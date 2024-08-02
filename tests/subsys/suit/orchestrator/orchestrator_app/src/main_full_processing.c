@@ -24,12 +24,12 @@
 #define CACHE_PARTITION_DEVICE(N)  FIXED_PARTITION_DEVICE(CACHE_PARTITION_LABEL(N))
 
 /* valid envelope */
-extern const uint8_t manifest_valid_buf[];
-extern const size_t manifest_valid_len;
+extern uint8_t manifest_valid_buf[];
+extern size_t manifest_valid_len;
 
 /* Envelope with unknown component type. */
-extern const uint8_t manifest_unsupported_component_buf[];
-extern const size_t manifest_unsupported_component_len;
+extern uint8_t manifest_unsupported_component_buf[];
+extern size_t manifest_unsupported_component_len;
 
 /* Valid root envelope for testing dependency-resolution + payload-fetch sequences. */
 extern const uint8_t manifest_valid_payload_fetch_buf[];

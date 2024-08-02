@@ -34,12 +34,12 @@ static const suit_manifest_class_id_t root_class_id = {{0x97, 0x05, 0x48, 0x23, 
 							0x4b, 0x0a}};
 
 /* Valid root envelope */
-extern const uint8_t manifest_valid_buf[];
-extern const size_t manifest_valid_len;
+extern uint8_t manifest_valid_buf[];
+extern size_t manifest_valid_len;
 
 /* Valid recovery envelope */
-extern const uint8_t manifest_valid_recovery_buf[];
-extern const size_t manifest_valid_recovery_len;
+extern uint8_t manifest_valid_recovery_buf[];
+extern size_t manifest_valid_recovery_len;
 
 static void setup_erased_flash(void)
 {

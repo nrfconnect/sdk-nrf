@@ -36,52 +36,52 @@ static const suit_manifest_class_id_t root_class_id = {{0x97, 0x05, 0x48, 0x23, 
 							0x4b, 0x0a}};
 
 /* Valid root envelope */
-extern const uint8_t manifest_valid_buf[];
-extern const size_t manifest_valid_len;
+extern uint8_t manifest_valid_buf[];
+extern size_t manifest_valid_len;
 
 /* Valid application envelope */
-extern const uint8_t manifest_valid_app_buf[];
-extern const size_t manifest_valid_app_len;
+extern uint8_t manifest_valid_app_buf[];
+extern size_t manifest_valid_app_len;
 
 /* Manifest generated using component id with size field set to zero */
-extern const uint8_t manifest_zero_size_buf[];
-extern const size_t manifest_zero_size_len;
+extern uint8_t manifest_zero_size_buf[];
+extern size_t manifest_zero_size_len;
 
 /* Originally valid envelope with manipulated single byte */
-extern const uint8_t manifest_manipulated_buf[];
-extern const size_t manifest_manipulated_len;
+extern uint8_t manifest_manipulated_buf[];
+extern size_t manifest_manipulated_len;
 
 /* Envelope generated with "UNSUPPORTED!" as a component type */
-extern const uint8_t manifest_unsupported_component_buf[];
-extern const size_t manifest_unsupported_component_len;
+extern uint8_t manifest_unsupported_component_buf[];
+extern size_t manifest_unsupported_component_len;
 
 /* Envelope with manifest version set to 2 */
-extern const uint8_t manifest_wrong_version_buf[];
-extern const size_t manifest_wrong_version_len;
+extern uint8_t manifest_wrong_version_buf[];
+extern size_t manifest_wrong_version_len;
 
 /* Envelope signed with a different private key */
-extern const uint8_t manifest_different_key_buf[];
-extern const size_t manifest_different_key_len;
+extern uint8_t manifest_different_key_buf[];
+extern size_t manifest_different_key_len;
 
 /* Empty root envelope with unsupported command (invoke on CAND_MFST) inside install sequence */
-extern const uint8_t manifest_root_unsupported_command_buf[];
-extern const size_t manifest_root_unsupported_command_len;
+extern uint8_t manifest_root_unsupported_command_buf[];
+extern size_t manifest_root_unsupported_command_len;
 
 /* Empty root envelope with install and failing candidate-verification sequences */
-extern const uint8_t manifest_root_candidate_verification_fail_buf[];
-extern const size_t manifest_root_candidate_verification_fail_len;
+extern uint8_t manifest_root_candidate_verification_fail_buf[];
+extern size_t manifest_root_candidate_verification_fail_len;
 
 /* Empty root envelope with candidate-verification sequence */
-extern const uint8_t manifest_root_candidate_verification_no_install_buf[];
-extern const size_t manifest_root_candidate_verification_no_install_len;
+extern uint8_t manifest_root_candidate_verification_no_install_buf[];
+extern size_t manifest_root_candidate_verification_no_install_len;
 
 /* Empty root envelope with candidate-verification and failing install sequences */
-extern const uint8_t manifest_root_candidate_verification_install_fail_buf[];
-extern const size_t manifest_root_candidate_verification_install_fail_len;
+extern uint8_t manifest_root_candidate_verification_install_fail_buf[];
+extern size_t manifest_root_candidate_verification_install_fail_len;
 
 /* Empty root envelope with candidate-verification and install sequences */
-extern const uint8_t manifest_root_candidate_verification_install_buf[];
-extern const size_t manifest_root_candidate_verification_install_len;
+extern uint8_t manifest_root_candidate_verification_install_buf[];
+extern size_t manifest_root_candidate_verification_install_len;
 
 static void setup_erased_flash(void)
 {
