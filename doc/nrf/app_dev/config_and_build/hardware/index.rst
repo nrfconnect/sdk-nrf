@@ -19,9 +19,14 @@ The following guides provide information about configuring specific aspects of h
 Read them together with Zephyr's :ref:`zephyr:hardware_support` and :ref:`zephyr:dt-guide` guides, and the official `Devicetree Specification`_.
 In particular, :ref:`zephyr:set-devicetree-overlays` explains how the base devicetree files are selected.
 
+.. note::
+   If you want to go through dedicated training related to some of the topics covered here, enroll in the courses in the `Nordic Developer Academy`_.
+   For example, `nRF Connect SDK Fundamentals course`_ describes devicetree in `Lesson 2 <Lesson 2 - Reading buttons and controlling LEDs_>`_.
+
 .. toctree::
    :maxdepth: 1
    :caption: Subpages:
 
+   add_new_driver
    pin_control
    use_gpio_pin_directly
