@@ -21,8 +21,8 @@
 #define SUIT_BACKUP_SIZE	  FIXED_PARTITION_SIZE(cpusec_suit_storage)
 
 /* Valid envelope */
-extern const uint8_t manifest_valid_buf[];
-extern const size_t manifest_valid_len;
+extern uint8_t manifest_valid_buf[];
+extern size_t manifest_valid_len;
 
 static void setup_erased_flash(void *f)
 {
