@@ -790,6 +790,11 @@ ci_applications_nrf_desktop:
     - nrf/drivers/mpsl/
     - nrf/drivers/sensor/paw3212/
     - nrf/drivers/sensor/pmw3360/
+    - nrf/dts/bindings/sensor/
+    - nrf/include/bluetooth/
+    - nrf/include/caf/
+    - nrf/include/sensor/
+    - nrf/scripts/hid_configurator/
     - nrf/subsys/app_event_manager/
     - nrf/subsys/bluetooth/
     - nrf/subsys/bootloader/
@@ -809,6 +814,7 @@ ci_applications_nrf_desktop:
     - zephyr/drivers/entropy/
     - zephyr/drivers/flash/
     - zephyr/drivers/usb/
+    - zephyr/include/zephyr/bluetooth/
     - zephyr/share/
     - zephyr/soc/nordic/
     - zephyr/subsys/bluetooth/
