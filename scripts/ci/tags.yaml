@@ -854,6 +854,11 @@ ci_tests_lib_at_cmd_parser:
     - nrf/lib/at_cmd_parser/
     - nrf/tests/lib/at_cmd_parser/
 
+ci_tests_lib_at_parser:
+  files:
+    - nrf/lib/at_parser/
+    - nrf/tests/lib/at_parser/
+
 ci_tests_lib_location:
   files:
     - modules/lib/cjson/
