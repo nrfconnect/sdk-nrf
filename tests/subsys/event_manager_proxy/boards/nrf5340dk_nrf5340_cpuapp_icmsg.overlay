@@ -9,6 +9,7 @@
 / {
 	chosen {
 		/delete-property/ zephyr,ipc_shm;
+		/delete-property/ zephyr,bt-hci;
 	};
 
 	reserved-memory {
