@@ -101,7 +101,7 @@ See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for i
       If you work on the command line, use one of the following options:
 
       * Edit the :file:`prj.conf` directly and run the standard ``west build`` command.
-      * Pass the additional options to the ``west build`` command by adding them after a ``--`` at the end of the command.
+      * Configure the ``west build`` command to use additional options by adding them after a ``--`` at the end of the ``west config build.cmake-args`` command.
 
         .. ncs-include:: develop/west/build-flash-debug.rst
            :docset: zephyr
