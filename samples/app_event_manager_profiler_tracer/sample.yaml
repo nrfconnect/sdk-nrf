@@ -16,4 +16,4 @@ tests:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_app_event_manager_profiler_tracer

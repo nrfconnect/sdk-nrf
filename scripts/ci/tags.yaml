@@ -697,6 +697,16 @@ ci_tests_subsys_app_event_manager:
     - nrf/subsys/app_event_manager/
     - nrf/tests/subsys/app_event_manager/
 
+ci_samples_app_event_manager_profiler_tracer:
+  files:
+    - nrf/include/app_event_manager.h
+    - nrf/samples/app_event_manager_profiler_tracer/
+    - nrf/samples/caf/
+    - nrf/samples/nrf_profiler/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/app_event_manager_profiler_tracer/
+    - nrf/subsys/caf/
+
 ci_applications_ipc_radio:
   files:
     - nrf/applications/ipc_radio/
