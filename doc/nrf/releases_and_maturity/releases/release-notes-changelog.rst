@@ -718,6 +718,7 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_log` library:
 
   * Added support for dictionary logs using REST.
+  * Added support for dictionary (binary) logs when connected to nRF Cloud using CoAP.
 
 Libraries for NFC
 -----------------
