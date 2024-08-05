@@ -106,13 +106,13 @@ static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 
 K_SEM_DEFINE(scan_sem, 0, 1);
 
-#if defined CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
+#if defined CONFIG_WIFI_NRF70_SKIP_LOCAL_ADMIN_MAC
 static bool local_mac_check(const uint8_t *const mac)
 {
 return ((mac[0] & 0x02) ||
 ((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x5E)));
 }
-#endif /* CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC */
+#endif /* CONFIG_WIFI_NRF70_SKIP_LOCAL_ADMIN_MAC */
 
 static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 {
@@ -131,9 +131,9 @@ static void handle_wifi_scan_result(struct net_mgmt_event_callback *cb)
 	strncpy(ssid_print, entry->ssid, sizeof(ssid_print) - 1);
 	ssid_print[sizeof(ssid_print) - 1] = '\0';
 
-#if defined CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC
+#if defined CONFIG_WIFI_NRF70_SKIP_LOCAL_ADMIN_MAC
 	__ASSERT(!local_mac_check(entry->mac), "Locally administered MAC found: %s\n", ssid_print);
-#endif /* CONFIG_WIFI_NRF700X_SKIP_LOCAL_ADMIN_MAC */
+#endif /* CONFIG_WIFI_NRF70_SKIP_LOCAL_ADMIN_MAC */
 
 	printk("%-4d | %-32s %-5u | %-4u | %-4d | %-5s | %s\n",
 	       scan_result, ssid_print, entry->ssid_length,
