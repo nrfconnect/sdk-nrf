@@ -68,3 +68,12 @@
 &cpusec_bellboard {
 	status = "okay";
 };
+
+/* Shrink ppr partition as ppr core is not used and extend app core code partition. */
+&cpuppr_code_partition {
+	reg = < 0xf8000 DT_SIZE_K(32) >;
+};
+
+&cpuapp_slot0_partition {
+	reg = < 0xa6000 DT_SIZE_K(328) >;
+};
