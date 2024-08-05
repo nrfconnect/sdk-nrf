@@ -33,7 +33,7 @@ config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
 	bool "nRF70 firmware patch"
 	depends on PARTITION_MANAGER
 	depends on BOOTLOADER_MCUBOOT
-	depends on WIFI_NRF700X
+	depends on WIFI_NRF70
 	depends on (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE)
 	help
 	  Enabling this option adds support for Device Firmware Update (DFU) for the nRF70 Series

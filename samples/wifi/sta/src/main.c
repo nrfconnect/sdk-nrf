@@ -256,11 +256,11 @@ int start_app(void)
 {
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
-	if (strlen(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY)) {
+	if (strlen(CONFIG_NRF70_QSPI_ENCRYPTION_KEY)) {
 		int ret;
 		char key[QSPI_KEY_LEN_BYTES];
 
-		ret = bytes_from_str(CONFIG_NRF700X_QSPI_ENCRYPTION_KEY, key, sizeof(key));
+		ret = bytes_from_str(CONFIG_NRF70_QSPI_ENCRYPTION_KEY, key, sizeof(key));
 		if (ret) {
 			LOG_ERR("Failed to parse encryption key: %d\n", ret);
 			return 0;

@@ -59,7 +59,7 @@ The script requires three inputs to be functional:
             Matter over Thread: CHIP && NET_L2_OPENTHREAD
         wifi:
             STA Mode:
-                rule: WPA_SUPP && WIFI_NRF700X
+                rule: WPA_SUPP && WIFI_NRF70
                 boards_and_shields:
                   - SHIELD_NRF7002EK
                   - BOARD_NRF7002DK_NRF5340_CPUAPP
