@@ -214,7 +214,7 @@ int scan_wifi_init(void)
 	const struct device *wifi_dev;
 
 	wifi_iface = NULL;
-#if defined(CONFIG_WIFI_NRF700X)
+#if defined(CONFIG_WIFI_NRF70)
 	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 #else
 	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_location_wifi));

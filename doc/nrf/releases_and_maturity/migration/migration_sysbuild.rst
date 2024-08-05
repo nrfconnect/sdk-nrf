@@ -255,24 +255,24 @@ Applications must enable these options if they generate factory data or need an 
 
 .. _child_parent_to_sysbuild_migration_nrf700x:
 
-nRF700x
-=======
+nRF70 Series
+============
 
-Support for nRF700x operating mode and firmware storage has moved to sysbuild.
+Support for the nRF70 Series operating mode and firmware storage has moved to sysbuild.
 The following Kconfig options are available:
 
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
 | Kconfig option                                                 | Description                                                                 |
 +================================================================+=============================================================================+
-|               ``SB_CONFIG_WIFI_NRF700X``                       | Enable Wifi support for nRF700x                                             |
+|               ``SB_CONFIG_WIFI_NRF70``                         | Enable Wifi support for the nRF70 Series devices                            |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF700X_SYSTEM_MODE``           | Use system mode firmware patches and set application to this mode           |
+|               ``SB_CONFIG_WIFI_NRF70_SYSTEM_MODE``             | Use system mode firmware patches and set application to this mode           |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF700X_SCAN_ONLY``             | Use scan-only mode firmware patches and set application to this mode        |
+|               ``SB_CONFIG_WIFI_NRF70_SCAN_ONLY``               | Use Scan-only mode firmware patches and set application to this mode        |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF700X_RADIO_TEST``            | Use radio test mode firmware patches and set application to this mode       |
+|               ``SB_CONFIG_WIFI_NRF70_RADIO_TEST``              | Use Radio Test mode firmware patches and set application to this mode       |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES`` | Use system with raw modes firmware patches and set application to this mode |
+|               ``SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES``   | Use system with Raw modes firmware patches and set application to this mode |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
 |               ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_DISABLED``    | Load firmware patches directly from ram (default)                           |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
@@ -304,7 +304,7 @@ The following Kconfig options are available:
 +-------------------------------------------------------------------+---------------------------------------------------+
 |               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT``       | Include MCUboot update in package                 |
 +-------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` | Include nRF7000x firmware patch update in package |
+|               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` | Include nRF70 firmware patch update in package    |
 +-------------------------------------------------------------------+---------------------------------------------------+
 
 You must update your application to select the required Kconfig options at the sysbuild level to have this file generated.

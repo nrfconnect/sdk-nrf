@@ -519,7 +519,7 @@ if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
 endif()
 
 # Calculate absolute address for the wi-fi firmware patch location.
-if (CONFIG_WIFI_NRF700X AND CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
+if (CONFIG_WIFI_NRF70 AND CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
   if(DEFINED ext_flash_dev)
     get_filename_component(qspi_node ${ext_flash_dev} DIRECTORY)
   else()

@@ -653,7 +653,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* Added :ref:`nrf700x_wifi`.
+* Added nRF Wi-Fi driver.
 
 Libraries
 =========
