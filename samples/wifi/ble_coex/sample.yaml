@@ -35,7 +35,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args: SHIELD=nrf7002ek ipc_radio_SHIELD=nrf7002ek_coex
+    extra_args: SHIELD=nrf7002ek
                 CONFIG_MPSL_CX=y ipc_radio_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf5340dk/nrf5340/cpuapp
@@ -45,7 +45,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args: SHIELD=nrf7002ek_nrf7001 ipc_radio_SHIELD=nrf7002ek_nrf7001_coex
+    extra_args: SHIELD=nrf7002ek_nrf7001
                 CONFIG_MPSL_CX=y ipc_radio_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     platform_allow: nrf5340dk/nrf5340/cpuapp
@@ -53,7 +53,7 @@ tests:
   sample.nrf7002_eb.thingy53.ble_coex:
     sysbuild: true
     build_only: true
-    extra_args: ble_coex_SHIELD=nrf7002eb ipc_radio_SHIELD=nrf7002eb_coex
+    extra_args: ble_coex_SHIELD=nrf7002eb
                 CONFIG_MPSL_CX=y ipc_radio_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
     integration_platforms:
