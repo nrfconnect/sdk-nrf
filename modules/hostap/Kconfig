@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig WPA_SUPP
+menuconfig WIFI_NM_WPA_SUPPLICANT
 	bool "WPA supplicant support"
 	# Need full POSIX from libc, Zephyr's POSIX support is only partial
 	select POSIX_CLOCK
@@ -21,7 +21,7 @@ menuconfig WPA_SUPP
 	help
 	  WPA supplicant implements 802.1X related functions.
 
-if WPA_SUPP
+if WIFI_NM_WPA_SUPPLICANT
 
 config COMMON_LIBC_MALLOC_ARENA_SIZE
 	default 40000 if WPA_SUPP_AP
@@ -216,7 +216,7 @@ config NET_MGMT_EVENT_STACK_SIZE
 config NET_SOCKETS_POLL_MAX
 	default 6
 
-module = WPA_SUPP
+module = WIFI_NM_WPA_SUPPLICANT
 module-str = WPA supplicant
 source "subsys/logging/Kconfig.template.log_config"
 
@@ -266,4 +266,4 @@ config WPA_SUPP_NW_SEL_RELIABILITY
 	  Select the network based on reliability.
 endchoice
 
-endif # WPA_SUPP
+endif # WIFI_NM_WPA_SUPPLICANT

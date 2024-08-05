@@ -28,7 +28,7 @@
 LOG_MODULE_REGISTER(wpas_event, CONFIG_WFA_QT_LOG_LEVEL);
 
 /* TODO: Handle other events */
-#define WPA_SUPP_EVENTS (NET_EVENT_WPA_SUPP_READY)
+#define WPA_SUPP_EVENTS (NET_EVENT_SUPPLICANT_READY)
 
 static struct net_mgmt_event_callback net_wpa_supp_cb;
 
@@ -44,7 +44,7 @@ static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 {
 	/* TODO: Handle other events */
 	switch (mgmt_event) {
-	case NET_EVENT_WPA_SUPP_READY:
+	case NET_EVENT_SUPPLICANT_READY:
 		handle_wpa_supp_ready(cb);
 		break;
 	default:
@@ -55,7 +55,7 @@ static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 
 int wait_for_wpa_s_ready(void)
 {
-	struct wpa_supplicant *wpa_s = z_wpas_get_handle_by_ifname(CONFIG_WFA_QT_DEFAULT_INTERFACE);
+	struct wpa_supplicant *wpa_s = zephyr_get_handle_by_ifname(CONFIG_WFA_QT_DEFAULT_INTERFACE);
 	int ret;
 
 	if (wpa_s) {
@@ -70,7 +70,7 @@ int wait_for_wpa_s_ready(void)
 		return -1;
 	}
 
-	wpa_s = z_wpas_get_handle_by_ifname(CONFIG_WFA_QT_DEFAULT_INTERFACE);
+	wpa_s = zephyr_get_handle_by_ifname(CONFIG_WFA_QT_DEFAULT_INTERFACE);
 	if (!wpa_s) {
 		LOG_INF("WPA Supplicant ready event received, but no handle found for %s",
 			 CONFIG_WFA_QT_DEFAULT_INTERFACE);
