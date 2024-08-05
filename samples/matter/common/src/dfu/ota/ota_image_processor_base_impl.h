@@ -6,10 +6,10 @@
 
 #pragma once
 
-#ifdef CONFIG_WIFI_NRF700X
+#ifdef CONFIG_WIFI_NRF70
 #include <platform/nrfconnect/OTAImageProcessorImplWiFi.h>
 using OTAImageProcessorBaseImpl = chip::DeviceLayer::OTAImageProcessorImplWiFi;
 #else
 #include <platform/nrfconnect/OTAImageProcessorImpl.h>
 using OTAImageProcessorBaseImpl = chip::DeviceLayer::OTAImageProcessorImpl;
-#endif /* CONFIG_WIFI_NRF700X */
+#endif /* CONFIG_WIFI_NRF70 */

@@ -16,7 +16,7 @@ In Promiscuous mode of operation, all received IEEE 802.11 packets that belong t
 Enabling Promiscuous mode
 *************************
 
-To use the Promiscuous mode feature in your applications, you must enable the :kconfig:option:`CONFIG_NRF700X_PROMISC_DATA_RX` Kconfig option in the project configuration.
+To use the Promiscuous mode feature in your applications, you must enable the :kconfig:option:`CONFIG_NRF70_PROMISC_DATA_RX` Kconfig option in the project configuration.
 
 .. _ug_nrf70_developing_promiscuous_mode_operation:
 
@@ -138,7 +138,7 @@ TX injection mode can be enabled concurrently with Promiscuous mode on the nRF70
 TX injection mode allows the transmission of a raw 802.11 transmit packet.
 Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF70 Series device.
 
-To use the TX injection mode in your application, you need to enable the :kconfig:option:`CONFIG_NRF700X_RAW_DATA_TX` Kconfig option in the project configuration.
+To use the TX injection mode in your application, you need to enable the :kconfig:option:`CONFIG_NRF70_RAW_DATA_TX` Kconfig option in the project configuration.
 
 TX injection mode can be enabled during runtime by invoking the API ``net_eth_txinjection_mode``.
 The API has the following parameters as described below.

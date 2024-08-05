@@ -12,7 +12,7 @@ top_table:
       - BOARD_NRF9151DK_NRF9151_NS
   Matter: CHIP
   Wi-Fi:
-    rule: WIFI && WIFI_NRF700X
+    rule: WIFI && WIFI_NRF70
     boards_and_shields:
       - SHIELD_NRF7002EK
       - SHIELD_NRF7002EK_NRF7000
@@ -67,7 +67,7 @@ features:
     Thread TCP: OPENTHREAD_TCP_ENABLE
   matter:
     Matter over Thread: CHIP && NET_L2_OPENTHREAD
-    Matter over Wi-Fi: CHIP && WIFI_NRF700X
+    Matter over Wi-Fi: CHIP && WIFI_NRF70
     Matter commissioning over IP: CHIP
     Matter commissioning over Bluetooth LE with QR code onboarding: CHIP && BT
     Matter commissioning over Bluetooth LE with NFC onboarding: CHIP && BT && CHIP_NFC_COMMISSIONING
@@ -77,7 +77,7 @@ features:
       NET_L2_OPENTHREAD && OPENTHREAD_MTD_SED
   wifi:
     STA Mode:
-      rule: WPA_SUPP && WIFI_NRF700X
+      rule: WPA_SUPP && WIFI_NRF70
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7000
@@ -88,7 +88,7 @@ features:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
     Scan only (for location accuracy):
-      rule: WIFI_NRF700X && !WPA_SUPP
+      rule: WIFI_NRF70 && !WPA_SUPP
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7000
@@ -97,7 +97,7 @@ features:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
     Bluetooth LE coexistence:
-      rule: WIFI_NRF700X && NRF700X_SR_COEX
+      rule: WIFI_NRF70 && NRF700X_SR_COEX
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7001
@@ -105,11 +105,11 @@ features:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
     Thread coexistence:
-      rule: WIFI_NRF700X && OPENTHREAD
+      rule: WIFI_NRF70 && OPENTHREAD
       boards_and_shields:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
     SoftAP Mode (for Wi-Fi provisioning):
-      rule: WIFI_NRF700X && NRF700X_AP_MODE && WPA_SUPP_AP
+      rule: WIFI_NRF70 && NRF700X_AP_MODE && WPA_SUPP_AP
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7000
@@ -118,7 +118,7 @@ features:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
     Monitor Mode:
-      rule: WIFI_NRF700X && NRF700X_RAW_DATA_RX
+      rule: WIFI_NRF70 && NRF700X_RAW_DATA_RX
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7000
@@ -127,7 +127,7 @@ features:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
     TX injection Mode:
-      rule: WIFI_NRF700X && NRF700X_RAW_DATA_TX
+      rule: WIFI_NRF70 && NRF700X_RAW_DATA_TX
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7000
@@ -136,7 +136,7 @@ features:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
         - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
     Promiscuous Mode:
-      rule: WIFI_NRF700X && NRF700X_PROMISC_DATA_RX
+      rule: WIFI_NRF70 && NRF700X_PROMISC_DATA_RX
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7001

@@ -72,7 +72,7 @@ tests:
     extra_args: lock_SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
       FILE_SUFFIX=thread_wifi_switched SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
       SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3 CONFIG_CHIP_DFU_OVER_BT_SMP=y
-      SB_CONFIG_WIFI_NRF700X=y SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y
+      SB_CONFIG_WIFI_NRF70=y SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp

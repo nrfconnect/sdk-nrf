@@ -210,7 +210,7 @@ To build this application to work with the nRF7002 Wi-Fi expansion board:
       .. group-tab:: nRF Connect for VS Code
 
          To build the application in the nRF Connect for VS Code IDE for Thingy:53 with the nRF7002 EB attached, add the expansion board and the file suffix variables in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
-         For example: ``-- -Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF700X=y``.
+         For example: ``-- -Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF70=y``.
 
       .. group-tab:: Command line
 
@@ -218,7 +218,7 @@ To build this application to work with the nRF7002 Wi-Fi expansion board:
 
          .. code-block:: console
 
-            west build -b thingy53/nrf5340/cpuapp -- -Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF700X=y
+            west build -b thingy53/nrf5340/cpuapp -- -Dmatter_weather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF70=y
 
 Generating factory data
 =======================

@@ -4,32 +4,32 @@
 
 menu "Wi-Fi"
 
-menuconfig WIFI_NRF700X
+menuconfig WIFI_NRF70
 	bool "nRF700x"
 
-if WIFI_NRF700X
+if WIFI_NRF70
 
-choice WIFI_NRF700X_OPER_MODES
+choice WIFI_NRF70_OPER_MODES
 	bool "nRF700x operating mode"
-	default WIFI_NRF700X_SYSTEM_MODE
+	default WIFI_NRF70_SYSTEM_MODE
 	help
 	  Select the operating mode of the nRF700x driver
 
-config WIFI_NRF700X_SYSTEM_MODE
-	bool "Enable nRF700X system mode"
+config WIFI_NRF70_SYSTEM_MODE
+	bool "Enable nRF70 system mode"
 	help
 	  Select this option to enable system mode of the nRF700x driver
 
-config WIFI_NRF700X_SCAN_ONLY
-	bool "Enable nRF700X scan only mode"
+config WIFI_NRF70_SCAN_ONLY
+	bool "Enable nRF70 scan only mode"
 	help
 	  Select this option to enable scan only mode of the nRF700x driver
 
-config WIFI_NRF700X_RADIO_TEST
+config WIFI_NRF70_RADIO_TEST
 	bool "Radio test mode of the nRF700x driver"
 
-config WIFI_NRF700X_SYSTEM_WITH_RAW_MODES
-	bool "Enable nRF700X system mode with raw modes"
+config WIFI_NRF70_SYSTEM_WITH_RAW_MODES
+	bool "Enable nRF70 system mode with raw modes"
 	help
 	  Select this option to enable system mode of the nRF700x driver with raw modes
 
@@ -60,6 +60,6 @@ config WIFI_PATCHES_EXT_FLASH_STORE
 
 endchoice
 
-endif # WIFI_NRF700X
+endif # WIFI_NRF70
 
 endmenu

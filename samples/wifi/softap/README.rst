@@ -25,7 +25,7 @@ Then, the sample lists the connected devices.
 
 You can enable the SoftAP mode by setting the below configuration options in the sample project configuration file:
 
-* :kconfig:option:`CONFIG_NRF700X_AP_MODE`: Enables access point mode support.
+* :kconfig:option:`CONFIG_NRF70_AP_MODE`: Enables access point mode support.
 * :kconfig:option:`CONFIG_WPA_SUPP_AP`: Enables access point support.
 
 The sample uses the :ref:`lib_wifi_ready` library to check Wi-Fi readiness.

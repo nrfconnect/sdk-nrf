@@ -14,12 +14,12 @@ target_include_directories(
 	PRIVATE
 	${ZEPHYR_BASE}/../nrfxlib/)
 
-target_sources_ifdef(CONFIG_NRF700X_RAW_DATA_TX
+target_sources_ifdef(CONFIG_NRF70_RAW_DATA_TX
 	app
 	PRIVATE
 	src/wifi_raw_tx_pkt_shell.c)
 
-target_sources_ifdef(CONFIG_NRF700X_PROMISC_DATA_RX
+target_sources_ifdef(CONFIG_NRF70_PROMISC_DATA_RX
 	app
 	PRIVATE
 	src/wifi_promiscuous_shell.c)
