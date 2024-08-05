@@ -1066,13 +1066,13 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 nRF91 Series DK with nRF7002 EK Wi-Fi support
 =============================================
 
-To build the MoSh sample for an nRF91 Series DK with nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF700X=y`` and ``-DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y`` options.
+To build the MoSh sample for an nRF91 Series DK with nRF7002 EK Wi-Fi support, use the ``-DSHIELD=nrf7002ek``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF70=y`` and ``-DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y`` options.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF700X=y -DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF70=y -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
 
 |board_target|
 
@@ -1081,12 +1081,12 @@ See :ref:`cmake_options` for more instructions on how to add these options.
 Thingy:91 X Wi-Fi support
 =========================
 
-To build the MoSh sample with Thingy:91 X Wi-Fi support, use the ``-DDTC_OVERLAY_FILE=thingy91x_wifi.overlay``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF700X=y``, and ``-DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y`` options.
+To build the MoSh sample with Thingy:91 X Wi-Fi support, use the ``-DDTC_OVERLAY_FILE=thingy91x_wifi.overlay``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF70=y``, and ``-DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y`` options.
 For example:
 
 .. code-block:: console
 
-   west build -p -b thingy91x/nrf9151/ns -- -DDTC_OVERLAY_FILE=thingy91x_wifi.overlay -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF700X=y -DSB_CONFIG_WIFI_NRF700X_SCAN_ONLY=y
+   west build -p -b thingy91x/nrf9151/ns -- -DDTC_OVERLAY_FILE=thingy91x_wifi.overlay -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF70=y -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 
