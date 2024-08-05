@@ -82,6 +82,14 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 #endif /* CONFIG_SUIT_STREAM_IPC_REQUESTOR */
 
 	if (ret == SUIT_PLAT_SUCCESS) {
+		/* Flush any remaining data before reading used storage size */
+		if (dst_sink->flush != NULL) {
+			ret = dst_sink->flush(dst_sink->ctx);
+			if (ret != SUIT_PLAT_SUCCESS) {
+				return suit_plat_err_to_processor_err_convert(ret);
+			}
+		}
+
 		/* Update size in memptr for MEM component */
 		if (dst_component_type == SUIT_COMPONENT_TYPE_MEM) {
 			size_t new_size = 0;
@@ -119,6 +127,14 @@ int suit_plat_fetch_integrated_domain_specific(suit_component_t dst_handle,
 
 	if (ret != SUIT_PLAT_SUCCESS) {
 		return suit_plat_err_to_processor_err_convert(ret);
+	}
+
+	/* Flush any remaining data before reading used storage size */
+	if (dst_sink->flush != NULL) {
+		ret = dst_sink->flush(dst_sink->ctx);
+		if (ret != SUIT_PLAT_SUCCESS) {
+			return suit_plat_err_to_processor_err_convert(ret);
+		}
 	}
 
 	/* Update size in memptr for MEM component */
