@@ -19,7 +19,7 @@ config NCS_SAMPLES_DEFAULTS
 
 if SOC_SERIES_NRF53X
 
-config NRF700X_RADIO_TEST_COMBO
+config NRF70_RADIO_TEST_COMBO
 	bool "Enable radio test combo build for nRF5340"
 	depends on SOC_NRF5340_CPUAPP
 	select BOARD_ENABLE_CPUNET
@@ -34,9 +34,9 @@ config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	bool "Include RPMsg sample on netcore"
-	depends on SOC_NRF5340_CPUAPP && (BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO)
+	depends on SOC_NRF5340_CPUAPP && (BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF70_RADIO_TEST_COMBO)
 	select PARTITION_MANAGER_ENABLED
-	default y if BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO
+	default y if BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF70_RADIO_TEST_COMBO
 	help
 	  Enabling this setting will include a network stack to run on the
 	  network core and communicate over RPMsg with the application core.
@@ -74,35 +74,35 @@ if NCS_INCLUDE_RPMSG_CHILD_IMAGE
 
 config NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
 	bool
-	depends on BT_HCI_IPC && NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST_COMBO
+	depends on BT_HCI_IPC && NRF_802154_SER_HOST && !BT_RPC && !NRF70_RADIO_TEST_COMBO
 	default y
 	help
 	  multiprotocol_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_HCI_IPC_CHILD_IMAGE
 	bool
-	depends on BT_HCI_IPC && !NRF_802154_SER_HOST && !BT_RPC && !NRF700X_RADIO_TEST_COMBO
+	depends on BT_HCI_IPC && !NRF_802154_SER_HOST && !BT_RPC && !NRF70_RADIO_TEST_COMBO
 	default y
 	help
 	  hci_ipc sample as a child image (network core).
 
 config NCS_SAMPLE_802154_RPMSG_CHILD_IMAGE
 	bool
-	depends on NRF_802154_SER_HOST && !BT_HCI_IPC && !BT_RPC && !NRF700X_RADIO_TEST_COMBO
+	depends on NRF_802154_SER_HOST && !BT_HCI_IPC && !BT_RPC && !NRF70_RADIO_TEST_COMBO
 	default y
 	help
 	  802154_rpmsg sample as a child image (network core).
 
 config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
 	bool
-	depends on BT_RPC && !NRF700X_RADIO_TEST_COMBO
+	depends on BT_RPC && !NRF70_RADIO_TEST_COMBO
 	default y
 	help
 	  rpc_host sample as a child image (network core).
 
 config NCS_SAMPLE_PERIPHERAL_RADIO_TEST_CHILD_IMAGE
 	bool "Add peripheral radio_test sample as a child image"
-	depends on NRF700X_RADIO_TEST_COMBO
+	depends on NRF70_RADIO_TEST_COMBO
 	default y
 	select PARTITION_MANAGER_ENABLED
 	help

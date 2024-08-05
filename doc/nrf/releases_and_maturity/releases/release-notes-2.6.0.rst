@@ -998,7 +998,7 @@ Wi-Fi drivers
 
   * OS agnostic code is moved to |NCS| (``sdk-nrfxlib``) repository.
 
-    * Low-level API documentation is now available on the :ref:`Wi-Fi driver API <nrfxlib:nrf_wifi_api>`.
+    * Low-level API documentation is now available on the ``Wi-Fi driver API``.
 
   * The Wi-Fi interface is now renamed and registered as a devicetree instance.
 
