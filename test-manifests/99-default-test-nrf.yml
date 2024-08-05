@@ -11,7 +11,7 @@ manifest:
     - name: test_nrf
       remote: ncs-test
       repo-path: test-fw-nrfconnect-nrf
-      revision: master
+      revision: run_ble_when_hw_models_updated
       import:
         name-blocklist: [sdk-nrf]
       userdata:
