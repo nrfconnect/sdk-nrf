@@ -103,6 +103,9 @@ Bluetooth® LE
 -------------
 
 * The correct SoftDevice Controller library :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE_MULTIROLE` will now be selected automatically when using coexistence based on :kconfig:option:`CONFIG_MPSL_CX` for nRF52-series devices.
+* Added the APIs :c:func:`bt_hci_err_to_str` and :c:func:`bt_security_err_to_str` to allow printing error codes as strings.
+  Each API returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
+  The :ref:`ble_samples` and :ref:`nrf53_audio_app` are updated to utilize these new APIs.
 
 Bluetooth Mesh
 --------------
@@ -212,7 +215,10 @@ Matter Bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The APIs :c:func:`bt_hci_err_to_str` and :c:func:`bt_security_err_to_str` that are used to allow printing error codes as strings.
+    Each API returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
 
 nRF Desktop
 -----------
