@@ -749,3 +749,11 @@ config NRF_WIFI_QOS_NULL_BASED_RETRIEVAL
 	  depending on the delay. Ideal for heavy buffered traffic.
 
 endchoice
+
+config NRF_WIFI_MGMT_BUFF_OFFLOAD
+	bool "Enable management buffer offload"
+	depends on !WIFI_MGMT_RAW_SCAN_RESULTS
+	default y if !WIFI_MGMT_RAW_SCAN_RESULTS
+	help
+	  Enable management buffer offload, driver is not involved in managing
+	  RX buffers for management frames.
