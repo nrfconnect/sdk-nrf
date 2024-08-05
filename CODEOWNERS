@@ -38,7 +38,6 @@
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/audio/                      @nrfconnect/ncs-audio
-/applications/protocols_serialization/    @nrfconnect/ncs-protocols-serialization
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
 /applications/zigbee_weather_station/     @milewr
 # Boards
@@ -198,7 +197,7 @@ Kconfig*                                  @tejlmand
 /samples/cellular/sms/                    @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /samples/nrf_profiler/                    @pdunaj
-/samples/nrf_rpc/ps_client/               @nrfconnect/ncs-protocols-serialization
+/samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @ankuns @piotrkoziar
