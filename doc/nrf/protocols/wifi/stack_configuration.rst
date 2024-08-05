@@ -294,5 +294,4 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
    The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002 DK.
    The results represent the best throughput, averaged over three iterations, and were obtained with a good RSSI signal in a clean environment.
 
-   The above configuration values can be passed using standard ways such as CMake arguments to west build (`Zephyr One Time Arguments`_ or `Zephyr Permanent Arguments`_), or by adding them in an :file:`overlay` file and passing to west build as CMake argument ``EXTRA_CONF_FILE``.
-   See `Zephyr Application Configuration`_ for more details.
+   The above configuration values can be passed when :ref:`configuring Kconfig options <configuring_kconfig>` before a build or by adding them in an :file:`overlay` file and passing to west build as CMake argument :makevar:`EXTRA_CONF_FILE` using the respective :ref:`CMake option <cmake_options>`.

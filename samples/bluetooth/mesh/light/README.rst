@@ -163,8 +163,7 @@ DFU configuration
          Currently, the nRF5340 development kit only supports DFU for the application core.
          This implies that all application DFU images must be compatible with the network core image running on the device.
 
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
-For more information about selecting a sysbuild configuration file, see the sysbuild Kconfig file section on the :ref:`zephyr:sysbuild` page in the Zephyr documentation.
+For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 FEM support
 ===========
