@@ -69,19 +69,19 @@ The nRF Wi-Fi driver provides the following software configurations to fine-tune
      - Memory savings
      - This specifies the inclusion of the WPA supplicant module.
        Disabling this flag restricts the nRF Wi-Fi driver's functionality to STA scan only.
-   * - :kconfig:option:`CONFIG_NRF700X_AP_MODE`
+   * - :kconfig:option:`CONFIG_NRF70_AP_MODE`
      - ``y`` or ``n``
      - Enable or disable Access Point (AP) mode
      - Memory savings
      - This specifies the inclusion of the AP mode module.
        Disabling this flag restricts the nRF Wi-Fi driver's functionality to :term:`Station mode (STA)` only.
-   * - :kconfig:option:`CONFIG_NRF700X_P2P_MODE`
+   * - :kconfig:option:`CONFIG_NRF70_P2P_MODE`
      - ``y`` or ``n``
      - Enable or disable Wi-Fi direct mode
      - Memory Savings
      - This specifies the inclusion of the P2P mode module.
        Disabling this flag restricts the nRF Wi-Fi driver's functionality to STA or AP mode only.
-   * - :kconfig:option:`CONFIG_NRF700X_MAX_TX_TOKENS`
+   * - :kconfig:option:`CONFIG_NRF70_MAX_TX_TOKENS`
      - ``5``, ``10``, ``11``, ``12``
      - Maximum number of TX tokens.
        These are distributed across all WMM® access categories (including a pool for all).
@@ -90,27 +90,27 @@ The nRF Wi-Fi driver provides the following software configurations to fine-tune
        More tokens imply more concurrent transmit opportunities for RPU but can lead to poor aggregation performance
        if the pipeline is not saturated. But to saturate the pipeline, a greater number of networking stack buffers,
        or queue depth, is required.
-   * - :kconfig:option:`CONFIG_NRF700X_MAX_TX_AGGREGATION`
+   * - :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION`
      - ``1`` to ``Unlimited`` (based on available memory in nRF70 Series device)
      - Maximum number of frames that are coalesced into a single Wi-Fi frame (for example, MPDU's in an A-MPDU, or MSDU's in an A-MSDU).
        The coalescing greatly improves the throughput for small frames or under high traffic load.
      - Performance tuning and Memory savings
      - This specifies the maximum number of frames that can be coalesced into a single Wi-Fi frame.
        More frames imply more coalescing opportunities but can add latency to the TX path as we wait for more frames to arrive.
-   * - :kconfig:option:`CONFIG_NRF700X_RX_NUM_BUFS`
+   * - :kconfig:option:`CONFIG_NRF70_RX_NUM_BUFS`
      - ``1`` to ``Unlimited`` (based on available memory in nRF70 Series device)
      - Number of RX buffers
      - Memory savings
      - This specifies the number of RX buffers that can be used by the nRF Wi-Fi driver.
        The number of buffers must be enough to keep up with the RX traffic, otherwise packets might be dropped.
-   * - :kconfig:option:`CONFIG_NRF700X_TX_MAX_DATA_SIZE`
+   * - :kconfig:option:`CONFIG_NRF70_TX_MAX_DATA_SIZE`
      - ``64`` to ``1600``
      - Maximum TX data size
      - Memory savings
      - This specifies the maximum size of Wi-Fi protocol frames that can be transmitted.
        Large frame sizes imply more memory usage but can efficiently utilize the bandwidth.
        If the application does not need to send large frames, then this can be reduced to save memory.
-   * - :kconfig:option:`CONFIG_NRF700X_RX_MAX_DATA_SIZE`
+   * - :kconfig:option:`CONFIG_NRF70_RX_MAX_DATA_SIZE`
      - ``64`` to ``1600``
      - Maximum RX data size
      - Memory savings
@@ -129,30 +129,30 @@ nRF70 Series packet memory
 The nRF70 Series device chipset has a special memory called the packet memory to store the Wi-Fi protocol frames for both TX and RX.
 The various configuration options that control the size of the packet memory are listed below:
 
-* :kconfig:option:`CONFIG_NRF700X_TX_MAX_DATA_SIZE`
-* :kconfig:option:`CONFIG_NRF700X_RX_MAX_DATA_SIZE`
-* :kconfig:option:`CONFIG_NRF700X_MAX_TX_TOKENS`
-* :kconfig:option:`CONFIG_NRF700X_MAX_TX_AGGREGATION`
-* :kconfig:option:`CONFIG_NRF700X_RX_NUM_BUFS`
+* :kconfig:option:`CONFIG_NRF70_TX_MAX_DATA_SIZE`
+* :kconfig:option:`CONFIG_NRF70_RX_MAX_DATA_SIZE`
+* :kconfig:option:`CONFIG_NRF70_MAX_TX_TOKENS`
+* :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION`
+* :kconfig:option:`CONFIG_NRF70_RX_NUM_BUFS`
 
 The packet memory is divided into two parts, one for TX and one for RX. The size of the TX packet memory is calculated as follows:
 
 .. code-block:: none
 
-   (CONFIG_NRF700X_TX_MAX_DATA_SIZE + 52 ) * CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_MAX_TX_AGGREGATION
+   (CONFIG_NRF70_TX_MAX_DATA_SIZE + 52 ) * CONFIG_NRF70_MAX_TX_TOKENS * CONFIG_NRF70_MAX_TX_AGGREGATION
 
 The size of the RX packet memory is calculated as follows:
 
 .. code-block:: none
 
-   CONFIG_NRF700X_RX_MAX_DATA_SIZE * CONFIG_NRF700X_RX_NUM_BUFS
+   CONFIG_NRF70_RX_MAX_DATA_SIZE * CONFIG_NRF70_RX_NUM_BUFS
 
 The total packet memory size is calculated as follows:
 
 .. code-block:: none
 
-   (CONFIG_NRF700X_TX_MAX_DATA_SIZE + 52 ) * CONFIG_NRF700X_MAX_TX_TOKENS * CONFIG_NRF700X_MAX_TX_AGGREGATION +
-   CONFIG_NRF700X_RX_MAX_DATA_SIZE * CONFIG_NRF700X_RX_NUM_BUFS
+   (CONFIG_NRF70_TX_MAX_DATA_SIZE + 52 ) * CONFIG_NRF70_MAX_TX_TOKENS * CONFIG_NRF70_MAX_TX_AGGREGATION +
+   CONFIG_NRF70_RX_MAX_DATA_SIZE * CONFIG_NRF70_RX_NUM_BUFS
 
 There is a build time check to ensure that the total packet memory size does not exceed the available packet memory size in the nRF70 Series chip.
 
@@ -177,8 +177,8 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
    * - STA scan only
      - Scan only
      - ``CONFIG_WPA_SUPP=n``
-       ``CONFIG_NRF700X_AP_MODE=n``
-       ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NRF70_AP_MODE=n``
+       ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=1``
        ``CONFIG_NET_PKT_RX_COUNT=1``
        ``CONFIG_NET_BUF_TX_COUNT=1``
@@ -188,19 +188,19 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
    * - :abbr:`STA (Station)` mode
      - IoT devices
      - ``CONFIG_WPA_SUPP=y``
-       ``CONFIG_NRF700X_AP_MODE=n``
-       ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NRF70_AP_MODE=n``
+       ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=6``
        ``CONFIG_NET_PKT_RX_COUNT=6``
        ``CONFIG_NET_BUF_TX_COUNT=12``
        ``CONFIG_NET_BUF_RX_COUNT=6``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=6``
+       ``CONFIG_NRF70_RX_NUM_BUFS=6``
        ``CONFIG_NET_BUF_DATA_SIZE=800``
        ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
-       ``CONFIG_NRF700X_UTIL=n``
-       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=1``
-       ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
+       ``CONFIG_NRF70_UTIL=n``
+       ``CONFIG_NRF70_MAX_TX_AGGREGATION=1``
+       ``CONFIG_NRF70_MAX_TX_TOKENS=5``
      - IoT devices
      - ``TCP-TX: 5.2 Mbps``
        ``TCP-RX: 3.4 Mbps``
@@ -209,19 +209,19 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
    * - :abbr:`STA (Station)` mode
      - Memory optimized :abbr:`STA (Station)` mode
      - ``CONFIG_WPA_SUPP=y``
-       ``CONFIG_NRF700X_AP_MODE=n``
-       ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NRF70_AP_MODE=n``
+       ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=6``
        ``CONFIG_NET_PKT_RX_COUNT=6``
        ``CONFIG_NET_BUF_TX_COUNT=12``
        ``CONFIG_NET_BUF_RX_COUNT=6``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=6``
+       ``CONFIG_NRF70_RX_NUM_BUFS=6``
        ``CONFIG_NET_BUF_DATA_SIZE=500``
        ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
-       ``CONFIG_NRF700X_UTIL=n``
-       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=1``
-       ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
+       ``CONFIG_NRF70_UTIL=n``
+       ``CONFIG_NRF70_MAX_TX_AGGREGATION=1``
+       ``CONFIG_NRF70_MAX_TX_TOKENS=5``
      - Sensors with low data requirements
      - ``TCP-TX: 0.3 Mbps``
        ``TCP-RX: 1.5 Mbps``
@@ -230,8 +230,8 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
    * - :abbr:`STA (Station)` mode
      - High performance :abbr:`STA (Station)` mode
      - ``CONFIG_WPA_SUPP=y``
-       ``CONFIG_NRF700X_AP_MODE=n``
-       ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NRF70_AP_MODE=n``
+       ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=30``
        ``CONFIG_NET_PKT_RX_COUNT=30``
        ``CONFIG_NET_BUF_TX_COUNT=60``
@@ -239,9 +239,9 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
        ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
-       ``CONFIG_NRF700X_UTIL=n``
-       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=9``
-       ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
+       ``CONFIG_NRF70_UTIL=n``
+       ``CONFIG_NRF70_MAX_TX_AGGREGATION=9``
+       ``CONFIG_NRF70_MAX_TX_TOKENS=12``
      - High data rate IoT devices
      - ``TCP-TX: 14.2 Mbps``
        ``TCP-RX: 7.4  Mbps``
@@ -250,19 +250,19 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_WPA_SUPP=y``
-       ``CONFIG_NRF700X_AP_MODE=n``
-       ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NRF70_AP_MODE=n``
+       ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=32``
        ``CONFIG_NET_PKT_RX_COUNT=10``
        ``CONFIG_NET_BUF_TX_COUNT=64``
        ``CONFIG_NET_BUF_RX_COUNT=10``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=10``
+       ``CONFIG_NRF70_RX_NUM_BUFS=10``
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
        ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
-       ``CONFIG_NRF700X_UTIL=n``
-       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=9``
-       ``CONFIG_NRF700X_MAX_TX_TOKENS=12``
+       ``CONFIG_NRF70_UTIL=n``
+       ``CONFIG_NRF70_MAX_TX_AGGREGATION=9``
+       ``CONFIG_NRF70_MAX_TX_TOKENS=12``
      - Sensors with high data rate
      - ``TCP-TX: 9.2  Mbps``
        ``TCP-RX: 3.6  Mbps``
@@ -271,19 +271,19 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_WPA_SUPP=y``
-       ``CONFIG_NRF700X_AP_MODE=n``
-       ``CONFIG_NRF700X_P2P_MODE=n``
+       ``CONFIG_NRF70_AP_MODE=n``
+       ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=5``
        ``CONFIG_NET_PKT_RX_COUNT=64``
        ``CONFIG_NET_BUF_TX_COUNT=10``
        ``CONFIG_NET_BUF_RX_COUNT=64``
-       ``CONFIG_NRF700X_RX_NUM_BUFS=64``
+       ``CONFIG_NRF70_RX_NUM_BUFS=64``
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
        ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
-       ``CONFIG_NRF700X_UTIL=n``
-       ``CONFIG_NRF700X_MAX_TX_AGGREGATION=2``
-       ``CONFIG_NRF700X_MAX_TX_TOKENS=5``
+       ``CONFIG_NRF70_UTIL=n``
+       ``CONFIG_NRF70_MAX_TX_AGGREGATION=2``
+       ``CONFIG_NRF70_MAX_TX_TOKENS=5``
      - Display devices streaming data
      - ``TCP-TX: 5.3  Mbps``
        ``TCP-RX: 7.9  Mbps``

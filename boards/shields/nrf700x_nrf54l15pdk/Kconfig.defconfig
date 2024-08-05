@@ -12,7 +12,7 @@ config NETWORKING
 config WIFI
 	default y
 
-config WIFI_NRF700X
+config WIFI_NRF70
 	default y
 
 config NRFX_GPIOTE

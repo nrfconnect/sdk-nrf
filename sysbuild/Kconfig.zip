@@ -33,7 +33,7 @@ config DFU_ZIP_NET
 config DFU_ZIP_WIFI_FW_PATCH
 	bool "nRF70 firmware patch"
 	depends on PARTITION_MANAGER
-	depends on WIFI_NRF700X
+	depends on WIFI_NRF70
 	depends on (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE)
 	default y
 	help
