@@ -19,7 +19,6 @@ endif
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
-rsource "wifi/Kconfig"
 
 config NRFE
 	bool
