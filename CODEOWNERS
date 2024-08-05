@@ -153,7 +153,6 @@ Kconfig*                                  @tejlmand
 /lib/sample_rate_converter/               @nrfconnect/ncs-audio
 /lib/tone/                                @nrfconnect/ncs-audio
 /modules/                                 @tejlmand
-/modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @nrfconnect/ncs-cia @plskeggs @sigvartmh
 /modules/trusted-firmware-m/              @frkv @Vge0rge @tomi-font
