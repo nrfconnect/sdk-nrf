@@ -74,7 +74,13 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Serial LTE Modem (SLM)
+----------------------
+
+.. toggle::
+
+   The :file:`overlay-native_tls.conf` overlay file is no longer supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
+   If you need to use native TLS with Thingy:91, you must disable features from the :file:`prj.conf` and :file:`overlay-native_tls.conf` configuration files to free up flash memory.
 
 Libraries
 =========

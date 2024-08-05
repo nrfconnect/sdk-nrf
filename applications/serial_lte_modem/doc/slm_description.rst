@@ -302,8 +302,8 @@ The following configuration files are provided:
 * :file:`prj.conf` - This configuration file contains the standard configuration for the serial LTE modem application and is included by default by the build system.
 
 * :file:`overlay-native_tls.conf` - This configuration file contains additional configuration options that are required to use :ref:`slm_native_tls`.
-  You can include it by adding ``-DEXTRA_CONF_FILE=overlay-native_tls.conf`` to your build command.
-  See :ref:`cmake_options`.
+  Not supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
+  If you need to use native TLS with Thingy:91, you must disable features to free up flash memory.
 
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
   See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
