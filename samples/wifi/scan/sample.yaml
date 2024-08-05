@@ -48,7 +48,7 @@ tests:
   sample.nrf7000_eks.scan:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WIFI_NM_WPA_SUPPLICANT=n
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     platform_allow: nrf9160dk/nrf9160/ns
