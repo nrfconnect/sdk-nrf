@@ -9,7 +9,7 @@ menuconfig SOFTAP_WIFI_PROVISION
 	select EXPERIMENTAL
 	depends on NANOPB
 	depends on NRF70_AP_MODE
-	depends on WPA_SUPP_AP
+	depends on WIFI_NM_WPA_SUPPLICANT_AP
 	depends on SMF
 	depends on NET_DHCPV4_SERVER
 	depends on TLS_CREDENTIALS
