@@ -192,16 +192,15 @@ To build the sample with a :ref:`ble_rpc` interface, use the following command:
 Activating sample extensions
 ============================
 
-To activate the optional extensions supported by this sample, modify :makevar:`EXTRA_CONF_FILE` in the following manner:
+To activate the optional extensions supported by this sample, set :makevar:`EXTRA_CONF_FILE` using the respective :ref:`CMake option <cmake_options>` in the following manner:
 
-* For the minimal build variant, set :file:`prj_minimal.conf`.
-* For the USB CDC ACM extension, set :file:`prj_cdc.conf`.
+* For the minimal build variant, set it to :file:`prj_minimal.conf`.
+* For the USB CDC ACM extension, set it to :file:`prj_cdc.conf`.
   Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to the :file:`usb.overlay` file.
-* For the MCUboot with serial recovery of the networking core image feature, set the :file:`nrf5340dk_app_sr_net.conf` file.
+* For the MCUboot with serial recovery of the networking core image feature, set it to :file:`nrf5340dk_app_sr_net.conf`.
   You also need to set the :makevar:`mcuboot_EXTRA_CONF_FILE` variant to the :file:`nrf5340dk_mcuboot_sr_net.conf` file.
 
-See :ref:`cmake_options` for instructions on how to add this option.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 .. _peripheral_uart_testing:
 

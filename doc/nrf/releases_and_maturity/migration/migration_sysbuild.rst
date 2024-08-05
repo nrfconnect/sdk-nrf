@@ -560,7 +560,7 @@ Without doing this, projects with multiple images (for example, those with MCUbo
 | ``-D<image>_SHIELD=...``      | Applies only to <image>          |Applies only to <image>|
 +-------------------------------+----------------------------------+-----------------------+
 
-Configuration values that specify Kconfig fragment or overlay files (for example, ``EXTRA_CONF_FILE`` and ``EXTRA_DTC_OVERLAY_FILE``) cannot be applied globally using either child/parent image or sysbuild.
+Configuration values that specify Kconfig fragment or overlay files (for example, :makevar:`EXTRA_CONF_FILE` and :makevar:`EXTRA_DTC_OVERLAY_FILE`) cannot be applied globally using either child/parent image or sysbuild.
 They function the same in both systems:
 
 * Without a prefix, they will be applied to the main application only.

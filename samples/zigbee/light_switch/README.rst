@@ -128,7 +128,7 @@ For example, when building from the command line, use the following command:
 For the board name to use instead of the ``nrf52840dk/nrf52840``, see :ref:`programming_board_names`.
 
 See :ref:`cmake_options` for instructions on how to add flags to your build.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 FEM support
 ===========
