@@ -225,11 +225,6 @@ nRF Machine Learning (Edge Impulse)
 
 |no_changes_yet_note|
 
-Protocols serialization
------------------------
-
-* Added the Protocols serialization server application.
-
 Serial LTE modem
 ----------------
 
@@ -377,7 +372,7 @@ NFC samples
 nRF RPC
 -------
 
-* Added the Protocols serialization client sample.
+* Added the Protocols serialization client and server samples.
 
 nRF5340 samples
 ---------------

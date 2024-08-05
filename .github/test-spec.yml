@@ -557,7 +557,6 @@
   - "tests/drivers/pwm/**/*"
 
 "CI-ps-test":
-  - "applications/protocols_serialization/**/*"
-  - "samples/nrf_rpc/ps_client/**/*"
+  - "samples/nrf_rpc/protocols_serialization/**/*"
   - "subsys/net/openthread/rpc/**/*"
   - "subsys/nrf_rpc/**/*"
