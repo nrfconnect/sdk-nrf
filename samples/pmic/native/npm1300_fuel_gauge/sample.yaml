@@ -8,8 +8,14 @@ common:
     - nrf52dk/nrf52832
     - nrf52840dk/nrf52840
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54l15pdk/nrf54l15/cpuapp
     - nrf9160dk/nrf9160
-  platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf9160dk/nrf9160
+  platform_allow:
+    - nrf52dk/nrf52832
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf54l15pdk/nrf54l15/cpuapp
+    - nrf9160dk/nrf9160
   tags: pmic ci_samples_pmic
 
 tests:
@@ -28,7 +34,7 @@ tests:
         - "SoC: [0-9.]+, TTE: ([0-9.]+|nan), TTF: ([0-9.]+|nan)"
   samples.compile:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160
+    platform_allow: nrf9160dk/nrf9160 nrf54l15pdk/nrf54l15/cpuapp
     harness: shield
     tags: shield sysbuild ci_samples_pmic
     extra_args: SHIELD=npm1300_ek
