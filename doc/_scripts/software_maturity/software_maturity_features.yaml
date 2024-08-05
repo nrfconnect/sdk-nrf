@@ -109,7 +109,7 @@ features:
       boards_and_shields:
         - BOARD_NRF7002DK_NRF5340_CPUAPP
     SoftAP Mode (for Wi-Fi provisioning):
-      rule: WIFI_NRF70 && NRF700X_AP_MODE && WPA_SUPP_AP
+      rule: WIFI_NRF70 && NRF700X_AP_MODE && WIFI_NM_WPA_SUPPLICANT_AP
       boards_and_shields:
         - SHIELD_NRF7002EK
         - SHIELD_NRF7002EK_NRF7000
