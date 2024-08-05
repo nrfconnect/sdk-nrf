@@ -202,7 +202,7 @@ To use nrf54H20 DK with the ``nrf7002ek`` shield attached (2.4 GHz or 5 GHz), fo
 
 .. code-block:: console
 
-    west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF700X=y -DCONFIG_CHIP_WIFI=y -Dtemplate_SHIELD=nrf700x_nrf54h20dk
+    west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dtemplate_SHIELD=nrf700x_nrf54h20dk
 
 Selecting a configuration
 =========================

@@ -10,13 +10,13 @@ function(setup_nrf700x_xip_data)
 
   set(OS_AGNOSTIC_BASE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi)
 
-  if(SB_CONFIG_WIFI_NRF700X_SYSTEM_MODE)
+  if(SB_CONFIG_WIFI_NRF70_SYSTEM_MODE)
     set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/default/nrf70.bin)
-  elseif(SB_CONFIG_WIFI_NRF700X_RADIO_TEST)
+  elseif(SB_CONFIG_WIFI_NRF70_RADIO_TEST)
     set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/radio_test/nrf70.bin)
-  elseif(SB_CONFIG_WIFI_NRF700X_SCAN_ONLY)
+  elseif(SB_CONFIG_WIFI_NRF70_SCAN_ONLY)
     set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/scan_only/nrf70.bin)
-  elseif(SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES)
+  elseif(SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES)
     set(NRF70_PATCH ${OS_AGNOSTIC_BASE}/fw_bins/system_with_raw/nrf70.bin)
   else()
     # Error

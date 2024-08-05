@@ -18,7 +18,7 @@ The MAC layer on the nRF70 Series device will transmit the raw 802.11 packets ov
 Enabling raw packet transmit feature
 ************************************
 
-To use the raw packet transmit feature in your applications, you must enable the :kconfig:option:`CONFIG_NRF700X_RAW_DATA_TX` Kconfig option in the project configuration.
+To use the raw packet transmit feature in your applications, you must enable the :kconfig:option:`CONFIG_NRF70_RAW_DATA_TX` Kconfig option in the project configuration.
 
 .. _ug_nrf70_developing_tx_injection_mode:
 
