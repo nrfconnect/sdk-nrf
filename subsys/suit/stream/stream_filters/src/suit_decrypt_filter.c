@@ -141,7 +141,7 @@ cleanup:
 	return err;
 }
 
-static suit_plat_err_t release(void *ctx)
+static suit_plat_err_t flush(void *ctx)
 {
 	suit_plat_err_t res = SUIT_PLAT_SUCCESS;
 	psa_status_t status = PSA_SUCCESS;
@@ -153,6 +153,11 @@ static suit_plat_err_t release(void *ctx)
 	if (ctx == NULL) {
 		LOG_ERR("Invalid arguments - decrypt ctx is NULL");
 		return SUIT_PLAT_ERR_INVAL;
+	}
+
+	if (decrypt_ctx->cek_key_id == 0) {
+		LOG_DBG("Filter already flushed");
+		return SUIT_PLAT_SUCCESS;
 	}
 
 	if (decrypt_ctx->stored_tag_bytes < decrypt_ctx->tag_size) {
@@ -187,6 +192,30 @@ static suit_plat_err_t release(void *ctx)
 		}
 	}
 
+	psa_destroy_key(decrypt_ctx->cek_key_id);
+
+	zeroize(decrypted_buf, sizeof(decrypted_buf));
+
+	decrypt_ctx->cek_key_id = 0;
+	zeroize(&decrypt_ctx->operation, sizeof(decrypt_ctx->operation));
+	decrypt_ctx->tag_size = 0;
+	decrypt_ctx->stored_tag_bytes = 0;
+	zeroize(decrypt_ctx->tag, sizeof(decrypt_ctx->tag));
+
+	return res;
+}
+
+static suit_plat_err_t release(void *ctx)
+{
+	struct decrypt_ctx *decrypt_ctx = (struct decrypt_ctx *)ctx;
+
+	if (ctx == NULL) {
+		LOG_ERR("Invalid arguments - decrypt ctx is NULL");
+		return SUIT_PLAT_ERR_INVAL;
+	}
+
+	suit_plat_err_t res = flush(ctx);
+
 	if (decrypt_ctx->enc_sink.release != NULL) {
 		suit_plat_err_t release_ret =
 			decrypt_ctx->enc_sink.release(decrypt_ctx->enc_sink.ctx);
@@ -196,16 +225,7 @@ static suit_plat_err_t release(void *ctx)
 		}
 	}
 
-	psa_destroy_key(decrypt_ctx->cek_key_id);
-
-	zeroize(decrypted_buf, sizeof(decrypted_buf));
-
-	decrypt_ctx->cek_key_id = 0;
-	zeroize(&decrypt_ctx->operation, sizeof(decrypt_ctx->operation));
 	zeroize(&decrypt_ctx->enc_sink, sizeof(struct stream_sink));
-	decrypt_ctx->tag_size = 0;
-	decrypt_ctx->stored_tag_bytes = 0;
-	zeroize(decrypt_ctx->tag, sizeof(decrypt_ctx->tag));
 
 	decrypt_ctx->in_use = false;
 
@@ -334,6 +354,7 @@ suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *dec_sink,
 	dec_sink->write = write;
 	dec_sink->erase = erase;
 	dec_sink->release = release;
+	dec_sink->flush = flush;
 	if (enc_sink->used_storage != NULL) {
 		dec_sink->used_storage = used_storage;
 	} else {
@@ -342,8 +363,6 @@ suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *dec_sink,
 
 	/* Seeking is not possible on encrypted payload. */
 	dec_sink->seek = NULL;
-	/* Flushing is not possible on encrypted payload. */
-	dec_sink->flush = NULL;
 
 	return SUIT_PLAT_SUCCESS;
 }
