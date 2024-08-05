@@ -69,7 +69,7 @@ tests:
   sample.matter.lock.thread_wifi_switched.lto.smp_dfu:
     sysbuild: true
     build_only: true
-    extra_args: lock_SHIELD=nrf7002ek multiprotocol_rpmsg_SHIELD=nrf7002ek_coex
+    extra_args: lock_SHIELD=nrf7002ek
       FILE_SUFFIX=thread_wifi_switched SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
       SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3 CONFIG_CHIP_DFU_OVER_BT_SMP=y
       SB_CONFIG_WIFI_NRF70=y SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y

@@ -28,7 +28,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args: SHIELD=nrf7002ek ipc_radio_SHIELD=nrf7002ek_coex
+    extra_args: SHIELD=nrf7002ek
                 CONFIG_MPSL_CX=y ipc_radio_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
                 EXTRA_CONF_FILE="overlay-wifi-udp-client-thread-udp-client.conf"
@@ -39,7 +39,7 @@ tests:
     build_only: true
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args: SHIELD=nrf7002ek_nrf7001 ipc_radio_SHIELD=nrf7002ek_nrf7001_coex
+    extra_args: SHIELD=nrf7002ek_nrf7001
                 CONFIG_MPSL_CX=y ipc_radio_CONFIG_MPSL_CX=y
                 CONFIG_COEX_SEP_ANTENNAS=y
                 EXTRA_CONF_FILE="overlay-wifi-udp-client-thread-udp-client.conf"
