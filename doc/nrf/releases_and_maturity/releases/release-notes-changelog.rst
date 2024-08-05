@@ -237,6 +237,10 @@ Serial LTE modem
 
   * DTLS support for the ``#XUDPSVR`` and ``#XSSOCKET`` (UDP server sockets) AT commands when the :file:`overlay-native_tls.conf` configuration file is used.
 
+* Removed:
+
+  * Support for the :file:`overlay-native_tls.conf` configuration file with the ``thingy91/nrf9160/ns`` board target.
+
 * Updated:
 
   * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
