@@ -97,6 +97,7 @@ manifest:
           - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_wurthelektronik
+          - hostap
           - liblc3
           - libmetal
           - littlefs
@@ -120,15 +121,6 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
-    - name: hostap
-      repo-path: sdk-hostap
-      path: modules/lib/hostap
-      revision: 3b64b3bf9957f3b1515d58429b89589d234dcaaf
-      userdata:
-        ncs:
-          upstream-url: https://w1.fi/cgit/hostap/
-          upstream-sha: e792f38db8471f35ee94f109a4093dece8f78c6a
-          compare-by-default: true
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
