@@ -63,7 +63,7 @@ The nRF Wi-Fi driver provides the following software configurations to fine-tune
      - Description
      - Impact
      - Purpose
-   * - :kconfig:option:`CONFIG_WPA_SUPP`
+   * - :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT`
      - ``y`` or ``n``
      - Enable or disable Wi-Fi Protected Access (WPA™) supplicant
      - Memory savings
@@ -176,7 +176,7 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
      - Throughputs
    * - STA scan only
      - Scan only
-     - ``CONFIG_WPA_SUPP=n``
+     - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=n``
        ``CONFIG_NRF70_AP_MODE=n``
        ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=1``
@@ -187,7 +187,7 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
      - ``N/A``
    * - :abbr:`STA (Station)` mode
      - IoT devices
-     - ``CONFIG_WPA_SUPP=y``
+     - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``
        ``CONFIG_NRF70_AP_MODE=n``
        ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=6``
@@ -208,7 +208,7 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``UDP-RX: 4.1 Mbps``
    * - :abbr:`STA (Station)` mode
      - Memory optimized :abbr:`STA (Station)` mode
-     - ``CONFIG_WPA_SUPP=y``
+     - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``
        ``CONFIG_NRF70_AP_MODE=n``
        ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=6``
@@ -229,7 +229,7 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``UDP-RX: 0.5 Mbps``
    * - :abbr:`STA (Station)` mode
      - High performance :abbr:`STA (Station)` mode
-     - ``CONFIG_WPA_SUPP=y``
+     - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``
        ``CONFIG_NRF70_AP_MODE=n``
        ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=30``
@@ -249,7 +249,7 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``UDP-RX: 12.4 Mbps``
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
-     - ``CONFIG_WPA_SUPP=y``
+     - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``
        ``CONFIG_NRF70_AP_MODE=n``
        ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=32``
@@ -270,7 +270,7 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``UDP-RX: 12.8 Mbps``
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
-     - ``CONFIG_WPA_SUPP=y``
+     - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``
        ``CONFIG_NRF70_AP_MODE=n``
        ``CONFIG_NRF70_P2P_MODE=n``
        ``CONFIG_NET_PKT_TX_COUNT=5``

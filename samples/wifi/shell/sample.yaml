@@ -14,7 +14,7 @@ tests:
   sample.nrf7002.shell.disable_adv_features:
     sysbuild: true
     build_only: true
-    extra_args: -DCONFIG_WPA_SUPP_ADVANCED_FEATURES=n
+    extra_args: -DCONFIG_WIFI_NM_WPA_SUPPLICANT_ADVANCED_FEATURES=n
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -38,7 +38,7 @@ tests:
   sample.nrf7000_eks.shell:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WIFI_NM_WPA_SUPPLICANT=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
@@ -64,7 +64,10 @@ tests:
   sample.nrf7000_eks_cpunet.shell:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_BOARD_ENABLE_CPUNET=y CONFIG_WPA_SUPP=n
+    extra_args:
+      - SHIELD=nrf7002ek_nrf7000
+      - CONFIG_BOARD_ENABLE_CPUNET=y
+      - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
@@ -120,7 +123,10 @@ tests:
   sample.nrf7000.shell.scan_only_91:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-scan-only.conf
+      - SHIELD=nrf7002ek_nrf7000
+      - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
@@ -132,7 +138,7 @@ tests:
   sample.nrf7002.shell.scan_only_thingy91x:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf CONFIG_WPA_SUPP=n
+    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf CONFIG_WIFI_NM_WPA_SUPPLICANT=n
     platform_allow:
       - thingy91x/nrf9151/ns
     tags: ci_build sysbuild ci_samples_wifi
@@ -345,7 +351,7 @@ tests:
     tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.psa:
     build_only: true
-    extra_args: CONFIG_WPA_SUPP_CRYPTO_PSA=y
+    extra_args: CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_LEGACY_NCS_PSA=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp

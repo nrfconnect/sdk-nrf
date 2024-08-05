@@ -393,11 +393,11 @@ The following table presents the possible threads used in a Matter application a
 | net_mgmt            | :kconfig:option:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`               | Zephyr network management event processing thread stack.       |
 |                     |                                                                  | For Matter over Wi-Fi only.                                    |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
-| wpa_supplicant_main | :kconfig:option:`CONFIG_WPA_SUPP_THREAD_STACK_SIZE`              | WPA supplicant main thread.                                    |
+| wpa_supplicant_main | :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_THREAD_STACK_SIZE`| WPA supplicant main thread.                                    |
 |                     |                                                                  | Processing Wi-Fi requests and connections.                     |
 |                     |                                                                  | For Matter over Wi-Fi only.                                    |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
-| wpa_supplicant_wq   | :kconfig:option:`CONFIG_WPA_SUPP_WQ_STACK_SIZE`                  | WPA supplicant work queue thread.                              |
+| wpa_supplicant_wq   | :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_WQ_STACK_SIZE`    | WPA supplicant work queue thread.                              |
 |                     |                                                                  | Processing Wi-Fi task queue                                    |
 |                     |                                                                  | For Matter over Wi-Fi only.                                    |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+

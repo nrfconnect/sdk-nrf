@@ -845,7 +845,7 @@ Matter samples
 * Disabled the following features:
 
   * :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
-  * WPA supplicant advanced features in all Matter samples using the :kconfig:option:`CONFIG_WPA_SUPP_ADVANCED_FEATURES` Kconfig option.
+  * WPA supplicant advanced features in all Matter samples using the ``CONFIG_WPA_SUPP_ADVANCED_FEATURES`` Kconfig option.
     This saves roughly 25 KB of flash memory for firmware images with Wi-Fi support.
 
 * Added ``matter_shell`` shell commands set to gather the current information about the NVS settings backend, such as current usage, free space, and peak usage value.

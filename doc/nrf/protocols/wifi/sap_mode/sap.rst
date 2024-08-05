@@ -30,7 +30,7 @@ The SAP mode in the nRF70 Series devices provides SoftAP support with the follow
 Enabling the SAP mode
 *********************
 
-You can enable the SAP mode by setting the :kconfig:option:`CONFIG_NRF70_AP_MODE` and :kconfig:option:`CONFIG_WPA_SUPP_AP` Kconfig options in the application project configuration file.
+You can enable the SAP mode by setting the :kconfig:option:`CONFIG_NRF70_AP_MODE` and :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_AP` Kconfig options in the application project configuration file.
 
 
 SAP mode configuration
