@@ -156,7 +156,6 @@
 
 # Modules
 /modules/                                 @nrfconnect/ncs-co-build-system
-/modules/hostap/                          @nrfconnect/ncs-co-networking @krish2718 @rado17 @sachinthegreen
 /modules/mcuboot/                         @nrfconnect/ncs-pluto
 /modules/cjson/                           @nrfconnect/ncs-cia @plskeggs
 /modules/trusted-firmware-m/              @nrfconnect/ncs-aegir
