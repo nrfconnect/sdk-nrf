@@ -250,6 +250,14 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 	}
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
 
+	/* Flush any remaining data before reading used storage size */
+	if ((ret == SUIT_SUCCESS) && (dst_sink.flush != NULL)) {
+		plat_ret = dst_sink.flush(dst_sink.ctx);
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
+			ret = suit_plat_err_to_processor_err_convert(ret);
+		}
+	}
+
 	/* Update size in memptr for MEM component */
 	if ((ret == SUIT_SUCCESS) && (dst_component_type == SUIT_COMPONENT_TYPE_MEM)) {
 		size_t new_size = 0;
