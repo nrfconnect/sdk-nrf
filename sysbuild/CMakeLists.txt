@@ -64,6 +64,10 @@ function(include_packaging)
   include(${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/cmake/packaging.cmake)
 endfunction()
 
+function(include_sw_io_devices)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/sw_io_devices.cmake)
+endfunction()
+
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   cmake_parse_arguments(PRE_CMAKE "" "" "IMAGES" ${ARGN})
   restore_ncs_vars()
@@ -518,6 +522,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
   endif()
+
+  if(SB_CONFIG_SW_IO_DEVICES)
+    include_sw_io_devices()
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
 # Enable use of partition manager with sysbuild.
@@ -532,5 +540,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/netcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/suit.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/sw_io_devices.cmake)
 
 store_ncs_vars()
