@@ -32,7 +32,7 @@ typedef struct __packed {
 			 */
 } nrfe_gpio_data_packet_t;
 
-#ifdef USE_STRUCT_COMMUNICATION
+#if defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
 #include <stdatomic.h>
 
 typedef struct __packed {

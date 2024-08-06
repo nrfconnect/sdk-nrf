@@ -12,7 +12,9 @@
 
 #include <zephyr/device.h>
 
-#if defined(USE_ICMSG_BACKEND)
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND) && defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
+#error "Only one communication backend can be configured"
+#elif defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 #include <zephyr/ipc/ipc_service.h>
 
 K_SEM_DEFINE(bound_sem, 0, 1);
@@ -30,14 +32,14 @@ static struct ipc_ept_cfg ep_cfg = {
 };
 
 static struct ipc_ept ep;
-#elif defined(USE_STRUCT_COMMUNICATION)
+#elif defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/mbox.h>
 static const struct mbox_dt_spec tx_channel = MBOX_DT_SPEC_GET(DT_PATH(mbox_consumer), tx);
 static shared_t *tx_data = (shared_t *)((uint8_t *)(DT_REG_ADDR(DT_NODELABEL(sram_tx))));
 #define MAX_MSG_SIZE (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
 #else
-#error "Define communication channel type"
+#error "Configure communication backend type"
 #endif
 
 struct gpio_nrfe_data {
@@ -58,14 +60,14 @@ static inline const struct gpio_nrfe_cfg *get_port_cfg(const struct device *port
 
 static int gpio_send(nrfe_gpio_data_packet_t *msg)
 {
-#if defined(USE_ICMSG_BACKEND)
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 	if (ipc_service_send(&ep, (void *)msg, sizeof(nrfe_gpio_data_packet_t)) ==
 	    sizeof(nrfe_gpio_data_packet_t)) {
 		return 0;
 	} else {
 		return -EIO;
 	}
-#elif defined(USE_STRUCT_COMMUNICATION)
+#elif defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
 	printk("Sending opcode: %d, pin %d, port %d, flag: %d\n", msg->opcode, msg->pin, msg->port,
 	       msg->flags);
 	/* Try and get lock */
@@ -142,7 +144,7 @@ static int gpio_nrfe_port_toggle_bits(const struct device *port, gpio_port_pins_
 
 static int gpio_nrfe_init(const struct device *port)
 {
-#if defined(USE_ICMSG_BACKEND)
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 	const struct device *ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 	int ret = ipc_service_open_instance(ipc0_instance);
 

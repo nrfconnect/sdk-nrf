@@ -8,7 +8,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
 
-#if defined(USE_ICMSG_BACKEND)
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 #include <zephyr/ipc/ipc_service.h>
 #endif
 #include <drivers/gpio/nrfe_gpio.h>
@@ -17,7 +17,9 @@
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
 
-#if defined(USE_ICMSG_BACKEND)
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND) && defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
+#error "Only one communication backend can be configured"
+#elif defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 static struct ipc_ept ep;
 
 volatile uint32_t bound_sem = 1;
@@ -26,11 +28,11 @@ static void ep_bound(void *priv)
 {
 	bound_sem = 0;
 }
-#elif defined(USE_STRUCT_COMMUNICATION)
+#elif defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
 #include <zephyr/drivers/mbox.h>
 static const struct mbox_dt_spec rx_channel = MBOX_DT_SPEC_GET(DT_PATH(mbox_consumer), rx);
 #else
-#error "Define communication channel type"
+#error "Define communication backend type"
 #endif
 
 static nrf_gpio_pin_pull_t get_pull(gpio_flags_t flags)
@@ -161,7 +163,7 @@ static void process_packet(nrfe_gpio_data_packet_t *packet)
 	}
 }
 
-#if defined(USE_ICMSG_BACKEND)
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 static void ep_recv(const void *data, size_t len, void *priv)
 {
 	(void)len;
@@ -177,7 +179,7 @@ static struct ipc_ept_cfg ep_cfg = {
 	},
 };
 
-#elif defined(USE_STRUCT_COMMUNICATION)
+#elif defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
 
 /**
  * @brief Callback function for when a message is received from the mailbox
@@ -247,7 +249,7 @@ static int mbox_init(void *shared_data)
 int main(void)
 {
 	int ret = 0;
-#if defined(USE_STRUCT_COMMUNICATION)
+#if defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
 
 	static shared_t *rx_data = (shared_t *)((uint8_t *)(DT_REG_ADDR(DT_NODELABEL(sram_rx))));
 
@@ -260,7 +262,7 @@ int main(void)
 	atomic_flag_clear(&rx_data->lock);
 	rx_data->size = 0;
 
-#elif defined(USE_ICMSG_BACKEND)
+#elif defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 	const struct device *ipc0_instance;
 	volatile uint32_t delay = 0;
 
