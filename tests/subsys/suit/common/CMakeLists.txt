@@ -18,6 +18,10 @@ if (CONFIG_SUIT_STREAM_SINK_DIGEST)
 target_link_libraries(suit_stream_sinks_interface INTERFACE mbedTLS)
 endif()
 
+if (CONFIG_SUIT_STREAM_FILTER_DECRYPT)
+target_link_libraries(suit_stream_filters_interface INTERFACE mbedTLS)
+endif()
+
 if (CONFIG_SUIT_STORAGE_LAYOUT_NRF54H20)
 target_link_libraries(suit_storage_interface INTERFACE mbedTLS)
 endif()
