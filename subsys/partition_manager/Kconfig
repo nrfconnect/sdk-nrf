@@ -42,11 +42,13 @@ config SRAM_BASE_ADDRESS
 if "$(HWM_SCHEME)" = "v1"
 config NRF_TRUSTZONE_FLASH_REGION_SIZE
 	hex
-	default NRF_SPU_FLASH_REGION_SIZE
+	default 0x0 if !BUILD_WITH_TFM
+	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
 
 config NRF_TRUSTZONE_RAM_REGION_SIZE
 	hex
-	default NRF_SPU_RAM_REGION_SIZE
+	default 0x0 if !BUILD_WITH_TFM
+	default NRF_SPU_RAM_REGION_SIZE if BUILD_WITH_TFM
 endif
 
 menu "Zephyr subsystem configurations"
