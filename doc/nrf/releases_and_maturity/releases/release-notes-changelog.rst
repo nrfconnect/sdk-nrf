@@ -801,6 +801,11 @@ Modem libraries
 
     * The RTT trace backend to allocate the RTT channel at boot, instead of when the modem is activated.
     * Renamed the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
+    * The :ref:`modem_trace_module` to let the trace thread sleep when the modem trace level is set to :c:enum:`NRF_MODEM_LIB_TRACE_LEVEL_OFF` using the :c:func:`nrf_modem_lib_trace_level_set` function, and the trace backend returns ``-ENOSPC``.
+      The trace thread wakes up when another trace level is set.
+    * The RTT trace backend to return ``-ENOSPC`` when the RTT buffer is full.
+      This allows the trace thread to sleep to save power.
+
 
   * Removed support for deprecated RAI socket options ``SO_RAI_LAST``, ``SO_RAI_NO_DATA``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE``.
 

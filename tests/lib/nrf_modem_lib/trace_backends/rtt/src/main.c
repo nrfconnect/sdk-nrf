@@ -40,7 +40,7 @@ static int rtt_allocupbuffer_callback(const char *sName, void *pBuffer, unsigned
 	TEST_ASSERT_EQUAL_CHAR_ARRAY(exp_sName, sName, sizeof(exp_sName));
 	TEST_ASSERT_NOT_EQUAL(NULL, pBuffer);
 	TEST_ASSERT_EQUAL(BACKEND_RTT_BUF_SIZE, BufferSize);
-	TEST_ASSERT_EQUAL(SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL, Flags);
+	TEST_ASSERT_EQUAL(SEGGER_RTT_MODE_NO_BLOCK_TRIM, Flags);
 
 	return trace_rtt_channel;
 }
