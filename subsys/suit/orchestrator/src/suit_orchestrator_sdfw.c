@@ -352,15 +352,10 @@ static int boot_path(bool emergency)
 
 		ret = boot_envelope(class_id);
 		if (ret != 0) {
-			LOG_ERR("Booting %d manifest failed (%d):", i, ret);
-			LOG_ERR("\t%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%"
-				"02x%02x",
-				class_id->raw[0], class_id->raw[1], class_id->raw[2],
-				class_id->raw[3], class_id->raw[4], class_id->raw[5],
-				class_id->raw[6], class_id->raw[7], class_id->raw[8],
-				class_id->raw[9], class_id->raw[10], class_id->raw[11],
-				class_id->raw[12], class_id->raw[13], class_id->raw[14],
-				class_id->raw[15]);
+			LOG_ERR("Booting manifest %d/%d failed (%d):", i + 1, class_ids_to_boot_len,
+				ret);
+			LOG_ERR("\t" SUIT_MANIFEST_CLASS_ID_LOG_FORMAT,
+				SUIT_MANIFEST_CLASS_ID_LOG_ARGS(class_id));
 			if (emergency) {
 				/* Conditionally continue booting other envelopes.
 				 * Recovery FW shall discover which parts of the system
@@ -371,12 +366,9 @@ static int boot_path(bool emergency)
 			return ret;
 		}
 
-		LOG_DBG("Manifest %d booted", i);
-		LOG_DBG("\t%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-			class_id->raw[0], class_id->raw[1], class_id->raw[2], class_id->raw[3],
-			class_id->raw[4], class_id->raw[5], class_id->raw[6], class_id->raw[7],
-			class_id->raw[8], class_id->raw[9], class_id->raw[10], class_id->raw[11],
-			class_id->raw[12], class_id->raw[13], class_id->raw[14], class_id->raw[15]);
+		LOG_INF("Manifest %d/%d booted", i + 1, class_ids_to_boot_len);
+		LOG_INF("\t" SUIT_MANIFEST_CLASS_ID_LOG_FORMAT,
+			SUIT_MANIFEST_CLASS_ID_LOG_ARGS(class_id));
 	}
 
 	return ret;
@@ -400,7 +392,7 @@ int suit_orchestrator_init(void)
 	if (plat_err != SUIT_PLAT_SUCCESS) {
 		switch (plat_err) {
 		case SUIT_PLAT_ERR_AUTHENTICATION:
-			LOG_ERR("Failed to load MPI: invalid digest");
+			LOG_ERR("Failed to load MPI: application MPI missing (invalid digest)");
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_NO_MPI);
 			break;
 		case SUIT_PLAT_ERR_NOT_FOUND:

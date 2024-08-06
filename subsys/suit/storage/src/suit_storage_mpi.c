@@ -85,7 +85,8 @@ suit_plat_err_t suit_storage_mpi_configuration_load(suit_manifest_role_t role, c
 			(const suit_manifest_class_id_t *)ex_mpi->class_id;
 
 		if (entries[i].role == role) {
-			LOG_ERR("Manifest with role 0x%x already configured at index %d", role, i);
+			LOG_ERR("Manifest with role 0x%x%s already configured at index %d", role,
+				suit_role_name_get(role), i);
 			return SUIT_PLAT_ERR_EXISTS;
 		}
 
@@ -108,8 +109,8 @@ suit_plat_err_t suit_storage_mpi_configuration_load(suit_manifest_role_t role, c
 	case SUIT_MPI_DOWNGRADE_PREVENTION_ENABLED:
 		break;
 	default:
-		LOG_ERR("Invalid downgrade prevention policy value for role 0x%x: %d", role,
-			mpi->downgrade_prevention_policy);
+		LOG_ERR("Invalid downgrade prevention policy value for role 0x%x%s: %d", role,
+			suit_role_name_get(role), mpi->downgrade_prevention_policy);
 		return SUIT_PLAT_ERR_OUT_OF_BOUNDS;
 	}
 
@@ -117,15 +118,16 @@ suit_plat_err_t suit_storage_mpi_configuration_load(suit_manifest_role_t role, c
 	switch (mpi->independent_updateability_policy) {
 	case SUIT_MPI_INDEPENDENT_UPDATE_DENIED:
 		if ((role == SUIT_MANIFEST_APP_ROOT) || (role == SUIT_MANIFEST_APP_RECOVERY)) {
-			LOG_ERR("It is incorrect to block independent updates for role %d", role);
+			LOG_ERR("It is incorrect to block independent updates for role 0x%x%s",
+				role, suit_role_name_get(role));
 			return SUIT_PLAT_ERR_UNSUPPORTED;
 		}
 		break;
 	case SUIT_MPI_INDEPENDENT_UPDATE_ALLOWED:
 		break;
 	default:
-		LOG_ERR("Invalid independent updateability policy value for role 0x%x: %d", role,
-			mpi->independent_updateability_policy);
+		LOG_ERR("Invalid independent updateability policy value for role 0x%x%s: %d", role,
+			suit_role_name_get(role), mpi->independent_updateability_policy);
 		return SUIT_PLAT_ERR_OUT_OF_BOUNDS;
 	}
 
@@ -136,41 +138,39 @@ suit_plat_err_t suit_storage_mpi_configuration_load(suit_manifest_role_t role, c
 	case SUIT_MPI_SIGNATURE_CHECK_ENABLED_ON_UPDATE_AND_BOOT:
 		break;
 	default:
-		LOG_ERR("Invalid signature verification policy value for role 0x%x: %d", role,
-			mpi->signature_verification_policy);
+		LOG_ERR("Invalid signature verification policy value for role 0x%x%s: %d", role,
+			suit_role_name_get(role), mpi->signature_verification_policy);
 		return SUIT_PLAT_ERR_OUT_OF_BOUNDS;
 	}
 
 	/* Validate reserved field value. */
 	for (size_t i = 0; i < ARRAY_SIZE(mpi->reserved); i++) {
 		if (mpi->reserved[i] != 0xFF) {
-			LOG_ERR("Invalid value inside reserved field at index %d for role 0x%x "
+			LOG_ERR("Invalid value inside reserved field at index %d for role 0x%x%s "
 				"(0x%x)",
-				i, role, mpi->reserved[i]);
+				i, role, suit_role_name_get(role), mpi->reserved[i]);
 			return SUIT_PLAT_ERR_OUT_OF_BOUNDS;
 		}
 	}
 
 	/* Validate vendor ID value. */
 	if (uuid_validate(mpi->vendor_id) != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Invalid vendor UUID configured for role 0x%x", role);
+		LOG_ERR("Invalid vendor UUID configured for role 0x%x%s", role,
+			suit_role_name_get(role));
 		return SUIT_PLAT_ERR_OUT_OF_BOUNDS;
 	}
 
 	/* Validate class ID value. */
 	if (uuid_validate(mpi->class_id) != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Invalid class UUID configured for role 0x%x", role);
+		LOG_ERR("Invalid class UUID configured for role 0x%x%s", role,
+			suit_role_name_get(role));
 		return SUIT_PLAT_ERR_OUT_OF_BOUNDS;
 	}
 
-	LOG_INF("Add manifest with role 0x%x and class ID at index %d:", role, entries_len);
-	LOG_INF("\t%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-		new_class_id->raw[0], new_class_id->raw[1], new_class_id->raw[2],
-		new_class_id->raw[3], new_class_id->raw[4], new_class_id->raw[5],
-		new_class_id->raw[6], new_class_id->raw[7], new_class_id->raw[8],
-		new_class_id->raw[9], new_class_id->raw[10], new_class_id->raw[11],
-		new_class_id->raw[12], new_class_id->raw[13], new_class_id->raw[14],
-		new_class_id->raw[15]);
+	LOG_INF("Add manifest with role 0x%x%s and class ID at index %d:", role,
+		suit_role_name_get(role), entries_len);
+	LOG_INF("\t" SUIT_MANIFEST_CLASS_ID_LOG_FORMAT,
+		SUIT_MANIFEST_CLASS_ID_LOG_ARGS(new_class_id));
 
 	entries[entries_len].role = role;
 	entries[entries_len].addr = addr;
