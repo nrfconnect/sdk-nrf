@@ -491,6 +491,7 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	sys_cache_data_flush_range(in_descs, sizeof(in_descs));
 	sys_cache_data_flush_range(&out_desc, sizeof(out_desc));
 	sys_cache_data_flush_range(input, sizeof(input));
+	sys_cache_data_flush_range(output, output_size);
 #endif
 
 	sx_wrreg_addr(REG_FETCH_ADDR, in_descs);

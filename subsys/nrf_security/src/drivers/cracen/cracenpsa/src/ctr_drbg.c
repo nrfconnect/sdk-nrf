@@ -82,7 +82,8 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 {
 	psa_status_t status = SX_OK;
 
-	char temp[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE];
+	char temp[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE] __aligned(
+		CONFIG_DCACHE_LINE_SIZE);
 	size_t temp_length = 0;
 
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
@@ -211,7 +212,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
-		char temp[SX_BLKCIPHER_AES_BLK_SZ];
+		char temp[SX_BLKCIPHER_AES_BLK_SZ] __aligned(CONFIG_DCACHE_LINE_SIZE);
 
 		si_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
