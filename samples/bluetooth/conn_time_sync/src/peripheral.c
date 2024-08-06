@@ -10,7 +10,6 @@
 #include <zephyr/bluetooth/hci.h>
 #include <bluetooth/services/nus.h>
 #include <bluetooth/services/nus_client.h>
-#include <../subsys/bluetooth/host/conn_internal.h>
 #include <bluetooth/hci_vs_sdc.h>
 
 #include "conn_time_sync.h"
@@ -148,7 +147,7 @@ static bool on_vs_evt(struct net_buf_simple *buf)
 		return false;
 	}
 
-	conn = bt_conn_lookup_handle(evt->conn_handle, BT_CONN_TYPE_LE);
+	conn = bt_hci_conn_lookup_handle(evt->conn_handle);
 	if (!conn) {
 		return true;
 	}
