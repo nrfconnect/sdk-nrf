@@ -106,20 +106,16 @@ static int sx_aead_hw_reserve(struct sxaead *c)
 	int err = SX_OK;
 	uint32_t prng_value;
 
-	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
-		err = cracen_prng_value_from_pool(&prng_value);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = cracen_prng_value_from_pool(&prng_value);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	sx_hw_reserve(&c->dma);
 
-	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
-		err = sx_cm_load_mask(prng_value);
-		if (err != SX_OK) {
-			goto exit;
-		}
+	err = sx_cm_load_mask(prng_value);
+	if (err != SX_OK) {
+		goto exit;
 	}
 
 	if (c->key->prepare_key) {
@@ -186,7 +182,6 @@ int sx_aead_create_aesgcm_enc(struct sxaead *c, const struct sxkeyref *key, cons
 {
 	int r;
 
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	r = sx_aead_create_aesgcm(c, key, iv, tagsz);
 	if (r) {
 		return r;
@@ -202,7 +197,6 @@ int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, cons
 {
 	int r;
 
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	r = sx_aead_create_aesgcm(c, key, iv, tagsz);
 	if (r) {
 		return r;
@@ -280,7 +274,6 @@ static int sx_aead_create_aesccm(struct sxaead *c, const struct sxkeyref *key, c
 int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
 			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_aead_create_aesccm(c, key, nonce, noncesz, tagsz, aadsz, datasz,
 				     ba411ccmcfg.encr);
 }
@@ -288,7 +281,6 @@ int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, cons
 int sx_aead_create_aesccm_dec(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
 			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_aead_create_aesccm(c, key, nonce, noncesz, tagsz, aadsz, datasz,
 				     ba411ccmcfg.decr);
 }
