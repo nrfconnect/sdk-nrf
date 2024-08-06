@@ -1,0 +1,7 @@
+tests:
+  suit.integration.decrypt_filter:
+    platform_allow: nrf52840dk/nrf52840 native_posix native_posix/native/64
+    tags: suit suit_decrypt_filter ci_tests_subsys_suit
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - native_posix
