@@ -14,7 +14,6 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/hci.h>
-#include <../subsys/bluetooth/host/conn_internal.h>
 
 #if defined(CONFIG_BT_LL_SOFTDEVICE_HEADERS_INCLUDE)
 #include <bluetooth/hci_vs_sdc.h>
