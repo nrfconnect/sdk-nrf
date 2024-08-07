@@ -22,6 +22,9 @@ On nRF91 Series devices, you can enable the following functionalities using snip
    * - :ref:`nrf91_modem_trace_uart_snippet`
      - ``nrf91-modem-trace-uart``
      - :ref:`All nRF91 Series board targets <ug_nrf91>`
+   * - :ref:`nrf91_modem_trace_rtt_snippet`
+     - ``nrf91-modem-trace-rtt``
+     - :ref:`All nRF91 Series board targets <ug_nrf91>`
    * - :ref:`tfm_enable_share_uart`
      - ``tfm-enable-share-uart``
      - :ref:`All nRF91 Series board targets <ug_nrf91>`
@@ -82,6 +85,20 @@ This can be done in one of the following ways:
       To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
 
       See :ref:`cmake_options` for more details.
+
+.. _nrf91_modem_trace_rtt_snippet:
+
+nRF91 modem traces with RTT backend using snippets
+**************************************************
+
+The ``nrf91-modem-trace-rtt`` snippet enables the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option and chooses the RTT trace backend with the necessary Kconfig options.
+
+To enable modem traces with the RTT backend, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-rtt"
 
 .. _tfm_enable_share_uart:
 
