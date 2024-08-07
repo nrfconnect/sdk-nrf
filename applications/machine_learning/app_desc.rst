@@ -34,12 +34,14 @@ By default, the following sensors are used by the application:
 * nRF5340 DK - Simulated sensor (:ref:`sensor_sim`).
   The simulated sensor generates predefined waves as acceleration.
   This development kit does not have a built-in accelerometer.
-* nRF54H20 - The DK does not have a built-in accelerometer.
-  The DK has two configurations:
+* nRF54H20 DK - The development kit does not have a built-in accelerometer.
+  However, it supports the following configurations:
 
    * Single-core - Accelerometer (``ADXL362``) connected to the DK with the PCA63566 shield.
-     See details in :file:`nrf/boards/shields/pca63566/doc/index.rst`.
-   * Dual-core - Simulated sensor (:ref:`sensor_sim`).
+     See the shield documentation under the :file:`nrf/boards/shields/pca63566/doc/index.rst` path.
+   * Dual-core - Accelerometer (``ADXL362``) connected to the DK with the PCA63566 shield.
+     Sensor is sampled from :term:`Peripheral Processor (PPR) <Peripheral Processor (PPR, pronounced “Pepper”)>`.
+     See the shield documentation under the :file:`nrf/boards/shields/pca63566/doc/index.rst` path.
 
 Forwarding data
 ===============
@@ -135,7 +137,6 @@ Firmware architecture for nRF54H20 DK
 
 On the nRF54H20 DK, the architecture of the nRF Machine Learning application is split in two, as part of the application is running on a separate :term:`Peripheral Processor (PPR) <Peripheral Processor (PPR, pronounced “Pepper”)>`.
 PPR handles sensor sampling and sending of data to the application processor.
-The currently simulated sensor is supported.
 
 The following figure shows the application architecture for the nRF54H20 DK, visualizing the relations between the Application Event Manager, modules, drivers, and libraries.
 
@@ -421,7 +422,7 @@ nRF54H20 DK
 
   .. code-block:: console
 
-     west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSHIELD=pca63566 -DFILE_SUFFIX="singlecore"
+     west build -b nrf54h20dk/nrf54h20/cpuapp -- -Dmachine_learning_SHIELD=pca63566 -DFILE_SUFFIX="singlecore"
 
   or use twister test case:
 
@@ -429,11 +430,11 @@ nRF54H20 DK
 
       west build -b nrf54h20dk/nrf54h20/cpuapp -T applications.machine_learning.sensor_hub.zdebug.singlecore .
 
-  To build the application for the nRF54H20 DK with the simulated sensor on the PPR core (dual-core application), run the following command:
+  To build the application for the nRF54H20 DK with the sensor sampling on the PPR core (dual-core application), run the following command:
 
   .. code-block:: console
 
-     west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE=y -Dmachine_learning_SNIPPET=nordic-ppr
+     west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE=y -Dmachine_learning_SNIPPET=nordic-ppr -Dmachine_learning_SHIELD=pca63566_fwd -Dremote_SHIELD=pca63566
 
   or use twister test case:
 

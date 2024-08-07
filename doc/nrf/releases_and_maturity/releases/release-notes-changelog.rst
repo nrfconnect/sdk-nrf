@@ -187,6 +187,13 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
+Machine learning
+----------------
+
+* Added:
+
+  * Support for sampling ADXL362 sensor from PPR core on the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+
 Asset Tracker v2
 ----------------
 

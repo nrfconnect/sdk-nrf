@@ -5,11 +5,6 @@
  */
 
  / {
-	sensor_sim: sensor-sim {
-		compatible = "nordic,sensor-sim";
-		acc-signal = "wave";
-	};
-
 	agg0: agg0 {
 		compatible = "caf,aggregator";
 		sensor_descr = "accel_xyz";
@@ -24,7 +19,6 @@
 /* Expand APP slot partition and remove DFU partition. */
 /delete-node/ &cpuapp_rx_partitions;
 /delete-node/ &cpuapp_rw_partitions;
-
 
 /*
  * Place aggregator buffers in PPR memory region.
@@ -87,4 +81,15 @@ ipc1: &cpuapp_cpuppr_ipc {
 
 &uart135 {
 	/delete-property/ hw-flow-control;
+};
+
+/* Disable unused sensors and peripherals. */
+/delete-node/ &bme688;
+
+&bmi270 {
+	status = "disabled";
+};
+
+&i2c130 {
+	status = "disabled";
 };
