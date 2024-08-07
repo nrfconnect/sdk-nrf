@@ -4,7 +4,7 @@
  */
 
 #include "thingy91x_nrf5340_cpuapp_common-pinctrl.dtsi"
-
+#include "thingy91x_common.dtsi"
 / {
 
 	chosen {
@@ -47,6 +47,17 @@
 		short-range-rf-fe-enable-gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
 	};
 
+	gpio_fwd: nrf-gpio-forwarder {
+		compatible = "nordic,nrf-gpio-forwarder";
+		status = "okay";
+		uart {
+			gpios = <&gpio0 22 0>, // nrf700x-coex req-gpios
+				<&gpio0 23 0>, // nrf700x-coex status0-gpios
+				<&gpio0 20 0>, // nrf700x-coex grant-gpios
+				<&gpio0 6 0>;  // nrf700x-coex swctrl1-gpios
+		};
+	};
+
 	/* These aliases are provided for compatibility with samples */
 	aliases {
 		led0 = &led0;
@@ -74,6 +85,30 @@
 
 &gpio1 {
 	status = "okay";
+};
+
+// INT1 not connected
+
+&accelerometer_hp {
+	irq-gpios = <&gpio0 17 GPIO_ACTIVE_LOW>; //INT2
+};
+&magnetometer {
+	drdy-gpios = <&gpio1 13 GPIO_ACTIVE_LOW>; //INT3
+};
+&accelerometer_lp {
+	int1-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>; //INT4
+};
+
+&nrf700x {
+	iovdd-ctrl-gpios = <&gpio0 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+	bucken-gpios = <&gpio0 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+	host-irq-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+};
+
+&spi3 {
+	cs-gpios = <&gpio0 2 GPIO_ACTIVE_LOW>, // FLASH_CS
+		   <&gpio0 11 GPIO_ACTIVE_LOW>, // WIFI_CS
+		   <&gpio1 11 GPIO_ACTIVE_LOW>; // BMI270_CS
 };
 
 &uart0 {
