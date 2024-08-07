@@ -20,7 +20,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/logging/log.h>
-#include <assert.h>
 
 LOG_MODULE_REGISTER(modem_info);
 
@@ -448,7 +447,7 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 	}
 
 	err = at_parser_init(&parser, recv_buf);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	err = at_parser_num_get(&parser, modem_data[info]->param_index, buf);
 	if (err) {
@@ -515,7 +514,7 @@ parse_line:
 	in_buf[++line_len + line_start_idx] = '\0';
 
 	err = at_parser_init(&parser, &in_buf[line_start_idx]);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	len = sizeof(ip_buf);
 	err = at_parser_string_get(&parser,
@@ -634,7 +633,7 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 	}
 
 	err = at_parser_init(&parser, recv_buf);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	if (modem_data[info]->data_type == AT_PARAM_TYPE_NUM_INT) {
 		err = at_parser_num_get(&parser,
@@ -692,7 +691,7 @@ static void modem_info_rsrp_subscribe_handler(const char *notif)
 	};
 
 	err = at_parser_init(&parser, notif);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	err = at_parser_num_get(&parser,
 				rsrp_notify_data.param_index,
