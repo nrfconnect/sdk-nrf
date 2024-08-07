@@ -7,7 +7,7 @@
 menuconfig FW_INFO
 	bool
 	prompt "Firmware Metadata"
-	imply NRFX_NVMC
+	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
 
 if (FW_INFO)
 
