@@ -83,7 +83,7 @@ Finally, configure these recommended additional options:
 * :kconfig:option:`CONFIG_COAP_CLIENT_STACK_SIZE` set to ``6144``.
 * :kconfig:option:`CONFIG_COAP_CLIENT_THREAD_PRIORITY` set to ``0``.
 * :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` set to ``64``.
-* :kconfig:option:`CONFIG_NRF_CLOUD_COAP_KEEPOPEN` set to ``y`` when using any of the NRF91x1 family of SoCs.
+* :kconfig:option:`CONFIG_NRF_CLOUD_COAP_KEEPOPEN` set to ``y`` when using any of the nRF91x1 Series SoCs.
 
 Usage
 *****
