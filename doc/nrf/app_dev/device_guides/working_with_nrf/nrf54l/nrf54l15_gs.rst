@@ -84,6 +84,7 @@ To build and program the sample to the nRF54L15 PDK, complete the following step
 
 1. Connect the nRF54L15 PDK to your computer using the IMCU USB port on the PDK.
 #. Navigate to the :file:`zephyr/samples/hello_world` folder containing the sample.
+#. |open_terminal_window_with_environment|
 #. Build the sample by running the following command:
 
    .. code-block:: console

@@ -147,7 +147,8 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
    .. group-tab:: Over Bluetooth Low Energy
 
-      1. Open a terminal window in |sample path|.
+      1. |open_terminal_window_with_environment|
+      #. Navigate to |sample path|.
       #. Build the sample using the following command, with the following Kconfig options set:
 
          .. code-block:: console
@@ -173,7 +174,8 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
    .. group-tab:: Over UART
 
-      1. Open a terminal window in |sample path|.
+      1. |open_terminal_window_with_environment|
+      #. Navigate to |sample path|.
       #. Build the sample:
 
          .. code-block:: console

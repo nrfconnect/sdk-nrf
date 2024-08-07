@@ -68,36 +68,38 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
 
          .. group-tab:: west
 
-            1. Open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
+            1. |open_terminal_window_with_environment|
+            #. Run the following command to erase the flash memory of the network core and program the network sample::
 
                 west flash --erase
 
-            2. Navigate to the build folder of the application sample and enter the same command to erase the flash memory of the application core and program the application sample::
+            #. Navigate to the build folder of the application sample and run the same command to erase the flash memory of the application core and program the application sample::
 
                 west flash --erase
 
          .. group-tab:: nRF Util
 
-            1. Open a command prompt in the build folder of the network sample and enter the following command to erase the flash memory of the network core and program the network sample::
+            1. |open_terminal_window_with_environment|
+            #. Run the following command to erase the flash memory of the network core and program the network sample::
 
                 nrfutil device program --firmware zephyr.hex --options chip_erase_mode=ERASE_ALL --core Network
 
-            .. note::
-               If you cannot locate the build folder of the network sample, look for a folder with one of these names inside the build folder of the application sample:
+                .. note::
+                    If you cannot locate the build folder of the network sample, look for a folder with one of these names inside the build folder of the application sample:
 
-               * :file:`rpc_host`
-               * :file:`hci_rpsmg`
-               * :file:`802154_rpmsg`
-               * :file:`multiprotocol_rpmsg`
+                    * :file:`rpc_host`
+                    * :file:`hci_rpsmg`
+                    * :file:`802154_rpmsg`
+                    * :file:`multiprotocol_rpmsg`
 
-            2. Navigate to the build folder of the application sample and enter the following command to erase the flash memory of the application core and program the application sample::
+            #. Navigate to the build folder of the application sample and run the following command to erase the flash memory of the application core and program the application sample::
 
                 nrfutil device program --firmware zephyr.hex  --options chip_erase_mode=ERASE_ALL
 
             .. note::
                The application build folder will be in a sub-directory which is the name of the folder of the application
 
-            3. Reset the development kit::
+            #. Reset the development kit::
 
                 nrfutil device reset --reset-kind=RESET_PIN
 
@@ -263,7 +265,7 @@ You must :ref:`build_environment_cli` before you start building an |NCS| project
 
 To build and program the source code from the command line, complete the following steps:
 
-1. Open a command line or terminal window.
+1. |open_terminal_window_with_environment|
 #. Go to the specific directory for the sample or application.
 
    For example, the directory path is :file:`ncs/nrf/applications/machine_learning` when building the source code for the :ref:`nrf_machine_learning_app` application.

@@ -219,7 +219,7 @@ Programming DKs
 
 To program the nRF5340 DK:
 
-1. Open a new terminal in the test PC.
+1. |open_terminal_window_with_environment|
 #. Navigate to :file:`<ncs code>/nrf/samples/bluetooth/throughput/`.
 #. Run the following command:
 
@@ -229,7 +229,7 @@ To program the nRF5340 DK:
 
 To program the nRF7002 DK:
 
-1. Open a new terminal in the test PC.
+1. |open_terminal_window_with_environment|
 #. Navigate to :file:`<ncs code>/nrf/samples/wifi/ble_coex/`.
 #. Run the following command:
 

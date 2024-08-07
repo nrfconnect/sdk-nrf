@@ -122,6 +122,7 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
 
       The companion image can be optionally upgraded and have its integrity checked.
 
+#. |open_terminal_window_with_environment|
 #. Build and flash the application by completing the following commands:
 
    .. code-block:: console

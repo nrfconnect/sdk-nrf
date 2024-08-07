@@ -66,7 +66,8 @@ You also need to use the ``nordic-bt-rpc`` snippet, see :file:`snippets/nordic-b
 
 See :ref:`configure_application` for information about how to configure a sample.
 
-1. Build the sample with the same Bluetooth configuration as the application core sample.
+1. |open_terminal_window_with_environment|
+#. Build the sample with the same Bluetooth configuration as the application core sample.
    For more details, see: :ref:`ble_rpc`.
 
 #. Build the :ref:`peripheral_uart` on the application core.
