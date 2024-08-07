@@ -294,6 +294,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/softap_wifi_provision/    @nrfconnect/ncs-cia
 /subsys/net/openthread/                   @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /subsys/nfc/                              @grochu @anangl
+/subsys/nfc/rpc/                          @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
 /subsys/pcd/                              @hakonfam
@@ -375,6 +376,7 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/wifi_credentials*/  @nrfconnect/ncs-cia
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
 /tests/subsys/net/openthread/rpc/         @nrfconnect/ncs-protocols-serialization
+/tests/subsys/nfc/rpc/                    @nrfconnect/ncs-protocols-serialization
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
 /tests/subsys/partition_manager/static_pm_file/  @nordicjm @tejlmand
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
