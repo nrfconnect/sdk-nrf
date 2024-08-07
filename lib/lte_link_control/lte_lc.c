@@ -1437,6 +1437,7 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 	if (params != NULL) {
 		used_params = *params;
 	}
+	ncellmeas_params = used_params;
 
 	/* Starting from modem firmware v1.3.1, there is an optional parameter to specify
 	 * the type of search.
@@ -1463,8 +1464,6 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 	if (err) {
 		err = -EFAULT;
 		k_sem_give(&ncellmeas_idle_sem);
-	} else {
-		ncellmeas_params = used_params;
 	}
 
 	return err;
