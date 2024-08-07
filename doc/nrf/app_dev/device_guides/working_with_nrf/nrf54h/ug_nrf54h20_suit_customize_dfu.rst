@@ -91,53 +91,92 @@ Variables in the provided templates, like memory ranges and paths to binaries, a
 How to use your own manifest
 ----------------------------
 
-Changing the source of manifest templates allows you to create manifest files on your own, without relying on the templates provided by Nordic Semiconductor.
+When creating an application, it is recommended to create a custom set of manifest templates and use the templates provided by Nordic Semiconductor only as a starting point.
+Using Nordic Semiconductor templates directly in a product is strongly discouraged.
 
-The source of the manifest templates can be configured by setting the following Kconfig options:
+The build system searches for the manifest templates in the following order:
 
-* ``SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE``
+#. It checks if :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` exists in the :file:`<sample-dir>/suit/${SB_CONFIG_SOC}/` file.
 
-* :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE` - For each of the images (application and radio core images)
+#. It checks if :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` exists in the :file:`<sdk-nrf-dir>/config/suit/templates/${SB_CONFIG_SOC}/${SB_CONFIG_SUIT_BASE_MANIFEST_VARIANT}/` file.
 
-One example is demonstrated with the following case:
+The build system selects the set of files from the first successful step.
 
-.. tabs::
+Creating custom manifest templates
+==================================
 
-    .. group-tab:: Windows
+You can create custom manifest templates in the application directory using the following command:
 
-        The provided user-defined manifest templates are stored in ``C:\my_default_templates``.
+.. code-block::
 
-    .. group-tab:: Linux
+   west suit-manifest init --soc nrf54h20
 
-        The provided user-defined manifest templates are stored in ``/home/my_user/my_default_templates``.
+This command will copy the default set of SUIT manifest templates into the :file:`suit/nrf54h20` subdirectory.
+You can edit those manifest templates to your needs and add them into your version control system along with the generated :file:`metadata.yaml` file.
 
-The following files are used to create the SUIT envelope:
+By default, the command uses the manifest templates from the ``default`` variant.
+Manifest template variants serve different use cases, as described in the following table.
 
-* Root envelope - :file:`root.yaml.jinja2`
-* Application domain - :file:`app.yaml.jinja2`
-* Radio domain - :file:`radio.yaml.jinja2`
++--------------+------------------------------------------------------------------------+-----------------------------------+-----------------------------------+
+| Variant name | Description                                                            | Bootable components               | Updateable components             |
++==============+========================================================================+===================================+===================================+
+| ``default``  | This set of manifest templates integrates all payloads into the SUIT   | * One application domain firmware | * One application domain firmware |
+|              | envelope and has a high requirement on the DFU partition size.         |                                   |                                   |
+|              |                                                                        | * One radio domain firmware       | * One radio domain firmware       |
+|              | Use this variant if your application does not use the external flash   |                                   |                                   |
+|              | and is small enough to fit into the executable MRAM partitions and     |                                   | * nordic_top (optional)           |
+|              | into the DFU partition.                                                |                                   |                                   |
++--------------+------------------------------------------------------------------------+-----------------------------------+-----------------------------------+
 
-To build the described example with the provided user-defined manifest templates:
+You can initialize the manifest templates from a different variant using the following command:
 
-.. tabs::
+.. code-block::
 
-    .. group-tab:: Windows
+   west suit-manifest init --soc nrf54h20 --variant default/latest
 
-        Run the following command:
+This command will copy the set of SUIT manifests from the latest version of the selected variant into the :file:`suit/nrf54h20` subdirectory.
+You can replace ``latest`` with a specific version, such as ``v1``.
 
-        .. code-block:: console
+Reviewing changes between nRF Connect SDK releases
+==================================================
 
-            west build -d C:/ncs-lcs/work_dir/build/ -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"c:/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/app.yaml.jinja2\" -Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"c:/my_default_templates/radio.yaml.jinja2\"
+The content of the Nordic Semiconductor SUIT templates may change between the |NCS| releases, for example to fix bugs or security issues.
 
-    .. group-tab:: Linux
+After updating to a newer |NCS| release, you can view what changes occurred in the Nordic Semiconductor templates that your custom templates were derived from and the Nordic Semiconductor templates that are present in the new |NCS| release.
+To do so, use the following command:
 
-        Run the following command:
+.. code-block::
 
-        .. code-block:: console
+   west suit-manifest review --soc nrf54h20
 
-            west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE=\"/home/my_user/my_default_templates/root.yaml.jinja2\" -DCONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/app.yaml.jinja2\" -Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE=\"/home/my_user/my_default_templates/radio.yaml.jinja2\"
+The command displays a diff where you can review the changes.
+If you see a change that is relevant to your application, you can apply them manually to your custom manifest templates.
 
-For more information about the Kconfig options used in this example, see the `SUIT Kconfig options`_.
+After reviewing the changes, you can update the :file:`metadata.yaml` to point to the new Nordic Semiconductor templates.
+
+.. code-block::
+
+   west suit-manifest review --soc nrf54h20 --accept
+
+Make sure to check-in the changes into your version control system.
+
+Metadata file
+=============
+
+The :file:`metadata.yaml` file contains information about the Nordic Semiconductor manifest templates from which the custom manifest templates were derived.
+The file should be added into the version control system alongside the custom manifest templates.
+
+The ``west suit-manifest review`` command uses the metadata to display the changes between the lastly linked Nordic Semiconductor manitest templates and the manifest templates that are present in the |NCS| release that is currently being used.
+
+The ``west suit-manifest review --accept`` command updates the metadata to link with the Nordic Semiconductor manifest templates that are present in the |NCS| release that is currently being used.
+
+
+Things to avoid
+===============
+
+Some samples use the :kconfig:option:`SB_CONFIG_SUIT_BASE_MANIFEST_VARIANT` Kconfig option.
+This option exists only for the convenience of the |NCS| developers and it must not be used in user applications.
+When you create your own custom manifest templates, remove this option.
 
 .. _ug_suit_customize_uuids:
 
