@@ -11,18 +11,9 @@
 #include <modem/lte_lc.h>
 #include <zephyr/logging/log.h>
 
-#define LC_MAX_READ_LENGTH			128
-
-#define AT_CMD_SIZE(x)				(sizeof(x) - 1)
-#define AT_RESPONSE_PREFIX_INDEX		0
 #define AT_CFUN_READ				"AT+CFUN?"
-#define AT_CFUN_RESPONSE_PREFIX			"+CFUN"
-#define AT_CFUN_MODE_INDEX			1
-#define AT_CFUN_PARAMS_COUNT			2
 #define AT_CEREG_5				"AT+CEREG=5"
 #define AT_CEREG_READ				"AT+CEREG?"
-#define AT_CEREG_RESPONSE_PREFIX		"+CEREG"
-#define AT_CEREG_PARAMS_COUNT_MAX		11
 #define AT_CEREG_REG_STATUS_INDEX		1
 #define AT_CEREG_TAC_INDEX			2
 #define AT_CEREG_CELL_ID_INDEX			3
@@ -32,15 +23,12 @@
 #define AT_CEREG_ACTIVE_TIME_INDEX		7
 #define AT_CEREG_TAU_INDEX			8
 #define AT_XSYSTEMMODE_READ			"AT%XSYSTEMMODE?"
-#define AT_XSYSTEMMODE_RESPONSE_PREFIX		"%XSYSTEMMODE"
-#define AT_XSYSTEMMODE_PROTO			"AT%%XSYSTEMMODE=%d,%d,%d,%d"
 
 /* The indices are for the set command. Add 1 for the read command indices. */
 #define AT_XSYSTEMMODE_READ_LTEM_INDEX		1
 #define AT_XSYSTEMMODE_READ_NBIOT_INDEX		2
 #define AT_XSYSTEMMODE_READ_GPS_INDEX		3
 #define AT_XSYSTEMMODE_READ_PREFERENCE_INDEX	4
-#define AT_XSYSTEMMODE_PARAMS_COUNT		5
 
 /* CEDRXS command parameters */
 #define AT_CEDRXS_MODE_INDEX
@@ -48,26 +36,21 @@
 #define AT_CEDRXS_ACTT_NB			5
 
 /* CEDRXP notification parameters */
-#define AT_CEDRXP_PARAMS_COUNT_MAX		6
 #define AT_CEDRXP_ACTT_INDEX			1
 #define AT_CEDRXP_REQ_EDRX_INDEX		2
 #define AT_CEDRXP_NW_EDRX_INDEX			3
 #define AT_CEDRXP_NW_PTW_INDEX			4
 
 /* CSCON command parameters */
-#define AT_CSCON_RESPONSE_PREFIX		"+CSCON"
-#define AT_CSCON_PARAMS_COUNT_MAX		4
 #define AT_CSCON_RRC_MODE_INDEX			1
 #define AT_CSCON_READ_RRC_MODE_INDEX		2
 
 /* XT3412 command parameters */
 #define AT_XT3412_SUB				"AT%%XT3412=1,%d,%d"
-#define AT_XT3412_PARAMS_COUNT_MAX		4
 #define AT_XT3412_TIME_INDEX			1
 #define T3412_MAX				35712000000
 
 /* NCELLMEAS notification parameters */
-#define AT_NCELLMEAS_RESPONSE_PREFIX		"%NCELLMEAS"
 #define AT_NCELLMEAS_START			"AT%%NCELLMEAS"
 #define AT_NCELLMEAS_STOP			"AT%%NCELLMEASSTOP"
 #define AT_NCELLMEAS_STATUS_INDEX		1
@@ -109,8 +92,6 @@
 
 /* CONEVAL command parameters */
 #define AT_CONEVAL_READ				"AT%CONEVAL"
-#define AT_CONEVAL_RESPONSE_PREFIX		"%CONEVAL"
-#define AT_CONEVAL_PREFIX_INDEX			0
 #define AT_CONEVAL_PARAMS_MAX			19
 #define AT_CONEVAL_RESULT_INDEX			1
 #define AT_CONEVAL_RRC_STATE_INDEX		2
@@ -145,18 +126,6 @@
 #define AT_MDMEV_CE_LEVEL_1			"PRACH CE-LEVEL 1\r\n"
 #define AT_MDMEV_CE_LEVEL_2			"PRACH CE-LEVEL 2\r\n"
 #define AT_MDMEV_CE_LEVEL_3			"PRACH CE-LEVEL 3\r\n"
-
-/* @brief Helper function to check if a response is what was expected.
- *
- * @param response Pointer to response prefix
- * @param response_len Length of the response to be checked
- * @param check The buffer with "truth" to verify the response against,
- *		for example "+CEREG"
- *
- * @return True if the provided buffer and check are equal, false otherwise.
- */
-bool response_is_valid(const char *response, size_t response_len,
-		       const char *check);
 
 /* @brief Parses an AT command response, and returns the current RRC mode.
  *

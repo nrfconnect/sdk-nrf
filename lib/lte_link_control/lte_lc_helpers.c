@@ -215,31 +215,6 @@ static uint32_t get_char_frequency(const char *str, char c)
 	return count;
 }
 
-/**@brief Helper function to check if a response is what was expected
- *
- * @param response Pointer to response prefix
- * @param response_len Length of the response to be checked
- * @param check The buffer with "truth" to verify the response against,
- *		for example "+CEREG"
- *
- * @return True if the provided buffer and check are equal, false otherwise.
- */
-bool response_is_valid(const char *response, size_t response_len,
-			      const char *check)
-{
-	if ((response == NULL) || (check == NULL)) {
-		LOG_ERR("Invalid pointer provided");
-		return false;
-	}
-
-	if ((response_len < strlen(check)) ||
-	    (memcmp(response, check, response_len) != 0)) {
-		return false;
-	}
-
-	return true;
-}
-
 int string_to_int(const char *str_buf, int base, int *output)
 {
 	int temp;
@@ -644,8 +619,6 @@ int parse_cereg(const char *at_response,
 	int err, temp;
 	struct at_parser parser;
 	char str_buf[10];
-	char  response_prefix[sizeof(AT_CEREG_RESPONSE_PREFIX)] = {0};
-	size_t response_prefix_len = sizeof(response_prefix);
 	size_t len = sizeof(str_buf);
 	size_t count = 0;
 
@@ -665,24 +638,6 @@ int parse_cereg(const char *at_response,
 
 	err = at_parser_init(&parser, at_response);
 	assert(err == 0);
-
-	/* Check if AT command response starts with +CEREG */
-	err = at_parser_string_get(&parser,
-				   AT_RESPONSE_PREFIX_INDEX,
-				   response_prefix,
-				   &response_prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(response_prefix, response_prefix_len,
-			       AT_CEREG_RESPONSE_PREFIX)) {
-		/* The unsolicited response is not a CEREG response, ignore it.
-		 */
-		LOG_DBG("Not a valid CEREG response");
-		goto clean_exit;
-	}
 
 	/* Get network registration status */
 	err = at_parser_num_get(&parser, AT_CEREG_REG_STATUS_INDEX, &temp);
@@ -876,8 +831,6 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 {
 	int err, status, tmp, len;
 	struct at_parser parser;
-	char  response_prefix[sizeof(AT_NCELLMEAS_RESPONSE_PREFIX)] = {0};
-	size_t response_prefix_len = sizeof(response_prefix);
 	char tmp_str[7];
 	size_t count = 0;
 
@@ -886,22 +839,6 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	err = at_parser_init(&parser, at_response);
 	assert(err == 0);
-
-	err = at_parser_string_get(&parser,
-				   AT_RESPONSE_PREFIX_INDEX,
-				   response_prefix,
-				   &response_prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(response_prefix, response_prefix_len,
-			       AT_NCELLMEAS_RESPONSE_PREFIX)) {
-		/* The unsolicited response is not a NCELLMEAS response, ignore it. */
-		LOG_DBG("Not a valid NCELLMEAS response");
-		goto clean_exit;
-	}
 
 	/* Status code. */
 	err = at_parser_num_get(&parser, AT_NCELLMEAS_STATUS_INDEX, &status);
@@ -1093,8 +1030,6 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 	struct lte_lc_ncell *ncells = NULL;
 	int err, status, tmp_int, len;
 	int16_t tmp_short;
-	char response_prefix[sizeof(AT_NCELLMEAS_RESPONSE_PREFIX)] = {0};
-	size_t response_prefix_len = sizeof(response_prefix);
 	char tmp_str[7];
 	bool incomplete = false;
 	int curr_index;
@@ -1139,22 +1074,6 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 	err = at_parser_init(&parser, at_response);
 	assert(err == 0);
-
-	err = at_parser_string_get(&parser,
-				   AT_RESPONSE_PREFIX_INDEX,
-				   response_prefix,
-				   &response_prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(response_prefix, response_prefix_len,
-			       AT_NCELLMEAS_RESPONSE_PREFIX)) {
-		/* The unsolicited response is not a NCELLMEAS response, ignore it. */
-		LOG_ERR("Not a valid NCELLMEAS response");
-		goto clean_exit;
-	}
 
 	/* Status code. */
 	curr_index = AT_NCELLMEAS_STATUS_INDEX;
@@ -1465,12 +1384,6 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 
 	if (at_response == NULL || modem_evt == NULL) {
 		return -EINVAL;
-	}
-
-	if (!response_is_valid(at_response, sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1,
-			       AT_MDMEV_RESPONSE_PREFIX)) {
-		LOG_ERR("Invalid MDMEV response");
-		return -EIO;
 	}
 
 	const char *start_ptr = at_response + sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1;

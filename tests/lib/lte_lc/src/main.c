@@ -301,17 +301,6 @@ void test_parse_rrc_mode(void)
 
 }
 
-void test_response_is_valid(void)
-{
-	char *cscon = "+CSCON";
-	char *xsystemmode = "+%XSYSTEMMODE";
-
-	TEST_ASSERT(response_is_valid(cscon, strlen(cscon), "+CSCON"));
-	TEST_ASSERT(response_is_valid(xsystemmode, strlen(xsystemmode), "+%XSYSTEMMODE"));
-	TEST_ASSERT_FALSE_MESSAGE(response_is_valid(cscon, strlen(cscon), "+%XSYSTEMMODE"),
-		     "response_is_valid should have failed");
-}
-
 void test_parse_ncellmeas(void)
 {
 	int err;
@@ -658,12 +647,6 @@ void test_parse_mdmev(void)
 
 	err = parse_mdmev(light_search_long, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
-
-	err = parse_mdmev("%MDMEVE", &modem_evt);
-	TEST_ASSERT_EQUAL(-EIO, err);
-
-	err = parse_mdmev("%MDME", &modem_evt);
-	TEST_ASSERT_EQUAL(-EIO, err);
 
 	err = parse_mdmev("%MDMEV: ", &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
