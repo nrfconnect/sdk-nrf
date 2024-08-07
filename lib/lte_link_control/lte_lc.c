@@ -1420,6 +1420,13 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 		.gci_count = 0,
 	};
 
+	if (params == NULL) {
+		LOG_DBG("Using default parameters");
+	}
+	LOG_DBG("Search type=%d, gci_count=%d",
+		params != NULL ? params->search_type : used_params.search_type,
+		params != NULL ? params->gci_count : used_params.gci_count);
+
 	__ASSERT(!IN_RANGE(
 			(int)params,
 			LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
@@ -1469,6 +1476,7 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 	}
 
 	if (err) {
+		LOG_ERR("Sending AT%%NCELLMEAS failed, error: %d", err);
 		err = -EFAULT;
 		k_sem_give(&ncellmeas_idle_sem);
 	}
@@ -1478,6 +1486,8 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 
 int lte_lc_neighbor_cell_measurement_cancel(void)
 {
+	LOG_DBG("Cancelling");
+
 	int err = nrf_modem_at_printf(AT_NCELLMEAS_STOP);
 
 	if (err) {

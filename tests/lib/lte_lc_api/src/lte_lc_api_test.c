@@ -1914,7 +1914,7 @@ void test_lte_lc_neighbor_cell_measurement_fail(void)
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
-void test_lte_lc_neighbor_cell_measurement_neighbors(void)
+void test_lte_lc_neighbor_cell_measurement_normal(void)
 {
 	int ret;
 	struct lte_lc_ncellmeas_params params = {
@@ -1922,8 +1922,8 @@ void test_lte_lc_neighbor_cell_measurement_neighbors(void)
 		.gci_count = 0,
 	};
 	strcpy(at_notif,
-		"%NCELLMEAS:0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,"
-		"456,4800,8,60,29,4,3500,9,99,18,5,5300,11\r\n");
+	       "%NCELLMEAS:0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,"
+	       "456,4800,8,60,29,4,3500,9,99,18,5,5300,11\r\n");
 
 	lte_lc_callback_count_expected = 1;
 
@@ -1945,6 +1945,7 @@ void test_lte_lc_neighbor_cell_measurement_neighbors(void)
 	test_event_data[0].cells_info.current_cell.rsrp = 31;
 	test_event_data[0].cells_info.current_cell.rsrq = 456;
 	test_event_data[0].cells_info.ncells_count = 2;
+	test_event_data[0].cells_info.gci_cells_count = 0;
 	test_neighbor_cells[0].earfcn = 8;
 	test_neighbor_cells[0].time_diff = 3500;
 	test_neighbor_cells[0].phys_cell_id = 60;
@@ -1959,6 +1960,283 @@ void test_lte_lc_neighbor_cell_measurement_neighbors(void)
 	at_monitor_dispatch(at_notif);
 }
 
+void test_lte_lc_neighbor_cell_measurement_normal_max_cells(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE,
+		.gci_count = 0,
+	};
+	strcpy(at_notif,
+	       "%NCELLMEAS:0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,"
+	       "456,4800,8,60,29,4,3500,9,99,18,5,5300,11\r\n");
+	strcpy(at_notif,
+	       /* Status */
+	       "%NCELLMEAS: 0,"
+	       /* Current cell */
+	       "\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       /* Neighbor cells (20). Last 3 are extra items to be ignored. */
+	       "333333,100,101,102,0,333333,103,104,105,0,"
+	       "333333,106,107,108,0,333333,109,110,111,0,"
+	       "444444,112,113,114,0,444444,115,116,117,0,"
+	       "444444,118,119,120,0,444444,121,122,123,0,"
+	       "555555,124,125,126,0,555555,127,128,129,0,"
+	       "555555,130,131,132,0,555555,133,134,135,0,"
+	       "666666,136,137,138,0,666666,139,140,141,0,"
+	       "666666,142,143,144,0,666666,145,146,147,0,"
+	       "777777,148,149,150,0,777777,151,152,153,0,"
+	       "888888,154,155,156,0,888888,157,158,159,0,"
+	       "11\r\n"); /* Timing advance for current cell */
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=2", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 987;
+	test_event_data[0].cells_info.current_cell.mnc = 12;
+	test_event_data[0].cells_info.current_cell.id = 0x00112233;
+	test_event_data[0].cells_info.current_cell.tac = 0x0AB9;
+	test_event_data[0].cells_info.current_cell.earfcn = 7;
+	test_event_data[0].cells_info.current_cell.timing_advance = 4800;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 11;
+	test_event_data[0].cells_info.current_cell.measurement_time = 4800;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 63;
+	test_event_data[0].cells_info.current_cell.rsrp = 31;
+	test_event_data[0].cells_info.current_cell.rsrq = 456;
+	test_event_data[0].cells_info.ncells_count = 17;
+	test_event_data[0].cells_info.gci_cells_count = 0;
+
+	/* Neighbor cells */
+	test_neighbor_cells[0].earfcn = 333333;
+	test_neighbor_cells[0].time_diff = 0;
+	test_neighbor_cells[0].phys_cell_id = 100;
+	test_neighbor_cells[0].rsrp = 101;
+	test_neighbor_cells[0].rsrq = 102;
+
+	test_neighbor_cells[1].earfcn = 333333;
+	test_neighbor_cells[1].time_diff = 0;
+	test_neighbor_cells[1].phys_cell_id = 103;
+	test_neighbor_cells[1].rsrp = 104;
+	test_neighbor_cells[1].rsrq = 105;
+
+	test_neighbor_cells[2].earfcn = 333333;
+	test_neighbor_cells[2].time_diff = 0;
+	test_neighbor_cells[2].phys_cell_id = 106;
+	test_neighbor_cells[2].rsrp = 107;
+	test_neighbor_cells[2].rsrq = 108;
+
+	test_neighbor_cells[3].earfcn = 333333;
+	test_neighbor_cells[3].time_diff = 0;
+	test_neighbor_cells[3].phys_cell_id = 109;
+	test_neighbor_cells[3].rsrp = 110;
+	test_neighbor_cells[3].rsrq = 111;
+
+	test_neighbor_cells[4].earfcn = 444444;
+	test_neighbor_cells[4].time_diff = 0;
+	test_neighbor_cells[4].phys_cell_id = 112;
+	test_neighbor_cells[4].rsrp = 113;
+	test_neighbor_cells[4].rsrq = 114;
+
+	test_neighbor_cells[5].earfcn = 444444;
+	test_neighbor_cells[5].time_diff = 0;
+	test_neighbor_cells[5].phys_cell_id = 115;
+	test_neighbor_cells[5].rsrp = 116;
+	test_neighbor_cells[5].rsrq = 117;
+
+	test_neighbor_cells[6].earfcn = 444444;
+	test_neighbor_cells[6].time_diff = 0;
+	test_neighbor_cells[6].phys_cell_id = 118;
+	test_neighbor_cells[6].rsrp = 119;
+	test_neighbor_cells[6].rsrq = 120;
+
+	test_neighbor_cells[7].earfcn = 444444;
+	test_neighbor_cells[7].time_diff = 0;
+	test_neighbor_cells[7].phys_cell_id = 121;
+	test_neighbor_cells[7].rsrp = 122;
+	test_neighbor_cells[7].rsrq = 123;
+
+	test_neighbor_cells[8].earfcn = 555555;
+	test_neighbor_cells[8].time_diff = 0;
+	test_neighbor_cells[8].phys_cell_id = 124;
+	test_neighbor_cells[8].rsrp = 125;
+	test_neighbor_cells[8].rsrq = 126;
+
+	test_neighbor_cells[9].earfcn = 555555;
+	test_neighbor_cells[9].time_diff = 0;
+	test_neighbor_cells[9].phys_cell_id = 127;
+	test_neighbor_cells[9].rsrp = 128;
+	test_neighbor_cells[9].rsrq = 129;
+
+	test_neighbor_cells[10].earfcn = 555555;
+	test_neighbor_cells[10].time_diff = 0;
+	test_neighbor_cells[10].phys_cell_id = 130;
+	test_neighbor_cells[10].rsrp = 131;
+	test_neighbor_cells[10].rsrq = 132;
+
+	test_neighbor_cells[11].earfcn = 555555;
+	test_neighbor_cells[11].time_diff = 0;
+	test_neighbor_cells[11].phys_cell_id = 133;
+	test_neighbor_cells[11].rsrp = 134;
+	test_neighbor_cells[11].rsrq = 135;
+
+	test_neighbor_cells[12].earfcn = 666666;
+	test_neighbor_cells[12].time_diff = 0;
+	test_neighbor_cells[12].phys_cell_id = 136;
+	test_neighbor_cells[12].rsrp = 137;
+	test_neighbor_cells[12].rsrq = 138;
+
+	test_neighbor_cells[13].earfcn = 666666;
+	test_neighbor_cells[13].time_diff = 0;
+	test_neighbor_cells[13].phys_cell_id = 139;
+	test_neighbor_cells[13].rsrp = 140;
+	test_neighbor_cells[13].rsrq = 141;
+
+	test_neighbor_cells[14].earfcn = 666666;
+	test_neighbor_cells[14].time_diff = 0;
+	test_neighbor_cells[14].phys_cell_id = 142;
+	test_neighbor_cells[14].rsrp = 143;
+	test_neighbor_cells[14].rsrq = 144;
+
+	test_neighbor_cells[15].earfcn = 666666;
+	test_neighbor_cells[15].time_diff = 0;
+	test_neighbor_cells[15].phys_cell_id = 145;
+	test_neighbor_cells[15].rsrp = 146;
+	test_neighbor_cells[15].rsrq = 147;
+
+	test_neighbor_cells[16].earfcn = 777777;
+	test_neighbor_cells[16].time_diff = 0;
+	test_neighbor_cells[16].phys_cell_id = 148;
+	test_neighbor_cells[16].rsrp = 149;
+	test_neighbor_cells[16].rsrq = 150;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_normal_no_ncells(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
+		.gci_count = 0,
+	};
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"1FFFFFFF\",\"98712\",\"0AB9\",4800,7,63,31,456,4800\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 987;
+	test_event_data[0].cells_info.current_cell.mnc = 12;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[0].cells_info.current_cell.tac = 0x0AB9;
+	test_event_data[0].cells_info.current_cell.earfcn = 7;
+	test_event_data[0].cells_info.current_cell.timing_advance = 4800;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 0;
+	test_event_data[0].cells_info.current_cell.measurement_time = 4800;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 63;
+	test_event_data[0].cells_info.current_cell.rsrp = 31;
+	test_event_data[0].cells_info.current_cell.rsrq = 456;
+	test_event_data[0].cells_info.ncells_count = 0;
+	test_event_data[0].cells_info.gci_cells_count = 0;
+
+	/* Test that 2nd NCELLMEAS returns error */
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(-EINPROGRESS, ret);
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_normal_status_failed(void)
+{
+	int ret;
+
+	strcpy(at_notif,
+	       "%NCELLMEAS: 1,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,"
+	       "456,4800,8,60,29,4,3500,9,99,18,5,5300,11\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[0].cells_info.ncells_count = 0;
+	test_event_data[0].cells_info.gci_cells_count = 0;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_normal_status_incomplete(void)
+{
+	int ret;
+
+	strcpy(at_notif,
+	       "%NCELLMEAS: 2,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,"
+	       "456,4800,8,60,29,4,3500,9,99,18,5,5300,11\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 987;
+	test_event_data[0].cells_info.current_cell.mnc = 12;
+	test_event_data[0].cells_info.current_cell.id = 0x00112233;
+	test_event_data[0].cells_info.current_cell.tac = 0x0AB9;
+	test_event_data[0].cells_info.current_cell.earfcn = 7;
+	test_event_data[0].cells_info.current_cell.timing_advance = 4800;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 11;
+	test_event_data[0].cells_info.current_cell.measurement_time = 4800;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 63;
+	test_event_data[0].cells_info.current_cell.rsrp = 31;
+	test_event_data[0].cells_info.current_cell.rsrq = 456;
+	test_event_data[0].cells_info.ncells_count = 2;
+	test_event_data[0].cells_info.gci_cells_count = 0;
+	test_neighbor_cells[0].earfcn = 8;
+	test_neighbor_cells[0].time_diff = 3500;
+	test_neighbor_cells[0].phys_cell_id = 60;
+	test_neighbor_cells[0].rsrp = 29;
+	test_neighbor_cells[0].rsrq = 4;
+	test_neighbor_cells[1].earfcn = 9;
+	test_neighbor_cells[1].time_diff = 5300;
+	test_neighbor_cells[1].phys_cell_id = 99;
+	test_neighbor_cells[1].rsrp = 18;
+	test_neighbor_cells[1].rsrq = 5;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_malformed_fail(void)
+{
+	int ret;
+
+	strcpy(at_notif,
+	       "%NCELLMEAS:0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,35 00,9,99,18,5,5300,11\r\n");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	at_monitor_dispatch(at_notif);
+}
+
 void test_lte_lc_neighbor_cell_measurement_gci(void)
 {
 	int ret;
@@ -1967,10 +2245,10 @@ void test_lte_lc_neighbor_cell_measurement_gci(void)
 		.gci_count = 10,
 	};
 	strcpy(at_notif,
-		"%NCELLMEAS: 0,"
-		"\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
-		"\"00567812\",\"11198\",\"3C4D\",65535,4,1300,75,53,16,189241,0,0,"
-		"\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	       "%NCELLMEAS: 0,"
+	       "\"1FFFFFFF\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"00567812\",\"11198\",\"3C4D\",65535,4,1300,75,53,16,189241,0,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
 
 	lte_lc_callback_count_expected = 1;
 
@@ -1982,7 +2260,96 @@ void test_lte_lc_neighbor_cell_measurement_gci(void)
 	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
 	test_event_data[0].cells_info.current_cell.mcc = 111;
 	test_event_data[0].cells_info.current_cell.mnc = 99;
-	test_event_data[0].cells_info.current_cell.id = 0x00112233;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[0].cells_info.current_cell.tac = 0x1A2B;
+	test_event_data[0].cells_info.current_cell.earfcn = 6200;
+	test_event_data[0].cells_info.current_cell.timing_advance = 64;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 20877;
+	test_event_data[0].cells_info.current_cell.measurement_time = 189205;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 110;
+	test_event_data[0].cells_info.current_cell.rsrp = 53;
+	test_event_data[0].cells_info.current_cell.rsrq = 22;
+	test_event_data[0].cells_info.ncells_count = 0;
+	test_event_data[0].cells_info.gci_cells_count = 2;
+
+	test_gci_cells[0].mcc = 111;
+	test_gci_cells[0].mnc = 98;
+	test_gci_cells[0].id = 0x00567812;
+	test_gci_cells[0].tac = 0x3C4D;
+	test_gci_cells[0].earfcn = 1300;
+	test_gci_cells[0].timing_advance = 65535;
+	test_gci_cells[0].timing_advance_meas_time = 4;
+	test_gci_cells[0].measurement_time = 189241;
+	test_gci_cells[0].phys_cell_id = 75;
+	test_gci_cells[0].rsrp = 53;
+	test_gci_cells[0].rsrq = 16;
+
+	test_gci_cells[1].mcc = 112;
+	test_gci_cells[1].mnc = 97;
+	test_gci_cells[1].id = 0x0011AABB;
+	test_gci_cells[1].tac = 0x5E6F;
+	test_gci_cells[1].earfcn = 2300;
+	test_gci_cells[1].timing_advance = 65534;
+	test_gci_cells[1].timing_advance_meas_time = 5;
+	test_gci_cells[1].measurement_time = 189245;
+	test_gci_cells[1].phys_cell_id = 449;
+	test_gci_cells[1].rsrp = 51;
+	test_gci_cells[1].rsrq = 11;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_gci_status_failed(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT,
+		.gci_count = 10,
+	};
+	strcpy(at_notif,
+	       "%NCELLMEAS: 1,"
+	       "\"1FFFFFFF\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"00567812\",\"11198\",\"3C4D\",65535,4,1300,75,53,16,189241,0,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,10", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[0].cells_info.ncells_count = 0;
+	test_event_data[0].cells_info.gci_cells_count = 0;
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_gci_status_incomplete(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT,
+		.gci_count = 10,
+	};
+	strcpy(at_notif,
+	       "%NCELLMEAS: 2,"
+	       "\"1FFFFFFF\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"00567812\",\"11198\",\"3C4D\",65535,4,1300,75,53,16,189241,0,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,10", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 111;
+	test_event_data[0].cells_info.current_cell.mnc = 99;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 	test_event_data[0].cells_info.current_cell.tac = 0x1A2B;
 	test_event_data[0].cells_info.current_cell.earfcn = 6200;
 	test_event_data[0].cells_info.current_cell.timing_advance = 64;
@@ -2030,37 +2397,37 @@ void test_lte_lc_neighbor_cell_measurement_gci_max_length(void)
 	};
 
 	strcpy(at_notif,
-		/* Status */
-		"%NCELLMEAS: 0,"
-		/* Current cell */
-		"\"00123456\",\"555555\",\"0102\",65534,18446744073709551614,"
-		"999999,123,127,-127,18446744073709551614,1,20,"
-		/* Neighbor cells (20). Last 3 are extra items to be ignored. */
-		"333333,100,101,102,0,333333,103,104,105,0,"
-		"333333,106,107,108,0,333333,109,110,111,0,"
-		"444444,112,113,114,0,444444,115,116,117,0,"
-		"444444,118,119,120,0,444444,121,122,123,0,"
-		"555555,124,125,126,0,555555,127,128,129,0,"
-		"555555,130,131,132,0,555555,133,134,135,0,"
-		"666666,136,137,138,0,666666,139,140,141,0,"
-		"666666,142,143,144,0,666666,145,146,147,0,"
-		"777777,148,149,150,0,777777,151,152,153,0,"
-		"888888,154,155,156,0,888888,157,158,159,0,"
-		/* GCI (surrounding) cells (14) */
-		"\"01234567\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"02345678\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"03456789\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"0456789A\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"056789AB\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"06789ABC\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"0789ABCD\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"089ABCDE\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"09ABCDEF\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"0ABCDEF0\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"0BCDEF01\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"0CDEF012\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"0DEF0123\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
-		"\"0EF01234\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0\r\n");
+	       /* Status */
+	       "%NCELLMEAS: 0,"
+	       /* Current cell */
+	       "\"00123456\",\"555555\",\"0102\",65534,18446744073709551614,"
+	       "999999,123,127,-127,18446744073709551614,1,20,"
+	       /* Neighbor cells (20). Last 3 are extra items to be ignored. */
+	       "333333,100,101,102,0,333333,103,104,105,0,"
+	       "333333,106,107,108,0,333333,109,110,111,0,"
+	       "444444,112,113,114,0,444444,115,116,117,0,"
+	       "444444,118,119,120,0,444444,121,122,123,0,"
+	       "555555,124,125,126,0,555555,127,128,129,0,"
+	       "555555,130,131,132,0,555555,133,134,135,0,"
+	       "666666,136,137,138,0,666666,139,140,141,0,"
+	       "666666,142,143,144,0,666666,145,146,147,0,"
+	       "777777,148,149,150,0,777777,151,152,153,0,"
+	       "888888,154,155,156,0,888888,157,158,159,0,"
+	       /* GCI (surrounding) cells (14) */
+	       "\"01234567\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"02345678\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"03456789\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"0456789A\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"056789AB\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"06789ABC\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"0789ABCD\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"089ABCDE\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"09ABCDEF\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"0ABCDEF0\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"0BCDEF01\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"0CDEF012\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"0DEF0123\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0,"
+	       "\"0EF01234\",\"555555\",\"0102\",65534,18446744073709551614,999999,123,127,-127,18446744073709551614,0,0\r\n");
 
 	lte_lc_callback_count_expected = 1;
 
@@ -2370,6 +2737,458 @@ void test_lte_lc_neighbor_cell_measurement_cancel(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEASSTOP", -NRF_ENOMEM);
 	ret = lte_lc_neighbor_cell_measurement_cancel();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_neighbor_cell_measurement_normal_invalid_field_format_fail(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT,
+		.gci_count = 0,
+	};
+
+	/* Syntax:
+	 * %NCELLMEAS: status
+	 * [,<cell_id>,<plmn>,<tac>,<ta>,<earfcn>,<phys_cell_id>,<rsrp>,<rsrq>,<meas_time>
+	 * [,<n_earfcn>1,<n_phys_cell_id>1,<n_rsrp>1,<n_rsrq>1,<time_diff>1]
+	 * [,<n_earfcn>2,<n_phys_cell_id>2,<n_rsrp>2,<n_rsrq>2,<time_diff>2]
+	 * ...
+	 * [,<n_earfcn>17,<n_phys_cell_id>17,<n_rsrp>17,<n_rsrq>17,<time_diff>17]
+	 * [,<timing_advance_measurement_time>]
+	 */
+
+	/* status */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS:invalid,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <cell_id> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,invalid,\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <plmn> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",invalid,\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <tac> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",invalid,4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <ta> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",invalid,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <earfcn> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,invalid,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <phys_cell_id> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,invalid,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <rsrp> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,invalid,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <rsrq> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,invalid,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <meas_time> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,invalid,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <timing_advance_measurement_time>: this is the last field after all neighbors */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300,invalid\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/***** Neighbor cell fields *****/
+
+	/* <n_earfcn> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,invalid,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <n_phys_cell_id> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,invalid,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <n_rsrp> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,invalid,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <n_rsrq> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,invalid,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <time_diff> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,invalid\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_gci_invalid_field_format_fail(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT,
+		.gci_count = 10,
+	};
+
+	/* Syntax for GCI search types:
+	 * High level:
+	 * status[,
+	 *      GCI_cell_info1,neighbor_count1[,neighbor_cell1_1,neighbor_cell1_2...],
+	 *      GCI_cell_info2,neighbor_count2[,neighbor_cell2_1,neighbor_cell2_2...]...]
+	 *
+	 * Detailed:
+	 * %NCELLMEAS: status
+	 * [,<cell_id>,<plmn>,<tac>,<ta>,<ta_meas_time>,<earfcn>,<phys_cell_id>,<rsrp>,<rsrq>,
+	 *              <meas_time>,<serving>,<neighbor_count>
+	 *      [,<n_earfcn1>,<n_phys_cell_id1>,<n_rsrp1>,<n_rsrq1>,<time_diff1>]
+	 *      [,<n_earfcn2>,<n_phys_cell_id2>,<n_rsrp2>,<n_rsrq2>,<time_diff2>]...],
+	 *  <cell_id>,<plmn>,<tac>,<ta>,<ta_meas_time>,<earfcn>,<phys_cell_id>,<rsrp>,<rsrq>,
+	 *              <meas_time>,<serving>,<neighbor_count>
+	 *      [,<n_earfcn1>,<n_phys_cell_id1>,<n_rsrp1>,<n_rsrq1>,<time_diff1>]
+	 *      [,<n_earfcn2>,<n_phys_cell_id2>,<n_rsrp2>,<n_rsrq2>,<time_diff2>]...]...
+	 */
+
+	/* status */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: invalid,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <cell_id> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "invalid,\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <plmn> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",invalid,\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <tac> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",invalid,65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <ta> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",invalid,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <ta_meas_time> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,invalid,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <earfcn> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,invalid,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <phys_cell_id> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,invalid,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <rsrp> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,invalid,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <rsrq> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,invalid,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <meas_time> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,invalid,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <serving> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,invalid,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <neighbor_count> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,invalid\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Serving cell normal neighbors */
+
+	/* <n_earfcn> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,2,"
+	       "invalid,100,101,102,0,333333,109,110,111,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <n_phys_cell_id> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,2,"
+	       "333333,invalid,101,102,0,333333,109,110,111,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <n_rsrp> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,2,"
+	       "333333,100,invalid,102,0,333333,109,110,111,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <n_rsrq> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,2,"
+	       "333333,100,101,invalid,0,333333,109,110,111,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* <time_diff> */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,10", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,2,"
+	       "333333,100,101,102,invalid,333333,109,110,111,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_normal_invalid_mccmnc_fail(void)
+{
+	int ret;
+
+	/* Invalid MCC */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"mcc12\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Invalid MNC */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,\"00112233\",\"987mnc\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_gci_invalid_mccmnc_fail(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE,
+		.gci_count = 2,
+	};
+
+	/* Invalid MCC */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=5,2", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"mcc97\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Invalid MNC */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=5,2", EXIT_SUCCESS);
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"112mnc\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_invalid_gci_cell_count_fail(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params;
+
+	params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT;
+	params.gci_count = 0;
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT;
+	params.gci_count = 1;
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	params.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE;
+	params.gci_count = 16;
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 void test_lte_lc_modem_sleep_event(void)
