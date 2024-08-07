@@ -93,6 +93,29 @@ To send logs over RTT instead of UART, apply the following settings:
     * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
     * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
 
+nRF70 Series
+------------
+
+.. toggle::
+
+   * The nRF70 Series support is now part of Zephyr upstream and it requires the following changes:
+
+    * The nRF70 Series driver namespace has been renamed from ``NRF700X`` to ``NRF70``.
+      For example, ``CONFIG_NRF700X_RAW_DATA_RX`` to ``CONIFG_NRF70_RAW_DATA_RX``.
+      Update your application configurations to use the new namespace.
+    * The nRF70 Series driver now uses per-module kernel heap with a higher default.
+      If a sample or an application uses the kernel heap but uses less than the default size, a build warning is displayed.
+      Use the :kconfig:option:`CONFIG_HEAP_MEM_POOL_IGNORE_MIN` Kconfig option and enable it to suppress the warning.
+
+   * The WPA supplicant is also now part of Zephy upstream and it requires the following changes:
+
+    * The WPA supplicant namespace has been renamed from ``WPA_SUPP`` to ``WIFI_NM_WPA_SUPPLICANT``.
+      For example, ``CONFIG_WPA_SUPP=y`` to ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``.
+      Update your application configurations to use the new namespace.
+
+   * The SR co-existence feature should now be explicitly enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX` Kconfig option.
+     The RF switch feature should be enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX_RF_SWITCH` Kconfig option.
+
 Libraries
 =========
 
