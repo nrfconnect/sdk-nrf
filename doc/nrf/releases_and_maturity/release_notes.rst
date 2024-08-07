@@ -3,7 +3,7 @@
 Release notes
 #############
 
-See the release notes for information about specific |NCS| releases.
+Each :ref:`release <dm-revisions>` of the |NCS| comes with its own release notes.
 
 Known issues for each release are listed on the `known issues page on the main branch`_.
 This page is included only in the latest documentation, because it might contain issues that are discovered after a release is tagged.

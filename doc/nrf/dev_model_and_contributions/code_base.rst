@@ -149,27 +149,30 @@ Versions and revisions
 
 The |NCS| version numbers are assigned based on very specific criteria.
 They follow the ``MAJOR.MINOR.PATCH`` pattern (also further called as ``X.Y.Z``), with possible additional postfixes depending on the release.
+All releases are accompanied by their respective :ref:`release_notes`.
 
-+-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-| Release type                  | Release critera                                                            | Comments                                                                                        |
-+===============================+============================================================================+=================================================================================================+
-| ``MAJOR``                     | Introduces a large number of substantial changes across the board          | Major version number is increased rarely and the release is accompanied by a migration guide.   |
-+-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-| ``MINOR``                     | Introduces one or more new functionalities.                                | Version number is increased every time a major release is cut.                                  |
-|                               |                                                                            | Minor releases are the default types of an |NCS| release.                                       |
-|                               |                                                                            | The new functionalities may break exisiting APIs.                                               |
-+-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-| ``PATCH``                     | Introduces bugfixes or minor changes to the existing functionalities.      | Patch releases only address functional issues and do not introduce new functionalities.         |
-+-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-| ``MAJOR.MINOR.99``            | The ``99`` added at the end of the version number indicates                | The number can be used between minor, major, or patch releases.                                 |
-|                               | that the version string is a point in between two releases.                |                                                                                                 |
-|                               | Such version does not belong to a release and corresponds to the           |                                                                                                 |
-|                               | current state of development.                                              |                                                                                                 |
-+-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
-| ``MAJOR.MINOR.PATCH-devN``    | Development tag, marked through a postfix added to the end of the version. | ``-devN`` version might not be subjected to the same amount of testing                          |
-|                               | Indicates a snapshot of the development state that is created to highlight | as the |NCS| release.                                                                           |
-|                               | the introduction of a new piece of functionality.                          |                                                                                                 |
-+-------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------+
++----------------------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
+|        Release type        |                              Release criteria                              |                                                 Comments                                                                             |
++============================+============================================================================+======================================================================================================================================+
+| ``MAJOR``                  | Introduces a large number of substantial changes across the board          | Major version number is increased rarely.                                                                                            |
+|                            |                                                                            | Major releases are always accompanied by a :ref:`migration guide <migration_guides>`.                                                |
++----------------------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
+| ``MINOR``                  | Introduces one or more new functionalities.                                | Version number is increased every time a minor release is cut.                                                                       |
+|                            |                                                                            | Minor releases are the default types of an |NCS| release and usually are accompanied by a :ref:`migration guide <migration_guides>`. |
+|                            |                                                                            | The new functionalities may break existing APIs.                                                                                     |
++----------------------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
+| ``PATCH``                  | Introduces bugfixes or minor changes to the existing functionalities.      | Patch releases only address functional issues and do not introduce new functionalities.                                              |
+|                            |                                                                            | Patch releases do not come with :ref:`migration guide <migration_guides>`.                                                           |
++----------------------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
+| ``MAJOR.MINOR.99``         | The ``99`` added at the end of the version number indicates                | The number can be used between minor, major, or patch releases.                                                                      |
+|                            | that the version string is a point in between two releases.                |                                                                                                                                      |
+|                            | Such version does not belong to a release and corresponds to the           |                                                                                                                                      |
+|                            | current state of development.                                              |                                                                                                                                      |
++----------------------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
+| ``MAJOR.MINOR.PATCH-devN`` | Development tag, marked through a postfix added to the end of the version. | Not part of the regular release cycle.                                                                                               |
+|                            | Indicates a snapshot of the development state that is created to highlight | The ``-devN`` version might not be subjected to the same amount of testing as a regular |NCS| release.                               |
+|                            | the introduction of a new piece of functionality.                          |                                                                                                                                      |
++----------------------------+----------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
 
 There are two fundamental revisions that are relevant to most |NCS| users:
 
