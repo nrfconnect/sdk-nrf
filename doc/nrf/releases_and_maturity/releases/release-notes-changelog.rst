@@ -78,7 +78,7 @@ See also the `MCUboot`_ section.
 Developing with nRF91 Series
 ============================
 
-|no_changes_yet_note|
+* Added the :ref:`nRF91 modem tracing with RTT backend snippet <nrf91_modem_trace_rtt_snippet>` to enable modem tracing using the RTT trace backend.
 
 Developing with nRF70 Series
 ============================
@@ -838,6 +838,7 @@ Modem libraries
 
     * The RTT trace backend to allocate the RTT channel at boot, instead of when the modem is activated.
     * The flash trace backend to solve concurrency issues when reading traces while writing, and when reinitializing the application (warm start).
+    * Renamed the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
 
   * Rename the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
 
