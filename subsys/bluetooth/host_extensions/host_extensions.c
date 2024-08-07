@@ -34,9 +34,16 @@ int bt_conn_set_remote_tx_power_level(struct bt_conn *conn,
 {
 	struct bt_hci_set_remote_tx_power_level *cp;
 	struct net_buf *buf;
+	uint16_t conn_handle;
+	int err;
 
 	if (!phy) {
 		return -EINVAL;
+	}
+
+	err = bt_hci_get_conn_handle(conn, &conn_handle);
+	if (err) {
+		return err;
 	}
 
 	buf = bt_hci_cmd_create(BT_HCI_OP_SET_REMOTE_TX_POWER, sizeof(*cp));
@@ -45,7 +52,7 @@ int bt_conn_set_remote_tx_power_level(struct bt_conn *conn,
 	}
 
 	cp = net_buf_add(buf, sizeof(*cp));
-	cp->handle = sys_cpu_to_le16(conn->handle);
+	cp->handle = conn_handle;
 	cp->phy = phy;
 	cp->delta = delta;
 
