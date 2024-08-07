@@ -10,7 +10,6 @@
 #include <zephyr/net/socket.h>
 #include <string.h>
 #include <stdio.h>
-#include <assert.h>
 #include <zephyr/device.h>
 #include <modem/lte_lc.h>
 #include <modem/at_parser.h>
@@ -260,7 +259,7 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 	__ASSERT_NO_MSG(ptw_str != NULL);
 
 	err = at_parser_init(&parser, at_response);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	err = at_parser_num_get(&parser, AT_CEDRXP_ACTT_INDEX, &tmp_int);
 	if (err) {
@@ -609,7 +608,7 @@ int parse_rrc_mode(const char *at_response,
 	__ASSERT_NO_MSG(mode != NULL);
 
 	err = at_parser_init(&parser, at_response);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Get the RRC mode from the response */
 	err = at_parser_num_get(&parser, mode_index, &temp_mode);
@@ -660,7 +659,7 @@ int parse_cereg(const char *at_response,
 	psm_cfg->tau = -1;
 
 	err = at_parser_init(&parser, at_response);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Get network registration status */
 	err = at_parser_num_get(&parser, AT_CEREG_REG_STATUS_INDEX, &temp);
@@ -796,7 +795,7 @@ int parse_xt3412(const char *at_response, uint64_t *time)
 	__ASSERT_NO_MSG(time != NULL);
 
 	err = at_parser_init(&parser, at_response);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Get the remaining time of T3412 from the response */
 	err = at_parser_num_get(&parser, AT_XT3412_TIME_INDEX, time);
@@ -860,7 +859,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	cells->current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 
 	err = at_parser_init(&parser, at_response);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Status code. */
 	err = at_parser_num_get(&parser, AT_NCELLMEAS_STATUS_INDEX, &status);
@@ -1095,7 +1094,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 	 */
 
 	err = at_parser_init(&parser, at_response);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Status code. */
 	curr_index = AT_NCELLMEAS_STATUS_INDEX;
@@ -1359,7 +1358,7 @@ int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_
 	__ASSERT_NO_MSG(modem_sleep != NULL);
 
 	err = at_parser_init(&parser, at_response);
-	assert(err == 0);
+	__ASSERT_NO_MSG(err == 0);
 
 	err = at_parser_num_get(&parser, AT_XMODEMSLEEP_TYPE_INDEX, &type);
 	if (err) {
