@@ -3,6 +3,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+&i2c2 {
+	status = "okay";
+};
+
+&spi3 {
+	status = "okay";
+};
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &flash_ext;
+		zephyr,wifi = &nordic_wlan0;
+	};
+};
+
 /* Enable short range RF */
 &ldsw_rf_fe_sr_en {
 	/delete-property/ output-low;
@@ -26,4 +41,21 @@
 /* enable nRF70 */
 &nrf700x {
 	status = "okay";
+};
+
+&flash_ext {
+	status = "okay";
+};
+
+&pmic_main {
+	status = "okay";
+	npm1300_gpios {
+		status = "okay";
+	};
+	regulators {
+		status = "okay";
+	};
+	charger {
+		status = "okay";
+	};
 };
