@@ -53,6 +53,19 @@ Serial LTE Modem (SLM)
     * ``AT#XSOCKETOPT=1,53,`` with ``AT#XSOCKETOPT=1,61,4`` to indicate ``RAI_ONGOING``.
     * ``AT#XSOCKETOPT=1,54,`` with ``AT#XSOCKETOPT=1,61,5`` to indicate ``RAI_WAIT_MORE``.
 
+nRF70 Series
+------------
+
+.. toggle::
+
+   * The nRF70 Series support is now part of Zephyr upstream and it warrants below changes:
+
+    * The nRF70 Series driver namespace has been renamed from ``NRF700X`` to ``NRF70``.
+      Update your application to use the new namespace.
+    * The nRF70 Series driver now uses per-module kernel heap with a higher default.
+    If a sample or an application uses the kernel heap but uses less than the default size, a build warning is displayed.
+    Use the :kconfig:option:`CONFIG_HEAP_MEM_POOL_IGNORE_MIN` and enable it to suppress the warning.
+
 Libraries
 =========
 
