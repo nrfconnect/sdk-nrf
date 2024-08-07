@@ -43,6 +43,8 @@
 
 .. |ANSI| replace:: that supports VT100/ANSI escape characters
 
+.. |open_terminal_window_with_environment| replace:: Start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window.
+
 .. ### Board shortcuts
 
 .. |nRF5340DKnoref| replace:: nRF5340 DK board (PCA10095)

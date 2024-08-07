@@ -232,7 +232,7 @@ Use the following steps depending on the application type:
       #. Click the :guilabel:`Use this template` button on the GitHub web user interface.
          This creates your own copy of the template repository.
          In the copy of the repository, the :file:`app` directory contains the template application that you can start modifying.
-      #. Open a command line terminal.
+      #. |open_terminal_window_with_environment|
       #. Initialize the repository with the repository name and path you have chosen for your manifest repository (*your-name/your-application* and *your-app-workspace*, respectively).
          *your-app-workspace* corresponds to :file:`ncs/` in the :ref:`workspace application structure <create_application_types_workspace>`.
          Use the following command pattern:

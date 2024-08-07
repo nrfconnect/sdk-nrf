@@ -229,7 +229,7 @@ Testing
 
 #. Program the nRF7002 DK by completing the following steps:
 
-	1. Open a new terminal in the test PC.
+	1. |open_terminal_window_with_environment|
 	#. Navigate to the :file:`<ncs code>/nrf/samples/wifi/thread_coex/` folder.
 	#. Run the following command:
 

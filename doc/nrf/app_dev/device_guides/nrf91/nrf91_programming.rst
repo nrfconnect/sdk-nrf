@@ -105,7 +105,8 @@ Complete the following steps to program firmware onto Thingy:91:
 
    .. group-tab:: Command line
 
-      5. Program the sample or application to the device using the following command::
+      5. |open_terminal_window_with_environment|
+      6. Program the sample or application to the device using the following command::
 
            west flash
 

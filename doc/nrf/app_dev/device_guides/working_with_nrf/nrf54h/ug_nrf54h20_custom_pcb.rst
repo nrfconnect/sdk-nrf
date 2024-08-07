@@ -125,7 +125,9 @@ After programming the BICR, the nRF54H20 SoC requires the provisioning of a bund
 To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
 
 1. Download the `nRF54H20 firmware bundle`_.
-#. Move the :file:`ZIP` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+#. Move the :file:`ZIP` bundle to a folder of your choice.
+#. |open_terminal_window_with_environment|
+#. Run nRF Util to program the binaries using the following command::
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
@@ -135,7 +137,7 @@ Updating the FICR
 After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
 To update the FICR, you must run a J-Link script:
 
-1. Get the Jlink script that updates the FICR::
+1. Get the J-Link script that updates the FICR::
 
       curl -LO https://files.nordicsemi.com/artifactory/swtools/external/scripts/nrf54h20es_trim_adjust.jlink
 
@@ -155,7 +157,8 @@ If the LCS is set to ``EMPTY``, you must transition it to ``RoT``.
 
 To transition the LCS to ``RoT``, do the following:
 
-1. Verify the current lifecycle state of the nRF54H20::
+1. |open_terminal_window_with_environment|
+#. Verify the current lifecycle state of the nRF54H20::
 
       nrfutil device x-adac-discovery --serial-number <serial_number>
 

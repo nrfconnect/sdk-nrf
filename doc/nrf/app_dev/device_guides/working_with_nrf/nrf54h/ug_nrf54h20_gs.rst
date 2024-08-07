@@ -152,6 +152,7 @@ Installing the Terminal application
 
 On your computer, install `nRF Connect for Desktop`_.
 You must also install a terminal emulator, such as `nRF Connect Serial Terminal`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
+Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 Installing nRF Util and its commands
 ************************************

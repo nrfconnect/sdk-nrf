@@ -221,6 +221,7 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
    On MacOS, connecting the DK might cause a popup containing the message ``“Disk Not Ejected Properly`` to repeatedly appear on screen.
    To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
 
+#. |open_terminal_window_with_environment|
 #. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
 
       nrfutil device list
@@ -242,7 +243,9 @@ To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the Sys
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
 
-#. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+#. Move the :file:`.zip` bundle to a folder of your choice.
+#. |open_terminal_window_with_environment|
+#. Run nRF Util to program the binaries using the following command::
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
@@ -258,7 +261,7 @@ Updating the FICR
 After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
 To update the FICR, you must run a J-Link script:
 
-1. Get the Jlink script that updates the FICR::
+1. Get the J-Link script that updates the FICR::
 
       curl -LO https://files.nordicsemi.com/artifactory/swtools/external/scripts/nrf54h20es_trim_adjust.jlink
 

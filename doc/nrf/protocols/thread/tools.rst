@@ -79,6 +79,7 @@ As neither the Linux-based PC nor the Raspberry Pi have such radio capability, y
 
 To program the nRF device with the RCP application, complete the following steps:
 
+#. |open_terminal_window_with_environment|
 #. Build the :ref:`ot_coprocessor_sample` sample for the hardware platform and the transport of your choice:
 
    .. tabs::

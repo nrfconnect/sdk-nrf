@@ -34,7 +34,7 @@ Just as for creating the application, you can build the application using either
 
       Complete the following steps to build on the command line:
 
-      1. Open a terminal window.
+      1. |open_terminal_window_with_environment|
       #. Go to the specific application directory.
 
          For example, if you want to build the :ref:`at_client_sample` sample, run the following command to navigate to its directory:
