@@ -1,0 +1,3 @@
+name: nrf91-modem-trace-rtt
+append:
+  EXTRA_CONF_FILE: overlay-modem-trace-rtt.conf
