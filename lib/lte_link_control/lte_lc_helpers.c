@@ -1282,7 +1282,15 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 			}
 
 			/* Parse neighbors */
-			for (j = 0; j < to_be_parsed_ncell_count; j++) {
+			for (j = 0; j < parsed_ncells_count; j++) {
+				/* If maximum number of cells has been stored, skip the data for
+				 * the remaining ncells to be able to continue from next GCI cell
+				 */
+				if (j >= to_be_parsed_ncell_count) {
+					LOG_WRN("Ignoring ncell");
+					curr_index += 5;
+					continue;
+				}
 				/* <n_earfcn[j]> */
 				curr_index++;
 				err = at_parser_num_get(&parser,
