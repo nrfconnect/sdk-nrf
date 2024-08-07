@@ -6,6 +6,9 @@
 
 if (${NORMALIZED_BOARD_TARGET} STREQUAL "nrf54h20dk_nrf54h20_cpuapp")
   list(LENGTH SHIELD SHIELD_NUM)
+  list(LENGTH machine_learning_SHIELD APP_SHIELD_NUM)
+  math(EXPR SHIELD_NUM "${SHIELD_NUM} + ${APP_SHIELD_NUM}")
+
   if(NOT SB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE AND SHIELD_NUM EQUAL 0)
     message(FATAL_ERROR "Missing configuration for the ${NORMALIZED_BOARD_TARGET}. It requires additional shield or snippet")
   endif()
