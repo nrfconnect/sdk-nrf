@@ -5,8 +5,20 @@ common:
   integration_platforms:
     - nrf54l15pdk/nrf54l15/cpuflpr
 tests:
-  applications.sw_io_devices.egpio:
-    sysbuild: true
+  applications.sw_io_devices.egpio_mbox:
     build_only: true
     platform_allow: nrf54l15pdk/nrf54l15/cpuflpr
-    tags: ci_build sysbuild
+    tags: ci_build
+    extra_configs:
+      CONFIG_GPIO_NRFE_MBOX_BACKEND=y
+
+  applications.sw_io_devices.egpio_icmsg:
+    build_only: true
+    platform_allow: nrf54l15pdk/nrf54l15/cpuflpr
+    tags: ci_build
+    extra_args:
+      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15pdk_nrf54l15_cpuflpr_icmsg.overlay"
+    extra_configs:
+      CONFIG_GPIO_NRFE_ICMSG_BACKEND=y
+      CONFIG_IPC_SERVICE=y
+      CONFIG_IPC_SERVICE_BACKEND_ICMSG=y

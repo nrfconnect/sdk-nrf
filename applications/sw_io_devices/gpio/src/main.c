@@ -4,16 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
-#include <zephyr/ipc/ipc_service.h>
 
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
+#include <zephyr/ipc/ipc_service.h>
+#endif
 #include <drivers/gpio/nrfe_gpio.h>
 
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
 
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND) && defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
+#error "Only one communication backend can be configured"
+#elif defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 static struct ipc_ept ep;
 
 volatile uint32_t bound_sem = 1;
@@ -22,6 +28,12 @@ static void ep_bound(void *priv)
 {
 	bound_sem = 0;
 }
+#elif defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
+#include <zephyr/drivers/mbox.h>
+static const struct mbox_dt_spec rx_channel = MBOX_DT_SPEC_GET(DT_PATH(mbox_consumer), rx);
+#else
+#error "Define communication backend type"
+#endif
 
 static nrf_gpio_pin_pull_t get_pull(gpio_flags_t flags)
 {
@@ -122,10 +134,8 @@ static void gpio_nrfe_port_toggle_bits(uint16_t toggle_mask)
 	nrf_vpr_csr_vio_out_toggle_set(toggle_mask);
 }
 
-static void ep_recv(const void *data, size_t len, void *priv)
+static void process_packet(nrfe_gpio_data_packet_t *packet)
 {
-	nrfe_gpio_data_packet_t *packet = (nrfe_gpio_data_packet_t *)data;
-
 	if (packet->port != 2) {
 		return;
 	}
@@ -153,6 +163,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 }
 
+#if defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
+static void ep_recv(const void *data, size_t len, void *priv)
+{
+	(void)len;
+	(void)priv;
+
+	process_packet((nrfe_gpio_data_packet_t *)data);
+}
+
 static struct ipc_ept_cfg ep_cfg = {
 	.cb = {
 		.bound = ep_bound,
@@ -160,9 +179,90 @@ static struct ipc_ept_cfg ep_cfg = {
 	},
 };
 
-int main(void)
+#elif defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
+
+/**
+ * @brief Callback function for when a message is received from the mailbox
+ * @param instance Pointer to the mailbox device instance
+ * @param channel Unused, but required by the mailbox API
+ * @param user_data Pointer to the received message
+ * @param msg_data Unused, but required by the mailbox API
+ *
+ * This function is called when a message is received from the mailbox.
+ * It is responsible for handling the received data and logging any errors.
+ */
+static void mbox_callback(const struct device *instance, uint32_t channel, void *user_data,
+			  struct mbox_msg *msg_data)
+{
+	/* Unused parameters */
+	(void)msg_data;
+
+	/* Check for invalid arguments */
+	if (user_data == NULL) {
+		return;
+	}
+
+	shared_t *rx_data = (shared_t *)user_data;
+
+	/* Try and get lock for the shared data structure */
+	if (atomic_flag_test_and_set(&rx_data->lock)) {
+		/* Return in case lock is not acquired (used by other core)*/
+		return;
+	}
+
+	nrfe_gpio_data_packet_t *packet = (nrfe_gpio_data_packet_t *)&rx_data->data;
+
+	process_packet(packet);
+
+	/* Clear shared_data.buffer_size (there is no more data available)
+	 * This is necessary so that the other core knows that the data has been read
+	 */
+	rx_data->size = 0;
+
+	/* We are finished with the shared data structure, so we can release the lock */
+	atomic_flag_clear(&rx_data->lock);
+}
+
+/**
+ * @brief Initialize the mailbox driver.
+ *
+ * This function sets up the mailbox receive channel with the callback
+ * function specified in the DT node.
+ *
+ * @return 0 on success, negative error code on failure.
+ */
+static int mbox_init(void *shared_data)
 {
 	int ret;
+
+	/* Register the callback function for the mailbox receive channel */
+	ret = mbox_register_callback_dt(&rx_channel, mbox_callback, shared_data);
+	if (ret < 0) {
+		return ret;
+	}
+
+	/* Enable the mailbox receive channel */
+	return mbox_set_enabled_dt(&rx_channel, true);
+}
+#endif
+
+int main(void)
+{
+	int ret = 0;
+#if defined(CONFIG_GPIO_NRFE_MBOX_BACKEND)
+
+	static shared_t *rx_data = (shared_t *)((uint8_t *)(DT_REG_ADDR(DT_NODELABEL(sram_rx))));
+
+	ret = mbox_init((void *)rx_data);
+	if (ret < 0) {
+		return 0;
+	}
+
+	/* clear the buffer locks and their size holders */
+	atomic_flag_clear(&rx_data->lock);
+	rx_data->size = 0;
+
+#elif defined(CONFIG_GPIO_NRFE_ICMSG_BACKEND)
 	const struct device *ipc0_instance;
 	volatile uint32_t delay = 0;
 
@@ -188,6 +288,7 @@ int main(void)
 	/* Wait for endpoint to be bound */
 	while (bound_sem != 0) {
 	};
+#endif
 
 	if (!nrf_vpr_csr_rtperiph_enable_check()) {
 		nrf_vpr_csr_rtperiph_enable_set(true);

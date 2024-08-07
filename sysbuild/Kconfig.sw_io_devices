@@ -1,0 +1,21 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "SW IO devices"
+
+menuconfig SW_IO_DEVICES
+	bool "Software IO devices"
+
+if SW_IO_DEVICES
+
+config EGPIO_FLPR_APPLICATION
+	bool "Nordic eGPIO FLPR application"
+	help
+	  Include FLPR side eGPIO application in build.
+	  FLPR eGPIO application is an eGPIO driver built for an FLPR core that receives commands
+	  from the app core and controls the pin states based on them.
+
+endif # SW_IO_DEVICES
+
+endmenu

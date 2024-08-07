@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-name: emulated-gpio
+name: emulated-gpio-mbox
 append:
   EXTRA_DTC_OVERLAY_FILE: emulated-gpio.overlay
 
@@ -12,3 +12,4 @@ boards:
   nrf54l15pdk/nrf54l15/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15pdk_nrf54l15_cpuapp.overlay
+      EXTRA_CONF_FILE: boards/nrf54l15pdk_nrf54l15_cpuapp.conf
