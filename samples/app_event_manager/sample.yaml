@@ -58,13 +58,15 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_configs:
       - CONFIG_SHELL=y
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     tags: sysbuild ci_samples_app_event_manager
-  sample.app_event_manager_shell.native_posix:
+  sample.app_event_manager_shell.native_sim:
     sysbuild: true
     build_only: false
     extra_configs:
       - CONFIG_SHELL=y
       - CONFIG_NATIVE_UART_0_ON_STDINOUT=y
-    platform_allow: native_posix
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
     tags: sysbuild ci_samples_app_event_manager

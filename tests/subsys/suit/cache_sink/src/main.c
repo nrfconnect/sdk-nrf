@@ -12,7 +12,7 @@
 #include <suit_dfu_cache_rw.h>
 #include <suit_plat_mem_util.h>
 
-#ifndef CONFIG_BOARD_NATIVE_POSIX
+#ifndef CONFIG_BOARD_NATIVE_SIM
 static const uint8_t corrupted_cache_header_ok_size_nok[] = {
 	0xBF, /* map(*) */
 	0x75, /* text(21) */
@@ -109,7 +109,7 @@ void setup_dfu_test_cache(void *f)
 	zassert_equal(ret, SUIT_PLAT_SUCCESS, "Failed to initialize cache: %i", ret);
 }
 
-#ifndef CONFIG_BOARD_NATIVE_POSIX
+#ifndef CONFIG_BOARD_NATIVE_SIM
 void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corrupted_cache_size)
 {
 	/* Erase the area, to met the preconditions in the next test. */
@@ -205,7 +205,7 @@ ZTEST(cache_rw_initialization_tests, test_cache_initialization_ok)
 	zassert_equal(ret, SUIT_PLAT_SUCCESS, "Initialization failed: %i", ret);
 }
 
-#ifndef CONFIG_BOARD_NATIVE_POSIX
+#ifndef CONFIG_BOARD_NATIVE_SIM
 ZTEST_SUITE(cache_sink_recovery_tests, NULL, NULL, NULL,
 	    clear_dfu_test_partitions, NULL);
 
@@ -396,7 +396,7 @@ ZTEST(cache_sink_tests, test_cache_get_slot_nok_not_enough_space)
 	ret = sink.release(sink.ctx);
 	zassert_equal(ret, SUIT_PLAT_SUCCESS, "Failed to release sink: %i", ret);
 
-#ifdef CONFIG_BOARD_NATIVE_POSIX
+#ifdef CONFIG_BOARD_NATIVE_SIM
 	ret = suit_dfu_cache_sink_get(&sink, 1, uri4, sizeof(uri4), true);
 	zassert_not_equal(ret, SUIT_PLAT_SUCCESS,
 			  "Get sink should have failed due to lack of free space: %i", ret);
@@ -407,7 +407,7 @@ ZTEST(cache_sink_tests, test_cache_get_slot_nok_not_enough_space)
 	ret = sink.write(sink.ctx, data3, sizeof(data3));
 	zassert_not_equal(ret, SUIT_PLAT_SUCCESS,
 			  "Write to sink should fail due to lack of space: %i", ret);
-#endif /* CONFIG_BOARD_NATIVE_POSIX */
+#endif /* CONFIG_BOARD_NATIVE_SIM */
 
 	printk("\nReleasing sink\n");
 	ret = sink.release(sink.ctx);

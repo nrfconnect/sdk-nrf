@@ -6,10 +6,10 @@
 
 /**
  * @file
- * @brief Additional Unity support code for the native_posix board.
+ * @brief Additional Unity support code for the native_sim board.
  */
 #include <zephyr/kernel.h>
-#ifdef CONFIG_BOARD_NATIVE_POSIX
+#ifdef CONFIG_BOARD_NATIVE_SIM
 #include "posix_board_if.h"
 #endif
 
@@ -17,14 +17,14 @@
 int generic_suiteTearDown(int num_failures)
 {
 	int ret = num_failures > 0 ? 1 : 0;
-	/* Sanitycheck bases the result of native_posix based unit tests on the
+	/* Sanitycheck bases the result of native_sim based unit tests on the
 	 * output:
 	 */
 	printk("PROJECT EXECUTION %s\n",
 	       num_failures == 0 ? "SUCCESSFUL" : "FAILED");
 
-#ifdef CONFIG_BOARD_NATIVE_POSIX
-	/* The native posix board will loop forever after leaving the runner's
+#ifdef CONFIG_BOARD_NATIVE_SIM
+	/* The native sim board will loop forever after leaving the runner's
 	 * main, so we have to explicitly call exit() to terminate the test.
 	 */
 	posix_exit(ret);

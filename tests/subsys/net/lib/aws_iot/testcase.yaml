@@ -1,7 +1,7 @@
 tests:
   net.lib.aws_iot:
     sysbuild: true
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
     tags: aws_iot sysbuild ci_tests_subsys_net

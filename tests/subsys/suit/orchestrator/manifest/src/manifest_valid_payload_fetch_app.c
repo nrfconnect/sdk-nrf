@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_BOARD_NATIVE_POSIX)
+#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_BOARD_NATIVE_SIM)
 #include <stdint.h>
 #include <stddef.h>
 
@@ -56,4 +56,4 @@ const uint8_t manifest_valid_payload_fetch_app_buf[] = {
 
 const size_t manifest_valid_payload_fetch_app_len = sizeof(manifest_valid_payload_fetch_app_buf);
 
-#endif /* CONFIG_SOC_NRF52840 || CONFIG_BOARD_NATIVE_POSIX */
+#endif /* CONFIG_SOC_NRF52840 || CONFIG_BOARD_NATIVE_SIM */

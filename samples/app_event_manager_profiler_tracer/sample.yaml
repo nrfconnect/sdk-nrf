@@ -5,7 +5,7 @@ tests:
   sample.app_event_manager_profiler_tracer:
     sysbuild: true
     build_only: true
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840

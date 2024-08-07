@@ -8,7 +8,6 @@
 #    - None
 
 - platforms:
-    - native_posix
     - native_sim
     - qemu_cortex_m3
     - qemu_x86
