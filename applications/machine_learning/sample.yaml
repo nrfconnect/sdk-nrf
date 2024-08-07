@@ -59,3 +59,5 @@ tests:
     extra_args:
       SB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE=y
       machine_learning_SNIPPET=nordic-ppr
+      machine_learning_SHIELD=pca63566_fwd
+      remote_SHIELD=pca63566
