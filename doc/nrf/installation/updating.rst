@@ -22,6 +22,7 @@ Using the correct command line environment
 ******************************************
 
 Whenever you update repositories and tools, make sure that you use the command line environment that is configured to work with west and the rest of the nRF Connect Toolchain and nRF Connect SDK environment.
+This is also valid for commands that must be executed in the |NCS| toolchain environment.
 
 Depending on your preferred development method, you can start the correct CLI toolchain environment the following way:
 

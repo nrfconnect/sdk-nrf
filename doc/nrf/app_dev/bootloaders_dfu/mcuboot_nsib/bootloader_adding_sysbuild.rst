@@ -38,7 +38,7 @@ The following sections describe how to add either |NSIB| or MCUboot as an immuta
 Adding |NSIB| as an immutable bootloader
 ========================================
 
-To build |NSIB| with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_SECURE_BOOT_APPCORE`` in the application's :file:`sysbuild.conf` file or using the command line:
+To build |NSIB| with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_SECURE_BOOT_APPCORE`` in the application's :file:`sysbuild.conf` file or using the command line (with the :ref:`toolchain environment <using_toolchain_environment>` enabled):
 
 .. code-block:: console
 
@@ -69,7 +69,7 @@ The following sections describe different configuration options available for |N
 Adding a custom signature key file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To specify a signature key file for this bootloader, set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` option in the application's :file:`sysbuild.conf` file or using the command line:
+To specify a signature key file for this bootloader, set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` option in the application's :file:`sysbuild.conf` file or using the command line (with the :ref:`toolchain environment <using_toolchain_environment>` enabled):
 
 .. tabs::
 

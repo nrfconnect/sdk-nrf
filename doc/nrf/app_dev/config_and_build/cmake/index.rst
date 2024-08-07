@@ -125,7 +125,7 @@ This is how you can specify them:
    .. group-tab:: Command line
 
       Pass the additional options to the ``west build`` command when :ref:`building`.
-      The CMake arguments must be added after a ``--`` at the end of the command.
+      Start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window and add the CMake arguments after a ``--`` at the end of the command.
 
       For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi support, the command would look like follows:
 

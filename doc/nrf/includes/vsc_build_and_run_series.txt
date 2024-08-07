@@ -25,6 +25,7 @@
       1. Connect the development kit to your PC using a USB cable.
       #. Power on the development kit.
       #. |exceptions_step|
+      #. Start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window.
       #. Program the application to the kit using the following command:
 
          .. code-block:: console

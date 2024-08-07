@@ -9,7 +9,7 @@ nRF54H20 debugging
 
 The main recommended tool for debugging in the |NCS| for the limited sampling of the nRF54H20 DK is the `GNU Project Debugger`_ (GDB tool).
 
-When working from the command line, you can use west with the GDB tool.
+When working from the command line, you can use west with the GDB tool (in a terminal with the :ref:`toolchain environment <using_toolchain_environment>` enabled).
 For details, read the :ref:`Debugging with west debug <zephyr:west-debugging>` section on the :ref:`zephyr:west-build-flash-debug` page in the Zephyr documentation.
 
 A useful tool for debugging the communication over Bluetooth® is the `nRF Sniffer for Bluetooth LE`_.

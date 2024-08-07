@@ -81,8 +81,7 @@ To configure the application to support the DFU over both Matter and SMP, use th
 
 See :ref:`cmake_options` for instructions on how to add these options to your build.
 
-
-When building on the command line, run the following command:
+When building on the command line, start the :ref:`toolchain environment <using_toolchain_environment>` and run the following command:
 
 .. parsed-literal::
    :class: highlight
