@@ -88,8 +88,7 @@ config MPSL_CX_BT_1WIRE
 config MPSL_CX_1WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	bool "1-Wire Radio Coexistence [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "1-Wire Radio Coexistence"
 	help
 	  Radio Coexistence interface implementation using a simple 1-wire PTA
 	  implementation for co-located radios.
