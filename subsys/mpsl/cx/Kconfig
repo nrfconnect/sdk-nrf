@@ -69,28 +69,29 @@ config MPSL_CX_NRF700X
 config MPSL_CX_3WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	bool "3-Wire Radio Coexistence [EXPERIMENTAL]"
+	bool "Three-wire Radio Coexistence [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  Radio Coexistence interface implementation according to Thread Radio
-	  Coexistence Practical recommendations for using a 3-wire PTA
+	  Coexistence Practical recommendations for using a three-wire PTA
 	  implementation for co-located 2.4 GHz radios.
 
 config MPSL_CX_BT_1WIRE
-	depends on SOC_COMPATIBLE_NRF52X
-	select NRFX_GPIOTE
-	select GPIO
-	bool "Bluetooth Radio 1-Wire Coexistence"
+	select DEPRECATED
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	bool "Bluetooth Radio One-wire Coexistence [DEPRECATED]"
 	help
-	  Radio Coexistence interface implementation using a simple 1-wire PTA
-	  implementation for co-located radios.
+	  Radio Coexistence interface implementation using a simple one-wire PTA
+	  implementation for co-located radios. This option has been replaced
+	  with MPSL_CX_1WIRE and will be removed in a future release.
 
 config MPSL_CX_1WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	bool "1-Wire Radio Coexistence"
+	bool "One-wire Radio Coexistence"
 	help
-	  Radio Coexistence interface implementation using a simple 1-wire PTA
+	  Radio Coexistence interface implementation using a simple one-wire PTA
 	  implementation for co-located radios.
 
 config MPSL_CX_SOFTWARE

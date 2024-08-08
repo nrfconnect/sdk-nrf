@@ -12,7 +12,7 @@ if (CONFIG_MPSL_CX_3WIRE OR
     zephyr_library()
 
     zephyr_library_sources_ifdef(CONFIG_MPSL_CX_3WIRE 3wire/mpsl_cx_3wire.c)
-    zephyr_library_sources_ifdef(CONFIG_MPSL_CX_BT_1WIRE bluetooth/mpsl_cx_1w_bluetooth.c)
+    zephyr_library_sources_ifdef(CONFIG_MPSL_CX_BT_1WIRE 1wire/mpsl_cx_1wire.c)
     zephyr_library_sources_ifdef(CONFIG_MPSL_CX_1WIRE 1wire/mpsl_cx_1wire.c)
     zephyr_library_sources_ifdef(CONFIG_MPSL_CX_NRF700X nrf700x/mpsl_cx_nrf700x.c)
     zephyr_library_sources_ifdef(CONFIG_MPSL_CX_SOFTWARE_RPC software/mpsl_cx_software_rpc.c)
