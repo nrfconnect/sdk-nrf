@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Dummy comment in BLE*/
+
 #include <zephyr/kernel.h>
 #include <zephyr/sys/byteorder.h>
 #include <string.h>
