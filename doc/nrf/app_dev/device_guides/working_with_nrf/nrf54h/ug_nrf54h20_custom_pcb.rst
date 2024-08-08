@@ -14,35 +14,23 @@ Prepare your PCB
 
 First, you need to create your PCB for the nRF54H20 SoC.
 
-We highly recommend using the PCB layouts and component values provided by Nordic Semiconductor, especially for clock and power sources.
-However, if you plan to select your own power sources, consider the following limitations:
+We highly recommend using the PCB layouts and component values provided by Nordic Semiconductor, especially for clock and power sources, considering the following limitations:
 
-* The DC/DC inductor must be present on the PCB.
-  If the DC/DC power converter is to be used, the BICR value ``POWER.CONFIG.INDUCTOR`` must also be programmed to ``Present`` (``0``).
-
-  .. note::
-     Currently, there is a bug (LIL-9968) causing the nRF54H20 limited sampling SoC to not wake up from the System OFF if DC/DC is enabled.
-     Temporarily, the workaround is to not use the DC/DC power converter.
-
+* The DC/DC inductor must be present on the PCB, and the ``inductor-present;`` node must be configured either in the :file:`zephyr/boards/your_board/nrf54h20dk_bicr.dtsi` file or in the section where ``bicr: bicr@fff87b0`` is present in the devicetree.
 * For the lowest sleep power consumption, use a 32 KHz crystal.
-* The **P9** port (3 V) cannot be used with internal nor external pull-down resistors.
-* For optimal performance, the output impedance of the **P6** and **P7** ports configured in ``IOPORT.DRIVECTRLX.PY`` should match the PCB and external device pin impedance.
-  However, an existing limitation requires this configuration to be 50 ohms.
+* The **P9** port cannot be used with internal or external pull-down resistors.
+* For optimal performance, the output impedance of the **P6** and **P7** ports should match the PCB and external device pin impedance.
+* Use one of the following power supply options:
 
+  * VDDH higher than 2.2V
+  * VDDH shorted to VDD at 1.8V
 
 Prepare the configuration files for your custom board in the |NCS|
 ******************************************************************
 
-The nRF54H20 DK uses multiple board files for its configuration:
-
-* `ARM cores configuration files`_
-* `Risc-V cores configuration files`_
-
+The nRF54H20 DK uses multiple board files for its configuration.
 You can use these files as a starting point for configuring your own custom board.
-The easiest way to do so, when creating a :ref:`Zephyr repository application <zephyr:zephyr-repo-app>`, is to create a copy of these folders under :file:`sdk-nrf-next/boards/arm/your_custom_board_name` (for the ARM configuration files) and :file:`sdk-nrf-next/boards/riscv/your_custom_board_name` (for the Risc-V configuration files), respectively.
-
-.. caution::
-   Do not modify the configuration files related to the Secure Domain (:file:`*_cpusec` in the ARM folder) and the System Controller (:file:`*_cpusys` in the Risc-V folder).
+When creating a :ref:`Zephyr repository application <zephyr:zephyr-repo-app>`, copy the files from :file:`sdk-zephyr/boards/nordic/nrf54h20dk` to the :file:`sdk-zephyr/boards/<your_vendor_prefix>/<your_custom_board_name>` file.
 
 You must edit the :file:`.dts` and :file:`.overlay` files for your project to match your board configuration, similarly to any new board added to the |NCS| or Zephyr.
 
@@ -54,9 +42,11 @@ See the following documentation pages for more information:
 * The :ref:`dm_adding_code` documentation for details on the best user workflows to add your own code to the |NCS|.
 
 .. note::
-   The configuration of board files is based on the `nRF54H20 common SoC files`_.
+   The configuration of board files is based on the nRF54H20 common SoC files located in :file:`sdk-zephyr/dts/common/nordic/`.
    Each new |NCS| revision might change these files, breaking the compatibility with your custom board files created for previous revisions.
    Ensure the compatibility of your custom board files when migrating to a new |NCS| release.
+
+   See :ref:`zephyr:board_porting_guide` for more information.
 
 Configure, generate, and flash BICR
 ***********************************
@@ -77,8 +67,9 @@ BICR allows for the configuration of various components on your custom board, li
 * Tamper switches
 * Active shield channels
 
-You can find the details of each register contained in BICR in the relevant `BICR register's PDF file`_.
-When not set, the register's default value is ``0xFFFFFFFF``.
+You can find the details in the DTS specification for the BICR in :file:`sdk-zephyr/dts/bindings/misc/nordic,nrf-bicr.yaml`
+
+When not set, the registers' default value is ``0xFFFFFFFF``.
 
 The ``LFOSC.LFXOCAL`` register is used by the device to store the calibration of the LFXO.
 
@@ -90,14 +81,17 @@ Each subsequent start will use this initial calibration as the starting point.
 BICR configuration
 ==================
 
-The nRF54H20 PDK BICR configuration can be found in the board configuration directory as :file:`boards/arm/nrf54h20dk_nrf54h20/nrf54h20soc1_pdk_bicr.dtsi`.
+The nRF54H20 DK BICR configuration can be found in the board configuration directory as :file:`sdk-zephyr/boards/nordic/nrf54h20dk/nrf54h20dk_bicr.dtsi`.
 This file is used by the |NCS| build system to generate a corresponding HEX file.
-You can start from this file when editing the values of the devicetree properties inside your custom board folder (:file:`boards/arm/your_custom_board`), according to your board configuration.
+You can start from this file when editing the values of the devicetree properties inside your custom board folder (:file:`boards/nordic/your_custom_board`), according to your board configuration.
+
+.. caution::
+   A mismatch between the board and the configuration values in BICR can damage the device or set it in an unrecoverable state.
 
 Generating the BICR binary
 ==========================
 
-To generate the BICR binary, you must first set the Kconfig option :kconfig:option:`CONFIG_INCLUDE_BICR` to ``y``.
+To generate the BICR binary, you must first set the Kconfig option :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_BICR` to ``y``.
 When running ``west build``, the build system then creates the relevant HEX file (:file:`bicr.hex`) at build time.
 Based on the peripheral definition extracted from the nRF54H20 SVD file, the modified registers from the configuration are mapped into their relevant position in memory.
 
@@ -112,38 +106,57 @@ Flashing the BICR binary
 
 After the |NCS| build system generates the BICR binary, you must flash this binary manually.
 The content of BICR should be loaded to the SoC only once and should not be erased nor modified unless the PCB layout changes.
-To manually flash the generated :file:`bicr.hex` file to the SoC, use nRF Util as follows::
+To manually program the generated :file:`bicr.hex` file to the SoC, use nRF Util as follows::
 
-    nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex` --core Secure --serial-number <serial_number>
+    nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex --core Application --serial-number <serial_number>
 
-You need to follow this flashing process only one time, as the PCB configuration will not change.
+You only need to follow this programming process once, assuming the PCB configuration applied through the BICR is correct the first time.
+However, it is also possible to reprogram the BICR while in the LCS ``RoT``.
+This can be useful, for example, when adjusting the configuration as the PCB design gets refined or modified, requiring the process to be repeated.
+
+Validate the BICR binary
+------------------------
+
+After programming the BICR binary onto the device, validate whether the BICR works with your device as follows:
+
+1. Reset the device::
+
+      nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
+
+2. When in LCS ``EMPTY``, use ``nrfutil`` to validate the BICR status by reading the memory::
+
+      nrfutil device x-read --address 0x2F88FF1C --serial-number 1051164514 --core Secure
+
+   nrfutil returns the BICR loading status using one of the following values:
+
+   * ``0x289CFB73``: BICR applied without error.
+     This indicates that the power configuration of the BICR is valid and you can proceed to the next step.
+   * ``0xD78213DF``: BICR application was skipped.
+     This indicates that no BICR was programmed to the device.
+     Revisit the previous step to ensure the programming command was executed, and that the BICR was correctly generated.
+   * ``0xCE68C97C``: BICR application failed.
+     This indicates that there is an issue with the BICR, but in most cases this can be recovered by programming the correct BICR for your board.
+   * ``Error``: This indicates that the device is likely suffering from severe power issues after applying the BICR.
+     This state is likely unrecoverable.
 
 Programming the SDFW and SCFW
 =============================
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.3.3.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.6.2.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
 To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 firmware bundle`_.
+1. Download the `nRF54H20 firmware bundle v0.6.2`_.
 #. Move the :file:`ZIP` bundle to a folder of your choice.
 #. |open_terminal_window_with_environment|
 #. Run nRF Util to program the binaries using the following command::
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
-Updating the FICR
-=================
+You can run the following command to confirm that the Secure Domain Firmware has loaded correctly:
 
-After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
-To update the FICR, you must run a J-Link script:
+   nrfutil device x-adac-lcs-change
 
-1. Get the J-Link script that updates the FICR::
-
-      curl -LO https://files.nordicsemi.com/artifactory/swtools/external/scripts/nrf54h20es_trim_adjust.jlink
-
-#. Run the script::
-
-      JLinkExe -CommanderScript nrf54h20es_trim_adjust.jlink
+If issues occur during bundle programming, the system will return an ``ADAC_FAILURE`` error.
 
 Verify the LCS and transition to RoT
 ************************************
@@ -231,3 +244,26 @@ When doing so, consider the following:
 
 * When creating a new application specific to your new board, DTS board files can contain all necessary configurations, and no overlay file is needed.
   However, the same limitations regarding the consistency and UICR configuration apply, but should be kept on the board files level.
+
+* You must manually program the BICR if it has been modified.
+
+Update the SDFW and SCFW
+************************
+
+When a new version of the nRF54H20 firmware bundle is released, you can update it as follows:
+
+1. Download the new version of the nRF54H20 firmware bundle (:file:`nrf54h20_soc_binaries_v<x.y.z>.zip`).
+#. Move the :file:`ZIP` bundle to a folder of your choice and unzip it.
+#. |open_terminal_window_with_environment|
+#. Verify the current SDFW version by running the following command::
+
+      nrfutil device x-sdfw-version-get --firmware-slot uslot --serial-number <serial_number>
+
+   If the SDFW version is 0.5.0 or higher, continue to the next step.
+#. Run nRF Util to update the binaries using the following SUIT command::
+
+      nrfutil device x-suit-dfu --serial-number <snr> --firmware nordic_top.suit
+
+#. Run again the following command to verify the new SDFW version::
+
+      nrfutil device x-sdfw-version-get --firmware-slot uslot --serial-number <serial_number>
