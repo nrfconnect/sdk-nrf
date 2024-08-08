@@ -39,7 +39,7 @@ The nRF54H20 DK uses multiple board files for its configuration:
 * `Risc-V cores configuration files`_
 
 You can use these files as a starting point for configuring your own custom board.
-The easiest way to do so, when creating a :ref:`Zephyr repository application <zephyr:zephyr-repo-app>`, is to create a copy of these folders under :file:`sdk-nrf-next/boards/arm/your_custom_board_name` (for the ARM configuration files) and :file:`sdk-nrf-next/boards/riscv/your_custom_board_name` (for the Risc-V configuration files), respectively.
+The easiest way to do so, when creating a :ref:`Zephyr repository application <zephyr:zephyr-repo-app>`, is to create a copy of these folders under :file:`sdk-zephyr/boards/nordic/your_custom_board_name`.
 
 .. caution::
    Do not modify the configuration files related to the Secure Domain (:file:`*_cpusec` in the ARM folder) and the System Controller (:file:`*_cpusys` in the Risc-V folder).
@@ -77,6 +77,8 @@ BICR allows for the configuration of various components on your custom board, li
 * Tamper switches
 * Active shield channels
 
+##TODO
+
 You can find the details of each register contained in BICR in the relevant `BICR register's PDF file`_.
 When not set, the register's default value is ``0xFFFFFFFF``.
 
@@ -90,14 +92,18 @@ Each subsequent start will use this initial calibration as the starting point.
 BICR configuration
 ==================
 
-The nRF54H20 PDK BICR configuration can be found in the board configuration directory as :file:`boards/arm/nrf54h20dk_nrf54h20/nrf54h20soc1_pdk_bicr.dtsi`.
+##TODO
+
+The nRF54H20 dk BICR configuration can be found in the board configuration directory as :file:`sdk-zephyr/boards/nordic/nrf54h20dk/nrf54h20dk_bicr.dtsi`.
 This file is used by the |NCS| build system to generate a corresponding HEX file.
-You can start from this file when editing the values of the devicetree properties inside your custom board folder (:file:`boards/arm/your_custom_board`), according to your board configuration.
+You can start from this file when editing the values of the devicetree properties inside your custom board folder (:file:`boards/nordic/your_custom_board`), according to your board configuration.
 
 Generating the BICR binary
 ==========================
 
-To generate the BICR binary, you must first set the Kconfig option :kconfig:option:`CONFIG_INCLUDE_BICR` to ``y``.
+##TODO
+
+To generate the BICR binary, you must first set the Kconfig option :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_BICR` to ``y``.
 When running ``west build``, the build system then creates the relevant HEX file (:file:`bicr.hex`) at build time.
 Based on the peripheral definition extracted from the nRF54H20 SVD file, the modified registers from the configuration are mapped into their relevant position in memory.
 
@@ -110,21 +116,25 @@ The presence of a ``bicr`` node in the application devicetree will automatically
 Flashing the BICR binary
 ========================
 
+##TODO
+
 After the |NCS| build system generates the BICR binary, you must flash this binary manually.
 The content of BICR should be loaded to the SoC only once and should not be erased nor modified unless the PCB layout changes.
 To manually flash the generated :file:`bicr.hex` file to the SoC, use nRF Util as follows::
 
-    nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex` --core Secure --serial-number <serial_number>
+    nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex` --core Application --serial-number <serial_number>
 
 You need to follow this flashing process only one time, as the PCB configuration will not change.
 
 Programming the SDFW and SCFW
 =============================
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.3.3.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+##TODO
+
+After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.5.0.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
 To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 firmware bundle`_.
+1. Download the `nRF54H20 firmware bundle v0.5.0`_.
 #. Move the :file:`ZIP` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
