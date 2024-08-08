@@ -140,6 +140,9 @@ static int string_param_to_int(struct at_parser *parser, size_t idx, int *output
 	char str_buf[16];
 	size_t len = sizeof(str_buf);
 
+	__ASSERT_NO_MSG(parser != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
 	err = at_parser_string_get(parser, idx, str_buf, &len);
 	if (err) {
 		return err;
@@ -158,6 +161,8 @@ static int string_param_to_int(struct at_parser *parser, size_t idx, int *output
  */
 static void get_ptw_multiplier(enum lte_lc_lte_mode lte_mode, float *ptw_multiplier)
 {
+	__ASSERT_NO_MSG(ptw_multiplier != NULL);
+
 	if (lte_mode == LTE_LC_LTE_MODE_NBIOT) {
 		*ptw_multiplier = 2.56;
 	} else {
@@ -181,7 +186,9 @@ static int get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edr
 		2, 2, 2, 4, 2, 8, 2, 2, 2, 16, 32, 64, 128, 256, 512, 1024
 	};
 
-	if ((edrx_value == NULL) || (idx > ARRAY_SIZE(edrx_lookup_ltem) - 1)) {
+	__ASSERT_NO_MSG(edrx_value != NULL);
+
+	if (idx > ARRAY_SIZE(edrx_lookup_ltem) - 1) {
 		return -EINVAL;
 	}
 
@@ -206,6 +213,8 @@ static uint32_t get_char_frequency(const char *str, char c)
 {
 	uint32_t count = 0;
 
+	__ASSERT_NO_MSG(str != NULL);
+
 	do {
 		if (*str == c) {
 			count++;
@@ -219,6 +228,8 @@ int string_to_int(const char *str_buf, int base, int *output)
 {
 	int temp;
 	char *end_ptr;
+
+	__ASSERT_NO_MSG(str_buf != NULL);
 
 	errno = 0;
 	temp = strtol(str_buf, &end_ptr, base);
@@ -243,9 +254,10 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 	size_t len = sizeof(tmp_buf);
 	float ptw_multiplier;
 
-	if ((at_response == NULL) || (cfg == NULL)) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(cfg != NULL);
+	__ASSERT_NO_MSG(edrx_str != NULL);
+	__ASSERT_NO_MSG(ptw_str != NULL);
 
 	err = at_parser_init(&parser, at_response);
 	assert(err == 0);
@@ -418,6 +430,9 @@ static int encode_psm_timer(
 	/* Timer unit and timer value encoded as an integer which will be converted to a string */
 	uint8_t encoded_value_int = 0;
 
+	__ASSERT_NO_MSG(encoded_timer_str != NULL);
+	__ASSERT_NO_MSG(lookup_table != NULL);
+
 	/* Search a value that is as close as possible to the requested value
 	 * rounding it up to the closest possible value
 	 */
@@ -511,6 +526,10 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	size_t lut_idx;
 	uint32_t timer_unit, timer_value;
 
+	__ASSERT_NO_MSG(active_time_str != NULL);
+	__ASSERT_NO_MSG(tau_ext_str != NULL);
+	__ASSERT_NO_MSG(psm_cfg != NULL);
+
 	if (strlen(active_time_str) != 8 || strlen(tau_ext_str) != 8 ||
 	    (tau_legacy_str != NULL && strlen(tau_legacy_str) != 8)) {
 		return -EINVAL;
@@ -586,6 +605,9 @@ int parse_rrc_mode(const char *at_response,
 	int err, temp_mode;
 	struct at_parser parser;
 
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(mode != NULL);
+
 	err = at_parser_init(&parser, at_response);
 	assert(err == 0);
 
@@ -622,6 +644,7 @@ int parse_cereg(const char *at_response,
 	size_t len = sizeof(str_buf);
 	size_t count = 0;
 
+	__ASSERT_NO_MSG(at_response != NULL);
 	__ASSERT_NO_MSG(reg_status != NULL);
 	__ASSERT_NO_MSG(cell != NULL);
 	__ASSERT_NO_MSG(lte_mode != NULL);
@@ -769,9 +792,8 @@ int parse_xt3412(const char *at_response, uint64_t *time)
 	int err;
 	struct at_parser parser;
 
-	if (time == NULL || at_response == NULL) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(time != NULL);
 
 	err = at_parser_init(&parser, at_response);
 	assert(err == 0);
@@ -1333,9 +1355,8 @@ int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_
 	uint16_t type;
 	size_t count = 0;
 
-	if (modem_sleep == NULL || at_response == NULL) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(modem_sleep != NULL);
 
 	err = at_parser_init(&parser, at_response);
 	assert(err == 0);
@@ -1382,9 +1403,8 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 		[LTE_LC_MODEM_EVT_CE_LEVEL_3] = AT_MDMEV_CE_LEVEL_3,
 	};
 
-	if (at_response == NULL || modem_evt == NULL) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(modem_evt != NULL);
 
 	const char *start_ptr = at_response + sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1;
 
@@ -1406,6 +1426,9 @@ char *periodic_search_pattern_get(char *const buf, size_t buf_size,
 				  const struct lte_lc_periodic_search_pattern *const pattern)
 {
 	int err;
+
+	__ASSERT_NO_MSG(buf != NULL);
+	__ASSERT_NO_MSG(pattern != NULL);
 
 	if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) {
 		/* Range format:
@@ -1484,6 +1507,9 @@ int parse_periodic_search_pattern(const char *const pattern_str,
 	int err;
 	int values[5];
 	size_t param_count;
+
+	__ASSERT_NO_MSG(pattern_str != NULL);
+	__ASSERT_NO_MSG(pattern != NULL);
 
 	err = sscanf(pattern_str, "%d,%u,%u,%u,%u,%u",
 		(int *)&pattern->type, &values[0], &values[1], &values[2], &values[3], &values[4]);

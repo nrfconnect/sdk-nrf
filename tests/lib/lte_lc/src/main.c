@@ -222,12 +222,6 @@ void test_parse_xt3412(void)
 
 	err = parse_xt3412(at_response_negative, &time);
 	TEST_ASSERT_EQUAL(err, -EINVAL);
-
-	err = parse_xt3412(NULL, &time);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
-
-	err = parse_xt3412(at_response_negative, NULL);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
 }
 
 void test_parse_xmodemsleep(void)
@@ -277,11 +271,6 @@ void test_parse_xmodemsleep(void)
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM, modem_sleep.type);
 	TEST_ASSERT_EQUAL(-1, modem_sleep.time);
 
-	err = parse_xmodemsleep(NULL, &modem_sleep);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
-
-	err = parse_xmodemsleep(at_response_0, NULL);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
 }
 
 void test_parse_rrc_mode(void)
@@ -641,9 +630,6 @@ void test_parse_mdmev(void)
 
 	err = parse_mdmev(status_3, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
-
-	err = parse_mdmev(search, NULL);
-	TEST_ASSERT_EQUAL(-EINVAL, err);
 
 	err = parse_mdmev(light_search_long, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);

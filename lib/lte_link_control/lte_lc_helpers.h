@@ -296,7 +296,6 @@ int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *param
  * @return Zero on success, negative errno code on failure.
  *
  * @retval 0 Parsing succeeded.
- * @retval -EINVAL If invalid parameters are provided.
  * @retval -EIO If the AT response is not a valid MDMEV response.
  * @retval -ENODATA If no modem event type was found in the AT response.
  */
