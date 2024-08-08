@@ -182,7 +182,7 @@ static void public_broadcast_features_set(uint8_t *features, uint8_t big_index)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+	if (create_param[big_index].encryption) {
 		*features |= BT_PBP_ANNOUNCEMENT_FEATURE_ENCRYPTION;
 	}
 
@@ -216,7 +216,6 @@ int broadcast_source_ext_adv_populate(uint8_t big_index,
 	int ret;
 	uint32_t broadcast_id = 0;
 	uint32_t ext_adv_buf_cnt = 0;
-	size_t brdcst_name_size;
 
 	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
 		LOG_ERR("Trying to populate ext adv for BIG %d out of %d", big_index,
@@ -231,18 +230,10 @@ int broadcast_source_ext_adv_populate(uint8_t big_index,
 
 	sys_put_le16(BT_UUID_BROADCAST_AUDIO_VAL, ext_adv_data->brdcst_id_buf);
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT)) {
-		brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) - 1;
-		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
-		       brdcst_name_size);
-	} else {
-		brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
-		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME,
-		       brdcst_name_size);
-	}
+	size_t brdcast_name_size = strlen(ext_adv_data->brdcst_name_buf);
 
 	ret = bt_mgmt_adv_buffer_put(ext_adv_buf, &ext_adv_buf_cnt, ext_adv_buf_vacant,
-				     brdcst_name_size, BT_DATA_BROADCAST_NAME,
+				     brdcast_name_size, BT_DATA_BROADCAST_NAME,
 				     (void *)ext_adv_data->brdcst_name_buf);
 	if (ret) {
 		return ret;
@@ -732,7 +723,7 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 		bt_le_audio_tx_init();
 	}
 
-	LOG_INF("Enabling broadcast_source %s", CONFIG_BT_AUDIO_BROADCAST_NAME);
+	LOG_INF("Enabling broadcast_source %d", big_index);
 
 	ret = create_param_produce(big_index, broadcast_param, &create_param[big_index]);
 	if (ret) {

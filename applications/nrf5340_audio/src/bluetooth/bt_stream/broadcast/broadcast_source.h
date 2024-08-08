@@ -11,22 +11,6 @@
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include "bt_le_audio_tx.h"
 
-struct subgroup_config {
-	enum bt_audio_location *location;
-	uint8_t num_bises;
-	enum bt_audio_context context;
-	struct bt_bap_lc3_preset group_lc3_preset;
-	char *preset_name;
-};
-
-struct broadcast_source_big {
-	struct subgroup_config *subgroups;
-	uint8_t num_subgroups;
-	uint8_t packing;
-	bool encryption;
-	uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE];
-};
-
 #if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
 	BT_BAP_LC3_PRESET_CONFIGURABLE(                                                            \
@@ -102,6 +86,24 @@ struct broadcast_source_big {
 
 #define BROADCAST_SOURCE_ADV_NAME_MAX (32)
 #define BROADCAST_SOURCE_ADV_ID_START (BT_UUID_SIZE_16)
+
+struct subgroup_config {
+	enum bt_audio_location *location;
+	uint8_t num_bises;
+	enum bt_audio_context context;
+	struct bt_bap_lc3_preset group_lc3_preset;
+	char *preset_name;
+};
+
+struct broadcast_source_big {
+	struct subgroup_config *subgroups;
+	uint8_t num_subgroups;
+	uint8_t packing;
+	bool encryption;
+	uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE + 1];
+	char broadcast_name[BROADCAST_SOURCE_ADV_NAME_MAX + 1];
+	char adv_name[CONFIG_BT_DEVICE_NAME_MAX + 1];
+};
 
 /**
  * @brief  Advertising data for broadcast source.
