@@ -225,3 +225,6 @@
     You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
 
 .. |multi_image| replace:: These samples are built for the application core and, by default, include the network core application as child image in a multi-image build (see :ref:`ug_nrf5340_multi_image`).
+
+.. |migration_contact_devzone| replace:: While we strive to document all breaking changes, the migration guides might not include the detailed migration steps for your use case.
+   If you need assistance, contact Nordic Semiconductor's technical support on `DevZone`_.
