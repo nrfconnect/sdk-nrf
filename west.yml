@@ -190,7 +190,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: b63820437291962aa0d5d0f90578e866ac04a11b
+      revision: b9429df48a56c04af4ebfc9be020ce6457dbc5bd
       groups:
         - nrf-802154
     - name: soc-hwmv1
