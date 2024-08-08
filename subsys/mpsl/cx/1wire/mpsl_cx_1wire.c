@@ -39,7 +39,8 @@
 #define ALLOW_RX false
 #endif
 
-#if !(DT_NODE_HAS_COMPAT(CX_NODE, generic_radio_coex_one_wire))
+#if !(DT_NODE_HAS_COMPAT(CX_NODE, generic_radio_coex_one_wire) || \
+		  DT_NODE_HAS_COMPAT(CX_NODE, sdc_radio_coex_one_wire))
 #error Selected coex node is not compatible with generic-radio-coex-one-wire.
 #endif
 

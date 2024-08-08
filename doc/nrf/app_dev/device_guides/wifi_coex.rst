@@ -21,34 +21,23 @@ Integration considerations
 **************************
 
 The |NCS| provides the coexistence feature by providing SR protocol drivers that can call the coexistence API and its implementations.
-The coexistence feature is provided in following ways:
+This feature is based on :ref:`nrfxlib:mpsl_cx` provided by the :ref:`nrfxlib:mpsl` (MPSL) library.
 
-   * :ref:`ug_radio_coex_mpsl_cx_based`
-   * :ref:`ug_radio_coex_bluetooth_only_based`
-
-
-.. _ug_radio_coex_mpsl_cx_based:
-
-Coexistence based on MPSL CX API
-================================
-
-This coexistence feature is based on :ref:`nrfxlib:mpsl_cx` provided by the :ref:`nrfxlib:mpsl` (MPSL) library.
-It is recommended for new designs.
-
-The following SR protocols are compatible with the coexistence based on MPSL CX API:
+The following SR protocols are compatible with the coexistence feature:
 
    * :ref:`Bluetooth LE <ug_ble_controller>`, if the implementation used is the :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>`.
    * Protocols based on :ref:`nrfxlib:nrf_802154`, such as :ref:`ug_thread` and :ref:`ug_zigbee`.
 
-This way of providing coexistence applies to the following implementations:
+The following drivers are available:
 
    * :ref:`ug_radio_mpsl_cx_nrf700x`
    * :ref:`ug_radio_mpsl_cx_generic_3wire`
+   * :ref:`ug_radio_mpsl_cx_generic_1wire`
    * :ref:`ug_radio_mpsl_cx_custom`
 
 The |NCS| provides a wrapper that configures Wi-Fi Coexistence based on devicetree source (DTS) and Kconfig information.
 
-The following are the common requirements to use coexistence based on the MPSL CX API:
+The following are the common requirements to use the coexistence feature:
 
 1. The Kconfig option :kconfig:option:`CONFIG_MPSL` must be enabled.
    Some protocol drivers, like :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>`, enable this option by default.
@@ -70,31 +59,20 @@ The following are the common requirements to use coexistence based on the MPSL C
    When using the nRF5340, apply steps 1 and 2 only to the network core.
    See :ref:`ug_multi_image`.
 
-.. _ug_radio_coex_bluetooth_only_based:
-
-MPSL provided Bluetooth-only coexistence
-========================================
-
-The MPSL-provided Bluetooth-only coexistence can be used only with the :ref:`ug_radio_coex_bluetooth_only_1wire` implementation.
-
-
-It is based on :ref:`nrfxlib:bluetooth_coex` provided by the :ref:`nrfxlib:mpsl` (MPSL) library.
-
+.. note::
+   Do not enable Wi-Fi coexistence on the nRF5340 SoC in conjunction with Coded Phy and FEM, as this can lead to undefined behavior.
 
 Supported implementations
 *************************
 
-The following are the implementations supported by the MPSL-provided Bluetooth-only coexistence.
-
-.. note::
-   Do not enable Wi-Fi coexistence on the nRF5340 SoC in conjunction with Coded Phy and FEM, as this can lead to undefined behavior.
+The following are the SR protocol driver implementations supported by the |NCS|.
 
 .. _ug_radio_mpsl_cx_nrf700x:
 
 nRF70 Series Wi-Fi coexistence
 ==============================
 
-Refer to :ref:`ug_radio_coex_mpsl_cx_based` for the general requirements of this implementation.
+The nRF70 Series Wi-Fi coexistence implementation is a three-wire coexistence interface compatible with nRF70 Series devices.
 
 Hardware description
 --------------------
@@ -169,20 +147,20 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
 
 .. _ug_radio_mpsl_cx_generic_3wire:
 
-Generic three wire coexistence
+Generic three-wire coexistence
 ==============================
 
-Refer to :ref:`ug_radio_coex_mpsl_cx_based` for the general requirements of this implementation.
+The generic three-wire coexistence is a three-wire coexistence interface which follows the Thread Radio Coexistence Practical recommendations for using a three-wire PTA implementation for co-located 2.4 GHz radios.
 
 Hardware description
 --------------------
 
-The generic three wire interface consists of the signals listed in the table below.
+The generic three-wire interface consists of the signals listed in the table below.
 The *Pin* is a generic pin name of a PTA, identified rather by its function.
 The *Direction* is from the point of view of the SoC running the SR protocol.
 The *DT property* is the name of the devicetree node property that configures the connection between the SoC running the SR protocol and the Wi-Fi device.
 
-.. table:: Generic three wire coexistence protocol pins
+.. table:: Generic three-wire coexistence protocol pins
 
    ============  =========  =================================  ==============
    Pin           Direction  Description                        DT property
@@ -244,22 +222,20 @@ To enable the generic three-wire coexistence, do the following:
 
 .. _ug_radio_mpsl_cx_generic_1wire:
 
-Generic one wire coexistence
+Generic one-wire coexistence
 ============================
 
-Refer to :ref:`ug_radio_coex_mpsl_cx_based` for the general requirements of this implementation.
-
-An example use-case of the generic one wire coexistence interface is to allow a protocol implementation to coexist alongside an LTE device on a separate chip, such as the nRF91 Series SiP.
+An example use-case of the generic one-wire coexistence interface is to allow a protocol implementation to coexist alongside an LTE device on a separate chip, such as the nRF91 Series SiP.
 
 Hardware description
 --------------------
 
-The generic one wire interface consists of the signals listed in the table below.
+The generic one-wire interface consists of the signals listed in the table below.
 The *Pin* is a generic pin name of a PTA, identified rather by its function.
 The *Direction* is from the point of view of the SoC running the coexistence protocol.
 The *DT property* is the name of the devicetree node property that configures the connection between the SoC running the coexistence protocol and the other device.
 
-.. table:: Generic one wire coexistence protocol pins
+.. table:: Generic one-wire coexistence protocol pins
 
    ============  =========  =================================  ==============
    Pin           Direction  Description                        DT property
@@ -269,12 +245,16 @@ The *DT property* is the name of the devicetree node property that configures th
 
 In cases where the GPIO is asserted after the radio activity has begun, the ``GRANT`` signal triggers a software interrupt, which in turn disables the radio.
 No guarantee is made on the latency of this interrupt, but the ISR priority is configurable.
-A priority as close to 0 as possible is recommended to avoid delaying the coex interface.
 
-Enabling generic one wire coexistence
+.. note::
+   The :ref:`nrfxlib:mpsl` (MPSL) library uses interrupts with priority 0.
+   This may delay the GPIOTE interrupt in some rare cases.
+   For that reason, it's recommended to deny SR radio activity at least 400 microseconds before activity on the other radio, and to use a GPIOTE interrupt priority as close to 0 as possible.
+
+Enabling generic one-wire coexistence
 -------------------------------------
 
-To enable the generic one wire coexistence, do the following:
+To enable the generic one-wire coexistence, do the following:
 
 
 1. Add the following node to the devicetree source file:
@@ -318,11 +298,9 @@ To enable the generic one wire coexistence, do the following:
 .. _ug_radio_mpsl_cx_custom:
 
 Custom coexistence implementations
-=======================================
+==================================
 
-Refer to :ref:`ug_radio_coex_mpsl_cx_based` for the general requirements that must be fulfilled by the implementation.
-
-To add a custom coexistence implementation based on the MPSL CX API, complete following steps:
+To add a custom coexistence implementation, complete following steps:
 
 1. Determine the hardware interface of your PTA.
    If your PTA uses an interface different from the ones already provided by the |NCS|, you need to provide a devicetree binding file.
@@ -338,29 +316,3 @@ To add a custom coexistence implementation based on the MPSL CX API, complete fo
    * A call to the function :c:func:`mpsl_cx_interface_set()` during the system initialization.
 
 #. Add the necessary CMakeLists.txt entries to get your code compiled when the new Kconfig choice option you added is selected.
-
-.. _ug_radio_coex_bluetooth_only_1wire:
-
-Bluetooth-only 1-wire coexistence
-=================================
-
-Refer to :ref:`ug_radio_coex_bluetooth_only_based` for the general requirements of this implementation.
-
-The Bluetooth-only 1-wire coexistence feature allows the :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>` to coexist alongside an LTE device on a separate chip.
-It is specifically designed for the coex interface of the nRF91 Series SiP.
-The implementation is based on :ref:`nrfxlib:mpsl_bluetooth_coex_1wire`, which is provided into the :ref:`nrfxlib:mpsl` (MPSL) library.
-
-
-Enabling Bluetooth-only 1-wire coexistence
-------------------------------------------
-
-Enable the following Kconfig options:
-
-   * :kconfig:option:`CONFIG_MPSL_CX`
-   * :kconfig:option:`CONFIG_MPSL_CX_BT_1WIRE`
-
-The configuration is set using devicetree (DTS).
-For more information about devicetree overlays, see :ref:`zephyr:use-dt-overlays`.
-See :file:`samples/bluetooth/radio_coex_1wire/boards/nrf52840dk_nrf52840.overlay` for an example of a devicetree overlay.
-The elements are described in the bindings: :file:`dts/bindings/radio_coex/sdc-radio-coex-one-wire.yaml`.
-See :file:`samples/bluetooth/radio_coex_1wire` for a sample application using 1-wire coexistence.
