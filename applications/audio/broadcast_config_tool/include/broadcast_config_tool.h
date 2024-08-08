@@ -11,6 +11,7 @@
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 
 #define PRESET_NAME_MAX 8
+#define LANGUAGE_LEN	3
 
 /* The location and context type will be set by further down */
 /* Low latency settings */
@@ -166,6 +167,29 @@ static struct audio_location locations[] = {
 	{.location = BT_AUDIO_LOCATION_FRONT_RIGHT_WIDE, .name = "FRW"},
 	{.location = BT_AUDIO_LOCATION_LEFT_SURROUND, .name = "LS"},
 	{.location = BT_AUDIO_LOCATION_RIGHT_SURROUND, .name = "RS"},
+};
+
+enum usecase_type {
+	LECTURE,
+	SILENT_TV_1,
+	SILENT_TV_2,
+	MULTI_LANGUAGE,
+	PERSONAL_SHARING,
+	PERSONAL_MULTI_LANGUAGE,
+};
+
+struct usecase_info {
+	enum usecase_type use_case;
+	char name[40];
+};
+
+static struct usecase_info pre_defined_use_cases[] = {
+	{.use_case = LECTURE, .name = "Lecture"},
+	{.use_case = SILENT_TV_1, .name = "Silent TV 1"},
+	{.use_case = SILENT_TV_2, .name = "Silent TV 2"},
+	{.use_case = MULTI_LANGUAGE, .name = "Multi-language"},
+	{.use_case = PERSONAL_SHARING, .name = "Personal sharing"},
+	{.use_case = PERSONAL_MULTI_LANGUAGE, .name = "Personal multi-language"},
 };
 
 static inline char *location_bit_to_str(enum bt_audio_location location)

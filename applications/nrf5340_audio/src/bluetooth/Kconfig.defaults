@@ -11,6 +11,9 @@ config BT_DEVICE_NAME
 	default BT_AUDIO_BROADCAST_NAME if TRANSPORT_BIS
 	default "NRF5340_AUDIO"
 
+config BT_DEVICE_NAME_DYNAMIC
+	default y
+
 config BT_ECC
 	default y if BT
 

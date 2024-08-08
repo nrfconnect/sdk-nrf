@@ -367,6 +367,30 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 	int ret;
 	size_t ext_adv_buf_cnt = 0;
 
+	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT)) {
+		if (sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) >
+		    ARRAY_SIZE(ext_adv_data->brdcst_name_buf)) {
+			LOG_ERR("CONFIG_BT_AUDIO_BROADCAST_NAME_ALT is too long");
+			return -EINVAL;
+		}
+
+		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) - 1;
+
+		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
+		       brdcst_name_size);
+	} else {
+		if (sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) >
+		    ARRAY_SIZE(ext_adv_data->brdcst_name_buf)) {
+			LOG_ERR("CONFIG_BT_AUDIO_BROADCAST_NAME is too long");
+			return -EINVAL;
+		}
+
+		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+
+		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		       brdcst_name_size);
+	}
+
 	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_SOME;
 	ext_adv_buf[ext_adv_buf_cnt].data = ext_adv_data->uuid_buf->data;
 	ext_adv_buf_cnt++;
@@ -567,6 +591,8 @@ int main(void)
 	ret = bt_mgmt_adv_start(0, ext_adv_buf[0], ext_adv_buf_cnt, &per_adv_buf[0],
 				per_adv_buf_cnt, false);
 	ERR_CHK_MSG(ret, "Failed to start first advertiser");
+
+	LOG_INF("Broadcast source: %s started", CONFIG_BT_AUDIO_BROADCAST_NAME);
 
 	return 0;
 }
