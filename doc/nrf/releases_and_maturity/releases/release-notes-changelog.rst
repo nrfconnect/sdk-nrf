@@ -421,6 +421,10 @@ Peripheral samples
   * Added sysbuild configuration for nRF5340.
   * Fixed the dBm value reported for captured frames.
 
+* :ref:`802154_phy_test` sample:
+
+  * Added build configuration for the nRF54H20.
+
 PMIC samples
 ------------
 
