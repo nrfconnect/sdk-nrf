@@ -142,6 +142,16 @@ Use the method corresponding to the way you installed the |NCS|, as described in
                git checkout origin/main
                west update
 
+.. _migrating_project:
+
+Migrating your project to a new SDK version
+===========================================
+
+After you updated the |NCS| repositories to the new version and you need to migrate your |NCS| project to the new version, check the available :ref:`migration_guides` for information about which components received major breaking changes and what you have to do to keep using them.
+
+.. note::
+    |migration_contact_devzone|
+
 .. _vsc_update:
 
 Updating |nRFVSC|
