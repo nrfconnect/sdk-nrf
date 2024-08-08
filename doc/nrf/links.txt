@@ -1631,10 +1631,6 @@
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
 .. _`nrf-regtool`: https://github.com/nrfconnect/nrf-regtool/
-.. _`UICR overlay`: https://github.com/nrfconnect/sdk-nrf-next/tree/haltium-ncs/applications/machine_learning/configuration/nrf54h20dk_nrf54h20_cpuapp%40soc1/uicr
-.. _`nRF54H20 common SoC files`: https://github.com/nrfconnect/sdk-ic-next/tree/haltium/soc
-.. _`ARM cores configuration files`: https://github.com/nrfconnect/sdk-ic-next/tree/haltium/boards/arm/nrf54h20dk_nrf54h20
-.. _`Risc-V cores configuration files`: https://github.com/nrfconnect/sdk-ic-next/tree/haltium/boards/riscv/nrf54h20dk_nrf54h20
 .. _`nRF54H20 Objective Product Specification 0.3`: https://res.developer.nordicsemi.com/res/nrf54H20/OPS/nRF54H20_OPS_v0.3.pdf
 .. _`nRF54H20 Objective Product Specification 0.3.1`: https://res.developer.nordicsemi.com/res/nrf54H20/OPS/nRF54H20_OPS_v0.3.1.pdf
 
@@ -1655,7 +1651,7 @@
 .. _`Git Credential Manager`: https://github.com/git-ecosystem/git-credential-manager
 .. _`Personal Access Token (PAT)`: https://github.com/settings/tokens
 .. _`Homebrew`: https://brew.sh/
-.. _`sdk-find-my-next repository`: https://github.com/nrfconnect/sdk-find-my-next
+
 
 .. _`10.23.3_ec 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
 
