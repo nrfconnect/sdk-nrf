@@ -269,6 +269,7 @@ The *DT property* is the name of the devicetree node property that configures th
 
 In cases where the GPIO is asserted after the radio activity has begun, the ``GRANT`` signal triggers a software interrupt, which in turn disables the radio.
 No guarantee is made on the latency of this interrupt, but the ISR priority is configurable.
+A priority as close to 0 as possible is recommended to avoid delaying the coex interface.
 
 Enabling generic one wire coexistence
 -------------------------------------
@@ -300,7 +301,7 @@ To enable the generic one wire coexistence, do the following:
    .. code-block::
 
       &gpiote {
-        interrupts = < 6 3 >;
+        interrupts = < 6 1 >;
       };
 
 #. Replace the pin number provided for the ``grant-gpios`` property:
