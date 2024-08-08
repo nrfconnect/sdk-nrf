@@ -38,6 +38,13 @@ __attribute__((warn_unused_result)) psa_status_t silex_statuscodes_to_psa(int re
 __attribute__((warn_unused_result)) psa_status_t
 hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo);
 
+enum asn1_tags {
+	ASN1_SEQUENCE = 0x10,
+	ASN1_INTEGER = 0x2,
+	ASN1_CONSTRUCTED = 0x20,
+	ASN1_BIT_STRING = 0x3
+};
+
 /*!
  * \brief Get Cracen curve object based on the PSA attributes.
  *

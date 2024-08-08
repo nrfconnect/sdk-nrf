@@ -8,7 +8,6 @@
 
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
-#include <mbedtls/asn1.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <sicrypto/drbghash.h>
