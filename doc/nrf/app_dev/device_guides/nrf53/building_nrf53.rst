@@ -50,7 +50,7 @@ Complete the following steps to program the sample or application onto Thingy:91
 Using the command line
 ======================
 
-To build nRF5340 samples from the command line, use :ref:`west <zephyr:west>`.
+To build nRF5340 samples from the command line, use :ref:`west <zephyr:west>` in a terminal window with the :ref:`toolchain environment <using_toolchain_environment>` enabled.
 To program the nRF5340 DK from the command line, use either west (which uses nrfjprog that is part of the `nRF Command Line Tools`_) or :ref:`nRF Util <toolchain_management_tools>`.
 
 .. note::
@@ -263,7 +263,7 @@ You must :ref:`build_environment_cli` before you start building an |NCS| project
 
 To build and program the source code from the command line, complete the following steps:
 
-1. Open a command line or terminal window.
+1. Start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window.
 #. Go to the specific directory for the sample or application.
 
    For example, the directory path is :file:`ncs/nrf/applications/machine_learning` when building the source code for the :ref:`nrf_machine_learning_app` application.

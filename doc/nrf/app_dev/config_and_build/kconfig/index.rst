@@ -98,7 +98,8 @@ See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for i
 
    .. group-tab:: Command line
 
-      If you work on the command line, use one of the following options:
+      If you work on the command line, start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window.
+      Then, use one of the following options:
 
       * Edit the :file:`prj.conf` directly and run the standard ``west build`` command.
       * Configure the ``west build`` command to use additional options by adding them after a ``--`` at the end of the ``west config build.cmake-args`` command.

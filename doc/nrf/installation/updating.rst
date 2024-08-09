@@ -22,6 +22,7 @@ Using the correct command line environment
 ******************************************
 
 Whenever you update repositories and tools, make sure that you use the command line environment that is configured to work with west and the rest of the nRF Connect Toolchain and nRF Connect SDK environment.
+This is also valid for commands that must be executed in the |NCS| toolchain environment.
 
 Depending on your preferred development method, you can start the correct CLI toolchain environment the following way:
 
@@ -136,6 +137,16 @@ Use the method corresponding to the way you installed the |NCS|, as described in
                git fetch origin
                git checkout origin/main
                west update
+
+.. _migrating_project:
+
+Migrating your project to a new SDK version
+===========================================
+
+After you updated the |NCS| repositories to the new version and you need to migrate your |NCS| project to the new version, check the available :ref:`migration_guides` for information about which components received major breaking changes and what you have to do to keep using them.
+
+.. note::
+    |migration_contact_devzone|
 
 .. _vsc_update:
 

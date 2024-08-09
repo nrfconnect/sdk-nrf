@@ -214,7 +214,7 @@ To build this application to work with the nRF7002 Wi-Fi expansion board:
 
       .. group-tab:: Command line
 
-         To build the sample from the command line for Thingy:53 with the nRF7002 EB attached, use the following command within the sample directory:
+         To build the sample from the command line for Thingy:53 with the nRF7002 EB attached, start the :ref:`toolchain environment <using_toolchain_environment>` and run the following command within the sample directory:
 
          .. code-block:: console
 

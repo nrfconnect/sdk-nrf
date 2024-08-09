@@ -71,7 +71,7 @@ Building and running
 Complete the following steps to program the sample:
 
 1. Go to the sample directory.
-#. Open the command line terminal.
+#. Start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window.
 #. Run the following command to build the application code for the host and the remote:
 
 
