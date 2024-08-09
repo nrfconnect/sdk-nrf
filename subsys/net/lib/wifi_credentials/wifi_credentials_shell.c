@@ -163,6 +163,11 @@ static int cmd_add_network(const struct shell *shell, size_t argc, char *argv[])
 			goto help;
 		}
 		creds.password_len = strlen(argv[3]);
+		if (creds.password_len < WIFI_PSK_MIN_LEN) {
+			shell_error(shell, "Passphrase should be minimum %d characters",
+				    WIFI_PSK_MIN_LEN);
+			goto help;
+		}
 		if (
 			(creds.password_len > CONFIG_WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH &&
 			 creds.header.type == WIFI_SECURITY_TYPE_SAE) ||
