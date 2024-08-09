@@ -219,7 +219,12 @@ static int endp_send(const struct nct_dc_data *dc_data, struct mqtt_utf8 *endp, 
 	if (qos != MQTT_QOS_0_AT_MOST_ONCE) {
 		publish.message_id = get_message_id(dc_data->message_id);
 	}
-
+	LOG_DBG("mqtt_publish: id = %d len = %d, topic: %.*s", publish.message_id,
+		dc_data->data.len,
+		publish.message.topic.topic.size,
+		publish.message.topic.topic.utf8);
+	LOG_DBG("%.*s", publish.message.payload.len,
+	     publish.message.payload.data ? (const char *)publish.message.payload.data : "<empty>");
 	return mqtt_publish(&nct.client, &publish);
 }
 
@@ -1068,6 +1073,29 @@ int nct_cc_connect(void)
 	return mqtt_subscribe(&nct.client, &subscription_list);
 }
 
+int nct_delta_subscribe(void)
+{
+	LOG_DBG("nct_delta_subscribe");
+	struct mqtt_topic list[1];
+
+	list[0].qos = MQTT_QOS_1_AT_LEAST_ONCE;
+	list[0].topic.utf8 = update_delta_topic;
+	list[0].topic.size = strlen(update_delta_topic);
+
+	const struct mqtt_subscription_list subscription_list = {
+		.list = (struct mqtt_topic *)&list,
+		.list_count = ARRAY_SIZE(list),
+		.message_id = NCT_MSG_ID_CC_SUB
+	};
+
+	LOG_DBG("Subscribing to:");
+	for (int i = 0; i < subscription_list.list_count; i++) {
+		LOG_DBG("%.*s", subscription_list.list[i].topic.size,
+			(const char *)subscription_list.list[i].topic.utf8);
+	}
+	return mqtt_subscribe(&nct.client, &subscription_list);
+}
+
 int nct_cc_send(const struct nct_cc_data *cc_data)
 {
 	if (cc_data == NULL) {
@@ -1096,11 +1124,12 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 
 	publish.message_id = get_message_id(cc_data->message_id);
 
-	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d, topic: %*s", publish.message_id,
+	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d, topic: %.*s", publish.message_id,
 		cc_data->opcode, cc_data->data.len,
 		publish.message.topic.topic.size,
 		publish.message.topic.topic.utf8);
-
+	LOG_DBG("%.*s", publish.message.payload.len,
+	     publish.message.payload.data ? (const char *)publish.message.payload.data : "<empty>");
 	int err = mqtt_publish(&nct.client, &publish);
 
 	if (err) {

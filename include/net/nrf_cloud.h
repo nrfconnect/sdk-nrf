@@ -1060,6 +1060,17 @@ void nrf_cloud_sec_tag_set(const sec_tag_t sec_tag);
  */
 sec_tag_t nrf_cloud_sec_tag_get(void);
 
+/**
+ * @brief Check for device association.
+ * Perform MQTT operation to ensure we receive indication that a device
+ * has been associated with the user's nRF Cloud account. Some modem firmware
+ * versions require this to be done after the device has been associated,
+ * so must be done periodically to ensure it is detected.
+ *
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_check_association(void);
+
 /** @} */
 
 #ifdef __cplusplus

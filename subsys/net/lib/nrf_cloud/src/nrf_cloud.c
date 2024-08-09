@@ -505,6 +505,16 @@ int nct_input(const struct nct_evt *evt)
 	return nfsm_handle_incoming_event(evt, current_state);
 }
 
+int nrf_cloud_check_association(void)
+{
+	/* When using JITP, ensure the newly-associated device receives
+	 * notification this has happened so it can complete the JITP
+	 * process. Otherwise rebooting is required.
+	 */
+
+	return nct_delta_subscribe();
+}
+
 void nct_send_event(const struct nrf_cloud_evt * const evt)
 {
 	__ASSERT_NO_MSG(evt != NULL);
