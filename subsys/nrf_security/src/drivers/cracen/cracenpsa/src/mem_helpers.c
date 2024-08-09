@@ -32,6 +32,26 @@ bool constant_memcmp_is_zero(const void *s1, size_t n)
 	return (x == 0);
 }
 
+bool memcpy_check_non_zero(void *dest, size_t dest_size, const void *src, size_t src_size)
+{
+	uint8_t *byte_ptr_dest = dest;
+	const uint8_t *byte_ptr_src = src;
+	uint8_t x = 0;
+
+	if (src_size > dest_size) {
+		return false;
+	}
+
+	for (size_t i = 0; i < src_size; i++) {
+		uint8_t byte = byte_ptr_src[i];
+
+		byte_ptr_dest[i] = byte;
+		x |= byte;
+	}
+
+	return (x != 0);
+}
+
 void safe_memset(void *dest, const size_t dest_size, const uint8_t ch, const size_t n)
 {
 	size_t bytes_to_set = MIN(dest_size, n);

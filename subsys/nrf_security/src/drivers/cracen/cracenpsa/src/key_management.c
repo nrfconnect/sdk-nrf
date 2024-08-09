@@ -238,11 +238,7 @@ static psa_status_t import_ecc_private_key(const psa_key_attributes_t *attribute
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	if (constant_memcmp_is_zero(data, data_length)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	psa_status = check_ecc_key_attributes(attributes, key_buffer_size, &key_bits_attr);
+	psa_status = check_ecc_key_attributes(attributes, data_length, &key_bits_attr);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
@@ -252,10 +248,13 @@ static psa_status_t import_ecc_private_key(const psa_key_attributes_t *attribute
 	 * error when tried to be used. Remove the comment when more testing is
 	 * done and we can verify that this is not needed.
 	 */
-	memcpy(key_buffer, data, data_length);
-	*key_bits = key_bits_attr;
-	*key_buffer_length = data_length;
-	return PSA_SUCCESS;
+	if (memcpy_check_non_zero(key_buffer, key_buffer_size, data, data_length)) {
+		*key_bits = key_bits_attr;
+		*key_buffer_length = data_length;
+		return PSA_SUCCESS;
+	} else {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 }
 
 static psa_status_t check_wstr_publ_key_for_ecdh(psa_ecc_family_t curve_family, size_t curve_bits,
@@ -315,11 +314,18 @@ static psa_status_t import_ecc_public_key(const psa_key_attributes_t *attributes
 	psa_algorithm_t key_alg = psa_get_key_algorithm(attributes);
 	psa_status_t psa_status;
 
+	uint8_t local_key_buffer[PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(
+		PSA_VENDOR_ECC_MAX_CURVE_BITS)];
+
+	if (!memcpy_check_non_zero(local_key_buffer, sizeof(local_key_buffer), data, data_length)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	if (data_length > key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	psa_status = check_ecc_key_attributes(attributes, key_buffer_size, &key_bits_attr);
+	psa_status = check_ecc_key_attributes(attributes, data_length, &key_bits_attr);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
@@ -327,8 +333,8 @@ static psa_status_t import_ecc_public_key(const psa_key_attributes_t *attributes
 	switch (curve) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
 	case PSA_ECC_FAMILY_SECP_R1:
-		psa_status =
-			check_wstr_pub_key_data(key_alg, curve, key_bits_attr, data, data_length);
+		psa_status = check_wstr_pub_key_data(key_alg, curve, key_bits_attr,
+						     local_key_buffer, data_length);
 		if (psa_status != PSA_SUCCESS) {
 			return psa_status;
 		}
@@ -338,7 +344,7 @@ static psa_status_t import_ecc_public_key(const psa_key_attributes_t *attributes
 		break;
 	}
 
-	memcpy(key_buffer, data, data_length);
+	memcpy(key_buffer, local_key_buffer, data_length);
 	*key_bits = key_bits_attr;
 	*key_buffer_length = data_length;
 
@@ -357,12 +363,19 @@ static psa_status_t import_rsa_key(const psa_key_attributes_t *attributes, const
 	struct sx_buf n = {0};
 	struct sx_buf e = {0};
 
+	if (data_length > key_buffer_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	/* We copy the key to the internal buffer first, then validate it. */
+	memcpy(key_buffer, data, data_length);
+
 	psa_status_t status = silex_statuscodes_to_psa(cracen_signature_get_rsa_key(
-		&rsakey, is_public_key, key_type == PSA_KEY_TYPE_RSA_KEY_PAIR, data, data_length,
-		&n, &e));
+		&rsakey, is_public_key, key_type == PSA_KEY_TYPE_RSA_KEY_PAIR, key_buffer,
+		data_length, &n, &e));
 
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto cleanup;
 	}
 
 	/* When importing keys the PSA APIs allow for key bits to be 0 and they
@@ -375,14 +388,19 @@ static psa_status_t import_rsa_key(const psa_key_attributes_t *attributes, const
 
 	status = check_rsa_key_attributes(attributes, key_bits_attr);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto cleanup;
 	}
 
-	memcpy(key_buffer, data, data_length);
 	*key_buffer_length = data_length;
 	*key_bits = key_bits_attr;
 
 	return PSA_SUCCESS;
+
+cleanup:
+	*key_buffer_length = 0;
+	*key_bits = 0;
+	safe_memzero(key_buffer, key_buffer_size);
+	return status;
 }
 
 static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, const uint8_t *data,
@@ -398,6 +416,10 @@ static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, c
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	if (key_buffer_size < data_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
 	/* We only support 256 bit keys and they PSA APIs does not enforce setting the key bits. */
 	bits = 256;
 
@@ -408,11 +430,14 @@ static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, c
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		/* Do not allow w0 to be 0. */
-		if (constant_memcmp_is_zero(data, CRACEN_P256_KEY_SIZE)) {
+		if (!memcpy_check_non_zero(key_buffer, key_buffer_size, data,
+					   CRACEN_P256_KEY_SIZE)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		/* Do not allow w1 to be 0. */
-		if (constant_memcmp_is_zero(data + CRACEN_P256_KEY_SIZE, CRACEN_P256_KEY_SIZE)) {
+		if (!memcpy_check_non_zero(key_buffer + CRACEN_P256_KEY_SIZE,
+					   key_buffer_size - CRACEN_P256_KEY_SIZE,
+					   data + CRACEN_P256_KEY_SIZE, CRACEN_P256_KEY_SIZE)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
@@ -425,26 +450,27 @@ static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, c
 		}
 
 		/* Do not allow w0 to be 0. */
-		if (constant_memcmp_is_zero(data, CRACEN_P256_KEY_SIZE)) {
+		if (!memcpy_check_non_zero(key_buffer, key_buffer_size, data,
+					   CRACEN_P256_KEY_SIZE)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
 		/* Validate L */
-		if (check_wstr_pub_key_data(PSA_ALG_ECDH, PSA_ECC_FAMILY_SECP_R1, bits,
-					    &data[CRACEN_P256_KEY_SIZE],
-					    CRACEN_P256_POINT_SIZE + 1)) {
+		uint8_t L[CRACEN_P256_POINT_SIZE + 1];
+
+		memcpy(L, &data[CRACEN_P256_KEY_SIZE], sizeof(L));
+		if (check_wstr_pub_key_data(PSA_ALG_ECDH, PSA_ECC_FAMILY_SECP_R1, bits, L,
+					    sizeof(L))) {
+			safe_memzero(L, sizeof(L));
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
+		memcpy(key_buffer + CRACEN_P256_KEY_SIZE, L, sizeof(L));
 
 		break;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (key_buffer_size < data_length) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-	memcpy(key_buffer, data, data_length);
 	*key_buffer_length = data_length;
 	*key_bits = bits;
 
@@ -457,6 +483,14 @@ static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const
 {
 	size_t bits = psa_get_key_bits(attributes);
 	psa_key_type_t type = psa_get_key_type(attributes);
+
+	if (key_buffer_size < data_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	if (!memcpy_check_non_zero(key_buffer, key_buffer_size, data, data_length)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
 	switch (type) {
 	case PSA_KEY_TYPE_SRP_KEY_PAIR(PSA_DH_FAMILY_RFC3526):
@@ -471,7 +505,7 @@ static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const
 		if (data_length != sizeof(cracen_N3072)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-		if (si_be_cmp(data, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
+		if (si_be_cmp(key_buffer, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
@@ -479,15 +513,9 @@ static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (constant_memcmp_is_zero(data, data_length)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-	if (key_buffer_size < data_length) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-	memcpy(key_buffer, data, data_length);
 	*key_buffer_length = data_length;
 	*key_bits = CRACEN_SRP_RFC3526_KEY_BITS_SIZE;
+
 	return PSA_SUCCESS;
 }
 
@@ -972,7 +1000,7 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	struct sx_buf sequence = {.sz = 0};
 	struct sx_buf version = {.bytes = &version_bytes, .sz = sizeof(version_bytes)};
 
-	/* The buffers are first laid out sequentially in the buffer provided
+	/* The buffers are first laid out sequentially in the output buffer
 	 * by the caller. When the key generation is finished we place the
 	 * buffers correctly and write the ASN.1 tag and size fields.
 	 */
