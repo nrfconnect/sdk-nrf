@@ -44,9 +44,12 @@ void ssf_client_sem_give(struct ssf_client_sem *sem)
 	k_sem_give(&sem->sem);
 }
 
+volatile int arha1 = 0;
+
 #if CONFIG_SSF_CLIENT_SYS_INIT
 static int client_init(void)
 {
+	arha1 = 1;
 	return ssf_client_init();
 }
 

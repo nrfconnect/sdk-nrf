@@ -233,20 +233,27 @@ static int process_request(const struct ssf_client_srvc *srvc, void *req, void *
 	return 0;
 }
 
+volatile int arha2 = 0;
 int ssf_client_init(void)
 {
 	int err;
 
+	arha2 = 1;
 	err = ssf_client_notif_init();
+	arha2 = 2;
 	if (err != 0) {
+		arha2 = 3;
 		return -SSF_EINVAL;
 	}
 
+	arha2 = 4;
 	err = ssf_client_transport_init(ssf_client_notif_handler);
 	if (err != 0) {
+		arha2 = 5;
 		SSF_CLIENT_LOG_ERR("Failed to initialize transport");
 		return -SSF_EINVAL;
 	}
+	arha2 = 6;
 
 	return 0;
 }

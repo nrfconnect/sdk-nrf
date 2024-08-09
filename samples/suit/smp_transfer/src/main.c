@@ -11,6 +11,8 @@
 #endif /* CONFIG_MGMT_SUITFU */
 #include <zephyr/storage/flash_map.h>
 #include "common.h"
+#include <zephyr/drivers/uart.h>
+#include <zephyr/mgmt/mcumgr/transport/serial.h>
 
 #ifdef CONFIG_SSF_SUIT_SERVICE_ENABLED
 #include <sdfw/sdfw_services/suit_service.h>
@@ -56,6 +58,33 @@ int main(void)
 	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT)) {
 		start_smp_bluetooth_adverts();
 	}
+	k_msleep(2000);
+
+        // SUIT_MANIFEST_SEC_TOP = 0x10,
+        // SUIT_MANIFEST_SEC_SDFW = 0x11,
+        // SUIT_MANIFEST_SEC_SYSCTRL = 0x12,
+        // SUIT_MANIFEST_APP_ROOT = 0x20,
+
+	suit_manifest_role_t role = SUIT_MANIFEST_SEC_SDFW;
+	suit_ssf_manifest_class_info_t class_info = {0};
+	unsigned int seq_num = 0;
+	suit_semver_raw_t semver_raw = {0};
+	suit_digest_status_t digest_status = SUIT_DIGEST_UNKNOWN;
+	int digest_alg_id = 0;
+	uint8_t digest_buf[32] = {0};
+	suit_plat_mreg_t digest;
+	digest.mem = digest_buf;
+	digest.size = sizeof(digest_buf);
+
+	suit_get_supported_manifest_info(role, &class_info);
+
+	suit_manifest_class_id_t class_id = {
+		.raw = {0xd9, 0x6b, 0x40, 0xb7, 0x09, 0x2b, 0x5c, 0xd1, 0xa5, 0x9f, 0x9a, 0xf8,
+			     0x0c, 0x33, 0x7e, 0xba}
+	};
+
+	suit_get_installed_manifest_info(&class_id, &seq_num, &semver_raw,
+					      &digest_status, &digest_alg_id, &digest);
 
 	while (1) {
 		for (int i = 0; i < CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM; i++) {

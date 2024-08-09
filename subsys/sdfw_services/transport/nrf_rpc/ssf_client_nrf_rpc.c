@@ -50,22 +50,30 @@ static void err_handler(const struct nrf_rpc_err_report *report)
 			   report->code);
 }
 
+volatile int arha3 = 0;
+volatile int arha_err = 0;
 int ssf_client_transport_init(ssf_client_transport_notif_handler handler)
 {
 	int err;
 
+	arha3 = 1;
 	if (handler == NULL) {
+		arha3 = 2;
 		return -SSF_EINVAL;
 	}
 	notif_handler = handler;
 
+	arha3 = 3;
 	transport_initialized = false;
 
 	err = nrf_rpc_init(err_handler);
 	if (err != 0) {
+		arha3 = 4;
+		arha_err = err;
 		return -SSF_EINVAL;
 	}
 
+	arha3 = 5;
 	transport_initialized = true;
 
 	return 0;
