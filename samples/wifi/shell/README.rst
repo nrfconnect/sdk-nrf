@@ -78,6 +78,24 @@ The following is an example of the CLI command:
 
        west build -b nrf9160dk/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-scan-only.conf -DSHIELD=nrf7002ek
 
+To build for the Thingy:91 X using the nRF5340 as the host chip, use the ``thingy91x/nrf5340/cpuapp`` board target with the ``SB_CONFIG_THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH=y`` CMake option set.
+This requires an external debugger since the nRF9151 normally owns the buses.
+This special configuration is not compatible with nRF9151 firmware compiled for the default configuration.
+You need to erase the nRF9151 first to avoid conflicts.
+The following is an example of the CLI commands:
+
+.. code-block:: console
+
+   west build -b thingy91x/nrf5340/cpuapp -- -DSB_CONFIG_THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH=y
+   # Set SWD switch to nRF91 and check if you are connected to an nRF91:
+   nrfjprog --deviceversion
+   # If you see NRF9120_xxAA_REV3, proceed with erasing:
+   nrfjprog --recover
+   # Flip the SWD switch back to nRF53.
+   nrfjprog --deviceversion
+   # If you see NRF5340_xxAA_REV1, proceed with flashing:
+   west flash --erase
+
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
 Supported CLI commands

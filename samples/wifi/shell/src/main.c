@@ -15,16 +15,23 @@
 #endif
 #include <zephyr/device.h>
 #include <zephyr/net/net_config.h>
-#ifdef CONFIG_USB_DEVICE_STACK
+
+#if defined(CONFIG_USB_DEVICE_STACK) && !defined(CONFIG_BOARD_THINGY91X_NRF5340_CPUAPP)
+#define USES_USB_ETH 1
+#else
+#define USES_USB_ETH 0
+#endif
+
+#if USES_USB_ETH
 #include <zephyr/usb/usb_device.h>
 #endif
 
-#if defined(CONFIG_USB_DEVICE_STACK) || defined(CONFIG_SLIP)
+#if USES_USB_ETH || defined(CONFIG_SLIP)
 static struct in_addr addr = { { { 192, 0, 2, 1 } } };
 static struct in_addr mask = { { { 255, 255, 255, 0 } } };
 #endif /* CONFIG_USB_DEVICE_STACK || CONFIG_SLIP */
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if USES_USB_ETH
 int init_usb(void)
 {
 	int ret;
@@ -49,7 +56,7 @@ int main(void)
 #endif
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if USES_USB_ETH
 	init_usb();
 
 	/* Redirect static IP address to netusb*/

@@ -523,6 +523,11 @@ Wi-Fi samples
 
   * Increased the value of the :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE` Kconfig option to 8192 bytes to avoid stack overflow.
 
+* :ref:`wifi_shell_sample` sample:
+
+  * Added support for running the full stack on the Thingy:91 X.
+     This is a special configuration that uses the nRF5340 as the host chip instead of the nRF9151.
+
 Other samples
 -------------
 
