@@ -18,7 +18,7 @@
 
 #include "ecdh.h"
 
-#define DT_DRV_COMPAT zephyr_bt_hci_ll_sw_split
+#define DT_DRV_COMPAT nordic_bt_hci_sdc
 
 #define LOG_LEVEL CONFIG_BT_HCI_DRIVER_LOG_LEVEL
 #include "zephyr/logging/log.h"
