@@ -67,20 +67,16 @@ static int sx_blkcipher_hw_reserve(struct sxblkcipher *c)
 
 	uint32_t prng_value;
 
-	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
-		err = cracen_prng_value_from_pool(&prng_value);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = cracen_prng_value_from_pool(&prng_value);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	sx_hw_reserve(&c->dma);
 
-	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
-		err = sx_cm_load_mask(prng_value);
-		if (err != SX_OK) {
-			goto exit;
-		}
+	err = sx_cm_load_mask(prng_value);
+	if (err != SX_OK) {
+		goto exit;
 	}
 
 	if (c->key.prepare_key) {
@@ -214,7 +210,6 @@ int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 1;
 	c->granularity = 1;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CTR, ba411cfg.encr);
 }
 
@@ -223,7 +218,6 @@ int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 1;
 	c->granularity = 1;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CTR, ba411cfg.decr);
 }
 
@@ -232,7 +226,6 @@ int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 16;
 	c->granularity = 16;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, NULL, BLKCIPHER_MODEID_ECB, ba411cfg.encr);
 }
 
@@ -240,7 +233,6 @@ int sx_blkcipher_create_aesecb_dec(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 16;
 	c->granularity = 16;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, NULL, BLKCIPHER_MODEID_ECB, ba411cfg.decr);
 }
 
@@ -249,7 +241,6 @@ int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 16;
 	c->granularity = 16;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CBC, ba411cfg.encr);
 }
 
@@ -258,7 +249,6 @@ int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 16;
 	c->granularity = 16;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CBC, ba411cfg.decr);
 }
 
@@ -267,7 +257,6 @@ int sx_blkcipher_create_aescfb_enc(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 16;
 	c->granularity = 16;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CFB, ba411cfg.encr);
 }
 
@@ -276,7 +265,6 @@ int sx_blkcipher_create_aescfb_dec(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 16;
 	c->granularity = 16;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CFB, ba411cfg.decr);
 }
 
@@ -285,7 +273,6 @@ int sx_blkcipher_create_aesofb_enc(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 1;
 	c->granularity = 1;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_OFB, ba411cfg.encr);
 }
 
@@ -294,7 +281,6 @@ int sx_blkcipher_create_aesofb_dec(struct sxblkcipher *c, const struct sxkeyref 
 {
 	c->inminsz = 1;
 	c->granularity = 1;
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_OFB, ba411cfg.decr);
 }
 

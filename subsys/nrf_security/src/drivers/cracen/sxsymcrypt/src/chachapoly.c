@@ -160,27 +160,23 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *c, const struct sxke
 int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, const struct sxkeyref *key,
 					const char *nonce, size_t tagsz)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_DISABLE;
 	return sx_aead_create_chacha20poly1305(c, key, nonce, ba417chachapolycfg.encr, tagsz);
 }
 
 int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, const struct sxkeyref *key,
 					const char *nonce, size_t tagsz)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_DISABLE;
 	return sx_aead_create_chacha20poly1305(c, key, nonce, ba417chachapolycfg.decr, tagsz);
 }
 
 int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, const struct sxkeyref *key,
 				     const char *counter, const char *nonce)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_DISABLE;
 	return sx_blkcipher_create_chacha20(c, key, nonce, counter, ba417chacha20cfg.encr);
 }
 
 int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *c, const struct sxkeyref *key,
 				     const char *counter, const char *nonce)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_DISABLE;
 	return sx_blkcipher_create_chacha20(c, key, nonce, counter, ba417chacha20cfg.decr);
 }

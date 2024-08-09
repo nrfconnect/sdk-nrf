@@ -29,9 +29,6 @@ extern "C" {
 /** Mode Register value for context saving */
 #define BA417_MODEID_CTX_SAVE (1u << 6)
 
-#define BA411_AES_COUNTERMEASURES_ENABLE  (true)
-#define BA411_AES_COUNTERMEASURES_DISABLE (false)
-
 struct sx_blkcipher_cmdma_cfg;
 struct sx_aead_cmdma_cfg;
 struct sxhashalg;
@@ -98,7 +95,6 @@ struct sxaead {
 	uint8_t tagsz;
 	bool is_in_ctx;
 	uint8_t ctxsz;
-	bool aes_countermeasures;
 	const struct sxkeyref *key;
 	struct sx_dmactl dma;
 	struct sxdesc allindescs[7];
@@ -117,7 +113,6 @@ struct sxblkcipher {
 	size_t inminsz;
 	size_t granularity;
 	uint32_t mode;
-	bool aes_countermeasures;
 	struct sxkeyref key;
 	struct sx_dmactl dma;
 	struct sxdesc allindescs[5];
