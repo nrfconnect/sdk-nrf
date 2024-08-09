@@ -32,11 +32,16 @@ config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 	  Add empty_app_core as a child image (application core).
 	  Used by samples that run on the network core only.
 
+config NCS_INCLUDE_BLINKY_CHILD_IMAGE
+	bool "Include hello-world sample as net core child image"
+	help
+	  Hello world sample as a child image (network core).
+
 config NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	bool "Include RPMsg sample on netcore"
-	depends on SOC_NRF5340_CPUAPP && (BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO)
+	depends on SOC_NRF5340_CPUAPP && (BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO || NCS_INCLUDE_BLINKY_CHILD_IMAGE)
 	select PARTITION_MANAGER_ENABLED
-	default y if BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO
+	default y if BT_HCI_IPC || NRF_802154_SER_HOST || BT_RPC || NRF700X_RADIO_TEST_COMBO || NCS_INCLUDE_BLINKY_CHILD_IMAGE
 	help
 	  Enabling this setting will include a network stack to run on the
 	  network core and communicate over RPMsg with the application core.
@@ -99,6 +104,13 @@ config NCS_SAMPLE_RPC_HOST_CHILD_IMAGE
 	default y
 	help
 	  rpc_host sample as a child image (network core).
+
+config NCS_SAMPLE_BLINKY_CHILD_IMAGE
+	bool
+	depends on NCS_INCLUDE_BLINKY_CHILD_IMAGE
+	default y
+	help
+	  Hello world sample as a child image (network core).
 
 config NCS_SAMPLE_PERIPHERAL_RADIO_TEST_CHILD_IMAGE
 	bool "Add peripheral radio_test sample as a child image"
