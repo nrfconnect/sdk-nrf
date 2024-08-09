@@ -107,7 +107,7 @@ To program the nRF device with the RCP application, complete the following steps
             .. code-block:: console
 
                nrfutil pkg generate --hw-version 52 --sd-req=0x00 \
-                --application build/zephyr/zephyr.hex --application-version 1 build/zephyr/zephyr.zip
+                --application build/merged.hex --application-version 1 build/merged.zip
 
          #. Connect the nRF52840 Dongle to the USB port.
          #. Press the **RESET** button on the dongle to put it into the DFU mode.
@@ -116,7 +116,7 @@ To program the nRF device with the RCP application, complete the following steps
 
             .. code-block:: console
 
-               nrfutil dfu usb-serial -pkg build/zephyr/zephyr.zip -p /dev/ttyACM0
+               nrfutil dfu usb-serial -pkg build/merged.zip -p /dev/ttyACM0
 
       .. tab:: nRF52840 Development Kit (UART transport)
 
