@@ -30,8 +30,8 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
-IDE and tool support
-====================
+IDE, and tool support
+=====================
 
 |no_changes_yet_note|
 
@@ -43,13 +43,20 @@ Build and configuration system
   .. note::
      This has security implications and may allow secrets to be leaked to the non-secure application in RAM.
 
-Working with nRF91 Series
-=========================
+Bootloaders and DFU
+===================
 
 |no_changes_yet_note|
 
-Working with nRF70 Series
-=========================
+See also the `MCUboot`_ section.
+
+Developing with nRF91 Series
+============================
+
+|no_changes_yet_note|
+
+Developing with nRF70 Series
+============================
 
 |no_changes_yet_note|
 
@@ -63,23 +70,23 @@ Working with nRF54L Series
 
 |no_changes_yet_note|
 
-Working with nRF53 Series
-=========================
+Developing with nRF53 Series
+============================
 
 |no_changes_yet_note|
 
-Working with nRF52 Series
-=========================
+Developing with nRF52 Series
+============================
 
 |no_changes_yet_note|
 
-Working with RF front-end modules
+Developing with Front-End Modules
 =================================
 
 |no_changes_yet_note|
 
-Working with PMIC
-=================
+Developing with PMICs
+=====================
 
 |no_changes_yet_note|
 
