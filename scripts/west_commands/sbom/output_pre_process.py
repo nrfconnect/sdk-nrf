@@ -101,12 +101,14 @@ def pre_process(data: Data):
             package.name = package.url[offs:]
             if package.name.endswith('.git'):
                 package.name = package.name[:-4]
-        if package.name in package_name_map:
-            existing = package_name_map[package.name]
-            del package_name_map[package.name]
-            package.name += '-' + package.version
-            existing.name += '-' + existing.version
-            package_name_map[existing.name] = existing
-        package_name_map[package.name] = package
+        if package.name is not None:
+            package_name = package.name
+            if package_name in package_name_map:
+                existing = package_name_map[package_name]
+                del package_name_map[package_name]
+                existing_new_name = f"{existing.name}-{existing.version}"
+                package_name_map[existing_new_name] = existing
+                package_name = f"{package_name}-{package.version}"
+            package_name_map[package_name] = package
         if (package.browser_url is None) and (package.url.startswith('http')):
             package.browser_url = package.url
