@@ -216,7 +216,7 @@ static int cmd_role_set(const struct shell *shell, size_t argc, char *argv[])
 
 static int cmd_instance_get_all(const struct shell *shell, size_t argc, char *argv[])
 {
-	return shell_model_instances_get_all(shell, BT_MESH_MODEL_ID_SCHEDULER_CLI);
+	return shell_model_instances_get_all(shell, BT_MESH_MODEL_ID_TIME_CLI);
 }
 
 static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[])
@@ -229,7 +229,7 @@ static int cmd_instance_set(const struct shell *shell, size_t argc, char *argv[]
 		return err;
 	}
 
-	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_SCHEDULER_CLI, elem_idx);
+	return shell_model_instance_set(shell, &mod, BT_MESH_MODEL_ID_TIME_CLI, elem_idx);
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(instance_cmds,
