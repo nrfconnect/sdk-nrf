@@ -754,7 +754,6 @@ MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 			ret = mqtt_input(&mqtt_client);
 			if (ret) {
 				LOG_ERR("Cloud MQTT input error: %d", ret);
-				(void)mqtt_abort(&mqtt_client);
 				break;
 			}
 
@@ -782,26 +781,23 @@ MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 				LOG_ERR("Socket error: POLLNVAL");
 				LOG_ERR("The socket was unexpectedly closed");
 			}
-
-			(void)mqtt_abort(&mqtt_client);
-
 			break;
 		}
 
 		if ((fds[0].revents & POLLHUP) == POLLHUP) {
 			LOG_ERR("Socket error: POLLHUP");
 			LOG_ERR("Connection was unexpectedly closed");
-			(void)mqtt_abort(&mqtt_client);
 			break;
 		}
 
 		if ((fds[0].revents & POLLERR) == POLLERR) {
 			LOG_ERR("Socket error: POLLERR");
 			LOG_ERR("Connection was unexpectedly closed");
-			(void)mqtt_abort(&mqtt_client);
 			break;
 		}
 	}
+
+	(void)mqtt_abort(&mqtt_client);
 }
 
 static void mqtt_helper_run(void)
