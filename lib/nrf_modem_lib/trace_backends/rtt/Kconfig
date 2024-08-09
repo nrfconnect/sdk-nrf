@@ -19,4 +19,10 @@ config NRF_MODEM_LIB_TRACE_BACKEND_RTT_BUF_SIZE
 	int "RTT buffer size"
 	default 1024
 
+config NRF_MODEM_LIB_TRACE_BACKEND_RTT_SKIP_IF_FIFO_FULL
+	bool "Skip modem traces if RTT not connected"
+	help
+	   To reduce power consumption for applications where RTT backend is not always connected
+	   to forward trace data, this allows the backend to skip traces.
+
 endif # NRF_MODEM_LIB_TRACE_BACKEND_RTT
