@@ -136,10 +136,6 @@ BUILD_ASSERT(!((IS_ENABLED(CONFIG_LOG_BACKEND_UART_OUTPUT_TEXT) ||
 		&& IS_ENABLED(CONFIG_LOG_FMT_SECTION_STRIP)),
 		"CONFIG_LOG_FMT_SECTION_STRIP is not compatible with text logging.");
 
-#if defined(CONFIG_NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED)
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRF_CLOUD_COAP),
-	     "nRF Cloud dictionary logging is only available for MQTT and REST");
-#endif
 
 LOG_BACKEND_DEFINE(log_nrf_cloud_backend, logger_api, false);
 /* Reduce reported log_buf size by 1 so we can null terminate */
@@ -156,11 +152,6 @@ static void logger_init(const struct log_backend *const backend)
 	int sid;
 
 	if ((backend != &log_nrf_cloud_backend) || initialized) {
-		return;
-	}
-	if ((CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DEFAULT != LOG_OUTPUT_TEXT) &&
-	    IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
-		LOG_ERR("Only text mode logs supported with current cloud transport");
 		return;
 	}
 	initialized = true;
@@ -512,7 +503,11 @@ static int send_ring_buffer(void)
 			}
 		} while (err == -EBUSY);
 	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
-		err = nrf_cloud_coap_json_message_send(output_data.ptr, true, true);
+		if (log_format_current == LOG_OUTPUT_TEXT) {
+			err = nrf_cloud_coap_json_message_send(output_data.ptr, true, true);
+		} else {
+			err = nrf_cloud_coap_bin_log_send(output_data.ptr, output_data.len, true);
+		}
 	} else {
 		err = -ENODEV;
 	}
@@ -529,6 +524,7 @@ cleanup:
 	ret = ring_buf_get_finish(&log_nrf_cloud_rb, stored);
 	ring_buf_reset(&log_nrf_cloud_rb);
 	num_msgs = 0;
+
 	if (ret) {
 		LOG_ERR("Error finishing ring buffer: %d", ret);
 		err = ret;
