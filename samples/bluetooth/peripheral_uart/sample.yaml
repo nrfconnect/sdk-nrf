@@ -44,7 +44,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SNIPPET=nordic-bt-rpc
       - FILE_SUFFIX=bt_rpc
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
