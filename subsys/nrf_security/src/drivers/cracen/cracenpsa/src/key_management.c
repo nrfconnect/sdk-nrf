@@ -616,10 +616,15 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		priv_key = si_sig_fetch_ikprivkey(sx_curve, *key_buffer);
-		data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
-		pub_key.key.eckey.qx = &data[1];
-		pub_key.key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
+
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
+			priv_key = si_sig_fetch_ikprivkey(sx_curve, *key_buffer);
+			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+			pub_key.key.eckey.qx = &data[1];
+			pub_key.key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
+		} else {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 	} else {
 
 		switch (psa_curve) {

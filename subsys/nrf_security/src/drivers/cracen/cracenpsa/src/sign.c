@@ -101,11 +101,16 @@ static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, ch
 		return status;
 	}
 
+	/* IKG supports one SECP256_R1 key */
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-	    PSA_KEY_LOCATION_CRACEN) {
-		*privkey = si_sig_fetch_ikprivkey(*sicurve, *key_buffer);
+		PSA_KEY_LOCATION_CRACEN) {
 
-		return status;
+		if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
+			*privkey = si_sig_fetch_ikprivkey(*sicurve, *key_buffer);
+			return status;
+		} else {
+			return SX_ERR_INCOMPATIBLE_HW;
+		}
 	}
 
 	if (key_buffer_size != PSA_BITS_TO_BYTES(psa_get_key_bits(attributes))) {
