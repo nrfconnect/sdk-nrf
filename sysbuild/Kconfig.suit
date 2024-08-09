@@ -24,9 +24,9 @@ config SUIT_ENVELOPE_SEQUENCE_NUM
 	range 0 2147483647
 	default 1
 
-config SUIT_ENVELOPE_ROOT_TEMPLATE
+config SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME
 	string "Path to the default root envelope template"
-	default "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs/root_with_binary_nordic_top.yaml.jinja2"
+	default "root_with_binary_nordic_top.yaml.jinja2"
 	help
 	  Path to the default root envelope template, that is used if the application directory does not
 	  contain an input envelope template file.
@@ -57,6 +57,18 @@ config SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY
 	help
 	  Path to the folder containing nordic-top.suit envelope.
 	  nordic_top.suit won't be included in the root manifest if value is empty.
+
+config SUIT_BASE_MANIFEST_TEMPLATE_DIR
+	string "Base manifest directory"
+	default "${ZEPHYR_NRF_MODULE_DIR}/config/suit/templates"
+	help
+	  Path to the base template directory.
+
+config SUIT_BASE_MANIFEST_VARIANT
+	string "Base manifest variant"
+	default "default/v1"
+	help
+	  Base manifest variant used during the build.
 
 endif # SUIT_ENVELOPE
 
