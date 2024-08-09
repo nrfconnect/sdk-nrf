@@ -35,12 +35,6 @@ jobs:
       - name: Checkout sources
         uses: nrfconnect/action-checkout-west-update@main
 
-      - name: cache-pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-doc-pip
-
       - name: Install packages
         run: |
           sudo apt update
