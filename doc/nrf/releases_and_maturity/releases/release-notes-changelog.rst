@@ -188,7 +188,7 @@ Zigbee
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* The WPA supplicant is now switched to Zephyr upstream's fork instead of |NCS|.
 
 Applications
 ============
@@ -572,7 +572,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 Wi-Fi drivers
 -------------
 
-|no_changes_yet_note|
+* nRF70 Series Wi-Fi driver is upstreamed to Zephyr, so, removed from the |NCS|.
 
 Libraries
 =========
@@ -973,6 +973,7 @@ Documentation
 
   * Removed the Device configuration guides section and moved its contents to :ref:`ug_app_dev`.
   * The Advanced building procedures page and moved its contents to the :ref:`building` page.
+  * nRF70 Series support is upstreamed to Zephyr, hence the documentation is removed from the |NCS|.
 
 * Updated:
 
