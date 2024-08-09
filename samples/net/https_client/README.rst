@@ -99,63 +99,126 @@ After programming the sample to your development kit, test it by performing the 
 Sample output
 =============
 
-Output for the default configuration (dual stack, IPV4V6) where the carrier does not support IPv6:
+.. tabs::
 
-.. code-block:: console
+   .. group-tab:: Wi-Fi
 
-   HTTPS client sample started
-   Certificate match
-   Waiting for network.. PDP context 0 activated
-   OK
-   Waiting for IPv6..
-   IPv6 not available
-   Looking up example.com
-   Resolved 93.184.216.34 (AF_INET)
-   Connecting to example.com:443
-   Sent 61 bytes
-   Received 370 bytes
+      Output for the default configuration (dual stack, IPV4V6) where the network does not support IPv6:
 
-   >        HTTP/1.1 200 OK
+      .. code-block:: console
 
-   Finished, closing socket.
-   PDP context 0 deactivated
+         HTTPS client sample started
+         Bringing network interface up
+         Provisioning certificate
+         Connecting to the network
+         <add your wifi configuration using shell here if not pre-provisioned>
+         <inf> wifi_mgmt_ext: Connection requested
+         Network connectivity established and IP address assigned
+         Looking up example.com
+         Resolved 93.184.215.14 (AF_INET)
+         Connecting to example.com:443
+         Sent 61 bytes
+         Received 377 bytes
 
-Output for the default configuration, where the carrier does support IPv6:
+         >        HTTP/1.1 200 OK
 
-.. code-block:: console
+         Finished, closing socket.
+         Network connectivity lost
+         Disconnected from the network
 
-   HTTPS client sample started
-   Bringing network interface up
-   Provisioning certificate
-   Certificate match
-   Connecting to the network
-   Looking up example.com
-   Resolved 2606:2800:220:1:248:1893:25c8:1946 (AF_INET6)
-   Connecting to example.com:443
-   Sent 61 bytes
-   Received 370 bytes
+   .. group-tab:: Cellular
 
-   >        HTTP/1.1 200 OK
+      Output for the default configuration (dual stack, IPV4V6) where the carrier does not support IPv6:
 
-   Finished, closing socket.
-   PDP context 0 deactivated
+      .. code-block:: console
 
-Output where you override the default packet data network (PDN) configuration to IPv4 only, using the ``overlay-pdn-nrf91-ipv4.conf`` overlay:
+         HTTPS client sample started
+         Bringing network interface up
+         Provisioning certificate
+         Certificate mismatch
+         Provisioning certificate to the modem
+         Connecting to the network
+         +CGEV: EXCE STATUS 0
+         +CEREG: 2,"8169","0149FB00",7
+         +CSCON: 1
+         +CGEV: ME PDN ACT 0
+         +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
+         Network connectivity established and IP address assigned
+         Looking up example.com
+         Resolved 93.184.215.14 (AF_INET)
+         Connecting to example.com:443
+         Sent 61 bytes
+         Received 377 bytes
 
-.. code-block:: console
+         >        HTTP/1.1 200 OK
 
-   HTTPS client sample started
-   Bringing network interface up
-   Provisioning certificate
-   Looking up example.com
-   Resolved 93.184.216.34 (AF_INET)
-   Connecting to example.com:443
-   Sent 61 bytes
-   Received 370 bytes
+         Finished, closing socket.
+         +CEREG: 0
+         +CGEV: ME DETACH
+         +CSCON: 0
+         Network connectivity lost
+         Disconnected from the network
 
-   >        HTTP/1.1 200 OK
+      Output for the default configuration, where the carrier does support IPv6:
 
-   Finished, closing socket.
+      .. code-block:: console
+
+         HTTPS client sample started
+         Bringing network interface up
+         Provisioning certificate
+         Certificate match
+         Connecting to the network
+         +CGEV: EXCE STATUS 0
+         +CEREG: 2,"8169","0149FB00",7
+         +CSCON: 1
+         +CGEV: ME PDN ACT 0
+         +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
+         Network connectivity established and IP address assigned
+         Looking up example.com
+         +CGEV: IPV6 0
+         Resolved 2606:2800:21f:cb07:6820:80da:af6b:8b2c (AF_INET6)
+         Connecting to example.com:443
+         Sent 61 bytes
+         Received 377 bytes
+
+         >        HTTP/1.1 200 OK
+
+         Finished, closing socket.
+         +CEREG: 0
+         +CGEV: ME DETACH
+         +CSCON: 0
+         Network connectivity lost
+         Disconnected from the net
+
+      Output where you override the default packet data network (PDN) configuration to IPv4 only, using the ``overlay-pdn-nrf91-ipv4.conf`` overlay:
+
+      .. code-block:: console
+
+         HTTPS client sample started
+         Bringing network interface up
+         Provisioning certificate
+         Certificate match
+         Connecting to the network
+         +CGEV: EXCE STATUS 0
+         +CEREG: 2,"8169","0149FB00",7
+         +CSCON: 1
+         +CGEV: ME PDN ACT 0
+         +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
+         Network connectivity established and IP address assigned
+         Looking up example.com
+         Resolved 93.184.215.14 (AF_INET)
+         Connecting to example.com:443
+         Sent 61 bytes
+         Received 377 bytes
+
+         >        HTTP/1.1 200 OK
+
+         Finished, closing socket.
+         +CEREG: 0
+         +CGEV: ME DETACH
+         +CSCON: 0
+         Network connectivity lost
+         Disconnected from the network
 
 Dependencies
 ************
