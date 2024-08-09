@@ -385,13 +385,21 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 	}
 
 	switch (msg->topic_type) {
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	case NRF_CLOUD_TOPIC_STATE_TF:
+#endif
 	case NRF_CLOUD_TOPIC_STATE: {
 		if (current_state < STATE_CC_CONNECTED) {
 			err = -EACCES;
 			break;
 		}
 		const struct nct_cc_data shadow_data = {
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+			.opcode = (msg->topic_type == NRF_CLOUD_TOPIC_STATE_TF) ?
+				   NCT_CC_OPCODE_TRANSFORM : NCT_CC_OPCODE_UPDATE_ACCEPTED,
+#else
 			.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
+#endif
 			.data.ptr = send_data.ptr,
 			.data.len = send_data.len,
 			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
@@ -493,6 +501,57 @@ int nrf_cloud_obj_shadow_update(struct nrf_cloud_obj *const shadow_obj)
 	};
 
 	return nrf_cloud_send(&msg);
+}
+
+int nrf_cloud_shadow_transform_request(char const *const transform, const size_t max_response_len)
+{
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	if (!transform) {
+		return -EINVAL;
+	}
+
+	NRF_CLOUD_OBJ_JSON_DEFINE(req_obj);
+
+	int ret;
+	struct nrf_cloud_tx_data msg = {
+		.obj = &req_obj,
+		.qos = MQTT_QOS_1_AT_LEAST_ONCE,
+		.topic_type = NRF_CLOUD_TOPIC_STATE_TF,
+		.id = 0,
+		.data = { 0 }
+	};
+
+	/* Initialize an object for the request */
+	ret = nrf_cloud_obj_init(&req_obj);
+	if (ret) {
+		return -EIO;
+	}
+
+	/* Add the transform string */
+	ret = nrf_cloud_obj_str_add(&req_obj, NRF_CLOUD_TRANSFORM_REQ_TF_KEY, transform, false);
+	if (ret) {
+		ret = -ENOMEM;
+		goto cleanup;
+	}
+
+	/* Set the max response length if not using the default value */
+	if (max_response_len && (max_response_len != NRF_CLOUD_TRANSFORM_MAX_RESPONSE_LEN)) {
+		ret = nrf_cloud_obj_num_add(&req_obj, NRF_CLOUD_TRANSFORM_REQ_LEN_KEY,
+					    max_response_len, false);
+		if (ret) {
+			ret = -ENOMEM;
+			goto cleanup;
+		}
+	}
+
+	ret = nrf_cloud_send(&msg);
+
+cleanup:
+	nrf_cloud_obj_free(&req_obj);
+	return ret;
+#else
+	return -ENOTSUP;
+#endif
 }
 
 int nrf_cloud_tenant_id_get(char *id_buf, size_t id_len)

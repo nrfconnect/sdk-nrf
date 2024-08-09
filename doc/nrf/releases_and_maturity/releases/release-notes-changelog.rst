@@ -605,6 +605,8 @@ Libraries for networking
 
     * The function :c:func:`nrf_cloud_client_id_runtime_set` to set the device ID string if the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option is enabled.
     * The functions :c:func:`nrf_cloud_sec_tag_set` and :c:func:`nrf_cloud_sec_tag_get` to set and get the sec tag used for nRF Cloud credentials.
+    * Experimental support for shadow transform requests over MQTT using the :c:func:`nrf_cloud_shadow_transform_request` function.
+      Functionality is enabled by the Kconfig option :kconfig:option:`CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS`.
 
   * Updated:
 
