@@ -1,6 +1,6 @@
 .. _bluetooth_direction_finding_central:
 
-Bluetooth: Direction finding central
+Bluetooth: Direction finding central 
 ####################################
 
 .. contents::
