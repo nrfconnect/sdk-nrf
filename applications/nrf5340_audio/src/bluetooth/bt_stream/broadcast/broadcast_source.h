@@ -16,6 +16,7 @@ struct subgroup_config {
 	uint8_t num_bises;
 	enum bt_audio_context context;
 	struct bt_bap_lc3_preset group_lc3_preset;
+	char *preset_name;
 };
 
 struct broadcast_source_big {
@@ -233,11 +234,11 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
  *
  * @param[in]	broadcast_param	Array of create parameters for creating a Broadcast Isochronous
  *				Group (BIG).
- * @param[in]	num_bigs	Number of BIGs to set up.
+ * @param[in]	big_index	Index of the BIG to enable.
  *
  * @return	0 for success, error otherwise.
  */
 int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,
-			    uint8_t num_bigs);
+			    uint8_t big_index);
 
 #endif /* _BROADCAST_SOURCE_H_ */

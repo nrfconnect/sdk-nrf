@@ -547,7 +547,7 @@ int main(void)
 	broadcast_source_default_create(&broadcast_param);
 
 	/* Only one BIG supported at the moment */
-	ret = broadcast_source_enable(&broadcast_param, 1);
+	ret = broadcast_source_enable(&broadcast_param, 0);
 	ERR_CHK_MSG(ret, "Failed to enable broadcaster(s)");
 
 	ret = audio_system_config_set(
