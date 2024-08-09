@@ -122,9 +122,8 @@ static int initialize_dfu_cache(const suit_plat_mreg_t *update_regions, size_t u
 	cache.pools_count = update_regions_len - 1;
 
 	for (size_t i = 1; i < update_regions_len; i++) {
-		if (suit_validator_validate_cache_pool_location(update_regions[i].mem,
-								   update_regions[i].size) !=
-		    SUIT_PLAT_SUCCESS) {
+		if (suit_validator_validate_cache_pool_location(
+			    update_regions[i].mem, update_regions[i].size) != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Invalid cache partition %d location", i);
 			return -EACCES;
 		}
@@ -281,10 +280,10 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_PARSE);
 	if (err != SUIT_SUCCESS) {
-		LOG_ERR("Failed to validate installed root manifest: %d", err);
+		LOG_ERR("Failed to validate installed manifest: %d", err);
 		return SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err);
 	}
-	LOG_DBG("Validated installed root manifest");
+	LOG_DBG("Validated installed manifest");
 
 	unsigned int seq_num;
 	suit_semver_raw_t version;
@@ -348,9 +347,15 @@ static int boot_path(bool emergency)
 	}
 
 	for (size_t i = 0; i < class_ids_to_boot_len; i++) {
-		ret = boot_envelope((const suit_manifest_class_id_t *)class_ids_to_boot[i]);
+		const suit_manifest_class_id_t *class_id =
+			(const suit_manifest_class_id_t *)class_ids_to_boot[i];
+
+		ret = boot_envelope(class_id);
 		if (ret != 0) {
-			LOG_ERR("Booting %d manifest failed (%d)", i, ret);
+			LOG_ERR("Booting manifest %d/%d failed (%d):", i + 1, class_ids_to_boot_len,
+				ret);
+			LOG_ERR("\t" SUIT_MANIFEST_CLASS_ID_LOG_FORMAT,
+				SUIT_MANIFEST_CLASS_ID_LOG_ARGS(class_id));
 			if (emergency) {
 				/* Conditionally continue booting other envelopes.
 				 * Recovery FW shall discover which parts of the system
@@ -361,7 +366,9 @@ static int boot_path(bool emergency)
 			return ret;
 		}
 
-		LOG_DBG("Manifest %d booted", i);
+		LOG_INF("Manifest %d/%d booted", i + 1, class_ids_to_boot_len);
+		LOG_INF("\t" SUIT_MANIFEST_CLASS_ID_LOG_FORMAT,
+			SUIT_MANIFEST_CLASS_ID_LOG_ARGS(class_id));
 	}
 
 	return ret;
@@ -385,7 +392,7 @@ int suit_orchestrator_init(void)
 	if (plat_err != SUIT_PLAT_SUCCESS) {
 		switch (plat_err) {
 		case SUIT_PLAT_ERR_AUTHENTICATION:
-			LOG_ERR("Failed to load MPI: invalid digest");
+			LOG_ERR("Failed to load MPI: application MPI missing (invalid digest)");
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_FAIL_NO_MPI);
 			break;
 		case SUIT_PLAT_ERR_NOT_FOUND:
