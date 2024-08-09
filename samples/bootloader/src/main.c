@@ -9,11 +9,21 @@
 #include <zephyr/sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>
+#ifdef CONFIG_FPROTECT
 #include <fprotect.h>
+#else
+#warning "FPROTECT not enabled, the bootloader will be unprotected."
+#endif
 #include <bl_storage.h>
 #include <bl_boot.h>
 #include <bl_validation.h>
+#ifdef CONFIG_NRFX_NVMC
 #include <nrfx_nvmc.h>
+#elif defined(CONFIG_NRFX_RRAMC)
+#include <nrfx_rramc.h>
+#else
+#error "No NRFX memory backend selected"
+#endif
 
 #if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
 #include <zephyr/init.h>
@@ -28,7 +38,11 @@ int load_huk(void)
 
 		if (*(uint32_t *)huk_flag_addr == 0xFFFFFFFF) {
 			printk("First boot, expecting app to write HUK.\n");
+#ifdef CONFIG_NRFX_NVMC
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
+#elif defined(CONFIG_NRFX_RRAMC)
+			nrfx_rramc_word_write(huk_flag_addr, 0);
+#endif
 			return 0;
 		}
 		printk("Error: Hardware Unique Key not present.\n");
@@ -50,7 +64,7 @@ SYS_INIT(load_huk, PRE_KERNEL_2, 0);
 #endif
 
 
-static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
+static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 {
 	printk("Attempting to boot slot %d.\r\n", slot);
 
@@ -71,7 +85,8 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 
 	printk("Firmware version %d\r\n", fw_info->version);
 
-	uint16_t stored_version;
+	counter_t stored_version;
+
 	int err = get_monotonic_version(&stored_version);
 
 	if (err) {
@@ -113,7 +128,13 @@ static void validate_and_boot(const struct fw_info *fw_info, uint16_t slot)
 
 int main(void)
 {
-	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	int err = 0;
+
+	if (IS_ENABLED(CONFIG_FPROTECT)) {
+		err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	} else {
+		printk("Fprotect disabled. No protection applied.\n\r");
+	}
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\n\r");
