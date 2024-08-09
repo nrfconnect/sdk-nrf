@@ -11,7 +11,8 @@ config CAF_POWER_MANAGER
 	select PM_DEVICE
 	select CAF_PM_EVENTS
 	select CAF_POWER_MANAGER_EVENTS
-	select POWEROFF
+	imply POWEROFF if !SOC_SERIES_NRF54HX
+	imply PM if SOC_SERIES_NRF54HX
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
@@ -20,6 +21,7 @@ if CAF_POWER_MANAGER
 
 config CAF_POWER_MANAGER_STAY_ON
 	bool "Stay on while no connections"
+	depends on PM || POWEROFF
 	help
 	  If disabled the device will switch SoC to OFF mode after power
 	  manager timeout is done. If enabled the device will stay on
@@ -37,6 +39,14 @@ config CAF_POWER_MANAGER_ERROR_TIMEOUT
 	default 30
 	help
 	 Time in seconds after which the device will be turned off after an error.
+
+config CAF_POWER_MANAGER_CLEAR_RESET_REASON
+	bool "Clear RESETREAS on system_off"
+	default y
+	depends on !SOC_SERIES_NRF54HX
+	help
+	  Clear RESETREAS on system_off to avoid starting serial recovery if nobody
+	  has cleared it already.
 
 module = CAF_POWER_MANAGER
 module-str = power manager
