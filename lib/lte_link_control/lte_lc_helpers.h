@@ -224,12 +224,15 @@ uint32_t neighborcell_count_get(const char *at_response);
  * Hence, the maximum value for these fields is represented by 63 bits and is
  * 9223372036854775807, which still represents millions of years.
  *
- * @param at_response Pointer to buffer with AT response.
- * @param ncell Pointer to ncell structure.
+ * @param at_response AT response.
+ * @param cells Neighbor cell structure.
+ *	        The current cell information is valid if the current cell ID is
+ *	        not set to LTE_LC_CELL_EUTRAN_ID_INVALID.
  *
  * @return Zero on success or (negative) error code otherwise.
- *         Returns -E2BIG if the static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
- *         are to small for the modem response. The associated data is still valid,
+ * @retval 1 Measurement failure.
+ * @retval -E2BIG The static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
+ *         are too small for the modem response. The associated data is still valid,
  *         but not complete.
  */
 int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);
@@ -245,12 +248,15 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);
  * 9223372036854775807, which still represents millions of years.
  *
  * @param params Neighbor cell measurement parameters.
- * @param at_response Pointer to buffer with AT response.
- * @param cells Pointer to lte_lc_cells_info structure.
+ * @param at_response AT response.
+ * @param cells Neighbor cell structure.
+ *	        The current cell information is valid if the current cell ID is
+ *	        not set to LTE_LC_CELL_EUTRAN_ID_INVALID.
  *
  * @return Zero on success or (negative) error code otherwise.
- *         Returns -E2BIG if the static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
- *         are to small for the modem response. The associated data is still valid,
+ * @retval 1 Measurement failure.
+ * @retval -E2BIG The static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
+ *         are too small for the modem response. The associated data is still valid,
  *         but not complete.
  */
 int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,

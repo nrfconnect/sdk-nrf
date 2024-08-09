@@ -820,10 +820,7 @@ uint32_t neighborcell_count_get(const char *at_response)
 {
 	uint32_t comma_count, ncell_elements, ncell_count;
 
-	if (at_response == NULL) {
-		LOG_ERR("at_response is NULL, can't get cell count");
-		return 0;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
 
 	comma_count = get_char_frequency(at_response, ',');
 	if (comma_count < AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT) {
@@ -854,6 +851,10 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	struct at_parser parser;
 	char tmp_str[7];
 	size_t count = 0;
+	bool incomplete = false;
+
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(cells != NULL);
 
 	cells->ncells_count = 0;
 	cells->current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
@@ -861,18 +862,21 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	err = at_parser_init(&parser, at_response);
 	__ASSERT_NO_MSG(err == 0);
 
-	/* Status code. */
+	/* Status code */
 	err = at_parser_num_get(&parser, AT_NCELLMEAS_STATUS_INDEX, &status);
 	if (err) {
 		goto clean_exit;
 	}
 
-	if (status != AT_NCELLMEAS_STATUS_VALUE_SUCCESS) {
+	if (status == AT_NCELLMEAS_STATUS_VALUE_FAIL) {
 		err = 1;
+		LOG_WRN("NCELLMEAS failed");
 		goto clean_exit;
+	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
+		LOG_WRN("NCELLMEAS interrupted; results incomplete");
 	}
 
-	/* Current cell ID. */
+	/* Current cell ID */
 	err = string_param_to_int(&parser, AT_NCELLMEAS_CELL_ID_INDEX, &tmp, 16);
 	if (err) {
 		goto clean_exit;
@@ -908,7 +912,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
-	/* Tracking area code. */
+	/* Tracking area code */
 	err = string_param_to_int(&parser, AT_NCELLMEAS_TAC_INDEX, &tmp, 16);
 	if (err) {
 		goto clean_exit;
@@ -932,7 +936,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
-	/* Physical cell ID. */
+	/* Physical cell ID */
 	err = at_parser_num_get(&parser, AT_NCELLMEAS_PHYS_CELL_ID_INDEX,
 				&cells->current_cell.phys_cell_id);
 	if (err) {
@@ -955,14 +959,14 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	cells->current_cell.rsrq = tmp;
 
-	/* Measurement time. */
+	/* Measurement time */
 	err = at_parser_num_get(&parser, AT_NCELLMEAS_MEASUREMENT_TIME_INDEX,
 				&cells->current_cell.measurement_time);
 	if (err) {
 		goto clean_exit;
 	}
 
-	/* Neighbor cell count. */
+	/* Neighbor cell count */
 	cells->ncells_count = neighborcell_count_get(at_response);
 
 	/* Starting from modem firmware v1.3.1, timing advance measurement time
@@ -973,6 +977,8 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	err = at_parser_cmd_count_get(&parser, &count);
 	if (err) {
+		LOG_ERR("Could not get NCELLMEAS param count, "
+			"potentially malformed notification, error: %d", err);
 		goto clean_exit;
 	}
 
@@ -986,11 +992,21 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		cells->current_cell.timing_advance_meas_time = 0;
 	}
 
-	if ((cells->ncells_count == 0) || (cells->neighbor_cells == NULL)) {
+	if (cells->ncells_count == 0) {
 		goto clean_exit;
 	}
 
-	/* Neighboring cells. */
+	__ASSERT_NO_MSG(cells->neighbor_cells != NULL);
+
+	if (cells->ncells_count > CONFIG_LTE_NEIGHBOR_CELLS_MAX) {
+		cells->ncells_count = CONFIG_LTE_NEIGHBOR_CELLS_MAX;
+		incomplete = true;
+		LOG_WRN("Cutting response, because received neigbor cell"
+			" count is bigger than configured max: %d",
+			CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+	}
+
+	/* Neighboring cells */
 	for (size_t i = 0; i < cells->ncells_count; i++) {
 		size_t start_idx = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
 				   i * AT_NCELLMEAS_N_PARAMS_COUNT;
@@ -1003,7 +1019,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 			goto clean_exit;
 		}
 
-		/* Physical cell ID. */
+		/* Physical cell ID */
 		err = at_parser_num_get(&parser,
 					start_idx + AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX,
 					&cells->neighbor_cells[i].phys_cell_id);
@@ -1031,7 +1047,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 		cells->neighbor_cells[i].rsrq = tmp;
 
-		/* Time difference. */
+		/* Time difference */
 		err = at_parser_num_get(&parser,
 					start_idx + AT_NCELLMEAS_N_TIME_DIFF_INDEX,
 					&cells->neighbor_cells[i].time_diff);
@@ -1040,12 +1056,19 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		}
 	}
 
+	if (incomplete) {
+		err = -E2BIG;
+		LOG_ERR("Buffer is too small; results incomplete: %d", err);
+	}
+
 clean_exit:
 	return err;
 }
 
-int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
-	const char *at_response, struct lte_lc_cells_info *cells)
+int parse_ncellmeas_gci(
+	struct lte_lc_ncellmeas_params *params,
+	const char *at_response,
+	struct lte_lc_cells_info *cells)
 {
 	struct at_parser parser;
 	struct lte_lc_ncell *ncells = NULL;
@@ -1063,6 +1086,11 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 	 * comma.
 	 */
 	size_t param_count = get_char_frequency(at_response, ',') + 3;
+
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(params != NULL);
+	__ASSERT_NO_MSG(cells != NULL);
+	__ASSERT_NO_MSG(cells->gci_cells != NULL);
 
 	/* Fill the defaults */
 	cells->gci_cells_count = 0;
@@ -1096,7 +1124,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 	err = at_parser_init(&parser, at_response);
 	__ASSERT_NO_MSG(err == 0);
 
-	/* Status code. */
+	/* Status code */
 	curr_index = AT_NCELLMEAS_STATUS_INDEX;
 	err = at_parser_num_get(&parser, curr_index, &status);
 	if (err) {
@@ -1106,13 +1134,13 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 	if (status == AT_NCELLMEAS_STATUS_VALUE_FAIL) {
 		err = 1;
-		LOG_DBG("NCELLMEAS status %d", status);
+		LOG_WRN("NCELLMEAS failed");
 		goto clean_exit;
 	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
-		LOG_WRN("NCELLMEAS measurements interrupted; results incomplete");
+		LOG_WRN("NCELLMEAS interrupted; results incomplete");
 	}
 
-	/* Go through the cells. */
+	/* Go through the cells */
 	for (i = 0; curr_index < (param_count - (AT_NCELLMEAS_GCI_CELL_PARAMS_COUNT + 1)) &&
 			i < params->gci_count; i++) {
 		struct lte_lc_cell parsed_cell;
@@ -1282,7 +1310,15 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 			}
 
 			/* Parse neighbors */
-			for (j = 0; j < to_be_parsed_ncell_count; j++) {
+			for (j = 0; j < parsed_ncells_count; j++) {
+				/* If maximum number of cells has been stored, skip the data for
+				 * the remaining ncells to be able to continue from next GCI cell
+				 */
+				if (j >= to_be_parsed_ncell_count) {
+					LOG_WRN("Ignoring ncell");
+					curr_index += 5;
+					continue;
+				}
 				/* <n_earfcn[j]> */
 				curr_index++;
 				err = at_parser_num_get(&parser,
