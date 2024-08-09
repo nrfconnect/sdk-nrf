@@ -1,0 +1,26 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <thingy91x_nrf53_wifi.dtsi>
+
+&usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+};
+
+/ {
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+		zephyr,shell-uart = &cdc_acm_uart0;
+		zephyr,uart-mcumgr = &cdc_acm_uart0;
+		zephyr,bt-mon-uart = &cdc_acm_uart0;
+		zephyr,bt-c2h-uart = &cdc_acm_uart0;
+		nordic,pm-ext-flash = &flash_ext;
+	};
+};
+
+&rtt0 {
+	status = "disabled";
+};
