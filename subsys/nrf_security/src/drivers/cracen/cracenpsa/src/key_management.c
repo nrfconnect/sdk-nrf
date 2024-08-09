@@ -28,12 +28,6 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/byteorder.h>
 
-enum asn1_tags {
-	ASN1_SEQUENCE = 0x10,
-	ASN1_INTEGER = 0x2,
-	ASN1_CONSTRUCTED = 0x20
-};
-
 extern const uint8_t cracen_N3072[384];
 
 extern nrf_security_mutex_t cracen_mutex_symmetric;

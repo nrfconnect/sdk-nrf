@@ -26,11 +26,6 @@ extern "C" {
  * MBEDTLS crypto definitions.
  */
 /****************************************************************/
-#if defined(CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
-/* TODO: NCSDK-26258: Improve, or get rid of this code */
-#define MBEDTLS_ASN1_PARSE_C
-#endif
-
 #if defined(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 #define MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 #endif
