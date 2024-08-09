@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "Kconfig.zephyr"
-
 menu "Nordic Fast Pair Locator tag sample"
 
 choice APP_PLATFORM
@@ -21,7 +19,10 @@ config APP_PLATFORM_THINGY
 
 endchoice
 
+rsource "src/Kconfig.dfu"
 rsource "src/ui/Kconfig.ui"
 rsource "src/battery/Kconfig.battery"
 
 endmenu
+
+source "Kconfig.zephyr"
