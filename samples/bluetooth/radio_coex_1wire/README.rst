@@ -7,7 +7,7 @@ Bluetooth: External radio coexistence using 1-wire interface
    :local:
    :depth: 2
 
-This sample demonstrates how to use the 1-wire coexistence feature described in :ref:`Bluetooth® external radio coexistence <nrfxlib:bluetooth_coex>`.
+This sample demonstrates how to use the 1-wire coexistence feature described in :ref:`ug_radio_mpsl_cx_generic_1wire`.
 
 Requirements
 ************

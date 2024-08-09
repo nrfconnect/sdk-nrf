@@ -584,6 +584,7 @@ Multiprotocol Service Layer libraries
 -------------------------------------
 
 * The Kconfig option ``CONFIG_MPSL_CX_THREAD`` has been renamed to :kconfig:option:`CONFIG_MPSL_CX_3WIRE` to better indicate multiprotocol compatibility.
+* The Kconfig option ``CONFIG_MPSL_CX_BT_1WIRE`` has been deprecated.
 * Added:
 
   * A 1-wire coexistence implementation which can be enabled using the Kconfig option :kconfig:option:`CONFIG_MPSL_CX_1WIRE`.
