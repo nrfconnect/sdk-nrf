@@ -93,7 +93,7 @@ ZTEST(suite_fast_pair_storage_common, test_one_key)
 	struct fp_account_key account_key;
 
 	cu_generate_account_key(seed, &account_key);
-	err = fp_storage_ak_save(&account_key);
+	err = fp_storage_ak_save(&account_key, NULL);
 	zassert_ok(err, "Unexpected error during Account Key save");
 
 	struct fp_account_key read_keys[ACCOUNT_KEY_MAX_CNT];
@@ -143,11 +143,11 @@ ZTEST(suite_fast_pair_storage_common, test_duplicate)
 	struct fp_account_key account_key;
 
 	cu_generate_account_key(seed, &account_key);
-	err = fp_storage_ak_save(&account_key);
+	err = fp_storage_ak_save(&account_key, NULL);
 	zassert_ok(err, "Unexpected error during Account Key save");
 
 	/* Try to add key duplicate. */
-	err = fp_storage_ak_save(&account_key);
+	err = fp_storage_ak_save(&account_key, NULL);
 	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY)) {
 		zassert_ok(err, "Unexpected error during Account Key save");
 	} else {
@@ -310,7 +310,7 @@ ZTEST(suite_fast_pair_storage_common, test_owner_key)
 		ret = fp_storage_ak_is_owner(&account_key);
 		zassert_equal(ret, -ESRCH, "No owner account key should be stored");
 
-		ret = fp_storage_ak_save(&account_key);
+		ret = fp_storage_ak_save(&account_key, NULL);
 		zassert_ok(ret, "Unexpected error during Account Key save");
 
 		ret = fp_storage_ak_is_owner(&account_key);

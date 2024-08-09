@@ -179,6 +179,17 @@ void fp_keys_bt_auth_progress(const struct bt_conn *conn, bool authenticated);
  */
 void fp_keys_drop_key(const struct bt_conn *conn);
 
+/** Save Account Key association with the potential Bluetooth bond in the AK storage module.
+ *  The Fast Pair Keys module links the Account Key information with the Bluetooth bond and stores
+ *  it in the NVM memory. The association and the Bluetooth bond will be deleted if the pairing
+ *  fails or the Fast Pair Procedure is incomplete.
+ *
+ * @param[in] conn Connection object associated with the potential Bluetooth bond.
+ *
+ * @return 0 If the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int fp_keys_bond_save(const struct bt_conn *conn);
+
 #ifdef __cplusplus
 }
 #endif
