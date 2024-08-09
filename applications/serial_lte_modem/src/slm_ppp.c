@@ -219,8 +219,9 @@ static int ppp_start_internal(void)
 		/* Set the PPP MTU to that of the LTE link. */
 		mtu = MIN(mtu, sizeof(ppp_data_buf));
 	} else {
-		LOG_DBG("Could not retrieve MTU, using default.");
-		mtu = sizeof(ppp_data_buf);
+		LOG_DBG("Could not retrieve MTU, using fallback value.");
+		mtu = CONFIG_SLM_PPP_FALLBACK_MTU;
+		BUILD_ASSERT(sizeof(ppp_data_buf) >= CONFIG_SLM_PPP_FALLBACK_MTU);
 	}
 
 	net_if_set_mtu(ppp_iface, mtu);
