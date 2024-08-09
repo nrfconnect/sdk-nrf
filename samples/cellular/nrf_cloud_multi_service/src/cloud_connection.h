@@ -51,6 +51,14 @@ bool await_cloud_disconnected(k_timeout_t timeout);
 bool await_date_time_known(k_timeout_t timeout);
 
 /**
+ * @brief Check if device has been removed from the cloud.
+ *
+ * @return true if it was just removed.
+ * @return false if not removed.
+ */
+bool is_device_deleted(void);
+
+/**
  * @brief Register a device message handler to receive general device messages from nRF Cloud.
  *
  * The callback will be called directly from the nRF Cloud connection poll thread, so it will block
