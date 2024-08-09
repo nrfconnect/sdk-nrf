@@ -411,7 +411,9 @@ static void esb_fem_for_tx_set(bool ack)
 		 * when this event occurs. The timer value must be big enough to give us possibility
 		 * to reconfigure timer shorts before timer will be cleared by them.
 		 */
-		nrf_timer_cc_set(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL2, TX_RAMP_UP_TIME_US);
+		uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US :
+							      TX_RAMP_UP_TIME_US;
+		nrf_timer_cc_set(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL2, ramp_up);
 	}
 
 	nrf_timer_shorts_set(esb_timer.p_reg, timer_shorts);
