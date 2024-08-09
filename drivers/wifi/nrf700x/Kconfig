@@ -610,6 +610,14 @@ config NET_TC_TX_COUNT
 
 endif # NETWORKING
 
+if NET_BUF_VARIABLE_DATA_SIZE
+config NET_PKT_BUF_RX_DATA_POOL_SIZE
+	default 32000
+
+config NET_PKT_BUF_TX_DATA_POOL_SIZE
+	default 55000
+endif
+
 # Override the Wi-Fi subsytems WIFI_MGMT_SCAN_SSID_FILT_MAX parameter,
 # since we support a maximum of 2 SSIDs for scan result filtering.
 config WIFI_MGMT_SCAN_SSID_FILT_MAX
