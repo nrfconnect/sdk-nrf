@@ -305,4 +305,8 @@ config MBEDTLS_LIBRARY_NRF_SECURITY
 
 endchoice
 
+# This is for internal use only.
+config SOC_NRF54H20_CPUSEC
+	bool
+
 endmenu
