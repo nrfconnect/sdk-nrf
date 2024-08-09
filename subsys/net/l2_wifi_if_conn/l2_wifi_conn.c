@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(l2_wifi_mgr_conn);
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT | \
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
 
-#define WPA_SUPP_EVENTS (NET_EVENT_WPA_SUPP_READY)
+#define WPA_SUPP_EVENTS (NET_EVENT_SUPPLICANT_READY)
 
 static struct net_mgmt_event_callback net_l2_mgmt_cb;
 static struct net_mgmt_event_callback net_wpa_supp_cb;
@@ -98,7 +98,7 @@ static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 				    uint32_t mgmt_event, struct net_if *iface)
 {
 	switch (mgmt_event) {
-	case NET_EVENT_WPA_SUPP_READY:
+	case NET_EVENT_SUPPLICANT_READY:
 		k_sem_give(&wpa_supp_ready_sem);
 		break;
 	default:

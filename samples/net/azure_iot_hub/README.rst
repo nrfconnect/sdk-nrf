@@ -260,5 +260,4 @@ It uses the following libraries and secure firmware component for nRF91 Series b
 It uses the following libraries for nRF7 Series builds:
 
 * :ref:`nrf_security`
-* :ref:`nrf700x_wifi`
 * :ref:`lib_wifi_credentials`

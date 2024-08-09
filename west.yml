@@ -72,7 +72,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 4f64a3afb9fd9a350ce471efbc029a3769a7d5b6
+      revision: pull/1939/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -97,6 +97,7 @@ manifest:
           - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_wurthelektronik
+          - hostap
           - liblc3
           - libmetal
           - littlefs
@@ -120,15 +121,6 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
-    - name: hostap
-      repo-path: sdk-hostap
-      path: modules/lib/hostap
-      revision: 3b64b3bf9957f3b1515d58429b89589d234dcaaf
-      userdata:
-        ncs:
-          upstream-url: https://w1.fi/cgit/hostap/
-          upstream-sha: e792f38db8471f35ee94f109a4093dece8f78c6a
-          compare-by-default: true
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
@@ -157,7 +149,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: d7d06def865e9b663113775c163dea553600e9ad
+      revision: pull/1424/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -169,7 +161,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: b6d6e9a8885ce8390e1847e7a986ecbbdcbc277d
+      revision: pull/469/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio

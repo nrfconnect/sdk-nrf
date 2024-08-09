@@ -272,7 +272,7 @@ You can configure the regulatory domain through build time or run time.
 Build time
 ==========
 
-Use the :kconfig:option:`CONFIG_NRF700X_REG_DOMAIN` Kconfig option to set the regulatory region.
+Use the :kconfig:option:`CONFIG_NRF70_REG_DOMAIN` Kconfig option to set the regulatory region.
 The regulatory region will take an ISO/IEC alpha-2 country code for the country in which the device is expected to operate.
 The beacon's regulatory region (if present) will be given higher precedence over the Kconfig option.
 
