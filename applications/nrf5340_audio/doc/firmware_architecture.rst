@@ -76,7 +76,7 @@ The audio quality for both modes does not change, although the processing time f
 Firmware architecture
 *********************
 
-The following figure illustrates the software layout for the nRF5340 Audio application:
+The following figure illustrates the high-level software layout for the nRF5340 Audio application:
 
 .. figure:: /images/nrf5340_audio_structure_generic.svg
    :alt: nRF5340 Audio high-level design (overview)
@@ -118,8 +118,17 @@ Since the application architecture is the same for all applications and the code
    Device Firmware Update (DFU) can only be enabled when :ref:`nrf53_audio_app_building_script`.
    See :ref:`nrf53_audio_app_configuration_configure_fota` for details.
 
-Communication between modules
-=============================
+.. _nrf53_audio_app_overview_files:
+
+Source file architecture
+========================
+
+The following figure illustrates the software layout for the nRF5340 Audio application on the file-by-file level, regardless of the application chosen:
+
+.. figure:: /images/nrf5340audio_all_packages.svg
+   :alt: nRF5340 Audio application file-level breakdown
+
+   nRF5340 Audio application file-level breakdown
 
 Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are as few dependencies as possible. Each of the buses used by the applications has their message structures described in :file:`zbus_common.h`.
 

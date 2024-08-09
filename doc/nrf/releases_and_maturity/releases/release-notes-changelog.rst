@@ -220,6 +220,8 @@ nRF5340 Audio
   * The APIs :c:func:`bt_hci_err_to_str` and :c:func:`bt_security_err_to_str` that are used to allow printing error codes as strings.
     Each API returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
 
+* Updated the :ref:`nrf53_audio_app_overview` documentation page with the :ref:`nrf53_audio_app_overview_files` section.
+
 nRF Desktop
 -----------
 
