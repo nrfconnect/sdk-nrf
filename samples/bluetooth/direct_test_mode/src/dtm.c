@@ -1652,9 +1652,12 @@ static bool dtm_set_txpower(uint32_t new_tx_power)
 }
 #endif /* !CONFIG_DTM_POWER_CONTROL_AUTOMATIC */
 
-static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
+static int dtm_vendor_specific_pkt(uint8_t vendor_cmd, uint8_t vendor_option)
 {
-	switch (vendor_cmd) {
+	/* Upper length doesn't apply to vendor specific commands. */
+	uint8_t vc = vendor_cmd & 0x3F;
+
+	switch (vc) {
 	/* nRFgo Studio uses CARRIER_TEST_STUDIO to indicate a continuous
 	 * carrier without a modulated signal.
 	 */
