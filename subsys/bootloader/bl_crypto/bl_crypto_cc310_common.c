@@ -33,8 +33,11 @@ int cc310_bl_init(void)
 #if (defined(CONFIG_BL_ROT_VERIFY_EXT_API_ENABLED) || defined(CONFIG_BL_SHA256_EXT_API_ENABLED) \
 	|| defined(CONFIG_BL_SECP256R1_EXT_API_ENABLED)) && defined(PM_B0_END_ADDRESS)
 	uint32_t msp = __get_MSP();
+	uint32_t psp = __get_PSP();
+	bool psp_selected = (__get_CONTROL() & CONTROL_SPSEL_Msk);
+	bool called_from_b0 = psp_selected ? (psp < PM_B0_END_ADDRESS) : (msp < PM_B0_END_ADDRESS);
 
-	if (msp < PM_B0_END_ADDRESS) {
+	if (called_from_b0) {
 #endif
 		static bool initialized;
 
