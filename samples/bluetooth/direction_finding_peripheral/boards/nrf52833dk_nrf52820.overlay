@@ -26,3 +26,17 @@
 	dfegpio2-gpios = <&gpio0 28 0>;
 	dfegpio3-gpios = <&gpio0 29 0>;
 };
+
+&bt_hci_controller {
+	status = "okay";
+};
+
+&bt_hci_sdc {
+	status = "disabled";
+};
+
+/ {
+	chosen {
+		zephyr,bt-hci = &bt_hci_controller;
+	};
+};

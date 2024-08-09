@@ -1,0 +1,11 @@
+description: Bluetooth HCI provided by the SoftDevice Controller
+
+compatible: "nordic,bt-hci-sdc"
+
+include: bt-hci.yaml
+
+properties:
+  bt-hci-name:
+    default: "SDC"
+  bt-hci-bus:
+    default: "BT_HCI_BUS_VIRTUAL"
