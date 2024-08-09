@@ -394,6 +394,23 @@ void main_application_thread_fn(void)
 
 		/* Wait out any remaining time on the sample interval timer. */
 		k_timer_status_sync(&sensor_sample_timer);
+
+		/* If cloud stops being ready due to network trouble or device being deleted
+		 * from the cloud, turn off sensors and wait, then restart sensors.
+		 */
+		if (!await_cloud_ready(K_NO_WAIT) && is_device_deleted()) {
+#if defined(CONFIG_LOCATION_TRACKING)
+			(void)location_request_cancel();
+#endif
+			LOG_INF("Cloud not ready. Pausing sensors.");
+			(void)await_cloud_ready(K_FOREVER);
+			LOG_INF("Cloud is ready. Enabling sensors.");
+#if defined(CONFIG_LOCATION_TRACKING)
+			/* Begin tracking location at the configured interval. */
+			(void)start_location_tracking(on_location_update,
+						  CONFIG_LOCATION_TRACKING_SAMPLE_INTERVAL_SECONDS);
+#endif
+		}
 	}
 }
 
