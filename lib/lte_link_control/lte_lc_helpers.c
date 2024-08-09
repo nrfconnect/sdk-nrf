@@ -854,6 +854,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	struct at_parser parser;
 	char tmp_str[7];
 	size_t count = 0;
+	bool incomplete = false;
 
 	cells->ncells_count = 0;
 	cells->current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
@@ -973,6 +974,8 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	err = at_parser_cmd_count_get(&parser, &count);
 	if (err) {
+		LOG_ERR("Could not get NCELLMEAS param count, "
+			"potentially malformed notification, error: %d", err);
 		goto clean_exit;
 	}
 
@@ -988,6 +991,16 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	if ((cells->ncells_count == 0) || (cells->neighbor_cells == NULL)) {
 		goto clean_exit;
+	}
+
+	__ASSERT_NO_MSG(cells->neighbor_cells != NULL);
+
+	if (cells->ncells_count > CONFIG_LTE_NEIGHBOR_CELLS_MAX) {
+		cells->ncells_count = CONFIG_LTE_NEIGHBOR_CELLS_MAX;
+		incomplete = true;
+		LOG_WRN("Cutting response, because received neigbor cell"
+			" count is bigger than configured max: %d",
+			CONFIG_LTE_NEIGHBOR_CELLS_MAX);
 	}
 
 	/* Neighboring cells. */
@@ -1038,6 +1051,11 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		if (err) {
 			goto clean_exit;
 		}
+	}
+
+	if (incomplete) {
+		err = -E2BIG;
+		LOG_WRN("Buffer is too small; results incomplete: %d", err);
 	}
 
 clean_exit:
@@ -1348,7 +1366,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 	if (incomplete) {
 		err = -E2BIG;
-		LOG_ERR("Buffer is too small; results incomplete: %d", err);
+		LOG_WRN("Buffer is too small; results incomplete: %d", err);
 	}
 
 clean_exit:
