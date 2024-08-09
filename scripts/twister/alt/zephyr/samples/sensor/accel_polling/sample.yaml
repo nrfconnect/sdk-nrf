@@ -28,8 +28,8 @@ tests:
         - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m\/s\\^2\\]:    \
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
-      - SHIELD=pca63566
-      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63566/boards/nrf54h20dk_nrf54h20_vpr_launcher.overlay"
+      - accel_polling_SHIELD=pca63566
+      - vpr_launcher_SHIELD=pca63566_fwd
     platform_allow: nrf54h20dk/nrf54h20/cpuppr
 
   sample.sensor.accel_polling.nrf54h_coverage:

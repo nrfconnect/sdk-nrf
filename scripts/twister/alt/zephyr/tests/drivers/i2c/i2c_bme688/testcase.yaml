@@ -29,9 +29,9 @@ tests:
     harness_config:
       fixture: pca63566
     extra_args:
-      - SHIELD=pca63566
+      - i2c_bme688_SHIELD=pca63566
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63566/boards/nrf54h20dk_nrf54h20_vpr_launcher.overlay"
+      - vpr_launcher_SHIELD=pca63566_fwd
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr

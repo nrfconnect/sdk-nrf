@@ -9,11 +9,6 @@
 		zephyr,console = &uart136;
 	};
 
-	sensor_sim: sensor-sim {
-		compatible = "nordic,sensor-sim";
-		acc-signal = "wave";
-	};
-
 	/* Redefine leds to fit CAF requirements. */
 	/delete-node/ leds;
 
@@ -100,4 +95,15 @@ ipc1: &cpuapp_cpuppr_ipc {
 		       reg = < 0x136000 DT_SIZE_K(24) >;
 	       };
        };
+};
+
+/* Disable unused sensors and peripherals. */
+/delete-node/ &bme688;
+
+&i2c130 {
+	status = "disabled";
+};
+
+&bmi270 {
+	status = "disabled";
 };
