@@ -45,3 +45,17 @@ tests:
     integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp/ns
+  sample.ecjpake.cracen.crypto_service:
+    sysbuild: true
+    tags: introduction psa cracen sysbuild crypto
+    platform_allow: >
+      nrf54h20dk/nrf54h20/cpuapp
+    harness: console
+    extra_args:
+      - SNIPPET=crypto_service
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
