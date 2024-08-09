@@ -182,11 +182,14 @@ static bool configure_ppp_link_ip_addresses(struct ppp_context *ctx)
 	return true;
 }
 
+static bool ppp_is_running(void)
+{
+	return (atomic_get(&ppp_state) == PPP_STATE_RUNNING);
+}
+
 static void send_status_notification(void)
 {
-	const bool is_running = atomic_get(&ppp_state) == PPP_STATE_RUNNING;
-
-	rsp_send("\r\n#XPPP: %u,%u\r\n", is_running, ppp_peer_connected);
+	rsp_send("\r\n#XPPP: %u,%u\r\n", ppp_is_running(), ppp_peer_connected);
 }
 
 static int ppp_start_failure(int ret)
@@ -261,9 +264,9 @@ static int ppp_start_internal(void)
 	return 0;
 }
 
-bool slm_ppp_is_running(void)
+bool slm_ppp_is_stopped(void)
 {
-	return atomic_get(&ppp_state) != PPP_STATE_STOPPED;
+	return (atomic_get(&ppp_state) == PPP_STATE_STOPPED);
 }
 
 static void ppp_start(void)
@@ -457,8 +460,8 @@ static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 			break;
 		}
 		ppp_peer_connected = false;
-		/* Also ignore this event when it is received after PPP has been stopped. */
-		if (!slm_ppp_is_running()) {
+		/* Also ignore this event when PPP is not running anymore. */
+		if (!ppp_is_running()) {
 			break;
 		}
 		send_status_notification();
