@@ -2,17 +2,34 @@ sample:
   description: Simple Management Protocol sample
   name: smp svr
 common:
+  sysbuild: true
   harness: console
   harness_config:
     type: one_line
     ordered: true
     regex:
       - "<inf> smp_sample: build time:"
+  platform_allow:
+    - nrf5340dk/nrf5340/cpuapp
+  integration_platforms:
+    - nrf5340dk/nrf5340/cpuapp
 tests:
   sample.mcumgr.smp_svr.ext_xip:
     platform_allow:
-      - nrf5340dk/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp
     integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp
+  sample.mcumgr.smp_svr.ext_xip.no_network_core:
+    platform_allow:
+      - thingy53/nrf5340/cpuapp
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+    extra_args:
+      - FILE_SUFFIX=no_network_core
+  sample.mcumgr.smp_svr.ext_xip.no_network_core.directxip:
+    platform_allow:
+      - thingy53/nrf5340/cpuapp
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+    extra_args:
+      - FILE_SUFFIX=no_network_core_directxip

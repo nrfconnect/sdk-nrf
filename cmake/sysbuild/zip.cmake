@@ -1,6 +1,18 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+function(mcuboot_image_number_to_slot result image secondary)
+  if(secondary)
+    set(secondary_offset "+ 1")
+  else()
+    set(secondary_offset "")
+  endif()
+
+  math(EXPR slot "${image} * 2 ${secondary_offset}")
+
+  set(${result} ${slot} PARENT_SCOPE)
+endfunction()
+
 function(dfu_app_zip_package)
   set(bin_files)
   set(zip_names)
@@ -13,50 +25,125 @@ function(dfu_app_zip_package)
   sysbuild_get(CONFIG_KERNEL_BIN_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
 
   if(SB_CONFIG_DFU_ZIP_APP)
-    set(app_update_name "${DEFAULT_IMAGE}.bin")
-    set(secondary_app_update_name mcuboot_secondary_app.bin)
+    if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
+      set(app_internal_update_name "${DEFAULT_IMAGE}.internal.bin")
+      set(app_external_update_name "${DEFAULT_IMAGE}.external.bin")
+      set(secondary_app_internal_update_name mcuboot_secondary_app.internal.bin)
+      set(secondary_app_external_update_name mcuboot_secondary_app.external.bin)
+      mcuboot_image_number_to_slot(internal_slot_primary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
+      mcuboot_image_number_to_slot(internal_slot_secondary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
+      mcuboot_image_number_to_slot(external_slot_primary ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} n)
+      mcuboot_image_number_to_slot(external_slot_secondary ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} y)
 
-    if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
-      # Application
-      set(generate_script_app_params
-          "${app_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
-          "${app_update_name}image_index=0"
-          "${app_update_name}slot_index_primary=1"
-          "${app_update_name}slot_index_secondary=2"
-          "${app_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-         )
-      list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin")
-      list(APPEND zip_names ${app_update_name})
-      list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts)
-      set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin)
-      set(include_files INCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin)
+      if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+        # Application
+        set(generate_script_app_params
+            "${app_internal_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
+            "${app_internal_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_internal_update_name}slot_index_primary=${internal_slot_primary}"
+            "${app_internal_update_name}slot_index_secondary=${internal_slot_secondary}"
+            "${app_internal_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+            "${app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
+            "${app_external_update_name}image_index=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
+            "${app_external_update_name}slot_index_primary=${external_slot_primary}"
+            "${app_external_update_name}slot_index_secondary=${external_slot_secondary}"
+            "${app_external_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+           )
+        list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin")
+        list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin")
+        list(APPEND zip_names "${app_internal_update_name};${app_external_update_name}")
+        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts)
+        set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin)
+        set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin)
+        set(include_files INCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin)
+      else()
+        # Application in DirectXIP mode
+        set(generate_script_app_params
+            "${app_internal_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_APP_ADDRESS>"
+            "${app_internal_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+            "${app_internal_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_internal_update_name}slot=${internal_slot_primary}"
+            "${app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
+            "${app_external_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+            "${app_external_update_name}image_index=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
+            "${app_external_update_name}slot=${external_slot_primary}"
+            "${secondary_app_internal_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_APP_ADDRESS>"
+            "${secondary_app_internal_update_name}image_index=0"
+            "${secondary_app_internal_update_name}slot=${internal_slot_secondary}"
+            "${secondary_app_internal_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+            "${secondary_app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
+            "${secondary_app_external_update_name}image_index=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
+            "${secondary_app_external_update_name}slot=${external_slot_secondary}"
+            "${secondary_app_external_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+           )
+
+        list(APPEND bin_files
+             "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
+             "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
+             "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
+             "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
+        )
+        list(APPEND zip_names "${app_internal_update_name};${app_external_update_name};${secondary_app_internal_update_name};${secondary_app_external_update_name}")
+        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
+        set(exclude_files EXCLUDE
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+            ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
+            ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+        )
+        set(include_files INCLUDE
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+            ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+        )
+      endif()
     else()
-      # Application in DirectXIP mode
-      set(generate_script_app_params
-          "${app_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_APP_ADDRESS>"
-          "${app_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-          "${app_update_name}image_index=0"
-          "${app_update_name}slot=0"
-          "${secondary_app_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_APP_ADDRESS>"
-          "${secondary_app_update_name}image_index=0"
-          "${secondary_app_update_name}slot=1"
-          "${secondary_app_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-         )
+      set(app_update_name "${DEFAULT_IMAGE}.bin")
+      set(secondary_app_update_name mcuboot_secondary_app.bin)
+      mcuboot_image_number_to_slot(slot_primary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
+      mcuboot_image_number_to_slot(slot_secondary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
 
-      list(APPEND bin_files
-           "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
-           "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
-      )
-      list(APPEND zip_names "${app_update_name};${secondary_app_update_name}")
-      list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
-      set(exclude_files EXCLUDE
-          ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
-          ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
-      )
-      set(include_files INCLUDE
-          ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-          ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-      )
+      if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+        # Application
+        set(generate_script_app_params
+            "${app_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
+            "${app_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_update_name}slot_index_primary=${slot_primary}"
+            "${app_update_name}slot_index_secondary=${slot_secondary}"
+            "${app_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+           )
+        list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin")
+        list(APPEND zip_names ${app_update_name})
+        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts)
+        set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin)
+        set(include_files INCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin)
+      else()
+        # Application in DirectXIP mode
+        set(generate_script_app_params
+            "${app_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_APP_ADDRESS>"
+            "${app_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+            "${app_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_update_name}slot=${slot_primary}"
+            "${secondary_app_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_APP_ADDRESS>"
+            "${secondary_app_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${secondary_app_update_name}slot=${slot_secondary}"
+            "${secondary_app_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+           )
+
+        list(APPEND bin_files
+             "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+             "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+        )
+        list(APPEND zip_names "${app_update_name};${secondary_app_update_name}")
+        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
+        set(exclude_files EXCLUDE
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+            ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+        )
+        set(include_files INCLUDE
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+            ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+        )
+      endif()
     endif()
   endif()
 
@@ -66,11 +153,15 @@ function(dfu_app_zip_package)
     set(net_update_name "${image_name}.bin")
     sysbuild_get(net_core_board IMAGE ${image_name} VAR BOARD CACHE)
     sysbuild_get(net_update_version IMAGE ${image_name} VAR CONFIG_FW_INFO_FIRMWARE_VERSION KCONFIG)
+
+    mcuboot_image_number_to_slot(net_update_slot_primary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} n)
+    mcuboot_image_number_to_slot(net_update_slot_secondary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} y)
+
     set(generate_script_app_params
         ${generate_script_app_params}
-        "${net_update_name}image_index=1"
-        "${net_update_name}slot_index_primary=3"
-        "${net_update_name}slot_index_secondary=4"
+        "${net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
+        "${net_update_name}slot_index_primary=${net_update_slot_primary}"
+        "${net_update_name}slot_index_secondary=${net_update_slot_secondary}"
         "${net_update_name}load_address=$<TARGET_PROPERTY:partition_manager,CPUNET_PM_APP_ADDRESS>"
         "${net_update_name}version=${net_update_version}"
         "${net_update_name}board=${net_core_board}"
@@ -83,19 +174,14 @@ function(dfu_app_zip_package)
 
   if(SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH)
     # nRF7x Wifi patch
-    if(SB_CONFIG_NETCORE_APP_UPDATE)
-      list(APPEND generate_script_app_params
-           "nrf70.binimage_index=2"
-           "nrf70.binslot_index_primary=5"
-           "nrf70.binslot_index_secondary=6"
-      )
-    else()
-      list(APPEND generate_script_app_params
-           "nrf70.binimage_index=1"
-           "nrf70.binslot_index_primary=3"
-           "nrf70.binslot_index_secondary=4"
-      )
-    endif()
+    mcuboot_image_number_to_slot(nrf70_patches_slot_primary ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} n)
+    mcuboot_image_number_to_slot(nrf70_patches_slot_secondary ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} y)
+
+    list(APPEND generate_script_app_params
+         "nrf70.binimage_index=${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}"
+         "nrf70.binslot_index_primary=${nrf70_patches_slot_primary}"
+         "nrf70.binslot_index_secondary=${nrf70_patches_slot_secondary}"
+    )
 
     list(APPEND bin_files "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND zip_names "nrf70.bin")
