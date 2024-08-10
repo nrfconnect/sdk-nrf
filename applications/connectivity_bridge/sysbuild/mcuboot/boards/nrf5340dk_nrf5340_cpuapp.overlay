@@ -1,0 +1,7 @@
+&uicr {
+	nfct-pins-as-gpios;
+};
+
+&gpio_fwd {
+	status = "disabled";
+};

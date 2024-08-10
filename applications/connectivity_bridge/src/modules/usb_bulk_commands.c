@@ -98,13 +98,14 @@ static void nrf53_reset_work_handler(struct k_work *work)
 size_t dap_execute_vendor_cmd(uint8_t *in, uint8_t *out)
 {
 	LOG_DBG("got command 0x%02X", in[0]);
-	int ret;
 
 	if (in[0] < ID_DAP_VENDOR0) {
 		return dap_execute_cmd(in, out);
 	}
 
 #if IS_ENABLED(CONFIG_RETENTION_BOOT_MODE)
+	int ret;
+
 	if (in[0] == ID_DAP_VENDOR_NRF53_BOOTLOADER) {
 		ret = bootmode_set(BOOT_MODE_TYPE_BOOTLOADER);
 		if (ret) {

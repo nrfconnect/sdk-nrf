@@ -43,9 +43,21 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_MSC_LOG_LEVEL);
  *
  * Format: (_key, _presentation_name, _size, _default, _callback, _enabled)
  */
+
+#if defined(CONFIG_BT_DEVICE_NAME)
+
 #define CONFIG_LIST \
 	X(ble_enable, BLE_ENABLED, 1, "0", ble_enable_opt_cb, (IS_ENABLED(CONFIG_BRIDGE_BLE_ENABLE) && !IS_ENABLED(CONFIG_BRIDGE_BLE_ALWAYS_ON))) \
 	X(ble_name, BLE_NAME, CONFIG_BT_DEVICE_NAME_MAX, CONFIG_BT_DEVICE_NAME, ble_name_opt_cb, IS_ENABLED(CONFIG_BT_DEVICE_NAME_DYNAMIC))
+
+#else
+
+#define CONFIG_LIST
+
+#define CONFIG_BT_DEVICE_NAME_MAX 8
+
+#endif
+
 
 struct cfg_option {
 	const char *display_name;
