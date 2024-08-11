@@ -84,7 +84,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek
+    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek_nrf7000
       EXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
       SB_CONF_FILE="sysbuild_nrf700x-wifi-scan.conf"
     tags: ci_build sysbuild ci_samples_cellular
@@ -94,7 +94,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
     platform_allow: nrf5340dk/nrf5340/cpuapp/ns
-    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek
+    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek_nrf7000
       EXTRA_CONF_FILE="overlay_nrf700x_wifi_mqtt_no_lte.conf"
       SB_CONF_FILE="sysbuild_nrf700x-wifi-conn.conf"
     tags: ci_build sysbuild ci_samples_cellular

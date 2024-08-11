@@ -41,7 +41,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    extra_args: SHIELD=nrf7002ek OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek_nrf7000 OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.location.nrf7000ek_wifi:
@@ -58,20 +58,6 @@ tests:
     extra_args: SHIELD=nrf7002ek_nrf7000 OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
                 CONFIG_WIFI_NM_WPA_SUPPLICANT=n SB_CONFIG_WIFI_NRF70=y
                 SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
-    tags: ci_build sysbuild ci_samples_cellular
-  sample.cellular.location.nrf7001ek_wifi:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
-    platform_allow:
-      - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
-    extra_args: SHIELD=nrf7002ek_nrf7001 OVERLAY_CONFIG=overlay-nrf700x-wifi-scan-only.conf
-                SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.location.thingy91x_wifi:
     sysbuild: true
