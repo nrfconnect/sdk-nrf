@@ -3,25 +3,10 @@ sample:
     application
   name: Wi-Fi scan
 tests:
-  sample.nrf7002.scan:
+  sample.nrf7000_eks.scan:
     sysbuild: true
     build_only: true
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
-    platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_wifi
-  sample.nrf7001.scan:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp/nrf7001
-    platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild ci_samples_wifi
-    skip: true
-  sample.nrf7002_eks.scan:
-    sysbuild: true
-    build_only: true
-    extra_args: SHIELD=nrf7002ek
+    extra_args: SHIELD=nrf7002ek_nrf7000
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
@@ -33,10 +18,10 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     tags: ci_build sysbuild ci_samples_wifi
-  sample.nrf7002_eks.raw_scan:
+  sample.nrf7000_eks.raw_scan:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002ek CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
+    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
@@ -44,24 +29,6 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_wifi
-  sample.nrf7000_eks.scan:
-    sysbuild: true
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7000 CONFIG_WIFI_NM_WPA_SUPPLICANT=n
-    integration_platforms:
-      - nrf9160dk/nrf9160/ns
-    platform_allow: nrf9160dk/nrf9160/ns
-    tags: ci_build sysbuild ci_samples_wifi
-  sample.nrf7001_eks.scan:
-    sysbuild: true
-    build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7001
-    integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160/ns
-    platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840 nrf9160dk/nrf9160/ns
     tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_eb.thingy53.scan:
     sysbuild: true
@@ -71,10 +38,11 @@ tests:
       - thingy53/nrf5340/cpuapp
     platform_allow: thingy53/nrf5340/cpuapp
     tags: ci_build sysbuild ci_samples_wifi
-  sample.thingy91x_nrf7002.scan:
+  sample.thingy91x_nrf7000.scan:
     sysbuild: true
     build_only: true
     platform_allow: thingy91x/nrf9151/ns
+    extra_args: SHIELD=nrf7002ek_nrf7000
     tags: ci_build sysbuild ci_samples_wifi
   sample.scan.nrf7002eb.nrf54l15dk.shell:
     sysbuild: true
