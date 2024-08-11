@@ -57,6 +57,82 @@ The PEM format looks like this::
 
 See the comprehensive `tutorial on SSL.com`_ for instructions on how to convert between different certificate formats and encodings.
 
+Usage
+*****
+
+The different types of credentials supported by the library are defined by the :c:enum:`modem_key_mgmt_cred_type` enum.
+
+The following code snippet shows how to write a CA chain certificate to the modem:
+
+.. code-block:: c
+
+   int err;
+   static const char cert[] = {
+           #include "YourCert.pem.inc"
+   };
+
+   err = modem_key_mgmt_write(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
+   if (err) {
+           printk("Failed to provision certificate, err %d\n", err);
+   }
+
+The following code snippet shows how to check if a CA chain certificate exists in the modem:
+
+.. code-block:: c
+
+   int err;
+   bool exists;
+
+   err = modem_key_mgmt_exists(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists);
+   if (err) {
+           printk("Failed to check if credential exists\n");
+           return;
+   }
+
+   if (exists) {
+           printk("Credential exists in the modem\n");
+   } else {
+           printk("Credential does not exist in the modem\n");
+   }
+
+The following code snippet shows how to check if the CA chain certificate stored in the modem is the same as another CA chain certificate:
+
+.. code-block:: c
+
+   int mismatch;
+   static const char cert[] = {
+           #include "YourCert.pem.inc"
+   };
+
+   mismatch = modem_key_mgmt_cmp(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
+   if (mismatch) {
+           printk("Certificate mismatch\n");
+   } else {
+           printk("Certificate match\n");
+   }
+
+The following code snippet shows how to read a CA chain certificate stored in the modem:
+
+.. code-block:: c
+
+   int err;
+   char cert[CERT_SIZE];
+
+   err = modem_key_mgmt_read(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
+   if (err) {
+           printk("Failed to read certificate\n");
+   }
+
+The following code snippet shows how to delete a CA chain certificate stored in the modem:
+
+.. code-block:: c
+
+   int err;
+
+   err = modem_key_mgmt_delete(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
+   if (err) {
+           printk("Failed to delete existing certificate, err %d\n", err);
+   }
 
 API documentation
 *****************
