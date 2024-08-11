@@ -95,7 +95,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek_nrf7000 EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.nrf7000ek_wifi:
@@ -113,20 +113,6 @@ tests:
                 CONFIG_WIFI_NM_WPA_SUPPLICANT=n SB_CONFIG_WIFI_NRF70=y
                 SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
-  sample.cellular.modem_shell.nrf7001ek_wifi:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
-    platform_allow:
-      - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
-    extra_args: SHIELD=nrf7002ek_nrf7001 EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
-                SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
-    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.nrf7002ek_wifi-debug:
     sysbuild: true
     build_only: true
@@ -138,7 +124,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-    extra_args: SHIELD=nrf7002ek
+    extra_args: SHIELD=nrf7002ek_nrf7000
                 EXTRA_CONF_FILE="overlay-nrf700x-wifi-scan-only.conf;overlay-debug.conf"
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
@@ -269,7 +255,7 @@ tests:
     extra_configs:
       - CONFIG_LOCATION_SERVICE_EXTERNAL=y
       - CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
-    extra_args: SHIELD=nrf7002ek
+    extra_args: SHIELD=nrf7002ek_nrf7000
                 EXTRA_CONF_FILE="overlay-cloud_mqtt.conf;overlay-pgps.conf;overlay-nrf700x-wifi-scan-only.conf"
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms:
@@ -381,7 +367,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=y
       - CONFIG_LOCATION_METHOD_CELLULAR=n
       - CONFIG_LOCATION_METHOD_WIFI=y
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek_nrf7000 EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_wifi_cellular_no_gnss:
@@ -399,7 +385,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=n
       - CONFIG_LOCATION_METHOD_CELLULAR=y
       - CONFIG_LOCATION_METHOD_WIFI=y
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek_nrf7000 EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_wifi_no_cellular_no_gnss:
@@ -417,7 +403,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=n
       - CONFIG_LOCATION_METHOD_CELLULAR=n
       - CONFIG_LOCATION_METHOD_WIFI=y
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek_nrf7000 EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular:
@@ -470,7 +456,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=y
       - CONFIG_LOCATION_METHOD_CELLULAR=y
       - CONFIG_LOCATION_METHOD_WIFI=y
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek_nrf7000 EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular_details:
@@ -506,7 +492,7 @@ tests:
       - CONFIG_LOCATION_METHOD_GNSS=n
       - CONFIG_LOCATION_METHOD_CELLULAR=y
       - CONFIG_LOCATION_METHOD_WIFI=y
-    extra_args: SHIELD=nrf7002ek EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
+    extra_args: SHIELD=nrf7002ek_nrf7000 EXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf
                 SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_gnss_cellular_no_wifi_details:
