@@ -1403,3 +1403,10 @@
   platforms:
     - thingy53/nrf5340/cpuapp/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - ".*nrf7002eb.*"
+    - ".*nrf7002_eb.*"
+    - ".thingy91x_nrf700.*"
+    - ".thingy91x_wifi.*"
+  comment: "nRF7002EB, Thingy91x are not support in the upstream nRF70 driver yet"
