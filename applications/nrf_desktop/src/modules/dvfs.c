@@ -5,8 +5,10 @@
  */
 
 #include <caf/events/ble_common_event.h>
+#include <caf/events/ble_smp_event.h>
 
 #include "usb_event.h"
+#include "config_event.h"
 
 #define MODULE dvfs
 #include <caf/events/module_state_event.h>
@@ -37,11 +39,15 @@ enum dvfs_state {
 	DVFS_STATE_INITIALIZING,
 	DVFS_STATE_LLPM_CONNECTED,
 	DVFS_STATE_USB_CONNECTED,
+	DVFS_STATE_CONFIG_CHANNEL,
+	DVFS_STATE_SMP_TRANSFER,
 	DVFS_STATE_COUNT
 };
 
 static const uint8_t dvfs_high_freq_bitmask = BIT(DVFS_STATE_INITIALIZING) |
-					      BIT(DVFS_STATE_USB_CONNECTED);
+					      BIT(DVFS_STATE_USB_CONNECTED) |
+					      BIT(DVFS_STATE_CONFIG_CHANNEL) |
+					      BIT(DVFS_STATE_SMP_TRANSFER);
 static const uint8_t dvfs_medlow_freq_bitmask = BIT(DVFS_STATE_LLPM_CONNECTED);
 
 /* Binary mask tracking which states are requested.
@@ -66,6 +72,12 @@ struct dvfs_state_timeout {
 };
 
 static struct dvfs_state_timeout dvfs_state_timeouts[DVFS_STATE_COUNT] = {
+	[DVFS_STATE_CONFIG_CHANNEL] = {
+		.timeout_ms = CONFIG_DESKTOP_DVFS_CONFIG_CHANNEL_TIMEOUT_MS,
+	},
+	[DVFS_STATE_SMP_TRANSFER] = {
+		.timeout_ms = CONFIG_DESKTOP_DVFS_SMP_TRANSFER_TIMEOUT_MS,
+	}
 };
 
 static const char *get_dvfs_frequency_setting_name(enum dvfs_frequency_setting setting)
@@ -84,6 +96,8 @@ static const char *get_dvfs_state_name(enum dvfs_state state)
 	case DVFS_STATE_INITIALIZING: return "DVFS_STATE_INITIALIZING";
 	case DVFS_STATE_LLPM_CONNECTED: return "DVFS_STATE_LLPM_CONNECTED";
 	case DVFS_STATE_USB_CONNECTED: return "DVFS_STATE_USB_CONNECTED";
+	case DVFS_STATE_CONFIG_CHANNEL: return "DVFS_STATE_CONFIG_CHANNEL";
+	case DVFS_STATE_SMP_TRANSFER: return "DVFS_STATE_SMP_TRANSFER";
 	default: return "Unknown";
 	}
 }
@@ -281,6 +295,26 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS) && is_ble_smp_transfer_event(aeh)) {
+		process_dvfs_states(DVFS_STATE_SMP_TRANSFER, true);
+		struct dvfs_state_timeout *smp_transfer_timeout =
+			&dvfs_state_timeouts[DVFS_STATE_SMP_TRANSFER];
+		(void) k_work_reschedule(&(smp_transfer_timeout->timeout_work),
+					 K_MSEC(smp_transfer_timeout->timeout_ms));
+
+		return false;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && is_config_event(aeh)) {
+		process_dvfs_states(DVFS_STATE_CONFIG_CHANNEL, true);
+		struct dvfs_state_timeout *config_channel_timeout =
+			&dvfs_state_timeouts[DVFS_STATE_CONFIG_CHANNEL];
+		(void) k_work_reschedule(&(config_channel_timeout->timeout_work),
+					 K_MSEC(config_channel_timeout->timeout_ms));
+
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -295,4 +329,10 @@ APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #endif
 #if CONFIG_DESKTOP_USB_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
+#endif
+#if CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS
+APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
+#endif
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
