@@ -18,6 +18,7 @@ zephyr_library_sources_ifdef(CONFIG_SUIT_CACHE_RW src/suit_dfu_cache_rw.c)
 zephyr_library_link_libraries(suit_cache_interface)
 
 zephyr_library_link_libraries_ifdef(CONFIG_SUIT_CACHE_RW suit_utils)
+zephyr_library_link_libraries_ifdef(CONFIG_SUIT_CACHE_RW suit_envelope_info)
 
 zephyr_library_link_libraries(suit_stream_sources_interface)
 zephyr_library_link_libraries(suit_source_selector_interface)

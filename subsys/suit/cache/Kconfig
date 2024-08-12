@@ -39,30 +39,4 @@ config SUIT_CACHE_RW
 	depends on SUIT_UTILS
 	depends on !SUIT_PLATFORM_VARIANT_SDFW
 
-config SUIT_CACHE0_ERASE_ON_ENVELOPE_STORED
-	bool "Always erase the DFU cache partition 0 after the envelope is stored"
-	help
-		If this option is set then after the SUIT envelope is stored (more
-		precisely: when calling the suit_dfu_cache_rw_initialize function)
-		then Cache0 will be erased and reinitialized regardless of its previous
-		state. If this option is not set, the SUIT subsystem will check the
-		partition and only erase it if its broken and needs recovery.
-		If this option is not set it is up to the user to ensure that the
-		contents of cache0 are appropriate after the envelope is stored.
-	depends on SUIT_CACHE_RW
-	default y
-
-config SUIT_CACHEX_ERASE_ON_INIT
-	bool "Always erase the DFU cache partition 1 .. n on initialization"
-	help
-	  If this option is set the SUIT caches with ID 1 .. n will be erased
-	  during cache initialization, if the cache partition is not already erased.
-
-config SUIT_CACHEX_ERASE_BLOCK_SIZE
-	int "Erase block size"
-	default 4096
-	help
-		Erase block size of cache partitions 1 .. n.
-		This configuration does not affect cache partition 0.
-
 endif # SUIT_CACHE

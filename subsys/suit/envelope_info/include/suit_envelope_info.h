@@ -10,31 +10,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <suit_plat_err.h>
+#include <suit_memory_layout.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * @brief Inform the module that the SUIT candidate envelope was stored.
- *        This will extract the information such as the size of the envelope.
- *        If after calling this function the envelope is modified, the
- *        state of this module must be reset using @ref suit_envelope_info_reset
- *        and this function must be called again when the modifications to the
- *        candidate envelope are finished.
- *
- * @param[in] address The address of the stored envelope.
- * @param[in] max_size The maximum supported envelope size (larger envelope will cause an error).
- *
- * @return suit_plat_success on success, error code otherwise.
- */
-suit_plat_err_t suit_envelope_info_candidate_stored(const uint8_t *address, size_t max_size);
-
-/**
- * @brief Resets the module.
- *
- */
-void suit_envelope_info_reset(void);
 
 /**
  * @brief Gets information about the stored candidate envelope.
@@ -44,7 +24,14 @@ void suit_envelope_info_reset(void);
  *
  * @return suit_plat_success on success, error code otherwise.
  */
-suit_plat_err_t suit_envelope_info_get(const uint8_t **address, size_t *size);
+suit_plat_err_t suit_dfu_partition_envelope_info_get(const uint8_t **address, size_t *size);
+
+/**
+ * @brief Gets information about dfu partition characteristics.
+ *
+ * @return suit_plat_success on success, error code otherwise.
+ */
+suit_plat_err_t suit_dfu_partition_device_info_get(struct suit_nvm_device_info *device_info);
 
 #ifdef __cplusplus
 }

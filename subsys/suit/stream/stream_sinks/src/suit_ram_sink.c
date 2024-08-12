@@ -121,7 +121,7 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 
 		if ((ram_ctx->offset_limit - (size_t)ram_ctx->ptr) >= size) {
 			uint8_t *dst = (uint8_t *)suit_memory_global_address_to_ram_address(
-				(uintptr_t)ram_ctx->ptr);
+				(uintptr_t)(ram_ctx->ptr + ram_ctx->offset));
 
 			if (dst == NULL) {
 				return SUIT_PLAT_ERR_INVAL;
