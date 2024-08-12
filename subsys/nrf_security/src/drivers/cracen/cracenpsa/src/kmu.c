@@ -117,6 +117,16 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 	return status;
 }
 
+static psa_status_t cracen_kmu_revoke_key_slot(int slot_id)
+{
+	int st = lib_kmu_revoke_slot(slot_id);
+
+	if (st) {
+		return PSA_ERROR_GENERIC_ERROR;
+	}
+	return PSA_SUCCESS;
+}
+
 static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
 				       kmu_metadata *metadata, uint8_t *encrypted_buffer,
 				       size_t encrypted_buffer_size,
