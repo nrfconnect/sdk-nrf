@@ -65,7 +65,7 @@ static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 
 	*task = 1;
 
-	while (!(*event || NRF_KMU_S->EVENTS_ERROR)) {
+	while (!(*event || NRF_KMU_S->EVENTS_ERROR || NRF_KMU_S->EVENTS_REVOKED)) {
 		/*
 		 * Poll until KMU completes or fails the operation. This is
 		 * not expected to take long.
@@ -74,12 +74,17 @@ static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 		 */
 	}
 
-	if (NRF_KMU_S->EVENTS_ERROR) {
-		result = -LIB_KMU_ERROR;
-	} else if (*event) {
+	if (*event) {
 		result = LIB_KMU_SUCCESS;
 	} else {
-		CODE_UNREACHABLE;
+		/* Check that REVOKED event is not expected. This can be when a revoke task is
+		 * triggered, where the REVOKED event actually means success.
+		 */
+		if (event != &NRF_KMU_S->EVENTS_REVOKED && NRF_KMU_S->EVENTS_REVOKED) {
+			result = -LIB_KMU_REVOKED;
+		} else {
+			result = -LIB_KMU_ERROR;
+		}
 	}
 
 	lib_kmu_clear_all_events();

@@ -19,4 +19,10 @@
 
 #define PSA_KEY_LOCATION_CRACEN ((psa_key_location_t)(0x800000 | ('N' << 8)))
 
+/*
+ * Defines a persistence state where deleted keys are permanently revoked.
+ * In this state, once a key is deleted, its corresponding slot cannot be provisioned again.
+ */
+#define CRACEN_KEY_PERSISTENCE_REVOKABLE 0x02
+
 #endif

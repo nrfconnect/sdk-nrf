@@ -322,16 +322,28 @@ psa_status_t end_provisioning(uint32_t slot_id, uint32_t num_slots)
 
 psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attributes_t *key_attr)
 {
+	psa_key_persistence_t key_persistence;
+
 	if (metadata->metadata_version != 0) {
 		return PSA_ERROR_BAD_STATE;
 	}
 
-	psa_key_persistence_t readonly = metadata->rpolicy == LIB_KMU_REV_POLICY_ROTATING
-						 ? PSA_KEY_PERSISTENCE_DEFAULT
-						 : PSA_KEY_PERSISTENCE_READ_ONLY;
+	switch (metadata->rpolicy) {
+	case LIB_KMU_REV_POLICY_ROTATING:
+		key_persistence = PSA_KEY_PERSISTENCE_DEFAULT;
+		break;
+	case LIB_KMU_REV_POLICY_REVOKED:
+		key_persistence = CRACEN_KEY_PERSISTENCE_REVOKABLE;
+		break;
+	case LIB_KMU_REV_POLICY_LOCKED:
+		key_persistence = PSA_KEY_PERSISTENCE_READ_ONLY;
+		break;
+	default:
+		return PSA_ERROR_STORAGE_FAILURE;
+	}
 
 	psa_set_key_lifetime(key_attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-					       readonly, PSA_KEY_LOCATION_CRACEN_KMU));
+					       key_persistence, PSA_KEY_LOCATION_CRACEN_KMU));
 
 	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_SEED) {
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_RAW_DATA);
@@ -595,9 +607,19 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 		}
 	}
 
-	bool read_only = PSA_KEY_LIFETIME_IS_READ_ONLY(psa_get_key_lifetime(key_attr));
-
-	metadata->rpolicy = read_only ? LIB_KMU_REV_POLICY_LOCKED : LIB_KMU_REV_POLICY_ROTATING;
+	switch (PSA_KEY_LIFETIME_GET_PERSISTENCE(psa_get_key_lifetime(key_attr))) {
+	case PSA_KEY_PERSISTENCE_READ_ONLY:
+		metadata->rpolicy = LIB_KMU_REV_POLICY_LOCKED;
+		break;
+	case PSA_KEY_PERSISTENCE_DEFAULT:
+		metadata->rpolicy = LIB_KMU_REV_POLICY_ROTATING;
+		break;
+	case CRACEN_KEY_PERSISTENCE_REVOKABLE:
+		metadata->rpolicy = LIB_KMU_REV_POLICY_REVOKED;
+		break;
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
 	return PSA_SUCCESS;
 }
@@ -735,6 +757,10 @@ psa_status_t cracen_kmu_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifeti
 
 	int kmu_status = lib_kmu_read_metadata((int)slot_id, (uint32_t *)&metadata);
 
+	if (kmu_status == -LIB_KMU_REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (kmu_status == -LIB_KMU_ERROR || is_secondary_slot(&metadata)) {
 		return PSA_ERROR_DOES_NOT_EXIST;
 	}
@@ -779,6 +805,10 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 {
 	kmu_metadata metadata;
 	int kmu_status = lib_kmu_read_metadata((int)slot_number, (uint32_t *)&metadata);
+
+	if (kmu_status == -LIB_KMU_REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 	if (kmu_status == -LIB_KMU_ERROR || is_secondary_slot(&metadata)) {
 		return PSA_ERROR_DOES_NOT_EXIST;
