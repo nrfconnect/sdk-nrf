@@ -1,0 +1,18 @@
+sample:
+  name: UICC LwM2M sample
+tests:
+  sample.cellular.uicc_lwm2m:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91/nrf9160/ns
+    tags: ci_build sysbuild ci_samples_cellular

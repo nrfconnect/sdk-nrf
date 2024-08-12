@@ -431,6 +431,8 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
+* Added the :ref:`uicc_lwm2m_sample` sample.
+
 * :ref:`fmfu_smp_svr_sample` sample:
 
   * Removed the unused :ref:`at_cmd_parser_readme` library.
@@ -753,6 +755,8 @@ Modem libraries
      The :ref:`at_parser_readme` is a library that parses AT command responses, notifications, and events.
      Compared to the deprecated :ref:`at_cmd_parser_readme` library, it does not allocate memory dynamically and has a smaller footprint.
      For more information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
+   * The :ref:`lib_uicc_lwm2m` library.
+     This library reads the LwM2M bootstrap configuration from SIM.
 
 * :ref:`at_cmd_parser_readme` library:
 
