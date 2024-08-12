@@ -19,7 +19,7 @@
 LOG_MODULE_REGISTER(dfu_cache, CONFIG_SUIT_LOG_LEVEL);
 
 static bool init_done;
-struct dfu_cache dfu_cache;
+static struct dfu_cache dfu_cache;
 
 /**
  * @brief Check if current_key is same as uri

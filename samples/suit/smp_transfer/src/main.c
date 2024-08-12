@@ -28,8 +28,8 @@ int main(void)
 		printk("Cannot init LEDs (err: %d)\r\n", ret);
 	}
 
-	printk("Hello world from %s version: %d\r\n", CONFIG_BOARD,
-	       CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM);
+	printk("Hello world from %s version: %d, BUILD: %s %s\r\n", CONFIG_BOARD,
+	       CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM, __DATE__, __TIME__);
 
 #if (CONFIG_SSF_SUIT_SERVICE_ENABLED) && (CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM == 1) &&               \
 	(!CONFIG_MGMT_SUITFU)

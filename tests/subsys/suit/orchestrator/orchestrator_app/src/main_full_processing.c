@@ -261,13 +261,11 @@ static void check_cache_slot_content(uint8_t cache_partition_id, const uint8_t *
 				     const uint8_t *expected_data, size_t expected_size)
 {
 	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
-	const uint8_t *partition_address;
-	size_t partition_size;
+	struct suit_nvm_device_info device_info;
 	const uint8_t *result_data;
 	size_t result_len;
 
-	ret = suit_dfu_cache_rw_partition_info_get(cache_partition_id, &partition_address,
-						   &partition_size);
+	ret = suit_dfu_cache_rw_device_info_get(cache_partition_id, &device_info);
 	zassert_equal(SUIT_PLAT_SUCCESS, ret, "Getting cache partition %d info failed",
 		      cache_partition_id);
 
@@ -275,8 +273,9 @@ static void check_cache_slot_content(uint8_t cache_partition_id, const uint8_t *
 	ret = suit_dfu_cache_search(uri, uri_len, &result_data, &result_len);
 	zassert_equal(SUIT_PLAT_SUCCESS, ret, "Finding slot for URI in cache failed!");
 
-	zassert_true(result_data >= partition_address &&
-			     (result_data + result_len) < (partition_address + partition_size),
+	zassert_true(result_data >= device_info.mapped_address &&
+			     (result_data + result_len) <=
+				     (device_info.mapped_address + device_info.partition_size),
 		     "Slot for the URI is not in partition %d", cache_partition_id);
 
 	zassert_equal(result_len, expected_size, "Incorrect cache slot size");

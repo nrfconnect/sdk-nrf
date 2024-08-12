@@ -12,6 +12,7 @@
 #include <zcbor_decode.h>
 #include <zephyr/storage/flash_map.h>
 #include <suit_dfu_cache.h>
+#include <suit_memory_layout.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,40 +31,6 @@ struct suit_cache_slot {
 };
 
 /**
- * @brief Initialize cache in R/W mode for APP context
- *
- * @note dfu_cache structure is initialized based on dfu_partitions_ext which in turn is
- *       initialized using SUIT cache partitions information from Device Tree.
- *
- * @param addr  Address of the envelope in DFU partition
- * @param size  Size of the envelope
- *
- * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
- */
-suit_plat_err_t suit_dfu_cache_rw_initialize(void *addr, size_t size);
-
-/**
- * @brief Deinitialize SUIT cache. This will also erase all the cache partitions.
- *
- * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
- */
-suit_plat_err_t suit_dfu_cache_rw_deinitialize(void);
-
-/**
- * @brief Retrieve information about the address and size of a given cache
- *        partition.
- *
- * @param cache_partition_id ID of the cache partition
- * @param address address of the cache partition
- * @param size size of the cache partition
- *
- * @return SUIT_PLAT_SUCCESS in case of success
- * @return SUIT_PLAT_ERR_NOT_FOUND if the given partition does not exist
- */
-suit_plat_err_t suit_dfu_cache_rw_partition_info_get(uint8_t cache_partition_id,
-						     const uint8_t **address, size_t *size);
-
-/**
  * @brief Function tries to allocate slot in cache pointed by ID
  *
  * @param cache_partition_id ID of the cache partition in which slot should be allocated
@@ -74,8 +41,8 @@ suit_plat_err_t suit_dfu_cache_rw_partition_info_get(uint8_t cache_partition_id,
  * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
  */
 suit_plat_err_t suit_dfu_cache_rw_slot_create(uint8_t cache_partition_id,
-					      struct suit_cache_slot *slot,
-					      const uint8_t *uri, size_t uri_size);
+					      struct suit_cache_slot *slot, const uint8_t *uri,
+					      size_t uri_size);
 
 /**
  * @brief Commits changes written to slot by updating cbor header for the cache slot
@@ -95,6 +62,42 @@ suit_plat_err_t suit_dfu_cache_rw_slot_close(struct suit_cache_slot *slot, size_
  * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
  */
 suit_plat_err_t suit_dfu_cache_rw_slot_drop(struct suit_cache_slot *slot);
+
+/**
+ * @brief Adjust cache partition 0 location and size based on characteristics of
+ * update candidate envelope
+ *
+ * To be executed each time new envelope is stored in the dfu partition
+ *
+ * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
+ */
+suit_plat_err_t suit_dfu_cache_0_resize(void);
+
+/**
+ * @brief Validates content of cache partitions
+ *
+ * Validates content of cache partitions and erases nvm partition in case of content incoherency
+ *
+ * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
+ */
+suit_plat_err_t suit_dfu_cache_validate_content(void);
+
+/**
+ * @brief Drops content of all cache partitions
+ *
+ * Erases nvm partitions belonging to all cache partitions
+ *
+ * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
+ */
+suit_plat_err_t suit_dfu_cache_drop_content(void);
+
+/**
+ * @brief Gets information about characteristics of cache partition
+ *
+ * @return suit_plat_success on success, error code otherwise.
+ */
+suit_plat_err_t suit_dfu_cache_rw_device_info_get(uint8_t cache_partition_id,
+						  struct suit_nvm_device_info *device_info);
 
 #ifdef __cplusplus
 }

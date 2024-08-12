@@ -40,13 +40,9 @@ suit_plat_err_t suit_dfu_cache_sink_get(struct stream_sink *sink, uint8_t cache_
 			return SUIT_PLAT_ERR_BUSY;
 		}
 
-		const uint8_t *dfu_partition_address;
-		size_t dfu_partition_size;
+		struct suit_nvm_device_info device_info;
 
-		(void)dfu_partition_address;
-		(void)dfu_partition_size;
-		if (suit_dfu_cache_rw_partition_info_get(cache_partition_id, &dfu_partition_address,
-							 &dfu_partition_size) !=
+		if (suit_dfu_cache_rw_device_info_get(cache_partition_id, &device_info) !=
 		    SUIT_PLAT_SUCCESS) {
 			return SUIT_PLAT_ERR_NOT_FOUND;
 		}

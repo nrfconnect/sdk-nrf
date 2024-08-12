@@ -26,17 +26,6 @@
 #include <suit_ipc_streamer.h>
 #endif
 
-#define FIXED_PARTITION_ERASE_BLOCK_SIZE(label)                                                    \
-	DT_PROP(DT_GPARENT(DT_NODELABEL(label)), erase_block_size)
-
-#define DFU_PARTITION_LABEL	 dfu_partition
-#define DFU_PARTITION_ADDRESS	 suit_plat_mem_nvm_ptr_get(DFU_PARTITION_OFFSET)
-#define DFU_PARTITION_OFFSET	 FIXED_PARTITION_OFFSET(DFU_PARTITION_LABEL)
-#define DFU_PARTITION_SIZE	 FIXED_PARTITION_SIZE(DFU_PARTITION_LABEL)
-#define DFU_PARTITION_EB_SIZE	 FIXED_PARTITION_ERASE_BLOCK_SIZE(DFU_PARTITION_LABEL)
-#define DFU_PARTITION_WRITE_SIZE FIXED_PARTITION_WRITE_BLOCK_SIZE(DFU_PARTITION_LABEL)
-#define DFU_PARTITION_DEVICE	 FIXED_PARTITION_DEVICE(DFU_PARTITION_LABEL)
-
 LOG_MODULE_REGISTER(suit_dfu, CONFIG_SUIT_LOG_LEVEL);
 
 #define SUIT_PROCESSOR_ERR_TO_ZEPHYR_ERR(err) ((err) == SUIT_SUCCESS ? 0 : -EACCES)
@@ -45,19 +34,19 @@ LOG_MODULE_REGISTER(suit_dfu, CONFIG_SUIT_LOG_LEVEL);
 
 static int dfu_partition_erase(void)
 {
-	const struct device *fdev = DFU_PARTITION_DEVICE;
+	struct suit_nvm_device_info device_info;
+	int err = suit_dfu_partition_device_info_get(&device_info);
 
-	if (!device_is_ready(fdev)) {
+	if (err != SUIT_PLAT_SUCCESS) {
+		return -EIO;
+	}
+
+	if (!device_is_ready(device_info.fdev)) {
 		return -ENODEV;
 	}
 
-	/* Division is used to round down so that erase_size is aligned to DFU_PARTITION_EB_SIZE  */
-	size_t erase_size = (DFU_PARTITION_SIZE / DFU_PARTITION_EB_SIZE) * DFU_PARTITION_EB_SIZE;
-
-	LOG_INF("Erasing dfu partition");
-
-	int rc = flash_erase(fdev, DFU_PARTITION_OFFSET, erase_size);
-
+	int rc = flash_erase(device_info.fdev, device_info.partition_offset,
+			     device_info.partition_size);
 	if (rc < 0) {
 		return -EIO;
 	}
@@ -69,12 +58,37 @@ static int dfu_partition_erase(void)
 
 int suit_dfu_initialize(void)
 {
+	LOG_DBG("Enter");
+
+	struct suit_nvm_device_info device_info;
+	const uint8_t *uc_env_addr = NULL;
+	size_t uc_env_size = 0;
+	int err = suit_dfu_partition_device_info_get(&device_info);
+
+	if (err != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Error when getting DFU partition address and size: %d", err);
+		return -EIO;
+	}
+
+	LOG_INF("DFU partition detected, addr: %p, size %d bytes",
+		(void *)device_info.mapped_address, device_info.partition_size);
+
+	err = suit_dfu_partition_envelope_info_get(&uc_env_addr, &uc_env_size);
+	if (err == SUIT_PLAT_SUCCESS) {
+		LOG_INF("Update candidate envelope detected, addr: %p, size %d bytes",
+			(void *)uc_env_addr, uc_env_size);
+	}
+
+#if CONFIG_SUIT_CACHE_RW
+	suit_dfu_cache_validate_content();
+#endif /* CONFIG_SUIT_CACHE_RW */
+
 #if CONFIG_SUIT_STREAM_IPC_PROVIDER
 	suit_ipc_streamer_provider_init();
 #endif
 
 #if CONFIG_SUIT_PROCESSOR
-	int err = suit_processor_init();
+	err = suit_processor_init();
 
 	if (err != SUIT_SUCCESS) {
 		LOG_ERR("Failed to initialize suit processor: %d", err);
@@ -82,7 +96,7 @@ int suit_dfu_initialize(void)
 	}
 #endif /* CONFIG_SUIT_PROCESSOR */
 
-	LOG_DBG("SUIT DFU module init ok");
+	LOG_DBG("Exit with success");
 
 	return 0;
 }
@@ -91,9 +105,9 @@ int suit_dfu_initialize(void)
 
 int suit_dfu_cleanup(void)
 {
-	int err = 0;
+	LOG_DBG("Enter");
 
-	suit_envelope_info_reset();
+	int err = 0;
 
 	err = dfu_partition_erase();
 	if (err != 0) {
@@ -101,66 +115,53 @@ int suit_dfu_cleanup(void)
 	}
 
 #if CONFIG_SUIT_CACHE_RW
-	if (suit_dfu_cache_rw_deinitialize() != SUIT_PLAT_SUCCESS) {
-		return -EIO;
-	}
+	suit_dfu_cache_0_resize();
+	suit_dfu_cache_drop_content();
 #endif
+	LOG_DBG("Exit with success");
 
 	return 0;
 }
 
 int suit_dfu_candidate_envelope_stored(void)
 {
-	suit_plat_err_t err;
+	LOG_DBG("Enter");
 
-	err = suit_envelope_info_candidate_stored((const uint8_t *)DFU_PARTITION_ADDRESS,
-						  DFU_PARTITION_SIZE);
+	const uint8_t *uc_env_addr = NULL;
+	size_t uc_env_size = 0;
+	int err = suit_dfu_partition_envelope_info_get(&uc_env_addr, &uc_env_size);
 
 	if (err != SUIT_PLAT_SUCCESS) {
 		LOG_INF("Invalid update candidate: %d", err);
-
 		return -ENOTSUP;
 	}
 
 #if CONFIG_SUIT_CACHE_RW
-	/* All data to initialize cache partitions is present - initialize DFU cache. */
-	const uint8_t *envelope_address = NULL;
-	size_t envelope_size = 0;
-
-	err = suit_envelope_info_get(&envelope_address, &envelope_size);
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_INF("Error when getting envelope address and size: %d", err);
-		return -EPIPE;
-	}
-
-	err = suit_dfu_cache_rw_initialize((void *)envelope_address, envelope_size);
-
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_INF("Error when initializing DFU cache: %d", err);
-		return -EIO;
-	}
+	suit_dfu_cache_0_resize();
 #endif /* CONFIG_SUIT_CACHE_RW */
 
+	LOG_DBG("Exit with success");
 	return 0;
 }
 
 int suit_dfu_candidate_preprocess(void)
 {
+	LOG_DBG("Enter");
+
 #if CONFIG_SUIT_PROCESSOR
 	uint8_t *candidate_envelope_address;
 	size_t candidate_envelope_size;
 
-	int err = suit_envelope_info_get((const uint8_t **)&candidate_envelope_address,
-					 &candidate_envelope_size);
+	int err = suit_dfu_partition_envelope_info_get(
+		(const uint8_t **)&candidate_envelope_address, &candidate_envelope_size);
 
 	if (err != SUIT_PLAT_SUCCESS) {
 		LOG_INF("Invalid update candidate: %d", err);
-
 		return -ENOTSUP;
 	}
 
-	LOG_DBG("Update candidate address: %p", candidate_envelope_address);
-	LOG_DBG("Update candidate size: %d", candidate_envelope_size);
+	LOG_INF("Update candidate envelope detected, addr: %p, size %d bytes",
+		(void *)candidate_envelope_address, candidate_envelope_size);
 
 	err = suit_process_sequence(candidate_envelope_address, candidate_envelope_size,
 				    SUIT_SEQ_DEP_RESOLUTION);
@@ -186,16 +187,19 @@ int suit_dfu_candidate_preprocess(void)
 
 #endif /* CONFIG_SUIT_PROCESSOR */
 
+	LOG_DBG("Exit with success");
 	return 0;
 }
 
 int suit_dfu_update_start(void)
 {
+	LOG_DBG("Enter");
+
 	const uint8_t *region_address;
 	size_t region_size;
 	size_t update_regions_count = 1;
 
-	int err = suit_envelope_info_get((const uint8_t **)&region_address, &region_size);
+	int err = suit_dfu_partition_envelope_info_get(&region_address, &region_size);
 
 	if (err != SUIT_PLAT_SUCCESS) {
 		LOG_INF("Invalid update candidate: %d", err);
@@ -215,11 +219,13 @@ int suit_dfu_update_start(void)
 	update_candidate[0].size = region_size;
 
 #if CONFIG_SUIT_CACHE_RW
+	struct suit_nvm_device_info device_info;
+
 	for (size_t i = 0; i < CONFIG_SUIT_CACHE_MAX_CACHES; i++) {
-		if (suit_dfu_cache_rw_partition_info_get(i, &region_address, &region_size) ==
-		    SUIT_PLAT_SUCCESS) {
-			update_candidate[update_regions_count].mem = region_address;
-			update_candidate[update_regions_count].size = region_size;
+		if (suit_dfu_cache_rw_device_info_get(i, &device_info) == SUIT_PLAT_SUCCESS) {
+
+			update_candidate[update_regions_count].mem = device_info.mapped_address;
+			update_candidate[update_regions_count].size = device_info.partition_size;
 			update_regions_count++;
 		}
 	}
