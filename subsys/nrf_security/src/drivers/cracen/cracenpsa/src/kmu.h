@@ -87,8 +87,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 				  const uint8_t *key_buffer, size_t key_buffer_size);
 
 /**
- * @brief Revokes key stored in KMU.
+ * @brief Destroy PSA key stored in KMU.
  *
- * @return psa_status_t
  */
-psa_status_t cracen_kmu_revoke_key_slot(int slot_id);
+psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes);
