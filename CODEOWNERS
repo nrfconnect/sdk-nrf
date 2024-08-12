@@ -175,6 +175,7 @@
 /lib/st25r3911b/                          @nrfconnect/ncs-si-muffin
 /lib/supl/                                @nrfconnect/ncs-co-networking @tokangas
 /lib/tone/                                @nrfconnect/ncs-audio
+/lib/uicc_lwm2m/                          @stig-bjorlykke
 /lib/wave_gen/                            @nrfconnect/ncs-si-muffin
 
 # Modules
@@ -213,6 +214,7 @@
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
 /samples/cellular/slm_shell/              @nrfconnect/ncs-iot-oulu
 /samples/cellular/sms/                    @trantanen @tokangas
+/samples/cellular/uicc_lwm2m/             @stig-bjorlykke
 /samples/common/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/crypto/                          @nrfconnect/ncs-aegir
 /samples/debug/memfault/                  @nrfconnect/ncs-cia
@@ -416,6 +418,7 @@
 /tests/lib/sfloat/                        @nrfconnect/ncs-si-muffin
 /tests/lib/sms/                           @trantanen @tokangas
 /tests/lib/tone/                          @nrfconnect/ncs-audio
+/tests/lib/uicc_lwm2m/                    @stig-bjorlykke
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-pluto
