@@ -40,21 +40,33 @@ enum dvfs_state {
 	DVFS_STATE_COUNT
 };
 
-static const uint8_t dvfs_high_freq_bitmask = BIT(DVFS_STATE_USB_CONNECTED) |
-					      BIT(DVFS_STATE_INITIALIZING);
+static const uint8_t dvfs_high_freq_bitmask = BIT(DVFS_STATE_INITIALIZING) |
+					      BIT(DVFS_STATE_USB_CONNECTED);
 static const uint8_t dvfs_medlow_freq_bitmask = BIT(DVFS_STATE_LLPM_CONNECTED);
 
 /* Binary mask tracking which states are requested.
  * We start with DVFS_STATE_INITIALIZING on as it is active on start.
  */
-static uint8_t dfvs_requests_state = BIT(DVFS_STATE_INITIALIZING);
+static uint8_t dfvs_requests_state_bitmask = BIT(DVFS_STATE_INITIALIZING);
+
+BUILD_ASSERT(sizeof(dvfs_high_freq_bitmask) == sizeof(dfvs_requests_state_bitmask));
+BUILD_ASSERT(sizeof(dvfs_medlow_freq_bitmask) == sizeof(dfvs_requests_state_bitmask));
+BUILD_ASSERT(CHAR_BIT * sizeof(dfvs_requests_state_bitmask) >= DVFS_STATE_COUNT);
 
 static enum dvfs_frequency_setting current_freq = DVFS_FREQ_HIGH;
 
-static struct dvfs_retry_work_data {
-	struct k_work_delayable dvfs_retry_work;
-	uint8_t dfvs_retries_cnt;
-} dvfs_retry_data;
+static struct dvfs_retry {
+	struct k_work_delayable retry_work;
+	uint8_t retries_cnt;
+} dvfs_retry;
+
+struct dvfs_state_timeout {
+	struct k_work_delayable timeout_work;
+	uint16_t timeout_ms;
+};
+
+static struct dvfs_state_timeout dvfs_state_timeouts[DVFS_STATE_COUNT] = {
+};
 
 static const char *get_dvfs_frequency_setting_name(enum dvfs_frequency_setting setting)
 {
@@ -78,20 +90,20 @@ static const char *get_dvfs_state_name(enum dvfs_state state)
 
 static void cancel_dvfs_retry_work(void)
 {
-	(void) k_work_cancel_delayable(&dvfs_retry_data.dvfs_retry_work);
-	dvfs_retry_data.dfvs_retries_cnt = 0;
+	(void) k_work_cancel_delayable(&dvfs_retry.retry_work);
+	dvfs_retry.retries_cnt = 0;
 }
 
 static void handle_dvfs_error(int32_t err)
 {
-	if (dvfs_retry_data.dfvs_retries_cnt >= DVFS_NUMBER_OF_RETRIES) {
+	if (dvfs_retry.retries_cnt >= DVFS_NUMBER_OF_RETRIES) {
 		LOG_ERR("DVFS retry count exceeded.");
 		module_set_state(MODULE_STATE_ERROR);
 		module_state = STATE_ERROR;
 		cancel_dvfs_retry_work();
 		return;
 	}
-	dvfs_retry_data.dfvs_retries_cnt++;
+	dvfs_retry.retries_cnt++;
 	k_timeout_t timeout;
 
 	if (err == -EBUSY) {
@@ -107,7 +119,7 @@ static void handle_dvfs_error(int32_t err)
 		cancel_dvfs_retry_work();
 		return;
 	}
-	(void) k_work_reschedule(&dvfs_retry_data.dvfs_retry_work, timeout);
+	(void) k_work_reschedule(&dvfs_retry.retry_work, timeout);
 }
 
 static void set_dvfs_freq(enum dvfs_frequency_setting target_freq)
@@ -126,9 +138,9 @@ static void set_dvfs_freq(enum dvfs_frequency_setting target_freq)
 
 static enum dvfs_frequency_setting check_required_frequency(void)
 {
-	if (dfvs_requests_state & dvfs_high_freq_bitmask) {
+	if (dfvs_requests_state_bitmask & dvfs_high_freq_bitmask) {
 		return DVFS_FREQ_HIGH;
-	} else if (dfvs_requests_state & dvfs_medlow_freq_bitmask) {
+	} else if (dfvs_requests_state_bitmask & dvfs_medlow_freq_bitmask) {
 		return DVFS_FREQ_MEDLOW;
 	} else {
 		return DVFS_FREQ_LOW;
@@ -142,20 +154,20 @@ static void process_dvfs_states(enum dvfs_state state, bool turn_on)
 	}
 
 	if (turn_on) {
-		dfvs_requests_state |= BIT(state);
+		dfvs_requests_state_bitmask |= BIT(state);
 		LOG_DBG("%s ACTIVE", get_dvfs_state_name(state));
 	} else {
-		dfvs_requests_state &= ~BIT(state);
+		dfvs_requests_state_bitmask &= ~BIT(state);
 		LOG_DBG("%s NOT ACTIVE", get_dvfs_state_name(state));
 	}
 
 	enum dvfs_frequency_setting required_freq = check_required_frequency();
 
 	if ((required_freq != current_freq) &&
-	    (!k_work_delayable_is_pending(&dvfs_retry_data.dvfs_retry_work))) {
+	    (!k_work_delayable_is_pending(&dvfs_retry.retry_work))) {
 		set_dvfs_freq(required_freq);
 	} else if ((required_freq == current_freq) &&
-	    (k_work_delayable_is_pending(&dvfs_retry_data.dvfs_retry_work))) {
+	    (k_work_delayable_is_pending(&dvfs_retry.retry_work))) {
 		cancel_dvfs_retry_work();
 	}
 }
@@ -173,6 +185,18 @@ static bool handle_ble_peer_conn_params_event(const struct ble_peer_conn_params_
 			    event->interval_min & REG_CONN_INTERVAL_LLPM_MASK);
 
 	return true;
+}
+static void dvfs_state_timeout_work_handler(struct k_work *work)
+{
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	struct dvfs_state_timeout *timeout_data = CONTAINER_OF(dwork,
+							       struct dvfs_state_timeout,
+							       timeout_work);
+	enum dvfs_state state = timeout_data - dvfs_state_timeouts;
+
+	__ASSERT_NO_MSG(state < DVFS_STATE_COUNT);
+	LOG_DBG("Timeout for %s DVFS state", get_dvfs_state_name(state));
+	process_dvfs_states(state, false);
 }
 
 static void dvfs_retry_work_handler(struct k_work *work)
@@ -206,8 +230,12 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG((dvfs_high_freq_bitmask & dvfs_medlow_freq_bitmask) == 0);
-			k_work_init_delayable(&dvfs_retry_data.dvfs_retry_work,
+			k_work_init_delayable(&dvfs_retry.retry_work,
 					      dvfs_retry_work_handler);
+			for (size_t i = 0; i < ARRAY_SIZE(dvfs_state_timeouts); i++) {
+				k_work_init_delayable(&dvfs_state_timeouts[i].timeout_work,
+						      dvfs_state_timeout_work_handler);
+			}
 			get_req_modules(&req_modules_bm);
 			module_state = STATE_READY;
 
