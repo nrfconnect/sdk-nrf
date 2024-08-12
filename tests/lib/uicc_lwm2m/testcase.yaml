@@ -1,0 +1,7 @@
+tests:
+  uicc_lwm2m.unit_test:
+    sysbuild: true
+    tags: uicc_lwm2m sysbuild ci_tests_lib_uicc_lwm2m
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
