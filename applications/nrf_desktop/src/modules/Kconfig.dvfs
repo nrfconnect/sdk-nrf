@@ -20,23 +20,42 @@ config DESKTOP_DVFS_RETRY_BUSY_TIMEOUT_MS
 	default 1
 	range 1 10000
 	help
-	  Timeout in milliseconds specifying time after which DVFS module will retry DVFS frequency change.
-	  This timeout is applied in case another DVFS change request is still in progress which causes the current request to fail.
+	  Timeout in milliseconds specifying time after which DVFS module will retry
+	  DVFS frequency change. This timeout is applied in case another DVFS change
+	  request is still in progress which causes the current request to fail.
 
 config DESKTOP_DVFS_RETRY_INIT_TIMEOUT_MS
 	int "Retry timeout"
 	default 500
 	range 1 10000
 	help
-	  Timeout in milliseconds specifying time after which DVFS module will retry DVFS frequency change.
-	  This timeout is applied in case DVFS is not yet initialized which causes the current request to fail.
+	  Timeout in milliseconds specifying time after which DVFS module will retry
+	  DVFS frequency change. This timeout is applied in case DVFS is not yet initialized
+	  which causes the current request to fail.
 
 config DESKTOP_DVFS_RETRY_COUNT
 	int "Number of retries"
 	default 5
 	range 1 255
 	help
-	  Number of retries of DVFS frequency change after which DVFS module will report MODULE_STATE_ERROR.
+	  Number of retries of DVFS frequency change after which DVFS module will report
+	  MODULE_STATE_ERROR.
+
+config DESKTOP_DVFS_SMP_TRANSFER_TIMEOUT_MS
+	int "SMP transfer timeout"
+	default 5000
+	range 1 65535
+	help
+	  Timeout in milliseconds specifying time after which DVFS module will go back to
+	  low frequency after receiving SMP transfer event.
+
+config DESKTOP_DVFS_CONFIG_CHANNEL_TIMEOUT_MS
+	int "Config channel timeout"
+	default 5000
+	range 1 65535
+	help
+	  Timeout in milliseconds specifying time after which DVFS module will go back to
+	  low frequency after reciving config event.
 
 module = DESKTOP_DVFS
 module-str = DVFS
