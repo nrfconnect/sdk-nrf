@@ -320,6 +320,34 @@ psa_status_t end_provisioning(uint32_t slot_id, uint32_t num_slots)
 	return PSA_SUCCESS;
 }
 
+psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
+{
+	psa_key_location_t location =
+		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
+
+	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
+		uint32_t slot_id = CRACEN_PSA_GET_KMU_SLOT(
+			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
+		size_t num_slots = DIV_ROUND_UP(PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)),
+						CRACEN_KMU_SLOT_KEY_SIZE);
+		psa_status_t status;
+
+		if (CRACEN_PSA_GET_KEY_USAGE_SCHEME(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(
+			    psa_get_key_id(attributes))) == KMU_METADATA_SCHEME_ENCRYPTED) {
+			num_slots += 2;
+		}
+
+		status = set_provisioning_in_progress(slot_id, num_slots);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		/* Verify will clear related key slots. */
+		return verify_provisioning_state();
+	}
+
+	return PSA_ERROR_DOES_NOT_EXIST;
+}
+
 psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attributes_t *key_attr)
 {
 	psa_key_persistence_t key_persistence;
@@ -736,16 +764,6 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 
 exit:
 	return status;
-}
-
-psa_status_t cracen_kmu_revoke_key_slot(int slot_id)
-{
-	int st = lib_kmu_revoke_slot(slot_id);
-
-	if (st) {
-		return PSA_ERROR_GENERIC_ERROR;
-	}
-	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_kmu_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,

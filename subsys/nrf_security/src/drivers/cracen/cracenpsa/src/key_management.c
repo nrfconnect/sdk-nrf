@@ -1403,32 +1403,7 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
-	psa_key_location_t location =
-		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
-
-	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		uint32_t slot_id = CRACEN_PSA_GET_KMU_SLOT(
-			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
-		psa_status_t status = cracen_kmu_revoke_key_slot(slot_id++);
-
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-		if (PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)) > CRACEN_KMU_SLOT_KEY_SIZE) {
-			status = cracen_kmu_revoke_key_slot(slot_id++);
-		}
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-		if (CRACEN_PSA_GET_KEY_USAGE_SCHEME(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(
-			    psa_get_key_id(attributes))) == KMU_METADATA_SCHEME_ENCRYPTED) {
-			status = cracen_kmu_revoke_key_slot(slot_id++);
-			if (status == PSA_SUCCESS) {
-				status = cracen_kmu_revoke_key_slot(slot_id++);
-			}
-		}
-		return status;
-	}
+	return cracen_kmu_destroy_key(attributes);
 #endif
 
 	return PSA_ERROR_DOES_NOT_EXIST;
