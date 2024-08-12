@@ -39,7 +39,10 @@
 };
 
 // Change IRQ ids to handle button interrupts.
-// The default values for nRF54L15 are 219 and 269, but with TF-M they are reserved for the secure domain (218 and 268 are reserved for the non-secure domain).
+
+// The default values for nRF54L15 are 219 and 269,
+// but with TF-M they are reserved for the secure domain
+// (218 and 268 are reserved for the non-secure domain).
 &gpiote20 {
 	interrupts = <218 NRF_DEFAULT_IRQ_PRIORITY>;
 };
