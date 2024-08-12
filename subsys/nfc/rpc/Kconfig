@@ -37,11 +37,27 @@ config NFC_RPC_SERVER
 
 endchoice
 
+config NFC_RPC_T2T
+	bool "NFC T2T over RPC"
+	default y
+	help
+	  Enables serialization NFC T2T API over RPC.
+
+config NFC_RPC_T4T
+	bool "NFC T4T over RPC"
+	select NFC_NDEF
+	default y
+	help
+	  Enables serialization NFC T4T API over RPC.
+
 config NFC_RPC_INITIALIZE_NRF_RPC
 	bool "Automatically initialize nRF RPC library"
-	default n
 	help
 	  Initialize nRF RPC library during the system startup. Disabling this
 	  option allow user to initialize it in a different way.
+
+if NFC_RPC_T4T
+rsource "../ndef/Kconfig"
+endif
 
 endif # NFC_RPC
