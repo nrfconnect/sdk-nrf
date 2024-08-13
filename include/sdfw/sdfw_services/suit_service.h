@@ -7,6 +7,16 @@
 #ifndef SUIT_SERVICE_H__
 #define SUIT_SERVICE_H__
 
+/** @file suit_service.h
+ *
+ * @brief The SUIT SSF service allows to start the SUIT DFU, read information about the currently
+ *        installed manifests and provides services necessary for processing manifests
+ *        by the local domain.
+ *
+ * @ingroup suit
+ * @{
+ */
+
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -170,5 +180,9 @@ suit_ssf_err_t suit_get_supported_manifest_info(suit_manifest_role_t role,
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* SUIT_SERVICE_H__ */
