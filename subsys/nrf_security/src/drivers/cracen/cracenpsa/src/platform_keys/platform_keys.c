@@ -269,10 +269,10 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 					     size_t key_buffer_size, size_t *key_buffer_length)
 {
 	platform_key key;
-	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
+	key_type type = find_key((uint32_t)slot_number, &key);
 
 	if (type == SICR) {
-		uint32_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes));
+		uint32_t key_id = (uint32_t)slot_number;
 		uint32_t domain = PLATFORM_KEY_GET_DOMAIN(key_id);
 		size_t key_bytes = PSA_BITS_TO_BYTES(key.sicr.bits);
 		size_t outlen;
@@ -580,7 +580,7 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 		return status;
 	}
 
-	uint32_t attr = key.sicr.bits | (key.sicr.type << 16);
+	uint32_t attr = (key.sicr.bits << 16) | key.sicr.type;
 
 	NRF_MRAMC_Type *mramc = (NRF_MRAMC_Type *)DT_REG_ADDR(DT_NODELABEL(mramc));
 	nrf_mramc_config_t mramc_config, mramc_config_write_enabled;
