@@ -135,13 +135,14 @@ int nrf_cloud_coap_disconnect(void);
  * @param[in]     request Data to be provided in API call.
  * @param[in,out] result Structure pointing to caller-provided buffer in which to store A-GNSS data.
  *
- *  @retval -EINVAL will be returned, and an error message printed, if invalid parameters
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
+ * @retval -EINVAL will be returned, and an error message printed, if invalid parameters
  *          are given.
- *  @retval -ENOENT will be returned if there was no A-GNSS data requested for the specified
- *          request type.
- *  @retval -ENOBUFS will be returned, and an error message printed, if there is not enough
+ * @retval -ENOBUFS will be returned, and an error message printed, if there is not enough
  *          buffer space to store retrieved A-GNSS data.
- * @return 0 If successful. Positive values are cloud-side errors (CoAP result codes)
+ * @return 0 If successful, nonzero if failed.
+ *           Negative values are device-side errors defined in errno.h.
+ *           Positive values are cloud-side errors (CoAP result codes)
  *           defined in zephyr/net/coap.h.
  */
 int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *const request,
@@ -157,6 +158,7 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
  * @param[in,out] file_location Structure that will contain the host and path to
  *                              the prediction file.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -179,6 +181,7 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
  * @param[in]     ts_ms  Timestamp the data was measured, or NRF_CLOUD_NO_TIMESTAMP.
  * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -201,6 +204,7 @@ int nrf_cloud_coap_sensor_send(const char *app_id, double value, int64_t ts_ms, 
  * @param[in]     ts_ms      Timestamp the data was measured, or NRF_CLOUD_NO_TIMESTAMP.
  * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -221,6 +225,7 @@ int nrf_cloud_coap_message_send(const char *app_id, const char *message, bool js
  *                           to be sent to the bulk topic.
  * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -238,6 +243,7 @@ int nrf_cloud_coap_json_message_send(const char *message, bool bulk, bool confir
  *                     location, usually as determined by the GNSS unit.
  * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -253,6 +259,7 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data * const gnss, 
  * @param[in]     request Data to be provided in API call.
  * @param[in,out] result Location information.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -269,6 +276,7 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
  *                    @ref nrf_cloud_coap_fota_job_free to free the memory
  *                    allocated by this function.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -292,6 +300,7 @@ void nrf_cloud_coap_fota_job_free(struct nrf_cloud_fota_job_info *const job);
  * @param[in]     details Null-terminated string containing details of the
  *                job, such as an error description.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -301,23 +310,25 @@ int nrf_cloud_coap_fota_job_update(const char *const job_id,
 	const enum nrf_cloud_fota_status status, const char * const details);
 
 /**
- * @brief Query the device's shadow delta.
- *
- * If there is no delta, the return value will be 0 and the length of the string stored
- * in buf will be 0.
+ * @brief Query the device's delta or desired shadow section.
  *
  * @param[in,out] buf     Pointer to memory in which to receive the delta.
  * @param[in,out] buf_len Size of buffer, will be set to the incoming length.
  * @param[in]     delta   True to request only changes in the shadow, if any; otherwise,
- *                        all of desired part.
+ *                        all of the desired section.
+ *                        If there is no data in the specified section, the return value will be 0
+ *                        and the value of buf_len will be 0.
  * @param[in]     format  Content format of the returned data. Supported values are
  *			  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, COAP_CONTENT_FORMAT_APP_JSON,
  *			  and COAP_CONTENT_FORMAT_APP_CBOR.
  *
- * @return 0 If successful, nonzero if failed.
- *           Negative values are device-side errors defined in errno.h.
- *           Positive values are cloud-side errors (CoAP result codes)
- *           defined in zephyr/net/coap.h.
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
+ * @retval -E2BIG Shadow data was received, but truncated because the provided buffer was
+ *		  not big enough.
+ * @return      0 If successful, nonzero if failed.
+ *		  Negative values are device-side errors defined in errno.h.
+ *		  Positive values are cloud-side errors (CoAP result codes)
+ *		  defined in zephyr/net/coap.h.
  */
 int nrf_cloud_coap_shadow_get(char *buf, size_t *buf_len, bool delta,
 			      enum coap_content_format format);
@@ -329,6 +340,7 @@ int nrf_cloud_coap_shadow_get(char *buf, size_t *buf_len, bool delta,
  *
  * @param[in]     shadow_json Null-terminated JSON string to be written to the device's shadow.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -343,6 +355,7 @@ int nrf_cloud_coap_shadow_state_update(const char * const shadow_json);
  *
  * @param[in]     shadow_json Null-terminated JSON string to be written to the device's shadow.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -355,6 +368,7 @@ int nrf_cloud_coap_shadow_desired_update(const char * const shadow_json);
  *
  * @param[in]     dev_status Device status to be encoded.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -400,6 +414,8 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
  * @param[in]     buf buffer with binary string.
  * @param[in]     buf_len  length of buf in bytes.
  * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
+ *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
@@ -419,6 +435,7 @@ int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len, bool confirmable);
  * NRF_CLOUD_ENC_SRC_NONE.
  * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
  *
+ * @retval -EACCES Device does not have a valid nRF Cloud CoAP connection.
  * @return 0 If successful, nonzero if failed.
  *           Negative values are device-side errors defined in errno.h.
  *           Positive values are cloud-side errors (CoAP result codes)
