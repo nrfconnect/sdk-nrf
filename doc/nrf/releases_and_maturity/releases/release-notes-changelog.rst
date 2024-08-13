@@ -549,7 +549,10 @@ Modem libraries
       Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
       In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
 
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated:
+
+    * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+    * The :c:func:`lte_lc_neighbor_cell_measurement` function to return an error for invalid GCI count.
 
 * :ref:`lib_location` library:
 

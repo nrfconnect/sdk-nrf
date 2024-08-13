@@ -1603,6 +1603,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  *
  * @retval 0 if neighbor cell measurement was successfully initiated.
  * @retval -EFAULT if AT command failed.
+ * @retval -EINVAL if parameters are invalid.
  * @retval -EINPROGRESS if a neighbor cell measurement is already in progress.
  */
 int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
