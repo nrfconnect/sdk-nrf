@@ -455,20 +455,17 @@ static void at_handler_ncellmeas_gci(const char *response)
 	int err;
 	struct lte_lc_evt evt = {0};
 	const char *resp = response;
+	struct lte_lc_cell *cells = NULL;
 
 	__ASSERT_NO_MSG(response != NULL);
-
-	int max_cell_count = ncellmeas_params.gci_count;
-	struct lte_lc_cell *cells = NULL;
+	__ASSERT_NO_MSG(ncellmeas_params.gci_count != 0);
 
 	LOG_DBG("%%NCELLMEAS GCI notification parsing starts");
 
-	if (max_cell_count != 0) {
-		cells = k_calloc(max_cell_count, sizeof(struct lte_lc_cell));
-		if (cells == NULL) {
-			LOG_ERR("Failed to allocate memory for the GCI cells");
-			return;
-		}
+	cells = k_calloc(ncellmeas_params.gci_count, sizeof(struct lte_lc_cell));
+	if (cells == NULL) {
+		LOG_ERR("Failed to allocate memory for the GCI cells");
+		return;
 	}
 
 	evt.cells_info.gci_cells = cells;
@@ -1428,6 +1425,16 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params)
 			LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
 			LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE),
 		 "Invalid argument, API does not accept enum values directly anymore");
+
+	if (params != NULL &&
+	    (params->search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT ||
+	     params->search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT ||
+	     params->search_type == LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE)) {
+		if (params->gci_count < 2 || params->gci_count > 15) {
+			LOG_ERR("Invalid GCI count, must be in range 2-15");
+			return -EINVAL;
+		}
+	}
 
 	if (k_sem_take(&ncellmeas_idle_sem, K_SECONDS(1)) != 0) {
 		LOG_WRN("Neighbor cell measurement already in progress");
