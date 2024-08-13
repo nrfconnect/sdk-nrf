@@ -56,16 +56,35 @@ Programming without ``--erase``
 
      west flash
 
-Programming with ``--recover``
-  Several Nordic Semiconductor SoCs or SiPs supported in the |NCS| offer an implementation of the :term:`Access port protection mechanism (AP-Protect)`, a form of readback protection.
-  To disable the AP-Protect, you must recover your device.
-  This is particularly important for multi-core devices.
+  ..
 
-  Use the following command:
+.. _readback_protection_error:
+
+Programming with ``--recover``
+  Recovering a device typically refers to the process of resetting it to a known, working state, often by erasing and reprogramming its memory.
+  This is usually done in the following cases:
+
+  * The device is not functioning correctly.
+  * The device is using a readback protection, such as the :term:`Access port protection mechanism (AP-Protect)`, offered by several Nordic Semiconductor SoCs or SiPs supported in the |NCS|.
+    In such a case, you might get an error similar to the following message:
+
+    .. code-block:: console
+
+       ERROR: The operation attempted is unavailable due to readback protection in
+       ERROR: your device. Please use --recover to unlock the device.
+
+  Use the following command to recover your device:
 
   .. code-block:: console
 
      west flash --recover
 
-  This command uses ``nrfjprog --recover`` command in the background.
-  It erases all user available non-volatile memory and disables the readback protection mechanism if enabled.
+  This command erases all user-available non-volatile memory and disables the readback protection mechanism, if enabled.
+
+  .. toggle:: Background recovery commands
+
+     The ``west flash --recover`` command uses one of the following background commands:
+
+     * ``nrfjprog --recover`` for devices from nRF52, nRF53, and nRF91 Series.
+     * ``nrfutil device recover`` for devices from nRF54H and nRF54L Series.
+       For more information about how ``nrfutil device recover`` works, see the `nRF Util documentation <Recovering the device_>`_.

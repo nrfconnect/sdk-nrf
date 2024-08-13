@@ -146,46 +146,6 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
             .. note::
                  The ``--verify`` command confirms that the writing operation has succeeded.
 
-.. _readback_protection_error:
-
-Readback protection
-===================
-
-When programming the device, you might get an error similar to the following message::
-
-    ERROR: The operation attempted is unavailable due to readback protection in
-    ERROR: your device. Please use --recover to unlock the device.
-
-This error occurs when readback protection is enabled.
-To disable the readback protection, you must *recover* your device.
-See the following instructions.
-
-.. tabs::
-
-   .. group-tab:: west
-
-      Use the ``--recover`` parameter with ``west flash``, as described in :ref:`programming_params`.
-
-   .. group-tab:: nRF Util
-
-      Enter the following commands to recover first the network core and then the application core:
-
-      .. code-block:: console
-
-         nrfutil device recover --core Network
-         nrfutil device recover
-
-      .. note::
-           Make sure to recover the network core before you recover the application core.
-
-           The ``nrfutil device recover`` command erases the flash memory and then writes a small binary into the recovered flash memory.
-           This binary prevents the readback protection from enabling itself again after a pin reset or power cycle.
-
-           Recovering the network core erases the flash memory of both cores.
-           Recovering the application core erases only the flash memory of the application core.
-           Therefore, you must recover the network core first.
-           Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
-
 .. _thingy53_building_pgming:
 
 Building and programming with Thingy:53

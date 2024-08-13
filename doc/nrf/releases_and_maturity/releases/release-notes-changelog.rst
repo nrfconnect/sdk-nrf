@@ -977,3 +977,4 @@ Documentation
 * Updated:
 
   * The :ref:`ug_nrf70_developing_debugging` page with the new snippets added for the nRF70 driver debug and WPA supplicant debug logs.
+  * The :ref:`programming_params` section on the :ref:`programming` page with information about readback protection moved from the :ref:`ug_nrf5340_building` page.
