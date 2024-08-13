@@ -109,7 +109,7 @@ struct radio_test_config {
 			uint8_t channel;
 
 			/**
-			 * Number of pacets to transmit.
+			 * Number of packets to transmit.
 			 * Set to zero for continuous TX.
 			 */
 			uint32_t packets_num;
@@ -124,6 +124,15 @@ struct radio_test_config {
 
 			/** Radio channel. */
 			uint8_t channel;
+
+			/**
+			 * Number of packets to be received.
+			 * Set to zero for continuous RX.
+			 */
+			uint32_t packets_num;
+
+			/** Callback to indicate that RX is finished. */
+			void (*cb)(void);
 		} rx;
 
 		struct {

@@ -55,6 +55,12 @@ static struct radio_param_config {
 	/** Duty cycle. */
 	uint32_t duty_cycle;
 
+	/**
+	 * Number of packets to be received.
+	 * Set to zero for continuous RX.
+	 */
+	uint32_t rx_packets_num;
+
 #if CONFIG_FEM
 	/* Front-end module (FEM) configuration. */
 	struct radio_test_fem fem;
@@ -237,6 +243,37 @@ static int cmd_tx_carrier_start(const struct shell *shell, size_t argc,
 static void tx_modulated_carrier_end(void)
 {
 	printk("The modulated TX has finished\n");
+}
+
+static void rx_end(void)
+{
+	uint32_t recv_pkt, req_pkt;
+	float error_rate;
+
+	struct radio_rx_stats rx_stats;
+
+	memset(&rx_stats, 0, sizeof(rx_stats));
+
+	radio_rx_stats_get(&rx_stats);
+
+	recv_pkt = rx_stats.packet_cnt;
+	req_pkt = config.rx_packets_num;
+
+	if (req_pkt == 0 || req_pkt < recv_pkt) {
+		printk("Error receiving packets\n");
+		return;
+	}
+
+	error_rate = ((float)(req_pkt - recv_pkt) / req_pkt) * 100.0f;
+
+	printk("\n");
+	printk("Received number of packets: %d\n", recv_pkt);
+	printk("Required number of packages: %d\n", req_pkt);
+	printk("Error rate: %.2f%%\n", (double)error_rate);
+
+	if (error_rate >= 10) {
+		printk("\033[91mWarning: High error rate! \033[0m\n");
+	}
 }
 
 static int cmd_tx_modulated_carrier_start(const struct shell *shell,
@@ -583,6 +620,11 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 		test_in_progress = false;
 	}
 
+	if (argc > 2) {
+		shell_error(shell, "%s: too many arguments", argv[0]);
+		return -EINVAL;
+	}
+
 #if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	ieee_channel_check(shell, config.channel_start);
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
@@ -595,6 +637,18 @@ static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 #if CONFIG_FEM
 	test_config.fem = config.fem;
 #endif /* CONFIG_FEM */
+
+	if (argc == 2) {
+		config.rx_packets_num = atoi(argv[1]);
+		test_config.params.rx.packets_num = config.rx_packets_num;
+		test_config.params.rx.cb = rx_end;
+
+		if (config.rx_packets_num == 0) {
+			shell_error(shell,
+				   "The number of packets to receive must be greater than zero.");
+			return -EINVAL;
+		}
+	}
 
 	radio_test_start(&test_config);
 
