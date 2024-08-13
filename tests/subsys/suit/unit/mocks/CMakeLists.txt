@@ -116,12 +116,6 @@ if (CONFIG_MOCK_FETCH_SOURCE_STREAMER)
   target_include_directories(testbinary PRIVATE ${SUIT_SUBSYS_DIR}/stream/stream_sources/include)
 endif()
 
-if (CONFIG_MOCK_SDFW_BUILTIN_KEYS)
-  target_compile_options(test_interface INTERFACE -DCONFIG_SDFW_BUILTIN_KEYS)
-  target_include_directories(testbinary PRIVATE ${ZEPHYR_MBEDTLS_MODULE_DIR}/include)
-  target_include_directories(testbinary PRIVATE ${ZEPHYR_SECDOM_MODULE_DIR}/include)
-endif()
-
 if (CONFIG_MOCK_SUIT_SERVICE)
   target_compile_options(test_interface INTERFACE -DCONFIG_SSF_SUIT_SERVICE_ENABLED)
   target_include_directories(testbinary PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include)
