@@ -323,7 +323,7 @@ int client_socket_send(const struct download_client *dlc, size_t len, int timeou
 	}
 
 	while (len) {
-		sent = send(dlc->fd, dlc->buf + off, len, 0);
+		sent = send(dlc->fd, dlc->config.buf + off, len, 0);
 		if (sent < 0) {
 			return -errno;
 		}
@@ -364,5 +364,5 @@ ssize_t client_socket_recv(struct download_client *dlc)
 		return -1;
 	}
 
-	return recv(dlc->fd, dlc->buf + dlc->offset, sizeof(dlc->buf) - dlc->offset, 0);
+	return recv(dlc->fd, dlc->config.buf + dlc->offset, dlc->config.buf_size - dlc->offset, 0);
 }
