@@ -479,6 +479,10 @@ Peripheral samples
 
   * Added build configuration for the nRF54H20.
 
+* :ref:`radio_test` sample:
+
+  * Added packet reception limit for the ``start_rx`` command.
+
 PMIC samples
 ------------
 
