@@ -672,8 +672,15 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_coap` library:
 
-  * Fixed a hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
-  * Updated to use a shorter resource string for the ``d2c/bulk`` resource.
+  * Fixed:
+
+    * A hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
+    * An issue where certain CoAP functions could return zero, indidicating success, even though there was an error.
+
+  * Updated:
+
+    * To use a shorter resource string for the ``d2c/bulk`` resource.
+    * The function :c:func:`nrf_cloud_coap_shadow_get` to return ``-E2BIG`` if the received shadow data was truncated because the provided buffer was not big enough.
 
 * :ref:`lib_lwm2m_client_utils` library:
 

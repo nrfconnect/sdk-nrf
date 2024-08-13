@@ -363,6 +363,7 @@ int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 			len, out_len);
 	}
 	if (err) {
+		LOG_ERR("Error decoding ground fix CBOR response: %d", err);
 		return err;
 	}
 

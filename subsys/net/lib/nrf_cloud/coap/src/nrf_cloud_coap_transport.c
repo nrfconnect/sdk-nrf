@@ -373,8 +373,7 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 		xfer->result_code = result_code;
 		if (xfer->cb) {
 			LOG_DBG("Calling user's callback %p", xfer->cb);
-			xfer->cb(result_code, offset, payload, len, last_block,
-				 xfer->user_data);
+			xfer->cb(result_code, offset, payload, len, last_block, xfer->user_data);
 		}
 	}
 	if (last_block || (result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
