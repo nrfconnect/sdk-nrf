@@ -148,7 +148,7 @@ int coap_parse(struct download_client *dlc, size_t len)
 	 * and we can just request the same block again using retry mechanism
 	 */
 
-	err = coap_packet_parse(&response, dlc->buf, len, NULL, 0);
+	err = coap_packet_parse(&response, dlc->config.buf, len, NULL, 0);
 	if (err) {
 		LOG_ERR("Failed to parse CoAP packet, err %d", err);
 		return -EBADMSG;
@@ -192,7 +192,7 @@ int coap_parse(struct download_client *dlc, size_t len)
 	 */
 	LOG_DBG("CoAP response: %d, copying %d bytes",
 		coap_header_get_code(&response), payload_len - blk_off);
-	memcpy(dlc->buf + dlc->offset, payload + blk_off,
+	memcpy(dlc->config.buf + dlc->offset, payload + blk_off,
 	       payload_len - blk_off);
 
 	dlc->offset += payload_len - blk_off;
@@ -221,7 +221,7 @@ int coap_request_send(struct download_client *dlc)
 		id = coap_next_id();
 	}
 
-	err = coap_packet_init(&request, dlc->buf, CONFIG_DOWNLOAD_CLIENT_BUF_SIZE, COAP_VER,
+	err = coap_packet_init(&request, dlc->config.buf, dlc->config.buf_size, COAP_VER,
 			       COAP_TYPE_CON, 8, coap_next_token(), COAP_METHOD_GET, id);
 	if (err) {
 		LOG_ERR("Failed to init CoAP message, err %d", err);

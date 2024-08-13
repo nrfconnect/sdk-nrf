@@ -126,6 +126,10 @@ struct download_client_cfg {
 	size_t range_override;
 	/** Set hostname for TLS Server Name Indication extension */
 	bool set_tls_hostname;
+	/** Response buffer. */
+	char *buf;
+	/** Response buffer size. */
+	size_t buf_size;
 };
 
 /**
@@ -168,8 +172,6 @@ struct download_client {
 	/** Destination address storage */
 	struct sockaddr remote_addr;
 
-	/** Response buffer. */
-	char buf[CONFIG_DOWNLOAD_CLIENT_BUF_SIZE];
 	/** Buffer offset. */
 	size_t offset;
 

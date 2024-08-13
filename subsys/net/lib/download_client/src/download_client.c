@@ -161,13 +161,13 @@ static int request_send(struct download_client *dlc)
 
 static int fragment_evt_send(struct download_client *dlc)
 {
-	__ASSERT(dlc->offset <= CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
+	__ASSERT(dlc->offset <= dlc->config.buf_size,
 		 "Buffer overflow!");
 
 	const struct download_client_evt evt = {
 		.id = DOWNLOAD_CLIENT_EVT_FRAGMENT,
 		.fragment = {
-			.buf = dlc->buf,
+			.buf = dlc->config.buf,
 			.len = dlc->offset,
 		}
 	};
@@ -315,7 +315,7 @@ static int client_revc_handle(struct download_client *dlc, ssize_t len)
 	if (dlc->proto == IPPROTO_TCP || dlc->proto == IPPROTO_TLS_1_2) {
 		rc = http_parse(dlc, len);
 		if (rc > 0 &&
-		    (!dlc->http.has_header || dlc->offset < sizeof(dlc->buf))) {
+		    (!dlc->http.has_header || dlc->offset < dlc->config.buf_size)) {
 			/* Wait for more data (full buffer).
 			 * Forward only full buffers to callback.
 			 */
@@ -468,17 +468,18 @@ void download_thread(void *cli, void *a, void *b)
 				}
 			}
 
-			__ASSERT(dlc->offset < sizeof(dlc->buf), "Buffer overflow");
+			__ASSERT(dlc->offset < dlc->config.buf_size, "Buffer overflow");
 
-			if (sizeof(dlc->buf) - dlc->offset == 0) {
+			if (dlc->config.buf_size - dlc->offset == 0) {
 				LOG_ERR("Could not fit HTTP header from server (> %d)",
-					sizeof(dlc->buf));
+					dlc->config.buf_size);
 				error_evt_send(dlc, E2BIG);
 				break;
 			}
 
-			LOG_DBG("Receiving up to %d bytes at %p...", (sizeof(dlc->buf) - dlc->offset),
-				(void *)(dlc->buf + dlc->offset));
+			LOG_DBG("Receiving up to %d bytes at %p...",
+				(dlc->config.buf_size - dlc->offset),
+				(void *)(dlc->config.buf + dlc->offset));
 
 			len = client_socket_recv(dlc);
 			if (len <= 0) {
@@ -550,7 +551,7 @@ int download_client_set_host(struct download_client *dlc, const char *host,
 		return -EINVAL;
 	}
 
-	if (config->range_override > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
+	if (config->range_override > config->buf_size) { //TODO how does this fit with header?
 		LOG_ERR("The configured fragment size is larger than buffer");
 		return -E2BIG;
 	}
