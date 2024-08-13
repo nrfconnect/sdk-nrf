@@ -72,7 +72,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 96aa87c2aae419a2d04f4ee86ef12b359789a817
+      revision: pull/1953/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -140,7 +140,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: e66169aa8daf93eee0ff3729ecc2c343c7fade51
+      revision: pull/327/head
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -149,19 +149,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.5.2-ncs2
+      revision: pull/36/head
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 5bfe42c2375204e38a067fe15bd33d581fbfbd01
+      revision: pull/15/head
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 56a4bd3100123a8dd2049968d54cfc4014ca8eb8
+      revision: pull/1464/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 9f68daeafd7b662c96d6fdf61c83222248e3ed9f
+      revision: pull/169/head
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -169,7 +169,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: f6c947fef644f56cddb942c41e9a2b007753fe03
+      revision: pull/478/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -274,7 +274,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.6.0
+      revision: pull/75/head
       remote: memfault
     - name: ant
       repo-path: sdk-ant
