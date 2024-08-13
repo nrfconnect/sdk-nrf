@@ -401,6 +401,11 @@ static int set_report(const struct device *dev, uint8_t report_type, uint8_t rep
 
 static void report_sent_sof(struct usb_hid_device *usb_hid)
 {
+	/* Ensure that the function will not be preempted. Other functions that require
+	 * synchronization with this function are assumed not to be called from an ISR context.
+	 */
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
 	struct hid_report_sent_event *event = atomic_ptr_set(&usb_hid->report_sent_on_sof, NULL);
 
 	if (event) {
@@ -410,6 +415,12 @@ static void report_sent_sof(struct usb_hid_device *usb_hid)
 
 static void report_sent(struct usb_hid_device *usb_hid, struct usb_hid_buf *buf, bool error)
 {
+	/* Ensure that the function is executed in a cooperative thread context and no extra
+	 * synchronization is required.
+	 */
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
 	__ASSERT_NO_MSG(buf);
 	__ASSERT_NO_MSG(buf->status_bm & USB_HID_BUF_ALLOCATED);
 	__ASSERT_NO_MSG(buf->status_bm & USB_HID_BUF_SENDING);
@@ -473,6 +484,12 @@ static struct usb_hid_device *subscriber_to_usb_hid(const void *subscriber)
 
 static bool handle_hid_report_event(struct hid_report_event *event)
 {
+	/* Ensure that the function is executed in a cooperative thread context and no extra
+	 * synchronization is required.
+	 */
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
 	struct usb_hid_device *usb_hid = subscriber_to_usb_hid(event->subscriber);
 
 	if (!usb_hid) {
@@ -625,6 +642,12 @@ static void usb_legacy_reset_pending_report(struct usb_hid_device *usb_hid)
 
 static void update_usb_hid(struct usb_hid_device *usb_hid, bool enabled)
 {
+	/* Ensure that the function is executed in a cooperative thread context and no extra
+	 * synchronization is required.
+	 */
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
 	if (usb_hid->enabled == enabled) {
 		/* Already updated. */
 		return;
@@ -665,6 +688,12 @@ static void update_usb_hid(struct usb_hid_device *usb_hid, bool enabled)
 
 static void protocol_change(const struct device *dev, uint8_t protocol)
 {
+	/* Ensure that the function is executed in a cooperative thread context and no extra
+	 * synchronization is required.
+	 */
+	__ASSERT_NO_MSG(!k_is_in_isr());
+	__ASSERT_NO_MSG(!k_is_preempt_thread());
+
 	struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 
 	BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY) ||
