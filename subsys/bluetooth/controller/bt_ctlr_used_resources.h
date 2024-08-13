@@ -17,8 +17,8 @@
 	/* DPPI channels 0 - 12, for the nRF53 Series */
 	#define PPI_CHANNELS_USED_BY_CTLR BIT_MASK(13)
 #else
-	/* DPPI channels 0 - 12, for all other platforms */
-	#define PPI_CHANNELS_USED_BY_CTLR BIT_MASK(13)
+	/* DPPI channels 0 - 11, for all other platforms */
+	#define PPI_CHANNELS_USED_BY_CTLR BIT_MASK(12)
 #endif
 
 /* Additionally, MPSL requires several PPI channels (as per the section
