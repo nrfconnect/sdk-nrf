@@ -111,7 +111,7 @@ Programming with the script
    This command builds the headset and the gateway applications with ``debug`` version of both the application core binary and the network core binary - and programs each to its respective core.
 
    .. note::
-      If the programming command fails because of :ref:`readback_protection_error`, run :file:`buildprog.py` with the ``--recover_on_fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
+      If the programming command fails because of a :ref:`readback protection error <readback_protection_error>`, run :file:`buildprog.py` with the ``--recover_on_fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
       For example, using the programming command example above:
 
       .. code-block:: console
