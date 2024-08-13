@@ -72,7 +72,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 4322f5169f4c0f24e3712de061a2fec5a29098a7
+      revision: pull/1953/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -140,7 +140,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 7aaeb636812f7e5b0b901a1894916dbfd5334f3a
+      revision: pull/327/head
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -149,19 +149,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.5.2-ncs2
+      revision: pull/36/head
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 5bfe42c2375204e38a067fe15bd33d581fbfbd01
+      revision: pull/15/head
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 837f9c00fc9470b91a586b9df4d84f2847f1c3a3
+      revision: pull/1464/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 9f68daeafd7b662c96d6fdf61c83222248e3ed9f
+      revision: pull/169/head
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -169,7 +169,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 89eb37b47ca8e4b9d309c431bde30bdb19d07577
+      revision: pull/478/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -218,12 +218,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: 34856b20d97fbd19123aada99ceb4530fca7253c
+      revision: pull/616/head
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 71a5358138fc6aaffac8ff9b478f693b919bd53b
+      revision: pull/223/head
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -274,7 +274,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.6.0
+      revision: 1.12.0
       remote: memfault
     - name: ant
       repo-path: sdk-ant
