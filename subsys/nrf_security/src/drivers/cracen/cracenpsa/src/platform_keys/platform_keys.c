@@ -454,17 +454,15 @@ size_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes)
 {
 	platform_key key;
 	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
+	psa_key_type_t key_type = psa_get_key_type(attributes);
 
-	if (type == SICR) {
-		return PSA_BITS_TO_BYTES(key.sicr.bits);
+	if (type == INVALID) {
+		return 0;
 	}
 
-	if (type == EMBEDDED) {
-		return key.embedded.key_buffer_size;
-	}
-
-	if (type == DERIVED) {
-		return 32;
+	if (key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS) ||
+	    key_type == PSA_KEY_TYPE_AES) {
+		return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 	}
 
 	return 0;
@@ -487,6 +485,10 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 		*slot_number = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id);
 		*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 			PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN);
+
+		if (type == SICR && key.sicr.bits == UINT16_MAX) {
+			return PSA_ERROR_DOES_NOT_EXIST;
+		}
 		return PSA_SUCCESS;
 	}
 
