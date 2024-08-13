@@ -72,7 +72,7 @@ int http_get_request_send(struct download_client *dlc)
 
 	tls_use_range = (dlc->proto == IPPROTO_TLS_1_2 &&
 			!dlc->set_native_tls &&
-			IS_ENABLED(CONFIG_NRF_MODEM_LIB));
+			IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
 
 	if (tls_use_range || dlc->config.range_override) {
 		if (tls_use_range && dlc->config.range_override) {
@@ -88,31 +88,31 @@ int http_get_request_send(struct download_client *dlc)
 			off = MIN(off, dlc->file_size - 1);
 		}
 
-		len = snprintf(dlc->buf,
-			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
+		len = snprintf(dlc->config.buf,
+			dlc->config.buf_size,
 			HTTP_GET_RANGE, file, host, dlc->progress, off);
 		dlc->http.ranged = true;
 		goto send;
 	} else if (dlc->progress) {
-		len = snprintf(dlc->buf,
-			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
+		len = snprintf(dlc->config.buf,
+			dlc->config.buf_size,
 			HTTP_GET_OFFSET, file, host, dlc->progress);
 		dlc->http.ranged = false;
 	} else {
-		len = snprintf(dlc->buf,
-			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
+		len = snprintf(dlc->config.buf,
+			dlc->config.buf_size,
 			HTTP_GET, file, host);
 		dlc->http.ranged = false;
 	}
 
 send:
-	if (len < 0 || len > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
+	if (len < 0 || len > dlc->config.buf_size) {
 		LOG_ERR("Cannot create GET request, buffer too small");
 		return -ENOMEM;
 	}
 
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(dlc->buf, len, "HTTP request");
+		LOG_HEXDUMP_DBG(dlc->config.buf, len, "HTTP request");
 	}
 
 	err = client_socket_send(dlc, len, 0);
@@ -137,27 +137,27 @@ static int http_header_parse(struct download_client *dlc, size_t *hdr_len)
 
 	const unsigned int expected_status = (dlc->http.ranged || dlc->progress) ? 206 : 200;
 
-	p = strnstr(dlc->buf, "\r\n\r\n", sizeof(dlc->buf));
-	if (!p || p > dlc->buf + dlc->offset) {
+	p = strnstr(dlc->config.buf, "\r\n\r\n", dlc->config.buf_size);
+	if (!p || p > dlc->config.buf + dlc->offset) {
 		/* Waiting full HTTP header */
 		LOG_DBG("Waiting full header in response");
 		return 1;
 	}
 
 	/* Offset of the end of the HTTP header in the buffer */
-	*hdr_len = p + strlen("\r\n\r\n") - dlc->buf;
+	*hdr_len = p + strlen("\r\n\r\n") - (char *)dlc->config.buf;
 
 	LOG_DBG("GET header size: %u", *hdr_len);
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(dlc->buf, *hdr_len, "HTTP response");
+		LOG_HEXDUMP_DBG(dlc->config.buf, *hdr_len, "HTTP response");
 	}
 
 	for (size_t i = 0; i < *hdr_len; i++) {
-		dlc->buf[i] = tolower(dlc->buf[i]);
+		dlc->config.buf[i] = tolower(dlc->config.buf[i]);
 	}
 
 	/* Look for the status code just after "http/1.1 " */
-	p = strnstr(dlc->buf, "http/1.1 ", *hdr_len);
+	p = strnstr(dlc->config.buf, "http/1.1 ", *hdr_len);
 	if (!p) {
 		LOG_ERR("Server response missing HTTP/1.1");
 		return -EBADMSG;
@@ -196,19 +196,19 @@ static int http_header_parse(struct download_client *dlc, size_t *hdr_len)
 	 */
 	if (dlc->file_size == 0) {
 		if (dlc->http.ranged) {
-			p = strnstr(dlc->buf, "\r\ncontent-range", *hdr_len);
+			p = strnstr(dlc->config.buf, "\r\ncontent-range", *hdr_len);
 			if (!p) {
 				LOG_ERR("Server did not send "
 					"\"Content-Range\" in response");
 				return -EBADMSG;
 			}
-			p = strnstr(p, "/", *hdr_len - (p - dlc->buf));
+			p = strnstr(p, "/", *hdr_len - (p - dlc->config.buf));
 			if (!p) {
 				LOG_ERR("No file size in response");
 				return -EBADMSG;
 			}
 		} else { /* proto == PROTO_HTTP */
-			p = strnstr(dlc->buf, "\r\ncontent-length", *hdr_len);
+			p = strnstr(dlc->config.buf, "\r\ncontent-length", *hdr_len);
 			if (!p) {
 				LOG_WRN("Server did not send "
 					"\"Content-Length\" in response");
@@ -229,7 +229,7 @@ static int http_header_parse(struct download_client *dlc, size_t *hdr_len)
 		LOG_DBG("File size = %u", dlc->file_size);
 	}
 
-	p = strnstr(dlc->buf, "\r\nconnection: close", *hdr_len);
+	p = strnstr(dlc->config.buf, "\r\nconnection: close", *hdr_len);
 	if (p) {
 		LOG_WRN("Peer closed connection, will re-connect");
 		dlc->http.connection_close = true;
@@ -271,7 +271,7 @@ int http_parse(struct download_client *dlc, size_t len)
 			 */
 			LOG_DBG("Copying %u payload bytes",
 				dlc->offset - hdr_len);
-			memmove(dlc->buf, dlc->buf + hdr_len,
+			memmove(dlc->config.buf, dlc->config.buf + hdr_len,
 				dlc->offset - hdr_len);
 
 			dlc->offset -= hdr_len;

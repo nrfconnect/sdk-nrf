@@ -46,7 +46,7 @@ The configuration of the library depends on the protocol you are using.
 Configuring HTTP and HTTPS (TLS 1.2)
 ====================================
 
-Set the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` and :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` Kconfig options, so that the buffer is large enough to accommodate the entire HTTP header of the request and the response.
+Set the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` Kconfig option, so that the buffer is large enough to accommodate the entire HTTP header of the request and the response.
 
 Moreover, the application must provision the TLS credentials and pass the security tag to the library when using HTTPS and calling the :c:func:`download_client_set_host` function.
 To provision a TLS certificate to the modem, use :c:func:`modem_key_mgmt_write` and other :ref:`modem_key_mgmt` APIs.

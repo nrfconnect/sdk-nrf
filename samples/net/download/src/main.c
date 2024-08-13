@@ -49,6 +49,8 @@ static int sec_tag_list[] = { SEC_TAG };
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 #endif
 
+static char dlc_buf[2048];
+
 static struct download_client downloader;
 static struct download_client_cfg config = {
 #if CONFIG_SAMPLE_SECURE_SOCKET
@@ -56,6 +58,9 @@ static struct download_client_cfg config = {
 	.sec_tag_count = ARRAY_SIZE(sec_tag_list),
 	.set_tls_hostname = true,
 #endif
+	.buf = dlc_buf,
+	.buf_size = sizeof(dlc_buf),
+	.range_override = 0,
 };
 
 #if CONFIG_SAMPLE_COMPUTE_HASH

@@ -35,7 +35,6 @@ target_link_libraries(app PRIVATE download_client)
 zephyr_append_cmake_library(download_client)
 
 zephyr_compile_options(
-        -DCONFIG_DOWNLOAD_CLIENT_BUF_SIZE=0x40
         -DCONFIG_DOWNLOAD_CLIENT_STACK_SIZE=2048
 )
 
@@ -43,7 +42,6 @@ target_compile_definitions(
         download_client PRIVATE
         -DCONFIG_COAP=1
         -DCONFIG_DOWNLOAD_CLIENT_LOG_LEVEL=4
-        -DCONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE=256
         -DCONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE=32
         -DCONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE=64
         -DCONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS=0
