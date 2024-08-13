@@ -18,6 +18,9 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 #define HOSTNAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 #define FILENAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 
+/* nRF91 modem TLS secure socket buffer limited to 2kB including header */
+#define TLS_RANGE_MAX 1024 // TODO can this be more than 1024?
+
 /* Request whole file; use with HTTP */
 #define HTTP_GET                                                               \
 	"GET /%s HTTP/1.1\r\n"                                                 \
@@ -47,9 +50,10 @@ int http_get_request_send(struct download_client *dlc)
 {
 	int err;
 	int len;
-	size_t off;
+	size_t off = 0;
 	char host[HOSTNAME_SIZE];
 	char file[FILENAME_SIZE];
+	bool tls_use_range;
 
 	__ASSERT_NO_MSG(dlc->host);
 	__ASSERT_NO_MSG(dlc->file);
@@ -66,25 +70,29 @@ int http_get_request_send(struct download_client *dlc)
 		return err;
 	}
 
-	/* Offset of last byte in range (Content-Range) */
-	if (dlc->config.frag_size_override) {
-		off = dlc->progress + dlc->config.frag_size_override - 1;
-	} else {
-		off = dlc->progress +
-			CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE - 1;
-	}
+	tls_use_range = (dlc->proto == IPPROTO_TLS_1_2 &&
+			!dlc->set_native_tls &&
+			IS_ENABLED(CONFIG_NRF_MODEM_LIB));
 
-	if (dlc->file_size != 0) {
-		/* Don't request bytes past the end of file */
-		off = MIN(off, dlc->file_size - 1);
-	}
+	if (tls_use_range || dlc->config.range_override) {
+		if (tls_use_range && dlc->config.range_override) {
+			off = MIN((dlc->progress + TLS_RANGE_MAX - 1), dlc->config.range_override);
+		} else if (dlc->config.range_override) {
+			off = dlc->config.range_override;
+		} else {
+			off = dlc->progress + TLS_RANGE_MAX - 1;
+		}
 
-	if (dlc->proto == IPPROTO_TLS_1_2
-	   || IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
+		if (dlc->file_size != 0) {
+			/* Don't request bytes past the end of file */
+			off = MIN(off, dlc->file_size - 1);
+		}
+
 		len = snprintf(dlc->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
 			HTTP_GET_RANGE, file, host, dlc->progress, off);
 		dlc->http.ranged = true;
+		goto send;
 	} else if (dlc->progress) {
 		len = snprintf(dlc->buf,
 			CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
@@ -97,6 +105,7 @@ int http_get_request_send(struct download_client *dlc)
 		dlc->http.ranged = false;
 	}
 
+send:
 	if (len < 0 || len > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
 		LOG_ERR("Cannot create GET request, buffer too small");
 		return -ENOMEM;
@@ -286,9 +295,9 @@ int http_parse(struct download_client *dlc, size_t len)
 	/* Have we received a whole fragment or the whole file? */
 	if (dlc->progress != dlc->file_size) {
 		if (dlc->http.ranged) {
-			if (dlc->offset < (dlc->config.frag_size_override != 0 ?
-						      dlc->config.frag_size_override :
-						      CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE)) {
+			if (dlc->offset < (dlc->config.range_override ?
+					   dlc->config.range_override :
+					   TLS_RANGE_MAX)) {
 				/* Ranged query: read until a full fragment */
 				return 1;
 			}

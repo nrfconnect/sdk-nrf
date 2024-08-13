@@ -81,7 +81,7 @@ static struct download_client_evt get_next_event(k_timeout_t timeout)
 
 static struct download_client_cfg config = {
 	.pdn_id = 0,
-	.frag_size_override = 0,
+	.range_override = 0,
 };
 
 static void init(void)

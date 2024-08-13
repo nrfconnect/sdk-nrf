@@ -123,7 +123,7 @@ struct download_client_cfg {
 	/** Maximum fragment size to download. 0 indicates that values
 	 * configured using Kconfig shall be used.
 	 */
-	size_t frag_size_override;
+	size_t range_override;
 	/** Set hostname for TLS Server Name Indication extension */
 	bool set_tls_hostname;
 };

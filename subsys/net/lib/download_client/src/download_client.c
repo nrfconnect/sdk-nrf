@@ -364,8 +364,7 @@ static int client_revc_handle(struct download_client *dlc, ssize_t len)
 		dlc->callback(&evt);
 		/* Restart and suspend */
 		rc = -1;
-	} else if ((dlc->proto == IPPROTO_TCP || dlc->proto == IPPROTO_TLS_1_2) &&
-		   IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
+	} else if ((dlc->proto == IPPROTO_TCP || dlc->proto == IPPROTO_TLS_1_2)) {
 		/* Request a next range */
 		rc = 0;
 	}
@@ -551,7 +550,7 @@ int download_client_set_host(struct download_client *dlc, const char *host,
 		return -EINVAL;
 	}
 
-	if (config->frag_size_override > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
+	if (config->range_override > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
 		LOG_ERR("The configured fragment size is larger than buffer");
 		return -E2BIG;
 	}
