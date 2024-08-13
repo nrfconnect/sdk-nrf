@@ -19,7 +19,6 @@ LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 #endif
 
 #include <zephyr/net/socket.h>
-#include <nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h>
 
 #include "net_private.h"
 #include "wifi_connection.h"
@@ -30,6 +29,7 @@ LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 
 #define IEEE80211_SEQ_CTRL_SEQ_NUM_MASK 0xFFF0
 #define IEEE80211_SEQ_NUMBER_INC BIT(4) /* 0-3 is fragment number */
+#define NRF_WIFI_MAGIC_NUM_RAWTX 0x12345678
 
 struct beacon {
 	uint16_t frame_control;
@@ -73,6 +73,16 @@ static struct beacon test_beacon_frame = {
 		0X01, 0X01, 0X00, 0X03, 0XA4, 0X00, 0X00, 0X27, 0XA4, 0X00,
 		0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00
 	}
+};
+
+/* TODO: Copied from nRF70 Wi-Fi driver, need to be moved to a common place */
+struct raw_tx_pkt_header {
+	unsigned int magic_num;
+	unsigned char data_rate;
+	unsigned short packet_length;
+	unsigned char tx_mode;
+	unsigned char queue;
+	unsigned char raw_tx_flag;
 };
 
 #ifdef CONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
