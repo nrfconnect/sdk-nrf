@@ -16,11 +16,43 @@
 LOG_MODULE_REGISTER(raw_tx_pkt, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include "net_private.h"
-#include <nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h>
 
 #define BEACON_PAYLOAD_LENGTH 256
 #define IEEE80211_SEQ_CTRL_SEQ_NUM_MASK 0xFFF0
 #define IEEE80211_SEQ_NUMBER_INC BIT(4) /* 0-3 is fragment number */
+#define NRF_WIFI_MAGIC_NUM_RAWTX 0x12345678
+
+/* TODO: Copied from nRF70 Wi-Fi driver, need to be moved to a common place */
+
+/**
+ * @brief Transmit modes for raw packets.
+ *
+ */
+enum nrf_wifi_fmac_rawtx_mode {
+	/** Legacy mode. */
+	NRF_WIFI_FMAC_RAWTX_MODE_LEGACY,
+	/** HT mode. */
+	NRF_WIFI_FMAC_RAWTX_MODE_HT,
+	/** VHT mode. */
+	NRF_WIFI_FMAC_RAWTX_MODE_VHT,
+	/** HE SU mode. */
+	NRF_WIFI_FMAC_RAWTX_MODE_HE_SU,
+	/** HE ER SU mode. */
+	NRF_WIFI_FMAC_RAWTX_MODE_HE_ER_SU,
+	/** HE TB mode. */
+	NRF_WIFI_FMAC_RAWTX_MODE_HE_TB,
+	/** Throughput max. */
+	NRF_WIFI_FMAC_RAWTX_MODE_MAX
+};
+
+struct raw_tx_pkt_header {
+	unsigned int magic_num;
+	unsigned char data_rate;
+	unsigned short packet_length;
+	unsigned char tx_mode;
+	unsigned char queue;
+	unsigned char raw_tx_flag;
+};
 
 struct raw_tx_pkt_header raw_tx_pkt;
 
