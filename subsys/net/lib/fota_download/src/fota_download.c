@@ -589,7 +589,7 @@ int fota_download(const char *host, const char *file,
 	static int sec_tag_list_copy[CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX];
 	struct download_client_cfg config = {
 		.pdn_id = pdn_id,
-		.frag_size_override = fragment_size,
+		.range_override = fragment_size,
 	};
 
 	if (sec_tag_count > ARRAY_SIZE(sec_tag_list_copy)) {

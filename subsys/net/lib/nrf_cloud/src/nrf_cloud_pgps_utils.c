@@ -501,7 +501,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 			.sec_tag_count = 0,
 			.sec_tag_list = NULL,
 			.pdn_id = pdn_id,
-			.frag_size_override = fragment_size,
+			.range_override = fragment_size,
 			.set_tls_hostname = false,
 			.family = family
 		},
