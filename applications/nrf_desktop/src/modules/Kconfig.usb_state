@@ -52,9 +52,10 @@ config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	select EXPERIMENTAL
 	help
 	  Delay submitting hid_report_sent_event until subsequent USB Start of
-	  Frame (SOF). Synchronizing submitting HID data to USB stack to USB SOF
-	  helps to avoid jitter related to USB polls, but it also increases HID
-	  data latency as HID report pipeline with length of 2 needs to be used.
+	  Frame (SOF). The feature reduces the negative impact of jitter related
+	  to USB polls. However, it also increases HID data latency, as a HID
+	  report pipeline with two sequential reports is required to ensure that
+	  the USB peripheral can provide a HID report on every USB poll.
 
 config DESKTOP_USB_INIT_THREAD
 	bool
