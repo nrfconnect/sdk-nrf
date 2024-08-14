@@ -143,8 +143,6 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
 
-	ERR_CHK(bt_le_audio_tx_stream_stopped(idx));
-
 	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)stream, reason);
 
 	if (delete_broadcast_src[idx.lvl1] && broadcast_sources[idx.lvl1] != NULL) {

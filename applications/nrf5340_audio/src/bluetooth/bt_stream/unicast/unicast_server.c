@@ -430,15 +430,6 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
-	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		struct stream_index idx = {
-			.lvl1 = 0,
-			.lvl2 = 0,
-			.lvl3 = 0,
-		};
-		ERR_CHK(bt_le_audio_tx_stream_stopped(idx));
-	}
-
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 }
 

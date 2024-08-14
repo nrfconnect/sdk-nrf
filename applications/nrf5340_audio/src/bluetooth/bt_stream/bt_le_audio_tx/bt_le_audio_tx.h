@@ -35,16 +35,6 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 			struct le_audio_encoded_audio enc_audio);
 
 /**
- * @brief	Resets TX buffers. Must be called when a TX stream is stopped.
- *
- * @param[in]	stream_idx	Stream index
- *
- * @retval	-EACCES		The module has not been initialized.
- * @retval	0		Success.
- */
-int bt_le_audio_tx_stream_stopped(struct stream_index stream_idx);
-
-/**
  * @brief	Initializes a stream. Must be called when a TX stream is started.
  *
  * @param[in]	stream_idx	Stream index.

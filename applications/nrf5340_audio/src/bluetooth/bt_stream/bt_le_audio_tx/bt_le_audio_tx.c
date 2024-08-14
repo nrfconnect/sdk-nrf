@@ -215,9 +215,10 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 	uint32_t common_interval = 0;
 
 	for (int i = 0; i < num_tx; i++) {
-		struct tx_inf tx_info = tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
+		struct tx_inf *tx_info =
+			&tx_info_arr[tx[i].idx.lvl1][tx[i].idx.lvl2][tx[i].idx.lvl3];
 
-		if (tx_info.iso_tx.seq_num == 0) {
+		if (tx_info->iso_tx.seq_num == 0) {
 			/* Temporary fix until /zephyr/pull/68745/ is available
 			 */
 #if defined(CONFIG_BT_BAP_DEBUG_STREAM_SEQ_NUM)
@@ -259,11 +260,11 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 		/* Check if same audio is sent to all channels */
 		if (enc_audio.num_ch == 1) {
 			ret = iso_stream_send(enc_audio.data, data_size_pr_stream, tx[i].cap_stream,
-					      &tx_info, common_tx_sync_ts_us);
+					      tx_info, common_tx_sync_ts_us);
 		} else {
 			ret = iso_stream_send(
 				&enc_audio.data[(data_size_pr_stream * tx[i].audio_channel)],
-				data_size_pr_stream, tx[i].cap_stream, &tx_info,
+				data_size_pr_stream, tx[i].cap_stream, tx_info,
 				common_tx_sync_ts_us);
 		}
 
@@ -274,7 +275,7 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 			continue;
 		}
 
-		ret = iso_conn_handle_set(&tx[i].cap_stream->bap_stream, &tx_info.iso_conn_handle);
+		ret = iso_conn_handle_set(&tx[i].cap_stream->bap_stream, &tx_info->iso_conn_handle);
 		if (ret) {
 			continue;
 		}
@@ -283,7 +284,7 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 		 * channel to get the timestamp which is sent to all other channels.
 		 * However, to be able to detect errors, this is called on each TX.
 		 */
-		ret = get_tx_sync_sdc(tx_info.iso_conn_handle, &tx_info.iso_tx_readback);
+		ret = get_tx_sync_sdc(tx_info->iso_conn_handle, &tx_info->iso_tx_readback);
 		if (ret) {
 			if (ret != -ENOTCONN) {
 				LOG_WRN("Unable to get tx sync. ret: %d stream: %p", ret,
@@ -294,7 +295,7 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 
 		if (!ts_common_acquired) {
 			curr_ts_us = audio_sync_timer_capture();
-			common_tx_sync_ts_us = tx_info.iso_tx_readback.ts;
+			common_tx_sync_ts_us = tx_info->iso_tx_readback.ts;
 			ts_common_acquired = true;
 		}
 	}
@@ -315,23 +316,13 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 	return 0;
 }
 
-int bt_le_audio_tx_stream_stopped(struct stream_index stream_idx)
-{
-	if (!initialized) {
-		return -EACCES;
-	}
-
-	atomic_clear(
-		&tx_info_arr[stream_idx.lvl1][stream_idx.lvl2][stream_idx.lvl3].iso_tx_pool_alloc);
-
-	return 0;
-}
-
 int bt_le_audio_tx_stream_started(struct stream_index idx)
 {
 	if (!initialized) {
 		return -EACCES;
 	}
+
+	atomic_clear(&tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_tx_pool_alloc);
 
 	tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].hci_wrn_printed = false;
 	tx_info_arr[idx.lvl1][idx.lvl2][idx.lvl3].iso_conn_handle = HANDLE_INVALID;
