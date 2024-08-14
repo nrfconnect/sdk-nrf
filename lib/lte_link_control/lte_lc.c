@@ -1662,7 +1662,7 @@ int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cf
 		return -EFAULT;
 	} else if (err > 0) {
 		/* The modem responded with "ERROR". */
-		LOG_ERR("The modem rejected the configuration");
+		LOG_ERR("The modem rejected the configuration, err: %d", err);
 		return -EBADMSG;
 	}
 
@@ -1721,7 +1721,7 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 	} else if (err < 0) {
 		return -EFAULT;
 	} else if (err < 4) {
-		/* No pattern found */
+		/* Not all parameters and at least one pattern found */
 		return -EBADMSG;
 	}
 
@@ -1732,14 +1732,12 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 	 */
 	cfg->pattern_count = err - 3;
 
-	if (cfg->pattern_count >= 1) {
-		LOG_DBG("Pattern 1: %s", pattern_buf[0]);
+	LOG_DBG("Pattern 1: %s", pattern_buf[0]);
 
-		err = parse_periodic_search_pattern(pattern_buf[0], &cfg->patterns[0]);
-		if (err) {
-			LOG_ERR("Failed to parse periodic search pattern");
-			return err;
-		}
+	err = parse_periodic_search_pattern(pattern_buf[0], &cfg->patterns[0]);
+	if (err) {
+		LOG_ERR("Failed to parse periodic search pattern");
+		return err;
 	}
 
 	if (cfg->pattern_count >= 2) {

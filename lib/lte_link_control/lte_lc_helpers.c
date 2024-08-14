@@ -1449,7 +1449,7 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 char *periodic_search_pattern_get(char *const buf, size_t buf_size,
 				  const struct lte_lc_periodic_search_pattern *const pattern)
 {
-	int err;
+	int len = 0;
 
 	__ASSERT_NO_MSG(buf != NULL);
 	__ASSERT_NO_MSG(pattern != NULL);
@@ -1460,67 +1460,46 @@ char *periodic_search_pattern_get(char *const buf, size_t buf_size,
 		 *  <pattern_end_point>"
 		 */
 		if (pattern->range.time_to_final_sleep != -1) {
-			err = snprintk(buf, buf_size, "\"0,%u,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"0,%u,%u,%u,%u\"",
 				       pattern->range.initial_sleep, pattern->range.final_sleep,
 				       pattern->range.time_to_final_sleep,
 				       pattern->range.pattern_end_point);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else {
-			err = snprintk(buf, buf_size, "\"0,%u,%u,,%u\"",
+			len = snprintk(buf, buf_size, "\"0,%u,%u,,%u\"",
 				       pattern->range.initial_sleep, pattern->range.final_sleep,
 				       pattern->range.pattern_end_point);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		}
 	} else if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE) {
 		/* Table format: "<type>,<val1>[,<val2>][,<val3>][,<val4>][,<val5>]". */
 		if (pattern->table.val_2 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u\"", pattern->table.val_1);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
+			len = snprintk(buf, buf_size, "\"1,%u\"", pattern->table.val_1);
 		} else if (pattern->table.val_3 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else if (pattern->table.val_4 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2,
 				       pattern->table.val_3);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else if (pattern->table.val_5 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2,
 				       pattern->table.val_3, pattern->table.val_4);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else {
-			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2,
 				       pattern->table.val_3, pattern->table.val_4,
 				       pattern->table.val_5);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		}
 	} else {
-		LOG_WRN("Unrecognized periodic search pattern type");
+		LOG_ERR("Unrecognized periodic search pattern type");
 		buf[0] = '\0';
 	}
 
-	return buf;
-
-error:
-	LOG_ERR("An error occurred, the pattern string is empty. Error code %d", err);
-	buf[0] = '\0';
+	if (len >= buf_size) {
+		LOG_ERR("Encoding periodic search pattern failed. Too small buffer (%d/%d)",
+			len, buf_size);
+		buf[0] = '\0';
+	}
 
 	return buf;
 }
