@@ -1173,22 +1173,8 @@ static void stream_disabled_cb(struct bt_bap_stream *stream)
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
-	int ret;
-
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream %p stopped. Reason %d", (void *)stream, reason);
-
-	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		struct stream_index idx;
-
-		ret = device_index_get(stream->conn, &idx);
-		if (ret) {
-			LOG_ERR("Device index not found");
-		} else {
-			ret = bt_le_audio_tx_stream_stopped(idx);
-			ERR_CHK(ret);
-		}
-	}
 
 	/* Check if the other streams are streaming, send event if not */
 	for (int i = 0; i < CONFIG_BT_ISO_MAX_CIG; i++) {
