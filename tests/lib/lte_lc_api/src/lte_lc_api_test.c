@@ -3748,6 +3748,52 @@ void test_lte_lc_periodic_search_set_patterns4_success(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
+void test_lte_lc_periodic_search_set_max_values_fail(void)
+{
+	int ret;
+	struct lte_lc_periodic_search_cfg cfg = { 0 };
+
+	cfg.pattern_count = 1;
+	cfg.loop = 0;
+	cfg.return_to_pattern = 1;
+	cfg.band_optimization = 1;
+	cfg.patterns[0].type = 2; /* Unknown type */
+	cfg.patterns[0].table.val_1 = 10;
+	cfg.patterns[0].table.val_2 = 20;
+	cfg.patterns[0].table.val_3 = 30;
+	cfg.patterns[0].table.val_4 = 40;
+	cfg.patterns[0].table.val_5 = 50;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=0,0,1,1,", 65536);
+
+	ret = lte_lc_periodic_search_set(&cfg);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_periodic_search_set_unknown_search_pattern_type_fail(void)
+{
+	int ret;
+	struct lte_lc_periodic_search_cfg cfg = { 0 };
+
+	cfg.pattern_count = 1;
+	cfg.loop = 0;
+	cfg.return_to_pattern = 1;
+	cfg.band_optimization = 1;
+	cfg.patterns[0].type = 1;
+	cfg.patterns[0].table.val_1 = INT_MAX;
+	cfg.patterns[0].table.val_2 = INT_MAX;
+	cfg.patterns[0].table.val_3 = INT_MAX;
+	cfg.patterns[0].table.val_4 = INT_MAX;
+	cfg.patterns[0].table.val_5 = INT_MAX;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=0,0,1,1,", 65536);
+
+	ret = lte_lc_periodic_search_set(&cfg);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
 void test_lte_lc_periodic_search_set_at_fail(void)
 {
 	int ret;
