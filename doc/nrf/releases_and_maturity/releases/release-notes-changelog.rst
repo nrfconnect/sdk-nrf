@@ -237,6 +237,12 @@ nRF Desktop
   * A debug configuration enabling the `Fast Pair`_ feature on the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
   * An application versioning using the :file:`VERSION` file.
     The versioning is only applied to the application configurations that use the MCUboot bootloader.
+  * The :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option to :ref:`nrf_desktop_usb_state`.
+    The option allows to synchronize providing HID data with USB Start of Frame (SOF).
+    The feature reduces the negative impact of jitter related to USB polls, but it also increases HID data latency.
+    For details, see :ref:`nrf_desktop_usb_state_sof_synchronization`.
+  * Local HID report buffering in :ref:`nrf_desktop_usb_state`.
+    This ensures that the memory buffer passed to the USB next stack is valid until a HID report is sent and allows to enqueue up to two HID input reports for a USB HID instance (used only when :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is enabled).
 
 * Updated:
 

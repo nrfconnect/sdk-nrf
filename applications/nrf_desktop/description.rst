@@ -210,6 +210,8 @@ For example, the nRF Desktop keyboard reference design (``nrf52kbd``) supports H
 
 As an example, the following section describes handling HID mouse report data.
 
+.. _nrf_desktop_hid_mouse_report_handling:
+
 HID mouse report handling
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -233,13 +235,14 @@ In this state, the nRF Desktop mouse forwards the data from the motion sensor to
 #. When the HID input report is sent to the host, ``hid_report_sent_event`` is submitted.
    The motion sensor sample is triggered and the sequence repeats.
 
-If the device is connected through Bluetooth, the :ref:`nrf_desktop_hid_state` uses a pipeline that consists of two HID reports that it creates upon receiving the first ``motion_event``.
+If the device is connected through Bluetooth LE or the device is connected through USB and :ref:`nrf_desktop_usb_state_sof_synchronization` is enabled, the :ref:`nrf_desktop_hid_state` uses a pipeline that consists of two HID reports that it creates upon receiving the first ``motion_event``.
 The |hid_state| submits two ``hid_report_event`` events.
 Sending the first event to the host triggers the motion sensor sample.
 
 For the Bluetooth connections, submitting ``hid_report_sent_event`` is delayed by one Bluetooth connection interval.
-Because of this delay, the :ref:`nrf_desktop_hids` requires a pipeline of two HID reports to make sure that data is sent on every connection event.
-Such solution is necessary to achieve high report rate.
+Because of this delay, the :ref:`nrf_desktop_hids` requires a pipeline of two sequential HID reports to make sure that data is sent on every connection event.
+Such a solution is necessary to achieve a high report rate.
+For :ref:`nrf_desktop_usb_state_sof_synchronization`, the pipeline of two sequential HID reports is necessary to ensure that a USB peripheral can provide HID data on every USB poll.
 
 If there is no motion data for the predefined number of samples, the :ref:`nrf_desktop_motion` goes to the idle state.
 This is done to reduce the power consumption.

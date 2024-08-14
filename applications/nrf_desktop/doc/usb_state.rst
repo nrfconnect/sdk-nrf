@@ -64,6 +64,27 @@ For the USB legacy stack, this results in updating defaults for the following Kc
 
 For the USB next stack, the module uses dedicated APIs to set the USB device identifiers during initialization.
 
+.. _nrf_desktop_usb_state_sof_synchronization:
+
+USB Start of Frame (SOF) synchronization
+========================================
+
+The module receives a HID input report as :c:struct:`hid_report_event` and submits the report to the USB stack.
+The module informs that the HID report was sent using :c:struct:`hid_report_sent_event`.
+
+* If the :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is disabled, the :c:struct:`hid_report_sent_event` is instantly submitted when a HID report is sent over a USB during USB poll (on USB endpoint read).
+  This approach results in shorter HID data latency as a HID report pipeline is not used.
+  However, the USB peripheral might not provide a HID report during a USB poll if two subsequent USB polls for HID data happen in quick succession.
+  USB polls for HID data are not guaranteed to be evenly spaced in time.
+* If the :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is enabled, submitting :c:struct:`hid_report_sent_event` is delayed until subsequent USB SOF is reported by the USB stack.
+  USB SOFs, in contrast to USB polls, are always evenly spaced in time.
+  Enabling the Kconfig option reduces the negative impact of jitter related to USB polls and ensures that a HID peripheral can provide a HID input report during every USB poll.
+  However, the feature also increases HID data latency as a HID report pipeline with two sequential reports is used.
+  Without the pipeline, a USB poll happening quickly after a USB SOF might result in no HID report provided by the peripheral because the HID report source would be unable to provide a subsequent HID input report in time.
+
+  In the case of :ref:`nrf_desktop_hid_mouse_report_handling`, enabling the USB SOF synchronization also synchronizes motion sensor sampling with the USB SOF instead of USB polls (motion sensor sampling is synchronized to :c:struct:`hid_report_sent_event`).
+  This synchronization ensures that the sensor is sampled more evenly.
+
 .. _nrf_desktop_usb_state_hid_class_instance:
 
 USB HID class instance configuration
@@ -200,9 +221,11 @@ For the USB next stack, a separate callback provided by USB HID-class API is use
 
 When the HID report data is transmitted through :c:struct:`hid_report_event`, the module will pass it to the associated USB HID-class instance.
 Upon data delivery, :c:struct:`hid_report_sent_event` is submitted by the module.
+See :ref:`nrf_desktop_usb_state_sof_synchronization` documentation section for more details about possible HID data flows over USB.
 
 .. note::
-    Only one HID input report is transmitted by the module to a single instance of HID-class USB device at any given time.
+    Only one HID input report is submitted by the module to a single instance of HID-class USB device at any given time.
+    Subsequent HID input report is provided only after the previous one is sent to USB host.
     Different instances can transmit reports in parallel.
 
 The |usb_state| is a transport for :ref:`nrf_desktop_config_channel` when the channel is enabled.
