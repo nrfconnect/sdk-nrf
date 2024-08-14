@@ -5,7 +5,7 @@
  */
 
 /*
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.8.99
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 3
  */
@@ -144,14 +144,6 @@ static bool encode_psa_generate_random_req(zcbor_state_t *state,
 					   const struct psa_generate_random_req *input);
 static bool encode_psa_generate_key_req(zcbor_state_t *state,
 					const struct psa_generate_key_req *input);
-static bool encode_psa_sign_hash_start_req(zcbor_state_t *state,
-					   const struct psa_sign_hash_start_req *input);
-static bool encode_psa_sign_hash_abort_req(zcbor_state_t *state,
-					   const struct psa_sign_hash_abort_req *input);
-static bool encode_psa_verify_hash_start_req(zcbor_state_t *state,
-					     const struct psa_verify_hash_start_req *input);
-static bool encode_psa_verify_hash_abort_req(zcbor_state_t *state,
-					     const struct psa_verify_hash_abort_req *input);
 static bool encode_psa_pake_setup_req(zcbor_state_t *state, const struct psa_pake_setup_req *input);
 static bool encode_psa_pake_set_role_req(zcbor_state_t *state,
 					 const struct psa_pake_set_role_req *input);
@@ -1628,93 +1620,6 @@ static bool encode_psa_generate_key_req(zcbor_state_t *state,
 	return tmp_result;
 }
 
-static bool encode_psa_sign_hash_start_req(zcbor_state_t *state,
-					   const struct psa_sign_hash_start_req *input)
-{
-	zcbor_log("%s\r\n", __func__);
-
-	bool tmp_result = ((
-		(((zcbor_uint32_put(state, (75)))) &&
-		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_start_req_p_operation)))) &&
-		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_start_req_key)))) &&
-		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_start_req_alg)))) &&
-		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_start_req_p_hash)))) &&
-		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_start_req_hash_length)))))));
-
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
-}
-
-static bool encode_psa_sign_hash_abort_req(zcbor_state_t *state,
-					   const struct psa_sign_hash_abort_req *input)
-{
-	zcbor_log("%s\r\n", __func__);
-
-	bool tmp_result = ((
-		(((zcbor_uint32_put(state, (76)))) &&
-		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_abort_req_p_operation)))))));
-
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
-}
-
-static bool encode_psa_verify_hash_start_req(zcbor_state_t *state,
-					     const struct psa_verify_hash_start_req *input)
-{
-	zcbor_log("%s\r\n", __func__);
-
-	bool tmp_result = (((
-		((zcbor_uint32_put(state, (77)))) &&
-		((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_start_req_p_operation)))) &&
-		((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_start_req_key)))) &&
-		((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_start_req_alg)))) &&
-		((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_start_req_p_hash)))) &&
-		((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_start_req_hash_length)))) &&
-		((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_start_req_p_signature)))) &&
-		((zcbor_uint32_encode(state,
-				      (&(*input).psa_verify_hash_start_req_signature_length)))))));
-
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
-}
-
-static bool encode_psa_verify_hash_abort_req(zcbor_state_t *state,
-					     const struct psa_verify_hash_abort_req *input)
-{
-	zcbor_log("%s\r\n", __func__);
-
-	bool tmp_result = (((((zcbor_uint32_put(state, (78)))) &&
-			     ((zcbor_uint32_encode(
-				     state, (&(*input).psa_verify_hash_abort_req_p_operation)))))));
-
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
-}
-
 static bool encode_psa_pake_setup_req(zcbor_state_t *state, const struct psa_pake_setup_req *input)
 {
 	zcbor_log("%s\r\n", __func__);
@@ -1991,10 +1896,6 @@ static bool encode_psa_crypto_req(zcbor_state_t *state, const struct psa_crypto_
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_raw_key_agreement_req_m_c) ? ((encode_psa_raw_key_agreement_req(state, (&(*input).psa_crypto_req_msg_psa_raw_key_agreement_req_m))))
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_generate_random_req_m_c) ? ((encode_psa_generate_random_req(state, (&(*input).psa_crypto_req_msg_psa_generate_random_req_m))))
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_generate_key_req_m_c) ? ((encode_psa_generate_key_req(state, (&(*input).psa_crypto_req_msg_psa_generate_key_req_m))))
-	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_sign_hash_start_req_m_c) ? ((encode_psa_sign_hash_start_req(state, (&(*input).psa_crypto_req_msg_psa_sign_hash_start_req_m))))
-	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_sign_hash_abort_req_m_c) ? ((encode_psa_sign_hash_abort_req(state, (&(*input).psa_crypto_req_msg_psa_sign_hash_abort_req_m))))
-	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_verify_hash_start_req_m_c) ? ((encode_psa_verify_hash_start_req(state, (&(*input).psa_crypto_req_msg_psa_verify_hash_start_req_m))))
-	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_verify_hash_abort_req_m_c) ? ((encode_psa_verify_hash_abort_req(state, (&(*input).psa_crypto_req_msg_psa_verify_hash_abort_req_m))))
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_pake_setup_req_m_c) ? ((encode_psa_pake_setup_req(state, (&(*input).psa_crypto_req_msg_psa_pake_setup_req_m))))
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_pake_set_role_req_m_c) ? ((encode_psa_pake_set_role_req(state, (&(*input).psa_crypto_req_msg_psa_pake_set_role_req_m))))
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_pake_set_user_req_m_c) ? ((encode_psa_pake_set_user_req(state, (&(*input).psa_crypto_req_msg_psa_pake_set_user_req_m))))
@@ -2004,7 +1905,7 @@ static bool encode_psa_crypto_req(zcbor_state_t *state, const struct psa_crypto_
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_pake_input_req_m_c) ? ((encode_psa_pake_input_req(state, (&(*input).psa_crypto_req_msg_psa_pake_input_req_m))))
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_pake_get_shared_key_req_m_c) ? ((encode_psa_pake_get_shared_key_req(state, (&(*input).psa_crypto_req_msg_psa_pake_get_shared_key_req_m))))
 	: (((*input).psa_crypto_req_msg_choice == psa_crypto_req_msg_psa_pake_abort_req_m_c) ? ((encode_psa_pake_abort_req(state, (&(*input).psa_crypto_req_msg_psa_pake_abort_req_m))))
-	: false)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) || (zcbor_list_map_end_force_encode(state), false)) && zcbor_list_end_encode(state, 12))));
+	: false)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) || (zcbor_list_map_end_force_encode(state), false)) && zcbor_list_end_encode(state, 12))));
 
 	if (!tmp_result) {
 		zcbor_trace_file(state);
