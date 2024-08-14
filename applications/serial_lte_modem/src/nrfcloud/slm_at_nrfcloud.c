@@ -418,20 +418,6 @@ static bool handle_cloud_cmd(const char *buf_in)
 			k_work_submit_to_queue(&slm_work_q, &cloud_cmd);
 			ret = true;
 		}
-	/* Format expected from nrf cloud:
-	 * {"appId":"DEVICE", "messageType":"DISCON"}
-	 */
-	} else if (strcmp(app_id->valuestring, NRF_CLOUD_JSON_APPID_VAL_DEVICE) == 0) {
-		msg_type = cJSON_GetObjectItemCaseSensitive(cloud_cmd_json,
-							    NRF_CLOUD_JSON_MSG_TYPE_KEY);
-		if (cJSON_GetStringValue(msg_type) != NULL) {
-			if (strcmp(msg_type->valuestring,
-			    NRF_CLOUD_JSON_MSG_TYPE_VAL_DISCONNECT) == 0) {
-				LOG_INF("DEVICE DISCON");
-				/* No action required, handled in lib_nrf_cloud */
-				ret = true;
-			}
-		}
 	}
 
 end:
@@ -484,6 +470,10 @@ static void cloud_event_handler(const struct nrf_cloud_evt *evt)
 	case NRF_CLOUD_EVT_RX_DATA_GENERAL:
 		LOG_INF("NRF_CLOUD_EVT_RX_DATA_GENERAL");
 		on_cloud_evt_data_received(&evt->data);
+		break;
+	case NRF_CLOUD_EVT_RX_DATA_DISCON:
+		LOG_INF("DEVICE DISCON");
+		/* No action required, handled in lib_nrf_cloud */
 		break;
 	case NRF_CLOUD_EVT_RX_DATA_LOCATION:
 		LOG_INF("NRF_CLOUD_EVT_RX_DATA_LOCATION");
