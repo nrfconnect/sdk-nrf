@@ -14,6 +14,7 @@
 #include <mock_nrf_modem_at.h>
 
 #include "cmock_nrf_modem_at.h"
+#include "cmock_nrf_modem.h"
 
 #define TEST_EVENT_MAX_COUNT 10
 
@@ -243,6 +244,116 @@ static int sys_init_helper(void)
 	__cmock_nrf_modem_at_notif_handler_set_ExpectAnyArgsAndReturn(0);
 
 	return 0;
+}
+
+extern void on_modem_init(int err, void *ctx);
+extern void on_modem_shutdown(void *ctx);
+extern void lte_lc_on_modem_cfun(int mode, void *ctx);
+
+void test_lte_lc_on_modem_init_success(void)
+{
+	/* lte_lc_system_mode_set() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=1,1,1,3", EXIT_SUCCESS);
+	/* lte_lc_psm_req(false) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=", EXIT_SUCCESS);
+	/* lte_lc_proprietary_psm_req() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", EXIT_SUCCESS);
+	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", EXIT_SUCCESS);
+	/* lte_lc_edrx_req(false) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
+	/* CONFIG_LTE_RAI_REQ=n */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%RAI=0", EXIT_SUCCESS);
+
+	on_modem_init(0, NULL);
+}
+
+void test_lte_lc_on_modem_init_error_fail(void)
+{
+	on_modem_init(-NRF_EFAULT, NULL);
+}
+
+void test_lte_lc_on_modem_init_system_mode_set_fail(void)
+{
+	/* lte_lc_system_mode_set() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=1,1,1,3", -NRF_EFAULT);
+
+	on_modem_init(0, NULL);
+}
+
+void test_lte_lc_on_modem_init_psm_req_fail(void)
+{
+	/* lte_lc_system_mode_set() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=1,1,1,3", EXIT_SUCCESS);
+	/* lte_lc_psm_req(false) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=", -NRF_EFAULT);
+
+	on_modem_init(0, NULL);
+}
+
+void test_lte_lc_on_modem_init_edrx_req_fail(void)
+{
+	/* lte_lc_system_mode_set() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=1,1,1,3", EXIT_SUCCESS);
+	/* lte_lc_psm_req(false) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=", EXIT_SUCCESS);
+	/* lte_lc_proprietary_psm_req() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", -NRF_EFAULT);
+	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", -NRF_EFAULT);
+	/* lte_lc_edrx_req(false) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", -NRF_EFAULT);
+
+	on_modem_init(0, NULL);
+}
+
+void test_lte_lc_on_modem_init_rai_fail(void)
+{
+	/* lte_lc_system_mode_set() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSYSTEMMODE=1,1,1,3", EXIT_SUCCESS);
+	/* lte_lc_psm_req(false) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=", EXIT_SUCCESS);
+	/* lte_lc_proprietary_psm_req() */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", EXIT_SUCCESS);
+	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", EXIT_SUCCESS);
+	/* lte_lc_edrx_req(false) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
+	/* CONFIG_LTE_RAI_REQ=n */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%RAI=0", -NRF_EFAULT);
+
+	on_modem_init(0, NULL);
+}
+
+void test_lte_lc_on_modem_shutdown(void)
+{
+	__cmock_nrf_modem_is_initialized_ExpectAndReturn(true);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
+
+	on_modem_shutdown(NULL);
+}
+
+void test_lte_lc_on_modem_shutdown_not_initialized(void)
+{
+	__cmock_nrf_modem_is_initialized_ExpectAndReturn(false);
+
+	on_modem_shutdown(NULL);
+}
+
+static int lte_lc_on_modem_cfun_callback_count;
+
+static void on_modem_cfun_callback(enum lte_lc_func_mode, void *ctx)
+{
+	lte_lc_on_modem_cfun_callback_count++;
+}
+
+LTE_LC_ON_CFUN(lte_lc_api_test_on_modem_cfun, on_modem_cfun_callback, NULL);
+
+void test_lte_lc_on_modem_cfun(void)
+{
+	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_OFFLINE, NULL);
+
+	TEST_ASSERT_EQUAL(1, lte_lc_on_modem_cfun_callback_count);
 }
 
 void test_lte_lc_register_handler_null(void)
