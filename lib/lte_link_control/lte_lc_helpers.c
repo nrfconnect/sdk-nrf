@@ -165,11 +165,12 @@ static void get_ptw_multiplier(enum lte_lc_lte_mode lte_mode, float *ptw_multipl
 	if (lte_mode == LTE_LC_LTE_MODE_NBIOT) {
 		*ptw_multiplier = 2.56;
 	} else {
+		__ASSERT_NO_MSG(lte_mode == LTE_LC_LTE_MODE_LTEM);
 		*ptw_multiplier = 1.28;
 	}
 }
 
-static int get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edrx_value)
+static void get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edrx_value)
 {
 	uint16_t multiplier = 0;
 
@@ -186,25 +187,17 @@ static int get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edr
 	};
 
 	__ASSERT_NO_MSG(edrx_value != NULL);
+	/* idx is parsed from 4 character bit field string so it cannot be more than 15 */
+	__ASSERT_NO_MSG(idx < ARRAY_SIZE(edrx_lookup_ltem));
 
-	if (idx > ARRAY_SIZE(edrx_lookup_ltem) - 1) {
-		return -EINVAL;
-	}
-
-	switch (lte_mode) {
-	case LTE_LC_LTE_MODE_LTEM:
+	if (lte_mode == LTE_LC_LTE_MODE_LTEM) {
 		multiplier = edrx_lookup_ltem[idx];
-		break;
-	case LTE_LC_LTE_MODE_NBIOT:
+	} else {
+		__ASSERT_NO_MSG(lte_mode == LTE_LC_LTE_MODE_NBIOT);
 		multiplier = edrx_lookup_nbiot[idx];
-		break;
-	default:
-		return -ENOTCONN;
 	}
 
 	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
-
-	return 0;
 }
 
 /* Counts the frequency of a character in a null-terminated string. */
@@ -327,11 +320,7 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 	 */
 	get_ptw_multiplier(cfg->mode, &ptw_multiplier);
 
-	err = get_edrx_value(cfg->mode, idx, &cfg->edrx);
-	if (err) {
-		LOG_ERR("Failed to get eDRX value, error; %d", err);
-		goto clean_exit;
-	}
+	get_edrx_value(cfg->mode, idx, &cfg->edrx);
 
 	len = sizeof(tmp_buf);
 
@@ -342,18 +331,15 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 		goto clean_exit;
 	}
 
-	__ASSERT_NO_MSG(ptw_str != NULL);
 	strcpy(ptw_str, tmp_buf);
 
 	/* Value can be a maximum of 15, as there are 16 entries in the table
 	 * for paging time window (both for LTE-M and NB1).
+	 * We can use assert as only 4 bits can be received and if there would be more,
+	 * the previous at_parser_string_get would fail.
 	 */
 	idx = strtoul(tmp_buf, NULL, 2);
-	if (idx > 15) {
-		LOG_ERR("Invalid PTW lookup index: %d", idx);
-		err = -EINVAL;
-		goto clean_exit;
-	}
+	__ASSERT_NO_MSG(idx <= 15);
 
 	/* The Paging Time Window is different for LTE-M and NB-IoT:
 	 *	- LTE-M: (idx + 1) * 1.28 s
@@ -538,10 +524,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	memcpy(unit_str, tau_ext_str, unit_str_len);
 
 	lut_idx = strtoul(unit_str, NULL, 2);
-	if (lut_idx > (ARRAY_SIZE(t3412_ext_lookup) - 1)) {
-		LOG_ERR("Unable to parse periodic TAU string (T3412 extended)");
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(lut_idx < ARRAY_SIZE(t3412_ext_lookup));
 
 	timer_unit = t3412_ext_lookup[lut_idx];
 	timer_value = strtoul(tau_ext_str + unit_str_len, NULL, 2);
@@ -554,10 +537,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 		memcpy(unit_str, tau_legacy_str, unit_str_len);
 
 		lut_idx = strtoul(unit_str, NULL, 2);
-		if (lut_idx > (ARRAY_SIZE(t3412_lookup) - 1)) {
-			LOG_ERR("Unable to parse periodic TAU string (T3412)");
-			return -EINVAL;
-		}
+		__ASSERT_NO_MSG(lut_idx < ARRAY_SIZE(t3412_lookup));
 
 		timer_unit = t3412_lookup[lut_idx];
 		if (timer_unit == 0) {
@@ -575,10 +555,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	memcpy(unit_str, active_time_str, unit_str_len);
 
 	lut_idx = strtoul(unit_str, NULL, 2);
-	if (lut_idx > (ARRAY_SIZE(t3324_lookup) - 1)) {
-		LOG_ERR("Unable to parse active time string");
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(lut_idx < ARRAY_SIZE(t3324_lookup));
 
 	timer_unit = t3324_lookup[lut_idx];
 	timer_value = strtoul(active_time_str + unit_str_len, NULL, 2);

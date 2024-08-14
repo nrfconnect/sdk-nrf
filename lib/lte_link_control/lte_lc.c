@@ -1023,6 +1023,19 @@ int lte_lc_edrx_req(bool enable)
 	int err = 0;
 	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB};
 
+	LOG_DBG("enable=%d, "
+		"requested_edrx_value_ltem=%s, edrx_value_ltem=%s, "
+		"requested_ptw_value_ltem=%s, ptw_value_ltem=%s, ",
+		enable,
+		requested_edrx_value_ltem, edrx_value_ltem,
+		requested_ptw_value_ltem, ptw_value_ltem);
+	LOG_DBG("enable=%d, "
+		"requested_edrx_value_nbiot=%s, edrx_value_nbiot=%s, "
+		"requested_ptw_value_nbiot=%s, ptw_value_nbiot=%s",
+		enable,
+		requested_edrx_value_nbiot, edrx_value_nbiot,
+		requested_ptw_value_nbiot, ptw_value_nbiot);
+
 	requested_edrx_enable = enable;
 
 	if (!enable) {
