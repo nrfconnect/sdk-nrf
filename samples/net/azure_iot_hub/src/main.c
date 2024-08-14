@@ -323,7 +323,7 @@ static void direct_method_handler(struct k_work *work)
 		},
 		.status = 200,
 		.payload.ptr = response,
-		.payload.size = sizeof(response) - 1,
+		.payload.size = strlen(response),
 	};
 	bool led_state = strncmp(method_data.payload, "0", 1) ? 1 : 0;
 
