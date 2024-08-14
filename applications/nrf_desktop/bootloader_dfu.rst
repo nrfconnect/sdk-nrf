@@ -216,10 +216,13 @@ SUIT also has the following options in the sysbuild configuration:
    * ``SB_CONFIG_SUIT_ENVELOPE`` - Required to create the SUIT envelope.
      Turned on by default on the ``nrf54h20dk`` board.
      The envelope is used directly as a DFU update file by the DFU tools.
-   * ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` - The nRF Desktop application uses the sequence number to define an application version.
 
 .. note::
    The ``SB_CONFIG_SUIT_ENVELOPE_SIGN`` is disabled, so the generated SUIT envelope is not signed.
+
+SUIT reads the following options from the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.:
+
+   * ``APP_ROOT_SEQ_NUM`` - The nRF Desktop application uses the sequence number of root manifest to define an application version.
 
 On the ``nrf54h20dk`` board, the dedicated DFU partition called ``dfu_partition`` is defined by default in the DTS.
 The partition is used to store the incoming SUIT envelope with an update candidate.
