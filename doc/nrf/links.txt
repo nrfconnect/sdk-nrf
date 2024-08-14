@@ -931,6 +931,7 @@
 .. _`Bluetooth Qualification Consultants`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/qualification-consultants/
 .. _`Bluetooth product types`: https://support.bluetooth.com/hc/en-us/articles/360049018712/
 .. _`PRD and DPD`: https://www.bluetooth.com/download/prd_dpd_resolutions/
+.. _`Create a subset of a design`: https://qualification.support.bluetooth.com/hc/en-us/articles/27694580618637-Create-a-Subset-of-a-Design
 
 .. _`Bluetooth Mesh model specification`:
 .. _`Bluetooth Mesh profile specification`: https://www.bluetooth.com/specifications/specs/
