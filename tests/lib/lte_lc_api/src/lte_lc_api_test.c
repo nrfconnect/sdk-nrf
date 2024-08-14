@@ -1305,7 +1305,7 @@ void test_lte_lc_edrx_get_ltem2_success(void)
 {
 	int ret;
 	struct lte_lc_edrx_cfg edrx_cfg;
-	static const char cedrxrdp_resp[] = "+CEDRXRDP: 4,\"1000\",\"0010\",\"1110\"";
+	static const char cedrxrdp_resp[] = "+CEDRXRDP: 4,\"1000\",\"0000\",\"1110\"";
 
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CEDRXRDP", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
@@ -1316,7 +1316,7 @@ void test_lte_lc_edrx_get_ltem2_success(void)
 	ret = lte_lc_edrx_get(&edrx_cfg);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, edrx_cfg.mode);
-	TEST_ASSERT_EQUAL_FLOAT(20.48, edrx_cfg.edrx);
+	TEST_ASSERT_EQUAL_FLOAT(5.12, edrx_cfg.edrx);
 	TEST_ASSERT_EQUAL_FLOAT(19.2, edrx_cfg.ptw);
 }
 
@@ -1363,6 +1363,73 @@ void test_lte_lc_edrx_get_invalid_mode_fail(void)
 	int ret;
 	struct lte_lc_edrx_cfg edrx_cfg;
 	static const char cedrxrdp_resp[] = "+CEDRXRDP: 1,\"1000\",\"0101\",\"1011\"";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CEDRXRDP", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cedrxrdp_resp, sizeof(cedrxrdp_resp));
+
+	ret = lte_lc_edrx_get(&edrx_cfg);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_edrx_get_invalid_nw_edrx_value_fail(void)
+{
+	int ret;
+	struct lte_lc_edrx_cfg edrx_cfg;
+	static const char cedrxrdp_resp[] = "+CEDRXRDP: 4,\"1000\",0101,\"1011\"";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CEDRXRDP", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cedrxrdp_resp, sizeof(cedrxrdp_resp));
+
+	ret = lte_lc_edrx_get(&edrx_cfg);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_edrx_get_invalid_nw_edrx_value_empty(void)
+{
+	int ret;
+	struct lte_lc_edrx_cfg edrx_cfg;
+	static const char cedrxrdp_resp[] = "+CEDRXRDP: 4,\"1000\",\"\",\"1011\"";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CEDRXRDP", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cedrxrdp_resp, sizeof(cedrxrdp_resp));
+
+	ret = lte_lc_edrx_get(&edrx_cfg);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, edrx_cfg.mode);
+	TEST_ASSERT_EQUAL_FLOAT(0, edrx_cfg.edrx);
+	TEST_ASSERT_EQUAL_FLOAT(0, edrx_cfg.ptw);
+}
+
+void test_lte_lc_edrx_get_missing_nw_edrx_value(void)
+{
+	int ret;
+	struct lte_lc_edrx_cfg edrx_cfg;
+	static const char cedrxrdp_resp[] = "+CEDRXRDP: 4,\"1000\"";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CEDRXRDP", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cedrxrdp_resp, sizeof(cedrxrdp_resp));
+
+	ret = lte_lc_edrx_get(&edrx_cfg);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_edrx_get_missing_ptw_value_fail(void)
+{
+	int ret;
+	struct lte_lc_edrx_cfg edrx_cfg;
+	static const char cedrxrdp_resp[] = "+CEDRXRDP: 4,\"1000\",\"0101\"";
 
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CEDRXRDP", 0);
 	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
