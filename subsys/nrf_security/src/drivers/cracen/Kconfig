@@ -26,6 +26,7 @@ config CRACEN_LOAD_MICROCODE
 config CRACEN_LIB_KMU
 	bool
 	depends on SOC_SERIES_NRF54LX
+	select NRFX_RRAMC if !BUILD_WITH_TFM
 	default y
 	help
 	  The CRACEN KMU library.
