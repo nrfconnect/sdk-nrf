@@ -132,7 +132,7 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
 
    The build system will automatically use :ref:`configuration_system_overview_sysbuild` and generate a :file:`build/zephyr/dfu_suit.zip` archive, which contains the SUIT envelope and candidate images.
 
-#. Build a new version of the application with the incremented ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` value.
+#. Build a new version of the application with the incremented ``CONFIG_N_BLINKS`` value.
 
 #. Download the new :file:`dfu_suit.zip` archive to your mobile device.
 

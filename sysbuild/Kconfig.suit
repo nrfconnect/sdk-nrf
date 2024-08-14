@@ -19,11 +19,6 @@ config SUIT_ENVELOPE_SIGN
 	help
 	  Sign created SUIT envelope by external script
 
-config SUIT_ENVELOPE_SEQUENCE_NUM
-	int "Sequence number of the generated SUIT manifest"
-	range 0 2147483647
-	default 1
-
 config SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME
 	string "Path to the default root envelope template"
 	default "root_with_binary_nordic_top.yaml.jinja2"

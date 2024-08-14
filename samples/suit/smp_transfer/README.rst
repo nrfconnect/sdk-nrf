@@ -55,27 +55,23 @@ Configuration
 |config|
 
 The default configuration uses UART with sequence number 1 (shown as Version 1 in the nRF Device Manager app).
-To change the sequence number of the application, configure the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` sysbuild Kconfig option.
-This also changes the number of blinks on **LED 0** and sets the :ref:`sequence number <ug_suit_dfu_suit_manifest_elements>` of the :ref:`SUIT envelope <ug_suit_dfu_suit_concepts>`’s manifest.
 
-To use this configuration, build the sample with :ref:`configuration_system_overview_sysbuild` and set the ``SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM`` sysbuild Kconfig option to ``x``, where ``x`` is the version number.
-For example:
+To change the sequence number of the application, configure the ``APP_ROOT_SEQ_NUM`` inside the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.
+It sets the :ref:`sequence number <ug_suit_dfu_suit_manifest_elements>` of the :ref:`SUIT envelope <ug_suit_dfu_suit_concepts>`’s manifest.
+If you do not provide the :file:`VERSION` file, the sample is built with sequence number set to 1 (shown as Version 1 in the nRF Device Manager app).
 
-.. code-block:: console
-
-   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
-
-If you do not specify this configuration, the sample is built with sequence number 1 (shown as Version 1 in the nRF Device Manager app).
+To change the number of blinks on **LED 0**, configure the ``CONFIG_N_BLINKS`` Kconfig option.
+If you do not specify this configuration, the sample is built with the number of blinks set to 1.
 
 Configuration options
 =====================
 
 Check and configure the following configuration option for the sample:
 
-.. _SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM:
+.. _CONFIG_N_BLINKS:
 
-SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM - Configuration for the sequence number.
-   The sample configuration updates the sequence number of the SUIT envelope, which is reflected as the version of the application in the nRF Device Manager app.
+CONFIG_N_BLINKS - Configuration for the number of blinks.
+   The sample configuration change the number of blinks on **LED 0**.
    The default value is ``1``.
 
 Modify partition sizes
@@ -153,7 +149,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
          .. code-block:: console
 
-            west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=1
+            west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DCONFIG_N_BLINKS=1
 
 
          The output build files can be found in the :file:`build/DFU` directory, including the :ref:`app_build_output_files_suit_dfu`.
@@ -163,11 +159,17 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
       #. Connect the DK to your computer using a USB cable.
       #. Power on the DK.
       #. Program the sample to the kit (see :ref:`programming_cmd` for instructions).
-      #. Update the SUIT envelope sequence number, by rebuilding the sample with an updated sequence number:
+      #. Update the SUIT envelope sequence number, by appending the following line to the :file:`VERSION` file:
 
          .. code-block:: console
 
-            west build -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+            APP_ROOT_SEQ_NUM = 2
+
+      #. Update the number of LED blinks, by rebuilding the sample with the following Kconfig options set:
+
+         .. code-block:: console
+
+            west build -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=bt -DCONFIG_N_BLINKS=2
 
          Another :file:`root.suit` file is created after running this command, that contains the updated firmware.
          You must manually transfer this file onto the same mobile device you will use with the nRF Device Manager app.
@@ -192,11 +194,17 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
       #. Connect the DK to your computer using a USB cable.
       #. Power on the DK.
       #. Program the sample to the kit (see :ref:`programming_cmd` for instructions).
-      #. Update the SUIT envelope sequence number, by rebuilding the sample with an updated sequence number:
+      #. Update the SUIT envelope sequence number, by appending the following line to the :file:`VERSION` file:
 
          .. code-block:: console
 
-            west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM=2
+            APP_ROOT_SEQ_NUM = 2
+
+      #. Update the number of LED blinks, by rebuilding the sample with the following Kconfig options set:
+
+         .. code-block:: console
+
+            west build -b nrf54h20dk/nrf54h20/cpuapp -- -DCONFIG_N_BLINKS=2
 
 
          Another :file:`root.suit` file is created after running this command, that contains the updated firmware.

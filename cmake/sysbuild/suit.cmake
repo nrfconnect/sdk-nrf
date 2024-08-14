@@ -149,6 +149,27 @@ function(suit_get_manifest template_name output_variable)
   endif()
 endfunction()
 
+# Find a VERSION file path.
+#
+# Usage:
+#   suit_get_version_file(<output_variable>)
+#
+# Parameters:
+#   'output_variable' - variable to store path
+function(suit_get_version_file output_variable)
+  sysbuild_get(PROJECT_DIR IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_SOURCE_DIR CACHE)
+
+  if(DEFINED VERSION_FILE)
+    set(${output_variable} "${VERSION_FILE}" PARENT_SCOPE)
+    message(STATUS "Using version: ${VERSION_FILE}")
+  elseif((DEFINED PROJECT_DIR) AND (EXISTS ${PROJECT_DIR}/VERSION))
+    set(${output_variable} "${PROJECT_DIR}/VERSION" PARENT_SCOPE)
+    message(STATUS "Using version: ${PROJECT_DIR}/VERSION")
+  else()
+    message(STATUS "Unable to find a VERSION file. Using default values (seq: 1, no semver)")
+  endif()
+endfunction()
+
 # Create DFU package/main envelope.
 #
 # Usage:
@@ -196,6 +217,14 @@ function(suit_create_package)
     suit_copy_artifact_to_output_directory(${image} ${BINARY_DIR}/zephyr/${BINARY_FILE})
   endforeach()
 
+  set(TEMPLATE_ARGS ${CORE_ARGS})
+  suit_get_version_file(VERSION_PATH)
+  if (DEFINED VERSION_PATH)
+    list(APPEND TEMPLATE_ARGS
+      --version_file ${VERSION_PATH}
+    )
+  endif()
+
   foreach(image ${IMAGES})
     unset(GENERATE_LOCAL_ENVELOPE)
     sysbuild_get(GENERATE_LOCAL_ENVELOPE IMAGE ${image} VAR CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE KCONFIG)
@@ -225,7 +254,7 @@ function(suit_create_package)
     set(ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${target}.yaml)
     set(ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${target}.suit)
 
-    suit_render_template(${INPUT_ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${CORE_ARGS}")
+    suit_render_template(${INPUT_ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
     suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
     list(APPEND STORAGE_BOOT_ARGS
       --input-envelope ${ENVELOPE_SUIT_FILE}
@@ -242,7 +271,7 @@ function(suit_create_package)
     suit_set_absolute_or_relative_path(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${app_config_dir} INPUT_ROOT_ENVELOPE_JINJA_FILE)
     set(ROOT_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.yaml)
     set(ROOT_ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.suit)
-    suit_render_template(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${ROOT_ENVELOPE_YAML_FILE} "${CORE_ARGS}")
+    suit_render_template(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${ROOT_ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
     suit_create_envelope(${ROOT_ENVELOPE_YAML_FILE} ${ROOT_ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
       list(APPEND STORAGE_BOOT_ARGS
         --input-envelope ${ROOT_ENVELOPE_SUIT_FILE}
