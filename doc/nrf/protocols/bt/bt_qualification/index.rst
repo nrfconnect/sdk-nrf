@@ -20,13 +20,20 @@ Pre-qualified design
 ********************
 
 A *design* is a specific configuration of hardware or software implementation (or both) of adopted Bluetooth specifications, either in parts or as a whole.
-If relevant, you can use an existing design that has already been qualified (called *pre-qualified design*).
+If relevant, you can use an existing design that has already been qualified (called *pre-qualified design*) and has a Qualification Design ID (QDID) number.
 This allows you to speed up your product's qualification process by omitting a testing phase.
 
 The |NCS| contains qualified portions of various Bluetooth features (for example, :ref:`ug_ble_controller_softdevice` versions).
+If your product uses a qualified Bluetooth stack provided as part of the |NCS|, you can inherit this qualification from Nordic Semiconductor, provided that you do not introduce any changes to the stack.
+To find the QDID, go to the Compatibility Matrix relevant for the SoC or SiP model you use (for example, the `nRF52840 DK Compatibility Matrix`_), and open the Bluetooth QDID section.
 
-Any qualified design offered by Nordic Semiconductor (for example, :ref:`ug_bt_mesh` versions) can be qualified independently by the customers.
-However, this process may be complex and time-consuming, thus it is recommended to inherit Nordic Semiconductor's design qualifications in your End Product's listing.
+Generally, the qualified designs from Nordic Semiconductor combine many features together, but when you create a product or product line, you might not need some optional features.
+In this case, you can create a subset design that contains only the features you want to inherit from the qualified design.
+Listing products using subsets allows your product to present its used feature list in the form of a subset and distinguish itself from other designs.
+Follow the `Create a subset of a design`_ instructions to create a subset of a qualified design.
+
+You can independently qualify any qualified design offered by Nordic Semiconductor (for example, :ref:`ug_bt_mesh` versions).
+However, this process may be complex and time-consuming, thus it is recommended that you inherit Nordic Semiconductor's design qualifications in your End Product's listing.
 If you want to create a Profile Subsystem that is not on the `Bluetooth Qualification Listing`_, run the relevant tests through the `Profile Tuning Suite (PTS)`_ tool and qualify the product.
 
 A full list of Bluetooth product types including their descriptions is available on the `Bluetooth product types`_ page.
