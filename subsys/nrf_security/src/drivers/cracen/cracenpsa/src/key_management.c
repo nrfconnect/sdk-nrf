@@ -1193,6 +1193,11 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN_KMU) {
 		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+			if (psa_get_key_type(attributes) ==
+			    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+				return PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(
+					psa_get_key_type(attributes), psa_get_key_bits(attributes));
+			}
 			return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 		} else {
 			return sizeof(kmu_opaque_key_buffer);

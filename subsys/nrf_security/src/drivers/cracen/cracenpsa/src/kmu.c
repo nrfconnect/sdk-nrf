@@ -58,7 +58,7 @@ enum kmu_metadata_algorithm {
 	METADATA_ALG_SP800_108_COUNTER_CMAC = 8,
 	METADATA_ALG_CMAC = 9,
 	METADATA_ALG_ED25519 = 10,
-	METADATA_ALG_RESERVED1 = 11,
+	METADATA_ALG_ECDSA = 11,
 	METADATA_ALG_RESERVED2 = 12,
 	METADATA_ALG_RESERVED3 = 13,
 	METADATA_ALG_RESERVED4 = 14,
@@ -115,16 +115,6 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 	}
 	status = cracen_key_derivation_output_bytes(&op, key, 32);
 	return status;
-}
-
-static psa_status_t cracen_kmu_revoke_key_slot(int slot_id)
-{
-	int st = lib_kmu_revoke_slot(slot_id);
-
-	if (st) {
-		return PSA_ERROR_GENERIC_ERROR;
-	}
-	return PSA_SUCCESS;
 }
 
 static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
@@ -404,6 +394,8 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 		metadata_usage_flags >>= 1;
 	}
 
+	psa_set_key_usage_flags(key_attr, usage_flags);
+
 	switch (metadata->algorithm) {
 	case METADATA_ALG_CHACHA20:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_CHACHA20);
@@ -452,6 +444,13 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 				: PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS));
 		psa_set_key_algorithm(key_attr, PSA_ALG_PURE_EDDSA);
 		break;
+	case METADATA_ALG_ECDSA:
+		psa_set_key_type(key_attr,
+				 can_sign(key_attr)
+					 ? PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)
+					 : PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1));
+		psa_set_key_algorithm(key_attr, PSA_ALG_ECDSA(PSA_ALG_ANY_HASH));
+		break;
 	default:
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
@@ -470,8 +469,6 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 		psa_set_key_bits(key_attr, 256);
 		break;
 	}
-
-	psa_set_key_usage_flags(key_attr, usage_flags);
 
 	switch (metadata->key_usage_scheme) {
 	case KMU_METADATA_SCHEME_PROTECTED:
@@ -598,6 +595,20 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_ED25519;
+		break;
+
+	case PSA_ALG_ECDSA(PSA_ALG_ANY_HASH):
+		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
+		    PSA_ECC_FAMILY_SECP_R1) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+
+		/* Don't support private keys that are only used for verify */
+		if (!can_sign(key_attr) &&
+		    PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(key_attr))) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		metadata->algorithm = METADATA_ALG_ECDSA;
 		break;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -870,7 +881,12 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 		case METADATA_ALG_KEY_BITS_192:
 		case METADATA_ALG_KEY_BITS_255:
 		case METADATA_ALG_KEY_BITS_256:
-			key->number_of_slots = 2;
+			if (psa_get_key_type(attributes) ==
+			    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+				key->number_of_slots = 4;
+			} else {
+				key->number_of_slots = 2;
+			}
 			break;
 		case METADATA_ALG_KEY_BITS_384_SEED:
 			key->number_of_slots = 3;
@@ -888,9 +904,14 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	/* ED25519 keys are getting loading into the key buffer like volatile keys */
-	if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes)) ==
-	    PSA_ECC_FAMILY_TWISTED_EDWARDS) {
+	/* ECC keys are getting loading into the key buffer like volatile keys */
+	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+		if (psa_get_key_type(attributes) ==
+		    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+			*key_buffer = SI_ECC_PUBKEY_UNCOMPRESSED;
+			key_buffer++;
+			key_buffer_size--;
+		}
 		return push_kmu_key_to_ram(key_buffer, key_buffer_size);
 	}
 
