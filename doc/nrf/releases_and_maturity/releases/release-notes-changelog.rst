@@ -768,7 +768,7 @@ zcbor
 Trusted Firmware-M
 ==================
 
-|no_changes_yet_note|
+* Added possibility to read UICR.OTP registers through platform services.
 
 cJSON
 =====

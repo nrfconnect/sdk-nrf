@@ -51,6 +51,11 @@
 #define CPUC_CPUID_SIZE (sizeof(uint32_t))
 #endif /* NRF_APPLICATION_CPUC_S_BASE */
 
+#if defined(NRF91_SERIES) || defined(NRF53_SERIES)
+#define UICR_OTP_ADDR (NRF_UICR_S_BASE + offsetof(NRF_UICR_Type, OTP))
+#define UICR_OTP_SIZE (sizeof(NRF_UICR_S->OTP))
+#endif
+
 static const struct tfm_read_service_range ranges[] = {
 #ifdef PM_MCUBOOT_ADDRESS
 	/* Allow reads of mcuboot metadata */
@@ -74,6 +79,11 @@ static const struct tfm_read_service_range ranges[] = {
 #if defined(NRF_APPLICATION_CPUC_S)
 	{.start = CPUC_CPUID_ADDR, .size = CPUC_CPUID_SIZE},
 #endif
+
+#if defined(UICR_OTP_ADDR)
+	{.start = UICR_OTP_ADDR, .size = UICR_OTP_SIZE},
+#endif
+
 };
 
 #if defined(NRF_RRAMC_S)
