@@ -148,8 +148,8 @@ The following table is an overview of the currently supported bootloaders:
      - Yes
      - Yes
      - :ref:`Monotonic (HW) <bootloader_monotonic_counter>`, :ref:`Semantic (SW) <ug_fw_update_image_versions_mcuboot>`
-     - Image swap - single primary
-       Dual-slot direct-xip
+     - | Image swap - single primary
+       | Dual-slot direct-xip
 
 .. rst-class:: numbered-step
 
