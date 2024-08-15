@@ -192,10 +192,10 @@ int coap_parse(struct download_client *dlc, size_t len)
 	 */
 	LOG_DBG("CoAP response: %d, copying %d bytes",
 		coap_header_get_code(&response), payload_len - blk_off);
-	memcpy(dlc->config.buf + dlc->offset, payload + blk_off,
+	memcpy(dlc->config.buf + dlc->buf_offset, payload + blk_off,
 	       payload_len - blk_off);
 
-	dlc->offset += payload_len - blk_off;
+	dlc->buf_offset += payload_len - blk_off;
 	dlc->progress += payload_len - blk_off;
 
 	if (!more) {
@@ -203,6 +203,7 @@ int coap_parse(struct download_client *dlc, size_t len)
 		dlc->file_size = dlc->progress;
 	}
 
+	dlc->new_data_req = true;
 	return 0;
 }
 

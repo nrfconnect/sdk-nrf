@@ -173,7 +173,7 @@ struct download_client {
 	struct sockaddr remote_addr;
 
 	/** Buffer offset. */
-	size_t offset;
+	size_t buf_offset;
 
 	/** Size of the file being downloaded, in bytes. */
 	size_t file_size;
@@ -194,15 +194,27 @@ struct download_client {
 	/** Protocol for current download. */
 	int proto;
 
+	/** Request new data */
+	bool new_data_req;
+
 	struct  {
-		/** Whether the HTTP header for
-		 * the current fragment has been processed.
-		 */
-		bool has_header;
 		/** The server has closed the connection. */
 		bool connection_close;
 		/** Is using ranged query. */
 		bool ranged;
+		/** Ranged progress */
+		size_t ranged_progress;
+		/** HTTP header */
+		struct {
+			/** Header length */
+			size_t hdr_len;
+			/** Status code */
+			unsigned long status_code;
+			/** Whether the HTTP header for
+			 * the current fragment has been processed.
+			 */
+			bool has_end;
+		} header;
 	} http;
 
 	struct {

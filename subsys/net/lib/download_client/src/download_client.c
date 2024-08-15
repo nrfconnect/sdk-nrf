@@ -161,18 +161,18 @@ static int request_send(struct download_client *dlc)
 
 static int fragment_evt_send(struct download_client *dlc)
 {
-	__ASSERT(dlc->offset <= dlc->config.buf_size,
+	__ASSERT(dlc->buf_offset <= dlc->config.buf_size,
 		 "Buffer overflow!");
 
 	const struct download_client_evt evt = {
 		.id = DOWNLOAD_CLIENT_EVT_FRAGMENT,
 		.fragment = {
 			.buf = dlc->config.buf,
-			.len = dlc->offset,
+			.len = dlc->buf_offset,
 		}
 	};
 
-	dlc->offset = 0;
+	dlc->buf_offset = 0;
 
 	return dlc->callback(&evt);
 }
@@ -249,7 +249,7 @@ static int client_revc_error_handle(struct download_client *dlc, ssize_t len)
 	 * and it has been accounted in our progress, we have
 	 * to hand it to the application before discarding it.
 	 */
-	if ((dlc->offset > 0) && (dlc->http.has_header)) {
+	if ((dlc->buf_offset > 0) && (dlc->http.header.has_end)) {
 		rc = fragment_evt_send(dlc);
 		if (rc) {
 			/* Restart and suspend */
@@ -314,12 +314,22 @@ static int client_revc_handle(struct download_client *dlc, ssize_t len)
 
 	if (dlc->proto == IPPROTO_TCP || dlc->proto == IPPROTO_TLS_1_2) {
 		rc = http_parse(dlc, len);
-		if (rc > 0 &&
-		    (!dlc->http.has_header || dlc->offset < dlc->config.buf_size)) {
-			/* Wait for more data (full buffer).
-			 * Forward only full buffers to callback.
-			 */
-			return 1;
+		if (rc < 0) {
+			error_evt_send(dlc, -rc);
+			return -1;
+		}
+
+		if (dlc->http.header.has_end && dlc->buf_offset) {
+			if (fragment_evt_send(dlc)) {
+				/* Restart and suspend */
+				LOG_INF("Fragment refused, download stopped.");
+				rc = -1;
+			}
+		}
+
+		if (!dlc->new_data_req) {
+			/* Wait for more data */
+			return 0;
 		}
 	} else if (IS_ENABLED(CONFIG_COAP)) {
 		rc = coap_parse(dlc, (size_t)len);
@@ -347,15 +357,6 @@ static int client_revc_handle(struct download_client *dlc, ssize_t len)
 		LOG_INF("Downloaded %u bytes", dlc->progress);
 	}
 
-	/* Send fragment to application.
-	 * If the application callback returns non-zero, stop.
-	 */
-	if (fragment_evt_send(dlc)) {
-		/* Restart and suspend */
-		LOG_INF("Fragment refused, download stopped.");
-		rc = -1;
-	}
-
 	if (dlc->progress == dlc->file_size) {
 		LOG_INF("Download complete");
 		const struct download_client_evt evt = {
@@ -366,20 +367,10 @@ static int client_revc_handle(struct download_client *dlc, ssize_t len)
 		rc = -1;
 	} else if ((dlc->proto == IPPROTO_TCP || dlc->proto == IPPROTO_TLS_1_2)) {
 		/* Request a next range */
+		dlc->new_data_req = true;
 		rc = 0;
 	}
 
-	/* Attempt to reconnect if the connection was closed */
-	if (dlc->http.connection_close && rc >= 0) {
-		dlc->http.connection_close = false;
-		k_mutex_lock(&dlc->mutex, K_FOREVER);
-		rc = reconnect(dlc);
-		k_mutex_unlock(&dlc->mutex);
-		if (rc) {
-			error_evt_send(dlc, EHOSTDOWN);
-			rc = -1;
-		}
-	}
 	return rc;
 }
 
@@ -417,7 +408,7 @@ void download_thread(void *cli, void *a, void *b)
 	int rc;
 	ssize_t len;
 	struct download_client *const dlc = cli;
-	bool send_request = false;
+	dlc->new_data_req = false;
 
 	while (true) {
 		rc = 0;
@@ -439,18 +430,18 @@ void download_thread(void *cli, void *a, void *b)
 			}
 
 			len = 0;
-			send_request = true;
+			dlc->new_data_req = true;
 
 			set_state(dlc, DOWNLOAD_CLIENT_DOWNLOADING);
 		}
 
 		/* Request loop */
 		while (is_state(dlc, DOWNLOAD_CLIENT_DOWNLOADING)) {
-			if (send_request) {
+			if (dlc->new_data_req) {
 				/* Request next fragment */
-				dlc->offset = 0;
+				dlc->buf_offset = 0;
 				rc = request_send(dlc);
-				send_request = false;
+				dlc->new_data_req = false;
 				if (rc) {
 					rc = error_evt_send(dlc, ECONNRESET);
 					if (rc) {
@@ -463,14 +454,14 @@ void download_thread(void *cli, void *a, void *b)
 						break;
 					}
 					/* Send request again */
-					send_request = true;
+					dlc->new_data_req = true;
 					continue;
 				}
 			}
 
-			__ASSERT(dlc->offset < dlc->config.buf_size, "Buffer overflow");
+			__ASSERT(dlc->buf_offset < dlc->config.buf_size, "Buffer overflow");
 
-			if (dlc->config.buf_size - dlc->offset == 0) {
+			if (dlc->config.buf_size - dlc->buf_offset == 0) {
 				LOG_ERR("Could not fit HTTP header from server (> %d)",
 					dlc->config.buf_size);
 				error_evt_send(dlc, E2BIG);
@@ -478,21 +469,37 @@ void download_thread(void *cli, void *a, void *b)
 			}
 
 			LOG_DBG("Receiving up to %d bytes at %p...",
-				(dlc->config.buf_size - dlc->offset),
-				(void *)(dlc->config.buf + dlc->offset));
+				(dlc->config.buf_size - dlc->buf_offset),
+				(void *)(dlc->config.buf + dlc->buf_offset));
 
 			len = client_socket_recv(dlc);
 			if (len <= 0) {
 				rc = client_revc_error_handle(dlc, len);
-			} else {
-				rc = client_revc_handle(dlc, len);
+				if (rc < 0) {
+					break;
+				}
 			}
 
+			/* Accumulate buffer offset */
+			dlc->buf_offset += len;
+			rc = client_revc_handle(dlc, len);
 			if (rc < 0) {
 				break;
-			} else if (rc == 0) {
+			}
+
+			/* Attempt to reconnect if the connection was closed */
+			if (dlc->http.connection_close) {
+				dlc->http.connection_close = false;
+				k_mutex_lock(&dlc->mutex, K_FOREVER);
+				rc = reconnect(dlc);
+				k_mutex_unlock(&dlc->mutex);
+				if (rc) {
+					error_evt_send(dlc, EHOSTDOWN);
+					break;
+				}
+
 				/* Send request again */
-				send_request = true;
+				dlc->new_data_req = true;
 			}
 		}
 
@@ -605,8 +612,11 @@ int download_client_start(struct download_client *dlc, const char *file,
 	dlc->file = file;
 	dlc->file_size = 0;
 	dlc->progress = from;
-	dlc->offset = 0;
-	dlc->http.has_header = false;
+	dlc->buf_offset = 0;
+	dlc->http.header.has_end = false;
+	dlc->http.header.hdr_len = 0;
+	dlc->http.header.status_code = 0;
+
 	if (is_state(dlc, DOWNLOAD_CLIENT_IDLE)) {
 		set_state(dlc, DOWNLOAD_CLIENT_CONNECTING);
 	} else {

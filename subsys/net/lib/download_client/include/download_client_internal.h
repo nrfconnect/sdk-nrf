@@ -7,6 +7,9 @@
 #ifndef DOWNLOAD_CLIENT_INTERNAL_H
 #define DOWNLOAD_CLIENT_INTERNAL_H
 
+#define DLC_REQUEST_NEW_DATA 0
+#define DLC_KEEP_READING 1
+
 #include <net/download_client.h>
 
 int url_parse_port(const char *url, uint16_t *port);
