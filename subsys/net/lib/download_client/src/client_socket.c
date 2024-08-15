@@ -364,5 +364,6 @@ ssize_t client_socket_recv(struct download_client *dlc)
 		return -1;
 	}
 
-	return recv(dlc->fd, dlc->config.buf + dlc->offset, dlc->config.buf_size - dlc->offset, 0);
+	return recv(dlc->fd, dlc->config.buf + dlc->buf_offset,
+		    dlc->config.buf_size - dlc->buf_offset, 0);
 }

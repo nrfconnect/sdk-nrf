@@ -50,6 +50,7 @@ int http_get_request_send(struct download_client *dlc)
 {
 	int err;
 	int len;
+	size_t range;
 	size_t off = 0;
 	char host[HOSTNAME_SIZE];
 	char file[FILENAME_SIZE];
@@ -58,7 +59,7 @@ int http_get_request_send(struct download_client *dlc)
 	__ASSERT_NO_MSG(dlc->host);
 	__ASSERT_NO_MSG(dlc->file);
 
-	dlc->http.has_header = false;
+	dlc->http.header.has_end = false;
 
 	err = url_parse_host(dlc->host, host, sizeof(host));
 	if (err) {
@@ -76,22 +77,25 @@ int http_get_request_send(struct download_client *dlc)
 
 	if (tls_use_range || dlc->config.range_override) {
 		if (tls_use_range && dlc->config.range_override) {
-			off = MIN((dlc->progress + TLS_RANGE_MAX - 1), dlc->config.range_override);
+			range = MIN((TLS_RANGE_MAX - 1), dlc->config.range_override);
 		} else if (dlc->config.range_override) {
-			off = dlc->config.range_override;
+			range = dlc->config.range_override;
 		} else {
-			off = dlc->progress + TLS_RANGE_MAX - 1;
+			range = TLS_RANGE_MAX - 1;
 		}
 
-		if (dlc->file_size != 0) {
+		off = dlc->progress + range;
+
+		if (dlc->file_size && (off > dlc->file_size - 1)) {
 			/* Don't request bytes past the end of file */
-			off = MIN(off, dlc->file_size - 1);
+			off = dlc->file_size - 1;
 		}
 
 		len = snprintf(dlc->config.buf,
 			dlc->config.buf_size,
 			HTTP_GET_RANGE, file, host, dlc->progress, off);
 		dlc->http.ranged = true;
+		dlc->http.ranged_progress = 0;
 		goto send;
 	} else if (dlc->progress) {
 		len = snprintf(dlc->config.buf,
@@ -115,6 +119,10 @@ send:
 		LOG_HEXDUMP_DBG(dlc->config.buf, len, "HTTP request");
 	}
 
+	printk("File size: %d\n", dlc->file_size);
+	printk("Progress: %d\n", dlc->progress);
+	printk("REQ: %s\n", dlc->config.buf);
+
 	err = client_socket_send(dlc, len, 0);
 	if (err) {
 		LOG_ERR("Failed to send HTTP request, errno %d", errno);
@@ -125,188 +133,187 @@ send:
 }
 
 /* Returns:
- *  1 while the header is being received
- *  0 if the header has been fully received
- * -errno on error
+ * Number of bytes parsed on success.
+ * Negative errno on error.
  */
-static int http_header_parse(struct download_client *dlc, size_t *hdr_len)
+static int http_header_parse(struct download_client *dlc, size_t buf_len)
 {
 	char *p;
 	char *q;
-	unsigned long http_status;
-
-	const unsigned int expected_status = (dlc->http.ranged || dlc->progress) ? 206 : 200;
+	size_t parse_len;
+	unsigned int expected_status;
 
 	p = strnstr(dlc->config.buf, "\r\n\r\n", dlc->config.buf_size);
-	if (!p || p > dlc->config.buf + dlc->offset) {
-		/* Waiting full HTTP header */
-		LOG_DBG("Waiting full header in response");
-		return 1;
+	if (p && p <= dlc->config.buf + dlc->buf_offset) {
+		/* End of header received */
+		dlc->http.header.has_end = true;
+		parse_len = p + strlen("\r\n\r\n") - (char *)dlc->config.buf;
+	} else {
+		parse_len = buf_len;
 	}
 
-	/* Offset of the end of the HTTP header in the buffer */
-	*hdr_len = p + strlen("\r\n\r\n") - (char *)dlc->config.buf;
-
-	LOG_DBG("GET header size: %u", *hdr_len);
-	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
-		LOG_HEXDUMP_DBG(dlc->config.buf, *hdr_len, "HTTP response");
-	}
-
-	for (size_t i = 0; i < *hdr_len; i++) {
+	for (size_t i = 0; i < parse_len; i++) {
 		dlc->config.buf[i] = tolower(dlc->config.buf[i]);
 	}
 
 	/* Look for the status code just after "http/1.1 " */
-	p = strnstr(dlc->config.buf, "http/1.1 ", *hdr_len);
-	if (!p) {
-		LOG_ERR("Server response missing HTTP/1.1");
-		return -EBADMSG;
-	}
-	p += strlen("http/1.1 ");
-
-	http_status = strtoul(p, &q, 10);
-	if (!q) {
-		LOG_ERR("Server response malformed: status code not found");
-		return -EBADMSG;
-	}
-
-	if (expected_status == 206 && http_status == 200) {
-		LOG_ERR("Server respond range not supported");
-		return -ERANGE;
-	}
-
-	if (http_status != expected_status) {
-		/* Truncate the server response at the first CR or LF after the
-		 * status and message so we can log it. Normally we can't
-		 * modify the response like this since we'd need to look at
-		 * data beyond this point, but we're already in a failing
-		 * condition.
-		 */
-		while ((*q != '\0') && (*q != '\r') && (*q != '\n')) {
-			q++;
+	p = strnstr(dlc->config.buf, "http/1.1 ", parse_len);
+	if (p) {
+		q = strnstr(p, "\r\n", parse_len - (p - dlc->config.buf));
+		if (q) {
+			/* Received entire line */
+			p += strlen("http/1.1 ");
+			dlc->http.header.status_code = strtoul(p, &q, 10);
 		}
-		*q = '\0';
 
-		LOG_ERR("Unexpected HTTP response: %s", p);
-		return -EBADMSG;
 	}
 
 	/* The file size is returned via "Content-Length" in case of HTTP,
 	 * and via "Content-Range" in case of HTTPS with range requests.
 	 */
-	if (dlc->file_size == 0) {
-		if (dlc->http.ranged) {
-			p = strnstr(dlc->config.buf, "\r\ncontent-range", *hdr_len);
-			if (!p) {
-				LOG_ERR("Server did not send "
-					"\"Content-Range\" in response");
-				return -EBADMSG;
+	do {
+		if (dlc->file_size == 0) {
+			if (dlc->http.ranged) {
+				p = strnstr(dlc->config.buf, "\r\ncontent-range", parse_len);
+				if (!p) {
+					break;
+				}
+				p = strnstr(p, "/", parse_len - (p - dlc->config.buf));
+				if (!p) {
+					break;
+				}
+				q = strnstr(p, "\r\n", parse_len - (p - dlc->config.buf));
+				if (!q) {
+					/* Missing end of line */
+					break;
+				}
+			} else { /* proto == PROTO_HTTP */
+				p = strnstr(dlc->config.buf, "\r\ncontent-length", parse_len);
+				if (!p) {
+					break;
+				}
+				p = strstr(p, ":");
+				if (!p) {
+					break;
+				}
+				q = strnstr(p, "\r\n", parse_len - (p - dlc->config.buf));
+				if (!q) {
+					/* Missing end of line */
+					break;
+				}
+				/* Accumulate any eventual progress (starting offset)
+				* when reading the file size from Content-Length
+				*/
+				dlc->file_size = dlc->progress;
 			}
-			p = strnstr(p, "/", *hdr_len - (p - dlc->config.buf));
-			if (!p) {
-				LOG_ERR("No file size in response");
-				return -EBADMSG;
-			}
-		} else { /* proto == PROTO_HTTP */
-			p = strnstr(dlc->config.buf, "\r\ncontent-length", *hdr_len);
-			if (!p) {
-				LOG_WRN("Server did not send "
-					"\"Content-Length\" in response");
-					return -EBADMSG;
-			}
-			p = strstr(p, ":");
-			if (!p) {
-				LOG_ERR("No file size in response");
-				return -EBADMSG;
-			}
-			/* Accumulate any eventual progress (starting offset)
-			 * when reading the file size from Content-Length
-			 */
-			dlc->file_size = dlc->progress;
+
+			dlc->file_size += atoi(p + 1);
+			LOG_DBG("File size = %u", dlc->file_size);
 		}
+	} while (0);
 
-		dlc->file_size += atoi(p + 1);
-		LOG_DBG("File size = %u", dlc->file_size);
-	}
-
-	p = strnstr(dlc->config.buf, "\r\nconnection: close", *hdr_len);
+	p = strnstr(dlc->config.buf, "\r\nconnection: close", parse_len);
 	if (p) {
 		LOG_WRN("Peer closed connection, will re-connect");
 		dlc->http.connection_close = true;
 	}
 
-	dlc->http.has_header = true;
+	if (dlc->http.header.has_end) {
+		/* We have received the end of the header.
+		 * Verify that we have received everything that we need.
+		 */
 
-	return 0;
+		if (!dlc->file_size) {
+			LOG_ERR("File size not set");
+			return -EBADMSG;
+		}
+
+		if (!dlc->http.header.status_code) {
+			LOG_ERR("Server response malformed: status code not found");
+			return -EBADMSG;
+		}
+
+		expected_status = (dlc->http.ranged || dlc->progress) ? 206 : 200;
+		if (dlc->http.header.status_code != expected_status) {
+			LOG_ERR("Unexpected HTTP response code %ld", dlc->http.header.status_code);
+			return -EBADMSG;
+		}
+
+		return parse_len;
+	}
+
+	q = dlc->config.buf + buf_len;
+	/* We are still missing part of the header.
+	 * Return the lines (in number of bytes) that we have parsed.
+	 */
+	while (q > dlc->config.buf && (*q != '\r') && (*q != '\n')) {
+		q--;
+	}
+
+	/* Keep \r and \n in the buffer in case it is part of the header ending. */
+	while (*(q - 1) == '\r' || *(q - 1) == '\n') {
+		q--;
+	}
+
+	parse_len = (q - dlc->config.buf);
+
+	return parse_len;
 }
 
 /* Returns:
- *  1 if more data is expected
- *  0 if a whole fragment has been received
- * -errno on error
+ * 0 on success
+ * Negative errno on error.
  */
 int http_parse(struct download_client *dlc, size_t len)
 {
-	int rc;
-	size_t hdr_len;
+	int parsed_len;
 
-	/* Accumulate buffer offset */
-	dlc->offset += len;
+	LOG_DBG("RES: %s", dlc->config.buf);
 
-	if (!dlc->http.has_header) {
-		rc = http_header_parse(dlc, &hdr_len);
-		if (rc > 0) {
-			/* Wait for header */
-			return 1;
-		}
-		if (rc < 0) {
+	if (!dlc->http.header.has_end) {
+		/* Parse what we can from the header */
+		parsed_len = http_header_parse(dlc, len);
+		if (parsed_len < 0) {
 			/* Something is wrong with the header */
-			return rc;
+			return parsed_len;
 		}
 
-		if (dlc->offset != hdr_len) {
-			/* The buffer contains some payload bytes,
-			 * copy them at the beginning of the buffer
-			 * and update the offset.
-			 */
-			LOG_DBG("Copying %u payload bytes",
-				dlc->offset - hdr_len);
-			memmove(dlc->config.buf, dlc->config.buf + hdr_len,
-				dlc->offset - hdr_len);
+		if (parsed_len == len) {
+			len = 0;
+			dlc->buf_offset = 0;
+		} else if (parsed_len) {
+			/* Keep remaining payload */
+			len = len - parsed_len;
+			memmove(dlc->config.buf, dlc->config.buf + parsed_len, dlc->buf_offset);
+			dlc->buf_offset = len;
+		}
 
-			dlc->offset -= hdr_len;
-		} else {
-			/* Reset the offset.
-			 * The payload is received in an empty buffer.
-			 */
-			dlc->offset = 0;
+		if (!dlc->http.header.has_end) {
+			/* Wait for rest of header */
+			return 0;
 		}
 	}
 
-	/* Accumulate overall file progress.
-	 * If the last recv() call read an HTTP header,
-	 * `offset` has been moved at the end of any trailing
-	 * payload bytes by http_header_parse(). In this case,
-	 * `offset` is less than `len` and it represents
-	 * the actual payload bytes.
-	 */
-	dlc->progress += MIN(dlc->offset, len);
+	/* Accumulate overall file progress. */
+	dlc->progress += len;
 
 	/* Have we received a whole fragment or the whole file? */
 	if (dlc->progress != dlc->file_size) {
 		if (dlc->http.ranged) {
-			if (dlc->offset < (dlc->config.range_override ?
+			dlc->http.ranged_progress += len;
+			if (dlc->http.ranged_progress < (dlc->config.range_override ?
 					   dlc->config.range_override :
 					   TLS_RANGE_MAX)) {
 				/* Ranged query: read until a full fragment */
-				return 1;
+				return 0;
 			}
 		} else {
 			/* Non-ranged query: just keep on reading, ignore fragment size */
-			return 1;
+			return 0;
 		}
 	}
 
 	/* Either we have a full file, or we need to request a next fragment */
+	dlc->new_data_req = true;
 	return 0;
 }
