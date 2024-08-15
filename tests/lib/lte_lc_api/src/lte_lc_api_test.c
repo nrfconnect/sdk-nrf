@@ -37,12 +37,31 @@ extern void at_monitor_dispatch(const char *at_notif);
  */
 extern void lte_lc_edrx_on_modem_cfun(int mode, void *ctx);
 
+static void lte_lc_connect_inprogress_work_fn(struct k_work *work)
+{
+	int ret;
+
+	ret = lte_lc_connect();
+	TEST_ASSERT_EQUAL(-EINPROGRESS, ret);
+}
+
+static K_WORK_DELAYABLE_DEFINE(lte_lc_connect_inprogress_work, lte_lc_connect_inprogress_work_fn);
+
 static void at_notif_dispatch_work_fn(struct k_work *work)
 {
 	at_monitor_dispatch(at_notif);
 }
 
 static K_WORK_DELAYABLE_DEFINE(at_notif_dispatch_work, at_notif_dispatch_work_fn);
+
+static int lte_lc_event_handler_custom_count;
+
+static void lte_lc_event_handler_custom(const struct lte_lc_evt *const evt)
+{
+	TEST_ASSERT_EQUAL(test_event_data[lte_lc_event_handler_custom_count].type, evt->type);
+
+	lte_lc_event_handler_custom_count++;
+}
 
 static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 {
@@ -379,6 +398,14 @@ void test_lte_lc_register_handler_twice(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
+void test_lte_lc_deregister_handler_unknown(void)
+{
+	int ret;
+
+	ret = lte_lc_deregister_handler(lte_lc_event_handler_custom);
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
 void test_lte_lc_factory_reset_success(void)
 {
 	int ret;
@@ -445,9 +472,12 @@ void test_lte_lc_connect_success(void)
 	test_event_data[6].type = LTE_LC_EVT_LTE_MODE_UPDATE;
 	test_event_data[6].lte_mode = LTE_LC_LTE_MODE_NONE;
 
+	/* Schedule another lte_lc_connect which will cause -EINPOGRESS */
+	k_work_schedule(&lte_lc_connect_inprogress_work, K_MSEC(1));
+
 	/* Schedule +CEREG notification to be dispatched while lte_lc_connect() blocks */
 	strcpy(at_notif, "+CEREG: 1,\"002F\",\"0012BEEF\",7,,,\"00000101\",\"00010011\"\r\n");
-	k_work_schedule(&at_notif_dispatch_work, K_MSEC(1));
+	k_work_schedule(&at_notif_dispatch_work, K_MSEC(2));
 
 	ret = lte_lc_connect();
 	TEST_ASSERT_EQUAL(0, ret);
@@ -550,15 +580,6 @@ void test_lte_lc_connect_cfun_normal_set_fail(void)
 
 	ret = lte_lc_connect();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
-}
-
-static int lte_lc_event_handler_custom_count;
-
-static void lte_lc_event_handler_custom(const struct lte_lc_evt *const evt)
-{
-	TEST_ASSERT_EQUAL(test_event_data[lte_lc_event_handler_custom_count].type, evt->type);
-
-	lte_lc_event_handler_custom_count++;
 }
 
 void test_lte_lc_connect_async_success(void)
@@ -2009,10 +2030,50 @@ void test_lte_lc_cereg_90_uicc_fail(void)
 	at_monitor_dispatch(at_notif);
 }
 
+void test_lte_lc_cereg_unknown_reg_status_fail(void)
+{
+	strcpy(at_notif, "+CEREG: 99\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
 void test_lte_lc_cereg_no_number_fail(void)
 {
 	strcpy(at_notif, "+CEREG:\r\n");
+	at_monitor_dispatch(at_notif);
+}
 
+void test_lte_lc_cereg_unknown_lte_mode_fail(void)
+{
+	strcpy(at_notif, "+CEREG: 1,\"5678\",\"87654321\",5,,,\"11100000\",\"11100000\"\r\n");
+
+	/* Registration status and cell update are sent before LTE mode is checked to be invalid */
+	lte_lc_callback_count_expected = 2;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.mcc = 0;
+	test_event_data[1].cell.mnc = 0;
+	test_event_data[1].cell.id = 0x87654321;
+	test_event_data[1].cell.tac = 0x5678;
+	test_event_data[1].cell.earfcn = 0;
+	test_event_data[1].cell.timing_advance = 0;
+	test_event_data[1].cell.timing_advance_meas_time = 0;
+	test_event_data[1].cell.measurement_time = 0;
+	test_event_data[1].cell.phys_cell_id = 0;
+	test_event_data[1].cell.rsrp = 0;
+	test_event_data[1].cell.rsrq = 0;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_cereg_malformed_fail(void)
+{
+	strcpy(at_notif, "+CEREG: 1 2,3\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "+CEREG: 1,.\r\n");
 	at_monitor_dispatch(at_notif);
 }
 
@@ -2048,6 +2109,10 @@ void test_lte_lc_cscon(void)
 
 	/* Invalid RRC mode value does not trigger event */
 	strcpy(at_notif, "+CSCON: 2\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Missing RRC mode value does not trigger event */
+	strcpy(at_notif, "+CSCON:\r\n");
 	at_monitor_dispatch(at_notif);
 }
 
@@ -2399,6 +2464,38 @@ void test_lte_lc_neighbor_cell_measurement_normal_status_incomplete(void)
 	at_monitor_dispatch(at_notif);
 }
 
+void test_lte_lc_neighbor_cell_measurement_cell_id_missing_fail(void)
+{
+	int ret;
+
+	strcpy(at_notif,
+	       "%NCELLMEAS:0,,\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300,11\r\n");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_cell_id_too_big_fail(void)
+{
+	int ret;
+
+	strcpy(at_notif,
+	       "%NCELLMEAS:0,\"FFFFFFFF\",\"98712\",\"0AB9\",4800,7,63,31,456,4800,"
+	       "8,60,29,4,3500,9,99,18,5,5300,11\r\n");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	at_monitor_dispatch(at_notif);
+}
+
 void test_lte_lc_neighbor_cell_measurement_malformed_fail(void)
 {
 	int ret;
@@ -2431,6 +2528,71 @@ void test_lte_lc_neighbor_cell_measurement_gci(void)
 	lte_lc_callback_count_expected = 1;
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,10", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 111;
+	test_event_data[0].cells_info.current_cell.mnc = 99;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[0].cells_info.current_cell.tac = 0x1A2B;
+	test_event_data[0].cells_info.current_cell.earfcn = 6200;
+	test_event_data[0].cells_info.current_cell.timing_advance = 64;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 20877;
+	test_event_data[0].cells_info.current_cell.measurement_time = 189205;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 110;
+	test_event_data[0].cells_info.current_cell.rsrp = 53;
+	test_event_data[0].cells_info.current_cell.rsrq = 22;
+	test_event_data[0].cells_info.ncells_count = 0;
+	test_event_data[0].cells_info.gci_cells_count = 2;
+
+	test_gci_cells[0].mcc = 111;
+	test_gci_cells[0].mnc = 98;
+	test_gci_cells[0].id = 0x00567812;
+	test_gci_cells[0].tac = 0x3C4D;
+	test_gci_cells[0].earfcn = 1300;
+	test_gci_cells[0].timing_advance = 65535;
+	test_gci_cells[0].timing_advance_meas_time = 4;
+	test_gci_cells[0].measurement_time = 189241;
+	test_gci_cells[0].phys_cell_id = 75;
+	test_gci_cells[0].rsrp = 53;
+	test_gci_cells[0].rsrq = 16;
+
+	test_gci_cells[1].mcc = 112;
+	test_gci_cells[1].mnc = 97;
+	test_gci_cells[1].id = 0x0011AABB;
+	test_gci_cells[1].tac = 0x5E6F;
+	test_gci_cells[1].earfcn = 2300;
+	test_gci_cells[1].timing_advance = 65534;
+	test_gci_cells[1].timing_advance_meas_time = 5;
+	test_gci_cells[1].measurement_time = 189245;
+	test_gci_cells[1].phys_cell_id = 449;
+	test_gci_cells[1].rsrp = 51;
+	test_gci_cells[1].rsrq = 11;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_gci_limit_results(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT,
+		.gci_count = 3,
+	};
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"1FFFFFFF\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"00567812\",\"11198\",\"3C4D\",65535,4,1300,75,53,16,189241,0,0,"
+	       "\"0011AABB\",\"11297\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0,"
+	       "\"0011CCDD\",\"11296\",\"5E6F\",65534,5,3300,449,51,11,189245,0,0,"
+	       "\"0011EEFF\",\"11295\",\"5E6F\",65534,5,4300,449,51,11,189245,0,0"
+	       "\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,3", EXIT_SUCCESS);
 
 	ret = lte_lc_neighbor_cell_measurement(&params);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
@@ -3369,51 +3531,91 @@ void test_lte_lc_neighbor_cell_measurement_invalid_gci_cell_count_fail(void)
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
+void test_lte_lc_neighbor_cell_measurement_no_event_handler(void)
+{
+	int ret;
+
+	ret = lte_lc_deregister_handler(lte_lc_event_handler);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	strcpy(at_notif,
+	       "%NCELLMEAS: 0,"
+	       "\"00112233\",\"11199\",\"1A2B\",64,20877,6200,110,53,22,189205,1,0,"
+	       "\"0011AABB\",\"112mnc\",\"5E6F\",65534,5,2300,449,51,11,189245,0,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Register handler so that tearDown() doesn't cause unnecessary warning log */
+	lte_lc_register_handler(lte_lc_event_handler);
+}
+
+
 void test_lte_lc_modem_sleep_event(void)
 {
-	lte_lc_callback_count_expected = 5;
+	lte_lc_callback_count_expected = 6;
+	int index = 0;
 
 	strcpy(at_notif, "%XMODEMSLEEP: 1,12345\r\n");
-	test_event_data[0].type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
-	test_event_data[0].modem_sleep.type = LTE_LC_MODEM_SLEEP_PSM;
-	test_event_data[0].modem_sleep.time = 12345;
+	test_event_data[index].type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
+	test_event_data[index].modem_sleep.type = LTE_LC_MODEM_SLEEP_PSM;
+	test_event_data[index].modem_sleep.time = 12345;
 	at_monitor_dispatch(at_notif);
+	index++;
 
 	strcpy(at_notif, "%XMODEMSLEEP: 2,5000\r\n");
-	test_event_data[1].type = LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING;
-	test_event_data[1].modem_sleep.type = LTE_LC_MODEM_SLEEP_RF_INACTIVITY;
-	test_event_data[1].modem_sleep.time = 5000;
+	test_event_data[index].type = LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING;
+	test_event_data[index].modem_sleep.type = LTE_LC_MODEM_SLEEP_RF_INACTIVITY;
+	test_event_data[index].modem_sleep.time = 5000;
 	at_monitor_dispatch(at_notif);
+	index++;
 
 	strcpy(at_notif, "%XMODEMSLEEP: 3,0\r\n");
-	test_event_data[2].type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
-	test_event_data[2].modem_sleep.type = LTE_LC_MODEM_SLEEP_LIMITED_SERVICE;
-	test_event_data[2].modem_sleep.time = 0;
+	test_event_data[index].type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
+	test_event_data[index].modem_sleep.type = LTE_LC_MODEM_SLEEP_LIMITED_SERVICE;
+	test_event_data[index].modem_sleep.time = 0;
 	at_monitor_dispatch(at_notif);
+	index++;
 
-	strcpy(at_notif, "%XMODEMSLEEP: 7,123456789\r\n");
-	test_event_data[3].type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
-	test_event_data[3].modem_sleep.type = LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM;
-	test_event_data[3].modem_sleep.time = 123456789;
+	strcpy(at_notif, "%XMODEMSLEEP: 7,35712000000\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
+	test_event_data[index].modem_sleep.type = LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM;
+	test_event_data[index].modem_sleep.time = 35712000000;
 	at_monitor_dispatch(at_notif);
+	index++;
 
 	strcpy(at_notif, "%XMODEMSLEEP: 4,0\r\n");
-	test_event_data[4].type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
-	test_event_data[4].modem_sleep.type = LTE_LC_MODEM_SLEEP_FLIGHT_MODE;
-	test_event_data[4].modem_sleep.time = 0;
+	test_event_data[index].type = LTE_LC_EVT_MODEM_SLEEP_EXIT;
+	test_event_data[index].modem_sleep.type = LTE_LC_MODEM_SLEEP_FLIGHT_MODE;
+	test_event_data[index].modem_sleep.time = 0;
 	at_monitor_dispatch(at_notif);
+	index++;
 
-	/* No event for unknown type */
-	strcpy(at_notif, "%XMODEMSLEEP: 99,0\r\n");
+	strcpy(at_notif, "%XMODEMSLEEP: 4\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_SLEEP_ENTER;
+	test_event_data[index].modem_sleep.type = LTE_LC_MODEM_SLEEP_FLIGHT_MODE;
+	test_event_data[index].modem_sleep.time = -1;
 	at_monitor_dispatch(at_notif);
 }
 
 void test_lte_lc_modem_sleep_event_ignore(void)
 {
+	/* 5: Sleep resumed not supported by lte_lc */
 	strcpy(at_notif, "%%XMODEMSLEEP: 5\r\n");
 	at_monitor_dispatch(at_notif);
 
+	/* 6: Sleep resumed not supported by lte_lc */
 	strcpy(at_notif, "%%XMODEMSLEEP: 6\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* No event for incorrect number format for time */
+	strcpy(at_notif, "%XMODEMSLEEP: 4,\"string\"\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* No event for unknown type */
+	strcpy(at_notif, "%XMODEMSLEEP: 99,0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* No event for malformed notification */
+	strcpy(at_notif, "%XMODEMSLEEP: 99,1 2\r\n");
 	at_monitor_dispatch(at_notif);
 }
 
