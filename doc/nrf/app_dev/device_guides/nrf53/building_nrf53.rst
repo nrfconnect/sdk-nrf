@@ -69,22 +69,28 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
          .. group-tab:: west
 
             1. |open_terminal_window_with_environment|
-            #. Run the following command to erase the flash memory of the network core and program the network sample::
+            #. Run the following command to erase the flash memory of the network core and program the network sample:
 
-                west flash --erase
+               .. code-block:: console
 
-            #. Navigate to the build folder of the application sample and run the same command to erase the flash memory of the application core and program the application sample::
+                  west flash --erase
 
-                west flash --erase
+            #. Navigate to the build folder of the application sample and run the same command to erase the flash memory of the application core and program the application sample:
+
+               .. code-block:: console
+
+                  west flash --erase
 
          .. group-tab:: nRF Util
 
             1. |open_terminal_window_with_environment|
-            #. Run the following command to erase the flash memory of the network core and program the network sample::
+            #. Run the following command to erase the flash memory of the network core and program the network sample:
 
-                nrfutil device program --firmware zephyr.hex --options chip_erase_mode=ERASE_ALL --core Network
+               .. code-block:: console
 
-                .. note::
+                  nrfutil device program --firmware zephyr.hex --options chip_erase_mode=ERASE_ALL --core Network
+
+               .. note::
                     If you cannot locate the build folder of the network sample, look for a folder with one of these names inside the build folder of the application sample:
 
                     * :file:`rpc_host`
@@ -92,16 +98,20 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
                     * :file:`802154_rpmsg`
                     * :file:`multiprotocol_rpmsg`
 
-            #. Navigate to the build folder of the application sample and run the following command to erase the flash memory of the application core and program the application sample::
+            #. Navigate to the build folder of the application sample and run the following command to erase the flash memory of the application core and program the application sample:
 
-                nrfutil device program --firmware zephyr.hex  --options chip_erase_mode=ERASE_ALL
+               .. code-block:: console
 
-            .. note::
-               The application build folder will be in a sub-directory which is the name of the folder of the application
+                  nrfutil device program --firmware zephyr.hex  --options chip_erase_mode=ERASE_ALL
 
-            #. Reset the development kit::
+               .. note::
+                    The application build folder will be in a sub-directory which is the name of the folder of the application
 
-                nrfutil device reset --reset-kind=RESET_PIN
+            #. Reset the development kit:
+
+               .. code-block:: console
+
+                  nrfutil device reset --reset-kind=RESET_PIN
 
       See :ref:`readback_protection_error` if you encounter an error.
 
@@ -115,22 +125,26 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
 
          .. group-tab:: west
 
-            Enter the following command to program multi-image builds for different cores::
+            Enter the following command to program multi-image builds for different cores:
 
-             west flash
+            .. code-block:: console
 
-			   .. note::
-               The minimum supported version of nrfjprog for multi-image builds for different cores is 10.21.0.
+               west flash
+
+            .. note::
+                 The minimum supported version of nrfjprog for multi-image builds for different cores is 10.21.0.
 
          .. group-tab:: nRF Util
 
-            Enter the following commands to program multiple image builds for different cores::
+            Enter the following commands to program multiple image builds for different cores:
 
-             nrfutil device program --firmware merged_CPUNET.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
-             nrfutil device program --firmware merged.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
+            .. code-block:: console
+
+               nrfutil device program --firmware merged_CPUNET.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
+               nrfutil device program --firmware merged.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
 
             .. note::
-               The ``--verify`` command confirms that the writing operation has succeeded.
+                 The ``--verify`` command confirms that the writing operation has succeeded.
 
 .. _readback_protection_error:
 
@@ -154,21 +168,23 @@ See the following instructions.
 
    .. group-tab:: nRF Util
 
-      Enter the following commands to recover first the network core and then the application core::
+      Enter the following commands to recover first the network core and then the application core:
 
-        nrfutil device recover --core Network
-        nrfutil device recover
+      .. code-block:: console
+
+         nrfutil device recover --core Network
+         nrfutil device recover
 
       .. note::
-         Make sure to recover the network core before you recover the application core.
+           Make sure to recover the network core before you recover the application core.
 
-         The ``nrfutil device recover`` command erases the flash memory and then writes a small binary into the recovered flash memory.
-         This binary prevents the readback protection from enabling itself again after a pin reset or power cycle.
+           The ``nrfutil device recover`` command erases the flash memory and then writes a small binary into the recovered flash memory.
+           This binary prevents the readback protection from enabling itself again after a pin reset or power cycle.
 
-         Recovering the network core erases the flash memory of both cores.
-         Recovering the application core erases only the flash memory of the application core.
-         Therefore, you must recover the network core first.
-         Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
+           Recovering the network core erases the flash memory of both cores.
+           Recovering the application core erases only the flash memory of the application core.
+           Therefore, you must recover the network core first.
+           Otherwise, if you recover the application core first and the network core last, the binary written to the application core is deleted and readback protection is enabled again after a reset.
 
 .. _thingy53_building_pgming:
 
@@ -271,7 +287,9 @@ To build and program the source code from the command line, complete the followi
    For example, the directory path is :file:`ncs/nrf/applications/machine_learning` when building the source code for the :ref:`nrf_machine_learning_app` application.
 
 #. Make sure that you have the required version of the |NCS| repository by pulling the ``sdk-nrf`` repository on GitHub as described in :ref:`dm-wf-get-ncs` and :ref:`dm-wf-update-ncs` sections.
-#. Get the rest of the dependencies using west::
+#. Get the rest of the dependencies using west:
+
+   .. code-block:: console
 
       west update
 
@@ -291,7 +309,9 @@ To build and program the source code from the command line, complete the followi
    a. Connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK, using a 10-pin JTAG cable.
    #. Connect the external debug probe to the PC using a USB cable.
    #. Make sure that the Nordic Thingy:53 and the external debug probe are powered on.
-   #. Use the following command to program the sample or application to the device::
+   #. Use the following command to program the sample or application to the device:
+
+      .. code-block:: console
 
          west flash
 
