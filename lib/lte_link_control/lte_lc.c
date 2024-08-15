@@ -667,6 +667,7 @@ static int connect_lte(bool blocking)
 
 	/* Check if a connection attempt is already in progress */
 	if (atomic_set(&in_progress, 1)) {
+		LOG_WRN("Connect already in progress");
 		return -EINPROGRESS;
 	}
 
@@ -752,11 +753,13 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler)
 
 int lte_lc_connect(void)
 {
+	LOG_DBG("Connecting synchronously");
 	return connect_lte(true);
 }
 
 int lte_lc_connect_async(lte_lc_evt_handler_t handler)
 {
+	LOG_DBG("Connecting asynchronously");
 	if (handler) {
 		event_handler_list_append_handler(handler);
 	} else if (event_handler_list_is_empty()) {
@@ -1364,6 +1367,8 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode)
 		LOG_ERR("Failed to set functional mode. Please check XSYSTEMMODE.");
 		return -EFAULT;
 	}
+
+	LOG_DBG("Functional mode set to %d", mode);
 
 	return 0;
 }
