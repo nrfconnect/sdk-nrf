@@ -650,6 +650,8 @@ int parse_cereg(const char *at_response,
 
 	err = at_parser_cmd_count_get(&parser, &count);
 	if (err) {
+		LOG_ERR("Could not get CEREG param count, potentially malformed notification, "
+			"error: %d", err);
 		goto clean_exit;
 	}
 
@@ -1371,6 +1373,8 @@ int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_
 
 	err = at_parser_cmd_count_get(&parser, &count);
 	if (err) {
+		LOG_ERR("Could not get XMODEMSLEEP param count, "
+			"potentially malformed notification, error: %d", err);
 		goto clean_exit;
 	}
 
