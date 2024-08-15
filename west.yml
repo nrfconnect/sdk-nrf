@@ -83,7 +83,7 @@ manifest:
         #
         # Please keep this list sorted alphabetically.
         name-allowlist:
-          - TraceRecorderSource
+          - percepio
           - canopennode
           - chre
           - cmsis
