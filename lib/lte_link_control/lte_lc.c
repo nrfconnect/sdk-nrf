@@ -303,6 +303,9 @@ static void at_handler_cereg(const char *response)
 	case LTE_LC_NW_REG_UICC_FAIL:
 		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UICC_FAIL);
 		break;
+	default:
+		LOG_ERR("Unknown network registration status: %d", reg_status);
+		return;
 	}
 
 	if (event_handler_list_is_empty()) {
@@ -328,10 +331,6 @@ static void at_handler_cereg(const char *response)
 	}
 
 	if (lte_mode != prev_lte_mode) {
-		prev_lte_mode = lte_mode;
-		evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
-		evt.lte_mode = lte_mode;
-
 		switch (lte_mode) {
 		case LTE_LC_LTE_MODE_LTEM:
 			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_LTEM);
@@ -342,7 +341,14 @@ static void at_handler_cereg(const char *response)
 		case LTE_LC_LTE_MODE_NONE:
 			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_NONE);
 			break;
+		default:
+			LOG_ERR("Unknown LTE mode: %d", lte_mode);
+			return;
 		}
+
+		prev_lte_mode = lte_mode;
+		evt.type = LTE_LC_EVT_LTE_MODE_UPDATE;
+		evt.lte_mode = lte_mode;
 
 		event_handler_list_dispatch(&evt);
 	}
