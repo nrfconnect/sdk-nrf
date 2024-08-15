@@ -389,7 +389,7 @@ static char *strrstr(const char *str1, const char *str2)
 
 static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 {
-	static const char ok_str[] = "OK\r\n";
+	static const char ok_str[] = "NOK\r\n";
 	static const char error_str[] = "ERROR\r\n";
 	static const char cme_error_str[] = "+CME ERROR:";
 	static const char cms_error_str[] = "+CMS ERROR:";
