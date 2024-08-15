@@ -597,19 +597,19 @@ static int init_default_security_obj(struct lwm2m_ctx *ctx, char *endpoint)
 					  SECURITY_SERVER_URI_ID), server_url_len + 1);
 
 	/* Security Mode, default to PSK with key written by application */
-	if (IS_ENABLED(CONFIG_LWM2M_DTLS_SUPPORT)) {
-		/* At minimum, we are storing endpoint name */
-		/* This works on PSK where credentials are already in modem */
-		lwm2m_security_set_psk(0, NULL, 0, false, endpoint);
-		/* But if modem has certificates, change the mode to match */
-		if (modem_has_credentials(ctx->tls_tag, SEC_MODE_CERTIFICATE)) {
-			lwm2m_set_u8(&LWM2M_OBJ(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_MODE_ID),
-				     SEC_MODE_CERTIFICATE);
-		}
-	} else {
+#if defined(CONFIG_LWM2M_DTLS_SUPPORT)
+	/* At minimum, we are storing endpoint name */
+	/* This works on PSK where credentials are already in modem */
+	lwm2m_security_set_psk(0, NULL, 0, false, endpoint);
+	/* But if modem has certificates, change the mode to match */
+	if (modem_has_credentials(ctx->tls_tag, SEC_MODE_CERTIFICATE)) {
 		lwm2m_set_u8(&LWM2M_OBJ(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_MODE_ID),
-			     SEC_MODE_NO_SEC);
+			     SEC_MODE_CERTIFICATE);
 	}
+#else /* CONFIG_LWM2M_DTLS_SUPPORT */
+	lwm2m_set_u8(&LWM2M_OBJ(LWM2M_OBJECT_SECURITY_ID, 0, SECURITY_MODE_ID),
+		     SEC_MODE_NO_SEC);
+#endif /* CONFIG_LWM2M_DTLS_SUPPORT */
 
 #if defined(CONFIG_LWM2M_RD_CLIENT_SUPPORT_BOOTSTRAP)
 	/* Mark 1st instance of security object as a bootstrap server */
