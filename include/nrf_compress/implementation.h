@@ -52,6 +52,9 @@ enum nrf_compress_types {
 	/** lzma1 or lzma2 */
 	NRF_COMPRESS_TYPE_LZMA,
 
+	/** ARM thumb filter */
+	NRF_COMPRESS_TYPE_ARM_THUMB,
+
 	NRF_COMPRESS_TYPE_COUNT
 };
 
