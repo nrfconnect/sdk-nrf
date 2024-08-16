@@ -774,117 +774,56 @@ void test_lte_lc_psm_get_null_fail(void)
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-void test_lte_lc_psm_get_badmsg_no_comma_fail(void)
-{
-	int ret;
-	int tau;
-	int active_time;
-
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1";
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
-
-	ret = lte_lc_psm_get(&tau, &active_time);
-	TEST_ASSERT_EQUAL(-EBADMSG, ret);
-}
-
-void test_lte_lc_psm_get_badmsg_no_edrx_value_fail(void)
-{
-	int ret;
-	int tau;
-	int active_time;
-
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
-		"334,6200,66,44";
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
-
-	ret = lte_lc_psm_get(&tau, &active_time);
-	TEST_ASSERT_EQUAL(-EBADMSG, ret);
-}
-
-void test_lte_lc_psm_get_badmsg_no_active_time_fail(void)
-{
-	int ret;
-	int tau;
-	int active_time;
-
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
-		"334,6200,66,44,\"\"";
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
-
-	ret = lte_lc_psm_get(&tau, &active_time);
-	TEST_ASSERT_EQUAL(-EBADMSG, ret);
-}
-
 void test_lte_lc_psm_get_badmsg_no_tau_ext_fail(void)
 {
 	int ret;
 	int tau;
 	int active_time;
 
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
-		"334,6200,66,44,\"\",\"00000101\"";
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XMONITOR",
+		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
+		1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
 
 	ret = lte_lc_psm_get(&tau, &active_time);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
-void test_lte_lc_psm_get_badmsg_no_legacy_tau_fail(void)
+void test_lte_lc_psm_get_badmsg_legacy_tau_len_not_8_fail(void)
 {
 	int ret;
 	int tau;
 	int active_time;
 
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
-		"334,6200,66,44,\"\",\"00000101\",\"00010011\"";
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XMONITOR",
+		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
+		3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010011");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("001001");
 
 	ret = lte_lc_psm_get(&tau, &active_time);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
-void test_lte_lc_psm_get_inval_legacy_tau_len_not_8_fail(void)
+void test_lte_lc_psm_get_badmsg_tau_ext_len_not_8_fail(void)
 {
 	int ret;
 	int tau;
 	int active_time;
 
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"002F\",7,20,\"0012BEEF\","
-		"334,6200,66,44,\"\",\"00000101\",\"00010011\",\"001001\"";
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XMONITOR",
+		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
+		3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("000100");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010010");
 
 	ret = lte_lc_psm_get(&tau, &active_time);
-	TEST_ASSERT_EQUAL(-EINVAL, ret);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
 void test_lte_lc_proprietary_psm_req_enable_success(void)
@@ -1669,11 +1608,6 @@ void test_lte_lc_cereg_with_xmonitor(void)
 {
 	strcpy(at_notif, "+CEREG: 5,\"4321\",\"87654321\",9,,,\"11100000\",\"11100000\"\r\n");
 
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"4321\",9,20,\"12345678\","
-		"334,6200,66,44,\"\","
-		"\"11100000\",\"11100000\",\"01001001\"";
-
 	lte_lc_callback_count_expected = 4;
 
 	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
@@ -1699,11 +1633,13 @@ void test_lte_lc_cereg_with_xmonitor(void)
 	test_event_data[3].psm_cfg.tau = 3240;
 	test_event_data[3].psm_cfg.active_time = -1;
 
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XMONITOR",
+		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
+		3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
 
 	at_monitor_dispatch(at_notif);
 	k_sleep(K_MSEC(1));
@@ -1712,11 +1648,6 @@ void test_lte_lc_cereg_with_xmonitor(void)
 void test_lte_lc_cereg_with_xmonitor_badmsg(void)
 {
 	strcpy(at_notif, "+CEREG: 1,\"5678\",\"87654321\",9,,,\"11100000\",\"11100000\"\r\n");
-
-	static const char xmonitor_resp[] =
-		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"4321\",9,20,\"12345678\","
-		"334,6200,66,44,\"\","
-		"\"11100000\",\"11100000\"";
 
 	lte_lc_callback_count_expected = 2;
 
@@ -1739,11 +1670,12 @@ void test_lte_lc_cereg_with_xmonitor_badmsg(void)
 	/* No LTE_LC_EVT_LTE_MODE_UPDATE because same values */
 	/* No LTE_LC_EVT_PSM_UPDATE because XMONITOR doesn't have legacy TAU timer */
 
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
-	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
-		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XMONITOR",
+		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
+		2);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
 
 	at_monitor_dispatch(at_notif);
 	k_sleep(K_MSEC(1));
@@ -1762,9 +1694,35 @@ void test_lte_lc_cereg_with_xmonitor_fail(void)
 	/* No LTE_LC_EVT_LTE_MODE_UPDATE because same values */
 	/* No LTE_LC_EVT_PSM_UPDATE because XMONITOR fails */
 
-	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", -NRF_E2BIG);
-	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
-	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XMONITOR",
+		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
+		-NRF_E2BIG);
+
+	at_monitor_dispatch(at_notif);
+	k_sleep(K_MSEC(1));
+}
+
+void test_lte_lc_cereg_with_xmonitor_tau_ext_not_8_fail(void)
+{
+	strcpy(at_notif, "+CEREG: 1,\"5678\",\"87654321\",9,,,\"11100000\",\"111000\"\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+
+	/* No LTE_LC_EVT_CELL_UPDATE because same values */
+	/* No LTE_LC_EVT_LTE_MODE_UPDATE because same values */
+	/* No LTE_LC_EVT_PSM_UPDATE because XMONITOR parsing fails */
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XMONITOR",
+		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
+		3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("001001");
 
 	at_monitor_dispatch(at_notif);
 	k_sleep(K_MSEC(1));
