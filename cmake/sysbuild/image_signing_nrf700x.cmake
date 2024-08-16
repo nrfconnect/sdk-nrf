@@ -4,6 +4,8 @@
 function(nrf7x_signing_tasks input output_hex output_bin dependencies)
   set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
   set(keyfile_enc "${SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE}")
+  string(CONFIGURE "${keyfile}" keyfile)
+  string(CONFIGURE "${keyfile_enc}" keyfile_enc)
 
   if(NOT "${SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE}")
     # Check for misconfiguration.
