@@ -42,6 +42,9 @@ static int date_time_tz = DATE_TIME_TZ_INVALID;
 /* Whether or not an already-scheduled update is blocking reschedules. */
 static atomic_t reschedule_blocked;
 
+/* Number of consecutive retries that have been attempted so far */
+static atomic_t retry_count;
+
 static void date_time_core_notify_event(enum date_time_evt_type time_source)
 {
 	static struct date_time_evt evt;
@@ -56,7 +59,7 @@ static void date_time_core_notify_event(enum date_time_evt_type time_source)
 	}
 }
 
-static void date_time_core_schedule_update()
+static int date_time_core_schedule_work(int interval)
 {
 	/* If a scheduled update is blocking reschedules, exit.
 	 * Otherwise set the reschedule_blocked flag to true, then proceed with the reschedule.
@@ -64,20 +67,43 @@ static void date_time_core_schedule_update()
 
 	if (atomic_set(&reschedule_blocked, true)) {
 		LOG_DBG("Requested date-time update not scheduled, another is already scheduled");
+		return -EAGAIN;
+	}
+
+	k_work_reschedule_for_queue(&date_time_work_q, &date_time_update_work, K_SECONDS(interval));
+
+	return 0;
+}
+
+static void date_time_core_schedule_update(void)
+{
+	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS <= 0) {
+		LOG_DBG("Skipping requested date time update, periodic requests are not enabled");
 		return;
 	}
 
-	/* (Re)schedule time update work
-	 * if periodic updates are requested in the configuration.
-	 */
-	if (CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS > 0) {
+	/* Reset the retry counter since this will be a normal update. */
+	atomic_set(&retry_count, 0);
+
+	if (date_time_core_schedule_work(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS) == 0) {
 		LOG_DBG("New periodic date time update in: %d seconds",
 			CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS);
+	}
+}
 
-		k_work_reschedule_for_queue(
-			&date_time_work_q,
-			&date_time_update_work,
-			K_SECONDS(CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS));
+static void date_time_core_schedule_retry(void)
+{
+	/* If this is the last allowable retry, or retries are not enabled
+	 * (CONFIG_DATE_TIME_RETRY_COUNT==0), switch to performing a normal update.
+	 */
+	if (atomic_inc(&retry_count) >= CONFIG_DATE_TIME_RETRY_COUNT) {
+		date_time_core_schedule_update();
+		return;
+	}
+
+	if (date_time_core_schedule_work(CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS) == 0) {
+		LOG_DBG("Date time update retry in: %d seconds",
+			CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
 	}
 }
 
@@ -125,7 +151,8 @@ static void date_time_update_work_fn(struct k_work *work)
 #endif
 	LOG_DBG("Did not get time from any time source");
 
-	date_time_core_schedule_update();
+	/* If CONFIG_DATE_TIME_RETRY_COUNT is set to 0, this will turn into a normal update. */
+	date_time_core_schedule_retry();
 	date_time_core_notify_event(DATE_TIME_NOT_OBTAINED);
 }
 
@@ -291,6 +318,9 @@ void date_time_core_store_tz(int64_t curr_time_ms, enum date_time_evt_type time_
 	date_time_tz = tz;
 
 	date_time_core_schedule_update();
+
+	/* Reset the retry counter since we have successfully acquired a time. */
+	atomic_set(&retry_count, 0);
 
 	tp.tv_sec = curr_time_ms / 1000;
 	tp.tv_nsec = (curr_time_ms % 1000) * 1000000;
