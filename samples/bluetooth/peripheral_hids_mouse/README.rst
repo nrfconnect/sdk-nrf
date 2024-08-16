@@ -11,10 +11,7 @@ The Peripheral HIDS mouse sample demonstrates how to use the :ref:`hids_readme` 
 This sample also shows how to perform directed advertising.
 
 .. note::
-   Apart from HID samples, the |NCS| provides a complete reference application design of :term:`Human Interface Device (HID)`.
-   Depending on the configuration, the application can work as a desktop mouse, gaming mouse, keyboard, or connection dongle.
-   It supports connection over Bluetooth® LE, USB, or both.
-   For details, see the :ref:`nrf_desktop` documentation.
+   |nrf_desktop_HID_ref|
 
 Requirements
 ************
@@ -38,7 +35,7 @@ This sample exposes the HID GATT Service.
 It uses a report map for a generic mouse.
 
 You can also disable the directed advertising feature by clearing the ``BT_DIRECTED_ADVERTISING`` flag in the application configuration.
-This feature is enabled by default and it changes the way how advertising works in comparison to the other Bluetooth® Low Energy samples.
+This feature is enabled by default and it changes the way how advertising works in comparison to the other Bluetooth Low Energy samples.
 When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
 If the timeout occurs, the device starts directed advertising to the next bonded peer.
 If all bonding information is used and there is still no connection, the regular advertising starts.

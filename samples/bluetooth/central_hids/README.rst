@@ -11,10 +11,7 @@ The Central HIDS sample demonstrates how to use the :ref:`hogp_readme` to intera
 Basically, the sample simulates a computer that connects to a mouse or a keyboard.
 
 .. note::
-   Apart from HID samples, the |NCS| provides a complete reference application design of :term:`Human Interface Device (HID)`.
-   Depending on the configuration, the application can work as a desktop mouse, gaming mouse, keyboard, or connection dongle.
-   It supports connection over Bluetooth® LE, USB, or both.
-   For details, see the :ref:`nrf_desktop` documentation.
+   |nrf_desktop_HID_ref|
 
 Requirements
 ************
@@ -25,7 +22,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` sample or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth® Low Energy dongle and `nRF Connect for Desktop`_).
+The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` sample or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth Low Energy dongle and `nRF Connect for Desktop`_).
 
 Overview
 ********

@@ -48,41 +48,6 @@ User interface
 
 The user interface of the sample depends on the hardware platform you are using.
 
-nRF52840 Dongle
-===============
-
-Green LED:
-   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
-
-RGB LED:
-   The RGB LED channels are used independently to display the following information:
-
-   * Red - If Dongle is connected.
-   * Green - If user set the LED using Nordic LED Button Service.
-
-Button 1:
-   Send a notification with the button state: "pressed" or "released".
-
-Thingy:53
-=========
-
-RGB LED:
-   The RGB LED channels are used independently to display the following information:
-
-   * Red - If the main loop is running (that is, the device is advertising).
-     The LED blinks with a period of two seconds, duty cycle 50%.
-   * Green - If the device is connected.
-   * Blue - If user set the LED using Nordic LED Button Service.
-
-   For example, if Thingy:53 is connected over Bluetooth, the LED color toggles between green and yellow.
-   The green LED channel is kept on and the red LED channel is blinking.
-
-Button 1:
-   Send a notification with the button state: "pressed" or "released".
-
-Development kits
-================
-
 .. tabs::
 
    .. group-tab:: nRF52 and nRF53 DKs
@@ -113,8 +78,39 @@ Development kits
       Button 0:
          Send a notification with the button state: "pressed" or "released".
 
+   .. group-tab:: Thingy:53
+
+      RGB LED:
+         The RGB LED channels are used independently to display the following information:
+
+         * Red - If the main loop is running (that is, the device is advertising).
+           The LED blinks with a period of two seconds, duty cycle 50%.
+         * Green - If the device is connected.
+         * Blue - If user set the LED using Nordic LED Button Service.
+
+         For example, if Thingy:53 is connected over Bluetooth, the LED color toggles between green and yellow.
+         The green LED channel is kept on and the red LED channel is blinking.
+
+      Button 1:
+         Send a notification with the button state: "pressed" or "released".
+
+   .. group-tab:: nRF52840 Dongle
+
+      Green LED:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+
+      RGB LED:
+         The RGB LED channels are used independently to display the following information:
+
+         * Red - If Dongle is connected.
+         * Green - If user set the LED using Nordic LED Button Service.
+
+      Button 1:
+         Send a notification with the button state: "pressed" or "released".
+
 Building and running
 ********************
+
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_lbs`
 
 .. include:: /includes/build_and_run_ns.txt
