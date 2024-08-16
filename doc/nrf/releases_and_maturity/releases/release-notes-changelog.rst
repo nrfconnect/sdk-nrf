@@ -450,6 +450,10 @@ Wi-Fi samples
 
   * Added capture timeout as a parameter for packet capture.
 
+* :ref:`softap_wifi_provision_sample` sample:
+
+  * Increased the value of the :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE` Kconfig option to 8192 bytes to avoid stack overflow.
+
 Other samples
 -------------
 
