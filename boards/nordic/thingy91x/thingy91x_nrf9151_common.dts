@@ -88,8 +88,12 @@
 
 &gpio0 {
 	status = "okay";
-	exp-board-power-enable {
+	/* Use PORT event rather than GPIOTE IN event, to save power */
+	sense-edge-mask = <0xffffffff>;
+	/* Load switch controlling 3.3V supply and I/O voltage for external boards */
+	exp_board_enable: exp_board_enable {
 		gpio-hog;
+		output-low;
 		gpios = <3 GPIO_ACTIVE_HIGH>;
 	};
 };
@@ -160,6 +164,7 @@
 			ldsw_nPM60_en: LDO1 {
 				regulator-initial-mode = <NPM1300_LDSW_MODE_LDSW>;
 				regulator-allowed-modes = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-boot-off;
 			};
 			/* LDO2 is used as a load switch for sensor power supply */
 			ldsw_sensors: LDO2 {
