@@ -906,9 +906,8 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		status = cracen_platform_get_key_slot(
-			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &lifetime,
-			&slot_id);
+		status = cracen_platform_get_key_slot(psa_get_key_id(attributes), &lifetime,
+						      &slot_id);
 
 		if (status != PSA_SUCCESS) {
 			return status;
