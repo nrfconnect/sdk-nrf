@@ -50,6 +50,13 @@ endchoice
 
 endif # NRF_COMPRESS_LZMA
 
+config NRF_COMPRESS_ARM_THUMB
+	bool "ARM Thumb"
+	depends on NRF_COMPRESS_DECOMPRESSION
+	select NRF_COMPRESS_TYPE_SELECTED
+	help
+	  Enables ARM thumb support for decompression.
+
 endmenu
 
 config NRF_COMPRESS_CHUNK_SIZE
