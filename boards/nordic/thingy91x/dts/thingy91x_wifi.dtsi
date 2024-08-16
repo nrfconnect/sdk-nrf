@@ -11,6 +11,7 @@
 
 /* set pmic_wifi enable signal  */
 &ldsw_nPM60_en {
+	/delete-property/ regulator-boot-off;
 	regulator-boot-on;
 };
 
