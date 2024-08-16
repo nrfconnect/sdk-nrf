@@ -140,6 +140,10 @@
 .. |smp| replace:: simple management protocol module
 .. |usb_state| replace:: USB state module
 .. |usb_state_pm| replace:: USB state power manager module
+.. |nrf_desktop_HID_ref| replace:: Apart from HID samples, the |NCS| provides a complete reference application design of :term:`Human Interface Device (HID)`.
+   Depending on the configuration, the application can work as a desktop mouse, gaming mouse, keyboard, or connection dongle.
+   It supports connection over Bluetooth® LE, USB, or both.
+   For details, see the :ref:`nrf_desktop` documentation.
 
 .. ### Matter shortcuts
 

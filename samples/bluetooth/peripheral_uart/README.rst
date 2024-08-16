@@ -141,18 +141,17 @@ Development kits
       Button 1:
          Reject the passkey value that is printed in the debug logs to prevent pairing/bonding with the other device.
 
-Thingy:53
-=========
+   .. group-tab:: Thingy:53
 
-RGB LED:
-   The RGB LED channels are used independently to display the following information:
+      RGB LED:
+         The RGB LED channels are used independently to display the following information:
 
-   * Red channel blinks with a period of two seconds, duty cycle 50%, when the main loop is running (device is advertising).
-   * Green channel displays if device is connected.
+         * Red channel blinks with a period of two seconds, duty cycle 50%, when the main loop is running (device is advertising).
+         * Green channel displays if device is connected.
 
-Button:
-   Confirm the passkey value that is printed in the debug logs to pair/bond with the other device.
-   Thingy:53 has only one button, therefore the passkey value cannot be rejected by pressing a button.
+      Button:
+         Confirm the passkey value that is printed in the debug logs to pair/bond with the other device.
+         Thingy:53 has only one button, therefore the passkey value cannot be rejected by pressing a button.
 
 Configuration
 *************
