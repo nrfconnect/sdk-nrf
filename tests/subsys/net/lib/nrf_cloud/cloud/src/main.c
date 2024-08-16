@@ -1467,6 +1467,15 @@ ZTEST(nrf_cloud_test, test_cloud_send_invalid_topic_type)
 	zassert_equal(STATE_IDLE, nfsm_get_current_state(),
 		"nrf_cloud lib should be in the idle state (uninitialized) at the start of test");
 
+	/* Init the cloud successfully */
+	init_cloud_success();
+
+	/* NRF_CLOUD_TOPIC_STATE requires state STATE_CC_CONNECTED
+	 * and all other topics require STATE_DC_CONNECTED.
+	 * Connect to the cloud successfully with dc_connect.
+	 */
+	connect_cloud_dc_success();
+
 	/* Message data */
 	struct nrf_cloud_tx_data tx_wrong_type = {
 		.topic_type = 0,
@@ -1486,9 +1495,17 @@ ZTEST(nrf_cloud_test, test_cloud_send_obj_encode_fail)
 
 	NRF_CLOUD_OBJ_JSON_DEFINE(tx_obj);
 
+	/* Init the cloud successfully */
+	init_cloud_success();
+
+	/* Topic type NRF_CLOUD_TOPIC_MESSAGE requires state STATE_DC_CONNECTED.
+	 * Connect to the cloud successfully with dc_connect.
+	 */
+	connect_cloud_dc_success();
+
 	/* Message data */
 	struct nrf_cloud_tx_data tx = {
-		.topic_type = 0,
+		.topic_type = NRF_CLOUD_TOPIC_MESSAGE,
 		.qos = MQTT_QOS_0_AT_MOST_ONCE,
 		.obj = &tx_obj
 	};

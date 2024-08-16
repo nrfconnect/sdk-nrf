@@ -653,6 +653,8 @@ Libraries for networking
     * The JSON string representing longitude in ``PVT`` reports from ``lng`` to ``lon`` to align with nRF Cloud.
       nRF Cloud still accepts ``lng`` for backward compatibility.
 
+  * Fixed an issue in the :c:func:`nrf_cloud_send` function that prevented data in the provided :c:struct:`nrf_cloud_obj` structure from being sent to the bulk and bin topics.
+
 * :ref:`lib_nrf_cloud_coap` library:
 
   * Fixed a hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
