@@ -1415,3 +1415,7 @@
     - ".*matter.*wifi.*"
     - ".*matter.*bridge.*"
   comment: "Matter is not supported in the upstream nRF70 driver yet"
+
+- scenarios:
+    - ".*tfm.*"
+  comment: "TF-M doesn't work with nrfx 3.6.0 yet"
