@@ -18,15 +18,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
     tags: ci_build sysbuild ci_samples_wifi
-  sample.nrf7000.monitor:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      SHIELD=nrf7002ek_nrf7000
-    integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.monitor:
     sysbuild: true
     build_only: true
