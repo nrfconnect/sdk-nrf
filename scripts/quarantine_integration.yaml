@@ -1424,3 +1424,9 @@
     - ".*matter.*wifi.*"
     - ".*matter.*bridge.*"
   comment: "Matter is not supported in the upstream nRF70 driver yet"
+
+- scenarios:
+    - applications.asset_tracker_v2.nrf_cloud
+    - ".*thingy.*nrf70.*"
+    - ".*thingy.*wifi.*"
+  comment: "Thingy is not supported in the upstream nRF70 driver yet"
