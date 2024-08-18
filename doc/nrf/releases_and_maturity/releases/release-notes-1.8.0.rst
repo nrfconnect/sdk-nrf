@@ -89,6 +89,7 @@ These changes are valid for :ref:`nrfxlib:softdevice_controller`.
     This interface is typically implemented in the Wi-Fi products.
   * Experimental support for a 1-wire PTA interface for external radio coexistence for the nRF52 Series.
     This interface is specific to Nordic Semiconductor's nRF91 Series.
+    See ``nrfxlib:bluetooth_coex`` for more information.
   * Support for the Simple GPIO Front-End Module implementation on the nRF53 Series.
 
 Bluetooth mesh
