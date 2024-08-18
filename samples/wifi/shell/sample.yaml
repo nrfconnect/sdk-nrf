@@ -168,8 +168,6 @@ tests:
   sample.nrf7002_ns.shell:
     sysbuild: true
     build_only: true
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp/ns
     platform_allow: nrf7002dk/nrf5340/cpuapp/ns
     tags: sysbuild ci_samples_wifi
   sample.nrf7002_eb.thingy53.shell:
@@ -209,8 +207,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf700x_nrf54h20dk
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
     tags: ci_build sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
@@ -337,8 +333,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf700x_nrf54l15pdk
-    integration_platforms:
-      - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002eb.nrf54l15dk.shell:
