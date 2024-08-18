@@ -1419,3 +1419,9 @@
 - scenarios:
     - ".*tfm.*"
   comment: "TF-M doesn't work with nrfx 3.6.0 yet"
+
+- scenarios:
+    - applications.asset_tracker_v2.nrf_cloud
+    - ".*thingy.*nrf70.*"
+    - ".*thingy.*wifi.*"
+  comment: "Thingy is not supported in the upstream nRF70 driver yet"
