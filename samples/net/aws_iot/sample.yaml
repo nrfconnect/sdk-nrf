@@ -11,7 +11,6 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
     platform_allow:
       - nrf9160dk/nrf9160/ns
@@ -19,5 +18,4 @@ tests:
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
