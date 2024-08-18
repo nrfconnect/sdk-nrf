@@ -50,12 +50,12 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
+To build for the nRF7000 EK, use the ``nrf5340dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command to demonstrate Wi-Fi shutdown:
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek_nrf7000
 
 Disable auto-start of the Wi-Fi driver
 --------------------------------------
@@ -65,7 +65,7 @@ You can disable it by setting the :kconfig:option:`CONFIG_NRF_WIFI_IF_AUTO_START
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp -DCONFIG_NRF_WIFI_IF_AUTO_START=n
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek_nrf7000 -DCONFIG_NRF_WIFI_IF_AUTO_START=n
 
 With this configuration, the Wi-Fi network interface is not automatically brought up by the Zephyr networking stack.
 You must press **Button 1** to bring up the Wi-Fi network interface.
@@ -85,7 +85,7 @@ Testing
       *** Booting Zephyr OS build v3.3.99-ncs1-26-ge405279d2134 ***
       [00:00:00.440,460] <inf> wifi_nrf: Firmware (v1.2.8.1) booted successfully
 
-      [00:00:00.638,397] <inf> scan: Starting nrf7002dk_nrf5340_cpuapp with CPU frequency: 64 MHz
+      [00:00:00.638,397] <inf> scan: Starting nrf5340dk_nrf5340_cpuapp with CPU frequency: 64 MHz
 
       [00:00:00.642,608] <inf> scan: Scan requested
 
