@@ -42,7 +42,7 @@ static volatile bool requesting_assistance;
 static struct k_work_delayable ttff_test_got_fix_work;
 static struct k_work_delayable ttff_test_prepare_work;
 static struct k_work ttff_test_start_work;
-static uint32_t time_to_fix;
+static double time_to_fix;
 #endif
 
 static const char update_indicator[] = {'\\', '|', '/', '-'};
@@ -138,7 +138,7 @@ static void gnss_event_handler(int event)
 		/* Time to fix is calculated here, but it's printed from a delayed work to avoid
 		 * messing up the NMEA output.
 		 */
-		time_to_fix = (k_uptime_get() - fix_timestamp) / 1000;
+		time_to_fix = (k_uptime_get() - fix_timestamp) / 1000.0;
 		k_work_schedule_for_queue(&gnss_work_q, &ttff_test_got_fix_work, K_MSEC(100));
 		k_work_schedule_for_queue(&gnss_work_q, &ttff_test_prepare_work,
 					  K_SECONDS(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL));
@@ -322,12 +322,12 @@ static void agnss_data_get_work_fn(struct k_work *item)
 #if defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST)
 static void ttff_test_got_fix_work_fn(struct k_work *item)
 {
-	LOG_INF("Time to fix: %u", time_to_fix);
+	LOG_INF("Time to fix: %.01f s", time_to_fix);
 	if (time_blocked > 0) {
-		LOG_INF("Time GNSS was blocked by LTE: %u", time_blocked);
+		LOG_INF("Time GNSS was blocked by LTE: %u s", time_blocked);
 	}
 	print_distance_from_reference(&last_pvt);
-	LOG_INF("Sleeping for %u seconds", CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL);
+	LOG_INF("Sleeping for %u s", CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_INTERVAL);
 }
 
 static int ttff_test_force_cold_start(void)
@@ -649,28 +649,48 @@ static void print_satellite_stats(struct nrf_modem_gnss_pvt_data_frame *pvt_data
 	printf("Tracking: %2d Using: %2d Unhealthy: %d\n", tracked, in_fix, unhealthy);
 }
 
+static void print_flags(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	if (pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
+		printf("GNSS operation blocked by LTE\n");
+	}
+	if (pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
+		printf("Insufficient GNSS time windows\n");
+	}
+	if (pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) {
+		printf("Sleep period(s) between PVT notifications\n");
+	}
+	if (pvt_data->flags & NRF_MODEM_GNSS_PVT_FLAG_SCHED_DOWNLOAD) {
+		printf("Scheduled navigation data download\n");
+	}
+}
+
 static void print_fix_data(struct nrf_modem_gnss_pvt_data_frame *pvt_data)
 {
-	printf("Latitude:       %.06f\n", pvt_data->latitude);
-	printf("Longitude:      %.06f\n", pvt_data->longitude);
-	printf("Altitude:       %.01f m\n", (double)pvt_data->altitude);
-	printf("Accuracy:       %.01f m\n", (double)pvt_data->accuracy);
-	printf("Speed:          %.01f m/s\n", (double)pvt_data->speed);
-	printf("Speed accuracy: %.01f m/s\n", (double)pvt_data->speed_accuracy);
-	printf("Heading:        %.01f deg\n", (double)pvt_data->heading);
-	printf("Date:           %04u-%02u-%02u\n",
+	printf("Latitude:          %.06f\n", pvt_data->latitude);
+	printf("Longitude:         %.06f\n", pvt_data->longitude);
+	printf("Accuracy:          %.01f m\n", (double)pvt_data->accuracy);
+	printf("Altitude:          %.01f m\n", (double)pvt_data->altitude);
+	printf("Altitude accuracy: %.01f m\n", (double)pvt_data->altitude_accuracy);
+	printf("Speed:             %.01f m/s\n", (double)pvt_data->speed);
+	printf("Speed accuracy:    %.01f m/s\n", (double)pvt_data->speed_accuracy);
+	printf("V. speed:          %.01f m/s\n", (double)pvt_data->vertical_speed);
+	printf("V. speed accuracy: %.01f m/s\n", (double)pvt_data->vertical_speed_accuracy);
+	printf("Heading:           %.01f deg\n", (double)pvt_data->heading);
+	printf("Heading accuracy:  %.01f deg\n", (double)pvt_data->heading_accuracy);
+	printf("Date:              %04u-%02u-%02u\n",
 	       pvt_data->datetime.year,
 	       pvt_data->datetime.month,
 	       pvt_data->datetime.day);
-	printf("Time (UTC):     %02u:%02u:%02u.%03u\n",
+	printf("Time (UTC):        %02u:%02u:%02u.%03u\n",
 	       pvt_data->datetime.hour,
 	       pvt_data->datetime.minute,
 	       pvt_data->datetime.seconds,
 	       pvt_data->datetime.ms);
-	printf("PDOP:           %.01f\n", (double)pvt_data->pdop);
-	printf("HDOP:           %.01f\n", (double)pvt_data->hdop);
-	printf("VDOP:           %.01f\n", (double)pvt_data->vdop);
-	printf("TDOP:           %.01f\n", (double)pvt_data->tdop);
+	printf("PDOP:              %.01f\n", (double)pvt_data->pdop);
+	printf("HDOP:              %.01f\n", (double)pvt_data->hdop);
+	printf("VDOP:              %.01f\n", (double)pvt_data->vdop);
+	printf("TDOP:              %.01f\n", (double)pvt_data->tdop);
 }
 
 int main(void)
@@ -746,17 +766,7 @@ int main(void)
 				printf("\033[1;1H");
 				printf("\033[2J");
 				print_satellite_stats(&last_pvt);
-
-				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_DEADLINE_MISSED) {
-					printf("GNSS operation blocked by LTE\n");
-				}
-				if (last_pvt.flags &
-				    NRF_MODEM_GNSS_PVT_FLAG_NOT_ENOUGH_WINDOW_TIME) {
-					printf("Insufficient GNSS time windows\n");
-				}
-				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_SLEEP_BETWEEN_PVT) {
-					printf("Sleep period(s) between PVT notifications\n");
-				}
+				print_flags(&last_pvt);
 				printf("-----------------------------------\n");
 
 				if (last_pvt.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
