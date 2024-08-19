@@ -662,16 +662,24 @@ void link_api_modem_info_get_for_shell(bool connected)
 	enum lte_lc_lte_mode currently_active_mode;
 	char info_str[MODEM_INFO_MAX_RESPONSE_SIZE + 1];
 	char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+	int value;
 	int ret;
 
 	(void)link_shell_get_and_print_current_system_modes(
 		&sys_mode_current, &sys_mode_preferred, &currently_active_mode);
 
-	ret = modem_info_string_get(MODEM_INFO_FW_VERSION, info_str, sizeof(info_str));
-	if (ret >= 0) {
-		mosh_print("Modem FW version:      %s", info_str);
+	ret = modem_info_get_batt_voltage(&value);
+	if (ret == 0) {
+		mosh_print("Battery voltage:       %d mV", value);
 	} else {
-		mosh_error("Unable to obtain modem FW version (%d)", ret);
+		mosh_error("Unable to obtain battery voltage (%d)", ret);
+	}
+
+	ret = modem_info_get_temperature(&value);
+	if (ret == 0) {
+		mosh_print("Modem temperature:     %d C", value);
+	} else {
+		mosh_error("Unable to obtain modem temperature (%d)", ret);
 	}
 
 	/* Get the device id used with nRF Cloud */

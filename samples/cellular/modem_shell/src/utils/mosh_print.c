@@ -13,6 +13,7 @@
 #include <zephyr/posix/time.h>
 #include <zephyr/sys/cbprintf.h>
 #include <zephyr/shell/shell.h>
+#include <modem/modem_info.h>
 #include <net/nrf_cloud.h>
 
 #include "mosh_print.h"
@@ -173,28 +174,52 @@ int mosh_print_help_shell(const struct shell *shell, size_t argc, char **argv)
 
 void mosh_print_version_info(void)
 {
+	int ret;
+	char info_str[MODEM_INFO_MAX_RESPONSE_SIZE + 1];
+
 	/* shell_print() is not used here, because this function is called early during
 	 * application startup and the shell might not be ready yet.
 	 */
 #if defined(APP_VERSION)
-	printk("\nMOSH version:       %s", STRINGIFY(APP_VERSION));
+	printk("\nMOSH version:       %s\n", STRINGIFY(APP_VERSION));
 #else
-	printk("\nMOSH version:       unknown");
+	printk("\nMOSH version:       unknown\n");
 #endif
 
 #if defined(BUILD_ID)
-	printk("\nMOSH build id:      v%s", STRINGIFY(BUILD_ID));
+	printk("MOSH build id:      v%s\n", STRINGIFY(BUILD_ID));
 #else
-	printk("\nMOSH build id:      custom");
+	printk("MOSH build id:      custom\n");
 #endif
 
 #if defined(BUILD_VARIANT)
 #if defined(BRANCH_NAME)
-	printk("\nMOSH build variant: %s/%s\n\n", STRINGIFY(BRANCH_NAME), STRINGIFY(BUILD_VARIANT));
+	printk("MOSH build variant: %s/%s\n", STRINGIFY(BRANCH_NAME), STRINGIFY(BUILD_VARIANT));
 #else
-	printk("\nMOSH build variant: %s\n\n", STRINGIFY(BUILD_VARIANT));
+	printk("MOSH build variant: %s\n", STRINGIFY(BUILD_VARIANT));
 #endif
 #else
-	printk("\nMOSH build variant: dev\n\n");
+	printk("MOSH build variant: dev\n");
 #endif
+
+	ret = modem_info_get_hw_version(info_str, sizeof(info_str));
+	if (ret == 0) {
+		printk("HW version:         %s\n", info_str);
+	} else {
+		printk("Unable to obtain HW version, error: %d\n", ret);
+	}
+
+	ret = modem_info_string_get(MODEM_INFO_FW_VERSION, info_str, sizeof(info_str));
+	if (ret >= 0) {
+		printk("Modem FW version:   %s\n", info_str);
+	} else {
+		printk("Unable to obtain modem FW version, error: %d\n", ret);
+	}
+
+	ret = modem_info_get_fw_uuid(info_str, sizeof(info_str));
+	if (ret == 0) {
+		printk("Modem FW UUID:      %s\n\n", info_str);
+	} else {
+		printk("Unable to obtain modem FW UUID, error: %d\n\n", ret);
+	}
 }
