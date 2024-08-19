@@ -1,0 +1,3 @@
+&bme680 {
+        status = "okay";
+};
