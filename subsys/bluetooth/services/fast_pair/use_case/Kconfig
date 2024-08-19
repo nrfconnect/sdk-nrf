@@ -42,6 +42,9 @@ config BT_FAST_PAIR_USE_CASE_LOCATOR_TAG
 	bool "Locator tag use case"
 	select BT_FAST_PAIR_FMDN
 	select BT_FAST_PAIR_FMDN_DULT
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_GATT_SERVICE_MODEL_ID
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_SUBSEQUENT_PAIRING
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_PN
 	help
 	  Select the locator tag Fast Pair use case. Locator tag is a small electronic device that
 	  can be attached to an object or a person, and is designed to help locate them in case
@@ -67,3 +70,16 @@ config BT_FAST_PAIR_USE_CASE_MOUSE
 	  in the Google Fast Pair specification.
 
 endchoice
+
+# Collection of unsupported Fast Pair features that can be selected by the use case Kconfig.
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_GATT_SERVICE_MODEL_ID
+	bool
+	depends on !BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
+
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_SUBSEQUENT_PAIRING
+	bool
+	depends on !BT_FAST_PAIR_SUBSEQUENT_PAIRING
+
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_PN
+	bool
+	depends on !BT_FAST_PAIR_PN
