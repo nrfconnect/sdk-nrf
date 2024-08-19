@@ -243,8 +243,8 @@ link_shell_map_to_string(struct mapping_tbl_item const *mapping_table,
 	}
 
 	if (!found) {
-		sprintf(out_str_buff,
-			"%d (unknown value, not converted to string)", mode);
+		mosh_error("%d (unknown value, not converted to string)", mode);
+		sprintf(out_str_buff, "%d", mode);
 	} else {
 		strcpy(out_str_buff, mapping_table[i].value_str);
 	}
