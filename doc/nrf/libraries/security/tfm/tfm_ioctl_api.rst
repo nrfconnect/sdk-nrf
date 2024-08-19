@@ -29,6 +29,32 @@ The supported platform services are defined by :c:struct:`tfm_platform_ioctl_cor
 
 Set the :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM` Kconfig option to enable the services.
 
+Read service
+============
+
+The TF-M IOTCL read service allows the NSPE to access memory areas within the SPE that would otherwise be inaccessible to it.
+The allowed memory areas are defined by the :file:`tfm_platform_user_memory_ranges.h` file.
+
+The service is used by the :c:func:`tfm_platform_mem_read` function.
+For example, you can use the service to read the OTP value from UICR registers:
+
+.. code-block:: c
+
+    #include <tfm_ioctl_api.h>
+
+    void read_otp_value(void) {
+        uint32_t otp_value;
+        int err;
+        enum tfm_platform_err_t plt_err;
+
+        plt_err = tfm_platform_mem_read(buf, (intptr_t)&NRF_UICR_S->OTP[0], sizeof(otp_value), &err);
+        if (plt_err != TFM_PLATFORM_ERR_SUCCESS || err != 0) {
+            /* Handle error */
+        }
+
+        printk("OTP[0]: %u\n", otp_value);
+    }
+
 See the :ref:`tfm_hello_world` sample for example usage.
 
 Prerequisites
