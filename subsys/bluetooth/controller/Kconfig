@@ -308,6 +308,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     MPSL_CX || \
 						     BT_CTLR_SYNC_PERIODIC || \
 						     BT_CTLR_SCA_UPDATE || \
+						     BT_CTLR_SUBRATING || \
 						     BT_CTLR_SDC_PAWR_ADV || \
 						     BT_CTLR_SDC_PAWR_SYNC || \
 						     BT_ISO || \
