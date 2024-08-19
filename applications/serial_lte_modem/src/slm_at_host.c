@@ -8,8 +8,8 @@
 #include "slm_at_fota.h"
 #include "slm_uart_handler.h"
 #include "slm_util.h"
-#if defined(CONFIG_SLM_PPP)
-#include "slm_ppp.h"
+#if defined(CONFIG_PDN)
+#include "slm_at_notif.h"
 #endif
 #include <assert.h>
 #include <stdio.h>
@@ -725,8 +725,8 @@ static void notification_handler(const char *notification)
 {
 	if (get_slm_mode() == SLM_AT_COMMAND_MODE) {
 
-#if defined(CONFIG_SLM_PPP)
-		if (!slm_fwd_cgev_notifs
+#if defined(CONFIG_PDN)
+		if (!slm_fwd_cgev_notif
 		 && !strncmp(notification, "+CGEV: ", strlen("+CGEV: "))) {
 			/* CGEV notifications are silenced. Do not forward them. */
 			return;

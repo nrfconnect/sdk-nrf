@@ -25,6 +25,7 @@ target_sources(app PRIVATE src/slm_uart_handler.c)
 target_sources_ifdef(CONFIG_SLM_SMS app PRIVATE src/slm_at_sms.c)
 target_sources_ifdef(CONFIG_SLM_PPP app PRIVATE src/slm_ppp.c)
 target_sources_ifdef(CONFIG_SLM_CMUX app PRIVATE src/slm_cmux.c)
+target_sources_ifdef(CONFIG_PDN app PRIVATE src/slm_at_notif.c)
 
 add_subdirectory_ifdef(CONFIG_SLM_GNSS src/gnss)
 add_subdirectory_ifdef(CONFIG_SLM_NRF_CLOUD src/nrfcloud)
