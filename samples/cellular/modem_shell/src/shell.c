@@ -12,28 +12,28 @@
 #include <zephyr/sys/sys_heap.h>
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/shell/shell.h>
+
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
 
-#if defined(CONFIG_LWM2M_CARRIER)
-#include <lwm2m_carrier.h>
-#endif
+#include "mosh_print.h"
+#include "link_shell.h"
+
 #if defined(CONFIG_MOSH_IPERF3)
 #include <zephyr/posix/sys/select.h>
 #include <iperf_api.h>
 #endif
-#if defined(CONFIG_MOSH_LINK)
-#if defined(CONFIG_LWM2M_CARRIER)
-#include "link.h"
-#include <modem/pdn.h>
-#include "link_settings.h"
-#endif /* CONFIG_LWM2M_CARRIER */
-#include "link_shell.h"
-#endif /* CONFIG_MOSH_LINK */
+
 #if defined(CONFIG_MOSH_CURL)
 #include <nrf_curl.h>
 #endif
-#include "mosh_print.h"
+
+#if defined(CONFIG_LWM2M_CARRIER)
+#include <modem/pdn.h>
+#include <lwm2m_carrier.h>
+#include "link.h"
+#include "link_settings.h"
+#endif /* CONFIG_LWM2M_CARRIER */
 
 extern struct k_poll_signal mosh_signal;
 
@@ -129,28 +129,16 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		mosh_print("LwM2M carrier event: request LTE Link up");
-#if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL,
 				   link_sett_is_normal_mode_autoconn_rel14_used());
 		return 0;
-#else
-		return lte_lc_normal();
-#endif
 	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
 		mosh_print("LwM2M carrier event: request LTE Link down");
-#if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 		link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE, false);
-#else
-		err = lte_lc_offline();
-#endif
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
 		mosh_print("LwM2M carrier event: request LTE Power off");
-#if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 		link_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF, false);
-#else
-		err = lte_lc_power_off();
-#endif
 		break;
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		mosh_print("LwM2M carrier event: bootstrapped");
