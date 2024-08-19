@@ -29,15 +29,6 @@ config MOSH_PING
 	help
 	  Ping is a tool for testing the reachability of a host on an IP network.
 
-config MOSH_LINK
-	bool "Link control"
-	depends on LTE_LINK_CONTROL
-	depends on MODEM_INFO
-	depends on SETTINGS
-	default y
-	help
-	  Link control changes and queries the state of the LTE connection.
-
 config MOSH_CURL
 	bool "cURL"
 	default y
@@ -184,7 +175,6 @@ config MOSH_AT_CMD_MODE_TERMINATION
 	default 3 if MOSH_AT_CMD_MODE_CR_LF_TERMINATION
 endif
 
-if MOSH_LINK
 menu "MoSH link control selections"
 
 config MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN
@@ -195,7 +185,6 @@ config MOSH_LINK_SETT_NORMAL_MODE_AT_CMD_STR_LEN
 	  when going to normal mode.
 
 endmenu
-endif #MOSH_LINK
 
 if MOSH_WORKER_THREADS
 
