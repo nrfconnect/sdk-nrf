@@ -534,8 +534,23 @@ Bluetooth libraries and services
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice option allowing the user to select their target Fast Pair use case.
       The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig options represent the supported use cases that can be selected as part of this Kconfig choice option.
 
-  * Removed the MbedTLS cryptographic backend support in Fast Pair, because it is superseded by the PSA backend.
-    Consequently, the :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS` Kconfig option has also been removed.
+  * Removed:
+
+    * The MbedTLS cryptographic backend support in Fast Pair, because it is superseded by the PSA backend.
+      Consequently, the :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS` Kconfig option has also been removed.
+    * The default overrides for the :kconfig:option:`CONFIG_BT_DIS` and :kconfig:option:`CONFIG_BT_DIS_FW_REV` Kconfig options that enable these options together with the Google Fast Pair Service.
+      This configuration is now selected only by the Fast Pair use cases that require the Device Information Service (DIS).
+    * The default override for the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option that was set to :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` if :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` was enabled.
+      The default override is now handled in the Kconfig of the Zephyr Device Information Service (DIS) module and is based on Zephyr's :ref:`zephyr:app-version-details` that uses the :file:`VERSION` file.
+
+  * Updated the default values of the following Fast Pair Kconfig options:
+
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING`
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING`
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_PN`
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID`
+
+    These Kconfig options are now disabled by default and are selected only by the Fast Pair use cases that require them.
 
 * :ref:`bt_le_adv_prov_readme`:
 
