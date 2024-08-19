@@ -18,7 +18,7 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 				    struct zcbor_string *signature, struct zcbor_string *data)
 {
 	psa_algorithm_t psa_alg;
-	psa_key_id_t public_key_id = 0;
+	uint32_t public_key_id = 0;
 	suit_manifest_class_id_t *class_id = NULL;
 
 	switch (alg_id) {
@@ -75,8 +75,17 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 		return SUIT_ERR_AUTHENTICATION;
 	}
 
+#ifdef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+	mbedtls_svc_key_id_t key;
+
+	key.MBEDTLS_PRIVATE(key_id) = public_key_id;
+	key.MBEDTLS_PRIVATE(owner) = NRF_OWNER_SECURE;
+#else  /* MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER */
+	psa_key_id_t key = public_key_id;
+#endif /* MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER */
+
 	/* Verify data */
-	if (psa_verify_message(public_key_id, psa_alg, data->value, data->len, signature->value,
+	if (psa_verify_message(key, psa_alg, data->value, data->len, signature->value,
 			       signature->len) == PSA_SUCCESS) {
 		return SUIT_SUCCESS;
 	}
