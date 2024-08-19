@@ -34,6 +34,13 @@ BUILD_ASSERT(CONFIG_MPSL);
 #define RTC_MIN_CYCLES_FROM_NOW 3
 #endif
 
+/** @brief Macro for creating the interrupt bitmask for the specified compare channel. */
+#define NRF_RTC_CHANNEL_INT_MASK(ch)    ((uint32_t)(NRF_RTC_INT_COMPARE0_MASK) << (ch))
+
+/** @brief Macro for obtaining the compare event for the specified channel. */
+#define NRF_RTC_CHANNEL_EVENT_ADDR(ch) \
+	(nrf_rtc_event_t)((NRF_RTC_EVENT_COMPARE_0) + (ch) * sizeof(uint32_t))
+
 struct timer_desc {
 	z_nrf_rtc_timer_compare_handler_t handler;
 	uint64_t target_time;
