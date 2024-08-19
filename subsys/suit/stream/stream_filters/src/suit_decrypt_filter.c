@@ -9,7 +9,9 @@
 #include <suit_types.h>
 #include <suit_plat_decode_util.h>
 #include <psa/crypto.h>
+#ifdef CONFIG_SUIT_AES_KW_MANUAL
 #include "suit_aes_key_unwrap_manual.h"
+#endif
 
 /**
  * @brief Chunk size for a single decryption operation.
@@ -254,6 +256,7 @@ static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
 	psa_key_id_t kek_key_id;
 
 	switch (kw_alg_id) {
+#ifdef CONFIG_SUIT_AES_KW_MANUAL
 	case suit_cose_aes256_kw:
 		if (suit_plat_decode_key_id(&kw_key.aes.key_id, &kek_key_id) != SUIT_PLAT_SUCCESS) {
 			return SUIT_PLAT_ERR_INVAL;
@@ -267,8 +270,10 @@ static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
 			return SUIT_PLAT_ERR_AUTHENTICATION;
 		}
 		break;
+#endif
 	default:
 		LOG_ERR("Unsupported key wrap/key derivation algorithm: %d", kw_alg_id);
+		(void) kek_key_id;
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
