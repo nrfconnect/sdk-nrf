@@ -812,11 +812,6 @@ Configuration options
 
 Check and configure the following configuration options for the sample:
 
-.. _CONFIG_MOSH_LINK:
-
-CONFIG_MOSH_LINK
-   Enable LTE link control feature in modem shell.
-
 .. _CONFIG_MOSH_PING:
 
 CONFIG_MOSH_PING

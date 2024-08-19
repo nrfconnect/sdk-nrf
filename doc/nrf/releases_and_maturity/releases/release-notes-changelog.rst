@@ -326,6 +326,8 @@ Cellular samples
 * :ref:`modem_shell_application` sample:
 
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
+    Link control functionality is now always enabled and cannot be disabled.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 

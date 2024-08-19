@@ -6,17 +6,13 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
-#include <helpers/nrfx_reset_reason.h>
-#include <nrf_modem.h>
-
-#include <sys/types.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/dfu/mcuboot.h>
-
 #include <zephyr/shell/shell.h>
 #if defined(CONFIG_SHELL_BACKEND_SERIAL)
 #include <zephyr/shell/shell_uart.h>
@@ -24,22 +20,22 @@
 #include <zephyr/shell/shell_rtt.h>
 #endif
 
+#include <nrf_modem.h>
+#include <helpers/nrfx_reset_reason.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/nrf_modem_lib_trace.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
-
 #include <net/nrf_cloud_os.h>
-
 #include <dk_buttons_and_leds.h>
+
+#include "mosh_defines.h"
+#include "mosh_print.h"
+#include "link.h"
 #include "uart_shell.h"
 
 #if defined(CONFIG_MOSH_PPP)
 #include "ppp_ctrl.h"
-#endif
-
-#if defined(CONFIG_MOSH_LINK)
-#include "link.h"
 #endif
 
 #if defined(CONFIG_MOSH_GNSS)
@@ -52,8 +48,6 @@
 #if defined(CONFIG_MOSH_WORKER_THREADS)
 #include "th_ctrl.h"
 #endif
-#include "mosh_defines.h"
-#include "mosh_print.h"
 
 #if defined(CONFIG_MOSH_LOCATION)
 #include "location_shell.h"
@@ -312,17 +306,13 @@ int main(void)
 	/* Location library should be initialized before LTE normal mode */
 	location_ctrl_init();
 #endif
-#if defined(CONFIG_LTE_LINK_CONTROL) && defined(CONFIG_MOSH_LINK)
 	link_init();
-#endif
 
-#if defined(CONFIG_MODEM_INFO)
 	err = modem_info_init();
 	if (err) {
 		printk("Modem info could not be initialized: %d\n", err);
 		return 0;
 	}
-#endif
 
 	/* Version information printing uses the Modem information library, so it can not be done
 	 * before the library has been initialized.
