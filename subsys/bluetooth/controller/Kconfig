@@ -569,9 +569,5 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  If this parameter is set to zero, the subevent length
 	  is chosen by the controller.
 
-config BT_CTLR_SUBRATING
-	bool "LE Connection Subrating [EXPERIMENTAL]"
-	select EXPERIMENTAL
-
 endmenu
 endif  # BT_LL_SOFTDEVICE
