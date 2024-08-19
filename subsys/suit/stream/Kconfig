@@ -193,4 +193,9 @@ config SUIT_STREAM_FILTER_DECRYPT
 	select PSA_WANT_ALG_GCM
 	select PSA_WANT_ALG_ECB_NO_PADDING
 
+config SUIT_AES_KW_MANUAL
+	bool "Use experimental, manual AES key wrapping"
+	depends on SUIT_STREAM_FILTER_DECRYPT
+	select EXPERIMENTAL
+
 endif # SUIT_STREAM
