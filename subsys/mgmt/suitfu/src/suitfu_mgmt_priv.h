@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <zcbor_common.h>
 #include <zephyr/mgmt/mcumgr/smp/smp.h>
+#include <suit_memory_layout.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,49 +46,55 @@ extern "C" {
 #define SUIT_MGMT_ID_ENVELOPE_UPLOAD	  2
 #define SUIT_MGMT_ID_MISSING_IMAGE_STATE  3
 #define SUIT_MGMT_ID_MISSING_IMAGE_UPLOAD 4
+#define SUIT_MGMT_ID_CACHE_RAW_UPLOAD	  5
+#define SUIT_MGMT_ID_CLEANUP		  6
 
 /**
- * @brief	Verifies if the device associated to DFU partition is ready for use
+ * @brief	Erases DFU and all Cache partitions
+ *
  *
  * @return MGMT_ERR_EOK on success
- *		MGMT_ERR_EBADSTATE if the device is not ready for use
  *
+ *		MGMT_ERR_EUNKNOWN on error
  */
-int suitfu_mgmt_is_dfu_partition_ready(void);
+int suitfu_mgmt_cleanup(void);
 
 /**
- * @brief	Returns size of DFU partition, in bytes
- *
- */
-size_t suitfu_mgmt_get_dfu_partition_size(void);
-
-/**
- * @brief	Erases first num_bytes of DFU partition rounded up to the end of erase
+ * @brief	Erases first num_bytes of partition rounded up to the end of erase
  * block size
  *
  * @return MGMT_ERR_EOK on success
- *		MGMT_ERR_ENOMEM if DFU partition is smaller than num_bytes
+ *		MGMT_ERR_EINVAL if wrong parameters are provided
+ *		MGMT_ERR_ENOMEM if partition is smaller than num_bytes
  *		MGMT_ERR_EUNKNOWN if erase operation has failed
  */
-int suitfu_mgmt_erase_dfu_partition(size_t num_bytes);
+int suitfu_mgmt_erase(struct suit_nvm_device_info *device_info, size_t num_bytes);
 
 /**
- * @brief	Writes image chunk to DFU partition
+ * @brief	Writes image chunk to partition
  *
  * @return MGMT_ERR_EOK on success
+ *		MGMT_ERR_EINVAL if wrong parameters are provided
  *		MGMT_ERR_EUNKNOWN if write operation has failed
  */
-int suitfu_mgmt_write_dfu_image_data(unsigned int req_offset, const void *addr, unsigned int size,
-				     bool flush);
+int suitfu_mgmt_write(struct suit_nvm_device_info *device_info, size_t req_img_offset,
+		      const uint8_t *chunk, size_t chunk_size, bool flush);
 
 /**
  * @brief	Called once entire update candidate is written to DFU partition
- * Implementation triggers further processing of the candidate
  *
  * @return MGMT_ERR_EOK on success
  *		MGMT_ERR_EBUSY on candidate processing error
  */
-int suitfu_mgmt_candidate_envelope_stored(size_t image_size);
+int suitfu_mgmt_candidate_envelope_stored(void);
+
+/**
+ * @brief	Triggers further processing of the candidate
+ *
+ * @return MGMT_ERR_EOK on success
+ *		MGMT_ERR_EBUSY on candidate processing error
+ */
+int suitfu_mgmt_candidate_envelope_process(void);
 
 /**
  * @brief	Process Manifests List Get Request
@@ -137,6 +144,23 @@ int suitfu_mgmt_suit_missing_image_upload(struct smp_streamer *ctx);
  *
  */
 int suitfu_mgmt_suit_bootloader_info_read(struct smp_streamer *ctx);
+
+/**
+ * @brief	Process Cache Raw Upload Request
+ *
+ * @note	Uploads CBOR-encoded map conatining pairs of
+ *		URI and payload
+ *
+ */
+int suitfu_mgmt_suit_cache_raw_upload(struct smp_streamer *ctx);
+
+/**
+ * @brief	Process Cleanup Request
+ *
+ * @note	Erases DFU partition and all DFU cache partitions
+ *
+ */
+int suitfu_mgmt_suit_cleanup(struct smp_streamer *ctx);
 
 #ifdef __cplusplus
 }
