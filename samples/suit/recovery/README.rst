@@ -14,7 +14,7 @@ The following limitations apply to this application:
 
 * The recovery firmware is only able to recover from a situation where the application or radio core are damaged.
   It does not recover from Nordic Semiconductor-controlled firmware failures.
-* The recovery firmware is not compatible with a main application that uses a external flash for update.
+* The recovery firmware is not compatible with a main application that uses an external flash for update.
 
 .. _suit_recovery_reqs:
 

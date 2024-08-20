@@ -55,7 +55,7 @@ You can choose one of the following reactions to the last fabric removal and ins
    * Remove all stored non-volatile data (both network credentials and application-specific data) and reboot.
    * Remove the network credentials, keep application-specific non-volatile data, and start advertising Bluetooth LE Matter service.
 
-To read more about the reactions to the last fabric and learn how to set the related Kconfigs, see the :ref:`ug_matter_device_advanced_kconfigs` page.
+To read more about the reactions to the last fabric and learn how to set the related Kconfig options, see the :ref:`ug_matter_device_advanced_kconfigs` page.
 
 Custom last fabric removal delegate
 ===================================

@@ -134,4 +134,4 @@ Support
 
 For details about the qualification process, see the `Qualifications and listings`_ page or ask `Bluetooth Qualification Consultants`_ for advice.
 
-In case of any questions regarding Nordic Semicondutor's qualified designs and their use in your products, contact Nordic Semiconductor's technical support on `DevZone`_.
+In case of any questions regarding Nordic Semiconductor's qualified designs and their use in your products, contact Nordic Semiconductor's technical support on `DevZone`_.

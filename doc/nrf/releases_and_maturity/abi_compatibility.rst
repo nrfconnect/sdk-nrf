@@ -40,5 +40,5 @@ The following table illustrates ABI compatibility between different versions of 
    * - |NCS| v2.6.99-cs2
      - `nRF54H20 SoC Binaries v0.3.3`_
 
-ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the Application, Radio binaries, or both are recompiled, as long as they are based on a compatible NCS version.
+ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the Application, Radio binaries, or both are recompiled, as long as they are based on a compatible |NCS| version.
 Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binaries components to work together without recompilation when updating to newer |NCS| versions.

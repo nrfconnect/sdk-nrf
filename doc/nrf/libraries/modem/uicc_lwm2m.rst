@@ -17,7 +17,7 @@ To enable the UICC LwM2M library, configure the :kconfig:option:`CONFIG_UICC_LWM
 Dependencies
 ************
 
-The UICC LwM2M library requires the :ref:`nrfxlib:nrf_modem` library to use AT commands.
+The UICC LwM2M library requires the :ref:`nrfxlib:nrf_modem` to use AT commands.
 
 API documentation
 *****************

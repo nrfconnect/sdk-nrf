@@ -3,6 +3,10 @@
 Bluetooth Mesh models
 #####################
 
+.. contents::
+   :local:
+   :depth: 2
+
 To standardize communication between devices from different vendors, the Bluetooth® Mesh protocol specification defines an access layer, which routes mesh messages between the various *models* in a device.
 A Bluetooth Mesh model is a standardized software component that defines a series of states and related behaviors.
 The end-user applications are implemented as a set of mesh models.
@@ -81,7 +85,7 @@ Server
 Client
    An element accessing a state is referred to as a client.
    In other words, a client reads and writes the server's states.
-   For example, the simplest client is a Generic OnOff Client (a binary switch) that is able to control a Generic OnOff Server via messages accepted by the Generic OnOff Server model.
+   For example, the simplest client is a Generic OnOff Client (a binary switch) that is able to control a Generic OnOff Server using messages accepted by the Generic OnOff Server model.
 
 Some models also include a *Setup Server* model instance.
 The two server model instances share the states of the server model, but accept different messages.

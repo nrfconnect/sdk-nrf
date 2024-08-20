@@ -47,7 +47,7 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is in the `
      - Initiates a reset using the CTRL-AP through the On-Board Debugger (OBD).
        The register used is ``RESET`` (address offset: ``0x00``).
    * - ``RESET_PIN``
-     - J-Link toggles the **RESET** pin via OBD.
+     - J-Link toggles the **RESET** pin using OBD.
    * - ``RESET_VIA_SECDOM``
      - Not supported.
    * - ``RESET_DEFAULT``
@@ -67,9 +67,9 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
      - Not supported.
    * - ``RESET_HARD``
      - Initiates a reset using the CTRL-AP through the On-Board Debugger (OBD).
-       The register used is ``RESET`` (address offset: ``0x00``).
+       The register used is **RESET** (address offset: ``0x00``).
    * - ``RESET_PIN``
-     - J-Link toggles the ``RESET`` pin via OBD.
+     - J-Link toggles the **RESET** pin using OBD.
    * - ``RESET_VIA_SECDOM``
      - Uses the CTRL-AP mailbox to send a local domain reset request to the Secure Domain Firmware (SDFW).
 

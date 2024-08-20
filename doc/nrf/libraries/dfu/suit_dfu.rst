@@ -7,7 +7,7 @@ Software Updates for Internet of Things (SUIT)
    :local:
    :depth: 2
 
-The Software Updates for Internet of Things (SUIT) Device Firmware Upgrade (DFU) library provides functionality to a local domain for for orchestrating the update based on the SUIT manifest.
+The Software Updates for Internet of Things (SUIT) Device Firmware Upgrade (DFU) library provides functionality to a local domain for managing the update based on the SUIT manifest.
 
 Overview
 ********

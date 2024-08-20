@@ -174,7 +174,7 @@ The ``<cmd>`` command is a string, and can be used as follows:
 
 * ``AT#XCARRIER="app_data_create",<obj_inst_id>,<res_inst_id>``
 
-  Create an empty resource instance of the Data resource (ID: 0) of the Binary App Data Containet object (ID: 19).
+  Create an empty resource instance of the Data resource (ID: 0) of the Binary App Data Container object (ID: 19).
 
   ``<obj_inst_id>`` indicates the target object instance.
 

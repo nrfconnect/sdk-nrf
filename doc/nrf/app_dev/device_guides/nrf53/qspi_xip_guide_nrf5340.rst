@@ -92,7 +92,7 @@ See the following snippet for an example of the Nordic Thingy:53 configuration t
     };
 
 .. note::
-    Due to QSPI peripheral product anomaly, the QSPI peripheral must be ran with the ``HFCLK192MCTRL=0`` setting.
+    Due to QSPI peripheral product anomaly, the QSPI peripheral must be run with the ``HFCLK192MCTRL=0`` setting.
     Any other value may cause undefined operation of the device.
 
 Add the following to the DTS overlay for your board:

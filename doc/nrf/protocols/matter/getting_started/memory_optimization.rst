@@ -359,7 +359,7 @@ The following table presents the possible threads used in a Matter application a
 | Thread name         | Kconfig option                                                   | Description of the related stack                               |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
 | CHIP                | :kconfig:option:`CONFIG_CHIP_TASK_STACK_SIZE`                    | Matter thread stack.                                           |
-|                     |                                                                  | For example, all functions scheduled to be execute from        |
+|                     |                                                                  | For example, all functions scheduled to be executed from       |
 |                     |                                                                  | the Matter thread context using                                |
 |                     |                                                                  | the ``SystemLayer().ScheduleLambda`` function.                 |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
@@ -367,7 +367,7 @@ The following table presents the possible threads used in a Matter application a
 |                     |                                                                  | For Matter over Thread only.                                   |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
 | main                | :kconfig:option:`CONFIG_MAIN_STACK_SIZE`                         | Application thread stack.                                      |
-|                     |                                                                  | For example, all functions scheduled to be execute from        |
+|                     |                                                                  | For example, all functions scheduled to be executed from       |
 |                     |                                                                  | the Main thread context using                                  |
 |                     |                                                                  | the ``Nrf::PostTask`` function.                                |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+

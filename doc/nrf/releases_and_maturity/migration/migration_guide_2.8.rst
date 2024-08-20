@@ -210,20 +210,20 @@ Serial LTE Modem (SLM)
 
 .. toggle::
 
-  * The handling of Release Assistance Indication (RAI) socket options has been updated in the ``#XSOCKETOPT`` command.
-    The individual RAI-related socket options have been consolidated into a single ``SO_RAI`` option.
-    You must modify your application to use the new ``SO_RAI`` option with the corresponding value to specify the RAI behavior.
-    The changes are as follows:
+   * The handling of Release Assistance Indication (RAI) socket options has been updated in the ``#XSOCKETOPT`` command.
+     The individual RAI-related socket options have been consolidated into a single ``SO_RAI`` option.
+     You must modify your application to use the new ``SO_RAI`` option with the corresponding value to specify the RAI behavior.
+     The changes are as follows:
 
-    The ``SO_RAI_NO_DATA``, ``SO_RAI_LAST``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE`` options have been replaced by the ``SO_RAI`` option with values from ``1`` to ``5``.
+     The ``SO_RAI_NO_DATA``, ``SO_RAI_LAST``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE`` options have been replaced by the ``SO_RAI`` option with values from ``1`` to ``5``.
 
-    Replace the following commands in your application code if they were used previously:
+     Replace the following commands in your application code if they were used previously:
 
-    * ``AT#XSOCKETOPT=1,50,`` with ``AT#XSOCKETOPT=1,61,1`` to indicate ``RAI_NO_DATA``.
-    * ``AT#XSOCKETOPT=1,51,`` with ``AT#XSOCKETOPT=1,61,2`` to indicate ``RAI_LAST``.
-    * ``AT#XSOCKETOPT=1,52,`` with ``AT#XSOCKETOPT=1,61,3`` to indicate ``RAI_ONE_RESP``.
-    * ``AT#XSOCKETOPT=1,53,`` with ``AT#XSOCKETOPT=1,61,4`` to indicate ``RAI_ONGOING``.
-    * ``AT#XSOCKETOPT=1,54,`` with ``AT#XSOCKETOPT=1,61,5`` to indicate ``RAI_WAIT_MORE``.
+     * ``AT#XSOCKETOPT=1,50,`` with ``AT#XSOCKETOPT=1,61,1`` to indicate ``RAI_NO_DATA``.
+     * ``AT#XSOCKETOPT=1,51,`` with ``AT#XSOCKETOPT=1,61,2`` to indicate ``RAI_LAST``.
+     * ``AT#XSOCKETOPT=1,52,`` with ``AT#XSOCKETOPT=1,61,3`` to indicate ``RAI_ONE_RESP``.
+     * ``AT#XSOCKETOPT=1,53,`` with ``AT#XSOCKETOPT=1,61,4`` to indicate ``RAI_ONGOING``.
+     * ``AT#XSOCKETOPT=1,54,`` with ``AT#XSOCKETOPT=1,61,5`` to indicate ``RAI_WAIT_MORE``.
 
 .. _migration_2.8_required_nrf54h:
 
@@ -233,7 +233,7 @@ nRF54H20
 .. toggle::
 
   * When using the nRF54H20 DK Engineering B (from v0.8.0 to 0.8.2), you must build samples and applications using the board revision 0.8.0 with the ``<board>@<revision>`` syntax.
-    For example , ``nrf54h20dk@0.8.0/nrf54h20/cpuapp`` when building for the application core, or ``nrf54h20dk@0.8.0/nrf54h20/cpurad`` when building for the radio core.
+    For example, ``nrf54h20dk@0.8.0/nrf54h20/cpuapp`` when building for the application core, or ``nrf54h20dk@0.8.0/nrf54h20/cpurad`` when building for the radio core.
 
   * When using SUIT DFU on the nRF54H20 SoC, the manifest sequence number is no longer configured through a :ref:`sysbuild <configuring_sysbuild>` Kconfig option.
     The values are now read from the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.
@@ -273,13 +273,13 @@ Nordic Secure Immutable Bootloader (NSIB, B0, or B0n)
 
 .. toggle::
 
-   Custom printing has been dropped in favor of using the logging subsystem, with output printed out to the default logging device.
-   The ``CONFIG_SECURE_BOOT_DEBUG`` Kconfig option has been removed.
-   To disable logging in B0 or B0n, set the :kconfig:option:`CONFIG_LOG` option to ``n``.
-   To send logs over RTT instead of UART, apply the following settings:
+   * Custom printing has been dropped in favor of using the logging subsystem, with output printed out to the default logging device.
+     The ``CONFIG_SECURE_BOOT_DEBUG`` Kconfig option has been removed.
+     To disable logging in B0 or B0n, set the :kconfig:option:`CONFIG_LOG` option to ``n``.
+     To send logs over RTT instead of UART, apply the following settings:
 
-       * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
-       * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
+     * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
+     * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
 
 nRF70 Series
 ------------
@@ -295,7 +295,7 @@ nRF70 Series
       If a sample or an application uses the kernel heap but uses less than the default size, a build warning is displayed.
       Use the :kconfig:option:`CONFIG_HEAP_MEM_POOL_IGNORE_MIN` Kconfig option and enable it to suppress the warning.
 
-   * The WPA supplicant is also now part of Zephy upstream and it requires the following changes:
+   * The WPA supplicant is also now part of Zephyr upstream and it requires the following changes:
 
     * The WPA supplicant namespace has been renamed from ``WPA_SUPP`` to ``WIFI_NM_WPA_SUPPLICANT``.
       For example, ``CONFIG_WPA_SUPP=y`` to ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``.
@@ -408,7 +408,7 @@ AT command parser
 
 .. toggle::
 
-  * The :c:func:`at_parser_cmd_type_get` has been renamed to :c:func:`at_parser_at_cmd_type_get`.
+   * The :c:func:`at_parser_cmd_type_get` has been renamed to :c:func:`at_parser_at_cmd_type_get`.
 
 nRF Cloud
 ---------
@@ -444,8 +444,8 @@ Serial LTE Modem (SLM)
 
 .. toggle::
 
-   The :file:`overlay-native_tls.conf` overlay file is no longer supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
-   If you need to use native TLS with Thingy:91, you must disable features from the :file:`prj.conf` and :file:`overlay-native_tls.conf` configuration files to free up flash memory.
+   * The :file:`overlay-native_tls.conf` overlay file is no longer supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
+     If you need to use native TLS with Thingy:91, you must disable features from the :file:`prj.conf` and :file:`overlay-native_tls.conf` configuration files to free up flash memory.
 
 Devicetree
 ----------
@@ -500,191 +500,191 @@ AT command parser
 
 .. toggle::
 
-  * The :ref:`at_cmd_parser_readme` library has been deprecated in favor of the :ref:`at_parser_readme` library and will be removed in a future version.
+   * The :ref:`at_cmd_parser_readme` library has been deprecated in favor of the :ref:`at_parser_readme` library and will be removed in a future version.
 
-    You can follow this guide to migrate your application to use the :ref:`at_parser_readme` library.
-    This will reduce the footprint of the application and will decrease memory requirements on the heap.
+     You can follow this guide to migrate your application to use the :ref:`at_parser_readme` library.
+     This will reduce the footprint of the application and will decrease memory requirements on the heap.
 
-    To replace :ref:`at_cmd_parser_readme` with the :ref:`at_parser_readme`, complete the following steps:
+     To replace :ref:`at_cmd_parser_readme` with the :ref:`at_parser_readme`, complete the following steps:
 
-    1. Replace the :kconfig:option:`CONFIG_AT_CMD_PARSER` Kconfig option with the :kconfig:option:`CONFIG_AT_PARSER` Kconfig option.
+     1. Replace the :kconfig:option:`CONFIG_AT_CMD_PARSER` Kconfig option with the :kconfig:option:`CONFIG_AT_PARSER` Kconfig option.
 
-    #. Replace header files:
+     #. Replace header files:
 
-       * Remove:
+        * Remove:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          #include <modem/at_cmd_parser.h>
-          #include <modem/at_params.h>
+           #include <modem/at_cmd_parser.h>
+           #include <modem/at_params.h>
 
-       * Add:
+        * Add:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          #include <modem/at_parser.h>
+           #include <modem/at_parser.h>
 
-    #. Replace AT parameter list:
+     #. Replace AT parameter list:
 
-       * Remove:
+        * Remove:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          struct at_param_list param_list;
+           struct at_param_list param_list;
 
-       * Add:
+        * Add:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          struct at_parser parser;
+           struct at_parser parser;
 
-    #. Replace AT parameter list initialization:
+     #. Replace AT parameter list initialization:
 
-       * Remove:
+        * Remove:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          /* `param_list` is a pointer to the AT parameter list.
-           * `AT_PARAMS_COUNT` is the maximum number of parameters of the list.
-           */
-          at_params_list_init(&param_list, AT_PARAMS_COUNT);
+           /* `param_list` is a pointer to the AT parameter list.
+            * `AT_PARAMS_COUNT` is the maximum number of parameters of the list.
+            */
+           at_params_list_init(&param_list, AT_PARAMS_COUNT);
 
-          /* Other code. */
+           /* Other code. */
 
-          /* `at_string` is the AT command string to be parsed.
-           * `&remainder` is a pointer to the returned remainder after parsing.
-           * `&param_list` is a pointer to the AT parameter list.
-           */
-          at_parser_params_from_str(at_string, &remainder, &param_list);
+           /* `at_string` is the AT command string to be parsed.
+            * `&remainder` is a pointer to the returned remainder after parsing.
+            * `&param_list` is a pointer to the AT parameter list.
+            */
+           at_parser_params_from_str(at_string, &remainder, &param_list);
 
-       * Add:
+        * Add:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          /* `&at_parser` is a pointer to the AT parser.
-           * `at_string` is the AT command string to be parsed.
-           */
-          at_parser_init(&at_parser, at_string);
+           /* `&at_parser` is a pointer to the AT parser.
+            * `at_string` is the AT command string to be parsed.
+            */
+           at_parser_init(&at_parser, at_string);
 
-         .. note::
+          .. note::
 
-            Remember to check the returned error codes from the :ref:`at_parser_readme` functions.
-            For the sake of simplicity, they have been omitted in this migration guide.
-            Refer to the :ref:`at_parser_readme` documentation for more information on the API and the returned error codes.
+             Remember to check the returned error codes from the :ref:`at_parser_readme` functions.
+             For the sake of simplicity, they have been omitted in this migration guide.
+             Refer to the :ref:`at_parser_readme` documentation for more information on the API and the returned error codes.
 
-    #. Replace integer parameter retrieval:
+     #. Replace integer parameter retrieval:
 
-       * Remove:
+        * Remove:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          int value;
+           int value;
 
-          /* `&param_list` is a pointer to the AT parameter list.
-           * `index` is the index of the parameter to retrieve.
-           * `&value` is a pointer to the output integer variable.
-           */
-          at_params_int_get(&param_list, index, &value);
+           /* `&param_list` is a pointer to the AT parameter list.
+            * `index` is the index of the parameter to retrieve.
+            * `&value` is a pointer to the output integer variable.
+            */
+           at_params_int_get(&param_list, index, &value);
 
-          uint16_t value;
-          at_params_unsigned_short_get(&param_list, index, &value);
+           uint16_t value;
+           at_params_unsigned_short_get(&param_list, index, &value);
 
-          /* Other variants: */
-          at_params_short_get(&param_list, index, &value);
-          at_params_unsigned_int_get(&param_list, index, &value);
-          at_params_int64_get(&param_list, index, &value);
+           /* Other variants: */
+           at_params_short_get(&param_list, index, &value);
+           at_params_unsigned_int_get(&param_list, index, &value);
+           at_params_int64_get(&param_list, index, &value);
 
-       * Add:
+        * Add:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          int value;
+           int value;
 
-          /* `&at_parser` is a pointer to the AT parser.
-           * `index` is the index of the parameter to retrieve.
-           * `&value` is a pointer to the output integer variable.
-           *
-           * Note: this function is type-generic on the type of the output integer variable.
-           */
-          err = at_parser_num_get(&at_parser, index, &value);
+           /* `&at_parser` is a pointer to the AT parser.
+            * `index` is the index of the parameter to retrieve.
+            * `&value` is a pointer to the output integer variable.
+            *
+            * Note: this function is type-generic on the type of the output integer variable.
+            */
+           err = at_parser_num_get(&at_parser, index, &value);
 
-          uint16_t value;
-          /* Note: this function is type-generic on the type of the output integer variable. */
-          err = at_parser_num_get(&at_parser, index, &value);
+           uint16_t value;
+           /* Note: this function is type-generic on the type of the output integer variable. */
+           err = at_parser_num_get(&at_parser, index, &value);
 
-    #. Replace string parameter retrieval:
+     #. Replace string parameter retrieval:
 
-       * Remove:
+        * Remove:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          /* `&param_list` is a pointer to the AT parameter list.
-           * `index` is the index of the parameter to retrieve.
-           * `value` is the output buffer where the string is copied into.
-           * `&len` is a pointer to the length of the copied string.
-           *
-           * Note: the copied string is not null-terminated.
-           */
-          at_params_string_get(&param_list, index, value, &len);
+           /* `&param_list` is a pointer to the AT parameter list.
+            * `index` is the index of the parameter to retrieve.
+            * `value` is the output buffer where the string is copied into.
+            * `&len` is a pointer to the length of the copied string.
+            *
+            * Note: the copied string is not null-terminated.
+            */
+           at_params_string_get(&param_list, index, value, &len);
 
-          /* Null-terminate the string. */
-          value[len] = '\0';
+           /* Null-terminate the string. */
+           value[len] = '\0';
 
-       * Add:
+        * Add:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          /* `&at_parser` is a pointer to the AT parser.
-           * `index` is the index of the parameter to retrieve.
-           * `value` is the output buffer where the string is copied into.
-           * `&len` is a pointer to the length of the copied string.
-           *
-           * Note: the copied string is null-terminated.
-           */
-          at_parser_string_get(&at_parser, index, value, &len);
+           /* `&at_parser` is a pointer to the AT parser.
+            * `index` is the index of the parameter to retrieve.
+            * `value` is the output buffer where the string is copied into.
+            * `&len` is a pointer to the length of the copied string.
+            *
+            * Note: the copied string is null-terminated.
+            */
+           at_parser_string_get(&at_parser, index, value, &len);
 
-    #. Replace parameter count retrieval:
+     #. Replace parameter count retrieval:
 
-       * Remove:
+        * Remove:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          /* `&param_list` is a pointer to the AT parameter list.
-           * `count` is the returned parameter count.
-           */
-          uint32_t count = at_params_valid_count_get(&param_list);
+           /* `&param_list` is a pointer to the AT parameter list.
+            * `count` is the returned parameter count.
+            */
+           uint32_t count = at_params_valid_count_get(&param_list);
 
-       * Add:
+        * Add:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          size_t count;
+           size_t count;
 
-          /* `&at_parser` is a pointer to the AT parser.
-           * `&count` is a pointer to the returned parameter count.
-           */
-          at_parser_cmd_count_get(&at_parser, &count);
+           /* `&at_parser` is a pointer to the AT parser.
+            * `&count` is a pointer to the returned parameter count.
+            */
+           at_parser_cmd_count_get(&at_parser, &count);
 
-    #. Replace command type retrieval:
+     #. Replace command type retrieval:
 
-       * Remove:
+        * Remove:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          /* `at_string` is the AT string that we want to retrieve the command type of.
-           */
-          enum at_cmd_type type = at_parser_at_cmd_type_get(at_string);
+           /* `at_string` is the AT string that we want to retrieve the command type of.
+            */
+           enum at_cmd_type type = at_parser_at_cmd_type_get(at_string);
 
-       * Add:
+        * Add:
 
-         .. code-block:: C
+          .. code-block:: C
 
-          enum at_parser_cmd_type type;
+           enum at_parser_cmd_type type;
 
-          /* `&at_parser` is a pointer to the AT parser.
-           * `&type` pointer to the returned command type.
-           */
-          at_parser_cmd_type_get(&at_parser, &type);
+           /* `&at_parser` is a pointer to the AT parser.
+            * `&type` pointer to the returned command type.
+            */
+           at_parser_cmd_type_get(&at_parser, &type);
 
 LTE link control library
 ------------------------
@@ -762,9 +762,7 @@ This section describes the changes related to snippets.
    The existing snippet ``nrf70-debug`` has been removed and divided into three sub-snippets as below:
 
    * ``nrf70-driver-debug`` - To enable the nRF70 driver debug logs.
-
    * ``nrf70-driver-verbose-logs`` - To enable the nRF70 driver, firmware interface, and BUS interface debug logs.
-
    * ``wpa-supplicant-debug`` - To enable supplicant logs.
 
 Protocols
