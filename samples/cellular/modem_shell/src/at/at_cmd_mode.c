@@ -11,9 +11,6 @@
 #include <modem/at_monitor.h>
 #include <nrf_modem_at.h>
 
-#include "mosh_defines.h"
-#include "mosh_print.h"
-
 #include "at_cmd_mode.h"
 
 extern struct k_work_q mosh_common_work_q;

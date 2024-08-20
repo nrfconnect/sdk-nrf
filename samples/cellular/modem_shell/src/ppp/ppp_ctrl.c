@@ -27,8 +27,6 @@
 #include <zephyr/posix/sys/socket.h>
 #include <zephyr/shell/shell.h>
 
-#include <zephyr/settings/settings.h>
-
 #include "link_api.h"
 #include "mosh_print.h"
 

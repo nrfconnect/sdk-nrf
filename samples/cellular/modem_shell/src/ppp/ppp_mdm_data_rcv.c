@@ -18,7 +18,6 @@
 
 #include <zephyr/posix/poll.h>
 #include <zephyr/posix/sys/socket.h>
-#include <zephyr/shell/shell.h>
 
 #include "mosh_print.h"
 #include "ppp_ctrl.h"

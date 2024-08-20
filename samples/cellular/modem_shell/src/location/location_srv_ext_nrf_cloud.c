@@ -13,7 +13,6 @@
 #include <modem/location.h>
 
 #include "mosh_print.h"
-#include "mosh_defines.h"
 #include "location_srv_ext.h"
 
 static struct location_data nrf_cloud_location;

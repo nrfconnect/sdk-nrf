@@ -15,7 +15,6 @@
 #include <modem/sms.h>
 
 #include "sms.h"
-#include "mosh_defines.h"
 #include "mosh_print.h"
 
 /* Maximum length of the message data that can be specified with -m option */

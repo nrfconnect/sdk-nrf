@@ -13,7 +13,6 @@
 #include <zephyr/settings/settings.h>
 
 #include "mosh_print.h"
-#include "ppp_ctrl.h"
 #include "ppp_settings.h"
 
 #define PPP_SETT_KEY "ppp_settings"

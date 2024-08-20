@@ -33,7 +33,6 @@
 #if defined(CONFIG_MOSH_CURL)
 #include <nrf_curl.h>
 #endif
-#include "uart_shell.h"
 #include "mosh_print.h"
 
 extern struct k_poll_signal mosh_signal;
