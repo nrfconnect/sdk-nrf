@@ -81,6 +81,11 @@ config MGMT_SUITFU_GRP_SUIT_IMAGE_FETCH_TIMEOUT_MS
 	int "Inter-chunk timeout for image fetching, in ms"
 	default 5000
 
+config MGMT_SUITFU_GRP_SUIT_CACHE_RAW_UPLOAD
+	bool "DFU cache raw image upload"
+	default y
+	depends on SUIT_CACHE_RW
+
 
 endif # MGMT_SUITFU_GRP_SUIT
 
