@@ -348,6 +348,10 @@ Cryptography samples
 Debug samples
 -------------
 
+* :ref:`memfault_sample` sample:
+
+  * Increased the value of the :kconfig:option:`CONFIG_MAIN_STACK_SIZE` Kconfig option to 8192 bytes to avoid stack overflow.
+
 |no_changes_yet_note|
 
 DECT NR+ samples
