@@ -69,7 +69,7 @@ Check and configure the following Kconfig options for the sample:
 
 .. _CONFIG_REST_CELL_LOCATION_DO_JITP:
 
-CONFIG_REST_CELL_LOCATION_DO_JITP - Enable prompt to perform JITP via REST
+CONFIG_REST_CELL_LOCATION_DO_JITP - Enable prompt to perform JITP using REST
    This configuration option defines whether the application prompts the user for just-in-time provisioning on startup.
 
 .. _CONFIG_REST_CELL_CHANGE_CONFIG:

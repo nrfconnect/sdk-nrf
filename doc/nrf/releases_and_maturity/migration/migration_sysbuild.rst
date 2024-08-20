@@ -3,6 +3,10 @@
 Migrating from multi-image builds to sysbuild
 #############################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 :ref:`sysbuild` is a build system used in zephyr to configure, build, and flash multiple images as part of a single project.
 It replaces the :ref:`child/parent system for multi-image builds <ug_multi_image>` in |NCS|.
 As the previous system has been deprecated, you must update your existing multi-image build projects to support being built using sysbuild.
@@ -26,7 +30,7 @@ Review how :ref:`sysbuild` works to understand the basic usage and configuration
 .. _child_parent_to_sysbuild_migration_sysbuild_configuration_file:
 
 Sysbuild configuration files
-============================
+****************************
 
 You can set sysbuild configuration for projects in the ``sysbuild.conf`` file in the project folder.
 You can also add custom Kconfig values in the ``Kconfig.sysbuild`` file in the project folder, or use this file to set Kconfig defaults that depend on a board or other parameters when building a project.
@@ -80,7 +84,7 @@ Both approaches are used in |NCS| applications and samples depending on the requ
 .. _child_parent_to_sysbuild_migration_network_core:
 
 Network core
-============
+************
 
 Sysbuild handles the selection of the network core image.
 The following Kconfig options are available to include the desired image in the build or to set network core options:
@@ -111,7 +115,7 @@ Projects must be updated to select the correct network core image.
 .. _child_parent_to_sysbuild_migration_mcuboot:
 
 MCUboot
-=======
+*******
 
 Sysbuild handles MCUboot mode selection and key file configuration.
 The following Kconfig options are available:
@@ -172,7 +176,7 @@ If this is not done, the settings of these builds will be forcefully replaced wi
 .. _child_parent_to_sysbuild_migration_secure_boot:
 
 Secure boot
-===========
+***********
 
 Sysbuild handles the mode selection of secure boot and the configuration of the key file.
 The following Kconfig options are available:
@@ -206,7 +210,7 @@ If not, the secure boot images are not built, or the settings of these builds ar
 .. _child_parent_to_sysbuild_migration_bluetooth_fast_pair:
 
 Google Fast Pair
-================
+****************
 
 Sysbuild now handles the HEX generation with Google Fast Pair provisioning data.
 See the :ref:`ug_bt_fast_pair_provisioning_register` section in the Fast Pair integration guide for more details regarding the provisioning process.
@@ -219,7 +223,7 @@ The following Kconfig options are available:
 +------------------------------------------+----------------------------------------+
 
 To generate the Google Fast Pair provisioning data, you must set this Kconfig option at the sysbuild level.
-The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key via the command line arguments remains unchanged from previous |NCS| versions.
+The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key using the command line arguments remains unchanged from previous |NCS| versions.
 
 .. note::
     When building with sysbuild, the value of the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option is overwritten by ``SB_CONFIG_BT_FAST_PAIR``.
@@ -228,7 +232,7 @@ The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key via
 .. _child_parent_to_sysbuild_migration_matter:
 
 Matter
-======
+******
 
 Sysbuild now directly controls Matter configuration for generating factory data and over-the-air firmware update images.
 The following Kconfig options are available:
@@ -256,7 +260,7 @@ Applications must enable these options if they generate factory data or need an 
 .. _child_parent_to_sysbuild_migration_nrf700x:
 
 nRF70 Series
-============
+************
 
 Support for the nRF70 Series operating mode and firmware storage has moved to sysbuild.
 The following Kconfig options are available:
@@ -288,7 +292,7 @@ If these options are not set, nRF700x functionality will not work.
 .. _child_parent_to_sysbuild_migration_dfu_multi_image_build:
 
 Multi-image builds for DFU
-==========================
+**************************
 
 Support for creating multi-image build files for Device Firmware Update (DFU) was moved to sysbuild.
 The following Kconfig options are available:
@@ -312,7 +316,7 @@ You must update your application to select the required Kconfig options at the s
 .. _child_parent_to_sysbuild_migration_dfu_zip:
 
 DFU Zip file generation
-=======================
+***********************
 
 Support for generating a firmware update zip has moved to sysbuild.
 The following Kconfig options are available:
@@ -336,7 +340,7 @@ You must update your application to select the required Kconfig options at the s
 .. _child_parent_to_sysbuild_migration_partition_manager:
 
 Partition Manager
-=================
+*****************
 
 Support for using the Partition Manager for an image has been moved to sysbuild.
 The following Kconfig options are available:
@@ -359,7 +363,7 @@ If these options are not set, firmware updates may not work or images may fail t
 .. _child_parent_to_sysbuild_migration_qspi_xip:
 
 QSPI XIP flash split code
--------------------------
+*************************
 
 Support for using an application image based on the Quad Serial Peripheral Interface (QSPI) with the Execute in place (XIP) flash memory split has been moved to sysbuild.
 The following Kconfig options are available:
@@ -407,7 +411,7 @@ For more details about the QSPI XIP flash split image feature, see :ref:`qspi_xi
 .. _child_parent_to_sysbuild_migration_filename_changes:
 
 Filename changes
-================
+****************
 
 Some output file names have changed from child/parent image configurations or have changed the directory where they are created.
 This is because sysbuild properly namespaces images in a project.
@@ -476,12 +480,12 @@ The changes to final output files (ignoring artifacts and intermediary files) ar
 +-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Example output files
-====================
+********************
 
 To demonstrate the expected output files when using sysbuild for an application build, the following sections show and describe the output files for the ``matter_weather_station`` application when building using the ``thingy53/nrf5340/cpaupp`` board target:
 
 Provision/container files
--------------------------
+=========================
 
 The expected output files are the following:
 
@@ -494,7 +498,7 @@ The expected output files are the following:
 +-----------------------+-------------------------------------------------------+
 
 Image build files
------------------
+=================
 
 The expected output files are the following:
 
@@ -525,7 +529,7 @@ The expected output files are the following:
 +-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
 
 Combined files
---------------
+==============
 
 The expected output files are the following:
 
@@ -538,7 +542,7 @@ The expected output files are the following:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Update files
-------------
+============
 
 The expected output files are the following:
 
@@ -559,7 +563,7 @@ The expected output files are the following:
 .. _child_parent_to_sysbuild_migration_image_overlay_changes:
 
 Image overlay configuration
-===========================
+***************************
 
 In child/parent image configurations, an application could include additional configuration files in the ``child_image`` folder that would be applied to these images (see :ref:`ug_multi_image_permanent_changes`).
 This feature has been adapted in sysbuild; see :ref:`sysbuild_application_configuration` for an overview.
@@ -573,7 +577,7 @@ In sysbuild, if an image application configuration directory is created then it 
 Sysbuild includes support for :ref:`application-file-suffixes` in applications, and it can also use :ref:`sysbuild_file_suffixes`.
 
 Example for MCUboot
-===================
+*******************
 
 The following table shows how to add custom MCUboot configuration for a project.
 The ``sysbuild`` folder must be created in the application's folder:
@@ -597,7 +601,7 @@ The ``sysbuild`` folder must be created in the application's folder:
 .. _child_parent_to_sysbuild_migration_scope_changes:
 
 Scope changes
-=============
+*************
 
 In child/parent images, the application controlled all images, so variables without a prefix would apply to the main application only.
 In Sysbuild, elements like file suffixes, shields, and snippets without an image prefix will be applied **globally** to all images.
@@ -630,7 +634,7 @@ They function the same in both systems:
 .. _child_parent_to_sysbuild_migration_building:
 
 Building with sysbuild
-======================
+**********************
 
 Sysbuild needs to be enabled from the command-line when building with ``west build``.
 You can pass the ``--sysbuild`` parameter to the build command or :ref:`configure west to use sysbuild whenever you build <sysbuild_enabled_ncs_configuring>`.
@@ -712,14 +716,14 @@ See the following command patterns for building with sysbuild for different use 
 .. _child_parent_to_sysbuild_forced_kconfig_options:
 
 Forced Kconfig options
-======================
+**********************
 
 As sysbuild deals with configuration of features for some features and propagating this information to other images, some Kconfig options in applications will be forcefully overwritten by sysbuild, for details on these options and how to set them from sysbuild, check the :ref:`sysbuild_forced_options` section.
 
 .. _child_parent_to_sysbuild_migration_incompatibilities:
 
-Incompatibities
-===============
+Incompatibilities
+*****************
 
 In the sysbuild release included in the |NCS| 2.7, the following features of the multi-image builds using child and parent images are not supported:
 

@@ -659,7 +659,7 @@ Forwarding data.
 
    a. Open the `nRF Connect for Mobile`_ application and connect to the device again.
    #. Bond with the device from the `nRF Connect for Mobile`_ application on your smartphone or tablet.
-   #. Find **Nordic UART Service** and enable notification of its "TX Charcteristic".
+   #. Find **Nordic UART Service** and enable notification of its "TX Characteristic".
    #. Observe the sensor readouts represented as comma-separated values.
       Every new value represents a single sensor readout.
 

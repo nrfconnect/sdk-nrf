@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Carlo Caione <ccaione@baylibre.com>
- * Copyrigt# Copyright (c) 2024 Nordic Semiconductor
+ * Copyright# Copyright (c) 2024 Nordic Semiconductor
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -9,7 +9,7 @@
  * @file
  * @brief External QSPI flash Linker command/script file
  *
- * Linker script for moving desired .text and and .data to the external
+ * Linker script for moving desired .text and .data to the external
  * memory space.
  */
 

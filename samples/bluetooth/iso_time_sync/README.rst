@@ -164,7 +164,7 @@ The sample code is divided into multiple source files, which makes it easier to 
       1. Configure a connected isochronous group (CIG).
       #. Scan and connect to a device that contains the device name.
       #. Set up a CIS to the connected device.
-      #. Continue to scanning for more peripherals, if there are more available isochronous streams.
+      #. Continue to scan for more peripherals, if there are more available isochronous streams.
 
     ``cis_peripheral.c``
       This file implements a device that acts as a CIS peripheral.

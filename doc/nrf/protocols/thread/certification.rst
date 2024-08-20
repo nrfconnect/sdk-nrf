@@ -166,9 +166,9 @@ The report is generated to the output console log, and stored as an additional b
 
 Generating the OpenThread report is enabled by default if the :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` Kconfig option is set to ``y``.
 This means that it is enabled for all samples that use the Thread stack.
-To disable the generation, set the :kconfig:option:`CONFIG_OPENTHREAD_REPORT` kconfig option to ``n``.
+To disable the generation, set the :kconfig:option:`CONFIG_OPENTHREAD_REPORT` Kconfig option to ``n``.
 
-By default, the build artefact name is set as :file:`ot_report.txt`, but you can specify a different name by setting the :kconfig:option:`CONFIG_OPENTHREAD_REPORT_BUILD_ARTEFACT_NAME` kconfig value to the new one.
+By default, the build artefact name is set as :file:`ot_report.txt`, but you can specify a different name by setting the :kconfig:option:`CONFIG_OPENTHREAD_REPORT_BUILD_ARTEFACT_NAME` Kconfig value to the new one.
 
 Depending on if you build the application using the :ref:`nrfxlib:ot_libs` or if you build the application and Thread stack from the source files, you will see the following logs in your build console:
 

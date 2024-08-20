@@ -7,7 +7,7 @@ Introduction to SUIT
    :local:
    :depth: 2
 
-This documentives an overview of SUIT and its characteristics.
+This documents an overview of SUIT and its characteristics.
 See the :ref:`nrf54h_suit_sample` if you want to try using the SUIT procedure on the nRF54H20 SoC.
 
 .. _ug_suit_overview:

@@ -3,6 +3,10 @@
 Running unit tests
 ##################
 
+.. contents::
+   :local:
+   :depth: 2
+
 Both Zephyr and the |NCS| support running unit tests using the following methods:
 
 * :ref:`Twister <zephyr:twister_script>` - A test runner tool that is part of Zephyr, used for automating the execution of test cases.

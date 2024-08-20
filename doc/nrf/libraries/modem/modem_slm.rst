@@ -22,7 +22,7 @@ The Modem SLM library allows you to perform the following functions:
 * Send raw data in SLM data mode.
   Refer to :ref:`slm_data_mode`.
 * Monitor AT notifications with registered callbacks, similar to the :ref:`at_monitor_readme` library.
-* Send AT commands via UART or RTT shell, similar to the :ref:`lib_at_shell` library.
+* Send AT commands through UART or RTT shell, similar to the :ref:`lib_at_shell` library.
 
 Configuration
 *************

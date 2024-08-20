@@ -826,7 +826,7 @@ This is particularly useful when you want to optimize the memory usage of MCUboo
 The ``CONFIG_PM_PARTITION_SIZE_<CHILD_IMAGE>`` Kconfig option allows you to specify the memory size for each child image's partition directly in the Kconfig file.
 This allows for precise control over memory allocation which is crucial for system performance optimization.
 
-Common variants of this Kconfig's option include the following:
+Common variants of this Kconfig option include the following:
 
 * ``CONFIG_PM_PARTITION_SIZE_MCUBOOT`` - Sets the partition size for the MCUboot image, and only used for dynamic partition maps.
   You can read more about this option in the `MCUboot Kconfig option documentation`_.

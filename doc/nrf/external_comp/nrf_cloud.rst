@@ -76,7 +76,7 @@ They are preprovisioned with just-in-time provisioning (JITP) certificates so th
 Device IDs that start with ``nrf-`` are checked against a database of genuine Nordic development kits, Thingy:91, and Thingy:91 X.
 If the device ID (and the accompanying PIN or Hardware ID) is not found in the database, the device cannot connect.
 This means that customers using custom hardware cannot use the ``nrf-`` prefix for their device IDs.
-Choose your own PIN when creating creating JITP credentials for a custom device.
+Choose your own PIN when creating JITP credentials for a custom device.
 
 The `device_credentials_installer.py`_ script uses the device UUID format by default.
 See these command line options to use other device ID formats:
@@ -97,7 +97,7 @@ Your firmware's device ID configuration must align with the options used when ex
 See the :ref:`configuration_device_id` section of the :ref:`lib_nrf_cloud` library documentation for more information.
 
 The :file:`device_credentials_installer.py` script automatically connects over USB or RTT to your device and installs the certificates in the modem.
-Before running the script, you must install and run firmware on the device that allows it to accept AT commands over USB or RTT, such as the :ref:AT Client <at_client_sample>` sample.
+Before running the script, you must install and run firmware on the device that allows it to accept AT commands over USB or RTT, such as the :ref:`AT Client <at_client_sample>` sample.
 
 If the device already contains certificates, delete the old certificates from the device by adding the ``--delete`` option.
 

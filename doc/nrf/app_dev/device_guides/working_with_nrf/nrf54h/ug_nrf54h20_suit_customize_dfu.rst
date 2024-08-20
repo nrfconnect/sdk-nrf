@@ -166,7 +166,7 @@ Metadata file
 The :file:`metadata.yaml` file contains information about the Nordic Semiconductor manifest templates from which the custom manifest templates were derived.
 The file should be added into the version control system alongside the custom manifest templates.
 
-The ``west suit-manifest review`` command uses the metadata to display the changes between the lastly linked Nordic Semiconductor manitest templates and the manifest templates that are present in the |NCS| release that is currently being used.
+The ``west suit-manifest review`` command uses the metadata to display the changes between the lastly linked Nordic Semiconductor manifest templates and the manifest templates that are present in the |NCS| release that is currently being used.
 
 The ``west suit-manifest review --accept`` command updates the metadata to link with the Nordic Semiconductor manifest templates that are present in the |NCS| release that is currently being used.
 
@@ -194,10 +194,10 @@ Specifically, in the basic case:
 * :kconfig:option:`CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME`
 * :kconfig:option:`CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME`
 
-These Kconfigs are used during Manifest Provisioning Information (MPI) generation.
+These Kconfig options are used during Manifest Provisioning Information (MPI) generation.
 After the MPI has been flashed, it is read by the Secure Domain Firmware, which can then use it to verify if the UUIDs in a manifest are correct,
 
-As as an example, after adding the following lines to the :file:`prj.conf` file:
+As an example, after adding the following lines to the :file:`prj.conf` file:
 
 .. code-block::
 
@@ -332,7 +332,7 @@ For more information, see the file available in the sample and `Jinja documentat
             suit-components:
             - - CAND_MFST
             - 0
-   {%- if radio is defined %}                                         # Add section below only, in case the radio core has been already been built.
+   {%- if radio is defined %}                                         # Add section below only, in case the radio core has already been built.
       {%- set component_index = component_index + 1 %}                             # Increment `component_index`.
       {%- set radio_component_index = component_index %}              # Store the current component index for further use.
       {{- component_list.append( radio_component_index ) or ""}}      # Append the current component index to the common list.
@@ -356,7 +356,7 @@ For more information, see the file available in the sample and `Jinja documentat
 Reference for editing manifest values
 -------------------------------------
 
-Some entries in the YAML file will filled in automatically, (upon first build of the sample) by the build system in the final binary DFU envelope.
+Some entries in the YAML file will be filled in automatically, (upon first build of the sample) by the build system in the final binary DFU envelope.
 
 +---------------------------------------------------------+------------------------------+--------------------------------------------------------+
 | Operation                                               | YAML entry                   | Value in the output binary envelope                    |

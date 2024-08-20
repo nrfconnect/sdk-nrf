@@ -33,7 +33,7 @@ The TF-M regression tests are implemented in the tf-m-tests repo: https://git.tr
 Configuration
 *************
 
-Tests for both the secure and non-secure area are enabled by default, but can be controlled via the Kconfig options :kconfig:option:`CONFIG_TFM_REGRESSION_S` and :kconfig:option:`CONFIG_TFM_REGRESSION_NS` respectively.
+Tests for both the secure and non-secure area are enabled by default, but can be controlled using the Kconfig options :kconfig:option:`CONFIG_TFM_REGRESSION_S` and :kconfig:option:`CONFIG_TFM_REGRESSION_NS` respectively.
 
 |config|
 

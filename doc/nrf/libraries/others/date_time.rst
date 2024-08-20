@@ -34,7 +34,7 @@ If all time requests fail and the :kconfig:option:`CONFIG_DATE_TIME_RETRY_COUNT`
 The interval before each retry is defined by the :kconfig:option:`CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS` Kconfig option, and the :kconfig:option:`CONFIG_DATE_TIME_RETRY_COUNT` Kconfig option sets how many consecutive retries are attempted before giving up.
 If the :kconfig:option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` Kconfig option is greater than zero, periodic updates at the defined interval resume after all retries have been attempted.
 
-The current date-time information is stored as Zephyr time when it has been retrieved and hence, applications can also get the time using the POSIX function ``clock_gettime``.
+The current date-time information is stored as Zephyr time when it has been retrieved and hence, applications can also get the time using the POSIX function ``clock_gettime()``.
 It is also stored as modem time if the modem does not have valid time.
 
 Implementation
@@ -47,7 +47,7 @@ The option :kconfig:option:`CONFIG_DATE_TIME_AUTO_UPDATE` determines whether dat
 Libraries that require date-time information can just enable this library to get updated time information.
 Applications do not need to do anything to trigger time update when they start because this library handles it automatically.
 
-Retrieving date-time information using the POSIX function ``clock_gettime`` is encouraged when feasible.
+Retrieving date-time information using the POSIX function ``clock_gettime()`` is encouraged when feasible.
 You can obtain the information also from the library by calling either the :c:func:`date_time_uptime_to_unix_time_ms` function or the :c:func:`date_time_now` function.
 See the API documentation for more information on these functions.
 
