@@ -263,7 +263,8 @@ You can set the option in :file:`sysbuild.conf` or using the command line:
 
       Escaped quotations avoid malformed-string warnings from Kconfig.
 
-The path of the key must be an absolute path, though ``${APPLICATION_CONFIG_DIR}`` can be used to get the path of the application configuration directory to use keys relative to this directory.
+The path of the key must be an absolute path.
+To utilize keys relative to the application configuration directory, use the escaped CMake variable ``\${APPLICATION_CONFIG_DIR}`` in the path by replacing ``$`` with ``\$``.
 
 See :ref:`ug_fw_update_keys` for information on how to generate custom keys for a project.
 
@@ -273,7 +274,7 @@ The key type must also be set correctly:
 
    west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
    -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
-   -DSB_CONFIG_BOOT_SIGNATURE_KEY_FILE=\"${APPLICATION_CONFIG_DIR}/../../priv-ecdsa256.pem\" \
+   -DSB_CONFIG_BOOT_SIGNATURE_KEY_FILE=\"\${APPLICATION_CONFIG_DIR}/../../priv-ecdsa256.pem\" \
    -DSB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
 
 You can find specific configuration options for keys with this bootloader in :file:`zephyr/share/sysbuild/images/bootloader/Kconfig`.
