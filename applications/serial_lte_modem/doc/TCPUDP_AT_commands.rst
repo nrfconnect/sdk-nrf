@@ -716,11 +716,10 @@ UDP receive data
 
 ::
 
-   #XUDPDATA notification comes only when SLM is not operating in :ref:`data mode <slm_data_mode>`.
-
    #XUDPDATA: <size>,<ip_addr>,<port>
    <data>
 
+* ``#XUDPDATA`` notification comes only when SLM is not operating in :ref:`data mode <slm_data_mode>`.
 * The ``<size>`` value is an integer that represents the actual number of bytes received.
 * The ``<ip_addr>`` value is a string that represents the IPv4 or IPv6 address of the remote peer.
 * The ``<port>`` value is an integer that represents the UDP port of the remote peer.

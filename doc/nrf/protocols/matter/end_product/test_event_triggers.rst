@@ -89,8 +89,8 @@ The following table lists the available triggers and their activation codes:
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
   * - Diagnostic Logs Network Data
     - Enabled ``Diagnostic Logs`` cluster, and either the snippet `diagnostic-logs` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS` = ``y``.
-    - Trigger writing a specific amount of ``n`` characters to the network diagnostics logs.
-      The amount of characters is determined by the value at the end of the event trigger value.
+    - Trigger writing a specific number of ``n`` characters to the network diagnostics logs.
+      The number of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
     - ``0xFFFFFFFF50000000`` - ``0xFFFFFFFF50000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
@@ -147,7 +147,7 @@ The following table lists the available triggers and their activation codes:
     - No additional value supported.
   * - Smoke CO alarm - end of service alarm
     - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
-    - Trigger a end of service alarm
+    - Trigger an end of service alarm
     - ``0x005c00000000009a``
     - No additional value supported.
   * - Smoke CO alarm - end of service alarm clean

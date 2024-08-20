@@ -308,7 +308,7 @@ For more information about the repository and development model, see the :ref:`d
 
 ..
 
-If you used the default locations (:file:`C:\ncs` on Windows, :file:`<home>/ncs` on Linux and MacOS), your directory structure now looks similar to this:
+If you used the default locations (:file:`C:/ncs` on Windows, :file:`<home>/ncs` on Linux and MacOS), your directory structure now looks similar to this:
 
 .. code-block:: none
 
@@ -619,7 +619,7 @@ To install the |NCS| system-wide, complete the following steps:
 Installation with Toolchain Manager
 ***********************************
 
-Toolchain Manager is a SDK and toolchain installer for the |NCS|.
+Toolchain Manager is an SDK and toolchain installer for the |NCS|.
 It is available from `nRF Connect for Desktop`_, a cross-platform tool that provides different development applications for the |NCS| and Nordic Semiconductor products.
 Both Toolchain Manager and nRF Connect for Desktop are available for Windows, Linux, and macOS.
 

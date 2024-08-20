@@ -61,7 +61,6 @@
 .. _`Arm Mbed TLS project`: https://github.com/ARMmbed/mbedtls
 
 .. _`nrfconnect GitHub organization`: https://github.com/nrfconnect
-.. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
 .. _`ncs-example-application`: https://github.com/nrfconnect/ncs-example-application
 .. _`manifest group filter`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L42
@@ -73,7 +72,6 @@
 .. _`sdk-nrf PR #14474`: https://github.com/nrfconnect/sdk-nrf/pull/14474
 .. _`sdk-nrf PR #16242`: https://github.com/nrfconnect/sdk-nrf/pull/16242
 
-.. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
 .. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
 
 .. _`nRF Blinky`: https://github.com/NordicSemiconductor/Android-nRF-Blinky
@@ -103,8 +101,6 @@
 .. _`HIDAPI library`: https://github.com/libusb/hidapi
 .. _`HIDAPI releases`: https://github.com/libusb/hidapi/releases
 .. _`pyhidapi Python wrapper`: https://github.com/apmorton/pyhidapi
-
-.. _`nrf9160dk_nrf9160_partition_conf.dts`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/arm/nrf9160dk_nrf9160/nrf9160dk_nrf9160_partition_conf.dts
 
 .. _`west manifest file`: https://github.com/nrfconnect/sdk-nrf/blob/main/west.yml
 .. _`LICENSE file`: https://github.com/nrfconnect/sdk-nrf/blob/main/LICENSE
@@ -217,8 +213,6 @@
 .. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
 
 .. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
-
-.. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
 .. _`PSA Certified Crypto API`: https://arm-software.github.io/psa-api/crypto/
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html

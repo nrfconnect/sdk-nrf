@@ -406,7 +406,7 @@ The following table shows asymmetric signature algorithm support for each driver
 
 The Kconfig option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cc3xx` for all supported algorithms.
 
-Configuration of the :ref:`nrf_security_drivers_oberon` driver is automatically generated based on the user-enabled algorithms in `Asymmetric signature configurations`_.
+Configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Asymmetric signature configurations`_.
 
 The Kconfig option :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER` enables the driver :ref:`nrf_security_drivers_cracen` for all supported algorithms.
 

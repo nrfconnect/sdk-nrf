@@ -14,7 +14,7 @@ The information about peer and connection state is propagated to other applicati
 
 The :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop.
 Specific Bluetooth configurations and application modules are selected or implied according to the HID device role.
-Apart from that, the defaults of Bluetooth-related Kconfigs are aligned with the nRF Desktop use case.
+Apart from that, the defaults of Bluetooth-related Kconfig options are aligned with the nRF Desktop use case.
 
 The nRF Desktop devices come in the following roles:
 

@@ -9,7 +9,7 @@ Coexistence of short-range radio and other radios
 
 This guide describes how to add short-range radio and other radio coexistence support to your application in |NCS|.
 
-Short-range RF technologies (here referred to as SR), such as Bluetooth LE or 802.15.4, use a different radio than other technologies like Wi-Fi or LTE (here referred to as *the other radios*).
+Short-range RF technologies (here referred to as SR), such as Bluetooth® LE or 802.15.4, use a different radio than other technologies like Wi-Fi®  or LTE (here referred to as *the other radios*).
 However, if both SR and the other radio attempt to transmit simultaneously, the radio frequency (RF) waves interfere with each other, causing decreased performance and higher power consumption.
 Also, in cases like receiving an acknowledgment (ACK), radios should not transmit to ensure correct reception.
 

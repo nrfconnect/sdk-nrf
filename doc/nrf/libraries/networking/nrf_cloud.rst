@@ -48,8 +48,8 @@ The :c:func:`nrf_cloud_connect` function does not block and returns success if t
 When the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD` Kconfig option is enabled, an additional event, :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECTING`, is sent to the application.
 To adjust the stack size of the connection monitoring thread, set the :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE` Kconfig option.
 The :c:enum:`NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR` event is sent if an error occurs while the transport connection is being established.
-The status field of the :c:struct:`nrf_cloud_evt` structure contains the reason for the error that is defined by :c:enumerator:`nrf_cloud_connect_result`.
-The :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` event also contains additional information in the status field that is defined by :c:enumerator:`nrf_cloud_disconnect_status`.
+The status field of the :c:struct:`nrf_cloud_evt` structure contains the reason for the error that is defined by :c:enum:`nrf_cloud_connect_result`.
+The :c:enumerator:`NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED` event also contains additional information in the status field that is defined by :c:enum:`nrf_cloud_disconnect_status`.
 
 First, the library tries to establish the transport for communicating with the cloud.
 This procedure involves a TLS handshake that might take up to three seconds.

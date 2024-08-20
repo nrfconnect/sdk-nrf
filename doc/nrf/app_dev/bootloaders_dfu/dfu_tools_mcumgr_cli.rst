@@ -396,7 +396,7 @@ Adding names requires an additional step:
     STATS_NAME(my_stats, my_stat_counter3)
   STATS_NAME_END(my_stats);
 
-The :kconfig:option:`CONFIG_MCUMGR_GRP_STAT_MAX_NAME_LEN` Kconfig option sets the maximum length of a section name that can can be accepted as parameter for showing the section data.
+The :kconfig:option:`CONFIG_MCUMGR_GRP_STAT_MAX_NAME_LEN` Kconfig option sets the maximum length of a section name that can be accepted as parameter for showing the section data.
 This may need adjustment for particularly long section names.
 
 .. note::
@@ -479,7 +479,7 @@ To upload a new file to a littleFS storage, mounted under ``/lfs``, use the foll
 where ``25`` is the size of the file.
 
 To download a file, first you must use the ``fs`` command with the :kconfig:option:`CONFIG_FILE_SYSTEM_SHELL` Kconfig option enabled.
-This allows operations via remote shell.
+This allows operations using remote shell.
 Create a new file on the remote system:
 
 .. code-block:: console

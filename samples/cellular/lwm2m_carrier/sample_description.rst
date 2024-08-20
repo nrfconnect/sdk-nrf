@@ -199,7 +199,7 @@ To test with the sample, complete the following steps:
          Set security tag: 450
 
    #. Apply the server config.
-      After rebooting, the sample loads these settings (instead of using the static Kconfigs).
+      After rebooting, the sample loads these settings (instead of using the static Kconfig options).
 
       .. code-block:: console
 

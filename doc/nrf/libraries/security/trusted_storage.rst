@@ -110,7 +110,7 @@ The following options are used to configure the AEAD backend and its behavior:
 
 :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_CRYPTO`
    Selects what implementation is used to perform the AEAD cryptographic operations.
-   This option defaults to :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY` using the ChaCha20Poly1305 AEAD scheme via PSA APIs.
+   This option defaults to :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_CRYPTO_PSA_CHACHAPOLY` using the ChaCha20Poly1305 AEAD scheme using PSA APIs.
 
 :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_NONCE`
    Selects what implementation provides AEAD nonce.

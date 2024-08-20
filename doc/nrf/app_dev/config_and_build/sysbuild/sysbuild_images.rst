@@ -190,8 +190,8 @@ sysbuild.cmake:
 
 .. _sysbuild_images_adding_via_a_zephyr_module:
 
-Adding via a zephyr module
---------------------------
+Adding through a Zephyr module
+------------------------------
 
 To add images in a Zephyr module, create a folder within the module to hold the `Kconfig.sysbuild` and (optionally, if needed) `CMakeLists.txt` files.
 Then, add this folder to the Zephyr module file:

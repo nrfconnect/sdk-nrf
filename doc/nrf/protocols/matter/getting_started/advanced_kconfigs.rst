@@ -301,7 +301,7 @@ The partition sizes are configured using example values and may not be sufficien
 To change the partition sizes, you need to change the configuration in the devicetree overlay.
 You can, for example, increase the partition sizes to be able to store more logs.
 
-The snippet sets the following kconfig options:
+The snippet sets the following Kconfig options:
 
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` to ``y``.
   * :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` to ``y``.

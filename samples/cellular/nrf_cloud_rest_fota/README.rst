@@ -87,7 +87,7 @@ CONFIG_REST_FOTA_BUTTON_EVT_NUM - Button number
 
 .. _CONFIG_REST_FOTA_DO_JITP:
 
-CONFIG_REST_FOTA_DO_JITP - Enable prompt to perform JITP via REST
+CONFIG_REST_FOTA_DO_JITP - Enable prompt to perform JITP using REST
    This configuration option defines if the application will prompt the user for just-in-time provisioning on startup.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst

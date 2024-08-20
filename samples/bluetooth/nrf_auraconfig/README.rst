@@ -210,7 +210,7 @@ Example:
 
      nac file select 16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3 1 2 0
 
-This command command selects the file :file:`16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3` for the BIS 0 in the subgroup 2 in the BIG 1.
+This command selects the file :file:`16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3` for the BIS 0 in the subgroup 2 in the BIG 1.
 
 ----
 

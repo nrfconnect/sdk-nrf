@@ -304,7 +304,7 @@ The clock drift is the difference between the beacon clock value as measured by 
 The beacon clock is used to calculate the Ephemeral Identifier (EID), which is a part of the FMDN advertising payload.
 Seekers identify and track the provisioned Provider by analyzing the broadcasted EIDs in the advertising frames.
 Performing frequent system reboots or staying in the turned off state (for example, System OFF) may cause the clock drift to accumulate overtime.
-If the clock drift is too high, the Provider EID encoded in the FMDN advertising payload becomes unidentifable to Seeker devices.
+If the clock drift is too high, the Provider EID encoded in the FMDN advertising payload becomes unidentifiable to Seeker devices.
 
 When you disable the FMDN extension using the :c:func:`bt_fast_pair_disable` function, the beacon clock service also gets terminated.
 As a result, the clock information is no longer updated in the non-volatile memory.
@@ -463,12 +463,12 @@ To comply with the requirements of the FMDN extension, you must manage the Fast 
 When creating the Fast Pair advertising set with the :c:func:`bt_le_ext_adv_create` function, register the :c:struct:`bt_le_ext_adv_cb` structure with the following callbacks:
 
 * The :c:member:`bt_le_ext_adv_cb.connected` callback to track connections that are part of the application's connection pool (and were not created from the FMDN advertising set).
-* The ``bt_le_ext_adv_cb.rpa_expired`` callback to synchronize the update of the application's advertising sets' payloads together with their respective Resolvable Private Addresses (RPA).
+* The ``bt_le_ext_adv_cb.rpa_expired()`` callback to synchronize the update of the application's advertising sets' payloads together with their respective Resolvable Private Addresses (RPA).
 
 .. Important::
    You must manage application advertising sets according to the FMDN provisioning state:
 
-   * For the provisioned device, only update the Fast Pair advertising payload during the ``bt_le_ext_adv_cb.rpa_expired`` callback execution.
+   * For the provisioned device, only update the Fast Pair advertising payload during the ``bt_le_ext_adv_cb.rpa_expired()`` callback execution.
      The FMDN extension controls the RPA rotation time in this state, and no other module in your application is allowed to change the rotation time.
    * For the unprovisioned device, control the Fast Pair advertising rotation time using the :c:func:`bt_le_set_rpa_timeout` and :c:func:`bt_le_oob_get_local` functions.
      You must still comply with the requirements of the Fast Pair protocol.
@@ -505,7 +505,7 @@ Battery level indication
 ------------------------
 
 To specify the battery level broadcasted in the FMDN advertising payload, use the :c:func:`bt_fast_pair_fmdn_battery_level_set` function.
-You can update the battery level asynchronously without having to wait on the ``bt_le_ext_adv_cb.rpa_expired`` callback.
+You can update the battery level asynchronously without having to wait on the ``bt_le_ext_adv_cb.rpa_expired()`` callback.
 
 The current API accepts the battery level as a percentage value, and ranges from 0% to 100%.
 This percentage value is first translated according to the quantified battery states defined in the FMDN Accessory specification and then encoded in the FMDN advertising set according to the following rules:
@@ -642,7 +642,7 @@ To enable the Fast Pair bond management functionality, use the :kconfig:option:`
 When this functionality is enabled, the Fast Pair subsystem tracks the Bluetooth bonds created through the Fast Pair Procedure and unpairs them if the procedure is incomplete or the Account Key associated with the bonds is removed.
 It also unpairs the Fast Pair Bluetooth bonds on Fast Pair factory reset, because the factory reset removes all Account Keys stored on device.
 Enabling the functionality imposes additional limitations related to enabling Fast Pair in runtime (:c:func:`bt_fast_pair_enable`).
-See the :kconfig:option:`CONFIG_BT_FAST_PAIR_BOND_MANAGER` Kconfig option help for more datails about using the functionality.
+See the :kconfig:option:`CONFIG_BT_FAST_PAIR_BOND_MANAGER` Kconfig option help for more details about using the functionality.
 
 The Fast Pair bond management functionality is disabled by default.
 Make sure that it is enabled for the following use cases of the Google Fast Pair application as it is highly recommended:
@@ -809,7 +809,7 @@ A call to the :c:func:`bt_fast_pair_fmdn_ring_state_update` function sends a mes
 The message is sent over the ringing source that is used by the connected peer.
 
 You must select the ringing source that is passed to the :c:func:`bt_fast_pair_fmdn_ring_state_update` function as a first parameter.
-Typically, you pass the ringing source that is used in the last ringing callback that triggerred the ringing state update.
+Typically, you pass the ringing source that is used in the last ringing callback that triggered the ringing state update.
 In certain edge cases, you can get two simultaneous requests to start ringing with two different sources before you are able to indicate the start of ringing with the :c:func:`bt_fast_pair_fmdn_ring_state_update` function.
 In this situation, you need to select the preferred ringing source.
 
@@ -905,7 +905,7 @@ Custom user reset action
 ========================
 
 Use the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` Kconfig option to enable a custom user reset action that executes together with the factory reset operation.
-To define the custom user reset action, you need to implement the ``bt_fast_pair_factory_reset_user_action_perform`` function in your application code.
+To define the custom user reset action, you need to implement the ``bt_fast_pair_factory_reset_user_action_perform()`` function in your application code.
 The function is defined as a weak, no-op function.
 Ensure that your reset action implementation executes correctly in the following execution contexts:
 

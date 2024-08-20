@@ -140,7 +140,7 @@ Destination node with a light bulb (Generic OnOff Server model)
 The following process takes place at this stage:
 
   1. The broadcast is received by a node, and is passed from the bearer layer to its network layer.
-  #. The network layer will decript the packet and pass it to the transport layer.
+  #. The network layer will decrypt the packet and pass it to the transport layer.
   #. Once all transport layer segments are received in this manner, the assembled message is decrypted with an application key, and passed on to the access layer.
   #. The access layer checks the opcode, application key and destination address, and passes the message to all eligible models.
   #. If one of these models is a Generic OnOff Server model, the model parses the contents of the message, and notifies the application to turn the light bulb on or off.
