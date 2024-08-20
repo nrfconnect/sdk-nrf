@@ -1284,6 +1284,7 @@ Syntax
 
 * The ``<hostname>`` parameter is a string.
 * The ``<address_family>`` parameter is an integer that gives a hint for DNS query on address family.
+
   * ``0`` means unspecified address family.
   * ``1`` means IPv4 address family.
   * ``2`` means IPv6 address family.

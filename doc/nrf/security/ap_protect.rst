@@ -35,12 +35,12 @@ For detailed information, refer to the hardware documentation.
    * - Hardware
      - Disabled
      - Writing ``Enabled`` to ``UICR.APPROTECT`` and performing a reset.
-     - Issuing an ``ERASEALL`` command via CTRL-AP.
+     - Issuing an ``ERASEALL`` command using CTRL-AP.
        This command erases the flash, UICR, and RAM, including ``UICR.APPROTECT``.
    * - Hardware and software
      - Enabled
      - When AP-Protect is disabled, a reset or a wake enables the access port protection again.
-     - Issuing an ``ERASEALL`` command via CTRL-AP.
+     - Issuing an ``ERASEALL`` command through CTRL-AP.
        This command erases the flash, UICR, and RAM, including ``UICR.APPROTECT``.
 
        To keep the AP-Protect disabled, ``UICR.APPROTECT`` must be programmed to ``HwDisabled`` and the firmware must write ``SwDisable`` to ``APPROTECT.DISABLE``.

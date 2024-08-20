@@ -205,7 +205,7 @@ To turn an application into a recovery application, the following steps have to 
 #. Optionally - you can modify the recovery manifest templates.
    The manifest template defined by the ``CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME`` is first searched for in :file:`suit/<soc>` in the main application directory.
    If it is not found, :file:`suit/<soc>` in the recovery app is checked.
-   If the manifest template is still not found, the default template directory in NCS is checked (:file:`config/suit/templates`).
+   If the manifest template is still not found, the default template directory in |NCS| is checked (:file:`config/suit/templates`).
 
 #. Extend the ``SUIT_RECOVERY_APPLICATION`` choice with an option for attaching the custom recovery application.
    Then, make the ``SB_CONFIG_SUIT_RECOVERY_APPLICATION_PATH`` point to the custom application path.

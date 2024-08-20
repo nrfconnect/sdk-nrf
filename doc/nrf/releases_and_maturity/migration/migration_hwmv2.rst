@@ -3,6 +3,10 @@
 Migrating to the current hardware model
 #######################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The *hardware model* refers to how SoCs and boards are named, defined, and used.
 Starting with |NCS| version 2.7.0, this model has been completely updated.
 

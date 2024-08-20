@@ -11,7 +11,7 @@ Overview
 ********
 
 Starting with |NCS| v2.6.0, the Serial LTE Modem (SLM) application can be used to turn an nRF91 Series SiP into a standalone modem that can be used through Zephyr's cellular modem driver.
-This means that the controlling chip can run a Zephyr application that seamlessly uses Zephyr's IP stack instead of offloaded sockets via AT commands.
+This means that the controlling chip can run a Zephyr application that seamlessly uses Zephyr's IP stack instead of offloaded sockets through AT commands.
 
 This is made possible by SLM's support of CMUX and PPP and Zephyr's cellular modem driver.
 
@@ -121,7 +121,7 @@ If SLM is running on the nRF9160 DK, the **PROG/DEBUG SW10** switch needs to be 
 However, for convenience you may want to redirect SLM's logs to the SiP's UART 0 so that you do not need to reconnect the RTT client every time the board is reset.
 See the :ref:`slm_additional_config` section for information on how to do this.
 
-The logs output via UART can be seen by connecting to the appropriate UART with a serial communication program.
+The logs output through UART can be seen by connecting to the appropriate UART with a serial communication program.
 Under Linux, if the controlling chip is the nRF52840 of the nRF9160 DK, the device file of its UART 0 will typically be :file:`/dev/ttyACM1`.
 
 After both applications have been flashed to their respective chips and you are connected to receive logs, you can reset the controlling chip.

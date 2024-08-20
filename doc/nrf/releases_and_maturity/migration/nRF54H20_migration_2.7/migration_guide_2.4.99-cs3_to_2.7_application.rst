@@ -21,7 +21,7 @@ Updated |NCS| toolchain
 
 Sysbuild
   A new build system was recently introduced in the |NCS|.
-  For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` userguide.
+  For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` user guide.
 
 Hardware Model v2
   A new hardware model was recently introduced in the |NCS|.
@@ -79,7 +79,7 @@ General
 
    * Sysbuild
      A new build system was recently introduced in |NCS|
-     For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` userguide.
+     For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` user guide.
 
    * Hardware Model v2
      A new hardware model was recently introduced in the |NCS|.

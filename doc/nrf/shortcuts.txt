@@ -169,6 +169,9 @@
 
 .. |ncs_oot_sample_note| replace:: Some samples in the |NCS| are currently not designed to work out-of-tree.
    You may need to manually configure your sample to work correctly in the |nRFVSC|.
+.. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
+
+.. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
 .. |ncs_unchanged_samples_note| replace:: If you are working with embedded devices, it is a good practice to first test your setup by programming an unchanged :ref:`sample<samples>` to your development kit.
 
 .. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".

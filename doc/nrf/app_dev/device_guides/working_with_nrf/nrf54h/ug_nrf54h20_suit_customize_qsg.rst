@@ -95,7 +95,7 @@ This can be done by changing the class and vendor names using Kconfig options (f
    CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME="ACME Corp"
    CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME="Light bulb"
 
-After rebuiling you will be able to find the following part in the :file:`./build/DFU/application.yaml` file.
+After rebuilding you can find the following part in the :file:`./build/DFU/application.yaml` file.
 
 .. code-block::
 

@@ -36,13 +36,13 @@ There are three test configurations in the :file:`testcase.yaml`.
 
 * ``benchmarks.multicore.idle_with_pwm.nrf54h20dk_cpuapp_cpurad.s2ram``
 
-  This configuration uses Kconfigs that enable entering low power modes.
+  This configuration uses Kconfig options that enable entering low power modes.
   Logging is disabled.
   Core sleeps for time sufficient to enter the ``suspend-to-ram`` power state.
 
 * ``benchmarks.multicore.idle_with_pwm.nrf54h20dk_cpuapp_cpurad.sleep``
 
-  This configuration uses Kconfigs that enable entering low power modes.
+  This configuration uses Kconfig options that enable entering low power modes.
   Logging is disabled.
   Core sleeps for time sufficient to enter the ``suspend-to-idle`` power state.
 
