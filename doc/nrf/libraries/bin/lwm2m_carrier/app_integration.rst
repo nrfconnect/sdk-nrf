@@ -17,7 +17,7 @@ This section describes the needed interaction between the LwM2M carrier library 
 
 The LwM2M carrier library has an OS abstraction layer.
 This abstraction layer makes the LwM2M carrier library independent of the |NCS| modules and underlying implementation of primitives such as timers, non-volatile storage, and heap allocation.
-For more information, see :file:`lwm2m_os.h`.
+For more information, see the :file:`lwm2m_os.h` file or the :ref:`liblwm2m_os` section for available APIs.
 
 .. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_os_abstraction.svg
     :alt: LwM2M library OS abstraction overview
@@ -219,133 +219,25 @@ Following are the device Kconfig options:
 LwM2M carrier library events
 ****************************
 
-The :c:func:`lwm2m_carrier_event_handler` function may be implemented by your application.
+The :c:func:`lwm2m_carrier_event_handler` function can be implemented by your application.
 This is shown in the :ref:`lwm2m_carrier` sample.
 A ``__weak`` implementation is included in :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
 
-Following are the various LwM2M carrier library events that are also listed in :file:`nrf/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h`.
+The ``__weak`` implementation acts as default handling and should be sufficient for most needs, but certain events could need handling specific to your application.
 
-* :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`:
+For example:
 
-  * This event indicates that the device must disconnect from the LTE network.
-  * It occurs during the bootstrapping process and FOTA.
-    It can also be triggered when the application calls :c:func:`lwm2m_carrier_request`.
+* :c:macro:`LWM2M_CARRIER_EVENT_REBOOT`- This event indicates that the LwM2M carrier library will reboot the device.
+  Your application might want to do some bookkeeping before rebooting.
 
-* :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_UP`:
+* :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`- This event indicates that the device must disconnect from the LTE network.
+  Your application might want to do some bookkeeping before disconnecting.
 
-  * This event indicates that the device must connect to the LTE network.
-  * It occurs during the bootstrapping process and FOTA.
-    It can also be triggered when the application calls :c:func:`lwm2m_carrier_request`.
+* :c:macro:`LWM2M_CARRIER_EVENT_ERROR_CODE_RESET`- This event indicates that the server has reset the "Error Code" resource (3/0/11) of the LwM2M carrier library.
+  When received, the application should re-evaluate the errors and signal relevant errors again using the :c:func:`lwm2m_carrier_error_code_add` function.
+  This is not handled in the ``__weak`` implementation since the applicable errors to report is application dependent.
 
-* :c:macro:`LWM2M_CARRIER_EVENT_BOOTSTRAPPED`:
-
-  * This event indicates that the bootstrap sequence is complete, and that the device is ready to be registered.
-  * This event is typically seen during the first boot-up.
-
-* :c:macro:`LWM2M_CARRIER_EVENT_REGISTERED`:
-
-  * This event indicates that the device has registered successfully to the carrier's device management servers.
-
-* :c:macro:`LWM2M_CARRIER_EVENT_DEREGISTERED`:
-
-  * This event indicates that the device has deregistered successfully from the carrier's device management servers.
-
-* :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED`:
-
-  * This event indicates that the connection to the device management server has failed.
-  * The :c:macro:`LWM2M_CARRIER_EVENT_DEFERRED` event appears instead of the :c:macro:`LWM2M_CARRIER_EVENT_REGISTERED` event.
-  * The :c:member:`timeout` parameter supplied with this event determines when the LwM2M carrier library will retry the connection.
-  * Following are the various deferred reasons:
-
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_NO_REASON` - The application need not take any special action.
-      If :c:member:`timeout` is 24 hours, the application can proceed with other activities until the retry takes place.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_PDN_ACTIVATE` - This event indicates problem with the SIM card, or temporary network problems.
-      If this persists, contact your carrier.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_BOOTSTRAP_CONNECT` - The DTLS handshake with the bootstrap server has failed.
-      If the application is using a custom PSK, verify that the format is correct.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_BOOTSTRAP_SEQUENCE` - The bootstrap sequence is incomplete.
-      The server failed either to acknowledge the request by the library, or to send objects to the library. Confirm that the carrier is aware of the IMEI.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_NO_ROUTE`, :c:macro:`LWM2M_CARRIER_DEFERRED_BOOTSTRAP_NO_ROUTE` - There is a routing problem in the carrier network.
-      If this event persists, contact the carrier.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_CONNECT` - This event indicates that the DTLS handshake with the server has failed.
-      This typically happens if the bootstrap sequence has failed on the carrier side.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVER_REGISTRATION` - The server registration has not completed, and the server does not recognize the connecting device.
-      If this event persists, contact the carrier.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_SERVICE_UNAVAILABLE` - The server is unavailable, for example due to maintenance.
-      In the Verizon network, this event can be triggered by the server to block excessive numbers of bootstrap and connections.
-    * :c:macro:`LWM2M_CARRIER_DEFERRED_SIM_MSISDN` - The device is waiting for the SIM MSISDN to be available to read.
-* :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START`:
-
-  * This event indicates that the modem update has started.
-  * The application must immediately terminate any open TLS and DTLS sessions.
-  * See :ref:`req_appln_limitations`.
-* :c:macro:`LWM2M_CARRIER_EVENT_FOTA_SUCCESS`:
-
-  * This event indicates that the FOTA procedure is successful.
-* :c:macro:`LWM2M_CARRIER_EVENT_REBOOT`:
-
-  * This event indicates that the LwM2M carrier library will reboot the device.
-  * If the application is not ready to reboot, it must return non-zero and then reboot at the earliest convenient time.
-* :c:macro:`LWM2M_CARRIER_EVENT_MODEM_INIT`:
-
-  * This event indicates that the application must initialize the modem for the LwM2M carrier library to proceed.
-  * This event is indicated during FOTA procedures to reinitialize the :ref:`nrf_modem_lib_readme`.
-* :c:macro:`LWM2M_CARRIER_EVENT_MODEM_SHUTDOWN`:
-
-  * This event indicates that the application must shut down the modem for the LwM2M carrier library to proceed.
-  * This event is indicated during FOTA procedures to reinitialize the :ref:`nrf_modem_lib_readme`.
-* :c:macro:`LWM2M_CARRIER_EVENT_ERROR_CODE_RESET`
-
-  * This event indicates that the server has reset the error codes resource of the LwM2M carrier library.
-  * The errors should be re-evaluated and set again if they still apply.
-  * The relevant APIs for setting the error codes are :c:func:`lwm2m_carrier_error_code_add` and :c:func:`lwm2m_carrier_error_code_remove`.
-* :c:macro:`LWM2M_CARRIER_EVENT_ERROR`:
-
-  * This event indicates an error.
-  * The event data struct :c:type:`lwm2m_carrier_event_error_t` contains the information about the error (:c:member:`type` and :c:member:`value`).
-  * Following are the valid error types:
-
-    * :c:macro:`LWM2M_CARRIER_ERROR_LTE_LINK_UP_FAIL` - This error is generated if the request to connect to the LTE network has failed.
-      It indicates possible problems with the SIM card, or insufficient network coverage. See :c:member:`value` field of the event.
-    * :c:macro:`LWM2M_CARRIER_ERROR_LTE_LINK_DOWN_FAIL` - This error is generated if the request to disconnect from the LTE network has failed.
-    * :c:macro:`LWM2M_CARRIER_ERROR_BOOTSTRAP` - This error is generated during the bootstrap procedure.
-
-      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
-      | Errors                                                 | More information                                                                     | Recovery                                         |
-      |                                                        |                                                                                      |                                                  |
-      +========================================================+======================================================================================+==================================================+
-      | Retry limit for connecting to the bootstrap            | Common reason for this failure can be incorrect URI or PSK,                          | Library retries after next device reboot.        |
-      | server has been reached (``-ETIMEDOUT``).              | or the server is unavailable (for example, temporary network issues).                |                                                  |
-      |                                                        | If this error persists, contact your carrier.                                        |                                                  |
-      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
-      | Failure to provision the PSK                           | The LTE link was up while the modem attempted to write keys to the modem.            | Library retries after 24 hours.                  |
-      | needed for the bootstrap procedure (``-EACCES``).      | Verify that the application prioritizes the ``LWM2M_CARRIER_EVENT_LTE_LINK_UP``      |                                                  |
-      |                                                        | and ``LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`` events.                                    |                                                  |
-      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
-      | Failure to read MSISDN or ICCID values (``-EFAULT``).  | ICCID is fetched from SIM, while MSISDN is received from the network for             | Library retries upon next network connection.    |
-      |                                                        | some carriers. If it has not been issued yet, the bootstrap process cannot proceed.  |                                                  |
-      +--------------------------------------------------------+--------------------------------------------------------------------------------------+--------------------------------------------------+
-
-    * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_FAIL` - This error indicates a failure to update the device.
-      If this error persists, create a ticket in `DevZone`_ with the modem trace.
-      The following error values may apply:
-
-      * ``-EPERM`` - No valid security tag found.
-        The security tag contains the certificate needed to secure the connection to the repository server.
-        Check with your operator which certificates are needed for the firmware update, and make sure that you have provisioned these to the device.
-      * ``-ENOMEM`` - Too many open connections to connect to the firmware repository.
-        Pay attention to :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START`, which prompts you to close any TLS socket.
-      * ``-EBADF`` - Incorrect firmware update version.
-        The Firmware could not be applied to the device.
-        Check that you are providing the correct FOTA image and that it is compatible with the current firmware.
-
-    * :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION` - This error indicates that an illegal object configuration has been detected.
-    * :c:macro:`LWM2M_CARRIER_ERROR_INIT` - This error indicates that the LwM2M carrier library has failed to initialize.
-    * :c:macro:`LWM2M_CARRIER_ERROR_RUN` - This error indicates that the library configuration is invalid.
-      Ensure that the :c:struct:`lwm2m_carrier_config_t` structure is configured correctly.
-    * :c:macro:`LWM2M_CARRIER_ERROR_CONNECT` - This error indicates that LwM2M carrier connect failed.
-      The LwM2M carrier library has exhausted its attempts to connect to the device management server.
-      New attempts at connecting will only be made after restarting the application (for example by rebooting the device).
+See the :ref:`liblwm2m_carrier_events` section of the API documentation for a complete overview over the events, which are defined in the :file:`nrf/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h` file.
 
 .. _lwm2m_carrier_shell:
 
@@ -455,48 +347,58 @@ Objects
 The objects enabled depend on the carrier network.
 When connecting to a generic LwM2M Server, the following objects are enabled:
 
-* Security
-* Server
-* Access Control
-* Device
-* Connectivity Monitoring
-* Firmware Update
-* Location
-* Connectivity Statistics
-* Cellular Connectivity
-* APN Connection Profile
-* Binary App Data Container
-* Event Log
++-----+---------------------------+
+| ID  | Name                      |
++=====+===========================+
+| 0   | Security                  |
++-----+---------------------------+
+| 1   | Server                    |
++-----+---------------------------+
+| 2   | Access Control            |
++-----+---------------------------+
+| 3   | Device                    |
++-----+---------------------------+
+| 4   | Connectivity Monitoring   |
++-----+---------------------------+
+| 5   | Firmware Update           |
++-----+---------------------------+
+| 6   | Location                  |
++-----+---------------------------+
+| 7   | Connectivity Statistics   |
++-----+---------------------------+
+| 10  | Cellular Connectivity     |
++-----+---------------------------+
+| 11  | APN Connection Profile    |
++-----+---------------------------+
+| 19  | Binary App Data Container |
++-----+---------------------------+
+| 20  | Event Log                 |
++-----+---------------------------+
 
 Resources
 =========
 
-The following values that reflect the state of the device must be kept up to date by the application:
+Reading and writing to the resources of the prior listed objects are the LwM2M Server's interface to your device.
+Many of these resources have no application API, and the reporting is automatically handled by the LwM2M carrier library.
+An example is the Network Bearer or Radio Signal Strength resources in the Connectivity Monitoring object are simply read from the modem directly by the library.
 
-* Available Power Sources - Defaults to ``0`` if not set (DC Power).
-* Power Source Voltage - Defaults to ``0`` if not set.
-* Power Source Current - Defaults to ``0`` if not set.
-* Battery Level - Defaults to ``0`` if not set.
-* Battery Status - Defaults to ``5`` if not set (Not Installed).
-* Memory Total - Defaults to ``0`` if not set.
-* Error Code - Defaults to ``0`` if not set (No Error).
-* Device Type - Defaults to ``Module`` if not set.
-* Software Version - Defaults to ``LwM2M_carrier_<libversion>``.
-  For example, ``LwM2M_carrier_3.5.1`` for release 3.5.1.
-* Hardware Version - Default value is read from the modem.
-  An example value is ``nRF9161 LACA ADA``.
-* Location - Defaults to ``0`` if not set.
+Every resource, which is *not* automatically managed by the library, can be set using the resource APIs.
+See the :ref:`liblwm2m_carrier_objects` section for more details on the resource APIs, which are defined in the :file:`nrf/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h` file.
 
-The following values are read from the modem by default but can be overwritten:
+For example, your operator's LwM2M Server might observe the battery level of your device.
+The battery level is not automatically known to the LwM2M carrier library, (or if there is no battery at all).
+So it provides the default (0%) to the server.
+The application can use the :c:func:`lwm2m_carrier_avail_power_sources_set` function to select :c:macro:`LWM2M_CARRIER_POWER_SOURCE_INTERNAL_BATTERY` as the power source, and then call the :c:func:`lwm2m_carrier_battery_level_set` function to indicate the current battery level of the device to the operator's server.
 
-* Manufacturer
-* Model Number
-* UTC Offset
-* Time zone
-* Current Time
+  .. note::
+     Some Device Resources are not expected to change during runtime and are set at start-up using the :c:struct:`lwm2m_carrier_config_t` struct
+     See :ref:`device_options_lwm2m` for the corresponding Kconfig options for the following events:
 
-For example, the carrier device management platform can observe the battery level of your device.
-The application uses the :c:func:`lwm2m_carrier_battery_level_set` function to indicate the current battery level of the device to the carrier.
+     * :c:member:`lwm2m_carrier_config_t.manufacturer`
+     * :c:member:`lwm2m_carrier_config_t.model_number`
+     * :c:member:`lwm2m_carrier_config_t.device_type`
+     * :c:member:`lwm2m_carrier_config_t.hardware_version`
+     * :c:member:`lwm2m_carrier_config_t.software_version`
 
 DFU interface
 *************
