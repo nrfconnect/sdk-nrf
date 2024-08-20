@@ -26,7 +26,6 @@
 
 #include <modem/nrf_modem_lib.h>
 #include <modem/nrf_modem_lib_trace.h>
-#include <modem/at_monitor.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 

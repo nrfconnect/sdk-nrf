@@ -9,7 +9,6 @@
 
 #include "cloud_lwm2m.h"
 #include "mosh_print.h"
-#include "mosh_defines.h"
 #include "location_srv_ext.h"
 
 /* Location Assistance resource IDs */

@@ -10,7 +10,6 @@
 #include <modem/modem_info.h>
 #include <lwm2m_object.h>
 #include <net/lwm2m_client_utils.h>
-#include <net/lwm2m_client_utils_location.h>
 
 #include "mosh_print.h"
 #include "cloud_lwm2m.h"
