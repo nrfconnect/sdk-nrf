@@ -252,6 +252,11 @@ The default templates searches for the following options inside the :file:`VERSI
 * ``RAD_RECOVERY_SEQ_NUM`` - Sets the radio recovery manifest sequence number.
 * ``RAD_RECOVERY_VERSION`` - Sets the radio recovery manifest current (semantic) version.
 
+If the manifest sequence number or current (semantic) version is not defined for a manifest, the default template tries to generate those values, based on the application version values:
+
+   * The default manifest sequence number is set in the same manner as the ``APPVERSION`` CMake variable.
+   * The default manifest current (semantic) version is set in the same manner as the ``APP_VERSION_EXTENDED_STRING`` CMake variable.
+
 With the Python dictionary you are able to, for example:
 
 * Extract the CPU ID by using ``application['dt'].label2node['cpu'].unit_addr``
