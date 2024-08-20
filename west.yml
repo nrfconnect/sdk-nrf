@@ -179,7 +179,7 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: v2.4.3
+      revision: b5d8e3ec3ad42b5789b94dbc4caf850c146df068
       groups:
         - homekit
     - name: find-my
