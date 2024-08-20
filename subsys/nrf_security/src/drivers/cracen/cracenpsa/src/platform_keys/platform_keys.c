@@ -31,6 +31,7 @@
 #define PLATFORM_KEY_GET_GENERATION(x) ((x)&0xf)
 #define PLATFORM_KEY_GET_USAGE(x)      (((x) >> 8) & 0xff)
 #define PLATFORM_KEY_GET_DOMAIN(x)     (((x) >> 16) & 0xff)
+#define PLATFORM_KEY_GET_ACCESS(x)     (((x) >> 24) & 0xf)
 
 #define USAGE_FWENC		       0x20
 #define USAGE_PUBKEY		       0x21
@@ -47,6 +48,9 @@
 #define DOMAIN_ISIM	   0x05
 #define DOMAIN_WIFI	   0x06
 #define DOMAIN_SYSCTRL	   0x08
+
+#define ACCESS_INTERNAL 0x0
+#define ACCESS_LOCAL	0x1
 
 #define MAX_KEY_SIZE 32
 
@@ -264,6 +268,33 @@ static key_type find_key(uint32_t id, platform_key *key)
 	return INVALID;
 }
 
+/**
+ * @brief Checks whether key usage from a certain domain can access key.
+ *
+ * @return psa_status_t
+ */
+static psa_status_t verify_access(uint32_t domain_id, uint32_t key_id)
+{
+	switch (PLATFORM_KEY_GET_ACCESS(key_id)) {
+	case ACCESS_INTERNAL:
+		/* Key can be accessed by secure domain only. */
+		if (domain_id == DOMAIN_SECURE) {
+			return PSA_SUCCESS;
+		}
+		return PSA_ERROR_NOT_PERMITTED;
+	case ACCESS_LOCAL:
+		/* Key can be accessed by both secure domain and the domain it belongs to. */
+		if (domain_id == DOMAIN_SECURE) {
+			return PSA_SUCCESS;
+		} else if (domain_id == PLATFORM_KEY_GET_DOMAIN(key_id)) {
+			return PSA_SUCCESS;
+		}
+		return PSA_ERROR_NOT_PERMITTED;
+	default:
+		return PSA_ERROR_DOES_NOT_EXIST;
+	}
+}
+
 psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 					     psa_key_attributes_t *attributes, uint8_t *key_buffer,
 					     size_t key_buffer_size, size_t *key_buffer_length)
@@ -476,9 +507,10 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 
 	uint32_t domain = PLATFORM_KEY_GET_DOMAIN(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
 
-	if (domain != MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id) &&
-	    MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id) != 0) {
-		return PSA_ERROR_NOT_PERMITTED;
+	psa_status_t status = verify_access(MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id),
+					    MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
 	if (type == SICR || type == EMBEDDED || type == DERIVED) {
@@ -509,17 +541,18 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_status_t status =
+		verify_access(MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes)),
+			      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 
 	/* The memory is required to be filled with 0xFF before the keys are provisioned. If another
 	 * value is found, we assume the key has already been provisioned.
 	 */
 	if (key.sicr.bits != UINT16_MAX) {
 		return PSA_ERROR_ALREADY_EXISTS;
-	}
-
-	if (domain != MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes)) && domain != 0) {
-		return PSA_ERROR_NOT_PERMITTED;
 	}
 
 	if (key_buffer_size > key.sicr.key_buffer_max_length) {
