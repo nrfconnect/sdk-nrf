@@ -220,9 +220,10 @@ SUIT also has the following options in the sysbuild configuration:
 .. note::
    The ``SB_CONFIG_SUIT_ENVELOPE_SIGN`` is disabled, so the generated SUIT envelope is not signed.
 
-SUIT reads the following options from the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.:
+By default, the SUIT generator sets the values inside the manifest based on the content of the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.:
 
-   * ``APP_ROOT_SEQ_NUM`` - The nRF Desktop application uses the sequence number of root manifest to define an application version.
+   * The manifest sequence number is set in the same manner as the ``APPVERSION`` CMake variable.
+   * The manifest current (semantic) version is set in the same manner as the ``APP_VERSION_EXTENDED_STRING`` CMake variable.
 
 On the ``nrf54h20dk`` board, the dedicated DFU partition called ``dfu_partition`` is defined by default in the DTS.
 The partition is used to store the incoming SUIT envelope with an update candidate.

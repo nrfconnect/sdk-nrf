@@ -13,6 +13,8 @@ SUIT_Envelope_Tagged:
     suit-manifest-version: 1
 {%- if RAD_LOCAL_1_SEQ_NUM is defined %}
     suit-manifest-sequence-number: {{ RAD_LOCAL_1_SEQ_NUM }}
+{%- elif DEFAULT_SEQ_NUM is defined %}
+    suit-manifest-sequence-number: {{ DEFAULT_SEQ_NUM }}
 {%- else %}
     suit-manifest-sequence-number: 1
 {%- endif %}
@@ -71,6 +73,8 @@ SUIT_Envelope_Tagged:
 
 {%- if RAD_LOCAL_1_VERSION is defined %}
     suit-current-version: {{ RAD_LOCAL_1_VERSION }}
+{%- elif DEFAULT_VERSION is defined %}
+    suit-current-version: {{ DEFAULT_VERSION }}
 {%- endif %}
 
     suit-payload-fetch:

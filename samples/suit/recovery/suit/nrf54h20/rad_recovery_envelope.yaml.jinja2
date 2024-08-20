@@ -8,6 +8,8 @@ SUIT_Envelope_Tagged:
     suit-manifest-version: 1
 {%- if RAD_RECOVERY_SEQ_NUM is defined %}
     suit-manifest-sequence-number: {{ RAD_RECOVERY_SEQ_NUM }}
+{%- elif DEFAULT_SEQ_NUM is defined %}
+    suit-manifest-sequence-number: {{ DEFAULT_SEQ_NUM }}
 {%- else %}
     suit-manifest-sequence-number: 1
 {%- endif %}
@@ -68,6 +70,8 @@ SUIT_Envelope_Tagged:
 
 {%- if RAD_RECOVERY_VERSION is defined %}
     suit-current-version: {{ RAD_RECOVERY_VERSION }}
+{%- elif DEFAULT_VERSION is defined %}
+    suit-current-version: {{ DEFAULT_VERSION }}
 {%- endif %}
 
     - suit-directive-fetch:
