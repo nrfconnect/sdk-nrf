@@ -1,21 +1,59 @@
 .. _liblwm2m_api:
 
 API documentation
-*****************
+#################
 
 .. contents::
    :local:
    :depth: 2
 
-| Header files: :file:`lib/bin/lwm2m_carrier/include`
-| Source files: :file:`lib/bin/lwm2m_carrier`
+Following are the LwM2M carrier and LwM2M OS abstraction layer API elements used by the library:
+
+LwM2M carrier library
+*********************
+
+| Header files: :file:`lib/bin/lwm2m_carrier/include/lwm2m_carrier.h`
+| Source files: :file:`lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`
+
+LwM2M carrier library start up
+==============================
+
+.. doxygengroup:: lwm2m_carrier_init
+   :project: nrf
+   :members:
+
+.. _liblwm2m_carrier_events:
+
+LwM2M carrier library events
+============================
+
+.. doxygengroup:: lwm2m_carrier_events
+   :project: nrf
+   :members:
 
 LwM2M carrier library API
-=========================
+=============================
 
 .. doxygengroup:: lwm2m_carrier_api
    :project: nrf
    :members:
+
+.. _liblwm2m_carrier_objects:
+
+LwM2M carrier library objects
+=============================
+
+.. doxygengroup:: lwm2m_carrier_objects
+   :project: nrf
+   :members:
+
+.. _liblwm2m_os:
+
+OS abstraction layer
+********************
+
+| Header file: :file:`lib/bin/lwm2m_carrier/include/lwm2m_os.h`
+| Source file: :file:`lib/bin/lwm2m_carrier/os/lwm2m_os.c`
 
 LwM2M OS layer
 ==============
