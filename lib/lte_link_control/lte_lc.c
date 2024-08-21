@@ -137,7 +137,7 @@ K_WORK_DEFINE(lte_lc_edrx_ptw_send_work, lte_lc_edrx_ptw_send_work_fn);
 static void lte_lc_edrx_req_work_fn(struct k_work *work_item);
 K_WORK_DEFINE(lte_lc_edrx_req_work, lte_lc_edrx_req_work_fn);
 
-K_THREAD_STACK_DEFINE(lte_lc_work_q_stack, 1280);
+K_THREAD_STACK_DEFINE(lte_lc_work_q_stack, 1024);
 
 static struct k_work_q lte_lc_work_q;
 
@@ -873,6 +873,9 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	char active_time_str[9] = {0};
 	char tau_ext_str[9] = {0};
 	char tau_legacy_str[9] = {0};
+	static char response[160] = { 0 };
+	const char ch = ',';
+	char *comma_ptr;
 
 	if ((tau == NULL) || (active_time == NULL)) {
 		return -EINVAL;
@@ -886,41 +889,67 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	 * Periodic-TAU.
 	 */
 
-	err = nrf_modem_at_scanf(
-		"AT%XMONITOR",
-		"%%XMONITOR: "
-		"%*u,"          /* <reg_status> */
-		"%*[^,],"       /* <full_name> */
-		"%*[^,],"       /* <short_name> */
-		"%*[^,],"       /* <plmn> */
-		"%*[^,],"       /* <tac> */
-		"%*u,"          /* <AcT> */
-		"%*u,"          /* <band> */
-		"%*[^,],"       /* <cell_id> */
-		"%*u,"          /* <phys_cell_id> */
-		"%*u,"          /* <EARFCN> */
-		"%*u,"          /* <rsrp> */
-		"%*u,"          /* <snr> */
-		"%*[^,],"       /* <NW-Provided_eDRX_value> */
-		"\"%8[^\"]\","  /* <Active-Time> */
-		"\"%8[^\"]\","  /* <Periodic-TAU-ext> */
-		"\"%8[^\"]\"",  /* <Periodic-TAU> */
-		active_time_str,
-		tau_ext_str,
-		tau_legacy_str);
+	response[0] = '\0';
 
-	if (err < 0) {
+	err = nrf_modem_at_cmd(response, sizeof(response), "AT%%XMONITOR");
+	if (err) {
 		LOG_ERR("AT command failed, error: %d", err);
 		return -EFAULT;
-	} else if (err != 3) {
-		LOG_ERR("XMONITOR parsing failed, error: %d", err);
+	}
+
+	comma_ptr = strchr(response, ch);
+	if (!comma_ptr) {
+		/* Not an AT error, thus must be that just a <reg_status> received:
+		 * optional part is included in a response only when <reg_status> is 1 or 5.
+		 */
+		LOG_DBG("Not registered: cannot get current PSM configuration");
+		return -EBADMSG;
+	}
+
+	/* Skip over first 13 fields in AT cmd response by counting delimiters (commas). */
+	for (int i = 0; i < 12; i++) {
+		if (comma_ptr) {
+			comma_ptr = strchr(comma_ptr + 1, ch);
+		} else {
+			LOG_ERR("AT command parsing failed");
+			return -EBADMSG;
+		}
+	}
+
+	/* The last three fields of AT response looks something like this:
+	 * ,"00011110","00000111","01001001"
+	 * comma_ptr now points the comma before Active-Time. Discard the comma and the quote mark,
+	 * hence + 2, and copy Active-Time into active_time_str. Find the next comma and repeat for
+	 * Periodic-TAU-ext and so forth.
+	 */
+
+	if (comma_ptr) {
+		strncpy(active_time_str, comma_ptr + 2, 8);
+	} else {
+		LOG_ERR("AT command parsing failed");
+		return -EBADMSG;
+	}
+
+	comma_ptr = strchr(comma_ptr + 1, ch);
+	if (comma_ptr) {
+		strncpy(tau_ext_str, comma_ptr + 2, 8);
+	} else {
+		LOG_ERR("AT command parsing failed");
+		return -EBADMSG;
+	}
+
+	comma_ptr = strchr(comma_ptr + 1, ch);
+	if (comma_ptr) {
+		strncpy(tau_legacy_str, comma_ptr + 2, 8);
+	} else {
+		LOG_ERR("AT command parsing failed");
 		return -EBADMSG;
 	}
 
 	err = parse_psm(active_time_str, tau_ext_str, tau_legacy_str, &psm_cfg);
 	if (err) {
 		LOG_ERR("Failed to parse PSM configuration, error: %d", err);
-		return -EBADMSG;
+		return err;
 	}
 
 	*tau = psm_cfg.tau;
