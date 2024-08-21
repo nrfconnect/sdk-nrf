@@ -148,6 +148,13 @@ The issues in this section are related to :ref:`ug_ble_controller`.
 
 .. rst-class:: v2-7-0
 
+DRGN-22930 The SoftDevice Controller may de-reference a ``NULL`` pointer
+  This can occur when using the vendor-specific HCI command Zephyr Write TX Power Level for a connection.
+
+  **Workaround:** Enable support for the LE Power Control feature (:kconfig:option:`CONFIG_BT_CTLR_LE_POWER_CONTROL`).
+
+.. rst-class:: v2-7-0
+
 NCSDK-28239 On nRF54H20, a Bluetooth LE disconnect event is not generated once the central device (i.e. mobile phone) moves out of range while data is being transferred (i.e. during DFU)
   This will prevent the device from establishing new BLE connections.
 
