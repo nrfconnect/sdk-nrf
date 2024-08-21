@@ -46,6 +46,7 @@ config NFC_RPC_T2T
 config NFC_RPC_T4T
 	bool "NFC T4T over RPC"
 	select NFC_NDEF
+	select NFC_NDEF_MSG
 	default y
 	help
 	  Enables serialization NFC T4T API over RPC.

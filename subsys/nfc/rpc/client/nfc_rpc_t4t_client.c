@@ -23,13 +23,13 @@ static void nfc_rpc_t4t_cb_rpc_handler(const struct nrf_rpc_group *group,
 	void *context;
 	nfc_t4t_callback_t callback;
 
+	context = (void *)nrf_rpc_decode_uint(ctx);
 	event = nrf_rpc_decode_uint(ctx);
 	data = nrf_rpc_decode_buffer_ptr_and_size(ctx, &data_length);
 	flags = nrf_rpc_decode_uint(ctx);
-	context = (void *)nrf_rpc_decode_uint(ctx);
 	callback = (nfc_t4t_callback_t)nrf_rpc_decode_callback_call(ctx);
 
-	if (data && data_length && callback) {
+	if (data && data_length) {
 		container = k_malloc(data_length);
 	}
 
@@ -43,10 +43,10 @@ static void nfc_rpc_t4t_cb_rpc_handler(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	if (container) {
-		callback(context, event, container, data_length, flags);
-		k_free(container);
+	if (callback) {
+		callback(context, event, data ? container : NULL, data ? data_length : 0, flags);
 	}
+	k_free(container);
 
 	nrf_rpc_rsp_send_void(group);
 }
