@@ -87,6 +87,19 @@ static int location_cb_expected_2;
 K_SEM_DEFINE(event_handler_called_sem, 0, 1);
 K_SEM_DEFINE(event_handler_called_sem_2, 0, 1);
 
+/* Strings for GNSS positioning */
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
+static const char xmonitor_resp[] =
+	"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"0140\",7,20,\"001F8414\","
+	"334,6200,66,44,\"\","
+	"\"11100000\",\"00010011\",\"01001001\"";
+
+static const char xmonitor_resp_psm_on[] =
+	"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"0140\",7,20,\"001F8414\","
+	"334,6200,66,44,\"\","
+	"\"00100001\",\"00101001\",\"01001001\"";
+#endif
+
 #if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 /* PDN active response */
 static const char cgact_resp_active[] = "+CGACT: 0,1";
@@ -743,13 +756,11 @@ void test_location_gnss(void)
 
 #else
 	/* PSM is configured */
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XMONITOR",
-		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
-		3);
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00100001");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00101001");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp_psm_on, sizeof(xmonitor_resp_psm_on));
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -849,13 +860,11 @@ void test_location_gnss_location_request_timeout(void)
 #endif
 
 #if !defined(CONFIG_LOCATION_TEST_AGNSS)
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XMONITOR",
-		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
-		3);
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010011");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 #endif
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 
@@ -1459,13 +1468,11 @@ void test_location_request_default(void)
 #endif
 
 #if !defined(CONFIG_LOCATION_TEST_AGNSS)
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XMONITOR",
-		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
-		3);
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010011");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 #endif
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
@@ -1684,13 +1691,11 @@ void test_location_request_mode_all_cellular_gnss(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
 #if !defined(CONFIG_LOCATION_TEST_AGNSS)
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XMONITOR",
-		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
-		3);
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010011");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 #endif
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
@@ -1788,13 +1793,11 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
 #if !defined(CONFIG_LOCATION_TEST_AGNSS)
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XMONITOR",
-		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
-		3);
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010011");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 #endif
 	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
 
@@ -1892,13 +1895,11 @@ void test_location_gnss_periodic(void)
 	TEST_ASSERT_EQUAL(0, err);
 
 #if !defined(CONFIG_LOCATION_TEST_AGNSS)
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XMONITOR",
-		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
-		3);
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010011");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 #endif
 	at_monitor_dispatch("+CSCON: 0");
 	k_sleep(K_MSEC(1));
@@ -1953,13 +1954,11 @@ void test_location_gnss_periodic(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
 
 #if !defined(CONFIG_LOCATION_TEST_AGNSS)
-	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XMONITOR",
-		"%%XMONITOR: %*u,%*[^,],%*[^,],%*[^,],%*[^,],%*u,%*u,%*[^,],%*u,%*u,%*u,%*u,%*[^,],\"%8[^\"]\",\"%8[^\"]\",\"%8[^\"]\"",
-		3);
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("11100000");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("00010011");
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("01001001");
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
 #endif
 	k_sleep(K_MSEC(1500));
 	at_monitor_dispatch("+CSCON: 0");
