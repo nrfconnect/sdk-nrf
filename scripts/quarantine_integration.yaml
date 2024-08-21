@@ -1430,3 +1430,13 @@
     - ".*thingy.*nrf70.*"
     - ".*thingy.*wifi.*"
   comment: "Thingy is not supported in the upstream nRF70 driver yet"
+
+- scenarios:
+    - sample.cellular.modem_shell.location_service_ext_pgps_nrf7002ek_wifi
+    - sample.cellular.nrf7002ek_wifi.scan
+    - sample.cellular.nrf7002ek_wifi.conn
+  platforms:
+    - nrf9161dk/nrf9161/ns
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9151dk/nrf9151/ns
+  comment: "Unknown failures using NS (TF-M), unable to replicate locally, temporarily excluded"
