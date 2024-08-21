@@ -318,6 +318,10 @@ Bluetooth Fast Pair samples
   * The values for the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option in all configurations, and for the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL` Kconfig option in configurations with the Find My Device Network (FMDN) extension support.
     The values are now aligned with the Fast Pair requirements.
 
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Updated the :ref:`ipc_radio` image configuration by splitting it into the debug and release configurations.
+
 Bluetooth Mesh samples
 ----------------------
 
