@@ -11,6 +11,7 @@ config PSA_CRYPTO_DRIVER_OBERON
 	prompt "Oberon PSA driver" if !(TFM_PARTITION_PROTECTED_STORAGE || TFM_CRYPTO_BUILTIN_KEYS)
 	bool
 	default y if ! CRACEN_HW_PRESENT
+	depends on PSA_CORE_OBERON
 	help
 	  This configuration enables the usage of the Oberon PSA driver.
 
@@ -18,6 +19,7 @@ config PSA_CRYPTO_DRIVER_CC3XX
 	prompt "CryptoCell PSA driver"
 	bool
 	depends on HAS_HW_NRF_CC3XX
+	depends on PSA_CORE_OBERON
 	help
 	  This configuration enables the usage of CryptoCell for the supported operations.
 	  Disabling this option will result in all crypto operations being handled by
@@ -30,6 +32,7 @@ config PSA_CRYPTO_DRIVER_CRACEN
 	bool "Enable the Cracen PSA driver"
 	depends on MBEDTLS_PSA_CRYPTO_C
 	depends on CRACEN_HW_PRESENT
+	depends on PSA_CORE_OBERON
 	# CRACEN uses the k_event_ API
 	select EVENTS if MULTITHREADING
 	default y
