@@ -350,6 +350,8 @@ Cellular samples
 
     * Wi-Fi overlays from newlibc to picolib.
     * Handling of JITP association to improve speed and reliability.
+    * Renamed the :file:`overlay_nrf7002ek_wifi_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_mqtt_no_lte.conf`.
+    * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
