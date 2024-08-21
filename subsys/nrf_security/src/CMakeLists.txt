@@ -65,7 +65,7 @@ file(REMOVE_RECURSE ${generated_include_path})
 include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_want_config.cmake)
 
 # Generate mbed TLS configurations
-if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS)
+if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS AND NOT CONFIG_PSA_SSF_CRYPTO_CLIENT)
   include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
 else()
   include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_config.cmake)
