@@ -33,6 +33,9 @@
 #define PLATFORM_KEY_GET_DOMAIN(x)     (((x) >> 16) & 0xff)
 #define PLATFORM_KEY_GET_ACCESS(x)     (((x) >> 24) & 0xf)
 
+#define USAGE_IAK		       0x1
+#define USAGE_MKEK		       0x2
+#define USAGE_MEXT		       0x3
 #define USAGE_FWENC		       0x20
 #define USAGE_PUBKEY		       0x21
 #define USAGE_AUTHDEBUG		       0x23
@@ -145,13 +148,15 @@ typedef union {
 	sicr_key sicr;
 	embedded_key embedded;
 	derived_key derived;
+	ikg_key ikg;
 } platform_key;
 
 typedef enum {
 	INVALID,
 	EMBEDDED,
 	DERIVED,
-	SICR
+	SICR,
+	IKG,
 } key_type;
 
 #define APPEND_STR(str, end, part)                                                                 \
@@ -258,6 +263,22 @@ static key_type find_key(uint32_t id, platform_key *key)
 		return DERIVED;
 	}
 
+	if (usage == USAGE_IAK || usage == USAGE_MKEK || usage == USAGE_MEXT) {
+		key->ikg.domain = domain;
+		switch (usage) {
+		case USAGE_IAK:
+			key->ikg.slot_number = CRACEN_IDENTITY_KEY_SLOT_NUMBER;
+			break;
+		case USAGE_MKEK:
+			key->ikg.slot_number = CRACEN_MKEK_SLOT_NUMBER;
+			break;
+		case USAGE_MEXT:
+			key->ikg.slot_number = CRACEN_MEXT_SLOT_NUMBER;
+			break;
+		}
+		return IKG;
+	}
+
 	for (size_t i = 0; i < ARRAY_SIZE(embedded_keys); i++) {
 		if (id == embedded_keys[i].id) {
 			key->embedded = embedded_keys[i];
@@ -331,7 +352,7 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 		/* Note: PSA Driver wrapper API require that attributes are filled before returning
 		 * error.
 		 */
-		if (key_bytes < key_buffer_size) {
+		if (key_bytes > key_buffer_size) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		} else if (key_buffer == NULL || key_buffer_length == NULL) {
 			return PSA_ERROR_INVALID_ARGUMENT;
@@ -436,7 +457,7 @@ cleanup:
 		/* Note: PSA Driver wrapper API require that attributes are filled before returning
 		 * error.
 		 */
-		if (32 < key_buffer_size) {
+		if (32 > key_buffer_size) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		} else if (key_buffer == NULL || key_buffer_length == NULL) {
 			return PSA_ERROR_INVALID_ARGUMENT;
@@ -491,6 +512,10 @@ size_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes)
 		return 0;
 	}
 
+	if (type == IKG) {
+		return sizeof(ikg_opaque_key);
+	}
+
 	if (key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS) ||
 	    key_type == PSA_KEY_TYPE_AES) {
 		return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
@@ -521,6 +546,14 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 		if (type == SICR && key.sicr.bits == UINT16_MAX) {
 			return PSA_ERROR_DOES_NOT_EXIST;
 		}
+		return PSA_SUCCESS;
+	}
+
+	if (type == IKG) {
+		*slot_number = key.ikg.slot_number;
+		*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+			PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN);
+
 		return PSA_SUCCESS;
 	}
 

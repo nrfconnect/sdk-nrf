@@ -52,8 +52,6 @@ struct sx_pk_cnx {
 
 struct sx_pk_cnx silex_pk_engine;
 
-int cracen_prepare_ik_key(const uint8_t *user_data);
-
 NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_asymmetric);
 
 bool ba414ep_is_busy(sx_pk_req *req)
@@ -196,10 +194,6 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 	/* Wait until initialized. */
 	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
 		cracen_wait_for_pke_interrupt();
-	}
-
-	if (sx_pk_is_ik_cmd(req.req)) {
-		req.status = cracen_prepare_ik_key(NULL);
 	}
 
 	return req;
