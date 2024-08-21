@@ -30,11 +30,6 @@ config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
 	help
 	  0 disables progress report.
 
-config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
-	int "Fragment size for FOTA downloads"
-	range 128 1700
-	default 1700
-
 config NRF_CLOUD_FOTA_BLE_DEVICES
 	bool "Enable API for FOTA of BLE devices"
 	depends on BT
@@ -44,6 +39,12 @@ module-str = nRF Cloud FOTA
 source "subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_CLOUD_FOTA
+
+config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
+	int "Fragment size for FOTA downloads"
+	depends on FOTA_DOWNLOAD
+	range 128 1900
+	default 1900
 
 config FOTA_USE_NRF_CLOUD_SETTINGS_AREA
 	bool "Use the same settings area as the nRF Cloud FOTA library"

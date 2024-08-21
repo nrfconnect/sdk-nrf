@@ -18,7 +18,6 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_fota_poll, CONFIG_NRF_CLOUD_FOTA_POLL_LOG_LEVEL);
 
-#define FOTA_DL_FRAGMENT_SZ	1400
 #define JOB_WAIT_S		30
 
 /* FOTA job status strings that provide additional details for nrf_cloud_fota_status values */
@@ -375,7 +374,7 @@ static int start_download(void)
 			.sec_tag_list = &sec_tag,
 			.sec_tag_count = (sec_tag < 0 ? 0 : 1),
 			.pdn_id = 0,
-			.frag_size_override = FOTA_DL_FRAGMENT_SZ,
+			.frag_size_override = CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
 		},
 		.fota = {
 			.expected_type = img_type,
