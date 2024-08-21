@@ -212,8 +212,9 @@ ZTEST(nfc_rpc_t4t_cli, test_t4t_cb_handler)
 	slot_cnt++;
 	cb_called = false;
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(NFC_RPC_CMD_T4T_CB, NFC_T4T_EVENT_DATA_IND, NFC_DATA,
-					CBOR_UINT32(0xcafebabe), CBOR_UINT32(0xdeadbeef), in_slot));
+	mock_nrf_rpc_tr_receive(RPC_CMD(NFC_RPC_CMD_T4T_CB, CBOR_UINT32(0xdeadbeef),
+					NFC_T4T_EVENT_DATA_IND, NFC_DATA, CBOR_UINT32(0xcafebabe),
+					in_slot));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_true(cb_called);

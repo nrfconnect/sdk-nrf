@@ -21,8 +21,6 @@ target_sources(app PRIVATE
   ../common/nrf_rpc_single_thread.c
 )
 
-zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nfc/include/)
-
 # Enforce single-threaded nRF RPC command processing.
 target_link_options(app PUBLIC
   -Wl,--wrap=nrf_rpc_os_init,--wrap=nrf_rpc_os_thread_pool_send
