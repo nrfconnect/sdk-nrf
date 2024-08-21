@@ -719,6 +719,14 @@ Libraries for networking
 
   * Added support for dictionary logs using REST.
 
+* :ref:`lib_nrf_cloud_fota` library:
+
+* Updated:
+
+  * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE` Kconfig option is made available and used also when the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` Kconfig option is enabled.
+    The range of the option is now from 128 to 1900 bytes, and the default value is 1700 bytes.
+  * The function :c:func:`nrf_cloud_fota_poll_process` can now be used asynchrounously if a callback to handle errors is provided.
+
 Libraries for NFC
 -----------------
 

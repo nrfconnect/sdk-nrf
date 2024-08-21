@@ -44,7 +44,7 @@ config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
 	int "Fragment size for FOTA downloads"
 	depends on FOTA_DOWNLOAD
 	range 128 1900
-	default 1900
+	default 1700
 
 config FOTA_USE_NRF_CLOUD_SETTINGS_AREA
 	bool "Use the same settings area as the nRF Cloud FOTA library"
