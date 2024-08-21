@@ -24,7 +24,6 @@ If you want to list applications available for one or more specific boards, `use
    ../../applications/nrf5340_audio/index
    ../../applications/nrf_desktop/README
    ../../applications/machine_learning/README
-   ../../applications/peripheral_sensor_node/README
    ../../applications/serial_lte_modem/README
    ../../applications/matter_weather_station/README
    ../../applications/zigbee_weather_station/README
