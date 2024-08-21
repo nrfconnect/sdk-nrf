@@ -392,6 +392,25 @@ static void context_print(const struct shell *shell)
 	}
 }
 
+static void codec_qos_print(const struct shell *shell, struct bt_audio_codec_qos *qos)
+{
+	if (qos->phy == BT_AUDIO_CODEC_QOS_1M || qos->phy == BT_AUDIO_CODEC_QOS_2M) {
+		shell_print(shell, "\t\t\tPHY: %dM", qos->phy);
+	} else if (qos->phy == BT_AUDIO_CODEC_QOS_CODED) {
+		shell_print(shell, "\t\t\tPHY: LE Coded");
+	} else {
+		shell_print(shell, "\t\t\tPHY: Unknown");
+	}
+
+	shell_print(shell, "\t\t\tFraming: %s",
+		    (qos->framing == BT_AUDIO_CODEC_QOS_FRAMING_UNFRAMED ? "unframed" : "framed"));
+	shell_print(shell, "\t\t\tRTN: %d", qos->rtn);
+	shell_print(shell, "\t\t\tSDU size: %d", qos->sdu);
+	shell_print(shell, "\t\t\tMax Transport Latency: %d ms", qos->latency);
+	shell_print(shell, "\t\t\tFrame Interval: %d us", qos->interval);
+	shell_print(shell, "\t\t\tPresentation Delay: %d us", qos->pd);
+}
+
 static void broadcast_config_print(const struct shell *shell,
 				   struct broadcast_source_big *brdcst_param)
 {
@@ -418,6 +437,8 @@ static void broadcast_config_print(const struct shell *shell,
 		shell_print(shell, "\tSubgroup %d:", i);
 
 		shell_print(shell, "\t\tPreset: %s", brdcst_param->subgroups[i].preset_name);
+
+		codec_qos_print(shell, &brdcst_param->subgroups[i].group_lc3_preset.qos);
 
 		int freq_hz = 0;
 
@@ -827,7 +848,7 @@ static int cmd_preset(const struct shell *shell, size_t argc, char **argv)
 	if (argc == 4) {
 		uint8_t sub_index;
 
-		ret = argv_to_indexes(shell, argc, argv, NULL, 0, &sub_index, 3);
+		ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
 
 		broadcast_param[big_index].subgroups[sub_index].group_lc3_preset = *preset;
 		broadcast_param[big_index].subgroups[sub_index].preset_name =
@@ -1258,6 +1279,252 @@ static int cmd_program_info(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+static int cmd_phy(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+
+	if (argc != 4) {
+		shell_error(shell,
+			    "Usage: bct phy <1, 2 or 4 (coded)> <BIG index> <subgroup index>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "PHY must be a digit");
+		return -EINVAL;
+	}
+
+	uint8_t phy = (uint8_t)atoi(argv[1]);
+
+	if (phy != BT_AUDIO_CODEC_QOS_1M && phy != BT_AUDIO_CODEC_QOS_2M &&
+	    phy != BT_AUDIO_CODEC_QOS_CODED) {
+		shell_error(shell, "Invalid PHY");
+		return -EINVAL;
+	}
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		return ret;
+	}
+
+	broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.phy = phy;
+	broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+
+	return 0;
+}
+
+static int cmd_framing(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+
+	if (argc != 4) {
+		shell_error(shell,
+			    "Usage: bct framing <unframed/framed> <BIG index> <subgroup index>");
+		return -EINVAL;
+	}
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		return ret;
+	}
+
+	if (strcasecmp(argv[1], "unframed") == 0) {
+		broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.framing =
+			BT_AUDIO_CODEC_QOS_FRAMING_UNFRAMED;
+		broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+	} else if (strcasecmp(argv[1], "framed") == 0) {
+		broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.framing =
+			BT_AUDIO_CODEC_QOS_FRAMING_FRAMED;
+		broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+	} else {
+		shell_error(shell, "Invalid framing type");
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+static int cmd_rtn(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+
+	if (argc != 4) {
+		shell_error(shell, "Usage: bct rtn <num> <BIG index> <subgroup index>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "RTN must be a digit");
+		return -EINVAL;
+	}
+
+	if (strtoul(argv[1], NULL, 10) > UINT8_MAX) {
+		shell_error(shell, "RTN must be less than %d", UINT8_MAX);
+		return -EINVAL;
+	}
+
+	uint8_t rtn = (uint8_t)atoi(argv[1]);
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		return ret;
+	}
+
+	broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.rtn = rtn;
+	broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+
+	return 0;
+}
+
+static int cmd_sdu(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+
+	if (argc != 4) {
+		shell_error(shell, "Usage: bct sdu <octets> <BIG index> <subgroup index>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "SDU must be a digit");
+		return -EINVAL;
+	}
+
+	if (strtoul(argv[1], NULL, 10) > UINT16_MAX) {
+		shell_error(shell, "SDU must be less than %d", UINT16_MAX);
+		return -EINVAL;
+	}
+
+	uint16_t sdu = (uint16_t)atoi(argv[1]);
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		return ret;
+	}
+
+	broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.sdu = sdu;
+	broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+
+	return 0;
+}
+
+static int cmd_mtl(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+
+	if (argc != 4) {
+		shell_error(shell, "Usage: bct mtl <time in ms> <BIG index> <subgroup index>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "MTL must be a digit");
+		return -EINVAL;
+	}
+
+	if (strtoul(argv[1], NULL, 10) > UINT16_MAX) {
+		shell_error(shell, "MTL must be less than %d", UINT16_MAX);
+		return -EINVAL;
+	}
+
+	uint16_t mtl = (uint16_t)atoi(argv[1]);
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		return ret;
+	}
+
+	broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.latency = mtl;
+	broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+
+	return 0;
+}
+
+static int cmd_frame_interval(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+
+	if (argc != 4) {
+		shell_error(shell,
+			    "Usage: bct frame_interval <time in us> <BIG index> <subgroup index>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "Frame interval must be a digit");
+		return -EINVAL;
+	}
+
+	if (strtoul(argv[1], NULL, 10) > UINT32_MAX) {
+		shell_error(shell, "Frame interval must be less than %ld", UINT32_MAX);
+		return -EINVAL;
+	}
+
+	uint32_t frame_interval = (uint32_t)atoi(argv[1]);
+
+	if (frame_interval != 7500 && frame_interval != 10000) {
+		shell_error(shell, "Frame interval must be 7500 or 10000");
+		return -EINVAL;
+	}
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		return ret;
+	}
+
+	broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.interval =
+		frame_interval;
+	broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+
+	return 0;
+}
+
+static int cmd_pd(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+
+	if (argc != 4) {
+		shell_error(shell, "Usage: bct pd <time us> <BIG index> <subgroup index>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "presentation delay must be a digit");
+		return -EINVAL;
+	}
+
+	if (strtoul(argv[1], NULL, 10) > UINT32_MAX) {
+		shell_error(shell, "Presentation delay must be less than %ld", UINT32_MAX);
+		return -EINVAL;
+	}
+
+	uint32_t pd = (uint32_t)atoi(argv[1]);
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		return ret;
+	}
+
+	broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.pd = pd;
+	broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
+
+	return 0;
+}
+
 static int usecase_find(const struct shell *shell, const char *name)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(pre_defined_use_cases); i++) {
@@ -1633,6 +1900,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_COND_CMD(CONFIG_SHELL, clear, NULL, "Clear configuration", cmd_clear),
 	SHELL_COND_CMD(CONFIG_SHELL, adv_name, NULL, "Set advertising name", cmd_adv_name),
 	SHELL_COND_CMD(CONFIG_SHELL, program_info, NULL, "Set program info", cmd_program_info),
+	SHELL_COND_CMD(CONFIG_SHELL, phy, NULL, "Set PHY", cmd_phy),
+	SHELL_COND_CMD(CONFIG_SHELL, framing, NULL, "Set framing", cmd_framing),
+	SHELL_COND_CMD(CONFIG_SHELL, rtn, NULL, "Set number of re-transmits", cmd_rtn),
+	SHELL_COND_CMD(CONFIG_SHELL, sdu, NULL, "Set SDU (octets)", cmd_sdu),
+	SHELL_COND_CMD(CONFIG_SHELL, mtl, NULL, "Set Max Transport latency (ms)", cmd_mtl),
+	SHELL_COND_CMD(CONFIG_SHELL, frame_interval, NULL, "Set frame interval (us)",
+		       cmd_frame_interval),
+	SHELL_COND_CMD(CONFIG_SHELL, pd, NULL, "Set presentation delay (us)", cmd_pd),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(bct, &configuration_cmd, "Broadcast Configuration Tool", NULL);
