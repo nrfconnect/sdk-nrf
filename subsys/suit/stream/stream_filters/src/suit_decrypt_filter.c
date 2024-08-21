@@ -21,7 +21,7 @@
 LOG_MODULE_REGISTER(suit_decrypt_filter, CONFIG_SUIT_LOG_LEVEL);
 
 struct decrypt_ctx {
-	psa_key_id_t cek_key_id;
+	mbedtls_svc_key_id_t cek_key_id;
 	psa_aead_operation_t operation;
 	struct stream_sink enc_sink;
 	size_t tag_size;
@@ -151,13 +151,19 @@ static suit_plat_err_t flush(void *ctx)
 	uint8_t decrypted_buf[PSA_AEAD_VERIFY_OUTPUT_MAX_SIZE] = {0};
 	size_t decrypted_len = 0;
 	struct decrypt_ctx *decrypt_ctx = (struct decrypt_ctx *)ctx;
+	psa_key_id_t cek_key_id_value = 0;
 
 	if (ctx == NULL) {
 		LOG_ERR("Invalid arguments - decrypt ctx is NULL");
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
-	if (decrypt_ctx->cek_key_id == 0) {
+#if defined(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
+	cek_key_id_value = decrypt_ctx->cek_key_id.MBEDTLS_PRIVATE(key_id);
+#else
+	cek_key_id_value = decrypt_ctx->cek_key_id;
+#endif
+	if (cek_key_id_value == 0) {
 		LOG_DBG("Filter already flushed");
 		return SUIT_PLAT_SUCCESS;
 	}
@@ -198,7 +204,7 @@ static suit_plat_err_t flush(void *ctx)
 
 	zeroize(decrypted_buf, sizeof(decrypted_buf));
 
-	decrypt_ctx->cek_key_id = 0;
+	memset(&decrypt_ctx->cek_key_id, 0, sizeof(decrypt_ctx->cek_key_id));
 	zeroize(&decrypt_ctx->operation, sizeof(decrypt_ctx->operation));
 	decrypt_ctx->tag_size = 0;
 	decrypt_ctx->stored_tag_bytes = 0;
@@ -251,13 +257,14 @@ static suit_plat_err_t used_storage(void *ctx, size_t *size)
 }
 
 static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
-				  union suit_key_encryption_data kw_key, psa_key_id_t *cek_key_id)
+				  union suit_key_encryption_data kw_key,
+				  mbedtls_svc_key_id_t *cek_key_id)
 {
-	psa_key_id_t kek_key_id;
-
 	switch (kw_alg_id) {
 #ifdef CONFIG_SUIT_AES_KW_MANUAL
 	case suit_cose_aes256_kw:
+		psa_key_id_t kek_key_id;
+
 		if (suit_plat_decode_key_id(&kw_key.aes.key_id, &kek_key_id) != SUIT_PLAT_SUCCESS) {
 			return SUIT_PLAT_ERR_INVAL;
 		}
@@ -273,7 +280,6 @@ static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
 #endif
 	default:
 		LOG_ERR("Unsupported key wrap/key derivation algorithm: %d", kw_alg_id);
-		(void) kek_key_id;
 		return SUIT_PLAT_ERR_INVAL;
 	}
 

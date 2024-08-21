@@ -6,6 +6,9 @@
 
 #include <stdint.h>
 #include <string.h>
+#if defined(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
+#include <nrf.h>
+#endif
 #include "suit_aes_key_unwrap_manual.h"
 
 #define KW_BLOCK_SIZE_BITS  64
@@ -42,7 +45,7 @@ const static uint8_t KW_IV[KW_BLOCK_SIZE_BYTES] = {0xA6, 0xA6, 0xA6, 0xA6, 0xA6,
 
 static psa_status_t import_cek(const uint8_t *cek, size_t cek_length_bits,
 			       psa_key_type_t cek_key_type, psa_algorithm_t cek_key_alg,
-			       psa_key_id_t *cek_key_id)
+			       mbedtls_svc_key_id_t *cek_key_id)
 {
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 
@@ -58,11 +61,20 @@ static psa_status_t import_cek(const uint8_t *cek, size_t cek_length_bits,
 psa_status_t suit_aes_key_unwrap_manual(psa_key_id_t kek_key_id, const uint8_t *wrapped_cek,
 					size_t cek_bits, psa_key_type_t cek_key_type,
 					psa_algorithm_t cek_key_alg,
-					psa_key_id_t *unwrapped_cek_key_id)
+					mbedtls_svc_key_id_t *unwrapped_cek_key_id)
 {
 	psa_status_t status = PSA_SUCCESS;
 	uint8_t unwrapped_cek[MAX_KEY_SIZE_BYTES] = {0};
 	uint8_t cmp_ret = 0;
+
+#ifdef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+	mbedtls_svc_key_id_t kek_key;
+
+	kek_key.MBEDTLS_PRIVATE(key_id) = kek_key_id;
+	kek_key.MBEDTLS_PRIVATE(owner) = NRF_OWNER_NONE;
+#else  /* MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER */
+	psa_key_id_t kek_key = kek_key_id;
+#endif /* MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER */
 
 	/* TODO: verify wrapped_cek is of correct length */
 
@@ -100,7 +112,7 @@ psa_status_t suit_aes_key_unwrap_manual(psa_key_id_t kek_key_id, const uint8_t *
 			memcpy(temp, A, KW_BLOCK_SIZE_BYTES);
 			memcpy(temp + KW_BLOCK_SIZE_BYTES, R[i], KW_BLOCK_SIZE_BYTES);
 			status =
-				psa_cipher_decrypt(kek_key_id, PSA_ALG_ECB_NO_PADDING, temp,
+				psa_cipher_decrypt(kek_key, PSA_ALG_ECB_NO_PADDING, temp,
 						   sizeof(temp), B, sizeof(B), &temp_output_length);
 
 			if (status != PSA_SUCCESS) {

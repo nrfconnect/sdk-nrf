@@ -35,7 +35,7 @@ extern "C" {
 psa_status_t suit_aes_key_unwrap_manual(psa_key_id_t kek_key_id, const uint8_t *wrapped_cek,
 					size_t cek_bits, psa_key_type_t cek_key_type,
 					psa_algorithm_t cek_key_alg,
-					psa_key_id_t *unwrapped_cek_key_id);
+					mbedtls_svc_key_id_t *unwrapped_cek_key_id);
 
 #ifdef __cplusplus
 }
