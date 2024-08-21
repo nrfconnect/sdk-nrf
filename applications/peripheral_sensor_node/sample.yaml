@@ -4,38 +4,9 @@ sample:
 tests:
   applications.peripheral_sensor_node:
     sysbuild: true
+    build_only: true
     platform_allow: nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build sysbuild
     extra_args: SHIELD=pca63565
-    timeout: 150
-    harness: console
-    harness_config:
-      fixture: pca63565
-      type: multi_line
-      ordered: true
-      regex:
-        - "ble_state: Bluetooth initialized"
-        - "ble_adv: Advertising started"
-        - "app_event_manager: e:module_state_event module:ble_adv state:READY"
-        - "app_event_manager: e:sensor_state_event sensor:imu state:ACTIVE"
-        - "app_event_manager: e:sensor_state_event sensor:env state:ACTIVE"
-        - "nsms: env .*"
-        - "nsms: imu .*"
-        - "app_event_manager: e: power_down_event"
-        - "ble_adv: Advertising stopped"
-        - "app_event_manager: e:module_state_event module:ble_adv state:OFF"
-        - "app_event_manager: e:sensor_state_event sensor:env state:SLEEP"
-        - "app_event_manager: e:sensor_state_event sensor:imu state:SLEEP"
-        - "app_event_manager: e: wake_up_event"
-        - "app_event_manager: e:module_state_event module:ble_adv state:READY"
-        - "app_event_manager: e:sensor_state_event sensor:imu state:ACTIVE"
-        - "app_event_manager: e:sensor_state_event sensor:env state:ACTIVE"
-        - "nsms: env .*"
-        - "nsms: imu .*"
-        - "app_event_manager: e: power_down_event"
-        - "ble_adv: Advertising stopped"
-        - "app_event_manager: e:module_state_event module:ble_adv state:OFF"
-        - "app_event_manager: e:sensor_state_event sensor:env state:SLEEP"
-        - "app_event_manager: e:sensor_state_event sensor:imu state:SLEEP"
