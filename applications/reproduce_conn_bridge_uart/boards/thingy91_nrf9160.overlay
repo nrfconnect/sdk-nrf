@@ -1,0 +1,10 @@
+/ {
+	aliases {
+		log-uart = &uart0;
+		extra-uart = &uart1;
+	};
+};
+
+&uart1 {
+	status = "okay";
+};
