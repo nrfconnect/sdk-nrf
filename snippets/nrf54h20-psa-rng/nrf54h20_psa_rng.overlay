@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	chosen {
+		zephyr,entropy = &psa_rng;
+	};
+
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+};
+
+	&cpusec_cpuapp_ipc {
+		status = "okay";
+	};
+
+	&cpusec_bellboard {
+		status = "okay";
+	};
+
+	&prng {
+		status = "disabled";
+	};
