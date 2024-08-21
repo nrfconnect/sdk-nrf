@@ -39,6 +39,7 @@
 #define DOMAIN_SYSCTRL	   0x08
 
 #define DEVICE_SECRET_LENGTH 4
+#define DEVICE_SECRET_ADDRESS ((uint32_t *)0x0E001620)
 #endif
 
 static const uint8_t RSA_ALGORITHM_IDENTIFIER[] = {0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7,
@@ -678,10 +679,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 	struct sx_pk_config_ik cfg = {};
 
 #ifdef NRF54H_SERIES
-	/* NCSDK-27273: Fetch device secret from persistent storage. */
-	uint32_t device_secret[DEVICE_SECRET_LENGTH] = {};
-
-	cfg.device_secret = device_secret;
+	cfg.device_secret = DEVICE_SECRET_ADDRESS;
 	cfg.device_secret_sz = DEVICE_SECRET_LENGTH;
 
 	switch (((uint32_t *)user_data)[0]) {
@@ -788,7 +786,20 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 			k->clean_key = NULL;
 			break;
 		default:
-			return PSA_ERROR_INVALID_HANDLE;
+			if (key_buffer_size == 0) {
+				return PSA_ERROR_CORRUPTION_DETECTED;
+			}
+
+			if (key_buffer_size == sizeof(ikg_opaque_key)) {
+				k->cfg = ((ikg_opaque_key *)key_buffer)->slot_number;
+				k->owner_id = ((ikg_opaque_key *)key_buffer)->owner_id;
+			} else {
+				/* Normal transparent key. */
+				k->prepare_key = NULL;
+				k->clean_key = NULL;
+				k->key = key_buffer;
+				k->sz = key_buffer_size;
+			}
 		}
 	} else {
 		k->key = key_buffer;

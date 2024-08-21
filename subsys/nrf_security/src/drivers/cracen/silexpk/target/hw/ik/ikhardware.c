@@ -19,6 +19,8 @@
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
 
+int cracen_prepare_ik_key(const uint8_t *user_data);
+
 int sx_pk_is_ik_cmd(sx_pk_req *req)
 {
 	return req->cmd->cmdcode & SX_PK_OP_IK;
@@ -88,17 +90,15 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 		req->ik_mode = 0;
 	} else {
 		if (!req->ik_mode) {
+			int status = cracen_prepare_ik_key((uint8_t *)&key);
+
+			if (status != SX_OK) {
+				sx_pk_release_req(req);
+				return SX_ERR_INVALID_PARAM;
+			}
 			sx_pk_wrreg(&req->regs, PK_REG_CONTROL, PK_RB_CONTROL_CLEAR_IRQ);
 			req->ik_mode = 1;
 		}
-		uint32_t config = sx_pk_rdreg(&req->regs, IK_REG_HW_CONFIG);
-		uint32_t max_hw_keys = ((config & IK_NB_PRIV_KEYS_MASK) >> 4);
-
-		if (key >= max_hw_keys) {
-			sx_pk_release_req(req);
-			return SX_ERR_INVALID_PARAM;
-		}
-		rval |= (key << 4);
 	}
 
 	/* Write IK cmd register */
