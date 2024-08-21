@@ -14,7 +14,7 @@
 psa_status_t suit_aes_key_unwrap_manual(psa_key_id_t kek_key_id, const uint8_t *wrapped_cek,
 					size_t cek_bits, psa_key_type_t cek_key_type,
 					psa_algorithm_t cek_key_alg,
-					psa_key_id_t *unwrapped_cek_key_id);
+					mbedtls_svc_key_id_t *unwrapped_cek_key_id);
 
 static const uint8_t test_kek_key[] = {
 	0x7b, 0xf2, 0x67, 0xbe, 0x5c, 0x57, 0x35, 0x77, 0xb6, 0xe0, 0x6d,
@@ -103,7 +103,7 @@ ZTEST_SUITE(suit_decrypt_filter_tests, NULL, test_suite_setup, NULL, NULL, test_
 
 ZTEST_F(suit_decrypt_filter_tests, test_aes_unwrap_smoke)
 {
-	psa_key_id_t unwrapped_cek_key_id;
+	mbedtls_svc_key_id_t unwrapped_cek_key_id;
 	const uint8_t wrapped_cek[] = {0xb2, 0x43, 0x88, 0x9a, 0x6a, 0x4a, 0x91, 0xc4, 0xf0, 0xb0,
 				       0x9b, 0xe8, 0xc5, 0xbc, 0x54, 0x60, 0xb9, 0x38, 0x99, 0xa0,
 				       0x1a, 0xdd, 0xa7, 0xd3, 0x87, 0x9f, 0xc7, 0x0a, 0xd8, 0xbf,
