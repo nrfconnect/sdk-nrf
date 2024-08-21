@@ -208,6 +208,11 @@ static int notify_personalized_name(struct bt_conn *conn)
 	uint8_t nonce[FP_CRYPTO_ADDITIONAL_DATA_NONCE_LEN];
 	static struct bt_gatt_attr *additional_data_attr;
 
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_PN)) {
+		__ASSERT_NO_MSG(false);
+		return -ENOTSUP;
+	}
+
 	err = fp_storage_pn_get(pn);
 	if (err) {
 		LOG_ERR("Failed to get Personalized Name from storage: err=%d", err);
