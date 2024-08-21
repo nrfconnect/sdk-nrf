@@ -24,10 +24,8 @@ static const uint8_t led_map[LED_ID_COUNT] = {
 };
 
 /* On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
- * Because of that, the PDK PCA10156 has the following limitations:
- *
- * - On the PDK revision v0.2.1, **LED 1** cannot be used for PWM output.
- * - On the PDK revision v0.3.0, **LED 0** and **LED 2** cannot be used for PWM output.
+ * Because of that, on the PDK PCA10156 revision v0.3.0 **LED 0** and **LED 2** cannot be used
+ * for PWM output.
  *
  * You can still use these LEDs with the PWM LED driver, but you must set the LED color to
  * ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``. This ensures the PWM peripheral is not
