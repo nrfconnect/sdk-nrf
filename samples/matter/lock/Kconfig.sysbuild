@@ -8,15 +8,13 @@
 config NRF_DEFAULT_IPC_RADIO
 	default y
 
-# Use HCI IPC as radio core image for nRF54H20 + nRF7002EK
-config NRF_DEFAULT_BLUETOOTH
-	default y if SOC_SERIES_NRF54HX && WIFI_NRF700X
-
 # Enable IEEE802.15.4 serialization to network core
+# This config automatically pulls in the `overlay-802154.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_IEEE802154
 	default y if (SOC_SERIES_NRF53X || SOC_SERIES_NRF54HX) && !WIFI_NRF700X
 
 # Enable Bluetooth serialization to network core
+# This config automatically pulls in the `overlay-bt_hci_ipc.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_BT_HCI_IPC
 	default y if (SOC_SERIES_NRF53X || SOC_SERIES_NRF54HX)
 
@@ -62,13 +60,6 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 endif # SOC_SERIES_NRF53X
 endif # BOOTLOADER_MCUBOOT
-
-if BOARD_NRF54H20DK
-
-config SUIT_ENVELOPE_ROOT_TEMPLATE
-	default "suit_templates/root_with_binary_nordic_top.yaml.jinja2"
-
-endif
 
 #### Enable generating factory data
 config MATTER_FACTORY_DATA_GENERATE

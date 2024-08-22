@@ -12,6 +12,9 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/sys/util.h>
 
+#include <nrfx.h>
+#include <hal/nrf_mramc.h>
+
 /**
  * PSA Key ID scheme
  *
@@ -28,12 +31,14 @@
 #define PLATFORM_KEY_GET_GENERATION(x) ((x)&0xf)
 #define PLATFORM_KEY_GET_USAGE(x)      (((x) >> 8) & 0xff)
 #define PLATFORM_KEY_GET_DOMAIN(x)     (((x) >> 16) & 0xff)
+#define PLATFORM_KEY_GET_ACCESS(x)     (((x) >> 24) & 0xf)
 
-#define USAGE_FWENC	0x20
-#define USAGE_PUBKEY	0x21
-#define USAGE_AUTHDEBUG 0x23
-#define USAGE_STMTRACE	0x25
-#define USAGE_COREDUMP	0x25
+#define USAGE_FWENC		       0x20
+#define USAGE_PUBKEY		       0x21
+#define USAGE_AUTHDEBUG		       0x23
+#define USAGE_STMTRACE		       0x25
+#define USAGE_COREDUMP		       0x26
+#define USAGE_MANIFEST_PUBKEY_OEM_ROOT 0xBB
 
 #define DOMAIN_NONE	   0x00
 #define DOMAIN_SECURE	   0x01
@@ -44,7 +49,30 @@
 #define DOMAIN_WIFI	   0x06
 #define DOMAIN_SYSCTRL	   0x08
 
+#define ACCESS_INTERNAL 0x0
+#define ACCESS_LOCAL	0x1
+
+#define MAX_KEY_SIZE 32
+
+struct {
+	uint8_t id;
+	const char *label;
+} owner_to_label[] = {{DOMAIN_SECURE, "SECURE-"}, {DOMAIN_SYSCTRL, "SYSCTRL-"},
+		      {DOMAIN_CELL, "CELLULAR-"}, {DOMAIN_WIFI, "WIFI-"},
+		      {DOMAIN_RADIO, "RADIO-"},	  {DOMAIN_APPLICATION, "APPLICATION-"}};
+
+struct {
+	uint8_t id;
+	const char *label;
+} key_type_to_label[] = {
+	{USAGE_FWENC, "FWENC-"}, {USAGE_STMTRACE, "STMTRACE-"}, {USAGE_COREDUMP, "COREDUMP-"}};
+
+#define DERIVED_KEY_MAX_LABEL_SIZE 32
+
 typedef struct sicr_key {
+	/* The nonce stored in SICR is 4 bytes, but we put it into a 12-byte array here, so it can
+	 * easily be supplied using the PSA APIs.
+	 */
 	uint32_t nonce[3];
 	uint8_t *nonce_addr;
 	psa_key_type_t type;
@@ -56,28 +84,125 @@ typedef struct sicr_key {
 	size_t mac_size;
 } sicr_key;
 
-static sicr_key find_key(uint32_t id)
+typedef struct embedded_key {
+	uint32_t id;
+	uint8_t key_buffer[32];
+	size_t key_buffer_size;
+	psa_key_type_t type;
+	psa_key_bits_t bits;
+} embedded_key;
+
+const embedded_key embedded_keys[] __attribute__((section("_embedded_keys"))) = {
+	{0x4000BB00,
+		{
+#include <public_key_native_MANIFEST_PUBKEY_NRF_TOP_0.bin.inc>
+		},
+	 32,
+	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
+	 255},
+	{0x4000BB01,
+		{
+#include <public_key_native_MANIFEST_PUBKEY_NRF_TOP_1.bin.inc>
+		},
+	 32,
+	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
+	 255},
+	{0x4000BB02,
+		{
+#include <public_key_native_MANIFEST_PUBKEY_NRF_TOP_2.bin.inc>
+		},
+	 32,
+	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
+	 255},
+	{0x40082100,
+		{
+#include <public_key_native_MANIFEST_PUBKEY_SYSCTRL_0.bin.inc>
+		},
+	 32,
+	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
+	 255},
+	{0x40082101,
+		{
+#include <public_key_native_MANIFEST_PUBKEY_SYSCTRL_1.bin.inc>
+		},
+	 32,
+	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
+	 255},
+	{0x40082102,
+		{
+#include <public_key_native_MANIFEST_PUBKEY_SYSCTRL_2.bin.inc>
+		},
+	 32,
+	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
+	 255},
+};
+
+typedef struct derived_key {
+	char label[DERIVED_KEY_MAX_LABEL_SIZE];
+} derived_key;
+
+typedef union {
+	sicr_key sicr;
+	embedded_key embedded;
+	derived_key derived;
+} platform_key;
+
+typedef enum {
+	INVALID,
+	EMBEDDED,
+	DERIVED,
+	SICR
+} key_type;
+
+#define APPEND_STR(str, end, part)                                                                 \
+	{                                                                                          \
+		if ((str) + strlen(part) > (end))                                                  \
+			return INVALID;                                                            \
+		memcpy((str), (part), strlen(part));                                               \
+		(str) += strlen(part);                                                             \
+	}
+
+static key_type find_key(uint32_t id, platform_key *key)
 {
-	struct sicr_key key = {};
+	safe_memzero(key, sizeof(platform_key));
 
 	uint32_t usage = PLATFORM_KEY_GET_USAGE(id);
 	uint32_t domain = PLATFORM_KEY_GET_DOMAIN(id);
 	uint32_t generation = PLATFORM_KEY_GET_GENERATION(id);
 
-#define FILL_KEY(x, gen)                                                                           \
+#define FILL_AESKEY(x, gen)                                                                        \
 	{                                                                                          \
 		if ((gen) >= ARRAY_SIZE(x)) {                                                      \
-			return key;                                                                \
+			return INVALID;                                                            \
 		}                                                                                  \
-		key.nonce[0] = (x)[gen].NONCE;                                                     \
-		key.nonce_addr = (uint8_t *)&(x)[gen].NONCE;                                       \
-		key.type = (x)[gen].ATTR & 0xffff;                                                 \
-		key.bits = (x)[gen].ATTR >> 16;                                                    \
-		key.attr_addr = (uint8_t *)&(x)[gen].ATTR;                                         \
-		key.key_buffer = (uint8_t *)(x)[gen].PUBKEY;                                       \
-		key.key_buffer_max_length = sizeof((x)[gen].PUBKEY);                               \
-		key.mac = (uint8_t *)(x)[gen].MAC;                                                 \
-		key.mac_size = sizeof((x)[gen].MAC);                                               \
+		key->sicr.nonce[0] = (x)[gen].NONCE;                                               \
+		key->sicr.nonce_addr = (uint8_t *)&(x)[gen].NONCE;                                 \
+		key->sicr.type = (x)[gen].ATTR & 0xffff;                                           \
+		key->sicr.bits = (x)[gen].ATTR >> 16;                                              \
+		key->sicr.attr_addr = (uint8_t *)&(x)[gen].ATTR;                                   \
+		key->sicr.key_buffer = (uint8_t *)(x)[gen].CIPHERTEXT;                             \
+		key->sicr.key_buffer_max_length = sizeof((x)[gen].CIPHERTEXT);                     \
+		key->sicr.mac = (uint8_t *)(x)[gen].MAC;                                           \
+		key->sicr.mac_size = sizeof((x)[gen].MAC);                                         \
+		return SICR;                                                                       \
+	}                                                                                          \
+	break;
+
+#define FILL_PUBKEY(x, gen)                                                                        \
+	{                                                                                          \
+		if ((gen) >= ARRAY_SIZE(x)) {                                                      \
+			return INVALID;                                                            \
+		}                                                                                  \
+		key->sicr.nonce[0] = (x)[gen].NONCE;                                               \
+		key->sicr.nonce_addr = (uint8_t *)&(x)[gen].NONCE;                                 \
+		key->sicr.type = (x)[gen].ATTR & 0xffff;                                           \
+		key->sicr.bits = (x)[gen].ATTR >> 16;                                              \
+		key->sicr.attr_addr = (uint8_t *)&(x)[gen].ATTR;                                   \
+		key->sicr.key_buffer = (uint8_t *)(x)[gen].PUBKEY;                                 \
+		key->sicr.key_buffer_max_length = sizeof((x)[gen].PUBKEY);                         \
+		key->sicr.mac = (uint8_t *)(x)[gen].MAC;                                           \
+		key->sicr.mac_size = sizeof((x)[gen].MAC);                                         \
+		return SICR;                                                                       \
 	}                                                                                          \
 	break;
 
@@ -85,144 +210,359 @@ static sicr_key find_key(uint32_t id)
 
 	switch (DOMAIN_USAGE(domain, usage)) {
 	case DOMAIN_USAGE(DOMAIN_APPLICATION, USAGE_PUBKEY):
-		FILL_KEY(NRF_SECURE_SICR_S->AROT.APPLICATION.SUITPUBKEY, generation);
+		FILL_PUBKEY(NRF_SECURE_SICR_S->AROT.APPLICATION.SUITPUBKEY, generation);
 	case DOMAIN_USAGE(DOMAIN_WIFI, USAGE_PUBKEY):
-		FILL_KEY(NRF_SECURE_SICR_S->AROT.WIFICORE.SUITPUBKEY, generation);
+		FILL_PUBKEY(NRF_SECURE_SICR_S->AROT.WIFICORE.SUITPUBKEY, generation);
 	case DOMAIN_USAGE(DOMAIN_CELL, USAGE_PUBKEY):
-		FILL_KEY(NRF_SECURE_SICR_S->AROT.CELLULARCORE.SUITPUBKEY, generation);
+		FILL_PUBKEY(NRF_SECURE_SICR_S->AROT.CELLULARCORE.SUITPUBKEY, generation);
 	case DOMAIN_USAGE(DOMAIN_RADIO, USAGE_PUBKEY):
-		FILL_KEY(NRF_SECURE_SICR_S->AROT.RADIO.SUITPUBKEY, generation);
+		FILL_PUBKEY(NRF_SECURE_SICR_S->AROT.RADIO.SUITPUBKEY, generation);
+	case DOMAIN_USAGE(DOMAIN_APPLICATION, USAGE_FWENC):
+		FILL_AESKEY(NRF_SECURE_SICR_S->AROT.APPLICATION.FWENC, generation);
+	case DOMAIN_USAGE(DOMAIN_RADIO, USAGE_FWENC):
+		FILL_AESKEY(NRF_SECURE_SICR_S->AROT.RADIO.FWENC, generation);
 	}
 
-	return key;
+	if (usage == USAGE_FWENC || usage == USAGE_STMTRACE || usage == USAGE_COREDUMP) {
+		char *labelptr = key->derived.label;
+		char *end = labelptr + sizeof(key->derived.label);
+
+		bool valid_owner = false;
+
+		for (size_t i = 0; i < ARRAY_SIZE(owner_to_label); i++) {
+			if (owner_to_label[i].id == domain) {
+				APPEND_STR(labelptr, end, owner_to_label[i].label);
+				valid_owner = true;
+				break;
+			}
+		}
+
+		bool valid_key_type = false;
+
+		for (size_t i = 0; i < ARRAY_SIZE(key_type_to_label); i++) {
+			if (key_type_to_label[i].id == usage) {
+				APPEND_STR(labelptr, end, key_type_to_label[i].label);
+				valid_key_type = true;
+				break;
+			}
+		}
+
+		static const char *const genstr[] = {"0", "1", "2", "3"};
+
+		if (generation > ARRAY_SIZE(genstr) || !valid_key_type || !valid_owner) {
+			return INVALID;
+		}
+
+		APPEND_STR(labelptr, end, genstr[generation]);
+
+		return DERIVED;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(embedded_keys); i++) {
+		if (id == embedded_keys[i].id) {
+			key->embedded = embedded_keys[i];
+			return EMBEDDED;
+		}
+	}
+
+	return INVALID;
+}
+
+/**
+ * @brief Checks whether key usage from a certain domain can access key.
+ *
+ * @return psa_status_t
+ */
+static psa_status_t verify_access(uint32_t domain_id, uint32_t key_id)
+{
+	switch (PLATFORM_KEY_GET_ACCESS(key_id)) {
+	case ACCESS_INTERNAL:
+		/* Key can be accessed by secure domain only. */
+		if (domain_id == DOMAIN_SECURE) {
+			return PSA_SUCCESS;
+		}
+		return PSA_ERROR_NOT_PERMITTED;
+	case ACCESS_LOCAL:
+		/* Key can be accessed by both secure domain and the domain it belongs to. */
+		if (domain_id == DOMAIN_SECURE) {
+			return PSA_SUCCESS;
+		} else if (domain_id == PLATFORM_KEY_GET_DOMAIN(key_id)) {
+			return PSA_SUCCESS;
+		}
+		return PSA_ERROR_NOT_PERMITTED;
+	default:
+		return PSA_ERROR_DOES_NOT_EXIST;
+	}
 }
 
 psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 					     psa_key_attributes_t *attributes, uint8_t *key_buffer,
 					     size_t key_buffer_size, size_t *key_buffer_length)
 {
-	sicr_key key = find_key(slot_number);
-	uint32_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes));
-	uint32_t domain = PLATFORM_KEY_GET_DOMAIN(key_id);
+	platform_key key;
+	key_type type = find_key((uint32_t)slot_number, &key);
 
-	psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
+	if (type == SICR) {
+		uint32_t key_id = (uint32_t)slot_number;
+		uint32_t domain = PLATFORM_KEY_GET_DOMAIN(key_id);
+		size_t key_bytes = PSA_BITS_TO_BYTES(key.sicr.bits);
+		size_t outlen;
 
-	psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(domain, CRACEN_BUILTIN_MKEK_ID));
-	psa_set_key_lifetime(&mkek_attr,
-			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-				     PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN));
-	psa_set_key_type(&mkek_attr, PSA_KEY_TYPE_AES);
+		uint8_t decrypted_key[MAX_KEY_SIZE];
 
-	cracen_aead_operation_t op = {};
-	psa_status_t status = cracen_aead_decrypt_setup(
-		&op, &mkek_attr, NULL, 0,
-		PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.mac_size));
-	if (status != PSA_SUCCESS) {
+		psa_set_key_bits(attributes, key.sicr.bits);
+		psa_set_key_type(attributes, key.sicr.type);
+
+		if (key.sicr.type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
+			psa_set_key_algorithm(attributes, PSA_ALG_PURE_EDDSA);
+			psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_VERIFY_MESSAGE);
+		} else if (key.sicr.type == PSA_KEY_TYPE_AES) {
+			/* This will be AES-KW when it is supported. */
+			psa_set_key_algorithm(attributes, PSA_ALG_ECB_NO_PADDING);
+			psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_DECRYPT);
+
+			if (PSA_BITS_TO_BYTES(key.sicr.bits) > sizeof(decrypted_key)) {
+				return PSA_ERROR_CORRUPTION_DETECTED;
+			}
+		} else {
+			return PSA_ERROR_INVALID_HANDLE;
+		}
+
+		/* Note: PSA Driver wrapper API require that attributes are filled before returning
+		 * error.
+		 */
+		if (key_bytes < key_buffer_size) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		} else if (key_buffer == NULL || key_buffer_length == NULL) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
+
+		psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(domain, CRACEN_BUILTIN_MKEK_ID));
+		psa_set_key_lifetime(&mkek_attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+							 PSA_KEY_PERSISTENCE_READ_ONLY,
+							 PSA_KEY_LOCATION_CRACEN));
+		psa_set_key_type(&mkek_attr, PSA_KEY_TYPE_AES);
+
+		cracen_aead_operation_t op = {};
+		psa_status_t status = cracen_aead_decrypt_setup(
+			&op, &mkek_attr, NULL, 0,
+			PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		status = cracen_aead_set_nonce(&op, (uint8_t *)key.sicr.nonce,
+					       sizeof(key.sicr.nonce));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.type,
+					       sizeof(key.sicr.type));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.bits,
+					       sizeof(key.sicr.bits));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		if (key.sicr.type == PSA_KEY_TYPE_AES) {
+			status = cracen_aead_update(&op, key.sicr.key_buffer, key_bytes,
+						    decrypted_key, sizeof(decrypted_key), &outlen);
+		} else {
+			status = cracen_aead_update_ad(&op, key.sicr.key_buffer, key_bytes);
+		}
+
+		if (status != PSA_SUCCESS) {
+			goto cleanup;
+		}
+
+		status = cracen_aead_finish(&op, NULL, 0, &outlen, key.sicr.mac, key.sicr.mac_size,
+					    &key.sicr.mac_size);
+		if (status != PSA_SUCCESS) {
+			goto cleanup;
+		}
+
+		if (key.sicr.type == PSA_KEY_TYPE_AES) {
+			memcpy(key_buffer, decrypted_key, key_bytes);
+		} else {
+			memcpy(key_buffer, key.sicr.key_buffer, key_bytes);
+		}
+		*key_buffer_length = key_bytes;
+
+cleanup:
+		safe_memzero(decrypted_key, sizeof(decrypted_key));
+
 		return status;
 	}
 
-	status = cracen_aead_set_nonce(&op, (uint8_t *)key.nonce, sizeof(key.nonce));
-	if (status != PSA_SUCCESS) {
+	if (type == EMBEDDED) {
+		psa_set_key_bits(attributes, key.embedded.bits);
+		psa_set_key_type(attributes, key.embedded.type);
+
+		if (key.embedded.type ==
+		    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
+			psa_set_key_algorithm(attributes, PSA_ALG_PURE_EDDSA);
+			psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_VERIFY_MESSAGE);
+		} else {
+			return PSA_ERROR_INVALID_HANDLE;
+		}
+
+		/* Note: PSA Driver wrapper API require that attributes are filled before returning
+		 * error.
+		 */
+		if (key.embedded.key_buffer_size > key_buffer_size) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		} else if (key_buffer == NULL || key_buffer_length == NULL) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		memcpy(key_buffer, key.embedded.key_buffer, key.embedded.key_buffer_size);
+		*key_buffer_length = key.embedded.key_buffer_size;
+
+		return PSA_SUCCESS;
+	}
+
+	if (type == DERIVED) {
+		psa_set_key_bits(attributes, 256);
+		psa_set_key_type(attributes, PSA_KEY_TYPE_AES);
+		psa_set_key_algorithm(attributes, PSA_ALG_GCM);
+		psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_DECRYPT);
+
+		/* Note: PSA Driver wrapper API require that attributes are filled before returning
+		 * error.
+		 */
+		if (32 < key_buffer_size) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		} else if (key_buffer == NULL || key_buffer_length == NULL) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		cracen_key_derivation_operation_t op = {};
+		psa_status_t status;
+		psa_key_attributes_t prot_attr = PSA_KEY_ATTRIBUTES_INIT;
+
+		psa_set_key_id(&prot_attr,
+			       mbedtls_svc_key_id_make(0, CRACEN_PROTECTED_RAM_AES_KEY0_ID));
+		psa_set_key_type(&prot_attr, PSA_KEY_TYPE_AES);
+		psa_set_key_algorithm(&prot_attr, PSA_ALG_SP800_108_COUNTER_CMAC);
+		psa_set_key_lifetime(&prot_attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+							 PSA_KEY_PERSISTENCE_READ_ONLY,
+							 PSA_KEY_LOCATION_CRACEN));
+
+		status = cracen_key_derivation_setup(&op, PSA_ALG_SP800_108_COUNTER_CMAC);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		status = cracen_key_derivation_input_key(&op, PSA_KEY_DERIVATION_INPUT_SECRET,
+							 &prot_attr, NULL, 0);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		status = cracen_key_derivation_input_bytes(&op, PSA_KEY_DERIVATION_INPUT_LABEL,
+							   key.derived.label,
+							   strlen(key.derived.label));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		status = cracen_key_derivation_output_bytes(&op, key_buffer, 32);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		*key_buffer_length = 32;
 		return status;
 	}
 
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.type, sizeof(key.type));
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.bits, sizeof(key.bits));
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-	status = cracen_aead_update_ad(&op, key_buffer, key_buffer_size);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
-	size_t outlen;
-
-	status = cracen_aead_finish(&op, NULL, 0, &outlen, key.mac, key.mac_size, &key.mac_size);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
-	psa_set_key_bits(attributes, key.bits);
-	psa_set_key_type(attributes, key.type);
-
-	if (key.type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
-		psa_set_key_algorithm(attributes, PSA_ALG_PURE_EDDSA);
-		psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_VERIFY_MESSAGE);
-	} else {
-		return PSA_ERROR_INVALID_HANDLE;
-	}
-
-	size_t key_bytes = PSA_BITS_TO_BYTES(key.bits);
-
-	if (key_bytes < key_buffer_size) {
-		*key_buffer_length = 0;
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
-	memcpy(key_buffer, key.key_buffer, key_bytes);
-	*key_buffer_length = key_bytes;
-
-	return PSA_SUCCESS;
+	return PSA_ERROR_CORRUPTION_DETECTED;
 }
 
 size_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes)
 {
-	sicr_key key = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
+	platform_key key;
+	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
+	psa_key_type_t key_type = psa_get_key_type(attributes);
 
-	return PSA_BITS_TO_BYTES(key.bits);
+	if (type == INVALID) {
+		return 0;
+	}
+
+	if (key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS) ||
+	    key_type == PSA_KEY_TYPE_AES) {
+		return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+	}
+
+	return 0;
 }
 
 psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 					  psa_drv_slot_number_t *slot_number)
 {
-	sicr_key key = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
+	platform_key key;
+	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), &key);
 
 	uint32_t domain = PLATFORM_KEY_GET_DOMAIN(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
 
-	if (domain != MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id) &&
-	    MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id) != 0) {
-		return PSA_ERROR_NOT_PERMITTED;
+	psa_status_t status = verify_access(MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id),
+					    MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
-	if (key.bits > 0) {
+	if (type == SICR || type == EMBEDDED || type == DERIVED) {
 		*slot_number = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id);
 		*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 			PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN);
+
+		if (type == SICR && key.sicr.bits == UINT16_MAX) {
+			return PSA_ERROR_DOES_NOT_EXIST;
+		}
 		return PSA_SUCCESS;
 	}
 
 	return PSA_ERROR_DOES_NOT_EXIST;
 }
 
-psa_status_t cracen_platform_keys_provision(psa_key_attributes_t *attributes, uint8_t *key_buffer,
-					    size_t key_buffer_size)
+psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attributes,
+					    const uint8_t *key_buffer, size_t key_buffer_size)
 {
 	uint32_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes));
-	sicr_key key = find_key(key_id);
+	platform_key key;
+	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
 	uint32_t domain = PLATFORM_KEY_GET_DOMAIN(key_id);
+	uint8_t encrypted_key[MAX_KEY_SIZE];
+	size_t outlen;
 
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-
-	if (key.bits != UINT16_MAX) {
-		return PSA_ERROR_ALREADY_EXISTS;
-	}
-
-	if (domain != MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes)) && domain != 0) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
-	if (key_buffer_size > key.key_buffer_max_length) {
+	if (type != SICR) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	key.type = psa_get_key_type(attributes);
-	key.bits = psa_get_key_bits(attributes);
+	psa_status_t status =
+		verify_access(MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes)),
+			      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 
-	status = psa_generate_random((uint8_t *)key.nonce, sizeof(key.nonce[0]));
+	/* The memory is required to be filled with 0xFF before the keys are provisioned. If another
+	 * value is found, we assume the key has already been provisioned.
+	 */
+	if (key.sicr.bits != UINT16_MAX) {
+		return PSA_ERROR_ALREADY_EXISTS;
+	}
+
+	if (key_buffer_size > key.sicr.key_buffer_max_length) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	key.sicr.type = psa_get_key_type(attributes);
+	key.sicr.bits = psa_get_key_bits(attributes);
+
+	status = psa_generate_random((uint8_t *)key.sicr.nonce, sizeof(key.sicr.nonce[0]));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -239,35 +579,41 @@ psa_status_t cracen_platform_keys_provision(psa_key_attributes_t *attributes, ui
 
 	status = cracen_aead_encrypt_setup(
 		&op, &mkek_attr, NULL, 0,
-		PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.mac_size));
+		PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_set_nonce(&op, (uint8_t *)key.nonce, sizeof(key.nonce));
+	status = cracen_aead_set_nonce(&op, (uint8_t *)key.sicr.nonce, sizeof(key.sicr.nonce));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.type, sizeof(key.type));
+	status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.type, sizeof(key.sicr.type));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.bits, sizeof(key.bits));
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-	status = cracen_aead_update_ad(&op, key_buffer, key_buffer_size);
+	status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.bits, sizeof(key.sicr.bits));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
-	size_t outlen;
+	if (key.sicr.type == PSA_KEY_TYPE_AES) {
+		status = cracen_aead_update(&op, key_buffer, key_buffer_size, encrypted_key,
+					    sizeof(encrypted_key), &outlen);
+	} else {
+		status = cracen_aead_update_ad(&op, key_buffer, key_buffer_size);
+	}
 
-	status = cracen_aead_finish(&op, NULL, 0, &outlen, key.mac, key.mac_size, &key.mac_size);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
-	uint32_t attr = key.bits | (key.type << 16);
+	status = cracen_aead_finish(&op, NULL, 0, &outlen, key.sicr.mac, key.sicr.mac_size,
+				    &key.sicr.mac_size);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	uint32_t attr = (key.sicr.bits << 16) | key.sicr.type;
 
 	NRF_MRAMC_Type *mramc = (NRF_MRAMC_Type *)DT_REG_ADDR(DT_NODELABEL(mramc));
 	nrf_mramc_config_t mramc_config, mramc_config_write_enabled;
@@ -280,9 +626,13 @@ psa_status_t cracen_platform_keys_provision(psa_key_attributes_t *attributes, ui
 
 	nrf_mramc_config_set(mramc, &mramc_config_write_enabled);
 
-	memcpy(key.nonce_addr, &key.nonce, sizeof(key.nonce));
-	memcpy(key.attr_addr, &attr, sizeof(attr));
-	memcpy(key.key_buffer, key_buffer, key_buffer_size);
+	memcpy(key.sicr.nonce_addr, &key.sicr.nonce, sizeof(key.sicr.nonce));
+	memcpy(key.sicr.attr_addr, &attr, sizeof(attr));
+	if (key.sicr.type == PSA_KEY_TYPE_AES) {
+		memcpy(key.sicr.key_buffer, encrypted_key, key_buffer_size);
+	} else {
+		memcpy(key.sicr.key_buffer, key_buffer, key_buffer_size);
+	}
 
 	/* Restore MRAMC config */
 	nrf_mramc_config_set(mramc, &mramc_config);

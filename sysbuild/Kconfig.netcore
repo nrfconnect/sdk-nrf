@@ -83,6 +83,7 @@ config NETCORE_NONE
 
 config NETCORE_EMPTY
 	bool "Empty"
+	depends on SUPPORT_NETCORE_EMPTY
 	help
 	  Include empty image as the netcore image to use.
 

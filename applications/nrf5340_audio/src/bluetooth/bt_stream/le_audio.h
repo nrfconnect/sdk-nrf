@@ -67,9 +67,9 @@ struct le_audio_encoded_audio {
 };
 
 struct stream_index {
-	uint8_t level1_idx; /* BIG / CIG */
-	uint8_t level2_idx; /* Subgroups if applicable */
-	uint8_t level3_idx; /* BIS / CIS */
+	uint8_t lvl1; /* BIG / CIG */
+	uint8_t lvl2; /* Subgroups (only applicable to Broadcast) */
+	uint8_t lvl3; /* BIS / CIS */
 };
 
 /**

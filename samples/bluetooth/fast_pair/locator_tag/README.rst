@@ -14,10 +14,8 @@ Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Blueto
 Google Fast Pair standard also supports the Find My Device Network (FMDN) extension that is the main focus of this sample demonstration.
 For detailed information, see the official `Fast Pair Find My Device Network extension`_ documentation.
 
-.. note::
-   The software maturity level for the locator tag use case is listed in the :ref:`software_maturity_fast_pair_use_case` table.
-
 This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
+The software maturity level for the locator tag use case is outlined in the :ref:`software_maturity_fast_pair_use_case` table.
 
 Requirements
 ************
@@ -133,9 +131,6 @@ User interface
 **************
 
 The user interface of the sample depends on the hardware platform you are using.
-
-Development kits
-================
 
 .. tabs::
 
@@ -320,69 +315,69 @@ Development kits
 
          When pressed during the application bootup, resets the accessory to default factory settings.
 
-Thingy:53
-=========
 
-RGB LED:
-   Thingy:53 displays the application state in the RGB scale using **LED1**.
-   The **LED1** displays a color sequence with each blink that indicates the overall application state.
+   .. group-tab:: Thingy:53
 
-   Each color of the LED indicates the different application state:
+      RGB LED:
+         Thingy:53 displays the application state in the RGB scale using **LED1**.
+         The **LED1** displays a color sequence with each blink that indicates the overall application state.
 
-   * Green - Indicates that firmware is running.
-   * Blue - Indicates that the device is provisioned.
-   * Yellow - Indicates that the identification mode is active.
-   * Red - Indicates that the recovery mode is active.
-   * White - Indicates that the Fast Pair advertising is active.
+         Each color of the LED indicates the different application state:
 
-Speaker/Buzzer:
-   Produces sound when the ringing action is in progress and to indicate a new button action.
+         * Green - Indicates that firmware is running.
+         * Blue - Indicates that the device is provisioned.
+         * Yellow - Indicates that the identification mode is active.
+         * Red - Indicates that the recovery mode is active.
+         * White - Indicates that the Fast Pair advertising is active.
 
-Button (SW3):
-   When pressed during the application bootup, the accessory is reset to its default factory settings.
+      Speaker/Buzzer:
+         Produces sound when the ringing action is in progress and to indicate a new button action.
 
-   When pressed, stops the ongoing ringing action.
+      Button (SW3):
+         When pressed during the application bootup, the accessory is reset to its default factory settings.
 
-   When released, the action depends on how long the button was held:
+         When pressed, stops the ongoing ringing action.
 
-   * From 1 to 3 seconds (notified by one short beep):
+         When released, the action depends on how long the button was held:
 
-     Toggles between different modes of the Fast Pair advertising set:
+         * From 1 to 3 seconds (notified by one short beep):
 
-     * Without an Account Key stored on the device:
+           Toggles between different modes of the Fast Pair advertising set:
 
-       * Fast Pair advertising disabled.
-       * Fast Pair discoverable advertising (the default after the system bootup).
+           * Without an Account Key stored on the device:
 
-     * With an Account Key stored on the device:
+             * Fast Pair advertising disabled.
+             * Fast Pair discoverable advertising (the default after the system bootup).
 
-       * Fast Pair advertising disabled.
-       * Fast Pair not discoverable advertising (the default after the system bootup).
+           * With an Account Key stored on the device:
 
-     .. note::
-        The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
-        After the connection, you can still switch the advertising modes, but the effect is only after disconnection.
+             * Fast Pair advertising disabled.
+             * Fast Pair not discoverable advertising (the default after the system bootup).
 
-        The sample automatically switches to the following Fast Pair advertising modes under certain conditions:
+           .. note::
+              The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
+              After the connection, you can still switch the advertising modes, but the effect is only after disconnection.
 
-        * Fast Pair not discoverable advertising - On the Account Key write operation.
-        * Fast Pair advertising disabled:
+              The sample automatically switches to the following Fast Pair advertising modes under certain conditions:
 
-          * Right before the factory reset operation.
-          * After the beacon clock synchronization.
+              * Fast Pair not discoverable advertising - On the Account Key write operation.
+              * Fast Pair advertising disabled:
 
-   * From 3 to 5 seconds (notified by two short beeps):
+                * Right before the factory reset operation.
+                * After the beacon clock synchronization.
 
-     Requests the FMDN subsystem to enable the identification mode for five minutes.
-     This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
+         * From 3 to 5 seconds (notified by two short beeps):
 
-   * From 5 to 7 seconds (notified by three short beeps):
+           Requests the FMDN subsystem to enable the identification mode for five minutes.
+           This timeout value is defined by the :kconfig:option:`CONFIG_DULT_ID_READ_STATE_TIMEOUT` Kconfig option according to the DULT specification requirements.
 
-     Enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
+         * From 5 to 7 seconds (notified by three short beeps):
 
-   * From 7 seconds or more (notified by one longer beep):
+           Enables the recovery mode for one minute as defined by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT` Kconfig option.
 
-     No action - allows to not perform any button operation.
+         * From 7 seconds or more (notified by one longer beep):
+
+           No action - allows to not perform any button operation.
 
 Configuration
 *************
@@ -392,36 +387,33 @@ Configuration
 Configuration options
 =====================
 
-All Kconfig options are specific to the chosen platform type and are listed in their dedicated subsections.
+The following Kconfig options are specific to the chosen hardware platform.
 
-Development kits
-----------------
+.. tabs::
 
-Check and configure the following Kconfig options for your development kit board target:
+   .. group-tab:: Development kits
 
-.. _CONFIG_APP_BATTERY_LEVEL_DECREMENT:
+      .. _CONFIG_APP_BATTERY_LEVEL_DECREMENT:
 
-CONFIG_APP_BATTERY_LEVEL_DECREMENT
-   The sample configuration defines the decrement value used to simulate the battery level on the development kit.
-   The battery level is defined in percentages and ranges from 0% to 100%.
-   By default, the decrement level is set to 10%.
+      CONFIG_APP_BATTERY_LEVEL_DECREMENT
+         The sample configuration defines the decrement value used to simulate the battery level on the development kit.
+         The battery level is defined in percentages and ranges from 0% to 100%.
+         By default, the decrement level is set to 10%.
 
-Thingy:53
----------
 
-Check and configure the following Kconfig options for your Thingy:53 board target:
+   .. group-tab:: Thingy:53
 
-.. _CONFIG_APP_BATTERY_POLL_INTERVAL:
+      .. _CONFIG_APP_BATTERY_POLL_INTERVAL:
 
-CONFIG_APP_BATTERY_POLL_INTERVAL
-   The sample configuration defines the polling interval in seconds for measuring battery level.
-   By default, the interval is set to 60 seconds.
+      CONFIG_APP_BATTERY_POLL_INTERVAL
+         The sample configuration defines the polling interval in seconds for measuring battery level.
+         By default, the interval is set to 60 seconds.
 
-.. _CONFIG_APP_UI_SPEAKER_FREQ:
+      .. _CONFIG_APP_UI_SPEAKER_FREQ:
 
-CONFIG_APP_UI_SPEAKER_FREQ
-   The sample configuration defines the frequency in hertz units for sounds generated by the speaker.
-   By default, the frequency is set to 4000 Hz.
+      CONFIG_APP_UI_SPEAKER_FREQ
+         The sample configuration defines the frequency in hertz units for sounds generated by the speaker.
+         By default, the frequency is set to 4000 Hz.
 
 Building and running
 ********************

@@ -25,8 +25,6 @@ config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
 
 config MATTER_OTA
 	bool "Matter OTA Software Update"
-	depends on PARTITION_MANAGER
-	depends on DFU_MULTI_IMAGE_PACKAGE_BUILD
 	default y
 	help
 	  Enables over-the-air (OTA) Requestor role that allows the node to perform Device Firmware
@@ -38,5 +36,8 @@ config MATTER_OTA_IMAGE_FILE_NAME
 	depends on MATTER_OTA
 	help
 	  Provides the file name of the generated Matter OTA image in the build directory.
+
+config SUIT_BASE_MANIFEST_VARIANT
+	default "matter/v1"
 
 endif

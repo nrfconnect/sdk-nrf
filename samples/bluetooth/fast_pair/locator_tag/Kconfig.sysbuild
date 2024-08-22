@@ -4,7 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
-
-config NRF_DEFAULT_IPC_RADIO
+config BT_FAST_PAIR
 	default y
+
+config APP_DFU
+	bool "Enable MCUmgr OTA DFU over Bluetooth"
+	default y
+	depends on BOOTLOADER_MCUBOOT
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

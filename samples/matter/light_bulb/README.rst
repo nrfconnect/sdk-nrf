@@ -165,6 +165,7 @@ To set up an AWS IoT instance and configure the sample, complete the following s
 
    The certificates will vary in size depending on the method you chose when generating the certificates.
    Due to this, you might need to increase the value of the :kconfig:option:`CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN` option to be able to establish a connection.
+#. |open_terminal_window_with_environment|
 #. Build the sample using the following command:
 
    .. code-block:: console

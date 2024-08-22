@@ -16,6 +16,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/iso.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include "iso_time_sync.h"
 
@@ -87,6 +88,8 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 				    &conn);
 	if (err) {
 		printk("Create conn to %s failed (%d)\n", name_str, err);
+	} else {
+		bt_conn_unref(conn);
 	}
 }
 
@@ -125,9 +128,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
-		printk("Failed to connect to %s (%u)\n", addr, err);
-
-		bt_conn_unref(conn);
+		printk("Failed to connect to %s 0x%02x %s\n", addr, err, bt_hci_err_to_str(err));
 
 		scan_start();
 		return;
@@ -162,9 +163,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Disconnected: %s (reason 0x%02x)\n", addr, reason);
-
-	bt_conn_unref(conn);
+	printk("Disconnected: %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 
 	scan_start();
 }
@@ -188,7 +187,7 @@ void cis_central_start(bool do_tx, uint8_t retransmission_number, uint16_t max_t
 		 * connection. The CIS central starts scanning for a new connection only after a
 		 * pending CIS connection has completed. This must be done because the
 		 * LE HCI Create CIS command is disallowed while a CIS connection is
-		 * pending. See Core Specification Version 5.4, Vol 6, Part B, section 7.8.99.
+		 * pending. See Bluetooth Core Specification, Vol 6, Part B, Section 7.8.99.
 		 */
 		iso_tx_init(retransmission_number, &scan_start);
 	} else {

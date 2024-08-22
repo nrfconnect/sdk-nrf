@@ -65,7 +65,7 @@ static char stage[NRF_CLOUD_STAGE_ID_MAX_LEN];
 static char tenant[NRF_CLOUD_TENANT_ID_MAX_LEN];
 
 /* Null-terminated MQTT client ID */
-static char *client_id_buf;
+static const char *client_id_ptr;
 
 /* Buffers for keeping the topics for nrf_cloud */
 static char *accepted_topic;
@@ -219,7 +219,12 @@ static int endp_send(const struct nct_dc_data *dc_data, struct mqtt_utf8 *endp, 
 	if (qos != MQTT_QOS_0_AT_MOST_ONCE) {
 		publish.message_id = get_message_id(dc_data->message_id);
 	}
-
+	LOG_DBG("mqtt_publish: id = %d len = %d, topic: %.*s", publish.message_id,
+		dc_data->data.len,
+		publish.message.topic.topic.size,
+		publish.message.topic.topic.utf8);
+	LOG_DBG("payload: %.*s", publish.message.payload.len,
+	     publish.message.payload.data ? (const char *)publish.message.payload.data : "");
 	return mqtt_publish(&nct.client, &publish);
 }
 
@@ -254,68 +259,28 @@ static bool nrf_cloud_cc_rx_topic_decode(const struct mqtt_topic *topic, enum nc
 /* Function to set/generate the MQTT client ID */
 static int nct_client_id_set(const char * const client_id)
 {
-	int ret;
-	size_t len;
+	int err = 0;
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
-		if (client_id) {
-			len = strlen(client_id);
-		} else {
-			return -EINVAL;
-		}
-	} else {
-		if (client_id) {
+	if (client_id) {
+		if (!IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
 			LOG_WRN("Not configured for runtime client ID, ignoring");
-		}
-		len = nrf_cloud_configured_client_id_length_get();
-	}
-
-	if (!len) {
-		LOG_WRN("Could not determine size of client ID");
-		return -ENOMSG;
-	}
-
-	nrf_cloud_free(client_id_buf);
-	client_id_buf = NULL;
-
-	/* Add one for NULL terminator */
-	++len;
-
-	client_id_buf = nrf_cloud_calloc(len, 1);
-	if (!client_id_buf) {
-		return -ENOMEM;
-	}
-
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME)) {
-		strncpy(client_id_buf, client_id, len);
-	} else {
-		ret = nrf_cloud_configured_client_id_get(client_id_buf, len);
-		if (ret) {
-			LOG_ERR("Could not obtain configured client ID, error: %d", ret);
-			return ret;
+		} else {
+			err = nrf_cloud_client_id_runtime_set(client_id);
+			if (err) {
+				LOG_ERR("Failed to set runtime client ID, error: %d", err);
+				return err;
+			}
 		}
 	}
 
-	LOG_DBG("client_id = %s", client_id_buf);
-
-	return 0;
-}
-
-int nct_client_id_get(char *id, size_t id_len)
-{
-	if (!client_id_buf) {
-		return -ENODEV;
-	} else if (!id || !id_len) {
-		return -EINVAL;
+	err = nrf_cloud_client_id_ptr_get(&client_id_ptr);
+	if (err) {
+		LOG_ERR("Failed to get client ID, error %d", err);
+		return err;
 	}
 
-	size_t len = strlen(client_id_buf);
+	LOG_DBG("client_id = %s", client_id_ptr);
 
-	if (id_len <= len) {
-		return -EMSGSIZE;
-	}
-
-	strncpy(id, client_id_buf, id_len);
 	return 0;
 }
 
@@ -376,7 +341,7 @@ static int allocate_and_format_topic(char **topic_buf, const char * const topic_
 {
 	int ret;
 	size_t topic_sz;
-	const size_t client_sz = strlen(client_id_buf);
+	const size_t client_sz = strlen(client_id_ptr);
 
 	topic_sz = client_sz + strlen(topic_template) - 1;
 
@@ -385,7 +350,7 @@ static int allocate_and_format_topic(char **topic_buf, const char * const topic_
 		return -ENOMEM;
 	}
 	ret = snprintk(*topic_buf, topic_sz,
-		       topic_template, client_id_buf);
+		       topic_template, client_id_ptr);
 	if (ret <= 0 || ret >= topic_sz) {
 		nrf_cloud_free(*topic_buf);
 		return -EIO;
@@ -451,9 +416,7 @@ static void nct_topic_lists_populate(void)
 
 static int nct_topics_populate(void)
 {
-	if (!client_id_buf) {
-		return -ENODEV;
-	}
+	__ASSERT_NO_MSG(client_id_ptr != NULL);
 
 	int ret;
 
@@ -500,14 +463,16 @@ err_cleanup:
 /* Provisions root CA certificate using modem_key_mgmt API */
 static int nct_provision(void)
 {
-	static sec_tag_t sec_tag_list[] = { CONFIG_NRF_CLOUD_SEC_TAG };
+	static sec_tag_t sec_tag;
 	int err = 0;
+
+	sec_tag = nrf_cloud_sec_tag_get();
 
 	nct.tls_config.peer_verify = 2;
 	nct.tls_config.cipher_count = 0;
 	nct.tls_config.cipher_list = NULL;
-	nct.tls_config.sec_tag_count = ARRAY_SIZE(sec_tag_list);
-	nct.tls_config.sec_tag_list = sec_tag_list;
+	nct.tls_config.sec_tag_count = 1;
+	nct.tls_config.sec_tag_list = &sec_tag;
 	nct.tls_config.hostname = NRF_CLOUD_HOSTNAME;
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES)
@@ -672,8 +637,8 @@ int nct_mqtt_connect(void)
 
 		nct.client.broker = (struct sockaddr *)&nct.broker;
 		nct.client.evt_cb = nct_mqtt_evt_handler;
-		nct.client.client_id.utf8 = (uint8_t *)client_id_buf;
-		nct.client.client_id.size = strlen(client_id_buf);
+		nct.client.client_id.utf8 = (uint8_t *)client_id_ptr;
+		nct.client.client_id.size = strlen(client_id_ptr);
 		nct.client.protocol_version = MQTT_VERSION_3_1_1;
 		nct.client.password = NULL;
 		nct.client.user_name = NULL;
@@ -991,9 +956,6 @@ void nct_uninit(void)
 	dc_endpoint_free();
 	nct_reset_topics();
 
-	nrf_cloud_free(client_id_buf);
-	client_id_buf = NULL;
-
 	memset(&nct, 0, sizeof(nct));
 	mqtt_client_initialized = false;
 }
@@ -1111,6 +1073,12 @@ int nct_cc_connect(void)
 	return mqtt_subscribe(&nct.client, &subscription_list);
 }
 
+int nct_set_keepalive(int seconds)
+{
+	nct.client.keepalive = seconds;
+	return mqtt_ping(&nct.client);
+}
+
 int nct_cc_send(const struct nct_cc_data *cc_data)
 {
 	if (cc_data == NULL) {
@@ -1139,11 +1107,12 @@ int nct_cc_send(const struct nct_cc_data *cc_data)
 
 	publish.message_id = get_message_id(cc_data->message_id);
 
-	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d, topic: %*s", publish.message_id,
+	LOG_DBG("mqtt_publish: id = %d opcode = %d len = %d, topic: %.*s", publish.message_id,
 		cc_data->opcode, cc_data->data.len,
 		publish.message.topic.topic.size,
 		publish.message.topic.topic.utf8);
-
+	LOG_DBG("payload: %.*s", publish.message.payload.len,
+	     publish.message.payload.data ? (const char *)publish.message.payload.data : "");
 	int err = mqtt_publish(&nct.client, &publish);
 
 	if (err) {
@@ -1196,7 +1165,7 @@ void nct_dc_endpoint_set(const struct nrf_cloud_data *tx_endp,
 		nct.dc_m_endp.size = m_endp->len;
 #if defined(CONFIG_NRF_CLOUD_FOTA)
 		(void)nrf_cloud_fota_endpoint_set_and_report(&nct.client,
-			client_id_buf, &nct.dc_m_endp);
+			client_id_ptr, &nct.dc_m_endp);
 		if (persistent_session) {
 			/* Check for updates since FOTA topics are
 			 * already subscribed to.
@@ -1338,7 +1307,7 @@ int nct_process(void)
 		if (err != -ENOTCONN) {
 			return err;
 		}
-	} else if (nct.client.unacked_ping) {
+	} else if (nct.client.unacked_ping > 1) {
 		LOG_DBG("Previous MQTT ping not acknowledged");
 		err = -ECONNRESET;
 	} else {

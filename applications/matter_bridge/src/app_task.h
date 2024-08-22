@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "board/board.h"
 #include <platform/CHIPDeviceLayer.h>
 
 class AppTask {
@@ -17,6 +18,11 @@ public:
 	};
 
 	CHIP_ERROR StartApp();
+#ifdef CONFIG_BRIDGE_SMART_PLUG_SUPPORT
+	static constexpr chip::EndpointId kSmartplugEndpointId = 2;
+	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
+	static void SmartplugOnOffEventHandler();
+#endif /* CONFIG_BRIDGE_SMART_PLUG_SUPPORT */
 
 private:
 	CHIP_ERROR Init();

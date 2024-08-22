@@ -7,4 +7,4 @@ tests:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-    tags: sfloat sysbuild
+    tags: sfloat sysbuild ci_tests_lib_sfloat

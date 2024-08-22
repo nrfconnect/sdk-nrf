@@ -15,13 +15,17 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 
-#define NO_LED					0xFF
-
 /* Minimum button hold time in milliseconds to trigger the FMDN recovery mode. */
 #define RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS	3000
 
+/* Minimum button hold time in milliseconds to trigger the DFU mode. */
+#define DFU_MODE_BTN_MIN_HOLD_TIME_MS		7000
+
 /* Run status LED blinking interval. */
 #define RUN_LED_BLINK_INTERVAL_MS		1000
+
+/* Run status LED blinking interval in the DFU mode. */
+#define RUN_LED_DFU_BLINK_INTERVAL_MS		250
 
 /* Mode LED blinking interval in recovery mode. */
 #define MODE_LED_RECOVERY_BLINK_INTERVAL_MS	1000
@@ -29,19 +33,22 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 /* Mode LED blinking interval in identification mode. */
 #define MODE_LED_ID_BLINK_INTERVAL_MS		500
 
-/* Mode LED thread backoff timeout. */
-#define MODE_LED_THREAD_BACKOFF_TIMEOUT_MS	500
+/* Provisioning LED blinking interval when provisioned and FP advertising is active. */
+#define PROVISIONING_LED_FP_ADV_PROV_BLINK_INTERVAL_MS		250
+
+/* Provisioning LED blinking interval when not provisioned and FP advertising is active. */
+#define PROVISIONING_LED_FP_ADV_NOT_PROV_BLINK_INTERVAL_MS	1000
 
 /* Assignments of the DK LEDs and buttons to different functionalities and modules. */
 
-/* Run status LED. */
+/* Run and DFU mode status LED. */
 #define APP_RUN_STATUS_LED			DK_LED1
 
 /* Ringing status LED. */
 #define APP_RING_LED				DK_LED2
 
-/* Provisioning status LED. */
-#define APP_PROVISIONED_LED			DK_LED3
+/* Provisioning and FP advertising status LED. */
+#define APP_PROVISIONING_LED			DK_LED3
 
 /* Recovery mode and identification mode status LED. */
 #define APP_MODE_LED				DK_LED4
@@ -64,21 +71,37 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 /* Button used perform a factory reset at the bootup (by polling the state). */
 #define APP_FACTORY_SETTINGS_RESET_BTN		DK_BTN4_MSK
 
-#define RUN_LED_THREAD_PRIORITY			K_PRIO_PREEMPT(0)
-#define RUN_LED_THREAD_STACK_SIZE		512
+#define LED_WORKQ_PRIORITY	K_PRIO_PREEMPT(0)
+#define LED_WORKQ_STACK_SIZE	512
 
-#define MODE_LED_THREAD_PRIORITY		K_PRIO_PREEMPT(0)
-#define MODE_LED_THREAD_STACK_SIZE		512
+static K_THREAD_STACK_DEFINE(led_workq_stack, LED_WORKQ_STACK_SIZE);
+static struct k_work_q led_workq;
 
-enum app_state_mode {
-	APP_STATE_MODE_NONE,
-	APP_STATE_MODE_ID,
-	APP_STATE_MODE_RECOVERY,
-	APP_STATE_MODE_ALL,
+static void run_led_work_handle(struct k_work *item);
+static K_WORK_DELAYABLE_DEFINE(run_led_work, run_led_work_handle);
+
+static void mode_led_work_handle(struct k_work *item);
+static K_WORK_DELAYABLE_DEFINE(mode_led_work, mode_led_work_handle);
+
+static void provisioning_led_work_handle(struct k_work *item);
+static K_WORK_DELAYABLE_DEFINE(provisioning_led_work, provisioning_led_work_handle);
+
+static struct {
+	struct k_work_delayable *work;
+	const uint32_t displayed_state_bm;
+} led_works_map[] = {
+	{.work = &run_led_work,		 .displayed_state_bm = BIT(APP_UI_STATE_APP_RUNNING)},
+	{.work = &mode_led_work,	 .displayed_state_bm = (BIT(APP_UI_STATE_ID_MODE) |
+								BIT(APP_UI_STATE_RECOVERY_MODE))},
+	{.work = &provisioning_led_work, .displayed_state_bm = (BIT(APP_UI_STATE_PROVISIONED) |
+								BIT(APP_UI_STATE_FP_ADV))},
 };
 
-static atomic_t app_state_mode = ATOMIC_INIT(APP_STATE_MODE_NONE);
-static atomic_t run_led_thread_state_app_running;
+static ATOMIC_DEFINE(ui_state_status, APP_UI_STATE_COUNT);
+
+BUILD_ASSERT(APP_UI_STATE_COUNT <= (sizeof(uint32_t) * __CHAR_BIT__));
+
+BUILD_ASSERT(DFU_MODE_BTN_MIN_HOLD_TIME_MS > RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS);
 
 static void btn_handle(uint32_t button_state, uint32_t has_changed)
 {
@@ -99,7 +122,9 @@ static void btn_handle(uint32_t button_state, uint32_t has_changed)
 			 */
 			if (prev_uptime != 0) {
 				hold_time = (k_uptime_get() - prev_uptime);
-				if (hold_time > RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS) {
+				if (hold_time > DFU_MODE_BTN_MIN_HOLD_TIME_MS) {
+					app_ui_request_broadcast(APP_UI_REQUEST_DFU_MODE_ENTER);
+				} else if (hold_time > RECOVERY_MODE_BTN_MIN_HOLD_TIME_MS) {
 					app_ui_request_broadcast(
 						APP_UI_REQUEST_RECOVERY_MODE_ENTER);
 				} else {
@@ -134,137 +159,90 @@ static void bootup_btn_handle(void)
 	}
 }
 
-static void run_led_thread_process(void)
+static void run_led_work_handle(struct k_work *item)
 {
-	static bool run_led_on = true;
+	struct k_work_delayable *dwork = k_work_delayable_from_work(item);
+	static bool run_led_on;
 
-	while (1) {
-		if (atomic_get(&run_led_thread_state_app_running)) {
-			dk_set_led(APP_RUN_STATUS_LED, run_led_on);
-			run_led_on = !run_led_on;
-		}
+	if (atomic_test_bit(ui_state_status, APP_UI_STATE_APP_RUNNING)) {
+		uint32_t blink_interval_ms = atomic_test_bit(ui_state_status,
+							     APP_UI_STATE_DFU_MODE) ?
+					     RUN_LED_DFU_BLINK_INTERVAL_MS :
+					     RUN_LED_BLINK_INTERVAL_MS;
 
-		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL_MS));
+		run_led_on = !run_led_on;
+		(void) k_work_reschedule_for_queue(&led_workq, dwork, K_MSEC(blink_interval_ms));
+	} else {
+		run_led_on = false;
 	}
+
+	dk_set_led(APP_RUN_STATUS_LED, run_led_on);
 }
 
-K_THREAD_DEFINE(run_led_thread_id, RUN_LED_THREAD_STACK_SIZE, run_led_thread_process,
-		NULL, NULL, NULL, RUN_LED_THREAD_PRIORITY, 0, 0);
-
-static void mode_led_thread_process(void)
+static void mode_led_work_handle(struct k_work *item)
 {
+	struct k_work_delayable *dwork = k_work_delayable_from_work(item);
 	static bool mode_led_on;
 
-	while (1) {
-		uint32_t sleep_time_ms = MODE_LED_THREAD_BACKOFF_TIMEOUT_MS;
-		enum app_state_mode mode = atomic_get(&app_state_mode);
+	bool id_mode = atomic_test_bit(ui_state_status, APP_UI_STATE_ID_MODE);
+	bool recovery_mode = atomic_test_bit(ui_state_status, APP_UI_STATE_RECOVERY_MODE);
 
-		switch (mode) {
-		case APP_STATE_MODE_NONE:
-			if (mode_led_on) {
-				mode_led_on = false;
-				dk_set_led(APP_MODE_LED, mode_led_on);
-			}
-			break;
+	if (recovery_mode != id_mode) {
+		uint32_t blink_interval_ms = recovery_mode ?
+					 MODE_LED_RECOVERY_BLINK_INTERVAL_MS :
+					 MODE_LED_ID_BLINK_INTERVAL_MS;
 
-		case APP_STATE_MODE_RECOVERY:
-			mode_led_on = !mode_led_on;
-			dk_set_led(APP_MODE_LED, mode_led_on);
-			sleep_time_ms = MODE_LED_RECOVERY_BLINK_INTERVAL_MS;
-			break;
-
-		case APP_STATE_MODE_ID:
-			mode_led_on = !mode_led_on;
-			dk_set_led(APP_MODE_LED, mode_led_on);
-			sleep_time_ms = MODE_LED_ID_BLINK_INTERVAL_MS;
-			break;
-
-		case APP_STATE_MODE_ALL:
-			if (!mode_led_on) {
-				mode_led_on = true;
-				dk_set_led(APP_MODE_LED, mode_led_on);
-			}
-			break;
-
-		default:
-			__ASSERT_NO_MSG(false);
-			break;
-		}
-
-		k_sleep(K_MSEC(sleep_time_ms));
-	}
-}
-
-K_THREAD_DEFINE(mode_led_thread_id, MODE_LED_THREAD_STACK_SIZE, mode_led_thread_process,
-		NULL, NULL, NULL, MODE_LED_THREAD_PRIORITY, 0, 0);
-
-static void state_app_running_indicate(bool active)
-{
-	atomic_set(&run_led_thread_state_app_running, active);
-
-	if (!active) {
-		dk_set_led(APP_RUN_STATUS_LED, false);
-	}
-}
-
-static void state_mode_indicate(enum app_ui_state state, bool active)
-{
-	static bool recovery_mode;
-	static bool id_mode;
-	enum app_state_mode mode;
-
-	switch (state) {
-	case APP_UI_STATE_RECOVERY_MODE:
-		recovery_mode = active;
-		break;
-	case APP_UI_STATE_ID_MODE:
-		id_mode = active;
-		break;
-	default:
-		__ASSERT_NO_MSG(false);
-		break;
-	}
-
-	if (!recovery_mode && !id_mode) {
-		mode = APP_STATE_MODE_NONE;
-	} else if (recovery_mode && !id_mode) {
-		mode = APP_STATE_MODE_RECOVERY;
-	} else if (!recovery_mode && id_mode) {
-		mode = APP_STATE_MODE_ID;
+		mode_led_on = !mode_led_on;
+		(void) k_work_reschedule_for_queue(&led_workq, dwork, K_MSEC(blink_interval_ms));
 	} else {
-		mode = APP_STATE_MODE_ALL;
+		mode_led_on = recovery_mode && id_mode;
 	}
-	atomic_set(&app_state_mode, mode);
+
+	dk_set_led(APP_MODE_LED, mode_led_on);
+}
+
+static void provisioning_led_work_handle(struct k_work *item)
+{
+	struct k_work_delayable *dwork = k_work_delayable_from_work(item);
+	static bool provisioning_led_on;
+
+	bool provisioned = atomic_test_bit(ui_state_status, APP_UI_STATE_PROVISIONED);
+	bool fp_adv = atomic_test_bit(ui_state_status, APP_UI_STATE_FP_ADV);
+
+	if (fp_adv) {
+		uint32_t blink_interval_ms = provisioned ?
+					 PROVISIONING_LED_FP_ADV_PROV_BLINK_INTERVAL_MS :
+					 PROVISIONING_LED_FP_ADV_NOT_PROV_BLINK_INTERVAL_MS;
+
+		provisioning_led_on = !provisioning_led_on;
+		(void) k_work_reschedule_for_queue(&led_workq, dwork, K_MSEC(blink_interval_ms));
+	} else {
+		provisioning_led_on = provisioned;
+	}
+
+	dk_set_led(APP_PROVISIONING_LED, provisioning_led_on);
 }
 
 int app_ui_state_change_indicate(enum app_ui_state state, bool active)
 {
-	static const uint8_t state_led_map[APP_UI_STATE_COUNT] = {
-		[APP_UI_STATE_APP_RUNNING] = APP_RUN_STATUS_LED,
-		[APP_UI_STATE_RINGING] = APP_RING_LED,
-		[APP_UI_STATE_RECOVERY_MODE] = APP_MODE_LED,
-		[APP_UI_STATE_ID_MODE] = APP_MODE_LED,
-		[APP_UI_STATE_PROVISIONED] = APP_PROVISIONED_LED,
-		[APP_UI_STATE_FP_ADV] = NO_LED,
-	};
-
 	__ASSERT_NO_MSG(state < APP_UI_STATE_COUNT);
 
-	if (state == APP_UI_STATE_APP_RUNNING) {
-		state_app_running_indicate(active);
-		return 0;
+	atomic_set_bit_to(ui_state_status, state, active);
+
+	for (size_t i = 0; i < ARRAY_SIZE(led_works_map); i++) {
+		if (led_works_map[i].displayed_state_bm & BIT(state)) {
+			(void) k_work_reschedule_for_queue(&led_workq,
+							   led_works_map[i].work,
+							   K_NO_WAIT);
+		}
 	}
 
-	if ((state == APP_UI_STATE_RECOVERY_MODE) || (state == APP_UI_STATE_ID_MODE)) {
-		state_mode_indicate(state, active);
-		return 0;
+	/* Only the ring LED needs to be driven here directly, the remaining LEDs
+	 * are handled by the respective work items.
+	 */
+	if (state == APP_UI_STATE_RINGING) {
+		dk_set_led(APP_RING_LED, active);
 	}
-
-	if (state_led_map[state] == NO_LED) {
-		return 0;
-	}
-
-	dk_set_led(state_led_map[state], active);
 
 	return 0;
 }
@@ -272,6 +250,11 @@ int app_ui_state_change_indicate(enum app_ui_state state, bool active)
 int app_ui_init(void)
 {
 	int err;
+
+	k_work_queue_init(&led_workq);
+	k_work_queue_start(&led_workq, led_workq_stack,
+			   K_THREAD_STACK_SIZEOF(led_workq_stack), LED_WORKQ_PRIORITY,
+			   NULL);
 
 	err = dk_leds_init();
 	if (err) {

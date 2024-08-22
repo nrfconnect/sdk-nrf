@@ -25,6 +25,7 @@
       1. Connect the development kit to your PC using a USB cable.
       #. Power on the development kit.
       #. |exceptions_step|
+      #. |open_terminal_window_with_environment|
       #. Program the application to the kit using the following command:
 
          .. code-block:: console

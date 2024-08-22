@@ -19,7 +19,6 @@ LOG_MODULE_DECLARE(bt_le_adv_prov, CONFIG_BT_ADV_PROV_LOG_LEVEL);
 static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *state,
 		    struct bt_le_adv_prov_feedback *fb)
 {
-	ARG_UNUSED(state);
 	ARG_UNUSED(fb);
 
 	static uint8_t tx_power;
@@ -35,7 +34,7 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 
 	cp = net_buf_add(cmd_buf, sizeof(*cp));
 	cp->handle_type = BT_HCI_VS_LL_HANDLE_TYPE_ADV;
-	cp->handle = sys_cpu_to_le16(0);
+	cp->handle = sys_cpu_to_le16(state->adv_handle);
 
 	int err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_READ_TX_POWER_LEVEL, cmd_buf, &rsp);
 

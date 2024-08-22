@@ -26,6 +26,7 @@
 #include "dfu/ota/ota_util.h"
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 
+#include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/server/OnboardingCodesUtil.h>
@@ -35,14 +36,18 @@
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 #include <zephyr/logging/log.h>
 
+#ifdef CONFIG_BRIDGE_SMART_PLUG_SUPPORT
+#define APPLICATION_BUTTON_MASK DK_BTN2_MSK
+#endif /* CONFIG_BRIDGE_SMART_PLUG_SUPPORT */
+
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip;
 using namespace ::chip::app;
 using namespace ::chip::DeviceLayer;
-
 namespace
 {
+
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 static const bt_uuid *sUuidLbs = BT_UUID_LBS;
 static const bt_uuid *sUuidEs = BT_UUID_ESS;
@@ -55,7 +60,7 @@ static constexpr uint8_t kUuidServicesNumber = ARRAY_SIZE(sUuidServices);
 constexpr static uint32_t kPairingBlinkRate{ 100 };
 constexpr static uint32_t kScanningBlinkRate_ms{ 300 };
 constexpr static uint32_t kLostBlinkRate_ms{ 1000 };
-
+#ifndef CONFIG_BRIDGE_SMART_PLUG_SUPPORT
 void BLEStateChangeCallback(Nrf::BLEConnectivityManager::State state)
 {
 	switch (state) {
@@ -83,6 +88,7 @@ void BLEStateChangeCallback(Nrf::BLEConnectivityManager::State state)
 		Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
 	}
 }
+#endif /* CONFIG_BRIDGE_SMART_PLUG_SUPPORT */
 
 #endif /* CONFIG_BRIDGED_DEVICE_BT */
 
@@ -130,13 +136,35 @@ CHIP_ERROR AppTask::RestoreBridgedDevices()
 	}
 	return CHIP_NO_ERROR;
 }
+#ifdef CONFIG_BRIDGE_SMART_PLUG_SUPPORT
+void AppTask::SmartplugOnOffEventHandler()
+{
+	SystemLayer().ScheduleLambda([] {
+		bool newState = !Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState();
+		Protocols::InteractionModel::Status status =
+			Clusters::OnOff::Attributes::OnOff::Set(kSmartplugEndpointId, newState);
+		if (status != Protocols::InteractionModel::Status::Success) {
+			LOG_ERR("Updating on/off cluster failed: %x", to_underlying(status));
+		}
+	});
+}
+
+void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
+{
+	if ((APPLICATION_BUTTON_MASK & hasChanged) & state) {
+		Nrf::PostTask([] { SmartplugOnOffEventHandler(); });
+	}
+}
+#endif /* CONFIG_BRIDGE_SMART_PLUG_SUPPORT */
 
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
 	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
 #ifdef CONFIG_BRIDGED_DEVICE_BT
+#ifndef CONFIG_BRIDGE_SMART_PLUG_SUPPORT
 		Nrf::BLEConnectivityManager::Instance().RegisterStateCallback(BLEStateChangeCallback);
+#endif /* CONFIG_BRIDGE_SMART_PLUG_SUPPORT */
 		/* Initialize BLE Connectivity Manager before the Bridge Manager, as it must be ready to recover
 		 * devices loaded from persistent storage during the bridge init. */
 		CHIP_ERROR bleInitError =
@@ -155,14 +183,20 @@ CHIP_ERROR AppTask::Init()
 		}
 		return CHIP_NO_ERROR;
 	} }));
-
+#ifdef CONFIG_BRIDGE_SMART_PLUG_SUPPORT
+	/* onoff plug part add buttonEventHandler*/
+	if (!Nrf::GetBoard().Init(ButtonEventHandler)) {
+		LOG_ERR("User interface initialization failed.");
+		return CHIP_ERROR_INCORRECT_STATE;
+	}
+#else
 	if (!Nrf::GetBoard().Init()) {
 		LOG_ERR("User interface initialization failed.");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
-
-	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
-	 * state. */
+#endif
+	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter
+	 * network state. */
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
 
 	return Nrf::Matter::StartServer();

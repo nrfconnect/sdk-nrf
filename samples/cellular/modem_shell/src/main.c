@@ -26,7 +26,6 @@
 
 #include <modem/nrf_modem_lib.h>
 #include <modem/nrf_modem_lib_trace.h>
-#include <modem/at_monitor.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 
@@ -257,9 +256,8 @@ int main(void)
 		mosh_print_reset_reason();
 	}
 
-	mosh_print_version_info();
-
-#if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT)
+#if defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_MQTT) || \
+	defined(CONFIG_NRF_CLOUD_COAP)
 #if defined(CONFIG_MOSH_IPERF3)
 	/* Due to iperf3, we cannot let nrf cloud lib to initialize cJSON lib to be
 	 * using kernel heap allocations (i.e. k_ prepending functions).
@@ -321,10 +319,15 @@ int main(void)
 #if defined(CONFIG_MODEM_INFO)
 	err = modem_info_init();
 	if (err) {
-		printk("Modem info could not be established: %d\n", err);
+		printk("Modem info could not be initialized: %d\n", err);
 		return 0;
 	}
 #endif
+
+	/* Version information printing uses the Modem information library, so it can not be done
+	 * before the library has been initialized.
+	 */
+	mosh_print_version_info();
 
 #if defined(CONFIG_DK_LIBRARY)
 	err = dk_buttons_init(button_handler);

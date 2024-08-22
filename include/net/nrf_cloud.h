@@ -93,6 +93,10 @@ enum nrf_cloud_evt_type {
 	NRF_CLOUD_EVT_READY,
 	/** The device received non-specific data from the cloud. */
 	NRF_CLOUD_EVT_RX_DATA_GENERAL,
+	/** The device received "appID" : "DEVICE", "messageType" : "DISCON",
+	 *  indicating that the device was removed from its nRF Cloud account.
+	 */
+	NRF_CLOUD_EVT_RX_DATA_DISCON,
 	/** The device received location data from the cloud
 	 *  and no response callback was registered.
 	 */
@@ -108,7 +112,7 @@ enum nrf_cloud_evt_type {
 	 */
 	NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED,
 	/** A FOTA update has started.
-	 * This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is enabled.
+	 *  This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is enabled.
 	 */
 	NRF_CLOUD_EVT_FOTA_START,
 	/** The device should be restarted to apply a firmware upgrade */
@@ -120,9 +124,9 @@ enum nrf_cloud_evt_type {
 	 */
 	NRF_CLOUD_EVT_TRANSPORT_CONNECT_ERROR,
 	/** FOTA update job information has been received.
-	 * When ready, the application should start the job by
-	 * calling @ref nrf_cloud_fota_job_start.
-	 * This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is disabled.
+	 *  When ready, the application should start the job by
+	 *  calling @ref nrf_cloud_fota_job_start.
+	 *  This event is only sent if @kconfig{CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB} is disabled.
 	 */
 	NRF_CLOUD_EVT_FOTA_JOB_AVAILABLE,
 	/** An error occurred. The status field in the event struct will
@@ -575,7 +579,7 @@ struct nrf_cloud_credentials_status {
 #endif
 /** @brief NMEA data */
 struct nrf_cloud_gnss_nmea {
-	/** NULL-terminated NMEA sentence. Supported types are GPGGA, GPGLL, GPRMC.
+	/** Null-terminated NMEA sentence. Supported types are GPGGA, GPGLL, GPRMC.
 	 * Max string length is NRF_MODEM_GNSS_NMEA_MAX_LEN - 1
 	 */
 	const char *sentence;
@@ -640,7 +644,7 @@ typedef void (*nrf_cloud_event_handler_t)(const struct nrf_cloud_evt *evt);
 struct nrf_cloud_init_param {
 	/** Event handler that is registered with the module. */
 	nrf_cloud_event_handler_t event_handler;
-	/** NULL-terminated MQTT client ID string.
+	/** Null-terminated MQTT client ID string.
 	 * Must not exceed NRF_CLOUD_CLIENT_ID_MAX_LEN.
 	 * Must be set if NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
 	 * is enabled; otherwise, NULL.
@@ -822,13 +826,32 @@ int nrf_cloud_modem_fota_completed(const bool fota_success);
 /**
  * @brief Retrieve the current device ID.
  *
- * @param[in,out] id_buf Buffer to receive the device ID.
- * @param[in] id_len     Size of buffer (NRF_CLOUD_CLIENT_ID_MAX_LEN).
+ * @param[in,out] id_buf Buffer to receive the device ID as a null-terminated string.
+ * @param[in] id_buf_sz  Size of buffer, maximum size is NRF_CLOUD_CLIENT_ID_MAX_LEN + 1.
+ *
+ * @retval 0         If successful.
+ * @retval -EMSGSIZE The provided buffer is too small.
+ * @retval -EIO      The client ID could not be initialized.
+ * @retval -ENXIO    The Kconfig option @kconfig{CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME} is enabled
+ *                   but the runtime client ID has not been set.
+ *                   See @ref nrf_cloud_client_id_runtime_set.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_client_id_get(char *id_buf, size_t id_buf_sz);
+
+/**
+ * @brief Set the device ID at runtime.
+ *        Requires @kconfig{CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME} to be enabled.
+ *
+ * @note This function does not perform any management of the device's connection to nRF Cloud.
+ *
+ * @param[in] client_id Null-terminated device ID string.
+ *                      Max string length is NRF_CLOUD_CLIENT_ID_MAX_LEN.
  *
  * @retval 0 If successful.
  * @return A negative value indicates an error.
  */
-int nrf_cloud_client_id_get(char *id_buf, size_t id_len);
+int nrf_cloud_client_id_runtime_set(const char *const client_id);
 
 /**
  * @brief Retrieve the current customer tenant ID.
@@ -1019,6 +1042,27 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs);
  * @return A negative value indicates an error.
  */
 int nrf_cloud_credentials_configured_check(void);
+
+/**
+ * @brief Set the sec tag used for nRF Cloud credentials.
+ *        The default sec tag value is @kconfig{CONFIG_NRF_CLOUD_COAP_SEC_TAG} or
+ *        @kconfig{CONFIG_NRF_CLOUD_COAP_SEC_TAG} for CoAP.
+ *
+ * @note This API only needs to be called if the default configured sec tag value is no
+ *       longer applicable. This function does not perform any management of the
+ *       device's connection to nRF Cloud.
+ *
+ * @param sec_tag The sec tag.
+ *
+ */
+void nrf_cloud_sec_tag_set(const sec_tag_t sec_tag);
+
+/**
+ * @brief Get the sec tag used for nRF Cloud credentials.
+ *
+ * @return The sec tag.
+ */
+sec_tag_t nrf_cloud_sec_tag_get(void);
 
 /** @} */
 

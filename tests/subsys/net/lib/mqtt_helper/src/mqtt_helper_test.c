@@ -531,10 +531,13 @@ void test_mqtt_helper_poll_loop_disconnecting(void)
 /* The test verifies that mqtt_live() is called when poll() returns 0. */
 void test_mqtt_helper_poll_loop_timeout(void)
 {
-	/* Let poll() return 0 first and then -1 on subsequent call to end the test. */
+	/* Let poll() return 0 first and then -ENOTCONN on subsequent call to end the test. */
 	__cmock_poll_ExpectAnyArgsAndReturn(0);
-	__cmock_poll_ExpectAnyArgsAndReturn(-1);
+	__cmock_poll_ExpectAnyArgsAndReturn(-ENOTCONN);
 	__cmock_mqtt_live_ExpectAndReturn(&mqtt_client, 0);
+
+	/* mqtt_abort() should be called when the connection is dropped. */
+	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -550,6 +553,9 @@ void test_mqtt_helper_poll_loop_pollin(void)
 {
 	__cmock_poll_Stub(poll_stub_pollin);
 	__cmock_mqtt_input_ExpectAndReturn(&mqtt_client, 0);
+
+	/* mqtt_abort() should be called when the poll fails (after the second call). */
+	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 

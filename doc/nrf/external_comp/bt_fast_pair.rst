@@ -362,7 +362,12 @@ The Fast Pair service implementation provides API to generate the advertising da
   Account Keys are used to generate not discoverable advertising data.
 
 :c:func:`bt_fast_pair_set_pairing_mode`
-  This function is to be used to set pairing mode before the advertising is started.
+  This function is used to set the pairing mode before the advertising is started.
+
+.. note::
+   When the :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option is disabled, you cannot use the Fast Pair not discoverable advertising with UI indications (:c:enum:`BT_FAST_PAIR_NOT_DISC_ADV_TYPE_SHOW_UI_IND`).
+   This type of advertising is required for triggering the subsequent pairing.
+   For more details, see the :ref:`ug_bt_fast_pair_gatt_service_subsequent_pairing` section.
 
 Since you control the advertising, make sure to use advertising parameters consistent with the specification.
 The Bluetooth privacy is selected by the Fast Pair service, but you must make sure that the following requirements are met:
@@ -588,6 +593,18 @@ In the Fast Pair subsystem disabled state, GATT operations on the Fast Pair serv
 The Fast Pair GATT service modifies default values of related Kconfig options to follow Fast Pair requirements.
 The service also enables the needed functionalities using Kconfig select statement.
 For details, see the :ref:`bt_fast_pair_readme` Bluetooth service documentation in the |NCS|.
+
+.. _ug_bt_fast_pair_gatt_service_subsequent_pairing:
+
+Subsequent pairing
+==================
+
+The Fast Pair specification supports the subsequent pairing feature.
+Subsequent pairing refers to the procedure between a Fast Pair Provider, initially paired with your Google account, and another Fast Pair Seeker logged into the same account.
+
+To support the subsequent pairing feature in the `Fast Pair Procedure`_, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option.
+
+Consequently, the Fast Pair not discoverable advertising with UI indications, which is used to trigger the subsequent pairing UI flow, is only available when the subsequent pairing feature is supported.
 
 .. _ug_bt_fast_pair_gatt_service_no_ble_pairing:
 
@@ -871,7 +888,49 @@ The specific use case of the Google Fast Pair application is indicated by the ch
 In the official `Fast Pair`_ documentation, the `Fast Pair Device Feature Requirements`_ category defines additional requirements for each supported use case, and specifies a list of mandatory, optional, and unsupported Fast Pair features.
 If your product is targeting one of the listed use cases, you must align your accessory firmware to meet these requirements.
 
-To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`software_maturity_fast_pair_use_case` table.
+Depending on your use case, select an option from the following list that is a part of the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice:
+
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` - The unknown use case (the default choice).
+  See the :ref:`ug_bt_fast_pair_use_case_unknown` subsection for more information.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE` - The input device use case.
+  See the :ref:`ug_bt_fast_pair_use_case_input_device` subsection for more information.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` - The locator tag use case.
+  See the :ref:`ug_bt_fast_pair_use_case_locator_tag` subsection for more information.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` - The mouse use case.
+  See the :ref:`ug_bt_fast_pair_use_case_mouse` subsection for more information.
+
+The selected Kconfig option configures the Fast Pair features and extensions to satisfy the `Fast Pair Device Feature Requirements`_ for your target use case.
+For certain device types, you may need to implement some of these requirements at the application level.
+In this case, refer to the following subsections describing Fast Pair use cases supported by the |NCS|.
+
+.. note::
+   To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`software_maturity_fast_pair_use_case` table.
+
+.. _ug_bt_fast_pair_use_case_unknown:
+
+Unknown
+=======
+
+The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option is the default selection for the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice option.
+This use case configuration is neutral, which means it does not enable any Fast Pair features and extensions or impose restrictions on Fast Pair Kconfig options.
+You can use the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option to implement use cases that are not yet supported by the |NCS|.
+In this case, you must manually enable the required Fast Pair features and extensions in the application's Kconfig configuration.
+
+.. _ug_bt_fast_pair_use_case_input_device:
+
+Input device
+============
+
+Input device is a Human Interface Device (HID) such as a mouse, keyboard, remote control, or gaming pad used to interact with electronic devices such as a PC, TV, or console.
+
+If your product is targeting the input device use case, you must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE` Kconfig option that automatically selects the appropriate Fast Pair configuration.
+Currently, the Google Fast Pair specification does not define the input device feature requirements.
+For this reason, the Fast Pair feature and extension set is chosen arbitrarily to ensure the best user experience.
+
+You must declare support for the input device use case when registering your device in the Google Nearby Device console.
+To enable the support, select the :guilabel:`Input Device` option from the **Device Type** list in the **Fast Pair** protocol configuration panel.
+
+.. _ug_bt_fast_pair_use_case_locator_tag:
 
 Locator tag
 ===========
@@ -881,8 +940,8 @@ The locator tags can use different wireless technologies like GPS, Bluetooth LE 
 It is even possible to combine multiple technologies in a single product to improve the user experience.
 
 The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation defines the Fast Pair requirements for the locator tag use case.
-If your product is targeting the locator tag use case, you must configure your application according to these requirements.
-Enable the mandatory Fast Pair features and extensions using the appropriate Kconfig options in your application's configuration.
+If your product is targeting the locator tag use case, you must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` Kconfig option that automatically selects the appropriate Fast Pair configuration according to the use case requirements.
+This Kconfig option activates the necessary Fast Pair features and extensions while restricting the unsupported ones.
 For the reference configuration of the `Fast Pair Device Feature Requirements for Locator Tags`_  specification, see the :ref:`fast_pair_locator_tag` sample.
 
 The `Fast Pair Device Feature Requirements for Locator Tags`_ documentation refers to the `Fast Pair Locator Tag Specific Guidelines`_ section from the FMDN Accessory specification.
@@ -890,15 +949,33 @@ You must implement the guidelines at application level as they cannot be automat
 Implement these guidelines in your application if your product is targeting the locator tag use case.
 To see how to implement `Fast Pair Locator Tag Specific Guidelines`_ , see the :ref:`fast_pair_locator_tag` sample.
 
-You should declare support for the locator tag use case during the device registration process in the Google Nearby Device console.
-To activate the support, populate the **Fast Pair** protocol configuration panel in the following order:
+You must declare support for the locator tag use case when registering your device in the Google Nearby Device console.
+To enable the support, populate the **Fast Pair** protocol configuration panel in the following order:
 
-#. Select :guilabel:`Locator Tag` option in the **Device Type** list.
+#. Select the :guilabel:`Locator Tag` option from the **Device Type** list.
 #. Set the **Find My Device** feature to **true**.
 
 .. note::
    It is recommended to use the special mode of the ``Fast Pair Procedure`` for the locator tag use case (see :ref:`ug_bt_fast_pair_gatt_service_no_ble_pairing` for more details).
    The Bluetooth bonding information can cause connection establishment issues and delays on some Android devices.
+
+.. _ug_bt_fast_pair_use_case_mouse:
+
+Mouse
+=====
+
+Mouse is a Human Interface Device (HID) used to interact with electronic devices such as a PC.
+This use case is a specific variant of the :ref:`ug_bt_fast_pair_use_case_input_device` and shares many similarities with it.
+
+If your product is targeting the mouse use case, you must enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig option that automatically selects the appropriate Fast Pair configuration.
+Currently, the Google Fast Pair specification does not specify the mouse feature requirements.
+For this reason, the Fast Pair feature and extension set is chosen arbitrarily to ensure the best user experience.
+
+You must declare support for the mouse use case when registering your device in the Google Nearby Device console.
+To enable the support, select the :guilabel:`Mouse` option from the **Device Type** list in the **Fast Pair** protocol configuration panel.
+
+.. note::
+   The mouse device type is not supported on Android devices.
 
 Applications and samples
 ************************

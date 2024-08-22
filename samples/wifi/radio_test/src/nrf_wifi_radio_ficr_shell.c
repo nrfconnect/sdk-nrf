@@ -305,8 +305,7 @@ static int nrf_wifi_radio_test_otp_write_params(const struct shell *shell,
 		write_val[0] = strtoul(argv[2], NULL, 0);
 		write_val[1] = strtoul(argv[3], NULL, 0) & 0xFFFF;
 
-		if (!nrf_wifi_utils_is_mac_addr_valid(fmac_dev_ctx->fpriv->opriv,
-				(const char *)&write_val[0])) {
+		if (!nrf_wifi_utils_is_mac_addr_valid((const char *)&write_val[0])) {
 			shell_fprintf(shell,
 				      SHELL_ERROR,
 				      "Invalid MAC address. MAC address cannot be all 0's, broadcast or multicast address\n");

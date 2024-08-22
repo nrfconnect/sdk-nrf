@@ -14,9 +14,8 @@
 #include <zephyr/bluetooth/hci.h>
 
 #include <caf/events/ble_common_event.h>
-
 #ifdef CONFIG_CAF_BLE_USE_LLPM
-#include "sdc_hci_vs.h"
+#include <bluetooth/hci_vs_sdc.h>
 #endif /* CONFIG_CAF_BLE_USE_LLPM */
 
 #define MODULE ble_state
@@ -313,15 +312,11 @@ static void bt_ready(int err)
 	LOG_INF("Bluetooth initialized");
 
 #ifdef CONFIG_CAF_BLE_USE_LLPM
-	sdc_hci_cmd_vs_llpm_mode_set_t *p_cmd_enable;
+	sdc_hci_cmd_vs_llpm_mode_set_t cmd_enable;
 
-	struct net_buf *buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_LLPM_MODE_SET,
-						sizeof(*p_cmd_enable));
+	cmd_enable.enable = 1;
 
-	p_cmd_enable = net_buf_add(buf, sizeof(*p_cmd_enable));
-	p_cmd_enable->enable = 1;
-
-	err = bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_LLPM_MODE_SET, buf, NULL);
+	err = hci_vs_sdc_llpm_mode_set(&cmd_enable);
 	if (err) {
 		LOG_ERR("Error enabling LLPM (err: %d)", err);
 	} else {

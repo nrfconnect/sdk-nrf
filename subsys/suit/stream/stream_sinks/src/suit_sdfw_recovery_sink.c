@@ -58,6 +58,7 @@ static digest_sink_err_t verify_digest(uint8_t *buf, size_t buf_size, psa_algori
 	err = digest_sink.write(digest_sink.ctx, buf, buf_size);
 	if (err != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Failed to write to stream: %d", err);
+		(void)digest_sink.release(digest_sink.ctx);
 		return err;
 	}
 

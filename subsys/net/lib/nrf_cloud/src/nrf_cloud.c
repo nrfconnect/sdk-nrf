@@ -348,13 +348,26 @@ int nrf_cloud_sensor_data_stream(const struct nrf_cloud_sensor_data *param)
 
 int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 {
-	int err;
-	bool local_encode = false;
-
 	if (!msg) {
 		return -EINVAL;
 	}
 
+	/* Verify that the requested topic can be used in the current state */
+	if (msg->topic_type == NRF_CLOUD_TOPIC_STATE) {
+		/* State (shadow) updates need to have the control channel connected */
+		if (current_state < STATE_CC_CONNECTED) {
+			return -EACCES;
+		}
+	} else {
+		/* All other topics require device channel connected */
+		if (current_state != STATE_DC_CONNECTED) {
+			return -EACCES;
+		}
+	}
+
+	int err;
+	bool local_encode = false;
+	const uint16_t msg_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT;
 	struct nrf_cloud_data send_data = { .ptr = msg->data.ptr,
 					    .len = msg->data.len };
 
@@ -377,24 +390,23 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		/* Collect object's encoded data for sending */
 		if ((msg->obj->enc_src == NRF_CLOUD_ENC_SRC_CLOUD_ENCODED) ||
 		    (msg->obj->enc_src == NRF_CLOUD_ENC_SRC_PRE_ENCODED)) {
-			send_data.ptr = msg->obj->encoded_data.ptr;
-			send_data.len = msg->obj->encoded_data.len;
+			send_data = msg->obj->encoded_data;
 		} else {
 			LOG_WRN("Included object contains no sendable data");
 		}
 	}
 
+	const struct nct_dc_data dc_data = {
+		.data = send_data,
+		.message_id = msg_id
+	};
+
 	switch (msg->topic_type) {
 	case NRF_CLOUD_TOPIC_STATE: {
-		if (current_state < STATE_CC_CONNECTED) {
-			err = -EACCES;
-			break;
-		}
 		const struct nct_cc_data shadow_data = {
 			.opcode = NCT_CC_OPCODE_UPDATE_ACCEPTED,
-			.data.ptr = send_data.ptr,
-			.data.len = send_data.len,
-			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
+			.data = send_data,
+			.message_id = msg_id
 		};
 
 		err = nct_cc_send(&shadow_data);
@@ -405,23 +417,13 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		break;
 	}
 	case NRF_CLOUD_TOPIC_MESSAGE: {
-		if (current_state != STATE_DC_CONNECTED) {
-			err = -EACCES;
-			break;
-		}
-		const struct nct_dc_data buf = {
-			.data.ptr = send_data.ptr,
-			.data.len = send_data.len,
-			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
-		};
-
 		if (msg->qos == MQTT_QOS_0_AT_MOST_ONCE) {
-			err = nct_dc_stream(&buf);
+			err = nct_dc_stream(&dc_data);
 			if (err) {
 				LOG_ERR("nct_dc_stream failed, error: %d", err);
 			}
 		} else if (msg->qos == MQTT_QOS_1_AT_LEAST_ONCE) {
-			err = nct_dc_send(&buf);
+			err = nct_dc_send(&dc_data);
 			if (err) {
 				LOG_ERR("nct_dc_send failed, error: %d", err);
 			}
@@ -433,39 +435,17 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		break;
 	}
 	case NRF_CLOUD_TOPIC_BULK: {
-		if (current_state != STATE_DC_CONNECTED) {
-			err = -EACCES;
-			break;
-		}
-		const struct nct_dc_data buf = {
-			.data.ptr = msg->data.ptr,
-			.data.len = msg->data.len,
-			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
-		};
-
-		err = nct_dc_bulk_send(&buf, msg->qos);
+		err = nct_dc_bulk_send(&dc_data, msg->qos);
 		if (err) {
 			LOG_ERR("nct_dc_bulk_send failed, error: %d", err);
 		}
-
 		break;
 	}
 	case NRF_CLOUD_TOPIC_BIN: {
-		if (current_state != STATE_DC_CONNECTED) {
-			err = -EACCES;
-			break;
-		}
-		const struct nct_dc_data buf = {
-			.data.ptr = msg->data.ptr,
-			.data.len = msg->data.len,
-			.message_id = (msg->id > 0) ? msg->id : NCT_MSG_ID_USE_NEXT_INCREMENT
-		};
-
-		err = nct_dc_bin_send(&buf, msg->qos);
+		err = nct_dc_bin_send(&dc_data, msg->qos);
 		if (err) {
 			LOG_ERR("nct_dc_bin_send failed, error: %d", err);
 		}
-
 		break;
 	}
 	default:

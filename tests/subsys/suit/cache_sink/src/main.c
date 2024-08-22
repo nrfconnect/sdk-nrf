@@ -24,8 +24,8 @@ static const uint8_t corrupted_cache_header_ok_size_nok[] = {
 	0x60,								  /* Empty padding uri */
 	0x4B,								  /* bytes(11) */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, /* padding bytes */
-	0x69,							    /* text(9) */
-	0x23, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x62, 0x69, 0x6E,	    /* "#file.bin" */
+	0x69,								  /* text(9) */
+	0x23, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x62, 0x69, 0x6E,		  /* "#file.bin" */
 	0x5A, 0xFF, 0xFF, 0xFF, 0xFF, /* not updated, corrupted value */
 	0x12, 0x35, 0x89, 0x02, 0x31, 0x70, 0x49, 0x81, 0x20, 0x91, 0x62, 0x38,
 	0x90, 0x47, 0x60, 0x12, 0x37, 0x84, 0x90, 0x70, 0x18, 0x92, 0x36, 0x51,
@@ -44,8 +44,8 @@ static const uint8_t corrupted_cache_malformed_zcbor[] = {
 	0x60,								  /* Empty padding uri */
 	0x4B,								  /* bytes(11) */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, /* padding bytes */
-	0x69,							    /* text(9) */
-	0x23, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x62, 0x69, 0x6E,	    /* "#file.bin" */
+	0x69,								  /* text(9) */
+	0x23, 0x66, 0x69, 0x6C, 0x65, 0x2E, 0x62, 0x69, 0x6E,		  /* "#file.bin" */
 	0x5A, 0x00, 0x00, 0x00, 0x1E, /* bytes(30) - mismatched with real size (31) */
 	0x12, 0x35, 0x89, 0x02, 0x31, 0x70, 0x49, 0x81, 0x20, 0x91, 0x62, 0x38,
 	0x90, 0x47, 0x60, 0x12, 0x37, 0x84, 0x90, 0x70, 0x18, 0x92, 0x36, 0x51,
@@ -102,13 +102,6 @@ static uint8_t data3[] = {
 	0x2e, 0x09, 0x7d, 0xf0, 0x5c, 0x0c, 0xa9, 0xa5, 0x9a, 0x8a, 0xe0, 0xa3, 0xa8, 0x23, 0xc1,
 	0x41, 0x4e, 0x5e, 0x3f, 0xf7, 0x39, 0xa4, 0xc5, 0x5b, 0xec};
 
-void setup_dfu_test_cache(void *f)
-{
-	int ret = suit_dfu_cache_rw_initialize(NULL, 0);
-
-	zassert_equal(ret, SUIT_PLAT_SUCCESS, "Failed to initialize cache: %i", ret);
-}
-
 #ifndef CONFIG_BOARD_NATIVE_POSIX
 void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corrupted_cache_size)
 {
@@ -128,8 +121,6 @@ void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corru
 			 suit_plat_mem_nvm_ptr_get(FIXED_PARTITION_OFFSET(dfu_cache_partition_1)),
 			 corrupted_cache_size);
 	zassert_equal(res, 0, "Mem compare after write failed");
-
-	setup_dfu_test_cache(NULL);
 }
 #endif
 
@@ -149,8 +140,6 @@ void clear_dfu_test_partitions(void *f)
 	rc = flash_erase(fdev, FIXED_PARTITION_OFFSET(dfu_cache_partition_3),
 			 FIXED_PARTITION_SIZE(dfu_cache_partition_3));
 	zassert_equal(rc, 0, "Unable to erase dfu_cache_partition_3 before test execution: %i", rc);
-
-	suit_dfu_cache_rw_deinitialize();
 }
 
 bool is_cache_partition_1_empty(void)
@@ -170,44 +159,8 @@ bool is_cache_partition_1_empty(void)
 
 ZTEST_SUITE(cache_rw_initialization_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
 
-ZTEST(cache_rw_initialization_tests, test_cache_initialization_size_nok)
-{
-	uint8_t *envelope_address =
-		suit_plat_mem_nvm_ptr_get(FIXED_PARTITION_OFFSET(dfu_partition)) + 256;
-	size_t envelope_size = FIXED_PARTITION_SIZE(dfu_partition);
-
-	int ret = suit_dfu_cache_rw_initialize(envelope_address, envelope_size);
-
-	zassert_not_equal(ret, SUIT_PLAT_SUCCESS,
-			  "Initialization should have failed: size out of bounds");
-}
-
-ZTEST(cache_rw_initialization_tests, test_cache_initialization_address_nok)
-{
-	uint8_t *envelope_address =
-		suit_plat_mem_nvm_ptr_get(FIXED_PARTITION_OFFSET(dfu_partition)) - 256;
-	size_t envelope_size = FIXED_PARTITION_SIZE(dfu_partition);
-
-	int ret = suit_dfu_cache_rw_initialize(envelope_address, envelope_size);
-
-	zassert_not_equal(ret, SUIT_PLAT_SUCCESS,
-			  "Initialization should have failed: address out of bounds");
-}
-
-ZTEST(cache_rw_initialization_tests, test_cache_initialization_ok)
-{
-	uint8_t *envelope_address =
-		suit_plat_mem_nvm_ptr_get(FIXED_PARTITION_OFFSET(dfu_partition)) + 256;
-	size_t envelope_size = FIXED_PARTITION_SIZE(dfu_partition) - 1024;
-
-	int ret = suit_dfu_cache_rw_initialize(envelope_address, envelope_size);
-
-	zassert_equal(ret, SUIT_PLAT_SUCCESS, "Initialization failed: %i", ret);
-}
-
 #ifndef CONFIG_BOARD_NATIVE_POSIX
-ZTEST_SUITE(cache_sink_recovery_tests, NULL, NULL, NULL,
-	    clear_dfu_test_partitions, NULL);
+ZTEST_SUITE(cache_sink_recovery_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
 
 ZTEST(cache_sink_recovery_tests, test_cache_recovery_header_ok_size_nok)
 {
@@ -242,7 +195,7 @@ ZTEST(cache_sink_recovery_tests, test_cache_recovery_malformed_zcbor)
 
 #endif
 
-ZTEST_SUITE(cache_sink_tests, NULL, NULL, setup_dfu_test_cache, clear_dfu_test_partitions, NULL);
+ZTEST_SUITE(cache_sink_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
 
 ZTEST(cache_sink_tests, test_cache_drop_slot_ok)
 {

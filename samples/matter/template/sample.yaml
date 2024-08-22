@@ -14,21 +14,21 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
   sample.matter.template.release:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=release
       CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
-      SB_CONFIG_BOOTLOADER_MCUBOOT=y SB_CONFIG_PARTITION_MANAGER=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
+    tags: sysbuild ci_samples_matter
   sample.matter.template.lto:
     sysbuild: true
     build_only: true
@@ -41,7 +41,7 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
   sample.matter.template.smp_dfu:
     sysbuild: true
     build_only: true
@@ -52,9 +52,10 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
+    tags: sysbuild ci_samples_matter
   sample.matter.template.mgrt_dac:
     sysbuild: true
     build_only: true
@@ -66,13 +67,28 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
-  sample.matter.template.nrf54h20.nrf7002ek:
+    tags: sysbuild ci_samples_matter
+  sample.matter.template.nrf54h20.nrf7002eb:
     sysbuild: true
     build_only: true
     extra_args: SB_CONFIG_WIFI_NRF700X=y template_SHIELD=nrf700x_nrf54h20dk
-      CONFIG_CHIP_WIFI=y
+      CONFIG_CHIP_WIFI=y CONFIG_CHIP_BOOTLOADER_NONE=y
+      CONFIG_CHIP_OTA_REQUESTOR=n SB_CONFIG_MATTER_OTA=n
+      CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
+  sample.matter.template.test_shell:
+    sysbuild: true
+    build_only: true
+    extra_args: CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL=y
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
+      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
+    tags: sysbuild ci_samples_matter

@@ -188,16 +188,7 @@ static bool skip_validation(suit_manifest_role_t role)
 	case SUIT_MANIFEST_SEC_TOP:
 	case SUIT_MANIFEST_SEC_SDFW:
 	case SUIT_MANIFEST_SEC_SYSCTRL:
-		current_lcs = lcs_get(LCS_DOMAIN_ID_SECURE);
-
-		/* TODO:
-		 * NCSDK-26255
-		 * Once keys are provisioned, validation skip for Secure domain should be disabled.
-		 * return false;
-		 */
-
-		LOG_WRN("SUIT: Validation skip is enabled for Secure domain.");
-		break;
+		return false;
 
 	case SUIT_MANIFEST_APP_ROOT:
 	case SUIT_MANIFEST_APP_RECOVERY:

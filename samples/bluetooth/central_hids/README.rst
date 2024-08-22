@@ -10,6 +10,9 @@ Bluetooth: Central HIDS
 The Central HIDS sample demonstrates how to use the :ref:`hogp_readme` to interact with a HIDS server.
 Basically, the sample simulates a computer that connects to a mouse or a keyboard.
 
+.. note::
+   |nrf_desktop_HID_ref|
+
 Requirements
 ************
 
@@ -19,7 +22,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` sample or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth® Low Energy dongle and `nRF Connect for Desktop`_).
+The sample also requires a HIDS device to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` sample or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth Low Energy dongle and `nRF Connect for Desktop`_).
 
 Overview
 ********

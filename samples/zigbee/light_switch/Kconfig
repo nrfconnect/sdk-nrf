@@ -11,3 +11,17 @@ endmenu
 module = NUS_CMD
 module-str = NUS command
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+
+config LIGHT_SWITCH_CONFIGURE_TX_POWER
+	bool "Configure TX power"
+	default y
+	help
+		Enable this option to configure TX power for the sample.
+
+config LIGHT_SWITCH_TX_POWER
+	int "TX power"
+	depends on LIGHT_SWITCH_CONFIGURE_TX_POWER
+	default 0
+	help
+		TX power level in dBm.

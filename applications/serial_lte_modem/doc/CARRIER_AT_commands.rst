@@ -31,27 +31,27 @@ These may be the following:
 
 * ``#XCARRIEREVT: 1,<status>``
 
-  Request to set the modem to full functional mode.
+  Request to use the ``AT+CFUN=1`` AT command to set the modem to full functional mode.
   ``<status>`` returns two possible values:
 
-  * ``0`` - Request handled successfully.
-  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
+  * ``0`` - Request handling is fulfilled automatically.
+  * ``-1`` - Request handling is deferred and must be fulfilled by the application at its earliest convenience.
 
 * ``#XCARRIEREVT: 2,<status>``
 
-  Request to set the modem to flight functional mode.
+  Request to use the ``AT+CFUN=4`` AT command to set the modem to flight functional mode.
   ``<status>`` returns two possible values:
 
-  * ``0`` - Request handled successfully.
-  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
+  * ``0`` - Request handling is fulfilled automatically.
+  * ``-1`` - Request handling is deferred and must be fulfilled by the application at its earliest convenience.
 
 * ``#XCARRIEREVT: 3,<status>``
 
-  Request to set the modem to minimum functional mode.
+  Request to use the ``AT+CFUN=0`` AT command to set the modem to minimum functional mode.
   ``<status>`` returns two possible values:
 
-  * ``0`` - Request handled successfully.
-  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
+  * ``0`` - Request handling is fulfilled automatically.
+  * ``-1`` - Request handling is deferred and must be fulfilled by the application at its earliest convenience.
 
 * ``#XCARRIEREVT: 4,0``
 
@@ -94,12 +94,12 @@ These may be the following:
 
 * ``#XCARRIEREVT: 10,<status>``
 
-  Request to perform an application reboot.
+  Request to perform an application reboot, for example using the ``AT#XRESET`` AT command.
 
   ``<status>`` returns two possible values:
 
-  * ``0`` - Request handled successfully.
-  * ``-1`` - Request handling was deferred and must be performed by the application at its earliest convenience.
+  * ``0`` - Request handling is fulfilled automatically.
+  * ``-1`` - Request handling is deferred and must be fulfilled by the application at its earliest convenience.
 
 * ``#XCARRIEREVT: 11,0``
 

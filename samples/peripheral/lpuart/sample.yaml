@@ -20,7 +20,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
     platform_exclude: native_posix
-    tags: sysbuild
+    tags: sysbuild ci_samples_peripheral_lpuart
   sample.peripheral.lpuart_nrf52840_debug:
     sysbuild: true
     build_only: true
@@ -29,7 +29,7 @@ tests:
       - nrf52840dk/nrf52840
     extra_args: OVERLAY_CONFIG=debug.conf
       DTC_OVERLAY_FILE="boards/nrf52840dk_nrf52840.overlay;debug.overlay"
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_peripheral_lpuart
   sample.peripheral.lpuart_nrf9160dk_debug:
     sysbuild: true
     build_only: true
@@ -38,7 +38,7 @@ tests:
       - nrf9160dk/nrf9160/ns
     extra_args: OVERLAY_CONFIG=debug.conf
       DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_ns.overlay;debug.overlay"
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_peripheral_lpuart
   sample.peripheral.lpuart_int_driven:
     sysbuild: true
     build_only: true
@@ -53,4 +53,4 @@ tests:
       - nrf21540dk/nrf52840
     platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840 nrf9160dk/nrf9160/ns
       nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_peripheral_lpuart

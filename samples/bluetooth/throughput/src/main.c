@@ -183,7 +183,7 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 			return;
 		}
 
-		printk("Connection failed (err 0x%02x)\n", hci_err);
+		printk("Connection failed, err 0x%02x %s\n", hci_err, bt_hci_err_to_str(hci_err));
 		return;
 	}
 
@@ -213,10 +213,10 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 	}
 }
 
-void security_changed(struct bt_conn *conn, bt_security_t level,
-				 enum bt_security_err security_err)
+void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err security_err)
 {
-	printk("Security changed: level %i, err: %i\n", level, security_err);
+	printk("Security changed: level %i, err: %i %s\n", level, security_err,
+	       bt_security_err_to_str(security_err));
 
 	if (security_err != 0) {
 		printk("Failed to encrypt link\n");
@@ -305,7 +305,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	struct bt_conn_info info = {0};
 	int err;
 
-	printk("Disconnected (reason 0x%02x)\n", reason);
+	printk("Disconnected, reason 0x%02x %s\n", reason, bt_hci_err_to_str(reason));
 
 	test_ready = false;
 	if (default_conn) {

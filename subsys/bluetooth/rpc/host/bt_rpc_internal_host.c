@@ -13,8 +13,8 @@
 #include <nrf_rpc_cbor.h>
 
 #include "bt_rpc_common.h"
-#include "serialize.h"
-#include "cbkproxy.h"
+#include <nrf_rpc/nrf_rpc_serialize.h>
+#include <nrf_rpc/nrf_rpc_cbkproxy.h>
 
 #include <zephyr/logging/log.h>
 
@@ -34,15 +34,15 @@ static void bt_addr_le_is_bonded_rpc_handler(const struct nrf_rpc_group *group,
 	uint8_t id;
 	bool result;
 
-	id = ser_decode_uint(ctx);
-	addr = ser_decode_buffer(ctx, &addr_data, sizeof(bt_addr_le_t));
+	id = nrf_rpc_decode_uint(ctx);
+	addr = nrf_rpc_decode_buffer(ctx, &addr_data, sizeof(bt_addr_le_t));
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	result = bt_addr_le_is_bonded(id, addr);
-	ser_rsp_send_bool(group, result);
+	nrf_rpc_rsp_send_bool(group, result);
 
 	return;
 
@@ -53,12 +53,12 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_addr_le_is_bonded, BT_ADDR_LE_IS_BONDED_CMD,
 			 bt_addr_le_is_bonded_rpc_handler, NULL);
 
-static void decode_net_buf(struct ser_scratchpad *scratchpad, struct net_buf *data)
+static void decode_net_buf(struct nrf_rpc_scratchpad *scratchpad, struct net_buf *data)
 {
 	size_t len;
 	void *buf;
 
-	buf = ser_decode_buffer_into_scratchpad(scratchpad, &len);
+	buf = nrf_rpc_decode_buffer_into_scratchpad(scratchpad, &len);
 	net_buf_add_mem(data, buf, len);
 }
 
@@ -72,14 +72,14 @@ static void bt_hci_cmd_send_sync_rsp(const struct nrf_rpc_group *group, int resu
 	buffer_size_max += (rsp == NULL) ? 1 : (3 + rsp->len);
 	NRF_RPC_CBOR_ALLOC(group, ctx, buffer_size_max);
 
-	ser_encode_int(&ctx, result);
+	nrf_rpc_encode_int(&ctx, result);
 
 	if (rsp == NULL) {
-		ser_encode_null(&ctx);
+		nrf_rpc_encode_null(&ctx);
 	} else {
-		scratchpad_size = SCRATCHPAD_ALIGN(rsp->len);
-		ser_encode_uint(&ctx, scratchpad_size);
-		ser_encode_buffer(&ctx, rsp->data, rsp->len);
+		scratchpad_size = NRF_RPC_SCRATCHPAD_ALIGN(rsp->len);
+		nrf_rpc_encode_uint(&ctx, scratchpad_size);
+		nrf_rpc_encode_buffer(&ctx, rsp->data, rsp->len);
 	}
 
 	nrf_rpc_cbor_rsp_no_err(group, &ctx);
@@ -93,17 +93,17 @@ static void bt_hci_cmd_send_sync_rpc_handler(const struct nrf_rpc_group *group,
 	size_t len;
 	struct net_buf *buf = NULL;
 	struct net_buf *rsp = NULL;
-	struct ser_scratchpad scratchpad;
+	struct nrf_rpc_scratchpad scratchpad;
 	bool response;
 
-	opcode = ser_decode_uint(ctx);
+	opcode = nrf_rpc_decode_uint(ctx);
 
-	if (ser_decode_is_null(ctx)) {
-		ser_decode_skip(ctx);
+	if (nrf_rpc_decode_is_null(ctx)) {
+		nrf_rpc_decode_skip(ctx);
 		buf = NULL;
 	} else {
-		SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
-		len = ser_decode_uint(ctx);
+		NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
+		len = nrf_rpc_decode_uint(ctx);
 		buf = bt_hci_cmd_create(opcode, len);
 		if (!buf) {
 			ret = -ENOBUFS;
@@ -112,14 +112,14 @@ static void bt_hci_cmd_send_sync_rpc_handler(const struct nrf_rpc_group *group,
 		}
 	}
 
-	if (ser_decode_is_null(ctx)) {
+	if (nrf_rpc_decode_is_null(ctx)) {
 		/* The caller is not interested in the response. */
 		response = false;
 	} else {
 		response = true;
 	}
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 

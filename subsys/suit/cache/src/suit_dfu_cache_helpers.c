@@ -178,6 +178,7 @@ suit_plat_err_t suit_dfu_cache_partition_is_empty(struct dfu_cache_pool *cache_p
 			}
 		}
 
+		address += read_size;
 		remaining -= read_size;
 	}
 

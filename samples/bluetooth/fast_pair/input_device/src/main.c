@@ -8,6 +8,7 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 #include <zephyr/settings/settings.h>
 #include <bluetooth/services/fast_pair/fast_pair.h>
 #include <bluetooth/adv_prov/fast_pair.h>
@@ -200,7 +201,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	__ASSERT_NO_MSG(!peer);
 
 	if (err) {
-		LOG_WRN("Connection failed (err %u)", err);
+		LOG_WRN("Connection failed, err 0x%02x %s", err, bt_hci_err_to_str(err));
 		ret = k_work_submit(&bt_adv_restart);
 		__ASSERT_NO_MSG(ret == 1);
 		return;
@@ -214,7 +215,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason %u)", reason);
+	LOG_INF("Disconnected, reason 0x%02x %s", reason, bt_hci_err_to_str(reason));
 
 	dk_set_led_off(CON_STATUS_LED);
 	peer = NULL;
@@ -236,7 +237,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 	if (!err) {
 		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_WRN("Security failed: %s level %u err %d", addr, level, err);
+		LOG_WRN("Security failed: %s level %u err %d %s", addr, level, err,
+			bt_security_err_to_str(err));
 	}
 }
 

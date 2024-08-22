@@ -40,6 +40,11 @@ extern "C" {
  * @brief Got a null pointer for KMU data.
  */
 #define LIB_KMU_NULL_PNT 0x2
+/** @def LIB_KMU_REVOKED
+ *
+ * @brief The key is revoked.
+ */
+#define LIB_KMU_REVOKED	 0x3
 
 /** @brief KMU revocation policies.
  */

@@ -770,9 +770,9 @@ Configuring static partitions
 Static partitions are defined through a YAML-formatted configuration file in the root application's source directory.
 This file is similar to the regular :file:`pm.yml` configuration files, except that it also defines the start address for all partitions.
 
-You can set ``PM_STATIC_YML_FILE`` to contain exactly the static configuration you want to use.
+You can set :makevar:`PM_STATIC_YML_FILE` to contain exactly the static configuration you want to use.
 
-If you do not set ``PM_STATIC_YML_FILE``, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
+If you do not set :makevar:`PM_STATIC_YML_FILE`, the build system will use the following order to look for files in your application source directory to use as a static configuration layout:
 
 * If a :ref:`file suffix <app_build_file_suffixes>` is used, the following order applies:
 

@@ -12,7 +12,7 @@ else()
 	add_subdirectory(nrf_cc3xx)
   endif()
 
-  if(CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
+  if(CONFIG_PSA_CRYPTO_DRIVER_CRACEN OR (CONFIG_NRF_SECURITY_LEGACY_AND_PSA AND CONFIG_SOC_SERIES_NRF54LX))
 	add_subdirectory(cracen)
   endif()
 endif()

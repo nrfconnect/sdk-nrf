@@ -46,58 +46,1280 @@
 
 bluetooth:
   files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
+    - nrf/applications/ipc_radio/
+    - nrf/cmake/
+    - nrf/drivers/mpsl/
+    - nrf/include/bluetooth/
+    - nrf/samples/bluetooth/
+    - nrf/samples/nrf5340/multiprotocol_rpmsg/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/nrf_security/
+    - nrf/sysbuild/
+    - nrf/tests/bluetooth/
+    - nrf/tests/subsys/bluetooth/
+    - nrfxlib/crypto/
+    - nrfxlib/mpsl/include/
+    - nrfxlib/mpsl/lib/
+    - nrfxlib/softdevice_controller/include/
+    - nrfxlib/softdevice_controller/lib/
+    - zephyr/cmake/
     - zephyr/drivers/bluetooth/
+    - zephyr/include/zephyr/bluetooth/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/share/
+    - zephyr/soc/nordic/
     - zephyr/subsys/bluetooth/
-    - zephyr/subsys/net/l2/bluetooth/
-#    Examples:
-#    - nrf/drivers/bluetooth/
-#    - nrf/subsys/bluetooth/
+    - zephyr/subsys/settings/
 
-net:
+ci_samples_net: &ci_net
   files:
-    - zephyr/subsys/net/
-    - zephyr/include/zephyr/net/
-    - zephyr/drivers/wifi/
-    - zephyr/drivers/net/
+    - bootloader/mcuboot/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/lib/azure-sdk-for-c/
+    - modules/lib/cjson/
+    - modules/lib/hostap/
+    - modules/lib/zcbor/
+    - nrf/cmake/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/net/
+    - nrf/drivers/wifi/
+    - nrf/include/modem/
+    - nrf/include/net/
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_host/
+    - nrf/lib/at_monitor/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_id/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/modem_info/
+    - nrf/lib/modem_key_mgmt/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/lib/pdn/
+    - nrf/modules/cjson/
+    - nrf/modules/hostap/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/samples/net/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/net/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/sysbuild/
+    - nrf/tests/subsys/net/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - nrfxlib/nrf_wifi/
+    - zephyr/cmake/
     - zephyr/drivers/ethernet/
     - zephyr/drivers/ieee802154/
+    - zephyr/drivers/net/
     - zephyr/drivers/ptp_clock/
-#    Examples:
-#    - nrf/subsys/net/
-#    - nrf/include/net/
-#    - nrf/drivers/wifi/
-#    - nrf/drivers/net/
+    - zephyr/drivers/wifi/
+    - zephyr/include/zephyr/net/
+    - zephyr/share/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
 
-test_framework:
-  files:
-    - zephyr/subsys/testsuite/
-    - zephyr/samples/subsys/testsuite/
-    - zephyr/tests/subsys/testsuite/
-    - zephyr/tests/ztest/
+ci_tests_subsys_net: *ci_net
 
-cmsis_dsp:
+ci_tests_subsys_net_openthread:
   files:
-    - zephyr/modules/Kconfig.cmsis_dsp
-    # we have no means of telling file changes in a module, so for assume any
-    # change to west.yml is updating something we need to re-test for.
-    - zephyr/west.yml
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_rpc/
+    - nrf/tests/mocks/nrf_rpc/
+    - nrf/tests/subsys/net/openthread/
+    - nrfxlib/nrf_rpc/
+    - zephyr/subsys/net/
 
-mcumgr:
+ci_samples_wifi:
   files:
+    - modules/lib/hostap/
+    - nrf/drivers/wifi/
+    - nrf/modules/hostap/
+    - nrf/samples/wifi/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_wifi/
+    - zephyr/subsys/net/l2/ethernet/
+    - zephyr/subsys/net/l2/wifi/
+
+ci_applications_matter: &ci_matter
+  files:
+    - modules/lib/hostap/
+    - modules/lib/matter/
+    - modules/lib/suit-generator/
+    - nrf/applications/ipc_radio/
+    - nrf/applications/matter_bridge/
+    - nrf/applications/matter_weather_station/
+    - nrf/cmake/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/drivers/wifi/
+    - nrf/modules/hostap/
+    - nrf/modules/mcuboot/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/samples/matter/
+    - nrf/samples/nrf5340/multiprotocol_rpmsg/
+    - nrf/snippets/matter-diagnostic-logs/
+    - nrf/subsys/bluetooth/controller/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/pcd/
+    - nrf/sysbuild/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_802154/driver/
+    - nrfxlib/nrf_802154/serialization/
+    - nrfxlib/nrf_802154/sl/
+    - nrfxlib/nrf_wifi/
+    - nrfxlib/openthread/
+    - zephyr/cmake/
+    - zephyr/drivers/net/
+    - zephyr/include/dfu/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/share/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
     - zephyr/subsys/mgmt/mcumgr/
-    - zephyr/tests/subsys/mgmt/mcumgr/
-    - zephyr/samples/subsys/mgmt/mcumgr/
-    - zephyr/include/zephyr/mgmt/mcumgr/
-kernel:
-  files:
-    - zephyr/kernel/
-    - zephyr/arch/
+    - zephyr/subsys/net/
+    - zephyr/subsys/settings/
 
-posix:
-  files:
-    - zephyr/lib/posix/
+ci_samples_matter: *ci_matter
 
-# cbprintf:
-#    files:
-#        - zephyr/lib/os/cbprintf*
-#        - zephyr/lib/posix
+ci_samples_crypto: &ci_crypto
+  files:
+    - modules/crypto/
+    - nrf/cmake/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/net/
+    - nrf/include/tfm/
+    - nrf/modules/cjson/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/samples/crypto/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/sysbuild/
+    - nrf/tests/crypto/
+    - zephyr/cmake/
+    - zephyr/drivers/entropy/
+    - zephyr/drivers/serial/
+    - zephyr/include/drivers/serial/
+    - zephyr/modules/mbedtls/
+    - zephyr/share/
+
+ci_tests_crypto: *ci_crypto
+
+ci_samples_zigbee: &ci_zigbee
+  files:
+    - nrf/applications/ipc_radio/
+    - nrf/applications/zigbee_weather_station/
+    - nrf/cmake/
+    - nrf/drivers/mpsl/
+    - nrf/dts/bindings/radio_fem/
+    - nrf/include/zigbee/
+    - nrf/modules/mcuboot/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/samples/nrf5340/multiprotocol_rpmsg/
+    - nrf/samples/zigbee/
+    - nrf/subsys/bluetooth/controller/
+    - nrf/subsys/bluetooth/services/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/pcd/
+    - nrf/subsys/zigbee
+    - nrf/sysbuild/
+    - nrf/tests/subsys/zigbee/
+    - nrfxlib/mpsl/include/
+    - nrfxlib/mpsl/lib/
+    - nrfxlib/nrf_802154/driver/
+    - nrfxlib/nrf_802154/serialization/
+    - nrfxlib/nrf_802154/sl/
+    - nrfxlib/softdevice_controller/include/
+    - nrfxlib/softdevice_controller/lib/
+    - nrfxlib/zboss/
+    - zephyr/cmake/
+    - zephyr/include/dfu/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/share/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/mgmt/mcumgr/
+
+ci_tests_subsys_zigbee: *ci_zigbee
+
+ci_samples_openthread:
+  files:
+    - modules/lib/openthread/
+    - nrf/applications/ipc_radio/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/samples/openthread/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/net/lib/coap_utils/
+    - nrf/subsys/net/openthread/
+    - nrfxlib/crypto/
+    - nrfxlib/mpsl/include/
+    - nrfxlib/mpsl/lib/
+    - nrfxlib/nrf_802154/driver/
+    - nrfxlib/nrf_802154/serialization/
+    - nrfxlib/nrf_802154/sl/
+    - nrfxlib/openthread/
+    - zephyr/include/zephyr/net/
+    - zephyr/modules/mbedtls/
+    - zephyr/modules/openthread/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/net/
+    - zephyr/subsys/settings/
+
+ci_samples_tfm: &ci_tfm
+  files:
+    - modules/crypto/
+    - nrf/cmake/
+    - nrf/include/tfm/
+    - nrf/modules/nrfxlib/
+    - nrf/modules/tfm/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/samples/tfm/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/sysbuild/
+    - nrf/tests/tfm/
+    - nrfxlib/crypto/
+    - zephyr/cmake/
+    - zephyr/drivers/entropy/
+    - zephyr/modules/trusted-firmware-m/
+    - zephyr/share/
+
+ci_tests_tfm: *ci_tfm
+
+ci_tests_subsys_suit:
+  files:
+    - modules/lib/suit-generator/
+    - modules/lib/suit-processor/
+    - nrf/cmake/
+    - nrf/include/bl*
+    - nrf/include/dfu/*suit*
+    - nrf/include/fprotect.h
+    - nrf/include/sdfw/sdfw_services/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/samples/suit/
+    - nrf/subsys/dfu/
+    - nrf/subsys/mgmt/suitfu/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/sdfw_services/
+    - nrf/subsys/suit/
+    - nrf/sysbuild/
+    - nrf/tests/subsys/suit/
+    - zephyr/cmake/
+    - zephyr/share/
+
+ci_samples_nfc:
+  files:
+    - nrf/include/nfc/
+    - nrf/lib/st25r3911b/
+    - nrf/samples/bluetooth/central_nfc_pairing/
+    - nrf/samples/bluetooth/peripheral_hids_keyboard/
+    - nrf/samples/bluetooth/peripheral_nfc_pairing/
+    - nrf/samples/nfc/
+    - nrf/subsys/nfc/
+    - nrfxlib/nfc/
+
+Sidewalk:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
+    - modules/lib/open-amp/open-amp/
+    - modules/lib/zcbor/
+    - nrf/applications/ipc_radio/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fatal_error/
+    - nrf/lib/fprotect/
+    - nrf/modules/mcuboot/
+    - nrf/subsys/bluetooth/controller/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/pcd/
+    - nrfxlib/crypto/
+    - sidewalk/
+    - zephyr/include/dfu/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/mem_mgmt/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/mgmt/mcumgr/
+    - zephyr/subsys/net/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/
+
+find_my:
+  files:
+    - bootloader/mcuboot/
+    - find-my/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
+    - modules/lib/open-amp/
+    - nrf/applications/ipc_radio/
+    - nrf/cmake/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fatal_error/
+    - nrf/lib/fprotect/
+    - nrf/lib/multithreading_lock/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/dfu/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nfc/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/sysbuild/
+    - nrfxlib/crypto/
+    - nrfxlib/nfc/
+    - zephyr/cmake/
+    - zephyr/drivers/sensor/adi/adxl362
+    - zephyr/drivers/sensor/bosch/bme680
+    - zephyr/drivers/sensor/bosch/bmi270
+    - zephyr/drivers/sensor/bosch/bmm150
+    - zephyr/drivers/sensor/voltage_divider
+    - zephyr/share/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/mem_mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/device/
+
+ci_samples_cellular:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
+    - modules/hal/nordic/nrfx/
+    - modules/lib/cjson/
+    - modules/lib/hostap/
+    - modules/lib/zcbor/
+    - nrf/boards/nordic/
+    - nrf/cmake/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/wifi/
+    - nrf/ext/curl/
+    - nrf/ext/iperf3/
+    - nrf/include/date_time.h
+    - nrf/include/dk_buttons_and_leds.h
+    - nrf/include/modem/
+    - nrf/include/net/
+    - nrf/lib/adp536x/
+    - nrf/lib/at_cmd_custom/
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_host/
+    - nrf/lib/at_monitor/
+    - nrf/lib/at_shell/
+    - nrf/lib/bin/lwm2m_carrier/
+    - nrf/lib/date_time/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fatal_error/
+    - nrf/lib/fprotect/
+    - nrf/lib/location/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/modem_attest_token/
+    - nrf/lib/modem_battery/
+    - nrf/lib/modem_info/
+    - nrf/lib/modem_jwt/
+    - nrf/lib/modem_key_mgmt/
+    - nrf/lib/modem_slm/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/lib/pdn/
+    - nrf/lib/sms/
+    - nrf/lib/wave_gen/
+    - nrf/modules/cjson/
+    - nrf/modules/hostap/
+    - nrf/samples/cellular/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/caf/
+    - nrf/subsys/debug/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/mgmt/
+    - nrf/subsys/net/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/sysbuild/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - nrfxlib/nrf_wifi/
+    - zephyr/boards/nordic/
+    - zephyr/cmake/
+    - zephyr/drivers/bluetooth/
+    - zephyr/drivers/console/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/net/
+    - zephyr/drivers/serial/
+    - zephyr/drivers/wifi/
+    - zephyr/include/net/
+    - zephyr/include/posix/
+    - zephyr/include/shell/
+    - zephyr/share/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/mem_mgmt/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
+
+ci_samples_peripheral_radio_test:
+  files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/hal/nordic/
+    - modules/lib/open-amp/open-amp/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/lib/fem_al/
+    - nrf/samples/nrf5340/remote_shell/
+    - nrf/samples/peripheral/radio_test/
+    - nrf/subsys/mpsl/fem/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/crypto/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/ipc/
+
+ci_samples_peripheral_802154:
+  files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/hal/nordic/
+    - modules/lib/open-amp/open-amp/
+    - modules/lib/zcbor/
+    - nrf/applications/ipc_radio/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/samples/nrf5340/remote_shell/
+    - nrf/samples/peripheral/802154_phy_test/
+    - nrf/samples/peripheral/802154_sniffer/
+    - nrf/subsys/mpsl/fem/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_802154/
+    - nrfxlib/nrf_rpc/
+    - zephyr/modules/hal_nordic/nrf_802154/
+    - zephyr/soc/nordic/
+
+ci_samples_keys:
+  files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_unique_key/
+    - nrf/lib/identity_key/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/samples/keys/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - zephyr/soc/nordic/
+
+ci_samples_esb:
+  files:
+    - modules/hal/nordic/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/samples/esb/
+    - nrf/samples/nrf5340/empty_app_core/
+    - nrf/subsys/esb/
+    - nrf/subsys/mpsl/
+    - nrfxlib/crypto/
+    - zephyr/soc/nordic/
+
+ci_applications_asset_tracker_v2:
+  files:
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - modules/lib/azure-sdk-for-c/
+    - modules/lib/cjson/
+    - modules/lib/memfault-firmware-sdk/
+    - modules/lib/zcbor/
+    - nrf/applications/asset_tracker_v2/
+    - nrf/cmake/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/wifi/
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_host/
+    - nrf/lib/at_monitor/
+    - nrf/lib/bin/lwm2m_carrier/
+    - nrf/lib/date_time/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_id/
+    - nrf/lib/location/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/modem*/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/lib/pdn/
+    - nrf/lib/qos/
+    - nrf/lib/sms/
+    - nrf/modules/azure-sdk-for-c/
+    - nrf/modules/cjson/
+    - nrf/modules/memfault-firmware-sdk/
+    - nrf/modules/trusted-firmware-m/
+    - nrf/subsys/caf/
+    - nrf/subsys/dfu/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/net/
+    - nrf/subsys/net/lib/aws_iot/
+    - nrf/subsys/net/lib/azure_iot_hub/
+    - nrf/subsys/net/lib/nrf_cloud/
+    - nrf/subsys/nrf_security/
+    - nrf/sysbuild/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - nrfxlib/nrf_wifi/
+    - zephyr/boards/nordic/nrf9160dk/
+    - zephyr/cmake/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/hwinfo/
+    - zephyr/share/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/net/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/tracing/
+
+ci_samples_edge_impulse:
+  files:
+    - nrf/drivers/sensor/sensor_sim/
+    - nrf/lib/edge_impulse/
+    - nrf/lib/wave_gen/
+    - nrf/samples/edge_impulse/
+    - zephyr/soc/nordic/
+
+ci_tests_subsys_bootloader:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/mbedtls/
+    - modules/crypto/oberon-psa-crypto/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_unique_key/
+    - nrf/lib/identity_key/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/samples/bootloader/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/subsys/bootloader/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_modem/
+    - zephyr/soc/nordic/
+
+ci_samples_app_event_manager:
+  files:
+    - nrf/include/app_event_manager.h
+    - nrf/samples/app_event_manager/
+    - nrf/subsys/app_event_manager/
+
+ci_tests_subsys_app_event_manager:
+  files:
+    - nrf/include/app_event_manager.h
+    - nrf/subsys/app_event_manager/
+    - nrf/tests/subsys/app_event_manager/
+
+ci_samples_app_event_manager_profiler_tracer:
+  files:
+    - nrf/include/app_event_manager.h
+    - nrf/samples/app_event_manager_profiler_tracer/
+    - nrf/samples/caf/
+    - nrf/samples/nrf_profiler/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/app_event_manager_profiler_tracer/
+    - nrf/subsys/caf/
+
+ci_applications_ipc_radio:
+  files:
+    - nrf/applications/ipc_radio/
+    - nrf/drivers/mpsl/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_rpc/
+    - nrfxlib/nrf_802154/
+    - nrfxlib/nrf_rpc/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/net/
+
+ci_tests_modules_mcuboot:
+  files:
+    - bootloader/mcuboot/
+    - nrf/modules/mcuboot/
+    - nrf/samples/nrf5340/empty_net_core/
+    - nrf/samples/nrf5340/netboot/
+    - nrf/subsys/bootloader/
+    - nrf/tests/modules/mcuboot/
+    - zephyr/drivers/flash/
+
+ci_tests_subsys_dfu:
+  files:
+    - nrf/subsys/dfu/
+    - nrf/tests/subsys/dfu/
+    - zephyr/drivers/flash/
+    - zephyr/subsys/mgmt/
+
+ci_tests_drivers_nrfx_integration_test:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/drivers/nrfx_integration_test/
+    - zephyr/modules/hal_nordic/
+
+ci_applications_machine_learning:
+  files:
+    - nrf/applications/ipc_radio/
+    - nrf/applications/machine_learning/
+    - nrf/boards/shields/pca63565/
+    - nrf/boards/shields/pca63566/
+    - nrf/cmake/
+    - nrf/drivers/mpsl/
+    - nrf/drivers/sensor/sensor_sim/
+    - nrf/lib/edge_impulse/
+    - nrf/lib/wave_gen/
+    - nrf/samples/nrf5340/netboot/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/caf/
+    - nrf/subsys/event_manager_proxy/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/pcd/
+    - nrf/sysbuild/
+    - zephyr/cmake/
+    - zephyr/drivers/sensor/adi/adxl362
+    - zephyr/drivers/sensor/bosch/bme680
+    - zephyr/drivers/sensor/bosch/bmi270
+    - zephyr/drivers/sensor/bosch/bmm150
+    - zephyr/drivers/sensor/voltage_divider
+    - zephyr/share/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/usb/
+
+ci_applications_nrf_desktop:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/
+    - modules/lib/zcbor/
+    - nrf/applications/ipc_radio/
+    - nrf/applications/nrf_desktop/
+    - nrf/boards/
+    - nrf/cmake/
+    - nrf/drivers/mpsl/
+    - nrf/drivers/sensor/paw3212/
+    - nrf/drivers/sensor/pmw3360/
+    - nrf/dts/bindings/sensor/
+    - nrf/include/bluetooth/
+    - nrf/include/caf/
+    - nrf/include/sensor/
+    - nrf/scripts/hid_configurator/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/caf/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/mgmt/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/partition_manager/
+    - nrf/sysbuild/
+    - nrfxlib/crypto/
+    - nrfxlib/mpsl/
+    - nrfxlib/softdevice_controller/
+    - zephyr/boards/nordic/
+    - zephyr/cmake/
+    - zephyr/drivers/bluetooth/
+    - zephyr/drivers/entropy/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/usb/
+    - zephyr/include/zephyr/bluetooth/
+    - zephyr/share/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/logging/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/net/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/
+
+ci_tests_subsys_caf:
+  files:
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/caf/
+    - nrf/tests/subsys/caf/
+
+ci_tests_subsys_partition_manager:
+  files:
+    - nrf/subsys/partition_manager/
+    - nrf/tests/subsys/partition_manager/
+
+ci_tests_subsys_emds:
+  files:
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/emds/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/subsys/emds/
+    - zephyr/subsys/bluetooth/
+
+ci_tests_lib_nrf_fuel_gauge:
+  files:
+    - nrf/tests/lib/nrf_fuel_gauge/
+    - nrfxlib/nrf_fuel_gauge/
+
+ci_tests_lib_at_cmd_parser:
+  files:
+    - nrf/lib/at_cmd_parser/
+    - nrf/tests/lib/at_cmd_parser/
+
+ci_tests_lib_at_parser:
+  files:
+    - nrf/lib/at_parser/
+    - nrf/tests/lib/at_parser/
+
+ci_tests_lib_location:
+  files:
+    - modules/lib/cjson/
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_monitor/
+    - nrf/lib/location/
+    - nrf/lib/lte_link_control/
+    - nrf/modules/cjson/
+    - nrf/tests/lib/location/
+    - nrf/tests/mocks/nrf_modem_at/
+
+ci_tests_lib_hw_id:
+  files:
+    - nrf/lib/hw_id
+    - nrf/tests/lib/hw_id
+
+ci_tests_subsys_debug:
+  files:
+    - nrf/subsys/debug/
+    - nrf/tests/subsys/debug/
+
+ci_tests_subsys_nrf_profiler:
+  files:
+    - nrf/subsys/nrf_profiler/
+    - nrf/tests/subsys/nrf_profiler/
+
+ci_tests_subsys_pcd:
+  files:
+    - nrf/subsys/pcd/
+    - nrf/tests/subsys/pcd/
+
+ci_tests_subsys_sdfw_services:
+  files:
+    - nrf/subsys/sdfw_services/
+    - nrf/tests/subsys/sdfw_services/
+
+ci_tests_subsys_event_manager_proxy:
+  files:
+    - modules/lib/open-amp/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/event_manager_proxy/
+    - nrf/tests/subsys/event_manager_proxy/
+    - zephyr/subsys/ipc/ipc_service/
+
+ci_samples_event_manager_proxy:
+  files:
+    - nrf/samples/event_manager_proxy/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/event_manager_proxy/
+    - zephyr/subsys/ipc/ipc_service/
+
+ci_tests_subsys_audio_module:
+  files:
+    - nrf/subsys/audio_module/
+    - nrf/tests/subsys/audio_module/
+
+ci_tests_subsys_mpsl:
+  files:
+    - nrf/subsys/mpsl/
+    - nrf/tests/subsys/mpsl/
+
+ci_tests_lib_nrf_modem_lib:
+  files:
+    - nrf/lib/nrf_modem_lib/
+    - nrf/tests/lib/nrf_modem_lib/
+    - nrf/tests/mocks/nrf_modem_at/
+    - zephyr/subsys/net/
+
+ci_tests_lib_edge_impulse:
+  files:
+    - nrf/lib/edge_impulse/
+    - nrf/tests/lib/edge_impulse/
+
+ci_samples_caf_sensor_manager:
+  files:
+    - nrf/samples/caf_sensor_manager/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/caf/
+    - nrf/subsys/event_manager_proxy/
+    - zephyr/subsys/ipc/
+
+ci_samples_hw_id:
+  files:
+    - nrf/drivers/entropy/
+    - nrf/lib/hw_id/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/modem_jwt/
+    - nrf/lib/multithreading_lock/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/samples/hw_id/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mpsl/
+    - nrfxlib/nrf_modem/
+    - zephyr/drivers/bluetooth/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/net/
+
+ci_samples_pmic:
+  files:
+    - nrf/samples/pmic/
+    - nrfxlib/nrf_fuel_gauge/
+    - zephyr/drivers/i2c/
+    - zephyr/drivers/mfd/
+    - zephyr/drivers/regulator/
+    - zephyr/drivers/sensor/nordic/npm1300_charger/
+
+ci_samples_ipc:
+  files:
+    - modules/lib/open-amp/
+    - nrf/samples/ipc/
+    - zephyr/drivers/mbox/
+    - zephyr/subsys/ipc/
+
+ci_samples_benchmarks:
+  files:
+    - modules/benchmark/
+    - nrf/modules/coremark/
+    - nrf/samples/benchmarks/
+
+ci_samples_debug:
+  files:
+    - bootloader/mcuboot/
+    - modules/hal/nordic/nrfx
+    - modules/lib/hostap/
+    - modules/lib/memfault-firmware-sdk/
+    - modules/lib/zcbor/
+    - nrf/drivers/wifi/
+    - nrf/modules/hostap/
+    - nrf/modules/memfault-firmware-sdk/
+    - nrf/samples/debug/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/debug/
+    - nrf/subsys/net/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/debug/
+    - zephyr/subsys/net/
+
+ci_samples_gazell:
+  files:
+    - nrf/samples/gazell/
+    - nrf/subsys/gazell/
+
+ci_tests_lib_hw_unique_key_tfm:
+  files:
+    - mbedtls/
+    - modules/crypto/
+    - modules/tee/tf-m/trusted-firmware-m/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/lib/hw_unique_key_tfm/
+
+ci_tests_lib_hw_unique_key:
+  files:
+    - modules/crypto/
+    - nrf/lib/fprotect/
+    - nrf/lib/hw_unique_key/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/lib/hw_unique_key/
+    - nrfxlib/crypto/
+
+ci_tests_lib_sfloat:
+  files:
+    - nrf/lib/sfloat/
+    - nrf/tests/lib/sfloat/
+
+ci_tests_lib_date_time:
+  files:
+    - nrf/lib/date_time/
+    - nrf/tests/lib/date_time/
+
+ci_tests_lib_modem_jwt:
+  files:
+    - nrf/lib/modem_jwt/
+    - nrf/tests/lib/modem_jwt/
+
+ci_tests_lib_qos:
+  files:
+    - nrf/lib/qos/
+    - nrf/tests/lib/qos/
+
+ci_tests_lib_pcm_mix:
+  files:
+    - nrf/lib/pcm_mix/
+    - nrf/tests/lib/pcm_mix/
+
+ci_tests_lib_lte_lc:
+  files:
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/lte_link_control/
+    - nrf/tests/lib/lte_lc/
+    - nrf/tests/lib/lte_lc_api/
+    - nrf/tests/mocks/nrf_modem_at/
+
+ci_tests_lib_contin_array:
+  files:
+    - nrf/lib/contin_array/
+    - nrf/tests/lib/contin_array/
+
+ci_tests_lib_at_cmd_custom:
+  files:
+    - nrf/lib/at_cmd_custom/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/tests/lib/at_cmd_custom/
+    - nrfxlib/nrf_modem/
+
+ci_tests_lib_data_fifo:
+  files:
+    - nrf/lib/data_fifo/
+    - nrf/tests/lib/data_fifo/
+
+ci_tests_lib_tone:
+  files:
+    - modules/lib/cmsis-dsp/
+    - nrf/lib/tone/
+    - nrf/tests/lib/tone/
+
+ci_tests_lib_modem_battery:
+  files:
+    - nrf/lib/modem_battery/
+    - nrf/tests/lib/modem_battery/
+    - nrf/tests/unity/
+
+ci_tests_lib_sms:
+  files:
+    - nrf/lib/at_cmd_parser/
+    - nrf/lib/at_monitor/
+    - nrf/lib/lte_link_control/
+    - nrf/lib/sms/
+    - nrf/tests/lib/sms/
+    - nrf/tests/mocks/nrf_modem_at/
+    - nrf/tests/unity/
+
+ci_tests_lib_modem_info:
+  files:
+    - nrf/lib/modem_info/
+    - nrf/tests/lib/modem_info/
+    - nrf/tests/unity/
+
+ci_tests_lib_gcf_sms:
+  files:
+    - nrf/lib/at_cmd_custom/
+    - nrf/lib/gcf_sms/
+    - nrf/lib/modem_antenna/
+    - nrf/lib/nrf_modem_lib/
+    - nrf/tests/lib/gcf_sms/
+    - nrfxlib/nrf_modem/
+
+ci_tests_lib_pcm_stream_channel_modifier:
+  files:
+    - nrf/lib/pcm_stream_channel_modifier/
+    - nrf/tests/lib/pcm_stream_channel_modifier/
+
+ci_tests_lib_pdn:
+  files:
+    - nrf/lib/pdn/
+    - nrf/tests/lib/
+
+ci_tests_lib_ram_pwrdn:
+  files:
+    - nrf/lib/ram_pwrdn/
+    - nrf/tests/lib/ram_pwrdn/
+
+ci_tests_lib_sample_rate_converter:
+  files:
+    - modules/lib/cmsis-dsp/
+    - nrf/lib/sample_rate_converter/
+    - nrf/tests/lib/sample_rate_converter/
+
+ci_tests_drivers_lpuart:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/drivers/serial/
+    - nrf/subsys/debug/
+    - nrf/tests/drivers/lpuart/
+    - zephyr/boards/nordic/
+    - zephyr/drivers/
+
+ci_tests_drivers_flash:
+  files:
+    - nrf/drivers/flash/
+    - nrf/subsys/nrf_rpc/
+    - nrf/tests/drivers/flash/
+    - nrfxlib/nrf_rpc/
+    - zephyr/drivers/flash/
+
+ci_tests_unity:
+  files:
+    - nrf/tests/unity/
+    - ncs/test/cmock/
+    - test/cmock/
+
+ci_tests_nrf5340_audio:
+  files:
+    - modules/lib/cmsis-dsp/
+    - nrf/tests/nrf5340_audio/
+    - nrfxlib/lc3/
+
+ci_tests_modules_lib_zcbor:
+  files:
+    - modules/lib/zcbor/
+    - nrf/tests/modules/lib/zcbor/
+
+ci_samples_suit:
+  files:
+    - modules/crypto/
+    - modules/lib/suit-processor/
+    - modules/lib/zcbor/
+    - nrf/samples/suit/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mgmt/suitfu/
+    - nrf/subsys/sdfw_services/
+    - nrf/subsys/suit/
+    - zephyr/subsys/bluetooth/
+
+ci_tests_benchmarks_multicore:
+  files:
+    - modules/hal/nordic/nrfs/
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/benchmarks/multicore/
+    - zephyr/boards/nordic/
+    - zephyr/boards/nordic/
+
+ci_tests_drivers_fprotect:
+  files:
+    - nrf/lib/fprotect/
+    - nrf/samples/bootloader/
+    - nrf/subsys/bootloader/
+    - nrf/tests/drivers/fprotect/
+    - zephyr/subsys/storage/
+
+ci_tests_drivers_pwm:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/drivers/pwm/
+    - zephyr/drivers/gpio/
+    - zephyr/drivers/pwm/
+    - zephyr/soc/nordic/
+
+ci_samples_peripheral_lpuart:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/drivers/serial/
+    - nrf/samples/peripheral/lpuart/
+    - zephyr/drivers/serial/
+    - zephyr/modules/hal_nordic/
+    - zephyr/soc/nordic/
+
+ci_samples_bootloader:
+  files:
+    - nrf/lib/fprotect/
+    - nrf/samples/bootloader/
+    - nrf/subsys/bootloader/
+    - nrf/subsys/fw_info/
+
+ci_samples_sdfw:
+  files:
+    - modules/hal/nordic/nrfs/
+    - modules/hal/nordic/nrfx/
+    - modules/lib/zcbor/
+    - nrf/samples/sdfw/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/sdfw_services/
+    - nrfxlib/nrf_rpc/
+    - zephyr/drivers/mbox/
+    - zephyr/modules/hal_nordic/
+    - zephyr/soc/nordic/nrf54h/
+    - zephyr/subsys/ipc/ipc_service/
+
+ci_samples_dect:
+  files:
+    - nrf/samples/dect/dect_phy/
+    - nrf/lib/nrf_modem_lib/
+    - nrfxlib/nrf_modem/
+    - zephyr/drivers/hwinfo/
+
+ci_samples_sensor:
+  files:
+    - modules/hal/nordic/nrfx/
+    - modules/lib/bme68x/
+    - nrf/drivers/sensor/
+    - nrf/lib/adp536x/
+    - nrf/samples/nrf5340/
+    - nrf/samples/sensor/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/pcd/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/i2c/
+    - zephyr/drivers/regulator/
+    - zephyr/drivers/sensor/
+    - zephyr/drivers/spi/
+    - zephyr/lib/crc/
+    - zephyr/subsys/fs/fcb/
+    - zephyr/subsys/storage/
+
+ci_samples_nrf_rpc:
+  files:
+    - modules/crypto/
+    - modules/lib/open-amp/
+    - nrf/samples/nrf_rpc/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_rpc/
+    - zephyr/drivers/entropy/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/ipc/ipc_service/
+    - zephyr/subsys/net/
+    - zephyr/subsys/random/
+
+ci_applications_protocols_serialization:
+  files:
+    - modules/crypto/
+    - modules/lib/openthread/
+    - nrf/applications/protocols_serialization/
+    - nrf/drivers/mpsl/
+    - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/ieee802154/
+    - nrf/subsys/logging/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_rpc/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/trusted_storage/
+    - nrfxlib/crypto/
+    - nrfxlib/nrf_802154/
+    - nrfxlib/nrf_rpc/
+    - zephyr/drivers/ieee802154/
+    - zephyr/modules/openthread/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/net/
+    - zephyr/subsys/retention/
+
+ci_samples_mpsl:
+  files:
+    - nrf/drivers/mpsl/
+    - nrf/samples/mpsl/
+    - nrf/samples/nrf5340/empty_app_core/
+    - nrf/subsys/mpsl/
+
+ci_samples_caf:
+  files:
+    - nrf/samples/caf/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/caf/
+
+ci_samples_nrf_profiler:
+  files:
+    - nrf/samples/caf/
+    - nrf/samples/nrf_profiler/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/caf/
+    - nrf/subsys/nrf_profiler/

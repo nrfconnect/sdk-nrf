@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_ram0x_region {
+    reg = <0x2f010000 0x91000>;
+    ranges = <0x0 0x2f010000 0x91000>;
+};
+
+&cpuapp_data {
+    reg = <0x1000 0x90000>;
+};
+
+&can120 {
+    status = "disabled";
+};
+
+&usbhs {
+    status = "disabled";
+};

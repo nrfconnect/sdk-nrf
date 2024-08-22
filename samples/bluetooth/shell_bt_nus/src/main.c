@@ -38,7 +38,7 @@ static const struct bt_data sd[] = {
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		LOG_ERR("Connection failed (err %u)", err);
+		LOG_ERR("Connection failed, err 0x%02x %s", err, bt_hci_err_to_str(err));
 		return;
 	}
 
@@ -49,7 +49,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason %u)", reason);
+	LOG_INF("Disconnected, reason 0x%02x %s", reason, bt_hci_err_to_str(reason));
 
 	shell_bt_nus_disable();
 	if (current_conn) {
@@ -76,8 +76,8 @@ static void __attribute__((unused)) security_changed(struct bt_conn *conn,
 	if (!err) {
 		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_INF("Security failed: %s level %u err %d", addr, level,
-			err);
+		LOG_INF("Security failed: %s level %u err %d %s", addr, level, err,
+			bt_security_err_to_str(err));
 	}
 }
 
@@ -105,7 +105,8 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-	LOG_INF("Pairing failed conn: %s, reason %d", log_addr(conn), reason);
+	LOG_INF("Pairing failed conn: %s, reason %d %s", log_addr(conn), reason,
+		bt_security_err_to_str(reason));
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {

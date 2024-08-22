@@ -50,23 +50,35 @@ const uint8_t cracen_N3072[384] = {
  */
 static const uint8_t cracen_G3072[] = {5};
 
+/* This is basically the calculation v = g^k % N */
+static psa_status_t calculate_v_from_k(const uint8_t *k, size_t k_size, uint8_t *v, size_t v_size)
+{
+
+	sx_op g = {.sz = sizeof(cracen_G3072), .bytes = (char *)cracen_G3072};
+	sx_op a = {.sz = k_size, .bytes = (char *)k};
+	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (char *)cracen_N3072};
+	sx_op result = {.sz = v_size, .bytes = v};
+
+	return silex_statuscodes_to_psa(sx_mod_exp(NULL, &g, &a, &modulo, &result));
+}
+
 static psa_status_t set_password_key(cracen_srp_operation_t *operation,
 				     const psa_key_attributes_t *attributes,
 				     const uint8_t *password, const size_t password_length)
 {
-
-	if (operation->role == PSA_PAKE_ROLE_CLIENT) {
-		/* password = x = SHA512(salt | SHA512(user | ":" | pass)) */
-		if (password_length != CRACEN_SRP_HASH_LENGTH) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
+	/* We don't know the role of the operation yet, since the set_role function
+	 * happens after the setup function. So here we need to distinguish the input
+	 * based on its length.
+	 */
+	switch (password_length) {
+	case CRACEN_SRP_HASH_LENGTH:
 		memcpy(operation->x, password, CRACEN_SRP_HASH_LENGTH);
-	} else { /* PSA_PAKE_ROLE_SERVER */
-		/* password = password_verifier = v = g^x mod N */
-		if (password_length != CRACEN_SRP_FIELD_SIZE) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
+		break;
+	case CRACEN_SRP_FIELD_SIZE:
 		memcpy(operation->v, password, CRACEN_SRP_FIELD_SIZE);
+		break;
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	return PSA_SUCCESS;
@@ -113,9 +125,25 @@ psa_status_t cracen_srp_set_user(cracen_srp_operation_t *operation, const uint8_
 
 psa_status_t cracen_srp_set_role(cracen_srp_operation_t *operation, const psa_pake_role_t role)
 {
+	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
+
 	if (role != PSA_PAKE_ROLE_CLIENT && role != PSA_PAKE_ROLE_SERVER) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
+
+	if (role == PSA_PAKE_ROLE_SERVER) {
+		/* For the server role the Oberon implementation supports setting
+		 * the x value instead of v. Add this for compatibility between implementations.
+		 */
+		if (constant_memcmp(operation->v, 0, CRACEN_SRP_FIELD_SIZE) == 0) {
+			status = calculate_v_from_k(operation->x, CRACEN_SRP_HASH_LENGTH,
+						    operation->v, CRACEN_SRP_FIELD_SIZE);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
+		}
+	}
+
 	operation->role = role;
 
 	return PSA_SUCCESS;

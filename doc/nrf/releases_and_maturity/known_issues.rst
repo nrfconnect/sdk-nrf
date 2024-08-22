@@ -148,6 +148,13 @@ The issues in this section are related to :ref:`ug_ble_controller`.
 
 .. rst-class:: v2-7-0
 
+DRGN-22930 The SoftDevice Controller may de-reference a ``NULL`` pointer
+  This can occur when using the vendor-specific HCI command Zephyr Write TX Power Level for a connection.
+
+  **Workaround:** Enable support for the LE Power Control feature (:kconfig:option:`CONFIG_BT_CTLR_LE_POWER_CONTROL`).
+
+.. rst-class:: v2-7-0
+
 NCSDK-28239 On nRF54H20, a Bluetooth LE disconnect event is not generated once the central device (i.e. mobile phone) moves out of range while data is being transferred (i.e. during DFU)
   This will prevent the device from establishing new BLE connections.
 
@@ -372,6 +379,21 @@ Matter
 ======
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
+
+.. rst-class:: v2-7-0 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
+
+KRKNWK-19300: The Matter weather station application has NVS size inconsistent with the settings partition size.
+  The settings partition size for Matter weather station is configured to the value of 64 kB.
+  However, the application cannot use all 64 kB of the settings space, because it depends on the NVS size that is limited by the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option to 32 kB.
+
+  **Affected platforms:** Thingy53
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option to ``16`` in the application :file:`prj.conf` file.
+
+  .. caution::
+
+     The workaround can be applied only to a newly programmed or factory reset device.
+     Changing the NVS sectors count for a device that is in-field and already has some data stored in settings may lead to the data corruption and undefined behavior.
 
 .. rst-class:: v2-7-0
 
@@ -2805,6 +2827,38 @@ Build system
 
 The issues in this section are related to :ref:`app_build_system`.
 
+.. rst-class:: v2-7-0
+
+NCSDK-28495: Sysbuild runs CMake code before processing application :file:`sysbuild.cmake`
+  When using a :file:`sysbuild.cmake` file to set configuration for images that have variants, this extra configuration might end up not being applied to the variant image, causing the images to be incompatible.
+
+  **Workaround:** Depending on your configuration:
+
+  * If applying configuration to the default image and building in the direct XIP mode, also apply the configuration to ``mcuboot_secondary_app``.
+  * If applying configuration to MCUboot with application secure boot enabled, also apply the configuration to ``s1_image``.
+  * If applying configuration to the default image with application secure boot enabled and MCUboot disabled, also apply the configuration to ``s1_image``.
+
+.. rst-class:: v2-7-0
+
+NCSDK-28462: MCUboot signing configuration cannot be updated without pristine build
+  When using :ref:`configuration_system_overview_sysbuild`, the MCUboot signing configuration cannot be updated in an already configured project.
+
+  **Workaround:** Perform a :ref:`pristine build <zephyr:west-building-pristine>` to change any of the MCUboot signing configuration. Do not update it using menuconfig, guiconfig or the nRF Kconfig GUI, and instead :ref:`provide it on the command line <cmake_options>` when configuring the application if it needs setting manually.
+
+.. rst-class:: v2-7-0
+
+NCSDK-28461: Sysbuild partition manager file changes cannot be propagated to builds unless they are pristine
+  When using :ref:`configuration_system_overview_sysbuild` and a :ref:`partition_manager` file, the Partition Manager configuration for things such as MCUboot signing will not be updated if the Partition Manager configuration is changed in an already configured project.
+
+  **Workaround:** Perform a :ref:`pristine build <zephyr:west-building-pristine>` after changing configuration in Partition Manager files.
+
+.. rst-class:: v2-7-0
+
+NCSDK-28451: Sysbuild silently does not use relative path (relative to application config dir) user-specified (PM_STATIC_YML_FILE) static PM files
+  When building an application using :ref:`configuration_system_overview_sysbuild` with a :ref:`static partition file <ug_pm_static_providing>` specified using ``PM_STATIC_YML_FILE`` with a relative path, the relative path will be relative to the sysbuild folder in Zephyr, not to the application configuration directory, and the file will silently be ignored.
+
+  **Workaround:** Use an absolute path when specifying the static partition file and ensure that the output shows the file as being used.
+
 .. rst-class:: v2-7-0 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-20567: When building an application for MCUboot, the build system does not check whether the compiled application is too big for being an update image
@@ -3925,7 +3979,7 @@ DRGN-18655: Wrongly set the address if calling :c:func:`bt_ctlr_set_public_addr`
 DRGN-18568: Using :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option lowers the value of radio output power
   The actual value is lower than the default one in case the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_ANTENNA` or :kconfig:option:`CONFIG_BT_CTLR_TX_PWR` Kconfig options are used together with the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option.
 
-.. rst-class:: v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0
+.. rst-class:: v2-7-0 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0
 
 DRGN-16013: Initiating connections over extended advertising is not supported when external radio coexistence and FEM support are enabled
   The initiator can assert when initiating a connection to an extended advertiser when both external radio coexistence and FEM are enabled.

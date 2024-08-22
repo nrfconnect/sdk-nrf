@@ -71,7 +71,7 @@ Building and running
 Complete the following steps to program the sample:
 
 1. Go to the sample directory.
-#. Open the command line terminal.
+#. |open_terminal_window_with_environment|
 #. Run the following command to build the application code for the host and the remote:
 
 

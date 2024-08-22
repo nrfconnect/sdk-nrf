@@ -8,7 +8,6 @@
 
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
-#include <mbedtls/asn1.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <sicrypto/drbghash.h>
@@ -103,10 +102,6 @@ static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, ch
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		status = sx_pk_ik_derive_keys(NULL);
-		if (status) {
-			return status;
-		}
 		*privkey = si_sig_fetch_ikprivkey(*sicurve, *key_buffer);
 
 		return status;

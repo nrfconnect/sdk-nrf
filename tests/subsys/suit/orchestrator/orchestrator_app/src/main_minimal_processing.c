@@ -11,8 +11,8 @@
 #include "orchestrator_app_tests_common.h"
 
 /* Valid envelope */
-extern const uint8_t manifest_valid_buf[];
-extern const size_t manifest_valid_len;
+extern uint8_t manifest_valid_buf[];
+extern size_t manifest_valid_len;
 
 #define MAX_UPDATE_REGIONS 10
 suit_plat_mreg_t requested_update_regions[MAX_UPDATE_REGIONS];

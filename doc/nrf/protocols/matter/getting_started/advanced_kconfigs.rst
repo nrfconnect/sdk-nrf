@@ -52,6 +52,18 @@ This is a much faster way than waiting for the subscriber node to notice that th
 
 To enable persistent subscriptions, set the :kconfig:option:`CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS` Kconfig option.
 
+The time that it takes to re-establish all subscriptions and CASE sessions depends on the number of sessions that can be recovered simultaneously.
+If the number of sessions and subscriptions to recover is greater than the maximum, the device will re-establish as many as possible and schedule re-establishment of the rest after a specified time interval.
+Since the wait interval between the following re-establishment attempts impacts the overall time to recover all device connections, decreasing it can be beneficial for the user experience.
+However, a small interval value will increase device power consumption.
+
+You can configure how many sessions will be re-established concurrently and what will be the subscription resumption retry interval using the following Kconfig options:
+
+* :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_CASE_CLIENTS` - Sets the maximum number of CASE sessions that can be simultaneously re-established by the end device.
+* :kconfig:option:`CONFIG_CHIP_MAX_ACTIVE_DEVICES` - Sets the maximum number of subscriptions that can be simultaneously re-established by the end device.
+* :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL` - Sets the minimum wait time in seconds before the first resumption retry.
+* :kconfig:option:`CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER` - Sets the multiplier in seconds that is used to calculate the wait time for the following resumption retries.
+
 .. _ug_matter_configuring_optional_log:
 
 Logging configuration

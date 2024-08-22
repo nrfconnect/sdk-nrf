@@ -93,6 +93,8 @@ static psa_status_t cracen_update_transcript(cracen_spake2p_operation_t *operati
 {
 	psa_status_t status;
 
+	uint8_t tmp[sizeof(SPAKE2P_POINT_M)];
+
 	/* add prover, verifier, M and N to protocol transcript (TT) */
 	status = cracen_update_hash_with_length(&operation->hash_op, operation->prover,
 						operation->prover_len, 0);
@@ -105,13 +107,16 @@ static psa_status_t cracen_update_transcript(cracen_spake2p_operation_t *operati
 		return status;
 	}
 
-	status = cracen_update_hash_with_length(&operation->hash_op, SPAKE2P_POINT_M,
-						sizeof(SPAKE2P_POINT_M), UNCOMPRESSED_POINT_TYPE);
+	memcpy(tmp, SPAKE2P_POINT_M, sizeof(SPAKE2P_POINT_M));
+	status = cracen_update_hash_with_length(&operation->hash_op, tmp,
+						sizeof(tmp), UNCOMPRESSED_POINT_TYPE);
 	if (status) {
 		return status;
 	}
-	return cracen_update_hash_with_length(&operation->hash_op, SPAKE2P_POINT_N,
-					      sizeof(SPAKE2P_POINT_N), UNCOMPRESSED_POINT_TYPE);
+
+	memcpy(tmp, SPAKE2P_POINT_N, sizeof(SPAKE2P_POINT_N));
+	return cracen_update_hash_with_length(&operation->hash_op, tmp,
+					      sizeof(tmp), UNCOMPRESSED_POINT_TYPE);
 }
 /**
  * @brief Will calculate Z and V.
@@ -333,7 +338,11 @@ static psa_status_t cracen_read_key_share(cracen_spake2p_operation_t *operation,
 	}
 	memcpy(operation->YX, input, CRACEN_P256_POINT_SIZE + 1);
 	if (operation->role == PSA_PAKE_ROLE_SERVER) {
-		cracen_update_transcript(operation);
+		psa_status_t status = cracen_update_transcript(operation);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
 	}
 	return cracen_update_hash_with_length(&operation->hash_op, operation->YX,
 					      CRACEN_P256_POINT_SIZE + 1, 0);
@@ -428,7 +437,10 @@ static psa_status_t cracen_write_key_share(cracen_spake2p_operation_t *operation
 	}
 
 	if (operation->role == PSA_PAKE_ROLE_CLIENT) {
-		cracen_update_transcript(operation);
+		status = cracen_update_transcript(operation);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
 	}
 
 	status = psa_generate_random(xs, sizeof(xs));

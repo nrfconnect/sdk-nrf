@@ -15,7 +15,7 @@ tests:
     sysbuild: true
     extra_args:
       CONFIG_SECURE_BOOT=y
-    tags: sysbuild
+    tags: sysbuild ci_tests_subsys_bootloader
   boot_chains.bootloader_mcuboot:
     sysbuild: true
     extra_args:
@@ -25,7 +25,7 @@ tests:
       nrf9151dk/nrf9151/ns
       nrf9160dk/nrf9160/ns
       nrf9161dk/nrf9161/ns
-    tags: sysbuild
+    tags: sysbuild ci_tests_subsys_bootloader
   boot_chains.secure_boot_and_bootloader_mcuboot:
     sysbuild: true
     extra_args:
@@ -36,10 +36,10 @@ tests:
       nrf9151dk/nrf9151/ns
       nrf9160dk/nrf9160/ns
       nrf9161dk/nrf9161/ns
-    tags: sysbuild
+    tags: sysbuild ci_tests_subsys_bootloader
   boot_chains.bootloader_mcuboot_and_nv_counters.sysbuild:
     sysbuild: true
     extra_args:
       SB_CONFIG_BOOTLOADER_MCUBOOT=y
       SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
-    tags: sysbuild
+    tags: sysbuild ci_tests_subsys_bootloader

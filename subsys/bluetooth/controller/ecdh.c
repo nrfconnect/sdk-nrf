@@ -11,11 +11,14 @@
 
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/buf.h>
-#include <zephyr/drivers/bluetooth/hci_driver.h>
+#include <sdc_hci.h>
+#include "hci_internal.h"
 
 #include <mpsl/mpsl_work.h>
 
 #include "ecdh.h"
+
+#define DT_DRV_COMPAT zephyr_bt_hci_ll_sw_split
 
 #define LOG_LEVEL CONFIG_BT_HCI_DRIVER_LOG_LEVEL
 #include "zephyr/logging/log.h"
@@ -38,7 +41,7 @@ enum {
 
 static atomic_t cmd;
 
-/* based on Core Specification 4.2 Vol 3. Part H 2.3.5.6.1 */
+/* Based on Bluetooth Core Specification, Vol 3. Part H, Section 2.3.5.6.1 */
 static const uint8_t debug_private_key_be[32] = {
 	0x3f, 0x49, 0xf6, 0xd4, 0xa3, 0xc5, 0x5f, 0x38,
 	0x74, 0xc9, 0xb3, 0xe3, 0xd2, 0x10, 0x3f, 0x50,
@@ -240,7 +243,11 @@ void ecdh_cmd_process(void)
 
 	atomic_set(&cmd, 0);
 	if (buf) {
-		bt_recv(buf);
+
+		const struct device *dev = DEVICE_DT_GET(DT_DRV_INST(0));
+		struct hci_driver_data *driver_data = dev->data;
+
+		driver_data->recv_func(dev, buf);
 	}
 }
 

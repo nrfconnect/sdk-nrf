@@ -322,6 +322,8 @@
 .. _`TF-M secure partition integration guide`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_secure_partition_addition.html
 .. _`TF-M ITS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_its_integration_guide.html
 
+.. _`HCI Events`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/softdevice_controller/doc/api.html#hci_events
+
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
 .. _`Repositories and revisions for v2.6.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
@@ -522,7 +524,7 @@
 .. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210?utm_campaign=2022%20Webinars&utm_source=Documentation&utm_medium=Link%20to%20webinar%20%7C%20from%20documentation&utm_content=Link%20to%20webinar%20%7C%20from%20documentation
 .. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
 .. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
-
+.. _Adding Device Firmware Update (DFU/FOTA) Support in nRF Connect SDK: https://www.nordicsemi.com/Events/2024/Webinar-Adding-Device-Firmware-Update-DFU-FOTA-Support-in-nRF-Connect-SDK
 .. #### Source: www.nordicsemi.com/*/Development-Tools
 
 .. _`nRF Command Line Tools`:
@@ -573,8 +575,9 @@
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`nRF Connect Bluetooth Low Energy`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
 .. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
-.. _`nPM PowerUP`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/profiling_npm_powerup.html
+.. _`nPM PowerUP`: https://docs.nordicsemi.com/bundle/nrf-connect-npm/page/index.html
 .. _`Quick Start`: https://docs.nordicsemi.com/bundle/nrf-connect-quickstart/page/index.html
+.. _`RSSI Viewer`: https://docs.nordicsemi.com/bundle/nrf-connect-rssi-viewer/page/index.html
 
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
 
@@ -734,6 +737,7 @@
 .. _`Evaluate nPM1300 using nPM PowerUP`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/npm_powerup.html
 .. _`Use the nPM1300 EK with an nRF5340 DK`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/using_nrf5340_DK.html
 .. _`nPM Fuel Gauge Board`: https://www.nordicsemi.com/Products/Development-hardware/nPM-Fuel-Gauge-board
+.. _`Using the nPM1300 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/intro.html
 
 .. _`nRF21540 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf21540/page/keyfeatures_html5.html
 .. _`nRF21540 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
@@ -844,6 +848,8 @@
 .. _`Power saving techniques`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/lessons/lesson-1-cellular-fundamentals/topic/lesson-1-power-saving-techniques/
 .. _`Bluetooth LE Fundamentals course`: https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/
 .. _`Wi-Fi Fundamentals course`: https://academy.nordicsemi.com/courses/wi-fi-fundamentals/
+
+.. _Bootloaders and DFU/FOTA: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-8-bootloaders-and-dfu-fota/
 
 .. ### Source: devzone.nordicsemi.com
 
@@ -1440,6 +1446,7 @@
 
 .. _`BME688`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme688/
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
+.. _`BMI270`: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
 .. _`Bosch BSEC`: https://www.bosch-sensortec.com/software-tools/software/bsec/
 .. _`BSEC license`: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf
 
@@ -1586,6 +1593,8 @@
 .. _`Mobile IoT deployment map`: https://www.gsma.com/iot/deployment-map/
 
 .. _`CoreMark®`: https://www.eembc.org/coremark/
+
+.. _`nrf-esl-bluetooth`: https://github.com/NordicPlayground/nrf-esl-bluetooth
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 

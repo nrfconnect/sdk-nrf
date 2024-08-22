@@ -276,17 +276,17 @@ static int do_http_connect(void)
 			ret = -errno;
 			goto exit_cli;
 		}
-#if !defined(CONFIG_SLM_NATIVE_TLS)
-		int session_cache = TLS_SESSION_CACHE_ENABLED;
+		if (!IS_ENABLED(CONFIG_SLM_NATIVE_TLS)) {
+			int session_cache = TLS_SESSION_CACHE_ENABLED;
 
-		ret = setsockopt(httpc.fd, SOL_TLS, TLS_SESSION_CACHE, &session_cache,
-				 sizeof(session_cache));
-		if (ret) {
-			LOG_ERR("setsockopt(TLS_SESSION_CACHE) error: %d", -errno);
-			ret = -errno;
-			goto exit_cli;
+			ret = setsockopt(httpc.fd, SOL_TLS, TLS_SESSION_CACHE, &session_cache,
+					 sizeof(session_cache));
+			if (ret) {
+				LOG_ERR("setsockopt(TLS_SESSION_CACHE) error: %d", -errno);
+				ret = -errno;
+				goto exit_cli;
+			}
 		}
-#endif
 	}
 
 	LOG_DBG("Configuring socket timeout (%lld s)", timeo.tv_sec);
@@ -418,37 +418,37 @@ static int do_http_request(void)
 }
 
 SLM_AT_CMD_CUSTOM(xhttpccon, "AT#XHTTPCCON", handle_at_httpc_connect);
-static int handle_at_httpc_connect(enum at_cmd_type cmd_type,
-				   const struct at_param_list *param_list, uint32_t param_count)
+static int handle_at_httpc_connect(enum at_parser_cmd_type cmd_type,
+				   struct at_parser *parser, uint32_t param_count)
 {
 	int err = -EINVAL;
 	uint16_t op;
 	size_t host_sz = SLM_MAX_URL;
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(param_list, 1, &op);
+	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, 1, &op);
 		if (err) {
 			return err;
 		}
 		if (op == HTTPC_CONNECT || op == HTTPC_CONNECT6) {
-			err = util_string_get(param_list, 2, httpc.host, &host_sz);
+			err = util_string_get(parser, 2, httpc.host, &host_sz);
 			if (err) {
 				return err;
 			}
-			if (at_params_unsigned_short_get(param_list, 3, &httpc.port)) {
+			if (at_parser_num_get(parser, 3, &httpc.port)) {
 				return -EINVAL;
 			}
 
 			httpc.sec_tag = INVALID_SEC_TAG;
 			if (param_count > 4) {
-				if (at_params_unsigned_int_get(param_list, 4, &httpc.sec_tag)) {
+				if (at_parser_num_get(parser, 4, &httpc.sec_tag)) {
 					return -EINVAL;
 				}
 			}
 			httpc.peer_verify = TLS_PEER_VERIFY_REQUIRED;
 			if (param_count > 5) {
-				if (at_params_unsigned_int_get(param_list, 5, &httpc.peer_verify) ||
+				if (at_parser_num_get(parser, 5, &httpc.peer_verify) ||
 				    (httpc.peer_verify != TLS_PEER_VERIFY_NONE &&
 				     httpc.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
 				     httpc.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
@@ -459,7 +459,7 @@ static int handle_at_httpc_connect(enum at_cmd_type cmd_type,
 			if (param_count > 6) {
 				uint16_t hostname_verify;
 
-				if (at_params_unsigned_short_get(param_list, 6, &hostname_verify) ||
+				if (at_parser_num_get(parser, 6, &hostname_verify) ||
 				    (hostname_verify != 0 && hostname_verify != 1)) {
 					return -EINVAL;
 				}
@@ -475,7 +475,7 @@ static int handle_at_httpc_connect(enum at_cmd_type cmd_type,
 		}
 		break;
 
-	case AT_CMD_TYPE_READ_COMMAND:
+	case AT_PARSER_CMD_TYPE_READ:
 		if (httpc.sec_tag != INVALID_SEC_TAG) {
 			rsp_send("\r\n#XHTTPCCON: %d,\"%s\",%d,%d\r\n",
 				(httpc.fd == INVALID_SOCKET) ? 0 : 1,
@@ -488,7 +488,7 @@ static int handle_at_httpc_connect(enum at_cmd_type cmd_type,
 		err = 0;
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XHTTPCCON: (%d,%d,%d),<host>,<port>,"
 			 "<sec_tag>,<peer_verify>,<hostname_verify>\r\n",
 			 HTTPC_DISCONNECT, HTTPC_CONNECT, HTTPC_CONNECT6);
@@ -567,8 +567,8 @@ static int http_headers_preprocess(size_t size)
 }
 
 SLM_AT_CMD_CUSTOM(xhttpcreq, "AT#XHTTPCREQ", handle_at_httpc_request);
-static int handle_at_httpc_request(enum at_cmd_type cmd_type,
-				   const struct at_param_list *param_list, uint32_t param_count)
+static int handle_at_httpc_request(enum at_parser_cmd_type cmd_type,
+				   struct at_parser *parser, uint32_t param_count)
 {
 	int err = -EINVAL;
 	int size;
@@ -580,11 +580,11 @@ static int handle_at_httpc_request(enum at_cmd_type cmd_type,
 	}
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
+	case AT_PARSER_CMD_TYPE_SET:
 		memset(slm_data_buf, 0, sizeof(slm_data_buf));
 		/* Get method string */
 		size = HTTPC_METHOD_LEN;
-		err = util_string_get(param_list, 1, slm_data_buf, &size);
+		err = util_string_get(parser, 1, slm_data_buf, &size);
 		if (err < 0) {
 			LOG_ERR("Fail to get method string: %d", err);
 			return err;
@@ -593,7 +593,7 @@ static int handle_at_httpc_request(enum at_cmd_type cmd_type,
 		offset = size + 1;
 		/* Get resource path string */
 		size = HTTPC_RES_LEN;
-		err = util_string_get(param_list, 2, slm_data_buf + offset, &size);
+		err = util_string_get(parser, 2, slm_data_buf + offset, &size);
 		if (err < 0) {
 			LOG_ERR("Fail to get resource string: %d", err);
 			return err;
@@ -604,7 +604,7 @@ static int handle_at_httpc_request(enum at_cmd_type cmd_type,
 			/* Get headers string */
 			offset += size + 1;
 			size = HTTPC_HEADERS_LEN;
-			err = util_string_get(param_list, 3, slm_data_buf + offset, &size);
+			err = util_string_get(parser, 3, slm_data_buf + offset, &size);
 			if (err == 0 && size > 0) {
 				httpc.headers = (char *)(slm_data_buf + offset);
 				err = http_headers_preprocess(size);
@@ -620,12 +620,12 @@ static int handle_at_httpc_request(enum at_cmd_type cmd_type,
 			/* Get content type string */
 			offset += size + 1;
 			size = HTTPC_CONTEN_TYPE_LEN;
-			err = util_string_get(param_list, 4, slm_data_buf + offset, &size);
+			err = util_string_get(parser, 4, slm_data_buf + offset, &size);
 			if (err == 0 && size > 0) {
 				httpc.content_type = (char *)(slm_data_buf + offset);
 			}
 			/* Get content length */
-			err = at_params_unsigned_int_get(param_list, 5, &httpc.content_length);
+			err = at_parser_num_get(parser, 5, &httpc.content_length);
 			if (err != 0) {
 				return err;
 			}
@@ -633,7 +633,7 @@ static int handle_at_httpc_request(enum at_cmd_type cmd_type,
 				uint16_t tmp;
 
 				/* Get chunked transfer flag */
-				err = at_params_unsigned_short_get(param_list, 6, &tmp);
+				err = at_parser_num_get(parser, 6, &tmp);
 				if (err != 0) {
 					return err;
 				}
@@ -651,7 +651,7 @@ static int handle_at_httpc_request(enum at_cmd_type cmd_type,
 				HTTPC_THREAD_PRIORITY, K_USER, K_NO_WAIT);
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		break;
 
 	default:

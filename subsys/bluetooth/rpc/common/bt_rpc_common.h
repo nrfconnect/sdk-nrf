@@ -19,7 +19,7 @@
 #include <zephyr/bluetooth/gatt.h>
 
 #include <nrf_rpc_cbor.h>
-#include <cbkproxy.h>
+#include <nrf_rpc/nrf_rpc_cbkproxy.h>
 
 #define BT_RPC_SIZE_OF_FIELD(structure, field) (sizeof(((structure *)NULL)->field))
 
@@ -97,6 +97,7 @@ enum bt_rpc_cmd_from_cli_to_host {
 	BT_CONN_GET_SECURITY_RPC_CMD,
 	BT_CONN_ENC_KEY_SIZE_RPC_CMD,
 	BT_CONN_CB_REGISTER_ON_REMOTE_RPC_CMD,
+	BT_CONN_CB_UNREGISTER_ON_REMOTE_RPC_CMD,
 	BT_SET_BONDABLE_RPC_CMD,
 	BT_LE_OOB_SET_LEGACY_FLAG_RPC_CMD,
 	BT_LE_OOB_SET_SC_FLAG_RPC_CMD,
@@ -288,7 +289,7 @@ struct bt_conn *bt_rpc_decode_bt_conn(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Declaration of callback proxy encoder for bt_gatt_complete_func_t.
  */
-CBKPROXY_HANDLER_DECL(bt_gatt_complete_func_t_encoder,
+NRF_RPC_CBKPROXY_HANDLER_DECL(bt_gatt_complete_func_t_encoder,
 		 (struct bt_conn *conn, void *user_data), (conn, user_data));
 
 #endif /* BT_RPC_COMMON_H_ */

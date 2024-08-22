@@ -11,6 +11,9 @@ The Peripheral HIDS keyboard sample demonstrates how to use the :ref:`hids_readm
 
 The sample also shows how to perform LE Secure Connections Out-of-Band pairing using NFC.
 
+.. note::
+   |nrf_desktop_HID_ref|
+
 Requirements
 ************
 
@@ -150,7 +153,7 @@ After programming the sample to your development kit, you can test it either by 
 Testing with a Microsoft Windows computer
 -----------------------------------------
 
-To test with a Microsoft Windows computer that has a Bluetooth® radio, complete the following steps:
+To test with a Microsoft Windows computer that has a Bluetooth radio, complete the following steps:
 
 .. tabs::
 

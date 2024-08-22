@@ -39,19 +39,21 @@ The Fast Pair Service is enabled with :kconfig:option:`CONFIG_BT_FAST_PAIR` Kcon
 With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the following Kconfig options are available for this service:
 
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID` - The option adds the Model ID characteristic to the Fast Pair GATT service.
-  This option is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` is enabled.
+  It is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option is enabled.
   This is done to align default configuration with `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING` - The option enforces the requirement for Bluetooth pairing and bonding during the `Fast Pair Procedure`_.
   This option is enabled by default.
   See the :ref:`ug_bt_fast_pair_gatt_service_no_ble_pairing` for more details.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` - The option adds support for the Fast Pair subsequent pairing feature.
+  It is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option is enabled.
+  This aligns the default configuration with the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` - The option enables user reset action that is executed together with the Fast Pair factory reset operation.
   See the :ref:`ug_bt_fast_pair_factory_reset_custom_user_reset_action` for more details.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX` - The option configures maximum number of stored Account Keys.
-* :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA` - These options are used to select the cryptographic backend for Fast Pair.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT`, :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA` - These options are used to select the cryptographic backend for Fast Pair.
   The Oberon backend is used by default.
-  The Mbed TLS backend uses Mbed TLS crypto APIs that are now considered legacy APIs.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` - The option enables the `Fast Pair Personalized Name extension`_.
-  This option is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` is enabled.
+  It is enabled by default unless the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option is enabled.
   This is done to align default configuration with `Fast Pair Device Feature Requirements for Locator Tags`_ documentation.
 
   * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX` - The option specifies the maximum length of a stored Fast Pair Personalized Name.
@@ -97,6 +99,8 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
 
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_TIME` - The option configures the time interval (in minutes) of periodic beacon clock writes to the non-volatile memory.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_RETRY_TIME` - The option configures the retry time (in seconds) when the beacon clock write to the non-volatile memory fails.
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG`and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` - These options are used to select the Fast Pair use case and configure the Fast Pair library according to the `Fast Pair Device Feature Requirements`_ for the chosen use case.
+  The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN` Kconfig option is used by default.
 
 See the Kconfig help for details.
 

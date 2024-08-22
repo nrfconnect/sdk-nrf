@@ -52,7 +52,7 @@ static const struct bt_data sd[] = {
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		printk("Connection failed (err %u)\n", err);
+		printk("Connection failed, err 0x%02x %s\n", err, bt_hci_err_to_str(err));
 		return;
 	}
 
@@ -63,7 +63,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason %u)\n", reason);
+	printk("Disconnected, reason 0x%02x %s\n", reason, bt_hci_err_to_str(reason));
 
 	dk_set_led_off(CON_STATUS_LED);
 }
@@ -79,8 +79,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
+		       bt_security_err_to_str(err));
 	}
 }
 #endif
@@ -127,7 +127,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
+	       bt_security_err_to_str(reason));
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {

@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_RADIO_NOTIFICATION_CONN_CB
+	bool "Radio Notification connection callback [EXPERIMENTAL]"
+	depends on BT_LL_SOFTDEVICE
+	select BT_CTLR_SDC_EVENT_TRIGGER
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_EGU0
+	select EXPERIMENTAL
+	help
+	  Enables the support for setting up a radio notification
+	  callback to trigger a configurable amount of time before the
+	  connection event starts.
+	  This feature can be used to synchronize data sampling
+	  with on-air data transmission.
+
+if BT_RADIO_NOTIFICATION_CONN_CB
+
+choice BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST
+	bool "Radio Notification connection callback EGU instance"
+	help
+	  Radio Notification connection callback implementation uses
+	  an EGU instance. This config selects which instance to be
+	  used.
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU0
+	bool "Use EGU0"
+	depends on $(dt_nodelabel_has_compat,egu0,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU0
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU1
+	bool "Use EGU1"
+	depends on $(dt_nodelabel_has_compat,egu1,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU1
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU2
+	bool "Use EGU2"
+	depends on $(dt_nodelabel_has_compat,egu2,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU2
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU3
+	bool "Use EGU3"
+	depends on $(dt_nodelabel_has_compat,egu3,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU3
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU4
+	bool "Use EGU3"
+	depends on $(dt_nodelabel_has_compat,egu4,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU4
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU5
+	bool "Use EGU5"
+	depends on $(dt_nodelabel_has_compat,egu5,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU5
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU020
+	bool "Use EGU020"
+	depends on $(dt_nodelabel_has_compat,egu020,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU020
+
+endchoice
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_TRIGGER_ISR_PRIO
+	int
+	depends on BT_RADIO_NOTIFICATION_CONN_CB
+	default 2
+	help
+	  The ISR priority of the connection event trigger
+	  used to setup the timer for the callback.
+
+endif

@@ -474,6 +474,13 @@ static int fp_storage_ak_reset(void)
 	int err;
 	bool was_enabled = is_enabled;
 
+	if (was_enabled) {
+		err = fp_storage_ak_uninit();
+		if (err) {
+			return err;
+		}
+	}
+
 	for (uint8_t index = 0; index < ACCOUNT_KEY_CNT; index++) {
 		err = fp_storage_ak_delete(index);
 		if (err) {

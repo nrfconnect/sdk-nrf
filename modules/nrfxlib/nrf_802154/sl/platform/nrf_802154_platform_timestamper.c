@@ -40,17 +40,17 @@ static int32_t m_timestamp_cc_channel;
 #define DPPIC_L_INST                 NRF_DPPIC020
 
 /*   - IPCT_L : NRF_IPCT (RADIOCORE.IPCT) */
-#define IPCT_L_TS_CHANNEL            0
+#define IPCT_L_TS_CHANNEL            2
 #define IPCT_L_TASK_SEND             NRFX_CONCAT_2(NRF_IPCT_TASK_SEND_, IPCT_L_TS_CHANNEL)
 
 /* Peripherals used for timestamping - located in global "Main power domain" (_G1_) */
 /*   - IPCT_G1 : IPCT130_S */
 #define IPCT_G1_INST                 NRF_IPCT130_S
-#define IPCT_G1_TS_CHANNEL           0
+#define IPCT_G1_TS_CHANNEL           2
 #if defined(NRF54H20_ENGA_XXAA)
-#define IPCT_G1_SHORTS               IPCT_SHORTS_RECEIVE0_ACK0_Msk
+#define IPCT_G1_SHORTS               IPCT_SHORTS_RECEIVE2_ACK2_Msk
 #else
-#define IPCT_G1_SHORTS               IPCT_SHORTS_RECEIVE0_FLUSH0_Msk
+#define IPCT_G1_SHORTS               IPCT_SHORTS_RECEIVE2_FLUSH2_Msk
 #endif
 #define IPCT_G1_EVENT_RECEIVE        NRFX_CONCAT_2(NRF_IPCT_EVENT_RECEIVE_, IPCT_G1_TS_CHANNEL)
 
@@ -74,6 +74,93 @@ static int32_t m_timestamp_cc_channel;
 /* Only this range of channels can be connected to PPIB133 */
 #error PPIB_G1_TS_CHANNEL is required to be in the [8..15] range
 #endif
+
+/* Ensure something similar to this is present in the DT:
+ * &dppic130 {
+ *	owned-channels = <3>;
+ *	source-channels = <3>;
+ * };
+ * where 3 corresponds to DPPIC_G1_TS_CHANNEL.
+ */
+#define _TS_DT_CHECK_DPPIC_G1_CHANNEL(node_id, prop, idx) \
+	(DT_PROP_BY_IDX(node_id, prop, idx) == DPPIC_G1_TS_CHANNEL) ||
+
+#define TS_DT_HAS_RESERVED_DPPIC_G1_CHANNEL		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(dppic130), source_channels), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(dppic130), \
+					  source_channels, \
+					  _TS_DT_CHECK_DPPIC_G1_CHANNEL) false), \
+		    (false))
+
+BUILD_ASSERT(TS_DT_HAS_RESERVED_DPPIC_G1_CHANNEL,
+	     "The required DPPIC_G1 channel is not reserved");
+
+/* Ensure something similar to this is present in the DT:
+ * &dppic132 {
+ *	owned-channels = <3>;
+ *	sink-channels = <3>;
+ * };
+ * where 3 corresponds to DPPIC_G2_TS_CHANNEL.
+ */
+#define _TS_DT_CHECK_DPPIC_G2_CHANNEL(node_id, prop, idx) \
+	(DT_PROP_BY_IDX(node_id, prop, idx) == DPPIC_G2_TS_CHANNEL) ||
+
+#define TS_DT_HAS_RESERVED_DPPIC_G2_CHANNEL		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(dppic132), sink_channels), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(dppic132), \
+					  sink_channels, \
+					  _TS_DT_CHECK_DPPIC_G2_CHANNEL) false), \
+		    (false))
+
+BUILD_ASSERT(TS_DT_HAS_RESERVED_DPPIC_G2_CHANNEL,
+	     "The required DPPIC_G2 channel is not reserved");
+
+/* Ensure something similar to this is present in the DT:
+ * &cpurad_ipct {
+ *	source-channel-links = <2 13 2>;
+ * };
+ * where first 2 corresponds to IPCT_L_TS_CHANNEL.
+ */
+#define _TS_DT_CHECK_IPCT_L_LINK(node_id, prop, idx) \
+	((DT_PROP_BY_IDX(node_id, prop, idx) == IPCT_L_TS_CHANNEL) && ((idx) % 3 == 0)) ||
+
+
+#define TS_DT_HAS_RESERVED_IPCT_L_LINK		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(cpurad_ipct), source_channel_links), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(cpurad_ipct), \
+					  source_channel_links, \
+					  _TS_DT_CHECK_IPCT_L_LINK) false), \
+		    (false))
+
+/* NOTE: this not verifying the allocation as the device tree property is an
+ * array of triplets that is difficult to separate using macros.
+ */
+BUILD_ASSERT(TS_DT_HAS_RESERVED_IPCT_L_LINK,
+	     "The required IPCT_radio link is not reserved");
+
+/* Ensure something similar to this is present in the DT:
+ * &ipct130 {
+ *	sink-channel-links = <2 3 2>;
+ * };
+ * where first 2 corresponds to IPCT_G1_TS_CHANNEL.
+ */
+#define _TS_DT_CHECK_IPCT_G1_LINK(node_id, prop, idx) \
+	((DT_PROP_BY_IDX(node_id, prop, idx) == IPCT_G1_TS_CHANNEL) && ((idx) % 3 == 0)) ||
+
+
+#define TS_DT_HAS_RESERVED_IPCT_G1_LINK		\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(ipct130), sink_channel_links), \
+		    (DT_FOREACH_PROP_ELEM(DT_NODELABEL(ipct130), \
+					  sink_channel_links, \
+					  _TS_DT_CHECK_IPCT_G1_LINK) false), \
+		    (false))
+
+/* NOTE: this not verifying the allocation as the device tree property is an
+ * array of triplets that is difficult to separate using macros.
+ */
+BUILD_ASSERT(TS_DT_HAS_RESERVED_IPCT_G1_LINK,
+	     "The required IPCT_G1 link is not reserved");
+
 
 void nrf_802154_platform_timestamper_cross_domain_connections_setup(void)
 {

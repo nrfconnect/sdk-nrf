@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+// Base path of the following includes points to the nrf/include directory.
+#include <../samples/matter/common/dts/nrf54h20/nrf54h20_cpuapp_peripherals.dtsi>
+#include <../samples/matter/common/dts/nrf54h20/nrf54h20_cpuapp_memory_map.dtsi>
+#include <../samples/matter/common/dts/nrf54h20/nrf54h20_ram_allocation.dtsi>
+
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
+
+&mram1x {
+    erase-block-size = <0x1000>;
+    write-block-size = <0x10>;
+
+    cpuapp_rx_partitions: cpuapp-rx-partitions {
+        compatible = "nordic,owned-partitions", "fixed-partitions";
+        status = "okay";
+        perm-read;
+        perm-execute;
+        perm-secure;
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        companion_partition: partition@98000 {
+            reg = <0x98000 DT_SIZE_K(64)>;
+        };
+
+        cpuapp_slot0_partition: partition@a8000 {
+            reg = <0xa8000 DT_SIZE_K(948)>;
+        };
+    };
+
+    cpuapp_rw_partitions: cpuapp-rw-partitions {
+        compatible = "nordic,owned-partitions", "fixed-partitions";
+        status = "okay";
+        perm-read;
+        perm-write;
+        #address-cells = <0x1>;
+        #size-cells = <0x1>;
+
+        storage_partition: partition@195000 {
+            reg = <0x195000 DT_SIZE_K(32)>;
+        };
+
+        factory_data: partition@19D000 {
+            reg = <0x19D000 DT_SIZE_K(4)>;
+        };
+
+        /* DFU partition to store SUIT manifests and Nordic Firmware update */
+        dfu_partition: partition@19E000 {
+            reg = <0x19E000 DT_SIZE_K(300)>;
+        };
+
+    };
+};

@@ -228,7 +228,7 @@ The light switch sample is split into the following source files:
 LPN configuration
 =================
 
-To make the light switch run as an LPN, set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-lpn.conf` when building the sample.
+To make the light switch run as an LPN, set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-lpn.conf` when building the sample using the respective :ref:`CMake option <cmake_options>`.
 For example, when building from the command line, use the following command, where *board_target* is the target for the development kit for which you are building:
 
 .. parsed-literal::
@@ -238,7 +238,8 @@ For example, when building from the command line, use the following command, whe
 
 The configuration overlay :file:`overlay-lpn.conf` enables the LPN feature, and alters certain configuration options to further lower the power consumption.
 To review the specific alterations, open and inspect the :file:`overlay-lpn.conf` file.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+
+For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 FEM support
 ===========

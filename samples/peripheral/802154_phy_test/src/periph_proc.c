@@ -20,6 +20,8 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
 
+#include <dk_buttons_and_leds.h>
+
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 #include <nrfx_gpiote.h>
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
@@ -72,8 +74,6 @@ static inline bool gpiote_is_valid(const nrfx_gpiote_t *gpiote)
 }
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
-static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
-
 #define CLOCK_NODE DT_INST(0, nordic_nrf_clock)
 
 static const struct device *gpio_port0_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
@@ -88,17 +88,20 @@ uint8_t ppi_channel;
 uint8_t task_channel;
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
+#if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 static void clk_timer_handler(nrf_timer_event_t event_type, void *context)
 {
 	/* do nothing */
 }
+#endif
 
 void periph_init(void)
 {
-	nrfx_err_t err_code;
 	int ret;
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
+	nrfx_err_t err_code;
+
 	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(clk_timer.p_reg);
 	nrfx_timer_config_t clk_timer_cfg = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 
@@ -119,9 +122,7 @@ void periph_init(void)
 	}
 #endif
 
-	assert(device_is_ready(led0.port));
-
-	ret = gpio_pin_configure_dt(&led0, GPIO_OUTPUT_INACTIVE);
+	ret = dk_leds_init();
 	assert(ret == 0);
 
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(gpio0), okay)
@@ -346,10 +347,10 @@ bool ptt_get_temp_ext(int32_t *temp)
 
 void ptt_ctrl_led_indication_on_ext(void)
 {
-	gpio_pin_set_dt(&led0, 1);
+	dk_set_led_on(DK_LED1);
 }
 
 void ptt_ctrl_led_indication_off_ext(void)
 {
-	gpio_pin_set_dt(&led0, 0);
+	dk_set_led_off(DK_LED1);
 }

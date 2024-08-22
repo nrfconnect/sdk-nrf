@@ -20,6 +20,7 @@
 #include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
 #include <zephyr/mgmt/mcumgr/mgmt/handlers.h>
 #include "suitfu_mgmt_priv.h"
+#include <suit_envelope_info.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(suitfu_mgmt, CONFIG_MGMT_SUITFU_LOG_LEVEL);
@@ -45,6 +46,8 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 	static size_t image_size;
 	static size_t offset_in_image;
 
+	static struct suit_nvm_device_info device_info;
+
 	size_t decoded = 0;
 	suitfu_mgmt_image_upload_req_t req = {
 		.off = SIZE_MAX,
@@ -54,13 +57,6 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 		.upgrade = false,
 		.image = 0,
 	};
-
-	int rc = suitfu_mgmt_is_dfu_partition_ready();
-
-	if (rc != MGMT_ERR_EOK) {
-		LOG_ERR("DFU Partition in not ready");
-		return rc;
-	}
 
 	struct zcbor_map_decode_key_val image_upload_decode[] = {
 		ZCBOR_MAP_DECODE_KEY_VAL(image, zcbor_uint32_decode, &req.image),
@@ -86,12 +82,19 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 			return MGMT_ERR_EINVAL;
 		}
 
+		suit_plat_err_t err = suit_dfu_partition_device_info_get(&device_info);
+
+		if (err != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("DFU Partition not found");
+			return MGMT_ERR_ENOENT;
+		}
+
 		if (req.image != CONFIG_MGMT_SUITFU_IMAGE_NUMBER) {
 			LOG_ERR("Incorrect image number");
 			return MGMT_ERR_EACCESSDENIED;
 		}
 
-		rc = suitfu_mgmt_erase_dfu_partition(req.size);
+		int rc = suitfu_mgmt_erase(&device_info, req.size);
 		if (rc != MGMT_ERR_EOK) {
 			LOG_ERR("Erasing DFU partition failed");
 			return rc;
@@ -126,13 +129,19 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 		last = true;
 	}
 
-	rc = suitfu_mgmt_write_dfu_image_data(req.off, req.img_data.value, req.img_data.len, last);
-
+	int rc = suitfu_mgmt_write(&device_info, req.off, req.img_data.value, req.img_data.len,
+				   last);
 	if (rc == MGMT_ERR_EOK) {
 
 		offset_in_image += req.img_data.len;
 		if (last) {
-			rc = suitfu_mgmt_candidate_envelope_stored(image_size);
+			LOG_INF("Candidate envelope stored");
+			rc = suitfu_mgmt_candidate_envelope_stored();
+
+			if (rc == MGMT_ERR_EOK) {
+				rc = suitfu_mgmt_candidate_envelope_process();
+			}
+
 			image_size = 0;
 		}
 	}

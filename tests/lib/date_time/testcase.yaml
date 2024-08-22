@@ -5,4 +5,4 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160
       - qemu_cortex_m3
-    tags: date_time sysbuild
+    tags: date_time sysbuild ci_tests_lib_date_time

@@ -708,7 +708,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
 	}
 
-	if (len > sizeof(uint8_t)) {
+	if (len != sizeof(uint8_t)) {
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_ATTRIBUTE_LEN);
 	}
 
@@ -727,7 +727,8 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_NOT_SUPPORTED);
 	}
 
-	memcpy(cur_cp + offset, new_cp, len);
+	*cur_cp = *new_cp;
+
 	return len;
 }
 

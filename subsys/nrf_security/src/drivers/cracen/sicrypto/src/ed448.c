@@ -46,6 +46,7 @@
 #include <silexpk/ed448.h>
 #include <sicrypto/sicrypto.h>
 #include <cracen/statuscodes.h>
+#include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include <sicrypto/ed448.h>
 #include <sicrypto/hash.h>
@@ -143,9 +144,7 @@ static int ed448_compute_pubkey(struct sitask *t)
 	/* The secret scalar s is computed in place from the first half of the
 	 * private key digest.
 	 */
-	t->workmem[0] &= ~0x03;		     /* clear bits 0 and 1 */
-	t->workmem[SX_ED448_SZ - 1] = 0;     /* clear last octet */
-	t->workmem[SX_ED448_SZ - 2] |= 0x80; /* set bit 447 */
+	decode_scalar_448(t->workmem);
 
 	/* Clear second half of private key digest: sx_async_ed448_ptmult_go()
 	 * works on an input of SX_ED448_DGST_SZ bytes.

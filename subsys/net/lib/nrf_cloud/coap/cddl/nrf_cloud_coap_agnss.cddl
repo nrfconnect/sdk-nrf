@@ -10,13 +10,13 @@
 
 agnss_req = {
 	? types => [1*13 int],
-	eci => uint,
+	? eci => uint,
 	? filtered => bool,
 	? mask => uint,
-	mcc => uint,
-	mnc => uint,
+	? mcc => uint,
+	? mnc => uint,
 	? rsrp => int,
-	tac => uint
+	? tac => uint
 }
 
 types = 1

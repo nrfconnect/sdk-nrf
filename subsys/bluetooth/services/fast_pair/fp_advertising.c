@@ -42,7 +42,7 @@ static const uint16_t fast_pair_uuid = BT_FAST_PAIR_UUID_FPS_VAL;
 static const uint8_t version_and_flags;
 static const uint8_t empty_account_key_list;
 
-static int check_adv_config_range(struct bt_fast_pair_adv_config fp_adv_config)
+static int check_adv_config(struct bt_fast_pair_adv_config fp_adv_config)
 {
 	if ((fp_adv_config.mode >= BT_FAST_PAIR_ADV_MODE_COUNT) || (fp_adv_config.mode < 0)) {
 		return -EINVAL;
@@ -51,6 +51,15 @@ static int check_adv_config_range(struct bt_fast_pair_adv_config fp_adv_config)
 	if (fp_adv_config.mode == BT_FAST_PAIR_ADV_MODE_NOT_DISC) {
 		if ((fp_adv_config.not_disc.type >= BT_FAST_PAIR_NOT_DISC_ADV_TYPE_COUNT) ||
 		    (fp_adv_config.not_disc.type < 0)) {
+			return -EINVAL;
+		}
+
+		if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING) &&
+		    fp_adv_config.not_disc.type == BT_FAST_PAIR_NOT_DISC_ADV_TYPE_SHOW_UI_IND) {
+			LOG_ERR("Cannot use not discoverable advertising with UI indications "
+				"without support for the subsequent pairing feature. Enable the "
+				"CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING Kconfig to use this mode");
+
 			return -EINVAL;
 		}
 
@@ -108,7 +117,7 @@ size_t bt_fast_pair_adv_data_size(struct bt_fast_pair_adv_config fp_adv_config)
 	size_t res = 0;
 	int err;
 
-	err = check_adv_config_range(fp_adv_config);
+	err = check_adv_config(fp_adv_config);
 	if (err) {
 		return 0;
 	}
@@ -247,7 +256,7 @@ int bt_fast_pair_adv_data_fill(struct bt_data *bt_adv_data, uint8_t *buf, size_t
 	enum fp_field_type ak_filter_type;
 	int err;
 
-	err = check_adv_config_range(fp_adv_config);
+	err = check_adv_config(fp_adv_config);
 	if (err) {
 		return err;
 	}

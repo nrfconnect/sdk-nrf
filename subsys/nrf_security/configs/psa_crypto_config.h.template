@@ -209,7 +209,6 @@
  * NCSDK-20700: Make PSA CRACEN driver configurable.
  */
 #cmakedefine PSA_CRYPTO_DRIVER_CRACEN                           @PSA_CRYPTO_DRIVER_CRACEN@
-
 #cmakedefine PSA_NEED_CRACEN_AEAD_DRIVER                        @PSA_NEED_CRACEN_AEAD_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_CIPHER_DRIVER                      @PSA_NEED_CRACEN_CIPHER_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER               @PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER@
@@ -218,6 +217,7 @@
 #cmakedefine PSA_NEED_CRACEN_HASH_DRIVER                        @PSA_NEED_CRACEN_HASH_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER              @PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_KMU_DRIVER                         @PSA_NEED_CRACEN_KMU_DRIVER@
+#cmakedefine PSA_NEED_CRACEN_PLATFORM_KEYS                      @PSA_NEED_CRACEN_PLATFORM_KEYS@
 #cmakedefine PSA_NEED_CRACEN_MAC_DRIVER                         @PSA_NEED_CRACEN_MAC_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_PAKE_DRIVER                        @PSA_NEED_CRACEN_PAKE_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER              @PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER@
@@ -424,6 +424,7 @@
 #cmakedefine PSA_NEED_CRACEN_HMAC                               @PSA_NEED_CRACEN_HMAC@
 #cmakedefine PSA_NEED_CRACEN_CMAC                               @PSA_NEED_CRACEN_CMAC@
 #cmakedefine PSA_NEED_CRACEN_SRP_6                              @PSA_NEED_CRACEN_SRP_6@
+#cmakedefine PSA_NEED_CRACEN_SRP_PASSWORD_HASH                  @PSA_NEED_CRACEN_SRP_PASSWORD_HASH@
 #cmakedefine PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256                @PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256@
 #cmakedefine PSA_NEED_CRACEN_ECJPAKE                            @PSA_NEED_CRACEN_ECJPAKE@
 #cmakedefine PSA_NEED_CRACEN_SPAKE2P                            @PSA_NEED_CRACEN_SPAKE2P@

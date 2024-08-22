@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <zephyr/init.h>
 #include <zephyr/logging/log.h>
 #include <modem/trace_backend.h>
 #include <SEGGER_RTT.h>
@@ -18,20 +19,14 @@ static trace_backend_processed_cb trace_processed_callback;
 
 int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 {
-	const int segger_rtt_mode = SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL;
-
 	if (trace_processed_cb == NULL) {
 		return -EFAULT;
 	}
-
-	trace_processed_callback = trace_processed_cb;
-
-	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer, sizeof(rtt_buffer),
-						     segger_rtt_mode);
-
 	if (trace_rtt_channel <= 0) {
 		return -EBUSY;
 	}
+
+	trace_processed_callback = trace_processed_cb;
 
 	return 0;
 }
@@ -72,3 +67,18 @@ struct nrf_modem_lib_trace_backend trace_backend = {
 	.deinit = trace_backend_deinit,
 	.write = trace_backend_write,
 };
+
+/* Allocate RTT buffer ASAP so external tooling can attach before `nrf_modem_init` */
+IF_DISABLED(CONFIG_UNITY, (static))
+int nrf_modem_lib_trace_rtt_channel_alloc(void)
+{
+	const int segger_rtt_mode = SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL;
+
+	trace_rtt_channel = SEGGER_RTT_AllocUpBuffer("modem_trace", rtt_buffer, sizeof(rtt_buffer),
+						     segger_rtt_mode);
+
+	return trace_rtt_channel < 0 ? -EBUSY : 0;
+}
+
+/* The RTT core initialises in PRE_KERNEL_1 */
+SYS_INIT(nrf_modem_lib_trace_rtt_channel_alloc, POST_KERNEL, 0);

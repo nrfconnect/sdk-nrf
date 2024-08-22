@@ -7,10 +7,13 @@
 #include <zephyr/types.h>
 
 #include <zephyr/device.h>
+#if CONFIG_CAF_POWER_MANAGER_CLEAR_RESET_REASON
 #include <hal/nrf_power.h>
 #include <helpers/nrfx_reset_reason.h>
+#endif
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/poweroff.h>
+#include <zephyr/pm/pm.h>
 
 #include <app_event_manager.h>
 #include <nrf_profiler.h>
@@ -142,25 +145,44 @@ static void system_off(void)
 	}
 }
 
+static void system_off_post_action(void)
+{
+	/* You shouldn't enable CONFIG_POWEROFF and CONFIG_PM simultaneously */
+	BUILD_ASSERT(!(IS_ENABLED(CONFIG_POWEROFF) && IS_ENABLED(CONFIG_PM)),
+		"CAF Power Manager uses either power off or power management, but never both");
+
+#if CONFIG_PM
+		(void)pm_state_force(0u, &(struct pm_state_info){.state = PM_STATE_SOFT_OFF,
+									.substate_id =  0,
+									.min_residency_us = 0,
+									.exit_latency_us = 0 });
+#elif CONFIG_POWEROFF
+		sys_poweroff();
+#endif
+}
+
 static void system_off_on_error(void)
 {
 	power_state = POWER_STATE_ERROR_OFF;
 	LOG_WRN("System turned off because of unrecoverable error");
 	LOG_PANIC();
 
-	sys_poweroff();
+	system_off_post_action();
 }
 
 static void system_off_handler(struct k_work *work)
 {
 	LOG_WRN("System turned off");
 	LOG_PANIC();
+
+#if CONFIG_CAF_POWER_MANAGER_CLEAR_RESET_REASON
 	/* Clear RESETREAS to avoid starting serial recovery if nobody
 	 * has cleared it already.
 	 */
 	nrfx_reset_reason_clear(nrfx_reset_reason_get());
+#endif
 
-	sys_poweroff();
+	system_off_post_action();
 }
 
 static void power_down(struct k_work *work)

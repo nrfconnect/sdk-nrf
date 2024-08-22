@@ -15,6 +15,7 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include <nfc_t2t_lib.h>
 
@@ -145,7 +146,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (conn_err) {
-		printk("Connection failed (err %u)\n", conn_err);
+		printk("Connection failed, err 0x%02x %s\n", conn_err, bt_hci_err_to_str(conn_err));
 		return;
 	}
 
@@ -159,7 +160,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason %u)\n", reason);
+	printk("Disconnected, reason 0x%02x %s\n", reason, bt_hci_err_to_str(reason));
 
 	dk_set_led_off(CON_STATUS_LED);
 
@@ -183,8 +184,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
+		       bt_security_err_to_str(err));
 	}
 }
 
@@ -331,7 +332,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
+	       bt_security_err_to_str(reason));
 
 	/* Generate new pairing keys if pairing procedure failed. */
 	k_work_submit(&key_generate_work);

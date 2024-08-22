@@ -12,7 +12,6 @@
 #include <modem/sms.h>
 
 #include "sms.h"
-#include "mosh_defines.h"
 #include "mosh_print.h"
 #include "str_utils.h"
 

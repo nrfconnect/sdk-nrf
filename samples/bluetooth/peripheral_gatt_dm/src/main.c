@@ -79,7 +79,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (err) {
-		printk("Connection failed (err 0x%02x)\n", err);
+		printk("Connection failed, err 0x%02x %s\n", err, bt_hci_err_to_str(err));
 		return;
 	}
 
@@ -97,11 +97,10 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-	printk("Disconnected from %s (reason 0x%02x)\n", addr, reason);
+	printk("Disconnected from %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 }
 
-static void security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -110,8 +109,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
+		       bt_security_err_to_str(err));
 	}
 }
 
@@ -158,7 +157,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
+	       bt_security_err_to_str(reason));
 
 	if (pairing_confirmation_conn) {
 		bt_conn_unref(pairing_confirmation_conn);

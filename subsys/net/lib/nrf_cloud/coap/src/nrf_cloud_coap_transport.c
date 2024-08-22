@@ -406,7 +406,7 @@ static int client_transfer(enum coap_method method,
 		k_sem_take(&serial_sem, K_FOREVER);
 	}
 
-	int err;
+	int err = 0;
 	int retry;
 	char path[MAX_COAP_PATH + 1];
 	struct coap_client_option options[1] = {{
@@ -438,8 +438,8 @@ static int client_transfer(enum coap_method method,
 		strncpy(path, resource, MAX_COAP_PATH);
 		path[MAX_COAP_PATH] = '\0';
 	} else {
-		err = snprintf(path, MAX_COAP_PATH, "%s?%s", resource, query);
-		if ((err < 0) || (err >= MAX_COAP_PATH)) {
+		err = snprintk(path, sizeof(path), "%s?%s", resource, query);
+		if ((err <= 0) || (err >= sizeof(path))) {
 			LOG_ERR("Could not format string");
 			err = -ETXTBSY;
 			goto transfer_end;
@@ -454,7 +454,8 @@ static int client_transfer(enum coap_method method,
 
 	retry = 0;
 	k_sem_reset(xfer->sem);
-	while ((err = coap_client_req(cc, xfer->nrfc_cc->sock, NULL, &request, NULL)) == -EAGAIN) {
+	while ((xfer->nrfc_cc->sock >= 0) &&
+	       (err = coap_client_req(cc, xfer->nrfc_cc->sock, NULL, &request, NULL)) == -EAGAIN) {
 		if (!nrf_cloud_coap_is_connected()) {
 			err = -EACCES;
 			break;
@@ -474,6 +475,13 @@ static int client_transfer(enum coap_method method,
 	if (err < 0) {
 		LOG_ERR("Error sending CoAP request: %d", err);
 	} else {
+
+		if (xfer->nrfc_cc->sock < 0) {
+			LOG_ERR("Socket closed during CoAP request");
+			err = -ESHUTDOWN;
+			goto transfer_end;
+		}
+
 		if (buf_len) {
 			LOG_HEXDUMP_DBG(buf, MIN(64, buf_len), "Sent");
 		}
@@ -782,7 +790,7 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 
 	err = modem_info_get_fw_version(mfw_string, sizeof(mfw_string));
 	if (!err) {
-		err = snprintf(ver_string, sizeof(ver_string), VER_STRING_FMT,
+		err = snprintk(ver_string, sizeof(ver_string), VER_STRING_FMT,
 			       mfw_string, BUILD_VERSION_STR, CDDL_VERSION);
 		if ((err < 0) || (err >= sizeof(ver_string))) {
 			LOG_ERR("Could not format string");

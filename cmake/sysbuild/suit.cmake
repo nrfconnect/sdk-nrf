@@ -99,6 +99,56 @@ function(suit_generate_dfu_zip)
   )
 endfunction()
 
+# Get path to the manifest template in the base manifest template directory.
+#
+# Usage:
+#   suit_make_base_manifest_path(template_name output_variable)
+#
+# Parameters:
+#   template_name - Name of the base manifest template
+#   output_variable - CMake variable where the path to the base manifest template will be stored.
+#
+function(suit_make_base_manifest_path template_name output_variable)
+  set(${output_variable} "${SB_CONFIG_SUIT_BASE_MANIFEST_TEMPLATE_DIR}/${SB_CONFIG_SOC}/${SB_CONFIG_SUIT_BASE_MANIFEST_VARIANT}/${template_name}" PARENT_SCOPE)
+endfunction()
+
+# Get path to the manifest template in the application manifest template directory.
+#
+# Usage:
+#   suit_make_custom_manifest_path(template_name output_variable)
+#
+# Parameters:
+#   template_name - Name of the base manifest template
+#   output_variable - CMake variable where the path to the base manifest template will be stored.
+#
+function(suit_make_custom_manifest_path template_name output_variable)
+  sysbuild_get(app_config_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_CONFIG_DIR CACHE)
+  set(${output_variable} "${app_config_dir}/suit/${SB_CONFIG_SOC}/${template_name}" PARENT_SCOPE)
+endfunction()
+
+# Get the path to the manifest template.
+#
+# The function searches for the manifest templates in the application manifest template directory.
+# If such template does not exist, it searches for the template in the base manifest template
+# directory.
+#
+# Usage:
+#   suit_get_manifest(template_name output_variable)
+#
+# Parameters:
+#   template_name - Name of the base manifest template
+#   output_variable - CMake variable where the path to the base manifest template will be stored.
+#
+function(suit_get_manifest template_name output_variable)
+  suit_make_custom_manifest_path(${template_name} custom_path)
+  suit_make_base_manifest_path(${template_name} base_path)
+  if(EXISTS ${custom_path})
+    set(${output_variable} ${custom_path} PARENT_SCOPE)
+  else()
+    set(${output_variable} ${base_path} PARENT_SCOPE)
+  endif()
+endfunction()
+
 # Create DFU package/main envelope.
 #
 # Usage:
@@ -153,7 +203,12 @@ function(suit_create_package)
       continue()
     endif()
 
-    sysbuild_get(INPUT_ENVELOPE_JINJA_FILE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TEMPLATE KCONFIG)
+    sysbuild_get(INPUT_ENVELOPE_JINJA_FILE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME KCONFIG)
+    string(CONFIGURE "${INPUT_ENVELOPE_JINJA_FILE}" INPUT_ENVELOPE_JINJA_FILE)
+    suit_get_manifest(${INPUT_ENVELOPE_JINJA_FILE} INPUT_ENVELOPE_JINJA_FILE)
+
+    message(STATUS "Found ${image} manifest template: ${INPUT_ENVELOPE_JINJA_FILE}")
+
     suit_set_absolute_or_relative_path(${INPUT_ENVELOPE_JINJA_FILE} ${app_config_dir} INPUT_ENVELOPE_JINJA_FILE)
     sysbuild_get(target IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
     sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
@@ -177,11 +232,13 @@ function(suit_create_package)
     )
   endforeach()
 
-  set(INPUT_ROOT_ENVELOPE_JINJA_FILE ${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE})
+  suit_get_manifest(${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME} INPUT_ROOT_ENVELOPE_JINJA_FILE)
+  message(STATUS "Found root manifest template: ${INPUT_ROOT_ENVELOPE_JINJA_FILE}")
 
   # create root envelope if defined
   if(DEFINED INPUT_ROOT_ENVELOPE_JINJA_FILE AND NOT INPUT_ROOT_ENVELOPE_JINJA_FILE STREQUAL "")
     set(ROOT_NAME ${SB_CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME})
+    string(CONFIGURE "${INPUT_ROOT_ENVELOPE_JINJA_FILE}" INPUT_ROOT_ENVELOPE_JINJA_FILE)
     suit_set_absolute_or_relative_path(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${app_config_dir} INPUT_ROOT_ENVELOPE_JINJA_FILE)
     set(ROOT_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.yaml)
     set(ROOT_ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.suit)
@@ -311,8 +368,6 @@ function(suit_build_recovery)
       "-DBOARD:STRING=${board_target}"
       "-DEXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery.overlay"
       "-Dhci_ipc_EXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery_hci_ipc.overlay"
-      "-DSB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE:STRING=\\\"${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery/app_recovery_envelope.yaml.jinja2\\\""
-      "-Dhci_ipc_CONFIG_SUIT_ENVELOPE_TEMPLATE:STRING=\\\"${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery/rad_recovery_envelope.yaml.jinja2\\\""
       "-DCONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME:STRING=\\\"${APP_RECOVERY_VENDOR_NAME}\\\""
       "-DCONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME:STRING=\\\"${APP_RECOVERY_CLASS_NAME}\\\""
       "-DCONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME:STRING=\\\"${RAD_RECOVERY_VENDOR_NAME}\\\""

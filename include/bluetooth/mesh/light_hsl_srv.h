@@ -34,9 +34,9 @@ struct bt_mesh_light_hsl_srv;
  *  @param[in] _hue_handlers Hue Server model handlers.
  *  @param[in] _sat_handlers Saturation Server model handlers.
  */
-#define BT_MESH_LIGHT_HSL_SRV_INIT(_lightness_srv, _hue_handlers, _sat_handlers)                 \
+#define BT_MESH_LIGHT_HSL_SRV_INIT(_lightness_srv, _hue_handlers, _sat_handlers)                   \
 	{                                                                                          \
-		.lightness = _lightness_srv,                          \
+		.lightness = _lightness_srv,                                                       \
 		.hue = BT_MESH_LIGHT_HUE_SRV_INIT(_hue_handlers),                                  \
 		.sat = BT_MESH_LIGHT_SAT_SRV_INIT(_sat_handlers),                                  \
 	}
@@ -46,18 +46,47 @@ struct bt_mesh_light_hsl_srv;
  *  @brief Light HSL Server model composition data entry.
  *
  *  @param[in] _srv Pointer to a @ref bt_mesh_light_hsl_srv instance.
+ *  @param ...	    Optional Light HSL Server metadata if application is
+ *		    compiled with Large Composition Data Server support,
+ *		    otherwise this parameter is ignored.
  */
-#define BT_MESH_MODEL_LIGHT_HSL_SRV(_srv)                                      \
-	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SRV,                       \
+#define BT_MESH_MODEL_LIGHT_HSL_SRV(_srv, ...)                                 \
+	BT_MESH_MODEL_METADATA_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SRV,              \
 			 _bt_mesh_light_hsl_srv_op, &(_srv)->pub,              \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_light_hsl_srv, \
 						 _srv),                        \
-			 &_bt_mesh_light_hsl_srv_cb),                          \
+			 &_bt_mesh_light_hsl_srv_cb, __VA_ARGS__),             \
 	BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_LIGHT_HSL_SETUP_SRV,                 \
 			 _bt_mesh_light_hsl_setup_srv_op, NULL,                \
 			 BT_MESH_MODEL_USER_DATA(struct bt_mesh_light_hsl_srv, \
 						 _srv),                        \
 			 &_bt_mesh_light_hsl_setup_srv_cb)
+
+/** Light HSL Hue Range Metadata ID. */
+#define BT_MESH_LIGHT_HSL_HUE_RANGE_METADATA_ID 0x0005
+
+/** Light HSL Saturation Range Metadata ID. */
+#define BT_MESH_LIGHT_HSL_SAT_RANGE_METADATA_ID 0x0006
+
+/**
+ *  Light HSL Hue Range Metadata entry.
+ *
+ *  @param range_min Minimum boundary of range (16-bit)
+ *  @param range_max Maximum boundary of range (16-bit)
+ */
+#define BT_MESH_LIGHT_HSL_HUE_RANGE_METADATA(range_min, range_max)                                 \
+	BT_MESH_MODELS_METADATA_ENTRY(4, BT_MESH_LIGHT_HSL_HUE_RANGE_METADATA_ID,                  \
+				      ((uint16_t[]){(range_min), (range_max)}))
+
+/**
+ *  Light HSL Saturation Range Metadata entry.
+ *
+ *  @param range_min Minimum boundary of range (16-bit)
+ *  @param range_max Maximum boundary of range (16-bit)
+ */
+#define BT_MESH_LIGHT_HSL_SAT_RANGE_METADATA(range_min, range_max)                                 \
+	BT_MESH_MODELS_METADATA_ENTRY(4, BT_MESH_LIGHT_HSL_SAT_RANGE_METADATA_ID,                  \
+				      ((uint16_t[]){(range_min), (range_max)}))
 
 /**
  * Light HSL Server instance.

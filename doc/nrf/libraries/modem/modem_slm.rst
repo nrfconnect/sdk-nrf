@@ -18,7 +18,7 @@ The Modem SLM library allows you to perform the following functions:
 * Manage the serial interface so that the application only decides which UART device to use and configures its DTS.
 * Manage the GPIO pins, with support for bidirectional indication and wakeup.
 * Send modem or SLM proprietary AT commands, receive responses and notifications, similar to the :ref:`lib_at_host` library.
-  Received AT responses or notifications can be parsed by the :ref:`at_cmd_parser_readme` library.
+  Received AT responses or notifications can be parsed by the :ref:`at_parser_readme` library.
 * Send raw data in SLM data mode.
   Refer to :ref:`slm_data_mode`.
 * Monitor AT notifications with registered callbacks, similar to the :ref:`at_monitor_readme` library.
@@ -98,8 +98,8 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/modem_slm.h`
-| Source file: :file:`lib/modem/modem_slm.c`
-| Source file: :file:`lib/modem/modem_slm_monitor.c`
+| Source file: :file:`lib/modem_slm/modem_slm.c`
+| Source file: :file:`lib/modem_slm/modem_slm_monitor.c`
 
 .. doxygengroup:: modem_slm
    :project: nrf

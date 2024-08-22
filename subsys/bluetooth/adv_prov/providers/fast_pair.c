@@ -29,10 +29,12 @@ void bt_le_adv_prov_fast_pair_enable(bool enable)
 	enabled = enable;
 }
 
+#if CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING
 void bt_le_adv_prov_fast_pair_show_ui_pairing(bool enable)
 {
 	show_ui_pairing = enable;
 }
+#endif /* CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING */
 
 int bt_le_adv_prov_fast_pair_set_battery_mode(enum bt_fast_pair_adv_battery_mode mode)
 {
@@ -82,7 +84,7 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 		    struct bt_le_adv_prov_feedback *fb)
 {
 	static uint8_t buf[ADV_DATA_BUF_SIZE];
-	struct bt_fast_pair_adv_config adv_config;
+	struct bt_fast_pair_adv_config adv_config = { 0 };
 
 	if (!enabled) {
 		return -ENOENT;

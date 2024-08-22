@@ -9,13 +9,15 @@
 
 LOG_MODULE_REGISTER(suit_plat_write, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *content)
+int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *content,
+			  struct suit_encryption_info *enc_info)
 {
 	LOG_ERR("SUIT directive write is not supported for app");
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 }
 
-int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content)
+int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content,
+		    struct suit_encryption_info *enc_info)
 {
 	LOG_ERR("SUIT directive write is not supported for app");
 	return SUIT_ERR_UNSUPPORTED_COMMAND;

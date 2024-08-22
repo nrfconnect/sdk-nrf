@@ -76,7 +76,14 @@ function(zephyr_mcuboot_tasks)
       set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
     endif()
   endif()
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign command")
+
+  # Split fields, imgtool_sign_sysbuild is stored in cache which will have fields updated by
+  # sysbuild, imgtool_sign must not be stored in cache because it would then prevent those fields
+  # from being updated without a pristine build
+  # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
+  # invalid if a static PM file is updated without pristine build
+  set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_sign_sysbuild})
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
@@ -128,7 +135,7 @@ function(zephyr_mcuboot_tasks)
 
     list(APPEND byproducts ${output}.bin)
     zephyr_runner_file(bin ${output}.bin)
-    set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output}.signed.bin"
+    set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output}.bin"
         CACHE FILEPATH "Signed kernel bin file" FORCE
     )
 
@@ -151,7 +158,7 @@ function(zephyr_mcuboot_tasks)
       endif()
 
       list(APPEND byproducts ${output}.encrypted.bin)
-      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_BIN_NAME "${output}.signed.encrypted.bin"
+      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_BIN_NAME "${output}.encrypted.bin"
           CACHE FILEPATH "Signed and encrypted kernel bin file" FORCE
       )
 
@@ -188,7 +195,7 @@ function(zephyr_mcuboot_tasks)
     if(NOT "${keyfile_enc}" STREQUAL "")
       set(unconfirmed_args ${input}.hex ${output}.encrypted.hex)
       list(APPEND byproducts ${output}.encrypted.hex)
-      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.signed.encrypted.hex"
+      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.encrypted.hex"
           CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
       )
 

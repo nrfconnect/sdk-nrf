@@ -10,7 +10,8 @@
 
 #include <array>
 
-namespace Nrf {
+namespace Nrf
+{
 
 /**
  * @brief DFU over SMP helper class
@@ -48,6 +49,8 @@ public:
 	 * deferred if another component with higher priority uses BLE.
 	 */
 	void StartServer();
+
+	static void Disconnected(bt_conn *conn, uint8_t reason);
 
 private:
 	bool mIsStarted = false;

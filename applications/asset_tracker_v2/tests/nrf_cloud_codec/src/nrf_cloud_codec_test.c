@@ -95,7 +95,7 @@ const static struct cloud_data_battery bat_data_example = {
 	"\"appId\":\"GNSS\","\
 	"\"messageType\":\"DATA\","\
 	"\"ts\":1563968747123,"\
-	"\"data\":{\"lng\":30,\"lat\":40,\"acc\":180,\"alt\":245,\"spd\":5,\"hdg\":39}"\
+	"\"data\":{\"lon\":30,\"lat\":40,\"acc\":180,\"alt\":245,\"spd\":5,\"hdg\":39}"\
 "}]"
 
 const static struct cloud_data_gnss gnss_data_example = {
@@ -119,7 +119,7 @@ const static struct cloud_data_gnss gnss_data_example = {
 	"\"appId\":\"GNSS\","\
 	"\"messageType\":\"DATA\","\
 	"\"ts\":1563968747123,"\
-	"\"data\":{\"lng\":30,\"lat\":40,\"acc\":180,\"alt\":245,\"spd\":5}"\
+	"\"data\":{\"lon\":30,\"lat\":40,\"acc\":180,\"alt\":245,\"spd\":5}"\
 "}]"
 
 const static struct cloud_data_gnss gnss_data_example_no_heading = {

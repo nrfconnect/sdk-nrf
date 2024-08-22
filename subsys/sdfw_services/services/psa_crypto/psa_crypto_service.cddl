@@ -589,40 +589,6 @@ psa_generate_key_req = (
 )
 
 
-psa_sign_hash_start_req = (
-    75,
-    p_operation: uint,
-    key: uint,
-    alg: uint,
-    p_hash: uint,
-    hash_length: uint,
-)
-
-
-psa_sign_hash_abort_req = (
-    76,
-    p_operation: uint,
-)
-
-
-psa_verify_hash_start_req = (
-    77,
-    p_operation: uint,
-    key: uint,
-    alg: uint,
-    p_hash: uint,
-    hash_length: uint,
-    p_signature: uint,
-    signature_length: uint,
-)
-
-
-psa_verify_hash_abort_req = (
-    78,
-    p_operation: uint,
-)
-
-
 psa_pake_setup_req = (
     79,
     p_handle: uint,
@@ -763,10 +729,6 @@ psa_crypto_req = [
         psa_raw_key_agreement_req /
         psa_generate_random_req /
         psa_generate_key_req /
-        psa_sign_hash_start_req /
-        psa_sign_hash_abort_req /
-        psa_verify_hash_start_req /
-        psa_verify_hash_abort_req /
         psa_pake_setup_req /
         psa_pake_set_role_req /
         psa_pake_set_user_req /

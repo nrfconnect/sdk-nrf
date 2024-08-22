@@ -54,11 +54,10 @@ static void lte_trace_cb(enum lte_lc_trace_type type)
 	}
 }
 
-static void lte_handler(const struct lte_lc_evt *const evt)
+static void modem_params_get(void)
 {
-	int err;
-
 #if defined(CONFIG_MODEM_INFO)
+	int err;
 	int rsrp;
 	uint8_t band;
 	int snr;
@@ -93,6 +92,19 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		}
 	}
 #endif
+}
+
+static void lte_handler(const struct lte_lc_evt *const evt)
+{
+	int err;
+	enum lte_lc_func_mode mode = LTE_LC_FUNC_MODE_OFFLINE;
+
+	err = lte_lc_func_mode_get(&mode);
+	if (err) {
+		LOG_ERR("Failed to get LTE mode, error: %d", err);
+	} else if (mode != LTE_LC_FUNC_MODE_OFFLINE) {
+		modem_params_get();
+	}
 
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:

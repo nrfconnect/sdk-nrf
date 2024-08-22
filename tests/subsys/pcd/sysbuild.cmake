@@ -13,6 +13,7 @@ ExternalZephyrProject_Add(
     APPLICATION hello_world
     SOURCE_DIR ${ZEPHYR_BASE}/samples/hello_world
     BOARD ${SB_CONFIG_REMOTE_BOARD}
+    BOARD_REVISION ${BOARD_REVISION}
   )
 
 set_property(GLOBAL APPEND PROPERTY PM_CPUNET_IMAGES hello_world)

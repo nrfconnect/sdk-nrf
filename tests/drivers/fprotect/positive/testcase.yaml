@@ -8,4 +8,4 @@ tests:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
-    tags: b0 fprotect sysbuild
+    tags: b0 fprotect sysbuild ci_tests_drivers_fprotect

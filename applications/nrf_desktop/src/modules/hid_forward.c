@@ -15,6 +15,7 @@
 
 #include "hid_report_desc.h"
 #include "config_channel_transport.h"
+#include "hid_reportq.h"
 
 #include "hid_event.h"
 #include <caf/events/ble_common_event.h>
@@ -25,7 +26,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
-#define MAX_ENQUEUED_ITEMS CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS
 #define CFG_CHAN_RSP_READ_DELAY		15
 #define CFG_CHAN_MAX_RSP_POLL_CNT	50
 #define CFG_CHAN_UNUSED_PEER_ID		UINT8_MAX
@@ -33,38 +33,17 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
 #define PERIPHERAL_ADDRESSES_STORAGE_NAME "paddr"
 
-#define OUTPUT_REPORT_DATA_MAX_LEN \
-	(IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)?(REPORT_SIZE_KEYBOARD_LEDS):(0))
-
 BUILD_ASSERT(CFG_CHAN_MAX_RSP_POLL_CNT <= UCHAR_MAX);
-
-struct enqueued_report {
-	sys_snode_t node;
-	struct hid_report_event *report;
-};
-
-struct counted_list {
-	sys_slist_t list;
-	size_t count;
-};
-
-struct enqueued_reports {
-	struct counted_list reports[ARRAY_SIZE(input_reports)];
-	uint8_t last_idx;
-};
 
 struct report_data {
 	uint8_t report_id;
-	uint8_t data[OUTPUT_REPORT_DATA_MAX_LEN];
+	uint8_t data[REPORT_BUFFER_SIZE_OUTPUT_REPORT];
 } __packed;
 
 struct subscriber {
-	const void *id;
-	uint32_t enabled_reports_bm;
-	struct enqueued_reports enqueued_reports;
+	struct hid_reportq *in_reportq;
 	struct report_data out_reports[ARRAY_SIZE(output_reports)];
 	uint32_t saved_out_reports_bm;
-	bool busy;
 };
 
 struct hids_peripheral {
@@ -88,7 +67,6 @@ static bool suspended;
 
 static void hogp_out_rep_write_cb(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, uint8_t err);
 static int send_hid_out_report(struct bt_hogp *hogp, const uint8_t *data, size_t size);
-static void send_empty_hid_out_reports(struct hids_peripheral *per, struct subscriber *sub);
 
 #if CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT > 1
 static void verify_data(const struct bt_bond_info *info, void *user_data)
@@ -170,22 +148,6 @@ static struct subscriber *get_subscriber(const struct hids_peripheral *per)
 	return &subscribers[per->sub_id];
 }
 
-static size_t next_id(size_t id, size_t max)
-{
-	return (id + 1) % max;
-}
-
-static int get_input_report_idx(uint8_t report_id)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
-		if (input_reports[i] == report_id) {
-			return i;
-		}
-	}
-
-	return -ENOENT;
-}
-
 static size_t get_output_report_idx(uint8_t report_id)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(output_reports); i++) {
@@ -208,159 +170,28 @@ static size_t get_output_report_size(uint8_t report_id)
 	}
 }
 
-static bool is_report_enabled(const struct subscriber *sub, uint8_t report_id)
-{
-	__ASSERT_NO_MSG(report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
-	return (sub->enabled_reports_bm & BIT(report_id)) != 0;
-}
-
-static bool is_report_enqueued(struct enqueued_reports *enqueued_reports,
-			       size_t irep_idx)
-{
-	struct counted_list *reports = &enqueued_reports->reports[irep_idx];
-
-	if (reports->count == 0) {
-		__ASSERT_NO_MSG(sys_slist_is_empty(&reports->list));
-		return false;
-	}
-	return true;
-}
-
-static struct enqueued_report *get_enqueued_report(struct enqueued_reports *enqueued_reports,
-						   size_t irep_idx)
-{
-	struct counted_list *reports = &enqueued_reports->reports[irep_idx];
-	struct enqueued_report *item;
-
-	item = CONTAINER_OF(sys_slist_get(&reports->list),
-			    __typeof__(*item),
-			    node);
-	__ASSERT_NO_MSG(reports->count > 0);
-	reports->count--;
-
-	return item;
-}
-
-static void drop_enqueued_reports(struct enqueued_reports *enqueued_reports,
-				  size_t irep_idx)
-{
-	__ASSERT_NO_MSG(irep_idx < ARRAY_SIZE(enqueued_reports->reports));
-
-	while (is_report_enqueued(enqueued_reports, irep_idx)) {
-		struct enqueued_report *item;
-
-		item = get_enqueued_report(enqueued_reports, irep_idx);
-
-		app_event_manager_free(item->report);
-		k_free(item);
-	}
-}
-
-static void init_enqueued_reports(struct enqueued_reports *enqueued_reports)
-{
-	for (size_t irep_idx = 0; irep_idx < ARRAY_SIZE(enqueued_reports->reports); irep_idx++) {
-		struct counted_list *reports = &enqueued_reports->reports[irep_idx];
-
-		sys_slist_init(&reports->list);
-		reports->count = 0;
-	}
-
-	enqueued_reports->last_idx = 0;
-}
-
-static struct enqueued_report *get_next_enqueued_report(struct enqueued_reports *enqueued_reports)
-{
-	struct enqueued_report *item = NULL;
-
-	for (size_t i = 0; i < ARRAY_SIZE(enqueued_reports->reports); i++) {
-		size_t irep_idx = next_id(enqueued_reports->last_idx + i,
-					  ARRAY_SIZE(enqueued_reports->reports));
-
-		if (is_report_enqueued(enqueued_reports, irep_idx)) {
-			item = get_enqueued_report(enqueued_reports, irep_idx);
-
-			enqueued_reports->last_idx = irep_idx;
-			break;
-		}
-	}
-
-	return item;
-}
-
-static void enqueue_hid_report(struct enqueued_reports *enqueued_reports,
-			       size_t irep_idx,
-			       struct hid_report_event *report)
-{
-	__ASSERT_NO_MSG(irep_idx < ARRAY_SIZE(enqueued_reports->reports));
-
-	struct counted_list *reports = &enqueued_reports->reports[irep_idx];
-
-	struct enqueued_report *item;
-
-	if (reports->count < MAX_ENQUEUED_ITEMS) {
-		item = k_malloc(sizeof(*item));
-	} else {
-		LOG_WRN("Enqueue dropped the oldest report");
-		item = get_enqueued_report(enqueued_reports, irep_idx);
-		app_event_manager_free(item->report);
-	}
-
-	if (!item) {
-		LOG_ERR("Dropped HID report");
-		/* Should never happen. */
-		__ASSERT_NO_MSG(false);
-	} else {
-		item->report = report;
-		sys_slist_append(&reports->list, &item->node);
-		reports->count++;
-	}
-}
-
 static void forward_hid_report(struct hids_peripheral *per, uint8_t report_id,
 			       const uint8_t *data, size_t size)
 {
+	__ASSERT_NO_MSG((report_id != REPORT_ID_RESERVED) &&
+			(report_id < REPORT_ID_COUNT));
+
 	struct subscriber *sub = get_subscriber(per);
 
-	if (report_id >= __CHAR_BIT__ * sizeof(sub->enabled_reports_bm)) {
-		__ASSERT_NO_MSG(false);
-		return;
-	}
+	if (sub->in_reportq) {
+		int err = hid_reportq_report_add(sub->in_reportq, per, report_id, data, size);
 
-	int irep_idx = get_input_report_idx(report_id);
-
-	if (irep_idx < 0) {
-		LOG_ERR("Unsupported report id %" PRIu8, report_id);
-		return;
+		if (err == -EACCES) {
+			/* Subscriber has not subscribed for the report. Drop the report data. */
+		} else if (err) {
+			LOG_ERR("hid_reportq_report_add failed (err: %d)", err);
+		}
 	}
 
 	if (suspended) {
 		/* If suspended, report should wake up the board. */
 		struct wake_up_event *event = new_wake_up_event();
 		APP_EVENT_SUBMIT(event);
-	}
-
-	if (!is_report_enabled(sub, report_id)) {
-		/* Drop report if subscriber is not waiting for it. */
-		return;
-	}
-
-	struct hid_report_event *report = new_hid_report_event(size + sizeof(report_id));
-
-	report->source = per;
-	report->subscriber = sub->id;
-
-	/* Forward report as is adding report id on the front. */
-	report->dyndata.data[0] = report_id;
-	memcpy(&report->dyndata.data[1], data, size);
-
-	if (!sub->busy) {
-		__ASSERT_NO_MSG(!is_report_enqueued(&sub->enqueued_reports, irep_idx));
-
-		APP_EVENT_SUBMIT(report);
-		sub->enqueued_reports.last_idx = irep_idx;
-		sub->busy = true;
-	} else {
-		enqueue_hid_report(&sub->enqueued_reports, irep_idx, report);
 	}
 }
 
@@ -372,9 +203,7 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 	__ASSERT_NO_MSG(!k_is_in_isr());
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 
-	struct hids_peripheral *per = CONTAINER_OF(hids_c,
-						   struct hids_peripheral,
-						   hogp);
+	struct hids_peripheral *per = CONTAINER_OF(hids_c, struct hids_peripheral, hogp);
 	__ASSERT_NO_MSG(per);
 
 	if (!data) {
@@ -389,8 +218,7 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 	size_t size = bt_hogp_rep_size(rep);
 
 	/* HID boot protocol reports are received with report ID equal 0 (REPORT_ID_RESERVED).
-	 * The report ID must be updated before HID report is submitted as an app_event_manager
-	 * event.
+	 * The report ID must be updated before HID report is forwarded as an Event Manager event.
 	 */
 	if (report_id == REPORT_ID_RESERVED) {
 		if (bt_hogp_rep_boot_kbd_in(hids_c)) {
@@ -399,9 +227,6 @@ static uint8_t hogp_read(struct bt_hogp *hids_c,
 			report_id = REPORT_ID_BOOT_MOUSE;
 		}
 	}
-
-	__ASSERT_NO_MSG((report_id != REPORT_ID_RESERVED) &&
-			(report_id < REPORT_ID_COUNT));
 
 	forward_hid_report(per, report_id, data, size);
 
@@ -415,8 +240,9 @@ static bool is_peripheral_connected(struct hids_peripheral *per)
 
 static enum bt_hids_pm get_sub_protocol_mode(const struct subscriber *sub)
 {
-	if (is_report_enabled(sub, REPORT_ID_BOOT_MOUSE) ||
-	    is_report_enabled(sub, REPORT_ID_BOOT_KEYBOARD)) {
+	if (sub->in_reportq &&
+	    (hid_reportq_is_subscribed(sub->in_reportq, REPORT_ID_BOOT_MOUSE) ||
+	     hid_reportq_is_subscribed(sub->in_reportq, REPORT_ID_BOOT_KEYBOARD))) {
 		return BT_HIDS_PM_BOOT;
 	} else {
 		return BT_HIDS_PM_REPORT;
@@ -960,53 +786,6 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 	__ASSERT_NO_MSG(!(peripheral_cache[per_id] & 0x01));
 }
 
-static void enable_subscription(struct subscriber *sub, uint8_t report_id)
-{
-	int irep_idx = get_input_report_idx(report_id);
-
-	if (irep_idx < 0) {
-		LOG_ERR("Cannot enable subscription for report %" PRIu8,
-			report_id);
-		return;
-	}
-
-	WRITE_BIT(sub->enabled_reports_bm, report_id, 1);
-}
-
-static void disable_subscription(struct subscriber *sub, uint8_t report_id)
-{
-	int irep_idx = get_input_report_idx(report_id);
-
-	if (irep_idx < 0) {
-		LOG_ERR("Cannot disable subscription for report %" PRIu8,
-			report_id);
-		return;
-	}
-
-	WRITE_BIT(sub->enabled_reports_bm, report_id, 0);
-	bool sub_disconnected = (sub->enabled_reports_bm == 0);
-
-	/* For all peripherals connected to this subscriber. */
-	for (size_t per_id = 0; per_id < ARRAY_SIZE(peripherals); per_id++) {
-		struct hids_peripheral *per = &peripherals[per_id];
-
-		if ((sub != get_subscriber(per)) ||
-		    (!is_peripheral_connected(per))) {
-			continue;
-		}
-
-		if (sub_disconnected) {
-			send_empty_hid_out_reports(per, sub);
-		}
-	}
-
-	drop_enqueued_reports(&sub->enqueued_reports, irep_idx);
-
-	if (sub_disconnected) {
-		sub->saved_out_reports_bm = 0;
-	}
-}
-
 static void hogp_ready(struct bt_hogp *hids_c)
 {
 	struct bt_hogp_rep_info *rep = NULL;
@@ -1112,28 +891,7 @@ static void init(void)
 
 		__ASSERT_NO_MSG(ARRAY_SIZE(sub->out_reports) <=
 				__CHAR_BIT__ * sizeof(sub->saved_out_reports_bm));
-		init_enqueued_reports(&sub->enqueued_reports);
 		sub->saved_out_reports_bm = 0;
-	}
-}
-
-static void send_enqueued_report(struct subscriber *sub)
-{
-	if (sub->busy) {
-		return;
-	}
-
-	struct enqueued_report *item;
-
-	/* First try to send report left at subscriber. */
-	item = get_next_enqueued_report(&sub->enqueued_reports);
-
-	if (item) {
-		APP_EVENT_SUBMIT(item->report);
-
-		k_free(item);
-
-		sub->busy = true;
 	}
 }
 
@@ -1196,27 +954,6 @@ static void hogp_out_rep_write_cb(struct bt_hogp *hogp, struct bt_hogp_rep_info 
 	WRITE_BIT(per->enqueued_out_reports_bm, orep_idx, 0);
 }
 
-static void send_empty_hid_out_reports(struct hids_peripheral *per, struct subscriber *sub)
-{
-	struct bt_hogp *per_hogp = &per->hogp;
-
-	for (size_t orep_idx = 0; orep_idx < ARRAY_SIZE(sub->out_reports); orep_idx++) {
-		if (sub->saved_out_reports_bm & BIT(orep_idx)) {
-			uint8_t report_id = sub->out_reports[orep_idx].report_id;
-			size_t size = get_output_report_size(report_id);
-			uint8_t empty_data[size];
-
-			memset(empty_data, 0, sizeof(empty_data));
-			empty_data[0] = report_id;
-			int err = send_hid_out_report(per_hogp, empty_data, size);
-
-			if (err) {
-				LOG_ERR("Failed to forward output report (err: %d)", err);
-			}
-		}
-	}
-}
-
 static void save_hid_out_report(struct subscriber *sub, const uint8_t *data, size_t size)
 {
 	uint8_t report_id = data[0];
@@ -1258,6 +995,121 @@ static void forward_hid_out_report(const struct hid_report_event *event,
 	}
 }
 
+static struct subscriber *find_free_subscriber(void)
+{
+	struct subscriber *sub = NULL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		if (!subscribers[i].in_reportq) {
+			sub = &subscribers[i];
+			break;
+		}
+	}
+
+	return sub;
+}
+
+static struct subscriber *find_subscriber(const void *sub_id)
+{
+	__ASSERT_NO_MSG(sub_id);
+	struct subscriber *sub = NULL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
+		if (subscribers[i].in_reportq &&
+		    (hid_reportq_get_sub_id(subscribers[i].in_reportq) == sub_id)) {
+			sub = &subscribers[i];
+			break;
+		}
+	}
+
+	return sub;
+}
+
+static void send_empty_hid_out_reports(struct hids_peripheral *per, struct subscriber *sub)
+{
+	struct bt_hogp *per_hogp = &per->hogp;
+
+	for (size_t orep_idx = 0; orep_idx < ARRAY_SIZE(sub->out_reports); orep_idx++) {
+		if (sub->saved_out_reports_bm & BIT(orep_idx)) {
+			uint8_t report_id = sub->out_reports[orep_idx].report_id;
+			size_t size = get_output_report_size(report_id);
+			uint8_t empty_data[size];
+
+			memset(empty_data, 0, sizeof(empty_data));
+			empty_data[0] = report_id;
+			int err = send_hid_out_report(per_hogp, empty_data, size);
+
+			if (err) {
+				LOG_ERR("Failed to forward output report (err: %d)", err);
+			}
+		}
+	}
+}
+
+static void clear_hid_out_reports(struct subscriber *sub)
+{
+	/* Update HID peripherals. */
+	for (size_t per_id = 0; per_id < ARRAY_SIZE(peripherals); per_id++) {
+		struct hids_peripheral *per = &peripherals[per_id];
+
+		if ((sub == get_subscriber(per)) && is_peripheral_connected(per)) {
+			send_empty_hid_out_reports(per, sub);
+		}
+
+	}
+
+	sub->saved_out_reports_bm = 0;
+}
+
+static bool handle_hid_report_subscriber_event(const struct hid_report_subscriber_event *event)
+{
+	if (event->connected) {
+		/* The HID forward module forwards data received from HID peripherals connected over
+		 * BLE and does not generate HID data pipeline.
+		 */
+		ARG_UNUSED(event->params.pipeline_size);
+		ARG_UNUSED(event->params.priority);
+
+		/* Allocate new subscriber. */
+		struct subscriber *sub = find_free_subscriber();
+
+		__ASSERT_NO_MSG(sub);
+
+		sub->in_reportq = hid_reportq_alloc(event->subscriber, event->params.report_max);
+		__ASSERT_NO_MSG(sub->in_reportq);
+	} else {
+		struct subscriber *sub = find_subscriber(event->subscriber);
+
+		__ASSERT_NO_MSG(sub);
+
+		hid_reportq_free(sub->in_reportq);
+		sub->in_reportq = NULL;
+		clear_hid_out_reports(sub);
+	}
+
+	return false;
+}
+
+static bool handle_hid_report_subscription_event(const struct hid_report_subscription_event *event)
+{
+	struct subscriber *sub = find_subscriber(event->subscriber);
+
+	__ASSERT_NO_MSG(sub);
+	enum bt_hids_pm prev_pm = get_sub_protocol_mode(sub);
+
+	if (event->enabled) {
+		hid_reportq_subscribe(sub->in_reportq, event->report_id);
+	} else {
+		hid_reportq_unsubscribe(sub->in_reportq, event->report_id);
+	}
+
+	if (prev_pm != get_sub_protocol_mode(sub)) {
+		update_sub_protocol_mode(sub, get_sub_protocol_mode(sub));
+	}
+
+	return false;
+}
+
 static bool handle_hid_report_event(const struct hid_report_event *event)
 {
 	/* Ignore HID input events. */
@@ -1265,27 +1117,15 @@ static bool handle_hid_report_event(const struct hid_report_event *event)
 		return false;
 	}
 
-	size_t sub_idx;
+	struct subscriber *sub = find_subscriber(event->source);
 
-	for (sub_idx = 0; sub_idx < ARRAY_SIZE(subscribers); sub_idx++) {
-		if (subscribers[sub_idx].id == event->source) {
-			break;
-		}
-	}
-
-	if (sub_idx == ARRAY_SIZE(subscribers)) {
-		LOG_WRN("No subscriber with ID: %p", event->source);
-		return false;
-	}
-
-	save_hid_out_report(&subscribers[sub_idx],
-			    event->dyndata.data,
-			    event->dyndata.size);
+	__ASSERT_NO_MSG(sub);
+	save_hid_out_report(sub, event->dyndata.data, event->dyndata.size);
 
 	for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
 		struct hids_peripheral *per = &peripherals[i];
 
-		if ((per->sub_id == sub_idx) && is_peripheral_connected(per)) {
+		if ((get_subscriber(per) == sub) && is_peripheral_connected(per)) {
 			forward_hid_out_report(event, per);
 		}
 	}
@@ -1296,20 +1136,14 @@ static bool handle_hid_report_event(const struct hid_report_event *event)
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_sent_event(aeh)) {
-		const struct hid_report_sent_event *event =
-			cast_hid_report_sent_event(aeh);
-		struct subscriber *sub = NULL;
+		const struct hid_report_sent_event *event = cast_hid_report_sent_event(aeh);
+		struct subscriber *sub = find_subscriber(event->subscriber);
 
-		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
-			if (subscribers[i].id == event->subscriber) {
-				sub = &subscribers[i];
-				break;
-			}
+		if (sub) {
+			hid_reportq_report_sent(sub->in_reportq, event->report_id, event->error);
+		} else {
+			LOG_WRN("Subscriber %p disconnected", event->subscriber);
 		}
-		__ASSERT_NO_MSG(sub);
-
-		sub->busy = false;
-		send_enqueued_report(sub);
 
 		return false;
 	}
@@ -1342,44 +1176,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
+	if (is_hid_report_subscriber_event(aeh)) {
+		return handle_hid_report_subscriber_event(cast_hid_report_subscriber_event(aeh));
+	}
+
 	if (is_hid_report_subscription_event(aeh)) {
-		const struct hid_report_subscription_event *event =
-			cast_hid_report_subscription_event(aeh);
-
-		struct subscriber *sub = NULL;
-
-		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
-			if ((subscribers[i].id == event->subscriber) ||
-			    (subscribers[i].id == NULL)) {
-				sub = &subscribers[i];
-			}
-
-			if (subscribers[i].id == event->subscriber) {
-				break;
-			}
-		}
-		__ASSERT_NO_MSG(sub);
-
-		if (!sub->id) {
-			sub->id = event->subscriber;
-		}
-
-		__ASSERT_NO_MSG(event->report_id < __CHAR_BIT__ * sizeof(sub->enabled_reports_bm));
-
-		enum bt_hids_pm prev_pm = get_sub_protocol_mode(sub);
-
-		if (event->enabled) {
-			enable_subscription(sub, event->report_id);
-			send_enqueued_report(sub);
-		} else {
-			disable_subscription(sub, event->report_id);
-		}
-
-		if (prev_pm != get_sub_protocol_mode(sub)) {
-			update_sub_protocol_mode(sub, get_sub_protocol_mode(sub));
-		}
-
-		return false;
+		return handle_hid_report_subscription_event(
+			cast_hid_report_subscription_event(aeh));
 	}
 
 	if (is_hid_report_event(aeh)) {
@@ -1446,6 +1249,7 @@ APP_EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscriber_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_sent_event);
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);

@@ -59,10 +59,9 @@ static const uint8_t cap_adv_data[] = {
 #define AVAILABLE_SINK_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
 #endif /* CONFIG_BT_AUDIO_RX */
 
-static struct bt_bap_stream *bap_tx_streams[CONFIG_BT_ASCS_ASE_SRC_COUNT];
+static struct bt_cap_stream *cap_tx_streams[CONFIG_BT_ASCS_ASE_SRC_COUNT];
 
 #if defined(CONFIG_BT_AUDIO_TX)
-static uint8_t audio_mapping_mask[CONFIG_BT_ASCS_ASE_SRC_COUNT] = {0};
 #define AVAILABLE_SOURCE_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
 #else
 #define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
@@ -159,8 +158,8 @@ static struct bt_pacs_cap caps[] = {
 };
 /* clang-format on */
 
-static struct bt_bap_stream
-	audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
+static struct bt_cap_stream
+	cap_audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
 
 #if (CONFIG_BT_AUDIO_TX)
 BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
@@ -174,11 +173,11 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 	int ret;
 	LOG_DBG("LC3 config callback");
 
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		struct bt_bap_stream *audio_stream = &audio_streams[i];
+	for (int i = 0; i < ARRAY_SIZE(cap_audio_streams); i++) {
+		struct bt_cap_stream *cap_audio_stream = &cap_audio_streams[i];
 
-		if (!audio_stream->conn) {
-			LOG_DBG("ASE Codec Config stream %p", (void *)audio_stream);
+		if (!cap_audio_stream->bap_stream.conn) {
+			LOG_DBG("ASE Codec Config stream %p", (void *)cap_audio_stream);
 
 			ret = le_audio_bitrate_check(codec);
 			if (!ret) {
@@ -204,7 +203,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 				le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, conn, dir);
 
 				/* CIS headset only supports one source stream for now */
-				bap_tx_streams[0] = audio_stream;
+				cap_tx_streams[0] = cap_audio_stream;
 			}
 #endif /* (CONFIG_BT_AUDIO_TX) */
 			else {
@@ -212,7 +211,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 				return -EINVAL;
 			}
 
-			*stream = audio_stream;
+			*stream = &cap_audio_stream->bap_stream;
 			*pref = qos_pref;
 
 			return 0;
@@ -358,7 +357,12 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 static void stream_sent_cb(struct bt_bap_stream *stream)
 {
 	/* Unicast server/CIS headset only supports one source stream for now */
-	ERR_CHK(bt_le_audio_tx_stream_sent(0));
+	struct stream_index idx = {
+		.lvl1 = 0,
+		.lvl2 = 0,
+		.lvl3 = 0,
+	};
+	ERR_CHK(bt_le_audio_tx_stream_sent(idx));
 }
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
@@ -403,7 +407,12 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	LOG_INF("Stream %p started", stream);
 
 	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		ERR_CHK(bt_le_audio_tx_stream_started(0));
+		struct stream_index idx = {
+			.lvl1 = 0,
+			.lvl2 = 0,
+			.lvl3 = 0,
+		};
+		ERR_CHK(bt_le_audio_tx_stream_started(idx));
 	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn, dir);
@@ -420,10 +429,6 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	}
 
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
-
-	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		ERR_CHK(bt_le_audio_tx_stream_stopped(0));
-	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 }
@@ -462,14 +467,15 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		/* If multiple sink streams exists, they should have the same configurations,
 		 * hence we only check the first one.
 		 */
-		if (audio_streams[0].codec_cfg == NULL) {
+		if (cap_audio_streams[0].bap_stream.codec_cfg == NULL) {
 			LOG_ERR("No codec found for the stream");
 
 			return -ENXIO;
 		}
 
 		if (sampling_rate_hz != NULL) {
-			ret = le_audio_freq_hz_get(audio_streams[0].codec_cfg, sampling_rate_hz);
+			ret = le_audio_freq_hz_get(cap_audio_streams[0].bap_stream.codec_cfg,
+						   sampling_rate_hz);
 			if (ret) {
 				LOG_ERR("Invalid sampling frequency: %d", ret);
 				return -ENXIO;
@@ -477,7 +483,8 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		}
 
 		if (bitrate != NULL) {
-			ret = le_audio_bitrate_get(audio_streams[0].codec_cfg, bitrate);
+			ret = le_audio_bitrate_get(cap_audio_streams[0].bap_stream.codec_cfg,
+						   bitrate);
 			if (ret) {
 				LOG_ERR("Unable to calculate bitrate: %d", ret);
 				return -ENXIO;
@@ -485,24 +492,25 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		}
 
 		if (pres_delay_us != NULL) {
-			if (audio_streams[0].qos == NULL) {
+			if (cap_audio_streams[0].bap_stream.qos == NULL) {
 				LOG_ERR("No QoS found for the stream");
 				return -ENXIO;
 			}
 
-			*pres_delay_us = audio_streams[0].qos->pd;
+			*pres_delay_us = cap_audio_streams[0].bap_stream.qos->pd;
 		}
 	} else if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		/* If multiple source streams exists, they should have the same configurations,
 		 * hence we only check the first one.
 		 */
-		if (bap_tx_streams[0]->codec_cfg == NULL) {
+		if (cap_tx_streams[0]->bap_stream.codec_cfg == NULL) {
 			LOG_ERR("No codec found for the stream");
 			return -ENXIO;
 		}
 
 		if (sampling_rate_hz != NULL) {
-			ret = le_audio_freq_hz_get(bap_tx_streams[0]->codec_cfg, sampling_rate_hz);
+			ret = le_audio_freq_hz_get(cap_tx_streams[0]->bap_stream.codec_cfg,
+						   sampling_rate_hz);
 			if (ret) {
 				LOG_ERR("Invalid sampling frequency: %d", ret);
 				return -ENXIO;
@@ -510,7 +518,8 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		}
 
 		if (bitrate != NULL) {
-			ret = le_audio_bitrate_get(bap_tx_streams[0]->codec_cfg, bitrate);
+			ret = le_audio_bitrate_get(cap_tx_streams[0]->bap_stream.codec_cfg,
+						   bitrate);
 			if (ret) {
 				LOG_ERR("Unable to calculate bitrate: %d", ret);
 				return -ENXIO;
@@ -518,12 +527,12 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		}
 
 		if (pres_delay_us != NULL) {
-			if (bap_tx_streams[0]->qos == NULL) {
+			if (cap_tx_streams[0]->bap_stream.qos == NULL) {
 				LOG_ERR("No QoS found for the stream");
 				return -ENXIO;
 			}
 
-			*pres_delay_us = bap_tx_streams[0]->qos->pd;
+			*pres_delay_us = cap_tx_streams[0]->bap_stream.qos->pd;
 			LOG_ERR("pres_delay_us: %d", *pres_delay_us);
 		}
 	}
@@ -596,9 +605,31 @@ int unicast_server_send(struct le_audio_encoded_audio enc_audio)
 {
 #if (CONFIG_BT_AUDIO_TX)
 	int ret;
+	uint8_t num_active_streams = 0;
 
-	ret = bt_le_audio_tx_send(bap_tx_streams, audio_mapping_mask, enc_audio,
-				  CONFIG_BT_ASCS_ASE_SRC_COUNT);
+	struct le_audio_tx_info tx[CONFIG_BT_ASCS_ASE_SRC_COUNT];
+
+	for (int i = 0; i < ARRAY_SIZE(cap_tx_streams); i++) {
+		if (!le_audio_ep_state_check(cap_tx_streams[i]->bap_stream.ep,
+					     BT_BAP_EP_STATE_STREAMING)) {
+			continue;
+		}
+
+		/* Set cap stream pointer */
+		tx[num_active_streams].cap_stream = cap_tx_streams[i];
+
+		/* Set index */
+		tx[num_active_streams].idx.lvl1 = 0;
+		tx[num_active_streams].idx.lvl2 = 0;
+		tx[num_active_streams].idx.lvl3 = i;
+
+		/* Set channel location */
+		tx[num_active_streams].audio_channel = AUDIO_MIC;
+
+		num_active_streams++;
+	}
+
+	ret = bt_le_audio_tx_send(tx, num_active_streams, enc_audio);
 	if (ret) {
 		return ret;
 	}
@@ -676,10 +707,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-		ret = bt_le_audio_tx_init();
-		if (ret) {
-			return ret;
-		}
+		bt_le_audio_tx_init();
 
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, location);
 		if (ret) {
@@ -714,8 +742,8 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		return ret;
 	}
 
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		bt_bap_stream_cb_register(&audio_streams[i], &stream_ops);
+	for (int i = 0; i < ARRAY_SIZE(cap_audio_streams); i++) {
+		bt_cap_stream_ops_register(&cap_audio_streams[i], &stream_ops);
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER)) {

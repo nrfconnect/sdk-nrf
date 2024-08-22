@@ -5,3 +5,4 @@ tests:
       suit
       suit_platform
       suit_plat_component_compatibility
+      ci_tests_subsys_suit

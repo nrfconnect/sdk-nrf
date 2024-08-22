@@ -46,6 +46,10 @@ function(partition_manager)
 
   sysbuild_get(${image_name}_APPLICATION_CONFIG_DIR IMAGE ${image_name} VAR APPLICATION_CONFIG_DIR CACHE)
 
+  if(DEFINED user_def_pm_static AND NOT IS_ABSOLUTE ${user_def_pm_static})
+    set(user_def_pm_static "${${image_name}_APPLICATION_CONFIG_DIR}/${user_def_pm_static}")
+  endif()
+
   ncs_file(CONF_FILES ${${image_name}_APPLICATION_CONFIG_DIR}
            PM conf_dir_pm_static
            DOMAIN ${DOMAIN}

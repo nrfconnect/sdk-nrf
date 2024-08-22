@@ -16,7 +16,7 @@ LOG_MODULE_REGISTER(slm_carrier_cfg, CONFIG_SLM_LOG_LEVEL);
 
 /* AT#XCARRIERCFG="apn"[,<apn>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_apn, "AT#XCARRIERCFG=\"apn\"", do_cfg_apn);
-static int do_cfg_apn(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_apn(enum at_parser_cmd_type, struct at_parser *parser,
 		      uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -29,7 +29,7 @@ static int do_cfg_apn(enum at_cmd_type, const struct at_param_list *param_list,
 	char apn[64];
 	int ret, size = sizeof(apn);
 
-	ret = util_string_get(param_list, 2, apn, &size);
+	ret = util_string_get(parser, 2, apn, &size);
 	if (ret) {
 		return ret;
 	}
@@ -39,7 +39,7 @@ static int do_cfg_apn(enum at_cmd_type, const struct at_param_list *param_list,
 
 /* AT#XCARRIERCFG="auto_startup"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_auto_startup, "AT#XCARRIERCFG=\"auto_startup\"", do_cfg_auto_startup);
-static int do_cfg_auto_startup(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_auto_startup(enum at_parser_cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {
 #if !defined(CONFIG_SLM_CARRIER_AUTO_STARTUP)
@@ -53,7 +53,7 @@ static int do_cfg_auto_startup(enum at_cmd_type, const struct at_param_list *par
 	int ret;
 	uint16_t auto_startup;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &auto_startup);
+	ret = at_parser_num_get(parser, 2, &auto_startup);
 	if (ret) {
 		return ret;
 	}
@@ -75,7 +75,7 @@ static int do_cfg_auto_startup(enum at_cmd_type, const struct at_param_list *par
 /* AT#XCARRIERCFG="auto_register"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_auto_register, "AT#XCARRIERCFG=\"auto_register\"",
 		  do_cfg_auto_register);
-static int do_cfg_auto_register(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_auto_register(enum at_parser_cmd_type, struct at_parser *parser,
 				uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -88,7 +88,7 @@ static int do_cfg_auto_register(enum at_cmd_type, const struct at_param_list *pa
 	int ret;
 	uint16_t auto_register;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &auto_register);
+	ret = at_parser_num_get(parser, 2, &auto_register);
 	if (ret) {
 		return ret;
 	}
@@ -104,7 +104,7 @@ static int do_cfg_auto_register(enum at_cmd_type, const struct at_param_list *pa
 /* AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_bootstrap_smartcard, "AT#XCARRIERCFG=\"bootstrap_smartcard\"",
 	      do_cfg_bootstrap_from_smartcard);
-static int do_cfg_bootstrap_from_smartcard(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_bootstrap_from_smartcard(enum at_parser_cmd_type, struct at_parser *parser,
 					   uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -117,7 +117,7 @@ static int do_cfg_bootstrap_from_smartcard(enum at_cmd_type, const struct at_par
 	int ret;
 	uint16_t enabled;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &enabled);
+	ret = at_parser_num_get(parser, 2, &enabled);
 	if (ret) {
 		return ret;
 	}
@@ -163,7 +163,7 @@ static const char *carriers_enabled_str(void)
 
 /* AT#XCARRIERCFG="carriers"[,"all"|<carrier1>[<carrier2>[,...[,<carrier6>]]]] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_carriers, "AT#XCARRIERCFG=\"carriers\"", do_cfg_carriers);
-static int do_cfg_carriers(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_carriers(enum at_parser_cmd_type, struct at_parser *parser,
 			   uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -178,14 +178,14 @@ static int do_cfg_carriers(enum at_cmd_type, const struct at_param_list *param_l
 	int ret, size = sizeof("all");
 	char size_buf[size];
 
-	ret = util_string_get(param_list, 2, size_buf, &size);
+	ret = util_string_get(parser, 2, size_buf, &size);
 	if (!ret && slm_util_casecmp(size_buf, "all")) {
 		carriers_enabled = UINT32_MAX;
 	} else {
 		for (int i = 2; i < param_count; i++) {
 			uint16_t carrier;
 
-			ret = at_params_unsigned_short_get(param_list, i, &carrier);
+			ret = at_parser_num_get(parser, i, &carrier);
 			if (ret || (carrier >= ARRAY_SIZE(carriers_enabled_map))) {
 				LOG_ERR("AT#XCARRIERCFG=\"carriers\" failed: illegal operator");
 				return -EINVAL;
@@ -201,7 +201,7 @@ static int do_cfg_carriers(enum at_cmd_type, const struct at_param_list *param_l
 /* AT#XCARRIERCFG="coap_con_interval"[,<interval>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_coap_con_interval, "AT#XCARRIERCFG=\"coap_con_interval\"",
 	      do_cfg_coap_con_interval);
-static int do_cfg_coap_con_interval(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_coap_con_interval(enum at_parser_cmd_type, struct at_parser *parser,
 				    uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -213,7 +213,7 @@ static int do_cfg_coap_con_interval(enum at_cmd_type, const struct at_param_list
 
 	int ret, coap_con_interval;
 
-	ret = at_params_int_get(param_list, 2, &coap_con_interval);
+	ret = at_parser_num_get(parser, 2, &coap_con_interval);
 	if (ret) {
 		return ret;
 	}
@@ -230,8 +230,8 @@ static int do_cfg_coap_con_interval(enum at_cmd_type, const struct at_param_list
 /* AT#XCARRIERCFG="download_timeout"[,<timeout>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_download_timeout, "AT#XCARRIERCFG=\"download_timeout\"",
 	      do_cfg_firmware_download_timeout);
-static int do_cfg_firmware_download_timeout(enum at_cmd_type,
-					    const struct at_param_list *param_list,
+static int do_cfg_firmware_download_timeout(enum at_parser_cmd_type,
+					    struct at_parser *parser,
 					    uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -245,7 +245,7 @@ static int do_cfg_firmware_download_timeout(enum at_cmd_type,
 	int ret;
 	uint16_t firmware_download_timeout;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &firmware_download_timeout);
+	ret = at_parser_num_get(parser, 2, &firmware_download_timeout);
 	if (ret) {
 		return ret;
 	}
@@ -256,7 +256,7 @@ static int do_cfg_firmware_download_timeout(enum at_cmd_type,
 /* AT#XCARRIERCFG="config_enable"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_config_enable, "AT#XCARRIERCFG=\"config_enable\"",
 		  do_cfg_config_enable);
-static int do_cfg_config_enable(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_config_enable(enum at_parser_cmd_type, struct at_parser *parser,
 				uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -269,7 +269,7 @@ static int do_cfg_config_enable(enum at_cmd_type, const struct at_param_list *pa
 	int ret;
 	uint16_t enabled;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &enabled);
+	ret = at_parser_num_get(parser, 2, &enabled);
 	if (ret) {
 		return ret;
 	}
@@ -285,7 +285,7 @@ static int do_cfg_config_enable(enum at_cmd_type, const struct at_param_list *pa
 /* AT#XCARRIERCFG="device_enable"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_device_enable, "AT#XCARRIERCFG=\"device_enable\"",
 		  do_cfg_device_enable);
-static int do_cfg_device_enable(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_device_enable(enum at_parser_cmd_type, struct at_parser *parser,
 				uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -299,7 +299,7 @@ static int do_cfg_device_enable(enum at_cmd_type, const struct at_param_list *pa
 	int ret;
 	uint16_t enabled;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &enabled);
+	ret = at_parser_num_get(parser, 2, &enabled);
 	if (ret) {
 		return ret;
 	}
@@ -314,7 +314,7 @@ static int do_cfg_device_enable(enum at_cmd_type, const struct at_param_list *pa
 
 /* AT#XCARRIERCFG="device_type"[,<device_type>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_device_type, "AT#XCARRIERCFG=\"device_type\"", do_cfg_device_type);
-static int do_cfg_device_type(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_device_type(enum at_parser_cmd_type, struct at_parser *parser,
 			      uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -328,7 +328,7 @@ static int do_cfg_device_type(enum at_cmd_type, const struct at_param_list *para
 	char device_type[32];
 	int size = sizeof(device_type);
 
-	ret = util_string_get(param_list, 2, device_type, &size);
+	ret = util_string_get(parser, 2, device_type, &size);
 	if (ret) {
 		return ret;
 	}
@@ -339,7 +339,7 @@ static int do_cfg_device_type(enum at_cmd_type, const struct at_param_list *para
 /* AT#XCARRIERCFG="hardware_version"[,<version>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_hardware_version, "AT#XCARRIERCFG=\"hardware_version\"",
 	      do_cfg_hardware_version);
-static int do_cfg_hardware_version(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_hardware_version(enum at_parser_cmd_type, struct at_parser *parser,
 				   uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -353,7 +353,7 @@ static int do_cfg_hardware_version(enum at_cmd_type, const struct at_param_list 
 	char hardware_version[32];
 	int size = sizeof(hardware_version);
 
-	ret = util_string_get(param_list, 2, hardware_version, &size);
+	ret = util_string_get(parser, 2, hardware_version, &size);
 	if (ret) {
 		return ret;
 	}
@@ -363,7 +363,7 @@ static int do_cfg_hardware_version(enum at_cmd_type, const struct at_param_list 
 
 /* AT#XCARRIERCFG="manufacturer"[,<manufacturer>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_manufacturer, "AT#XCARRIERCFG=\"manufacturer\"", do_cfg_manufacturer);
-static int do_cfg_manufacturer(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_manufacturer(enum at_parser_cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -377,7 +377,7 @@ static int do_cfg_manufacturer(enum at_cmd_type, const struct at_param_list *par
 	char manufacturer[32];
 	int size = sizeof(manufacturer);
 
-	ret = util_string_get(param_list, 2, manufacturer, &size);
+	ret = util_string_get(parser, 2, manufacturer, &size);
 	if (ret) {
 		return ret;
 	}
@@ -387,7 +387,7 @@ static int do_cfg_manufacturer(enum at_cmd_type, const struct at_param_list *par
 
 /* AT#XCARRIERCFG="model_number"[,<model_number>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_model_number, "AT#XCARRIERCFG=\"model_number\"", do_cfg_model_number);
-static int do_cfg_model_number(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_model_number(enum at_parser_cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -401,7 +401,7 @@ static int do_cfg_model_number(enum at_cmd_type, const struct at_param_list *par
 	char model_number[32];
 	int size = sizeof(model_number);
 
-	ret = util_string_get(param_list, 2, model_number, &size);
+	ret = util_string_get(parser, 2, model_number, &size);
 	if (ret) {
 		return ret;
 	}
@@ -412,7 +412,7 @@ static int do_cfg_model_number(enum at_cmd_type, const struct at_param_list *par
 /* AT#XCARRIERCFG="software_version"[,<version>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_software_version, "AT#XCARRIERCFG=\"software_version\"",
 	      do_cfg_software_version);
-static int do_cfg_software_version(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_software_version(enum at_parser_cmd_type, struct at_parser *parser,
 				   uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -426,7 +426,7 @@ static int do_cfg_software_version(enum at_cmd_type, const struct at_param_list 
 	char software_version[32];
 	int size = sizeof(software_version);
 
-	ret = util_string_get(param_list, 2, software_version, &size);
+	ret = util_string_get(parser, 2, software_version, &size);
 	if (ret) {
 		return ret;
 	}
@@ -437,7 +437,7 @@ static int do_cfg_software_version(enum at_cmd_type, const struct at_param_list 
 /* AT#XCARRIERCFG="session_idle_timeout"[,<timeout>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_session_idle_timeout, "AT#XCARRIERCFG=\"session_idle_timeout\"",
 	      do_cfg_session_idle_timeout);
-static int do_cfg_session_idle_timeout(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_session_idle_timeout(enum at_parser_cmd_type, struct at_parser *parser,
 				       uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -449,7 +449,7 @@ static int do_cfg_session_idle_timeout(enum at_cmd_type, const struct at_param_l
 
 	int ret, session_idle_timeout;
 
-	ret = at_params_int_get(param_list, 2, &session_idle_timeout);
+	ret = at_parser_num_get(parser, 2, &session_idle_timeout);
 	if (ret) {
 		return ret;
 	}
@@ -466,7 +466,7 @@ static int do_cfg_session_idle_timeout(enum at_cmd_type, const struct at_param_l
 /* AT#XCARRIERCFG="device_serial_no_type"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_device_serial_no_type, "AT#XCARRIERCFG=\"device_serial_no_type\"",
 	     do_cfg_device_serial_no_type);
-static int do_cfg_device_serial_no_type(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_device_serial_no_type(enum at_parser_cmd_type, struct at_parser *parser,
 					uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -478,7 +478,7 @@ static int do_cfg_device_serial_no_type(enum at_cmd_type, const struct at_param_
 
 	int ret, serial_no_type;
 
-	ret = at_params_int_get(param_list, 2, &serial_no_type);
+	ret = at_parser_num_get(parser, 2, &serial_no_type);
 	if (ret) {
 		return ret;
 	}
@@ -500,7 +500,7 @@ static int do_cfg_device_serial_no_type(enum at_cmd_type, const struct at_param_
 
 /* AT#XCARRIERCFG="service_code"[,<service_code>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_service_code, "AT#XCARRIERCFG=\"service_code\"", do_cfg_service_code);
-static int do_cfg_service_code(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_service_code(enum at_parser_cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -514,7 +514,7 @@ static int do_cfg_service_code(enum at_cmd_type, const struct at_param_list *par
 	char service_code[5];
 	int size = sizeof(service_code);
 
-	ret = util_string_get(param_list, 2, service_code, &size);
+	ret = util_string_get(parser, 2, service_code, &size);
 	if (ret) {
 		return ret;
 	}
@@ -524,7 +524,7 @@ static int do_cfg_service_code(enum at_cmd_type, const struct at_param_list *par
 
 /* AT#XCARRIERCFG="pdn_type"[,<pdn_type>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_pdn_type, "AT#XCARRIERCFG=\"pdn_type\"", do_cfg_pdn_type);
-static int do_cfg_pdn_type(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_pdn_type(enum at_parser_cmd_type, struct at_parser *parser,
 			   uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -537,7 +537,7 @@ static int do_cfg_pdn_type(enum at_cmd_type, const struct at_param_list *param_l
 	int ret;
 	uint16_t pdn_type;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &pdn_type);
+	ret = at_parser_num_get(parser, 2, &pdn_type);
 	if (ret) {
 		return ret;
 	}
@@ -565,7 +565,7 @@ static int do_cfg_pdn_type(enum at_cmd_type, const struct at_param_list *param_l
 
 /* AT#XCARRIERCFG="queue_mode"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_queue_mode, "AT#XCARRIERCFG=\"queue_mode\"", do_cfg_queue_mode);
-static int do_cfg_queue_mode(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_queue_mode(enum at_parser_cmd_type, struct at_parser *parser,
 			     uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -578,7 +578,7 @@ static int do_cfg_queue_mode(enum at_cmd_type, const struct at_param_list *param
 	int ret;
 	uint16_t queue_mode;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &queue_mode);
+	ret = at_parser_num_get(parser, 2, &queue_mode);
 	if (ret) {
 		return ret;
 	}
@@ -593,7 +593,7 @@ static int do_cfg_queue_mode(enum at_cmd_type, const struct at_param_list *param
 
 /* AT#XCARRIERCFG="binding"[,<binding>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_binding, "AT#XCARRIERCFG=\"binding\"", do_cfg_binding);
-static int do_cfg_binding(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_binding(enum at_parser_cmd_type, struct at_parser *parser,
 			  uint32_t param_count)
 {
 	int ret;
@@ -619,7 +619,7 @@ static int do_cfg_binding(enum at_cmd_type, const struct at_param_list *param_li
 		return -EINVAL;
 	}
 
-	ret = util_string_get(param_list, 2, binding_string, &size);
+	ret = util_string_get(parser, 2, binding_string, &size);
 	if (ret) {
 		return ret;
 	}
@@ -640,7 +640,7 @@ static int do_cfg_binding(enum at_cmd_type, const struct at_param_list *param_li
 
 /* AT#XCARRIERCFG="is_bootstrap"[,<0|1>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_is_bootstrap, "AT#XCARRIERCFG=\"is_bootstrap\"", do_cfg_is_bootstrap);
-static int do_cfg_is_bootstrap(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_is_bootstrap(enum at_parser_cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -653,7 +653,7 @@ static int do_cfg_is_bootstrap(enum at_cmd_type, const struct at_param_list *par
 	int ret;
 	uint16_t is_bootstrap;
 
-	ret = at_params_unsigned_short_get(param_list, 2, &is_bootstrap);
+	ret = at_parser_num_get(parser, 2, &is_bootstrap);
 	if (ret) {
 		return ret;
 	}
@@ -668,7 +668,7 @@ static int do_cfg_is_bootstrap(enum at_cmd_type, const struct at_param_list *par
 
 /* AT#XCARRIERCFG="lifetime"[,<lifetime>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_lifetime, "AT#XCARRIERCFG=\"lifetime\"", do_cfg_lifetime);
-static int do_cfg_lifetime(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_lifetime(enum at_parser_cmd_type, struct at_parser *parser,
 			   uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -680,7 +680,7 @@ static int do_cfg_lifetime(enum at_cmd_type, const struct at_param_list *param_l
 
 	int ret, lifetime;
 
-	ret = at_params_int_get(param_list, 2, &lifetime);
+	ret = at_parser_num_get(parser, 2, &lifetime);
 	if (ret) {
 		return ret;
 	}
@@ -696,7 +696,7 @@ static int do_cfg_lifetime(enum at_cmd_type, const struct at_param_list *param_l
 
 /* AT#XCARRIERCFG="sec_tag"[,<sec_tag>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_sec_tag, "AT#XCARRIERCFG=\"sec_tag\"", do_cfg_sec_tag);
-static int do_cfg_sec_tag(enum at_cmd_type, const struct at_param_list *param_list,
+static int do_cfg_sec_tag(enum at_parser_cmd_type, struct at_parser *parser,
 			  uint32_t param_count)
 {
 	if (param_count == 2) {
@@ -709,7 +709,7 @@ static int do_cfg_sec_tag(enum at_cmd_type, const struct at_param_list *param_li
 	int ret;
 	uint32_t sec_tag;
 
-	ret = at_params_unsigned_int_get(param_list, 2, &sec_tag);
+	ret = at_parser_num_get(parser, 2, &sec_tag);
 	if (ret) {
 		return ret;
 	}
@@ -719,8 +719,7 @@ static int do_cfg_sec_tag(enum at_cmd_type, const struct at_param_list *param_li
 
 /* AT#XCARRIERCFG="uri"[,<uri>] */
 SLM_AT_CMD_CUSTOM(xcarriercfg_uri, "AT#XCARRIERCFG=\"uri\"", do_cfg_uri);
-static int do_cfg_uri(enum at_cmd_type, const struct at_param_list *param_list,
-		      uint32_t param_count)
+static int do_cfg_uri(enum at_parser_cmd_type, struct at_parser *parser, uint32_t param_count)
 {
 	if (param_count == 2) {
 		rsp_send("\r\n#XCARRIERCFG: %s\r\n", lwm2m_settings_server_uri_get());
@@ -733,7 +732,7 @@ static int do_cfg_uri(enum at_cmd_type, const struct at_param_list *param_list,
 	char server_uri[255];
 	int size = sizeof(server_uri);
 
-	ret = util_string_get(param_list, 2, server_uri, &size);
+	ret = util_string_get(parser, 2, server_uri, &size);
 	if (ret) {
 		return ret;
 	}

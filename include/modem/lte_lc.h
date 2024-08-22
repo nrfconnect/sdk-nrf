@@ -1230,19 +1230,6 @@ void lte_lc_register_handler(lte_lc_evt_handler_t handler);
 int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
 
 /**
- * Initialize the library and configure the modem.
- *
- * @deprecated There is no need to call this function anymore.
- *
- * @note A follow-up call to lte_lc_connect() or lte_lc_connect_async() must be made to establish
- *       an LTE connection. The library can be initialized only once, and subsequent calls will
- *       return @c 0.
- *
- * @retval 0 if successful.
- */
-__deprecated int lte_lc_init(void);
-
-/**
  * Connect to LTE network.
  *
  *
@@ -1256,24 +1243,6 @@ __deprecated int lte_lc_init(void);
  * @retval -EINPROGRESS if a connection establishment attempt is already in progress.
  */
 int lte_lc_connect(void);
-
-/**
- * Initialize the library, configure the modem and connect to LTE network.
- *
- * @deprecated Use @ref lte_lc_connect instead.
- *
- * The function blocks until connection is established, or the connection attempt times out.
- *
- * @note The library can be initialized only once, and repeated calls will return @c 0.
- *       lte_lc_connect_async() should be used on subsequent calls.
- *
- * @retval 0 if successful.
- * @retval -EFAULT if an AT command failed.
- * @retval -ETIMEDOUT if a connection attempt timed out before the device was
- *	   registered to a network.
- * @retval -EINPROGRESS if a connection establishment attempt is already in progress.
- */
-__deprecated int lte_lc_init_and_connect(void);
 
 /**
  * Connect to LTE network.
@@ -1290,35 +1259,6 @@ __deprecated int lte_lc_init_and_connect(void);
  * @retval -EFAULT if an AT command failed.
  */
 int lte_lc_connect_async(lte_lc_evt_handler_t handler);
-
-/**
- * Initialize the library, configure the modem and connect to LTE network.
- *
- * @deprecated Use @ref lte_lc_connect_async instead.
- *
- * The function returns immediately.
- *
- * @note The library can be initialized only once, and repeated calls will return @c 0.
- *       lte_lc_connect() should be used on subsequent calls.
- *
- * @param[in] handler Event handler for receiving LTE events. The parameter can be @c NULL if an
- *                    event handler is already registered.
- *
- * @retval 0 if successful.
- * @retval -EFAULT if an AT command failed.
- * @retval -EINVAL if no event handler was registered.
- */
-__deprecated int lte_lc_init_and_connect_async(lte_lc_evt_handler_t handler);
-
-/**
- * Deinitialize the library and power off the modem.
- *
- * @deprecated Use @ref lte_lc_power_off instead.
- *
- * @retval 0 if successful.
- * @retval -EFAULT if an AT command failed.
- */
-__deprecated int lte_lc_deinit(void);
 
 /**
  * Set the modem to offline mode.
@@ -1663,6 +1603,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  *
  * @retval 0 if neighbor cell measurement was successfully initiated.
  * @retval -EFAULT if AT command failed.
+ * @retval -EINVAL if parameters are invalid.
  * @retval -EINPROGRESS if a neighbor cell measurement is already in progress.
  */
 int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);

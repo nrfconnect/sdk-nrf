@@ -366,6 +366,8 @@ Use the latest available release for development.
 See the :ref:`install_ncs` page for information about how to use the extension to manage |NCS| toolchain installations.
 For more information about the extension and what it offers, visit the `nRF Connect for Visual Studio Code`_ documentation.
 
+.. _requirements_nrf_util:
+
 nRF Util
 ========
 

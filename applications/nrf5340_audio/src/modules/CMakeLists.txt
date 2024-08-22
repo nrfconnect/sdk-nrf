@@ -16,5 +16,9 @@ target_sources_ifdef(CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT app PRIVATE
                      ${CMAKE_CURRENT_SOURCE_DIR}/power_meas.c)
 target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_MODULE app PRIVATE
                      ${CMAKE_CURRENT_SOURCE_DIR}/sd_card.c)
+target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_LC3_FILE app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/lc3_file.c)
 target_sources_ifdef(CONFIG_SD_CARD_PLAYBACK app PRIVATE
                      ${CMAKE_CURRENT_SOURCE_DIR}/sd_card_playback.c)
+target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_LC3_STREAMER app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/lc3_streamer.c)

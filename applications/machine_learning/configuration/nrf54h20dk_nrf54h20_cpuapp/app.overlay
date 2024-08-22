@@ -9,11 +9,6 @@
 		zephyr,console = &uart136;
 	};
 
-	sensor_sim: sensor-sim {
-		compatible = "nordic,sensor-sim";
-		acc-signal = "wave";
-	};
-
 	/* Redefine leds to fit CAF requirements. */
 	/delete-node/ leds;
 
@@ -55,54 +50,60 @@ ipc1: &cpuapp_cpuppr_ipc {
 	status = "okay";
 };
 
-/*
- * Expand PPR memory region.
- * Place aggregator buffers in PPR memory region.
- */
-
-/delete-node/ &cpuppr_code_data;
-/delete-node/ &cpuapp_cpuppr_ipc_shm;
-/delete-node/ &cpuppr_cpuapp_ipc_shm;
+/* Expand APP slot partition and remove DFU partition. */
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
 
 &cpuppr_ram3x_region {
-	reg = <0x2fc00000 DT_SIZE_K(68)>;
-	ranges = <0x0 0x2fc00000 0x11000>;
-
 	cpuppr_code_data: memory@0 {
-		reg = <0x0 DT_SIZE_K(64)>;
+		reg = <0x0 0xf200>;
 	};
 
-	cpuapp_cpuppr_ipc_shm: memory@10000 {
-		reg = <0x10000 DT_SIZE_K(1)>;
-	};
-
-	cpuppr_cpuapp_ipc_shm: memory@10400 {
-		reg = <0x10400 DT_SIZE_K(1)>;
-	};
-	ram3x_agg_area0: memory@10800{
-		reg = <0x10800 0x600>;
+	ram3x_agg_area0: memory@f200{
+		reg = <0xf200 0x600>;
 	};
 };
 
-/* Expand APP slot partition and remove DFU partition. */
+&mram1x {
+       cpuapp_rx_partitions: cpuapp-rx-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       perm-read;
+	       perm-execute;
+	       perm-secure;
+	       #address-cells = <1>;
+	       #size-cells = <1>;
 
-/delete-node/ &cpuapp_slot0_partition;
-/delete-node/ &cpuppr_code_partition;
-/delete-node/ &dfu_partition;
-/delete-node/ &storage_partition;
+	       cpuapp_slot0_partition: partition@a6000 {
+		       reg = <0xa6000 DT_SIZE_K(512)>;
+	       };
 
-&cpuapp_rx_partitions {
-	cpuapp_slot0_partition: partition@a6000 {
-		reg = <0xa6000 DT_SIZE_K(512)>;
-	};
+	       cpuppr_code_partition: partition@126000 {
+		       reg = <0x126000 DT_SIZE_K(64)>;
+	       };
+       };
 
-	cpuppr_code_partition: partition@126000 {
-		reg = <0x126000 DT_SIZE_K(64)>;
-	};
+       cpuapp_rw_partitions: cpuapp-rw-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       perm-read;
+	       perm-write;
+	       #address-cells = < 0x1 >;
+	       #size-cells = < 0x1 >;
+
+	       storage_partition: partition@136000 {
+		       reg = < 0x136000 DT_SIZE_K(24) >;
+	       };
+       };
 };
 
-&cpuapp_rw_partitions {
-	storage_partition: partition@136000 {
-		reg = < 0x136000 DT_SIZE_K(24) >;
-	};
+/* Disable unused sensors and peripherals. */
+/delete-node/ &bme688;
+
+&i2c130 {
+	status = "disabled";
+};
+
+&bmi270 {
+	status = "disabled";
 };

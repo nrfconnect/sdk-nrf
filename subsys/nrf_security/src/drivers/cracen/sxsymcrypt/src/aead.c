@@ -30,7 +30,6 @@
 
 static int lenAlenC_aesgcm_ba411(size_t aadsz, size_t datasz, uint8_t *out);
 static int lenAlenC_nop(size_t aadsz, size_t datasz, uint8_t *out);
-extern const struct sx_aead_cmdma_cfg ba419ccmcfg;
 
 static const char zeros[SX_CCM_MAX_TAG_SZ] = {0};
 
@@ -107,20 +106,16 @@ static int sx_aead_hw_reserve(struct sxaead *c)
 	int err = SX_OK;
 	uint32_t prng_value;
 
-	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
-		err = cracen_prng_value_from_pool(&prng_value);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = cracen_prng_value_from_pool(&prng_value);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	sx_hw_reserve(&c->dma);
 
-	if (c->aes_countermeasures == BA411_AES_COUNTERMEASURES_ENABLE) {
-		err = sx_cm_load_mask(prng_value);
-		if (err != SX_OK) {
-			goto exit;
-		}
+	err = sx_cm_load_mask(prng_value);
+	if (err != SX_OK) {
+		goto exit;
 	}
 
 	if (c->key->prepare_key) {
@@ -187,7 +182,6 @@ int sx_aead_create_aesgcm_enc(struct sxaead *c, const struct sxkeyref *key, cons
 {
 	int r;
 
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	r = sx_aead_create_aesgcm(c, key, iv, tagsz);
 	if (r) {
 		return r;
@@ -203,7 +197,6 @@ int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, cons
 {
 	int r;
 
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	r = sx_aead_create_aesgcm(c, key, iv, tagsz);
 	if (r) {
 		return r;
@@ -281,7 +274,6 @@ static int sx_aead_create_aesccm(struct sxaead *c, const struct sxkeyref *key, c
 int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
 			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_aead_create_aesccm(c, key, nonce, noncesz, tagsz, aadsz, datasz,
 				     ba411ccmcfg.encr);
 }
@@ -289,7 +281,6 @@ int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, cons
 int sx_aead_create_aesccm_dec(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
 			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz)
 {
-	c->aes_countermeasures = BA411_AES_COUNTERMEASURES_ENABLE;
 	return sx_aead_create_aesccm(c, key, nonce, noncesz, tagsz, aadsz, datasz,
 				     ba411ccmcfg.decr);
 }
@@ -398,8 +389,6 @@ int sx_aead_verify_tag(struct sxaead *c, const char *tagin)
 	if (c->cfg->lenAlenC(c->totalaadsz, c->dataintotalsz, &c->extramem[0])) {
 		ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), 16, c->cfg->dmatags->data);
 		c->expectedtag = tagin;
-	} else if (c->cfg == &ba419ccmcfg) {
-		c->expectedtag = tagin;
 	} else {
 		ADD_INDESC(c->dma, tagin, c->tagsz, c->cfg->dmatags->data);
 	}
@@ -483,6 +472,10 @@ int sx_aead_status(struct sxaead *c)
 	if (r == SX_ERR_HW_PROCESSING) {
 		return r;
 	}
+
+#if CONFIG_DCACHE
+	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+#endif
 
 	if ((!r) && (c->expectedtag != NULL) && (!c->is_in_ctx)) {
 		r = sx_memdiff(c->expectedtag, (const char *)c->extramem, c->tagsz)

@@ -14,6 +14,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
+#include <zephyr/sys/barrier.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_rtc.h>
 #include <nrfx_timer.h>
@@ -205,17 +206,38 @@ uint64_t controller_time_us_get(void)
 	 * timestamp. That requires setting up a PPI channel to capture both values simultaneously.
 	 */
 
-	const uint32_t rtc_overflow_time_us = 512000000UL;
+	const uint64_t rtc_overflow_time_us = 512000000UL;
 
-	uint32_t rtc_ticks = nrf_rtc_counter_get(app_rtc_instance.p_reg);
+	uint32_t captured_rtc_overflows;
+	uint32_t captured_rtc_ticks;
 
-	return rtc_ticks_to_us(rtc_ticks) + (num_rtc_overflows * rtc_overflow_time_us);
+	while (true) {
+		captured_rtc_overflows = num_rtc_overflows;
+
+		/* Read out RTC ticks after reading number of overflows. */
+		barrier_isync_fence_full();
+
+		captured_rtc_ticks = nrf_rtc_counter_get(app_rtc_instance.p_reg);
+
+		/* Read out number of overflows after reading number of RTC ticks  */
+		barrier_isync_fence_full();
+
+		if (captured_rtc_overflows == num_rtc_overflows) {
+			/* There were no new overflows after reading ticks.
+			 * That is, we can use the captured value.
+			 */
+			break;
+		}
+	}
+
+	return rtc_ticks_to_us(captured_rtc_ticks) +
+	       (captured_rtc_overflows * rtc_overflow_time_us);
 }
 
 void controller_time_trigger_set(uint64_t timestamp_us)
 {
 	uint32_t num_overflows = timestamp_us / 512000000UL;
-	uint64_t overflow_time_us = num_overflows * num_overflows;
+	uint64_t overflow_time_us = num_overflows * 512000000UL;
 
 	uint32_t remainder_time_us = timestamp_us - overflow_time_us;
 	uint32_t rtc_val = us_to_rtc_ticks(remainder_time_us);

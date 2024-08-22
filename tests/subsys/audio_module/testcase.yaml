@@ -5,4 +5,4 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
       - nrf5340dk/nrf5340/cpuapp
-    tags: audio_module nrf5340_audio_unit_tests sysbuild
+    tags: audio_module nrf5340_audio_unit_tests sysbuild ci_tests_subsys_audio_module

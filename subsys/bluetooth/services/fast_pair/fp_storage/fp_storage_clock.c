@@ -159,6 +159,13 @@ static int fp_storage_clock_reset_perform(void)
 	int err;
 	bool was_enabled = is_enabled;
 
+	if (was_enabled) {
+		err = fp_storage_clock_uninit();
+		if (err) {
+			return err;
+		}
+	}
+
 	err = settings_delete(SETTINGS_CLOCK_FULL_NAME);
 	if (err) {
 		LOG_ERR("FP Storage Clock: settings_delete failed: %d", err);

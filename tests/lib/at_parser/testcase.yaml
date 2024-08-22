@@ -1,0 +1,7 @@
+tests:
+  at_parser.at_parser:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags: at_parser ci_tests_lib_at_parser

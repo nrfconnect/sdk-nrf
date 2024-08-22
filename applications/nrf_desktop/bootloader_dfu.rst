@@ -105,7 +105,8 @@ You must also set the MCUboot private key path (``SB_CONFIG_BOOT_SIGNATURE_KEY_F
 The key is used both by the build system (to sign the application update images) and by the bootloader (to verify the application signature using public key derived from the selected private key).
 If this Kconfig option is not overwritten in the sysbuild configuration, debug signature key files located in the MCUboot bootloader repository will be used by default.
 
-To select a specific version of the application, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option in the application configuration.
+To select a specific version of the application, change the :file:`VERSION` file in the nRF Desktop main directory.
+By default, this change propagates to the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option in the application configuration.
 If the nRF Desktop application is configured with the MCUboot in the direct-xip mode, the build system builds two application images: one for the primary slot and the other for the secondary slot, named ``mcuboot_secondary_app``.
 You need to update this configuration only in the main application image, as the ``mcuboot_secondary_app`` image mirrors it.
 
@@ -315,11 +316,11 @@ To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the 
 
    .. tab:: MCUboot
 
-      .. include:: /device_guides/nrf52/fota_update.rst
+      .. include:: /app_dev/device_guides/nrf52/fota_update.rst
          :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
          :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 
-      .. include:: /device_guides/nrf52/fota_update.rst
+      .. include:: /app_dev/device_guides/nrf52/fota_update.rst
          :start-after: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start
          :end-before: fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
 

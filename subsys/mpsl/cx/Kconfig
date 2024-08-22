@@ -5,6 +5,7 @@
 #
 
 DT_COMPAT_CX_NRF700X := nordic,nrf700x-coex
+DT_COMPAT_CX_SOFTWARE := nordic,software-coex
 
 config MPSL_CX_ANY_SUPPORT
 	bool
@@ -17,6 +18,12 @@ config MPSL_CX_NRF700X_SUPPORT
 	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF700X))
 	help
 	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,nrf700x-coex".
+
+config MPSL_CX_SOFTWARE_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_SOFTWARE))
+	help
+	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,software-coex".
 
 config MPSL_CX
 	bool "Radio Coexistence interface support"
@@ -59,28 +66,68 @@ config MPSL_CX_NRF700X
 	help
 	  Radio Coexistence supporting nRF700x interface.
 
-config MPSL_CX_THREAD
+config MPSL_CX_3WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
-	depends on !BT
-	bool "Thread Radio Coexistence [EXPERIMENTAL]"
+	bool "Three-wire Radio Coexistence [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  Radio Coexistence interface implementation according to Thread Radio
-	  Coexistence Practical recommendations for using a 3-wire PTA
+	  Coexistence Practical recommendations for using a three-wire PTA
 	  implementation for co-located 2.4 GHz radios.
 
 config MPSL_CX_BT_1WIRE
-	depends on SOC_SERIES_NRF52X
-	select NRFX_GPIOTE
-	select GPIO
-	select NRFX_TIMER1
-	bool "Bluetooth Radio 1-Wire Coexistence"
+	select DEPRECATED
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	bool "Bluetooth Radio One-wire Coexistence [DEPRECATED]"
 	help
-	  Radio Coexistence interface implementation using a simple 1-wire PTA
+	  Radio Coexistence interface implementation using a simple one-wire PTA
+	  implementation for co-located radios. This option has been replaced
+	  with MPSL_CX_1WIRE and will be removed in a future release.
+
+config MPSL_CX_1WIRE
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	bool "One-wire Radio Coexistence"
+	help
+	  Radio Coexistence interface implementation using a simple one-wire PTA
 	  implementation for co-located radios.
 
+config MPSL_CX_SOFTWARE
+	bool "Software Coexistence"
+	depends on MPSL_CX_SOFTWARE_SUPPORT
+	# If MPSL is not enabled in the current build, this option implies
+	# the Software Coexistence RPC client role.
+	select MPSL_CX_SOFTWARE_RPC if !MPSL
+	help
+	  Radio Coexistence interface implementation using software APIs to
+	  configure currently granted radio operations.
+
 endchoice # MPSL_CX_CHOICE
+
+if MPSL_CX_SOFTWARE
+
+config MPSL_CX_SOFTWARE_RPC_CLIENT
+	bool
+
+config MPSL_CX_SOFTWARE_RPC_SERVER
+	bool
+
+config MPSL_CX_SOFTWARE_RPC
+	bool "Software Coexistence RPC"
+	default y
+	depends on MPSL_CX_SOFTWARE
+	select MPSL_CX_SOFTWARE_RPC_SERVER if MPSL
+	select MPSL_CX_SOFTWARE_RPC_CLIENT if !MPSL
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Remote procedure call (RPC) layer for Software Coexistence implementation.
+	  Enables the Software Coexistence RPC server role if MPSL is enabled, or
+	  the Software Coexistence RPC client role otherwise.
+
+endif # MPSL_CX_SOFTWARE
 
 module=MPSL_CX
 module-str=MPSL_CX

@@ -124,7 +124,7 @@ iperf_accept(struct iperf_test *test)
     struct timeval tv;
 #endif
 
-    /* Workaround due to nrf91_socket_offload_accept / bsdlib that requires len to be either of in4 or in6 */    
+    /* Workaround due to nrf9x_socket_offload_accept / bsdlib that requires len to be either of in4 or in6 */
     int domain = nrf_iperf3_mock_getsockdomain(test, test->ctrl_sck);
 
     if (domain == AF_INET) {

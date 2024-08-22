@@ -16,10 +16,12 @@
 #include "macros_common.h"
 #include "zbus_common.h"
 #include "button_handler.h"
-#include "button_assignments.h"
 #include "bt_mgmt_ctlr_cfg_internal.h"
 #include "bt_mgmt_adv_internal.h"
 #include "bt_mgmt_dfu_internal.h"
+#if CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP
+#include "button_assignments.h"
+#endif
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
@@ -78,8 +80,8 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 		if (err == BT_HCI_ERR_UNKNOWN_CONN_ID) {
 			LOG_WRN("ACL connection to addr: %s timed out, will try again", addr);
 		} else {
-			LOG_ERR("ACL connection to addr: %s, conn: %p, failed, error %d", addr,
-				(void *)conn, err);
+			LOG_ERR("ACL connection to addr: %s, conn: %p, failed, error %d %s", addr,
+				(void *)conn, err, bt_hci_err_to_str(err));
 		}
 
 		bt_conn_unref(conn);
@@ -131,7 +133,7 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	(void)bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	/* NOTE: The string below is used by the Nordic CI system */
-	LOG_INF("Disconnected: %s (reason 0x%02x)", addr, reason);
+	LOG_INF("Disconnected: %s, reason 0x%02x %s", addr, reason, bt_hci_err_to_str(reason));
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 		bt_conn_unref(conn);
@@ -170,7 +172,8 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 	struct bt_mgmt_msg msg;
 
 	if (err) {
-		LOG_WRN("Security failed: level %d err %d", level, err);
+		LOG_WRN("Security failed: level %d err %d %s", level, err,
+			bt_security_err_to_str(err));
 		ret = bt_conn_disconnect(conn, BT_HCI_ERR_AUTH_FAIL);
 		if (ret) {
 			LOG_WRN("Failed to disconnect %d", ret);
@@ -209,6 +212,7 @@ static void bt_enabled_cb(int err)
 
 static int bonding_clear_check(void)
 {
+#if CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP
 	int ret;
 	bool pressed;
 
@@ -222,6 +226,7 @@ static int bonding_clear_check(void)
 		return ret;
 	}
 
+#endif
 	return 0;
 }
 

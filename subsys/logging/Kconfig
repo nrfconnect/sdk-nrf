@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Logging over RPC"
+
+config LOG_RPC
+	bool
+	select NRF_RPC
+	select NRF_RPC_CBOR
+
+config LOG_FORWARDER_RPC
+	bool "nRF RPC logging forwarder"
+	depends on LOG
+	select LOG_RPC
+	help
+	  Enables receiving log messages as nRF RPC events and forwarding them to
+	  the Zephyr logging subsystem.
+
+menuconfig LOG_BACKEND_RPC
+	bool "nRF RPC logging backend"
+	depends on LOG_MODE_DEFERRED
+	depends on LOG_PROCESS_THREAD
+	depends on !LOG_FORWARDER_RPC
+	select LOG_OUTPUT
+	select LOG_RPC
+	help
+	  Enables Zephyr logging backend that sends log messages as nRF RPC events.
+
+if LOG_BACKEND_RPC
+
+config LOG_BACKEND_RPC_BUFFER_SIZE
+	int "nRF RPC logging backend buffer size"
+	default 256
+	help
+	  Defines the maximum log line length that can be sent to the log forwarder
+	  over nRF RPC without fragmentation.
+
+config LOG_BACKEND_RPC_CRASH_LOG
+	bool "nRF RPC crash log"
+	select RETENTION
+	select RETENTION_MUTEX_FORCE_DISABLE
+	select RETAINED_MEM
+	select RETAINED_MEM_MUTEX_FORCE_DISABLE
+	help
+	  Enables saving the crash log in the "crash_log" retained RAM partition,
+	  and adds an nRF RPC command that allows a remote user to read the crash
+	  log after the device reboots.
+	  The crash log contains any log messages passed to the nRF RPC logging
+	  backend after the logging subsystem has been put in the panic mode.
+	  Setting this option requires that the devicetree contains the "crash_log"
+	  retained RAM partition.
+
+endif # LOG_BACKEND_RPC
+
+endmenu # "Logging over nRF RPC"

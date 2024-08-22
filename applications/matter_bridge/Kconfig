@@ -159,6 +159,10 @@ config CHIP_ENABLE_READ_CLIENT
 config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	default y
 
+config BRIDGE_SMART_PLUG_SUPPORT
+	bool "Enables additional endpoint implementing Matter smart plug functionality"
+	default n
+
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
 source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/Kconfig"

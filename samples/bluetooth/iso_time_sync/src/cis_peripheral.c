@@ -14,6 +14,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/iso.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include "iso_time_sync.h"
 
@@ -30,7 +31,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
-		printk("Failed to connect to %s (%u)\n", addr, err);
+		printk("Failed to connect to %s 0x%02x %s\n", addr, err, bt_hci_err_to_str(err));
 		return;
 	}
 
@@ -43,7 +44,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Disconnected from %s (reason 0x%02x)\n", addr, reason);
+	printk("Disconnected from %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 }
 
 static struct bt_conn_cb conn_callbacks = {

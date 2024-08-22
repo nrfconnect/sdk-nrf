@@ -2,7 +2,7 @@ tests:
   mcuboot.external_flash:
     sysbuild: true
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp thingy53/nrf5340/cpuapp
-    tags: mcuboot external_flash sysbuild
+    tags: mcuboot external_flash sysbuild ci_tests_modules_mcuboot
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -11,7 +11,7 @@ tests:
   mcuboot.external_flash.child_parent:
     sysbuild: false
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp thingy53/nrf5340/cpuapp
-    tags: mcuboot external_flash child_parent deprecated
+    tags: mcuboot external_flash child_parent deprecated ci_tests_modules_mcuboot
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp

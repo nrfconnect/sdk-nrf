@@ -12,8 +12,7 @@
 #include <stdio.h>
 #include <zephyr/device.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
+#include <modem/at_parser.h>
 #include <zephyr/logging/log.h>
 
 #include "lte_lc_helpers.h"
@@ -134,19 +133,19 @@ void event_handler_list_dispatch(const struct lte_lc_evt *const evt)
 /* Converts integer on string format to integer type.
  * Returns zero on success, otherwise negative error on failure.
  */
-static int string_param_to_int(struct at_param_list *resp_list,
-			       size_t idx, int *output, int base)
+static int string_param_to_int(struct at_parser *parser, size_t idx, int *output, int base)
 {
 	int err;
 	char str_buf[16];
 	size_t len = sizeof(str_buf);
 
-	err = at_params_string_get(resp_list, idx, str_buf, &len);
+	__ASSERT_NO_MSG(parser != NULL);
+	__ASSERT_NO_MSG(output != NULL);
+
+	err = at_parser_string_get(parser, idx, str_buf, &len);
 	if (err) {
 		return err;
 	}
-
-	str_buf[len] = '\0';
 
 	if (string_to_int(str_buf, base, output)) {
 		return -ENODATA;
@@ -161,14 +160,17 @@ static int string_param_to_int(struct at_param_list *resp_list,
  */
 static void get_ptw_multiplier(enum lte_lc_lte_mode lte_mode, float *ptw_multiplier)
 {
+	__ASSERT_NO_MSG(ptw_multiplier != NULL);
+
 	if (lte_mode == LTE_LC_LTE_MODE_NBIOT) {
 		*ptw_multiplier = 2.56;
 	} else {
+		__ASSERT_NO_MSG(lte_mode == LTE_LC_LTE_MODE_LTEM);
 		*ptw_multiplier = 1.28;
 	}
 }
 
-static int get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edrx_value)
+static void get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edrx_value)
 {
 	uint16_t multiplier = 0;
 
@@ -184,30 +186,26 @@ static int get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *edr
 		2, 2, 2, 4, 2, 8, 2, 2, 2, 16, 32, 64, 128, 256, 512, 1024
 	};
 
-	if ((edrx_value == NULL) || (idx > ARRAY_SIZE(edrx_lookup_ltem) - 1)) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(edrx_value != NULL);
+	/* idx is parsed from 4 character bit field string so it cannot be more than 15 */
+	__ASSERT_NO_MSG(idx < ARRAY_SIZE(edrx_lookup_ltem));
 
-	switch (lte_mode) {
-	case LTE_LC_LTE_MODE_LTEM:
+	if (lte_mode == LTE_LC_LTE_MODE_LTEM) {
 		multiplier = edrx_lookup_ltem[idx];
-		break;
-	case LTE_LC_LTE_MODE_NBIOT:
+	} else {
+		__ASSERT_NO_MSG(lte_mode == LTE_LC_LTE_MODE_NBIOT);
 		multiplier = edrx_lookup_nbiot[idx];
-		break;
-	default:
-		return -ENOTCONN;
 	}
 
 	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
-
-	return 0;
 }
 
 /* Counts the frequency of a character in a null-terminated string. */
 static uint32_t get_char_frequency(const char *str, char c)
 {
 	uint32_t count = 0;
+
+	__ASSERT_NO_MSG(str != NULL);
 
 	do {
 		if (*str == c) {
@@ -218,68 +216,12 @@ static uint32_t get_char_frequency(const char *str, char c)
 	return count;
 }
 
-/**@brief Helper function to check if a response is what was expected
- *
- * @param response Pointer to response prefix
- * @param response_len Length of the response to be checked
- * @param check The buffer with "truth" to verify the response against,
- *		for example "+CEREG"
- *
- * @return True if the provided buffer and check are equal, false otherwise.
- */
-bool response_is_valid(const char *response, size_t response_len,
-			      const char *check)
-{
-	if ((response == NULL) || (check == NULL)) {
-		LOG_ERR("Invalid pointer provided");
-		return false;
-	}
-
-	if ((response_len < strlen(check)) ||
-	    (memcmp(response, check, response_len) != 0)) {
-		return false;
-	}
-
-	return true;
-}
-
-/* Get network registration status from CEREG response list.
- * Returns the (positive) registration value if it's found, otherwise a negative
- * error code.
- */
-static int get_nw_reg_status(struct at_param_list *list, bool is_notif)
-{
-	int err, reg_status;
-	size_t reg_status_index = is_notif ? AT_CEREG_REG_STATUS_INDEX :
-					     AT_CEREG_READ_REG_STATUS_INDEX;
-
-	err = at_params_int_get(list, reg_status_index, &reg_status);
-	if (err) {
-		return err;
-	}
-
-	/* Check if the parsed value maps to a valid registration status */
-	switch (reg_status) {
-	case LTE_LC_NW_REG_NOT_REGISTERED:
-	case LTE_LC_NW_REG_REGISTERED_HOME:
-	case LTE_LC_NW_REG_SEARCHING:
-	case LTE_LC_NW_REG_REGISTRATION_DENIED:
-	case LTE_LC_NW_REG_UNKNOWN:
-	case LTE_LC_NW_REG_REGISTERED_ROAMING:
-	case LTE_LC_NW_REG_UICC_FAIL:
-		break;
-	default:
-		LOG_ERR("Invalid network registration status: %d", reg_status);
-		return -EINVAL;
-	}
-
-	return reg_status;
-}
-
 int string_to_int(const char *str_buf, int base, int *output)
 {
 	int temp;
 	char *end_ptr;
+
+	__ASSERT_NO_MSG(str_buf != NULL);
 
 	errno = 0;
 	temp = strtol(str_buf, &end_ptr, base);
@@ -299,31 +241,20 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 {
 	int err, tmp_int;
 	uint8_t idx;
-	struct at_param_list resp_list = {0};
+	struct at_parser parser;
 	char tmp_buf[5];
-	size_t len = sizeof(tmp_buf) - 1;
+	size_t len = sizeof(tmp_buf);
 	float ptw_multiplier;
 
-	if ((at_response == NULL) || (cfg == NULL)) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(cfg != NULL);
+	__ASSERT_NO_MSG(edrx_str != NULL);
+	__ASSERT_NO_MSG(ptw_str != NULL);
 
-	err = at_params_list_init(&resp_list, AT_CEDRXP_PARAMS_COUNT_MAX);
-	if (err) {
-		LOG_ERR("Could not init AT params list, error: %d", err);
-		return err;
-	}
+	err = at_parser_init(&parser, at_response);
+	__ASSERT_NO_MSG(err == 0);
 
-	/* Parse response and populate AT parameter list */
-	err = at_parser_params_from_str(at_response,
-					NULL,
-					&resp_list);
-	if (err) {
-		LOG_ERR("Could not parse eDRX response, error: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_int_get(&resp_list, AT_CEDRXP_ACTT_INDEX, &tmp_int);
+	err = at_parser_num_get(&parser, AT_CEDRXP_ACTT_INDEX, &tmp_int);
 	if (err) {
 		LOG_ERR("Failed to get LTE mode, error: %d", err);
 		goto clean_exit;
@@ -351,7 +282,7 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 		goto clean_exit;
 	}
 
-	err = at_params_string_get(&resp_list, AT_CEDRXP_NW_EDRX_INDEX,
+	err = at_parser_string_get(&parser, AT_CEDRXP_NW_EDRX_INDEX,
 				   tmp_buf, &len);
 	if (err) {
 		LOG_ERR("Failed to get eDRX configuration, error: %d", err);
@@ -372,7 +303,6 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 		goto clean_exit;
 	}
 
-	tmp_buf[len] = '\0';
 	__ASSERT_NO_MSG(edrx_str != NULL);
 	strcpy(edrx_str, tmp_buf);
 
@@ -390,34 +320,26 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 	 */
 	get_ptw_multiplier(cfg->mode, &ptw_multiplier);
 
-	err = get_edrx_value(cfg->mode, idx, &cfg->edrx);
-	if (err) {
-		LOG_ERR("Failed to get eDRX value, error; %d", err);
-		goto clean_exit;
-	}
+	get_edrx_value(cfg->mode, idx, &cfg->edrx);
 
-	len = sizeof(tmp_buf) - 1;
+	len = sizeof(tmp_buf);
 
-	err = at_params_string_get(&resp_list, AT_CEDRXP_NW_PTW_INDEX,
+	err = at_parser_string_get(&parser, AT_CEDRXP_NW_PTW_INDEX,
 				   tmp_buf, &len);
 	if (err) {
 		LOG_ERR("Failed to get PTW configuration, error: %d", err);
 		goto clean_exit;
 	}
 
-	tmp_buf[len] = '\0';
-	__ASSERT_NO_MSG(ptw_str != NULL);
 	strcpy(ptw_str, tmp_buf);
 
 	/* Value can be a maximum of 15, as there are 16 entries in the table
 	 * for paging time window (both for LTE-M and NB1).
+	 * We can use assert as only 4 bits can be received and if there would be more,
+	 * the previous at_parser_string_get would fail.
 	 */
 	idx = strtoul(tmp_buf, NULL, 2);
-	if (idx > 15) {
-		LOG_ERR("Invalid PTW lookup index: %d", idx);
-		err = -EINVAL;
-		goto clean_exit;
-	}
+	__ASSERT_NO_MSG(idx <= 15);
 
 	/* The Paging Time Window is different for LTE-M and NB-IoT:
 	 *	- LTE-M: (idx + 1) * 1.28 s
@@ -434,8 +356,6 @@ int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_
 		(int)(100 * (cfg->ptw - (int)cfg->ptw)));
 
 clean_exit:
-	at_params_list_free(&resp_list);
-
 	return err;
 }
 
@@ -494,6 +414,9 @@ static int encode_psm_timer(
 	uint32_t selected_timer_value = -1;
 	/* Timer unit and timer value encoded as an integer which will be converted to a string */
 	uint8_t encoded_value_int = 0;
+
+	__ASSERT_NO_MSG(encoded_timer_str != NULL);
+	__ASSERT_NO_MSG(lookup_table != NULL);
 
 	/* Search a value that is as close as possible to the requested value
 	 * rounding it up to the closest possible value
@@ -588,6 +511,10 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	size_t lut_idx;
 	uint32_t timer_unit, timer_value;
 
+	__ASSERT_NO_MSG(active_time_str != NULL);
+	__ASSERT_NO_MSG(tau_ext_str != NULL);
+	__ASSERT_NO_MSG(psm_cfg != NULL);
+
 	if (strlen(active_time_str) != 8 || strlen(tau_ext_str) != 8 ||
 	    (tau_legacy_str != NULL && strlen(tau_legacy_str) != 8)) {
 		return -EINVAL;
@@ -597,10 +524,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	memcpy(unit_str, tau_ext_str, unit_str_len);
 
 	lut_idx = strtoul(unit_str, NULL, 2);
-	if (lut_idx > (ARRAY_SIZE(t3412_ext_lookup) - 1)) {
-		LOG_ERR("Unable to parse periodic TAU string (T3412 extended)");
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(lut_idx < ARRAY_SIZE(t3412_ext_lookup));
 
 	timer_unit = t3412_ext_lookup[lut_idx];
 	timer_value = strtoul(tau_ext_str + unit_str_len, NULL, 2);
@@ -613,10 +537,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 		memcpy(unit_str, tau_legacy_str, unit_str_len);
 
 		lut_idx = strtoul(unit_str, NULL, 2);
-		if (lut_idx > (ARRAY_SIZE(t3412_lookup) - 1)) {
-			LOG_ERR("Unable to parse periodic TAU string (T3412)");
-			return -EINVAL;
-		}
+		__ASSERT_NO_MSG(lut_idx < ARRAY_SIZE(t3412_lookup));
 
 		timer_unit = t3412_lookup[lut_idx];
 		if (timer_unit == 0) {
@@ -634,10 +555,7 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
 	memcpy(unit_str, active_time_str, unit_str_len);
 
 	lut_idx = strtoul(unit_str, NULL, 2);
-	if (lut_idx > (ARRAY_SIZE(t3324_lookup) - 1)) {
-		LOG_ERR("Unable to parse active time string");
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(lut_idx < ARRAY_SIZE(t3324_lookup));
 
 	timer_unit = t3324_lookup[lut_idx];
 	timer_value = strtoul(active_time_str + unit_str_len, NULL, 2);
@@ -661,25 +579,16 @@ int parse_rrc_mode(const char *at_response,
 		   size_t mode_index)
 {
 	int err, temp_mode;
-	struct at_param_list resp_list = {0};
+	struct at_parser parser;
 
-	err = at_params_list_init(&resp_list, AT_CSCON_PARAMS_COUNT_MAX);
-	if (err) {
-		LOG_ERR("Could not init AT params list, error: %d", err);
-		return err;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(mode != NULL);
 
-	/* Parse CSCON response and populate AT parameter list */
-	err = at_parser_params_from_str(at_response,
-					NULL,
-					&resp_list);
-	if (err) {
-		LOG_ERR("Could not parse +CSCON response, error: %d", err);
-		goto clean_exit;
-	}
+	err = at_parser_init(&parser, at_response);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Get the RRC mode from the response */
-	err = at_params_int_get(&resp_list, mode_index, &temp_mode);
+	err = at_parser_num_get(&parser, mode_index, &temp_mode);
 	if (err) {
 		LOG_ERR("Could not get signalling mode, error: %d", err);
 		goto clean_exit;
@@ -696,219 +605,183 @@ int parse_rrc_mode(const char *at_response,
 	}
 
 clean_exit:
-	at_params_list_free(&resp_list);
-
 	return err;
 }
 
 int parse_cereg(const char *at_response,
-		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
 		enum lte_lc_lte_mode *lte_mode,
 		struct lte_lc_psm_cfg *psm_cfg)
 {
-	int err, status;
-	struct at_param_list resp_list;
+	int err, temp;
+	struct at_parser parser;
 	char str_buf[10];
-	char  response_prefix[sizeof(AT_CEREG_RESPONSE_PREFIX)] = {0};
-	size_t response_prefix_len = sizeof(response_prefix);
-	size_t len = sizeof(str_buf) - 1;
+	size_t len = sizeof(str_buf);
+	size_t count = 0;
 
-	err = at_params_list_init(&resp_list, AT_CEREG_PARAMS_COUNT_MAX);
-	if (err) {
-		LOG_ERR("Could not init AT params list, error: %d", err);
-		return err;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(reg_status != NULL);
+	__ASSERT_NO_MSG(cell != NULL);
+	__ASSERT_NO_MSG(lte_mode != NULL);
+	__ASSERT_NO_MSG(psm_cfg != NULL);
 
-	/* Parse CEREG response and populate AT parameter list */
-	err = at_parser_params_from_str(at_response,
-					NULL,
-					&resp_list);
-	if (err) {
-		LOG_ERR("Could not parse AT+CEREG response, error: %d", err);
-		goto clean_exit;
-	}
+	/* Initialize all return values. */
+	*reg_status = LTE_LC_NW_REG_UNKNOWN;
+	(void)memset(cell, 0, sizeof(struct lte_lc_cell));
+	cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	cell->tac = LTE_LC_CELL_TAC_INVALID;
+	*lte_mode = LTE_LC_LTE_MODE_NONE;
+	psm_cfg->active_time = -1;
+	psm_cfg->tau = -1;
 
-	/* Check if AT command response starts with +CEREG */
-	err = at_params_string_get(&resp_list,
-				   AT_RESPONSE_PREFIX_INDEX,
-				   response_prefix,
-				   &response_prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(response_prefix, response_prefix_len,
-			       AT_CEREG_RESPONSE_PREFIX)) {
-		/* The unsolicited response is not a CEREG response, ignore it.
-		 */
-		LOG_DBG("Not a valid CEREG response");
-		goto clean_exit;
-	}
+	err = at_parser_init(&parser, at_response);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Get network registration status */
-	status = get_nw_reg_status(&resp_list, is_notif);
-	if (status < 0) {
-		LOG_ERR("Could not get registration status, error: %d", status);
-		err = status;
+	err = at_parser_num_get(&parser, AT_CEREG_REG_STATUS_INDEX, &temp);
+	if (err) {
+		LOG_ERR("Could not get registration status, error: %d", err);
 		goto clean_exit;
 	}
 
-	if (reg_status) {
-		*reg_status = status;
+	*reg_status = temp;
+	LOG_DBG("Network registration status: %d", *reg_status);
 
-		LOG_DBG("Network registration status: %d", *reg_status);
+	err = at_parser_cmd_count_get(&parser, &count);
+	if (err) {
+		LOG_ERR("Could not get CEREG param count, potentially malformed notification, "
+			"error: %d", err);
+		goto clean_exit;
 	}
 
-
-	if (cell && (status != LTE_LC_NW_REG_UICC_FAIL) &&
-	    (at_params_valid_count_get(&resp_list) > AT_CEREG_CELL_ID_INDEX)) {
+	if ((*reg_status != LTE_LC_NW_REG_UICC_FAIL) &&
+	    (count > AT_CEREG_CELL_ID_INDEX)) {
 		/* Parse tracking area code */
-		err = at_params_string_get(
-				&resp_list,
-				is_notif ? AT_CEREG_TAC_INDEX :
-					   AT_CEREG_READ_TAC_INDEX,
-				str_buf, &len);
+		err = at_parser_string_get(&parser, AT_CEREG_TAC_INDEX, str_buf, &len);
 		if (err) {
 			LOG_DBG("Could not get tracking area code, error: %d", err);
-			cell->tac = LTE_LC_CELL_TAC_INVALID;
 		} else {
-			str_buf[len] = '\0';
 			cell->tac = strtoul(str_buf, NULL, 16);
 		}
 
 		/* Parse cell ID */
-		len = sizeof(str_buf) - 1;
+		len = sizeof(str_buf);
 
-		err = at_params_string_get(&resp_list,
-				is_notif ? AT_CEREG_CELL_ID_INDEX :
-					   AT_CEREG_READ_CELL_ID_INDEX,
-				str_buf, &len);
+		err = at_parser_string_get(&parser, AT_CEREG_CELL_ID_INDEX, str_buf, &len);
 		if (err) {
 			LOG_DBG("Could not get cell ID, error: %d", err);
-			cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 		} else {
-			str_buf[len] = '\0';
 			cell->id = strtoul(str_buf, NULL, 16);
 		}
-	} else if (cell) {
-		cell->tac = LTE_LC_CELL_TAC_INVALID;
-		cell->id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 	}
 
-	if (lte_mode) {
-		int mode;
+	/* Get currently active LTE mode. */
+	err = at_parser_num_get(&parser, AT_CEREG_ACT_INDEX, &temp);
+	if (err) {
+		LOG_DBG("LTE mode not found, error code: %d", err);
 
-		/* Get currently active LTE mode. */
-		err = at_params_int_get(&resp_list,
-				is_notif ? AT_CEREG_ACT_INDEX :
-					   AT_CEREG_READ_ACT_INDEX,
-				&mode);
-		if (err) {
-			LOG_DBG("LTE mode not found, error code: %d", err);
-			*lte_mode = LTE_LC_LTE_MODE_NONE;
-
-			/* This is not an error that should be returned, as it's
-			 * expected in some situations that LTE mode is not
-			 * available.
-			 */
-			err = 0;
-		} else {
-			*lte_mode = mode;
-
-			LOG_DBG("LTE mode: %d", *lte_mode);
-		}
+		/* This is not an error that should be returned, as it's
+		 * expected in some situations that LTE mode is not available.
+		 */
+		err = 0;
+	} else {
+		*lte_mode = temp;
+		LOG_DBG("LTE mode: %d", *lte_mode);
 	}
+
+#if defined(CONFIG_LOG)
+	int cause_type;
+	int reject_cause;
+
+	/* Log reject cause if present. */
+	err = at_parser_num_get(&parser, AT_CEREG_CAUSE_TYPE_INDEX, &cause_type);
+	err |= at_parser_num_get(&parser, AT_CEREG_REJECT_CAUSE_INDEX, &reject_cause);
+	if (!err && cause_type == 0 /* EMM cause */) {
+		LOG_WRN("Registration rejected, EMM cause: %d, Cell ID: %d, Tracking area: %d, "
+				"LTE mode: %d",
+			reject_cause, cell->id, cell->tac, *lte_mode);
+	}
+	/* Absence of reject cause is not considered an error. */
+	err = 0;
+#endif /* CONFIG_LOG */
 
 	/* Check PSM parameters only if we are connected */
-	if ((status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-	    (status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+	if ((*reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
+	    (*reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 		goto clean_exit;
 	}
 
-	if (psm_cfg != NULL) {
-		char active_time_str[9] = {0};
-		char tau_ext_str[9] = {0};
-		int str_len = 8;
-		int err_active_time;
-		int err_tau;
+	char active_time_str[9] = {0};
+	char tau_ext_str[9] = {0};
+	int str_len;
+	int err_active_time;
+	int err_tau;
 
-		psm_cfg->active_time = -1;
-		psm_cfg->tau = -1;
+	str_len = sizeof(active_time_str);
 
-		/* Get active time */
-		err_active_time = at_params_string_get(
-				&resp_list,
-				is_notif ? AT_CEREG_ACTIVE_TIME_INDEX :
-					   AT_CEREG_READ_ACTIVE_TIME_INDEX,
-				active_time_str, &str_len);
-		if (err_active_time) {
-			LOG_DBG("Active time not found, error: %d", err_active_time);
-		} else {
-			LOG_DBG("Active time: %s", active_time_str);
-		}
-
-		/* Get Periodic-TAU-ext */
-		err_tau = at_params_string_get(
-				&resp_list,
-				is_notif ? AT_CEREG_TAU_INDEX :
-					   AT_CEREG_READ_TAU_INDEX,
-				tau_ext_str, &str_len);
-		if (err_tau) {
-			LOG_DBG("TAU not found, error: %d", err_tau);
-		} else {
-			LOG_DBG("TAU: %s", tau_ext_str);
-		}
-
-		if (err_active_time == 0 && err_tau == 0) {
-			/* Legacy TAU is not requested because we do not get it from CEREG.
-			 * If extended TAU is not set, TAU will be set to inactive so
-			 * caller can then make its conclusions.
-			 */
-			err = parse_psm(active_time_str, tau_ext_str, NULL, psm_cfg);
-			if (err) {
-				LOG_ERR("Failed to parse PSM configuration, error: %d", err);
-			}
-		}
-		/* The notification does not always contain PSM parameters,
-		 * so this is not considered an error
-		 */
-		err = 0;
+	/* Get active time */
+	err_active_time = at_parser_string_get(
+				&parser,
+				AT_CEREG_ACTIVE_TIME_INDEX,
+				active_time_str,
+				&str_len);
+	if (err_active_time) {
+		LOG_DBG("Active time not found, error: %d", err_active_time);
+	} else {
+		LOG_DBG("Active time: %s", active_time_str);
 	}
 
-clean_exit:
-	at_params_list_free(&resp_list);
+	str_len = sizeof(tau_ext_str);
 
+	/* Get Periodic-TAU-ext */
+	err_tau = at_parser_string_get(
+			&parser,
+			AT_CEREG_TAU_INDEX,
+			tau_ext_str,
+			&str_len);
+	if (err_tau) {
+		LOG_DBG("TAU not found, error: %d", err_tau);
+	} else {
+		LOG_DBG("TAU: %s", tau_ext_str);
+	}
+
+	if (err_active_time == 0 && err_tau == 0) {
+		/* Legacy TAU is not requested because we do not get it from CEREG.
+		 * If extended TAU is not set, TAU will be set to inactive so
+		 * caller can then make its conclusions.
+		 */
+		err = parse_psm(active_time_str, tau_ext_str, NULL, psm_cfg);
+		if (err) {
+			LOG_ERR("Failed to parse PSM configuration, error: %d", err);
+		}
+	}
+	/* The notification does not always contain PSM parameters,
+	 * so this is not considered an error
+	 */
+	err = 0;
+
+clean_exit:
 	return err;
 }
 
 int parse_xt3412(const char *at_response, uint64_t *time)
 {
 	int err;
-	struct at_param_list resp_list = {0};
+	struct at_parser parser;
 
-	if (time == NULL || at_response == NULL) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(time != NULL);
 
-	err = at_params_list_init(&resp_list, AT_XT3412_PARAMS_COUNT_MAX);
-	if (err) {
-		LOG_ERR("Could not init AT params list, error: %d", err);
-		return err;
-	}
-
-	/* Parse XT3412 response and populate AT parameter list */
-	err = at_parser_params_from_str(at_response, NULL, &resp_list);
-	if (err) {
-		LOG_ERR("Could not parse %%XT3412 response, error: %d", err);
-		goto clean_exit;
-	}
+	err = at_parser_init(&parser, at_response);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* Get the remaining time of T3412 from the response */
-	err = at_params_int64_get(&resp_list, AT_XT3412_TIME_INDEX, time);
+	err = at_parser_num_get(&parser, AT_XT3412_TIME_INDEX, time);
 	if (err) {
+		if (err == -ERANGE) {
+			err = -EINVAL;
+		}
 		LOG_ERR("Could not get time until next TAU, error: %d", err);
 		goto clean_exit;
 	}
@@ -919,7 +792,6 @@ int parse_xt3412(const char *at_response, uint64_t *time)
 	}
 
 clean_exit:
-	at_params_list_free(&resp_list);
 	return err;
 }
 
@@ -927,10 +799,7 @@ uint32_t neighborcell_count_get(const char *at_response)
 {
 	uint32_t comma_count, ncell_elements, ncell_count;
 
-	if (at_response == NULL) {
-		LOG_ERR("at_response is NULL, can't get cell count");
-		return 0;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
 
 	comma_count = get_char_frequency(at_response, ',');
 	if (comma_count < AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT) {
@@ -944,81 +813,39 @@ uint32_t neighborcell_count_get(const char *at_response)
 	return ncell_count;
 }
 
-/* Parse NCELLMEAS notification and put information into struct lte_lc_cells_info.
- *
- * Returns 0 on successful cell measurements and population of struct.
- *	     The current cell information is valid if the current cell ID is
- *	     not set to LTE_LC_CELL_EUTRAN_ID_INVALID.
- *	     The ncells_count indicates how many neighbor cells were parsed
- *	     into the neighbor_cells array.
- * Returns 1 on measurement failure
- * Returns -E2BIG if not all cells were parsed due to memory limitations
- * Returns otherwise a negative error code.
- */
 int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 {
 	int err, status, tmp, len;
-	struct at_param_list resp_list;
-	char  response_prefix[sizeof(AT_NCELLMEAS_RESPONSE_PREFIX)] = {0};
-	size_t response_prefix_len = sizeof(response_prefix);
+	struct at_parser parser;
 	char tmp_str[7];
+	size_t count = 0;
 	bool incomplete = false;
-	/* Count the actual number of parameters in the AT response before
-	 * allocating heap for it. This may save quite a bit of heap as the
-	 * worst case scenario is 96 elements.
-	 * 3 is added to account for the parameters that do not have a trailng
-	 * comma.
-	 */
-	size_t param_count = get_char_frequency(at_response, ',') + 3;
+
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(cells != NULL);
 
 	cells->ncells_count = 0;
 	cells->current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
 
-	err = at_params_list_init(&resp_list, param_count);
-	if (err) {
-		LOG_ERR("Could not init AT params list, error: %d", err);
-		return err;
-	}
+	err = at_parser_init(&parser, at_response);
+	__ASSERT_NO_MSG(err == 0);
 
-	err = at_parser_params_from_str(at_response,
-					NULL,
-					&resp_list);
-	if (err && err != -E2BIG) {
-		LOG_ERR("Could not parse AT%%NCELLMEAS response, error: %d", err);
-		goto clean_exit;
-	} else if (err == -E2BIG) {
-		incomplete = true;
-	}
-
-	err = at_params_string_get(&resp_list,
-				   AT_RESPONSE_PREFIX_INDEX,
-				   response_prefix,
-				   &response_prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(response_prefix, response_prefix_len,
-			       AT_NCELLMEAS_RESPONSE_PREFIX)) {
-		/* The unsolicited response is not a NCELLMEAS response, ignore it. */
-		LOG_DBG("Not a valid NCELLMEAS response");
-		goto clean_exit;
-	}
-
-	/* Status code. */
-	err = at_params_int_get(&resp_list, AT_NCELLMEAS_STATUS_INDEX, &status);
+	/* Status code */
+	err = at_parser_num_get(&parser, AT_NCELLMEAS_STATUS_INDEX, &status);
 	if (err) {
 		goto clean_exit;
 	}
 
-	if (status != AT_NCELLMEAS_STATUS_VALUE_SUCCESS) {
+	if (status == AT_NCELLMEAS_STATUS_VALUE_FAIL) {
 		err = 1;
+		LOG_WRN("NCELLMEAS failed");
 		goto clean_exit;
+	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
+		LOG_WRN("NCELLMEAS interrupted; results incomplete");
 	}
 
-	/* Current cell ID. */
-	err = string_param_to_int(&resp_list, AT_NCELLMEAS_CELL_ID_INDEX, &tmp, 16);
+	/* Current cell ID */
+	err = string_param_to_int(&parser, AT_NCELLMEAS_CELL_ID_INDEX, &tmp, 16);
 	if (err) {
 		goto clean_exit;
 	}
@@ -1031,13 +858,11 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	/* PLMN */
 	len = sizeof(tmp_str);
 
-	err = at_params_string_get(&resp_list, AT_NCELLMEAS_PLMN_INDEX,
+	err = at_parser_string_get(&parser, AT_NCELLMEAS_PLMN_INDEX,
 				   tmp_str, &len);
 	if (err) {
 		goto clean_exit;
 	}
-
-	tmp_str[len] = '\0';
 
 	/* Read MNC and store as integer. The MNC starts as the fourth character
 	 * in the string, following three characters long MCC.
@@ -1055,8 +880,8 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		goto clean_exit;
 	}
 
-	/* Tracking area code. */
-	err = string_param_to_int(&resp_list, AT_NCELLMEAS_TAC_INDEX, &tmp, 16);
+	/* Tracking area code */
+	err = string_param_to_int(&parser, AT_NCELLMEAS_TAC_INDEX, &tmp, 16);
 	if (err) {
 		goto clean_exit;
 	}
@@ -1064,7 +889,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	cells->current_cell.tac = tmp;
 
 	/* Timing advance */
-	err = at_params_int_get(&resp_list, AT_NCELLMEAS_TIMING_ADV_INDEX,
+	err = at_parser_num_get(&parser, AT_NCELLMEAS_TIMING_ADV_INDEX,
 				&tmp);
 	if (err) {
 		goto clean_exit;
@@ -1073,21 +898,21 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	cells->current_cell.timing_advance = tmp;
 
 	/* EARFCN */
-	err = at_params_int_get(&resp_list, AT_NCELLMEAS_EARFCN_INDEX,
+	err = at_parser_num_get(&parser, AT_NCELLMEAS_EARFCN_INDEX,
 				&cells->current_cell.earfcn);
 	if (err) {
 		goto clean_exit;
 	}
 
-	/* Physical cell ID. */
-	err = at_params_short_get(&resp_list, AT_NCELLMEAS_PHYS_CELL_ID_INDEX,
+	/* Physical cell ID */
+	err = at_parser_num_get(&parser, AT_NCELLMEAS_PHYS_CELL_ID_INDEX,
 				&cells->current_cell.phys_cell_id);
 	if (err) {
 		goto clean_exit;
 	}
 
 	/* RSRP */
-	err = at_params_int_get(&resp_list, AT_NCELLMEAS_RSRP_INDEX, &tmp);
+	err = at_parser_num_get(&parser, AT_NCELLMEAS_RSRP_INDEX, &tmp);
 	if (err) {
 		goto clean_exit;
 	}
@@ -1095,21 +920,21 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	cells->current_cell.rsrp = tmp;
 
 	/* RSRQ */
-	err = at_params_int_get(&resp_list, AT_NCELLMEAS_RSRQ_INDEX, &tmp);
+	err = at_parser_num_get(&parser, AT_NCELLMEAS_RSRQ_INDEX, &tmp);
 	if (err) {
 		goto clean_exit;
 	}
 
 	cells->current_cell.rsrq = tmp;
 
-	/* Measurement time. */
-	err = at_params_int64_get(&resp_list, AT_NCELLMEAS_MEASUREMENT_TIME_INDEX,
-				  &cells->current_cell.measurement_time);
+	/* Measurement time */
+	err = at_parser_num_get(&parser, AT_NCELLMEAS_MEASUREMENT_TIME_INDEX,
+				&cells->current_cell.measurement_time);
 	if (err) {
 		goto clean_exit;
 	}
 
-	/* Neighbor cell count. */
+	/* Neighbor cell count */
 	cells->ncells_count = neighborcell_count_get(at_response);
 
 	/* Starting from modem firmware v1.3.1, timing advance measurement time
@@ -1118,9 +943,16 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	size_t ta_meas_time_index = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
 			cells->ncells_count * AT_NCELLMEAS_N_PARAMS_COUNT;
 
-	if (at_params_valid_count_get(&resp_list) > ta_meas_time_index) {
-		err = at_params_int64_get(&resp_list, ta_meas_time_index,
-					  &cells->current_cell.timing_advance_meas_time);
+	err = at_parser_cmd_count_get(&parser, &count);
+	if (err) {
+		LOG_ERR("Could not get NCELLMEAS param count, "
+			"potentially malformed notification, error: %d", err);
+		goto clean_exit;
+	}
+
+	if (count > ta_meas_time_index) {
+		err = at_parser_num_get(&parser, ta_meas_time_index,
+					&cells->current_cell.timing_advance_meas_time);
 		if (err) {
 			goto clean_exit;
 		}
@@ -1128,33 +960,43 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		cells->current_cell.timing_advance_meas_time = 0;
 	}
 
-	if ((cells->ncells_count == 0) || (cells->neighbor_cells == NULL)) {
+	if (cells->ncells_count == 0) {
 		goto clean_exit;
 	}
 
-	/* Neighboring cells. */
+	__ASSERT_NO_MSG(cells->neighbor_cells != NULL);
+
+	if (cells->ncells_count > CONFIG_LTE_NEIGHBOR_CELLS_MAX) {
+		cells->ncells_count = CONFIG_LTE_NEIGHBOR_CELLS_MAX;
+		incomplete = true;
+		LOG_WRN("Cutting response, because received neigbor cell"
+			" count is bigger than configured max: %d",
+			CONFIG_LTE_NEIGHBOR_CELLS_MAX);
+	}
+
+	/* Neighboring cells */
 	for (size_t i = 0; i < cells->ncells_count; i++) {
 		size_t start_idx = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
 				   i * AT_NCELLMEAS_N_PARAMS_COUNT;
 
 		/* EARFCN */
-		err = at_params_int_get(&resp_list,
+		err = at_parser_num_get(&parser,
 					start_idx + AT_NCELLMEAS_N_EARFCN_INDEX,
 					&cells->neighbor_cells[i].earfcn);
 		if (err) {
 			goto clean_exit;
 		}
 
-		/* Physical cell ID. */
-		err = at_params_short_get(&resp_list,
-					  start_idx + AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX,
-					  &cells->neighbor_cells[i].phys_cell_id);
+		/* Physical cell ID */
+		err = at_parser_num_get(&parser,
+					start_idx + AT_NCELLMEAS_N_PHYS_CELL_ID_INDEX,
+					&cells->neighbor_cells[i].phys_cell_id);
 		if (err) {
 			goto clean_exit;
 		}
 
 		/* RSRP */
-		err = at_params_int_get(&resp_list,
+		err = at_parser_num_get(&parser,
 					start_idx + AT_NCELLMEAS_N_RSRP_INDEX,
 					&tmp);
 		if (err) {
@@ -1164,7 +1006,7 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 		cells->neighbor_cells[i].rsrp = tmp;
 
 		/* RSRQ */
-		err = at_params_int_get(&resp_list,
+		err = at_parser_num_get(&parser,
 					start_idx + AT_NCELLMEAS_N_RSRQ_INDEX,
 					&tmp);
 		if (err) {
@@ -1173,8 +1015,8 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 		cells->neighbor_cells[i].rsrq = tmp;
 
-		/* Time difference. */
-		err = at_params_int_get(&resp_list,
+		/* Time difference */
+		err = at_parser_num_get(&parser,
 					start_idx + AT_NCELLMEAS_N_TIME_DIFF_INDEX,
 					&cells->neighbor_cells[i].time_diff);
 		if (err) {
@@ -1184,23 +1026,22 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 
 	if (incomplete) {
 		err = -E2BIG;
+		LOG_WRN("Buffer is too small; results incomplete: %d", err);
 	}
 
 clean_exit:
-	at_params_list_free(&resp_list);
-
 	return err;
 }
 
-int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
-	const char *at_response, struct lte_lc_cells_info *cells)
+int parse_ncellmeas_gci(
+	struct lte_lc_ncellmeas_params *params,
+	const char *at_response,
+	struct lte_lc_cells_info *cells)
 {
-	struct at_param_list resp_list;
+	struct at_parser parser;
 	struct lte_lc_ncell *ncells = NULL;
 	int err, status, tmp_int, len;
 	int16_t tmp_short;
-	char response_prefix[sizeof(AT_NCELLMEAS_RESPONSE_PREFIX)] = {0};
-	size_t response_prefix_len = sizeof(response_prefix);
 	char tmp_str[7];
 	bool incomplete = false;
 	int curr_index;
@@ -1213,6 +1054,11 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 	 * comma.
 	 */
 	size_t param_count = get_char_frequency(at_response, ',') + 3;
+
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(params != NULL);
+	__ASSERT_NO_MSG(cells != NULL);
+	__ASSERT_NO_MSG(cells->gci_cells != NULL);
 
 	/* Fill the defaults */
 	cells->gci_cells_count = 0;
@@ -1243,45 +1089,12 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 	 *	[,<n_earfcn2>,<n_phys_cell_id2>,<n_rsrp2>,<n_rsrq2>,<time_diff2>]...]...
 	 */
 
-	err = at_params_list_init(&resp_list, param_count);
-	if (err) {
-		LOG_ERR("Could not init AT params list for cell_list, error: %d", err);
-		goto clean_exit;
-	}
+	err = at_parser_init(&parser, at_response);
+	__ASSERT_NO_MSG(err == 0);
 
-	err = at_parser_params_from_str(at_response, NULL, &resp_list);
-	if (err && err != -E2BIG) {
-		LOG_ERR("Could not parse AT%%NCELLMEAS response, error: %d", err);
-		goto clean_exit;
-	} else if (err == -E2BIG) {
-		/* Returns -E2BIG if the buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
-		 * are too small for the modem response. The associated data is still valid,
-		 * but not complete.
-		 */
-		incomplete = true;
-		LOG_WRN("E2BIG was returned, continue. param_count %d, err %d, str %s",
-			param_count, err, at_response);
-	}
-
-	err = at_params_string_get(&resp_list,
-				   AT_RESPONSE_PREFIX_INDEX,
-				   response_prefix,
-				   &response_prefix_len);
-	if (err) {
-		LOG_ERR("Could not get response prefix, error: %d", err);
-		goto clean_exit;
-	}
-
-	if (!response_is_valid(response_prefix, response_prefix_len,
-			       AT_NCELLMEAS_RESPONSE_PREFIX)) {
-		/* The unsolicited response is not a NCELLMEAS response, ignore it. */
-		LOG_ERR("Not a valid NCELLMEAS response");
-		goto clean_exit;
-	}
-
-	/* Status code. */
+	/* Status code */
 	curr_index = AT_NCELLMEAS_STATUS_INDEX;
-	err = at_params_int_get(&resp_list, curr_index, &status);
+	err = at_parser_num_get(&parser, curr_index, &status);
 	if (err) {
 		LOG_DBG("Cannot parse NCELLMEAS status");
 		goto clean_exit;
@@ -1289,13 +1102,13 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 	if (status == AT_NCELLMEAS_STATUS_VALUE_FAIL) {
 		err = 1;
-		LOG_DBG("NCELLMEAS status %d", status);
+		LOG_WRN("NCELLMEAS failed");
 		goto clean_exit;
 	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
-		LOG_WRN("NCELLMEAS measurements interrupted; results incomplete");
+		LOG_WRN("NCELLMEAS interrupted; results incomplete");
 	}
 
-	/* Go through the cells. */
+	/* Go through the cells */
 	for (i = 0; curr_index < (param_count - (AT_NCELLMEAS_GCI_CELL_PARAMS_COUNT + 1)) &&
 			i < params->gci_count; i++) {
 		struct lte_lc_cell parsed_cell;
@@ -1304,7 +1117,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <cell_id>  */
 		curr_index++;
-		err = string_param_to_int(&resp_list, curr_index, &tmp_int, 16);
+		err = string_param_to_int(&parser, curr_index, &tmp_int, 16);
 		if (err) {
 			LOG_ERR("Could not parse cell_id, index %d, i %d error: %d",
 				curr_index, i, err);
@@ -1322,15 +1135,11 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 		len = sizeof(tmp_str);
 
 		curr_index++;
-		err = at_params_string_get(&resp_list, curr_index, tmp_str, &len);
+		err = at_parser_string_get(&parser, curr_index, tmp_str, &len);
 		if (err) {
 			LOG_ERR("Could not parse plmn, error: %d", err);
 			goto clean_exit;
 		}
-		/* A successful call to `at_params_string_get` guarantees `len` to be set to
-		 * a value lower than the totalt size of `tmp_str`.
-		 */
-		tmp_str[len] = '\0';
 
 		/* Read MNC and store as integer. The MNC starts as the fourth character
 		 * in the string, following three characters long MCC.
@@ -1352,7 +1161,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <tac> */
 		curr_index++;
-		err = string_param_to_int(&resp_list, curr_index, &tmp_int, 16);
+		err = string_param_to_int(&parser, curr_index, &tmp_int, 16);
 		if (err) {
 			LOG_ERR("Could not parse tracking_area_code in i %d, error: %d", i, err);
 			goto clean_exit;
@@ -1361,7 +1170,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <ta> */
 		curr_index++;
-		err = at_params_int_get(&resp_list, curr_index, &tmp_int);
+		err = at_parser_num_get(&parser, curr_index, &tmp_int);
 		if (err) {
 			LOG_ERR("Could not parse timing_advance, error: %d", err);
 			goto clean_exit;
@@ -1370,8 +1179,8 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <ta_meas_time> */
 		curr_index++;
-		err = at_params_int64_get(&resp_list, curr_index,
-					  &parsed_cell.timing_advance_meas_time);
+		err = at_parser_num_get(&parser, curr_index,
+					&parsed_cell.timing_advance_meas_time);
 		if (err) {
 			LOG_ERR("Could not parse timing_advance_meas_time, error: %d", err);
 			goto clean_exit;
@@ -1379,7 +1188,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <earfcn> */
 		curr_index++;
-		err = at_params_int_get(&resp_list, curr_index, &parsed_cell.earfcn);
+		err = at_parser_num_get(&parser, curr_index, &parsed_cell.earfcn);
 		if (err) {
 			LOG_ERR("Could not parse earfcn, error: %d", err);
 			goto clean_exit;
@@ -1387,7 +1196,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <phys_cell_id> */
 		curr_index++;
-		err = at_params_short_get(&resp_list, curr_index, &parsed_cell.phys_cell_id);
+		err = at_parser_num_get(&parser, curr_index, &parsed_cell.phys_cell_id);
 		if (err) {
 			LOG_ERR("Could not parse phys_cell_id, error: %d", err);
 			goto clean_exit;
@@ -1395,7 +1204,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <rsrp> */
 		curr_index++;
-		err = at_params_short_get(&resp_list, curr_index, &parsed_cell.rsrp);
+		err = at_parser_num_get(&parser, curr_index, &parsed_cell.rsrp);
 		if (err) {
 			LOG_ERR("Could not parse rsrp, error: %d", err);
 			goto clean_exit;
@@ -1403,7 +1212,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <rsrq> */
 		curr_index++;
-		err = at_params_short_get(&resp_list, curr_index, &parsed_cell.rsrq);
+		err = at_parser_num_get(&parser, curr_index, &parsed_cell.rsrq);
 		if (err) {
 			LOG_ERR("Could not parse rsrq, error: %d", err);
 			goto clean_exit;
@@ -1411,7 +1220,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <meas_time> */
 		curr_index++;
-		err = at_params_int64_get(&resp_list, curr_index, &parsed_cell.measurement_time);
+		err = at_parser_num_get(&parser, curr_index, &parsed_cell.measurement_time);
 		if (err) {
 			LOG_ERR("Could not parse meas_time, error: %d", err);
 			goto clean_exit;
@@ -1419,7 +1228,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <serving> */
 		curr_index++;
-		err = at_params_short_get(&resp_list, curr_index, &tmp_short);
+		err = at_parser_num_get(&parser, curr_index, &tmp_short);
 		if (err) {
 			LOG_ERR("Could not parse serving, error: %d", err);
 			goto clean_exit;
@@ -1428,7 +1237,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 		/* <neighbor_count> */
 		curr_index++;
-		err = at_params_short_get(&resp_list, curr_index, &tmp_short);
+		err = at_parser_num_get(&parser, curr_index, &tmp_short);
 		if (err) {
 			LOG_ERR("Could not parse neighbor_count, error: %d", err);
 			goto clean_exit;
@@ -1469,10 +1278,18 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 			}
 
 			/* Parse neighbors */
-			for (j = 0; j < to_be_parsed_ncell_count; j++) {
+			for (j = 0; j < parsed_ncells_count; j++) {
+				/* If maximum number of cells has been stored, skip the data for
+				 * the remaining ncells to be able to continue from next GCI cell
+				 */
+				if (j >= to_be_parsed_ncell_count) {
+					LOG_WRN("Ignoring ncell");
+					curr_index += 5;
+					continue;
+				}
 				/* <n_earfcn[j]> */
 				curr_index++;
-				err = at_params_int_get(&resp_list,
+				err = at_parser_num_get(&parser,
 							curr_index,
 							&cells->neighbor_cells[j].earfcn);
 				if (err) {
@@ -1482,9 +1299,9 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 				/* <n_phys_cell_id[j]> */
 				curr_index++;
-				err = at_params_short_get(&resp_list,
-							  curr_index,
-							  &cells->neighbor_cells[j].phys_cell_id);
+				err = at_parser_num_get(&parser,
+							curr_index,
+							&cells->neighbor_cells[j].phys_cell_id);
 				if (err) {
 					LOG_ERR("Could not parse n_phys_cell_id, error: %d", err);
 					goto clean_exit;
@@ -1492,7 +1309,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 				/* <n_rsrp[j]> */
 				curr_index++;
-				err = at_params_int_get(&resp_list, curr_index, &tmp_int);
+				err = at_parser_num_get(&parser, curr_index, &tmp_int);
 				if (err) {
 					LOG_ERR("Could not parse n_rsrp, error: %d", err);
 					goto clean_exit;
@@ -1501,7 +1318,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 				/* <n_rsrq[j]> */
 				curr_index++;
-				err = at_params_int_get(&resp_list, curr_index, &tmp_int);
+				err = at_parser_num_get(&parser, curr_index, &tmp_int);
 				if (err) {
 					LOG_ERR("Could not parse n_rsrq, error: %d", err);
 					goto clean_exit;
@@ -1510,7 +1327,7 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 				/* <time_diff[j]> */
 				curr_index++;
-				err = at_params_int_get(&resp_list,
+				err = at_parser_num_get(&parser,
 							curr_index,
 							&cells->neighbor_cells[j].time_diff);
 				if (err) {
@@ -1527,59 +1344,52 @@ int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
 
 	if (incomplete) {
 		err = -E2BIG;
-		LOG_ERR("Buffer is too small; results incomplete: %d", err);
+		LOG_WRN("Buffer is too small; results incomplete: %d", err);
 	}
 
 clean_exit:
-	at_params_list_free(&resp_list);
-
 	return err;
 }
 
 int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_sleep)
 {
 	int err;
-	struct at_param_list resp_list = {0};
+	struct at_parser parser;
 	uint16_t type;
+	size_t count = 0;
 
-	if (modem_sleep == NULL || at_response == NULL) {
-		return -EINVAL;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(modem_sleep != NULL);
 
-	err = at_params_list_init(&resp_list, AT_XMODEMSLEEP_PARAMS_COUNT_MAX);
-	if (err) {
-		LOG_ERR("Could not init AT params list, error: %d", err);
-		return err;
-	}
+	err = at_parser_init(&parser, at_response);
+	__ASSERT_NO_MSG(err == 0);
 
-	/* Parse XMODEMSLEEP response and populate AT parameter list */
-	err = at_parser_params_from_str(at_response, NULL, &resp_list);
-	if (err) {
-		LOG_ERR("Could not parse %%XMODEMSLEEP response, error: %d", err);
-		goto clean_exit;
-	}
-
-	err = at_params_unsigned_short_get(&resp_list, AT_XMODEMSLEEP_TYPE_INDEX, &type);
+	err = at_parser_num_get(&parser, AT_XMODEMSLEEP_TYPE_INDEX, &type);
 	if (err) {
 		LOG_ERR("Could not get mode sleep type, error: %d", err);
 		goto clean_exit;
 	}
 	modem_sleep->type = type;
 
-	/* If the time parameter is not present sleep time is considered infinite. */
-	if (at_params_valid_count_get(&resp_list) < AT_XMODEMSLEEP_PARAMS_COUNT_MAX - 1) {
+	err = at_parser_cmd_count_get(&parser, &count);
+	if (err) {
+		LOG_ERR("Could not get XMODEMSLEEP param count, "
+			"potentially malformed notification, error: %d", err);
+		goto clean_exit;
+	}
+
+	if (count < AT_XMODEMSLEEP_PARAMS_COUNT_MAX - 1) {
 		modem_sleep->time = -1;
 		goto clean_exit;
 	}
 
-	err = at_params_int64_get(&resp_list, AT_XMODEMSLEEP_TIME_INDEX, &modem_sleep->time);
+	err = at_parser_num_get(&parser, AT_XMODEMSLEEP_TIME_INDEX, &modem_sleep->time);
 	if (err) {
 		LOG_ERR("Could not get time until next modem sleep, error: %d", err);
 		goto clean_exit;
 	}
 
 clean_exit:
-	at_params_list_free(&resp_list);
 	return err;
 }
 
@@ -1598,15 +1408,8 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 		[LTE_LC_MODEM_EVT_CE_LEVEL_3] = AT_MDMEV_CE_LEVEL_3,
 	};
 
-	if (at_response == NULL || modem_evt == NULL) {
-		return -EINVAL;
-	}
-
-	if (!response_is_valid(at_response, sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1,
-			       AT_MDMEV_RESPONSE_PREFIX)) {
-		LOG_ERR("Invalid MDMEV response");
-		return -EIO;
-	}
+	__ASSERT_NO_MSG(at_response != NULL);
+	__ASSERT_NO_MSG(modem_evt != NULL);
 
 	const char *start_ptr = at_response + sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1;
 
@@ -1627,7 +1430,10 @@ int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 char *periodic_search_pattern_get(char *const buf, size_t buf_size,
 				  const struct lte_lc_periodic_search_pattern *const pattern)
 {
-	int err;
+	int len = 0;
+
+	__ASSERT_NO_MSG(buf != NULL);
+	__ASSERT_NO_MSG(pattern != NULL);
 
 	if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE) {
 		/* Range format:
@@ -1635,67 +1441,46 @@ char *periodic_search_pattern_get(char *const buf, size_t buf_size,
 		 *  <pattern_end_point>"
 		 */
 		if (pattern->range.time_to_final_sleep != -1) {
-			err = snprintk(buf, buf_size, "\"0,%u,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"0,%u,%u,%u,%u\"",
 				       pattern->range.initial_sleep, pattern->range.final_sleep,
 				       pattern->range.time_to_final_sleep,
 				       pattern->range.pattern_end_point);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else {
-			err = snprintk(buf, buf_size, "\"0,%u,%u,,%u\"",
+			len = snprintk(buf, buf_size, "\"0,%u,%u,,%u\"",
 				       pattern->range.initial_sleep, pattern->range.final_sleep,
 				       pattern->range.pattern_end_point);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		}
 	} else if (pattern->type == LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE) {
 		/* Table format: "<type>,<val1>[,<val2>][,<val3>][,<val4>][,<val5>]". */
 		if (pattern->table.val_2 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u\"", pattern->table.val_1);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
+			len = snprintk(buf, buf_size, "\"1,%u\"", pattern->table.val_1);
 		} else if (pattern->table.val_3 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else if (pattern->table.val_4 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2,
 				       pattern->table.val_3);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else if (pattern->table.val_5 == -1) {
-			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2,
 				       pattern->table.val_3, pattern->table.val_4);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		} else {
-			err = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u,%u\"",
+			len = snprintk(buf, buf_size, "\"1,%u,%u,%u,%u,%u\"",
 				       pattern->table.val_1, pattern->table.val_2,
 				       pattern->table.val_3, pattern->table.val_4,
 				       pattern->table.val_5);
-			if (err < 0 || err >= buf_size) {
-				goto error;
-			}
 		}
 	} else {
-		LOG_WRN("Unrecognized periodic search pattern type");
+		LOG_ERR("Unrecognized periodic search pattern type");
 		buf[0] = '\0';
 	}
 
-	return buf;
-
-error:
-	LOG_ERR("An error occurred, the pattern string is empty. Error code %d", err);
-	buf[0] = '\0';
+	if (len >= buf_size) {
+		LOG_ERR("Encoding periodic search pattern failed. Too small buffer (%d/%d)",
+			len, buf_size);
+		buf[0] = '\0';
+	}
 
 	return buf;
 }
@@ -1706,6 +1491,9 @@ int parse_periodic_search_pattern(const char *const pattern_str,
 	int err;
 	int values[5];
 	size_t param_count;
+
+	__ASSERT_NO_MSG(pattern_str != NULL);
+	__ASSERT_NO_MSG(pattern != NULL);
 
 	err = sscanf(pattern_str, "%d,%u,%u,%u,%u,%u",
 		(int *)&pattern->type, &values[0], &values[1], &values[2], &values[3], &values[4]);

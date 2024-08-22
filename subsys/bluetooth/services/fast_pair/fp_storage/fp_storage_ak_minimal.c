@@ -232,6 +232,13 @@ static int fp_storage_ak_reset(void)
 	int err;
 	bool was_enabled = is_enabled;
 
+	if (was_enabled) {
+		err = fp_storage_ak_uninit();
+		if (err) {
+			return err;
+		}
+	}
+
 	err = fp_storage_owner_ak_delete();
 	if (err) {
 		return err;

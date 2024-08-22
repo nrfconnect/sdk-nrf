@@ -333,7 +333,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
+	       bt_security_err_to_str(reason));
 
 	k_poll_signal_raise(&pair_signal, 0);
 	bt_le_oob_set_sc_flag(false);
@@ -373,7 +374,8 @@ static void connected(struct bt_conn *conn, uint8_t err)
 			printk("Direct advertising to %s timed out\n", addr);
 			k_work_submit(&adv_work);
 		} else {
-			printk("Failed to connect to %s (%u)\n", addr, err);
+			printk("Failed to connect to %s 0x%02x %s\n", addr, err,
+			       bt_hci_err_to_str(err));
 		}
 
 		return;
@@ -401,11 +403,10 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		dk_set_led_off(CON_STATUS_LED);
 	}
 
-	printk("Disconnected from %s (reason %u)\n", addr, reason);
+	printk("Disconnected from %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 }
 
-static void security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -414,8 +415,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
+		       bt_security_err_to_str(err));
 	}
 }
 

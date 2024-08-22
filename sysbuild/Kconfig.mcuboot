@@ -158,4 +158,12 @@ endchoice
 
 endif
 
+config MCUBOOT_USE_ALL_AVAILABLE_RAM
+	bool "Allow MCUboot to use all available RAM (security implications)"
+	depends on BOARD_IS_NON_SECURE
+	help
+	  By default MCUboot uses only the secure RAM partition. Enabling this
+	  may allow secrets to be leaked to non-secure through the non-secure
+	  RAM partition.
+
 endmenu

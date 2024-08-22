@@ -58,6 +58,15 @@ config BUILD_OUTPUT_HEX
 	  The name of this file can be customized with CONFIG_KERNEL_BIN_NAME.
 	  This will be applied to all target images.
 
+# TODO: NCSDK-28330
+# This check will fail for variants
+BOARD_NS_QUALIFIER_CHECK := $(substring,$(BOARD_QUALIFIERS),-3)
+
+config BOARD_IS_NON_SECURE
+	bool
+	default y if "$(BOARD_NS_QUALIFIER_CHECK)" = "/ns"
+
+rsource "Kconfig.appcore"
 rsource "Kconfig.netcore"
 rsource "Kconfig.pprcore"
 rsource "Kconfig.secureboot"

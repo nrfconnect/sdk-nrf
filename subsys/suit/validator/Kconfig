@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SUIT_VALIDATOR
+	bool "Enable SUIT validator module"
+	depends on SUIT_METADATA
+
+if SUIT_VALIDATOR
+
+choice SUIT_VALIDATOR_IMPL
+	prompt "SUIT validator implementation"
+
+config SUIT_VALIDATOR_IMPL_NRF54H20_SDFW
+	bool "nRF54H20: Secure domain"
+	depends on SOC_SERIES_NRF54HX
+	depends on SUIT_PLATFORM_VARIANT_SDFW
+
+config SUIT_VALIDATOR_IMPL_CUSTOM
+	bool "custom"
+
+endchoice # SUIT_VALIDATOR_IMPL
+
+endif # SUIT_VALIDATOR

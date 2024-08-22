@@ -20,6 +20,16 @@ struct nvm_address {
 	uintptr_t offset;
 };
 
+/* Characteristics of NVM partition */
+struct suit_nvm_device_info {
+	const struct device *fdev;
+	size_t erase_block_size;
+	size_t write_block_size;
+	size_t partition_offset;
+	size_t partition_size;
+	uint8_t *mapped_address;
+};
+
 /**
  * @brief Convert global address to NVM address.
  *

@@ -100,7 +100,8 @@ This guide uses the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` to i
 
 To edit clusters using the ZAP tool, complete the following steps:
 
-1. Navigate to your sample directory and run the following command:
+1. |open_terminal_window_with_environment|
+#. Navigate to your sample directory and run the following command:
 
    .. code-block::
 

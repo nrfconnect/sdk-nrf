@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MOCK_NRF_RPC
+	bool "Mock library for nRF RPC"
+
+if MOCK_NRF_RPC
+
+choice NRF_RPC_TRANSPORT
+
+config MOCK_NRF_RPC_TRANSPORT
+	bool "Mock nRF RPC transport"
+	help
+	  Mock nRF RPC transport for unit testing.
+
+endchoice # NRF_RPC_TRANSPORT
+
+endif # MOCK_NRF_RPC

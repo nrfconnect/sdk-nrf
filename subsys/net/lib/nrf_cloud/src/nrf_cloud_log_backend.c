@@ -19,6 +19,7 @@
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_log_internal.h"
 #include "nrf_cloud_coap_transport.h"
+#include "nrf_cloud_client_id.h"
 #include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_coap.h>
 #include <net/nrf_cloud_log.h>
@@ -32,6 +33,9 @@ LOG_MODULE_DECLARE(nrf_cloud_log, CONFIG_NRF_CLOUD_LOG_LOG_LEVEL);
 
 /** Special value indicating the source of this log entry could not be determined */
 #define UNKNOWN_LOG_SOURCE UINT32_MAX
+
+/** Topic for dictionary (binary) logging. */
+#define TOPIC_FMT "d/%s/d2c/bin"
 
 static void logger_init(const struct log_backend *const backend);
 static void logger_process(const struct log_backend *const backend, union log_msg_generic *msg);
@@ -96,6 +100,7 @@ static const char * const filtered_modules[] = {
 	"nrf_cloud_jwt",
 	"rest_client",
 	"net_http",
+	"net_http_client",
 #endif
 #if defined(CONFIG_NRF_CLOUD_COAP)
 	"nrf_cloud_coap",
@@ -131,6 +136,11 @@ BUILD_ASSERT(!((IS_ENABLED(CONFIG_LOG_BACKEND_UART_OUTPUT_TEXT) ||
 		&& IS_ENABLED(CONFIG_LOG_FMT_SECTION_STRIP)),
 		"CONFIG_LOG_FMT_SECTION_STRIP is not compatible with text logging.");
 
+#if defined(CONFIG_NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED)
+BUILD_ASSERT(!IS_ENABLED(CONFIG_NRF_CLOUD_COAP),
+	     "nRF Cloud dictionary logging is only available for MQTT and REST");
+#endif
+
 LOG_BACKEND_DEFINE(log_nrf_cloud_backend, logger_api, false);
 /* Reduce reported log_buf size by 1 so we can null terminate */
 LOG_OUTPUT_DEFINE(log_nrf_cloud_output, logger_out, log_buf, (sizeof(log_buf) - 1));
@@ -149,13 +159,16 @@ static void logger_init(const struct log_backend *const backend)
 		return;
 	}
 	if ((CONFIG_LOG_BACKEND_NRF_CLOUD_OUTPUT_DEFAULT != LOG_OUTPUT_TEXT) &&
-	    !IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+	    IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
 		LOG_ERR("Only text mode logs supported with current cloud transport");
 		return;
 	}
 	initialized = true;
 
 	nrf_cloud_log_init();
+	LOG_INF("nRF Cloud logging mode:%s, level:%d",
+		IS_ENABLED(CONFIG_NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED) ? "dictionary" : "text",
+		nrf_cloud_log_control_get());
 
 	LOG_DBG("Filtering lower level log sources");
 	for (i = 0; i < ARRAY_SIZE(filtered_modules); i++) {
@@ -173,8 +186,9 @@ static void logger_init(const struct log_backend *const backend)
 		actual_level = log_filter_set(&log_nrf_cloud_backend,
 					      Z_LOG_LOCAL_DOMAIN_ID,
 					      sid, 0);
-		if (actual_level != 0) {
-			LOG_WRN("Unable to filter logs for module %d: %s", i, filtered_modules[i]);
+		if (IS_ENABLED(CONFIG_LOG_RUNTIME_FILTERING) && (actual_level != 0)) {
+			LOG_WRN("Unable to filter logs for module %d: %s",
+				i, filtered_modules[i]);
 		}
 		LOG_DBG("%d. log:%s, srcid:%u, actual_level:%u",
 			i, filtered_modules[i], sid, actual_level);
@@ -239,7 +253,9 @@ static int log_msg_filter(uint32_t src_id, int level)
 			continue;
 		}
 		if (src_id == filtered_ids[i]) {
-			LOG_DBG("Filtered: %s", filtered_modules[i]);
+			if (IS_ENABLED(CONFIG_NRF_CLOUD_LOG_LOG_LEVEL_DBG)) {
+				printk("nrf_cloud_log: Filtered: %s\n", filtered_modules[i]);
+			}
 			return -ENOMSG;
 		}
 	}
@@ -356,17 +372,76 @@ static void logger_notify(const struct log_backend *const backend, enum log_back
 	}
 }
 
+static int convert_to_quoted_base64(const uint8_t *in_ptr, size_t in_sz,
+				    uint8_t **out_ptr, size_t *out_sz)
+{
+	int err;
+	size_t blen;
+
+	/* Determine buffer size needed -- blen will include 1 byte for null terminator */
+	(void)base64_encode(NULL, 0, &blen, in_ptr, in_sz);
+	*out_sz = blen + 2;
+
+	*out_ptr = nrf_cloud_malloc(*out_sz);
+	if (*out_ptr == NULL) {
+		return -ENOMEM;
+	}
+	(*out_ptr)[0] = '\"';
+	err = base64_encode(&((*out_ptr)[1]), blen, &blen, in_ptr, in_sz);
+	if (err) {
+		nrf_cloud_free(*out_ptr);
+		*out_ptr = NULL;
+		return err;
+	}
+	(*out_ptr)[*out_sz - 2] = '\"';
+	(*out_ptr)[*out_sz - 1] = '\0';
+	(*out_sz)--;
+
+	return 0;
+}
+
+static char *get_dict_topic(void)
+{
+	int err;
+	const char *client_id_ptr;
+	size_t client_id_len;
+	char *topic;
+	size_t topic_len;
+
+	err = nrf_cloud_client_id_ptr_get(&client_id_ptr);
+	if (err) {
+		LOG_ERR("Unable to get client_id: %d", err);
+		return NULL;
+	};
+	client_id_len = strlen(client_id_ptr);
+
+	topic_len = client_id_len + sizeof(TOPIC_FMT);
+	topic = nrf_cloud_malloc(topic_len + 1);
+	if (!topic) {
+		LOG_ERR("Memory allocation failed for topic");
+		return NULL;
+	}
+
+	err = snprintk(topic, topic_len, TOPIC_FMT, client_id_ptr);
+	if (err < 0 || err >= topic_len) {
+		LOG_ERR("Could not format topic");
+		nrf_cloud_free(topic);
+		return NULL;
+	}
+	return topic;
+}
+
 static int send_ring_buffer(void)
 {
 	int err = 0;
 	int ret = 0;
-	struct nrf_cloud_tx_data output = {
-		.qos = MQTT_QOS_0_AT_MOST_ONCE,
-		.topic_type = (log_format_current == LOG_OUTPUT_TEXT) ?
-			       NRF_CLOUD_TOPIC_BULK : NRF_CLOUD_TOPIC_BIN
-	};
 	uint32_t stored;
-	uint8_t *base64_buf = NULL;
+	char *topic = NULL;
+	uint8_t *log_rb_ptr;
+	uint32_t log_rb_len;
+	uint8_t *log_b64_ptr = NULL;
+	uint32_t log_b64_len;
+	struct nrf_cloud_data output_data;
 
 	/* The bulk topic requires the multiple JSON messages to be placed in
 	 * a JSON array. Close the array then send it.
@@ -376,69 +451,95 @@ static int send_ring_buffer(void)
 	}
 
 	stored = ring_buf_size_get(&log_nrf_cloud_rb);
-	output.data.len = ring_buf_get_claim(&log_nrf_cloud_rb,
-					     (uint8_t **)&output.data.ptr,
-					     stored);
-	if (output.data.len != stored) {
+	log_rb_len = ring_buf_get_claim(&log_nrf_cloud_rb, &log_rb_ptr, stored);
+	if (log_rb_len != stored) {
 		LOG_WRN("Capacity:%u, free:%u, stored:%u, claimed:%u",
 			ring_buf_capacity_get(&log_nrf_cloud_rb),
 			ring_buf_space_get(&log_nrf_cloud_rb),
-			stored, output.data.len);
-		stored = output.data.len;
+			stored, log_rb_len);
+		stored = log_rb_len;
 	}
-	if (!output.data.len) {
+	if (!log_rb_len) {
 		goto cleanup;
 	}
+	if ((log_format_current == LOG_OUTPUT_DICT) &&
+	    IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
+		topic = get_dict_topic();
+		if (!topic) {
+			goto cleanup;
+		}
+		err = convert_to_quoted_base64(log_rb_ptr, log_rb_len,
+					       &log_b64_ptr, &log_b64_len);
+		if (err) {
+			goto cleanup;
+		}
+		LOG_DBG("topic:   %s", topic);
+		LOG_DBG("payload: %s", (const char *)log_b64_ptr);
+		output_data.ptr = log_b64_ptr;
+		output_data.len = log_b64_len;
+	} else {
+		/* Send ring buffer contents as is -- JSON or raw binary. */
+		log_rb_ptr[log_rb_len] = '\0';
+		output_data.ptr = log_rb_ptr;
+		output_data.len = log_rb_len;
+	}
 
-	uint8_t *p = (uint8_t *)output.data.ptr;
-
-	p[output.data.len] = '\0';
-
-	LOG_DBG("Ready to transmit %zd bytes...", output.data.len);
+	LOG_DBG("Ready to transmit %zd bytes...", output_data.len);
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT)) {
+		struct nrf_cloud_tx_data output = {
+			.qos = MQTT_QOS_0_AT_MOST_ONCE,
+			.topic_type = (log_format_current == LOG_OUTPUT_TEXT) ?
+				       NRF_CLOUD_TOPIC_BULK : NRF_CLOUD_TOPIC_BIN,
+			.data.ptr = output_data.ptr,
+			.data.len = output_data.len
+		};
+
 		err = nrf_cloud_send(&output);
 	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
 		do {
+			/* If no topic provided, use d2c/bulk, otherwise use topic. */
 			err = nrf_cloud_rest_send_device_message(log_context.rest_ctx,
 								 log_context.device_id,
-								 output.data.ptr, true, NULL);
+								 output_data.ptr,
+								 !topic, topic);
 			if (err) {
 				LOG_ERR("Error sending message:%d", err);
-				if (p[0] == '\0') {
-					LOG_ERR("Empty buffer!");
-				}
 				if (err != -EBUSY) {
 					LOG_ERR("Data: %s, len: %zd",
-						(const char *)output.data.ptr, output.data.len);
+						(const char *)output_data.ptr, output_data.len);
 				}
 				k_sleep(K_MSEC(100));
 			}
 		} while (err == -EBUSY);
 	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
-		err = nrf_cloud_coap_json_message_send(output.data.ptr, true, true);
+		err = nrf_cloud_coap_json_message_send(output_data.ptr, true, true);
 	} else {
 		err = -ENODEV;
 	}
 	if (!err) {
 		stats.lines_sent += num_msgs;
-		stats.bytes_sent += output.data.len;
+		stats.bytes_sent += output_data.len;
 	}
 
 cleanup:
 	if (err) {
 		LOG_ERR("Error %d ret %d processing ring buffer", err, ret);
 	}
-	if (base64_buf) {
-		k_free(base64_buf);
-	}
+
 	ret = ring_buf_get_finish(&log_nrf_cloud_rb, stored);
 	ring_buf_reset(&log_nrf_cloud_rb);
 	num_msgs = 0;
-
 	if (ret) {
 		LOG_ERR("Error finishing ring buffer: %d", ret);
 		err = ret;
 	}
+	if (log_b64_ptr) {
+		nrf_cloud_free(log_b64_ptr);
+	}
+	if (topic) {
+		nrf_cloud_free(topic);
+	}
+
 	return err;
 }
 

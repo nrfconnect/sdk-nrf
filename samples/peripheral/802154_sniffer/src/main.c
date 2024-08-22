@@ -60,7 +60,7 @@ int net_recv_data(struct net_if *iface, struct net_pkt *pkt)
 	uint8_t *psdu = net_buf_frag_last(pkt->buffer)->data;
 	size_t length = net_buf_frags_len(pkt->buffer);
 	uint8_t lqi = net_pkt_ieee802154_lqi(pkt);
-	int8_t rssi = net_pkt_ieee802154_rssi(pkt);
+	int8_t rssi = net_pkt_ieee802154_rssi_dbm(pkt);
 	struct net_ptp_time *pkt_time = net_pkt_timestamp(pkt);
 	uint64_t timestamp =
 		pkt_time->second * USEC_PER_SEC + pkt_time->nanosecond / NSEC_PER_USEC;

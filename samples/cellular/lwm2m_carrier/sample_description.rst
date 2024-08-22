@@ -120,7 +120,7 @@ Building and running
 Building with overlay
 =====================
 
-To build with a Kconfig overlay, pass it to the build system using the ``EXTRA_CONF_FILE`` CMake variable, as shown in the following example:
+To build with a Kconfig overlay, set :makevar:`EXTRA_CONF_FILE` to the :file:`overlay-shell.conf` file using the respective :ref:`CMake option <cmake_options>`, as shown in the following example:
 
 .. parsed-literal::
    :class: highlight
@@ -131,6 +131,8 @@ To build with a Kconfig overlay, pass it to the build system using the ``EXTRA_C
 
 This command builds for your nRF91 Series DK using the configurations found in the :file:`overlay-shell.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
 If some options are defined in both files, the options set in the overlay take precedence.
+
+For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 Testing
 =======

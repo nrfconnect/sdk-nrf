@@ -225,6 +225,14 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		goto out;
 	}
 
+	if (*(end - 1) == '\n') {
+		end--;
+	}
+
+	if (((char *)buf)[len - 1] == '\n') {
+		len--;
+	}
+
 	if (end - begin != len) {
 		LOG_DBG("Credential length mismatch");
 		err = 1;

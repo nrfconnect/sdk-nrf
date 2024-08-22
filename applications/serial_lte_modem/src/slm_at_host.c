@@ -42,7 +42,6 @@ static int datamode_handler_result;
 uint16_t slm_datamode_time_limit; /* Send trigger by time in data mode */
 K_MUTEX_DEFINE(mutex_mode); /* Protects the operation mode variables. */
 
-static struct at_param_list at_host_param_list;
 uint8_t slm_at_buf[SLM_AT_MAX_CMD_LEN + 1];
 uint8_t slm_data_buf[SLM_MAX_MESSAGE_SIZE];
 
@@ -846,32 +845,31 @@ bool verify_datamode_control(uint16_t time_limit, uint16_t *min_time_limit)
 	return true;
 }
 
-int slm_get_at_param_list(const char *at_cmd, struct at_param_list **list)
-{
-	int err;
-
-	*list = &at_host_param_list;
-
-	err = at_parser_params_from_str(at_cmd, NULL, *list);
-	if (err) {
-		LOG_ERR("AT command parsing failed: %d", err);
-	}
-
-	return err;
-}
-
 int slm_at_cb_wrapper(char *buf, size_t len, char *at_cmd, slm_at_callback *cb)
 {
 	int err;
-	struct at_param_list *list = NULL;
+	struct at_parser parser;
+	size_t valid_count = 0;
+	enum at_parser_cmd_type type;
 
 	assert(cb);
 
-	err = slm_get_at_param_list(at_cmd, &list);
+	err = at_parser_init(&parser, at_cmd);
 	if (err) {
 		return err;
 	}
-	err = cb(at_parser_cmd_type_get(at_cmd), list, at_params_valid_count_get(list));
+
+	err = at_parser_cmd_count_get(&parser, &valid_count);
+	if (err) {
+		return err;
+	}
+
+	err = at_parser_cmd_type_get(&parser, &type);
+	if (err) {
+		return err;
+	}
+
+	err = cb(type, &parser, valid_count);
 	if (!err) {
 		err = at_cmd_custom_respond(buf, len, "OK\r\n");
 		if (err) {
@@ -885,13 +883,6 @@ int slm_at_cb_wrapper(char *buf, size_t len, char *at_cmd, slm_at_callback *cb)
 int slm_at_host_init(void)
 {
 	int err;
-
-	/* Initialize AT Parser */
-	err = at_params_list_init(&at_host_param_list, CONFIG_SLM_AT_MAX_PARAM);
-	if (err) {
-		LOG_ERR("Failed to init AT Parser: %d", err);
-		return err;
-	}
 
 	k_mutex_lock(&mutex_mode, K_FOREVER);
 	slm_datamode_time_limit = 0;
@@ -985,9 +976,6 @@ void slm_at_host_uninit(void)
 	slm_at_uninit();
 
 	at_host_power_off(true);
-
-	/* Un-initialize AT Parser */
-	at_params_list_free(&at_host_param_list);
 
 	LOG_DBG("at_host uninit done");
 }

@@ -30,12 +30,14 @@
 # Applications
 /applications/asset_tracker_v2/           @nrfconnect/ncs-cia @coderbyheart
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
+/applications/sw_io_devices/              @masz-nordic
 /applications/ipc_radio/                  @dchat-nordic
 /applications/machine_learning/           @pdunaj
 /applications/matter_bridge/              @nrfconnect/ncs-matter
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
+/applications/audio/                      @nrfconnect/ncs-audio
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
 /applications/zigbee_weather_station/     @milewr
 # Boards
@@ -49,6 +51,8 @@ Kconfig*                                  @tejlmand
 # Sysbuild related files
 /sysbuild/                                @tejlmand @nordicjm
 /cmake/sysbuild/                          @tejlmand @nordicjm
+# SUIT configuration files
+/config/suit/                             @tomchy @ahasztag
 # All doc related files
 /doc/_extensions/                         @gmarull
 /doc/_scripts/                            @carlescufi
@@ -59,8 +63,8 @@ Kconfig*                                  @tejlmand
 /doc/**/conf.py                           @carlescufi
 /doc/kconfig/                             @gmarull
 /doc/nrf/                                 @carlescufi
-/doc/nrf/device_guides/working_with_nrf/nrf54h/  @FrancescoSer
-/doc/nrf/device_guides/working_with_nrf/nrf54l/ @annwoj
+/doc/nrf/app_dev/device_guides/working_with_nrf/nrf54h/  @FrancescoSer
+/doc/nrf/app_dev/device_guides/working_with_nrf/nrf54l/ @annwoj
 /doc/nrfx/                                @gmarull
 /doc/matter/                              @gmarull
 /doc/mcuboot/                             @carlescufi
@@ -70,7 +74,7 @@ Kconfig*                                  @tejlmand
 /doc/tags.yml                             @gmarull @umapraseeda @b-gent
 /doc/requirements.txt                     @gmarull
 # General top-level docs
-/doc/nrf/config_and_build/                @greg-fer
+/doc/nrf/app_dev/                         @greg-fer
 /doc/nrf/installation/                    @greg-fer
 /doc/nrf/security/                        @greg-fer
 /doc/nrf/test_and_optimize/               @greg-fer
@@ -79,6 +83,7 @@ Kconfig*                                  @tejlmand
 /doc/nrf/protocols/thread/*.rst           @wiba-nordic
 # All subfolders
 /drivers/                                 @anangl
+/drivers/gpio/                            @masz-nordic
 /drivers/serial/                          @nordic-krch @anangl
 /drivers/sensor/bh1749/                   @nrfconnect/ncs-cia
 /drivers/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
@@ -88,17 +93,19 @@ Kconfig*                                  @tejlmand
 /dts/                                     @anangl
 /ext/                                     @carlescufi
 /include/                                 @anangl @rlubos
+/include/drivers/gpio/                    @masz-nordic
 /include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @plskeggs @jayteemo @glarsennordic
 /include/bluetooth/                       @alwa-nordic @jori-nordic @KAGA164
 /include/bluetooth/services/fast_pair/    @alstrzebonski @MarekPieta @kapi-no
 /include/bluetooth/adv_prov.h             @MarekPieta @kapi-no @KAGA164
-/include/bluetooth/mesh/                  @ludvigsj
+/include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /include/caf/                             @pdunaj
 /include/debug/ppi_trace.h                @nordic-krch @anangl
 /include/drivers/                         @anangl
 /include/dult.h                           @alstrzebonski @kapi-no
+/include/logging/                         @nrfconnect/ncs-protocols-serialization
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @rlubos
 /include/nfc/                             @anangl @grochu
@@ -108,6 +115,7 @@ Kconfig*                                  @tejlmand
 /lib/boot_banner/                         @nordicjm
 /lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/at_cmd_parser/                       @rlubos
+/lib/at_parser/                           @MirkoCovizzi
 /lib/at_cmd_custom/                       @eivindj-nordic
 /lib/at_host/                             @rlubos
 /lib/at_monitor/                          @lemrey @rlubos
@@ -135,8 +143,8 @@ Kconfig*                                  @tejlmand
 /lib/date_time/                           @trantanen @tokangas
 /lib/hw_id/                               @nrfconnect/ncs-cia
 /lib/wave_gen/                            @MarekPieta
-/lib/hw_unique_key/                       @frkv @Vge0rge @vili-nordic @mswarowsky
-/lib/identity_key/                        @frkv @Vge0rge @vili-nordic @mswarowsky
+/lib/hw_unique_key/                       @frkv @Vge0rge @vili-nordic
+/lib/identity_key/                        @frkv @Vge0rge @vili-nordic
 /lib/modem_jwt/                           @jayteemo @SeppoTakalo
 /lib/modem_slm/                           @SeppoTakalo @MarkusLassila @tomi-font
 /lib/modem_attest_token/                  @jayteemo
@@ -145,26 +153,26 @@ Kconfig*                                  @tejlmand
 /lib/data_fifo/                           @nrfconnect/ncs-audio
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
-/lib/sample_rate_converter/               @andvib @gWacey
+/lib/sample_rate_converter/               @nrfconnect/ncs-audio
 /lib/tone/                                @nrfconnect/ncs-audio
 /modules/                                 @tejlmand
 /modules/hostap/                          @krish2718 @jukkar @rado17 @sachinthegreen @rlubos
 /modules/mcuboot/                         @de-nordic @nordicjm
 /modules/cjson/                           @nrfconnect/ncs-cia @plskeggs @sigvartmh
-/modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic @mswarowsky
+/modules/trusted-firmware-m/              @frkv @Vge0rge @vili-nordic
 /modules/coremark/                        @zycz
 /samples/                                 @nrfconnect/ncs-test-leads
 /samples/net/                             @nrfconnect/ncs-cia @lemrey
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/bluetooth/                       @alwa-nordic @jori-nordic @carlescufi @KAGA164
-/samples/bluetooth/mesh/                  @ludvigsj
+/samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic
 /samples/bluetooth/fast_pair/             @alstrzebonski @MarekPieta @kapi-no
 /samples/bootloader/                      @hakonfam @oyvindronningstad
 /samples/matter/                          @nrfconnect/ncs-matter
-/samples/crypto/                          @frkv @Vge0rge @vili-nordic @mswarowsky
+/samples/crypto/                          @frkv @Vge0rge @vili-nordic
 /samples/debug/memfault/                  @nrfconnect/ncs-cia
 /samples/debug/ppi_trace/                 @nordic-krch @anangl
 /samples/hw_id/                           @nrfconnect/ncs-cia
@@ -173,7 +181,7 @@ Kconfig*                                  @tejlmand
 /samples/app_event_manager/               @pdunaj @MarekPieta
 /samples/event_manager_proxy/             @rakons
 /samples/gazell/                          @leewkb4567
-/samples/keys/                            @frkv @Vge0rge @vili-nordic @mswarowsky
+/samples/keys/                            @frkv @Vge0rge @vili-nordic
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/nfc/                             @grochu
 /samples/nrf_rpc/                         @doki-nordic @KAGA164
@@ -191,11 +199,12 @@ Kconfig*                                  @tejlmand
 /samples/cellular/sms/                    @trantanen @tokangas
 /samples/openthread/                      @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /samples/nrf_profiler/                    @pdunaj
+/samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
 /samples/peripheral/radio_test/           @KAGA164 @maje-emb
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/802154_phy_test/      @ankuns @piotrkoziar
 /samples/peripheral/802154_sniffer/       @e-rk
-/samples/tfm/                             @frkv @Vge0rge @vili-nordic @mswarowsky
+/samples/tfm/                             @frkv @Vge0rge @vili-nordic
 /samples/zigbee/                          @milewr
 /samples/CMakeLists.txt                   @tejlmand
 /samples/nrf5340/netboot/                 @hakonfam
@@ -229,18 +238,25 @@ Kconfig*                                  @tejlmand
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
+/scripts/ci/tags.yaml                     @nordic-piks @PerMac @katgiadla
+/scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
+/snippets/emulated*/                      @masz-nordic
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
 /snippets/nrf91-modem-trace-uart/         @eivindj-nordic
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
-/snippets/nrf70-debug/                    @krish2718 @sachinthegreen
+/snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
+/snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
+/snippets/wpa-supplicant-debug/           @krish2718 @sachinthegreen
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
+/snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
+/snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @alwa-nordic @jori-nordic @carlescufi @KAGA164
-/subsys/bluetooth/mesh/                   @ludvigsj
+/subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @MarekPieta @kapi-no @KAGA164
 /subsys/bluetooth/services/fast_pair/     @alstrzebonski @MarekPieta @kapi-no
@@ -255,13 +271,14 @@ Kconfig*                                  @tejlmand
 /subsys/ieee802154/                       @rlubos @ankuns @piotrkoziar
 /subsys/mgmt/                             @hakonfam @sigvartmh
 /subsys/mgmt/suitfu/                      @tomchy @ahasztag
-/subsys/emds/                             @balaklaka
+/subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
 /subsys/esb/                              @lemrey
 /subsys/app_event_manager/                @pdunaj
 /subsys/app_event_manager_profiler_tracer/    @pdunaj @MarekPieta
 /subsys/event_manager_proxy/              @rakons
 /subsys/fw_info/                          @hakonfam
 /subsys/gazell/                           @leewkb4567
+/subsys/logging/                          @nrfconnect/ncs-protocols-serialization
 /subsys/mpsl/                             @nrfconnect/ncs-dragoon
 /subsys/mpsl/cx/                          @ankuns @martintv
 /subsys/mpsl/fem/                         @ankuns @martintv
@@ -279,6 +296,7 @@ Kconfig*                                  @tejlmand
 /subsys/net/lib/softap_wifi_provision/    @nrfconnect/ncs-cia
 /subsys/net/openthread/                   @rlubos @edmont @canisLupus1313 @maciejbaczmanski
 /subsys/nfc/                              @grochu @anangl
+/subsys/nfc/rpc/                          @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_rpc/                          @doki-nordic @KAGA164
 /subsys/partition_manager/                @hakonfam
 /subsys/pcd/                              @hakonfam
@@ -287,14 +305,14 @@ Kconfig*                                  @tejlmand
 /subsys/sdfw_services/                    @anhmolt @hakonfam @jonathannilsen
 /subsys/sdfw_services/services/extmem/    @e-rk @tomchy
 /subsys/suit/                             @tomchy @ahasztag
-/subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic @mswarowsky
-/subsys/trusted_storage/                  @frkv @Vge0rge @vili-nordic @mswarowsky
+/subsys/nrf_security/                     @frkv @Vge0rge @vili-nordic
+/subsys/trusted_storage/                  @frkv @Vge0rge @vili-nordic
 /subsys/uart_async_adapter/               @rakons
 /subsys/net_core_monitor/                 @maje-emb
 /subsys/zigbee/                           @milewr
 /tests/                                   @PerMac @katgiadla
 /tests/benchmarks/multicore/              @carlescufi
-/tests/bluetooth/tester/                  @carlescufi @ludvigsj
+/tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/crypto/                            @stephen-nordic @magnev
 /tests/drivers/flash_patch/               @oyvindronningstad
@@ -302,13 +320,15 @@ Kconfig*                                  @tejlmand
 /tests/drivers/fprotect/                  @oyvindronningstad
 /tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @anangl
+/tests/drivers/pwm/gpio_loopback/         @nrfconnect/ncs-low-level-test
 /tests/lib/at_cmd_parser/                 @rlubos
+/tests/lib/at_parser/                     @MirkoCovizzi
 /tests/lib/at_cmd_custom/                 @eivindj-nordic
 /tests/lib/date_time/                     @trantanen @tokangas
 /tests/lib/edge_impulse/                  @pdunaj @MarekPieta
 /tests/lib/nrf_fuel_gauge/                @nordic-auko @aasinclair
 /tests/lib/gcf_sms/                       @eivindj-nordic
-/tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic @mswarowsky
+/tests/lib/hw_unique_key*/                @frkv @Vge0rge @vili-nordic
 /tests/lib/hw_id/                         @nrfconnect/ncs-cia
 /tests/lib/location/                      @trantanen @tokangas
 /tests/lib/lte_lc/                        @trantanen @tokangas
@@ -320,30 +340,31 @@ Kconfig*                                  @tejlmand
 /tests/lib/sfloat/                        @kapi-no @maje-emb
 /tests/lib/sms/                           @trantanen @tokangas
 /tests/lib/nrf_modem_lib/                 @lemrey @MirkoCovizzi
-/tests/lib/nrf_modem_lib/nrf91_sockets/   @MirkoCovizzi
+/tests/lib/nrf_modem_lib/nrf9x_sockets/   @MirkoCovizzi
 /tests/lib/pdn/                           @lemrey @eivindj-nordic
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
 /tests/lib/contin_array/                  @nrfconnect/ncs-audio
 /tests/lib/data_fifo/                     @nrfconnect/ncs-audio
 /tests/lib/pcm_mix/                       @nrfconnect/ncs-audio
 /tests/lib/pcm_stream_channel_modifier/   @nrfconnect/ncs-audio
-/tests/lib/sample_rate_converter/         @andvib @gWacey
+/tests/lib/sample_rate_converter/         @nrfconnect/ncs-audio
 /tests/lib/tone/                          @nrfconnect/ncs-audio
+/tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @hakonfam
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
-/tests/subsys/bluetooth/mesh/             @ludvigsj
-/tests/subsys/bluetooth/enocean/          @ludvigsj
+/tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
+/tests/subsys/bluetooth/enocean/          @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/fast_pair/        @alstrzebonski @MarekPieta @kapi-no
 /tests/subsys/bootloader/                 @hakonfam
 /tests/subsys/caf/                        @zycz
 /tests/subsys/debug/cpu_load/             @nordic-krch
 /tests/subsys/dfu/                        @hakonfam @sigvartmh
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
-/tests/subsys/emds/                       @balaklaka
+/tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @rakons
 /tests/subsys/app_event_manager/          @pdunaj @MarekPieta @rakons
 /tests/subsys/fw_info/                    @oyvindronningstad
@@ -356,12 +377,15 @@ Kconfig*                                  @tejlmand
 /tests/subsys/net/lib/nrf_provisioning/   @SeppoTakalo @juhaylinen
 /tests/subsys/net/lib/wifi_credentials*/  @nrfconnect/ncs-cia
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
+/tests/subsys/net/openthread/rpc/         @nrfconnect/ncs-protocols-serialization
+/tests/subsys/nfc/rpc/                    @nrfconnect/ncs-protocols-serialization
 /tests/subsys/partition_manager/region/   @hakonfam @sigvartmh
+/tests/subsys/partition_manager/static_pm_file/  @nordicjm @tejlmand
 /tests/subsys/pcd/                        @hakonfam @sigvartmh
 /tests/subsys/nrf_profiler/               @pdunaj @MarekPieta
 /tests/subsys/sdfw_services/              @anhmolt @hakonfam @jonathannilsen
 /tests/subsys/zigbee/                     @milewr
 /tests/subsys/suit/                       @tomchy @ahasztag @robertstypa
-/tests/tfm/                               @frkv @Vge0rge @vili-nordic @mswarowsky @stephen-nordic @magnev
+/tests/tfm/                               @frkv @Vge0rge @vili-nordic @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /zephyr/                                  @carlescufi

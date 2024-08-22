@@ -182,7 +182,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (conn_err) {
-		printk("Failed to connect to %s (%u)\n", addr, conn_err);
+		printk("Failed to connect to %s, 0x%02x %s\n", addr, conn_err,
+		       bt_hci_err_to_str(conn_err));
 		if (conn == default_conn) {
 			bt_conn_unref(default_conn);
 			default_conn = NULL;
@@ -220,7 +221,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		auth_conn = NULL;
 	}
 
-	printk("Disconnected: %s (reason %u)\n", addr, reason);
+	printk("Disconnected: %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 
 	if (bt_hogp_assign_check(&hogp)) {
 		printk("HIDS client active - releasing");
@@ -251,8 +252,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
+		       bt_security_err_to_str(err));
 	}
 
 	gatt_discover(conn);
@@ -620,7 +621,8 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
+	       bt_security_err_to_str(reason));
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {

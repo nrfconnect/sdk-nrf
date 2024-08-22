@@ -15,14 +15,27 @@ config _NRF_RPC_DUMMY_SELECT
 	default y
 	select THREAD_CUSTOM_DATA
 
-menuconfig NRF_RPC_IPC_SERVICE
+choice NRF_RPC_TRANSPORT
+	prompt "NRF RPC transport"
+	default NRF_RPC_IPC_SERVICE
+
+config NRF_RPC_IPC_SERVICE
 	bool "nRF RPC over IPC Service"
-	default y
 	select IPC_SERVICE
 	select MBOX
 	select EVENTS
 	help
-	  If enabled, selects the IPC Service as a transport layer for nRF PRC.
+	  If enabled, selects the IPC Service as a transport layer for the nRF RPC.
+
+config NRF_RPC_UART_TRANSPORT
+	bool "nRF RPC over UART"
+	select UART_NRFX
+	select RING_BUFFER
+	select CRC
+	help
+	  If enabled, selects the UART as a transport layer for the nRF RPC.
+
+endchoice
 
 if NRF_RPC_IPC_SERVICE
 
@@ -45,6 +58,34 @@ config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
 
 endif # NRF_RPC_IPC_SERVICE
 
+
+menu "nRF RPC over UART configuration"
+	depends on NRF_RPC_UART_TRANSPORT
+
+config NRF_RPC_UART_MAX_PACKET_SIZE
+	int "Maximum packet size"
+	default 1536
+	help
+	  Defines the maximum size of an nRF RPC packet that can be sent or received
+	  using the UART transport.
+
+config NRF_RPC_UART_RX_RINGBUF_SIZE
+	int "RX ring buffer size"
+	default 2048
+	help
+	  Defines the size of the ring buffer used to relay received bytes between
+	  the UART interrupt service routine and the UART transport RX worker thread.
+
+config NRF_RPC_UART_RX_THREAD_STACK_SIZE
+	int "RX thread stack size"
+	default 4096
+	help
+	  Defines the stack size of the UART transport RX worker thread. The worker
+	  thread is responsible for consuming data received over the UART, and
+	  passing decoded nRF RPC packets to the nRF RPC core.
+
+endmenu # "nRF RPC over UART configuration"
+
 config NRF_RPC_CBOR
 	bool
 	select ZCBOR
@@ -63,6 +104,45 @@ config NRF_RPC_THREAD_PRIORITY
 	default 2
 	help
 	  Thread priority of each thread in local thread pool.
+
+config NRF_RPC_SERIALIZE_API
+	bool "API for serialization"
+	default y
+	help
+	  API for serialization and deserialization of several major CBOR types.
+
+config NRF_RPC_CALLBACK_PROXY
+	bool "Proxy functionality for remote callbacks"
+	default y
+	help
+	  Proxy functionality that allows to register callbacks on the local side
+	  and to match the invoked callbacks on the remote side to registered
+	  callbacks on the local side.
+
+if NRF_RPC_CALLBACK_PROXY
+
+config NRF_RPC_CBKPROXY_OUT_SLOTS
+	int "Maximum number of RPC callback proxy output slots"
+	default 16
+	range 0 16383
+	help
+	  Output slot is used to save context for one callback that is called
+	  on local side, encoded, sent and finally executed on the remote side.
+	  Each output slot takes 8 bytes of flash memory. Maximum number of
+	  input slots on the remote side should be the same as this value.
+
+
+config NRF_RPC_CBKPROXY_IN_SLOTS
+	int "Maximum number of RPC callback proxy input slots"
+	default 16
+	range 0 16383
+	help
+	  Input slot is used to save context for one callback that is called
+	  on remote side, encoded, sent and finally executed on the local side.
+	  Each output slot takes 8 bytes of RAM memory. Maximum number of
+	  output slots on the remote side should be the same as this value.
+
+endif # NRF_RPC_CALLBACK_PROXY
 
 module = NRF_RPC
 module-str = NRF_RPC

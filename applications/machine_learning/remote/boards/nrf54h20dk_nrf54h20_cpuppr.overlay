@@ -5,15 +5,6 @@
  */
 
  / {
-	chosen {
-		zephyr,console = &uart135;
-	};
-
-	sensor_sim: sensor-sim {
-		compatible = "nordic,sensor-sim";
-		acc-signal = "wave";
-	};
-
 	agg0: agg0 {
 		compatible = "caf,aggregator";
 		sensor_descr = "accel_xyz";
@@ -25,37 +16,55 @@
 	};
 };
 
+/* Expand APP slot partition and remove DFU partition. */
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
+
 /*
- * Expand PPR memory region.
  * Place aggregator buffers in PPR memory region.
  */
-
-/delete-node/ &cpuppr_code_data;
-/delete-node/ &cpuapp_cpuppr_ipc_shm;
-/delete-node/ &cpuppr_cpuapp_ipc_shm;
-
 &cpuppr_ram3x_region {
-	reg = <0x2fc00000 DT_SIZE_K(68)>;
-	ranges = <0x0 0x2fc00000 0x11000>;
-
 	cpuppr_code_data: memory@0 {
-		reg = <0x0 DT_SIZE_K(64)>;
+		reg = <0x0 0xf200>;
 	};
 
-	cpuapp_cpuppr_ipc_shm: memory@10000 {
-		reg = <0x10000 DT_SIZE_K(1)>;
-	};
-
-	cpuppr_cpuapp_ipc_shm: memory@10400 {
-		reg = <0x10400 DT_SIZE_K(1)>;
-	};
-	ram3x_agg_area0: memory@10800{
-		reg = <0x10800 0x600>;
+	ram3x_agg_area0: memory@f200{
+		reg = <0xf200 0x600>;
 	};
 };
 
-&uart135 {
-	status = "okay";
+/* This duplicates the Application core configuration to build PPR image under valid address. */
+&mram1x {
+       cpuapp_rx_partitions: cpuapp-rx-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       perm-read;
+	       perm-execute;
+	       perm-secure;
+	       #address-cells = <1>;
+	       #size-cells = <1>;
+
+	       cpuapp_slot0_partition: partition@a6000 {
+		       reg = <0xa6000 DT_SIZE_K(512)>;
+	       };
+
+	       cpuppr_code_partition: partition@126000 {
+		       reg = <0x126000 DT_SIZE_K(64)>;
+	       };
+       };
+
+       cpuapp_rw_partitions: cpuapp-rw-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       perm-read;
+	       perm-write;
+	       #address-cells = < 0x1 >;
+	       #size-cells = < 0x1 >;
+
+	       storage_partition: partition@136000 {
+		       reg = < 0x136000 DT_SIZE_K(24) >;
+	       };
+       };
 };
 
 ipc1: &cpuapp_cpuppr_ipc {
@@ -68,4 +77,19 @@ ipc1: &cpuapp_cpuppr_ipc {
 
 &cpuapp_bellboard {
 	status = "okay";
+};
+
+&uart135 {
+	/delete-property/ hw-flow-control;
+};
+
+/* Disable unused sensors and peripherals. */
+/delete-node/ &bme688;
+
+&bmi270 {
+	status = "disabled";
+};
+
+&i2c130 {
+	status = "disabled";
 };

@@ -11,6 +11,7 @@
 
 #ifdef CONFIG_SUIT_STREAM
 
+#include <suit_generic_address_streamer.h>
 #ifdef CONFIG_SUIT_STREAM_SOURCE_CACHE
 #include <suit_dfu_cache_streamer.h>
 #endif /* CONFIG_SUIT_STREAM_SOURCE_CACHE */
@@ -81,6 +82,14 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 #endif /* CONFIG_SUIT_STREAM_IPC_REQUESTOR */
 
 	if (ret == SUIT_PLAT_SUCCESS) {
+		/* Flush any remaining data before reading used storage size */
+		if (dst_sink->flush != NULL) {
+			ret = dst_sink->flush(dst_sink->ctx);
+			if (ret != SUIT_PLAT_SUCCESS) {
+				return suit_plat_err_to_processor_err_convert(ret);
+			}
+		}
+
 		/* Update size in memptr for MEM component */
 		if (dst_component_type == SUIT_COMPONENT_TYPE_MEM) {
 			size_t new_size = 0;
@@ -97,7 +106,6 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 				LOG_ERR("Failed to update destination MEM component size: %i", ret);
 
 				return suit_plat_err_to_processor_err_convert(ret);
-				;
 			}
 		}
 	}
@@ -107,9 +115,27 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 
 int suit_plat_fetch_integrated_domain_specific(suit_component_t dst_handle,
 					       suit_component_type_t dst_component_type,
-					       struct stream_sink *dst_sink)
+					       struct stream_sink *dst_sink,
+					       struct zcbor_string *payload)
 {
-	suit_plat_err_t ret = SUIT_SUCCESS;
+	if (payload == NULL) {
+		return SUIT_ERR_UNAVAILABLE_PAYLOAD;
+	}
+
+	suit_plat_err_t ret =
+		suit_generic_address_streamer_stream(payload->value, payload->len, dst_sink);
+
+	if (ret != SUIT_PLAT_SUCCESS) {
+		return suit_plat_err_to_processor_err_convert(ret);
+	}
+
+	/* Flush any remaining data before reading used storage size */
+	if (dst_sink->flush != NULL) {
+		ret = dst_sink->flush(dst_sink->ctx);
+		if (ret != SUIT_PLAT_SUCCESS) {
+			return suit_plat_err_to_processor_err_convert(ret);
+		}
+	}
 
 	/* Update size in memptr for MEM component */
 	if (dst_component_type == SUIT_COMPONENT_TYPE_MEM) {

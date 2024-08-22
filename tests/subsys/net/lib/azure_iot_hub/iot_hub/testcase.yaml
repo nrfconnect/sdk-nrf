@@ -5,4 +5,4 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
       - native_posix
-    tags: azure_iot_hub sysbuild
+    tags: azure_iot_hub sysbuild ci_tests_subsys_net

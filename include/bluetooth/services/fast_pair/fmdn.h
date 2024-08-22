@@ -34,7 +34,7 @@ enum bt_fast_pair_fmdn_ring_src {
 
 	/** Ringing source type originating from the Bluetooth accessory non-owner
 	 *  service that is defined in the DULT specification.
-	 *  Used only when the CONFIG_BT_FAST_PAIR_FMDN_DULT is enabled.
+	 *  Used only when the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_DULT} is enabled.
 	 */
 	BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT,
 };
@@ -148,9 +148,9 @@ struct bt_fast_pair_fmdn_ring_cb {
 	 *
 	 *  This callback is executed in the cooperative thread context. You
 	 *  can learn about the exact thread context by analyzing the
-	 *  CONFIG_BT_RECV_CONTEXT configuration choice. By default, this
+	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
 	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (CONFIG_BT_RECV_WORKQ_BT).
+	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
 	 *
 	 *  @param src   Source of the ringing activity.
 	 *  @param param Requested ringing parameters.
@@ -208,9 +208,9 @@ struct bt_fast_pair_fmdn_ring_cb {
 	 *
 	 *  This callback is executed in the cooperative thread context. You
 	 *  can learn about the exact thread context by analyzing the
-	 *  CONFIG_BT_RECV_CONTEXT configuration choice. By default, this
+	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
 	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (CONFIG_BT_RECV_WORKQ_BT).
+	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
 	 *
 	 *  @param src Source of the ringing activity.
 	 */
@@ -220,7 +220,7 @@ struct bt_fast_pair_fmdn_ring_cb {
 /** @brief Register the ringing callbacks in the FMDN module.
  *
  *  This function registers the ringing callbacks. If you declare at least one
- *  ringing component using the CONFIG_BT_FAST_PAIR_FMDN_RING_COMP Kconfig
+ *  ringing component using the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_RING_COMP} Kconfig
  *  choice option, you shall call this API before you enable Fast Pair with the
  *  @ref bt_fast_pair_enable function. Otherwise, the enable operation fails.
  *
@@ -309,7 +309,7 @@ int bt_fast_pair_fmdn_ring_state_update(
  *  If you do not want to support the battery level indication, you should
  *  ignore this API and never call it in their application.
  *
- *  However, if the CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT Kconfig is enabled,
+ *  However, if the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT} Kconfig is enabled,
  *  you must initialize battery level with this API before you enable Fast Pair
  *  with the @ref bt_fast_pair_enable API. This requirement is necessary as the
  *  DULT battery mechanism does not support unknown battery levels. As a result,
@@ -323,8 +323,8 @@ int bt_fast_pair_fmdn_ring_state_update(
  *  The exact mapping of the battery percentage to the battery level as defined by the
  *  FMDN Accessory specification in the advertising payload is implementation-specific.
  *  The mapping configuration is controlled by the following Kconfig options:
- *  CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR and
- *  CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR.
+ *  @kconfig{CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR} and
+ *  @kconfig{CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR}.
  *
  *  @param percentage_level Battery level as a percentage [0-100%] or
  *                          @ref BT_FAST_PAIR_FMDN_BATTERY_LEVEL_NONE value if the
@@ -372,6 +372,10 @@ struct bt_fast_pair_fmdn_adv_param {
  *  initialize the advertising parameters with this API before you enable
  *  Fast Pair with the @ref bt_fast_pair_enable API. Otherwise, the default
  *  value @ref BT_FAST_PAIR_FMDN_ADV_PARAM_DEFAULT is used for advertising.
+ *
+ *  In the Fast Pair disabled state, advertising parameters are accepted
+ *  without any validation but are subsequently validated during the
+ *  @ref bt_fast_pair_enable API call.
  *
  *  You can use this function to dynamically update advertising parameters
  *  during an ongoing FMDN advertising.
@@ -421,9 +425,9 @@ struct bt_fast_pair_fmdn_info_cb {
 	 *
 	 *  This callback is executed in the cooperative thread context. You
 	 *  can learn about the exact thread context by analyzing the
-	 *  CONFIG_BT_RECV_CONTEXT configuration choice. By default, this
+	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
 	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (CONFIG_BT_RECV_WORKQ_BT).
+	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
 	 */
 	void (*clock_synced)(void);
 
@@ -438,9 +442,9 @@ struct bt_fast_pair_fmdn_info_cb {
 	 *  The first callback is executed in the workqueue context after the
 	 *  @ref bt_fast_pair_enable function call. Subsequent callbacks are
 	 *  also executed in the cooperative thread context. You can learn about
-	 *  the exact thread context by analyzing the CONFIG_BT_RECV_CONTEXT
+	 *  the exact thread context by analyzing the @kconfig{CONFIG_BT_RECV_CONTEXT}
 	 *  configuration choice. By default, this callback is executed in the
-	 *  Bluetooth-specific workqueue thread (CONFIG_BT_RECV_WORKQ_BT).
+	 *  Bluetooth-specific workqueue thread (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
 	 *
 	 *  @param provisioned true if the accessory has been successfully provisioned.
 	 *                     false if the accessory has been successfully unprovisioned.
@@ -470,7 +474,7 @@ enum bt_fast_pair_fmdn_read_mode {
 	BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY,
 
 	/** Identification read mode.
-	 *  Used only when the CONFIG_BT_FAST_PAIR_FMDN_DULT is enabled.
+	 *  Used only when the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_DULT} is enabled.
 	 */
 	BT_FAST_PAIR_FMDN_READ_MODE_DULT_ID,
 };

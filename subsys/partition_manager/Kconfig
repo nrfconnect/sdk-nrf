@@ -32,6 +32,25 @@ config SRAM_BASE_ADDRESS
 	hex
 	depends on !PARTITION_MANAGER_ENABLED
 
+# Workaround for the hardware model v1 which is not aware of the new
+# TrustZone definitions. Since nRF54L15 is not supported with the
+# hardware model v1, the values are set to the SPU values
+# since both nRF53 and nRF9X series are using the SPU for configuring
+# secure/non-secure regions.
+# TODO: Remove this when support for hardware model v1 is removed.
+# Tracked by NCSDK-28541
+if "$(HWM_SCHEME)" = "v1"
+config NRF_TRUSTZONE_FLASH_REGION_SIZE
+	hex
+	default 0x0 if !BUILD_WITH_TFM
+	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
+
+config NRF_TRUSTZONE_RAM_REGION_SIZE
+	hex
+	default 0x0 if !BUILD_WITH_TFM
+	default NRF_SPU_RAM_REGION_SIZE if BUILD_WITH_TFM
+endif
+
 menu "Zephyr subsystem configurations"
 
 DT_CHOSEN_Z_IPC_SHM := zephyr,ipc_shm
@@ -61,7 +80,7 @@ rsource "Kconfig.template.partition_region"
 
 config PM_PARTITION_ALIGN_SETTINGS_STORAGE
 	hex "Settings storage partition alignment"
-	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
+	default NRF_TRUSTZONE_FLASH_REGION_SIZE if BUILD_WITH_TFM
 	default FPROTECT_BLOCK_SIZE
 	help
 	  Alignment of the settings storage partition.
@@ -107,7 +126,7 @@ rsource "Kconfig.template.partition_region"
 
 config PM_PGPS_ALIGN
 	hex
-	default NRF_SPU_FLASH_REGION_SIZE if BUILD_WITH_TFM
+	default NRF_TRUSTZONE_FLASH_REGION_SIZE if BUILD_WITH_TFM
 	default NRF_CLOUD_PGPS_PARTITION_ALIGN
 	depends on PM_PARTITION_REGION_PGPS_EXTERNAL && BUILD_WITH_TFM
 

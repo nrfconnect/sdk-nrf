@@ -23,7 +23,7 @@ The Bluetooth Low Energy RPC is a solution that consists of the following compon
 
   * Bluetooth RPC Client and common software libraries that serialize the Bluetooth Host API and enable RPC communication.
     These libraries need to be part of the user application.
-  * :ref:`ble_rpc_host` sample that includes the full configured Bluetooth Low Energy stack, Bluetooth RPC Host, and common libraries that enable communication with the Bluetooth RPC Client.
+  * :ref:`ipc_radio` application that includes the full configuration of the Bluetooth Low Energy stack, Bluetooth RPC Host and common libraries that enable communication with the Bluetooth RPC Client.
     This software includes the :ref:`ug_ble_controller` and needs to run on a device or CPU that has the radio hardware peripheral, for example nRF5340 network core.
   * Build system files that automate building a Bluetooth LE application in the RPC variant with the additional image containing the Bluetooth LE stack.
 
@@ -45,7 +45,7 @@ Requirements
 ************
 
 Some configuration options related to Bluetooth Low Energy must be the same on the host and client.
-Set the following options in the same way for the :ref:`ble_rpc_host` or :ref:`ipc_radio`, and application core:
+Set the following options in the same way for the :ref:`ipc_radio` or :ref:`ble_rpc_host`, and application core:
 
   * :kconfig:option:`CONFIG_BT_CENTRAL`
   * :kconfig:option:`CONFIG_BT_PERIPHERAL`
@@ -81,55 +81,53 @@ Set the following options in the same way for the :ref:`ble_rpc_host` or :ref:`i
   * :kconfig:option:`CONFIG_BT_PER_ADV_SYNC_MAX`
   * :kconfig:option:`CONFIG_BT_DEVICE_APPEARANCE`
   * :kconfig:option:`CONFIG_BT_DEVICE_NAME`
-  * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS` on the other.
+  * :kconfig:option:`CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS` on one core must be equal to :kconfig:option:`CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS` on the other.
 
-To keep all the above configuration options in sync, create an overlay file that is shared between the application and network core.
+To keep all the above configuration options in sync, you can create a snippet with an overlay file that is shared between the application and network core.
 Then, you can invoke build command like this:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b *board_target* -- -DEXTRA_CONF_FILE=my_overlay_file.conf
+   west build -b *board_target* -S my_snippet
+
+For more details, see the :ref:`zephyr:snippets` documentation.
 
 Configuration
 *************
 
-Set the :kconfig:option:`CONFIG_BT_RPC_STACK` Kconfig option to enable the Bluetooth Low Energy RPC library.
+To enable the Bluetooth Low Energy RPC library, use the sysbuild configuration ``SB_CONFIG_NETCORE_IPC_RADIO`` along with the ``SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC`` option.
+Set the :makevar:`SNIPPET` to ``nordic-bt-rpc`` to apply the necessary configuration for the Bluetooth Low Energy RPC library on both cores.
+If you use a custom board, you need to create a custom snippet with a similar configuration to the ``nordic-bt-rpc`` snippet.
+
 Build the application using the following command:
 
 .. code-block:: console
 
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DCONFIG_BT_RPC_STACK=y
+   west build -b *board_name* -S nordic-bt-rpc -- -DSB_CONFIG_NETCORE_IPC_RADIO=y -DSB_CONFIG_NETCORE_IPC_RADIO_BT_RPC=y
 
-Additionally, you can use the following options:
-
-  * :kconfig:option:`CONFIG_BT_RPC`
-  * :kconfig:option:`CONFIG_BT_RPC_CLIENT`
-  * :kconfig:option:`CONFIG_BT_RPC_HOST`
-  * :kconfig:option:`CONFIG_BT_RPC_STACK`
-  * :kconfig:option:`CONFIG_BT_RPC_INITIALIZE_NRF_RPC`
-  * :kconfig:option:`CONFIG_BT_RPC_GATT_SRV_MAX`
-  * :kconfig:option:`CONFIG_BT_RPC_GATT_BUFFER_SIZE`
-  * :kconfig:option:`CONFIG_BT_RPC_INTERNAL_FUNCTIONS`
-  * :kconfig:option:`CONFIG_CBKPROXY_OUT_SLOTS`
-  * :kconfig:option:`CONFIG_CBKPROXY_IN_SLOTS`
-
-For more details, see the Kconfig option description.
+.. note::
+   The samples that support the Bluetooth Low Energy RPC use the :makevar:`FILE_SUFFIX` variable along with :makevar:`SNIPPET` to adjust the selection and configuration of the network and radio core firmware.
 
 Samples using the library
 *************************
 
 The following |NCS| sample and application use this library:
 
-* :ref:`ble_rpc_host`
 * :ref:`ipc_radio`
+* :ref:`ble_rpc_host`
 
-The :ref:`ble_rpc_host` sample exposes the Bluetooth LE stack functionality that runs on an MCU with radio (for example, the nRF5340 network core) to another CPU using the :ref:`nrfxlib:nrf_rpc`.
-When building samples for the application core, enable the :kconfig:option:`CONFIG_BT_RPC_STACK` Kconfig option to run the Bluetooth LE stack on the network core.
-This option builds :ref:`ble_rpc_host` automatically as a child image.
-For more details, see :ref:`ug_nrf5340_building`.
+The following |NCS| samples can optionally use this library:
 
-The :ref:`ipc_radio` application is an alternative to the :ref:`ble_rpc_host` sample.
+* :ref:`central_uart`
+* :ref:`peripheral_hids_mouse`
+* :ref:`peripheral_uart`
+
+The :ref:`ipc_radio` sample, is a configurable application, that exposes the Bluetooth LE stack functionality running on an MCU with radio (for example, the nRF5340 network core) to another CPU through the :ref:`nrfxlib:nrf_rpc`.
+When using the :ref:`ipc_radio` as Bluetooth Low Energy over RPC, reconfigure it by setting the ``SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC`` sysbuild Kconfig option to ``y`` to run the whole Bluetooth LE stack on the network core.
+For more details, see the :ref:`Configuration <ipc_radio_config>` section of the IPC radio firmware application guide.
+
+The :ref:`ble_rpc_host` application is an alternative to the :ref:`ipc_radio` sample.
 
 Limitations
 ***********

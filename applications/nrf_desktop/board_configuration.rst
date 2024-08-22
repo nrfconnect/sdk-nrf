@@ -122,6 +122,8 @@ Sample mouse or keyboard (``nrf54l15pdk/nrf54l15/cpuapp``)
       * In debug configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 PDK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+      * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
+        The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample mouse (``nrf54h20dk/nrf54h20/cpuapp``)
       * The configuration uses the nRF54H20 DK.

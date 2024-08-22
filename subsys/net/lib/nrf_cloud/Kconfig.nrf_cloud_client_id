@@ -27,10 +27,9 @@ config NRF_CLOUD_CLIENT_ID_SRC_HW_ID
 
 config NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
 	bool "Runtime value"
-	depends on NRF_CLOUD_MQTT
 	help
-		NULL-terminated client ID string must be passed to this library's
-		initialization function.
+		NULL-terminated client ID string must be set using the provided library function.
+		For MQTT, this can also be set with library initialization function.
 endchoice
 
 if NRF_CLOUD_CLIENT_ID_SRC_IMEI

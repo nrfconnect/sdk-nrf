@@ -137,6 +137,13 @@ static int fp_storage_pn_reset(void)
 	int err;
 	bool was_enabled = is_enabled;
 
+	if (was_enabled) {
+		err = fp_storage_pn_uninit();
+		if (err) {
+			return err;
+		}
+	}
+
 	err = settings_delete(SETTINGS_PN_FULL_NAME);
 	if (err) {
 		return err;

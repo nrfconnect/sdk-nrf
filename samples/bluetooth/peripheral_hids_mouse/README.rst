@@ -10,6 +10,9 @@ Bluetooth: Peripheral HIDS mouse
 The Peripheral HIDS mouse sample demonstrates how to use the :ref:`hids_readme` to implement a mouse input device that you can connect to your computer.
 This sample also shows how to perform directed advertising.
 
+.. note::
+   |nrf_desktop_HID_ref|
+
 Requirements
 ************
 
@@ -32,7 +35,7 @@ This sample exposes the HID GATT Service.
 It uses a report map for a generic mouse.
 
 You can also disable the directed advertising feature by clearing the ``BT_DIRECTED_ADVERTISING`` flag in the application configuration.
-This feature is enabled by default and it changes the way how advertising works in comparison to the other Bluetooth® Low Energy samples.
+This feature is enabled by default and it changes the way how advertising works in comparison to the other Bluetooth Low Energy samples.
 When the device wants to advertise, it starts with high duty cycle directed advertising provided that it has bonding information.
 If the timeout occurs, the device starts directed advertising to the next bonded peer.
 If all bonding information is used and there is still no connection, the regular advertising starts.
@@ -94,11 +97,15 @@ The HID service specification does not require encryption (:kconfig:option:`CONF
 Building and running
 ********************
 
-To build this sample with the :ref:`nrf_rpc_ipc_readme` library on the nRF5340 DK, set the :makevar:`EXTRA_CONF_FILE` option to the :file:`overlay-nrf_rpc.conf` file.
+To build this sample with the :ref:`ble_rpc` library, add the following parameters:
 
-.. code-block::
+* set the :makevar:`SNIPPET` option to ``nordic-bt-rpc``,
+* set the :makevar:`FILE_SUFFIX` option to ``bt_rpc``.
 
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-nrf_rpc.conf
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc
 
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_mouse`
 

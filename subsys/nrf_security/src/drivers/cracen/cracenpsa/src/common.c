@@ -10,7 +10,6 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <hal/nrf_cracen.h>
-#include <mbedtls/asn1.h>
 #include <nrfx.h>
 #include <sicrypto/rsa_keys.h>
 #include <sicrypto/sicrypto.h>
@@ -84,6 +83,7 @@ psa_status_t silex_statuscodes_to_psa(int ret)
 		return PSA_ERROR_INSUFFICIENT_MEMORY;
 
 	case SX_ERR_INSUFFICIENT_ENTROPY:
+	case SX_ERR_TOO_MANY_ATTEMPTS:
 		return PSA_ERROR_INSUFFICIENT_ENTROPY;
 
 	case SX_ERR_INVALID_CIPHERTEXT:
@@ -423,9 +423,96 @@ void cracen_xorbytes(char *a, const char *b, size_t sz)
 	}
 }
 
-/*
- * This function is based mbedtls ASN1 API.
- */
+static int cracen_asn1_get_len(unsigned char **p, const unsigned char *end, size_t *len)
+{
+	if ((end - *p) < 1) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	if ((**p & 0x80) == 0) {
+		*len = *(*p)++;
+	} else {
+		int n = (**p) & 0x7F;
+
+		if (n == 0 || n > 4) {
+			return SX_ERR_INVALID_PARAM;
+		}
+		if ((end - *p) <= n) {
+			return SX_ERR_INVALID_PARAM;
+		}
+		*len = 0;
+		(*p)++;
+		while (n--) {
+			*len = (*len << 8) | **p;
+			(*p)++;
+		}
+	}
+
+	if (*len > (size_t)(end - *p)) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	return 0;
+}
+
+static int cracen_asn1_get_tag(unsigned char **p, const unsigned char *end, size_t *len, int tag)
+{
+	if ((end - *p) < 1) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	if (**p != tag) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	(*p)++;
+
+	return cracen_asn1_get_len(p, end, len);
+}
+
+static int cracen_asn1_get_int(unsigned char **p, const unsigned char *end, int *val)
+{
+	int ret = SX_ERR_INVALID_PARAM;
+	size_t len;
+
+	ret = cracen_asn1_get_tag(p, end, &len, ASN1_INTEGER);
+	if (ret != 0) {
+		return ret;
+	}
+
+	if (len == 0) {
+		return SX_ERR_INVALID_PARAM;
+	}
+	/* Reject negative integers. */
+	if ((**p & 0x80) != 0) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	/* Skip leading zeros. */
+	while (len > 0 && **p == 0) {
+		++(*p);
+		--len;
+	}
+
+	/* Reject integers that don't fit in an int. This code assumes that
+	 * the int type has no padding bit.
+	 */
+	if (len > sizeof(int)) {
+		return SX_ERR_INVALID_PARAM;
+	}
+	if (len == sizeof(int) && (**p & 0x80) != 0) {
+		return SX_ERR_INVALID_PARAM;
+	}
+
+	*val = 0;
+	while (len-- > 0) {
+		*val = (*val << 8) | **p;
+		(*p)++;
+	}
+
+	return 0;
+}
+
 int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *end,
 				      struct sx_buf *op)
 {
@@ -433,7 +520,7 @@ int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *en
 	size_t len = 0;
 	size_t i = 0;
 
-	ret = mbedtls_asn1_get_tag(p, end, &len, MBEDTLS_ASN1_INTEGER);
+	ret = cracen_asn1_get_tag(p, end, &len, ASN1_INTEGER);
 	if (ret) {
 		return SX_ERR_INVALID_PARAM;
 	}
@@ -501,7 +588,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	 *  OpenSSL wraps public keys with an RSA algorithm identifier that we skip
 	 *  if it is present.
 	 */
-	ret = mbedtls_asn1_get_tag(&p, end, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+	ret = cracen_asn1_get_tag(&p, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 	if (ret) {
 		return SX_ERR_INVALID_KEYREF;
 	}
@@ -509,7 +596,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	end = p + len;
 
 	if (is_key_pair) {
-		ret = mbedtls_asn1_get_int(&p, end, &version);
+		ret = cracen_asn1_get_int(&p, end, &version);
 		if (ret) {
 			return SX_ERR_INVALID_KEYREF;
 		}
@@ -520,8 +607,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 		/* Skip algorithm identifier prefix. */
 		unsigned char *id_seq = p;
 
-		ret = mbedtls_asn1_get_tag(&id_seq, end, &len,
-					   MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+		ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 		if (ret == 0) {
 			if (len != sizeof(RSA_ALGORITHM_IDENTIFIER)) {
 				return SX_ERR_INVALID_KEYREF;
@@ -533,15 +619,14 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 
 			id_seq += len;
 
-			ret = mbedtls_asn1_get_tag(&id_seq, end, &len, MBEDTLS_ASN1_BIT_STRING);
+			ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_BIT_STRING);
 			if (ret != 0 || *id_seq != 0) {
 				return SX_ERR_INVALID_KEYREF;
 			}
 
 			p = id_seq + 1;
 
-			ret = mbedtls_asn1_get_tag(
-				&p, end, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+			ret = cracen_asn1_get_tag(&p, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 			if (ret) {
 				return SX_ERR_INVALID_KEYREF;
 			}
@@ -554,6 +639,10 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	ret = cracen_signature_asn1_get_operand(&p, end, modulus);
 	if (ret) {
 		return ret;
+	}
+
+	if (PSA_BYTES_TO_BITS(modulus->sz) > PSA_MAX_KEY_BITS) {
+		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	/* Import E */
@@ -575,7 +664,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	return SX_OK;
 }
 
-static int cracen_prepare_ik_key(const uint8_t *user_data)
+int cracen_prepare_ik_key(const uint8_t *user_data)
 {
 #ifdef CONFIG_CRACEN_LOAD_KMU_SEED
 	if (!nrf_cracen_seedram_lock_check(NRF_CRACEN)) {
@@ -691,6 +780,12 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 			break;
 		case CRACEN_BUILTIN_MEXT_ID:
 			k->cfg = CRACEN_INTERNAL_HW_KEY2_ID;
+			break;
+		case CRACEN_PROTECTED_RAM_AES_KEY0_ID:
+			k->sz = 32;
+			k->key = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
+			k->prepare_key = NULL;
+			k->clean_key = NULL;
 			break;
 		default:
 			return PSA_ERROR_INVALID_HANDLE;

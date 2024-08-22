@@ -278,7 +278,7 @@ int link_sett_save_defcont_pdn_family(enum pdn_fam family)
 {
 	int err;
 	const char *key = LINK_SETT_KEY "/" LINK_SETT_DEFCONT_IP_FAMILY_KEY;
-	char tmp_str[8];
+	char tmp_str[16];
 
 	err = settings_save_one(key, &family, sizeof(enum pdn_fam));
 

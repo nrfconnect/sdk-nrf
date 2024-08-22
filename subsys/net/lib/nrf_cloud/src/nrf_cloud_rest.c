@@ -73,8 +73,10 @@ LOG_MODULE_REGISTER(nrf_cloud_rest, CONFIG_NRF_CLOUD_REST_LOG_LEVEL);
 #define API_GET_PGPS_BASE		API_VER API_LOCATION "/pgps"
 
 #define API_DEVICES_BASE		"/devices"
-#define API_DEVICES_STATE_TEMPLATE	API_VER API_DEVICES_BASE "/%s/state"
-#define API_DEVICES_MSGS_TEMPLATE	API_VER API_DEVICES_BASE "/%s/messages"
+#define API_DEVICES_TEMPLATE		API_VER API_DEVICES_BASE "/%s"
+#define API_DEVICES_TRANSFORM_TEMPLATE	API_DEVICES_TEMPLATE "?transform=%s"
+#define API_DEVICES_STATE_TEMPLATE	API_DEVICES_TEMPLATE "/state"
+#define API_DEVICES_MSGS_TEMPLATE	API_DEVICES_TEMPLATE "/messages"
 #define API_DEVICES_MSGS_D2C_TPC_TMPLT	"d/%s/d2c%s"
 #define API_DEVICES_MSGS_BULK		NRF_CLOUD_BULK_MSG_TOPIC
 
@@ -178,7 +180,7 @@ static void init_rest_client_request(struct nrf_cloud_rest_context const *const 
 	req->resp_buff		= rest_ctx->rx_buf;
 	req->resp_buff_len	= rest_ctx->rx_buf_len;
 
-	req->sec_tag		= CONFIG_NRF_CLOUD_SEC_TAG;
+	req->sec_tag		= nrf_cloud_sec_tag_get();
 	req->port		= HTTPS_PORT;
 	req->host		= CONFIG_NRF_CLOUD_REST_HOST_NAME;
 	req->tls_peer_verify	= TLS_PEER_VERIFY_REQUIRED;
@@ -1242,4 +1244,76 @@ clean_up:
 		cJSON_free((void *)json_msg);
 	}
 	return err;
+}
+
+int nrf_cloud_rest_shadow_transform_request(struct nrf_cloud_rest_context *const rest_ctx,
+	const char *const device_id, char const *const transform)
+{
+	__ASSERT_NO_MSG(rest_ctx != NULL);
+	__ASSERT_NO_MSG(device_id != NULL);
+	__ASSERT_NO_MSG(transform != NULL);
+
+	int ret;
+	size_t url_sz;
+	char *auth_hdr = NULL;
+	char *url = NULL;
+	struct rest_client_req_context req;
+	struct rest_client_resp_context resp;
+
+	memset(&resp, 0, sizeof(resp));
+	init_rest_client_request(rest_ctx, &req, HTTP_GET);
+
+	/* Format API URL with device ID */
+	url_sz = sizeof(API_DEVICES_TRANSFORM_TEMPLATE) + strlen(device_id) + strlen(transform);
+	url = nrf_cloud_malloc(url_sz);
+	if (!url) {
+		ret = -ENOMEM;
+		goto clean_up;
+	}
+	req.url = url;
+
+	ret = snprintk(url, url_sz, API_DEVICES_TRANSFORM_TEMPLATE, device_id, transform);
+	if ((ret < 0) || (ret >= url_sz)) {
+		LOG_ERR("Could not format URL");
+		ret = -ETXTBSY;
+		goto clean_up;
+	}
+
+	/* Format auth header */
+	ret = generate_auth_header(rest_ctx->auth, &auth_hdr);
+	if (ret) {
+		LOG_ERR("Could not format HTTP auth header");
+		goto clean_up;
+	}
+	char *const headers[] = {
+		HDR_ACCEPT_APP_JSON,
+		(char *const)auth_hdr,
+		NULL
+	};
+
+	req.header_fields = (const char **)headers;
+
+	/* Make REST call */
+	ret = do_rest_client_request(rest_ctx, &req, &resp, false, false);
+	if (ret) {
+		/* This is the result if the response data is too large for the modem */
+		if (rest_ctx->status == NRF_CLOUD_HTTP_STATUS_NONE) {
+			LOG_ERR("Response too big, disconnecting socket to recover");
+			(void)nrf_cloud_rest_disconnect(rest_ctx);
+		}
+		goto clean_up;
+	}
+
+	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK) {
+		ret = -EBADMSG;
+		goto clean_up;
+	}
+
+clean_up:
+	nrf_cloud_free(url);
+	nrf_cloud_free(auth_hdr);
+
+	close_connection(rest_ctx);
+
+	return ret;
 }

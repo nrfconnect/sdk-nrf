@@ -182,11 +182,14 @@ static bool configure_ppp_link_ip_addresses(struct ppp_context *ctx)
 	return true;
 }
 
+static bool ppp_is_running(void)
+{
+	return (atomic_get(&ppp_state) == PPP_STATE_RUNNING);
+}
+
 static void send_status_notification(void)
 {
-	const bool is_running = atomic_get(&ppp_state) == PPP_STATE_RUNNING;
-
-	rsp_send("\r\n#XPPP: %u,%u\r\n", is_running, ppp_peer_connected);
+	rsp_send("\r\n#XPPP: %u,%u\r\n", ppp_is_running(), ppp_peer_connected);
 }
 
 static int ppp_start_failure(int ret)
@@ -216,8 +219,9 @@ static int ppp_start_internal(void)
 		/* Set the PPP MTU to that of the LTE link. */
 		mtu = MIN(mtu, sizeof(ppp_data_buf));
 	} else {
-		LOG_DBG("Could not retrieve MTU, using default.");
-		mtu = sizeof(ppp_data_buf);
+		LOG_DBG("Could not retrieve MTU, using fallback value.");
+		mtu = CONFIG_SLM_PPP_FALLBACK_MTU;
+		BUILD_ASSERT(sizeof(ppp_data_buf) >= CONFIG_SLM_PPP_FALLBACK_MTU);
 	}
 
 	net_if_set_mtu(ppp_iface, mtu);
@@ -261,9 +265,9 @@ static int ppp_start_internal(void)
 	return 0;
 }
 
-bool slm_ppp_is_running(void)
+bool slm_ppp_is_stopped(void)
 {
-	return atomic_get(&ppp_state) != PPP_STATE_STOPPED;
+	return (atomic_get(&ppp_state) == PPP_STATE_STOPPED);
 }
 
 static void ppp_start(void)
@@ -457,8 +461,8 @@ static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 			break;
 		}
 		ppp_peer_connected = false;
-		/* Also ignore this event when it is received after PPP has been stopped. */
-		if (!slm_ppp_is_running()) {
+		/* Also ignore this event when PPP is not running anymore. */
+		if (!ppp_is_running()) {
 			break;
 		}
 		send_status_notification();
@@ -518,7 +522,7 @@ int slm_ppp_init(void)
 }
 
 SLM_AT_CMD_CUSTOM(xppp, "AT#XPPP", handle_at_ppp);
-static int handle_at_ppp(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_ppp(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			 uint32_t param_count)
 {
 	int ret;
@@ -529,15 +533,15 @@ static int handle_at_ppp(enum at_cmd_type cmd_type, const struct at_param_list *
 		OP_COUNT
 	};
 
-	if (cmd_type == AT_CMD_TYPE_READ_COMMAND) {
+	if (cmd_type == AT_PARSER_CMD_TYPE_READ) {
 		send_status_notification();
 		return 0;
 	}
-	if (cmd_type != AT_CMD_TYPE_SET_COMMAND || param_count != 2) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET || param_count != 2) {
 		return -EINVAL;
 	}
 
-	ret = at_params_unsigned_int_get(param_list, 1, &op);
+	ret = at_parser_num_get(parser, 1, &op);
 	if (ret) {
 		return ret;
 	} else if (op >= OP_COUNT) {

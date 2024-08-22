@@ -107,6 +107,7 @@ static const fsm_transition *state_event_handlers[] = {
 BUILD_ASSERT(ARRAY_SIZE(state_event_handlers) == STATE_TOTAL);
 
 static bool persistent_session;
+static bool jitp_association_wait;
 
 /* Flag to track if the c2d topic was modified; if so, the desired section
  * in the shadow needs to be updated to prevent delta events.
@@ -169,20 +170,34 @@ static int state_ua_pin_wait(void)
 		.message_id = NCT_MSG_ID_STATE_REPORT,
 	};
 
-	/* Update the shadow for the current state: STATE_UA_PIN_WAIT */
-	err = nrf_cloud_state_encode(STATE_UA_PIN_WAIT, false, false, &msg.data);
-	if (err) {
-		LOG_ERR("nrf_cloud_state_encode failed %d", err);
-		return err;
+	/* Prevent duplicate application notifications of user association request
+	 * events. They are unnecessary and caused by various background shadow
+	 * updates.
+	 */
+	if (!jitp_association_wait) {
+		jitp_association_wait = true;
+		add_shadow_info = IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SHADOW_INFO);
+		(void)nct_save_session_state(false);
+		(void)nct_set_keepalive(CONFIG_NRF_CLOUD_MQTT_UA_WAIT_KEEPALIVE);
+	} else {
+		LOG_DBG("Ignoring duplicate STATE_UA_PIN_WAIT");
+		return 0;
 	}
 
-	err = nct_cc_send(&msg);
-
-	nrf_cloud_free((void *)msg.data.ptr);
-
-	if (err) {
-		LOG_ERR("nct_cc_send failed %d", err);
+	/* Update the shadow for the current state: STATE_UA_PIN_WAIT */
+	err = nrf_cloud_state_encode(STATE_UA_PIN_WAIT, false, false, &msg.data);
+	if (err < 0) {
+		LOG_ERR("nrf_cloud_state_encode failed %d", err);
 		return err;
+	} else if (err == 0) {
+		err = nct_cc_send(&msg);
+
+		nrf_cloud_free((void *)msg.data.ptr);
+
+		if (err) {
+			LOG_ERR("nct_cc_send failed %d", err);
+			return err;
+		}
 	}
 
 	struct nrf_cloud_evt evt = {
@@ -210,8 +225,11 @@ static int state_ua_pin_complete(void)
 	}
 
 	add_shadow_info = false;
-
 	c2d_topic_modified = false;
+	if (jitp_association_wait) {
+		jitp_association_wait = false;
+		(void)nct_set_keepalive(CONFIG_NRF_CLOUD_MQTT_KEEPALIVE);
+	}
 
 	err = nct_cc_send(&msg);
 
@@ -446,7 +464,7 @@ static int cc_rx_data_handler(const struct nct_evt *nct_evt)
 
 	NRF_CLOUD_OBJ_JSON_DEFINE(shadow_obj);
 
-	LOG_DBG("CC RX on topic [%d] %*s: %s",
+	LOG_DBG("CC RX on topic [%d] %.*s: %s",
 		nct_evt->param.cc->opcode,
 		nct_evt->param.cc->topic.len,
 		(const char *)nct_evt->param.cc->topic.ptr,
@@ -729,15 +747,19 @@ static int dc_rx_data_handler(const struct nct_evt *nct_evt)
 		/* Intentional fall-through */
 	case NRF_CLOUD_RCV_TOPIC_GENERAL:
 	default:
-		cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_GENERAL;
 		discon_req = nrf_cloud_disconnection_request_decode(cloud_evt.data.ptr);
+		if (discon_req) {
+			cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_DISCON;
+		} else {
+			cloud_evt.type = NRF_CLOUD_EVT_RX_DATA_GENERAL;
+		}
 		break;
 	}
 
 	nfsm_set_current_state_and_notify(nfsm_get_current_state(), &cloud_evt);
 
 	if (discon_req) {
-		LOG_DBG("Device deleted from nRF Cloud");
+		LOG_INF("Device deleted from nRF Cloud");
 		int err = nrf_cloud_disconnect();
 
 		if (err < 0) {

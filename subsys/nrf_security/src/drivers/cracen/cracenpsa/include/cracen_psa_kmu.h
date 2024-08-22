@@ -9,6 +9,14 @@
 
 #include <psa/crypto.h>
 
+#ifdef CONFIG_BUILD_WITH_TFM
+/** A slot number identifying a key in a driver.
+ *
+ * Values of this type are used to identify built-in keys.
+ */
+typedef uint64_t psa_drv_slot_number_t;
+#endif
+
 #define PSA_KEY_LOCATION_CRACEN_KMU (PSA_KEY_LOCATION_VENDOR_FLAG | ('N' << 8) | 'K')
 
 /* Key id 0x7fffXYZZ */

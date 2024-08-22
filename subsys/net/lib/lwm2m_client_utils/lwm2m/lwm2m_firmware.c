@@ -23,7 +23,7 @@
 #include <zephyr/settings/settings.h>
 /* Firmware update needs access to internal functions as well */
 #include <lwm2m_engine.h>
-
+#include <zephyr/net/coap.h>
 #include <modem/modem_info.h>
 #include <pm_config.h>
 #include <zephyr/sys/reboot.h>
@@ -640,6 +640,7 @@ static int firmware_update_state(uint16_t obj_inst_id, uint16_t res_id, uint16_t
 	if (*data == STATE_IDLE) {
 		/* Cancel Only object is same than ongoing update */
 		if (obj_inst_id == ongoing_obj_id) {
+			client_acknowledge(); /* Erasing might take some time, so acknoledge now.*/
 			ongoing_obj_id = UNUSED_OBJ_ID;
 			fota_download_util_download_cancel();
 			ret = firmware_target_reset(obj_inst_id);
@@ -670,6 +671,34 @@ static void dfu_target_cb(enum dfu_target_evt_id evt)
 	ARG_UNUSED(evt);
 }
 
+static bool is_duplicate_token(void)
+{
+	static uint8_t prev_token[COAP_TOKEN_MAX_LEN];
+	static uint8_t prev_token_len;
+	struct lwm2m_ctx *ctx;
+	struct lwm2m_message *msg;
+
+	ctx = lwm2m_rd_client_ctx();
+	if (!ctx) {
+		return false;
+	}
+
+	msg = (struct lwm2m_message *) ctx->processed_req;
+	if (!msg) {
+		return false;
+	}
+	if (msg->tkl == 0) {
+		return false;
+	}
+	if (msg->tkl == prev_token_len &&
+	    memcmp(msg->token, prev_token, prev_token_len) == 0) {
+		return true;
+	}
+	memcpy(prev_token, msg->token, msg->tkl);
+	prev_token_len = msg->tkl;
+	return false;
+}
+
 static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uint16_t res_inst_id,
 				      uint8_t *data, uint16_t data_len, bool last_block,
 				      size_t total_size, size_t offset)
@@ -685,9 +714,19 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 		return -EINVAL;
 	}
 
+	if (offset < bytes_downloaded) {
+		LOG_DBG("Skipping already downloaded bytes");
+		return 0;
+	}
+
 	if (bytes_downloaded == 0 && offset == 0) {
 		if (ongoing_obj_id != UNUSED_OBJ_ID) {
 			LOG_INF("DFU is allocated already");
+			return -EAGAIN;
+		}
+
+		if (is_duplicate_token()) {
+			LOG_DBG("Duplicate token, don't restart DFU");
 			return -EAGAIN;
 		}
 
@@ -707,28 +746,40 @@ static int firmware_block_received_cb(uint16_t obj_inst_id, uint16_t res_id, uin
 
 		/* Store Started DFU type */
 		target_image_type_store(obj_inst_id, image_type);
-		ret = dfu_target_init(image_type, 0, total_size, dfu_target_cb);
-		if (ret < 0) {
-			LOG_ERR("Failed to init DFU target, err: %d", ret);
-			goto cleanup;
-		}
+		do {
+			ret = dfu_target_init(image_type, 0, total_size, dfu_target_cb);
+			if (ret < 0) {
+				LOG_ERR("Failed to init DFU target, err: %d", ret);
+				goto cleanup;
+			}
+			/* Check if we need to erase */
+			ret = dfu_target_offset_get(&target_offset);
+			if (ret < 0) {
+				LOG_ERR("Failed to obtain current offset, err: %d", ret);
+				goto cleanup;
+			}
+
+			if (target_offset != 0) {
+				LOG_INF("Erasing target");
+				ret = dfu_target_reset();
+				if (ret < 0) {
+					LOG_ERR("Failed to erase target, err: %d", ret);
+					goto cleanup;
+				}
+			}
+		} while (target_offset != 0);
 
 		LOG_INF("%s firmware download started.",
 			image_type == DFU_TARGET_IMAGE_TYPE_MODEM_DELTA ||
 					image_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM ?
 				"Modem" :
 				"Application");
-	}
-
-	if (offset < bytes_downloaded) {
-		LOG_DBG("Skipping already downloaded bytes");
-		return 0;
-	}
-
-	ret = dfu_target_offset_get(&target_offset);
-	if (ret < 0) {
-		LOG_ERR("Failed to obtain current offset, err: %d", ret);
-		goto cleanup;
+	} else {
+		ret = dfu_target_offset_get(&target_offset);
+		if (ret < 0) {
+			LOG_ERR("Failed to obtain current offset, err: %d", ret);
+			goto cleanup;
+		}
 	}
 
 	/* Display a % downloaded or byte progress, if no total size was
@@ -793,6 +844,24 @@ cleanup:
 	if (ret < 0) {
 		if (dfu_target_reset() < 0) {
 			LOG_ERR("Failed to reset DFU target");
+		}
+		/* We must return only known values for LwM2M firmware handler. */
+		switch (ret) {
+		case -ENOMEM:
+		case -ENOSPC:
+		case -EFAULT:
+		case -ENOMSG:
+			break;
+		case -EFBIG:
+		case -E2BIG:
+			ret = -ENOSPC;
+			break;
+		case -EINVAL:
+			ret = -ENOMSG;
+			break;
+		default:
+			ret = -EFAULT;
+			break;
 		}
 	}
 

@@ -3,7 +3,11 @@
 Migration guides
 ################
 
-The |NCS| provides migration guides for all major and minor releases, in order to assist user's transition from the previous release.
+The |NCS| provides migration guides for all :ref:`major and minor releases <dm-revisions>` to assist user's transition from the previous release.
+Migration guides are also provided for major functionality updates.
+
+.. note::
+    |migration_contact_devzone|
 
 .. toctree::
    :maxdepth: 1

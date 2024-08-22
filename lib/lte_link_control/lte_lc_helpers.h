@@ -9,47 +9,26 @@
 #include <string.h>
 #include <stdio.h>
 #include <modem/lte_lc.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
 #include <zephyr/logging/log.h>
 
-#define LC_MAX_READ_LENGTH			128
-
-#define AT_CMD_SIZE(x)				(sizeof(x) - 1)
-#define AT_RESPONSE_PREFIX_INDEX		0
 #define AT_CFUN_READ				"AT+CFUN?"
-#define AT_CFUN_RESPONSE_PREFIX			"+CFUN"
-#define AT_CFUN_MODE_INDEX			1
-#define AT_CFUN_PARAMS_COUNT			2
-#define AT_CFUN_RESPONSE_MAX_LEN		20
 #define AT_CEREG_5				"AT+CEREG=5"
 #define AT_CEREG_READ				"AT+CEREG?"
-#define AT_CEREG_RESPONSE_PREFIX		"+CEREG"
-#define AT_CEREG_PARAMS_COUNT_MAX		11
 #define AT_CEREG_REG_STATUS_INDEX		1
-#define AT_CEREG_READ_REG_STATUS_INDEX		2
 #define AT_CEREG_TAC_INDEX			2
-#define AT_CEREG_READ_TAC_INDEX			3
 #define AT_CEREG_CELL_ID_INDEX			3
-#define AT_CEREG_READ_CELL_ID_INDEX		4
 #define AT_CEREG_ACT_INDEX			4
-#define AT_CEREG_READ_ACT_INDEX			5
+#define AT_CEREG_CAUSE_TYPE_INDEX		5
+#define AT_CEREG_REJECT_CAUSE_INDEX		6
 #define AT_CEREG_ACTIVE_TIME_INDEX		7
-#define AT_CEREG_READ_ACTIVE_TIME_INDEX		8
 #define AT_CEREG_TAU_INDEX			8
-#define AT_CEREG_READ_TAU_INDEX			9
-#define AT_CEREG_RESPONSE_MAX_LEN		80
 #define AT_XSYSTEMMODE_READ			"AT%XSYSTEMMODE?"
-#define AT_XSYSTEMMODE_RESPONSE_PREFIX		"%XSYSTEMMODE"
-#define AT_XSYSTEMMODE_PROTO			"AT%%XSYSTEMMODE=%d,%d,%d,%d"
 
 /* The indices are for the set command. Add 1 for the read command indices. */
 #define AT_XSYSTEMMODE_READ_LTEM_INDEX		1
 #define AT_XSYSTEMMODE_READ_NBIOT_INDEX		2
 #define AT_XSYSTEMMODE_READ_GPS_INDEX		3
 #define AT_XSYSTEMMODE_READ_PREFERENCE_INDEX	4
-#define AT_XSYSTEMMODE_PARAMS_COUNT		5
-#define AT_XSYSTEMMODE_RESPONSE_MAX_LEN		30
 
 /* CEDRXS command parameters */
 #define AT_CEDRXS_MODE_INDEX
@@ -57,26 +36,21 @@
 #define AT_CEDRXS_ACTT_NB			5
 
 /* CEDRXP notification parameters */
-#define AT_CEDRXP_PARAMS_COUNT_MAX		6
 #define AT_CEDRXP_ACTT_INDEX			1
 #define AT_CEDRXP_REQ_EDRX_INDEX		2
 #define AT_CEDRXP_NW_EDRX_INDEX			3
 #define AT_CEDRXP_NW_PTW_INDEX			4
 
 /* CSCON command parameters */
-#define AT_CSCON_RESPONSE_PREFIX		"+CSCON"
-#define AT_CSCON_PARAMS_COUNT_MAX		4
 #define AT_CSCON_RRC_MODE_INDEX			1
 #define AT_CSCON_READ_RRC_MODE_INDEX		2
 
 /* XT3412 command parameters */
 #define AT_XT3412_SUB				"AT%%XT3412=1,%d,%d"
-#define AT_XT3412_PARAMS_COUNT_MAX		4
-#define AT_XT3412_TIME_INDEX			2
+#define AT_XT3412_TIME_INDEX			1
 #define T3412_MAX				35712000000
 
 /* NCELLMEAS notification parameters */
-#define AT_NCELLMEAS_RESPONSE_PREFIX		"%NCELLMEAS"
 #define AT_NCELLMEAS_START			"AT%%NCELLMEAS"
 #define AT_NCELLMEAS_STOP			"AT%%NCELLMEASSTOP"
 #define AT_NCELLMEAS_STATUS_INDEX		1
@@ -118,9 +92,6 @@
 
 /* CONEVAL command parameters */
 #define AT_CONEVAL_READ				"AT%CONEVAL"
-#define AT_CONEVAL_RESPONSE_PREFIX		"%CONEVAL"
-#define AT_CONEVAL_PREFIX_INDEX			0
-#define AT_CONEVAL_RESPONSE_MAX_LEN		110
 #define AT_CONEVAL_PARAMS_MAX			19
 #define AT_CONEVAL_RESULT_INDEX			1
 #define AT_CONEVAL_RRC_STATE_INDEX		2
@@ -155,18 +126,6 @@
 #define AT_MDMEV_CE_LEVEL_1			"PRACH CE-LEVEL 1\r\n"
 #define AT_MDMEV_CE_LEVEL_2			"PRACH CE-LEVEL 2\r\n"
 #define AT_MDMEV_CE_LEVEL_3			"PRACH CE-LEVEL 3\r\n"
-
-/* @brief Helper function to check if a response is what was expected.
- *
- * @param response Pointer to response prefix
- * @param response_len Length of the response to be checked
- * @param check The buffer with "truth" to verify the response against,
- *		for example "+CEREG"
- *
- * @return True if the provided buffer and check are equal, false otherwise.
- */
-bool response_is_valid(const char *response, size_t response_len,
-		       const char *check);
 
 /* @brief Parses an AT command response, and returns the current RRC mode.
  *
@@ -220,21 +179,19 @@ int parse_psm(const char *active_time_str, const char *tau_ext_str,
  */
 int encode_psm(char *tau_ext_str, char *active_time_str, int rptau, int rat);
 
-/* @brief Parses an CEREG response and returns network registration status,
- *	  cell information, LTE mode and pSM configuration.
+/* @brief Parses a +CEREG notification and returns network registration status,
+ *	  cell information, LTE mode and PSM configuration. The function always
+ *	  initializes the return values. The destination pointers must be non-NULL.
  *
- * @param at_response Pointer to buffer with AT response.
- * @param is_notif The buffer in at_response is a notification.
- * @param reg_status Pointer to where the registration status is stored.
- *		     Can be NULL.
- * @param cell Pointer to cell information struct. Can be NULL.
- * @param lte_mode Pointer to LTE mode struct. Can be NULL.
- * @param psm_cfg Pointer to PSM configuration struct. Can be NULL.
+ * @param[in] at_response AT notification.
+ * @param[out] reg_status Registration status.
+ * @param[out] cell Cell information.
+ * @param[out] lte_mode LTE mode.
+ * @param[out] psm_cfg PSM configuration.
  *
  * @return Zero on success or (negative) error code otherwise.
  */
 int parse_cereg(const char *at_response,
-		bool is_notif,
 		enum lte_lc_nw_reg_status *reg_status,
 		struct lte_lc_cell *cell,
 		enum lte_lc_lte_mode *lte_mode,
@@ -267,12 +224,15 @@ uint32_t neighborcell_count_get(const char *at_response);
  * Hence, the maximum value for these fields is represented by 63 bits and is
  * 9223372036854775807, which still represents millions of years.
  *
- * @param at_response Pointer to buffer with AT response.
- * @param ncell Pointer to ncell structure.
+ * @param at_response AT response.
+ * @param cells Neighbor cell structure.
+ *	        The current cell information is valid if the current cell ID is
+ *	        not set to LTE_LC_CELL_EUTRAN_ID_INVALID.
  *
  * @return Zero on success or (negative) error code otherwise.
- *         Returns -E2BIG if the static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
- *         are to small for the modem response. The associated data is still valid,
+ * @retval 1 Measurement failure.
+ * @retval -E2BIG The static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
+ *         are too small for the modem response. The associated data is still valid,
  *         but not complete.
  */
 int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);
@@ -288,12 +248,15 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells);
  * 9223372036854775807, which still represents millions of years.
  *
  * @param params Neighbor cell measurement parameters.
- * @param at_response Pointer to buffer with AT response.
- * @param cells Pointer to lte_lc_cells_info structure.
+ * @param at_response AT response.
+ * @param cells Neighbor cell structure.
+ *	        The current cell information is valid if the current cell ID is
+ *	        not set to LTE_LC_CELL_EUTRAN_ID_INVALID.
  *
  * @return Zero on success or (negative) error code otherwise.
- *         Returns -E2BIG if the static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
- *         are to small for the modem response. The associated data is still valid,
+ * @retval 1 Measurement failure.
+ * @retval -E2BIG The static buffers set by CONFIG_LTE_NEIGHBOR_CELLS_MAX
+ *         are too small for the modem response. The associated data is still valid,
  *         but not complete.
  */
 int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params,
@@ -339,7 +302,6 @@ int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *param
  * @return Zero on success, negative errno code on failure.
  *
  * @retval 0 Parsing succeeded.
- * @retval -EINVAL If invalid parameters are provided.
  * @retval -EIO If the AT response is not a valid MDMEV response.
  * @retval -ENODATA If no modem event type was found in the AT response.
  */

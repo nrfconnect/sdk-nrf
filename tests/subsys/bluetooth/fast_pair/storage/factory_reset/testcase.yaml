@@ -14,7 +14,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.no_reboot:
     sysbuild: true
     platform_allow:
@@ -24,7 +24,7 @@ tests:
       - native_posix
       - nrf52840dk/nrf52840
     extra_args: CONFIG_REBOOT=n
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.6keys:
     sysbuild: true
     platform_exclude: native_posix
@@ -33,7 +33,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=6
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.7keys:
     sysbuild: true
     platform_exclude: native_posix
@@ -42,7 +42,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=7
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.8keys:
     sysbuild: true
     platform_exclude: native_posix
@@ -51,7 +51,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=8
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.9keys:
     sysbuild: true
     platform_exclude: native_posix
@@ -60,7 +60,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=9
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.10keys:
     sysbuild: true
     platform_exclude: native_posix
@@ -69,7 +69,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=10
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.ak_minimal_backend:
     sysbuild: true
     platform_exclude: native_posix
@@ -86,7 +86,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15pdk/nrf54l15/cpuapp
     extra_args: CONFIG_TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY=y
-    tags: sysbuild
+    tags: sysbuild bluetooth
   fast_pair.storage.factory_reset.ak_minimal_backend_no_reboot:
     sysbuild: true
     platform_allow:
@@ -96,4 +96,4 @@ tests:
       - native_posix
       - nrf52840dk/nrf52840
     extra_args: CONFIG_TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY=y CONFIG_REBOOT=n
-    tags: sysbuild
+    tags: sysbuild bluetooth

@@ -24,6 +24,7 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
+#include "nrf_cloud_mem.h"
 #include "nrf_cloud_transport.h"
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_pgps_schema_v1.h"
@@ -39,7 +40,6 @@ LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 #define PREDICTION_PERIOD		240
 #endif
 #define REPLACEMENT_THRESHOLD		CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
-#define SEC_TAG				CONFIG_NRF_CLOUD_SEC_TAG
 #define FRAGMENT_SIZE			CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
 #define PREDICTION_MIDPOINT_SHIFT_SEC	(120 * SEC_PER_MIN)
 #define LOCATION_UNC_SEMIMAJOR_K	89U
@@ -915,7 +915,7 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location)
 		return err;
 	}
 
-	int sec_tag = SEC_TAG;
+	int sec_tag = nrf_cloud_sec_tag_get();
 
 	if (FORCE_HTTP_DL && (strncmp(file_location->host, "https", 5) == 0)) {
 		memmove(&file_location->host[4],
@@ -1671,7 +1671,9 @@ static void end_transfer_handler(int transfer_result)
 	if (transfer_result == 0) {
 		LOG_DBG("Download completed without error.");
 	} else {
-		LOG_ERR("Download failed: %d", transfer_result);
+		if (transfer_result != -ECANCELED) {
+			LOG_ERR("Download failed: %d", transfer_result);
+		}
 		npgps_undo_alloc_block(index.store_block);
 	}
 	nrf_cloud_pgps_finish_update();
@@ -1731,8 +1733,9 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	state = PGPS_NONE;
 
 	if (!write_buf) {
-		write_buf = k_malloc(flash_page_size);
+		write_buf = nrf_cloud_malloc(flash_page_size);
 		if (!write_buf) {
+			LOG_ERR("Failed to allocate write buffer");
 			return -ENOMEM;
 		}
 #if PGPS_DEBUG

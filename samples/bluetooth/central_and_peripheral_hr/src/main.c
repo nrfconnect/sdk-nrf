@@ -8,6 +8,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/hci.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/scan.h>
 
@@ -196,12 +197,11 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Pairing failed conn: %s, reason %d\n", addr, reason);
+	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
+	       bt_security_err_to_str(reason));
 }
 
-static const struct bt_conn_auth_cb auth_callbacks = {
-	.cancel = auth_cancel
-};
+static const struct bt_conn_auth_cb auth_callbacks = {.cancel = auth_cancel};
 
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_complete = pairing_complete,
@@ -228,7 +228,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (conn_err) {
-		printk("Failed to connect to %s (%u)\n", addr, conn_err);
+		printk("Failed to connect to %s, 0x%02x %s\n", addr, conn_err,
+		       bt_hci_err_to_str(conn_err));
 
 		if (conn == central_conn) {
 			bt_conn_unref(central_conn);
@@ -268,7 +269,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Disconnected: %s (reason %u)\n", addr, reason);
+	printk("Disconnected: %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 
 	if (conn == central_conn) {
 		dk_set_led_off(CENTRAL_CON_STATUS_LED);
@@ -292,8 +293,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		printk("Security changed: %s level %u\n", addr, level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
-			err);
+		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
+		       bt_security_err_to_str(err));
 	}
 
 	if (conn == central_conn) {

@@ -9,7 +9,7 @@
 #include <bluetooth/gatt_dm.h>
 
 #ifdef CONFIG_BT_LL_SOFTDEVICE
-#include "sdc_hci_vs.h"
+#include <bluetooth/hci_vs_sdc.h>
 #endif /* CONFIG_BT_LL_SOFTDEVICE */
 
 #define MODULE ble_conn_params
@@ -95,8 +95,7 @@ static int interval_reg_to_us(uint16_t reg)
 static int set_llpm_conn_param(struct bt_conn *conn, uint16_t latency)
 {
 #ifdef CONFIG_BT_CTLR_SDC_LLPM
-	struct net_buf *buf;
-	sdc_hci_cmd_vs_conn_update_t *cmd_conn_update;
+	sdc_hci_cmd_vs_conn_update_t cmd_conn_update;
 	uint16_t conn_handle;
 
 	int err = bt_hci_get_conn_handle(conn, &conn_handle);
@@ -106,19 +105,12 @@ static int set_llpm_conn_param(struct bt_conn *conn, uint16_t latency)
 		return err;
 	}
 
-	buf = bt_hci_cmd_create(SDC_HCI_OPCODE_CMD_VS_CONN_UPDATE, sizeof(*cmd_conn_update));
-	if (!buf) {
-		LOG_ERR("Could not allocate command buffer");
-		return -ENOBUFS;
-	}
+	cmd_conn_update.conn_handle = conn_handle;
+	cmd_conn_update.conn_interval_us = CONN_INTERVAL_LLPM_US;
+	cmd_conn_update.conn_latency = latency;
+	cmd_conn_update.supervision_timeout = CONN_SUPERVISION_TIMEOUT;
 
-	cmd_conn_update = net_buf_add(buf, sizeof(*cmd_conn_update));
-	cmd_conn_update->conn_handle = conn_handle;
-	cmd_conn_update->conn_interval_us = CONN_INTERVAL_LLPM_US;
-	cmd_conn_update->conn_latency = latency;
-	cmd_conn_update->supervision_timeout = CONN_SUPERVISION_TIMEOUT;
-
-	return bt_hci_cmd_send_sync(SDC_HCI_OPCODE_CMD_VS_CONN_UPDATE, buf, NULL);
+	return hci_vs_sdc_conn_update(&cmd_conn_update);
 #else
 	__ASSERT_NO_MSG(false);
 	return -ENOTSUP;

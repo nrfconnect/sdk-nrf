@@ -310,6 +310,11 @@ int fp_keys_generate_key(const struct bt_conn *conn, struct fp_keys_keygen_param
 		/* Update state to ensure that key could be used for decryption. */
 		proc->state = FP_STATE_USE_TEMP_ACCOUNT_KEY;
 
+		/* Encryption/decryption key should not be generated from the Account Key
+		 * if the subsequent pairing feature is not enabled in Kconfig.
+		 */
+		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING));
+
 		err = key_gen_account_key(conn, keygen_params);
 	}
 

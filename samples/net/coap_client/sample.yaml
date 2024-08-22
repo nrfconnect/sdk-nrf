@@ -19,4 +19,4 @@ tests:
       - thingy91/nrf9160/ns
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_net

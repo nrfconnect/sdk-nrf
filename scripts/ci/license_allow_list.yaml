@@ -41,7 +41,8 @@ any: |
 LicenseRef-west-ncs-sbom-iperf-BSD-3-Clause: "^nrf/ext/"
 Apache-2.0: |
   ^nrf/ext/
-  /src/zap-generated/
+  ^nrf/.clang-format
+  /zap-generated/
   ^nrf/tests/bluetooth/tester/src/main.c$
   ^nrf/tests/bluetooth/tester/src/bttester.c$
   ^nrf/subsys/nrf_security/src/legacy

@@ -1,0 +1,102 @@
+/*
+ * Copyright (C) 2024 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		sensor-bme688 = &i2c130;
+		accel0 = &adxl362;
+		accel-gyro = &bmi270;
+	};
+};
+
+&pinctrl {
+	i2c130_default: i2c130_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 8)>,
+				<NRF_PSEL(TWIM_SCL, 2, 3)>;
+				bias-pull-up;
+		};
+	};
+
+	i2c130_sleep: i2c130_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 8)>,
+				<NRF_PSEL(TWIM_SCL, 2, 3)>;
+			low-power-enable;
+			bias-pull-up;
+		};
+	};
+
+	spi131_default: spi131_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_MISO, 1, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 5)>,
+				<NRF_PSEL(SPIM_SCK, 1, 1)>;
+		};
+	};
+
+	spi131_sleep: spi131_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_MISO, 1, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 5)>,
+				<NRF_PSEL(SPIM_SCK, 1, 1)>;
+				low-power-enable;
+		};
+	};
+};
+
+&i2c130 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	pinctrl-0 = <&i2c130_default>;
+	pinctrl-1 = <&i2c130_sleep>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <255>;
+
+	bme688: bme688@76 {
+		compatible = "bosch,bme680";
+		status = "okay";
+		reg = <0x76>;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+};
+
+&spi131 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi131_default>;
+	pinctrl-1 = <&spi131_sleep>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	cs-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>,
+				<&gpio1 2 GPIO_ACTIVE_LOW>;
+
+	bmi270: bmi270@0 {
+		compatible = "bosch,bmi270";
+		status = "okay";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+	};
+
+	adxl362: adxl362@1 {
+		compatible = "adi,adxl362";
+		status = "okay";
+		reg = <1>;
+		int1-gpios = <&gpio1 8 (GPIO_ACTIVE_HIGH)>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+	};
+};

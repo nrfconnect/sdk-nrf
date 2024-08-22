@@ -16,7 +16,7 @@ canopen==2.1.0            # via -r zephyr/scripts/requirements-base.txt
 capstone==4.0.2           # via pyocd
 cbor==1.0.0               # via -r zephyr/scripts/requirements-run-test.txt
 cbor2==5.4.6              # via -r bootloader/mcuboot/scripts/requirements.txt, -r nrf/scripts/requirements-build.txt, imgtool, zcbor
-certifi==2023.7.22        # via requests
+certifi==2024.7.4         # via -r nrf/scripts/requirements-base.txt, requests
 cffi==1.15.1              # via cmsis-pack-manager, cryptography, milksnake, pygit2, pynacl
 chardet==5.2.0            # via -r nrf/scripts/requirements-ci.txt
 charset-normalizer==3.2.0  # via requests
@@ -70,7 +70,7 @@ msgpack==1.0.5            # via python-can
 mypy==1.5.1               # via -r zephyr/scripts/requirements-build-test.txt
 mypy-extensions==1.0.0    # via mypy
 natsort==8.4.0            # via pyocd
-nrf-regtool==5.4.0        # via -r nrf/scripts/requirements-build.txt
+nrf-regtool==5.5.1        # via -r nrf/scripts/requirements-build.txt
 nrfcredstore==1.0.0       # via -r nrf/scripts/requirements-extra.txt
 numpy==1.26.4             # via svada
 packaging==24.0           # via -r zephyr/scripts/requirements-base.txt, pkg-about, pytest, python-can, setuptools-scm, west

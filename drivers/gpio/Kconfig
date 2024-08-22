@@ -1,0 +1,20 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig GPIO_NRFE
+	bool "Emulated GPIO"
+	default y
+	depends on DT_HAS_NORDIC_NRF_EGPIO_ENABLED
+	select IPC_SERVICE
+	select MBOX
+	help
+	  Use emulated GPIO driver.
+
+config GPIO_NRFE_INIT_PRIORITY
+	int "Emulated GPIO init priority"
+	depends on GPIO_NRFE
+	default 48
+	help
+	  eGPIO driver device initialization priority.
+	  eGPIO initialization depends on IPC initialization which is done at the same init level and
+	  has init priority equal to 46.

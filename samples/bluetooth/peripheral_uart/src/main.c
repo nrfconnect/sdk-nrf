@@ -338,7 +338,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (err) {
-		LOG_ERR("Connection failed (err %u)", err);
+		LOG_ERR("Connection failed, err 0x%02x %s", err, bt_hci_err_to_str(err));
 		return;
 	}
 
@@ -356,7 +356,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Disconnected: %s (reason %u)", addr, reason);
+	LOG_INF("Disconnected: %s, reason 0x%02x %s", addr, reason, bt_hci_err_to_str(reason));
 
 	if (auth_conn) {
 		bt_conn_unref(auth_conn);
@@ -381,8 +381,8 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	if (!err) {
 		LOG_INF("Security changed: %s level %u", addr, level);
 	} else {
-		LOG_WRN("Security failed: %s level %u err %d", addr,
-			level, err);
+		LOG_WRN("Security failed: %s level %u err %d %s", addr, level, err,
+			bt_security_err_to_str(err));
 	}
 }
 #endif
@@ -444,9 +444,9 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	LOG_INF("Pairing failed conn: %s, reason %d", addr, reason);
+	LOG_INF("Pairing failed conn: %s, reason %d %s", addr, reason,
+		bt_security_err_to_str(reason));
 }
-
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.passkey_display = auth_passkey_display,

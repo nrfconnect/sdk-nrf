@@ -19,6 +19,7 @@
     - sample.matter.window_cover.lto
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
+    - sample.matter.template.test_shell
   platforms:
     - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -41,6 +42,7 @@
     - sample.matter.window_cover.lto
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
+    - sample.matter.template.test_shell
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -84,6 +86,7 @@
     - sample.matter.lock.release
     - sample.matter.lock.lto
     - sample.matter.lock.smp_dfu
+    - sample.matter.lock.nus
     - sample.matter.light_bulb.memory_profiling.persistent_subscriptions
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.debug
@@ -431,7 +434,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - fast_pair.crypto.mbedtls
     - fast_pair.crypto.oberon
     - fast_pair.crypto.tinycrypt
     - fast_pair.crypto.psa
@@ -474,6 +476,7 @@
 - scenarios:
     - applications.nrf_desktop.zdebug_3bleconn
     - applications.nrf_desktop.zrelease_4llpmconn
+    - applications.nrf_desktop.zrelease.usb_next
   platforms:
     - nrf52840dongle/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"

@@ -1,0 +1,8 @@
+tests:
+  suit.unit.platform.version:
+    type: unit
+    tags: >-
+      suit
+      suit_platform
+      suit_plat_version
+      ci_tests_subsys_suit

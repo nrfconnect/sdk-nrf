@@ -1,0 +1,19 @@
+common:
+  tags:
+    - pwm
+    - drivers
+    - ci_tests_drivers_pwm
+  depends_on: pwm
+  filter: dt_compat_enabled("test-pwm-to-gpio-loopback")
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+
+tests:
+  drivers.pwm.gpio_loopback:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp

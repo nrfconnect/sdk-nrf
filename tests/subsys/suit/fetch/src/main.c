@@ -94,7 +94,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_OK)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source);
+	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_component_impl_data_get(component_handle, &handle);
@@ -134,7 +134,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_OK)
 
 	setup_cache_with_sample_entries();
 
-	ret = suit_plat_fetch(component_handle, &uri);
+	ret = suit_plat_fetch(component_handle, &uri, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_release_component_handle(component_handle);
@@ -163,7 +163,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_NOK_uri_not_in_cache)
 
 	setup_cache_with_sample_entries();
 
-	ret = suit_plat_fetch(component_handle, &uri);
+	ret = suit_plat_fetch(component_handle, &uri, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_fetch should fail - supplied uri is not in cache", ret);
 
@@ -193,7 +193,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_NOK_invalid_component_id)
 
 	setup_cache_with_sample_entries();
 
-	ret = suit_plat_fetch(component_handle, &uri);
+	ret = suit_plat_fetch(component_handle, &uri, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_fetch should have failed - invalid component_id");
 
@@ -220,7 +220,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_data_ptr_NULL)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source);
+	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_fetch should have failed - NULL data pointer");
 
@@ -245,7 +245,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_data_size_zero)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source);
+	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS, "suit_plat_fetch should have failed - data size 0");
 
 	ret = suit_plat_release_component_handle(component_handle);
@@ -269,7 +269,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_handle_NULL)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source);
+	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	const uint8_t *payload;

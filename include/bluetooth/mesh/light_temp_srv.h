@@ -49,14 +49,30 @@ struct bt_mesh_light_temp_srv;
  * @brief Light CTL Temperature Server model composition data entry.
  *
  * @param[in] _srv Pointer to a @ref bt_mesh_light_temp_srv instance.
+ * @param ...	   Optional Light Temperature Server metadata if application is
+ *		   compiled with Large Composition Data Server support,
+ *		   otherwise this parameter is ignored.
  */
-#define BT_MESH_MODEL_LIGHT_TEMP_SRV(_srv)                                     \
+#define BT_MESH_MODEL_LIGHT_TEMP_SRV(_srv, ...)                                \
 	BT_MESH_MODEL_LVL_SRV(&(_srv)->lvl),                                   \
-	BT_MESH_MODEL_CB(                                                      \
+	BT_MESH_MODEL_METADATA_CB(                                             \
 		BT_MESH_MODEL_ID_LIGHT_CTL_TEMP_SRV,                           \
 		_bt_mesh_light_temp_srv_op, &(_srv)->pub,                      \
 		BT_MESH_MODEL_USER_DATA(struct bt_mesh_light_temp_srv, _srv),  \
-		&_bt_mesh_light_temp_srv_cb)
+		&_bt_mesh_light_temp_srv_cb, __VA_ARGS__)
+
+/** Light CTL Temperature Range Metadata ID. */
+#define BT_MESH_LIGHT_CTL_TEMP_RANGE_METADATA_ID 0x0004
+
+/**
+ *  Light CTL Temperature Range Metadata entry.
+ *
+ *  @param range_min Minimum boundary of range (16-bit)
+ *  @param range_max Maximum boundary of range (16-bit)
+ */
+#define BT_MESH_LIGHT_CTL_TEMP_RANGE_METADATA(range_min, range_max)                                \
+	BT_MESH_MODELS_METADATA_ENTRY(4, BT_MESH_LIGHT_CTL_TEMP_RANGE_METADATA_ID,                 \
+				      ((uint16_t[]){(range_min), (range_max)}))
 
 /** Light CTL Temperature Server state access handlers. */
 struct bt_mesh_light_temp_srv_handlers {

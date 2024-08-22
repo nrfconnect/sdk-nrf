@@ -18,7 +18,7 @@ size_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes);
 psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 					  psa_drv_slot_number_t *slot_number);
 
-psa_status_t cracen_platform_keys_provision(psa_key_attributes_t *attributes, uint8_t *key_buffer,
-					    size_t key_buffer_size);
+psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attributes,
+					    const uint8_t *key_buffer, size_t key_buffer_size);
 
 #endif /* CRACEN_PLATFORM_KEYS_H */

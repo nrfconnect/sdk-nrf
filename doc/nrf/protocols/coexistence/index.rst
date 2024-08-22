@@ -22,7 +22,7 @@ The following table lists wireless coexistence between protocols:
       - :ref:`Supported<ug_multiprotocol_support>`
       - :ref:`Supported<ug_multiprotocol_support>`
       - :ref:`Supported<ug_radio_coex>`
-      - :ref:`Supported <ug_radio_coex_bluetooth_only_1wire>`
+      - :ref:`Supported<ug_radio_coex>`
     * - Thread
       - :ref:`Supported<ug_multiprotocol_support>`
       - N/A
@@ -42,7 +42,7 @@ The following table lists wireless coexistence between protocols:
       - N/A
       -
     * - LTE-M/NB-IoT
-      - :ref:`Supported <ug_radio_coex_bluetooth_only_1wire>`
+      - :ref:`Supported<ug_radio_coex>`
       -
       -
       -

@@ -123,7 +123,25 @@ int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan
 int bt_mgmt_manufacturer_uuid_populate(struct net_buf_simple *uuid_buf, uint16_t company_id);
 
 /**
- * @brief	Create and start advertising for ACL connection.
+ * @brief	Stop periodic advertising.
+ *
+ * @note	Must be called before bt_mgmt_ext_adv_stop.
+ *
+ * @param[in]	ext_adv_index	Index of the advertising set to stop.
+ *
+ * @return	0 if success, error otherwise.
+ */
+int bt_mgmt_per_adv_stop(uint8_t ext_adv_index);
+
+/**
+ * @brief	Stop extended advertising.
+ *
+ * @return	0 if success, error otherwise.
+ */
+int bt_mgmt_ext_adv_stop(uint8_t ext_adv_index);
+
+/**
+ * @brief	Create and start advertising for an ACL connection.
  *
  * @param[in]	ext_adv_index	Index of the advertising set to start.
  * @param[in]	ext_adv		The data to be put in the extended advertisement.
@@ -156,6 +174,18 @@ void bt_mgmt_num_conn_get(uint8_t *num_conn);
 int bt_mgmt_bonding_clear(void);
 
 /**
+ * @brief	Scan delegator feature initialization.
+ */
+void bt_mgmt_scan_delegator_init(void);
+
+/**
+ * @brief	Get the pointer to broadcast code.
+ *
+ * @param[out]	broadcast_code_ptr	Pointer to the broadcast code.
+ */
+void bt_mgmt_broadcast_code_ptr_get(uint8_t **broadcast_code_ptr);
+
+/**
  * @brief	Delete a periodic advertisement sync.
  *
  * @param[in]	pa_sync	Pointer to the periodic advertisement sync to delete.
@@ -169,7 +199,7 @@ int bt_mgmt_pa_sync_delete(struct bt_le_per_adv_sync *pa_sync);
  *
  * @param[in]	conn	Connection to disconnect.
  * @param[in]	reason	Reason code for the disconnection, as specified in
- *			HCI Error Codes, BT Core Spec v5.4 [Vol 1, Part F].
+ *			HCI Error Codes, BT Core Spec [Vol 1, Part F].
  *
  * @return	0 if success, error otherwise.
  */

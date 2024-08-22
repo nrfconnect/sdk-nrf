@@ -54,27 +54,6 @@ config BT_RPC_INITIALIZE_NRF_RPC
 	  Initialize nRF RPC library during the system startup. Disabling this
 	  option allow user to initialize it in a different way.
 
-config CBKPROXY_OUT_SLOTS
-	int "Maximum number of RPC callback proxy output slots"
-	default 16
-	range 0 16383
-	help
-	  Output slot is used to save context for one callback that is called
-	  on local side, encoded, sent and finally executed on the remote side.
-	  Each output slot takes 8 bytes of flash memory. Maximum number of
-	  input slots on the remote side should be the same as this value.
-
-
-config CBKPROXY_IN_SLOTS
-	int "Maximum number of RPC callback proxy input slots"
-	default 16
-	range 0 16383
-	help
-	  Input slot is used to save context for one callback that is called
-	  on remote side, encoded, sent and finally executed on the local side.
-	  Each output slot takes 8 bytes of RAM memory. Maximum number of
-	  output slots on the remote side should be the same as this value.
-
 config BT_RPC_GATT_SRV_MAX
 	int "Maximum number of GATT services"
 	default 4
@@ -204,5 +183,6 @@ source "$(ZEPHYR_BASE)/subsys/bluetooth/services/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/common/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/host/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/crypto/Kconfig"
+source "$(ZEPHYR_BASE)/subsys/bluetooth/shell/Kconfig"
 
 endif # BT_RPC_STACK

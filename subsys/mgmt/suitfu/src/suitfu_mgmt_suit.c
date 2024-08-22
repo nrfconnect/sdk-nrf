@@ -39,6 +39,7 @@ static const struct mgmt_handler suit_mgmt_handlers[] = {
 #ifdef CONFIG_MGMT_SUITFU_GRP_SUIT_CAND_ENV_UPLOAD
 	[SUIT_MGMT_ID_ENVELOPE_UPLOAD] = {.mh_read = NULL,
 					  .mh_write = suitfu_mgmt_suit_envelope_upload},
+	[SUIT_MGMT_ID_CLEANUP] = {.mh_read = NULL, .mh_write = suitfu_mgmt_suit_cleanup},
 #endif
 
 #ifdef CONFIG_MGMT_SUITFU_GRP_SUIT_IMAGE_FETCH
@@ -46,6 +47,11 @@ static const struct mgmt_handler suit_mgmt_handlers[] = {
 					      .mh_write = NULL},
 	[SUIT_MGMT_ID_MISSING_IMAGE_UPLOAD] = {.mh_read = NULL,
 					       .mh_write = suitfu_mgmt_suit_missing_image_upload},
+#endif
+
+#ifdef CONFIG_MGMT_SUITFU_GRP_SUIT_CACHE_RAW_UPLOAD
+	[SUIT_MGMT_ID_CACHE_RAW_UPLOAD] = {.mh_read = NULL,
+					   .mh_write = suitfu_mgmt_suit_cache_raw_upload},
 #endif
 };
 

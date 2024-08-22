@@ -10,6 +10,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include <zephyr/settings/settings.h>
 
@@ -88,7 +89,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (err) {
-		printk("Connection failed (err %u)\n", err);
+		printk("Connection failed, err 0x%02x %s\n", err, bt_hci_err_to_str(err));
 		return;
 	}
 
@@ -107,7 +108,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 	dk_set_led_off(CON_STATUS_LED);
 
-	printk("Disconnected: %s (reason %u)\n", addr, reason);
+	printk("Disconnected: %s, reason 0x%02x %s\n", addr, reason, bt_hci_err_to_str(reason));
 
 	/* Process the disconnect logic in the workqueue so that
 	 * the BLE stack is finished with the connection bookkeeping

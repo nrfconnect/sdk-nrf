@@ -6,7 +6,7 @@
 
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>
-#include <modem/at_cmd_parser.h>
+#include <modem/at_parser.h>
 #include <ctype.h>
 #include <zephyr/device.h>
 #include <errno.h>
@@ -365,7 +365,6 @@ static const struct modem_info_data *const modem_data[] = {
 AT_MONITOR(modem_info_cesq_mon, "%CESQ", modem_info_rsrp_subscribe_handler, PAUSED);
 
 static rsrp_cb_t modem_info_rsrp_cb;
-static struct at_param_list m_param_list;
 
 static void flip_iccid_string(char *buf)
 {
@@ -379,31 +378,6 @@ static void flip_iccid_string(char *buf)
 		buf[i] = next_char;
 		buf[i + 1] = current_char;
 	}
-}
-
-static int modem_info_parse(const struct modem_info_data *modem_data,
-			    const char *buf)
-{
-	int err;
-	uint32_t param_index;
-
-	err = at_parser_max_params_from_str(buf, NULL, &m_param_list,
-					    modem_data->param_count);
-
-	if (err == -EAGAIN) {
-		LOG_DBG("More items exist to parse for: %s",
-			modem_data->data_name);
-		err = 0;
-	} else if (err != 0) {
-		return err;
-	}
-
-	param_index = at_params_valid_count_get(&m_param_list);
-	if (param_index > modem_data->param_count) {
-		return -EAGAIN;
-	}
-
-	return err;
 }
 
 static int map_nrf_modem_at_scanf_error(int err)
@@ -457,6 +431,7 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 {
 	int err;
 	char recv_buf[CONFIG_MODEM_INFO_BUFFER_SIZE] = {0};
+	struct at_parser parser;
 
 	if (buf == NULL) {
 		return -EINVAL;
@@ -471,15 +446,10 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 		return -EIO;
 	}
 
-	err = modem_info_parse(modem_data[info], recv_buf);
-	if (err) {
-		return err;
-	}
+	err = at_parser_init(&parser, recv_buf);
+	__ASSERT_NO_MSG(err == 0);
 
-	err = at_params_unsigned_short_get(&m_param_list,
-					   modem_data[info]->param_index,
-					   buf);
-
+	err = at_parser_num_get(&parser, modem_data[info]->param_index, buf);
 	if (err) {
 		return err;
 	}
@@ -503,6 +473,7 @@ static int parse_ip_addresses(char *out_buf, size_t out_buf_size, char *in_buf)
 	char ip_buf[INET_ADDRSTRLEN + sizeof(" ") + INET6_ADDRSTRLEN];
 	char *ip_v6_str;
 	bool first_address;
+	struct at_parser parser;
 
 	p = strstr(in_buf, "OK\r\n");
 	if (!p) {
@@ -542,21 +513,16 @@ parse_line:
 	line_len = str_end - &in_buf[line_start_idx];
 	in_buf[++line_len + line_start_idx] = '\0';
 
-	err = modem_info_parse(modem_data[MODEM_INFO_IP_ADDRESS], &in_buf[line_start_idx]);
-	if (err) {
-		LOG_ERR("Unable to parse data: %d", err);
-		return err;
-	}
+	err = at_parser_init(&parser, &in_buf[line_start_idx]);
+	__ASSERT_NO_MSG(err == 0);
 
 	len = sizeof(ip_buf);
-	err = at_params_string_get(&m_param_list,
+	err = at_parser_string_get(&parser,
 				   modem_data[MODEM_INFO_IP_ADDRESS]->param_index,
 				   ip_buf,
 				   &len);
-	if (err != 0) {
+	if (err) {
 		return err;
-	} else if (len >= sizeof(ip_buf)) {
-		return -EMSGSIZE;
 	}
 
 	if (len == 0) {
@@ -623,6 +589,7 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 	 * one elements, such as multiple IP addresses.
 	 */
 	size_t accumulated_len = 0;
+	struct at_parser parser;
 
 	if ((buf == NULL) || (buf_size == 0)) {
 		return -EINVAL;
@@ -661,20 +628,17 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 		return len;
 	}
 
-	err = modem_info_parse(modem_data[info], recv_buf);
-	if (err) {
-		LOG_ERR("Unable to parse data: %d", err);
-		return err;
-	}
-
 	if (info == MODEM_INFO_IP_ADDRESS) {
 		return parse_ip_addresses(buf, buf_size, recv_buf);
 	}
 
+	err = at_parser_init(&parser, recv_buf);
+	__ASSERT_NO_MSG(err == 0);
+
 	if (modem_data[info]->data_type == AT_PARAM_TYPE_NUM_INT) {
-		err = at_params_unsigned_short_get(&m_param_list,
-						    modem_data[info]->param_index,
-						    &param_value);
+		err = at_parser_num_get(&parser,
+					modem_data[info]->param_index,
+					&param_value);
 		if (err) {
 			LOG_ERR("Unable to obtain short: %d", err);
 			return err;
@@ -686,15 +650,12 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 		}
 	} else if (modem_data[info]->data_type == AT_PARAM_TYPE_STRING) {
 		len = buf_size - out_buf_len;
-		err = at_params_string_get(&m_param_list,
+		err = at_parser_string_get(&parser,
 					   modem_data[info]->param_index,
 					   &buf[out_buf_len],
 					   &len);
-		if (err != 0) {
+		if (err) {
 			return err;
-		} else if (len >= buf_size) {
-			return -EMSGSIZE;
-
 		}
 
 		accumulated_len += len;
@@ -719,6 +680,7 @@ static void modem_info_rsrp_subscribe_handler(const char *notif)
 {
 	int err;
 	uint16_t param_value;
+	struct at_parser parser;
 
 	const struct modem_info_data rsrp_notify_data = {
 		.cmd		= AT_CMD_CESQ,
@@ -728,16 +690,12 @@ static void modem_info_rsrp_subscribe_handler(const char *notif)
 		.data_type	= AT_PARAM_TYPE_NUM_INT,
 	};
 
-	err = modem_info_parse(&rsrp_notify_data, notif);
-	if (err != 0) {
-		LOG_ERR("modem_info_parse failed to parse "
-			"CESQ notification, %d", err);
-		return;
-	}
+	err = at_parser_init(&parser, notif);
+	__ASSERT_NO_MSG(err == 0);
 
-	err = at_params_unsigned_short_get(&m_param_list,
-					   rsrp_notify_data.param_index,
-					   &param_value);
+	err = at_parser_num_get(&parser,
+				rsrp_notify_data.param_index,
+				&param_value);
 	if (err != 0) {
 		LOG_ERR("Failed to obtain RSRP value, %d", err);
 		return;
@@ -940,21 +898,31 @@ int modem_info_get_connectivity_stats(int *tx_kbytes, int *rx_kbytes)
 
 int modem_info_get_current_band(uint8_t *val)
 {
+	int ret;
+	unsigned int band;
+
 	if (val == NULL) {
 		return -EINVAL;
 	}
 
-	int ret = nrf_modem_at_scanf("AT%XCBAND", "%%XCBAND: %u", val);
-
+	ret = nrf_modem_at_scanf("AT%XCBAND", "%%XCBAND: %u", &band);
 	if (ret != 1) {
 		LOG_ERR("Could not get band, error: %d", ret);
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 
-	if (*val == BAND_UNAVAILABLE) {
+	if (band == BAND_UNAVAILABLE) {
 		LOG_WRN("No valid band");
 		return -ENOENT;
 	}
+
+	/* Band is expected to be within range 1–71 */
+	if (band > UINT8_MAX) {
+		LOG_ERR("Band is out of range");
+		return -ERANGE;
+	}
+
+	*val = band;
 
 	return 0;
 }
@@ -1010,13 +978,5 @@ int modem_info_get_snr(int *val)
 
 int modem_info_init(void)
 {
-	int err = 0;
-
-	if (m_param_list.params == NULL) {
-		/* Init at_cmd_parser storage module */
-		err = at_params_list_init(&m_param_list,
-					  CONFIG_MODEM_INFO_MAX_AT_PARAMS_RSP);
-	}
-
-	return err;
+	return 0;
 }

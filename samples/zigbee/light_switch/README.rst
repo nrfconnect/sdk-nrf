@@ -128,12 +128,26 @@ For example, when building from the command line, use the following command:
 For the board name to use instead of the ``nrf52840dk/nrf52840``, see :ref:`programming_board_names`.
 
 See :ref:`cmake_options` for instructions on how to add flags to your build.
-For more information about using configuration overlay files, see :ref:`zephyr:important-build-vars` in the Zephyr documentation.
+For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 FEM support
 ===========
 
 .. include:: /includes/sample_fem_support.txt
+
+Configurable transmission power
+===============================
+
+To achieve a lower power consumption of the light switch, you can configure the transmission power using the :kconfig:option:`CONFIG_LIGHT_SWITCH_CONFIGURE_TX_POWER` Kconfig option.
+You can select per-channel transmission power (in dBm) with the :kconfig:option:`CONFIG_LIGHT_SWITCH_TX_POWER` Kconfig option.
+This affects to all frames sent by the device, even in the network scan phase.
+
+.. note::
+    The :kconfig:option:`CONFIG_LIGHT_SWITCH_CONFIGURE_TX_POWER` Kconfig option is enabled by default and this sample's transmission power is set to 0 dBm.
+
+When the :kconfig:option:`CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI` Kconfig option is set to ``y``, the :kconfig:option:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` Kconfig option must be increased depending on the channel mask.
+For example, in case 16 channels are active, a proper value for :kconfig:option:`CONFIG_ZIGBEE_APP_CB_QUEUE_LENGTH` would be ``17``.
+Similar consideration applies to the `ZB_CONFIG_IOBUF_POOL_SIZE` and `ZB_CONFIG_SCHEDULER_Q_SIZE` values configured in the :file:`include/zb_mem_config_custom.h` file.
 
 .. _zigbee_light_switch_user_interface:
 

@@ -45,9 +45,10 @@ static uint16_t exp_light_sensor = 0x018D;
  * we can use it for testing the module.
  */
 static struct bt_le_scan_cb *scancb;
-void bt_le_scan_cb_register(struct bt_le_scan_cb *cb)
+int bt_le_scan_cb_register(struct bt_le_scan_cb *cb)
 {
 	scancb = cb;
+	return 0;
 }
 
 int settings_save_one(const char *name, const void *value, size_t val_len)

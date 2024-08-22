@@ -48,13 +48,6 @@ FAKE_VALUE_FUNC(int, suit_plat_authorize_unsigned_manifest, struct zcbor_string 
 FAKE_VALUE_FUNC(int, suit_plat_authenticate_manifest, struct zcbor_string *, enum suit_cose_alg,
 		struct zcbor_string *, struct zcbor_string *, struct zcbor_string *);
 
-void setup_dfu_test_cache(void *f)
-{
-	int ret = suit_dfu_cache_rw_initialize(NULL, 0);
-
-	zassert_equal(ret, SUIT_PLAT_SUCCESS, "Failed to initialize cache: %i", ret);
-}
-
 void clear_dfu_test_partitions(void *f)
 {
 	/* Erase the area, to meet the preconditions in the next test. */
@@ -71,12 +64,9 @@ void clear_dfu_test_partitions(void *f)
 	rc = flash_erase(fdev, FIXED_PARTITION_OFFSET(dfu_cache_partition_3),
 			 FIXED_PARTITION_SIZE(dfu_cache_partition_3));
 	zassert_equal(rc, 0, "Unable to erase dfu_cache_partition_3 before test execution: %i", rc);
-
-	suit_dfu_cache_rw_deinitialize();
 }
 
-ZTEST_SUITE(cache_pool_digest_tests, NULL, NULL, setup_dfu_test_cache, clear_dfu_test_partitions,
-	    NULL);
+ZTEST_SUITE(cache_pool_digest_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
 
 ZTEST(cache_pool_digest_tests, test_cache_get_slot_ok)
 {
@@ -125,7 +115,7 @@ ZTEST(cache_pool_digest_tests, test_cache_get_slot_ok)
 		.len = sizeof(uri),
 	};
 
-	ret = suit_plat_fetch(dst_component, &src_uri);
+	ret = suit_plat_fetch(dst_component, &src_uri, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_check_image_match(dst_component, suit_cose_sha256, &exp_digest);

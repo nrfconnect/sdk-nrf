@@ -11,8 +11,7 @@
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #include <modem/lte_lc.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
+#include <modem/at_parser.h>
 #include "lwm2m_engine.h"
 #include "nrf_modem_at.h"
 #include "nrf_errno.h"
@@ -34,7 +33,7 @@ static bool initialized;
 static uint64_t pause_start_time; /* [ms] */
 static bool engine_paused;
 static bool resumed;
-static struct at_param_list at_list;
+static struct at_parser parser;
 
 static void pause_engine(void)
 {
@@ -48,18 +47,18 @@ static int read_energy_estimate(uint16_t *energy_estimate)
 	int ret;
 	int conneval_result;
 
-	ret = at_params_int_get(&at_list, AT_CONEVAL_RESULT_INDEX, &conneval_result);
+	ret = at_parser_num_get(&parser, AT_CONEVAL_RESULT_INDEX, &conneval_result);
 	if (ret) {
-		LOG_ERR("AT params error : %d", ret);
+		LOG_ERR("AT parser error : %d", ret);
 		return ret;
 	}
 
 	/* Check that coneval estimation is valid */
 	if (conneval_result == 0) {
-		ret = at_params_unsigned_short_get(&at_list, AT_CONEVAL_ENERGY_ESTIMATE_INDEX,
-						   energy_estimate);
+		ret = at_parser_num_get(&parser, AT_CONEVAL_ENERGY_ESTIMATE_INDEX,
+					energy_estimate);
 		if (ret) {
-			LOG_ERR("AT params error : %d", ret);
+			LOG_ERR("AT parser error : %d", ret);
 			return ret;
 		}
 		LOG_INF("Energy estimate: %hu", *energy_estimate);
@@ -74,7 +73,7 @@ static void conneval_cb(const char *resp)
 
 	LOG_DBG("Conneval response: %s", resp);
 
-	ret = at_parser_max_params_from_str(resp, NULL, &at_list, AT_CONEVAL_PARAMS_MAX);
+	ret = at_parser_init(&parser, resp);
 	if (ret) {
 		LOG_ERR("AT parser error : %d", ret);
 		return;
@@ -137,8 +136,6 @@ static void conneval_update_work(struct k_work *work)
 int lwm2m_utils_enable_conneval(enum lte_lc_energy_estimate min_energy_estimate,
 				uint64_t maximum_delay_s, uint64_t poll_period_ms)
 {
-	int ret;
-
 	LOG_INF("Min energy estimate %d", min_energy_estimate);
 	LOG_INF("Max delay %" PRIu64 " s", maximum_delay_s);
 	LOG_INF("Poll period %" PRIu64 " ms", poll_period_ms);
@@ -151,11 +148,6 @@ int lwm2m_utils_enable_conneval(enum lte_lc_energy_estimate min_energy_estimate,
 	if (!initialized) {
 		k_work_init_delayable(&conneval_work_delayable, conneval_update_work);
 		k_work_init(&conneval_estimate_work, estimate_work);
-		ret = at_params_list_init(&at_list, AT_CONEVAL_PARAMS_MAX);
-		if (ret < 0) {
-			LOG_ERR("Failed to initialize parameter list: %d", ret);
-			return ret;
-		}
 		initialized = true;
 	}
 

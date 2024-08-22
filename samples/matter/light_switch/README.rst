@@ -117,6 +117,24 @@ Matter light switch custom configurations
     :start-after: matter_light_bulb_sample_configuration_file_types_start
     :end-before: matter_light_bulb_sample_configuration_file_types_end
 
+.. _matter_light_switch_snippets:
+
+Snippets
+========
+
+.. |snippet| replace:: :makevar:`light_switch_SNIPPET`
+
+.. include:: /includes/sample_snippets.txt
+
+The following snippet is available:
+
+* ``lit_icd`` - Enables experimental LIT ICD support.
+
+  .. |snippet_zap_file| replace:: :file:`snippets/lit_icd/light_switch.zap`
+  .. |snippet_dir| replace:: :file:`snippets/lit_icd`
+
+  .. include:: /includes/matter_snippets_note.txt
+
 FEM support
 ===========
 
@@ -166,6 +184,14 @@ User interface
          * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
            The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 2** is pressed.
 
+      Button 3:
+         Functions as the User Active Mode Trigger (UAT) button.
+         For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
+
+         .. note::
+            To enable this functionality, :ref:`activate the lit_icd snippet <matter_light_switch_snippets>`.
+            ICD and UAT functionality is currently supported only for Matter over Thread.
+
       .. include:: /includes/matter_segger_usb.txt
 
       NFC port with antenna attached:
@@ -193,6 +219,13 @@ User interface
          * If pressed for less than 0.5 seconds, it changes the light state to the opposite one on the bound lighting device (:ref:`light bulb <matter_light_bulb_sample>`).
          * If pressed for more than 0.5 seconds, it changes the brightness of the light on the bound lighting bulb device (:ref:`light bulb <matter_light_bulb_sample>`).
            The brightness is changing from 0% to 100% with 1% increments every 300 milliseconds as long as **Button 1** is pressed.
+
+      Button 2:
+         Functions as the User Active Mode Trigger (UAT) button.
+         For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
+
+         .. note::
+            To enable this functionality, :ref:`activate the lit_icd snippet <matter_light_switch_snippets>`.
 
       .. include:: /includes/matter_segger_usb.txt
 

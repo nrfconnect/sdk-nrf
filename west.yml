@@ -1,4 +1,4 @@
-# The west manifest file (west.yml) for the nRF Connect SDK (NCS).
+# tHe west manifest file (west.yml) for the nRF Connect SDK (NCS).
 #
 # The per-workspace west configuration file, ncs/.west/config,
 # specifies the location of this manifest file like this:
@@ -47,7 +47,16 @@ manifest:
   defaults:
     remote: ncs
 
-  group-filter: [-nrf-802154, -dragoon, -find-my, -ant, -babblesim, -sidewalk, -bsec, +optional]
+  group-filter:
+    - -nrf-802154
+    - -dragoon
+    - -find-my
+    - -ant
+    - -babblesim
+    - -sidewalk
+    - -bsec
+    - -doc-internal
+    - +optional
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -114,7 +123,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 6311fde66f87ac8c8838a2d5fcfe55a498a8682a
+      revision: 3b64b3bf9957f3b1515d58429b89589d234dcaaf
       userdata:
         ncs:
           upstream-url: https://w1.fi/cgit/hostap/
@@ -123,7 +132,7 @@ manifest:
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
-      revision: 9f91589a5be2b95a77a2b109901aad3298255315
+      revision: af011c8a8d338ba529f17aed2cc2ef4c1c591a58
       userdata:
         ncs:
           upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
@@ -144,15 +153,15 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: e0800ec5283ba89b2619919ef1889d98a9a79132
+      revision: 5bfe42c2375204e38a067fe15bd33d581fbfbd01
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.7.0
+      revision: 8f5ca6fee77c5572e3a6583981a3016efc06a794
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v2.0.0-ncs2
+      revision: ac5004232f9b5ae7209b5b1b77eb30ae89309abe
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -160,7 +169,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.7.0
+      revision: b6d6e9a8885ce8390e1847e7a986ecbbdcbc277d
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -181,7 +190,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.7.0
+      revision: 11b447c6e634a29da762064f3f9191714e4420ae
       groups:
         - nrf-802154
     - name: soc-hwmv1
@@ -194,7 +203,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: d6dac7ae08db726f2aa326492a4da8b3980e077f
+      revision: fc68c233ae346436ae57c07a590cb40838ce53d0
       submodules: true
       groups:
         - dragoon
@@ -209,12 +218,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: v2.7.0
+      revision: ec5b68df4398594fdb569942993cdc1b4acbee0b
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.7.0
+      revision: fccf8ecac55c9ee8875f4f06cd06f1e50d4897bf
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -238,18 +247,24 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: a57d927b0ace94972a49ea2672c9073b88b86377
+      revision: a759a4a09f9fe5bdf757c470aa86dffdc7a349f1
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: v2.7.0
+      revision: dcd58e681a98d5b8b49ec56a065315f53e21a2b7
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: v2.7.0
+      revision: ee58d543994256d545c692e14badf3efa9830237
       path: modules/lib/suit-processor
+    - name: doc-internal
+      repo-path: doc-internal
+      path: modules/doc-internal
+      revision: f598c1901b67990c4519d5b2a542cf5b81e1298d
+      groups:
+        - doc-internal
 
     # Other third-party repositories.
     - name: cmock

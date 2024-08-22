@@ -32,15 +32,12 @@ static void factory_reset_work_handle(struct k_work *w);
 
 static K_WORK_DELAYABLE_DEFINE(factory_reset_work, factory_reset_work_handle);
 static enum app_factory_reset_state factory_reset_state;
-static app_factory_reset_executed_cb user_cb;
 static bool factory_reset_ui_requested;
 
 int bt_fast_pair_factory_reset_user_action_perform(void)
 {
-	int err;
 	int id;
 	size_t id_count;
-	bool fp_adv_is_init = app_fp_adv_is_init();
 	uint8_t bt_id;
 
 	/* Please be extra careful while implementing this hook function, as it can be
@@ -50,15 +47,6 @@ int bt_fast_pair_factory_reset_user_action_perform(void)
 	 * will be propagated as a return value of the bt_fast_pair_enable API.
 	 */
 	LOG_INF("Factory Reset: resetting Bluetooth identity within the factory reset");
-
-	/* Uninitialize the Fast Pair advertising module if it is active. */
-	if (fp_adv_is_init) {
-		err = app_fp_adv_uninit();
-		if (err) {
-			LOG_ERR("Factory Reset: app_fp_adv_uninit failed (err %d)", err);
-			return err;
-		}
-	}
 
 	/* Check if FP identity exists. */
 	bt_id = app_fp_adv_id_get();
@@ -76,23 +64,32 @@ int bt_fast_pair_factory_reset_user_action_perform(void)
 		LOG_INF("Factory Reset: identity for factory reset does not exist");
 	}
 
-	/* Initialize the Fast Pair advertising module if it was active before the reset. */
-	if (fp_adv_is_init) {
-		err = app_fp_adv_init();
-		if (err) {
-			LOG_ERR("Factory Reset: app_fp_adv_init failed (err %d)", err);
-			return err;
+	return 0;
+}
+
+static void factory_reset_prepare(void)
+{
+	STRUCT_SECTION_FOREACH(app_factory_reset_callbacks, cbs) {
+		if (cbs->prepare) {
+			cbs->prepare();
 		}
 	}
+}
 
-	return 0;
+static void factory_reset_executed(void)
+{
+	STRUCT_SECTION_FOREACH(app_factory_reset_callbacks, cbs) {
+		if (cbs->executed) {
+			cbs->executed();
+		}
+	}
 }
 
 static void factory_reset_perform(void)
 {
 	int err;
 	bool fast_pair_is_ready = bt_fast_pair_is_ready();
-	bool fp_adv_is_init = app_fp_adv_is_init();
+	bool fp_adv_is_ready = app_fp_adv_is_ready();
 
 	LOG_INF("Performing reset to factory settings...");
 
@@ -103,20 +100,22 @@ static void factory_reset_perform(void)
 
 	factory_reset_state = APP_FACTORY_RESET_STATE_IN_PROGRESS;
 
+	factory_reset_prepare();
+
+	/* Disable the Fast Pair advertising module if it is active. */
+	if (fp_adv_is_ready) {
+		err = app_fp_adv_disable();
+		if (err) {
+			LOG_ERR("Factory Reset: app_fp_adv_disable failed (err %d)", err);
+			goto finish;
+		}
+	}
+
 	/* Disable the Fast Pair subsystem if it is active. */
 	if (fast_pair_is_ready) {
 		err = bt_fast_pair_disable();
 		if (err) {
 			LOG_ERR("Factory Reset: bt_fast_pair_disable failed: %d", err);
-			goto finish;
-		}
-	}
-
-	/* Uninitialize the Fast Pair advertising module if it is active. */
-	if (fp_adv_is_init) {
-		err = app_fp_adv_uninit();
-		if (err) {
-			LOG_ERR("Factory Reset: app_fp_adv_uninit failed (err %d)", err);
 			goto finish;
 		}
 	}
@@ -130,15 +129,6 @@ static void factory_reset_perform(void)
 		goto finish;
 	}
 
-	/* Initialize the Fast Pair advertising module if it was active before the reset. */
-	if (fp_adv_is_init) {
-		err = app_fp_adv_init();
-		if (err) {
-			LOG_ERR("Factory Reset: app_fp_adv_init failed (err %d)", err);
-			goto finish;
-		}
-	}
-
 	/* Reenable the Fast Pair subsystem. */
 	if (fast_pair_is_ready) {
 		err = bt_fast_pair_enable();
@@ -148,14 +138,20 @@ static void factory_reset_perform(void)
 		}
 	}
 
-	LOG_INF("Reset to factory settings has completed");
-
-	if (user_cb) {
-		user_cb();
+	/* Reenable the Fast Pair advertising module if it was active before the reset. */
+	if (fp_adv_is_ready) {
+		err = app_fp_adv_enable();
+		if (err) {
+			LOG_ERR("Factory Reset: app_fp_adv_enable failed (err %d)", err);
+			goto finish;
+		}
 	}
 
+	LOG_INF("Reset to factory settings has completed");
+
+	factory_reset_executed();
+
 	factory_reset_state = APP_FACTORY_RESET_STATE_IDLE;
-	user_cb = NULL;
 
 finish:
 	if (err) {
@@ -176,8 +172,7 @@ static void factory_reset_request_handle(enum app_ui_request request)
 	}
 }
 
-void app_factory_reset_schedule(k_timeout_t delay,
-				app_factory_reset_executed_cb cb)
+void app_factory_reset_schedule(k_timeout_t delay)
 {
 	if (factory_reset_state != APP_FACTORY_RESET_STATE_IDLE) {
 		LOG_ERR("Factory Reset: rejecting scheduling operation");
@@ -186,7 +181,6 @@ void app_factory_reset_schedule(k_timeout_t delay,
 
 	(void) k_work_schedule(&factory_reset_work, delay);
 	factory_reset_state = APP_FACTORY_RESET_STATE_PENDING;
-	user_cb = cb;
 }
 
 void app_factory_reset_cancel(void)

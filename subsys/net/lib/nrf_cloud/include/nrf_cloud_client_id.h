@@ -13,11 +13,8 @@
 extern "C" {
 #endif
 
-/** @brief Gets the length of the Kconfig configured client id string. */
-size_t nrf_cloud_configured_client_id_length_get(void);
-
-/** @brief Copies the Kconfig configured client id string to the provided buffer */
-int nrf_cloud_configured_client_id_get(char * const buf, size_t buf_sz);
+/** @brief Get the pointer to the device ID string. */
+int nrf_cloud_client_id_ptr_get(const char **client_id);
 
 #ifdef __cplusplus
 }

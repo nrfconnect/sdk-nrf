@@ -15,6 +15,7 @@
 #include <bluetooth/services/fast_pair/fmdn.h>
 
 #include "app_battery.h"
+#include "app_dfu.h"
 #include "app_factory_reset.h"
 #include "app_fp_adv.h"
 #include "app_ring.h"
@@ -58,6 +59,18 @@ static bool fmdn_provisioned;
 static bool fmdn_recovery_mode;
 static bool fmdn_id_mode;
 static bool fp_account_key_present;
+static bool fp_adv_ui_request;
+
+/* Used to trigger the clock synchronization after the bootup if provisioned. */
+APP_FP_ADV_TRIGGER_REGISTER(fp_adv_trigger_clock_sync, "clock_sync");
+
+/* Used to wait for the FMDN provisioning procedure after the Account Key write. */
+APP_FP_ADV_TRIGGER_REGISTER(fp_adv_trigger_fmdn_provisioning, "fmdn_provisioning");
+
+/* Used to manually request the FP advertising by the user.
+ * Enabled by default on bootup if not provisioned.
+ */
+APP_FP_ADV_TRIGGER_REGISTER(fp_adv_trigger_ui, "ui");
 
 static bool factory_reset_executed;
 static enum factory_reset_trigger factory_reset_trigger;
@@ -67,6 +80,19 @@ static void init_work_handle(struct k_work *w);
 static K_SEM_DEFINE(init_work_sem, 0, 1);
 static K_WORK_DEFINE(init_work, init_work_handle);
 
+static void fmdn_factory_reset_prepare(void)
+{
+	/* Disable advertising requests related to the FMDN. */
+	app_fp_adv_request(&fp_adv_trigger_fmdn_provisioning, false);
+	app_fp_adv_request(&fp_adv_trigger_clock_sync, false);
+
+	/* Disable advertising request from the UI. */
+	fp_adv_ui_request = false;
+	app_fp_adv_request(&fp_adv_trigger_ui, fp_adv_ui_request);
+
+	app_fp_adv_rpa_rotation_suspend(false);
+}
+
 static void fmdn_factory_reset_executed(void)
 {
 	/* Clear the trigger state for the scheduled factory reset operations. */
@@ -74,9 +100,12 @@ static void fmdn_factory_reset_executed(void)
 	factory_reset_executed = true;
 }
 
+APP_FACTORY_RESET_CALLBACKS_REGISTER(factory_reset_cbs, fmdn_factory_reset_prepare,
+				    fmdn_factory_reset_executed);
+
 static void fmdn_factory_reset_schedule(enum factory_reset_trigger trigger, k_timeout_t delay)
 {
-	app_factory_reset_schedule(delay, fmdn_factory_reset_executed);
+	app_factory_reset_schedule(delay);
 	factory_reset_trigger = trigger;
 }
 
@@ -106,9 +135,13 @@ static const struct bt_conn_auth_cb conn_auth_callbacks = {
 	.pairing_accept = pairing_accept,
 };
 
-static bool identifying_info_read_allow(struct bt_conn *conn)
+static bool identifying_info_allow(const struct bt_uuid *uuid)
 {
-	ARG_UNUSED(conn);
+	const struct bt_uuid *uuid_block_list[] = {
+		/* GAP service characteristics */
+		BT_UUID_GAP_DEVICE_NAME,
+	};
+	bool uuid_match = false;
 
 	if (!fmdn_provisioned) {
 		return true;
@@ -118,46 +151,57 @@ static bool identifying_info_read_allow(struct bt_conn *conn)
 		return true;
 	}
 
-	LOG_INF("Rejecting read operation of identifying information");
+	for (size_t i = 0; i < ARRAY_SIZE(uuid_block_list); i++) {
+		if (bt_uuid_cmp(uuid, uuid_block_list[i]) == 0) {
+			uuid_match = true;
+			break;
+		}
+	}
+
+	if (!uuid_match) {
+		return true;
+	}
+
+	LOG_INF("Rejecting operation on the identifying information");
 
 	return false;
 }
 
-static bool gatt_read_authorize(struct bt_conn *conn, const struct bt_gatt_attr *attr)
+static bool gatt_authorize(struct bt_conn *conn, const struct bt_gatt_attr *attr)
 {
-	const struct bt_uuid *uuid_block_list[] = {
-		/* GAP service characteristics */
-		BT_UUID_GAP_DEVICE_NAME,
-	};
+	bool authorized = true;
 
-	for (size_t i = 0; i < ARRAY_SIZE(uuid_block_list); i++) {
-		if (bt_uuid_cmp(attr->uuid, uuid_block_list[i]) == 0) {
-			/* Fast Pair Implementation Guidelines for the locator tag use case:
-			 * The Provider shouldn't expose any identifying information
-			 * in an unauthenticated manner (e.g. names or identifiers).
-			 */
-			return identifying_info_read_allow(conn);
-		}
+	/* Fast Pair Implementation Guidelines for the locator tag use case:
+	 * The Provider shouldn't expose any identifying information
+	 * in an unauthenticated manner (e.g. names or identifiers).
+	 */
+
+	if (IS_ENABLED(CONFIG_APP_DFU)) {
+		authorized = authorized && app_dfu_bt_gatt_operation_allow(attr->uuid);
 	}
 
-	return true;
+	authorized = authorized && identifying_info_allow(attr->uuid);
+
+	return authorized;
 }
 
 static const struct bt_gatt_authorization_cb gatt_authorization_callbacks = {
-	.read_authorize = gatt_read_authorize,
+	.read_authorize = gatt_authorize,
+	.write_authorize = gatt_authorize,
 };
 
 static void fp_account_key_written(struct bt_conn *conn)
 {
 	LOG_INF("Fast Pair: Account Key write");
 
-	app_fp_adv_mode_set(APP_FP_ADV_MODE_NOT_DISCOVERABLE);
-
-	/* Fast Pair Implementation Guidelines for the locator tag use case:
-	 * trigger the reset to factory settings if there is no FMDN
-	 * provisioning operation within 5 minutes.
-	 */
+	/* The first and only Account Key write starts the FMDN provisioning. */
 	if (!fp_account_key_present) {
+		app_fp_adv_request(&fp_adv_trigger_fmdn_provisioning, true);
+
+		/* Fast Pair Implementation Guidelines for the locator tag use case:
+		 * trigger the reset to factory settings if there is no FMDN
+		 * provisioning operation within 5 minutes.
+		 */
 		fmdn_factory_reset_schedule(
 			FACTORY_RESET_TRIGGER_PROVISIONING_TIMEOUT,
 			K_MINUTES(FMDN_PROVISIONING_TIMEOUT));
@@ -287,6 +331,9 @@ static void fmdn_mode_request_handle(enum app_ui_request request)
 		fmdn_recovery_mode_action_handle();
 	} else if (request == APP_UI_REQUEST_ID_MODE_ENTER) {
 		fmdn_id_mode_action_handle();
+	} else if (request == APP_UI_REQUEST_FP_ADV_MODE_CHANGE) {
+		fp_adv_ui_request = !fp_adv_ui_request;
+		app_fp_adv_request(&fp_adv_trigger_ui, fp_adv_ui_request);
 	}
 }
 
@@ -301,15 +348,24 @@ static void fmdn_clock_synced(void)
 		 * This lets the Seeker detect the device and synchronize the clock even
 		 * if a significant clock drift occurred.
 		 */
-		app_fp_adv_mode_set(APP_FP_ADV_MODE_OFF);
+		app_fp_adv_request(&fp_adv_trigger_clock_sync, false);
 	}
+}
+
+static bool fmdn_provisioning_state_is_first_cb_after_bootup(void)
+{
+	static bool first_cb_after_bootup = true;
+	bool is_first_cb_after_bootup = first_cb_after_bootup;
+
+	first_cb_after_bootup = false;
+
+	return is_first_cb_after_bootup;
 }
 
 static void fmdn_provisioning_state_changed(bool provisioned)
 {
-	static bool is_first_state_changed_cb = true;
-
-	enum app_fp_adv_mode fp_adv_mode;
+	bool clock_sync_required = fmdn_provisioning_state_is_first_cb_after_bootup() &&
+				   provisioned;
 
 	LOG_INF("FMDN: state changed to %s",
 		provisioned ? "provisioned" : "unprovisioned");
@@ -332,8 +388,6 @@ static void fmdn_provisioning_state_changed(bool provisioned)
 	 */
 	fp_account_key_present = bt_fast_pair_has_account_key();
 	if (fp_account_key_present != provisioned) {
-		app_fp_adv_mode_set(APP_FP_ADV_MODE_OFF);
-
 		/* Delay the factory reset operation to allow the local device
 		 * to send a response to the unprovisioning command and give
 		 * the connected peer necessary time to finalize its operations
@@ -342,32 +396,24 @@ static void fmdn_provisioning_state_changed(bool provisioned)
 		fmdn_factory_reset_schedule(
 			FACTORY_RESET_TRIGGER_KEY_STATE_MISMATCH,
 			K_SECONDS(FACTORY_RESET_DELAY));
-
 		return;
 	}
 
 	/* Triggered on the unprovisioning operation. */
 	if (factory_reset_executed) {
+		LOG_INF("The device has been reset to factory settings");
 		LOG_INF("Please press a button to put the device in the Fast Pair discoverable "
-			"advertising mode after a reset to factory settings");
-		factory_reset_executed = false;
+			"advertising mode");
 
+		factory_reset_executed = false;
 		return;
 	}
 
-	/* Select the Fast Pair advertising mode according to the FMDN provisioning state. */
-	if (provisioned) {
-		if (is_first_state_changed_cb) {
-			fp_adv_mode = APP_FP_ADV_MODE_NOT_DISCOVERABLE;
-		} else {
-			fp_adv_mode = APP_FP_ADV_MODE_OFF;
-		}
-	} else {
-		fp_adv_mode = APP_FP_ADV_MODE_DISCOVERABLE;
-	}
-	app_fp_adv_mode_set(fp_adv_mode);
+	app_fp_adv_request(&fp_adv_trigger_clock_sync, clock_sync_required);
+	app_fp_adv_request(&fp_adv_trigger_fmdn_provisioning, false);
 
-	is_first_state_changed_cb = false;
+	fp_adv_ui_request = !provisioned;
+	app_fp_adv_request(&fp_adv_trigger_ui, fp_adv_ui_request);
 }
 
 static struct bt_fast_pair_fmdn_info_cb fmdn_info_cb = {
@@ -379,15 +425,15 @@ static int fast_pair_prepare(void)
 {
 	int err;
 
-	err = app_fp_adv_id_set(APP_BT_ID);
-	if (err) {
-		LOG_ERR("Fast Pair: app_fp_adv_id_set failed (err %d)", err);
-		return err;
-	}
-
 	err = app_fp_adv_init();
 	if (err) {
 		LOG_ERR("Fast Pair: app_fp_adv_init failed (err %d)", err);
+		return err;
+	}
+
+	err = app_fp_adv_id_set(APP_BT_ID);
+	if (err) {
+		LOG_ERR("Fast Pair: app_fp_adv_id_set failed (err %d)", err);
 		return err;
 	}
 
@@ -542,6 +588,12 @@ static void init_work_handle(struct k_work *w)
 		return;
 	}
 
+	err = app_fp_adv_enable();
+	if (err) {
+		LOG_ERR("FMDN: app_fp_adv_enable failed (err %d)", err);
+		return;
+	}
+
 	k_sem_give(&init_work_sem);
 }
 
@@ -550,6 +602,10 @@ int main(void)
 	int err;
 
 	LOG_INF("Starting Bluetooth Fast Pair locator tag example");
+
+	if (IS_ENABLED(CONFIG_APP_DFU)) {
+		app_dfu_fw_version_log();
+	}
 
 	/* Switch to the cooperative thread context before interaction
 	 * with the Fast Pair and FMDN API.

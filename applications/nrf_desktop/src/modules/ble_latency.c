@@ -23,6 +23,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 #define LOW_LATENCY_CHECK_PERIOD_MS	K_SECONDS(5)
 #define DEFAULT_LATENCY			CONFIG_BT_PERIPHERAL_PREF_LATENCY
 #define DEFAULT_TIMEOUT			CONFIG_BT_PERIPHERAL_PREF_TIMEOUT
+/* Connection intervals used by LLPM are out of Bluetooth LE specification.
+ * The intervals are encoded by OR operation with a magic number of 0x0d00.
+ */
 #define REG_CONN_INTERVAL_LLPM_MASK	0x0d00
 #define REG_CONN_INTERVAL_BLE_DEFAULT	0x0006
 

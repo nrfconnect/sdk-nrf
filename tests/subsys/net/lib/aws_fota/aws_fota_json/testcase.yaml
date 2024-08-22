@@ -7,4 +7,4 @@ tests:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
       - qemu_cortex_m3
-    tags: aws fota json sysbuild
+    tags: aws fota json sysbuild ci_tests_subsys_net

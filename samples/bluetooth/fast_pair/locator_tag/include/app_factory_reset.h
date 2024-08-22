@@ -20,16 +20,32 @@
 extern "C" {
 #endif
 
-/** Callback type used to notify the user that the factory reset has been executed. */
-typedef void (*app_factory_reset_executed_cb)(void);
+/** Factory reset callback descriptor. */
+struct app_factory_reset_callbacks {
+	/** Callback used to allow the user to prepare for the factory reset. */
+	void (*prepare)(void);
+
+	/** Callback used to notify the user that the factory reset has been executed. */
+	void (*executed)(void);
+};
+
+/** Register a factory reset callback descriptor.
+ *
+ *  @param _name Factory reset callbacks descriptor name.
+ *  @param _prepare Callback to define actions before the factory reset.
+ *  @param _executed Callback to define actions after the factory reset.
+ */
+#define APP_FACTORY_RESET_CALLBACKS_REGISTER(_name, _prepare, _executed)		\
+	static const STRUCT_SECTION_ITERABLE(app_factory_reset_callbacks, _name) = {	\
+		.prepare = _prepare,							\
+		.executed = _executed,							\
+	}
 
 /** Schedule the factory reset action.
  *
  * @param delay Time to wait before the factory reset action is performed.
- * @param cb    Callback to define the prepare action before the factory reset.
  */
-void app_factory_reset_schedule(k_timeout_t delay,
-				app_factory_reset_executed_cb cb);
+void app_factory_reset_schedule(k_timeout_t delay);
 
 /** Cancel the scheduled factory reset action. */
 void app_factory_reset_cancel(void);

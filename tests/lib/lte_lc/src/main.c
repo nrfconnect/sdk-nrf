@@ -77,113 +77,122 @@ void test_parse_cereg(void)
 {
 	int err;
 	enum lte_lc_nw_reg_status status;
-	enum lte_lc_lte_mode mode;
 	struct lte_lc_cell cell;
-	char *at_response_0 = "+CEREG: 5,0,,,9,0,0,,";
-	char *at_response_1 = "+CEREG: 5,1,\"0A0B\",\"01020304\",9,0,0,\"00100110\",\"01011111\"";
-	char *at_response_2 = "+CEREG: 5,2,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"11100000\"";
-	char *at_response_3 = "+CEREG: 5,3,\"0A0B\",\"01020304\",9,0,0,,";
-	char *at_response_4 = "+CEREG: 5,4,\"0A0B\",\"FFFFFFFF\",9,0,0,,";
-	char *at_response_5 = "+CEREG: 5,5,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"11100000\"";
-	char *at_response_90 = "+CEREG: 5,90,,\"FFFFFFFF\",,,,,";
-	char *at_response_wrong = "+CEREG: 5,10,,\"FFFFFFFF\",,,,,";
-	char *at_notif_0 = "+CEREG: 0,\"FFFF\",\"FFFFFFFF\",9,0,0,,";
-	char *at_notif_1 = "+CEREG: 1,\"0A0B\",\"01020304\",9,0,0,\"00100110\",\"01011111\"";
-	char *at_notif_2 = "+CEREG: 2,\"0A0B\",\"01020304\",9,0,0,,";
-	char *at_notif_3 = "+CEREG: 3,\"0A0B\",\"01020304\",9,0,0,,";
-	char *at_notif_4 = "+CEREG: 4,\"FFFF\",\"FFFFFFFF\",9,0,0,,";
-	char *at_notif_5 = "+CEREG: 5,\"0A0B\",\"01020304\",9,0,0,\"11100000\",\"00011111\"";
-	char *at_notif_90 = "+CEREG: 90,,\"FFFFFFFF\",,,,,";
-	char *at_notif_wrong = "+CEREG: 10,,\"FFFFFFFF\",,,,,";
+	enum lte_lc_lte_mode mode;
+	struct lte_lc_psm_cfg psm_cfg;
+	char *at_cereg_0 = "+CEREG: 0";
+	char *at_cereg_1 = "+CEREG: 1,\"0A0B\",\"01020304\",9,,,\"00100110\",\"01011111\"";
+	char *at_cereg_1_no_tau_ext = "+CEREG: 1,\"0A0B\",\"01020304\",9,,,\"01001010\"";
+	char *at_cereg_1_no_tau_ext_no_active_time = "+CEREG: 1,\"0A0B\",\"01020304\",9";
+	char *at_cereg_2 = "+CEREG: 2,\"ABBA\",\"DEADBEEF\",7";
+	char *at_cereg_2_reject_cause = "+CEREG: 2,\"ABBA\",\"DEADBEEF\",7,0,13";
+	char *at_cereg_2_unknown_cause_type = "+CEREG: 2,\"ABBA\",\"DEADBEEF\",7,1,1";
+	char *at_cereg_4 = "+CEREG: 4";
+	char *at_cereg_5 = "+CEREG: 5,\"0A0B\",\"01020304\",9,,,\"11100000\",\"00011111\"";
+	char *at_cereg_90 = "+CEREG: 90";
+	char *at_cereg_invalid = "+CEREG: 10,,,5,,,,";
 
-	/* Pass NULL parameter to reg_status param and expect the API to succeed. */
-	err = parse_cereg(at_response_0, false, NULL, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-
-	/* For CEREG reads, we only check the network status, as that's the only
-	 * functionality that is exposed.
-	 */
-	err = parse_cereg(at_response_0, false, &status, NULL, NULL, NULL);
+	err = parse_cereg(at_cereg_0, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_response_1, false, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_1, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(360, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(1116000, psm_cfg.tau);
 
-	err = parse_cereg(at_response_2, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
-
-	err = parse_cereg(at_response_3, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
-
-	err = parse_cereg(at_response_4, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
-
-	err = parse_cereg(at_response_5, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
-
-	err = parse_cereg(at_response_90, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
-
-	err = parse_cereg(at_response_wrong, false, &status, NULL, NULL, NULL);
-	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
-
-	/* For CEREG notifications, we test the parser function, which
-	 * implicitly also tests parse_nw_reg_status() for notifications.
-	 */
-	err = parse_cereg(at_notif_0, true, &status, &cell, &mode, NULL);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_NOT_REGISTERED, status);
-
-	err = parse_cereg(at_notif_1, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_1_no_tau_ext, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_2, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_1_no_tau_ext_no_active_time, &status, &cell, &mode, &psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_HOME, status);
+	TEST_ASSERT_EQUAL(0x01020304, cell.id);
+	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
+
+	err = parse_cereg(at_cereg_2, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
-	TEST_ASSERT_EQUAL(0x01020304, cell.id);
-	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(0xDEADBEEF, cell.id);
+	TEST_ASSERT_EQUAL(0xABBA, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_3, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_2_reject_cause, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTRATION_DENIED, status);
-	TEST_ASSERT_EQUAL(0x01020304, cell.id);
-	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
+	TEST_ASSERT_EQUAL(0xDEADBEEF, cell.id);
+	TEST_ASSERT_EQUAL(0xABBA, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_4, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_2_unknown_cause_type, &status, &cell, &mode, &psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_SEARCHING, status);
+	TEST_ASSERT_EQUAL(0xDEADBEEF, cell.id);
+	TEST_ASSERT_EQUAL(0xABBA, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_LTEM, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
+
+	err = parse_cereg(at_cereg_4, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UNKNOWN, status);
-	TEST_ASSERT_EQUAL(0xFFFFFFFF, cell.id);
-	TEST_ASSERT_EQUAL(0xFFFF, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_5, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_5, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_REGISTERED_ROAMING, status);
 	TEST_ASSERT_EQUAL(0x01020304, cell.id);
 	TEST_ASSERT_EQUAL(0x0A0B, cell.tac);
-	TEST_ASSERT_EQUAL(9, mode);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NBIOT, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(18600, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_90, true, &status, &cell, &mode, NULL);
+	err = parse_cereg(at_cereg_90, &status, &cell, &mode, &psm_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_NW_REG_UICC_FAIL, status);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(LTE_LC_LTE_MODE_NONE, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 
-	err = parse_cereg(at_notif_wrong, true, &status, &cell, &mode, NULL);
-	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, err, "parse_cereg should have failed");
+	/* The parser does not check registration status or LTE mode values for validity,
+	 * also values not used by the modem are parsed.
+	 */
+	err = parse_cereg(at_cereg_invalid, &status, &cell, &mode, &psm_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(10, status);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cell.id);
+	TEST_ASSERT_EQUAL(LTE_LC_CELL_TAC_INVALID, cell.tac);
+	TEST_ASSERT_EQUAL(5, mode);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.active_time);
+	TEST_ASSERT_EQUAL(-1, psm_cfg.tau);
 }
 
 void test_parse_xt3412(void)
@@ -212,12 +221,6 @@ void test_parse_xt3412(void)
 	TEST_ASSERT_EQUAL(err, -EINVAL);
 
 	err = parse_xt3412(at_response_negative, &time);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
-
-	err = parse_xt3412(NULL, &time);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
-
-	err = parse_xt3412(at_response_negative, NULL);
 	TEST_ASSERT_EQUAL(err, -EINVAL);
 }
 
@@ -268,11 +271,6 @@ void test_parse_xmodemsleep(void)
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM, modem_sleep.type);
 	TEST_ASSERT_EQUAL(-1, modem_sleep.time);
 
-	err = parse_xmodemsleep(NULL, &modem_sleep);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
-
-	err = parse_xmodemsleep(at_response_0, NULL);
-	TEST_ASSERT_EQUAL(err, -EINVAL);
 }
 
 void test_parse_rrc_mode(void)
@@ -290,113 +288,6 @@ void test_parse_rrc_mode(void)
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_RRC_MODE_CONNECTED, mode);
 
-}
-
-void test_response_is_valid(void)
-{
-	char *cscon = "+CSCON";
-	char *xsystemmode = "+%XSYSTEMMODE";
-
-	TEST_ASSERT(response_is_valid(cscon, strlen(cscon), "+CSCON"));
-	TEST_ASSERT(response_is_valid(xsystemmode, strlen(xsystemmode), "+%XSYSTEMMODE"));
-	TEST_ASSERT_FALSE_MESSAGE(response_is_valid(cscon, strlen(cscon), "+%XSYSTEMMODE"),
-		     "response_is_valid should have failed");
-}
-
-void test_parse_ncellmeas(void)
-{
-	int err;
-	char *resp1 = "%NCELLMEAS: 0,\"021D140C\",\"24201\",\"0821\",65535,5300,"
-			"449,50,15,10891,5300,194,46,8,0,1650,292,60,27,24,8061152878017748";
-	char *resp2 = "%NCELLMEAS: 1,\"021D140C\",\"24201\",\"0821\",65535,5300,50000";
-	char *resp3 =
-		"%NCELLMEAS: 0,\"071D340C\",\"24201\",\"0821\",65535,5300,449,50,15,10891,655350";
-	char *resp4 = "%NCELLMEAS: 0,\"071D340C\",\"24202\",\"0762\",65535,5300,449,50,15,10871";
-	struct lte_lc_ncell ncells[17];
-	struct lte_lc_cells_info cells = {
-		.neighbor_cells = ncells,
-	};
-
-	/* Valid response with two neighbors and timing advance measurement time. */
-	err = parse_ncellmeas(resp1, &cells);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(242, cells.current_cell.mcc);
-	TEST_ASSERT_EQUAL(1, cells.current_cell.mnc);
-	TEST_ASSERT_EQUAL(2081, cells.current_cell.tac);
-	TEST_ASSERT_EQUAL(35460108, cells.current_cell.id);
-	TEST_ASSERT_EQUAL(5300, cells.current_cell.earfcn);
-	TEST_ASSERT_EQUAL(65535, cells.current_cell.timing_advance);
-	TEST_ASSERT_EQUAL(8061152878017748, cells.current_cell.timing_advance_meas_time);
-	TEST_ASSERT_EQUAL(10891, cells.current_cell.measurement_time);
-	TEST_ASSERT_EQUAL(449, cells.current_cell.phys_cell_id);
-	TEST_ASSERT_EQUAL(2, cells.ncells_count);
-	TEST_ASSERT_EQUAL(5300, cells.neighbor_cells[0].earfcn);
-	TEST_ASSERT_EQUAL(194, cells.neighbor_cells[0].phys_cell_id);
-	TEST_ASSERT_EQUAL(46, cells.neighbor_cells[0].rsrp);
-	TEST_ASSERT_EQUAL(8, cells.neighbor_cells[0].rsrq);
-	TEST_ASSERT_EQUAL(0, cells.neighbor_cells[0].time_diff);
-	TEST_ASSERT_EQUAL(1650, cells.neighbor_cells[1].earfcn);
-	TEST_ASSERT_EQUAL(292, cells.neighbor_cells[1].phys_cell_id);
-	TEST_ASSERT_EQUAL(60, cells.neighbor_cells[1].rsrp);
-	TEST_ASSERT_EQUAL(27, cells.neighbor_cells[1].rsrq);
-	TEST_ASSERT_EQUAL(24, cells.neighbor_cells[1].time_diff);
-
-	memset(&cells, 0, sizeof(cells));
-
-	/* Valid response of failed measurement. */
-	err = parse_ncellmeas(resp2, &cells);
-	TEST_ASSERT_EQUAL(1, err);
-	TEST_ASSERT_EQUAL(LTE_LC_CELL_EUTRAN_ID_INVALID, cells.current_cell.id);
-	TEST_ASSERT_EQUAL(0, cells.ncells_count);
-
-	memset(&cells, 0, sizeof(cells));
-
-	/* Valid response with timing advance measurement time. */
-	err = parse_ncellmeas(resp3, &cells);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(242, cells.current_cell.mcc);
-	TEST_ASSERT_EQUAL(1, cells.current_cell.mnc);
-	TEST_ASSERT_EQUAL(2081, cells.current_cell.tac);
-	TEST_ASSERT_EQUAL(119354380, cells.current_cell.id);
-	TEST_ASSERT_EQUAL(5300, cells.current_cell.earfcn);
-	TEST_ASSERT_EQUAL(65535, cells.current_cell.timing_advance);
-	TEST_ASSERT_EQUAL(655350, cells.current_cell.timing_advance_meas_time);
-	TEST_ASSERT_EQUAL(10891, cells.current_cell.measurement_time);
-	TEST_ASSERT_EQUAL(449, cells.current_cell.phys_cell_id);
-	TEST_ASSERT_EQUAL(0, cells.ncells_count);
-
-	memset(&cells, 0, sizeof(cells));
-
-	/* Valid response without timing advance measurement time. */
-	err = parse_ncellmeas(resp4, &cells);
-	TEST_ASSERT_EQUAL(0, err);
-	TEST_ASSERT_EQUAL(242, cells.current_cell.mcc);
-	TEST_ASSERT_EQUAL(2, cells.current_cell.mnc);
-	TEST_ASSERT_EQUAL(1890, cells.current_cell.tac);
-	TEST_ASSERT_EQUAL(119354380, cells.current_cell.id);
-	TEST_ASSERT_EQUAL(5300, cells.current_cell.earfcn);
-	TEST_ASSERT_EQUAL(65535, cells.current_cell.timing_advance);
-	TEST_ASSERT_EQUAL(0, cells.current_cell.timing_advance_meas_time);
-	TEST_ASSERT_EQUAL(10871, cells.current_cell.measurement_time);
-	TEST_ASSERT_EQUAL(449, cells.current_cell.phys_cell_id);
-	TEST_ASSERT_EQUAL(0, cells.ncells_count);
-}
-
-void test_neighborcell_count_get(void)
-{
-	char *resp1 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
-		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,"
-		      "1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1000";
-	char *resp2 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,1000";
-	char *resp3 = "%NCELLMEAS: 1,2,3,4,5,6,7,8,9,10,1000";
-	char *resp4 = "%NCELLMEAS: ";
-	char *resp5 = " ";
-
-	TEST_ASSERT_EQUAL(17, neighborcell_count_get(resp1));
-	TEST_ASSERT_EQUAL(3, neighborcell_count_get(resp2));
-	TEST_ASSERT_EQUAL(0, neighborcell_count_get(resp3));
-	TEST_ASSERT_EQUAL(0, neighborcell_count_get(resp4));
-	TEST_ASSERT_EQUAL(0, neighborcell_count_get(resp5));
 }
 
 void test_parse_psm(void)
@@ -644,17 +535,8 @@ void test_parse_mdmev(void)
 	err = parse_mdmev(status_3, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
 
-	err = parse_mdmev(search, NULL);
-	TEST_ASSERT_EQUAL(-EINVAL, err);
-
 	err = parse_mdmev(light_search_long, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
-
-	err = parse_mdmev("%MDMEVE", &modem_evt);
-	TEST_ASSERT_EQUAL(-EIO, err);
-
-	err = parse_mdmev("%MDME", &modem_evt);
-	TEST_ASSERT_EQUAL(-EIO, err);
 
 	err = parse_mdmev("%MDMEV: ", &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);

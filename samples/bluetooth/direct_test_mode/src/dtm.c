@@ -1744,8 +1744,8 @@ static uint32_t dtm_packet_interval_calculate(uint32_t test_payload_length,
 	uint32_t overhead_bits = 0;
 
 	/* Packet overhead
-	 * see BLE [Vol 6, Part F] page 213
-	 * 4.1 LE TEST PACKET FORMAT
+	 * see Bluetooth Core Specification [Vol 6, Part F]
+	 * Section 4.1 LE TEST PACKET FORMAT
 	 */
 	if (mode == NRF_RADIO_MODE_BLE_2MBIT) {
 		/* 16 preamble
@@ -2292,8 +2292,8 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 	radio_prepare(TX_MODE);
 
 	/* Set the timer to the correct period. The delay between each
-	 * packet is described in the Bluetooth Core Spsification
-	 * version 4.2 Vol. 6 Part F Section 4.1.6.
+	 * packet is described in the Bluetooth Core Specification,
+	 * Vol. 6 Part F Section 4.1.6.
 	 */
 	nrfx_timer_extended_compare(&dtm_inst.timer, NRF_TIMER_CC_CHANNEL0,
 			dtm_packet_interval_calculate(dtm_inst.packet_len, dtm_inst.radio_mode),

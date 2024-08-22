@@ -55,12 +55,28 @@ int nrf_wifi_if_zep_start_board(const struct device *dev)
 int nrf_wifi_if_zep_stop_board(const struct device *dev)
 {
 	ARG_UNUSED(dev);
+	const struct regulator_common_config *wifi_regulator_config = wifi_regulator->config;
+	static bool boot_power_disabled;
 	int ret;
 
 	ret = regulator_disable(wifi_regulator);
 	if (ret) {
 		LOG_ERR("Cannot turn off regulator %s (%d)", wifi_regulator->name, ret);
 		return ret;
+	}
+
+	/*
+	 * If the REGULATOR_BOOT_ON flag is set, turn off the regulator once more. This is needed
+	 * once after boot, since the initial enabling caused by the flag counts as a
+	 * reference-counted request, on par with invoking regulator_enable().
+	 */
+	if (wifi_regulator_config->flags & REGULATOR_BOOT_ON && !boot_power_disabled) {
+		ret = regulator_disable(wifi_regulator);
+		boot_power_disabled = true;
+		if (ret) {
+			LOG_ERR("Cannot turn off regulator %s (%d)", wifi_regulator->name, ret);
+			return ret;
+		}
 	}
 
 	ret = gpio_pin_set_dt(&ldsw_rf_fe_sr_en, 0);

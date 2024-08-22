@@ -1,0 +1,12 @@
+sample:
+  name: eGPIO application
+  description: SW-defined GPIO application
+common:
+  integration_platforms:
+    - nrf54l15pdk/nrf54l15/cpuflpr
+tests:
+  applications.sw_io_devices.egpio:
+    sysbuild: true
+    build_only: true
+    platform_allow: nrf54l15pdk/nrf54l15/cpuflpr
+    tags: ci_build sysbuild

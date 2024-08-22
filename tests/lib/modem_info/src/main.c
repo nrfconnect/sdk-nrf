@@ -21,7 +21,6 @@
 DEFINE_FFF_GLOBALS;
 
 FAKE_VALUE_FUNC(int, nrf_modem_at_notif_handler_set, nrf_modem_at_notif_handler_t);
-FAKE_VALUE_FUNC(int, at_params_list_init, struct at_param_list *, size_t);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_scanf, const char *, const char *, ...);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...);
 
@@ -44,12 +43,6 @@ FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...)
 #define SHORT_OP_NAME_SIZE_WITHOUT_NULL_TERM 64
 BUILD_ASSERT(SHORT_OP_NAME_SIZE_WITHOUT_NULL_TERM == (MODEM_INFO_SHORT_OP_NAME_SIZE - 1),
 	     "Short operator size macros must match");
-
-struct at_param at_params[10] = {};
-static struct at_param_list m_param_list = {
-	.param_count = 0,
-	.params = at_params,
-};
 
 static int nrf_modem_at_scanf_custom_no_match(const char *cmd, const char *fmt, va_list args)
 {
@@ -145,7 +138,7 @@ static int nrf_modem_at_scanf_custom_xcband(const char *cmd, const char *fmt, va
 	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
 	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
 
-	uint8_t *val = va_arg(args, uint8_t *);
+	unsigned int *val = va_arg(args, unsigned int *);
 	*val = EXAMPLE_BAND;
 
 	return 1;
@@ -156,7 +149,7 @@ static int nrf_modem_at_scanf_custom_xcband_max_val(const char *cmd, const char 
 	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
 	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
 
-	uint8_t *val = va_arg(args, uint8_t *);
+	unsigned int *val = va_arg(args, unsigned int *);
 	*val = EXAMPLE_BAND_MAX_VAL;
 
 	return 1;
@@ -168,7 +161,7 @@ static int nrf_modem_at_scanf_custom_xcband_unavailable(const char *cmd, const c
 	TEST_ASSERT_EQUAL_STRING("AT%XCBAND", cmd);
 	TEST_ASSERT_EQUAL_STRING("%%XCBAND: %u", fmt);
 
-	uint8_t *val = va_arg(args, uint8_t *);
+	unsigned int *val = va_arg(args, unsigned int *);
 	*val = BAND_UNAVAILABLE;
 
 	return 1;
@@ -268,7 +261,6 @@ static int nrf_modem_at_scanf_custom_snr(const char *cmd, const char *fmt, va_li
 void setUp(void)
 {
 	RESET_FAKE(nrf_modem_at_notif_handler_set);
-	RESET_FAKE(at_params_list_init);
 	RESET_FAKE(nrf_modem_at_scanf);
 }
 
@@ -276,20 +268,12 @@ void tearDown(void)
 {
 }
 
-int at_params_list_init_custom(struct at_param_list *list, size_t max_params_count)
-{
-	*list = m_param_list;
-	return EXIT_SUCCESS;
-}
-
 void test_modem_info_init_success(void)
 {
 	int ret;
 
-	at_params_list_init_fake.custom_fake = at_params_list_init_custom;
 	ret = modem_info_init();
 	TEST_ASSERT_EQUAL(0, ret);
-	TEST_ASSERT_EQUAL(1, at_params_list_init_fake.call_count);
 }
 
 void test_modem_info_get_fw_uuid_null(void)

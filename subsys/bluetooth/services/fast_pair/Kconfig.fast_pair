@@ -12,6 +12,18 @@ menuconfig BT_FAST_PAIR
 
 if BT_FAST_PAIR
 
+rsource "use_case/Kconfig"
+
+config BT_FAST_PAIR_SUBSEQUENT_PAIRING
+	bool "Fast Pair subsequent pairing [EXPERIMENTAL]"
+	default y if !BT_FAST_PAIR_FMDN
+	select EXPERIMENTAL
+	help
+	  Enable support for the subsequent pairing feature. Subsequent pairing
+	  refers to the procedure between a Fast Pair Provider, initially paired
+	  with your Google account, and another Fast Pair Seeker logged into the
+	  same account.
+
 config BT_FAST_PAIR_REQ_PAIRING
 	bool "Require Bluetooth Pairing during Fast Pair Procedure"
 	default y

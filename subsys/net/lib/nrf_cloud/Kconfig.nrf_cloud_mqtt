@@ -95,11 +95,19 @@ config NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE
 endif
 
 config NRF_CLOUD_MQTT_KEEPALIVE
-	int "Maximum number of keep alive time for MQTT (in seconds)"
+	int "Keep alive time for MQTT (in seconds)"
 	default 1200
 	help
 	  Keep alive time for MQTT connection to nRF Cloud, in seconds. This option overwrites
 	  the CONFIG_MQTT_KEEPALIVE value. Default is set to the maximum specified MQTT keepalive
 	  for nRF Cloud.
+
+config NRF_CLOUD_MQTT_UA_WAIT_KEEPALIVE
+	int "Keepalive time while waiting for user to associate the device with the cloud"
+	default 30
+	help
+	  Keep alive time for MQTT connection to nRF Cloud, in seconds.
+	  Default is set to a short time so device receives notification of association
+	  more rapidly for better user experience.
 
 endif # NRF_CLOUD_MQTT

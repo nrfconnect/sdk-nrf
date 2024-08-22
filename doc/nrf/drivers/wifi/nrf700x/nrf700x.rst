@@ -31,7 +31,7 @@ Design overview
 ***************
 
 The nRF Wi-Fi driver follows an OS agnostic design, and the driver implementation is split into OS agnostic and OS (Zephyr) specific code.
-The OS agnostic code is located in the :file:`drivers/wifi/nrf700x/osal/` folder and the OS specific code is located in the :file:`drivers/wifi/nrf700x/zephyr/` folder.
+The OS agnostic code is located in the :file:`sdk-nrfxlib/nrf_wifi/` folder and the Zephyr OS port is located in the :file:`drivers/wifi/nrf700x/` folder.
 
 The driver supports two modes of operation:
 
@@ -151,4 +151,4 @@ API documentation
 After the nRF Wi-Fi driver has been initialized, the application will see it as an Ethernet interface.
 To use the Ethernet interface, the application can use `Zephyr Network APIs`_.
 
-See the :ref:`nrfxlib:nrf_wifi_api` to learn more about various modes of low-level API.
+See the :ref:`nrfxlib:nrf_wifi_driver` to learn more about various modes of low-level API.

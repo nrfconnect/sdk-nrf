@@ -15,7 +15,7 @@ tests:
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp
       nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
   sample.matter.lock.release:
     sysbuild: true
     build_only: true
@@ -26,9 +26,11 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+      nrf54h20dk/nrf54h20/cpuapp
+    tags: sysbuild ci_samples_matter
   sample.matter.lock.lto:
     sysbuild: true
     build_only: true
@@ -41,7 +43,7 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
   sample.matter.lock.smp_dfu:
     sysbuild: true
     build_only: true
@@ -54,15 +56,16 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
       nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15pdk/nrf54l15/cpuapp
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
   sample.matter.lock.no_dfu.no_fd:
     sysbuild: true
     build_only: true
+    extra_args: SB_CONFIG_MATTER_OTA=n
     integration_platforms:
       - nrf21540dk/nrf52840
     platform_allow: >
       nrf21540dk/nrf52840
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
   sample.matter.lock.thread_wifi_switched.lto.smp_dfu:
     sysbuild: true
     build_only: true
@@ -73,7 +76,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: sysbuild
+    tags: sysbuild ci_samples_matter
   sample.matter.lock.nus:
     sysbuild: true
     build_only: true
@@ -81,5 +84,6 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
-    tags: sysbuild
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf54l15pdk/nrf54l15/cpuapp
+    tags: sysbuild ci_samples_matter
+      - nrf54l15pdk/nrf54l15/cpuapp

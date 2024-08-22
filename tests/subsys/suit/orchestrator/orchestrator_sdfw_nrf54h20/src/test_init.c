@@ -21,8 +21,8 @@
 #define SUIT_BACKUP_SIZE	  FIXED_PARTITION_SIZE(cpusec_suit_storage)
 
 /* Valid envelope */
-extern const uint8_t manifest_valid_buf[];
-extern const size_t manifest_valid_len;
+extern uint8_t manifest_valid_buf[];
+extern size_t manifest_valid_len;
 
 static void setup_erased_flash(void *f)
 {
@@ -189,6 +189,53 @@ static void write_mpi_area_app_unsupported_version(void)
 	zassert_equal(0, err, "Unable to store application MPI digest before test execution");
 }
 
+static void write_mpi_area_app_duplicate_class_ids(void)
+{
+	uint8_t mpi_root[] = {
+		0x01, /* version */
+		0x01, /* downgrade prevention disabled */
+		0x02, /* Independent update allowed */
+		0x01, /* signature check disabled */
+		/* reserved (12) */
+		0xFF, 0xFF, 0xFF, 0xFF,
+		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+		/* RFC4122 uuid5(uuid.NAMESPACE_DNS, 'nordicsemi.com') */
+		0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85,
+		0x8f, 0x94, 0xe2, 0x8d, 0x73, 0x5c, 0xe9, 0xf4,
+		/* RFC4122 uuid5(nordic_vid, 'test_sample_root') */
+		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
+		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
+	};
+	/* Digest of the content defined in assert_valid_mpi_area_app(). */
+	uint8_t app_digest[] = {
+		0x1a, 0x81, 0x80, 0xb6, 0x43, 0x8e, 0xe0, 0x59,
+		0xd0, 0xce, 0x9a, 0xf9, 0x51, 0x46, 0xa5, 0x58,
+		0x9d, 0x72, 0xb6, 0x71, 0x98, 0xc1, 0x8a, 0x0f,
+		0xf5, 0xf3, 0x6e, 0x92, 0xac, 0xc3, 0x7d, 0x58,
+	};
+
+	/* Write the sample application area (root and local MPI) and corresponding digest */
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
+
+	zassert_not_null(fdev, "Unable to find a driver to modify MPI area");
+
+	int err = flash_write(fdev, SUIT_STORAGE_OFFSET, mpi_root, sizeof(mpi_root));
+
+	zassert_equal(0, err,
+		      "Unable to store application root MPI contents before test execution");
+
+	err = flash_write(fdev, SUIT_STORAGE_OFFSET + sizeof(mpi_root) * 2, mpi_root,
+			  sizeof(mpi_root));
+
+	zassert_equal(
+		0, err,
+		"Unable to store application application local MPI contents before test execution");
+
+	err = flash_write(fdev, SUIT_STORAGE_OFFSET + SUIT_STORAGE_APP_MPI_SIZE, app_digest,
+			  sizeof(app_digest));
+	zassert_equal(0, err, "Unable to store application MPI digest before test execution");
+}
+
 ZTEST_SUITE(orchestrator_nrf54h20_init_tests, NULL, NULL, setup_erased_flash, NULL, NULL);
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_no_mpi)
@@ -209,7 +256,7 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_no_mpi)
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_no_root_mpi)
 {
-	/* GIVEN empty flash (suit storage and empty MPI area with digest)... */
+	/* GIVEN empty suit storage and empty MPI area with digest... */
 	write_empty_mpi_area_app();
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set */
@@ -226,8 +273,25 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_no_root_mpi)
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_invalid_mpi_version)
 {
-	/* GIVEN empty flash (suit storage and root MPI with incorrect version... */
+	/* GIVEN empty suit storage and root MPI with incorrect version... */
 	write_mpi_area_app_unsupported_version();
+	/* ... and update candidate flag is not set... */
+	/* ... and emergency flag is not set */
+
+	/* WHEN orchestrator is initialized */
+	int err = suit_orchestrator_init();
+
+	/* THEN failed state is triggered... */
+	zassert_equal(EXECUTION_MODE_FAIL_MPI_INVALID, suit_execution_mode_get(),
+		      "Malformed ROOT MPI not detected");
+	/* ... and orchestrator is initialized */
+	zassert_equal(0, err, "Orchestrator not initialized");
+}
+
+ZTEST(orchestrator_nrf54h20_init_tests, test_duplicate_class_id)
+{
+	/* GIVEN empty suit storage and root MPI with incorrect version... */
+	write_mpi_area_app_duplicate_class_ids();
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set */
 
@@ -243,7 +307,7 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_invalid_mpi_version)
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_unupdateable_root)
 {
-	/* GIVEN empty flash (suit storage and root MPI without updateability flag set... */
+	/* GIVEN empty suit storage and root MPI without updateability flag set... */
 	write_mpi_area_app_unupdateable_root();
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set */
@@ -260,7 +324,7 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_unupdateable_root)
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_valid_root)
 {
-	/* GIVEN empty flash (suit storage and valid root MPI... */
+	/* GIVEN empty suit storage and valid root MPI... */
 	write_mpi_area_app_root();
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set */
@@ -268,9 +332,9 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_valid_root)
 	/* WHEN orchestrator is initialized */
 	int err = suit_orchestrator_init();
 
-	/* THEN failed state is triggered... */
+	/* THEN regular boot state is triggered... */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(),
-		      "Non-updateable ROOT MPI not detected");
+		      "Valid ROOT MPI not accepted");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
 }

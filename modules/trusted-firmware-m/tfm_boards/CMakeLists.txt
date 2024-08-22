@@ -145,6 +145,14 @@ if (CONFIG_NRF_TRACE_PORT)
   target_compile_definitions(platform_s PUBLIC ENABLE_TRACE)
 endif()
 
+if (CONFIG_NRF_APPROTECT_LOCK)
+  target_compile_definitions(platform_s PUBLIC NRF_APPROTECT)
+endif()
+
+if (CONFIG_NRF_SECURE_APPROTECT_LOCK)
+  target_compile_definitions(platform_s PUBLIC NRF_SECURE_APPROTECT)
+endif()
+
 if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
   # Added here to satisfy the following requirement from tfm_crypto.yaml:
   #
@@ -201,5 +209,7 @@ file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
 
 if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
   file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
+       DESTINATION ${INSTALL_INTERFACE_INC_DIR})
+  file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_kmu.h
        DESTINATION ${INSTALL_INTERFACE_INC_DIR})
 endif()

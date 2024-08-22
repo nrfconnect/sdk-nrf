@@ -11,8 +11,13 @@
 #if defined(CONFIG_MODEM_JWT)
 #include <nrf_modem_at.h>
 #endif
+#include "nrf_cloud_client_id.h"
 
-#define GET_TIME_CMD "AT%%CCLK?"
+#define GET_TIME_CMD		"AT%%CCLK?"
+/* Example CCLK response */
+#define GET_TIME_RSP_STR	"%CCLK: \"24/07/03,21:29:34-28\",1\r\nOK\r\n"
+/* Expected size of the response, plus some extra padding */
+#define GET_TIME_RSP_SZ		(sizeof(GET_TIME_RSP_STR) + 5)
 
 LOG_MODULE_REGISTER(nrf_cloud_jwt, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -462,14 +467,10 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 	}
 
 	int err;
-	char buf[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+	const char *id_ptr;
 	struct jwt_data jwt = {
 		.audience = NULL,
-#if defined(CONFIG_NRF_CLOUD_COAP)
-		.sec_tag = CONFIG_NRF_CLOUD_COAP_SEC_TAG,
-#else
-		.sec_tag = CONFIG_NRF_CLOUD_SEC_TAG,
-#endif
+		.sec_tag = nrf_cloud_sec_tag_get(),
 		.key = JWT_KEY_TYPE_CLIENT_PRIV,
 		.alg = JWT_ALG_TYPE_ES256,
 		.jwt_buf = jwt_buf,
@@ -478,6 +479,8 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 
 #if defined(CONFIG_MODEM_JWT)
 	/* Check if modem time is valid */
+	char buf[GET_TIME_RSP_SZ];
+
 	err = nrf_modem_at_cmd(buf, sizeof(buf), GET_TIME_CMD);
 	if (err != 0) {
 		LOG_ERR("Modem does not have valid date/time, JWT not generated");
@@ -498,12 +501,12 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 		 */
 		jwt.subject = NULL;
 	} else {
-		err = nrf_cloud_client_id_get(buf, sizeof(buf));
+		err = nrf_cloud_client_id_ptr_get(&id_ptr);
 		if (err) {
-			LOG_ERR("Failed to obtain client id, error: %d", err);
+			LOG_ERR("Failed to obtain client ID, error: %d", err);
 			return err;
 		}
-		jwt.subject = buf;
+		jwt.subject = id_ptr;
 	}
 
 #if defined(CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM)

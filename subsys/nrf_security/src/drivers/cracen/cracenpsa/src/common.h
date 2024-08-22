@@ -38,6 +38,13 @@ __attribute__((warn_unused_result)) psa_status_t silex_statuscodes_to_psa(int re
 __attribute__((warn_unused_result)) psa_status_t
 hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo);
 
+enum asn1_tags {
+	ASN1_SEQUENCE = 0x10,
+	ASN1_INTEGER = 0x2,
+	ASN1_CONSTRUCTED = 0x20,
+	ASN1_BIT_STRING = 0x3
+};
+
 /*!
  * \brief Get Cracen curve object based on the PSA attributes.
  *
@@ -164,5 +171,13 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
  */
 psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
 				     size_t input_length, uint8_t *output, size_t output_size,
-				     size_t *output_length, enum cipher_operation dir,
-				     bool aes_countermeasures);
+				     size_t *output_length, enum cipher_operation dir);
+
+/**
+ * @brief Prepare ik key.
+ *
+ * @param user_data    Owner ID.
+ *
+ * @return sxsymcrypt error code.
+ */
+int cracen_prepare_ik_key(const uint8_t *user_data);

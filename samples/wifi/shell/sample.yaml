@@ -9,7 +9,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   # Disable optional features to reduce memory usage
   sample.nrf7002.shell.disable_adv_features:
     sysbuild: true
@@ -18,14 +18,14 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.shell:
     sysbuild: true
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_eks.shell:
     sysbuild: true
     build_only: true
@@ -34,7 +34,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7000_eks.shell:
     sysbuild: true
     build_only: true
@@ -43,7 +43,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001_eks.shell:
     sysbuild: true
     build_only: true
@@ -52,7 +52,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_eks_cpunet.shell:
     sysbuild: true
     build_only: true
@@ -60,7 +60,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7000_eks_cpunet.shell:
     sysbuild: true
     build_only: true
@@ -68,7 +68,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001_eks_cpunet.shell:
     sysbuild: true
     build_only: true
@@ -76,23 +76,23 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.zperf:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-zperf.conf
+    extra_args: EXTRA_CONF_FILE=overlay-zperf.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.shell.zperf:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-zperf.conf
+    extra_args: EXTRA_CONF_FILE=overlay-zperf.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.wpa_cli:
     sysbuild: true
     build_only: true
@@ -100,7 +100,7 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.shell.wpa_cli:
     sysbuild: true
     build_only: true
@@ -108,19 +108,19 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.scan_only_7002:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf
+    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7000.shell.scan_only_91:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
+    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf SHIELD=nrf7002ek_nrf7000 CONFIG_WPA_SUPP=n
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
@@ -128,22 +128,22 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.scan_only_thingy91x:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-scan-only.conf CONFIG_WPA_SUPP=n
+    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf CONFIG_WPA_SUPP=n
     platform_allow:
       - thingy91x/nrf9151/ns
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.otbr:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-openthread.conf
+    extra_args: EXTRA_CONF_FILE=overlay-openthread.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.posix_names:
     sysbuild: true
     build_only: true
@@ -151,14 +151,14 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002_ns.shell:
     sysbuild: true
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
     platform_allow: nrf7002dk/nrf5340/cpuapp/ns
-    tags: sysbuild
+    tags: sysbuild ci_samples_wifi
   sample.nrf7002_eb.thingy53.shell:
     sysbuild: true
     build_only: true
@@ -166,7 +166,7 @@ tests:
     integration_platforms:
       - thingy53/nrf5340/cpuapp
     platform_allow: thingy53/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.qspi.ext_flash_xip:
     sysbuild: true
     build_only: true
@@ -178,7 +178,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.qspi.ext_flash_store:
     sysbuild: true
     build_only: true
@@ -191,7 +191,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf52840dk/nrf52840
     platform_allow: nrf5340dk/nrf5340/cpuapp nrf52840dk/nrf52840
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf54h20dk_nrf7002ek.shell:
     sysbuild: true
     build_only: true
@@ -199,13 +199,13 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7001.superset:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -213,14 +213,14 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7001_ek.superset:
     sysbuild: true
     build_only: true
     extra_args:
       SHIELD=nrf7002ek_nrf7001
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -228,13 +228,13 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7002.superset:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -242,14 +242,14 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   # Used by QA and also acts as a memory stress test
   sample.nrf7002_ek.superset:
     sysbuild: true
     build_only: true
     extra_args:
       SHIELD=nrf7002ek
-      OVERLAY_CONFIG=overlay-zperf.conf
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -257,13 +257,13 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   sample.nrf7002.superset.debug:
     sysbuild: true
     build_only: true
     extra_args:
-      SNIPPET=nrf70-debug
-      OVERLAY_CONFIG=overlay-zperf.conf
+      nrf_wifi_shell_SNIPPET="nrf70-driver-verbose-debug;wpa-supplicant-debug"
+      EXTRA_CONF_FILE=overlay-zperf.conf
       CONFIG_NRF700X_UTIL=y
       CONFIG_WPA_CLI=y
       CONFIG_NET_IPV4_FRAGMENT=y
@@ -271,55 +271,55 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build_superset sysbuild
+    tags: ci_build_superset sysbuild ci_samples_wifi
   sample.nrf7002.ap:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-sap.conf
+    extra_args: EXTRA_CONF_FILE=overlay-sap.conf
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.with_overlay_raw_tx_packet:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-raw-tx.conf
+      EXTRA_CONF_FILE=overlay-raw-tx.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.with_overlay_monitor:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-monitor-mode.conf
+      EXTRA_CONF_FILE=overlay-monitor-mode.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.promiscuous_mode:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+      EXTRA_CONF_FILE=overlay-promiscuous-mode.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7001.promiscuous_mode_7001:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG=overlay-promiscuous-mode.conf
+      EXTRA_CONF_FILE=overlay-promiscuous-mode.conf
       SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
     platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002eb.nrf54l15pdk.shell:
     sysbuild: true
     build_only: true
@@ -327,11 +327,11 @@ tests:
     integration_platforms:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf54l15pdk/nrf54l15/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.psa:
     build_only: true
     extra_args: CONFIG_WPA_SUPP_CRYPTO_PSA=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi

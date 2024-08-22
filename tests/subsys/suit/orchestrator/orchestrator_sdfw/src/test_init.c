@@ -24,8 +24,8 @@
 #define SUIT_STORAGE_ADDRESS suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_OFFSET)
 
 /* Valid envelope */
-extern const uint8_t manifest_valid_buf[];
-extern const size_t manifest_valid_len;
+extern uint8_t manifest_valid_buf[];
+extern size_t manifest_valid_len;
 
 static void setup_erased_flash(void)
 {

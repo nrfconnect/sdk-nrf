@@ -294,16 +294,16 @@ See :ref:`app_build_system`: for more information on the |NCS| configuration sys
 
 .. important::
 
-  When adding Kconfig fragments and devicetree overlays, make sure to use the ``-DEXTRA_CONF_FILE`` and ``-DEXTRA_DTC_OVERLAY_FILE`` CMake parameters, respectively.
-  Otherwise, if ``-DCONF_FILE`` or ``-DDTC_OVERLAY_FILE`` is used, all the configuration files that normally get picked up automatically will have to be included explicitly.
+  When adding Kconfig fragments and devicetree overlays, make sure to use the :makevar:`EXTRA_CONF_FILE` and :makevar:`EXTRA_DTC_OVERLAY_FILE` :ref:`CMake options <cmake_options>`, respectively.
+  Otherwise, if :makevar:`CONF_FILE` or :makevar:`DTC_OVERLAY_FILE` is used, all the configuration files that normally get picked up automatically will have to be included explicitly.
 
 The following configuration files are provided:
 
 * :file:`prj.conf` - This configuration file contains the standard configuration for the serial LTE modem application and is included by default by the build system.
 
 * :file:`overlay-native_tls.conf` - This configuration file contains additional configuration options that are required to use :ref:`slm_native_tls`.
-  You can include it by adding ``-DEXTRA_CONF_FILE=overlay-native_tls.conf`` to your build command.
-  See :ref:`cmake_options`.
+  Not supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
+  If you need to use native TLS with Thingy:91, you must disable features to free up flash memory.
 
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
   See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
@@ -346,14 +346,16 @@ The following configuration files are provided:
 Native TLS
 ----------
 
-By default, the secure socket (TLS) is offloaded to the modem.
-If you need customized TLS features that are not supported by the modem firmware, you can use native TLS instead.
+By default, the secure socket (TLS/DTLS) is offloaded to the modem.
+If you need customized TLS/DTLS features that are not supported by the modem firmware, you can use native TLS instead.
 Native TLS uses the Mbed TLS library in Zephyr to establish secure connectivity.
 Currently, the SLM application can be built to use native TLS for the following services:
 
 * Secure socket
 * TLS Proxy client
 * TLS Proxy server
+* DTLS Proxy client
+* DTLS Proxy server
 * HTTPS client
 
 With native TLS, the credentials are stored in the Zephyr settings storage with the ``AT#XCMNG`` command.
@@ -621,7 +623,7 @@ Dependencies
 
 This application uses the following |NCS| libraries:
 
-* :ref:`at_cmd_parser_readme`
+* :ref:`at_parser_readme`
 * :ref:`at_monitor_readme`
 * :ref:`nrf_modem_lib_readme`
 * :ref:`lib_modem_jwt`

@@ -6,7 +6,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build sysbuild
+    tags: bluetooth ci_build sysbuild ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
@@ -15,7 +15,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
@@ -24,7 +24,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf54h20dk/nrf54h20/cpurad
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build ci_applications_ipc_radio
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     extra_args: EXTRA_CONF_FILE=overlay-bt_hci_ipc.conf SB_CONFIG_PARTITION_MANAGER=n
@@ -32,7 +32,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build sysbuild
+    tags: bluetooth ci_build sysbuild ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
@@ -41,7 +41,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
@@ -50,7 +50,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf54h20dk/nrf54h20/cpurad
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build ci_applications_ipc_radio
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     extra_args: EXTRA_CONF_FILE=overlay-bt_rpc.conf SB_CONFIG_PARTITION_MANAGER=n
@@ -58,7 +58,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
@@ -67,7 +67,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: ci_build
+    tags: ci_build ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
@@ -76,7 +76,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build sysbuild
+    tags: bluetooth ci_build sysbuild ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
@@ -85,7 +85,7 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: bluetooth ci_build
+    tags: bluetooth ci_build ci_applications_ipc_radio
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet

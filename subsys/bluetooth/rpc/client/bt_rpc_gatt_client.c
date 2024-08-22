@@ -15,8 +15,8 @@
 
 #include "bt_rpc_common.h"
 #include "bt_rpc_gatt_common.h"
-#include "serialize.h"
-#include "cbkproxy.h"
+#include <nrf_rpc/nrf_rpc_serialize.h>
+#include <nrf_rpc/nrf_rpc_cbkproxy.h>
 #include "nrf_rpc_cbor.h"
 
 #include <zephyr/logging/log.h>
@@ -71,13 +71,13 @@ void bt_rpc_encode_gatt_attr(struct nrf_rpc_cbor_ctx *encoder, const struct bt_g
 	err = bt_rpc_gatt_attr_to_index(attr, &attr_index);
 	__ASSERT(err == 0, "Service attribute not found. Service database might be out of sync");
 
-	ser_encode_uint(encoder, attr_index);
+	nrf_rpc_encode_uint(encoder, attr_index);
 }
 const struct bt_gatt_attr *bt_rpc_decode_gatt_attr(struct nrf_rpc_cbor_ctx *ctx)
 {
 	uint32_t attr_index;
 
-	attr_index = ser_decode_uint(ctx);
+	attr_index = nrf_rpc_decode_uint(ctx);
 
 	return bt_rpc_gatt_index_to_attr(attr_index);
 }
@@ -116,16 +116,16 @@ static void bt_gatt_complete_func_t_callback_rpc_handler(const struct nrf_rpc_gr
 	void *user_data;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	user_data = (void *)ser_decode_uint(ctx);
-	callback_slot = (bt_gatt_complete_func_t)ser_decode_callback_call(ctx);
+	user_data = (void *)nrf_rpc_decode_uint(ctx);
+	callback_slot = (bt_gatt_complete_func_t)nrf_rpc_decode_callback_call(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	callback_slot(conn, user_data);
 
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -145,10 +145,10 @@ static void bt_rpc_gatt_ccc_cfg_changed_cb_rpc_handler(const struct nrf_rpc_grou
 	const struct bt_gatt_attr *attr;
 	struct _bt_gatt_ccc *ccc;
 
-	attr_index = ser_decode_uint(ctx);
-	ccc_value = ser_decode_uint(ctx);
+	attr_index = nrf_rpc_decode_uint(ctx);
+	ccc_value = nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -163,7 +163,7 @@ static void bt_rpc_gatt_ccc_cfg_changed_cb_rpc_handler(const struct nrf_rpc_grou
 		ccc->cfg_changed(attr, ccc_value);
 	}
 
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -186,10 +186,10 @@ static void bt_rpc_gatt_ccc_cfg_write_cb_rpc_handler(const struct nrf_rpc_group 
 	ssize_t write_len = 0;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	attr_index = ser_decode_uint(ctx);
-	ccc_value = ser_decode_uint(ctx);
+	attr_index = nrf_rpc_decode_uint(ctx);
+	ccc_value = nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -204,7 +204,7 @@ static void bt_rpc_gatt_ccc_cfg_write_cb_rpc_handler(const struct nrf_rpc_group 
 		write_len = ccc->cfg_write(conn, attr, ccc_value);
 	}
 
-	ser_rsp_send_int(group, write_len);
+	nrf_rpc_rsp_send_int(group, write_len);
 
 	return;
 decoding_error:
@@ -226,9 +226,9 @@ static void bt_rpc_gatt_ccc_cfg_match_cb_rpc_handler(const struct nrf_rpc_group 
 	bool match = false;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	attr_index = ser_decode_int(ctx);
+	attr_index = nrf_rpc_decode_int(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -243,7 +243,7 @@ static void bt_rpc_gatt_ccc_cfg_match_cb_rpc_handler(const struct nrf_rpc_group 
 		match = ccc->cfg_match(conn, attr);
 	}
 
-	ser_rsp_send_bool(group, match);
+	nrf_rpc_rsp_send_bool(group, match);
 
 	return;
 decoding_error:
@@ -258,7 +258,7 @@ static void bt_rpc_gatt_attr_read_cb_rpc_handler(const struct nrf_rpc_group *gro
 						 struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	struct bt_conn *conn;
-	struct ser_scratchpad scratchpad;
+	struct nrf_rpc_scratchpad scratchpad;
 	size_t buffer_size_max = 9;
 	const struct bt_gatt_attr *attr;
 	uint32_t service_index;
@@ -267,14 +267,14 @@ static void bt_rpc_gatt_attr_read_cb_rpc_handler(const struct nrf_rpc_group *gro
 	uint16_t len;
 	uint8_t *buf = NULL;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
+	NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	service_index = ser_decode_uint(ctx);
-	len = ser_decode_uint(ctx);
-	offset = ser_decode_uint(ctx);
+	service_index = nrf_rpc_decode_uint(ctx);
+	len = nrf_rpc_decode_uint(ctx);
+	offset = nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -283,7 +283,7 @@ static void bt_rpc_gatt_attr_read_cb_rpc_handler(const struct nrf_rpc_group *gro
 		LOG_WRN("Service database may not be synchronized with client");
 		read_len = BT_GATT_ERR(BT_ATT_ERR_ATTRIBUTE_NOT_FOUND);
 	} else {
-		buf = ser_scratchpad_add(&scratchpad, len);
+		buf = nrf_rpc_scratchpad_add(&scratchpad, len);
 
 		if (attr->read) {
 			read_len = attr->read(conn, attr, buf, len, offset);
@@ -297,8 +297,8 @@ static void bt_rpc_gatt_attr_read_cb_rpc_handler(const struct nrf_rpc_group *gro
 
 		NRF_RPC_CBOR_ALLOC(group, ectx, buffer_size_max);
 
-		ser_encode_int(&ectx, read_len);
-		ser_encode_buffer(&ectx, buf, read_len);
+		nrf_rpc_encode_int(&ectx, read_len);
+		nrf_rpc_encode_buffer(&ectx, buf, read_len);
 
 		nrf_rpc_cbor_rsp_no_err(group, &ectx);
 	}
@@ -314,7 +314,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_gatt_attr_read_cb, BT_RPC_GATT_CB_AT
 static void bt_rpc_gatt_attr_write_cb_rpc_handler(const struct nrf_rpc_group *group,
 						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	struct ser_scratchpad scratchpad;
+	struct nrf_rpc_scratchpad scratchpad;
 	struct bt_conn *conn;
 	const struct bt_gatt_attr *attr;
 	int service_index;
@@ -324,16 +324,16 @@ static void bt_rpc_gatt_attr_write_cb_rpc_handler(const struct nrf_rpc_group *gr
 	uint8_t flags;
 	uint8_t *buf;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
+	NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	service_index = ser_decode_int(ctx);
-	len = ser_decode_uint(ctx);
-	offset = ser_decode_uint(ctx);
-	flags = ser_decode_uint(ctx);
-	buf = ser_decode_buffer_into_scratchpad(&scratchpad, NULL);
+	service_index = nrf_rpc_decode_int(ctx);
+	len = nrf_rpc_decode_uint(ctx);
+	offset = nrf_rpc_decode_uint(ctx);
+	flags = nrf_rpc_decode_uint(ctx);
+	buf = nrf_rpc_decode_buffer_into_scratchpad(&scratchpad, NULL);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -347,7 +347,7 @@ static void bt_rpc_gatt_attr_write_cb_rpc_handler(const struct nrf_rpc_group *gr
 		}
 	}
 
-	ser_rsp_send_int(group, write_len);
+	nrf_rpc_rsp_send_int(group, write_len);
 
 	return;
 decoding_error:
@@ -365,11 +365,11 @@ static int bt_rpc_gatt_start_service(uint8_t service_index, size_t attr_count)
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
-	ser_encode_uint(&ctx, service_index);
-	ser_encode_uint(&ctx, attr_count);
+	nrf_rpc_encode_uint(&ctx, service_index);
+	nrf_rpc_encode_uint(&ctx, attr_count);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_START_SERVICE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -408,13 +408,13 @@ static size_t bt_uuid_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_uuid
 			break;
 		default:
 			if (encoder != NULL) {
-				ser_encoder_invalid(encoder);
+				nrf_rpc_encoder_invalid(encoder);
 			}
 			return 1;
 		}
 	}
 	if (encoder != NULL) {
-		ser_encode_buffer(encoder, uuid, size);
+		nrf_rpc_encode_buffer(encoder, uuid, size);
 	}
 	return 1 + size;
 }
@@ -423,7 +423,7 @@ static size_t bt_uuid_enc(struct nrf_rpc_cbor_ctx *encoder, const struct bt_uuid
 
 static struct bt_uuid *bt_uuid_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_uuid *uuid)
 {
-	return (struct bt_uuid *)ser_decode_buffer(ctx, uuid, sizeof(struct bt_uuid_128));
+	return (struct bt_uuid *)nrf_rpc_decode_buffer(ctx, uuid, sizeof(struct bt_uuid_128));
 }
 
 #endif /* CONFIG_BT_GATT_CLIENT */
@@ -441,11 +441,11 @@ static int bt_rpc_gatt_send_simple_attr(uint8_t special_attr, const struct bt_uu
 
 	bt_uuid_enc(&ctx, uuid);
 
-	ser_encode_uint(&ctx, special_attr);
-	ser_encode_uint(&ctx, data);
+	nrf_rpc_encode_uint(&ctx, special_attr);
+	nrf_rpc_encode_uint(&ctx, data);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_SEND_SIMPLE_ATTR_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -493,18 +493,18 @@ static int bt_rpc_gatt_send_desc_attr(uint8_t special_attr, uint16_t param, uint
 	buffer_size = sizeof(uint8_t) * size;
 	buffer_size_max += buffer_size;
 
-	scratchpad_size += SCRATCHPAD_ALIGN(buffer_size);
+	scratchpad_size += NRF_RPC_SCRATCHPAD_ALIGN(buffer_size);
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	nrf_rpc_encode_uint(&ctx, scratchpad_size);
 
-	ser_encode_uint(&ctx, special_attr);
-	ser_encode_uint(&ctx, param);
-	ser_encode_uint(&ctx, size);
-	ser_encode_buffer(&ctx, buffer, buffer_size);
+	nrf_rpc_encode_uint(&ctx, special_attr);
+	nrf_rpc_encode_uint(&ctx, param);
+	nrf_rpc_encode_uint(&ctx, size);
+	nrf_rpc_encode_buffer(&ctx, buffer, buffer_size);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_SEND_DESC_ATTR_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -561,7 +561,7 @@ static int bt_rpc_gatt_end_service(void)
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_END_SERVICE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -703,10 +703,10 @@ int bt_gatt_service_unregister(struct bt_gatt_service *svc)
 		return err;
 	}
 
-	ser_encode_uint(&ctx, svc_index);
+	nrf_rpc_encode_uint(&ctx, svc_index);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_SERVICE_UNREGISTER_RPC_CMD,
-				&ctx, ser_rsp_decode_i32, &result);
+				&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	if (result) {
 		return result;
@@ -716,7 +716,7 @@ int bt_gatt_service_unregister(struct bt_gatt_service *svc)
 }
 #endif /* defined(CONFIG_BT_GATT_DYNAMIC_DB) */
 
-size_t bt_gatt_notify_params_buf_size(const struct bt_gatt_notify_params *data)
+static size_t bt_gatt_notify_params_buf_size(const struct bt_gatt_notify_params *data)
 {
 	size_t buffer_size_max = 23;
 
@@ -727,30 +727,30 @@ size_t bt_gatt_notify_params_buf_size(const struct bt_gatt_notify_params *data)
 	return buffer_size_max;
 }
 
-size_t bt_gatt_notify_params_sp_size(const struct bt_gatt_notify_params *data)
+static size_t bt_gatt_notify_params_sp_size(const struct bt_gatt_notify_params *data)
 {
 	size_t scratchpad_size = 0;
 
-	scratchpad_size += SCRATCHPAD_ALIGN(sizeof(uint8_t) * data->len);
+	scratchpad_size += NRF_RPC_SCRATCHPAD_ALIGN(sizeof(uint8_t) * data->len);
 
 	scratchpad_size += data->len;
 
 	return scratchpad_size;
 }
 
-void bt_gatt_notify_params_enc(struct nrf_rpc_cbor_ctx *encoder,
-		const struct bt_gatt_notify_params *data)
+static void bt_gatt_notify_params_enc(struct nrf_rpc_cbor_ctx *encoder,
+				      const struct bt_gatt_notify_params *data)
 {
 	bt_rpc_encode_gatt_attr(encoder, data->attr);
-	ser_encode_uint(encoder, data->len);
-	ser_encode_buffer(encoder, data->data, sizeof(uint8_t) * data->len);
-	ser_encode_callback(encoder, data->func);
-	ser_encode_uint(encoder, (uintptr_t)data->user_data);
+	nrf_rpc_encode_uint(encoder, data->len);
+	nrf_rpc_encode_buffer(encoder, data->data, sizeof(uint8_t) * data->len);
+	nrf_rpc_encode_callback(encoder, data->func);
+	nrf_rpc_encode_uint(encoder, (uintptr_t)data->user_data);
 
 	if (data->uuid) {
 		bt_uuid_enc(encoder, data->uuid);
 	} else {
-		ser_encode_null(encoder);
+		nrf_rpc_encode_null(encoder);
 	}
 }
 
@@ -767,13 +767,13 @@ int bt_gatt_notify_cb(struct bt_conn *conn,
 	scratchpad_size += bt_gatt_notify_params_sp_size(params);
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	nrf_rpc_encode_uint(&ctx, scratchpad_size);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_gatt_notify_params_enc(&ctx, params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_NOTIFY_CB_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -799,18 +799,18 @@ int bt_gatt_notify_multiple(struct bt_conn *conn, uint16_t num_params,
 }
 #endif /* CONFIG_BT_GATT_NOTIFY_MULTIPLE */
 
-size_t bt_gatt_indicate_params_sp_size(const struct bt_gatt_indicate_params *data)
+static size_t bt_gatt_indicate_params_sp_size(const struct bt_gatt_indicate_params *data)
 {
 	size_t scratchpad_size = 0;
 
-	scratchpad_size += SCRATCHPAD_ALIGN(sizeof(uint8_t) * data->len);
+	scratchpad_size += NRF_RPC_SCRATCHPAD_ALIGN(sizeof(uint8_t) * data->len);
 
 	scratchpad_size += data->uuid ? bt_uuid_buf_size(data->uuid) : 0;
 
 	return scratchpad_size;
 }
 
-size_t bt_gatt_indicate_params_buf_size(const struct bt_gatt_indicate_params *data)
+static size_t bt_gatt_indicate_params_buf_size(const struct bt_gatt_indicate_params *data)
 {
 	size_t buffer_size_max = 15;
 
@@ -820,18 +820,18 @@ size_t bt_gatt_indicate_params_buf_size(const struct bt_gatt_indicate_params *da
 	return buffer_size_max;
 }
 
-void bt_gatt_indicate_params_enc(struct nrf_rpc_cbor_ctx *encoder,
-				 const struct bt_gatt_indicate_params *data)
+static void bt_gatt_indicate_params_enc(struct nrf_rpc_cbor_ctx *encoder,
+					const struct bt_gatt_indicate_params *data)
 {
 	bt_rpc_encode_gatt_attr(encoder, data->attr);
-	ser_encode_uint(encoder, data->len);
-	ser_encode_buffer(encoder, data->data, sizeof(uint8_t) * data->len);
-	ser_encode_uint(encoder, data->_ref);
+	nrf_rpc_encode_uint(encoder, data->len);
+	nrf_rpc_encode_buffer(encoder, data->data, sizeof(uint8_t) * data->len);
+	nrf_rpc_encode_uint(encoder, data->_ref);
 
 	if (data->uuid) {
 		bt_uuid_enc(encoder, data->uuid);
 	} else {
-		ser_encode_null(encoder);
+		nrf_rpc_encode_null(encoder);
 	}
 }
 
@@ -847,14 +847,14 @@ int bt_gatt_indicate(struct bt_conn *conn, struct bt_gatt_indicate_params *param
 	scratchpad_size += bt_gatt_indicate_params_sp_size(params);
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	nrf_rpc_encode_uint(&ctx, scratchpad_size);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_gatt_indicate_params_enc(&ctx, params);
-	ser_encode_uint(&ctx, params_addr);
+	nrf_rpc_encode_uint(&ctx, params_addr);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_INDICATE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -868,10 +868,10 @@ static void bt_gatt_indicate_func_t_callback_rpc_handler(const struct nrf_rpc_gr
 	struct bt_gatt_indicate_params *params;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	err = ser_decode_uint(ctx);
-	params = (struct bt_gatt_indicate_params *) ser_decode_uint(ctx);
+	err = nrf_rpc_decode_uint(ctx);
+	params = (struct bt_gatt_indicate_params *) nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -879,7 +879,7 @@ static void bt_gatt_indicate_func_t_callback_rpc_handler(const struct nrf_rpc_gr
 		params->func(conn, params, err);
 	}
 
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -896,9 +896,9 @@ static void bt_gatt_indicate_params_destroy_t_callback_rpc_handler(
 {
 	struct bt_gatt_indicate_params *params;
 
-	params = (struct bt_gatt_indicate_params *)ser_decode_uint(ctx);
+	params = (struct bt_gatt_indicate_params *)nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -906,7 +906,7 @@ static void bt_gatt_indicate_params_destroy_t_callback_rpc_handler(
 		params->destroy(params);
 	}
 
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -928,10 +928,10 @@ bool bt_gatt_is_subscribed(struct bt_conn *conn,
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_rpc_encode_gatt_attr(&ctx, attr);
-	ser_encode_uint(&ctx, ccc_value);
+	nrf_rpc_encode_uint(&ctx, ccc_value);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_IS_SUBSCRIBED_RPC_CMD,
-		&ctx, ser_rsp_decode_bool, &result);
+		&ctx, nrf_rpc_rsp_decode_bool, &result);
 
 	return result;
 }
@@ -947,7 +947,7 @@ uint16_t bt_gatt_get_mtu(struct bt_conn *conn)
 	bt_rpc_encode_bt_conn(&ctx, conn);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_GET_MTU_RPC_CMD,
-		&ctx, ser_rsp_decode_u16, &result);
+		&ctx, nrf_rpc_rsp_decode_u16, &result);
 
 	return result;
 }
@@ -963,16 +963,16 @@ static void bt_gatt_exchange_mtu_callback_rpc_handler(const struct nrf_rpc_group
 	struct bt_gatt_exchange_params *params;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	err = ser_decode_uint(ctx);
-	params = (struct bt_gatt_exchange_params *)ser_decode_uint(ctx);
+	err = nrf_rpc_decode_uint(ctx);
+	params = (struct bt_gatt_exchange_params *)nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	params->func(conn, err, params);
 
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 
@@ -992,10 +992,10 @@ int bt_gatt_exchange_mtu(struct bt_conn *conn,
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, 8);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
-	ser_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_EXCHANGE_MTU_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1047,7 +1047,7 @@ uint16_t bt_gatt_attr_get_handle(const struct bt_gatt_attr *attr)
 	bt_rpc_encode_gatt_attr(&ctx, attr);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_ATTR_GET_HANDLE_RPC_CMD,
-		&ctx, ser_rsp_decode_u16, &result);
+		&ctx, nrf_rpc_rsp_decode_u16, &result);
 
 	return result;
 }
@@ -1094,7 +1094,7 @@ static void bt_le_gatt_cb_register_on_remote(void)
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_GATT_CB_REGISTER_ON_REMOTE_RPC_CMD,
-				&ctx, ser_rsp_decode_void, NULL);
+				&ctx, nrf_rpc_rsp_decode_void, NULL);
 }
 
 void bt_gatt_cb_register(struct bt_gatt_cb *cb)
@@ -1120,10 +1120,10 @@ static void bt_gatt_cb_att_mtu_update_call_rpc_handler(const struct nrf_rpc_grou
 	uint16_t rx;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	tx = ser_decode_uint(ctx);
-	rx = ser_decode_uint(ctx);
+	tx = nrf_rpc_decode_uint(ctx);
+	rx = nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1131,7 +1131,7 @@ static void bt_gatt_cb_att_mtu_update_call_rpc_handler(const struct nrf_rpc_grou
 		listener->att_mtu_updated(conn, tx, rx);
 	}
 
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 decoding_error:
@@ -1153,9 +1153,9 @@ static void bt_gatt_discover_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 	const struct bt_gatt_discover_params *data)
 {
 	bt_uuid_enc(encoder, data->uuid);
-	ser_encode_uint(encoder, data->start_handle);
-	ser_encode_uint(encoder, data->end_handle);
-	ser_encode_uint(encoder, data->type);
+	nrf_rpc_encode_uint(encoder, data->start_handle);
+	nrf_rpc_encode_uint(encoder, data->end_handle);
+	nrf_rpc_encode_uint(encoder, data->type);
 }
 
 int bt_gatt_discover(struct bt_conn *conn, struct bt_gatt_discover_params *params)
@@ -1167,10 +1167,10 @@ int bt_gatt_discover(struct bt_conn *conn, struct bt_gatt_discover_params *param
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_gatt_discover_params_enc(&ctx, params);
-	ser_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_DISCOVER_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1198,16 +1198,16 @@ static void bt_gatt_discover_callback_rpc_handler(const struct nrf_rpc_group *gr
 	struct bt_gatt_attr *attr = &attr_instance;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	params_pointer = ser_decode_uint(ctx);
+	params_pointer = nrf_rpc_decode_uint(ctx);
 	params = (struct bt_gatt_discover_params *)params_pointer;
 
-	if (ser_decode_is_null(ctx)) {
+	if (nrf_rpc_decode_is_null(ctx)) {
 		attr = NULL;
 	} else {
 		attr->uuid = bt_uuid_dec(ctx, &uuid_buffers[0].uuid);
-		attr->handle = ser_decode_uint(ctx);
+		attr->handle = nrf_rpc_decode_uint(ctx);
 		attr_uuid_16 = (struct bt_uuid_16 *)attr->uuid;
-		if (ser_decode_is_null(ctx)) {
+		if (nrf_rpc_decode_is_null(ctx)) {
 			attr->user_data = NULL;
 		} else if (attr->uuid == NULL || attr->uuid->type != BT_UUID_TYPE_16) {
 			LOG_ERR("Invalid attribute UUID");
@@ -1215,33 +1215,33 @@ static void bt_gatt_discover_callback_rpc_handler(const struct nrf_rpc_group *gr
 		} else if (attr_uuid_16->val == BT_UUID_GATT_PRIMARY_VAL ||
 			attr_uuid_16->val == BT_UUID_GATT_SECONDARY_VAL) {
 			user_data.service.uuid = bt_uuid_dec(ctx, &uuid_buffers[1].uuid);
-			user_data.service.end_handle = ser_decode_uint(ctx);
+			user_data.service.end_handle = nrf_rpc_decode_uint(ctx);
 		} else if (attr_uuid_16->val == BT_UUID_GATT_INCLUDE_VAL) {
 			user_data.include.uuid = bt_uuid_dec(ctx, &uuid_buffers[1].uuid);
-			user_data.include.start_handle = ser_decode_uint(ctx);
-			user_data.include.end_handle = ser_decode_uint(ctx);
+			user_data.include.start_handle = nrf_rpc_decode_uint(ctx);
+			user_data.include.end_handle = nrf_rpc_decode_uint(ctx);
 		} else if (attr_uuid_16->val == BT_UUID_GATT_CHRC_VAL) {
 			user_data.chrc.uuid = bt_uuid_dec(ctx, &uuid_buffers[1].uuid);
-			user_data.chrc.value_handle = ser_decode_uint(ctx);
-			user_data.chrc.properties = ser_decode_uint(ctx);
+			user_data.chrc.value_handle = nrf_rpc_decode_uint(ctx);
+			user_data.chrc.properties = nrf_rpc_decode_uint(ctx);
 		} else {
 			LOG_ERR("Unsupported attribute UUID");
 			goto decoding_done_with_error;
 		}
 	}
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	result = params->func(conn, attr, params);
 
-	ser_rsp_send_uint(group, result);
+	nrf_rpc_rsp_send_uint(group, result);
 
 	return;
 
 decoding_done_with_error:
-	ser_decoding_done_and_check(group, ctx);
+	nrf_rpc_decoding_done_and_check(group, ctx);
 decoding_error:
 	report_decoding_error(BT_GATT_DISCOVER_CALLBACK_RPC_CMD, handler_data);
 }
@@ -1266,18 +1266,18 @@ static size_t bt_gatt_read_params_buf_size(const struct bt_gatt_read_params *dat
 static void bt_gatt_read_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 				    const struct bt_gatt_read_params *data)
 {
-	ser_encode_uint(encoder, data->handle_count);
+	nrf_rpc_encode_uint(encoder, data->handle_count);
 	if (data->handle_count == 0) {
-		ser_encode_uint(encoder, data->by_uuid.start_handle);
-		ser_encode_uint(encoder, data->by_uuid.end_handle);
+		nrf_rpc_encode_uint(encoder, data->by_uuid.start_handle);
+		nrf_rpc_encode_uint(encoder, data->by_uuid.end_handle);
 		bt_uuid_enc(encoder, data->by_uuid.uuid);
 	} else if (data->handle_count == 1) {
-		ser_encode_uint(encoder, data->single.handle);
-		ser_encode_uint(encoder, data->single.offset);
+		nrf_rpc_encode_uint(encoder, data->single.handle);
+		nrf_rpc_encode_uint(encoder, data->single.offset);
 	} else {
-		ser_encode_buffer(encoder, data->multiple.handles,
+		nrf_rpc_encode_buffer(encoder, data->multiple.handles,
 				  sizeof(data->multiple.handles[0]) * data->handle_count);
-		ser_encode_bool(encoder, data->multiple.variable);
+		nrf_rpc_encode_bool(encoder, data->multiple.variable);
 	}
 }
 
@@ -1290,10 +1290,10 @@ int bt_gatt_read(struct bt_conn *conn, struct bt_gatt_read_params *params)
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_gatt_read_params_enc(&ctx, params);
-	ser_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_READ_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1301,7 +1301,7 @@ int bt_gatt_read(struct bt_conn *conn, struct bt_gatt_read_params *params)
 static void bt_gatt_read_callback_rpc_handler(const struct nrf_rpc_group *group,
 					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	struct ser_scratchpad scratchpad;
+	struct nrf_rpc_scratchpad scratchpad;
 	struct bt_conn *conn;
 	uintptr_t params_pointer;
 	uint8_t err;
@@ -1310,22 +1310,22 @@ static void bt_gatt_read_callback_rpc_handler(const struct nrf_rpc_group *group,
 	void *data;
 	size_t length;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
+	NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	err = ser_decode_uint(ctx);
-	params_pointer = ser_decode_uint(ctx);
+	err = nrf_rpc_decode_uint(ctx);
+	params_pointer = nrf_rpc_decode_uint(ctx);
 	params = (struct bt_gatt_read_params *)params_pointer;
 
-	data = ser_decode_buffer_into_scratchpad(&scratchpad, &length);
+	data = nrf_rpc_decode_buffer_into_scratchpad(&scratchpad, &length);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	result = params->func(conn, err, params, data, (uint16_t)length);
 
-	ser_rsp_send_uint(group, result);
+	nrf_rpc_rsp_send_uint(group, result);
 
 	return;
 
@@ -1344,9 +1344,9 @@ static size_t bt_gatt_write_params_buf_size(const struct bt_gatt_write_params *d
 static void bt_gatt_write_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 	const struct bt_gatt_write_params *data)
 {
-	ser_encode_buffer(encoder, data->data, data->length);
-	ser_encode_uint(encoder, data->handle);
-	ser_encode_uint(encoder, data->offset);
+	nrf_rpc_encode_buffer(encoder, data->data, data->length);
+	nrf_rpc_encode_uint(encoder, data->handle);
+	nrf_rpc_encode_uint(encoder, data->offset);
 }
 
 int bt_gatt_write(struct bt_conn *conn, struct bt_gatt_write_params *params)
@@ -1358,10 +1358,10 @@ int bt_gatt_write(struct bt_conn *conn, struct bt_gatt_write_params *params)
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	bt_gatt_write_params_enc(&ctx, params);
-	ser_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_WRITE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1374,16 +1374,16 @@ static void bt_gatt_write_callback_rpc_handler(const struct nrf_rpc_group *group
 	struct bt_gatt_write_params *params;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	err = ser_decode_uint(ctx);
-	params = (struct bt_gatt_write_params *)ser_decode_uint(ctx);
+	err = nrf_rpc_decode_uint(ctx);
+	params = (struct bt_gatt_write_params *)nrf_rpc_decode_uint(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	params->func(conn, err, params);
 
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 
@@ -1408,21 +1408,21 @@ int bt_gatt_write_without_response_cb(struct bt_conn *conn, uint16_t handle,
 	_data_size = sizeof(uint8_t) * length;
 	buffer_size_max += _data_size;
 
-	scratchpad_size += SCRATCHPAD_ALIGN(_data_size);
+	scratchpad_size += NRF_RPC_SCRATCHPAD_ALIGN(_data_size);
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-	ser_encode_uint(&ctx, scratchpad_size);
+	nrf_rpc_encode_uint(&ctx, scratchpad_size);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
-	ser_encode_uint(&ctx, handle);
-	ser_encode_uint(&ctx, length);
-	ser_encode_buffer(&ctx, data, _data_size);
-	ser_encode_bool(&ctx, sign);
-	ser_encode_callback(&ctx, func);
-	ser_encode_uint(&ctx, (uintptr_t)user_data);
+	nrf_rpc_encode_uint(&ctx, handle);
+	nrf_rpc_encode_uint(&ctx, length);
+	nrf_rpc_encode_buffer(&ctx, data, _data_size);
+	nrf_rpc_encode_bool(&ctx, sign);
+	nrf_rpc_encode_callback(&ctx, func);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)user_data);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_WRITE_WITHOUT_RESPONSE_CB_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1434,24 +1434,24 @@ static const size_t bt_gatt_subscribe_params_buf_size =
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, ccc_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value) +
+#if defined(CONFIG_BT_SMP)
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, min_security) +
+#endif
 	/* Placeholder for the flags field */
-	2 +
-#if defined(CONFIG_BT_SMP)
-	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, min_security);
-#endif /* defined(CONFIG_BT_SMP) */
+	2;
 
-void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
-				  const struct bt_gatt_subscribe_params *data)
+static void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
+					 const struct bt_gatt_subscribe_params *data)
 {
-	ser_encode_bool(encoder, data->notify != NULL);
-	ser_encode_callback(encoder, data->write);
-	ser_encode_uint(encoder, data->value_handle);
-	ser_encode_uint(encoder, data->ccc_handle);
-	ser_encode_uint(encoder, data->value);
+	nrf_rpc_encode_bool(encoder, data->notify != NULL);
+	nrf_rpc_encode_callback(encoder, data->write);
+	nrf_rpc_encode_uint(encoder, data->value_handle);
+	nrf_rpc_encode_uint(encoder, data->ccc_handle);
+	nrf_rpc_encode_uint(encoder, data->value);
 #if defined(CONFIG_BT_SMP)
-	ser_encode_uint(encoder, data->min_security);
+	nrf_rpc_encode_uint(encoder, data->min_security);
 #endif /* defined(CONFIG_BT_SMP) */
-	ser_encode_uint(encoder, (uint16_t)atomic_get(data->flags));
+	nrf_rpc_encode_uint(encoder, (uint16_t)atomic_get(data->flags));
 }
 
 int bt_gatt_subscribe(struct bt_conn *conn,
@@ -1466,11 +1466,11 @@ int bt_gatt_subscribe(struct bt_conn *conn,
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
-	ser_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 	bt_gatt_subscribe_params_enc(&ctx, params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_SUBSCRIBE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1488,14 +1488,14 @@ int bt_gatt_resubscribe(uint8_t id, const bt_addr_le_t *peer,
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
-	ser_encode_uint(&ctx, id);
-	ser_encode_buffer(&ctx, peer, sizeof(bt_addr_le_t));
+	nrf_rpc_encode_uint(&ctx, id);
+	nrf_rpc_encode_buffer(&ctx, peer, sizeof(bt_addr_le_t));
 
-	ser_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 	bt_gatt_subscribe_params_enc(&ctx, params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_RESUBSCRIBE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1510,10 +1510,10 @@ int bt_gatt_unsubscribe(struct bt_conn *conn,
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
-	ser_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_UNSUBSCRIBE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1527,12 +1527,12 @@ static int bt_rpc_gatt_subscribe_flag_update(struct bt_gatt_subscribe_params *pa
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
-	ser_encode_uint(&ctx, (uintptr_t)params);
-	ser_encode_uint(&ctx, flags_bit);
-	ser_encode_int(&ctx, val);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
+	nrf_rpc_encode_uint(&ctx, flags_bit);
+	nrf_rpc_encode_int(&ctx, val);
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_RPC_GATT_SUBSCRIBE_FLAG_UPDATE_RPC_CMD,
-		&ctx, ser_rsp_decode_i32, &result);
+		&ctx, nrf_rpc_rsp_decode_i32, &result);
 
 	return result;
 }
@@ -1561,15 +1561,15 @@ static void bt_gatt_subscribe_params_notify_rpc_handler(const struct nrf_rpc_gro
 	size_t length;
 	uint8_t *data;
 	uint8_t result = BT_GATT_ITER_CONTINUE;
-	struct ser_scratchpad scratchpad;
+	struct nrf_rpc_scratchpad scratchpad;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
+	NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	params = (struct bt_gatt_subscribe_params *)ser_decode_uint(ctx);
-	data = ser_decode_buffer_into_scratchpad(&scratchpad, &length);
+	params = (struct bt_gatt_subscribe_params *)nrf_rpc_decode_uint(ctx);
+	data = nrf_rpc_decode_buffer_into_scratchpad(&scratchpad, &length);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
@@ -1577,7 +1577,7 @@ static void bt_gatt_subscribe_params_notify_rpc_handler(const struct nrf_rpc_gro
 		result = params->notify(conn, params, data, (uint16_t)length);
 	}
 
-	ser_rsp_send_uint(group, result);
+	nrf_rpc_rsp_send_uint(group, result);
 
 	return;
 decoding_error:
@@ -1595,34 +1595,34 @@ static void bt_gatt_subscribe_params_write_rpc_handler(const struct nrf_rpc_grou
 	uint8_t err;
 	struct bt_gatt_write_params params;
 	struct bt_gatt_write_params *params_ptr;
-	struct ser_scratchpad scratchpad;
+	struct nrf_rpc_scratchpad scratchpad;
 	bt_gatt_write_func_t func;
 
-	SER_SCRATCHPAD_DECLARE(&scratchpad, ctx);
+	NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
 	conn = bt_rpc_decode_bt_conn(ctx);
-	err = ser_decode_uint(ctx);
-	if (ser_decode_is_null(ctx)) {
+	err = nrf_rpc_decode_uint(ctx);
+	if (nrf_rpc_decode_is_null(ctx)) {
 		params_ptr = NULL;
 	} else {
 		size_t len;
 
-		params.handle = ser_decode_uint(ctx);
-		params.offset = ser_decode_uint(ctx);
-		params.data = ser_decode_buffer_into_scratchpad(&scratchpad, &len);
+		params.handle = nrf_rpc_decode_uint(ctx);
+		params.offset = nrf_rpc_decode_uint(ctx);
+		params.data = nrf_rpc_decode_buffer_into_scratchpad(&scratchpad, &len);
 		params.length = len;
 		params_ptr = &params;
 	}
-	func = (bt_gatt_write_func_t)ser_decode_callback_call(ctx);
+	func = (bt_gatt_write_func_t)nrf_rpc_decode_callback_call(ctx);
 
-	if (!ser_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
 	}
 
 	if (func != NULL) {
 		func(conn, err, params_ptr);
 	}
-	ser_rsp_send_void(group);
+	nrf_rpc_rsp_send_void(group);
 
 	return;
 decoding_error:

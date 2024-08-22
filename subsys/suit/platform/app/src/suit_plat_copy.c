@@ -9,12 +9,14 @@
 
 LOG_MODULE_REGISTER(suit_plat_copy, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handle)
+int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handle,
+			 struct suit_encryption_info *enc_info)
 {
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 }
 
-int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle)
+int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
+		   struct suit_encryption_info *enc_info)
 {
 	return SUIT_ERR_UNSUPPORTED_COMMAND;
 }

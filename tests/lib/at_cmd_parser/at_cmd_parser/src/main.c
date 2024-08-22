@@ -527,7 +527,7 @@ ZTEST(at_cmd_parser, test_at_cmd_set)
 
 	ret = at_parser_params_from_str(at_cmd_cgmi, NULL, &test_list2);
 	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
-	zassert_equal(at_parser_cmd_type_get(at_cmd_cgmi),
+	zassert_equal(at_parser_at_cmd_type_get(at_cmd_cgmi),
 		      AT_CMD_TYPE_SET_COMMAND, "Invalid AT command type");
 
 	ret = at_params_valid_count_get(&test_list2);
@@ -548,7 +548,7 @@ ZTEST(at_cmd_parser, test_at_cmd_set)
 
 	ret = at_parser_params_from_str(at_cmd_cclk, NULL, &test_list2);
 	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
-	zassert_equal(at_parser_cmd_type_get(at_cmd_cclk),
+	zassert_equal(at_parser_at_cmd_type_get(at_cmd_cclk),
 		      AT_CMD_TYPE_SET_COMMAND, "Invalid AT command type");
 
 	ret = at_params_valid_count_get(&test_list2);
@@ -579,7 +579,7 @@ ZTEST(at_cmd_parser, test_at_cmd_set)
 
 	ret = at_parser_params_from_str(at_cmd_xsystemmode, NULL, &test_list2);
 	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
-	zassert_equal(at_parser_cmd_type_get(at_cmd_xsystemmode),
+	zassert_equal(at_parser_at_cmd_type_get(at_cmd_xsystemmode),
 		      AT_CMD_TYPE_SET_COMMAND, "Invalid AT command type");
 
 	ret = at_params_valid_count_get(&test_list2);
@@ -631,7 +631,7 @@ ZTEST(at_cmd_parser, test_at_cmd_set)
 
 	ret = at_parser_params_from_str(lone_at_cmd, NULL, &test_list2);
 	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
-	zassert_equal(at_parser_cmd_type_get(lone_at_cmd),
+	zassert_equal(at_parser_at_cmd_type_get(lone_at_cmd),
 		      AT_CMD_TYPE_SET_COMMAND, "Invalid AT command type");
 
 	ret = at_params_valid_count_get(&test_list2);
@@ -688,7 +688,7 @@ ZTEST(at_cmd_parser, test_at_cmd_read)
 
 	ret = at_parser_params_from_str(at_cmd_cfun_read, NULL, &test_list2);
 	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
-	zassert_equal(at_parser_cmd_type_get(at_cmd_cfun_read),
+	zassert_equal(at_parser_at_cmd_type_get(at_cmd_cfun_read),
 		      AT_CMD_TYPE_READ_COMMAND, "Invalid AT command type");
 
 	ret = at_params_valid_count_get(&test_list2);
@@ -716,7 +716,7 @@ ZTEST(at_cmd_parser, test_at_cmd_test)
 
 	ret = at_parser_params_from_str(at_cmd_cfun_read, NULL, &test_list2);
 	zassert_true(ret == 0, "at_parser_params_from_str should return 0");
-	zassert_equal(at_parser_cmd_type_get(at_cmd_cfun_read),
+	zassert_equal(at_parser_at_cmd_type_get(at_cmd_cfun_read),
 		      AT_CMD_TYPE_TEST_COMMAND, "Invalid AT command type");
 
 	ret = at_params_valid_count_get(&test_list2);

@@ -15,9 +15,6 @@ config TFM_BOARD
 
 if BUILD_WITH_TFM
 
-config TFM_ISOLATION_LEVEL
-	default 1 if SOC_FAMILY_NORDIC_NRF
-
 config TFM_BL2
 	bool
 	default n
@@ -28,7 +25,8 @@ config TFM_DUMMY_PROVISIONING
 
 config TFM_REGRESSION_NS
 	bool
-	select NRF_TIMER0_SECURE
+	select NRF_TIMER0_SECURE if !SOC_SERIES_NRF54LX
+	select NRF_TIMER00_SECURE if SOC_SERIES_NRF54LX
 
 config TFM_LOG_LEVEL_SILENCE
 	# Overrule zephyr disable TF-M secure output if the uart1 node has not

@@ -690,7 +690,7 @@ static void gnss_event_handler(int event)
 
 SLM_AT_CMD_CUSTOM(xgps_set, "AT#XGPS=", handle_at_gps);
 SLM_AT_CMD_CUSTOM(xgps_read, "AT#XGPS?", handle_at_gps);
-static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_gps(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			 uint32_t param_count)
 {
 	int err = 0;
@@ -706,8 +706,8 @@ static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *
 		MAX_PARAM_COUNT
 	};
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_short_get(param_list, OP_IDX, &op);
+	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, OP_IDX, &op);
 		if (err) {
 			return err;
 		}
@@ -717,8 +717,8 @@ static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *
 				return -EBUSY;
 			}
 
-			err = at_params_unsigned_short_get(
-				param_list, CLOUD_ASSISTANCE_IDX, &gnss_cloud_assistance);
+			err = at_parser_num_get(
+				parser, CLOUD_ASSISTANCE_IDX, &gnss_cloud_assistance);
 			if (err || gnss_cloud_assistance > 1) {
 				return -EINVAL;
 			}
@@ -739,7 +739,7 @@ static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *
 				return -ENOTCONN;
 			}
 
-			err = at_params_unsigned_short_get(param_list, INTERVAL_IDX, &interval);
+			err = at_parser_num_get(parser, INTERVAL_IDX, &interval);
 			if (err || (interval > 1 && interval < 10)) {
 				return -EINVAL;
 			}
@@ -772,8 +772,8 @@ static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *
 				if (param_count == TIMEOUT_IDX) {
 					timeout = 60;  /* default value */
 				} else {
-					err = at_params_unsigned_short_get(
-						param_list, TIMEOUT_IDX, &timeout);
+					err = at_parser_num_get(
+						parser, TIMEOUT_IDX, &timeout);
 					if (err || param_count != MAX_PARAM_COUNT) {
 						return -EINVAL;
 					}
@@ -801,11 +801,11 @@ static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *
 		}
 		break;
 
-	case AT_CMD_TYPE_READ_COMMAND:
+	case AT_PARSER_CMD_TYPE_READ:
 		rsp_send("\r\n#XGPS: %d,%d\r\n", (int)is_gnss_activated(), gnss_status);
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XGPS: (%d,%d),(0,1),<interval>,<timeout>\r\n",
 			GPS_STOP, GPS_START);
 		break;
@@ -819,22 +819,22 @@ static int handle_at_gps(enum at_cmd_type cmd_type, const struct at_param_list *
 }
 
 SLM_AT_CMD_CUSTOM(xgpsdel, "AT#XGPSDEL", handle_at_gps_delete);
-static int handle_at_gps_delete(enum at_cmd_type cmd_type, const struct at_param_list *param_list,
+static int handle_at_gps_delete(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 				uint32_t)
 {
 	int err = -EINVAL;
 	uint32_t mask;
 
 	switch (cmd_type) {
-	case AT_CMD_TYPE_SET_COMMAND:
-		err = at_params_unsigned_int_get(param_list, 1, &mask);
+	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, 1, &mask);
 		if (err || !mask || (mask & NRF_MODEM_GNSS_DELETE_TCXO_OFFSET)) {
 			return -EINVAL;
 		}
 		err = nrf_modem_gnss_nv_data_delete(mask);
 		break;
 
-	case AT_CMD_TYPE_TEST_COMMAND:
+	case AT_PARSER_CMD_TYPE_TEST:
 		rsp_send("\r\n#XGPSDEL: <mask>\r\n");
 		err = 0;
 		break;

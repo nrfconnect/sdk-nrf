@@ -28,8 +28,7 @@
 
 #include <nrf_modem_at.h>
 #include <net/nrf_cloud.h>
-#include <modem/at_cmd_parser.h>
-#include <modem/at_params.h>
+#include <modem/at_parser.h>
 
 extern char mosh_at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
 extern struct k_mutex mosh_at_resp_buf_mutex;
@@ -350,15 +349,13 @@ static void link_api_modem_operator_info_read_for_shell(void)
 static int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *populated_info)
 {
 	int ret = 0;
-	struct at_param_list param_list = { 0 };
+	struct at_parser parser;
 	size_t param_str_len;
 
 	/* Cannot use global mosh_at_resp_buf because this used from link_api_pdp_contexts_read()
 	 * where global mosh_at_resp_buf is already used
 	 */
 	char cgcontrdp_at_rsp_buf[512];
-	char *next_param_str;
-	bool resp_continues = false;
 
 	char *at_ptr;
 	char *tmp_ptr;
@@ -395,32 +392,18 @@ static int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *popu
 	}
 
 	/* Parse the response */
-	ret = at_params_list_init(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_PARAM_COUNT);
+	ret = at_parser_init(&parser, at_ptr);
 	if (ret) {
-		mosh_error("Could not init AT params list, error: %d\n", ret);
+		mosh_error("Could not init AT parser for %s, error: %d\n",
+			   at_cmd_pdp_context_read_info_cmd_str, ret);
 		return ret;
 	}
 
 parse:
-	resp_continues = false;
-	ret = at_parser_max_params_from_str(at_ptr, &next_param_str, &param_list,
-					    AT_CMD_PDP_CONTEXT_READ_INFO_PARAM_COUNT);
-	if (ret == -EAGAIN) {
-		resp_continues = true;
-	} else if (ret == -E2BIG) {
-		mosh_error("E2BIG, error: %d\n", ret);
-	} else if (ret != 0) {
-		mosh_error(
-			"Could not parse AT response for %s, error: %d\n",
-			at_cmd_pdp_context_read_info_cmd_str,
-			ret);
-		goto clean_exit;
-	}
-
 	/* Read primary DNS address */
 	param_str_len = sizeof(dns_addr_str);
-	ret = at_params_string_get(
-		&param_list,
+	ret = at_parser_string_get(
+		&parser,
 		AT_CMD_PDP_CONTEXT_READ_INFO_DNS_ADDR_PRIMARY_INDEX,
 		dns_addr_str, &param_str_len);
 	if (ret) {
@@ -444,8 +427,8 @@ parse:
 	/* Read secondary DNS address */
 	param_str_len = sizeof(dns_addr_str);
 
-	ret = at_params_string_get(
-		&param_list,
+	ret = at_parser_string_get(
+		&parser,
 		AT_CMD_PDP_CONTEXT_READ_INFO_DNS_ADDR_SECONDARY_INDEX,
 		dns_addr_str, &param_str_len);
 	if (ret) {
@@ -471,7 +454,7 @@ parse:
 	 * parameters followed by one line with the IPv6 parameters.
 	 */
 	if (iterator == 1) {
-		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
+		ret = at_parser_num_get(&parser, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
 					&(populated_info->ipv6_mtu));
 		if (ret) {
 			/* Don't care if it fails */
@@ -479,7 +462,7 @@ parse:
 			populated_info->ipv6_mtu = 0;
 		}
 	} else {
-		ret = at_params_int_get(&param_list, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
+		ret = at_parser_num_get(&parser, AT_CMD_PDP_CONTEXT_READ_INFO_MTU_INDEX,
 					&(populated_info->ipv4_mtu));
 		if (ret) {
 			/* Don't care if it fails */
@@ -488,8 +471,7 @@ parse:
 		}
 	}
 
-	if (resp_continues) {
-		at_ptr = next_param_str;
+	if (at_parser_cmd_next(&parser) == 0) {
 		iterator++;
 		if (iterator < lines) {
 			goto parse;
@@ -497,8 +479,6 @@ parse:
 	}
 
 clean_exit:
-	at_params_list_free(&param_list);
-
 	return ret;
 }
 
@@ -507,10 +487,8 @@ clean_exit:
 int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 {
 	int ret = 0;
-	struct at_param_list param_list = { 0 };
+	struct at_parser parser;
 	size_t param_str_len;
-	char *next_param_str;
-	bool resp_continues = false;
 
 	char *at_ptr;
 	char *tmp_ptr;
@@ -549,26 +527,16 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 	pdp_info->size = pdp_cnt;
 
 	/* Parse the response */
-	ret = at_params_list_init(&param_list, AT_CMD_PDP_CONTEXTS_READ_PARAM_COUNT);
+	ret = at_parser_init(&parser, at_ptr);
 	if (ret) {
-		mosh_error("Could not init AT params list, error: %d\n", ret);
+		mosh_error("Could not init AT parser for %s, error: %d\n", AT_CMD_PDP_CONTEXTS_READ,
+			   ret);
 		goto clean_exit;
 	}
 	populated_info = pdp_info->array;
 
 parse:
-	resp_continues = false;
-	ret = at_parser_max_params_from_str(
-		at_ptr, &next_param_str, &param_list,
-		AT_CMD_PDP_CONTEXTS_READ_PARAM_COUNT);
-	if (ret == -EAGAIN) {
-		resp_continues = true;
-	} else if (ret != 0 && ret != -EAGAIN) {
-		mosh_error("Could not parse AT response, error: %d", ret);
-		goto clean_exit;
-	}
-
-	ret = at_params_int_get(&param_list,
+	ret = at_parser_num_get(&parser,
 				AT_CMD_PDP_CONTEXTS_READ_CID_INDEX,
 				&populated_info[iterator].cid);
 	if (ret) {
@@ -586,8 +554,8 @@ parse:
 	}
 
 	param_str_len = sizeof(populated_info[iterator].pdp_type_str);
-	ret = at_params_string_get(
-		&param_list, AT_CMD_PDP_CONTEXTS_READ_PDP_TYPE_INDEX,
+	ret = at_parser_string_get(
+		&parser, AT_CMD_PDP_CONTEXTS_READ_PDP_TYPE_INDEX,
 		populated_info[iterator].pdp_type_str, &param_str_len);
 	if (ret) {
 		mosh_error("Could not parse pdp type, err: %d", ret);
@@ -607,8 +575,8 @@ parse:
 	}
 
 	param_str_len = sizeof(populated_info[iterator].apn_str);
-	ret = at_params_string_get(
-		&param_list,
+	ret = at_parser_string_get(
+		&parser,
 		AT_CMD_PDP_CONTEXTS_READ_APN_INDEX,
 		populated_info[iterator].apn_str,
 		&param_str_len);
@@ -619,8 +587,8 @@ parse:
 	populated_info[iterator].apn_str[param_str_len] = '\0';
 
 	param_str_len = sizeof(ip_addr_str);
-	ret = at_params_string_get(
-		&param_list, AT_CMD_PDP_CONTEXTS_READ_PDP_ADDR_INDEX,
+	ret = at_parser_string_get(
+		&parser, AT_CMD_PDP_CONTEXTS_READ_PDP_ADDR_INDEX,
 		ip_addr_str, &param_str_len);
 	if (ret) {
 		mosh_error("Could not parse apn str, err: %d", ret);
@@ -666,8 +634,7 @@ parse:
 		(void)link_api_pdp_context_dynamic_params_get(&(populated_info[iterator]));
 	}
 
-	if (resp_continues) {
-		at_ptr = next_param_str;
+	if (at_parser_cmd_next(&parser) == 0) {
 		iterator++;
 		if (iterator < pdp_cnt) {
 			goto parse;
@@ -678,7 +645,6 @@ parse:
 	link_api_context_info_fill_activation_status(pdp_info);
 
 clean_exit:
-	at_params_list_free(&param_list);
 	/* User need to free pdp_info->array also in case of error */
 
 	k_mutex_unlock(&mosh_at_resp_buf_mutex);
@@ -696,16 +662,24 @@ void link_api_modem_info_get_for_shell(bool connected)
 	enum lte_lc_lte_mode currently_active_mode;
 	char info_str[MODEM_INFO_MAX_RESPONSE_SIZE + 1];
 	char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
+	int value;
 	int ret;
 
 	(void)link_shell_get_and_print_current_system_modes(
 		&sys_mode_current, &sys_mode_preferred, &currently_active_mode);
 
-	ret = modem_info_string_get(MODEM_INFO_FW_VERSION, info_str, sizeof(info_str));
-	if (ret >= 0) {
-		mosh_print("Modem FW version:      %s", info_str);
+	ret = modem_info_get_batt_voltage(&value);
+	if (ret == 0) {
+		mosh_print("Battery voltage:       %d mV", value);
 	} else {
-		mosh_error("Unable to obtain modem FW version (%d)", ret);
+		mosh_error("Unable to obtain battery voltage (%d)", ret);
+	}
+
+	ret = modem_info_get_temperature(&value);
+	if (ret == 0) {
+		mosh_print("Modem temperature:     %d C", value);
+	} else {
+		mosh_error("Unable to obtain modem temperature (%d)", ret);
 	}
 
 	/* Get the device id used with nRF Cloud */

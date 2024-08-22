@@ -44,12 +44,35 @@ config BT_ISO_MAX_CHAN
 config BT_ISO_MAX_BIG
 	default 2
 
-config BT_PAC_SNK
-	default y
-
 config BT_AUDIO_RX
 	default y
 
+config BT_PER_ADV_SYNC_TRANSFER_RECEIVER
+	depends on BT_AUDIO_SCAN_DELEGATOR
+	select SETTINGS
+	select BT_SETTINGS
+	select FLASH
+	select FLASH_MAP
+	select NVS
+
+config NVS_LOG_LEVEL
+	default 2
+
+config BT_DEVICE_NAME
+	default "NRF5340_BIS_HEADSET"
+
+## PACS related configs ##
+config BT_PAC_SNK_NOTIFIABLE
+	default y
+
+config BT_PAC_SNK
+	default y
+
+config BT_PAC_SRC_NOTIFIABLE
+	default y
+
+config BT_PAC_SRC
+	default y
 
 ## Audio related configs ##
 config AUDIO_MUTE

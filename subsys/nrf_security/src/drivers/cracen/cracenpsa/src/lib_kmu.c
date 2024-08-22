@@ -11,41 +11,13 @@
 #include <zephyr/kernel.h>
 
 #include <nrf.h>
+
+#if !defined(__NRF_TFM__)
 #include <hal/nrf_rramc.h>
+#include <nrfx_rramc.h>
+#endif
 
 #include <cracen/lib_kmu.h>
-
-/*
- * Enable writes and set the write buffer size to 0
- * bytes. IPS states that this is invalid but the IPS is
- * wrong. Setting it to 0 will prevent buffering and therefore
- * prevent writes from being discarded on soft reset.
- */
-static void rramc_enable_writes(void)
-{
-	nrf_rramc_config_t const config = {
-		.mode_write = true, .write_buff_size = 0 /* Unbuffered */
-	};
-	nrf_rramc_config_set(NRF_RRAMC_S, &config);
-
-	while (!nrf_rramc_ready_check(NRF_RRAMC_S)) {
-		;
-	}
-}
-
-/*
- * Reset the CONFIG register back to having writes disabled. Also set
- * buffer size to 1.
- */
-static void rramc_disable_writes(void)
-{
-	nrf_rramc_config_t const config = {.mode_write = false, .write_buff_size = 1};
-
-	nrf_rramc_config_set(NRF_RRAMC_S, &config);
-	while (!nrf_rramc_ready_check(NRF_RRAMC_S)) {
-		;
-	}
-}
 
 void lib_kmu_clear_all_events(void)
 {
@@ -65,7 +37,7 @@ static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 
 	*task = 1;
 
-	while (!(*event || NRF_KMU_S->EVENTS_ERROR)) {
+	while (!(*event || NRF_KMU_S->EVENTS_ERROR || NRF_KMU_S->EVENTS_REVOKED)) {
 		/*
 		 * Poll until KMU completes or fails the operation. This is
 		 * not expected to take long.
@@ -74,12 +46,17 @@ static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 		 */
 	}
 
-	if (NRF_KMU_S->EVENTS_ERROR) {
-		result = -LIB_KMU_ERROR;
-	} else if (*event) {
+	if (*event) {
 		result = LIB_KMU_SUCCESS;
 	} else {
-		CODE_UNREACHABLE;
+		/* Check that REVOKED event is not expected. This can be when a revoke task is
+		 * triggered, where the REVOKED event actually means success.
+		 */
+		if (event != &NRF_KMU_S->EVENTS_REVOKED && NRF_KMU_S->EVENTS_REVOKED) {
+			result = -LIB_KMU_REVOKED;
+		} else {
+			result = -LIB_KMU_ERROR;
+		}
 	}
 
 	lib_kmu_clear_all_events();
@@ -98,7 +75,9 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
 
 	int result = 1;
 
-	rramc_enable_writes();
+#if !defined(__NRF_TFM__)
+	nrfx_rramc_write_enable_set(true, 0);
+#endif
 
 	NRF_KMU_S->KEYSLOT = slot_id;
 	NRF_KMU_S->SRC = (uint32_t)kmu_src;
@@ -106,7 +85,9 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
 	result = trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_PROVISION),
 							  &(NRF_KMU_S->EVENTS_PROVISIONED));
 
-	rramc_disable_writes();
+#if !defined(__NRF_TFM__)
+	nrfx_rramc_write_enable_set(false, 0);
+#endif
 
 	return result;
 }
@@ -121,14 +102,18 @@ int lib_kmu_push_slot(int slot_id)
 
 int lib_kmu_revoke_slot(int slot_id)
 {
-	rramc_enable_writes();
+#if !defined(__NRF_TFM__)
+	nrfx_rramc_write_enable_set(true, 0);
+#endif
 
 	NRF_KMU_S->KEYSLOT = slot_id;
 
 	int result = trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_REVOKE),
 							      &(NRF_KMU_S->EVENTS_REVOKED));
 
-	rramc_disable_writes();
+#if !defined(__NRF_TFM__)
+	nrfx_rramc_write_enable_set(false, 0);
+#endif
 
 	return result;
 }

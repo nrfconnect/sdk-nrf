@@ -37,9 +37,6 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
-	LOG_DBG("buf: %p", (void *)buf);
-	LOG_DBG("size: %d", size);
-
 	struct digest_sink_context *digest_ctx = (struct digest_sink_context *)ctx;
 
 	if (!digest_ctx->in_use) {

@@ -2,7 +2,7 @@
 tests:
   dfu.target_stream:
     sysbuild: true
-    tags: target_stream sysbuild
+    tags: target_stream sysbuild ci_tests_subsys_dfu
     platform_allow: nrf52840dk/nrf52840 nrf9160dk/nrf9160 nrf5340dk/nrf5340/cpuapp native_posix
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -11,7 +11,7 @@ tests:
       - native_posix
   dfu.target_stream.store_progress:
     sysbuild: true
-    tags: target_stream sysbuild
+    tags: target_stream sysbuild ci_tests_subsys_dfu
     extra_args: OVERLAY_CONFIG=overlay-store-progress.conf
     # Since we need the storage partition (and hence PM) allow some nRF devices
     # only.

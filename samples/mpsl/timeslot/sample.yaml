@@ -10,4 +10,4 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpunet
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_mpsl

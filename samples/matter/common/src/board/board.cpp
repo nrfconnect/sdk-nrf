@@ -5,6 +5,7 @@
  */
 
 #include "board.h"
+#include "app/group_data_provider.h"
 #include "app/task_executor.h"
 
 #include <app/server/Server.h>
@@ -210,6 +211,7 @@ void Board::FunctionTimerEventHandler()
 	} else if (sInstance.mFunction == BoardFunctions::FactoryReset) {
 		/* Actually trigger Factory Reset */
 		sInstance.mFunction = BoardFunctions::None;
+		Matter::GroupDataProviderImpl::Instance().WillBeFactoryReset();
 		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
 }
@@ -304,17 +306,11 @@ void Board::DefaultMatterEventHandler(const ChipDeviceEvent *event, intptr_t /* 
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
 		isBleConnected = ConnectivityMgr().NumBLEConnections() != 0;
 		break;
-#if defined(CONFIG_NET_L2_OPENTHREAD)
 	case DeviceEventType::kThreadStateChange:
-		isNetworkProvisioned = ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled();
-		break;
-#endif /* CONFIG_NET_L2_OPENTHREAD */
-#if defined(CONFIG_CHIP_WIFI)
 	case DeviceEventType::kWiFiConnectivityChange:
-		isNetworkProvisioned =
-			ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled();
+		isNetworkProvisioned = ConnectivityMgrImpl().IsIPv6NetworkProvisioned() &&
+				       ConnectivityMgrImpl().IsIPv6NetworkEnabled();
 		break;
-#endif /* CONFIG_CHIP_WIFI */
 	default:
 		break;
 	}

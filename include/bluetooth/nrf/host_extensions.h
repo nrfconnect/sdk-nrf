@@ -61,7 +61,7 @@ struct bt_conn_set_pcr_params {
 	 */
 	uint16_t beta;
 	/** The lower limit of the RSSI golden range. The RSSI golden range is explained in
-	 *  Core_v5.4, Vol 6, Part B, Section 5.1.17.1.
+	 *  Bluetooth Core Specification, Vol 6, Part B, Section 5.1.17.1.
 	 *  Default value is -70 dBm.
 	 */
 	int8_t lower_limit;

@@ -11,10 +11,13 @@
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
+#if defined(CONFIG_UNITY)
+void on_modem_init(int err, void *ctx)
+#else
 NRF_MODEM_LIB_ON_INIT(lte_lc_init_hook, on_modem_init, NULL);
-NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
 
 static void on_modem_init(int err, void *ctx)
+#endif
 {
 	extern const enum lte_lc_system_mode lte_lc_sys_mode;
 	extern const enum lte_lc_system_mode_preference lte_lc_sys_mode_pref;
@@ -128,7 +131,13 @@ static void on_modem_init(int err, void *ctx)
 	}
 }
 
+#if defined(CONFIG_UNITY)
+void on_modem_shutdown(void *ctx)
+#else
+NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
+
 static void on_modem_shutdown(void *ctx)
+#endif
 {
 	/* Make sure the Modem library was in normal mode and not in bootloader mode. */
 	if (nrf_modem_is_initialized()) {

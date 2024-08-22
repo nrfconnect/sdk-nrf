@@ -15,7 +15,7 @@ tests:
       thingy91/nrf9160/ns
       thingy53/nrf5340/cpuapp
       thingy53/nrf5340/cpuapp/ns
-    tags: sensors sysbuild
+    tags: sensors sysbuild ci_samples_sensor
   sample.sensor.bme68x.polling:
     sysbuild: true
     depends_on: i2c
@@ -30,7 +30,7 @@ tests:
       thingy91/nrf9160/ns
       thingy53/nrf5340/cpuapp
       thingy53/nrf5340/cpuapp/ns
-    tags: sensors sysbuild
+    tags: sensors sysbuild ci_samples_sensor
     harness: console
     harness_config:
       type: multi_line
@@ -43,4 +43,4 @@ tests:
     harness: sensor
     platform_allow: >-
       nrf9160dk/nrf9160/ns
-    tags: sensors sysbuild
+    tags: sensors sysbuild ci_samples_sensor

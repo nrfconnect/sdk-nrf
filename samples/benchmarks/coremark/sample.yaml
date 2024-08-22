@@ -20,7 +20,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_benchmarks
     harness: console
     harness_config:
       ordered: false
@@ -38,7 +38,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_benchmarks
     extra_args: EXTRA_CONF_FILE="prj_heap_memory.conf"
                 coremark_image_2_board_EXTRA_CONF_FILE="prj_heap_memory.conf"
   sample.benchmark.coremark_static:
@@ -56,7 +56,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_benchmarks
     extra_args: EXTRA_CONF_FILE="prj_static_memory.conf"
   sample.benchmark.coremark_multithread:
     sysbuild: true
@@ -73,7 +73,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_benchmarks
     extra_args: EXTRA_CONF_FILE="prj_multiple_threads.conf"
   sample.benchmark.coremark_ppr:
     sysbuild: true
@@ -82,7 +82,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_benchmarks
     extra_args:
       SB_CONFIG_APP_CPUNET_RUN=n
       SB_CONFIG_APP_CPUPPR_RUN=y

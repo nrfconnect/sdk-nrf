@@ -22,6 +22,7 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/source_common.cmake
 target_include_directories(app PRIVATE
     src
     src/bridged_device_types
+    ${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/util
 )
@@ -30,6 +31,7 @@ target_sources(app PRIVATE
     src/app_task.cpp
     src/main.cpp
     src/bridge_shell.cpp
+    src/zcl_callbacks.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_manager.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/matter_bridged_device.cpp
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_storage_manager.cpp
@@ -128,7 +130,7 @@ endif() # CONFIG_BRIDGED_DEVICE_BT
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL
-    GEN_DIR src/zap-generated
-    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/bridge.zap
+    GEN_DIR ${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/zap-generated
+    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/bridge.zap
 )
 # NORDIC SDK APP END

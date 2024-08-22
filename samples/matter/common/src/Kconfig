@@ -83,10 +83,22 @@ config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES
 	  Defines the maximum number for the TestEventTriggerDelegate implementations
 	  to be registered in the nRF test event triggers class.
 
+config NCS_SAMPLE_MATTER_TEST_SHELL
+	bool "Test - specific shell commands support for Matter samples"
+	depends on CHIP_LIB_SHELL
+	help
+	  Enables support for test - specific shell commands in Matter samples.
+
 config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	bool "Persistent storage support for Matter samples"
 	help
 	  Matter persistent storage support with the configurable backend.
+
+config NCS_SAMPLE_MATTER_ZAP_FILES_PATH
+	string "Path in sample, under which ZAP files are located"
+	default "src/default_zap"
+	help
+	  Path in sample, under which ZAP files are located
 
 rsource "persistent_storage/Kconfig"
 rsource "watchdog/Kconfig"

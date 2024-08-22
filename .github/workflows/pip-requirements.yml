@@ -81,7 +81,8 @@ jobs:
             mkvirtualenv pip-fixed-venv  > /dev/null 2>&1 || true
             workon pip-fixed-venv  > /dev/null 2>&1
             pip3 install pip-tools > /dev/null 2>&1
-            pip3 install setuptools --upgrade
+            # Use setuptools==71.1.0 due to https://github.com/pypa/setuptools/issues/4519
+            pip3 install setuptools==71.1.0 --upgrade
 
             pip-compile \
                 --build-isolation \

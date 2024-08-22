@@ -55,8 +55,8 @@ extern const uint8_t manifest_recovery_validate_load_invoke_buf[];
 extern const size_t manifest_recovery_validate_load_invoke_len;
 
 /* Valid recovery envelope */
-extern const uint8_t manifest_valid_recovery_buf[];
-extern const size_t manifest_valid_recovery_len;
+extern uint8_t manifest_valid_recovery_buf[];
+extern size_t manifest_valid_recovery_len;
 
 /* Originally valid recovery envelope with manipulated single byte */
 extern const uint8_t manifest_manipulated_recovery_buf[];

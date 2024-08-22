@@ -5,6 +5,7 @@
 #
 
 add_subdirectory(mci_test)
+add_subdirectory(validator_test)
 zephyr_include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
 if (CONFIG_MBEDTLS)
@@ -15,6 +16,10 @@ endif() # CONFIG_SUIT_PLATFORM
 
 if (CONFIG_SUIT_STREAM_SINK_DIGEST)
 target_link_libraries(suit_stream_sinks_interface INTERFACE mbedTLS)
+endif()
+
+if (CONFIG_SUIT_STREAM_FILTER_DECRYPT)
+target_link_libraries(suit_stream_filters_interface INTERFACE mbedTLS)
 endif()
 
 if (CONFIG_SUIT_STORAGE_LAYOUT_NRF54H20)

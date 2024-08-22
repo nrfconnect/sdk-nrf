@@ -14,3 +14,4 @@ include(../cmake/test_template.cmake)
 # Link with the CMake target, that includes SUIT platform internal APIs header
 zephyr_library_link_libraries(suit_stream_sinks_interface)
 zephyr_library_link_libraries(suit_utils)
+zephyr_library_link_libraries(suit_memory_layout_interface)

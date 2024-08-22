@@ -808,18 +808,15 @@ To update the firmware, complete the following steps:
       .. group-tab:: Leshan Firmware update
 
          1. Identify the firmware image file to be uploaded to the device. See :ref:`lte_modem` and :ref:`nrf91_fota` for more information.
-         #. Open `Coiote Device Management server`_ and click :guilabel:`LwM2M firmware`.
-         #. Click :guilabel:`Schedule new firmware upgrade`.
-         #. Click :guilabel:`Upload file` in the bottom left corner and upload the firmware image file.
-         #. Configure the necessary firmware update settings in the menu to the right.
-         #. Click :guilabel:`Upgrade`.
+         #. Open `Leshan Demo Server`_ and select :guilabel:`Firmware Update` from the left.
+         #. Click :guilabel:`OBS` to observe the firmware update object.
+         #. Upload the firmware image onto the :guilabel:`Package 5/0/0` resource or write the URL to the :guilabel:`Package URI 5/0/1` resource.
          #. Observe in the terminal window that the image file is being downloaded.
             The download will take some time.
-            If you do not increase the server lifetime, the Coiote server might drop the connection to the device.
-            The device reconnects later.
-         #. When the download is complete, the device restarts on its own after installing the firmware.
-            Restart the device manually if it has not started automatically.
-            The device runs the updated firmware and reconnects to Coiote Device Management server automatically.
+         #. If the observation was successful, you should see that the :guilabel:`State 5/0/3` resource changed to `1`, which means the download is in progress.
+         #. When the download has completed, you should see that the :guilabel:`State 5/0/3` resource changed to `2`, which means the download is complete.
+         #. Click the :guilabel:`Update 5/0/2` resource to start the update process.
+         #. The firmware of the device now updates and the device reconnects or reboots when the update is complete.
 
 
 Dependencies
@@ -830,7 +827,7 @@ This sample application uses the following |NCS| libraries and drivers:
 * :ref:`lib_lwm2m_client_utils`
 * :ref:`lib_lwm2m_location_assistance`
 * :ref:`modem_info_readme`
-* :ref:`at_cmd_parser_readme`
+* :ref:`at_parser_readme`
 * :ref:`dk_buttons_and_leds_readme`
 * :ref:`lte_lc_readme`
 * :ref:`lib_date_time`

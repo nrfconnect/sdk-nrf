@@ -8,7 +8,11 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 
+#if CONFIG_NRF_RPC_IPC_SERVICE
 #include <nrf_rpc/nrf_rpc_ipc.h>
+#elif CONFIG_NRF_RPC_UART_TRANSPORT
+#include <nrf_rpc/nrf_rpc_uart.h>
+#endif
 #include <nrf_rpc_cbor.h>
 
 #include "bt_rpc_common.h"
@@ -18,8 +22,11 @@
 LOG_MODULE_REGISTER(BT_RPC, CONFIG_BT_RPC_LOG_LEVEL);
 
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_BREDR), "BT_RPC does not support BR/EDR");
-
+#ifdef CONFIG_NRF_RPC_IPC_SERVICE
 NRF_RPC_IPC_TRANSPORT(bt_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "bt_rpc_ept");
+#elif defined(CONFIG_NRF_RPC_UART_TRANSPORT)
+#define bt_rpc_tr NRF_RPC_UART_TRANSPORT(DT_CHOSEN(nordic_rpc_uart))
+#endif
 NRF_RPC_GROUP_DEFINE(bt_rpc_grp, "bt_rpc", &bt_rpc_tr, NULL, NULL, NULL);
 
 #if CONFIG_BT_RPC_INITIALIZE_NRF_RPC
@@ -237,7 +244,7 @@ static const CHECK_LIST_ENTRY_TYPE check_table[] = {
 	CHECK_UINT8(CONFIG_BT_DEVICE_NAME_MAX),
 	CHECK_UINT8(CONFIG_BT_PER_ADV_SYNC_MAX),
 	CHECK_UINT16(CONFIG_BT_DEVICE_APPEARANCE),
-	CHECK_UINT16_PAIR(CONFIG_CBKPROXY_OUT_SLOTS, CONFIG_CBKPROXY_IN_SLOTS),
+	CHECK_UINT16_PAIR(CONFIG_NRF_RPC_CBKPROXY_OUT_SLOTS, CONFIG_NRF_RPC_CBKPROXY_IN_SLOTS),
 };
 
 static const STR_CHECK_LIST_ENTRY_TYPE str_check_list[] =

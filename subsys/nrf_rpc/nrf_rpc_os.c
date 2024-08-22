@@ -128,6 +128,13 @@ uint32_t nrf_rpc_os_ctx_pool_reserve(void)
 	do {
 		old_mask = atomic_get(&context_mask);
 		number = u32_count_leading_zeros(old_mask);
+
+		/* Coverity issue: 112515
+		 * This should never happen because if there is no context available,
+		 * the function waits for it.
+		 */
+		__ASSERT_NO_MSG(number < CONFIG_NRF_RPC_CMD_CTX_POOL_SIZE);
+
 		new_mask = old_mask & ~(0x80000000u >> number);
 	} while (!atomic_cas(&context_mask, old_mask, new_mask));
 

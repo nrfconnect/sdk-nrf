@@ -32,6 +32,10 @@ struct agnss_req_types_r {
 	size_t agnss_req_types_int_count;
 };
 
+struct agnss_req_eci {
+	uint32_t agnss_req_eci;
+};
+
 struct agnss_req_filtered {
 	bool agnss_req_filtered;
 };
@@ -40,23 +44,39 @@ struct agnss_req_mask {
 	uint32_t agnss_req_mask;
 };
 
+struct agnss_req_mcc {
+	uint32_t agnss_req_mcc;
+};
+
+struct agnss_req_mnc {
+	uint32_t agnss_req_mnc;
+};
+
 struct agnss_req_rsrp {
 	int32_t agnss_req_rsrp;
+};
+
+struct agnss_req_tac {
+	uint32_t agnss_req_tac;
 };
 
 struct agnss_req {
 	struct agnss_req_types_r agnss_req_types;
 	bool agnss_req_types_present;
-	uint32_t agnss_req_eci;
+	struct agnss_req_eci agnss_req_eci;
+	bool agnss_req_eci_present;
 	struct agnss_req_filtered agnss_req_filtered;
 	bool agnss_req_filtered_present;
 	struct agnss_req_mask agnss_req_mask;
 	bool agnss_req_mask_present;
-	uint32_t agnss_req_mcc;
-	uint32_t agnss_req_mnc;
+	struct agnss_req_mcc agnss_req_mcc;
+	bool agnss_req_mcc_present;
+	struct agnss_req_mnc agnss_req_mnc;
+	bool agnss_req_mnc_present;
 	struct agnss_req_rsrp agnss_req_rsrp;
 	bool agnss_req_rsrp_present;
-	uint32_t agnss_req_tac;
+	struct agnss_req_tac agnss_req_tac;
+	bool agnss_req_tac_present;
 };
 
 #ifdef __cplusplus

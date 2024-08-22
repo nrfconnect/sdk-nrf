@@ -190,7 +190,7 @@ To use the same MCUboot configuration as in `Communication through USB`_, you ne
 See :ref:`ug_multi_image_variables` to learn how to set the required options.
 
 MCUboot with the USB DFU requires a larger partition.
-To increase the partition, define the ``PM_STATIC_YML_FILE`` variable that provides the path to the :file:`pm_static_<board>_<suffix>.yml` static configuration file for the board target of your choice.
+To increase the partition, define the :makevar:`PM_STATIC_YML_FILE` variable that provides the path to the :file:`pm_static_<board>_<suffix>.yml` static configuration file for the board target of your choice.
 This is done automatically when building the sample with the ``-DFILE_SUFFIX=<suffix>`` flag.
 
 For instructions on how to set these additional options and configuration at build time, see :ref:`cmake_options` and :ref:`configure_application`.

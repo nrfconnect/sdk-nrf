@@ -222,7 +222,7 @@ Syntax
 * The ``<sec_tag>`` parameter is an integer.
   It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
   It is associated with a credential, that is, a certificate or PSK. The credential should be stored on the modem side beforehand.
-  Note that when ``<role>`` has a value of ``1``, ``<sec_tag>`` can only be used if ``<type>`` has a value of ``SOCK_STREAM`` and the :file:`overlay-native_tls.conf` configuration file is used.
+  Note that when ``<role>`` has a value of ``1``, ``<sec_tag>`` can only be used if the :file:`overlay-native_tls.conf` configuration file is used.
 
 * The ``<peer_verify>`` parameter can accept one of the following values:
 
@@ -1276,9 +1276,15 @@ Syntax
 
 ::
 
-   #XGETADDRINFO=<hostname>
+   #XGETADDRINFO=<hostname>[,<address_family>]
 
 * The ``<hostname>`` parameter is a string.
+* The ``<address_family>`` parameter is an integer that gives a hint for DNS query on address family.
+  * ``0`` means unspecified address family.
+  * ``1`` means IPv4 address family.
+  * ``2`` means IPv6 address family.
+
+  If ``<address_family>`` is not specified, there will be no hint given for DNS query.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -1295,8 +1301,17 @@ Example
 
 ::
 
-   AT#XGETADDRINFO="nordicsemi.com"
-   #XGETADDRINFO: "104.20.251.111"
+   AT#XGETADDRINFO="google.com"
+   #XGETADDRINFO: "142.251.42.142"
+   OK
+   AT#XGETADDRINFO="google.com",0
+   #XGETADDRINFO: "172.217.31.142"
+   OK
+   AT#XGETADDRINFO="google.com",1
+   #XGETADDRINFO: "142.251.42.142"
+   OK
+   AT#XGETADDRINFO="ipv6.google.com",2
+   #XGETADDRINFO: "2404:6800:4004:824::200e"
    OK
 
 Read command

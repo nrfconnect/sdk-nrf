@@ -12,7 +12,7 @@
 
 LOG_MODULE_REGISTER(suit_flash_streamer, CONFIG_SUIT_LOG_LEVEL);
 
-#define READ_CHUNK_SIZE 256
+#define READ_CHUNK_SIZE 16
 
 bool suit_flash_streamer_address_in_range(const uint8_t *address)
 {
@@ -59,6 +59,7 @@ suit_plat_err_t suit_flash_streamer_stream(const uint8_t *payload, size_t payloa
 			return ret;
 		}
 
+		offset += read_size;
 		bytes_read += read_size;
 	} while (bytes_read < payload_size);
 
