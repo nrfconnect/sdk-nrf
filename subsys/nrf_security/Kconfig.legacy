@@ -24,6 +24,18 @@ config MBEDTLS_THREADING_C
 	bool
 	default y if CC3XX_BACKEND || PSA_CRYPTO_DRIVER_CC3XX
 
+config MBEDTLS_BASE64_C
+	bool
+	default y if MBEDTLS_PEM_WRITE_C || MBEDTLS_PEM_PARSE_C
+
+config MBEDTLS_ASN1_WRITE_C
+	bool
+	default y if MBEDTLS_PEM_WRITE_C
+
+config MBEDTLS_ASN1_PARSE_C
+	bool
+	default y if MBEDTLS_PEM_PARSE_C
+
 # Platform configurations for _ALT defines
 config MBEDTLS_PLATFORM_EXIT_ALT
 	bool
@@ -742,7 +754,7 @@ endif #MBEDTLS_LEGACY_CRYPTO_C
 config MBEDTLS_CIPHER_C
 	bool
 	prompt "Enable Cipher support"
-	default y if MBEDTLS_PSA_CRYPTO_C || MBEDTLS_USE_PSA_CRYPTO || MBEDTLS_LEGACY_CRYPTO_C
+	default y if MBEDTLS_LEGACY_CRYPTO_C
 
 config MBEDTLS_MD_C
 	bool
@@ -752,6 +764,7 @@ config MBEDTLS_MD_C
 config MBEDTLS_PK_C
 	bool
 	prompt "Enable PK support"
+	default y if MBEDTLS_TLS_LIBRARY
 
 config MBEDTLS_PKCS5_C
 	bool
@@ -763,17 +776,28 @@ config MBEDTLS_PKCS5_C
 config MBEDTLS_PK_WRITE_C
 	bool
 	prompt "Enable PK write support"
-	# default y if MBEDTLS_USE_PSA_CRYPTO && !MBEDTLS_PSA_CRYPTO_SPM
+	depends on MBEDTLS_PK_C
 
 config MBEDTLS_PK_PARSE_C
 	bool
 	prompt "Enable PK parse support"
 	default y if MBEDTLS_TLS_LIBRARY
+	depends on MBEDTLS_PK_C
 
 config MBEDTLS_PK_PARSE_EC_EXTENDED
 	bool
 	prompt "Enhance support for reading EC keys"
 	default y
 	depends on MBEDTLS_PK_PARSE_C
+		
+config MBEDTLS_PEM_PARSE_C
+	bool
+	prompt "Support parsing PEM files"
+	depends on MBEDTLS_BASE64_C
+
+config MBEDTLS_PEM_WRITE_C
+	bool
+	prompt "Support writing PEM files"
+	depends on MBEDTLS_BASE64_C
 
 endmenu # Legacy mbed TLS crypto APIs
