@@ -55,6 +55,19 @@ struct nrf_cloud_fota_poll_ctx {
 	bool full_modem_fota_supported;
 	const char *device_id;
 
+	/* Public variables */
+
+	/** HTTP fragment size. Sets the size of the requested payload in each HTTP request when
+	 *  downloading the firmware image. Note that the header size is not included in this size.
+	 *  It is important that the total size of each fragment (HTTP headers + payload) fits in
+	 *  the buffers of the underlying network stack layers. Failing to do so, may result in
+	 *  failure to download new firmware images.
+	 *
+	 *  If this value is set to 0, the Kconfig option
+	 *  :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE` will be used.
+	 */
+	uint32_t fragment_size;
+
 	/** User-provided callback function to handle reboots */
 	fota_reboot_handler_t reboot_fn;
 
