@@ -59,7 +59,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: c0aa4d27d3f2767e88c6c8c4634425086156f7f5
+      revision: v3.3.99-ncs1-3
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -131,7 +131,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: v2.4.3
+      revision: v2.4.4
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -139,7 +139,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.4.3
+      revision: v2.4.4
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -157,7 +157,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.4.3
+      revision: v2.4.4
       groups:
         - nrf-802154
     - name: dragoon
@@ -179,12 +179,12 @@ manifest:
           compare-by-default: false
     - name: homekit
       repo-path: sdk-homekit
-      revision: b5d8e3ec3ad42b5789b94dbc4caf850c146df068
+      revision: v2.4.4
       groups:
         - homekit
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.4.3
+      revision: v2.4.4
       groups:
         - find-my
     - name: azure-sdk-for-c
