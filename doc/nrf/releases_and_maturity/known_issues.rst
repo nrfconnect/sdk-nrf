@@ -2139,6 +2139,20 @@ NCSDK-19942: HID samples do not work with Android 13
   * :ref:`fast_pair_input_device`
   * Fast Pair configurations of the :ref:`nrf_desktop` application
 
+.. rst-class:: wontfix v2-7-0 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0 v0-3-0
+
+NCSDK-26669: Reconnection with HID devices that have privacy enabled may not work on Android 14
+  If an Android 14 device is disconnected from the HID device without user intervention through the Bluetooth UI from Android settings (for example, due to a connection timeout caused by the HID device rebooting), the device faces issues.
+  If the disconnection occurs in the same session as successful Bluetooth pairing and bonding, the smartphone will not be able to automatically reconnect to the HID device.
+  This limitation affects both background reconnection and explicit user attempts through the Bluetooth settings.
+  See the following list of affected samples and applications:
+
+  * :ref:`peripheral_hids_mouse`
+  * :ref:`fast_pair_input_device`
+  * Fast Pair configurations of the :ref:`nrf_desktop` application
+
+  **Workaround** After successful Bluetooth pairing and bonding, manually disconnect the Android device using the Bluetooth UI from Android settings, and then reconnect to the HID device.
+
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-18518: Cannot build peripheral UART and peripheral LBS samples for the nRF52810 and nRF52811 devices with the Zephyr Bluetooth LE Controller
