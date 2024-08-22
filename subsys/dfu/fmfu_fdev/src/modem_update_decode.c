@@ -5,7 +5,7 @@
  */
 
 /*
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.9.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 128
  */
@@ -22,6 +22,17 @@
 #error "The type file was generated with a different default_max_qty than this file"
 #endif
 
+#define log_result(state, result, func)                                                            \
+	do {                                                                                       \
+		if (!result) {                                                                     \
+			zcbor_trace_file(state);                                                   \
+			zcbor_log("%s error: %s\r\n", func,                                        \
+				  zcbor_error_str(zcbor_peek_error(state)));                       \
+		} else {                                                                           \
+			zcbor_log("%s success\r\n", func);                                         \
+		}                                                                                  \
+	} while (0)
+
 static bool decode_Segment(zcbor_state_t *state, struct Segment *result);
 static bool decode_header_map(zcbor_state_t *state, void *result);
 static bool decode_Manifest(zcbor_state_t *state, struct Manifest *result);
@@ -34,62 +45,43 @@ static bool decode_Segment(zcbor_state_t *state, struct Segment *result)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((((zcbor_uint32_decode(state, (&(*result).Segment_target_addr)))) &&
-			     ((zcbor_uint32_decode(state, (&(*result).Segment_len)))))));
+	bool res = (((((zcbor_uint32_decode(state, (&(*result).Segment_target_addr)))) &&
+		      ((zcbor_uint32_decode(state, (&(*result).Segment_len)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool decode_header_map(zcbor_state_t *state, void *result)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
+	bool res =
 		(((zcbor_map_start_decode(state) &&
 		   (((((zcbor_uint32_expect(state, (1)))) && (zcbor_int32_expect(state, (-37))))) ||
 		    (zcbor_list_map_end_force_decode(state), false)) &&
 		   zcbor_map_end_decode(state))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool decode_Manifest(zcbor_state_t *state, struct Manifest *result)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((zcbor_list_start_decode(state) &&
-			     ((((zcbor_uint32_decode(state, (&(*result).Manifest_version)))) &&
-			       ((zcbor_uint32_decode(state, (&(*result).Manifest_compat)))) &&
-			       ((zcbor_bstr_decode(state, (&(*result).Manifest_blob_hash))) &&
-				((((*result).Manifest_blob_hash.len >= 32) &&
-				  ((*result).Manifest_blob_hash.len <= 32)) ||
-				 (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false))) &&
-			       ((zcbor_bstr_decode(state, (&(*result).Manifest_segments))))) ||
-			      (zcbor_list_map_end_force_decode(state), false)) &&
-			     zcbor_list_end_decode(state))));
+	bool res = (((zcbor_list_start_decode(state) &&
+		      ((((zcbor_uint32_decode(state, (&(*result).Manifest_version)))) &&
+			((zcbor_uint32_decode(state, (&(*result).Manifest_compat)))) &&
+			((zcbor_bstr_decode(state, (&(*result).Manifest_blob_hash))) &&
+			 ((((*result).Manifest_blob_hash.len == 32)) ||
+			  (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false))) &&
+			((zcbor_bstr_decode(state, (&(*result).Manifest_segments))))) ||
+		       (zcbor_list_map_end_force_decode(state), false)) &&
+		      zcbor_list_end_decode(state))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool decode_COSE_Sign1_Manifest(zcbor_state_t *state, struct COSE_Sign1_Manifest *result)
@@ -97,7 +89,7 @@ static bool decode_COSE_Sign1_Manifest(zcbor_state_t *state, struct COSE_Sign1_M
 	zcbor_log("%s\r\n", __func__);
 	bool int_res;
 
-	bool tmp_result =
+	bool res =
 		(((zcbor_list_start_decode(state) &&
 		   ((((zcbor_bstr_start_decode(state, &(*result).COSE_Sign1_Manifest_protected) &&
 		       (int_res = (((decode_header_map(state, NULL)))),
@@ -108,42 +100,36 @@ static bool decode_COSE_Sign1_Manifest(zcbor_state_t *state, struct COSE_Sign1_M
 				state, (&(*result).COSE_Sign1_Manifest_payload_cbor))))),
 			zcbor_bstr_end_decode(state), int_res))) &&
 		     ((zcbor_bstr_decode(state, (&(*result).COSE_Sign1_Manifest_signature))) &&
-		      ((((*result).COSE_Sign1_Manifest_signature.len >= 256) &&
-			((*result).COSE_Sign1_Manifest_signature.len <= 256)) ||
+		      ((((*result).COSE_Sign1_Manifest_signature.len == 256)) ||
 		       (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false)))) ||
 		    (zcbor_list_map_end_force_decode(state), false)) &&
 		   zcbor_list_end_decode(state))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool decode_Segments(zcbor_state_t *state, struct Segments *result)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((zcbor_list_start_decode(state) &&
-		   ((zcbor_multi_decode(1, 128, &(*result).Segments_Segment_m_count,
-					(zcbor_decoder_t *)decode_Segment, state,
-					(&(*result).Segments_Segment_m), sizeof(struct Segment))) ||
-		    (zcbor_list_map_end_force_decode(state), false)) &&
-		   zcbor_list_end_decode(state))));
+	bool res = ((
+		(zcbor_list_start_decode(state) &&
+		 ((zcbor_multi_decode(1, 128, &(*result).Segments_Segment_m_count,
+				      (zcbor_decoder_t *)decode_Segment, state,
+				      (*&(*result).Segments_Segment_m), sizeof(struct Segment))) ||
+		  (zcbor_list_map_end_force_decode(state), false)) &&
+		 zcbor_list_end_decode(state))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
+	if (false) {
+		/* For testing that the types of the arguments are correct.
+		 * A compiler error here means a bug in zcbor.
+		 */
+		decode_Segment(state, (*&(*result).Segments_Segment_m));
 	}
 
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool decode_Sig_structure1(zcbor_state_t *state, struct Sig_structure1 *result)
@@ -152,7 +138,7 @@ static bool decode_Sig_structure1(zcbor_state_t *state, struct Sig_structure1 *r
 	struct zcbor_string tmp_str;
 	bool int_res;
 
-	bool tmp_result =
+	bool res =
 		(((zcbor_list_start_decode(state) &&
 		   ((((zcbor_tstr_expect(state,
 					 ((tmp_str.value = (uint8_t *)"Signature1",
@@ -166,31 +152,19 @@ static bool decode_Sig_structure1(zcbor_state_t *state, struct Sig_structure1 *r
 		    (zcbor_list_map_end_force_decode(state), false)) &&
 		   zcbor_list_end_decode(state))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool decode_Wrapper(zcbor_state_t *state, struct COSE_Sign1_Manifest *result)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = ((zcbor_tag_expect(state, 18) &&
-			    (decode_COSE_Sign1_Manifest(state, (&(*result))))));
+	bool res = ((zcbor_tag_expect(state, 18) &&
+		     (decode_COSE_Sign1_Manifest(state, (&(*result))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 int cbor_decode_Wrapper(const uint8_t *payload, size_t payload_len,
