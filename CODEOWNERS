@@ -37,7 +37,6 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf_desktop/                @MarekPieta
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
-/applications/audio/                      @nrfconnect/ncs-audio
 /applications/serial_lte_modem/           @SeppoTakalo @MarkusLassila @rlubos @tomi-font
 /applications/zigbee_weather_station/     @milewr
 # Boards
@@ -167,6 +166,7 @@ Kconfig*                                  @tejlmand
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/bluetooth/                       @alwa-nordic @jori-nordic @carlescufi @KAGA164
+/samples/bluetooth/broadcast_config_tool/ @nrfconnect/ncs-audio
 /samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
 /samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic

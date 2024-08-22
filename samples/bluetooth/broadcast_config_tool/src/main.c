@@ -20,6 +20,7 @@
 #include "macros_common.h"
 #include "bt_mgmt.h"
 #include "sd_card.h"
+#include "led.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
@@ -376,6 +377,12 @@ int main(void)
 		return ret;
 	}
 
+	ret = led_init();
+	ERR_CHK_MSG(ret, "Failed to initialize LED module");
+
+	ret = led_on(LED_APP_RGB, LED_COLOR_GREEN);
+	ERR_CHK(ret);
+
 	ret = bt_mgmt_init();
 	ERR_CHK(ret);
 
@@ -712,6 +719,8 @@ static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
+	led_blink(LED_APP_RGB, LED_COLOR_GREEN);
+
 	return 0;
 }
 
@@ -787,6 +796,8 @@ static int cmd_stop(const struct shell *shell, size_t argc, char **argv)
 			}
 		}
 	}
+
+	led_on(LED_APP_RGB, LED_COLOR_GREEN);
 
 	return 0;
 }
@@ -1151,7 +1162,7 @@ static int cmd_broadcast_name(const struct shell *shell, size_t argc, char **arg
 	uint8_t big_index;
 
 	if (argc < 2) {
-		shell_error(shell, "Usage: bct name <name> <BIG index>");
+		shell_error(shell, "Usage: bct broadcast_name <name> <BIG index>");
 		return -EINVAL;
 	}
 
