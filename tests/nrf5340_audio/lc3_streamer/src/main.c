@@ -52,9 +52,13 @@ ZTEST(lc3_streamer, test_lc3_streamer_stream_register_valid)
 	int ret;
 	uint8_t streamer_idx;
 
-	ret = lc3_streamer_stream_register("test", &streamer_idx, false);
+	static const char test_filename[] = "test";
+
+	ret = lc3_streamer_stream_register(test_filename, &streamer_idx, false);
 	zassert_equal(0, ret, "lc3_streamer_stream_register should return success");
 	zassert_equal(0, streamer_idx, "lc3_streamer_stream_register should return index 0");
+	zassert_mem_equal(test_filename, lc3_file_open_fake.arg1_val, sizeof(test_filename),
+			  "lc3_file_open called with wrong filename");
 
 	int num_active = lc3_streamer_num_active_streams();
 
