@@ -10,7 +10,7 @@ project(BCT)
 
 # Include application events and configuration headers
 zephyr_library_include_directories(app PRIVATE
-    ${ZEPHYR_NRF_MODULE_DIR}/applications/audio/broadcast_config_tool/include
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/broadcast_config_tool/include
     ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/include
     ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth
     ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules
@@ -20,6 +20,8 @@ zephyr_library_include_directories(app PRIVATE
 add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth bluetooth_build)
 
 target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_MODULE app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/sd_card.c)
+
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/led.c)
 
 
 FILE(GLOB app_sources src/*.c)

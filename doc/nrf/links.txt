@@ -969,6 +969,7 @@
 .. _`Bluetooth SIG's Assigned Numbers`: https://www.bluetooth.com/specifications/assigned-numbers/
 
 .. _`Auracast™`: https://www.bluetooth.com/auracast/how-it-works/
+.. _`Basic Audio Profile specification`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/16212-BAP-html5/out/en/index-en.html#UUID-c9d31763-9ede-2270-6b9c-c042ae684cc3
 
 .. ### Source: openmobilealliance.org
 
@@ -1628,6 +1629,8 @@
 
 .. _`Wireless Logic LTE-M/NB-IoT network coverage`: https://www.wirelesslogic.com/simclaim/nsctrial/
 
+.. _`ISO 639-2 code`: https://www.loc.gov/standards/iso639-2/php/code_list.php
+
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
 .. _`nrf-regtool`: https://github.com/nrfconnect/nrf-regtool/
@@ -1672,7 +1675,6 @@
 .. _`10.23.3_ec macOS, zip archive`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nrf-command-line-tools-10.23.3-osx.zip
 
 .. _`Git for Windows`: https://git-scm.com/download/win
-
 
 .. _`curl`: https://curl.se/
 
