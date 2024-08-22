@@ -434,22 +434,6 @@ config MBEDTLS_CIPHER_MODE_CTR
 	  Enable the AES Counter Block Cipher mode (CTR) mode,
 	  MBEDTLS_CIPHER_MODE_CTR setting in mbed TLS config file.
 
-config MBEDTLS_CIPHER_MODE_CFB
-	bool "AES-CFB - AES Cipher Feedback mode"
-	depends on OBERON_BACKEND
-	default y
-	help
-	  Enable the AES Cipher Feedback mode (CFB) mode,
-	  MBEDTLS_CIPHER_MODE_CFB setting in mbed TLS config file.
-
-config MBEDTLS_CIPHER_MODE_OFB
-	bool "AES-OFB - AES Output Feedback mode"
-	depends on OBERON_BACKEND
-	default y
-	help
-	  Enable the AES Output Feedback mode (OFB) mode,
-	  MBEDTLS_CIPHER_MODE_OFB setting in mbed TLS config file.
-
 config MBEDTLS_CIPHER_MODE_XTS
 	bool "AES-XTS - AES Xor-encrypt-xor with ciphertext stealing mode"
 	depends on OBERON_BACKEND
