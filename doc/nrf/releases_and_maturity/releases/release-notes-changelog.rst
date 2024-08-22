@@ -323,7 +323,19 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Updated the :ref:`ipc_radio` image configuration by splitting it into the debug and release configurations.
+  * Added:
+
+    * LED indication on development kits for the Fast Pair advertising state.
+    * An application versioning using the :file:`VERSION` file.
+    * The DFU support which can be enabled using the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
+      DFU is available for all supported targets except the ``debug`` configurations of :ref:`zephyr:nrf52dk_nrf52832` and :ref:`zephyr:nrf52833dk_nrf52833` due to size constraints.
+
+  * Updated:
+
+    * The :ref:`ipc_radio` image configuration by splitting it into the debug and release configurations.
+    * The location of the sample configuration.
+      It has been moved from the root sample directory to the dedicated folder (:file:`locator_tag/configuration`).
+    * The ``fp_adv`` module to use the trigger requests for the Fast Pair advertising state instead of setting the Fast Pair advertising mode directly.
 
 Bluetooth Mesh samples
 ----------------------
