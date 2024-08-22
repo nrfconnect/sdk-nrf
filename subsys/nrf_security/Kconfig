@@ -18,7 +18,6 @@ config NORDIC_SECURITY_BACKEND
 	bool
 	prompt "Use nRF Security with Mbed TLS legacy crypto APIs support" \
 		if !NORDIC_SECURITY_PROMPTLESS
-	default y if BUILD_WITH_TFM
 	depends on SOC_FAMILY_NORDIC_NRF
 	select NRF_SECURITY
 	select MBEDTLS_LEGACY_CRYPTO_C
@@ -46,6 +45,7 @@ config NRF_SECURITY
 	# Select TFM_BL2_NOT_SUPPORTED to prevent users from enabling
 	# CONFIG_TFM_BL2.
 	select TFM_BL2_NOT_SUPPORTED if BUILD_WITH_TFM
+	select PSA_CRYPTO_CLIENT
 	help
 	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).
