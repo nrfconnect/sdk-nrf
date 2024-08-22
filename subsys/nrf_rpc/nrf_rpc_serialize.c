@@ -73,6 +73,16 @@ void nrf_rpc_encode_int(struct nrf_rpc_cbor_ctx *ctx, int32_t value)
 	zcbor_int32_put(ctx->zs, value);
 }
 
+void nrf_rpc_encode_uint64(struct nrf_rpc_cbor_ctx *ctx, uint64_t value)
+{
+	zcbor_uint64_put(ctx->zs, value);
+}
+
+void nrf_rpc_encode_int64(struct nrf_rpc_cbor_ctx *ctx, int64_t value)
+{
+	zcbor_int64_put(ctx->zs, value);
+}
+
 void nrf_rpc_encode_str(struct nrf_rpc_cbor_ctx *ctx, const char *value, int len)
 {
 	if (!value) {
@@ -180,6 +190,28 @@ int32_t nrf_rpc_decode_int(struct nrf_rpc_cbor_ctx *ctx)
 	int32_t result;
 
 	if (zcbor_int32_decode(ctx->zs, &result)) {
+		return result;
+	}
+
+	return 0;
+}
+
+uint64_t nrf_rpc_decode_uint64(struct nrf_rpc_cbor_ctx *ctx)
+{
+	uint64_t result;
+
+	if (zcbor_uint64_decode(ctx->zs, &result)) {
+		return result;
+	}
+
+	return 0;
+}
+
+int64_t nrf_rpc_decode_int64(struct nrf_rpc_cbor_ctx *ctx)
+{
+	int64_t result;
+
+	if (zcbor_int64_decode(ctx->zs, &result)) {
 		return result;
 	}
 
