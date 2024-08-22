@@ -31,7 +31,7 @@ if NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
 
 config NCS_SAMPLE_MATTER_SECURE_STORAGE_MAX_ENTRY_NUMBER
 	int "Maximum number of entries that can be stored securely"
-	default 30
+	default 64
 
 config NCS_SAMPLE_MATTER_SECURE_STORAGE_PSA_KEY_VALUE_OFFSET
 	hex "The PSA key offset dedicated for Matter application"
