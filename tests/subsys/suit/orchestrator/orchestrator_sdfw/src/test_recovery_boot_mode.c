@@ -136,7 +136,7 @@ static void setup_boot_report(uint8_t *buf, size_t len)
 
 ZTEST_SUITE(orchestrator_recovery_boot_tests, NULL, setup_install_recovery_fw, NULL, NULL, NULL);
 
-ZTEST(orchestrator_recovery_boot_tests, test_no_recovery_envelope)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_no_recovery_envelope)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -166,7 +166,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_no_recovery_envelope)
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_invalid_recovery_envelope)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_invalid_recovery_envelope)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -199,7 +199,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_invalid_recovery_envelope)
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_valid_recovery_envelope)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_valid_recovery_envelope)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -232,7 +232,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_valid_recovery_envelope)
 		      "Execution mode not changed to the POST INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_seq_no_validate)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_no_validate)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -265,7 +265,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_no_validate)
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_fail)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_fail)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -298,7 +298,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_fail)
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_fail)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_load_fail)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -331,7 +331,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_fail)
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_no_invoke)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_load_no_invoke)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -364,7 +364,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_no_invoke)
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_invoke_fail)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_load_invoke_fail)
 {
 	const uint8_t *buf;
 	size_t len;
@@ -397,7 +397,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_invoke_fail)
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
 }
 
-ZTEST(orchestrator_recovery_boot_tests, test_seq_validate_load_invoke)
+ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_load_invoke)
 {
 	const uint8_t *buf;
 	size_t len;

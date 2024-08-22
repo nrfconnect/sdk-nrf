@@ -263,7 +263,7 @@ ZTEST(orchestrator_update_tests, test_manipulated_envelope)
 	assert_post_install_state();
 }
 
-ZTEST(orchestrator_update_tests, test_invalid_exec_mode)
+ZTEST(orchestrator_update_tests, test_update_invalid_exec_mode)
 {
 	/* GIVEN suit storage does not indicate presence of update candidate... */
 	setup_erased_flash();
