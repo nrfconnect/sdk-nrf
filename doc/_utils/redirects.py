@@ -305,6 +305,7 @@ NRF = [
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
     ("ug_ble_controller", "protocols/ble/index"), # Bluetooth LE Controller
     ("protocols/ble/index", "protocols/bt/ble/index"),
+    ("protocols/bt/ble/radio_notification_conn_cb", "libraries/bluetooth_services/radio_notification_conn_cb"),
     ("ug_bt_mesh", "protocols/bt_mesh/index"), # Bluetooth Mesh (landing)
     ("protocols/bt_mesh/index", "protocols/bt/bt_mesh/index"),
     ("ug_bt_mesh_supported_features", "protocols/bt_mesh/supported_features"), # Supported Bluetooth Mesh features
