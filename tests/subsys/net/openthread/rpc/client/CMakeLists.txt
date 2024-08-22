@@ -6,20 +6,20 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(ot_rpc_commissioning_client_test)
+project(ot_rpc_client_test)
 
 FILE(GLOB app_sources src/*.c)
 
 target_include_directories(app PRIVATE
   # Needed to access OpenThread RPC command IDs.
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/openthread/rpc/common
-  ../../common
+  ../common
   )
 
 target_sources(app PRIVATE
   ${app_sources}
-  ../../common/net_l2_openthread.c
-  ../../common/nrf_rpc_single_thread.c
+  ../common/net_l2_openthread.c
+  ../common/nrf_rpc_single_thread.c
   )
 
 # Fill the gaps due to not setting NET_L2_OPENTHREAD.

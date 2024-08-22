@@ -130,7 +130,7 @@ static void ot_rpc_data_set_active_tlvs_rpc_handler(const struct nrf_rpc_group *
 	ot_rpc_decode_dataset_tlvs(group, ctx, &data_ptr);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_DATA_SET_ACTIVE_TLVS);
+		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS);
 		return;
 	}
 
@@ -145,7 +145,7 @@ static void ot_rpc_data_set_active_tlvs_rpc_handler(const struct nrf_rpc_group *
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_data_set_active_tlvs, OT_RPC_CMD_DATA_SET_ACTIVE_TLVS,
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_data_set_active_tlvs, OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS,
 			 ot_rpc_data_set_active_tlvs_rpc_handler, NULL);
 
 static void ot_rpc_rsp_send_dataset(otOperationalDatasetTlvs *dataset)
@@ -166,7 +166,7 @@ static void ot_rpc_data_get_active_tlvs_rpc_handler(const struct nrf_rpc_group *
 	otError error;
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_DATA_GET_ACTIVE_TLVS);
+		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS);
 		return;
 	}
 
@@ -177,5 +177,64 @@ static void ot_rpc_data_get_active_tlvs_rpc_handler(const struct nrf_rpc_group *
 	ot_rpc_rsp_send_dataset(error == OT_ERROR_NONE ? &dataset : NULL);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_data_get_active_tlvs, OT_RPC_CMD_DATA_GET_ACTIVE_TLVS,
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_data_get_active_tlvs, OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS,
 			 ot_rpc_data_get_active_tlvs_rpc_handler, NULL);
+
+static void ot_rpc_dataset_set_active_rpc_handler(const struct nrf_rpc_group *group,
+						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	otOperationalDataset dataset;
+	void *data_ptr = &dataset;
+	otError error;
+
+	ot_rpc_decode_dataset(group, ctx, &data_ptr);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE);
+		return;
+	}
+
+	if (data_ptr) {
+		openthread_api_mutex_lock(openthread_get_default_context());
+		error = otDatasetSetActive(openthread_get_default_instance(), &dataset);
+		openthread_api_mutex_unlock(openthread_get_default_context());
+	} else {
+		error = OT_ERROR_INVALID_ARGS;
+	}
+
+	nrf_rpc_rsp_send_uint(group, error);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_set_active, OT_RPC_CMD_DATASET_SET_ACTIVE,
+			 ot_rpc_dataset_set_active_rpc_handler, NULL);
+
+static void ot_rpc_dataset_get_active_rpc_handler(const struct nrf_rpc_group *group,
+						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	otOperationalDataset dataset;
+	struct nrf_rpc_cbor_ctx tx_ctx;
+	size_t cbor_buffer_size = OPERATIONAL_DATASET_LENGTH(&dataset);
+	otError error;
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE);
+		return;
+	}
+
+	openthread_api_mutex_lock(openthread_get_default_context());
+	error = otDatasetGetActive(openthread_get_default_instance(), &dataset);
+	openthread_api_mutex_unlock(openthread_get_default_context());
+
+	if (error != OT_ERROR_NONE) {
+		NRF_RPC_CBOR_ALLOC(&ot_group, tx_ctx, 1);
+		nrf_rpc_encode_null(&tx_ctx);
+	} else {
+		NRF_RPC_CBOR_ALLOC(&ot_group, tx_ctx, cbor_buffer_size);
+		ot_rpc_encode_dataset(&tx_ctx, &dataset);
+	}
+
+	nrf_rpc_cbor_rsp_no_err(&ot_group, &tx_ctx);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_get_active, OT_RPC_CMD_DATASET_GET_ACTIVE,
+			 ot_rpc_dataset_get_active_rpc_handler, NULL);
