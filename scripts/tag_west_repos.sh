@@ -159,20 +159,14 @@ remove_tag() {
     git -C "$local_path" tag -d "$tagname"
 }
 
-check_tags() {
-
-    for project in "${!PROJECT_TAGS[@]}"; do
-        if [ -z "${PROJECT_TAGS[$project]}" ]; then
-	    echo "error: empty tag name" 1>&2
-	    exit 1
-	fi
-    done
-}
-
 tag_all() {
     # Creates all the tags in the PROJECT_TAGS array.
 
     for project in "${!PROJECT_TAGS[@]}"; do
+        if [ -z "${PROJECT_TAGS[$project]}" ]; then
+	    echo "Skipping $project (not tagged)"
+	    continue
+	fi
         tag "$project" "${PROJECT_TAGS[$project]}"
     done
 }
@@ -182,6 +176,10 @@ push_all() {
     # to the main nrfconnect repositories on GitHub.
 
     for project in "${!PROJECT_TAGS[@]}"; do
+        if [ -z "${PROJECT_TAGS[$project]}" ]; then
+	    echo "Skipping $project (not tagged)"
+	    continue
+	fi
         push_tag "$project" "${PROJECT_TAGS[$project]}"
     done
 }
@@ -197,7 +195,6 @@ remove_all() {
 command="$1"
 shift
 
-check_tags
 case "$command" in
     tag-all)
 	# Create tags in all the repositories in the local working trees.
