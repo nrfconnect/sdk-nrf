@@ -931,6 +931,11 @@ Shell libraries
 
 |no_changes_yet_note|
 
+Secure Domain Firmware (SDFW) libraries
+---------------------------------------
+
+* sdfw_services: Regenerated generated code files using zcbor 0.9.0.
+
 Libraries for Zigbee
 --------------------
 
