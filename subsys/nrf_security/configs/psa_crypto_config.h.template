@@ -502,11 +502,20 @@
 #cmakedefine MBEDTLS_ENTROPY_MAX_SOURCES                        @MBEDTLS_ENTROPY_MAX_SOURCES@
 #cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
 
-/* Legacy configurations for mbed TLS APIs */
+/* Platform configurations for Mbed TLS APIs*/
+#cmakedefine MBEDTLS_BASE64_C
+#cmakedefine MBEDTLS_OID_C
+#cmakedefine MBEDTLS_ASN1_PARSE_C
+#cmakedefine MBEDTLS_ASN1_WRITE_C
+
+/* Legacy configurations for Mbed TLS APIs */
 #cmakedefine MBEDTLS_CIPHER_C
-//#define MBEDTLS_PK_C                                       @MBEDTLS_PK_C@
-//#define MBEDTLS_PK_WRITE_C                                 @MBEDTLS_PK_WRITE_C@
 #cmakedefine MBEDTLS_MD_C
+#cmakedefine MBEDTLS_PK_C
+#cmakedefine MBEDTLS_PK_WRITE_C
+#cmakedefine MBEDTLS_PK_PARSE_C
+#cmakedefine MBEDTLS_PEM_PARSE_C
+#cmakedefine MBEDTLS_PEM_WRITE_C
 
 /* TLS/DTLS configurations */
 #cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
