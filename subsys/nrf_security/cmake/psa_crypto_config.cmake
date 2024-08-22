@@ -509,14 +509,25 @@ kconfig_check_and_set_base_to_one(MBEDTLS_NO_PLATFORM_ENTROPY)
 kconfig_check_and_set_base_int(MBEDTLS_ENTROPY_MAX_SOURCES)
 
 # Legacy configurations for mbed TLS APIs
-kconfig_check_and_set_base_to_one(MBEDTLS_CIPHER_C)
-kconfig_check_and_set_base_to_one(MBEDTLS_PK_C)
-kconfig_check_and_set_base_to_one(MBEDTLS_PK_WRITE_C)
-kconfig_check_and_set_base_to_one(MBEDTLS_MD_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_THREADING_ALT)
 
 if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+  # Platform configuration
+  kconfig_check_and_set_base_to_one(MBEDTLS_ASN1_PARSE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_ASN1_WRITE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_BASE64_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_OID_C)
+
+  # PKI configurations
+  kconfig_check_and_set_base_to_one(MBEDTLS_CIPHER_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_MD_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_PK_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_PKCS5_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_PK_PARSE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_PK_WRITE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_PEM_PARSE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_PEM_WRITE_C)
 
   # TLS/DTLS configurations
   kconfig_check_and_set_base_to_one(MBEDTLS_SSL_ALL_ALERT_MESSAGES)
@@ -556,14 +567,14 @@ if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base_int(MBEDTLS_MPI_MAX_SIZE)
 
   # x509 configurations
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_RSASSA_PSS_SUPPORT)
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_USE_C)
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_CRT_PARSE_C)
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_CRL_PARSE_C)
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_CSR_PARSE_C)
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_CREATE_C)
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_CRT_WRITE_C)
-  # kconfig_check_and_set_base_to_one(MBEDTLS_X509_CSR_WRITE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_RSASSA_PSS_SUPPORT)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_USE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_CRT_PARSE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_CRL_PARSE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_CSR_PARSE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_CREATE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_CRT_WRITE_C)
+  kconfig_check_and_set_base_to_one(MBEDTLS_X509_CSR_WRITE_C)
 
   # TLS key exchange
   kconfig_check_and_set_base_to_one(MBEDTLS_KEY_EXCHANGE_PSK_ENABLED)
