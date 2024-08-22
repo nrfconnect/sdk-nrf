@@ -24,9 +24,12 @@ DlStatus AccessManager<CRED_BIT_MASK>::GetWeekDaySchedule(uint8_t weekdayIndex, 
 	VerifyOrReturnError(userIndex > 0 && userIndex <= CONFIG_LOCK_MAX_NUM_USERS, DlStatus::kFailure);
 	VerifyOrReturnError(weekdayIndex > 0 && weekdayIndex <= CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER,
 			    DlStatus::kFailure);
-	VerifyOrReturnError(!mWeekDaySchedule[userIndex - 1][weekdayIndex - 1].mAvailable, DlStatus::kNotFound);
 
-	if (CHIP_NO_ERROR != mWeekDaySchedule[userIndex - 1][weekdayIndex - 1].ConvertToPlugin(schedule)) {
+	auto &sch = mWeekDaySchedule[userIndex - 1][weekdayIndex - 1];
+
+	VerifyOrReturnError(!sch.mAvailable, DlStatus::kNotFound);
+
+	if (CHIP_NO_ERROR != sch.ConvertToPlugin(schedule)) {
 		return DlStatus::kNotFound;
 	}
 
@@ -47,15 +50,15 @@ DlStatus AccessManager<CRED_BIT_MASK>::SetWeekDaySchedule(uint8_t weekdayIndex, 
 
 	if (DlScheduleStatus::kAvailable == status && !schedule.mAvailable) {
 		schedule.mAvailable = true;
-		memset(schedule.mData.mRaw, 0, DoorLockData::WeekDaySchedule::RequiredBufferSize());
+		memset(schedule.mData.mRaw, 0, sizeof(schedule.mData.mRaw));
 		if (!AccessStorage::Instance().Remove(AccessStorage::Type::WeekDaySchedule, userIndex, weekdayIndex)) {
 			LOG_ERR("Cannot remove the WeekDay schedule");
 			return DlStatus::kFailure;
 		}
 		return DlStatus::kSuccess;
+	} else if (DlScheduleStatus::kOccupied == status && !schedule.mAvailable) {
+		LOG_DBG("Modifying week day schedule of index: %d for user %d", weekdayIndex, userIndex);
 	}
-
-	VerifyOrReturnError(schedule.mAvailable, DlStatus::kOccupied);
 
 	schedule.mData.mFields.mDaysMask = static_cast<uint8_t>(daysMask);
 	schedule.mData.mFields.mStartHour = startHour;
@@ -104,9 +107,12 @@ DlStatus AccessManager<CRED_BIT_MASK>::GetYearDaySchedule(uint8_t yearDayIndex, 
 	VerifyOrReturnError(userIndex > 0 && userIndex <= CONFIG_LOCK_MAX_NUM_USERS, DlStatus::kFailure);
 	VerifyOrReturnError(yearDayIndex > 0 && yearDayIndex <= CONFIG_LOCK_MAX_YEARDAY_SCHEDULES_PER_USER,
 			    DlStatus::kFailure);
-	VerifyOrReturnError(!mYearDaySchedule[userIndex - 1][yearDayIndex - 1].mAvailable, DlStatus::kNotFound);
 
-	if (CHIP_NO_ERROR != mYearDaySchedule[userIndex - 1][yearDayIndex - 1].ConvertToPlugin(schedule)) {
+	auto &sch = mYearDaySchedule[userIndex - 1][yearDayIndex - 1];
+
+	VerifyOrReturnError(!sch.mAvailable, DlStatus::kNotFound);
+
+	if (CHIP_NO_ERROR != sch.ConvertToPlugin(schedule)) {
 		return DlStatus::kNotFound;
 	}
 
@@ -126,15 +132,15 @@ DlStatus AccessManager<CRED_BIT_MASK>::SetYearDaySchedule(uint8_t yeardayIndex, 
 
 	if (DlScheduleStatus::kAvailable == status && !schedule.mAvailable) {
 		schedule.mAvailable = true;
-		memset(schedule.mData.mRaw, 0, DoorLockData::YearDaySchedule::RequiredBufferSize());
+		memset(schedule.mData.mRaw, 0, sizeof(schedule.mData.mRaw));
 		if (!AccessStorage::Instance().Remove(AccessStorage::Type::YearDaySchedule, userIndex, yeardayIndex)) {
 			LOG_ERR("Cannot remove the YearDay schedule");
 			return DlStatus::kFailure;
 		}
 		return DlStatus::kSuccess;
+	} else if (DlScheduleStatus::kOccupied == status && !schedule.mAvailable) {
+		LOG_DBG("Modifying year day schedule of index: %d for user %d", yeardayIndex, userIndex);
 	}
-
-	VerifyOrReturnError(schedule.mAvailable, DlStatus::kOccupied);
 
 	schedule.mData.mFields.mLocalStartTime = localStartTime;
 	schedule.mData.mFields.mLocalEndTime = localEndTime;
@@ -178,9 +184,12 @@ DlStatus AccessManager<CRED_BIT_MASK>::GetHolidaySchedule(uint8_t holidayIndex,
 							  EmberAfPluginDoorLockHolidaySchedule &schedule)
 {
 	VerifyOrReturnError(holidayIndex > 0 && holidayIndex <= CONFIG_LOCK_MAX_HOLIDAY_SCHEDULES, DlStatus::kFailure);
-	VerifyOrReturnError(!mHolidaySchedule[holidayIndex - 1].mAvailable, DlStatus::kNotFound);
 
-	if (CHIP_NO_ERROR != mHolidaySchedule[holidayIndex - 1].ConvertToPlugin(schedule)) {
+	auto &sch = mHolidaySchedule[holidayIndex - 1];
+
+	VerifyOrReturnError(!sch.mAvailable, DlStatus::kNotFound);
+
+	if (CHIP_NO_ERROR != sch.ConvertToPlugin(schedule)) {
 		return DlStatus::kNotFound;
 	}
 
@@ -198,15 +207,15 @@ DlStatus AccessManager<CRED_BIT_MASK>::SetHolidaySchedule(uint8_t holidayIndex, 
 
 	if (DlScheduleStatus::kAvailable == status && !schedule.mAvailable) {
 		schedule.mAvailable = true;
-		memset(schedule.mData.mRaw, 0, DoorLockData::HolidaySchedule::RequiredBufferSize());
+		memset(schedule.mData.mRaw, 0, sizeof(schedule.mData.mRaw));
 		if (!AccessStorage::Instance().Remove(AccessStorage::Type::HolidaySchedule, holidayIndex)) {
 			LOG_ERR("Cannot remove the Holiday schedule");
 			return DlStatus::kFailure;
 		}
 		return DlStatus::kSuccess;
+	} else if (DlScheduleStatus::kOccupied == status && !schedule.mAvailable) {
+		LOG_DBG("Modifying holiday schedule of index: %d", holidayIndex);
 	}
-
-	VerifyOrReturnError(schedule.mAvailable, DlStatus::kOccupied);
 
 	schedule.mData.mFields.mLocalStartTime = localStartTime;
 	schedule.mData.mFields.mLocalEndTime = localEndTime;
@@ -369,7 +378,7 @@ void AccessManager<CRED_BIT_MASK>::PrintSchedule(ScheduleType scheduleType, uint
 	case ScheduleType::WeekDay: {
 		auto *schedule = &mWeekDaySchedule[userIndex - 1][scheduleIndex - 1];
 		if (schedule) {
-			LOG_INF("-- WeekDay Schedule %d for user %d, days %08u, start %d:%d, end %d:%d", scheduleIndex,
+			LOG_DBG("-- WeekDay Schedule %d for user %d, days %08u, start %d:%d, end %d:%d", scheduleIndex,
 				userIndex, static_cast<uint8_t>(schedule->mData.mFields.mDaysMask),
 				schedule->mData.mFields.mStartHour, schedule->mData.mFields.mStartMinute,
 				schedule->mData.mFields.mEndHour, schedule->mData.mFields.mEndMinute);
@@ -378,7 +387,7 @@ void AccessManager<CRED_BIT_MASK>::PrintSchedule(ScheduleType scheduleType, uint
 	case ScheduleType::YearDay: {
 		auto *schedule = &mYearDaySchedule[userIndex - 1][scheduleIndex - 1];
 		if (schedule) {
-			LOG_INF("-- YearDay Schedule %d for user %d, starting time: %u, ending time: %u", scheduleIndex,
+			LOG_DBG("-- YearDay Schedule %d for user %d, starting time: %u, ending time: %u", scheduleIndex,
 				userIndex, schedule->mData.mFields.mLocalStartTime,
 				schedule->mData.mFields.mLocalEndTime);
 		}
@@ -386,7 +395,7 @@ void AccessManager<CRED_BIT_MASK>::PrintSchedule(ScheduleType scheduleType, uint
 	case ScheduleType::Holiday: {
 		auto *schedule = &mHolidaySchedule[scheduleIndex - 1];
 		if (schedule) {
-			LOG_INF("-- Holiday Schedule %d, Local start time: %u, Local end time: %u, Operating mode: %d",
+			LOG_DBG("-- Holiday Schedule %d, Local start time: %u, Local end time: %u, Operating mode: %d",
 				scheduleIndex, schedule->mData.mFields.mLocalStartTime,
 				schedule->mData.mFields.mLocalEndTime,
 				static_cast<uint8_t>(schedule->mData.mFields.mOperatingMode));

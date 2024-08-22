@@ -117,8 +117,71 @@ struct Credential {
 	 */
 	CHIP_ERROR Deserialize(const void *buff, size_t buffSize);
 };
+/* A base class for specific schedule types that implements the common schedule serialization. */
+template <typename T> class Schedule {
+public:
+	/**
+	 * @brief Serialize all fields into data buffer.
+	 *
+	 * `buffSize` must be set to at least the RequiredBufferSize size.
+	 *
+	 * @param buff buffer to store serialized data.
+	 * @param buffSize size of input buffer.
+	 * @return size_t output serialized data length, 0 value means error.
+	 */
+	size_t Serialize(void *buff, size_t buffSize)
+	{
+		if (!buff || buffSize < Impl()->RequiredBufferSize()) {
+			return 0;
+		}
 
-struct WeekDaySchedule {
+		size_t offset = 0;
+
+		pack(buff, Impl()->mData.mRaw, sizeof(Impl()->mData.mRaw), offset);
+		pack(buff, &(Impl()->mAvailable), sizeof(Impl()->mAvailable), offset);
+
+		return offset;
+	}
+
+	/**
+	 * @brief Deserialize all fields from given buffer.
+	 *
+	 * `buffSize` must be set to at least the RequiredBufferSize size.
+	 *
+	 * @param buff buffer containing serialized data (by invoking serialized method).
+	 * @param buffSize size of output buffer.
+	 * @return CHIP_ERROR_BUFFER_TOO_SMALL if provided buffSize is too small.
+	 * @return CHIP_ERROR_INVALID_ARGUMENT if arguments are wrong.
+	 * @return CHIP_NO_ERROR if deserialization has been finished successfully.
+	 */
+	CHIP_ERROR Deserialize(const void *buff, size_t buffSize)
+	{
+		if (!buff) {
+			return CHIP_ERROR_INVALID_ARGUMENT;
+		}
+
+		if (buffSize > Impl()->RequiredBufferSize()) {
+			return CHIP_ERROR_BUFFER_TOO_SMALL;
+		}
+
+		size_t offset = 0;
+
+		unpack(Impl()->mData.mRaw, sizeof(Impl()->mData.mRaw), buff, offset);
+		unpack(&(Impl()->mAvailable), sizeof(Impl()->mAvailable), buff, offset);
+
+		return CHIP_NO_ERROR;
+	}
+
+private:
+	/**
+	 * @brief Get the derived class handle.
+	 *
+	 * @return Pointer to the derived class.
+	 */
+	T *Impl() { return static_cast<T *>(this); };
+};
+
+struct WeekDaySchedule : public Schedule<WeekDaySchedule> {
 	union Data {
 		struct Fields {
 			uint8_t mDaysMask;
@@ -141,7 +204,7 @@ struct WeekDaySchedule {
 	 *
 	 * @return size of single credential entry.
 	 */
-	constexpr static size_t RequiredBufferSize() { return sizeof(Data); }
+	constexpr static size_t RequiredBufferSize() { return sizeof(Data) + sizeof(bool); }
 
 	/**
 	 * @brief fill User entry with data from the EmberAfPluginDoorLockWeekDaySchedule plugin
@@ -158,33 +221,9 @@ struct WeekDaySchedule {
 	 * @return CHIP_NO_ERROR if conversion has been finished successfully.
 	 */
 	CHIP_ERROR ConvertToPlugin(EmberAfPluginDoorLockWeekDaySchedule &plugin) const;
-
-	/**
-	 * @brief Serialize all fields into data buffer.
-	 *
-	 * `buffSize` must be set to at least the RequiredBufferSize size.
-	 *
-	 * @param buff buffer to store serialized data.
-	 * @param buffSize size of input buffer.
-	 * @return size_t output serialized data length, 0 value means error.
-	 */
-	size_t Serialize(void *buff, size_t buffSize);
-
-	/**
-	 * @brief Deserialize all fields from given buffer.
-	 *
-	 * `buffSize` must be set to at least the RequiredBufferSize size.
-	 *
-	 * @param buff buffer containing serialized data (by invoking serialized method).
-	 * @param buffSize size of output buffer.
-	 * @return CHIP_ERROR_BUFFER_TOO_SMALL if provided buffSize is too small.
-	 * @return CHIP_ERROR_INVALID_ARGUMENT if arguments are wrong.
-	 * @return CHIP_NO_ERROR if deserialization has been finished successfully.
-	 */
-	CHIP_ERROR Deserialize(const void *buff, size_t buffSize);
 };
 
-struct YearDaySchedule {
+struct YearDaySchedule : public Schedule<YearDaySchedule> {
 	union Data {
 		struct Fields {
 			uint32_t mLocalStartTime;
@@ -204,7 +243,7 @@ struct YearDaySchedule {
 	 *
 	 * @return size of single credential entry.
 	 */
-	constexpr static size_t RequiredBufferSize() { return sizeof(Data); }
+	constexpr static size_t RequiredBufferSize() { return sizeof(Data) + sizeof(bool); }
 
 	/**
 	 * @brief fill User entry with data from one  the EmberAfPluginDoorLockYearDaySchedule plugin.
@@ -221,33 +260,9 @@ struct YearDaySchedule {
 	 * @return CHIP_NO_ERROR if conversion has been finished successfully.
 	 */
 	CHIP_ERROR ConvertToPlugin(EmberAfPluginDoorLockYearDaySchedule &plugin) const;
-
-	/**
-	 * @brief Serialize all fields into data buffer.
-	 *
-	 * `buffSize` must be set to at least the RequiredBufferSize size.
-	 *
-	 * @param buff buffer to store serialized data.
-	 * @param buffSize size of input buffer.
-	 * @return size_t output serialized data length, 0 value means error.
-	 */
-	size_t Serialize(void *buff, size_t buffSize);
-
-	/**
-	 * @brief Deserialize all fields from given buffer.
-	 *
-	 * `buffSize` must be set to at least the RequiredBufferSize size.
-	 *
-	 * @param buff buffer containing serialized data (by invoking serialized method).
-	 * @param buffSize size of output buffer.
-	 * @return CHIP_ERROR_BUFFER_TOO_SMALL if provided buffSize is too small.
-	 * @return CHIP_ERROR_INVALID_ARGUMENT if arguments are wrong.
-	 * @return CHIP_NO_ERROR if deserialization has been finished successfully.
-	 */
-	CHIP_ERROR Deserialize(const void *buff, size_t buffSize);
 };
 
-struct HolidaySchedule {
+struct HolidaySchedule : public Schedule<HolidaySchedule> {
 	union Data {
 		struct Fields {
 			uint32_t mLocalStartTime;
@@ -268,7 +283,7 @@ struct HolidaySchedule {
 	 *
 	 * @return size of single credential entry.
 	 */
-	constexpr static size_t RequiredBufferSize() { return sizeof(Data); }
+	constexpr static size_t RequiredBufferSize() { return sizeof(Data) + sizeof(bool); }
 
 	/**
 	 * @brief fill User entry with data from one  the EmberAfPluginDoorLockHolidaySchedule plugin.
@@ -285,30 +300,6 @@ struct HolidaySchedule {
 	 * @return CHIP_NO_ERROR if conversion has been finished successfully.
 	 */
 	CHIP_ERROR ConvertToPlugin(EmberAfPluginDoorLockHolidaySchedule &plugin) const;
-
-	/**
-	 * @brief Serialize all fields into data buffer.
-	 *
-	 * `buffSize` must be set to at least the RequiredBufferSize size.
-	 *
-	 * @param buff buffer to store serialized data.
-	 * @param buffSize size of input buffer.
-	 * @return size_t output serialized data length, 0 value means error.
-	 */
-	size_t Serialize(void *buff, size_t buffSize);
-
-	/**
-	 * @brief Deserialize all fields from given buffer.
-	 *
-	 * `buffSize` must be set to at least the RequiredBufferSize size.
-	 *
-	 * @param buff buffer containing serialized data (by invoking serialized method).
-	 * @param buffSize size of output buffer.
-	 * @return CHIP_ERROR_BUFFER_TOO_SMALL if provided buffSize is too small.
-	 * @return CHIP_ERROR_INVALID_ARGUMENT if arguments are wrong.
-	 * @return CHIP_NO_ERROR if deserialization has been finished successfully.
-	 */
-	CHIP_ERROR Deserialize(const void *buff, size_t buffSize);
 };
 
 struct User {
