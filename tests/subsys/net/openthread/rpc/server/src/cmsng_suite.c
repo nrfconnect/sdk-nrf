@@ -20,36 +20,21 @@
 #include <test_rpc_env.h>
 
 /* Fake functions */
-
-DEFINE_FFF_GLOBALS;
 FAKE_VALUE_FUNC(otError, otThreadDiscover, otInstance *, uint32_t, uint16_t, bool, bool,
 		otHandleActiveScanResult, void *);
 FAKE_VALUE_FUNC(bool, otDatasetIsCommissioned, otInstance *);
 FAKE_VALUE_FUNC(otError, otDatasetSetActiveTlvs, otInstance *, const otOperationalDatasetTlvs *);
 FAKE_VALUE_FUNC(otError, otDatasetGetActiveTlvs, otInstance *, otOperationalDatasetTlvs *);
-FAKE_VOID_FUNC(otCliInit, otInstance *, otCliOutputCallback, void *);
-FAKE_VOID_FUNC(otCliInputLine, char *);
-FAKE_VALUE_FUNC(const otNetifAddress *, otIp6GetUnicastAddresses, otInstance *);
-FAKE_VALUE_FUNC(const otNetifMulticastAddress *, otIp6GetMulticastAddresses, otInstance *);
-FAKE_VALUE_FUNC(otError, otIp6SubscribeMulticastAddress, otInstance *, const otIp6Address *);
-FAKE_VALUE_FUNC(otError, otIp6UnsubscribeMulticastAddress, otInstance *, const otIp6Address *);
-FAKE_VALUE_FUNC(otError, otIp6SetEnabled, otInstance *, bool);
-FAKE_VALUE_FUNC(bool, otIp6IsEnabled, otInstance *);
-FAKE_VALUE_FUNC(otError, otThreadSetEnabled, otInstance *, bool);
-FAKE_VALUE_FUNC(otDeviceRole, otThreadGetDeviceRole, otInstance *);
-FAKE_VALUE_FUNC(otError, otThreadSetLinkMode, otInstance *, otLinkModeConfig);
-FAKE_VALUE_FUNC(otLinkModeConfig, otThreadGetLinkMode, otInstance *);
-FAKE_VALUE_FUNC(otError, otLinkSetPollPeriod, otInstance *, uint32_t);
-FAKE_VALUE_FUNC(uint32_t, otLinkGetPollPeriod, otInstance *);
-FAKE_VALUE_FUNC(const otExtAddress *, otLinkGetExtendedAddress, otInstance *);
-FAKE_VALUE_FUNC(otError, otSetStateChangedCallback, otInstance *, otStateChangedCallback, void *);
-FAKE_VOID_FUNC(otRemoveStateChangeCallback, otInstance *, otStateChangedCallback, void *);
+FAKE_VALUE_FUNC(otError, otDatasetSetActive, otInstance *, const otOperationalDataset *);
+FAKE_VALUE_FUNC(otError, otDatasetGetActive, otInstance *, otOperationalDataset *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otThreadDiscover);                                                                       \
 	f(otDatasetIsCommissioned);                                                                \
 	f(otDatasetSetActiveTlvs);                                                                 \
-	f(otDatasetGetActiveTlvs)
+	f(otDatasetGetActiveTlvs);                                                                 \
+	f(otDatasetSetActive);                                                                     \
+	f(otDatasetGetActive)
 
 extern uint64_t ot_thread_discover_cb_encoder(uint32_t callback_slot, uint32_t _rsv0,
 					      uint32_t _rsv1, uint32_t _ret,
@@ -129,7 +114,7 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActiveTlvs)
 	otDatasetSetActiveTlvs_fake.return_val = OT_ERROR_NONE;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATA_SET_ACTIVE_TLVS, TLVS));
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, TLVS));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetSetActiveTlvs_fake.call_count, 1);
@@ -144,13 +129,13 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActiveTlvs)
 ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActiveTlvs_negative)
 {
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_ARGS), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATA_SET_ACTIVE_TLVS, CBOR_NULL));
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, CBOR_NULL));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetSetActiveTlvs_fake.call_count, 0);
 }
 
-static otError custom_fake(otInstance *instance, otOperationalDatasetTlvs *dataset)
+static otError dataset_get_tlvs_fake(otInstance *instance, otOperationalDatasetTlvs *dataset)
 {
 	otOperationalDatasetTlvs expected_dataset = {
 		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
@@ -167,10 +152,10 @@ static otError custom_fake(otInstance *instance, otOperationalDatasetTlvs *datas
  */
 ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActiveTlvs)
 {
-	otDatasetGetActiveTlvs_fake.custom_fake = custom_fake;
+	otDatasetGetActiveTlvs_fake.custom_fake = dataset_get_tlvs_fake;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(TLVS), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATA_GET_ACTIVE_TLVS));
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetGetActiveTlvs_fake.call_count, 1);
@@ -185,7 +170,7 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActiveTlvs_null)
 	otDatasetGetActiveTlvs_fake.return_val = OT_ERROR_NOT_FOUND;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_NULL), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATA_GET_ACTIVE_TLVS));
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetGetActiveTlvs_fake.call_count, 1);
@@ -231,6 +216,139 @@ ZTEST(ot_rpc_commissioning_server, test_tx_discover_cb_null)
 		RPC_RSP());
 	(void)ot_thread_discover_cb_encoder(0, 0, 0, 0, NULL, (void *)0xdeadbeef);
 	mock_nrf_rpc_tr_expect_done();
+}
+
+/*
+ * Test reception of otDatasetSetActive command.
+ * Test serialization of the result: OT_ERROR_NONE.
+ */
+ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActive)
+{
+	const otOperationalDataset *expected_dataset;
+	uint8_t net_key[] = {INT_SEQUENCE(OT_NETWORK_KEY_SIZE)};
+	uint8_t nwk_name[] = {INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), 0};
+	uint8_t ext_pan_id[] = {INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)};
+	uint8_t local_prefix[] = {INT_SEQUENCE(OT_IP6_PREFIX_SIZE)};
+	uint8_t pskc[] = {INT_SEQUENCE(OT_PSKC_MAX_SIZE)};
+
+	otDatasetSetActive_fake.return_val = OT_ERROR_NONE;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE, DATASET));
+	mock_nrf_rpc_tr_expect_done();
+
+	expected_dataset = otDatasetSetActive_fake.arg1_val;
+
+	zassert_equal(otDatasetSetActive_fake.call_count, 1);
+	zassert_equal(expected_dataset->mActiveTimestamp.mSeconds, 0x0123456789abcdefull);
+	zassert_equal(expected_dataset->mActiveTimestamp.mTicks, 0x1234);
+	zassert_false(expected_dataset->mActiveTimestamp.mAuthoritative);
+
+	zassert_equal(expected_dataset->mPendingTimestamp.mSeconds, 0x0123456789abcdefull);
+	zassert_equal(expected_dataset->mPendingTimestamp.mTicks, 0x1234);
+	zassert_false(expected_dataset->mPendingTimestamp.mAuthoritative);
+
+	zassert_mem_equal(expected_dataset->mNetworkKey.m8, net_key, OT_NETWORK_KEY_SIZE);
+	zassert_mem_equal(expected_dataset->mNetworkName.m8, nwk_name,
+			  OT_NETWORK_NAME_MAX_SIZE + 1);
+	zassert_mem_equal(expected_dataset->mExtendedPanId.m8, ext_pan_id, OT_EXT_PAN_ID_SIZE);
+	zassert_mem_equal(expected_dataset->mMeshLocalPrefix.m8, local_prefix, OT_IP6_PREFIX_SIZE);
+	zassert_equal(expected_dataset->mDelay, 0x12345678ul);
+	zassert_equal(expected_dataset->mPanId, 0xabcd);
+	zassert_equal(expected_dataset->mChannel, 0xef67);
+	zassert_mem_equal(expected_dataset->mPskc.m8, pskc, OT_PSKC_MAX_SIZE);
+
+	zassert_equal(expected_dataset->mSecurityPolicy.mRotationTime, 0x9876);
+	zassert_true(!!expected_dataset->mSecurityPolicy.mObtainNetworkKeyEnabled);
+	zassert_false(!!expected_dataset->mSecurityPolicy.mNativeCommissioningEnabled);
+	zassert_true(!!expected_dataset->mSecurityPolicy.mRoutersEnabled);
+	zassert_false(!!expected_dataset->mSecurityPolicy.mExternalCommissioningEnabled);
+	zassert_true(!!expected_dataset->mSecurityPolicy.mCommercialCommissioningEnabled);
+	zassert_false(!!expected_dataset->mSecurityPolicy.mAutonomousEnrollmentEnabled);
+	zassert_true(!!expected_dataset->mSecurityPolicy.mNetworkKeyProvisioningEnabled);
+	zassert_false(!!expected_dataset->mSecurityPolicy.mTobleLinkEnabled);
+	zassert_true(!!expected_dataset->mSecurityPolicy.mNonCcmRoutersEnabled);
+	zassert_equal(expected_dataset->mSecurityPolicy.mVersionThresholdForRouting, 7);
+
+	zassert_equal(expected_dataset->mChannelMask, 0xfedcba98ul);
+
+	zassert_false(expected_dataset->mComponents.mIsActiveTimestampPresent);
+	zassert_true(expected_dataset->mComponents.mIsPendingTimestampPresent);
+	zassert_false(expected_dataset->mComponents.mIsNetworkKeyPresent);
+	zassert_true(expected_dataset->mComponents.mIsNetworkNamePresent);
+	zassert_false(expected_dataset->mComponents.mIsExtendedPanIdPresent);
+	zassert_true(expected_dataset->mComponents.mIsMeshLocalPrefixPresent);
+	zassert_false(expected_dataset->mComponents.mIsDelayPresent);
+	zassert_true(expected_dataset->mComponents.mIsPanIdPresent);
+	zassert_false(expected_dataset->mComponents.mIsChannelPresent);
+	zassert_true(expected_dataset->mComponents.mIsPskcPresent);
+	zassert_false(expected_dataset->mComponents.mIsSecurityPolicyPresent);
+	zassert_true(expected_dataset->mComponents.mIsChannelMaskPresent);
+}
+
+/*
+ * Test reception of otDatasetSetActive command with NULL pointer.
+ * Test serialization of the result: OT_ERROR_INVALID_ARGS.
+ */
+ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActive_negative)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_ARGS), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE, CBOR_NULL));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetSetActive_fake.call_count, 0);
+}
+
+static otError dataset_get_fake(otInstance *instance, otOperationalDataset *dataset)
+{
+	otOperationalDataset expected_dataset = {
+		{0x0123456789abcdefull, 0x1234, false},
+		{0x0123456789abcdefull, 0x1234, false},
+		{{INT_SEQUENCE(OT_NETWORK_KEY_SIZE)}},
+		{{INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE)}},
+		{{INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)}},
+		{{INT_SEQUENCE(OT_IP6_PREFIX_SIZE)}},
+		0x12345678ul,
+		0xabcd,
+		0xef67,
+		{{INT_SEQUENCE(OT_PSKC_MAX_SIZE)}},
+		{0x9876, 1, 0, 1, 0, 1, 0, 1, 0, 1, 7},
+		0xfedcba98,
+		{false, true, false, true, false, true, false, true, false, true, false, true}};
+
+	memcpy(dataset, &expected_dataset, sizeof(otOperationalDataset));
+
+	return OT_ERROR_NONE;
+}
+
+/*
+ * Test reception of otDatasetGetActive command.
+ * Test serialization of the result: dataset.
+ */
+ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActive)
+{
+	otDatasetGetActive_fake.custom_fake = dataset_get_fake;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(DATASET), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetGetActive_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otDatasetGetActive command.
+ * Test serialization of the result: NULL as dataset has not been found.
+ */
+ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActive_null)
+{
+	otDatasetGetActive_fake.return_val = OT_ERROR_NOT_FOUND;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_NULL), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetGetActive_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_commissioning_server, NULL, NULL, tc_setup, NULL, NULL);

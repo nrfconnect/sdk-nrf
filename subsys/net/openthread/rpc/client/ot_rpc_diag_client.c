@@ -84,11 +84,6 @@ const char *otGetVersionString(void)
 	return version;
 }
 
-otError otDatasetGetActive(otInstance *aInstance, otOperationalDataset *aDataset)
-{
-	return 0;
-}
-
 uint8_t otLinkGetChannel(otInstance *aInstance)
 {
 	uint8_t ret;

@@ -33,6 +33,7 @@
 
 /* Other test data */
 
+#define CBOR_UINT64(value) 0x1B, BT_BYTES_LIST_LE64(BSWAP_64(value))
 #define CBOR_UINT32(value) 0x1A, BT_BYTES_LIST_LE32(BSWAP_32(value))
 #define CBOR_UINT16(value) 0x19, BT_BYTES_LIST_LE16(BSWAP_16(value))
 /* for value bigger than 0x17 */
@@ -44,3 +45,17 @@
 #define EXT_PAN_ID    0x48, INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)
 #define STEERING_DATA 0x50, INT_SEQUENCE(OT_STEERING_DATA_MAX_LENGTH)
 #define TLVS          0x58, 0xFE, INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)
+#define NWK_KEY       0x50, INT_SEQUENCE(OT_NETWORK_KEY_SIZE)
+#define LOCAL_PREFIX  0x48, INT_SEQUENCE(OT_IP6_PREFIX_SIZE)
+#define PSKC          0x50, INT_SEQUENCE(OT_PSKC_MAX_SIZE)
+#define TIMESTAMP     CBOR_UINT64(0x0123456789abcdef), CBOR_UINT16(0x1234), CBOR_FALSE
+#define SECURITY_POLICY                                                                            \
+	CBOR_UINT16(0x9876), CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE,  \
+		CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, 0x07
+#define DATASET_COMPONENTS                                                                         \
+	CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE,           \
+		CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE
+#define DATASET                                                                                    \
+	TIMESTAMP, TIMESTAMP, NWK_KEY, NWK_NAME, EXT_PAN_ID, LOCAL_PREFIX,                         \
+		CBOR_UINT32(0x12345678), CBOR_UINT16(0xabcd), CBOR_UINT16(0xef67), PSKC,           \
+		SECURITY_POLICY, CBOR_UINT32(0xfedcba98), DATASET_COMPONENTS

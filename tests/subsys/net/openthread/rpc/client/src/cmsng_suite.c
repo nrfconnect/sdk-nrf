@@ -78,7 +78,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActiveTlvs)
 		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
 		OT_OPERATIONAL_DATASET_MAX_LENGTH};
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATA_SET_ACTIVE_TLVS, TLVS),
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, TLVS),
 				   RPC_RSP(OT_ERROR_NONE));
 	error = otDatasetSetActiveTlvs(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
@@ -106,7 +106,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActiveTlvs)
 		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
 		OT_OPERATIONAL_DATASET_MAX_LENGTH};
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATA_GET_ACTIVE_TLVS), RPC_RSP(TLVS));
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS), RPC_RSP(TLVS));
 	error = otDatasetGetActiveTlvs(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
 	zassert_equal(error, OT_ERROR_NONE);
@@ -119,7 +119,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActiveTlvs_null)
 	otError error;
 	otOperationalDatasetTlvs dataset;
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATA_GET_ACTIVE_TLVS), RPC_RSP(CBOR_NULL));
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS), RPC_RSP(CBOR_NULL));
 	error = otDatasetGetActiveTlvs(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
 	zassert_equal(error, OT_ERROR_NOT_FOUND);
@@ -195,6 +195,117 @@ ZTEST(ot_rpc_commissioning_cli, test_discover_cb_handler_empty)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_true(cb_called);
+}
+
+/* Test serialization of otDatasetSetActive() */
+ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActive)
+{
+	otError error;
+
+	const otOperationalDataset dataset = {
+		{0x0123456789abcdefull, 0x1234, false},
+		{0x0123456789abcdefull, 0x1234, false},
+		{{INT_SEQUENCE(OT_NETWORK_KEY_SIZE)}},
+		{{INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE)}},
+		{{INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)}},
+		{{INT_SEQUENCE(OT_IP6_PREFIX_SIZE)}},
+		0x12345678ul,
+		0xabcd,
+		0xef67,
+		{{INT_SEQUENCE(OT_PSKC_MAX_SIZE)}},
+		{0x9876, 1, 0, 1, 0, 1, 0, 1, 0, 1, 7},
+		0xfedcba98,
+		{false, true, false, true, false, true, false, true, false, true, false, true}};
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE, DATASET),
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otDatasetSetActive(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(error, OT_ERROR_NONE);
+}
+
+/* Test incoming parameters validation of otDatasetSetActive() */
+ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActive_negative)
+{
+	otError error;
+
+	error = otDatasetSetActive(NULL, NULL);
+	zassert_equal(error, OT_ERROR_INVALID_ARGS);
+}
+
+/* Test serialization of otDatasetGetActive() */
+ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActive)
+{
+	otError error;
+	otOperationalDataset dataset;
+	uint8_t net_key[] = {INT_SEQUENCE(OT_NETWORK_KEY_SIZE)};
+	uint8_t nwk_name[] = {INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), 0};
+	uint8_t ext_pan_id[] = {INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)};
+	uint8_t local_prefix[] = {INT_SEQUENCE(OT_IP6_PREFIX_SIZE)};
+	uint8_t pskc[] = {INT_SEQUENCE(OT_PSKC_MAX_SIZE)};
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE), RPC_RSP(DATASET));
+	error = otDatasetGetActive(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(error, OT_ERROR_NONE);
+	zassert_equal(dataset.mActiveTimestamp.mSeconds, 0x0123456789abcdefull);
+	zassert_equal(dataset.mActiveTimestamp.mTicks, 0x1234);
+	zassert_false(dataset.mActiveTimestamp.mAuthoritative);
+
+	zassert_equal(dataset.mPendingTimestamp.mSeconds, 0x0123456789abcdefull);
+	zassert_equal(dataset.mPendingTimestamp.mTicks, 0x1234);
+	zassert_false(dataset.mPendingTimestamp.mAuthoritative);
+
+	zassert_mem_equal(dataset.mNetworkKey.m8, net_key, OT_NETWORK_KEY_SIZE);
+	zassert_mem_equal(dataset.mNetworkName.m8, nwk_name, OT_NETWORK_NAME_MAX_SIZE + 1);
+	zassert_mem_equal(dataset.mExtendedPanId.m8, ext_pan_id, OT_EXT_PAN_ID_SIZE);
+	zassert_mem_equal(dataset.mMeshLocalPrefix.m8, local_prefix, OT_IP6_PREFIX_SIZE);
+	zassert_equal(dataset.mDelay, 0x12345678ul);
+	zassert_equal(dataset.mPanId, 0xabcd);
+	zassert_equal(dataset.mChannel, 0xef67);
+	zassert_mem_equal(dataset.mPskc.m8, pskc, OT_PSKC_MAX_SIZE);
+
+	zassert_equal(dataset.mSecurityPolicy.mRotationTime, 0x9876);
+	zassert_true(!!dataset.mSecurityPolicy.mObtainNetworkKeyEnabled);
+	zassert_false(!!dataset.mSecurityPolicy.mNativeCommissioningEnabled);
+	zassert_true(!!dataset.mSecurityPolicy.mRoutersEnabled);
+	zassert_false(!!dataset.mSecurityPolicy.mExternalCommissioningEnabled);
+	zassert_true(!!dataset.mSecurityPolicy.mCommercialCommissioningEnabled);
+	zassert_false(!!dataset.mSecurityPolicy.mAutonomousEnrollmentEnabled);
+	zassert_true(!!dataset.mSecurityPolicy.mNetworkKeyProvisioningEnabled);
+	zassert_false(!!dataset.mSecurityPolicy.mTobleLinkEnabled);
+	zassert_true(!!dataset.mSecurityPolicy.mNonCcmRoutersEnabled);
+	zassert_equal(dataset.mSecurityPolicy.mVersionThresholdForRouting, 7);
+
+	zassert_equal(dataset.mChannelMask, 0xfedcba98ul);
+
+	zassert_false(dataset.mComponents.mIsActiveTimestampPresent);
+	zassert_true(dataset.mComponents.mIsPendingTimestampPresent);
+	zassert_false(dataset.mComponents.mIsNetworkKeyPresent);
+	zassert_true(dataset.mComponents.mIsNetworkNamePresent);
+	zassert_false(dataset.mComponents.mIsExtendedPanIdPresent);
+	zassert_true(dataset.mComponents.mIsMeshLocalPrefixPresent);
+	zassert_false(dataset.mComponents.mIsDelayPresent);
+	zassert_true(dataset.mComponents.mIsPanIdPresent);
+	zassert_false(dataset.mComponents.mIsChannelPresent);
+	zassert_true(dataset.mComponents.mIsPskcPresent);
+	zassert_false(dataset.mComponents.mIsSecurityPolicyPresent);
+	zassert_true(dataset.mComponents.mIsChannelMaskPresent);
+}
+
+/* Test NULL replay on otDatasetGetActive() and parameter validation. */
+ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActive_null)
+{
+	otError error;
+	otOperationalDataset dataset;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE), RPC_RSP(CBOR_NULL));
+	error = otDatasetGetActive(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(error, OT_ERROR_NOT_FOUND);
+
+	error = otDatasetGetActive(NULL, NULL);
+	zassert_equal(error, OT_ERROR_NOT_FOUND);
 }
 
 ZTEST_SUITE(ot_rpc_commissioning_cli, NULL, NULL, tc_setup, NULL, NULL);
