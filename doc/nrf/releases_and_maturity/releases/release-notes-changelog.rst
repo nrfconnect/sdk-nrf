@@ -684,7 +684,9 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* :ref:`lib_fmfu_fdev`:
+
+  * Regenerated the code files using zcbor v0.9.0.
 
 Gazell libraries
 ----------------
