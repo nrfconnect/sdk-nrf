@@ -216,6 +216,8 @@
 
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
+.. _`nRF Connect SDK Add-ons`: https://nrfconnect.github.io/ncs-app-index/
+
 .. ### Source: githubusercontent.com
 
 .. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
@@ -837,6 +839,7 @@
 .. _`Details View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_details.html
 .. _`Memory report`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/memory_overview.html
 .. _`Kconfig action in the Actions View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_actions.html
+.. _`Application support overview`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/applications.html
 .. _`Create a new application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#create-a-new-application
 .. _`Browse samples`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#browse-samples
 .. _`nRF Terminal documentation`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_panel.html#nrf-connect-and-nrf-terminal-profiles

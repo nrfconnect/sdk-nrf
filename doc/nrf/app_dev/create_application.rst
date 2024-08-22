@@ -68,6 +68,8 @@ This application type is suitable for the following development cases:
 
 * You want to test the solution provided by the |NCS| out-of-the-box.
 
+For more information about applications placed inside the |NCS| source code, see the :ref:`workflow 3 on the development model page <dm_workflow_3>`.
+
 .. _create_application_types_workspace:
 
 Workspace application
@@ -138,6 +140,10 @@ Creating an |NCS| application
 The process for creating an |NCS| application depends on the development environment.
 Using the |nRFVSC| is the recommended method.
 
+.. note::
+     No steps are provided for the creation of :ref:`repository applications <create_application_types_repository>`.
+     Creating repository applications is not recommended, as placing any application in the |NCS| source file structure can corrupt the SDK installation.
+
 .. _creating_vsc:
 
 Creating application in the |nRFVSC|
@@ -163,7 +169,7 @@ Use the following steps depending on the application placement:
       #. Enter the location and the name for the application.
          The location will be the *<west-workspace>/* directory mentioned in the :ref:`workspace application structure <create_application_types_workspace>`.
          The application creation process starts after you enter the name.
-         When the application is created, a VS Code prompt appears.
+         When the application is created, a VS Code prompt appears asking you what to do with the application.
       #. Click :guilabel:`Open`.
          This opens the new application and adds it to the :guilabel:`Applications View` in the extension.
          At this point, you have created a freestanding application.
@@ -206,6 +212,8 @@ Use the following steps depending on the application placement:
 
       .. note::
           You can transform your freestanding application into a workspace application at any moment by completing the step 7 under the Workspace application tab.
+
+See the `extension documentation <Application support overview_>`_ for more information about the differences between the applications types from the extension's perspective.
 
 .. _creating_cmd:
 
