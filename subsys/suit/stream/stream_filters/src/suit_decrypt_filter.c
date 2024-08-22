@@ -27,6 +27,7 @@ struct decrypt_ctx {
 	size_t tag_size;
 	size_t stored_tag_bytes;
 	uint8_t tag[PSA_AEAD_TAG_MAX_SIZE];
+	enum suit_cose_alg kw_alg_id;
 	bool in_use;
 };
 
@@ -200,7 +201,11 @@ static suit_plat_err_t flush(void *ctx)
 		}
 	}
 
-	psa_destroy_key(decrypt_ctx->cek_key_id);
+#ifdef CONFIG_SUIT_AES_KW_MANUAL
+	if (decrypt_ctx->kw_alg_id == suit_cose_aes256_kw) {
+		psa_destroy_key(decrypt_ctx->cek_key_id);
+	}
+#endif
 
 	zeroize(decrypted_buf, sizeof(decrypted_buf));
 
@@ -209,6 +214,7 @@ static suit_plat_err_t flush(void *ctx)
 	decrypt_ctx->tag_size = 0;
 	decrypt_ctx->stored_tag_bytes = 0;
 	zeroize(decrypt_ctx->tag, sizeof(decrypt_ctx->tag));
+	decrypt_ctx->kw_alg_id = 0;
 
 	return res;
 }
@@ -278,6 +284,21 @@ static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
 		}
 		break;
 #endif
+	case suit_cose_direct:
+		psa_key_id_t cek_key_id_value;
+
+		if (suit_plat_decode_key_id(&kw_key.direct.key_id, &cek_key_id_value)
+			!= SUIT_PLAT_SUCCESS) {
+			return SUIT_PLAT_ERR_INVAL;
+		}
+#ifdef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+		cek_key_id->MBEDTLS_PRIVATE(key_id) = cek_key_id_value;
+		cek_key_id->MBEDTLS_PRIVATE(owner) = NRF_OWNER_SECURE;
+#else  /* MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER */
+		*cek_key_id = cek_key_id_value;
+#endif /* MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER */
+		break;
+
 	default:
 		LOG_ERR("Unsupported key wrap/key derivation algorithm: %d", kw_alg_id);
 		return SUIT_PLAT_ERR_INVAL;
@@ -334,6 +355,8 @@ suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *dec_sink,
 		ctx.in_use = false;
 		return ret;
 	}
+
+	ctx.kw_alg_id = enc_info->kw_alg_id;
 
 	ctx.operation = psa_aead_operation_init();
 
