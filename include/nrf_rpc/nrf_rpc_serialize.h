@@ -98,6 +98,20 @@ void nrf_rpc_encode_uint(struct nrf_rpc_cbor_ctx *ctx, uint32_t value);
  */
 void nrf_rpc_encode_int(struct nrf_rpc_cbor_ctx *ctx, int32_t value);
 
+/** @brief Encode an 64bits unsigned integer value.
+ *
+ * @param[in,out] ctx Structure used to encode CBOR stream.
+ * @param[in]     value Encoded value.
+ */
+void nrf_rpc_encode_uint64(struct nrf_rpc_cbor_ctx *ctx, uint64_t value);
+
+/** @brief Encode an 64bits integer value.
+ *
+ * @param[in,out] ctx Structure used to encode CBOR stream.
+ * @param[in]     value Encoded value.
+ */
+void nrf_rpc_encode_int64(struct nrf_rpc_cbor_ctx *ctx, int64_t value);
+
 /** @brief Encode a string value.
  *
  * @param[in,out] ctx CBOR encoding context.
@@ -188,6 +202,22 @@ uint32_t nrf_rpc_decode_uint(struct nrf_rpc_cbor_ctx *ctx);
  * @retval Decoded integer value.
  */
 int32_t nrf_rpc_decode_int(struct nrf_rpc_cbor_ctx *ctx);
+
+/** @brief Decode a 64bits unsigned integer value.
+ *
+ * @param[in,out] ctx CBOR decoding context.
+ *
+ * @retval Decoded value.
+ */
+uint64_t nrf_rpc_decode_uint64(struct nrf_rpc_cbor_ctx *ctx);
+
+/** @brief Decode a 64bits integer value.
+ *
+ * @param[in,out] ctx CBOR decoding context.
+ *
+ * @retval Decoded value.
+ */
+int64_t nrf_rpc_decode_int64(struct nrf_rpc_cbor_ctx *ctx);
 
 /** @brief Decode a string value.
  *
