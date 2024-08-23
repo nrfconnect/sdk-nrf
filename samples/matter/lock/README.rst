@@ -248,6 +248,13 @@ The sample supports the following configurations:
 
 .. matter_door_lock_sample_configuration_file_types_end
 
+Matter lock with Trusted Firmware-M
+===================================
+
+.. include:: ../template/README.rst
+    :start-after: matter_template_build_with_tfm_start
+    :end-before: matter_template_build_with_tfm_end
+
 .. _matter_lock_snippets:
 
 Snippets

@@ -400,14 +400,11 @@ Matter samples
 
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the sample.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to sample's location that contains the ZAP file and :file:`zap-generated` directory.
+  * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 PDK.
 
 * :ref:`matter_lock_sample` sample:
 
     * Added :ref:`Matter Lock schedule snippet <matter_lock_snippets>`, and updated the documentation to use the snippet.
-
-* :ref:`matter_template_sample` sample:
-
-  * Added support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 PDK.
 
 Networking samples
 ------------------
