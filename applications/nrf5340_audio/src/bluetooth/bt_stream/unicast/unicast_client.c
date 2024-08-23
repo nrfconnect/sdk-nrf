@@ -33,9 +33,7 @@ LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#define HCI_ISO_BUF_ALLOC_PER_CHAN 2
-#define CIS_CONN_RETRY_TIMES	   5
-#define CIS_CONN_RETRY_DELAY_MS	   500
+#define CAP_PROCED_MUTEX_WAIT_TIME_MS K_MSEC(500)
 
 struct le_audio_unicast_server {
 	char *ch_name;
@@ -92,10 +90,7 @@ BUILD_ASSERT(CONFIG_BT_ISO_MAX_CIG == 1, "Only one CIG is supported");
 static le_audio_receive_cb receive_cb;
 
 static struct bt_bap_unicast_group *unicast_group;
-
-/* Used for group creation only */
-static struct bt_bap_lc3_preset lc3_preset_max = BT_BAP_LC3_PRESET_CONFIGURABLE(
-	BT_AUDIO_LOCATION_FRONT_LEFT, BT_AUDIO_CONTEXT_TYPE_ANY, CONFIG_LC3_BITRATE_MAX);
+static bool unicast_group_created;
 
 static struct bt_bap_lc3_preset lc3_preset_sink = BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK;
 static struct bt_bap_lc3_preset lc3_preset_sink_48_4_1 =
@@ -129,10 +124,14 @@ static void le_audio_event_publish(enum le_audio_evt_type event, struct bt_conn 
 	ERR_CHK(ret);
 }
 
+K_MUTEX_DEFINE(mtx_cap_procedure_proceed);
+
 static void cap_start_worker(struct k_work *work)
 {
 	int ret;
 	struct stream_index idx;
+	int device_iterator = 0;
+	int stream_iterator = 0;
 
 	/* Check msgq for a pending start procedure */
 	ret = k_msgq_get(&cap_start_msgq, &idx, K_NO_WAIT);
@@ -143,6 +142,75 @@ static void cap_start_worker(struct k_work *work)
 
 	struct le_audio_unicast_server *unicast_server =
 		&unicast_servers[idx.lvl1][idx.lvl2][idx.lvl3];
+
+	if (unicast_server->sink_ep == NULL && unicast_server->source_ep == NULL) {
+		LOG_ERR("No sink or source endpoint found for device");
+		return;
+	}
+
+	if (unicast_group_created == false) {
+		uint8_t cig_index = idx.lvl1;
+		struct bt_bap_unicast_group_stream_pair_param
+			pair_params[ARRAY_SIZE(unicast_servers[cig_index][0])];
+		/* 2 streams (one sink and one source stream) for each unicast_server */
+		struct bt_bap_unicast_group_stream_param
+			group_stream_params[(ARRAY_SIZE(unicast_servers[cig_index][0]) * 2)];
+		struct bt_bap_unicast_group_param group_param;
+
+		for (int i = 0; i < ARRAY_SIZE(group_stream_params); i++) {
+			/* Every other stream should be sink or source */
+			if ((i % 2) == 0) {
+				group_stream_params[i].qos = &lc3_preset_sink.qos;
+				group_stream_params[i].stream =
+					&unicast_servers[cig_index][0][device_iterator]
+						 .cap_sink_stream.bap_stream;
+			} else {
+				group_stream_params[i].qos = &lc3_preset_source.qos;
+				group_stream_params[i].stream =
+					&unicast_servers[cig_index][0][device_iterator]
+						 .cap_source_stream.bap_stream;
+				device_iterator++;
+			}
+		}
+
+		for (int i = 0; i < ARRAY_SIZE(pair_params); i++) {
+			if (unicast_server->sink_ep) {
+				pair_params[i].tx_param = &group_stream_params[stream_iterator];
+			} else {
+				pair_params[i].tx_param = NULL;
+			}
+			stream_iterator++;
+
+			if (unicast_server->source_ep) {
+				pair_params[i].rx_param = &group_stream_params[stream_iterator];
+			} else {
+				pair_params[i].rx_param = NULL;
+			}
+
+			stream_iterator++;
+		}
+
+		group_param.params = pair_params;
+		group_param.params_count = ARRAY_SIZE(pair_params);
+
+		if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+			group_param.packing = BT_ISO_PACKING_INTERLEAVED;
+		} else {
+			group_param.packing = BT_ISO_PACKING_SEQUENTIAL;
+		}
+
+		ret = bt_bap_unicast_group_create(&group_param, &unicast_group);
+		if (ret) {
+			LOG_ERR("Failed to create unicast group: %d", ret);
+		} else {
+			unicast_group_created = true;
+		}
+	}
+
+	ret = k_mutex_lock(&mtx_cap_procedure_proceed, CAP_PROCED_MUTEX_WAIT_TIME_MS);
+	if (ret == -EAGAIN) {
+		LOG_ERR("CAP procedure lock timeout");
+	}
 
 	struct bt_cap_unicast_audio_start_stream_param
 		cap_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT +
@@ -352,6 +420,10 @@ static void supported_sample_rates_print(uint16_t supported_sample_rates, enum b
 
 	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
 		strcat(supported_str, "24, ");
+	}
+
+	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_32KHZ) {
+		strcat(supported_str, "32, ");
 	}
 
 	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
@@ -679,6 +751,9 @@ static int update_cap_sink_stream_qos(struct le_audio_unicast_server *unicast_se
 		struct bt_cap_unicast_audio_stop_param param;
 		struct bt_cap_stream *streams[2];
 
+		LOG_DBG("Current preset PD = %d us, target PD = %d us",
+			unicast_server->cap_sink_stream.bap_stream.qos->pd, pres_delay_us);
+
 		param.streams = streams;
 		param.count = 0;
 		param.type = BT_CAP_SET_TYPE_AD_HOC;
@@ -715,7 +790,8 @@ static int update_cap_sink_stream_qos(struct le_audio_unicast_server *unicast_se
 		if (param.count > 0) {
 			ret = bt_cap_initiator_unicast_audio_stop(&param);
 			if (ret) {
-				LOG_ERR("Failed to stop streams: %d", ret);
+				LOG_WRN("Failed to stop streams: %d, use default PD in preset",
+					ret);
 				return ret;
 			}
 		}
@@ -817,7 +893,7 @@ static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 
 		temp_cap[temp_cap_index].num_caps++;
 	} else {
-		LOG_WRN("No more space. Increase CODEC_CAPAB_COUNT_MAX");
+		LOG_WRN("No more space. Increase CONFIG_CODEC_CAP_COUNT_MAX");
 	}
 }
 
@@ -1017,7 +1093,8 @@ static void check_and_update_pd_in_group(struct stream_index idx, uint32_t new_p
 			ret = update_cap_sink_stream_qos(&unicast_servers[idx.lvl1][idx.lvl2][i],
 							 new_pres_dly_us);
 			if (ret && ret != -ESRCH) {
-				LOG_ERR("Presentation delay not set for %s "
+				/* TODO: Fix OCT-3111 and then turn the WRN to ERR */
+				LOG_WRN("Presentation delay not set for %s "
 					"device: %d",
 					unicast_servers[idx.lvl1][idx.lvl2][i].ch_name, ret);
 			}
@@ -1300,8 +1377,9 @@ static void unicast_discovery_complete_cb(struct bt_conn *conn, int err,
 		msg.set_size = 0;
 		msg.sirk = NULL;
 	} else {
-		LOG_DBG("\tErr: %d, set_size: %d, key: %s", err, csis_inst->info.set_size,
-			csis_inst->info.set_sirk);
+		LOG_DBG("\tErr: %d, set_size: %d", err, csis_inst->info.set_size);
+		LOG_HEXDUMP_DBG(csis_inst->info.set_sirk, BT_CSIP_SET_SIRK_SIZE, "\tSIRK:");
+
 		unicast_servers[idx.lvl1][idx.lvl2][idx.lvl3].member = member;
 		msg.set_size = csis_inst->info.set_size;
 		msg.sirk = csis_inst->info.set_sirk;
@@ -1320,6 +1398,8 @@ static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 {
 	int ret;
 	struct stream_index idx;
+
+	k_mutex_unlock(&mtx_cap_procedure_proceed);
 
 	if (err) {
 		LOG_WRN("Failed start_complete for conn: %p, err: %d", (void *)conn, err);
@@ -1698,20 +1778,11 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
-	int device_iterator = 0;
-	int stream_iterator = 0;
 
 	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
 		LOG_ERR("Trying to enable CIG %d out of %d", cig_index, CONFIG_BT_ISO_MAX_CIG);
 		return -EINVAL;
 	}
-
-	struct bt_bap_unicast_group_stream_pair_param
-		pair_params[ARRAY_SIZE(unicast_servers[cig_index][0])];
-	/* 2 streams (one sink and one source stream) for each unicast_server */
-	struct bt_bap_unicast_group_stream_param
-		group_stream_params[(ARRAY_SIZE(unicast_servers[cig_index][0]) * 2)];
-	struct bt_bap_unicast_group_param group_param;
 
 	if (initialized) {
 		LOG_WRN("Already initialized");
@@ -1746,54 +1817,6 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		bt_le_audio_tx_init();
-	}
-
-	for (int i = 0; i < ARRAY_SIZE(group_stream_params); i++) {
-		/* Every other stream should be sink or source */
-		if ((i % 2) == 0) {
-			group_stream_params[i].qos = &lc3_preset_max.qos;
-			group_stream_params[i].stream =
-				&unicast_servers[cig_index][0][device_iterator]
-					 .cap_sink_stream.bap_stream;
-		} else {
-			group_stream_params[i].qos = &lc3_preset_max.qos;
-			group_stream_params[i].stream =
-				&unicast_servers[cig_index][0][device_iterator]
-					 .cap_source_stream.bap_stream;
-			device_iterator++;
-		}
-	}
-
-	for (int i = 0; i < ARRAY_SIZE(pair_params); i++) {
-		if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
-			pair_params[i].tx_param = &group_stream_params[stream_iterator];
-		} else {
-			pair_params[i].tx_param = NULL;
-		}
-		stream_iterator++;
-
-		if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
-			pair_params[i].rx_param = &group_stream_params[stream_iterator];
-		} else {
-			pair_params[i].rx_param = NULL;
-		}
-
-		stream_iterator++;
-	}
-
-	group_param.params = pair_params;
-	group_param.params_count = ARRAY_SIZE(pair_params);
-
-	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
-		group_param.packing = BT_ISO_PACKING_INTERLEAVED;
-	} else {
-		group_param.packing = BT_ISO_PACKING_SEQUENTIAL;
-	}
-
-	ret = bt_bap_unicast_group_create(&group_param, &unicast_group);
-	if (ret) {
-		LOG_ERR("Failed to create unicast group: %d", ret);
-		return ret;
 	}
 
 	initialized = true;
