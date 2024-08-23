@@ -798,6 +798,14 @@ Other libraries
 ---------------
 
 * Added a compression/decompression library with support for the LZMA decompression.
+* :ref:`lib_date_time` library:
+
+  * Fixed a bug that caused date-time updates to not be rescheduled under certain circumstances.
+
+  * Added:
+
+    * A retry feature that reattempts failed date-time updates up to a certain number of consecutive times.
+    * The Kconfig options :kconfig:option:`CONFIG_DATE_TIME_RETRY_COUNT` to control whether and how many consecutive date-time update retries may be performed, and :kconfig:option:`CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS` to control how quickly date-time update retries occur.
 
 Security libraries
 ------------------
