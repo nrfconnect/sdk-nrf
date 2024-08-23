@@ -13,6 +13,7 @@
 #include "dult_battery.h"
 #include "dult_bt_anos.h"
 #include "dult_id.h"
+#include "dult_motion_detector.h"
 #include "dult_near_owner_state.h"
 #include "dult_sound.h"
 #include "dult_user.h"
@@ -95,6 +96,16 @@ int dult_enable(const struct dult_user *user)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_DULT_MOTION_DETECTOR) &&
+	    (user->accessory_capabilities &
+	     BIT(DULT_ACCESSORY_CAPABILITY_MOTION_DETECTOR_UT_BIT_POS))) {
+		err = dult_motion_detector_enable();
+		if (err) {
+			LOG_ERR("dult_motion_detector_enable returned an error: %d", err);
+			return err;
+		}
+	}
+
 	err = dult_bt_anos_enable();
 	if (err) {
 		LOG_ERR("dult_bt_anos_enable returned an error: %d", err);
@@ -149,6 +160,16 @@ int dult_reset(const struct dult_user *user)
 	if (err) {
 		LOG_ERR("dult_bt_anos_reset returned an error: %d", err);
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_DULT_MOTION_DETECTOR) &&
+	    (user->accessory_capabilities &
+	     BIT(DULT_ACCESSORY_CAPABILITY_MOTION_DETECTOR_UT_BIT_POS))) {
+		err = dult_motion_detector_reset();
+		if (err) {
+			LOG_ERR("dult_motion_detector_reset returned an error: %d", err);
+			return err;
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_DULT_BATTERY)) {

@@ -9,6 +9,7 @@
 #include <errno.h>
 
 #include "dult_bt_anos.h"
+#include "dult_motion_detector.h"
 #include "dult_user.h"
 
 #include <zephyr/logging/log.h>
@@ -78,6 +79,12 @@ int dult_sound_state_update(const struct dult_user *user,
 	dult_bt_anos_sound_state_change_notify(param->active,
 					       param->src == DULT_SOUND_SRC_BT_GATT);
 
+	if (IS_ENABLED(CONFIG_DULT_MOTION_DETECTOR)) {
+		dult_motion_detector_sound_state_change_notify(
+						param->active,
+						param->src == DULT_SOUND_SRC_MOTION_DETECTOR);
+	}
+
 	return 0;
 }
 
@@ -107,6 +114,25 @@ const static struct dult_bt_anos_sound_cb anos_sound_cb = {
 	.sound_stop = anos_sound_stop,
 };
 
+static void motion_detector_sound_start(void)
+{
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DULT_MOTION_DETECTOR));
+
+	if (sound_active) {
+		dult_motion_detector_sound_state_change_notify(sound_active, false);
+		return;
+	}
+
+	__ASSERT(sound_cb && sound_cb->sound_start,
+		 "DULT Sound: start callback is not populated");
+
+	sound_cb->sound_start(DULT_SOUND_SRC_MOTION_DETECTOR);
+}
+
+const static struct dult_motion_detector_sound_cb motion_detector_sound_cb = {
+	.sound_start = motion_detector_sound_start,
+};
+
 int dult_sound_enable(void)
 {
 	static bool bt_anos_sound_cb_registered;
@@ -114,6 +140,15 @@ int dult_sound_enable(void)
 	if (!bt_anos_sound_cb_registered) {
 		dult_bt_anos_sound_cb_register(&anos_sound_cb);
 		bt_anos_sound_cb_registered = true;
+	}
+
+	if (IS_ENABLED(CONFIG_DULT_MOTION_DETECTOR)) {
+		static bool motion_detector_sound_cb_registered;
+
+		if (!motion_detector_sound_cb_registered) {
+			dult_motion_detector_sound_cb_register(&motion_detector_sound_cb);
+			motion_detector_sound_cb_registered = true;
+		}
 	}
 
 	if (is_enabled) {

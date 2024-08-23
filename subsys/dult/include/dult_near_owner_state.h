@@ -28,6 +28,26 @@ extern "C" {
  */
 enum dult_near_owner_state_mode dult_near_owner_state_get(void);
 
+/** @brief DULT near owner state callback structure. */
+struct dult_near_owner_state_cb {
+	/** @brief DULT near owner state changed.
+	 *
+	 *  This callback is called to notify that the near owner state has been changed.
+	 *
+	 *  @param mode Mode of the current DULT near owner state.
+	 */
+	void (*state_changed)(enum dult_near_owner_state_mode mode);
+
+	/** Internally used field for list handling. */
+	sys_snode_t node;
+};
+
+/** @brief Register DULT near owner state callback structure.
+ *
+ *  @param cb Near owner state callback structure.
+ */
+void dult_near_owner_state_cb_register(struct dult_near_owner_state_cb *cb);
+
 /** @brief Reset DULT near owner state.
  *
  *  Resets DULT near owner state to boot value which is equal to

@@ -182,13 +182,20 @@ int dult_id_read_state_cb_register(const struct dult_user *user,
  */
 int dult_id_read_state_enter(const struct dult_user *user);
 
-/** Minimum duration in milliseconds for the DULT sound action. */
-#define DULT_SOUND_DURATION_MIN_MS (5000U)
+/** Minimum duration in milliseconds for the DULT sound action originating from the Bluetooth
+ *  accessory non-owner service (see @ref DULT_SOUND_SRC_BT_GATT).
+ */
+#define DULT_SOUND_DURATION_BT_GATT_MIN_MS (5000U)
 
 /** DULT sound source types. */
 enum dult_sound_src {
 	/** Sound source type originating from the Bluetooth accessory non-owner service. */
 	DULT_SOUND_SRC_BT_GATT,
+
+	/** Sound source type originating from the Motion detector.
+	 *  Used only when the @kconfig{CONFIG_DULT_MOTION_DETECTOR} is enabled.
+	 */
+	DULT_SOUND_SRC_MOTION_DETECTOR,
 
 	/** External source type originating from the unknown location to the DULT module. */
 	DULT_SOUND_SRC_EXTERNAL,
@@ -204,7 +211,8 @@ struct dult_sound_cb {
 	 *  structure), it then calls the @ref dult_sound_state_update API.
 	 *
 	 *  @param src	Sound source type. Only the DULT internal sources are
-	 *              used in this callback: @ref DULT_SOUND_SRC_BT_GATT.
+	 *              used in this callback: @ref DULT_SOUND_SRC_BT_GATT,
+	 *              @ref DULT_SOUND_SRC_MOTION_DETECTOR.
 	 */
 	void (*sound_start)(enum dult_sound_src src);
 
@@ -215,8 +223,9 @@ struct dult_sound_cb {
 	 *  response to this request (as described by the @ref dult_sound_state_param
 	 *  structure), it then calls the @ref dult_sound_state_update API.
 	 *
-	 *  @param src	Sound source type. Only the DULT internal sources are
-	 *              used in this callback: @ref DULT_SOUND_SRC_BT_GATT.
+	 *  @param src	Sound source type. Only the DULT internal source originating
+	 *		from the Bluetooth accessory non-owner service
+	 *		(@ref DULT_SOUND_SRC_BT_GATT) is used in this callback.
 	 */
 	void (*sound_stop)(enum dult_sound_src src);
 };
@@ -278,6 +287,63 @@ struct dult_sound_state_param {
  */
 int dult_sound_state_update(const struct dult_user *user,
 			    const struct dult_sound_state_param *param);
+
+/** @brief Motion detector callback structure.
+ *
+ *  Used only when the @kconfig{CONFIG_DULT_MOTION_DETECTOR} Kconfig option is enabled.
+ */
+struct dult_motion_detector_cb {
+	/** @brief Request the user to start the motion detector.
+	 *
+	 *  This callback is called to start the motion detector
+	 *  activity. From now on, the motion detector events are polled
+	 *  periodically with the @ref period_expired API.
+	 *  The motion detector activity stops when the
+	 *  @ref stop is called.
+	 */
+	void (*start)(void);
+
+	/** @brief Notify the user that the motion detector period has expired.
+	 *
+	 *  This callback is called at the end of each
+	 *  motion detector period. The @ref start function
+	 *  indicates the beginning of the first motion detector period.
+	 *  The next period is started as soon as the previous period expires.
+	 *  The user should notify the DULT module if motion was detected
+	 *  in the previous period. The return value of this callback
+	 *  is used to pass this information.
+	 *
+	 *  @return true to indicate detected motion in the last period,
+	 *  otherwise false.
+	 */
+	bool (*period_expired)(void);
+
+	/** @brief Notify the user that the motion detector can be stopped.
+	 *
+	 *  This callback is called to notify the user that the motion
+	 *  detector is no longer used by the DULT module. It concludes
+	 *  the motion detector activity that was started by the
+	 *  @ref start callback.
+	 */
+	void (*stop)(void);
+};
+
+/** @brief Register motion detector callbacks.
+ *
+ *  This function registers callbacks to handle motion detector activities defined
+ *  in the Motion detector feature from the DULT specification. This API can only
+ *  be used when the @kconfig{CONFIG_DULT_MOTION_DETECTOR} Kconfig option is
+ *  enabled. If this configuration is active, this function must be called after
+ *  registering the DULT user with @ref dult_user_register and before enabling
+ *  DULT with @ref dult_enable function.
+ *
+ *  @param user	User structure used to authenticate the user.
+ *  @param cb Motion detector callback structure.
+ *
+ *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int dult_motion_detector_cb_register(const struct dult_user *user,
+				     const struct dult_motion_detector_cb *cb);
 
 /** Modes of the DULT near-owner state. */
 enum dult_near_owner_state_mode {
