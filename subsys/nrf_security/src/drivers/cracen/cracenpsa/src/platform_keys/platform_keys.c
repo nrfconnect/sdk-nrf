@@ -9,6 +9,8 @@
 #include "../common.h"
 #include "platform_keys.h"
 #include <psa/nrf_platform_key_ids.h>
+#include <sdfw/lcs.h>
+#include <sdfw/lcs_helpers.h>
 #include <stdint.h>
 #include <psa/crypto.h>
 #include <zephyr/devicetree.h>
@@ -279,17 +281,42 @@ static key_type find_key(uint32_t id, platform_key *key)
 /**
  * @brief Checks whether key usage from a certain domain can access key.
  *
+ * @param[in] domain_id     Originator domain of the key access request.
+ * @param[in] key_id        Key id with domain in N5-N4.
+ *
  * @return psa_status_t
  */
 static psa_status_t verify_access(uint32_t domain_id, uint32_t key_id)
 {
 	switch (PLATFORM_KEY_GET_ACCESS(key_id)) {
 	case ACCESS_INTERNAL:
-		/* Key can be accessed by secure domain only. */
+		/* These keys can be accessed by secure domain. */
 		if (domain_id == DOMAIN_SECURE) {
 			return PSA_SUCCESS;
 		}
-		return PSA_ERROR_NOT_PERMITTED;
+
+		/* Check if access to the target domain key is allowed depending on LCS */
+		enum lcs_domain_id domain_lcs = 0;
+		const int key_domain = PLATFORM_KEY_GET_DOMAIN(key_id);
+
+		if (key_domain == 0) {
+			/* OEM keys can be installed by any domain */
+			return PSA_SUCCESS;
+		}
+
+		int status = nrf_domain_to_lcs_domain(key_domain, &domain_lcs);
+
+		if (status != 0) {
+			return PSA_ERROR_DOES_NOT_EXIST;
+		}
+
+		switch (lcs_get(domain_lcs)) {
+		case LCS_EMPTY:
+		case LCS_ROT:
+			return PSA_SUCCESS;
+		default:
+			return PSA_ERROR_NOT_PERMITTED;
+		}
 	case ACCESS_LOCAL:
 		/* Key can be accessed by both secure domain and the domain it belongs to. */
 		if (domain_id == DOMAIN_SECURE) {
