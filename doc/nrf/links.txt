@@ -50,7 +50,6 @@
 .. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
 
 .. _`MCUboot Kconfig option documentation`: https://github.com/nrfconnect/sdk-nrf/blob/main/modules/mcuboot/boot/zephyr/Kconfig#L27C11-L27C12
-.. _`Kconfig search results`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
 
 .. _`sdk-mbedtls`: https://github.com/nrfconnect/sdk-mbedtls
 .. _`Arm Mbed TLS project`: https://github.com/ARMmbed/mbedtls
@@ -144,7 +143,6 @@
 .. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
-.. _`Matter factory data Kconfig options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CHIP_FACTORY_DATA
 
 .. _`CoreMark GitHub`: https://github.com/eembc/coremark
 
@@ -225,56 +223,6 @@
 
 .. ### Source: developer.nordicsemi.com
 
-.. _`nRF Connect SDK v1.4.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.4.0/nrf/index.html
-.. _`nRF Connect SDK v1.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.3.0/nrf/index.html
-.. _`nRF Connect SDK v1.2.1 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.1/nrf/index.html
-.. _`nRF Connect SDK v1.2.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/index.html
-.. _`nRF Connect SDK v1.1.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.1.0/nrf/index.html
-.. _`nRF Connect SDK v1.0.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.0.0/nrf/index.html
-.. _`nRF Connect SDK v0.4.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.4.0/nrf/index.html
-.. _`nRF Connect SDK v0.3.0 documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/0.3.0/nrf/index.html
-.. _`nRF Connect SDK latest documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
-
-.. _`known issues page on the main branch`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html
-.. _`known issues for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-7-0
-.. _`known issues for nRF Connect SDK v2.6.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-6-1
-.. _`known issues for nRF Connect SDK v2.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-6-0
-.. _`known issues for nRF Connect SDK v2.5.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-3
-.. _`known issues for nRF Connect SDK v2.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-2
-.. _`known issues for nRF Connect SDK v2.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-1
-.. _`known issues for nRF Connect SDK v2.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-5-0
-.. _`known issues for nRF Connect SDK v2.4.4`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-4-4
-.. _`known issues for nRF Connect SDK v2.4.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-3
-.. _`known issues for nRF Connect SDK v2.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-2
-.. _`known issues for nRF Connect SDK v2.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-1
-.. _`known issues for nRF Connect SDK v2.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-4-0
-.. _`known issues for nRF Connect SDK v2.3.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-3-0
-.. _`known issues for nRF Connect SDK v2.2.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-2-0
-.. _`known issues for nRF Connect SDK v2.1.4`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-4
-.. _`known issues for nRF Connect SDK v2.1.3`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-3
-.. _`known issues for nRF Connect SDK v2.1.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-2
-.. _`known issues for nRF Connect SDK v2.1.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-1
-.. _`known issues for nRF Connect SDK v2.1.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-1-0
-.. _`known issues for nRF Connect SDK v2.0.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-0-2
-.. _`known issues for nRF Connect SDK v2.0.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-0-1
-.. _`known issues for nRF Connect SDK v2.0.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-0-0
-.. _`known issues for nRF Connect SDK v1.9.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-9-2
-.. _`known issues for nRF Connect SDK v1.9.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-9-1
-.. _`known issues for nRF Connect SDK v1.9.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-9-0
-.. _`known issues for nRF Connect SDK v1.8.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-8-0
-.. _`known issues for nRF Connect SDK v1.7.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-7-1
-.. _`known issues for nRF Connect SDK v1.7.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-7-0
-.. _`known issues for nRF Connect SDK v1.6.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-6-1
-.. _`known issues for nRF Connect SDK v1.6.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-6-0
-.. _`known issues for nRF Connect SDK v1.5.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-5-2
-.. _`known issues for nRF Connect SDK v1.5.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-5-1
-.. _`known issues for nRF Connect SDK v1.5.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-5-0
-.. _`known issues for nRF Connect SDK v1.4.2`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-2
-.. _`known issues for nRF Connect SDK v1.4.1`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-1
-.. _`known issues for nRF Connect SDK v1.4.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v1-4-0
-
-.. _`connecting to nRF Cloud`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/networking/nrf_cloud.html#connecting
-
 .. _`API documentation`:
 .. _`external ZBOSS development guide and API documentation`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.4.0/zigbee_devguide.html
 .. _`Stack commissioning start sequence`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.4.0/using_zigbee__z_c_l.html#stack_start_initiation
@@ -318,6 +266,179 @@
 .. _`ZB_BDB_NETWORK_FORMATION`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.4.0/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ac723cfd38f78c08a673ec3664539027c
 .. _`ZB_BDB_FINDING_N_BINDING`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.4.0/group__zboss__bdb__comm__start.html#gga9c44bbce9f6f6b19b623837914959c02ad9bcb56a6668b6ba6f37edc73a796b58
 .. _`zb_bdb_finding_binding_initiator()`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/zboss/3.11.4.0/group__zboss__bdb__comm__fb.html#gae6fd60a050559ef0aa3c3e5ec32bc515
+
+
+.. ### Source: www.nordicsemi.com
+
+.. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
+
+.. _`Nordic nRF9161 DK`:
+.. _`nRF9161 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK
+.. _`nRF9161 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#infotabs
+.. _`nRF9161 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#B73EF1B2F2A34F50A40DC90199A1DAE2
+
+.. _`Nordic nRF9160 DK`:
+.. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
+.. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
+.. _`nRF9160 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download?lang=en#B460A4E1F91A40B99C6432AD8CEC767C
+.. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
+
+.. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
+.. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
+.. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
+.. _`nRF9131 product website`: https://www.nordicsemi.com/Products/nRF9131
+
+.. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
+.. _`nRF9161 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9161/Download#infotabs
+
+.. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
+.. _`nRF9161 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9161-Global-and-regulatory?lang=en#infotabs
+.. _`nRF91 Series certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications?lang=en#infotabs
+.. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
+.. _`Cellular IoT unique features`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Unique-Features?lang=en#infotabs
+.. _`Cellular IoT SiPs`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Products?lang=en#infotabs
+
+.. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
+.. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
+
+.. _`nRF52833 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52833-DK/Download#infotabs
+
+.. _`nRF52 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52-DK/Download#infotabs
+
+.. _`nRF5340 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/Download?lang=en#infotabs
+.. _`nRF5340 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/
+.. _`nRF70 Series product page`: https://www.nordicsemi.com/Products/WiFi/Products#infotabs
+.. _`nRF7002 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF7002-DK/Download?lang=en#infotabs
+.. _`nRF7002 EB get started`: https://www.nordicsemi.com/Products/Development-hardware/nRF7002-Expansion-Board/Get-started?lang=en#infotabs
+
+.. _`Nordic Thingy:53`:
+.. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
+.. _`Nordic Thingy:53 Downloads`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53/Downloads#infotabs
+
+.. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
+.. _`Nordic Thingy:91`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
+.. _`Thingy:91 product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91
+.. _`Thingy:91 Downloads`:
+.. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
+
+.. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
+.. _`nRF21540 DB product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF21540-DB
+
+.. _`nPM1300 product website`: https://www.nordicsemi.com/products/npm1300
+.. _`nPM1300 EK product page`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK
+.. _`nPM1300 EK get started`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK/Get-started?lang=en#infotabs
+
+.. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
+
+.. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
+
+.. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
+
+.. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
+
+.. _`Nordic Semiconductor Wi-Fi products`: https://www.nordicsemi.com/Products/WiFi
+
+.. _`Nordic third-party modules`: https://www.nordicsemi.com/Nordic-Partners/3rd-party-modules
+
+.. _`contact our sales`: https://www.nordicsemi.com/About-us/Contact-Us#Sales_related_questions
+
+.. #### Source: www.nordicsemi.com/Events/
+
+.. _`nRF Connect SDK v2.7.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v270
+.. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
+.. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
+.. _`nRF Connect SDK v2.4.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v240
+.. _`nRF Connect SDK v2.3.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v23?utm_campaign=2023%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3
+.. _`nRF Connect SDK v2.2.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v220?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2
+.. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210?utm_campaign=2022%20Webinars&utm_source=Documentation&utm_medium=Link%20to%20webinar%20%7C%20from%20documentation&utm_content=Link%20to%20webinar%20%7C%20from%20documentation
+.. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
+.. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
+.. _`Adding Device Firmware Update (DFU/FOTA) Support in nRF Connect SDK`: https://www.nordicsemi.com/Events/2024/Webinar-Adding-Device-Firmware-Update-DFU-FOTA-Support-in-nRF-Connect-SDK
+.. #### Source: www.nordicsemi.com/*/Development-Tools
+
+.. _`nRF Command Line Tools`:
+.. _`nRF5x Command Line Tools`:
+.. _`nRF5x Command Line Tools Linux 32`:
+.. _`nRF5x Command Line Tools Linux 64`:
+.. _`nRF5x Command Line Tools Windows 32`:
+.. _`nRF5x Command Line Tools Windows 64`:
+.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools
+
+.. _`nRF Util development tool`: https://www.nordicsemi.com/Products/Development-tools/nrf-util
+
+.. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
+.. _`Download nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs
+
+.. _`nRF Connect for Mobile`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-mobile
+
+.. _`nRF Programmer`:
+.. _`nRF Programmer mobile app`: https://www.nordicsemi.com/Products/Development-tools/nrf-programmer
+
+.. _`nRF Connect Device Manager`: https://www.nordicsemi.com/Products/Development-tools/nrf-connect-device-manager
+
+.. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
+
+.. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
+
+.. _`nRF Edge Impulse mobile app`: https://cm.nordicsemi.com/Products/Development-tools/nrf-edge-impulse
+
+.. ### Source: infocenter.nordicsemi.com
+
+.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
+
+.. ### Source: docs.nordicsemi.com
+
+.. _`Nordic Semiconductor TechDocs`: https://docs.nordicsemi.com
+
+.. _`nRF Connect SDK v1.4.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.4.0/page/nrf/index.html
+.. _`nRF Connect SDK v1.3.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.3.0/page/nrf/index.html
+.. _`nRF Connect SDK v1.2.1 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.2.1/page/nrf/index.html
+.. _`nRF Connect SDK v1.2.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.2.0/page/nrf/index.html
+.. _`nRF Connect SDK v1.1.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.1.0/page/nrf/index.html
+.. _`nRF Connect SDK v1.0.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.0.0/page/nrf/index.html
+.. _`nRF Connect SDK v0.4.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-0.4.0/page/nrf/index.html
+.. _`nRF Connect SDK v0.3.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-0.3.0/page/nrf/index.html
+.. _`nRF Connect SDK latest documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
+
+.. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-7-0
+.. _`known issues for nRF Connect SDK v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-1
+.. _`known issues for nRF Connect SDK v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-0
+.. _`known issues for nRF Connect SDK v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-5-3
+.. _`known issues for nRF Connect SDK v2.5.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-5-2
+.. _`known issues for nRF Connect SDK v2.5.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-5-1
+.. _`known issues for nRF Connect SDK v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-5-0
+.. _`known issues for nRF Connect SDK v2.4.4`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-4-4
+.. _`known issues for nRF Connect SDK v2.4.3`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-4-3
+.. _`known issues for nRF Connect SDK v2.4.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-4-2
+.. _`known issues for nRF Connect SDK v2.4.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-4-1
+.. _`known issues for nRF Connect SDK v2.4.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-4-0
+.. _`known issues for nRF Connect SDK v2.3.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-3-0
+.. _`known issues for nRF Connect SDK v2.2.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-2-0
+.. _`known issues for nRF Connect SDK v2.1.4`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-1-4
+.. _`known issues for nRF Connect SDK v2.1.3`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-1-3
+.. _`known issues for nRF Connect SDK v2.1.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-1-2
+.. _`known issues for nRF Connect SDK v2.1.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-1-1
+.. _`known issues for nRF Connect SDK v2.1.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-1-0
+.. _`known issues for nRF Connect SDK v2.0.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-0-2
+.. _`known issues for nRF Connect SDK v2.0.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-0-1
+.. _`known issues for nRF Connect SDK v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-0-0
+.. _`known issues for nRF Connect SDK v1.9.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-9-2
+.. _`known issues for nRF Connect SDK v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-9-1
+.. _`known issues for nRF Connect SDK v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-9-0
+.. _`known issues for nRF Connect SDK v1.8.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-8-0
+.. _`known issues for nRF Connect SDK v1.7.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-7-1
+.. _`known issues for nRF Connect SDK v1.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-7-0
+.. _`known issues for nRF Connect SDK v1.6.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-6-1
+.. _`known issues for nRF Connect SDK v1.6.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-6-0
+.. _`known issues for nRF Connect SDK v1.5.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-5-2
+.. _`known issues for nRF Connect SDK v1.5.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-5-1
+.. _`known issues for nRF Connect SDK v1.5.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-5-0
+.. _`known issues for nRF Connect SDK v1.4.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-2
+.. _`known issues for nRF Connect SDK v1.4.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-1
+.. _`known issues for nRF Connect SDK v1.4.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-0
+
+.. _`connecting to nRF Cloud`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/networking/nrf_cloud.html#connecting
 
 .. _`TF-M documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_secure_partition_addition.html
@@ -441,131 +562,13 @@
 .. _`Dictionary-based Logging`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#dictionary-based_logging
 .. _`Run-time Filtering`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#runtime_filtering
 
-.. _`nRF9160: GPS with SUPL client library`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.2.0/nrf/samples/nrf9160/gps/README.html
+.. _`nRF9160: GPS with SUPL client library`: https://docs.nordicsemi.com/bundle/ncs-1.2.0/page/nrf/samples/nrf9160/gps/README.html
 
 .. _`previous method to define a board (hardware model)`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/zephyr/hardware/porting/board_porting.html
 
-.. ### Source: www.nordicsemi.com
+.. _`Matter factory data Kconfig options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CHIP_FACTORY_DATA
 
-.. _`Nordic Semiconductor website`: https://www.nordicsemi.com/
-
-.. _`Nordic nRF9161 DK`:
-.. _`nRF9161 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK
-.. _`nRF9161 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#infotabs
-.. _`nRF9161 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9161-DK/Download?lang=en#B73EF1B2F2A34F50A40DC90199A1DAE2
-
-.. _`Nordic nRF9160 DK`:
-.. _`nRF9160 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nrf9160-dk/
-.. _`nRF9160 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download#infotabs
-.. _`nRF9160 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download?lang=en#B460A4E1F91A40B99C6432AD8CEC767C
-.. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
-
-.. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
-.. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
-.. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
-.. _`nRF9131 product website`: https://www.nordicsemi.com/Products/nRF9131
-
-.. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
-.. _`nRF9161 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9161/Download#infotabs
-
-.. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
-.. _`nRF9161 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9161-Global-and-regulatory?lang=en#infotabs
-.. _`nRF91 Series certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications?lang=en#infotabs
-.. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
-.. _`Cellular IoT unique features`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Unique-Features?lang=en#infotabs
-.. _`Cellular IoT SiPs`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Products?lang=en#infotabs
-
-.. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
-.. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
-
-.. _`nRF52833 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52833-DK/Download#infotabs
-
-.. _`nRF52 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52-DK/Download#infotabs
-
-.. _`nRF5340 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/Download?lang=en#infotabs
-.. _`nRF5340 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF5340-DK/
-.. _`nRF70 Series product page`: https://www.nordicsemi.com/Products/WiFi/Products#infotabs
-.. _`nRF7002 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF7002-DK/Download?lang=en#infotabs
-.. _`nRF7002 EB get started`: https://www.nordicsemi.com/Products/Development-hardware/nRF7002-Expansion-Board/Get-started?lang=en#infotabs
-
-.. _`Nordic Thingy:53`:
-.. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
-.. _`Nordic Thingy:53 Downloads`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53/Downloads#infotabs
-
-.. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
-.. _`Nordic Thingy:91`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
-.. _`Thingy:91 product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91
-.. _`Thingy:91 Downloads`:
-.. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
-
-.. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
-.. _`nRF21540 DB product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF21540-DB
-
-.. _`nPM1300 product website`: https://www.nordicsemi.com/products/npm1300
-.. _`nPM1300 EK product page`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK
-.. _`nPM1300 EK get started`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK/Get-started?lang=en#infotabs
-
-.. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
-
-.. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
-
-.. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
-
-.. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
-
-.. _`Nordic Semiconductor Wi-Fi products`: https://www.nordicsemi.com/Products/WiFi
-
-.. _`Nordic third-party modules`: https://www.nordicsemi.com/Nordic-Partners/3rd-party-modules
-
-.. _`contact our sales`: https://www.nordicsemi.com/About-us/Contact-Us#Sales_related_questions
-
-.. #### Source: www.nordicsemi.com/Events/
-
-.. _`nRF Connect SDK v2.7.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v270
-.. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
-.. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
-.. _`nRF Connect SDK v2.4.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v240
-.. _`nRF Connect SDK v2.3.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v23?utm_campaign=2023%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3
-.. _`nRF Connect SDK v2.2.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v220?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2
-.. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210?utm_campaign=2022%20Webinars&utm_source=Documentation&utm_medium=Link%20to%20webinar%20%7C%20from%20documentation&utm_content=Link%20to%20webinar%20%7C%20from%20documentation
-.. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
-.. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
-.. _Adding Device Firmware Update (DFU/FOTA) Support in nRF Connect SDK: https://www.nordicsemi.com/Events/2024/Webinar-Adding-Device-Firmware-Update-DFU-FOTA-Support-in-nRF-Connect-SDK
-.. #### Source: www.nordicsemi.com/*/Development-Tools
-
-.. _`nRF Command Line Tools`:
-.. _`nRF5x Command Line Tools`:
-.. _`nRF5x Command Line Tools Linux 32`:
-.. _`nRF5x Command Line Tools Linux 64`:
-.. _`nRF5x Command Line Tools Windows 32`:
-.. _`nRF5x Command Line Tools Windows 64`:
-.. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools
-
-.. _`nRF Util development tool`: https://www.nordicsemi.com/Products/Development-tools/nrf-util
-
-.. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
-.. _`Download nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs
-
-.. _`nRF Connect for Mobile`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-mobile
-
-.. _`nRF Programmer`:
-.. _`nRF Programmer mobile app`: https://www.nordicsemi.com/Products/Development-tools/nrf-programmer
-
-.. _`nRF Connect Device Manager`: https://www.nordicsemi.com/Products/Development-tools/nrf-connect-device-manager
-
-.. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
-
-.. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
-
-.. _`nRF Edge Impulse mobile app`: https://cm.nordicsemi.com/Products/Development-tools/nrf-edge-impulse
-
-.. ### Source: infocenter.nordicsemi.com
-
-.. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
-
-.. ### Source: docs.nordicsemi.com
-
-.. _`Nordic Semiconductor TechDocs`: https://docs.nordicsemi.com
+.. _`Kconfig search results`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
 
 .. _`nRF Asset Tracker project`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/index.html
 .. _`Getting started guide for nRF Asset Tracker for AWS`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/aws/GettingStarted/Index.html
