@@ -1,5 +1,22 @@
 #include <autoconf.h>
 
+# In nRF54L15 we place the TF-M non-secure storage partitions after the
+# TF-M non-secure application to avoid splitting the secure/non-secure
+# partitions more than necessary.
+#ifdef CONFIG_SOC_NRF54L15_ENGA_CPUAPP
+nvs_storage:
+  placement:
+    after: [app]
+    before: [end]
+#ifdef CONFIG_PM_PARTITION_REGION_NVS_STORAGE_EXTERNAL
+  region: external_flash
+#else
+  inside: [nonsecure_storage]
+#endif
+  size: CONFIG_PM_PARTITION_SIZE_NVS_STORAGE
+
+
+#else
 nvs_storage:
   placement:
     before: [tfm_storage, end]
@@ -12,3 +29,5 @@ nvs_storage:
   inside: [nonsecure_storage]
 #endif
   size: CONFIG_PM_PARTITION_SIZE_NVS_STORAGE
+
+#endif /* CONFIG_SOC_NRF54L15_ENGA_CPUAPP */
