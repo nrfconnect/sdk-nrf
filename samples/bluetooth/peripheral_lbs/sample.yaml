@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy LED Button service sample
-  name: BLE LED Button service
+  name: Bluetooth LE LED Button service
 tests:
   sample.bluetooth.peripheral_lbs:
     sysbuild: true

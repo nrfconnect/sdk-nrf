@@ -24,7 +24,7 @@ top_table:
       - BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001
 features:
   sidewalk:
-    Sidewalk over BLE: SIDEWALK && SIDEWALK_LINK_MASK_BLE
+    Sidewalk over Bluetooth LE: SIDEWALK && SIDEWALK_LINK_MASK_BLE
     Sidewalk over FSK: SIDEWALK && CONFIG_SIDEWALK_SUBGHZ_SUPPORT
     Sidewalk over LORA: SIDEWALK && CONFIG_SIDEWALK_SUBGHZ_SUPPORT
     Sidewalk - OTA DFU over Bluetooth LE: SIDEWALK && SIDEWALK_DFU_SERVICE_BLE

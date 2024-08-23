@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Gatt client discovery manager sample
-  name: BLE Gatt Discovery
+  name: Bluetooth LE Gatt Discovery
 tests:
   sample.bluetooth.peripheral_gatt_dm:
     sysbuild: true

@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Nordic Status Message service sample
-  name: BLE Nordic Status Message service
+  name: Bluetooth LE Nordic Status Message service
 tests:
   sample.bluetooth.peripheral_nsms:
     sysbuild: true

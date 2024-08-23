@@ -1,5 +1,5 @@
 sample:
-  name: LTE-BLE gateway sample
+  name: LTE-Bluetooth LE gateway sample
 tests:
   sample.cellular.lte_ble_gateway:
     sysbuild: true

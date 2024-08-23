@@ -12,7 +12,7 @@ common:
       - "app_event_manager: e:module_state_event module:main state:READY"
       - "ble_state: Bluetooth initialized"
       - "settings_loader: Settings loaded"
-      - "ble_bond: Selected BLE peers"
+      - "ble_bond: Selected Bluetooth LE peers"
       - "(ble_adv: Advertising started)|(ble_scan: Scan started)"
       - "dfu: Secondary image slot is clean"
 tests:

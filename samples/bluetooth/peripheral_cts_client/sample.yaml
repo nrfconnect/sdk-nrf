@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy CTS client sample
-  name: BLE CTS client sample
+  name: Bluetooth LE CTS client
 tests:
   sample.bluetooth.peripheral_cts_client.build:
     sysbuild: true

@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy central and peripheral heart rate relay sample
-  name: BLE Central and Peripheral HRS
+  name: Bluetooth LE Central and Peripheral HRS
 tests:
   sample.bluetooth.central_and_peripheral_hr.build:
     sysbuild: true

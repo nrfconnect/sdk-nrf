@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy combined BIS and CIS sample
-  name: BLE combined BIS and CIS
+  name: Bluetooth LE combined BIS and CIS
 tests:
   sample.bluetooth.iso_bis_cis:
     sysbuild: true

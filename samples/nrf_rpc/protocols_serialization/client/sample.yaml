@@ -1,6 +1,6 @@
 sample:
   name: Protocols serialization client sample
-  description: Demonstrates serialization of BLE and OpenThread API using nRF RPC
+  description: Demonstrates serialization of Bluetooth LE and OpenThread API using nRF RPC
 tests:
   samples.nrf_rpc.protocols_serialization.client.rpc_ble:
     build_only: true

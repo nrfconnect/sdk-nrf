@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Memfault Diagnostic service sample
-  name: BLE MDS service
+  name: Bluetooth LE MDS service
 tests:
   sample.bluetooth.peripheral_mds:
     sysbuild: true

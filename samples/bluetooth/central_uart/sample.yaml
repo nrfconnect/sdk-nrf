@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy central UART sample
-  name: BLE Central UART
+  name: Bluetooth LE Central UART
 tests:
   sample.bluetooth.central_uart:
     sysbuild: true

@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Bond Management service sample
-  name: BLE Bond Management service
+  name: Bluetooth LE Bond Management service
 tests:
   sample.bluetooth.peripheral_bms:
     sysbuild: true
