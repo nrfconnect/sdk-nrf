@@ -71,6 +71,16 @@ rsource "Kconfig.template.partition_config"
 rsource "Kconfig.template.partition_region"
 endif
 
+if FAT_FILESYSTEM_ELM
+partition=FATFS
+partition-size=0x10000
+rsource "Kconfig.template.partition_config"
+rsource "Kconfig.template.partition_region"
+endif
+
+config PM_PARTITION_FATFS_DISK_NAME
+	string "FATFS Partition disk name"
+	default "SD"
 
 if SETTINGS_FCB || SETTINGS_NVS || SETTINGS_ZMS
 partition=SETTINGS_STORAGE
