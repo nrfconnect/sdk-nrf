@@ -148,6 +148,69 @@ config DULT_USER
 	help
 	  Add DULT user source files.
 
+config DULT_MOTION_DETECTOR
+	bool "Enable DULT Motion detector feature"
+	help
+	  The DULT Motion detector requests the device to ring if the accessory separated
+	  from owner is moving. For more details see
+	  https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-motion-detector.
+
+if DULT_MOTION_DETECTOR
+
+config DULT_MOTION_DETECTOR_TEST_MODE
+	bool "Enable DULT Motion detector test mode"
+	help
+	  The DULT Motion detector test mode allows to configure motion detector parameters
+	  for testing purposes. Those values are defined in the DULT specification and should
+	  not be changed in the production code.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE1
+	int
+	default 10000
+	help
+	  Sampling rate in milliseconds when motion detector is enabled in separated state.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2
+	int
+	default 500
+	help
+	  Motion detector sampling rate in milliseconds when movement is detected in separated
+	  state.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD
+	int "Period in minutes to disable motion detector if accessory is in separated state" if DULT_MOTION_DETECTOR_TEST_MODE
+	default 2 if DULT_MOTION_DETECTOR_TEST_MODE
+	default 360
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN
+	int "Minimum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
+	default 3 if DULT_MOTION_DETECTOR_TEST_MODE
+	default 480
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX
+	int "Maximum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
+	default DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN if DULT_MOTION_DETECTOR_TEST_MODE
+	default 1440
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_ACTIVE_POLL_DURATION
+	int
+	default 20
+	help
+	  Time span in seconds of motion detector active polling with
+	  CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2 rate. After the timeout, the
+	  motion detector is disabled for CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD
+	  period.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_MAX_SOUND_COUNT
+	int
+	default 10
+	help
+	  Maximum number of sound indications to be sent by motion detector before disabling it.
+	  After sending maximum number of sound indications, the motion detector is disabled for
+	  CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD period."
+
+endif # DULT_MOTION_DETECTOR
+
 module = DULT
 module-str = DULT
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
