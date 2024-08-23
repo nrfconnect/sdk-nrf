@@ -257,21 +257,31 @@ int fp_fmdn_ring_state_param_set(
 	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_DULT)) {
 		int err;
 		struct dult_sound_state_param dult_param = {0};
-		const uint16_t dult_timeout_min = BT_FAST_PAIR_FMDN_RING_TIMEOUT_MS_TO_DS(
-			DULT_SOUND_DURATION_MIN_MS);
+		const uint16_t dult_gatt_timeout_min = BT_FAST_PAIR_FMDN_RING_TIMEOUT_MS_TO_DS(
+			DULT_SOUND_DURATION_BT_GATT_MIN_MS);
 
 		if ((src == BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT) &&
 		    (param->trigger == BT_FAST_PAIR_FMDN_RING_TRIGGER_STARTED) &&
-		    (param->timeout < dult_timeout_min)) {
+		    (param->timeout < dult_gatt_timeout_min)) {
 			LOG_ERR("FMDN Ring: timeout too low for DULT GATT source: "
 				"on the ringing start operation: %d < %d [ds]",
-				param->timeout, dult_timeout_min);
+				param->timeout, dult_gatt_timeout_min);
 
 			return -EINVAL;
 		}
 
-		dult_param.src = (src == BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT) ?
-			DULT_SOUND_SRC_BT_GATT : DULT_SOUND_SRC_EXTERNAL;
+		switch (src) {
+		case BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT:
+			dult_param.src = DULT_SOUND_SRC_BT_GATT;
+			break;
+		case BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR:
+			dult_param.src = DULT_SOUND_SRC_MOTION_DETECTOR;
+			break;
+		default:
+			dult_param.src = DULT_SOUND_SRC_EXTERNAL;
+			break;
+		}
+
 		dult_param.active =
 			(param->active_comp_bm != BT_FAST_PAIR_FMDN_RING_COMP_BM_NONE);
 
@@ -349,27 +359,48 @@ static void dult_sound_start(enum dult_sound_src src)
 {
 	int err;
 	struct bt_fast_pair_fmdn_ring_req_param dult_ring_req_param = {0};
-	const uint16_t ring_timeout = CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT;
+	enum bt_fast_pair_fmdn_ring_src fmdn_ring_src;
+	uint16_t ring_timeout;
 
 	BUILD_ASSERT(CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT >=
-		     DULT_SOUND_DURATION_MIN_MS);
+		     DULT_SOUND_DURATION_BT_GATT_MIN_MS);
 
-	/* Detecting Unwanted Location Trackers (DULT) specification:
-	 * 3.12.4.1. Play sound:
-	 * The sound maker MUST play sound for a minimum duration of 5 seconds.
-	 *
-	 * Guidelines specific to FMDN to be compliant with DULT spec:
-	 * Guidelines for implementing the Sound_Start opcode:
-	 *  * The command should trigger ringing in all available components.
-	 *  * The maximal supported volume should be used.
-	 */
-	dult_ring_req_param.active_comp_bm = BT_FAST_PAIR_FMDN_RING_COMP_BM_ALL;
-	dult_ring_req_param.timeout = BT_FAST_PAIR_FMDN_RING_TIMEOUT_MS_TO_DS(ring_timeout);
-	dult_ring_req_param.volume = IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_RING_VOLUME) ?
-		BT_FAST_PAIR_FMDN_RING_VOLUME_HIGH : BT_FAST_PAIR_FMDN_RING_VOLUME_DEFAULT;
+	switch (src) {
+	case DULT_SOUND_SRC_BT_GATT:
+		ring_timeout = CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT;
+		fmdn_ring_src = BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT;
+		/* Detecting Unwanted Location Trackers (DULT) specification:
+		 * 3.12.4.1. Play sound:
+		 * The sound maker MUST play sound for a minimum duration of 5 seconds.
+		 *
+		 * Guidelines specific to FMDN to be compliant with DULT spec:
+		 * Guidelines for implementing the Sound_Start opcode:
+		 *  * The command should trigger ringing in all available components.
+		 *  * The maximal supported volume should be used.
+		 */
+		dult_ring_req_param.active_comp_bm = BT_FAST_PAIR_FMDN_RING_COMP_BM_ALL;
+		dult_ring_req_param.timeout = BT_FAST_PAIR_FMDN_RING_TIMEOUT_MS_TO_DS(ring_timeout);
+		dult_ring_req_param.volume = IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_RING_VOLUME) ?
+			BT_FAST_PAIR_FMDN_RING_VOLUME_HIGH : BT_FAST_PAIR_FMDN_RING_VOLUME_DEFAULT;
 
-	err = fp_fmdn_ring_req_handle(BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT,
-				      &dult_ring_req_param);
+		break;
+	case DULT_SOUND_SRC_MOTION_DETECTOR:
+		ring_timeout = CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR;
+		fmdn_ring_src = BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR;
+		/* No specific guidelines at the moment. */
+		dult_ring_req_param.active_comp_bm = BT_FAST_PAIR_FMDN_RING_COMP_BM_ALL;
+		dult_ring_req_param.timeout = BT_FAST_PAIR_FMDN_RING_TIMEOUT_MS_TO_DS(ring_timeout);
+		dult_ring_req_param.volume = IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_RING_VOLUME) ?
+			BT_FAST_PAIR_FMDN_RING_VOLUME_HIGH : BT_FAST_PAIR_FMDN_RING_VOLUME_DEFAULT;
+
+		break;
+	default:
+		__ASSERT(false,
+			 "FMDN Ring: unsupported DULT Sound source on the sound start action");
+		return;
+	}
+
+	err = fp_fmdn_ring_req_handle(fmdn_ring_src, &dult_ring_req_param);
 	__ASSERT(!err,
 		 "FMDN Ring: invalid translation from DULT Sound to FMDN Ring "
 		 "parameters on the sound start action");
@@ -379,6 +410,9 @@ static void dult_sound_stop(enum dult_sound_src src)
 {
 	int err;
 	struct bt_fast_pair_fmdn_ring_req_param dult_ring_req_param = {0};
+
+	__ASSERT(src == DULT_SOUND_SRC_BT_GATT,
+		 "FMDN Ring: unsupported DULT Sound source on the sound stop action");
 
 	dult_ring_req_param.active_comp_bm = BT_FAST_PAIR_FMDN_RING_COMP_BM_NONE;
 
