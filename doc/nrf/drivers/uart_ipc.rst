@@ -23,11 +23,13 @@ A configuration example:
 
 .. code-block:: devicetree
 
-	&uart0 {
-		status = "okay";
-		compatible = "nordic,nrf-ipc-uart";
-		ipc = <&ipc0>;
-		ept-name = "remote shell";
+	/ {
+			uart_ipc: uart_ipc {
+				status = "okay";
+				compatible = "nordic,nrf-ipc-uart";
+				ipc = <&ipc0>;
+				ept-name = "remote shell";
+			};
 	};
 
 The following configuration options are available for this driver:
