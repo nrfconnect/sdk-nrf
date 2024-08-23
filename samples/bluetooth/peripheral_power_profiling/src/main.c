@@ -90,6 +90,9 @@ static const struct bt_data non_connectable_ad_data[] = {
 		      '/', '/', 'w', 'w', 'w', '.',
 		      'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.',
 		      'c', 'o', 'm'),
+};
+
+static const struct bt_data non_connectable_sd_data[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
@@ -100,7 +103,7 @@ static const struct bt_le_adv_param *connectable_ad_params =
 			NULL);
 
 static const struct bt_le_adv_param *non_connectable_ad_params =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_SCANNABLE,
 			NON_CONNECTABLE_ADV_INTERVAL_MIN,
 			NON_CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);
@@ -399,7 +402,9 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		}
 
 		err = bt_le_ext_adv_set_data(adv_set, non_connectable_ad_data,
-					     ARRAY_SIZE(non_connectable_ad_data), NULL, 0);
+					     ARRAY_SIZE(non_connectable_ad_data),
+					     non_connectable_sd_data,
+					     ARRAY_SIZE(non_connectable_sd_data));
 		if (err) {
 			printk("Failed to set data for non-connectable advertising (err %d)\n",
 			       err);
