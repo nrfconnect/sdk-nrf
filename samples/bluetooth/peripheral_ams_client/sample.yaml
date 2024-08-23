@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy AMS client sample
-  name: BLE AMS client sample
+  name: Bluetooth LE AMS client
 tests:
   sample.bluetooth.peripheral_ams_client.build:
     sysbuild: true

@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy multiple advertising sets sample
-  name: BLE multiple advertising sets sample
+  name: Bluetooth LE multiple advertising sets
 tests:
   sample.bluetooth.multiple_adv_sets.build:
     sysbuild: true

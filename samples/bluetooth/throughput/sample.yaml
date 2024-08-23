@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy throughput sample
-  name: BLE throughput
+  name: Bluetooth LE throughput
 tests:
   sample.bluetooth.throughput:
     sysbuild: true

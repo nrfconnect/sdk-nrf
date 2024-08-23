@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy central Human Interface Device sample
-  name: BLE Central HIDS
+  name: Bluetooth LE Central HIDS
 tests:
   sample.bluetooth.central_hids:
     sysbuild: true

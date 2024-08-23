@@ -1,6 +1,6 @@
 sample:
   description: Buetooth Low Energy Event Trigger sample
-  name: BLE Event Trigger
+  name: Bluetooth LE Event Trigger
 tests:
   sample.bluetooth.event_trigger:
     sysbuild: true

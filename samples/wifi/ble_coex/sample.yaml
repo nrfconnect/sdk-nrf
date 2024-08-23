@@ -1,7 +1,6 @@
 sample:
-  description: Wi-Fi BLE coex sample
-    application
-  name: Wi-Fi BLE coex
+  description: Wi-Fi Bluetooth Low Energy coex sample
+  name: Wi-Fi Bluetooth LE coex
 tests:
   sample.nrf7002.ble_coex_sep_ant:
     sysbuild: true

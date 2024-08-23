@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Power Profiling sample
-  name: BLE Power Profiling
+  name: Bluetooth LE Power Profiling
 tests:
   sample.bluetooth.peripheral_power_profiling:
     sysbuild: true

@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy central battery service sample
-  name: BLE Central BAS
+  name: Bluetooth LE Central BAS
 tests:
   sample.bluetooth.central_bas:
     sysbuild: true

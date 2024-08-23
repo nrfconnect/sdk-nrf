@@ -1,6 +1,6 @@
 sample:
-  description: nRF RPC host providing BLE API access
-  name: nRF RPC host for BLE API
+  description: nRF RPC host providing Bluetooth Low Energy API access
+  name: nRF RPC host for Bluetooth LE API
 tests:
   sample.bluetooth.rpc_host:
     sysbuild: true

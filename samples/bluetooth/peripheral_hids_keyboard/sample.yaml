@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Human Interface Device keyboard sample
-  name: BLE HIDS keyboard sample
+  name: Bluetooth LE HIDS keyboard
 tests:
   sample.bluetooth.peripheral_hids_keyboard:
     sysbuild: true
