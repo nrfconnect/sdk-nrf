@@ -12,7 +12,6 @@
 #include <suit_dfu_cache_rw.h>
 #include <suit_plat_mem_util.h>
 
-#ifndef CONFIG_BOARD_NATIVE_POSIX
 static const uint8_t corrupted_cache_header_ok_size_nok[] = {
 	0xBF, /* map(*) */
 	0x75, /* text(21) */
@@ -52,7 +51,6 @@ static const uint8_t corrupted_cache_malformed_zcbor[] = {
 	0x92, 0x83, 0x09, 0x86, 0x70, 0x19, 0x23, /* payload(31) */
 	0xFF,					  /* primitive(*) - end marker */
 	0xFF};					  /* Alignment to erase block size (16 bytes) */
-#endif
 
 static uint8_t uri[] = "http://databucket.com";
 static uint8_t data[] = {0x43, 0x60, 0x02, 0x11, 0x35, 0x85, 0x37, 0x85, 0x76,
@@ -102,7 +100,6 @@ static uint8_t data3[] = {
 	0x2e, 0x09, 0x7d, 0xf0, 0x5c, 0x0c, 0xa9, 0xa5, 0x9a, 0x8a, 0xe0, 0xa3, 0xa8, 0x23, 0xc1,
 	0x41, 0x4e, 0x5e, 0x3f, 0xf7, 0x39, 0xa4, 0xc5, 0x5b, 0xec};
 
-#ifndef CONFIG_BOARD_NATIVE_POSIX
 void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corrupted_cache_size)
 {
 	/* Erase the area, to met the preconditions in the next test. */
@@ -122,7 +119,6 @@ void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corru
 			 corrupted_cache_size);
 	zassert_equal(res, 0, "Mem compare after write failed");
 }
-#endif
 
 void clear_dfu_test_partitions(void *f)
 {
@@ -159,7 +155,6 @@ bool is_cache_partition_1_empty(void)
 
 ZTEST_SUITE(cache_rw_initialization_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
 
-#ifndef CONFIG_BOARD_NATIVE_POSIX
 ZTEST_SUITE(cache_sink_recovery_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
 
 ZTEST(cache_sink_recovery_tests, test_cache_recovery_header_ok_size_nok)
@@ -168,6 +163,8 @@ ZTEST(cache_sink_recovery_tests, test_cache_recovery_header_ok_size_nok)
 
 	setup_dfu_test_corrupted_cache(corrupted_cache_header_ok_size_nok,
 				       sizeof(corrupted_cache_header_ok_size_nok));
+
+	suit_dfu_cache_validate_content();
 
 	zassert_true(is_cache_partition_1_empty(), "Corrupted cache partition was not recovered");
 
@@ -190,10 +187,10 @@ ZTEST(cache_sink_recovery_tests, test_cache_recovery_malformed_zcbor)
 	setup_dfu_test_corrupted_cache(corrupted_cache_malformed_zcbor,
 				       sizeof(corrupted_cache_malformed_zcbor));
 
+	suit_dfu_cache_validate_content();
+
 	zassert_true(is_cache_partition_1_empty(), "Corrupted cache partition was not recovered");
 }
-
-#endif
 
 ZTEST_SUITE(cache_sink_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
 
