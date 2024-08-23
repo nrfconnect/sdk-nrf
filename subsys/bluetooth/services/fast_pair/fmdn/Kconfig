@@ -295,6 +295,11 @@ config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_PLAY_SOUND
 	help
 	  Support for play sound capability is required.
 
+config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_MOTION_DETECTOR_UT
+	bool
+	help
+	  Motion detector unwanted tracking capability support.
+
 config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_ID_LOOKUP_BLE
 	bool
 	default y
@@ -322,6 +327,15 @@ config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION
 	range 0 255
 
 endmenu
+
+config BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
+	bool "Enable DULT Motion detector support in FMDN"
+	select DULT_MOTION_DETECTOR
+	select BT_FAST_PAIR_FMDN_DULT_CAPABILITY_MOTION_DETECTOR_UT
+	help
+	  The DULT Motion detector requests the device to ring if the accessory separated
+	  from owner is moving. For more details see
+	  https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-motion-detector.
 
 endif # BT_FAST_PAIR_FMDN_DULT
 
@@ -367,6 +381,19 @@ config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT
 	  "Ringing using the accessory non-owner service" test in the Fast Pair
 	  Validator app. This Kconfig default value (12 seconds) is the recommended
 	  configuration.
+
+config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR
+	int "Timeout in milliseconds in ringing request from DULT motion detector source"
+	default 1000
+	depends on BT_FAST_PAIR_FMDN_DULT
+	help
+	  The default timeout parameter in milliseconds is used in the start
+	  ringing request that originates from the motion detector DULT source.
+	  The application can override this default parameter and use a different
+	  timeout using the bt_fast_pair_fmdn_ring_state_update API. This Kconfig
+	  value is recommended to be fairly short to allow the motion detector for
+	  detecting multiple motion events inside the 20 seconds active motion
+	  polling interval.
 
 endif # BT_FAST_PAIR_FMDN_RING
 

@@ -30,6 +30,10 @@ if(CONFIG_BT_FAST_PAIR_FMDN_DULT_INTEGRATION)
   target_sources(fmdn PRIVATE dult_integration.c)
 endif()
 
+if(CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR)
+  target_sources(fmdn PRIVATE motion_detector.c)
+endif()
+
 if(CONFIG_BT_FAST_PAIR_FMDN_READ_MODE)
   target_sources(fmdn PRIVATE read_mode.c)
 endif()

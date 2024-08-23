@@ -37,6 +37,13 @@ enum bt_fast_pair_fmdn_ring_src {
 	 *  Used only when the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_DULT} is enabled.
 	 */
 	BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT,
+
+	/** Ringing source type originating from the Motion detector defined in the
+	 *  DULT specification.
+	 *  Used only when the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR}
+	 *  is enabled.
+	 */
+	BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR,
 };
 
 /** Ringing component identifiers. */
@@ -294,6 +301,66 @@ struct bt_fast_pair_fmdn_ring_state_param {
 int bt_fast_pair_fmdn_ring_state_update(
 	enum bt_fast_pair_fmdn_ring_src src,
 	const struct bt_fast_pair_fmdn_ring_state_param *param);
+
+/** @brief Motion detector callback structure.
+ *
+ *  Used only if the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR} Kconfig option
+ *  is enabled.
+ */
+struct bt_fast_pair_fmdn_motion_detector_cb {
+	/** @brief Request the user to start the motion detector.
+	 *
+	 *  This callback is called to start the motion detector
+	 *  activity. From now on, the motion detector events are polled
+	 *  periodically with the @ref period_expired API.
+	 *  The motion detector activity stops when the
+	 *  @ref stop is called.
+	 */
+	void (*start)(void);
+
+	/** @brief Notify the user that the motion detector period has expired.
+	 *
+	 *  This callback is called at the end of each
+	 *  motion detector period. The @ref start function
+	 *  indicates the beginning of the first motion detector period.
+	 *  The next period is started as soon as the previous period expires.
+	 *  The user should notify the FMDN module if motion was detected
+	 *  in the previous period. The return value of this callback
+	 *  is used to pass this information.
+	 *
+	 *  @return true to indicate detected motion in the last period,
+	 *  otherwise false.
+	 */
+	bool (*period_expired)(void);
+
+	/** @brief Notify the user that the motion detector can be stopped.
+	 *
+	 *  This callback is called to notify the user that the motion
+	 *  detector is no longer used by the FMDN module. It concludes
+	 *  the motion detector activity that was started by the
+	 *  @ref start callback.
+	 */
+	void (*stop)(void);
+};
+
+/** @brief Register motion detector callbacks.
+ *
+ *  This function registers callbacks to handle motion detector activities defined
+ *  in the Motion detector feature from the DULT specification. This API can
+ *  only be used when the @kconfig{CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR}
+ *  Kconfig option is enabled. If this configuration is active, this function must
+ *  be called before you enable Fast Pair with the @ref bt_fast_pair_enable function.
+ *  Otherwise, the enable operation fails.
+ *
+ *  You can call this function only in the disabled state of the FMDN module
+ *  (see @ref bt_fast_pair_is_ready function).
+ *
+ *  @param cb Motion detector callback structure.
+ *
+ *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
+ */
+int bt_fast_pair_fmdn_motion_detector_cb_register(
+	const struct bt_fast_pair_fmdn_motion_detector_cb *cb);
 
 /** Unknown battery level. */
 #define BT_FAST_PAIR_FMDN_BATTERY_LEVEL_NONE (0xFF)
