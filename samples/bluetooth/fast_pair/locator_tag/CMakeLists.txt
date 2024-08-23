@@ -47,4 +47,9 @@ target_link_libraries(app PRIVATE app_ui)
 
 add_subdirectory(src/battery)
 target_link_libraries(app PRIVATE app_battery)
+
+if (CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR)
+  add_subdirectory(src/motion_detector)
+  target_link_libraries(app PRIVATE app_motion_detector)
+endif()
 # NORDIC SDK APP END

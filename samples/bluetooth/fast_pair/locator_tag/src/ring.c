@@ -160,6 +160,7 @@ static const char *ring_src_str_get(enum bt_fast_pair_fmdn_ring_src src)
 	static const char * const ring_src_description[] = {
 		[BT_FAST_PAIR_FMDN_RING_SRC_FMDN_BT_GATT] = "Bluetooth GATT FMDN",
 		[BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT] = "Bluetooth GATT DULT",
+		[BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR] = "Motion Detector DULT",
 	};
 
 	__ASSERT((src < ARRAY_SIZE(ring_src_description)) && ring_src_description[src],

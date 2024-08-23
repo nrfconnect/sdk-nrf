@@ -18,6 +18,7 @@
 #include "app_dfu.h"
 #include "app_factory_reset.h"
 #include "app_fp_adv.h"
+#include "app_motion_detector.h"
 #include "app_ring.h"
 #include "app_ui.h"
 
@@ -473,6 +474,14 @@ static int fmdn_prepare(void)
 	if (err) {
 		LOG_ERR("FMDN: bt_fast_pair_fmdn_read_mode_cb_register failed (err %d)", err);
 		return err;
+	}
+
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR)) {
+		err = app_motion_detector_init();
+		if (err) {
+			LOG_ERR("FMDN: app_motion_detector_init failed (err %d)", err);
+			return err;
+		}
 	}
 
 	err = bt_fast_pair_info_cb_register(&fp_info_callbacks);
