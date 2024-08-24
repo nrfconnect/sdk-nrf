@@ -19,7 +19,7 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 #define FILENAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 
 /* nRF91 modem TLS secure socket buffer limited to 2kB including header */
-#define TLS_RANGE_MAX 1024 // TODO can this be more than 1024?
+#define TLS_RANGE_MAX 2048
 
 /* Request whole file; use with HTTP */
 #define HTTP_GET                                                               \
@@ -50,11 +50,10 @@ int http_get_request_send(struct download_client *dlc)
 {
 	int err;
 	int len;
-	size_t range;
 	size_t off = 0;
 	char host[HOSTNAME_SIZE];
 	char file[FILENAME_SIZE];
-	bool tls_use_range;
+	bool tls_force_range;
 
 	__ASSERT_NO_MSG(dlc->host);
 	__ASSERT_NO_MSG(dlc->file);
@@ -71,20 +70,22 @@ int http_get_request_send(struct download_client *dlc)
 		return err;
 	}
 
-	tls_use_range = (dlc->proto == IPPROTO_TLS_1_2 &&
+	/* nRF91 series has a limitation of decoding ~2k of data at once when using TLS */
+	tls_force_range = (dlc->proto == IPPROTO_TLS_1_2 &&
 			!dlc->set_native_tls &&
 			IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
 
-	if (tls_use_range || dlc->config.range_override) {
-		if (tls_use_range && dlc->config.range_override) {
-			range = MIN((TLS_RANGE_MAX - 1), dlc->config.range_override);
-		} else if (dlc->config.range_override) {
-			range = dlc->config.range_override;
-		} else {
-			range = TLS_RANGE_MAX - 1;
+	if (dlc->config.range_override) {
+		if (tls_force_range && dlc->config.range_override > (TLS_RANGE_MAX - 1)) {
+			LOG_WRN("Range override > TLS max range, setting to TLS max range");
+			dlc->config.range_override = (TLS_RANGE_MAX - 1);
 		}
+	} else if (tls_force_range) {
+		dlc->config.range_override = TLS_RANGE_MAX - 1;
+	}
 
-		off = dlc->progress + range;
+	if (dlc->config.range_override) {
+		off = dlc->progress + dlc->config.range_override;
 
 		if (dlc->file_size && (off > dlc->file_size - 1)) {
 			/* Don't request bytes past the end of file */
