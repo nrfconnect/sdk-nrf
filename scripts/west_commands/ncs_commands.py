@@ -100,14 +100,14 @@ def print_likely_merged(downstream_repo: nwh.Repository,
                 '(revert these if appropriate):', color=log.WRN_COLOR)
         for downstream_commit, upstream_commits in likely_merged.items():
             if len(upstream_commits) == 1:
-                log.inf(f'- {downstream_commit.oid} {commit_title(downstream_commit)}')
+                log.inf(f'- {downstream_commit.id} {commit_title(downstream_commit)}')
                 log.inf(f'  Similar upstream title:\n'
-                        f'  {upstream_commits[0].oid} {commit_title(upstream_commits[0])}')
+                        f'  {upstream_commits[0].id} {commit_title(upstream_commits[0])}')
             else:
-                log.inf(f'- {downstream_commit.oid} {commit_title(downstream_commit)}\n'
+                log.inf(f'- {downstream_commit.id} {commit_title(downstream_commit)}\n'
                         '  Similar upstream titles:')
                 for i, upstream_commit in enumerate(upstream_commits, start=1):
-                    log.inf(f'    {i}. {upstream_commit.oid} {commit_title(upstream_commit)}')
+                    log.inf(f'    {i}. {upstream_commit.id} {commit_title(upstream_commit)}')
     else:
         log.dbg('no downstream patches seem to have been merged upstream')
 
@@ -382,11 +382,11 @@ class NcsLoot(NcsWestCommand):
         for index, commit in enumerate(loot):
             if self.args.files and not commit_affects_files(commit,
                                                             self.args.files):
-                log.dbg(f"skipping {commit.oid}; it doesn't affect file filter",
+                log.dbg(f"skipping {commit.id}; it doesn't affect file filter",
                         level=log.VERBOSE_VERY)
                 continue
 
-            sha = str(commit.oid)
+            sha = str(commit.id)
             title = commit_title(commit)
             if self.args.sha_only:
                 log.inf(sha)
@@ -705,15 +705,15 @@ class NcsUpmerger(NcsWestCommand):
 
         for dc, ucs in reversed(analyzer.likely_merged.items()):
             if len(ucs) == 1:
-                log.inf(f'- Reverting: {dc.oid} {commit_title(dc)}')
+                log.inf(f'- Reverting: {dc.id} {commit_title(dc)}')
                 log.inf(f'  Similar upstream title:\n'
-                        f'  {ucs[0].oid} {commit_title(ucs[0])}')
+                        f'  {ucs[0].id} {commit_title(ucs[0])}')
             else:
-                log.inf(f'- Reverting: {dc.oid} {commit_title(dc)}\n'
+                log.inf(f'- Reverting: {dc.id} {commit_title(dc)}\n'
                         '  Similar upstream titles:')
                 for i, uc in enumerate(ucs, start=1):
-                    log.inf(f'    {i}. {uc.oid} {commit_title(uc)}')
-            project.git('revert --signoff --no-edit ' + str(dc.oid))
+                    log.inf(f'    {i}. {uc.id} {commit_title(uc)}')
+            project.git('revert --signoff --no-edit ' + str(dc.id))
         log.inf(f'Merging: {z_rev} to project: {project.name}')
         msg = f"[nrf mergeup] Merge upstream automatically up to commit {z_sha}\n\nThis auto-upmerge was performed with ncs-upmerger script."
         project.git('merge --no-edit --no-ff --signoff -m "' + msg + '" ' + str(self.zephyr_rev))
