@@ -149,8 +149,6 @@ static void check_modem_fw_version(void)
 		return;
 	}
 
-	LOG_INF("Modem FW version: %s", mfwv_str);
-
 	if ((sscanf(mfwv_str, "mfw_nrf9160_%u.%u.%u", &major, &minor, &rev) != 3) &&
 	    (sscanf(mfwv_str, "mfw_nrf91x1_%u.%u.%u", &major, &minor, &rev) != 3)) {
 		LOG_WRN("Unable to parse modem FW version number");
@@ -436,9 +434,6 @@ int init(void)
 		return err;
 	}
 
-	/* Check modem FW version */
-	check_modem_fw_version();
-
 	/* Print the nRF Cloud device ID. This device ID should match the ID used
 	 * to provision the device on nRF Cloud or to register a public JWT signing key.
 	 */
@@ -448,7 +443,13 @@ int init(void)
 		return err;
 	}
 
-	LOG_INF("Device ID: %s", device_id);
+	err = nrf_cloud_print_details();
+	if (err) {
+		LOG_ERR("Error printing cloud information: %d", err);
+	}
+
+	/* Check modem FW version */
+	check_modem_fw_version();
 
 	/* Inform the app event manager that this module is ready to receive events */
 	module_set_state(MODULE_STATE_READY);

@@ -454,8 +454,6 @@ static int setup_connection(void)
 		return err;
 	}
 
-	LOG_INF("Device ID: %s", device_id);
-
 	/* Connect to LTE */
 	err = connect_to_lte();
 	if (err) {
@@ -526,6 +524,11 @@ static int init(void)
 	if (err) {
 		LOG_ERR("Failed to initialize modem library: 0x%X", err);
 		return -EFAULT;
+	}
+
+	err = nrf_cloud_print_details();
+	if (err) {
+		LOG_ERR("Error printing cloud information: %d", err);
 	}
 
 	/* If provisioning library is disabled, ensure device has credentials installed

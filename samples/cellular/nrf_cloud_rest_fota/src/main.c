@@ -159,9 +159,7 @@ static void get_modem_info(void)
 {
 	int err = modem_info_params_get(&mdm_param);
 
-	if (!err) {
-		LOG_INF("Modem FW Ver: %s", mdm_param.device.modem_fw.value_string);
-	} else {
+	if (err) {
 		LOG_WRN("Unable to obtain modem info, error: %d", err);
 	}
 }
@@ -349,6 +347,11 @@ int init(void)
 		return -EFAULT;
 	}
 
+	err = nrf_cloud_print_details();
+	if (err) {
+		LOG_ERR("Error printing cloud information: %d", err);
+	}
+
 	err = nrf_cloud_fota_poll_init(&fota_ctx);
 	if (err) {
 		LOG_ERR("FOTA support init failed: %d", err);
@@ -382,8 +385,6 @@ int init(void)
 		LOG_ERR("Failed to set device ID, error: %d", err);
 		return err;
 	}
-
-	LOG_INF("Device ID: %s", device_id);
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
