@@ -27,6 +27,13 @@ rsource "Kconfig.nrf_cloud_coap"
 
 rsource "Kconfig.nrf_cloud_shadow_info"
 
+config NRF_CLOUD_VERBOSE_DETAILS
+	bool "Log more info about cloud connection"
+	default y
+	help
+	  Log at INF level the stage, protocol, sec tag, host name, and team ID,
+	  in addition to device id.
+
 config NRF_CLOUD_GATEWAY
 	bool "nRF Cloud Gateway"
 	help

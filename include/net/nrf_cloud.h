@@ -702,6 +702,65 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param);
 int nrf_cloud_uninit(void);
 
 /**
+ * @brief Print details about cloud connection.
+ *
+ * if @kconfig{CONFIG_NRF_CLOUD_VERBOSE_DETAILS} is not enabled,
+ * only print the device id. If enabled, also print the protocol,
+ * sec tag, host name, stage, and team id.
+ *
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_print_details(void);
+
+/**
+ * @brief Retrieve the IMEI.
+ *
+ * If @kconfig{CONFIG_NRF_MODEM_LIB} is not enabled, returns an error.
+ *
+ * @param[in,out] buf A pointer in which to store the IMEI string.
+ * @param[in]  buf_sz The size of the buffer. It should be at least 22
+ *                    to include the 15 bytes for the IMEI and 7 for AT
+ *                    command overhead.
+ *
+ * @retval 0        If successful.
+ * @retval -ENOTSUP If the modem library is not available.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_get_imei(char *buf, size_t buf_sz);
+
+/**
+ * @brief Retrieve the device's UUID.
+ *
+ * If @kconfig{CONFIG_NRF_MODEM_LIB} is not enabled, returns an error.
+ *
+ * @param[in,out] buf A pointer in which to store the UUID string.
+ * @param[in]  buf_sz The size of the buffer. It should be at least
+ *                    NRF_DEVICE_UUID_STR_LEN + 1 bytes in size.
+ *
+ * @retval 0        If successful.
+ * @retval -ENOTSUP If the modem library is not available.
+ * @retval -EINVAL  buf cannot be NULL.
+ * @retval -ENOMEM  buf_sz was too small.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_get_uuid(char *buf, size_t buf_sz);
+
+/**
+ * @brief Retrieve the Modem firmware version.
+ *
+ * If @kconfig{CONFIG_NRF_MODEM_LIB} is not enabled, returns an error.
+ *
+ * @param[in,out] buf A pointer in which to store the mfw string.
+ * @param[in]  buf_sz The size of the buffer. The required size could
+ *                    be up to 2048, but 32 should be sufficient.
+ *
+ * @retval 0        If successful.
+ * @retval -ENOTSUP If the modem library is not available.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_get_modem_fw(char *buf, size_t buf_sz);
+
+/**
  * @brief Connect to the cloud.
  *
  * The @ref NRF_CLOUD_EVT_TRANSPORT_CONNECTED event indicates

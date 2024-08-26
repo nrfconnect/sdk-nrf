@@ -248,20 +248,14 @@ void cloud_transport_error_detected(void)
  */
 static bool connect_cloud(void)
 {
-	char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 	int err;
 
 	LOG_INF("Connecting to nRF Cloud");
 
-	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
-	if (!err) {
-		LOG_INF("Device ID: %s", device_id);
-	} else {
-		LOG_ERR("Error requesting the device id: %d", err);
-	}
-
 	/* Clear the disconnected flag, no longer accurate. */
 	k_event_clear(&cloud_events, CLOUD_DISCONNECTED);
+
+	nrf_cloud_print_details();
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* Connect to nRF Cloud -- Non-blocking. State updates are handled in callbacks. */
