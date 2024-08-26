@@ -63,16 +63,26 @@ int hw_unique_key_derive_key(enum hw_unique_key_slot key_slot, const uint8_t *co
 
 bool hw_unique_key_are_any_written(void)
 {
-
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	psa_key_lifetime_t lifetime;
 	psa_drv_slot_number_t slot_number;
 	mbedtls_svc_key_id_t key_id = mbedtls_svc_key_id_make(
 		0, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_SEED, 0));
 	return cracen_kmu_get_key_slot(key_id, &lifetime, &slot_number) == PSA_SUCCESS;
+#endif
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
+	/* Handled outside the scope of the hw unique key library. */
+	return true;
+#endif
+	return false;
 }
 
 int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)
 {
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
+	/* Handled outside the scope of the hw unique key library. */
+	return HW_UNIQUE_KEY_SUCCESS;
+#endif
 	size_t key_bits;
 	uint8_t opaque_buffer[2];
 	size_t outlen;
