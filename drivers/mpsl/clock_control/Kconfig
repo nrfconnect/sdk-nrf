@@ -8,5 +8,6 @@ config CLOCK_CONTROL_MPSL
 	bool
 	depends on MPSL
 	depends on CLOCK_CONTROL
+	depends on !SOC_SERIES_NRF54HX
 	default y
 	select CLOCK_CONTROL_NRF_FORCE_ALT
