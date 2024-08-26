@@ -254,7 +254,7 @@ manifest:
     - name: doc-internal
       repo-path: doc-internal
       path: modules/doc-internal
-      revision: faf5e6b24a140855e273fd34ac1476ab3e44ad3c
+      revision: 69d728935b5766a6dae5cfbe557f2a18f6ecbccc
       groups:
         - doc-internal
 
