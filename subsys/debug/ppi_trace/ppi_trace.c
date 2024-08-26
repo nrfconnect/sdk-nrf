@@ -47,9 +47,13 @@ LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 #define GET_STOP_CH(handle) (((uint32_t)handle >> 8) & 0xFF)
 
 #define GPIOTE_NODE(gpio_node) DT_PHANDLE(gpio_node, gpiote_instance)
+#define INVALID_NRFX_GPIOTE_INSTANCE \
+	{ .p_reg = NULL }
 #define GPIOTE_INST_AND_COMMA(gpio_node) \
 	[DT_PROP(gpio_node, port)] = \
-		NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance)),
+		COND_CODE_1(DT_NODE_HAS_PROP(gpio_node, gpiote_instance), \
+			(NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance))), \
+			(INVALID_NRFX_GPIOTE_INSTANCE)),
 
 static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
 {
@@ -57,7 +61,11 @@ static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
 		DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, GPIOTE_INST_AND_COMMA)
 	};
 
-	return &gpiote[pin >> 5];
+	const nrfx_gpiote_t *result = &gpiote[pin >> 5];
+
+	__ASSERT(result->p_reg != NULL, "The pin=%u nas no GPIOTE", pin);
+
+	return result;
 }
 
 /** @brief Allocate (D)PPI channel. */
