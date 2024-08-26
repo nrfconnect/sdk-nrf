@@ -155,7 +155,7 @@ static int disconnect(void)
 #if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
 	return 0;
 #endif
-	return download_client_disconnect(&dlc);
+	return download_client_stop(&dlc);
 }
 
 static int download_client_callback(const struct download_client_evt *event)
@@ -587,7 +587,7 @@ int fota_download(const char *host, const char *file,
 
 	int err;
 	static int sec_tag_list_copy[CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX];
-	struct download_client_cfg config = {
+	struct download_client_host_cfg config = {
 		.pdn_id = pdn_id,
 		.range_override = fragment_size,
 	};

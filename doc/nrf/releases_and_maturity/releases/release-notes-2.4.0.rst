@@ -814,11 +814,11 @@ Libraries for networking
 
 * :ref:`lib_download_client` library:
 
-  * Added the :c:func:`download_client_get` function that combines the functionality of functions :c:func:`download_client_set_host`, :c:func:`download_client_start`, and :c:func:`download_client_disconnect`.
+  * Added the :c:func:`download_client_get` function that combines the functionality of functions :c:func:`download_client_connect`, :c:func:`download_client_start`, and :c:func:`download_client_close`.
 
   * Updated:
 
-    * The ``download_client_connect`` function has been refactored to :c:func:`download_client_set_host` and made it non-blocking.
+    * The ``download_client_connect`` function has been refactored to :c:func:`download_client_connect` and made it non-blocking.
     * The configuration from one security tag to a list of security tags.
     * The library reports error ``ERANGE`` when HTTP range is requested but not supported by server.
 
