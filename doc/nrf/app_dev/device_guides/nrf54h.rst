@@ -21,6 +21,19 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
        | ``nrf54h20dk_nrf54h20_cpurad``
        | ``nrf54h20dk_nrf54h20_cpuppr``
 
+The following table indicates the compatibility between nRF54H20 firmware bundle versions and |NCS| versions:
+
+.. list-table::
+   :header-rows: 1
+
+   * - |NCS| version
+     - nRF54H20 firmware bundle version
+   * - v2.7
+     - v0.5.0
+   * - v2.7.99-cs1
+     - v0.6.2
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:

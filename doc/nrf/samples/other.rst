@@ -12,3 +12,4 @@ Other samples
    ../../../samples/ipc/*/README
    ../../../samples/mpsl/*/README
    ../../../samples/benchmarks/*/README
+   ../../../tests/benchmarks/multicore/*/README
