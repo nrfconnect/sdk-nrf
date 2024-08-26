@@ -6,6 +6,7 @@
 
 config CLOCK_CONTROL_MPSL
 	bool
+	depends on DT_HAS_NORDIC_NRF_CLOCK_ENABLED
 	depends on MPSL
 	depends on CLOCK_CONTROL
 	default y
