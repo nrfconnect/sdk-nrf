@@ -55,12 +55,12 @@ int http_get_request_send(struct download_client *dlc)
 	char file[FILENAME_SIZE];
 	bool tls_force_range;
 
-	__ASSERT_NO_MSG(dlc->host);
+	__ASSERT_NO_MSG(dlc->host_config.hostname);
 	__ASSERT_NO_MSG(dlc->file);
 
 	dlc->http.header.has_end = false;
 
-	err = url_parse_host(dlc->host, host, sizeof(host));
+	err = url_parse_host(dlc->host_config.hostname, host, sizeof(host));
 	if (err) {
 		return err;
 	}
@@ -71,21 +71,21 @@ int http_get_request_send(struct download_client *dlc)
 	}
 
 	/* nRF91 series has a limitation of decoding ~2k of data at once when using TLS */
-	tls_force_range = (dlc->proto == IPPROTO_TLS_1_2 &&
-			!dlc->set_native_tls &&
+	tls_force_range = (dlc->sock.proto == IPPROTO_TLS_1_2 &&
+			!dlc->host_config.set_native_tls &&
 			IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
 
-	if (dlc->config.range_override) {
-		if (tls_force_range && dlc->config.range_override > (TLS_RANGE_MAX - 1)) {
+	if (dlc->host_config.range_override) {
+		if (tls_force_range && dlc->host_config.range_override > (TLS_RANGE_MAX - 1)) {
 			LOG_WRN("Range override > TLS max range, setting to TLS max range");
-			dlc->config.range_override = (TLS_RANGE_MAX - 1);
+			dlc->host_config.range_override = (TLS_RANGE_MAX - 1);
 		}
 	} else if (tls_force_range) {
-		dlc->config.range_override = TLS_RANGE_MAX - 1;
+		dlc->host_config.range_override = TLS_RANGE_MAX - 1;
 	}
 
-	if (dlc->config.range_override) {
-		off = dlc->progress + dlc->config.range_override;
+	if (dlc->host_config.range_override) {
+		off = dlc->progress + dlc->host_config.range_override;
 
 		if (dlc->file_size && (off > dlc->file_size - 1)) {
 			/* Don't request bytes past the end of file */
@@ -119,10 +119,6 @@ send:
 	if (IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_LOG_HEADERS)) {
 		LOG_HEXDUMP_DBG(dlc->config.buf, len, "HTTP request");
 	}
-
-	printk("File size: %d\n", dlc->file_size);
-	printk("Progress: %d\n", dlc->progress);
-	printk("REQ: %s\n", dlc->config.buf);
 
 	err = client_socket_send(dlc, len, 0);
 	if (err) {
@@ -269,14 +265,12 @@ int http_parse(struct download_client *dlc, size_t len)
 {
 	int parsed_len;
 
-	LOG_DBG("RES: %s", dlc->config.buf);
-
 	if (!dlc->http.header.has_end) {
 		/* Parse what we can from the header */
 		parsed_len = http_header_parse(dlc, len);
 		if (parsed_len < 0) {
 			/* Something is wrong with the header */
-			return parsed_len;
+			return -EBADMSG;
 		}
 
 		if (parsed_len == len) {
@@ -290,6 +284,11 @@ int http_parse(struct download_client *dlc, size_t len)
 		}
 
 		if (!dlc->http.header.has_end) {
+			if (dlc->config.buf_size == dlc->buf_offset) {
+				LOG_ERR("Could not parse HTTP header lines from server (> %d)",
+					dlc->config.buf_size);
+				return -E2BIG;
+			}
 			/* Wait for rest of header */
 			return 0;
 		}
@@ -302,8 +301,8 @@ int http_parse(struct download_client *dlc, size_t len)
 	if (dlc->progress != dlc->file_size) {
 		if (dlc->http.ranged) {
 			dlc->http.ranged_progress += len;
-			if (dlc->http.ranged_progress < (dlc->config.range_override ?
-					   dlc->config.range_override :
+			if (dlc->http.ranged_progress < (dlc->host_config.range_override ?
+					   dlc->host_config.range_override :
 					   TLS_RANGE_MAX)) {
 				/* Ranged query: read until a full fragment */
 				return 0;

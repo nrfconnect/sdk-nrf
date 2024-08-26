@@ -394,7 +394,7 @@ static int dlc_disconnect(struct nrf_cloud_download_data *const dl)
 	return coap_dl_disconnect();
 #endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 
-	return download_client_disconnect(dl->dlc);
+	return download_client_stop(dl->dlc);
 }
 
 static void active_dl_reset(void)

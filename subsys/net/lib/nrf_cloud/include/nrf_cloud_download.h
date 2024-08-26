@@ -41,7 +41,7 @@ struct nrf_cloud_download_data {
 	const char *path;
 
 	/* Download client configuration */
-	struct download_client_cfg dl_cfg;
+	struct download_client_host_cfg dl_cfg;
 
 	union {
 		/* FOTA type data */

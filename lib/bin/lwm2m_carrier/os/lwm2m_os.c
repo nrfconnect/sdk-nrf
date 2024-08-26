@@ -432,7 +432,7 @@ static lwm2m_os_download_callback_t lwm2m_os_lib_callback;
 
 int lwm2m_os_download_get(const char *host, const struct lwm2m_os_download_cfg *cfg, size_t from)
 {
-	struct download_client_cfg config = {
+	struct download_client_host_cfg config = {
 		.sec_tag_list = cfg->sec_tag_list,
 		.sec_tag_count = cfg->sec_tag_count,
 		.pdn_id = cfg->pdn_id,
@@ -449,7 +449,7 @@ int lwm2m_os_download_get(const char *host, const struct lwm2m_os_download_cfg *
 
 int lwm2m_os_download_disconnect(void)
 {
-	return download_client_disconnect(&http_downloader);
+	return download_client_close(&http_downloader);
 }
 
 static void download_client_evt_translate(const struct download_client_evt *event,
