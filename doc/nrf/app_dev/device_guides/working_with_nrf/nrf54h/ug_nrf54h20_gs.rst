@@ -20,9 +20,9 @@ Make sure you have all the required hardware and that your computer has one of t
 Hardware
 ========
 
-* nRF54H20 DK version PCA10175 v0.7.2 (ES3) or PCA10175 v0.8.0 (ES3.3, ES4).
-  These are the only versions of the nRF54H20 DK compatible with the |NCS| v2.7.0.
-  Check the version number on your DK's sticker to verify its compatibility with the |NCS| version v2.7.0.
+* nRF54H20 DK, version PCA10175 v0.8.0 (ES4) or later revisions.
+  This is the only version of the nRF54H20 DK compatible with the |NCS| v2.7.99-cs1.
+  Check the version number on your DK's sticker to verify its compatibility with the |NCS| version v2.7.99-cs1.
 * USB-C cable.
 
 Software
@@ -81,10 +81,10 @@ To work with the nRF54H20 DK, follow the instructions in the next sections to in
 
 .. _ug_nrf54h20_install_toolchain:
 
-Installing the |NCS| v2.7.0 and its toolchain
-*********************************************
+Installing the |NCS| v2.7.99-cs1 and its toolchain
+**************************************************
 
-You can install the |NCS| v2.7.0 and its toolchain by using Toolchain Manager.
+You can install the |NCS| v2.7.99-cs1 and its toolchain by using Toolchain Manager.
 
 Toolchain Manager is a tool available from `nRF Connect for Desktop`_, a cross-platform tool that provides different applications that simplify installing the |NCS|.
 Both the tool and the application are available for Windows, Linux, and MacOS.
@@ -109,9 +109,9 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
          The Toolchain Manager window
 
    #. Click :guilabel:`SETTINGS` in the navigation bar to specify where you want to install the |NCS|.
-   #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version 2.7.0.
+   #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version 2.7.99-cs1.
 
-      The |NCS| version 2.7.0 is installed on your machine.
+      The |NCS| version 2.7.99-cs1 is installed on your machine.
       The :guilabel:`Install` button changes to :guilabel:`Open VS Code`.
 
 #. Set up the preferred building method:
@@ -157,10 +157,10 @@ Both of these terminal emulators start the required :ref:`toolchain environment 
 Installing nRF Util and its commands
 ************************************
 
-Using the nRF54H20 DK with the |NCS| v2.7.0 requires the following:
+Using the nRF54H20 DK with the |NCS| v2.7.99-cs1 requires the following:
 
 * nRF Util version 7.11.1 or above
-* nRF Util ``device`` version 2.4.0
+* nRF Util ``device`` version 2.4.6
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
 #. Add nRF Util to the system path on Linux and MacOS, or environment variables on Windows, to run it from anywhere on the system.
@@ -180,9 +180,9 @@ Using the nRF54H20 DK with the |NCS| v2.7.0 requires the following:
 
       nrfutil self-upgrade
 
-#. Install the nRF Util ``device`` command to version 2.4.0 as follows::
+#. Install the nRF Util ``device`` command version 2.4.6 as follows::
 
-      nrfutil install device=2.4.0 --force
+      nrfutil install device=2.4.6 --force
 
 For more information, consult the `nRF Util`_ documentation.
 
@@ -199,9 +199,9 @@ Programming the BICR
 ====================
 
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
-To prepare the nRF54H20 DK for first use, you must manually program the values of the BICR using a precompiled BICR binary file (:file:`bicr_ext_loadcap.hex`).
+To prepare the nRF54H20 DK for first use, you must manually program the values of the BICR using a precompiled BICR binary file (:file:`bicr.hex`).
 
-1. Download the `BICR binary file`_ .
+1. Download the `BICR new binary file`_.
 #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
 .. note::
@@ -214,17 +214,17 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 
 #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
 
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr_ext_loadcap.hex --core Secure --serial-number <serial_number>
+      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware build/zephyr/bicr.hex --core Application --serial-number <serialnumber>
 
 .. rst-class:: numbered-step
 
 Programming the SDFW and SCFW
 =============================
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.5.0.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.6.2.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
 To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 firmware bundle v0.5.0`_.
+1. Download the `nRF54H20 firmware bundle v0.6.2`_.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -232,32 +232,6 @@ To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the Sys
 #. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
-
-.. rst-class:: numbered-step
-
-Updating the FICR
-=================
-
-.. caution::
-   This step is required only if your nRF54H20 DK is version PCA10175 v0.7.2 or v0.8.0 ES3.3.
-   Jump to the next step if your DK is version ES4, meaning v0.8.0 with no ES markings.
-
-After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
-To update the FICR, you must run a J-Link script:
-
-1. Get the Jlink script that updates the FICR::
-
-      curl -LO https://files.nordicsemi.com/artifactory/swtools/external/scripts/nrf54h20es_trim_adjust.jlink
-
-#. Run the script:
-
-   * Linux and Mac OS::
-
-        JLinkExe -CommanderScript nrf54h20es_trim_adjust.jlink
-
-   * Windows::
-
-        jlink.exe -CommanderScript nrf54h20es_trim_adjust.jlink
 
 .. rst-class:: numbered-step
 
@@ -332,8 +306,8 @@ To transition the LCS to ``RoT``, do the following:
 
 .. _ug_nrf54h20_gs_sample:
 
-Programming the sample
-**********************
+Building and programming the sample
+***********************************
 
 The :zephyr:code-sample:`sysbuild_hello_world` sample is a multicore sample running on both the application core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
 It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
@@ -341,18 +315,18 @@ It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
-#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.7.0 toolchain, and click the :guilabel:`Open terminal` button.
+#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.7.99-cs1 toolchain, and click the :guilabel:`Open terminal` button.
 #. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
 #. Build the sample for application and radio cores by running the following command::
 
       west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
 
-#. Program the sample.
-   If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
+You can now program the sample.
+If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
 
-   .. code-block:: console
+.. code-block:: console
 
-      west flash
+   west flash
 
 The sample will be automatically built and programmed on both the application core and the Peripheral Processor (PPR) of the nRF54H20.
 

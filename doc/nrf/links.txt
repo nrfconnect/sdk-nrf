@@ -1652,9 +1652,14 @@
 .. _`nRF54H20 firmware bundle`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.5.0.zip
 .. _`nRF54H20 firmware bundle v0.3.3`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.3.3.zip
 .. _`nRF54H20 firmware bundle v0.5.0`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.5.0.zip
+.. _`nRF54H20 firmware bundle v0.6.2`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.6.2.zip
 
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
+.. _`BICR new binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex
 
 .. _`J-Link version 7.94e`: https://www.segger.com/downloads/jlink/
 
 .. _`J-Link version 7.88j`: https://www.segger.com/downloads/jlink/
+
+.. _`Zephyr's nRF clock control API extensions`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/clock_control/nrf_clock_control.h
+.. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h
