@@ -44,10 +44,16 @@ static bool has_pending(struct download_client *dlc)
 
 int coap_block_init(struct download_client *dlc, size_t from)
 {
+	if (dlc->coap.initialized) {
+		return 0;
+	}
+
 	coap_block_transfer_init(&dlc->coap.block_ctx,
 				 CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE, 0);
 	dlc->coap.block_ctx.current = from;
 	coap_pending_clear(&dlc->coap.pending);
+
+	dlc->coap.initialized = true;
 	return 0;
 }
 
@@ -262,7 +268,7 @@ int coap_request_send(struct download_client *dlc)
 
 		params.max_retransmission =
 			CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT;
-		err = coap_pending_init(&dlc->coap.pending, &request, &dlc->remote_addr,
+		err = coap_pending_init(&dlc->coap.pending, &request, &dlc->sock.remote_addr,
 					&params);
 		if (err < 0) {
 			return -EINVAL;

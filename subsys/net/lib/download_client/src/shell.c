@@ -18,7 +18,7 @@ static char file[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 
 static int sec_tag_list[1];
 static struct download_client downloader;
-static struct download_client_cfg config = {
+static struct download_client_host_cfg host_config = {
 	.sec_tag_list = sec_tag_list,
 };
 
@@ -68,7 +68,7 @@ static int download_shell_init(void)
 
 static int cmd_dc_config(const struct shell *shell, size_t argc, char **argv)
 {
-	shell_warn(shell, "usage: dc config <pdn_id>|<sec_tag>\n");
+	shell_warn(shell, "usage: dc host_config <pdn_id>|<sec_tag>\n");
 	return 0;
 }
 
@@ -76,13 +76,13 @@ static int cmd_dc_config_pdn_id(const struct shell *shell, size_t argc,
 			     char **argv)
 {
 	if (argc != 2) {
-		shell_warn(shell, "usage: dc config pdn <pdn_id>\n");
+		shell_warn(shell, "usage: dc host_config pdn <pdn_id>\n");
 		return -EINVAL;
 	}
 
-	config.pdn_id = atoi(argv[1]);
+	host_config.pdn_id = atoi(argv[1]);
 
-	shell_print(shell, "PDN ID set: %d\n", config.pdn_id);
+	shell_print(shell, "PDN ID set: %d\n", host_config.pdn_id);
 	return 0;
 }
 
@@ -90,14 +90,14 @@ static int cmd_dc_config_sec_tag(const struct shell *shell, size_t argc,
 				 char **argv)
 {
 	if (argc != 2) {
-		shell_warn(shell, "usage: dc config sec_tag <sec_tag>\n");
+		shell_warn(shell, "usage: dc host_config sec_tag <sec_tag>\n");
 		return -EINVAL;
 	}
 
 	sec_tag_list[0] = atoi(argv[1]);
-	config.sec_tag_count = 1;
+	host_config.sec_tag_count = 1;
 
-	shell_print(shell, "Security tag set: %d\n", config.sec_tag_list[0]);
+	shell_print(shell, "Security tag set: %d\n", host_config.sec_tag_list[0]);
 	return 0;
 }
 
@@ -114,9 +114,9 @@ static int cmd_dc_set_host(const struct shell *shell, size_t argc, char **argv)
 
 	memcpy(host, argv[1], MIN(strlen(argv[1]) + 1, sizeof(host)));
 
-	err = download_client_set_host(&downloader, host, &config);
+	err = download_client_connect(&downloader, host, &host_config);
 	if (err) {
-		shell_warn(shell, "download_client_set_host() failed, err %d",
+		shell_warn(shell, "download_client_connect() failed, err %d",
 			   err);
 		return -ENOEXEC;
 	}
@@ -178,7 +178,7 @@ static int cmd_dc_get(const struct shell *shell, size_t argc, char **argv)
 	}
 
 
-	err = download_client_get(&downloader, host, &config, f, from);
+	err = download_client_get(&downloader, host, &host_config, f, from);
 
 	if (err) {
 		shell_warn(shell, "download_client_get() failed, err %d",
@@ -193,7 +193,7 @@ static int cmd_dc_get(const struct shell *shell, size_t argc, char **argv)
 static int cmd_dc_disconnect(const struct shell *shell, size_t argc,
 			     char **argv)
 {
-	return download_client_disconnect(&downloader);
+	return download_client_stop(&downloader);
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
@@ -203,7 +203,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_dc,
-	SHELL_CMD(config, &sub_config, "Configure", cmd_dc_config),
+	SHELL_CMD(host_config, &sub_config, "Configure", cmd_dc_config),
 	SHELL_CMD(set_host, NULL, "Set a target host", cmd_dc_set_host),
 	SHELL_CMD(disconnect, NULL, "Disconnect from a host",
 		  cmd_dc_disconnect),

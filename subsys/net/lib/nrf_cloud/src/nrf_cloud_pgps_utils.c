@@ -570,7 +570,7 @@ static int download_client_callback(const struct download_client_evt *event)
 
 	/* CoAP downloads do not need to disconnect since they don't directly use download_client */
 #if !defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
-	int ret = download_client_disconnect(&dlc);
+	int ret = download_client_stop(&dlc);
 
 	if (ret) {
 		LOG_ERR("Error disconnecting from download client:%d", ret);
