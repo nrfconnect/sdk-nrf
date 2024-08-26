@@ -8,19 +8,13 @@
 #include <nrfx_gpiote.h>
 #ifdef DPPI_PRESENT
 #include <nrfx_dppi.h>
-#else
-#include <nrfx_ppi.h>
 #endif
+#include <helpers/nrfx_gppi.h>
+
 #include <debug/ppi_trace.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
-
-/* Convert task address to associated subscribe register */
-#define SUBSCRIBE_ADDR(task) (volatile uint32_t *)(task + 0x80)
-
-/* Convert event address to associated publish register */
-#define PUBLISH_ADDR(evt) (volatile uint32_t *)(evt + 0x80)
 
 /* Handle which is used by the user to enable and disable the trace pin is
  * encapsulating ppi channel(s). Bit 31 is set to indicate that handle is
@@ -55,6 +49,11 @@ LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 			(NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance))), \
 			(INVALID_NRFX_GPIOTE_INSTANCE)),
 
+typedef struct {
+	const nrfx_gpiote_t *gpiote;
+	uint8_t              gpiote_channel;
+} ppi_trace_gpiote_pin_t;
+
 static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
 {
 	static const nrfx_gpiote_t gpiote[GPIO_COUNT] = {
@@ -63,190 +62,196 @@ static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
 
 	const nrfx_gpiote_t *result = &gpiote[pin >> 5];
 
-	__ASSERT(result->p_reg != NULL, "The pin=%u nas no GPIOTE", pin);
+	if (result->p_reg == NULL) {
+		/* On given pin's port there is no GPIOTE. */
+		result = NULL;
+	}
 
 	return result;
 }
 
-/** @brief Allocate (D)PPI channel. */
-static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
+static bool ppi_trace_gpiote_pin_init(
+		ppi_trace_gpiote_pin_t *ppi_trace_gpiote_pin, nrfx_gpiote_pin_t pin)
 {
-	nrfx_err_t err;
-#ifdef DPPI_PRESENT
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
-
-	if (*PUBLISH_ADDR(evt) != 0) {
-		/* Use mask of one of subscribe registers in the system,
-		 * assuming that all subscribe registers has the same mask for
-		 * channel id.
-		 */
-		*ch = *PUBLISH_ADDR(evt) & DPPIC_SUBSCRIBE_CHG_EN_CHIDX_Msk;
-		err = NRFX_SUCCESS;
-	} else {
-		err = nrfx_dppi_channel_alloc(&dppi, ch);
-	}
-#else
-	err = nrfx_ppi_channel_alloc((nrf_ppi_channel_t *)ch);
-#endif
-	return err;
-}
-
-/** @brief Set task and event on (D)PPI channel. */
-static void ppi_assign(uint8_t ch, uint32_t evt, uint32_t task)
-{
-#ifdef DPPI_PRESENT
-	/* Use mask of one of subscribe registers in the system, assuming that
-	 * all subscribe registers has the same mask for enabling channel.
-	 */
-	*SUBSCRIBE_ADDR(task) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | (uint32_t)ch;
-	*PUBLISH_ADDR(evt) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | (uint32_t)ch;
-#else
-	(void)nrfx_ppi_channel_assign(ch, evt, task);
-#endif
-}
-
-/** @brief Enable (D)PPI channels. */
-static void ppi_enable(uint32_t channel_mask)
-{
-#ifdef DPPI_PRESENT
-	nrf_dppi_channels_enable(NRF_DPPIC, channel_mask);
-#else
-	nrf_ppi_channels_enable(NRF_PPI, channel_mask);
-#endif
-}
-
-/** @brief Disable (D)PPI channels. */
-static void ppi_disable(uint32_t channel_mask)
-{
-#ifdef DPPI_PRESENT
-	nrf_dppi_channels_disable(NRF_DPPIC, channel_mask);
-#else
-	nrf_ppi_channels_disable(NRF_PPI, channel_mask);
-#endif
-}
-
-/** @brief Allocate GPIOTE channel.
- *
- * @param pin Pin.
- *
- * @return Allocated channel or -1 if failed to allocate.
- */
-static int gpiote_channel_alloc(uint32_t pin)
-{
-	uint8_t channel;
-	const nrfx_gpiote_t *gpiote = get_gpiote(pin);
-
-	if (nrfx_gpiote_channel_alloc(gpiote, &channel) != NRFX_SUCCESS) {
-		return -1;
+	ppi_trace_gpiote_pin->gpiote = get_gpiote(pin);
+	if (ppi_trace_gpiote_pin->gpiote == NULL) {
+		LOG_ERR("Given GPIO pin has no associated GPIOTE.");
+		return false;
 	}
 
-	nrf_gpiote_task_configure(gpiote->p_reg, channel, pin,
+	if (nrfx_gpiote_channel_alloc(ppi_trace_gpiote_pin->gpiote,
+		&ppi_trace_gpiote_pin->gpiote_channel) != NRFX_SUCCESS) {
+		LOG_ERR("Failed to allocate GPIOTE channel.");
+		return false;
+	}
+
+	nrf_gpiote_task_configure(ppi_trace_gpiote_pin->gpiote->p_reg,
+				  ppi_trace_gpiote_pin->gpiote_channel,
+				  pin,
 				  NRF_GPIOTE_POLARITY_TOGGLE,
 				  NRF_GPIOTE_INITIAL_VALUE_LOW);
-	nrf_gpiote_task_enable(gpiote->p_reg, channel);
+	nrf_gpiote_task_enable(ppi_trace_gpiote_pin->gpiote->p_reg,
+			       ppi_trace_gpiote_pin->gpiote_channel);
 
-	return channel;
+	return true;
 }
 
 void *ppi_trace_config(uint32_t pin, uint32_t evt)
 {
-	int err;
-	uint32_t task;
-	int gpiote_ch;
-	nrf_gpiote_task_t task_id;
-	uint8_t ppi_ch;
+	uint8_t gppi_ch = UINT8_MAX;
 
-	err = ppi_alloc(&ppi_ch, evt);
-	if (err != NRFX_SUCCESS) {
-		LOG_ERR("Failed to allocate PPI channel.");
+	if (NRFX_SUCCESS != nrfx_gppi_channel_alloc(&gppi_ch)) {
+		LOG_ERR("Failed to allocate GPPI channel.");
 		return NULL;
 	}
 
-	gpiote_ch = gpiote_channel_alloc(pin);
-	if (gpiote_ch < 0) {
-		LOG_ERR("Failed to allocate GPIOTE channel.");
+	ppi_trace_gpiote_pin_t ppi_trace_gpiote_pin = {};
+
+	if (!ppi_trace_gpiote_pin_init(&ppi_trace_gpiote_pin, pin)) {
+		nrfx_gppi_channel_free(gppi_ch);
 		return NULL;
 	}
 
-	task_id = offsetof(NRF_GPIOTE_Type, TASKS_OUT[gpiote_ch]);
-	task = nrf_gpiote_task_address_get(get_gpiote(pin)->p_reg, task_id);
-	ppi_assign(ppi_ch, evt, task);
+	uint32_t tep = nrf_gpiote_task_address_get(ppi_trace_gpiote_pin.gpiote->p_reg,
+				nrf_gpiote_out_task_get(ppi_trace_gpiote_pin.gpiote_channel));
+	nrfx_gppi_channel_endpoints_setup(gppi_ch, evt, tep);
 
-	return HANDLE_ENCODE(ppi_ch);
+	return HANDLE_ENCODE(gppi_ch);
 }
 
 void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)
 {
-	int err;
-	uint32_t task;
-	uint8_t start_ch;
-	uint8_t stop_ch;
-	int gpiote_ch;
-	nrf_gpiote_task_t task_set_id;
-	nrf_gpiote_task_t task_clr_id;
-
 #if !defined(GPIOTE_FEATURE_SET_PRESENT) || \
     !defined(GPIOTE_FEATURE_CLR_PRESENT)
 	__ASSERT(0, "Function not supported on this platform.");
 	return NULL;
 #else
+	uint8_t gppi_ch_start_evt = UINT8_MAX;
 
-	err = ppi_alloc(&start_ch, start_evt);
-	if (err != NRFX_SUCCESS) {
-		LOG_ERR("Failed to allocate PPI channel.");
+	if (NRFX_SUCCESS != nrfx_gppi_channel_alloc(&gppi_ch_start_evt)) {
+		LOG_ERR("Failed to allocate GPPI channel.");
 		return NULL;
 	}
 
-	err = ppi_alloc(&stop_ch, stop_evt);
-	if (err != NRFX_SUCCESS) {
-		LOG_ERR("Failed to allocate PPI channel.");
+	uint8_t gppi_ch_stop_evt = UINT8_MAX;
+
+	if (NRFX_SUCCESS != nrfx_gppi_channel_alloc(&gppi_ch_stop_evt)) {
+		LOG_ERR("Failed to allocate GPPI channel.");
+		nrfx_gppi_channel_free(gppi_ch_start_evt);
 		return NULL;
 	}
 
-	gpiote_ch = gpiote_channel_alloc(pin);
-	if (gpiote_ch < 0) {
-		LOG_ERR("Failed to allocate GPIOTE channel.");
+	ppi_trace_gpiote_pin_t ppi_trace_gpiote_pin = {};
+
+	if (!ppi_trace_gpiote_pin_init(&ppi_trace_gpiote_pin, pin)) {
+		nrfx_gppi_channel_free(gppi_ch_stop_evt);
+		nrfx_gppi_channel_free(gppi_ch_start_evt);
 		return NULL;
 	}
 
-	task_set_id = offsetof(NRF_GPIOTE_Type, TASKS_SET[gpiote_ch]);
-	task_clr_id = offsetof(NRF_GPIOTE_Type, TASKS_CLR[gpiote_ch]);
+	uint32_t tep;
 
-	task = nrf_gpiote_task_address_get(get_gpiote(pin)->p_reg, task_set_id);
-	ppi_assign(start_ch, start_evt, task);
-	task = nrf_gpiote_task_address_get(get_gpiote(pin)->p_reg, task_clr_id);
-	ppi_assign(stop_ch, stop_evt, task);
+	tep = nrf_gpiote_task_address_get(ppi_trace_gpiote_pin.gpiote->p_reg,
+			nrf_gpiote_set_task_get(ppi_trace_gpiote_pin.gpiote_channel));
+	nrfx_gppi_channel_endpoints_setup(gppi_ch_start_evt, start_evt, tep);
 
-	return HANDLE_ENCODE(PACK_CHANNELS(start_ch, stop_ch));
+	tep = nrf_gpiote_task_address_get(ppi_trace_gpiote_pin.gpiote->p_reg,
+			nrf_gpiote_clr_task_get(ppi_trace_gpiote_pin.gpiote_channel));
+	nrfx_gppi_channel_endpoints_setup(gppi_ch_stop_evt, stop_evt, tep);
+
+	return HANDLE_ENCODE(PACK_CHANNELS(gppi_ch_start_evt, gppi_ch_stop_evt));
 #endif
 }
 
-int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch)
-{
-#ifdef DPPI_PRESENT
-	uint32_t task;
-	int gpiote_ch;
-	nrf_gpiote_task_t task_id;
+#if defined(DPPI_PRESENT)
 
-	gpiote_ch = gpiote_channel_alloc(pin);
-	if (gpiote_ch < 0) {
-		LOG_ERR("Failed to allocate GPIOTE channel.");
+static const nrfx_dppi_t *get_dppic_for_gpiote(const nrfx_gpiote_t *gpiote)
+{
+	/* The Device Tree does not provide information about the DPPIC controller for which
+	 * the given GPIOTE instance can subscribe to. That's why we need to provide the
+	 * matching DPPIC instance ourselves.
+	 */
+
+#if (!defined(DPPIC_COUNT) || (DPPIC_COUNT == 1))
+	static const nrfx_dppi_t dppic = NRFX_DPPI_INSTANCE(0);
+
+	return &dppic;
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+	if (gpiote->p_reg == NRF_GPIOTE20) {
+		static const nrfx_dppi_t dppic20 = NRFX_DPPI_INSTANCE(20);
+
+		return &dppic20;
+	} else if (gpiote->p_reg == NRF_GPIOTE30) {
+		static const nrfx_dppi_t dppic30 = NRFX_DPPI_INSTANCE(30);
+
+		return &dppic30;
+	} else {
+		return NULL;
+	}
+#else
+#error Unsupported SoC series
+	return NULL;
+#endif
+}
+
+int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch, const nrfx_dppi_t *dppic)
+{
+	ppi_trace_gpiote_pin_t ppi_trace_gpiote_pin = {};
+
+	if (!ppi_trace_gpiote_pin_init(&ppi_trace_gpiote_pin, pin)) {
 		return -ENOMEM;
 	}
 
-	task_id = offsetof(NRF_GPIOTE_Type, TASKS_OUT[gpiote_ch]);
-	task = nrf_gpiote_task_address_get(NRF_GPIOTE, task_id);
+	const nrfx_dppi_t *dppic_for_gpiote = get_dppic_for_gpiote(ppi_trace_gpiote_pin.gpiote);
 
-	*SUBSCRIBE_ADDR(task) = DPPIC_SUBSCRIBE_CHG_EN_EN_Msk | dppi_ch;
+	if (dppic_for_gpiote == NULL) {
+		LOG_ERR("For given GPIO pin, the GPIOTE has no associated DPPIC.");
+		return -ENOMEM;
+	}
 
+	if (dppic_for_gpiote->p_reg == dppic->p_reg) {
+		/* The GPIOTE can directly subscribe to DPPI channels of `dppic` */
+		nrf_gpiote_subscribe_set(ppi_trace_gpiote_pin.gpiote->p_reg,
+			nrf_gpiote_out_task_get(ppi_trace_gpiote_pin.gpiote_channel),
+			dppi_ch);
+	} else {
+		/* Let the GPIOTE channel subscribe to a local dppi_channel_for_gpiote of
+		 * ppi_trace_gpiote_pin.dppic first.
+		 */
+		uint8_t dppi_channel_for_gpiote = UINT8_MAX;
+
+		if (nrfx_dppi_channel_alloc(dppic_for_gpiote,
+			&dppi_channel_for_gpiote) != NRFX_SUCCESS) {
+			return -ENOMEM;
+		}
+
+		nrf_gpiote_subscribe_set(ppi_trace_gpiote_pin.gpiote->p_reg,
+			nrf_gpiote_out_task_get(ppi_trace_gpiote_pin.gpiote_channel),
+			dppi_channel_for_gpiote);
+
+		(void)nrfx_dppi_channel_enable(dppic_for_gpiote, dppi_channel_for_gpiote);
+
+		/* Then, let the dppi_ch channel of dppic controller passed by parameters
+		 * trigger the local dppi_channel_for_gpiote.
+		 */
+		uint8_t gppi_ch = UINT8_MAX;
+
+		if (NRFX_SUCCESS != nrfx_gppi_channel_alloc(&gppi_ch)) {
+			LOG_ERR("Failed to allocate GPPI channel.");
+			return -ENOMEM;
+		}
+
+		if (NRFX_SUCCESS != nrfx_gppi_edge_connection_setup(gppi_ch,
+			dppic, dppi_ch, dppic_for_gpiote, dppi_channel_for_gpiote)) {
+			LOG_ERR("Failed to setup a GPPI edge connection.");
+			return -ENOMEM;
+		}
+
+		nrfx_gppi_channels_enable(1U << gppi_ch);
+	}
 	return 0;
-#else
-	(void)pin;
-	(void)dppi_ch;
-
-	return -ENOTSUP;
-#endif
 }
+#endif /* defined(DPPI_PRESENT) */
 
 static uint32_t ppi_channel_mask_get(void *handle)
 {
@@ -257,10 +262,10 @@ static uint32_t ppi_channel_mask_get(void *handle)
 
 void ppi_trace_enable(void *handle)
 {
-	ppi_enable(ppi_channel_mask_get(handle));
+	nrfx_gppi_channels_enable(ppi_channel_mask_get(handle));
 }
 
 void ppi_trace_disable(void *handle)
 {
-	ppi_disable(ppi_channel_mask_get(handle));
+	nrfx_gppi_channels_disable(ppi_channel_mask_get(handle));
 }
