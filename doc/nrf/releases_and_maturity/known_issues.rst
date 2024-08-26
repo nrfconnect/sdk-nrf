@@ -831,6 +831,16 @@ Thread
 
 The issues in this section are related to the :ref:`ug_thread` protocol.
 
+.. rst-class:: v2-7-0
+
+KRKNWK-19376: OpenThread CLI sample does not work on the nRF52840 Dongle
+  The sample should not use Partition Manager.
+  To avoid a failure, the main function should have a check for whether the USB is already enabled.
+
+  **Affected platforms:** nRF52840 Dongle
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from ``main`` (commit hash: ``f7b59d26db4cc55c6936a0a88f3daa7e0b7b2085``).
+
 .. rst-class:: v2-7-0 v2-6-1 v2-6-0
 
 KRKNWK-19036: High power consumption after parent loss
