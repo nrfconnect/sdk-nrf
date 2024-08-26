@@ -9,6 +9,8 @@
 
 #include <zephyr/bluetooth/audio/audio.h>
 
+#include "le_audio.h"
+
 #define ZBUS_READ_TIMEOUT_MS	K_MSEC(100)
 #define ZBUS_ADD_OBS_TIMEOUT_MS K_MSEC(200)
 
@@ -28,6 +30,7 @@ enum le_audio_evt_type {
 	LE_AUDIO_EVT_PRES_DELAY_SET,
 	LE_AUDIO_EVT_STREAMING,
 	LE_AUDIO_EVT_NOT_STREAMING,
+	LE_AUDIO_EVT_STREAM_SENT,
 	LE_AUDIO_EVT_SYNC_LOST,
 	LE_AUDIO_EVT_NO_VALID_CFG,
 	LE_AUDIO_EVT_COORD_SET_DISCOVERED,
@@ -40,6 +43,7 @@ struct le_audio_msg {
 	enum bt_audio_dir dir;
 	uint8_t set_size;
 	uint8_t const *sirk;
+	struct stream_index idx;
 };
 
 /**
