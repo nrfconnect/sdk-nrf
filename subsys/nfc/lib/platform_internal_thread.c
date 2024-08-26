@@ -64,6 +64,10 @@ static int ring_buf_get_data(struct ring_buf *buf, uint8_t **data, uint32_t size
 	uint32_t tmp;
 	int err;
 
+	if (!buf || !data || !is_alloc) {
+		return -EINVAL;
+	}
+
 	*is_alloc = false;
 
 	/* Try to access data without copying.
@@ -79,7 +83,7 @@ static int ring_buf_get_data(struct ring_buf *buf, uint8_t **data, uint32_t size
 		}
 
 		*data = k_malloc(size);
-		if (data == NULL) {
+		if (*data == NULL) {
 			LOG_DBG("Could not allocate %d bytes.", size);
 			return -ENOMEM;
 		}

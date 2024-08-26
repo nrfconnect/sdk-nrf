@@ -701,6 +701,7 @@ Libraries for NFC
 -----------------
 
 * Added an experimental serialization of NFC tag 2 and tag 4 APIs.
+* Fixed a potential issue with handling data pointers in the function ``ring_buf_get_data`` in the :file:`platform_internal_thread` file.
 
 nRF RPC libraries
 -----------------
