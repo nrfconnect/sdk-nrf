@@ -7,7 +7,7 @@
 zephyr_library()
 zephyr_library_sources(
 	at_parser.c
-	at_match.c
+	generated/at_match.c
 )
 
 zephyr_include_directories(include)
