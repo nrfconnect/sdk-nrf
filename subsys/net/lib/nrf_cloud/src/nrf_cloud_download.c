@@ -403,6 +403,30 @@ static void active_dl_reset(void)
 	active_dl.type = NRF_CLOUD_DL_TYPE_NONE;
 }
 
+void nrf_cloud_download_cancel(void)
+{
+	int ret = 0;
+
+	k_mutex_lock(&active_dl_mutex, K_FOREVER);
+
+	if (active_dl.type == NRF_CLOUD_DL_TYPE_FOTA) {
+#if defined(CONFIG_FOTA_DOWNLOAD)
+		ret = fota_download_cancel();
+#endif
+	} else if (active_dl.type == NRF_CLOUD_DL_TYPE_DL_CLIENT) {
+		ret = dlc_disconnect(&active_dl);
+	} else {
+		LOG_WRN("No active download to cancel");
+	}
+
+	if (ret) {
+		LOG_WRN("Error canceling download: %d", ret);
+	}
+
+	active_dl_reset();
+	k_mutex_unlock(&active_dl_mutex);
+}
+
 void nrf_cloud_download_end(void)
 {
 #if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)

@@ -64,6 +64,11 @@ struct nrf_cloud_download_data {
  */
 int nrf_cloud_download_start(struct nrf_cloud_download_data *const dl);
 
+/** @brief Cancel the active download.
+ *         Call to stop the current download and reset the download state.
+ */
+void nrf_cloud_download_cancel(void);
+
 /** @brief Resume a CoAP download at the provided offset. */
 int nrf_cloud_download_coap_offset_resume(const size_t offset);
 
