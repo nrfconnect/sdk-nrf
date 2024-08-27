@@ -43,3 +43,11 @@
 		};
 	};
 };
+
+/* Communication between Application Core and Secure Domain */
+&cpusec_cpuapp_ipc {
+	status = "okay";
+};
+&cpusec_bellboard {
+	status = "okay";
+};
