@@ -352,8 +352,12 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 			psa_set_key_algorithm(attributes, PSA_ALG_PURE_EDDSA);
 			psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_VERIFY_MESSAGE);
 		} else if (key.sicr.type == PSA_KEY_TYPE_AES) {
-			/* This will be AES-KW when it is supported. */
-			psa_set_key_algorithm(attributes, PSA_ALG_ECB_NO_PADDING);
+			/* Currently AES-KW is not supported, so the key stored in SICR
+			 * is directly used to decrypt the firmware (using AES-GCM).
+			 * When AES-KW is supported, this will possibly need to be extended
+			 * so that both AES-KW and direct decryption can be supported.
+			 */
+			psa_set_key_algorithm(attributes, PSA_ALG_GCM);
 			psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_DECRYPT);
 
 			if (PSA_BITS_TO_BYTES(key.sicr.bits) > sizeof(decrypted_key)) {
