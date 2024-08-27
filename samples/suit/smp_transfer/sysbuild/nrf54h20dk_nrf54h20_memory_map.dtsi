@@ -15,7 +15,7 @@
 	};
 
 	companion_partition: partition@f7000 {
-		reg = <0xf7000 DT_SIZE_K(36)>;
+		reg = <0xf7000 DT_SIZE_K(32)>;
 	};
 };
 &cpurad_rx_partitions {
