@@ -87,3 +87,13 @@ function(suit_create_envelope input_file output_file create_signature)
     suit_sign_envelope(${output_file} ${output_file})
   endif()
 endfunction()
+
+function(suit_create_cache_partition args)
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+    COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
+    cache_create
+    ${args}
+    BYPRODUCTS ${output_file}
+  )
+endfunction()

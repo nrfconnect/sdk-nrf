@@ -261,6 +261,38 @@ function(suit_create_package)
     )
   endforeach()
 
+  # First parse which images should be extracted to which cache partition
+  set(DFU_CACHE_PARTITIONS_USED "")
+  foreach(image ${IMAGES})
+    sysbuild_get(EXTRACT_TO_CACHE IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE KCONFIG)
+    if(EXTRACT_TO_CACHE)
+      sysbuild_get(CACHE_PARTITION_NUM IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_PARTITION KCONFIG)
+      list(APPEND DFU_CACHE_PARTITIONS_USED ${CACHE_PARTITION_NUM})
+      list(APPEND SUIT_CACHE_PARTITION_${CACHE_PARTITION_NUM} ${image})
+    endif()
+  endforeach()
+  list(REMOVE_DUPLICATES DFU_CACHE_PARTITIONS_USED)
+
+  # Then create the cache partitions
+  foreach(CACHE_PARTITION_NUM ${DFU_CACHE_PARTITIONS_USED})
+    set(CACHE_CREATE_ARGS "")
+    foreach(image ${SUIT_CACHE_PARTITION_${CACHE_PARTITION_NUM}})
+      sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
+      sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+      sysbuild_get(IMAGE_CACHE_URI IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI KCONFIG)
+      list(APPEND CACHE_CREATE_ARGS
+        "--input" "\"${IMAGE_CACHE_URI},${BINARY_DIR}/zephyr/${BINARY_FILE}.bin\""
+      )
+    endforeach()
+    list(APPEND CACHE_CREATE_ARGS "--output-file" "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${CACHE_PARTITION_NUM}.bin")
+
+    if(SUIT_DFU_CACHE_PARTITION_${CACHE_PARTITION_NUM}_EB_SIZE)
+      list(APPEND CACHE_CREATE_ARGS "--eb-size" "${SUIT_DFU_CACHE_PARTITION_${CACHE_PARTITION_NUM}_EB_SIZE}")
+    endif()
+
+    suit_create_cache_partition("${CACHE_CREATE_ARGS}")
+  endforeach()
+
   suit_get_manifest(${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME} INPUT_ROOT_ENVELOPE_JINJA_FILE)
   message(STATUS "Found root manifest template: ${INPUT_ROOT_ENVELOPE_JINJA_FILE}")
 
