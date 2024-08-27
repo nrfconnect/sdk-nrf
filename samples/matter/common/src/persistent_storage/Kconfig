@@ -13,14 +13,15 @@ config NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
 
 config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
 	bool "Secure storage implementation for Matter samples"
-	select TRUSTED_STORAGE if !BUILD_WITH_TFM
-	select PSA_PROTECTED_STORAGE if !BUILD_WITH_TFM
+	select TRUSTED_STORAGE if (!PSA_SSF_CRYPTO_CLIENT && !BUILD_WITH_TFM)
+	select PSA_PROTECTED_STORAGE if (!PSA_SSF_CRYPTO_CLIENT && !BUILD_WITH_TFM)
 	help
-	  Enables secure persistent storage wrapper API, that
-	  imitates Zephyr Settings key-value data format.
+	  Enables the secure persistent storage wrapper API that
+	  imitates Zephyr Settings' key-value data format.
 	  If building with CMSE enabled (*/ns), the TF-M
-	  PS implementation is leveraged by default.
-	  If building with CMSE disabled (cpuapp target),
+	  and Secure Domain PSA Protected Storage implementation
+	  is leveraged by default.
+	  If building with CMSE disabled (*/cpuapp),
 	  the Trusted Storage library must be used.
 
 config NCS_SAMPLE_MATTER_STORAGE_MAX_KEY_LEN
