@@ -78,7 +78,11 @@ SUIT_Envelope_Tagged:
     suit-install:
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
+{%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in radio['config'] and radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}
+        suit-parameter-uri: '{{ radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}'
+{%- else %}
         suit-parameter-uri: '#{{ radio['name'] }}'
+{%- endif %}
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
@@ -112,5 +116,7 @@ SUIT_Envelope_Tagged:
         suit-text-model-info: The nRF54H20 radio core
         suit-text-component-description: Sample radio core FW
         suit-text-component-version: v1.0.0
+{%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE' not in radio['config'] or radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE'] == '' %}
   suit-integrated-payloads:
     '#{{ radio['name'] }}': {{ radio['binary'] }}
+{%- endif %}
