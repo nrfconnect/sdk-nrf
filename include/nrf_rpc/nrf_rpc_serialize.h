@@ -330,7 +330,23 @@ bool nrf_rpc_decoding_done_and_check(const struct nrf_rpc_group *group,
 void nrf_rpc_rsp_decode_bool(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			     void *handler_data);
 
+/** @brief Decode a command response as an unsigned integer value.
+ *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
+ *
+ * @param[in] group	nRF RPC group.
+ * @param[in,out] ctx CBOR decoding context.
+ * @param[in] result Pointer to an integer variable to store the result.
+ * @param[in] result_size Size of the integer variable to store the result.
+ */
+void nrf_rpc_rsp_decode_uint(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			     void *result, size_t result_size);
+
 /** @brief Decode a command response as an unsigned 8-bit integer value.
+ *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
  *
  * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
@@ -341,6 +357,9 @@ void nrf_rpc_rsp_decode_u8(const struct nrf_rpc_group *group, struct nrf_rpc_cbo
 
 /** @brief Decode a command response as an unsigned 16-bit integer value.
  *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
+ *
  * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.
  * @param[in] handler_data Pointer to place where value will be decoded.
@@ -348,7 +367,59 @@ void nrf_rpc_rsp_decode_u8(const struct nrf_rpc_group *group, struct nrf_rpc_cbo
 void nrf_rpc_rsp_decode_u16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			    void *handler_data);
 
-/** @brief Decode a command response as an integer value.
+/** @brief Decode a command response as an unsigned 32-bit integer value.
+ *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
+ *
+ * @param[in] group nRF RPC group.
+ * @param[in,out] ctx CBOR decoding context.
+ * @param[in] handler_data Pointer to place where value will be decoded.
+ */
+void nrf_rpc_rsp_decode_u32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data);
+
+/** @brief Decode a command response as a signed integer value.
+ *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
+ *
+ * @param[in] group	nRF RPC group.
+ * @param[in,out] ctx CBOR decoding context.
+ * @param[in] result Pointer to an integer variable to store the result.
+ * @param[in] result_size Size of the integer variable to store the result.
+ */
+void nrf_rpc_rsp_decode_int(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *result, size_t result_size);
+
+/** @brief Decode a command response as a signed 8-bit integer value.
+ *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
+ *
+ * @param[in] group nRF RPC group.
+ * @param[in,out] ctx CBOR decoding context.
+ * @param[in] handler_data Pointer to place where value will be decoded.
+ */
+void nrf_rpc_rsp_decode_i8(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			   void *handler_data);
+
+/** @brief Decode a command response as a signed 16-bit integer value.
+ *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
+ *
+ * @param[in] group nRF RPC group.
+ * @param[in,out] ctx CBOR decoding context.
+ * @param[in] handler_data Pointer to place where value will be decoded.
+ */
+void nrf_rpc_rsp_decode_i16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data);
+
+/** @brief Decode a command response as a signed 32-bit integer value.
+ *
+ * On decoding failure, this function triggers the nRF RPC error handler.
+ * It then sets the result to zero, ensuring consistent output in error scenarios.
  *
  * @param[in] group nRF RPC group.
  * @param[in,out] ctx CBOR decoding context.

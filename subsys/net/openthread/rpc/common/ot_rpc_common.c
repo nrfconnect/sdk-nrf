@@ -11,7 +11,7 @@
 void ot_rpc_decode_error(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			 void *handler_data)
 {
-	nrf_rpc_rsp_decode_i32(group, ctx, handler_data);
+	nrf_rpc_rsp_decode_uint(group, ctx, handler_data, sizeof(otError));
 }
 
 void ot_rpc_decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
