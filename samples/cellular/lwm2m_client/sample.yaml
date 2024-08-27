@@ -16,3 +16,13 @@ tests:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     tags: ci_build sysbuild ci_samples_cellular
+  sample.cellular.lwm2m_client.afwu_extcpu:
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf"
+      - EXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
+    integration_platforms:
+      - nrf9160dk/nrf9160/ns
+    platform_allow:
+      - nrf9160dk/nrf9160/ns
+    tags: ci_build sysbuild ci_samples_cellular
