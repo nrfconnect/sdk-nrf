@@ -45,7 +45,6 @@ extern "C" {
 #define USAGE_AUTHOP	   0x14
 #define USAGE_FWENC	   0x20
 #define USAGE_PUBKEY	   0x21
-#define USAGE_AUTHDEBUG	   0x23
 #define USAGE_STMTRACE	   0x25
 #define USAGE_COREDUMP	   0x26
 #define USAGE_RMNORDIC	   0xAA

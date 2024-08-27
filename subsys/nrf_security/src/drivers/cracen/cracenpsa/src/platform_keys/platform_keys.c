@@ -6,7 +6,9 @@
 
 #include "cracen_psa.h"
 #include "cracen_psa_primitives.h"
+#include "../common.h"
 #include "platform_keys.h"
+#include <psa/nrf_platform_key_ids.h>
 #include <stdint.h>
 #include <psa/crypto.h>
 #include <zephyr/devicetree.h>
@@ -33,36 +35,14 @@
 #define PLATFORM_KEY_GET_DOMAIN(x)     (((x) >> 16) & 0xff)
 #define PLATFORM_KEY_GET_ACCESS(x)     (((x) >> 24) & 0xf)
 
-#define USAGE_IAK		       0x1
-#define USAGE_MKEK		       0x2
-#define USAGE_MEXT		       0x3
-#define USAGE_FWENC		       0x20
-#define USAGE_PUBKEY		       0x21
-#define USAGE_AUTHDEBUG		       0x23
-#define USAGE_STMTRACE		       0x25
-#define USAGE_COREDUMP		       0x26
-#define USAGE_MANIFEST_PUBKEY_OEM_ROOT 0xBB
-
-#define DOMAIN_NONE	   0x00
-#define DOMAIN_SECURE	   0x01
-#define DOMAIN_APPLICATION 0x02
-#define DOMAIN_RADIO	   0x03
-#define DOMAIN_CELL	   0x04
-#define DOMAIN_ISIM	   0x05
-#define DOMAIN_WIFI	   0x06
-#define DOMAIN_SYSCTRL	   0x08
-
-#define ACCESS_INTERNAL 0x0
-#define ACCESS_LOCAL	0x1
-
 #define MAX_KEY_SIZE 32
 
-struct {
+static struct {
 	uint8_t id;
 	const char *label;
 } owner_to_label[] = {{DOMAIN_SECURE, "SECURE-"}, {DOMAIN_SYSCTRL, "SYSCTRL-"},
-		      {DOMAIN_CELL, "CELLULAR-"}, {DOMAIN_WIFI, "WIFI-"},
-		      {DOMAIN_RADIO, "RADIO-"},	  {DOMAIN_APPLICATION, "APPLICATION-"}};
+		      {DOMAIN_CELL, "CELL-"}, {DOMAIN_WIFI, "WIFI-"},
+		      {DOMAIN_RADIO, "RADIOCORE-"},	  {DOMAIN_APPLICATION, "APPLICATION-"}};
 
 struct {
 	uint8_t id;
@@ -144,6 +124,11 @@ typedef struct derived_key {
 	char label[DERIVED_KEY_MAX_LABEL_SIZE];
 } derived_key;
 
+typedef struct ikg_key {
+	uint32_t slot_number;
+	uint32_t domain;
+} ikg_key;
+
 typedef union {
 	sicr_key sicr;
 	embedded_key embedded;
@@ -222,6 +207,8 @@ static key_type find_key(uint32_t id, platform_key *key)
 		FILL_PUBKEY(NRF_SECURE_SICR_S->AROT.CELLULARCORE.SUITPUBKEY, generation);
 	case DOMAIN_USAGE(DOMAIN_RADIO, USAGE_PUBKEY):
 		FILL_PUBKEY(NRF_SECURE_SICR_S->AROT.RADIO.SUITPUBKEY, generation);
+	case DOMAIN_USAGE(DOMAIN_NONE, USAGE_RMOEM):
+		FILL_PUBKEY(NRF_SECURE_SICR_S->AROT.SECURE.OEMPUBKEY, generation);
 	case DOMAIN_USAGE(DOMAIN_APPLICATION, USAGE_FWENC):
 		FILL_AESKEY(NRF_SECURE_SICR_S->AROT.APPLICATION.FWENC, generation);
 	case DOMAIN_USAGE(DOMAIN_RADIO, USAGE_FWENC):
