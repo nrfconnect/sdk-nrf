@@ -246,6 +246,21 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
 			 enum coap_content_format fmt, bool reliable,
 			 coap_client_response_cb_t cb, void *user);
 
+/**
+ * @brief Send binary log data to nRF Cloud on the /msg/d2c/bin topic. The data sent should
+ * come from the nrf_cloud_log_backend. It will be assembled in sequential order and made
+ * available for download by the nRF Cloud REST API or website.
+ *
+ * @param[in]     buf buffer with binary string.
+ * @param[in]     buf_len  length of buf in bytes.
+ * @param[in]     confirmable Select whether to use a CON or NON CoAP transfer.
+ * @return 0 If successful, nonzero if failed.
+ *           Negative values are device-side errors defined in errno.h.
+ *           Positive values are cloud-side errors (CoAP result codes)
+ *           defined in zephyr/net/coap.h.
+ */
+int nrf_cloud_coap_bin_log_send(const uint8_t * const buf, size_t buf_len, bool confirmable);
+
 /** @} */
 
 #ifdef __cplusplus
