@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TESTED_SPI_MODE
+	int "SPI mode"
+	default 0
+	help
+		SPI mode value (clock polarity and phase) used in the test.
+		0: CPOL 0 (Active high), CPHA 0 (leading)
+		1: CPOL 0 (Active high), CPHA 1 (trailing)
+		2: CPOL 1 (Active low), CPHA 0 (leading)
+		3: CPOL 1 (Active low), CPHA 1 (trailing)
+
+config ROLE_HOST
+	int "Change test behaviour depending on Host/Device role"
+	default 1
+	help
+		Change test behaviour.
+		0: Device - returns data received previously
+		1: Host - generates data, sends it to the Device, confirms that received data is correct
+
+source "Kconfig.zephyr"

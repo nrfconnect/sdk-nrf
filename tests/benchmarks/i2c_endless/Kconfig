@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config ROLE_HOST
+	int "Change test behaviour depending on Host/Device role"
+	default 1
+	help
+		Change test behaviour.
+		0: Device - returns data received previously
+		1: Host - generates data, sends it to the Device, confirms that received data is correct
+
+source "Kconfig.zephyr"
