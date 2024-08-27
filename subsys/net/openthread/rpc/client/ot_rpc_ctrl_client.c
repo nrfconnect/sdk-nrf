@@ -15,6 +15,7 @@
 #include <openthread/thread.h>
 
 #include <zephyr/sys/util_macro.h>
+#include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <string.h>
 
@@ -419,4 +420,64 @@ uint32_t otLinkGetPollPeriod(otInstance *aInstance)
 	}
 
 	return poll_period;
+}
+
+void otLinkSetMaxFrameRetriesDirect(otInstance *aInstance, uint8_t aMaxFrameRetriesDirect)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	ARG_UNUSED(aInstance);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
+	nrf_rpc_encode_uint(&ctx, aMaxFrameRetriesDirect);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_DIRECT, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+}
+
+void otLinkSetMaxFrameRetriesIndirect(otInstance *aInstance, uint8_t aMaxFrameRetriesIndirect)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	ARG_UNUSED(aInstance);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
+	nrf_rpc_encode_uint(&ctx, aMaxFrameRetriesIndirect);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_INDIRECT, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+}
+
+otError otLinkSetEnabled(otInstance *aInstance, bool aEnable)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	otError error;
+
+	ARG_UNUSED(aInstance);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
+	nrf_rpc_encode_bool(&ctx, aEnable);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_LINK_SET_ENABLED, &ctx, ot_rpc_decode_error,
+				&error);
+
+	return error;
+}
+
+static void ot_rpc_decode_eui64(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+				void *handler_data)
+{
+	nrf_rpc_decode_buffer(ctx, handler_data, OT_EXT_ADDRESS_SIZE);
+}
+
+void otLinkGetFactoryAssignedIeeeEui64(otInstance *aInstance, otExtAddress *aEui64)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	ARG_UNUSED(aInstance);
+
+	if (aEui64 == NULL) {
+		return;
+	}
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_LINK_GET_FACTORY_ASSIGNED_EUI64, &ctx,
+				ot_rpc_decode_eui64, aEui64->m8);
 }
