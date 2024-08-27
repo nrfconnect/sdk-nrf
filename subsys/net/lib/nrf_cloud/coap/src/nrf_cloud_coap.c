@@ -246,6 +246,22 @@ int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len, bool confirmable)
 	return err;
 }
 
+int nrf_cloud_coap_bin_log_send(const uint8_t * const buf, size_t buf_len, bool confirmable)
+{
+	int err = 0;
+
+	if (!nrf_cloud_coap_is_connected()) {
+		return -EACCES;
+	}
+
+	err = nrf_cloud_coap_post(COAP_D2C_BIN_RSC, NULL, buf, buf_len,
+				  COAP_CONTENT_FORMAT_APP_OCTET_STREAM, confirmable, NULL, NULL);
+	if (err) {
+		LOG_ERR("Failed to send POST request: %d", err);
+	}
+	return err;
+}
+
 int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable)
 {
 	if (!nrf_cloud_coap_is_connected()) {

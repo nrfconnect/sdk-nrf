@@ -409,7 +409,8 @@ int nrf_cloud_coap_shadow_delta_process(const struct nrf_cloud_data *in_data,
 					struct nrf_cloud_obj *const delta_out);
 
 /**
- * @brief Send raw bytes to nRF Cloud.
+ * @brief Send raw bytes to nRF Cloud on the /msg/d2c/raw topic. The data sent can be for any
+ * purpose.
  *
  * @param[in]     buf buffer with binary string.
  * @param[in]     buf_len  length of buf in bytes.
