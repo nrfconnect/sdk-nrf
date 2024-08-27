@@ -131,30 +131,6 @@ out:
 }
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
-#ifdef CONFIG_NRF700X_DATA_TX
-static void nrf_wifi_net_iface_work_handler(struct k_work *work)
-{
-	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
-								struct nrf_wifi_vif_ctx_zep,
-								nrf_wifi_net_iface_work);
-
-	if (!vif_ctx_zep) {
-		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
-		return;
-	}
-
-	if (!vif_ctx_zep->zep_net_if_ctx) {
-		LOG_ERR("%s: zep_net_if_ctx is NULL", __func__);
-		return;
-	}
-
-	if (vif_ctx_zep->if_carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
-		net_if_dormant_off(vif_ctx_zep->zep_net_if_ctx);
-	} else if (vif_ctx_zep->if_carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_OFF) {
-		net_if_dormant_on(vif_ctx_zep->zep_net_if_ctx);
-	}
-}
-
 #if defined(CONFIG_NRF700X_RAW_DATA_RX) || defined(CONFIG_NRF700X_PROMISC_DATA_RX)
 void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 				struct raw_rx_pkt_header *raw_rx_hdr,
@@ -236,6 +212,7 @@ enum nrf_wifi_status nrf_wifi_if_carr_state_chg(void *os_vif_ctx,
 	vif_ctx_zep->if_carr_state = carr_state;
 
 	LOG_DBG("%s: Carrier state: %d", __func__, carr_state);
+	LOG_ERR("%s: Carrier state is: %d", __func__, carr_state);
 
 	k_work_submit(&vif_ctx_zep->nrf_wifi_net_iface_work);
 
@@ -245,6 +222,33 @@ out:
 	return status;
 }
 
+#ifdef CONFIG_NRF700X_DATA_TX
+static void nrf_wifi_net_iface_work_handler(struct k_work *work)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
+								struct nrf_wifi_vif_ctx_zep,
+								nrf_wifi_net_iface_work);
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	if (!vif_ctx_zep->zep_net_if_ctx) {
+		LOG_ERR("%s: zep_net_if_ctx is NULL", __func__);
+		return;
+	}
+
+	LOG_ERR("%s: setting dormant off or on based on carrier state %d", __func__,
+			vif_ctx_zep->if_carr_state);
+	if (vif_ctx_zep->if_carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
+		net_if_dormant_off(vif_ctx_zep->zep_net_if_ctx);
+	} else if (vif_ctx_zep->if_carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_OFF) {
+		net_if_dormant_on(vif_ctx_zep->zep_net_if_ctx);
+	}
+}
+
+#if defined(CONFIG_NRF700X_STA_MODE)
 static bool is_eapol(struct net_pkt *pkt)
 {
 	struct net_eth_hdr *hdr;
@@ -255,6 +259,7 @@ static bool is_eapol(struct net_pkt *pkt)
 
 	return ethertype == NET_ETH_PTYPE_EAPOL;
 }
+#endif
 #endif /* CONFIG_NRF700X_DATA_TX */
 
 enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev)
@@ -313,16 +318,18 @@ int nrf_wifi_if_send(const struct device *dev,
 			goto unlock;
 		}
 
+		LOG_ERR("%s: Raw Packet is being sent", __func__);
 		ret = nrf_wifi_fmac_start_rawpkt_xmit(rpu_ctx_zep->rpu_ctx,
 						      vif_ctx_zep->vif_idx,
 						      net_pkt_to_nbuf(pkt));
 	} else {
 #endif /* CONFIG_NRF700X_RAW_DATA_TX */
+#if defined(CONFIG_NRF700X_STA_MODE)
 		if ((vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) ||
 		    (!vif_ctx_zep->authorized && !is_eapol(pkt))) {
 			goto unlock;
 		}
-
+#endif
 		ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
 					       vif_ctx_zep->vif_idx,
 					       net_pkt_to_nbuf(pkt));
@@ -588,10 +595,10 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 			     NET_EVENT_IPV6_MADDR_ADD | NET_EVENT_IPV6_MADDR_DEL);
 	net_mgmt_add_event_callback(&ip_maddr6_cb);
 #endif /* CONFIG_NRF700X_STA_MODE */
-#ifdef CONFIG_NRF700X_DATA_TX
+#if defined(CONFIG_NRF700X_STA_MODE) || defined(CONFIG_NRF700X_RAW_DATA_RX)
 	k_work_init(&vif_ctx_zep->nrf_wifi_net_iface_work,
 		    nrf_wifi_net_iface_work_handler);
-#endif /* CONFIG_NRF700X_DATA_TX */
+#endif /* CONFIG_NRF700X_STA_MODE || CONFIG_NRF700X_RAW_DATA_RX */
 
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	k_work_init(&vif_ctx_zep->nrf_wifi_rpu_recovery_work,

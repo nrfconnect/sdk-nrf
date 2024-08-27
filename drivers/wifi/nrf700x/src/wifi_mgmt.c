@@ -135,7 +135,7 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
-
+#if defined(CONFIG_NRF700X_STA_MODE)
 int nrf_wifi_get_power_save_config(const struct device *dev,
 				   struct wifi_ps_config *ps_config)
 {
@@ -221,7 +221,9 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
 }
+#endif
 
+#if defined(CONFIG_NRF700X_STA_MODE)
 /* TWT interval conversion helpers: User <-> Protocol */
 static struct twt_interval_float nrf_wifi_twt_us_to_float(uint32_t twt_interval)
 {
@@ -731,6 +733,7 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
+#endif
 
 #ifdef CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES
 int nrf_wifi_mode(const struct device *dev,
@@ -781,13 +784,13 @@ int nrf_wifi_mode(const struct device *dev,
 			LOG_ERR("%s: mode setting is not valid", __func__);
 			goto out;
 		}
-
+#if defined(CONFIG_NRF700X_STA_MODE)
 		if (vif_ctx_zep->authorized && (mode->mode == NRF_WIFI_MONITOR_MODE)) {
 			LOG_ERR("%s: Cannot set monitor mode when station is connected",
 				__func__);
 			goto out;
 		}
-
+#endif
 		/**
 		 * Send the driver vif_idx instead of upper layer sent if_index.
 		 * we map network if_index 1 to vif_idx of 0 and so on. The vif_ctx_zep
@@ -836,6 +839,7 @@ int nrf_wifi_channel(const struct device *dev,
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	int ret = -1;
 
+	LOG_ERR("%s: entered", __func__);
 	if (!dev || !channel) {
 		LOG_ERR("%s: illegal input parameters", __func__);
 		return ret;
@@ -846,12 +850,12 @@ int nrf_wifi_channel(const struct device *dev,
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
 		return ret;
 	}
-
+#if defined(CONFIG_NRF700X_STA_MODE)
 	if (vif_ctx_zep->authorized) {
 		LOG_ERR("%s: Cannot change channel when in station connected mode", __func__);
 		return ret;
 	}
-
+#endif
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
@@ -866,6 +870,7 @@ int nrf_wifi_channel(const struct device *dev,
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 	def_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	LOG_ERR("%s: set channel called", __func__);
 
 	if (channel->oper == WIFI_MGMT_SET) {
 		/**

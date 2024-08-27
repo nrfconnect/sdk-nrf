@@ -715,7 +715,15 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = dev->data;
 
 	vif_ctx_zep->rpu_ctx_zep = &rpu_drv_priv_zep.rpu_ctx_zep;
-
+#if defined(CONFIG_NRF700X_MONITOR_MODE) || defined(CONFIG_NRF700X_DATA_TX)
+	callbk_fns.if_carr_state_chg_callbk_fn = nrf_wifi_if_carr_state_chg;
+#endif
+#if defined(CONFIG_NRF700X_RAW_DATA_RX) || defined(CONFIG_NRF700X_PROMISC_DATA_RX)
+	callbk_fns.rx_sniffer_frm_callbk_fn = nrf_wifi_if_sniffer_rx_frm;
+#endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
+#if defined(CONFIG_NRF700X_STA_MODE)
+	callbk_fns.rx_frm_callbk_fn = nrf_wifi_if_rx_frm;
+#endif
 #ifdef CONFIG_NRF700X_DATA_TX
 	data_config.aggregation = aggregation;
 	data_config.wmm = wmm;
@@ -725,11 +733,6 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 	data_config.reorder_buf_size = reorder_buf_size;
 	data_config.max_rxampdu_size = max_rxampdu_size;
 	data_config.rate_protection_type = rate_protection_type;
-	callbk_fns.if_carr_state_chg_callbk_fn = nrf_wifi_if_carr_state_chg;
-	callbk_fns.rx_frm_callbk_fn = nrf_wifi_if_rx_frm;
-#if defined(CONFIG_NRF700X_RAW_DATA_RX) || defined(CONFIG_NRF700X_PROMISC_DATA_RX)
-	callbk_fns.rx_sniffer_frm_callbk_fn = nrf_wifi_if_sniffer_rx_frm;
-#endif /* CONFIG_NRF700X_RAW_DATA_RX || CONFIG_NRF700X_PROMISC_DATA_RX */
 #endif
 	rx_buf_pools[0].num_bufs = rx1_num_bufs;
 	rx_buf_pools[1].num_bufs = rx2_num_bufs;

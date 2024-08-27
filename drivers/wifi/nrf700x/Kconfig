@@ -54,16 +54,16 @@ config NRF700X_RADIO_TEST
 config NRF700X_SYSTEM_WITH_RAW_MODES
 	bool "Enable nRF700X system mode with raw modes"
 	# TODO: This dependency need to be removed for Monitor and TX injection only
-	depends on WPA_SUPP
 	help
 	  Select this option to enable system mode of the nRF700x driver with raw modes
 
 endchoice
 
+#if NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
 if NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
 config NRF700X_STA_MODE
 	bool "Enable nRF700X STA mode"
-	default y
+	default y if WPA_SUPP
 	help
 		Select this option to enable STA mode of the nRF700x driver
 
@@ -73,7 +73,11 @@ config NRF700X_AP_MODE
 
 config NRF700X_P2P_MODE
 	bool "Enable P2P support in driver"
-endif # NRF700X_SYSTEM_MODE || NRF700X_SYSTEM_WITH_RAW_MODES
+
+config NRF700X_MONITOR_MODE
+	bool "Enable Monitor support in driver"
+	default y if NRF700X_RAW_DATA_RX
+endif # NRF700X_SYSTEM_MODE
 
 config NRF700X_RAW_DATA_TX
 	bool "Enable RAW TX data path in the driver"
