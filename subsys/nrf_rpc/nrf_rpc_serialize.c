@@ -458,13 +458,6 @@ bool nrf_rpc_decoding_done_and_check(const struct nrf_rpc_group *group,
 	return !is_decoder_invalid(ctx);
 }
 
-void nrf_rpc_rsp_decode_i32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
-			    void *handler_data)
-{
-	*(int32_t *)handler_data = nrf_rpc_decode_int(ctx);
-	check_final_decode_valid(group, ctx);
-}
-
 void nrf_rpc_rsp_decode_bool(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			     void *handler_data)
 {
@@ -472,18 +465,60 @@ void nrf_rpc_rsp_decode_bool(const struct nrf_rpc_group *group, struct nrf_rpc_c
 	check_final_decode_valid(group, ctx);
 }
 
+void nrf_rpc_rsp_decode_uint(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			     void *result, size_t result_size)
+{
+	if (!zcbor_uint_decode(ctx->zs, result, result_size)) {
+		memset(result, 0, result_size);
+	}
+
+	check_final_decode_valid(group, ctx);
+}
+
 void nrf_rpc_rsp_decode_u8(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			   void *handler_data)
 {
-	*(uint8_t *)handler_data = nrf_rpc_decode_int(ctx);
-	check_final_decode_valid(group, ctx);
+	nrf_rpc_rsp_decode_uint(group, ctx, handler_data, sizeof(uint8_t));
 }
 
 void nrf_rpc_rsp_decode_u16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			    void *handler_data)
 {
-	*(uint16_t *)handler_data = nrf_rpc_decode_int(ctx);
+	nrf_rpc_rsp_decode_uint(group, ctx, handler_data, sizeof(uint16_t));
+}
+
+void nrf_rpc_rsp_decode_u32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data)
+{
+	nrf_rpc_rsp_decode_uint(group, ctx, handler_data, sizeof(uint32_t));
+}
+
+void nrf_rpc_rsp_decode_int(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *result, size_t result_size)
+{
+	if (!zcbor_int_decode(ctx->zs, result, result_size)) {
+		memset(result, 0, result_size);
+	}
+
 	check_final_decode_valid(group, ctx);
+}
+
+void nrf_rpc_rsp_decode_i8(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			   void *handler_data)
+{
+	nrf_rpc_rsp_decode_int(group, ctx, handler_data, sizeof(int8_t));
+}
+
+void nrf_rpc_rsp_decode_i16(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data)
+{
+	nrf_rpc_rsp_decode_int(group, ctx, handler_data, sizeof(int16_t));
+}
+
+void nrf_rpc_rsp_decode_i32(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			    void *handler_data)
+{
+	nrf_rpc_rsp_decode_int(group, ctx, handler_data, sizeof(int32_t));
 }
 
 void nrf_rpc_rsp_decode_void(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
