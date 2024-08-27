@@ -1201,6 +1201,18 @@ ci_tests_benchmarks_multicore:
     - zephyr/boards/nordic/
     - zephyr/boards/nordic/
 
+ci_tests_benchmarks_i2c_endless:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/benchmarks/i2c_endless/
+    - zephyr/drivers/i2c/
+
+ci_tests_benchmarks_spi_endless:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/benchmarks/spi_endless/
+    - zephyr/drivers/spi/
+
 ci_tests_drivers_fprotect:
   files:
     - nrf/lib/fprotect/

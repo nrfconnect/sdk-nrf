@@ -315,6 +315,8 @@ Kconfig*                                  @tejlmand
 /tests/                                   @PerMac @katgiadla
 /tests/benchmarks/multicore/              @carlescufi
 /tests/benchmarks/multicore/idle/         @adamkondraciuk @nrfconnect/ncs-low-level-test
+/tests/benchmarks/i2c_endless/            @nrfconnect/ncs-low-level-test
+/tests/benchmarks/spi_endless/            @nrfconnect/ncs-low-level-test
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/subsys/nrf_compress/               @nordicjm
