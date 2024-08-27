@@ -74,18 +74,6 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
 
-	caps = sx_pk_fetch_capabilities();
-
-	if (!caps->ik_opsz) {
-		sx_pk_release_req(req);
-		return SX_ERR_IK_NOT_READY;
-	}
-
-	int max_opsz = caps->max_gfp_opsz;
-
-	req->op_size = caps->ik_opsz;
-	uint32_t rval = req->cmd->cmdcode & 0x301;
-
 	if (req->cmd->cmdcode == PK_OP_IK_EXIT) {
 		req->ik_mode = 0;
 	} else {
@@ -100,6 +88,18 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 			req->ik_mode = 1;
 		}
 	}
+
+	caps = sx_pk_fetch_capabilities();
+
+	if (!caps->ik_opsz) {
+		sx_pk_release_req(req);
+		return SX_ERR_IK_NOT_READY;
+	}
+
+	int max_opsz = caps->max_gfp_opsz;
+
+	req->op_size = caps->ik_opsz;
+	uint32_t rval = req->cmd->cmdcode & 0x301;
 
 	/* Write IK cmd register */
 	sx_pk_wrreg(&req->regs, IK_REG_PK_COMMAND, rval);

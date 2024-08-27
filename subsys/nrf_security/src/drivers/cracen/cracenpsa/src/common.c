@@ -23,21 +23,13 @@
 #include <sxsymcrypt/sha2.h>
 #include <sxsymcrypt/sha3.h>
 #include <zephyr/sys/util.h>
+#include <psa/nrf_platform_key_ids.h>
 
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
 
 #ifdef NRF54H_SERIES
-/* NCSDK-27273: These defines will come from an external header file. */
-#define DOMAIN_NONE	   0x00
-#define DOMAIN_SECURE	   0x01
-#define DOMAIN_APPLICATION 0x02
-#define DOMAIN_RADIO	   0x03
-#define DOMAIN_CELL	   0x04
-#define DOMAIN_ISIM	   0x05
-#define DOMAIN_WIFI	   0x06
-#define DOMAIN_SYSCTRL	   0x08
-
+/* Address from the IPS. May come from the MDK in the future. */
 #define DEVICE_SECRET_LENGTH 4
 #define DEVICE_SECRET_ADDRESS ((uint32_t *)0x0E001620)
 #endif
@@ -694,28 +686,28 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 		cfg.key_bundle_sz = sizeof(lstr_##x) / sizeof(uint32_t);                           \
 	}
 	case DOMAIN_NONE:
-		SET_STR(NONE);
+		SET_STR(NONE0);
 		break;
 	case DOMAIN_SECURE:
-		SET_STR(SECURE);
+		SET_STR(SECURE0);
 		break;
 	case DOMAIN_APPLICATION:
-		SET_STR(APPLICATION);
+		SET_STR(APPLICATION0);
 		break;
 	case DOMAIN_RADIO:
-		SET_STR(RADIO);
+		SET_STR(RADIOCORE0);
 		break;
 	case DOMAIN_CELL:
-		SET_STR(CELL);
+		SET_STR(CELL0);
 		break;
 	case DOMAIN_ISIM:
-		SET_STR(ISIM);
+		SET_STR(ISIM0);
 		break;
 	case DOMAIN_WIFI:
-		SET_STR(WIFI);
+		SET_STR(WIFI0);
 		break;
 	case DOMAIN_SYSCTRL:
-		SET_STR(SYSCTRL);
+		SET_STR(SYSCTRL0);
 		break;
 
 	default:
