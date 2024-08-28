@@ -23,8 +23,7 @@ Overview
 
 The sample demonstrates a basic Bluetooth® Low Energy Peripheral role functionality that exposes the Continuous Glucose Monitoring GATT Service.
 Once it connects to a Central device, it generates dummy glucose measurement values.
-You can use it together with the Continuous Glucose module in the nRF Toolbox app.
-You can also use the `nRF Connect for Mobile`_ to interact with the CGMS module.
+You can use the `nRF Connect for Mobile`_ to interact with the CGMS module.
 
 Building and running
 ********************
@@ -36,23 +35,23 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, connect to a smartphone
-with the nRF Toolbox installed to test it as follows:
+After programming the sample to your development kit, test it by performing the following steps:
 
 1. |connect_terminal_specific|
 #. Reset the development kit.
-#. Open the nRF Toolbox app and select the **Continuous Glucose** module.
-#. Click the name of the development kit to connect to it.
-
+#. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+#. Connect to the device from the application.
+   The device is advertising as ``Nordic Glucose Sensor``.
+   The services of the connected device are shown.
+#. In :guilabel:`Continuous Glucose Monitoring` Service, tap the :guilabel:`Notify` button for the "CGMS Measurement" characteristic.
    Authentication is required.
    The device prints the pairing key in the terminal.
 #. Enter the pairing key on the client side.
 #. If pairing is successful, in the terminal window, observe that notifications are enabled::
 
       <inf> cgms: CGMS Measurement: notification enabled
-      <inf> cgms: CGMS RACP: indication enabled
-      <inf> cgms: CGMS SOCP: indication enabled
 
+#. Observe that notifications with the measurement values are received.
 #. The glucose measurement is sent to the client using a notification.
    The client can also retrieve the record using the record access control point.
 
