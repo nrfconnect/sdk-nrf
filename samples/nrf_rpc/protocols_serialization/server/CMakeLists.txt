@@ -11,9 +11,13 @@ project(protocols_serialization_server)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
+
+if(CONFIG_NRF_PS_SERVER_FATAL_ERROR_TRIGGER)
+    target_sources(app PRIVATE src/fatal_error_trigger.c)
+endif()
 # NORDIC SDK APP END
 
 # Link OpenThread CLI even though OPENTHREAD_SHELL is not selected
 if(CONFIG_OPENTHREAD_RPC)
-zephyr_link_libraries(openthread-cli-ftd)
+    zephyr_link_libraries(openthread-cli-ftd)
 endif()

@@ -45,6 +45,14 @@ The following snippets are available:
 * ``log_rpc`` - Enables logging over RPC.
 * ``openthread`` - Enables the server part of the OpenThread RPC.
 
+User interface
+**************
+
+Button 1:
+   * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
+     This is used for testing the crash log feature.
+   * Otherwise: not available.
+
 Building and running
 ********************
 
@@ -73,7 +81,7 @@ In the protocols serialization samples, one peripheral is used for shell and log
 
     .. group-tab:: nRF52840 DK
 
-        By default, the nRF52840 DK uses the ``uart0`` peripheral for shell and logging purposes, and the ``uart1`` peripheral for sending OpenThread and Bluetooth remove procedure calls (RPCs).
+        By default, the nRF52840 DK uses the ``uart0`` peripheral for shell and logging purposes, and the ``uart1`` peripheral for sending OpenThread and Bluetooth remote procedure calls (RPCs).
 
         The ``uart1`` peripheral is configured to use the following pins:
 
@@ -107,7 +115,7 @@ In the protocols serialization samples, one peripheral is used for shell and log
 
     .. group-tab:: nRF54l15 DK
 
-        By default, the nRF54L15 DK uses the ``uart20`` peripheral for shell and logging purposes, and the ``uart21`` peripheral for sending OpenThread and Bluetooth remove procedure calls (RPCs).
+        By default, the nRF54L15 DK uses the ``uart20`` peripheral for shell and logging purposes, and the ``uart21`` peripheral for sending OpenThread and Bluetooth remote procedure calls (RPCs).
 
         The ``uart21`` peripheral is configured to use the following pins:
 

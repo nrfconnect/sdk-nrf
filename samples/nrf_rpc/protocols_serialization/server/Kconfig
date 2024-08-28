@@ -22,6 +22,15 @@ config LOG_BACKEND_RTT
 config LOG_BACKEND_UART
 	default n
 
+config NRF_PS_SERVER_FATAL_ERROR_TRIGGER
+	bool "Fatal error trigger"
+	select DK_LIBRARY
+	help
+	  Enables triggering a fatal error by pressing Button 1 on the development
+	  kit. This trigger allows for testing the feature of logging over RPC that
+	  provides an RPC client with access to the crash log stored in the retained
+	  RAM partition.
+
 module = NRF_PS_SERVER
 module-str = nrf_ps_server
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
