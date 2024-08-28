@@ -11,6 +11,8 @@
 #include <openthread/ip6.h>
 #include <openthread/link.h>
 #include <openthread/thread.h>
+#include <openthread/udp.h>
+#include <openthread/message.h>
 
 #include <string.h>
 
@@ -407,14 +409,58 @@ static int cmd_thread(const struct shell *sh, size_t argc, char *argv[])
 	return ot_cli_command_invoke(ot_cli_command_thread, sh, argc, argv);
 }
 
+static int cmd_test_message(const struct shell *sh, size_t argc, char *argv[])
+{
+	otError error = OT_ERROR_NONE;
+	otMessage *message = NULL;
+	uint16_t offset = 0;
+	uint16_t read = 0;
+	uint16_t length = 0;
+	static const char UDP_PAYLOAD[] = "Hello OpenThread World!";
+	char buf[128] = {0};
+
+	message = otUdpNewMessage(NULL, NULL);
+	if (message == NULL) {
+		error = OT_ERROR_NO_BUFS;
+		goto exit;
+	};
+
+	offset = otMessageGetOffset(message);
+
+	error = otMessageAppend(message, UDP_PAYLOAD, sizeof(UDP_PAYLOAD));
+	if (error != OT_ERROR_NONE) {
+		goto exit;
+	}
+
+	length = otMessageGetLength(message);
+	shell_print(sh, "length %d, offset %d", length, offset);
+	read = otMessageRead(message, offset, buf, length);
+	shell_print(sh, "read data: %s", buf);
+
+	if (strcmp(UDP_PAYLOAD, buf) == 0) {
+		shell_print(sh, "Payload matches.");
+	} else {
+		shell_print(sh, "Payload doesn't match.");
+	}
+
+	read = otMessageRead((otMessage *)2, offset, buf, length);
+	shell_print(sh, "read data len %d should be 0.", read);
+
+exit:
+	if (message != NULL) {
+		otMessageFree(message);
+	}
+
+	return 0;
+}
+
 static int cmd_ot(const struct shell *sh, size_t argc, char *argv[])
 {
 	return ot_cli_command_send(sh, argc, argv);
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	ot_cmds,
-	SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
+	ot_cmds, SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
 	SHELL_CMD_ARG(ipmaddr, NULL, "IPv6 multicast configuration", cmd_ipmaddr, 1, 2),
 	SHELL_CMD_ARG(mode, NULL, "Mode configuration", cmd_mode, 1, 1),
 	SHELL_CMD_ARG(pollperiod, NULL, "Polling configuration", cmd_pollperiod, 1, 1),
@@ -422,6 +468,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
 	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
 	SHELL_CMD_ARG(active_tlvs, NULL, "Set active dataset", cmd_active_tlvs, 1, 1),
+	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
