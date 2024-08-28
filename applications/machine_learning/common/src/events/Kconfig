@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if LOG
+
+menu "Event options"
+
+comment "Initially logged events"
+
+config ML_APP_INIT_LOG_BATTERY_LEVEL_EVENT
+	bool "Log battery level events"
+	default y
+	help
+	  Log battery level events in ML application.
+
+endmenu
+
+endif

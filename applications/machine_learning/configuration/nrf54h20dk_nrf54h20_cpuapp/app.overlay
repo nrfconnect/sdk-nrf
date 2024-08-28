@@ -9,6 +9,11 @@
 		zephyr,console = &uart136;
 	};
 
+	zephyr,user {
+		io-channels = <&adc 2>;
+		io-channel-names = "batt_meas";
+	};
+
 	/* Redefine leds to fit CAF requirements. */
 	/delete-node/ leds;
 
@@ -107,3 +112,5 @@ ipc1: &cpuapp_cpuppr_ipc {
 &bmi270 {
 	status = "disabled";
 };
+
+batt_meas_pin: &light_sensor_pin {};
