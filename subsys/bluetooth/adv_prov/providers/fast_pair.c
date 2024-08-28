@@ -38,6 +38,13 @@ void bt_le_adv_prov_fast_pair_show_ui_pairing(bool enable)
 
 int bt_le_adv_prov_fast_pair_set_battery_mode(enum bt_fast_pair_adv_battery_mode mode)
 {
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_BN)) {
+		LOG_ERR("Cannot set battery mode without support for the Battery Notification "
+			"extension. Enable the CONFIG_BT_FAST_PAIR_BN Kconfig to use this API");
+
+		return -ENOSYS;
+	}
+
 	if ((mode < 0) || (mode >= BT_FAST_PAIR_ADV_BATTERY_MODE_COUNT)) {
 		return -EINVAL;
 	}

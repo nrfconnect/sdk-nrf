@@ -51,6 +51,7 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
 
   * :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_PN_LEN_MAX` - The option specifies the maximum length of a stored Fast Pair Personalized Name.
 
+* :kconfig:option:`CONFIG_BT_FAST_PAIR_BN` - The option enables the `Fast Pair Battery Notification extension`_.
 * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` - The option enables the `Fast Pair Find My Device Network extension`_.
 
   * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` - The option enables the Detecting Unwanted Location Trackers (DULT) support in the FMDN extension (see :ref:`ug_bt_fast_pair_prerequisite_ops_fmdn_dult_integration`):
