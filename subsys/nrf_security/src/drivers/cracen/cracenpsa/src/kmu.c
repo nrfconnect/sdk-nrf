@@ -108,7 +108,7 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_key_derivation_input_bytes(&op, PSA_KEY_DERIVATION_INPUT_INFO, context,
+	status = cracen_key_derivation_input_bytes(&op, PSA_KEY_DERIVATION_INPUT_CONTEXT, context,
 						   CRACEN_KMU_SLOT_KEY_SIZE);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -685,7 +685,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	 *     - Key material (optional for keys > 128 bits.)
 	 *     - Tag
 	 */
-	uint8_t encrypted_workmem[CRACEN_KMU_SLOT_KEY_SIZE * 4];
+	uint8_t encrypted_workmem[CRACEN_KMU_SLOT_KEY_SIZE * 4] = {};
 	size_t encrypted_outlen = 0;
 
 	psa_status_t status = verify_provisioning_state();
@@ -725,8 +725,11 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	}
 
 	if (metadata.key_usage_scheme == KMU_METADATA_SCHEME_ENCRYPTED) {
-		status = cracen_kmu_encrypt(key_buffer, key_buffer_size, &metadata,
-					    encrypted_workmem, sizeof(encrypted_workmem),
+		/* Copy key material to workbuffer, zero-pad key and align to key slot size. */
+		memcpy(encrypted_workmem + CRACEN_KMU_SLOT_KEY_SIZE, key_buffer, key_buffer_size);
+		status = cracen_kmu_encrypt(encrypted_workmem + CRACEN_KMU_SLOT_KEY_SIZE,
+					    ROUND_UP(key_buffer_size, CRACEN_KMU_SLOT_KEY_SIZE),
+					    &metadata, encrypted_workmem, sizeof(encrypted_workmem),
 					    &encrypted_outlen);
 
 		if (status != PSA_SUCCESS) {
