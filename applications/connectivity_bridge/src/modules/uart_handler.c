@@ -187,7 +187,9 @@ static void uart_callback(const struct device *dev, struct uart_event *evt,
 		 * Typically happens when the peer does not drive its TX GPIO,
 		 * or if there is a baud rate mismatch.
 		 */
-		enable_rx_retry[dev_idx] = true;
+		if (IS_ENABLED(CONFIG_UART_NRFX_UARTE_LEGACY_SHIM)) {
+			enable_rx_retry[dev_idx] = true;
+		}
 		break;
 	default:
 		LOG_ERR("Unexpected event: %d", evt->type);
