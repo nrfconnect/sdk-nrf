@@ -33,6 +33,11 @@
 #define CRACEN_X25519_KEY_SIZE_BYTES (32)
 #define CRACEN_X448_KEY_SIZE_BYTES   (56)
 
+typedef struct {
+	uint8_t slot_number;
+	uint8_t owner_id;
+} ikg_opaque_key;
+
 __attribute__((warn_unused_result)) psa_status_t silex_statuscodes_to_psa(int ret);
 
 __attribute__((warn_unused_result)) psa_status_t

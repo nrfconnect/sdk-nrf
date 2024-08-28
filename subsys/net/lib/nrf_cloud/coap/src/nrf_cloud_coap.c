@@ -44,6 +44,12 @@ LOG_MODULE_REGISTER(nrf_cloud_coap, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define MAX_COAP_PAYLOAD_SIZE (CONFIG_COAP_CLIENT_BLOCK_SIZE - \
 			       CONFIG_COAP_CLIENT_MESSAGE_HEADER_SIZE)
 
+/* Semaphore to guard CoAP client callback data/error codes for GET and FETCH operations.
+ * A single semaphore is sufficient for all public functions since nrf_cloud_coap_transport
+ * only allows one transfer at a time.
+ */
+static K_SEM_DEFINE(coap_transfer_sem, 1, 1);
+
 static int64_t get_ts(void)
 {
 	int64_t ts;
@@ -74,19 +80,17 @@ static void get_agnss_callback(int16_t result_code,
 	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
 		agnss_err = result_code;
 		if (len) {
-			LOG_ERR("Unexpected response: %*s", len, payload);
+			LOG_ERR("Unexpected response: %.*s", len, payload);
 		}
 		return;
 	}
 	if (((offset + len) <= result->buf_sz) && result->buf && payload) {
 		memcpy(&result->buf[offset], payload, len);
 		result->agnss_sz += len;
-	} else {
-		agnss_err = -EOVERFLOW;
-		return;
-	}
-	if (last_block) {
 		agnss_err = 0;
+	} else if (agnss_err != -ENOBUFS) {
+		LOG_ERR("Received A-GNSS data cannot fit in result buffer");
+		agnss_err = -ENOBUFS;
 	}
 }
 
@@ -103,30 +107,49 @@ int nrf_cloud_coap_agnss_data_get(struct nrf_cloud_rest_agnss_request const *con
 	size_t len = sizeof(buffer);
 	int err;
 
+	/* Take the semaphore before modifying the static buffer */
+	(void)k_sem_take(&coap_transfer_sem, K_FOREVER);
+
 	err = coap_codec_agnss_encode(request, buffer, &len,
 				     COAP_CONTENT_FORMAT_APP_CBOR);
 	if (err) {
 		LOG_ERR("Unable to encode A-GNSS request: %d", err);
-		return err;
+		goto give_and_return;
 	}
 
 	result->agnss_sz = 0;
+
+	agnss_err = 0;
+
 	err = nrf_cloud_coap_fetch(COAP_AGNSS_RSC, NULL,
 				   buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
 				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_agnss_callback,
 				   result);
-	if (!err && !agnss_err) {
-		LOG_INF("Got A-GNSS data");
-	} else if (err == -EAGAIN) {
+
+	/* Check for CoAP transfer errors */
+	if (err == -EAGAIN) {
 		LOG_ERR("Timeout waiting for A-GNSS data");
-	} else if (agnss_err > 0) {
-		LOG_RESULT_CODE_ERR("Unexpected result code:", agnss_err);
-		err = agnss_err;
-	} else {
-		err = agnss_err;
-		LOG_ERR("Error: %d", err);
+		goto give_and_return;
+	} else if (err) {
+		LOG_ERR("CoAP client error: %d", err);
+		goto give_and_return;
 	}
 
+	/* Use the callback error as the return value */
+	err = agnss_err;
+
+	/* Check for callback errors */
+	if (agnss_err > 0) {
+		LOG_RESULT_CODE_ERR("Unexpected A-GNSS result code:", agnss_err);
+	} else if (agnss_err < 0) {
+		LOG_ERR("A-GNSS response processing error: %d", agnss_err);
+	} else {
+		/* No callback error: success */
+		LOG_DBG("Got A-GNSS data");
+	}
+
+give_and_return:
+	k_sem_give(&coap_transfer_sem);
 	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
@@ -141,7 +164,7 @@ static void get_pgps_callback(int16_t result_code,
 	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
 		pgps_err = result_code;
 		if (len) {
-			LOG_ERR("Unexpected response: %*s", len, payload);
+			LOG_ERR("Unexpected response: %.*s", len, payload);
 		}
 	} else {
 		pgps_err = coap_codec_pgps_resp_decode(user, payload, len,
@@ -162,36 +185,50 @@ int nrf_cloud_coap_pgps_url_get(struct nrf_cloud_rest_pgps_request const *const 
 	size_t len = sizeof(buffer);
 	int err;
 
+	/* Take the semaphore before modifying the static buffer */
+	(void)k_sem_take(&coap_transfer_sem, K_FOREVER);
+
 	err = coap_codec_pgps_encode(request, buffer, &len,
 				     COAP_CONTENT_FORMAT_APP_CBOR);
 	if (err) {
 		LOG_ERR("Unable to encode P-GPS request: %d", err);
-		return err;
+		goto give_and_return;
 	}
+
+	pgps_err = 0;
 
 	err = nrf_cloud_coap_fetch(COAP_PGPS_RSC, NULL,
 				   buffer, len, COAP_CONTENT_FORMAT_APP_CBOR,
 				   COAP_CONTENT_FORMAT_APP_CBOR, true, get_pgps_callback,
 				   file_location);
-	if (!err && !pgps_err) {
-		LOG_INF("Got P-GPS file location");
-	} else if (err == -EAGAIN) {
-		LOG_ERR("Timeout waiting for P-GPS file location");
-	} else {
-		if (pgps_err > 0) {
-			LOG_RESULT_CODE_ERR("Error getting P-GPS file location; result code:",
-					    pgps_err);
-			err = pgps_err;
-		} else {
-			err = pgps_err;
-			LOG_ERR("Error: %d", err);
-		}
+
+	/* Check for CoAP transfer errors */
+	if (err == -EAGAIN) {
+		LOG_ERR("Timeout waiting for P-GPS URL");
+		goto give_and_return;
+	} else if (err) {
+		LOG_ERR("CoAP client error: %d", err);
+		goto give_and_return;
 	}
 
+	/* Use the callback error as the return value */
+	err = pgps_err;
+
+	/* Check for callback errors */
+	if (pgps_err > 0) {
+		LOG_RESULT_CODE_ERR("Error getting P-GPS URL; result code:", pgps_err);
+	} else if (pgps_err < 0) {
+		LOG_ERR("P-GPS response decoding error: %d", pgps_err);
+	} else {
+		/* No callback error: success */
+		LOG_DBG("Got P-GPS URL");
+	}
+
+give_and_return:
+	k_sem_give(&coap_transfer_sem);
 	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */
-
 
 int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len, bool confirmable)
 {
@@ -208,7 +245,6 @@ int nrf_cloud_coap_bytes_send(uint8_t *buf, size_t buf_len, bool confirmable)
 	}
 	return err;
 }
-
 
 int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable)
 {
@@ -393,7 +429,7 @@ static void get_location_callback(int16_t result_code,
 	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
 		loc_err = result_code;
 		if (len) {
-			LOG_ERR("Unexpected response: %*s", len, payload);
+			LOG_ERR("Unexpected response: %.*s", len, payload);
 		}
 	} else if (len) {
 		loc_err = coap_codec_ground_fix_resp_decode(user, payload, len,
@@ -428,13 +464,18 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 
 	(void)nrf_cloud_ground_fix_url_encode(url, url_size, COAP_GND_FIX_RSC, conf);
 
+	/* Take the semaphore before modifying the static buffer */
+	(void)k_sem_take(&coap_transfer_sem, K_FOREVER);
+
+	loc_err = 0;
+
 	err = coap_codec_ground_fix_req_encode(request->cell_info,
 					       request->wifi_info,
 					       buffer, &len,
 					       COAP_CONTENT_FORMAT_APP_CBOR);
 	if (err) {
 		LOG_ERR("Unable to encode location data: %d", err);
-		return err;
+		goto give_and_return;
 	}
 
 	err = nrf_cloud_coap_fetch(url, NULL, buffer, len,
@@ -442,25 +483,35 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 				   COAP_CONTENT_FORMAT_APP_CBOR, true,
 				   get_location_callback, result);
 
-	if (!err && !loc_err) {
+	/* Check for CoAP transfer errors */
+	if (err == -EAGAIN) {
+		LOG_ERR("Timeout waiting for location");
+		goto give_and_return;
+	} else if (err) {
+		LOG_ERR("CoAP client error: %d", err);
+		goto give_and_return;
+	}
+
+	/* Use the callback error as the return value */
+	err = loc_err;
+
+	/* Check for callback errors */
+	if (loc_err > 0) {
+		LOG_RESULT_CODE_ERR("Error getting location; result code:", loc_err);
+	} else if (loc_err < 0) {
+		LOG_ERR("Location response decoding error: %d", loc_err);
+	} else {
+		/* No callback error: success */
 		if (result->type != LOCATION_TYPE__INVALID) {
 			LOG_DBG("Location: %d, %.12g, %.12g, %d", result->type,
 				result->lat, result->lon, result->unc);
 		} else {
 			LOG_DBG("No location returned");
 		}
-	} else if (err == -EAGAIN) {
-		LOG_ERR("Timeout waiting for location");
-	} else {
-		if (loc_err > 0) {
-			LOG_RESULT_CODE_ERR("Error getting location; result code:", loc_err);
-			err = loc_err;
-		} else {
-			err = loc_err;
-			LOG_ERR("Error: %d", err);
-		}
 	}
 
+give_and_return:
+	k_sem_give(&coap_transfer_sem);
 	return err;
 }
 
@@ -473,7 +524,7 @@ static void get_fota_callback(int16_t result_code,
 	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
 		fota_err = result_code;
 		if (len) {
-			LOG_ERR("Unexpected response: %*s", len, payload);
+			LOG_ERR("Unexpected response: %.*s", len, payload);
 		}
 	} else if (payload && len) {
 		LOG_DBG("Got FOTA response: %.*s", len, (const char *)payload);
@@ -494,31 +545,43 @@ int nrf_cloud_coap_fota_job_get(struct nrf_cloud_fota_job_info *const job)
 
 	job->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 
+	(void)k_sem_take(&coap_transfer_sem, K_FOREVER);
+
+	fota_err = 0;
+
 	err = nrf_cloud_coap_get(COAP_FOTA_GET_RSC, NULL, NULL, 0,
 				 COAP_CONTENT_FORMAT_APP_CBOR,
 				 COAP_CONTENT_FORMAT_APP_JSON, true, get_fota_callback, job);
 
-	if (!err && !fota_err) {
-		LOG_INF("FOTA job received; type:%d, id:%s, host:%s, path:%s, size:%d",
-			job->type, job->id, job->host, job->path, job->file_size);
-	} else if (!err && (fota_err == COAP_RESPONSE_CODE_NOT_FOUND)) {
-		LOG_INF("No pending FOTA job");
-		err = 0;
-	} else if (err == -EAGAIN) {
+	/* Check for CoAP transfer errors */
+	if (err == -EAGAIN) {
 		LOG_ERR("Timeout waiting for FOTA job");
-	} else if (err < 0) {
-		LOG_ERR("Error getting current FOTA job: %d", err);
-	} else {
-		if (fota_err > 0) {
-			LOG_RESULT_CODE_ERR("Unexpected CoAP response code"
-					    " getting current FOTA job; rc:",
-					    fota_err);
-			err = fota_err;
-		} else {
-			err = fota_err;
-			LOG_ERR("Error: %d", err);
-		}
+		goto give_and_return;
+	} else if (err) {
+		LOG_ERR("CoAP client error: %d", err);
+		goto give_and_return;
 	}
+
+	/* Use the callback error as the return value */
+	err = fota_err;
+
+	/* Check for callback errors */
+	if (fota_err == COAP_RESPONSE_CODE_NOT_FOUND) {
+		/* A CoAP error response code, but not an actual error */
+		err = 0;
+		LOG_DBG("No pending FOTA job");
+	} else if (fota_err > 0) {
+		LOG_RESULT_CODE_ERR("Error getting FOTA job info; result code:", fota_err);
+	} else if (fota_err < 0) {
+		LOG_ERR("FOTA response decoding error: %d", fota_err);
+	} else {
+		/* No callback error: success */
+		LOG_DBG("FOTA job received; type:%d, id:%s, host:%s, path:%s, size:%d",
+			job->type, job->id, job->host, job->path, job->file_size);
+	}
+
+give_and_return:
+	k_sem_give(&coap_transfer_sem);
 	return err;
 }
 
@@ -551,44 +614,53 @@ int nrf_cloud_coap_fota_job_update(const char *const job_id,
 	return err;
 }
 
-struct get_shadow_data  {
+static struct get_shadow_data  {
+	enum coap_content_format format;
 	char *buf;
 	size_t buf_len;
-} get_shadow_data;
-static int shadow_err;
+	int err;
+} shadow_data;
 
 static void get_shadow_callback(int16_t result_code,
 				size_t offset, const uint8_t *payload, size_t len,
 				bool last_block, void *user)
 {
-	__ASSERT_NO_MSG(user != NULL);
-	struct get_shadow_data *data = (struct get_shadow_data *)user;
-
 	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
-		shadow_err = result_code;
+		shadow_data.err = result_code;
 		if (len) {
-			LOG_ERR("Unexpected response: %*s", len, payload);
+			LOG_ERR("Unexpected response: %.*s", len, payload);
 		}
-	} else {
-		int cpy_len = MIN(data->buf_len - 1, len);
-
-		if (cpy_len < len) {
-			LOG_WRN("Shadow truncated from %zd to %zd characters.",
-				len, cpy_len);
-		}
-		shadow_err = 0;
-		if (cpy_len) {
-			memcpy(data->buf, payload, cpy_len);
-		}
-		data->buf[cpy_len] = '\0';
-		data->buf_len = cpy_len;
+		return;
 	}
+
+	/* If JSON, ensure buffer can be NULL-terminated */
+	size_t cpy_len = (shadow_data.format == COAP_CONTENT_FORMAT_APP_JSON) ?
+			 (shadow_data.buf_len - 1) : shadow_data.buf_len;
+
+	if (len > cpy_len) {
+		LOG_WRN("Shadow data truncated from %zd to %zd bytes.", len, cpy_len);
+		shadow_data.err = -E2BIG;
+	} else {
+		/* Copy the entire received buffer */
+		cpy_len = len;
+	}
+
+	if (cpy_len) {
+		memcpy(shadow_data.buf, payload, cpy_len);
+	}
+
+	if (shadow_data.format == COAP_CONTENT_FORMAT_APP_JSON) {
+		shadow_data.buf[cpy_len] = '\0';
+	}
+
+	shadow_data.buf_len = cpy_len;
 }
 
 int nrf_cloud_coap_shadow_get(char *buf, size_t *buf_len, bool delta,
 			      enum coap_content_format format)
 {
 	__ASSERT_NO_MSG(buf != NULL);
+	__ASSERT_NO_MSG(buf_len != NULL);
 	__ASSERT_NO_MSG(*buf_len != 0);
 	if (!nrf_cloud_coap_is_connected()) {
 		return -EACCES;
@@ -600,21 +672,40 @@ int nrf_cloud_coap_shadow_get(char *buf, size_t *buf_len, bool delta,
 		return -EINVAL;
 	}
 
-	get_shadow_data.buf = buf;
-	get_shadow_data.buf_len = *buf_len;
 	int err;
 
+	(void)k_sem_take(&coap_transfer_sem, K_FOREVER);
+
+	shadow_data.buf		= buf;
+	shadow_data.buf_len	= *buf_len;
+	shadow_data.err		= 0;
+	shadow_data.format	= format;
+
 	err = nrf_cloud_coap_get(COAP_SHDW_RSC, delta ? NULL : "delta=false", NULL, 0,
-				  0, format, true, get_shadow_callback,
-				  &get_shadow_data);
+				  0, format, true, get_shadow_callback, NULL);
+
+	/* Check for CoAP transfer errors */
 	if (err) {
-		LOG_ERR("Failed to send get request: %d", err);
-	} else if (shadow_err > 0) {
-		LOG_RESULT_CODE_ERR("Unexpected result code:", shadow_err);
-		err = shadow_err;
+		LOG_ERR("Failed to send shadow get request: %d", err);
+		goto give_and_return;
 	}
 
-	*buf_len = get_shadow_data.buf_len;
+	/* Use the callback error as the return value */
+	err = shadow_data.err;
+
+	/* Check for callback errors */
+	if (shadow_data.err > 0) {
+		LOG_RESULT_CODE_ERR("Error getting shadow; result code:", shadow_data.err);
+	} else if ((shadow_data.err < 0) && (shadow_data.err != -E2BIG)) {
+		LOG_ERR("Shadow response processing error: %d", shadow_data.err);
+	} else {
+		/* Data received, a return value of -E2BIG indicates that data was truncated */
+		LOG_DBG("Received shadow, size: %u", shadow_data.buf_len);
+		*buf_len = shadow_data.buf_len;
+	}
+
+give_and_return:
+	k_sem_give(&coap_transfer_sem);
 	return err;
 }
 

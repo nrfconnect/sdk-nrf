@@ -24,20 +24,34 @@ Enabling configuration options
 
 Application configuration must support an external XIP and image splitting.
 
-Enable the following options:
+Enable the following sysbuild options in a ``sysbuild.conf`` file:
 
-* :kconfig:option:`CONFIG_CODE_DATA_RELOCATION`
-* :kconfig:option:`CONFIG_HAVE_CUSTOM_LINKER_SCRIPT`
-* :kconfig:option:`CONFIG_BUILD_NO_GAP_FILL`
-* :kconfig:option:`CONFIG_XIP`
-* :kconfig:option:`CONFIG_NORDIC_QSPI_NOR_XIP`
-* :kconfig:option:`CONFIG_XIP_SPLIT_IMAGE`
-* :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` - This option enables the MCUboot build and support for the application.
+.. tabs::
 
-Additionally, set the following options:
+   .. group-tab:: Swap using move with network core support
+
+      .. code-block:: cfg
+
+         SB_CONFIG_BOOTLOADER_MCUBOOT=y
+         SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
+         SB_CONFIG_NETCORE_APP_UPDATE=y
+         SB_CONFIG_SECURE_BOOT_NETCORE=y
+         SB_CONFIG_QSPI_XIP_SPLIT_IMAGE=y
+
+         # This will enable the hci_ipc image for the network core, change to the desired image
+         SB_CONFIG_NETCORE_HCI_IPC=y
+
+   .. group-tab:: Swap using move without network core support
+
+      .. code-block:: cfg
+
+         SB_CONFIG_BOOTLOADER_MCUBOOT=y
+         SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
+         SB_CONFIG_QSPI_XIP_SPLIT_IMAGE=y
+
+Additionally, set the following application options:
 
 * :kconfig:option:`CONFIG_CUSTOM_LINKER_SCRIPT` to ``"<linker_file_for_relocation>"``
-* :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` to ``3``
 * :kconfig:option:`CONFIG_FLASH_INIT_PRIORITY` to ``40`` - You must ensure the QSPI device initialization priority, as it makes the external XIP code accessible before it is executed.
   If any initialization code is expected to be run from the QSPI XIP, then its initialization priority value must be lower than the QSPI device initialization priority.
 
@@ -108,6 +122,7 @@ The configuration must have 3 images with 2 slots each:
   These slots should be named ``mcuboot_primary_1`` and ``mcuboot_secondary_1``.
 * The third set of slots is for the QSPI XIP part of the application.
   These slots should be named ``mcuboot_primary_2`` and ``mcuboot_secondary_2``.
+  There should also be ``mcuboot_primary_2_pad`` (which should be the same size as ``mcuboot_pad``) and ``mcuboot_primary_2_app``.
 
 This means a basic dual image configuration for the nRF5340 DK needs to describe an external QSPI XIP code partition as ``mcuboot_primary_2`` partition.
 Additionally, ensure that:
@@ -118,109 +133,8 @@ Additionally, ensure that:
 
 See the following snippet for an example of the static configuration for partition manager:
 
-.. code-block:: console
-
-    app:
-        address: 0x10200
-        end_address: 0xe4000
-        region: flash_primary
-        size: 0xd3e00
-    external_flash:
-        address: 0x120000
-        device: MX25R64
-        end_address: 0x800000
-        region: external_flash
-        size: 0x6e0000
-    mcuboot:
-        address: 0x0
-        end_address: 0x10000
-        region: flash_primary
-        size: 0x10000
-    mcuboot_pad:
-        address: 0x10000
-        end_address: 0x10200
-        region: flash_primary
-        size: 0x200
-    mcuboot_primary:
-        address: 0x10000
-        end_address: 0xf0000
-        orig_span: &id001
-        - mcuboot_pad
-        - app
-        region: flash_primary
-        size: 0xe0000
-        span: *id001
-    mcuboot_primary_1:
-        address: 0x0
-        device: flash_ctrl
-        end_address: 0x40000
-        region: ram_flash
-        size: 0x40000
-    mcuboot_primary_app:
-        address: 0x10200
-        end_address: 0xf0000
-        orig_span: &id002
-        - app
-        region: flash_primary
-        size: 0xdfe00
-        span: *id002
-    mcuboot_secondary:
-        address: 0x0
-        device: MX25R64
-        end_address: 0xe0000
-        region: external_flash
-        size: 0xe0000
-    mcuboot_secondary_1:
-        address: 0xe0000
-        device: MX25R64
-        end_address: 0x120000
-        region: external_flash
-        size: 0x40000
-    mcuboot_primary_2:
-        address: 0x120000
-        device: MX25R64
-        end_address: 0x160000
-        region: external_flash
-        size: 0x40000
-    mcuboot_secondary_2:
-        address: 0x160000
-        device: MX25R64
-        end_address: 0x1a0000
-        region: external_flash
-        size: 0x40000
-    otp:
-        address: 0xff8100
-        end_address: 0xff83fc
-        region: otp
-        size: 0x2fc
-    pcd_sram:
-        address: 0x20000000
-        end_address: 0x20002000
-        region: sram_primary
-        size: 0x2000
-    ram_flash:
-        address: 0x40000
-        end_address: 0x40000
-        region: ram_flash
-        size: 0x0
-    rpmsg_nrf53_sram:
-        address: 0x20070000
-        end_address: 0x20080000
-        placement:
-            before:
-            - end
-        region: sram_primary
-        size: 0x10000
-    settings_storage:
-        address: 0xf0000
-        end_address: 0x100000
-        region: flash_primary
-        size: 0x10000
-    sram_primary:
-        address: 0x20002000
-        end_address: 0x20070000
-        region: sram_primary
-        size: 0x6e000
+.. literalinclude:: ../../../../../samples/nrf5340/extxip_smp_svr/pm_static.yml
+    :language: yaml
 
 Configuring linker script
 *************************
@@ -282,43 +196,52 @@ Similarly, it is possible to relocate certain libraries, for example:
 Building the project
 ********************
 
-You must use child image when building your project, as XIP QSPI does not currently support sysbuild.
+Use the standard :ref:`building` procedure.
+The XIP QSPI sample supports and uses sysbuild by default.
 
-Flashing the project
-********************
+Programming the project
+***********************
 
-For the nRF5340 DK and other boards equipped with flash working in the QSPI mode, use the ``west flash`` command.
-For other cases, flashing needs to be done manually.
+For the nRF5340 DK and other boards equipped with flash working in the QSPI mode, use the :ref:`standard programming command <programming>` (``west flash``).
+For other cases, set up a configuration file for nrfjprog, as described in the following section.
 
-Flashing to external flash in SPI/DSPI mode
-===========================================
+Programming to external flash in SPI/DSPI mode
+==============================================
 
-Flashing an application with ``west`` triggers the ``nrfjprog`` runner.
-The runner uses the default system settings that configure the application in the QSPI mode when flashing the external flash.
-You can change this behavior by using a custom :file:`Qspi.ini` configuration file, however, it will prevent flashing through west.
+Programming an application with west triggers the nrfjprog runner.
+The runner uses the default system settings that configure the application in the QSPI mode when programming the external flash.
+You can change this behavior by using a custom :file:`Qspi.ini` configuration file.
 
 .. note::
     The :file:`Qspi.ini` file is required to work on the Nordic Thingy:53.
 
-If you wish to use the :file:`Qspi.ini` file, you will need to manually flash the HEX files in the repository.
-For example, for the :ref:`smp_svr_ext_xip` sample, you need to flash the following files (paths are relative to the build directory):
+This file can specify the mode to use when programming the QSPI flash.
+For example, the following code is from the file for the Thingy:53 and uses ``PP`` for programming and ``READ2IO`` for reading:
 
-* :file:`<cpunet_build_subdirectory>/zephyr/merged_CPUNET.hex`
+.. literalinclude:: ../../../../../samples/nrf5340/extxip_smp_svr/Qspi_thingy53.ini
+    :language: yaml
 
-  * For Bluetooth stack application the path is :file:`<cpunet_build_subdirectory> hci_ipc`.
-* :file:`mcuboot/zephyr/zephyr.hex`
-* :file:`zephyr/internal_flash_signed.hex`
-* :file:`zephyr/qspi_flash_signed.hex`
+To use this file automatically in a project, update the ``CMakeLists.txt`` file by :ref:`adding the mention of the new file <modifying_files_compiler>`.
+This way, the file can be applied globally for every board built with a project or applied to specific boards if a project supports multiple board targets, each with different configurations.
+The following code shows how to set the configuration file used when flashing the Thingy:53 only.
 
-Use the following commands to flash and verify the Simple Management Protocol (SMP) server sample:
+.. note::
+    This code must be placed before the ``find_package`` line.
 
-.. code-block:: console
+.. code-block:: cmake
 
-    nrfjprog -f NRF53 --coprocessor CP_NETWORK --sectorerase --program hci_ipc/zephyr/merged_CPUNET.hex --verify
-    nrfjprog -f NRF53 --sectorerase --program mcuboot/zephyr/zephyr.hex --verify
-    nrfjprog -f NRF53 --sectorerase --program zephyr/internal_flash_signed.hex --verify
-    nrfjprog -f NRF53 --qspisectorerase --program zephyr/qspi_flash_signed.hex --qspiini <path_to>/Qspi.ini --verify
-    nrfjprog -f NRF53 --reset
+    cmake_minimum_required(VERSION 3.20.0)
+
+    macro(app_set_runner_args)
+      if(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP)
+        # Use alternative QSPI configuration file when flashing Thingy53
+        board_runner_args(nrfjprog "--qspiini=${CMAKE_CURRENT_SOURCE_DIR}/Qspi_thingy53.ini")
+      endif()
+    endmacro()
+
+    find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+
+    project(smp_svr_ext_xip)
 
 .. note::
     The external flash chip must be connected to the dedicated QSPI peripheral port pins of the nRF5340 SoC.
@@ -391,3 +314,8 @@ The following table lists performance numbers that were measured under different
 +-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
 | 128 MHz         | External flash  | Yes    | 48 MHz       | Quad   | 36.4      | 8.85               | 13.9               | 966                      | 911                      |
 +-----------------+-----------------+--------+--------------+--------+-----------+--------------------+--------------------+--------------------------+--------------------------+
+
+Additional information
+**********************
+
+For additional information regarding the QSPI XIP mode of |NCS| and how to use it, see :ref:`qspi_xip_split_image`.

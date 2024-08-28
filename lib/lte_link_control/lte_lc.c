@@ -17,6 +17,7 @@
 #include <modem/lte_lc_trace.h>
 #include <modem/at_monitor.h>
 #include <modem/nrf_modem_lib.h>
+#include <modem/at_parser.h>
 #include <zephyr/logging/log.h>
 
 #include "lte_lc_helpers.h"
@@ -870,12 +871,13 @@ int lte_lc_psm_get(int *tau, int *active_time)
 {
 	int err;
 	struct lte_lc_psm_cfg psm_cfg;
+	struct at_parser parser;
 	char active_time_str[9] = {0};
 	char tau_ext_str[9] = {0};
 	char tau_legacy_str[9] = {0};
+	int len;
+	int reg_status = 0;
 	static char response[160] = { 0 };
-	const char ch = ',';
-	char *comma_ptr;
 
 	if ((tau == NULL) || (active_time == NULL)) {
 		return -EINVAL;
@@ -884,7 +886,7 @@ int lte_lc_psm_get(int *tau, int *active_time)
 	/* Format of XMONITOR AT command response:
 	 * %XMONITOR: <reg_status>,[<full_name>,<short_name>,<plmn>,<tac>,<AcT>,<band>,<cell_id>,
 	 * <phys_cell_id>,<EARFCN>,<rsrp>,<snr>,<NW-provided_eDRX_value>,<Active-Time>,
-	 * <Periodic-TAUext>,<Periodic-TAU>]
+	 * <Periodic-TAU-ext>,<Periodic-TAU>]
 	 * We need to parse the three last parameters, Active-Time, Periodic-TAU-ext and
 	 * Periodic-TAU.
 	 */
@@ -897,59 +899,48 @@ int lte_lc_psm_get(int *tau, int *active_time)
 		return -EFAULT;
 	}
 
-	comma_ptr = strchr(response, ch);
-	if (!comma_ptr) {
-		/* Not an AT error, thus must be that just a <reg_status> received:
-		 * optional part is included in a response only when <reg_status> is 1 or 5.
-		 */
-		LOG_DBG("Not registered: cannot get current PSM configuration");
+	err = at_parser_init(&parser, response);
+	__ASSERT_NO_MSG(err == 0);
+
+	/* Check registration status */
+	err = at_parser_num_get(&parser, 1, &reg_status);
+	if (err) {
+		LOG_ERR("AT command parsing failed, error: %d", err);
+		return -EBADMSG;
+	} else if (reg_status != LTE_LC_NW_REG_REGISTERED_HOME &&
+		   reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING) {
+		LOG_WRN("No PSM parameters because device not registered, status: %d", reg_status);
 		return -EBADMSG;
 	}
 
-	/* Skip over first 13 fields in AT cmd response by counting delimiters (commas). */
-	for (int i = 0; i < 12; i++) {
-		if (comma_ptr) {
-			comma_ptr = strchr(comma_ptr + 1, ch);
-		} else {
-			LOG_ERR("AT command parsing failed");
-			return -EBADMSG;
-		}
-	}
-
-	/* The last three fields of AT response looks something like this:
-	 * ,"00011110","00000111","01001001"
-	 * comma_ptr now points the comma before Active-Time. Discard the comma and the quote mark,
-	 * hence + 2, and copy Active-Time into active_time_str. Find the next comma and repeat for
-	 * Periodic-TAU-ext and so forth.
-	 */
-
-	if (comma_ptr) {
-		strncpy(active_time_str, comma_ptr + 2, 8);
-	} else {
-		LOG_ERR("AT command parsing failed");
+	/* <Active-Time> */
+	len = sizeof(active_time_str);
+	err = at_parser_string_get(&parser, 14, active_time_str, &len);
+	if (err) {
+		LOG_ERR("AT command parsing failed, error: %d", err);
 		return -EBADMSG;
 	}
 
-	comma_ptr = strchr(comma_ptr + 1, ch);
-	if (comma_ptr) {
-		strncpy(tau_ext_str, comma_ptr + 2, 8);
-	} else {
-		LOG_ERR("AT command parsing failed");
+	/* <Periodic-TAU-ext> */
+	len = sizeof(tau_ext_str);
+	err = at_parser_string_get(&parser, 15, tau_ext_str, &len);
+	if (err) {
+		LOG_ERR("AT command parsing failed, error: %d", err);
 		return -EBADMSG;
 	}
 
-	comma_ptr = strchr(comma_ptr + 1, ch);
-	if (comma_ptr) {
-		strncpy(tau_legacy_str, comma_ptr + 2, 8);
-	} else {
-		LOG_ERR("AT command parsing failed");
+	/* <Periodic-TAU> */
+	len = sizeof(tau_legacy_str);
+	err = at_parser_string_get(&parser, 16, tau_legacy_str, &len);
+	if (err) {
+		LOG_ERR("AT command parsing failed, error: %d", err);
 		return -EBADMSG;
 	}
 
 	err = parse_psm(active_time_str, tau_ext_str, tau_legacy_str, &psm_cfg);
 	if (err) {
 		LOG_ERR("Failed to parse PSM configuration, error: %d", err);
-		return err;
+		return -EBADMSG;
 	}
 
 	*tau = psm_cfg.tau;

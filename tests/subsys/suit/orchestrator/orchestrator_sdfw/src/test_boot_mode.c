@@ -135,7 +135,7 @@ static void setup_install_envelope(const suit_manifest_class_id_t *class_id, con
 
 ZTEST_SUITE(orchestrator_boot_tests, NULL, setup_install_fw, NULL, NULL, NULL);
 
-ZTEST(orchestrator_boot_tests, test_invalid_exec_mode)
+ZTEST(orchestrator_boot_tests, test_boot_invalid_exec_mode)
 {
 	const uint8_t *buf;
 	size_t len;

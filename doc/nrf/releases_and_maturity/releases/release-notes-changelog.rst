@@ -46,7 +46,8 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* Added documentation for :ref:`qspi_xip_split_image` functionality.
+* Added a section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
 
 See also the `MCUboot`_ section.
 
@@ -237,6 +238,12 @@ nRF Desktop
   * A debug configuration enabling the `Fast Pair`_ feature on the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
   * An application versioning using the :file:`VERSION` file.
     The versioning is only applied to the application configurations that use the MCUboot bootloader.
+  * The :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option to :ref:`nrf_desktop_usb_state`.
+    The option allows to synchronize providing HID data with USB Start of Frame (SOF).
+    The feature reduces the negative impact of jitter related to USB polls, but it also increases HID data latency.
+    For details, see :ref:`nrf_desktop_usb_state_sof_synchronization`.
+  * Local HID report buffering in :ref:`nrf_desktop_usb_state`.
+    This ensures that the memory buffer passed to the USB next stack is valid until a HID report is sent and allows to enqueue up to two HID input reports for a USB HID instance (used only when :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is enabled).
 
 * Updated:
 
@@ -312,6 +319,10 @@ Bluetooth Fast Pair samples
   * The values for the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option in all configurations, and for the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL` Kconfig option in configurations with the Find My Device Network (FMDN) extension support.
     The values are now aligned with the Fast Pair requirements.
 
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Updated the :ref:`ipc_radio` image configuration by splitting it into the debug and release configurations.
+
 Bluetooth Mesh samples
 ----------------------
 
@@ -343,6 +354,8 @@ Cellular samples
 
     * Wi-Fi overlays from newlibc to picolib.
     * Handling of JITP association to improve speed and reliability.
+    * Renamed the :file:`overlay_nrf7002ek_wifi_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_mqtt_no_lte.conf`.
+    * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
@@ -394,14 +407,11 @@ Matter samples
 
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the sample.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to sample's location that contains the ZAP file and :file:`zap-generated` directory.
+  * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 PDK.
 
 * :ref:`matter_lock_sample` sample:
 
     * Added :ref:`Matter Lock schedule snippet <matter_lock_snippets>`, and updated the documentation to use the snippet.
-
-* :ref:`matter_template_sample` sample:
-
-  * Added support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 PDK.
 
 Networking samples
 ------------------
@@ -421,7 +431,10 @@ nRF RPC
 nRF5340 samples
 ---------------
 
-|no_changes_yet_note|
+* :ref:`smp_svr_ext_xip` sample:
+
+  * This sample has been converted to support sysbuild.
+  * Support has been added to demonstrate direct-XIP building and building without network core support.
 
 Peripheral samples
 ------------------
@@ -525,8 +538,23 @@ Bluetooth libraries and services
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice option allowing the user to select their target Fast Pair use case.
       The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig options represent the supported use cases that can be selected as part of this Kconfig choice option.
 
-  * Removed the MbedTLS cryptographic backend support in Fast Pair, because it is superseded by the PSA backend.
-    Consequently, the :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS` Kconfig option has also been removed.
+  * Removed:
+
+    * The MbedTLS cryptographic backend support in Fast Pair, because it is superseded by the PSA backend.
+      Consequently, the :kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_MBEDTLS` Kconfig option has also been removed.
+    * The default overrides for the :kconfig:option:`CONFIG_BT_DIS` and :kconfig:option:`CONFIG_BT_DIS_FW_REV` Kconfig options that enable these options together with the Google Fast Pair Service.
+      This configuration is now selected only by the Fast Pair use cases that require the Device Information Service (DIS).
+    * The default override for the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option that was set to :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` if :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` was enabled.
+      The default override is now handled in the Kconfig of the Zephyr Device Information Service (DIS) module and is based on Zephyr's :ref:`zephyr:app-version-details` that uses the :file:`VERSION` file.
+
+  * Updated the default values of the following Fast Pair Kconfig options:
+
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING`
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING`
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_PN`
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID`
+
+    These Kconfig options are now disabled by default and are selected only by the Fast Pair use cases that require them.
 
 * :ref:`bt_le_adv_prov_readme`:
 
@@ -672,8 +700,15 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_coap` library:
 
-  * Fixed a hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
-  * Updated to use a shorter resource string for the ``d2c/bulk`` resource.
+  * Fixed:
+
+    * A hard fault that occurred when encoding AGNSS request data and the ``net_info`` field of the :c:struct:`nrf_cloud_rest_agnss_request` structure is NULL.
+    * An issue where certain CoAP functions could return zero, indidicating success, even though there was an error.
+
+  * Updated:
+
+    * To use a shorter resource string for the ``d2c/bulk`` resource.
+    * The function :c:func:`nrf_cloud_coap_shadow_get` to return ``-E2BIG`` if the received shadow data was truncated because the provided buffer was not big enough.
 
 * :ref:`lib_lwm2m_client_utils` library:
 
@@ -701,7 +736,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* Added a compression/decompression library with support for the LZMA decompression.
 
 Security libraries
 ------------------

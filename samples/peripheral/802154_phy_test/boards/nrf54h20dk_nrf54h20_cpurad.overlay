@@ -55,6 +55,10 @@
 		sw2 = &button2;
 		sw3 = &button3;
 	};
+
+	chosen {
+		zephyr,shell-ipc = &ipc0;
+	};
 };
 
 &gpio9 {
@@ -67,4 +71,8 @@
 
 &gpiote130 {
 	status = "okay";
+};
+
+&uart135 {
+	status = "disabled";
 };

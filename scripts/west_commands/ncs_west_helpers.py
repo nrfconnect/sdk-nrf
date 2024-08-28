@@ -206,7 +206,7 @@ class RepoAnalyzer:
         # complete list of OOT patches.
         downstream_out: dict[str, pygit2.Commit] = {}
         for c in all_downstream_oot:
-            sha, sl = str(c.oid), commit_title(c)
+            sha, sl = str(c.id), commit_title(c)
             is_revert = title_is_revert(sl)  # this is just a heuristic
 
             if len(c.parents) > 1:

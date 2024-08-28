@@ -102,7 +102,11 @@ static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, ch
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		*privkey = si_sig_fetch_ikprivkey(*sicurve, *key_buffer);
+		if (key_buffer_size != sizeof(ikg_opaque_key)) {
+			return SX_ERR_INVALID_ARG;
+		}
+		*privkey =
+			si_sig_fetch_ikprivkey(*sicurve, ((ikg_opaque_key *)key_buffer)->owner_id);
 
 		return status;
 	}

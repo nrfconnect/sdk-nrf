@@ -11,7 +11,6 @@
 {%- set mpi_application_class_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
 {%- set mpi_radio_vendor_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
 {%- set mpi_radio_class_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
-{%- set sequence_number = sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] %}
 {%- if 'SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] != '' %}
   {%- set nordic_top = True %}
 {%- else %}
@@ -23,7 +22,13 @@ SUIT_Envelope_Tagged:
       suit-digest-algorithm-id: cose-alg-sha-256
   suit-manifest:
     suit-manifest-version: 1
-    suit-manifest-sequence-number: {{ sequence_number }}
+{%- if APP_ROOT_SEQ_NUM is defined %}
+    suit-manifest-sequence-number: {{ APP_ROOT_SEQ_NUM }}
+{%- elif DEFAULT_SEQ_NUM is defined %}
+    suit-manifest-sequence-number: {{ DEFAULT_SEQ_NUM }}
+{%- else %}
+    suit-manifest-sequence-number: 1
+{%- endif %}
     suit-common:
       suit-components:
       - - CAND_MFST
@@ -108,6 +113,12 @@ SUIT_Envelope_Tagged:
       - suit-send-record-failure
       - suit-send-sysinfo-success
       - suit-send-sysinfo-failure
+
+{%- if APP_ROOT_VERSION is defined %}
+    suit-current-version: {{ APP_ROOT_VERSION }}
+{%- elif DEFAULT_VERSION is defined %}
+    suit-current-version: {{ DEFAULT_VERSION }}
+{%- endif %}
 
     suit-payload-fetch:
 {%- if application is defined %}

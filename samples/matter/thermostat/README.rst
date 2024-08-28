@@ -112,6 +112,13 @@ Matter thermostat custom configurations
     :start-after: matter_light_bulb_sample_configuration_file_types_start
     :end-before: matter_light_bulb_sample_configuration_file_types_end
 
+Matter thermostat with Trusted Firmware-M
+=========================================
+
+.. include:: ../template/README.rst
+    :start-after: matter_template_build_with_tfm_start
+    :end-before: matter_template_build_with_tfm_end
+
 Device Firmware Upgrade support
 ===============================
 

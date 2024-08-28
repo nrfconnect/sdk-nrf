@@ -296,7 +296,7 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 		return -EAGAIN;
 	}
 
-	ret = lc3_file_open(&streams[*streamer_idx].file, streams[*streamer_idx].filename);
+	ret = lc3_file_open(&streams[*streamer_idx].file, filename);
 	if (ret) {
 		LOG_ERR("Failed to open file %d", ret);
 		return ret;

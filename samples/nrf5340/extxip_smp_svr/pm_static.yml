@@ -64,8 +64,23 @@ mcuboot_primary_2:
   address: 0x120000
   device: MX25R64
   end_address: 0x160000
+  orig_span: &id003
+  - mcuboot_primary_2_pad
+  - mcuboot_primary_2_app
   region: external_flash
   size: 0x40000
+  span: *id003
+mcuboot_primary_2_pad:
+  address: 0x120000
+  end_address: 0x120200
+  region: external_flash
+  size: 0x200
+mcuboot_primary_2_app:
+  address: 0x120200
+  device: MX25R64
+  end_address: 0x40000
+  region: external_flash
+  size: 0x3FE00
 mcuboot_secondary_2:
   address: 0x160000
   device: MX25R64

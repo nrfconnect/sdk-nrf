@@ -53,6 +53,35 @@ Serial LTE Modem (SLM)
     * ``AT#XSOCKETOPT=1,53,`` with ``AT#XSOCKETOPT=1,61,4`` to indicate ``RAI_ONGOING``.
     * ``AT#XSOCKETOPT=1,54,`` with ``AT#XSOCKETOPT=1,61,5`` to indicate ``RAI_WAIT_MORE``.
 
+SUIT DFU for nRF54H20
+---------------------
+
+.. toggle::
+
+  * The manifest sequence number is no longer configured through a :ref:`sysbuild <configuring_sysbuild>` Kconfig option.
+    The values are now read from the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.
+    This change to the :ref:`sysbuild <configuring_sysbuild>` Kconfig option requires the following updates in the SUIT templates for your project:
+
+       * Remove from all templates:
+
+         .. code-block:: YAML
+
+            suit-manifest-sequence-number: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] }}
+
+       * Add the line that corresponds to the manifest name, that is ``APP_ROOT_SEQ_NUM`` for the application root manifest:
+
+         .. code-block:: YAML
+
+            suit-manifest-sequence-number: {{ APP_ROOT_SEQ_NUM }}
+
+    If the value of the sequence number was changed in your application, append the following line to the :file:`VERSION` file:
+
+         .. code-block:: sh
+
+            APP_ROOT_SEQ_NUM = <N>
+
+    For the list of all variables, set through the :file:`VERSION`, refer to the :ref:`ug_nrf54h20_suit_customize_dfu`.
+
 Libraries
 =========
 

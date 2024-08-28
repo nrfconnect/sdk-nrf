@@ -238,14 +238,32 @@ Each variable is a Python dictionary type (``dict``) containing the following ke
 * ``dt`` -  Devicetree representation (`edtlib`_ object)
 * ``binary`` - Path to the binary, which holds the firmware for the target
 
-Additionally, the Python dictionary holds a variable called ``version`` that holds the application version.
+Additionally, the Python dictionary holds all the variables defined inside the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.
+The default templates searches for the following options inside the :file:`VERSION` file:
+
+* ``APP_ROOT_SEQ_NUM`` - Sets the application root manifest sequence number.
+* ``APP_ROOT_VERSION`` - Sets the application root manifest current (semantic) version.
+* ``APP_LOCAL_1_SEQ_NUM`` - Sets the application local manifest sequence number.
+* ``APP_LOCAL_1_VERSION`` - Sets the application local manifest current (semantic) version.
+* ``RAD_LOCAL_1_SEQ_NUM`` - Sets the radio local manifest sequence number.
+* ``RAD_LOCAL_1_VERSION`` - Sets the radio local manifest current (semantic) version.
+* ``APP_RECOVERY_SEQ_NUM`` - Sets the application recovery manifest sequence number.
+* ``APP_RECOVERY_VERSION`` - Sets the application recovery manifest current (semantic) version.
+* ``RAD_RECOVERY_SEQ_NUM`` - Sets the radio recovery manifest sequence number.
+* ``RAD_RECOVERY_VERSION`` - Sets the radio recovery manifest current (semantic) version.
+
+If the manifest sequence number or current (semantic) version is not defined for a manifest, the default template tries to generate those values, based on the application version values:
+
+   * The default manifest sequence number is set in the same manner as the ``APPVERSION`` CMake variable.
+   * The default manifest current (semantic) version is set in the same manner as the ``APP_VERSION_EXTENDED_STRING`` CMake variable.
+
 With the Python dictionary you are able to, for example:
 
 * Extract the CPU ID by using ``application['dt'].label2node['cpu'].unit_addr``
 * Obtain the partition address with ``application['dt'].chosen_nodes['zephyr,code-partition']``
 * Obtain the size of partition with ``application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size``
 * Get the pair of URI name and the binary path by using ``'#{{ application['name'] }}': {{ application['binary'] }}``
-* Get the application version with ``suit-manifest-sequence-number: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] }}``
+* Get the root manifest sequence number with ``suit-manifest-sequence-number: {{ APP_ROOT_SEQ_NUM }}``
 
 Additionally, the **get_absolute_address** method is available to recalculate the absolute address of the partition.
 With these variables and methods, you can define templates which will next be filled out by the build system and use them to prepare the output binary SUIT envelope.
@@ -307,7 +325,7 @@ For more information, see the file available in the sample and `Jinja documentat
            suit-digest-algorithm-id: cose-alg-sha-256
       suit-manifest:
          suit-manifest-version: 1
-         suit-manifest-sequence-number: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_SEQUENCE_NUM'] }}                              # Assign value defined in the `CONFIG_APP_VERSION` Kconfig option.
+         suit-manifest-sequence-number: {{ APP_ROOT_SEQ_NUM }}                     # Assign value defined in the `VERSION` file.
          suit-common:
             suit-components:
             - - CAND_MFST

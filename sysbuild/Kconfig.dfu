@@ -5,6 +5,7 @@
 menuconfig DFU_MULTI_IMAGE_PACKAGE_BUILD
 	bool "Create multi-image DFU"
 	depends on BOOTLOADER_MCUBOOT
+	depends on !QSPI_XIP_SPLIT_IMAGE
 	help
 	  Build DFU Multi Image package that contains a manifest file followed by selected update
 	  images.

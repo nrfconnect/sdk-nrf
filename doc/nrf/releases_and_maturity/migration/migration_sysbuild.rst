@@ -335,26 +335,74 @@ You must update your application to select the required Kconfig options at the s
 
 .. _child_parent_to_sysbuild_migration_partition_manager:
 
-Partition manager
+Partition Manager
 =================
 
-Support for using partition manager for an image was moved to sysbuild.
+Support for using the Partition Manager for an image has been moved to sysbuild.
 The following Kconfig options are available:
 
-+-----------------------------------------------------------------+----------------------------------------------------------------------------+
-| Kconfig option                                                  | Description                                                                |
-+=================================================================+============================================================================+
-|               ``SB_CONFIG_PARTITION_MANAGER``                   | Enables partition manager support                                          |
-+-----------------------------------------------------------------+----------------------------------------------------------------------------+
-|               ``SB_CONFIG_PM_MCUBOOT_PAD``                      | MCUboot image header padding                                               |
-+-----------------------------------------------------------------+----------------------------------------------------------------------------+
-|               ``SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`` | Places the secondary MCUboot update partition in external flash            |
-+-----------------------------------------------------------------+----------------------------------------------------------------------------+
-|               ``SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK``   | Will force override the external flash driver check                        |
-+-----------------------------------------------------------------+----------------------------------------------------------------------------+
++---------------------------------------------------+-----------------------------------------------------------------+
+|                  Kconfig option                   |                           Description                           |
++===================================================+=================================================================+
+| ``SB_CONFIG_PARTITION_MANAGER``                   | Enables partition manager support                               |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``SB_CONFIG_PM_MCUBOOT_PAD``                      | MCUboot image header padding                                    |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`` | Places the secondary MCUboot update partition in external flash |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK``   | Will force override the external flash driver check             |
++---------------------------------------------------+-----------------------------------------------------------------+
 
 You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
 If these options are not set, firmware updates may not work or images may fail to boot.
+
+.. _child_parent_to_sysbuild_migration_qspi_xip:
+
+QSPI XIP flash split code
+-------------------------
+
+Support for using an application image based on the Quad Serial Peripheral Interface (QSPI) with the Execute in place (XIP) flash memory split has been moved to sysbuild.
+The following Kconfig options are available:
+
++------------------------------------+------------------------------------------------------------------------------------------------------------+
+|           Kconfig option           |                                                Description                                                 |
++====================================+============================================================================================================+
+| ``SB_CONFIG_QSPI_XIP_SPLIT_IMAGE`` | Enables splitting application into internal flash and external QSPI XIP flash images with MCUboot signing. |
++------------------------------------+------------------------------------------------------------------------------------------------------------+
+
+You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
+If these options are not set, the QSPI XIP flash code sections will not be generated.
+The MCUboot image number is now dependent upon what images are present in a build, and the Kconfig option ``SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`` gives the image number of this section.
+
+The format for the Partition Manager static partition file has also changed.
+There must now be a ``pad`` section and an ``app`` section which form the primary section in a span.
+Here's an example from the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample:
+
+.. code-block:: yaml
+
+    mcuboot_primary_2:
+      address: 0x120000
+      device: MX25R64
+      end_address: 0x160000
+    +  orig_span: &id003
+    +  - mcuboot_primary_2_pad
+    +  - mcuboot_primary_2_app
+      region: external_flash
+      size: 0x40000
+    +  span: *id003
+    +mcuboot_primary_2_pad:
+    +  address: 0x120000
+    +  end_address: 0x120200
+    +  region: external_flash
+    +  size: 0x200
+    +mcuboot_primary_2_app:
+    +  address: 0x120200
+    +  device: MX25R64
+    +  end_address: 0x40000
+    +  region: external_flash
+    +  size: 0x3FE00
+
+For more details about the QSPI XIP flash split image feature, see :ref:`qspi_xip_split_image`.
 
 .. _child_parent_to_sysbuild_migration_filename_changes:
 
@@ -365,55 +413,67 @@ Some output file names have changed from child/parent image configurations or ha
 This is because sysbuild properly namespaces images in a project.
 The changes to final output files (ignoring artifacts and intermediary files) are as follows:
 
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Child/parent file                                   | Sysbuild file                                                                                                                                                |
-+=====================================================+==============================================================================================================================================================+
-| ``zephyr/app_update.bin``                           | ``<app_name>/zephyr/<kernel_name>.signed.bin`` where ``<kernel_name>`` is the applications Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/app_signed.hex``                           | ``<app_name>/zephyr/<kernel_name>.signed.hex`` where ``<kernel_name>`` is the applications Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/app_test_update.hex``                      | No equivalent                                                                                                                                                |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/app_moved_test_update.hex``                | No equivalent                                                                                                                                                |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_update.bin``                  | ``signed_by_mcuboot_and_b0_<net_core_app_name>.bin`` where ``<net_core_app_name>`` is the name of the network core application                               |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_signed.hex``                  | ``signed_by_b0_<net_core_app_name>.hex`` where ``<net_core_app_name>`` is the name of the network core application                                           |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_test_update.hex``             | No equivalent                                                                                                                                                |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_moved_test_update.hex``       | No equivalent                                                                                                                                                |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/mcuboot_secondary_app_update.bin``         | ``mcuboot_secondary_app/zephyr/<kernel_name>.signed.bin`` where ``<kernel_name>`` is the applications Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/mcuboot_secondary_app_signed.hex``         | ``mcuboot_secondary_app/zephyr/<kernel_name>.signed.hex`` where ``<kernel_name>`` is the applications Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/matter.ota``                               | ``<matter_ota_name>.ota`` where ``<matter_ota_name>`` is the value of Kconfig ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME``                                       |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s0_image.hex``                | ``signed_by_b0_<app_name>.hex`` where ``<app_name>`` is the name of the application                                                                          |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s1_image.hex``                | ``signed_by_b0_s1_image.hex``                                                                                                                                |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s0_image.bin``                | ``signed_by_b0_<app_name>.bin`` where ``<app_name>`` is the name of the application                                                                          |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s1_image.bin``                | ``signed_by_b0_s1_image.bin``                                                                                                                                |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``<net_core_app_name>/zephyr/signed_by_b0_app.hex`` | ``signed_by_b0_<net_core_app_name>.hex`` where ``<net_core_app_name>`` is the name of the network core application                                           |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``<net_core_app_name>/zephyr/signed_by_b0_app.bin`` | ``signed_by_b0_<net_core_app_name>.bin`` where ``<net_core_app_name>`` is the name of the network core application                                           |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/merged.hex``                               | ``merged.hex``                                                                                                                                               |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``<net_core_app_name>/zephyr/merged_CPUNET.hex``    | ``merged_CPUNET.hex``                                                                                                                                        |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/merged_domains.hex``                       | No equivalent, use ``merged.hex`` for application core and ``merged_CPUNET.hex`` for network core                                                            |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/dfu_multi_image.bin``                      | ``dfu_multi_image.bin``                                                                                                                                      |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/dfu_application.zip``                      | ``dfu_application.zip``                                                                                                                                      |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/dfu_mcuboot.zip``                          | ``dfu_mcuboot.zip``                                                                                                                                          |
-+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                  Child/parent file                  |                                                                         Sysbuild file                                                                         |
++=====================================================+===============================================================================================================================================================+
+| ``zephyr/app_update.bin``                           | ``<app_name>/zephyr/<kernel_name>.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/app_signed.hex``                           | ``<app_name>/zephyr/<kernel_name>.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/app_test_update.hex``                      | No equivalent                                                                                                                                                 |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/app_moved_test_update.hex``                | No equivalent                                                                                                                                                 |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/net_core_app_update.bin``                  | ``signed_by_mcuboot_and_b0_<net_core_app_name>.bin`` where ``<net_core_app_name>`` is the name of the network core application                                |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/net_core_app_signed.hex``                  | ``signed_by_b0_<net_core_app_name>.hex`` where ``<net_core_app_name>`` is the name of the network core application                                            |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/net_core_app_test_update.hex``             | No equivalent                                                                                                                                                 |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/net_core_app_moved_test_update.hex``       | No equivalent                                                                                                                                                 |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/mcuboot_secondary_app_update.bin``         | ``mcuboot_secondary_app/zephyr/<kernel_name>.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/mcuboot_secondary_app_signed.hex``         | ``mcuboot_secondary_app/zephyr/<kernel_name>.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/matter.ota``                               | ``<matter_ota_name>.ota`` where ``<matter_ota_name>`` is the value of Kconfig ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME``                                        |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/signed_by_b0_s0_image.hex``                | ``signed_by_b0_<app_name>.hex`` where ``<app_name>`` is the name of the application                                                                           |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/signed_by_b0_s1_image.hex``                | ``signed_by_b0_s1_image.hex``                                                                                                                                 |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/signed_by_b0_s0_image.bin``                | ``signed_by_b0_<app_name>.bin`` where ``<app_name>`` is the name of the application                                                                           |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/signed_by_b0_s1_image.bin``                | ``signed_by_b0_s1_image.bin``                                                                                                                                 |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``<net_core_app_name>/zephyr/signed_by_b0_app.hex`` | ``signed_by_b0_<net_core_app_name>.hex`` where ``<net_core_app_name>`` is the name of the network core application                                            |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``<net_core_app_name>/zephyr/signed_by_b0_app.bin`` | ``signed_by_b0_<net_core_app_name>.bin`` where ``<net_core_app_name>`` is the name of the network core application                                            |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/internal_flash.hex``                       | ``<app_name>/zephyr/<kernel_name>.internal.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value          |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/internal_flash_signed.hex``                | ``<app_name>/zephyr/<kernel_name>.internal.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/internal_flash_update.bin``                | ``<app_name>/zephyr/<kernel_name>.internal.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/qspi_flash.hex``                           | ``<app_name>/zephyr/<kernel_name>.external.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value          |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/qspi_flash_signed.hex``                    | ``<app_name>/zephyr/<kernel_name>.external.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/qspi_flash_update.bin``                    | ``<app_name>/zephyr/<kernel_name>.external.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/merged.hex``                               | ``merged.hex``                                                                                                                                                |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``<net_core_app_name>/zephyr/merged_CPUNET.hex``    | ``merged_CPUNET.hex``                                                                                                                                         |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/merged_domains.hex``                       | No equivalent, use ``merged.hex`` for application core and ``merged_CPUNET.hex`` for network core                                                             |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/dfu_multi_image.bin``                      | ``dfu_multi_image.bin``                                                                                                                                       |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/dfu_application.zip``                      | ``dfu_application.zip``                                                                                                                                       |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``zephyr/dfu_mcuboot.zip``                          | ``dfu_mcuboot.zip``                                                                                                                                           |
++-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Example output files
 ====================
@@ -544,21 +604,21 @@ In Sysbuild, elements like file suffixes, shields, and snippets without an image
 To apply them to a single image, they must be prefixed with the image name.
 Without doing this, projects with multiple images (for example, those with MCUboot) might fail to build due to invalid configuration for other images.
 
-+-------------------------------+----------------------------------+-----------------------+
-| Configuration parameter       | Child/parent                     | Sysbuild              |
-+===============================+==================================+=======================+
-| ``-DFILE_SUFFIX=...``         | Applies only to main application | Applies to all images |
-+-------------------------------+----------------------------------+-----------------------+
-| ``-D<image>_FILE_SUFFIX=...`` | Applies only to <image>          |Applies only to <image>|
-+-------------------------------+----------------------------------+-----------------------+
-| ``-DSNIPPET=...``             | Applies only to main application | Applies to all images |
-+-------------------------------+----------------------------------+-----------------------+
-| ``-D<image>_SNIPPET=...``     | Applies only to <image>          |Applies only to <image>|
-+-------------------------------+----------------------------------+-----------------------+
-| ``-DSHIELD=...``              | Applies only to main application | Applies to all images |
-+-------------------------------+----------------------------------+-----------------------+
-| ``-D<image>_SHIELD=...``      | Applies only to <image>          |Applies only to <image>|
-+-------------------------------+----------------------------------+-----------------------+
++-------------------------------+----------------------------------+-------------------------+
+| Configuration parameter       | Child/parent                     | Sysbuild                |
++===============================+==================================+=========================+
+| ``-DFILE_SUFFIX=...``         | Applies only to main application | Applies to all images   |
++-------------------------------+----------------------------------+-------------------------+
+| ``-D<image>_FILE_SUFFIX=...`` | Applies only to <image>          | Applies only to <image> |
++-------------------------------+----------------------------------+-------------------------+
+| ``-DSNIPPET=...``             | Applies only to main application | Applies to all images   |
++-------------------------------+----------------------------------+-------------------------+
+| ``-D<image>_SNIPPET=...``     | Applies only to <image>          | Applies only to <image> |
++-------------------------------+----------------------------------+-------------------------+
+| ``-DSHIELD=...``              | Applies only to main application | Applies to all images   |
++-------------------------------+----------------------------------+-------------------------+
+| ``-D<image>_SHIELD=...``      | Applies only to <image>          | Applies only to <image> |
++-------------------------------+----------------------------------+-------------------------+
 
 Configuration values that specify Kconfig fragment or overlay files (for example, :makevar:`EXTRA_CONF_FILE` and :makevar:`EXTRA_DTC_OVERLAY_FILE`) cannot be applied globally using either child/parent image or sysbuild.
 They function the same in both systems:

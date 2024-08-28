@@ -247,13 +247,12 @@ Apart from the callback registration and enabling the Fast Pair subsystem, no ad
 Personalized Name extension
 ===========================
 
-To support the Personalized Name extension, ensure that the :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` Kconfig option is enabled in your project.
-This extension is enabled by default.
+To support the Personalized Name extension, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_PN` Kconfig option in your project.
 
 FMDN extension
 ==============
 
-Enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option to support the FMDN extension in your project.
+To support the FMDN extension, enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` Kconfig option in your project.
 
 Managing the activation state
 -----------------------------
@@ -615,8 +614,8 @@ The Fast Pair specification allows the `Fast Pair Procedure`_ to operate in a sp
 In this mode, the Provider and Seeker skip the steps that involve Bluetooth pairing and bonding.
 In this case, the `Fast Pair Procedure`_ is only used to pass the Account Key from the Seeker to the Provider device.
 
-You can disable the :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING` configuration option to support the `Fast Pair Procedure`_  without Bluetooth pairing and bonding.
-By default, the :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING` configuration option is enabled, and the standard mode of the procedure is required by the Provider.
+You can enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING` configuration option to restrict the `Fast Pair Procedure`_  and allow it to execute only with the Bluetooth pairing and bonding step.
+By default, the :kconfig:option:`CONFIG_BT_FAST_PAIR_REQ_PAIRING` configuration option is disabled, and the procedure is not restricted by the Provider.
 
 Using the information callbacks
 ===============================
