@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+zephyr_include_directories(.)
+target_sources_ifdef(CONFIG_SLM_LWM2M app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/slm_at_lwm2m.c)
+target_sources_ifdef(CONFIG_SLM_LWM2M app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/slm_lwm2m_device.c)

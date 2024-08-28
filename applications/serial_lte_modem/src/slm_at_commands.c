@@ -67,6 +67,9 @@
 #if defined(CONFIG_SLM_CMUX)
 #include "slm_cmux.h"
 #endif
+#if defined(CONFIG_SLM_LWM2M)
+#include "slm_at_lwm2m.h"
+#endif
 
 LOG_MODULE_REGISTER(slm_at, CONFIG_SLM_LOG_LEVEL);
 
@@ -484,6 +487,13 @@ int slm_at_init(void)
 		return err;
 	}
 #endif
+#if defined(CONFIG_SLM_LWM2M)
+	err = slm_at_lwm2m_init();
+	if (err) {
+		LOG_ERR("LwM2M could not be initialized: %d", err);
+		return -EFAULT;
+	}
+#endif
 	return err;
 }
 
@@ -563,6 +573,12 @@ void slm_at_uninit(void)
 	err = slm_at_carrier_uninit();
 	if (err) {
 		LOG_ERR("LwM2M carrier could not be uninitialized: %d", err);
+	}
+#endif
+#if defined(CONFIG_SLM_LWM2M)
+	err = slm_at_lwm2m_uninit();
+	if (err) {
+		LOG_ERR("LwM2M could not be uninitialized: %d", err);
 	}
 #endif
 }
