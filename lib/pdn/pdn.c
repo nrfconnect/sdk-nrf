@@ -318,6 +318,25 @@ int pdn_default_ctx_cb_reg(pdn_event_handler_t cb)
 	return 0;
 }
 
+static void pdn_ctx_free(struct pdn *pdn)
+{
+	bool removed;
+
+	if (!pdn) {
+		return;
+	}
+
+	k_mutex_lock(&list_mutex, K_FOREVER);
+	removed = sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
+	k_mutex_unlock(&list_mutex);
+
+	if (!removed) {
+		return;
+	}
+
+	k_free(pdn);
+}
+
 int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb)
 {
 	bool removed;
@@ -346,25 +365,6 @@ int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb)
 	k_free(pdn);
 
 	return 0;
-}
-
-static void pdn_ctx_free(struct pdn *pdn)
-{
-	bool removed;
-
-	if (!pdn) {
-		return;
-	}
-
-	k_mutex_lock(&list_mutex, K_FOREVER);
-	removed = sys_slist_find_and_remove(&pdn_contexts, &pdn->node);
-	k_mutex_unlock(&list_mutex);
-
-	if (!removed) {
-		return;
-	}
-
-	k_free(pdn);
 }
 
 int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb)
