@@ -1,16 +1,27 @@
-/* Copyright (c) 2024 Nordic Semiconductor ASA
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <thingy91x_wifi.dtsi>
+
 / {
 	aliases {
 		temp-sensor = &bme680;
+		ext-flash = &flash_ext;
+	};
+
+	nordic_wlan0: nordic_wlan0 {
+		compatible = "nordic,wlan0";
+		status = "okay";
+	};
+
+	chosen {
+		zephyr,wifi = &nordic_wlan0;
 	};
 };
 
-&i2c2 {
-	bme680: bme680@76 {
-		status = "okay";
-	};
+&bme680 {
+	status = "okay";
 };
