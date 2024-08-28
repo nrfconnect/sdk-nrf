@@ -3,6 +3,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+ / {
+	light_sensor_pin: light_sensor_pin {
+		compatible = "nordic,gpio-pins";
+		status = "reserved";
+		gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+	};
+ };
+
 &i2c130 {
 	 status = "reserved";
 	 interrupt-parent = <&cpuppr_clic>;
@@ -28,4 +36,8 @@
 &gpiote130 {
 	nonsecure-channels = < 7 >;
 	child-owned-channels = < 7 >;
+};
+
+&adc {
+	status = "reserved";
 };
