@@ -791,10 +791,10 @@ The device is identified using its UUID rather than its IMEI, since both overlay
 
 .. _nrf_cloud_multi_service_building_wifi_scan:
 
-Building with nRF7002 EK Wi-Fi scanning support (for nRF91 Series DK)
-=====================================================================
+Building with nRF7002 Wi-Fi scanning support
+============================================
 
-To build the sample with nRF7002 EK Wi-Fi scanning support, use the ``-DSHIELD=nrf7002ek``, ``-DSB_CONF_FILE=sysbuild_nrf700x-wifi-scan.conf``, and ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only`` options.
+To build the sample with Wi-Fi scanning support for the nRF7002 EK shield attached to an nRF91xx DK, use the ``-DSHIELD=nrf7002ek``, ``-DSB_CONF_FILE=sysbuild_nrf700x-wifi-scan.conf``, and ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only`` options.
 
 This enables the Wi-Fi location tracking method automatically.
 
@@ -804,6 +804,8 @@ This enables the Wi-Fi location tracking method automatically.
    west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DSB_CONF_FILE="sysbuild_nrf700x-wifi-scan.conf" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
 
 |board_target|
+
+For the Thingy:91 X, which contains both an nRF9151 System-in-Package and the nRF7002 Companion IC, Wi-Fi scanning support is enabled by default.
 
 See also :ref:`the paragraphs on the Wi-Fi location tracking method <nrf_cloud_multi_service_wifi_location_tracking>`.
 

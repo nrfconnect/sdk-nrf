@@ -375,6 +375,7 @@ Cellular samples
     * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
     * A handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` to stop sensors and location services.
     * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
+    * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
 
   * Updated:
 
