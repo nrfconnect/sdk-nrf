@@ -52,8 +52,10 @@ function(zephyr_mcuboot_tasks)
   # MCUboot.
   #
   # Therefore, go with an explicitly installed imgtool first, falling
-  # back on mcuboot/scripts/imgtool.py.
-  if(IMGTOOL)
+  # back on mcuboot/scripts/imgtool.py. We exclude the system imgtool when
+  # compressed image support is enabled due to needing a version of imgtool
+  # that has features not in the most recent public release.
+  if(IMGTOOL AND NOT CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED)
     set(imgtool_path "${IMGTOOL}")
   elseif(DEFINED ZEPHYR_MCUBOOT_MODULE_DIR)
     set(IMGTOOL_PY "${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py")
@@ -101,6 +103,19 @@ function(zephyr_mcuboot_tasks)
     separate_arguments(imgtool_extra UNIX_COMMAND ${CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS})
   else()
     set(imgtool_extra)
+  endif()
+
+  if(CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED)
+    set(imgtool_bin_extra --compression lzma2armthumb)
+  else()
+    set(imgtool_bin_extra)
+  endif()
+
+  # Apply compression to hex file if this is a test
+  if(ncs_compress_test_compress_hex)
+    set(imgtool_hex_extra ${imgtool_bin_extra})
+  else()
+    set(imgtool_hex_extra)
   endif()
 
   if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
@@ -153,7 +168,7 @@ function(zephyr_mcuboot_tasks)
     # calls to the "extra_post_build_commands" property ensures they run
     # after the commands which generate the unsigned versions.
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_sign} ${imgtool_args} ${unconfirmed_args})
+      ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${unconfirmed_args})
 
     if(NOT "${keyfile_enc}" STREQUAL "")
       if(CONFIG_BUILD_WITH_TFM)
@@ -169,7 +184,7 @@ function(zephyr_mcuboot_tasks)
       )
 
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${unconfirmed_args})
+        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${imgtool_bin_extra} ${unconfirmed_args})
     endif()
   endif()
 
@@ -196,7 +211,7 @@ function(zephyr_mcuboot_tasks)
     # calls to the "extra_post_build_commands" property ensures they run
     # after the commands which generate the unsigned versions.
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${unconfirmed_args})
+      ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${imgtool_hex_extra} ${unconfirmed_args})
 
     if(NOT "${keyfile_enc}" STREQUAL "")
       set(unconfirmed_args ${input}.hex ${output}.encrypted.hex)
@@ -206,7 +221,7 @@ function(zephyr_mcuboot_tasks)
       )
 
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${unconfirmed_args})
+        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${imgtool_hex_extra} ${unconfirmed_args})
     endif()
   endif()
 

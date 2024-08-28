@@ -241,4 +241,9 @@ rsource "bl_crypto/Kconfig"
 rsource "bl_validation/Kconfig"
 rsource "bl_storage/Kconfig"
 
+config MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED
+	bool "MCUboot compressed image support"
+	help
+	  This is a Kconfig which is informative only, the value should not be changed.
+
 endmenu
