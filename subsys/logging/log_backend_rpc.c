@@ -266,6 +266,7 @@ static void process(const struct log_backend *const backend, union log_msg_gener
 	 */
 	if (panic_mode) {
 		flags |= LOG_OUTPUT_FLAG_CRLF_LFONLY;
+		max_level = LOG_RPC_LEVEL_DBG;
 	} else if (NRF_RPC_GROUP_STATUS(log_rpc_group)) {
 		flags |= LOG_OUTPUT_FLAG_CRLF_NONE;
 	} else {
