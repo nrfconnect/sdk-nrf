@@ -26,3 +26,5 @@ enum ot_rpc_link_mode_offsets {
 	OT_RPC_LINK_MODE_DEVICE_TYPE_OFFSET = 1,
 	OT_RPC_LINK_MODE_NETWORK_DATA_OFFSET = 2,
 };
+
+typedef uint32_t ot_msg_key;
