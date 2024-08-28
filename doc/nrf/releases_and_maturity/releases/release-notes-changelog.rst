@@ -203,7 +203,8 @@ Asset Tracker v2
 Connectivity Bridge
 -------------------
 
-|no_changes_yet_note|
+* Updated the new nrfx UARTE driver implementation by setting the :kconfig:option:`CONFIG_UART_NRFX_UARTE_LEGACY_SHIM` Kconfig option to ``n``.
+  This resolves an issue where data from UART0 ends up in UART1 sometimes after the device was reset.
 
 IPC radio firmware
 ------------------
