@@ -57,12 +57,14 @@ choice BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_MODE
 
 config BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_SHOW_UI
 	bool "Include battery data in Fast Pair not discoverable advertising and show UI indication"
+	depends on BT_FAST_PAIR_BN
 	help
 	  When this option is enabled, battery data is included in Fast Pair not discoverable
 	  advertising and the show battery data UI indication mode is enabled.
 
 config BT_ADV_PROV_FAST_PAIR_BATTERY_DATA_HIDE_UI
 	bool "Include battery data in Fast Pair not discoverable advertising and hide UI indication"
+	depends on BT_FAST_PAIR_BN
 	help
 	  When this option is enabled, battery data is included in Fast Pair not discoverable
 	  advertising and the hide battery data UI indication mode is enabled.

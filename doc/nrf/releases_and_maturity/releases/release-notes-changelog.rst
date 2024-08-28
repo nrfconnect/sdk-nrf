@@ -579,6 +579,8 @@ Bluetooth libraries and services
 
   * Added:
 
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_BN` Kconfig option that enables support for the Battery Notification extension.
+      You must enable this option to access Fast Pair API elements associated with the Battery Notification extension.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option allowing the user to control the support for the Fast Pair subsequent pairing feature.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice option allowing the user to select their target Fast Pair use case.
       The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig options represent the supported use cases that can be selected as part of this Kconfig choice option.
