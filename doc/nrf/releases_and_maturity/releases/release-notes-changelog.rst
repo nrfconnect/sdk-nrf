@@ -642,6 +642,11 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
+  * Fixed:
+
+    * A bug causing the GNSS obstructed visibility detection to sometimes count only part of the tracked satellites.
+    * A bug causing the GNSS obstructed visibility detection to be sometimes performed twice.
+
   * Removed the unused :ref:`at_cmd_parser_readme` library.
 
 * :ref:`lib_zzhc` library:
