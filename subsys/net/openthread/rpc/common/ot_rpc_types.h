@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef OT_RPC_TYPES_H_
+#define OT_RPC_TYPES_H_
+
 #include <stdint.h>
 #include <openthread/thread.h>
 
@@ -28,3 +31,5 @@ enum ot_rpc_link_mode_offsets {
 };
 
 typedef uint32_t ot_msg_key;
+
+#endif /* OT_RPC_TYPES_H_ */
