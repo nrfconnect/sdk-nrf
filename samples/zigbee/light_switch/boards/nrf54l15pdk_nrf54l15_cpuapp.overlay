@@ -1,0 +1,13 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+/ {
+	chosen {
+        zephyr,entropy = &prng;
+		ncs,zigbee-uart = &uart30;
+		ncs,zboss-trace-uart = &uart30;
+	};
+};
+
+&prng {
+	status = "okay";
+};
