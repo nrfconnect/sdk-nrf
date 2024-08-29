@@ -37,6 +37,10 @@ FAKE_VALUE_FUNC(uint32_t, otLinkGetPollPeriod, otInstance *);
 FAKE_VALUE_FUNC(const otExtAddress *, otLinkGetExtendedAddress, otInstance *);
 FAKE_VALUE_FUNC(otError, otSetStateChangedCallback, otInstance *, otStateChangedCallback, void *);
 FAKE_VOID_FUNC(otRemoveStateChangeCallback, otInstance *, otStateChangedCallback, void *);
+FAKE_VOID_FUNC(otLinkSetMaxFrameRetriesDirect, otInstance *, uint8_t);
+FAKE_VOID_FUNC(otLinkSetMaxFrameRetriesIndirect, otInstance *, uint8_t);
+FAKE_VALUE_FUNC(otError, otLinkSetEnabled, otInstance *, bool);
+FAKE_VOID_FUNC(otLinkGetFactoryAssignedIeeeEui64, otInstance *, otExtAddress *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otCliInit);                                                                              \
@@ -55,7 +59,11 @@ FAKE_VOID_FUNC(otRemoveStateChangeCallback, otInstance *, otStateChangedCallback
 	f(otLinkGetPollPeriod);                                                                    \
 	f(otLinkGetExtendedAddress);                                                               \
 	f(otSetStateChangedCallback);                                                              \
-	f(otRemoveStateChangeCallback)
+	f(otRemoveStateChangeCallback);                                                            \
+	f(otLinkSetMaxFrameRetriesDirect);                                                         \
+	f(otLinkSetMaxFrameRetriesIndirect);                                                       \
+	f(otLinkSetEnabled);                                                                       \
+	f(otLinkGetFactoryAssignedIeeeEui64);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -445,6 +453,70 @@ ZTEST(ot_rpc_server, test_otLinkGetPollPeriod_max)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otLinkGetPollPeriod_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otLinkSetMaxFrameRetriesDirect() command.
+ */
+ZTEST(ot_rpc_server, test_otLinkSetMaxFrameRetriesDirect)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(
+		RPC_CMD(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_DIRECT, CBOR_UINT8(0x55)));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otLinkSetMaxFrameRetriesDirect_fake.call_count, 1);
+	zassert_equal(otLinkSetMaxFrameRetriesDirect_fake.arg1_val, 0x55);
+}
+
+/*
+ * Test reception of otLinkSetMaxFrameRetriesIndirect() command.
+ */
+ZTEST(ot_rpc_server, test_otLinkSetMaxFrameRetriesIndirect)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(
+		RPC_CMD(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_INDIRECT, CBOR_UINT8(0xAA)));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otLinkSetMaxFrameRetriesIndirect_fake.call_count, 1);
+	zassert_equal(otLinkSetMaxFrameRetriesIndirect_fake.arg1_val, 0xAA);
+}
+
+/*
+ * Test reception of otLinkSetEnabled() command.
+ */
+ZTEST(ot_rpc_server, test_otLinkSetEnabled)
+{
+	otLinkGetPollPeriod_fake.return_val = OT_ERROR_NONE;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_LINK_SET_ENABLED, CBOR_TRUE));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otLinkSetEnabled_fake.call_count, 1);
+	zassert_equal(otLinkSetEnabled_fake.arg1_val, true);
+}
+
+static void factory_assigned_eui64_get_fake(otInstance *instance, otExtAddress *eui64)
+{
+	otExtAddress ext_addr = {{INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)}};
+
+	memcpy(eui64->m8, ext_addr.m8, OT_EXT_ADDRESS_SIZE);
+}
+
+/*
+ * Test reception of otLinkGetFactoryAssignedIeeeEui64() command.
+ */
+ZTEST(ot_rpc_server, test_otLinkGetFactoryAssignedIeeeEui64)
+{
+	otLinkGetFactoryAssignedIeeeEui64_fake.custom_fake = factory_assigned_eui64_get_fake;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(EXT_ADDR), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_LINK_GET_FACTORY_ASSIGNED_EUI64));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otLinkGetFactoryAssignedIeeeEui64_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_server, NULL, NULL, tc_setup, NULL, NULL);
