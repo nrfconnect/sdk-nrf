@@ -75,5 +75,12 @@ config SB_VALIDATE_FW_HASH
 	  Hash validation (not secure). Only meant for nRF5340 network core
 	  since the app core will do the signature validation.
 
+if SECURE_BOOT_VALIDATION
+
+module = SECURE_BOOT_VALIDATION
+module-str = Secure Bootloader Validation
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # SECURE_BOOT_VALIDATION
 
 endmenu

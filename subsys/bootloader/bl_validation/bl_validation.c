@@ -8,7 +8,10 @@
 #include <zephyr/types.h>
 #include <fw_info.h>
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <bl_storage.h>
+
+LOG_MODULE_REGISTER(bl_validation, CONFIG_SECURE_BOOT_VALIDATION_LOG_LEVEL);
 
 /* The 15 bit version is encoded into the most significant bits of
  * the 16 bit monotonic_counter, and the 1 bit slot is encoded
@@ -19,7 +22,7 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 {
 	__ASSERT(version <= 0x7FFF, "version too large.\r\n");
 	__ASSERT(slot <= 1, "Slot must be either 0 or 1.\r\n");
-	printk("Setting monotonic counter (version: %d, slot: %d)\r\n",
+	LOG_INF("Setting monotonic counter (version: %d, slot: %d)\r\n",
 		version, slot);
 
 	uint16_t num_cnt_slots;
@@ -27,19 +30,19 @@ int set_monotonic_version(uint16_t version, uint16_t slot)
 
 	err = num_monotonic_counter_slots(BL_MONOTONIC_COUNTERS_DESC_NSIB, &num_cnt_slots);
 	if (err != 0) {
-		printk("Failed during reading of the number of the counter slots, error: %d\r\n",
+		LOG_ERR("Failed during reading of the number of the counter slots, error: %d",
 		       err);
 		return err;
 	}
 
 	if (num_cnt_slots == 0) {
-		printk("Monotonic version counter is disabled.\r\n");
+		LOG_ERR("Monotonic version counter is disabled.");
 		return -EINVAL;
 	}
 
 	err = set_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, (version << 1) | !slot);
 	if (err != 0) {
-		printk("Failed during setting the monotonic counter, error: %d\r\n", err);
+		LOG_ERR("Failed during setting the monotonic counter, error: %d", err);
 	}
 
 	return err;
@@ -112,7 +115,6 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 
 #else
 #include <errno.h>
-#include <zephyr/sys/printk.h>
 #include <zephyr/toolchain.h>
 #include <bl_crypto.h>
 #include "bl_validation_internal.h"
@@ -120,8 +122,6 @@ bool bl_validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address)
 #if USE_PARTITION_MANAGER
 #include <pm_config.h>
 #endif
-
-#define PRINT(...) if (!external) printk(__VA_ARGS__)
 
 struct __packed fw_validation_info {
 	/* Magic value to verify that the struct has the correct type. */
@@ -201,16 +201,16 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 	int init_retval = bl_crypto_init();
 
 	if (init_retval) {
-		PRINT("bl_crypto_init() returned %d.\n\r", init_retval);
+		LOG_ERR("bl_crypto_init() returned %d.", init_retval);
 		return false;
 	}
 
 	init_retval = verify_public_keys();
 	if (init_retval) {
-		PRINT("verify_public_keys() returned %d.\n\r", init_retval);
+		LOG_ERR("verify_public_keys() returned %d.", init_retval);
 		if (init_retval == -EHASHFF) {
-			PRINT("A public key contains 0xFFFF, which is "
-				"unsupported\n\r");
+			LOG_INF("A public key contains 0xFFFF, which is "
+				"unsupported");
 		}
 		return false;
 	}
@@ -229,18 +229,18 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 
 		if (read_retval != SB_PUBLIC_KEY_HASH_LEN) {
 			if (read_retval == -EINVAL) {
-				PRINT("Key %d has been invalidated, try next.\n\r",
+				LOG_INF("Key %d has been invalidated, try next.",
 					key_data_idx);
 				continue;
 			} else {
-				PRINT("public_key_data_read failed: %d.\n\r",
+				LOG_ERR("public_key_data_read failed: %d.",
 					read_retval);
 				return false;
 			}
 		}
 
-		PRINT("Verifying signature against key %d.\n\r", key_data_idx);
-		PRINT("Hash: 0x%02x...%02x\r\n", key_data[0],
+		LOG_INF("Verifying signature against key %d.", key_data_idx);
+		LOG_INF("Hash: 0x%02x...%02x", key_data[0],
 			key_data[SB_PUBLIC_KEY_HASH_LEN-1]);
 		int retval = rot_verify(fw_val_info->public_key,
 					key_data,
@@ -250,22 +250,22 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 
 		if (retval == 0) {
 			for (uint32_t i = 0; i < key_data_idx; i++) {
-				PRINT("Invalidating key %d.\n\r", i);
+				LOG_INF("Invalidating key %d.", i);
 				invalidate_public_key(i);
 			}
-			PRINT("Firmware signature verified.\n\r");
+			LOG_INF("Firmware signature verified.");
 			return true;
 		} else if (retval == -EHASHINV) {
-			PRINT("Public key didn't match, try next.\n\r");
+			LOG_WRN("Public key didn't match, try next.");
 			continue;
 		} else {
-			PRINT("Firmware validation failed with error %d.\n\r",
+			LOG_ERR("Firmware validation failed with error %d.",
 				retval);
 			return false;
 		}
 	}
 
-	PRINT("Failed to validate signature.\n\r");
+	LOG_ERR("Failed to validate signature.");
 	return false;
 }
 
@@ -278,7 +278,7 @@ static bool validate_hash(const uint32_t fw_src_address, const uint32_t fw_size,
 	int retval = bl_crypto_init();
 
 	if (retval) {
-		PRINT("bl_crypto_init() returned %d.\n\r", retval);
+		LOG_ERR("bl_crypto_init() returned %d.", retval);
 		return false;
 	}
 
@@ -286,12 +286,12 @@ static bool validate_hash(const uint32_t fw_src_address, const uint32_t fw_size,
 			fw_val_info->hash);
 
 	if (retval != 0) {
-		PRINT("Firmware validation failed with error %d.\n\r",
-			    retval);
+		LOG_ERR("Firmware validation failed with error %d.",
+			retval);
 		return false;
 	}
 
-	PRINT("Firmware hash verified.\n\r");
+	LOG_INF("Firmware hash verified.");
 
 	return true;
 }
@@ -308,32 +308,32 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	const uint32_t fw_src_end = (fw_src_address + fwinfo->size);
 
 	if (!fwinfo) {
-		PRINT("NULL parameter.\n\r");
+		LOG_ERR("NULL parameter.");
 		return false;
 	}
 
 	if (!fw_info_check((uint32_t)fwinfo)) {
-		PRINT("Invalid firmware info format.\n\r");
+		LOG_ERR("Invalid firmware info format.");
 		return false;
 	}
 
 	if (fw_dst_address != fwinfo->address) {
-		PRINT("The firmware doesn't belong at destination addr.\n\r");
+		LOG_ERR("The firmware doesn't belong at destination addr.");
 		return false;
 	}
 
 	if (!external && (fw_src_address != fw_dst_address)) {
-		PRINT("src and dst must be equal for local calls.\n\r");
+		LOG_ERR("src and dst must be equal for local calls.");
 		return false;
 	}
 
 	if (fw_info_find(fw_src_address) != fwinfo) {
-		PRINT("Firmware info doesn't point to itself.\n\r");
+		LOG_ERR("Firmware info doesn't point to itself.");
 		return false;
 	}
 
 	if (fwinfo->valid != CONFIG_FW_INFO_VALID_VAL) {
-		PRINT("Firwmare has been invalidated: 0x%x.\n\r",
+		LOG_ERR("Firmware has been invalidated: 0x%x.",
 			fwinfo->valid);
 		return false;
 	}
@@ -343,8 +343,8 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	int err = get_monotonic_version(&stored_version);
 
 	if (err) {
-		PRINT("Cannot read the firmware version. %d\n\r", err);
-		PRINT("We assume this is due to the firmware version not being enabled.\n\r");
+		LOG_ERR("Cannot read the firmware version. %d", err);
+		LOG_INF("We assume this is due to the firmware version not being enabled.");
 
 		/*
 		 * Errors in reading the firmware version are assumed to be
@@ -358,7 +358,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	}
 
 	if (fwinfo->version < stored_version) {
-		PRINT("Firmware version (%u) is smaller than monotonic counter (%u).\n\r",
+		LOG_ERR("Firmware version (%u) is smaller than monotonic counter (%u).",
 			fwinfo->version, stored_version);
 		return false;
 	}
@@ -368,19 +368,19 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		"B0's slots aren't the same size. Check pm.yml.");
 	if ((fwinfo->size > (PM_S0_SIZE))
 		|| (fwinfo->total_size > fwinfo->size)) {
-		PRINT("Invalid size or total_size in firmware info.\n\r");
+		LOG_ERR("Invalid size or total_size in firmware info.");
 		return false;
 	}
 #endif
 
 	if (!region_within(fwinfo_address, fwinfo_end,
 			fw_src_address, fw_src_end)) {
-		PRINT("Firmware info is not within signed region.\n\r");
+		LOG_ERR("Firmware info is not within signed region.");
 		return false;
 	}
 
 	if (!within(fwinfo->boot_address, fw_dst_address, fw_dst_end)) {
-		PRINT("Boot address is not within signed region.\n\r");
+		LOG_ERR("Boot address is not within signed region.");
 		return false;
 	}
 
@@ -391,19 +391,19 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	const uint32_t reset_vector = ((const uint32_t *)(fw_src_address + stack_ptr_offset))[1];
 
 	if (!within(reset_vector, fw_dst_address, fw_dst_end)) {
-		PRINT("Reset handler is not within signed region.\n\r");
+		LOG_ERR("Reset handler is not within signed region.");
 		return false;
 	}
 
 	fw_val_info = validation_info_find(fw_src_address + fwinfo->size, 4);
 
 	if (!fw_val_info) {
-		PRINT("Could not find valid firmware validation info.\n\r");
+		LOG_ERR("Could not find valid firmware validation info.");
 		return false;
 	}
 
 	if (fw_val_info->address != fwinfo->address) {
-		PRINT("Validation info doesn't belong to this firmware.\n\r");
+		LOG_ERR("Validation info doesn't belong to this firmware.");
 		return false;
 	}
 
