@@ -75,9 +75,6 @@ config SB_SIGNING_KEY_FILE
 	  Specifies the private key used for signing the firmware image.
 	  The hash of the corresponding public key is stored as the first
 	  entry in the list of public key hashes in the provision hex file.
-	  This value can also be set by exporting an environment variable
-	  named 'SB_SIGNING_KEY_FILE' or passing
-	  '-DSB_SIGNING_KEY_FILE=/path/to/my/pem' when running cmake.
 	  See also SB_PUBLIC_KEY_FILES.
 
 config SB_SIGNING_COMMAND
