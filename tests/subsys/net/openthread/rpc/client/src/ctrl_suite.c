@@ -311,4 +311,48 @@ ZTEST(ot_rpc_client, test_otLinkGetPollPeriod_max)
 	zassert_equal(period, 0x3ffffff);
 }
 
+/* Test serialization of otLinkSetMaxFrameRetriesDirect() */
+ZTEST(ot_rpc_client, test_otLinkSetMaxFrameRetriesDirect)
+{
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_DIRECT, CBOR_UINT8(0x55)), RPC_RSP());
+	otLinkSetMaxFrameRetriesDirect(NULL, 0x55);
+	mock_nrf_rpc_tr_expect_done();
+}
+
+/* Test serialization of otLinkSetMaxFrameRetriesIndirect() */
+ZTEST(ot_rpc_client, test_otLinkSetMaxFrameRetriesIndirect)
+{
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_INDIRECT, CBOR_UINT8(0xAA)),
+		RPC_RSP());
+	otLinkSetMaxFrameRetriesIndirect(NULL, 0xAA);
+	mock_nrf_rpc_tr_expect_done();
+}
+
+/* Test serialization of otLinkSetEnabled() */
+ZTEST(ot_rpc_client, test_otLinkSetEnabled)
+{
+	otError error;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_LINK_SET_ENABLED, CBOR_TRUE),
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otLinkSetEnabled(NULL, true);
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(error, OT_ERROR_NONE);
+}
+
+/* Test serialization of otLinkGetFactoryAssignedIeeeEui64() */
+ZTEST(ot_rpc_client, test_otLinkGetFactoryAssignedIeeeEui64)
+{
+	otExtAddress ext_addr;
+	otExtAddress expected_ext_addr = {{INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)}};
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_LINK_GET_FACTORY_ASSIGNED_EUI64),
+				   RPC_RSP(EXT_ADDR));
+	otLinkGetFactoryAssignedIeeeEui64(NULL, &ext_addr);
+	mock_nrf_rpc_tr_expect_done();
+	zassert_mem_equal(expected_ext_addr.m8, ext_addr.m8, OT_EXT_ADDRESS_SIZE);
+}
+
 ZTEST_SUITE(ot_rpc_client, NULL, NULL, tc_setup, NULL, NULL);
