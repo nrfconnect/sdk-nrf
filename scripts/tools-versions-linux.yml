@@ -29,3 +29,5 @@ dfu_util:
   version: 0.9-1
 doxygen:
   version: 1.9.6
+pip:
+  version: 24.2

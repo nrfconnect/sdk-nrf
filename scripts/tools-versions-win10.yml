@@ -1,5 +1,5 @@
 python:
-  version: 3.9.13
+  version: 3.12.4
 git:
   version: 2.37.3.windows.1
 cmake:
@@ -23,3 +23,5 @@ zephyr-sdk:
     - riscv64-zephyr-elf
 doxygen:
   version: 1.9.2
+pip:
+  version: 24.2
