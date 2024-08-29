@@ -27,8 +27,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp/ns
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
+      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp nrf54l15pdk/nrf54l15/cpuapp/ns
     tags: sysbuild ci_samples_matter
   sample.matter.template.lto:
     sysbuild: true
@@ -54,20 +55,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp/ns
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild ci_samples_matter
-  sample.matter.template.mgrt_dac:
-    sysbuild: true
-    build_only: true
-    extra_args: CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY=y
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf7002dk/nrf5340/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
+      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp nrf54l15pdk/nrf54l15/cpuapp/ns
     tags: sysbuild ci_samples_matter
   sample.matter.template.nrf54h20.nrf7002eb:
     sysbuild: true
@@ -79,19 +69,6 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild ci_samples_matter
-  sample.matter.template.test_shell:
-    sysbuild: true
-    build_only: true
-    extra_args: CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL=y
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf7002dk/nrf5340/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
     tags: sysbuild ci_samples_matter
   sample.matter.template.release.internal.smp_dfu:
     sysbuild: true
