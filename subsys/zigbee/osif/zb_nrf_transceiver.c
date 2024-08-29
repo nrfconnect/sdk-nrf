@@ -28,7 +28,8 @@
 #define ZBOSS_ED_RESULT_FACTOR 4
 
 #elif defined(NRF52833_XXAA) || defined(NRF52820_XXAA) \
-|| defined(NRF5340_XXAA_NETWORK) || defined(NRF5340_XXAA_APPLICATION)
+|| defined(NRF5340_XXAA_NETWORK) || defined(NRF5340_XXAA_APPLICATION) \
+|| defined(CONFIG_SOC_SERIES_NRF54LX)
 /* Minimum value in dBm detectable by the radio. */
 #define MIN_RADIO_SENSITIVITY (-93)
 /* Factor needed to calculate the ED result based on the data from the RADIO peripheral. */
