@@ -22,6 +22,7 @@ jobs:
           token: ${{ secrets.NCS_GITHUB_TOKEN }}
           path: ncs/nrf
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Switch to PR source branch
         working-directory: ncs/nrf
