@@ -31,14 +31,14 @@ NRF = [
     ("device_guides/working_with_nrf/nrf91/thingy91_gsg", "gsg_guides/thingy91_gsg"),
     ("ug_nrf7002_gs", "gsg_guides/nrf7002_gs"), # Getting started with nRF7002 DK
     ("working_with_nrf/nrf70/gs", "gsg_guides/nrf7002_gs"),
-    ("device_guides/working_with_nrf/nrf70/gs","gsg_guides/nrf7002_gs"),
-    ("device_guides/working_with_nrf/nrf53/nrf5340_gs","gsg_guides/nrf5340_gs"), # Getting started with nRF5340 DK
+    ("device_guides/working_with_nrf/nrf70/gs", "gsg_guides/nrf7002_gs"),
+    ("device_guides/working_with_nrf/nrf53/nrf5340_gs", "gsg_guides/nrf5340_gs"), # Getting started with nRF5340 DK
     ("ug_thingy53_gs", "gsg_guides/thingy53_gs"), # Getting started with Thingy:53
     ("working_with_nrf/nrf53/thingy53_gs", "gsg_guides/thingy53_gs"),
-    ("device_guides/working_with_nrf/nrf53/thingy53_gs","gsg_guides/thingy53_gs"),
+    ("device_guides/working_with_nrf/nrf53/thingy53_gs", "gsg_guides/thingy53_gs"),
     ("ug_nrf52_gs", "gsg_guides/nrf52_gs"), # Getting started with nRF52 Series
     ("working_with_nrf/nrf52/gs", "gsg_guides/nrf52_gs"),
-    ("device_guides/working_with_nrf/nrf52/gs","gsg_guides/nrf52_gs"),
+    ("device_guides/working_with_nrf/nrf52/gs", "gsg_guides/nrf52_gs"),
     ("gs_assistant", "installation/install_ncs"), # Installing the nRF Connect SDK
     ("getting_started", "installation"),
     ("getting_started/assistant", "installation/install_ncs"),
@@ -142,97 +142,97 @@ NRF = [
     ("nrf91", "app_dev/device_guides/nrf91/index"),
     ("device_guides/nrf91", "app_dev/device_guides/nrf91/index"),
     ("device_guides/nrf91/index", "app_dev/device_guides/nrf91/index"),
-    ("ug_nrf9160","app_dev/device_guides/nrf91/index"), ## Developing with nRF9160 (pre-2.7.0; removed)
-    ("working_with_nrf/nrf91/nrf9160","app_dev/device_guides/nrf91/index"),
+    ("ug_nrf9160", "app_dev/device_guides/nrf91/index"), ## Developing with nRF9160 (pre-2.7.0; removed)
+    ("working_with_nrf/nrf91/nrf9160", "app_dev/device_guides/nrf91/index"),
     ("device_guides/working_with_nrf/nrf91/nrf9160", "app_dev/device_guides/nrf91/index"),
     ("ug_nrf9161", "app_dev/device_guides/nrf91/index"), ## Developing with nRF9161 (pre-2.7.0; removed)
     ("working_with_nrf/nrf91/nrf9161", "app_dev/device_guides/nrf91/index"),
     ("device_guides/working_with_nrf/nrf91/nrf9161", "app_dev/device_guides/nrf91/index"),
-    ("ug_thingy91","app_dev/device_guides/nrf91/index"), ## Developing with Thingy:91 (pre-2.7.0; removed)
-    ("working_with_nrf/nrf91/thingy91","app_dev/device_guides/nrf91/index"),
+    ("ug_thingy91", "app_dev/device_guides/nrf91/index"), ## Developing with Thingy:91 (pre-2.7.0; removed)
+    ("working_with_nrf/nrf91/thingy91", "app_dev/device_guides/nrf91/index"),
     ("device_guides/working_with_nrf/nrf91/thingy91", "app_dev/device_guides/nrf91/index"),
-    ("ug_nrf91_features","app_dev/device_guides/nrf91/nrf91_features"), # Features of nRF91 Series
-    ("working_with_nrf/nrf91/nrf91_features","app_dev/device_guides/nrf91/nrf91_features"),
+    ("ug_nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"), # Features of nRF91 Series
+    ("working_with_nrf/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/working_with_nrf/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
-    ("device_guides/nrf91/nrf91_features","app_dev/device_guides/nrf91/nrf91_features"),
-    ("device_guides/nrf91/nrf91_board_controllers","app_dev/device_guides/nrf91/nrf91_board_controllers"), # Configuring board controller
-    ("device_guides/nrf91/nrf91_cloud_certificate","app_dev/device_guides/nrf91/nrf91_cloud_certificate"), # Updating the nRF Cloud certificate
-    ("device_guides/nrf91/thingy91_connecting","app_dev/device_guides/nrf91/thingy91_connecting"), # Connecting to Thingy:91
-    ("device_guides/nrf91/nrf91_dk_updating_fw_programmer","app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the firmware for nRF91 Series devices (landing)
-    ("device_guides/nrf91/nrf91_updating_fw_programmer","app_dev/device_guides/nrf91/nrf91_updating_fw_programmer"), # Updating the DK firmware using Programmer
-    ("device_guides/nrf91/thingy91_updating_fw_programmer","app_dev/device_guides/nrf91/thingy91_updating_fw_programmer"), # Updating the Thingy:91 firmware using Programmer
-    ("device_guides/nrf91/nrf91_building","app_dev/device_guides/nrf91/nrf91_building"), # Configuring and building with nRF91 Series
-    ("device_guides/nrf91/nrf91_programming","app_dev/device_guides/nrf91/nrf91_programming"), # Programming onto nRF91 Series devices
-    ("device_guides/nrf91/nrf91_testing_at_client","app_dev/device_guides/nrf91/nrf91_testing_at_client"), # Testing the cellular connection on nRF91 Series DK
+    ("device_guides/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
+    ("device_guides/nrf91/nrf91_board_controllers", "app_dev/device_guides/nrf91/nrf91_board_controllers"), # Configuring board controller
+    ("device_guides/nrf91/nrf91_cloud_certificate", "app_dev/device_guides/nrf91/nrf91_cloud_certificate"), # Updating the nRF Cloud certificate
+    ("device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/nrf91/thingy91_connecting"), # Connecting to Thingy:91
+    ("device_guides/nrf91/nrf91_dk_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the firmware for nRF91 Series devices (landing)
+    ("device_guides/nrf91/nrf91_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_updating_fw_programmer"), # Updating the DK firmware using Programmer
+    ("device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/nrf91/thingy91_updating_fw_programmer"), # Updating the Thingy:91 firmware using Programmer
+    ("device_guides/nrf91/nrf91_building", "app_dev/device_guides/nrf91/nrf91_building"), # Configuring and building with nRF91 Series
+    ("device_guides/nrf91/nrf91_programming", "app_dev/device_guides/nrf91/nrf91_programming"), # Programming onto nRF91 Series devices
+    ("device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing_at_client"), # Testing the cellular connection on nRF91 Series DK
     ("device_guides/working_with_nrf/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"), # Snippets for an nRF91 Series device
-    ("device_guides/nrf91/nrf91_snippet","app_dev/device_guides/nrf91/nrf91_snippet"),
-    ("device_guides/nrf91/nrf9160_external_flash","app_dev/device_guides/nrf91/nrf9160_external_flash"), # Configuring external flash memory on the nRF9160 DK
+    ("device_guides/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"),
+    ("device_guides/nrf91/nrf9160_external_flash", "app_dev/device_guides/nrf91/nrf9160_external_flash"), # Configuring external flash memory on the nRF9160 DK
     ("ug_nrf70", "app_dev/device_guides/nrf70/index"), # Developing with nRF70 Series (post-2.7.0 landing)
     ("device_guides/nrf70", "app_dev/device_guides/nrf70/index"),
     ("device_guides/nrf70/index", "app_dev/device_guides/nrf70/index"),
-    ("ug_nrf70_developing","app_dev/device_guides/nrf70/index"), ## Developing with nRF70 Series (pre-2.7.0 landing; removed)
-    ("working_with_nrf/nrf70/developing/index","app_dev/device_guides/nrf70/index"),
-    ("device_guides/working_with_nrf/nrf70/developing/index","app_dev/device_guides/nrf70/index"),
-    ("ug_nrf70_features","app_dev/device_guides/nrf70/features"), # Features of nRF70 Series
-    ("working_with_nrf/nrf70/features","app_dev/device_guides/nrf70/features"),
-    ("device_guides/working_with_nrf/nrf70/features","app_dev/device_guides/nrf70/features"),
-    ("device_guides/nrf70/features","app_dev/device_guides/nrf70/features"),
-    ("device_guides/working_with_nrf/nrf70/developing/stack_partitioning","app_dev/device_guides/nrf70/stack_partitioning"), # Networking stack partitioning
-    ("device_guides/nrf70/stack_partitioning","app_dev/device_guides/nrf70/stack_partitioning"),
-    ("ug_nrf7002_constrained","app_dev/device_guides/nrf70/constrained"), # Host device considerations
-    ("working_with_nrf/nrf70/developing/constrained","app_dev/device_guides/nrf70/constrained"),
-    ("device_guides/working_with_nrf/nrf70/developing/constrained","app_dev/device_guides/nrf70/constrained"),
-    ("device_guides/nrf70/constrained","app_dev/device_guides/nrf70/constrained"),
-    ("device_guides/working_with_nrf/nrf70/developing/fw_patches_ext_flash","app_dev/device_guides/nrf70/fw_patches_ext_flash"), # Firmware patches in the external memory
-    ("device_guides/nrf70/fw_patches_ext_flash","app_dev/device_guides/nrf70/fw_patches_ext_flash"),
-    ("device_guides/working_with_nrf/nrf70/developing/nrf70_fw_patch_update","app_dev/device_guides/nrf70/nrf70_fw_patch_update"), # Firmware patch update
-    ("device_guides/nrf70/nrf70_fw_patch_update","app_dev/device_guides/nrf70/nrf70_fw_patch_update"),
-    ("device_guides/working_with_nrf/nrf70/developing/power_profiling","app_dev/device_guides/nrf70/power_profiling"), # Power profiling of nRF7002 DK
-    ("device_guides/nrf70/power_profiling","app_dev/device_guides/nrf70/power_profiling"),
-    ("device_guides/working_with_nrf/nrf70/nrf7002ek_gs","app_dev/device_guides/nrf70/nrf7002ek_dev_guide"), # Developing with nRF7002 EK
-    ("device_guides/nrf70/nrf7002ek_dev_guide","app_dev/device_guides/nrf70/nrf7002ek_dev_guide"),
-    ("device_guides/working_with_nrf/nrf70/nrf7002eb_gs","app_dev/device_guides/nrf70/nrf7002eb_dev_guide"), # Developing with nRF7002 EB
-    ("device_guides/nrf70/nrf7002eb_dev_guide","app_dev/device_guides/nrf70/nrf7002eb_dev_guide"),
-    ("device_guides/nrf54l","app_dev/device_guides/nrf54l"), # Developing with nRF54L Series
-    ("device_guides/working_with_nrf/nrf54l/features","app_dev/device_guides/working_with_nrf/nrf54l/features"), # Features of the nRF54L15 PDK
-    ("device_guides/working_with_nrf/nrf54l/nrf54l15_gs","app_dev/device_guides/working_with_nrf/nrf54l/nrf54l15_gs"), # Getting started with nRF54L15 PDK
-    ("device_guides/working_with_nrf/nrf54l/testing_dfu","app_dev/device_guides/working_with_nrf/nrf54l/testing_dfu"), # Testing the DFU solution
-    ("device_guides/working_with_nrf/nrf54l/peripheral_sensor_node_shield","app_dev/device_guides/working_with_nrf/nrf54l/peripheral_sensor_node_shield"), # Developing with Peripheral Sensor node shield
-    ("device_guides/nrf54h","app_dev/device_guides/nrf54h"), # Developing with nRF54H Series
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs"), # Getting started with the nRF54H20 DK
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture"), # Architecture of nRF54H20 (landing)
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_cpu","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_cpu"), # nRF54H20 Domains
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_memory","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_memory"), # nRF54H20 Memory Layout
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_ipc","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_ipc"), # Interprocessor Communication in nRF54H20
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_boot","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_boot"), # nRF54H20 Boot Sequence
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_lifecycle","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_lifecycle"), # nRF54H20 lifecycle states
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_configuration","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_configuration"), # Configuring the nRF54H20 DK
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging"), # nRF54H20 logging (orphaned as of 2.7.0)
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu"), # Device Firmware Update using SUIT (landing)
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro"), # Introduction to SUIT
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview"), # SUIT manifest overview
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg"), # Customize SUIT DFU quick start guide
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu"), # How to customize the SUIT DFU process
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch"), # How to fetch payloads
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory"), # Firmware upgrade with external memory
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components"), # SUIT components
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests"), # Hierarchical manifests
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu","app_dev/bootloaders_dfu/index"), # DFU and bootloader comparison (removed after 2.7.0) > Bootloaders and DFU (landing)
-    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu","app_dev/bootloaders_dfu/index"),
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_debugging","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_debugging"), # nRF54H20 debugging
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb","app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb"), # Configuring your application for a custom PCB
+    ("ug_nrf70_developing", "app_dev/device_guides/nrf70/index"), ## Developing with nRF70 Series (pre-2.7.0 landing; removed)
+    ("working_with_nrf/nrf70/developing/index", "app_dev/device_guides/nrf70/index"),
+    ("device_guides/working_with_nrf/nrf70/developing/index", "app_dev/device_guides/nrf70/index"),
+    ("ug_nrf70_features", "app_dev/device_guides/nrf70/features"), # Features of nRF70 Series
+    ("working_with_nrf/nrf70/features", "app_dev/device_guides/nrf70/features"),
+    ("device_guides/working_with_nrf/nrf70/features", "app_dev/device_guides/nrf70/features"),
+    ("device_guides/nrf70/features", "app_dev/device_guides/nrf70/features"),
+    ("device_guides/working_with_nrf/nrf70/developing/stack_partitioning", "app_dev/device_guides/nrf70/stack_partitioning"), # Networking stack partitioning
+    ("device_guides/nrf70/stack_partitioning", "app_dev/device_guides/nrf70/stack_partitioning"),
+    ("ug_nrf7002_constrained", "app_dev/device_guides/nrf70/constrained"), # Host device considerations
+    ("working_with_nrf/nrf70/developing/constrained", "app_dev/device_guides/nrf70/constrained"),
+    ("device_guides/working_with_nrf/nrf70/developing/constrained", "app_dev/device_guides/nrf70/constrained"),
+    ("device_guides/nrf70/constrained", "app_dev/device_guides/nrf70/constrained"),
+    ("device_guides/working_with_nrf/nrf70/developing/fw_patches_ext_flash", "app_dev/device_guides/nrf70/fw_patches_ext_flash"), # Firmware patches in the external memory
+    ("device_guides/nrf70/fw_patches_ext_flash", "app_dev/device_guides/nrf70/fw_patches_ext_flash"),
+    ("device_guides/working_with_nrf/nrf70/developing/nrf70_fw_patch_update", "app_dev/device_guides/nrf70/nrf70_fw_patch_update"), # Firmware patch update
+    ("device_guides/nrf70/nrf70_fw_patch_update", "app_dev/device_guides/nrf70/nrf70_fw_patch_update"),
+    ("device_guides/working_with_nrf/nrf70/developing/power_profiling", "app_dev/device_guides/nrf70/power_profiling"), # Power profiling of nRF7002 DK
+    ("device_guides/nrf70/power_profiling", "app_dev/device_guides/nrf70/power_profiling"),
+    ("device_guides/working_with_nrf/nrf70/nrf7002ek_gs", "app_dev/device_guides/nrf70/nrf7002ek_dev_guide"), # Developing with nRF7002 EK
+    ("device_guides/nrf70/nrf7002ek_dev_guide", "app_dev/device_guides/nrf70/nrf7002ek_dev_guide"),
+    ("device_guides/working_with_nrf/nrf70/nrf7002eb_gs", "app_dev/device_guides/nrf70/nrf7002eb_dev_guide"), # Developing with nRF7002 EB
+    ("device_guides/nrf70/nrf7002eb_dev_guide", "app_dev/device_guides/nrf70/nrf7002eb_dev_guide"),
+    ("device_guides/nrf54l", "app_dev/device_guides/nrf54l"), # Developing with nRF54L Series
+    ("device_guides/working_with_nrf/nrf54l/features", "app_dev/device_guides/working_with_nrf/nrf54l/features"), # Features of the nRF54L15 PDK
+    ("device_guides/working_with_nrf/nrf54l/nrf54l15_gs", "app_dev/device_guides/working_with_nrf/nrf54l/nrf54l15_gs"), # Getting started with nRF54L15 PDK
+    ("device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/working_with_nrf/nrf54l/testing_dfu"), # Testing the DFU solution
+    ("device_guides/working_with_nrf/nrf54l/peripheral_sensor_node_shield", "app_dev/device_guides/working_with_nrf/nrf54l/peripheral_sensor_node_shield"), # Developing with Peripheral Sensor node shield
+    ("device_guides/nrf54h", "app_dev/device_guides/nrf54h"), # Developing with nRF54H Series
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs"), # Getting started with the nRF54H20 DK
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture"), # Architecture of nRF54H20 (landing)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_cpu", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_cpu"), # nRF54H20 Domains
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_memory", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_memory"), # nRF54H20 Memory Layout
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_ipc", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_ipc"), # Interprocessor Communication in nRF54H20
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_boot", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_boot"), # nRF54H20 Boot Sequence
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_lifecycle", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_lifecycle"), # nRF54H20 lifecycle states
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_configuration", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_configuration"), # Configuring the nRF54H20 DK
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging"), # nRF54H20 logging (orphaned as of 2.7.0)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu"), # Device Firmware Update using SUIT (landing)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro"), # Introduction to SUIT
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview"), # SUIT manifest overview
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg"), # Customize SUIT DFU quick start guide
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu"), # How to customize the SUIT DFU process
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch"), # How to fetch payloads
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory"), # Firmware upgrade with external memory
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components"), # SUIT components
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests"), # Hierarchical manifests
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"), # DFU and bootloader comparison (removed after 2.7.0) > Bootloaders and DFU (landing)
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"),
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_debugging", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_debugging"), # nRF54H20 debugging
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb"), # Configuring your application for a custom PCB
     ("ug_nrf53", "app_dev/device_guides/nrf53/index"), # Developing with nRF53 Series (landing)
     ("nrf53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53/index", "app_dev/device_guides/nrf53/index"),
-    ("ug_nrf5340","app_dev/device_guides/nrf53/index"),
+    ("ug_nrf5340", "app_dev/device_guides/nrf53/index"),
     ("working_with_nrf/nrf53/nrf5340", "app_dev/device_guides/nrf53/index"),
     ("device_guides/working_with_nrf/nrf53/nrf5340", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53/index", "app_dev/device_guides/nrf53/index"),
-    ("ug_thingy53","app_dev/device_guides/nrf53/index"), # Developing with Thingy:53 (removed for 2.7.0)
-    ("working_with_nrf/nrf53/thingy53","app_dev/device_guides/nrf53/index"),
+    ("ug_thingy53", "app_dev/device_guides/nrf53/index"), # Developing with Thingy:53 (removed for 2.7.0)
+    ("working_with_nrf/nrf53/thingy53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/working_with_nrf/nrf53/thingy53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53/features_nrf53", "app_dev/device_guides/nrf53/features_nrf53"), # Features of nRF53 Series
     ("device_guides/nrf53/building_nrf53", "app_dev/device_guides/nrf53/building_nrf53"), # Building and programming with nRF53 Series
@@ -247,35 +247,35 @@ NRF = [
     ("ug_nrf52", "app_dev/device_guides/nrf52/index"), # Developing with nRF52 Series (landing)
     ("nrf52", "app_dev/device_guides/nrf52/index"),
     ("device_guides/nrf52", "app_dev/device_guides/nrf52/index"),
-    ("device_guides/nrf52/index","app_dev/device_guides/nrf52/index"),
-    ("ug_nrf52_developing","app_dev/device_guides/nrf52/index"),
-    ("working_with_nrf/nrf52/developing","app_dev/device_guides/nrf52/index"),
-    ("device_guides/working_with_nrf/nrf52/developing","app_dev/device_guides/nrf52/index"),
-    ("ug_nrf52_features","app_dev/device_guides/nrf52/features"), # Features of nRF52 Series
-    ("working_with_nrf/nrf52/features","app_dev/device_guides/nrf52/features"),
-    ("device_guides/working_with_nrf/nrf52/features","app_dev/device_guides/nrf52/features"),
-    ("device_guides/nrf52/features","app_dev/device_guides/nrf52/features"),
+    ("device_guides/nrf52/index", "app_dev/device_guides/nrf52/index"),
+    ("ug_nrf52_developing", "app_dev/device_guides/nrf52/index"),
+    ("working_with_nrf/nrf52/developing", "app_dev/device_guides/nrf52/index"),
+    ("device_guides/working_with_nrf/nrf52/developing", "app_dev/device_guides/nrf52/index"),
+    ("ug_nrf52_features", "app_dev/device_guides/nrf52/features"), # Features of nRF52 Series
+    ("working_with_nrf/nrf52/features", "app_dev/device_guides/nrf52/features"),
+    ("device_guides/working_with_nrf/nrf52/features", "app_dev/device_guides/nrf52/features"),
+    ("device_guides/nrf52/features", "app_dev/device_guides/nrf52/features"),
     ("device_guides/nrf52/building", "app_dev/device_guides/nrf52/building"), # Building and programming on nRF52 Series devices
     ("device_guides/nrf52/fota_update", "app_dev/device_guides/nrf52/fota_update"), # FOTA updates on nRF52 Series devices
-    ("device_guides/pmic","app_dev/device_guides/pmic/index"), # Developing with PMICs (landing)
-    ("device_guides/pmic/index","app_dev/device_guides/pmic/index"),
-    ("device_guides/working_with_pmic/npm1300/developing","app_dev/device_guides/pmic/npm1300"), # Developing with the nPM1300 PMIC
-    ("device_guides/working_with_pmic/npm1300/features","app_dev/device_guides/pmic/npm1300"),
-    ("device_guides/working_with_pmic/npm1300/gs","app_dev/device_guides/pmic/npm1300"),
-    ("device_guides/pmic/npm1300","app_dev/device_guides/pmic/npm1300"),
+    ("device_guides/pmic", "app_dev/device_guides/pmic/index"), # Developing with PMICs (landing)
+    ("device_guides/pmic/index", "app_dev/device_guides/pmic/index"),
+    ("device_guides/working_with_pmic/npm1300/developing", "app_dev/device_guides/pmic/npm1300"), # Developing with the nPM1300 PMIC
+    ("device_guides/working_with_pmic/npm1300/features", "app_dev/device_guides/pmic/npm1300"),
+    ("device_guides/working_with_pmic/npm1300/gs", "app_dev/device_guides/pmic/npm1300"),
+    ("device_guides/pmic/npm1300", "app_dev/device_guides/pmic/npm1300"),
     ("ug_radio_fem", "app_dev/device_guides/fem/index"), # Developing with Front-End Modules (landing)
-    ("device_guides/fem/fem_software_support","app_dev/device_guides/fem/fem_software_support"), # Enabling FEM support (landing)
-    ("app_dev/working_with_fem/index","app_dev/device_guides/fem/index"),
-    ("device_guides/working_with_fem","app_dev/device_guides/fem/index"),
-    ("device_guides/fem/index","app_dev/device_guides/fem/index"),
-    ("device_guides/fem/fem_mpsl_fem_only","app_dev/device_guides/fem/fem_mpsl_fem_only"), # MPSL FEM-only configuration
-    ("device_guides/fem/fem_nrf21540_gpio","app_dev/device_guides/fem/fem_nrf21540_gpio"), # Enabling GPIO mode support for nRF21540
-    ("device_guides/fem/fem_nrf21540_gpio_spi","app_dev/device_guides/fem/fem_nrf21540_gpio_spi"), # Enabling GPIO+SPI mode support for nRF21540
-    ("device_guides/fem/fem_nRF21540_optional_properties","app_dev/device_guides/fem/fem_nRF21540_optional_properties"), # Optional FEM properties for nRF21540 GPIO and GPIO+SPI
-    ("device_guides/fem/fem_simple_gpio","app_dev/device_guides/fem/fem_simple_gpio"), # Enabling support for front-end modules using Simple GPIO interface
-    ("device_guides/fem/fem_incomplete_connections","app_dev/device_guides/fem/fem_incomplete_connections"), # Use case of incomplete physical connections to the FEM module
-    ("device_guides/fem/fem_power_models","app_dev/device_guides/fem/fem_power_models"), # Using FEM power models
-    ("device_guides/fem/21540ek_dev_guide","app_dev/device_guides/fem/21540ek_dev_guide"), # Developing with the nRF21540 EK
+    ("device_guides/fem/fem_software_support", "app_dev/device_guides/fem/fem_software_support"), # Enabling FEM support (landing)
+    ("app_dev/working_with_fem/index", "app_dev/device_guides/fem/index"),
+    ("device_guides/working_with_fem", "app_dev/device_guides/fem/index"),
+    ("device_guides/fem/index", "app_dev/device_guides/fem/index"),
+    ("device_guides/fem/fem_mpsl_fem_only", "app_dev/device_guides/fem/fem_mpsl_fem_only"), # MPSL FEM-only configuration
+    ("device_guides/fem/fem_nrf21540_gpio", "app_dev/device_guides/fem/fem_nrf21540_gpio"), # Enabling GPIO mode support for nRF21540
+    ("device_guides/fem/fem_nrf21540_gpio_spi", "app_dev/device_guides/fem/fem_nrf21540_gpio_spi"), # Enabling GPIO+SPI mode support for nRF21540
+    ("device_guides/fem/fem_nRF21540_optional_properties", "app_dev/device_guides/fem/fem_nRF21540_optional_properties"), # Optional FEM properties for nRF21540 GPIO and GPIO+SPI
+    ("device_guides/fem/fem_simple_gpio", "app_dev/device_guides/fem/fem_simple_gpio"), # Enabling support for front-end modules using Simple GPIO interface
+    ("device_guides/fem/fem_incomplete_connections", "app_dev/device_guides/fem/fem_incomplete_connections"), # Use case of incomplete physical connections to the FEM module
+    ("device_guides/fem/fem_power_models", "app_dev/device_guides/fem/fem_power_models"), # Using FEM power models
+    ("device_guides/fem/21540ek_dev_guide", "app_dev/device_guides/fem/21540ek_dev_guide"), # Developing with the nRF21540 EK
     ("ug_radio_coex", "app_dev/device_guides/wifi_coex"), # Coexistence of short-range radio and other radios
     ("app_dev/wifi_coex/index", "app_dev/device_guides/wifi_coex"),
     ("device_guides/wifi_coex", "app_dev/device_guides/wifi_coex"),
@@ -293,8 +293,8 @@ NRF = [
     ("app_dev/optimizing/memory", "test_and_optimize/optimizing/memory"),
     ("app_power_opt", "test_and_optimize/optimizing/power"), # Power optimization
     ("app_dev/optimizing/power", "test_and_optimize/optimizing/power"),
-    ("security_chapter","security/security"), # Security (landing)
-    ("security","security/security"),
+    ("security_chapter", "security/security"), # Security (landing)
+    ("security", "security/security"),
     ("ug_tfm", "security/tfm"), # Running applications with Trusted Firmware-M
     ("app_dev/tfm/index", "security/tfm"),
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
@@ -325,99 +325,99 @@ NRF = [
     ("protocols/bt_mesh/vendor_model/chat_sample_walk_through", "protocols/bt/bt_mesh/vendor_model/chat_sample_walk_through"),
     ("ug_bt_mesh_reserved_ids", "protocols/bt/bt_mesh/reserved_ids"), # Reserved vendor model IDs and opcodes
     ("protocols/bt_mesh/reserved_ids", "protocols/bt/bt_mesh/reserved_ids"),
-    ("ug_esb","protocols/esb/index"), # Enhanced ShockBurst (ESB) (landing)
-    ("ug_gz","protocols/gazell/index"), # Gazell (landing)
-    ("ug_gzll","protocols/gazell/gzll"), # Gazell Link Layer
-    ("ug_gzp","protocols/gazell/gzp"), # Gazell Pairing
-    ("ug_matter","protocols/matter/index"), # Matter (landing)
-    ("ug_matter_intro_overview","protocols/matter/overview/index"), # Matter overview (landing)
-    ("ug_matter_overview_architecture","protocols/matter/overview/architecture"), # Matter architecture
-    ("ug_matter_overview_data_model","protocols/matter/overview/data_model"), # Matter Data Model and device types
-    ("ug_matter_overview_int_model","protocols/matter/overview/int_model"), # Matter Interaction Model and interaction types
-    ("ug_matter_overview_network_topologies","protocols/matter/overview/network_topologies"), # Matter network topology and concepts
-    ("ug_matter_overview_security","protocols/matter/overview/security"), # Matter network security
-    ("ug_matter_overview_commissioning","protocols/matter/overview/commissioning"), # Matter network commissioning
-    ("ug_matter_overview_multi_fabrics","protocols/matter/overview/multi_fabrics"), # Matter multiple fabrics feature
-    ("ug_matter_overview_dfu","protocols/matter/overview/dfu"), # Matter OTA
-    ("ug_matter_overview_dev_model","protocols/matter/overview/dev_model"), # Matter development model and compatible ecosystems
-    ("ug_matter_overview_architecture_integration","protocols/matter/overview/integration"), # Matter integration in the nRF Connect SDK
-    ("ug_matter_intro_gs","protocols/matter/getting_started/index"), # Getting started with Matter (landing)
-    ("ug_matter_hw_requirements","protocols/matter/getting_started/hw_requirements"), # Matter hardware and memory requirements
-    ("ug_matter_gs_testing","protocols/matter/getting_started/testing/index"), # Testing Matter in the nRF Connect SDK (landing)
-    ("ug_matter_gs_testing_thread_separate_linux_macos","protocols/matter/getting_started/testing/thread_separate_otbr_linux_macos"), # Matter over Thread: Configuring Border Router and Linux/macOS controller on separate devices
-    ("ug_matter_gs_testing_thread_one_otbr","protocols/matter/getting_started/testing/thread_one_otbr"), # Matter over Thread: Configuring Border Router and controller on one device
-    ("ug_matter_gs_testing_wifi_pc","protocols/matter/getting_started/testing/wifi_pc"), # Matter over Wi-Fi: Configuring CHIP Tool for Linux or macOS
-    ("ug_matter_gs_testing_thread_separate_otbr_android","protocols/matter/getting_started/testing/index"), # Matter over Thread: Configuring Border Router and Android controller on separate devices (removed after 2.2.0)
-    ("ug_matter_gs_testing_wifi_mobile","protocols/matter/getting_started/testing/index"), # Matter over Wi-Fi: Configuring CHIP Tool for Android (removed after 2.2.0)
-    ("ug_matter_gs_tools","protocols/matter/getting_started/tools"), # Matter tools
-    ("ug_matter_gs_kconfig","protocols/matter/getting_started/kconfig"), # Enabling Matter in Kconfig
-    ("ug_matter_gs_advanced_kconfigs","protocols/matter/getting_started/advanced_kconfigs"), # Advanced Matter Kconfig options
-    ("ug_matter_gs_adding_clusters","protocols/matter/getting_started/adding_clusters"), # Adding clusters to Matter application
-    ("ug_matter_intro_device","protocols/matter/end_product/index"), # How to create Matter end product
-    ("ug_matter_device_prerequisites","protocols/matter/end_product/prerequisites"), # Matter device development prerequisites
-    ("ug_matter_device_factory_provisioning","protocols/matter/end_product/factory_provisioning"), # Factory provisioning in Matter
-    ("ug_matter_device_attestation","protocols/matter/end_product/attestation"), # Matter Device Attestation
-    ("ug_matter_device_dcl","protocols/matter/end_product/dcl"), # Matter Distributed Compliance Ledger
-    ("ug_matter_device_certification","protocols/matter/end_product/certification"), # Matter certification
-    ("ug_matter_ecosystems_certification","protocols/matter/end_product/ecosystems_certification"), # Ecosystems certification
-    ("ug_matter_device_bootloader","protocols/matter/end_product/bootloader"), # Bootloader configuration in Matter
-    ("ug_multiprotocol_support","protocols/multiprotocol/index"), # Multiprotocol support (landing page in Protocols)
-    ("ug_nfc","protocols/nfc/index"), # Near Field Communication (NFC)
-    ("ug_thread","protocols/thread/index"), # Thread (landing)
-    ("ug_thread_overview","protocols/thread/overview/index"), # OpenThread overview (landing)
-    ("ug_thread_supported_features","protocols/thread/overview/supported_features"), # Supported Thread features
-    ("ug_thread_architectures","protocols/thread/overview/architectures"), # OpenThread architectures
-    ("ug_thread_communication","protocols/thread/overview/communication"), # OpenThread co-processor communication
-    ("ug_thread_ot_integration","protocols/thread/overview/ot_integration"), # OpenThread integration
-    ("ug_thread_ot_memory","protocols/thread/overview/ot_memory"), # OpenThread memory requirements
-    ("ug_thread_commissioning","protocols/thread/overview/commissioning"), # OpenThread commissioning
-    ("ug_thread_configuring","protocols/thread/configuring"), # Configuring Thread in the nRF Connect SDK
-    ("ug_thread_prebuilt_libs","protocols/thread/prebuilt_libs"), # Pre-build libraries
-    ("ug_thread_tools","protocols/thread/tools"), # Thread tools
-    ("ug_thread_certification","protocols/thread/certification"), # Thread certification
-    ("ug_wifi","protocols/wifi/index"), # Wi-Fi (landing)
+    ("ug_esb", "protocols/esb/index"), # Enhanced ShockBurst (ESB) (landing)
+    ("ug_gz", "protocols/gazell/index"), # Gazell (landing)
+    ("ug_gzll", "protocols/gazell/gzll"), # Gazell Link Layer
+    ("ug_gzp", "protocols/gazell/gzp"), # Gazell Pairing
+    ("ug_matter", "protocols/matter/index"), # Matter (landing)
+    ("ug_matter_intro_overview", "protocols/matter/overview/index"), # Matter overview (landing)
+    ("ug_matter_overview_architecture", "protocols/matter/overview/architecture"), # Matter architecture
+    ("ug_matter_overview_data_model", "protocols/matter/overview/data_model"), # Matter Data Model and device types
+    ("ug_matter_overview_int_model", "protocols/matter/overview/int_model"), # Matter Interaction Model and interaction types
+    ("ug_matter_overview_network_topologies", "protocols/matter/overview/network_topologies"), # Matter network topology and concepts
+    ("ug_matter_overview_security", "protocols/matter/overview/security"), # Matter network security
+    ("ug_matter_overview_commissioning", "protocols/matter/overview/commissioning"), # Matter network commissioning
+    ("ug_matter_overview_multi_fabrics", "protocols/matter/overview/multi_fabrics"), # Matter multiple fabrics feature
+    ("ug_matter_overview_dfu", "protocols/matter/overview/dfu"), # Matter OTA
+    ("ug_matter_overview_dev_model", "protocols/matter/overview/dev_model"), # Matter development model and compatible ecosystems
+    ("ug_matter_overview_architecture_integration", "protocols/matter/overview/integration"), # Matter integration in the nRF Connect SDK
+    ("ug_matter_intro_gs", "protocols/matter/getting_started/index"), # Getting started with Matter (landing)
+    ("ug_matter_hw_requirements", "protocols/matter/getting_started/hw_requirements"), # Matter hardware and memory requirements
+    ("ug_matter_gs_testing", "protocols/matter/getting_started/testing/index"), # Testing Matter in the nRF Connect SDK (landing)
+    ("ug_matter_gs_testing_thread_separate_linux_macos", "protocols/matter/getting_started/testing/thread_separate_otbr_linux_macos"), # Matter over Thread: Configuring Border Router and Linux/macOS controller on separate devices
+    ("ug_matter_gs_testing_thread_one_otbr", "protocols/matter/getting_started/testing/thread_one_otbr"), # Matter over Thread: Configuring Border Router and controller on one device
+    ("ug_matter_gs_testing_wifi_pc", "protocols/matter/getting_started/testing/wifi_pc"), # Matter over Wi-Fi: Configuring CHIP Tool for Linux or macOS
+    ("ug_matter_gs_testing_thread_separate_otbr_android", "protocols/matter/getting_started/testing/index"), # Matter over Thread: Configuring Border Router and Android controller on separate devices (removed after 2.2.0)
+    ("ug_matter_gs_testing_wifi_mobile", "protocols/matter/getting_started/testing/index"), # Matter over Wi-Fi: Configuring CHIP Tool for Android (removed after 2.2.0)
+    ("ug_matter_gs_tools", "protocols/matter/getting_started/tools"), # Matter tools
+    ("ug_matter_gs_kconfig", "protocols/matter/getting_started/kconfig"), # Enabling Matter in Kconfig
+    ("ug_matter_gs_advanced_kconfigs", "protocols/matter/getting_started/advanced_kconfigs"), # Advanced Matter Kconfig options
+    ("ug_matter_gs_adding_clusters", "protocols/matter/getting_started/adding_clusters"), # Adding clusters to Matter application
+    ("ug_matter_intro_device", "protocols/matter/end_product/index"), # How to create Matter end product
+    ("ug_matter_device_prerequisites", "protocols/matter/end_product/prerequisites"), # Matter device development prerequisites
+    ("ug_matter_device_factory_provisioning", "protocols/matter/end_product/factory_provisioning"), # Factory provisioning in Matter
+    ("ug_matter_device_attestation", "protocols/matter/end_product/attestation"), # Matter Device Attestation
+    ("ug_matter_device_dcl", "protocols/matter/end_product/dcl"), # Matter Distributed Compliance Ledger
+    ("ug_matter_device_certification", "protocols/matter/end_product/certification"), # Matter certification
+    ("ug_matter_ecosystems_certification", "protocols/matter/end_product/ecosystems_certification"), # Ecosystems certification
+    ("ug_matter_device_bootloader", "protocols/matter/end_product/bootloader"), # Bootloader configuration in Matter
+    ("ug_multiprotocol_support", "protocols/multiprotocol/index"), # Multiprotocol support (landing page in Protocols)
+    ("ug_nfc", "protocols/nfc/index"), # Near Field Communication (NFC)
+    ("ug_thread", "protocols/thread/index"), # Thread (landing)
+    ("ug_thread_overview", "protocols/thread/overview/index"), # OpenThread overview (landing)
+    ("ug_thread_supported_features", "protocols/thread/overview/supported_features"), # Supported Thread features
+    ("ug_thread_architectures", "protocols/thread/overview/architectures"), # OpenThread architectures
+    ("ug_thread_communication", "protocols/thread/overview/communication"), # OpenThread co-processor communication
+    ("ug_thread_ot_integration", "protocols/thread/overview/ot_integration"), # OpenThread integration
+    ("ug_thread_ot_memory", "protocols/thread/overview/ot_memory"), # OpenThread memory requirements
+    ("ug_thread_commissioning", "protocols/thread/overview/commissioning"), # OpenThread commissioning
+    ("ug_thread_configuring", "protocols/thread/configuring"), # Configuring Thread in the nRF Connect SDK
+    ("ug_thread_prebuilt_libs", "protocols/thread/prebuilt_libs"), # Pre-build libraries
+    ("ug_thread_tools", "protocols/thread/tools"), # Thread tools
+    ("ug_thread_certification", "protocols/thread/certification"), # Thread certification
+    ("ug_wifi", "protocols/wifi/index"), # Wi-Fi (landing)
     ("ug_nrf70_developing_powersave", "protocols/wifi/station_mode/powersave"), # Operating in power save modes
     ("working_with_nrf/nrf70/developing/powersave", "protocols/wifi/station_mode/powersave"),
-    ("device_guides/working_with_nrf/nrf70/developing/powersave","protocols/wifi/station_mode/powersave"),
-    ("protocols/wifi/powersave","protocols/wifi/station_mode/powersave"),
-    ("device_guides/working_with_nrf/nrf70/developing/scan_operation","protocols/wifi/scan_mode/scan_operation"), # Optimizing scan operation
-    ("protocols/wifi/scan_operation","protocols/wifi/scan_mode/scan_operation"),
-    ("device_guides/working_with_nrf/nrf70/developing/sap","protocols/wifi/sap_mode/sap"), # SoftAP mode
-    ("protocols/wifi/sap","protocols/wifi/sap_mode/sap"),
-    ("device_guides/working_with_nrf/nrf70/developing/raw_tx_operation","protocols/wifi/advanced_modes/raw_tx_operation"), # Raw IEEE 802.11 packet transmission
-    ("protocols/wifi/raw_tx_operation","protocols/wifi/advanced_modes/raw_tx_operation"),
-    ("protocols/wifi/sniffer_rx_operation","protocols/wifi/advanced_modes/sniffer_rx_operation"), # Raw IEEE 802.11 packet reception using Monitor mode
-    ("device_guides/working_with_nrf/nrf70/developing/regulatory_support","protocols/wifi/regulatory_support"), # Operating with regulatory support
-    ("device_guides/working_with_nrf/nrf70/developing/debugging","protocols/wifi/debugging"), # Debugging
-    ("ug_zigbee","protocols/zigbee/index"), # Zigbee (landing)
-    ("ug_zigbee_qsg","protocols/zigbee/qsg"), # Zigbee quick start guide
-    ("ug_zigbee_supported_features","protocols/zigbee/supported_features"), # Supported Zigbee features
-    ("ug_zigbee_architectures","protocols/zigbee/architectures"), # Zigbee architectures
-    ("ug_zigbee_commissioning","protocols/zigbee/commissioning"), # Zigbee commissioning
-    ("ug_zigbee_memory","protocols/zigbee/memory"), # Zigbee memory requirements
-    ("ug_zigbee_configuring","protocols/zigbee/configuring"), # Configuring Zigbee in nRF Connect SDK
-    ("ug_zigbee_configuring_libraries","protocols/zigbee/configuring_libraries"), # Configuring Zigbee libraries in nRF Connect SDK
-    ("ug_zigbee_configuring_zboss_traces","protocols/zigbee/configuring_zboss_traces"), # Configuring ZBOSS traces in nRF Connect SDK
-    ("ug_zigbee_adding_clusters","protocols/zigbee/adding_clusters"), # Adding ZCL clusters to application (removed after 2.5.0)
-    ("ug_zigbee_other_ecosystems","protocols/zigbee/other_ecosystems"), # Configuring Zigbee samples for other ecosystems
-    ("ug_zigbee_tools","protocols/zigbee/tools"), # Zigbee tools
-    ("applications/nrf5340_audio/README","applications/nrf5340_audio/index"), # nRF5340 Audio applications (landing)
-    ("samples/samples_bl","samples/bl"), # Bluetooth samples (landing)
-    ("samples/samples_nrf9160","samples/cellular"), # Cellular samples (landing)
-    ("samples/samples_crypto","samples/crypto"), # Cryptography samples (landing)
-    ("samples/samples_edge","samples/edge"), # Edge Impulse samples (landing)
-    ("samples/samples_gazell","samples/gazell"), # Gazell samples (landing)
-    ("samples/samples_matter","samples/matter"), # Matter samples (landing)
-    ("samples/samples_nfc","samples/nfc"), # NFC samples (landing)
-    ("samples/samples_nrf5340","samples/nrf5340"), # nRF5340 samples (landing)
-    ("samples/samples_thread","samples/thread"), # Thread samples (landing)
-    ("samples/samples_tfm","samples/tfm"), # Trusted Firmware-M (TF-M) samples (landing)
-    ("samples/samples_wifi","samples/wifi"), # Wi-Fi samples (landing)
-    ("samples/wifi/sr_coex/README","samples/wifi/ble_coex/README"), # Wi-Fi: Bluetooth LE coexistence
-    ("samples/samples_zigbee","samples/zigbee"), # Zigbee samples (landing)
-    ("samples/samples_other","samples/other"), # Other samples (landing)
+    ("device_guides/working_with_nrf/nrf70/developing/powersave", "protocols/wifi/station_mode/powersave"),
+    ("protocols/wifi/powersave", "protocols/wifi/station_mode/powersave"),
+    ("device_guides/working_with_nrf/nrf70/developing/scan_operation", "protocols/wifi/scan_mode/scan_operation"), # Optimizing scan operation
+    ("protocols/wifi/scan_operation", "protocols/wifi/scan_mode/scan_operation"),
+    ("device_guides/working_with_nrf/nrf70/developing/sap", "protocols/wifi/sap_mode/sap"), # SoftAP mode
+    ("protocols/wifi/sap", "protocols/wifi/sap_mode/sap"),
+    ("device_guides/working_with_nrf/nrf70/developing/raw_tx_operation", "protocols/wifi/advanced_modes/raw_tx_operation"), # Raw IEEE 802.11 packet transmission
+    ("protocols/wifi/raw_tx_operation", "protocols/wifi/advanced_modes/raw_tx_operation"),
+    ("protocols/wifi/sniffer_rx_operation", "protocols/wifi/advanced_modes/sniffer_rx_operation"), # Raw IEEE 802.11 packet reception using Monitor mode
+    ("device_guides/working_with_nrf/nrf70/developing/regulatory_support", "protocols/wifi/regulatory_support"), # Operating with regulatory support
+    ("device_guides/working_with_nrf/nrf70/developing/debugging", "protocols/wifi/debugging"), # Debugging
+    ("ug_zigbee", "protocols/zigbee/index"), # Zigbee (landing)
+    ("ug_zigbee_qsg", "protocols/zigbee/qsg"), # Zigbee quick start guide
+    ("ug_zigbee_supported_features", "protocols/zigbee/supported_features"), # Supported Zigbee features
+    ("ug_zigbee_architectures", "protocols/zigbee/architectures"), # Zigbee architectures
+    ("ug_zigbee_commissioning", "protocols/zigbee/commissioning"), # Zigbee commissioning
+    ("ug_zigbee_memory", "protocols/zigbee/memory"), # Zigbee memory requirements
+    ("ug_zigbee_configuring", "protocols/zigbee/configuring"), # Configuring Zigbee in nRF Connect SDK
+    ("ug_zigbee_configuring_libraries", "protocols/zigbee/configuring_libraries"), # Configuring Zigbee libraries in nRF Connect SDK
+    ("ug_zigbee_configuring_zboss_traces", "protocols/zigbee/configuring_zboss_traces"), # Configuring ZBOSS traces in nRF Connect SDK
+    ("ug_zigbee_adding_clusters", "protocols/zigbee/adding_clusters"), # Adding ZCL clusters to application (removed after 2.5.0)
+    ("ug_zigbee_other_ecosystems", "protocols/zigbee/other_ecosystems"), # Configuring Zigbee samples for other ecosystems
+    ("ug_zigbee_tools", "protocols/zigbee/tools"), # Zigbee tools
+    ("applications/nrf5340_audio/README", "applications/nrf5340_audio/index"), # nRF5340 Audio applications (landing)
+    ("samples/samples_bl", "samples/bl"), # Bluetooth samples (landing)
+    ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
+    ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
+    ("samples/samples_edge", "samples/edge"), # Edge Impulse samples (landing)
+    ("samples/samples_gazell", "samples/gazell"), # Gazell samples (landing)
+    ("samples/samples_matter", "samples/matter"), # Matter samples (landing)
+    ("samples/samples_nfc", "samples/nfc"), # NFC samples (landing)
+    ("samples/samples_nrf5340", "samples/nrf5340"), # nRF5340 samples (landing)
+    ("samples/samples_thread", "samples/thread"), # Thread samples (landing)
+    ("samples/samples_tfm", "samples/tfm"), # Trusted Firmware-M (TF-M) samples (landing)
+    ("samples/samples_wifi", "samples/wifi"), # Wi-Fi samples (landing)
+    ("samples/wifi/sr_coex/README", "samples/wifi/ble_coex/README"), # Wi-Fi: Bluetooth LE coexistence
+    ("samples/samples_zigbee", "samples/zigbee"), # Zigbee samples (landing)
+    ("samples/samples_other", "samples/other"), # Other samples (landing)
     ("libraries/bin/bt_ll_acs_nrf53/index", "../nrfxlib/softdevice_controller/doc/isochronous_channels"), # LE Audio controller for nRF5340 (removed for 2.7.0)
-    ("libraries/networking/nrf_cloud_agps","libraries/networking/nrf_cloud_agnss"), # nRF Cloud A-GNSS
+    ("libraries/networking/nrf_cloud_agps", "libraries/networking/nrf_cloud_agnss"), # nRF Cloud A-GNSS
     ("libraries/bootloader/index", "libraries/security/bootloader/index"), # Bootloader libraries (landing)
     ("libraries/bootloader/bl_crypto", "libraries/security/bootloader/bl_crypto"), # Bootloader crypto
     ("libraries/bootloader/bl_storage", "libraries/security/bootloader/bl_storage"), # Bootloader storage
@@ -470,6 +470,6 @@ NRF = [
     ("release_notes", "releases_and_maturity/release_notes"), # Release notes (landing)
     ("migration/migration_guide_1.x_to_2.x", "releases_and_maturity/migration/migration_guide_1.x_to_2.x"), # Migration notes for nRF Connect SDK v2.0.0
     ("software_maturity", "releases_and_maturity/software_maturity"), # Software maturity
-    ("known_issues","releases_and_maturity/known_issues"), # Known issues
-    ("releases_and_maturity/glossary","glossary"), # Glossary
+    ("known_issues", "releases_and_maturity/known_issues"), # Known issues
+    ("releases_and_maturity/glossary", "glossary"), # Glossary
 ]
