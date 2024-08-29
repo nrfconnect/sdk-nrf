@@ -45,6 +45,13 @@ Build and configuration system
 
 * Added the ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
 
+* Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
+
+  .. note::
+     This feature has never been functional.
+     To configure the signing key, use any available Kconfig method.
+
+
 Bootloaders and DFU
 ===================
 
