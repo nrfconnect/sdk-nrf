@@ -1,0 +1,23 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig OPENTHREAD_REPORT
+	bool "OpenThread report generation"
+	default y
+	depends on NET_L2_OPENTHREAD
+	help
+	  Enables report generation that contains the OpenThread version,
+	  NCS revision, OpenThread library build information, List of enabled
+	  Thread features, the diff of nrfxlib directory between the NCS release
+	  version (TAG) and the version that is used by a customer.
+	  The report will be stored as a build artefact (separate .txt file),
+	  or printed to console.
+
+config OPENTHREAD_REPORT_BUILD_ARTEFACT_NAME
+	string "Name of the report .txt file build artefact"
+	depends on OPENTHREAD_REPORT
+	default "ot_report.txt"
+	help
+	  Set the name of the report .txt build artefact.

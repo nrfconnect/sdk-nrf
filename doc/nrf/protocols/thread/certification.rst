@@ -23,6 +23,9 @@ You can find the certification information for the SoC or the SiP you are using 
 
 Depending on your development approach, you have several certification options when using Nordic Semiconductor devices.
 
+You will need to analyze the :ref:`ug_thread_build_report` to check that there is a proper Thread version and library used for the certification process and that there are no changes that may affect the certification by inheritance.
+Additionally, you may be asked to include the build report during the certification process.
+
 .. _ug_thread_cert_inheritance_without_modifications:
 
 Certification by inheritance without modifications to binaries
@@ -177,3 +180,87 @@ This is valid only for Nordic Semiconductor development kits with a J-Link virtu
 
 To add an nRF52840 DK, drag the nRF52840 DK and drop it on the test bed configuration page.
 After that, the device is configured and the :ref:`proper baud rate (115200) <test_and_optimize>` and COM port are set.
+
+.. _ug_thread_build_report:
+
+OpenThread build report
+***********************
+
+The OpenThread build report contains information about:
+
+   * The current |NCS| and OpenThread revisions.
+   * The Thread feature set and Thread library path.
+   * Changes in the :ref:`nrfxlib:nrfxlib` repository in comparison to the latest |NCS| release.
+
+The report is generated to the output console log, and stored as an additional build artefact in the application build directory.
+
+Generating the OpenThread report is enabled by default if the :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` Kconfig option is set to ``y``.
+This means that it is enabled for all samples that use the Thread stack.
+To disable the generation, set the :kconfig:option:`CONFIG_OPENTHREAD_REPORT` kconfig option to ``n``.
+
+By default, the build artefact name is set as :file:`ot_report.txt`, but you can specify a different name by setting the :kconfig:option:`CONFIG_OPENTHREAD_REPORT_BUILD_ARTEFACT_NAME` kconfig value to the new one.
+
+Depending on if you build the application using the :ref:`nrfxlib:ot_libs` or if you build the application and Thread stack from the source files, you will see the following logs in your build console:
+
+.. tabs::
+
+   .. group-tab:: Using pre-built libraries
+
+      .. code-block::
+
+         ################### OPENTHREAD REPORT ###################
+         + Target device: nrf52840
+         + Thread version: v1.3
+         + OpenThread library feature set: Minimal Thread Device (MTD)
+         + Thread device type: Sleepy End Device (SED)
+         + OpenThread Library: openthread/lib/cortex-m4/soft-float/v1.3/mtd/
+         + OpenThread NCS revision: thread-reference-20230706-819-gd60aaab22
+         + OpenThread NCS SHA: d60aaab22
+         + NCS revision: v2.7.99-cs1-41-g26ef793b91-dirty
+         + NCS SHA: 26ef793b91
+         + No differences in the used Thread library in comparison to the NCS v2.7.0 release.
+         ###################        END        ###################
+
+      The generated build artefact will also include the list of the :ref:`nrfxlib:nrfxlib` repository changes between the current revision and the latest |NCS| release.
+      If there are no changes related to the used Thread library, you can use :ref:`ug_thread_cert_inheritance_without_modifications`.
+      If the report shows any changes detected in the used Thread library, you will need to contact the Thread Group to check if certification by inheritance is still possible.
+
+      An example of the changes detected in the Thread library:
+
+      .. code-block::
+
+         ################### OPENTHREAD REPORT ###################
+         + Target device: nrf52840
+         + Thread version: v1.3
+         + OpenThread library feature set: Minimal Thread Device (MTD)
+         + Thread device type: Sleepy End Device (SED)
+         + OpenThread Library: openthread/lib/cortex-m4/soft-float/v1.3/mtd/
+         + OpenThread NCS revision: thread-reference-20230706-819-gd60aaab22
+         + OpenThread NCS SHA: d60aaab22
+         + NCS revision: v2.7.99-cs1-41-g26ef793b91-dirty
+         + NCS SHA: 26ef793b91
+         + Found differences in the nrfxlib repository in comparison to the NCS v2.7.0 release. See the ot_report.txt report file to learn more.
+         ###################        END        ###################
+
+      You can look at the report file located in the application build directory to see the full list of changes.
+      For example, for the :ref:`ot_cli_sample` sample, you can find a report file in the default location: :file:`cli/build/cli/ot_report.txt`.
+
+   .. group-tab:: From source files
+
+      .. code-block::
+
+         ################### OPENTHREAD REPORT ###################
+         + Target device: nrf52840
+         + Thread version: v1.3
+         + OpenThread library feature set: Minimal Thread Device (MTD)
+         + Thread device type: Sleepy End Device (SED)
+         + OpenThread library has been built from sources
+         + OpenThread NCS revision: thread-reference-20230706-819-gd60aaab22
+         + OpenThread NCS SHA: d60aaab22
+         + NCS revision: v2.7.99-cs1-41-g26ef793b91-dirty
+         + NCS SHA: 26ef793b91
+         ###################        END        ###################
+
+      The information shows that the Thread library has been build from sources, so it cannot be used for :ref:`ug_thread_cert_inheritance_without_modifications`.
+
+..

@@ -173,7 +173,7 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
+* Added the :ref:`ug_thread_build_report` and described how to use it.
 
 Zigbee
 ------
@@ -450,6 +450,8 @@ Matter samples
 
     * Added :ref:`Matter Lock schedule snippet <matter_lock_snippets>`, and updated the documentation to use the snippet.
 
+* Enabled the :ref:`ug_thread_build_report` generation in all samples.
+
 Networking samples
 ------------------
 
@@ -519,7 +521,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Enabled the :ref:`ug_thread_build_report` generation in all samples.
 
 Zigbee samples
 --------------

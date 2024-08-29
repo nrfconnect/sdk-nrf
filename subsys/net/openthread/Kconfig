@@ -150,3 +150,4 @@ endmenu # "OpenThread"
 endif # NET_L2_OPENTHREAD
 
 rsource "rpc/Kconfig"
+rsource "report/Kconfig"
