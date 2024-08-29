@@ -116,8 +116,8 @@ function(zephyr_mcuboot_tasks)
   # invalid if a static PM file is updated without pristine build
   set(imgtool_internal_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_internal_rom_command} CACHE STRING "imgtool sign (internal flash) sysbuild replacement")
   set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${qspi_xip_image_number}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
-  set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_internal_sign_sysbuild} ${imgtool_internal_rom_command} CACHE STRING "imgtool sign command (internal flash)")
-  set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_external_sign_sysbuild} ${imgtool_external_rom_command} CACHE STRING "imgtool sign command (external flash)")
+  set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_internal_sign_sysbuild})
+  set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_external_sign_sysbuild})
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
