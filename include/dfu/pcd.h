@@ -66,7 +66,7 @@ enum pcd_status {
  *                 network core.
  * @param len Length of the data which is to be copied into the network core.
  *
- * @retval 0 on success, -1 on failure.
+ * @retval 0 on success, an error code on failure.
  */
 int pcd_network_core_update(const void *src_addr, size_t len);
 
