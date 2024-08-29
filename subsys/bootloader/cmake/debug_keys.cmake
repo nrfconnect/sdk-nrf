@@ -16,22 +16,6 @@ set(PUB_CMD
   )
 
 # Check if PEM file is specified by user, if not, create one.
-
-# First, check environment variables. Only use if not specified in command line.
-if (DEFINED ENV{SB_SIGNING_KEY_FILE} AND NOT SB_SIGNING_KEY_FILE)
-  if (NOT EXISTS "$ENV{SB_SIGNING_KEY_FILE}")
-    message(FATAL_ERROR "ENV points to non-existing PEM file '$ENV{SB_SIGNING_KEY_FILE}'")
-  else()
-    set(SIGNATURE_PRIVATE_KEY_FILE $ENV{SB_SIGNING_KEY_FILE})
-  endif()
-endif()
-
-# Next, check command line arguments
-if (DEFINED SB_SIGNING_KEY_FILE)
-  set(SIGNATURE_PRIVATE_KEY_FILE ${SB_SIGNING_KEY_FILE})
-endif()
-
-# Check if debug sign key should be generated.
 if( "${CONFIG_SB_SIGNING_KEY_FILE}" STREQUAL "")
   message(WARNING "
     --------------------------------------------------------------
