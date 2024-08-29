@@ -786,11 +786,15 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_fota` library:
 
-* Updated:
+  * Updated:
 
-  * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE` Kconfig option is made available and used also when the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` Kconfig option is enabled.
-    The range of the option is now from 128 to 1900 bytes, and the default value is 1700 bytes.
-  * The function :c:func:`nrf_cloud_fota_poll_process` can now be used asynchrounously if a callback to handle errors is provided.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE` Kconfig option to be available and used also when the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` Kconfig option is enabled.
+      The range of the option is now from 128 to 1900 bytes, and the default value is 1700 bytes.
+    * The function :c:func:`nrf_cloud_fota_poll_process` to be used asynchrounously if a callback to handle errors is provided.
+
+* :ref:`lib_nrf_provisioning` library:
+
+  * Added support for the ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
 
 Libraries for NFC
 -----------------
