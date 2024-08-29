@@ -207,35 +207,11 @@ menuconfig IS_SECURE_BOOTLOADER
 
 if IS_SECURE_BOOTLOADER
 
-menuconfig SECURE_BOOT_DEBUG
-	bool "Printing"
-	select NCS_BOOT_BANNER
-	select PRINTK
-	select CONSOLE
-	select SERIAL
-
-if SECURE_BOOT_DEBUG
-choice SECURE_BOOT_DEBUG_BACKEND
-	prompt "Where to print to"
-	default SECURE_BOOT_DEBUG_UART
-
-config SECURE_BOOT_DEBUG_UART
-	bool "Print to UART"
-	select UART_NRFX
-	select UART_CONSOLE
-
-config SECURE_BOOT_DEBUG_RTT
-	bool "Print to RTT"
-	select RTT_CONSOLE
-	select USE_SEGGER_RTT
-endchoice
-
 config SB_BPROT_IN_DEBUG
 	bool "Enable block protect in debug"
 	default y
 	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
 
-endif # SECURE_BOOT_DEBUG
 endif # IS_SECURE_BOOTLOADER
 
 config IS_BOOTLOADER_IMG
