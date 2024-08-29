@@ -12,6 +12,7 @@ menuconfig QSPI_XIP_SPLIT_IMAGE
 	bool "QSPI XIP split image"
 	depends on SUPPORT_QSPI_XIP && BOOTLOADER_MCUBOOT && PARTITION_MANAGER
 	depends on PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	depends on MCUBOOT_MODE_OVERWRITE_ONLY || MCUBOOT_MODE_DIRECT_XIP
 	help
 	  Configures images and build system to support executing code from QSPI flash in XIP
 	  mode. Will also configure an additional image for MCUboot (if enabled) to allow for
