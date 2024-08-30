@@ -931,6 +931,14 @@ ci_tests_subsys_nrf_compress:
     - nrf/subsys/nrf_compress/
     - nrf/tests/subsys/nrf_compress/
 
+ci_tests_subsys_nfc:
+  files:
+    - nrf/subsys/nfc/
+    - nrf/subsys/nrf_rpc/
+    - nrf/tests/mocks/nrf_rpc/
+    - nrf/tests/subsys/nfc/
+    - nrfxlib/nrf_rpc/
+
 ci_tests_lib_nrf_modem_lib:
   files:
     - nrf/lib/nrf_modem_lib/
