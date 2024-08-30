@@ -94,11 +94,11 @@ jobs:
           fi
 
           # add zoomin metadata
-          cp doc/custom.properties doc/_build/html
+          cp doc/_zoomin/ncs.custom.properties doc/_build/html/custom.properties
           sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/custom.properties
 
           # add zoomin tags file
-          cp doc/tags.yml doc/_build/html
+          cp doc/_zoomin/ncs.tags.yml doc/_build/html/tags.yml
           sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/tags.yml
 
           # compress

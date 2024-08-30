@@ -68,8 +68,7 @@ Kconfig*                                  @tejlmand
 /doc/mcuboot/                             @carlescufi
 /doc/nrfxlib/                             @gmarull
 /doc/versions.json                        @carlescufi
-/doc/custom.properties                    @gmarull
-/doc/tags.yml                             @gmarull @umapraseeda @b-gent
+/doc/_zoomin/                             @gmarull @umapraseeda @b-gent
 /doc/requirements.txt                     @gmarull
 # General top-level docs
 /doc/nrf/app_dev/                         @greg-fer
