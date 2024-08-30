@@ -57,6 +57,11 @@ static const uint8_t cache2[] = {
 	0x90, 0x70, 0x18, 0x92, 0x36, 0x51, 0x92, 0x83, 0x09, 0x86, 0x70, 0x19, 0x23};
 static const size_t cache2_len = sizeof(cache2);
 
+static struct zcbor_string valid_manifest_component_id = {
+	.value = (const uint8_t *)0x1234,
+	.len = 123,
+};
+
 static void setup_cache_with_sample_entries(void)
 {
 	struct dfu_cache dfu_caches;
@@ -113,7 +118,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_msink_OK)
 	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
 	zassert_equal(ret, SUIT_PLAT_SUCCESS, "cannot write to in-place updateable component");
 
-	ret = suit_plat_fetch_integrated(dst_handle, &source, NULL);
+	ret = suit_plat_fetch_integrated(dst_handle, &source, &valid_dst_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
@@ -141,7 +146,8 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_OK)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
+	ret = suit_plat_fetch_integrated(component_handle, &source, &valid_manifest_component_id,
+					 NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_component_impl_data_get(component_handle, &handle);
@@ -182,7 +188,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_OK)
 
 	setup_cache_with_sample_entries();
 
-	ret = suit_plat_fetch(component_handle, &uri, NULL);
+	ret = suit_plat_fetch(component_handle, &uri, &valid_manifest_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_release_component_handle(component_handle);
@@ -211,7 +217,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_NOK_uri_not_in_cache)
 
 	setup_cache_with_sample_entries();
 
-	ret = suit_plat_fetch(component_handle, &uri, NULL);
+	ret = suit_plat_fetch(component_handle, &uri, &valid_manifest_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_fetch should succeed - supplied uri is not in cache, "
 			  "treated as empty payload");
@@ -242,7 +248,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_NOK_invalid_component_id)
 
 	setup_cache_with_sample_entries();
 
-	ret = suit_plat_fetch(component_handle, &uri, NULL);
+	ret = suit_plat_fetch(component_handle, &uri, &valid_manifest_component_id, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_fetch should have failed - invalid component_id");
 
@@ -269,7 +275,8 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_data_ptr_NULL)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
+	ret = suit_plat_fetch_integrated(component_handle, &source, &valid_manifest_component_id,
+					 NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_fetch should have failed - NULL data pointer");
 
@@ -294,7 +301,8 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_data_size_zero)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
+	ret = suit_plat_fetch_integrated(component_handle, &source, &valid_manifest_component_id,
+					 NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS, "suit_plat_fetch should have failed - data size 0");
 
 	ret = suit_plat_release_component_handle(component_handle);
@@ -318,7 +326,8 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_handle_NULL)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_fetch_integrated(component_handle, &source, NULL);
+	ret = suit_plat_fetch_integrated(component_handle, &source, &valid_manifest_component_id,
+					 NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	const uint8_t *payload;

@@ -33,6 +33,7 @@
 LOG_MODULE_REGISTER(suit_plat_write, CONFIG_SUIT_LOG_LEVEL);
 
 int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *content,
+			  struct zcbor_string *manifest_component_id,
 			  struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
@@ -40,6 +41,7 @@ int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *cont
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+	(void)manifest_component_id;
 
 	/*
 	 * Validate streaming operation.
@@ -102,6 +104,7 @@ int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *cont
 }
 
 int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content,
+		    struct zcbor_string *manifest_component_id,
 		    struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
@@ -109,6 +112,7 @@ int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content,
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+	(void)manifest_component_id;
 
 	/*
 	 * Validate streaming operation.
