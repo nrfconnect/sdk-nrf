@@ -712,7 +712,10 @@ Modem libraries
 
 * :ref:`sms_readme` library:
 
-  * Added the use of the ``AT+CMMS`` AT command for sending concatenated SMS message.
+  * Updated:
+
+    * To use the ``AT+CMMS`` AT command when sending concatenated SMS message.
+    * To set "7" as a fallback SMS service center address for type approval SIM cards which do not have it set.
 
 Multiprotocol Service Layer libraries
 -------------------------------------

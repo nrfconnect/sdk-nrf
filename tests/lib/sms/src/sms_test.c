@@ -419,6 +419,12 @@ void test_send_len3_number10plus(void)
 {
 	sms_reg_helper();
 
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=15\r0021000A912143658709000003CD771A\x1A", 0);
 
@@ -446,6 +452,12 @@ void test_send_len1_number20plus(void)
 {
 	sms_reg_helper();
 
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=18\r00210014912143658709214365870900000131\x1A", 0);
 
@@ -472,6 +484,12 @@ void test_send_len1_number20plus(void)
  */
 void test_send_len7_number11(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=20\r0021000B912143658709F100000731D98C56B3DD00\x1A", 0);
 
@@ -487,6 +505,12 @@ void test_send_len7_number11(void)
  */
 void test_send_len8_number1(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=15\r0021000191F100000831D98C56B3DD70\x1A", 0);
 
@@ -501,6 +525,12 @@ void test_send_len8_number1(void)
  */
 void test_send_len9_number5(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=18\r00210005912143F500000931D98C56B3DD7039\x1A", 0);
 
@@ -515,6 +545,12 @@ void test_send_len9_number5(void)
  */
 void test_send_concat_220chars_2msgs(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CMMS=1", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=153\r0061010C912143658709210000A005000301020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966\x1A",
@@ -537,6 +573,12 @@ void test_send_concat_220chars_2msgs(void)
  */
 void test_send_concat_291chars_2msgs(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CMMS=1", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=153\r0061030C912143658709210000A005000302020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966\x1A",
@@ -559,6 +601,12 @@ void test_send_concat_291chars_2msgs(void)
  */
 void test_send_concat_700chars_5msgs(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CMMS=1", -ENOMEM);
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=153\r0061050C912143658709210000A005000303050162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966\x1A",
@@ -595,6 +643,12 @@ void test_send_concat_700chars_5msgs(void)
  */
 void test_send_special_characters(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=49\r00210005912143F500002C5378799C0EB3416374581E1ED3CBF2B90EB4A1803628D02605DAF0401B1F68F3026D7AA00DD005\x1A",
 		0);
@@ -617,6 +671,12 @@ void test_send_special_characters(void)
  */
 void test_send_concat_special_character_split(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CMMS=1", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=150\r00610A05912143F500009F05000304020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC900\x1A",
@@ -636,10 +696,251 @@ void test_send_concat_special_character_split(void)
 /** Text is empty. Message will be sent successfully. */
 void test_send_text_empty(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=12\r002100099121436587F9000000\x1A", 0);
 
 	int ret = sms_send_text("123456789", "");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/********* SMS SEND SMS CENTER ADDRESS (SCA) TESTS ******************/
+
+/** Test type approval SIM. */
+void test_send_ta_sim_no_sca(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=178,28482,1,4,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string(
+		"12345678901234567890EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r0291F7210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test type approval SIM with SCA field included. */
+void test_send_ta_sim_sca(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=178,28482,1,4,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string(
+		"FFFFFFFFFFFFFFFFFFFFFFFFFFFFE00080FFFFFFFFFFFFFFFFFFFF0491000000FFFFFFFFFFFFFF0000A7");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r00210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFAD query with invalid <sw1>. */
+void test_send_ta_sim_query_sw1_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(111);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r00210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFAD query with invalid <sw2>. */
+void test_send_ta_sim_query_sw2_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r00210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFAD query with missing parameters. */
+void test_send_ta_sim_query_params_missing_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r00210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFAD query with empty CRSM <response>. */
+void test_send_ta_sim_query_crsm_resp_empty_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r00210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFSMSP query with invalid <sw1>. */
+void test_send_ta_sim_sca_query_sw1_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=178,28482,1,4,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(106);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r0291F7210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFSMSP query with invalid <sw2>. */
+void test_send_ta_sim_sca_query_sw2_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=178,28482,1,4,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string(
+		"FFFFFFFFFFFFFFFFFFFFFFFFFFFFE00080FFFFFFFFFFFFFFFFFFFF0491000000FFFFFFFFFFFFFF0000A7");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r0291F7210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFSMSP query with too many parameters. */
+void test_send_ta_sim_sca_query_too_many_params_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=178,28482,1,4,0", "+CRSM: %d, %d, \"%511[^\"]\"", 7);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string(
+		"FFFFFFFFFFFFFFFFFFFFFFFFFFFFE00080FFFFFFFFFFFFFFFFFFFF0491000000FFFFFFFFFFFFFF0000A7");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r0291F7210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFSMSP query with too short CRSM <response>. */
+void test_send_ta_sim_sca_query_crsm_resp_too_short_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=178,28482,1,4,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string(
+		"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r0291F7210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
+
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+/** Test EFSMSP query with non-integer parameter_indicator. */
+void test_send_ta_sim_sca_query_invalid_parameter_indicator_fail(void)
+{
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("80000002");
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=178,28482,1,4,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string(
+		"FFFFFFFFFFFFFFFFFFFFFFFFFFFFii0080FFFFFFFFFFFFFFFFFFFF0491000000FFFFFFFFFFFFFF0000A7");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=18\r0291F7210005912143F500000931D98C56B3DD7039\x1A", 0);
+
+	int ret = sms_send_text("12345", "123456789");
 
 	TEST_ASSERT_EQUAL(0, ret);
 }
@@ -689,6 +990,12 @@ void test_send_fail_text_null(void)
 /** Failing AT command response to CMGS command. */
 void test_send_fail_atcmd(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=15\r0021000A912143658709000003CD771A\x1A", -ENOMEM);
 
@@ -700,6 +1007,11 @@ void test_send_fail_atcmd(void)
 /** Failing AT command response to CMGS command when sending concatenated message. */
 void test_send_fail_atcmd_concat(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CMMS=1", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=153\r00610C0C912143658709210000A005000305020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966\x1A",
@@ -716,6 +1028,12 @@ void test_send_fail_atcmd_concat(void)
 /** Data has special characters. */
 void test_send_gsm7bit_special_characters(void)
 {
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
+
 	uint8_t data[] = {
 		0x00, 0x01, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
 		0x09, 0x0E, 0x0F, 0x10, 0x12, 0x13, 0x14, 0x15,
@@ -1945,6 +2263,12 @@ void test_recv_large_negative_time_zone_offset(void)
 void send_basic(void)
 {
 	helper_sms_data_clear();
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=15\r0021000A912143658709000003CD771A\x1A", 0);
