@@ -30,7 +30,7 @@ jobs:
           mkdir -p ~/.ssh && \
             ssh-keyscan -p 2222 transfer.nordicsemi.no >> ~/.ssh/known_hosts
           # upload files
-          for file in docs/*.zip docs/monitor*.txt; do
+          for file in docs/*legacy.zip docs/monitor*.txt; do
             echo "put ${file}" | \
               sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
           done
@@ -53,7 +53,17 @@ jobs:
           chmod 600 zoomin_key
 
           # upload files
-          for file in docs/*.zip; do
+          for file in docs/*zoomin_doxygen*.zip; do
+            sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
+            cd docs-be.nordicsemi.com/doxygen/incoming
+            put ${file}
+            cd ../../../nordic-be-dev.zoominsoftware.io/doxygen/incoming
+            put ${file}
+            quit
+          EOF
+          done
+
+          for file in docs/*zoomin_sphinx*.zip; do
             sftp -v -i zoomin_key nordic@upload-v1.zoominsoftware.io <<EOF
             cd docs-be.nordicsemi.com/sphinx-html/incoming
             put ${file}
