@@ -260,7 +260,7 @@ add_custom_target(
   copy-extra-content
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/_static/html/index.html ${HTML_DIR}
   COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/versions.json ${HTML_DIR}
-  COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/custom.properties ${HTML_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy ${NRF_BASE}/doc/_zoomin/ncs.custom.properties ${HTML_DIR}/custom.properties
 )
 
 add_custom_target(
