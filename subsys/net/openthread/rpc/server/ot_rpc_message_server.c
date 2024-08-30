@@ -21,10 +21,11 @@
 
 static otMessage *ot_message_registry[OT_MESSAGES_POOL];
 
-ot_msg_key ot_reg_msg_alloc(void)
+ot_msg_key ot_reg_msg_alloc(otMessage *msg)
 {
 	for (ot_msg_key i = 0; i < OT_MESSAGES_POOL; i++) {
 		if (ot_message_registry[i] == NULL) {
+			ot_message_registry[i] = msg;
 			return i + 1;
 		}
 	}
@@ -133,7 +134,7 @@ exit:
 static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			       void *handler_data)
 {
-	uint32_t key = 0;
+	ot_msg_key key = 0;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	otMessageSettings settings;
 	otMessageSettings *pSettings;
@@ -142,31 +143,23 @@ static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	key = ot_reg_msg_alloc();
-
-	if (key == 0) {
-		goto exit;
-	}
-
 	openthread_api_mutex_lock(openthread_get_default_context());
-	ot_message_registry[key - 1] =
-		otUdpNewMessage(openthread_get_default_instance(), pSettings);
+	key = ot_reg_msg_alloc(otUdpNewMessage(openthread_get_default_instance(), pSettings));
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-	if (ot_message_registry[key - 1] == NULL) {
+	if (ot_msg_get(key) == NULL) {
 		key = 0;
 	}
 
-exit:
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(uint32_t) + 1);
-	zcbor_uint_encode(rsp_ctx.zs, &key, sizeof(uint32_t));
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(key) + 1);
+	zcbor_uint_encode(rsp_ctx.zs, &key, sizeof(key));
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
 static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			      void *handler_data)
 {
-	uint32_t key;
+	ot_msg_key key;
 	bool decoding_ok;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t length = 0;
@@ -199,7 +192,7 @@ exit:
 static void ot_rpc_get_offset(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			      void *handler_data)
 {
-	uint32_t key;
+	ot_msg_key key;
 	bool decoding_ok;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t offset = 0;
@@ -234,7 +227,7 @@ static void ot_rpc_msg_read(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 {
 	uint16_t offset;
 	uint16_t length;
-	uint32_t key;
+	ot_msg_key key;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	const uint16_t chunk_size = 64;
 	uint8_t buf[chunk_size];

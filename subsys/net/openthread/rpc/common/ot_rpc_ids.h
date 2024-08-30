@@ -14,6 +14,7 @@ enum ot_rpc_cmd_client {
 	OT_RPC_CMD_STATE_CHANGED,
 	OT_RPC_CMD_IF_RECEIVE,
 	OT_RPC_CMD_THREAD_DISCOVER_CB,
+	OT_RPC_CMD_UDP_RECEIVE_CB,
 };
 
 /** @brief Command IDs accepted by the OpenThread over RPC server.
@@ -70,6 +71,11 @@ enum ot_rpc_cmd_server {
 	OT_RPC_CMD_MESSAGE_GET_LENGTH,
 	OT_RPC_CMD_MESSAGE_GET_OFFSET,
 	OT_RPC_CMD_MESSAGE_READ,
+	OT_RPC_CMD_UDP_OPEN,
+	OT_RPC_CMD_UDP_SEND,
+	OT_RPC_CMD_UDP_BIND,
+	OT_RPC_CMD_UDP_CLOSE,
+	OT_RPC_CMD_UDP_CONNECT,
 };
 
 #endif /* OT_RPC_IDS_H_ */

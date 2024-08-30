@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "openthread/ip6.h"
 #include "ot_rpc_common.h"
+#include <string.h>
 
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
@@ -146,4 +148,112 @@ void ot_rpc_decode_dataset(const struct nrf_rpc_group *group, struct nrf_rpc_cbo
 void ot_rpc_report_decoding_error(uint8_t cmd_evt_id)
 {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group, cmd_evt_id, NRF_RPC_PACKET_TYPE_CMD);
+}
+
+bool ot_rpc_encode_message_info(struct nrf_rpc_cbor_ctx *ctx, const otMessageInfo *aMessageInfo)
+{
+	uint8_t tmp;
+
+	if (!zcbor_bstr_encode_ptr(ctx->zs, (const char *)&aMessageInfo->mSockAddr.mFields.m8,
+				   sizeof(aMessageInfo->mSockAddr))) {
+		return false;
+	}
+
+	if (!zcbor_bstr_encode_ptr(ctx->zs, (const char *)&aMessageInfo->mPeerAddr.mFields.m8,
+				   sizeof(aMessageInfo->mPeerAddr))) {
+		return false;
+	}
+
+	if (!zcbor_uint_encode(ctx->zs, &aMessageInfo->mSockPort,
+			       sizeof(aMessageInfo->mSockPort))) {
+		return false;
+	}
+
+	if (!zcbor_uint_encode(ctx->zs, &aMessageInfo->mPeerPort,
+			       sizeof(aMessageInfo->mPeerPort))) {
+		return false;
+	}
+
+	if (!zcbor_uint_encode(ctx->zs, &aMessageInfo->mHopLimit,
+			       sizeof(aMessageInfo->mHopLimit))) {
+		return false;
+	}
+
+	tmp = aMessageInfo->mEcn;
+	if (!zcbor_uint_encode(ctx->zs, &tmp, sizeof(tmp))) {
+		return false;
+	}
+
+	if (!zcbor_bool_put(ctx->zs, aMessageInfo->mIsHostInterface)) {
+		return false;
+	}
+
+	if (!zcbor_bool_put(ctx->zs, aMessageInfo->mAllowZeroHopLimit)) {
+		return false;
+	}
+
+	if (!zcbor_bool_put(ctx->zs, aMessageInfo->mMulticastLoop)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool ot_rpc_decode_message_info(struct nrf_rpc_cbor_ctx *ctx, otMessageInfo *aMessageInfo)
+{
+	struct zcbor_string zst;
+	uint8_t tmp;
+
+	if (!zcbor_bstr_decode(ctx->zs, &zst)) {
+		return false;
+	}
+
+	memcpy(&aMessageInfo->mSockAddr.mFields.m8, zst.value, zst.len);
+
+	if (!zcbor_bstr_decode(ctx->zs, &zst)) {
+		return false;
+	}
+
+	memcpy(&aMessageInfo->mPeerAddr.mFields.m8, zst.value, zst.len);
+
+	if (!zcbor_uint_decode(ctx->zs, &aMessageInfo->mSockPort,
+			       sizeof(aMessageInfo->mSockPort))) {
+		return false;
+	}
+
+	if (!zcbor_uint_decode(ctx->zs, &aMessageInfo->mPeerPort,
+			       sizeof(aMessageInfo->mPeerPort))) {
+		return false;
+	}
+
+	if (!zcbor_uint_decode(ctx->zs, &aMessageInfo->mHopLimit,
+			       sizeof(aMessageInfo->mHopLimit))) {
+		return false;
+	}
+
+	if (!zcbor_uint_decode(ctx->zs, &tmp, sizeof(tmp))) {
+		return false;
+	}
+
+	aMessageInfo->mEcn = tmp;
+
+	if (!zcbor_bool_decode(ctx->zs, (bool *)&tmp)) {
+		return false;
+	}
+
+	aMessageInfo->mIsHostInterface = tmp;
+
+	if (!zcbor_bool_decode(ctx->zs, (bool *)&tmp)) {
+		return false;
+	}
+
+	aMessageInfo->mAllowZeroHopLimit = tmp;
+
+	if (!zcbor_bool_decode(ctx->zs, (bool *)&tmp)) {
+		return false;
+	}
+
+	aMessageInfo->mMulticastLoop = tmp;
+
+	return true;
 }

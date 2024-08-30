@@ -10,6 +10,7 @@
 #include <openthread/dataset.h>
 
 #include <nrf_rpc_cbor.h>
+#include <openthread/ip6.h>
 
 #define OT_RPC_TIMESTAMP_LENGTH(timestamp) \
 	sizeof((timestamp).mSeconds) + 1 + \
@@ -62,4 +63,6 @@ void ot_rpc_encode_dataset(struct nrf_rpc_cbor_ctx *ctx, const otOperationalData
 /* The function reports about command decoding error (not responses). */
 void ot_rpc_report_decoding_error(uint8_t cmd_evt_id);
 
+bool ot_rpc_decode_message_info(struct nrf_rpc_cbor_ctx *ctx, otMessageInfo *aMessageInfo);
+bool ot_rpc_encode_message_info(struct nrf_rpc_cbor_ctx *ctx, const otMessageInfo *aMessageInfo);
 #endif /* OT_RPC_COMMON_H_ */

@@ -30,6 +30,12 @@ enum ot_rpc_link_mode_offsets {
 	OT_RPC_LINK_MODE_NETWORK_DATA_OFFSET = 2,
 };
 
+/** @brief Key type of internal otMesage registry.
+ */
 typedef uint32_t ot_msg_key;
+
+/** @brief Key type of internal otUdpSocket registry.
+ */
+typedef uint32_t ot_socket_key;
 
 #endif /* OT_RPC_TYPES_H_ */

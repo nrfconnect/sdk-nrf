@@ -16,6 +16,7 @@ zephyr_library_sources_ifdef(CONFIG_NET_L2_OPENTHREAD
   ot_rpc_commissioning_server.c
   ot_rpc_diag_server.c
   ot_rpc_message_server.c
+  ot_rpc_udp_server.c
 )
 
 zephyr_library_include_directories(
