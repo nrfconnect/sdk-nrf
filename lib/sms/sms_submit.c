@@ -27,6 +27,11 @@ LOG_MODULE_DECLARE(sms, CONFIG_SMS_LOG_LEVEL);
 #define SMS_MAX_CONCAT_PAYLOAD_LEN_CHARS \
 	(SMS_MAX_PAYLOAD_LEN_CHARS - SMS_UDH_CONCAT_SIZE_SEPTETS)
 
+/** @brief Length of EFSMSP field's static part. */
+#define CRSM_EFSMSP_STATIC_LEN 58
+/** @brief Index to Parameter Indicators field in EFSMSP from the end of the field data. */
+#define CRSM_EFSMSP_PARAMETER_INDICATORS_FROM_END_INDEX (CRSM_EFSMSP_STATIC_LEN - 2)
+
 /**
  * @brief Encode phone number into format specified within SMS header.
  *
@@ -96,6 +101,138 @@ static int sms_submit_encode_number(
 }
 
 /**
+ * @brief Encode SMS Service Center Address (SCA) field for type approval SIMs.
+ *
+ * @details This function reads information from SIM card as follows:
+ *   - Read EFAD field and check if it is a type approval SIM.
+ *     EFAD is specified in 3GPP TS 51.011 chapter 10.3.18.
+ *   - Read EFSMSP field and check if it has TS-Service Centre Address.
+ *     EFSMSP is specified in 3GPP TS 51.011 chapter 10.5.6.
+ *
+ * Based on this information, the SCA field is set as follows:
+ *   - If not type approval SIM, set empty SCA ("00").
+ *   - If type approval SIM and SCA exists, set empty SCA ("00").
+ *   - If type approval SIM and SCA does not exist, set SCA to '7' ("0291F7").
+ *
+ * '7' has been used as SCA for type approval SIMs without SCA in some other systems,
+ * such as Android, for more than a decade.
+ *
+ * SIM fields are read with AT+CRSM command, which is specified in 3GPP TS 27.007 chapter 8.18
+ * and some parameter encodings in ETSI TS 102 221 chapter 10.2.1.
+ *
+ * SCA field is used in SMS-SUBMIT message. This is specified piece by piece
+ * in the following specifications:
+ *   - 3GPP TS 23.040 chapter 9.1.2.5
+ *   - 3GPP TS 27.005 chapter 3.1 (see <pdu>, <tosca> and <toda>)
+ *   - 3GPP TS 27.005 chapter 3.3.1
+ *   - 3GPP TS 27.005 chapter 4.3
+ *   - 3GPP TS 24.011 chapter 8.2.5.2
+ *
+ * @param[in,out] sca_field Buffer for SCA field. Must be at least 7 bytes long.
+ */
+static void sms_submit_encode_sca(char *sca_field)
+{
+	int ret;
+	char *efsmsp_parameter_indicators_field;
+	int crsm_sw1 = 0;
+	int crsm_sw2 = 0;
+	int crsm_resp_len = 0;
+	uint8_t parameter_indicators = 0;
+	int bin_buf_len = 0;
+
+	/* sms_buf_tmp is used for CRSM <response> field which could theoretically be
+	 * 512 characters as hexadecimal string (256 bytes). And technically the response
+	 * could be split into multiple parts. So we will fail to recognize type approval SIM
+	 * and SCA if the <response> is longer than 255 bytes (510 characters).
+	 * This limitation should not be a problem in practice.
+	 */
+
+	/* Check if this is a type approval SIM */
+
+	/* Read EFAD (0x6FAD = 28589): 3GPP TS 51.011 chapter 10.3.18 */
+	ret = nrf_modem_at_scanf(
+		"AT+CRSM=176,28589,0,0,0",
+		"+CRSM: %d, %d, \"%511[^\"]\"",
+		&crsm_sw1,
+		&crsm_sw2,
+		sms_buf_tmp);
+
+	LOG_DBG("EFAD: (ret=%d, crsm_sw1=%d, crsm_sw2=%d): %s",
+		ret, crsm_sw1, crsm_sw2, sms_buf_tmp);
+
+	if (ret != 3 || crsm_sw1 != 0x90 || crsm_sw2 != 0x00 || strlen(sms_buf_tmp) == 0) {
+		LOG_WRN("Failed to read UICC EFSMSP (ret=%d, crsm_sw1=%d, crsm_sw2=%d): %s",
+			ret, crsm_sw1, crsm_sw2, sms_buf_tmp);
+		goto empty_sca_set;
+	}
+	if (sms_buf_tmp[0] != '8') {
+		LOG_DBG("Not a type approval SIM");
+		goto empty_sca_set;
+	}
+
+	LOG_DBG("Type approval SIM detected");
+
+	/* Check if SIM has SMS Service Center Address */
+	sms_buf_tmp[0] = '\0';
+
+	/* Read EFSMSP (0x6F42 = 28482): 3GPP TS 51.011 chapter 10.5.6 */
+	ret = nrf_modem_at_scanf(
+		"AT+CRSM=178,28482,1,4,0",
+		"+CRSM: %d, %d, \"%511[^\"]\"",
+		&crsm_sw1,
+		&crsm_sw2,
+		sms_buf_tmp);
+
+	LOG_DBG("EFSMSP: (ret=%d, crsm_sw1=%d, crsm_sw2=%d): %s",
+		ret, crsm_sw1, crsm_sw2, sms_buf_tmp);
+
+	if (ret != 3 || crsm_sw1 != 0x90 || crsm_sw2 != 0x00) {
+		LOG_WRN("Failed to read UICC EFSMSP (ret=%d, crsm_sw1=%d, crsm_sw2=%d): %s",
+			ret, crsm_sw1, crsm_sw2, sms_buf_tmp);
+		goto ta_sim_no_sca;
+	}
+
+	crsm_resp_len = strlen(sms_buf_tmp);
+	if (crsm_resp_len < CRSM_EFSMSP_STATIC_LEN) {
+		LOG_WRN("CRSM response too short (less than %d): %d",
+			CRSM_EFSMSP_STATIC_LEN, crsm_resp_len);
+		goto ta_sim_no_sca;
+	}
+
+	efsmsp_parameter_indicators_field =
+		sms_buf_tmp + crsm_resp_len - CRSM_EFSMSP_PARAMETER_INDICATORS_FROM_END_INDEX;
+
+	/* Decode Parameter Indicators */
+	bin_buf_len = hex2bin(efsmsp_parameter_indicators_field, 2, &parameter_indicators, 1);
+
+	/* If parameter indicator is not a number, decoding it failed */
+	if (bin_buf_len != 1) {
+		LOG_WRN("Invalid Parameter Indicators field");
+		goto ta_sim_no_sca;
+	}
+
+	/* If bit #2 is set, TS-Service Centre Address does not exist */
+	if ((parameter_indicators & 0x02) != 0) {
+		LOG_DBG("No TS-Service Centre Address in SIM");
+		goto ta_sim_no_sca;
+	}
+
+	LOG_DBG("TS-Service Centre Address exists in SIM. Using empty address.");
+
+empty_sca_set:
+	/* Empty SCA field */
+	strcpy(sca_field, "00");
+	return;
+
+ta_sim_no_sca:
+	/* Add '7' as service center address for type approval without SCA.
+	 * We use default value of 145 (0x91), which is for international number format.
+	 */
+	LOG_DBG("Setting service center address to '7' for type approval SIM");
+	sprintf(sca_field, "0291F7");
+}
+
+/**
  * @brief Prints error information for positive error codes of @c nrf_modem_at_printf.
  *
  * @param[in] err Error code.
@@ -122,9 +259,11 @@ static void sms_submit_print_error(int err)
 }
 
 /**
- * @brief Create SMS-SUBMIT message as specified in specified in 3GPP TS 23.040 chapter 9.2.2.2.
+ * @brief Create SMS-SUBMIT message as specified in 3GPP TS 23.040 chapter 9.2.2.2.
  *
  * @details Optionally allows adding User-Data-Header.
+ *
+ * For the encoding of the SMS PDU, see <pdu> in 3GPP TS 27.005 chapter 3.1.
  *
  * @param[out] send_buf Output buffer where SMS-SUBMIT message is created. Caller should allocate
  *             enough space. Minimum of 400 bytes is required with maximum message size and if
@@ -137,6 +276,8 @@ static void sms_submit_print_error(int err)
  * @param[in] encoded_data_size_septets Encoded User-Data size in septets.
  * @param[in] message_ref TP-Message-Reference field in SMS-SUBMIT message.
  * @param[in] udh_str User Data Header. Can be set to NULL if not desired.
+ * @param[in] sca_field SMS Service Center address field of the SMS pdu within CMGS AT command.
+ *                      Buffer must be at least 7 bytes long.
  */
 static int sms_submit_encode(
 	char *send_buf,
@@ -147,7 +288,8 @@ static int sms_submit_encode(
 	uint8_t encoded_data_size_octets,
 	uint8_t encoded_data_size_septets,
 	uint8_t message_ref,
-	char *udh_str)
+	char *udh_str,
+	char *sca_field)
 {
 	int err = 0;
 	int msg_size;
@@ -157,6 +299,7 @@ static int sms_submit_encode(
 
 	/* Create and send CMGS AT command */
 	msg_size =
+		/* SMSC address octets are excluded based on 3GPP TS 27.005 chapter 4.3 */
 		2 + /* First header byte and TP-MR fields */
 		1 + /* Length of phone number */
 		1 + /* Phone number Type-of-Address byte */
@@ -173,8 +316,9 @@ static int sms_submit_encode(
 	 * User-Data-Header to be added later
 	 */
 	sprintf(send_buf,
-		"AT+CMGS=%d\r00%02X%02X%02X91%s0000%02X",
+		"AT+CMGS=%d\r%s%02X%02X%02X91%s0000%02X",
 		msg_size,
+		sca_field,
 		sms_submit_header_byte,
 		message_ref,
 		encoded_number_size,
@@ -230,6 +374,7 @@ static int sms_submit_encode(
  * @param[in] encoded_number Number in semi-octet representation for SMS-SUBMIT message.
  * @param[in] encoded_number_size Number of characters in number (encoded_number).
  * @param[in] encoded_number_size_octets Number of octets in number (encoded_number).
+ * @param[in] sca_field SMS Service Center address/number field of the CMGS AT command.
  * @param[in] send_at_cmds Indicates whether parts of the concatenated SMS message are sent.
  * @param[in,out] concat_msg_count Number of message parts required to decode given text.
  *                     If send_at_cmds is true, this is input.
@@ -240,6 +385,7 @@ static int sms_submit_concat(
 	uint8_t *encoded_number,
 	uint8_t encoded_number_size,
 	uint8_t encoded_number_size_octets,
+	char *sca_field,
 	bool send_at_cmds,
 	uint8_t *concat_msg_count)
 {
@@ -302,7 +448,8 @@ static int sms_submit_concat(
 				encoded_data_size_octets - SMS_UDH_CONCAT_SIZE_OCTETS,
 				encoded_data_size_septets,
 				message_ref,
-				udh_str);
+				udh_str,
+				sca_field);
 
 			if (err) {
 				break;
@@ -339,6 +486,7 @@ int sms_submit_send(
 	uint8_t encoded_data_size_octets = 0;
 	uint8_t encoded_data_size_septets = 0;
 	uint8_t concat_msg_count = 0;
+	char sca_field[7] = { 0 };
 
 	if (number == NULL) {
 		LOG_ERR("SMS number NULL");
@@ -381,18 +529,21 @@ int sms_submit_send(
 		size = data_len;
 	}
 
+	/* Encode SCA field */
+	sms_submit_encode_sca(sca_field);
+
 	/* Check if this should be sent as concatenated SMS */
 	if (size < data_len) {
 		LOG_DBG("Entire message doesn't fit into one SMS message. Using concatenated SMS.");
 
 		/* Encode messages to get number of message parts required to send given text */
 		err = sms_submit_concat(data,
-			encoded_number, encoded_number_size, encoded_number_size_octets,
+			encoded_number, encoded_number_size, encoded_number_size_octets, sca_field,
 			false, &concat_msg_count);
 
 		/* Then, encode and send message parts */
 		err = sms_submit_concat(data,
-			encoded_number, encoded_number_size, encoded_number_size_octets,
+			encoded_number, encoded_number_size, encoded_number_size_octets, sca_field,
 			true, &concat_msg_count);
 	} else {
 		/* Single message SMS */
@@ -405,7 +556,8 @@ int sms_submit_send(
 			encoded_data_size_octets,
 			encoded_data_size_septets,
 			0,
-			NULL);
+			NULL,
+			sca_field);
 	}
 
 	return err;
