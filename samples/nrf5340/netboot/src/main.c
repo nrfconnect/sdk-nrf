@@ -15,6 +15,9 @@
 #include <dfu/pcd.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+#ifdef CONFIG_PCD_LOCK_NETCORE_APPROTECT
+#include <nrfx_nvmc.h>
+#endif
 
 int main(void)
 {
@@ -39,10 +42,26 @@ int main(void)
 
 	uint32_t s0_addr = s0_address_read();
 	bool valid = false;
-	uint8_t status = pcd_fw_copy_status_get();
+
+	switch (pcd_fw_copy_status_get()) {
+#ifdef CONFIG_PCD_LOCK_NETCORE_DEBUG
+	case PCD_STATUS_LOCK_DEBUG:
+		nrfx_nvmc_word_write((uint32_t)&NRF_UICR_NS->APPROTECT,
+				     UICR_APPROTECT_PALL_Protected);
+		while (!nrfx_nvmc_write_done_check())
+			;
+
+		pcd_done();
+
+		/* Success, waiting to be rebooted */
+		while (1)
+			;
+		CODE_UNREACHABLE;
+	break;
+#endif
 
 #ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
-	if (status == PCD_STATUS_READ_VERSION) {
+	case PCD_STATUS_READ_VERSION:
 		err = pcd_find_fw_version();
 		if (err < 0) {
 			printk("Unable to find valid firmware version %d\n\r", err);
@@ -54,10 +73,10 @@ int main(void)
 		while (1)
 			;
 		CODE_UNREACHABLE;
-	}
+	break;
 #endif
 
-	if (status == PCD_STATUS_COPY) {
+	case PCD_STATUS_COPY:
 		/* First we validate the data where the PCD CMD tells
 		 * us that we can find it.
 		 */
@@ -94,6 +113,10 @@ int main(void)
 		while (1)
 			;
 		CODE_UNREACHABLE;
+	break;
+
+	default:
+		break;
 	}
 
 	err = fprotect_area(PM_APP_ADDRESS, PM_APP_SIZE);
