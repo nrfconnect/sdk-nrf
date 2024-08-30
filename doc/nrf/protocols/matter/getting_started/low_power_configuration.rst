@@ -78,6 +78,8 @@ The higher the threshold value, the higher the communication reliability, but th
 A high threshold is useful mainly for an ICD with a long Slow Polling Interval, typically bigger than a few seconds, where getting another chance to receive a message will happen after a long time.
 For devices with a short Slow Polling Interval, using this functionality can lead to unnecessary power consumption.
 
+.. _ug_matter_device_low_power_icd_sit_lit:
+
 Short idle time and long idle time devices
 ==========================================
 

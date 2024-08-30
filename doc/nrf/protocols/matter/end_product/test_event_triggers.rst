@@ -105,6 +105,56 @@ The following table lists the available triggers and their activation codes:
     - ``0x002a000000000100`` - ``0x01000000000001FF``
     - The range of ``0x00`` - ``0xFF`` is the fabric index value.
       The maximum fabric index value depends on the current device's settings.
+  * - Smoke CO alarm - Smoke critical alarm
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger a smoke alarm with critical severity level
+    - ``0x005c00000000009c``
+    - No additional value supported.
+  * - Smoke CO alarm - Smoke alarm clean
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger an action that ceases smoke alarm
+    - ``0x005c0000000000a0``
+    - No additional value supported.
+  * - Smoke CO alarm - CO critical alarm
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger a CO alarm with critical severity level
+    - ``0x005c00000000009d``
+    - No additional value supported.
+  * - Smoke CO alarm - CO alarm clean
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger an action that ceases CO alarm
+    - ``0x005c0000000000a1``
+    - No additional value supported.
+  * - Smoke CO alarm - battery low level alarm
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger a battery low level alarm
+    - ``0x005c000000000095``
+    - No additional value supported.
+  * - Smoke CO alarm - battery low level alarm clean
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger an action that ceases battery low level alarm
+    - ``0x005c0000000000a5``
+    - No additional value supported.
+  * - Smoke CO alarm - hardware fault alarm
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger a hardware fault alarm
+    - ``0x005c000000000093``
+    - No additional value supported.
+  * - Smoke CO alarm - hardware fault alarm clean
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger an action that ceases hardware fault alarm
+    - ``0x005c0000000000a3``
+    - No additional value supported.
+  * - Smoke CO alarm - end of service alarm
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger a end of service alarm
+    - ``0x005c00000000009a``
+    - No additional value supported.
+  * - Smoke CO alarm - end of service alarm clean
+    - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
+    - Trigger an action that ceases end of service alarm
+    - ``0x005c0000000000aa``
+    - No additional value supported.
   * - Door lock jammed
     - :kconfig:option:`CONFIG_CHIP_DEVICE_PRODUCT_ID` = ``32774``
     - Simulate the jammed lock state.
