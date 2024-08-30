@@ -16,6 +16,10 @@
 
 #include <string.h>
 
+static otUdpSocket udp_socket;
+static const char udp_payload[] = "Hello OpenThread World!";
+#define PORT 1212
+
 static int ot_cli_output_cb(void *context, const char *format, va_list arg)
 {
 	const struct shell *sh = context;
@@ -416,7 +420,6 @@ static int cmd_test_message(const struct shell *sh, size_t argc, char *argv[])
 	uint16_t offset = 0;
 	uint16_t read = 0;
 	uint16_t length = 0;
-	static const char UDP_PAYLOAD[] = "Hello OpenThread World!";
 	char buf[128] = {0};
 
 	message = otUdpNewMessage(NULL, NULL);
@@ -427,7 +430,7 @@ static int cmd_test_message(const struct shell *sh, size_t argc, char *argv[])
 
 	offset = otMessageGetOffset(message);
 
-	error = otMessageAppend(message, UDP_PAYLOAD, sizeof(UDP_PAYLOAD));
+	error = otMessageAppend(message, udp_payload, sizeof(udp_payload));
 	if (error != OT_ERROR_NONE) {
 		goto exit;
 	}
@@ -437,7 +440,7 @@ static int cmd_test_message(const struct shell *sh, size_t argc, char *argv[])
 	read = otMessageRead(message, offset, buf, length);
 	shell_print(sh, "read data: %s", buf);
 
-	if (strcmp(UDP_PAYLOAD, buf) == 0) {
+	if (strcmp(udp_payload, buf) == 0) {
 		shell_print(sh, "Payload matches.");
 	} else {
 		shell_print(sh, "Payload doesn't match.");
@@ -451,6 +454,83 @@ exit:
 		otMessageFree(message);
 	}
 
+	return 0;
+}
+
+static void handle_udp_receive(void *context, otMessage *message, const otMessageInfo *message_info)
+{
+	uint16_t length;
+	uint16_t offset;
+	uint16_t read;
+	char buf[128] = {0};
+
+	offset = otMessageGetOffset(message);
+	length = otMessageGetLength(message);
+
+	read = otMessageRead(message, offset, buf, length);
+
+	if (read > 0) {
+		printk("RECEIVED: '%s'\n", buf);
+	} else {
+		printk("message empty\n");
+	}
+}
+
+static int cmd_test_udp_init(const struct shell *sh, size_t argc, char *argv[])
+{
+	otSockAddr listen_sock_addr;
+
+	memset(&udp_socket, 0, sizeof(udp_socket));
+	memset(&listen_sock_addr, 0, sizeof(listen_sock_addr));
+
+	listen_sock_addr.mPort = PORT;
+
+	otUdpOpen(NULL, &udp_socket, handle_udp_receive, NULL);
+	otUdpBind(NULL, &udp_socket, &listen_sock_addr, OT_NETIF_THREAD);
+
+	return 0;
+}
+
+static int cmd_test_udp_send(const struct shell *sh, size_t argc, char *argv[])
+{
+	otError error = OT_ERROR_NONE;
+	otMessage *message = NULL;
+	otMessageInfo message_info;
+	otIp6Address destination_addr;
+
+	memset(&message_info, 0, sizeof(message_info));
+	memset(&destination_addr, 0, sizeof(destination_addr));
+
+	destination_addr.mFields.m8[0] = 0xff;
+	destination_addr.mFields.m8[1] = 0x03;
+	destination_addr.mFields.m8[15] = 0x01;
+	message_info.mPeerAddr = destination_addr;
+	message_info.mPeerPort = PORT;
+
+	message = otUdpNewMessage(NULL, NULL);
+	if (message == NULL) {
+		error = OT_ERROR_NO_BUFS;
+		goto exit;
+	};
+
+	error = otMessageAppend(message, udp_payload, sizeof(udp_payload));
+	if (error != OT_ERROR_NONE) {
+		goto exit;
+	}
+	error = otUdpSend(NULL, &udp_socket, message, &message_info);
+	shell_print(sh, "Udp message send.");
+
+exit:
+	if (error != OT_ERROR_NONE && message != NULL) {
+		otMessageFree(message);
+	}
+	return 0;
+}
+
+static int cmd_test_udp_close(const struct shell *sh, size_t argc, char *argv[])
+{
+	otUdpClose(NULL, &udp_socket);
+	shell_print(sh, "Udp socket closed.");
 	return 0;
 }
 
@@ -469,6 +549,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
 	SHELL_CMD_ARG(active_tlvs, NULL, "Set active dataset", cmd_active_tlvs, 1, 1),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
+	SHELL_CMD_ARG(test_udp_init, NULL, "Test udp init API", cmd_test_udp_init, 1, 0),
+	SHELL_CMD_ARG(test_udp_send, NULL, "Test udp send API", cmd_test_udp_send, 1, 0),
+	SHELL_CMD_ARG(test_udp_close, NULL, "Test udp close API", cmd_test_udp_close, 1, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
