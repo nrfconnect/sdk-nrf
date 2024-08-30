@@ -770,6 +770,15 @@ Libraries for networking
       nRF Cloud still accepts ``lng`` for backward compatibility.
     * The handling of MQTT JITP device association to improve speed and reliability.
     * To use nRF Cloud's custom MQTT topics instead of the default AWS topics.
+    * MQTT and CoAP transports to use a single unified DNS lookup mechanism that supports IPv4 and IPv6, fallback to IPv4, and handling of multiple addresses returned by :c:func:`getaddrinfo`.
+
+  * Deprecated:
+
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_IPV6` Kconfig option, which now no longer forces the nRF Cloud MQTT transport to use IPv4 when not enabled.
+      Instead, use the :kconfig:option:`CONFIG_NET_IPV4` and :kconfig:option:`CONFIG_NET_IPV6` Kconfig options to customize which IP versions the :ref:`lib_nrf_cloud` library uses.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_STATIC_IPV4` and :kconfig:option:`CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR` Kconfig options.
+      Support for statically configured nRF Cloud IP Addresses will soon be removed.
+      Leave :kconfig:option:`CONFIG_NRF_CLOUD_STATIC_IPV4` disabled to instead use automatic DNS lookup.
 
   * Fixed an issue in the :c:func:`nrf_cloud_send` function that prevented data in the provided :c:struct:`nrf_cloud_obj` structure from being sent to the bulk and bin topics.
 

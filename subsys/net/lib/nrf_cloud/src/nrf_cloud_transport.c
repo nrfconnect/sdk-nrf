@@ -12,6 +12,8 @@
 #include "nrf_cloud_fota.h"
 #endif
 
+#include "nrf_cloud_dns.h"
+
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -36,12 +38,6 @@ BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX
 
 #define NRF_CLOUD_HOSTNAME CONFIG_NRF_CLOUD_HOST_NAME
 #define NRF_CLOUD_PORT CONFIG_NRF_CLOUD_PORT
-
-#if defined(CONFIG_NRF_CLOUD_IPV6)
-#define NRF_CLOUD_AF_FAMILY AF_INET6
-#else
-#define NRF_CLOUD_AF_FAMILY AF_INET
-#endif /* defined(CONFIG_NRF_CLOUD_IPV6) */
 
 /* nRF Cloud's custom update topic (device PUB).
  * Functionally identical to the AWS shadow update topic.
@@ -107,7 +103,6 @@ static void nct_mqtt_evt_handler(struct mqtt_client *client,
 static struct nct {
 	struct mqtt_sec_config tls_config;
 	struct mqtt_client client;
-	struct sockaddr_storage broker;
 	struct nct_cc_endpoints cc;
 	struct nct_dc_endpoints dc;
 	uint16_t message_id;
@@ -611,78 +606,6 @@ static void nrf_cloud_fota_cb_handler(const struct nrf_cloud_fota_evt
 }
 #endif
 
-/* Connect to MQTT broker. */
-int nct_mqtt_connect(void)
-{
-	int err;
-	if (!mqtt_client_initialized) {
-
-		mqtt_client_init(&nct.client);
-
-		nct.client.broker = (struct sockaddr *)&nct.broker;
-		nct.client.evt_cb = nct_mqtt_evt_handler;
-		nct.client.client_id.utf8 = (uint8_t *)client_id_ptr;
-		nct.client.client_id.size = strlen(client_id_ptr);
-		nct.client.protocol_version = MQTT_VERSION_3_1_1;
-		nct.client.password = NULL;
-		nct.client.user_name = NULL;
-		nct.client.keepalive = CONFIG_NRF_CLOUD_MQTT_KEEPALIVE;
-		nct.client.clean_session = persistent_session ? 0U : 1U;
-		LOG_DBG("MQTT clean session flag: %u",
-			nct.client.clean_session);
-
-#if defined(CONFIG_MQTT_LIB_TLS)
-		nct.client.transport.type = MQTT_TRANSPORT_SECURE;
-		nct.client.rx_buf = nct.rx_buf;
-		nct.client.rx_buf_size = sizeof(nct.rx_buf);
-		nct.client.tx_buf = nct.tx_buf;
-		nct.client.tx_buf_size = sizeof(nct.tx_buf);
-
-		struct mqtt_sec_config *tls_config =
-			   &nct.client.transport.tls.config;
-		memcpy(tls_config, &nct.tls_config,
-			   sizeof(struct mqtt_sec_config));
-#else
-		nct.client.transport.type = MQTT_TRANSPORT_NON_SECURE;
-#endif
-		mqtt_client_initialized = true;
-	}
-
-	err = mqtt_connect(&nct.client);
-	if (err != 0) {
-		LOG_DBG("mqtt_connect failed %d", err);
-		return err;
-	}
-
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_NONBLOCKING)) {
-		err = fcntl(nct_socket_get(), F_SETFL, O_NONBLOCK);
-		if (err == -1) {
-			LOG_ERR("Failed to set socket as non-blocking, err: %d",
-				errno);
-			LOG_WRN("Continuing with blocking socket");
-			err = 0;
-		} else {
-			LOG_DBG("Using non-blocking socket");
-		}
-	}  else if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_TIMEOUT)) {
-		struct timeval timeout = {
-			.tv_sec = CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC
-		};
-
-		err = setsockopt(nct_socket_get(), SOL_SOCKET, SO_SNDTIMEO,
-				 &timeout, sizeof(timeout));
-		if (err == -1) {
-			LOG_ERR("Failed to set timeout, errno: %d", errno);
-			err = 0;
-		} else {
-			LOG_DBG("Using socket send timeout of %d seconds",
-				CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC);
-		}
-	}
-
-	return err;
-}
-
 static int publish_get_payload(struct mqtt_client *client, size_t length)
 {
 	if (length > (sizeof(nct.payload_buf) - 1)) {
@@ -943,100 +866,104 @@ void nct_uninit(void)
 	mqtt_client_initialized = false;
 }
 
-#if defined(CONFIG_NRF_CLOUD_STATIC_IPV4)
-int nct_connect(void)
+
+static void nct_init_mqtt(void)
 {
-	int err;
+	if (!mqtt_client_initialized) {
+		mqtt_client_init(&nct.client);
 
-	struct sockaddr_in *broker = ((struct sockaddr_in *)&nct.broker);
+		nct.client.evt_cb = nct_mqtt_evt_handler;
+		nct.client.client_id.utf8 = (uint8_t *)client_id_ptr;
+		nct.client.client_id.size = strlen(client_id_ptr);
+		nct.client.protocol_version = MQTT_VERSION_3_1_1;
+		nct.client.password = NULL;
+		nct.client.user_name = NULL;
+		nct.client.keepalive = CONFIG_NRF_CLOUD_MQTT_KEEPALIVE;
+		nct.client.clean_session = persistent_session ? 0U : 1U;
+		LOG_DBG("MQTT clean session flag: %u",
+			nct.client.clean_session);
 
-	inet_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR,
-		  &broker->sin_addr);
-	broker->sin_family = AF_INET;
-	broker->sin_port = htons(NRF_CLOUD_PORT);
+#if defined(CONFIG_MQTT_LIB_TLS)
+		nct.client.transport.type = MQTT_TRANSPORT_SECURE;
+		nct.client.rx_buf = nct.rx_buf;
+		nct.client.rx_buf_size = sizeof(nct.rx_buf);
+		nct.client.tx_buf = nct.tx_buf;
+		nct.client.tx_buf_size = sizeof(nct.tx_buf);
 
-	LOG_DBG("IPv4 Address %s", CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR);
-	err = nct_mqtt_connect();
-
-	return err;
-}
+		struct mqtt_sec_config *tls_config =
+			   &nct.client.transport.tls.config;
+		memcpy(tls_config, &nct.tls_config,
+			   sizeof(struct mqtt_sec_config));
 #else
-int nct_connect(void)
+		nct.client.transport.type = MQTT_TRANSPORT_NON_SECURE;
+#endif
+		mqtt_client_initialized = true;
+	}
+}
+
+static int nct_connect_host_cb(struct sockaddr *const addr)
 {
 	int err;
-	struct addrinfo *result;
-	struct addrinfo *addr;
+
+	/* Initialize MQTT client if it is not already initialized. */
+	nct_init_mqtt();
+
+	/* Attempt to connect to the provided address */
+	nct.client.broker = addr;
+	err = mqtt_connect(&nct.client);
+
+	if (err != 0) {
+		LOG_DBG("mqtt_connect failed %d", err);
+		return err;
+	}
+
+	/* Success, return the resulting socket. */
+	return nct_socket_get();
+}
+
+int nct_connect(void)
+{
+	int err = 0;
+	const char *const host_name = NRF_CLOUD_HOSTNAME;
+	uint16_t port = htons(NRF_CLOUD_PORT);
 	struct addrinfo hints = {
-		.ai_family = NRF_CLOUD_AF_FAMILY,
 		.ai_socktype = SOCK_STREAM
 	};
+	int sock = nrf_cloud_connect_host(host_name, port, &hints, &nct_connect_host_cb);
 
-	LOG_DBG("Connecting to host: %s", NRF_CLOUD_HOSTNAME);
-	err = getaddrinfo(NRF_CLOUD_HOSTNAME, NULL, &hints, &result);
-	if (err) {
-		LOG_DBG("getaddrinfo failed %d", err);
-		return -ECHILD;
+	if (sock < 0) {
+		LOG_ERR("Could not connect to nRF Cloud MQTT Broker %s, port: %d. err: %d",
+			host_name, port, sock);
+		return -ECONNREFUSED;
 	}
 
-	addr = result;
-	err = -ECHILD;
-
-	/* Look for address of the broker. */
-	while (addr != NULL) {
-		/* IPv4 Address. */
-		if ((addr->ai_addrlen == sizeof(struct sockaddr_in)) &&
-		    (NRF_CLOUD_AF_FAMILY == AF_INET)) {
-			char addr_str[INET_ADDRSTRLEN];
-			struct sockaddr_in *broker =
-				((struct sockaddr_in *)&nct.broker);
-
-			broker->sin_addr.s_addr =
-				((struct sockaddr_in *)addr->ai_addr)
-					->sin_addr.s_addr;
-			broker->sin_family = AF_INET;
-			broker->sin_port = htons(NRF_CLOUD_PORT);
-
-			inet_ntop(AF_INET,
-				 &broker->sin_addr.s_addr,
-				 addr_str,
-				 sizeof(addr_str));
-
-			LOG_DBG("IPv4 address: %s", addr_str);
-
-			err = nct_mqtt_connect();
-			break;
-		} else if ((addr->ai_addrlen == sizeof(struct sockaddr_in6)) &&
-			   (NRF_CLOUD_AF_FAMILY == AF_INET6)) {
-			/* IPv6 Address. */
-			struct sockaddr_in6 *broker =
-				((struct sockaddr_in6 *)&nct.broker);
-
-			memcpy(broker->sin6_addr.s6_addr,
-			       ((struct sockaddr_in6 *)addr->ai_addr)
-				       ->sin6_addr.s6_addr,
-			       sizeof(struct in6_addr));
-			broker->sin6_family = AF_INET6;
-			broker->sin6_port = htons(NRF_CLOUD_PORT);
-
-			LOG_DBG("IPv6 Address");
-			err = nct_mqtt_connect();
-			break;
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_NONBLOCKING)) {
+		err = fcntl(sock, F_SETFL, O_NONBLOCK);
+		if (err == -1) {
+			LOG_ERR("Failed to set socket as non-blocking, err: %d",
+				errno);
+			LOG_WRN("Continuing with blocking socket");
+			err = 0;
 		} else {
-			LOG_DBG("ai_addrlen = %u should be %u or %u",
-				(unsigned int)addr->ai_addrlen,
-				(unsigned int)sizeof(struct sockaddr_in),
-				(unsigned int)sizeof(struct sockaddr_in6));
+			LOG_DBG("Using non-blocking socket");
 		}
+	}  else if (IS_ENABLED(CONFIG_NRF_CLOUD_SEND_TIMEOUT)) {
+		struct timeval timeout = {
+			.tv_sec = CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC
+		};
 
-		addr = addr->ai_next;
+		err = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+		if (err == -1) {
+			LOG_ERR("Failed to set timeout, errno: %d", errno);
+			err = 0;
+		} else {
+			LOG_DBG("Using socket send timeout of %d seconds",
+				CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC);
+		}
 	}
-
-	/* Free the address. */
-	freeaddrinfo(result);
 
 	return err;
 }
-#endif /* defined(CONFIG_NRF_CLOUD_STATIC_IPV4) */
 
 int nct_cc_connect(void)
 {
