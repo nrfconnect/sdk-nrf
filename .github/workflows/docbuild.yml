@@ -68,7 +68,20 @@ jobs:
           cmake -GNinja -Bdoc/_build -Sdoc
           ninja -C doc/_build
 
-      - name: Prepare archive
+      - name: Check version
+        run: |
+          VERSION_REGEX="^v([0-9a-z\.\-]+)$"
+          if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
+            VERSION=${BASH_REMATCH[1]}
+          elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
+            VERSION="latest"
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            VERSION="pr-${{ github.event.number }}"
+          fi
+
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Prepare legacy upload
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
         working-directory: ncs/nrf
         run: |
@@ -76,35 +89,63 @@ jobs:
 
           # Create documentation upload files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            ARCHIVE="doc_build_pr_${{ github.event.number }}.zip"
+            ARCHIVE="doc_build_pr_${{ github.event.number }}_legacy.zip"
             echo "publish2 dev PR-${{ github.event.number }} ${ARCHIVE}" > "${MONITOR}"
             echo "${{ github.event.number }}" > pr.txt
           else
-            VERSION_REGEX="^v([0-9a-z\.\-]+)$"
-            if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
-              VERSION=${BASH_REMATCH[1]}
-            elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
-              VERSION="latest"
-            else
+            if [ -z "${VERSION}" ]; then
               echo "Not a release or latest, skipping publish"
               exit 0
             fi
-            ARCHIVE="doc_build_${VERSION}.zip"
+
+            ARCHIVE="doc_build_${VERSION}_legacy.zip"
             echo "publish2 main ${VERSION} ${ARCHIVE}" > "${MONITOR}"
           fi
 
-          # add zoomin metadata
-          cp doc/_zoomin/ncs.custom.properties doc/_build/html/custom.properties
-          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/custom.properties
-
-          # add zoomin tags file
-          cp doc/_zoomin/ncs.tags.yml doc/_build/html/tags.yml
-          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/tags.yml
-
-          # compress
           cd doc/_build/html
           zip -rq "${ARCHIVE}" .
           mv "${ARCHIVE}" ../../../
+
+      - name: Prepare Zoomin upload
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
+        working-directory: ncs/nrf
+        run: |
+          mkdir doc/_build/html-doxygen
+
+          # Zephyr APIs (Doxygen)
+          mv doc/_build/html/zephyr/doxygen/html doc/_build/html-doxygen/zephyr-apis
+
+          cp doc/_zoomin/zephyr.apis.custom.properties doc/_build/html-doxygen/zephyr-apis/custom.properties
+          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html-doxygen/zephyr-apis/custom.properties
+
+          cp doc/_zoomin/zephyr.apis.tags.yml doc/_build/html-doxygen/zephyr-apis/tags.yml
+          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html-doxygen/zephyr-apis/tags.yml
+
+          # NCS (Sphinx)
+          cp doc/_zoomin/ncs.custom.properties doc/_build/html/custom.properties
+          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/custom.properties
+
+          cp doc/_zoomin/ncs.tags.yml doc/_build/html/tags.yml
+          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/tags.yml
+
+          # Patch links from Zephyr (Sphinx) to Zephyr APIs (Doxygen)
+          find doc/_build/html/zephyr -type f -name "*.html" -exec \
+            sed -ri "/href=\"(.*)\/doxygen\/html\/(.*)\"/{s//href=\"\1\/..\/..\/..\/zephyr-apis-$VERSION\/page\/\2\"/; :a s/__/_/;ta; }" {} \;
+
+          # Prepare archives
+          cd doc/_build/
+
+          cd html-doxygen/zephyr-apis
+          ARCHIVE="doc_build_${VERSION}_zoomin_doxygen_zephyr_apis.zip"
+          zip -rq "${ARCHIVE}" .
+          mv "${ARCHIVE}" ../../../../
+          cd ../../
+
+          ARCHIVE="doc_build_${VERSION}_zoomin_sphinx_ncs.zip"
+          cd html
+          zip -rq "${ARCHIVE}" .
+          mv "${ARCHIVE}" ../../../
+          cd ..
 
       - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
