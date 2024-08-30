@@ -39,6 +39,11 @@ static struct zcbor_string unexp_digest = {
 	.len = sizeof(invalid_digest),
 };
 
+static struct zcbor_string valid_manifest_component_id = {
+	.value = (const uint8_t *)0x1234,
+	.len = 123,
+};
+
 /* Mocks of functions provided via SSF services */
 FAKE_VALUE_FUNC(int, suit_plat_component_compatibility_check, suit_manifest_class_id_t *,
 		struct zcbor_string *);
@@ -116,7 +121,7 @@ ZTEST(cache_pool_digest_tests, test_cache_get_slot_ok)
 		.len = sizeof(uri),
 	};
 
-	ret = suit_plat_fetch(dst_component, &src_uri, NULL);
+	ret = suit_plat_fetch(dst_component, &src_uri, &valid_manifest_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
 	ret = suit_plat_check_image_match(dst_component, suit_cose_sha256, &exp_digest);

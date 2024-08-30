@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 #ifndef MOCK_SUIT_MEMORY_LAYOUT_H__
 #define MOCK_SUIT_MEMORY_LAYOUT_H__
 
