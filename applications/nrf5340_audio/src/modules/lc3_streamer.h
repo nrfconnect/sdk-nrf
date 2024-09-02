@@ -57,6 +57,31 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 uint8_t lc3_streamer_num_active_streams(void);
 
 /**
+ * @brief Get the file path for a stream.
+ *
+ * @details If path buffer is smaller than the length of the actual path, the path will be
+ *          truncated.
+ *
+ * @param[in]	streamer_idx	Index of the streamer.
+ * @param[out]	path		Pointer for string to store filepath in.
+ * @param[in]	path_len	Length of string buffer.
+ *
+ * @retval	-EINVAL		Nullpointers or invalid index given.
+ * @retval	0		Success.
+ */
+int lc3_streamer_file_path_get(const uint8_t streamer_idx, char *const path, const size_t path_len);
+
+/**
+ * @brief Check if a stream is configured to loop.
+ *
+ * @param[in]	streamer_idx	Index of the streamer.
+ *
+ * @retval	true	Streamer is configured to loop.
+ * @retval	false	Streamer is not configured to loop, or the streamer index is too high.
+ */
+bool lc3_streamer_is_looping(const uint8_t streamer_idx);
+
+/**
  * @brief End a stream that's playing.
  *
  * @details Stops the streamer from playing the stream. Any open contexts will be closed, and any

@@ -204,7 +204,6 @@ menuconfig NRF5340_AUDIO_SD_CARD_LC3_STREAMER
 	bool "Audio SD Card LC3 Streamer"
 	depends on NRF5340_AUDIO_SD_CARD_LC3_FILE
 	select EXPERIMENTAL
-	default n
 
 if NRF5340_AUDIO_SD_CARD_LC3_STREAMER
 
