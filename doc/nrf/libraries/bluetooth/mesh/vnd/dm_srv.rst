@@ -18,7 +18,7 @@ The results can be queried by a :ref:`bt_mesh_dm_cli_readme`.
 .. note::
    The current implementation is classified with :ref:`experimental <software_maturity>` software maturity.
 
-.. figure:: ../../../../../nrf/libraries/bluetooth_services/mesh/vnd/images/bt_mesh_dm_models.svg
+.. figure:: ../../../../../nrf/libraries/bluetooth/mesh/vnd/images/bt_mesh_dm_models.svg
    :alt: Sequence diagram for DM procedure
 
    Distance measurement procedure

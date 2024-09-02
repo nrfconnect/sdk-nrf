@@ -363,12 +363,12 @@ mapping_topics:
   - nrf/libraries/bin/lwm2m_carrier/*.html: ["nrf91-series", "nrf9161", "nrf9151", "nrf9160", "lte",
                                              "development-kits"]
   - nrf/libraries/bin/lwm2m_carrier/certification.html: ["certification"]
-  - nrf/libraries/bluetooth_services/*.html: ["ble", "nrf52-series", "nrf52840", "nrf52833",
-                                              "nrf52832", "nrf52820", "nrf52811", "nrf52810",
-                                              "nrf52805", "nrf54-series", "nrf54h20", "nrf54l15",
-                                              "nrf54l05", "nrf54l10", "development-kits"]
-  - nrf/libraries/bluetooth_services/mesh.html: ["blemesh"]
-  - nrf/libraries/bluetooth_services/mesh/*.html: ["blemesh"]
+  - nrf/libraries/bluetooth/*.html: ["ble", "nrf52-series", "nrf52840", "nrf52833", "nrf52832",
+                                     "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf54-series",
+                                     "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10",
+                                     "development-kits"]
+  - nrf/libraries/bluetooth/mesh.html: ["blemesh"]
+  - nrf/libraries/bluetooth/mesh/*.html: ["blemesh"]
   - nrf/libraries/gazell/*.html: ["gazell"]
   - nrf/libraries/modem/*.html: ["lte", "nrf91-series", "nrf9160", "nrf9161", "nrf9151",
                                  "development-kits", "at-commands"]
