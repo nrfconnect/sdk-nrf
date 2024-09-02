@@ -39,6 +39,7 @@ tests:
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr.conf
       idle_SNIPPET=nordic-ppr
+      CONFIG_FIRST_SLEEP_OFFSET=y
 
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpuppr_xip:
     harness: console
@@ -49,6 +50,7 @@ tests:
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr_xip.conf
       idle_SNIPPET=nordic-ppr-xip
+      CONFIG_FIRST_SLEEP_OFFSET=y
 
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad:
     harness: console
@@ -58,6 +60,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      CONFIG_FIRST_SLEEP_OFFSET=y
 
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram:
     platform_allow:
@@ -66,6 +69,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      CONFIG_FIRST_SLEEP_OFFSET=y
       CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_SERIAL=n CONFIG_GPIO=n CONFIG_BOOT_BANNER=n
       CONFIG_NRFS_MRAM_SERVICE_ENABLED=n CONFIG_CLOCK_CONTROL=n
@@ -87,6 +91,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      CONFIG_FIRST_SLEEP_OFFSET=y
       CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_SERIAL=n CONFIG_GPIO=n CONFIG_BOOT_BANNER=n
       CONFIG_NRFS_MRAM_SERVICE_ENABLED=n CONFIG_CLOCK_CONTROL=n
@@ -108,6 +113,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      CONFIG_FIRST_SLEEP_OFFSET=y
       CONFIG_PM=y CONFIG_PM_S2RAM=y CONFIG_POWEROFF=y CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       CONFIG_CONSOLE=n CONFIG_UART_CONSOLE=n CONFIG_SERIAL=n CONFIG_GPIO=n CONFIG_BOOT_BANNER=n
       CONFIG_NRFS_MRAM_SERVICE_ENABLED=n CONFIG_CLOCK_CONTROL=n
