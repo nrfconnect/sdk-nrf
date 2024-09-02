@@ -15,7 +15,10 @@
 #define CBOR_NULL  0xf6
 
 #define LSFY_IDENTITY(n, _) n + 1
-#define INT_SEQUENCE(length)  LISTIFY(length, LSFY_IDENTITY, (,))
+#define INT_SEQUENCE(length) LISTIFY(length, LSFY_IDENTITY, (,))
+
+#define LSFY_CHAR(n, _) 'a'
+#define STR_SEQUENCE(length) LISTIFY(length, LSFY_CHAR, (,))
 
 /* Macros for constructing nRF RPC packets for the OpenThread command group. */
 
