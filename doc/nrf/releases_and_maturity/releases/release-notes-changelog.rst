@@ -520,6 +520,7 @@ Wi-Fi samples
 * :ref:`wifi_radio_test` sample:
 
   * Added capture timeout as a parameter for packet capture.
+  * Expanded the scope of ``wifi_radio_test show_config`` subcommand and rectified the behavior of ``wifi_radio_test tx_pkt_preamble`` subcommand.
 
 * :ref:`softap_wifi_provision_sample` sample:
 

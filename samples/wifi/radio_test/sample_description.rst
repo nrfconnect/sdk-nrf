@@ -100,7 +100,7 @@ Testing
 
               tx_pkt_tput_mode = 0
               tx_pkt_sgi = 0
-              tx_pkt_preamble = 1
+              tx_pkt_preamble = 0
               tx_pkt_mcs = 0
               tx_pkt_rate = 6
               tx_pkt_gap = 0
@@ -111,7 +111,7 @@ Testing
               phy_calib_txiq = 1
               tx_pkt_num = -1
               tx_pkt_len = 1400
-              tx_power = 0
+              tx_power = 30
               he_ltf = 2
               he_gi = 2
               xo_val = 42
@@ -120,12 +120,14 @@ Testing
               rx = 0
               tx_tone_freq = 0
               rx_lna_gain = 0
-              rx_lna_gain = 0
+              rx_bb_gain = 0
               rx_capture_length = 0
               wlan_ant_switch_ctrl = 0
               tx_pkt_cw = 15
               reg_domain = 00
-              bypass_reg_domian = 0
+              bypass_reg_domain = 0
+              ru_tone = 26
+              ru_index = 1
 
          * To run a continuous Orthogonal frequency-division multiplexing (OFDM) TX traffic sequence with the following configuration:
 
@@ -185,7 +187,7 @@ Testing
            .. code-block:: console
 
               wifi_radio_test init 14
-              wifi_radio_test tx_pkt_preamble 1
+              wifi_radio_test tx_pkt_preamble 0
               wifi_radio_test tx_pkt_rate 1
               wifi_radio_test tx_pkt_len 1024
               wifi_radio_test tx_power 10

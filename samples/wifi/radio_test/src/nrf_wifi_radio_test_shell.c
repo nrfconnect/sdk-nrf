@@ -2423,8 +2423,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(rx_cap,
 		      NULL,
 		      "0 = ADC capture\n"
-		      "1 = Static packet capture\n"
-		      "2 = Dynamic packet captur              ",
+		      "1 = Filtered ADC capture\n"
+		      "2 = Dynamic packet capture              ",
 		      nrf_wifi_radio_test_rx_cap,
 		      2,
 		      0),
