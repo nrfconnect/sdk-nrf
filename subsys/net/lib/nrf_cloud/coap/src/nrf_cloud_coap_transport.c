@@ -509,6 +509,9 @@ transfer_end:
 		k_sem_give(&serial_sem);
 	}
 	xfer_ctx_release(xfer);
+	if (err == -ETIMEDOUT) {
+		nrf_cloud_coap_disconnect();
+	}
 	return err;
 }
 
