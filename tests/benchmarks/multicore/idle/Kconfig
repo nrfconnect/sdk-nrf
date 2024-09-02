@@ -10,3 +10,7 @@ config BOARD_ENABLE_CPUNET
 	bool
 	depends on BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default y
+
+config FIRST_SLEEP_OFFSET
+	bool "Enable the time shift before first sleep in a loop"
+	default n
