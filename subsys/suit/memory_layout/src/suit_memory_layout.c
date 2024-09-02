@@ -86,6 +86,12 @@ static struct ram_area ram_area_map[] = {
 		.ra_size = DT_REG_SIZE(DT_NODELABEL(cpuapp_ram0x_region)),
 	},
 #endif							/* ram0x */
+#if (DT_NODE_EXISTS(DT_NODELABEL(cpuapp_ram0))) /* nrf54H20 */
+	{
+		.ra_start = DT_REG_ADDR(DT_NODELABEL(cpuapp_ram0)),
+		.ra_size = DT_REG_SIZE(DT_NODELABEL(cpuapp_ram0)),
+	},
+#endif						/* cpuapp_ram0 */
 #if (DT_NODE_EXISTS(DT_NODELABEL(shared_ram20_region))) /* nrf54H20 */
 	{
 		.ra_start = DT_REG_ADDR(DT_NODELABEL(shared_ram20_region)),
