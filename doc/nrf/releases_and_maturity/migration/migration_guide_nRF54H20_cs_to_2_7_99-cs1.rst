@@ -26,20 +26,6 @@ nrfutil device
 
   For more information, consult the `nRF Util`_ documentation.
 
-SDFW and SCFW firmwares
-  The *nRF54H20 firmware bundle* has been updated to version 0.6.2.
-
-  To update the firmware bundle of your development kit while in Root of Trust, do the following:
-
-  1. Download the `nRF54H20 firmware bundle v0.6.2`_.
-
-     .. note::
-        On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
-
-  #. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
-
-        nrfutil device x-suit-dfu --firmware <path-to_bundle_zip_file> --serial-number <serialnumber>
-
 nRF54H20 BICR
   The nRF54H20 BICR has been updated.
 
@@ -59,3 +45,20 @@ nRF54H20 BICR
   #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
 
         nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Application --serial-number <serialnumber>
+
+SDFW and SCFW firmwares
+  The *nRF54H20 firmware bundle* has been updated to version 0.6.2.
+
+  .. caution::
+     Before proceeding with the firmware bundle update, you must first update the BICR as described in the previous chapter.
+
+  To update the firmware bundle of your development kit while in Root of Trust, do the following:
+
+  1. Download the `nRF54H20 firmware bundle v0.6.2`_.
+
+     .. note::
+        On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
+
+  #. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+
+        nrfutil device x-suit-dfu --firmware <path-to_bundle_zip_file> --serial-number <serialnumber>
