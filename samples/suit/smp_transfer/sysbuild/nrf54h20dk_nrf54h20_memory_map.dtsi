@@ -13,10 +13,6 @@
 	cpuapp_recovery_partition: partition@e5000 {
 		reg = <0xe5000 DT_SIZE_K(72)>;
 	};
-
-	companion_partition: partition@f7000 {
-		reg = <0xf7000 DT_SIZE_K(32)>;
-	};
 };
 &cpurad_rx_partitions {
 	compatible = "nordic,owned-partitions", "fixed-partitions";
