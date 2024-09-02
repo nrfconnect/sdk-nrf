@@ -192,4 +192,14 @@ config MCUBOOT_USE_ALL_AVAILABLE_RAM
 	  may allow secrets to be leaked to non-secure through the non-secure
 	  RAM partition.
 
+config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
+	bool "Network core multi-image update (in single operation)"
+	depends on NETCORE_APP_UPDATE
+	help
+	  If selected, network core image updates can be applied in a single operation. This is
+	  required if the secondary partition resides in off-chip memory.
+
+	  Note: if not using overwrite only mode for MCUboot, this can result in a bricked device
+	  upon firmware reverts.
+
 endmenu
