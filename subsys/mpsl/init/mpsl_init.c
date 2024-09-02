@@ -393,6 +393,8 @@ static int32_t mpsl_lib_init_internal(void)
 		return err;
 	}
 
+	mpsl_clock_hfclk_latency_set(CONFIG_MPSL_HFCLK_LATENCY);
+
 	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT)) {
 		mpsl_pan_rfu();
 	}
