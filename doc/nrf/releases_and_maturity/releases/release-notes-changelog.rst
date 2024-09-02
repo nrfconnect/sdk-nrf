@@ -43,6 +43,8 @@ Build and configuration system
   .. note::
      This has security implications and may allow secrets to be leaked to the non-secure application in RAM.
 
+* Added the ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
+
 Bootloaders and DFU
 ===================
 
