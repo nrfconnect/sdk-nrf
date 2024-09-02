@@ -552,7 +552,7 @@ static void select_dongle_peer(void)
 
 static void select_ble_peers(void)
 {
-	LOG_INF("Selected BLE peers");
+	LOG_INF("Selected Bluetooth LE peers");
 	if (state == STATE_DONGLE) {
 		state = STATE_IDLE;
 	} else if (state == STATE_DONGLE_STANDBY) {
