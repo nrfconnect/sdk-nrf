@@ -117,12 +117,12 @@
 /doc/nrf/installation/                    @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
 /doc/nrf/libraries/bin/                   @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/bin/lwm2m_carrier/     @nrfconnect/ncs-carrier-doc
-/doc/nrf/libraries/bluetooth_services/    @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-dragoon-doc
-/doc/nrf/libraries/bluetooth_services/mesh/ @nrfconnect/ncs-paladin-doc
-/doc/nrf/libraries/bluetooth_services/adv_prov.rst @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/libraries/bluetooth_services/mesh.rst @nrfconnect/ncs-paladin-doc
-/doc/nrf/libraries/bluetooth_services/services/fast_pair.rst @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/libraries/bluetooth_services/services/wifi_prov.rst @nrfconnect/ncs-wifi-doc
+/doc/nrf/libraries/bluetooth/    @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-dragoon-doc
+/doc/nrf/libraries/bluetooth/mesh/ @nrfconnect/ncs-paladin-doc
+/doc/nrf/libraries/bluetooth/adv_prov.rst @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/libraries/bluetooth/mesh.rst @nrfconnect/ncs-paladin-doc
+/doc/nrf/libraries/bluetooth/services/fast_pair.rst @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/libraries/bluetooth/services/wifi_prov.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/debug/cpu_load.rst     @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/debug/etb_trace.rst    @nrfconnect/ncs-cia-doc
