@@ -14,10 +14,14 @@ int main(void)
 {
 	unsigned int cnt = 0;
 
+#if defined CONFIG_FIRST_SLEEP_OFFSET
+	k_msleep(1000);
+#endif
+
 	LOG_INF("Multicore idle test on %s", CONFIG_BOARD_TARGET);
 	while (1) {
 		LOG_INF("Multicore idle test iteration %u", cnt++);
-		k_msleep(1000);
+		k_msleep(2000);
 	}
 
 	return 0;
