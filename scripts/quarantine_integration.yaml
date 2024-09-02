@@ -2,6 +2,22 @@
 # To use with "quarantine-list" twister argument.
 
 - scenarios:
+    - tfm.psa_test_crypto_lvl1
+    - tfm.psa_test_storage_lvl1
+    - tfm.psa_test_storage_lvl2
+    - tfm.regression_fp_hardabi
+    - tfm.regression_ipc_lvl1
+    - tfm.regression_ipc_lvl2
+    - tfm.regression_ipc_lvl2.oberon
+    - tfm.regression_ipc_lvl2.cc3xx_oberon
+    - tfm.regression_ipc_lvl2.cc3xx
+    - tfm.regression_sfn_lvl1
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+    - nrf54l15pdk/nrf54l15/cpuapp/ns
+  comment: "Regression from PR-17084 being worked on."
+
+- scenarios:
     - sample.matter.lock.release
     - sample.matter.lock.debug
     - sample.matter.lock.lto
