@@ -145,6 +145,18 @@ void ot_rpc_decode_dataset(const struct nrf_rpc_group *group, struct nrf_rpc_cbo
 	dataset->mComponents.mIsChannelMaskPresent = nrf_rpc_decode_bool(ctx);
 }
 
+void ot_rpc_decode_message_settings(struct nrf_rpc_cbor_ctx *ctx, otMessageSettings *settings)
+{
+	settings->mLinkSecurityEnabled = nrf_rpc_decode_bool(ctx);
+	settings->mPriority = nrf_rpc_decode_uint(ctx);
+}
+
+void ot_rpc_encode_message_settings(struct nrf_rpc_cbor_ctx *ctx, const otMessageSettings *settings)
+{
+	nrf_rpc_encode_bool(ctx, settings->mLinkSecurityEnabled);
+	nrf_rpc_encode_uint(ctx, settings->mPriority);
+}
+
 void ot_rpc_report_decoding_error(uint8_t cmd_evt_id)
 {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group, cmd_evt_id, NRF_RPC_PACKET_TYPE_CMD);

@@ -39,8 +39,9 @@ static void log_payload(const char *caption, const uint8_t *payload, size_t leng
 		 * payload as possible, followed by "...". The code below calculates the prefix
 		 * length.
 		 */
-		length = (sizeof(payload_str) - sizeof("...")) / 2;
-		bin2hex(payload, length, payload_str, sizeof(payload_str));
+		size_t printed_length = (sizeof(payload_str) - sizeof("...")) / 2;
+
+		bin2hex(payload, printed_length, payload_str, sizeof(payload_str));
 		strcat(payload_str, "...");
 	}
 
