@@ -40,7 +40,7 @@ LOG_MODULE_DECLARE(sms, CONFIG_SMS_LOG_LEVEL);
  * @param[in] encoded_number Number encoded into 3GPP format.
  * @param[out] encoded_number_size_octets Number of octets/bytes in encoded_number.
  *
- * @retval -EINVAL Invalid parameter.
+ * @retval -EINVAL Invalid parameter, that is, number is empty or too long (over 20 characters).
  * @return Zero on success, otherwise error code.
  */
 static int sms_submit_encode_number(
@@ -54,7 +54,7 @@ static int sms_submit_encode_number(
 	__ASSERT_NO_MSG(number != NULL);
 
 	if (*number_size == 0) {
-		LOG_ERR("SMS number not given but zero length");
+		LOG_ERR("SMS number zero length");
 		return -EINVAL;
 	}
 
@@ -65,6 +65,13 @@ static int sms_submit_encode_number(
 		number += 1;
 		*number_size = strlen(number);
 		LOG_DBG("Ignoring leading '+' in the number");
+	}
+
+	if (*number_size > SMS_MAX_ADDRESS_LEN_CHARS) {
+		LOG_ERR("Number length exceeds limit (%d): %s",
+			SMS_MAX_ADDRESS_LEN_CHARS,
+			number);
+		return -EINVAL;
 	}
 
 	memset(encoded_number, 0, SMS_MAX_ADDRESS_LEN_CHARS + 1);
@@ -334,7 +341,7 @@ int sms_submit_send(
 	uint8_t concat_msg_count = 0;
 
 	if (number == NULL) {
-		LOG_ERR("SMS number not given but NULL");
+		LOG_ERR("SMS number NULL");
 		return -EINVAL;
 	}
 	__ASSERT_NO_MSG(data != NULL);
