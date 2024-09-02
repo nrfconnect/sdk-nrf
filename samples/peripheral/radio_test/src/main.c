@@ -8,8 +8,10 @@
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
-
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
+#if defined(NRF54L15_XXAA)
+#include <hal/nrf_clock.h>
+#endif /* defined(NRF54L15_XXAA) */
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 static void clock_init(void)
@@ -41,9 +43,14 @@ static void clock_init(void)
 		}
 	} while (err);
 
+#if defined(NRF54L15_XXAA)
+	/* MLTPAN-20 */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54L15_XXAA) */
+
 	printk("Clock has started\n");
 }
-#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 int main(void)
 {
@@ -51,7 +58,7 @@ int main(void)
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 	clock_init();
-#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 	return 0;
 }
