@@ -74,6 +74,28 @@ config MPSL_LOW_PRIO_IRQN
 	  This option sets the low priority interrupt that MPSL will use.
 	  Check the interrupt number in the MDK
 
+config MPSL_HFCLK_LATENCY
+	int
+	default 854 if SOC_SERIES_NRF54LX
+	default 1400
+	help
+	  This option configures the amount of time MPSL will assume it takes
+	  for the HFCLK to be available after it's requested.
+	  Lowering this value will improve power consumption.
+	  Making this value too small can degrade BLE performance.
+	  In order to configure this value effectively, there are several considerations.
+	  This value needs to include the startup time of the HFXO, which will depend on various
+	  factors including the crystal itself, load capacitors, ESR,
+	  operating conditions, variations in bias voltage, etc. For complete information
+	  about the startup time for the HFXO in use, consult the relevant datasheet
+	  or contact the crystal vendor. Recommended load capacitances are
+	  given in the nordic product specifications.
+	  Additionally, depending on the product, a debounce period may be implemented
+	  in the nordic chip before the HFXO is considered available.
+	  For the nRF52 Series this is configured by the HFXODEBOUNCE register in
+	  the CLOCK peripheral. For the nRF53 Series application core it's
+	  configured by the HFXOCNT register in the UICR.
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
