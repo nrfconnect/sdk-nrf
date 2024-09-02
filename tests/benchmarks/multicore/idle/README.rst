@@ -8,6 +8,7 @@ Multicore idle test
    :depth: 2
 
 The test benchmarks the idle behavior of an application that runs on multiple cores.
+It uses a system timer as a wake-up source.
 
 Requirements
 ************
