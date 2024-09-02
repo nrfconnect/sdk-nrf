@@ -664,6 +664,11 @@ static int clock_init(void)
 		}
 	} while (err);
 
+#if defined(NRF54L15_XXAA)
+	/* MLTPAN-20 */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54L15_XXAA) */
+
 	return err;
 }
 #endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
