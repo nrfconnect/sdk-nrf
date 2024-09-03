@@ -46,22 +46,26 @@
 #define CHAN_TO_FREQ(_channel) (2400 + _channel)
 
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
-	#define RADIO_TEST_EGU            NRF_EGU020
-	#define RADIO_TEST_TIMER_INSTANCE 020
-	#define RADIO_TEST_TIMER_IRQn     TIMER020_IRQn
-	#define RADIO_TEST_RADIO_IRQn     RADIO_0_IRQn
-	#define NRF_RADIO_SHORT_END_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+	#define RADIO_TEST_EGU                     NRF_EGU020
+	#define RADIO_TEST_TIMER_INSTANCE          020
+	#define RADIO_TEST_TIMER_IRQn              TIMER020_IRQn
+	#define RADIO_TEST_RADIO_IRQn              RADIO_0_IRQn
+	#define RADIO_TEST_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+	#define RADIO_TEST_SHORT_END_START_MASK    NRF_RADIO_SHORT_PHYEND_START_MASK
 #elif defined(CONFIG_SOC_SERIES_NRF54LX)
-	#define RADIO_TEST_EGU            NRF_EGU10
-	#define RADIO_TEST_TIMER_INSTANCE 10
-	#define RADIO_TEST_TIMER_IRQn     TIMER10_IRQn
-	#define RADIO_TEST_RADIO_IRQn     RADIO_0_IRQn
-	#define NRF_RADIO_SHORT_END_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+	#define RADIO_TEST_EGU                     NRF_EGU10
+	#define RADIO_TEST_TIMER_INSTANCE          10
+	#define RADIO_TEST_TIMER_IRQn              TIMER10_IRQn
+	#define RADIO_TEST_RADIO_IRQn              RADIO_0_IRQn
+	#define RADIO_TEST_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+	#define RADIO_TEST_SHORT_END_START_MASK    NRF_RADIO_SHORT_PHYEND_START_MASK
 #else
-	#define RADIO_TEST_EGU            NRF_EGU0
-	#define RADIO_TEST_TIMER_INSTANCE 0
-	#define RADIO_TEST_TIMER_IRQn     TIMER0_IRQn
-	#define RADIO_TEST_RADIO_IRQn     RADIO_IRQn
+	#define RADIO_TEST_EGU                     NRF_EGU0
+	#define RADIO_TEST_TIMER_INSTANCE          0
+	#define RADIO_TEST_TIMER_IRQn              TIMER0_IRQn
+	#define RADIO_TEST_RADIO_IRQn              RADIO_IRQn
+	#define RADIO_TEST_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_END_DISABLE_MASK
+	#define RADIO_TEST_SHORT_END_START_MASK    NRF_RADIO_SHORT_END_START_MASK
 #endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
 
 #define RADIO_TEST_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,	    \
@@ -695,7 +699,7 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 	case NRF_RADIO_MODE_BLE_LR500KBIT:
 		nrf_radio_shorts_enable(NRF_RADIO,
 					NRF_RADIO_SHORT_READY_START_MASK |
-					NRF_RADIO_SHORT_PHYEND_START_MASK);
+					RADIO_TEST_SHORT_END_START_MASK);
 		break;
 
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 || CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
@@ -716,7 +720,7 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 #endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_25) */
 		nrf_radio_shorts_enable(NRF_RADIO,
 					NRF_RADIO_SHORT_READY_START_MASK |
-					NRF_RADIO_SHORT_END_START_MASK);
+					RADIO_TEST_SHORT_END_START_MASK);
 		break;
 	}
 
@@ -748,7 +752,7 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 
 	nrf_radio_shorts_enable(NRF_RADIO,
 				NRF_RADIO_SHORT_READY_START_MASK |
-				NRF_RADIO_SHORT_END_START_MASK);
+				RADIO_TEST_SHORT_END_START_MASK);
 	nrf_radio_packetptr_set(NRF_RADIO, rx_packet);
 
 	radio_config(mode, pattern);
@@ -818,7 +822,7 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	radio_mode_set(NRF_RADIO, mode);
 	nrf_radio_shorts_enable(NRF_RADIO,
 				NRF_RADIO_SHORT_READY_START_MASK |
-				NRF_RADIO_SHORT_END_DISABLE_MASK);
+				RADIO_TEST_SHORT_END_DISABLE_MASK);
 	radio_power_set(mode, channel, txpower);
 	radio_channel_set(mode, channel);
 
