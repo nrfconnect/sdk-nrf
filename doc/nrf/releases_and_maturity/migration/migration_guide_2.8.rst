@@ -82,6 +82,17 @@ SUIT DFU for nRF54H20
 
     For the list of all variables, set through the :file:`VERSION`, refer to the :ref:`ug_nrf54h20_suit_customize_dfu`.
 
+Nordic Secure Immutable Bootloader (NSIB, B0, or B0n)
+-----------------------------------------------------
+
+Custom printing has been dropped in favor of using the logging subsystem, with output printed out to the default logging device.
+The ``CONFIG_SECURE_BOOT_DEBUG`` Kconfig option has been removed.
+To disable logging in B0 or B0n, set the :kconfig:option:`CONFIG_LOG` option to ``n``.
+To send logs over RTT instead of UART, apply the following settings:
+
+    * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
+    * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
+
 Libraries
 =========
 
