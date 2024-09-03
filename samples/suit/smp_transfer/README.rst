@@ -89,8 +89,20 @@ This is done by modifying the values for the desired location and size of the pa
 
 * To modify the application core's partition size, modify the values for ``cpuapp_slot0_partition`` defined in the :file:`nrf/samples/suit/smp_transfer/sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi`.
 
-* To modify the DFU partition, modify the values for ``dfu_partition`` defined in :file:`samples/suit/smp_transfer/boards/nrf54h20dk_nrf54h20_cpuapp.overlay`.
+* To modify the DFU partition, add the following snippet inside the :file:`samples/suit/smp_transfer/boards/nrf54h20dk_nrf54h20_cpuapp.overlay` file, modifying the addresses and sizes accordingly::
+
+      &mram1x {
+         cpuapp_rw_partitions: cpuapp-rw-partitions {
+            /* DFU partition to store SUIT manifests and Nordic Firmware update */
+            dfu_partition: partition@100000 {
+                  reg = < 0x100000 DT_SIZE_K(300) >;
+            };
+
+         };
+      };
+
   This partition is where the update candidate is stored before the update process begins.
+  You can see an example of this snippet inside the :file:`nrf/applications/matter_bridge/boards/nrf54h20dk_nrf54h20_cpuapp.overlay` file.
 
 Manifest template files
 =======================
