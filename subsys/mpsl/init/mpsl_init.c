@@ -42,11 +42,11 @@ extern void rtc_pretick_rtc0_isr_hook(void);
 	#endif
 #endif
 
-#if !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_SERIES_NRF54LX)
+#if !defined(CONFIG_SOC_SERIES_NRF54HX) && !defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #define MPSL_TIMER_IRQn TIMER0_IRQn
 #define MPSL_RTC_IRQn RTC0_IRQn
 #define MPSL_RADIO_IRQn RADIO_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #define MPSL_TIMER_IRQn TIMER10_IRQn
 #define MPSL_RTC_IRQn GRTC_3_IRQn
 #define MPSL_RADIO_IRQn RADIO_0_IRQn
@@ -59,11 +59,11 @@ extern void rtc_pretick_rtc0_isr_hook(void);
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
 /* Basic build time sanity checking */
 #define MPSL_RESERVED_GRTC_CHANNELS ((1U << 8) | (1U << 9) | (1U << 10) | (1U << 11) | (1U << 12))
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #define MPSL_RESERVED_GRTC_CHANNELS ((1U << 7) | (1U << 8) | (1U << 9) | (1U << 10) | (1U << 11))
 #endif
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
 
 BUILD_ASSERT(MPSL_RTC_IRQn != DT_IRQN(DT_NODELABEL(grtc)), "MPSL requires a dedicated GRTC IRQ");
 
