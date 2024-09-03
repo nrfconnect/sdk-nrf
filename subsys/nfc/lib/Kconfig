@@ -86,6 +86,7 @@ config NFC_LOW_LATENCY_IRQ
 	# NFC low latency interrupt requires software interrupt being supported.
 	default y if $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_EGU)) || \
 		     $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_SWI))
+	depends on !SOC_SERIES_NRF54HX
 	select ZERO_LATENCY_IRQS
 	help
 	  Using this option ensures fast NFC interrupt
