@@ -3,7 +3,7 @@
 # Copyright (c) 2024 Nordic Semiconductor
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-if  BOARD_THINGY91X_NRF5340_CPUAPP || BOARD_THINGY91X_NRF5340_CPUAPP_NS
+if BOARD_THINGY91X_NRF5340_CPUAPP || BOARD_THINGY91X_NRF5340_CPUAPP_NS
 
 # By default, if we build for a Non-Secure version of the board,
 # enable building with TF-M as the Secure Execution Environment.
