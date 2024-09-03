@@ -12,6 +12,7 @@
 #include <openthread/link.h>
 #include <openthread/thread.h>
 #include <openthread/udp.h>
+#include <openthread/netdata.h>
 #include <openthread/message.h>
 
 #include <string.h>
@@ -534,6 +535,53 @@ static int cmd_test_udp_close(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
+static int cmd_test_net_data(const struct shell *sh, size_t argc, char *argv[])
+{
+	const size_t net_data_len = 255;
+	uint8_t buf[net_data_len];
+	uint8_t data_len = net_data_len;
+
+	if (otNetDataGet(NULL, false, buf, &data_len) == OT_ERROR_NONE) {
+		shell_print(sh, "Net dataget success.");
+	} else {
+		shell_print(sh, "Net dataget failed.");
+	}
+
+	if (otNetDataGet(NULL, true, buf, &data_len) == OT_ERROR_NONE) {
+		shell_print(sh, "Net dataget success.");
+	} else {
+		shell_print(sh, "Net dataget failed.");
+	}
+
+	return 0;
+}
+
+static int cmd_test_net_data_mesh_prefix(const struct shell *sh, size_t argc, char *argv[])
+{
+	otNetworkDataIterator iterator = OT_NETWORK_DATA_ITERATOR_INIT;
+	otBorderRouterConfig config;
+	otError error;
+
+	while ((error = otNetDataGetNextOnMeshPrefix(NULL, &iterator, &config)) == OT_ERROR_NONE) {
+		shell_print(sh, "iterator %d", iterator);
+	}
+	shell_print(sh, "OT error: %d", error);
+	return 0;
+}
+
+static int cmd_test_net_data_next_service(const struct shell *sh, size_t argc, char *argv[])
+{
+	otNetworkDataIterator iterator = OT_NETWORK_DATA_ITERATOR_INIT;
+	otServiceConfig config;
+	otError error;
+
+	while ((error = otNetDataGetNextService(NULL, &iterator, &config)) == OT_ERROR_NONE) {
+		shell_print(sh, "iterator %d", iterator);
+	}
+	shell_print(sh, "OT error: %d", error);
+	return 0;
+}
+
 static int cmd_ot(const struct shell *sh, size_t argc, char *argv[])
 {
 	return ot_cli_command_send(sh, argc, argv);
@@ -552,6 +600,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(test_udp_init, NULL, "Test udp init API", cmd_test_udp_init, 1, 0),
 	SHELL_CMD_ARG(test_udp_send, NULL, "Test udp send API", cmd_test_udp_send, 1, 0),
 	SHELL_CMD_ARG(test_udp_close, NULL, "Test udp close API", cmd_test_udp_close, 1, 0),
+	SHELL_CMD_ARG(test_net_data, NULL, "Test netdata API", cmd_test_net_data, 1, 0),
+	SHELL_CMD_ARG(test_net_data_mesh_prefix, NULL, "Test netdata msh prefix API",
+		      cmd_test_net_data_mesh_prefix, 1, 0),
+	SHELL_CMD_ARG(test_net_data_next_service, NULL, "Test netdata next service API",
+		      cmd_test_net_data_next_service, 1, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
