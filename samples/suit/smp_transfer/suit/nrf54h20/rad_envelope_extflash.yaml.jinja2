@@ -77,16 +77,22 @@ SUIT_Envelope_Tagged:
     suit-current-version: {{ DEFAULT_VERSION }}
 {%- endif %}
 
+{%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE' not in radio['config'] or radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE'] == '' %}
     suit-payload-fetch:
     - suit-directive-set-component-index: 2
     - suit-directive-override-parameters:
         suit-parameter-uri: 'file://{{ radio['filename'] }}'
     - suit-directive-fetch:
       - suit-send-record-failure
+{%- endif %}
     suit-install:
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
+{%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in radio['config'] and radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}
+        suit-parameter-uri: '{{ radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}'
+{%- else %}
         suit-parameter-uri: 'file://{{ radio['filename'] }}'
+{%- endif %}
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
