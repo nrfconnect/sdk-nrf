@@ -166,6 +166,57 @@ Example output:
                Location:
                        BIS 0: Mono Audio
 
+----
+
+file list
+=========
+
+Lists the files and directories in the given directory on the SD card.
+If no directory is given, contents of the root directory is listed.
+
+Usage:
+
+.. code-block:: console
+
+      bct file list [directory]
+
+Example output:
+
+.. code-block:: console
+
+   bct file list
+
+   [DIR ]  16000hz
+   [DIR ]  24000hz
+   [DIR ]  32000hz
+   [FILE]  left-channel-announcement.wav
+   [FILE]  right-channel-announcement.wav
+
+----
+
+file select
+===========
+
+Selects a file from the SD card to be used as the audio source for the given stream.
+The file must be in the LC3 format, and one file may be used for multiple streams at the same time.
+
+Usage:
+
+.. code-block:: console
+
+   bct file select <file> <BIG index> <subgroup index> <BIS index>
+
+Example:
+
+  .. code-block:: console
+
+     bct file select 16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3 1 2 0
+
+
+This command command selects the file :file:`16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3` for the BIS 0 in the subgroup 2 in the BIG 1.
+
+----
+
 packing
 =======
 

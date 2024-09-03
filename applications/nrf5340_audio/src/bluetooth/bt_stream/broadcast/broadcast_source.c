@@ -45,8 +45,7 @@ struct bt_cap_initiator_broadcast_create_param create_param[CONFIG_BT_ISO_MAX_BI
 /* Make sure we have statically allocated streams for all potential BISes */
 static struct bt_cap_stream cap_streams[CONFIG_BT_ISO_MAX_BIG]
 				       [CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT]
-				       [CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT /
-					CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
+				       [CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
 
 static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO;
 

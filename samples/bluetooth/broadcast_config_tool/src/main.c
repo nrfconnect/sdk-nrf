@@ -20,6 +20,7 @@
 #include "macros_common.h"
 #include "bt_mgmt.h"
 #include "sd_card.h"
+#include "lc3_streamer.h"
 #include "led.h"
 
 #include <zephyr/logging/log.h>
@@ -27,6 +28,12 @@ LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 ZBUS_CHAN_DECLARE(sdu_ref_chan);
+ZBUS_CHAN_DECLARE(le_audio_chan);
+ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
+
+static struct k_thread le_audio_msg_sub_thread_data;
+static k_tid_t le_audio_msg_sub_thread_id;
+K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
 
 struct bt_le_ext_adv *ext_adv;
 
@@ -87,6 +94,18 @@ static enum bt_audio_location stream_location[CONFIG_BT_ISO_MAX_BIG]
 					     [CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT] = {
 						     {{BT_AUDIO_LOCATION_MONO_AUDIO}}};
 
+#define LC3_STREAMER_INDEX_UNUSED 0xFF
+
+struct subgroup_lc3_stream_info {
+	size_t frame_size;
+	uint8_t lc3_streamer_idx[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
+	bool frame_loaded[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
+	uint8_t *frame_ptrs[CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT];
+};
+
+static struct subgroup_lc3_stream_info lc3_stream_infos[CONFIG_BT_ISO_MAX_BIG]
+						       [CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
+
 static struct bt_bap_lc3_preset *preset_find(const char *name)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(bap_presets); i++) {
@@ -129,6 +148,168 @@ static bool is_number(const char *str)
 
 	/* All characters are digits */
 	return true;
+}
+
+static void subgroup_send(struct stream_index stream_idx)
+{
+	int ret;
+	static int prev_ret;
+
+	uint8_t num_bis = subgroups[stream_idx.lvl1][stream_idx.lvl2].num_bises;
+	size_t frame_size = lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2].frame_size;
+	uint8_t frame_buffer[num_bis][frame_size];
+
+	for (int i = 0; i < num_bis; i++) {
+		uint8_t *frame_ptr =
+			lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2].frame_ptrs[i];
+
+		if (frame_ptr == NULL) {
+			memset(frame_buffer[i], 0, frame_size);
+		} else {
+			memcpy(frame_buffer[i], frame_ptr, frame_size);
+		}
+	}
+
+	struct le_audio_encoded_audio enc_audio = {
+		.data = (uint8_t *)frame_buffer, .size = frame_size * num_bis, .num_ch = num_bis};
+
+	ret = broadcast_source_send(stream_idx.lvl1, stream_idx.lvl2, enc_audio);
+
+	if (ret != 0 && ret != prev_ret) {
+		if (ret == -ECANCELED) {
+			LOG_WRN("Sending operation cancelled");
+		} else {
+			LOG_WRN("broadcast_source_send returned: %d", ret);
+		}
+	}
+
+	prev_ret = ret;
+}
+
+static void stream_frame_get_and_send(struct stream_index stream_idx)
+{
+	int ret;
+
+	struct subgroup_lc3_stream_info *bis_info =
+		&(lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2]);
+
+	uint8_t num_bis = subgroups[stream_idx.lvl1][stream_idx.lvl2].num_bises;
+	uint8_t stream_file_idx = bis_info->lc3_streamer_idx[stream_idx.lvl3];
+
+	if (stream_file_idx == LC3_STREAMER_INDEX_UNUSED) {
+		LOG_ERR("Stream index for stream big %d sub: %d bis: %d is unused", stream_idx.lvl1,
+			stream_idx.lvl2, stream_idx.lvl3);
+		return;
+	}
+
+	ret = lc3_streamer_next_frame_get(
+		stream_file_idx, (const uint8_t **const)&(bis_info->frame_ptrs[stream_idx.lvl3]));
+	if (ret == -ENODATA) {
+		LOG_WRN("No more frames to read");
+		ret = lc3_streamer_stream_close(stream_file_idx);
+		if (ret) {
+			LOG_ERR("Failed to close stream: %d", ret);
+		}
+
+		bis_info->lc3_streamer_idx[stream_idx.lvl3] = LC3_STREAMER_INDEX_UNUSED;
+
+		return;
+	} else if (ret == -ENOMSG) {
+		LOG_DBG("Frame from SD card not ready for stream %d, using zero packet",
+			stream_idx.lvl3);
+		bis_info->frame_ptrs[stream_idx.lvl3] = NULL;
+	} else if (ret) {
+		LOG_ERR("Failed to get next frame: %d", ret);
+		return;
+	}
+
+	bis_info->frame_loaded[stream_idx.lvl3] = true;
+
+	int loaded_count = 0;
+
+	for (int i = 0; i < num_bis; i++) {
+		if (bis_info->frame_loaded[i]) {
+			++loaded_count;
+		}
+	}
+	if (loaded_count == num_bis) {
+		subgroup_send(stream_idx);
+
+		for (int i = 0; i < num_bis; i++) {
+			bis_info->frame_loaded[i] = false;
+			bis_info->frame_ptrs[i] = NULL;
+		}
+	}
+}
+
+/**
+ * @brief	Handle Bluetooth LE audio events.
+ */
+static void le_audio_msg_sub_thread(void)
+{
+	int ret;
+	const struct zbus_channel *chan;
+
+	LOG_DBG("Zbus subscription thread started");
+
+	while (1) {
+		struct le_audio_msg msg;
+
+		ret = zbus_sub_wait_msg(&le_audio_evt_sub, &chan, &msg, K_FOREVER);
+		ERR_CHK(ret);
+
+		switch (msg.event) {
+		case LE_AUDIO_EVT_STREAM_SENT:
+			LOG_DBG("LE_AUDIO_EVT_STREAM_SENT for stream big %d sub: %d bis: %d",
+				msg.idx.lvl1, msg.idx.lvl2, msg.idx.lvl3);
+
+			stream_frame_get_and_send(msg.idx);
+
+			break;
+
+		case LE_AUDIO_EVT_STREAMING:
+			LOG_DBG("LE audio evt streaming for stream big %d sub: %d bis: %d",
+				msg.idx.lvl1, msg.idx.lvl2, msg.idx.lvl3);
+
+			stream_frame_get_and_send(msg.idx);
+
+			break;
+
+		case LE_AUDIO_EVT_NOT_STREAMING:
+			LOG_DBG("LE audio evt not_streaming");
+
+			break;
+
+		default:
+			LOG_WRN("Unexpected/unhandled le_audio event: %d", msg.event);
+
+			break;
+		}
+
+		STACK_USAGE_PRINT("le_audio_msg_thread", &le_audio_msg_sub_thread_data);
+	}
+}
+
+/**
+ * @brief	Create zbus subscriber threads.
+ *
+ * @return	0 for success, error otherwise.
+ */
+static int zbus_subscribers_create(void)
+{
+	int ret;
+
+	le_audio_msg_sub_thread_id = k_thread_create(
+		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
+	if (ret) {
+		LOG_ERR("Failed to create le_audio_msg thread");
+		return ret;
+	}
+
+	return 0;
 }
 
 /**
@@ -181,6 +362,12 @@ static int zbus_link_producers_observers(void)
 	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add bt_mgmt listener");
+		return ret;
+	}
+
+	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	if (ret) {
+		LOG_ERR("Failed to add le_audio sub");
 		return ret;
 	}
 
@@ -278,26 +465,6 @@ static int per_adv_populate(uint8_t big_index, struct broadcast_source_per_adv_d
 	return 0;
 }
 
-static void audio_send(void const *const data, size_t size, uint8_t num_ch)
-{
-	int ret;
-	static int prev_ret;
-
-	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
-
-	ret = broadcast_source_send(0, 0, enc_audio);
-
-	if (ret != 0 && ret != prev_ret) {
-		if (ret == -ECANCELED) {
-			LOG_WRN("Sending operation cancelled");
-		} else {
-			LOG_WRN("Problem with sending LE audio data, ret: %d", ret);
-		}
-	}
-
-	prev_ret = ret;
-}
-
 static void broadcast_create(uint8_t big_index)
 {
 	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
@@ -346,12 +513,21 @@ static void broadcast_create(uint8_t big_index)
  */
 static void broadcast_config_clear(void)
 {
+	int ret;
+
+	ret = lc3_streamer_close_all_streams();
+	if (ret) {
+		LOG_ERR("Failed to close all LC3 streams: %d", ret);
+	}
+
 	for (size_t i = 0; i < ARRAY_SIZE(broadcast_param); i++) {
 		memset(&broadcast_param[i], 0, sizeof(broadcast_param[i]));
 		for (size_t j = 0; j < ARRAY_SIZE(subgroups[i]); j++) {
 			memset(&subgroups[i][j], 0, sizeof(subgroups[i][j]));
 			for (size_t k = 0; k < ARRAY_SIZE(stream_location[i][j]); k++) {
 				stream_location[i][j][k] = BT_AUDIO_LOCATION_MONO_AUDIO;
+				lc3_stream_infos[i][j].lc3_streamer_idx[k] =
+					LC3_STREAMER_INDEX_UNUSED;
 			}
 		}
 	}
@@ -362,14 +538,6 @@ int main(void)
 	int ret;
 
 	LOG_DBG("Main started");
-
-	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
-		ret = sd_card_init();
-		if (ret != -ENODEV && ret != 0) {
-			LOG_ERR("Failed to initialize SD card");
-			return ret;
-		}
-	}
 
 	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
 	ret -= NRFX_ERROR_BASE_NUM;
@@ -388,6 +556,21 @@ int main(void)
 
 	ret = zbus_link_producers_observers();
 	ERR_CHK_MSG(ret, "Failed to link zbus producers and observers");
+
+	ret = lc3_streamer_init();
+	ERR_CHK_MSG(ret, "Failed to initialize LC3 streamer");
+
+	for (int i = 0; i < CONFIG_BT_ISO_MAX_BIG; i++) {
+		for (int j = 0; j < CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT; j++) {
+			for (int k = 0; k < CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT; k++) {
+				lc3_stream_infos[i][j].lc3_streamer_idx[k] =
+					LC3_STREAMER_INDEX_UNUSED;
+			}
+		}
+	}
+
+	ret = zbus_subscribers_create();
+	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
 
 	return 0;
 }
@@ -418,10 +601,11 @@ static void codec_qos_print(const struct shell *shell, struct bt_audio_codec_qos
 	shell_print(shell, "\t\t\tPresentation Delay: %d us", qos->pd);
 }
 
-static void broadcast_config_print(const struct shell *shell,
-				   struct broadcast_source_big *brdcst_param)
+static void broadcast_config_print(const struct shell *shell, uint8_t group_index)
 {
 	int ret;
+
+	struct broadcast_source_big *brdcst_param = &broadcast_param[group_index];
 
 	shell_print(shell, "\tAdvertising name: %s",
 		    strlen(brdcst_param->adv_name) > 0 ? brdcst_param->adv_name
@@ -524,6 +708,24 @@ static void broadcast_config_print(const struct shell *shell,
 		for (size_t j = 0; j < brdcst_param->subgroups[i].num_bises; j++) {
 			shell_print(shell, "\t\t\tBIS %d: %s", j,
 				    location_bit_to_str(brdcst_param->subgroups[i].location[j]));
+		}
+
+		shell_print(shell, "\t\tFiles:");
+
+		for (size_t j = 0; j < brdcst_param->subgroups[i].num_bises; j++) {
+			uint8_t streamer_idx = lc3_stream_infos[group_index][i].lc3_streamer_idx[j];
+
+			if (streamer_idx == LC3_STREAMER_INDEX_UNUSED) {
+				shell_print(shell, "\t\t\tBIS %d: Not set", j);
+			} else {
+				char file_name[CONFIG_FS_FATFS_MAX_LFN];
+				bool looping = lc3_streamer_is_looping(streamer_idx);
+
+				lc3_streamer_file_path_get(streamer_idx, file_name,
+							   sizeof(file_name));
+				shell_print(shell, "\t\t\tBIS %d: %s %s", j, file_name,
+					    looping ? "(looping)" : "");
+			}
 		}
 	}
 }
@@ -681,6 +883,35 @@ static int argv_to_indexes(const struct shell *shell, size_t argc, char **argv, 
 	return 0;
 }
 
+static int big_enable(const struct shell *shell, uint8_t big_index)
+{
+	int ret;
+
+	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
+		return -EINVAL;
+	}
+
+	if ((broadcast_param[big_index].subgroups == NULL) ||
+	    (broadcast_param[big_index].num_subgroups == 0)) {
+		LOG_ERR("No subgroups defined for BIG%d", big_index);
+		return -EINVAL;
+	}
+
+	ret = broadcast_source_enable(&broadcast_param[big_index], big_index);
+	if (ret) {
+		shell_error(shell, "Failed to enable broadcaster: %d", ret);
+		return ret;
+	}
+
+	ret = adv_create_and_start(shell, big_index);
+	if (ret) {
+		shell_error(shell, "Failed to start advertising for BIG%d: %d", big_index, ret);
+		return ret;
+	}
+
+	return 0;
+}
+
 static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
@@ -693,25 +924,16 @@ static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 			return ret;
 		}
 
-		ret = broadcast_source_enable(&broadcast_param[big_index], big_index);
+		ret = big_enable(shell, big_index);
 		if (ret) {
-			shell_error(shell, "Failed to enable broadcaster: %d", ret);
 			return ret;
 		}
-
-		ret = adv_create_and_start(shell, big_index);
 
 	} else {
 		for (int i = 0; i < CONFIG_BT_ISO_MAX_BIG; i++) {
 			if (broadcast_param[i].subgroups != NULL ||
 			    broadcast_param[i].num_subgroups > 0) {
-				ret = broadcast_source_enable(&broadcast_param[i], i);
-				if (ret) {
-					shell_error(shell, "Failed to enable broadcaster(s): %d",
-						    ret);
-					return ret;
-				}
-				ret = adv_create_and_start(shell, i);
+				ret = big_enable(shell, i);
 				if (ret) {
 					return ret;
 				}
@@ -817,7 +1039,7 @@ static int cmd_show(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "BIG %d:", i);
 		shell_print(shell, "\tStreaming: %s", (streaming ? "true" : "false"));
 
-		broadcast_config_print(shell, &broadcast_param[i]);
+		broadcast_config_print(shell, i);
 	}
 
 	return 0;
@@ -1286,6 +1508,92 @@ static int cmd_program_info(const struct shell *shell, size_t argc, char **argv)
 		shell_error(shell, "Failed to set program info: %d", ret);
 		return ret;
 	}
+
+	return 0;
+}
+
+#define FILE_LIST_BUF_SIZE 1024
+static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	char buf[FILE_LIST_BUF_SIZE];
+	size_t buf_size = FILE_LIST_BUF_SIZE;
+	char *dir_path = NULL;
+
+	if (argc > 2) {
+		shell_error(shell, "Usage: bct file list [dir path]");
+		return -EINVAL;
+	}
+
+	if (argc == 2) {
+		dir_path = argv[1];
+	}
+
+	ret = sd_card_list_files(dir_path, buf, &buf_size);
+	if (ret) {
+		shell_error(shell, "List files err: %d", ret);
+		return ret;
+	}
+
+	shell_print(shell, "%s", buf);
+
+	return 0;
+}
+
+static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t big_index;
+	uint8_t sub_index;
+	uint8_t bis_index;
+
+	if (argc != 5) {
+		shell_error(shell,
+			    "Usage: bct file select <file path> <BIG index> <subgroup index> "
+			    "<BIS index>");
+		return -EINVAL;
+	}
+
+	ret = argv_to_indexes(shell, argc, argv, &big_index, 2, &sub_index, 3);
+	if (ret) {
+		shell_error(shell, "Failed to get indexes: %d", ret);
+		return ret;
+	}
+
+	if (broadcast_source_is_streaming(big_index)) {
+		shell_error(shell, "Files cannot be selected while already streaming");
+		return -EFAULT;
+	}
+
+	if (!is_number(argv[4])) {
+		shell_error(shell, "BIS index must be a digit");
+		return -EINVAL;
+	}
+
+	bis_index = (uint8_t)atoi(argv[4]);
+
+	if ((bis_index >= CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT) ||
+	    (bis_index >= broadcast_param[big_index].subgroups[sub_index].num_bises)) {
+		shell_error(shell, "BIS index %d is out of range (max %d)", bis_index,
+			    broadcast_param[big_index].subgroups[sub_index].num_bises - 1);
+		return -EINVAL;
+	}
+
+	char *file_name = argv[1];
+
+	LOG_DBG("Selecting file %s for stream big: %d sub: %d bis: %d", file_name, big_index,
+		sub_index, bis_index);
+
+	ret = lc3_streamer_stream_register(
+		file_name, &lc3_stream_infos[big_index][sub_index].lc3_streamer_idx[bis_index],
+		true);
+	if (ret) {
+		shell_error(shell, "Failed to register stream: %d", ret);
+		return ret;
+	}
+
+	lc3_stream_infos[big_index][sub_index].frame_size =
+		broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.sdu;
 
 	return 0;
 }
@@ -1889,6 +2197,13 @@ static int cmd_clear(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_file_cmd,
+			       SHELL_COND_CMD(CONFIG_SHELL, list, NULL, "List files on SD card",
+					      cmd_file_list),
+			       SHELL_COND_CMD(CONFIG_SHELL, select, NULL, "Select file on SD card",
+					      cmd_file_select),
+			       SHELL_SUBCMD_SET_END);
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	configuration_cmd, SHELL_COND_CMD(CONFIG_SHELL, list, NULL, "List presets", cmd_list),
 	SHELL_COND_CMD(CONFIG_SHELL, start, NULL, "Start broadcaster", cmd_start),
@@ -1919,6 +2234,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_COND_CMD(CONFIG_SHELL, frame_interval, NULL, "Set frame interval (us)",
 		       cmd_frame_interval),
 	SHELL_COND_CMD(CONFIG_SHELL, pd, NULL, "Set presentation delay (us)", cmd_pd),
+	SHELL_COND_CMD(CONFIG_SHELL, file, &sub_file_cmd, "File commands", NULL),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(bct, &configuration_cmd, "Broadcast Configuration Tool", NULL);

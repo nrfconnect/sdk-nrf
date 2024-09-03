@@ -32,7 +32,7 @@ int lc3_file_frame_get(struct lc3_file_ctx *file, uint8_t *buffer, size_t buffer
 	}
 
 	if ((frame_header_size == 0) || (frame_header == 0)) {
-		LOG_ERR("No more frames to read");
+		LOG_DBG("No more frames to read");
 		return -ENODATA;
 	}
 
