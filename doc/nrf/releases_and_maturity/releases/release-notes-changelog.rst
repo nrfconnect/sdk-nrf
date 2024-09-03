@@ -50,6 +50,7 @@ Bootloaders and DFU
 
 * Added documentation for :ref:`qspi_xip_split_image` functionality.
 * Added a section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+* Removed secure bootloader Kconfig ``CONFIG_SECURE_BOOT_DEBUG`` and replaced with usage of logging subsystem.
 
 See also the `MCUboot`_ section.
 
