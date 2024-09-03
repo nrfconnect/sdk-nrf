@@ -86,12 +86,14 @@ SUIT_Envelope_Tagged:
     suit-current-version: {{ DEFAULT_VERSION }}
 {%- endif %}
 
+{%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE' not in application['config'] or application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE'] == '' %}
     suit-payload-fetch:
     - suit-directive-set-component-index: 2
     - suit-directive-override-parameters:
         suit-parameter-uri: 'file://{{ application['filename'] }}'
     - suit-directive-fetch:
       - suit-send-record-failure
+{%- endif %}
     suit-install:
 {%- if flash_companion is defined %}
     - suit-directive-set-component-index: 1
@@ -123,7 +125,11 @@ SUIT_Envelope_Tagged:
 {%- endif %}
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
+{%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in application['config'] and application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}
+        suit-parameter-uri: '{{ application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}'
+{%- else %}
         suit-parameter-uri: 'file://{{ application['filename'] }}'
+{%- endif %}
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:

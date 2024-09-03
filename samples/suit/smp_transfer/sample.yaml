@@ -52,3 +52,22 @@ tests:
       - OVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf"
       - SB_OVERLAY_CONFIG="sysbuild_bt.conf"
     tags: suit bluetooth ci_samples_suit
+
+  sample.suit.smp_transfer.full.extflash.extracted_cache:
+    extra_args:
+      - FILE_SUFFIX=extflash
+      - SUIT_DFU_CACHE_PARTITION_1_EB_SIZE=4096
+    extra_configs:
+      - CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
+    tags: suit ci_samples_suit
+
+  sample.suit.smp_transfer.full.extflash.bt.extracted_cache:
+    extra_args:
+      - FILE_SUFFIX=extflash
+      - OVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf"
+      - SB_OVERLAY_CONFIG="sysbuild_bt.conf"
+      - SUIT_DFU_CACHE_PARTITION_1_EB_SIZE=4096
+      - hci_ipc_CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
+    extra_configs:
+      - CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
+    tags: suit bluetooth ci_samples_suit
