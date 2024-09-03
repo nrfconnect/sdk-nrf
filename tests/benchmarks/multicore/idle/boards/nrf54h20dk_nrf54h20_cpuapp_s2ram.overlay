@@ -16,8 +16,6 @@
                        compatible = "zephyr,power-state";
                        power-state-name = "suspend-to-ram";
                        min-residency-us = <800000>;
-                       /* TODO: replace with a busy loop in S2RAM entering procedure; replace 1000 with real value here */
-                       exit-latency-us = <1000>;
                };
        };
 };
