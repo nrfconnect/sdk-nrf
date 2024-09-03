@@ -126,7 +126,10 @@ static int put_next_frame_to_fifo(struct lc3_stream *stream)
 	ret = lc3_file_frame_get(&stream->file, data_ptr,
 				 CONFIG_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE);
 	if (ret) {
-		LOG_ERR("Failed to get frame from file %d", ret);
+		if (ret != -ENODATA) {
+			LOG_ERR("Failed to get frame from file %d", ret);
+		}
+
 		data_fifo_block_free(&stream->fifo, (void *)data_ptr);
 		return ret;
 	}
@@ -245,7 +248,11 @@ int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **cons
 	ret = data_fifo_pointer_last_filled_get(&stream->fifo, (void **)&data_ptr, &data_len,
 						K_NO_WAIT);
 	if (ret) {
-		LOG_ERR("Failed to get last filled block %d", ret);
+		if (ret == -ENOMSG) {
+			LOG_DBG("Next block is not ready %d", ret);
+		} else {
+			LOG_ERR("Failed to get last filled block %d", ret);
+		}
 		return ret;
 	}
 
@@ -465,7 +472,7 @@ int lc3_streamer_init(void)
 	k_work_queue_init(&lc3_streamer_work_q);
 	k_work_queue_start(&lc3_streamer_work_q, lc3_streamer_work_q_stack_area,
 			   K_THREAD_STACK_SIZEOF(lc3_streamer_work_q_stack_area),
-			   CONFIG_SD_CARD_LC3_STREAMER_THREAD_PRIORITY, NULL);
+			   CONFIG_SD_CARD_LC3_STREAMER_THREAD_PRIO, NULL);
 	k_thread_name_set(&lc3_streamer_work_q.thread, "lc3_streamer_work_q");
 
 	initialized = true;
