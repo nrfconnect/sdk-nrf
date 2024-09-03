@@ -95,7 +95,10 @@ Testing
 #. |connect_kit|
 #. Corrupt the currently running main application (for example by flashing a modified version of the application)
 #. Open the Device Manager or the nRF Connect application, and observe the device advertising as "SUIT Recovery"
-#. Recover the application using Device Manager in the same way as described in the ``smp_transfer`` sample documentation.
+#. Recover the application using `nRF Connect Device Manager`_ in the same way as described in the :ref:`nrf54h_suit_sample` sample documentation.
+
+  .. note::
+     In recovery state, `nRF Connect Device Manager`_ uses legacy mode.
 
 Device firmware update for recovery firmware
 ============================================
