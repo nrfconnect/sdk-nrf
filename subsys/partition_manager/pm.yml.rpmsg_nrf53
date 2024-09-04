@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 # This block of RAM is used for IPC
 rpmsg_nrf53_sram:
