@@ -32,7 +32,7 @@ Test setup
 The following figure shows a reference test setup.
 
 .. figure:: /images/wifi_thread_coex.svg
-     :alt: Wi-Fi Thread Coex test setup
+     :alt: Wi-Fi and Thread Coex test setup
 
      Wi-Fi Thread coexistence reference test and evaluation setup
 
@@ -69,36 +69,8 @@ Configuration options
 
 The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/thread_coex/Kconfig`):
 
-
-.. _CONFIG_TEST_TYPE_WLAN_ONLY:
-
-CONFIG_TEST_TYPE_WLAN_ONLY
-   This option enables the Wi-Fi test type.
-
-.. _CONFIG_TEST_TYPE_OT_ONLY:
-
-CONFIG_TEST_TYPE_OT_ONLY
-   This option enables the Thread test type.
-
-.. _CONFIG_TEST_TYPE_WLAN_OT:
-
-CONFIG_TEST_TYPE_WLAN_OT
-   This option enables concurrent Wi-Fi and Thread tests.
-
-.. _CONFIG_COEX_TEST_DURATION:
-
-CONFIG_COEX_TEST_DURATION
-   This option sets the Wi-Fi, Thread, or both test duration in milliseconds.
-
-.. _WIFI_CREDENTIALS_STATIC_SSID:
-
-WIFI_CREDENTIALS_STATIC_SSID
-   This option specifies the SSID of the Wi-Fi access point to connect.
-
-.. _WIFI_CREDENTIALS_STATIC_PASSWORD:
-
-WIFI_CREDENTIALS_STATIC_PASSWORD
-   This option specifies the Wi-Fi passphrase (WPA2™) or password (WPA3™) to connect.
+.. options-from-kconfig::
+   :show-type:
 
 Additional configuration
 ========================
@@ -120,11 +92,11 @@ To enable different test modes, set up the following configuration parameters in
 .. include:: /includes/wifi_credentials_static.txt
 
 .. note::
-   ``menuconfig`` can also be used to configure ``Wi-Fi credentials``
+   You can also use ``menuconfig`` to configure ``Wi-Fi credentials``.
+
+   See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
 * Wi-Fi throughput test: Set the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option appropriately as per the Wi-Fi interface IP address of the test PC on which **iperf** is run.
-
-See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
 Building and running
 ********************
@@ -203,7 +175,7 @@ Testing
 #. |connect_kit|
 #. |connect_terminal|
 
-#. Use the following commands to check the available devices:
+#. Run the following commands to check the available devices:
 
    .. code-block:: console
 
@@ -214,35 +186,36 @@ Testing
       1050759502         /dev/ttyACM3    VCOM1
       $
 
-	In this example, ``1050779496`` is the device ID of the first nRF7002 DK and ``1050759502`` is the device ID of the second nRF7002 DK.
+	  In this example, ``1050779496`` is the device ID of the first nRF7002 DK and ``1050759502`` is the device ID of the other one.
 
-	While connecting to a particular board, use the ttyACMx corresponding to VCOM1.
-	In the example, use ttyACM1 to connect to the board with device ID ``1050779496``.
-	Similarly, use ttyACM3 to connect to the board with device ID ``1050759502``.
+	  While connecting to a particular board, use the ttyACMx corresponding to VCOM1.
+	  In the example, use ttyACM1 to connect to the board with device ID ``1050779496``.
+	  Similarly, use ttyACM3 to connect to the board with device ID ``1050759502``.
 
-#. Use the following commands to connect to the desired devices:
+#. Run the following commands to connect to the desired devices:
 
 	.. code-block:: console
 
 	   $ minicom -D /dev/ttyACM1 -b 115200
 	   $ minicom -D /dev/ttyACM3 -b 115200
 
-#. Program the nRF7002 DK by completing the following steps:
+Programming DKs
+===============
 
-	1. |open_terminal_window_with_environment|
-	#. Navigate to the :file:`<ncs code>/nrf/samples/wifi/thread_coex/` folder.
-	#. Run the following command:
+Complete the following steps to program the nRF7002 DK:
 
-	   .. code-block:: console
+1. |open_terminal_window_with_environment|
+#. Navigate to the :file:`<ncs code>/nrf/samples/wifi/thread_coex/` folder.
+#. Run the following command:
 
-		  $ west flash --dev-id <device-id> --hex-file build/merged.hex
+   .. code-block:: console
 
-	When the sample runs Wi-Fi UDP throughput in client mode, a peer device (test PC) runs UDP throughput
-	in server mode using the following command:
+	  $ west flash --dev-id <device-id> --hex-file build/merged.hex
 
-	.. code-block:: console
+Test procedure
+==============
 
-	   $ iperf -s -i 1 -u
+The following tables provide the procedure to run Wi-Fi only, Bluetooth LE-only, and combined throughput for different Thread roles.
 
 #. Complete the following steps to run the Wi-Fi client and Thread client:
 
@@ -292,8 +265,15 @@ Testing
 	|               |             | on client** is seen on the DUT nRF7002 DK's UART console window.        |
 	+---------------+-------------+-------------------------------------------------------------------------+
 
-#. Observe that the Wi-Fi throughput result appears on the test PC terminal on which **iperf** server is run.
-   The Thread throughput result appears on the minicom terminal connected to the nRF7002 DK, on which Thread is run in the client role.
+When the sample is executed, the Wi-Fi UDP throughput operates with the Device Under Test (DUT) in client mode.
+To run the UDP throughput in server mode on the peer device (test PC), use the following command.
+
+.. code-block:: console
+
+   $ iperf -s -i 1 -u
+
+Observe that the Wi-Fi throughput result appears on the test PC terminal on which **iperf** server is run.
+The Thread throughput result appears on the minicom terminal connected to the nRF7002 DK, on which Thread is run in the client role.
 
 Results
 =======
