@@ -4,42 +4,51 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Add generated path first in list (order dependent)
-target_include_directories(mbedcrypto_common
-    INTERFACE
-      ${generated_include_path}
-)
-
-# Add regular includes
-# Note, the order of include matters
-target_include_directories(mbedcrypto_common
-  INTERFACE
-    # Nordic PSA headers
-    ${NRF_SECURITY_ROOT}/include
-    # Oberon PSA headers
-    ${OBERON_PSA_PATH}/include
-    ${OBERON_PSA_PATH}/library
-    # Mbed TLS (mbedcrypto) PSA headers
-    ${ARM_MBEDTLS_PATH}/library
-    ${ARM_MBEDTLS_PATH}/include
-    ${ARM_MBEDTLS_PATH}/include/library
-)
-
-append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/library/
+append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_CORE_PATH}/library/
   platform.c
   platform_util.c
+  )
+
+append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_CORE_PATH}/library/
+  psa_crypto.c
+  psa_crypto_client.c
+  psa_crypto_slot_management.c
+  psa_crypto_storage.c
 )
 
-if (COMPILE_PSA_APIS)
-  append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_PATH}/library/
-    psa_crypto.c
-    psa_crypto_client.c
-    psa_crypto_slot_management.c
-    psa_crypto_storage.c
-  )
-endif()
-
-target_sources(${mbedcrypto_target}
-  PRIVATE
+add_library(oberon_psa_core STATIC
     ${src_crypto_core_oberon}
 )
+
+# Add the nordic version of psa_crypto_driver_wrappers with the core (out of tree)
+target_sources(oberon_psa_core
+  PRIVATE
+    ${NRF_SECURITY_ROOT}/src/psa_crypto_driver_wrappers.c
+)
+
+target_link_libraries(oberon_psa_core
+  PRIVATE
+    psa_crypto_library_config
+    psa_interface
+)
+
+# Disable warnings showing up in Oberon PSA crypto code.
+target_compile_options(oberon_psa_core
+  PRIVATE
+    -Wno-stringop-overflow
+    -Wno-stringop-overread
+    -Wno-strict-aliasing
+)
+
+target_link_libraries(oberon_psa_core
+  PRIVATE
+    mbedcrypto_base
+)
+
+nrf_security_add_zephyr_options(oberon_psa_core)
+
+target_link_libraries(${mbedcrypto_target}
+  PRIVATE
+    oberon_psa_core
+)
+
