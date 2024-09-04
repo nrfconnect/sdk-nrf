@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 mcuboot_sram:
 #ifdef CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM

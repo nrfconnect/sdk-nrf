@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 # In nRF54L15 we place the TF-M non-secure storage partitions after the
 # TF-M non-secure application to avoid splitting the secure/non-secure
