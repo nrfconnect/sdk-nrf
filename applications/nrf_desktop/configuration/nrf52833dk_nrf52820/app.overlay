@@ -1,8 +1,4 @@
 / {
-	chosen {
-		zephyr,bt-hci = &bt_hci_controller;
-	};
-
 	/* Configure DTS nodes used for USB next HID support. */
 	hid_dev_0: hid_dev_0 {
 		compatible = "zephyr,hid-device";
@@ -54,13 +50,4 @@
 	num-out-endpoints = <2>;
 	num-isoin-endpoints = <0>;
 	num-isoout-endpoints = <0>;
-};
-
-&bt_hci_controller {
-	status = "okay";
-};
-
-
-&bt_hci_sdc {
-	status = "disabled";
 };
