@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 #if defined(TFM_PARTITION_CRYPTO) && defined(CONFIG_HAS_HW_NRF_CC3XX)
 #include <nrf_cc3xx_platform.h>

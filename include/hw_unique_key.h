@@ -26,7 +26,7 @@ extern "C" {
 #include <stdbool.h>
 
 #if defined(__NRF_TFM__)
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 #endif
 #include <zephyr/devicetree.h>
 

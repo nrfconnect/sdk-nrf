@@ -19,7 +19,7 @@
 
 #include "util.h"
 
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 #include <zephyr/devicetree.h>
 
 #define BUTTON_PIN      DT_GPIO_PIN(DT_NODELABEL(button0), gpios)
