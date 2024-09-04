@@ -18,3 +18,23 @@ config GPIO_NRFE_INIT_PRIORITY
 	  eGPIO driver device initialization priority.
 	  eGPIO initialization depends on IPC initialization which is done at the same init level and
 	  has init priority equal to 46.
+
+choice GPIO_NRFE_EGPIO_BACKEND
+	prompt "eGPIO driver backend type"
+	default GPIO_NRFE_EGPIO_BACKEND_ICMSG
+	help
+	  Select the backend type for the eGPIO driver and application.
+
+config GPIO_NRFE_EGPIO_BACKEND_MBOX
+	bool "MBOX"
+	help
+	  Use MBOX backend driver for eGPIO.
+	  The MBOX version is more resource-efficient than the ICMSG backend,
+	  but needs to have a shared structure defined as a communication channel.
+
+config GPIO_NRFE_EGPIO_BACKEND_ICMSG
+	bool "ICMSG"
+	help
+	  Use ICMSG backend driver for eGPIO.
+
+endchoice
