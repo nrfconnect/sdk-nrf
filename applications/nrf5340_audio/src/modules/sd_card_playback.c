@@ -564,7 +564,7 @@ static int cmd_list_files(const struct shell *shell, size_t argc, char **argv)
 	char buf[LIST_FILES_BUF_SIZE];
 	size_t buf_size = LIST_FILES_BUF_SIZE;
 
-	ret = sd_card_list_files(playback_file_path, buf, &buf_size);
+	ret = sd_card_list_files(playback_file_path, buf, &buf_size, true);
 	if (ret) {
 		shell_error(shell, "List files err: %d", ret);
 		return ret;

@@ -1,0 +1,9 @@
+tests:
+  nrf5340_audio.sd_card_test:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags: macros nrf5340_audio_unit_tests sysbuild ci_tests_nrf5340_audio
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="ramdisk.overlay"

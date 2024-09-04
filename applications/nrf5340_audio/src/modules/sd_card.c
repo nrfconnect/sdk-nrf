@@ -14,13 +14,20 @@
 #include <string.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/devicetree.h>
+#include <string.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sd_card, CONFIG_MODULE_SD_CARD_LOG_LEVEL);
 
-#define SD_ROOT_PATH "/SD:/"
-/* Maximum length for path support by Windows file system */
-#define PATH_MAX_LEN 260
+#define SD_ROOT_PATH	   "/SD:/"
+/* Round down to closest 4-byte boundary */
+#define PATH_MAX_LEN	   ROUND_DOWN(CONFIG_FS_FATFS_MAX_LFN, 4)
+#define SD_CARD_LEVELS_MAX 8
+#define SD_CARD_BUF_SIZE   700
+
+static uint32_t num_files_added;
+static struct k_mem_slab slab_A;
+static struct k_mem_slab slab_B;
 
 static const char *sd_root_path = "/SD:";
 static FATFS fat_fs;
@@ -31,7 +38,165 @@ static struct fs_mount_t mnt_pt = {
 	.fs_data = &fat_fs,
 };
 
-int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
+/**
+ * @brief	Replaces first carriage return or line feed with null terminator.
+ */
+static void cr_lf_remove(char *str)
+{
+	char *p = str;
+
+	while (*p != '\0') {
+		if (*p == '\r' || *p == '\n') {
+			*p = '\0';
+			break;
+		}
+		p++;
+	}
+}
+
+/**
+ * @brief Recursively traverse the SD card tree.
+ */
+static int traverse_down(char const *const path, uint8_t curr_depth, uint16_t result_file_num_max,
+			 uint16_t result_path_len_max, char result[][result_path_len_max],
+			 char const *const search_pattern)
+{
+	int ret = 0;
+
+	if (curr_depth > SD_CARD_LEVELS_MAX) {
+		LOG_WRN("At tree curr_depth %u, greater than %u", curr_depth, SD_CARD_LEVELS_MAX);
+		return 0;
+	}
+
+	char *slab_A_ptr;
+
+	ret = k_mem_slab_alloc(&slab_A, (void **)&slab_A_ptr, K_NO_WAIT);
+	if (ret) {
+		LOG_ERR("Failed to alloc slab A: %d", ret);
+		return ret;
+	}
+
+	char *slab_A_ptr_origin = slab_A_ptr;
+	char *slab_B_ptr;
+
+	ret = k_mem_slab_alloc(&slab_B, (void **)&slab_B_ptr, K_NO_WAIT);
+	if (ret) {
+		k_mem_slab_free(&slab_A, (void *)slab_A_ptr_origin);
+		LOG_ERR("Failed to alloc slab B: %d", ret);
+		return ret;
+	}
+
+	char *slab_B_ptr_origin = slab_B_ptr;
+	size_t slab_A_ptr_size = SD_CARD_BUF_SIZE;
+
+	/* Search for folders */
+	ret = sd_card_list_files(path, slab_A_ptr, &slab_A_ptr_size, false);
+	if (ret == -ENOENT) {
+		/* Not able to open, hence likely not a folder */
+		ret = 0;
+		goto cleanup;
+	} else if (ret) {
+		goto cleanup;
+	}
+
+	LOG_DBG("At curr_depth %d tmp_buf is: %s", curr_depth, slab_A_ptr);
+
+	char *token = strtok_r(slab_A_ptr, "\r\n", &slab_A_ptr);
+
+	while (token != NULL) {
+		if (strstr(token, "System Volume Information") != NULL) {
+			/* Skipping System Volume Information */
+			token = strtok_r(NULL, "\n", &slab_A_ptr);
+			continue;
+		}
+
+		cr_lf_remove(token);
+		memset(slab_B_ptr, '\0', PATH_MAX_LEN);
+
+		if (path != NULL) {
+			strcat(slab_B_ptr, path);
+			cr_lf_remove(slab_B_ptr);
+			strcat(slab_B_ptr, "/");
+		}
+
+		strcat(slab_B_ptr, token);
+
+		if (strstr(token, search_pattern) != NULL) {
+			if (num_files_added >= result_file_num_max) {
+				LOG_WRN("Max file count reached %u", result_file_num_max);
+				ret = -ENOMEM;
+				goto cleanup;
+			}
+			strcpy(result[num_files_added], slab_B_ptr);
+			num_files_added++;
+			LOG_DBG("Added file num: %d at: %s", num_files_added, slab_B_ptr);
+
+		} else {
+			ret = traverse_down(slab_B_ptr, curr_depth + 1, result_file_num_max,
+					    result_path_len_max, result, search_pattern);
+			if (ret) {
+				LOG_ERR("Failed to traverse down: %d", ret);
+			}
+		}
+
+		token = strtok_r(NULL, "\n", &slab_A_ptr);
+	}
+
+cleanup:
+	k_mem_slab_free(&slab_A, (void *)slab_A_ptr_origin);
+	k_mem_slab_free(&slab_B, (void *)slab_B_ptr_origin);
+	return ret;
+}
+
+int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_path_len_max,
+			     char result[][result_path_len_max], char *path,
+			     char const *const search_pattern)
+{
+	int ret;
+
+	num_files_added = 0;
+
+	if (result == NULL) {
+		return -EINVAL;
+	}
+
+	if (result_file_num_max == 0) {
+		return -EINVAL;
+	}
+
+	if (result_path_len_max == 0 || (result_path_len_max > PATH_MAX_LEN)) {
+		return -EINVAL;
+	}
+
+	if (search_pattern == NULL) {
+		return -EINVAL;
+	}
+
+	char __aligned(4) buf_A[SD_CARD_BUF_SIZE * SD_CARD_LEVELS_MAX] = {'\0'};
+	char __aligned(4) buf_B[PATH_MAX_LEN * SD_CARD_LEVELS_MAX] = {'\0'};
+
+	ret = k_mem_slab_init(&slab_A, buf_A, SD_CARD_BUF_SIZE, SD_CARD_LEVELS_MAX);
+	if (ret) {
+		LOG_ERR("Failed to init slab: %d", ret);
+		return ret;
+	}
+
+	ret = k_mem_slab_init(&slab_B, buf_B, PATH_MAX_LEN, SD_CARD_LEVELS_MAX);
+	if (ret) {
+		LOG_ERR("Failed to init slab: %d", ret);
+		return ret;
+	}
+
+	ret = traverse_down(path, 0, result_file_num_max, result_path_len_max, result,
+			    search_pattern);
+	if (ret) {
+		return ret;
+	}
+
+	return num_files_added;
+}
+
+int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool extra_info)
 {
 	int ret;
 	struct fs_dir_t dirp;
@@ -44,7 +209,6 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 	}
 
 	fs_dir_t_init(&dirp);
-
 	if (path == NULL) {
 		ret = fs_opendir(&dirp, sd_root_path);
 		if (ret) {
@@ -59,9 +223,14 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 
 		strcat(abs_path_name, path);
 
+		if (strchr(abs_path_name, '.')) {
+			/* Path contains a dot. Regarded as not a folder*/
+			return -ENOENT;
+		}
+
 		ret = fs_opendir(&dirp, abs_path_name);
 		if (ret) {
-			LOG_ERR("Open assigned path failed");
+			LOG_ERR("Open assigned path failed %d. %s", ret, abs_path_name);
 			return ret;
 		}
 	}
@@ -78,9 +247,17 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 
 		if (buf != NULL) {
 			size_t remaining_buf_size = *buf_size - used_buf_size;
-			ssize_t len = snprintk(
-				&buf[used_buf_size], remaining_buf_size, "[%s]\t%s\n",
-				entry.type == FS_DIR_ENTRY_DIR ? "DIR " : "FILE", entry.name);
+			ssize_t len;
+
+			if (extra_info) {
+				len = snprintk(&buf[used_buf_size], remaining_buf_size,
+					       "[%s]\t%s\r\n",
+					       entry.type == FS_DIR_ENTRY_DIR ? "DIR " : "FILE",
+					       entry.name);
+			} else {
+				len = snprintk(&buf[used_buf_size], remaining_buf_size, "%s\r\n",
+					       entry.name);
+			}
 
 			if (len >= remaining_buf_size) {
 				LOG_ERR("Failed to append to buffer, error: %d", len);
@@ -290,7 +467,7 @@ int sd_card_init(void)
 
 	sd_card_size_bytes = (uint64_t)sector_count * sector_size;
 
-	LOG_INF("SD card volume size: %d MB", (uint32_t)(sd_card_size_bytes >> 20));
+	LOG_INF("SD card volume size: %lld B", sd_card_size_bytes);
 
 	mnt_pt.mnt_point = sd_root_path;
 
