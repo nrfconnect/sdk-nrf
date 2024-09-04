@@ -13,7 +13,7 @@ LOG_MODULE_REGISTER(ssf_client_sample, CONFIG_SSF_CLIENT_SAMPLE_LOG_LEVEL);
 static void echo_request(void)
 {
 	int err;
-	char req_str[] = "Hello " CONFIG_BOARD;
+	char req_str[] = "Hello " CONFIG_BOARD_TARGET;
 	char rsp_str[sizeof(req_str) + 1];
 
 	LOG_INF("Calling ssf_echo, str: \"%s\"", req_str);
@@ -46,7 +46,7 @@ static void reset_evt_subscribe(void)
 
 int main(void)
 {
-	LOG_INF("ssf client sample (%s)", CONFIG_BOARD);
+	LOG_INF("ssf client sample (" CONFIG_BOARD_TARGET ")");
 
 	if (IS_ENABLED(CONFIG_ENABLE_ECHO_REQUEST)) {
 		echo_request();
