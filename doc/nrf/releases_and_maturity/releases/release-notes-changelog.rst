@@ -223,6 +223,7 @@ Matter Bridge
   * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
   * Optional smart plug device functionality.
   * Support for the Thread protocol.
+  * Added :ref:`multiprotocol_bt_thread` page.
 
 nRF5340 Audio
 -------------
