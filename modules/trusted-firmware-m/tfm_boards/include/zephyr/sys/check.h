@@ -15,7 +15,7 @@
  * The functionality will be forwarded to TF-M equivalent of the Zephyr API.
  */
 
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 #include <zephyr/sys/__assert.h>
 
 /* Note:

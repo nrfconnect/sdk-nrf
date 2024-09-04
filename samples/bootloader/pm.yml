@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 b0:
   size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE

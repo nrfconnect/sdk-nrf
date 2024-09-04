@@ -8,7 +8,7 @@
 #include <tfm_platform_api.h>
 #include <tfm_ioctl_api.h>
 
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 #include <errno.h>
 
 static int status2err(enum tfm_platform_err_t status, uint32_t result)

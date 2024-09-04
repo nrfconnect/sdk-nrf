@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 provision:
   size: CONFIG_PM_PARTITION_SIZE_PROVISION

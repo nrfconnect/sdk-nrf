@@ -3,17 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-
-# This file is nrf_security's entry-point for the TF-M build system
-set(BUILD_INSIDE_TFM True)
-
-set(west_root_dir ${CMAKE_CURRENT_LIST_DIR}/../../../..)
-
-set(NRFXLIB_DIR ${west_root_dir}/nrfxlib)
-set(NRF_SECURITY_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
-
-set(ZEPHYR_NRF_MODULE_DIR ${NRF_DIR})
-set(ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR ${west_root_dir}/modules/crypto/oberon-psa-crypto)
+include(${TFM_EXTRA_CONFIG_PATH})
 
 include(${NRF_SECURITY_ROOT}/cmake/extensions.cmake)
 
@@ -25,7 +15,7 @@ set(mbedtls_target    ${MBEDTLS_TARGET_PREFIX}mbedtls)
 # Building nrf security for TF-M implies the following:
 # - Parse NRF_SECURITY_SETTINGS into CMake variables.
 #   Variables transferred from Zephyr to nRF Security TF-M build includes:
-#   - <build>/zephyr/.config
+#   - <build>/zephyr/.configc
 #   - GCC_M_CPU
 #   - ARM_MBEDTLS_PATH
 #   - autoconf.h
@@ -63,7 +53,7 @@ set(CONFIG_MBEDTLS_MD_C                             False)
 # control of the CryptoCell. Therefore, specifically for building TF-M we
 # enable it manually.
 if(CONFIG_HAS_HW_NRF_CC3XX)
-  set(CONFIG_NRF_CC3XX_PLATFORM                       True)
+  set(CONFIG_NRF_CC3XX_PLATFORM                     True)
 endif()
 
 # Disable threading for TF-M SPM image
@@ -86,10 +76,11 @@ set(CONFIG_BUILD_WITH_TFM                           False)
 # Enable the MBEDTLS_ENABLE_HEAP configuration since TF-M implements heap in crypto_init.c
 set(CONFIG_MBEDTLS_ENABLE_HEAP                      True)
 
+# Ensure that RNG is not usling legacy code
 set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG          True)
 
-# TF-M build require that PSA Crypto APIs are compiled
-set(COMPILE_PSA_APIS True)
+# Ensure that PSA core is built inside TF-M image
+set(CONFIG_MBEDTLS_PSA_CRYPTO_C                     True)
 
 if ("${PROJECT_NAME}" STREQUAL "Bootloader")
   set(CONFIG_CC3XX_MBEDTLS_RSA_C    True)
