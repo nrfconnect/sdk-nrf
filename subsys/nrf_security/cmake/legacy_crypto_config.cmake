@@ -175,27 +175,9 @@ kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED)
 kconfig_check_and_set_base(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)
 kconfig_check_and_set_base(MBEDTLS_PK_PARSE_EC_EXTENDED)
 
-#
-# CC3XX flags for threading and platform zeroize
-#
+# Threading configurations for CryptoCell and locally built PSA core
 kconfig_check_and_set_base(MBEDTLS_THREADING_C)
 kconfig_check_and_set_base(MBEDTLS_THREADING_ALT)
-if (CONFIG_CC3XX_BACKEND)
-  # TODO: Why don't we use kconfig_check_and_set_base for
-  # MBEDTLS_PLATFORM_ZEROIZE_ALT ?
-  set(MBEDTLS_PLATFORM_ZEROIZE_ALT TRUE)
-
-  if(NOT DEFINED MBEDTLS_THREADING_C)
-
-	# TODO: Why do we override these when CONFIG_CC3XX_BACKEND?
-	# Shouldn't the Kconfig be corrected instead? Now we have Kconfig
-	# and mbedtls configs saying conlficting things, which is not
-	# great.
-    set(MBEDTLS_THREADING_C TRUE)
-    set(MBEDTLS_THREADING_ALT TRUE)
-  endif()
-endif()
-
 
 # Convert defines required even in PSA mode
 kconfig_check_and_set_base_depends(MBEDTLS_SHA1_C
@@ -289,15 +271,6 @@ kconfig_check_and_set_base_depends(MBEDTLS_SHA224_C
   MBEDTLS_SHA256_C
 )
 
-if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
-  # Generate the mbed TLS config file (default nrf-config.h)
-  configure_file(${NRF_SECURITY_ROOT}/configs/legacy_crypto_config.h.template
-    ${generated_include_path}/${CONFIG_MBEDTLS_CFG_FILE}
-  )
-
-  # Copy an empty PSA user-config, as it is not needed for legacy builds
-  # Generate an empty file to prevent build issues
-  configure_file(${NRF_SECURITY_ROOT}/configs/nrf-config-user-empty.h
-    ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}
-  )
-endif()
+configure_file(${NRF_SECURITY_ROOT}/configs/legacy_crypto_config.h.template
+  ${generated_include_path}/${CONFIG_MBEDTLS_CFG_FILE}
+)
