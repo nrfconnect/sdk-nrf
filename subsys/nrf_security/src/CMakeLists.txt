@@ -5,78 +5,52 @@
 #
 
 #
-# File including instructions to build PSA APIs.
+# File including instructions to build PSA crypto APIs.
 #
-# Can be executed by both the NCS and TF-M build systems.
+# This is executed both in NCS (NS, secure only) build of Mbed TLS as
+# well as TF-M build
 #
-# The variable BUILD_INSIDE_TFM can be used to distinguish between being
-# within the TF-M build system or the NCS build system.
-#
-# For TF-M the nrf_security/tfm/CMakeLists.txt file will execute this file. BUILD_INSIDE_TFM=True
-# For NCS  the nrf_security/CMakeLists.txt     file will execute this file. BUILD_INSIDE_TFM=False
-#
+# The Mbed TLS configuration MBEDTLS_PSA_CRYPTO_SPM used to check if this is
+# used inside a TF-M build.
+
+# The interface is only generated in the NS image if TF-M is used
+include(${NRF_SECURITY_ROOT}/cmake/generate_configs.cmake)
+generate_mbedcrypto_interface_configs()
+generate_mbedcrypto_library_configs()
 
 
-# Library for mbedcrypto includes and configurations
-add_library(mbedcrypto_common INTERFACE)
-
-# Add the config-file entry point
-target_compile_definitions(mbedcrypto_common
+# Add include folders for psa_crypto_config (interface builds)
+target_include_directories(psa_crypto_config
   INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG
+    #$<BUILD_INTERFACE:${PSA_CRYPTO_CONFIG_INTERFACE_PATH}>
+    ${PSA_CRYPTO_CONFIG_INTERFACE_PATH}
+    ${NRF_SECURITY_ROOT}/include
 )
 
-# Add the user config only if it is set
-if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
-  target_compile_definitions(mbedcrypto_common
-    INTERFACE
-      -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
-  )
-endif()
-
-if(BUILD_INSIDE_TFM)
-  # In order to support FPU in TF-M the following is documented by the TF-M
-  # build system:
-  #
-  #   Secure and non-secure libraries are compiled with COMPILER_CP_FLAG and
-  #   linked with LINKER_CP_OPTION for different FP ABI types. All those
-  #   libraries shall be built with COMPILER_CP_FLAG
-  target_compile_options(mbedcrypto_common
-    INTERFACE
-      ${COMPILER_CP_FLAG}
-  )
-
-  target_link_options(mbedcrypto_common
-    INTERFACE
-      ${LINKER_CP_OPTION}
-  )
-endif()
-
-set(generated_include_path ${CMAKE_CURRENT_BINARY_DIR}/include/generated)
-
-# Empty out previous versions of config-files
-file(REMOVE_RECURSE ${generated_include_path})
-
-# Generate PSA WANT configurations
-include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_want_config.cmake)
-
-# Generate mbed TLS configurations
-if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS)
-  include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
-else()
-  include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_config.cmake)
-endif()
-
-if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
-  # Add the generated CONFIG_MBEDTLS_CFG_FILE file to the include path
-  target_include_directories(mbedcrypto_common
-    INTERFACE
-    ${generated_include_path} # From cmake/*_crypto_config.cmake
+# Add include folders for psa_crypto_library_config (library build in S-only and inside TF-M)
+target_include_directories(psa_crypto_library_config
+  INTERFACE
+    ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
 )
-endif()
+
+# # Suspect: Write something about NCSDK-YYYYY
+# if(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+#   # In order to support FPU in TF-M the following is documented by the TF-M
+#   # build system:
+#   #
+#   #   Secure and non-secure libraries are compiled with COMPILER_CP_FLAG and
+#   #   linked with LINKER_CP_OPTION for different FP ABI types. All those
+#   #   libraries shall be built with COMPILER_CP_FLAG
+#   target_compile_options(tfm_sprt
+#     INTERFACE
+#       ${COMPILER_CP_FLAG}
+#   )
+
+#   target_link_options(tfm_sprt
+#     INTERFACE
+#       ${LINKER_CP_OPTION}
+#   )
+# endif()
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
   if (CONFIG_BUILD_WITH_TFM)
@@ -89,20 +63,15 @@ if(CONFIG_MBEDTLS_ENABLE_HEAP)
   endif()
 endif()
 
-if (COMPILE_PSA_APIS)
-  # Add the local version of psa_crypto_driver_wrappers.c
-  list(APPEND src_crypto
-    psa_crypto_driver_wrappers.c
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+  append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
+    pem.c
+    pkcs12.c
+    pkcs5.c
+    pkparse.c
+    pkwrite.c
   )
 endif()
-
-append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
-  pem.c
-  pkcs12.c
-  pkcs5.c
-  pkparse.c
-  pkwrite.c
-)
 
 # Library for mbed TLS crypto toolbox functionality
 add_library(${mbedcrypto_target}
@@ -137,8 +106,10 @@ add_library(mbedcrypto_base
 )
 
 target_link_libraries(mbedcrypto_base
-  PRIVATE
-    mbedcrypto_common
+  PUBLIC
+    # Enable the PSA crypto (client) interface or the library build
+    $<IF:$<BOOL:${CONFIG_MBEDTLS_PSA_CRYPTO_C}>,psa_crypto_library_config,psa_crypto_config>
+    psa_interface
 )
 
 # Misusing the psa_crypto_config and psa_crypto_library_config awareness to 
@@ -174,10 +145,11 @@ target_link_libraries(${mbedcrypto_target}
     mbedcrypto_base
 )
 
-# Add regular mbedcrypto common includes and configurations
+# Add a public version of the configs includes and interface
 target_link_libraries(${mbedcrypto_target}
-  PUBLIC
-    mbedcrypto_common
+  PRIVATE
+    $<IF:$<BOOL:${CONFIG_MBEDTLS_PSA_CRYPTO_C}>,psa_crypto_library_config,psa_crypto_config>
+    psa_interface
 )
 
 target_compile_options(${mbedcrypto_target} PRIVATE
@@ -240,8 +212,6 @@ if (CONFIG_MBEDTLS_X509_LIBRARY)
     PRIVATE
       ${mbedcrypto_target}
       mbedcrypto_base
-    PUBLIC
-      mbedcrypto_common
   )
 endif()
 
@@ -284,12 +254,10 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
       ${mbedx509_target}
       ${mbedcrypto_target}
       mbedcrypto_base
-    PUBLIC
-      mbedcrypto_common
   )
 endif()
 
-if (NOT BUILD_INSIDE_TFM)
+if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   # Add zephyr-specific code
   add_subdirectory(zephyr)
 endif()
