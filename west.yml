@@ -140,7 +140,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v2.1.0-ncs1
+      revision: e66169aa8daf93eee0ff3729ecc2c343c7fade51
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -223,7 +223,7 @@ manifest:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: c2ecfc2e2392fc1cb6dadfb50f792397c8cf6e63
+      revision: 6372db81668f8f93234bac2a780c6ecebd9e4b6f
       groups:
         - find-my
     - name: azure-sdk-for-c
