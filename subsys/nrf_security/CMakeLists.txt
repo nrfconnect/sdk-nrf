@@ -7,8 +7,6 @@
 # This file is nrf_security's entry-point for the NCS build system
 set(BUILD_INSIDE_TFM False)
 
-set(NRFXLIB_DIR ${ZEPHYR_NRFXLIB_MODULE_DIR})
-set(NRF_SECURITY_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 # Include generic macros
 include(cmake/extensions.cmake)
@@ -17,8 +15,14 @@ set(mbedcrypto_target mbedcrypto)
 set(mbedx509_target   mbedx509)
 set(mbedtls_target    mbedtls)
 
-# Populate ARM_MBEDTLS_PATH with the value of ZEPHYR_MBEDTLS_MODULE_DIR
-set(ARM_MBEDTLS_PATH ${ZEPHYR_MBEDTLS_MODULE_DIR})
+# Generate the file containing all static paths and configurations used both in
+# TF-M and non TF-M builds
+configure_file(${CMAKE_CURRENT_LIST_DIR}/configs/config_extra.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake/config_extra.cmake
+)
+
+# Include files with standard paths like oberon-psa-core and nrf_security root
+include(${CMAKE_CURRENT_BINARY_DIR}/cmake/config_extra.cmake)
 
 if(CONFIG_SSF_SERVER_PSA_CRYPTO_SERVICE_ENABLED)
 # Inside the SSF server, when the PSA crypto service is enabled we need to
