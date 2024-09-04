@@ -38,4 +38,8 @@ typedef uint32_t ot_msg_key;
  */
 typedef uint32_t ot_socket_key;
 
+/** @brief Key type for internal CoAP request registry.
+ */
+typedef uint32_t ot_rpc_coap_request_key;
+
 #endif /* OT_RPC_TYPES_H_ */

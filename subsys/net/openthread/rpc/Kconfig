@@ -39,6 +39,18 @@ config OPENTHREAD_RPC_SERVER
 
 endchoice
 
+menu "OpenThread over RPC client configuration"
+	depends on OPENTHREAD_RPC_CLIENT
+
+config OPENTHREAD_RPC_CLIENT_NUM_SENT_COAP_REQUESTS
+	int "Maximum number of ongoing sent CoAP messages"
+	default 8
+	help
+	  Defines the number of slots for storing a callback along with its context
+	  for ongoing CoAP requests awaiting a response.
+
+endmenu # "OpenThread over RPC client configuration"
+
 config OPENTHREAD_RPC_INITIALIZE_NRF_RPC
 	bool "Automatically initialize nRF RPC library"
 	default n
