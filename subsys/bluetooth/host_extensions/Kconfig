@@ -10,7 +10,6 @@ menuconfig BT_RADIO_NOTIFICATION_CONN_CB
 	select BT_CTLR_SDC_EVENT_TRIGGER
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
-	select NRFX_EGU0
 	select EXPERIMENTAL
 	help
 	  Enables the support for setting up a radio notification
@@ -57,6 +56,11 @@ config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU5
 	bool "Use EGU5"
 	depends on $(dt_nodelabel_has_compat,egu5,$(DT_COMPAT_NORDIC_NRF_EGU))
 	select NRFX_EGU5
+
+config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU10
+	bool "Use EGU10"
+	depends on $(dt_nodelabel_has_compat,egu10,$(DT_COMPAT_NORDIC_NRF_EGU))
+	select NRFX_EGU10
 
 config BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU020
 	bool "Use EGU020"
