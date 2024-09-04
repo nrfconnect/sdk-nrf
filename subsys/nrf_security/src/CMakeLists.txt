@@ -33,25 +33,6 @@ target_include_directories(psa_crypto_library_config
     ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
 )
 
-# # Suspect: Write something about NCSDK-YYYYY
-# if(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
-#   # In order to support FPU in TF-M the following is documented by the TF-M
-#   # build system:
-#   #
-#   #   Secure and non-secure libraries are compiled with COMPILER_CP_FLAG and
-#   #   linked with LINKER_CP_OPTION for different FP ABI types. All those
-#   #   libraries shall be built with COMPILER_CP_FLAG
-#   target_compile_options(tfm_sprt
-#     INTERFACE
-#       ${COMPILER_CP_FLAG}
-#   )
-
-#   target_link_options(tfm_sprt
-#     INTERFACE
-#       ${LINKER_CP_OPTION}
-#   )
-# endif()
-
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
   if (CONFIG_BUILD_WITH_TFM)
     # Add replacement for memory_buffer_alloc.c for NS build
@@ -152,18 +133,17 @@ target_link_libraries(${mbedcrypto_target}
     psa_interface
 )
 
-target_compile_options(${mbedcrypto_target} PRIVATE
-  # Don't be too strict with warnings on mbedtls code. This code is not
-  # ours, so it's not necessary to do too much static analysis on
-  # it. And any warnings that do pop up are difficult to fix as they
-  # require changes far upstream.
-  -Wno-unused-function
-  -Wno-unused-variable
-  # Disable warnings showing up in Oberon PSA crypto code.
-  -Wno-stringop-overflow
-  -Wno-stringop-overread
-  -Wno-strict-aliasing
-  )
+
+# Disable compile warnings for Mbed TLS sources for files that are 
+# added to the build for legacy APIs but are not enabled due to
+# configurations not being set. 
+#
+# These can be removed when NCSDK-28901 is addressed.
+target_compile_options(${mbedcrypto_target}
+  PRIVATE
+    -Wno-unused-function
+    -Wno-unused-variable
+)
 
 add_subdirectory(core)
 

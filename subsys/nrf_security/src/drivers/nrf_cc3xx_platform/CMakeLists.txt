@@ -9,14 +9,14 @@ get_target_property(NRF_CC3XX_PLATFORM_INCLUDE_DIRECTORIES
   nrf_cc3xx_platform INTERFACE_INCLUDE_DIRECTORIES
 )
 
-# Link with nrf_cc3xx_platform for driver usage
-target_link_libraries(${mbedcrypto_target}
-  PRIVATE
-    nrf_cc3xx_platform
-)
-
 # Add nrf_cc3xx_platform includes for mbedcrypto
-target_include_directories(${mbedcrypto_target}
+target_include_directories(psa_crypto_library_config
   INTERFACE
     ${NRF_CC3XX_PLATFORM_INCLUDE_DIRECTORIES}
+)
+
+# Link the Oberon PSA core with nrf_cc3xx_platform
+target_link_libraries(oberon_psa_core
+  PRIVATE
+    nrf_cc3xx_platform
 )
