@@ -93,7 +93,11 @@ A delta patch can only update the modem firmware from one specific version to an
 If you need to perform a major version update (for example, v1.2.x to v1.3.x), you need an external flash with a minimum size of 4 MB.
 
 Different versions of the LTE modem firmware are available, and these versions are certified for the mobile network operators having their own certification programs.
-For more information, see the `nRF9161 Mobile network operator certifications`_ or `nRF9160 Mobile network operator certifications`_, depending on the SiP you are using.
+For more information, see the following documents, depending on the SiP you are using:
+
+* `nRF9151 Mobile network operator certifications`_
+* `nRF9161 Mobile network operator certifications`_
+* `nRF9160 Mobile network operator certifications`_
 
 .. note::
 
@@ -243,7 +247,11 @@ GNSS
 
 An nRF91 Series device is a highly versatile device that integrates both cellular and GNSS functionality.
 Note that GNSS functionality is only available on the SICA variant and not on the SIAA or SIBA variants.
-For more information, see `nRF9161 SiP revisions and variants`_ or `nRF9160 SiP revisions and variants`_, depending on the SiP you are using.
+For more information, see the following documents, depending on the SiP you are using:
+
+* `nRF9151 SiP revisions and variants`_
+* `nRF9161 SiP revisions and variants`_
+* `nRF9160 SiP revisions and variants`_
 
 There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS) available but GPS is the most mature technology.
 An nRF91 Series device supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.

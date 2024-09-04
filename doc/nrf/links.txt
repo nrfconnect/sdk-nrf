@@ -781,9 +781,11 @@
 
 .. _`nRF9160 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`nRF9161 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_operator_certifications.html
-.. _`Modem firmware compatibility matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
+.. _`nRF9151 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_operator_certifications.html
+.. _`Modem firmware compatibility matrix`:
 .. _`Modem firmware compatibility matrix for the nRF9160 DK`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_modem_fw.html
 .. _`Modem firmware compatibility matrix for the nRF9161 DK`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_modem_fw.html
+.. _`Modem firmware compatibility matrix for the nRF9151 DK`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_modem_fw.html
 
 
 .. _`Electrical specification of nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/_tmp/alta.nRF9160/autodita/APPLICATION.CURRENT/parameters.frontpage.html
@@ -810,6 +812,7 @@
 
 .. _`nRF9160 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_ic_revision_overview.html
 .. _`nRF9161 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_ic_revision_overview.html
+.. _`nRF9151 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_ic_revision_overview.html
 
 .. _`SWD Select`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/programming_debugging_interface.html
 
