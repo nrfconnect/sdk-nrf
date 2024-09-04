@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 nrf_modem_lib_sram:
   span: [nrf_modem_lib_ctrl, nrf_modem_lib_tx, nrf_modem_lib_rx, nrf_modem_lib_trace]

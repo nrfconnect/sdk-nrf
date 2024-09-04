@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 pgps:
   placement:

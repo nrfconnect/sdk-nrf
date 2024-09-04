@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 lwm2m_carrier:
   placement:

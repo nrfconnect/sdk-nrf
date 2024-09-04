@@ -420,7 +420,7 @@ The information extracted from devicetree is the alignment value for some partit
 
 .. code-block:: yaml
 
-   #include <autoconf.h>
+   #include <zephyr/autoconf.h>
    #include <devicetree_legacy_unfixed.h>
 
    b0:
