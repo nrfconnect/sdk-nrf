@@ -20,6 +20,7 @@ SSF_CLIENT_LOG_DECLARE(ssf_client, CONFIG_SSF_CLIENT_LOG_LEVEL);
 
 static struct ssf_client_notif_listener *listeners[CONFIG_SSF_CLIENT_REGISTERED_LISTENERS_MAX];
 static struct ssf_client_sem listeners_sem;
+static bool ssf_client_notif_initialized;
 
 static int decode_header(const uint8_t *buf, size_t buf_size, uint16_t *service_id,
 			 uint16_t *service_version, struct ssf_notification *notif)
@@ -50,7 +51,15 @@ static int decode_header(const uint8_t *buf, size_t buf_size, uint16_t *service_
 
 int ssf_client_notif_init(void)
 {
-	return ssf_client_sem_init(&listeners_sem);
+	int err;
+
+	err = ssf_client_sem_init(&listeners_sem);
+	if (err != 0) {
+		return err;
+	}
+
+	ssf_client_notif_initialized = true;
+	return 0;
 }
 
 void ssf_client_notif_handler(const uint8_t *pkt, size_t pkt_len)
@@ -64,6 +73,10 @@ void ssf_client_notif_handler(const uint8_t *pkt, size_t pkt_len)
 	err = decode_header(pkt, pkt_len, &service_id, &server_service_version, &notif);
 	if (err != 0) {
 		ssf_client_transport_decoding_done(pkt);
+		return;
+	}
+
+	if (!ssf_client_notif_initialized) {
 		return;
 	}
 
@@ -142,6 +155,10 @@ int ssf_client_notif_register(struct ssf_client_notif_listener *listener, void *
 		return -SSF_EINVAL;
 	}
 
+	if (!ssf_client_notif_initialized) {
+		return -SSF_EPERM;
+	}
+
 	ssf_client_sem_take(&listeners_sem, SSF_CLIENT_SEM_WAIT_FOREVER);
 
 	if (listener->is_registered) {
@@ -173,6 +190,10 @@ int ssf_client_notif_deregister(struct ssf_client_notif_listener *listener)
 
 	if (listener == NULL) {
 		return -SSF_EINVAL;
+	}
+
+	if (!ssf_client_notif_initialized) {
+		return -SSF_EPERM;
 	}
 
 	ssf_client_sem_take(&listeners_sem, SSF_CLIENT_SEM_WAIT_FOREVER);

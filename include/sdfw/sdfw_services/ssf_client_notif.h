@@ -121,6 +121,7 @@ void ssf_client_notif_decode_done(struct ssf_notification *notif);
  *
  * @return      0 on success,
  *              -SSF_EINVAL if parameters are invalid.
+ *              -SSF_EPERM if SSF is not initialized.
  *              -SSF_EALREADY if the listener is already registered.
  *              -SSF_ENOBUFS if max number of listeners have already been registered.
  */
@@ -134,6 +135,7 @@ int ssf_client_notif_register(struct ssf_client_notif_listener *listener, void *
  *
  * @return      0 on success,
  *              -SSF_EINVAL if parameters are invalid.
+ *              -SSF_EPERM if SSF is not initialized.
  *              -SSF_ENXIO if the listener is not already registered.
  */
 int ssf_client_notif_deregister(struct ssf_client_notif_listener *listener);
