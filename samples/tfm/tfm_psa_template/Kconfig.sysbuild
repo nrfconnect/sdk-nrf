@@ -8,9 +8,8 @@ source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 
-choice NETCORE
-	default NETCORE_EMPTY
-endchoice
+config NRF_DEFAULT_TFM_PSA_TEMPLATE_NETCORE
+	default y
 
 config SECURE_BOOT_NETCORE
 	default y

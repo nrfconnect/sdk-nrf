@@ -25,7 +25,7 @@ This sample uses Trusted Firmware-M, nRF Secure Immutable bootloader and MCUboot
 It includes provisioning the device with keys and being able to perform a device firmware update.
 The sample prints information about the identity of the device and the firmware versions that are currently running.
 
-With nRF5340 this sample also includes the :ref:`B0n bootloader <nc_bootloader>` and :ref:`empty_net_core <nrf5340_empty_net_core>` for demonstrating the network core firmware update process.
+With nRF5340 this sample also includes the :ref:`B0n bootloader <nc_bootloader>` and :ref:`tfm_psa_template_net_core` for demonstrating the network core firmware update process.
 
 Building and running
 ********************
@@ -224,19 +224,19 @@ The verification of the image will happen during the update process.
 Network core update (nRF5340 only)
 ==================================
 
-To upload a new network core image, build the empty_net_core image with an updated firmware image version.
+To upload a new network core image, build the tfm_psa_template_net_core image with an updated firmware image version.
 
 .. code-block:: console
 
     west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
-    -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+    -Dtfm_psa_template_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
 Then upload the new network core image to the device. Note that the image is uploaded to the network core slot.
 
 .. code-block:: console
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
+    build_update/signed_by_mcuboot_and_b0_tfm_psa_template_net_core.bin -e -n 1
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
 
@@ -266,7 +266,7 @@ To do this, build the application image with an updated image version and the ne
 .. code-block:: console
 
     west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
-    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.4\" -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=3
+    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.4\" -Dtfm_psa_template_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=3
 
 Then upload the new application and network core images to the device. Note that the application image is uploaded to the application slot and the network core image is uploaded to the network core slot.
 
@@ -276,7 +276,7 @@ Then upload the new application and network core images to the device. Note that
     build_update/tfm_psa_template/zephyr/zephyr.signed.bin -e -n 0
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
+    build_update/signed_by_mcuboot_and_b0_tfm_psa_template_net_core.bin -e -n 1
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
 
