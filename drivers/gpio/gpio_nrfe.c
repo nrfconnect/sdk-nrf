@@ -6,29 +6,10 @@
 
 #define DT_DRV_COMPAT nordic_nrf_egpio
 
-#include <drivers/gpio/nrfe_gpio.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/gpio/gpio_utils.h>
 
-#include <zephyr/device.h>
-
-#include <zephyr/ipc/ipc_service.h>
-
-K_SEM_DEFINE(bound_sem, 0, 1);
-
-static void ep_bound(void *priv)
-{
-	k_sem_give(&bound_sem);
-}
-
-static struct ipc_ept_cfg ep_cfg = {
-	.cb = {
-			.bound = ep_bound,
-			.received = NULL,
-		},
-};
-
-static struct ipc_ept ep;
+#include "gpio_nrfe.h"
 
 struct gpio_nrfe_data {
 	/* gpio_driver_data needs to be first */
@@ -44,16 +25,6 @@ struct gpio_nrfe_cfg {
 static inline const struct gpio_nrfe_cfg *get_port_cfg(const struct device *port)
 {
 	return port->config;
-}
-
-static int gpio_send(nrfe_gpio_data_packet_t *msg)
-{
-	if (ipc_service_send(&ep, (void *)(&msg), sizeof(nrfe_gpio_data_packet_t))
-		== sizeof(nrfe_gpio_data_packet_t)) {
-		return 0;
-	} else {
-		return -EIO;
-	}
 }
 
 static int gpio_nrfe_pin_configure(const struct device *port, gpio_pin_t pin, gpio_flags_t flags)
@@ -110,25 +81,6 @@ static int gpio_nrfe_port_toggle_bits(const struct device *port, gpio_port_pins_
 		.opcode = NRFE_GPIO_PIN_TOGGLE, .pin = mask, .port = get_port_cfg(port)->port_num};
 
 	return gpio_send(&msg);
-}
-
-static int gpio_nrfe_init(const struct device *port)
-{
-	const struct device *ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
-	int ret = ipc_service_open_instance(ipc0_instance);
-
-	if ((ret < 0) && (ret != -EALREADY)) {
-		return ret;
-	}
-
-	ret = ipc_service_register_endpoint(ipc0_instance, &ep, &ep_cfg);
-	if (ret < 0) {
-		return ret;
-	}
-
-	k_sem_take(&bound_sem, K_FOREVER);
-
-	return 0;
 }
 
 static const struct gpio_driver_api gpio_nrfe_drv_api_funcs = {

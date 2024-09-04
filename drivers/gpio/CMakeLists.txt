@@ -5,4 +5,13 @@
 #
 
 zephyr_library_amend()
-zephyr_library_sources_ifdef(CONFIG_GPIO_NRFE gpio_nrfe.c)
+
+if(CONFIG_GPIO_NRFE)
+  if(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG)
+    zephyr_library_sources(gpio_nrfe_icmsg.c)
+  elseif(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX)
+    zephyr_library_sources(gpio_nrfe_mbox.c)
+  endif()
+
+  zephyr_library_sources(gpio_nrfe.c)
+endif()

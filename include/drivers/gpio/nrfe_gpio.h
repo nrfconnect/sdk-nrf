@@ -8,6 +8,7 @@
 #define NRFE_GPIO_H
 
 #include <drivers/nrfx_common.h>
+#include <sdp/nrfe_common.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,6 +32,11 @@ typedef struct __packed {
 			 * Not used in other cases.
 			 */
 } nrfe_gpio_data_packet_t;
+
+typedef struct __packed {
+	nrfe_shared_data_lock_t lock;
+	nrfe_gpio_data_packet_t data;
+} nrfe_gpio_mbox_data_t;
 
 #ifdef __cplusplus
 }
