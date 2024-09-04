@@ -21,4 +21,9 @@ rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
 rsource "wifi/Kconfig"
 
+config NRFE
+	bool
+	default y if GPIO_NRFE
+	# Temporary kconfig to include DPPI channel allocation for NRFE
+
 endmenu
