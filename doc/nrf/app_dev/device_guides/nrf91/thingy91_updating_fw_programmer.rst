@@ -7,10 +7,10 @@ Updating the Thingy:91 firmware using Programmer
    :local:
    :depth: 2
 
-You can use the Programmer app from `nRF Connect for Desktop`_ to:
+You can use the Programmer app from `nRF Connect for Desktop`_ for the following:
 
 * :ref:`Update the Connectivity bridge application firmware in the nRF52840 SoC <updating_the conn_bridge_52840>`.
-* :ref:`Update the modem firmware on the nRF9160 SoC <update_modem_fw_nrf9160>`.
+* :ref:`Update the modem firmware on the nRF9160 SiP <update_modem_fw_nrf9160>`.
 * :ref:`Program the application firmware on the nRF9160 SiP <update_nrf9160_application>`.
 
 These operations can be done through USB using MCUboot, or through an external debug probe.
