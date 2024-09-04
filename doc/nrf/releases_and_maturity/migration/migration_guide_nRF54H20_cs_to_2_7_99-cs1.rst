@@ -59,6 +59,6 @@ SDFW and SCFW firmwares
      .. note::
         On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
 
-  #. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+  #. Move the bundle's :file:`.zip` archive to a folder of your choice, unzip the archive, and then run nRF Util to program the :file:`nordic_top.suit` using the following command::
 
-        nrfutil device x-suit-dfu --firmware <path-to_bundle_zip_file> --serial-number <serialnumber>
+        nrfutil device x-suit-dfu --firmware nordic_top.suit --serial-number <serialnumber>
