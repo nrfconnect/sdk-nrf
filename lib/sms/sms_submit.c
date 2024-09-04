@@ -278,6 +278,14 @@ static int sms_submit_concat(
 			sprintf(udh_str, "050003%02X%02X%02X",
 				concat_msg_id, *concat_msg_count, concat_seq_number);
 
+			if (text_encoded_size < text_size) {
+				/* Inform that there are more messages to send */
+				(void)nrf_modem_at_printf("AT+CMMS=1");
+			} else {
+				/* Inform that the next message is the last one */
+				(void)nrf_modem_at_printf("AT+CMMS=0");
+			}
+
 			err = sms_submit_encode(
 				sms_buf_tmp,
 				encoded_number,
