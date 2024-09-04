@@ -99,40 +99,25 @@ config MBEDTLS_CFG_FILE
 	  Name of the config file for mbed TLS. This configuration file is used
 	  in configurations with or without PSA APIs supported.
 
-config MBEDTLS_USER_CONFIG_FILE
-	string "mbed TLS user configuration file"
-	default "nrf-config-user-empty.h"
-	help
-	  Name of the file that will contain additional configurations for mbed TLS.
-	  This file is empty by default.
+config MBEDTLS_PSA_CRYPTO_CONFIG
+	bool
+	default y
 
 config MBEDTLS_PSA_CRYPTO_CONFIG_FILE
 	string "PSA want configuration file"
-	default "nrf-psa-crypto-want-config.h"
+	default "nrf-psa-crypto-config.h"
 	help
-	  Name of the config file containins the PSA configuration.
-	  This file may be generated and will contain PSA configurations if PSA APIs
-	  are generated in the system.
+	  Name of the config file for PSA crypto (Containins PSA_WANT_XXXX configurations).
+	  This file is generated and will contain PSA configurations if PSA crypto APIs
+	  are enabled in the system.
 
 config MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
 	string "Additional PSA configuration file"
-	default "nrf-psa-crypto-config.h"
+	default "nrf-psa-crypto-user-config.h"
 	help
 	  Name of the file containing extra PSA configuration.
 	  This file may be generated andd will contain exte PSA configurations like the
 	  PSA_NEED defines for different crypto accelerators.
-
-config GENERATE_MBEDTLS_CFG_FILE
-	bool
-	prompt "Generate mbed TLS config files"
-	default y
-	help
-	  nrf_security will generate mbed TLS configuration file(s)
-	  based on the selection of configuration options in Kconfig.
-	  However, if the generated configuration file needs custom
-	  adjustments, this setting can be used to disable generating the
-	  mbed TLS configuration file. Only disable this setting if you know
-	  what you are doing.
 
 config MBEDTLS_ENABLE_HEAP
 	bool "Enable global heap for mbed TLS"

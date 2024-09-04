@@ -82,16 +82,32 @@ macro(kconfig_check_and_set_base_to_one_depends base)
   kconfig_check_and_set_base_to_val_depends(${base} 1 ${ARGN})
 endmacro()
 
+
 #
-# Internal macro to configure file if Kconfig config is set
+# Internal macro that makes a backup of a given configuration (suffixed by _COPY)
+# This stores the current state of a Kconfig (CONFIG_ is expected)
 #
-# This needs some work
+macro(kconfig_backup_current_config config)
+  if(${config})
+    message("Backup: ${config}: True")
+    set(${config}_COPY True})
+  else()
+    message("Backup: ${config}: False")
+    set(${config}_COPY False)
+  endif()
+endmacro()
+
 #
-macro(nrf_security_configure_file config location file)
-  if (${mbedtls_config})
-    nrf_security_debug("Configure file: ${file}")
-    get_filename_component(file_name ${file} NAME)
-    configure_file(${file} ${location}/${file_name} COPYONLY)
+# Internal macro that restore a backed up copy of a given configuration (suffixed by _COPY)
+# This restores the backed up state of a Kconfig (CONFIG_ is expected)
+#
+macro(kconfig_restore_backup_config config)
+  if(${config}_COPY)
+    message("Restore: ${config}: True")
+    set(${config} True)
+  else()
+    message("Restore: ${config}: False")
+    set(${config} False)
   endif()
 endmacro()
 
