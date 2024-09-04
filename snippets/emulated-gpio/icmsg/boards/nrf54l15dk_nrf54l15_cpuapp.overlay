@@ -39,7 +39,7 @@
 			compatible = "zephyr,ipc-icmsg";
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
-			mboxes = <&cpuapp_vevif_rx 15>, <&cpuapp_vevif_tx 16>;
+			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
 			mbox-names = "rx", "tx";
 			status = "okay";
 		};
@@ -66,10 +66,6 @@
 
 &cpuapp_vevif_tx {
 	status = "okay";
-};
-
-&led0 {
-	gpios = <&egpio 7 GPIO_ACTIVE_HIGH>;
 };
 
 &egpio {
