@@ -38,7 +38,7 @@ int main(void)
 	uint32_t dtr = 0U;
 
 	ret = usb_enable(NULL);
-	if (ret != 0) {
+	if (ret != 0 && ret != -EALREADY) {
 		LOG_ERR("Failed to enable USB");
 		return 0;
 	}
