@@ -124,10 +124,6 @@ endchoice
 config FS_FATFS_EXFAT
 	default y
 
-# Set the maximum file name length to 255
-config FS_FATFS_MAX_LFN
-	default 255
-
 config WATCHDOG
 	default y
 
