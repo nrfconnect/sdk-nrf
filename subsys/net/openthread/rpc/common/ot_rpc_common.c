@@ -148,14 +148,26 @@ void ot_rpc_decode_dataset(const struct nrf_rpc_group *group, struct nrf_rpc_cbo
 	dataset->mComponents.mIsChannelMaskPresent = nrf_rpc_decode_bool(ctx);
 }
 
-void ot_rpc_decode_message_settings(struct nrf_rpc_cbor_ctx *ctx, otMessageSettings *settings)
+otMessageSettings *ot_rpc_decode_message_settings(struct nrf_rpc_cbor_ctx *ctx,
+						  otMessageSettings *settings)
 {
+	if (nrf_rpc_decode_is_null(ctx)) {
+		return NULL;
+	}
+
 	settings->mLinkSecurityEnabled = nrf_rpc_decode_bool(ctx);
 	settings->mPriority = nrf_rpc_decode_uint(ctx);
+
+	return settings;
 }
 
 void ot_rpc_encode_message_settings(struct nrf_rpc_cbor_ctx *ctx, const otMessageSettings *settings)
 {
+	if (!settings) {
+		nrf_rpc_encode_null(ctx);
+		return;
+	}
+
 	nrf_rpc_encode_bool(ctx, settings->mLinkSecurityEnabled);
 	nrf_rpc_encode_uint(ctx, settings->mPriority);
 }

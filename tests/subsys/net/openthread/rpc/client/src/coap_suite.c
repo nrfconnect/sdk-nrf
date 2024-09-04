@@ -13,6 +13,7 @@
 #include <openthread/coap.h>
 
 #include <ot_rpc_ids.h>
+#include <ot_rpc_types.h>
 #include <test_rpc_env.h>
 
 /* Message address used when testing serialization of a function that takes otMessage* */
@@ -32,6 +33,7 @@
 
 DEFINE_FFF_GLOBALS;
 FAKE_VOID_FUNC(ot_coap_handler, void *, otMessage *, const otMessageInfo *);
+FAKE_VOID_FUNC(ot_coap_response_handler, void *, otMessage *, const otMessageInfo *, otError);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -276,12 +278,12 @@ ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
 	otCoapAddResource(NULL, &resource);
 	mock_nrf_rpc_tr_expect_done();
 
-	/* Test remote call of the default handler */
+	/* Test remote call of the resource handler */
 	RESET_FAKE(ot_coap_handler);
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
-	mock_nrf_rpc_tr_receive(
-		RPC_CMD(OT_RPC_CMD_COAP_RESOURCE_HANDLER, CBOR_LONG_URI, CBOR_UINT32(MSG_ADDR)));
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_RESOURCE_HANDLER, CBOR_LONG_URI,
+					CBOR_UINT32(MSG_ADDR), CBOR_MSG_INFO));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(ot_coap_handler_fake.call_count, 1);
@@ -308,7 +310,8 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 	RESET_FAKE(ot_coap_handler);
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_DEFAULT_HANDLER, CBOR_UINT32(MSG_ADDR)));
+	mock_nrf_rpc_tr_receive(
+		RPC_CMD(OT_RPC_CMD_COAP_DEFAULT_HANDLER, CBOR_UINT32(MSG_ADDR), CBOR_MSG_INFO));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(ot_coap_handler_fake.call_count, 1);
@@ -320,6 +323,107 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 				   RPC_RSP());
 	otCoapSetDefaultHandler(NULL, NULL, NULL);
 	mock_nrf_rpc_tr_expect_done();
+}
+
+/* Test serialization of otCoapSendRequest() returning OT_ERROR_NONE */
+ZTEST(ot_rpc_coap, test_otCoapSendRequest)
+{
+	/*
+	 * Request key is allocated by the otCoapSendRequest() encoder function but we know
+	 * that the first free slot will be selected so it will be 1.
+	 */
+	ot_rpc_coap_request_key request_rep = 1;
+	otMessageInfo message_info = {
+		.mSockAddr = {.mFields.m8 = {ADDR_1}},
+		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
+		.mSockPort = PORT_1,
+		.mPeerPort = PORT_2,
+		.mHopLimit = HOP_LIMIT,
+		.mEcn = 3,
+		.mIsHostInterface = true,
+		.mAllowZeroHopLimit = true,
+		.mMulticastLoop = true,
+	};
+	otError error;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_SEND_REQUEST, CBOR_UINT32(MSG_ADDR),
+					   CBOR_MSG_INFO, request_rep),
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otCoapSendRequest(NULL, (otMessage *)MSG_ADDR, &message_info,
+				  ot_coap_response_handler, (void *)(UINT32_MAX - 1));
+	mock_nrf_rpc_tr_expect_done();
+
+	/* Test remote call of the resource handler */
+	RESET_FAKE(ot_coap_response_handler);
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_RESPONSE_HANDLER, request_rep,
+					CBOR_UINT32(MSG_ADDR), CBOR_MSG_INFO,
+					CBOR_UINT8(OT_ERROR_RESPONSE_TIMEOUT)));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(ot_coap_response_handler_fake.call_count, 1);
+	zassert_equal(ot_coap_response_handler_fake.arg0_val, (void *)(UINT32_MAX - 1));
+	zassert_equal(ot_coap_response_handler_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zassert_equal(ot_coap_response_handler_fake.arg3_val, OT_ERROR_RESPONSE_TIMEOUT);
+
+	zassert_equal(error, OT_ERROR_NONE);
+}
+
+/* Test serialization of otCoapSendRequest() returning OT_ERROR_INVALID_STATE */
+ZTEST(ot_rpc_coap, test_otCoapSendRequest_failure)
+{
+	/*
+	 * Request key is allocated by the otCoapSendRequest() encoder function but we know
+	 * that the first free slot will be selected so it will be 1.
+	 */
+	ot_rpc_coap_request_key request_rep = 1;
+	otMessageInfo message_info = {
+		.mSockAddr = {.mFields.m8 = {ADDR_1}},
+		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
+		.mSockPort = PORT_1,
+		.mPeerPort = PORT_2,
+		.mHopLimit = HOP_LIMIT,
+		.mEcn = 3,
+		.mIsHostInterface = true,
+		.mAllowZeroHopLimit = true,
+		.mMulticastLoop = true,
+	};
+	otError error;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_SEND_REQUEST, CBOR_UINT32(MSG_ADDR),
+					   CBOR_MSG_INFO, request_rep),
+				   RPC_RSP(OT_ERROR_INVALID_STATE));
+	error = otCoapSendRequest(NULL, (otMessage *)MSG_ADDR, &message_info,
+				  ot_coap_response_handler, (void *)(UINT32_MAX - 1));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(error, OT_ERROR_INVALID_STATE);
+}
+
+/* Test serialization of otCoapSendResponse() returning OT_ERROR_INVALID_STATE */
+ZTEST(ot_rpc_coap, test_otCoapSendResponse)
+{
+	otMessageInfo message_info = {
+		.mSockAddr = {.mFields.m8 = {ADDR_1}},
+		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
+		.mSockPort = PORT_1,
+		.mPeerPort = PORT_2,
+		.mHopLimit = HOP_LIMIT,
+		.mEcn = 3,
+		.mIsHostInterface = true,
+		.mAllowZeroHopLimit = true,
+		.mMulticastLoop = true,
+	};
+	otError error;
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_COAP_SEND_RESPONSE, CBOR_UINT32(MSG_ADDR), CBOR_MSG_INFO),
+		RPC_RSP(OT_ERROR_INVALID_STATE));
+	error = otCoapSendResponse(NULL, (otMessage *)MSG_ADDR, &message_info);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(error, OT_ERROR_INVALID_STATE);
 }
 
 ZTEST_SUITE(ot_rpc_coap, NULL, NULL, tc_setup, NULL, NULL);

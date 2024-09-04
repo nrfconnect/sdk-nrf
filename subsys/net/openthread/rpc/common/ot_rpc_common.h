@@ -71,7 +71,8 @@ void ot_rpc_decode_dataset_tlvs(const struct nrf_rpc_group *group, struct nrf_rp
 void ot_rpc_decode_dataset(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			   void *handler_data);
 void ot_rpc_encode_dataset(struct nrf_rpc_cbor_ctx *ctx, const otOperationalDataset *dataset);
-void ot_rpc_decode_message_settings(struct nrf_rpc_cbor_ctx *ctx, otMessageSettings *settings);
+otMessageSettings *ot_rpc_decode_message_settings(struct nrf_rpc_cbor_ctx *ctx,
+						  otMessageSettings *settings);
 void ot_rpc_encode_message_settings(struct nrf_rpc_cbor_ctx *ctx,
 				    const otMessageSettings *settings);
 /* The function reports about command decoding error (not responses). */

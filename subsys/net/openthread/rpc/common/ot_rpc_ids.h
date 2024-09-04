@@ -17,6 +17,7 @@ enum ot_rpc_cmd_client {
 	OT_RPC_CMD_UDP_RECEIVE_CB,
 	OT_RPC_CMD_COAP_RESOURCE_HANDLER,
 	OT_RPC_CMD_COAP_DEFAULT_HANDLER,
+	OT_RPC_CMD_COAP_RESPONSE_HANDLER,
 };
 
 /** @brief Command IDs accepted by the OpenThread over RPC server.

@@ -14,9 +14,30 @@
 
 #include <openthread/coap.h>
 
-static otCoapResource * resources;
+struct ot_rpc_coap_request {
+	otCoapResponseHandler handler;
+	void *context;
+};
+
+static otCoapResource *resources;
 static otCoapRequestHandler default_handler;
 static void *default_handler_ctx;
+static struct ot_rpc_coap_request requests[CONFIG_OPENTHREAD_RPC_CLIENT_NUM_SENT_COAP_REQUESTS];
+
+static ot_rpc_coap_request_key ot_rpc_coap_request_alloc(otCoapResponseHandler handler,
+							 void *context)
+{
+	for (ot_rpc_coap_request_key i = 0; i < ARRAY_SIZE(requests); i++) {
+		if (requests[i].handler == NULL) {
+			requests[i].handler = handler;
+			requests[i].context = context;
+
+			return i + 1;
+		}
+	}
+
+	return 0;
+}
 
 otMessage *otCoapNewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
 {
@@ -217,7 +238,7 @@ otCoapResource **find_coap_resource_prev_next(otCoapResource *searched)
 {
 	otCoapResource **prev_next = &resources;
 
-	for (otCoapResource *r = resources; r != NULL; r = r->mNext, prev_next = &r->mNext) {
+	for (otCoapResource *r = resources; r != NULL; prev_next = &r->mNext, r = r->mNext) {
 		if (r == searched) {
 			return prev_next;
 		}
@@ -370,3 +391,101 @@ static void ot_rpc_cmd_coap_default_handler(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_default_handler, OT_RPC_CMD_COAP_DEFAULT_HANDLER,
 			 ot_rpc_cmd_coap_default_handler, NULL);
+
+otError otCoapSendRequestWithParameters(otInstance *aInstance, otMessage *aMessage,
+					const otMessageInfo *aMessageInfo,
+					otCoapResponseHandler aHandler, void *aContext,
+					const otCoapTxParameters *aTxParameters)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t cbor_buffer_size = 0;
+	ot_rpc_coap_request_key request_rep;
+	otError error = OT_ERROR_PARSE;
+
+	request_rep = ot_rpc_coap_request_alloc(aHandler, aContext);
+
+	if (!request_rep) {
+		return OT_ERROR_NO_BUFS;
+	}
+
+	cbor_buffer_size += 1 + sizeof(ot_msg_key); /* aMessage */
+	cbor_buffer_size += OT_RPC_MESSAGE_INFO_LENGTH(aMessageInfo);
+	cbor_buffer_size += 1 + sizeof(ot_rpc_coap_request_key);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
+	nrf_rpc_encode_uint(&ctx, (ot_msg_key)aMessage);
+	ot_rpc_encode_message_info(&ctx, aMessageInfo);
+	nrf_rpc_encode_uint(&ctx, request_rep);
+	/* Ignore aTXParameters as it is NULL for otCoapSendRequest() that we only need for now */
+	ARG_UNUSED(aTxParameters);
+
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_SEND_REQUEST, &ctx, ot_rpc_decode_error,
+				&error);
+
+	if (error != OT_ERROR_NONE) {
+		/* Release the request slot on failure. */
+		requests[request_rep - 1].handler = NULL;
+	}
+
+	return error;
+}
+
+static void ot_rpc_cmd_coap_response_handler(const struct nrf_rpc_group *group,
+					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	ot_rpc_coap_request_key request_rep;
+	otMessage *message;
+	otMessageInfo message_info;
+	otError error;
+	struct ot_rpc_coap_request *request;
+
+	request_rep = nrf_rpc_decode_uint(ctx);
+	message = (otMessage *)nrf_rpc_decode_uint(ctx);
+	ot_rpc_decode_message_info(ctx, &message_info);
+	error = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_RESPONSE_HANDLER);
+		return;
+	}
+
+	if (request_rep == 0 || request_rep > ARRAY_SIZE(requests)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_RESPONSE_HANDLER);
+		return;
+	}
+
+	request = &requests[request_rep - 1];
+
+	if (request->handler) {
+		request->handler(request->context, message, &message_info, error);
+		request->handler = NULL;
+	}
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_response_handler,
+			 OT_RPC_CMD_COAP_RESPONSE_HANDLER, ot_rpc_cmd_coap_response_handler, NULL);
+
+otError otCoapSendResponseWithParameters(otInstance *aInstance, otMessage *aMessage,
+					 const otMessageInfo *aMessageInfo,
+					 const otCoapTxParameters *aTxParameters)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t cbor_buffer_size = 0;
+	otError error = OT_ERROR_PARSE;
+
+	cbor_buffer_size += 1 + sizeof(ot_msg_key); /* aMessage */
+	cbor_buffer_size += OT_RPC_MESSAGE_INFO_LENGTH(aMessageInfo);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
+	nrf_rpc_encode_uint(&ctx, (ot_msg_key)aMessage);
+	ot_rpc_encode_message_info(&ctx, aMessageInfo);
+	/* Ignore aTXParameters as it is NULL for otCoapSendResponse() that we only need for now */
+	ARG_UNUSED(aTxParameters);
+
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_SEND_RESPONSE, &ctx, ot_rpc_decode_error,
+				&error);
+
+	return error;
+}

@@ -6,7 +6,6 @@
 
 #include <mock_nrf_rpc_transport.h>
 
-#include <openthread/error.h>
 #include <ot_rpc_message_server.h>
 
 #include <zephyr/fff.h>
@@ -16,7 +15,6 @@
 
 #include <openthread/coap.h>
 
-#include <openthread/message.h>
 #include <ot_rpc_ids.h>
 #include <test_rpc_env.h>
 
@@ -52,7 +50,13 @@ FAKE_VALUE_FUNC(uint8_t, otCoapMessageGetTokenLength, const otMessage *);
 FAKE_VALUE_FUNC(const uint8_t *, otCoapMessageGetToken, const otMessage *);
 FAKE_VALUE_FUNC(otError, otCoapStart, otInstance *, uint16_t);
 FAKE_VALUE_FUNC(otError, otCoapStop, otInstance *);
+FAKE_VOID_FUNC(otCoapAddResource, otInstance *, otCoapResource *);
+FAKE_VOID_FUNC(otCoapRemoveResource, otInstance *, otCoapResource *);
 FAKE_VOID_FUNC(otCoapSetDefaultHandler, otInstance *, otCoapRequestHandler, void *)
+FAKE_VALUE_FUNC(otError, otCoapSendRequestWithParameters, otInstance *, otMessage *,
+		const otMessageInfo *, otCoapResponseHandler, void *, const otCoapTxParameters *);
+FAKE_VALUE_FUNC(otError, otCoapSendResponseWithParameters, otInstance *, otMessage *,
+		const otMessageInfo *, const otCoapTxParameters *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otUdpNewMessage);                                                                        \
@@ -73,7 +77,11 @@ FAKE_VOID_FUNC(otCoapSetDefaultHandler, otInstance *, otCoapRequestHandler, void
 	f(otCoapMessageGetToken);                                                                  \
 	f(otCoapStart);                                                                            \
 	f(otCoapStop);                                                                             \
-	f(otCoapSetDefaultHandler);
+	f(otCoapAddResource);                                                                      \
+	f(otCoapRemoveResource);                                                                   \
+	f(otCoapSetDefaultHandler);                                                                \
+	f(otCoapSendRequestWithParameters);                                                        \
+	f(otCoapSendResponseWithParameters);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -332,35 +340,181 @@ ZTEST(ot_rpc_coap, test_otCoapStop)
 	zassert_equal(otCoapStop_fake.call_count, 1);
 }
 
-/* TODO:
- * otCoapAddResource
- * otCoapRemoveResource
- */
+static void otCoapAddResource_custom_func(otInstance *instance, otCoapResource *resource)
+{
+	char uri[] = {URI, '\0'};
+
+	zassert_not_null(resource);
+	zexpect_str_equal(resource->mUriPath, uri);
+}
+
+static void otCoapRemoveResource_custom_func(otInstance *instance, otCoapResource *resource)
+{
+	char uri[] = {URI, '\0'};
+
+	zassert_not_null(resource);
+	zexpect_str_equal(resource->mUriPath, uri);
+}
 
 /*
- * Test reception of otCoapSetDefaultHandler() command that sets the default handler.
+ * Test reception of otCoapAddResource() and otCoapRemoveResource() commands.
+ */
+ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
+{
+	/*
+	 * Message key is allocated by the default handler encoder function but we know that
+	 * the first free slot will be selected so it will be 1.
+	 */
+	ot_msg_key message_rep = 1;
+	otMessageInfo message_info = {
+		.mSockAddr = {.mFields.m8 = {ADDR_1}},
+		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
+		.mSockPort = PORT_1,
+		.mPeerPort = PORT_2,
+		.mHopLimit = HOP_LIMIT,
+		.mEcn = 3,
+		.mIsHostInterface = true,
+		.mAllowZeroHopLimit = true,
+		.mMulticastLoop = true,
+	};
+
+	/* Test reception of otCoapAddResource() */
+	otCoapAddResource_fake.custom_fake = otCoapAddResource_custom_func;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_ADD_RESOURCE, CBOR_URI));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otCoapAddResource_fake.call_count, 1);
+
+	/* Test serialization of the resource handler call */
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_COAP_RESOURCE_HANDLER, CBOR_URI, message_rep, CBOR_MSG_INFO),
+		RPC_RSP());
+	otCoapAddResource_fake.arg1_val->mHandler(otCoapAddResource_fake.arg1_val->mContext,
+						  (otMessage *)MSG_ADDR, &message_info);
+	mock_nrf_rpc_tr_expect_done();
+
+	/* Test reception of otCoapRemoveResource() */
+	otCoapRemoveResource_fake.custom_fake = otCoapRemoveResource_custom_func;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_REMOVE_RESOURCE, CBOR_URI));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otCoapRemoveResource_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otCoapSetDefaultHandler() command.
  */
 ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 {
+	/*
+	 * Message key is allocated by the default handler encoder function but we know that
+	 * the first free slot will be selected so it will be 1.
+	 */
+	ot_msg_key message_rep = 1;
+	otMessageInfo message_info = {
+		.mSockAddr = {.mFields.m8 = {ADDR_1}},
+		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
+		.mSockPort = PORT_1,
+		.mPeerPort = PORT_2,
+		.mHopLimit = HOP_LIMIT,
+		.mEcn = 3,
+		.mIsHostInterface = true,
+		.mAllowZeroHopLimit = true,
+		.mMulticastLoop = true,
+	};
+
+	/* Test reception of otCoapSetDefaultHandler() command that sets the default handler */
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_SET_DEFAULT_HANDLER, CBOR_TRUE));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otCoapSetDefaultHandler_fake.call_count, 1);
 	zassert_not_null(otCoapSetDefaultHandler_fake.arg1_val);
-}
 
-/*
- * Test reception of otCoapSetDefaultHandler() command that unsets the default handler.
- */
-ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler_null)
-{
+	/* Test serialization of the default handler call */
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_COAP_DEFAULT_HANDLER, message_rep, CBOR_MSG_INFO), RPC_RSP());
+	otCoapSetDefaultHandler_fake.arg1_val(otCoapSetDefaultHandler_fake.arg2_val,
+					      (otMessage *)MSG_ADDR, &message_info);
+	mock_nrf_rpc_tr_expect_done();
+
+	/* Test reception of otCoapSetDefaultHandler() command that unsets the default handler */
+	RESET_FAKE(otCoapSetDefaultHandler);
+
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_SET_DEFAULT_HANDLER, CBOR_FALSE));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otCoapSetDefaultHandler_fake.call_count, 1);
 	zassert_is_null(otCoapSetDefaultHandler_fake.arg1_val);
+}
+
+/*
+ * Test reception of otCoapSendRequest().
+ */
+ZTEST(ot_rpc_coap, test_otCoapSendRequest)
+{
+	ot_rpc_coap_request_key request_rep = 3;
+	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	/*
+	 * The request message slot is freed when otCoapSendRequest() succeeds,
+	 * so we know that the same slot will be used to relay the response message.
+	 */
+	ot_msg_key response_rep = message_rep;
+	otMessageInfo message_info = {
+		.mSockAddr = {.mFields.m8 = {ADDR_1}},
+		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
+		.mSockPort = PORT_1,
+		.mPeerPort = PORT_2,
+		.mHopLimit = HOP_LIMIT,
+		.mEcn = 3,
+		.mIsHostInterface = true,
+		.mAllowZeroHopLimit = true,
+		.mMulticastLoop = true,
+	};
+
+	otCoapSendRequestWithParameters_fake.return_val = OT_ERROR_NONE;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(
+		RPC_CMD(OT_RPC_CMD_COAP_SEND_REQUEST, message_rep, CBOR_MSG_INFO, request_rep));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otCoapSendRequestWithParameters_fake.call_count, 1);
+	zassert_equal(otCoapSendRequestWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zassert_not_null(otCoapSendRequestWithParameters_fake.arg2_val);
+	zassert_not_null(otCoapSendRequestWithParameters_fake.arg3_val);
+
+	/* Test serialization of the response handler call */
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_RESPONSE_HANDLER, request_rep,
+					   response_rep, CBOR_MSG_INFO, OT_ERROR_PARSE),
+				   RPC_RSP());
+	otCoapSendRequestWithParameters_fake.arg3_val(otCoapSendRequestWithParameters_fake.arg4_val,
+						      (otMessage *)MSG_ADDR, &message_info,
+						      OT_ERROR_PARSE);
+	mock_nrf_rpc_tr_expect_done();
+}
+
+/*
+ * Test reception of otCoapSendResponse().
+ */
+ZTEST(ot_rpc_coap, test_otCoapSendResponse)
+{
+	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+
+	otCoapSendResponseWithParameters_fake.return_val = OT_ERROR_INVALID_STATE;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_STATE), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_SEND_RESPONSE, message_rep, CBOR_MSG_INFO));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otCoapSendResponseWithParameters_fake.call_count, 1);
+	zassert_equal(otCoapSendResponseWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zassert_not_null(otCoapSendResponseWithParameters_fake.arg2_val);
 }
 
 ZTEST_SUITE(ot_rpc_coap, NULL, NULL, tc_setup, NULL, NULL);

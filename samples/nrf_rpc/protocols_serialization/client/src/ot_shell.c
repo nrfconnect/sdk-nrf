@@ -8,6 +8,7 @@
 #include <zephyr/net/net_ip.h>
 
 #include <openthread/cli.h>
+#include <openthread/coap.h>
 #include <openthread/ip6.h>
 #include <openthread/link.h>
 #include <openthread/thread.h>
@@ -579,6 +580,192 @@ static int cmd_test_net_data_next_service(const struct shell *sh, size_t argc, c
 		shell_print(sh, "iterator %d", iterator);
 	}
 	shell_print(sh, "OT error: %d", error);
+
+	return 0;
+}
+
+static void coap_message_print(const struct shell *sh, otMessage *message)
+{
+	otCoapType type;
+	otCoapCode code;
+	uint16_t id;
+	uint8_t token[32];
+	uint8_t token_len;
+
+	type = otCoapMessageGetType(message);
+	code = otCoapMessageGetCode(message);
+	id = otCoapMessageGetMessageId(message);
+	token_len = otCoapMessageGetTokenLength(message);
+	memcpy(token, otCoapMessageGetToken(message), token_len);
+
+	shell_print(sh, "CoAP type %u, code %u, id %u, token:", type, code, id);
+	shell_hexdump(sh, token, token_len);
+}
+
+static void coap_response_handler(void *ctx, otMessage *message, const otMessageInfo *message_info,
+				  otError error)
+{
+	const struct shell *sh = ctx;
+
+	shell_print(sh, "Called CoAP response handler, result %u", error);
+
+	if (error == OT_ERROR_NONE) {
+		coap_message_print(sh, message);
+	}
+}
+
+static int cmd_test_coap_send(const struct shell *sh, size_t argc, char *argv[])
+{
+	otMessage *message;
+	otMessageInfo msg_info;
+	otError error;
+
+	memset(&msg_info, 0, sizeof(msg_info));
+	net_addr_pton(AF_INET6, argv[1], msg_info.mPeerAddr.mFields.m8);
+	msg_info.mPeerPort = OT_DEFAULT_COAP_PORT;
+
+	message = otCoapNewMessage(NULL, NULL);
+
+	if (!message) {
+		error = OT_ERROR_NO_BUFS;
+		goto exit;
+	}
+
+	otCoapMessageInit(message, OT_COAP_TYPE_CONFIRMABLE, OT_COAP_CODE_GET);
+
+	error = otCoapMessageAppendUriPathOptions(message, argv[2]);
+
+	if (error != OT_ERROR_NONE) {
+		goto exit;
+	}
+
+	error = otCoapMessageSetPayloadMarker(message);
+
+	if (error != OT_ERROR_NONE) {
+		goto exit;
+	}
+
+	error = otMessageAppend(message, "request", strlen("request"));
+
+	if (error != OT_ERROR_NONE) {
+		goto exit;
+	}
+
+	error = otCoapSendRequest(NULL, message, &msg_info, coap_response_handler, (void *)sh);
+
+exit:
+	if (error != OT_ERROR_NONE && message) {
+		otMessageFree(message);
+	}
+
+	if (error != OT_ERROR_NONE) {
+		shell_error(sh, "Error: %u", error);
+	}
+
+	return 0;
+}
+
+static void coap_default_handler(void *ctx, otMessage *message, const otMessageInfo *message_info)
+{
+	const struct shell *sh = ctx;
+
+	shell_print(sh, "Called CoAP default handler");
+	coap_message_print(sh, message);
+}
+
+static void coap_resource_handler(void *ctx, otMessage *message, const otMessageInfo *message_info)
+{
+	const struct shell *sh = ctx;
+	otError error = OT_ERROR_NONE;
+
+	shell_print(sh, "Called CoAP resource handler");
+	coap_message_print(sh, message);
+
+	if (otCoapMessageGetCode(message) == OT_COAP_CODE_GET) {
+		otMessage *response;
+
+		shell_print(sh, "Responding to GET request");
+
+		response = otCoapNewMessage(NULL, NULL);
+
+		if (!response) {
+			error = OT_ERROR_NO_BUFS;
+			goto exit;
+		}
+
+		error = otCoapMessageInitResponse(response, message, OT_COAP_TYPE_ACKNOWLEDGMENT,
+						  OT_COAP_CODE_CONTENT);
+
+		if (error != OT_ERROR_NONE) {
+			goto exit;
+		}
+
+		error = otCoapMessageSetPayloadMarker(response);
+
+		if (error != OT_ERROR_NONE) {
+			goto exit;
+		}
+
+		error = otMessageAppend(response, "response", strlen("response"));
+
+		if (error != OT_ERROR_NONE) {
+			goto exit;
+		}
+
+		error = otCoapSendResponse(NULL, response, message_info);
+	}
+
+exit:
+	if (error != OT_ERROR_NONE) {
+		shell_error(sh, "Error: %u", error);
+	}
+}
+
+static otCoapResource coap_resource = {
+	.mUriPath = "resource",
+};
+
+static int cmd_test_coap_start(const struct shell *sh, size_t argc, char *argv[])
+{
+	otError error;
+
+	coap_resource.mHandler = coap_resource_handler;
+	coap_resource.mContext = (void *)sh;
+
+	otCoapSetDefaultHandler(NULL, coap_default_handler, (void *)sh);
+	otCoapAddResource(NULL, &coap_resource);
+
+	shell_print(sh, "CoAP handlers added");
+
+	error = otCoapStart(NULL, OT_DEFAULT_COAP_PORT);
+
+	shell_print(sh, "CoAP started");
+
+	return 0;
+}
+
+static int cmd_test_coap_stop(const struct shell *sh, size_t argc, char *argv[])
+{
+	otError error;
+
+	error = otCoapStop(NULL);
+
+	if (error != OT_ERROR_NONE) {
+		goto exit;
+	}
+
+	shell_print(sh, "CoAP stopped");
+
+	otCoapSetDefaultHandler(NULL, NULL, NULL);
+	otCoapRemoveResource(NULL, &coap_resource);
+
+	shell_print(sh, "CoAP handlers removed");
+
+exit:
+	if (error != OT_ERROR_NONE) {
+		shell_error(sh, "Error: %u", error);
+	}
+
 	return 0;
 }
 
@@ -605,6 +792,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_test_net_data_mesh_prefix, 1, 0),
 	SHELL_CMD_ARG(test_net_data_next_service, NULL, "Test netdata next service API",
 		      cmd_test_net_data_next_service, 1, 0),
+	SHELL_CMD_ARG(test_coap_send, NULL, "Test CoAP send API", cmd_test_coap_send, 3, 0),
+	SHELL_CMD_ARG(test_coap_start, NULL, "Test CoAP start API", cmd_test_coap_start, 1, 0),
+	SHELL_CMD_ARG(test_coap_stop, NULL, "Test CoAP stop API", cmd_test_coap_stop, 1, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
