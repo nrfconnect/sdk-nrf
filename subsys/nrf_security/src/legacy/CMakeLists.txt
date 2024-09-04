@@ -21,13 +21,9 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
   sha256.c
   sha512.c
   sha3.c
-  ripemd160.c
   md5.c
   aesni.c
   aesce.c
-  aria.c
-  camellia.c
-  des.c
   psa_util.c
   platform_util.c
 )
