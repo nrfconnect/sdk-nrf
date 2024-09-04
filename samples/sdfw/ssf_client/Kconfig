@@ -21,22 +21,6 @@ config ENABLE_RESET_EVT_SUBSCRIBE_REQUEST
 	depends on SSF_RESET_EVT_SERVICE_ENABLED
 	default y
 
-config ENABLE_SDFW_UPDATE_REQUEST
-	bool "Enable the SDFW update service"
-	depends on SSF_SDFW_UPDATE_SERVICE_ENABLED
-	help
-	  Prompt a firmware update of SDFW based on downloaded update data.
-	  This data can be "downloaded" in the sense that it was programmed into
-	  MRAM manually for local testing.
-
-config UPDATE_REQUEST_CHECK_DATA
-	bool "Abort update if no data exists"
-	depends on ENABLE_SDFW_UPDATE_REQUEST
-	default y
-	help
-	  Safety option to abort the update request if the download data is invalid
-	  or not programmed at all.
-
 module = SSF_CLIENT_SAMPLE
 module-str = SSF Client Sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
