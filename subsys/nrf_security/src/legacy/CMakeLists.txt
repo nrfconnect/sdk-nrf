@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-set(is_getting_includes FALSE)
+if(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+  return()
+endif()
 
 # Legacy APIs missing driver support or APIs assumed to be
 # deprecated with more PSA API awareness.
@@ -57,12 +59,10 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
 endif()
 
 # Legacy files should only be added in certain configurations
-if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
-  append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
-    ctr_drbg.c
-    entropy.c
-  )
-endif()
+append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+  ctr_drbg.c
+  entropy.c
+)
 
 # Legacy Files needed when Oberon is disabled
 if(NOT CONFIG_OBERON_BACKEND)
@@ -104,16 +104,6 @@ if(DEFINED src_crypto_legacy_base)
 endif()
 
 if(TARGET mbedcrypto_oberon_mbedtls_imported)
-  set(is_getting_includes TRUE)
-
-  # Get the include paths from nrf_oberon libraries
-  get_target_property(NRF_OBERON_MBEDTLS_INCLUDE_PATH mbedcrypto_oberon_mbedtls_imported
-    INTERFACE_INCLUDE_DIRECTORIES
-  )
-  get_target_property(NRF_OBERON_INCLUDE_PATH mbedcrypto_oberon_imported
-    INTERFACE_INCLUDE_DIRECTORIES
-  )
-
   # Link to the nrf_oberon mbedcrypto library
   target_link_libraries(${mbedcrypto_target}
     PRIVATE
@@ -125,73 +115,50 @@ target_link_libraries(mbedcrypto_oberon_mbedtls_imported
     mbedcrypto_base
 )
 
-  # Add nrf_oberon includes to mbedcrypto library
+  # Add nrf_oberon Mbed TLS includes to mbedcrypto library
   target_include_directories(${mbedcrypto_target}
     INTERFACE
-      ${NRF_OBERON_MBEDTLS_INCLUDE_PATH}
-      ${NRF_OBERON_INCLUDE_PATH}
+      $<TARGET_PROPERTY:mbedcrypto_oberon_mbedtls_imported,INTERFACE_INCLUDE_DIRECTORIES>
 	)
 endif()
 
+if(TARGET mbedcrypto_oberon_imported)
+  # Add nrf_oberon includes to mbedcrypto library
+  target_include_directories(${mbedcrypto_target}
+    INTERFACE
+      $<TARGET_PROPERTY:mbedcrypto_oberon_imported,INTERFACE_INCLUDE_DIRECTORIES>
+  )
+endif()
 
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C AND CONFIG_CC3XX_BACKEND)
-  set(is_getting_includes TRUE)
-
-  # Link directly with cc3xx platform/mbedcrypto libraries
-  target_link_libraries(${mbedcrypto_target} PRIVATE
-    nrf_cc3xx_legacy_crypto_imported
+  # Link legacy nrf_cc3xx library if it is enabled
+  # This will only be used for secure-only builds
+  target_link_libraries(${mbedcrypto_target} 
+    PRIVATE
+      nrf_cc3xx_legacy_crypto_imported
   )
+endif()
 
+if(TARGET nrf_cc3xx_core_imported)
+  # nrf_cc3xx needs functionality from mbedcrypto_base
   target_link_libraries(nrf_cc3xx_core_imported
     INTERFACE
       mbedcrypto_base
   )
+endif()
 
-  # Add cc3xx platform/mbedcrypto includes to mbedcrypto library
-  target_include_directories(mbedcrypto_common
+# Add the nrf_cc3xx core include folder to library build (if it exists)
+if (TARGET nrf_cc3xx_core_imported)
+  target_include_directories(psa_crypto_library_config
     INTERFACE
       $<TARGET_PROPERTY:nrf_cc3xx_core_imported,INTERFACE_INCLUDE_DIRECTORIES>
   )
 endif()
 
-if(TARGET nrf_cc3xx_core_imported)
-  set(is_getting_includes TRUE)
-
-  # The CC3XX needs funcionality which is provided by the inluded source files in src_crypto_legacy
-  # Link CC3XX with mbedcrypto_target because of link order dependency
-  target_link_libraries(nrf_cc3xx_core_imported INTERFACE
-    ${mbedcrypto_target}
-  )
-
-  get_target_property(NRF_CC3XX_MBEDCRYPTO_INCLUDE_PATH nrf_cc3xx_core_imported INTERFACE_INCLUDE_DIRECTORIES)
-
-  target_include_directories(mbedcrypto_common
+# Add the nrf_cc3xx platform include folder to library build (if it exists)
+if (TARGET nrf_cc3xx_platform)
+  target_include_directories(psa_crypto_library_config
     INTERFACE
-      ${NRF_CC3XX_MBEDCRYPTO_INCLUDE_PATH}
-  )
-endif()
-
-target_include_directories(${mbedcrypto_target}
-INTERFACE
-  $<$<TARGET_EXISTS:nrf_cc3xx_platform>:$<TARGET_PROPERTY:nrf_cc3xx_platform,INTERFACE_INCLUDE_DIRECTORIES>>
-)
-
-if(NOT is_getting_includes)
-  if(NOT DEFINED ARM_MBEDTLS_PATH)
-  message(FATAL_ERROR "misconfiguration")
-  endif()
-
-  # Add mbedtls legacy include paths to the mbedtls legacy library and
-  # it's users (users get the headers because we use interface).  Also
-  # since nrf_security only provides some of the headers, add the rest
-  # from Zephyr. We place nrf_security before ARM_MBEDTLS_PATH so that
-  # nrf_security takes precedence.
-  target_include_directories(${mbedcrypto_target}
-  INTERFACE
-  ${NRF_SECURITY_ROOT}/include
-  ${OBERON_PSA_PATH}/include
-  ${OBERON_PSA_PATH}/library
-  ${ARM_MBEDTLS_PATH}/include
-  ${ARM_MBEDTLS_PATH}/library
+      $<TARGET_PROPERTY:nrf_cc3xx_platform,INTERFACE_INCLUDE_DIRECTORIES>
   )
 endif()

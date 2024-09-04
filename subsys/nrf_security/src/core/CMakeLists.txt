@@ -4,6 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (CONFIG_PSA_CORE_OBERON)
+if (CONFIG_MBEDTLS_PSA_CRYPTO_C)
   add_subdirectory(nrf_oberon)
 endif()

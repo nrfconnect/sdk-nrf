@@ -82,9 +82,6 @@ if (${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_crypto_keys
 	PUBLIC
 	platform_s
-	# Link with mbedcrypto_common to get Oberon PSA headers instead of
-	# TF-M PSA headers
-	mbedcrypto_common
 	# Link with tfm_sprt to get the include path for tfm_sp_log.h
 	tfm_sprt
   )

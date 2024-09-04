@@ -139,10 +139,7 @@ kconfig_check_and_set_base_to_one(PSA_WANT_ALG_SP800_108_COUNTER_HMAC)
 
 kconfig_check_and_set_base_int(PSA_MAX_RSA_KEY_BITS)
 
-
-if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
-  # Create the mbed TLS PSA config file that contains all the PSA_WANT definitions
-  configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_want_config.h.template
-    ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}
-  )
-endif()
+# Create the Mbed TLS PSA crypto config file (Contains all the PSA_WANT definitions)
+configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_want_config.h.template
+  ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}
+)
