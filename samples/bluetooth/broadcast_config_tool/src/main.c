@@ -571,6 +571,111 @@ static void broadcast_config_clear(void)
 	}
 }
 
+/**
+ * @brief	Replaces first carriage return or line feed with null terminator.
+ */
+static void remove_cr_lf(char *str)
+{
+	char *p = str;
+
+	while (*p != '\0') {
+		if (*p == '\r' || *p == '\n') {
+			*p = '\0';
+			break;
+		}
+		p++;
+	}
+}
+
+#define SD_FILECOUNT_MAX 120
+#define SD_PATHLEN_MAX	 140
+#define FOLDER_BUF_MAX	 800
+#define SD_LEVEL_MAX	 7
+static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
+uint32_t num_files_added;
+
+static int traverse_down(char *path, uint8_t level)
+{
+	int ret;
+	char tmp_file_buf[FOLDER_BUF_MAX] = {'\0'};
+	char *tmp_file_ptr = tmp_file_buf;
+	size_t buf_size = FOLDER_BUF_MAX;
+
+	if (level > SD_LEVEL_MAX) {
+		LOG_DBG("At level %d, max level reached", level);
+		return 0;
+	}
+
+	ret = sd_card_list_files(path, tmp_file_buf, &buf_size, false);
+	if (ret == -ENOENT) {
+		/* Not able to open, hence likely not a folder */
+		return 0;
+	} else if (ret) {
+		return ret;
+	}
+
+	LOG_DBG("level %d tmp_file_buf is: %s", level, tmp_file_buf);
+
+	char *token = strtok_r(tmp_file_ptr, "\r\n", &tmp_file_ptr);
+
+	while (token != NULL) {
+		if (strstr(token, "System Volume Information") != NULL) {
+			LOG_DBG("Skipping System Volume Information");
+			token = strtok_r(NULL, "\n", &tmp_file_ptr);
+		}
+
+		if (strstr(token, ".wav") != NULL) {
+			LOG_DBG("Skipping wav files");
+			token = strtok_r(NULL, "\n", &tmp_file_ptr);
+		}
+
+		remove_cr_lf(token);
+		LOG_DBG("level %d, token is: %s.", level, token);
+		char fullPath[SD_PATHLEN_MAX] = {'\0'};
+
+		if (path != NULL) {
+			remove_cr_lf(path);
+			strcat(fullPath, path);
+			strcat(fullPath, "/");
+		}
+
+		strcat(fullPath, token);
+		LOG_DBG("Fullpath: %s", fullPath);
+
+		if (strstr(token, ".lc3") != NULL) {
+			strcpy(sd_paths_and_files[num_files_added], fullPath);
+			num_files_added++;
+			LOG_DBG("Added file num %d %s", num_files_added, fullPath);
+			if (num_files_added >= SD_FILECOUNT_MAX) {
+				LOG_WRN("Max file count reached");
+			}
+		} else {
+			ret = traverse_down(fullPath, level + 1);
+			if (ret) {
+				LOG_DBG("Going up on level.");
+			}
+		}
+		token = strtok_r(NULL, "\n", &tmp_file_ptr);
+	}
+
+	return 0;
+}
+
+static int sd_card_toc_gen(void)
+{
+	/* Traverse SD tree */
+	int ret;
+
+	ret = traverse_down(NULL, 0);
+	if (ret) {
+		return ret;
+	}
+
+	LOG_INF("Number of *.lc3 files on SD card: %d", num_files_added);
+
+	return 0;
+}
+
 int main(void)
 {
 	int ret;
@@ -609,6 +714,9 @@ int main(void)
 
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
+	/*TODO: Should be within the lc3_streamer_module */
+	ret = sd_card_toc_gen();
+	ERR_CHK_MSG(ret, "Failed to generate SD card table");
 
 	return 0;
 }
@@ -1588,7 +1696,7 @@ static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
 		dir_path = argv[1];
 	}
 
-	ret = sd_card_list_files(dir_path, buf, &buf_size);
+	ret = sd_card_list_files(dir_path, buf, &buf_size, true);
 	if (ret) {
 		shell_error(shell, "List files err: %d", ret);
 		return ret;
@@ -2365,11 +2473,27 @@ static int cmd_clear(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+static void file_paths_get(size_t idx, struct shell_static_entry *entry);
+
+SHELL_DYNAMIC_CMD_CREATE(folder_names, file_paths_get);
+
+static void file_paths_get(size_t idx, struct shell_static_entry *entry)
+{
+	if (idx < num_files_added) {
+		entry->syntax = sd_paths_and_files[idx];
+	} else {
+		entry->syntax = NULL;
+	}
+	entry->handler = NULL;
+	entry->help = NULL;
+	entry->subcmd = &folder_names;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_file_cmd,
 			       SHELL_COND_CMD(CONFIG_SHELL, list, NULL, "List files on SD card",
 					      cmd_file_list),
-			       SHELL_COND_CMD(CONFIG_SHELL, select, NULL, "Select file on SD card",
-					      cmd_file_select),
+			       SHELL_CMD_ARG(select, &folder_names, "List files on SD card",
+					     cmd_file_select, 4, 2),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(

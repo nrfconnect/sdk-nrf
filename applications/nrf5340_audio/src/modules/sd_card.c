@@ -31,7 +31,7 @@ static struct fs_mount_t mnt_pt = {
 	.fs_data = &fat_fs,
 };
 
-int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
+int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool extra_info)
 {
 	int ret;
 	struct fs_dir_t dirp;
@@ -61,7 +61,7 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 
 		ret = fs_opendir(&dirp, abs_path_name);
 		if (ret) {
-			LOG_ERR("Open assigned path failed");
+			LOG_WRN("Open assigned path failed %d. %s", ret, abs_path_name);
 			return ret;
 		}
 	}
@@ -78,9 +78,17 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size)
 
 		if (buf != NULL) {
 			size_t remaining_buf_size = *buf_size - used_buf_size;
-			ssize_t len = snprintk(
-				&buf[used_buf_size], remaining_buf_size, "[%s]\t%s\n",
-				entry.type == FS_DIR_ENTRY_DIR ? "DIR " : "FILE", entry.name);
+			ssize_t len;
+
+			if (extra_info) {
+				len = snprintk(&buf[used_buf_size], remaining_buf_size,
+					       "[%s]\t%s\r\n",
+					       entry.type == FS_DIR_ENTRY_DIR ? "DIR " : "FILE",
+					       entry.name);
+			} else {
+				len = snprintk(&buf[used_buf_size], remaining_buf_size, "%s\r\n",
+					       entry.name);
+			}
 
 			if (len >= remaining_buf_size) {
 				LOG_ERR("Failed to append to buffer, error: %d", len);
