@@ -311,6 +311,14 @@ set_property(TARGET zephyr_property_target
     -DPROJECT_CONFIG_HEADER_FILE=${CMAKE_CURRENT_BINARY_DIR}/tfm_config.h
 )
 
+configure_file(${NRF_DIR}/subsys/nrf_security/configs/config_extra.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/config_extra.cmake
+)
+
+set_property(TARGET zephyr_property_target
+  APPEND PROPERTY TFM_CMAKE_OPTIONS -DTFM_EXTRA_CONFIG_PATH="${CMAKE_CURRENT_BINARY_DIR}/config_extra.cmake"
+)
+
 if(SYSBUILD)
   set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${CMAKE_BINARY_DIR}/zephyr/tfm_merged.hex"
       CACHE FILEPATH "Kernel hex file" FORCE
