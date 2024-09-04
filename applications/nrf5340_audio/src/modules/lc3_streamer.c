@@ -163,7 +163,7 @@ static int stream_loop(struct lc3_stream *stream)
 
 	ret = lc3_file_open(&stream->file, stream->filename);
 	if (ret) {
-		LOG_ERR("Failed to open file %d", ret);
+		LOG_ERR("Failed to open file %s: %d", stream->filename, ret);
 		return ret;
 	}
 
@@ -369,8 +369,7 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 		return ret;
 	}
 
-	strncpy(streams[*streamer_idx].filename, filename,
-		ARRAY_SIZE(streams[*streamer_idx].filename));
+	strncpy(streams[*streamer_idx].filename, filename, strlen(filename));
 
 	ret = data_fifo_init(&streams[*streamer_idx].fifo);
 	if (ret) {

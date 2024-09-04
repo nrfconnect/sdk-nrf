@@ -1,0 +1,7 @@
+# Temporary Kconfig file for SD card module
+
+module = MODULE_SD_CARD
+module-str = module-sd-card
+source "subsys/logging/Kconfig.template.log_config"
+
+source "Kconfig.zephyr"
