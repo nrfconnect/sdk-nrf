@@ -26,16 +26,16 @@ endif()
 
 if (COMPILE_PSA_APIS OR CONFIG_NRF_SECURITY_LEGACY_AND_PSA)
 
-if (COMPILE_PSA_APIS)
-  list(APPEND src_crypto_oberon
-       ${drivers_path}/oberon_helpers.c
-       ${drivers_path}/oberon_ecdh.c
-       ${drivers_path}/oberon_ecdsa.c
-       ${drivers_path}/oberon_ec_keys.c
-       ${drivers_path}/oberon_jpake.c
-       ${drivers_path}/oberon_spake2p.c
-       ${drivers_path}/oberon_srp.c
-  )
+list(APPEND src_crypto_oberon
+  ${drivers_path}/oberon_helpers.c
+  ${drivers_path}/oberon_ecdh.c
+  ${drivers_path}/oberon_ecdsa.c
+  ${drivers_path}/oberon_ec_keys.c
+  ${drivers_path}/oberon_jpake.c
+  ${drivers_path}/oberon_spake2p.c
+  ${drivers_path}/oberon_srp.c
+  ${drivers_path}/oberon_rsa.c
+)
 
   # This is a workaroudn to avoid a build warning since oberon_rsa.c has an unused variable when RSA is not enabled.
   if(CONFIG_PSA_NEED_OBERON_RSA_ANY_CRYPT OR CONFIG_PSA_NEED_OBERON_RSA_ANY_SIGN OR CONFIG_PSA_NEED_OBERON_KEY_MANAGEMENT_RSA)
