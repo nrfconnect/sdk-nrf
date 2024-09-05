@@ -220,9 +220,9 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
   )
 
   if (CONFIG_MBEDTLS_DEBUG)
-	list(APPEND src_tls
-	  ${ARM_MBEDTLS_PATH}/library/ssl_debug_helpers_generated.c
-	)
+    list(APPEND src_tls
+      ${ARM_MBEDTLS_PATH}/library/ssl_debug_helpers_generated.c
+    )
   endif()
 
   add_library(${mbedtls_target} STATIC

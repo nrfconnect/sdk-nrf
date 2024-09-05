@@ -108,10 +108,10 @@ if(TARGET mbedcrypto_oberon_mbedtls_imported)
       mbedcrypto_oberon_mbedtls_imported
   )
 
-target_link_libraries(mbedcrypto_oberon_mbedtls_imported
-  INTERFACE
-    mbedcrypto_base
-)
+  target_link_libraries(mbedcrypto_oberon_mbedtls_imported
+    INTERFACE
+      mbedcrypto_base
+  )
 
   # Add nrf_oberon Mbed TLS includes to mbedcrypto library
   target_include_directories(${mbedcrypto_target}
