@@ -347,7 +347,7 @@ To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the 
          #. In the mobile app, scan and select the device to update.
          #. Switch to the :guilabel:`Image` tab and tap on :guilabel:`ADVANCED` in the upper right corner of the app.
          #. In the **Firmware Upload** section, tap the :guilabel:`SELECT FILE` button and select the :file:`root.suit` envelope.
-         #. Tap the :guilabel:`START` button.
+         #. Tap the :guilabel:`UPLOAD` button.
          #. Wait for the DFU to finish and then verify that the application works properly.
 
       .. note::
