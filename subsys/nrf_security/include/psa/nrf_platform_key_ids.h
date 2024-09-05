@@ -47,8 +47,8 @@ extern "C" {
 #define USAGE_PUBKEY	   0x21
 #define USAGE_STMTRACE	   0x25
 #define USAGE_COREDUMP	   0x26
-#define USAGE_RMNORDIC	   0xAA
-#define USAGE_RMOEM	   0xBB
+#define USAGE_RMOEM	   0xAA
+#define USAGE_RMNORDIC	   0xBB
 
 /* KeyIDs used by SDFW for Identity Attestation Keys (IAKs) */
 
