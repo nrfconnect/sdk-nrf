@@ -789,11 +789,11 @@ static bool update_radio_bitrate(void)
 
 	switch (esb_cfg.bitrate) {
 
-#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5)
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
 	case ESB_BITRATE_4MBPS:
 		wait_for_ack_timeout_us = RX_ACK_TIMEOUT_US_4MBPS;
 		break;
-#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) */
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || define(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
 
 	case ESB_BITRATE_2MBPS:
 
