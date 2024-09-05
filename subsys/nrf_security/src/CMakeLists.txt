@@ -121,6 +121,9 @@ if(LINKER_CP_OPTION)
 )
 endif()
 
+# Add threading support for PSA core (if enabled)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/threading)
+
 target_link_libraries(${mbedcrypto_target}
   PRIVATE
     mbedcrypto_base
