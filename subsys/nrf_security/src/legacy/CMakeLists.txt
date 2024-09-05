@@ -36,6 +36,7 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR
   CONFIG_PSA_CRYPTO_DRIVER_OBERON OR
   CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
   append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+    aes.c
     cmac.c
     ccm.c
     chachapoly.c
@@ -77,13 +78,10 @@ endif()
 # Add oberon-specific replacement files
 if (CONFIG_OBERON_ONLY_ENABLED)
   list(APPEND src_crypto_legacy
-    ${CMAKE_CURRENT_LIST_DIR}/aes.c
-    ${CMAKE_CURRENT_LIST_DIR}/aes_oberon.c
     ${CMAKE_CURRENT_LIST_DIR}/ecjpake_oberon.c
   )
 else()
   list(APPEND src_crypto_legacy
-    ${ARM_MBEDTLS_PATH}/library/aes.c
     ${CMAKE_CURRENT_LIST_DIR}/dhm_ext.c
   )
 endif()
