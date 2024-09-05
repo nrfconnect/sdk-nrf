@@ -410,6 +410,11 @@ Bluetooth samples
   * :ref:`shell_bt_nus`
   * :ref:`ble_throughput`
 
+* :ref:`peripheral_mds` sample:
+
+  * Fixed an issue where device ID was incorrectly set during system initialization because MAC address was not available at that time.
+    The device ID is now set to ``ncs-ble-testdevice`` by default using the :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID` Kconfig option.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
@@ -768,7 +773,7 @@ Debug libraries
 * :ref:`mod_memfault` library:
 
   * Added location metrics, including GNSS, cellular, and Wi-Fi specific metrics.
-    The metrics are enabled with the :kconfig:option`CONFIG_MEMFAULT_NCS_LOCATION_METRICS` Kconfig option.
+    The metrics are enabled with the :kconfig:option:`CONFIG_MEMFAULT_NCS_LOCATION_METRICS` Kconfig option.
 
 DFU libraries
 -------------
