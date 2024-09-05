@@ -56,7 +56,7 @@ static struct mpsl_context _context;
  */
 static uint32_t get_timeslot_time_us(void)
 {
-#ifdef CONFIG_SOC_SERIES_NRF54LX
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
 	nrf_timer_task_trigger(NRF_TIMER10, NRF_TIMER_TASK_CAPTURE0);
 	return nrf_timer_cc_get(NRF_TIMER10, NRF_TIMER_CC_CHANNEL0);
 #else
@@ -229,7 +229,7 @@ void nrf_flash_sync_get_timestamp_begin(void)
 
 bool nrf_flash_sync_check_time_limit(uint32_t iteration)
 {
-#ifdef CONFIG_SOC_SERIES_NRF54LX
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
 	/* The time taken in a previous write is not a predictor of the time taken
 	 * for the next write. Writing the same value as is already stored is much
 	 * faster than writing a different value. If the first few writes are fast
