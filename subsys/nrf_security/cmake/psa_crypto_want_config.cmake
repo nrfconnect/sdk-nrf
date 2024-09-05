@@ -3,10 +3,9 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-# Convert all standard Kconfig variables for mbed TLS (strip CONFIG_)
+# Convert all PSA_WANT_XXXX Kconfig variables for Mbed TLS (strip CONFIG_)
 
-
-# All PSA_WANT_ symbols in alphabetical order */
+# All PSA_WANT_XXXX symbols in alphabetical order */
 kconfig_check_and_set_base_to_one(PSA_WANT_AES_KEY_SIZE_128)
 kconfig_check_and_set_base_to_one(PSA_WANT_AES_KEY_SIZE_192)
 kconfig_check_and_set_base_to_one(PSA_WANT_AES_KEY_SIZE_256)

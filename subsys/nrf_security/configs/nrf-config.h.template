@@ -1,222 +1,172 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor
+ * Copyright (c) 2024 Nordic Semiconductor
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  */
-
-#ifndef MBEDTLS_CONFIG_PSA_H
-#define MBEDTLS_CONFIG_PSA_H
-
-#if defined(MBEDTLS_PSA_CRYPTO_CONFIG_FILE)
-#include MBEDTLS_PSA_CRYPTO_CONFIG_FILE
-#else
-#error "MBEDTLS_PSA_CRYPTO_CONFIG_FILE expected to be set"
-#endif
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/****************************************************************/
-/* Require built-in implementations based on CRACEN PSA requirements
- *
- * NOTE: Required by the CRACEN driver still, which is checking for
- * MBEDTLS crypto definitions.
+/* The include guards used here ensures that a different Mbed TLS config is not
+ * added to the build and used by accident. Hence, this guard is not 
+ * equivalent to naming of this file.
  */
-/****************************************************************/
-#if defined(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
-#define MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
-#endif
+#ifndef MBEDTLS_CONFIG_FILE_H
+#define MBEDTLS_CONFIG_FILE_H
 
-/****************************************************************/
-/* Require built-in implementations based on PSA requirements
- *
- * NOTE: Required by the TLS stack still, which is checking for MBEDTLS crypto definitions.
- */
-/****************************************************************/
-
-/* Required for MBEDTLS_HAS_ECDH_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_ECDH)
-#define MBEDTLS_ECDH_C
-#define MBEDTLS_ECP_C
-#define MBEDTLS_BIGNUM_C
-#endif
-
-/* Required for MBEDTLS_HAS_ECDSA_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_ECDSA)
-#define MBEDTLS_ECDSA_C
-#define MBEDTLS_ECP_C
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_ASN1_PARSE_C
-#define MBEDTLS_ASN1_WRITE_C
-#endif
-
-/* Required for MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
- *
- * The requirements should all be met on MBEDTLS configurations already.
+/* This file includes configurations for Mbed TLS for platform and TLS/DTLS and X.509
+ * and it should be used inside TF-M build and when CONFIG_MBEDTLS_LEGACY_CRYPTO_C is
+ * not used
  */
 
-#if defined(PSA_WANT_ALG_SHA_1)
-/* TLS/DTLS 1.2 requires SHA-1 support using legacy API for now.
- * Revert this when resolving NCSDK-20975.
- */
-#if defined(CONFIG_MBEDTLS_TLS_LIBRARY)
-#define MBEDTLS_SHA1_C
-#endif
+/* TF-M */
+#cmakedefine MBEDTLS_PSA_CRYPTO_SPM
+
+/* PSA core configurations */
+#cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
+#cmakedefine MBEDTLS_PSA_CRYPTO_C
+#cmakedefine MBEDTLS_USE_PSA_CRYPTO
+/* Avoid redefinition as TF-M defines this on the command line */
+#ifndef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+#cmakedefine MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 #endif
 
-/* Required for MBEDTLS_HAS_ECJPAKE_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_SHA_256)
-#define MBEDTLS_SHA224_C
-#define MBEDTLS_SHA256_C
-#endif
+/* Platform */
+#cmakedefine MBEDTLS_PLATFORM_C
+#cmakedefine MBEDTLS_PLATFORM_MEMORY
+#cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
+#cmakedefine MBEDTLS_MEMORY_BUFFER_ALLOC_C
+#cmakedefine MBEDTLS_DEBUG_C
+#cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 
-/* Required for MBEDTLS_HAS_CBC_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_CBC_PKCS7)
-/* NB: check_config does not do any checks for CBC. */
-#define MBEDTLS_CIPHER_MODE_CBC
-#define MBEDTLS_CIPHER_PADDING_PKCS7
-#define MBEDTLS_AES_C
-#endif
+/* Platform configurations for _ALT defines */
+#cmakedefine MBEDTLS_PLATFORM_EXIT_ALT
+#cmakedefine MBEDTLS_PLATFORM_FPRINTF_ALT
+#cmakedefine MBEDTLS_PLATFORM_PRINTF_ALT
+#cmakedefine MBEDTLS_PLATFORM_SNPRINTF_ALT
+#cmakedefine MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT
+#cmakedefine MBEDTLS_ENTROPY_HARDWARE_ALT
 
-/* Required for MBEDTLS_HAS_CCM_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_CCM)
-#define MBEDTLS_CCM_C
-#define MBEDTLS_AES_C
-#endif
+/* Threading configurations */
+#cmakedefine MBEDTLS_THREADING_C
+#cmakedefine MBEDTLS_THREADING_ALT
 
-/* Required for MBEDTLS_HAS_GCM_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_GCM)
-#define MBEDTLS_GCM_C
-#define MBEDTLS_AES_C
-#endif
+/* Legacy configurations for _ALT defines */
+#cmakedefine MBEDTLS_AES_SETKEY_ENC_ALT
+#cmakedefine MBEDTLS_AES_SETKEY_DEC_ALT
+#cmakedefine MBEDTLS_AES_ENCRYPT_ALT
+#cmakedefine MBEDTLS_AES_DECRYPT_ALT
+#cmakedefine MBEDTLS_AES_ALT
+#cmakedefine MBEDTLS_CMAC_ALT
+#cmakedefine MBEDTLS_CCM_ALT
+#cmakedefine MBEDTLS_GCM_ALT
+#cmakedefine MBEDTLS_CHACHA20_ALT
+#cmakedefine MBEDTLS_POLY1305_ALT
+#cmakedefine MBEDTLS_CHACHAPOLY_ALT
+#cmakedefine MBEDTLS_DHM_ALT
+#cmakedefine MBEDTLS_ECP_ALT
+#cmakedefine MBEDTLS_ECDH_GEN_PUBLIC_ALT
+#cmakedefine MBEDTLS_ECDH_COMPUTE_SHARED_ALT
+#cmakedefine MBEDTLS_ECDSA_GENKEY_ALT
+#cmakedefine MBEDTLS_ECDSA_SIGN_ALT
+#cmakedefine MBEDTLS_ECDSA_VERIFY_ALT
+#cmakedefine MBEDTLS_ECJPAKE_ALT
+#cmakedefine MBEDTLS_RSA_ALT
+#cmakedefine MBEDTLS_SHA1_ALT
+#cmakedefine MBEDTLS_SHA224_ALT
+#cmakedefine MBEDTLS_SHA256_ALT
+#cmakedefine MBEDTLS_SHA384_ALT
+#cmakedefine MBEDTLS_SHA512_ALT
 
-/* Required for MBEDTLS_HAS_CHACHAPOLY_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_CHACHA20_POLY1305)
-#if defined(PSA_WANT_KEY_TYPE_CHACHA20)
-#define MBEDTLS_CHACHA20_C
-#define MBEDTLS_POLY1305_C
-#define MBEDTLS_CHACHAPOLY_C
-#endif
-#endif
+/* Legacy configuration for RNG */
+#cmakedefine MBEDTLS_ENTROPY_FORCE_SHA256
+#cmakedefine MBEDTLS_ENTROPY_MAX_SOURCES                        @MBEDTLS_ENTROPY_MAX_SOURCES@
+#cmakedefine MBEDTLS_NO_PLATFORM_ENTROPY
 
-/* Because we have enabled MBEDTLS_ECP_C we need atleast one ECC curve type. */
-#if defined(PSA_WANT_ECC_BRAINPOOL_P_R1_256)
-#define MBEDTLS_ECP_DP_BP256R1_ENABLED
-#endif
+/* Nordic defines for library support. Note that these configurations are used by the PSA interface */
+#cmakedefine MBEDTLS_LEGACY_CRYPTO_C
+#cmakedefine MBEDTLS_TLS_LIBRARY
+#cmakedefine MBEDTLS_X509_LIBRARY
 
-#if defined(PSA_WANT_ECC_BRAINPOOL_P_R1_384)
-#define MBEDTLS_ECP_DP_BP384R1_ENABLED
-#endif
+/* Platform configurations for Mbed TLS APIs*/
+#cmakedefine MBEDTLS_BASE64_C
+#cmakedefine MBEDTLS_OID_C
+#cmakedefine MBEDTLS_ASN1_PARSE_C
+#cmakedefine MBEDTLS_ASN1_WRITE_C
 
-#if defined(PSA_WANT_ECC_BRAINPOOL_P_R1_512)
-#define MBEDTLS_ECP_DP_BP512R1_ENABLED
-#endif
+/* Ensure these are not enabled internal in NS build */
+#if !defined(MBEDTLS_PSA_CRYPTO_SPM) && !defined(INSIDE_TFM_BUILD)
 
-#if defined(PSA_WANT_ECC_MONTGOMERY_255)
-#define MBEDTLS_ECP_DP_CURVE25519_ENABLED
-#endif
+/* Legacy configurations for Mbed TLS APIs */
+#cmakedefine MBEDTLS_CIPHER_C
+#cmakedefine MBEDTLS_MD_C
+#cmakedefine MBEDTLS_PK_C
+#cmakedefine MBEDTLS_PK_WRITE_C
+#cmakedefine MBEDTLS_PK_PARSE_C
+#cmakedefine MBEDTLS_PEM_PARSE_C
+#cmakedefine MBEDTLS_PEM_WRITE_C
 
-#if defined(PSA_WANT_ECC_MONTGOMERY_448)
-#define MBEDTLS_ECP_DP_CURVE448_ENABLED
-#endif
+/* TLS/DTLS configurations */
+#cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
+#cmakedefine MBEDTLS_SSL_DTLS_CONNECTION_ID
+#cmakedefine MBEDTLS_SSL_CONTEXT_SERIALIZATION
+#cmakedefine MBEDTLS_SSL_DEBUG_ALL
+#cmakedefine MBEDTLS_SSL_ENCRYPT_THEN_MAC
+#cmakedefine MBEDTLS_SSL_EXTENDED_MASTER_SECRET
+#cmakedefine MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+#cmakedefine MBEDTLS_SSL_RENEGOTIATION
+#cmakedefine MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
+#cmakedefine MBEDTLS_SSL_PROTO_TLS1_2
+#cmakedefine MBEDTLS_SSL_PROTO_DTLS
+#cmakedefine MBEDTLS_SSL_ALPN
+#cmakedefine MBEDTLS_SSL_DTLS_ANTI_REPLAY
+#cmakedefine MBEDTLS_SSL_DTLS_HELLO_VERIFY
+#cmakedefine MBEDTLS_SSL_DTLS_SRTP
+#cmakedefine MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE
+#cmakedefine MBEDTLS_SSL_SESSION_TICKETS
+#cmakedefine MBEDTLS_SSL_EXPORT_KEYS
+#cmakedefine MBEDTLS_SSL_SERVER_NAME_INDICATION
+#cmakedefine MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH
+#cmakedefine MBEDTLS_SSL_CACHE_C
+#cmakedefine MBEDTLS_SSL_TICKET_C
+#cmakedefine MBEDTLS_SSL_CLI_C
+#cmakedefine MBEDTLS_SSL_COOKIE_C
+#cmakedefine MBEDTLS_SSL_SRV_C
+#cmakedefine MBEDTLS_SSL_TLS_C
+#cmakedefine MBEDTLS_SSL_IN_CONTENT_LEN                 @MBEDTLS_SSL_IN_CONTENT_LEN@
+#cmakedefine MBEDTLS_SSL_OUT_CONTENT_LEN                @MBEDTLS_SSL_OUT_CONTENT_LEN@
+#cmakedefine MBEDTLS_SSL_CIPHERSUITES                   @MBEDTLS_SSL_CIPHERSUITES@
 
-#if defined(PSA_WANT_ECC_SECP_R1_192)
-#define MBEDTLS_ECP_DP_SECP192R1_ENABLED
-#endif
+#cmakedefine MBEDTLS_X509_RSASSA_PSS_SUPPORT
+#cmakedefine MBEDTLS_X509_USE_C
+#cmakedefine MBEDTLS_X509_CRT_PARSE_C
+#cmakedefine MBEDTLS_X509_CRL_PARSE_C
+#cmakedefine MBEDTLS_X509_CSR_PARSE_C
+#cmakedefine MBEDTLS_X509_CREATE_C
+#cmakedefine MBEDTLS_X509_CRT_WRITE_C
+#cmakedefine MBEDTLS_X509_CSR_WRITE_C
+#cmakedefine MBEDTLS_X509_REMOVE_INFO
 
-#if defined(PSA_WANT_ECC_SECP_R1_224)
-#define MBEDTLS_ECP_DP_SECP224R1_ENABLED
-#endif
-
-#if defined(PSA_WANT_ECC_SECP_R1_256)
-#define MBEDTLS_ECP_DP_SECP256R1_ENABLED
-#endif
-
-#if defined(PSA_WANT_ECC_SECP_R1_384)
-#define MBEDTLS_ECP_DP_SECP384R1_ENABLED
-#endif
-
-#if defined(PSA_WANT_ECC_SECP_R1_521)
-#define MBEDTLS_ECP_DP_SECP521R1_ENABLED
-#endif
-
-#if defined(PSA_WANT_ECC_SECP_K1_192)
-#define MBEDTLS_ECP_DP_SECP192K1_ENABLED
-#endif
-
-#if defined(PSA_WANT_ECC_SECP_K1_224)
-#define MBEDTLS_ECP_DP_SECP224K1_ENABLED
-#endif
-
-#if defined(PSA_WANT_ECC_SECP_K1_256)
-#define MBEDTLS_ECP_DP_SECP256K1_ENABLED
-#endif
-
-/* Required for MBEDTLS_HAS_ECJPAKE_CIPHERSUITE_REQUIREMENTS */
-#if defined(PSA_WANT_ALG_JPAKE)
-#define MBEDTLS_ECP_DP_SECP256R1_ENABLED
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_ECP_C
-#define MBEDTLS_ECJPAKE_C
-#endif
-
-/* Nordic added */
-#if defined(MBEDTLS_PK_PARSE_C)
-#define MBEDTLS_ASN1_PARSE_C
-#endif
-
-#if defined(MBEDTLS_PK_WRITE_C)
-#define MBEDTLS_ASN1_WRITE_C
-#endif
-
-/* TLS/DTLS additions */
-#if !defined(MBEDTLS_PSA_CRYPTO_SPM)
-#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED
-#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED
-#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
-#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_RSA_ENABLED
 #cmakedefine MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED
-#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED
+#cmakedefine MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
 
-#if     defined(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)    || \
-	defined(MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED)     || \
-	defined(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED)   || \
-	defined(MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED)      || \
-	defined(MBEDTLS_KEY_EXCHANGE_PSK_ENABLED)           || \
-	defined(MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED)       || \
-	defined(MBEDTLS_KEY_EXCHANGE_RSA_ENABLED)           || \
-	defined(MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED)       || \
-	defined(MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED)
-#define MBEDTLS_X509_CRT_PARSE_C
-#define MBEDTLS_ASN1_PARSE_C
-#define MBEDTLS_ASN1_WRITE_C
-#define MBEDTLS_X509_USE_C
-#define MBEDTLS_PK_PARSE_C
-#define MBEDTLS_PK_WRITE_C
-#define MBEDTLS_PK_C
-#define MBEDTLS_OID_C
-#define MBEDTLS_DHM_C
-#define MBEDTLS_BIGNUM_C
-#define MBEDTLS_BASE64_C
-#define MBEDTLS_PEM_PARSE_C
+#endif /* !defined(MBEDTLS_PSA_CRYPTO_SPM) && !defined(INSIDE_TFM_BUILD) */
+
+#cmakedefine MBEDTLS_PSA_CRYPTO_CONFIG
+
+/* Controlling some MPI sizes */
+#cmakedefine MBEDTLS_MPI_WINDOW_SIZE       @MBEDTLS_MPI_WINDOW_SIZE@ /**< Maximum window size used. */
+#cmakedefine MBEDTLS_MPI_MAX_SIZE          @MBEDTLS_MPI_MAX_SIZE@ /**< Maximum number of bytes for usable MPIs. */
+
+#if CONFIG_MBEDTLS_CMAC_ALT
+/* NCSDK-24838 */
+#define MBEDTLS_CIPHER_MODE_CBC
 #endif
 
-#endif /* MBEDTLS_PSA_CRYPTO_SPM */
-
-#if defined(CONFIG_MBEDTLS_DEBUG)
-#define MBEDTLS_ERROR_C
-#define MBEDTLS_DEBUG_C
-#define MBEDTLS_SSL_DEBUG_ALL
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* MBEDTLS_CONFIG_PSA_H */
+#endif /* MBEDTLS_CONFIG_FILE_H */
