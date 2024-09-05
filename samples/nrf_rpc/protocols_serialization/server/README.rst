@@ -48,10 +48,19 @@ The following snippets are available:
 User interface
 **************
 
-Button 1:
-   * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
-     This is used for testing the crash log feature.
-   * Otherwise: not available.
+.. tabs::
+   .. group-tab:: nRF52840 DK
+
+      Button 4:
+         * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
+            This is used for testing the crash log feature.
+         * Otherwise: not available.
+
+   .. group-tab:: nRF54L15 DK
+      Button 3:
+         * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
+           This is used for testing the crash log feature.
+         * Otherwise: not available.
 
 Building and running
 ********************
@@ -113,7 +122,7 @@ In the protocols serialization samples, one peripheral is used for shell and log
         .. figure:: /images/ps_nrf52_connections.png
             :alt: nRF52840 DK server and client pin connections
 
-    .. group-tab:: nRF54l15 DK
+    .. group-tab:: nRF54L15 DK
 
         By default, the nRF54L15 DK uses the ``uart20`` peripheral for shell and logging purposes, and the ``uart21`` peripheral for sending OpenThread and Bluetooth remote procedure calls (RPCs).
 
