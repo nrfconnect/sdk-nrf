@@ -364,6 +364,11 @@ Bluetooth samples
 
    * Fixed an issue where the HCI LE Set Extended Advertising Enable command was called with a NULL pointer.
 
+* :ref:`peripheral_mds` sample:
+
+  * Fixed an issue where device ID was incorrectly set during system initialization because MAC address was not available at that time.
+    The device ID is now set to ``ncs-ble-testdevice`` by default using the :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID` Kconfig option.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
