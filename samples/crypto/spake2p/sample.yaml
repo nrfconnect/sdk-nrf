@@ -29,6 +29,7 @@ tests:
     sysbuild: true
     tags: introduction psa cracen sysbuild ci_samples_crypto
     platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp/ns
     harness: console
@@ -37,6 +38,7 @@ tests:
       regex:
         - ".*Example finished successfully!.*"
     integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp/ns
   sample.spake2p.cracen.crypto_service:

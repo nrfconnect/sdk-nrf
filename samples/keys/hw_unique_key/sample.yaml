@@ -14,6 +14,7 @@ common:
     - nrf9151dk/nrf9151/ns
     - nrf52840dk/nrf52840
     - nrf21540dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
     - nrf54l15pdk/nrf54l15/cpuapp
   integration_platforms:
     - nrf5340dk/nrf5340/cpuapp
@@ -26,6 +27,7 @@ common:
     - nrf9151dk/nrf9151/ns
     - nrf52840dk/nrf52840
     - nrf21540dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
     - nrf54l15pdk/nrf54l15/cpuapp
   harness: console
   harness_config:

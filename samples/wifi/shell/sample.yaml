@@ -335,6 +335,14 @@ tests:
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build sysbuild ci_samples_wifi
+  sample.nrf7002eb.nrf54l15dk.shell:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf700x_nrf54l15dk
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.psa:
     build_only: true
     extra_args: CONFIG_WPA_SUPP_CRYPTO_PSA=y

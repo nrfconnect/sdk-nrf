@@ -22,6 +22,7 @@ tests:
       - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
     platform_allow: >
       nrf52dk/nrf52832
@@ -31,6 +32,7 @@ tests:
       nrf5340dk/nrf5340/cpunet
       nrf21540dk/nrf52840
       nrf54h20dk/nrf54h20/cpurad
+      nrf54l15dk/nrf54l15/cpuapp
       nrf54l15pdk/nrf54l15/cpuapp
     tags: esb ci_build sysbuild ci_samples_esb
   sample.esb.ptx.dynamic_irq:
