@@ -5,13 +5,8 @@
  *
  */
 
-#ifndef PSA_CRYPTO_WANT_CONFIG_H
-#define PSA_CRYPTO_WANT_CONFIG_H
-
-/* TODO make sure this required */
-#ifndef MBEDTLS_PSA_CRYPTO_CONFIG
-#define MBEDTLS_PSA_CRYPTO_CONFIG
-#endif
+#ifndef PSA_CRYPTO_CONFIG_H
+#define PSA_CRYPTO_CONFIG_H
 
 /*
  * All PSA_WANT_ symbols in alphabetical order
@@ -150,4 +145,4 @@
 /* The Adjusting is done in this file */
 #define PSA_CRYPTO_ADJUST_KEYPAIR_TYPES_H
 
-#endif /* PSA_CRYPTO_WANT_CONFIG_H */
+#endif /* PSA_CRYPTO_CONFIG_H */
