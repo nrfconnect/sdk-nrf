@@ -27,6 +27,7 @@ FAKE_VALUE_FUNC(otError, otDatasetSetActiveTlvs, otInstance *, const otOperation
 FAKE_VALUE_FUNC(otError, otDatasetGetActiveTlvs, otInstance *, otOperationalDatasetTlvs *);
 FAKE_VALUE_FUNC(otError, otDatasetSetActive, otInstance *, const otOperationalDataset *);
 FAKE_VALUE_FUNC(otError, otDatasetGetActive, otInstance *, otOperationalDataset *);
+FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otThreadDiscover);                                                                       \
@@ -34,7 +35,8 @@ FAKE_VALUE_FUNC(otError, otDatasetGetActive, otInstance *, otOperationalDataset 
 	f(otDatasetSetActiveTlvs);                                                                 \
 	f(otDatasetGetActiveTlvs);                                                                 \
 	f(otDatasetSetActive);                                                                     \
-	f(otDatasetGetActive)
+	f(otDatasetGetActive);                                                                     \
+	f(nrf_rpc_cbkproxy_out_get);
 
 extern uint64_t ot_thread_discover_cb_encoder(uint32_t callback_slot, uint32_t _rsv0,
 					      uint32_t _rsv1, uint32_t _ret,
@@ -61,6 +63,7 @@ static void tc_setup(void *f)
  */
 ZTEST(ot_rpc_commissioning_server, test_otThreadDiscover)
 {
+	nrf_rpc_cbkproxy_out_get_fake.return_val = (void *)0xfacecafe;
 	otThreadDiscover_fake.return_val = OT_ERROR_NONE;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
@@ -74,7 +77,7 @@ ZTEST(ot_rpc_commissioning_server, test_otThreadDiscover)
 	zassert_equal(otThreadDiscover_fake.arg2_val, 0x4321);
 	zassert_equal(otThreadDiscover_fake.arg3_val, false);
 	zassert_equal(otThreadDiscover_fake.arg4_val, true);
-	zassert_equal_ptr(otThreadDiscover_fake.arg5_val, NULL);
+	zassert_equal_ptr(otThreadDiscover_fake.arg5_val, (void *)0xfacecafe);
 	zassert_equal_ptr(otThreadDiscover_fake.arg6_val, (void *)0xcafeface);
 }
 

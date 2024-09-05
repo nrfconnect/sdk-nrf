@@ -139,8 +139,15 @@ bool nrf_rpc_decode_is_null(struct nrf_rpc_cbor_ctx *ctx)
 		return true;
 	}
 
-	if (ctx->zs->constant_state->error == ZCBOR_ERR_WRONG_TYPE) {
+	switch (ctx->zs->constant_state->error) {
+	/* The next data item is not a simple value (Major 7) */
+	case ZCBOR_ERR_WRONG_TYPE:
+	/* The next data item is a simple value other than null (for example, a bool) */
+	case ZCBOR_ERR_WRONG_VALUE:
 		zcbor_pop_error(ctx->zs);
+		break;
+	default:
+		break;
 	}
 
 	return false;
