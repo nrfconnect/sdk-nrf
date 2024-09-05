@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+
+config BUILD_ALSO_FOR_RADIO_CORE
+	bool "Build also for the radio CPU"
+
+config RADIO_BOARD_TARGET_CPUCLUSTER
+	string
+	depends on BUILD_ALSO_FOR_RADIO_CORE
+	default "cpurad" if SOC_NRF54H20_CPUAPP || SOC_NRF9280_CPUAPP
