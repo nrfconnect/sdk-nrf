@@ -42,10 +42,10 @@ struct data_fifo {
 };
 
 #define DATA_FIFO_DEFINE(name, elements_max_in, block_size_max_in)                                 \
-	char __aligned(WB_UP(1))                                                                   \
-		_msgq_buffer_##name[(elements_max_in) * sizeof(struct data_fifo_msgq)] = {0};      \
-	char __aligned(WB_UP(1))                                                                   \
-		_slab_buffer_##name[(elements_max_in) * (block_size_max_in)] = {0};                \
+	char __aligned(WB_UP(                                                                      \
+		1)) _msgq_buffer_##name[(elements_max_in) * sizeof(struct data_fifo_msgq)] = {0};  \
+	char __aligned(WB_UP(1)) _slab_buffer_##name[(elements_max_in) * (block_size_max_in)] = {  \
+		0};                                                                                \
 	struct data_fifo name = {.msgq_buffer = _msgq_buffer_##name,                               \
 				 .slab_buffer = _slab_buffer_##name,                               \
 				 .block_size_max = block_size_max_in,                              \
@@ -163,7 +163,7 @@ int data_fifo_empty(struct data_fifo *data_fifo);
 int data_fifo_uninit(struct data_fifo *data_fifo);
 
 /**
- * @brief Initialise the data_fifo.
+ * @brief Initialize the data_fifo.
  *
  * @param data_fifo Pointer to the data_fifo structure.
  *
@@ -171,6 +171,16 @@ int data_fifo_uninit(struct data_fifo *data_fifo);
  * @retval value	Return values from k_mem_slab_init.
  */
 int data_fifo_init(struct data_fifo *data_fifo);
+
+/**
+ * @brief Test if the data_fifo state.
+ *
+ * @param data_fifo Pointer to the data_fifo structure.
+ *
+ * @retval false	Uninitialized.
+ * @retval true		Initialized.
+ */
+bool data_fifo_state(struct data_fifo *data_fifo);
 
 /**
  * @}

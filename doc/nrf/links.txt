@@ -216,6 +216,8 @@
 
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
+.. _`nRF Connect SDK Add-ons`: https://nrfconnect.github.io/ncs-app-index/
+
 .. ### Source: githubusercontent.com
 
 .. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
@@ -283,6 +285,10 @@
 .. _`nRF9160 DK board controller firmware`: https://www.nordicsemi.com/Products/Development-hardware/nRF9160-DK/Download?lang=en#B460A4E1F91A40B99C6432AD8CEC767C
 .. _`SUPL client download`: https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF9160-DK/Download#supl-c
 
+.. _`Nordic nRF9151 DK`:
+.. _`nRF9151 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-DK
+.. _`nRF9151 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-DK/Download?lang=en#infotabs
+
 .. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
 .. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
@@ -290,9 +296,11 @@
 
 .. _`nRF9160 product website (compatible downloads)`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160/Download#infotabs
 .. _`nRF9161 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9161/Download#infotabs
+.. _`nRF9151 product website (compatible downloads)`: https://www.nordicsemi.com/Products/nRF9151/Download#infotabs
 
 .. _`nRF9160 Certifications`: https://www.nordicsemi.com/Products/Low-power-Cellular-IoT/nRF9160-Certifications
 .. _`nRF9161 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9161-Global-and-regulatory?lang=en#infotabs
+.. _`nRF9151 Certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications/nRF9151-Global-and-regulatory?lang=en#infotabs
 .. _`nRF91 Series certifications`: https://www.nordicsemi.com/Products/Wireless/Low-power-cellular-IoT/nRF91-Series-certifications?lang=en#infotabs
 .. _`Energy efficiency`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/What-is-cellular-IoT#energy_efficiency
 .. _`Cellular IoT unique features`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Unique-Features?lang=en#infotabs
@@ -619,15 +627,15 @@
 .. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
 .. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
 .. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
-.. _`Measuring current on nRF9160 DK`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/hw_measure_current.html
 
 .. _`nRF9160 DK GPS`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
 
 .. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
 .. _`Security protocol for cellular IoT`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/security_protocols.html
 
-.. _`nRF9160 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf91_dk/page/UG/nrf91_DK/intro.html
+.. _`nRF9160 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/nrf9160_board_controller.html
+.. _`Measuring current on nRF9160 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
 .. _`External memory section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/external_memory.html
 .. _`Device programming section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/operating_modes/mcu_device_programming.html
 .. _`VDD supply rail section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/power_sources_vdd.html
@@ -639,7 +647,14 @@
 .. _`nRF9161 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9161 DK board control section in the nRF9161 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
 .. _`Measuring current on nRF9161 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9161_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
+
+.. _`nRF9151 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/nRF9151_html5_keyfeatures.html
 .. _`nRF9151 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dect.html
+.. _`nRF9151 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/gps.html
+
+.. _`nRF9151 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/intro.html
+.. _`nRF9151 DK board control section in the nRF9151 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
+.. _`Measuring current on nRF9151 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
 
 .. _`AT Commands Reference Guide`:
 .. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html
@@ -752,6 +767,7 @@
 .. _`nRF21540 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
 .. _`nRF21540 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_ek/page/UG/nrf21540_DK/intro.html
 
+.. _`AP-Protect for nRF9151`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
 .. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
 .. _`AP-Protect for nRF5340`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/debugandtrace.html#ariaid-title9
@@ -793,6 +809,7 @@
 .. _`GPS interface and antenna`: https://docs.nordicsemi.com/bundle/nwp_033/page/WP/nwp_033/nwp_033_gps.html
 
 .. _`nRF9160 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_ic_revision_overview.html
+.. _`nRF9161 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_ic_revision_overview.html
 
 .. _`SWD Select`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/programming_debugging_interface.html
 
@@ -837,6 +854,7 @@
 .. _`Details View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_details.html
 .. _`Memory report`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/memory_overview.html
 .. _`Kconfig action in the Actions View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_actions.html
+.. _`Application support overview`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/applications.html
 .. _`Create a new application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#create-a-new-application
 .. _`Browse samples`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#browse-samples
 .. _`nRF Terminal documentation`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_panel.html#nrf-connect-and-nrf-terminal-profiles
@@ -1466,6 +1484,12 @@
 .. _`Wireshark with Lua`: https://wiki.wireshark.org/Lua
 .. _`Wireshark Unix Build setup`: https://www.wireshark.org/docs/wsdg_html_chunked/ChapterSetup.html#ChSetupUNIX
 
+.. ### Source: analog.com
+
+.. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
+.. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
+.. _`ADXL367`: https://www.analog.com/en/products/ADXL367.html#product-overview
+
 .. ### Source: other (2 links or less from the same URL)
 
 .. _`Amazon Root CA 1`: https://www.amazontrust.com/repository/AmazonRootCA1.pem
@@ -1475,10 +1499,6 @@
 .. _`MQTT getting started`: https://mqtt.org/getting-started/
 
 .. _`iBasis IoT network coverage`: https://ibasis.com/solutions/iot-connectivity/network-coverage/
-
-.. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
-.. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
-.. _`ADXL367`: https://www.analog.com/en/products/ADXL367.html#product-overview
 
 .. _`Kconfig language`: https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html
 
@@ -1605,6 +1625,8 @@
 .. _`CoreMark®`: https://www.eembc.org/coremark/
 
 .. _`nrf-esl-bluetooth`: https://github.com/NordicPlayground/nrf-esl-bluetooth
+
+.. _`Wireless Logic LTE-M/NB-IoT network coverage`: https://www.wirelesslogic.com/simclaim/nsctrial/
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 

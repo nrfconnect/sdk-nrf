@@ -19,7 +19,7 @@ endif()
 
 # If the BMM350 driver is not used, use a minimal initialization instead to save power.
 # Once a driver is available in the Zephyr tree, this can be removed.
-if (CONFIG_REGULATOR AND CONFIG_I2C AND NOT CONFIG_BMM350)
+if (CONFIG_SENSOR AND CONFIG_REGULATOR AND CONFIG_I2C AND NOT CONFIG_BMM350)
   zephyr_library_named(bmm350_init_minimal)
   zephyr_library_sources(bmm350_init_minimal.c)
 endif()

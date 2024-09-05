@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Connection Subrating sample
-  name: BLE Connection Subrating
+  name: Bluetooth LE Connection Subrating
 tests:
   sample.bluetooth.subrating.build:
     sysbuild: true

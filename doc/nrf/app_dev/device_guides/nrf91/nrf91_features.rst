@@ -11,15 +11,15 @@ The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF fron
 These SiPs are designed to support a wide range of cellular IoT applications and DECT NR+ applications.
 
 Development Kits and Evaluation Kits
-  * nRF9160 DK: A development kit for designing and developing application firmware on the nRF9160 :term:`System in Package (SiP)`, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 13 support.
-  * nRF9161 DK: A development kit for designing and developing application firmware on the nRF9161 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
-  * nRF9151 DK: A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
-  * nRF9131 EK: A single-board evaluation kit for the nRF9131 SiP, designed for DECT NR+ applications.
+  * nRF9160 DK - A development kit for designing and developing application firmware on the nRF9160 :term:`System in Package (SiP)`, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 13 support.
+  * nRF9161 DK - A development kit for designing and developing application firmware on the nRF9161 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
+  * nRF9151 DK - A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
+  * nRF9131 EK - A single-board evaluation kit for the nRF9131 SiP, designed for DECT NR+ applications.
 
 Prototyping Platforms
-  * Nordic Thingy:91: A battery-operated prototyping platform for cellular IoT systems, suitable for prototyping asset tracking, environmental monitoring and more.
+  * Nordic Thingy:91 - A battery-operated prototyping platform for cellular IoT systems, suitable for prototyping asset tracking, environmental monitoring and more.
     Thingy:91 integrates an nRF9160 SiP that supports LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) and an nRF52840 SoC that supports Bluetooth® Low Energy, Near Field Communication (NFC) and USB.
-  * Nordic Thingy:91 X: An advanced version of the Thingy:91.
+  * Nordic Thingy:91 X - An advanced version of the Thingy:91.
     Thingy:91 X integrates the following components:
 
     * An nRF9151 SiP with LTE-M, NB-IoT, and Global Navigation Satellite System (GNSS) support.
@@ -71,7 +71,7 @@ Application
 ===========
 
 The user application runs in NSPE.
-Therefore, it must be built for the ``nrf9161dk/nrf9161/ns``, ``nrf9160dk/nrf9160/ns``, or ``thingy91/nrf9160/ns`` board target.
+Therefore, it must be built for the ``nrf9151dk/nrf9151/ns``, ``nrf9161dk/nrf9161/ns``, ``nrf9160dk/nrf9160/ns``, or ``thingy91/nrf9160/ns`` board target, depending on the DK that you are using.
 
 The application image might require other images to be present.
 Some samples include the :ref:`bootloader` sample (:kconfig:option:`CONFIG_SECURE_BOOT`) and :doc:`mcuboot:index-ncs` (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`).
@@ -87,7 +87,7 @@ It is controlled through AT commands.
 The AT commands are documented in the `nRF91x1 AT Commands Reference Guide`_  and `nRF9160 AT Commands Reference Guide`_.
 
 The firmware for the modem is available as a precompiled binary.
-You can download the firmware from the `nRF9161 product website (compatible downloads)`_ or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
+You can download the firmware from the `nRF9151 product website (compatible downloads)`_, `nRF9161 product website (compatible downloads)`_, or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
 The zip file contains the release notes, and both the full firmware and patches to update from one version to another.
 A delta patch can only update the modem firmware from one specific version to another version (for example, v1.2.1 to v1.2.2).
 If you need to perform a major version update (for example, v1.2.x to v1.3.x), you need an external flash with a minimum size of 4 MB.
@@ -98,7 +98,7 @@ For more information, see the `nRF9161 Mobile network operator certifications`_ 
 .. note::
 
    Most operators do not require certifications other than GCF or PTCRB.
-   For the current status of GCF and PTCRB certifications, see `nRF9161 certifications`_ or `nRF9160 certifications`_, depending on the SiP you are using.
+   For the current status of GCF and PTCRB certifications, see `nRF9151 certifications`_, `nRF9161 certifications`_, or `nRF9160 certifications`_, depending on the SiP you are using.
 
 .. _nrf91_update_modem_fw:
 .. _nrf9160_update_modem_fw:
@@ -115,7 +115,7 @@ Full update
     Both methods use the Simple Management Protocol (SMP) to provide an interface over UART, which enables the device to perform the update.
 
     * You can use the nRF Connect Programmer to perform the update, regardless of the images that are part of the existing firmware of the device.
-      For example, you can update the modem on an nRF9160 DK using the instructions described in :ref:`nrf9160_updating_fw_modem` in the Developing with nRF9160 DK documentation.
+      For example, you can update the modem on an nRF9160 DK using the instructions described in the :ref:`nrf9160_updating_fw_modem` section.
 
     * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
       See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.
@@ -142,7 +142,7 @@ The modem can operate on a number of LTE bands.
 To check which bands are supported by a particular modem firmware version, see the release notes for that version.
 
 You can use band lock to restrict modem operation to a subset of the supported bands, which might improve the performance of your application.
-To check which bands are certified in your region, visit `nRF9161 certifications`_ or `nRF9160 certifications`_, depending on the SiP you are using.
+To check which bands are certified in your region, visit `nRF9151 certifications`_, `nRF9161 certifications`_, or `nRF9160 certifications`_, depending on the SiP you are using.
 
 To set the LTE band lock, enable the :ref:`lte_lc_readme` library by setting the Kconfig option :kconfig:option:`CONFIG_LTE_LINK_CONTROL`  to ``y`` in your :file:`prj.conf` project configuration file.
 
@@ -243,7 +243,7 @@ GNSS
 
 An nRF91 Series device is a highly versatile device that integrates both cellular and GNSS functionality.
 Note that GNSS functionality is only available on the SICA variant and not on the SIAA or SIBA variants.
-For an nRF9160 SiP, see `nRF9160 SiP revisions and variants`_ for more information.
+For more information, see `nRF9161 SiP revisions and variants`_ or `nRF9160 SiP revisions and variants`_, depending on the SiP you are using.
 
 There are many GNSS constellations (GPS, BeiDou, Galileo, GLONASS) available but GPS is the most mature technology.
 An nRF91 Series device supports both GPS L1 C/A (Coarse/Acquisition) and QZSS L1C/A at 1575.42 MHz.
@@ -293,7 +293,7 @@ Concurrent GNSS and LTE
 
 The GNSS operation in an nRF91 Series device is time-multiplexed with the LTE modem.
 Therefore, the LTE modem must either be completely deactivated or in `RRC idle mode <Radio Resource Control_>`_ or `Power Saving Mode (PSM)`_ when using the GNSS receiver.
-For more information, see the `nRF9161 GPS receiver Specification`_ or the `nRF9160 GPS receiver Specification`_, depending on the SiP you are using.
+For more information, see the `nRF9151 GPS receiver Specification`_, `nRF9161 GPS receiver Specification`_, or the `nRF9160 GPS receiver Specification`_, depending on the SiP you are using.
 
 Enhancements to GNSS
 ====================

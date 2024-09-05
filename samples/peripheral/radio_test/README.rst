@@ -109,8 +109,8 @@ User interface
      - <duty_cycle>
      - Duty cycle in percent (two decimal digits, between 01 and 90).
    * - start_rx
-     -
-     - Start RX.
+     - <packet_num>
+     - Start RX (continuous RX mode is used if no argument is provided).
    * - start_rx_sweep
      -
      - Start the RX sweep.

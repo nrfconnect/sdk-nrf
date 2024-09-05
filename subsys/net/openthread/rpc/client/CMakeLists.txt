@@ -8,11 +8,14 @@ zephyr_library()
 
 zephyr_library_sources(
   ot_rpc_if_client.c
+  ot_rpc_instance_client.c
   ot_rpc_cli_client.c
+  ot_rpc_coap_client.c
   ot_rpc_ctrl_client.c
   ot_rpc_commissioning_client.c
   ot_rpc_diag_client.c
-  ot_rpc_ot_message_client.c
+  ot_rpc_message_client.c
+  ot_rpc_udp_client.c
 )
 
 zephyr_library_include_directories(

@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_DVFS_STATE_$(dvfs_state)_ENABLE
+	bool "Handle the DVFS $(dvfs_state) state"
+	default y
+
+if DESKTOP_DVFS_STATE_$(dvfs_state)_ENABLE
+
+config DESKTOP_DVFS_STATE_$(dvfs_state)_TIMEOUT_MS
+	int "Timeout in milliseconds for the DVFS $(dvfs_state) state" if $(dvfs_timeout) != 0
+	default $(dvfs_timeout)
+	range 0 65535
+	help
+	  Timeout in milliseconds specifying time after which DVFS request related to
+	  the DVFS $(dvfs_state) state times out.
+	  A request is automatically cleared on timeout.
+
+choice "DESKTOP_DVFS_STATE_$(dvfs_state)_ACTIVE_FREQ"
+	prompt "Active frequency of the DVFS $(dvfs_state) state"
+	default DESKTOP_DVFS_STATE_$(dvfs_state)_ACTIVE_$(dfvs_frequency)
+
+config DESKTOP_DVFS_STATE_$(dvfs_state)_ACTIVE_FREQ_HIGH
+	bool "High frequency"
+
+config DESKTOP_DVFS_STATE_$(dvfs_state)_ACTIVE_FREQ_MEDLOW
+	bool "Medium low frequency"
+
+endchoice
+
+endif # DESKTOP_DVFS_STATE_$(dvfs_state)_ENABLE

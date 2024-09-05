@@ -75,7 +75,7 @@ The average current reduces to 6 µA, which implies 9.5 years of battery life on
 
 For a similar configuration, see the :ref:`udp` sample, which transmits UDP packets to an LTE network using an nRF91 Series DK.
 You can use the sample to characterize the current consumption of the nRF91 Series SiP.
-It is optimized for low power operation on the ``nrf9160dk/nrf9160/ns`` or ``nrf9161dk/nrf9161/ns`` board target without any modifications.
+It is optimized for low power operation on the board targets ``nrf9151dk/nrf9151/ns``, ``nrf9161dk/nrf9161/ns``, and ``nrf9160dk/nrf9160/ns`` without any modifications.
 
 Verify idle current due to other peripherals
 ============================================

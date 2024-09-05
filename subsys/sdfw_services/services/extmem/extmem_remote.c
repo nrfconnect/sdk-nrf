@@ -160,30 +160,32 @@ static void write_worker_fn(struct server_state *state, struct extmem_req *req)
 
 	struct extmem_rsp rsp;
 
-	req->extmem_req_msg_choice = extmem_req_msg_extmem_write_setup_req_m_c;
-	req->extmem_req_msg_extmem_write_setup_req_m.extmem_write_setup_req_addr =
-		(uintptr_t)flash_op_buffer;
-	req->extmem_req_msg_extmem_write_setup_req_m.extmem_write_setup_req_error =
-		EXTMEM_RESULT_SUCCESS;
-	req->extmem_req_msg_extmem_write_setup_req_m.extmem_write_setup_req_request_id =
-		state->action_data.write.request_id;
+	if (IS_ENABLED(CONFIG_SSF_EXTMEM_WRITE_ERASE_OPS)) {
+		req->extmem_req_msg_choice = extmem_req_msg_extmem_write_setup_req_m_c;
+		req->extmem_req_msg_extmem_write_setup_req_m.extmem_write_setup_req_addr =
+			(uintptr_t)flash_op_buffer;
+		req->extmem_req_msg_extmem_write_setup_req_m.extmem_write_setup_req_error =
+			EXTMEM_RESULT_SUCCESS;
+		req->extmem_req_msg_extmem_write_setup_req_m.extmem_write_setup_req_request_id =
+			state->action_data.write.request_id;
 
-	int ret = ssf_client_send_request(&extmem_srvc, req, &rsp, NULL);
+		int ret = ssf_client_send_request(&extmem_srvc, req, &rsp, NULL);
 
-	if (ret == 0) {
-		size_t invd_size = cache_size_adjust(state->action_data.read.len);
+		if (ret == 0) {
+			size_t invd_size = cache_size_adjust(state->action_data.read.len);
 
-		sys_cache_data_invd_range(flash_op_buffer, invd_size);
+			sys_cache_data_invd_range(flash_op_buffer, invd_size);
 
-		ret = flash_write(fdev, state->action_data.write.offset, flash_op_buffer,
-				  state->action_data.write.len);
+			ret = flash_write(fdev, state->action_data.write.offset, flash_op_buffer,
+					state->action_data.write.len);
+		}
+
+		if (ret == 0) {
+			result = EXTMEM_RESULT_SUCCESS;
+		}
+
+		LOG_HEXDUMP_DBG(flash_op_buffer, state->action_data.write.len, "Write data");
 	}
-
-	if (ret == 0) {
-		result = EXTMEM_RESULT_SUCCESS;
-	}
-
-	LOG_HEXDUMP_DBG(flash_op_buffer, state->action_data.write.len, "Write data");
 
 	req->extmem_req_msg_choice = extmem_req_msg_extmem_write_done_req_m_c;
 	req->extmem_req_msg_extmem_write_done_req_m.extmem_write_done_req_error = result;
@@ -196,13 +198,17 @@ static void erase_worker_fn(struct server_state *state, struct extmem_req *req)
 	const struct device *fdev = FLASH_DEVICE;
 	int result = EXTMEM_RESULT_REMOTE_ERROR;
 
-	int err = flash_erase(fdev, state->action_data.erase.offset, state->action_data.erase.len);
+	if (IS_ENABLED(CONFIG_SSF_EXTMEM_WRITE_ERASE_OPS)) {
+		int err = flash_erase(fdev,
+				      state->action_data.erase.offset,
+				      state->action_data.erase.len);
 
-	if (err == 0) {
-		result = EXTMEM_RESULT_SUCCESS;
+		if (err == 0) {
+			result = EXTMEM_RESULT_SUCCESS;
+		}
+
+		LOG_HEXDUMP_DBG(flash_op_buffer, state->action_data.erase.len, "erase data");
 	}
-
-	LOG_HEXDUMP_DBG(flash_op_buffer, state->action_data.erase.len, "erase data");
 
 	req->extmem_req_msg_choice = extmem_req_msg_extmem_erase_done_req_m_c;
 	req->extmem_req_msg_extmem_erase_done_req_m.extmem_erase_done_req_error = result;

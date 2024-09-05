@@ -67,12 +67,13 @@ static int metadata_u8_add(uint8_t buffer[], uint8_t *index, uint8_t type, uint8
 	return 0;
 }
 
-static void le_audio_event_publish(enum le_audio_evt_type event)
+static void le_audio_event_publish(enum le_audio_evt_type event, const struct stream_index *idx)
 {
 	int ret;
 	struct le_audio_msg msg;
 
 	msg.event = event;
+	msg.idx = *idx;
 
 	ret = zbus_chan_pub(&le_audio_chan, &msg, LE_AUDIO_ZBUS_EVENT_WAIT_TIME);
 	ERR_CHK(ret);
@@ -108,6 +109,8 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 		return;
 	}
 
+	le_audio_event_publish(LE_AUDIO_EVT_STREAM_SENT, &idx);
+
 	ERR_CHK(bt_le_audio_tx_stream_sent(idx));
 }
 
@@ -123,7 +126,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	ERR_CHK(bt_le_audio_tx_stream_started(idx));
 
-	le_audio_event_publish(LE_AUDIO_EVT_STREAMING);
+	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, &idx);
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Broadcast source %p started", (void *)stream);
@@ -141,7 +144,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 		return;
 	}
 
-	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING);
+	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, &idx);
 
 	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)stream, reason);
 

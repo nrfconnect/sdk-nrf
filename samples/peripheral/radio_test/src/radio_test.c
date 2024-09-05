@@ -73,6 +73,9 @@
 #define ENDPOINT_TIMER_RADIO_TX  BIT(3)
 #define ENDPOINT_FORK_EGU_TIMER  BIT(4)
 
+/* RX timeout counted from the last packet received. */
+#define RX_PACKET_TIMEOUT_MS 100
+
 /* Buffer for the radio TX packet */
 static uint8_t tx_packet[RADIO_MAX_PAYLOAD_LEN];
 /* Buffer for the radio RX packet. */
@@ -98,6 +101,13 @@ static uint8_t ppi_radio_start;
 
 /* PPI endpoint status.*/
 static atomic_t endpoint_state;
+
+/*  Work element used to handle the end of packet reception. */
+static void rx_timeout_work_handler(struct k_work *work);
+K_WORK_DELAYABLE_DEFINE(rx_timeout_work, rx_timeout_work_handler);
+
+/* Pointer to rx timeout callback function. */
+static void (**rx_timeout_cb)(void);
 
 #if CONFIG_FEM
 static struct radio_test_fem fem;
@@ -729,7 +739,8 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 	radio_start(false, false);
 }
 
-static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern pattern)
+static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern pattern,
+		     uint32_t rx_packet_num)
 {
 	radio_disable();
 
@@ -756,6 +767,10 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 #endif /* CONFIG_FEM */
 
 	radio_start(true, sweep_processing);
+
+	if (rx_packet_num > 0) {
+		k_work_reschedule(&rx_timeout_work, K_SECONDS(CONFIG_RADIO_TEST_RX_TIMEOUT));
+	}
 }
 
 static void radio_sweep_start(uint8_t channel, uint32_t delay_ms)
@@ -866,7 +881,8 @@ void radio_test_start(const struct radio_test_config *config)
 	case RX:
 		radio_rx(config->mode,
 			config->params.rx.channel,
-			config->params.rx.pattern);
+			config->params.rx.pattern,
+			config->params.rx.packets_num);
 		break;
 	case TX_SWEEP:
 		radio_sweep_start(config->params.tx_sweep.channel_start,
@@ -946,6 +962,14 @@ void toggle_dcdc_state(uint8_t dcdc_state)
 }
 #endif /* NRF_POWER_HAS_DCDCEN_VDDH || NRF_POWER_HAS_DCDCEN */
 
+static void rx_timeout_work_handler(struct k_work *work)
+{
+	radio_disable();
+	if (rx_timeout_cb != NULL && *rx_timeout_cb != NULL) {
+		(*rx_timeout_cb)();
+	}
+}
+
 static void timer_handler(nrf_timer_event_t event_type, void *context)
 {
 	const struct radio_test_config *config =
@@ -967,7 +991,8 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 			sweep_processing = true;
 			radio_rx(config->mode,
 				current_channel,
-				config->params.rx.pattern);
+				config->params.rx.pattern,
+				0);
 
 			channel_start = config->params.rx_sweep.channel_start;
 			channel_end = config->params.rx_sweep.channel_end;
@@ -1006,12 +1031,21 @@ void radio_handler(const void *context)
 	const struct radio_test_config *config =
 		(const struct radio_test_config *) context;
 
-	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_CRCOK)) {
+	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_CRCOK_MASK) &&
+	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_CRCOK)) {
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_CRCOK);
 		rx_packet_cnt++;
+		if (config->params.rx.packets_num) {
+			if (rx_packet_cnt == config->params.rx.packets_num) {
+				k_work_reschedule(&rx_timeout_work, K_NO_WAIT);
+			} else {
+				k_work_reschedule(&rx_timeout_work, K_MSEC(RX_PACKET_TIMEOUT_MS));
+			}
+		}
 	}
 
-	if (nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
+	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_END_MASK) &&
+	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
 
 		tx_packet_cnt++;
@@ -1038,6 +1072,8 @@ int radio_test_init(struct radio_test_config *config)
 		printk("Failed to allocate gppi channel.\n");
 		return -EFAULT;
 	}
+
+	rx_timeout_cb = &config->params.rx.cb;
 
 #if CONFIG_FEM
 	int err = fem_init(timer.p_reg,

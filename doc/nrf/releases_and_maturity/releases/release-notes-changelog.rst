@@ -43,6 +43,8 @@ Build and configuration system
   .. note::
      This has security implications and may allow secrets to be leaked to the non-secure application in RAM.
 
+* Added the ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
+
 Bootloaders and DFU
 ===================
 
@@ -203,7 +205,8 @@ Asset Tracker v2
 Connectivity Bridge
 -------------------
 
-|no_changes_yet_note|
+* Updated the new nrfx UARTE driver implementation by setting the :kconfig:option:`CONFIG_UART_NRFX_UARTE_LEGACY_SHIM` Kconfig option to ``n``.
+  This resolves an issue where data from UART0 ends up in UART1 sometimes after the device was reset.
 
 IPC radio firmware
 ------------------
@@ -219,6 +222,7 @@ Matter Bridge
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to application's location that contains the ZAP file and :file:`zap-generated` directory.
   * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
   * Optional smart plug device functionality.
+  * Support for the Thread protocol.
 
 nRF5340 Audio
 -------------
@@ -253,6 +257,10 @@ nRF Desktop
     The value is now aligned with the Fast Pair requirements.
   * The :kconfig:option:`CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE` Kconfig option value in the nRF54L15 PDK configurations to ensure short write slots.
     It prevents timeouts in the MPSL flash synchronization caused by allocating long write slots while maintaining a Bluetooth LE connection with short intervals and no connection latency.
+  * The method of obtaining hardware ID using Zephyr's :ref:`zephyr:hwinfo_api` on the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+    Replaced the custom implementation of the :c:func:`z_impl_hwinfo_get_device_id` function in the nRF Desktop application with the native Zephyr driver function that now supports the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+    Removed the ``CONFIG_DESKTOP_HWINFO_BLE_ADDRESS_FICR_POSTFIX`` Kconfig option as a postfix constant is no longer needed for the Zephyr native driver.
+    The driver uses ``BLE.ADDR``, ``BLE.IR``, and ``BLE.ER`` fields of the Factory Information Configuration Registers (FICR) to provide 8 bytes of unique hardware ID.
 
 
 nRF Machine Learning (Edge Impulse)
@@ -375,6 +383,8 @@ Cellular samples
     * Renamed the :file:`overlay_nrf7002ek_wifi_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_mqtt_no_lte.conf`.
     * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
 
+  * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
+
 * :ref:`nrf_cloud_rest_device_message` sample:
 
   * Added:
@@ -433,6 +443,7 @@ Matter samples
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the sample.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to sample's location that contains the ZAP file and :file:`zap-generated` directory.
   * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 PDK.
+  * The :ref:`matter_smoke_co_alarm_sample` sample that demonstrates implementation of Matter Smoke CO alarm device type.
 
 * :ref:`matter_lock_sample` sample:
 
@@ -474,6 +485,10 @@ Peripheral samples
 * :ref:`802154_phy_test` sample:
 
   * Added build configuration for the nRF54H20.
+
+* :ref:`radio_test` sample:
+
+  * Added packet reception limit for the ``start_rx`` command.
 
 PMIC samples
 ------------
@@ -518,10 +533,16 @@ Wi-Fi samples
 * :ref:`wifi_radio_test` sample:
 
   * Added capture timeout as a parameter for packet capture.
+  * Expanded the scope of ``wifi_radio_test show_config`` subcommand and rectified the behavior of ``wifi_radio_test tx_pkt_preamble`` subcommand.
 
 * :ref:`softap_wifi_provision_sample` sample:
 
   * Increased the value of the :kconfig:option:`CONFIG_SOFTAP_WIFI_PROVISION_THREAD_STACK_SIZE` Kconfig option to 8192 bytes to avoid stack overflow.
+
+* :ref:`wifi_shell_sample` sample:
+
+  * Added support for running the full stack on the Thingy:91 X.
+     This is a special configuration that uses the nRF5340 as the host chip instead of the nRF9151.
 
 Other samples
 -------------
@@ -559,6 +580,8 @@ Bluetooth libraries and services
 
   * Added:
 
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_BN` Kconfig option that enables support for the Battery Notification extension.
+      You must enable this option to access Fast Pair API elements associated with the Battery Notification extension.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option allowing the user to control the support for the Fast Pair subsequent pairing feature.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice option allowing the user to select their target Fast Pair use case.
       The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig options represent the supported use cases that can be selected as part of this Kconfig choice option.
@@ -654,6 +677,11 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
+  * Fixed:
+
+    * A bug causing the GNSS obstructed visibility detection to sometimes count only part of the tracked satellites.
+    * A bug causing the GNSS obstructed visibility detection to be sometimes performed twice.
+
   * Removed the unused :ref:`at_cmd_parser_readme` library.
 
 * :ref:`lib_zzhc` library:
@@ -722,6 +750,7 @@ Libraries for networking
     * The JSON string representing longitude in ``PVT`` reports from ``lng`` to ``lon`` to align with nRF Cloud.
       nRF Cloud still accepts ``lng`` for backward compatibility.
     * The handling of MQTT JITP device association to improve speed and reliability.
+    * To use nRF Cloud's custom MQTT topics instead of the default AWS topics.
 
   * Fixed an issue in the :c:func:`nrf_cloud_send` function that prevented data in the provided :c:struct:`nrf_cloud_obj` structure from being sent to the bulk and bin topics.
 
@@ -774,6 +803,14 @@ Other libraries
 ---------------
 
 * Added a compression/decompression library with support for the LZMA decompression.
+* :ref:`lib_date_time` library:
+
+  * Fixed a bug that caused date-time updates to not be rescheduled under certain circumstances.
+
+  * Added:
+
+    * A retry feature that reattempts failed date-time updates up to a certain number of consecutive times.
+    * The Kconfig options :kconfig:option:`CONFIG_DATE_TIME_RETRY_COUNT` to control whether and how many consecutive date-time update retries may be performed, and :kconfig:option:`CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS` to control how quickly date-time update retries occur.
 
 Security libraries
 ------------------

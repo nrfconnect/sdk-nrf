@@ -6,9 +6,9 @@
 
 #include <zephyr/ztest.h>
 #include <errno.h>
-
-#include "fakes.h"
 #include "audio_module/audio_module.h"
+
+#include "audio_module_test_fakes.h"
 #include "audio_module_test_common.h"
 
 static struct audio_module_functions mod_1_functions = {.open = NULL,
@@ -26,7 +26,7 @@ static struct audio_module_configuration *config =
 	(struct audio_module_configuration *)&configuration;
 static struct audio_module_handle handle, handle_tx, handle_rx;
 static struct mod_context context;
-static uint8_t test_data[FAKE_FIFO_MSG_QUEUE_DATA_SIZE];
+static uint8_t test_data[TEST_MOD_DATA_SIZE];
 static struct data_fifo mod_fifo_tx, mod_fifo_rx;
 static struct audio_data test_block, test_block_tx, test_block_rx;
 static char mod_thread_stack[TEST_MOD_THREAD_STACK_SIZE];
@@ -155,7 +155,7 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_bad_state)
 			       NULL, &mod_fifo_rx);
 
 	test_block.data = &test_data[0];
-	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_tx(&handle, &test_block, NULL);
 	zassert_equal(ret, -ECANCELED, "Data TX function did not return -EALREADY (%d): ret %d",
@@ -199,11 +199,7 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_null)
 			       NULL, NULL);
 
 	test_block.data = &test_data[0];
-	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
-
-	ret = audio_module_data_tx(NULL, &test_block, NULL);
-	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
+	test_block.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_tx(&handle, &test_block, NULL);
 	zassert_equal(ret, -ECANCELED, "Data TX function did not return -ECANCELED (%d): ret %d",
@@ -212,20 +208,6 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_null)
 	handle.thread.msg_rx = &mod_fifo_rx;
 
 	ret = audio_module_data_tx(&handle, NULL, NULL);
-	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
-
-	test_block.data = NULL;
-	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
-
-	ret = audio_module_data_tx(&handle, &test_block, NULL);
-	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
-
-	test_block.data = &test_data[0];
-	test_block.data_size = 0;
-
-	ret = audio_module_data_tx(&handle, &test_block, NULL);
 	zassert_equal(ret, -EINVAL, "Data TX function did not return -EINVAL (%d): ret %d", -EINVAL,
 		      ret);
 }
@@ -241,7 +223,7 @@ ZTEST(suite_audio_module_bad_param, test_data_rx_bad_state)
 			       &mod_fifo_tx, NULL);
 
 	test_block.data = &test_data[0];
-	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_rx(&handle, &test_block, K_NO_WAIT);
 	zassert_equal(ret, -ECANCELED, "Data RX function did not return -ECANCELED (%d): ret %d",
@@ -285,7 +267,7 @@ ZTEST(suite_audio_module_bad_param, test_data_rx_null)
 			       NULL, NULL);
 
 	test_block.data = &test_data[0];
-	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_rx(NULL, &test_block, K_NO_WAIT);
 	zassert_equal(ret, -EINVAL, "Data RX function did not return -EINVAL (%d): ret %d", -EINVAL,
@@ -302,18 +284,18 @@ ZTEST(suite_audio_module_bad_param, test_data_rx_null)
 		      ret);
 
 	test_block.data = NULL;
-	test_block.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_rx(&handle, &test_block, K_NO_WAIT);
-	zassert_equal(ret, -EINVAL, "Data RX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
+	zassert_equal(ret, -ECANCELED, "Data RX function did not return -ECANCELED (%d): ret %d",
+		      -ECANCELED, ret);
 
 	test_block.data = &test_data[0];
 	test_block.data_size = 0;
 
 	ret = audio_module_data_rx(&handle, &test_block, K_NO_WAIT);
-	zassert_equal(ret, -EINVAL, "Data RX function did not return -EINVAL (%d): ret %d", -EINVAL,
-		      ret);
+	zassert_equal(ret, -ECANCELED, "Data RX function did not return -ECANCELED (%d): ret %d",
+		      -ECANCELED, ret);
 }
 
 ZTEST(suite_audio_module_bad_param, test_data_tx_rx_bad_state)
@@ -331,9 +313,9 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_rx_bad_state)
 			       AUDIO_MODULE_STATE_RUNNING, &mod_fifo_tx, &mod_fifo_rx);
 
 	test_block_tx.data = &test_data[0];
-	test_block_tx.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block_tx.data_size = TEST_MOD_DATA_SIZE;
 	test_block_rx.data = &test_data[0];
-	test_block_rx.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block_rx.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_tx_rx(&handle_tx, &handle_rx, &test_block_tx, &test_block_rx,
 				      K_NO_WAIT);
@@ -424,9 +406,9 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_rx_null)
 			       AUDIO_MODULE_STATE_RUNNING, NULL, NULL);
 
 	test_block_tx.data = &test_data[0];
-	test_block_tx.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block_tx.data_size = TEST_MOD_DATA_SIZE;
 	test_block_rx.data = &test_data[0];
-	test_block_rx.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block_rx.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_tx_rx(NULL, &handle_rx, &test_block_tx, &test_block_rx, K_NO_WAIT);
 	zassert_equal(ret, -EINVAL, "Data TX/RX function did not return -EINVAL (%d): ret %d",
@@ -459,7 +441,7 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_rx_null)
 		      -EINVAL, ret);
 
 	test_block_tx.data = NULL;
-	test_block_tx.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block_tx.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_tx_rx(&handle_tx, &handle_rx, &test_block_tx, &test_block_rx,
 				      K_NO_WAIT);
@@ -475,9 +457,9 @@ ZTEST(suite_audio_module_bad_param, test_data_tx_rx_null)
 		      -EINVAL, ret);
 
 	test_block_tx.data = &test_data[0];
-	test_block_tx.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block_tx.data_size = TEST_MOD_DATA_SIZE;
 	test_block_rx.data = NULL;
-	test_block_rx.data_size = FAKE_FIFO_MSG_QUEUE_DATA_SIZE;
+	test_block_rx.data_size = TEST_MOD_DATA_SIZE;
 
 	ret = audio_module_data_tx_rx(&handle_tx, &handle_rx, &test_block_tx, &test_block_rx,
 				      K_NO_WAIT);

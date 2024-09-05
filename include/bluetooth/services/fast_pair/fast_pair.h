@@ -24,7 +24,10 @@
 extern "C" {
 #endif
 
-/** Value that denotes unknown battery level (see @ref bt_fast_pair_battery). */
+/** Value that denotes unknown battery level (see @ref bt_fast_pair_battery).
+ *
+ * Used only when the @kconfig{CONFIG_BT_FAST_PAIR_BN} Kconfig option is enabled.
+ */
 #define BT_FAST_PAIR_BATTERY_LEVEL_UNKNOWN	0x7f
 
 /** @brief Fast Pair advertising mode. Used to generate advertising packet. */
@@ -55,6 +58,8 @@ enum bt_fast_pair_not_disc_adv_type {
 
 /** @brief Fast Pair advertising battery mode. Used to generate advertising packet.
  *
+ * Used only when the @kconfig{CONFIG_BT_FAST_PAIR_BN} Kconfig option is enabled.
+ *
  * Battery data can be included in advertising packet only if the Fast Pair Provider is in Fast Pair
  * not discoverable advertising mode and is in possession of at least one Account Key. To prevent
  * tracking, the Fast Pair Provider should not include battery data in the advertising packet
@@ -74,7 +79,10 @@ enum bt_fast_pair_adv_battery_mode {
 	BT_FAST_PAIR_ADV_BATTERY_MODE_COUNT
 };
 
-/** @brief Index of Fast Pair battery component. */
+/** @brief Index of Fast Pair battery component.
+ *
+ * Used only when the @kconfig{CONFIG_BT_FAST_PAIR_BN} Kconfig option is enabled.
+ */
 enum bt_fast_pair_battery_comp {
 	/** Left bud. */
 	BT_FAST_PAIR_BATTERY_COMP_LEFT_BUD = 0,
@@ -101,6 +109,10 @@ struct bt_fast_pair_not_disc_adv_info {
 
 	/** Fast Pair advertising battery mode. Battery values can be set using
 	 *  @ref bt_fast_pair_battery_set.
+	 *
+	 *  This field is used only when the @kconfig{CONFIG_BT_FAST_PAIR_BN} Kconfig option is
+	 *  enabled. Otherwise, it should be set to @ref BT_FAST_PAIR_ADV_BATTERY_MODE_NONE or
+	 *  zero.
 	 */
 	enum bt_fast_pair_adv_battery_mode battery_mode;
 };
@@ -126,7 +138,10 @@ struct bt_fast_pair_adv_config {
 	};
 };
 
-/** @brief Fast Pair battery component descriptor. */
+/** @brief Fast Pair battery component descriptor.
+ *
+ * Used only when the @kconfig{CONFIG_BT_FAST_PAIR_BN} Kconfig option is enabled.
+ */
 struct bt_fast_pair_battery {
 	/** Battery status. True means that battery is charging and False means that battery is not
 	 *  charging.
@@ -262,6 +277,9 @@ bool bt_fast_pair_has_account_key(void);
  * packet this function must be called before @ref bt_fast_pair_adv_data_fill. It is user
  * responsibility to update battery value and regenerate advertising packet when battery value
  * change.
+ *
+ * This function can only be used only when the @kconfig{CONFIG_BT_FAST_PAIR_BN} Kconfig option is
+ * enabled.
  *
  * @param[in] battery_comp	Battery component.
  * @param[in] battery		Battery value.

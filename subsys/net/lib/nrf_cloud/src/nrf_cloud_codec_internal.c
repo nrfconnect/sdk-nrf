@@ -390,19 +390,19 @@ static cJSON *json_object_decode(cJSON *obj, const char *str)
 	return obj ? cJSON_GetObjectItem(obj, str) : NULL;
 }
 
-static int json_decode_and_alloc(cJSON *obj, struct nrf_cloud_data *data)
+static int json_decode_and_alloc(cJSON *obj, struct mqtt_utf8 *const ep)
 {
-	if (!data || !cJSON_IsString(obj)) {
+	if (!ep || !cJSON_IsString(obj)) {
 		return -EINVAL;
 	}
 
-	data->ptr = json_strdup(obj);
+	ep->utf8 = (uint8_t *)json_strdup(obj);
 
-	if (data->ptr == NULL) {
+	if (ep->utf8 == NULL) {
 		return -ENOMEM;
 	}
 
-	data->len = strlen(data->ptr);
+	ep->size = (uint32_t)strlen(ep->utf8);
 
 	return 0;
 }
@@ -510,9 +510,7 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 		ret += json_add_null_cs(reported_obj, NRF_CLOUD_JSON_KEY_STAGE);
 
 	} else if (reported_state == STATE_UA_PIN_COMPLETE) {
-		struct nrf_cloud_data rx_endp;
-		struct nrf_cloud_data tx_endp;
-		struct nrf_cloud_data m_endp;
+		struct nct_dc_endpoints eps;
 		struct nrf_cloud_ctrl_data device_ctrl = {0};
 
 		disassociated_state_sent = false;
@@ -530,12 +528,13 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 							      NRF_CLOUD_JSON_KEY_TOPICS);
 
 		/* Get the endpoint information and add topics */
-		nct_dc_endpoint_get(&tx_endp, &rx_endp, NULL, NULL, &m_endp);
-		ret += json_add_str_cs(reported_obj, NRF_CLOUD_JSON_KEY_TOPIC_PRFX, m_endp.ptr);
+		nct_dc_endpoint_get(&eps);
+		ret += json_add_str_cs(reported_obj, NRF_CLOUD_JSON_KEY_TOPIC_PRFX,
+				       (char *)eps.e[DC_BASE].utf8);
 		ret += json_add_str_cs(topics_obj, NRF_CLOUD_JSON_KEY_DEVICE_TO_CLOUD,
-				       tx_endp.ptr);
+				       (char *)eps.e[DC_TX].utf8);
 		ret += json_add_str_cs(topics_obj, NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE,
-				       rx_endp.ptr);
+				       (char *)eps.e[DC_RX].utf8);
 
 		if (update_desired_topic) {
 			/* Align desired c2d topic with reported to prevent delta events */
@@ -547,7 +546,7 @@ int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_to
 								     NRF_CLOUD_JSON_KEY_TOPICS);
 
 			ret += json_add_str_cs(topic_obj, NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE,
-					       rx_endp.ptr);
+					       (char *)eps.e[DC_RX].utf8);
 		}
 
 		/* Add reported control section */
@@ -658,27 +657,16 @@ int json_send_to_cloud(cJSON *const request)
 }
 
 int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
-				   struct nrf_cloud_data *tx_endpoint,
-				   struct nrf_cloud_data *rx_endpoint,
-				   struct nrf_cloud_data *bulk_endpoint,
-				   struct nrf_cloud_data *bin_endpoint,
-				   struct nrf_cloud_data *m_endpoint)
+				  struct nct_dc_endpoints *const eps)
 {
 	__ASSERT_NO_MSG(desired_obj != NULL);
 	__ASSERT_NO_MSG(desired_obj->json != NULL);
 	__ASSERT_NO_MSG(desired_obj->type == NRF_CLOUD_OBJ_TYPE_JSON);
-	__ASSERT_NO_MSG(tx_endpoint != NULL);
-	__ASSERT_NO_MSG(rx_endpoint != NULL);
-	__ASSERT_NO_MSG(bulk_endpoint != NULL);
-	__ASSERT_NO_MSG(bin_endpoint != NULL);
+	__ASSERT_NO_MSG(eps != NULL);
 
 	int err;
-	cJSON *endpoint_obj = NULL;
-
-	if (m_endpoint != NULL) {
-		endpoint_obj = json_object_decode(desired_obj->json, NRF_CLOUD_JSON_KEY_TOPIC_PRFX);
-	}
-
+	size_t len_tmp;
+	cJSON *endpoint_obj = json_object_decode(desired_obj->json, NRF_CLOUD_JSON_KEY_TOPIC_PRFX);
 	cJSON *pairing_obj = json_object_decode(desired_obj->json, NRF_CLOUD_JSON_KEY_PAIRING);
 	cJSON *pairing_state_obj = json_object_decode(pairing_obj, NRF_CLOUD_JSON_KEY_STATE);
 	cJSON *topic_obj = json_object_decode(pairing_obj, NRF_CLOUD_JSON_KEY_TOPICS);
@@ -695,7 +683,7 @@ int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
 	}
 
 	if (endpoint_obj != NULL) {
-		err = json_decode_and_alloc(endpoint_obj, m_endpoint);
+		err = json_decode_and_alloc(endpoint_obj, &eps->e[DC_BASE]);
 		if (err) {
 			return err;
 		}
@@ -703,7 +691,7 @@ int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
 
 	cJSON *tx_obj = json_object_decode(topic_obj, NRF_CLOUD_JSON_KEY_DEVICE_TO_CLOUD);
 
-	err = json_decode_and_alloc(tx_obj, tx_endpoint);
+	err = json_decode_and_alloc(tx_obj, &eps->e[DC_TX]);
 	if (err) {
 		LOG_ERR("Could not decode topic for %s", NRF_CLOUD_JSON_KEY_DEVICE_TO_CLOUD);
 		return err;
@@ -712,35 +700,31 @@ int nrf_cloud_obj_endpoint_decode(const struct nrf_cloud_obj *const desired_obj,
 	/* Populate bulk endpoint topic by copying and appending /bulk to the parsed
 	 * tx endpoint (d2c) topic.
 	 */
-	size_t bulk_ep_len_temp = tx_endpoint->len + sizeof(NRF_CLOUD_BULK_MSG_TOPIC);
-
-	bulk_endpoint->ptr = nrf_cloud_calloc(bulk_ep_len_temp, 1);
-	if (bulk_endpoint->ptr == NULL) {
+	len_tmp = eps->e[DC_TX].size + sizeof(NRF_CLOUD_BULK_MSG_TOPIC);
+	eps->e[DC_BULK].utf8 = (uint8_t *)nrf_cloud_calloc(len_tmp, 1);
+	if (eps->e[DC_BULK].utf8 == NULL) {
 		LOG_ERR("Could not allocate memory for bulk topic");
 		return -ENOMEM;
 	}
 
-	bulk_endpoint->len = snprintk((char *)bulk_endpoint->ptr, bulk_ep_len_temp, "%s%s",
-				       (char *)tx_endpoint->ptr,
-				       NRF_CLOUD_BULK_MSG_TOPIC);
+	eps->e[DC_BULK].size = snprintk((char *)eps->e[DC_BULK].utf8, len_tmp, "%s%s",
+					(char *)eps->e[DC_TX].utf8, NRF_CLOUD_BULK_MSG_TOPIC);
 
 	/* Populate bin endpoint topic by copying and appending /bin to the parsed
 	 * tx endpoint (d2c) topic.
 	 */
-	size_t bin_ep_len_temp = tx_endpoint->len + sizeof(NRF_CLOUD_JSON_VAL_TOPIC_BIN);
-
-	bin_endpoint->ptr = nrf_cloud_calloc(bin_ep_len_temp, 1);
-	if (bin_endpoint->ptr == NULL) {
+	len_tmp = eps->e[DC_TX].size + sizeof(NRF_CLOUD_JSON_VAL_TOPIC_BIN);
+	eps->e[DC_BIN].utf8 = (uint8_t *)nrf_cloud_calloc(len_tmp, 1);
+	if (eps->e[DC_BIN].utf8 == NULL) {
 		LOG_ERR("Could not allocate memory for bin topic");
 		return -ENOMEM;
 	}
 
-	bin_endpoint->len = snprintk((char *)bin_endpoint->ptr, bin_ep_len_temp, "%s%s",
-				       (char *)tx_endpoint->ptr,
-				       NRF_CLOUD_JSON_VAL_TOPIC_BIN);
+	eps->e[DC_BIN].size = snprintk((char *)eps->e[DC_BIN].utf8, len_tmp, "%s%s",
+				 (char *)eps->e[DC_TX].utf8, NRF_CLOUD_JSON_VAL_TOPIC_BIN);
 
 	err = json_decode_and_alloc(json_object_decode(topic_obj,
-		NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE), rx_endpoint);
+		NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE), &eps->e[DC_RX]);
 	if (err) {
 		LOG_ERR("Failed to parse \"%s\" from JSON, error: %d",
 			NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE, err);

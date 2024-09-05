@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Human Interface Device mouse sample
-  name: BLE HIDS mouse sample
+  name: Bluetooth LE HIDS mouse
 tests:
   sample.bluetooth.peripheral_hids_mouse:
     sysbuild: true

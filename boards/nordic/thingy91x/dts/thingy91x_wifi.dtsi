@@ -3,40 +3,27 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* enable short range rf */
+/* Enable short range RF */
 &ldsw_rf_fe_sr_en {
 	/delete-property/ output-low;
 	output-high;
 };
 
-/* set pmic_wifi enable signal  */
-&ldsw_nPM60_en {
+/* Set pmic_wifi enable signal */
+&ldsw_nPM6001_en {
 	/delete-property/ regulator-boot-off;
 	regulator-boot-on;
 };
 
-/* enable pmic_wifi */
+/* Enable pmic_wifi */
 &pmic_wifi {
 	status = "okay";
+	regulators {
+		status = "okay";
+	};
 };
 
-/* enable nrf70 */
+/* enable nRF70 */
 &nrf700x {
 	status = "okay";
-};
-
-/ {
-	nrf70_tx_power_ceiling: nrf70_tx_power_ceiling_node {
-		status = "okay";
-		compatible = "nordic,nrf700x-tx-power-ceiling";
-		max-pwr-2g-dsss = <0x54>;
-		max-pwr-2g-mcs0 = <0x40>;
-		max-pwr-2g-mcs7 = <0x40>;
-		max-pwr-5g-low-mcs0 = <0x24>;
-		max-pwr-5g-low-mcs7 = <0x24>;
-		max-pwr-5g-mid-mcs0 = <0x2C>;
-		max-pwr-5g-mid-mcs7 = <0x2C>;
-		max-pwr-5g-high-mcs0 = <0x34>;
-		max-pwr-5g-high-mcs7 = <0x34>;
-	};
 };

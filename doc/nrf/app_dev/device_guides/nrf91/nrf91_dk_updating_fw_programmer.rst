@@ -8,7 +8,7 @@ Updating the DK firmware using Programmer
    :local:
    :depth: 2
 
-Before you begin to update the firmware, download and extract the latest application and modem firmware from the `nRF9161 DK Downloads`_ or `nRF9160 DK Downloads`_ page, depending on the DK you are using.
+Before you begin to update the firmware, download and extract the latest application and modem firmware from the `nRF9151 DK Downloads`_, `nRF9161 DK Downloads`_, or `nRF9160 DK Downloads`_ page, depending on the DK you are using.
 
 The downloaded ZIP archive contains the following firmware:
 
@@ -22,6 +22,12 @@ Application firmware
   Check with your SIM card provider for the mode they support at your location.
 
   .. tabs::
+
+     .. group-tab:: nRF9151 DK
+
+        * For the Onomondo SIM card, check the `Onomondo LTE-M coverage`_ and `Onomondo NB-IoT coverage`_ to see if your country is supported.
+
+        * For the Wireless Logic SIM card, check the `Wireless Logic LTE-M/NB-IoT network coverage`_ to see if your country is supported.
 
      .. group-tab:: nRF9161 DK
 
@@ -49,8 +55,8 @@ The :file:`CONTENTS.txt` file in the extracted folder contains the location and 
 Complete the steps in the following sections to program applications using the Programmer app from `nRF Connect for Desktop`_.
 You will need the following USB cables for this purpose:
 
-* nRF9161 DK: USB-C cable
-* nRF9160 DK: micro-USB cable
+* nRF91x1 DK - USB-C cable
+* nRF9160 DK - micro-USB cable
 
 .. _nrf9161_updating_fw_modem:
 .. _nrf9160_updating_fw_modem:
@@ -72,12 +78,12 @@ To update the modem firmware, complete the following steps.
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
-         .. figure:: images/programmer_select_device_nrf9161.png
-            :alt: Programmer - Select device
+         .. figure:: images/programmer_select_device_nrf9151.png
+            :alt: Programmer - Select device (nRF9151 DK shown)
 
-            Programmer - Select device
+            Programmer - Select device (nRF9151 DK shown)
 
       .. group-tab:: nRF9160 DK
 
@@ -94,19 +100,19 @@ To update the modem firmware, complete the following steps.
 #. Click :guilabel:`Add file` in the **FILE** section, and select :guilabel:`Browse`.
 #. Navigate to where you extracted the firmware, and select the file for your DK:
 
-   * nRF9160 DK: :file:`mfw_nrf9160_<version-number>.zip`
-   * nRF91x1 DK: :file:`mfw_nrf91x1_<version-number>.zip`
+   * nRF9160 DK - :file:`mfw_nrf9160_<version-number>.zip`
+   * nRF91x1 DK - :file:`mfw_nrf91x1_<version-number>.zip`
 
 #. Click :guilabel:`Write` in the **DEVICE** section of the side panel.
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
-         .. figure:: images/programmer_hex_write_nrf9161.png
-            :alt: Programmer - Write
+         .. figure:: images/programmer_hex_write_nrf9151.png
+            :alt: Programmer - Write (nRF9151 DK shown)
 
-            Programmer - Write
+            Programmer - Write (nRF9151 DK shown)
 
       .. group-tab:: nRF9160 DK
 
@@ -119,12 +125,12 @@ To update the modem firmware, complete the following steps.
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
-         .. figure:: images/programmerapp_modemdfu_nrf9161.png
-            :alt: Modem DFU window
+         .. figure:: images/programmerapp_modemdfu_nrf9151.png
+            :alt: Modem DFU window (nRF9151 DK shown)
 
-            The Modem DFU window
+            The Modem DFU window (nRF9151 DK shown)
 
       .. group-tab:: nRF9160 DK
 
@@ -166,12 +172,12 @@ To update the application firmware using the Programmer app, complete the follow
 
    .. tabs::
 
-      .. group-tab:: nRF9161 DK
+      .. group-tab:: nRF91x1 DK
 
-         .. figure:: images/programmer_select_device_nrf9161.png
-            :alt: Programmer - Select device
+         .. figure:: images/programmer_select_device_nrf9151.png
+            :alt: Programmer - Select device (nRF9151 DK shown)
 
-            Programmer - Select device
+            Programmer - Select device (nRF9151 DK shown)
 
       .. group-tab:: nRF9160 DK
 
@@ -189,8 +195,8 @@ To update the application firmware using the Programmer app, complete the follow
 #. Navigate to where you extracted the firmware, and then to the :file:`img_app_bl` folder there.
 #. Select the :file:`.hex` file for your DK for the application you are programming:
 
-   * nRF9160 DK: :file:`nrf9160dk_asset_tracker_v2_<version-number>.hex`
-   * nRF91x1 DK: :file:`nrf9161dk_asset_tracker_v2_<version-number>.hex`
+   * nRF9160 DK - :file:`nrf9160dk_asset_tracker_v2_<version-number>.hex`
+   * nRF91x1 DK - :file:`nrf9151dk_asset_tracker_v2_<version-number>.hex` or :file:`nrf9161dk_asset_tracker_v2_<version-number>.hex`
 
    For NB-IoT, there is a second variant of the Asset Tracker v2 firmware in the file ending with :file:`*_nbiot_legacy_pco_<version-number>.hex`.
    Only use this legacy variant if your network does not support ePCO.

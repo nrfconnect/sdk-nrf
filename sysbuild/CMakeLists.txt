@@ -321,6 +321,18 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       # MCUboot must run in secure mode on the nRF9160/nRF5340
       set_target_properties(mcuboot PROPERTIES BOARD ${board_target_secure})
     endif()
+
+    if(SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE)
+      set_config_bool(mcuboot CONFIG_NRF53_MULTI_IMAGE_UPDATE y)
+      set_config_bool(mcuboot CONFIG_BOOT_IMAGE_ACCESS_HOOKS y)
+      set_config_bool(mcuboot CONFIG_FLASH_SIMULATOR y)
+      set_config_bool(mcuboot CONFIG_FLASH_SIMULATOR_DOUBLE_WRITES y)
+      set_config_bool(mcuboot CONFIG_FLASH_SIMULATOR_STATS n)
+
+      if(NOT SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY)
+        set_config_bool(mcuboot CONFIG_USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY y)
+      endif()
+    endif()
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_APPCORE)

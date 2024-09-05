@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy Central Device Firmware Update sample
-  name: BLE Central DFU SMP
+  name: Bluetooth LE Central DFU SMP
 tests:
   sample.bluetooth.central_dfu_smp:
     sysbuild: true

@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy UART service sample
-  name: BLE UART service
+  name: Bluetooth LE UART service
 tests:
   sample.bluetooth.peripheral_uart:
     sysbuild: true

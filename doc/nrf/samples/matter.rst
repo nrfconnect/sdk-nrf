@@ -19,6 +19,7 @@ The following table lists variants and extensions available out of the box for e
       - Template
       - Window covering
       - Thermostat
+      - Smoke CO alarm
     * - FEM support
       - ✔
       - ✔
@@ -26,7 +27,9 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       -
+      -
     * - DFU support
+      - ✔
       - ✔
       - ✔
       - ✔
@@ -40,6 +43,7 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       - ✔
+      - ✔
     * - :ref:`Thread role <thread_ot_device_types>`
       - Router
       - SED
@@ -47,6 +51,7 @@ The following table lists variants and extensions available out of the box for e
       - MED
       - SSED
       -
+      - SED
     * - Wi-Fi support
       - ✔
       - ✔
@@ -54,10 +59,12 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       -
       - ✔
+      -
     * - Thread and Wi-Fi switching
       -
       -
       - ✔
+      -
       -
       -
       -
@@ -68,6 +75,7 @@ The following table lists variants and extensions available out of the box for e
       -
       - ✔
       -
+      - ✔
 
 See the sample documentation pages for instructions about how to enable these variants and extensions.
 

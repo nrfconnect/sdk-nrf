@@ -4,21 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf_rpc/nrf_rpc_serialize.h"
-#include "openthread/error.h"
+#include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
 
-#include <openthread/ip6.h>
-#include <openthread/link.h>
-#include <openthread/thread.h>
-
+#include <openthread/error.h>
 #include <openthread/udp.h>
-
-#include <zephyr/sys/util_macro.h>
 
 #include <string.h>
 
@@ -86,7 +80,7 @@ void otMessageFree(otMessage *aMessage)
 	struct nrf_rpc_cbor_ctx ctx;
 	ot_msg_key key = (ot_msg_key)aMessage;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(uint32_t) + 1);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(ot_msg_key) + 1);
 
 	if (!zcbor_uint32_encode(ctx.zs, &key)) {
 		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);

@@ -28,6 +28,7 @@ config PM_MCUBOOT_PAD
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	bool "Place MCUboot secondary in external flash"
 	depends on BOOTLOADER_MCUBOOT
+	select MCUBOOT_NRF53_MULTI_IMAGE_UPDATE if NETCORE_APP_UPDATE
 	help
 	  Place the secondary partition of MCUboot in the external flash instead
 	  of the internal flash. This option should only be enabled by the user

@@ -67,7 +67,7 @@ See the related hardware documentation for more information about which implemen
    * - nRF9151
      - n/a
      - ✔
-     - *Documentation not yet available*
+     - `AP-Protect for nRF9151`_
      - Also supports Secure AP-Protect (see note below)
    * - nRF9131
      - n/a

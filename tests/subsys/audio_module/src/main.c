@@ -7,8 +7,7 @@
 #include <zephyr/fff.h>
 #include <zephyr/ztest.h>
 #include <errno.h>
-
-#include "fakes.h"
+#include "audio_module_test_fakes.h"
 
 /* This function runs before each test */
 static void run_before(void *fixture)
@@ -22,5 +21,5 @@ static void run_before(void *fixture)
 	FFF_RESET_HISTORY();
 }
 
-ZTEST_SUITE(suite_audio_module_bad_param, NULL, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(suite_audio_module_bad_param, NULL, NULL, run_before, NULL, NULL);
 ZTEST_SUITE(suite_audio_module_functional, NULL, NULL, run_before, NULL, NULL);

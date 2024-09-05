@@ -154,6 +154,48 @@ static int string_param_to_int(struct at_parser *parser, size_t idx, int *output
 	return 0;
 }
 
+/* Converts PLMN string to integer type MCC and MNC.
+ * Returns zero on success, otherwise negative error on failure.
+ */
+static int plmn_param_string_to_mcc_mnc(
+	struct at_parser *parser,
+	size_t idx,
+	int *mcc,
+	int *mnc)
+{
+	int err;
+	char str_buf[7];
+	size_t len = sizeof(str_buf);
+
+	err = at_parser_string_get(parser, idx, str_buf, &len);
+	if (err) {
+		LOG_ERR("Could not get PLMN, error: %d", err);
+		return err;
+	}
+
+	str_buf[len] = '\0';
+
+	/* Read MNC and store as integer. The MNC starts as the fourth character
+	 * in the string, following three characters long MCC.
+	 */
+	err = string_to_int(&str_buf[3], 10, mnc);
+	if (err) {
+		LOG_ERR("Could not get MNC, error: %d", err);
+		return err;
+	}
+
+	/* NUL-terminate MCC, read and store it. */
+	str_buf[3] = '\0';
+
+	err = string_to_int(str_buf, 10, mcc);
+	if (err) {
+		LOG_ERR("Could not get MCC, error: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
 /* Get Paging Time Window multiplier for the LTE mode.
  * Multiplier is 1.28 s for LTE-M, and 2.56 s for NB-IoT, derived from
  * Figure 10.5.5.32/3GPP TS 24.008.
@@ -815,9 +857,8 @@ uint32_t neighborcell_count_get(const char *at_response)
 
 int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 {
-	int err, status, tmp, len;
+	int err, status, tmp;
 	struct at_parser parser;
-	char tmp_str[7];
 	size_t count = 0;
 	bool incomplete = false;
 
@@ -855,27 +896,10 @@ int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *cells)
 	}
 	cells->current_cell.id = tmp;
 
-	/* PLMN */
-	len = sizeof(tmp_str);
-
-	err = at_parser_string_get(&parser, AT_NCELLMEAS_PLMN_INDEX,
-				   tmp_str, &len);
-	if (err) {
-		goto clean_exit;
-	}
-
-	/* Read MNC and store as integer. The MNC starts as the fourth character
-	 * in the string, following three characters long MCC.
-	 */
-	err = string_to_int(&tmp_str[3], 10, &cells->current_cell.mnc);
-	if (err) {
-		goto clean_exit;
-	}
-
-	/* Null-terminated MCC, read and store it. */
-	tmp_str[3] = '\0';
-
-	err = string_to_int(tmp_str, 10, &cells->current_cell.mcc);
+	/* PLMN, that is, MCC and MNC */
+	err = plmn_param_string_to_mcc_mnc(
+		&parser, AT_NCELLMEAS_PLMN_INDEX,
+		&cells->current_cell.mcc, &cells->current_cell.mnc);
 	if (err) {
 		goto clean_exit;
 	}
@@ -1040,9 +1064,8 @@ int parse_ncellmeas_gci(
 {
 	struct at_parser parser;
 	struct lte_lc_ncell *ncells = NULL;
-	int err, status, tmp_int, len;
+	int err, status, tmp_int;
 	int16_t tmp_short;
-	char tmp_str[7];
 	bool incomplete = false;
 	int curr_index;
 	size_t i = 0, j = 0, k = 0;
@@ -1131,34 +1154,13 @@ int parse_ncellmeas_gci(
 		}
 		parsed_cell.id = tmp_int;
 
-		/* <plmn> */
-		len = sizeof(tmp_str);
-
+		/* <plmn>, that is, MCC and MNC */
 		curr_index++;
-		err = at_parser_string_get(&parser, curr_index, tmp_str, &len);
+		err = plmn_param_string_to_mcc_mnc(
+			&parser, curr_index, &parsed_cell.mcc, &parsed_cell.mnc);
 		if (err) {
-			LOG_ERR("Could not parse plmn, error: %d", err);
 			goto clean_exit;
 		}
-
-		/* Read MNC and store as integer. The MNC starts as the fourth character
-		 * in the string, following three characters long MCC.
-		 */
-		err = string_to_int(&tmp_str[3], 10, &parsed_cell.mnc);
-		if (err) {
-			LOG_ERR("string_to_int, error: %d", err);
-			goto clean_exit;
-		}
-
-		/* Null-terminated MCC, read and store it. */
-		tmp_str[3] = '\0';
-
-		err = string_to_int(tmp_str, 10, &parsed_cell.mcc);
-		if (err) {
-			LOG_ERR("string_to_int, error: %d", err);
-			goto clean_exit;
-		}
-
 		/* <tac> */
 		curr_index++;
 		err = string_param_to_int(&parser, curr_index, &tmp_int, 16);

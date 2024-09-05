@@ -72,7 +72,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: pull/1989/head
+      revision: 64df5190709112eae313384ae188edb1a5670da7
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -157,11 +157,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 9e4d3e4639956c332b95d66093bc641f1addd9c3
+      revision: b4c65adeac9775a9b86a6ff05c864e82787bc76f
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: dc309f687d4ad579013a6022db12794a69e47bdd
+      revision: 9f68daeafd7b662c96d6fdf61c83222248e3ed9f
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -169,7 +169,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 67cbbed0c3095608ef2aab88cf2473cb5d6fb06d
+      revision: 91dfee141790b17c0d2938743aecdb16d0d6f071
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -190,7 +190,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: dcb3abcb98b340bd095f1637e3285589752e3475
+      revision: 77cac0c8c707305f946b5b6cb008158fe81f47b8
       groups:
         - nrf-802154
     - name: soc-hwmv1
@@ -203,7 +203,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 65b46548d2d4c8cf61cdc2303129da2f1ca1f9ee
+      revision: 6c48afc9da87c6b789378d4c365fbd63b9bf7ec2
       submodules: true
       groups:
         - dragoon
@@ -223,7 +223,7 @@ manifest:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: a764b0c41781dd682835ddc73c5ddfffa0bca833
+      revision: ae051fe3f9ed9a905626461f5503ecbf6ba870fe
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -247,7 +247,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: a759a4a09f9fe5bdf757c470aa86dffdc7a349f1
+      revision: db6393251a25b9952a4907137092acf9c7f254aa
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread

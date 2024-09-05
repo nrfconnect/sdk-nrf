@@ -82,7 +82,7 @@ The modem trace flash backend has some additional configuration options:
 * :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE` - Defines the space to be used for the modem trace partition.
   In order to improve the modem trace write performance, this partition is erased during system boot.
   This might lead to a significant increase in the boot time on the nRF9160 DK.
-  The external flash size on the nRF9160 DK is 8 MB (equal to ``0x800000`` in HEX) and 32 MB on the nRF9161 DK (equal to ``0x2000000`` in HEX).
+  The external flash size on the nRF9160 DK is 8 MB (equal to ``0x800000`` in HEX) and 32 MB on an nRF91x1 DK (equal to ``0x2000000`` in HEX).
 
 It is also recommended to enable high drive mode and high-performance mode in devicetree.
 High drive is to ensure that the communication with the flash device is reliable at high speed.

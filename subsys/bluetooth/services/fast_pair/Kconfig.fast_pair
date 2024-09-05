@@ -38,6 +38,13 @@ config BT_FAST_PAIR_PN
 	help
 	  Enable Fast Pair Personalized Name extension.
 
+config BT_FAST_PAIR_BN
+	bool "Fast Pair Battery Notification extension [EXPERIMENTAL]"
+	select BT_FAST_PAIR_BATTERY
+	select EXPERIMENTAL
+	help
+	  Enable Fast Pair Battery Notification extension.
+
 rsource "fp_crypto/Kconfig.fp_crypto"
 rsource "fp_storage/Kconfig.fp_storage"
 rsource "fmdn/Kconfig"
@@ -142,7 +149,6 @@ endif # BT_FAST_PAIR_REGISTRATION_DATA
 
 config BT_FAST_PAIR_BATTERY
 	bool
-	default y
 	help
 	  Add Fast Pair battery module source files.
 

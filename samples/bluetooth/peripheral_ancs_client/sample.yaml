@@ -1,6 +1,6 @@
 sample:
   description: Bluetooth Low Energy ANCS client sample
-  name: BLE ANCS client sample
+  name: Bluetooth LE ANCS client
 tests:
   sample.bluetooth.peripheral_ancs_client.build:
     sysbuild: true

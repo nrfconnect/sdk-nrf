@@ -91,7 +91,7 @@ config MCUBOOT_USB_SUPPORT
 	default y if "$(dt_nodelabel_enabled,zephyr_udc0)"
 
 config USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY
-	bool
+	bool "Allow nRF53 multi-image update support [dangerous]"
 	help
 	  Enabling this option allows you to use NRF53_MULTI_IMAGE update
 	  without having BOOT_UPGRADE_ONLY enabled, allowing you to use

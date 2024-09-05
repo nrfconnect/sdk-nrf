@@ -13,6 +13,7 @@ FILE(GLOB app_sources src/*.c)
 target_include_directories(app PRIVATE
   # Needed to access OpenThread RPC command IDs.
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/openthread/rpc/common
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/openthread/rpc/server
   ../common
 )
 

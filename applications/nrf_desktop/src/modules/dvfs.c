@@ -35,31 +35,48 @@ enum state {
 
 static enum state module_state = STATE_DISABLED;
 
+#define LIST_FOR_DVFS_STATE(MACRO, ...)						\
+	MACRO(INITIALIZING, __VA_ARGS__)					\
+	MACRO(LLPM_CONNECTED, __VA_ARGS__)					\
+	MACRO(USB_CONNECTED, __VA_ARGS__)					\
+	MACRO(CONFIG_CHANNEL, __VA_ARGS__)					\
+	MACRO(SMP_TRANSFER, __VA_ARGS__)					\
+	MACRO(COUNT, __VA_ARGS__)
+
+#define DVFS_STATE(name, ...) DVFS_STATE_ ## name,
+
+#define GET_ENUM_STRING(name, ...)						\
+	IF_ENABLED(CONFIG_DESKTOP_DVFS_STATE_ ## name ## _ENABLE,		\
+		(case DVFS_STATE_ ## name: return STRINGIFY(_CONCAT(DVFS_STATE_, name));))
+
+#define _DEFINE_FREQ_MASK_BIT(name, freq_suffix)				\
+	IF_ENABLED(CONFIG_DESKTOP_DVFS_STATE_ ## name ## _ ## freq_suffix,	\
+	(BIT(DVFS_STATE_ ## name) |))
+
+#define INITIALIZE_DVFS_FREQ_MASK(FREQ_SUFFIX)					\
+	LIST_FOR_DVFS_STATE(_DEFINE_FREQ_MASK_BIT, FREQ_SUFFIX) 0
+
+#define INITIALIZE_DVFS_STATE_TIMEOUT(name, ...)				\
+	IF_ENABLED(CONFIG_DESKTOP_DVFS_STATE_ ## name ## _ENABLE,		\
+	([DVFS_STATE_ ## name] = {						\
+		.timeout_ms = CONFIG_DESKTOP_DVFS_STATE_ ## name ## _TIMEOUT_MS,\
+	},))
+
 enum dvfs_state {
-	DVFS_STATE_INITIALIZING,
-	DVFS_STATE_LLPM_CONNECTED,
-	DVFS_STATE_USB_CONNECTED,
-	DVFS_STATE_CONFIG_CHANNEL,
-	DVFS_STATE_SMP_TRANSFER,
-	DVFS_STATE_COUNT
+	LIST_FOR_DVFS_STATE(DVFS_STATE)
 };
 
-static const uint8_t dvfs_high_freq_bitmask = BIT(DVFS_STATE_INITIALIZING) |
-					      BIT(DVFS_STATE_USB_CONNECTED) |
-					      BIT(DVFS_STATE_CONFIG_CHANNEL) |
-					      BIT(DVFS_STATE_SMP_TRANSFER);
-static const uint8_t dvfs_medlow_freq_bitmask = BIT(DVFS_STATE_LLPM_CONNECTED);
+static const uint8_t dvfs_high_freq_bitmask = INITIALIZE_DVFS_FREQ_MASK(ACTIVE_FREQ_HIGH);
+static const uint8_t dvfs_medlow_freq_bitmask = INITIALIZE_DVFS_FREQ_MASK(ACTIVE_FREQ_MEDLOW);
 
-/* Binary mask tracking which states are requested.
- * We start with DVFS_STATE_INITIALIZING on as it is active on start.
- */
-static uint8_t dfvs_requests_state_bitmask = BIT(DVFS_STATE_INITIALIZING);
+/* Binary mask tracking which states are requested. */
+static uint8_t dfvs_requests_state_bitmask;
+
+static enum dvfs_frequency_setting current_freq = DVFS_FREQ_HIGH;
 
 BUILD_ASSERT(sizeof(dvfs_high_freq_bitmask) == sizeof(dfvs_requests_state_bitmask));
 BUILD_ASSERT(sizeof(dvfs_medlow_freq_bitmask) == sizeof(dfvs_requests_state_bitmask));
 BUILD_ASSERT(CHAR_BIT * sizeof(dfvs_requests_state_bitmask) >= DVFS_STATE_COUNT);
-
-static enum dvfs_frequency_setting current_freq = DVFS_FREQ_HIGH;
 
 static struct dvfs_retry {
 	struct k_work_delayable retry_work;
@@ -72,12 +89,7 @@ struct dvfs_state_timeout {
 };
 
 static struct dvfs_state_timeout dvfs_state_timeouts[DVFS_STATE_COUNT] = {
-	[DVFS_STATE_CONFIG_CHANNEL] = {
-		.timeout_ms = CONFIG_DESKTOP_DVFS_CONFIG_CHANNEL_TIMEOUT_MS,
-	},
-	[DVFS_STATE_SMP_TRANSFER] = {
-		.timeout_ms = CONFIG_DESKTOP_DVFS_SMP_TRANSFER_TIMEOUT_MS,
-	}
+	LIST_FOR_DVFS_STATE(INITIALIZE_DVFS_STATE_TIMEOUT)
 };
 
 static const char *get_dvfs_frequency_setting_name(enum dvfs_frequency_setting setting)
@@ -93,11 +105,8 @@ static const char *get_dvfs_frequency_setting_name(enum dvfs_frequency_setting s
 static const char *get_dvfs_state_name(enum dvfs_state state)
 {
 	switch (state) {
-	case DVFS_STATE_INITIALIZING: return "DVFS_STATE_INITIALIZING";
-	case DVFS_STATE_LLPM_CONNECTED: return "DVFS_STATE_LLPM_CONNECTED";
-	case DVFS_STATE_USB_CONNECTED: return "DVFS_STATE_USB_CONNECTED";
-	case DVFS_STATE_CONFIG_CHANNEL: return "DVFS_STATE_CONFIG_CHANNEL";
-	case DVFS_STATE_SMP_TRANSFER: return "DVFS_STATE_SMP_TRANSFER";
+	LIST_FOR_DVFS_STATE(GET_ENUM_STRING);
+
 	default: return "Unknown";
 	}
 }
@@ -244,28 +253,37 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			__ASSERT_NO_MSG((dvfs_high_freq_bitmask & dvfs_medlow_freq_bitmask) == 0);
+
 			k_work_init_delayable(&dvfs_retry.retry_work,
 					      dvfs_retry_work_handler);
 			for (size_t i = 0; i < ARRAY_SIZE(dvfs_state_timeouts); i++) {
 				k_work_init_delayable(&dvfs_state_timeouts[i].timeout_work,
 						      dvfs_state_timeout_work_handler);
 			}
-			get_req_modules(&req_modules_bm);
 			module_state = STATE_READY;
 
-			/* In case user implemented empty get_req_modules function */
-			if (module_flags_check_zero(&req_modules_bm)) {
-				process_dvfs_states(DVFS_STATE_INITIALIZING, false);
-				return false;
+			if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_INITIALIZING_ENABLE)) {
+				if (module_flags_check_zero(&req_modules_bm)) {
+					process_dvfs_states(DVFS_STATE_INITIALIZING, true);
+				}
+				get_req_modules(&req_modules_bm);
+			} else {
+				enum dvfs_frequency_setting required_freq =
+								check_required_frequency();
+				if (required_freq != current_freq) {
+					set_dvfs_freq(required_freq);
+				}
 			}
 		}
 
-		if (module_flags_check_zero(&req_modules_bm)) {
+		if (!IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_INITIALIZING_ENABLE) ||
+		    module_flags_check_zero(&req_modules_bm)) {
 			/* Frequency already changed */
 			return false;
 		}
 
-		if (event->state == MODULE_STATE_READY) {
+		if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_INITIALIZING_ENABLE) &&
+		    event->state == MODULE_STATE_READY) {
 			module_flags_clear_bit(&req_modules_bm, module_idx_get(event->module_id));
 
 			if (module_flags_check_zero(&req_modules_bm)) {
@@ -275,11 +293,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_conn_params_event(aeh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_LLPM_CONNECTED_ENABLE) &&
+	    is_ble_peer_conn_params_event(aeh)) {
 		return handle_ble_peer_conn_params_event(cast_ble_peer_conn_params_event(aeh));
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_BLE_COMMON_EVENTS) && is_ble_peer_event(aeh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_LLPM_CONNECTED_ENABLE) &&
+	    is_ble_peer_event(aeh)) {
 		if (cast_ble_peer_event(aeh)->state == PEER_STATE_DISCONNECTED) {
 			process_dvfs_states(DVFS_STATE_LLPM_CONNECTED, false);
 		}
@@ -287,7 +307,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_USB_ENABLE) && is_usb_state_event(aeh)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_USB_CONNECTED_ENABLE) &&
+	    is_usb_state_event(aeh)) {
 		const struct usb_state_event *event = cast_usb_state_event(aeh);
 
 		process_dvfs_states(DVFS_STATE_USB_CONNECTED, event->state == USB_STATE_ACTIVE);
@@ -295,22 +316,27 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS) && is_ble_smp_transfer_event(aeh)) {
-		process_dvfs_states(DVFS_STATE_SMP_TRANSFER, true);
+	if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_SMP_TRANSFER_ENABLE) &&
+	    is_ble_smp_transfer_event(aeh)) {
 		struct dvfs_state_timeout *smp_transfer_timeout =
 			&dvfs_state_timeouts[DVFS_STATE_SMP_TRANSFER];
-		(void) k_work_reschedule(&(smp_transfer_timeout->timeout_work),
-					 K_MSEC(smp_transfer_timeout->timeout_ms));
+		if (smp_transfer_timeout->timeout_ms > 0) {
+			process_dvfs_states(DVFS_STATE_SMP_TRANSFER, true);
+			(void) k_work_reschedule(&smp_transfer_timeout->timeout_work,
+						K_MSEC(smp_transfer_timeout->timeout_ms));
+		}
 
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && is_config_event(aeh)) {
-		process_dvfs_states(DVFS_STATE_CONFIG_CHANNEL, true);
+	if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_CONFIG_CHANNEL_ENABLE) && is_config_event(aeh)) {
 		struct dvfs_state_timeout *config_channel_timeout =
 			&dvfs_state_timeouts[DVFS_STATE_CONFIG_CHANNEL];
-		(void) k_work_reschedule(&(config_channel_timeout->timeout_work),
-					 K_MSEC(config_channel_timeout->timeout_ms));
+		if (config_channel_timeout->timeout_ms > 0) {
+			process_dvfs_states(DVFS_STATE_CONFIG_CHANNEL, true);
+			(void) k_work_reschedule(&config_channel_timeout->timeout_work,
+						K_MSEC(config_channel_timeout->timeout_ms));
+		}
 
 		return false;
 	}
@@ -323,16 +349,16 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if CONFIG_CAF_BLE_COMMON_EVENTS
+#if CONFIG_DESKTOP_DVFS_STATE_LLPM_CONNECTED_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #endif
-#if CONFIG_DESKTOP_USB_ENABLE
+#if CONFIG_DESKTOP_DVFS_STATE_USB_CONNECTED_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
-#if CONFIG_CAF_BLE_SMP_TRANSFER_EVENTS
+#if CONFIG_DESKTOP_DVFS_STATE_SMP_TRANSFER_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
-#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+#if CONFIG_DESKTOP_DVFS_STATE_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

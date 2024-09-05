@@ -44,6 +44,11 @@ config SSF_EXTMEM_BASE_ADDRESS
 	  into the XIP or EXMEE memory regions. The SDFW will validate if the base
 	  address does not belong to memory ranges owned by other domains to prevent data leaks.
 
+config SSF_EXTMEM_WRITE_ERASE_OPS
+	bool "Enable write and erase operations"
+	help
+	  Enable write and erase operations.
+
 module = SSF_EXTMEM_SERVICE
 module-str = EXTMEM Update service
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

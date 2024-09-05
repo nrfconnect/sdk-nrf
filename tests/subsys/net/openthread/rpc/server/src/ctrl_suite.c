@@ -13,6 +13,7 @@
 #include <openthread/cli.h>
 #include <openthread/ip6.h>
 #include <openthread/thread.h>
+#include <openthread/netdata.h>
 
 #include <ot_rpc_ids.h>
 #include <test_rpc_env.h>
@@ -41,6 +42,11 @@ FAKE_VOID_FUNC(otLinkSetMaxFrameRetriesDirect, otInstance *, uint8_t);
 FAKE_VOID_FUNC(otLinkSetMaxFrameRetriesIndirect, otInstance *, uint8_t);
 FAKE_VALUE_FUNC(otError, otLinkSetEnabled, otInstance *, bool);
 FAKE_VOID_FUNC(otLinkGetFactoryAssignedIeeeEui64, otInstance *, otExtAddress *);
+FAKE_VALUE_FUNC(otError, otNetDataGet, otInstance *, bool, uint8_t *, uint8_t *);
+FAKE_VALUE_FUNC(otError, otNetDataGetNextService, otInstance *, otNetworkDataIterator *,
+		otServiceConfig *);
+FAKE_VALUE_FUNC(otError, otNetDataGetNextOnMeshPrefix, otInstance *, otNetworkDataIterator *,
+		otBorderRouterConfig *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otCliInit);                                                                              \
@@ -63,7 +69,10 @@ FAKE_VOID_FUNC(otLinkGetFactoryAssignedIeeeEui64, otInstance *, otExtAddress *);
 	f(otLinkSetMaxFrameRetriesDirect);                                                         \
 	f(otLinkSetMaxFrameRetriesIndirect);                                                       \
 	f(otLinkSetEnabled);                                                                       \
-	f(otLinkGetFactoryAssignedIeeeEui64);
+	f(otLinkGetFactoryAssignedIeeeEui64);                                                      \
+	f(otNetDataGet);                                                                           \
+	f(otNetDataGetNextService);                                                                \
+	f(otNetDataGetNextOnMeshPrefix);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {

@@ -1,7 +1,6 @@
 sample:
-  description: BLE Wi-Fi provision sample
-    application
-  name: BLE Wi-Fi provision
+  description: Bluetooth Low Energy Wi-Fi provision sample
+  name: Bluetooth LE Wi-Fi provision
 tests:
   sample.nrf7002.ble-wifi-provision:
     sysbuild: true

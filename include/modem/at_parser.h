@@ -289,7 +289,7 @@ int at_parser_uint64_get(struct at_parser *parser, size_t index, uint64_t *value
  * The data type must be a string (quoted or non-quoted), an AT command prefix, or an array,
  * otherwise an error is returned.
  * The string value is copied to the buffer and null-terminated.
- * @p len must be larger than the string length plus one, or an error is returned.
+ * @p len must be at least string length plus one, or an error is returned.
  *
  * @param[in]     parser  AT parser.
  * @param[in]     index   Index in the current AT command line configured in @p parser.

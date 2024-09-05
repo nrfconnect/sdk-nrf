@@ -418,6 +418,7 @@ Battery Notification extension
 You can include special battery data in a not discoverable advertising packet using the Fast Pair Battery Notification extension.
 To use this extension, ensure the following:
 
+#. Enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_BN` Kconfig option in your application configuration.
 #. Call the :c:func:`bt_fast_pair_battery_set` function to provide battery information.
 #. Set :c:member:`bt_fast_pair_not_disc_adv_info.battery_mode` in :c:struct:`bt_fast_pair_adv_config` to either :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_SHOW_UI_IND` or :c:enum:`BT_FAST_PAIR_ADV_BATTERY_MODE_HIDE_UI_IND` to include the battery notification in the generated advertising payload.
 

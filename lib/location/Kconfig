@@ -31,6 +31,7 @@ config LOCATION_METHOD_WIFI
 
 config LOCATION_METHOD_WIFI_NET_MGMT
 	bool
+	depends on LOCATION_METHOD_WIFI
 	default y
 	help
 	  Use the Network Management APIs for Wi-Fi functionality. This is

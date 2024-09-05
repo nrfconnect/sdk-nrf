@@ -32,6 +32,19 @@ config DATE_TIME_TOO_OLD_SECONDS
 	  done earlier than given number of seconds ago.
 	  This must be smaller than or equal to DATE_TIME_UPDATE_INTERVAL_SECONDS.
 
+config DATE_TIME_RETRY_COUNT
+	int "Reattempt date-time updates at a reduced interval, up to this many times in a row"
+	default 0
+	help
+	  If this value is nonzero, failed date-time updates will be retried at a reduced interval,
+	  up to the number of times specified.
+
+config DATE_TIME_RETRY_INTERVAL_SECONDS
+	int "Time between date-time update retries, in seconds"
+	default 60
+	help
+	  The number of seconds to wait between date-time update retries.
+
 config DATE_TIME_MODEM
 	bool "Get date time from the nRF9160 onboard modem"
 	depends on NRF_MODEM_LIB

@@ -7,6 +7,7 @@
 / {
 	chosen {
 		extmem-device = &mx25uw63;
+		zephyr,code-partition = &cpuapp_ram0;
 	};
 };
 

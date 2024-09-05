@@ -7,6 +7,7 @@
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_mem.h"
+#include "nrf_cloud_transport.h"
 #include <zephyr/kernel.h>
 #include <net/nrf_cloud_alert.h>
 #include <net/nrf_cloud_codec.h>
@@ -357,11 +358,7 @@ static int cc_connection_handler(const struct nct_evt *nct_evt)
 static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input)
 {
 	int err;
-	struct nrf_cloud_data rx;
-	struct nrf_cloud_data tx;
-	struct nrf_cloud_data bulk;
-	struct nrf_cloud_data bin;
-	struct nrf_cloud_data endpoint;
+	struct nct_dc_endpoints eps;
 	struct nrf_cloud_obj *desired_obj = NULL;
 
 	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
@@ -372,17 +369,18 @@ static int set_endpoint_data(const struct nrf_cloud_obj_shadow_data *const input
 		return -ENOTSUP;
 	}
 
-	err = nrf_cloud_obj_endpoint_decode(desired_obj, &tx, &rx, &bulk, &bin, &endpoint);
+	err = nrf_cloud_obj_endpoint_decode(desired_obj, &eps);
 	if (err) {
 		LOG_ERR("nrf_cloud_obj_endpoint_decode failed %d", err);
 		return err;
 	}
 
 	/* Update to use wildcard topic if necessary */
-	c2d_topic_modified = nrf_cloud_set_wildcard_c2d_topic((char *)rx.ptr, rx.len);
+	c2d_topic_modified = nrf_cloud_set_wildcard_c2d_topic((char *)eps.e[DC_RX].utf8,
+							      eps.e[DC_RX].size);
 
 	/* Set the endpoint information. */
-	nct_dc_endpoint_set(&tx, &rx, &bulk, &bin, &endpoint);
+	nct_dc_endpoint_set(&eps);
 
 	return 0;
 }

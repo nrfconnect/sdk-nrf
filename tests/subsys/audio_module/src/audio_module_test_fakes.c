@@ -9,16 +9,16 @@
 #include <data_fifo.h>
 
 #include "audio_module_test_common.h"
-#include "fakes.h"
+#include "audio_module_test_fakes.h"
 
 /* Overload the message buffer pointer with a point to one of the an arrays below */
-static int fifo_num;
+int fifo_num;
 
 struct test_slab_queue {
 	size_t head;
 	size_t tail;
 	size_t size;
-	size_t locked;
+	struct k_sem sem;
 
 	void **data[FAKE_FIFO_MSG_QUEUE_SIZE];
 	struct audio_module_message msg[FAKE_FIFO_MSG_QUEUE_SIZE];
@@ -28,25 +28,16 @@ struct test_msg_fifo_queue {
 	size_t head;
 	size_t tail;
 	size_t size;
-	size_t locked;
+	struct k_sem sem;
 
 	void **data[FAKE_FIFO_MSG_QUEUE_SIZE];
 };
 
+/* FIFO "slab" */
 static struct test_slab_queue test_fifo_slab[FAKE_FIFO_NUM];
 
+/* FIFO "message" queue */
 static struct test_msg_fifo_queue test_fifo_msg_queue[FAKE_FIFO_NUM];
-
-void data_fifo_deinit(struct data_fifo *data_fifo)
-{
-	data_fifo->msgq_buffer = (char *)NULL;
-	data_fifo->slab_buffer = (char *)NULL;
-	data_fifo->elements_max = 0;
-	data_fifo->block_size_max = 0;
-	data_fifo->initialized = false;
-
-	fifo_num = 0;
-}
 
 /*
  * Stubs are defined here, so that multiple *.c files can share them
@@ -62,20 +53,30 @@ DEFINE_FAKE_VALUE_FUNC(int, data_fifo_pointer_last_filled_get, struct data_fifo 
 DEFINE_FAKE_VOID_FUNC2(data_fifo_block_free, struct data_fifo *, void *);
 DEFINE_FAKE_VALUE_FUNC(int, data_fifo_num_used_get, struct data_fifo *, uint32_t *, uint32_t *);
 DEFINE_FAKE_VALUE_FUNC(int, data_fifo_empty, struct data_fifo *);
+DEFINE_FAKE_VALUE_FUNC(int, data_fifo_uninit, struct data_fifo *);
 DEFINE_FAKE_VALUE_FUNC(int, data_fifo_init, struct data_fifo *);
+DEFINE_FAKE_VALUE_FUNC(bool, data_fifo_state, struct data_fifo *);
 
+void fake_fifo_counter_reset(void)
+{
+	fifo_num = 0;
+}
+
+/* Custom fakes implementation */
 int fake_data_fifo_pointer_first_vacant_get__succeeds(struct data_fifo *data_fifo, void **data,
 						      k_timeout_t timeout)
 {
+	int ret;
 	struct test_slab_queue *test_fifo_slab_data =
 		(struct test_slab_queue *)data_fifo->slab_buffer;
 
-	if (test_fifo_slab_data->head == test_fifo_slab_data->tail) {
-		return -EINVAL;
-	}
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
 
-	*data = &test_fifo_slab_data->msg[test_fifo_slab_data->tail % test_fifo_slab_data->size];
-	test_fifo_slab_data->tail = (test_fifo_slab_data->tail + 1) % test_fifo_slab_data->size;
+	ret = k_sem_take(&test_fifo_slab_data->sem, timeout);
+	zassert_equal(ret, 0, "Failed to take the slab semaphore: ret %d", ret);
+
+	*data = &test_fifo_slab_data->msg[test_fifo_slab_data->head];
+	test_fifo_slab_data->head = (test_fifo_slab_data->head + 1) % test_fifo_slab_data->size;
 
 	return 0;
 }
@@ -116,14 +117,12 @@ int fake_data_fifo_block_lock__succeeds(struct data_fifo *data_fifo, void **data
 	struct test_msg_fifo_queue *test_fifo_msg =
 		(struct test_msg_fifo_queue *)data_fifo->msgq_buffer;
 
-	if (((test_fifo_msg->head + 1) % test_fifo_msg->size) == test_fifo_msg->tail) {
-		return -EINVAL;
-	}
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
+
+	k_sem_give(&test_fifo_msg->sem);
 
 	test_fifo_msg->data[test_fifo_msg->head] = *data;
 	test_fifo_msg->head = (test_fifo_msg->head + 1) % test_fifo_msg->size;
-
-	test_fifo_msg->locked++;
 
 	return 0;
 }
@@ -158,13 +157,15 @@ int fake_data_fifo_block_lock__put_fails(struct data_fifo *data_fifo, void **dat
 int fake_data_fifo_pointer_last_filled_get__succeeds(struct data_fifo *data_fifo, void **data,
 						     size_t *size, k_timeout_t timeout)
 {
+	int ret;
 	struct audio_module_message *msg;
 	struct test_msg_fifo_queue *test_fifo_msg =
 		(struct test_msg_fifo_queue *)data_fifo->msgq_buffer;
 
-	if (test_fifo_msg->tail == test_fifo_msg->head) {
-		return -EINVAL;
-	}
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
+
+	ret = k_sem_take(&test_fifo_msg->sem, timeout);
+	zassert_equal(ret, 0, "Failed to take the message semaphore: ret %d", ret);
 
 	msg = (struct audio_module_message *)test_fifo_msg->data[test_fifo_msg->tail];
 
@@ -173,8 +174,6 @@ int fake_data_fifo_pointer_last_filled_get__succeeds(struct data_fifo *data_fifo
 
 	*data = msg;
 	*size = sizeof(struct audio_module_message);
-
-	test_fifo_msg->locked--;
 
 	return 0;
 }
@@ -205,14 +204,13 @@ void fake_data_fifo_block_free__succeeds(struct data_fifo *data_fifo, void *data
 {
 	ARG_UNUSED(data);
 
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
+
 	struct test_slab_queue *test_fifo_slab_data =
 		(struct test_slab_queue *)data_fifo->slab_buffer;
 
-	if (test_fifo_slab_data->tail == test_fifo_slab_data->head) {
-		return;
-	}
-
-	test_fifo_slab_data->head = (test_fifo_slab_data->head + 1) % test_fifo_slab_data->size;
+	k_sem_give(&test_fifo_slab_data->sem);
+	test_fifo_slab_data->tail = (test_fifo_slab_data->tail + 1) % test_fifo_slab_data->size;
 }
 
 int fake_data_fifo_num_used_get__succeeds(struct data_fifo *data_fifo, uint32_t *alloced_num,
@@ -222,7 +220,7 @@ int fake_data_fifo_num_used_get__succeeds(struct data_fifo *data_fifo, uint32_t 
 		(struct test_msg_fifo_queue *)data_fifo->msgq_buffer;
 
 	*alloced_num = test_fifo_msg->head - test_fifo_msg->tail;
-	*locked_num = test_fifo_msg->locked;
+	*locked_num = k_sem_count_get(&test_fifo_msg->sem);
 
 	return 0;
 }
@@ -239,19 +237,25 @@ int fake_data_fifo_num_used_get__fails(struct data_fifo *data_fifo, uint32_t *al
 
 int fake_data_fifo_empty__succeeds(struct data_fifo *data_fifo)
 {
+	int ret;
 	struct test_msg_fifo_queue *test_fifo_msg =
 		(struct test_msg_fifo_queue *)data_fifo->msgq_buffer;
 	struct test_slab_queue *test_fifo_slab_data =
 		(struct test_slab_queue *)data_fifo->slab_buffer;
 
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
+
 	test_fifo_msg->head = 0;
 	test_fifo_msg->tail = 0;
 	test_fifo_msg->size = FAKE_FIFO_MSG_QUEUE_SIZE;
-	test_fifo_msg->locked = 0;
+	k_sem_reset(&test_fifo_msg->sem);
 
 	test_fifo_slab_data->head = 0;
 	test_fifo_slab_data->tail = 0;
 	test_fifo_slab_data->size = FAKE_FIFO_MSG_QUEUE_SIZE;
+	ret = k_sem_init(&test_fifo_slab_data->sem, FAKE_FIFO_MSG_QUEUE_SIZE,
+			 FAKE_FIFO_MSG_QUEUE_SIZE);
+	zassert_equal(ret, 0, "Failed to initialize the slab semaphore: ret %d", ret);
 
 	return 0;
 }
@@ -284,13 +288,42 @@ int fake_data_fifo_empty__timeout_fails(struct data_fifo *data_fifo)
 	return -EAGAIN;
 }
 
+int fake_data_fifo_uninit__succeeds(struct data_fifo *data_fifo)
+{
+	int ret;
+
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
+
+	if (data_fifo->initialized) {
+		ret = data_fifo_empty(data_fifo);
+		if (ret) {
+			return ret;
+		}
+
+		data_fifo->initialized = false;
+	}
+
+	return 0;
+}
+
+int fake_data_fifo_uninit__fails(struct data_fifo *data_fifo)
+{
+	ARG_UNUSED(data_fifo);
+
+	return -EINVAL;
+}
+
 int fake_data_fifo_init__succeeds(struct data_fifo *data_fifo)
 {
+	int ret;
 	struct test_msg_fifo_queue *test_fifo_msg = &test_fifo_msg_queue[fifo_num];
 	struct test_slab_queue *test_fifo_slab_data = &test_fifo_slab[fifo_num];
 
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
+
 	data_fifo->msgq_buffer = (char *)test_fifo_msg;
 	data_fifo->slab_buffer = (char *)test_fifo_slab_data;
+
 	data_fifo->elements_max = FAKE_FIFO_MSG_QUEUE_SIZE;
 	data_fifo->block_size_max = TEST_MOD_DATA_SIZE;
 	data_fifo->initialized = true;
@@ -300,22 +333,21 @@ int fake_data_fifo_init__succeeds(struct data_fifo *data_fifo)
 	test_fifo_msg->head = 0;
 	test_fifo_msg->tail = 0;
 	test_fifo_msg->size = FAKE_FIFO_MSG_QUEUE_SIZE;
-	test_fifo_msg->locked = 0;
+	ret = k_sem_init(&test_fifo_msg->sem, 0, FAKE_FIFO_MSG_QUEUE_SIZE);
+	zassert_equal(ret, 0, "Failed to initialize the message semaphore: ret %d", ret);
 
 	test_fifo_slab_data->head = 0;
 	test_fifo_slab_data->tail = 0;
 	test_fifo_slab_data->size = FAKE_FIFO_MSG_QUEUE_SIZE;
+	ret = k_sem_init(&test_fifo_slab_data->sem, FAKE_FIFO_MSG_QUEUE_SIZE,
+			 FAKE_FIFO_MSG_QUEUE_SIZE);
+	zassert_equal(ret, 0, "Failed to initialize the slab semaphore: ret %d", ret);
 
 	for (int i = 0; i < FAKE_FIFO_MSG_QUEUE_SIZE; i++) {
-		if (((test_fifo_slab_data->head + 1) % test_fifo_slab_data->size) ==
-		    test_fifo_slab_data->tail) {
-			return -ENOMSG;
-		}
-		test_fifo_slab_data->data[test_fifo_slab_data->head] =
-			(void **)&test_fifo_slab_data->msg[i];
-		test_fifo_slab_data->head =
-			(test_fifo_slab_data->head + 1) % test_fifo_slab_data->size;
+		test_fifo_slab_data->data[i] = (void **)&test_fifo_slab_data->msg[i];
 	}
+
+	data_fifo->initialized = true;
 
 	return 0;
 }
@@ -325,4 +357,11 @@ int fake_data_fifo_init__fails(struct data_fifo *data_fifo)
 	ARG_UNUSED(data_fifo);
 
 	return -EINVAL;
+}
+
+bool fake_data_fifo_state__succeeds(struct data_fifo *data_fifo)
+{
+	zassert_not_equal(data_fifo, NULL, "Data FIFO pointer is NULL");
+
+	return data_fifo->initialized;
 }

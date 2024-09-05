@@ -4,4 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/audio_module.c)
+zephyr_sources_ifdef(CONFIG_AUDIO_MODULE audio_module.c)
