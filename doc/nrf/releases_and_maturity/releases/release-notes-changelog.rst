@@ -117,6 +117,10 @@ Bluetooth® LE
 * Added the APIs :c:func:`bt_hci_err_to_str` and :c:func:`bt_security_err_to_str` to allow printing error codes as strings.
   Each API returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
   The :ref:`ble_samples` and :ref:`nrf53_audio_app` are updated to utilize these new APIs.
+* The Bluetooth HCI driver is now present as a devicetree node in the device tree.
+  The SoftDevice Controller driver uses a devicetree node named ``bt_hci_sdc`` with a devicetree binding compatible with ``nordic,bt-hci-sdc``.
+  The Zephyr Bluetooth LE Controller uses a devicetree node named ``bt_hci_controller`` with a devicetree binding compatible with ``zephyr,bt-hci-ll-sw-split``.
+  Applications using the Zephyr Bluetooth Controller need to be updated (see the :ref:`migration guide <migration_2.8>`).
 
 Bluetooth Mesh
 --------------

@@ -350,3 +350,13 @@ This section describes the changes related to snippets.
    * ``nrf70-driver-verbose-logs`` - To enable the nRF70 driver, firmware interface, and BUS interface debug logs.
 
    * ``wpa-supplicant-debug`` - To enable supplicant logs.
+
+Protocols
+=========
+
+This section provides detailed lists of changes by :ref:`protocol <protocols>`.
+
+Bluetooth® LE
+-------------
+
+*  To use the Zephyr Bluetooth LE Controller, use the :ref:`bt-ll-sw-split <zephyr:snippet-bt-ll-sw-split>` snippet (see :ref:`app_build_snippets`).
