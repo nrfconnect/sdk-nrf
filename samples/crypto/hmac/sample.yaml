@@ -30,13 +30,15 @@ tests:
     sysbuild: true
     tags: introduction psa cracen sysbuild ci_samples_crypto
     platform_allow: >
-      nrf54l15pdk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp/ns
+      nrf54l15dk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp
+      nrf54l15pdk/nrf54l15/cpuapp/ns
     harness: console
     harness_config:
       type: multi_line
       regex:
         - ".*Example finished successfully!.*"
     integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54l15pdk/nrf54l15/cpuapp/ns
   sample.hmac.cracen.crypto_service:

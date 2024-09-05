@@ -10,7 +10,7 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15pdk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuflpr
@@ -22,7 +22,7 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15pdk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -35,7 +35,7 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15pdk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
       - CONFIG_TEST_I2C_SPEED=3
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp

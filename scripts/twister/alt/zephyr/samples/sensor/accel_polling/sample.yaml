@@ -54,7 +54,7 @@ tests:
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565
-    platform_allow: nrf54l15pdk/nrf54l15/cpuapp
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
   sample.sensor.accel_polling.nrf54l_coverage:
     filter: CONFIG_COVERAGE
@@ -66,9 +66,9 @@ tests:
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565;coverage_support
-    platform_allow: nrf54l15pdk/nrf54l15/cpuapp
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
-  sample.sensor.accel_polling.nrf54l_cpuflpr:
+  sample.sensor.accel_polling.nrf54l15_cpuflpr:
     filter: not CONFIG_COVERAGE
     sysbuild: true
     harness_config:
@@ -79,5 +79,5 @@ tests:
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565
-      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15pdk_nrf54l15_vpr_launcher.overlay"
-    platform_allow: nrf54l15pdk/nrf54l15/cpuflpr
+      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
