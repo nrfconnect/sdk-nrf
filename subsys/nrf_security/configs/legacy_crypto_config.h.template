@@ -1756,7 +1756,7 @@
  * This feature is still experimental and is not ready for production since
  * it is not completed.
  */
-//#define MBEDTLS_PSA_CRYPTO_CONFIG
+#define MBEDTLS_PSA_CRYPTO_CONFIG
 
 /**
  * \def MBEDTLS_VERSION_FEATURES
