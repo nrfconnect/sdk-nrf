@@ -46,6 +46,7 @@ tests:
     tags: drivers ci_build sysbuild ci_tests_drivers_nrfx_integration_test
     extra_configs:
       - CONFIG_NRFX_AND_BT_LL_SW_SPLIT=y
+    extra_args: SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpunet
