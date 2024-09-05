@@ -718,6 +718,12 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 #if defined(RADIO_MODE_MODE_Nrf_4Mbit0_25)
 	case NRF_RADIO_MODE_NRF_4MBIT_H_0_25:
 #endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_25) */
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
+	case NRF_RADIO_MODE_NRF_4MBIT_BT_0_6:
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT4)
+	case NRF_RADIO_MODE_NRF_4MBIT_BT_0_4:
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT4) */
 		nrf_radio_shorts_enable(NRF_RADIO,
 					NRF_RADIO_SHORT_READY_START_MASK |
 					RADIO_TEST_SHORT_END_START_MASK);
