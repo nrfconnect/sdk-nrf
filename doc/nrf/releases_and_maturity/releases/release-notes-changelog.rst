@@ -846,7 +846,7 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* Added semantic version support to :ref:`nrf_desktop_config_channel_script` Python script for devices that use the SUIT DFU.
 
 Integrations
 ============
