@@ -141,6 +141,34 @@ target_link_libraries(mbedcrypto_base
     mbedcrypto_common
 )
 
+# Misusing the psa_crypto_config and psa_crypto_library_config awareness to 
+# set compiler-flags to ensure right floating-point types are set
+if(COMPILER_CP_FLAG)
+  target_compile_options(psa_crypto_config
+    INTERFACE
+      ${COMPILER_CP_FLAG}
+  )
+
+  target_compile_options(psa_crypto_library_config
+    INTERFACE
+      ${COMPILER_CP_FLAG}
+  )
+endif()
+
+# Misusing the psa_crypto_config and psa_crypto_library_config awareness to 
+# set linker-options to ensure right floating-point types are set
+if(LINKER_CP_OPTION)
+  target_link_options(psa_crypto_config
+    INTERFACE
+      ${LINKER_CP_OPTION}
+  )
+
+  target_link_options(psa_crypto_library_config
+  INTERFACE
+    ${LINKER_CP_OPTION}
+)
+endif()
+
 target_link_libraries(${mbedcrypto_target}
   PRIVATE
     mbedcrypto_base
