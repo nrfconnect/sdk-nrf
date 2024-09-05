@@ -14,6 +14,7 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
   cipher_wrap.c
   md.c
   pk.c
+  pk_ecc.c
   pk_wrap.c
   pkwrite.c
   sha1.c
