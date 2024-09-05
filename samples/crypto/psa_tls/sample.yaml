@@ -140,54 +140,6 @@ tests:
   ################################################################################
   ## Legacy APIs with Cryptocell (secure-only)
   ################################################################################
-  sample.psa_tls.tls_server.rsa.cc3xx_legacy:
-    sysbuild: true
-    build_only: true
-    extra_args: >
-      OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
-    platform_allow: nrf52840dk/nrf52840 nrf9160dk/nrf9160 nrf5340dk/nrf5340/cpuapp nrf9151dk/nrf9151
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf9160dk/nrf9160
-      - nrf9151dk/nrf9151
-    tags: ci_build legacy cc3xx_legacy sysbuild ci_samples_crypto
-  sample.psa_tls.tls_client.rsa.cc3xx_legacy:
-    sysbuild: true
-    build_only: true
-    extra_args: >
-      OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
-    platform_allow: nrf52840dk/nrf52840 nrf9160dk/nrf9160 nrf5340dk/nrf5340/cpuapp nrf9151dk/nrf9151
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf9160dk/nrf9160
-      - nrf9151dk/nrf9151
-    tags: ci_build legacy cc3xx_legacy sysbuild ci_samples_crypto
   ################################################################################
   ## Legacy APIs with Oberon (secure-only)
   ################################################################################
-  sample.psa_tls.tls_server.rsa.oberon_legacy:
-    sysbuild: true
-    build_only: true
-    extra_args: >
-      OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
-    platform_allow: nrf52840dk/nrf52840 nrf9160dk/nrf9160 nrf5340dk/nrf5340/cpuapp nrf9151dk/nrf9151
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf9160dk/nrf9160
-      - nrf9151dk/nrf9151
-    tags: ci_build legacy oberon_legacy sysbuild ci_samples_crypto
-  sample.psa_tls.tls_client.rsa.oberon_legacy:
-    sysbuild: true
-    build_only: true
-    extra_args: >
-      OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
-    platform_allow: nrf52840dk/nrf52840 nrf9160dk/nrf9160 nrf5340dk/nrf5340/cpuapp nrf9151dk/nrf9151
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf9160dk/nrf9160
-      - nrf9151dk/nrf9151
-    tags: ci_build legacy oberon_legacy sysbuild ci_samples_crypto
