@@ -29,6 +29,7 @@ FAKE_VALUE_FUNC(int, nfc_t2t_internal_set, const uint8_t *, size_t);
 FAKE_VALUE_FUNC(int, nfc_t2t_emulation_start);
 FAKE_VALUE_FUNC(int, nfc_t2t_emulation_stop);
 FAKE_VALUE_FUNC(int, nfc_t2t_done);
+FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(nfc_t2t_setup);                                                                          \
@@ -39,7 +40,8 @@ FAKE_VALUE_FUNC(int, nfc_t2t_done);
 	f(nfc_t2t_internal_set);                                                                   \
 	f(nfc_t2t_emulation_start);                                                                \
 	f(nfc_t2t_emulation_stop);                                                                 \
-	f(nfc_t2t_done);
+	f(nfc_t2t_done);                                                                           \
+	f(nrf_rpc_cbkproxy_out_get);
 
 extern uint64_t nfc_t2t_cb_encoder(uint32_t callback_slot, uint32_t _rsv0, uint32_t _rsv1,
 				   uint32_t _ret, void *context, nfc_t2t_event_t event,
@@ -63,6 +65,7 @@ static void tc_setup(void *f)
 /* Test reception of nfc_t2t_setup command. */
 ZTEST(nfc_rpc_t2t_srv, test_nfc_t2t_setup)
 {
+	nrf_rpc_cbkproxy_out_get_fake.return_val = (void *)0xfacecafe;
 	nfc_t2t_setup_fake.return_val = 0;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(0), NO_RSP);
@@ -70,7 +73,7 @@ ZTEST(nfc_rpc_t2t_srv, test_nfc_t2t_setup)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(nfc_t2t_setup_fake.call_count, 1);
-	zassert_equal_ptr(nfc_t2t_setup_fake.arg0_val, NULL);
+	zassert_equal_ptr(nfc_t2t_setup_fake.arg0_val, (void *)0xfacecafe);
 	zassert_equal_ptr(nfc_t2t_setup_fake.arg1_val, (void *)0xcafeface);
 }
 

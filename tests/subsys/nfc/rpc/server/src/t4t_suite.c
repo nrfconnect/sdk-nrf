@@ -28,6 +28,7 @@ FAKE_VALUE_FUNC(int, nfc_t4t_parameter_get, nfc_t4t_param_id_t, void *, size_t *
 FAKE_VALUE_FUNC(int, nfc_t4t_emulation_start);
 FAKE_VALUE_FUNC(int, nfc_t4t_emulation_stop);
 FAKE_VALUE_FUNC(int, nfc_t4t_done);
+DECLARE_FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(nfc_t4t_setup);                                                                          \
@@ -62,6 +63,7 @@ static void tc_setup(void *f)
 /* Test reception of nfc_t4t_setup command. */
 ZTEST(nfc_rpc_t4t_srv, test_nfc_t4t_setup)
 {
+	nrf_rpc_cbkproxy_out_get_fake.return_val = (void *)0xfacecafe;
 	nfc_t4t_setup_fake.return_val = 0;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(0), NO_RSP);
@@ -69,7 +71,7 @@ ZTEST(nfc_rpc_t4t_srv, test_nfc_t4t_setup)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(nfc_t4t_setup_fake.call_count, 1);
-	zassert_equal_ptr(nfc_t4t_setup_fake.arg0_val, NULL);
+	zassert_equal_ptr(nfc_t4t_setup_fake.arg0_val, (void *)0xfacecafe);
 	zassert_equal_ptr(nfc_t4t_setup_fake.arg1_val, (void *)0xcafeface);
 }
 

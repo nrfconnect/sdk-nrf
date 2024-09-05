@@ -103,7 +103,7 @@ void ot_rpc_decode_dataset(const struct nrf_rpc_group *group, struct nrf_rpc_cbo
 {
 	otOperationalDataset *dataset = *(otOperationalDataset **)handler_data;
 
-	if (zcbor_nil_expect(ctx->zs, NULL)) {
+	if (nrf_rpc_decode_is_null(ctx)) {
 		*(otOperationalDataset **)handler_data = NULL;
 		return;
 	}
