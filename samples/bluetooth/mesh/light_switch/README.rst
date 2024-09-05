@@ -123,7 +123,7 @@ The mesh light switch sample can also be run as a Low Power node (LPN), giving t
       Instead, the user can manually enable the Node ID advertisement for a period of 30 seconds by pressing **Button 4** on the device.
       This will give the user a short period of time to connect directly to the LPN, and thus perform necessary configuration of the device.
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF54 DKs
 
       While running the sample with the LPN configuration, the fourth :ref:`bt_mesh_onoff_cli_readme` instance will be omitted.
       Instead, **Button 3** will be used to temporarily enable Node ID advertisement on the LPN device.
