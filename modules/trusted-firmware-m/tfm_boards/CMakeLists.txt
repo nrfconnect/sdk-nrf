@@ -12,45 +12,45 @@ set(NRF_BOARD_SELECTED True)
 set(partition_includes
   partition
   ${CMAKE_BINARY_DIR}/../zephyr/include/generated
-  )
+)
 
 set(board_includes
   board
   ${CMAKE_BINARY_DIR}/../zephyr/misc/generated/syscalls_links/include
   ${ZEPHYR_BASE}/include
-  )
+)
 
 target_include_directories(platform_region_defs INTERFACE ${partition_includes})
 
 target_compile_definitions(platform_s
   PRIVATE
-  $<$<BOOL:${PLATFORM_DEFAULT_CRYPTO_KEYS}>:PLATFORM_DEFAULT_CRYPTO_KEYS>
-  FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
-  EXT_API_MAGIC=${EXT_API_MAGIC}
-  )
+    $<$<BOOL:${PLATFORM_DEFAULT_CRYPTO_KEYS}>:PLATFORM_DEFAULT_CRYPTO_KEYS>
+    FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
+    EXT_API_MAGIC=${EXT_API_MAGIC}
+)
 
 target_include_directories(platform_s
   PUBLIC
-  include
-  ${partition_includes}
-  ${board_includes}
-  services/include
-  ${ZEPHYR_NRF_MODULE_DIR}/include
-  )
+    include
+    ${partition_includes}
+    ${board_includes}
+    services/include
+    ${ZEPHYR_NRF_MODULE_DIR}/include
+)
 
 target_sources(platform_s
   PRIVATE
-  common/tfm_hal_platform.c
-  $<$<OR:$<BOOL:${TFM_PARTITION_INITIAL_ATTESTATION}>,$<BOOL:${NRF_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/attest_hal.c>
-  common/assert.c
-  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
-  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_SYSTEM_RESET_HALT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/tfm_hal_reset_halt.c>
-  )
+    common/tfm_hal_platform.c
+    $<$<OR:$<BOOL:${TFM_PARTITION_INITIAL_ATTESTATION}>,$<BOOL:${NRF_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/attest_hal.c>
+    common/assert.c
+    $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
+    $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_SYSTEM_RESET_HALT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/tfm_hal_reset_halt.c>
+)
 
 target_link_libraries(platform_s
   PRIVATE
-  tfm_sprt
- )
+    tfm_sprt
+)
 
 if (NOT ${PLATFORM_DEFAULT_PROVISIONING})
   if(NRF_PROVISIONING)
@@ -80,10 +80,10 @@ if (${TFM_PARTITION_CRYPTO})
   endif()
 
   target_link_libraries(platform_crypto_keys
-	PUBLIC
-	platform_s
-	# Link with tfm_sprt to get the include path for tfm_sp_log.h
-	tfm_sprt
+    PUBLIC
+      platform_s
+      # Link with tfm_sprt to get the include path for tfm_sp_log.h
+      tfm_sprt
   )
 
    if (${CONFIG_HW_UNIQUE_KEY})
@@ -114,7 +114,7 @@ if (${TFM_PARTITION_CRYPTO})
   endif()
 
   if(EXISTS platform_cc3xx)
-	target_link_libraries(platform_s PRIVATE platform_cc3xx)
+	  target_link_libraries(platform_s PRIVATE platform_cc3xx)
   endif()
 
   # Needed in order to get crypto partition modules flags
@@ -169,16 +169,16 @@ if(TFM_PARTITION_PLATFORM)
 
   target_include_directories(platform_s
     PUBLIC
-    include
-    ${ZEPHYR_NRF_MODULE_DIR}/include/tfm
-    ${ZEPHYR_NRF_MODULE_DIR}/include
-    )
+      include
+      ${ZEPHYR_NRF_MODULE_DIR}/include/tfm
+      ${ZEPHYR_NRF_MODULE_DIR}/include
+  )
 
   target_sources(platform_s
     PRIVATE
-    ${src_dir}/tfm_platform_system.c
-    ${src_dir}/tfm_ioctl_s_api.c
-    )
+      ${src_dir}/tfm_platform_system.c
+      ${src_dir}/tfm_ioctl_s_api.c
+  )
 
 endif()
 

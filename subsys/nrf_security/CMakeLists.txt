@@ -25,15 +25,15 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/configs/config_extra.cmake.in
 include(${CMAKE_CURRENT_BINARY_DIR}/cmake/config_extra.cmake)
 
 if(CONFIG_SSF_SERVER_PSA_CRYPTO_SERVICE_ENABLED)
-# Inside the SSF server, when the PSA crypto service is enabled we need to
-# use the OWNER id to give key ownership to the differrent domains.
-set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER     True)
+  # Inside the SSF server, when the PSA crypto service is enabled we need to
+  # use the OWNER id to give key ownership to the differrent domains.
+  set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER     True)
 else()
-# MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be disabled for Zephyr
-# builds or when MBEDTLS_USE_PSA_CRYPTO is enabled (e.g. for TLS/DTLS
-# and x.509 support) Note: This configuration is internal and may be
-# removed with a new mbed TLS version
-set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER     False)
+  # MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be disabled for Zephyr
+  # builds or when MBEDTLS_USE_PSA_CRYPTO is enabled (e.g. for TLS/DTLS
+  # and x.509 support) Note: This configuration is internal and may be
+  # removed with a new mbed TLS version
+  set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER     False)
 endif()
 
 if(CONFIG_BUILD_WITH_TFM)
