@@ -14,83 +14,35 @@ All of these requirements are installed when you :ref:`install the nRF Connect S
 .. _gs_supported_OS:
 .. _supported_OS:
 
-Supported operating systems
-***************************
+Supported operating systems (firmware)
+**************************************
 
 The |NCS| supports Microsoft Windows, Linux, and macOS for development.
-The following table shows the operating system versions that support the |NCS| tools:
+
+The following table lists the support levels for the |NCS| firmware.
+For OS support for additional software tools from Nordic Semiconductor, see :ref:`the table at the bottom of the page <additional_nordic_sw_tools>`.
 
 .. os_table_start
 
 .. list-table::
-   :header-rows: 1
+  :header-rows: 1
 
-   * - Operating System
-     - x86
-     - x64
-     - ARM64
-   * - `Windows 11`_
-     - Tier 3
-     - Tier 3
-     - Not supported
-   * - `Windows 10`_
-     - Tier 3
-     - Tier 1
-     - Not supported
-   * - `Linux - Ubuntu 22.04 LTS`_
-     - Not supported
-     - Tier 1
-     - Not supported
-   * - `Linux - Ubuntu 20.04 LTS`_
-     - Not supported
-     - Tier 2
-     - Not supported
-   * - `macOS 14`_
-     - Not applicable
-     - Tier 3
-     - Tier 3
-   * - `macOS 13`_
-     - Not applicable
-     - Tier 1
-     - Tier 1
-   * - `macOS 12`_
-     - Not applicable
-     - Tier 3
-     - Tier 3
-   * - `macOS 11`_
-     - Not applicable
-     - Tier 2
-     - Tier 2
-   * - `macOS 10.15`_
-     - Not applicable
-     - Tier 3
-     - Not supported
+  * - Operating System
+    - x64
+    - ARM64
+  * - `Windows 10`_
+    - Built and tested with :ref:`Twister <running_unit_tests>`.
+    - Not supported.
+  * - `Linux - Ubuntu 22.04 LTS`_
+    - Built and tested with :ref:`Twister <running_unit_tests>`. Comprehensive testing with Nordic Semiconductor hardware.
+    - Not supported.
+  * - `macOS 14`_
+    - Built and tested with :ref:`Twister <running_unit_tests>`.
+    - Only toolchain provided.
 
 .. os_table_end
 
-Tier definitions
-  The table uses several tier definitions to categorize the level of operating system support:
-
-  .. toggle:: Support levels
-
-     Tier 1
-       The |NCS| tools will always work.
-       The automated build and automated testing ensure that the |NCS| tools build and successfully complete tests after each change.
-
-     Tier 2
-       The |NCS| tools will always build.
-       The automated build ensures that the |NCS| tools build successfully after each change.
-       There is no guarantee that a build will work because the automation tests do not always run.
-
-     Tier 3
-       The |NCS| tools are supported by design, but are not built or tested after each change.
-       Therefore, the application may or may not work.
-
-     Not supported
-       The |NCS| tools do not work, but it may be supported in the future.
-
-     Not applicable
-       The specified architecture is not supported for the respective operating system.
+For building, Twister uses definitions in :file:`sample.yml` for the default configuration for the given sample or application.
 
 Zephyr features only available on Linux
   There are some Zephyr features that are currently only available on Linux, including:
@@ -325,17 +277,6 @@ They can all be installed using the ``doc/requirements.txt`` file using ``pip``.
    * - west
      - :ncs-tool-version:`WEST_VERSION`
 
-.. _requirements_clt:
-
-nRF Command Line Tools
-**********************
-
-`nRF Command Line Tools`_ is a package of tools used for development, programming, and debugging of Nordic Semiconductor's nRF51, nRF52, nRF53, nRF54H, and nRF91 Series devices.
-Among others, this package includes the nrfjprog executable and library, which the west command uses by default to program the development kits.
-For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
-
-It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
-
 .. _requirements_jlink:
 
 J-Link Software and Documentation Pack
@@ -347,12 +288,94 @@ Among others, this package includes the J-Link RTT Viewer, which can be used for
 It is recommended to use the |jlink_ver| of the package when you :ref:`installing_vsc`.
 
 .. _toolchain_management_tools:
+.. _additional_nordic_sw_tools:
 
-|NCS| toolchain management tools
-********************************
+Additional software tools
+*************************
 
-Nordic Semiconductor provides proprietary |NCS| toolchain management tools that streamline the process of installing the |NCS| and its toolchain.
+Nordic Semiconductor provides proprietary tools for working with Nordic Semiconductor devices, as well as different |NCS| toolchain management tools that streamline the process of installing the |NCS| and its toolchain.
 Depending on your development environment, you need to install only some of them when you :ref:`installing_vsc`.
+
+.. _additional_nordic_sw_tools_os_support:
+
+Supported operating systems (proprietary tools)
+===============================================
+
+The following table shows the operating system versions that support the additional software tools from Nordic Semiconductor.
+For firmware OS support, see :ref:`the table at the top of the page <supported_OS>`.
+
+.. list-table::
+  :header-rows: 1
+
+  * - Operating System
+    - x86
+    - x64
+    - ARM64
+  * - `Windows 11`_
+    - Tier 3
+    - Tier 3
+    - Not supported
+  * - `Windows 10`_
+    - Tier 3
+    - Tier 1
+    - Not supported
+  * - `Linux - Ubuntu 24.04 LTS`_
+    - Not supported
+    - Tier 2
+    - Not supported
+  * - `Linux - Ubuntu 22.04 LTS`_
+    - Not supported
+    - Tier 1
+    - Not supported
+  * - `Linux - Ubuntu 20.04 LTS`_
+    - Not supported
+    - Tier 2
+    - Not supported
+  * - `macOS 15`_
+    - n/a
+    - Tier 3
+    - Tier 3
+  * - `macOS 14`_
+    - n/a
+    - Tier 3
+    - Tier 3
+  * - `macOS 13`_
+    - n/a
+    - Tier 1
+    - Tier 1
+
+Tier definitions
+  .. toggle:: Support levels
+
+     Tier 1
+       The toolchain management tools will always work.
+       The automated build and automated testing ensure that the |NCS| tools build and successfully complete tests after each change.
+
+     Tier 2
+       The toolchain management tools will always build.
+       The automated build ensures that the |NCS| tools build successfully after each change.
+       There is no guarantee that a build will work because the automation tests do not always run.
+
+     Tier 3
+       The toolchain management tools are supported by design, but are not built or tested after each change.
+       Therefore, the application may or may not work.
+
+     Not supported
+       The toolchain management tools do not work, but it may be supported in the future.
+
+     Not applicable
+       The specified architecture is not supported for the respective operating system.
+
+.. _requirements_clt:
+
+nRF Command Line Tools
+======================
+
+`nRF Command Line Tools`_ is a package of tools used for development, programming, and debugging of Nordic Semiconductor's nRF51, nRF52, nRF53, nRF54H, and nRF91 Series devices.
+Among others, this package includes the nrfjprog executable and library, which the west command uses by default to program the development kits.
+For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
+
+It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
 
 |nRFVSC|
 ========
@@ -379,8 +402,19 @@ nRF Util
 The `nRF Util development tool`_ is a unified command line utility for Nordic products.
 Its functionality is provided through installable and upgradeable commands that are served on a central package registry on the Internet.
 
-The utility follows its own release cycle.
+The utility follows its own release cycle and has its own `operating system requirements <nRF Util_>`_.
 Use the latest available release for development.
 
 nRF Util provides |NCS| toolchain packages for each |NCS| release through the ``toolchain-manager`` command.
 See the :ref:`install_ncs` page for information about how to use this command.
+
+.. _requirements_ncd:
+
+nRF Connect for Desktop's Toolchain Manager
+===========================================
+
+`nRF Connect for Desktop`_ is a cross-platform tool that provides different applications that simplify working the |NCS| and Nordic Semiconductor products.
+One of those tools is the :ref:`Toolchain Manager <auto_installation_tcm_setup>`, which allows you to install the toolchain and the SDK.
+
+.. note::
+    |toolchain_management_ncs_versions|

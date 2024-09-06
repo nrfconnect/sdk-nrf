@@ -34,7 +34,7 @@ On your computer, one of the following operating systems:
     :start-after: os_table_start
     :end-before: os_table_end
 
-See :ref:`supported_OS` for more information about the tier definitions.
+See :ref:`supported_OS` for more information.
 
 |supported OS|
 
