@@ -127,7 +127,8 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 	 * abort and to change the image number.
 	 */
 	if (new_target == current_target && img_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA &&
-	    img_type != DFU_TARGET_IMAGE_TYPE_SMP && current_img_num == img_num) {
+	    img_type != DFU_TARGET_IMAGE_TYPE_SMP && current_img_num == img_num &&
+	    img_type != DFU_TARGET_IMAGE_TYPE_SUIT) {
 		return 0;
 	}
 

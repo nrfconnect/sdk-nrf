@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -29,23 +29,22 @@ extern "C" {
 int dfu_target_suit_set_buf(uint8_t *buf, size_t len);
 
 /**
- * @brief See if data in buf indicates SUIT style upgrade.
+ * @brief Initialize dfu target for specific image, perform steps necessary to receive firmware.
  *
- * Not implemented as it does not currently have any use cases.
- * Currently always returns -ENOSYS.
- *
- * @retval -ENOSYS
- */
-bool dfu_target_suit_identify(const void *const buf);
-
-/**
- * @brief Initialize dfu target, perform steps necessary to receive firmware.
+ * If you call this function, you must call dfu_target_suit_done() to finalize the firmware upgrade
+ * before initializing any other images.
  *
  * @param[in] file_size Size of the current file being downloaded.
- * @param[in] img_num Image pair index.
+ * @param[in] img_num Image index.
  * @param[in] cb Callback for signaling events(unused).
  *
- * @retval 0 If successful, negative errno otherwise.
+ * @return 0 If successful
+ * @return -ENODEV errno code if the buffer has not been initialized.
+ * @return -ENXIO errno code if the partition dedicated for provided image is not found.
+ * @return -ENOMEM errno code if the buffer is not large enough.
+ * @return -EFAULT errno code if flash device assigned to the image is not available on the device.
+ * @return -EBUSY errno code if the any image is already initialized and stream flash is in use.
+ * @return other negative errno code if the initialization failed.
  */
 int dfu_target_suit_init(size_t file_size, int img_num, dfu_target_callback_t cb);
 
@@ -54,7 +53,7 @@ int dfu_target_suit_init(size_t file_size, int img_num, dfu_target_callback_t cb
  *
  * @param[out] offset Returns the offset of the firmware upgrade.
  *
- * @return 0 if success, otherwise negative value if unable to get the offset
+ * @retval 0 if success, otherwise negative value if unable to get the offset
  */
 int dfu_target_suit_offset_get(size_t *offset);
 
@@ -64,7 +63,9 @@ int dfu_target_suit_offset_get(size_t *offset);
  * @param[in] buf Pointer to data that should be written.
  * @param[in] len Length of data to write.
  *
- * @return 0 on success, negative errno otherwise.
+ * @return 0 on success
+ * @return -EFAULT errno code if the stream flash has not been initialized for any dfu image.
+ * @return other negative errno code if the initialization failed.
  */
 int dfu_target_suit_write(const void *const buf, size_t len);
 
@@ -73,21 +74,23 @@ int dfu_target_suit_write(const void *const buf, size_t len);
 
  * @param[in] successful Indicate whether the firmware was successfully recived.
  *
- * @return 0 on success, negative errno otherwise.
+ * @retval 0 on success, negative errno otherwise.
  */
 int dfu_target_suit_done(bool successful);
 
 /**
- * @brief Schedule update and reset the device.
+ * @brief Schedule an update
  *
- * This call requests images update and immediately starts it
- * by resetting the device.
+ * This call processes SUIT envelope and requests images update.
+ *
+ * Firmware update will start after the device reboot.
+ * You can reboot device, for example, by calling dfu_target_suit_reboot().
  *
  * @param[in] img_num Given image pair index or -1 for all
  *		      of image pair indexes.
  *
- * @return 0 for a successful request or a negative error
- *	   code identicating reason of failure.
+ * @retval 0 for a successful request or a negative error
+ *	   code indicating reason of failure.
  **/
 int dfu_target_suit_schedule_update(int img_num);
 
@@ -96,10 +99,19 @@ int dfu_target_suit_schedule_update(int img_num);
  *
  * Cancels any ongoing updates.
  *
- * @return 0 on success, negative errno otherwise.
+ * @retval 0 on success, negative errno otherwise.
  */
 int dfu_target_suit_reset(void);
 
+/**
+ * @brief Reboot the device, and apply new image.
+ *
+ * The reboot can be delayed by setting the
+ * CONFIG_DFU_TARGET_REBOOT_RESET_DELAY_MS kconfig value.
+ *
+ * @retval 0 on success, negative errno otherwise.
+ */
+int dfu_target_suit_reboot(void);
 
 #ifdef __cplusplus
 }
