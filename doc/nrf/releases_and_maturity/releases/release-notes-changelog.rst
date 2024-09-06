@@ -30,11 +30,18 @@ Changelog
 
 The following sections provide detailed lists of changes by component.
 
-IDE, and tool support
-=====================
+IDE, OS, and tool support
+=========================
 
 * Added explicit mention of the :ref:`requirements_jlink` being required in the :ref:`installing_vsc` section of the installation page.
-* Updated the required `SEGGER J-Link`_ version to v7.94i.
+* Updated:
+
+  * The required `SEGGER J-Link`_ version to v7.94i.
+  * The :ref:`supported_OS` table on the :ref:`gs_recommended_versions` page:
+
+    * Linux 24.04 and macOS 15 have been added to the list.
+    * macOS 10.15, macOS 11, macOS 12 have been removed from the list.
+    * Tier descriptions have been updated.
 
 Board support
 =============

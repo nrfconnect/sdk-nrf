@@ -208,7 +208,8 @@
    The NFCT driver is part of the nrfx driver package.
    For more information about this driver, see the NFCT driver page in the `nrfx`_ repository.
 
-.. |Supported OS| replace:: The operating system versions that support the |NCS| tools are listed in the :ref:`supported_OS` section.
+.. |Supported OS| replace:: The operating system versions that support the |NCS| firmware are listed in the :ref:`supported_OS` section.
+   Some additional tools for working with Nordic Semiconductor devices might have :ref:`different OS requirements <additional_nordic_sw_tools_os_support>`.
 
 .. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
 
@@ -243,3 +244,6 @@
 
 .. |ATv2_maintenance_note| replace:: The Asset Tracker v2 application is in maintenance mode.
    For new projects, it is recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
+
+.. |toolchain_management_ncs_versions| replace:: The Toolchain Manager installation is recommended only when using the nRF54H20 DK with the |NCS| v2.7.0.
+   When using any other DK, the Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier versions.

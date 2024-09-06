@@ -9,7 +9,7 @@ Installing the |NCS|
    :local:
    :depth: 2
 
-There are different ways to install the |NCS|, depending on your preferred development environment and the :ref:`toolchain management tool <toolchain_management_tools>`:
+There are different ways to install the |NCS|, depending on your preferred development environment:
 
 * Using |VSC| and the |nRFVSC| (recommended)
 * Using command line and nRF Util
@@ -25,13 +25,11 @@ This includes everything that is required by Zephyr's :ref:`zephyr:getting_start
 Update operating system
 ***********************
 
-Before you start setting up the toolchain, install available updates for your operating system.
+Before you start setting up the toolchain, install available updates for your :ref:`operating system <supported_OS>` to make sure it supports the |NCS| firmware.
 
 .. include:: ./recommended_versions.rst
     :start-after: os_table_start
     :end-before: os_table_end
-
-See :ref:`supported_OS` for more information about the tier definitions.
 
 .. _installing_vsc:
 
@@ -40,7 +38,8 @@ See :ref:`supported_OS` for more information about the tier definitions.
 Install prerequisites
 *********************
 
-Depending on your preferred development environment, install the following required tools:
+Depending on your preferred development environment, install the following required tools.
+
 
 .. tabs::
 
@@ -49,7 +48,7 @@ Depending on your preferred development environment, install the following requi
       * All operating systems:
 
         * The latest version of the :ref:`requirements_clt` package.
-          Download it from the `nRF Command Line Tools`_ page.
+          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and download the installer from the `nRF Command Line Tools`_ page.
         * The |jlink_ver_vsc| of :ref:`SEGGER J-Link <requirements_jlink>`.
           Download it from the `J-Link Software and Documentation Pack`_ page.
         * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
@@ -61,15 +60,15 @@ Depending on your preferred development environment, install the following requi
 
       * All operating systems:
 
-        * The latest version of `nRF Util development tool`_, a unified command-line utility for Nordic Semiconductor products.
+        * The latest version of nRF Util, a unified command-line utility for Nordic Semiconductor products.
+          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and download the installer from the `nRF Util development tool`_ page.
 
           .. note::
               After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
-              On macOS and Linux, you need to give execute rights to the downloaded file.
-              Type `chmod +x nrfutil` or check the checkbox in the file properties.
+              On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
 
         * The latest version of the :ref:`requirements_clt` package.
-          Download it from the `nRF Command Line Tools`_ page.
+          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and download the installer from the `nRF Command Line Tools`_ page.
 
          .. note::
                After downloading and installing the tools, add nrfjprog to the system :envvar:`PATH` in the environment variables.
@@ -624,8 +623,7 @@ It is available from `nRF Connect for Desktop`_, a cross-platform tool that prov
 Both Toolchain Manager and nRF Connect for Desktop are available for Windows, Linux, and macOS.
 
 .. note::
-   The Toolchain Manager installation is recommended only when using the nRF54H20 DK with the |NCS| v2.7.0.
-   Since the release of the |NCS| v2.0.0, the |nRFVSC| is the recommended IDE for managing the |NCS| Toolchain and working with the |NCS|.
+    |toolchain_management_ncs_versions|
 
 .. toggle::
 
@@ -633,7 +631,8 @@ Both Toolchain Manager and nRF Connect for Desktop are available for Windows, Li
 
    1. Install Toolchain Manager:
 
-      a. `Download nRF Connect for Desktop`_ for your operating system.
+      a. Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>`.
+      #. `Download nRF Connect for Desktop`_ for your operating system.
       #. Install and run the tool on your machine.
       #. In the **APPS** section, click :guilabel:`Install` next to Toolchain Manager.
 

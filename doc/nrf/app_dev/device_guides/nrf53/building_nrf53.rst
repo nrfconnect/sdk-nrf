@@ -51,7 +51,7 @@ Using the command line
 ======================
 
 To build nRF5340 samples from the command line, use :ref:`west <zephyr:west>`.
-To program the nRF5340 DK from the command line, use either west (which uses nrfjprog that is part of the `nRF Command Line Tools`_) or :ref:`nRF Util <toolchain_management_tools>`.
+To program the nRF5340 DK from the command line, use either west (which uses nrfjprog that is part of the `nRF Command Line Tools`_) or :ref:`nRF Util <requirements_nrf_util>`.
 
 .. note::
    Programming the nRF5340 DK from the command line with west requires the `nRF Command Line Tools`_ v10.12.0 or later.
