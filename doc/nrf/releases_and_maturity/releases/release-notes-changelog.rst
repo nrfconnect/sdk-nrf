@@ -81,7 +81,7 @@ Bluetooth Mesh
 Matter
 ------
 
-* Updated default MRP retry intervals for Thread devices to two seconds to reduce the number of spurious retransmissions in Thread networks.
+|no_changes_yet_note|
 
 Matter fork
 +++++++++++
@@ -95,7 +95,7 @@ The following list summarizes the most important changes inherited from the upst
 Thread
 ------
 
-* Fixed ``otPlatCryptoPbkdf2GenerateKey`` API implementation to allow a fallback to legacy MbedTLS implementation instead of returning ``OT_ERROR_NOT_CAPABLE``.
+|no_changes_yet_note|
 
 Zigbee
 ------
@@ -120,7 +120,7 @@ nRF IEEE 802.15.4 radio driver
 Wi-Fi
 -----
 
-* Fixed TX EVM regression.
+|no_changes_yet_note|
 
 Applications
 ============
@@ -295,7 +295,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 Wi-Fi drivers
 -------------
 
-* Added a new feature to recover nRF70 chip.
+|no_changes_yet_note|
 
 Libraries
 =========
@@ -335,7 +335,7 @@ Modem libraries
 Libraries for networking
 ------------------------
 
-* Added the :ref:`lib_wifi_ready` library.
+|no_changes_yet_note|
 
 Libraries for NFC
 -----------------
