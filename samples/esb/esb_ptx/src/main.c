@@ -6,7 +6,10 @@
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
+#if defined(NRF54L15_XXAA)
+#include <hal/nrf_clock.h>
+#endif /* defined(NRF54L15_XXAA) */
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/irq.h>
 #include <zephyr/logging/log.h>
@@ -86,10 +89,15 @@ int clocks_start(void)
 		}
 	} while (err);
 
+#if defined(NRF54L15_XXAA)
+	/* MLTPAN-20 */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54L15_XXAA) */
+
 	LOG_DBG("HF clock started");
 	return 0;
 }
-#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 int esb_initialize(void)
 {
@@ -159,7 +167,7 @@ int main(void)
 	if (err) {
 		return 0;
 	}
-#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 	err = dk_leds_init();
 	if (err) {
