@@ -244,6 +244,7 @@ Kconfig*                                  @tejlmand
 /share/zephyrbuild-package/               @tejlmand
 /share/ncs-package/                       @tejlmand
 /snippets/emulated*/                      @masz-nordic
+/snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
 /snippets/nrf91-modem-trace-uart/         @eivindj-nordic
