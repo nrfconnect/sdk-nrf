@@ -225,7 +225,6 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
  */
 enum nrf_wifi_status nrf_wifi_fmac_get_power_save_info(void *fmac_dev_ctx,
 						       unsigned char if_idx);
-
 /**
  * @}
  */

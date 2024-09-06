@@ -794,13 +794,13 @@ enum nrf_wifi_keep_alive_status {
  * @brief This enum specifies the type of frames used to retrieve buffered data
  *  from the AP in power save mode.
  */
-enum data_retrieve_mechanism {
-	/** Retrieves data from the AP using a PS-Poll frame */
-	PS_POLL_FRAME,
-	/** Retrieves data from the AP using a QoS Null frame */
-	QOS_NULL_FRAME,
-	/** For future implementation. The RPU will decide which frame to use */
-	AUTOMATIC
+enum ps_exit_strategy {
+	/** Uses an intelligent algo and decide whether to
+	 * stay or exit power save mode to receive buffered frames.
+	 */
+	INT_PS = 0,
+	/** Exits power save mode for every TIM */
+	EVERY_TIM
 };
 
 #define TWT_EXTEND_SP_EDCA  0x1
@@ -849,9 +849,9 @@ struct nrf_wifi_cmd_sys_init {
 	 */
 	unsigned int discon_timeout;
 	/** RPU uses QoS null frame or PS-Poll frame to retrieve buffered frames
-	 * from the AP in power save @ref data_retrieve_mechanism.
+	 * from the AP in power save @ref ps_exit_strategy.
 	 */
-	unsigned char ps_data_retrieval_mech;
+	unsigned char ps_exit_strategy;
 	/** The RPU uses this value to configure watchdog timer */
 	unsigned int watchdog_timer_val;
 	/** The RPU uses this value to decide whether keep alive

@@ -233,7 +233,6 @@ struct nrf_wifi_hal_dev_ctx {
 	void *rpu_ps_timer;
 	void *rpu_ps_lock;
 	bool dbg_enable;
-	bool irq_ctx;
 	bool rpu_fw_booted;
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	char *event_data;

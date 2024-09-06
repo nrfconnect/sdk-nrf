@@ -134,15 +134,35 @@ static bool hal_rpu_irq_wdog_chk(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	unsigned int val = 0;
 	bool ret = false;
+	unsigned int i, max_read_retries = 10;
 
-	status = hal_rpu_reg_read(hal_dev_ctx,
-				  &val,
-				  RPU_REG_MIPS_MCU_UCCP_INT_STATUS);
+	for (i = 0; i < max_read_retries; i++) {
+		status = hal_rpu_reg_read(hal_dev_ctx,
+					&val,
+					RPU_REG_MIPS_MCU_UCCP_INT_STATUS);
 
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
+						"%s: Reading from interrupt status register failed\n",
+						__func__);
+			goto out;
+		}
+
+		if (val != 0xAAAAAAAA) {
+			break;
+		}
+
 		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
-				      "%s: Reading from interrupt status register failed\n",
-				      __func__);
+					"%s: Reading from interrupt status register failed 0x%x\n",
+					__func__,
+					val);
+	}
+
+	if (i == max_read_retries) {
+		nrf_wifi_osal_log_err(hal_dev_ctx->hpriv->opriv,
+				      "%s: Reading from interrupt status register failed 0x%x\n",
+				      __func__,
+				      val);
 		goto out;
 	}
 

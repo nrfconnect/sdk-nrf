@@ -71,4 +71,6 @@ enum nrf_wifi_status umac_cmd_prog_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_
 #endif /* CONFIG_NRF700X_RADIO_TEST */
 					     int stat_type);
 
+enum nrf_wifi_status umac_cmd_set_ps_exit_strategy(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+					enum ps_exit_strategy ps_exit_strategy);
 #endif /* __FMAC_CMD_H__ */
