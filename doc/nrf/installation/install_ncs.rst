@@ -25,13 +25,11 @@ This includes everything that is required by Zephyr's :ref:`zephyr:getting_start
 Update operating system
 ***********************
 
-Before you start setting up the toolchain, install available updates for your operating system.
+Before you start setting up the toolchain, install available updates for your :ref:`operating system <supported_OS>`.
 
 .. include:: ./recommended_versions.rst
     :start-after: os_table_start
     :end-before: os_table_end
-
-See :ref:`supported_OS` for more information about the tier definitions.
 
 .. _installing_vsc:
 
@@ -59,6 +57,8 @@ Depending on your preferred development environment, install the following requi
       * The latest version of `nRF Util development tool`_, a unified command line utility for Nordic products.
 
         .. note::
+            nRF Util has its own `operating system requirements <nRF Util_>`_.
+
             After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
             On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
 
