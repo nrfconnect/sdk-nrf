@@ -428,6 +428,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       --align       ${CONFIG_MCUBOOT_FLASH_WRITE_BLOCK_SIZE}
       --version     ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}
       --pad-header
+      --clear
       ${imgtool_security_counter}
       ${imgtool_extra}
       )
@@ -449,20 +450,57 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       set(rom_fixed)
     endif()
 
+    message(ERROR
+    "MARKUS: ELF_FILE_IN ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME}")  
+
     if(CONFIG_XIP_SPLIT_IMAGE)
       split(
         ELF_FILE_IN ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME}
         ELF_SECTION_NAMES ".extflash_text_reloc;.extflash_rodata_reloc"
-        HEX_INCLUDE_FILE_OUT ${PROJECT_BINARY_DIR}/internal_flash.hex
+        HEX_INCLUDE_FILE_OUT ${PROJECT_BINARY_DIR}/pure_internal_flash.hex
         HEX_EXCLUDE_FILE_OUT ${PROJECT_BINARY_DIR}/qspi_flash.hex
         DEPENDS ${app_sign_depends} ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME}
       )
 
+    message(ERROR
+     "MARKUS: SSPLIT")
+
+
     add_custom_target(mcuboot_split_target
       DEPENDS
-      ${PROJECT_BINARY_DIR}/internal_flash.hex
+      ${PROJECT_BINARY_DIR}/pure_internal_flash.hex
       ${PROJECT_BINARY_DIR}/qspi_flash.hex
     )
+
+    set(HEX_FILES_TO_MERGE ${PROJECT_BINARY_DIR}/pure_internal_flash.hex ${PROJECT_BINARY_DIR}/../tfm/bin/tfm_s.hex)
+
+    add_custom_command(
+      OUTPUT ${PROJECT_BINARY_DIR}/internal_flash.hex
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_BASE}/scripts/build/mergehex.py
+      -o ${PROJECT_BINARY_DIR}/internal_flash.hex
+      ${HEX_FILES_TO_MERGE}
+      DEPENDS ${HEX_FILES_TO_MERGE}
+    )
+
+    add_custom_target(merge_hex_files ALL
+      DEPENDS ${PROJECT_BINARY_DIR}/internal_flash.hex
+    )
+
+    # sign(
+    #   SIGNED_BIN_FILE_IN ${PROJECT_BINARY_DIR}/tfm_internal_flash.hex
+    #   SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/tfm_internal_flash
+    #   SLOT_SIZE $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_SIZE>
+    #   SIGNED_HEX_FILE_OUT tfm_internal_flash_signed_hex
+    #   SIGNED_BIN_FILE_OUT tfm_internal_flash_signed_bin
+    #   ${sign_dependencies}
+    #   ${rom_fixed}
+    #   DEPENDS ${PROJECT_BINARY_DIR}/tfm_internal_flash.hex
+    # )
+
+    message(ERROR
+      "MARKUS: SIGNED_BIN_FILE_IN ${PROJECT_BINARY_DIR}/internal_flash.hex")
 
     sign(
       SIGNED_BIN_FILE_IN ${PROJECT_BINARY_DIR}/internal_flash.hex
@@ -472,7 +510,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       SIGNED_BIN_FILE_OUT internal_flash_signed_bin
       ${sign_dependencies}
       ${rom_fixed}
-      DEPENDS ${app_sign_depends} mcuboot_split_target
+      DEPENDS ${app_sign_depends} mcuboot_split_target merge_hex_files
     )
 
     sign(
@@ -488,6 +526,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
     add_custom_target(mcuboot_sign_target
       DEPENDS
+      ${tfm_internal_flash_signed_hex}
       ${internal_flash_signed_hex}
       ${internal_flash_signed_bin}
       ${qspi_flash_signed_hex}
@@ -523,7 +562,15 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
       "qspi_flash_update.binslot_index_secondary=6"
       "qspi_flash_update.binversion_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
     )
+
+    message(ERROR
+      "MARKUS: GOT THIS FAR")
+
 else()
+
+    message(ERROR
+      "MARKUS: SIGNED_BIN_FILE_IN ${app_to_sign_hex}")
+
     sign(
       SIGNED_BIN_FILE_IN ${app_to_sign_hex}
       SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/app
@@ -560,6 +607,9 @@ endif()
       set(mcuboot_secondary_app_hex ${mcuboot_secondary_app_bin_dir}/zephyr.hex)
 
       set(rom_fixed ROM_FIXED $<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_ADDRESS>)
+
+      message(ERROR
+        "MARKUS: SIGNED_BIN_FILE_IN ${mcuboot_secondary_app_hex}")
 
       sign(
         SIGNED_BIN_FILE_IN ${mcuboot_secondary_app_hex}
@@ -617,6 +667,9 @@ endif()
         # Add dependency inside network core image to require the latest application core image.
         set(sign_dependencies IMAGE_DEPENDENCIES "(${APPLICATION_IMAGE_PAIR_IDX},${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})")
       endif()
+
+      message(ERROR
+        "MARKUS: SIGNED_BIN_FILE_IN ${cpunet_signed_app_hex}")
 
       sign(
         SIGNED_BIN_FILE_IN ${cpunet_signed_app_hex}
@@ -712,6 +765,9 @@ CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT cannot be used with CONFIG_XIP_SPLIT_IMAGE.
     if(CONFIG_NRF_WIFI_FW_PATCH_DFU)
       set(nrf70_binary_name nrf70_update.bin)
 
+      message(ERROR
+      "MARKUS: SIGNED_BIN_FILE_IN ${PROJECT_BINARY_DIR}/nrf70.hex")
+
       sign(
         SIGNED_BIN_FILE_IN ${PROJECT_BINARY_DIR}/nrf70.hex
         SIGNED_HEX_FILE_NAME_PREFIX ${PROJECT_BINARY_DIR}/nrf70
@@ -793,6 +849,9 @@ CONFIG_BOOT_BUILD_DIRECT_XIP_VARIANT cannot be used with CONFIG_XIP_SPLIT_IMAGE.
 
         set(out_path ${PROJECT_BINARY_DIR}/signed_by_mcuboot_and_b0_${slot})
 
+        message(ERROR
+        "MARKUS: SIGNED_BIN_FILE_IN ${slot_hex}")
+  
         sign(
           SIGNED_BIN_FILE_IN ${${slot}_hex}
           SIGNED_HEX_FILE_NAME_PREFIX ${out_path}

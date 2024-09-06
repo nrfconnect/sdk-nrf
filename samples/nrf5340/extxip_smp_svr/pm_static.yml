@@ -1,8 +1,3 @@
-app:
-  address: 0x10200
-  end_address: 0xe4000
-  region: flash_primary
-  size: 0xd3e00
 external_flash:
   address: 0x120000
   device: MX25R64
@@ -23,6 +18,7 @@ mcuboot_primary:
   address: 0x10000
   end_address: 0xe4000
   orig_span: &id001
+  - tfm
   - mcuboot_pad
   - app
   region: flash_primary
@@ -38,10 +34,19 @@ mcuboot_primary_app:
   address: 0x10200
   end_address: 0xe4000
   orig_span: &id002
+  - tfm
   - app
   region: flash_primary
   size: 0xd3e00
   span: *id002
+app_image:
+  address: 0x10200
+  end_address: 0xe4000
+  span:
+  - tfm
+  - app
+  region: flash_primary
+  size: 0xd3e00
 mcuboot_secondary:
   address: 0x0
   device: MX25R64

@@ -357,6 +357,9 @@ foreach(name ${pm_var_names})
     )
 endforeach()
 
+message(WARNING "\
+MARKUS: Here1!")
+
 # Turn the space-separated list into a Cmake list.
 string(REPLACE " " ";" PM_ALL_BY_SIZE ${PM_ALL_BY_SIZE})
 
@@ -453,6 +456,10 @@ foreach(container ${containers} ${merged})
     )
 
 endforeach()
+
+message(WARNING "\
+MARKUS: Here!")
+
 
 if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
   # Create symbols for the offsets required for moving test update hex files
@@ -744,6 +751,10 @@ to the external flash")
     # Wrapper target for the merge command.
     add_custom_target(merged_domains_hex ALL DEPENDS ${final_merged})
   endif()
+
+  message(WARNING "\
+  MARKUS: Final_merged: ${final_merged}")
+
 
   set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${final_merged}"
     CACHE STRING "Path to merged image in Intel Hex format" FORCE)
