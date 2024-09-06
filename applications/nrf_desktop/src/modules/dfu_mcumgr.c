@@ -141,21 +141,68 @@ static void dfu_backend_init(void)
 	LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION);
 }
 #elif CONFIG_DESKTOP_DFU_BACKEND_SUIT
+static const char *suit_release_type_str_get(suit_version_release_type_t type)
+{
+	switch (type) {
+	case SUIT_VERSION_RELEASE_NORMAL:
+		return NULL;
+	case SUIT_VERSION_RELEASE_RC:
+		return "rc";
+	case SUIT_VERSION_RELEASE_BETA:
+		return "beta";
+	case SUIT_VERSION_RELEASE_ALPHA:
+		return "alpha";
+	default:
+		__ASSERT(0, "Unknown release type");
+		return NULL;
+	}
+};
+
 static void dfu_backend_init(void)
 {
+	int err;
+	bool is_semver_supported;
 	unsigned int seq_num = 0;
 	suit_ssf_manifest_class_info_t class_info;
+	suit_semver_raw_t version_raw;
+	suit_version_t version;
 
-	int err = suit_get_supported_manifest_info(SUIT_MANIFEST_APP_ROOT, &class_info);
-
+	err = suit_get_supported_manifest_info(SUIT_MANIFEST_APP_ROOT, &class_info);
 	if (!err) {
 		err = suit_get_installed_manifest_info(&(class_info.class_id),
-				&seq_num, NULL, NULL, NULL, NULL);
+				&seq_num, &version_raw, NULL, NULL, NULL);
 	}
 	if (!err) {
-		LOG_INF("SUIT sequence number: %d", seq_num);
+		/* Semantic versioning support has been added to the SDFW in the v0.6.2
+		 * public release. Older SDFW versions return empty array in the version
+		 * variable.
+		 */
+		is_semver_supported = (version_raw.len != 0);
+		if (is_semver_supported) {
+			err = suit_metadata_version_from_array(&version,
+							       version_raw.raw,
+							       version_raw.len);
+		}
+	}
+
+	if (!err) {
+		if (is_semver_supported) {
+			const char *release_type;
+
+			release_type = suit_release_type_str_get(version.type);
+			if (release_type) {
+				LOG_INF("SUIT manifest version: %d.%d.%d-%s%d",
+					version.major, version.minor, version.patch,
+					release_type, version.pre_release_number);
+			} else {
+				LOG_INF("SUIT manifest version: %d.%d.%d",
+					version.major, version.minor, version.patch);
+			}
+		}
+
+		LOG_INF("SUIT manifest sequence number: %d", seq_num);
 	} else {
-		LOG_ERR("suit retrieve manifest seq num failed (err: %d)", err);
+		LOG_ERR("SUIT manifest info retrieval failed (err: %d)", err);
 	}
 }
 #else
