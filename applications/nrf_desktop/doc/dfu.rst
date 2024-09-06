@@ -139,10 +139,15 @@ fwinfo
    * Version and length of the image.
    * Partition ID of the currently booted image, used to specify the image placement.
 
-   For the nRF54H Series:
+   Additionally, for the nRF54H Series, the following applies:
 
-   * Reported image size is set to zero.
-   * Root manifest sequence number is reported as the booted image version.
+   * The reported image size is set to zero.
+   * The booted image version is indicated by:
+
+     * Root manifest sequence number that is encoded in the build number field.
+     * Manifest semantic version, if supported by the SDFW (requires v0.6.2 or higher).
+       The semantic version is encoded in the major, minor and patch fields.
+       If semantic versioning is not supported, these fields are set to zero.
 
 .. _dfu_devinfo:
 

@@ -253,6 +253,7 @@ nRF Desktop
   * Kconfig dependency that prevents enabling USB remote wakeup (:ref:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP <config_desktop_app_options>`) for the nRF54H20 SoC.
     The DWC2 USB device controller driver used by the nRF54H20 SoC does not support the remote wakeup capability.
   * Bootup logs with the manifest semantic version information to :ref:`nrf_desktop_dfu_mcumgr` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
+  * Manifest semantic version information to the firmware information response in :ref:`nrf_desktop_dfu` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
 
 * Updated:
 
