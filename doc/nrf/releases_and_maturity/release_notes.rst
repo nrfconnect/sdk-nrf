@@ -19,6 +19,7 @@ This page is included only in the latest documentation, because it might contain
    :maxdepth: 1
    :caption: Subpages:
 
+   releases/release-notes-2.6.2
    releases/release-notes-2.6.1
    releases/release-notes-2.6.0
    releases/release-notes-2.5.2
