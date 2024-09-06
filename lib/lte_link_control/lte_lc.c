@@ -138,7 +138,7 @@ K_WORK_DEFINE(lte_lc_edrx_ptw_send_work, lte_lc_edrx_ptw_send_work_fn);
 static void lte_lc_edrx_req_work_fn(struct k_work *work_item);
 K_WORK_DEFINE(lte_lc_edrx_req_work, lte_lc_edrx_req_work_fn);
 
-K_THREAD_STACK_DEFINE(lte_lc_work_q_stack, 1024);
+K_THREAD_STACK_DEFINE(lte_lc_work_q_stack, CONFIG_LTE_LC_WORKQUEUE_STACK_SIZE);
 
 static struct k_work_q lte_lc_work_q;
 

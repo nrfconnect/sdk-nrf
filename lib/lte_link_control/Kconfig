@@ -344,6 +344,11 @@ config LTE_LC_TRACE
 	  what has happened and has no associated payload.
 	  It is intended to be used for debugging purposes.
 
+config LTE_LC_WORKQUEUE_STACK_SIZE
+	int "Stack size for the library work queue"
+	default 1280 if LOG_MODE_IMMEDIATE
+	default 1024
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library
