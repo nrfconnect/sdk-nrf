@@ -177,6 +177,16 @@ Building and running
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
+Experimental nRF54H20 SoC radio core only build
+===============================================
+
+The sample can also be built in a configuration that allows it to run on the nRF54H20 SoC radio core only.
+To build the sample with this configuration, use the following command:
+
+.. code-block:: console
+
+   west build -b nrf54h20dk/nrf54h20/cpurad
+
 Experimental Bluetooth Low Energy Remote Procedure Call interface
 =================================================================
 
