@@ -305,10 +305,7 @@ static void le_audio_msg_sub_thread(void)
 			break;
 
 		case LE_AUDIO_EVT_STREAMING:
-			LOG_DBG("LE audio evt streaming for stream big %d sub: %d bis: %d",
-				msg.idx.lvl1, msg.idx.lvl2, msg.idx.lvl3);
-
-			stream_frame_get_and_send(msg.idx);
+			stream_get_frame_and_send(msg.idx);
 
 			break;
 
@@ -784,8 +781,6 @@ static void broadcast_config_print(const struct shell *shell,
 		    (brdcst_param->encryption == true ? "true" : "false"));
 
 	shell_print(shell, "\tBroadcast code: %s", brdcst_param->broadcast_code);
-
-	shell_print(shell, "\t\tFiles:");
 
 	for (size_t i = 0; i < brdcst_param->num_subgroups; i++) {
 		struct bt_audio_codec_cfg *codec_cfg =
@@ -2205,6 +2200,12 @@ static void silent_tv_1_set(const struct shell *shell)
 	char *location_FL_argv[5] = {"location", "FL", "0", "0", "0"};
 	char *location_FR_argv[5] = {"location", "FR", "0", "0", "1"};
 
+	char *fileselect0_argv[5] = {
+		"file select", "24000hz/48_kbps/left-channel_24kHz_left_48kbps.lc3", "0", "0", "0"};
+	char *fileselect1_argv[5] = {"file select",
+				     "24000hz/48_kbps/right-channel_24kHz_left_48kbps.lc3", "0",
+				     "0", "1"};
+
 	cmd_preset(shell, 3, preset_argv);
 	cmd_adv_name(shell, 3, adv_name_argv);
 	cmd_broadcast_name(shell, 3, name_argv);
@@ -2221,6 +2222,9 @@ static void silent_tv_1_set(const struct shell *shell)
 
 	cmd_location(shell, 5, location_FL_argv);
 	cmd_location(shell, 5, location_FR_argv);
+
+	cmd_file_select(shell, 5, fileselect0_argv);
+	cmd_file_select(shell, 5, fileselect1_argv);
 
 	cmd_show(shell, 0, NULL);
 }
@@ -2245,6 +2249,12 @@ static void silent_tv_2_set(const struct shell *shell)
 	char *location_FL0_argv[5] = {"location", "FL", "0", "0", "0"};
 	char *location_FR0_argv[5] = {"location", "FR", "0", "0", "1"};
 
+	char *fileselect00_argv[5] = {
+		"file select", "24000hz/48_kbps/left-channel_24kHz_left_48kbps.lc3", "0", "0", "0"};
+	char *fileselect01_argv[5] = {"file select",
+				      "24000hz/48_kbps/right-channel_24kHz_left_48kbps.lc3", "0",
+				      "0", "1"};
+
 	cmd_preset(shell, 3, preset0_argv);
 	cmd_adv_name(shell, 3, adv_name0_argv);
 	cmd_broadcast_name(shell, 3, name0_argv);
@@ -2261,6 +2271,9 @@ static void silent_tv_2_set(const struct shell *shell)
 
 	cmd_location(shell, 5, location_FL0_argv);
 	cmd_location(shell, 5, location_FR0_argv);
+
+	cmd_file_select(shell, 5, fileselect00_argv);
+	cmd_file_select(shell, 5, fileselect01_argv);
 
 	/* BIG1 */
 	char *preset1_argv[3] = {"preset", "48_2_1", "1"};
@@ -2280,6 +2293,13 @@ static void silent_tv_2_set(const struct shell *shell)
 	char *location_FL1_argv[5] = {"location", "FL", "1", "0", "0"};
 	char *location_FR1_argv[5] = {"location", "FR", "1", "0", "1"};
 
+	char *fileselect10_argv[5] = {
+		"file select", "48000hz/80_kbps/left-channel_48kHz_left_80kbps.lc3", "1", "0", "0"};
+	char *fileselect11_argv[5] = {"file select",
+				      "48000hz/80_kbps/right-channel_48kHz_left_80kbps.lc3", "1",
+				      "0", "1"};
+	char *num_rtn_argv[4] = {"rtn", "2", "1", "0"};
+
 	cmd_preset(shell, 3, preset1_argv);
 	cmd_adv_name(shell, 3, adv_name1_argv);
 	cmd_broadcast_name(shell, 3, name1_argv);
@@ -2297,6 +2317,11 @@ static void silent_tv_2_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FL1_argv);
 	cmd_location(shell, 5, location_FR1_argv);
 
+	cmd_file_select(shell, 5, fileselect10_argv);
+	cmd_file_select(shell, 5, fileselect11_argv);
+
+	cmd_rtn(shell, 4, num_rtn_argv);
+
 	cmd_show(shell, 0, NULL);
 }
 
@@ -2309,7 +2334,7 @@ static void multi_language_set(const struct shell *shell)
 	char *packing_argv[3] = {"packing", "int", "0"};
 
 	char *lang0_argv[4] = {"lang_set", "eng", "0", "0"};
-	char *lang1_argv[4] = {"lang_set", "spa", "0", "1"};
+	char *lang1_argv[4] = {"lang_set", "chi", "0", "1"};
 	char *lang2_argv[4] = {"lang_set", "nor", "0", "2"};
 
 	char *context0_argv[4] = {"context", "unspecified", "0", "0"};
@@ -2319,6 +2344,21 @@ static void multi_language_set(const struct shell *shell)
 	char *num_bis0_argv[4] = {"num_bises", "1", "0", "0"};
 	char *num_bis1_argv[4] = {"num_bises", "1", "0", "1"};
 	char *num_bis2_argv[4] = {"num_bises", "1", "0", "2"};
+
+	char *num_rtn0_argv[4] = {"rtn", "2", "0", "0"};
+	char *num_rtn1_argv[4] = {"rtn", "2", "0", "1"};
+	char *num_rtn2_argv[4] = {"rtn", "2", "0", "2"};
+
+	char *fileselect0_argv[5] = {"file select",
+				     "24000hz/48_kbps/gate-b23-english_24kHz_left_48kbps.lc3", "0",
+				     "0", "0"};
+	char *fileselect1_argv[5] = {"file select",
+				     "24000hz/48_kbps/gate-b23-mandarin_24kHz_left_48kbps.lc3", "0",
+				     "1", "0"};
+	char *fileselect2_argv[5] = {
+		"file select",
+		"24000hz/48_kbps/adventuresherlockholmes_01_doyle_24kHz_left_48kbps.lc3", "0", "2",
+		"0"};
 
 	cmd_num_subgroups(shell, 3, num_subs_argv);
 	cmd_preset(shell, 3, preset_argv);
@@ -2338,6 +2378,14 @@ static void multi_language_set(const struct shell *shell)
 	cmd_num_bises(shell, 4, num_bis1_argv);
 	cmd_num_bises(shell, 4, num_bis2_argv);
 
+	cmd_rtn(shell, 4, num_rtn0_argv);
+	cmd_rtn(shell, 4, num_rtn1_argv);
+	cmd_rtn(shell, 4, num_rtn2_argv);
+
+	cmd_file_select(shell, 5, fileselect0_argv);
+	cmd_file_select(shell, 5, fileselect1_argv);
+	cmd_file_select(shell, 5, fileselect2_argv);
+
 	cmd_show(shell, 0, NULL);
 }
 
@@ -2349,12 +2397,19 @@ static void personal_sharing_set(const struct shell *shell)
 	char *packing_argv[3] = {"packing", "int", "0"};
 	char *encrypt_argv[4] = {"encrypt", "1", "0", "Auratest"};
 
-	char *context_argv[4] = {"context", "conversational", "0", "0"};
+	char *context_argv[4] = {"context", "media", "0", "0"};
 
 	char *num_bis_argv[4] = {"num_bises", "2", "0", "0"};
 
 	char *location_FL_argv[5] = {"location", "FL", "0", "0", "0"};
 	char *location_FR_argv[5] = {"location", "FR", "0", "0", "1"};
+
+	char *fileselect0_argv[5] = {
+		"file select", "48000hz/80_kbps/groovy-ambient-funk-201745_48kHz_left_80kbps.lc3",
+		"0", "0", "0"};
+	char *fileselect1_argv[5] = {
+		"file select", "48000hz/80_kbps/groovy-ambient-funk-201745_48kHz_right_80kbps.lc3",
+		"0", "0", "1"};
 
 	cmd_preset(shell, 3, preset_argv);
 	cmd_adv_name(shell, 3, adv_name_argv);
@@ -2369,6 +2424,9 @@ static void personal_sharing_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FL_argv);
 	cmd_location(shell, 5, location_FR_argv);
 
+	cmd_file_select(shell, 5, fileselect0_argv);
+	cmd_file_select(shell, 5, fileselect1_argv);
+
 	cmd_show(shell, 0, NULL);
 }
 
@@ -2382,7 +2440,7 @@ static void personal_multi_language_set(const struct shell *shell)
 	char *encrypt_argv[4] = {"encrypt", "1", "0", "Auratest"};
 
 	char *lang0_argv[4] = {"lang_set", "eng", "0", "0"};
-	char *lang1_argv[4] = {"lang_set", "spa", "0", "1"};
+	char *lang1_argv[4] = {"lang_set", "chi", "0", "1"};
 
 	char *context0_argv[4] = {"context", "media", "0", "0"};
 	char *context1_argv[4] = {"context", "media", "0", "1"};
@@ -2394,6 +2452,22 @@ static void personal_multi_language_set(const struct shell *shell)
 	char *location_FR0_argv[5] = {"location", "FR", "0", "0", "1"};
 	char *location_FL1_argv[5] = {"location", "FL", "0", "1", "0"};
 	char *location_FR1_argv[5] = {"location", "FR", "0", "1", "1"};
+
+	char *fileselect000_argv[5] = {"file select",
+				       "24000hz/48_kbps/auditorium-english_24kHz_left_48kbps.lc3",
+				       "0", "0", "0"};
+	char *fileselect001_argv[5] = {"file select",
+				       "24000hz/48_kbps/auditorium-english_24kHz_right_48kbps.lc3",
+				       "0", "0", "1"};
+	char *fileselect010_argv[5] = {"file select",
+				       "24000hz/48_kbps/auditorium-mandarin_24kHz_left_48kbps.lc3",
+				       "0", "1", "0"};
+	char *fileselect011_argv[5] = {"file select",
+				       "24000hz/48_kbps/auditorium-mandarin_24kHz_right_48kbps.lc3",
+				       "0", "1", "1"};
+
+	char *num_rtn000_argv[4] = {"rtn", "2", "0", "0"};
+	char *num_rtn010_argv[4] = {"rtn", "2", "0", "1"};
 
 	cmd_num_subgroups(shell, 3, num_subs_argv);
 	cmd_preset(shell, 3, preset_argv);
@@ -2415,6 +2489,14 @@ static void personal_multi_language_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FR0_argv);
 	cmd_location(shell, 5, location_FL1_argv);
 	cmd_location(shell, 5, location_FR1_argv);
+
+	cmd_file_select(shell, 5, fileselect000_argv);
+	cmd_file_select(shell, 5, fileselect001_argv);
+	cmd_file_select(shell, 5, fileselect010_argv);
+	cmd_file_select(shell, 5, fileselect011_argv);
+
+	cmd_rtn(shell, 4, num_rtn000_argv);
+	cmd_rtn(shell, 4, num_rtn010_argv);
 
 	cmd_show(shell, 0, NULL);
 }
