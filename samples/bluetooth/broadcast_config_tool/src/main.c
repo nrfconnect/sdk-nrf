@@ -587,8 +587,8 @@ static void remove_cr_lf(char *str)
 	}
 }
 
-#define SD_FILECOUNT_MAX 120
-#define SD_PATHLEN_MAX	 140
+#define SD_FILECOUNT_MAX 420
+#define SD_PATHLEN_MAX	 190
 #define FOLDER_BUF_MAX	 800
 #define SD_LEVEL_MAX	 7
 static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
@@ -606,12 +606,16 @@ static int traverse_down(char *path, uint8_t level)
 		return 0;
 	}
 
-	ret = sd_card_list_files(path, tmp_file_buf, &buf_size, false);
-	if (ret == -ENOENT) {
-		/* Not able to open, hence likely not a folder */
+	if (strstr(path, ".") == NULL) {
+		ret = sd_card_list_files(path, tmp_file_buf, &buf_size, false);
+		if (ret == -ENOENT) {
+			/* Not able to open, hence likely not a folder */
+			return 0;
+		} else if (ret) {
+			return ret;
+		}
+	} else {
 		return 0;
-	} else if (ret) {
-		return ret;
 	}
 
 	LOG_DBG("level %d tmp_file_buf is: %s", level, tmp_file_buf);
@@ -622,11 +626,13 @@ static int traverse_down(char *path, uint8_t level)
 		if (strstr(token, "System Volume Information") != NULL) {
 			LOG_DBG("Skipping System Volume Information");
 			token = strtok_r(NULL, "\n", &tmp_file_ptr);
+			continue;
 		}
 
 		if (strstr(token, ".wav") != NULL) {
 			LOG_DBG("Skipping wav files");
 			token = strtok_r(NULL, "\n", &tmp_file_ptr);
+			continue;
 		}
 
 		remove_cr_lf(token);
@@ -747,7 +753,8 @@ static void codec_qos_print(const struct shell *shell, struct bt_audio_codec_qos
 	shell_print(shell, "\t\t\tPresentation Delay: %d us", qos->pd);
 }
 
-static void broadcast_config_print(const struct shell *shell, uint8_t group_index)
+static void broadcast_config_print(const struct shell *shell,
+				   struct broadcast_source_big *brdcst_param, uint8_t big_index)
 {
 	int ret;
 
@@ -777,6 +784,8 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 		    (brdcst_param->encryption == true ? "true" : "false"));
 
 	shell_print(shell, "\tBroadcast code: %s", brdcst_param->broadcast_code);
+
+	shell_print(shell, "\t\tFiles:");
 
 	for (size_t i = 0; i < brdcst_param->num_subgroups; i++) {
 		struct bt_audio_codec_cfg *codec_cfg =
@@ -862,27 +871,23 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 		shell_print(shell, "\t\tImmediate rendering flag: %s",
 			    (immediate == 0 ? "set" : "not set"));
 		shell_print(shell, "\t\tNumber of BIS: %d", brdcst_param->subgroups[i].num_bises);
-		shell_print(shell, "\t\tLocation:");
 
 		for (size_t j = 0; j < brdcst_param->subgroups[i].num_bises; j++) {
-			shell_print(shell, "\t\t\tBIS %d: %s", j,
+			shell_print(shell, "\t\tBIS %d:", j);
+			shell_print(shell, "\t\t\tLocation: %s",
 				    location_bit_to_str(brdcst_param->subgroups[i].location[j]));
-		}
 
-		shell_print(shell, "\t\tFiles:");
-
-		for (size_t j = 0; j < brdcst_param->subgroups[i].num_bises; j++) {
-			uint8_t streamer_idx = lc3_stream_infos[group_index][i].lc3_streamer_idx[j];
+			uint8_t streamer_idx = subgroup_bis_infos[big_index][i].lc3_streamer_idx[j];
 
 			if (streamer_idx == LC3_STREAMER_INDEX_UNUSED) {
-				shell_print(shell, "\t\t\tBIS %d: Not set", j);
+				shell_print(shell, "\t\t\tFile: Not set");
 			} else {
 				char file_name[CONFIG_FS_FATFS_MAX_LFN];
 				bool looping = lc3_streamer_is_looping(streamer_idx);
 
 				lc3_streamer_file_path_get(streamer_idx, file_name,
 							   sizeof(file_name));
-				shell_print(shell, "\t\t\tBIS %d: %s %s", j, file_name,
+				shell_print(shell, "\t\t\tFile: %s %s", file_name,
 					    looping ? "(looping)" : "");
 			}
 		}
@@ -1206,7 +1211,7 @@ static int cmd_show(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "BIG %d:", i);
 		shell_print(shell, "\tStreaming: %s", (streaming ? "true" : "false"));
 
-		broadcast_config_print(shell, i);
+		broadcast_config_print(shell, &broadcast_param[i], i);
 	}
 
 	return 0;
@@ -1748,8 +1753,7 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 
 	char *file_name = argv[1];
 
-	LOG_DBG("Selecting file %s for stream big: %d sub: %d bis: %d", file_name, big_index,
-		sub_index, bis_index);
+	LOG_DBG("Selecting file %s for stream %d.%d.%d", file_name, big_idx, sub_idx, bis_idx);
 
 	struct bt_audio_codec_cfg *codec_cfg =
 		&broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.codec_cfg;
@@ -2158,6 +2162,10 @@ static void lecture_set(const struct shell *shell)
 
 	char *num_bis_argv[4] = {"num_bises", "1", "0", "0"};
 
+	char *fileselect_argv[5] = {"file select",
+				    "24000hz/48_kbps/auditorium-english_24kHz_left_48kbps.lc3", "0",
+				    "0", "0"};
+
 	cmd_preset(shell, 3, preset_argv);
 	cmd_adv_name(shell, 3, adv_name_argv);
 	cmd_broadcast_name(shell, 3, name_argv);
@@ -2172,6 +2180,8 @@ static void lecture_set(const struct shell *shell)
 	cmd_immediate_set(shell, 4, imm_argv);
 
 	cmd_num_bises(shell, 4, num_bis_argv);
+
+	cmd_file_select(shell, 5, fileselect_argv);
 
 	cmd_show(shell, 0, NULL);
 }
@@ -2484,6 +2494,7 @@ static void file_paths_get(size_t idx, struct shell_static_entry *entry)
 	} else {
 		entry->syntax = NULL;
 	}
+
 	entry->handler = NULL;
 	entry->help = NULL;
 	entry->subcmd = &folder_names;
