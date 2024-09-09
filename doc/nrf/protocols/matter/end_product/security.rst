@@ -56,20 +56,17 @@ An important setting, that depends on the hardware platform in use, is the way o
 The recommended and the most secure option is to use :ref:`lib_hw_unique_key` (HUK) library.
 HUK support is automatically enabled with the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK` Kconfig option for compatible configurations.
 
-The HUK library is supported for both the nRF52840 and nRF5340 platforms, but for :ref:`matter_samples` in the |NCS|, it is only enabled for the nRF5340 platform:
+The HUK library is supported for the nRF52840, nRF5340, and nRF54L15 platforms, but for :ref:`matter_samples` in the |NCS|, it is only enabled for the nRF5340 and NRF54L15 platforms:
 
-* For the nRF5340 platform, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
+* For the nRF5340 and nRF54L15 platforms, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
   No changes to the existing partition layout are needed for products in the field.
-* For the nRF52840 and nRF54L15 platforms, AEAD keys are derived with a SHA-256 hash (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
+* For the nRF54L15 NS platform, the HUK generation and management is handled by the Trusted Firmware-M (TF-M) library.
+* For the nRF52840 platform, AEAD keys are derived with a SHA-256 hash (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
   This approach is less secure than using the library for key derivation as it will only provide integrity of sensitive material.
   It is also possible to implement a custom AEAD keys generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
 
   Using the HUK library with nRF52840 SoC is possible, but it requires employing the :ref:`bootloader` that would generate the AEAD key at first boot and store it in the dedicated HUK partition that can be accessed only by the CryptoCell peripheral.
   Note that adding another partition in the FLASH layout implies breaking the firmware backward compatibility with already deployed devices.
-
-  .. note::
-     Using the HUK library with the nRF54L15 SoC is not possible yet.
-     This means that you need to use AEAD keys derived with a SHA-256 hash.
 
 You can find an overview of the Trusted Storage layer configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
 
@@ -90,36 +87,37 @@ This is a reference configuration that can be modified in the production firmwar
      - Cryptography API
      - Cryptography backend
      - ARM TrustZone support
-     - Trusted Storage backend
-     - Trusted Storage AEAD key
+     - PSA Secure Storage backend
    * - nRF52840 SoC
      - Thread
-     - PSA
+     - PSA Crypto API
      - Oberon + CryptoCell [1]_
      - No
-     - Trusted Storage library
-     - SHA-256 hash
+     - Trusted Storage library + SHA-256 hash
    * - nRF5340 SoC
      - Thread
-     - PSA
+     - PSA Crypto API
      - Oberon + CryptoCell [1]_
      - Yes
-     - Trusted Storage library
-     - Hardware Unique Key (HUK)
+     - Trusted Storage library + Hardware Unique Key (HUK)
    * - nRF5340 SoC + nRF7002 companion IC
      - Wi-Fi
      - Mbed TLS
      - Oberon + CryptoCell [1]_
      - Yes
      - ---
-     - ---
    * - nRF54L15 SoC
      - Thread
-     - PSA
-     - CRACEN + Oberon [2]_
+     - PSA Crypto API
+     - CRACEN [2]_
      - Yes
-     - Trusted Storage backend
-     - SHA-256 hash
+     - Trusted Storage library + Hardware Unique Key (HUK)
+   * - nRF54L15 SoC + Trusted Firmware-M (TF-M)
+     - Thread
+     - PSA Crypto API
+     - CRACEN
+     - Yes
+     - Trusted Firmware-M (TF-M)
 
 .. [1] The CryptoCell backend is used in parallel with the Oberon backend.
        It is only used to implement Random Nuber Generation (RNG), and the AED keys derivation driver (only for Thread networking).
