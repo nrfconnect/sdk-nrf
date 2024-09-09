@@ -268,6 +268,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_HAVE_CUSTOM_LINKER_SCRIPT y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_BUILD_NO_GAP_FILL y)
 
+        # Set required options if MCUmgr img mgmt is used
+        if(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP)
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE y)
+        else()
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE n)
+        endif()
+
         if(NOT DEFINED SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
           # If external driver check Kconfig is enabled then users will need to select their own
           # Kconfigs (to allow for forked/derivative QSPI NOR drivers), otherwise force enable the
@@ -289,6 +296,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
             IMAGE_CONF_SCRIPT ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/firmware_loader_image_default.cmake
           )
         endif()
+
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE n)
       endif()
 
       if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
