@@ -7,7 +7,7 @@
 #ifndef HCI_UART_H_
 #define HCI_UART_H_
 
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
