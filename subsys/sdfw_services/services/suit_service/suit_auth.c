@@ -7,6 +7,7 @@
 #include <suit_platform.h>
 #include <suit_plat_component_compatibility.h>
 #include <suit_plat_decode_util.h>
+#include <zephyr/cache.h>
 
 #include <sdfw/sdfw_services/ssf_client.h>
 #include "suit_service_types.h"
@@ -14,6 +15,12 @@
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(suit_srvc_auth, CONFIG_SSF_SUIT_SERVICE_LOG_LEVEL);
+
+#ifdef CONFIG_DCACHE_LINE_SIZE
+#define CACHE_ALIGNMENT CONFIG_DCACHE_LINE_SIZE
+#else
+#define CACHE_ALIGNMENT 4
+#endif
 
 extern const struct ssf_client_srvc suit_srvc;
 
@@ -25,6 +32,8 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 	struct suit_req req;
 	struct suit_rsp rsp;
 	struct suit_authenticate_manifest_req *req_data;
+	uint8_t aligned_auth_data[ROUND_UP(SUIT_SUIT_SIG_STRUCTURE1_MAX_LENGTH,
+					   CACHE_ALIGNMENT)] __ALIGNED(CACHE_ALIGNMENT) = {0};
 
 	if (manifest_component_id == NULL || key_id == NULL || signature == NULL || data == NULL) {
 		return SUIT_ERR_DECODING;
@@ -39,8 +48,19 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 	req_data->SSF_SUIT_REQ_ARG(authenticate_manifest, alg_id) = alg_id;
 	req_data->SSF_SUIT_REQ_ARG(authenticate_manifest, key_id) = *key_id;
 	req_data->SSF_SUIT_REQ_ARG(authenticate_manifest, signature) = *signature;
-	req_data->SSF_SUIT_REQ_ARG(authenticate_manifest, data_addr) = (uintptr_t)data->value;
+
+	memcpy(aligned_auth_data, data->value, data->len);
+	req_data->SSF_SUIT_REQ_ARG(authenticate_manifest, data_addr) = (uintptr_t)aligned_auth_data;
 	req_data->SSF_SUIT_REQ_ARG(authenticate_manifest, data_size) = data->len;
+
+	ret = sys_cache_data_flush_range((void *)aligned_auth_data, sizeof(aligned_auth_data));
+	/*
+	 * EAGAIN means that the cache is not enabled.
+	 * ENOTSUP means there is no cache in the system.
+	 */
+	if (ret != 0 && ret != -EAGAIN && ret != -ENOTSUP) {
+		return SUIT_ERR_CRASH;
+	}
 
 	ret = ssf_client_send_request(&suit_srvc, &req, &rsp, NULL);
 	if (ret != 0) {

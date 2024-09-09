@@ -159,6 +159,8 @@ suit_ssf_err_t suit_get_installed_manifest_info(suit_manifest_class_id_t *manife
 	*seq_num = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, seq_num);
 
 	if (version != NULL) {
+		memset(version, 0, sizeof(*version));
+
 		if (rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, semver_int_count) >
 		    ARRAY_SIZE(version->raw)) {
 			ssf_client_decode_done(rsp_pkt);
@@ -242,6 +244,8 @@ suit_ssf_err_t suit_get_install_candidate_info(suit_manifest_class_id_t *manifes
 	}
 
 	if (version != NULL) {
+		memset(version, 0, sizeof(*version));
+
 		if (rsp_data->SSF_SUIT_RSP_ARG(get_install_candidate_info, semver_int_count) >
 		    ARRAY_SIZE(version->raw)) {
 			ssf_client_decode_done(rsp_pkt);
