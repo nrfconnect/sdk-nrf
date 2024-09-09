@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/uart.h>
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <zephyr/bluetooth/hci_types.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>

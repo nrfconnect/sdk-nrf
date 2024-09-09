@@ -9,7 +9,7 @@
 #include <string.h>
 #include <errno.h>
 #include <zephyr/kernel.h>
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <zephyr/logging/log.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
