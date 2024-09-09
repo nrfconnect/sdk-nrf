@@ -8,15 +8,15 @@
 		sensor-bme688 = &i2c22;
 		accel0 = &adxl362;
 		accel-gyro = &bmi270;
-		/delete-property/ led2;
+		/delete-property/ led0;
 		/delete-property/ led3;
-		/delete-property/ sw3;
+		/delete-property/ sw0;
 	};
 };
 
-/delete-node/ &led2;	// P1.13 is bmi270 chip select signal
+/delete-node/ &led0;	// P2.09 is adxl362 SPIM_MISO
 /delete-node/ &led3;	// P1.14 is adxl362 interrupt signal
-/delete-node/ &button3; // P2.10 is adxl362 chip select signal
+/delete-node/ &button0; // P1.13 is bmi270 chip select signal
 
 &pinctrl {
 	i2c22_default: i2c22_default {
