@@ -16,7 +16,7 @@
 		.st6 {fill:#0077c8;font-family:Arial;font-size:0.833336em}
 		.st7 {stroke:#0077c8;stroke-dasharray:2,1;stroke-linecap:butt;stroke-width:1}
 		.st8 {fill:#00a9ce;font-family:Arial;font-size:0.666664em}
-		.st9 {marker-end:url(#mrkr4-45);stroke:#00a9ce;stroke-linecap:butt;stroke-width:1}
+		.st9 {marker-end:url(#mrkr4-46);stroke:#00a9ce;stroke-linecap:butt;stroke-width:1}
 		.st10 {fill:#00a9ce;fill-opacity:1;stroke:#00a9ce;stroke-opacity:1;stroke-width:0.28409090909091}
 		.st11 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
@@ -26,7 +26,7 @@
 		<g id="lend4">
 			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
 		</g>
-		<marker id="mrkr4-45" class="st10" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
+		<marker id="mrkr4-46" class="st10" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
 		</marker>
@@ -107,23 +107,24 @@
 			<v:textRect cx="91.4173" cy="314.945" width="182.84" height="18.9921"/>
 			<rect x="0" y="305.449" width="182.835" height="18.9921" class="st5"/>
 			<text x="12.52" y="318.25" class="st8" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>LWM2M_CARRIER_EVENT_FOTA_START</text>		</g>
-		<g id="shape43-33" v:mID="43" v:groupContext="shape" transform="translate(231.457,-78.9528)">
+		<g id="shape43-33" v:mID="43" v:groupContext="shape" transform="translate(231.457,-58.0304)">
 			<title>Sheet.43</title>
-			<desc>LWM2M_CARRIER_ERROR_FOTA_FAIL (value: NRF_ECONNREFUSED)</desc>
+			<desc>LWM2M_CARRIER_EVENT_ERROR (Type) LWM2M_CARRIER_ERROR_FOTA_FAI...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="108.425" cy="312.982" width="216.86" height="22.9182"/>
 			<rect x="0" y="301.523" width="216.85" height="22.9182" class="st5"/>
-			<text x="33.08" y="309.38" class="st8" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>LWM2M_CARRIER_ERROR_FOTA_FAIL<v:newlineChar/><tspan
-						x="49.97" dy="1.425em" class="st4">(value: NRF_ECONNREFUSED)</tspan></text>		</g>
-		<g id="shape45-37" v:mID="45" v:groupContext="shape" v:layerMember="0" transform="translate(231.457,-255.642)">
+			<text x="41.08" y="304.58" class="st8" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>LWM2M_CARRIER_EVENT_ERROR<v:newlineChar/><tspan
+						x="20.41" dy="1.2em" class="st4">(Type) LWM2M_CARRIER_ERROR_FOTA_FAIL<v:newlineChar/></tspan><tspan
+						x="61.53" dy="1.425em" class="st4">(value) ECONNREFUSED</tspan></text>		</g>
+		<g id="shape45-38" v:mID="45" v:groupContext="shape" v:layerMember="0" transform="translate(231.457,-255.642)">
 			<title>Dynamic connector.45</title>
 			<path d="M7.09 324.44 L7.09 579.08" class="st3"/>
 		</g>
-		<g id="shape46-40" v:mID="46" v:groupContext="shape" v:layerMember="0" transform="translate(441.02,-196.531)">
+		<g id="shape46-41" v:mID="46" v:groupContext="shape" v:layerMember="0" transform="translate(441.02,-196.531)">
 			<title>Dynamic connector.46</title>
 			<path d="M0 317.41 L-195.44 317.3" class="st9"/>
 		</g>
-		<g id="shape48-46" v:mID="48" v:groupContext="shape" v:layerMember="0" transform="translate(440.937,-71.9252)">
+		<g id="shape48-47" v:mID="48" v:groupContext="shape" v:layerMember="0" transform="translate(440.937,-46.2929)">
 			<title>Dynamic connector.48</title>
 			<path d="M0 317.41 L-195.44 317.3" class="st9"/>
 		</g>
