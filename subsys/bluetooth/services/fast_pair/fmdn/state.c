@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <zephyr/kernel.h>
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <zephyr/random/random.h>
 #include <zephyr/sys/byteorder.h>
 

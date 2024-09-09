@@ -19,7 +19,7 @@
 
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_if.h>
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 
 #include <net/wifi_credentials.h>
 #include <bluetooth/services/wifi_provisioning.h>
