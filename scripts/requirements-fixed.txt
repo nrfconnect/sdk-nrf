@@ -69,7 +69,7 @@ msgpack==1.0.5            # via python-can
 mypy==1.5.1               # via -r zephyr/scripts/requirements-build-test.txt
 mypy-extensions==1.0.0    # via mypy
 natsort==8.4.0            # via pyocd
-nrf-regtool==5.5.1        # via -r nrf/scripts/requirements-build.txt
+nrf-regtool==5.6.0        # via -r nrf/scripts/requirements-build.txt
 nrfcredstore==1.0.0       # via -r nrf/scripts/requirements-extra.txt
 numpy==1.26.4             # via svada
 packaging==24.0           # via -r zephyr/scripts/requirements-base.txt, pkg-about, pytest, python-can, setuptools-scm, west
