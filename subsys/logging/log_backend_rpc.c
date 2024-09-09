@@ -308,8 +308,16 @@ static void init(struct log_backend const *const backend)
 static void dropped(const struct log_backend *const backend, uint32_t cnt)
 {
 	ARG_UNUSED(backend);
+	ARG_UNUSED(cnt);
 
-	log_backend_std_dropped(&log_output_rpc, cnt);
+	/*
+	 * Due to an issue in Zephyr logging subsystem (see upstream PR 78145), this function
+	 * may be called more often than the configured periodicity (1000ms by default), which
+	 * might cause sending RPC events to the RPC client indefinitely, wasting the bandwidth
+	 * of the RPC communication.
+	 *
+	 * For this reason, do not report the dropped log messages until this issue is fixed.
+	 */
 }
 
 static int format_set(const struct log_backend *const backend, uint32_t log_type)
