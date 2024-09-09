@@ -56,10 +56,12 @@ if MBEDTLS && SOC_POSIX
 
 # Make sure that PSA API compatibility layer is enabled
 config MBEDTLS_PSA_CRYPTO_C
+	bool
 	default y
 
 # Instruct mbedTLS to use Zephyr entropy
 config MBEDTLS_ZEPHYR_ENTROPY
+	bool
 	default y
 
 config SUIT_DEFAULT_MBEDTLS_CONFIG
