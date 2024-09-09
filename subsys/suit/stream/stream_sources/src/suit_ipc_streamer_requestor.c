@@ -477,7 +477,16 @@ suit_plat_err_t suit_ipc_streamer_chunk_enqueue(uint32_t stream_session_id, uint
 			err = SUIT_PLAT_ERR_INVAL;
 		}
 
-		int result = sys_cache_data_flush_range(address, aligned_size);
+		/*
+		 * It is assumed that even if the data length is not aligned to the cache
+		 * lines, the client side allocates a bigger, aligned buffer and passes a
+		 * pointer to it's beginning with size set to the part used.
+		 * That way it is safe to invalidate the whole range, as it matches with
+		 * the allocated buffer size.
+		 *
+		 * See: suit_ipc_streamer_provider.c, buffer_info_t type definition.
+		 */
+		int result = sys_cache_data_invd_range(address, aligned_size);
 
 		/*
 		 * EAGAIN means that the cache is not enabled.
