@@ -14,7 +14,7 @@
 #ifndef NRF_RPC_SERIALIZE_H_
 #define NRF_RPC_SERIALIZE_H_
 
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <zephyr/sys/util.h>
 #include <nrf_rpc_cbor.h>
 
