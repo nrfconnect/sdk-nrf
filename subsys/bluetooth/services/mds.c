@@ -15,7 +15,7 @@
 
 #include <bluetooth/services/mds.h>
 
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <zephyr/sys/atomic.h>
 #include <zephyr/sys/__assert.h>
 
