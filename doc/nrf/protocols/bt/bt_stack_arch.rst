@@ -51,7 +51,10 @@ For this controller the support includes:
 
 The Zephyr Project has a community support :ref:`ug_ble_controller`.
 This Bluetooth controller will be the default when using Zephyr RTOS stand-alone.
-It is possible to configure projects in the |NCS| to use the Zephyr Controller, but Nordic Semiconductor does not support this configuration for production.
+
+.. note::
+   It is possible to configure projects in the |NCS| to use the Zephyr Controller.
+   Nordic Semiconductor does not support the Zephyr Bluetooth LE Controller for production.
 
 .. _ug_ble_controller_softdevice:
 
