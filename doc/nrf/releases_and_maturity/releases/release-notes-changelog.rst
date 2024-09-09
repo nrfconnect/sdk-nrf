@@ -175,6 +175,7 @@ Matter
   * The :ref:`ug_matter_device_memory_profiling` section to the :ref:`ug_matter_device_optimizing_memory` page.
     The section contains useful commands for measuring memory and troubleshooting tips.
 
+* Changed the default Trusted Storage AEAD key to Hardware Unique Key (HUK) for supported nRF54L Series devices.
 
 Matter fork
 +++++++++++
@@ -194,6 +195,7 @@ Thread
 ------
 
 * Added the :ref:`ug_thread_build_report` and described how to use it.
+* Changed the default Trusted Storage AEAD key to Hardware Unique Key (HUK) for supported nRF54L Series devices.
 
 Zigbee
 ------
