@@ -87,11 +87,11 @@
 		#size-cells = <1>;
 
 		dfu_partition: partition@136000 {
-			reg = < 0x136000 DT_SIZE_K(676) >;
+			reg = < 0x136000 DT_SIZE_K(692) >;
 		};
 
-		storage_partition: partition@1df000 {
-			reg = < 0x1df000 DT_SIZE_K(24) >;
+		storage_partition: partition@1e3000 {
+			reg = < 0x1e3000 DT_SIZE_K(24) >;
 		};
 	};
 };
