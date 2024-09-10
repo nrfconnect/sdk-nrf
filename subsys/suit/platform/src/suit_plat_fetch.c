@@ -13,6 +13,10 @@
 #include <suit_plat_digest_cache.h>
 #endif /* CONFIG_SUIT_DIGEST_CACHE */
 
+#if CONFIG_SUIT_IPUC
+#include <suit_plat_ipuc.h>
+#endif /* CONFIG_SUIT_IPUC */
+
 #ifdef CONFIG_SUIT_STREAM
 #include <suit_sink.h>
 #include <suit_sink_selector.h>
@@ -175,6 +179,10 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	 * Stream the data.
 	 */
 
+#if CONFIG_SUIT_IPUC
+	suit_plat_ipuc_revoke(dst_handle);
+#endif /* CONFIG_SUIT_IPUC */
+
 #if CONFIG_SUIT_DIGEST_CACHE
 	/* Invalidate digest cache for the destination component. */
 	ret = suit_plat_digest_cache_remove_by_handle(dst_handle);
@@ -335,6 +343,10 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	/*
 	 * Stream the data.
 	 */
+
+#if CONFIG_SUIT_IPUC
+	suit_plat_ipuc_revoke(dst_handle);
+#endif /* CONFIG_SUIT_IPUC */
 
 #if CONFIG_SUIT_DIGEST_CACHE
 	/* Invalidate digest cache for the destination component. */
