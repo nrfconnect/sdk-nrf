@@ -21,7 +21,6 @@ _MANIFEST = Manifest.from_file(_NRF_BASE / "west.yml")
 
 ALL_DOCSETS = {
     "nrf": ("nRF Connect SDK", "index", "manifest"),
-    "nrfx": ("nrfx", "index", "hal_nordic"),
     "nrfxlib": ("nrfxlib", "README", "nrfxlib"),
     "zephyr": ("Zephyr Project", "index", "zephyr"),
     "mcuboot": ("MCUboot", "wrapper", "mcuboot"),
