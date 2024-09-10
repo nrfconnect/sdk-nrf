@@ -46,6 +46,8 @@
     0x00000031, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     0x0000003E, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    0x00000046, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    0x00000046, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
 }
 
 // Parallel array data (cluster, *attribute*, privilege) for read attribute
@@ -67,6 +69,8 @@
     0x00000007, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     0x00000000, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    0x00000003, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    0x00000004, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
 }
 
 // Parallel array data (cluster, attribute, *privilege*) for read attribute
@@ -88,6 +92,8 @@
     chip::Access::Privilege::kAdminister, /* Cluster: Network Commissioning, Attribute: LastConnectErrorValue, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Operational Credentials, Attribute: NOCs, Privilege: administer */ \
     /* Cluster: Group Key Management, Attribute: GroupKeyMap, Privilege: view */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: ICD Management, Attribute: RegisteredClients, Privilege: administer */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: ICD Management, Attribute: ICDCounter, Privilege: administer */ \
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -161,6 +167,9 @@
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    0x00000046, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    0x00000046, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    0x00000046, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
 }
 
 // Parallel array data (cluster, *command*, privilege) for invoke command
@@ -191,6 +200,9 @@
     0x00000001, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     0x00000003, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     0x00000004, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    0x00000000, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    0x00000002, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    0x00000003, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
 }
 
 // Parallel array data (cluster, command, *privilege*) for invoke command
@@ -221,6 +233,9 @@
     chip::Access::Privilege::kAdminister, /* Cluster: Group Key Management, Command: KeySetRead, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Group Key Management, Command: KeySetRemove, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
+    chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
+    chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
+    chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -33,7 +33,62 @@
 		/* Endpoint: 0, Cluster: General Commissioning (server), big-endian */                                 \
                                                                                                                        \
 		/* 0 - Breadcrumb, */                                                                                  \
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                                                        \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+                                                                                                                       \
+		/* Endpoint: 0, Cluster: ICD Management (server), big-endian */                                        \
+                                                                                                                       \
+		/* 8 - UserActiveModeTriggerInstruction, */                                                            \
+		43,                                                                                                    \
+		'P',                                                                                                   \
+		'r',                                                                                                   \
+		'e',                                                                                                   \
+		's',                                                                                                   \
+		's',                                                                                                   \
+		' ',                                                                                                   \
+		't',                                                                                                   \
+		'h',                                                                                                   \
+		'e',                                                                                                   \
+		' ',                                                                                                   \
+		'b',                                                                                                   \
+		'u',                                                                                                   \
+		't',                                                                                                   \
+		't',                                                                                                   \
+		'o',                                                                                                   \
+		'n',                                                                                                   \
+		' ',                                                                                                   \
+		's',                                                                                                   \
+		'p',                                                                                                   \
+		'e',                                                                                                   \
+		'c',                                                                                                   \
+		'i',                                                                                                   \
+		'f',                                                                                                   \
+		'i',                                                                                                   \
+		'e',                                                                                                   \
+		'd',                                                                                                   \
+		' ',                                                                                                   \
+		'i',                                                                                                   \
+		'n',                                                                                                   \
+		' ',                                                                                                   \
+		'd',                                                                                                   \
+		'o',                                                                                                   \
+		'c',                                                                                                   \
+		'u',                                                                                                   \
+		'm',                                                                                                   \
+		'e',                                                                                                   \
+		'n',                                                                                                   \
+		't',                                                                                                   \
+		'a',                                                                                                   \
+		't',                                                                                                   \
+		'i',                                                                                                   \
+		'o',                                                                                                   \
+		'n',                                                                                                   \
                                                                                                                        \
 	}
 
@@ -44,13 +99,68 @@
 		/* Endpoint: 0, Cluster: General Commissioning (server), little-endian */                              \
                                                                                                                        \
 		/* 0 - Breadcrumb, */                                                                                  \
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                                                        \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+		0x00,                                                                                                  \
+                                                                                                                       \
+		/* Endpoint: 0, Cluster: ICD Management (server), little-endian */                                     \
+                                                                                                                       \
+		/* 8 - UserActiveModeTriggerInstruction, */                                                            \
+		43,                                                                                                    \
+		'P',                                                                                                   \
+		'r',                                                                                                   \
+		'e',                                                                                                   \
+		's',                                                                                                   \
+		's',                                                                                                   \
+		' ',                                                                                                   \
+		't',                                                                                                   \
+		'h',                                                                                                   \
+		'e',                                                                                                   \
+		' ',                                                                                                   \
+		'b',                                                                                                   \
+		'u',                                                                                                   \
+		't',                                                                                                   \
+		't',                                                                                                   \
+		'o',                                                                                                   \
+		'n',                                                                                                   \
+		' ',                                                                                                   \
+		's',                                                                                                   \
+		'p',                                                                                                   \
+		'e',                                                                                                   \
+		'c',                                                                                                   \
+		'i',                                                                                                   \
+		'f',                                                                                                   \
+		'i',                                                                                                   \
+		'e',                                                                                                   \
+		'd',                                                                                                   \
+		' ',                                                                                                   \
+		'i',                                                                                                   \
+		'n',                                                                                                   \
+		' ',                                                                                                   \
+		'd',                                                                                                   \
+		'o',                                                                                                   \
+		'c',                                                                                                   \
+		'u',                                                                                                   \
+		'm',                                                                                                   \
+		'e',                                                                                                   \
+		'n',                                                                                                   \
+		't',                                                                                                   \
+		'a',                                                                                                   \
+		't',                                                                                                   \
+		'i',                                                                                                   \
+		'o',                                                                                                   \
+		'n',                                                                                                   \
                                                                                                                        \
 	}
 
 #endif // CHIP_CONFIG_BIG_ENDIAN_TARGET
 
-#define GENERATED_DEFAULTS_COUNT (1)
+#define GENERATED_DEFAULTS_COUNT (2)
 
 // This is an array of EmberAfAttributeMinMaxValue structures.
 #define GENERATED_MIN_MAX_DEFAULT_COUNT 0
@@ -59,7 +169,7 @@
 	}
 
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 127
+#define GENERATED_ATTRIBUTE_COUNT 138
 #define GENERATED_ATTRIBUTES                                                                                                                     \
 	{                                                                                                                                        \
                                                                                                                                                  \
@@ -264,6 +374,26 @@
 		{ ZAP_EMPTY_DEFAULT(), 0x0000FFFD, 2, ZAP_TYPE(INT16U), ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ClusterRevision               \
 														 */                              \
                                                                                                                                                  \
+		/* Endpoint: 0, Cluster: ICD Management (server) */                                                                              \
+		{ ZAP_EMPTY_DEFAULT(), 0x00000000, 4, ZAP_TYPE(INT32U), ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* IdleModeDuration              \
+														 */                              \
+		{ ZAP_EMPTY_DEFAULT(), 0x00000001, 4, ZAP_TYPE(INT32U), ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ActiveModeDuration            \
+														 */                              \
+		{ ZAP_EMPTY_DEFAULT(), 0x00000002, 2, ZAP_TYPE(INT16U), ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ActiveModeThreshold           \
+														 */                              \
+		{ ZAP_EMPTY_DEFAULT(), 0x00000003, 0, ZAP_TYPE(ARRAY), ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* RegisteredClients              \
+														*/                               \
+		{ ZAP_EMPTY_DEFAULT(), 0x00000004, 4, ZAP_TYPE(INT32U), ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ICDCounter                    \
+														 */                              \
+		{ ZAP_EMPTY_DEFAULT(), 0x00000005, 2, ZAP_TYPE(INT16U), ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ClientsSupportedPerFabric     \
+														 */                              \
+		{ ZAP_SIMPLE_DEFAULT(0x10000), 0x00000006, 4, ZAP_TYPE(BITMAP32), 0 }, /* UserActiveModeTriggerHint */                           \
+		{ ZAP_LONG_DEFAULTS_INDEX(8), 0x00000007, 129, ZAP_TYPE(CHAR_STRING), 0 }, /* UserActiveModeTriggerInstruction                   \
+											    */                                                   \
+		{ ZAP_SIMPLE_DEFAULT(0), 0x00000008, 1, ZAP_TYPE(ENUM8), 0 }, /* OperatingMode */                                                \
+		{ ZAP_SIMPLE_DEFAULT(0x000f), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                           \
+		{ ZAP_SIMPLE_DEFAULT(2), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                                             \
+                                                                                                                                                 \
 		/* Endpoint: 1, Cluster: Identify (server) */                                                                                    \
 		{ ZAP_SIMPLE_DEFAULT(0x0), 0x00000000, 2, ZAP_TYPE(INT16U), ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* IdentifyTime                      \
 													     */                                  \
@@ -410,12 +540,22 @@
   0x00000002 /* KeySetReadResponse */, \
   0x00000005 /* KeySetReadAllIndicesResponse */, \
   chip::kInvalidCommandId /* end of list */, \
-  /* Endpoint: 1, Cluster: Identify (server) */\
+  /* Endpoint: 0, Cluster: ICD Management (server) */\
   /*   AcceptedCommandList (index=52) */ \
+  0x00000000 /* RegisterClient */, \
+  0x00000002 /* UnregisterClient */, \
+  0x00000003 /* StayActiveRequest */, \
+  chip::kInvalidCommandId /* end of list */, \
+  /*   GeneratedCommandList (index=56)*/ \
+  0x00000001 /* RegisterClientResponse */, \
+  0x00000004 /* StayActiveResponse */, \
+  chip::kInvalidCommandId /* end of list */, \
+  /* Endpoint: 1, Cluster: Identify (server) */\
+  /*   AcceptedCommandList (index=59) */ \
   0x00000000 /* Identify */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 1, Cluster: Smoke CO Alarm (server) */\
-  /*   AcceptedCommandList (index=54) */ \
+  /*   AcceptedCommandList (index=61) */ \
   0x00000000 /* SelfTestRequest */, \
   chip::kInvalidCommandId /* end of list */, \
 }
@@ -423,7 +563,7 @@
 // clang-format on
 
 // This is an array of EmberAfCluster structures.
-#define GENERATED_CLUSTER_COUNT 18
+#define GENERATED_CLUSTER_COUNT 19
 // clang-format off
 #define GENERATED_CLUSTERS { \
   { \
@@ -609,14 +749,27 @@
       .eventCount = 0, \
     },\
   { \
+      /* Endpoint: 0, Cluster: ICD Management (server) */ \
+      .clusterId = 0x00000046, \
+      .attributes = ZAP_ATTRIBUTE_INDEX(99), \
+      .attributeCount = 11, \
+      .clusterSize = 140, \
+      .mask = ZAP_CLUSTER_MASK(SERVER), \
+      .functions = NULL, \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 52 ), \
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 56 ), \
+      .eventList = nullptr, \
+      .eventCount = 0, \
+    },\
+  { \
       /* Endpoint: 1, Cluster: Identify (server) */ \
       .clusterId = 0x00000003, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(99), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(110), \
       .attributeCount = 4, \
       .clusterSize = 9, \
       .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(ATTRIBUTE_CHANGED_FUNCTION), \
       .functions = chipFuncArrayIdentifyServer, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 52 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 59 ), \
       .generatedCommandList = nullptr, \
       .eventList = nullptr, \
       .eventCount = 0, \
@@ -624,7 +777,7 @@
   { \
       /* Endpoint: 1, Cluster: Descriptor (server) */ \
       .clusterId = 0x0000001D, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(103), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(114), \
       .attributeCount = 6, \
       .clusterSize = 0, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -637,7 +790,7 @@
   { \
       /* Endpoint: 1, Cluster: Power Source (server) */ \
       .clusterId = 0x0000002F, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(109), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(120), \
       .attributeCount = 9, \
       .clusterSize = 72, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
@@ -650,12 +803,12 @@
   { \
       /* Endpoint: 1, Cluster: Smoke CO Alarm (server) */ \
       .clusterId = 0x0000005C, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(118), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(129), \
       .attributeCount = 9, \
       .clusterSize = 13, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 54 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 61 ), \
       .generatedCommandList = nullptr, \
       .eventList = nullptr, \
       .eventCount = 0, \
@@ -664,17 +817,17 @@
 
 // clang-format on
 
-#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 17
+#define ZAP_FIXED_ENDPOINT_DATA_VERSION_COUNT 18
 
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                                       \
 	{                                                                                                              \
-		{ ZAP_CLUSTER_INDEX(0), 14, 202 },                                                                     \
-		{ ZAP_CLUSTER_INDEX(14), 4, 94 },                                                                      \
+		{ ZAP_CLUSTER_INDEX(0), 15, 342 },                                                                     \
+		{ ZAP_CLUSTER_INDEX(15), 4, 94 },                                                                      \
 	}
 
 // Largest attribute size is needed for various buffers
-#define ATTRIBUTE_LARGEST (66)
+#define ATTRIBUTE_LARGEST (130)
 
 static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 	      "ATTRIBUTE_LARGEST larger than expected");
@@ -683,7 +836,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define ATTRIBUTE_SINGLETONS_SIZE (35)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (296)
+#define ATTRIBUTE_MAX_SIZE (436)
 
 // Number of fixed endpoints
 #define FIXED_ENDPOINT_COUNT (2)

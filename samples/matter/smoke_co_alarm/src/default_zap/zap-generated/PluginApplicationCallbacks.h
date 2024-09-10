@@ -33,6 +33,7 @@ void MatterGeneralDiagnosticsPluginServerInitCallback();
 void MatterAdministratorCommissioningPluginServerInitCallback();
 void MatterOperationalCredentialsPluginServerInitCallback();
 void MatterGroupKeyManagementPluginServerInitCallback();
+void MatterIcdManagementPluginServerInitCallback();
 void MatterSmokeCoAlarmPluginServerInitCallback();
 
 #define MATTER_PLUGINS_INIT                                                                                            \
@@ -50,4 +51,5 @@ void MatterSmokeCoAlarmPluginServerInitCallback();
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
 	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
+	MatterIcdManagementPluginServerInitCallback();                                                                 \
 	MatterSmokeCoAlarmPluginServerInitCallback();
