@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "MCUboot IDs (informative only, do not change)"
+
+config MCUBOOT_APPLICATION_IMAGE_NUMBER
+	int "Application image number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
+	int "Netcore core image number (informative only, do not change)"
+#	depends on SOC_NRF5340_CPUAPP
+	default -1
+
+config MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
+	int "WiFi patches image number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_QSPI_XIP_IMAGE_NUMBER
+	int "QSPI XIP image number (informative only, do not change)"
+#	depends on SOC_NRF52840 || SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
+	default -1
+
+config MCUBOOT_MCUBOOT_IMAGE_NUMBER
+	int "MCUboot (S0/S1) image number (informative only, do not change)"
+#	depends on MCUBOOT
+	default -1
+
+endmenu
