@@ -89,7 +89,7 @@ jobs:
 
           # Create documentation upload files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            ARCHIVE="doc_build_pr_${{ github.event.number }}_legacy.zip"
+            ARCHIVE="legacy-ncs-pr-${{ github.event.number }}.zip"
             echo "publish2 dev PR-${{ github.event.number }} ${ARCHIVE}" > "${MONITOR}"
             echo "${{ github.event.number }}" > pr.txt
           else
@@ -98,7 +98,7 @@ jobs:
               exit 0
             fi
 
-            ARCHIVE="doc_build_${VERSION}_legacy.zip"
+            ARCHIVE="legacy-ncs-${VERSION}.zip"
             echo "publish2 main ${VERSION} ${ARCHIVE}" > "${MONITOR}"
           fi
 
@@ -136,12 +136,12 @@ jobs:
           cd doc/_build/
 
           cd html-doxygen/zephyr-apis
-          ARCHIVE="doc_build_${VERSION}_zoomin_doxygen_zephyr_apis.zip"
+          ARCHIVE="zephyr-apis-${VERSION}.zip"
           zip -rq "${ARCHIVE}" .
           mv "${ARCHIVE}" ../../../../
           cd ../../
 
-          ARCHIVE="doc_build_${VERSION}_zoomin_sphinx_ncs.zip"
+          ARCHIVE="ncs-${VERSION}.zip"
           cd html
           zip -rq "${ARCHIVE}" .
           mv "${ARCHIVE}" ../../../
