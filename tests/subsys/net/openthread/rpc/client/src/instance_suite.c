@@ -5,14 +5,13 @@
  */
 
 #include <mock_nrf_rpc_transport.h>
+#include <ot_rpc_ids.h>
+#include <test_rpc_env.h>
 
 #include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
 
 #include <openthread/instance.h>
-
-#include <ot_rpc_ids.h>
-#include <test_rpc_env.h>
 
 /* Instance address used when testing serialization of a function that takes otInstance* */
 #define INSTANCE_ADDR UINT32_MAX

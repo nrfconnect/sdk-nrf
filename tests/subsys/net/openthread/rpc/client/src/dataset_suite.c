@@ -5,19 +5,14 @@
  */
 
 #include <mock_nrf_rpc_transport.h>
+#include <nrf_rpc/nrf_rpc_cbkproxy.h>
+#include <ot_rpc_ids.h>
+#include <test_rpc_env.h>
 
 #include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
 
-#include <nrf_rpc/nrf_rpc_cbkproxy.h>
-
-#include <ot_rpc_ids.h>
-#include <ot_rpc_types.h>
-#include <ot_rpc_common.h>
-#include <test_rpc_env.h>
-
-static int slot_cnt;
-static bool cb_called;
+#include <openthread/dataset.h>
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -31,29 +26,8 @@ static void tc_setup(void *f)
 	mock_nrf_rpc_tr_expect_reset();
 }
 
-/* Test serialization of otThreadDiscover() */
-ZTEST(ot_rpc_commissioning_cli, test_otThreadDiscover)
-{
-	otError error;
-	uint32_t scan_channels = 0x7fff800;
-	uint16_t pan_id = 0x4321;
-	bool joiner = false;
-	bool enable_eui64_filtering = true;
-	otHandleActiveScanResult cb = (otHandleActiveScanResult)0xdeadbeef;
-	void *cb_ctx = (void *)0xcafeface;
-
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER, CBOR_UINT32(0x7fff800),
-					   CBOR_UINT16(0x4321), CBOR_FALSE, CBOR_TRUE, slot_cnt,
-					   CBOR_UINT32(0xcafeface)),
-				   RPC_RSP(OT_ERROR_NONE));
-	error = otThreadDiscover(NULL, scan_channels, pan_id, joiner, enable_eui64_filtering, cb,
-				 cb_ctx);
-	mock_nrf_rpc_tr_expect_done();
-	zassert_equal(error, OT_ERROR_NONE);
-}
-
 /* Test serialization of otDatasetIsCommissioned() */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetIsCommissioned)
+ZTEST(ot_rpc_dataset, test_otDatasetIsCommissioned)
 {
 	bool result;
 
@@ -70,13 +44,12 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetIsCommissioned)
 }
 
 /* Test serialization of otDatasetSetActiveTlvs() */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActiveTlvs)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
 {
 	otError error;
 
-	const otOperationalDatasetTlvs dataset = {
-		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
-		OT_OPERATIONAL_DATASET_MAX_LENGTH};
+	const otOperationalDatasetTlvs dataset = {{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
+						  OT_OPERATIONAL_DATASET_MAX_LENGTH};
 
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, TLVS),
 				   RPC_RSP(OT_ERROR_NONE));
@@ -86,7 +59,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActiveTlvs)
 }
 
 /* Test incoming parameters validation of otDatasetSetActiveTlvs() */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActiveTlvs_negative)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs_negative)
 {
 	otError error;
 	const otOperationalDatasetTlvs dataset = {{0}, OT_OPERATIONAL_DATASET_MAX_LENGTH + 1};
@@ -98,7 +71,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActiveTlvs_negative)
 }
 
 /* Test serialization of otDatasetGetActiveTlvs() */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActiveTlvs)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs)
 {
 	otError error;
 	otOperationalDatasetTlvs dataset;
@@ -114,7 +87,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActiveTlvs)
 }
 
 /* Test NULL replay on otDatasetGetActiveTlvs() and parameter validation. */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActiveTlvs_null)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs_null)
 {
 	otError error;
 	otOperationalDatasetTlvs dataset;
@@ -128,77 +101,8 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActiveTlvs_null)
 	zassert_equal(error, OT_ERROR_NOT_FOUND);
 }
 
-static void discover_cb(otActiveScanResult *result, void *ctx)
-{
-	uint8_t ext_addr[] = {INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)};
-	uint8_t nwk_name[] = {INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), 0};
-	uint8_t ext_pan_id[] = {INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)};
-	uint8_t steer_data[] = {INT_SEQUENCE(OT_STEERING_DATA_MAX_LENGTH)};
-
-	cb_called = true;
-	zassert_not_null(result);
-	zassert_not_null(ctx);
-	zassert_mem_equal(result->mExtAddress.m8, ext_addr, OT_EXT_ADDRESS_SIZE);
-	zassert_mem_equal(result->mNetworkName.m8, nwk_name, OT_NETWORK_NAME_MAX_SIZE + 1);
-	zassert_mem_equal(result->mExtendedPanId.m8, ext_pan_id, OT_EXT_PAN_ID_SIZE);
-	zassert_mem_equal(result->mSteeringData.m8, steer_data, OT_STEERING_DATA_MAX_LENGTH);
-	zassert_equal(result->mPanId, 0x1234);
-	zassert_equal(result->mJoinerUdpPort, 0x4321);
-	zassert_equal(result->mChannel, 0x22);
-	zassert_equal(result->mRssi, 0x33);
-	zassert_equal(result->mLqi, 0x44);
-	zassert_equal(result->mVersion, 0x0f);
-	zassert_false(!!result->mIsNative);
-	zassert_true(!!result->mDiscover);
-	zassert_false(!!result->mIsJoinable);
-	zassert_equal_ptr(ctx, (void *)0xdeadbeef);
-}
-
-/* Test reception of discover callback with active scan result. */
-ZTEST(ot_rpc_commissioning_cli, test_discover_cb_handler)
-{
-
-	int in_slot = nrf_rpc_cbkproxy_in_set(discover_cb);
-
-	slot_cnt++;
-	cb_called = false;
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, EXT_ADDR, NWK_NAME,
-					EXT_PAN_ID, STEERING_DATA, CBOR_UINT16(0x1234),
-					CBOR_UINT16(0x4321), CBOR_UINT8(0x22), CBOR_UINT8(0x33),
-					CBOR_UINT8(0x44), 0x0f, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE,
-					CBOR_UINT32(0xdeadbeef), in_slot));
-	mock_nrf_rpc_tr_expect_done();
-
-	zassert_true(cb_called);
-}
-
-static void discover_empty_cb(otActiveScanResult *result, void *ctx)
-{
-	cb_called = true;
-	zassert_is_null(result);
-	zassert_not_null(ctx);
-	zassert_equal_ptr(ctx, (void *)0xdeadbeef);
-}
-
-/* Test reception of discover callback with empty active scan result. */
-ZTEST(ot_rpc_commissioning_cli, test_discover_cb_handler_empty)
-{
-
-	int in_slot = nrf_rpc_cbkproxy_in_set(discover_empty_cb);
-
-	slot_cnt++;
-	cb_called = false;
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, CBOR_NULL,
-					CBOR_UINT32(0xdeadbeef), in_slot));
-	mock_nrf_rpc_tr_expect_done();
-
-	zassert_true(cb_called);
-}
-
 /* Test serialization of otDatasetSetActive() */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActive)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
 {
 	otError error;
 
@@ -225,7 +129,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActive)
 }
 
 /* Test incoming parameters validation of otDatasetSetActive() */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActive_negative)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActive_negative)
 {
 	otError error;
 
@@ -234,7 +138,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetSetActive_negative)
 }
 
 /* Test serialization of otDatasetGetActive() */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActive)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActive)
 {
 	otError error;
 	otOperationalDataset dataset;
@@ -294,7 +198,7 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActive)
 }
 
 /* Test NULL replay on otDatasetGetActive() and parameter validation. */
-ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActive_null)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActive_null)
 {
 	otError error;
 	otOperationalDataset dataset;
@@ -308,4 +212,4 @@ ZTEST(ot_rpc_commissioning_cli, test_otDatasetGetActive_null)
 	zassert_equal(error, OT_ERROR_NOT_FOUND);
 }
 
-ZTEST_SUITE(ot_rpc_commissioning_cli, NULL, NULL, tc_setup, NULL, NULL);
+ZTEST_SUITE(ot_rpc_dataset, NULL, NULL, tc_setup, NULL, NULL);
