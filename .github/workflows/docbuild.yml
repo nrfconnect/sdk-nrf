@@ -139,6 +139,26 @@ jobs:
             popd
           done
 
+          # Doxygen APIs standalone
+          declare -a DOXYGEN=("nrfx")
+
+          for docset in "${DOXYGEN[@]}"; do
+            OUTDIR=doc/_build/html/$docset
+
+            # Populate custom.properties, tags.yml
+            cp doc/_zoomin/$docset.apis.custom.properties "$OUTDIR/custom.properties"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/custom.properties"
+
+            cp doc/_zoomin/$docset.apis.tags.yml "$OUTDIR/tags.yml"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
+
+            pushd "$OUTDIR"
+            ARCHIVE="$docset-apis-$VERSION.zip"
+            zip -rq "$ARCHIVE" .
+            mv "$ARCHIVE" "$ROOT"
+            popd
+          done
+
           # NCS
           OUTDIR=doc/_build/html
 

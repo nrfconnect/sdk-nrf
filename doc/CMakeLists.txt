@@ -50,6 +50,36 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 #-------------------------------------------------------------------------------
 # Functions
 
+# Add a new Doxygen docset.
+#
+# Args:
+# - name: Docset name.
+# - sources: Sources.
+#
+# Configured targets:
+# - ${name}: Run Doxygen build.
+# - ${name}-clean: Clean build artifacts.
+#
+function(add_doxygen_docset name sources)
+  set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/html)
+  set(DOCSET_SOURCE_BASE ${sources})
+
+  configure_file(${CMAKE_CURRENT_LIST_DIR}/${name}/${name}.doxyfile.in ${CMAKE_BINARY_DIR}/${name}.doxyfile)
+
+  add_custom_target(
+    ${name}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_BUILD_DIR}
+    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/${name}.doxyfile
+    USES_TERMINAL
+    COMMENT "Building ${name} docset..."
+  )
+
+  add_custom_target(
+    ${name}-clean
+    COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOCSET_BUILD_DIR}
+  )
+endfunction()
+
 # Add a new docset.
 #
 # Args:
@@ -223,7 +253,7 @@ add_docset(mcuboot)
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-add_docset(nrfx DODGY)
+add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR})
 
 #-------------------------------------------------------------------------------
 # docset: tfm
@@ -274,7 +304,6 @@ add_custom_target(
 
 add_dependencies(merge-search-indexes
     nrf-all
-    nrfx-all
     nrfxlib-all
     zephyr-all
     mcuboot-all
@@ -297,7 +326,7 @@ add_dependencies(build-all
     copy-extra-content
     merge-search-indexes
     nrf-all
-    nrfx-all
+    nrfx
     nrfxlib-all
     zephyr-all
     mcuboot-all
