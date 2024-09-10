@@ -33,13 +33,13 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "sphinx.ext.intersphinx",
-    "breathe",
     "sphinxcontrib.mscgen",
     "inventory_builder",
     "zephyr.kconfig",
     "zephyr.warnings_filter",
     "zephyr.external_content",
     "zephyr.doxyrunner",
+    "zephyr.doxybridge",
 ]
 master_doc = "README"
 
@@ -83,19 +83,16 @@ warnings_filter_config = str(NRF_BASE / "doc" / "nrfxlib" / "known-warnings.txt"
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
 doxyrunner_doxyfile = NRF_BASE / "doc" / "nrfxlib" / "nrfxlib.doxyfile.in"
-doxyrunner_outdir = utils.get_builddir() / "nrfxlib" / "doxygen"
+doxyrunner_outdir = utils.get_builddir() / "html" / "nrfxlib" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRFXLIB_BASE": str(NRFXLIB_BASE),
     "OUTPUT_DIRECTORY": str(doxyrunner_outdir),
 }
 
-# Options for breathe ----------------------------------------------------------
+# -- Options for doxybridge plugin ---------------------------------------------
 
-breathe_projects = {"nrfxlib": str(doxyrunner_outdir / "xml")}
-breathe_default_project = "nrfxlib"
-breathe_domain_by_extension = {"h": "c", "c": "c"}
-breathe_separate_member_pages = True
+doxybridge_dir = doxyrunner_outdir
 
 # Options for external_content -------------------------------------------------
 
