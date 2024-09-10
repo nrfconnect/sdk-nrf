@@ -7,9 +7,25 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
-
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
+
+#include <nrf_rpc_cbor.h>
+
+#include <openthread/thread.h>
+
+static otError decode_ot_error(struct nrf_rpc_cbor_ctx *ctx)
+{
+	otError error;
+
+	if (!zcbor_uint_decode(ctx->zs, &error, sizeof(error))) {
+		error = OT_ERROR_PARSE;
+	}
+
+	nrf_rpc_cbor_decoding_done(&ot_group, ctx);
+
+	return error;
+}
 
 static void ot_rpc_thread_discover_cb_rpc_handler(const struct nrf_rpc_group *group,
 						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
@@ -65,8 +81,8 @@ otError otThreadDiscover(otInstance *aInstance, uint32_t aScanChannels, uint16_t
 
 	cbor_buffer_size += sizeof(uint32_t) + 1;  /* aScanChannels */
 	cbor_buffer_size += sizeof(uint16_t) + 1;  /* aPanId */
-	cbor_buffer_size += 1;                     /* aJoiner */
-	cbor_buffer_size += 1;                     /* aEnableEui64Filtering */
+	cbor_buffer_size += 1;			   /* aJoiner */
+	cbor_buffer_size += 1;			   /* aEnableEui64Filtering */
 	cbor_buffer_size += sizeof(uintptr_t) + 1; /* aCallback */
 	cbor_buffer_size += sizeof(uint32_t) + 1;  /* aCallbackContext */
 
@@ -85,101 +101,102 @@ otError otThreadDiscover(otInstance *aInstance, uint32_t aScanChannels, uint16_t
 	return error;
 }
 
-bool otDatasetIsCommissioned(otInstance *aInstance)
+otError otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool result;
 
 	ARG_UNUSED(aInstance);
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
 
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DATASET_IS_COMMISSIONED, &ctx,
-				nrf_rpc_rsp_decode_bool, &result);
-
-	return result;
-}
-
-otError otDatasetSetActiveTlvs(otInstance *aInstance, const otOperationalDatasetTlvs *aDataset)
-{
-	struct nrf_rpc_cbor_ctx ctx;
-	size_t cbor_buffer_size;
-	otError error;
-
-	ARG_UNUSED(aInstance);
-
-	if (aDataset == NULL || aDataset->mLength > OT_OPERATIONAL_DATASET_MAX_LENGTH) {
+	if (!zcbor_bool_encode(ctx.zs, &aEnabled)) {
+		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
 		return OT_ERROR_INVALID_ARGS;
 	}
 
-	cbor_buffer_size = aDataset->mLength + 2;
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_SET_ENABLED, &ctx);
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
-
-	nrf_rpc_encode_buffer(&ctx, aDataset->mTlvs, aDataset->mLength);
-
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, &ctx,
-				ot_rpc_decode_error, &error);
-
-	return error;
+	return decode_ot_error(&ctx);
 }
 
-otError otDatasetGetActiveTlvs(otInstance *aInstance, otOperationalDatasetTlvs *aDataset)
+otDeviceRole otThreadGetDeviceRole(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otOperationalDatasetTlvs *dataset = aDataset;
+	otDeviceRole role = 0;
+	bool decoded_ok;
 
 	ARG_UNUSED(aInstance);
-
-	if (aDataset == NULL) {
-		return OT_ERROR_NOT_FOUND;
-	}
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS, &ctx,
-				ot_rpc_decode_dataset_tlvs, &dataset);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_DEVICE_ROLE, &ctx);
 
-	return dataset ? OT_ERROR_NONE : OT_ERROR_NOT_FOUND;
+	decoded_ok = zcbor_uint_decode(ctx.zs, &role, sizeof(role));
+	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+
+	if (!decoded_ok) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group,
+			    OT_RPC_CMD_THREAD_GET_DEVICE_ROLE, NRF_RPC_PACKET_TYPE_RSP);
+	}
+
+	return role;
 }
 
-otError otDatasetSetActive(otInstance *aInstance, const otOperationalDataset *aDataset)
+otError otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	size_t cbor_buffer_size;
-	otError error;
+	uint8_t mode_mask;
 
 	ARG_UNUSED(aInstance);
 
-	if (aDataset == NULL) {
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
+
+	if (aConfig.mRxOnWhenIdle) {
+		mode_mask |= BIT(OT_RPC_LINK_MODE_RX_ON_WHEN_IDLE_OFFSET);
+	}
+
+	if (aConfig.mDeviceType) {
+		mode_mask |= BIT(OT_RPC_LINK_MODE_DEVICE_TYPE_OFFSET);
+	}
+
+	if (aConfig.mNetworkData) {
+		mode_mask |= BIT(OT_RPC_LINK_MODE_NETWORK_DATA_OFFSET);
+	}
+
+	if (!zcbor_uint_encode(ctx.zs, &mode_mask, sizeof(mode_mask))) {
+		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
 		return OT_ERROR_INVALID_ARGS;
 	}
 
-	cbor_buffer_size = OPERATIONAL_DATASET_LENGTH(aDataset);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_SET_LINK_MODE, &ctx);
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
-	ot_rpc_encode_dataset(&ctx, aDataset);
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DATASET_SET_ACTIVE, &ctx, ot_rpc_decode_error,
-				&error);
-
-	return error;
+	return decode_ot_error(&ctx);
 }
 
-otError otDatasetGetActive(otInstance *aInstance, otOperationalDataset *aDataset)
+otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otOperationalDataset *dataset = aDataset;
+	uint8_t mode_mask = 0;
+	otLinkModeConfig mode;
+	bool decoded_ok;
 
 	ARG_UNUSED(aInstance);
 
-	if (aDataset == NULL) {
-		return OT_ERROR_NOT_FOUND;
-	}
-
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DATASET_GET_ACTIVE, &ctx,
-				ot_rpc_decode_dataset, &dataset);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_LINK_MODE, &ctx);
 
-	return dataset ? OT_ERROR_NONE : OT_ERROR_NOT_FOUND;
+	decoded_ok = zcbor_uint_decode(ctx.zs, &mode_mask, sizeof(mode_mask));
+	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+
+	if (!decoded_ok) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group,
+			    OT_RPC_CMD_THREAD_GET_LINK_MODE, NRF_RPC_PACKET_TYPE_RSP);
+	}
+
+	mode.mRxOnWhenIdle = (mode_mask & BIT(OT_RPC_LINK_MODE_RX_ON_WHEN_IDLE_OFFSET)) != 0;
+	mode.mDeviceType = (mode_mask & BIT(OT_RPC_LINK_MODE_DEVICE_TYPE_OFFSET)) != 0;
+	mode.mNetworkData = (mode_mask & BIT(OT_RPC_LINK_MODE_NETWORK_DATA_OFFSET)) != 0;
+
+	return mode;
 }

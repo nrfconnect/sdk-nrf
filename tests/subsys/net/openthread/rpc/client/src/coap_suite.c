@@ -5,16 +5,15 @@
  */
 
 #include <mock_nrf_rpc_transport.h>
+#include <ot_rpc_ids.h>
+#include <ot_rpc_types.h>
+#include <test_rpc_env.h>
 
 #include <zephyr/fff.h>
 #include <zephyr/kernel.h>
 #include <zephyr/ztest.h>
 
 #include <openthread/coap.h>
-
-#include <ot_rpc_ids.h>
-#include <ot_rpc_types.h>
-#include <test_rpc_env.h>
 
 /* Message address used when testing serialization of a function that takes otMessage* */
 #define MSG_ADDR UINT32_MAX
