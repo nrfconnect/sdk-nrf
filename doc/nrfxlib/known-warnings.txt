@@ -1,6 +1,0 @@
-# Each line should contain the regular expression of a known Sphinx warning
-# that should be filtered out
-.*Duplicate C declaration.*\n.*'\.\. c:.*:: nrf_modem_bootloader_digest'.*
-.*Duplicate C declaration.*\n.*'\.\. c:.*:: nrf_modem_bootloader_uuid'.*
-.*Duplicate C declaration.*\n.*'\.\. c:.*:: nrf_modem_delta_dfu_uuid'.*
-.*Duplicate C declaration.*\n.*'\.\. c:.*:: union mpsl_fem_event_t.@[0-9]+ event'.*
