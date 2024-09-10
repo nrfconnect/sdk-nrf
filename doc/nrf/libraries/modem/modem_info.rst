@@ -40,5 +40,3 @@ API documentation
 | Source files: :file:`lib/modem_info/`
 
 .. doxygengroup:: modem_info
-   :project: nrf
-   :members:

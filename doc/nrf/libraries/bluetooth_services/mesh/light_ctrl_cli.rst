@@ -149,5 +149,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/light_ctrl_cli.c`
 
 .. doxygengroup:: bt_mesh_light_ctrl_cli
-   :project: nrf
-   :members:

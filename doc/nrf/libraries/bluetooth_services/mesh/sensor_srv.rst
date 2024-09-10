@@ -95,5 +95,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/sensor_srv.c`
 
 .. doxygengroup:: bt_mesh_sensor_srv
-   :project: nrf
-   :members:

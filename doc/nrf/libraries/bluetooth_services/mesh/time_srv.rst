@@ -221,5 +221,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/time_srv.c`
 
 .. doxygengroup:: bt_mesh_time_srv
-   :project: nrf
-   :members:

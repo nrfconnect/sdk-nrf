@@ -27,6 +27,3 @@ Common types
 This section lists the types common to the Generic Location mesh models.
 
 | Header file: :file:`include/bluetooth/mesh/gen_loc.h`
-
-.. doxygenfile:: gen_loc.h
-   :project: nrf

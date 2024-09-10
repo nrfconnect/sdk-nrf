@@ -58,5 +58,3 @@ API documentation
 | Source file: :file:`lib/modem_jwt/modem_jwt.c`
 
 .. doxygengroup:: modem_jwt
-   :project: nrf
-   :members:

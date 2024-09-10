@@ -85,5 +85,3 @@ API documentation
 | Source file: :file:`subsys/zigbee/lib/zigbee_logger_ep/zigbee_logger_eprxzcl.c`
 
 .. doxygengroup:: zigbee_logger_ep
-   :project: nrf
-   :members:

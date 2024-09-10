@@ -99,5 +99,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/light_hue_srv.c`
 
 .. doxygengroup:: bt_mesh_light_hue_srv
-   :project: nrf
-   :members:

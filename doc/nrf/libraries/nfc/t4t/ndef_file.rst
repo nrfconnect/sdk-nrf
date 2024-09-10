@@ -27,5 +27,3 @@ API documentation
 .. _nfc_t4t_ndef_file:
 
 .. doxygengroup:: nfc_t4t_ndef_file
-   :project: nrf
-   :members:

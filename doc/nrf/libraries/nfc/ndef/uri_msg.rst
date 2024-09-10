@@ -57,8 +57,6 @@ URI messages
 | Source file: :file:`subsys/nfc/ndef/uri_msg.c`
 
 .. doxygengroup:: nfc_uri_msg
-   :project: nrf
-   :members:
 
 .. _nfc_uri_record:
 
@@ -69,5 +67,3 @@ URI records
 | Source file: :file:`subsys/nfc/ndef/uri_rec.c`
 
 .. doxygengroup:: nfc_uri_rec
-   :project: nrf
-   :members:

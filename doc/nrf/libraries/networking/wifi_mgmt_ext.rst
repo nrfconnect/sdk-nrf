@@ -65,5 +65,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/wifi_mgmt_ext`
 
 .. doxygengroup:: wifi_mgmt_ext
-   :project: nrf
-   :members:

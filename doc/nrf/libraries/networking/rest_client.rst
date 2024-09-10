@@ -44,5 +44,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/rest_client`
 
 .. doxygengroup:: rest_client
-   :project: nrf
-   :members:

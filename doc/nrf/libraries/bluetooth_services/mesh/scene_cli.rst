@@ -99,5 +99,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/scene_cli.c`
 
 .. doxygengroup:: bt_mesh_scene_cli
-   :project: nrf
-   :members:

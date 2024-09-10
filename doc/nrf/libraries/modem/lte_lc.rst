@@ -232,5 +232,3 @@ API documentation
 | Source file: :file:`lib/lte_link_control/lte_lc.c`
 
 .. doxygengroup:: lte_lc
-   :project: nrf
-   :members:

@@ -317,5 +317,3 @@ API documentation
                 :file:`asset_tracker_v2/src/cloud/lwm2m_integration.c`
 
 .. doxygengroup:: cloud_wrapper
-   :project: nrf
-   :members:

@@ -106,5 +106,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/nrf_cloud_alert.c`
 
 .. doxygengroup:: nrf_cloud_alert
-   :project: nrf
-   :members:

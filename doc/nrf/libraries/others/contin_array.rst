@@ -25,5 +25,3 @@ API documentation
 | Source file: :file:`lib/contin_array/contin_array.c`
 
 .. doxygengroup:: contin_array
-   :project: nrf
-   :members:

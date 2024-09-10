@@ -54,8 +54,6 @@ NFC Type 2 Tag parser
 | Source file: :file:`subsys/nfc/t2t/parser.c`
 
 .. doxygengroup:: nfc_t2t_parser
-   :project: nrf
-   :members:
 
 Type 2 Tag TLV blocks
 ---------------------
@@ -63,5 +61,3 @@ Type 2 Tag TLV blocks
 | Header file: :file:`include/nfc/t2t/tlv_block.h`
 
 .. doxygengroup:: nfc_t2t_tlv_block
-   :project: nrf
-   :members:

@@ -77,5 +77,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/download_client/src/`
 
 .. doxygengroup:: dl_client
-   :project: nrf
-   :members:

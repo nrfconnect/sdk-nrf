@@ -277,5 +277,3 @@ API documentation*
    | Source files: :file:`*provide_the_path*`
 
    .. doxygengroup:: *doxygen_group_name*
-      :project: *project_name*
-      :members:

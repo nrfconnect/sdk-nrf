@@ -52,5 +52,3 @@ API documentation
 | Source files: :file:`subsys/bootloader/bl_crypto/` and :file:`subsys/bootloader/bl_crypto_client/`
 
 .. doxygengroup:: bl_crypto
-   :project: nrf
-   :members:

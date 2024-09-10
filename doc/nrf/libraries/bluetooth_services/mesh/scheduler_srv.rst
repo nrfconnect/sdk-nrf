@@ -166,5 +166,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/scheduler_srv.c`
 
 .. doxygengroup:: bt_mesh_scheduler_srv
-   :project: nrf
-   :members:

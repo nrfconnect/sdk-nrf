@@ -18,5 +18,3 @@ API documentation
 | Source file: :file:`subsys/gazell/gzll_glue.c`
 
 .. doxygengroup:: gzll_glue
-   :project: nrf
-   :members:

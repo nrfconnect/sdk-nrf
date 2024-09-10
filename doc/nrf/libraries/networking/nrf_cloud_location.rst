@@ -37,9 +37,5 @@ API documentation
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/`
 
 .. doxygengroup:: nrf_cloud_location
-   :project: nrf
-   :members:
 
 .. doxygengroup:: wifi_location_common
-   :project: nrf
-   :members:

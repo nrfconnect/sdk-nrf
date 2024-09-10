@@ -175,5 +175,3 @@ Instead, it uses Zephyr's :ref:`zephyr:bluetooth_api`.
 | Source files: :file:`subsys/bluetooth/rpc/`
 
 .. doxygengroup:: bt_rpc
-   :project: nrf
-   :members:

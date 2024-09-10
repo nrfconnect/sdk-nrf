@@ -127,8 +127,6 @@ CAF Bluetooth LE common events
 | Source file: :file:`subsys/caf/events/ble_common_event.c`
 
 .. doxygengroup:: caf_ble_common_event
-   :project: nrf
-   :members:
 
 CAF Bluetooth LE SMP events
 ===========================
@@ -137,8 +135,6 @@ CAF Bluetooth LE SMP events
 | Source file: :file:`subsys/caf/events/ble_smp_event.c`
 
 .. doxygengroup:: ble_smp_event
-   :project: nrf
-   :members:
 
 CAF button events
 =================
@@ -147,8 +143,6 @@ CAF button events
 | Source file: :file:`subsys/caf/events/button_event.c`
 
 .. doxygengroup:: caf_button_event
-   :project: nrf
-   :members:
 
 CAF click events
 ================
@@ -157,8 +151,6 @@ CAF click events
 | Source file: :file:`subsys/caf/events/click_event.c`
 
 .. doxygengroup:: caf_click_event
-   :project: nrf
-   :members:
 
 CAF force power down events
 ===========================
@@ -167,8 +159,6 @@ CAF force power down events
 | Source file: :file:`subsys/caf/events/force_power_down_event.c`
 
 .. doxygengroup:: caf_force_power_down_event
-   :project: nrf
-   :members:
 
 CAF keep alive events
 =====================
@@ -177,8 +167,6 @@ CAF keep alive events
 | Source file: :file:`subsys/caf/events/keep_alive_event.c`
 
 .. doxygengroup:: caf_keep_alive_event
-   :project: nrf
-   :members:
 
 CAF LED events
 ==============
@@ -187,8 +175,6 @@ CAF LED events
 | Source file: :file:`subsys/caf/events/led_event.c`
 
 .. doxygengroup:: caf_led_event
-   :project: nrf
-   :members:
 
 CAF module state events
 =======================
@@ -197,8 +183,6 @@ CAF module state events
 | Source file: :file:`subsys/caf/events/module_state_event.c`
 
 .. doxygengroup:: caf_module_state_event
-   :project: nrf
-   :members:
 
 CAF net state events
 ====================
@@ -207,8 +191,6 @@ CAF net state events
 | Source file: :file:`subsys/caf/events/net_state_event.c`
 
 .. doxygengroup:: net_state_event
-   :project: nrf
-   :members:
 
 CAF power events
 ================
@@ -217,8 +199,6 @@ CAF power events
 | Source file: :file:`subsys/caf/events/power_event.c`
 
 .. doxygengroup:: caf_power_event
-   :project: nrf
-   :members:
 
 CAF power manager events
 ========================
@@ -227,8 +207,6 @@ CAF power manager events
 | Source file: :file:`subsys/caf/events/power_manager_event.c`
 
 .. doxygengroup:: caf_power_manager_event
-   :project: nrf
-   :members:
 
 CAF sensor events
 =================
@@ -237,8 +215,6 @@ CAF sensor events
 | Source file: :file:`subsys/caf/events/sensor_event.c`
 
 .. doxygengroup:: caf_sensor_event
-   :project: nrf
-   :members:
 
 CAF sensor common
 =================
@@ -246,8 +222,6 @@ CAF sensor common
 | Header file: :file:`include/caf/caf_sensor_common.h`
 
 .. doxygengroup:: caf_sensor_common
-   :project: nrf
-   :members:
 
 CAF sensor data aggregator events
 =================================
@@ -256,5 +230,3 @@ CAF sensor data aggregator events
 | Source file: :file:`subsys/caf/events/sensor_data_aggregator_event.c`
 
 .. doxygengroup:: caf_sensor_data_aggregator_event
-   :project: nrf
-   :members:

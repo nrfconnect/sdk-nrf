@@ -34,5 +34,3 @@ This section lists the types common to the Scheduler mesh models.
 | Header file: :file:`include/bluetooth/mesh/scheduler.h`
 
 .. doxygengroup:: bt_mesh_scheduler
-   :project: nrf
-   :members:

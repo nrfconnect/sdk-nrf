@@ -175,5 +175,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/nrf_cloud_log_backend.c`
 
 .. doxygengroup:: nrf_cloud_log
-   :project: nrf
-   :members:

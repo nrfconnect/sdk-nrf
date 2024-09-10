@@ -151,5 +151,3 @@ API documentation
 | Source file: :file:`drivers/sensor/pmw3360/pmw3360.c`
 
 .. doxygengroup:: pmw3360
-   :project: nrf
-   :members:

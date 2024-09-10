@@ -224,5 +224,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/softap_wifi_provision`
 
 .. doxygengroup:: softap_wifi_provision_library
-   :project: nrf
-   :members:

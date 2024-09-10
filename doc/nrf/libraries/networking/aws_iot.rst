@@ -486,5 +486,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/aws_iot/src/`
 
 .. doxygengroup:: aws_iot
-   :project: nrf
-   :members:

@@ -188,5 +188,3 @@ API documentation
 | Source files: :file:`asset_tracker_v2/src/events/data_module_event.c`, :file:`asset_tracker_v2/src/modules/data_module.c`
 
 .. doxygengroup:: data_module_event
-   :project: nrf
-   :members:

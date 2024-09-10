@@ -43,5 +43,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_lvl_srv.c`
 
 .. doxygengroup:: bt_mesh_lvl_srv
-   :project: nrf
-   :members:

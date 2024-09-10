@@ -62,5 +62,3 @@ API documentation
 | Source file: :file:`subsys/nfc/t4t/cc_file.c`
 
 .. doxygengroup:: nfc_t4t_cc_file
-   :project: nrf
-   :members:

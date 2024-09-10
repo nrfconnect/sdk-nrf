@@ -66,5 +66,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_dtt_cli.c`
 
 .. doxygengroup:: bt_mesh_dtt_cli
-   :project: nrf
-   :members:

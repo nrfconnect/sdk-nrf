@@ -124,5 +124,3 @@ API documentation
 | Source file: :file:`subsys/shell/shell_nfc.c`
 
 .. doxygengroup:: shell_nfc
-   :project: nrf
-   :members:

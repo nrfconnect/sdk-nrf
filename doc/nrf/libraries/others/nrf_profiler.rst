@@ -228,5 +228,3 @@ API documentation
 | Source files: :file:`subsys/nrf_profiler/`
 
 .. doxygengroup:: nrf_profiler
-   :project: nrf
-   :members:

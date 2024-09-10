@@ -74,5 +74,3 @@ API documentation
 | Source file: :file:`subsys/nrf_rpc/nrf_rpc_uart.c`
 
 .. doxygengroup:: nrf_rpc_uart
-   :project: nrf
-   :members:

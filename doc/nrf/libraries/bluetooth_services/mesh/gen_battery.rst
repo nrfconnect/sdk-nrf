@@ -29,5 +29,3 @@ This section lists the types common to the Generic Battery mesh models.
 | Header file: :file:`include/bluetooth/mesh/gen_battery.h`
 
 .. doxygengroup:: bt_mesh_battery
-   :project: nrf
-   :members:

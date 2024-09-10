@@ -99,5 +99,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_loc_cli.c`
 
 .. doxygengroup:: bt_mesh_loc_cli
-   :project: nrf
-   :members:

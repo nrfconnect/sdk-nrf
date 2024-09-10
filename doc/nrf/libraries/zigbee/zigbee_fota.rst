@@ -116,5 +116,3 @@ API documentation
 | Source files: :file:`subsys/zigbee/lib/zigbee_fota/src/`
 
 .. doxygengroup:: zigbee_fota
-   :project: nrf
-   :members:

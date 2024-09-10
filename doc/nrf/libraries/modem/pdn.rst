@@ -74,5 +74,3 @@ API documentation
 | Source file: :file:`lib/pdn/pdn.c`
 
 .. doxygengroup:: pdn
-   :project: nrf
-   :members:

@@ -35,8 +35,6 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "sphinx.ext.intersphinx",
-    "breathe",
-    "interbreathe",
     "table_from_rows",
     "options_from_kconfig",
     "ncs_include",
@@ -47,6 +45,7 @@ extensions = [
     "zephyr.kconfig",
     "zephyr.external_content",
     "zephyr.doxyrunner",
+    "zephyr.doxybridge",
     "zephyr.link-roles",
     "zephyr.domain",
     "sphinx_tabs.tabs",
@@ -128,7 +127,7 @@ if tfm_mapping:
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
 doxyrunner_doxyfile = NRF_BASE / "doc" / "nrf" / "nrf.doxyfile.in"
-doxyrunner_outdir = utils.get_builddir() / "nrf" / "doxygen"
+doxyrunner_outdir = utils.get_builddir() / "html" / "nrf" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRF_BASE": str(NRF_BASE),
@@ -150,12 +149,9 @@ with open(fin_path) as fin, open(fout_path, "w") as fout:
         )
     )
 
-# Options for breathe ----------------------------------------------------------
+# -- Options for doxybridge plugin ---------------------------------------------
 
-breathe_projects = {"nrf": str(doxyrunner_outdir / "xml")}
-breathe_default_project = "nrf"
-breathe_domain_by_extension = {"h": "c", "c": "c"}
-breathe_separate_member_pages = True
+doxybridge_dir = doxyrunner_outdir
 
 # Options for ncs_include ------------------------------------------------------
 

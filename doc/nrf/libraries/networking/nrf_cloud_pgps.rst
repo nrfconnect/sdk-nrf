@@ -311,5 +311,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/`
 
 .. doxygengroup:: nrf_cloud_pgps
-   :project: nrf
-   :members:

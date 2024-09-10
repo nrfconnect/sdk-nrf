@@ -113,7 +113,7 @@ jobs:
           ROOT="$PWD"
 
           # Doxygen APIs combined with Sphinx
-          declare -a SPHINX_DOXYGEN=("zephyr")
+          declare -a SPHINX_DOXYGEN=("nrf" "zephyr")
 
           mkdir doc/_build/html-doxygen
 

@@ -69,5 +69,3 @@ API documentation
 | Source files: :file:`subsys/bluetooth/mesh/dk_prov.c`
 
 .. doxygengroup:: bt_mesh_dk_prov
-   :project: nrf
-   :members:

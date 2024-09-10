@@ -33,6 +33,3 @@ Common types
 This section lists the types common to the Generic Property mesh models.
 
 | Header file: :file:`include/bluetooth/mesh/gen_prop.h`
-
-.. doxygenfile:: gen_prop.h
-   :project: nrf

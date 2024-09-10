@@ -67,5 +67,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/vnd/le_pair_resp.c`
 
 .. doxygengroup:: bt_mesh_le_pair_resp
-   :project: nrf
-   :members:

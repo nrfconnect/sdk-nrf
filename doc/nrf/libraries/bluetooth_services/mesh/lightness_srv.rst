@@ -118,5 +118,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/lightness_srv.c`
 
 .. doxygengroup:: bt_mesh_lightness_srv
-   :project: nrf
-   :members:

@@ -115,5 +115,3 @@ API documentation
 | Source files: :file:`subsys/audio_module/audio_module.c`
 
 .. doxygengroup:: audio_module
-   :project: nrf
-   :members:

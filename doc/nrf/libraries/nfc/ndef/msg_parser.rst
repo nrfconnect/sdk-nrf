@@ -51,8 +51,6 @@ NDEF message parser API
 | Source file: :file:`subsys/nfc/ndef/msg_parser.c`
 
 .. doxygengroup:: nfc_ndef_msg_parser
-   :project: nrf
-   :members:
 
 NDEF record parser API
 ----------------------
@@ -61,5 +59,3 @@ NDEF record parser API
 | Source file: :file:`subsys/nfc/ndef/record_parser.c`
 
 .. doxygengroup:: nfc_ndef_record_parser
-   :project: nrf
-   :members:

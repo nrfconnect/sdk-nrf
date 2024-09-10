@@ -67,5 +67,3 @@ API documentation
 | Source files: :file:`subsys/debug/cpu_load/`
 
 .. doxygengroup:: cpu_load
-   :project: nrf
-   :members:

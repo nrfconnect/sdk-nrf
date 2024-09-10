@@ -127,5 +127,3 @@ API documentation
 | Source files: :file:`lib/qos.c`
 
 .. doxygengroup:: qos
-   :project: nrf
-   :members:
