@@ -13,6 +13,10 @@
 #include <suit_plat_digest_cache.h>
 #include <suit_plat_memptr_size_update.h>
 
+#if CONFIG_SUIT_IPUC
+#include <suit_plat_ipuc.h>
+#endif /* CONFIG_SUIT_IPUC */
+
 #ifdef CONFIG_SUIT_STREAM
 #include <suit_sink.h>
 #include <suit_sink_selector.h>
@@ -203,6 +207,10 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 	/*
 	 * Stream the data.
 	 */
+
+#if CONFIG_SUIT_IPUC
+	suit_plat_ipuc_revoke(dst_handle);
+#endif /* CONFIG_SUIT_IPUC */
 
 #if CONFIG_SUIT_DIGEST_CACHE
 	/* Invalidate digest cache for the destination component. */

@@ -10,6 +10,10 @@
 #include <suit_memptr_storage.h>
 #include <zephyr/logging/log.h>
 
+#if CONFIG_SUIT_IPUC
+#include <suit_plat_ipuc.h>
+#endif /* CONFIG_SUIT_IPUC */
+
 LOG_MODULE_REGISTER(plat_components, CONFIG_SUIT_LOG_LEVEL);
 
 struct suit_plat_component {
@@ -264,6 +268,14 @@ int suit_plat_override_image_size(suit_component_t handle, size_t size)
 			LOG_ERR("Failed to update memptr: %i", err);
 			return SUIT_ERR_CRASH;
 		}
+
+#if CONFIG_SUIT_IPUC
+		if (size == 0) {
+			suit_plat_ipuc_declare(handle);
+		} else {
+			suit_plat_ipuc_revoke(handle);
+		}
+#endif /* CONFIG_SUIT_IPUC */
 
 		return SUIT_SUCCESS;
 	}
