@@ -168,5 +168,3 @@ API documentation
 | Source files: :file:`subsys/zigbee/osif/`
 
 .. doxygengroup:: zigbee_zboss_osif
-   :project: nrf
-   :members:

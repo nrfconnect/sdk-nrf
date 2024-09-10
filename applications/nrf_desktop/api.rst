@@ -16,8 +16,6 @@ HID reports
 | Source file: :file:`applications/nrf_desktop/configuration/common/hid_report_desc.c`
 
 .. doxygengroup:: nrf_desktop_hid_reports
-   :project: nrf
-   :members:
 
 LED states
 **********
@@ -26,8 +24,6 @@ LED states
 | Source file: :file:`applications/nrf_desktop/src/modules/led_state.c`
 
 .. doxygengroup:: nrf_desktop_led_state
-   :project: nrf
-   :members:
 
 USB events
 **********
@@ -36,5 +32,3 @@ USB events
 | Source file: :file:`applications/nrf_desktop/src/modules/usb_state.c`
 
 .. doxygengroup:: nrf_desktop_usb_event
-   :project: nrf
-   :members:

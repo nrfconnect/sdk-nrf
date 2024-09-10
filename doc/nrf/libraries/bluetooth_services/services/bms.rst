@@ -42,5 +42,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/bms.c`
 
 .. doxygengroup:: bt_bms
-   :project: nrf
-   :members:

@@ -393,5 +393,3 @@ API documentation
 | Source files: :file:`subsys/app_event_manager/`
 
 .. doxygengroup:: app_event_manager
-   :project: nrf
-   :members:

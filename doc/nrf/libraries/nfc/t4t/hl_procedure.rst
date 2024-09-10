@@ -33,5 +33,3 @@ API documentation
 | Source file: :file:`subsys/nfc/t4t/hl_procedure.c`
 
 .. doxygengroup:: nfc_t4t_hl_procedure
-   :project: nrf
-   :members:

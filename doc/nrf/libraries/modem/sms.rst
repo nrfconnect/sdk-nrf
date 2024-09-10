@@ -44,5 +44,3 @@ API documentation
 | Source file: :file:`lib/sms/sms.c`
 
 .. doxygengroup:: sms
-   :project: nrf
-   :members:

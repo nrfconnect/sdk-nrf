@@ -52,5 +52,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_battery_cli.c`
 
 .. doxygengroup:: bt_mesh_battery_cli
-   :project: nrf
-   :members:

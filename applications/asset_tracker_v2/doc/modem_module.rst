@@ -137,5 +137,3 @@ API documentation
 | Source files: :file:`asset_tracker_v2/src/events/modem_module_event.c`, :file:`asset_tracker_v2/src/modules/modem_module.c`
 
 .. doxygengroup:: modem_module_event
-   :project: nrf
-   :members:

@@ -42,5 +42,3 @@ API documentation
 | Source file: :file:`lib/modem_attest_token/modem_attest_token.c`
 
 .. doxygengroup:: modem_attest_token
-   :project: nrf
-   :members:

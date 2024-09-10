@@ -74,5 +74,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/vnd/dm_cli.c`
 
 .. doxygengroup:: bt_mesh_dm_cli
-   :project: nrf
-   :members:

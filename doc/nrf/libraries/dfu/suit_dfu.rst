@@ -61,5 +61,3 @@ API documentation
 | Source files: :file:`subsys/suit`
 
 .. doxygengroup:: suit
-   :project: nrf
-   :members:

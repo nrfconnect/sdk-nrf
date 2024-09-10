@@ -19,5 +19,3 @@ API documentation
 | Source file: :file:`subsys/shell/shell_ipc.c`
 
 .. doxygengroup:: shell_ipc
-   :project: nrf
-   :members:

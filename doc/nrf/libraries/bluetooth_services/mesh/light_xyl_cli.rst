@@ -121,5 +121,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/light_xyl_cli.c`
 
 .. doxygengroup:: bt_mesh_light_xyl_cli
-   :project: nrf
-   :members:

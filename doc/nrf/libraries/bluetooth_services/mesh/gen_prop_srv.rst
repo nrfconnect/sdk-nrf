@@ -70,5 +70,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_prop_srv.c`
 
 .. doxygengroup:: bt_mesh_prop_srv
-   :project: nrf
-   :members:

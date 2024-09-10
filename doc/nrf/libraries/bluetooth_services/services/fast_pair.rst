@@ -221,8 +221,6 @@ API documentation
 | Source files: :file:`subsys/bluetooth/services/fast_pair`
 
 .. doxygengroup:: bt_fast_pair
-   :project: nrf
-   :members:
 
 FMDN extension
 ==============
@@ -231,8 +229,6 @@ FMDN extension
 | Source files: :file:`subsys/bluetooth/services/fast_pair/fmdn`
 
 .. doxygengroup:: bt_fast_pair_fmdn
-   :project: nrf
-   :members:
 
 Fast Pair UUID API
 ==================
@@ -241,5 +237,3 @@ Fast Pair UUID API
 | Source files: :file:`subsys/bluetooth/services/fast_pair`
 
 .. doxygengroup:: bt_fast_pair_uuid
-   :project: nrf
-   :members:

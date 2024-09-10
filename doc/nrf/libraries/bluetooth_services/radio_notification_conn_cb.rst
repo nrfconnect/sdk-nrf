@@ -52,5 +52,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/host_extensions/radio_notification_conn_cb.c`
 
 .. doxygengroup:: bt_radio_notification_cb
-   :project: nrf
-   :members:

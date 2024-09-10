@@ -148,5 +148,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/nrf_cloud_coap.c`
 
 .. doxygengroup:: nrf_cloud_coap
-   :project: nrf
-   :members:

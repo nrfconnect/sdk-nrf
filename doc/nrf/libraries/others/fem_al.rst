@@ -39,5 +39,3 @@ API documentation
 | Source files: :file:`lib/fem_al/`
 
 .. doxygengroup:: fem_al
-   :project: nrf
-   :members:

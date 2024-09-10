@@ -31,5 +31,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/light_ctrl_reg_spec.c`
 
 .. doxygengroup:: bt_mesh_light_ctrl_reg_spec
-   :project: nrf
-   :members:

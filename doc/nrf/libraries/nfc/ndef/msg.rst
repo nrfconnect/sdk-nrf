@@ -170,8 +170,6 @@ NDEF messages
 | Source file: :file:`subsys/nfc/ndef/msg.c`
 
 .. doxygengroup:: nfc_ndef_msg
-   :project: nrf
-   :members:
 
 .. _nfc_ndef_record:
 
@@ -182,5 +180,3 @@ NDEF records
 | Source file: :file:`subsys/nfc/ndef/record.c`
 
 .. doxygengroup:: nfc_ndef_record
-   :project: nrf
-   :members:

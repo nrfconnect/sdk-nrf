@@ -73,5 +73,3 @@ LED effect API
 **************
 
 .. doxygengroup:: led_effect_CAF
-   :project: nrf
-   :members:

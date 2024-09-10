@@ -89,5 +89,3 @@ API documentation
 | Source files: :file:`asset_tracker_v2/src/events/util_module_event.c`, :file:`asset_tracker_v2/src/modules/util_module.c`
 
 .. doxygengroup:: util_module_event
-   :project: nrf
-   :members:

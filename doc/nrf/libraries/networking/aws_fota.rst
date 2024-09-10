@@ -210,5 +210,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/aws_fota/`
 
 .. doxygengroup:: aws_fota
-   :project: nrf
-   :members:

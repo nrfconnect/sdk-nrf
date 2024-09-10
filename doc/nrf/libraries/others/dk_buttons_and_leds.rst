@@ -31,8 +31,6 @@ API documentation
 | Source files: :file:`lib/dk_buttons_and_leds/`
 
 .. doxygengroup:: dk_buttons_and_leds
-   :project: nrf
-   :members:
 
 .. _dk_buttons_and_leds_other_boards:
 

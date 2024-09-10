@@ -45,5 +45,3 @@ API documentation
 | Source files: :file:`subsys/dfu/fmfu_fdev/src/`
 
 .. doxygengroup:: fmfu_fdev
-   :project: nrf
-   :members:

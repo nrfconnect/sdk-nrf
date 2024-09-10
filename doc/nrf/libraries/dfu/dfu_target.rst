@@ -155,5 +155,3 @@ API documentation
 | Source files: :file:`subsys/dfu/dfu_target/src/`
 
 .. doxygengroup:: dfu_target
-   :project: nrf
-   :members:

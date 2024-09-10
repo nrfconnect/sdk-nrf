@@ -314,6 +314,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/lwm2m_client_utils/lwm2m`
 
 .. doxygengroup:: lwm2m_client_utils
-   :project: nrf
-   :members:
-   :inner:

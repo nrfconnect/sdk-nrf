@@ -23,5 +23,3 @@ API documentation
 | Source files: :file:`lib/wave_gen/`
 
 .. doxygengroup:: wave_gen
-   :project: nrf
-   :members:

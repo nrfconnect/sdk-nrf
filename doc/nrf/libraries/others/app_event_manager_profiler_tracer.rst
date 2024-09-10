@@ -134,5 +134,3 @@ API documentation
 | Source files: :file:`subsys/app_event_manager_profiler_tracer/`
 
 .. doxygengroup:: app_event_manager_profiler_tracer
-   :project: nrf
-   :members:

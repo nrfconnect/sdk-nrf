@@ -268,8 +268,6 @@ API documentation
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/`
 
 .. doxygengroup:: nrf_cloud
-   :project: nrf
-   :members:
 
 nRF Cloud codec documentation
 *****************************
@@ -277,8 +275,6 @@ nRF Cloud codec documentation
 | Header file: :file:`include/net/nrf_cloud_codec.h`
 
 .. doxygengroup:: nrf_cloud_codec
-   :project: nrf
-   :members:
 
 nRF Cloud common definitions
 ****************************
@@ -286,8 +282,6 @@ nRF Cloud common definitions
 | Header file: :file:`include/net/nrf_cloud_defs.h`
 
 .. doxygengroup:: nrf_cloud_defs
-   :project: nrf
-   :members:
 
 nRF Cloud FOTA poll for REST and CoAP
 ****************************************
@@ -295,5 +289,3 @@ nRF Cloud FOTA poll for REST and CoAP
 | Header file: :file:`include/net/nrf_cloud_fota_poll.h`
 
 .. doxygengroup:: nrf_cloud_fota_poll
-   :project: nrf
-   :members:

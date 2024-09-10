@@ -73,5 +73,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_ponoff_cli.c`
 
 .. doxygengroup:: bt_mesh_ponoff_cli
-   :project: nrf
-   :members:

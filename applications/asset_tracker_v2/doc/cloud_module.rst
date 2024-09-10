@@ -258,5 +258,3 @@ API documentation
                 :file:`asset_tracker_v2/src/modules/cloud_module.c`
 
 .. doxygengroup:: cloud_module_event
-   :project: nrf
-   :members:

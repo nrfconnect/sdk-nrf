@@ -36,6 +36,3 @@ API documentation
 | Source file: :file:`subsys/net/lib/mqtt_helper/mqtt_helper.c`
 
 .. doxygengroup:: mqtt_helper
-   :project: nrf
-   :members:
-   :inner:

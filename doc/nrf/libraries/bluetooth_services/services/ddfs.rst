@@ -77,5 +77,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/ddfs.c`
 
 .. doxygengroup:: bt_ddfs
-   :project: nrf
-   :members:

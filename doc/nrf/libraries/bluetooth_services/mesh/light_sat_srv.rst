@@ -82,5 +82,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/light_sat_srv.c`
 
 .. doxygengroup:: bt_mesh_light_sat_srv
-   :project: nrf
-   :members:

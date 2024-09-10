@@ -76,5 +76,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/bas_client.c`
 
 .. doxygengroup:: bt_bas_client_api
-   :project: nrf
-   :members:

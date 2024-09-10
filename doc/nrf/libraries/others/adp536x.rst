@@ -50,5 +50,3 @@ API documentation
 Following define VBUS current limit values, charging current values, and overcharge protection threshold values respectively:
 
 .. doxygengroup:: adp536x
-      :project: nrf
-      :members:

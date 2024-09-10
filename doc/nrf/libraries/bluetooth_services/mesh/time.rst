@@ -30,5 +30,3 @@ This section lists the types common to the Time mesh models.
 | Header file: :file:`include/bluetooth/mesh/time.h`
 
 .. doxygengroup:: bt_mesh_time
-   :project: nrf
-   :members:

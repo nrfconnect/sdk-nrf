@@ -155,5 +155,3 @@ API documentation
 | Source files: :file:`asset_tracker_v2/src/events/location_module_event.c`
 
 .. doxygengroup:: location_module_event
-   :project: nrf
-   :members:

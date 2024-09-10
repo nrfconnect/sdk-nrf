@@ -25,5 +25,3 @@ API documentation
 | Source files: :file:`lib/fprotect/`
 
 .. doxygengroup:: fprotect
-   :project: nrf
-   :members:

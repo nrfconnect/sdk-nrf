@@ -173,5 +173,3 @@ API documentation
 | Source file: :file:`subsys/emds/emds.c`
 
 .. doxygengroup:: emds
-    :project: nrf
-    :members:

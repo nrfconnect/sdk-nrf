@@ -28,5 +28,3 @@ API documentation
 | Source files: :file:`subsys/bootloader/bl_validation/`
 
 .. doxygengroup:: bl_validation
-   :project: nrf
-   :members:

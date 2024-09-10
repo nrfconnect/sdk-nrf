@@ -36,5 +36,3 @@ API documentation
 | Source files: :file:`subsys/bootloader/bl_storage/`
 
 .. doxygengroup:: bl_storage
-   :project: nrf
-   :members:

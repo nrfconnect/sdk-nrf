@@ -27,5 +27,3 @@ API documentation
 | Source files: :file:`subys/mpsl/`
 
 .. doxygengroup:: mpsl_work
-   :project: nrf
-   :members:

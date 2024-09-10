@@ -21,5 +21,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/conn_ctx.c`
 
 .. doxygengroup:: bt_conn_ctx
-   :project: nrf
-   :members:

@@ -183,5 +183,3 @@ API documentation
 | Source files: :file:`subsys/fw_info/`
 
 .. doxygengroup:: fw_info
-   :project: nrf
-   :members:

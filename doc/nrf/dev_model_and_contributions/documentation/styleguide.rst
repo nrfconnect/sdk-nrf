@@ -119,8 +119,6 @@ The `Breathe documentation`_ contains information about what you can link to and
 .. code-block:: none
 
    .. doxygengroup:: bluetooth_throughput
-      :project: nrf
-      :members:
 
 
 .. note::
@@ -338,7 +336,6 @@ Structs
 =======
 
 The documentation block must precede the documented element.
-Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
 
 In the RST file:
 
@@ -351,8 +348,6 @@ In the RST file:
    | Source file: :file:`subsys/bluetooth/gatt_dm.c`
 
    .. doxygengroup:: bt_gatt_dm
-      :project: nrf
-      :members:
 
 In the header file:
 
@@ -389,10 +384,6 @@ To link to functions, enums, or structs from within doxygen itself, use the ``@r
     *  Use this structure with the function @ref function_name and
     *  this structure is related to another structure, @ref structure_name.
     */
-
-.. note::
-   Linking to functions does not currently work due to `Breathe issue #438`_.
-
 
 Typedefs
 ========

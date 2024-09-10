@@ -70,5 +70,3 @@ API documentation
 | Source files: :file:`modules/tfm/tfm/boards/src/`
 
 .. doxygengroup:: tfm_ioctl_api
-   :project: nrf
-   :members:

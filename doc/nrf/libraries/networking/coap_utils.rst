@@ -35,5 +35,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/coap_utils/`
 
 .. doxygengroup:: coap_utils
-   :project: nrf
-   :members:

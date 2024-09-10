@@ -144,5 +144,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/hogp.c`
 
 .. doxygengroup:: bt_hogp
-   :project: nrf
-   :members:

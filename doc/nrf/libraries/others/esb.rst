@@ -19,5 +19,3 @@ API documentation
 | Source files: :file:`subsys/esb/`
 
 .. doxygengroup:: esb
-   :project: nrf
-   :members:

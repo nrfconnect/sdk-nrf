@@ -20,5 +20,3 @@ API documentation
 | Header file: :file:`include/bluetooth/mesh/properties.h`
 
 .. doxygengroup:: bt_mesh_property_ids
-   :project: nrf
-   :members:

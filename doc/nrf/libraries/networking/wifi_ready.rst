@@ -26,5 +26,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/wifi_ready`
 
 .. doxygengroup:: wifi_ready
-   :project: nrf
-   :members:

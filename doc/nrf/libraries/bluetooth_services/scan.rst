@@ -183,5 +183,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/scan.c`
 
 .. doxygengroup:: nrf_bt_scan
-   :project: nrf
-   :members:

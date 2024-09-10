@@ -46,5 +46,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/throughput.c`
 
 .. doxygengroup::  bt_throughput
-   :project: nrf
-   :members:

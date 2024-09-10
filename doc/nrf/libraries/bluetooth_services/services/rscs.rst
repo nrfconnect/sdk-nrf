@@ -17,5 +17,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/rscs.c`
 
 .. doxygengroup:: bt_rscs
-   :project: nrf
-   :members:
