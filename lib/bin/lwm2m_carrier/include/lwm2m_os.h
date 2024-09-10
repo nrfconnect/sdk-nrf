@@ -480,8 +480,6 @@ size_t lwm2m_os_lte_modes_get(int32_t *modes);
  * @param prefer LWM2M_OS_LTE_MODE_NONE    for no preference
  *               LWM2M_OS_LTE_MODE_CAT_M1  for Cat-M1 (LTE-FDD)
  *               LWM2M_OS_LTE_MODE_CAT_NB1 for Cat-NB1 (NB-IoT)
- *
- * @return Number of enabled modes:
  */
 void lwm2m_os_lte_mode_request(int32_t prefer);
 
