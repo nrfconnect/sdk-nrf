@@ -110,43 +110,50 @@ jobs:
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
         working-directory: ncs/nrf
         run: |
+          ROOT="$PWD"
+
+          # Doxygen APIs combined with Sphinx
+          declare -a SPHINX_DOXYGEN=("zephyr")
+
           mkdir doc/_build/html-doxygen
 
-          # Zephyr APIs (Doxygen)
-          mv doc/_build/html/zephyr/doxygen/html doc/_build/html-doxygen/zephyr-apis
+          for docset in "${SPHINX_DOXYGEN[@]}"; do
+            OUTDIR=doc/_build/html-doxygen/$docset-apis
+            mv doc/_build/html/$docset/doxygen/html "$OUTDIR"
 
-          cp doc/_zoomin/zephyr.apis.custom.properties doc/_build/html-doxygen/zephyr-apis/custom.properties
-          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html-doxygen/zephyr-apis/custom.properties
+            # Populate custom.properties, tags.yml
+            cp doc/_zoomin/$docset.apis.custom.properties "$OUTDIR/custom.properties"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/custom.properties"
 
-          cp doc/_zoomin/zephyr.apis.tags.yml doc/_build/html-doxygen/zephyr-apis/tags.yml
-          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html-doxygen/zephyr-apis/tags.yml
+            cp doc/_zoomin/$docset.apis.tags.yml "$OUTDIR/tags.yml"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
 
-          # NCS (Sphinx)
-          cp doc/_zoomin/ncs.custom.properties doc/_build/html/custom.properties
-          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/custom.properties
+            # Patch links from Sphinx to Doxygen APIs
+            find doc/_build/html/$docset -type f -name "*.html" -exec \
+              sed -ri "/href=\"(.*)\/doxygen\/html\/(.*)\"/{s//href=\"\1\/..\/..\/..\/$docset-apis-$VERSION\/page\/\2\"/; :a s/__/_/;ta; }" {} \;
 
-          cp doc/_zoomin/ncs.tags.yml doc/_build/html/tags.yml
-          sed -i 's/__VERSION__/'"${VERSION}"'/g' doc/_build/html/tags.yml
+            pushd "$OUTDIR"
+            ARCHIVE="$docset-apis-$VERSION.zip"
+            zip -rq "$ARCHIVE" .
+            mv "$ARCHIVE" "$ROOT"
+            popd
+          done
 
-          # Patch links from Zephyr (Sphinx) to Zephyr APIs (Doxygen)
-          find doc/_build/html/zephyr -type f -name "*.html" -exec \
-            sed -ri "/href=\"(.*)\/doxygen\/html\/(.*)\"/{s//href=\"\1\/..\/..\/..\/zephyr-apis-$VERSION\/page\/\2\"/; :a s/__/_/;ta; }" {} \;
+          # NCS
+          OUTDIR=doc/_build/html
 
-          # Prepare archives
-          cd doc/_build/
+          # Populate custom.properties, tags.yml
+          cp doc/_zoomin/ncs.custom.properties "$OUTDIR/custom.properties"
+          sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/custom.properties"
 
-          cd html-doxygen/zephyr-apis
-          ARCHIVE="zephyr-apis-${VERSION}.zip"
-          zip -rq "${ARCHIVE}" .
-          mv "${ARCHIVE}" ../../../../
-          cd ../../
+          cp doc/_zoomin/ncs.tags.yml "$OUTDIR/tags.yml"
+          sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
 
-          ARCHIVE="ncs-${VERSION}.zip"
-          cd html
-          zip -rq "${ARCHIVE}" .
-          mv "${ARCHIVE}" ../../../
-          cd ..
-
+          ARCHIVE="ncs-$VERSION.zip"
+          pushd "$OUTDIR"
+          zip -rq "$ARCHIVE" .
+          mv "$ARCHIVE" "$ROOT"
+          popd
       - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
         uses: actions/upload-artifact@v4
