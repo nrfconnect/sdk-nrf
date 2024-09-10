@@ -15,6 +15,9 @@
 #include <dfu/pcd.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+#ifdef CONFIG_PCD_LOCK_NETCORE_APPROTECT
+#include <nrfx_nvmc.h>
+#endif
 
 int main(void)
 {
@@ -40,6 +43,20 @@ int main(void)
 	uint32_t s0_addr = s0_address_read();
 	bool valid = false;
 	uint8_t status = pcd_fw_copy_status_get();
+
+#ifdef CONFIG_PCD_LOCK_NETCORE_DEBUG
+	if (status == PCD_STATUS_LOCK_DEBUG) {
+		nrfx_nvmc_word_write((uint32_t)&NRF_UICR_NS->APPROTECT,
+				     UICR_APPROTECT_PALL_Protected);
+
+		pcd_done();
+
+		/* Success, waiting to be rebooted */
+		while (1)
+			;
+		CODE_UNREACHABLE;
+	}
+#endif
 
 #ifdef CONFIG_PCD_READ_NETCORE_APP_VERSION
 	if (status == PCD_STATUS_READ_VERSION) {

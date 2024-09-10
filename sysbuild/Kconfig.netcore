@@ -48,6 +48,10 @@ config SUPPORT_NETCORE_IPC_RADIO
 	bool
 	default y
 
+config SUPPORT_NETCORE_TFM_PSA_TEMPLATE
+	bool
+	default y
+
 config NRF_DEFAULT_EMPTY
 	bool
 
@@ -66,6 +70,9 @@ config NRF_DEFAULT_MULTIPROTOCOL
 config NRF_DEFAULT_IPC_RADIO
 	bool
 
+config NRF_DEFAULT_TFM_PSA_TEMPLATE_NETCORE
+	bool
+
 choice NETCORE
 	prompt "Netcore image"
 	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && NETCORE_REMOTE_BOARD_NAME != ""
@@ -73,6 +80,7 @@ choice NETCORE
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_IPC_RADIO if NRF_DEFAULT_IPC_RADIO && NETCORE_REMOTE_BOARD_NAME != ""
+	default NETCORE_TFM_PSA_TEMPLATE if NRF_DEFAULT_TFM_PSA_TEMPLATE_NETCORE && NETCORE_REMOTE_BOARD_NAME != ""
 	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_NAME != ""
 	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
 
@@ -137,6 +145,12 @@ config NETCORE_IPC_RADIO_IEEE802154
 
 endif # NETCORE_IPC_RADIO
 
+config NETCORE_TFM_PSA_TEMPLATE
+	bool "tfm_psa_template_net_core"
+	depends on SUPPORT_NETCORE_TFM_PSA_TEMPLATE
+	help
+	  Include tfm_psa_template_net_core as the netcore image to use.
+
 endchoice
 
 if !NETCORE_NONE
@@ -149,6 +163,7 @@ config NETCORE_IMAGE_NAME
 	default "802154_rpmsg" if NETCORE_802154_RPMSG
 	default "multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
 	default "ipc_radio" if NETCORE_IPC_RADIO
+	default "tfm_psa_template_net_core" if NETCORE_TFM_PSA_TEMPLATE
 	help
 	  Name of netcore image.
 
@@ -160,6 +175,7 @@ config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_BASE}/samples/boards/nrf/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
 	default "${ZEPHYR_NRF_MODULE_DIR}/applications/ipc_radio" if NETCORE_IPC_RADIO
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/tfm/tfm_psa_template_net_core" if NETCORE_TFM_PSA_TEMPLATE
 	help
 	  Source directory of netcore image.
 
