@@ -1,5 +1,5 @@
-Blutooth stack architecture
-###########################
+Bluetooth stack architecture
+############################
 
 .. contents::
    :local:
