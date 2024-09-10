@@ -79,12 +79,6 @@ app:
   size: 0xc8000
   region: flash_primary
 
-external_flash:
-  device: GD25LB256E
-  address: 0x0
-  size: 0x2000000
-  span: [mcuboot_secondary]
-  region: external_flash
 mcuboot_secondary:
   device: GD25LB256E
   address: 0x0
