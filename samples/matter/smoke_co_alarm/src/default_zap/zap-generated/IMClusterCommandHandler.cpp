@@ -299,6 +299,70 @@ namespace app
 
 		} // namespace GroupKeyManagement
 
+		namespace IcdManagement
+		{
+
+			void DispatchServerCommand(CommandHandler *apCommandObj,
+						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
+			{
+				CHIP_ERROR TLVError = CHIP_NO_ERROR;
+				bool wasHandled = false;
+				{
+					switch (aCommandPath.mCommandId) {
+					case Commands::RegisterClient::Id: {
+						Commands::RegisterClient::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfIcdManagementClusterRegisterClientCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::UnregisterClient::Id: {
+						Commands::UnregisterClient::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled =
+								emberAfIcdManagementClusterUnregisterClientCallback(
+									apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::StayActiveRequest::Id: {
+						Commands::StayActiveRequest::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled =
+								emberAfIcdManagementClusterStayActiveRequestCallback(
+									apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					default: {
+						// Unrecognized command ID, error status will apply.
+						apCommandObj->AddStatus(
+							aCommandPath,
+							Protocols::InteractionModel::Status::UnsupportedCommand);
+						ChipLogError(Zcl,
+							     "Unknown command " ChipLogFormatMEI
+							     " for cluster " ChipLogFormatMEI,
+							     ChipLogValueMEI(aCommandPath.mCommandId),
+							     ChipLogValueMEI(aCommandPath.mClusterId));
+						return;
+					}
+					}
+				}
+
+				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
+					apCommandObj->AddStatus(aCommandPath,
+								Protocols::InteractionModel::Status::InvalidCommand);
+					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
+							TLVError.Format());
+				}
+			}
+
+		} // namespace IcdManagement
+
 		namespace Identify
 		{
 
@@ -564,6 +628,9 @@ namespace app
 			break;
 		case Clusters::GroupKeyManagement::Id:
 			Clusters::GroupKeyManagement::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
+			break;
+		case Clusters::IcdManagement::Id:
+			Clusters::IcdManagement::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
 		case Clusters::Identify::Id:
 			Clusters::Identify::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
