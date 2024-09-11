@@ -123,14 +123,6 @@ config MBEDTLS_CIPHER_MODE_CTR
 	bool
 	default n
 
-config MBEDTLS_CIPHER_MODE_CFB
-	bool
-	default n
-
-config MBEDTLS_CIPHER_MODE_OFB
-	bool
-	default n
-
 config MBEDTLS_CHACHA20_C
 	bool
 	default n
