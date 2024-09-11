@@ -11,15 +11,12 @@
 
 #include <openthread/cli.h>
 
-#include <zephyr/net/openthread.h>
-
 #include <zephyr/net/net_l2.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_pkt.h>
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/net_context.h>
-
-#include <stdio.h>
+#include <zephyr/net/openthread.h>
 
 LOG_MODULE_DECLARE(ot_rpc, LOG_LEVEL_DBG);
 

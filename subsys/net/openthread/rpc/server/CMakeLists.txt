@@ -7,18 +7,21 @@
 zephyr_library()
 
 zephyr_library_sources(
-  ot_rpc_cli_server.c
-  ot_rpc_coap_server.c
-  ot_rpc_ctrl_server.c
-  ot_rpc_instance_server.c
-  ot_rpc_message_server.c
+  ot_rpc_cli.c
+  ot_rpc_coap.c
+  ot_rpc_dataset.c
+  ot_rpc_instance.c
+  ot_rpc_ip6.c
+  ot_rpc_link.c
+  ot_rpc_message.c
+  ot_rpc_netdata.c
+  ot_rpc_thread.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NET_L2_OPENTHREAD
-  ot_rpc_if_server.c
-  ot_rpc_commissioning_server.c
-  ot_rpc_diag_server.c
-  ot_rpc_udp_server.c
+  ot_rpc_if.c
+  ot_rpc_diag.c
+  ot_rpc_udp.c
 )
 
 zephyr_library_include_directories(

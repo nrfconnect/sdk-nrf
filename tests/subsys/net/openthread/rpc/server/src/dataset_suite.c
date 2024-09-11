@@ -5,42 +5,28 @@
  */
 
 #include <mock_nrf_rpc_transport.h>
+#include <ot_rpc_ids.h>
+#include <test_rpc_env.h>
 
 #include <zephyr/fff.h>
 #include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
 
-#include <zephyr/net/openthread.h>
-#include <openthread/link.h>
-#include <openthread/cli.h>
-#include <openthread/ip6.h>
-#include <openthread/thread.h>
-
-#include <ot_rpc_ids.h>
-#include <test_rpc_env.h>
+#include <openthread/dataset.h>
 
 /* Fake functions */
-FAKE_VALUE_FUNC(otError, otThreadDiscover, otInstance *, uint32_t, uint16_t, bool, bool,
-		otHandleActiveScanResult, void *);
 FAKE_VALUE_FUNC(bool, otDatasetIsCommissioned, otInstance *);
 FAKE_VALUE_FUNC(otError, otDatasetSetActiveTlvs, otInstance *, const otOperationalDatasetTlvs *);
 FAKE_VALUE_FUNC(otError, otDatasetGetActiveTlvs, otInstance *, otOperationalDatasetTlvs *);
 FAKE_VALUE_FUNC(otError, otDatasetSetActive, otInstance *, const otOperationalDataset *);
 FAKE_VALUE_FUNC(otError, otDatasetGetActive, otInstance *, otOperationalDataset *);
-FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
-	f(otThreadDiscover);                                                                       \
 	f(otDatasetIsCommissioned);                                                                \
 	f(otDatasetSetActiveTlvs);                                                                 \
 	f(otDatasetGetActiveTlvs);                                                                 \
 	f(otDatasetSetActive);                                                                     \
-	f(otDatasetGetActive);                                                                     \
-	f(nrf_rpc_cbkproxy_out_get);
-
-extern uint64_t ot_thread_discover_cb_encoder(uint32_t callback_slot, uint32_t _rsv0,
-					      uint32_t _rsv1, uint32_t _ret,
-					      otActiveScanResult *result, void *context);
+	f(otDatasetGetActive);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -58,34 +44,10 @@ static void tc_setup(void *f)
 }
 
 /*
- * Test reception of otThreadDiscover command.
- * Test serialization of the result: OT_ERROR_NONE.
- */
-ZTEST(ot_rpc_commissioning_server, test_otThreadDiscover)
-{
-	nrf_rpc_cbkproxy_out_get_fake.return_val = (void *)0xfacecafe;
-	otThreadDiscover_fake.return_val = OT_ERROR_NONE;
-
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER, CBOR_UINT32(0x7fff800),
-					CBOR_UINT16(0x4321), CBOR_FALSE, CBOR_TRUE, 0,
-					CBOR_UINT32(0xcafeface)));
-	mock_nrf_rpc_tr_expect_done();
-
-	zassert_equal(otThreadDiscover_fake.call_count, 1);
-	zassert_equal(otThreadDiscover_fake.arg1_val, 0x7fff800);
-	zassert_equal(otThreadDiscover_fake.arg2_val, 0x4321);
-	zassert_equal(otThreadDiscover_fake.arg3_val, false);
-	zassert_equal(otThreadDiscover_fake.arg4_val, true);
-	zassert_equal_ptr(otThreadDiscover_fake.arg5_val, (void *)0xfacecafe);
-	zassert_equal_ptr(otThreadDiscover_fake.arg6_val, (void *)0xcafeface);
-}
-
-/*
  * Test reception of otDatasetIsCommissioned command.
  * Test serialization of the result: true or false.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetIsCommissioned)
+ZTEST(ot_rpc_dataset, test_otDatasetIsCommissioned)
 {
 	otDatasetIsCommissioned_fake.return_val = true;
 
@@ -108,7 +70,7 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetIsCommissioned)
  * Test reception of otDatasetSetActiveTlvs command.
  * Test serialization of the result: OT_ERROR_NONE.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActiveTlvs)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
 {
 	const otOperationalDatasetTlvs expected_dataset = {
 		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
@@ -129,7 +91,7 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActiveTlvs)
  * Test reception of otDatasetSetActiveTlvs command with NULL pointer.
  * Test serialization of the result: OT_ERROR_INVALID_ARGS.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActiveTlvs_negative)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs_negative)
 {
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_ARGS), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, CBOR_NULL));
@@ -153,7 +115,7 @@ static otError dataset_get_tlvs_fake(otInstance *instance, otOperationalDatasetT
  * Test reception of otDatasetGetActiveTlvs command.
  * Test serialization of the result: TLVS data.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActiveTlvs)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs)
 {
 	otDatasetGetActiveTlvs_fake.custom_fake = dataset_get_tlvs_fake;
 
@@ -168,7 +130,7 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActiveTlvs)
  * Test reception of otDatasetGetActiveTlvs command.
  * Test serialization of the result: NULL as tlvs data has not been found.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActiveTlvs_null)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs_null)
 {
 	otDatasetGetActiveTlvs_fake.return_val = OT_ERROR_NOT_FOUND;
 
@@ -180,52 +142,10 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActiveTlvs_null)
 }
 
 /*
- * Test sending of otThreadDiscover result over server's callback.
- */
-ZTEST(ot_rpc_commissioning_server, test_tx_discover_cb)
-{
-	otActiveScanResult result = {
-		.mExtAddress.m8 = {INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)},
-		.mNetworkName.m8 = {INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), 0},
-		.mExtendedPanId.m8 = {INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)},
-		.mSteeringData.m8 = {INT_SEQUENCE(OT_STEERING_DATA_MAX_LENGTH)},
-		.mPanId = 0x1234,
-		.mJoinerUdpPort = 0x4321,
-		.mChannel = 0x22,
-		.mRssi = 0x33,
-		.mLqi = 0x44,
-		.mVersion = 0x0f,
-		.mIsNative = 0,
-		.mDiscover = 1,
-		.mIsJoinable = 0};
-
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, EXT_ADDR, NWK_NAME,
-					   EXT_PAN_ID, STEERING_DATA, CBOR_UINT16(0x1234),
-					   CBOR_UINT16(0x4321), CBOR_UINT8(0x22), CBOR_UINT8(0x33),
-					   CBOR_UINT8(0x44), 0x0f, CBOR_FALSE, CBOR_TRUE,
-					   CBOR_FALSE, CBOR_UINT32(0xdeadbeef), 0),
-				   RPC_RSP());
-	(void)ot_thread_discover_cb_encoder(0, 0, 0, 0, &result, (void *)0xdeadbeef);
-	mock_nrf_rpc_tr_expect_done();
-}
-
-/*
- * Test sending of absence of otThreadDiscover result over server's callback.
- */
-ZTEST(ot_rpc_commissioning_server, test_tx_discover_cb_null)
-{
-	mock_nrf_rpc_tr_expect_add(
-		RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, CBOR_NULL, CBOR_UINT32(0xdeadbeef), 0),
-		RPC_RSP());
-	(void)ot_thread_discover_cb_encoder(0, 0, 0, 0, NULL, (void *)0xdeadbeef);
-	mock_nrf_rpc_tr_expect_done();
-}
-
-/*
  * Test reception of otDatasetSetActive command.
  * Test serialization of the result: OT_ERROR_NONE.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActive)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
 {
 	const otOperationalDataset *expected_dataset;
 	uint8_t net_key[] = {INT_SEQUENCE(OT_NETWORK_KEY_SIZE)};
@@ -293,7 +213,7 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActive)
  * Test reception of otDatasetSetActive command with NULL pointer.
  * Test serialization of the result: OT_ERROR_INVALID_ARGS.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetSetActive_negative)
+ZTEST(ot_rpc_dataset, test_otDatasetSetActive_negative)
 {
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_ARGS), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE, CBOR_NULL));
@@ -328,7 +248,7 @@ static otError dataset_get_fake(otInstance *instance, otOperationalDataset *data
  * Test reception of otDatasetGetActive command.
  * Test serialization of the result: dataset.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActive)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActive)
 {
 	otDatasetGetActive_fake.custom_fake = dataset_get_fake;
 
@@ -343,7 +263,7 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActive)
  * Test reception of otDatasetGetActive command.
  * Test serialization of the result: NULL as dataset has not been found.
  */
-ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActive_null)
+ZTEST(ot_rpc_dataset, test_otDatasetGetActive_null)
 {
 	otDatasetGetActive_fake.return_val = OT_ERROR_NOT_FOUND;
 
@@ -354,4 +274,4 @@ ZTEST(ot_rpc_commissioning_server, test_otDatasetGetActive_null)
 	zassert_equal(otDatasetGetActive_fake.call_count, 1);
 }
 
-ZTEST_SUITE(ot_rpc_commissioning_server, NULL, NULL, tc_setup, NULL, NULL);
+ZTEST_SUITE(ot_rpc_dataset, NULL, NULL, tc_setup, NULL, NULL);
