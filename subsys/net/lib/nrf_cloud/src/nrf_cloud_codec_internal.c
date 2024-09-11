@@ -377,8 +377,9 @@ static int enabled_info_sections_get(struct nrf_cloud_device_status *const ds)
 	if (fota && IS_ENABLED(CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA)) {
 		fota->bootloader =  IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_BOOT_SUPPORTED);
 		fota->application = IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_APP_SUPPORTED);
-		fota->modem =	    IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED);
+		fota->modem =       IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED);
 		fota->modem_full =  IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED);
+		fota->smp =	    IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_TYPE_SMP_SUPPORTED);
 	}
 
 	return 0;
@@ -1043,8 +1044,7 @@ static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fo
 
 	/* Add the FOTA array to the serviceInfo object */
 	int item_cnt = 0;
-	cJSON *array = cJSON_AddArrayToObjectCS(svc_inf_obj,
-						NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA);
+	cJSON *array = cJSON_AddArrayToObjectCS(svc_inf_obj, NRF_CLOUD_JSON_KEY_SRVC_INFO_FOTA);
 
 	if (!array) {
 		return -ENOMEM;
@@ -1054,8 +1054,7 @@ static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fo
 		++item_cnt;
 	}
 	if (fota->modem) {
-		cJSON_AddItemToArray(array,
-					cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_DELTA));
+		cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_DELTA));
 		++item_cnt;
 	}
 	if (fota->application) {
@@ -1063,8 +1062,11 @@ static int nrf_cloud_encode_service_info_fota(const struct nrf_cloud_svc_info_fo
 		++item_cnt;
 	}
 	if (fota->modem_full) {
-		cJSON_AddItemToArray(array,
-					cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_FULL));
+		cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_MODEM_FULL));
+		++item_cnt;
+	}
+	if (fota->smp) {
+		cJSON_AddItemToArray(array, cJSON_CreateString(NRF_CLOUD_FOTA_TYPE_SMP));
 		++item_cnt;
 	}
 
@@ -1458,6 +1460,19 @@ static int encode_modem_info_json_object(struct modem_param_info *modem, cJSON *
 		if (app_ver) {
 			ret = json_add_str_cs(device_obj, NRF_CLOUD_JSON_KEY_APP_VER, app_ver);
 		}
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
+		if (!ret) {
+			char *smp_ver = NULL;
+
+			(void)nrf_cloud_fota_smp_version_get(&smp_ver);
+
+			if (smp_ver) {
+				ret = json_add_str_cs(device_obj, NRF_CLOUD_JSON_KEY_SMP_APP_VER,
+						      smp_ver);
+			}
+		}
+#endif /* CONFIG_NRF_CLOUD_FOTA_SMP */
 
 		if (ret) {
 			cJSON_Delete(device_obj);
@@ -1915,7 +1930,7 @@ int nrf_cloud_fota_job_decode(struct nrf_cloud_fota_job_info *const job_info,
 		goto cleanup;
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_CLOUD_LOG_LEVEL_DGB)) {
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_LOG_LEVEL_DBG)) {
 		char *temp = cJSON_PrintUnformatted(array);
 
 		if (temp) {

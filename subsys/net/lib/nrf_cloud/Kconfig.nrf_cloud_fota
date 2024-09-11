@@ -110,6 +110,14 @@ config NRF_CLOUD_FOTA_FULL_MODEM_UPDATE_BUF_SIZE
 	default 4096
 endif # NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
 
+config NRF_CLOUD_FOTA_SMP
+	bool "SMP FOTA updates"
+	depends on NRF_CLOUD_FOTA
+	select NRF_MCUMGR_SMP_CLIENT
+	select EXPERIMENTAL
+	help
+	  Enables FOTA updates to an auxiliary MCU using SMP.
+
 config NRF_CLOUD_FOTA_TRANSPORT_ENABLED
 	bool
 	default y if (NRF_CLOUD_REST || NRF_CLOUD_COAP || NRF_CLOUD_FOTA)
@@ -141,6 +149,12 @@ config NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED
 		      NRF_CLOUD_FOTA_TRANSPORT_ENABLED)
 	help
 	  This symbol is y when full modem FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_SMP_SUPPORTED
+	bool
+	default y if NRF_CLOUD_FOTA_SMP
+	help
+	  This symbol is y when SMP FOTA is supported by the configuration.
 
 config NRF_CLOUD_FOTA_POLL
 	bool "Enable FOTA job polling helpers"
