@@ -35,15 +35,6 @@ config MGMT_SUITFU_GRP_IMG
 	# The IMG MGMT group is substituted, not extended by the SUIT variant
 	depends on !MCUMGR_GRP_IMG
 
-
-if MGMT_SUITFU_GRP_IMG
-
-config MGMT_SUITFU_IMAGE_NUMBER
-	int "Image number representing SUIT envelope"
-	default 0
-
-endif # MGMT_SUITFU_GRP_IMG
-
 config MGMT_SUITFU_GRP_OS
 	bool "Bootloader identification, handlers for OS management"
 	default y
