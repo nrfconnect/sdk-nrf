@@ -44,6 +44,11 @@ config MGMT_SUITFU_IMAGE_NUMBER
 
 endif # MGMT_SUITFU_GRP_IMG
 
+config MGMT_SUITFU_GRP_OS
+	bool "Bootloader identification, handlers for OS management"
+	default y
+	# The IMG MGMT OS bootloader info is substituted, not extended by the SUIT variant
+	depends on !MCUMGR_GRP_OS_BOOTLOADER_INFO
 
 config MGMT_SUITFU_GRP_SUIT
 	bool "Extended SUIT commands over USER group"
