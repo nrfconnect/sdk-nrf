@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config LTE_LC_CONN_EVAL
+	bool "Connection Parameters Evaluation module"
+
+config LTE_LC_EDRX
+	bool "Extended Discountinuous Reception (eDRX) module"
+
+config LTE_LC_NEIGHBOR_CELL_MEAS
+	bool "Neighboring Cell Measurements module"
+
+config LTE_LC_PERIODIC_SEARCH
+	bool "Periodic Search Configuration module"
+
+config LTE_LC_PSM
+	bool "Power Saving Mode (PSM) module"
+
+config LTE_LC_RAI
+	bool "Release Assistance Indication (RAI) module"
+
+config LTE_LC_REDMOB
+	bool "Reduced LTE Idle Mode Mobility module"
+	select DEPRECATED
+
+config LTE_LC_FACTORY_RESET
+	bool "Factory Reset module"
+	select DEPRECATED
+
+config LTE_LC_MODEM_SLEEP
+	bool "Modem Sleep module"
+
+config LTE_LC_TAU_PRE_WARNING
+	bool "Tracking Area Update (TAU) module"
