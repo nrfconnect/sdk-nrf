@@ -12,8 +12,8 @@ However, the application domain can implement an IPC service, which allows the S
 This guide explains how to prepare the application domain firmware and the SUIT envelope to perform SUIT firmware upgrade using external memory.
 
 .. note::
-   The prerequisite to this guide is the :ref:`ug_nrf54h20_suit_fetch` user guide, as this guide assumes that the application uses the fetch model to obtain the candidate images.
-   See the :ref:`ug_nrf54h20_suit_fetch` for more details on how to migrate from push to fetch model.
+   To use external memory with SUIT, you can either use the push model-based or the fetch model-based firmware upgrade.
+   See :ref:`ug_nrf54h20_suit_push` for details about the push model and :ref:`ug_nrf54h20_suit_fetch` for details on how to migrate from the push to fetch model.
 
 The following terms are used in this guide:
 
@@ -25,12 +25,10 @@ The following terms are used in this guide:
 Overview of external memory in SUIT firmware updates
 ****************************************************
 
-To use external memory with SUIT, the fetch model-based firmware upgrade is required.
 The SUIT envelope must always be stored in the non-volatile memory in the MCU.
 The SUIT manifests stored in the envelope contain instructions that the device must perform to fetch other required payloads.
 To store payloads in the external memory, a Device Firmware Update (DFU) cache partition must be defined in the external memory's devicetree node.
-In the SUIT manifest, you can define a component representing the cache partition in the external memory.
-Within the ``suit-payload-fetch`` sequence, you can then store fetched payload(s) into a ``CACHE_POOL`` component.
+The push model-based update and the fetch model-based update differ in the way the cache partition is filled with the images.
 
 When the Secure Domain processes the ``suit-install`` sequence, issuing ``suit-directive-fetch`` on any non-integrated payload will instruct the Secure Domain firmware to search for a given URI in all cache partitions in the system.
 However, when such a cache partition is located in the external memory, the Secure Domain is unable to access the data directly.
@@ -43,13 +41,54 @@ The companion image consists of two main parts:
 * IPC service exposed towards the Secure Domain
 
 When the companion image is booted and a directive that accesses the data on the external memory is issued, such as the ``suit-directive-fetch`` or ``suit-directive-copy`` directives, the Secure Domain firmware uses the IPC service provided by the companion image to access the contents of the external memory.
-Beyond the booting of the companion image, the update process does not differ from regular fetch model-based update.
+Apart from booting the companion image, the update process does not differ from regular push model-based or fetch model-based updates.
+
+Difference between push and fetch models
+========================================
+
+Push model
+----------
+
+In the push model, the cache partition contents are created on the building machine and pushed to the device without modifications.
+The images are extracted to the cache partition files using the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE`  Kconfig option.
+
+No additional sequences are required in the SUIT manifest.
+
+For more details, see :ref:`ug_nrf54h20_suit_push`.
+
+Fetch model
+-----------
+
+In the fetch model, the SUIT processor runs on the application core.
+
+In the SUIT manifest, you can define a component that represents the cache partition in the external memory.
+Within the ``suit-payload-fetch`` sequence, you can then store fetched payloads into a ``CACHE_POOL`` component.
+The device then pulls the images from external sources and manages their storage in the cache partitions.
+
+For more details, see :ref:`ug_nrf54h20_suit_fetch`.
 
 Enabling external flash support in SUIT DFU
 *******************************************
 
-The :ref:`nrf54h_suit_sample` sample contains a premade configuration enabling the external memory in SUIT DFU.
-To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` argument to the build, or complete the following steps:
+The :ref:`nrf54h_suit_sample` sample contains several example configurations that enable the external memory for SUIT DFU.
+
+The configurations using the push model are the following:
+
+* ``sample.suit.smp_transfer.cache_push.extflash``
+* ``sample.suit.smp_transfer.cache_push.extflash.bt``
+
+The configurations using the fetch model are following:
+
+* ``sample.suit.smp_transfer.full_processing.extflash``
+* ``sample.suit.smp_transfer.full_processing.extflash.bt``
+
+You can find these configurations defined in the :file:`samples/suit/smp_transfer/sample.yaml` file.
+This file specifies which options need to be enabled.
+
+Alternatively, you can follow the following steps to manually enable external memory in SUIT DFU.
+
+Common steps for both push and fetch models
+===========================================
 
 1. Turn on the external flash chip on the nRF54H20 DK using the `nRF Connect Board Configurator`_ app within `nRF Connect for Desktop`_ .
 
@@ -58,8 +97,6 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
 
 #. Enable the ``SB_CONFIG_SUIT_BUILD_FLASH_COMPANION`` sysbuild Kconfig option, which enables the build of the reference companion image.
    See the :ref:`suit_flash_companion` user guide for instructions on how to configure the companion image using sysbuild.
-
-#. Enable the :kconfig:option:`CONFIG_SUIT_STREAM_SOURCE_FLASH` Kconfig option, which enables SUIT processor on the application core to read and parse DFU cache partitions.
 
 #. Define a new DFU cache partition in the external memory in the DTS file:
 
@@ -86,18 +123,7 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
 
 #. Modify the application manifest file :file:`app_envelope.yaml.jinja2` by completing the following steps:
 
-   a. Modify the ``CACHE_POOL`` identifier in the SUIT manifest:
-
-      .. code-block:: yaml
-
-         suit-components:
-             ...
-         - - CACHE_POOL
-           - 1
-
-      The ``CACHE_POOL`` identifier must match the identifier of the cache partition defined in the DTS file.
-
-   #. Append the ``MEM`` type component that represents the companion image in the same SUIT manifest file:
+   a. Append the ``MEM`` type component that represents the companion image in the same SUIT manifest file:
 
       .. code-block:: yaml
 
@@ -111,7 +137,7 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
       In this example, the component index is ``3``.
       In the following steps, the companion image component is selected with ``suit-directive-set-component-index: 3``.
 
-   #. Modify the ``suit-install`` sequence to boot the companion image before accessing the candidate images, which are stored in the external memory:
+   #. Modify the ``suit-install`` sequence in the application manifest file (:file:`app_envelope.yaml.jinja2`) to boot the companion image before accessing the candidate images stored in the external memory:
 
       .. code-block:: yaml
 
@@ -122,12 +148,63 @@ To enable the external memory, you must add the ``-DFILE_SUFFIX="extflash"`` arg
 
       The companion image can be optionally upgraded and have its integrity checked.
 
-#. |open_terminal_window_with_environment|
+Steps specific for the push model
+=================================
+
+1. Enable the :kconfig:option:`CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_PUSH_TO_CACHE` option to allow the application core to modify cache partitions.
+
+#.  Enable the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE` Kconfig option for every image that needs to be updated from external memory.
+
+#. Modify the manifest files for all domains by completing the following steps:
+
+   a. Ensure that the URI used by the ``suit-payload-fetch`` sequence to fetch a given image matches the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI` Kconfig option.
+
+   #. Ensure that the envelope integrates the specified image within the envelope integrated payloads section.
+      This is ensured by default if you use the provided SUIT envelope templates.
+
+Steps specific for the fetch model
+==================================
+
+1. Enable the :kconfig:option:`CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL` Kconfig option to allow the application core to process SUIT manifests.
+
+#. Enable the :kconfig:option:`CONFIG_SUIT_STREAM_SOURCE_FLASH` Kconfig option, which allows the SUIT processor on the application core to read and parse DFU cache partitions.
+
+#. Modify the application manifest file :file:`app_envelope.yaml.jinja2` by completing the following steps:
+
+   a. Modify the ``CACHE_POOL`` identifier in the SUIT manifest:
+
+      .. code-block:: yaml
+
+         suit-components:
+             ...
+         - - CACHE_POOL
+           - 1
+
+      The ``CACHE_POOL`` identifier must match the identifier of the cache partition defined in the DTS file.
+
+   #. Add the ``suit-payload-fetch`` sequence:
+
+      .. code-block:: yaml
+
+         suit-payload-fetch:
+         - suit-directive-set-component-index: 2
+         - suit-directive-override-parameters:
+             suit-parameter-uri: 'file://{{ app['binary'] }}'
+         - suit-directive-fetch:
+           - suit-send-record-failure
+
+      This snippet assumes that ``CACHE_POOL`` is the third component on the manifest's components list (so its component index is 2)
+
+Testing the application with external flash support
+===================================================
+
+1. |open_terminal_window_with_environment|
+
 #. Build and flash the application by completing the following commands:
 
    .. code-block:: console
 
-      west build -b nrf54h20dk/nrf54h20/cpuapp
+      west build ./ -b nrf54h20dk/nrf54h20/cpuapp -T <configuration_name>
       west flash
 
    The build system will automatically use :ref:`configuration_system_overview_sysbuild` and generate a :file:`build/zephyr/dfu_suit.zip` archive, which contains the SUIT envelope and candidate images.
