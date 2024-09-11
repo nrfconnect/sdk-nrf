@@ -110,8 +110,7 @@ mapping_topics:
                                              "development-kits"]
   - nrf/app_dev/device_guides/nrf70/nrf7002ek_dev_guide.html: ["evaluation-kits"]
   - nrf/app_dev/device_guides/nrf70/constrained.html: ["kconfig"]
-  - nrf/app_dev/device_guides/nrf54l.html: ["nrf54-series", "nrf54l15"]
-  - nrf/app_dev/device_guides/working_with_nrf/nrf54l/*.html: ["nrf54-series", "nrf54l15"]
+  - nrf/app_dev/device_guides/nrf54l/*.html: ["nrf54-series", "nrf54l15"]
   - nrf/app_dev/device_guides/nrf54h.html: ["nrf54-series", "nrf54h20", "development-kits"]
   - nrf/app_dev/device_guides/working_with_nrf/nrf54h/*.html: ["nrf54-series", "nrf54h20",
                                                                "development-kits"]
