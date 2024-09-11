@@ -128,7 +128,7 @@ The following table lists the available triggers and their activation codes:
   * - Smoke CO alarm - battery low level alarm
     - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
     - Trigger a battery low level alarm
-    - ``0x005c000000000095``
+    - ``0x005c00000000009e``
     - No additional value supported.
   * - Smoke CO alarm - battery low level alarm clean
     - Only for :ref:`Matter Smoke CO Alarm <matter_smoke_co_alarm_sample>`
