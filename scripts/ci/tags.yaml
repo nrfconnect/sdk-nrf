@@ -1211,6 +1211,25 @@ ci_tests_benchmarks_i2c_endless:
     - nrf/tests/benchmarks/i2c_endless/
     - zephyr/drivers/i2c/
 
+ci_tests_benchmarks_peripheral_load:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/benchmarks/peripheral_load/
+    - zephyr/drivers/sensor/adi/adxl362
+    - zephyr/drivers/sensor/bosch/bme680
+    - zephyr/drivers/sensor/nordic/temp/
+    - zephyr/drivers/adc/
+    - zephyr/drivers/can/
+    - zephyr/drivers/counter/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/gpio/
+    - zephyr/drivers/i2c/
+    - zephyr/drivers/i2s/
+    - zephyr/drivers/pwm/
+    - zephyr/drivers/spi/
+    - zephyr/drivers/watchdog/
+    - zephyr/soc/nordic/
+
 ci_tests_benchmarks_spi_endless:
   files:
     - modules/hal/nordic/nrfx/
