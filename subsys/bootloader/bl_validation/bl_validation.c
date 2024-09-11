@@ -302,20 +302,22 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 			      const struct fw_info *fwinfo, bool external)
 {
 	const struct fw_validation_info *fw_val_info;
-	const uint32_t fwinfo_address = (uint32_t)fwinfo;
-	const uint32_t fwinfo_end = (fwinfo_address + fwinfo->total_size);
-	const uint32_t fw_dst_end = (fw_dst_address + fwinfo->size);
-	const uint32_t fw_src_end = (fw_src_address + fwinfo->size);
 
 	if (!fwinfo) {
 		PRINT("NULL parameter.\n\r");
 		return false;
 	}
 
-	if (!fw_info_check((uint32_t)fwinfo)) {
+	const uint32_t fwinfo_address = (uint32_t)fwinfo;
+
+	if (!fw_info_check(fwinfo_address)) {
 		PRINT("Invalid firmware info format.\n\r");
 		return false;
 	}
+
+	const uint32_t fwinfo_end = (fwinfo_address + fwinfo->total_size);
+	const uint32_t fw_dst_end = (fw_dst_address + fwinfo->size);
+	const uint32_t fw_src_end = (fw_src_address + fwinfo->size);
 
 	if (fw_dst_address != fwinfo->address) {
 		PRINT("The firmware doesn't belong at destination addr.\n\r");
