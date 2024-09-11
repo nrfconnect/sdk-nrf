@@ -22,6 +22,10 @@
 #include "suitfu_mgmt_priv.h"
 #include <suit_envelope_info.h>
 
+#ifdef CONFIG_SUIT_CACHE_RW
+#include <suit_dfu_cache_rw.h>
+#endif
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(suitfu_mgmt, CONFIG_MGMT_SUITFU_LOG_LEVEL);
 
@@ -43,6 +47,7 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 {
 	zcbor_state_t *zsd = ctx->reader->zs;
 	zcbor_state_t *zse = ctx->writer->zs;
+	static uint32_t image_id;
 	static size_t image_size;
 	static size_t offset_in_image;
 
@@ -82,24 +87,43 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 			return MGMT_ERR_EINVAL;
 		}
 
-		suit_plat_err_t err = suit_dfu_partition_device_info_get(&device_info);
+		if (req.image == 0) {
+			suit_plat_err_t err = suit_dfu_partition_device_info_get(&device_info);
 
-		if (err != SUIT_PLAT_SUCCESS) {
-			LOG_ERR("DFU Partition not found");
+			if (err != SUIT_PLAT_SUCCESS) {
+				LOG_ERR("DFU Partition not found");
+				return MGMT_ERR_ENOENT;
+			}
+
+		} else {
+#ifdef CONFIG_SUIT_CACHE_RW
+			uint32_t cache_pool_id = req.image - 1;
+			suit_plat_err_t err =
+				suit_dfu_cache_rw_device_info_get(cache_pool_id, &device_info);
+
+			if (err != SUIT_PLAT_SUCCESS) {
+				LOG_ERR("Cache pool %d not found", cache_pool_id);
+				return MGMT_ERR_ENOENT;
+			}
+#else
 			return MGMT_ERR_ENOENT;
+#endif
 		}
 
-		if (req.image != CONFIG_MGMT_SUITFU_IMAGE_NUMBER) {
-			LOG_ERR("Incorrect image number");
-			return MGMT_ERR_EACCESSDENIED;
+		if (req.size > device_info.partition_size) {
+			LOG_ERR("Image too large: %d bytes. Partition size: %d bytes", req.size,
+				device_info.partition_size);
+			return MGMT_ERR_ENOMEM;
 		}
 
 		int rc = suitfu_mgmt_erase(&device_info, req.size);
+
 		if (rc != MGMT_ERR_EOK) {
-			LOG_ERR("Erasing DFU partition failed");
+			LOG_ERR("Erasing partition failed");
 			return rc;
 		}
 
+		image_id = req.image;
 		image_size = req.size;
 	}
 
@@ -131,15 +155,19 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 
 	int rc = suitfu_mgmt_write(&device_info, req.off, req.img_data.value, req.img_data.len,
 				   last);
+
 	if (rc == MGMT_ERR_EOK) {
 
 		offset_in_image += req.img_data.len;
 		if (last) {
-			LOG_INF("Candidate envelope stored");
-			rc = suitfu_mgmt_candidate_envelope_stored();
 
-			if (rc == MGMT_ERR_EOK) {
-				rc = suitfu_mgmt_candidate_envelope_process();
+			if (image_id == 0) {
+				LOG_INF("Candidate envelope stored");
+				rc = suitfu_mgmt_candidate_envelope_stored();
+			} else {
+				uint32_t cache_pool_id = image_id - 1;
+
+				LOG_INF("Cache pool %d updated with RAW image", cache_pool_id);
 			}
 
 			image_size = 0;
@@ -170,18 +198,26 @@ static int suitfu_mgmt_img_state_read(struct smp_streamer *ctx)
 #ifdef CONFIG_SSF_SUIT_SERVICE_ENABLED
 	unsigned int seq_num = 0;
 	int alg_id = 0;
-	/* RFC4122 uuid5(nordic_vid, 'nRF54H20_sample_root') */
-	const suit_manifest_class_id_t manifest_class_id = {{0x3f, 0x6a, 0x3a, 0x4d, 0xcd, 0xfa,
-							     0x58, 0xc5, 0xac, 0xce, 0xf9, 0xf5,
-							     0x84, 0xc4, 0x11, 0x24}};
+	suit_ssf_manifest_class_info_t class_info = {0};
+	suit_manifest_role_t role = SUIT_MANIFEST_APP_ROOT;
+
 	suit_plat_mreg_t hash_mreg = {.mem = hash, .size = IMG_MGMT_HASH_LEN};
 
 	if (ok) {
+		suit_plat_err_t err = suit_get_supported_manifest_info(role, &class_info);
+
+		if (err != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Unable to read the root manifest data class info: %d", err);
+			ok = false;
+		}
+	}
+
+	if (ok) {
 		/* Let's proceed installed envelope */
-		int err = suit_get_installed_manifest_info(
-			(suit_manifest_class_id_t *)&manifest_class_id, &seq_num, NULL, NULL,
-			&alg_id, &hash_mreg);
-		if (err != 0) {
+		suit_plat_err_t err = suit_get_installed_manifest_info(
+			&class_info.class_id, &seq_num, NULL, NULL, &alg_id, &hash_mreg);
+
+		if (err != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Unable to read the current manifest data: %d", err);
 			ok = false;
 		}
@@ -236,18 +272,35 @@ static int suitfu_mgmt_img_state_read(struct smp_streamer *ctx)
 
 static int suitfu_mgmt_img_erase(struct smp_streamer *ctx)
 {
-	int rc = suit_dfu_cleanup();
+	return suitfu_mgmt_cleanup();
+}
 
-	if (rc != 0) {
-		LOG_ERR("Erasing DFU partition failed");
-		return MGMT_ERR_EBADSTATE;
+static int suitfu_mgmt_img_state_write(struct smp_streamer *ctx)
+{
+
+	zcbor_state_t *zsd = ctx->reader->zs;
+	bool confirm = false;
+	size_t decoded = 0;
+
+	struct zcbor_map_decode_key_val image_upload_decode[] = {
+		ZCBOR_MAP_DECODE_KEY_VAL(confirm, zcbor_bool_decode, &confirm)};
+
+	if (zcbor_map_decode_bulk(zsd, image_upload_decode, ARRAY_SIZE(image_upload_decode),
+				  &decoded) != 0) {
+		LOG_ERR("Decoding image state write request failed");
+		return MGMT_ERR_EINVAL;
+	}
+
+	if (confirm) {
+		return suitfu_mgmt_candidate_envelope_process();
 	}
 
 	return MGMT_ERR_EOK;
 }
 
 static const struct mgmt_handler img_mgmt_handlers[] = {
-	[IMG_MGMT_ID_STATE] = {.mh_read = suitfu_mgmt_img_state_read, .mh_write = NULL},
+	[IMG_MGMT_ID_STATE] = {.mh_read = suitfu_mgmt_img_state_read,
+			       .mh_write = suitfu_mgmt_img_state_write},
 	[IMG_MGMT_ID_UPLOAD] = {.mh_read = NULL, .mh_write = suitfu_mgmt_img_upload},
 	[IMG_MGMT_ID_ERASE] = {.mh_read = NULL, .mh_write = suitfu_mgmt_img_erase},
 };
