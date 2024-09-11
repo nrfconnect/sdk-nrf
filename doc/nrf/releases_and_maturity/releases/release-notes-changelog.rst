@@ -1110,6 +1110,7 @@ Documentation
   * The :ref:`peripheral_sensor_node_shield` page.
   * The :ref:`dfu_tools_mcumgr_cli` page after it was removed from the Zephyr repository.
   * The :ref:`ug_nrf54h20_suit_soc_binaries` page.
+  * The :ref:`ug_nrf54h20_suit_push` page documentating the SUIT push model-based update process.
 
 * Restructured the :ref:`app_bootloaders` documentation and combined the DFU and bootloader articles.
   Additionally, created a new bootloader :ref:`bootloader_quick_start`.

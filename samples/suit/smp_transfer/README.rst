@@ -107,22 +107,30 @@ See :ref:`app_build_output_files_suit_dfu` for a full table of SUIT-generated ou
 If you want to make modifications to how the DFU is executed in this sample, you can do so by editing the manifest templates, or generating your own custom manifests.
 See the :ref:`ug_nrf54h20_suit_customize_dfu` user guide for instructions and examples.
 
+.. _nrf54h_suit_sample_extflash:
+
 External flash support
 ======================
 
-You can enable the external flash support by setting the following ``FILE_SUFFIX=extflash`` parameter:
+You can build the application with external flash support by running the following command from the sample directory:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX="extflash"
+   west build ./ -b nrf54h20dk/nrf54h20/cpuapp -T  sample.suit.smp_transfer.cache_push.extflash
 
 With this configuration, the sample is configured to use UART as the transport and the external flash is enabled.
+To see which Kconfig options are needed to achieve that, see the ``sample.suit.smp_transfer.cache_push.extflash`` configuration in the :file:`samples/suit/sample.yaml` file.
 
 To enable both the external flash and the BLE transport, use the following command:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX="extflash" -DOVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf" -DSB_OVERLAY_CONFIG="sysbuild_bt.conf"
+   west build ./ -b nrf54h20dk/nrf54h20/cpuapp -T  sample.suit.smp_transfer.cache_push.extflash.bt
+
+.. note::
+   This way of building the application will enable the push scenario for updating from external flash.
+   It will also extract the image to a DFU cache partition file.
+   For more information, see :ref:`How to push SUIT payloads to multiple partitions <ug_nrf54h20_suit_push>`.
 
 Building and running
 ********************
@@ -313,6 +321,20 @@ After programming the sample to your development kit and updating the sequence n
                197.40 KiB / 244.57 KiB [==============================================================================================================================>------------------------------]  80.71% 20.51 KiB/s 00m02s
                241.16 KiB / 244.57 KiB [=================================================================================================================================================================>--]  98.60% 20.74 KiB/s
                Done
+      #. If you have built the application with :ref:`external flash support <nrf54h_suit_sample_extflash>`, upload the cache partition to the external flash using the following command:
+
+         .. code-block:: console
+
+            mcumgr --conntype serial --connstring "dev=/dev/ttyACM0,baud=115200" image upload -n 2 build/DFU/dfu_cache_partition_1.bin
+
+            .. note::
+               the ``-n 2`` parameter uploads to DFU cache partition 1 (where image 0 is the envelope and image 1 is the cache partition 0).
+
+      #. Start the installation of the new firmware as follows:
+
+         .. code-block:: console
+
+            mcumgr --conntype serial --connstring "dev=/dev/ttyACM0,baud=115200" image confirm
 
       #. Read the version and digest of the uploaded root manifest with MCUmgr:
 
