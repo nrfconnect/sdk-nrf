@@ -72,9 +72,9 @@ enum mgmt_cb_return CommandHandler(uint32_t event, enum mgmt_cb_return, int32_t 
 				   bool *, void *, size_t)
 {
 	if (event == MGMT_EVT_OP_CMD_RECV) {
-		Nrf::Matter::GetFlashHandler().DoAction(ExternalFlashManager::Action::WAKE_UP);
+		ExternalFlashManager::GetInstance().DoAction(ExternalFlashManager::Action::WAKE_UP);
 	} else if (event == MGMT_EVT_OP_CMD_DONE) {
-		Nrf::Matter::GetFlashHandler().DoAction(ExternalFlashManager::Action::SLEEP);
+		ExternalFlashManager::GetInstance().DoAction(ExternalFlashManager::Action::SLEEP);
 	}
 
 	return MGMT_CB_OK;
