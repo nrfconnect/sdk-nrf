@@ -122,7 +122,7 @@ static void start_advertising_coded(struct k_work *work)
 {
 	int err;
 
-	err = bt_le_ext_adv_start(adv, NULL);
+	err = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
 	if (err) {
 		printk("Failed to start advertising set (err %d)\n", err);
 		return;

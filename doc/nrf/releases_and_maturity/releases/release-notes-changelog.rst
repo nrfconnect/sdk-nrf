@@ -330,6 +330,10 @@ Bluetooth samples
 
   * Moved to the :file:`samples/bluetooth/event_trigger` folder.
 
+* :ref:`peripheral_hr_coded` sample:
+
+   * Fixed an issue where the HCI LE Set Extended Advertising Enable command was called with a NULL pointer.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
