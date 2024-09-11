@@ -65,7 +65,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /doc/**/*.png				  @nrfconnect/ncs-doc-owners
 /doc/nrf/protocols/thread/*.rst           @wiba-nordic
 /doc/nrf/app_dev/device_guides/working_with_nrf/nrf54h/ @FrancescoSer
-/doc/nrf/app_dev/device_guides/working_with_nrf/nrf54l/ @annwoj
+/doc/nrf/app_dev/device_guides/nrf54l/    @annwoj
 
 # Drivers
 /drivers/                                 @nrfconnect/ncs-co-drivers

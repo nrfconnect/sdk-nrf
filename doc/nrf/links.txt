@@ -308,6 +308,8 @@
 .. _`Cellular IoT unique features`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Unique-Features?lang=en#infotabs
 .. _`Cellular IoT SiPs`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Products?lang=en#infotabs
 
+.. _`nRF54L15 System-on-Chip`: https://www.nordicsemi.com/Products/nRF54L15
+
 .. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
 .. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
 

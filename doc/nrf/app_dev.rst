@@ -26,7 +26,7 @@ For detailed integration instructions of specific technologies and components, c
    app_dev/bootloaders_dfu/index
    app_dev/device_guides/nrf91/index
    app_dev/device_guides/nrf70/index
-   app_dev/device_guides/nrf54l
+   app_dev/device_guides/nrf54l/index
    app_dev/device_guides/nrf54h
    app_dev/device_guides/nrf53/index
    app_dev/device_guides/nrf52/index

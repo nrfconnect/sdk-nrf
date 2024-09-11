@@ -1,7 +1,8 @@
 .. _ug_nrf54l:
+.. _ug_nrf54L15_gs:
 
-Working with nRF54L Series
-##########################
+Developing with nRF54L Series
+#############################
 
 .. note::
 
@@ -16,11 +17,13 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - PCA number
      - Board target
      - Documentation
+     - Product pages
    * - :ref:`zephyr:nrf54l15pdk_nrf54l15`
      - PCA10156
      - | ``nrf54l15pdk@0.2.1/nrf54l15/cpuapp`` for the PDK revision v0.2.1, AB0-ES7 (Engineering A).
        | ``nrf54l15pdk/nrf54l15/cpuapp`` for the PDK revisions v0.3.0 and v0.7.0 (Engineering A).
-     - --
+     - :ref:`Getting started <gsg_other>`
+     - `nRF54L15 System-on-Chip`_
 
 .. note::
 
@@ -31,7 +34,6 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    :maxdepth: 2
    :caption: Subpages:
 
-   working_with_nrf/nrf54l/features
-   working_with_nrf/nrf54l/nrf54l15_gs
-   working_with_nrf/nrf54l/testing_dfu
-   working_with_nrf/nrf54l/peripheral_sensor_node_shield
+   features
+   testing_dfu
+   peripheral_sensor_node_shield

@@ -12,7 +12,6 @@ The nRF54L15 PDK embeds an Arm® Cortex®-M33 processor with multiprotocol 2.4 G
 For additional information, see the following documentation:
 
 * Zephyr page on the :ref:`zephyr:nrf54l15pdk_nrf54l15`
-* :ref:`ug_nrf54l15_gs`
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
 Supported protocols
@@ -46,7 +45,7 @@ For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zep
 Enhanced ShockBurst
 ===================
 
-.. include:: ../../../../protocols/esb/index.rst
+.. include:: ../../../protocols/esb/index.rst
    :start-after: esb_intro_start
    :end-before: esb_intro_end
 
@@ -56,7 +55,7 @@ To start developing, check out the :ref:`esb_ptx` and :ref:`esb_prx` samples.
 Matter
 ======
 
-.. include:: ../../../../protocols/matter/index.rst
+.. include:: ../../../protocols/matter/index.rst
    :start-after: matter_intro_start
    :end-before: matter_intro_end
 
@@ -70,7 +69,7 @@ To start developing, check the :ref:`matter_samples`.
 Thread
 ======
 
-.. include:: ../../../../protocols/thread/index.rst
+.. include:: ../../../protocols/thread/index.rst
    :start-after: thread_intro_start
    :end-before: thread_intro_end
 

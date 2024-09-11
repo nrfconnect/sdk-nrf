@@ -72,7 +72,8 @@ Working with nRF54H Series
 Working with nRF54L Series
 ==========================
 
-|no_changes_yet_note|
+* Updated the name and the structure of the section, with :ref:`ug_nrf54l` as the landing page.
+* Removed the Getting started with the nRF54L15 PDK page, and instead included the information about the `Quick Start`_ app support.
 
 Developing with nRF53 Series
 ============================
@@ -999,7 +1000,7 @@ Documentation
 
 * Removed:
 
-  * Removed the Device configuration guides section and moved its contents to :ref:`ug_app_dev`.
+  * The Device configuration guides section and moved its contents to :ref:`ug_app_dev`.
   * The Advanced building procedures page and moved its contents to the :ref:`building` page.
 
 * Updated:
