@@ -18,7 +18,7 @@
     status = "disabled";
 };
 
-&spi00 {
+&spi21 {
     status = "disabled";
 };
 
