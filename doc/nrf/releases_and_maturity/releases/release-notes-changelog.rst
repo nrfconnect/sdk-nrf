@@ -511,7 +511,9 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* :ref:`npm1300_fuel_gauge` sample:
+
+  * Updated to accommodate API changes in nRF Fuel Gauge library v0.11.1.
 
 SDFW samples
 ------------

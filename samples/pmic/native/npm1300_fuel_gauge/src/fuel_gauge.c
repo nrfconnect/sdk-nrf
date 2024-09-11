@@ -80,7 +80,7 @@ int fuel_gauge_init(const struct device *charger)
 	return 0;
 }
 
-int fuel_gauge_update(const struct device *charger)
+int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 {
 	float voltage;
 	float current;
@@ -103,7 +103,7 @@ int fuel_gauge_update(const struct device *charger)
 
 	delta = (float) k_uptime_delta(&ref_time) / 1000.f;
 
-	soc = nrf_fuel_gauge_process(voltage, current, temp, delta, NULL);
+	soc = nrf_fuel_gauge_process(voltage, current, temp, delta, vbus_connected, NULL);
 	tte = nrf_fuel_gauge_tte_get();
 	ttf = nrf_fuel_gauge_ttf_get(cc_charging, -term_charge_current);
 

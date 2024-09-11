@@ -26,18 +26,22 @@ void tearDown(void)
 
 void test_nrf_fuel_gauge_init(void)
 {
+	struct nrf_fuel_gauge_config_parameters opt_params;
 	const struct nrf_fuel_gauge_init_parameters params = {
 		.v0 = 4.2f,
 		.i0 = 0.0f,
 		.t0 = 25.0f,
 		.model = &battery,
-		.opt_params = NULL,
+		.opt_params = &opt_params,
 	};
 	float v0;
 	int err;
 
 	TEST_ASSERT_TRUE(strlen(nrf_fuel_gauge_version) > 0);
 	TEST_ASSERT_TRUE(strlen(nrf_fuel_gauge_build_date) > 0);
+
+	nrf_fuel_gauge_opt_params_default_get(&opt_params);
+	opt_params.tte_min_time = 0.0f;
 
 	err = nrf_fuel_gauge_init(&params, &v0);
 	TEST_ASSERT_EQUAL(0, err);
@@ -53,6 +57,7 @@ void test_nrf_fuel_gauge_sanity(void)
 	float temperature;
 	float current;
 	float time_step;
+	bool vbus_connected;
 
 	const float voltage_step = 0.001f;
 	const float voltage_begin = 4.2f;
@@ -67,8 +72,10 @@ void test_nrf_fuel_gauge_sanity(void)
 	temperature = 25.0f;
 	current = 0.08f;
 	time_step = 60.0f;
+	vbus_connected = false;
 
-	soc_begin = nrf_fuel_gauge_process(voltage, current, temperature, time_step, &state_info);
+	soc_begin = nrf_fuel_gauge_process(
+		voltage, current, temperature, time_step, vbus_connected, &state_info);
 	soc_end = soc_begin;
 
 	TEST_ASSERT_FALSE(isnan(soc_begin));
@@ -79,7 +86,8 @@ void test_nrf_fuel_gauge_sanity(void)
 	for (int i = 0; i < ((voltage_begin - voltage_end) / voltage_step); ++i) {
 		voltage -= voltage_step;
 		soc_end = nrf_fuel_gauge_process(
-					voltage, current, temperature, time_step, &state_info);
+					voltage, current, temperature, time_step,
+					vbus_connected, &state_info);
 		TEST_ASSERT_FALSE(isnan(soc_end));
 		TEST_ASSERT_FALSE(signbit(soc_end));
 
@@ -110,7 +118,8 @@ void test_nrf_fuel_gauge_sanity(void)
 	TEST_ASSERT_TRUE(model_temp_min < model_temp_max);
 
 	for (float t = temp_range_begin; t <= temp_range_end; t += temp_step_size) {
-		(void) nrf_fuel_gauge_process(voltage, current, t, time_step, &state_info);
+		(void) nrf_fuel_gauge_process(
+			voltage, current, t, time_step, vbus_connected, &state_info);
 		if (t < model_temp_min) {
 			TEST_ASSERT_TRUE(state_info.T_truncated == model_temp_min);
 		} else if (t > model_temp_max) {
@@ -132,7 +141,7 @@ void test_nrf_fuel_gauge_linking(void)
 	float v0;
 
 	(void) nrf_fuel_gauge_init(&params, &v0);
-	(void) nrf_fuel_gauge_process(4.2f, 0.07f, 25.0f, 60.0f, NULL);
+	(void) nrf_fuel_gauge_process(4.2f, 0.07f, 25.0f, 60.0f, false, NULL);
 	(void) nrf_fuel_gauge_idle_set(4.2f, 25.0f, 0.0f);
 	(void) nrf_fuel_gauge_tte_get();
 	(void) nrf_fuel_gauge_ttf_get(false, 0.0f);

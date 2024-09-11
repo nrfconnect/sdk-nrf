@@ -56,6 +56,12 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - P1.03
         - P1.12
         - P0.31
+      * - GPIO3
+        - P0.22
+        - P1.12
+        - P1.12
+        - P1.10
+        - P0.10
       * - VDDIO
         - VDD
         - VDD
@@ -71,6 +77,7 @@ To connect your DK to the nPM1300 EK, complete the following steps:
 
 #. Make the following connections on the nPM1300 EK:
 
+   * Remove all existing connections.
    * Connect a USB power supply to the **J3** connector.
    * Connect a suitable battery to the **J2** connector.
    * On the **P2** pin header, connect **VBAT** and **VBATIN** pins with a jumper.
