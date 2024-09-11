@@ -13,7 +13,6 @@
 
 #include <openthread/udp.h>
 #include <openthread/message.h>
-#include <openthread/error.h>
 
 #include <zephyr/net/openthread.h>
 

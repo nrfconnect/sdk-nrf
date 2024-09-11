@@ -19,7 +19,6 @@ target_include_directories(app PRIVATE
 
 target_sources(app PRIVATE
   ${app_sources}
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/openthread/rpc/server/ot_rpc_commissioning_server.c
   ../common/net_l2_openthread.c
   ../common/nrf_rpc_single_thread.c
 )

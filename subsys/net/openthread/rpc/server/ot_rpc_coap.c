@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "ot_rpc_message_server.h"
+#include "ot_rpc_message.h"
 
+#include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_coap.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_types.h>
-#include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
 
-#include <zephyr/net/openthread.h>
-
 #include <openthread/coap.h>
+
+#include <zephyr/net/openthread.h>
 
 struct ot_rpc_coap_resource_buf {
 	struct ot_rpc_coap_resource_buf *next;

@@ -5,6 +5,8 @@
  */
 
 #include <mock_nrf_rpc_transport.h>
+#include <ot_rpc_ids.h>
+#include <test_rpc_env.h>
 
 #include <zephyr/fff.h>
 #include <zephyr/kernel.h>
@@ -13,9 +15,6 @@
 
 #include <openthread/instance.h>
 
-#include <ot_rpc_ids.h>
-#include <test_rpc_env.h>
-
 /* Fake functions */
 
 FAKE_VALUE_FUNC(otInstance *, otInstanceInitSingle);
@@ -23,13 +22,17 @@ FAKE_VALUE_FUNC(uint32_t, otInstanceGetId, otInstance *);
 FAKE_VALUE_FUNC(bool, otInstanceIsInitialized, otInstance *);
 FAKE_VOID_FUNC(otInstanceFinalize, otInstance *);
 FAKE_VALUE_FUNC(otError, otInstanceErasePersistentInfo, otInstance *);
+FAKE_VALUE_FUNC(otError, otSetStateChangedCallback, otInstance *, otStateChangedCallback, void *);
+FAKE_VOID_FUNC(otRemoveStateChangeCallback, otInstance *, otStateChangedCallback, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otInstanceInitSingle);                                                                   \
 	f(otInstanceGetId);                                                                        \
 	f(otInstanceIsInitialized);                                                                \
 	f(otInstanceFinalize);                                                                     \
-	f(otInstanceErasePersistentInfo);
+	f(otInstanceErasePersistentInfo);                                                          \
+	f(otSetStateChangedCallback);                                                              \
+	f(otRemoveStateChangeCallback);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
