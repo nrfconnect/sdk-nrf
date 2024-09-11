@@ -9,7 +9,7 @@
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/logging/log.h>
 
-#include "lte_lc_helpers.h"
+#include "modules/rai.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
@@ -37,6 +37,7 @@ static void on_modem_init(int err, void *ctx)
 		}
 	}
 
+#if defined(CONFIG_LTE_LC_PSM_MODULE)
 	if (IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_SECONDS)) {
 		err = lte_lc_psm_param_set_seconds(CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
 						   CONFIG_LTE_PSM_REQ_RAT_SECONDS);
@@ -80,6 +81,7 @@ static void on_modem_init(int err, void *ctx)
 		 */
 		(void)lte_lc_proprietary_psm_req(false);
 	}
+#endif
 
 	/* Only supported in mfw 2.0.1 and newer.
 	 * Ignore the return value; an error likely means that the feature
@@ -89,11 +91,13 @@ static void on_modem_init(int err, void *ctx)
 	(void)nrf_modem_at_printf("AT%%FEACONF=0,3,%d",
 		IS_ENABLED(CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION));
 
+#if defined(CONFIG_LTE_LC_EDRX_MODULE)
 	err = lte_lc_edrx_req(IS_ENABLED(CONFIG_LTE_EDRX_REQ));
 	if (err) {
 		LOG_ERR("Failed to configure eDRX, err %d", err);
 		return;
 	}
+#endif
 
 #if defined(CONFIG_LTE_LOCK_BANDS)
 	/* Set LTE band lock (volatile setting).
@@ -124,8 +128,10 @@ static void on_modem_init(int err, void *ctx)
 	}
 #endif
 
+#if defined(CONFIG_LTE_LC_RAI_MODULE)
 	/* Configure Release Assistance Indication (RAI). */
 	rai_set();
+#endif
 }
 
 #if defined(CONFIG_UNITY)

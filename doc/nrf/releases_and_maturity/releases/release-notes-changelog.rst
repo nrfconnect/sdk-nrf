@@ -853,24 +853,18 @@ Modem libraries
 
 * :ref:`lte_lc_readme` library:
 
-  * Removed:
+  * Added:
 
-    * The :c:func:`lte_lc_init` function.
-      All instances of this function can be removed without any additional actions.
-    * The :c:func:`lte_lc_deinit` function.
-      Use the :c:func:`lte_lc_power_off` function instead.
-    * The :c:func:`lte_lc_init_and_connect` function.
-      Use the :c:func:`lte_lc_connect` function instead.
-    * The :c:func:`lte_lc_init_and_connect_async` function.
-      Use the :c:func:`lte_lc_connect_async` function instead.
-    * The ``CONFIG_LTE_NETWORK_USE_FALLBACK`` Kconfig option.
-      Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
-      In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
-
-  * Deprecated the :c:macro:`LTE_LC_ON_CFUN` macro.
-    Use the :c:macro:`NRF_MODEM_LIB_ON_CFUN` macro instead.
-
-  * Added a new :c:enumerator:`LTE_LC_EVT_RAI_UPDATE` event that is enabled with the :kconfig:option:`CONFIG_LTE_RAI_REQ` Kconfig option.
+    * The :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option to enable the Connection Parameters Evaluation module.
+    * The :kconfig:option:`CONFIG_LTE_LC_EDRX_MODULE` Kconfig option to enable the eDRX module.
+    * The :kconfig:option:`CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` Kconfig option to enable the Neighboring Cell Measurements module.
+    * The :kconfig:option:`CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` Kconfig option to enable the Periodic Search Configuration module.
+    * The :kconfig:option:`CONFIG_LTE_LC_PSM_MODULE` Kconfig option to enable the PSM module.
+    * The :kconfig:option:`CONFIG_LTE_LC_RAI_MODULE` Kconfig option to enable the RAI module.
+    * The :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_MODULE` Kconfig option to enable the Modem Sleep Notifications module.
+    * The :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE` Kconfig option to enable the TAU Pre-warning module.
+    * The :c:enumerator:`LTE_LC_EVT_RAI_UPDATE` event that is enabled with the :kconfig:option:`CONFIG_LTE_RAI_REQ` Kconfig option.
+      This requires the :kconfig:option:`CONFIG_LTE_LC_RAI_MODULE` Kconfig option to be enabled.
 
   * Updated:
 
@@ -884,6 +878,35 @@ Modem libraries
       Refer to the :ref:`migration guide <migration_2.8>` for more details.
     * The :c:enum:`lte_lc_reduced_mobility_mode` type has been deprecated.
       Refer to the :ref:`migration guide <migration_2.8>` for more details.
+    * The library was reorganized into modules that are enabled through their respective Kconfig options.
+      By default, the library now enables only the core features related to the network connectivity.
+      This reorganization reduces flash memory consumption for applications that only use the core features of the library related to network connectivity.
+      For more information on how to update your project, see the :ref:`migration guide <migration_2.8_required>`.
+
+      * The :c:func:`lte_lc_conn_eval_params_get` function now requires the new :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option to be enabled.
+      * The :c:enumerator:`LTE_LC_EVT_EDRX_UPDATE` event and the :c:func:`lte_lc_ptw_set`, :c:func:`lte_lc_edrx_param_set`, :c:func:`lte_lc_edrx_req`, and :c:func:`lte_lc_edrx_get` functions require the new :kconfig:option:`CONFIG_LTE_LC_EDRX_MODULE` Kconfig option to be enabled.
+      * The :c:enumerator:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` event and the :c:func:`lte_lc_neighbor_cell_measurement_cancel`, and :c:func:`lte_lc_neighbor_cell_measurement` functions require the new :kconfig:option:`CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` Kconfig option to be enabled.
+      * The :c:func:`lte_lc_periodic_search_request`, :c:func:`lte_lc_periodic_search_clear`, :c:func:`lte_lc_periodic_search_get`, and :c:func:`lte_lc_periodic_search_set` functions require the new :kconfig:option:`CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` Kconfig option to be enabled.
+      * The :c:enumerator:`LTE_LC_EVT_PSM_UPDATE` event and the :c:func:`lte_lc_psm_param_set`, :c:func:`lte_lc_psm_param_set_seconds`, :c:func:`lte_lc_psm_req`, :c:func:`lte_lc_psm_get`, and :c:func:`lte_lc_proprietary_psm_req` functions require the new :kconfig:option:`CONFIG_LTE_LC_PSM_MODULE` Kconfig option to be enabled.
+      * The :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING`, :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_ENTER`, and :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_EXIT` events require the new :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_MODULE` Kconfig option to be enabled.
+      * The :c:enumerator:`LTE_LC_EVT_TAU_PRE_WARNING` event requires the new :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE` Kconfig option to be enabled.
+
+  * Deprecated the :c:macro:`LTE_LC_ON_CFUN` macro.
+    Use the :c:macro:`NRF_MODEM_LIB_ON_CFUN` macro instead.
+
+  * Removed:
+
+    * The :c:func:`lte_lc_init` function.
+      All instances of this function can be removed without any additional actions.
+    * The :c:func:`lte_lc_deinit` function.
+      Use the :c:func:`lte_lc_power_off` function instead.
+    * The :c:func:`lte_lc_init_and_connect` function.
+      Use the :c:func:`lte_lc_connect` function instead.
+    * The :c:func:`lte_lc_init_and_connect_async` function.
+      Use the :c:func:`lte_lc_connect_async` function instead.
+    * The ``CONFIG_LTE_NETWORK_USE_FALLBACK`` Kconfig option.
+      Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
+      In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
 
 * :ref:`lib_location` library:
 

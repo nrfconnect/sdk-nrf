@@ -7,6 +7,10 @@
 menuconfig LWM2M_CLIENT_UTILS
 	bool "LWM2M client utilities library"
 	select LWM2M if !ZTEST
+	imply LTE_LC_EDRX_MODULE
+	imply LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+	imply LTE_LC_PSM_MODULE
+	imply LTE_LC_TAU_PRE_WARNING_MODULE
 
 if LWM2M_CLIENT_UTILS
 

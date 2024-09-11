@@ -20,6 +20,9 @@ Configuration
 
 To enable the library, set the Kconfig option :kconfig:option:`CONFIG_LTE_LINK_CONTROL` to ``y`` in the project configuration file :file:`prj.conf`.
 
+.. note::
+   By default, the library enables only the core features related to the network connectivity.
+
 Establishing an LTE connection
 ==============================
 
@@ -50,18 +53,11 @@ The following block of code shows how you can use the API to establish an LTE co
                    k_sem_give(&lte_connected);
                    break;
 
-           case LTE_LC_EVT_PSM_UPDATE:
-           case LTE_LC_EVT_EDRX_UPDATE:
            case LTE_LC_EVT_RRC_UPDATE:
            case LTE_LC_EVT_CELL_UPDATE:
            case LTE_LC_EVT_LTE_MODE_UPDATE:
-           case LTE_LC_EVT_TAU_PRE_WARNING:
-           case LTE_LC_EVT_NEIGHBOR_CELL_MEAS:
-           case LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING:
-           case LTE_LC_EVT_MODEM_SLEEP_EXIT:
-           case LTE_LC_EVT_MODEM_SLEEP_ENTER:
            case LTE_LC_EVT_MODEM_EVENT:
-                   /* Handle LTE events */
+                   /* Handle LTE events that are enabled by default. */
                    break;
 
            default:
@@ -87,17 +83,72 @@ The following block of code shows how you can use the API to establish an LTE co
    }
 
 The code block demonstrates how you can use the library to asynchronously set up an LTE connection.
+
+Additionally, to enable specific functionalities and receive specific events from the library, you must enable the corresponding modules through their respective Kconfig options:
+
+Connection Parameters Evaluation:
+  Use the :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option to enable the following functionality related to Connection Parameters Evaluation:
+
+  * :c:func:`lte_lc_conn_eval_params_get`
+
+eDRX (Extended Discontinuous Reception):
+  Use the :kconfig:option:`CONFIG_LTE_LC_EDRX_MODULE` Kconfig option to enable all the following functionalities related to eDRX:
+
+  * :c:enumerator:`LTE_LC_EVT_EDRX_UPDATE` events
+  * :c:func:`lte_lc_ptw_set`
+  * :c:func:`lte_lc_edrx_param_set`
+  * :c:func:`lte_lc_edrx_req`
+  * :c:func:`lte_lc_edrx_get`
+  * :kconfig:option:`CONFIG_LTE_EDRX_REQ`
+
+Neighboring Cell Measurements:
+  Use the :kconfig:option:`CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` Kconfig option to enable all the following functionalities related to Neighboring Cell Measurements:
+
+  * :c:enumerator:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS` events
+  * :c:func:`lte_lc_neighbor_cell_measurement_cancel`
+  * :c:func:`lte_lc_neighbor_cell_measurement`
+
+Periodic Search Configuration:
+  Use the :kconfig:option:`CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` Kconfig option to enable all the following functionalities related to Periodic Search Configuration:
+
+  * :c:func:`lte_lc_periodic_search_request`
+  * :c:func:`lte_lc_periodic_search_clear`
+  * :c:func:`lte_lc_periodic_search_get`
+  * :c:func:`lte_lc_periodic_search_set`
+
+PSM (Power Saving Mode):
+  Use the :kconfig:option:`CONFIG_LTE_LC_PSM_MODULE` Kconfig option to enable all the following functionalities related to PSM:
+
+  * :c:enumerator:`LTE_LC_EVT_PSM_UPDATE` events
+  * :c:func:`lte_lc_psm_param_set`
+  * :c:func:`lte_lc_psm_param_set_seconds`
+  * :c:func:`lte_lc_psm_req`
+  * :c:func:`lte_lc_psm_get`
+  * :c:func:`lte_lc_proprietary_psm_req`
+  * :kconfig:option:`CONFIG_LTE_PSM_REQ`
+
+Release Assistance Indication (RAI):
+  Use the :kconfig:option:`CONFIG_LTE_LC_RAI_MODULE` Kconfig option to enable the following functionalities related to RAI:
+
+  * :c:enumerator:`LTE_LC_EVT_RAI_UPDATE` events
+  * :kconfig:option:`CONFIG_LTE_RAI_REQ`
+
+Modem Sleep Notifications:
+  Use the :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_MODULE` Kconfig option to enable all the following functionalities related to Modem Sleep Notifications:
+
+  * :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING` events
+  * :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_ENTER` events
+  * :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_EXIT` events
+  * :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS`
+
+Tracking Area Update (TAU) Pre-warning:
+  Use the :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE` Kconfig option to enable the following functionalities related to TAU Pre-warning:
+
+  * :c:enumerator:`LTE_LC_EVT_TAU_PRE_WARNING` events
+  * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
+
 For more information on the callback events received in :c:type:`lte_lc_evt_handler_t` and data associated with each event, see the documentation on :c:struct:`lte_lc_evt`.
-
-The following list mentions some of the information that can be extracted from the received callback events:
-
-* Network registration status
-* PSM parameters
-* eDRX parameters
-* RRC connection state
-* Cell information
-* TAU pre-warning notifications
-* Modem sleep notifications
+For more information on the functions and data associated with each, refer to the API documentation.
 
 .. note::
    Some of the functionalities might not be compatible with certain modem firmware versions.
@@ -108,7 +159,12 @@ The following list mentions some of the information that can be extracted from t
 Enabling power-saving features
 ==============================
 
-The recommended way of enabling power saving features is to use the Kconfig options :kconfig:option:`CONFIG_LTE_PSM_REQ` and :kconfig:option:`CONFIG_LTE_EDRX_REQ`.
+To enable power-saving features, use the following options:
+
+* :kconfig:option:`CONFIG_LTE_LC_PSM_MODULE`
+* :kconfig:option:`CONFIG_LTE_LC_EDRX_MODULE`
+* :kconfig:option:`CONFIG_LTE_LC_PSM_REQ`
+* :kconfig:option:`CONFIG_LTE_LC_EDRX_REQ`
 
 PSM and eDRX can also be requested at run time using the :c:func:`lte_lc_psm_req` and :c:func:`lte_lc_edrx_req` function calls.
 However, calling the functions during modem initialization can lead to conflicts with the value set by the Kconfig options.
@@ -131,6 +187,7 @@ Connection pre-evaluation
 
 Modem firmware version 1.3.0 and higher supports connection a pre-evaluation feature that allows the application to get information about a cell that is likely to be used for an RRC connection.
 Based on the parameters received in the function call, the application can decide whether to send application data or not.
+To enable this module, use the :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option.
 The function :c:func:`lte_lc_conn_eval_params_get` populates a structure of type :c:struct:`lte_lc_conn_eval_params` that includes information on the current consumption cost by the data transmission when utilizing the given cell.
 The following code snippet shows a basic implementation of :c:func:`lte_lc_conn_eval_params_get`:
 
@@ -177,8 +234,10 @@ For instance, TAU pre-warning notifications can be used to schedule data transfe
 
 Modem sleep notifications can be used to schedule processing in the same operational window as the modem to limit the overall computation time of the nRF91 Series SiP.
 
-To enable modem sleep and TAU pre-warning notifications, enable the following options:
+To enable modem sleep and TAU pre-warning notifications, use the following options:
 
+* :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_MODULE`
+* :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE`
 * :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS`
 * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
 
