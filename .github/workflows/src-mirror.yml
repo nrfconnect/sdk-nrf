@@ -13,10 +13,17 @@ jobs:
         with:
           git-fetch-depth: 0
           path: workspace/nrf
+          west-update-args: '--group-filter=+babblesim,+sidewalk'
 
-      - name: Create tar
-        run: >
-          tar -C ./workspace -cvf src.tar.gz .
+      - name: Configure git and run garbage collection
+        run: |
+          cd workspace/nrf
+          git config --global pack.windowMemory "32m" &&
+          west forall -c 'git gc --prune --aggressive'
+
+      - name: Create 7z archive
+        run: |
+          7z a -t7z src.7z ./workspace/
 
       - name: Set up JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4
@@ -25,7 +32,7 @@ jobs:
         env:
           ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
           REPOSITORY: ncs-src-mirror
-          FILE_PATH: src.tar.gz
+          FILE_PATH: src.7z
           TARGET_PATH: external/${{ github.ref_name }}/
         run: >
           jfrog rt u $FILE_PATH $REPOSITORY/$TARGET_PATH
