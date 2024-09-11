@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig TESTS_SUIT_DFU_TARGET_SUIT_CACHE_PROCESSING
+	bool "Run tests for processing of SUIT cache partition by the SUIT DFU target"
+	imply DFU_TARGET_SUIT_CACHE_PROCESSING
+	default n
+
+menuconfig TESTS_SUIT_DFU_TARGET_SUIT_SINGLE_PARTITION
+	bool "Run tests for processing of the dfu_partition only by the DFU target"
+	default n
+
+source "Kconfig.zephyr"
