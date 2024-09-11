@@ -102,19 +102,25 @@ typedef void (*nrf_cloud_fota_callback_t)
 typedef void (*nrf_cloud_fota_ble_callback_t)
 	(const struct nrf_cloud_fota_ble_job * const ble_job);
 
+struct nrf_cloud_fota_init_param {
+	nrf_cloud_fota_callback_t evt_cb;
+	/* Callback of type @ref dfu_target_reset_cb_t */
+	void *smp_reset_cb;
+};
+
 /**
  * @brief Initialize the nRF Cloud FOTA module.
  *
  * @note This API must be called prior to using nRF Cloud FOTA and it must
  * return successfully.
  *
- * @param[in] cb FOTA event handler.
+ * @param[in] init Initialization parameters.
  *
  * @retval 0 If successful.
  *         1 If successful and a prior FOTA event has been completed.
  *           Otherwise, a (negative) error code is returned.
  */
-int nrf_cloud_fota_init(nrf_cloud_fota_callback_t cb);
+int nrf_cloud_fota_init(struct nrf_cloud_fota_init_param const *const init);
 
 /**
  * @brief Uninitialize nRF Cloud FOTA; cleans up allocated memory. If a FOTA

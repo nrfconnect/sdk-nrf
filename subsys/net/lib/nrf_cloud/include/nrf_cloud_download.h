@@ -29,6 +29,8 @@ struct nrf_cloud_download_fota {
 	/* FOTA update type */
 	enum dfu_target_image_type expected_type;
 	int img_sz;
+	/* fota_download callback: fota_download_callback_t */
+	void *cb;
 };
 
 struct nrf_cloud_download_data {
