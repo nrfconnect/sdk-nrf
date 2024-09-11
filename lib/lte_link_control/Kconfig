@@ -4,12 +4,43 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Note: the naming of the Kconfig options is inconsistent in this file as a result of gradual
+# development. It will be fixed in a future version.
+
 menuconfig LTE_LINK_CONTROL
 	bool "LTE link control library"
 	select AT_PARSER
 	select AT_MONITOR
 
 if LTE_LINK_CONTROL
+
+# Modules: these Kconfig options enable specific features of the library.
+
+config LTE_LC_CONN_EVAL_MODULE
+	bool "Connection Parameters Evaluation module"
+
+config LTE_LC_EDRX_MODULE
+	bool "Extended Discountinuous Reception (eDRX) module"
+
+config LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+	bool "Neighboring Cell Measurements module"
+
+config LTE_LC_PERIODIC_SEARCH_MODULE
+	bool "Periodic Search Configuration module"
+
+config LTE_LC_PSM_MODULE
+	bool "Power Saving Mode (PSM) module"
+
+config LTE_LC_RAI_MODULE
+	bool "Release Assistance Indication (RAI) module"
+
+config LTE_LC_MODEM_SLEEP_MODULE
+	bool "Modem Sleep module"
+
+config LTE_LC_TAU_PRE_WARNING_MODULE
+	bool "Tracking Area Update (TAU) module"
+
+# End of modules Kconfig options
 
 config LTE_SHELL
 	bool "Enable LTE shell commands"
@@ -58,6 +89,8 @@ config LTE_UNLOCK_PLMN
 	depends on !LTE_LOCK_PLMN
 	help
 	  Disable PLMN lock for network selection.
+
+if LTE_LC_PSM_MODULE
 
 config LTE_PSM_REQ
 	bool "Enable PSM request"
@@ -124,6 +157,10 @@ config LTE_PROPRIETARY_PSM_REQ
 	  must be enabled using CONFIG_LTE_PSM_REQ or lte_lc_psm_req().
 	  Refer to the AT command guide for guidance and limitations of this feature.
 
+endif # LTE_LC_PSM_MODULE
+
+if LTE_LC_EDRX_MODULE
+
 config LTE_EDRX_REQ
 	bool "Enable eDRX request"
 	help
@@ -177,6 +214,8 @@ config LTE_PTW_VALUE_NBIOT
 	  caution. The requested value must be compliant with the eDRX
 	  value that is configured, and it's usually best to let the modem
 	  use default PTW values.
+
+endif # LTE_LC_EDRX_MODULE
 
 choice LTE_NETWORK_MODE
 	prompt "Select network mode"
@@ -266,6 +305,8 @@ config LTE_MODE_PREFERENCE_VALUE
 	default 3 if LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
 	default 4 if LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
 
+if LTE_LC_RAI_MODULE
+
 config LTE_RAI_REQ
 	bool "Release Assistance Indication (RAI) request"
 	help
@@ -273,11 +314,15 @@ config LTE_RAI_REQ
 	  the RAI socket option (SO_RAI) to inform the modem when no more data is expected
 	  and the RRC connection can be released.
 
+endif # LTE_LC_RAI_MODULE
+
 config LTE_NETWORK_TIMEOUT
 	int "Time period to attempt establishing connection"
 	default 600
 	help
 	  Time period in seconds to attempt establishing an LTE link, before timing out.
+
+if LTE_LC_TAU_PRE_WARNING_MODULE
 
 config LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS
 	bool "Get notifications prior to Tracking Area Updates"
@@ -301,6 +346,10 @@ config LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS
 	  Minimum value of the given T3412 timer in milliseconds that will trigger TAU
 	  pre-warnings.
 
+endif # LTE_LC_TAU_PRE_WARNING_MODULE
+
+if LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+
 config LTE_NEIGHBOR_CELLS_MAX
 	int "Max number of neighbor cells"
 	range 1 17
@@ -313,6 +362,10 @@ config LTE_NEIGHBOR_CELLS_MAX
 	  The modem can deliver information for a maximum of 17 neighbor
 	  cells, so there's a trade-off between heap requirements and
 	  the risk of not being able to parse all neighbor cell information.
+
+endif # LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+
+if LTE_LC_MODEM_SLEEP_MODULE
 
 config LTE_LC_MODEM_SLEEP_NOTIFICATIONS
 	bool "Modem sleep notifications"
@@ -335,6 +388,8 @@ config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
 	help
 	  Minimum value of the duration of the scheduled modem sleep in milliseconds
 	  that triggers a notification.
+
+endif # LTE_LC_MODEM_SLEEP_MODULE
 
 config LTE_LC_TRACE
 	bool "LTE link control tracing"

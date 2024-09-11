@@ -139,6 +139,71 @@ LTE link control library
        Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
        In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
 
+     * The library has been reorganized into modules that are enabled via their respective Kconfig options.
+       This change requires the following updates:
+
+      * If your application uses:
+
+         * :c:func:`lte_lc_conn_eval_params_get`
+
+         You must use the new :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option.
+
+      * If your application uses:
+
+         * :c:enumerator:`LTE_LC_EVT_EDRX_UPDATE`
+         * :c:func:`lte_lc_ptw_set`
+         * :c:func:`lte_lc_edrx_param_set`
+         * :c:func:`lte_lc_edrx_req`
+         * :c:func:`lte_lc_edrx_get`
+         * :kconfig:option:`CONFIG_LTE_EDRX_REQ`
+
+         You must use the new :kconfig:option:`CONFIG_LTE_LC_EDRX_MODULE` Kconfig option.
+
+      * If your application uses:
+
+         * :c:enumerator:`LTE_LC_EVT_NEIGHBOR_CELL_MEAS`
+         * :c:func:`lte_lc_neighbor_cell_measurement_cancel`
+         * :c:func:`lte_lc_neighbor_cell_measurement`
+
+         You must use the new :kconfig:option:`CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` Kconfig option.
+
+      * If your application uses:
+
+         * :c:func:`lte_lc_periodic_search_request`
+         * :c:func:`lte_lc_periodic_search_clear`
+         * :c:func:`lte_lc_periodic_search_get`
+         * :c:func:`lte_lc_periodic_search_set`
+
+         You must use the new :kconfig:option:`CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` Kconfig option.
+
+      * If your application uses:
+
+         * :c:enumerator:`LTE_LC_EVT_PSM_UPDATE`
+         * :c:func:`lte_lc_psm_param_set`
+         * :c:func:`lte_lc_psm_param_set_seconds`
+         * :c:func:`lte_lc_psm_req`
+         * :c:func:`lte_lc_psm_get`
+         * :c:func:`lte_lc_proprietary_psm_req`
+         * :kconfig:option:`CONFIG_LTE_PSM_REQ`
+
+         You must use the new :kconfig:option:`CONFIG_LTE_LC_PSM_MODULE` Kconfig option.
+
+      * If your application uses:
+
+         * :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING`
+         * :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_ENTER`
+         * :c:enumerator:`LTE_LC_EVT_MODEM_SLEEP_EXIT`
+         * :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS`
+
+         You must use the new :kconfig:option:`CONFIG_LTE_LC_MODEM_SLEEP_MODULE` Kconfig option.
+
+      * If your application uses:
+
+         * :c:enumerator:`LTE_LC_EVT_TAU_PRE_WARNING`
+         * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
+
+         You must use the new :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE` Kconfig option.
+
 AT command parser
 -----------------
 
