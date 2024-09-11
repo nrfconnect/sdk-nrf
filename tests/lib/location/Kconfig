@@ -12,6 +12,9 @@ config LOCATION_METHOD_GNSS
 	bool "Internal"
 	#depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
+	imply LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+	imply LTE_LC_PSM_MODULE
+	imply LTE_LC_MODEM_SLEEP_MODULE
 	default y
 	help
 	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
