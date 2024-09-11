@@ -346,6 +346,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /tests/benchmarks/multicore/idle_gpio/    @adamkondraciuk @nrfconnect/ncs-low-level-test
 /tests/benchmarks/i2c_endless/            @nrfconnect/ncs-low-level-test
 /tests/benchmarks/spi_endless/            @nrfconnect/ncs-low-level-test
+/tests/benchmarks/peripheral_load/        @nrfconnect/ncs-low-level-test
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/crypto/                            @stephen-nordic @magnev
