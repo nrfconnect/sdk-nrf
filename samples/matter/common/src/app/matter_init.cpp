@@ -46,6 +46,7 @@
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
+#include <platform/nrfconnect/ExternalFlashManager.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
@@ -224,6 +225,9 @@ void DoInitChipServer(intptr_t /* unused */)
 	Nrf::GetDFUOverSMP().Init();
 	Nrf::GetDFUOverSMP().ConfirmNewImage();
 #endif
+
+	/* Set External Flash into sleep mode */
+	ExternalFlashManager::GetInstance().DoAction(ExternalFlashManager::Action::SLEEP);
 
 	/* Initialize CHIP server */
 #ifdef CONFIG_CHIP_FACTORY_DATA

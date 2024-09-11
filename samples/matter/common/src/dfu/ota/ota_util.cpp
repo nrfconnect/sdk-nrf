@@ -39,7 +39,7 @@ namespace Nrf::Matter
 OTAImageProcessorImpl &GetOTAImageProcessor()
 {
 #if CONFIG_PM_DEVICE && CONFIG_NORDIC_QSPI_NOR
-	static OTAImageProcessorBaseImpl sOTAImageProcessor(&GetFlashHandler());
+	static OTAImageProcessorBaseImpl sOTAImageProcessor(&ExternalFlashManager::GetInstance());
 #else
 	static OTAImageProcessorBaseImpl sOTAImageProcessor;
 #endif
@@ -57,7 +57,6 @@ void InitBasicOTARequestor()
 	sOTARequestor.Init(Server::GetInstance(), sOTARequestorStorage, sOTARequestorDriver, sBDXDownloader);
 	chip::SetRequestorInstance(&sOTARequestor);
 	sOTARequestorDriver.Init(&sOTARequestor, &imageProcessor);
-	imageProcessor.TriggerFlashAction(ExternalFlashManager::Action::SLEEP);
 }
 
 void OtaConfirmNewImage()
@@ -86,11 +85,5 @@ void OtaConfirmNewImage()
 }
 
 #endif
-
-ExternalFlashManager &GetFlashHandler()
-{
-	static ExternalFlashManager sFlashHandler;
-	return sFlashHandler;
-}
 
 } /* namespace Nrf::Matter */
