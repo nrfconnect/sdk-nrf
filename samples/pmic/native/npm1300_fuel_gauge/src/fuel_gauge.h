@@ -8,6 +8,6 @@
 
 int fuel_gauge_init(const struct device *charger);
 
-int fuel_gauge_update(const struct device *charger);
+int fuel_gauge_update(const struct device *charger, bool vbus_connected);
 
 #endif /* __FUEL_GAUGE_H__ */
