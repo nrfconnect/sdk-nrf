@@ -124,6 +124,7 @@ toml==0.10.2              # via -r nrf/scripts/requirements-ci.txt
 tomli==2.0.1              # via nrf-regtool
 tomlkit==0.12.1           # via pylint
 typing-extensions==4.8.0  # via mypy, pyocd, python-can, qrcode, setuptools-scm, svada
+unidiff==0.7.5
 urllib3==2.2.2            # via requests
 wcwidth==0.2.6            # via prettytable
 west==1.2.0               # via -r nrf/scripts/requirements-base.txt, -r zephyr/scripts/requirements-base.txt
