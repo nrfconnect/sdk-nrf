@@ -368,6 +368,34 @@ function(suit_create_package)
     endif()
   endif()
 
+  if(SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD)
+    include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
+    include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+
+    set(suit_multi_image_ids)
+    set(suit_multi_image_paths)
+    set(suit_multi_image_targets)
+
+    list(APPEND suit_multi_image_ids 0)
+    # Include the suit Envelope to the multi image package to store it in dfu_partition
+    list(APPEND suit_multi_image_paths "${SUIT_ROOT_DIRECTORY}root.suit")
+    list(APPEND suit_multi_image_targets "${SUIT_ROOT_DIRECTORY}root.suit")
+    # Include cache partition to the multi image package to store it in cache_partition
+    foreach(CACHE_PARTITION_NUM ${DFU_CACHE_PARTITIONS_USED})
+      math(EXPR DFU_IMAGE_ID "${CACHE_PARTITION_NUM} + 1")
+      list(APPEND suit_multi_image_ids ${DFU_IMAGE_ID})
+      list(APPEND suit_multi_image_paths "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${CACHE_PARTITION_NUM}.bin")
+    endforeach()
+
+    dfu_multi_image_package(
+      dfu_multi_image_pkg
+      IMAGE_IDS ${suit_multi_image_ids}
+      IMAGE_PATHS ${suit_multi_image_paths}
+      OUTPUT ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
+      DEPENDS ${suit_multi_image_targets}
+    )
+  endif() # SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD
+
   suit_get_manifest(${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME} INPUT_ROOT_ENVELOPE_JINJA_FILE)
   message(STATUS "Found root manifest template: ${INPUT_ROOT_ENVELOPE_JINJA_FILE}")
 

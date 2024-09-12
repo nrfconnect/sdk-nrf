@@ -65,6 +65,12 @@ config SUIT_BASE_MANIFEST_VARIANT
 	help
 	  Base manifest variant used during the build.
 
+config SUIT_MULTI_IMAGE_PACKAGE_BUILD
+	bool "Create multi-image DFU for SUIT envelope and cache images"
+	help
+	  Build DFU Multi Image package that contains a manifest file followed by SUIT envelope
+	  and selected cache image files.
+
 endif # SUIT_ENVELOPE
 
 config SUIT_BUILD_RECOVERY
