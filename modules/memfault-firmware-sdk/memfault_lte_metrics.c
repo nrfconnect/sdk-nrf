@@ -9,6 +9,7 @@
 
 #include <modem/lte_lc.h>
 #include <modem/lte_lc_trace.h>
+#include <modem/nrf_modem_lib.h>
 
 #if defined(CONFIG_MODEM_INFO)
 #include <modem/modem_info.h>
@@ -23,6 +24,16 @@
 LOG_MODULE_DECLARE(memfault_ncs_metrics, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 
 static bool connected;
+static enum lte_lc_func_mode current_func_mode;
+
+static void memfault_on_modem_cfun(int mode, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	current_func_mode = mode;
+}
+
+NRF_MODEM_LIB_ON_CFUN(memfault_cfun_hook, memfault_on_modem_cfun, NULL);
 
 #if CONFIG_MEMFAULT_NCS_STACK_METRICS
 static struct memfault_ncs_metrics_thread lte_metrics_thread = {
@@ -64,32 +75,35 @@ static void modem_params_get(void)
 
 	err = modem_info_get_rsrp(&rsrp);
 	if (err) {
-		LOG_WRN("LTE RSRP value collection failed, error: %d", err);
-	} else {
-		err = MEMFAULT_METRIC_SET_SIGNED(ncs_lte_rsrp_dbm, rsrp);
-		if (err) {
-			LOG_ERR("Failed to set ncs_lte_rsrp_dbm");
-		}
-	};
+		return;
+	}
+
+	err = MEMFAULT_METRIC_SET_SIGNED(ncs_lte_rsrp_dbm, rsrp);
+	if (err) {
+		LOG_ERR("Failed to set ncs_lte_rsrp_dbm");
+		return;
+	}
 
 	err = modem_info_get_current_band(&band);
-	if (err != 0) {
-		LOG_WRN("Network band collection failed, error: %d", err);
-	} else {
-		err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_lte_band, band);
-		if (err) {
-			LOG_ERR("Failed to set nce_lte_band");
-		}
+	if (err) {
+		return;
+	}
+
+	err = MEMFAULT_METRIC_SET_UNSIGNED(ncs_lte_band, band);
+	if (err) {
+		LOG_ERR("Failed to set nce_lte_band");
+		return;
 	}
 
 	err = modem_info_get_snr(&snr);
-	if (err != 0) {
-		LOG_WRN("SNR collection failed, error: %d", err);
-	} else {
-		err = MEMFAULT_METRIC_SET_SIGNED(ncs_lte_snr_decibels, snr);
-		if (err) {
-			LOG_ERR("Failed to set ncs_lte_snr_decibels");
-		}
+	if (err) {
+		return;
+	}
+
+	err = MEMFAULT_METRIC_SET_SIGNED(ncs_lte_snr_decibels, snr);
+	if (err) {
+		LOG_ERR("Failed to set ncs_lte_snr_decibels");
+		return;
 	}
 #endif
 }
@@ -97,12 +111,8 @@ static void modem_params_get(void)
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
 	int err;
-	enum lte_lc_func_mode mode = LTE_LC_FUNC_MODE_OFFLINE;
 
-	err = lte_lc_func_mode_get(&mode);
-	if (err) {
-		LOG_ERR("Failed to get LTE mode, error: %d", err);
-	} else if (mode != LTE_LC_FUNC_MODE_OFFLINE) {
+	if (current_func_mode == LTE_LC_FUNC_MODE_NORMAL) {
 		modem_params_get();
 	}
 
