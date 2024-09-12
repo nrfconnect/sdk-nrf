@@ -162,6 +162,11 @@ int suitfu_mgmt_suit_cache_raw_upload(struct smp_streamer *ctx);
  */
 int suitfu_mgmt_suit_cleanup(struct smp_streamer *ctx);
 
+/**
+ * @brief	Register OS Management Bootloader Info hook to return SUIT bootloader name.
+ */
+void suitfu_mgmt_register_bootloader_info_hook(void);
+
 #ifdef __cplusplus
 }
 #endif

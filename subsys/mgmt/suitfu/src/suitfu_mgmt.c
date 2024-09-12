@@ -258,6 +258,9 @@ int suitfu_mgmt_init(void)
 	k_work_queue_start(&system_update_work_queue, system_update_stack_area,
 			   K_THREAD_STACK_SIZEOF(system_update_stack_area), K_HIGHEST_THREAD_PRIO,
 			   NULL);
+#ifdef CONFIG_MGMT_SUITFU_GRP_OS_BOOTLOADER_INFO_HOOK
+	suitfu_mgmt_register_bootloader_info_hook();
+#endif /* CONFIG_MGMT_SUITFU_GRP_OS_BOOTLOADER_INFO_HOOK */
 	return suit_dfu_initialize();
 }
 
