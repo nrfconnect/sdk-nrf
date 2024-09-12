@@ -116,16 +116,6 @@ IDE and tool support
 `nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v2.7.0.
 See the :ref:`installation` section for more information about supported operating systems and toolchain.
 
-.. note::
-
-   Because of the significant, potentially breaking changes introduced in the |NCS| v2.7.0, the support for v2.7.0 in the |nRFVSC| is experimental in the following areas:
-
-     * sysbuild - During the extension stabilization period, manually edit and verify Kconfig option values instead of using the nRF Kconfig GUI.
-     * Hardware Model v2 - During the extension stabilization period, edit devicetree files manually instead of using the Devicetree Visual Editor.
-       Moreover, custom boards added in the extension will follow the Zephyr's Hardware Model v1.
-
-   The extension users that need v2.7.0 should `switch to the pre-release version of the extension`_.
-
 Supported modem firmware
 ************************
 

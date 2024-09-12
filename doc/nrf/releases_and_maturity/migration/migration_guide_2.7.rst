@@ -105,7 +105,7 @@ Matter
 
 .. toggle::
 
-   With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS| <configuration_system_overview_sysbuild>`, some changes are provided to the Matter samples and applications:
+   With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS| :ref:`configuration_system_overview_sysbuild`, some changes are provided to the Matter samples and applications:
 
      * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
        To enable factory data support on your device, you still need to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` to ``y``.
