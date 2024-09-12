@@ -412,6 +412,7 @@
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
 .. _`known issues for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-7-0
+.. _`known issues for nRF Connect SDK v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-2
 .. _`known issues for nRF Connect SDK v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-1
 .. _`known issues for nRF Connect SDK v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-0
 .. _`known issues for nRF Connect SDK v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-5-3
@@ -460,6 +461,7 @@
 
 .. _`Repositories and revisions for v2.7.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-2.6.2/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrf/releases_and_maturity/repository_revisions.html
@@ -487,6 +489,7 @@
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
 .. _`Modem library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
+.. _`Modem library changelog for v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-2.6.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -513,6 +516,7 @@
 .. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
 .. _`LwM2M carrier library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
+.. _`LwM2M carrier library changelog for v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-2.6.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 .. _`LwM2M carrier library changelog for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
