@@ -774,8 +774,6 @@ static psa_status_t ecc_export_key(const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size, uint8_t *data,
 				   size_t data_size, size_t *data_length)
 {
-	psa_status_t psa_status;
-
 	if (data_size < key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
