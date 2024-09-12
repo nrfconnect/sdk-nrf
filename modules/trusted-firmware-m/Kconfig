@@ -468,8 +468,8 @@ config TFM_NRF_PROVISIONING
 	select SECURE_BOOT_STORAGE
 	help
 	  Provision the TF-M image. When enabled, TF-M must be in the PSA
-	  provisioning lifecycle state in order to boot. See provisioning
-	  guide for more details.
+	  provisioning lifecycle state in order to boot. Find more information
+	  about provisioning in Running applications with Trusted Firmware-M.
 
 config TFM_PSA_FRAMEWORK_HAS_MM_IOVEC
 	bool
