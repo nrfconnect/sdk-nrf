@@ -21,7 +21,7 @@ static const struct gpio_dt_spec center_led_g = GPIO_DT_SPEC_GET(DT_NODELABEL(rg
 static const struct gpio_dt_spec center_led_b = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_blue), gpios);
 #endif /* (defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) && (CONFIG_DEBUG)) */
 
-void error_handler(unsigned int reason, const z_arch_esf_t *esf)
+void error_handler(unsigned int reason, const struct arch_esf *esf)
 {
 #if (CONFIG_DEBUG)
 	LOG_ERR("Caught system error -- reason %d. Entering infinite loop", reason);
@@ -51,7 +51,7 @@ void bt_ctlr_assert_handle(char *c, int code)
 	error_handler(code, NULL);
 }
 
-void k_sys_fatal_error_handler(unsigned int reason, const z_arch_esf_t *esf)
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 {
 	error_handler(reason, esf);
 }
