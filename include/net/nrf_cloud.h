@@ -280,7 +280,7 @@ enum nrf_cloud_topic_type {
 	NRF_CLOUD_TOPIC_BIN
 };
 
-/** @brief FOTA status reported to nRF Cloud. */
+/** @brief FOTA status reported to nRF Cloud and notified in @ref nrf_cloud_fota_poll_handler_t */
 enum nrf_cloud_fota_status {
 	NRF_CLOUD_FOTA_QUEUED = 0,
 	NRF_CLOUD_FOTA_IN_PROGRESS = 1,

@@ -796,6 +796,10 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_fota` library:
 
+  * Added:
+
+    * FOTA status callback.
+
   * Updated:
 
     * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE` Kconfig option to be available and used also when the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` Kconfig option is enabled.

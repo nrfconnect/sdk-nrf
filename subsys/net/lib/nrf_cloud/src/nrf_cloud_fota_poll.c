@@ -13,6 +13,7 @@
 #include <net/nrf_cloud_rest.h>
 #include <zephyr/logging/log.h>
 #include <net/fota_download.h>
+#include <fota_download_util.h>
 #include "nrf_cloud_download.h"
 #include "nrf_cloud_fota.h"
 
@@ -137,6 +138,7 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 		fota_status_details = FOTA_STATUS_DETAILS_SUCCESS;
 
 		if (ctx_ptr->is_nonblocking) {
+			k_work_cancel_delayable(&ctx_ptr->timeout_work);
 			handle_download_succeeded_and_reboot(ctx_ptr);
 		} else {
 			k_sem_give(&fota_download_sem);
@@ -153,6 +155,18 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 		LOG_ERR("FOTA download error: %d", evt->cause);
 
 		nrf_cloud_download_end();
+
+		/* Do an image reset if full modem FOTA fails. This is to avoid resuming the
+		 * download when doing a full modem FOTA, which does not currently work.
+		 */
+		if (ctx_ptr->img_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
+			int err = fota_download_util_image_reset(DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
+
+			if (err) {
+				LOG_ERR("fota_download_util_image_reset() failed: %d\n", err);
+			}
+		}
+
 		fota_status = NRF_CLOUD_FOTA_FAILED;
 		fota_status_details = FOTA_STATUS_DETAILS_DL_ERR;
 
@@ -168,7 +182,8 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 		}
 
 		if (ctx_ptr->is_nonblocking) {
-			ctx_ptr->error_fn(fota_status, fota_status_details);
+			k_work_cancel_delayable(&ctx_ptr->timeout_work);
+			ctx_ptr->status_fn(fota_status, fota_status_details);
 
 			(void)update_job_status(ctx_ptr);
 		} else {
@@ -188,7 +203,8 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 			fota_status = NRF_CLOUD_FOTA_TIMED_OUT;
 			fota_status_details = FOTA_STATUS_DETAILS_TIMEOUT;
 
-			ctx_ptr->error_fn(fota_status, fota_status_details);
+			k_work_cancel_delayable(&ctx_ptr->timeout_work);
+			ctx_ptr->status_fn(fota_status, fota_status_details);
 
 			(void)update_job_status(ctx_ptr);
 		}
@@ -209,7 +225,8 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 			fota_status_details = FOTA_STATUS_DETAILS_DL_ERR;
 
 			if (ctx_ptr->is_nonblocking) {
-				ctx_ptr->error_fn(fota_status, fota_status_details);
+				k_work_cancel_delayable(&ctx_ptr->timeout_work);
+				ctx_ptr->status_fn(fota_status, fota_status_details);
 
 				(void)update_job_status(ctx_ptr);
 			} else {
@@ -295,7 +312,7 @@ int nrf_cloud_fota_poll_init(struct nrf_cloud_fota_poll_ctx *ctx)
 	 * so the timeout must be detected via a delayable work item instead of a semaphore.
 	 * Calls to nrf_cloud_fota_poll_process() will then be nonblocking.
 	 */
-	if (ctx->error_fn) {
+	if (ctx->status_fn) {
 		ctx->is_nonblocking = true;
 
 		k_work_init_delayable(&ctx->timeout_work, fota_dl_timeout_work_fn);
@@ -398,7 +415,6 @@ static int update_job_status(struct nrf_cloud_fota_poll_ctx *ctx)
 
 static int start_download(void)
 {
-	enum dfu_target_image_type img_type;
 	static int sec_tag;
 	int ret = 0;
 
@@ -406,14 +422,14 @@ static int start_download(void)
 	switch (job.type) {
 	case NRF_CLOUD_FOTA_BOOTLOADER:
 	case NRF_CLOUD_FOTA_APPLICATION:
-		img_type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
+		ctx_ptr->img_type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 		break;
 	case NRF_CLOUD_FOTA_MODEM_DELTA:
-		img_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
+		ctx_ptr->img_type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 		break;
 	case NRF_CLOUD_FOTA_MODEM_FULL:
 		if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)) {
-			img_type = DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
+			ctx_ptr->img_type = DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
 		} else {
 			LOG_ERR("Not configured for full modem FOTA");
 			ret = -EFTYPE;
@@ -446,7 +462,7 @@ static int start_download(void)
 					      CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
 		},
 		.fota = {
-			.expected_type = img_type,
+			.expected_type = ctx_ptr->img_type,
 			.img_sz = job.file_size
 		}
 	};
@@ -521,6 +537,10 @@ static void handle_download_succeeded_and_reboot(struct nrf_cloud_fota_poll_ctx 
 		(void)update_job_status(ctx);
 	}
 
+	if (ctx_ptr->status_fn) {
+		ctx_ptr->status_fn(NRF_CLOUD_FOTA_SUCCEEDED, NULL);
+	}
+
 	if (ctx->reboot_fn) {
 		ctx->reboot_fn(FOTA_REBOOT_SUCCESS);
 	}
@@ -563,6 +583,10 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 		return -EAGAIN;
 	}
 
+	if (ctx_ptr->status_fn) {
+		ctx_ptr->status_fn(NRF_CLOUD_FOTA_DOWNLOADING, NULL);
+	}
+
 	/* Start the FOTA download process and wait for completion (or timeout) */
 	err = start_download();
 	if (err) {
@@ -570,7 +594,7 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 		return -ENOTRECOVERABLE;
 	}
 
-	/* Set timeout and return if this call is asynchronous, ie error_fn is defined */
+	/* Set timeout and return if this call is asynchronous, ie status_fn is defined */
 	if (ctx->is_nonblocking) {
 		k_work_schedule(&ctx->timeout_work, K_MINUTES(CONFIG_FOTA_DL_TIMEOUT_MIN));
 
