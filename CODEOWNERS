@@ -39,9 +39,9 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-bluebagel
+/applications/sdp/                        @masz-nordic
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
-/applications/sw_io_devices/              @masz-nordic
 /applications/zigbee_weather_station/     @milewr
 /applications/**/*.rst                    @nrfconnect/ncs-doc-owners
 
