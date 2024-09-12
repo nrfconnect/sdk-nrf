@@ -32,7 +32,7 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, ``nrf54l15pdk/nrf54l15/cpuapp``, and ``nrf54h20dk/nrf54h20/cpuapp``.
+* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, ``nrf54l15dk/nrf54l15/cpuapp``, and ``nrf54h20dk/nrf54h20/cpuapp``.
 * Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` or ``nrf54h20dk/nrf54h20/cpuapp`` with the ``nrf7002ek`` shield attached, or for ``nrf7002dk/nrf5340/cpuapp``.
 
 Overview
@@ -113,16 +113,20 @@ Matter template with Trusted Firmware-M
 
 .. matter_template_build_with_tfm_start
 
-The sample supports using :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 PDK.
+The sample supports using :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 DK.
 The memory map of the sample has been aligned to meet the :ref:`ug_tfm_partition_alignment_requirements`.
 
-You can build the sample with Trusted Firmware-M support by adding the ``ns`` suffix to the build target.
+You can build the sample with Trusted Firmware-M support by adding the ``ns`` suffix to the ``nrf54l15pdk/nrf54l15/cpuapp`` build target.
 
 For example:
 
 .. code-block:: console
 
     west build -p -b nrf54l15pdk/nrf54l15/cpuapp/ns
+
+.. note::
+
+   The firmware built for ``nrf54l15pdk/nrf54l15/cpuapp/ns`` will not work on the nRF54L15 DK.
 
 .. matter_template_build_with_tfm_end
 
@@ -133,15 +137,15 @@ Device Firmware Upgrade support
     :start-after: matter_door_lock_sample_build_with_dfu_start
     :end-before: matter_door_lock_sample_build_with_dfu_end
 
-Alternatively, for the nRF54L15 PDK, the DFU can be configured to only use the internal MRAM for storage.
+Alternatively, for the nRF54L15 DK, the DFU can be configured to only use the internal MRAM for storage.
 This means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal flash memory.
 This configuration is only available for the :ref:`release configuration <matter_template_custom_configs>`.
 
-The following is an example command to build the sample on the nRF54L15 PDK with support for Matter OTA DFU and DFU over Bluetooth® SMP, and using internal MRAM only:
+The following is an example command to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth® SMP, and using internal MRAM only:
 
 .. code-block:: console
 
-    west build -p -b nrf54l15pdk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DPM_STATIC_YML_FILE=pm_static_nrf54l15pdk_nrf54l15_cpuapp_internal.yml -Dmcuboot_EXTRA_CONF_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15pdk_nrf54l15_cpuapp_internal.conf -Dmcuboot_EXTRA_DTC_OVERLAY_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15pdk_nrf54l15_cpuapp_internal.overlay
+    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DPM_STATIC_YML_FILE=pm_static_nrf54l15dk_nrf54l15_cpuapp_internal.yml -Dmcuboot_EXTRA_CONF_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15dk_nrf54l15_cpuapp_internal.conf -Dmcuboot_EXTRA_DTC_OVERLAY_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15dk_nrf54l15_cpuapp_internal.overlay
 
 Note that in this case, the size of the application partition is half of what it would be when using a configuration with external flash memory support.
 

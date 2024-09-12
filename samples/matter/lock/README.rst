@@ -282,7 +282,7 @@ Device Firmware Upgrade support
 
 .. note::
    You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
-   Currently only nRF52840 DK, nRF5340 DK, nRF7002 DK and nRF54L15 PDK support Device Firmware Upgrade feature.
+   Currently only nRF52840 DK, nRF5340 DK, nRF7002 DK and nRF54L15 DK support Device Firmware Upgrade feature.
 
 The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
 
