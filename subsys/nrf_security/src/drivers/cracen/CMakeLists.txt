@@ -44,3 +44,5 @@ target_link_libraries(oberon_psa_core
   PRIVATE
     cracen_psa_driver
 )
+
+nrf_security_add_zephyr_options(cracen_psa_driver)
