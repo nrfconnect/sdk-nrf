@@ -909,6 +909,7 @@ static int nrf_wifi_util_dump_rpu_stats(const struct shell *shell,
 
 	ret = 0;
 unlock:
+	k_mutex_unlock(&ctx->rpu_lock);
 	return ret;
 }
 #endif /* CONFIG_NRF700X_RADIO_TEST */
