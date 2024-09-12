@@ -14,7 +14,7 @@ LOG_MODULE_REGISTER(fatal_error, CONFIG_FATAL_ERROR_LOG_LEVEL);
 extern void sys_arch_reboot(int type);
 
 void k_sys_fatal_error_handler(unsigned int reason,
-			       const z_arch_esf_t *esf)
+			       const struct arch_esf *esf)
 {
 	ARG_UNUSED(esf);
 	ARG_UNUSED(reason);
