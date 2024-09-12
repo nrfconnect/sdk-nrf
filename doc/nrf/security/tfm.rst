@@ -126,6 +126,22 @@ By using the :kconfig:option:`CONFIG_TFM_SECURE_UART0`. the TF-M UART instance b
 
   When the TF-M and application use the same UART, the TF-M will disable logging after it has booted and it will only re-enable it again to log a fatal error.
 
+Provisioning
+************
+
+For the devices that need provisioning, TF-M implements the following Platform Root of Trust (PRoT) Security Lifecycle states that conform to the `ARM Platform Security Model 1.1`_:
+
+* Device Assembly and Test
+* PRoT Provisioning
+* Secured
+
+The device starts in the **Device Assembly and Test** state.
+The :ref:`provisioning_image` sample shows how to move the device from the **Device Assembly and Test** state to the **PRoT Provisioning** state, and how to provision the device with hardware unique keys (HUKs) and an identity key.
+
+To move the device from the **PRoT Provisioning** state to the **Secured** state, set the :kconfig:option:`CONFIG_TFM_NRF_PROVISIONING` Kconfig option for your application.
+In the first boot, TF-M will ensure that the keys are stored in the Key Management Unit (KMU) and move the device to the **Secured** state.
+The :ref:`tfm_psa_template` sample shows how to achieve this.
+
 .. _ug_tfm_manual_VCOM_connection:
 
 Manual connection to Virtual COM ports on the nRF5340 DK

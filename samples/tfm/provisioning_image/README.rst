@@ -11,7 +11,7 @@ Running the provisioning image sample will initialize the provisioning process o
 This sample does not include a TF-M image, it is a Zephyr image intended to be flashed, run, and erased before the TF-M image is flashed.
 
 After completion, the device is in the Platform Root-of-Trust (PRoT) security lifecycle state called **PRoT Provisioning**.
-For more information about the PRoT security lifecycle, see Arm's Platform Security Model 1.1 defined in the Platform Security Architecture (PSA).
+For more information about the PRoT security lifecycle, see `ARM Platform Security Model 1.1`_.
 
 When built for the nrf5340dk/nrf5340/cpuapp target, this image by default also includes the :ref:`provisioning_image_net_core` sample as a child image for the network core (``nrf5340dk/nrf5340/cpunet`` target).
 The child image demonstrates how to disable the debugging access on the network core by writing to the UICR.APPROTECT register.
@@ -34,7 +34,7 @@ The sample also requires the following libraries to generate and store the maste
 Overview
 ********
 
-The PSA security model defines the PRoT security lifecycle states.
+The Platform Security Architecture (PSA) security model defines the PRoT security lifecycle states.
 This sample performs the transition from the PRoT security lifecycle state **Device Assembly and Test** to the **PRoT Provisioning** state.
 
 PRoT Provisioning is a state where the device platform security parameters are generated.
