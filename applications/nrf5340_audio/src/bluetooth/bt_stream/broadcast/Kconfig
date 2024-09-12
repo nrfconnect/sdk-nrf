@@ -217,6 +217,13 @@ config BT_AUDIO_SCAN_DELEGATOR
 	  search for a predefined broadcast source. Instead, it will wait for a
 	  broadcast assistant to connect and control.
 
+config BT_AUDIO_BROADCAST_ZBUS_EVT_STREAM_SENT
+	bool "Enable Zephyr bus event for stream sent"
+	help
+	  Enable ZBUS event signalling that a stream has been sent, and that the next frame can
+	  be prepared. As this event will trigger once for each frame it will cause significant
+	  overhead, even if the event is not used.
+
 #----------------------------------------------------------------------------#
 menu "Log levels"
 

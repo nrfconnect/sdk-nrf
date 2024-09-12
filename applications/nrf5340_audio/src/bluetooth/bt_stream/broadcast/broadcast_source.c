@@ -109,7 +109,9 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 		return;
 	}
 
-	le_audio_event_publish(LE_AUDIO_EVT_STREAM_SENT, &idx);
+	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ZBUS_EVT_STREAM_SENT)) {
+		le_audio_event_publish(LE_AUDIO_EVT_STREAM_SENT, &idx);
+	}
 
 	ERR_CHK(bt_le_audio_tx_stream_sent(idx));
 }

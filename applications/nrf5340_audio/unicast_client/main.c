@@ -352,6 +352,10 @@ static void le_audio_msg_sub_thread(void)
 
 			break;
 
+		case LE_AUDIO_EVT_STREAM_SENT:
+			/* Nothing to do. */
+			break;
+
 		default:
 			LOG_WRN("Unexpected/unhandled le_audio event: %d", msg.event);
 			break;
