@@ -6,7 +6,7 @@ common:
     - nrf54l15dk/nrf54l15/cpuflpr
     - nrf54l15pdk/nrf54l15/cpuflpr
 tests:
-  applications.sw_io_devices.egpio:
+  applications.sdp.egpio:
     sysbuild: true
     build_only: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr nrf54l15pdk/nrf54l15/cpuflpr
