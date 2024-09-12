@@ -38,14 +38,14 @@ enum nrf_cloud_fota_reboot_status {
 typedef void (*fota_reboot_handler_t)(enum nrf_cloud_fota_reboot_status status);
 
 /**
- * @brief  Error event handler registered with the module to handle asynchronous
- * error events from the module.
+ * @brief  Status event handler registered with the module to handle asynchronous
+ * status events from the module.
  *
- * @param[in]  status The FOTA status for the error event.
- * @param[in]  status_details Details about the error event.
+ * @param[in]  status Status event.
+ * @param[in]  status_details Details about the event, NULL if no details are provided.
  */
-typedef void (*fota_error_handler_t)(enum nrf_cloud_fota_status status,
-				     const char *const status_details);
+typedef void (*nrf_cloud_fota_poll_handler_t)(enum nrf_cloud_fota_status status,
+					      const char *const status_details);
 
 struct nrf_cloud_fota_poll_ctx {
 	/* Internal variables */
@@ -54,6 +54,7 @@ struct nrf_cloud_fota_poll_ctx {
 	bool is_nonblocking;
 	bool full_modem_fota_supported;
 	const char *device_id;
+	enum dfu_target_image_type img_type;
 
 	/* Public variables */
 
@@ -71,14 +72,13 @@ struct nrf_cloud_fota_poll_ctx {
 	/** User-provided callback function to handle reboots */
 	fota_reboot_handler_t reboot_fn;
 
-	/** Optional, user-provided callback function to handle errors.
+	/** Optional, user-provided callback function to handle FOTA status events.
 	 *  If the function is provided, @ref nrf_cloud_fota_poll_process will be non-blocking and
-	 *  the user will receive error events asynchronously.
+	 *  the user will receive status events asynchronously.
 	 *
-	 * If the function is not provided, @ref nrf_cloud_fota_poll_process will be blocking and
-	 * return an error code when an error occurs.
+	 * If the function is not provided, @ref nrf_cloud_fota_poll_process will be blocking.
 	 */
-	fota_error_handler_t error_fn;
+	nrf_cloud_fota_poll_handler_t status_fn;
 };
 
 /**
