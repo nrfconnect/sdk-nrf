@@ -408,47 +408,16 @@ endfunction()
 #   suit_build_recovery()
 #
 function(suit_build_recovery)
-  include(ExternalProject)
+  if (NOT EXISTS ${SB_CONFIG_SUIT_BUILD_RECOVERY_FIRMWARE_PATH})
+    message(SEND_ERROR "${SB_CONFIG_SUIT_BUILD_RECOVERY_FIRMWARE_PATH} does not exist.")
+    return()
+  endif()
+  if (NOT EXISTS ${SB_CONFIG_SUIT_BUILD_RECOVERY_FIRMWARE_PATH}/recovery.cmake)
+    message(SEND_ERROR "The recovery firmware ${SB_CONFIG_SUIT_BUILD_RECOVERY_FIRMWARE_PATH} does not contain a recovery.cmake file.")
+    return()
+  endif()
 
-  set(sysbuild_root_path "${ZEPHYR_NRF_MODULE_DIR}/../zephyr/share/sysbuild")
-  set(board_target "${SB_CONFIG_BOARD}/${target_soc}/cpuapp")
-
-  # Get class and vendor ID-s to pass to recovery application
-  sysbuild_get(APP_RECOVERY_VENDOR_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME KCONFIG)
-  sysbuild_get(APP_RECOVERY_CLASS_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME KCONFIG)
-  sysbuild_get(RAD_RECOVERY_VENDOR_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME KCONFIG)
-  sysbuild_get(RAD_RECOVERY_CLASS_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME KCONFIG)
-
-  ExternalProject_Add(
-    recovery
-    SOURCE_DIR ${sysbuild_root_path}
-    PREFIX ${CMAKE_BINARY_DIR}/recovery
-    INSTALL_COMMAND ""
-    CMAKE_CACHE_ARGS
-      "-DAPP_DIR:PATH=${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery"
-      "-DBOARD:STRING=${board_target}"
-      "-DEXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery.overlay"
-      "-Dhci_ipc_EXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery_hci_ipc.overlay"
-      "-DCONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME:STRING=\\\"${APP_RECOVERY_VENDOR_NAME}\\\""
-      "-DCONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME:STRING=\\\"${APP_RECOVERY_CLASS_NAME}\\\""
-      "-DCONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME:STRING=\\\"${RAD_RECOVERY_VENDOR_NAME}\\\""
-      "-DCONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME:STRING=\\\"${RAD_RECOVERY_CLASS_NAME}\\\""
-    BUILD_ALWAYS True
-)
-  ExternalProject_Get_property(recovery BINARY_DIR)
-
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_application
-    ${BINARY_DIR}/recovery/zephyr/suit_installed_envelopes_application_merged.hex)
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_application ${BINARY_DIR}/recovery/zephyr/zephyr.hex)
-
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio
-    ${BINARY_DIR}/recovery/zephyr/suit_installed_envelopes_radio_merged.hex)
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio ${BINARY_DIR}/hci_ipc/zephyr/zephyr.hex)
-
+  include(${SB_CONFIG_SUIT_BUILD_RECOVERY_FIRMWARE_PATH}/recovery.cmake)
 endfunction()
 
 if(SB_CONFIG_SUIT_BUILD_RECOVERY)

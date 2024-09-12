@@ -69,10 +69,21 @@ endif # SUIT_ENVELOPE
 
 config SUIT_BUILD_RECOVERY
 	bool "Build SUIT recovery firmware"
-	depends on NETCORE_HCI_IPC
 	help
 	  Build the recovery firmware, which allows to recover the main application
 	  if the image on the board was damaged.
+
+if SUIT_BUILD_RECOVERY
+
+config SUIT_BUILD_RECOVERY_FIRMWARE_PATH
+	string "Path to the recovery firmware source directory"
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery"
+	help
+	  This path must contain an application which can be used to recover the main application.
+	  The directory must contain a recovery.cmake file, which allows to build the recovery
+	  application from the main application build and fills in variables holding the 
+	  hex files to merge.
+endif # SUIT_BUILD_RECOVERY
 
 config SUIT_BUILD_FLASH_COMPANION
 	bool "Build SUIT flash companion firmware"
