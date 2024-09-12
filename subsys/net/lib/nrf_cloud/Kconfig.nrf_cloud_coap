@@ -57,6 +57,12 @@ config NRF_CLOUD_COAP_DOWNLOADS
 	  When enabled, the Kconfig option COAP_EXTENDED_OPTIONS_LEN_VALUE must be increased
 	  from the default value. Safe values are 80 for P-GPS and 192 for FOTA.
 
+config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
+	bool "Disconnect on failed request"
+	help
+	  Enabling this option will ensure that the CoAP client is disconnected when a request
+	  fails to be sent. (Maximum retransmissions reached).
+
 module = NRF_CLOUD_COAP
 module-str = nRF Cloud COAP
 source "subsys/logging/Kconfig.template.log_config"
