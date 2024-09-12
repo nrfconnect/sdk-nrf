@@ -197,9 +197,9 @@ Values are provided in kilobytes (KB).
       | :ref:`Thermostat <matter_thermostat_sample>` (Release)         |            48 |               804 |              4 |         32 |         888 |                             267 |
       +----------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
 
-   .. tab:: nRF54l15 PDK
+   .. tab:: nRF54L15 DK
 
-      The following table lists memory requirements for samples running on the :ref:`nRF54l15 PDK <programming_board_names>` (:ref:`nrf54l15pdk/nrf54l15/cpuapp <nrf54l15pdk_nrf54l15>`).
+      The following table lists memory requirements for samples running on the :ref:`nRF54l15 DK <programming_board_names>` (:ref:`nrf54l15dk/nrf54l15/cpuapp <nrf54l15dk_nrf54l15>`).
 
       +----------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                               |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -594,9 +594,9 @@ For more information about configuration of memory layouts in Matter, see :ref:`
         | OTP Memory (otp)                        | 0kB (0x0)           | 764B (0x2fc)      |-                    |-                |-                |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-----------------+
 
-   .. tab:: nRF54L15 PDK
+   .. tab:: nRF54L15 DK
 
-      The following memory map is valid for Matter applications running on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk/nrf54l15/cpuapp <zephyr:nrf54l15pdk_nrf54l15>`).
+      The following memory map is valid for Matter applications running on the :ref:`nRF54L15 DK <programming_board_names>` (:ref:`nrf54l15dk/nrf54l15/cpuapp <zephyr:nrf54l15dk_nrf54l15>`).
 
       Application core flash (size: 0x17D000 = 1524kB)
 
@@ -725,9 +725,9 @@ The following tabs show the RAM memory layout defined for the default configurat
       | User Data Logs retention      | 511kB (0x7FC00)      | 1k (0x400)           |
       +-------------------------------+----------------------+----------------------+
 
-   .. tab:: nRF54L15 PDK
+   .. tab:: nRF54L15 DK
 
-    The following RAM memory layout is valid for Matter applications running on the :ref:`nRF54L15 PDK <programming_board_names>` (:ref:`nrf54l15pdk/nrf54l15/cpuapp <zephyr:nrf54l15pdk_nrf54l15>`).
+    The following RAM memory layout is valid for Matter applications running on the :ref:`nRF54L15 DK <programming_board_names>` (:ref:`nrf54l15dk/nrf54l15/cpuapp <zephyr:nrf54l15dk_nrf54l15>`).
 
     Base SRAM size (size: 0x40000 = 256kB)
     SRAM is located at the address ``0x20000000`` in the memory address space of the application.
