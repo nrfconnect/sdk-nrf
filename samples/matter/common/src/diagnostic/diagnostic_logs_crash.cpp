@@ -208,12 +208,12 @@ extern "C" {
 
 /* The actual code of the z_fatal_error function assigned as __real_ for linker wrapping purpose.
 It required -Wl,--wrap=z_fatal_error linker option added */
-void __real_z_fatal_error(unsigned int reason, const z_arch_esf_t *esf);
+void __real_z_fatal_error(unsigned int reason, const struct arch_esf *esf);
 
 /* Wrapped z_fatal_error function to implement saving crash data to the retention memory
 and then call the _real_ function that contains the actual code of the z_fatal_error.
 It required -Wl,--wrap=z_fatal_error linker option added */
-void __wrap_z_fatal_error(unsigned int reason, const z_arch_esf_t *esf)
+void __wrap_z_fatal_error(unsigned int reason, const struct arch_esf *esf)
 {
 	/* Store the crash data into the retained RAM memory */
 	if (esf) {
