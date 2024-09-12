@@ -43,26 +43,26 @@ static int parse_lte_mcc(struct lte_params *lte,
 			 int buf_len)
 {
 	if (buf_len < MIN_XMONITOR_MCC_MNC_LEN) {
-		memset(lte->mcc, 0, 3);
+		memset(lte->mcc, 0, sizeof(lte->mcc));
 		return -1;
 	}
 
 	uint8_t c;
 
 	if (char2hex(buf[1], &c) != 0) {
-		memset(lte->mcc, 0, 3);
+		memset(lte->mcc, 0, sizeof(lte->mcc));
 		return -1;
 	}
 	lte->mcc[0] = c;
 
 	if (char2hex(buf[2], &c) != 0) {
-		memset(lte->mcc, 0, 3);
+		memset(lte->mcc, 0, sizeof(lte->mcc));
 		return -1;
 	}
 	lte->mcc[1] = c;
 
 	if (char2hex(buf[3], &c) != 0) {
-		memset(lte->mcc, 0, 3);
+		memset(lte->mcc, 0, sizeof(lte->mcc));
 		return -1;
 	}
 	lte->mcc[2] = c;
@@ -86,20 +86,20 @@ static int parse_lte_mnc(struct lte_params *lte,
 			 int buf_len)
 {
 	if (buf_len < MIN_XMONITOR_MCC_MNC_LEN) {
-		memset(lte->mnc, 0, 3);
+		memset(lte->mnc, 0, sizeof(lte->mnc));
 		return -1;
 	}
 
 	uint8_t c;
 
 	if (char2hex(buf[4], &c) != 0) {
-		memset(lte->mnc, 0, 3);
+		memset(lte->mnc, 0, sizeof(lte->mnc));
 		return -1;
 	}
 	lte->mnc[0] = c;
 
 	if (char2hex(buf[5], &c) != 0) {
-		memset(lte->mnc, 0, 3);
+		memset(lte->mnc, 0, sizeof(lte->mnc));
 		return -1;
 	}
 	lte->mnc[1] = c;
@@ -110,7 +110,7 @@ static int parse_lte_mnc(struct lte_params *lte,
 	} else {
 		lte->mnc_length = 3;
 		if (char2hex(buf[6], &c) != 0) {
-			memset(lte->mnc, 0, 3);
+			memset(lte->mnc, 0, sizeof(lte->mnc));
 			return -1;
 		}
 		lte->mnc[2] = c;
@@ -134,7 +134,7 @@ static int parse_lte_tac(struct lte_params *lte,
 			 int buf_len)
 {
 	if (buf_len < MIN_XMONITOR_TAC_LEN) {
-		memset(lte->tac, 0, 2);
+		memset(lte->tac, 0, sizeof(lte->tac));
 		return -1;
 	}
 
@@ -142,7 +142,7 @@ static int parse_lte_tac(struct lte_params *lte,
 					   TAC_STR_LEN,
 					   lte->tac,
 					   sizeof(lte->tac))) {
-		memset(lte->tac, 0, 2);
+		memset(lte->tac, 0, sizeof(lte->tac));
 		return -1;
 	}
 
@@ -165,7 +165,7 @@ static int parse_lte_cid(struct lte_params *lte,
 			 int buf_len)
 {
 	if (buf_len < MIN_XMONITOR_CID_LEN) {
-		memset(lte->cid, 0, 4);
+		memset(lte->cid, 0, sizeof(lte->cid));
 		return -1;
 	}
 
@@ -173,7 +173,7 @@ static int parse_lte_cid(struct lte_params *lte,
 					   CID_STR_LEN,
 					   lte->cid,
 					   sizeof(lte->cid))) {
-		memset(lte->cid, 0, 4);
+		memset(lte->cid, 0, sizeof(lte->cid));
 		return -1;
 	}
 
