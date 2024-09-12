@@ -9,7 +9,7 @@
 #include <zephyr/tc_util.h>
 #include <zephyr/kernel_structs.h>
 
-FUNC_NORETURN void _SysFatalErrorHandler(unsigned int reason, const z_arch_esf_t *pEsf)
+FUNC_NORETURN void _SysFatalErrorHandler(unsigned int reason, const struct arch_esf *pEsf)
 {
 	TC_PRINT("SysFatalErrorHandler called - reason %d\n", reason);
 	k_thread_abort(_current);
