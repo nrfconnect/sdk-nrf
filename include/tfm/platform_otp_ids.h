@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 enum tfm_otp_element_id_t {
+	PLAT_OTP_ID_LCS = UINT32_MAX -1,
 	PLAT_OTP_ID_MAX = UINT32_MAX,
 };
 
