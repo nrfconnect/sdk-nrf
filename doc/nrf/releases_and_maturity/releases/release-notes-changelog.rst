@@ -814,6 +814,7 @@ Libraries for networking
   * Added:
 
     * FOTA status callback.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST` Kconfig option to disconnect the CoAP client on a failed request.
 
   * Updated:
 
