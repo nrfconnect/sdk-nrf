@@ -581,7 +581,7 @@
   - "tests/subsys/suit/**/*"
 
 "CI-test-low-level":
-  - "applications/sw_io_devices/**/*"
+  - "applications/sdp/**/*"
   - "drivers/gpio/**/*"
   - "dts/bindings/gpio/**/*"
   - "include/drivers/gpio/**/*"
