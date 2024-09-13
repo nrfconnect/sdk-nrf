@@ -12,6 +12,7 @@
 #include <getopt.h>
 
 #include <nrf_modem_at.h>
+#include <modem/nrf_modem_lib.h>
 
 #include "mosh_print.h"
 #include "link.h"
@@ -48,7 +49,8 @@ enum link_shell_command {
 	LINK_CMD_RAI,
 	LINK_CMD_DNSADDR,
 	LINK_CMD_REDMOB,
-	LINK_CMD_PROPRIPSM
+	LINK_CMD_PROPRIPSM,
+	LINK_CMD_MODEM
 };
 
 enum link_shell_operation {
@@ -357,6 +359,16 @@ static const char link_propripsm_usage_str[] =
 	"  -e, --enable,       Enable proprietary PSM\n"
 	"  -h, --help,         Shows this help information";
 
+static const char link_modem_usage_str[] =
+	"Usage: link modem [options]\n"
+	"Options:\n"
+	"      --init,           Initialize modem using nrf_modem_lib_init()\n"
+	"      --shutdown,       Shutdown modem\n"
+	"      --shutdown_cfun0, Send AT+CFUN=0 AT command and shutdown modem\n"
+	"  -h, --help,           Shows this help information\n"
+	"\n"
+	"Several options can be given and they are run in the given order.";
+
 /* The following do not have short options */
 enum {
 	LINK_SHELL_OPT_MEM_SLOT_1 = 1001,
@@ -397,7 +409,10 @@ enum {
 	LINK_SHELL_OPT_LTEM_EDRX,
 	LINK_SHELL_OPT_LTEM_PTW,
 	LINK_SHELL_OPT_NBIOT_EDRX,
-	LINK_SHELL_OPT_NBIOT_PTW
+	LINK_SHELL_OPT_NBIOT_PTW,
+	LINK_SHELL_OPT_MODEM_INIT,
+	LINK_SHELL_OPT_MODEM_SHUTDOWN,
+	LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0,
 };
 
 /* Specifying the expected options (both long and short) */
@@ -469,6 +484,9 @@ static struct option long_options[] = {
 	{ "normal_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
 	{ "default", no_argument, 0, LINK_SHELL_OPT_REDMOB_DEFAULT },
 	{ "nordic", no_argument, 0, LINK_SHELL_OPT_REDMOB_NORDIC },
+	{ "init", no_argument, 0, LINK_SHELL_OPT_MODEM_INIT },
+	{ "shutdown", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN },
+	{ "shutdown_cfun0", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0 },
 	{ 0, 0, 0, 0 }
 };
 
@@ -538,6 +556,9 @@ static void link_shell_print_usage(enum link_shell_command command)
 		break;
 	case LINK_CMD_PROPRIPSM:
 		mosh_print_no_format(link_propripsm_usage_str);
+		break;
+	case LINK_CMD_MODEM:
+		mosh_print_no_format(link_modem_usage_str);
 		break;
 	default:
 		break;
@@ -1373,6 +1394,59 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 
 show_usage:
 	link_shell_print_usage(LINK_CMD_FUNMODE);
+	return 0;
+}
+
+static int link_shell_modem(const struct shell *shell, size_t argc, char **argv)
+{
+	bool operation_selected = false;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case LINK_SHELL_OPT_MODEM_INIT:
+			operation_selected = true;
+			nrf_modem_lib_init();
+			break;
+		case LINK_SHELL_OPT_MODEM_SHUTDOWN:
+			operation_selected = true;
+			nrf_modem_lib_shutdown();
+			break;
+		case LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0:
+			operation_selected = true;
+			/* This option is here because applications should be doing it like this.
+			 * User could do CFUN=0 and then shutdown, but that would be too slow
+			 * to simulate application behavior.
+			 */
+			nrf_modem_at_printf("AT+CFUN=0");
+			nrf_modem_lib_shutdown();
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (!operation_selected) {
+		goto show_usage;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_MODEM);
 	return 0;
 }
 
@@ -2606,6 +2680,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		ifaddrs, NULL,
 		"Get interface address information (no options).",
 		link_shell_ifaddrs, 1, 0),
+	SHELL_CMD_ARG(
+		modem, NULL,
+		"Initialize and shutdown modem.",
+		link_shell_modem, 0, 2),
 	SHELL_CMD_ARG(
 		msleep, NULL,
 		"Subscribe/unsubscribe for modem sleep notifications.",
