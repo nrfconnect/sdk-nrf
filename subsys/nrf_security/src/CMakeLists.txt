@@ -84,6 +84,10 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   constant_time.c
 )
 
+# Add threading support for PSA core (if enabled)
+include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
+include(${NRF_SECURITY_ROOT}/src/utils/nrf_security_utils.cmake)
+
 # Add base library with files required by all drivers/backends.
 add_library(mbedcrypto_base
   STATIC
@@ -124,9 +128,6 @@ if(LINKER_CP_OPTION)
     ${LINKER_CP_OPTION}
 )
 endif()
-
-# Add threading support for PSA core (if enabled)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/threading)
 
 target_link_libraries(${mbedcrypto_target}
   PRIVATE

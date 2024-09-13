@@ -16,6 +16,17 @@
 #endif
 
 #if defined(CONFIG_MULTITHREADING) && !defined(__NRF_TFM__)
+
+void nrf_security_mutex_init(nrf_security_mutex_t mutex)
+{
+	(void)k_mutex_init(mutex);
+}
+
+void nrf_security_mutex_free(nrf_security_mutex_t mutex)
+{
+	(void)mutex;
+}
+
 int nrf_security_mutex_lock(nrf_security_mutex_t mutex)
 {
 	return k_mutex_lock(mutex, K_FOREVER);
@@ -27,6 +38,17 @@ int nrf_security_mutex_unlock(nrf_security_mutex_t mutex)
 }
 
 #else
+
+void nrf_security_mutex_init(nrf_security_mutex_t mutex)
+{
+	(void)mutex;
+}
+
+void nrf_security_mutex_free(nrf_security_mutex_t mutex)
+{
+	(void)mutex;
+}
+
 int nrf_security_mutex_lock(nrf_security_mutex_t mutex)
 {
 	(void)mutex;
