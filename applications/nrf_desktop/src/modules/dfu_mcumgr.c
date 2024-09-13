@@ -75,6 +75,43 @@ static void dfu_timeout_handler(struct k_work *work)
 	}
 }
 
+static bool smp_cmd_is_suit_dfu_cmd(const struct mgmt_evt_op_cmd_arg *cmd,
+				    const char **smp_cmd_name)
+{
+#if CONFIG_MGMT_SUITFU_GRP_SUIT
+	if (cmd->group == CONFIG_MGMT_GROUP_ID_SUIT) {
+		*smp_cmd_name = "SUIT Management";
+		return true;
+	}
+#endif /* CONFIG_MGMT_SUITFU_GRP_SUIT */
+
+	return false;
+}
+
+static bool smp_cmd_is_dfu_cmd(const struct mgmt_evt_op_cmd_arg *cmd)
+{
+	const char *smp_cmd_name = "Unknown";
+	bool dfu_transfer_cmd = true;
+
+	if (cmd->group == MGMT_GROUP_ID_IMAGE) {
+		smp_cmd_name = "Image Management";
+	} else if ((cmd->group == MGMT_GROUP_ID_OS) && (cmd->id == OS_MGMT_ID_RESET)) {
+		smp_cmd_name = "OS Management Reset";
+	} else {
+		dfu_transfer_cmd = false;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_DFU_BACKEND_SUIT) && !dfu_transfer_cmd) {
+		dfu_transfer_cmd = smp_cmd_is_suit_dfu_cmd(cmd, &smp_cmd_name);
+	}
+
+	if (dfu_transfer_cmd && smp_cmd_name) {
+		LOG_DBG("MCUmgr %s event", smp_cmd_name);
+	}
+
+	return dfu_transfer_cmd;
+}
+
 static enum mgmt_cb_return smp_cmd_recv(uint32_t event, enum mgmt_cb_return prev_status,
 					int32_t *rc, uint16_t *group, bool *abort_more,
 					void *data, size_t data_size)
@@ -87,8 +124,6 @@ static enum mgmt_cb_return smp_cmd_recv(uint32_t event, enum mgmt_cb_return prev
 		return MGMT_CB_ERROR_RC;
 	}
 
-	LOG_DBG("MCUmgr SMP Command Recv Event");
-
 	if (data_size != sizeof(*cmd_recv)) {
 		LOG_ERR("Invalid data size in recv cb: %zu (expected: %zu)",
 			data_size, sizeof(*cmd_recv));
@@ -98,14 +133,13 @@ static enum mgmt_cb_return smp_cmd_recv(uint32_t event, enum mgmt_cb_return prev
 
 	cmd_recv = data;
 
+	LOG_DBG("MCUmgr SMP Command Recv Event: group_id=%d cmd_id=%d",
+		cmd_recv->group, cmd_recv->id);
+
 	/* Ignore commands not related to DFU over SMP. */
-	if (!(cmd_recv->group == MGMT_GROUP_ID_IMAGE) &&
-	    !((cmd_recv->group == MGMT_GROUP_ID_OS) && (cmd_recv->id == OS_MGMT_ID_RESET))) {
+	if (!smp_cmd_is_dfu_cmd(cmd_recv)) {
 		return MGMT_CB_OK;
 	}
-
-	LOG_DBG("MCUmgr %s event", (cmd_recv->group == MGMT_GROUP_ID_IMAGE) ?
-		"Image Management" : "OS Management Reset");
 
 	k_work_reschedule(&dfu_timeout, DFU_TIMEOUT);
 	if (IS_ENABLED(CONFIG_DESKTOP_DFU_LOCK) && dfu_lock_claim(&mcumgr_owner)) {
