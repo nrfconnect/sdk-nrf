@@ -131,7 +131,7 @@ static void hci_rpmsg_rx(uint8_t *data, size_t len)
 	}
 
 	if (buf) {
-		net_buf_put(&tx_queue, buf);
+		k_fifo_put(&tx_queue, buf);
 
 		LOG_HEXDUMP_DBG(buf->data, buf->len, "Final net buffer:");
 	}
@@ -144,7 +144,7 @@ static void tx_thread(void *p1, void *p2, void *p3)
 		int err;
 
 		/* Wait until a buffer is available */
-		buf = net_buf_get(&tx_queue, K_FOREVER);
+		buf = k_fifo_get(&tx_queue, K_FOREVER);
 		/* Pass buffer to the stack */
 		err = bt_send(buf);
 		if (err) {
@@ -253,7 +253,7 @@ int main(void)
 	while (1) {
 		struct net_buf *buf;
 
-		buf = net_buf_get(&rx_queue, K_FOREVER);
+		buf = k_fifo_get(&rx_queue, K_FOREVER);
 		err = hci_rpmsg_send(buf);
 		if (err) {
 			LOG_ERR("Failed to send (err %d)", err);

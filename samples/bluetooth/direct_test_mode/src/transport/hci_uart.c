@@ -249,7 +249,7 @@ static void tx_thread(void)
 		 * and it's not supposed to be sent over uart.
 		 * The pointer is an address to the associated net_buf.
 		 */
-		buf = net_buf_get(&hci_tx_queue, K_FOREVER);
+		buf = k_fifo_get(&hci_tx_queue, K_FOREVER);
 		uart_tx(hci_uart_dev, &buf->data[sizeof(buf)],
 			buf->len - sizeof(buf), SYS_FOREVER_US);
 	}
@@ -304,6 +304,6 @@ int hci_uart_write(uint8_t type, const uint8_t *hdr, size_t hdr_len, const uint8
 	net_buf_add_mem(buf, hdr, hdr_len);
 	net_buf_add_mem(buf, pld, len);
 
-	net_buf_put(&hci_tx_queue, buf);
+	k_fifo_put(&hci_tx_queue, buf);
 	return 0;
 }
