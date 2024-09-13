@@ -4,11 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-list(APPEND nrf_security_utils_sources
-  ${CMAKE_CURRENT_LIST_DIR}/nrf_security_mutexes.c
-  ${CMAKE_CURRENT_LIST_DIR}/nrf_security_events.c
+append_with_prefix(src_crypto_base ${CMAKE_CURRENT_LIST_DIR}
+  nrf_security_mutexes.c
+  nrf_security_events.c
 )
 
-list(APPEND nrf_security_utils_include_dirs
+target_include_directories(psa_crypto_library_config
+  INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}
 )
