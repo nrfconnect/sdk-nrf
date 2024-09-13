@@ -10,5 +10,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(emulated_gpio)
 
 target_sources_ifdef(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG app PRIVATE src/nrfe_icmsg.c)
+target_sources_ifdef(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG app PRIVATE src/nrfe_icmsg.c)
 target_sources_ifdef(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX app PRIVATE  src/nrfe_mbox.c)
 target_sources(app PRIVATE src/main.c)
