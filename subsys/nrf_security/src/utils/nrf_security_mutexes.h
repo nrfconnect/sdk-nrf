@@ -29,6 +29,20 @@ typedef uint8_t nrf_security_mutex_t;
 #endif
 
 /**
+ * @brief Initialize a mutex.
+ *
+ * @param[in] mutex The mutex to initialized.
+ */
+void nrf_security_mutex_init(nrf_security_mutex_t mutex);
+
+/**
+ * @brief Free a mutex.
+ *
+ * @param[in] mutex The mutex to free.
+ */
+void nrf_security_mutex_free(nrf_security_mutex_t mutex);
+
+/**
  * @brief Lock a mutex.
  *
  * @param[in] mutex The mutex to lock.
