@@ -19,7 +19,7 @@
  * there are no threads and uses cortex-M33 __WFE instructions.
  */
 
-#if defined(CONFIG_MULTITHREADING) && !defined(__NRF_TFM__)
+#if defined(CONFIG_EVENTS) && !defined(__NRF_TFM__)
 typedef struct k_event *nrf_security_event_t;
 
 #define NRF_SECURITY_EVENT_DEFINE(event_name)                                                      \
