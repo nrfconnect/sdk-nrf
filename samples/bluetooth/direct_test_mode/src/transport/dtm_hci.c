@@ -712,7 +712,7 @@ static int hci_cmd(const struct bt_hci_cmd_hdr *hdr, const uint8_t *data)
 
 static void dtm_hci_put(struct net_buf *buf)
 {
-	net_buf_put(&hci_rx_queue, buf);
+	k_fifo_put(&hci_rx_queue, buf);
 }
 
 int dtm_tr_init(void)
@@ -738,7 +738,7 @@ union dtm_tr_packet dtm_tr_get(void)
 {
 	union dtm_tr_packet tmp;
 
-	tmp.hci = net_buf_get(&hci_rx_queue, K_FOREVER);
+	tmp.hci = k_fifo_get(&hci_rx_queue, K_FOREVER);
 	return tmp;
 }
 
