@@ -119,3 +119,5 @@ The SUIT DFU procedure can further be customized by:
 
 Instructions for these actions and further customization are described in the :ref:`ug_nrf54h20_suit_customize_dfu` page.
 Additionally, you can modify SUIT components within the manifest (see the :ref:`ug_nrf54h20_suit_components` page for more information).
+
+If an update to the *nRF54H20 SoC binaries* (precompiled binaries provided by Nordic Semiconductor) is required, refer to the :ref:`ug_nrf54h20_suit_soc_binaries` page.
