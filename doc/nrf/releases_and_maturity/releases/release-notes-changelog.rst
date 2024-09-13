@@ -269,6 +269,7 @@ nRF Desktop
     Replaced the custom implementation of the :c:func:`z_impl_hwinfo_get_device_id` function in the nRF Desktop application with the native Zephyr driver function that now supports the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
     Removed the ``CONFIG_DESKTOP_HWINFO_BLE_ADDRESS_FICR_POSTFIX`` Kconfig option as a postfix constant is no longer needed for the Zephyr native driver.
     The driver uses ``BLE.ADDR``, ``BLE.IR``, and ``BLE.ER`` fields of the Factory Information Configuration Registers (FICR) to provide 8 bytes of unique hardware ID.
+  * The :ref:`nrf_desktop_dfu_mcumgr` to recognize the MCUmgr custom group ID (:kconfig:option:`CONFIG_MGMT_GROUP_ID_SUIT`) from the SUITFU subsystem (:kconfig:option:`CONFIG_MGMT_SUITFU`) as a DFU-related command group.
 
 
 nRF Machine Learning (Edge Impulse)
