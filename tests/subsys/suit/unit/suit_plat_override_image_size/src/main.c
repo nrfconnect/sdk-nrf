@@ -117,7 +117,7 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 
 	zassert_equal(SUIT_SUCCESS, err, "Failed to override image size: %d", err);
 
-	/* THEN memptr_storage size should be updated to given value */
+	/* THEN memptr_storage size should be updated to given value... */
 	expected_call_count = 2;
 	expected_size = TEST_FAKE_SIZE;
 	zassert_equal(suit_memptr_storage_ptr_store_fake.call_count, expected_call_count,
@@ -126,6 +126,54 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 	zassert_equal(suit_memptr_storage_ptr_store_fake.arg2_history[1], expected_size,
 		      "Wrong size: %d instead of %d",
 		      suit_memptr_storage_ptr_store_fake.arg2_history[1], expected_size);
+
+	/* ... and IPUC component should be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 1,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_revoke_fake.arg0_history[0], component,
+		      "Wrong component handle: %d instead of %d",
+		      suit_plat_ipuc_revoke_fake.arg0_history[0], component);
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
+}
+
+ZTEST(suit_platform_override_image_size_tests, test_suit_override_size_and_declare_ipuc)
+{
+	/* GIVEN a MEM-type component */
+	/* WHEN a component handle is created (in test setup step) */
+	/* THEN memptr_storage size should be set to 0 */
+	int expected_call_count = 1;
+	size_t expected_size = 0;
+
+	zassert_equal(suit_memptr_storage_ptr_store_fake.call_count, expected_call_count,
+		      "Wrong initial size store call count",
+		      suit_memptr_storage_ptr_store_fake.call_count, expected_call_count);
+	zassert_equal(suit_memptr_storage_ptr_store_fake.arg2_history[0], expected_size,
+		      "Wrong initial size: %d instead of %d",
+		      suit_memptr_storage_ptr_store_fake.arg2_history[0], expected_size);
+
+	/* WHEN size override is called */
+	int err = suit_plat_override_image_size(component, 0);
+
+	zassert_equal(SUIT_SUCCESS, err, "Failed to override image size: %d", err);
+
+	/* THEN memptr_storage size should be updated to given value... */
+	expected_call_count = 2;
+	zassert_equal(suit_memptr_storage_ptr_store_fake.call_count, expected_call_count,
+		      "Wrong size store call count: %d instead of %d",
+		      suit_memptr_storage_ptr_store_fake.call_count, expected_call_count);
+	zassert_equal(suit_memptr_storage_ptr_store_fake.arg2_history[1], expected_size,
+		      "Wrong size: %d instead of %d",
+		      suit_memptr_storage_ptr_store_fake.arg2_history[1], expected_size);
+
+	/* ... and IPUC component should be revoked */
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 1,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.arg0_history[0], component,
+		      "Wrong component handle: %d instead of %d",
+		      suit_plat_ipuc_declare_fake.arg0_history[0], component);
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests,
@@ -139,11 +187,17 @@ ZTEST(suit_platform_override_image_size_tests,
 	/* WHEN size override is called */
 	int err = suit_plat_override_image_size(component, TEST_FAKE_SIZE);
 
-	/* THEN appropriate error code is returned */
+	/* THEN appropriate error code is returned... */
 	int expected_error = SUIT_ERR_DECODING;
 
 	zassert_equal(expected_error, err, "Unexpected error code: %d instead of %d", err,
 		      expected_error);
+
+	/* ... and IPUC component should not be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_size_fail_get)
@@ -155,11 +209,17 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 
 	/* WHEN size override is called */
 	int err = suit_plat_override_image_size(component, TEST_FAKE_SIZE);
-	/* THEN appropriate error code is returned */
+	/* THEN appropriate error code is returned... */
 	int expected_error = SUIT_ERR_CRASH;
 
 	zassert_equal(expected_error, err, "Unexpected error code: %d instead of %d", err,
 		      expected_error);
+
+	/* ... and IPUC component should not be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_size_fail_store)
@@ -170,11 +230,17 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 		suit_memptr_storage_ptr_store_fake_unallocated_record;
 	/* WHEN size override is called */
 	int err = suit_plat_override_image_size(component, TEST_FAKE_SIZE);
-	/* THEN appropriate error code is returned */
+	/* THEN appropriate error code is returned... */
 	int expected_error = SUIT_ERR_CRASH;
 
 	zassert_equal(expected_error, err, "Unexpected error code: %d instead of %d", err,
 		      expected_error);
+
+	/* ... and IPUC component should not be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests,
@@ -186,11 +252,17 @@ ZTEST(suit_platform_override_image_size_tests,
 
 	/* WHEN size override is called */
 	int err = suit_plat_override_image_size(component, TEST_FAKE_SIZE);
-	/* THEN appropriate error code is returned */
+	/* THEN appropriate error code is returned... */
 	int expected_error = SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 
 	zassert_equal(expected_error, err, "Unexpected error code: %d instead of %d", err,
 		      expected_error);
+
+	/* ... and IPUC component should not be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
 
 	/* Cleanup: create component to satisfy test_after */
 	suit_plat_decode_component_type_fake.custom_fake =
@@ -211,11 +283,17 @@ ZTEST(suit_platform_override_image_size_tests,
 
 	/* WHEN size override is called */
 	int err = suit_plat_override_image_size(component, TEST_FAKE_SIZE);
-	/* THEN appropriate error code is returned */
+	/* THEN appropriate error code is returned... */
 	int expected_error = SUIT_ERR_UNSUPPORTED_COMMAND;
 
 	zassert_equal(expected_error, err, "Unexpected error code: %d instead of %d", err,
 		      expected_error);
+
+	/* ... and IPUC component should not be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests,
@@ -227,11 +305,17 @@ ZTEST(suit_platform_override_image_size_tests,
 	suit_plat_decode_address_size_fake.return_val = SUIT_PLAT_ERR_CBOR_DECODING;
 	/* WHEN size override is called */
 	int err = suit_plat_override_image_size(component, TEST_FAKE_SIZE);
-	/* THEN appropriate error code is returned */
+	/* THEN appropriate error code is returned... */
 	int expected_error = SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 
 	zassert_equal(expected_error, err, "Unexpected error code: %d instead of %d", err,
 		      expected_error);
+
+	/* ... and IPUC component should not be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_size_exceeding_size)
@@ -239,9 +323,15 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 	/* GIVEN a MEM-type component (created in test setup step)*/
 	/* WHEN size override is called with size exceeding the boundaries */
 	int err = suit_plat_override_image_size(component, TEST_FAKE_SIZE + 1);
-	/* THEN appropriate error code is returned */
+	/* THEN appropriate error code is returned... */
 	int expected_error = SUIT_ERR_UNSUPPORTED_PARAMETER;
 
 	zassert_equal(expected_error, err, "Unexpected error code: %d instead of %d", err,
 		      expected_error);
+
+	/* ... and IPUC component should not be revoked */
+	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
+		      "Incorrect number of suit_plat_ipuc_declare() calls");
 }

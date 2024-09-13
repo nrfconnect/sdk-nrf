@@ -54,6 +54,10 @@
 #include <mock_suit_platform.h>
 #endif /* CONFIG_MOCK_SUIT_PLATFORM */
 
+#ifdef CONFIG_MOCK_SUIT_IPUC
+#include <mock_suit_plat_ipuc.h>
+#endif /* CONFIG_MOCK_SUIT_IPUC */
+
 #ifdef CONFIG_MOCK_DIGEST_SINK
 #include <mock_digest_sink.h>
 #endif /* CONFIG_MOCK_DIGEST_SINK */
@@ -127,6 +131,10 @@ static inline void mocks_reset(void)
 #ifdef CONFIG_MOCK_SUIT_PLATFORM
 	mock_suit_platform_reset();
 #endif /* CONFIG_MOCK_SUIT_PLATFORM */
+
+#ifdef CONFIG_MOCK_SUIT_IPUC
+	mock_suit_plat_ipuc_reset();
+#endif /* CONFIG_MOCK_SUIT_IPUC */
 
 #ifdef CONFIG_MOCK_DIGEST_SINK
 	mock_digest_sink_reset();
