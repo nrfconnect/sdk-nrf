@@ -8,7 +8,7 @@
 # Which was added in Mbed TLS 3.6.0.
 
 # Return if threading is not enabled at all
-if(NOT CONFIG_MBEDTLS_THREADING_C)
+if(NOT (CONFIG_MBEDTLS_THREADING_C OR CONFIG_MBEDTLS_PSA_CRYPTO_C))
   return()
 endif()
 
@@ -18,7 +18,6 @@ if(CONFIG_PSA_CRYPTO_DRIVER_CC3XX OR CONFIG_CC3XX_BACKEND)
   return()
 endif()
 
-# Add support for threading using 
 append_with_prefix(src_crypto_base ${CMAKE_CURRENT_LIST_DIR}
   threading_alt.c
 )
