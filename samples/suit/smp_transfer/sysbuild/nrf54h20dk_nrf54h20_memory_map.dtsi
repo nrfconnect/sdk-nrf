@@ -16,7 +16,6 @@
 };
 &cpurad_rx_partitions {
 	compatible = "nordic,owned-partitions", "fixed-partitions";
-	status = "okay";
 	perm-read;
 	perm-execute;
 	perm-secure;
