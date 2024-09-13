@@ -64,6 +64,9 @@ config MOCK_SUIT_PLATFORM_INTERNAL
 config MOCK_SUIT_PLATFORM
 	bool "Mock suit_plat_retrieve_manifest"
 
+config MOCK_SUIT_IPUC
+	bool "Mock in-place updateable componenets"
+
 config MOCK_DIGEST_SINK
 	bool "Mock stream sinks"
 
