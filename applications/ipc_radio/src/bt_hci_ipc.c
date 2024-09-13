@@ -88,7 +88,7 @@ static void recv_cmd(const uint8_t *data, size_t len)
 						sys_le16_to_cpu(hdr->opcode), hdr->param_len);
 
 	net_buf_add_mem(buf, data, len);
-	net_buf_put(&tx_queue, buf);
+	k_fifo_put(&tx_queue, buf);
 }
 
 static void recv_acl(const uint8_t *data, size_t len)
@@ -125,7 +125,7 @@ static void recv_acl(const uint8_t *data, size_t len)
 					sys_le16_to_cpu(hdr->handle), sys_le16_to_cpu(hdr->len));
 
 	net_buf_add_mem(buf, data, len);
-	net_buf_put(&tx_queue, buf);
+	k_fifo_put(&tx_queue, buf);
 }
 
 static void recv_iso(const uint8_t *data, size_t len)
@@ -162,7 +162,7 @@ static void recv_iso(const uint8_t *data, size_t len)
 					sys_le16_to_cpu(hdr->handle), sys_le16_to_cpu(hdr->len));
 
 	net_buf_add_mem(buf, data, len);
-	net_buf_put(&tx_queue, buf);
+	k_fifo_put(&tx_queue, buf);
 }
 
 static void send(struct net_buf *buf, bool is_fatal_err)
@@ -260,7 +260,7 @@ static void tx_thread(void)
 	int err;
 
 	while (1) {
-		buf = net_buf_get(&tx_queue, K_FOREVER);
+		buf = k_fifo_get(&tx_queue, K_FOREVER);
 		err = bt_send(buf);
 		if (err) {
 			LOG_ERR("bt_send failed err: %d.", err);
@@ -374,7 +374,7 @@ int ipc_bt_process(void)
 	k_sem_take(&ipc_bound_sem, K_FOREVER);
 
 	while (1) {
-		buf = net_buf_get(&rx_queue, K_FOREVER);
+		buf = k_fifo_get(&rx_queue, K_FOREVER);
 		send(buf, HCI_REGULAR_MSG);
 	}
 
