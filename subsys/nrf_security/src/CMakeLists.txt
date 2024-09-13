@@ -18,6 +18,10 @@ include(${NRF_SECURITY_ROOT}/cmake/generate_configs.cmake)
 generate_mbedcrypto_interface_configs()
 generate_mbedcrypto_library_configs()
 
+# This configuration is used for regex matching of the PSA crypto config interface path
+# This regex is used by nrf_security_add_zephyr_options when adding includes from
+# the zephyr_interface to nrf_security libraries
+string(REPLACE "/" "\\/" PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX ${PSA_CRYPTO_CONFIG_INTERFACE_PATH})
 
 # Add include folders for psa_crypto_config (interface builds)
 target_include_directories(psa_crypto_config
@@ -128,14 +132,6 @@ target_link_libraries(${mbedcrypto_target}
   PRIVATE
     mbedcrypto_base
 )
-
-# Add a public version of the configs includes and interface
-target_link_libraries(${mbedcrypto_target}
-  PRIVATE
-    $<IF:$<BOOL:${CONFIG_MBEDTLS_PSA_CRYPTO_C}>,psa_crypto_library_config,psa_crypto_config>
-    psa_interface
-)
-
 
 # Disable compile warnings for Mbed TLS sources for files that are 
 # added to the build for legacy APIs but are not enabled due to
