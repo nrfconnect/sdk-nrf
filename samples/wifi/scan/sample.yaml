@@ -76,7 +76,7 @@ tests:
     build_only: true
     platform_allow: thingy91x/nrf9151/ns
     tags: ci_build sysbuild ci_samples_wifi
-  sample.nrf7002eb.nrf54l15dk.shell:
+  sample.scan.nrf7002eb.nrf54l15dk.shell:
     sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf700x_nrf54l15pdk
@@ -84,7 +84,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     tags: ci_build sysbuild ci_samples_wifi
-  sample.nrf54h20dk_nrf7002ek.shell:
+  sample.scan.nrf54h20dk_nrf7002ek.shell:
     sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf700x_nrf54h20dk
