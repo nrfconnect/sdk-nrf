@@ -9,3 +9,7 @@
 &uart135 {
 	status = "disabled";
 };
+
+&cpurad_rx_partitions {
+	status = "okay";
+};
