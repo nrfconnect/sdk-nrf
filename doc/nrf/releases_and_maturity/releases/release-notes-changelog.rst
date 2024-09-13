@@ -367,6 +367,7 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
+  * Added ``link modem`` command for initializing and shutting down the modem.
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
 * :ref:`nrf_cloud_rest_fota` sample:
