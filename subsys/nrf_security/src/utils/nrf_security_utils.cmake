@@ -13,3 +13,8 @@ target_include_directories(psa_crypto_library_config
   INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}
 )
+
+target_include_directories(psa_crypto_config
+  INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}
+)
