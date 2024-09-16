@@ -4,10 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
-  return()
-endif()
-
 # Legacy APIs missing driver support or APIs assumed to be
 # deprecated with more PSA API awareness.
 append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
@@ -98,24 +94,11 @@ if(TARGET mbedcrypto_oberon_mbedtls_imported)
       mbedcrypto_oberon_mbedtls_imported
   )
 
-  target_link_libraries(mbedcrypto_oberon_mbedtls_imported
-    INTERFACE
-      mbedcrypto_base
-  )
-
   # Add nrf_oberon Mbed TLS includes to mbedcrypto library
   target_include_directories(${mbedcrypto_target}
     INTERFACE
       $<TARGET_PROPERTY:mbedcrypto_oberon_mbedtls_imported,INTERFACE_INCLUDE_DIRECTORIES>
 	)
-endif()
-
-if(TARGET mbedcrypto_oberon_imported)
-  # Add nrf_oberon includes to mbedcrypto library
-  target_include_directories(${mbedcrypto_target}
-    INTERFACE
-      $<TARGET_PROPERTY:mbedcrypto_oberon_imported,INTERFACE_INCLUDE_DIRECTORIES>
-  )
 endif()
 
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C AND CONFIG_CC3XX_BACKEND)
@@ -131,22 +114,7 @@ if(TARGET nrf_cc3xx_core_imported)
   # nrf_cc3xx needs functionality from mbedcrypto_base
   target_link_libraries(nrf_cc3xx_core_imported
     INTERFACE
+      psa_crypto_library_config
       mbedcrypto_base
-  )
-endif()
-
-# Add the nrf_cc3xx core include folder to library build (if it exists)
-if (TARGET nrf_cc3xx_core_imported)
-  target_include_directories(psa_crypto_library_config
-    INTERFACE
-      $<TARGET_PROPERTY:nrf_cc3xx_core_imported,INTERFACE_INCLUDE_DIRECTORIES>
-  )
-endif()
-
-# Add the nrf_cc3xx platform include folder to library build (if it exists)
-if (TARGET nrf_cc3xx_platform)
-  target_include_directories(psa_crypto_library_config
-    INTERFACE
-      $<TARGET_PROPERTY:nrf_cc3xx_platform,INTERFACE_INCLUDE_DIRECTORIES>
   )
 endif()
