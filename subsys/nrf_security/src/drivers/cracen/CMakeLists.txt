@@ -8,7 +8,6 @@
 set(cracen_driver_sources)
 
 # Add more CRACEN sources and include dirs from the ext directory
-include(${NRF_SECURITY_ROOT}/src/utils/nrf_security_utils.cmake)
 include(sxsymcrypt/sxsymcrypt.cmake)
 include(silexpk/silexpk.cmake)
 include(sicrypto/sicrypto.cmake)
