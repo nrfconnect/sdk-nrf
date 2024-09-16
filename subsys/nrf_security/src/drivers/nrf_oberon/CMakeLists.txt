@@ -7,14 +7,8 @@
 # Build Oberon PSA crypto driver 
 set(drivers_path ${OBERON_PSA_CORE_PATH}/oberon/drivers)
 
-# Add includes relevant for library build (not PSA crypto interface)
 target_include_directories(psa_crypto_library_config
   INTERFACE
-    # Add nrf_oberon includes
-    ${NRFXLIB_DIR}/crypto/nrf_oberon/include/
-    ${NRFXLIB_DIR}/crypto/nrf_oberon/include/mbedtls
-
-    # Add Oberon PSA Crypto Driver includes
     ${drivers_path}
 )
 
@@ -54,6 +48,11 @@ target_compile_options(oberon_psa_driver
     -Wno-uninitialized
     -Wno-maybe-uninitialized
     -Wno-unused-variable
+)
+
+target_include_directories(oberon_psa_driver
+  PRIVATE
+    ${OBERON_PSA_CORE_PATH}/oberon/drivers
 )
 
 # Link to the PSA interface and library PSA crypto configurations
