@@ -1,0 +1,18 @@
+# Copyright (c) 2024 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+name: nrf70-wifi
+
+boards:
+  nrf54h20dk/nrf54h20/cpuapp:
+    append:
+      EXTRA_CONF_FILE: nrf54h20_cpuapp.conf
+      EXTRA_DTC_OVERLAY_FILE: nrf54h20_cpuapp.overlay
+  nrf54l15dk/nrf54l15/cpuapp:
+    append:
+      EXTRA_CONF_FILE: nrf54l15_cpuapp.conf
+      EXTRA_DTC_OVERLAY_FILE: nrf54l15_cpuapp.overlay
+  nrf54l15pdk/nrf54l15/cpuapp:
+    append:
+      EXTRA_CONF_FILE: nrf54l15_cpuapp.conf
+      EXTRA_DTC_OVERLAY_FILE: nrf54l15_cpuapp.overlay
