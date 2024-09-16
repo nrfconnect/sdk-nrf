@@ -110,7 +110,7 @@ config GETOPT
 	default n
 
 # Temporary hack to be able to build samples and tests on the nRF51L15 FLPR core
-if SOC_NRF54L15_ENGA_CPUFLPR && PARTITION_MANAGER_ENABLED
+if (SOC_NRF54L15_ENGA_CPUFLPR || SOC_NRF54L15_CPUFLPR) && PARTITION_MANAGER_ENABLED
 config FLASH_BASE_ADDRESS
 	hex
 	default 0x0
