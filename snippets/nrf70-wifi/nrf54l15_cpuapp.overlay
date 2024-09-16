@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&rram_controller {
+	/delete-node/ cpuflpr_sram;
+	/delete-node/ cpuflpr_rram;
+};
+
+/* Adjust the cpuapp_sram to include the freed up cpuflpr_sram */
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(256)>;
+	ranges = <0x0 0x20000000 0x20040000>;
+};
+
+/* Adjust the cpuapp_rram to include the freed up cpuflpr_rram */
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1524)>;
+};
