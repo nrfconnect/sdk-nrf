@@ -18,11 +18,10 @@ function(provision application prefix_name)
   set(PROVISION_HEX_NAME     ${prefix_name}provision.hex)
   set(PROVISION_HEX          ${CMAKE_BINARY_DIR}/${PROVISION_HEX_NAME})
 
-  # This calculation is based on the LCS cycle state datacycle state data struct in bl_storage.h
   if(CONFIG_SOC_SERIES_NRF54LX)
-    set(lcs_state_struct_size 0x10) # 4 * 4 bytes
+    set(otp_write_width 4) # OTP writes are in words (4 bytes)
   else()
-    set(lcs_state_struct_size 0x8) # 4 * 2 bytes
+    set(otp_write_width 2) # OTP writes are in half-words (2 bytes)
   endif()
 
   if(CONFIG_SECURE_BOOT)
@@ -87,6 +86,10 @@ function(provision application prefix_name)
     set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
   endif()
 
+  if(SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE AND SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE)
+    set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
+  endif()
+
   if(CONFIG_SECURE_BOOT)
     add_custom_command(
       OUTPUT
@@ -103,7 +106,8 @@ function(provision application prefix_name)
       ${monotonic_counter_arg}
       ${no_verify_hashes_arg}
       ${mcuboot_counters_slots}
-      --lcs-state-size ${lcs_state_struct_size}
+      --otp-write-width ${otp_write_width}
+      ${psa_certificate_reference}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
       ${PROVISION_DEPENDS}
@@ -126,7 +130,8 @@ function(provision application prefix_name)
       --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
       ${mcuboot_counters_num}
       ${mcuboot_counters_slots}
-      --lcs-state-size ${lcs_state_struct_size}
+      --otp-write-width ${otp_write_width}
+      ${psa_certificate_reference}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
       WORKING_DIRECTORY
