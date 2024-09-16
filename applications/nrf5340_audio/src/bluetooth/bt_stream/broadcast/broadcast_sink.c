@@ -158,7 +158,7 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 		LOG_DBG("Failed retrieving frame duration: %d", ret);
 	}
 
-	ret = bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation);
+	ret = bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation, false);
 	if (ret == -ENODATA) {
 		/* Codec channel allocation not set, defaulting to 0 */
 		codec_info->chan_allocation = 0;

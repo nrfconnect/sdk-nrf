@@ -9,3 +9,6 @@ config BT_BUF_ACL_RX_SIZE
 
 config BT_AUDIO_CODEC_CFG_MAX_METADATA_SIZE
 	default 80
+
+config BT_ASCS_MAX_ASE_SRC_COUNT
+	default 1
