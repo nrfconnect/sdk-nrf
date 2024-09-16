@@ -181,18 +181,20 @@ if (CONFIG_MBEDTLS_X509_LIBRARY)
     x509write_csr.c
   )
 
-  add_library(${mbedx509_target} STATIC
+  add_library(mbedx509 STATIC
     ${src_x509}
   )
 
-  # Add options from Zephyr build
-  nrf_security_add_zephyr_options(${mbedx509_target})
-
-  target_link_libraries(${mbedx509_target}
+  # Link with 
+  target_link_libraries(mbedx509
     PRIVATE
+      psa_crypto_config
       ${mbedcrypto_target}
       mbedcrypto_base
   )
+
+  nrf_security_add_zephyr_options(mbedx509)
+
 endif()
 
 # Library for TLS protocol support
@@ -222,19 +224,19 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
     )
   endif()
 
-  add_library(${mbedtls_target} STATIC
+  add_library(mbedtls STATIC
     ${src_tls}
   )
 
-  # Add options from Zephyr build
-  nrf_security_add_zephyr_options(${mbedtls_target})
-
-  target_link_libraries(${mbedtls_target}
+  target_link_libraries(mbedtls
     PRIVATE
-      ${mbedx509_target}
+      psa_crypto_config
+      mbedx509
       ${mbedcrypto_target}
       mbedcrypto_base
   )
+
+  nrf_security_add_zephyr_options(mbedtls)
 endif()
 
 if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)

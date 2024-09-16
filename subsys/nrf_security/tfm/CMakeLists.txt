@@ -9,8 +9,6 @@ include(${NRF_SECURITY_ROOT}/cmake/extensions.cmake)
 
 # Prefix targets as expected from TF-M
 set(mbedcrypto_target ${MBEDTLS_TARGET_PREFIX}mbedcrypto)
-set(mbedx509_target   ${MBEDTLS_TARGET_PREFIX}mbedx509)
-set(mbedtls_target    ${MBEDTLS_TARGET_PREFIX}mbedtls)
 
 # Building nrf security for TF-M implies the following:
 # - Parse NRF_SECURITY_SETTINGS into CMake variables.
