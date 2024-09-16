@@ -10,6 +10,9 @@ include(${NRF_SECURITY_ROOT}/cmake/extensions.cmake)
 # Prefix targets as expected from TF-M
 set(mbedcrypto_target ${MBEDTLS_TARGET_PREFIX}mbedcrypto)
 
+# Set BUILD_INSIDE_TFM to use only for legacy added files
+set(BUILD_INSIDE_TFM True)
+
 # Building nrf security for TF-M implies the following:
 # - Parse NRF_SECURITY_SETTINGS into CMake variables.
 #   Variables transferred from Zephyr to nRF Security TF-M build includes:
