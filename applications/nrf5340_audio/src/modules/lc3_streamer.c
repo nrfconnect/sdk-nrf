@@ -276,7 +276,8 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 		return -EINVAL;
 	}
 
-	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+	/* Check that there's room for the filename and a NULL terminating char */
+	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN - 1) {
 		LOG_ERR("Filename too long");
 		return -EINVAL;
 	}
@@ -303,7 +304,8 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 		return ret;
 	}
 
-	strncpy(streams[*streamer_idx].filename, filename, strlen(filename));
+	strncpy(streams[*streamer_idx].filename, filename,
+		ARRAY_SIZE(streams[*streamer_idx].filename));
 
 	ret = data_fifo_init(&streams[*streamer_idx].fifo);
 	if (ret) {
