@@ -211,7 +211,13 @@ static void send(struct net_buf *buf, bool is_fatal_err)
 	} while (ret < 0);
 
 	LOG_INF("Sent message of %d bytes.", ret);
-
+#if IS_ENABLED(CONFIG_SERIAL)
+	printk("HCI TX DATA:");
+	for(int idx = 0; idx < buf->len; idx++) {
+		printk("%x ", ((uint8_t*)buf->data)[idx]);
+	}
+	printk("\n");
+#endif
 	net_buf_unref(buf);
 }
 
@@ -230,8 +236,14 @@ static void recv(const void *data, size_t len, void *priv)
 	enum hci_h4_type type;
 
 	LOG_INF("Received hci message of %u bytes.", len);
-	LOG_HEXDUMP_DBG(data, len, "HCI data:");
-
+#if IS_ENABLED(CONFIG_SERIAL)
+	printk("HCI RX DATA:");
+	for(int idx = 0; idx < len; idx++) {
+		printk("%x ", ((uint8_t*)data)[idx]);
+	}
+	printk("\n");
+	//LOG_HEXDUMP_DBG(data, len, "HCI data:");
+#endif
 	type = (enum hci_h4_type)*tmp++;
 	len -= sizeof(type);
 
@@ -376,6 +388,9 @@ int ipc_bt_process(void)
 	while (1) {
 		buf = net_buf_get(&rx_queue, K_FOREVER);
 		send(buf, HCI_REGULAR_MSG);
+#if IS_ENABLED(CONFIG_SERIAL)
+		printk("IPC_BT loop\n");
+#endif
 	}
 
 	return 0;

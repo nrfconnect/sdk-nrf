@@ -5,6 +5,7 @@
  */
 
 #include <errno.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 #include "ipc_bt.h"
@@ -25,6 +26,9 @@ int main(void)
 		return err;
 	}
 
+#if IS_ENABLED(CONFIG_SERIAL)
+	printk("IPC initialized\n");
+#endif
 	for (;;) {
 		err = ipc_bt_process();
 
@@ -33,7 +37,12 @@ int main(void)
 			return 0;
 		} else if (err) {
 			LOG_ERR("Error processing ipc radio %d", err);
+
 			return err;
 		}
+
+#if IS_ENABLED(CONFIG_SERIAL)
+		printk("IPC loop\n");
+#endif
 	}
 }
