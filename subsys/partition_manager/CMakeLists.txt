@@ -130,7 +130,7 @@ if (CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH)
   ncs_add_partition_manager_config(pm.yml.modem_trace)
 endif()
 
-if (CONFIG_SOC_NRF54L15_ENGA_CPUFLPR)
+if (CONFIG_SOC_NRF54L15_ENGA_CPUFLPR OR SOC_NRF54L15_ENGA_CPUFLPR)
   ncs_add_partition_manager_config(pm.yml.vpr_launcher)
 endif()
 

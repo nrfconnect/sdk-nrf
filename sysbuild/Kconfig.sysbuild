@@ -16,7 +16,7 @@ if PARTITION_MANAGER
 
 config PM_MCUBOOT_PAD
 	hex "Memory reserved for MCUBOOT_PAD"
-	default 0x800 if BOARD_NRF54L15PDK_NRF54L15_CPUAPP
+	default 0x800 if SOC_SERIES_NRF54LX
 	default 0x200
 	depends on BOOTLOADER_MCUBOOT
 	help
