@@ -650,7 +650,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	int ret;
 	static bool initialized;
 
-	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SET_SIRK_SIZE,
+	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SIRK_SIZE,
 		 "SIRK incorrect size, must be 16 bytes");
 
 	if (initialized) {
@@ -677,8 +677,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 				"before production");
 		}
 
-		memcpy(csip_param.set_sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY,
-		       BT_CSIP_SET_SIRK_SIZE);
+		memcpy(csip_param.sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY, BT_CSIP_SIRK_SIZE);
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(caps); i++) {
