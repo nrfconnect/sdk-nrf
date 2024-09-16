@@ -130,10 +130,10 @@
 		reg = <0x1d>;
 	};
 
-	magnetometer: bmm150@10 {
+	magnetometer: bmm350@14 {
 		status = "disabled";
-		compatible = "bosch,bmm150";
-		reg = <0x10>;
+		compatible = "bosch,bmm350";
+		reg = <0x14>;
 	};
 };
 
