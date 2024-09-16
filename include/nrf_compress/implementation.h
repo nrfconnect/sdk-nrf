@@ -122,7 +122,11 @@ enum nrf_compress_types {
 	/** ARM thumb filter */
 	NRF_COMPRESS_TYPE_ARM_THUMB,
 
-	NRF_COMPRESS_TYPE_COUNT
+	/** Marks end/count of nRF supported filters */
+	NRF_COMPRESS_TYPE_COUNT,
+
+	/** Start of freely usable IDs with custom out-of-tree implementations */
+	NRF_COMPRESS_TYPE_USER_CUSTOM_START = 32768
 };
 
 struct nrf_compress_implementation {
