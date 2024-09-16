@@ -75,4 +75,4 @@ target_link_libraries(oberon_psa_core
     oberon_psa_driver
 )
 
-nrf_security_add_zephyr_options(oberon_psa_driver)
+nrf_security_add_zephyr_options_library(oberon_psa_driver)
