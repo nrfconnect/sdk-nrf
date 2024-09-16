@@ -48,7 +48,7 @@ if(CONFIG_MBEDTLS_ENABLE_HEAP)
   endif()
 endif()
 
-if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND NOT PSA_CRYPTO_EXTERNAL_CORE)
   append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
     pem.c
     pkcs12.c
