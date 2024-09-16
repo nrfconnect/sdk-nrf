@@ -132,6 +132,13 @@ config TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS
 	bool "Include optional claims in initial attestation token"
 	default y
 
+config TFM_ATTEST_VERIFICATION_SERVICE_URL
+	string "TF-M attestation verification service URL"
+	default ""
+	depends on TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS
+	help
+	  Optional claim of URL of the verification service in the TF-M attestation token.
+
 config TFM_ATTEST_INCLUDE_COSE_KEY_ID
 	bool "Include COSE key-id in initial attestation token"
 	default n
