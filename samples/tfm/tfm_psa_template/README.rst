@@ -57,25 +57,31 @@ After programming the sample, the following output is displayed in the console:
 
 .. code-block:: console
 
-    *** Booting nRF Connect SDK v2.6.99-27b5931e8742 ***
-    *** Using Zephyr OS v3.6.99-b5cf30402984 ***
+    *** Booting nRF Connect SDK v2.9.99-ad7a4f0e68fa ***
+    *** Using Zephyr OS v3.7.99-f5efb381b8af ***
     Attempting to boot slot 0.
     Attempting to boot from address 0x8200.
-    Verifying signature against key 0.
-    Hash: 0x43...7f
-    Firmware signature verified.
+    I: Trying to get Firmware version
+    I: Verifying signature against key 0.
+    I: Hash: 0xf0...99
+    I: Firmware signature verified.
     Firmware version 1
-    *** Booting My Application v2.1.0-dev-0b5810de95eb ***
-    *** Using nRF Connect SDK v2.6.99-27b5931e8742 ***
-    *** Using Zephyr OS v3.6.99-b5cf30402984 ***
-    *** Booting nRF Connect SDK v2.6.99-27b5931e8742 ***
-    *** Using Zephyr OS v3.6.99-b5cf30402984 ***
-    build time: May 13 2024 17:13:28
+    *** Booting My Application v2.1.0-dev-b82206c15fff ***
+    *** Using nRF Connect SDK v2.9.99-ad7a4f0e68fa ***
+    *** Using Zephyr OS v3.7.99-f5efb381b8af ***
+    I: Starting bootloader
+    I: Image index: 0, Swap type: none
+    I: Image index: 1, Swap type: none
+    I: Image index: 2, Swap type: none
+    I: Bootloader chainload address offset: 0x20000
+    *** Booting nRF Connect SDK v2.9.99-ad7a4f0e68fa ***
+    *** Using Zephyr OS v3.7.99-f5efb381b8af ***
+    build time: Dec 19 2024 08:31:12
 
     FW info S0:
     Magic: 0x281ee6de8fcebb4c00003502
-    Total Size: 60
-    Size: 0x000081c8
+    Total Size: 140
+    Size: 0x0000805c
     Version: 1
     Address: 0x00008200
     Boot address: 0x00008200
@@ -83,8 +89,8 @@ After programming the sample, the following output is displayed in the console:
 
     FW info S1:
     Magic: 0x281ee6de8fcebb4c00003502
-    Total Size: 60
-    Size: 0x000081c8
+    Total Size: 140
+    Size: 0x0000805c
     Version: 1
     Address: 0x00014200
     Boot address: 0x00014200
@@ -93,28 +99,32 @@ After programming the sample, the following output is displayed in the console:
     Active slot: S0
 
     Requesting initial attestation token with 64 byte challenge.
-    Received initial attestation token of 303 bytes.
+    Received initial attestation token of 360 bytes.
 
     0  1  2  3  4  5  6  7   8  9  A  B  C  D  E  F
-    D2 84 43 A1 01 26 A0 58  E4 AA 3A 00 01 24 FF 58  |  ..C..&.X..:..$.X
-    40 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  @.."3DUfw.......
-    FF 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  ..."3DUfw.......
-    FF 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  ..."3DUfw.......
-    FF 00 11 22 33 44 55 66  77 88 99 AA BB CC DD EE  |  ..."3DUfw.......
-    FF 3A 00 01 24 FB 58 20  3B 32 D3 C6 4F E0 9E 44  |  .:..$.X ;2..O..D
-    85 33 05 C0 7E 1B 14 39  C0 73 22 2E AE 63 68 8C  |  .3..~..9.s"..ch.
-    26 66 52 D2 84 50 EF 56  3A 00 01 25 00 58 21 01  |  &fR..P.V:..%.X!.
-    70 7D AE 14 A9 68 1F 77  99 6F F8 02 CF 69 C2 47  |  p}...h.w.o...i.G
-    BF 3A 10 DD EA C3 74 6E  0B F7 45 CF 2A 25 A9 DA  |  .:....tn..E.*%..
-    3A 00 01 24 FA 58 20 AA  AA AA AA AA AA AA AA BB  |  :..$.X .........
-    BB BB BB BB BB BB BB CC  CC CC CC CC CC CC CC DD  |  ................
-    DD DD DD DD DD DD DD 3A  00 01 24 F8 20 3A 00 01  |  .......:..$. :..
-    24 F9 19 30 00 3A 00 01  24 FE 01 3A 00 01 24 F7  |  $..0.:..$..:..$.
-    60 3A 00 01 25 01 60 3A  00 01 24 FC 60 58 40 00  |  `:..%.`:..$.`X@.
-    E0 AB 97 6B C1 24 8D AF  C9 E1 1C 77 E4 5E 1D 8E  |  ...k.$.....w.^..
-    0D 44 61 76 28 A5 0D A1  BE A3 2D B2 A0 35 77 0E  |  .Dav(.....-..5w.
-    78 72 7D E6 BE A1 10 A2  DC 7C ED 87 76 C7 33 E4  |  xr}......|..v.3.
-    4E 8C 39 3D AA EC 40 EB  31 4B D5 68 80 53 77     |  N.9=..@.1K.h.Sw
+    D2 84 43 A1 01 26 A0 59  01 1C AA 3A 00 01 24 FF  |  ..C..&.Y...:..$.
+    58 40 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  X@.."3DUfw......
+    EE FF 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  ...."3DUfw......
+    EE FF 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  ...."3DUfw......
+    EE FF 00 11 22 33 44 55  66 77 88 99 AA BB CC DD  |  ...."3DUfw......
+    EE FF 3A 00 01 24 FB 58  20 20 E7 18 5E 6F F1 0A  |  ..:..$.X  ..^o..
+    F7 C0 04 63 A9 6C 73 78  65 92 11 02 EC DF 09 EF  |  ...c.lsxe.......
+    4C BD 13 AD 69 A3 33 AD  AE 3A 00 01 25 00 58 21  |  L...i.3..:..%.X!
+    01 69 48 1A 3C 87 E2 6E  48 D3 15 8A 45 F1 D8 E4  |  .iH.<..nH...E...
+    6A 00 A0 14 0C 87 E5 5E  3F B3 B6 98 45 8F 36 5E  |  j......^?...E.6^
+    BB 3A 00 01 24 FA 58 20  AA AA AA AA AA AA AA AA  |  .:..$.X ........
+    BB BB BB BB BB BB BB BB  CC CC CC CC CC CC CC CC  |  ................
+    DD DD DD DD DD DD DD DD  3A 00 01 24 F8 3A 3B FF  |  ........:..$.:;.
+    FF FF 3A 00 01 24 F9 19  30 00 3A 00 01 24 FE 01  |  ..:..$..0.:..$..
+    3A 00 01 24 F7 71 50 53  41 5F 49 4F 54 5F 50 52  |  :..$.qPSA_IOT_PR
+    4F 46 49 4C 45 5F 31 3A  00 01 25 01 70 76 65 72  |  OFILE_1:..%.pver
+    69 66 69 63 61 74 69 6F  6E 5F 75 72 6C 3A 00 01  |  ification_url:..
+    24 FC 73 30 36 33 32 37  39 33 35 31 39 35 33 39  |  $.s0632793519539
+    2D 31 30 31 30 30 58 40  F9 04 F8 56 4F 89 A0 67  |  -10100X@...VO..g
+    2C 21 31 6C 88 EF D6 34  D1 02 4F 6D EA 17 54 9F  |  ,!1l...4..Om..T.
+    B6 90 E4 6E D6 55 4E D3  62 8C 9D 6A 0F 67 8D 9E  |  ...n.UN.b..j.g..
+    D7 05 45 3C 89 BE C2 9B  2B D0 ED 05 F1 AC 42 21  |  ..E<....+.....B!
+    F0 05 00 CE B7 B9 47 E9                           |  ......G.
 
 Firmware update
 ***************
