@@ -222,8 +222,8 @@ Depending on if you build the application using the :ref:`nrfxlib:ot_libs` or if
          ###################        END        ###################
 
       The generated build artefact will also include the list of the :ref:`nrfxlib:nrfxlib` repository changes between the current revision and the latest |NCS| release.
-      If there are no changes related to the used Thread library, you can use :ref:`ug_thread_cert_inheritance_without_modifications`.
-      If the report shows any changes detected in the used Thread library, you will need to contact the Thread Group to check if certification by inheritance is still possible.
+      The resulting report can be useful when applying for certification by inheritance.
+      See :ref:`ug_thread_cert_options` for more details.
 
       An example of the changes detected in the Thread library:
 
