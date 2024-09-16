@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#include <nrf_security_mutexes.h>
+#include "nrf_security_mutexes.h"
 
 #if !defined(MBEDTLS_CONFIG_FILE)
 #include "mbedtls/config.h"
