@@ -1,0 +1,26 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "TF-M"
+	depends on BOARD_IS_NON_SECURE
+
+config TFM_OTP_PSA_CERTIFICATE_REFERENCE
+	bool "Include TF-M attestation PSA certificate reference"
+	depends on BOARD_IS_NON_SECURE
+	help
+	  Include the optional PSA certificate reference in the TF-M attestation token.
+	  Stored in one-time programmable (OTP) memory during provisioning.
+
+config TFM_PSA_CERTIFICATE_REFERENCE_VALUE
+	string "TF-M PSA Certificate Reference"
+	depends on TFM_OTP_PSA_CERTIFICATE_REFERENCE
+	depends on BOARD_IS_NON_SECURE
+	default "0632793519546-10200" if SOC_NRF9160
+	default "0632793519539-10100" if SOC_NRF5340_CPUAPP
+	default ""
+	help
+	  The reference of the PSA certificate.
+	  Certificate details available at https://www.psacertified.org.
+
+endmenu

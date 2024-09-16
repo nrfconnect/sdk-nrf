@@ -18,19 +18,28 @@ IMPLEMENTATION_ID_SIZE = 0x20
 
 # These variable names and values are copied from bl_storage.h and
 # should be kept in sync
+BL_COLLECTION_TYPE_MONOTONIC_COUNTERS = 0x1
+BL_COLLECTION_TYPE_VARIABLE_DATA = 0x9312
+
 BL_MONOTONIC_COUNTERS_DESC_NSIB = 1
 BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0 = 2
 
+BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE = 0x1
+
+# Maximum lengths for the TF-M attestation variable data fields.
+# These are defined in tfm_attest_hal.h and in tfm_plat_device_id.h.
+CERTIFICATION_REF_MAX_SIZE = 19
+
 def generate_provision_intel_hex_file(provision_data, provision_address, output, max_size):
     assert len(provision_data) <= max_size, """Provisioning data doesn't fit.
-Reduce the number of public keys or counter slots and try again."""
+Reduce the number of public keys, counter slots or variable data and try again."""
 
     ih = IntelHex()
     ih.frombytes(provision_data, offset=provision_address)
     ih.write_hex_file(output)
 
 
-def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_slots):
+def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_slots, otp_write_width):
     num_counters = min(mcuboot_counters_slots, 1) + min(num_counter_slots_version, 1)
 
     if num_counters == 0:
@@ -39,23 +48,24 @@ def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_
     assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
     assert mcuboot_counters_slots    % 2 == 0, "--mcuboot-counters-slots     must be an even number"
 
-    provision_data += struct.pack('H', 1) # Type "counter collection"
+    provision_data += struct.pack('H', BL_COLLECTION_TYPE_MONOTONIC_COUNTERS)
     provision_data += struct.pack('H', num_counters) # Could be 0, 1, or 2
 
     if num_counter_slots_version > 0:
         provision_data += struct.pack('H', BL_MONOTONIC_COUNTERS_DESC_NSIB)
         provision_data += struct.pack('H', num_counter_slots_version)
-        provision_data += bytes(2 * num_counter_slots_version * [0xFF])
+        provision_data += bytes(otp_write_width * num_counter_slots_version * [0xFF])
 
     if mcuboot_counters_slots > 0:
         provision_data += struct.pack('H', BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0)
         provision_data += struct.pack('H', mcuboot_counters_slots)
-        provision_data += bytes(2 * mcuboot_counters_slots * [0xFF])
+        provision_data += bytes(otp_write_width * mcuboot_counters_slots * [0xFF])
 
     return provision_data
 
 
-def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size, mcuboot_counters_slots, lcs_state_sz):
+def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size, mcuboot_counters_slots,
+                                             lcs_state_sz, otp_write_width, variable_data):
     # This function generates a .hex file with the provisioned data
     # for the uncommon use-case where MCUBoot is present, but NSIB is
     # not.
@@ -85,13 +95,16 @@ def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size
 
     provision_data = bytes(num_bytes_in_bl_storage_data_struct * [0])
 
-    provision_data = add_hw_counters(provision_data, 0, mcuboot_counters_slots)
+    provision_data = add_hw_counters(provision_data, 0, mcuboot_counters_slots, otp_write_width)
+
+    provision_data += variable_data
 
     generate_provision_intel_hex_file(provision_data, provision_address, output, max_size)
 
 
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
-                                num_counter_slots_version, mcuboot_counters_slots):
+                                num_counter_slots_version, mcuboot_counters_slots, otp_write_width,
+                                variable_data):
 
     provision_data = struct.pack('III', s0_address, s1_address,
                                  len(hashes))
@@ -102,7 +115,13 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
         provision_data += mhash
         idx += 1
 
-    provision_data = add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_slots)
+    provision_data = add_hw_counters(
+        provision_data,
+        num_counter_slots_version,
+        mcuboot_counters_slots,
+        otp_write_width)
+
+    provision_data += variable_data
 
     generate_provision_intel_hex_file(provision_data, provision_address, output, max_size)
 
@@ -130,8 +149,10 @@ def parse_args():
                         help="The MCUBOOT bootloader is used without the NSIB bootloader. Only the provision address, the MCUBOOT counters and the MCUBOOT counters slots arguments will be used.")
     parser.add_argument('--mcuboot-counters-slots', required=False, type=int, default=0,
                         help='Number of monotonic counter slots for every MCUBOOT counter.')
-    parser.add_argument('--lcs-state-size', required=False, type=lambda x: int(x, 0), default=0x8,
-                        help='Size of life cycle state data structure in bytes.')
+    parser.add_argument('--otp-write-width', required=False, type=lambda x: int(x, 0), default=2,
+                        help='OTP-write width in bytes.')
+    parser.add_argument('--psa-certificate-reference', required=False, type=str, default=None,
+                        help='(Optional) PSA certificate reference for the TF-M attestation token.')
     return parser.parse_args()
 
 
@@ -151,15 +172,67 @@ def get_hashes(public_key_files, verify_hashes):
 
     return hashes
 
+def get_variable_data(psa_certification_reference):
+    # Get variable data to be written to the OTP region.
+    #
+    # Variable data, if present, starts with variable data collection ID, followed
+    # by amount of variable data entries and the variable data entries themselves.
+    # [Collection ID][Variable count][Type][Variable data length][Variable data][Type]...
+    # 2 bytes        2 bytes         1 byte 1 byte                0-255 bytes
+    #
+    variable_data = b''
+    variable_data_count = 0
+
+    def add_variable_data(variable_data_type, data):
+        nonlocal variable_data
+        nonlocal variable_data_count
+
+        variable_data += struct.pack('B', variable_data_type)
+        variable_data += struct.pack('B', len(data))
+        variable_data += data.encode('ascii')
+        variable_data_count += 1
+
+    if psa_certification_reference:
+        if len(psa_certification_reference) > CERTIFICATION_REF_MAX_SIZE:
+            raise RuntimeError(f"PSA certification reference is too long. Maximum length is {CERTIFICATION_REF_MAX_SIZE} characters.")
+        add_variable_data(BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE, psa_certification_reference)
+
+    if variable_data_count:
+        # Add the variable data header at the beginning of the variable data.
+        variable_data = struct.pack('H', BL_COLLECTION_TYPE_VARIABLE_DATA) + \
+            struct.pack('H', variable_data_count) +  \
+            variable_data
+
+        # Padding to align to 4 bytes.
+        padding_length = (4 - (len(variable_data) % 4)) % 4
+        variable_data += b'\x00' * padding_length
+
+    return variable_data
+
+def get_lcs_size(otp_write_width):
+
+    # Life-cycle-states to be written to the OTP. The values are copied from bl_storage.h.
+    lcs = {
+        'BL_STORAGE_LCS_ASSEMBLY': 0x1,
+        'BL_STORAGE_LCS_PROVISIONING': 0x2,
+        'BL_STORAGE_LCS_SECURED': 0x3,
+        'BL_STORAGE_LCS_DECOMMISSIONED': 0x4
+    }
+
+    return len(lcs) * otp_write_width
 
 def main():
     args = parse_args()
 
-    lcs_state_size = args.lcs_state_size
-    num_bytes_provisioned_elsewhere = lcs_state_size + IMPLEMENTATION_ID_SIZE
+    lcs_size = get_lcs_size(args.otp_write_width)
+    num_bytes_provisioned_elsewhere = lcs_size + IMPLEMENTATION_ID_SIZE
 
     if not args.mcuboot_only and args.s0_addr is None:
         raise RuntimeError("Either --mcuboot-only or --s0-addr must be specified")
+
+    variable_data = get_variable_data(
+        psa_certification_reference=args.psa_certificate_reference
+    )
 
     if args.mcuboot_only:
         generate_mcuboot_only_provision_hex_file(
@@ -167,7 +240,9 @@ def main():
             output=args.output,
             max_size=args.max_size,
             mcuboot_counters_slots=args.mcuboot_counters_slots,
-            lcs_state_sz=lcs_state_size
+            lcs_state_sz=lcs_size,
+            otp_write_width=args.otp_write_width,
+            variable_data=variable_data
         )
         return
 
@@ -197,7 +272,9 @@ def main():
         output=args.output,
         max_size=max_size,
         num_counter_slots_version=args.num_counter_slots_version,
-        mcuboot_counters_slots=args.mcuboot_counters_slots
+        mcuboot_counters_slots=args.mcuboot_counters_slots,
+        otp_write_width=args.otp_write_width,
+        variable_data=variable_data
     )
 
 

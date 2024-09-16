@@ -10,14 +10,13 @@
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
-#if defined(CONFIG_BUILD_WITH_TFM)
-#include <stdlib.h>
-#else
+#if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
 #endif
 
-#define TYPE_COUNTERS 1 /* Type referring to counter collection. */
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
+
+#define ALIGN_TO_WORD(x) ((uint32_t)x & 0x3)
 
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF
@@ -30,6 +29,10 @@ BUILD_ASSERT(CONFIG_SB_NUM_VER_COUNTER_SLOTS % 2 == 0,
 #ifdef CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
 			 "CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS was not an even number");
+#endif
+
+#if defined(CONFIG_BUILD_WITH_TFM)
+void tfm_core_panic(void);
 #endif
 
 #if defined(CONFIG_NRFX_RRAMC)
@@ -85,7 +88,7 @@ static uint16_t bl_storage_otp_halfword_read(uint32_t address)
 #elif defined(CONFIG_NRFX_RRAMC)
 	uint32_t word = nrfx_rramc_otp_word_read(index_from_address(address));
 
-	if (!(address & 0x3)) {
+	if (!ALIGN_TO_WORD(address)) {
 		halfword = (uint16_t)(word & 0x0000FFFF); /* C truncates the upper bits */
 	} else {
 		halfword = (uint16_t)(word >> 16); /* Shift the upper half down */
@@ -139,7 +142,7 @@ static bool key_is_valid(uint32_t key_idx)
 
 	/* Invalid value. */
 #if defined(CONFIG_BUILD_WITH_TFM)
-	abort();
+	tfm_core_panic();
 #else
 	k_panic();
 #endif
@@ -173,19 +176,36 @@ int verify_public_keys(void)
  * time. Writes to @p dst are done a byte at a time.
  *
  * @param[out] dst destination buffer.
- * @param[in] src source buffer in OTP. Must be 4-byte-aligned.
- * @param[in] size number of *bytes* in src to copy into dst. Must be divisible by 4.
+ * @param[in] src source buffer in OTP.
+ * @param[in] size number of *bytes* in src to copy into dst.
  */
-static void otp_copy32(uint8_t *restrict dst, uint32_t volatile * restrict src,
-				   size_t size)
+static void otp_copy(uint8_t *restrict dst, const uint8_t volatile * restrict src, size_t size)
 {
-	for (int i = 0; i < size / 4; i++) {
-		/* OTP is in UICR */
-		uint32_t val = bl_storage_word_read((uint32_t)(src + i));
+	size_t copied = 0; /* Bytes copied. */
+	uint8_t src_offset = ALIGN_TO_WORD(src); /* Align the src address to 32-bits. */
 
-		for (int j = 0; j < 4; j++) {
-			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
+	uint32_t val;	   /* 32-bit value read from the OTP. */
+	uint8_t copy_size; /* Number of bytes to copy. */
+
+	while (copied < size) {
+		/* Read 32-bits. */
+		val = bl_storage_word_read((uint32_t)(src + copied - src_offset));
+
+		/* Calculate the size to copy. */
+		copy_size = sizeof(val) - src_offset;
+		if (size - copied < copy_size) {
+			copy_size = size - copied;
 		}
+
+		/* Copy the data one byte at a time. */
+		for (int i = 0; i < copy_size; i++) {
+			*dst++ = (val >> (8 * (i + src_offset))) & 0xFF;
+		}
+
+		/* Source address is aligned to 32-bits after the first iteration. */
+		src_offset = 0;
+
+		copied += copy_size;
 	}
 }
 
@@ -210,7 +230,7 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf)
 	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
 	__ASSERT(((uint32_t)p_key % 4 == 0), "Key address is not word aligned");
 
-	otp_copy32(p_buf, (volatile uint32_t *restrict)p_key, SB_PUBLIC_KEY_HASH_LEN);
+	otp_copy(p_buf, p_key, SB_PUBLIC_KEY_HASH_LEN);
 
 	return SB_PUBLIC_KEY_HASH_LEN;
 }
@@ -226,13 +246,24 @@ void invalidate_public_key(uint32_t key_idx)
 	}
 }
 
-/** Get the counter_collection data structure in the provision data. */
-const struct counter_collection *get_counter_collection(void)
+static const struct collection *get_first_collection(void)
 {
-	const struct counter_collection *collection = (struct counter_collection *)
-		&BL_STORAGE->key_data[num_public_keys_read()];
-	return bl_storage_otp_halfword_read((uint32_t)&collection->type) == TYPE_COUNTERS
-		? collection : NULL;
+	return (const struct collection *)&BL_STORAGE->key_data[num_public_keys_read()];
+}
+
+static uint16_t get_collection_type(const struct collection *collection)
+{
+	return bl_storage_otp_halfword_read((uint32_t)&collection->type);
+}
+
+/** Get the counter_collection data structure in the provision data. */
+static const struct counter_collection *get_counter_collection(void)
+{
+	const struct collection *collection = get_first_collection();
+
+	return get_collection_type(collection) == BL_COLLECTION_TYPE_MONOTONIC_COUNTERS
+		       ? (const struct counter_collection *)collection
+		       : NULL;
 }
 
 /** Get one of the (possibly multiple) counters in the provision data.
@@ -250,7 +281,7 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description)
 	const struct monotonic_counter *current = counters->counters;
 
 	for (size_t i = 0; i < bl_storage_otp_halfword_read(
-		(uint32_t)&counters->num_counters); i++) {
+		(uint32_t)&counters->collection.count); i++) {
 		uint16_t num_slots = bl_storage_otp_halfword_read(
 					(uint32_t)&current->num_counter_slots);
 
@@ -468,8 +499,105 @@ void read_implementation_id_from_otp(uint8_t *buf)
 		return;
 	}
 
-	otp_copy32(buf, (uint32_t *)&BL_STORAGE->implementation_id,
+	otp_copy(buf, (uint8_t *)&BL_STORAGE->implementation_id,
 		   BL_STORAGE_IMPLEMENTATION_ID_SIZE);
 }
 
-#endif
+static uint32_t get_monotonic_counter_collection_size(const struct counter_collection *collection)
+{
+	/* Add only the constant part of the counter_collection. */
+	uint32_t size = sizeof(struct collection);
+	uint16_t num_counters =
+		bl_storage_otp_halfword_read((uint32_t)&collection->collection.count);
+	const struct monotonic_counter *counter = collection->counters;
+	uint16_t num_slots;
+
+	for (int i = 0; i < num_counters; i++) {
+		/* Add only the constant part of the monotonic_counter. */
+		size += sizeof(struct monotonic_counter);
+
+		num_slots = bl_storage_otp_halfword_read((uint32_t)&counter->num_counter_slots);
+		size += (num_slots * sizeof(counter_t));
+
+		/* Move to the next monotonic counter. */
+		counter = (const struct monotonic_counter *)&counter->counter_slots[num_slots];
+	}
+
+	return size;
+}
+
+static const struct variable_data_collection *get_variable_data_collection(void)
+{
+	/* We expect to find variable data after the monotonic counters. */
+	const struct collection *collection = get_first_collection();
+
+	if (get_collection_type(collection) == BL_COLLECTION_TYPE_MONOTONIC_COUNTERS) {
+		/* Advance to next collection. */
+		collection = (const struct collection *)((uint8_t *)collection +
+							 get_monotonic_counter_collection_size(
+								 (const struct counter_collection *)
+									 collection));
+
+		/* Verify that we found variable collection. */
+		return get_collection_type(collection) == BL_COLLECTION_TYPE_VARIABLE_DATA
+			       ? (const struct variable_data_collection *)collection
+			       : NULL;
+
+	} else if (get_collection_type(collection) == BL_COLLECTION_TYPE_VARIABLE_DATA) {
+		/* Bit of a special scenario where monotonic counters are not present. */
+		return (const struct variable_data_collection *)collection;
+	}
+
+	return NULL;
+}
+
+int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t *buf_len)
+{
+	const struct variable_data_collection *collection;
+	const struct variable_data *variable_data;
+	uint16_t count;
+	uint8_t type;
+	uint8_t length;
+
+	if (buf == NULL) {
+		return -EINVAL;
+	}
+
+	collection = get_variable_data_collection();
+	if (collection == NULL) {
+		/* Variable data collection does not necessarily exist. Exit gracefully. */
+		*buf_len = 0;
+		return 0;
+	}
+
+	/* Loop through all variable data entries. */
+	variable_data = collection->variable_data;
+	count = bl_storage_otp_halfword_read((uint32_t)&collection->collection.count);
+	for (int i = 0; i < count; i++) {
+		/* Read the type and length of the variable data. */
+		otp_copy((uint8_t *)&type, (uint8_t *)&variable_data->type, sizeof(type));
+		otp_copy((uint8_t *)&length, (uint8_t *)&variable_data->length, sizeof(length));
+
+		if (type == data_type) {
+			/* Found the requested variable data. */
+			if (*buf_len < length) {
+				return -ENOMEM;
+			}
+
+			/* Copy the variable data into the buffer. */
+			otp_copy(buf, (uint8_t *)&variable_data->data, length);
+			*buf_len = length;
+			return 0;
+		}
+		/* Move to the next variable data entry. */
+		variable_data =
+			(const struct variable_data *)((uint8_t *)&variable_data->data + length);
+	}
+
+	/* No matching variable data. */
+	*buf_len = 0;
+
+	return 0;
+}
+
+#endif /* CONFIG_BUILD_WITH_TFM */

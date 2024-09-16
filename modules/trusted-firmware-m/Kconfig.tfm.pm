@@ -59,7 +59,8 @@ config PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE
 
 config PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
 	hex "Memory reserved for TFM OTP / Non-Volatile Counters"
-	default 0x2000 if !TFM_PROFILE_TYPE_MINIMAL
+	default 0x2000 if !TFM_PROFILE_TYPE_MINIMAL && \
+		!TFM_PLATFORM_NV_COUNTER_MODULE_DISABLED
 	default 0
 	help
 	  Memory set aside for the OTP / Non-Volatile (NV) Counters partition
