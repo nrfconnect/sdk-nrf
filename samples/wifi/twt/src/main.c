@@ -18,7 +18,6 @@ LOG_MODULE_REGISTER(twt, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/posix/sys/socket.h>
 #endif
 
-#include <nrfx_clock.h>
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -6,6 +6,10 @@
 
 #include "ot_coex_functions.h"
 
+#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#include <nrfx_clock.h>
+#endif
+
 bool is_ot_device_role_client;
 
 uint8_t ot_wait4_ping_reply_from_peer;

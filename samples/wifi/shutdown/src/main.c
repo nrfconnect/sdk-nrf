@@ -11,7 +11,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(shutdown, CONFIG_LOG_DEFAULT_LEVEL);
 
-#include <nrfx_clock.h>
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
