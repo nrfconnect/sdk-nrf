@@ -32,5 +32,6 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    working_with_nrf/nrf54h/ug_nrf54h20_architecture
    working_with_nrf/nrf54h/ug_nrf54h20_configuration
    working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu
+   working_with_nrf/nrf54h/ug_nrf54h20_logging
    working_with_nrf/nrf54h/ug_nrf54h20_debugging
    working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb
