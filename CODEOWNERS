@@ -343,6 +343,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /tests/                                   @nrfconnect/ncs-co-verification @katgiadla
 /tests/benchmarks/multicore/              @carlescufi
 /tests/benchmarks/multicore/idle/         @adamkondraciuk @nrfconnect/ncs-low-level-test
+/tests/benchmarks/multicore/idle_gpio/    @adamkondraciuk @nrfconnect/ncs-low-level-test
 /tests/benchmarks/i2c_endless/            @nrfconnect/ncs-low-level-test
 /tests/benchmarks/spi_endless/            @nrfconnect/ncs-low-level-test
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin

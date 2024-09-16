@@ -34,10 +34,11 @@ int main(void)
 {
 	unsigned int cnt = 0;
 	int rc;
-	const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
-	if (!device_is_ready(gpio_dev)) {
-		return -ENODEV;
+	rc = gpio_is_ready_dt(&sw);
+	if (rc < 0) {
+		LOG_ERR("GPIO Device not ready (%d)\n", rc);
+		return 0;
 	}
 
 	rc = gpio_pin_configure_dt(&sw, GPIO_INPUT);
@@ -52,12 +53,12 @@ int main(void)
 		return 0;
 	}
 	gpio_init_callback(&gpio_cb, my_gpio_callback, 0xFFFF);
-	gpio_add_callback(gpio_dev, &gpio_cb);
-	LOG_INF("Multicore idle_gpio test on %s", CONFIG_BOARD_TARGET);
+	gpio_add_callback(sw.port, &gpio_cb);
+	LOG_INF("Multicore idle_gpio test on %s\n", CONFIG_BOARD_TARGET);
 	while (1) {
-		LOG_INF("Multicore idle_gpio test iteration %u", cnt++);
+		LOG_INF("Multicore idle_gpio test iteration %u\n", cnt++);
 		if (k_sem_take(&my_gpio_sem, K_FOREVER) != 0) {
-			LOG_ERR("Failed to take a semaphore");
+			LOG_ERR("Failed to take a semaphore\n");
 			return 0;
 		}
 		k_busy_wait(1000000);
