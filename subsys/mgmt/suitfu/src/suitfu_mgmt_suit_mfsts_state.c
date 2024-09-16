@@ -79,7 +79,7 @@ int suitfu_mgmt_suit_manifest_state_read(struct smp_streamer *ctx)
 	struct zcbor_string zcs = {0};
 	int rc = 0;
 
-	suit_manifest_role_t role = 0;
+	uint32_t role = 0;
 	suit_ssf_manifest_class_info_t class_info = {0};
 	unsigned int seq_num = 0;
 	suit_semver_raw_t semver_raw = {0};
@@ -89,11 +89,12 @@ int suitfu_mgmt_suit_manifest_state_read(struct smp_streamer *ctx)
 	suit_plat_mreg_t digest;
 
 	struct zcbor_map_decode_key_val manifest_state_read_decode[] = {
-		ZCBOR_MAP_DECODE_KEY_VAL(role, zcbor_int_decode, &role)};
+		ZCBOR_MAP_DECODE_KEY_VAL(role, zcbor_uint32_decode, &role)};
 
-	if (zcbor_map_decode_bulk(zsd, manifest_state_read_decode,
-				  ARRAY_SIZE(manifest_state_read_decode), &decoded) != 0) {
-		LOG_ERR("Decoding manifest state read request failed");
+	rc = zcbor_map_decode_bulk(zsd, manifest_state_read_decode,
+				   ARRAY_SIZE(manifest_state_read_decode), &decoded);
+	if (rc) {
+		LOG_ERR("Decoding manifest state read request failed: %d", rc);
 		return MGMT_ERR_EINVAL;
 	}
 
