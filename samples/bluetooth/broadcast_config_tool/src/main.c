@@ -716,16 +716,18 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 			shell_print(shell, "\t\tOctets per frame: %d", octets_per_sdu);
 		}
 
-		int language = bt_audio_codec_cfg_meta_get_stream_lang(codec_cfg);
+		const uint8_t *language;
 
-		if (language > 0) {
+		ret = bt_audio_codec_cfg_meta_get_lang(codec_cfg, &language);
+
+		if (ret) {
+			shell_print(shell, "\t\tLanguage: not_set");
+		} else {
 			char lang[LANGUAGE_LEN + 1] = {'\0'};
 
-			memcpy(lang, &language, LANGUAGE_LEN);
+			memcpy(lang, language, LANGUAGE_LEN);
 
 			shell_print(shell, "\t\tLanguage: %s", lang);
-		} else {
-			shell_print(shell, "\t\tLanguage: not_set");
 		}
 
 		shell_print(shell, "\t\tContext(s):");
@@ -1196,9 +1198,9 @@ static int cmd_lang_set(const struct shell *shell, size_t argc, char **argv)
 		return ret;
 	}
 
-	bt_audio_codec_cfg_meta_set_stream_lang(
+	bt_audio_codec_cfg_meta_set_lang(
 		&broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.codec_cfg,
-		sys_get_le24(language));
+		language);
 
 	return 0;
 }
