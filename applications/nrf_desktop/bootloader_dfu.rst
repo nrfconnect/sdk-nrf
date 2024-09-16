@@ -286,6 +286,9 @@ SUIT
 The :file:`<build_dir>/DFU/root.suit` SUIT envelope is used in the SUIT DFU procedure.
 The envelope contains both the manifest and the update candidates for the application and radio cores.
 
+Alternatively, the :file:`<build_dir>/zephyr/dfu_suit.zip` package can be used in the SUIT DFU procedure.
+Apart from the :file:`root.suit` SUIT envelope and image binaries, the ZIP package contains the :file:`manifest.json` that describes the DFU package similarly to the one used in MCUboot and B0-based DFU solutions (:file:`<build_dir>/dfu_application.zip`).
+
 Update image transfer
 =====================
 
@@ -336,18 +339,19 @@ To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the 
 
       1. Generate the SUIT envelope by building your application with the FOTA support over Bluetooth Low Energy.
          You can find the generated :file:`root.suit` envelope in the :file:`<build_dir>/DFU` directory.
-      #. Download the :file:`root.suit` envelope to your device.
+         Alternatively, you can use the generated :file:`dfu_suit.zip` package in the :file:`<build_dir>/zephyr` directory.
+      #. Download the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package to your device.
 
          .. note::
             `nRF Connect for Desktop`_ does not currently support the FOTA process.
 
       #. Use the `nRF Connect Device Manager`_ mobile app to update your device with the new firmware.
 
-         a. Ensure that you can access the :file:`root.suit` envelope from your phone or tablet.
+         a. Ensure that you can access the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package from your phone or tablet.
          #. In the mobile app, scan and select the device to update.
-         #. Switch to the :guilabel:`Image` tab and tap on :guilabel:`ADVANCED` in the upper right corner of the app.
-         #. In the **Firmware Upload** section, tap the :guilabel:`SELECT FILE` button and select the :file:`root.suit` envelope.
-         #. Tap the :guilabel:`UPLOAD` button.
+         #. Switch to the :guilabel:`Image` tab.
+         #. In the **Firmware Upgrade** section, tap the :guilabel:`SELECT FILE` button and select the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package.
+         #. Tap the :guilabel:`START` button.
          #. Wait for the DFU to finish and then verify that the application works properly.
 
       .. note::
