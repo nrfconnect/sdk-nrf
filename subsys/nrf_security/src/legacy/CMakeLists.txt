@@ -11,14 +11,6 @@ endif()
 # Legacy APIs missing driver support or APIs assumed to be
 # deprecated with more PSA API awareness.
 append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
-  dhm.c
-  cipher.c
-  cipher_wrap.c
-  md.c
-  pk.c
-  pk_ecc.c
-  pk_wrap.c
-  pkwrite.c
   sha1.c
   sha256.c
   sha512.c
@@ -26,8 +18,6 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
   md5.c
   aesni.c
   aesce.c
-  psa_util.c
-  platform_util.c
 )
 
 # Add all files that are neccessary for (nrf_oberon or cracen) + builtin in legacy mode
