@@ -42,5 +42,6 @@ The following table indicates the compatibility between nRF54H20 firmware bundle
    working_with_nrf/nrf54h/ug_nrf54h20_architecture
    working_with_nrf/nrf54h/ug_nrf54h20_configuration
    working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu
+   working_with_nrf/nrf54h/ug_nrf54h20_logging
    working_with_nrf/nrf54h/ug_nrf54h20_debugging
    working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb
