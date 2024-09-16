@@ -45,9 +45,11 @@ config BT_ASCS
 	default y
 
 config BT_ASCS_ASE_SNK_COUNT
+	int "Number of Audio Sink Endpoints"
 	default 1
 
 config BT_ASCS_ASE_SRC_COUNT
+	int "Number of Audio Source Endpoints"
 	default 1 if STREAM_BIDIRECTIONAL
 	default 0 if !STREAM_BIDIRECTIONAL
 
