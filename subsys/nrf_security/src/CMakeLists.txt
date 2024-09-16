@@ -55,6 +55,15 @@ if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
     pkcs5.c
     pkparse.c
     pkwrite.c
+    dhm.c
+    cipher.c
+    cipher_wrap.c
+    md.c
+    pk.c
+    pk_ecc.c
+    pk_wrap.c
+    pkwrite.c
+    psa_util.c
   )
 endif()
 
@@ -83,6 +92,16 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   version.c
   constant_time.c
 )
+
+# Legacy APIs were missing files added by Oberon PSA core (not built in
+# certain instances. This adds the same platform support as the Oberon PSA core)
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
+  append_with_prefix(src_crypto_base  ${OBERON_PSA_CORE_PATH}/library/
+    platform.c
+    platform_util.c
+  )
+endif()
+
 
 # Add threading support for PSA core (if enabled)
 include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
