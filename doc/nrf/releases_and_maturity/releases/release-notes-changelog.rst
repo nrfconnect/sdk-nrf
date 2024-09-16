@@ -368,6 +368,7 @@ Cellular samples
 * :ref:`modem_shell_application` sample:
 
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Added the ``uiccpowersave`` link command for reading/setting UICC power saving mode. This feature is supported by Modem Firmware 2.0.2 or higher.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
@@ -685,6 +686,12 @@ Modem libraries
 
     * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
     * The :c:func:`lte_lc_neighbor_cell_measurement` function to return an error for invalid GCI count.
+
+  * Added:
+
+    * The :c:func:`lte_lc_uiccpowersave_get` function for reading the current UICC power saving mode, and the :c:func:`lte_lc_uiccpowersave_set` function for setting the UICC power saving mode. These functions are supported by Modem Firmware 2.0.2 or higher. Please refer to the :ref:`lte_lc_readme` documentation for more information.
+    * The :c:enum:`LTE_LC_UICCPOWERSAVE_DEFAULT`, :c:enum:`LTE_LC_UICCPOWERSAVE_POLLING`, :c:enum:`LTE_LC_UICCPOWERSAVE_BYPASS`, and :c:enum:`LTE_LC_UICCPOWERSAVE_RRC` UICC power saving modes. These modes are supported by Modem Firmware 2.0.2 or higher. Please refer to the :ref:`lte_lc_readme` documentation for more information.
+    * The :kconfig:option:`CONFIG_LTE_UICCPOWERSAVE_DEFAULT`, :kconfig:option:`CONFIG_LTE_UICCPOWERSAVE_POLLING`, :kconfig:option:`CONFIG_LTE_UICCPOWERSAVE_BYPASS`, and :kconfig:option:`CONFIG_LTE_UICCPOWERSAVE_RRC` Kconfig options for setting the respective UICC power saving modes during initialization. These Kconfig options are supported by Modem Firmware 2.0.2 or higher.
 
 * :ref:`lib_location` library:
 

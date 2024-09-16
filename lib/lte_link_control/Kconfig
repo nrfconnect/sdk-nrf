@@ -349,6 +349,57 @@ config LTE_LC_WORKQUEUE_STACK_SIZE
 	default 1280 if LOG_MODE_IMMEDIATE
 	default 1024
 
+choice LTE_UICCPOWERSAVE_MODE
+	prompt "UICC power saving mode."
+	default LTE_UICCPOWERSAVE_DEFAULT
+	help
+	  Select the UICC power saving mode.
+	  Note: This feature is supported by Modem Firmware 2.0.2 or higher.
+
+config LTE_UICCPOWERSAVE_DEFAULT
+	bool "Default functionality for UICC deactivation. UICC is deactivated in some conditions."
+	help
+	  The UICC is deactivated during eDRX only when: it is allowed by the EF-AD (Elementary
+	  File - Administrative Data); application PIN is disabled; sleep mode time is longer than
+	  the minimum time limit (1 minute in ultra low power mode and 5 minutes in
+	  other power modes). Note: AT&T has a shorter minimum time of 20.48 seconds.
+	  Proactive polling interval can be modified during eDRX sleep only if allowed in EF-AD.
+	  Note: This feature is supported by Modem Firmware 2.0.2 or higher.
+
+config LTE_UICCPOWERSAVE_POLLING
+	bool "If UICC deactivation is not allowed, increase proactive polling interval instead."
+	help
+	  If UICC deactivation is not allowed due to some conditions mentioned in
+	  LTE_UICCPOWERSAVE_DEFAULT, the proactive polling interval is increased to match the eDRX
+	  sleep time regardless of EF-AD content.
+	  If the interval is already longer than the sleep time, it is not affected.
+	  Note: This feature is supported by Modem Firmware 2.0.2 or higher.
+
+config LTE_UICCPOWERSAVE_BYPASS
+	bool "When deactivating the UICC, bypass certain conditions."
+	help
+	  Bypass conditions related to EF-AD, PIN state, and minimum deactivation time when
+	  deactivating the UICC.
+	  After deactivation on eDRX sleep, the UICC is activated only when the EMM (EPS Mobility
+	  Management) is starting to initiate signalling to the network.
+	  Note: This feature is supported by Modem Firmware 2.0.2 or higher.
+
+config LTE_UICCPOWERSAVE_RRC
+	bool "When deactivating, bypass certain conditions. Additionally, activate on RRC IDLE."
+	help
+	  In addition to LTE_UICCPOWERSAVE_BYPASS, this allows the UICC deactivation when entering
+	  RRC IDLE state. The UICC is activated before the next RRC connection.
+	  Note: This feature is supported by Modem Firmware 2.0.2 or higher.
+
+endchoice
+
+config LTE_UICCPOWERSAVE_MODE_VALUE
+	int
+	default 0 if LTE_UICCPOWERSAVE_DEFAULT
+	default 1 if LTE_UICCPOWERSAVE_POLLING
+	default 2 if LTE_UICCPOWERSAVE_BYPASS
+	default 3 if LTE_UICCPOWERSAVE_RRC
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library

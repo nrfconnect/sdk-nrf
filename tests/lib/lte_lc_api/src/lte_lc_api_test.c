@@ -279,6 +279,8 @@ void test_lte_lc_on_modem_init_success(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", EXIT_SUCCESS);
 	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", EXIT_SUCCESS);
+	/* lte_lc_uiccpowersave(0) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=0", EXIT_SUCCESS);
 	/* lte_lc_edrx_req(false) */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
@@ -320,6 +322,8 @@ void test_lte_lc_on_modem_init_edrx_req_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", -NRF_EFAULT);
 	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", -NRF_EFAULT);
+	/* lte_lc_uiccpowersave(0) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=0", EXIT_SUCCESS);
 	/* lte_lc_edrx_req(false) */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", -NRF_EFAULT);
 
@@ -336,6 +340,8 @@ void test_lte_lc_on_modem_init_rai_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,0,0", EXIT_SUCCESS);
 	/* CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION=y */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%FEACONF=0,3,1", EXIT_SUCCESS);
+	/* lte_lc_uiccpowersave(0) */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=0", EXIT_SUCCESS);
 	/* lte_lc_edrx_req(false) */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
@@ -4448,6 +4454,69 @@ void test_lte_lc_reduced_mobility_get_null(void)
 	int ret;
 
 	ret = lte_lc_reduced_mobility_get(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_uiccpowersave_set_success(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=0", 0);
+	ret = lte_lc_uiccpowersave_set(LTE_LC_UICCPOWERSAVE_DEFAULT);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=1", 0);
+	ret = lte_lc_uiccpowersave_set(LTE_LC_UICCPOWERSAVE_POLLING);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=2", 0);
+	ret = lte_lc_uiccpowersave_set(LTE_LC_UICCPOWERSAVE_BYPASS);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=3", 0);
+	ret = lte_lc_uiccpowersave_set(LTE_LC_UICCPOWERSAVE_RRC);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_uiccpowersave_set_fail(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%UICCPOWERSAVE=0", -NRF_ENOMEM);
+
+	ret = lte_lc_uiccpowersave_set(LTE_LC_UICCPOWERSAVE_DEFAULT);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_uiccpowersave_get_success(void)
+{
+	int ret;
+	enum lte_lc_uiccpowersave_mode mode;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT%UICCPOWERSAVE?", "%%UICCPOWERSAVE: %hu", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_UICCPOWERSAVE_POLLING);
+
+	ret = lte_lc_uiccpowersave_get(&mode);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL(LTE_LC_UICCPOWERSAVE_POLLING, mode);
+}
+
+void test_lte_lc_uiccpowersave_get_fail(void)
+{
+	int ret;
+	enum lte_lc_uiccpowersave_mode mode;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT%UICCPOWERSAVE?", "%%UICCPOWERSAVE: %hu", 2);
+
+	ret = lte_lc_uiccpowersave_get(&mode);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_uiccpowersave_get_null(void)
+{
+	int ret;
+
+	ret = lte_lc_uiccpowersave_get(NULL);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 

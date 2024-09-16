@@ -651,6 +651,47 @@ enum lte_lc_reduced_mobility_mode {
 	LTE_LC_REDUCED_MOBILITY_DISABLED = 2,
 };
 
+/**
+ * UICC power saving mode.
+ */
+enum lte_lc_uiccpowersave_mode {
+	/**
+	 * Default functionality.
+	 * The UICC is deactivated during eDRX only when:
+	 * - \li It is allowed by the EF-AD (Elementary File - Administrative Data)
+	 * - \li Application PIN is disabled
+	 * - \li Sleep mode time is longer than the minimum time limit (1 minute in ultra
+	 *   low power mode and 5 minutes in other power modes)
+	 *
+	 * @note AT&T has a shorter minimum time of 20.48 seconds.
+	 *
+	 * Proactive polling interval can be modified during eDRX sleep only if allowed in EF-AD.
+	 */
+	LTE_LC_UICCPOWERSAVE_DEFAULT = 0,
+
+	/**
+	 * If UICC deactivation is not allowed due to some conditions mentioned in
+	 * @ref LTE_LC_UICCPOWERSAVE_DEFAULT, the proactive polling interval is increased to
+	 * match the eDRX sleep time regardless of EF-AD content.
+	 * If the interval is already longer than the sleep time, it is not affected.
+	 */
+	LTE_LC_UICCPOWERSAVE_POLLING = 1,
+
+	/**
+	 * Bypass conditions related to EF-AD, PIN state, and minimum deactivation time when
+	 * deactivating the UICC.
+	 * After deactivation on eDRX sleep, the UICC is activated only when the EMM (EPS
+	 * Mobility Management) is starting to initiate signalling to the network.
+	 */
+	LTE_LC_UICCPOWERSAVE_BYPASS = 2,
+
+	/**
+	 * In addition to @ref LTE_LC_UICCPOWERSAVE_BYPASS, this allows UICC deactivation when
+	 * entering RRC IDLE state. The UICC is activated before the next RRC connection.
+	 */
+	LTE_LC_UICCPOWERSAVE_RRC = 3
+};
+
 /** Modem domain events. */
 enum lte_lc_modem_evt {
 	/**
@@ -1739,6 +1780,35 @@ int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
  * @retval -EFAULT if an AT command failed.
  */
 int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
+
+/**
+ * Read the current UICC power saving mode.
+ *
+ * @note This feature is only supported by modem firmware versions >= 2.0.2.
+ *
+ * @param[out] mode Pointer to a variable where the current UICC power saving mode will be stored.
+ *
+ * @retval 0 if the mode was successfully read and stored in the provided pointer.
+ * @retval -EINVAL if the input parameter is NULL.
+ * @retval -EFAULT if an AT command failed to execute.
+ *
+ * @note This function retrieves the current UICC power saving mode set on the modem.
+ */
+int lte_lc_uiccpowersave_get(enum lte_lc_uiccpowersave_mode *mode);
+
+/**
+ * Set the UICC power saving mode.
+ *
+ * @note This feature is only supported by modem firmware versions >= 2.0.2.
+ *
+ * @param[in] mode The UICC power saving mode to set.
+ *
+ * @retval 0 if the new UICC power saving mode was successfully set.
+ * @retval -EFAULT if an AT command failed to execute.
+ *
+ * @note This function configures the modem to use a specific UICC power saving mode.
+ */
+int lte_lc_uiccpowersave_set(enum lte_lc_uiccpowersave_mode mode);
 
 /**
  * Reset modem to factory settings.

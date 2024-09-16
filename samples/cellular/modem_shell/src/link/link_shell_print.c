@@ -147,6 +147,19 @@ const char *link_shell_redmob_mode_to_string(int funmode, char *out_str_buff)
 	return link_shell_map_to_string(mapping_table, funmode, out_str_buff);
 }
 
+const char *link_shell_uiccpowersave_mode_to_string(int mode, char *out_str_buff)
+{
+	struct mapping_tbl_item const mapping_table[] = {
+		{ LTE_LC_UICCPOWERSAVE_DEFAULT, "default_mode" },
+		{ LTE_LC_UICCPOWERSAVE_POLLING, "polling" },
+		{ LTE_LC_UICCPOWERSAVE_BYPASS, "bypass" },
+		{ LTE_LC_UICCPOWERSAVE_RRC, "rrc" },
+		{ -1, NULL }
+	};
+
+	return link_shell_map_to_string(mapping_table, mode, out_str_buff);
+}
+
 const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {

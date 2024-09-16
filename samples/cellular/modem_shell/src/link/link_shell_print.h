@@ -25,5 +25,6 @@ const char *link_shell_sysmode_currently_active_to_string(int actmode, char *out
 const char *link_shell_map_to_string(struct mapping_tbl_item const *mapping_table,
 				      int mode, char *out_str_buff);
 const char *link_shell_redmob_mode_to_string(int funmode, char *out_str_buff);
+const char *link_shell_uiccpowersave_mode_to_string(int mode, char *out_str_buff);
 
 #endif /* MOSH_LINK_SHELL_PRINT_H */

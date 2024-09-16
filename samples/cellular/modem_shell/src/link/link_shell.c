@@ -48,7 +48,8 @@ enum link_shell_command {
 	LINK_CMD_RAI,
 	LINK_CMD_DNSADDR,
 	LINK_CMD_REDMOB,
-	LINK_CMD_PROPRIPSM
+	LINK_CMD_PROPRIPSM,
+	LINK_CMD_UICCPOWERSAVE,
 };
 
 enum link_shell_operation {
@@ -357,6 +358,40 @@ static const char link_propripsm_usage_str[] =
 	"  -e, --enable,       Enable proprietary PSM\n"
 	"  -h, --help,         Shows this help information";
 
+static const char link_uiccpowersave_usage_str[] =
+	"Usage: link uiccpowersave [options] | --read\n"
+	"Options:\n"
+	"  -r, --read,         Read and print the current UICC power saving mode.\n"
+	"      --default_mode, Default functionality.\n"
+	"                      The UICC is deactivated during eDRX only when:\n"
+	"                      - It is allowed by the EF-AD (Elementary File - Administrative\n"
+	"                        Data)\n"
+	"                      - Application PIN is disabled\n"
+	"                      - Sleep mode time is longer than the minimum time limit (1 minute\n"
+	"                        in ultra low power mode and 5 minutes in other power modes)\n"
+	"                      Note: AT&T has a shorter minimum time of 20.48 seconds.\n"
+	"                      Proactive polling interval can be modified during eDRX sleep only\n"
+	"                      if allowed in EF-AD.\n"
+	"                      Supported with modem firmware versions >= 2.0.2.\n"
+	"      --polling,      If UICC deactivation is not allowed due to some conditions\n"
+	"                      mentioned in --default_mode, the proactive polling interval is\n"
+	"                      increased to match the eDRX sleep time regardless of EF-AD\n"
+	"                      content.\n"
+	"                      If the interval is already longer than the sleep time,\n"
+	"                      it is not affected.\n"
+	"                      Supported with modem firmware versions >= 2.0.2.\n"
+	"      --bypass,       Bypass conditions related to EF-AD, PIN state, and minimum\n"
+	"                      deactivation time when deactivating the UICC.\n"
+	"                      After deactivation on eDRX sleep, the UICC is activated only when\n"
+	"                      the EMM (EPS Mobility Management) is starting to initiate\n"
+	"                      signalling to the network.\n"
+	"                      Supported with modem firmware versions >= 2.0.2.\n"
+	"      --rrc,          In addition to --bypass, this allows UICC deactivation when\n"
+	"                      entering RRC IDLE state. The UICC is activated before the next RRC\n"
+	"                      connection.\n"
+	"                      Supported with modem firmware versions >= 2.0.2.\n"
+	"  -h, --help,         Shows this help information";
+
 /* The following do not have short options */
 enum {
 	LINK_SHELL_OPT_MEM_SLOT_1 = 1001,
@@ -397,7 +432,11 @@ enum {
 	LINK_SHELL_OPT_LTEM_EDRX,
 	LINK_SHELL_OPT_LTEM_PTW,
 	LINK_SHELL_OPT_NBIOT_EDRX,
-	LINK_SHELL_OPT_NBIOT_PTW
+	LINK_SHELL_OPT_NBIOT_PTW,
+	LINK_SHELL_OPT_UICCPOWERSAVE_DEFAULT,
+	LINK_SHELL_OPT_UICCPOWERSAVE_POLLING,
+	LINK_SHELL_OPT_UICCPOWERSAVE_BYPASS,
+	LINK_SHELL_OPT_UICCPOWERSAVE_RRC,
 };
 
 /* Specifying the expected options (both long and short) */
@@ -469,6 +508,10 @@ static struct option long_options[] = {
 	{ "normal_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
 	{ "default", no_argument, 0, LINK_SHELL_OPT_REDMOB_DEFAULT },
 	{ "nordic", no_argument, 0, LINK_SHELL_OPT_REDMOB_NORDIC },
+	{ "default_mode", no_argument, 0, LINK_SHELL_OPT_UICCPOWERSAVE_DEFAULT },
+	{ "polling", no_argument, 0, LINK_SHELL_OPT_UICCPOWERSAVE_POLLING },
+	{ "bypass", no_argument, 0, LINK_SHELL_OPT_UICCPOWERSAVE_BYPASS },
+	{ "rrc", no_argument, 0, LINK_SHELL_OPT_UICCPOWERSAVE_RRC },
 	{ 0, 0, 0, 0 }
 };
 
@@ -538,6 +581,9 @@ static void link_shell_print_usage(enum link_shell_command command)
 		break;
 	case LINK_CMD_PROPRIPSM:
 		mosh_print_no_format(link_propripsm_usage_str);
+		break;
+	case LINK_CMD_UICCPOWERSAVE:
+		mosh_print_no_format(link_uiccpowersave_usage_str);
 		break;
 	default:
 		break;
@@ -1997,6 +2043,85 @@ show_usage:
 	return 0;
 }
 
+static int link_shell_uiccpowersave(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
+	enum lte_lc_uiccpowersave_mode uiccpowersave_mode = LINK_UICCPOWERSAVE_NONE;
+	char snum[10];
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case 'r':
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error("Only -r option can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+
+		case LINK_SHELL_OPT_UICCPOWERSAVE_DEFAULT:
+			uiccpowersave_mode = LTE_LC_UICCPOWERSAVE_DEFAULT;
+			break;
+		case LINK_SHELL_OPT_UICCPOWERSAVE_POLLING:
+			uiccpowersave_mode = LTE_LC_UICCPOWERSAVE_POLLING;
+			break;
+		case LINK_SHELL_OPT_UICCPOWERSAVE_BYPASS:
+			uiccpowersave_mode = LTE_LC_UICCPOWERSAVE_BYPASS;
+			break;
+		case LINK_SHELL_OPT_UICCPOWERSAVE_RRC:
+			uiccpowersave_mode = LTE_LC_UICCPOWERSAVE_RRC;
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
+		enum lte_lc_uiccpowersave_mode mode;
+
+		ret = lte_lc_uiccpowersave_get(&mode);
+		if (ret) {
+			mosh_error("Cannot get UICC power saving mode: %d", ret);
+		} else {
+			mosh_print(
+				"UICC power saving mode read successfully: %s",
+				link_shell_uiccpowersave_mode_to_string(mode, snum));
+		}
+	} else if (uiccpowersave_mode != LINK_UICCPOWERSAVE_NONE) {
+		ret = lte_lc_uiccpowersave_set(uiccpowersave_mode);
+		if (ret) {
+			mosh_error("Cannot set UICC power saving mode: %d", ret);
+		} else {
+			mosh_print(
+				"UICC power saving mode set successfully: %s",
+				link_shell_uiccpowersave_mode_to_string(uiccpowersave_mode, snum));
+		}
+	} else {
+		goto show_usage;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_UICCPOWERSAVE);
+	return 0;
+}
+
 static int link_shell_rsrp(const struct shell *shell, size_t argc, char **argv)
 {
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
@@ -2664,6 +2789,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		tau, NULL,
 		"Subscribe/unsubscribe for modem TAU pre-warning notifications.",
 		link_shell_tau, 0, 10),
+	SHELL_CMD_ARG(
+		uiccpowersave, NULL,
+		"Set/read UICC power saving modes of the modem.",
+		link_shell_uiccpowersave, 0, 10),
 	SHELL_SUBCMD_SET_END
 );
 

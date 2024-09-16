@@ -1821,6 +1821,39 @@ int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode)
 	return 0;
 }
 
+int lte_lc_uiccpowersave_get(enum lte_lc_uiccpowersave_mode *mode)
+{
+	int ret;
+	uint16_t mode_tmp;
+
+	if (mode == NULL) {
+		return -EINVAL;
+	}
+
+	ret = nrf_modem_at_scanf("AT%UICCPOWERSAVE?", "%%UICCPOWERSAVE: %hu", &mode_tmp);
+	if (ret != 1) {
+		LOG_ERR("AT command failed, nrf_modem_at_scanf() returned error: %d", ret);
+		return -EFAULT;
+	}
+
+	*mode = mode_tmp;
+
+	return 0;
+}
+
+int lte_lc_uiccpowersave_set(enum lte_lc_uiccpowersave_mode mode)
+{
+	int ret = nrf_modem_at_printf("AT%%UICCPOWERSAVE=%d", mode);
+
+	if (ret) {
+		/* Failure to send the AT command. */
+		LOG_ERR("AT command failed, returned error code: %d", ret);
+		return -EFAULT;
+	}
+
+	return 0;
+}
+
 int lte_lc_factory_reset(enum lte_lc_factory_reset_type type)
 {
 	return nrf_modem_at_printf("AT%%XFACTORYRESET=%d", type) ? -EFAULT : 0;

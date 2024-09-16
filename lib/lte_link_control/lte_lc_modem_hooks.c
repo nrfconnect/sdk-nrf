@@ -87,6 +87,12 @@ static void on_modem_init(int err, void *ctx)
 	(void)nrf_modem_at_printf("AT%%FEACONF=0,3,%d",
 		IS_ENABLED(CONFIG_LTE_PLMN_SELECTION_OPTIMIZATION));
 
+	/* Only supported in mfw 2.0.2 and newer.
+	 * Ignore the return value; an error likely means that the feature
+	 * is not supported.
+	 */
+	(void)lte_lc_uiccpowersave_set(CONFIG_LTE_UICCPOWERSAVE_MODE_VALUE);
+
 	err = lte_lc_edrx_req(IS_ENABLED(CONFIG_LTE_EDRX_REQ));
 	if (err) {
 		LOG_ERR("Failed to configure eDRX, err %d", err);
