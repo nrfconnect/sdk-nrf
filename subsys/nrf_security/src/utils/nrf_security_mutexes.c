@@ -9,7 +9,7 @@
 
 #include <errno.h>
 #include <stdbool.h>
-#include <nrf_security_mutexes.h>
+#include "nrf_security_mutexes.h"
 
 #if !defined(__NRF_TFM__)
 #include <zephyr/kernel.h>
