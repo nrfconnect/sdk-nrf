@@ -158,7 +158,7 @@ static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 		LOG_DBG("Failed retrieving frame duration: %d", ret);
 	}
 
-	ret = bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation);
+	ret = bt_audio_codec_cfg_get_chan_allocation(codec, &codec_info->chan_allocation, false);
 	if (ret == -ENODATA) {
 		/* Codec channel allocation not set, defaulting to 0 */
 		codec_info->chan_allocation = 0;
@@ -279,7 +279,7 @@ static bool base_subgroup_bis_cb(const struct bt_bap_base_subgroup_bis *bis, voi
 	bool single_bit = (chan_bitfield & (chan_bitfield - 1)) == 0;
 
 	if (single_bit) {
-		bis_index_bitfields[bis->index - 1] = BIT(bis->index);
+		bis_index_bitfields[bis->index - 1] = BIT(bis->index - 1);
 	} else {
 		LOG_WRN("More than one bit set in channel location, we only support 1 channel per "
 			"BIS");
