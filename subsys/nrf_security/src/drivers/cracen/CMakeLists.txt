@@ -36,6 +36,7 @@ target_link_libraries(cracen_psa_driver
   PRIVATE
     psa_crypto_library_config
     psa_interface
+    nrf_security_utils
 )
 
 # Link oberon_psa_core with this PSA crypto driver
