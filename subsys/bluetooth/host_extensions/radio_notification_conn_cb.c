@@ -10,34 +10,17 @@
 #include <bluetooth/radio_notification_cb.h>
 #include <bluetooth/hci_vs_sdc.h>
 
-#include <nrfx_egu.h>
-
-#if defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU0)
-#define EGU_INST_IDX 0
-#elif defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU1)
-#define EGU_INST_IDX 1
-#elif defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU2)
-#define EGU_INST_IDX 2
-#elif defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU3)
-#define EGU_INST_IDX 3
-#elif defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU4)
-#define EGU_INST_IDX 4
-#elif defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU5)
-#define EGU_INST_IDX 5
-#elif defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU10)
-#define EGU_INST_IDX 10
-#elif defined(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_INST_EGU020)
-#define EGU_INST_IDX 020
-#else
-#error "Unknown EGU instance"
+#if defined(CONFIG_SOC_COMPATIBLE_NRF52X) || defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
+#include <hal/nrf_rtc.h>
+static uint32_t sys_clock_start_to_bt_clk_start_us;
 #endif
 
-static nrfx_egu_t egu_inst = NRFX_EGU_INSTANCE(EGU_INST_IDX);
 static uint32_t configured_prepare_distance_us;
 static const struct bt_radio_notification_conn_cb *registered_cb;
 
 static struct bt_conn *conn_pointers[CONFIG_BT_MAX_CONN];
-static struct k_work_delayable work_queue_items[CONFIG_BT_MAX_CONN];
+static struct k_timer timers[CONFIG_BT_MAX_CONN];
+static struct k_work work_queue_items[CONFIG_BT_MAX_CONN];
 
 static uint32_t conn_interval_us_get(const struct bt_conn *conn)
 {
@@ -62,76 +45,60 @@ static void work_handler(struct k_work *work)
 
 	if (info.state == BT_CONN_STATE_CONNECTED) {
 		registered_cb->prepare(conn);
-
-		uint32_t conn_interval_us = conn_interval_us_get(conn);
-
-		/* Schedule the callback in case the connection event does not occur because
-		 * of peripheral latency or scheduling conflicts.
-		 */
-		k_work_reschedule(&work_queue_items[index], K_USEC(conn_interval_us));
+	} else {
+		k_timer_stop(&timers[index]);
 	}
 }
 
-static void egu_isr_handler(uint8_t event_idx, void *context)
+static void timer_handler(struct k_timer *timer)
 {
-	ARG_UNUSED(context);
+	uint8_t conn_index = ARRAY_INDEX(timers, timer);
 
-	__ASSERT_NO_MSG(event_idx < ARRAY_SIZE(work_queue_items));
+	k_work_submit(&work_queue_items[conn_index]);
+}
 
-	struct bt_conn *conn = conn_pointers[event_idx];
+static bool on_vs_evt(struct net_buf_simple *buf)
+{
+	uint8_t subevent_code;
+	struct bt_conn *conn;
+	sdc_hci_subevent_vs_conn_anchor_point_update_report_t *evt = NULL;
+
+	subevent_code = net_buf_simple_pull_u8(buf);
+
+	switch (subevent_code) {
+	case SDC_HCI_SUBEVENT_VS_CONN_ANCHOR_POINT_UPDATE_REPORT:
+		evt = (void *)buf->data;
+		break;
+	default:
+		return false;
+	}
+
+	conn = bt_hci_conn_lookup_handle(evt->conn_handle);
+	if (!conn) {
+		return true;
+	}
+
 	uint32_t conn_interval_us = conn_interval_us_get(conn);
-
-	__ASSERT_NO_MSG(conn_interval_us > configured_prepare_distance_us);
-
-	const uint32_t timer_distance_us =
-		conn_interval_us - configured_prepare_distance_us;
-
-	k_work_reschedule(&work_queue_items[event_idx], K_USEC(timer_distance_us));
-}
-
-static int setup_event_start_task(struct bt_conn *conn)
-{
-	int err;
-	uint8_t conn_index;
-	uint16_t conn_handle;
-
-	err = bt_hci_get_conn_handle(conn, &conn_handle);
-	if (err) {
-		return err;
-	}
-
-	conn_index = bt_conn_index(conn);
-
-	const sdc_hci_cmd_vs_set_event_start_task_t params = {
-		.handle = conn_handle,
-		.handle_type = SDC_HCI_VS_SET_EVENT_START_TASK_HANDLE_TYPE_CONN,
-		.task_address = nrfx_egu_task_address_get(&egu_inst,
-			nrf_egu_trigger_task_get(conn_index)),
-	};
-
-	return hci_vs_sdc_set_event_start_task(&params);
-}
-
-static void on_connected(struct bt_conn *conn, uint8_t conn_err)
-{
-	if (!registered_cb) {
-		return;
-	}
-
-	if (conn_err) {
-		return;
-	}
-
 	uint8_t conn_index = bt_conn_index(conn);
 
 	conn_pointers[conn_index] = conn;
 
-	setup_event_start_task(conn);
-}
+	bt_conn_unref(conn);
+	conn = NULL;
 
-BT_CONN_CB_DEFINE(conn_params_updated_cb) = {
-	.connected = on_connected,
-};
+	uint64_t timer_trigger_us =
+		evt->anchor_point_us + conn_interval_us - configured_prepare_distance_us;
+
+#if defined(CONFIG_SOC_COMPATIBLE_NRF52X) || defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
+	timer_trigger_us -= sys_clock_start_to_bt_clk_start_us;
+#endif
+
+	/* Start/Restart a timer triggering every conn_interval_us from the last anchor point. */
+	k_timer_start(&timers[conn_index], K_TIMEOUT_ABS_US(timer_trigger_us),
+		      K_USEC(conn_interval_us));
+
+	return true;
+}
 
 int bt_radio_notification_conn_cb_register(const struct bt_radio_notification_conn_cb *cb,
 					   uint32_t prepare_distance_us)
@@ -140,9 +107,25 @@ int bt_radio_notification_conn_cb_register(const struct bt_radio_notification_co
 		return -EALREADY;
 	}
 
+	int err;
+
+	err = bt_hci_register_vnd_evt_cb(on_vs_evt);
+	if (err) {
+		return err;
+	}
+
+	sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t enable_params = {
+		.enable = true
+	};
+
+	err = hci_vs_sdc_conn_anchor_point_update_event_report_enable(&enable_params);
+	if (err) {
+		return err;
+	}
+
 	for (size_t i = 0; i < CONFIG_BT_MAX_CONN; i++) {
-		nrfx_egu_int_enable(&egu_inst, nrf_egu_channel_int_get(i));
-		k_work_init_delayable(&work_queue_items[i], work_handler);
+		k_work_init(&work_queue_items[i], work_handler);
+		k_timer_init(&timers[i], timer_handler, NULL);
 	}
 
 	registered_cb = cb;
@@ -151,30 +134,48 @@ int bt_radio_notification_conn_cb_register(const struct bt_radio_notification_co
 	return 0;
 }
 
-static int driver_init(const struct device *dev)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF52X) || defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
+static int set_sys_clock_start_to_bt_clk_start_us(void)
 {
-	nrfx_err_t err;
+	/* To obtain the system clock from the bt clock timestamp
+	 * we find the offset between RTC0 and RTC1.
+	 * We achieve this by reading out the counter value of both of them.
+	 * When the diff between those two have been equal twice, we know the
+	 * time difference in ticks.
+	 */
 
-	err = nrfx_egu_init(&egu_inst,
-			    CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_TRIGGER_ISR_PRIO,
-			    egu_isr_handler,
-			    NULL);
-	if (err != NRFX_SUCCESS) {
-		return -EALREADY;
+	uint32_t sync_attempts = 10;
+	int32_t ticks_difference = 0;
+
+	while (sync_attempts > 0) {
+		sync_attempts--;
+
+		int32_t diff_measurement_1 =
+			nrf_rtc_counter_get(NRF_RTC0) - nrf_rtc_counter_get(NRF_RTC1);
+
+		/* We need to wait half an RTC tick to ensure we are not measuring
+		 * the diff between the two RTCs at the point in time where their
+		 * values are transitioning.
+		 */
+		k_busy_wait(15);
+
+		int32_t diff_measurement_2 =
+			nrf_rtc_counter_get(NRF_RTC0) - nrf_rtc_counter_get(NRF_RTC1);
+
+		ticks_difference = diff_measurement_1;
+		if (diff_measurement_1 == diff_measurement_2) {
+			break;
+		}
 	}
 
-	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_EGU_INST_GET(EGU_INST_IDX)),
-		    CONFIG_BT_RADIO_NOTIFICATION_CONN_CB_EGU_TRIGGER_ISR_PRIO,
-		    nrfx_isr,
-		    NRFX_EGU_INST_HANDLER_GET(EGU_INST_IDX),
-		    0);
-	irq_enable(NRFX_IRQ_NUMBER_GET(NRF_EGU_INST_GET(EGU_INST_IDX)));
+	const uint64_t rtc_ticks_in_femto_units = 30517578125UL;
 
+	__ASSERT_NO_MSG(ticks_difference >= 0);
+
+	sys_clock_start_to_bt_clk_start_us =
+		((ticks_difference * rtc_ticks_in_femto_units) / 1000000000UL);
 	return 0;
 }
 
-DEVICE_DEFINE(conn_event_notification, "radion_notification_conn_cb",
-	      driver_init, NULL,
-	      NULL, NULL,
-	      POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE,
-	      NULL);
+SYS_INIT(set_sys_clock_start_to_bt_clk_start_us, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+#endif
