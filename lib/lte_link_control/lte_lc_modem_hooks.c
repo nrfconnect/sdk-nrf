@@ -132,20 +132,6 @@ static void on_modem_init(int err, void *ctx)
 }
 
 #if defined(CONFIG_UNITY)
-void on_modem_shutdown(void *ctx)
-#else
-NRF_MODEM_LIB_ON_SHUTDOWN(lte_lc_shutdown_hook, on_modem_shutdown, NULL);
-
-static void on_modem_shutdown(void *ctx)
-#endif
-{
-	/* Make sure the Modem library was in normal mode and not in bootloader mode. */
-	if (nrf_modem_is_initialized()) {
-		(void)lte_lc_power_off();
-	}
-}
-
-#if defined(CONFIG_UNITY)
 void lte_lc_on_modem_cfun(int mode, void *ctx)
 #else
 NRF_MODEM_LIB_ON_CFUN(lte_lc_cfun_hook, lte_lc_on_modem_cfun, NULL);
