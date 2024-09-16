@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-   / {
+/ {
 	aliases {
 		sw1 = &button1;
 	};
@@ -16,7 +16,7 @@
 			zephyr,code = <INPUT_KEY_1>;
 		};
 	};
-   };
+};
 
 &gpio0 {
 	status = "okay";
