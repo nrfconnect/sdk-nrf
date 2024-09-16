@@ -11,7 +11,6 @@
 #include "tfm_attest_hal.h"
 #include "tfm_plat_boot_seed.h"
 #include "tfm_plat_device_id.h"
-#include "tfm_plat_otp.h"
 #include <nrf_cc3xx_platform.h>
 #include "tfm_strnlen.h"
 #include "nrf_provisioning.h"
@@ -72,50 +71,30 @@ int tfm_attest_update_security_lifecycle_otp(enum tfm_security_lifecycle_t slc)
 	return update_life_cycle_state(next_lcs);
 }
 
-enum tfm_plat_err_t tfm_attest_hal_get_verification_service(uint32_t *size, uint8_t *buf)
+static const char *get_attestation_profile(void)
 {
-	enum tfm_plat_err_t err;
-	size_t otp_size;
-	size_t copy_size;
-
-	err = tfm_plat_otp_read(PLAT_OTP_ID_VERIFICATION_SERVICE_URL, *size, buf);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
-	}
-
-	err = tfm_plat_otp_get_size(PLAT_OTP_ID_VERIFICATION_SERVICE_URL, &otp_size);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
-	}
-
-	/* Actually copied data is always the smaller */
-	copy_size = *size < otp_size ? *size : otp_size;
-	/* String content */
-	*size = tfm_strnlen((char *)buf, copy_size);
-
-	return TFM_PLAT_ERR_SUCCESS;
+#if defined(CONFIG_TFM_ATTEST_TOKEN_PROFILE_PSA_IOT_1)
+	return "PSA_IOT_PROFILE_1";
+#elif defined(CONFIG_TFM_ATTEST_TOKEN_PROFILE_PSA_2_0_0)
+	return "http://arm.com/psa/2.0.0";
+#elif defined(CONFIG_TFM_ATTEST_TOKEN_PROFILE_ARM_CCA)
+	return "http://arm.com/CCA-SSD/1.0.0";
+#else
+#error "Attestation token profile not defined"
+#endif
 }
 
 enum tfm_plat_err_t tfm_attest_hal_get_profile_definition(uint32_t *size, uint8_t *buf)
 {
-	enum tfm_plat_err_t err;
-	size_t otp_size;
-	size_t copy_size;
+	const char *profile = get_attestation_profile();
+	uint32_t profile_len = strlen(profile);
 
-	err = tfm_plat_otp_read(PLAT_OTP_ID_PROFILE_DEFINITION, *size, buf);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
+	if (*size < profile_len) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-	err = tfm_plat_otp_get_size(PLAT_OTP_ID_PROFILE_DEFINITION, &otp_size);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
-	}
-
-	/* Actually copied data is always the smaller */
-	copy_size = *size < otp_size ? *size : otp_size;
-	/* String content */
-	*size = tfm_strnlen((char *)buf, copy_size);
+	memcpy(buf, profile, profile_len);
+	*size = profile_len;
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
@@ -144,27 +123,30 @@ enum tfm_plat_err_t tfm_plat_get_implementation_id(uint32_t *size, uint8_t *buf)
 	return TFM_PLAT_ERR_SUCCESS;
 }
 
+#if CONFIG_TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS
+
 enum tfm_plat_err_t tfm_plat_get_cert_ref(uint32_t *size, uint8_t *buf)
-
 {
-	enum tfm_plat_err_t err;
-	size_t otp_size;
-	size_t copy_size;
-
-	err = tfm_plat_otp_read(PLAT_OTP_ID_CERT_REF, *size, buf);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
+	if (read_variable_data(BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE, buf, size)) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
-
-	err = tfm_plat_otp_get_size(PLAT_OTP_ID_CERT_REF, &otp_size);
-	if (err != TFM_PLAT_ERR_SUCCESS) {
-		return err;
-	}
-
-	/* Actually copied data is always the smaller */
-	copy_size = *size < otp_size ? *size : otp_size;
-	/* String content */
-	*size = tfm_strnlen((char *)buf, copy_size);
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
+
+enum tfm_plat_err_t tfm_attest_hal_get_verification_service(uint32_t *size, uint8_t *buf)
+{
+	const char *url = CONFIG_TFM_ATTEST_VERIFICATION_SERVICE_URL;
+	uint32_t url_len = strlen(url);
+
+	if (*size < url_len) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
+	memcpy(buf, url, url_len);
+	*size = url_len;
+
+	return TFM_PLAT_ERR_SUCCESS;
+}
+
+#endif /* CONFIG_TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS */
