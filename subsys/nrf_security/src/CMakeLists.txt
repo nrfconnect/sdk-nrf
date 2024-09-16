@@ -26,7 +26,6 @@ string(REPLACE "/" "\\/" PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX ${PSA_CRYPTO_CON
 # Add include folders for psa_crypto_config (interface builds)
 target_include_directories(psa_crypto_config
   INTERFACE
-    #$<BUILD_INTERFACE:${PSA_CRYPTO_CONFIG_INTERFACE_PATH}>
     ${PSA_CRYPTO_CONFIG_INTERFACE_PATH}
     ${NRF_SECURITY_ROOT}/include
 )
@@ -35,6 +34,7 @@ target_include_directories(psa_crypto_config
 target_include_directories(psa_crypto_library_config
   INTERFACE
     ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
+    ${NRF_SECURITY_ROOT}/include
 )
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
@@ -71,6 +71,12 @@ endif()
 add_library(${mbedcrypto_target}
   STATIC
     ${src_crypto}
+)
+
+target_link_libraries(${mbedcrypto_target}
+  INTERFACE
+    psa_crypto_config
+    psa_interface
 )
 
 if(CONFIG_PSA_SSF_CRYPTO_CLIENT)
@@ -114,9 +120,10 @@ add_library(mbedcrypto_base
 )
 
 target_link_libraries(mbedcrypto_base
+  PRIVATE
+    psa_crypto_config
+    $<TARGET_NAME_IF_EXISTS:platform_s>
   PUBLIC
-    # Enable the PSA crypto (client) interface or the library build
-    $<IF:$<BOOL:${CONFIG_MBEDTLS_PSA_CRYPTO_C}>,psa_crypto_library_config,psa_crypto_config>
     psa_interface
 )
 

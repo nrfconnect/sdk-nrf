@@ -113,12 +113,6 @@ target_compile_definitions(psa_crypto_library_config
     -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
 )
 
-target_include_directories(psa_crypto_library_config
-  INTERFACE
-    ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
-    ${NRF_SECURITY_ROOT}/include
-)
-
 # Add a library for crypto includes for the PSA interface (NS, S-only and TF-M)
 # The name and intent of this comes from TF-M distribution
 add_library(psa_interface INTERFACE)
