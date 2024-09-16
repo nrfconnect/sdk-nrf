@@ -164,16 +164,18 @@ target_compile_options(${mbedcrypto_target}
     -Wno-unused-variable
 )
 
-add_subdirectory(core)
+# Add PSA core
+if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
+  add_subdirectory(core)
+endif()
 
-# Add drivers if enabled
+# Add drivers (for legacy and PSA crypto build)
 add_subdirectory(drivers)
 
-# Add legacy mbed TLS APIs
-add_subdirectory(legacy)
-
-# Print all files in the mbedcrypto_target (with optional legacy-additions)
-nrf_security_debug_list_target_files(${mbedcrypto_target})
+# Add legacy Mbed TLS APIs
+if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
+  add_subdirectory(legacy)
+endif()
 
 # In TF-M build, a psa_interface lib is created and we must inherit its settings
 set_property(TARGET ${mbedcrypto_target}
