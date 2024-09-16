@@ -120,6 +120,8 @@ target_link_libraries(mbedcrypto_base
     psa_interface
 )
 
+nrf_security_add_zephyr_options(mbedcrypto_base)
+
 # Misusing the psa_crypto_config and psa_crypto_library_config awareness to 
 # set compiler-flags to ensure right floating-point types are set
 if(COMPILER_CP_FLAG)
