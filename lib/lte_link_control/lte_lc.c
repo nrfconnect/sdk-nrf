@@ -135,9 +135,6 @@ K_WORK_DEFINE(lte_lc_psm_get_work, lte_lc_psm_get_work_fn);
 static void lte_lc_edrx_ptw_send_work_fn(struct k_work *work_item);
 K_WORK_DEFINE(lte_lc_edrx_ptw_send_work, lte_lc_edrx_ptw_send_work_fn);
 
-static void lte_lc_edrx_req_work_fn(struct k_work *work_item);
-K_WORK_DEFINE(lte_lc_edrx_req_work, lte_lc_edrx_req_work_fn);
-
 K_THREAD_STACK_DEFINE(lte_lc_work_q_stack, CONFIG_LTE_LC_WORKQUEUE_STACK_SIZE);
 
 static struct k_work_q lte_lc_work_q;
@@ -1107,11 +1104,6 @@ int lte_lc_edrx_get(struct lte_lc_edrx_cfg *edrx_cfg)
 	return 0;
 }
 
-static void lte_lc_edrx_req_work_fn(struct k_work *work_item)
-{
-	lte_lc_edrx_req(requested_edrx_enable);
-}
-
 #if defined(CONFIG_UNITY)
 void lte_lc_edrx_on_modem_cfun(int mode, void *ctx)
 #else
@@ -1128,7 +1120,11 @@ static void lte_lc_edrx_on_modem_cfun(int mode, void *ctx)
 	 */
 	if (mode == LTE_LC_FUNC_MODE_POWER_OFF && requested_edrx_enable) {
 		lte_lc_edrx_current_values_clear();
-		k_work_submit_to_queue(&lte_lc_work_q, &lte_lc_edrx_req_work);
+		/* We want to avoid sending AT commands in the callback. However,
+		 * when modem is powered off, we are not expecting AT notifications
+		 * that could cause an assertion or missing notification.
+		 */
+		lte_lc_edrx_req(requested_edrx_enable);
 	}
 }
 
