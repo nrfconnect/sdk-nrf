@@ -266,7 +266,6 @@ static int sys_init_helper(void)
 }
 
 extern void on_modem_init(int err, void *ctx);
-extern void on_modem_shutdown(void *ctx);
 extern void lte_lc_on_modem_cfun(int mode, void *ctx);
 
 void test_lte_lc_on_modem_init_success(void)
@@ -342,21 +341,6 @@ void test_lte_lc_on_modem_init_rai_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%RAI=0", -NRF_EFAULT);
 
 	on_modem_init(0, NULL);
-}
-
-void test_lte_lc_on_modem_shutdown(void)
-{
-	__cmock_nrf_modem_is_initialized_ExpectAndReturn(true);
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", EXIT_SUCCESS);
-
-	on_modem_shutdown(NULL);
-}
-
-void test_lte_lc_on_modem_shutdown_not_initialized(void)
-{
-	__cmock_nrf_modem_is_initialized_ExpectAndReturn(false);
-
-	on_modem_shutdown(NULL);
 }
 
 static int lte_lc_on_modem_cfun_callback_count;
