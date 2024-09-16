@@ -55,3 +55,6 @@ config NVS
 
 config NVS_LOG_LEVEL
 	default 2
+
+config BT_ASCS_MAX_ASE_SRC_COUNT
+	default 1
