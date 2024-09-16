@@ -12,9 +12,6 @@
 LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/kernel.h>
-#if defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M
-#include <nrfx_clock.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <zephyr/shell/shell.h>

@@ -18,7 +18,6 @@ LOG_MODULE_REGISTER(traffic_gen, CONFIG_TRAFFIC_GEN_LOG_LEVEL);
 #include <zephyr/posix/sys/socket.h>
 #endif
 
-#include <nrfx_clock.h>
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
