@@ -8,7 +8,9 @@
 #include <zephyr/net/openthread.h>
 #include <zephyr/device.h>
 #include <zephyr/pm/device.h>
+#if defined(CONFIG_RAM_POWER_DOWN_LIBRARY)
 #include <ram_pwrdn.h>
+#endif
 
 #include "low_power.h"
 
@@ -24,7 +26,9 @@ static void on_thread_state_changed(otChangedFlags flags, struct openthread_cont
 			}
 
 			pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+#if defined(CONFIG_RAM_POWER_DOWN_LIBRARY)
 			power_down_unused_ram();
+#endif
 		}
 	}
 }
