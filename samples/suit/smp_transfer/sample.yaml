@@ -36,6 +36,7 @@ tests:
   sample.suit.smp_transfer.full.extflash:
     extra_args:
       - FILE_SUFFIX=extflash
+      - OVERLAY_CONFIG="sysbuild/smp_transfer.conf"
     tags: suit ci_samples_suit
 
   sample.suit.smp_transfer.recovery:
@@ -57,6 +58,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=extflash
       - SUIT_DFU_CACHE_PARTITION_1_EB_SIZE=4096
+      - OVERLAY_CONFIG="sysbuild/smp_transfer.conf"
     extra_configs:
       - CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
     tags: suit ci_samples_suit
