@@ -7,7 +7,7 @@ nRF RPC: Protocols serialization server
    :local:
    :depth: 2
 
-The Protocols serialization server sample runs full Bluetooth® LE and OpenThread stacks, and it exposes selected functions from these stacks over UART.
+The Protocols serialization server sample runs full Bluetooth® LE, OpenThread or NFC stacks, and it exposes selected functions from these stacks over UART.
 
 Requirements
 ************
@@ -18,12 +18,14 @@ The sample supports the following development kits for testing the network statu
 
 To test the sample, you also need another device running the :ref:`Protocols serialization client <nrf_rpc_protocols_serialization_client>` sample.
 
-For testing the Bluetooth LE API serialization, you also need to have the `nRF Connect for Mobile`_ app installed on your smartphone or tablet.
+For testing the Bluetooth LE API serialization, you need to have the `nRF Connect for Mobile`_ app installed on your smartphone or tablet.
+
+For testing the NFC API serialization, you also need a smartphone or tablet that can read NFC tags.
 
 Overview
 ********
 
-The Protocols serialization server sample implements the server part of the serialization of OpenThread and Bluetooth LE API calls between two devices that communicate with each other using the UART interface.
+The Protocols serialization server sample implements the server part of the serialization of OpenThread, Bluetooth LE API and NFC calls between two devices that communicate with each other using the UART interface.
 The sample uses the :ref:`nrfxlib:nrf_rpc` and CBOR encoding to serialize function calls.
 
 Configuration
@@ -44,6 +46,7 @@ The following snippets are available:
 * ``debug`` - Enables debugging the sample by enabling :c:func:`__ASSERT()` statements globally and verbose logging.
 * ``log_rpc`` - Enables logging over RPC.
 * ``openthread`` - Enables the server part of the OpenThread RPC.
+* ``nfc`` - Enables the server part of the NFC RPC.
 
 User interface
 **************
@@ -76,7 +79,7 @@ You can modify the list of enabled features, which by default includes Bluetooth
 Testing
 *******
 
-After building the Protocols serialization server sample and programming it to your development kit, connect it to a second device running the :ref:`Protocol serialization client <nrf_rpc_protocols_serialization_client>` sample to test either the Bluetooth LE or OpenThread functionality.
+After building the Protocols serialization server sample and programming it to your development kit, connect it to a second device running the :ref:`Protocol serialization client <nrf_rpc_protocols_serialization_client>` sample to test either the Bluetooth LE, OpenThread or NFC functionality.
 
 .. _protocols_serialization_server_app_connection:
 
@@ -84,7 +87,7 @@ Connecting the client and server samples
 ========================================
 
 The client and server devices are connected using two UART peripherals.
-In the protocols serialization samples, one peripheral is used for shell and logging purposes, similarly to other applications and samples, while the other peripheral is used for sending OpenThread and Bluetooth LE remote procedure calls (RPCs).
+In the protocols serialization samples, one peripheral is used for shell and logging purposes, similarly to other applications and samples, while the other peripheral is used for sending OpenThread, Bluetooth LE and NFC remote procedure calls (RPCs).
 
 .. tabs::
 
@@ -161,7 +164,7 @@ Testing Bluetooth LE API serialization
 
 Complete the following steps to test Bluetooth LE API serialization:
 
-1. |connect_terminal_both|
+#. |connect_terminal_both|
 
 #. Reboot both devices at the same time by pressing the **RESET** button on each DK.
 
@@ -312,9 +315,54 @@ Complete the following steps to test OpenThread API serialization:
 
 Note that all IPv6 addresses shown here are just examples and will be replaced with the actual IPv6 addresses of the peer devices.
 
+Testing NFC API serialization
+====================================
+
+#. |connect_terminal_both|
+
+#. Reboot both devices at the same time by pressing the **RESET** button on each DK.
+
+#. Wait a few seconds until you see a message similar to the following on both terminal emulators:
+
+   .. code-block:: console
+
+      [00:00:00.842,862] <inf> nrf_rpc_host: RPC client ready
+
+
+   This indicates that the communication between the devices has been initialized properly.
+
+#. Run the following commands on the client's terminal emulator to bring up NFC interface on the server device:
+
+   .. code-block:: console
+
+      uart:~$ nfc init
+      uart:~$ nfc start
+
+#. Start any application on smartphone or tablet that is able to read NFC tags.
+
+#. Touch the NFC antenna with the smartphone or tablet and observe it displays the encoded text "Hello world!".
+
+#. Run the following commands on the client's terminal emulator to set and encode a custom message on the server device:
+
+   .. code-block:: console
+
+      uart:~$ nfc stop
+      uart:~$ nfc set_new_msg "https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK"
+      uart:~$ nfc start
+
+#. Touch the NFC antenna with the smartphone or tablet and observe it displays the custom message as the encoded text.
+
+#. Run the following commands on the client's terminal emulator to stop and to release NFC frontend on the server device:
+
+   .. code-block:: console
+
+      uart:~$ nfc stop
+      uart:~$ nfc release
+
 Dependencies
 ************
 
 This sample uses the following `sdk-nrfxlib`_ library:
 
 * :ref:`nrfxlib:nrf_rpc`
+* :ref:`nrfxlib:nfc_api_type2`
