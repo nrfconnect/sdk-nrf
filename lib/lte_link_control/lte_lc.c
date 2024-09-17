@@ -24,6 +24,7 @@
 #include "modules/edrx.h"
 #include "modules/mdmev.h"
 #include "modules/ncellmeas.h"
+#include "modules/pall.h"
 #include "modules/periodicsearchconf.h"
 #include "modules/psm.h"
 #include "modules/redmob.h"
@@ -236,6 +237,23 @@ static int lte_lc_sys_init(void)
 	work_q_start();
 
 	return 0;
+}
+
+int lte_lc_plmn_access_list_write(struct lte_lc_plmn_entry *plmn_list, size_t plmn_list_size,
+				  enum lte_lc_plmn_list_type list_type)
+{
+	return plmn_access_list_write(plmn_list, plmn_list_size, list_type);
+}
+
+int lte_lc_plmn_access_list_read(struct lte_lc_plmn_entry *plmn_list, size_t *plmn_list_size,
+				 enum lte_lc_plmn_list_type *list_type)
+{
+	return plmn_access_list_read(plmn_list, plmn_list_size, list_type);
+}
+
+int lte_lc_plmn_access_list_clear(void)
+{
+	return plmn_access_list_clear();
 }
 
 SYS_INIT(lte_lc_sys_init, APPLICATION, 0);

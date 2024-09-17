@@ -1273,6 +1273,38 @@ struct lte_lc_evt {
 	};
 };
 
+/** Bitmask for access technology E-UTRAN (WB-S1 mode). */
+#define LTE_LC_PLMN_ACT_BIT_WBS1 1
+/** Bitmask for access technology E-UTRAN (NB-S1 mode). */
+#define LTE_LC_PLMN_ACT_BIT_NBS1 (1 << 1)
+/** Maximum length of a PLMN string comprised of MCC and MNC values. */
+#define LTE_LC_PLMN_MCC_MNC_MAX 6
+/** Maximum length of a configurable PLMN list of @ref lte_lc_plmn_entry. */
+#define LTE_LC_PLMN_LIST_MAX 25
+
+/**
+ * Type of PLMN list to be configured.
+ *
+ * If the type is @ref LTE_LC_PLMN_LIST_TYPE_ALLOWED, other PLMNs than the ones included in the list
+ * will not be accessed.
+ * If the type is @ref LTE_LC_PLMN_LIST_TYPE_UNALLOWED, PLMNs included in the list will not be
+ * accessed.
+ */
+enum lte_lc_plmn_list_type {
+	LTE_LC_PLMN_LIST_ALLOWED = 0,
+	LTE_LC_PLMN_LIST_UNALLOWED = 1
+};
+
+/**
+ * PLMN entry for a configurable PLMN list.
+ *
+ * To be used with @ref lte_lc_plmn_list_write and @ref lte_lc_plmn_list_read.
+ */
+struct lte_lc_plmn_entry {
+	char mcc_mnc[LTE_LC_PLMN_MCC_MNC_MAX + 1];
+	char act_bitmask;
+};
+
 /**
  * Handler for LTE events.
  *
@@ -1859,6 +1891,60 @@ int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
  * @deprecated since v2.8.0.
  */
 int lte_lc_factory_reset(enum lte_lc_factory_reset_type type);
+
+/**
+ * Write an allowed/unallowed PLMN access list that will be taken into account during automatic and
+ * manual PLMN selection procedures. If the @ref list_type is @ref LTE_LC_PLMN_LIST_TYPE_ALLOWED,
+ * other PLMNs than the ones included in the list will not be accessed. If the @ref list_type is
+ * @ref LTE_LC_PLMN_LIST_TYPE_UNALLOWED, PLMNs included in the list will not be accessed.
+ * The written list is stored in the modem. Writing a PLMN access list of any type replaces the
+ * previously stored list if it exists. Only one type of PLMN access list can exist at any time.
+ * This configuration is stored in Non-Volatile Memory (NVM) when the modem is set to minimum
+ * functionality mode with the `AT+CFUN=0` command.
+ * The stored configuration is reset with a modem factory reset or a user factory reset.
+ *
+ * @note This feature is only supported by modem firmware versions >= 2.0.2.
+ *
+ * @param[in] plmn_list      List of PLMNs.
+ * @param[in] plmn_list_size Size of the list of PLMNs.
+ * @param[in] list_type      Type of PLMN access list.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -ENOMEM if memory allocation failed.
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_plmn_access_list_write(struct lte_lc_plmn_entry *plmn_list, size_t plmn_list_size,
+				  enum lte_lc_plmn_list_type list_type);
+
+/**
+ * Read the stored PLMN access list into @ref plmn_list and update the size @ref plmn_list_size
+ * accordingly. Update @ref list_type based on the type of PLMN access list that was retrieved
+ * from NVM (Non-Volatile Memory).
+ *
+ * @note This feature is only supported by modem firmware versions >= 2.0.2.
+ *
+ * @param[out]    plmn_list      List of PLMNs.
+ * @param[in,out] plmn_list_size Size of the list of PLMNs.
+ * @param[out]    list_type      Type of PLMN access list.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -ENOMEM if memory allocation failed.
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_plmn_access_list_read(struct lte_lc_plmn_entry *plmn_list, size_t *plmn_list_size,
+				 enum lte_lc_plmn_list_type *list_type);
+
+/**
+ * Clear the stored PLMN access list.
+ *
+ * @note This feature is only supported by modem firmware versions >= 2.0.2.
+ *
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_plmn_access_list_clear(void);
 
 /** @} */
 

@@ -28,6 +28,9 @@ config LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
 config LTE_LC_PERIODIC_SEARCH_MODULE
 	bool "Periodic Search Configuration module"
 
+config LTE_LC_PALL_MODULE
+	bool "PLMN Allow List Configuration module"
+
 config LTE_LC_PSM_MODULE
 	bool "Power Saving Mode (PSM) module"
 
