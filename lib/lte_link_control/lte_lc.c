@@ -27,6 +27,9 @@ LOG_MODULE_REGISTER(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 /* Internal system mode value used when CONFIG_LTE_NETWORK_MODE_DEFAULT is enabled. */
 #define LTE_LC_SYSTEM_MODE_DEFAULT 0xff
 
+/* Size of PLMN allowed list entry. `act` is always 1 char + 2 quotes + 2 commas. */
+#define LTE_LC_PLMN_ENTRY_STR_SIZE (LTE_LC_PLMN_MCC_MNC_MAX + 1 + 2 + 2)
+
 #define SYS_MODE_PREFERRED \
 	(IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M)		? \
 		LTE_LC_SYSTEM_MODE_LTEM				: \
@@ -1838,6 +1841,136 @@ static int lte_lc_sys_init(void)
 		K_THREAD_STACK_SIZEOF(lte_lc_work_q_stack),
 		K_LOWEST_APPLICATION_THREAD_PRIO,
 		&cfg);
+
+	return 0;
+}
+
+int lte_lc_plmn_access_list_write(struct lte_lc_plmn_entry *list, size_t size, bool allowed)
+{
+	int err;
+	char *entry_list_str_format;
+	char entry_str_temp[LTE_LC_PLMN_ENTRY_STR_SIZE + 1] = { 0 };
+
+	if (size > LTE_LC_PLMN_ENTRY_LIST_MAX) {
+		LOG_ERR("Invalid PLMN access list size.");
+		return -EINVAL;
+	}
+
+	/* Dynamically allocate the format string for the AT command. */
+	int format_size = LTE_LC_PLMN_ENTRY_STR_SIZE * size + 1;
+
+	entry_list_str_format = (char *)k_malloc(format_size);
+	if (!entry_list_str_format) {
+		LOG_ERR("Failed to allocate PLMN access list AT command parameters.");
+		return -ENOMEM;
+	}
+	/* Always zero the malloc'd buffer. */
+	memset(entry_list_str_format, 0, format_size);
+
+	/* Populate the format string. */
+	for (int i = 0; i < size; i++) {
+		snprintf(entry_str_temp, sizeof(entry_str_temp), ",\"%s\",%d", list[i].mcc_mnc,
+			 list[i].act_bitmask);
+		strcat(entry_list_str_format, entry_str_temp);
+	}
+
+	err = nrf_modem_at_printf("AT%%PALL=0,%d%s", allowed ? 0 : 1, entry_list_str_format);
+	if (err) {
+		LOG_ERR("AT command failed, returned error code: %d", err);
+		err = -EFAULT;
+		goto clean_exit;
+	}
+
+clean_exit:
+	k_free(entry_list_str_format);
+
+	return err;
+}
+
+int lte_lc_plmn_access_list_read(struct lte_lc_plmn_entry *list, size_t *size, bool allowed)
+{
+	int err;
+	int act;
+	struct at_parser parser = { 0 };
+	char *buffer;
+
+	if (*size > LTE_LC_PLMN_ENTRY_LIST_MAX) {
+		LOG_ERR("Invalid PLMN access list size.");
+		return -EINVAL;
+	}
+
+	/* Dynamically allocate the AT response buffer. */
+	int buffer_size = strlen("%%PALL:0") +
+			  LTE_LC_PLMN_ENTRY_STR_SIZE * LTE_LC_PLMN_ENTRY_LIST_MAX +
+			  strlen("\r\nOK\r\n") + 1;
+
+	buffer = (char *)k_malloc(buffer_size);
+	if (!buffer) {
+		LOG_ERR("Failed to allocate PLMN access list response buffer.");
+		return -ENOMEM;
+	}
+	/* Always zero the malloc'd buffer. */
+	memset(buffer, 0, buffer_size);
+
+	err = nrf_modem_at_cmd(buffer, sizeof(buffer), "AT%%PALL=1");
+	if (err) {
+		LOG_ERR("AT command failed, returned error code: %d", err);
+		err = -EFAULT;
+		goto clean_exit;
+	}
+
+	err = at_parser_init(&parser, buffer);
+	if (err) {
+		LOG_ERR("AT parser init failed, returned error code: %d", err);
+		err = -EFAULT;
+		goto clean_exit;
+	}
+
+	/* Skip "%PALL:<type>"" */
+	int start_index = 2;
+	int i = 0;
+
+	for (i = 0; i < *size; i++) {
+		int mcc_mnc_size = sizeof(list[i].mcc_mnc);
+
+		err = at_parser_string_get(&parser, start_index + 2 * i, list[i].mcc_mnc,
+					   &mcc_mnc_size);
+		if (err == -EIO) {
+			/* The list is finished. */
+			err = 0;
+			break;
+		} else if (err) {
+			LOG_ERR("AT parser string get failed, returned error code: %d", err);
+			err = -EFAULT;
+			goto clean_exit;
+		}
+
+		err = at_parser_num_get(&parser, start_index + 2 * i + 1, &act);
+		if (err) {
+			LOG_ERR("AT parser num get failed, returned error code: %d", err);
+			err = -EFAULT;
+			goto clean_exit;
+		}
+
+		list[i].act_bitmask = act;
+	}
+
+	*size = i;
+
+clean_exit:
+	k_free(buffer);
+
+	return err;
+}
+
+int lte_lc_plmn_access_list_clear(void)
+{
+	int err = nrf_modem_at_printf("AT%%PALL=2");
+
+	if (err) {
+		LOG_ERR("AT command failed, returned error code: %d", err);
+		return -EFAULT;
+	}
 
 	return 0;
 }
