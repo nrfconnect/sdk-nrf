@@ -1,8 +1,12 @@
 .. |NCS| replace:: nRF Connect SDK
 
+.. ### Versions
+
 .. |release| replace:: v2.7.0
 .. |release_tt| replace:: ``v2.7.0``
 .. |release_number_tt| replace:: ``2.7.0``
+
+.. |jlink_ver| replace:: v7.94i
 
 .. ### Config shortcuts
 

@@ -33,7 +33,8 @@ The following sections provide detailed lists of changes by component.
 IDE, and tool support
 =====================
 
-|no_changes_yet_note|
+* Added explicit mention of the :ref:`requirements_jlink` being required in the :ref:`installing_vsc` section of the installation page.
+* Updated the required `SEGGER J-Link`_ version to v7.94i.
 
 Build and configuration system
 ==============================

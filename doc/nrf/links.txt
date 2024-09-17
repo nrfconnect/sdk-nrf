@@ -927,6 +927,7 @@
 
 .. ### Source: www.segger.com
 
+.. _`SEGGER J-Link`:
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
 .. _`SEGGER SystemView`: https://www.segger.com/products/development-tools/systemview/
@@ -1688,10 +1689,6 @@
 
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
 .. _`BICR new binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex
-
-.. _`J-Link version 7.94e`: https://www.segger.com/downloads/jlink/
-
-.. _`J-Link version 7.88j`: https://www.segger.com/downloads/jlink/
 
 .. _`Zephyr's nRF clock control API extensions`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/clock_control/nrf_clock_control.h
 .. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h
