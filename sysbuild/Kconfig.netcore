@@ -157,7 +157,7 @@ config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/empty_net_core" if NETCORE_EMPTY
 	default "${ZEPHYR_BASE}/samples/bluetooth/hci_ipc" if NETCORE_HCI_IPC
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
-	default "${ZEPHYR_BASE}/samples/boards/nrf/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
+	default "${ZEPHYR_BASE}/samples/boards/nordic/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
 	default "${ZEPHYR_NRF_MODULE_DIR}/applications/ipc_radio" if NETCORE_IPC_RADIO
 	help
