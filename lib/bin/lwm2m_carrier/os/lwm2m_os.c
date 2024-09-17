@@ -257,21 +257,6 @@ void lwm2m_os_timer_release(lwm2m_os_timer_t *timer)
 	work->handler = NULL;
 }
 
-int lwm2m_os_timer_start(lwm2m_os_timer_t *timer, int64_t delay)
-{
-	struct lwm2m_work *work = (struct lwm2m_work *)timer;
-
-	__ASSERT(PART_OF_ARRAY(lwm2m_works, work), "start unknown timer");
-
-	if (!PART_OF_ARRAY(lwm2m_works, work)) {
-		return -EINVAL;
-	}
-
-	k_work_reschedule(&work->work_item, K_MSEC(delay));
-
-	return 0;
-}
-
 int lwm2m_os_timer_start_on_q(lwm2m_os_work_q_t *work_q, lwm2m_os_timer_t *timer, int64_t delay)
 {
 	struct k_work_q *queue = (struct k_work_q *)work_q;
@@ -631,7 +616,10 @@ BUILD_ASSERT(
 	(int)LWM2M_OS_PDN_EVENT_DEACTIVATED == (int)PDN_EVENT_DEACTIVATED &&
 	(int)LWM2M_OS_PDN_EVENT_IPV6_UP == (int)PDN_EVENT_IPV6_UP &&
 	(int)LWM2M_OS_PDN_EVENT_IPV6_DOWN == (int)PDN_EVENT_IPV6_DOWN &&
-	(int)LWM2M_OS_PDN_EVENT_NETWORK_DETACHED == (int)PDN_EVENT_NETWORK_DETACH,
+	(int)LWM2M_OS_PDN_EVENT_NETWORK_DETACHED == (int)PDN_EVENT_NETWORK_DETACH &&
+	(int)LWM2M_OS_PDN_EVENT_APN_RATE_CONTROL_ON == (int)PDN_EVENT_APN_RATE_CONTROL_ON &&
+	(int)LWM2M_OS_PDN_EVENT_APN_RATE_CONTROL_OFF == (int)PDN_EVENT_APN_RATE_CONTROL_OFF &&
+	(int)LWM2M_OS_PDN_EVENT_CTX_DESTROYED == (int)PDN_EVENT_CTX_DESTROYED,
 	"Incompatible enums"
 );
 

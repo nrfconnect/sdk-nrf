@@ -150,6 +150,14 @@ static void on_modem_lib_cfun(int mode, void *ctx)
 {
 	ARG_UNUSED(ctx);
 
+	if ((mode == 1) || (mode == 21)) {
+		mode = LWM2M_CARRIER_MODEM_MODE_LTE_ACTIVATED;
+	} else if ((mode == 2) || (mode == 4) || (mode == 20) || (mode == 44)) {
+		mode = LWM2M_CARRIER_MODEM_MODE_LTE_DEACTIVATED;
+	} else {
+		mode = LWM2M_CARRIER_MODEM_MODE_POWER_OFF;
+	}
+
 	lwm2m_carrier_on_modem_cfun(mode);
 }
 
