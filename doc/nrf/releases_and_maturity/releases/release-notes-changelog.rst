@@ -50,6 +50,8 @@ Bootloaders and DFU
 
 * Added documentation for :ref:`qspi_xip_split_image` functionality.
 * Added a section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+* Extended :ref:`qspi_xip_split_image` support to nRF52840 SoC and nRF91 series.
+* Extended :ref:`qspi_xip_split_image` to support MCUBoot's direct-xip mode.
 * Removed secure bootloader Kconfig ``CONFIG_SECURE_BOOT_DEBUG`` and replaced with usage of logging subsystem.
 
 See also the `MCUboot`_ section.
