@@ -8,6 +8,10 @@ Developing with nRF54L Series
 
   All software for the nRF54L15 SoC is experimental and hardware availability is restricted to the participants in the limited sampling program.
 
+.. |nrf_series| replace:: devices of the nRF54L Series
+
+.. include:: /includes/guides_complementary_to_app_dev.txt
+
 Zephyr and the |NCS| provide support and contain board definitions for developing on the following nRF54L Series device:
 
 .. list-table::

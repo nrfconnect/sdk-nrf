@@ -232,3 +232,6 @@
 
 .. |migration_contact_devzone| replace:: While we strive to document all breaking changes, the migration guides might not include the detailed migration steps for your use case.
    If you need assistance, contact Nordic Semiconductor's technical support on `DevZone`_.
+
+.. |nrf54_buttons_leds_numbering| replace:: The nRF54 DKs use a different numbering pattern for LED and buttons.
+   See the User interface section for full overview.

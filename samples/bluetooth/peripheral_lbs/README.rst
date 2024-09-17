@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a smartphone or tablet running a compatible application.
+The sample also requires a smartphone or tablet running a compatible mobile application.
 The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also use other similar applications (for example, `nRF Blinky`_ or `nRF Toolbox`_).
 
 .. note::
@@ -134,13 +134,15 @@ For example, when building on the command line, you can add the option as follow
 Testing
 =======
 
-After programming the sample to your dongle or development kit, test it by performing the following steps:
+After programming the sample to your dongle or development kit, one of the LEDs starts blinking to indicate that the advertising loop is active (see `User interface`_ for details).
+
+To test the sample using the `nRF Connect for Mobile`_ mobile application, complete the following steps:
 
 .. tabs::
 
    .. group-tab:: nRF52 and nRF53 DKs
 
-      1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+      1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
       #. Power on the development kit or insert your dongle into the USB port.
       #. Connect to the device from the application.
          The device is advertising as ``Nordic_LBS``.
@@ -155,25 +157,28 @@ After programming the sample to your dongle or development kit, test it by perfo
       #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
          Depending on the hardware platform, this produces results described in the table.
 
-      +------------------------+---------+----------------------------------------------+
-      | Hardware platform      | Value   | Effect                                       |
-      +========================+=========+==============================================+
-      | Development kit        | ``OFF`` | Switch the **LED 3** off.                    |
-      +                        +---------+----------------------------------------------+
-      |                        | ``ON``  | Switch the **LED 3** on.                     |
-      +------------------------+---------+----------------------------------------------+
-      | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
-      +                        +---------+----------------------------------------------+
-      |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
-      +------------------------+---------+----------------------------------------------+
-      | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
-      +                        +---------+----------------------------------------------+
-      |                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
-      +------------------------+---------+----------------------------------------------+
+         +------------------------+---------+----------------------------------------------+
+         | Hardware platform      | Value   | Effect                                       |
+         +========================+=========+==============================================+
+         | nRF52 and nRF53 DKs    | ``OFF`` | Switch the **LED 3** off.                    |
+         +                        +---------+----------------------------------------------+
+         |                        | ``ON``  | Switch the **LED 3** on.                     |
+         +------------------------+---------+----------------------------------------------+
+         | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
+         +                        +---------+----------------------------------------------+
+         |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
+         +------------------------+---------+----------------------------------------------+
+         | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
+         +                        +---------+----------------------------------------------+
+         |                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
+         +------------------------+---------+----------------------------------------------+
 
    .. group-tab:: nRF54 DKs
 
-      1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+      .. note::
+          |nrf54_buttons_leds_numbering|
+
+      1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
       #. Power on the development kit or insert your dongle into the USB port.
       #. Connect to the device from the application.
          The device is advertising as ``Nordic_LBS``.
@@ -188,21 +193,14 @@ After programming the sample to your dongle or development kit, test it by perfo
       #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
          Depending on the hardware platform, this produces results described in the table.
 
-      +------------------------+---------+----------------------------------------------+
-      | Hardware platform      | Value   | Effect                                       |
-      +========================+=========+==============================================+
-      | Development kit        | ``OFF`` | Switch the **LED 2** off.                    |
-      +                        +---------+----------------------------------------------+
-      |                        | ``ON``  | Switch the **LED 2** on.                     |
-      +------------------------+---------+----------------------------------------------+
-      | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
-      +                        +---------+----------------------------------------------+
-      |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
-      +------------------------+---------+----------------------------------------------+
-      | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
-      +                        +---------+----------------------------------------------+
-      |                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
-      +------------------------+---------+----------------------------------------------+
+         +------------------------+---------+----------------------------------------------+
+         | Hardware platform      | Value   | Effect                                       |
+         +========================+=========+==============================================+
+         | nRF54 DKs              | ``OFF`` | Switch the **LED 2** off.                    |
+         +                        +---------+----------------------------------------------+
+         |                        | ``ON``  | Switch the **LED 2** on.                     |
+         +------------------------+---------+----------------------------------------------+
+
 
 Dependencies
 ************
