@@ -125,7 +125,7 @@ However, you must use as data plane memory allocation mechanisms optimized for b
    The ownership of the shared buffers is passed between the cores using the control plane, but only one of the cores is responsible for managing (allocating, resizing, freeing) the buffers.
 
 For more information on ICMsg, consult the :ref:`ICMsg <zephyr:ipc_service_backend_icmsg>` backend documentation.
-For more information on ICBMsg, consult the :ref:`ICMsg <zephyr:ipc_multi_endpoint_sample>` page.
+For more information on ICBMsg, consult the :zephyr:code-sample:`ipc_multi_endpoint` page.
 
 
 Session

@@ -153,7 +153,7 @@ nRF5340 SoC
 
   * :ref:`esb_readme` subsystem - Added support for nRF5340 (CPUNET) in the ESB subsystem.
   * Secure Partition Manager (SPM) subsystem - Added support for nRF5340 peripherals in non-secure applications.
-  * :ref:`ble_samples` - Added configuration overlays for child image to the required Bluetooth LE samples so that no Kconfig updates in the :ref:`zephyr:bluetooth-hci-ipc-sample` sample are needed by default.
+  * :ref:`ble_samples` - Added configuration overlays for child image to the required Bluetooth LE samples so that no Kconfig updates in the :zephyr:code-sample:`bluetooth_hci_ipc` sample are needed by default.
   * :ref:`nrf5340_empty_app_core` sample - Disabled the kernel memory pool option :kconfig:option:`CONFIG_KERNEL_MEM_POOL` to reduce the memory footprint.
   * ``bl_boot`` library - Disabled clock interrupts before booting the application. This change fixes an issue where the :ref:`bootloader` sample would not be able to boot a Zephyr application on the nRF5340 SoC.
 
@@ -866,12 +866,12 @@ The following list summarizes the most important changes inherited from upstream
 
 * Samples:
 
-  * Added :ref:`zephyr:nrf-ieee802154-rpmsg-sample`.
+  * Added :zephyr:code-sample:`nrf_ieee802154_rpmsg`.
   * Added :zephyr:code-sample:`tagoio-http-post`.
   * Added Civetweb WebSocket Server sample.
   * :zephyr:code-sample:`led-strip`: Updated to force SPIM on nRF52 DK.
   * :zephyr:code-sample:`cfb-custom-fonts`: Added support for ssd1306fb.
-  * :zephyr:code-sample:`gsm-modem`: Added suspend/resume shell commands.
+  * Generic GSM modem: Added suspend/resume shell commands.
   * :zephyr:code-sample:`updatehub-fota`: Added support for Bluetooth LE IPSP, 802.15.4, modem, and Wi-Fi.
 
 * Logging:

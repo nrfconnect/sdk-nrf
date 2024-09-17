@@ -230,10 +230,10 @@ Zephyr samples
   * :zephyr:code-sample:`blinky`
   * :ref:`zephyr:hello_world`
   * :zephyr:code-sample:`settings`
-  * :ref:`zephyr:bluetooth-observer-sample`
-  * :ref:`zephyr:nrf-system-off-sample`
-  * :ref:`zephyr:peripheral_hr`
-  * :ref:`zephyr:bluetooth_central_hr`
+  * :zephyr:code-sample:`bluetooth_observer`
+  * :zephyr:code-sample:`nrf_system_off`
+  * :zephyr:code-sample:`ble_peripheral_hr`
+  * :zephyr:code-sample:`ble_central_hr`
   * :zephyr:code-sample:`smp-svr`
 
 Current nRF54L15 PDK Limitations
