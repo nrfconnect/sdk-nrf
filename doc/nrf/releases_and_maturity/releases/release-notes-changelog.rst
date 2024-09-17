@@ -535,7 +535,7 @@ Thread samples
 
 * :ref:`ot_cli_sample` sample:
 
-  * Added the :ref:`zephyr:nrf54l15dk_nrf54l15` board support in the low-power snippet.
+  * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` in the low-power snippet.
 
 Zigbee samples
 --------------
@@ -848,6 +848,10 @@ Other libraries
 
     * A retry feature that reattempts failed date-time updates up to a certain number of consecutive times.
     * The Kconfig options :kconfig:option:`CONFIG_DATE_TIME_RETRY_COUNT` to control whether and how many consecutive date-time update retries may be performed, and :kconfig:option:`CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS` to control how quickly date-time update retries occur.
+
+* :ref:`lib_ram_pwrdn` library:
+
+  * Added support for the nRF54L15 SoC.
 
 Security libraries
 ------------------
