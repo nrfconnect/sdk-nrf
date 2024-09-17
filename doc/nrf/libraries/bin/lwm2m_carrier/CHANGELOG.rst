@@ -18,6 +18,50 @@ For certification status of the released versions, see the following documents, 
 * `nRF9161 Mobile network operator certifications`_
 * `nRF9160 Mobile network operator certifications`_
 
+liblwm2m_carrier 3.6.0
+**********************
+
+Release for modem firmware versions 1.3.6, 1.3.7, 2.0.1, and 2.0.2.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 79046         | 19712      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 99516         | 34592      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Removed the configuration ``disable_bootstrap_from_smartcard`` (and the corresponding Kconfig option ``CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD``).
+
+  * Instead, the LwM2M carrier library will attempt to bootstrap from smartcard if the external :ref:`lib_uicc_lwm2m` library is included in the project (:kconfig:option:`CONFIG_UICC_LWM2M`).
+
+* Changed the CoAP response if an unsupported image is pushed during in-band FOTA.
+
+  * Previous CoAP return value was ``5.00 Internal Server Error``, and is now ``4.00 Bad Request``.
+
+* Changed the timing of the lifetime update in order to better allow CoAP retransmissions.
+
+  * Effectively, the updates will now trigger earlier, before the lifetime expiry.
+  * This can reduce the amount of overall signaling needed.
+    For example, in poor network conditions, the server could have de-registered the client prematurely, when the client was still retransmitting and attempting to update with the server.
+
+* The library no longer uses the system workqueue to schedule work.
+  This is because some of the issued work could block for some time, and this should be avoided on the system workqueue.
+
+  * Removed ``lwm2m_os_timer_start()`` from the glue layer.
+
+* Extended the use of the modem library hooks (:c:macro:`NRF_MODEM_LIB_ON_CFUN`) to better handle changes in the modem functional states.
+
 liblwm2m_carrier 3.5.1
 **********************
 

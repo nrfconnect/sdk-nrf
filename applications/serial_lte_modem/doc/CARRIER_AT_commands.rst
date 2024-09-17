@@ -441,12 +441,6 @@ The ``<cmd>`` command is a string, and can be used as follows:
   This command accepts two possible input parameters: ``0`` to disable or ``1`` to enable.
   This command is not available when the :kconfig:option:`CONFIG_SLM_CARRIER_AUTO_STARTUP` Kconfig option is enabled.
 
-* ``AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>]``
-
-  Configure the LwM2M carrier library to allow bootstrap from Smartcard.
-  This command accepts two possible input parameters: ``0`` to disable or ``1`` to enable.
-  For details, see the :kconfig:option:`CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD` Kconfig option.
-
 * ``AT#XCARRIERCFG="carriers"[,"all"|<carrier1>[,<carrier2>[,...[,<carrier6>]]]]``
 
   Configure the networks in which the LwM2M carrier library will apply (see the :ref:`general_options_lwm2m` section of the library's documentation).

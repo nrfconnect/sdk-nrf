@@ -609,20 +609,6 @@ typedef struct {
 	 */
 	bool disable_auto_register;
 
-	/** This configuration allows you to disable bootstrap from smartcard.
-	 *
-	 *  This option is only used for @ref LWM2M_CARRIER_GENERIC, @ref LWM2M_CARRIER_T_MOBILE and
-	 *  @ref LWM2M_CARRIER_BELL_CA. In other carriers bootstrap from smartcard is always
-	 *  disabled.
-	 *
-	 *  When this option is set, you disable reading bootstrap information from the smartcard
-	 *  (SIM card).
-	 *
-	 *  @note using `lwm2m_carrier.c` this option can be set in kconfig by setting
-	 *  CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD to false.
-	 */
-	bool disable_bootstrap_from_smartcard;
-
 	/** This configuration allows you to disable queue mode.
 	 *
 	 *  By default the library will inform the LwM2M Server that it may be disconnected for an
@@ -889,6 +875,21 @@ int lwm2m_carrier_main(const lwm2m_carrier_config_t *config);
 /** @} */
 
 /**
+ * @anchor lwm2m_carrier_modem_mode_values
+ * @name LwM2M carrier library modem functional modes.
+ *
+ * Used to pass on the modem functional mode in @ref lwm2m_carrier_on_modem_cfun().
+ * @{
+ */
+/** Minimum functionality mode. */
+#define LWM2M_CARRIER_MODEM_MODE_POWER_OFF        0
+/** LTE services activated. */
+#define LWM2M_CARRIER_MODEM_MODE_LTE_ACTIVATED    1
+/** LTE services deactivated. */
+#define LWM2M_CARRIER_MODEM_MODE_LTE_DEACTIVATED  2
+/** @} */
+
+/**
  * @anchor lwm2m_carrier_request_values
  * @name LwM2M carrier requests
  *
@@ -934,7 +935,7 @@ void lwm2m_carrier_on_modem_init(int result);
 /**
  * LwM2M carrier library modem functional mode handler.
  *
- * @param[in] mode Modem functional mode.
+ * @param[in] mode Modem functional mode @ref lwm2m_carrier_modem_mode_values.
  *
  * This function must be called whenever modem functional mode is changed.
  *

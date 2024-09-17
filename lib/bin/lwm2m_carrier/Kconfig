@@ -231,12 +231,6 @@ config LWM2M_CARRIER_PDN_TYPE
 	help
 	  PDN type for custom APN.
 
-config LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
-	bool "Allow bootstrap from Smartcard"
-	default y
-	help
-	  Bootstrap from Smartcard mode when this is enabled by the carrier.
-
 config LWM2M_CARRIER_QUEUE_MODE
 	bool "Enable queue mode"
 	default y
