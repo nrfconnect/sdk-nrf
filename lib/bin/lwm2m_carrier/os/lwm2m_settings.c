@@ -27,7 +27,6 @@ LOG_MODULE_REGISTER(lwm2m_settings, CONFIG_LOG_DEFAULT_LEVEL);
 #define SERVER_SEC_TAG_SETTINGS_KEY			"server_sec_tag"
 #define SERVER_LIFETIME_SETTINGS_KEY			"server_lifetime"
 #define SERVER_BINDING_SETTINGS_KEY			"server_binding"
-#define BOOTSTRAP_FROM_SMARTCARD_SETTINGS_KEY		"bootstrap_from_smartcard"
 #define SESSION_IDLE_TIMEOUT_SETTINGS_KEY		"session_idle_timeout"
 #define COAP_CON_INTERVAL_SETTINGS_KEY			"coap_con_interval"
 #define APN_SETTINGS_KEY				"apn"
@@ -76,12 +75,6 @@ static uint32_t carriers_enabled = 0
 static bool auto_register = true;
 #else
 static bool auto_register;
-#endif
-
-#ifdef CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD
-static bool bootstrap_from_smartcard = true;
-#else
-static bool bootstrap_from_smartcard;
 #endif
 
 static int32_t session_idle_timeout = CONFIG_LWM2M_CARRIER_SESSION_IDLE_TIMEOUT;
@@ -146,9 +139,6 @@ static int settings_load_cb(const char *key, size_t len, settings_read_cb read_c
 		sz = read_cb(cb_arg, &enable_custom_config, sizeof(enable_custom_config));
 	} else if (strcmp(key, CARRIERS_ENABLED_SETTINGS_KEY) == 0) {
 		sz = read_cb(cb_arg, &carriers_enabled, sizeof(carriers_enabled));
-	} else if (strcmp(key, BOOTSTRAP_FROM_SMARTCARD_SETTINGS_KEY) == 0) {
-		sz = read_cb(cb_arg, &bootstrap_from_smartcard,
-			     sizeof(bootstrap_from_smartcard));
 	} else if (strcmp(key, SESSION_IDLE_TIMEOUT_SETTINGS_KEY) == 0) {
 		sz = read_cb(cb_arg, &session_idle_timeout, sizeof(session_idle_timeout));
 	} else if (strcmp(key, COAP_CON_INTERVAL_SETTINGS_KEY) == 0) {
@@ -218,7 +208,6 @@ static void settings_enable_custom_config(lwm2m_carrier_config_t *config)
 	config->server_lifetime = server_lifetime;
 	config->server_binding = server_binding;
 	config->disable_auto_register = !auto_register;
-	config->disable_bootstrap_from_smartcard = !bootstrap_from_smartcard;
 	config->disable_queue_mode = !queue_mode;
 	config->session_idle_timeout = session_idle_timeout;
 	config->coap_con_interval = coap_con_interval;
@@ -336,25 +325,6 @@ int lwm2m_settings_carriers_enabled_set(uint32_t new_carriers_enabled)
 				    &carriers_enabled, sizeof(carriers_enabled));
 	if (err) {
 		LOG_ERR("Save " CARRIERS_ENABLED_SETTINGS_KEY " failed: %d", err);
-	}
-
-	return err;
-}
-
-bool lwm2m_settings_bootstrap_from_smartcard_get(void)
-{
-	return bootstrap_from_smartcard;
-}
-
-int lwm2m_settings_bootstrap_from_smartcard_set(bool new_bootstrap_from_smartcard)
-{
-	bootstrap_from_smartcard = new_bootstrap_from_smartcard;
-
-	int err = settings_save_one(LWM2M_SETTINGS_SUBTREE_NAME "/"
-				    BOOTSTRAP_FROM_SMARTCARD_SETTINGS_KEY,
-				    &bootstrap_from_smartcard, sizeof(bootstrap_from_smartcard));
-	if (err) {
-		LOG_ERR("Save " BOOTSTRAP_FROM_SMARTCARD_SETTINGS_KEY " failed: %d", err);
 	}
 
 	return err;
