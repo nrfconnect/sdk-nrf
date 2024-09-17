@@ -4,9 +4,12 @@
 .. _ug_thingy91:
 .. _thingy91_ug_intro:
 
-
 Developing with nRF91 Series
 ############################
+
+.. |nrf_series| replace:: devices of the nRF91 Series
+
+.. include:: /includes/guides_complementary_to_app_dev.txt
 
 Zephyr and the |NCS| provide support for developing cellular applications using the following nRF91 Series devices:
 

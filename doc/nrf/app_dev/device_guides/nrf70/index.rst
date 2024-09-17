@@ -4,6 +4,10 @@
 Developing with nRF70 Series
 ############################
 
+.. |nrf_series| replace:: devices of the nRF70 Series
+
+.. include:: /includes/guides_complementary_to_app_dev.txt
+
 Zephyr and the |NCS| provide support for developing networking applications with Wi-Fi® connectivity using the following nRF70 Series companion IC devices:
 
 .. list-table::
