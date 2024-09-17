@@ -169,7 +169,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: f6c947fef644f56cddb942c41e9a2b007753fe03
+      revision: 7c2da28fd9c21ff4b5dd0aa027aff249d87dc526
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
