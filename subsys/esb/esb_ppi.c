@@ -43,8 +43,10 @@ void esb_ppi_for_fem_clear(void)
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, egu_timer_start, 0, 0);
 }
 
-void esb_ppi_for_txrx_set(bool rx, bool timer_start)
+void esb_ppi_for_txrx_set(bool rx, bool timer_start, bool fast_switching)
 {
+	ARG_UNUSED(fast_switching);
+
 	uint32_t channels_mask;
 	uint32_t egu_event = nrf_egu_event_address_get(ESB_EGU, ESB_EGU_EVENT);
 	uint32_t egu_task = nrf_egu_task_address_get(ESB_EGU, ESB_EGU_TASK);
@@ -73,11 +75,13 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 	nrf_ppi_channels_enable(NRF_PPI, channels_mask);
 }
 
-void esb_ppi_for_txrx_clear(bool rx, bool timer_start)
+void esb_ppi_for_txrx_clear(bool rx, bool timer_start, bool fast_switching)
 {
+	ARG_UNUSED(fast_switching);
+	ARG_UNUSED(rx);
+
 	uint32_t channels_mask = (BIT(egu_ramp_up) | BIT(disabled_egu));
 
-	ARG_UNUSED(rx);
 
 	if (timer_start) {
 		channels_mask |= BIT(egu_timer_start);

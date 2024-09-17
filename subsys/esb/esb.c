@@ -272,6 +272,7 @@ static volatile uint32_t last_tx_attempts;
 static volatile uint32_t wait_for_ack_timeout_us;
 
 static uint32_t radio_shorts_common = RADIO_SHORTS_COMMON;
+static const bool fast_switching = IS_ENABLED(CONFIG_ESB_FAST_SWITCHING);
 
 static const mpsl_fem_event_t rx_event = {
 	.type = MPSL_FEM_EVENT_TYPE_TIMER,
@@ -1086,7 +1087,8 @@ static void start_tx_transaction(void)
 						(esb_state == ESB_STATE_PTX_TX));
 			esb_state = ESB_STATE_PTX_TX;
 		} else {
-			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common |
+					     ESB_SHORT_DISABLE_MASK);
 
 			on_radio_disabled = on_radio_disabled_tx_noack;
 			esb_state = ESB_STATE_PTX_TX;
@@ -1121,7 +1123,7 @@ static void start_tx_transaction(void)
 	if (is_tx_idle) {
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
 	} else {
-		esb_ppi_for_txrx_set(false, ack);
+		esb_ppi_for_txrx_set(false, ack, fast_switching && ack);
 		esb_fem_for_tx_set(ack);
 
 		radio_start();
@@ -1158,7 +1160,7 @@ static void on_radio_end_tx_noack(void)
 static void on_radio_disabled_tx_noack(void)
 {
 	esb_fem_pa_reset();
-	esb_ppi_for_txrx_clear(false, false);
+	esb_ppi_for_txrx_clear(false, false, false);
 
 	interrupt_flags |= INT_TX_SUCCESS_MSK;
 	tx_fifo_remove_last();
@@ -1174,7 +1176,7 @@ static void on_radio_disabled_tx_noack(void)
 
 static void on_radio_disabled_tx(void)
 {
-	esb_ppi_for_txrx_clear(false, true);
+	esb_ppi_for_txrx_clear(false, true, fast_switching);
 	/* The timer was triggered on radio disabled event so we can clear PPI connections here. */
 	esb_ppi_for_fem_clear();
 	esb_fem_for_rx_ack();
@@ -1310,7 +1312,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 				esb_ppi_for_retransmission_clear();
 
 				/* Start radio here. */
-				esb_ppi_for_txrx_set(false, true);
+				esb_ppi_for_txrx_set(false, true, fast_switching);
 				esb_fem_for_tx_set(true);
 
 				radio_start();
@@ -1322,7 +1324,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 static void clear_events_restart_rx(void)
 {
 	esb_fem_lna_reset();
-	esb_ppi_for_txrx_clear(true, false);
+	esb_ppi_for_txrx_clear(true, false, fast_switching);
 
 	nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 
@@ -1341,7 +1343,7 @@ static void clear_events_restart_rx(void)
 
 	nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
 
-	esb_ppi_for_txrx_set(true, false);
+	esb_ppi_for_txrx_set(true, false, fast_switching);
 	esb_fem_for_rx_set();
 
 	radio_start();
@@ -1960,7 +1962,7 @@ int esb_start_rx(void)
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PAYLOAD);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
-	esb_ppi_for_txrx_set(true, false);
+	esb_ppi_for_txrx_set(true, false, fast_switching);
 	esb_fem_for_rx_set();
 
 	radio_start();
@@ -1974,7 +1976,7 @@ int esb_stop_rx(void)
 		return -EINVAL;
 	}
 
-	esb_ppi_for_txrx_clear(true, false);
+	esb_ppi_for_txrx_clear(true, false, fast_switching);
 	esb_fem_reset();
 
 	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
