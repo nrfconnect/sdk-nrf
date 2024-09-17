@@ -427,7 +427,6 @@ NRF = [
     ("samples/wifi/sr_coex/README", "samples/wifi/ble_coex/README"), # Wi-Fi: Bluetooth LE coexistence
     ("samples/samples_zigbee", "samples/zigbee"), # Zigbee samples (landing)
     ("samples/samples_other", "samples/other"), # Other samples (landing)
-    ("libraries/bin/bt_ll_acs_nrf53/index", "../nrfxlib/softdevice_controller/doc/isochronous_channels"), # LE Audio controller for nRF5340 (removed for 2.7.0)
     ("libraries/networking/nrf_cloud_agps", "libraries/networking/nrf_cloud_agnss"), # nRF Cloud A-GNSS
     ("libraries/bootloader/index", "libraries/security/bootloader/index"), # Bootloader libraries (landing)
     ("libraries/bootloader/bl_crypto", "libraries/security/bootloader/bl_crypto"), # Bootloader crypto
