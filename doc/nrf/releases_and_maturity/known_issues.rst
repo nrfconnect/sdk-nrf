@@ -380,6 +380,15 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-7-0
+
+KRKNWK-19443: The device commissioning window can be opened for longer than 900 seconds, which violates the Matter specification.
+  A device using the Extended Announcement feature is allowed to open the commissioning window for longer than 900 s only if it is uncommissioned.
+  However, the implementation with Extended Announcement enabled allows the device to open the commissioning window for longer than 900 s even when the device is commissioned as well.
+  This leads to the TC-CADMIN-1.21 and TC-CADMIN-1.22 certification test cases failure.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``ba9faf2b1e321f009f8bf27f5800627c9e4826ea`` from the `upstream Matter SDK repo <https://github.com/project-chip/connectedhomeip>`_).
+
 .. rst-class:: v2-7-0 v2-6-1 v2-6-0
 
 NCSDK-29228: DFU over Bluetooth LE SMP can lead to an application crash.
