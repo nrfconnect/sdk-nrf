@@ -380,6 +380,21 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-7-0 v2-6-1 v2-6-0
+
+NCSDK-29228: DFU over Bluetooth LE SMP can lead to an application crash.
+  Performing the DFU over SMP using a large application image with a specific size can lead to an MPU fault and application crash.
+  The issue is not reproducible for all images above a certain file size, but rather it seems to occur only for some specific sizes.
+  The reproduction rate is small and the specific conditions to trigger it are not well known.
+  The exact root cause is not known, but is probably related to problems with communication between the QSPI and external flash chip.
+
+  **Affected platforms:** nRF52840
+
+  **Workaround:** There are two alternative solutions that seem to fix this issue:
+
+    * Set the :kconfig:option:`CONFIG_NORDIC_QSPI_NOR_TIMEOUT_MS` Kconfig option to ``3500`` in the application :file:`prj.conf` file.
+    * Manually cherry-pick and apply the commit with the fix to ``sdk-zephyr`` (commit hash: ``d1abe40fb0af5d6219a0bcd824c4ea93ab90877a`` from the `upstream Zephyr repo <https://github.com/zephyrproject-rtos/zephyr>`_).
+
 .. rst-class:: v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0
 
 KRKNWK-19300: The Matter weather station application has NVS size inconsistent with the settings partition size.
