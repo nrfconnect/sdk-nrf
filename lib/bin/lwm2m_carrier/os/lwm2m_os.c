@@ -26,6 +26,7 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <nrf_errno.h>
 #include <modem/at_monitor.h>
+#include <modem/uicc_lwm2m.h>
 
 /* NVS-related defines */
 
@@ -257,21 +258,6 @@ void lwm2m_os_timer_release(lwm2m_os_timer_t *timer)
 	work->handler = NULL;
 }
 
-int lwm2m_os_timer_start(lwm2m_os_timer_t *timer, int64_t delay)
-{
-	struct lwm2m_work *work = (struct lwm2m_work *)timer;
-
-	__ASSERT(PART_OF_ARRAY(lwm2m_works, work), "start unknown timer");
-
-	if (!PART_OF_ARRAY(lwm2m_works, work)) {
-		return -EINVAL;
-	}
-
-	k_work_reschedule(&work->work_item, K_MSEC(delay));
-
-	return 0;
-}
-
 int lwm2m_os_timer_start_on_q(lwm2m_os_work_q_t *work_q, lwm2m_os_timer_t *timer, int64_t delay)
 {
 	struct k_work_q *queue = (struct k_work_q *)work_q;
@@ -497,6 +483,20 @@ int lwm2m_os_download_file_size_get(size_t *size)
 	return download_client_file_size_get(&http_downloader, size);
 }
 
+bool lwm2m_os_uicc_bootstrap_is_enabled(void)
+{
+	return IS_ENABLED(CONFIG_UICC_LWM2M);
+}
+
+int lwm2m_os_uicc_bootstrap_read(uint8_t *p_buffer, int buffer_size)
+{
+	if (IS_ENABLED(CONFIG_UICC_LWM2M)) {
+		return uicc_lwm2m_bootstrap_read(p_buffer, buffer_size);
+	} else {
+		return -ENOTSUP;
+	}
+}
+
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 
@@ -631,7 +631,10 @@ BUILD_ASSERT(
 	(int)LWM2M_OS_PDN_EVENT_DEACTIVATED == (int)PDN_EVENT_DEACTIVATED &&
 	(int)LWM2M_OS_PDN_EVENT_IPV6_UP == (int)PDN_EVENT_IPV6_UP &&
 	(int)LWM2M_OS_PDN_EVENT_IPV6_DOWN == (int)PDN_EVENT_IPV6_DOWN &&
-	(int)LWM2M_OS_PDN_EVENT_NETWORK_DETACHED == (int)PDN_EVENT_NETWORK_DETACH,
+	(int)LWM2M_OS_PDN_EVENT_NETWORK_DETACHED == (int)PDN_EVENT_NETWORK_DETACH &&
+	(int)LWM2M_OS_PDN_EVENT_APN_RATE_CONTROL_ON == (int)PDN_EVENT_APN_RATE_CONTROL_ON &&
+	(int)LWM2M_OS_PDN_EVENT_APN_RATE_CONTROL_OFF == (int)PDN_EVENT_APN_RATE_CONTROL_OFF &&
+	(int)LWM2M_OS_PDN_EVENT_CTX_DESTROYED == (int)PDN_EVENT_CTX_DESTROYED,
 	"Incompatible enums"
 );
 

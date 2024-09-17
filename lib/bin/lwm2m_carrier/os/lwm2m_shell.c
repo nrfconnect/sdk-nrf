@@ -1064,27 +1064,6 @@ static int cmd_auto_register_set(const struct shell *shell, size_t argc, char **
 	return 0;
 }
 
-static int cmd_bootstrap_from_smartcard_set(const struct shell *shell, size_t argc, char **argv)
-{
-	if (argc != 2) {
-		shell_print(shell, "%s <y|n>", argv[0]);
-		return 0;
-	}
-
-	bool bootstrap_from_smartcard;
-	int err = string_to_bool(argv[1], &bootstrap_from_smartcard);
-
-	if (!err) {
-		lwm2m_settings_bootstrap_from_smartcard_set(bootstrap_from_smartcard);
-		shell_print(shell, "Set bootstrap from smartcard: %s",
-		bootstrap_from_smartcard ? GREEN "Yes" NORMAL : RED "No" NORMAL);
-	} else {
-		shell_print(shell, "Invalid input: <y|n>");
-	}
-
-	return 0;
-}
-
 static int cmd_queue_mode_set(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc != 2) {
@@ -1631,8 +1610,6 @@ static int cmd_settings_print(const struct shell *shell, size_t argc, char **arg
 
 	shell_print(shell, "  Auto register                  %s",
 			lwm2m_settings_auto_register_get() ? "Yes" : "No");
-	shell_print(shell, "  Bootstrap from smartcard       %s",
-			lwm2m_settings_bootstrap_from_smartcard_get() ? "Yes" : "No");
 	shell_print(shell, "  Queue mode                     %s",
 			lwm2m_settings_queue_mode_get() ? "Yes" : "No");
 	shell_print(shell, "  Session idle timeout           %d",
@@ -1769,8 +1746,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_carrier_config,
 		SHELL_CMD(apn, NULL, "APN", cmd_apn_set),
 		SHELL_CMD(auto_startup, NULL, "Automatic startup", cmd_auto_startup_set),
 		SHELL_CMD(auto_register, NULL, "Automatic registration", cmd_auto_register_set),
-		SHELL_CMD(bootstrap_from_smartcard, NULL, "Bootstrap from smartcard",
-			  cmd_bootstrap_from_smartcard_set),
 		SHELL_CMD(carriers, NULL, "Carriers enabled", cmd_carriers_set),
 		SHELL_CMD(coap_confirmable_interval, NULL, "CoAP confirmable interval",
 			  cmd_coap_confirmable_interval),
