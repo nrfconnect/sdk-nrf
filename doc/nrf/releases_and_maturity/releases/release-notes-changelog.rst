@@ -533,6 +533,10 @@ Thread samples
 
 * Enabled the :ref:`ug_thread_build_report` generation in all samples.
 
+* :ref:`ot_cli_sample` sample:
+
+  * Added the :ref:`zephyr:nrf54l15dk_nrf54l15` board support in the low-power snippet.
+
 Zigbee samples
 --------------
 
