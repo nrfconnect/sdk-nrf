@@ -15,6 +15,7 @@ set(NRFXLIB_DIR          ${ZEPHYR_NRFXLIB_MODULE_DIR}            CACHE STRING "n
 set(NRF_SECURITY_ROOT    ${NRF_DIR}/subsys/nrf_security          CACHE STRING "nrf_security root folder")
 set(OBERON_PSA_CORE_PATH ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}  CACHE STRING "oberon-psa-core folder")
 set(ARM_MBEDTLS_PATH     ${ZEPHYR_MBEDTLS_MODULE_DIR}            CACHE STRING "Mbed TLS folder")
+set(NRF_DIR              ${NRF_DIR}                              CACHE STRING "NRF folder")
 
 # This file is populated with the Mbed TLS config file names
 set(MBEDTLS_CONFIG_FILE                 ${CONFIG_MBEDTLS_CFG_FILE}                      CACHE STRING "Mbed TLS Config file")
