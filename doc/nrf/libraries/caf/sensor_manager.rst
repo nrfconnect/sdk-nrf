@@ -18,7 +18,7 @@ Configuration
 The following Kconfig options are required:
 
 * :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER` - This option enables the |sensor_manager|.
-* :kconfig:option:`CONFIG_SENSOR` - This option enables Zephyr's :ref:`zephyr:sensor_api` driver, which is required for interacting with the sensors.
+* :kconfig:option:`CONFIG_SENSOR` - This option enables Zephyr's :ref:`zephyr:sensor` driver, which is required for interacting with the sensors.
 
 The following Kconfig options are also available for the module:
 
@@ -90,7 +90,7 @@ Enabling sensor trigger
 
 The |sensor_manager| supports the sensor trigger functionality.
 This functionality allows the |sensor_manager| to stop sampling a specific sensor when specified conditions are met.
-For more details about the sensor trigger, see Zephyr's :ref:`zephyr:sensor_api` driver.
+For more details about the sensor trigger, see Zephyr's :ref:`zephyr:sensor` driver.
 
 .. note::
    Not all sensors support the trigger functionality.

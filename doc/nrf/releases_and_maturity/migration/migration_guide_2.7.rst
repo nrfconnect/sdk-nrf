@@ -58,7 +58,7 @@ Samples and applications using short-range radio
 
    All samples and applications built for multi-core SoCs were migrated to use :ref:`ipc_radio` as the default image for the network core (on nRF5340) or the radio core (on nRF54H20).
 
-   The samples previously built for those cores are no longer used in the default builds: :ref:`zephyr:bluetooth-hci-ipc-sample`, :ref:`zephyr:nrf-ieee802154-rpmsg-sample`, :ref:`multiprotocol-rpmsg-sample`, and :ref:`ble_rpc_host`.
+   The samples previously built for those cores are no longer used in the default builds: :zephyr:code-sample:`bluetooth_hci_ipc`, :zephyr:code-sample:`nrf_ieee802154_rpmsg`, :ref:`multiprotocol-rpmsg-sample`, and :ref:`ble_rpc_host`.
 
 .. _nrf5340_audio_migration_notes_2.7:
 

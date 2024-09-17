@@ -7,7 +7,7 @@ PMW3360 driver
    :local:
    :depth: 2
 
-The PMW3360 driver implements a PMW3360 motion sensor driver that is compatible with Zephyr's :ref:`zephyr:sensor_api`.
+The PMW3360 driver implements a PMW3360 motion sensor driver that is compatible with Zephyr's :ref:`zephyr:sensor`.
 
 The sensor driver supports the following features:
 
@@ -109,7 +109,7 @@ See :ref:`kconfig_tips_and_tricks` for information about Kconfig.
 Sensor API calls
 ****************
 
-Read the following sections for information about the :ref:`zephyr:sensor_api` calls supported by the motion sensor.
+Read the following sections for information about the :ref:`zephyr:sensor` calls supported by the motion sensor.
 
 .. note::
    Driver initialization is performed asynchronously using a delayed work that resubmits itself.
@@ -135,7 +135,7 @@ The trigger handler is called when motion is detected.
 Sensor attributes
 =================
 
-The sensor supports a custom set of attributes that are not part of generic sensor attributes defined by Zephyr's :ref:`zephyr:sensor_api` API.
+The sensor supports a custom set of attributes that are not part of generic sensor attributes defined by Zephyr's :ref:`zephyr:sensor` API.
 The attributes are defined as private to the motion sensor in the sensor's header file.
 See API documentation for details.
 
