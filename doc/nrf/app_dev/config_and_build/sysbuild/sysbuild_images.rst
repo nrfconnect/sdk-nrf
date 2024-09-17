@@ -37,11 +37,11 @@ These options determine whether the secure boot image is included on the network
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 |               ``SB_CONFIG_NETCORE_EMPTY``               | |NCS| empty network core image :ref:`nrf5340_empty_net_core`.                                             |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_HCI_IPC``             | Zephyr hci_ipc Bluetooth image :ref:`zephyr:bluetooth-hci-ipc-sample`.                                    |
+|               ``SB_CONFIG_NETCORE_HCI_IPC``             | Zephyr hci_ipc Bluetooth image :zephyr:code-sample:`bluetooth_hci_ipc`.                                   |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 |               ``SB_CONFIG_NETCORE_RPC_HOST``            | |NCS| rpc_host Bluetooth image :ref:`ble_rpc_host`.                                                       |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_802154_RPMSG``        | Zephyr 802.15.4 image :ref:`zephyr:nrf-ieee802154-rpmsg-sample`.                                          |
+|               ``SB_CONFIG_NETCORE_802154_RPMSG``        | Zephyr 802.15.4 image :zephyr:code-sample:`nrf_ieee802154_rpmsg`.                                         |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 |               ``SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG`` | |NCS| multiprotocol_rpmsg Bluetooth and 802.15.4 image :ref:`multiprotocol-rpmsg-sample`.                 |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+

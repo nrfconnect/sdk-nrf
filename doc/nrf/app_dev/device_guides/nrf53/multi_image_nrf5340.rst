@@ -42,10 +42,10 @@ The combination of these options determines which (if any) sample is included in
      - Child image sample for the network core
      - Child image sample for the application core
    * - :kconfig:option:`CONFIG_BT_HCI_IPC`
-     - :ref:`zephyr:bluetooth-hci-ipc-sample`
+     - :zephyr:code-sample:`bluetooth_hci_ipc`
      - ---
    * - :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
-     - :ref:`zephyr:nrf-ieee802154-rpmsg-sample`
+     - :zephyr:code-sample:`nrf_ieee802154_rpmsg`
      - ---
    * - :kconfig:option:`CONFIG_BT_HCI_IPC` and :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
      - :ref:`multiprotocol-rpmsg-sample`

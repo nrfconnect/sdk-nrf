@@ -4818,7 +4818,7 @@ NCSDK-6330: USB Mass Storage Sample Application fails MSC Tests from USB3CV test
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6328: USB CDC ACM Composite Sample Application fails Chapter 9 Tests from USB3CV test tool
-  :zephyr:code-sample:`usb-cdc-acm-composite` fails the USB3CV compliance TD 9.1: Device Descriptor Test from the Chapter 9 Test suite.
+  USB CDC ACM Composite sample application fails the USB3CV compliance TD 9.1: Device Descriptor Test from the Chapter 9 Test suite.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 

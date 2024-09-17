@@ -3,7 +3,7 @@
 Adding support for a new Bluetooth LE service
 #############################################
 
-The Matter Bridge application supports bridging Bluetooth LE devices using :ref:`LED Button Service <lbs_readme>` and :ref:`Environmental Sensing Service <peripheral_esp>` Bluetooth services.
+The Matter Bridge application supports bridging Bluetooth LE devices using :ref:`LED Button Service <lbs_readme>` and :zephyr:code-sample:`ble_peripheral_esp` Bluetooth services.
 You can also add support for a proprietary Bluetooth LE service, if required by your use case.
 The functionality of the added Bluetooth LE service has to be represented by one or more device types available in the :ref:`Matter Data Model <ug_matter_device_types>`.
 For example, the :ref:`LED Button Service <lbs_readme>` is represented by the Matter On/Off Light and Matter Generic Switch device types.

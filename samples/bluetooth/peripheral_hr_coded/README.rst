@@ -7,7 +7,7 @@ Bluetooth: Peripheral Heart Rate Monitor with Coded PHY
    :local:
    :depth: 2
 
-The Peripheral Heart Rate Monitor with Coded PHY offers similar functionality to the :ref:`zephyr:peripheral_hr` sample from Zephyr.
+The Peripheral Heart Rate Monitor with Coded PHY offers similar functionality to the :zephyr:code-sample:`ble_peripheral_hr` sample from Zephyr.
 However, this sample supports LE Coded PHY.
 
 Requirements

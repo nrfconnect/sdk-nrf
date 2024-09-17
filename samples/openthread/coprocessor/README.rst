@@ -144,7 +144,7 @@ After building the sample and programming it to your development kit, complete t
 #. Get the kit's serial port name (for example, :file:`/dev/ttyACM0`).
 #. Run and configure ot-cli as described in :ref:`ug_thread_tools_ot_apps`.
 #. From this point, you can follow the :ref:`ot_cli_sample_testing` instructions in the CLI sample by removing the `ot` prefix for each command.
-   If you are using HCI, follow the instructions for the :ref:`zephyr:bluetooth-hci-uart-sample` sample in the Zephyr documentation.
+   If you are using HCI, follow the instructions for the :zephyr:code-sample:`bluetooth_hci_uart` sample in the Zephyr documentation.
    You can follow these instead of or in addition to the CLI sample instructions.
 
 Dependencies

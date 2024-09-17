@@ -79,7 +79,7 @@ Applications will normally not access :c:member:`bt_mesh_sensor_value.raw` or th
 Instead, API functions for converting between :c:struct:`bt_mesh_sensor_value` and the values suitable for application use are used.
 An exception to this is when statically initializing :c:struct:`bt_mesh_sensor_value` at compile-time, in which case the API functions cannot be used.
 
-The sensor API is built to integrate well with the Zephyr :ref:`zephyr:sensor_api` API, and provides functions for converting to and from :c:struct:`sensor_value`.
+The sensor API is built to integrate well with the Zephyr :ref:`zephyr:sensor` API, and provides functions for converting to and from :c:struct:`sensor_value`.
 
 .. _bt_mesh_sensor_types:
 
@@ -293,7 +293,7 @@ A pointer to the format for a given channel can be found through the :c:struct:`
            sensor->type->channels[0].format;
    }
 
-The sensor data in the callback typically comes from a sensor using the :ref:`Zephyr sensor API <zephyr:sensor_api>`.
+The sensor data in the callback typically comes from a sensor using the :ref:`Zephyr sensor API <zephyr:sensor>`.
 The Zephyr sensor API records samples in two steps:
 
 1.
