@@ -89,6 +89,8 @@ Bootloaders and DFU
 * Updated the procedure for signing the application image built for booting by MCUboot in direct-XIP mode with revert support.
   Now, the Intel-Hex file of the application image automatically receives a confirmation flag.
 
+* Extended :ref:`qspi_xip_split_image` support to nRF52840 SoC and nRF91 series.
+* Extended :ref:`qspi_xip_split_image` to support MCUBoot's direct-XIP mode.
 * Removed secure bootloader Kconfig ``CONFIG_SECURE_BOOT_DEBUG`` and replaced with usage of logging subsystem.
 
 See also the `MCUboot`_ section.
