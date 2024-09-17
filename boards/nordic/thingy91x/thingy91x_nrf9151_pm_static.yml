@@ -80,18 +80,18 @@ app:
   region: flash_primary
 
 mcuboot_secondary:
-  device: GD25LB256E
+  device: DT_CHOSEN(nordic_pm_ext_flash)
   address: 0x0
   size: 0xD0000
   share_size: [mcuboot_primary]
   region: external_flash
 fmfu_storage:
   address: 0xD0000
-  device: GD25LB256E
+  device: DT_CHOSEN(nordic_pm_ext_flash)
   region: external_flash
   size: 0x400000
 settings_storage:
-  device: GD25LB256E
+  device: DT_CHOSEN(nordic_pm_ext_flash)
   address: 0x4D0000
   size: 0x2000
   region: external_flash
