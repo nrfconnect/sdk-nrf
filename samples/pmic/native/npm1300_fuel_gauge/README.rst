@@ -42,7 +42,6 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - nRF52 DK pins
         - nRF52840 DK pins
         - nRF5340 DK pins
-        - nRF54L15 PDK pins
         - nRF54L15 DK pins
         - nRF9160 DK pins
       * - SDA
@@ -50,13 +49,11 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - P0.26
         - P1.02
         - P1.11
-        - P1.11
         - P0.30
       * - SCL
         - P0.27
         - P0.27
         - P1.03
-        - P1.12
         - P1.12
         - P0.31
       * - VDDIO
@@ -64,10 +61,8 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - VDD
         - VDD
         - VDDIO
-        - VDDIO
         - VDD
       * - GND
-        - GND
         - GND
         - GND
         - GND
