@@ -17,7 +17,7 @@ NCS supports dividing an application into an internal and external part, along w
 
 For more information about QSPI XIP hardware support, the `Execute in place page in the nRF5340 Product Specification`_.
 
-For placing individual source code files into defined memory regions, check the :ref:`zephyr:code_relocation_nocopy` sample in Zephyr.
+For placing individual source code files into defined memory regions, check the :zephyr:code-sample:`code_relocation_nocopy` sample in Zephyr.
 
 Enabling configuration options
 ******************************

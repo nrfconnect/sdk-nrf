@@ -105,7 +105,7 @@ Building and running
 
 The sample generates header and source files based on protocol buffer definitions in :file:`.proto` files during the build process.
 You must install a protocol buffer compiler to generate the files.
-See the :ref:`zephyr:nanopb_sample` in the Zephyr documentation for more information.
+See the :zephyr:code-sample:`nanopb` in the Zephyr documentation for more information.
 
 Testing
 =======

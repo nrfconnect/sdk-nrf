@@ -122,7 +122,7 @@ Add a new sensor driver
 First, create a new motion sensor driver that will provide code for communication with the sensor.
 Use the two existing |NCS| sensor drivers as an example.
 
-The communication between the application and the sensor happens through a sensor driver API (see :ref:`sensor_api`).
+The communication between the application and the sensor happens through a sensor driver API (see :ref:`zephyr:sensor`).
 For the motion module to work correctly, the driver must support a trigger (see ``sensor_trigger_set``) on a new data (see ``SENSOR_TRIG_DATA_READY`` trigger type).
 
 When the motion data is ready, the driver calls a registered callback.

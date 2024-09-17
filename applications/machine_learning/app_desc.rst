@@ -15,14 +15,14 @@ To learn more about Edge Impulse support in the |NCS| see :ref:`ug_edge_impulse`
 Application overview
 ********************
 
-To perform its tasks, the nRF Machine Learning application uses components available in Zephyr and the |NCS|, namely the :ref:`lib_caf` modules and :ref:`zephyr:sensor_api` for sampling sensors, and :ref:`zephyr:uart_api` or :ref:`nus_service_readme` for forwarding data.
+To perform its tasks, the nRF Machine Learning application uses components available in Zephyr and the |NCS|, namely the :ref:`lib_caf` modules and :ref:`zephyr:sensor` for sampling sensors, and :ref:`zephyr:uart_api` or :ref:`nus_service_readme` for forwarding data.
 It also uses the `Edge Impulse's data forwarder`_ protocol.
 
 Sampling sensors
 ================
 
 The application handles the sensor sampling using the :ref:`caf_sensor_manager`.
-This module uses Zephyr's :ref:`zephyr:sensor_api` to handle the sampling.
+This module uses Zephyr's :ref:`zephyr:sensor` to handle the sampling.
 This approach allows you to use any sensor available in Zephyr.
 
 By default, the following sensors are used by the application:
@@ -659,7 +659,7 @@ Dependencies
 
 The application uses the following Zephyr drivers and libraries:
 
-* :ref:`zephyr:sensor_api`
+* :ref:`zephyr:sensor`
 * :ref:`zephyr:uart_api`
 * :ref:`zephyr:mcu_mgr`
 
