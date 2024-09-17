@@ -27,6 +27,9 @@ You need the nRF Device Manager app for SUIT update over Bluetooth Low Energy:
 * `nRF Device Manager mobile app for iOS`_
   (The minimum required version is v1.7.)
 
+.. note::
+   In recovery mode, the Device Manager will operate in legacy mode.
+
 For a SUIT update over UART, you need to install :ref:`zephyr:mcu_mgr`, a tool that can be used to upload SUIT envelopes through the SMP protocol.
 
 Overview
