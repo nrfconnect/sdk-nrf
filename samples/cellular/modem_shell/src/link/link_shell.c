@@ -50,7 +50,8 @@ enum link_shell_command {
 	LINK_CMD_DNSADDR,
 	LINK_CMD_REDMOB,
 	LINK_CMD_PROPRIPSM,
-	LINK_CMD_MODEM
+	LINK_CMD_MODEM,
+	LINK_CMD_PALL,
 };
 
 enum link_shell_operation {
@@ -369,6 +370,13 @@ static const char link_modem_usage_str[] =
 	"\n"
 	"Several options can be given and they are run in the given order.";
 
+static const char link_pall_usage_str[] =
+	"Usage: link pall --read | --write\n"
+	"Options:\n"
+	"  -r, --read,         Read\n"
+	"      --write,        Write.\n"
+	"  -h, --help,         Shows this help information";
+
 /* The following do not have short options */
 enum {
 	LINK_SHELL_OPT_MEM_SLOT_1 = 1001,
@@ -413,6 +421,8 @@ enum {
 	LINK_SHELL_OPT_MODEM_INIT,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0,
+	LINK_SHELL_OPT_PALL_ALLOWED,
+	LINK_SHELL_OPT_PALL_ENTRY_LIST,
 };
 
 /* Specifying the expected options (both long and short) */
@@ -487,6 +497,8 @@ static struct option long_options[] = {
 	{ "init", no_argument, 0, LINK_SHELL_OPT_MODEM_INIT },
 	{ "shutdown", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN },
 	{ "shutdown_cfun0", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0 },
+	{ "allowed", required_argument, 0, LINK_SHELL_OPT_PALL_ALLOWED},
+	{ "entry_list", required_argument, 0, LINK_SHELL_OPT_PALL_ENTRY_LIST},
 	{ 0, 0, 0, 0 }
 };
 
@@ -559,6 +571,8 @@ static void link_shell_print_usage(enum link_shell_command command)
 		break;
 	case LINK_CMD_MODEM:
 		mosh_print_no_format(link_modem_usage_str);
+	case LINK_CMD_PALL:
+		mosh_print_no_format(link_pall_usage_str);
 		break;
 	default:
 		break;
@@ -2635,6 +2649,150 @@ show_usage:
 	return 0;
 }
 
+static int link_shell_pall(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret = 0;
+	enum link_shell_operation operation = LINK_OPERATION_NONE;
+	struct lte_lc_plmn_entry *entries = NULL;
+	size_t num_entries = 0;
+	bool allowed = false;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case 'r':
+		case LINK_SHELL_OPT_WRITE:
+			if (operation != LINK_OPERATION_NONE) {
+				mosh_error(
+					"Only one of -r, or --write options "
+					"can be used.");
+				goto show_usage;
+			}
+			link_shell_getopt_operation(opt, &operation);
+			break;
+		case LINK_SHELL_OPT_PALL_ALLOWED:
+			bool opt_false = memcmp(optarg, "0", sizeof("0")) == 0;
+			bool opt_true = memcmp(optarg, "1", sizeof("1")) == 0;
+			if (opt_false || opt_true) {
+				allowed = !opt_false && opt_true;
+			} else {
+				mosh_error("invalid allowed option"); // todo
+				return -EINVAL;
+			}
+			break;
+
+		case LINK_SHELL_OPT_PALL_ENTRY_LIST: {
+			mosh_print("`%s`", optarg); // debug
+
+			/* Count commas so that we allocate only the exact amount of entries. */	
+			int comma_count = 0;
+			char *ptr = optarg;
+			while (*ptr != '\0') {
+				if (*ptr == ',') {
+					comma_count++;
+				}
+				ptr++;
+			}
+			mosh_print("commas: %d", comma_count);
+
+			num_entries = comma_count / 2 + 1;
+			mosh_print("num_entries: %d", num_entries);
+
+			if (num_entries > LTE_LC_PLMN_ENTRY_LIST_MAX) {
+				mosh_error("num_allocs error"); // todo
+				return -EINVAL;
+			}
+
+			entries = (struct lte_lc_plmn_entry *)k_malloc(sizeof(struct lte_lc_plmn_entry) * num_entries);
+			if (!entries) {
+				mosh_error("k_malloc error"); // todo
+				return -ENOMEM;
+			}
+
+			char *mcc_mnc;
+			char *act_bitmask;
+			char *saveptr;
+
+			for (int i = 0; i < num_entries; i++) {
+				if (i == 0) {
+					mcc_mnc = strtok_r(optarg, ",", &saveptr);
+				} else {
+					mcc_mnc = strtok_r(NULL, ",", &saveptr);
+				}
+				if (!mcc_mnc) {
+					mosh_error("strtok_r error"); // todo
+					return -EINVAL;
+				}
+				if (strlen(mcc_mnc) > LTE_LC_PLMN_MCC_MNC_MAX) {
+					mosh_error("mcc_mnc length error"); // todo
+					return -EINVAL;
+				}
+				strncpy(entries[i].mcc_mnc, mcc_mnc, sizeof(entries[i].mcc_mnc));
+
+				act_bitmask = strtok_r(NULL, ",", &saveptr);
+				if (!act_bitmask) {
+					mosh_error("strtok_r error"); // todo
+					return -EINVAL;
+				}
+				char *next;
+				entries[i].act_bitmask = strtol(act_bitmask, &next, 10);
+			}
+
+			break;
+		}
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (operation == LINK_OPERATION_READ) {
+		struct lte_lc_plmn_entry *read_entries;
+		size_t read_entries_size = LTE_LC_PLMN_ENTRY_LIST_MAX;
+		read_entries = (struct lte_lc_plmn_entry *)k_malloc(sizeof(struct lte_lc_plmn_entry) * read_entries_size);
+		if (!read_entries) {
+			mosh_error("k_malloc error"); // todo
+			return -ENOMEM;
+		}
+		ret = lte_lc_plmn_access_list_read(read_entries, &read_entries_size, allowed);
+		if (ret == 0) {
+			for (int i = 0; i < read_entries_size; i++) {
+				mosh_print("`%s`, %d", read_entries[i].mcc_mnc, read_entries[i].act_bitmask);
+			}
+		}
+		k_free(read_entries);
+	} else if (operation == LINK_OPERATION_WRITE) {
+		if (entries) {
+			ret = lte_lc_plmn_access_list_write(entries, num_entries, allowed);
+			k_free(entries);
+			if (ret) {
+				mosh_error("plmn access list write failed %d", ret); // todo
+				return -EFAULT;
+			}
+		}
+	} else {
+		goto show_usage;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_PALL);
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_link,
 	SHELL_CMD_ARG(
@@ -2744,6 +2902,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		tau, NULL,
 		"Subscribe/unsubscribe for modem TAU pre-warning notifications.",
 		link_shell_tau, 0, 10),
+	SHELL_CMD_ARG(
+		pall, NULL,
+		"pall.",
+		link_shell_pall, 0, 10),
 	SHELL_SUBCMD_SET_END
 );
 
