@@ -24,7 +24,7 @@ To test the Matter bridge application with the :ref:`Bluetooth LE bridged device
 * An additional development kit compatible with one of the following Bluetooth LE samples:
 
   * :ref:`peripheral_lbs`
-  * :ref:`peripheral_esp`
+  * :zephyr:code-sample:`ble_peripheral_esp`
 
 * A micro-USB cable for every development kit to connect it to the PC.
 
@@ -119,7 +119,7 @@ The application supports two bridged device configurations that are mutually exc
 
   * Nordic Semiconductor's :ref:`LED Button Service <lbs_readme>` - represented by the Matter On/Off Light and Generic Switch device types.
     The service can be configured to use the On/Off Light Switch instead of the Generic Switch device type.
-  * Zephyr's :ref:`Environmental Sensing Service <peripheral_esp>` - represented by the Matter Temperature Sensor and Humidity Sensor device types.
+  * Zephyr's :zephyr:code-sample:`ble_peripheral_esp` - represented by the Matter Temperature Sensor and Humidity Sensor device types.
 
 If the Bluetooth LE service required by your use case is not supported, you can extend the application.
 For information about how to add a new Bluetooth LE service support to the application, see the :ref:`matter_bridge_app_extending_ble_service` section.

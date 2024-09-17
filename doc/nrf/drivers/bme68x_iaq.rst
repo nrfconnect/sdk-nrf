@@ -26,7 +26,7 @@ Configuration
 
 To use the driver, configure the following Kconfig option:
 
-* :kconfig:option:`CONFIG_BME680`- Set to ``n`` to disable the :ref:`bme680` Zephyr driver.
+* :kconfig:option:`CONFIG_BME680`- Set to ``n`` to disable the BME680 Zephyr driver.
 * :kconfig:option:`CONFIG_SETTINGS` - Configure the Kconfig option and a settings backend to save the persistent state of the BSEC library.
 * :ref:`CONFIG_BME68X_IAQ <CONFIG_BME68X_IAQ>` - To enable this driver.
 
