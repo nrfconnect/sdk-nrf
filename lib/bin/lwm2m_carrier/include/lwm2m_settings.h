@@ -66,23 +66,6 @@ uint32_t lwm2m_settings_carriers_enabled_get(void);
 int lwm2m_settings_carriers_enabled_set(uint32_t new_carriers_enabled);
 
 /**
- * @brief Determines whether bootstrap from Smartcard mode is disabled.
- *
- * @retval true if bootstrap from Smartcard mode enabled.
- */
-bool lwm2m_settings_bootstrap_from_smartcard_get(void);
-
-/**
- * @brief Enable or disable bootstrap from Smartcard mode.
- *
- * @param new_bootstrap_from_smartcard Whether to enable bootstrap from Smartcard
- * mode or not.
- *
- * @retval 0 on success, non-zero on failure.
- */
-int lwm2m_settings_bootstrap_from_smartcard_set(bool new_bootstrap_from_smartcard);
-
-/**
  * @brief Determines whether @c server_uri is an LwM2M Bootstrap-Server or an LwM2M Server.
  *
  * @retval true if @c server_uri is an LwM2M Bootstrap-Server, false if  @c server_uri is

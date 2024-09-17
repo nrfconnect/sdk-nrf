@@ -101,35 +101,6 @@ static int do_cfg_auto_register(enum at_parser_cmd_type, struct at_parser *parse
 	return lwm2m_settings_auto_register_set(auto_register);
 }
 
-/* AT#XCARRIERCFG="bootstrap_smartcard"[,<0|1>] */
-SLM_AT_CMD_CUSTOM(xcarriercfg_bootstrap_smartcard, "AT#XCARRIERCFG=\"bootstrap_smartcard\"",
-	      do_cfg_bootstrap_from_smartcard);
-static int do_cfg_bootstrap_from_smartcard(enum at_parser_cmd_type, struct at_parser *parser,
-					   uint32_t param_count)
-{
-	if (param_count == 2) {
-		rsp_send("\r\n#XCARRIERCFG: %u\r\n", lwm2m_settings_bootstrap_from_smartcard_get());
-		return 0;
-	} else if (param_count != 3) {
-		return -EINVAL;
-	}
-
-	int ret;
-	uint16_t enabled;
-
-	ret = at_parser_num_get(parser, 2, &enabled);
-	if (ret) {
-		return ret;
-	}
-
-	if (enabled > 1) {
-		LOG_ERR("AT#XCARRIERCFG=\"bootstrap_smartcard\" failed: must be 0 or 1");
-		return -EINVAL;
-	}
-
-	return lwm2m_settings_bootstrap_from_smartcard_set(enabled);
-}
-
 const static uint32_t carriers_enabled_map[] = {
 	LWM2M_CARRIER_GENERIC,
 	LWM2M_CARRIER_VERIZON,
