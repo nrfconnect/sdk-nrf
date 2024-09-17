@@ -69,7 +69,8 @@ if(TARGET psa_crypto_config)
         INTERFACE
             ${PSA_CRYPTO_CONFIG_INTERFACE_PATH}
             ${NRF_SECURITY_ROOT}/include
-            ${OBERON_PSA_CORE_PATH}/include/
+            ${OBERON_PSA_CORE_PATH}/include
+            ${NRF_DIR}/include/tfm
     )
 endif()
 
@@ -87,7 +88,8 @@ if(TARGET psa_crypto_library_config)
         INTERFACE
             ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
             ${NRF_SECURITY_ROOT}/include
-            ${OBERON_PSA_CORE_PATH}/include/
+            ${OBERON_PSA_CORE_PATH}/include
+            ${NRF_DIR}/include/tfm
     )
 endif()
 
