@@ -50,10 +50,10 @@ You also need the following:
      Before running the initial J-Link installation from the `nRF Command Line Tools`_ package, ensure not to have any other J-Link executables on your system.
      If you have other J-Link installations, uninstall them before proceeding.
 
-* On Windows, SEGGER USB Driver for J-Link from SEGGER `J-Link version 7.94e`_.
+* On Windows, SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
 
    .. note::
-      To install the SEGGER USB Driver for J-Link on Windows, you must manually reinstall J-Link v7.94e from the command line using the ``-InstUSBDriver=1`` parameter, updating the installation previously run by the `nRF Command Line Tools`_:
+      To install the SEGGER USB Driver for J-Link on Windows, you must manually reinstall J-Link |jlink_ver| from the command line using the ``-InstUSBDriver=1`` parameter, updating the installation previously run by the `nRF Command Line Tools`_:
 
       1. Navigate to the download location of the J-Link executable and run one of the following commands:
 

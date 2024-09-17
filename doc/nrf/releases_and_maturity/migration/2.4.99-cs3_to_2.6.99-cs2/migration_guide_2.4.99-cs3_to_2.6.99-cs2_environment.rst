@@ -50,7 +50,7 @@ You also need the following:
 * `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively)
 * `curl`_
 * On Windows, SEGGER USB Driver for J-Link
-* SEGGER `J-Link version 7.94e`_
+* `SEGGER J-Link` (v7.94e)
 
 .. note::
    The SEGGER USB Driver for J-Link was included, on Windows, in the nRF Command Line Tools bundle required by the |NCS| v2.4.99-cs3.

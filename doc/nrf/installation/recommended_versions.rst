@@ -332,14 +332,21 @@ They can all be installed using the ``doc/requirements.txt`` file using ``pip``.
 nRF Command Line Tools
 **********************
 
-`nRF Command Line Tools`_ is a package of tools used for development, programming, and debugging of Nordic Semiconductor's nRF51, nRF52, nRF53 and nRF91 Series devices.
-Among others, this package includes the following prerequisites for the |NCS|:
-
-* The universal version of SEGGER J-Link, which is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
-* nrfjprog executable and library, which the west command uses by default to program the development kits.
-  For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
+`nRF Command Line Tools`_ is a package of tools used for development, programming, and debugging of Nordic Semiconductor's nRF51, nRF52, nRF53, nRF54H, and nRF91 Series devices.
+Among others, this package includes the nrfjprog executable and library, which the west command uses by default to program the development kits.
+For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
 
 It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
+
+.. _requirements_jlink:
+
+J-Link Software and Documentation Pack
+**************************************
+
+SEGGER's `J-Link Software and Documentation Pack`_ is a package of tools that is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
+Among others, this package includes the J-Link RTT Viewer, which can be used for :ref:`test_and_optimize`.
+
+It is recommended to use the |jlink_ver| of the package when you :ref:`installing_vsc`.
 
 .. _toolchain_management_tools:
 
