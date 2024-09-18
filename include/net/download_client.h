@@ -28,6 +28,8 @@
 extern "C" {
 #endif
 
+#define K_THREAD_STACK_MEMBER K_KERNEL_STACK_MEMBER
+
 /**
  * @brief Download client event IDs.
  */
