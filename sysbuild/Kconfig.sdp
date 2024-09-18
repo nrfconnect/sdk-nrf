@@ -1,0 +1,42 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "SW defined peripherals"
+
+menuconfig SDP
+	bool "Software defined peripherals"
+
+if SDP
+
+config EGPIO_FLPR_APPLICATION
+	bool "Nordic eGPIO FLPR application"
+	help
+	  Include FLPR side eGPIO application in build.
+	  FLPR eGPIO application is an eGPIO driver built for an FLPR core that receives commands
+	  from the app core and controls the pin states based on them.
+
+choice EGPIO_BACKEND
+	prompt "eGPIO driver backend type"
+	depends on EGPIO_FLPR_APPLICATION
+	default EGPIO_BACKEND_ICMSG
+	help
+	  Select the backend type for the eGPIO driver and application.
+
+config EGPIO_BACKEND_MBOX
+	bool "MBOX backend for eGPIO"
+	help
+	  Use MBOX backend driver for eGPIO.
+	  The MBOX version is more resource-efficient than the ICMSG backend,
+	  but needs to have a shared structure defined as a communication channel.
+
+config EGPIO_BACKEND_ICMSG
+	bool "ICMSG backend for eGPIO"
+	help
+	  Use ICMSG backend driver for eGPIO.
+
+endchoice
+
+endif # SDP
+
+endmenu
