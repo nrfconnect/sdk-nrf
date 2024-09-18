@@ -973,6 +973,7 @@ Documentation
 
   * The :ref:`ug_app_dev` section, which includes pages from the :ref:`configuration_and_build` section and from the removed Device configuration guides section.
   * The :ref:`peripheral_sensor_node_shield` page.
+  * The :ref:`dfu_tools_mcumgr_cli` page after it was removed from the Zephyr repository.
 
 * Restructured the :ref:`app_bootloaders` documentation and combined the DFU and bootloader articles.
   Additionally, created a new bootloader :ref:`bootloader_quick_start`.
