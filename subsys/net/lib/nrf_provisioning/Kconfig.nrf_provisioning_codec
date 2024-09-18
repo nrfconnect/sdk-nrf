@@ -6,7 +6,7 @@
 menuconfig NRF_PROVISIONING_CODEC
 	bool "nRF Provisioning codec"
 	select EXPERIMENTAL
-	imply NRF_MODEM_LIB
+	depends on NRF_MODEM_LIB
 
 if NRF_PROVISIONING_CODEC
 
