@@ -46,6 +46,7 @@
 .. _`Zephyr issue #69546`: https://github.com/zephyrproject-rtos/zephyr/issues/69546
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
+.. _`MCUboot design`: https://github.com/mcu-tools/mcuboot/blob/main/docs/design.md
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 .. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
 

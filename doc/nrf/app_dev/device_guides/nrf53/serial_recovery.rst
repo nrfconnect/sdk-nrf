@@ -19,7 +19,7 @@ To upload the networking image, use the following command::
      ./mcumgr image upload <build_dir_path>/zephyr/net_core_app_update.bin -e -n 3 -c serial_conn
 
 ``serial_conn`` is the serial connection configuration.
-For more information on MCUmgr image management, see :ref:`zephyr:image_mgmt`.
+For more information on MCUmgr image management, see :ref:`dfu_tools_mcumgr_cli_image_mgmt`.
 
 To enable the serial recovery of the network core while the multi-image update is not enabled in the MCUboot, set the following options:
 
