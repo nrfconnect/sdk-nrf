@@ -670,6 +670,11 @@ Trusted Firmware-M (TF-M) samples
 
 * Replaced support for the ``nrf54l15pdk/nrf54l15/cpuapp/ns`` board target with ``nrf54l15dk/nrf54l15/cpuapp/ns``.
 
+* :ref:`tfm_psa_template` sample:
+
+  * Added support for updating the network core on the nRF5340 DK.
+
+
 Thread samples
 --------------
 
