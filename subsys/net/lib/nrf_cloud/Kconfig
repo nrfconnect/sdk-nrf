@@ -127,6 +127,7 @@ choice NRF_CLOUD_CREDENTIALS_MGMT
 config NRF_CLOUD_CREDENTIALS_MGMT_MODEM
 	depends on NRF_MODEM_LIB
 	select MODEM_KEY_MGMT
+	imply AT_SHELL_UNESCAPE_LF if AT_SHELL
 	bool "Credentials are managed by the modem"
 
 config NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED

@@ -738,6 +738,11 @@ Modem libraries
     * To use the ``AT+CMMS`` AT command when sending concatenated SMS message.
     * To set "7" as a fallback SMS service center address for type approval SIM cards which do not have it set.
 
+* :ref:`lib_at_shell` library:
+
+  * Added the :kconfig:option:`CONFIG_AT_SHELL_UNESCAPE_LF` Kconfig option to enable reception of multiline AT commands.
+  * Updated the :c:func:`at_shell` function to replace ``\n`` with ``<CR><LF>`` if :kconfig:option:`CONFIG_AT_SHELL_UNESCAPE_LF` is enabled.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
