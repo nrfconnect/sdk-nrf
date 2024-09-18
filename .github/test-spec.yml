@@ -204,6 +204,7 @@
 
 "CI-ble-samples-test":
   - "samples/bluetooth/**/*"
+  - "samples/peripheral/radio_test/**/*"
   - "subsys/nrf_rpc/**/*"
   - "subsys/mpsl/**/*"
   - "drivers/mpsl/**/*"
