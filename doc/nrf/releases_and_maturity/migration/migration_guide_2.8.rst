@@ -120,6 +120,13 @@ AT command parser
 
   * The :c:func:`at_parser_cmd_type_get` has been renamed to :c:func:`at_parser_at_cmd_type_get`.
 
+Security libraries
+------------------
+
+.. toggle::
+
+   * The ``CONFIG_CRACEN_LOAD_KMU_SEED`` Kconfig option was renamed to :kconfig:option:`CONFIG_CRACEN_IKG_SEED_LOAD`.
+
 .. _migration_2.8_recommended:
 
 Recommended changes

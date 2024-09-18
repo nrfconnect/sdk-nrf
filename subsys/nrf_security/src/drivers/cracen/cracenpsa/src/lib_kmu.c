@@ -26,6 +26,7 @@ void lib_kmu_clear_all_events(void)
 	NRF_KMU_S->EVENTS_PROVISIONED = 0;
 	NRF_KMU_S->EVENTS_PUSHED = 0;
 	NRF_KMU_S->EVENTS_REVOKED = 0;
+	NRF_KMU_S->EVENTS_PUSHBLOCKED = 0;
 }
 
 static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,

@@ -97,7 +97,7 @@ Developing with PMICs
 Security
 ========
 
-|no_changes_yet_note|
+* The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option was added to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed.
 
 Protocols
 =========

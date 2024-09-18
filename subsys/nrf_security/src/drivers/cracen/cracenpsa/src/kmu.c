@@ -14,8 +14,8 @@
 #include <sxsymcrypt/internal.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/__assert.h>
-
-#include "cracen_psa.h"
+#include <hw_unique_key.h>
+#include <cracen_psa.h>
 #include "common.h"
 #include "kmu.h"
 
@@ -254,7 +254,7 @@ static bool can_sign(const psa_key_attributes_t *key_attr)
  *
  * @return psa_status_t
  */
-static psa_status_t verify_provisioning_state(void)
+static psa_status_t clean_up_unfinished_provisioning(void)
 {
 	uint32_t data;
 	int st = lib_kmu_read_metadata(PROVISIONING_SLOT, &data);
@@ -290,7 +290,7 @@ static psa_status_t verify_provisioning_state(void)
  * @param num_slots
  * @return psa_status_t
  */
-psa_status_t set_provisioning_in_progress(uint32_t slot_id, uint32_t num_slots)
+static psa_status_t set_provisioning_in_progress(uint32_t slot_id, uint32_t num_slots)
 {
 	struct kmu_src_t kmu_desc = {};
 
@@ -312,7 +312,7 @@ psa_status_t set_provisioning_in_progress(uint32_t slot_id, uint32_t num_slots)
  * @param num_slots
  * @return psa_status_t
  */
-psa_status_t end_provisioning(uint32_t slot_id, uint32_t num_slots)
+static psa_status_t end_provisioning(uint32_t slot_id, uint32_t num_slots)
 {
 	if (lib_kmu_revoke_slot(PROVISIONING_SLOT) != LIB_KMU_SUCCESS) {
 		return PSA_ERROR_HARDWARE_FAILURE;
@@ -341,14 +341,15 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		/* Verify will clear related key slots. */
-		return verify_provisioning_state();
+		/* This will revoke the related key slots. */
+		return clean_up_unfinished_provisioning();
 	}
 
 	return PSA_ERROR_DOES_NOT_EXIST;
 }
 
-psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attributes_t *key_attr)
+static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
+					      psa_key_attributes_t *key_attr)
 {
 	psa_key_persistence_t key_persistence;
 
@@ -375,7 +376,7 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 
 	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_SEED) {
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_RAW_DATA);
-		psa_set_key_bits(key_attr, 384);
+		psa_set_key_bits(key_attr, PSA_BYTES_TO_BITS(HUK_SIZE_BYTES));
 		return PSA_SUCCESS;
 	}
 
@@ -485,8 +486,6 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 			return PSA_ERROR_CORRUPTION_DETECTED;
 		}
 		break;
-	case KMU_METADATA_SCHEME_SEED:
-		return PSA_ERROR_NOT_PERMITTED;
 	}
 
 	return PSA_SUCCESS;
@@ -688,7 +687,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	uint8_t encrypted_workmem[CRACEN_KMU_SLOT_KEY_SIZE * 4] = {};
 	size_t encrypted_outlen = 0;
 
-	psa_status_t status = verify_provisioning_state();
+	psa_status_t status = clean_up_unfinished_provisioning();
 
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -716,7 +715,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		break;
 	case KMU_METADATA_SCHEME_SEED:
 		push_address = (uint8_t *)NRF_CRACEN->SEED;
-		if (key_buffer_size != 16 * 3) {
+		if (key_buffer_size != HUK_SIZE_BYTES) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
@@ -740,8 +739,8 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	}
 
 	/* Verify that required slots are empty */
-	size_t num_slots = (MAX(encrypted_outlen, key_buffer_size) + CRACEN_KMU_SLOT_KEY_SIZE - 1) /
-			   CRACEN_KMU_SLOT_KEY_SIZE;
+	const size_t num_slots =  DIV_ROUND_UP(MAX(encrypted_outlen, key_buffer_size),
+						   CRACEN_KMU_SLOT_KEY_SIZE);
 
 	for (size_t i = 0; i < num_slots; i++) {
 		if (!lib_kmu_is_slot_empty(slot_id + i)) {
@@ -775,7 +774,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 			/* We've already verified that this slot empty, so it should not fail. */
 			status = PSA_ERROR_HARDWARE_FAILURE;
 
-			(void)verify_provisioning_state();
+			clean_up_unfinished_provisioning();
 			break;
 		}
 
@@ -856,7 +855,7 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 		return PSA_ERROR_DOES_NOT_EXIST;
 	}
 
-	psa_status_t status = verify_provisioning_state();
+	psa_status_t status = clean_up_unfinished_provisioning();
 
 	if (status != PSA_SUCCESS) {
 		return status;
