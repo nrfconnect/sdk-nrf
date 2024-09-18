@@ -240,7 +240,7 @@ bool mock_socket_is_supported(int family, int type, int proto)
 
 int mock_socket_create(int family, int type, int proto)
 {
-	int fd = z_reserve_fd();
+	int fd = zvfs_reserve_fd();
 	struct net_context *ctx;
 	int res;
 
@@ -260,7 +260,7 @@ int mock_socket_create(int family, int type, int proto)
 
 	res = net_context_get(family, type, proto, &ctx);
 	if (res < 0) {
-		z_free_fd(fd);
+		zvfs_free_fd(fd);
 		errno = -res;
 		return -1;
 	}
@@ -290,7 +290,7 @@ int mock_socket_create(int family, int type, int proto)
 		net_context_ref(ctx);
 	}
 
-	z_finalize_fd(fd, ctx, (const struct fd_op_vtable *)&mock_socket_fd_op_vtable);
+	zvfs_finalize_fd(fd, ctx, (const struct fd_op_vtable *)&mock_socket_fd_op_vtable);
 
 	return fd;
 }
