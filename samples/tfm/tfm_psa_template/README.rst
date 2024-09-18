@@ -25,6 +25,8 @@ This sample uses Trusted Firmware-M, nRF Secure Immutable bootloader and MCUboot
 It includes provisioning the device with keys and being able to perform a device firmware update.
 The sample prints information about the identity of the device and the firmware versions that are currently running.
 
+On the nRF5340 devices, this sample also includes the :ref:`B0n bootloader <nc_bootloader>` and the :ref:`empty_net_core <nrf5340_empty_net_core>` image for demonstrating the network core firmware update process.
+
 Building and running
 ********************
 
@@ -38,7 +40,7 @@ Build and flash the provisioning image sample to provision the device with the P
 .. code-block:: console
 
     west build -b nrf5340dk/nrf5340/cpuapp nrf/samples/tfm/provisioning_image -d build_provisioning_image
-    west flash --erase -d build_provisioning_image
+    west flash --erase --recover -d build_provisioning_image
 
 Build and flash the TF-M PSA template sample.
 Do not flash with ``--erase`` as this will erase the PSA platform security parameters and they will be lost.
@@ -145,6 +147,10 @@ See :ref:`ug_fw_update_keys` for more information on how to generate and use key
 The bootloader and the application can be updated using the :file:`mcumgr` command-line tool.
 See :zephyr:code-sample:`smp-svr` for installation and usage instructions.
 
+.. note::
+
+    Remember to rebuild the sample with the updated keys before proceeding with the firmware update.
+
 Application and TF-M firmware update
 ====================================
 
@@ -189,7 +195,7 @@ To upload a new bootloader image, build a bootloader targeting the correct bootl
 
 .. code-block:: console
 
-    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template \
+    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
     -Dmcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
 List the current firmware images and upload a bootloader image that targets the non-active bootloader slot.
@@ -198,7 +204,7 @@ List the current firmware images and upload a bootloader image that targets the 
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build/signed_by_mcuboot_and_b0_s1_image.bin
+    build_update/signed_by_mcuboot_and_b0_s1_image.bin
 
 Once the new bootloader image is uploaded, the hash of the image is shown in the image list.
 Flag the image to be tested on next reboot using its hash.
@@ -215,8 +221,90 @@ The verification of the image will happen during the update process.
 
     mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
 
+Network core update (nRF5340 only)
+==================================
+
+To upload a new network core image, build the empty_net_core image with an updated firmware image version.
+
+.. code-block:: console
+
+    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
+    -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+
+Then upload the new network core image to the device.
+Note that the image is uploaded to the network core slot.
+
+.. code-block:: console
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+    build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+
+Once the network core image is uploaded, the hash of the image is shown in the image list as image 1 in slot 1.
+Flag the image to be tested on next reboot using its hash.
+
+.. code-block:: console
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
+
+Trigger the network core update by initiating a reset.
+The verification of the image will happen during the update process.
+
+.. code-block:: console
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
+
+Alternatively, you can conduct a manual reset to trigger the network core update.
+This allows you to observe the update process in the application and network core console outputs.
+
+Simultaneous application and network core update (nRF5340 only)
+===============================================================
+
+When the interface between the application and network core is updated, both the application and network core images must be updated simultaneously.
+To do this, build the application image with an updated image version and the network core image with an updated firmware image version.
+
+.. code-block:: console
+
+    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
+    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.4\" -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=3
+
+Then upload the new application and network core images to the device.
+Note that the application image is uploaded to the application slot, and the network core image is uploaded to the network core slot.
+
+.. code-block:: console
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+    build_update/tfm_psa_template/zephyr/zephyr.signed.bin -e -n 0
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+    build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+
+Once the images are uploaded, the hash of the images is shown in the image list.
+The application image is image 1 in slot 0, and the network core image is image 1 in slot 1.
+To allow the application and network core images to be updated simultaneously, first confirm the network core image and then the application image.
+
+.. code-block:: console
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image confirm <network core image hash>
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image confirm <application core image hash>
+
+Trigger the core updates by initiating a reset.
+The verification of the images will happen during the update process.
+
+.. code-block:: console
+
+    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
+
+Alternatively, you can conduct a manual reset to trigger the core updates.
+This allows you to observe the update process in the application and network core console outputs.
+
 Dependencies
 *************
 
 * This sample uses the TF-M module found in the :file:`modules/tee/tfm/` folder of the |NCS|.
 * This sample uses the :ref:`lib_tfm_ioctl_api` library.
+* On the nRF5340 devices, this sample uses the :ref:`subsys_pcd` library.

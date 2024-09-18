@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+
+if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
+
+choice NETCORE
+	default NETCORE_EMPTY
+endchoice
+
+config SECURE_BOOT_NETCORE
+	default y
+
+config NETCORE_APP_UPDATE
+	default y
+
+config MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES
+	default y
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	default y
+
+config MCUBOOT_USE_ALL_AVAILABLE_RAM
+	default y
+
+endif
