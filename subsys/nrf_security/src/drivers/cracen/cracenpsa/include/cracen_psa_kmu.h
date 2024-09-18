@@ -34,10 +34,26 @@ typedef uint64_t psa_drv_slot_number_t;
 /* Retrieve KMU slot number for PSA key id. */
 #define CRACEN_PSA_GET_KMU_SLOT(key_id) ((key_id)&0xff)
 
-#define CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED 0
-#define CRACEN_KMU_KEY_USAGE_SCHEME_SEED      1
-#define CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED 2
-#define CRACEN_KMU_KEY_USAGE_SCHEME_RAW	      3
+enum kmu_metadata_key_usage_scheme {
+	/**
+	 * These keys can only be pushed to CRACEN's protected RAM.
+	 * The keys are not encrypted. Only AES supported.
+	 */
+	KMU_METADATA_SCHEME_PROTECTED,
+	/**
+	 * These keys use 3 key slots. Pushed to the seed register.
+	 */
+	KMU_METADATA_SCHEME_SEED,
+	/**
+	 * These keys are stored in encrypted form. They will be decrypted
+	 * to @ref kmu_push_area for usage.
+	 */
+	KMU_METADATA_SCHEME_ENCRYPTED,
+	/**
+	 * These keys are not encrypted. Pushed to @ref kmu_push_area.
+	 */
+	KMU_METADATA_SCHEME_RAW
+};
 
 /**
  * @brief Retrieves the slot number for a given key handle.
