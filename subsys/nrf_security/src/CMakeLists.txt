@@ -123,9 +123,9 @@ target_link_libraries(mbedcrypto_base
   PRIVATE
     psa_crypto_config
     $<TARGET_NAME_IF_EXISTS:platform_s>
+    nrf_security_utils
   PUBLIC
     psa_interface
-    nrf_security_utils
 )
 
 nrf_security_add_zephyr_options(mbedcrypto_base)
