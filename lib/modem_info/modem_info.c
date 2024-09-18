@@ -26,24 +26,24 @@ LOG_MODULE_REGISTER(modem_info);
 #define INVALID_DESCRIPTOR	-1
 
 #define AT_CMD_CESQ		"AT+CESQ"
-#define AT_CMD_CURRENT_BAND	"AT%%XCBAND"
-#define AT_CMD_SUPPORTED_BAND	"AT%%XCBAND=?"
+#define AT_CMD_CURRENT_BAND	"AT%XCBAND"
+#define AT_CMD_SUPPORTED_BAND	"AT%XCBAND=?"
 #define AT_CMD_CURRENT_MODE	"AT+CEMODE?"
 #define AT_CMD_CURRENT_OP	"AT+COPS?"
 #define AT_CMD_NETWORK_STATUS	"AT+CEREG?"
 #define AT_CMD_PDP_CONTEXT	"AT+CGDCONT?"
-#define AT_CMD_UICC_STATE	"AT%%XSIM?"
-#define AT_CMD_VBAT		"AT%%XVBAT"
-#define AT_CMD_TEMP		"AT%%XTEMP?"
+#define AT_CMD_UICC_STATE	"AT%XSIM?"
+#define AT_CMD_VBAT		"AT%XVBAT"
+#define AT_CMD_TEMP		"AT%XTEMP?"
 #define AT_CMD_FW_VERSION	"AT+CGMR"
 #define AT_CMD_CRSM		"AT+CRSM"
 #define AT_CMD_ICCID		"AT+CRSM=176,12258,0,0,10"
-#define AT_CMD_SYSTEMMODE	"AT%%XSYSTEMMODE?"
+#define AT_CMD_SYSTEMMODE	"AT%XSYSTEMMODE?"
 #define AT_CMD_IMSI		"AT+CIMI"
 #define AT_CMD_IMEI		"AT+CGSN"
 #define AT_CMD_DATE_TIME	"AT+CCLK?"
 #define AT_CMD_XCONNSTAT	"AT%XCONNSTAT?"
-#define AT_CMD_XMONITOR		"AT%%XMONITOR"
+#define AT_CMD_XMONITOR		"AT%XMONITOR"
 #define AT_CMD_SUCCESS_SIZE	5
 
 #define RSRP_DATA_NAME		"rsrp"
@@ -437,7 +437,8 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 		return -EINVAL;
 	}
 
-	err = nrf_modem_at_cmd(recv_buf, CONFIG_MODEM_INFO_BUFFER_SIZE, modem_data[info]->cmd);
+	err = nrf_modem_at_cmd(recv_buf, CONFIG_MODEM_INFO_BUFFER_SIZE,
+			       "%s", modem_data[info]->cmd);
 	if (err != 0) {
 		return -EIO;
 	}
@@ -593,7 +594,8 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 
 	buf[0] = '\0';
 
-	err = nrf_modem_at_cmd(recv_buf, CONFIG_MODEM_INFO_BUFFER_SIZE, modem_data[info]->cmd);
+	err = nrf_modem_at_cmd(recv_buf, CONFIG_MODEM_INFO_BUFFER_SIZE,
+			       "%s", modem_data[info]->cmd);
 	if (err != 0) {
 		return -EIO;
 	}
