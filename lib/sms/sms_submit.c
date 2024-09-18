@@ -344,7 +344,7 @@ static int sms_submit_encode(
 	LOG_DBG("Sending encoded SMS data (length=%d):", msg_size);
 	LOG_DBG("%s", send_buf);
 
-	err = nrf_modem_at_printf(send_buf);
+	err = nrf_modem_at_printf("%s", send_buf);
 	if (err) {
 		LOG_ERR("Sending AT command failed, err=%d", err);
 		sms_submit_print_error(err);
