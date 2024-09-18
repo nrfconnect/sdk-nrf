@@ -7,7 +7,7 @@
 menuconfig NRF_PROVISIONING
 	bool "nRF Provisioning"
 	select EXPERIMENTAL
-	imply NRF_MODEM_LIB
+	depends on NRF_MODEM_LIB
 	depends on SETTINGS
 	imply FCB
 
