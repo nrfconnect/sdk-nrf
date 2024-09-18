@@ -85,7 +85,7 @@ if(TARGET mbedcrypto_oberon_mbedtls_imported)
 
   target_link_libraries(mbedcrypto_oberon_mbedtls_imported
     INTERFACE
-      psa_crypto_library_config
+      psa_crypto_config
       mbedcrypto_base
   )
 endif()
