@@ -3,12 +3,75 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
-#include <zephyr/ztest.h>
-#include <stdio.h>
+#include <unity.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <date_time.h>
-#include <time.h>
+#include <modem/at_monitor.h>
+#include <modem/lte_lc.h>
+#include <mock_nrf_modem_at.h>
+#include <nrf_errno.h>
+
+#include "cmock_nrf_modem_at.h"
+
+#define TEST_EVENT_MAX_COUNT 10
+
+struct test_date_time_cb {
+	enum date_time_evt_type type;
+};
+
+struct test_date_time_cb test_date_time_cb_data[TEST_EVENT_MAX_COUNT] = {0};
+
+static int date_time_cb_count_occurred;
+static int date_time_cb_count_expected;
+
+static void date_time_callback(const struct date_time_evt *evt);
+
+/* at_monitor_dispatch() is implemented in at_monitor library and
+ * we'll call it directly to fake received AT commands/notifications
+ */
+extern void at_monitor_dispatch(const char *at_notif);
+
+/* date_time_modem_on_cfun() is implemented in date_time library and
+ * we'll call it directly to fake nrf_modem_lib call to this function
+ */
+extern void date_time_modem_on_cfun(int mode, void *ctx);
+
+K_SEM_DEFINE(date_time_callback_sem, 0, 1);
+
+void setUp(void)
+{
+	mock_nrf_modem_at_Init();
+
+	date_time_cb_count_occurred = 0;
+	date_time_cb_count_expected = 0;
+
+	date_time_register_handler(date_time_callback);
+}
+
+void tearDown(void)
+{
+	TEST_ASSERT_EQUAL(date_time_cb_count_expected, date_time_cb_count_occurred);
+
+	date_time_register_handler(NULL);
+
+	mock_nrf_modem_at_Verify();
+}
+
+/** Callback that date_time library will call when an event is received. */
+static void date_time_callback(const struct date_time_evt *evt)
+{
+	TEST_ASSERT_MESSAGE(date_time_cb_count_occurred < date_time_cb_count_expected,
+			    "date-time event callback called more times than expected");
+
+	TEST_ASSERT_EQUAL(test_date_time_cb_data[date_time_cb_count_occurred].type, evt->type);
+
+	date_time_cb_count_occurred++;
+	k_sem_give(&date_time_callback_sem);
+}
 
 static void reset_to_valid_time(struct tm *time)
 {
@@ -20,7 +83,7 @@ static void reset_to_valid_time(struct tm *time)
 	time->tm_sec = 30;
 }
 
-ZTEST(test_date_time, test_date_time_invalid_input)
+void test_date_time_invalid_input(void)
 {
 	int ret;
 	struct tm date_time_dummy;
@@ -31,12 +94,12 @@ ZTEST(test_date_time, test_date_time_invalid_input)
 	date_time_dummy.tm_year = 2020;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	date_time_dummy.tm_year = 114;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	reset_to_valid_time(&date_time_dummy);
 
@@ -46,12 +109,12 @@ ZTEST(test_date_time, test_date_time_invalid_input)
 	date_time_dummy.tm_mon = 12;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	date_time_dummy.tm_mon = -1;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	reset_to_valid_time(&date_time_dummy);
 
@@ -61,12 +124,12 @@ ZTEST(test_date_time, test_date_time_invalid_input)
 	date_time_dummy.tm_mday = 0;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	date_time_dummy.tm_mday = 32;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	reset_to_valid_time(&date_time_dummy);
 
@@ -76,12 +139,12 @@ ZTEST(test_date_time, test_date_time_invalid_input)
 	date_time_dummy.tm_hour = -1;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	date_time_dummy.tm_hour = 24;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	reset_to_valid_time(&date_time_dummy);
 
@@ -91,12 +154,12 @@ ZTEST(test_date_time, test_date_time_invalid_input)
 	date_time_dummy.tm_min = -1;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	date_time_dummy.tm_min = 60;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	reset_to_valid_time(&date_time_dummy);
 
@@ -106,36 +169,61 @@ ZTEST(test_date_time, test_date_time_invalid_input)
 	date_time_dummy.tm_sec = -1;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	date_time_dummy.tm_sec = 62;
 
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(-EINVAL, ret, "date_time_set should equal -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	reset_to_valid_time(&date_time_dummy);
 
 }
 
-ZTEST(test_date_time, test_date_time_premature_request)
+void test_date_time_null_input(void)
+{
+	int ret;
+
+	ret = date_time_set(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = date_time_uptime_to_unix_time_ms(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = date_time_now(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = date_time_now_local(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = date_time_timestamp_clear(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_date_time_premature_request(void)
 {
 	int ret;
 	int64_t ts_unix_ms = 0;
 
 	ret = date_time_now(&ts_unix_ms);
-	zassert_equal(-ENODATA, ret, "date_time_now should return -ENODATA");
-	zassert_equal(0, ts_unix_ms, "ts_unix_ms should equal 0");
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	TEST_ASSERT_EQUAL(0, ts_unix_ms);
 
 	ret = date_time_uptime_to_unix_time_ms(&ts_unix_ms);
-	zassert_equal(-ENODATA, ret,
-		"date_time_uptime_to_unix_time_ms should return -ENODATA");
-	zassert_equal(0, ts_unix_ms, "ts_unix_ms should equal 0");
+	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	TEST_ASSERT_EQUAL(0, ts_unix_ms);
 
 }
 
-ZTEST(test_date_time, test_date_time_already_converted)
+void test_date_time_already_converted(void)
 {
+	/* Wait to get uptime non-zero for date_time_uptime_to_unix_time_ms() call */
+	k_sleep(K_MSEC(10));
+	date_time_register_handler(NULL);
+	date_time_clear();
 	int ret;
+
+	date_time_register_handler(NULL);
 
 	struct tm date_time_dummy = {
 		.tm_year = 120,
@@ -146,33 +234,32 @@ ZTEST(test_date_time, test_date_time_already_converted)
 		.tm_sec = 30
 	};
 
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CCLK=\"20/08/07,15:11:30+99\"", 0);
+
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(0, ret, "date_time_set should equal 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	/** Fri Aug 07 2020 15:11:30 UTC. */
 	int64_t ts_unix_ms = 1596813090000;
 	int64_t ts_unix_ms_prev = 1596813090000;
 
 	ret = date_time_uptime_to_unix_time_ms(&ts_unix_ms);
-	zassert_equal(-EINVAL, ret,
-		      "date_time_uptime_to_unix_time_ms should return -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
-	zassert_equal(ts_unix_ms_prev, ts_unix_ms,
-		      "ts_unix_ms should equal ts_unix_ms_prev");
+	TEST_ASSERT_EQUAL(ts_unix_ms_prev, ts_unix_ms);
 }
 
-ZTEST(test_date_time, test_date_time_negative_uptime)
+void test_date_time_negative_uptime(void)
 {
 	int ret;
 
 	int64_t ts_unix_ms = -1000;
 
 	ret = date_time_uptime_to_unix_time_ms(&ts_unix_ms);
-	zassert_equal(-EINVAL, ret,
-		      "date_time_uptime_to_unix_time_ms should return -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-ZTEST(test_date_time, test_date_time_clear)
+void test_date_time_clear(void)
 {
 	int ret;
 
@@ -180,17 +267,19 @@ ZTEST(test_date_time, test_date_time_clear)
 	int64_t ts_unix_ms = 1596813090000;
 
 	ret = date_time_timestamp_clear(NULL);
-	zassert_equal(-EINVAL, ret,
-		      "date_time_timestamp_clear should return -EINVAL");
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	ret = date_time_timestamp_clear(&ts_unix_ms);
-	zassert_equal(0, ret, "date_time_timestamp_clear should return 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
-	zassert_equal(0, ts_unix_ms, "ts_unix_ms should equal 0");
+	TEST_ASSERT_EQUAL(0, ts_unix_ms);
 }
 
-ZTEST(test_date_time, test_date_time_conversion)
+void test_date_time_conversion(void)
 {
+	date_time_register_handler(NULL);
+	date_time_clear();
+
 	int ret;
 	struct tm date_time_dummy = {
 		.tm_year = 120,
@@ -209,11 +298,13 @@ ZTEST(test_date_time, test_date_time_conversion)
 	int64_t ts_unix_ms = 0;
 	int64_t ts_expect = 0;
 
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CCLK=\"20/08/07,15:11:30+99\"", 0);
+
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(0, ret, "date_time_set() should return 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = date_time_now(&ts_unix_ms);
-	zassert_equal(0, ret, "date_time_now() should return 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ts_expect = date_time_utc_unix - date_time_utc_unix_origin + k_uptime_get();
 
@@ -221,52 +312,50 @@ ZTEST(test_date_time, test_date_time_conversion)
 	 * the comparing values are based on k_uptime_get(). Use range instead and compare agains an
 	 * arbitrary "high" delta, just to be sure.
 	 */
-	zassert_within(ts_expect, ts_unix_ms, 100,
-		       "Converted value should be within 100 ms of the expected result");
+	TEST_ASSERT_INT64_WITHIN(100, ts_expect, ts_unix_ms);
 
 	ret = date_time_timestamp_clear(&ts_unix_ms);
-	zassert_equal(0, ret, "date_time_timestamp_clear() should return 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
-	zassert_equal(0, ts_unix_ms, "ts_unix_ms should equal 0");
+	TEST_ASSERT_EQUAL(0, ts_unix_ms);
 
 	uptime = 0;
 
 	ret = date_time_uptime_to_unix_time_ms(&uptime);
-	zassert_equal(0, ret,
-		      "date_time_uptime_to_unix_time_ms() should return 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ts_expect = date_time_utc_unix - date_time_utc_unix_origin;
 
-	zassert_within(ts_expect, uptime, 100,
-		       "Converted value should be within 100 ms of the expected result");
+	TEST_ASSERT_INT64_WITHIN(100, ts_expect, uptime);
 
 	uptime = k_uptime_get();
 
 	ret = date_time_uptime_to_unix_time_ms(&uptime);
-	zassert_equal(0, ret,
-		      "date_time_uptime_to_unix_time_ms should return 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ts_expect = date_time_utc_unix - date_time_utc_unix_origin + k_uptime_get();
 
-	zassert_within(ts_expect, uptime, 100,
-		       "Converted value should be within 100 ms of the expected result");
+	TEST_ASSERT_INT64_WITHIN(100, ts_expect, uptime);
 
 	k_sleep(K_SECONDS(1));
 
 	uptime = k_uptime_get();
 
 	ret = date_time_uptime_to_unix_time_ms(&uptime);
-	zassert_equal(0, ret,
-		      "date_time_uptime_to_unix_time_ms should return 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ts_expect = date_time_utc_unix - date_time_utc_unix_origin + k_uptime_get();
 
-	zassert_within(ts_expect, uptime, 100,
-		       "Converted value should be within 100 ms of the expected result");
+	TEST_ASSERT_INT64_WITHIN(100, ts_expect, uptime);
 }
 
-ZTEST(test_date_time, test_date_time_validity)
+void test_date_time_validity(void)
 {
+	/* Wait to get uptime non-zero for last date_time_is_valid() call */
+	k_sleep(K_MSEC(10));
+	date_time_register_handler(NULL);
+	date_time_clear();
+
 	int ret;
 	struct tm date_time_dummy = {
 		.tm_year = 120,
@@ -278,32 +367,38 @@ ZTEST(test_date_time, test_date_time_validity)
 	};
 
 	ret = date_time_is_valid();
-	zassert_equal(false, ret, "date_time_is_valid should equal false");
+	TEST_ASSERT_EQUAL(false, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CCLK=\"20/08/07,15:11:30+99\"", 0);
 
 	/** UNIX timestamp equavivalent to tm structure date_time_dummy. */
 	/** Fri Aug 07 2020 15:11:30 UTC. */
 	ret = date_time_set(&date_time_dummy);
-	zassert_equal(0, ret, "date_time_set should equal 0");
+	TEST_ASSERT_EQUAL(0, ret);
 
 	ret = date_time_is_valid();
-	zassert_equal(true, ret, "date_time_is_valid should equal true");
+	TEST_ASSERT_EQUAL(true, ret);
 }
 
-static void date_time_after(void *unused)
+/* This is needed because AT Monitor library is initialized in SYS_INIT. */
+static int date_time_test_sys_init(void)
 {
-	ARG_UNUSED(unused);
-	date_time_clear();
+	__cmock_nrf_modem_at_notif_handler_set_ExpectAnyArgsAndReturn(0);
+
+	return 0;
 }
 
-static void *suite_setup(void)
+/* It is required to be added to each test. That is because unity's
+ * main may return nonzero, while zephyr's main currently must
+ * return 0 in all cases (other values are reserved).
+ */
+extern int unity_main(void);
+
+int main(void)
 {
-	/* Delay to ensure that k_uptime_get returns positive non-zero value
-	 * irrespective of what CONFIG_SYS_CLOCK_TICKS_PER_SEC value is.
-	 * This has been an issue in QEMU tests.
-	 */
-	k_sleep(K_SECONDS(1));
+	(void)unity_main();
 
-	return NULL;
+	return 0;
 }
 
-ZTEST_SUITE(test_date_time, NULL, suite_setup, NULL, date_time_after, NULL);
+SYS_INIT(date_time_test_sys_init, POST_KERNEL, 0);
