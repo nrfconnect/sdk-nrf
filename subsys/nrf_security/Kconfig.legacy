@@ -388,6 +388,7 @@ config MBEDTLS_CIPHER_MODE_CBC
 	bool "AES-CBC - AES Cipher Block Chaining mode"
 	default y if !NET_L2_OPENTHREAD
 	select PSA_WANT_ALG_CBC_NO_PADDING if PSA_CRYPTO_CLIENT
+	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
 	  Enable the AES Cipher Block Chaining (CBC) mode,
 	  MBEDTLS_CIPHER_MODE_CBC setting in mbed TLS config file.
@@ -400,6 +401,7 @@ config MBEDTLS_CIPHER_PADDING_PKCS7
 	prompt "Enable MBEDTLS_CIPHER_PADDING_PKCS7"
 	default y if !NET_L2_OPENTHREAD
 	select PSA_WANT_ALG_CBC_PKCS7 if PSA_CRYPTO_CLIENT
+	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
 	  Enable support for PKCS7 padding for CBC cipher functions in mbedTLS.
 	  That is, fill buffer with ll bytes, where ll is padding length.
@@ -450,6 +452,7 @@ config MBEDTLS_CIPHER_MODE_CTR
 	bool "AES-CTR - AES Counter Block Cipher mode"
 	default y
 	select PSA_WANT_ALG_CTR if PSA_CRYPTO_CLIENT
+	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
 	  Enable the AES Counter Block Cipher mode (CTR) mode,
 	  MBEDTLS_CIPHER_MODE_CTR setting in mbed TLS config file.
@@ -466,6 +469,8 @@ config MBEDTLS_CMAC_C
 	bool "AES-CMAC - AES Cipher-based Message Authentication Code mode for block ciphers"
 	default y if !PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_CMAC if PSA_CRYPTO_CLIENT
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
 	  Enable AES CMAC support.
 
@@ -478,6 +483,7 @@ config MBEDTLS_CCM_C
 	depends on MBEDTLS_AES_C
 	default y if !PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_CCM if PSA_CRYPTO_CLIENT
+	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
 	  Enable the Counter with CBC-MAC (CCM) mode for 128-bit block cipher.
 	  This also includes CCM*
@@ -488,6 +494,7 @@ config MBEDTLS_GCM_C
 	prompt "AES-GCM - AES Galois/Counter Mode support"
 	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
 	select PSA_WANT_ALG_GCM if PSA_CRYPTO_CLIENT
+	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
 	  Enable the GCM module.
 	  MBEDTLS_GCM_C setting in mbed TLS config file.
