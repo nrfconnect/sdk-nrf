@@ -630,7 +630,9 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* :ref:`tfm_psa_template` sample:
+
+  * Added support for updating the network core on the nRF5340 DK.
 
 Thread samples
 --------------
