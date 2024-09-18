@@ -344,6 +344,7 @@
 /tests/benchmarks/multicore/              @carlescufi @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle/         @adamkondraciuk @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle_gpio/    @adamkondraciuk @nrfconnect/ncs-low-level-test
+/tests/benchmarks/multicore/idle_with_pwm/  @nrfconnect/ncs-low-level-test
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/crypto/                            @stephen-nordic @magnev
