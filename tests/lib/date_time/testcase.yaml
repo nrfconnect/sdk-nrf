@@ -1,8 +1,7 @@
 tests:
-  date_time.functionality_test:
+  date_time.unit_test:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160 qemu_x86 qemu_cortex_m3
+    platform_allow: native_sim
     integration_platforms:
-      - nrf9160dk/nrf9160
-      - qemu_cortex_m3
-    tags: date_time sysbuild ci_tests_lib_date_time
+      - native_sim
+    tags: date_time_unity sysbuild ci_tests_lib_date_time_unity
