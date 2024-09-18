@@ -10,6 +10,8 @@
 #include <nrf_modem_at.h>
 #include <modem/at_monitor.h>
 
+#define CREDENTIALS_CMD "AT%CMNG=0"
+
 static struct shell *global_shell;
 static const char at_usage_str[] =
 	"Usage: at <subcommand>\n"
@@ -54,6 +56,22 @@ int at_shell(const struct shell *shell, size_t argc, char **argv)
 		at_monitor_pause(&at_shell_monitor);
 		shell_print(shell, "AT command event handler disabled");
 	} else {
+		if (IS_ENABLED(CONFIG_AT_SHELL_UNESCAPE_LF)) {
+			/* Replace the two character sequence "\n" with <CR><LF> so AT%CMNG=0,
+			 * which accepts multiline input, will work with a properly
+			 * pre-processed cert. Without this, the second and subsequent lines of the
+			 * cert are treated as new shell commands, which of course fail.
+			 */
+			if (strncmp(command, CREDENTIALS_CMD, strlen(CREDENTIALS_CMD)) == 0) {
+				char *c = command;
+
+				while ((c = strstr(c, "\\n")) != NULL) {
+					c[0] = '\r';
+					c[1] = '\n';
+				}
+			}
+		}
+
 		err = nrf_modem_at_cmd(response, sizeof(response), "%s", command);
 		if (err < 0) {
 			shell_print(shell, "Sending AT command failed with error code %d", err);

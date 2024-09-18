@@ -20,4 +20,12 @@ config AT_SHELL_CMD_RESPONSE_MAX_LEN
 	int "Maximum AT command response length"
 	default 2700
 
+config AT_SHELL_UNESCAPE_LF
+	bool "Unescape linefeed"
+	help
+	  Replaces \n with <CR><LF>. This enables commands such as AT%CMNG=0 to
+	  properly receive certificates that ordinarily have multiple lines.
+	  The certificate must have been preprocessed to replace EOL sequences
+	  with a literal \ character followed by an n character.
+
 endif # AT_SHELL
