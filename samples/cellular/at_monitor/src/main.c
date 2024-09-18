@@ -109,8 +109,8 @@ static void psm_read(void)
 		",\"%8[0-1]\""	/* Requested_Periodic-TAU */
 		",\"%8[0-1]\"",	/* Requested_Active-Time */
 		&psm_enabled,
-		&request_periodic_tau,
-		&request_active_time
+		request_periodic_tau,
+		request_active_time
 	);
 
 	if (ret < 0) {
