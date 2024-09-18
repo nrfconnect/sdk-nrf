@@ -338,7 +338,7 @@ static int nrf9x_socket_offload_socket(int family, int type, int proto)
 static int nrf9x_socket_offload_accept(void *obj, struct sockaddr *addr,
 				       socklen_t *addrlen)
 {
-	int fd = z_reserve_fd();
+	int fd = zvfs_reserve_fd();
 	int sd = OBJ_TO_SD(obj);
 	int new_sd = -1;
 	struct nrf_sock_ctx *ctx = NULL;
@@ -348,7 +348,7 @@ static int nrf9x_socket_offload_accept(void *obj, struct sockaddr *addr,
 	struct nrf_sockaddr_in6 nrf_addr;
 	nrf_socklen_t nrf_addrlen;
 
-	/* `z_reserve_fd()` can fail */
+	/* `zvfs_reserve_fd()` can fail */
 	if (fd < 0) {
 		return -1;
 	}
@@ -395,7 +395,7 @@ static int nrf9x_socket_offload_accept(void *obj, struct sockaddr *addr,
 		}
 	}
 
-	z_finalize_fd(fd, ctx,
+	zvfs_finalize_fd(fd, ctx,
 		      (const struct fd_op_vtable *)&nrf9x_socket_fd_op_vtable);
 
 	return fd;
@@ -409,7 +409,7 @@ error:
 		release_ctx(ctx);
 	}
 
-	z_free_fd(fd);
+	zvfs_free_fd(fd);
 	return -1;
 }
 
@@ -1083,14 +1083,14 @@ static int nrf9x_socket_create(int family, int type, int proto)
 		return native_socket(family, type, proto, &tls_offload_disabled);
 	}
 
-	fd = z_reserve_fd();
+	fd = zvfs_reserve_fd();
 	if (fd < 0) {
 		return -1;
 	}
 
 	sd = nrf9x_socket_offload_socket(family, type, proto);
 	if (sd < 0) {
-		z_free_fd(fd);
+		zvfs_free_fd(fd);
 		return -1;
 	}
 
@@ -1098,11 +1098,11 @@ static int nrf9x_socket_create(int family, int type, int proto)
 	if (ctx == NULL) {
 		errno = ENOMEM;
 		nrf_close(sd);
-		z_free_fd(fd);
+		zvfs_free_fd(fd);
 		return -1;
 	}
 
-	z_finalize_fd(fd, ctx,
+	zvfs_finalize_fd(fd, ctx,
 		      (const struct fd_op_vtable *)&nrf9x_socket_fd_op_vtable);
 
 	return fd;
