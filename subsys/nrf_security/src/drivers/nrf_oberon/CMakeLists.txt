@@ -48,6 +48,7 @@ target_compile_options(oberon_psa_driver
     -Wno-uninitialized
     -Wno-maybe-uninitialized
     -Wno-unused-variable
+    -Wno-unused-function
 )
 
 target_include_directories(oberon_psa_driver
