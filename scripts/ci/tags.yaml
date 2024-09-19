@@ -929,6 +929,7 @@ ci_tests_subsys_mpsl:
 ci_tests_subsys_nrf_compress:
   files:
     - nrf/subsys/nrf_compress/
+    - nrf/include/nrf_compress/
     - nrf/tests/subsys/nrf_compress/
 
 ci_tests_subsys_nfc:
