@@ -62,7 +62,7 @@ function(suit_register_post_build_commands)
     list(APPEND dependencies "${BINARY_DIR}/zephyr/${BINARY_FILE}.bin")
   endforeach()
 
-  if (SB_CONFIG_SUIT_BUILD_RECOVERY)
+  if(SB_CONFIG_SUIT_BUILD_RECOVERY)
     list(APPEND dependencies recovery)
   endif()
 
@@ -126,6 +126,19 @@ function(suit_make_custom_manifest_path template_name output_variable)
   set(${output_variable} "${app_config_dir}/suit/${SB_CONFIG_SOC}/${template_name}" PARENT_SCOPE)
 endfunction()
 
+# Get path to the manifest template in the recovery application manifest template directory.
+#
+# Usage:
+#   suit_make_custom_recovery_manifest_path(template_name output_variable)
+#
+# Parameters:
+#   template_name - Name of the base manifest template
+#   output_variable - CMake variable where the path to the base manifest template will be stored.
+#
+function(suit_make_custom_recovery_manifest_path template_name output_variable)
+  set(${output_variable} "${SB_CONFIG_SUIT_RECOVERY_APPLICATION_PATH}/suit/${SB_CONFIG_SOC}/${template_name}" PARENT_SCOPE)
+endfunction()
+
 # Get the path to the manifest template.
 #
 # The function searches for the manifest templates in the application manifest template directory.
@@ -141,9 +154,12 @@ endfunction()
 #
 function(suit_get_manifest template_name output_variable)
   suit_make_custom_manifest_path(${template_name} custom_path)
+  suit_make_custom_recovery_manifest_path(${template_name} custom_recovery_path)
   suit_make_base_manifest_path(${template_name} base_path)
   if(EXISTS ${custom_path})
     set(${output_variable} ${custom_path} PARENT_SCOPE)
+  elseif(SB_CONFIG_SUIT_BUILD_RECOVERY AND EXISTS ${custom_recovery_path})
+    set(${output_variable} ${custom_recovery_path} PARENT_SCOPE)
   else()
     set(${output_variable} ${base_path} PARENT_SCOPE)
   endif()
@@ -293,6 +309,25 @@ function(suit_create_package)
     suit_create_cache_partition("${CACHE_CREATE_ARGS}")
   endforeach()
 
+  if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+    suit_get_manifest(${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_TEMPLATE_FILENAME} INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE)
+
+    # create app recovery envelope if defined
+    if(DEFINED INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE AND NOT INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE STREQUAL "")
+      message(STATUS "Found app_recovery manifest template: ${INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE}")
+      set(APP_RECOVERY_NAME ${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_ARTIFACT_NAME})
+      string(CONFIGURE "${INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE}" INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE)
+      suit_set_absolute_or_relative_path(${INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE} ${app_config_dir} INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE)
+      set(APP_RECOVERY_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${APP_RECOVERY_NAME}.yaml)
+      set(APP_RECOVERY_ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${APP_RECOVERY_NAME}.suit)
+      suit_render_template(${INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE} ${APP_RECOVERY_ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
+      suit_create_envelope(${APP_RECOVERY_ENVELOPE_YAML_FILE} ${APP_RECOVERY_ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
+        list(APPEND STORAGE_BOOT_ARGS
+          --input-envelope ${APP_RECOVERY_ENVELOPE_SUIT_FILE}
+        )
+    endif()
+  endif()
+
   suit_get_manifest(${SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME} INPUT_ROOT_ENVELOPE_JINJA_FILE)
   message(STATUS "Found root manifest template: ${INPUT_ROOT_ENVELOPE_JINJA_FILE}")
 
@@ -349,43 +384,33 @@ function(suit_setup_merge)
   foreach(image ${IMAGES})
     set(ARTIFACTS_TO_MERGE)
 
-    unset(GENERATE_LOCAL_ENVELOPE)
-    sysbuild_get(GENERATE_LOCAL_ENVELOPE IMAGE ${image} VAR CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE KCONFIG)
-    if(NOT DEFINED GENERATE_LOCAL_ENVELOPE)
+    unset(CONFIG_NRF_REGTOOL_GENERATE_UICR)
+    sysbuild_get(CONFIG_NRF_REGTOOL_GENERATE_UICR IMAGE ${image} VAR CONFIG_NRF_REGTOOL_GENERATE_UICR KCONFIG)
+    if(NOT DEFINED CONFIG_NRF_REGTOOL_GENERATE_UICR)
       continue()
     endif()
 
-    sysbuild_get(IMAGE_BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
-    sysbuild_get(IMAGE_BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    unset(IMAGE_TARGET_NAME)
     sysbuild_get(IMAGE_TARGET_NAME IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
     if (NOT DEFINED IMAGE_TARGET_NAME OR IMAGE_TARGET_NAME STREQUAL "")
       message(STATUS "DFU: Target name for ${image} is not defined. Skipping.")
       continue()
     endif()
 
+    sysbuild_get(IMAGE_BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(IMAGE_BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
     sysbuild_get(CONFIG_SUIT_ENVELOPE_OUTPUT_ARTIFACT IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_OUTPUT_ARTIFACT KCONFIG)
-    sysbuild_get(CONFIG_NRF_REGTOOL_GENERATE_UICR IMAGE ${image} VAR CONFIG_NRF_REGTOOL_GENERATE_UICR KCONFIG)
-    sysbuild_get(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE KCONFIG)
 
     set(OUTPUT_HEX_FILE "${IMAGE_BINARY_DIR}/zephyr/${CONFIG_SUIT_ENVELOPE_OUTPUT_ARTIFACT}")
 
     list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_installed_envelopes_${IMAGE_TARGET_NAME}_merged.hex)
     list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/${IMAGE_BINARY_FILE}.hex)
+    list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/uicr.hex)
+
+    unset(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE)
+    sysbuild_get(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE KCONFIG)
     if(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE)
       list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_mpi_${IMAGE_TARGET_NAME}_merged.hex)
-    endif()
-    if(CONFIG_NRF_REGTOOL_GENERATE_UICR)
-      list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/uicr.hex)
-    endif()
-
-    if(SB_CONFIG_SUIT_BUILD_RECOVERY)
-      get_property(
-        recovery_artifacts
-        GLOBAL PROPERTY
-        SUIT_RECOVERY_ARTIFACTS_TO_MERGE_${IMAGE_TARGET_NAME}
-      )
-
-      list(APPEND ARTIFACTS_TO_MERGE ${recovery_artifacts})
     endif()
 
     set_property(
@@ -401,59 +426,6 @@ function(suit_setup_merge)
     )
   endforeach()
 endfunction()
-
-# Build recovery image.
-#
-# Usage:
-#   suit_build_recovery()
-#
-function(suit_build_recovery)
-  include(ExternalProject)
-
-  set(sysbuild_root_path "${ZEPHYR_NRF_MODULE_DIR}/../zephyr/share/sysbuild")
-  set(board_target "${SB_CONFIG_BOARD}/${target_soc}/cpuapp")
-
-  # Get class and vendor ID-s to pass to recovery application
-  sysbuild_get(APP_RECOVERY_VENDOR_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME KCONFIG)
-  sysbuild_get(APP_RECOVERY_CLASS_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME KCONFIG)
-  sysbuild_get(RAD_RECOVERY_VENDOR_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME KCONFIG)
-  sysbuild_get(RAD_RECOVERY_CLASS_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME KCONFIG)
-
-  ExternalProject_Add(
-    recovery
-    SOURCE_DIR ${sysbuild_root_path}
-    PREFIX ${CMAKE_BINARY_DIR}/recovery
-    INSTALL_COMMAND ""
-    CMAKE_CACHE_ARGS
-      "-DAPP_DIR:PATH=${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery"
-      "-DBOARD:STRING=${board_target}"
-      "-DEXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery.overlay"
-      "-Dhci_ipc_EXTRA_DTC_OVERLAY_FILE:STRING=${APP_DIR}/sysbuild/recovery_hci_ipc.overlay"
-      "-DCONFIG_SUIT_MPI_APP_RECOVERY_VENDOR_NAME:STRING=\\\"${APP_RECOVERY_VENDOR_NAME}\\\""
-      "-DCONFIG_SUIT_MPI_APP_RECOVERY_CLASS_NAME:STRING=\\\"${APP_RECOVERY_CLASS_NAME}\\\""
-      "-DCONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME:STRING=\\\"${RAD_RECOVERY_VENDOR_NAME}\\\""
-      "-DCONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME:STRING=\\\"${RAD_RECOVERY_CLASS_NAME}\\\""
-    BUILD_ALWAYS True
-)
-  ExternalProject_Get_property(recovery BINARY_DIR)
-
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_application
-    ${BINARY_DIR}/recovery/zephyr/suit_installed_envelopes_application_merged.hex)
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_application ${BINARY_DIR}/recovery/zephyr/zephyr.hex)
-
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio
-    ${BINARY_DIR}/recovery/zephyr/suit_installed_envelopes_radio_merged.hex)
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_RECOVERY_ARTIFACTS_TO_MERGE_radio ${BINARY_DIR}/hci_ipc/zephyr/zephyr.hex)
-
-endfunction()
-
-if(SB_CONFIG_SUIT_BUILD_RECOVERY)
-  suit_build_recovery()
-endif()
 
 if(SB_CONFIG_SUIT_ENVELOPE)
   suit_create_package()

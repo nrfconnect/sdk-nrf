@@ -19,3 +19,19 @@ if(SB_CONFIG_SUIT_BUILD_FLASH_COMPANION)
     BOARD_REVISION ${BOARD_REVISION}
   )
 endif()
+
+if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+  # Calculate the network board target
+  string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
+  list(GET split_board_qualifiers 1 target_soc)
+  list(GET split_board_qualifiers 2 target_cpucluster)
+
+  set(board_target "${BOARD}/${target_soc}/${target_cpucluster}")
+
+  ExternalZephyrProject_Add(
+    APPLICATION recovery
+    SOURCE_DIR ${SB_CONFIG_SUIT_RECOVERY_APPLICATION_PATH}
+    BOARD ${board_target}
+    BOARD_REVISION ${BOARD_REVISION}
+  )
+endif()

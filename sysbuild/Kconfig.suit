@@ -20,13 +20,13 @@ config SUIT_ENVELOPE_SIGN
 	  Sign created SUIT envelope by external script
 
 config SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME
-	string "Path to the default root envelope template"
+	string "Name of the default root envelope template"
 	default "root_with_binary_nordic_top.yaml.jinja2"
 	help
-	  Path to the default root envelope template, that is used if the application directory does not
-	  contain an input envelope template file.
-	  You can use either absolute or relative path.
-	  In case relative path is used, the build system uses CMAKE_SOURCE_DIR directory.
+	  Name of the default root envelope template. The build system searches for a file with this
+	  name in the suit/<soc> directory inside the application directory. If the file is not found
+	  the default template from the base template directory is used.
+
 
 config SUIT_ENVELOPE_SIGN_SCRIPT
 	string "Location of SUIT sign script"
@@ -69,10 +69,46 @@ endif # SUIT_ENVELOPE
 
 config SUIT_BUILD_RECOVERY
 	bool "Build SUIT recovery firmware"
-	depends on NETCORE_HCI_IPC
 	help
 	  Build the recovery firmware, which allows to recover the main application
 	  if the image on the board was damaged.
+
+if SUIT_BUILD_RECOVERY
+
+choice SUIT_RECOVERY_APPLICATION
+	prompt "Select SUIT recovery application"
+	default SUIT_RECOVERY_APPLICATION_DEFAULT
+
+config SUIT_RECOVERY_APPLICATION_DEFAULT
+	bool "Use the default recovery application"
+	help
+	  Use the default recovery application using BluetoothLE and SMP.
+
+endchoice
+
+config SUIT_RECOVERY_APPLICATION_PATH
+	string
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery" if SUIT_RECOVERY_APPLICATION_DEFAULT
+	help
+	  Source directory of the SUIR recovery application.
+
+config SUIT_ENVELOPE_APP_RECOVERY_TEMPLATE_FILENAME
+	string "Name of the default root envelope template"
+	default "app_recovery_envelope.yaml.jinja2"
+	help
+	  Name of the default application recovery envelope template. This also has a role of the
+	  recovery firmware root envelope template.
+	  The build system first searches for a file with this name in the suit/<soc> directory inside
+	  the application directory, then in the recovery application suit/<soc> directory.
+	  If the file is not found the default template from the base template directory is used.
+
+config SUIT_ENVELOPE_APP_RECOVERY_ARTIFACT_NAME
+	string "Name of the root SUIT artifact."
+	default "app_recovery"
+	help
+	  Name of the root SUIT artifact.
+
+endif # SUIT_BUILD_RECOVERY
 
 config SUIT_BUILD_FLASH_COMPANION
 	bool "Build SUIT flash companion firmware"
