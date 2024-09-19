@@ -92,6 +92,7 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   base64.c
   bignum.c
   bignum_core.c
+  block_cipher.c
   nist_kw.c
   oid.c
   padlock.c
@@ -130,7 +131,7 @@ target_link_libraries(mbedcrypto_base
 
 nrf_security_add_zephyr_options(mbedcrypto_base)
 
-# Misusing the psa_crypto_config and psa_crypto_library_config awareness to 
+# Misusing the psa_crypto_config and psa_crypto_library_config awareness to
 # set compiler-flags to ensure right floating-point types are set
 if(COMPILER_CP_FLAG)
   target_compile_options(psa_crypto_config
@@ -144,7 +145,7 @@ if(COMPILER_CP_FLAG)
   )
 endif()
 
-# Misusing the psa_crypto_config and psa_crypto_library_config awareness to 
+# Misusing the psa_crypto_config and psa_crypto_library_config awareness to
 # set linker-options to ensure right floating-point types are set
 if(LINKER_CP_OPTION)
   target_link_options(psa_crypto_config
@@ -163,9 +164,9 @@ target_link_libraries(${mbedcrypto_target}
     mbedcrypto_base
 )
 
-# Disable compile warnings for Mbed TLS sources for files that are 
+# Disable compile warnings for Mbed TLS sources for files that are
 # added to the build for legacy APIs but are not enabled due to
-# configurations not being set. 
+# configurations not being set.
 #
 # These can be removed when NCSDK-28901 is addressed.
 target_compile_options(${mbedcrypto_target}
@@ -216,7 +217,7 @@ if (CONFIG_MBEDTLS_X509_LIBRARY)
     ${src_x509}
   )
 
-  # Link with 
+  # Link with
   target_link_libraries(mbedx509
     PRIVATE
       psa_crypto_config
