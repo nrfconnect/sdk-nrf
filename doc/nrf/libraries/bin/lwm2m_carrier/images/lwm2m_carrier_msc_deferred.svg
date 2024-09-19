@@ -110,9 +110,9 @@
 			<v:textRect cx="168.509" cy="531.967" width="337.02" height="7.87714"/>
 			<rect x="0" y="528.028" width="337.017" height="7.87714" class="st2"/>
 			<text x="15.65" y="535.57" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Device is bootstrapped and is ready to connect to the LwM2M Server</text>		</g>
-		<g id="shape76-28" v:mID="76" v:groupContext="shape" transform="translate(45.8024,-455.961)">
+		<g id="shape76-28" v:mID="76" v:groupContext="shape" transform="translate(31.6291,-455.961)">
 			<title>Sheet.76</title>
-			<path d="M0 535.91 L490.66 535.91" class="st8"/>
+			<path d="M0 535.91 L517.32 535.91" class="st8"/>
 		</g>
 		<g id="shape120-31" v:mID="120" v:groupContext="shape" transform="translate(179.031,-93.6481)">
 			<title>Sheet.120</title>
@@ -121,11 +121,11 @@
 			<v:textRect cx="113.863" cy="530.646" width="227.73" height="10.5186"/>
 			<rect x="0" y="525.387" width="227.726" height="10.5186" class="st2"/>
 			<text x="9.93" y="534.25" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>LwM2M library has exhasted the retry attempts</text>		</g>
-		<g id="shape121-34" v:mID="121" v:groupContext="shape" transform="translate(29.1855,-90.8135)">
+		<g id="shape121-34" v:mID="121" v:groupContext="shape" transform="translate(31.6291,-90.8135)">
 			<title>Sheet.121</title>
-			<path d="M0 535.91 L492.21 535.91" class="st8"/>
+			<path d="M0 535.91 L517.32 535.91" class="st8"/>
 		</g>
-		<g id="shape125-37" v:mID="125" v:groupContext="shape" transform="translate(92.574,-60.4828)">
+		<g id="shape125-37" v:mID="125" v:groupContext="shape" transform="translate(92.574,-59.1102)">
 			<title>Sheet.125</title>
 			<desc>LWM2M_CARRIER_ERROR_CONNECT</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -157,7 +157,7 @@
 						x="17.71" dy="1.2em" class="st12">more management </tspan><tspan x="43.29" dy="1.2em" class="st12">servers</tspan></text>		</g>
 		<g id="shape162-60" v:mID="162" v:groupContext="shape" transform="translate(435.246,-388.451)">
 			<title>Rectangle.162</title>
-			<desc>network issues, server is not reached, response is lost.</desc>
+			<desc>network issues, server is not reached, response is lost</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -165,8 +165,8 @@
 			<v:textRect cx="59.6768" cy="512.781" width="119.36" height="46.2495"/>
 			<rect x="0" y="489.656" width="119.354" height="46.2495" class="st4"/>
 			<text x="25.22" y="503.78" class="st5" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>network issues,<v:newlineChar/><tspan
-						x="11.6" dy="1.2em" class="st12">server is not reached, </tspan><tspan x="23.55" dy="1.2em" class="st12">response is lost.</tspan></text>		</g>
-		<g id="shape164-65" v:mID="164" v:groupContext="shape" transform="translate(51.4716,-364.782)">
+						x="11.6" dy="1.2em" class="st12">server is not reached, </tspan><tspan x="24.94" dy="1.2em" class="st12">response is lost</tspan></text>		</g>
+		<g id="shape164-65" v:mID="164" v:groupContext="shape" transform="translate(51.4716,-362.842)">
 			<title>Sheet.164</title>
 			<desc>LWM2M_CARRIER_EVENT_DEFERRED (LWM2M_CARRIER_DEFERRED_BOOTSTRA...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -176,7 +176,7 @@
 						x="11.38" dy="1.538em" class="st12">(LWM2M_CARRIER_DEFERRED_BOOTSTRAP_NO_ROUTE)</tspan></text>		</g>
 		<g id="shape166-69" v:mID="166" v:groupContext="shape" transform="translate(31.6291,-324.672)">
 			<title>Sheet.166</title>
-			<path d="M0 535.91 L518.34 535.91" class="st8"/>
+			<path d="M0 535.91 L517.32 535.91" class="st8"/>
 		</g>
 		<g id="shape168-72" v:mID="168" v:groupContext="shape" transform="translate(235.171,-325.869)">
 			<title>Sheet.168</title>
@@ -206,7 +206,7 @@
 			<v:textRect cx="59.6768" cy="512.781" width="119.36" height="46.2495"/>
 			<rect x="0" y="489.656" width="119.354" height="46.2495" class="st4"/>
 			<text x="5.48" y="515.78" class="st5" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Security handshake fails</text>		</g>
-		<g id="shape175-83" v:mID="175" v:groupContext="shape" transform="translate(51.4716,-237.223)">
+		<g id="shape175-83" v:mID="175" v:groupContext="shape" transform="translate(54.3063,-236.276)">
 			<title>Sheet.175</title>
 			<desc>LWM2M_CARRIER_EVENT_DEFERRED (LWM2M_CARRIER_DEFERRED_SERVER_C...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -214,9 +214,9 @@
 			<rect x="0" y="516.913" width="249.449" height="18.9921" class="st2"/>
 			<text x="49.82" y="522.21" class="st3" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>LWM2M_CARRIER_EVENT_DEFERRED<v:lf/><tspan
 						x="22.04" dy="1.538em" class="st12">(LWM2M_CARRIER_DEFERRED_SERVER_CONNECT)</tspan></text>		</g>
-		<g id="shape176-87" v:mID="176" v:groupContext="shape" transform="translate(45.8023,-204.199)">
+		<g id="shape176-87" v:mID="176" v:groupContext="shape" transform="translate(31.6291,-204.199)">
 			<title>Sheet.176</title>
-			<path d="M0 535.91 L474.8 535.91" class="st8"/>
+			<path d="M0 535.91 L517.32 535.91" class="st8"/>
 		</g>
 		<g id="shape177-90" v:mID="177" v:groupContext="shape" transform="translate(235.724,-205.019)">
 			<title>Sheet.177</title>
@@ -251,7 +251,7 @@
 			<title>Dynamic connector.183</title>
 			<path d="M6.68 542.99 L7.04 542.99 L232.05 542.99" class="st11"/>
 		</g>
-		<g id="shape184-107" v:mID="184" v:groupContext="shape" transform="translate(51.4717,-121.002)">
+		<g id="shape184-107" v:mID="184" v:groupContext="shape" transform="translate(51.4716,-120.905)">
 			<title>Sheet.184</title>
 			<desc>LWM2M_CARRIER_EVENT_DEFERRED (LWM2M_CARRIER_DEFERRED_SERVER_R...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>

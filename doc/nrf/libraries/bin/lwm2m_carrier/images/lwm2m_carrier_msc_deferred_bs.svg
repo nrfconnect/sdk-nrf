@@ -65,9 +65,9 @@
 			<v:textRect cx="59.6768" cy="576.583" width="119.36" height="35.4331"/>
 			<rect x="0" y="558.866" width="119.354" height="35.4331" class="st4"/>
 			<text x="35.22" y="579.58" class="st5" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Application</text>		</g>
-		<g id="shape79-10" v:mID="79" v:groupContext="shape" v:layerMember="0" transform="translate(67.7634,-556.874)">
+		<g id="shape79-10" v:mID="79" v:groupContext="shape" v:layerMember="0" transform="translate(53.793,-556.874)">
 			<title>Dynamic connector</title>
-			<path d="M-7.09 594.3 L-7.09 1148.47" class="st1"/>
+			<path d="M6.88 594.3 L7.29 1149.89" class="st1"/>
 		</g>
 		<g id="shape81-13" v:mID="81" v:groupContext="shape" transform="translate(232.896,-557.866)">
 			<title>Rectangle.81</title>
@@ -79,9 +79,9 @@
 			<v:textRect cx="59.6768" cy="576.583" width="119.36" height="35.4331"/>
 			<rect x="0" y="558.866" width="119.354" height="35.4331" class="st6"/>
 			<text x="35.22" y="579.58" class="st5" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Application</text>		</g>
-		<g id="shape84-16" v:mID="84" v:groupContext="shape" v:layerMember="0" transform="translate(488.902,-557.866)">
+		<g id="shape84-16" v:mID="84" v:groupContext="shape" v:layerMember="0" transform="translate(488.63,-557.866)">
 			<title>Dynamic connector.84</title>
-			<path d="M6.02 594.3 L8.15 1140.96" class="st1"/>
+			<path d="M6.29 594.3 L7.88 1150.88" class="st1"/>
 		</g>
 		<g id="shape85-19" v:mID="85" v:groupContext="shape" transform="translate(232.896,-556.874)">
 			<title>Rectangle.85</title>
@@ -110,9 +110,9 @@
 			<v:textRect cx="65.0404" cy="590.361" width="130.09" height="7.87714"/>
 			<rect x="0" y="586.422" width="130.081" height="7.87714" class="st2"/>
 			<text x="5.84" y="593.96" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>Device is not bootstrapped</text>		</g>
-		<g id="shape76-28" v:mID="76" v:groupContext="shape" transform="translate(45.8024,-514.354)">
+		<g id="shape76-28" v:mID="76" v:groupContext="shape" transform="translate(31.6291,-514.354)">
 			<title>Sheet.76</title>
-			<path d="M0 594.3 L490.66 594.3" class="st8"/>
+			<path d="M0 594.3 L503.15 594.3" class="st8"/>
 		</g>
 		<g id="shape100-31" v:mID="100" v:groupContext="shape" transform="translate(95.4087,-406.518)">
 			<title>Sheet.100</title>
@@ -128,9 +128,9 @@
 			<v:textRect cx="113.863" cy="589.04" width="227.73" height="10.5186"/>
 			<rect x="0" y="583.781" width="227.726" height="10.5186" class="st2"/>
 			<text x="9.93" y="592.64" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>LwM2M library has exhasted the retry attempts</text>		</g>
-		<g id="shape121-37" v:mID="121" v:groupContext="shape" transform="translate(29.1855,-39.5512)">
+		<g id="shape121-37" v:mID="121" v:groupContext="shape" transform="translate(31.6291,-39.5512)">
 			<title>Sheet.121</title>
-			<path d="M0 594.3 L492.21 594.3" class="st8"/>
+			<path d="M0 594.3 L503.15 594.3" class="st8"/>
 		</g>
 		<g id="shape125-40" v:mID="125" v:groupContext="shape" transform="translate(92.574,-9.22046)">
 			<title>Sheet.125</title>
@@ -205,7 +205,7 @@
 						x="11.38" dy="1.538em" class="st9">(LWM2M_CARRIER_DEFERRED_BOOTSTRAP_NO_ROUTE)</tspan></text>		</g>
 		<g id="shape166-82" v:mID="166" v:groupContext="shape" transform="translate(31.6291,-273.409)">
 			<title>Sheet.166</title>
-			<path d="M0 594.3 L518.34 594.3" class="st8"/>
+			<path d="M0 594.3 L503.15 594.3" class="st8"/>
 		</g>
 		<g id="shape168-85" v:mID="168" v:groupContext="shape" transform="translate(235.171,-274.607)">
 			<title>Sheet.168</title>
@@ -243,9 +243,9 @@
 			<rect x="0" y="575.307" width="249.449" height="18.9921" class="st2"/>
 			<text x="49.82" y="580.6" class="st3" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>LWM2M_CARRIER_EVENT_DEFERRED<v:lf/><tspan
 						x="13.82" dy="1.538em" class="st9">(LWM2M_CARRIER_DEFERRED_BOOTSTRAP_CONNECT)</tspan></text>		</g>
-		<g id="shape176-99" v:mID="176" v:groupContext="shape" transform="translate(45.8023,-152.937)">
+		<g id="shape176-99" v:mID="176" v:groupContext="shape" transform="translate(31.6291,-152.937)">
 			<title>Sheet.176</title>
-			<path d="M0 594.3 L474.8 594.3" class="st8"/>
+			<path d="M0 594.3 L503.15 594.3" class="st8"/>
 		</g>
 		<g id="shape177-102" v:mID="177" v:groupContext="shape" transform="translate(235.724,-153.757)">
 			<title>Sheet.177</title>
