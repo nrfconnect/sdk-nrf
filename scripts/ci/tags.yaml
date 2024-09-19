@@ -1174,6 +1174,7 @@ ci_tests_unity:
 ci_tests_nrf5340_audio:
   files:
     - modules/lib/cmsis-dsp/
+    - nrf/applications/nrf5340_audio/
     - nrf/tests/nrf5340_audio/
     - nrfxlib/lc3/
 
