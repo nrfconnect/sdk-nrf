@@ -56,7 +56,7 @@
 		compatible = "zephyr,hid-device";
 		interface-name = "HID0";
 		protocol-code = "mouse";
-		in-polling-rate = <125>;
+		in-polling-period-us = <125>;
 		in-report-size = <64>;
 	};
 };
