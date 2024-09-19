@@ -809,7 +809,11 @@ Modem libraries
 
   * Updated the RTT trace backend to allocate the RTT channel at boot, instead of when the modem is activated.
   * Rename the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
-  * Removed support for deprecated RAI socket options ``SO_RAI_LAST``, ``SO_RAI_NO_DATA``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE``.
+
+  * Removed:
+
+    * Support for deprecated RAI socket options ``SO_RAI_LAST``, ``SO_RAI_NO_DATA``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE``.
+    * The mutex in the :c:func:`nrf9x_socket_offload_getaddrinfo` function after updating the :c:func:`nrf_getaddrinfo` function to handle concurrent requests.
 
 * :ref:`modem_info_readme` library:
 
