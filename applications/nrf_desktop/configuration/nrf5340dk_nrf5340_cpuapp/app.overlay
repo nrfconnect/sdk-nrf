@@ -4,14 +4,14 @@
 		compatible = "zephyr,hid-device";
 		interface-name = "HID0";
 		protocol-code = "keyboard";
-		in-polling-rate = <1000>;
+		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
 	hid_dev_1: hid_dev_1 {
 		compatible = "zephyr,hid-device";
 		interface-name = "HID1";
 		protocol-code = "keyboard";
-		in-polling-rate = <1000>;
+		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
 
