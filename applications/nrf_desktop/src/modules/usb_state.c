@@ -1424,8 +1424,8 @@ static struct usbd_context *usb_init_next_usbd_init(void)
 	static const uint8_t attributes = IS_ENABLED(CONFIG_DESKTOP_USB_REMOTE_WAKEUP) ?
 					  (USB_SCD_REMOTE_WAKEUP) : (0);
 
-	USBD_CONFIGURATION_DEFINE(fs_config, attributes, max_power);
-	USBD_CONFIGURATION_DEFINE(hs_config, attributes, max_power);
+	USBD_CONFIGURATION_DEFINE(fs_config, attributes, max_power, NULL);
+	USBD_CONFIGURATION_DEFINE(hs_config, attributes, max_power, NULL);
 
 	if (!usbd_can_detect_vbus(&usbd)) {
 		LOG_ERR("USBD controller cannot detect VBUS state change");
