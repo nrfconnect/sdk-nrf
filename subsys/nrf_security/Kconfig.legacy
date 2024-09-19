@@ -709,6 +709,7 @@ config MBEDTLS_HKDF_C
 	bool
 	prompt "HKDF support"
 	default y if !PSA_CRYPTO_CLIENT
+	select PSA_WANT_ALG_HMAC if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_HKDF if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_TLS12_PRF if PSA_CRYPTO_CLIENT && MBEDTLS_TLS_LIBRARY
 	select PSA_WANT_ALG_TLS12_PSK_TO_MS if PSA_CRYPTO_CLIENT && MBEDTLS_TLS_LIBRARY
@@ -857,7 +858,7 @@ config MBEDTLS_PK_PARSE_EC_EXTENDED
 	prompt "Enhance support for reading EC keys"
 	default y
 	depends on MBEDTLS_PK_PARSE_C
-		
+
 config MBEDTLS_PEM_PARSE_C
 	bool
 	prompt "Support parsing PEM files"
