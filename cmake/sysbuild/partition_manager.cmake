@@ -76,6 +76,24 @@ function(partition_manager)
     )
     set(static_configuration --static-config ${static_configuration_file})
 
+    # Generate an MD5 of the configuration and check if it matches the existing one, alert the
+    # user with a warning to do a pristine build if it differs to avoid having stale
+    # configuration used for MCUboot images
+    file(MD5 ${static_configuration_file} static_configuration_checksum)
+    if(NOT DEFINED STATIC_PM_FILE_HASH OR NOT "${STATIC_PM_FILE_HASH}" STREQUAL "${static_configuration_checksum}")
+      if(DEFINED STATIC_PM_FILE_HASH)
+        message(WARNING "Static partition manager file has changed since this project was last configured, "
+                        "this may cause images to use the original static partition manager file "
+                        "configuration data, which is incorrect. It is recommended that a pristine build be "
+                        "performed when a static partition manager file is updated."
+        )
+      endif()
+
+      set(STATIC_PM_FILE_HASH "${static_configuration_checksum}" CACHE INTERNAL
+          "nRF Connect SDK static partition manager file hash" FORCE
+      )
+    endif()
+
     # Add a watch on this static PM file for changes so a CMake reconfigure occurs
     set_property(DIRECTORY APPEND PROPERTY
                  CMAKE_CONFIGURE_DEPENDS
