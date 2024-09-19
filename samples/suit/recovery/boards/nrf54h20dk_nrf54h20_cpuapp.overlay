@@ -10,3 +10,17 @@
 		nrf,tz-secure-image = &cpuapp_recovery_partition;
 	};
 };
+
+&cpusec_cpuapp_ipc {
+    status = "okay";
+};
+
+&cpusec_bellboard {
+    status = "okay";
+};
+
+/ {
+    chosen {
+        zephyr,bt-hci-ipc = &ipc0;
+    };
+};
