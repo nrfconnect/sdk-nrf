@@ -18,15 +18,6 @@
 
 LOG_MODULE_REGISTER(pcd, CONFIG_PCD_LOG_LEVEL);
 
-/** Magic value written to indicate that a copy should take place. */
-#define PCD_CMD_MAGIC_COPY 0xb5b4b3b6
-/** Magic value written to indicate that a something failed. */
-#define PCD_CMD_MAGIC_FAIL 0x25bafc15
-/** Magic value written to indicate that a copy is done. */
-#define PCD_CMD_MAGIC_DONE 0xf103ce5d
-/** Magic value written to indicate that a version number read should take place. */
-#define PCD_CMD_MAGIC_READ_VERSION 0xdca345ea
-
 #ifdef CONFIG_PCD_APP
 
 #include <hal/nrf_reset.h>
@@ -49,13 +40,6 @@ K_TIMER_DEFINE(network_core_finished_check_timer,
 
 #endif /* CONFIG_PCD_APP */
 
-struct pcd_cmd {
-	uint32_t magic; /* Magic value to identify this structure in memory */
-	const void *data;     /* Data to copy*/
-	size_t len;           /* Number of bytes to copy */
-	off_t offset;         /* Offset to store the flash image in */
-} __aligned(4);
-
 static struct pcd_cmd *cmd = (struct pcd_cmd *)PCD_CMD_ADDRESS;
 
 void pcd_fw_copy_invalidate(void)
@@ -71,6 +55,8 @@ enum pcd_status pcd_fw_copy_status_get(void)
 		return PCD_STATUS_READ_VERSION;
 	} else if (cmd->magic == PCD_CMD_MAGIC_DONE) {
 		return PCD_STATUS_DONE;
+	} else if (cmd->magic == PCD_CMD_MAGIC_LOCK_DEBUG) {
+		return PCD_STATUS_LOCK_DEBUG;
 	}
 
 	return PCD_STATUS_FAILED;
@@ -278,12 +264,11 @@ int pcd_network_core_update(const void *src_addr, size_t len)
 	return network_core_update(src_addr, len, true);
 }
 
-void pcd_lock_ram(void)
+void pcd_lock_ram(bool lock_conf)
 {
 	uint32_t region = PCD_CMD_ADDRESS/CONFIG_NRF_SPU_RAM_REGION_SIZE;
 
-	nrf_spu_ramregion_set(NRF_SPU, region, false, NRF_SPU_MEM_PERM_READ,
-			true);
+	nrf_spu_ramregion_set(NRF_SPU, region, false, NRF_SPU_MEM_PERM_READ, lock_conf);
 }
 
 #endif /* CONFIG_PCD_APP */

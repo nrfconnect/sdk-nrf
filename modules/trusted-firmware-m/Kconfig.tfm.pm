@@ -15,7 +15,7 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	# assigning 0x16000 of RAM to TFM will not leave enough RAM for
 	# Matter. So we use 0x13000 of RAM on 54L.
 	default 0x13000 if SOC_SERIES_NRF54LX
-	default 0x16000 if SOC_SERIES_NRF91X
+	default 0x16000 if SOC_SERIES_NRF91X || SOC_SERIES_NRF53X
 	default 0x30000
 	help
 	  Memory set aside for the TFM_SRAM partition.

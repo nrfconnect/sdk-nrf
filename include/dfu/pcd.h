@@ -25,37 +25,18 @@
 
 #include <zephyr/device.h>
 #include <sys/types.h>
+#include <dfu/pcd_common.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifdef CONFIG_SOC_SERIES_NRF53X
-
-#ifdef CONFIG_PCD_CMD_ADDRESS
-
-#define PCD_CMD_ADDRESS CONFIG_PCD_CMD_ADDRESS
-
-#else
-
-#include <pm_config.h>
-
-#ifdef PM_PCD_SRAM_ADDRESS
-#define PCD_CMD_ADDRESS PM_PCD_SRAM_ADDRESS
-#else
-/* extra '_' since its in a different domain */
-#define PCD_CMD_ADDRESS PM__PCD_SRAM_ADDRESS
-#endif /* PM_PCD_SRAM_ADDRESS */
-
-#endif /* CONFIG_PCD_CMD_ADDRESS */
-
-#endif /* CONFIG_SOC_SERIES_NRF53X */
 
 enum pcd_status {
 	PCD_STATUS_COPY = 0,
 	PCD_STATUS_DONE = 1,
 	PCD_STATUS_FAILED = 2,
 	PCD_STATUS_READ_VERSION = 3,
+	PCD_STATUS_LOCK_DEBUG = 4,
 };
 
 /** @brief Sets up the PCD command structure with the location and size of the
@@ -87,8 +68,10 @@ int pcd_network_core_update(const void *src_addr, size_t len);
 int pcd_network_core_update_initiate(const void *src_addr, size_t len);
 
 /** @brief Lock the RAM section used for IPC with the network core bootloader.
+ *
+ * @param lock_conf Lock configuration until next SoC reset.
  */
-void pcd_lock_ram(void);
+void pcd_lock_ram(bool lock_conf);
 
 /** @brief Update the PCD CMD to indicate that the operation has completed
  *         successfully.
