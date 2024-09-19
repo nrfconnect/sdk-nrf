@@ -142,7 +142,7 @@ tests:
     extra_args: SB_CONFIG_THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH=y
     platform_allow:
       - thingy91x/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002.shell.otbr:
     sysbuild: true
     build_only: true
