@@ -309,7 +309,7 @@ void slm_enter_idle(void)
 	}
 }
 
-FUNC_NORETURN static void enter_sleep_no_uninit(void)
+static void enter_sleep_no_uninit(void)
 {
 	LOG_INF("Entering sleep.");
 	LOG_PANIC();
@@ -321,7 +321,7 @@ FUNC_NORETURN static void enter_sleep_no_uninit(void)
 	assert(false);
 }
 
-FUNC_NORETURN void slm_enter_sleep(void)
+void slm_enter_sleep(void)
 {
 	slm_at_host_uninit();
 
@@ -336,7 +336,7 @@ FUNC_NORETURN void slm_enter_sleep(void)
 
 #endif /* POWER_PIN_IS_ENABLED */
 
-FUNC_NORETURN void slm_enter_shutdown(void)
+void slm_enter_shutdown(void)
 {
 	LOG_INF("Entering shutdown.");
 
