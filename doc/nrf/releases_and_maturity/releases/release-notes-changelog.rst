@@ -36,6 +36,13 @@ IDE, and tool support
 * Added explicit mention of the :ref:`requirements_jlink` being required in the :ref:`installing_vsc` section of the installation page.
 * Updated the required `SEGGER J-Link`_ version to v7.94i.
 
+Board support
+=============
+
+* Added support for the Thingy:91 X board.
+* Updated Thingy:91 X board to use the ``nordic,pm-ext-flash`` node instead of external flash device name in static partitions.
+* Removed invalid external flash from static partitions for Thingy:91 X.
+
 Build and configuration system
 ==============================
 
@@ -513,6 +520,8 @@ Peripheral samples
 
 PMIC samples
 ------------
+
+* Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` to the PMIC samples.
 
 * :ref:`npm1300_fuel_gauge` sample:
 
