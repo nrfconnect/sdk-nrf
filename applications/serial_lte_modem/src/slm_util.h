@@ -32,8 +32,8 @@ int slm_power_off_modem(void);
 FUNC_NORETURN void slm_reset(void);
 
 void slm_enter_idle(void);
-FUNC_NORETURN void slm_enter_sleep(void);
-FUNC_NORETURN void slm_enter_shutdown(void);
+void slm_enter_sleep(void);
+void slm_enter_shutdown(void);
 
 /** @brief Temporarily sets the indicate pin high. */
 int slm_indicate(void);
