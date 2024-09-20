@@ -24,3 +24,14 @@ tests:
       - CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG=y
       - CONFIG_IPC_SERVICE=y
       - CONFIG_IPC_SERVICE_BACKEND_ICMSG=y
+
+  applications.sdp.egpio_icmsg_pdk:
+    build_only: true
+    platform_allow: nrf54l15pdk/nrf54l15/cpuflpr
+    tags: ci_build gpio
+    extra_args:
+      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15pdk_nrf54l15_cpuflpr_icmsg.overlay"
+    extra_configs:
+      - CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG=y
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_IPC_SERVICE_BACKEND_ICMSG=y
