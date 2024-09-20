@@ -23,3 +23,4 @@ The following pages briefly describe topics like the responsibilities of the cor
    ug_nrf54h20_architecture_lifecycle
    ug_nrf54h20_architecture_pm
    ug_nrf54h20_architecture_clockman
+   ug_nrf54h20_architecture_reset
