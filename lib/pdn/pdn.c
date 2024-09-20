@@ -655,7 +655,7 @@ int pdn_default_apn_get(char *buf, size_t len)
 
 	/* +CGDCONT: 0,"family","apn.name" */
 	err = nrf_modem_at_scanf("AT+CGDCONT?",
-		"+CGDCONT: 0,\"%*[^\"]\",\"%64[^\"]\"", apn);
+		"+CGDCONT: 0,\"%*[^\"]\",\"%63[^\"]\"", apn);
 	if (err < 0) {
 		LOG_ERR("Failed to read PDP contexts, err %d", err);
 		return err;

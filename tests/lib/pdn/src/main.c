@@ -530,7 +530,7 @@ static int nrf_modem_at_scanf_custom_cgdcont(const char *cmd, const char *fmt, v
 	int *apn;
 
 	TEST_ASSERT_EQUAL_STRING("AT+CGDCONT?", cmd);
-	TEST_ASSERT_EQUAL_STRING("+CGDCONT: 0,\"%*[^\"]\",\"%64[^\"]\"", fmt);
+	TEST_ASSERT_EQUAL_STRING("+CGDCONT: 0,\"%*[^\"]\",\"%63[^\"]\"", fmt);
 
 	apn = va_arg(args, int *);
 	*apn = 1;
