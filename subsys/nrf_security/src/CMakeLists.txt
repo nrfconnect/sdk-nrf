@@ -30,6 +30,16 @@ target_include_directories(psa_crypto_config
     ${NRF_SECURITY_ROOT}/include
 )
 
+# Add fallback include folders from Mbed TLS for driver context structures
+# This is only necessary when building with legacy code which will include <psa/crypto.h>
+if(NOT (CMAKE_BUILD_WITH_TFM OR CONFIG_MBEDTLS_PSA_CRYPTO_C))
+target_include_directories(psa_crypto_config
+  INTERFACE
+    ${ARM_MBEDTLS_PATH}/include
+)
+endif()
+
+
 # Add include folders for psa_crypto_library_config (library build in S-only and inside TF-M)
 target_include_directories(psa_crypto_library_config
   INTERFACE
