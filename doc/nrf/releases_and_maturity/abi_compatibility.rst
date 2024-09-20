@@ -21,13 +21,15 @@ However, changes that affect data structure layouts, such as altering field orde
 ABI Compatibility Matrix for the for the nrf54h20_soc_binary bundle
 ===================================================================
 
-The following table illustrates ABI compatibility between different versions of the *nrf54h20_soc_binary* bundle and the |NCS|:
+The following table illustrates ABI compatibility between different versions of the nRF54H20 SoC binaries bundle and the |NCS|:
 
 .. list-table::
    :header-rows: 1
 
    * - |NCS| versions
-     - Compatible nrf54h20_soc_binary version
+     - Compatible nRF54H20 SoC binaries version
+   * - |NCS| v2.7.99-cs2
+     - nrf54h20_soc_binaries v0.6.5
    * - |NCS| v2.7.99-cs1
      - nrf54h20_soc_binaries v0.6.2
    * - |NCS| v2.7.0
@@ -36,4 +38,4 @@ The following table illustrates ABI compatibility between different versions of 
      - nrf54h20_soc_binaries v0.3.3
 
 ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the Application, Radio binaries, or both are recompiled, as long as they are based on a compatible NCS version.
-Additionally, maintaining ABI compatibility allows the *nrf54h20_soc_binary* components to work together without recompilation when updating to newer |NCS| versions.
+Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binaries components to work together without recompilation when updating to newer |NCS| versions.

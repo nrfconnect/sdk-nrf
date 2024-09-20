@@ -142,10 +142,10 @@ After programming the BICR binary onto the device, validate whether the BICR wor
 Programming the SDFW and SCFW
 =============================
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.6.2.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
-To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
+After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.6.5.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 firmware bundle v0.6.2`_.
+1. Download the `nRF54H20 SoC binaries v0.6.5`_.
 #. Move the :file:`ZIP` bundle to a folder of your choice.
 #. |open_terminal_window_with_environment|
 #. Run nRF Util to program the binaries using the following command::
@@ -255,11 +255,11 @@ When a new version of the nRF54H20 firmware bundle is released, you can update i
 1. Download the new version of the nRF54H20 firmware bundle (:file:`nrf54h20_soc_binaries_v<x.y.z>.zip`).
 #. Move the :file:`ZIP` bundle to a folder of your choice and unzip it.
 #. |open_terminal_window_with_environment|
-#. Verify the current SDFW version by running the following command::
+#. Verify the current version of the nRF54H20 SoC binaries by running the following command::
 
       nrfutil device x-sdfw-version-get --firmware-slot uslot --serial-number <serial_number>
 
-   If the SDFW version is 0.5.0 or higher, continue to the next step.
+   If the nRF54H20 SoC binaries version is 0.5.0 or higher, continue to the next step.
 #. Run nRF Util to update the binaries using the following SUIT command::
 
       nrfutil device x-suit-dfu --serial-number <snr> --firmware nordic_top.suit
