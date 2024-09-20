@@ -37,6 +37,8 @@ tests:
     extra_args:
       - FILE_SUFFIX=extflash
       - OVERLAY_CONFIG="sysbuild/smp_transfer.conf"
+    extra_configs:
+      - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit ci_samples_suit
 
   sample.suit.smp_transfer.recovery:
@@ -52,6 +54,8 @@ tests:
       - FILE_SUFFIX=extflash
       - OVERLAY_CONFIG="sysbuild/smp_transfer_bt.conf"
       - SB_OVERLAY_CONFIG="sysbuild_bt.conf"
+    extra_configs:
+      - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit bluetooth ci_samples_suit
 
   sample.suit.smp_transfer.full.extflash.extracted_cache:
@@ -61,6 +65,7 @@ tests:
       - OVERLAY_CONFIG="sysbuild/smp_transfer.conf"
     extra_configs:
       - CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
+      - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_PUSH_TO_CACHE=y
     tags: suit ci_samples_suit
 
   sample.suit.smp_transfer.full.extflash.bt.extracted_cache:
@@ -72,4 +77,6 @@ tests:
       - hci_ipc_CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
     extra_configs:
       - CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
+      - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_PUSH_TO_CACHE=y
+
     tags: suit bluetooth ci_samples_suit
