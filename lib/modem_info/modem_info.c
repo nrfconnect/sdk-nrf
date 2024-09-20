@@ -26,7 +26,6 @@ LOG_MODULE_REGISTER(modem_info);
 #define INVALID_DESCRIPTOR	-1
 
 #define AT_CMD_CESQ		"AT+CESQ"
-#define AT_CMD_CESQ_ON		"AT%%CESQ=1"
 #define AT_CMD_CURRENT_BAND	"AT%%XCBAND"
 #define AT_CMD_SUPPORTED_BAND	"AT%%XCBAND=?"
 #define AT_CMD_CURRENT_MODE	"AT+CEMODE?"
@@ -44,8 +43,6 @@ LOG_MODULE_REGISTER(modem_info);
 #define AT_CMD_IMEI		"AT+CGSN"
 #define AT_CMD_DATE_TIME	"AT+CCLK?"
 #define AT_CMD_XCONNSTAT	"AT%XCONNSTAT?"
-#define AT_CMD_XCONNSTAT_ON	"AT%%XCONNSTAT=1"
-#define AT_CMD_XCONNSTAT_OFF	"AT%%XCONNSTAT=0"
 #define AT_CMD_XMONITOR		"AT%%XMONITOR"
 #define AT_CMD_SUCCESS_SIZE	5
 
@@ -709,7 +706,7 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 
 	at_monitor_resume(&modem_info_cesq_mon);
 
-	if (nrf_modem_at_printf(AT_CMD_CESQ_ON) != 0) {
+	if (nrf_modem_at_printf("AT%%CESQ=1") != 0) {
 		return -EIO;
 	}
 
@@ -718,7 +715,7 @@ int modem_info_rsrp_register(rsrp_cb_t cb)
 
 int modem_info_connectivity_stats_init(void)
 {
-	int err = nrf_modem_at_printf(AT_CMD_XCONNSTAT_ON);
+	int err = nrf_modem_at_printf("AT%%XCONNSTAT=1");
 
 	if (err != 0) {
 		if (err > 0) {
@@ -730,7 +727,7 @@ int modem_info_connectivity_stats_init(void)
 
 int modem_info_connectivity_stats_disable(void)
 {
-	int err = nrf_modem_at_printf(AT_CMD_XCONNSTAT_OFF);
+	int err = nrf_modem_at_printf("AT%%XCONNSTAT=0");
 
 	if (err != 0) {
 		if (err > 0) {
