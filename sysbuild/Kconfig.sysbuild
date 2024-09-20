@@ -59,6 +59,11 @@ config BUILD_OUTPUT_HEX
 	  The name of this file can be customized with CONFIG_KERNEL_BIN_NAME.
 	  This will be applied to all target images.
 
+config BUILD_OUTPUT_ZIP
+	bool "Build a binary in ZIP format"
+	help
+	   Build a ZIP file with a manifest and DFU binaries.
+
 # TODO: NCSDK-28330
 # This check will fail for variants
 BOARD_NS_QUALIFIER_CHECK := $(substring,$(BOARD_QUALIFIERS),-3)

@@ -96,6 +96,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     else()
       set_config_bool(${image} CONFIG_BUILD_OUTPUT_HEX n)
     endif()
+
+    if(SB_CONFIG_BUILD_OUTPUT_ZIP)
+      set_config_bool(${image} CONFIG_BUILD_OUTPUT_ZIP y)
+    else()
+      set_config_bool(${image} CONFIG_BUILD_OUTPUT_ZIP n)
+    endif()
   endforeach()
 
   if(SB_CONFIG_PARTITION_MANAGER AND SB_CONFIG_BOOTLOADER_MCUBOOT)
