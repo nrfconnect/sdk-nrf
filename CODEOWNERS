@@ -88,7 +88,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
-/include/bluetooth/                       @nrfconnect/ncs-si-muffin @alwa-nordic @jori-nordic
+/include/bluetooth/                       @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/adv_prov.h             @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
@@ -172,7 +172,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
-/samples/bluetooth/                       @nrfconnect/ncs-si-muffin @alwa-nordic @jori-nordic @carlescufi
+/samples/bluetooth/                       @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
 /samples/bluetooth/broadcast_config_tool/ @nrfconnect/ncs-audio
 /samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
@@ -276,7 +276,7 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 # Subsystems
 /subsys/                                  @nrfconnect/ncs-code-owners
 /subsys/audio_module/                     @nrfconnect/ncs-audio
-/subsys/bluetooth/                        @nrfconnect/ncs-si-muffin @alwa-nordic @jori-nordic @carlescufi
+/subsys/bluetooth/                        @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
 /subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @nrfconnect/ncs-si-bluebagel
