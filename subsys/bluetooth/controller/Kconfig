@@ -357,7 +357,8 @@ choice BT_CTLR_ECDH_LIB
 	prompt "SoftDevice Controller ECDH library"
 
 config BT_CTLR_ECDH_LIB_OBERON
-	select NRF_OBERON
+	select NRF_OBERON if !BUILD_WITH_TFM
+	select NORDIC_SECURITY_BACKEND if BUILD_WITH_TFM
 	depends on !SOC_SERIES_BSIM_NRFXX
 	bool "nRF Oberon (SW)"
 
