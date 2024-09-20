@@ -75,3 +75,6 @@
 #define CBOR_MSG_INFO                                                                              \
 	0x50, ADDR_1, 0x50, ADDR_2, CBOR_UINT16(PORT_1), CBOR_UINT16(PORT_2), CBOR_UINT8(64), 3,   \
 		CBOR_TRUE, CBOR_TRUE, CBOR_TRUE
+#define CBOR_ADDR1 0x50, ADDR_1
+
+#define CBOR_SOC_ADDR CBOR_ADDR1, CBOR_UINT16(1024)

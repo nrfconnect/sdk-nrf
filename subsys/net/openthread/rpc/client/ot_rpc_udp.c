@@ -27,7 +27,7 @@ otError otUdpConnect(otInstance *aInstance, otUdpSocket *aSocket, const otSockAd
 
 	ARG_UNUSED(aInstance);
 
-	if (aSocket == NULL) {
+	if (aSocket == NULL || aSockName == NULL) {
 		return OT_ERROR_INVALID_ARGS;
 	}
 
@@ -95,11 +95,11 @@ otError otUdpBind(otInstance *aInstance, otUdpSocket *aSocket, const otSockAddr 
 
 	ARG_UNUSED(aInstance);
 
-	if (aSocket == NULL) {
+	if (aSocket == NULL || aSockName == NULL) {
 		return OT_ERROR_INVALID_ARGS;
 	}
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + sizeof(otSockAddr) + sizeof(uint32_t) + 6);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + sizeof(otSockAddr) + sizeof(net_if) + 6);
 
 	if (!zcbor_uint_encode(ctx.zs, &key, sizeof(key))) {
 		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
@@ -220,6 +220,10 @@ otError otUdpSend(otInstance *aInstance, otUdpSocket *aSocket, otMessage *aMessa
 	otError error = OT_ERROR_NONE;
 
 	ARG_UNUSED(aInstance);
+
+	if (aSocket == NULL || aMessage == NULL || aMessageInfo == NULL) {
+		return OT_ERROR_INVALID_ARGS;
+	}
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(otMessageInfo) + 16);
 
