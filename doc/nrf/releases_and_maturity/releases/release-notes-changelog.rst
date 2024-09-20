@@ -407,6 +407,8 @@ Cellular samples
     * A handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` to stop sensors and location services.
     * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
+    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
 
   * Updated:
 
@@ -423,6 +425,8 @@ Cellular samples
 
     * Support for dictionary logs using REST.
     * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
+    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
