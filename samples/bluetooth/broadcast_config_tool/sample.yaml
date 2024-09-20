@@ -1,0 +1,14 @@
+sample:
+  name: Bluetooth Low Energy Broadcast Configuration Tool
+  description: Bluetooth LE shell configurable broadcast tool
+common:
+  integration_platforms:
+    - nrf5340_audio_dk/nrf5340/cpuapp
+  platform_allow: nrf5340_audio_dk/nrf5340/cpuapp
+  platform_exclude: nrf5340_audio_dk/nrf5340/cpuapp_ns
+  sysbuild: true
+  build_only: true
+  tags: ci_build sysbuild
+tests:
+  sample.bluetooth.broadcast_config_tool.build:
+    extra_args: []
