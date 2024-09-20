@@ -128,6 +128,6 @@ if(TARGET nrf_cc3xx_core_imported)
   target_link_libraries(nrf_cc3xx_core_imported
     INTERFACE
       psa_crypto_config
-      mbedcrypto_base
+      ${mbedcrypto_target}
   )
 endif()
