@@ -122,8 +122,11 @@ Application thread and main application loop
 ============================================
 
 The application thread is implemented in the :file:`src/application.c` file, and is responsible for the high-level behavior of this sample.
-It performs the following major tasks:
 
+When it starts, it logs the `reset reason code <nRF9160 RESETREAS_>`_.
+If the :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option is enabled, it sends an alert to nRF Cloud containing the reset reason as the value field.
+
+It performs the following major tasks:
 * Establishes periodic position tracking (which the :ref:`lib_location` library performs).
 * Periodically samples temperature data (using the :file:`src/temperature.c` file).
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.

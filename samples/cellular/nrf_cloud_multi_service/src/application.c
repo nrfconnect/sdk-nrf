@@ -6,6 +6,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
+#include <helpers/nrfx_reset_reason.h>
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
@@ -321,8 +322,29 @@ static void test_counter_send(void)
 	}
 }
 
+static void print_reset_reason(void)
+{
+	uint32_t reset_reason;
+
+	reset_reason = nrfx_reset_reason_get();
+	LOG_INF("Reset reason: 0x%x", reset_reason);
+}
+
+static void report_startup(void)
+{
+	if (IS_ENABLED(CONFIG_SEND_ONLINE_ALERT)) {
+		uint32_t reset_reason;
+
+		reset_reason = nrfx_reset_reason_get();
+		nrfx_reset_reason_clear(reset_reason);
+		(void)nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE, reset_reason, NULL);
+	}
+}
+
 void main_application_thread_fn(void)
 {
+	print_reset_reason();
+
 	if (IS_ENABLED(CONFIG_AT_CMD_REQUESTS)) {
 		/* Register with connection.c to receive general device messages and check them for
 		 * AT command requests.
@@ -333,7 +355,7 @@ void main_application_thread_fn(void)
 	/* Wait for first connection before starting the application. */
 	(void)await_cloud_ready(K_FOREVER);
 
-	(void)nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE, 0, NULL);
+	report_startup();
 
 	/* Wait for the date and time to become known.
 	 * This is needed both for location services and for sensor sample timestamping.
