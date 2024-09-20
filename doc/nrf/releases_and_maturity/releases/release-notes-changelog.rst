@@ -58,8 +58,14 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-* Added documentation for :ref:`qspi_xip_split_image` functionality.
-* Added a section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+* Added:
+
+  * Documentation for :ref:`qspi_xip_split_image` functionality.
+  * A section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+
+* Updated the procedure for signing the application image built for booting by MCUboot in direct-XIP mode with revert support.
+  Now, the Intel-Hex file of the application image automatically receives a confirmation flag.
+
 * Removed secure bootloader Kconfig ``CONFIG_SECURE_BOOT_DEBUG`` and replaced with usage of logging subsystem.
 
 See also the `MCUboot`_ section.
