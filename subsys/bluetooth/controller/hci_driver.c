@@ -36,6 +36,14 @@
 #include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(bt_sdc_hci_driver);
 
+
+#if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
+#define HCI_RX_BUF_SIZE MAX(BT_BUF_RX_SIZE, \
+			BT_BUF_EVT_SIZE(CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE))
+#else
+#define HCI_RX_BUF_SIZE BT_BUF_RX_SIZE
+#endif
+
 #if defined(CONFIG_BT_CONN) && defined(CONFIG_BT_CENTRAL)
 
 #if CONFIG_BT_MAX_CONN > 1
@@ -390,6 +398,14 @@ static void data_packet_process(uint8_t *hci_buf)
 	pb = bt_acl_flags_pb(flags);
 	bc = bt_acl_flags_bc(flags);
 
+	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
+		LOG_ERR("Event buffer too small. %u > %u",
+			len + sizeof(*hdr),
+			HCI_RX_BUF_SIZE);
+		k_panic();
+		return;
+	}
+
 	LOG_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
 	       pb, bc, len);
 
@@ -403,6 +419,14 @@ static void iso_data_packet_process(uint8_t *hci_buf)
 	struct bt_hci_iso_hdr *hdr = (void *)hci_buf;
 
 	uint16_t len = sys_le16_to_cpu(hdr->len);
+
+	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
+		LOG_ERR("Event buffer too small. %u > %u",
+			len + sizeof(*hdr),
+			HCI_RX_BUF_SIZE);
+		k_panic();
+		return;
+	}
 
 	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
 
@@ -456,6 +480,14 @@ static void event_packet_process(uint8_t *hci_buf)
 	bool discardable = event_packet_is_discardable(hci_buf);
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
 	struct net_buf *evt_buf;
+
+	if (hdr->len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
+		LOG_ERR("Event buffer too small. %u > %u",
+			hdr->len + sizeof(*hdr),
+			HCI_RX_BUF_SIZE);
+		k_panic();
+		return;
+	}
 
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
 		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
@@ -530,12 +562,7 @@ static bool fetch_and_process_hci_msg(uint8_t *p_hci_buffer)
 
 void hci_driver_receive_process(void)
 {
-#if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
-	static uint8_t hci_buf[MAX(BT_BUF_RX_SIZE,
-				   BT_BUF_EVT_SIZE(CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE))];
-#else
-	static uint8_t hci_buf[BT_BUF_RX_SIZE];
-#endif
+	static uint8_t hci_buf[HCI_RX_BUF_SIZE];
 
 	if (fetch_and_process_hci_msg(&hci_buf[0])) {
 		/* Let other threads of same priority run in between. */
