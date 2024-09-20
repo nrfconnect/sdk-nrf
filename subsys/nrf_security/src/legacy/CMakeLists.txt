@@ -27,7 +27,6 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR
     ccm.c
     chachapoly.c
     ecdh.c
-    ecdsa.c
     ecp.c
     ecp_curves.c
     ecp_curves_new.c
@@ -38,6 +37,20 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR
     rsa_alt_helpers.c
   )
 endif()
+
+# There is a symbol inside the nrf_oberon ECDSA implementation (built lib) that is 
+# colliding with a symbol in ecdsa.c in mbedtls: mbedtls_ecdsa_can_do.
+# To solve this quickly a copy of ecdsa.c is added here in case oberon is built
+if(CONFIG_OBERON_BACKEND)
+  list(APPEND src_crypto_legacy
+    ${CMAKE_CURRENT_LIST_DIR}/ecdsa_oberon.c
+  )
+else()
+  list(APPEND src_crypto_legacy
+    ${ARM_MBEDTLS_PATH}/library/ecdsa.c
+  )
+endif()
+
 
 if(CONFIG_HAS_HW_NRF_CC310)
 append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
