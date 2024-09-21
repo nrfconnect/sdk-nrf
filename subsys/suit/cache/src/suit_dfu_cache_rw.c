@@ -629,15 +629,9 @@ suit_plat_err_t suit_dfu_cache_rw_slot_close(struct suit_cache_slot *slot, size_
 
 			end_address += header_size;
 
-			tmp_size = 1;
-			for (size_t i = 0; i < padding_size; i++) {
-				if (write_to_sink((uint8_t *)(end_address + i), &(uint8_t){0},
-						  tmp_size)) {
-					LOG_ERR("Writing padding byte failed.");
-					return SUIT_PLAT_ERR_IO;
-				}
-			}
-
+			/* Left padding area as-is to save time.
+			 * It is inaccessible through the cache API.
+			 */
 			end_address += padding_size;
 		}
 
