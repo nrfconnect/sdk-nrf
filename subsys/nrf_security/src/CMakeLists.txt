@@ -35,7 +35,7 @@ target_include_directories(psa_crypto_config
 if(NOT (CMAKE_BUILD_WITH_TFM OR CONFIG_MBEDTLS_PSA_CRYPTO_C))
 target_include_directories(psa_crypto_config
   INTERFACE
-    ${ARM_MBEDTLS_PATH}/include
+    ${OBERON_PSA_CORE_PATH}/include
 )
 endif()
 
