@@ -6,6 +6,7 @@
 
 import argparse
 import os
+import re
 import struct
 
 OTA_HEADER_FILE_ID               = 0x0BEEF11E
@@ -140,11 +141,11 @@ class OTA_header:
 
 def convert_version_string_to_int(s):
     """Convert from semver string "1.2.3", to integer 1020003"""
-    numbers = s.split('.')
-    if len(numbers) != 3:
-        raise ValueError('application-version-string parameter must be on the format x.y.z')
+    match = re.match(r'^([0-9]+)\.([0-9]+)\.([0-9])(?:\+[0-9]+)?$', s)
+    if match is None:
+        raise ValueError('application-version-string parameter must be on the format x.y.z or x.y.z+t')
     js = [0x100*0x10000, 0x10000, 1]
-    return sum([js[i] * int(numbers[i]) for i in range(3)])
+    return sum([js[i] * int(match.group(i+1)) for i in range(3)])
 
 def hex2int(x):
     """Convert hex to int."""

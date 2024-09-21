@@ -184,7 +184,7 @@ Thread
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Fixed the :file:`zb_add_ota_header.py` script not being able to handle an ``APPLICATION_VERSION_STRING`` which includes a tweak, such as ``1.0.0+3``.
 
 Wi-Fi
 -----
