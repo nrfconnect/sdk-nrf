@@ -1616,7 +1616,9 @@
  *
  * Comment this macro to disable support for key export
  */
+#ifndef MBEDTLS_SSL_EXPORT_KEYS
 #cmakedefine MBEDTLS_SSL_EXPORT_KEYS
+#endif /* MBEDTLS_SSL_EXPORT_KEYS */
 
 /**
  * \def MBEDTLS_SSL_SERVER_NAME_INDICATION
