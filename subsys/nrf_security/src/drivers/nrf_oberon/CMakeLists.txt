@@ -53,7 +53,7 @@ target_compile_options(oberon_psa_driver
 
 target_include_directories(oberon_psa_driver
   PRIVATE
-    ${OBERON_PSA_CORE_PATH}/oberon/drivers
+    $<TARGET_PROPERTY:mbedcrypto_oberon_imported,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
 # Link to the PSA interface and library PSA crypto configurations
@@ -62,6 +62,7 @@ target_link_libraries(oberon_psa_driver
     psa_crypto_library_config
     psa_interface
 )
+
 
 # Link to imported libraries for Oberon APIs.
 target_link_libraries(oberon_psa_driver
@@ -74,6 +75,12 @@ target_link_libraries(oberon_psa_driver
 target_link_libraries(oberon_psa_core
   PRIVATE
     oberon_psa_driver
+)
+
+target_link_libraries(mbedcrypto_oberon_mbedtls_imported
+  INTERFACE
+    psa_crypto_config
+    ${mbedcrypto_target}
 )
 
 nrf_security_add_zephyr_options_library(oberon_psa_driver)
