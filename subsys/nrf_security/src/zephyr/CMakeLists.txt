@@ -11,7 +11,7 @@
 # to ensure that MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER is not set.
 target_link_libraries(zephyr_interface
   INTERFACE
-    psa_crypto_config
+    psa_crypto_config_chosen
     psa_interface
 )
 

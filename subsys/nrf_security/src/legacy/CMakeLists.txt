@@ -127,7 +127,7 @@ if(TARGET nrf_cc3xx_core_imported)
   # nrf_cc3xx needs functionality from mbedcrypto_base
   target_link_libraries(nrf_cc3xx_core_imported
     INTERFACE
-      psa_crypto_config
+      psa_crypto_config_chosen
       ${mbedcrypto_target}
   )
 endif()
