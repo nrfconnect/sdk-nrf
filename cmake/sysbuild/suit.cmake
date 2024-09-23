@@ -99,6 +99,28 @@ function(suit_generate_dfu_zip)
   )
 endfunction()
 
+function(suit_generate_recovery_dfu_zip)
+  get_property(
+    dfu_artifacts
+    GLOBAL PROPERTY
+    SUIT_RECOVERY_DFU_ARTIFACTS
+  )
+
+  set(root_name "${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_ARTIFACT_NAME}.suit")
+  set(script_params "${root_name}type=suit-envelope")
+
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
+
+  generate_dfu_zip(
+    OUTPUT ${PROJECT_BINARY_DIR}/dfu_suit_recovery.zip
+    BIN_FILES ${dfu_artifacts}
+    TYPE bin
+    IMAGE ${DEFAULT_IMAGE}
+    DEPENDS ${create_suit_artifacts}
+    SCRIPT_PARAMS "${script_params}"
+  )
+endfunction()
+
 # Get path to the manifest template in the base manifest template directory.
 #
 # Usage:
@@ -231,11 +253,19 @@ function(suit_create_package)
       )
     endif()
     suit_copy_artifact_to_output_directory(${image} ${BINARY_DIR}/zephyr/${BINARY_FILE})
+
+    unset(CONFIG_SUIT_RECOVERY)
+    sysbuild_get(CONFIG_SUIT_RECOVERY IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
+    if(CONFIG_SUIT_RECOVERY)
+      set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ARTIFACTS ${SUIT_ROOT_DIRECTORY}${image}.bin)
+    else()
+      set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${SUIT_ROOT_DIRECTORY}${image}.bin)
+    endif()
   endforeach()
 
   set(TEMPLATE_ARGS ${CORE_ARGS})
   suit_get_version_file(VERSION_PATH)
-  if (DEFINED VERSION_PATH)
+  if(DEFINED VERSION_PATH)
     list(APPEND TEMPLATE_ARGS
       --version_file ${VERSION_PATH}
     )
@@ -258,7 +288,7 @@ function(suit_create_package)
     sysbuild_get(target IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
     sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-    if (NOT DEFINED INPUT_ENVELOPE_JINJA_FILE OR INPUT_ENVELOPE_JINJA_FILE STREQUAL "")
+    if(NOT DEFINED INPUT_ENVELOPE_JINJA_FILE OR INPUT_ENVELOPE_JINJA_FILE STREQUAL "")
       message(STATUS "DFU: Input SUIT template for ${image} is not defined. Skipping.")
       continue()
     endif()
@@ -272,6 +302,15 @@ function(suit_create_package)
 
     suit_render_template(${INPUT_ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
     suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
+
+    unset(CONFIG_SUIT_RECOVERY)
+    sysbuild_get(CONFIG_SUIT_RECOVERY IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
+    if(CONFIG_SUIT_RECOVERY)
+      set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ARTIFACTS ${ENVELOPE_SUIT_FILE})
+    else()
+      set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${ENVELOPE_SUIT_FILE})
+    endif()
+
     list(APPEND STORAGE_BOOT_ARGS
       --input-envelope ${ENVELOPE_SUIT_FILE}
     )
@@ -325,6 +364,7 @@ function(suit_create_package)
         list(APPEND STORAGE_BOOT_ARGS
           --input-envelope ${APP_RECOVERY_ENVELOPE_SUIT_FILE}
         )
+      set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ARTIFACTS ${APP_RECOVERY_ENVELOPE_SUIT_FILE})
     endif()
   endif()
 
@@ -343,13 +383,14 @@ function(suit_create_package)
       list(APPEND STORAGE_BOOT_ARGS
         --input-envelope ${ROOT_ENVELOPE_SUIT_FILE}
       )
+    set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${ROOT_ENVELOPE_SUIT_FILE})
   endif()
 
   sysbuild_get(DEFAULT_BINARY_DIR IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
 
   # Read SUIT storage addresses, set during MPI generation
   sysbuild_get(SUIT_STORAGE_ADDRESS IMAGE ${DEFAULT_IMAGE} VAR SUIT_STORAGE_ADDRESS CACHE)
-  if (DEFINED SUIT_STORAGE_ADDRESS)
+  if(DEFINED SUIT_STORAGE_ADDRESS)
     list(APPEND STORAGE_BOOT_ARGS --storage-address ${SUIT_STORAGE_ADDRESS})
   else()
     message(WARNING "Using default value of the SUIT storage address")
@@ -392,7 +433,7 @@ function(suit_setup_merge)
 
     unset(IMAGE_TARGET_NAME)
     sysbuild_get(IMAGE_TARGET_NAME IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
-    if (NOT DEFINED IMAGE_TARGET_NAME OR IMAGE_TARGET_NAME STREQUAL "")
+    if(NOT DEFINED IMAGE_TARGET_NAME OR IMAGE_TARGET_NAME STREQUAL "")
       message(STATUS "DFU: Target name for ${image} is not defined. Skipping.")
       continue()
     endif()
@@ -430,4 +471,7 @@ endfunction()
 if(SB_CONFIG_SUIT_ENVELOPE)
   suit_create_package()
   suit_generate_dfu_zip()
+  if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+    suit_generate_recovery_dfu_zip()
+  endif()
 endif()
