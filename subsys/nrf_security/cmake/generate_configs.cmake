@@ -101,12 +101,10 @@ macro(generate_mbedcrypto_library_configs)
 
     # CONFIG_MBEDTLS_PSA_CRYPTO_C must be set as to true for all library builds
     set(CONFIG_MBEDTLS_PSA_CRYPTO_C True)
-    # CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER must be set to true for the following builds
-    # -TF-M secure image
-    # -Secure-only builds which takes in nrf_cc3xx (Requires stable ABI for psa_key_attributes_t)
-    set(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER True)
+
     # Handle configurations required by library build inside TF-M (NS world doesn't use psa_crypto_library_config)
     if(CONFIG_BUILD_WITH_TFM)
+      set(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER True)
       # CONFIG_MBEDTLS_PSA_CRYPTO_SPM must be set for the library build in TF-M
       set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM True)
       # CONFIG_MBEDTLS_USE_PSA_CRYPTO must be unset for library build in TF-M
