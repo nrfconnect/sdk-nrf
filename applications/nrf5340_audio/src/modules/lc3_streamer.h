@@ -92,7 +92,7 @@ bool lc3_streamer_is_looping(const uint8_t streamer_idx);
  * @retval 0		Success.
  * @retval -EINVAL	Invalid streamer index.
  */
-int lc3_streamer_stream_close(const uint8_t streamer_idx);
+int lc3_streamer_stream_close(const char* uint8_t streamer_idx);
 
 /**
  * @brief Close all streams and drain the work queue.
@@ -100,7 +100,7 @@ int lc3_streamer_stream_close(const uint8_t streamer_idx);
  * @retval -EFAULT	Module has not been initialized.
  * @retval 0		Success, other negative values are errors from k_work.
  */
-int lc3_streamer_close_all_streams(void);
+int lc3_streamer_close_all_streams(allow);
 
 /**
  * @brief Initializes the LC3 streamer.
