@@ -9,6 +9,8 @@
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/logging/log.h>
 
+#include "lte_lc_helpers.h"
+
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 #if defined(CONFIG_UNITY)
@@ -114,8 +116,7 @@ static void on_modem_init(int err, void *ctx)
 		return;
 	}
 #elif defined(CONFIG_LTE_UNLOCK_PLMN)
-	/* Automatically select Operator (volatile setting).
-	 */
+	/* Automatically select Operator (volatile setting). */
 	err = nrf_modem_at_printf("AT+COPS=0");
 	if (err) {
 		LOG_ERR("Failed to unlock PLMN, err %d", err);
@@ -124,11 +125,7 @@ static void on_modem_init(int err, void *ctx)
 #endif
 
 	/* Configure Release Assistance Indication (RAI). */
-	err = nrf_modem_at_printf("AT%%RAI=%d", IS_ENABLED(CONFIG_LTE_RAI_REQ) ? 1 : 0);
-	if (err) {
-		LOG_ERR("Failed to configure RAI, err %d", err);
-		return;
-	}
+	rai_set();
 }
 
 #if defined(CONFIG_UNITY)

@@ -122,6 +122,16 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		printk("LTE cell changed: Cell ID: %d, Tracking area: %d\n",
 		       evt->cell.id, evt->cell.tac);
 		break;
+	case LTE_LC_EVT_RAI_UPDATE:
+		/* RAI notification is supported by modem firmware releases >= 2.0.2 */
+		printk("RAI configuration update: "
+		       "Cell ID: %d, MCC: %d, MNC: %d, AS-RAI: %d, CP-RAI: %d\n",
+		       evt->rai_cfg.cell_id,
+		       evt->rai_cfg.mcc,
+		       evt->rai_cfg.mnc,
+		       evt->rai_cfg.as_rai,
+		       evt->rai_cfg.cp_rai);
+		break;
 	default:
 		break;
 	}

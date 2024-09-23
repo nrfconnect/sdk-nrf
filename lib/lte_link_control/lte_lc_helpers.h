@@ -127,6 +127,14 @@
 #define AT_MDMEV_CE_LEVEL_2			"PRACH CE-LEVEL 2\r\n"
 #define AT_MDMEV_CE_LEVEL_3			"PRACH CE-LEVEL 3\r\n"
 
+/* RAI notification parameters */
+#define AT_RAI_RESPONSE_PREFIX			"%RAI"
+#define AT_RAI_PARAMS_COUNT_MAX			5
+#define AT_RAI_CELL_ID_INDEX			1
+#define AT_RAI_PLMN_INDEX			2
+#define AT_RAI_AS_INDEX				3
+#define AT_RAI_CP_INDEX				4
+
 /* @brief Parses an AT command response, and returns the current RRC mode.
  *
  * @param at_response Pointer to buffer with AT response.
@@ -307,6 +315,15 @@ int parse_coneval(const char *at_response, struct lte_lc_conn_eval_params *param
  */
 int parse_mdmev(const char *at_response, enum lte_lc_modem_evt *modem_evt);
 
+/* @brief Parse a RAI response and extract RAI configuration.
+ *
+ * @param at_response AT response.
+ * @param rai_cfg RAI configuration.
+ *
+ * @return Zero on success, negative errno code on failure.
+ */
+int parse_rai(const char *at_response, struct lte_lc_rai_cfg *rai_cfg);
+
 /* @brief Add the handler in the event handler list if not already present.
  *
  *  @param handler Event handler.
@@ -372,3 +389,13 @@ char *periodic_search_pattern_get(char *const buf, size_t buf_size,
  */
 int parse_periodic_search_pattern(const char *const pattern_str,
 				  struct lte_lc_periodic_search_pattern *pattern);
+
+/* @brief Set RAI based on @kconfig{CONFIG_LTE_RAI_REQ}.
+ *
+ * If enabling of RAI is requested, AT%RAI=2 is used to order unsolicited RAI notifications.
+ * If setting that fails, AT%RAI=1 is used.
+ *
+ * @retval 0 Setting RAI succeeded.
+ * @retval -EFAULT Setting RAI failed.
+ */
+int rai_set(void);
