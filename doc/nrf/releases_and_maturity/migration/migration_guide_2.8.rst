@@ -85,13 +85,15 @@ SUIT DFU for nRF54H20
 Nordic Secure Immutable Bootloader (NSIB, B0, or B0n)
 -----------------------------------------------------
 
-Custom printing has been dropped in favor of using the logging subsystem, with output printed out to the default logging device.
-The ``CONFIG_SECURE_BOOT_DEBUG`` Kconfig option has been removed.
-To disable logging in B0 or B0n, set the :kconfig:option:`CONFIG_LOG` option to ``n``.
-To send logs over RTT instead of UART, apply the following settings:
+.. toggle::
 
-    * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
-    * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
+   Custom printing has been dropped in favor of using the logging subsystem, with output printed out to the default logging device.
+   The ``CONFIG_SECURE_BOOT_DEBUG`` Kconfig option has been removed.
+   To disable logging in B0 or B0n, set the :kconfig:option:`CONFIG_LOG` option to ``n``.
+   To send logs over RTT instead of UART, apply the following settings:
+
+       * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
+       * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
 
 Libraries
 =========
@@ -120,8 +122,8 @@ AT command parser
 
   * The :c:func:`at_parser_cmd_type_get` has been renamed to :c:func:`at_parser_at_cmd_type_get`.
 
-Security libraries
-------------------
+nRF Security
+------------
 
 .. toggle::
 
@@ -366,4 +368,6 @@ This section provides detailed lists of changes by :ref:`protocol <protocols>`.
 Bluetooth® LE
 -------------
 
-*  To use the Zephyr Bluetooth LE Controller, use the :ref:`bt-ll-sw-split <zephyr:snippet-bt-ll-sw-split>` snippet (see :ref:`app_build_snippets`).
+.. toggle::
+
+   *  To use the Zephyr Bluetooth LE Controller, use the :ref:`bt-ll-sw-split <zephyr:snippet-bt-ll-sw-split>` snippet (see :ref:`app_build_snippets`).
