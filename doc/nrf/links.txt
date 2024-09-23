@@ -825,6 +825,7 @@
 .. _`nrfutil-trace`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/CHANGELOG.html
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`Device command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming.html
+.. _`Programming application firmware on the nRF54L15 SoC`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_nrf54L15.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
