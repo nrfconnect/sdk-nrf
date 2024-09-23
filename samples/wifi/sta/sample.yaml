@@ -58,19 +58,14 @@ tests:
       - thingy53/nrf5340/cpuapp
     platform_allow: thingy53/nrf5340/cpuapp
     tags: ci_build sysbuild ci_samples_wifi
-  sample.sta.nrf7002eb.nrf54l15dk.shell:
+  sample.nrf7002eb_interposer_p1.nrf7002eb.sta:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf700x_nrf54l15pdk
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
-    tags: ci_build sysbuild ci_samples_wifi
-  sample.sta.nrf54h20dk_nrf7002ek.shell:
-    sysbuild: true
-    build_only: true
-    extra_args: SHIELD=nrf700x_nrf54h20dk
-    integration_platforms:
+    extra_args:
+      - sta_SHIELD=nrf7002eb_interposer_p1 nrf7002eb
+      - sta_SNIPPET=nrf70-wifi
+    platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15pdk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     tags: ci_build sysbuild ci_samples_wifi

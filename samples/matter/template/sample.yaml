@@ -62,10 +62,15 @@ tests:
   sample.matter.template.nrf54h20.nrf7002eb:
     sysbuild: true
     build_only: true
-    extra_args: SB_CONFIG_WIFI_NRF70=y template_SHIELD=nrf700x_nrf54h20dk
-      CONFIG_CHIP_WIFI=y CONFIG_CHIP_BOOTLOADER_NONE=y
-      CONFIG_CHIP_OTA_REQUESTOR=n SB_CONFIG_MATTER_OTA=n
-      CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
+    extra_args:
+      - SB_CONFIG_WIFI_NRF70=y
+      - template_SHIELD=nrf7002eb_interposer_p1 nrf7002eb
+      - CONFIG_CHIP_WIFI=y
+      - CONFIG_CHIP_BOOTLOADER_NONE=y
+      - CONFIG_CHIP_OTA_REQUESTOR=n
+      - SB_CONFIG_MATTER_OTA=n
+      - CONFIG_LTO=y
+      - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
