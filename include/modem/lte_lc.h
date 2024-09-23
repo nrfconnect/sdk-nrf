@@ -242,8 +242,8 @@ enum lte_lc_evt_type {
 	 * Current cell.
 	 *
 	 * The associated payload is the @c lte_lc_evt.cell member of type
-	 * @ref lte_lc_cell in the event. Only the @c cell.tac and @c cell.id members are
-	 * populated in the event payload. The rest are expected to be zero.
+	 * @ref lte_lc_cell in the event. Only the @c lte_lc_cell.tac and @c lte_lc_cell.id
+	 * members are populated in the event payload. The rest are expected to be zero.
 	 */
 	LTE_LC_EVT_CELL_UPDATE,
 
@@ -287,7 +287,7 @@ enum lte_lc_evt_type {
 	 * configurable.
 	 *
 	 * The associated payload is the @c lte_lc_evt.modem_sleep member of type
-	 * @ref lte_lc_modem_sleep in the event. The @c time parameter indicates
+	 * @ref lte_lc_modem_sleep in the event. The @c lte_lc_modem_sleep.time parameter indicates
 	 * the time until modem exits sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
@@ -304,7 +304,7 @@ enum lte_lc_evt_type {
 	 * Modem entered sleep.
 	 *
 	 * The associated payload is the @c lte_lc_evt.modem_sleep member of type
-	 * @ref lte_lc_modem_sleep in the event. The @c time parameter indicates
+	 * @ref lte_lc_modem_sleep in the event. The @c lte_lc_modem_sleep.time parameter indicates
 	 * the duration of the sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_ENTER,
@@ -316,6 +316,16 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_modem_evt in the event.
 	 */
 	LTE_LC_EVT_MODEM_EVENT,
+
+	/**
+	 * Information about RAI (Release Assistance Indication) configuration.
+	 *
+	 * The associated payload is the @c lte_lc_evt.rai_cfg member of type
+	 * @ref lte_lc_rai_cfg in the event.
+	 *
+	 * @note This event is only supported by modem firmware versions >= 2.0.2.
+	 */
+	LTE_LC_EVT_RAI_UPDATE,
 };
 
 /** RRC connection state. */
@@ -735,6 +745,20 @@ enum lte_lc_factory_reset_type {
 
 	/** Reset user-configurable data to factory settings. */
 	LTE_LC_FACTORY_RESET_USER = 1,
+};
+
+/** RAI configuration. */
+struct lte_lc_rai_cfg {
+	/** E-UTRAN cell ID. */
+	uint32_t cell_id;
+	/** Mobile Country Code. */
+	int mcc;
+	/** Mobile Network Code. */
+	int mnc;
+	/** AS RAI support. */
+	bool as_rai;
+	/** CP RAI support. */
+	bool cp_rai;
 };
 
 /**
@@ -1204,6 +1228,9 @@ struct lte_lc_evt {
 
 		/** Payload for event @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS. */
 		struct lte_lc_cells_info cells_info;
+
+		/** Payload for event @ref LTE_LC_EVT_RAI_UPDATE. */
+		struct lte_lc_rai_cfg rai_cfg;
 	};
 };
 
