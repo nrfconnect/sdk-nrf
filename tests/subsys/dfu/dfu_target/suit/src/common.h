@@ -24,11 +24,13 @@
 void reset_fakes(void);
 
 /**
- * @brief Check whether the partition is empty
+ * @brief Check whether the partition is empty.
  *
- * @param address partition address to check
- * @param size partition size
- * @retval true if partition is empty, false otherwise
+ * @param address Partition address to check.
+ * @param size Partition size.
+ *
+ * @retval true If the partition is empty.
+ * @retval false If the partition is not empty.
  */
 bool is_partition_empty(void *address, size_t size);
 

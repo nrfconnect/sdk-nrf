@@ -710,7 +710,10 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* :ref:`lib_dfu_target` library:
+
+  * Updated the DFU Target SUIT implementation to the newest version of the SUIT.
+  * Added SUIT cache processing to the DFU Target SUIT library, as described in the :ref:`lib_dfu_target_suit_style_update` section.
 
 Gazell libraries
 ----------------
