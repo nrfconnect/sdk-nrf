@@ -43,7 +43,7 @@ void bt_mesh_rpl_update(struct bt_mesh_rpl *rpl,
  * the RPL is immediately updated (used for unsegmented messages).
  */
 bool bt_mesh_rpl_check(struct bt_mesh_net_rx *rx,
-		struct bt_mesh_rpl **match)
+		struct bt_mesh_rpl **match, bool bridge)
 {
 	int i;
 
@@ -52,8 +52,8 @@ bool bt_mesh_rpl_check(struct bt_mesh_net_rx *rx,
 		return false;
 	}
 
-	/* The RPL is used only for the local node */
-	if (!rx->local_match) {
+	/* The RPL is used only for the local node or Subnet Bridge. */
+	if (!rx->local_match && !bridge) {
 		return false;
 	}
 
