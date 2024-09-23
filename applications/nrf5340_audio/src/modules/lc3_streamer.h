@@ -28,7 +28,7 @@
  *			stream has been playing an error has occurred preventing from further
  *			streaming. Call lc3_streamer_end_stream to clean context.
  */
-int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **const frame_buffer);
+int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **const frame_Buffer);
 
 /**
  * @brief Register a new stream that will be played by the LC3 streamer.
