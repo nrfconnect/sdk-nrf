@@ -20,12 +20,6 @@ target_include_directories(psa_crypto_library_config
     ${cracen_driver_include_dirs}
 )
 
-target_include_directories(psa_crypto_config
-  INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}/common/include/
-    ${cracen_driver_include_dirs}
-)
-
 add_library(cracen_psa_driver STATIC
   ${cracen_driver_sources}
 )

@@ -39,6 +39,15 @@ target_include_directories(psa_crypto_config
 )
 endif()
 
+# Add a meta-target of the PSA config interface to avoid using generator expressions
+add_library(psa_crypto_config_chosen INTERFACE)
+
+if(CONFIG_BUILD_WITH_TFM)
+  target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_config)
+else()
+  target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_library_config)
+endif()
+
 
 # Add include folders for psa_crypto_library_config (library build in S-only and inside TF-M)
 target_include_directories(psa_crypto_library_config
@@ -85,7 +94,7 @@ add_library(${mbedcrypto_target}
 
 target_link_libraries(${mbedcrypto_target}
   INTERFACE
-    psa_crypto_config
+    psa_crypto_config_chosen
     psa_interface
 )
 
@@ -132,7 +141,7 @@ add_library(mbedcrypto_base
 
 target_link_libraries(mbedcrypto_base
   PRIVATE
-    psa_crypto_config
+    psa_crypto_config_chosen
     $<TARGET_NAME_IF_EXISTS:platform_s>
     nrf_security_utils
   PUBLIC
@@ -230,7 +239,7 @@ if (CONFIG_MBEDTLS_X509_LIBRARY)
   # Link with
   target_link_libraries(mbedx509
     PRIVATE
-      psa_crypto_config
+      psa_crypto_config_chosen
       ${mbedcrypto_target}
       mbedcrypto_base
   )
@@ -272,7 +281,7 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
 
   target_link_libraries(mbedtls
     PRIVATE
-      psa_crypto_config
+      psa_crypto_config_chosen
       mbedx509
       ${mbedcrypto_target}
       mbedcrypto_base

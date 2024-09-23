@@ -79,7 +79,7 @@ target_link_libraries(oberon_psa_core
 
 target_link_libraries(mbedcrypto_oberon_mbedtls_imported
   INTERFACE
-    psa_crypto_config
+    psa_crypto_config_chosen
     ${mbedcrypto_target}
 )
 
