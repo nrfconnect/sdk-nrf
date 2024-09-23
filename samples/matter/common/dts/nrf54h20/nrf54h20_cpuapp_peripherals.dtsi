@@ -12,6 +12,7 @@
 	chosen {
 		/* prepare IPC to HCI Radio core */
 		zephyr,bt-hci-ipc = &ipc0;
+		extmem-device = &mx25uw63;
 	};
 
 	aliases {

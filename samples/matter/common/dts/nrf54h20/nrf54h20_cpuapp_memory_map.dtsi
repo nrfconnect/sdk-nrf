@@ -37,12 +37,8 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		companion_partition: partition@98000 {
-			reg = <0x98000 DT_SIZE_K(64)>;
-		};
-
-		cpuapp_slot0_partition: partition@a8000 {
-			reg = <0xa8000 DT_SIZE_K(784)>;
+		cpuapp_slot0_partition: partition@98000 {
+			reg = <0x98000 DT_SIZE_K(848)>;
 		};
 	};
 
@@ -67,5 +63,18 @@
 			reg = < 0x175000 DT_SIZE_K(464) >;
 		};
 
+	};
+};
+
+&mx25uw63 {
+	status = "okay";
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		dfu_cache_partition_1: partition@0 {
+			reg = <0x0 DT_SIZE_K(1024)>;
+		};
 	};
 };

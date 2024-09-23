@@ -120,15 +120,102 @@ SUIT_Envelope_Tagged:
     suit-current-version: {{ DEFAULT_VERSION }}
 {%- endif %}
 
+    suit-payload-fetch:
+{%- if application is defined %}
+    - suit-directive-set-component-index: 0
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ application['name'] }}'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if radio is defined %}
+    - suit-directive-set-component-index: 0
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ radio['name'] }}'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+
     suit-install:
     - suit-directive-set-component-index: 0
+{%- if application is defined %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ application['name'] }}'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
 {%- if radio is defined %}
     - suit-directive-override-parameters:
         suit-parameter-uri: '#{{ radio['name'] }}'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if nordic_top %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#top'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-process-dependency:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+{%- endif %}
+
+    suit-candidate-verification:
+    - suit-directive-set-component-index: 0
+{%- if application is defined %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#{{ application['name'] }}'
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:
-            envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+            envelope: {{ artifacts_folder ~ application['name'] }}.suit
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
@@ -147,13 +234,13 @@ SUIT_Envelope_Tagged:
       - suit-send-sysinfo-success
       - suit-send-sysinfo-failure
 {%- endif %}
-{%- if application is defined %}
+{%- if radio is defined %}
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ application['name'] }}'
+        suit-parameter-uri: '#{{ radio['name'] }}'
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:
-            envelope: {{ artifacts_folder ~ application['name'] }}.suit
+            envelope: {{ artifacts_folder ~ radio['name'] }}.suit
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
