@@ -47,7 +47,7 @@ int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **cons
  * @retval -EFAULT	Module has not been initialized.
  */
 int lc3_streamer_stream_register(const char *const filename, uint8_t *const streamer_idx,
-				 const bool loop);
+				 const BOOL loop);
 
 /**
  * @brief Get the number of active streams.
