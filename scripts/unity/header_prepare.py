@@ -43,7 +43,7 @@ def header_prepare(in_file, out_file, out_wrap_file):
     content = static_inline_pattern.sub(r"\1;", content)
 
     # remove syscall include
-    syscall_pattern = re.compile(r"#include <syscalls/\w+?.h>", re.M | re.S)
+    syscall_pattern = re.compile(r"#include <zephyr/syscalls/\w+?.h>", re.M | re.S)
     content = syscall_pattern.sub(r"", content)
 
     syscall_decl_pattern = re.compile(
