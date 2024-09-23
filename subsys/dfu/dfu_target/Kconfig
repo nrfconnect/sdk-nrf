@@ -135,20 +135,20 @@ config DFU_TARGET_SUIT_CACHE_PROCESSING
 	default y
 	depends on SUIT_CACHE_RW
 	help
-	  Enable SUIT cache processing to process images ids bigger than 0.
-	  It allows to store the image in the cache cache partitions and
-	  assign them to be processed by the SUIT.
+	  Enable SUIT cache processing to process images IDs higher than 0.
+	  This allows to store the image in the cache partitions and
+	  assign them to be processed by SUIT.
 
 config DFU_TARGET_SUIT_INITIALIZE_SUIT
-	bool "Initialize SUIT dfu library"
+	bool "Initialize the SUIT DFU library"
 	help
-	  Initialize SUIT library during the system startup.
+	  Initialize the SUIT library during the system startup.
 
 config DFU_TARGET_REBOOT_RESET_DELAY_MS
-	int "Reboot reset delay in milliseconds"
+	int "Set reboot reset delay in milliseconds"
 	default 0
 	help
-	  Set the delay in milliseconds before the device is reset after a reboot
+	  Set the delay in milliseconds for resetting the device after a reboot
 	  function is called.
 
 endif # DFU_TARGET_SUIT
