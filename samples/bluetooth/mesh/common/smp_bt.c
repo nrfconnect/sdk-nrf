@@ -149,7 +149,7 @@ int smp_service_adv_init(void)
 
 int smp_dfu_init(void)
 {
-	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT_AUTHEN) &&
+	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_AUTHEN) &&
 	    IS_ENABLED(CONFIG_BT_MESH_LE_PAIR_RESP)) {
 		int err;
 
