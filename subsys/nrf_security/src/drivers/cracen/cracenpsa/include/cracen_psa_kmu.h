@@ -41,7 +41,7 @@ enum kmu_metadata_key_usage_scheme {
 	 */
 	KMU_METADATA_SCHEME_PROTECTED,
 	/**
-	 * These keys use 3 key slots. Pushed to the seed register.
+	 * CRACEN's IKG seed uses 3 key slots. Pushed to the seed register.
 	 */
 	KMU_METADATA_SCHEME_SEED,
 	/**
