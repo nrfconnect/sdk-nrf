@@ -210,6 +210,8 @@
  */
 #define MBEDTLS_ECDSA_C
 
+#define MBEDTLS_ASN1_PARSE_C
+
 /* Verify that the assigned volatile key ID will match with the key ID used
  * inside the authentication wrappers.
  */
