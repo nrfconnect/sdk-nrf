@@ -71,8 +71,10 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
 		return -LIB_KMU_NULL_PNT;
 	}
 
-	/* DEST must be on a 64-bit boundary */
-	__ASSERT(IS_PTR_ALIGNED(kmu_src->dest, uint64_t), "unaligned kmu_src->dest");
+	/* DEST must be 64/128-bit aligned */
+	__ASSERT(IS_PTR_ALIGNED_BYTES(kmu_src->dest,
+				      (IS_ENABLED(CONFIG_SOC_NRF54L15_ENGA_CPUAPP) ? 8 : 16)),
+		 "DEST misaligned");
 
 	int result = 1;
 

@@ -759,7 +759,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	struct kmu_src_t kmu_desc = {};
 
 	for (size_t i = 0; i < num_slots; i++) {
-		kmu_desc.dest = (uint64_t *)(push_address + (CRACEN_KMU_SLOT_KEY_SIZE * i));
+		kmu_desc.dest = push_address + (CRACEN_KMU_SLOT_KEY_SIZE * i);
 		kmu_desc.metadata = UINT32_MAX;
 		if (i == 0) {
 			memcpy(&kmu_desc.metadata, &metadata, sizeof(metadata));

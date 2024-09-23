@@ -64,9 +64,9 @@ struct kmu_src_t {
 	/** Revocation policy. */
 	uint32_t rpolicy;
 	/** 32-bit destination address. Cannot point to SICR and must be on a
-	 * 64-bit boundary.
+	 * 128-bit boundary.
 	 */
-	uint64_t *dest;
+	uint8_t *dest;
 	/** 32 bits of any clear-text metadata that belongs with the key slot.
 	 */
 	uint32_t metadata;
