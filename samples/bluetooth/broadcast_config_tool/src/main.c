@@ -128,11 +128,48 @@ static char *preset_name_find(struct bt_bap_lc3_preset *preset)
 	return "Custom";
 }
 
+/**
+ * @brief	Check if a given string is a hexadecimal value.
+ *
+ * @param[in]	str	Pointer to the string to check.
+ * @param[out]	len	Pointer to the length of the string.
+ *
+ * @return	True if the string is a hexadecimal value, false otherwise.
+ */
+static bool is_hex(const char *str, uint8_t *len)
+{
+	/* Check if the string is empty */
+	if (*str == '\0') {
+		return false;
+	}
+
+	*len = strlen(str);
+
+	/* Skip 0x if present */
+	if (*str == '0' && (*(str + 1) == 'x' || *(str + 1) == 'X')) {
+		str += 2;
+		*len -= 2;
+	}
+
+	/* Iterate through each character of the string */
+	for (uint8_t i = 0; i < *len; i++) {
+		/* Check if the character is not a hexadecimal digit */
+		if (!isxdigit((int)*str)) {
+			return false;
+		}
+
+		str++;
+	}
+
+	/* All characters are hexadecimal digits */
+	return true;
+}
+
 static bool is_number(const char *str)
 {
 	/* Check if the string is empty */
 	if (*str == '\0') {
-		return 0;
+		return false;
 	}
 
 	uint8_t len = strlen(str);
@@ -406,8 +443,9 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 		return ret;
 	}
 
-	ret = broadcast_source_ext_adv_populate(big_index, ext_adv_data,
-						&ext_adv_buf[ext_adv_buf_cnt],
+	ret = broadcast_source_ext_adv_populate(big_index, broadcast_param[big_index].fixed_id,
+						broadcast_param[big_index].broadcast_id,
+						ext_adv_data, &ext_adv_buf[ext_adv_buf_cnt],
 						ext_adv_buf_size - ext_adv_buf_cnt);
 	if (ret < 0) {
 		LOG_ERR("Failed to add ext adv data for broadcast source: %d", ret);
@@ -612,6 +650,17 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 						       : CONFIG_BT_DEVICE_NAME);
 
 	shell_print(shell, "\tBroadcast name: %s", brdcst_param->broadcast_name);
+
+	if (brdcst_param->fixed_id) {
+		shell_print(shell, "\tBroadcast ID (fixed): 0x%04x", brdcst_param->broadcast_id);
+	} else if (!broadcast_source_is_streaming(group_index)) {
+		shell_print(shell, "\tBroadcast ID (random): Will be set on start");
+	} else {
+		uint32_t broadcast_id;
+
+		broadcast_source_id_get(group_index, &broadcast_id);
+		shell_print(shell, "\tBroadcast ID (random): 0x%04x", broadcast_id);
+	}
 
 	shell_print(shell, "\tPacking: %s",
 		    (brdcst_param->packing == BT_ISO_PACKING_INTERLEAVED ? "interleaved"
@@ -1844,6 +1893,85 @@ static int cmd_pd(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+static int cmd_random_id(const struct shell *shell, size_t argc, char **argv)
+{
+	uint8_t big_index;
+
+	if (argc < 2) {
+		shell_error(shell, "Usage: bct broadcast_id random <BIG index>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "BIG index must be a digit");
+		return -EINVAL;
+	}
+
+	big_index = (uint8_t)atoi(argv[1]);
+
+	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
+		shell_error(shell, "BIG index out of range");
+		return -EINVAL;
+	}
+
+	if (broadcast_source_is_streaming(big_index)) {
+		shell_error(shell, "Broadcast ID can not be changed while streaming");
+		return -EFAULT;
+	}
+
+	broadcast_param[big_index].fixed_id = false;
+
+	return 0;
+}
+
+static int cmd_fixed_id(const struct shell *shell, size_t argc, char **argv)
+{
+	uint8_t big_index;
+
+	if (argc < 3) {
+		shell_error(shell, "Usage: bct broadcast_id fixed <BIG index> <broadcast_id in hex "
+				   "(3 octets)>");
+		return -EINVAL;
+	}
+
+	if (!is_number(argv[1])) {
+		shell_error(shell, "BIG index must be a digit");
+		return -EINVAL;
+	}
+
+	big_index = (uint8_t)atoi(argv[1]);
+
+	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
+		shell_error(shell, "BIG index out of range");
+		return -EINVAL;
+	}
+
+	if (broadcast_source_is_streaming(big_index)) {
+		shell_error(shell, "Broadcast ID can not be changed while streaming");
+		return -EFAULT;
+	}
+
+	uint8_t len;
+
+	if (!is_hex(argv[2], &len)) {
+		shell_error(shell, "Broadcast ID must be a hexadecimal value");
+		return -EINVAL;
+	}
+
+	if (len > 6) {
+		shell_error(shell, "Broadcast ID must be three octets long at maximum");
+		return -EINVAL;
+	}
+
+	uint32_t broadcast_id = (uint32_t)strtoul(argv[2], NULL, 16);
+
+	broadcast_param[big_index].broadcast_id = broadcast_id;
+
+	broadcast_param[big_index].fixed_id = true;
+
+	return 0;
+}
+
 static int usecase_find(const struct shell *shell, const char *name)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(pre_defined_use_cases); i++) {
@@ -2205,6 +2333,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_file_cmd,
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_broadcast_id_cmd,
+	SHELL_COND_CMD(CONFIG_SHELL, random, NULL,
+		       "Set the broadcast ID to be random generated on each start", cmd_random_id),
+	SHELL_COND_CMD(CONFIG_SHELL, fixed, NULL, "Set the broadcast ID to be a fixed value",
+		       cmd_fixed_id),
+	SHELL_SUBCMD_SET_END);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
 	configuration_cmd, SHELL_COND_CMD(CONFIG_SHELL, list, NULL, "List presets", cmd_list),
 	SHELL_COND_CMD(CONFIG_SHELL, start, NULL, "Start broadcaster", cmd_start),
 	SHELL_COND_CMD(CONFIG_SHELL, stop, NULL, "Stop broadcaster", cmd_stop),
@@ -2235,6 +2371,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		       cmd_frame_interval),
 	SHELL_COND_CMD(CONFIG_SHELL, pd, NULL, "Set presentation delay (us)", cmd_pd),
 	SHELL_COND_CMD(CONFIG_SHELL, file, &sub_file_cmd, "File commands", NULL),
+	SHELL_COND_CMD(CONFIG_SHELL, broadcast_id, &sub_broadcast_id_cmd, "Broadcast ID commands",
+		       NULL),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(bct, &configuration_cmd, "Broadcast Configuration Tool", NULL);

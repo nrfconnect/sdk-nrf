@@ -232,7 +232,6 @@ static void le_audio_msg_sub_thread(void)
 			/* Nothing to do. */
 			break;
 
-
 		default:
 			LOG_WRN("Unexpected/unhandled le_audio event: %d", msg.event);
 
@@ -407,7 +406,11 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 		return ret;
 	}
 
-	ret = broadcast_source_ext_adv_populate(big_index, ext_adv_data,
+	bool fixed_id = !IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_RANDOM);
+
+	uint32_t broadcast_id = CONFIG_BT_AUDIO_BROADCAST_ID_FIXED;
+
+	ret = broadcast_source_ext_adv_populate(big_index, fixed_id, broadcast_id, ext_adv_data,
 						&ext_adv_buf[ext_adv_buf_cnt],
 						ext_adv_buf_size - ext_adv_buf_cnt);
 	if (ret < 0) {
