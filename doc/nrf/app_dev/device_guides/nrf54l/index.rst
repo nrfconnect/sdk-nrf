@@ -61,4 +61,6 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
    zms
    cryptography
    testing_dfu
+   vpr_flpr
+   building_nrf54l
    snippets
