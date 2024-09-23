@@ -18,7 +18,7 @@ target_sources(app PRIVATE ${app_sources}
 )
 
 # Enable authentication with passkey
-if (CONFIG_MCUMGR_TRANSPORT_BT_AUTHEN AND CONFIG_BT_MESH_LE_PAIR_RESP)
+if (CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_AUTHEN AND CONFIG_BT_MESH_LE_PAIR_RESP)
 target_sources(app PRIVATE
 	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt_auth.c)
 endif()
