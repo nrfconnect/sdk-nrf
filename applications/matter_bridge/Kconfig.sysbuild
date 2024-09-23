@@ -20,7 +20,7 @@ endchoice
 # Enable IEEE802.15.4 serialization to network core
 # This config automatically pulls in the `overlay-802154.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_IEEE802154
-	default y if (SOC_SERIES_NRF53X || SOC_SERIES_NRF54HX) && !WIFI_NRF700X
+	default y if (SOC_SERIES_NRF53X || SOC_SERIES_NRF54HX) && !WIFI_NRF70
 
 if BOOTLOADER_MCUBOOT
 
@@ -38,7 +38,7 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 if SOC_SERIES_NRF53X
 
 config MCUBOOT_UPDATEABLE_IMAGES
-	default 3 if (BOARD_NRF5340DK_NRF5340_CPUAPP && WIFI_NRF700X) #### Support for WiFi patch on external flash memory.
+	default 3 if (BOARD_NRF5340DK_NRF5340_CPUAPP && WIFI_NRF70) #### Support for WiFi patch on external flash memory.
 	default 2
 
 choice MCUBOOT_MODE
