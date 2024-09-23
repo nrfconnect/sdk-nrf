@@ -14,7 +14,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lc3_streamer, CONFIG_MODULE_SD_CARD_LC3_STREAMER_LOG_LEVEL);
 
-K_THREAD_STACK_DEFINE(lc3_streamer_work_q_stack_area, CONFIG_SD_CARD_LC3_STREAMER_STACK_SIZE);
+K_THREAD_STACK_DEFINE(lc3_streamer_work_q_stack_area, CONFIG_SD_CARD_LC3_STREAMER_STACK_BUFFER);
 
 struct k_work_q lc3_streamer_work_q;
 
