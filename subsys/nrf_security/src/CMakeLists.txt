@@ -42,7 +42,7 @@ endif()
 # Add a meta-target of the PSA config interface to avoid using generator expressions
 add_library(psa_crypto_config_chosen INTERFACE)
 
-if(CONFIG_BUILD_WITH_TFM)
+if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
   target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_config)
 else()
   target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_library_config)
