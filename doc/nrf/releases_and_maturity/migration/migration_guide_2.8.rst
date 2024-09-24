@@ -154,6 +154,14 @@ nRF Security
 
 .. _migration_2.8_recommended:
 
+nRF Security
+------------
+
+.. toggle::
+
+  * The ``CONFIG_MBEDTLS_CIPHER_MODE_CFB`` and ``CONFIG_MBEDTLS_CIPHER_MODE_OFB`` Kconfig options have been removed.
+    Use other cipher modes instead.
+
 Recommended changes
 *******************
 

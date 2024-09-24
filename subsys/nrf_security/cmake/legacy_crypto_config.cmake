@@ -32,8 +32,6 @@ kconfig_check_and_set_base(MBEDTLS_AES_ROM_TABLES)
 kconfig_check_and_set_base(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)
 
 kconfig_check_and_set_base(MBEDTLS_CIPHER_MODE_CTR)
-kconfig_check_and_set_base(MBEDTLS_CIPHER_MODE_CFB)
-kconfig_check_and_set_base(MBEDTLS_CIPHER_MODE_OFB)
 kconfig_check_and_set_base(MBEDTLS_CIPHER_MODE_XTS)
 kconfig_check_and_set_base(MBEDTLS_CMAC_C)
 kconfig_check_and_set_base(MBEDTLS_CMAC_ALT)

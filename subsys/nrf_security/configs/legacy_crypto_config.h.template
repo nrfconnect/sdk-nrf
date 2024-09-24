@@ -538,25 +538,11 @@
 #cmakedefine MBEDTLS_CIPHER_MODE_CBC
 
 /**
- * \def MBEDTLS_CIPHER_MODE_CFB
- *
- * Enable Cipher Feedback mode (CFB) for symmetric ciphers.
- */
-#cmakedefine MBEDTLS_CIPHER_MODE_CFB
-
-/**
  * \def MBEDTLS_CIPHER_MODE_CTR
  *
  * Enable Counter Block Cipher mode (CTR) for symmetric ciphers.
  */
 #cmakedefine MBEDTLS_CIPHER_MODE_CTR
-
-/**
- * \def MBEDTLS_CIPHER_MODE_OFB
- *
- * Enable Output Feedback mode (OFB) for symmetric ciphers.
- */
-#cmakedefine MBEDTLS_CIPHER_MODE_OFB
 
 /**
  * \def MBEDTLS_CIPHER_MODE_XTS
