@@ -100,9 +100,10 @@ Working with nRF54H Series
 
 |no_changes_yet_note|
 
-Working with nRF54L Series
-==========================
+Developing with nRF54L Series
+=============================
 
+* Added the :ref:`ug_nrf54l_cryptography` page, providing more information about the cryptographic peripherals of the nRF54L Series devices, the programming model for referencing keys, and the configuration.
 * Updated the name and the structure of the section, with :ref:`ug_nrf54l` as the landing page.
 * Removed the Getting started with the nRF54L15 PDK page, and instead included the information about the `Quick Start`_ app support.
 
