@@ -157,7 +157,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 8fa4251a3970b7c4893b93c3f9210a746c11ede5
+      revision: 6f4076efa30fa53c708a06740464f4def3f7daad
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -190,7 +190,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 77cac0c8c707305f946b5b6cb008158fe81f47b8
+      revision: 559b3d38a1f490371ebac659959d2eebda078b58
       groups:
         - nrf-802154
     - name: soc-hwmv1
