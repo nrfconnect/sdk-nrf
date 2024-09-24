@@ -265,6 +265,7 @@ manifest:
       revision: pull/124/head
       groups:
         - doc-internal
+      import: true
 
     # Other third-party repositories.
     - name: cmock
