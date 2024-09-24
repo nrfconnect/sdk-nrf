@@ -2,6 +2,7 @@ tests:
   nrf_modem_lib.lte_net_if:
     sysbuild: true
     tags: nrf_modem_lib sysbuild ci_tests_lib_nrf_modem_lib
-    platform_allow: native_posix
+    platform_allow:
+      - native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
