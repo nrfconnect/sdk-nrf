@@ -228,7 +228,7 @@ Zephyr samples
 * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` in the following Zephyr samples:
 
   * :zephyr:code-sample:`blinky`
-  * :ref:`zephyr:hello_world`
+  * :zephyr:code-sample:`hello_world`
   * :zephyr:code-sample:`settings`
   * :zephyr:code-sample:`bluetooth_observer`
   * :zephyr:code-sample:`nrf_system_off`

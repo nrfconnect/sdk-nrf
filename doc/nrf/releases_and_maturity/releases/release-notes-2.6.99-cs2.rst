@@ -137,7 +137,7 @@ Zephyr samples
 * Added support for the :ref:`nRF54H20 DK <ug_nrf54h20_gs>` in the following Zephyr samples:
 
   * :zephyr:code-sample:`pwm-blinky`
-  * :ref:`zephyr:hello_world`
+  * :zephyr:code-sample:`hello_world`
   * :zephyr:code-sample:`fade-led`
 
 Documentation
