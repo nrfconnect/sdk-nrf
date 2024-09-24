@@ -51,6 +51,15 @@ else()
   )
 endif()
 
+# There is a function expected to be built inside psa_crypto.c that is used
+# by md. This makes MD not work with TF-M. Temporarily adding this check-function
+# to a self-contained file an use this when PSA crypto is not built locally
+if(CONFIG_BUILD_WITH_TFM)
+  list(APPEND src_crypto_legacy
+    ${CMAKE_CURRENT_LIST_DIR}/md_ext.c
+  )
+endif()
+
 
 if(CONFIG_HAS_HW_NRF_CC310)
 append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
