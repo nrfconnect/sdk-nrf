@@ -41,7 +41,7 @@ The nRF52840 SoC on the DK comes preprogrammed with a firmware.
 If you need to restore the original firmware at some point, download the `nRF9160 DK board controller firmware`_ from the nRF9160 DK downloads page.
 To program the HEX file, use nrfjprog (which is part of the `nRF Command Line Tools`_).
 
-If you want to route some pins differently from what is done in the preprogrammed firmware, program the :ref:`zephyr:hello_world` sample instead of the preprogrammed firmware.
+If you want to route some pins differently from what is done in the preprogrammed firmware, program the :zephyr:code-sample:`hello_world` sample instead of the preprogrammed firmware.
 Build the sample (located under :file:`ncs/zephyr/samples/hello_world`) for the ``nrf9160dk_nrf52840`` board target.
 To change the routing options, enable or disable the corresponding devicetree nodes for that board as needed.
 See :ref:`zephyr:nrf9160dk_board_controller_firmware` for detailed information.
