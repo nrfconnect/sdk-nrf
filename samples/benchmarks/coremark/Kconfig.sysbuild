@@ -14,12 +14,4 @@ config APP_CPUNET_RUN
 config APP_CPUPPR_RUN
 	bool "Run the CoreMark benchmark on the PPR core"
 	depends on SUPPORT_PPRCORE
-	depends on !BOARD_NRF54H20DK || !APP_CPUNET_RUN
-	help
-	  Due to the limited number of UART ports on the nRF54H20 DK, you can run the CoreMark
-	  benchmark only on two cores at a time; application core and either radio core or PPR
-	  core.
-
-	  PPR code is run from RAM. You must use the "nordic-ppr" snippet for the application
-	  core to be able to boot the PPR core. You need to provide the "coremark_SNIPPET=nordic"
-	  build argument.
+	default y
