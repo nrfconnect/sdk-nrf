@@ -1306,6 +1306,7 @@ static void usb_init_next_status_cb(struct usbd_context *const usbd,
 		module_set_state(MODULE_STATE_ERROR);
 		break;
 
+	case USBD_MSG_CONFIGURATION:
 	case USBD_MSG_CDC_ACM_LINE_CODING:
 	case USBD_MSG_CDC_ACM_CONTROL_LINE_STATE:
 		/* Ignore */
