@@ -41,7 +41,7 @@ endif()
 # There is a symbol inside the nrf_oberon ECDSA implementation (built lib) that is 
 # colliding with a symbol in ecdsa.c in mbedtls: mbedtls_ecdsa_can_do.
 # To solve this quickly a copy of ecdsa.c is added here in case oberon is built
-if(CONFIG_OBERON_BACKEND)
+if(CONFIG_OBERON_BACKEND OR CONFIG_PSA_CRYPTO_DRIVER_OBERON)
   list(APPEND src_crypto_legacy
     ${CMAKE_CURRENT_LIST_DIR}/ecdsa_oberon.c
   )
