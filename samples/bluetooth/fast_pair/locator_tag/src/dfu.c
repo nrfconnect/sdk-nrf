@@ -14,6 +14,8 @@
 #include <bluetooth/services/fast_pair/fast_pair.h>
 #include <bluetooth/services/fast_pair/fmdn.h>
 
+#include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
+
 #include "app_dfu.h"
 #include "app_factory_reset.h"
 #include "app_fp_adv.h"
@@ -25,17 +27,7 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
 /* DFU mode timeout in minutes. */
 #define DFU_MODE_TIMEOUT_MIN (5)
 
-/* UUID of the SMP service used for the DFU. */
-#define BT_UUID_SMP_SVC_VAL \
-	BT_UUID_128_ENCODE(0x8d53dc1d, 0x1db7, 0x4cd3, 0x868b, 0x8a527460aa84)
-
-/* UUID of the SMP characteristic used for the DFU. */
-#define BT_UUID_SMP_CHAR_VAL	\
-	BT_UUID_128_ENCODE(0xda2e7828, 0xfbce, 0x4e01, 0xae9e, 0x261174997c48)
-
-#define BT_UUID_SMP_CHAR	BT_UUID_DECLARE_128(BT_UUID_SMP_CHAR_VAL)
-
-static const struct bt_data data = BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_SMP_SVC_VAL);
+static const struct bt_data data = BT_DATA_BYTES(BT_DATA_UUID128_ALL, SMP_BT_SVC_UUID_VAL);
 static bool dfu_mode;
 
 APP_FP_ADV_TRIGGER_REGISTER(fp_adv_trigger_dfu, "dfu");
@@ -83,7 +75,7 @@ APP_FACTORY_RESET_CALLBACKS_REGISTER(factory_reset_cbs, dfu_factory_reset_prepar
 
 bool app_dfu_bt_gatt_operation_allow(const struct bt_uuid *uuid)
 {
-	if (bt_uuid_cmp(uuid, BT_UUID_SMP_CHAR) != 0) {
+	if (bt_uuid_cmp(uuid, SMP_BT_CHR_UUID) != 0) {
 		return true;
 	}
 
