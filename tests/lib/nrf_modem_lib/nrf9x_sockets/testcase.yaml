@@ -1,7 +1,8 @@
 tests:
   unity.nrf9x_sockets_test:
     sysbuild: true
-    platform_allow: native_posix
     tags: nrf_modem_lib sysbuild ci_tests_lib_nrf_modem_lib
+    platform_allow:
+      - native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
