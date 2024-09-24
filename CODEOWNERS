@@ -4,8 +4,8 @@
 # Order is important; the last matching pattern takes the most
 # precedence.
 
-# General default
-*					  @nrfconnect/ncs-code-owners
+# No general default entry with `*`. Instead the compliance workflow verifies
+# that all new files are covered by an entry in the CODEOWNERS file.
 
 # Global file patterns
 Kconfig*                                  @nrfconnect/ncs-co-build-system
