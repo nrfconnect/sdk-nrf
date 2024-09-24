@@ -17,7 +17,8 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_gnss.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
 	     FUNC_EXCLUDE ".*nrf_modem_at_printf"
-             FUNC_EXCLUDE ".*nrf_modem_at_scanf")
+             FUNC_EXCLUDE ".*nrf_modem_at_scanf"
+	     WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)")
 
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud.h
 	     FUNC_EXCLUDE ".*nrf_cloud_obj_shadow_update")

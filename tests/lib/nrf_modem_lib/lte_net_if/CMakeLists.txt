@@ -18,7 +18,9 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h
 	WORD_EXCLUDE "__deprecated")
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/nrf_modem_lib.h FUNC_EXCLUDE ".*nrf_modem_lib_shutdown_wait")
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/pdn.h)
-cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h FUNC_EXCLUDE ".*nrf_modem_at_scanf")
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
+	FUNC_EXCLUDE ".*nrf_modem_at_scanf"
+	WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)")
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_socket.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_errno.h)
@@ -41,6 +43,7 @@ target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf9x_sock
 
 target_include_directories(app PRIVATE
                            ${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/lte_net_if
+                           ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include
                            ${ZEPHYR_BASE}/subsys/net/lib/sockets
                           )
 
