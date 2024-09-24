@@ -13,7 +13,8 @@ test_runner_generate(src/main.c)
 
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
 	     FUNC_EXCLUDE ".*nrf_modem_at_scanf"
-	     FUNC_EXCLUDE ".*nrf_modem_at_printf")
+	     FUNC_EXCLUDE ".*nrf_modem_at_printf"
+       WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)")
 
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
@@ -27,6 +28,7 @@ target_include_directories(app
   PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/lib/lte_link_control/
   ${ZEPHYR_NRF_MODULE_DIR}/include/modem/
+  ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include
 )
 
 target_compile_options(app
