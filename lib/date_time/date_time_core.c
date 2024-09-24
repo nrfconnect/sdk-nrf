@@ -59,11 +59,18 @@ static void date_time_core_notify_event(enum date_time_evt_type time_source)
 
 	if (app_evt_handler != NULL) {
 		app_evt_handler(&evt);
+	} else {
+		LOG_DBG("No date-time event handler registered");
 	}
 }
 
 static int date_time_core_schedule_work(int interval)
 {
+	if (!IS_ENABLED(CONFIG_DATE_TIME_MODEM) && !IS_ENABLED(CONFIG_DATE_TIME_NTP)) {
+		LOG_DBG("Skipping requested date time update, modem and NTP are disabled");
+		return -ENOTSUP;
+	}
+
 	/* If a scheduled update is blocking reschedules, exit.
 	 * Otherwise set the reschedule_blocked flag to true, then proceed with the reschedule.
 	 */
@@ -104,10 +111,11 @@ static void date_time_core_schedule_retry(void)
 		return;
 	}
 
-	if (date_time_core_schedule_work(CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS) == 0) {
-		LOG_DBG("Date time update retry in: %d seconds",
-			CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
-	}
+	/* Scheduling new update cannot fail because we are never doing retries
+	 * if we have fresh enough time
+	 */
+	date_time_core_schedule_work(CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
+	LOG_DBG("Date time update retry in: %d seconds", CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
 }
 
 static void date_time_update_work_fn(struct k_work *work)
@@ -169,6 +177,8 @@ void date_time_lte_ind_handler(const struct lte_lc_evt *const evt)
 		case LTE_LC_NW_REG_REGISTERED_HOME:
 		case LTE_LC_NW_REG_REGISTERED_ROAMING:
 			if (!date_time_is_valid()) {
+				LOG_DBG("Date time update scheduled in 1 second "
+					"due to LTE registration");
 				k_work_reschedule_for_queue(
 					&date_time_work_q,
 					&date_time_update_work,
@@ -241,6 +251,8 @@ int date_time_core_now_local(int64_t *local_time_ms)
 
 int date_time_core_update_async(date_time_evt_handler_t evt_handler)
 {
+	LOG_DBG("Requesting date-time update asynchronously");
+
 	if (evt_handler) {
 		app_evt_handler = evt_handler;
 	} else if (app_evt_handler == NULL) {

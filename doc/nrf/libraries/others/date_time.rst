@@ -57,6 +57,14 @@ See the API documentation for more information on these functions.
    If an application has time-dependent operations immediately after connecting to the LTE network, it should wait for a confirmation indicating that time has been updated.
    If the :kconfig:option:`CONFIG_DATE_TIME_AUTO_UPDATE` option is not set, the first date-time update cycle (after boot) does not occur until the time set by the :kconfig:option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` option has elapsed.
 
+.. note::
+
+   Exceptions to the regular date-time update interval set by the :kconfig:option:`CONFIG_DATE_TIME_UPDATE_INTERVAL_SECONDS` Kconfig option occur when
+   the :c:func:`date_time_update_async` function is called and a new date-time update is triggered and scheduled.
+   Either retry or regular update interval is used depending on the outcome of the date-time update procedure.
+   Date-time update from modem through an ``AT%XTIME`` notification,
+   or from the client through the :c:func:`date_time_set` function does not disturb the regular update interval.
+
 Configuration
 *************
 
