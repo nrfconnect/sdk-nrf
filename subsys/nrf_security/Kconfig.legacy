@@ -373,7 +373,7 @@ config MBEDTLS_ENTROPY_C
 menuconfig MBEDTLS_AES_C
 	bool
 	prompt "AES - Advanced Encryption Standard"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	help
 	  This setting will enable AES block cipher, including ECB - Electronic Code Book.
 	  Enabling AES will provide a sub-menu which allows for fine grained
@@ -467,7 +467,7 @@ config MBEDTLS_CIPHER_MODE_XTS
 
 config MBEDTLS_CMAC_C
 	bool "AES-CMAC - AES Cipher-based Message Authentication Code mode for block ciphers"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_CMAC if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_ECB_NO_PADDING
 	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
@@ -481,7 +481,7 @@ menu "AEAD  - Authenticated Encryption with Associated Data"
 config MBEDTLS_CCM_C
 	bool "AES-CCM - AES Counter with CBC-MAC mode"
 	depends on MBEDTLS_AES_C
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_CCM if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
@@ -492,7 +492,7 @@ config MBEDTLS_CCM_C
 config MBEDTLS_GCM_C
 	bool
 	prompt "AES-GCM - AES Galois/Counter Mode support"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_GCM if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
@@ -502,7 +502,7 @@ config MBEDTLS_GCM_C
 config MBEDTLS_CHACHA20_C
 	bool
 	prompt "CHACHA20 stream cipher support"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20 if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_STREAM_CIPHER if PSA_CRYPTO_CLIENT
@@ -513,7 +513,7 @@ config MBEDTLS_CHACHA20_C
 config MBEDTLS_POLY1305_C
 	bool
 	prompt "POLY1305 module support"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
 	help
 	  Enable the POLY1305 module.
@@ -523,7 +523,7 @@ config MBEDTLS_CHACHAPOLY_C
 	bool
 	prompt "CHACHA-POLY module support"
 	depends on (MBEDTLS_CHACHA20_C && MBEDTLS_POLY1305_C)
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
 	help
 	  Enable the CHACHA-POLY module.
@@ -542,7 +542,7 @@ config MBEDTLS_DHM_C
 menuconfig MBEDTLS_ECP_C
 	bool
 	prompt "ECC - Eliptic Curve Cryptography"
-	default y if !PSA_CRYPTO_CLIENT
+	default y
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE if PSA_CRYPTO_CLIENT
@@ -559,7 +559,7 @@ if MBEDTLS_ECP_C
 config MBEDTLS_ECDH_C
 	bool
 	prompt "ECDH  - Elliptic Curve Diffie-Hellman"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_ECDH if PSA_CRYPTO_CLIENT
 	help
 	  Enable the ECDH module.
@@ -568,7 +568,7 @@ config MBEDTLS_ECDH_C
 config MBEDTLS_ECDSA_C
 	bool
 	prompt "ECDSA - Elliptic Curve Digital Signature Algorithm"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_ECDSA if PSA_CRYPTO_CLIENT
 	help
 	  Enable the ECDSA module.
@@ -578,12 +578,12 @@ config MBEDTLS_ECDSA_DETERMINISTIC
 	bool "Enable deterministic ECDSA (RFC 6979)"
 	select MBEDTLS_HMAC_DRBG_C if !PSA_CRYPTO_CLIENT
 	depends on MBEDTLS_ECDSA_C
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_DETERMINISTIC_ECDSA if PSA_CRYPTO_CLIENT
 
 config MBEDTLS_ECJPAKE_C
 	bool "ECJPAKE - Elliptic curve J-PAKE"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE if PSA_CRYPTO_CLIENT
@@ -611,7 +611,7 @@ config MBEDTLS_ECP_DP_SECP224R1_ENABLED
 
 config MBEDTLS_ECP_DP_SECP256R1_ENABLED
 	bool "Enable NIST curve secp256r1"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !PSA_CRYPTO_CLIENT || MBEDTLS_TLS_LIBRARY || MBEDTLS_X509_LIBRARY
 	select PSA_WANT_ECC_SECP_R1_256 if PSA_CRYPTO_CLIENT
 	help
 	  MBEDTLS_ECP_DP_SECP256R1_ENABLED setting in mbed TLS config file.
