@@ -7,11 +7,6 @@
 # No general default entry with `*`. Instead the compliance workflow verifies
 # that all new files are covered by an entry in the CODEOWNERS file.
 
-# Global file patterns
-Kconfig*                                  @nrfconnect/ncs-co-build-system
-CMakeLists*                               @nrfconnect/ncs-co-build-system
-*.cmake	                                  @nrfconnect/ncs-co-build-system
-
 # Root folder
 /.*					  @nrfconnect/ncs-code-owners
 /CMakeLists.txt                           @nrfconnect/ncs-co-build-system
@@ -434,3 +429,8 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 
 # Zephyr module
 /zephyr/                                  @nrfconnect/ncs-co-build-system
+
+# Global override file patterns
+Kconfig*                                  @nrfconnect/ncs-co-build-system
+CMakeLists*                               @nrfconnect/ncs-co-build-system
+*.cmake	                                  @nrfconnect/ncs-co-build-system
