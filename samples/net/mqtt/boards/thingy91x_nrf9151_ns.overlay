@@ -16,3 +16,13 @@
 		nordic,modem-trace-uart = &uart1;
 	};
 };
+
+/ {
+	aliases {
+		temp-sensor = &bme680;
+	};
+};
+
+&bme680 {
+	status = "okay";
+};

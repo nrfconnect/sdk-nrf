@@ -7,10 +7,11 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/zbus/zbus.h>
+#include <zephyr/drivers/sensor.h>
 
 #include "message_channel.h"
 
-#define FORMAT_STRING "Hello MQTT! Current uptime is: %d"
+#define FORMAT_STRING "Hello MQTT! Current temperature is: %d.%06d"
 
 /* Register log module */
 LOG_MODULE_REGISTER(sampler, CONFIG_MQTT_SAMPLE_SAMPLER_LOG_LEVEL);
@@ -18,17 +19,22 @@ LOG_MODULE_REGISTER(sampler, CONFIG_MQTT_SAMPLE_SAMPLER_LOG_LEVEL);
 /* Register subscriber */
 ZBUS_SUBSCRIBER_DEFINE(sampler, CONFIG_MQTT_SAMPLE_SAMPLER_MESSAGE_QUEUE_SIZE);
 
+static const struct device *const sensor_dev = DEVICE_DT_GET(DT_ALIAS(temp_sensor));
+
 static void sample(void)
 {
-	struct payload payload = { 0 };
-	uint32_t uptime = k_uptime_get_32();
 	int err, len;
+	struct payload payload = { 0 };
+	struct sensor_value temp = { 0 };
 
-	/* The payload is user defined and can be sampled from any source.
-	 * Default case is to populate a string and send it on the payload channel.
-	 */
+	err = sensor_sample_fetch(sensor_dev);
+	__ASSERT_NO_MSG(err == 0);
+	err = sensor_channel_get(sensor_dev, SENSOR_CHAN_AMBIENT_TEMP, &temp);
+	__ASSERT_NO_MSG(err == 0);
 
-	len = snprintk(payload.string, sizeof(payload.string), FORMAT_STRING, uptime);
+	LOG_DBG("temp: %d.%06d", temp.val1, temp.val2);
+
+	len = snprintk(payload.string, sizeof(payload.string), FORMAT_STRING, temp.val1, temp.val2);
 	if ((len < 0) || (len >= sizeof(payload))) {
 		LOG_ERR("Failed to construct message, error: %d", len);
 		SEND_FATAL_ERROR();
