@@ -64,6 +64,14 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
   entropy.c
 )
 
+if(CONFIG_CC3XX_BACKEND)
+  # Add missing API to resolve bit-length for RSA. This needs to be
+  # resolved in nrf_cc3xx Mbed TLS library
+  list(APPEND src_crypto_legacy
+    ${CMAKE_CURRENT_LIST_DIR}/rsa_ext.c
+  )
+endif()
+
 # Legacy Files needed when Oberon is disabled
 if(NOT CONFIG_OBERON_BACKEND)
   append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
