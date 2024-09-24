@@ -28,6 +28,44 @@ For the button assignment, see the :ref:`coremark_user_interface` section.
 When the benchmark has completed, you can press the same button to restart it.
 If you want to run the sample upon startup, enable the :ref:`CONFIG_APP_MODE_FLASH_AND_RUN <CONFIG_APP_MODE_FLASH_AND_RUN>` Kconfig option.
 
+Logging
+=======
+
+The logging mode depends on the chosen board target.
+The sample supports two distinct modes that are described in the following subsections.
+
+Standard logging
+----------------
+
+This logging mode is used by most board targets.
+Each core running the CoreMark benchmark has an independent UART instance that is used for logging.
+
+To see all logging information for the multi-core board targets, you must open a terminal for each active core.
+
+The sample configuration sets up the following board targets for standard logging:
+
+* ``nrf52840dk/nrf52840``
+* ``nrf52833dk/nrf52833``
+* ``nrf52dk/nrf52832``
+* ``nrf5340dk/nrf5340/cpuapp``
+* ``nrf54l15dk/nrf54l15/cpuapp``
+
+Multi-domain logging
+--------------------
+
+This logging mode is used by multi-core board targets that support logging using the ARM Coresight STM.
+Each core running the CoreMark benchmark writes its logging information to its own set of STM Extended Stimulus Port (STMESP).
+One core in the system is designated to collect all logs and to send them to the chosen UART instance.
+The sample supports multi-domain logging in the standalone mode.
+See :ref:`zephyr:logging_cs_stm` for more details.
+
+To see all logging information in this logging mode, it is enough to open one terminal.
+When the core used for sending the logs to UART is running the CoreMark benchmark, the logging activity is blocked until the benchmark has completed.
+
+The sample configuration sets up the following board targets for multi-domain logging:
+
+* ``nrf54h20dk/nrf54h20/cpuapp``
+
 .. _coremark_user_interface:
 
 User interface
@@ -146,13 +184,6 @@ SB_CONFIG_APP_CPUPPR_RUN - Enable execution for the PPR core
 
 .. note::
    PPR code is run from RAM.
-   You must use the ``nordic-ppr`` snippet for the application core to be able to boot the PPR core.
-   Use the build argument ``coremark_SNIPPET=nordic-ppr``.
-   To build the sample with the execution for the PPR core enabled, run the following command:
-
-   .. code-block:: console
-
-      west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_APP_CPUNET_RUN=n -DSB_CONFIG_APP_CPUPPR_RUN=y -Dcoremark_SNIPPET=nordic-ppr
 
 Building and running
 ********************
@@ -176,6 +207,11 @@ Testing
 After programming the sample to your development kit, complete the following steps to test it:
 
 1. |connect_terminal|
+
+   .. note::
+      To see all logging information for the multi-core board targets and the standard logging mode, you must open a terminal for each active core.
+      The ``nrf5340dk/nrf5340/cpuapp`` is an example of such board target.
+
 #. Reset your development kit.
 #. To start the test, press the button assigned to the respective core.
    For button assignment, refer to the :ref:`coremark_user_interface` section.
@@ -190,30 +226,116 @@ After programming the sample to your development kit, complete the following ste
 #. Wait for the console output for all tested cores.
    The results will be similar to the following example:
 
-      .. code-block:: console
+   .. tabs::
 
-         *** Booting nRF Connect SDK v2.8.99-bd215d43d184 ***
-         *** Using Zephyr OS v3.7.99-02718211f9a9 ***
-         I: CoreMark sample for nrf52840dk/nrf52840
-         I: Press Push button switch 0 to start the test ...
+      .. group-tab:: Standard logging
 
-         I: Push button switch 0 pressed!
-         I: CoreMark started! CPU FREQ: 64000000 Hz, threads: 1, data size: 2000; iterations: 2000
+         .. code-block:: console
 
-         2K performance run parameters for coremark.
-         CoreMark Size    : 666
-         Total ticks      : 399362
-         Total time (secs): 12.187000
-         Iterations/Sec   : 164.109297
-         Iterations       : 2000
-         Compiler version : GCC12.2.0
-         Compiler flags   : -O3 + see compiler flags added by Zephyr
-         Memory location  : STACK
-         seedcrc          : 0xe9f5
-         [0]crclist       : 0xe714
-         [0]crcmatrix     : 0x1fd7
-         [0]crcstate      : 0x8e3a
-         [0]crcfinal      : 0x4983
-         Correct operation validated. See README.md for run and reporting rules.
-         CoreMark 1.0 : 164.109297 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
-         I: CoreMark finished! Press Push button switch 0 to restart ...
+            *** Booting nRF Connect SDK v2.8.99-bd215d43d184 ***
+            *** Using Zephyr OS v3.7.99-02718211f9a9 ***
+            I: Standard logging mode
+
+            I: CoreMark sample for nrf52840dk/nrf52840
+            I: Press Push button switch 0 to start the test ...
+
+            I: Push button switch 0 pressed!
+            I: CoreMark started! CPU FREQ: 64000000 Hz, threads: 1, data size: 2000; iterations: 2000
+
+            2K performance run parameters for coremark.
+            CoreMark Size    : 666
+            Total ticks      : 399362
+            Total time (secs): 12.187000
+            Iterations/Sec   : 164.109297
+            Iterations       : 2000
+            Compiler version : GCC12.2.0
+            Compiler flags   : -O3 + see compiler flags added by Zephyr
+            Memory location  : STACK
+            seedcrc          : 0xe9f5
+            [0]crclist       : 0xe714
+            [0]crcmatrix     : 0x1fd7
+            [0]crcstate      : 0x8e3a
+            [0]crcfinal      : 0x4983
+            Correct operation validated. See README.md for run and reporting rules.
+            CoreMark 1.0 : 164.109297 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
+            I: CoreMark finished! Press Push button switch 0 to restart ...
+
+      .. group-tab:: Multi-domain logging
+
+         .. code-block:: console
+
+            *** Booting nRF Connect SDK v2.8.99-f9add8e14565 ***
+            *** Using Zephyr OS v3.7.99-02718211f9a9 ***
+            [00:00:00.208,166] <inf> app/app: Multi-domain logging mode
+            [00:00:00.208,168] <inf> app/app: This core is used to output logs from all cores to terminal over UART
+
+            [00:00:00.208,441] <inf> ppr/app: CoreMark sample for nrf54h20dk@0.9.0/nrf54h20/cpuppr
+            [00:00:00.208,496] <inf> ppr/app: CoreMark started! CPU FREQ: 16000000 Hz, threads: 1, data size: 2000; iterations: 500
+
+            [00:00:01.186,256] <inf> rad/app: CoreMark sample for nrf54h20dk@0.9.0/nrf54h20/cpurad
+            [00:00:01.186,305] <inf> rad/app: Press Push button 1 to start the test ...
+
+            [00:00:01.285,614] <inf> app/app: CoreMark sample for nrf54h20dk@0.9.0/nrf54h20/cpuapp
+            [00:00:01.285,654] <inf> app/app: Press Push button 0 to start the test ...
+
+            [00:00:04.984,744] <inf> app/app: Push button 0 pressed!
+            [00:00:04.984,753] <inf> app/app: CoreMark started! CPU FREQ: 320000000 Hz, threads: 1, data size: 2000; iterations: 10000
+
+            [00:00:04.984,755] <inf> app/app: Logging is blocked for all cores until this core finishes the CoreMark benchmark
+
+            [00:00:05.714,470] <inf> rad/app: Push button 1 pressed!
+            [00:00:05.714,486] <inf> rad/app: CoreMark started! CPU FREQ: 256000000 Hz, threads: 1, data size: 2000; iterations: 10000
+
+            2K performance run parameters for coremark.
+            CoreMark Size    : 666
+            Total ticks      : 13471150
+            Total time (secs): 13.471000
+            Iterations/Sec   : 37.116769
+            Iterations       : 500
+            Compiler version : GCC12.2.0
+            Compiler flags   : -O3 + see compiler flags added by Zephyr
+            Memory location  : STACK
+            seedcrc          : 0xe9f5
+            [0]crclist       : 0xe714
+            [0]crcmatrix     : 0x1fd7
+            [0]crcstate      : 0x8e3a
+            [0]crcfinal      : 0xa14c
+            Correct operation validated. See README.md for run and reporting rules.
+            CoreMark 1.0 : 37.116769 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
+            [00:00:13.595,072] <inf> ppr/app: CoreMark finished! Press the reset button to restart...
+
+            2K performance run parameters for coremark.
+            CoreMark Size    : 666
+            Total ticks      : 11436744
+            Total time (secs): 11.436000
+            Iterations/Sec   : 874.431619
+            Iterations       : 10000
+            Compiler version : GCC12.2.0
+            Compiler flags   : -O3 + see compiler flags added by Zephyr
+            Memory location  : STACK
+            seedcrc          : 0xe9f5
+            [0]crclist       : 0xe714
+            [0]crcmatrix     : 0x1fd7
+            [0]crcstate      : 0x8e3a
+            [0]crcfinal      : 0x988c
+            Correct operation validated. See README.md for run and reporting rules.
+            CoreMark 1.0 : 874.431619 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
+            [00:00:16.446,916] <inf> app/app: CoreMark finished! Press Push button 0 to restart ...
+
+            2K performance run parameters for coremark.
+            CoreMark Size    : 666
+            Total ticks      : 14290211
+            Total time (secs): 14.290000
+            Iterations/Sec   : 699.790063
+            Iterations       : 10000
+            Compiler version : GCC12.2.0
+            Compiler flags   : -O3 + see compiler flags added by Zephyr
+            Memory location  : STACK
+            seedcrc          : 0xe9f5
+            [0]crclist       : 0xe714
+            [0]crcmatrix     : 0x1fd7
+            [0]crcstate      : 0x8e3a
+            [0]crcfinal      : 0x988c
+            Correct operation validated. See README.md for run and reporting rules.
+            CoreMark 1.0 : 699.790063 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
+            [00:00:19.911,390] <inf> rad/app: CoreMark finished! Press Push button 1 to restart ...

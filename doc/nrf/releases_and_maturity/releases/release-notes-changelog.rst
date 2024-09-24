@@ -385,7 +385,9 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`coremark_sample` sample:
+
+  * Updated configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board to support multi-domain logging using the ARM Coresight STM.
 
 Drivers
 =======
