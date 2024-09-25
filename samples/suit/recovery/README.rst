@@ -94,6 +94,7 @@ Testing
 Device firmware update for recovery firmware
 ============================================
 
-To update the recovery firmware, perform a SUIT firmware update using the SUIT envelope found in :file:`<main_application_build_directory>/recovery/src/recovery-build/DFU/application.suit`.
+To update the recovery firmware, perform a SUIT firmware update using the SUIT envelope found in :file:`<main_application_build_directory>/DFU/app_recovery.suit`.
+For updating using the Device Manager application, you can also use the zip file found in :file:`<main_application_build_directory>/zephyr/dfu_suit_recovery.zip`.
 
-See the ``smp_transfer`` sample documentation to see how to perform the update using the Device Manager application.
+See :ref:`nrf54h_suit_sample` to see how to perform the update using the Device Manager application.
