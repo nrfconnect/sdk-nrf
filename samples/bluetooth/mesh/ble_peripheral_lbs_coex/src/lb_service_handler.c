@@ -41,7 +41,7 @@ static const struct bt_data sd[] = {
 };
 
 static struct bt_le_ext_adv *adv;
-static const struct bt_le_adv_param *adv_params = BT_LE_ADV_CONN;
+static struct bt_le_adv_param *adv_params = (struct bt_le_adv_param *)BT_LE_ADV_CONN;
 static bool ble_button_state;
 
 static void connected(struct bt_conn *conn, uint8_t err)
