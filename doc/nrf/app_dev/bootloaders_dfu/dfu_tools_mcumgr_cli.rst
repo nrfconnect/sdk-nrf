@@ -153,10 +153,10 @@ The ones that are supported are as follows:
        To enable the ``echo`` command specifically, enable the :kconfig:option:`CONFIG_MCUMGR_GRP_OS_ECHO` Kconfig option.
    * - ``fs``
      - Provides access to files on a device.
-       For more details, see :ref:`zephyr:fs_mgmt`.
+       For more details, see :ref:`dfu_tools_mcumgr_cli_fs_mgmt`.
    * - ``image``
      - Manages firmware images on a device.
-       For additional information, see :ref:`zephyr:image_mgmt`.
+       For additional information, see :ref:`dfu_tools_mcumgr_cli_image_mgmt`.
    * - ``reset``
      - Performs a soft reset of a device.
        This command is part of the ``OS`` group, which must be enabled by setting the :kconfig:option:`CONFIG_MCUMGR_GRP_OS` Kconfig option.
@@ -167,7 +167,7 @@ The ones that are supported are as follows:
        For more details, see :ref:`zephyr:shell_api`.
    * - ``stat``
      - Reads statistic data from a device.
-       Fore more details, see :ref:`zephyr:stats_mgmt`.
+       Fore more details, see :ref:`dfu_tools_mcumgr_cli_stats_mgmt`.
    * - ``taskstat``
      - Reads task statistics from a device.
        This command is part of the ``OS`` group.
