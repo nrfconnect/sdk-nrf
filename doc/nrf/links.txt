@@ -115,8 +115,6 @@
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_JOINER.md
 .. _`BBTC Client`: https://github.com/nrfconnect/sdk-openthread/tree/main/tools/tcat_ble_client
 
-.. _`Breathe issue #437`: https://github.com/michaeljones/breathe/issues/437
-.. _`Breathe issue #438`: https://github.com/michaeljones/breathe/issues/438
 .. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
@@ -1354,8 +1352,6 @@
 .. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
 
 .. ### Source: *.readthedocs.io
-
-.. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
 
 .. _`IntelHex`: https://python-intelhex.readthedocs.io/en/latest/
 
