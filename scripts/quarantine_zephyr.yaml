@@ -272,6 +272,7 @@
     - libraries.libc.common.picolibc
     - libraries.libc.common.picolibc.module
     - libraries.libc.common.picolibc.notls
+    - libraries.net_buf.buf
     - libraries.ring_buffer
     - libraries.hash_map.cxx.djb2
     - cpp.libcxx.glibcxx.picolibc
@@ -293,7 +294,6 @@
     - crypto.tinycrypt.hmac_prng
     - net.mqtt_sn.packet
     - net.http.server.common
-    - net.buf
     - net.coap.server.common
     - sample.zbus.msg_subscriber_static
     - sample.zbus.msg_subscriber_dynamic
