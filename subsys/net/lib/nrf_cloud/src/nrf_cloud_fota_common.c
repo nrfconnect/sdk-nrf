@@ -34,7 +34,7 @@ static void on_modem_lib_dfu(int dfu_res, void *ctx)
 NRF_MODEM_LIB_ON_DFU_RES(nrf_cloud_fota_dfu_hook, on_modem_lib_dfu, NULL);
 #endif /* CONFIG_NRF_MODEM_LIB*/
 
-LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_cloud_fota_common, CONFIG_NRF_CLOUD_FOTA_LOG_LEVEL);
 
 /* Use the settings library to store FOTA job information to flash so
  * that the job status can be updated after a reboot
