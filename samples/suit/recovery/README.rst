@@ -10,6 +10,12 @@ SUIT: Recovery application
 The SUIT recovery application is a minimal application that allows recovering the device firmware if the original firmware is damaged.
 It is to be used as a companion firmware to the main application that is using :ref:`Software Update for Internet of Things (SUIT) <ug_nrf54h20_suit_intro>` procedure, rather than a stand-alone application.
 
+The following limitations apply to this application:
+
+* The recovery firmware is only able to recover from a situation where the application or radio core are damaged.
+  It does not recover from Nordic Semiconductor-controlled firmware failures.
+* The recovery firmware is not compatible with a main application that uses a external flash for update.
+
 .. _suit_recovery_reqs:
 
 Requirements
@@ -94,6 +100,7 @@ Testing
 Device firmware update for recovery firmware
 ============================================
 
-To update the recovery firmware, perform a SUIT firmware update using the SUIT envelope found in :file:`<main_application_build_directory>/recovery/src/recovery-build/DFU/application.suit`.
+To update the recovery firmware, perform a SUIT firmware update using the SUIT envelope found in :file:`<main_application_build_directory>/DFU/app_recovery.suit`.
+For updating using the Device Manager application, you can also use the zip file found in :file:`<main_application_build_directory>/zephyr/dfu_suit_recovery.zip`.
 
-See the ``smp_transfer`` sample documentation to see how to perform the update using the Device Manager application.
+See :ref:`nrf54h_suit_sample` to see how to perform the update using the Device Manager application.
