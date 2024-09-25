@@ -16,6 +16,7 @@
 /delete-node/ &cpuapp_rw_partitions;
 /delete-node/ &cpurad_rx_partitions;
 /delete-node/ &cpuppr_vpr;
+/delete-node/ &cpuflpr_vpr;
 
 &mram1x {
 	cpurad_rx_partitions: cpurad-rx-partitions {
