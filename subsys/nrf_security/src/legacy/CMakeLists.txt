@@ -19,6 +19,8 @@ append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
 # Add all files that are neccessary for (nrf_oberon or cracen) + builtin in legacy mode
 # These files are used only as a convenience until PSA Crypto APIs are standarized
 if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR
+  CONFIG_OBERON_BACKEND           OR
+  CONFIG_CC3XX_BACKEND            OR
   CONFIG_PSA_CRYPTO_DRIVER_OBERON OR
   CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
   append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
