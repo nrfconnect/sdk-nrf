@@ -48,6 +48,7 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/wifi_mgmt.h
 	     FUNC_EXCLUDE "offsetof")
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/device.h
 	     FUNC_EXCLUDE ".*DEVICE_DT_NAME_GET"
+	     FUNC_EXCLUDE ".*device_get_dt_nodelabels"
 	     WORD_EXCLUDE ".*device_visitor_callback_t.*")
 
 zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include)
