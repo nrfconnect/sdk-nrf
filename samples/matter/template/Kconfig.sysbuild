@@ -74,6 +74,10 @@ endif # BOARD_NRF54L15PDK_NRF54L15_CPUAPP_NS
 
 endif # BOOTLOADER_MCUBOOT
 
+# Currently Matter OTA is not available for nRF54 SoC series
+config MATTER_OTA
+	default n if SOC_SERIES_NRF54HX
+
 #### Enable generating factory data
 config MATTER_FACTORY_DATA_GENERATE
 	default y if !BOARD_NRF21540DK
