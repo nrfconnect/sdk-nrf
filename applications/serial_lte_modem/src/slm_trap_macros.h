@@ -13,8 +13,8 @@
  *  when forwarding intercepted AT commands from within the callbacks.
  *  Alternatives to these functions are available in slm_util.h.
  */
-#define nrf_modem_at_printf(...) function_disallowed_use_slm_util_alternative(void)
-#define nrf_modem_at_scanf(...) function_disallowed_use_slm_util_alternative(void)
-#define nrf_modem_at_cmd_async(...) function_disallowed(void)
+#define nrf_modem_at_printf(...) function_disallowed_use_slm_util_printf_alternative(__VA_ARGS__)
+#define nrf_modem_at_scanf(...) function_disallowed_use_slm_util_scanf_alternative(__VA_ARGS__)
+#define nrf_modem_at_cmd_async(...) function_disallowed(__VA_ARGS__)
 
 #endif
