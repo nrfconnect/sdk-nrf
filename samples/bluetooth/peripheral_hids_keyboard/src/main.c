@@ -169,7 +169,7 @@ K_MSGQ_DEFINE(mitm_queue,
 static void advertising_start(void)
 {
 	int err;
-	struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
+	const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 						BT_LE_ADV_OPT_CONNECTABLE |
 						BT_LE_ADV_OPT_ONE_TIME,
 						BT_GAP_ADV_FAST_INT_MIN_2,
