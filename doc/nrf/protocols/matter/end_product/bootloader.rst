@@ -56,6 +56,8 @@ Consider the following when defining partitions for your end product:
   This means that performing DFU from one firmware version to another using different partition sizes may not be possible, and you will not be able to change the partition sizes without reprogramming the device.
   Trying to perform DFU between applications that use incompatible partition sizes can result in unwanted application behavior, depending on which partitions are overlapping.
   In some cases, this may corrupt some partitions; in others, this can lead to a DFU failure.
+* The MCUboot requires its `mcuboot_primary` and `mcuboot_secondary` partitions to be located under offsets being aligned to the 4 kB flash page size.
+  Selecting offset values that are not aligned to 4 kB for these partititions will lead to erase failures, and result in a DFU failure.
 
 Settings partition
 ==================
