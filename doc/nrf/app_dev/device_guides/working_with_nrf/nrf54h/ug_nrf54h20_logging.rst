@@ -143,7 +143,7 @@ To read the dictionary-based STM log output, do the following:
 
 1. Set up the log capture.
 
-   Use the ``nrfutil trace stm`` command to start capturing logs from the device, specifying the database configuration for each domain ID, as well as the serial port, the baud rate, and the output file name::
+   Use the ``nrfutil trace stm`` command to start capturing logs from the device, specifying the database configuration for each domain ID, as well as the serial port, the baud rate, and the output type::
 
       nrfutil trace stm --database-config <domain_id>:build/<app_name>/zephyr/log_dictionary.json --input-serialport <port> --baudrate 115200 --stdout ascii
 
@@ -155,15 +155,16 @@ To read the dictionary-based STM log output, do the following:
    * ``<app_name>`` is the application name.
    * ``<port>`` is the serial port used for output.
      Use ``nrfutil device list`` to list which serial ports are exposed by the development kit.
+   * The output can be either the console (``--stdout ascii``) or a file (the :file:`out.txt` file if ``--output-ascii out.txt``).
 
 #. Capture and decode the logs.
 
    nrfutil will capture the log data from the specified UART port and use the provided dictionary databases to decode the logs into a human-readable format.
-   The decoded logs will be saved in the specified output file (the :file:`out.txt` file in the previous example).
+   The decoded logs are sent to the previously-defined output (either the console or the :file:`out.txt` file in the previous example).
 
-#. Open the output file to review the decoded log messages.
+#. Read the terminal or open the output file to review the decoded log messages.
 
-   The file will contain timestamps and the log messages in a format that is human-readable.
+   The output contains timestamps and the log messages in a human-readable format.
 
 If the log capture fails to find a sync, rerun the capture process.
 
@@ -182,7 +183,6 @@ The following are the prefixes used to indicate the cores:
    System Controller (SysCtrl), ``sys``, 0x2c
    Fast Lightweight Processor (FLPR), ``flpr``, 0x2d
    Peripheral Processor (PPR), ``ppr``, 0x2e
-    , ``mod``, 0x24
 
 For more information on ``nrfutil trace``, see `nrfutil-trace`_.
 
