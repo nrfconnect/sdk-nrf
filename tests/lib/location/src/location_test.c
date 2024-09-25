@@ -484,7 +484,7 @@ void test_location_init(void)
 	/* __cmock_device_get_binding_ExpectAndReturn is not called for an unknown reason.
 	 * __syscall in the function declaration may have something to do with it.
 	 */
-	__cmock_z_device_is_ready_IgnoreAndReturn(true);
+	__cmock_device_is_ready_IgnoreAndReturn(true);
 	__cmock_net_if_lookup_by_dev_IgnoreAndReturn(&wifi_iface);
 	__cmock_net_mgmt_init_event_callback_Ignore();
 	__cmock_net_mgmt_add_event_callback_Ignore();
