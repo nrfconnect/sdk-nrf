@@ -2466,6 +2466,13 @@ Matter samples
 
 The issues in this section are related to :ref:`matter_samples`.
 
+.. rst-class:: v2-7-0
+
+KRKNWK-19480: Lock sample does not allow for clearing the door lock user when using the schedules feature
+  If the lock application is built with the :kconfig:option:`CONFIG_LOCK_SCHEDULES` Kconfig option and lock credentials are programmed by the controller, clearing of the user always fails.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``b60eb4900e62bb7c771397adb152552849052b18``).
+
 .. rst-class:: v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
 KRKNWK-18242: Thermostat sample does support the AUTO system mode
