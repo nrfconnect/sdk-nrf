@@ -209,40 +209,41 @@ enum lte_lc_evt_type {
 	/**
 	 * Network registration status.
 	 *
-	 * The associated payload is the @c nw_reg_status member of type @ref lte_lc_nw_reg_status
-	 * in the event.
+	 * The associated payload is the @c lte_lc_evt.nw_reg_status member of type
+	 * @ref lte_lc_nw_reg_status in the event.
 	 */
 	LTE_LC_EVT_NW_REG_STATUS,
 
 	/**
 	 * PSM parameters provided by the network.
 	 *
-	 * The associated payload is the @c psm_cfg member of type @ref lte_lc_psm_cfg in the event.
+	 * The associated payload is the @c lte_lc_evt.psm_cfg member of type
+	 * @ref lte_lc_psm_cfg in the event.
 	 */
 	LTE_LC_EVT_PSM_UPDATE,
 
 	/**
 	 * eDRX parameters provided by the network.
 	 *
-	 * The associated payload is the @c edrx_cfg member of type @ref lte_lc_edrx_cfg in the
-	 * event.
+	 * The associated payload is the @c lte_lc_evt.edrx_cfg member of type
+	 * @ref lte_lc_edrx_cfg in the event.
 	 */
 	LTE_LC_EVT_EDRX_UPDATE,
 
 	/**
 	 * RRC connection state.
 	 *
-	 * The associated payload is the @c rrc_mode member of type @ref lte_lc_rrc_mode in the
-	 * event.
+	 * The associated payload is the @c lte_lc_evt.rrc_mode member of type
+	 * @ref lte_lc_rrc_mode in the event.
 	 */
 	LTE_LC_EVT_RRC_UPDATE,
 
 	/**
 	 * Current cell.
 	 *
-	 * The associated payload is the @c cell member of type @ref lte_lc_cell in the event.
-	 * Only the @c cell.tac and @c cell.id members are populated in the event payload. The rest
-	 * are expected to be zero.
+	 * The associated payload is the @c lte_lc_evt.cell member of type
+	 * @ref lte_lc_cell in the event. Only the @c lte_lc_cell.tac and @c lte_lc_cell.id
+	 * members are populated in the event payload. The rest are expected to be zero.
 	 */
 	LTE_LC_EVT_CELL_UPDATE,
 
@@ -254,8 +255,8 @@ enum lte_lc_evt_type {
 	 * availability. This event will then indicate which LTE mode is currently used by the
 	 * modem.
 	 *
-	 * The associated payload is the @c lte_mode member of type @ref lte_lc_lte_mode in the
-	 * event.
+	 * The associated payload is the @c lte_lc_evt.lte_mode member of type
+	 * @ref lte_lc_lte_mode in the event.
 	 */
 	LTE_LC_EVT_LTE_MODE_UPDATE,
 
@@ -267,15 +268,15 @@ enum lte_lc_evt_type {
 	 * before the TAU happens, thus saving power by avoiding sending data and the TAU
 	 * separately.
 	 *
-	 * The associated payload is the @c time member of type @c uint64_t in the event.
+	 * The associated payload is the @c lte_lc_evt.time member of type @c uint64_t in the event.
 	 */
 	LTE_LC_EVT_TAU_PRE_WARNING,
 
 	/**
 	 * Neighbor cell measurement results.
 	 *
-	 * The associated payload is the @c cells_info member of type @ref lte_lc_cells_info in the
-	 * event.
+	 * The associated payload is the @c lte_lc_evt.cells_info member of type
+	 * @ref lte_lc_cells_info in the event.
 	 */
 	LTE_LC_EVT_NEIGHBOR_CELL_MEAS,
 
@@ -285,34 +286,46 @@ enum lte_lc_evt_type {
 	 * This event will be received some time before the modem exits sleep. The time is
 	 * configurable.
 	 *
-	 * The associated payload is the @c modem_sleep member of type @ref lte_lc_modem_sleep in
-	 * the event. The @c time parameter indicates the time until modem exits sleep.
+	 * The associated payload is the @c lte_lc_evt.modem_sleep member of type
+	 * @ref lte_lc_modem_sleep in the event. The @c lte_lc_modem_sleep.time parameter indicates
+	 * the time until modem exits sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
 
 	/**
 	 * Modem exited from sleep.
 	 *
-	 * The associated payload is the @c modem_sleep member of type @ref lte_lc_modem_sleep in
-	 * the event.
+	 * The associated payload is the @c lte_lc_evt.modem_sleep member of type
+	 * @ref lte_lc_modem_sleep in the event.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_EXIT,
 
 	/**
 	 * Modem entered sleep.
 	 *
-	 * The associated payload is the @c modem_sleep member of type @ref lte_lc_modem_sleep in
-	 * the event. The @c time parameter indicates the duration of the sleep.
+	 * The associated payload is the @c lte_lc_evt.modem_sleep member of type
+	 * @ref lte_lc_modem_sleep in the event. The @c lte_lc_modem_sleep.time parameter indicates
+	 * the duration of the sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_ENTER,
 
 	/**
 	 * Information about modem operation.
 	 *
-	 * The associated payload is the @c modem_evt member of type @ref lte_lc_modem_evt in the
-	 * event.
+	 * The associated payload is the @c lte_lc_evt.modem_evt member of type
+	 * @ref lte_lc_modem_evt in the event.
 	 */
 	LTE_LC_EVT_MODEM_EVENT,
+
+	/**
+	 * Information about RAI (Release Assistance Indication) configuration.
+	 *
+	 * The associated payload is the @c lte_lc_evt.rai_cfg member of type
+	 * @ref lte_lc_rai_cfg in the event.
+	 *
+	 * @note This event is only supported by modem firmware versions >= 2.0.2.
+	 */
+	LTE_LC_EVT_RAI_UPDATE,
 };
 
 /** RRC connection state. */
@@ -732,6 +745,20 @@ enum lte_lc_factory_reset_type {
 
 	/** Reset user-configurable data to factory settings. */
 	LTE_LC_FACTORY_RESET_USER = 1,
+};
+
+/** RAI configuration. */
+struct lte_lc_rai_cfg {
+	/** E-UTRAN cell ID. */
+	uint32_t cell_id;
+	/** Mobile Country Code. */
+	int mcc;
+	/** Mobile Network Code. */
+	int mnc;
+	/** AS RAI support. */
+	bool as_rai;
+	/** CP RAI support. */
+	bool cp_rai;
 };
 
 /**
@@ -1201,6 +1228,9 @@ struct lte_lc_evt {
 
 		/** Payload for event @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS. */
 		struct lte_lc_cells_info cells_info;
+
+		/** Payload for event @ref LTE_LC_EVT_RAI_UPDATE. */
+		struct lte_lc_rai_cfg rai_cfg;
 	};
 };
 

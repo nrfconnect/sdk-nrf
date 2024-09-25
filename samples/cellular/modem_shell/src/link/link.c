@@ -450,6 +450,16 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 	case LTE_LC_EVT_MODEM_EVENT:
 		link_shell_print_modem_domain_event(evt->modem_evt);
 		break;
+	case LTE_LC_EVT_RAI_UPDATE:
+		mosh_print(
+			"RAI configuration update: "
+			"Cell ID: %d, MCC: %d, MNC: %d, AS-RAI: %d, CP-RAI: %d",
+			evt->rai_cfg.cell_id,
+			evt->rai_cfg.mcc,
+			evt->rai_cfg.mnc,
+			evt->rai_cfg.as_rai,
+			evt->rai_cfg.cp_rai);
+		break;
 	default:
 		break;
 	}
@@ -720,7 +730,16 @@ int link_rai_enable(bool enable)
 {
 	int err;
 
-	err = nrf_modem_at_printf("AT%%RAI=%d", enable);
+	/* '2' means enable RAI with notifications */
+	err = nrf_modem_at_printf("AT%%RAI=%d", enable ? 2 : 0);
+	if (err && enable) {
+		/* AT%RAI=2 requires modem firmware 2.0.2 or higher.
+		 * Trying RAI without notifications for older modems.
+		 */
+		mosh_print("Failed to enable RAI with notifications so trying without them");
+		err = nrf_modem_at_printf("AT%%RAI=1");
+	}
+
 	if (!err) {
 		mosh_print(
 			"Release Assistance Indication functionality %s.\n"

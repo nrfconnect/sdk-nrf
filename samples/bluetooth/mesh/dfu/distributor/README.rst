@@ -148,7 +148,7 @@ Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform th
 
 The commands can be executed in two ways:
 
-* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application or :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>`).
+* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
 * By accessing the :ref:`zephyr:shell_api` module over RTT.
 
 .. _ble_mesh_dfu_distributor_fw_image_upload:

@@ -33,7 +33,15 @@ The following sections provide detailed lists of changes by component.
 IDE, and tool support
 =====================
 
-|no_changes_yet_note|
+* Added explicit mention of the :ref:`requirements_jlink` being required in the :ref:`installing_vsc` section of the installation page.
+* Updated the required `SEGGER J-Link`_ version to v7.94i.
+
+Board support
+=============
+
+* Added support for the Thingy:91 X board.
+* Updated Thingy:91 X board to use the ``nordic,pm-ext-flash`` node instead of external flash device name in static partitions.
+* Removed invalid external flash from static partitions for Thingy:91 X.
 
 Build and configuration system
 ==============================
@@ -513,6 +521,8 @@ Peripheral samples
 PMIC samples
 ------------
 
+* Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` to the PMIC samples.
+
 * :ref:`npm1300_fuel_gauge` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v0.11.1.
@@ -695,6 +705,10 @@ Modem libraries
     * The ``CONFIG_LTE_NETWORK_USE_FALLBACK`` Kconfig option.
       Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
       In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
+
+  * Added:
+
+    * A new :c:enum:`LTE_LC_EVT_RAI_UPDATE` event that is enabled with the :kconfig:option:`CONFIG_LTE_RAI_REQ` Kconfig option.
 
   * Updated:
 
@@ -1003,6 +1017,7 @@ Documentation
 
   * The :ref:`ug_app_dev` section, which includes pages from the :ref:`configuration_and_build` section and from the removed Device configuration guides section.
   * The :ref:`peripheral_sensor_node_shield` page.
+  * The :ref:`dfu_tools_mcumgr_cli` page after it was removed from the Zephyr repository.
 
 * Restructured the :ref:`app_bootloaders` documentation and combined the DFU and bootloader articles.
   Additionally, created a new bootloader :ref:`bootloader_quick_start`.

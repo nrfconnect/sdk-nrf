@@ -21,8 +21,8 @@ Hardware
 ========
 
 * nRF54H20 DK, version PCA10175 v0.8.0 (ES4) or later revisions.
-  This is the only version of the nRF54H20 DK compatible with the |NCS| v2.7.99-cs1.
-  Check the version number on your DK's sticker to verify its compatibility with the |NCS| version v2.7.99-cs1.
+  This is the only version of the nRF54H20 DK compatible with the |NCS| v2.7.99-cs2.
+  Check the version number on your DK's sticker to verify its compatibility with the |NCS| version v2.7.99-cs2.
 * USB-C cable.
 
 Software
@@ -50,10 +50,10 @@ You also need the following:
      Before running the initial J-Link installation from the `nRF Command Line Tools`_ package, ensure not to have any other J-Link executables on your system.
      If you have other J-Link installations, uninstall them before proceeding.
 
-* On Windows, SEGGER USB Driver for J-Link from SEGGER `J-Link version 7.94e`_.
+* On Windows, SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
 
    .. note::
-      To install the SEGGER USB Driver for J-Link on Windows, you must manually reinstall J-Link v7.94e from the command line using the ``-InstUSBDriver=1`` parameter, updating the installation previously run by the `nRF Command Line Tools`_:
+      To install the SEGGER USB Driver for J-Link on Windows, you must manually reinstall J-Link |jlink_ver| from the command line using the ``-InstUSBDriver=1`` parameter, updating the installation previously run by the `nRF Command Line Tools`_:
 
       1. Navigate to the download location of the J-Link executable and run one of the following commands:
 
@@ -81,10 +81,10 @@ To work with the nRF54H20 DK, follow the instructions in the next sections to in
 
 .. _ug_nrf54h20_install_toolchain:
 
-Installing the |NCS| v2.7.99-cs1 and its toolchain
+Installing the |NCS| v2.7.99-cs2 and its toolchain
 **************************************************
 
-You can install the |NCS| v2.7.99-cs1 and its toolchain by using Toolchain Manager.
+You can install the |NCS| v2.7.99-cs2 and its toolchain by using Toolchain Manager.
 
 Toolchain Manager is a tool available from `nRF Connect for Desktop`_, a cross-platform tool that provides different applications that simplify installing the |NCS|.
 Both the tool and the application are available for Windows, Linux, and MacOS.
@@ -109,9 +109,9 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
          The Toolchain Manager window
 
    #. Click :guilabel:`SETTINGS` in the navigation bar to specify where you want to install the |NCS|.
-   #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version 2.7.99-cs1.
+   #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version 2.7.99-cs2.
 
-      The |NCS| version 2.7.99-cs1 is installed on your machine.
+      The |NCS| version 2.7.99-cs2 is installed on your machine.
       The :guilabel:`Install` button changes to :guilabel:`Open VS Code`.
 
 #. Set up the preferred building method:
@@ -157,10 +157,10 @@ Both of these terminal emulators start the required :ref:`toolchain environment 
 Installing nRF Util and its commands
 ************************************
 
-Using the nRF54H20 DK with the |NCS| v2.7.99-cs1 requires the following:
+Using the nRF54H20 DK with the |NCS| v2.7.99-cs2 requires the following:
 
 * nRF Util version 7.11.1 or above
-* nRF Util ``device`` version 2.4.6
+* nRF Util ``device`` version 2.5.4
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
 #. Add nRF Util to the system path on Linux and MacOS, or environment variables on Windows, to run it from anywhere on the system.
@@ -180,9 +180,9 @@ Using the nRF54H20 DK with the |NCS| v2.7.99-cs1 requires the following:
 
       nrfutil self-upgrade
 
-#. Install the nRF Util ``device`` command version 2.4.6 as follows::
+#. Install the nRF Util ``device`` command version 2.5.4 as follows::
 
-      nrfutil install device=2.4.6 --force
+      nrfutil install device=2.5.4 --force
 
 For more information, consult the `nRF Util`_ documentation.
 
@@ -218,13 +218,13 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 
 .. rst-class:: numbered-step
 
-Programming the SDFW and SCFW
-=============================
+Programming the nRF54H20 SoC binaries
+=====================================
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.6.2.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
-To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
+After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle ( :file:`nrf54h20_soc_binaries_v0.6.5.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 firmware bundle v0.6.2`_.
+1. Download the `nRF54H20 SoC binaries v0.6.5`_.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -315,7 +315,7 @@ It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
-#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.7.99-cs1 toolchain, and click the :guilabel:`Open terminal` button.
+#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.7.99-cs2 toolchain, and click the :guilabel:`Open terminal` button.
 #. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
 #. Build the sample for application and radio cores by running the following command::
 

@@ -48,6 +48,8 @@ Depending on your preferred development environment, install the following requi
 
       * The latest version of the :ref:`requirements_clt` package.
         Download it from the `nRF Command Line Tools`_ page.
+      * The |jlink_ver| of :ref:`SEGGER J-Link <requirements_jlink>`.
+        Download it from the `J-Link Software and Documentation Pack`_ page.
       * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
       * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
       * Linux users: `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
@@ -66,6 +68,8 @@ Depending on your preferred development environment, install the following requi
         .. note::
             After downloading and installing the tools, add nrfjprog to the system :envvar:`PATH` in the environment variables.
 
+      * The latest version of :ref:`SEGGER J-Link <requirements_jlink>`.
+        Download it from the `J-Link Software and Documentation Pack`_ page.
       * Linux users: `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
 .. _gs_installing_toolchain:

@@ -68,12 +68,18 @@ function(zephyr_mcuboot_tasks)
     return()
   endif()
 
+  set(imgtool_directxip_hex_command)
+
   if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
     # XIP image, need to use the fixed address for this slot
     if(CONFIG_NCS_IS_VARIANT_IMAGE)
       set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
     else()
       set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
+    endif()
+
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      set(imgtool_directxip_hex_command --confirm)
     endif()
   endif()
 
@@ -190,7 +196,7 @@ function(zephyr_mcuboot_tasks)
     # calls to the "extra_post_build_commands" property ensures they run
     # after the commands which generate the unsigned versions.
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_sign} ${imgtool_args} ${unconfirmed_args})
+      ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${unconfirmed_args})
 
     if(NOT "${keyfile_enc}" STREQUAL "")
       set(unconfirmed_args ${input}.hex ${output}.encrypted.hex)

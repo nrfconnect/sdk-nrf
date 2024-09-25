@@ -46,6 +46,7 @@
 .. _`Zephyr issue #69546`: https://github.com/zephyrproject-rtos/zephyr/issues/69546
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
+.. _`MCUboot design`: https://github.com/mcu-tools/mcuboot/blob/main/docs/design.md
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 .. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
 
@@ -807,6 +808,7 @@
 .. _`DFU over a serial USB connection`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_performing.html#dfu-over-a-serial-usb-connection
 .. _`Toolchain Manager command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-toolchain-manager/nrfutil-toolchain-manager_0.14.1.html#available-subcommands
 .. _`Recovering the device`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_recovery.html
+.. _`nrfutil-trace`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/CHANGELOG.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
@@ -933,6 +935,7 @@
 
 .. ### Source: www.segger.com
 
+.. _`SEGGER J-Link`:
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
 .. _`SEGGER SystemView`: https://www.segger.com/products/development-tools/systemview/
@@ -1691,13 +1694,10 @@
 .. _`nRF54H20 firmware bundle v0.3.3`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.3.3.zip
 .. _`nRF54H20 firmware bundle v0.5.0`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.5.0.zip
 .. _`nRF54H20 firmware bundle v0.6.2`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.6.2.zip
+.. _`nRF54H20 SoC binaries v0.6.5`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.6.5.zip
 
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
 .. _`BICR new binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex
-
-.. _`J-Link version 7.94e`: https://www.segger.com/downloads/jlink/
-
-.. _`J-Link version 7.88j`: https://www.segger.com/downloads/jlink/
 
 .. _`Zephyr's nRF clock control API extensions`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/clock_control/nrf_clock_control.h
 .. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h

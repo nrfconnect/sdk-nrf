@@ -26,7 +26,7 @@ For the complete list of commands, see the :ref:`zephyr:bluetooth_mesh_shell_dfd
 
 The commands can be executed in two ways:
 
-* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <zephyr:mcumgr_cli>`).
+* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
 * By accessing the :ref:`zephyr:shell_api` module over UART.
 
 Provisioning and configuring the devices

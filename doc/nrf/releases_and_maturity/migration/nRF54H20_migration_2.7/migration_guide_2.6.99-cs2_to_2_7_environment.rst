@@ -56,9 +56,9 @@ You also need the following:
 * The latest version of the `nRF Command Line Tools`_ package.
   After downloading and installing the tools, add the nrfjprog executable to the system path, on Linux and MacOS, or to the environment variables, on Windows, to run it from anywhere on the system.
 
-  The CLI tools installation will also trigger the installation of J-Link.
+  The CLI tools installation will also trigger the installation of `SEGGER J-Link`_ (v7.94e).
   During that installation, in the :guilabel:`Choose optional components` window, select :guilabel:`update existing installation`.
-* On Windows, SEGGER USB Driver for J-Link from SEGGER `J-Link version 7.94e`_.
+* On Windows, SEGGER USB Driver for J-Link from `SEGGER J-Link`_ v7.94e.
 
    .. note::
       To install the SEGGER USB Driver for J-Link on Windows, you must manually reinstall J-Link v7.94e from the command line using the ``-InstUSBDriver=1`` parameter, updating the installation previously run by the `nRF Command Line Tools`_:
