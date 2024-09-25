@@ -34,10 +34,6 @@ config NRF_CLOUD_FOTA_BLE_DEVICES
 	bool "Enable API for FOTA of BLE devices"
 	depends on BT
 
-module = NRF_CLOUD_FOTA
-module-str = nRF Cloud FOTA
-source "subsys/logging/Kconfig.template.log_config"
-
 endif # NRF_CLOUD_FOTA
 
 config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
@@ -157,9 +153,11 @@ config NRF_CLOUD_FOTA_POLL
 	  to nRF Cloud.
 
 if NRF_CLOUD_FOTA_POLL
-
 module = NRF_CLOUD_FOTA_POLL
 module-str = nRF Cloud FOTA Poll
 source "subsys/logging/Kconfig.template.log_config"
-
 endif # NRF_CLOUD_FOTA_POLL
+
+module = NRF_CLOUD_FOTA
+module-str = nRF Cloud FOTA
+source "subsys/logging/Kconfig.template.log_config"

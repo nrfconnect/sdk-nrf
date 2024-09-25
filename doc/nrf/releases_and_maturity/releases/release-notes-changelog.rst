@@ -816,6 +816,7 @@ Libraries for networking
     * The handling of MQTT JITP device association to improve speed and reliability.
     * To use nRF Cloud's custom MQTT topics instead of the default AWS topics.
     * MQTT and CoAP transports to use a single unified DNS lookup mechanism that supports IPv4 and IPv6, fallback to IPv4, and handling of multiple addresses returned by :c:func:`getaddrinfo`.
+    * The log module in the :file:`nrf_cloud_fota_common.c` file from ``NRF_CLOUD`` to ``NRF_CLOUD_FOTA``.
 
   * Deprecated:
 
