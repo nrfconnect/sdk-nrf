@@ -84,6 +84,29 @@ config NRF_RPC_UART_RX_THREAD_STACK_SIZE
 	  thread is responsible for consuming data received over the UART, and
 	  passing decoded nRF RPC packets to the nRF RPC core.
 
+config NRF_RPC_UART_RELIABLE
+	bool "UART reliability"
+	help
+	  Enables acknowledgment functionality for each frame sent over UART.
+
+if NRF_RPC_UART_RELIABLE
+
+config NRF_RPC_UART_ACK_WAITING_TIME
+	int "Time window to receive acknowledgment"
+	default 50
+	help
+	   Defines time in milliseconds during which the device waits
+	   for acknowledgment for sent data.
+
+config NRF_RPC_UART_TX_ATTEMPTS
+	int "Number of transmitting attempts"
+	default 3
+	help
+	   Number of transmitting attempts, after which sender gives up if
+	   acknowledgment has not been received yet.
+
+endif # NRF_RPC_UART_RELIABLE
+
 endmenu # "nRF RPC over UART configuration"
 
 config NRF_RPC_CBOR
