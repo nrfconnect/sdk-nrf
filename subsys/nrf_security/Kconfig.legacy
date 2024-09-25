@@ -492,7 +492,7 @@ config MBEDTLS_CCM_C
 config MBEDTLS_GCM_C
 	bool
 	prompt "AES-GCM - AES Galois/Counter Mode support"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_GCM if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
 	help
@@ -502,7 +502,7 @@ config MBEDTLS_GCM_C
 config MBEDTLS_CHACHA20_C
 	bool
 	prompt "CHACHA20 stream cipher support"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20 if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_STREAM_CIPHER if PSA_CRYPTO_CLIENT
@@ -513,7 +513,7 @@ config MBEDTLS_CHACHA20_C
 config MBEDTLS_POLY1305_C
 	bool
 	prompt "POLY1305 module support"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
 	help
 	  Enable the POLY1305 module.
@@ -523,7 +523,7 @@ config MBEDTLS_CHACHAPOLY_C
 	bool
 	prompt "CHACHA-POLY module support"
 	depends on (MBEDTLS_CHACHA20_C && MBEDTLS_POLY1305_C)
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT || MBEDTLS_USE_PSA_CRYPTO)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
 	help
 	  Enable the CHACHA-POLY module.
@@ -612,7 +612,7 @@ config MBEDTLS_ECP_DP_SECP224R1_ENABLED
 
 config MBEDTLS_ECP_DP_SECP256R1_ENABLED
 	bool "Enable NIST curve secp256r1"
-	default y if !PSA_CRYPTO_CLIENT || MBEDTLS_TLS_LIBRARY || MBEDTLS_X509_LIBRARY
+	default y
 	select PSA_WANT_ECC_SECP_R1_256 if PSA_CRYPTO_CLIENT
 	help
 	  MBEDTLS_ECP_DP_SECP256R1_ENABLED setting in mbed TLS config file.
@@ -709,7 +709,7 @@ endif # MBEDTLS_ECP_C
 config MBEDTLS_HKDF_C
 	bool
 	prompt "HKDF support"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_HMAC if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_HKDF if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_TLS12_PRF if PSA_CRYPTO_CLIENT && MBEDTLS_TLS_LIBRARY
@@ -767,7 +767,7 @@ config MBEDTLS_MD5_C
 config MBEDTLS_SHA1_C
 	bool
 	prompt "SHA-1 hash functionality"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_1 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-1 hash functionality.
@@ -775,7 +775,7 @@ config MBEDTLS_SHA1_C
 config MBEDTLS_SHA224_C
 	bool
 	prompt "SHA-224 hash functionality"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_224 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-224 hash functionality.
@@ -783,7 +783,7 @@ config MBEDTLS_SHA224_C
 config MBEDTLS_SHA256_C
 	bool
 	prompt "SHA-256 hash functionality"
-	default y if !PSA_CRYPTO_CLIENT
+	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_SHA_256 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-256 hash functionality.
@@ -798,7 +798,7 @@ config MBEDTLS_SHA384_C
 	bool
 	prompt "SHA-384 hash functionality"
 	select MBEDTLS_SHA512_C
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_384 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-384 hash functionality.
@@ -806,7 +806,7 @@ config MBEDTLS_SHA384_C
 config MBEDTLS_SHA512_C
 	bool
 	prompt "SHA-512 hash functionality"
-	default y if !(NET_L2_OPENTHREAD || PSA_CRYPTO_CLIENT)
+	default y if !(NET_L2_OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_512 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-512 hash functionality.
