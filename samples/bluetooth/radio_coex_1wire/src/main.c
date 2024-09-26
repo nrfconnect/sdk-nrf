@@ -21,6 +21,9 @@
 #include <helpers/nrfx_gppi.h>
 #endif
 
+/* Predefined channels for radio events. */
+#include <protocol/mpsl_dppi_protocol_api.h>
+
 #define EGU_NODE DT_ALIAS(egu)
 #define NRF_EGU ((NRF_EGU_Type *) DT_REG_ADDR(EGU_NODE))
 #define EGU_EVENT_ID 4
@@ -113,6 +116,7 @@ static void console_print_thread(void)
 	}
 }
 
+#if defined(PPI_PRESENT)
 static nrf_ppi_channel_t allocate_gppi_channel(void)
 {
 	nrf_ppi_channel_t channel;
@@ -122,15 +126,21 @@ static nrf_ppi_channel_t allocate_gppi_channel(void)
 	}
 	return channel;
 }
+#endif
 
 static void setup_radio_event_counter(void)
 {
+#if defined(PPI_PRESENT)
 	nrf_ppi_channel_t channel = allocate_gppi_channel();
 
 	nrfx_gppi_channel_endpoints_setup(
 		channel, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY),
 		nrf_egu_task_address_get(NRF_EGU, EGU_TASK));
 	nrfx_ppi_channel_enable(channel);
+#else
+	/* Radio events are published on predefined channels. */
+	nrf_egu_subscribe_set(NRF_EGU, EGU_TASK, MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX);
+#endif
 
 	IRQ_DIRECT_CONNECT(DT_IRQN(EGU_NODE), 5, egu_handler, 0);
 	nrf_egu_int_enable(NRF_EGU, EGU_INT);

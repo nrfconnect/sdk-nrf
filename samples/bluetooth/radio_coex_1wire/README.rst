@@ -27,10 +27,25 @@ Enter ``g`` to grant or ``d`` to deny Bluetooth radio activity.
 * The number of packets transmitted is tracked by counting the RADIO->READY event.
 * The total number of transmitted packets is printed every second.
 
+Wiring
+******
+
 The application generates a grant signal on the pin selected by ``coex-pta-grant-gpios``.
 Connect this pin to the pin defined by the ``grant-gpios`` property in the DTS using a jumper cable.
 
-On the ``nrf52840dk_nrf52840`` target, the default pins are **P0.26** and **P0.02**.
+The following table shows the default pins used for this sample for each supported target:
+
+.. table::
+   :align: center
+
+   +----------------------------+----------------------+-------------+
+   | Target                     | coex-pta-grant-gpios | grant-gpios |
+   +============================+======================+=============+
+   | nrf52840dk/nrf52840        | P0.26                | P0.02       |
+   +----------------------------+----------------------+-------------+
+   | nrf54l15dk/nrf54l15/cpuapp | P0.00                | P0.02       |
+   +----------------------------+----------------------+-------------+
+
 
 The board's :ref:`/zephyr,user <dt-zephyr-user>` node must have the ``coex-pta-grant-gpios`` property set in the devicetree.
 You can use this sample's board overlay as an example.
