@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
- &uart20 {
+&uart20 {
         compatible = "nordic,nrf-uarte";
         current-speed = <115200>;
         status = "okay";

@@ -27,7 +27,7 @@ target_include_directories(platform_s
   ${ZEPHYR_BASE}/soc/nordic/common
   )
 
-# nrf54l15_enga_application.h should be defining __ICACHE_PRESENT, but
+# nrf54l15_application.h should be defining __ICACHE_PRESENT, but
 # it is not, until this is fixed we define it here.
 target_compile_definitions(platform_s
   PRIVATE

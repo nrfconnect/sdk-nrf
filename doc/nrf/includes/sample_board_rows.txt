@@ -226,14 +226,14 @@
 
 | :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk/nrf54l15/cpuapp`` |
 
-.. nrf54l15pdk_nrf54l15_cpuapp_ns
-
-| :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk/nrf54l15/cpuapp/ns`` |
-
 .. nrf54l15pdk@0.3.0_nrf54l15_cpuapp
 
 | :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` | PCA10156 | :ref:`nrf54l15pdk <zephyr:nrf54l15pdk_nrf54l15>` | ``nrf54l15pdk@0.3.0/nrf54l15/cpuapp`` |
 
 .. nrf54l15dk_nrf54l15_cpuapp
 
-| nRF54L15 DK | PCA10156 | :ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>` | ``nrf54l15dk/nrf54l15/cpuapp`` |
+| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>` | ``nrf54l15dk/nrf54l15/cpuapp`` |
+
+.. nrf54l15dk_nrf54l15_cpuapp_ns
+
+| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>` | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |

@@ -126,7 +126,14 @@ Developing with PMICs
 Security
 ========
 
-* The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option was added to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed.
+Added:
+
+* The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed. The default IKG seed slot is now 183 (previously 0).
+* TF-M support to the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``).
+
+Removed:
+
+* TF-M support from the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
 
 Protocols
 =========
@@ -511,7 +518,7 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target, replacing ``nrf54l15pdk/nrf54l15/cpuapp/ns``.
 
 Debug samples
 -------------
@@ -563,7 +570,7 @@ Matter samples
     * Added :ref:`Matter Lock schedule snippet <matter_lock_snippets>`, and updated the documentation to use the snippet.
 
 * Enabled the :ref:`ug_thread_build_report` generation in all samples.
-* Removed support for the nRF54L15 PDK in all samples, except for the ``*/ns`` :ref:`variant <app_boards_names>`.
+* Removed support for the nRF54L15 PDK in all samples.
 
 Networking samples
 ------------------
@@ -635,7 +642,7 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* Replaced support for the ``nrf54l15pdk/nrf54l15/cpuapp/ns`` board target with ``nrf54l15dk/nrf54l15/cpuapp/ns``.
 
 Thread samples
 --------------

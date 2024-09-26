@@ -116,17 +116,17 @@ Matter template with Trusted Firmware-M
 The sample supports using :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 DK.
 The memory map of the sample has been aligned to meet the :ref:`ug_tfm_partition_alignment_requirements`.
 
-You can build the sample with Trusted Firmware-M support by adding the ``ns`` suffix to the ``nrf54l15pdk/nrf54l15/cpuapp`` build target.
+You can build the sample with Trusted Firmware-M support by adding the ``ns`` suffix to the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
 
 For example:
 
 .. code-block:: console
 
-    west build -p -b nrf54l15pdk/nrf54l15/cpuapp/ns
+    west build -p -b nrf54l15dk/nrf54l15/cpuapp/ns
 
 .. note::
 
-   The firmware built for ``nrf54l15pdk/nrf54l15/cpuapp/ns`` will not work on the nRF54L15 DK.
+   The firmware built for ``nrf54l15dk/nrf54l15/cpuapp/ns`` will not work on the nRF54L15 PDK.
 
 .. matter_template_build_with_tfm_end
 
