@@ -515,6 +515,48 @@ Testing
             * Packet detection does not take place in a clean RF environment.
             * The command will timeout if no packets are detected within set timeout period.
 
+         * To set a regulatory domain with the following configuration:
+
+           * Regulatory domain: US
+
+           Execute the following command:
+
+           .. code-block:: console
+
+              wifi_radio_test reg_domain US
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+              wifi_radio_test show_config
+              reg_domain = US
+
+         .. note::
+
+            The default regulatory domain is ``00`` (world regulatory).
+
+         * To bypass regulatory domain, set ``bypass_reg_domain`` to ``1`` using the following command:
+
+           .. code-block:: console
+
+              wifi_radio_test bypass_reg_domain 1
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+               wifi_radio_test show_config
+               reg_domain = US
+               bypass_reg_domain = 1
+
+         .. note::
+
+            Bypass regulatory domain is false by default.
+
+            If ``bypass_reg_domain`` is ``0``, then TX power of the channel will be configured to the minimum value of the user configured TX power value and maximum power supported in the configured regulatory domain.
+
+            If ``bypass_reg_domain`` is ``1``, then user configured TX power value will be set overriding current configured regulatory domain maximum TX power for the channel.
 
       .. group-tab:: FICR/OTP programming
 
@@ -597,50 +639,6 @@ Testing
               [00:24:25.202,575] <inf> otp_prog: mac addr 0 : Reg2 (0x12c) = 0x4a00
               [00:24:25.202,606] <inf> otp_prog: Written REGION_DEFAULTS (0x154) : 0xfffffffb
               [00:24:25.203,002] <inf> otp_prog: Finished Writing OTP params
-
-
-         * To set a regulatory domain with the following configuration:
-
-           * Regulatory domain: US
-
-           Execute the following command:
-
-           .. code-block:: console
-
-              wifi_radio_test reg_domain US
-
-           The sample shows the following output:
-
-           .. code-block:: console
-
-              wifi_radio_test show_config
-              reg_domain = US
-
-         .. note::
-
-            The default regulatory domain is ``00`` (world regulatory).
-
-         * To bypass regulatory domain, set ``bypass_reg_domain`` to ``1`` using the following command:
-
-           .. code-block:: console
-
-              wifi_radio_test bypass_reg_domain 1
-
-           The sample shows the following output:
-
-           .. code-block:: console
-
-               wifi_radio_test show_config
-               reg_domain = US
-               bypass_reg_domain = 1
-
-         .. note::
-
-            Bypass regulatory domain is false by default.
-
-            If ``bypass_reg_domain`` is ``0``, then TX power of the channel will be configured to the minimum value of the user configured TX power value and maximum power supported in the configured regulatory domain.
-
-            If ``bypass_reg_domain`` is ``1``, then user configured TX power value will be set overriding current configured regulatory domain maximum TX power for the channel.
 
          See :ref:`wifi_radio_ficr_prog_subcmds` for a list of available subcommands.
 
