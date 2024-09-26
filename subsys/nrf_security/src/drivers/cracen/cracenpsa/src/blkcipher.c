@@ -401,7 +401,6 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				  size_t *output_length)
 {
 	__ASSERT_NO_MSG(input != NULL || input_length == 0);
-	__ASSERT_NO_MSG(output != NULL);
 	__ASSERT_NO_MSG(output_length != NULL);
 
 	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
@@ -412,7 +411,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		return PSA_SUCCESS;
 	}
 
-	if (output_size < input_length + operation->unprocessed_input_bytes) {
+	if (output == NULL || output_size < input_length + operation->unprocessed_input_bytes) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
