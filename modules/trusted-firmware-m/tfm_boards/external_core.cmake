@@ -91,6 +91,12 @@ if(TARGET psa_crypto_library_config)
             ${OBERON_PSA_CORE_PATH}/include
             ${NRF_DIR}/include/tfm
     )
+
+    target_compile_definitions(psa_crypto_library_config
+        INTERFACE
+            MBEDTLS_PSA_CRYPTO_DRIVERS
+            $<$<BOOL:${CRYPTO_TFM_BUILTIN_KEYS_DRIVER}>:MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY>
+    )
 endif()
 
 if(TARGET tfm_psa_rot_partition_crypto)
