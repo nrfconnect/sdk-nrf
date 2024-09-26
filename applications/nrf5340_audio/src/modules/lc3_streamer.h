@@ -12,14 +12,20 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
+struct lc3_stream_cfg {
+	uint32_t sample_rate_hz;
+	uint32_t bit_rate_bps;
+	uint32_t frame_duration_us;
+};
+
 /**
  * @brief Get the next frame for the stream.
  *
- * @details Populates a pointer to the buffer holding the next frame. This buffer is valid until
- *          the next call to this function. or stream is closed.
+ * @details	Populates a pointer to the buffer holding the next frame. This buffer is valid until
+ *		the next call to this function. or stream is closed.
  *
- * @param[in]   streamer_idx    Index of the streamer to get the next frame from.
- * @param[out]  frame_buffer    Pointer to the buffer holding the next frame.
+ * @param[in]	streamer_idx	Index of the streamer to get the next frame from.
+ * @param[out]	frame_buffer	Pointer to the buffer holding the next frame.
  *
  * @retval 0		Success.
  * @retval -EINVAL	Invalid streamer index.
@@ -29,6 +35,22 @@
  *			streaming. Call lc3_streamer_end_stream to clean context.
  */
 int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **const frame_buffer);
+
+/**
+ * @brief Verify that the LC3 header matches the stream configuration.
+ *
+ * @details	Verifies that the file is valid and can be used by the LC3 streamer.
+ *		Since there is no standard header for LC3 files, the header might be different than
+ *		what is defined in the struct lc3_file_header.
+ *
+ * @param[in]	filename	Name of the file to verify.
+ * @param[in]	cfg		Stream configuration to compare against.
+ *
+ * @retval	true	Success.
+ * @retval	false	Header is not matching the configuration.
+ */
+bool lc3_streamer_file_header_verify(const char *const filename,
+				     const struct lc3_stream_cfg *const cfg);
 
 /**
  * @brief Register a new stream that will be played by the LC3 streamer.
@@ -63,10 +85,10 @@ uint8_t lc3_streamer_num_active_streams(void);
  *          truncated.
  *
  * @param[in]	streamer_idx	Index of the streamer.
- * @param[out]	path		Pointer for string to store filepath in.
+ * @param[out]	path		Pointer for string to store file path in.
  * @param[in]	path_len	Length of string buffer.
  *
- * @retval	-EINVAL		Nullpointers or invalid index given.
+ * @retval	-EINVAL		Null pointers or invalid index given.
  * @retval	0		Success.
  */
 int lc3_streamer_file_path_get(const uint8_t streamer_idx, char *const path, const size_t path_len);

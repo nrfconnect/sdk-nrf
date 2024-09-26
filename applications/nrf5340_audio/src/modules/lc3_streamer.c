@@ -268,6 +268,64 @@ int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **cons
 	return 0;
 }
 
+bool lc3_streamer_file_header_verify(const char *const filename,
+				     const struct lc3_stream_cfg *const cfg)
+{
+	int ret;
+	bool result = true;
+
+	if (filename == NULL || cfg == NULL) {
+		LOG_ERR("NULL pointer received");
+		return false;
+	}
+
+	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN - 1) {
+		LOG_ERR("Filename too long");
+		return false;
+	}
+
+	struct lc3_file_ctx file;
+
+	ret = lc3_file_open(&file, filename);
+	if (ret) {
+		LOG_ERR("Failed to open file %d", ret);
+		return false;
+	}
+
+	struct lc3_file_header header;
+
+	ret = lc3_header_get(&file, &header);
+	if (ret) {
+		LOG_WRN("Failed to get header %d", ret);
+		return false;
+	}
+
+	if ((header.sample_rate * 100) != cfg->sample_rate_hz) {
+		LOG_WRN("Sample rate mismatch %d Hz != %d Hz", (header.sample_rate * 100),
+			cfg->sample_rate_hz);
+		result = false;
+	}
+
+	if ((header.bit_rate * 100) != cfg->bit_rate_bps) {
+		LOG_WRN("Bit rate mismatch %d bps != %d bps", (header.bit_rate * 100),
+			cfg->bit_rate_bps);
+		result = false;
+	}
+
+	if ((header.frame_duration * 10) != cfg->frame_duration_us) {
+		LOG_WRN("Frame duration mismatch %d us != %d us", (header.frame_duration * 10),
+			cfg->frame_duration_us);
+		result = false;
+	}
+
+	ret = lc3_file_close(&file);
+	if (ret) {
+		LOG_ERR("Failed to close file %d", ret);
+	}
+
+	return result;
+}
+
 int lc3_streamer_stream_register(const char *const filename, uint8_t *const streamer_idx,
 				 const bool loop)
 {
