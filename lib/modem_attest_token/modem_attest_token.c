@@ -43,7 +43,7 @@ int modem_attest_token_get(struct nrf_attestation_token *const token)
 
 	/* Execute AT command to get attestation token */
 	ret = nrf_modem_at_scanf(AT_ATTEST_CMD,
-		"%%ATTESTTOKEN: \"%127[^.].%127[^\"]\"", &attest, &cose);
+		"%%ATTESTTOKEN: \"%127[^.].%127[^\"]\"", attest, cose);
 	if (ret != 2) {
 		return -EBADMSG;
 	}
