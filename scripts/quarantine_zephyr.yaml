@@ -388,3 +388,8 @@
     - nrf54h20dk/nrf54h20/cpuapp
     - nrf54h20dk/nrf54h20/cpurad
   comment: "Won't be fixed, 'rodata will not fit in region FLASH' - no ticket"
+
+- scenarios:
+    - examples.nrfx_spim.blocking
+    - examples.nrfx_spim.non_blocking
+  comment: "Not fixable during upmerge, fix will be included in next upmerge"
