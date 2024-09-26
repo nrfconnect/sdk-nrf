@@ -5,8 +5,12 @@
  */
 
 
- /delete-node/ &cpuapp_rx_partitions;
- /delete-node/ &cpuapp_rw_partitions;
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
+/delete-node/ &cpuppr_vpr;
+/delete-node/ &cpuflpr_vpr;
+/delete-node/ &cpuapp_cpuppr_ipc;
+/delete-node/ &cpuapp_cpuflpr_ipc;
 
 &mram1x {
 	erase-block-size = < 0x1000 >;
