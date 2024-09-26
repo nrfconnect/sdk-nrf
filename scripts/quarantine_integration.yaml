@@ -113,7 +113,7 @@
     - sample.matter.thermostat.debug
     - sample.matter.window_cover.debug
   platforms:
-    - nrf54l15pdk/nrf54l15/cpuapp/ns
+    - nrf54l15dk/nrf54l15/cpuapp/ns
   comment: "Configurations excluded to limit resources usage in integration Matter ns builds"
 
 - scenarios:
