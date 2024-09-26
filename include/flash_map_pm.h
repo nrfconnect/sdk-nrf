@@ -29,7 +29,8 @@
 #define image_scratch mcuboot_scratch
 #define image_scratch mcuboot_scratch
 
-#if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS || defined(PM_SETTINGS_STORAGE_ID))
+#if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS || defined(PM_SETTINGS_STORAGE_ID) ||\
+	CONFIG_SETTINGS_ZMS)
 #define storage settings_storage
 #define storage_partition settings_storage
 #elif CONFIG_FILE_SYSTEM_LITTLEFS
@@ -38,6 +39,9 @@
 #elif CONFIG_NVS
 #define storage nvs_storage
 #define storage_partition nvs_storage
+#elif CONFIG_ZMS
+#define storage zms_storage
+#define storage_partition zms_storage
 #endif
 
 #define PM_ID(label) PM_##label##_ID
