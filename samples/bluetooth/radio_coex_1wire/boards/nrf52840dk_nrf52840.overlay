@@ -14,6 +14,10 @@
 		grant-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
 		concurrency-mode = <0>;
 	};
+
+	aliases {
+		egu = &egu0;
+	};
 };
 
 &radio {
