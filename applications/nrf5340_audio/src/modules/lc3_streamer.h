@@ -49,8 +49,8 @@ int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **cons
  * @retval	true	Success.
  * @retval	false	Header is not matching the configuration.
  */
-bool lc3_streamer_file_header_verify(const char *const filename,
-				     const struct lc3_stream_cfg *const cfg);
+bool lc3_streamer_file_compatible_check(const char *const filename,
+					const struct lc3_stream_cfg *const cfg);
 
 /**
  * @brief Register a new stream that will be played by the LC3 streamer.

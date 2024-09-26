@@ -268,8 +268,8 @@ int lc3_streamer_next_frame_get(const uint8_t streamer_idx, const uint8_t **cons
 	return 0;
 }
 
-bool lc3_streamer_file_header_verify(const char *const filename,
-				     const struct lc3_stream_cfg *const cfg)
+bool lc3_streamer_file_compatible_check(const char *const filename,
+					const struct lc3_stream_cfg *const cfg)
 {
 	int ret;
 	bool result = true;
