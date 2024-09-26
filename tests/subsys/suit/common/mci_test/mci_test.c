@@ -233,6 +233,11 @@ int suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id, u
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
+	if (key_id == 0)
+	{
+		return SUIT_PLAT_SUCCESS;
+	}
+
 	const manifest_config_t *manifest_config = find_manifest_config(class_id);
 
 	if (NULL == manifest_config) {
