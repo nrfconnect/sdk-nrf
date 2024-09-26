@@ -9,8 +9,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project("External radio Bluetooth coexistence sample")
 
-if (NOT CONFIG_SOC_SERIES_NRF52X)
-  message(FATAL_ERROR "This sample is only supported on the nRF52 series.")
+if (NOT CONFIG_SOC_SERIES_NRF52X AND NOT CONFIG_SOC_SERIES_NRF54LX)
+	message(FATAL_ERROR "This sample is only supported on the nRF52 and nRF54L series.")
 endif()
 
 # NORDIC SDK APP START
