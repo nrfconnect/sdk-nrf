@@ -183,7 +183,7 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 {
 	struct sx_pk_acq_req req = {NULL, SX_OK};
 
-	nrf_security_mutex_lock(cracen_mutex_asymmetric);
+	nrf_security_mutex_lock(&cracen_mutex_asymmetric);
 	req.req = &silex_pk_engine.instance;
 	req.req->cmd = cmd;
 	req.req->cnx = &silex_pk_engine;
@@ -220,7 +220,7 @@ void sx_pk_release_req(sx_pk_req *req)
 	cracen_release();
 	req->cmd = NULL;
 	req->userctxt = NULL;
-	nrf_security_mutex_unlock(cracen_mutex_asymmetric);
+	nrf_security_mutex_unlock(&cracen_mutex_asymmetric);
 }
 
 struct sx_regs *sx_pk_get_regs(void)

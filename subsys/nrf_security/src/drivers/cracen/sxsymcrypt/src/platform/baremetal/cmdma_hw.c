@@ -29,7 +29,7 @@ NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_symmetric);
 void sx_hw_reserve(struct sx_dmactl *dma)
 {
 	cracen_acquire();
-	nrf_security_mutex_lock(cracen_mutex_symmetric);
+	nrf_security_mutex_lock(&cracen_mutex_symmetric);
 
 	if (dma) {
 		dma->hw_acquired = true;
@@ -48,7 +48,7 @@ void sx_cmdma_release_hw(struct sx_dmactl *dma)
 {
 	if (dma == NULL || dma->hw_acquired) {
 		cracen_release();
-		nrf_security_mutex_unlock(cracen_mutex_symmetric);
+		nrf_security_mutex_unlock(&cracen_mutex_symmetric);
 		if (dma) {
 			dma->hw_acquired = false;
 		}
