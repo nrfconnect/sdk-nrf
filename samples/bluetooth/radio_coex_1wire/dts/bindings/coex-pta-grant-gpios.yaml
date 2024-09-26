@@ -1,0 +1,17 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    Coexistence PTA (Packet Traffic Arbiter) grant GPIOs
+
+include: base.yaml
+
+properties:
+  coex-pta-grant-gpios:
+    type: phandle-array
+    description: |
+      A phandle to the GPIO controller that provides the GRANT signal.
+      The GPIO controller must be defined in the device tree.
+    required: true
+
+compatible: "coex-pta-grant-gpios"
