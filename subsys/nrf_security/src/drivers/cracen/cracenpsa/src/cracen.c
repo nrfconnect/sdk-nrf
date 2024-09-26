@@ -51,7 +51,7 @@ static void cracen_load_microcode(void)
 
 void cracen_acquire(void)
 {
-	nrf_security_mutex_lock(cracen_mutex);
+	nrf_security_mutex_lock(&cracen_mutex);
 
 	if (users++ == 0) {
 		nrf_cracen_module_enable(NRF_CRACEN, CRACEN_ENABLE_CRYPTOMASTER_Msk |
@@ -61,12 +61,12 @@ void cracen_acquire(void)
 		LOG_DBG_MSG("Power on CRACEN.");
 	}
 
-	nrf_security_mutex_unlock(cracen_mutex);
+	nrf_security_mutex_unlock(&cracen_mutex);
 }
 
 void cracen_release(void)
 {
-	nrf_security_mutex_lock(cracen_mutex);
+	nrf_security_mutex_lock(&cracen_mutex);
 
 	if (--users == 0) {
 		/* Disable IRQs in the ARM NVIC as the first operation to be
@@ -102,7 +102,7 @@ void cracen_release(void)
 		LOG_DBG_MSG("Powered off CRACEN.");
 	}
 
-	nrf_security_mutex_unlock(cracen_mutex);
+	nrf_security_mutex_unlock(&cracen_mutex);
 }
 
 #define CRACEN_NOT_INITIALIZED 0x207467

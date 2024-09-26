@@ -12,19 +12,30 @@
  * One is backed by Zephyr events APIs (k_mutex_*), and other assumes
  * there are no threads thus it always returns success without doing anything.
  */
+#ifndef NRF_SECURITY_MUTEXES_H
+#define NRF_SECURITY_MUTEXES_H
 
 #include <stdint.h>
 
 #if defined(CONFIG_MULTITHREADING) && !defined(__NRF_TFM__)
-typedef struct k_mutex *nrf_security_mutex_t;
-#define NRF_SECURITY_MUTEX_DEFINE(mutex_name)                                                      \
-	K_MUTEX_DEFINE(k_##mutex_name);                                                            \
-	nrf_security_mutex_t mutex_name = &k_##mutex_name;
 
+#include <zephyr/kernel.h>
+
+typedef enum {
+	NRF_SECURITY_MUTEX_FLAGS_NONE = 0,
+	NRF_SECURITY_MUTEX_FLAGS_INITIALIZED = 1 << 0,
+} NRF_SECURITY_MUTEX_FLAGS;
+
+typedef struct { 
+	uint32_t 	flags;
+	struct k_mutex 	mutex; 
+} mbedtls_threading_mutex_t;
+
+#define NRF_SECURITY_MUTEX_DEFINE(mutex_name) mbedtls_threading_mutex_t mutex_name = {0}
 #else
-/* The uint8_t here is just a placeholder, this mutex type is not used */
-typedef uint8_t nrf_security_mutex_t;
-#define NRF_SECURITY_MUTEX_DEFINE(mutex_name) nrf_security_mutex_t mutex_name;
+/* The uint32_t here is just a placeholder, this mutex type is not used */
+typedef uint32_t mbedtls_threading_mutex_t;
+#define NRF_SECURITY_MUTEX_DEFINE(mutex_name) mbedtls_threading_mutex_t mutex_name;
 
 #endif
 
@@ -33,14 +44,14 @@ typedef uint8_t nrf_security_mutex_t;
  *
  * @param[in] mutex The mutex to initialized.
  */
-void nrf_security_mutex_init(nrf_security_mutex_t mutex);
+void nrf_security_mutex_init(mbedtls_threading_mutex_t * mutex);
 
 /**
  * @brief Free a mutex.
  *
  * @param[in] mutex The mutex to free.
  */
-void nrf_security_mutex_free(nrf_security_mutex_t mutex);
+void nrf_security_mutex_free(mbedtls_threading_mutex_t * mutex);
 
 /**
  * @brief Lock a mutex.
@@ -50,7 +61,7 @@ void nrf_security_mutex_free(nrf_security_mutex_t mutex);
  * @return Returns 0 if the mutex was successfully locked; otherwise, it returns
  *         an error code from the k_mutex_lock() function.
  */
-int nrf_security_mutex_lock(nrf_security_mutex_t mutex);
+int nrf_security_mutex_lock(mbedtls_threading_mutex_t * mutex);
 
 /**
  * @brief Unlock a mutex.
@@ -60,4 +71,6 @@ int nrf_security_mutex_lock(nrf_security_mutex_t mutex);
  * @return Returns 0 if the mutex was successfully unlocked; otherwise, it returns
  *         an error code from the k_mutex_unlock() function.
  */
-int nrf_security_mutex_unlock(nrf_security_mutex_t mutex);
+int nrf_security_mutex_unlock(mbedtls_threading_mutex_t * mutex);
+
+#endif /* NRF_SECURITY_MUTEXES_H */

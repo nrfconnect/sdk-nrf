@@ -13,11 +13,18 @@ if(CONFIG_MBEDTLS_THREADING_C AND NOT (CONFIG_PSA_CRYPTO_DRIVER_CC3XX OR CONFIG_
     threading_alt.c
   )
 
+  # Add include of threading_alt.h in interface build
+  target_include_directories(psa_crypto_config
+    INTERFACE
+      ${CMAKE_CURRENT_LIST_DIR}/include
+  )
+
   # Add include of threading_alt.h in library build
   target_include_directories(psa_crypto_library_config
     INTERFACE
       ${CMAKE_CURRENT_LIST_DIR}/include
   )
+
 
   # Add include of threading_alt.h in interface build
   target_include_directories(psa_crypto_config    
