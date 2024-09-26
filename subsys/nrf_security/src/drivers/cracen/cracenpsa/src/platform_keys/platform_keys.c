@@ -607,6 +607,7 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 	key.sicr.type = psa_get_key_type(attributes);
 	key.sicr.bits = psa_get_key_bits(attributes);
 
+	/* Generate the 4 first bytes of the nonce, the rest are padded with zeros */
 	status = psa_generate_random((uint8_t *)key.sicr.nonce, sizeof(key.sicr.nonce[0]));
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -662,6 +663,7 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 
 	NRF_MRAMC_Type *mramc = (NRF_MRAMC_Type *)DT_REG_ADDR(DT_NODELABEL(mramc));
 	nrf_mramc_config_t mramc_config, mramc_config_write_enabled;
+	nrf_mramc_readynext_timeout_t readynext_timeout, short_readynext_timeout;
 
 	nrf_mramc_config_get(mramc, &mramc_config);
 	mramc_config_write_enabled = mramc_config;
@@ -671,7 +673,6 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 
 	nrf_mramc_config_set(mramc, &mramc_config_write_enabled);
 
-	memcpy(key.sicr.nonce_addr, &key.sicr.nonce, sizeof(key.sicr.nonce));
 	memcpy(key.sicr.attr_addr, &attr, sizeof(attr));
 	if (key.sicr.type == PSA_KEY_TYPE_AES) {
 		memcpy(key.sicr.key_buffer, encrypted_key, key_buffer_size);
@@ -679,8 +680,19 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 		memcpy(key.sicr.key_buffer, key_buffer, key_buffer_size);
 	}
 
+	nrf_mramc_readynext_timeout_get(mramc, &readynext_timeout);
+
+	/* Ensure that nonce is committed to MRAM by setting MRAMC READYNEXT timeout to 0 */
+	short_readynext_timeout.value = 0;
+	short_readynext_timeout.direct_write = true;
+	nrf_mramc_readynext_timeout_set(mramc, &short_readynext_timeout);
+
+	/* Only store the 4 first bytes of the nonce, the rest are padded with zeros */
+	memcpy(key.sicr.nonce_addr, &key.sicr.nonce, sizeof(key.sicr.nonce[0]));
+
 	/* Restore MRAMC config */
 	nrf_mramc_config_set(mramc, &mramc_config);
+	nrf_mramc_readynext_timeout_set(mramc, &readynext_timeout);
 
 	return status;
 }
