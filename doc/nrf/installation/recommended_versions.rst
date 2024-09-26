@@ -296,6 +296,8 @@ They can all be installed using the ``doc/requirements.txt`` file using ``pip``.
      - Version
    * - azure-storage-blob
      - :ncs-tool-version:`AZURE_STORAGE_BLOB_VERSION`
+   * - breathe
+     - :ncs-tool-version:`BREATHE_VERSION`
    * - m2r2
      - :ncs-tool-version:`M2R2_VERSION`
    * - PyYAML
