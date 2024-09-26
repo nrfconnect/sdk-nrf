@@ -192,7 +192,7 @@ int gcf_sms_filter_callback(char *buf, size_t len, char *at_cmd)
 			/* AT command is filtered. */
 			err = (*callback)(buf_remaining, len_remaining, msg);
 		} else {
-			err = nrf_modem_at_cmd(buf_remaining, len_remaining, msg);
+			err = nrf_modem_at_cmd(buf_remaining, len_remaining, "%s", msg);
 		}
 
 		if (err != 0) {
@@ -370,7 +370,7 @@ static int at_cmd_callback_cmss(char *buf, size_t len, char *at_cmd)
 	}
 
 	/* Send AT+CMGS command to modem. */
-	err = nrf_modem_at_cmd(buf, len, "AT+CMGS=%d\r%s\x1a\0",
+	err = nrf_modem_at_cmd(buf, len, "AT+CMGS=%d\r%s\x1a",
 			       sms_buffers[sms_buffer_index].pdu_size,
 			       sms_buffers[sms_buffer_index].data);
 	if (err) {
@@ -393,7 +393,7 @@ static int at_cmd_callback_cmms(char *buf, size_t len, char *at_cmd)
 	int err;
 
 	/* Send to modem without buffer. */
-	err = nrf_modem_at_printf(at_cmd);
+	err = nrf_modem_at_printf("%s", at_cmd);
 	if (err) {
 		if (err > 0) {
 			LOG_ERR("%s failed, error_type: %d, error_value: %d", at_cmd,
