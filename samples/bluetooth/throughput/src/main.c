@@ -56,10 +56,6 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
-static const char img[] =
-#include "img.file"
-;
-
 static void button_handler_cb(uint32_t button_state, uint32_t has_changed);
 
 static const char *phy2str(uint8_t phy)
@@ -551,11 +547,6 @@ int test_run(const struct shell *shell,
 	int64_t delta;
 	uint32_t data = 0;
 
-	const char *img_ptr = img;
-	char str_buf[7];
-	int str_len;
-
-
 	/* a dummy data buffer */
 	static char dummy[495];
 
@@ -578,6 +569,9 @@ int test_run(const struct shell *shell,
 		return err;
 	}
 
+	shell_print(shell, "The test is in progress and will require around %d seconds "
+		"to complete.", CONFIG_BT_THROUGHPUT_DURATION / 1000);
+
 	/* Make sure that all BLE procedures are finished. */
 	k_sleep(K_MSEC(500));
 
@@ -591,35 +585,15 @@ int test_run(const struct shell *shell,
 	/* get cycle stamp */
 	stamp = k_uptime_get_32();
 
-	if (IS_ENABLED(CONFIG_BT_THROUGHPUT_FILE)) {
-		while (*img_ptr) {
-			err = bt_throughput_write(&throughput, dummy, 495);
-			if (err) {
-				shell_error(shell, "GATT write failed (err %d)", err);
-				break;
-			}
-
-			/* print graphics */
-			str_len = (*img_ptr == '\x1b') ? 6 : 1;
-			memcpy(str_buf, img_ptr, str_len);
-			str_buf[str_len] = '\0';
-			img_ptr += str_len;
-			printk("%s", str_buf);
-
-			data += 495;
+	while (true) {
+		err = bt_throughput_write(&throughput, dummy, 495);
+		if (err) {
+			shell_error(shell, "GATT write failed (err %d)", err);
+			break;
 		}
-	} else {
-		delta = 0;
-		while (true) {
-			err = bt_throughput_write(&throughput, dummy, 495);
-			if (err) {
-				shell_error(shell, "GATT write failed (err %d)", err);
-				break;
-			}
-			data += 495;
-			if (k_uptime_get_32() - stamp > CONFIG_BT_THROUGHPUT_DURATION) {
-				break;
-			}
+		data += 495;
+		if (k_uptime_get_32() - stamp > CONFIG_BT_THROUGHPUT_DURATION) {
+			break;
 		}
 	}
 

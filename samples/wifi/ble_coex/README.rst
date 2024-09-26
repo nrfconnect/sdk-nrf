@@ -105,12 +105,9 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 
 * Wi-Fi throughput test: Set the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option appropriately as per the Wi-Fi interface IP address of the test PC on which iPerf is run.
 
-Set up the following configuration parameters in the :file:`Kconfig.conf` file of the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder.
-
-* File or time-based throughput: Use :kconfig:option:`CONFIG_BT_THROUGHPUT_FILE` to select file or time-based throughput test.
-  Set it to ``n`` to enable time-based throughput test only when running Bluetooth LE throughput in central role.
-* Test duration: Use :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION` to set the duration of the Bluetooth LE throughput test only when running Bluetooth LE throughput in central role.
-  The units are in milliseconds.
+Set up the test duration configuration parameters in the :file:`Kconfig.conf` file of the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder.
+Use :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION` to set the duration of the Bluetooth LE throughput test only when running Bluetooth LE throughput in central role.
+The units are in milliseconds.
 
 .. note::
    Use the same test duration value for :kconfig:option:`CONFIG_WIFI_TEST_DURATION`, :kconfig:option:`CONFIG_BLE_TEST_DURATION`, and :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION`.
