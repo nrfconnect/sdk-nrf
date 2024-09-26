@@ -1587,40 +1587,31 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 	struct bt_audio_codec_cfg *codec_cfg =
 		&broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.codec_cfg;
 
-	int freq_hz = 0;
+	struct lc3_stream_cfg cfg;
 
-	ret = le_audio_freq_hz_get(codec_cfg, &freq_hz);
+	ret = le_audio_freq_hz_get(codec_cfg, &cfg.sample_rate_hz);
 	if (ret) {
 		shell_error(shell, "Failed to get frequency: %d", ret);
 		return ret;
 	}
 
-	int frame_duration = 0;
-
-	ret = le_audio_duration_us_get(codec_cfg, &frame_duration);
+	ret = le_audio_duration_us_get(codec_cfg, &cfg.frame_duration_us);
 	if (ret) {
 		shell_error(shell, "Failed to get frame duration: %d", ret);
 	}
 
-	uint32_t bit_rate = 0;
-
-	ret = le_audio_bitrate_get(codec_cfg, &bit_rate);
+	ret = le_audio_bitrate_get(codec_cfg, &cfg.bit_rate_bps);
 	if (ret) {
 		shell_error(shell, "Failed to get bitrate: %d", ret);
 	}
 
-	struct lc3_stream_cfg cfg = {
-		.sample_rate_hz = freq_hz,
-		.bit_rate_bps = bit_rate,
-		.frame_duration_us = frame_duration,
-	};
-
-	/* Verify the file header */
+	/* Verify that the file header matches the stream configurationn */
 	/* NOTE: This will not abort the streamer if the file is not valid, only give a warning */
-	bool result = lc3_streamer_file_header_verify(file_name, &cfg);
+	bool header_valid = lc3_streamer_file_compatible_check(file_name, &cfg);
 
-	if (!result) {
-		shell_warn(shell, "File header verification failed, continue at own risk");
+	if (!header_valid) {
+		shell_warn(shell, "File header verification failed. File may not be compatible "
+				  "with stream config.");
 	}
 
 	ret = lc3_streamer_stream_register(

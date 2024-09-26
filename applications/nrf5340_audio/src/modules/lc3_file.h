@@ -40,7 +40,7 @@ struct lc3_file_ctx {
  * @retval -EINVAL	Invalid file context.
  * @retval 0		Success.
  */
-int lc3_header_get(struct lc3_file_ctx *file, struct lc3_file_header *header);
+int lc3_header_get(struct lc3_file_ctx const *const file, struct lc3_file_header *header);
 
 /**
  * @brief Get the next LC3 frame from the file.

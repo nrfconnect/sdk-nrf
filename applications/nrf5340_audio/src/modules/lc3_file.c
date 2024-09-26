@@ -28,7 +28,7 @@ static void lc3_header_print(struct lc3_file_header *header)
 	LOG_DBG("Num samples: %d", header->signal_len_lsb | (header->signal_len_msb << 16));
 }
 
-int lc3_header_get(struct lc3_file_ctx *file, struct lc3_file_header *header)
+int lc3_header_get(struct lc3_file_ctx const *const file, struct lc3_file_header *header)
 {
 	if ((file == NULL) || (header == NULL)) {
 		LOG_ERR("Nullptr received");
