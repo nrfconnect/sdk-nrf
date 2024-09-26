@@ -24,7 +24,7 @@
 #ifndef PSA_CRYPTO_DRIVER_CONTEXTS_PRIMITIVES_H
 #define PSA_CRYPTO_DRIVER_CONTEXTS_PRIMITIVES_H
 
-#include "common.h"
+#include "oberon_psa_common.h"
 
 #include "psa/crypto_driver_common.h"
 
