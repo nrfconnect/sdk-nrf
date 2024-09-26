@@ -32,6 +32,17 @@ struct lc3_file_ctx {
 };
 
 /**
+ * @brief Get the LC3 header from the file.
+ *
+ * @param[in]	file	Pointer to the file context.
+ * @param[out]	header	Pointer to the header structure to store the header.
+ *
+ * @retval -EINVAL	Invalid file context.
+ * @retval 0		Success.
+ */
+int lc3_header_get(struct lc3_file_ctx *file, struct lc3_file_header *header);
+
+/**
  * @brief Get the next LC3 frame from the file.
  *
  * @param[in]	file		Pointer to the file context.

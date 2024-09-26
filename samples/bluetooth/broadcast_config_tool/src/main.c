@@ -1584,6 +1584,45 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 	LOG_DBG("Selecting file %s for stream big: %d sub: %d bis: %d", file_name, big_index,
 		sub_index, bis_index);
 
+	struct bt_audio_codec_cfg *codec_cfg =
+		&broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.codec_cfg;
+
+	int freq_hz = 0;
+
+	ret = le_audio_freq_hz_get(codec_cfg, &freq_hz);
+	if (ret) {
+		shell_error(shell, "Failed to get frequency: %d", ret);
+		return ret;
+	}
+
+	int frame_duration = 0;
+
+	ret = le_audio_duration_us_get(codec_cfg, &frame_duration);
+	if (ret) {
+		shell_error(shell, "Failed to get frame duration: %d", ret);
+	}
+
+	uint32_t bit_rate = 0;
+
+	ret = le_audio_bitrate_get(codec_cfg, &bit_rate);
+	if (ret) {
+		shell_error(shell, "Failed to get bitrate: %d", ret);
+	}
+
+	struct lc3_stream_cfg cfg = {
+		.sample_rate_hz = freq_hz,
+		.bit_rate_bps = bit_rate,
+		.frame_duration_us = frame_duration,
+	};
+
+	/* Verify the file header */
+	/* NOTE: This will not abort the streamer if the file is not valid, only give a warning */
+	bool result = lc3_streamer_file_header_verify(file_name, &cfg);
+
+	if (!result) {
+		shell_warn(shell, "File header verification failed, continue at own risk");
+	}
+
 	ret = lc3_streamer_stream_register(
 		file_name, &lc3_stream_infos[big_index][sub_index].lc3_streamer_idx[bis_index],
 		true);
