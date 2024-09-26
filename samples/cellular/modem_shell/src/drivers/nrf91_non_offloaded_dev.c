@@ -108,10 +108,8 @@ static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret
 {
 	struct at_parser parser;
 	size_t param_str_len;
-	char at_cmd_str[16];
 	char at_cmd_response_str[512];
 	char dns_addr_str[128];
-	char *at_ptr = at_cmd_response_str;
 	int ret, family, iterator;
 	struct in_addr *addr;
 	struct in6_addr *addr6;
@@ -119,16 +117,15 @@ static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret
 	uint32_t mtu;
 	int family_for_mtu;
 
-	sprintf(at_cmd_str, AT_CMD_PDP_CONTEXT_READ_DYN_INFO, cid);
-
-	ret = nrf_modem_at_cmd(at_cmd_response_str, sizeof(at_cmd_response_str), at_cmd_str);
+	ret = nrf_modem_at_cmd(at_cmd_response_str, sizeof(at_cmd_response_str),
+			       AT_CMD_PDP_CONTEXT_READ_DYN_INFO, cid);
 	if (ret) {
 		mosh_error("Cannot get PDP conn dyn params, ret: %d", ret);
 		return false;
 	}
 
 	/* Parse the response */
-	ret = at_parser_init(&parser, at_ptr);
+	ret = at_parser_init(&parser, at_cmd_response_str);
 	if (ret) {
 		mosh_error("Could not init AT parser, error: %d\n", ret);
 		return ret;
