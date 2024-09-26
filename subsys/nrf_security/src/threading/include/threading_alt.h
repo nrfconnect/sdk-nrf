@@ -7,9 +7,7 @@
 #ifndef MBEDTLS_THREADING_ALT_H
 #define MBEDTLS_THREADING_ALT_H
 
-#include <zephyr/kernel.h>
 #include "mbedtls/build_info.h"
-
-typedef struct k_mutex mbedtls_threading_mutex_t;
+#include "nrf_security_mutexes.h"
 
 #endif /* MBEDTLS_THREADING_ALT_H */
