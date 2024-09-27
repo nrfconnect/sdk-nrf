@@ -751,7 +751,15 @@ Modem libraries
 
 * :ref:`modem_info_readme` library:
 
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated:
+
+    * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+    * The formulas of RSRP and RSRQ values in :c:macro:`RSRP_IDX_TO_DBM` and :c:macro:`RSRQ_IDX_TO_DB` based on AT command reference guide updates.
+      The formulas are now aligned with the modem implementation that has not changed
+      but the AT command reference guide has not been up to date with the modem implementation.
+
+  * Removed ``RSRP_OFFSET_VAL``, ``RSRQ_OFFSET_VAL`` and ``RSRQ_SCALE_VAL`` from the API.
+    Clients should have used the :c:macro:`RSRP_IDX_TO_DBM` and the :c:macro:`RSRQ_IDX_TO_DB` macros.
 
 * :ref:`nrf_modem_lib_lte_net_if` library:
 

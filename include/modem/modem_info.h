@@ -31,15 +31,6 @@ extern "C" {
 /** Size of the JSON string. */
 #define MODEM_INFO_JSON_STRING_SIZE 512
 
-/** RSRP offset value. */
-#define RSRP_OFFSET_VAL 140
-
-/** RSRQ offset value. */
-#define RSRQ_OFFSET_VAL 19.5f
-
-/** RSRQ scale value. */
-#define RSRQ_SCALE_VAL 0.5f
-
 /** Modem firmware version string can be up to 40 characters long. */
 #define MODEM_INFO_FWVER_SIZE 41
 
@@ -57,14 +48,78 @@ extern "C" {
 /** SNR offset value. */
 #define SNR_OFFSET_VAL 24
 
-/** Modem returns RSRP and RSRQ as index values which require
- * a conversion to dBm and dB respectively. See modem AT
- * command reference guide for more information.
+/** @brief Converts RSRP index value returned by the modem to dBm.
+ *
+ * The index value of RSRP can be converted to dBm with the following formula:
+ * * index < 0: index – 140
+ * * index = 0: Not used
+ * * index > 0: index – 141
+ *
+ * Example values:
+ * * -17: RSRP < -156 dBm
+ * * -16: -156 ≤ RSRP < -155 dBm
+ * * ...
+ * * -3: -143 ≤ RSRP < -142 dBm
+ * * -2: -142 ≤ RSRP < -141 dBm
+ * * -1: -141 ≤ RSRP < -140 dBm
+ * * 0: Not used.
+ * * 1: -140 ≤ RSRP < -139 dBm
+ * * 2: -139 ≤ RSRP < -138 dBm
+ * * ...
+ * * 95: -46 ≤ RSRP < -45 dBm
+ * * 96: -45 ≤ RSRP < -44 dBm
+ * * 97: -44 ≤ RSRP dBm
+ *
+ * There are use cases where the index value 0 is used to represent RSRP < -140 dBm.
+ *
+ * See modem AT command reference guide for more information.
+ *
+ * @param[in] rsrp RSRP index value as 'int'.
+ *
+ * @return RSRP in dBm as 'int'.
  */
-#define RSRP_IDX_TO_DBM(rsrp) ((rsrp) - RSRP_OFFSET_VAL)
+#define RSRP_IDX_TO_DBM(rsrp) ((rsrp) < 0 ?  (rsrp) - 140 : (rsrp) - 141)
 
-#define RSRQ_IDX_TO_DB(rsrq) ((((float)(rsrq)) * RSRQ_SCALE_VAL) - \
-			      RSRQ_OFFSET_VAL)
+/** @brief Converts RSRQ index value returned by the modem to dB.
+ *
+ * The index value of RSRQ can be converted to dB with the following formula:
+ * * index < 0: (index – 39) / 2
+ * * index = 0: Not used
+ * * index > 0 and index < 35: (index – 40) / 2
+ * * index ≥ 35: (index – 41) / 2
+ *
+ * Example values:
+ * * -30: RSRQ < -34.5 dB
+ * * -29: -34 ≤ RSRQ < -33.5 dB
+ * * ...
+ * * -2: -20.5 ≤ RSRQ < -20 dB
+ * * -1: -20 ≤ RSRQ < -19.5 dB
+ * * 0: Not used.
+ * * 1: -19.5 ≤ RSRQ < -19 dB
+ * * 2: -19 ≤ RSRQ < -18.5 dB
+ * * ...
+ * * 32: -4 ≤ RSRQ < -3.5 dB
+ * * 33: -3.5 ≤ RSRQ < -3 dB
+ * * 34: -3 ≤ RSRQ dB
+ * * 35: -3 ≤ RSRQ < -2.5 dB
+ * * 36: -2.5 ≤ RSRQ < -2 dB
+ * * ...
+ * * 45: 2 ≤ RSRQ < 2.5 dB
+ * * 46: 2.5 ≤ RSRQ dB
+ *
+ * There are use cases where the index value 0 is used to represent RSRQ < −19.5 dB.
+ *
+ * See modem AT command reference guide for more information.
+ *
+ * @param[in] rsrq RSRQ index value as 'int'.
+ *
+ * @return RSRQ in dB as 'float'.
+ */
+#define RSRQ_IDX_TO_DB(rsrq) ((rsrq) < 0 ? \
+			      (((float)(rsrq) - 39) * 0.5f) : \
+			      ((rsrq) < 35 ? \
+			       (((float)(rsrq) - 40) * 0.5f) : \
+			       (((float)(rsrq) - 41) * 0.5f)))
 
 /**@brief RSRP event handler function prototype. */
 typedef void (*rsrp_cb_t)(char rsrp_value);

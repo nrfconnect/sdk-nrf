@@ -873,7 +873,7 @@ int modem_info_get_rsrp(int *val)
 		return -ENOENT;
 	}
 
-	*val = *val - RSRP_OFFSET_VAL;
+	*val = RSRP_IDX_TO_DBM(*val);
 	return 0;
 }
 
