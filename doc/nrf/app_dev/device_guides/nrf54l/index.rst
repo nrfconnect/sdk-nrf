@@ -22,17 +22,11 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - Board target
      - Documentation
      - Product pages
-   * - :ref:`zephyr:nrf54l15pdk_nrf54l15`
+   * - :ref:`zephyr:nrf54l15dk_nrf54l15`
      - PCA10156
-     - | ``nrf54l15pdk@0.2.1/nrf54l15/cpuapp`` for the PDK revision v0.2.1, AB0-ES7 (Engineering A).
-       | ``nrf54l15pdk/nrf54l15/cpuapp`` for the PDK revisions v0.3.0 and v0.7.0 (Engineering A).
+     - ``nrf54l15dk/nrf54l51/cpuapp``
      - :ref:`Getting started <gsg_other>`
      - `nRF54L15 System-on-Chip`_
-
-.. note::
-
-  The v0.2.1 revision of the nRF54L15 PDK has **Button 3** and **Button 4** connected to GPIO port 2 that do not support interrupts.
-  The workaround for this issue is enabled by default with the :kconfig:option:`CONFIG_DK_LIBRARY_BUTTON_NO_ISR` Kconfig option, but it increases the overall power consumption of the system.
 
 .. toctree::
    :maxdepth: 2
