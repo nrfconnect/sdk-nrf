@@ -127,7 +127,8 @@ doxyrunner_outdir = utils.get_builddir() / "html" / "nrf" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRF_BASE": str(NRF_BASE),
-    "NRF_BINARY_DIR": str(utils.get_builddir() / "nrf"),
+    "DOCSET_SOURCE_BASE": str(NRF_BASE),
+    "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
 }
 
 # create mbedtls config header (needed for Doxygen)

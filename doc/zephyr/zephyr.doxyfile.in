@@ -42,13 +42,13 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "nRF Connect SDK API"
+PROJECT_NAME           = "Zephyr API"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 0.1.0
+PROJECT_NUMBER         = "3.6.99"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -174,7 +174,7 @@ FULL_PATH_NAMES        = YES
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = @DOCSET_SOURCE_BASE@
+STRIP_FROM_PATH        = @DOCSET_SOURCE_BASE@/include
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -199,7 +199,7 @@ SHORT_NAMES            = NO
 # description.)
 # The default value is: NO.
 
-JAVADOC_AUTOBRIEF      = NO
+JAVADOC_AUTOBRIEF      = YES
 
 # If the JAVADOC_BANNER tag is set to YES then doxygen will interpret a line
 # such as
@@ -217,7 +217,7 @@ JAVADOC_BANNER         = NO
 # requiring an explicit \brief command for a brief description.)
 # The default value is: NO.
 
-QT_AUTOBRIEF           = NO
+QT_AUTOBRIEF           = YES
 
 # The MULTILINE_CPP_IS_BRIEF tag can be set to YES to make doxygen treat a
 # multi-line C++ special comment block (i.e. a block of //! or /// comments) as
@@ -250,7 +250,7 @@ INHERIT_DOCS           = YES
 # of the file/class/namespace that contains it.
 # The default value is: NO.
 
-SEPARATE_MEMBER_PAGES  = YES
+SEPARATE_MEMBER_PAGES  = NO
 
 # The TAB_SIZE tag can be used to set the number of spaces in a tab. Doxygen
 # uses this value to replace tabs by spaces in code fragments.
@@ -273,14 +273,21 @@ TAB_SIZE               = 8
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                = "rst=\verbatim embed:rst" \
-                         "endrst=\endverbatim" \
-                         "rststar=\verbatim embed:rst:leading-asterisk" \
-                         "endrststar=\endverbatim" \
-                         "r=\verbatim embed:rst:leading-asterisk" \
-                         "er=\endverbatim" \
-                         "kconfig{1}=\verbatim embed:rst:inline :kconfig:option:`\1` \endverbatim" \
-                         "req=\xrefitem req \"Requirement\" \"Requirements\""
+ALIASES                = "rst=\verbatim embed:rst:leading-asterisk" \
+                         endrst=\endverbatim \
+                         "kconfig{1}=\htmlonly <code>\1</code> \endhtmlonly \xmlonly <verbatim>embed:rst:inline :kconfig:option:`\1`</verbatim> \endxmlonly" \
+                         "req{1}=\ref ZEPH_\1 \"ZEPH-\1\"" \
+                         "satisfy{1}=\xrefitem satisfy \"Satisfies requirement\" \"Requirement Implementation\" \1" \
+                         "verify{1}=\xrefitem verify \"Verifies requirement\" \"Requirement Verification\" \1" \
+                         "funcprops=\par \"Function properties (list may not be complete)\"" \
+                         "reschedule=\htmlonly reschedule \endhtmlonly \xmlonly <verbatim>embed:rst:inline :ref:`api_term_reschedule`</verbatim> \endxmlonly" \
+                         "sleep=\htmlonly sleep \endhtmlonly \xmlonly <verbatim>embed:rst:inline :ref:`api_term_sleep`</verbatim> \endxmlonly" \
+                         "no_wait=\htmlonly no-wait \endhtmlonly \xmlonly <verbatim>embed:rst:inline :ref:`api_term_no-wait`</verbatim> \endxmlonly" \
+                         "isr_ok=\htmlonly isr-ok \endhtmlonly \xmlonly <verbatim>embed:rst:inline :ref:`api_term_isr-ok`</verbatim> \endxmlonly" \
+                         "pre_kernel_ok=\htmlonly pre-kernel-ok \endhtmlonly \xmlonly <verbatim>embed:rst:inline :ref:`api_term_pre-kernel-ok`</verbatim> \endxmlonly" \
+                         "async=\htmlonly async \endhtmlonly \xmlonly <verbatim>embed:rst:inline :ref:`api_term_async`</verbatim> \endxmlonly" \
+                         "atomic_api=As for all atomic APIs, includes a full/sequentially-consistent memory barrier (where applicable)." \
+                         "supervisor=\htmlonly supervisor \endhtmlonly \xmlonly <verbatim>embed:rst:inline :ref:`api_term_supervisor`</verbatim> \endxmlonly"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
@@ -914,10 +921,15 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @DOCSET_SOURCE_BASE@/applications \
-                         @DOCSET_SOURCE_BASE@/lib \
-                         @DOCSET_SOURCE_BASE@/include \
-                         @DOCSET_SOURCE_BASE@/subsys/zigbee/osif/zb_nrf_platform.h
+INPUT                  = @DOCSET_SOURCE_BASE@/doc/_doxygen/mainpage.md \
+                         @DOCSET_SOURCE_BASE@/doc/_doxygen/groups.dox \
+                         @DOCSET_SOURCE_BASE@/kernel/include/kernel_arch_interface.h \
+                         @DOCSET_SOURCE_BASE@/include/zephyr/arch/cache.h \
+                         @DOCSET_SOURCE_BASE@/include/zephyr/sys/atomic.h \
+                         @DOCSET_SOURCE_BASE@/include/ \
+                         @DOCSET_SOURCE_BASE@/lib/libc/minimal/include/ \
+                         @DOCSET_SOURCE_BASE@/subsys/testsuite/include/ \
+                         @DOCSET_SOURCE_BASE@/subsys/testsuite/ztest/include/
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -957,7 +969,10 @@ INPUT_FILE_ENCODING    =
 # comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08, *.f18, *.f, *.for, *.vhd,
 # *.vhdl, *.ucf, *.qsf and *.ice.
 
-FILE_PATTERNS          = *.h
+FILE_PATTERNS          = *.c \
+                         *.h \
+                         *.S \
+                         *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -972,8 +987,8 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = @DOCSET_SOURCE_BASE@/applications/connectivity_bridge/src/events/module_state_event.h \
-                         @DOCSET_SOURCE_BASE@/applications/matter_weather_station/src
+EXCLUDE                = @DOCSET_SOURCE_BASE@/include/zephyr/portability/cmsis_os.h \
+                         @DOCSET_SOURCE_BASE@/include/zephyr/portability/cmsis_os2.h
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1001,7 +1016,9 @@ EXCLUDE_PATTERNS       =
 # exclude all test directories use the pattern */test/*
 
 EXCLUDE_SYMBOLS        = _* \
-                         *.__unnamed__
+                         *.__unnamed__ \
+                         z_* \
+                         Z_*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
@@ -1088,7 +1105,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = YES
+USE_MDFILE_AS_MAINPAGE = mainpage.md
 
 # The Fortran standard specifies that for fixed formatted Fortran code all
 # characters from position 72 are to be considered as comment. A common
@@ -1297,8 +1314,6 @@ HTML_HEADER            = @NRF_BASE@/doc/_doxygen/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            =
-
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
 # the HTML output. If left blank doxygen will generate a default style sheet.
@@ -1364,7 +1379,7 @@ HTML_COLORSTYLE        = LIGHT
 # Minimum value: 0, maximum value: 359, default value: 220.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_HUE    = 196
+HTML_COLORSTYLE_HUE    = 220
 
 # The HTML_COLORSTYLE_SAT tag controls the purity (or saturation) of the colors
 # in the HTML output. For a value of 0 the output will use gray-scales only. A
@@ -1372,7 +1387,7 @@ HTML_COLORSTYLE_HUE    = 196
 # Minimum value: 0, maximum value: 255, default value: 100.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_SAT    = 46
+HTML_COLORSTYLE_SAT    = 100
 
 # The HTML_COLORSTYLE_GAMMA tag controls the gamma correction applied to the
 # luminance component of the colors in the HTML output. Values below 100
@@ -1383,7 +1398,7 @@ HTML_COLORSTYLE_SAT    = 46
 # Minimum value: 40, maximum value: 240, default value: 80.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_GAMMA  = 92
+HTML_COLORSTYLE_GAMMA  = 80
 
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting this
@@ -1682,7 +1697,7 @@ ENUM_VALUES_PER_LINE   = 4
 # Minimum value: 0, maximum value: 1500, default value: 250.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-TREEVIEW_WIDTH         = 250
+TREEVIEW_WIDTH         = 300
 
 # If the EXT_LINKS_IN_WINDOW option is set to YES, doxygen will open links to
 # external symbols imported via tag files in a separate window.
@@ -2331,67 +2346,69 @@ INCLUDE_FILE_PATTERNS  =
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
 PREDEFINED             = __DOXYGEN__ \
-                         "CONFIG_SYS_CLOCK_EXISTS=y" \
-                         "CONFIG_THREAD_MONITOR=y" \
-                         "CONFIG_THREAD_CUSTOM_DATA=y" \
-                         "CONFIG_ERRNO=y" \
-                         "CONFIG_THREAD_STACK_INFO=y" \
-                         "CONFIG_UART_INTERRUPT_DRIVEN=y" \
-                         "CONFIG_UART_DRV_CMD=y" \
-                         "CONFIG_PM_DEVICE=y" \
-                         "CONFIG_BT_SMP=y" \
-                         "CONFIG_USERSPACE=y" \
-                         "CONFIG_BT_BREDR=y" \
-                         "NET_MGMT_DEFINE_REQUEST_HANDLER(x)=" \
-                         "DEVICE_DEFINE()=" \
-                         "DEVICE_AND_API_INIT()=" \
-                         "BUILD_ASSERT()=" \
-                         "BUILD_ASSERT()=" \
-                         "__deprecated=" \
-                         "__packed=" \
-                         "__aligned(x)=" \
+                         CONFIG_ARCH_HAS_CUSTOM_BUSY_WAIT \
+                         CONFIG_ARCH_HAS_CUSTOM_SWAP_TO_MAIN \
+                         CONFIG_BT_CLASSIC \
+                         CONFIG_BT_EATT \
+                         CONFIG_BT_L2CAP_SEG_RECV \
+                         CONFIG_BT_MESH_MODEL_EXTENSIONS \
+                         CONFIG_BT_REMOTE_INFO \
+                         CONFIG_BT_USER_DATA_LEN_UPDATE \
+                         CONFIG_BT_USER_PHY_UPDATE \
+                         CONFIG_BT_SMP \
+                         CONFIG_BT_SMP_APP_PAIRING_ACCEPT \
+                         CONFIG_CBPRINTF_LIBC_SUBSTS \
+                         CONFIG_ERRNO \
+                         CONFIG_FLASH_JESD216_API \
+                         CONFIG_FLASH_PAGE_LAYOUT \
+                         CONFIG_FP16 \
+                         CONFIG_FPU \
+                         CONFIG_FPU_SHARING \
+                         CONFIG_GDBSTUB \
+                         CONFIG_HEAP_MEM_POOL_SIZE \
+                         CONFIG_MMU \
+                         CONFIG_NET_L2_ETHERNET_MGMT \
+                         CONFIG_NET_L2_IEEE802154_MGMT \
+                         CONFIG_NET_L2_IEEE802154_SECURITY \
+                         CONFIG_NET_MGMT_EVENT \
+                         CONFIG_NET_SOCKETS_POSIX_NAMES \
+                         CONFIG_NET_TCP \
+                         CONFIG_NET_UDP \
+                         CONFIG_SCHED_CPU_MASK \
+                         CONFIG_SCHED_DEADLINE \
+                         CONFIG_SCHED_DEADLINE \
+                         CONFIG_SETTINGS_RUNTIME \
+                         CONFIG_SMP \
+                         CONFIG_SYS_CLOCK_EXISTS \
+                         CONFIG_THREAD_CUSTOM_DATA \
+                         CONFIG_THREAD_MONITOR \
+                         CONFIG_THREAD_STACK_INFO \
+                         CONFIG_TIMING_FUNCTIONS \
+                         CONFIG_UART_DRV_CMD \
+                         CONFIG_UART_INTERRUPT_DRIVEN \
+                         CONFIG_UART_ASYNC_API \
+                         CONFIG_USERSPACE \
+                         CONFIG_USE_SWITCH \
+                         NET_MGMT_DEFINE_REQUEST_HANDLER(x)= \
+                         DEVICE_DEFINE()= \
+                         BUILD_ASSERT()= \
+			 XEN_GUEST_HANDLE_64(x)= \
+                         _LINKER \
+                         __deprecated= \
+			 __sparse_cache= \
+                         __packed= \
+                         __aligned(x)= \
+                         __attribute_nonnull(...)= \
                          "__printf_like(x, y)=" \
-                         "__attribute__(x)=" \
-                         "__syscall=" \
-                         "__syscall_inline=" \
-                         "__attribute(x)= DOXYGEN=1" \
-                         "NRFX_STATIC_INLINE=" \
-                         "CONFIG_BT_SCAN_FILTER_ENABLE:=1" \
-                         "CONFIG_BT_SCAN_UUID_CNT:=1" \
-                         "CONFIG_BT_SCAN_NAME_CNT:=1" \
-                         "CONFIG_BT_SCAN_SHORT_NAME_CNT:=1" \
-                         "CONFIG_BT_SCAN_ADDRESS_CNT:=1" \
-                         "CONFIG_BT_SCAN_APPEARANCE_CNT:=1" \
-                         "CONFIG_NRF_PROFILER=y" \
-                         "CONFIG_NFC_TNEP_TAG=y" \
-                         "APP_EVENT_TYPE_DECLARE(x)=" \
-                         "CONFIG_LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT=y" \
-                         "CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT=y" \
-                         "CONFIG_LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT=y" \
-                         "CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT=y" \
-                         "CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT=y" \
+                         __attribute__(x)= \
+                         __syscall= \
+                         __syscall_always_inline= \
+                         __must_check= \
                          "ATOMIC_DEFINE(x, y)=atomic_t x[ATOMIC_BITMAP_SIZE(y)]" \
-                         "CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y" \
-                         "CONFIG_ZBOSS_ERROR_PRINT_TO_LOG=y" \
-                         "CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG=y" \
-                         "CONFIG_BT_MESH_LIGHT_CTRL_SRV=y" \
-                         "MODULE=" \
-                         "RADIO_MODE_MODE_Nrf_250Kbit=y" \
-                         "CONFIG_SOC_SERIES_NRF52X=y" \
-                         "CONFIG_LOCATION_SERVICE_EXTERNAL=y" \
-                         "CONFIG_LOCATION_DATA_DETAILS=y" \
-                         "CONFIG_LOCATION_METHOD_CELLULAR=y" \
-                         "CONFIG_LOCATION_METHOD_WIFI=y" \
-                         "CONFIG_NRF_MODEM_LIB_MEM_DIAG=y" \
-                         "CONFIG_NRF_CLOUD_MQTT=y" \
-                         "CONFIG_NRF_CLOUD_AGNSS=y" \
-                         "CONFIG_NRF_CLOUD_PGPS=y" \
-                         "CONFIG_MODEM_INFO=y" \
-                         "CONFIG_NRF_MODEM=y" \
-                         "CONFIG_ZIGBEE_ROLE_END_DEVICE=y" \
-                         "CONFIG_ZIGBEE_FACTORY_RESET=y" \
-                         "CONFIG_NRF_CLOUD_GATEWAY=y" \
-                         "CONFIG_BT_CENTRAL"
+                         "ZTEST(suite, fn)=void fn(void)" \
+                         "ZTEST_USER(suite, fn)=void fn(void)" \
+                         "ZTEST_USER_F(suite, fn)=void fn(void)" \
+                         "ZTEST_F(suite, fn)=void fn(void)"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

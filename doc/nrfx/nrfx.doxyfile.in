@@ -65,7 +65,7 @@ PROJECT_BRIEF          =
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/nordic_small.png
+PROJECT_LOGO           = @NRF_BASE@/doc/_doxygen/logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -795,7 +795,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/layout.xml
+LAYOUT_FILE            =
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -1256,7 +1256,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/header.html
+HTML_HEADER            = @NRF_BASE@/doc/_doxygen/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1266,7 +1266,7 @@ HTML_HEADER            = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/footer.html
+HTML_FOOTER            =
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1296,7 +1296,7 @@ HTML_STYLESHEET        =
 # documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/extra_stylesheet.css
+HTML_EXTRA_STYLESHEET  = @NRF_BASE@/doc/_doxygen/doxygen-awesome.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1306,7 +1306,11 @@ HTML_EXTRA_STYLESHEET  = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/extra_styleshe
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/favicon.ico
+HTML_EXTRA_FILES       = @NRF_BASE@/doc/_doxygen/doxygen-awesome-darkmode-toggle.js \
+			 @NRF_BASE@/doc/_doxygen/doxygen-awesome-fragment-copy-button.js \
+			 @NRF_BASE@/doc/_doxygen/doxygen-awesome-paragraph-link.js \
+			 @NRF_BASE@/doc/_doxygen/doxygen-awesome-interactive-toc.js
+
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
 # should be rendered with a dark or light theme.
@@ -1319,7 +1323,7 @@ HTML_EXTRA_FILES       = @DOCSET_SOURCE_BASE@/nrfx/doc/buildfiles/favicon.ico
 # The default value is: AUTO_LIGHT.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE        = AUTO_LIGHT
+HTML_COLORSTYLE        = LIGHT
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
@@ -1604,7 +1608,7 @@ ECLIPSE_DOC_ID         = com.nordic.infocenter.nrfx
 
 ### EDIT THIS ###
 
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 
 # The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
 # structure should be generated to display hierarchical information. If the tag
