@@ -86,6 +86,7 @@ If you have not built all documentation sets before, it is recommended to run th
 
 Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 This target will build the :ref:`documentation sets <documentation_sets>` that are needed for *docset-name*.
+Note that Doxygen-only docsets like ``nrfx`` do not have the ``-all`` target as they have no dependencies.
 
 On subsequent builds, it is recommended to just run the following command:
 
