@@ -31,7 +31,7 @@
 
 extern const uint8_t cracen_N3072[384];
 
-extern nrf_security_mutex_t cracen_mutex_symmetric;
+extern mbedtls_threading_mutex_t cracen_mutex_symmetric;
 
 #define DEFAULT_KEY_SIZE(bits) (bits), PSA_BITS_TO_BYTES(bits), (1 + 2 * PSA_BITS_TO_BYTES(bits))
 static struct {
