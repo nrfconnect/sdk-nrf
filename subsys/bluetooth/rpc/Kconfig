@@ -179,6 +179,7 @@ config BT_DATA_LEN_UPDATE
 endif # BT_CONN
 
 source "$(ZEPHYR_BASE)/subsys/bluetooth/Kconfig.adv"
+source "$(ZEPHYR_BASE)/subsys/bluetooth/Kconfig.logging"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/services/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/common/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/host/Kconfig"
