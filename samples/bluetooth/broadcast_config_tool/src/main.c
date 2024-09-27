@@ -305,7 +305,7 @@ static void le_audio_msg_sub_thread(void)
 			break;
 
 		case LE_AUDIO_EVT_STREAMING:
-			stream_get_frame_and_send(msg.idx);
+			stream_frame_get_and_send(msg.idx);
 
 			break;
 
@@ -750,8 +750,7 @@ static void codec_qos_print(const struct shell *shell, struct bt_audio_codec_qos
 	shell_print(shell, "\t\t\tPresentation Delay: %d us", qos->pd);
 }
 
-static void broadcast_config_print(const struct shell *shell,
-				   struct broadcast_source_big *brdcst_param, uint8_t big_index)
+static void broadcast_config_print(const struct shell *shell, uint8_t group_index)
 {
 	int ret;
 
@@ -872,7 +871,7 @@ static void broadcast_config_print(const struct shell *shell,
 			shell_print(shell, "\t\t\tLocation: %s",
 				    location_bit_to_str(brdcst_param->subgroups[i].location[j]));
 
-			uint8_t streamer_idx = subgroup_bis_infos[big_index][i].lc3_streamer_idx[j];
+			uint8_t streamer_idx = lc3_stream_infos[group_index][i].lc3_streamer_idx[j];
 
 			if (streamer_idx == LC3_STREAMER_INDEX_UNUSED) {
 				shell_print(shell, "\t\t\tFile: Not set");
@@ -1206,7 +1205,7 @@ static int cmd_show(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "BIG %d:", i);
 		shell_print(shell, "\tStreaming: %s", (streaming ? "true" : "false"));
 
-		broadcast_config_print(shell, &broadcast_param[i], i);
+		broadcast_config_print(shell, i);
 	}
 
 	return 0;
@@ -1748,7 +1747,8 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 
 	char *file_name = argv[1];
 
-	LOG_DBG("Selecting file %s for stream %d.%d.%d", file_name, big_idx, sub_idx, bis_idx);
+	LOG_DBG("Selecting file %s for stream big: %d sub: %d bis: %d", file_name, big_index,
+		sub_index, bis_index);
 
 	struct bt_audio_codec_cfg *codec_cfg =
 		&broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.codec_cfg;
