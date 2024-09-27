@@ -24,6 +24,8 @@
 #include <zephyr/types.h>
 #include <zephyr/net/coap.h>
 
+/* Predefinition of download client struct used in download client transport. */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -133,10 +135,6 @@ struct download_client_cfg {
  * @brief Download client configuration options.
  */
 struct download_client_host_cfg {
-	/** Server hosting the file, null-terminated.
-	 *  The host name must be kept in scope while download is going on.
-	 */
-	const char *hostname;
 	/** TLS security tag list.
 	 *  Pass NULL to disable TLS.
 	 * The list must be kept in scope while download is going on.
@@ -151,17 +149,10 @@ struct download_client_host_cfg {
 	 * Zero is the default PDN.
 	 */
 	uint8_t pdn_id;
-	/**
-	 * Address family to be used for the download, AF_INET6 or AF_INET.
-	 * Set to AF_UNSPEC (0) to fallback to AF_INET if AF_INET6 does not work.
-	 */
-	int family;
 	/** Maximum fragment size to download. 0 indicates that values
 	 * configured using Kconfig shall be used.
 	 */
 	size_t range_override;
-	/** Set hostname for TLS Server Name Indication extension */
-	bool set_tls_hostname;
 	/** Set socket to native TLS */
 	bool set_native_tls;
 	/** Close connection when done */
@@ -172,12 +163,12 @@ struct download_client_host_cfg {
  * @brief Download client state.
  */
 enum download_client_state {
-		DOWNLOAD_CLIENT_DEINITIALIZED,
-		DOWNLOAD_CLIENT_IDLE,
-		DOWNLOAD_CLIENT_CONNECTING,
-		DOWNLOAD_CLIENT_CONNECTED,
-		DOWNLOAD_CLIENT_DOWNLOADING,
-		DOWNLOAD_CLIENT_DEINITIALIZING,
+	DOWNLOAD_CLIENT_DEINITIALIZED,
+	DOWNLOAD_CLIENT_IDLE,
+	DOWNLOAD_CLIENT_CONNECTING,
+	DOWNLOAD_CLIENT_CONNECTED,
+	DOWNLOAD_CLIENT_DOWNLOADING,
+	DOWNLOAD_CLIENT_DEINITIALIZING,
 };
 
 /**
@@ -190,64 +181,25 @@ struct download_client {
 	struct download_client_cfg config;
 	/** Host configuration options. */
 	struct download_client_host_cfg host_config;
-
-	/** File name, null-terminated.
-	 *  The file name must be kept in scope while download is going on.
+	/** Host name, null-terminated.
 	 */
-	const char *file;
+	char hostname[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
+	/** File name, null-terminated.
+	 */
+	char file[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 	/** Size of the file being downloaded, in bytes. */
 	size_t file_size;
 	/** Download progress, number of bytes downloaded. */
 	size_t progress;
 	/** Buffer offset. */
 	size_t buf_offset;
-	/** Request new data */
-	bool new_data_req;
 
-	struct {
-		/** Socket descriptor. */
-		int fd;
-		/** Protocol for current download. */
-		int proto;
-		/** Socket type */
-		int type;
-		/** Port */
-		uint16_t port;
-		/** Destination address storage */
-		struct sockaddr remote_addr;
-	} sock;
-
-	/** Application protocols */
-	union {
-		struct  {
-			/** The server has closed the connection. */
-			bool connection_close;
-			/** Is using ranged query. */
-			bool ranged;
-			/** Ranged progress */
-			size_t ranged_progress;
-			/** HTTP header */
-			struct {
-				/** Header length */
-				size_t hdr_len;
-				/** Status code */
-				unsigned long status_code;
-				/** Whether the HTTP header for
-				 * the current fragment has been processed.
-				 */
-				bool has_end;
-			} header;
-		} http;
-
-		struct {
-			bool initialized;
-			/** CoAP block context. */
-			struct coap_block_context block_ctx;
-
-			/** CoAP pending object. */
-			struct coap_pending pending;
-		} coap;
-	};
+	/** Download client transport, http, CoAP, MQTT, ...
+	 *  Store a pointer to the selected transport per DLC instance to avoid looking it up each call.
+	 */
+	void *transport;
+	/** Transport parameters. */
+	uint8_t transport_internal[CONFIG_DOWNLOAD_CLIENT_TRANSPORT_PARAMS_SIZE];
 
 	/** Protect shared variables. */
 	struct k_mutex mutex;
@@ -309,7 +261,7 @@ int download_client_deinit(struct download_client *client);
  */
 int download_client_start(struct download_client *client,
 			  const struct download_client_host_cfg *host_config,
-			  const char *file, size_t from);
+			  const char *url, size_t from);
 
 /**
  * @brief Stop file download and disconnect from server.
@@ -376,7 +328,7 @@ int download_client_downloaded_size_get(struct download_client *client, size_t *
  */
 int download_client_get(struct download_client *client,
 			const struct download_client_host_cfg *config,
-			const char *file, size_t from);
+			const char *url, size_t from);
 
 #ifdef __cplusplus
 }

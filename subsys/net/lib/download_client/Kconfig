@@ -26,7 +26,22 @@ config DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 	range 8 2048
 	default 255
 
-config DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS
+config DOWNLOAD_CLIENT_SHELL
+	bool "Enable shell"
+	depends on SHELL
+
+config DOWNLOAD_CLIENT_TRANSPORT_PARAMS_SIZE
+	int "Maximum transport parameter size"
+	default 128 if DOWNLOAD_CLIENT_TRANSPORT_COAP
+	default 64 if DOWNLOAD_CLIENT_TRANSPORT_HTTP
+
+config DOWNLOAD_CLIENT_TRANSPORT_HTTP
+	bool "HTTP transport"
+	default y
+
+if DOWNLOAD_CLIENT_TRANSPORT_HTTP
+
+config DOWNLOAD_CLIENT_HTTP_TIMEO_MS
 	int "Receive timeout on TCP sockets, in milliseconds"
 	default 30000
 	range -1 600000
@@ -35,6 +50,14 @@ config DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS
 	  When using HTTP or HTTPS, set a timeout to be able to detect
 	  when the server is not responding and client should give up.
 	  Set to -1 disable.
+
+endif #DOWNLOAD_CLIENT_TRANSPORT_HTTP
+
+config DOWNLOAD_CLIENT_TRANSPORT_COAP
+	depends on COAP
+	bool "CoAP transport"
+
+if DOWNLOAD_CLIENT_TRANSPORT_COAP
 
 config DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT
 	int "Number of CoAP request retransmissions"
@@ -51,9 +74,35 @@ config DOWNLOAD_CLIENT_CID
 	  Use DTLS Connection-ID option when downloading from CoAPS resources.
 	  This requires modem firmware 1.3.5 or newer.
 
-config DOWNLOAD_CLIENT_SHELL
-	bool "Enable shell"
-	depends on SHELL
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE
+	int
+	default 3 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_128
+	default 4 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_256
+	default 5 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+
+choice DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_CHOICE
+	prompt "CoAP block size"
+	depends on COAP
+	default DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+	help
+	   CoAP blockwise transfer block size.
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+	bool "512"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 532
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_256
+	bool "256"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 276
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_128
+	bool "128"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 148
+
+endchoice
+
+endif #DOWNLOAD_CLIENT_TRANSPORT_COAP
 
 module=DOWNLOAD_CLIENT
 module-dep=LOG

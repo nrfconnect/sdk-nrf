@@ -86,10 +86,10 @@ int download_client_file_size_get(struct download_client *client, size_t *size)
 	return 0;
 }
 
-int download_client_init(struct download_client *client,
-			 download_client_callback_t callback)
+int download_client_init(struct download_client *const dlc,
+			 struct download_client_cfg *config)
 {
-	download_client_event_handler = callback;
+	download_client_event_handler = config->callback;
 	client->fd = -1;
 	return 0;
 }

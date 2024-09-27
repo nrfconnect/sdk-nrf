@@ -8,9 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <zephyr/net/socket.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
 #include <net/download_client.h>
+#include <net/download_client_transport.h>
 #include "download_client_internal.h"
 
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
@@ -44,6 +46,44 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 	"Connection: keep-alive\r\n"                                           \
 	"\r\n"
 
+struct transport_params_http {
+	/** The server has closed the connection. */
+	bool connection_close;
+	/** Is using ranged query. */
+	bool ranged;
+	/** Ranged progress */
+	size_t ranged_progress;
+	/** HTTP header */
+	struct {
+		/** Header length */
+		size_t hdr_len;
+		/** Status code */
+		unsigned long status_code;
+		/** Whether the HTTP header for
+		 * the current fragment has been processed.
+		 */
+		bool has_end;
+	} header;
+
+	struct {
+		/** Socket descriptor. */
+		int fd;
+		/** Protocol for current download. */
+		int proto;
+		/** Socket type */
+		int type;
+		/** Port */
+		uint16_t port;
+		/** Destination address storage */
+		struct sockaddr remote_addr;
+	} sock;
+
+	/** Request new data */
+	bool new_data_req;
+};
+
+BUILD_ASSERT(CONFIG_DOWNLOAD_CLIENT_TRANSPORT_PARAMS_SIZE >= sizeof(struct transport_params_http));
+
 extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
 
 int http_get_request_send(struct download_client *dlc)
@@ -51,27 +91,15 @@ int http_get_request_send(struct download_client *dlc)
 	int err;
 	int len;
 	size_t off = 0;
-	char host[HOSTNAME_SIZE];
-	char file[FILENAME_SIZE];
 	bool tls_force_range;
+	struct transport_params_http *http;
 
-	__ASSERT_NO_MSG(dlc->host_config.hostname);
-	__ASSERT_NO_MSG(dlc->file);
+	http = (struct transport_params_http *)dlc->transport_internal;
 
-	dlc->http.header.has_end = false;
-
-	err = url_parse_host(dlc->host_config.hostname, host, sizeof(host));
-	if (err) {
-		return err;
-	}
-
-	err = url_parse_file(dlc->file, file, sizeof(file));
-	if (err) {
-		return err;
-	}
+	http->header.has_end = false;
 
 	/* nRF91 series has a limitation of decoding ~2k of data at once when using TLS */
-	tls_force_range = (dlc->sock.proto == IPPROTO_TLS_1_2 &&
+	tls_force_range = (http->sock.proto == IPPROTO_TLS_1_2 &&
 			!dlc->host_config.set_native_tls &&
 			IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
 
@@ -94,20 +122,21 @@ int http_get_request_send(struct download_client *dlc)
 
 		len = snprintf(dlc->config.buf,
 			dlc->config.buf_size,
-			HTTP_GET_RANGE, file, host, dlc->progress, off);
-		dlc->http.ranged = true;
-		dlc->http.ranged_progress = 0;
+			HTTP_GET_RANGE, dlc->file, dlc->hostname, dlc->progress, off);
+		http->ranged = true;
+		http->ranged_progress = 0;
+		LOG_DBG("Range request up to %d bytes", dlc->host_config.range_override);
 		goto send;
 	} else if (dlc->progress) {
 		len = snprintf(dlc->config.buf,
 			dlc->config.buf_size,
-			HTTP_GET_OFFSET, file, host, dlc->progress);
-		dlc->http.ranged = false;
+			HTTP_GET_OFFSET, dlc->file, dlc->hostname, dlc->progress);
+		http->ranged = false;
 	} else {
 		len = snprintf(dlc->config.buf,
 			dlc->config.buf_size,
-			HTTP_GET, file, host);
-		dlc->http.ranged = false;
+			HTTP_GET, dlc->file, dlc->hostname);
+		http->ranged = false;
 	}
 
 send:
@@ -120,7 +149,7 @@ send:
 		LOG_HEXDUMP_DBG(dlc->config.buf, len, "HTTP request");
 	}
 
-	err = client_socket_send(dlc, len, 0);
+	err = client_socket_send(http->sock.fd, dlc->config.buf, len);
 	if (err) {
 		LOG_ERR("Failed to send HTTP request, errno %d", errno);
 		return err;
@@ -139,11 +168,14 @@ static int http_header_parse(struct download_client *dlc, size_t buf_len)
 	char *q;
 	size_t parse_len;
 	unsigned int expected_status;
+	struct transport_params_http *http;
+
+	http = (struct transport_params_http *)dlc->transport_internal;
 
 	p = strnstr(dlc->config.buf, "\r\n\r\n", dlc->config.buf_size);
-	if (p && p <= dlc->config.buf + dlc->buf_offset) {
+	if (p) {
 		/* End of header received */
-		dlc->http.header.has_end = true;
+		http->header.has_end = true;
 		parse_len = p + strlen("\r\n\r\n") - (char *)dlc->config.buf;
 	} else {
 		parse_len = buf_len;
@@ -160,7 +192,7 @@ static int http_header_parse(struct download_client *dlc, size_t buf_len)
 		if (q) {
 			/* Received entire line */
 			p += strlen("http/1.1 ");
-			dlc->http.header.status_code = strtoul(p, &q, 10);
+			http->header.status_code = strtoul(p, &q, 10);
 		}
 
 	}
@@ -170,7 +202,7 @@ static int http_header_parse(struct download_client *dlc, size_t buf_len)
 	 */
 	do {
 		if (dlc->file_size == 0) {
-			if (dlc->http.ranged) {
+			if (http->ranged) {
 				p = strnstr(dlc->config.buf, "\r\ncontent-range", parse_len);
 				if (!p) {
 					break;
@@ -212,10 +244,10 @@ static int http_header_parse(struct download_client *dlc, size_t buf_len)
 	p = strnstr(dlc->config.buf, "\r\nconnection: close", parse_len);
 	if (p) {
 		LOG_WRN("Peer closed connection, will re-connect");
-		dlc->http.connection_close = true;
+		http->connection_close = true;
 	}
 
-	if (dlc->http.header.has_end) {
+	if (http->header.has_end) {
 		/* We have received the end of the header.
 		 * Verify that we have received everything that we need.
 		 */
@@ -225,14 +257,14 @@ static int http_header_parse(struct download_client *dlc, size_t buf_len)
 			return -EBADMSG;
 		}
 
-		if (!dlc->http.header.status_code) {
+		if (!http->header.status_code) {
 			LOG_ERR("Server response malformed: status code not found");
 			return -EBADMSG;
 		}
 
-		expected_status = (dlc->http.ranged || dlc->progress) ? 206 : 200;
-		if (dlc->http.header.status_code != expected_status) {
-			LOG_ERR("Unexpected HTTP response code %ld", dlc->http.header.status_code);
+		expected_status = (http->ranged || dlc->progress) ? 206 : 200;
+		if (http->header.status_code != expected_status) {
+			LOG_ERR("Unexpected HTTP response code %ld", http->header.status_code);
 			return -EBADMSG;
 		}
 
@@ -258,20 +290,25 @@ static int http_header_parse(struct download_client *dlc, size_t buf_len)
 }
 
 /* Returns:
- * 0 on success
+ * length of data payload received on success
  * Negative errno on error.
  */
 int http_parse(struct download_client *dlc, size_t len)
 {
 	int parsed_len;
+	struct transport_params_http *http;
 
-	if (!dlc->http.header.has_end) {
+	http = (struct transport_params_http *)dlc->transport_internal;
+
+	if (!http->header.has_end) {
 		/* Parse what we can from the header */
 		parsed_len = http_header_parse(dlc, len);
 		if (parsed_len < 0) {
 			/* Something is wrong with the header */
 			return -EBADMSG;
 		}
+
+		LOG_DBG("Parsed len: %d", parsed_len);
 
 		if (parsed_len == len) {
 			len = 0;
@@ -283,7 +320,7 @@ int http_parse(struct download_client *dlc, size_t len)
 			dlc->buf_offset = len;
 		}
 
-		if (!dlc->http.header.has_end) {
+		if (!http->header.has_end) {
 			if (dlc->config.buf_size == dlc->buf_offset) {
 				LOG_ERR("Could not parse HTTP header lines from server (> %d)",
 					dlc->config.buf_size);
@@ -294,26 +331,214 @@ int http_parse(struct download_client *dlc, size_t len)
 		}
 	}
 
-	/* Accumulate overall file progress. */
-	dlc->progress += len;
-
 	/* Have we received a whole fragment or the whole file? */
-	if (dlc->progress != dlc->file_size) {
-		if (dlc->http.ranged) {
-			dlc->http.ranged_progress += len;
-			if (dlc->http.ranged_progress < (dlc->host_config.range_override ?
+	if (dlc->progress + len != dlc->file_size) {
+		if (http->ranged) {
+			http->ranged_progress += len;
+			if (http->ranged_progress < (dlc->host_config.range_override ?
 					   dlc->host_config.range_override :
-					   TLS_RANGE_MAX)) {
+					   TLS_RANGE_MAX - 1)) {
 				/* Ranged query: read until a full fragment */
-				return 0;
+				return len;
 			}
 		} else {
 			/* Non-ranged query: just keep on reading, ignore fragment size */
-			return 0;
+			return len;
 		}
 	}
 
 	/* Either we have a full file, or we need to request a next fragment */
-	dlc->new_data_req = true;
+	http->new_data_req = true;
+	return len;
+}
+
+static bool dlc_http_proto_supported(struct download_client *dlc, const char *uri)
+{
+	if (strncmp(uri, "https://", 8) == 0) {
+		return true;
+	}
+
+	if (strncmp(uri, "http://", 7) == 0) {
+		return true;
+	}
+
+	return false;
+}
+
+static int dlc_http_init(struct download_client *dlc, struct download_client_host_cfg *host_cfg, const char *uri)
+{
+	int err;
+	struct transport_params_http *http;
+
+	http = (struct transport_params_http *)dlc->transport_internal;
+
+	http->sock.proto = IPPROTO_TCP;
+	http->sock.type = SOCK_STREAM;
+
+	if (strncmp(uri, "https://", 8) == 0) {
+		http->sock.proto = IPPROTO_TLS_1_2;
+		http->sock.type = SOCK_STREAM;
+
+		if (host_cfg->sec_tag_list == NULL || host_cfg->sec_tag_count == 0) {
+			LOG_WRN("No security tag provided for TLS/DTLS");
+			return -EINVAL;
+		}
+	}
+
+	err = url_parse_port(uri, &http->sock.port);
+	if (err) {
+		switch (http->sock.proto) {
+		case IPPROTO_TLS_1_2:
+			http->sock.port = 443;
+			break;
+		case IPPROTO_TCP:
+		 	http->sock.port = 80;
+			break;
+		}
+		LOG_DBG("Port not specified, using default: %d", http->sock.port);
+	}
+
+	if (host_cfg->set_native_tls) {
+		LOG_DBG("Enabled native TLS");
+		http->sock.type |= SOCK_NATIVE_TLS;
+	}
+
 	return 0;
 }
+
+static int dlc_http_deinit(struct download_client *dlc)
+{
+	struct transport_params_http *http;
+
+	http = (struct transport_params_http *)dlc->transport_internal;
+
+	if (http->sock.fd != -1) {
+		client_socket_close(&http->sock.fd);
+		dlc_transport_evt_disconnected(dlc);
+	}
+
+	return 0;
+}
+
+static int dlc_http_connect(struct download_client *dlc)
+{
+	int err;
+	int ns_err;
+	struct transport_params_http *http;
+
+	http = (struct transport_params_http *)dlc->transport_internal;
+
+	err = -1;
+	ns_err = -1;
+
+	if (!http->sock.remote_addr.sa_family) {
+		client_socket_host_lookup(dlc->hostname, dlc->host_config.pdn_id, &http->sock.remote_addr);
+	}
+
+	err = client_socket_configure_and_connect(
+		&http->sock.fd, http->sock.proto, http->sock.type, http->sock.port,
+		&http->sock.remote_addr, dlc->hostname, &dlc->host_config);
+	if (err) {
+		return err;
+	}
+
+	err = client_socket_recv_timeout_set(http->sock.fd,
+					     CONFIG_DOWNLOAD_CLIENT_HTTP_TIMEO_MS);
+	if (err) {
+		/* Unable to connect, close socket */
+		client_socket_close(&http->sock.fd);
+		return err;
+	}
+
+	http->new_data_req = true;
+
+	dlc_transport_evt_connected(dlc);
+
+	return err;
+}
+
+static int dlc_http_close(struct download_client *dlc)
+{
+	int err;
+	struct transport_params_http *http;
+
+	http = (struct transport_params_http *)dlc->transport_internal;
+
+	if (http->sock.fd != -1) {
+		err = client_socket_close(&http->sock.fd);
+		dlc_transport_evt_disconnected(dlc);
+		return err;
+	}
+
+	return -EBADF;
+}
+
+static int dlc_http_download(struct download_client *dlc)
+{
+	int ret, len;
+	struct transport_params_http *http;
+
+	http = (struct transport_params_http *)dlc->transport_internal;
+
+	if (http->connection_close) {
+		return -ECONNRESET;
+	}
+
+	if (http->new_data_req) {
+		/* Request next fragment */
+		dlc->buf_offset = 0;
+		ret = http_get_request_send(dlc);
+		if (ret) {
+			LOG_DBG("data_req failed, err %d", ret);
+			/** Attempt reconnection. */
+			return -ECONNRESET;
+		}
+
+		http->new_data_req = false;
+	}
+
+	__ASSERT(dlc->buf_offset < dlc->config.buf_size, "Buffer overflow");
+
+	LOG_DBG("Receiving up to %d bytes at %p...",
+		(dlc->config.buf_size - dlc->buf_offset),
+		(void *)(dlc->config.buf + dlc->buf_offset));
+
+	len = client_socket_recv(http->sock.fd,
+				 dlc->config.buf + dlc->buf_offset,
+				 dlc->config.buf_size - dlc->buf_offset);
+	if (len < 0) {
+		return len;
+	}
+
+	if (len == 0) {
+		return -ECONNRESET;
+	}
+
+	ret = http_parse(dlc, len);
+	if (ret <= 0) {
+		return ret;
+	}
+
+	if (http->header.has_end ) {
+		/* Accumulate progress */
+		dlc->progress += ret;
+		dlc_transport_evt_data(dlc, dlc->config.buf, ret);
+		if (dlc->progress == dlc->file_size) {
+			dlc_transport_evt_download_complete(dlc);
+		}
+		dlc->buf_offset = 0;
+	}
+
+	return 0;
+}
+
+static struct dlc_transport dlc_transport_http = {
+	.proto_supported = dlc_http_proto_supported,
+	.init = dlc_http_init,
+	.deinit = dlc_http_deinit,
+	.connect = dlc_http_connect,
+	.close = dlc_http_close,
+	.download = dlc_http_download,
+};
+
+DLC_TRANSPORT(http, &dlc_transport_http);

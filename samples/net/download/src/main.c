@@ -13,6 +13,10 @@
 #include <zephyr/net/conn_mgr_monitor.h>
 #include <net/download_client.h>
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
+
+
 #if CONFIG_MODEM_KEY_MGMT
 #include <modem/modem_key_mgmt.h>
 #else
@@ -60,11 +64,9 @@ static struct download_client_cfg config = {
 	.buf_size = sizeof(dlc_buf),
 };
 static struct download_client_host_cfg host_config = {
-	.hostname = URL,
 #if CONFIG_SAMPLE_SECURE_SOCKET
 	.sec_tag_list = sec_tag_list,
 	.sec_tag_count = ARRAY_SIZE(sec_tag_list),
-	.set_tls_hostname = true,
 #endif
 	.range_override = 0,
 };
@@ -173,18 +175,16 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 
 static void progress_print(size_t downloaded, size_t file_size)
 {
+	static int prev_percent = 0;
 	const int percent = (downloaded * 100) / file_size;
-	size_t lpad = (percent * PROGRESS_WIDTH) / 100;
-	size_t rpad = PROGRESS_WIDTH - lpad;
 
-	printk("\r[ %3d%% ] |", percent);
-	for (size_t i = 0; i < lpad; i++) {
-		printk("=");
+	if (percent >= prev_percent && percent < prev_percent + 5) {
+		return;
 	}
-	for (size_t i = 0; i < rpad; i++) {
-		printk(" ");
-	}
-	printk("| (%d/%d bytes)", downloaded, file_size);
+
+	prev_percent = percent;
+
+	LOG_INF("[ %3d%% ] (%d/%d bytes)", percent, downloaded, file_size);
 }
 
 static int callback(const struct download_client_evt *event)
@@ -205,7 +205,7 @@ static int callback(const struct download_client_evt *event)
 		if (file_size) {
 			progress_print(downloaded, file_size);
 		} else {
-			printk("\r[ %d bytes ] ", downloaded);
+			printk("\r[ %d bytes ] \n", downloaded);
 		}
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
@@ -332,7 +332,7 @@ int main(void)
 	err = download_client_get(&downloader, &host_config, URL, STARTING_OFFSET);
 	if (err) {
 		printk("Failed to start the downloader, err %d", err);
-		return 0;
+		k_sleep(K_FOREVER);
 	}
 
 	printk("Downloading %s\n", URL);
