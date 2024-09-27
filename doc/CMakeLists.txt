@@ -39,6 +39,11 @@ if(NOT SPHINXBUILD)
   message(FATAL_ERROR "The 'sphinx-build' command was not found")
 endif()
 
+find_program(SPHINXAUTOBUILD sphinx-autobuild)
+if(NOT SPHINXAUTOBUILD)
+  message(WARNING "sphinx-autobuild not found, HTML hot reloading will not be available.")
+endif()
+
 find_program(WEST west)
 if(NOT WEST)
   message(FATAL_ERROR "The 'west' command was not found")
@@ -101,6 +106,8 @@ endfunction()
 #   the "inventory" builder on the docset conf.py. This target can be used
 #   to solve circular dependencies between docsets.
 # - ${name}: Run Sphinx "html" build.
+# - ${name}-live: Run Sphinx "html" live build (if sphinx-autobuild is
+#   available).
 # - ${name}-linkcheck: Run Sphinx "linkcheck" target.
 # - ${name}-clean: Clean build artifacts.
 #
@@ -155,6 +162,28 @@ function(add_docset name)
     COMMENT "Building ${name} docset..."
   )
 
+  if(SPHINXAUTOBUILD)
+    add_doc_target(
+      ${name}-live
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
+      COMMAND ${CMAKE_COMMAND} -E env ${DOCSET_ENV}
+      ${SPHINXAUTOBUILD}
+        --watch ${DOCSET_CFG_DIR}
+        --ignore ${DOCSET_BUILD_DIR}
+        -b html
+        -c ${DOCSET_CFG_DIR}
+        -d ${DOCSET_DOCTREE_DIR}
+        -w ${DOCSET_BUILD_DIR}/html-live.log
+        ${SPHINXOPTS}
+        ${SPHINXOPTS_EXTRA}
+        ${EXTRA_ARGS}
+        ${DOCSET_SRC_DIR}
+        ${DOCSET_HTML_DIR}
+      USES_TERMINAL
+      COMMENT "Building ${name}-live docset..."
+    )
+  endif()
+
   add_custom_target(
     ${name}-linkcheck
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_MAKE_DIRS}
@@ -180,6 +209,14 @@ function(add_docset name)
     PROPERTIES
       ADDITIONAL_CLEAN_FILES "${DOCSET_CLEAN_DIRS}"
   )
+
+  if(SPHINXAUTOBUILD)
+    set_target_properties(
+      ${name}-live ${name}-live-all
+      PROPERTIES
+        ADDITIONAL_CLEAN_FILES "${DOCSET_CLEAN_DIRS}"
+    )
+  endif()
 
   add_custom_target(
     ${name}-clean
@@ -322,12 +359,19 @@ if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(merge-search-indexes internal-all)
 endif()
 
-add_dependencies(zephyr-all kconfig-all)
-add_dependencies(mcuboot-all kconfig-all)
+# Add dependencies to both a docset-all and docset-live-all targets if available
+function(add_doc_dependencies docset)
+  add_dependencies(${docset}-all ${ARGN})
+  if(SPHINXAUTOBUILD)
+    add_dependencies(${docset}-live-all ${ARGN})
+  endif()
+endfunction()
+
 add_dependencies(nrfxlib-inventory-all kconfig-all zephyr-all)
-add_dependencies(nrf-all zephyr-all nrfxlib-inventory-all mcuboot-all matter-all kconfig-all)
-add_dependencies(nrf-all zephyr-all nrfxlib-inventory-all mcuboot-all tfm-all kconfig-all)
-add_dependencies(nrfxlib-all nrf-all)
+add_doc_dependencies(zephyr kconfig-all)
+add_doc_dependencies(mcuboot kconfig-all)
+add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all matter-all tfm-all kconfig-all)
+add_doc_dependencies(nrfxlib nrf-all)
 
 add_custom_target(build-all ALL)
 add_dependencies(build-all

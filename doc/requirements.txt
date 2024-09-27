@@ -14,6 +14,7 @@ pykwalify                       # |     |         |        |         |         |
 pytest                          # |     |         |        |         |         |      |   X    |
 recommonmark                    # |     |         |   X    |    X    |         |      |        |
 sphinx~=6.2                     # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
+sphinx-autobuild                # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
 sphinx-copybutton               # |  X  |         |        |         |         |      |   X    |
 sphinx-ncs-theme<1.1            # |  X  |         |        |         |         |      |        |
 sphinx-notfound-page            # |  X  |         |        |         |         |      |   X    |
