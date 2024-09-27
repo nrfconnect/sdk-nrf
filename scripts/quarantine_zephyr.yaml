@@ -46,6 +46,14 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24923"
 
 - scenarios:
+    - display.cfb.basic.mono01
+    - display.cfb.basic.mono01.lsbfirst
+    - display.cfb.basic.mono01.lsbfirst.msbfirst_font
+    - display.cfb.basic.mono01.msbfirst_font
+    - display.cfb.basic.mono10
+    - display.cfb.basic.mono10.lsbfirst
+    - display.cfb.basic.mono10.lsbfirst.msbfirst_font
+    - display.cfb.basic.mono10.msbfirst_font
     - drivers.display.default
     - drivers.display.read_write.sdl.argb8888
     - drivers.display.read_write.sdl.bgr565
@@ -55,6 +63,7 @@
     - drivers.display.read_write.sdl.mono10.lsbfirst
     - drivers.display.read_write.sdl.rgb565
     - drivers.display.read_write.sdl.rgb888
+    - sample.boards.nrf.nrf_led_matrix
     - sample.display.builtin
     - sample.display.lvgl.gui
     - sample.modules.lvgl.accelerometer_chart
@@ -62,8 +71,11 @@
     - sample.modules.lvgl.demo_benchmark
     - sample.modules.lvgl.demo_stress
     - sample.modules.lvgl.demo_widgets
+    - sample.smf.smf_calculator
   platforms:
     - native_posix
+    - native_sim
+    - native_sim/native/64
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
 
 - scenarios:
