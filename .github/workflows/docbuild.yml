@@ -65,7 +65,11 @@ jobs:
       - name: Build documentation
         working-directory: ncs/nrf
         run: |
-          cmake -GNinja -Bdoc/_build -Sdoc
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BUILD_CONF="-DNO_DTS_BINDINGS=ON"
+          fi
+
+          cmake -GNinja -Bdoc/_build -Sdoc ${BUILD_CONF}
           ninja -C doc/_build
 
       - name: Check version
