@@ -68,13 +68,8 @@ UNIT(va) = { "Volt Ampere", "VA" };
 UNIT(kvah) = { "Kilo Volt Ampere hours", "kVAh" };
 UNIT(db) = { "Decibel", "dB" };
 UNIT(lux) = { "Lux", "lx" };
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-UNIT(klxh) = { "Kilo Lux hours", "klxh" };
-UNIT(klmh) = { "Kilo Lumen hours", "klmh" };
-#else
 UNIT(lxh) = { "Lux hours", "lxh" };
 UNIT(lmh) = { "Lumen hours", "lmh" };
-#endif
 UNIT(lumen) = { "Lumen", "lm" };
 UNIT(lumen_per_watt) = { "Lumen per Watt", "lm/W" };
 UNIT(degrees) = { "Degrees", "degrees" };
@@ -108,11 +103,7 @@ UNIT(unitless) = { "Unitless" };
 
 #define SCALAR_REPR(_scalar, _flags) SCALAR_REPR_RANGED(_scalar, _flags, 0, 0)
 
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-#define SCALAR_CALLBACKS .encode = scalar_encode, .decode = scalar_decode
-#else
 #define SCALAR_CALLBACKS .cb = &scalar_cb
-#endif
 
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
 
@@ -331,216 +322,6 @@ static int scalar_encode_raw(const struct bt_mesh_sensor_format *format,
 	return 0;
 }
 
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-#define MUL_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
-				 ((_val) / (_repr)->value) :                   \
-				 ((_val) * (_repr)->value))
-
-#define DIV_SCALAR(_val, _repr) (((repr)->flags & DIVIDE) ?                    \
-				 ((_val) * (_repr)->value) :                   \
-				 ((_val) / (_repr)->value))
-
-static int scalar_encode(const struct bt_mesh_sensor_format *format,
-			 const struct sensor_value *val,
-			 struct net_buf_simple *buf)
-{
-	const struct scalar_repr *repr = format->user_data;
-
-	if (net_buf_simple_tailroom(buf) < format->size) {
-		return -ENOMEM;
-	}
-
-	int64_t raw = DIV_SCALAR(val->val1, repr) +
-		    DIV_SCALAR(val->val2, repr) / 1000000LL;
-
-	int64_t max_value = scalar_max(format);
-	int32_t min_value = scalar_min(format);
-
-	if (raw > max_value || raw < min_value) {
-		uint32_t type_max = BIT64(8 * format->size) - 1;
-		if (repr->flags & SIGNED) {
-			type_max = BIT64(8 * format->size - 1) - 1;
-		}
-
-		if ((repr->flags & HAS_HIGHER_THAN) &&
-			!((repr->flags & HAS_UNDEFINED) && (val->val1 == type_max))) {
-			raw = max_value;
-		} else if ((repr->flags & HAS_INVALID) && val->val1 == type_max - 1) {
-			raw = type_max - 1;
-		} else if ((repr->flags & HAS_UNDEFINED) && val->val1 == type_max) {
-			raw = type_max;
-		} else if (repr->flags & HAS_UNDEFINED_MIN) {
-			raw = type_max + 1;
-		} else {
-			return -ERANGE;
-		}
-	}
-
-	return scalar_encode_raw(format, raw, net_buf_simple_add(buf, format->size));
-}
-
-static int scalar_decode(const struct bt_mesh_sensor_format *format,
-			 struct net_buf_simple *buf, struct sensor_value *val)
-{
-	const struct scalar_repr *repr = format->user_data;
-
-	if (buf->len < format->size) {
-		return -ENOMEM;
-	}
-
-	int64_t raw;
-	int err;
-
-	err = scalar_decode_raw(format,
-				net_buf_simple_pull_mem(buf, format->size),
-				&raw);
-	if (err) {
-		return err;
-	}
-
-	int64_t max_value = scalar_max(format);
-	int64_t min_value = scalar_min(format);
-
-	if (raw < min_value || raw > max_value) {
-		if (!(repr->flags & (HAS_UNDEFINED | HAS_UNDEFINED_MIN |
-				     HAS_HIGHER_THAN | HAS_INVALID))) {
-			return -ERANGE;
-		}
-
-		uint32_t type_max = (repr->flags & SIGNED) ?
-			BIT64(8 * format->size - 1) - 1 :
-			BIT64(8 * format->size) - 1;
-
-		if (repr->flags & HAS_UNDEFINED_MIN) {
-			type_max += 1;
-		} else if ((repr->flags & HAS_INVALID) && raw == type_max - 1) {
-			type_max -= 1;
-		} else if (raw != type_max) {
-			return -ERANGE;
-		}
-
-		val->val1 = type_max;
-		val->val2 = 0;
-		return 0;
-	}
-
-	int64_t million = MUL_SCALAR(raw * 1000000LL, repr);
-
-	val->val1 = million / 1000000LL;
-	val->val2 = million % 1000000LL;
-
-	return 0;
-}
-
-static int boolean_encode(const struct bt_mesh_sensor_format *format,
-			  const struct sensor_value *val,
-			  struct net_buf_simple *buf)
-{
-	if (net_buf_simple_tailroom(buf) < 1) {
-		return -ENOMEM;
-	}
-
-	net_buf_simple_add_u8(buf, !!val->val1);
-	return 0;
-}
-
-static int boolean_decode(const struct bt_mesh_sensor_format *format,
-			  struct net_buf_simple *buf, struct sensor_value *val)
-{
-	if (buf->len < 1) {
-		return -ENOMEM;
-	}
-
-	uint8_t b = net_buf_simple_pull_u8(buf);
-
-	if (b > 1) {
-		return -EINVAL;
-	}
-
-	val->val1 = b;
-	val->val2 = 0;
-	return 0;
-}
-
-static int exp_1_1_encode(const struct bt_mesh_sensor_format *format,
-			  const struct sensor_value *val,
-			  struct net_buf_simple *buf)
-{
-	if (net_buf_simple_tailroom(buf) < 1) {
-		return -ENOMEM;
-	}
-
-	if (val->val1 == 0xffffffff && val->val2 == 0) {
-		net_buf_simple_add_u8(buf, 0xff); // Unknown time
-		return 0;
-	}
-	if (val->val1 == 0xfffffffe && val->val2 == 0) {
-		net_buf_simple_add_u8(buf, 0xfe); // Total lifetime
-		return 0;
-	}
-
-	net_buf_simple_add_u8(buf,
-			      sensor_powtime_encode((val->val1 * 1000ULL) +
-						    (val->val2 / 1000ULL)));
-	return 0;
-}
-
-static int exp_1_1_decode(const struct bt_mesh_sensor_format *format,
-			  struct net_buf_simple *buf, struct sensor_value *val)
-{
-	if (buf->len < 1) {
-		return -ENOMEM;
-	}
-
-	uint8_t raw = net_buf_simple_pull_u8(buf);
-
-	val->val2 = 0;
-	if (raw == 0xff) {
-		val->val1 = 0xffffffff;
-	} else if (raw == 0xfe) {
-		val->val1 = 0xfffffffe;
-	} else {
-		uint64_t time_us = sensor_powtime_decode_us(raw);
-
-		val->val1 = time_us / USEC_PER_SEC;
-		val->val2 = time_us % USEC_PER_SEC;
-	}
-	return 0;
-}
-
-static int float32_encode(const struct bt_mesh_sensor_format *format,
-			  const struct sensor_value *val,
-			  struct net_buf_simple *buf)
-{
-	if (net_buf_simple_tailroom(buf) < sizeof(float)) {
-		return -ENOMEM;
-	}
-
-	/* IEEE-754 32-bit floating point */
-	float fvalue = (float)val->val1 + (float)val->val2 / 1000000L;
-
-	net_buf_simple_add_mem(buf, &fvalue, sizeof(float));
-
-	return 0;
-}
-
-static int float32_decode(const struct bt_mesh_sensor_format *format,
-			  struct net_buf_simple *buf, struct sensor_value *val)
-{
-	if (buf->len < sizeof(float)) {
-		return -ENOMEM;
-	}
-
-	float fvalue;
-
-	memcpy(&fvalue, net_buf_simple_pull_mem(buf, sizeof(float)),
-	       sizeof(float));
-
-	val->val1 = (int32_t)fvalue;
-	val->val2 = ((int64_t)(fvalue * 1000000.0f)) % 1000000L;
-	return 0;
-}
-#else /* !defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 static inline int64_t mul_scalar(int64_t val, const struct scalar_repr *repr)
 {
 	return repr->flags & DIVIDE ?
@@ -1249,7 +1030,6 @@ static struct bt_mesh_sensor_format_cb float32_cb = {
 	.to_float = float32_to_float,
 	.from_float = float32_from_float,
 };
-#endif /* defined(CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE) */
 
 /*******************************************************************************
  * Sensor Formats
@@ -1369,12 +1149,7 @@ FORMAT(time_exp_8)	    = {
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
 	.unit = &bt_mesh_sensor_unit_seconds,
 #endif
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-	.encode = exp_1_1_encode,
-	.decode = exp_1_1_decode,
-#else
 	.cb = &exp_1_1_cb,
-#endif
 };
 
 /*******************************************************************************
@@ -1417,21 +1192,12 @@ FORMAT(energy)           = SCALAR_FORMAT(3,
 /*******************************************************************************
  * Lighting formats
  ******************************************************************************/
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-FORMAT(chromatic_distance)      = SCALAR_FORMAT_MIN_MAX(2,
-							(SIGNED |
-							HAS_INVALID |
-							HAS_UNDEFINED),
-							unitless, SCALAR(1e-5, 0),
-							-5000, 5000);
-#else
 FORMAT(chromatic_distance)      = SCALAR_FORMAT_MIN_MAX(2,
 							(SIGNED |
 							HAS_INVALID |
 							HAS_UNDEFINED_MAX_MINUS_1),
 							unitless, SCALAR(1e-5, 0),
 							-5000, 5000);
-#endif
 FORMAT(chromaticity_coordinate) = SCALAR_FORMAT(2,
 						UNSIGNED,
 						unitless,
@@ -1450,16 +1216,6 @@ FORMAT(luminous_efficacy)	= SCALAR_FORMAT_MAX(2,
 						    lumen_per_watt,
 						    SCALAR(1e-1, 0),
 						    18000);
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-FORMAT(luminous_energy)		= SCALAR_FORMAT(3,
-						(UNSIGNED | HAS_UNDEFINED),
-						klmh,
-						SCALAR(1, 0));
-FORMAT(luminous_exposure)	= SCALAR_FORMAT(3,
-						(UNSIGNED | HAS_UNDEFINED),
-						klxh,
-						SCALAR(1, 0));
-#else
 FORMAT(luminous_energy)		= SCALAR_FORMAT(3,
 						(UNSIGNED | HAS_UNDEFINED),
 						lmh,
@@ -1468,7 +1224,6 @@ FORMAT(luminous_exposure)	= SCALAR_FORMAT(3,
 						(UNSIGNED | HAS_UNDEFINED),
 						lxh,
 						SCALAR(1e3, 0));
-#endif
 FORMAT(luminous_flux)		= SCALAR_FORMAT(2,
 						(UNSIGNED | HAS_UNDEFINED),
 						lumen,
@@ -1500,24 +1255,14 @@ FORMAT(cos_of_the_angle) = SCALAR_FORMAT_MIN_MAX(1,
 						 SCALAR(1, 0),
 						 -100, 100);
 FORMAT(boolean) = {
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-	.encode = boolean_encode,
-	.decode = boolean_decode,
-#else
 	.cb = &boolean_cb,
-#endif
 	.size	= 1,
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
 	.unit = &bt_mesh_sensor_unit_unitless,
 #endif
 };
 FORMAT(coefficient) = {
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-	.encode = float32_encode,
-	.decode = float32_decode,
-#else
 	.cb = &float32_cb,
-#endif
 	.size	= 4,
 #ifdef CONFIG_BT_MESH_SENSOR_LABELS
 	.unit = &bt_mesh_sensor_unit_unitless,

@@ -264,21 +264,12 @@ bt_mesh_lc_prop_format_get(uint16_t id)
 		.accuracy = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY,        \
 	}
 
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-#define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT                                        \
-	.lux = {                                                               \
-		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY },             \
-		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON },                  \
-		{ CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG }              \
-	}
-#else
 #define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT                                        \
 	.centilux = {                                                          \
 		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY * 100,           \
 		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON * 100,                \
 		CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG * 100            \
 	}
-#endif
 #else
 #define BT_MESH_LIGHT_CTRL_SRV_LUX_INIT
 #endif

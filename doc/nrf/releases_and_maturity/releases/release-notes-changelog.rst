@@ -145,6 +145,9 @@ Bluetooth Mesh
  * Added metadata as optional parameter for models Light Lightness Server, Light HSL Server, Light CTL Temperature Server, Sensor Server, and Time Server.
    To use the metadata, enable the :kconfig:option:`CONFIG_BT_MESH_LARGE_COMP_DATA_SRV` Kconfig option.
 
+* Removed the ``BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`` Kconfig option, deprecated in the |NCS| v2.6.0, as the old APIs, based on the :c:struct:`sensor_value` type, are removed.
+  Applications using the old APIs must be updated, as described in the :ref:`v2.6.0 migration guide <nrf5340_audio_migration_notes>`.
+
 DECT NR+
 --------
 

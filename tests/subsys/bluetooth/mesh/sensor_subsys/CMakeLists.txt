@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 Nordic Semiconductor ASA
+# Copyright (c) 2024 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -10,7 +10,6 @@ project(bt_mesh_sensor_subsystem_test)
 
 target_include_directories(app PUBLIC
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh
-  ${ZEPHYR_BASE}/subsys/bluetooth
   )
 
 FILE(GLOB app_sources src/*.c)
@@ -18,7 +17,6 @@ target_sources(app PRIVATE
   ${app_sources}
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/sensor_types.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh/sensor.c
-  ${ZEPHYR_BASE}/subsys/bluetooth/mesh/msg.c
   )
 
 target_compile_options(app
@@ -26,7 +24,6 @@ target_compile_options(app
   -DCONFIG_BT_MESH_MODEL_KEY_COUNT=5
   -DCONFIG_BT_MESH_MODEL_GROUP_COUNT=5
   -DCONFIG_BT_MESH_SENSOR_ALL_TYPES=1
-  -DCONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE=1
   -DCONFIG_BT_MESH_SENSOR_LABELS=1
   -DCONFIG_BT_MESH_SENSOR_CHANNELS_MAX=5
   -DCONFIG_BT_MESH_SENSOR_CHANNEL_ENCODED_SIZE_MAX=4

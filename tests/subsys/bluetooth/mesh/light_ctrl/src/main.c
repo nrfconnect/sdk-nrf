@@ -327,28 +327,16 @@ expected_statemachine_cond(bool enabled,
 		      light_ctrl_srv.flags);
 }
 
-static struct sensor_value float_to_sensor_value(float fvalue)
-{
-	return (struct sensor_value) {
-		       .val1 = (int32_t)(fvalue),
-		       .val2 = ((int64_t)((fvalue) * 1000000.0f)) % 1000000L
-	};
-}
-
-static float sensor_to_float(struct sensor_value *val)
-{
-	return val->val1 + val->val2 / 1000000.0f;
-}
-
 static void send_amb_lux_level(float amb)
 {
 	struct bt_mesh_msg_ctx ctx;
-	struct sensor_value value;
+	struct bt_mesh_sensor_value value;
 
 	NET_BUF_SIMPLE_DEFINE(buf, BT_MESH_SENSOR_OP_STATUS);
 	net_buf_simple_init(&buf, 0);
 
-	value = float_to_sensor_value(amb);
+	zassert_ok(
+		bt_mesh_sensor_value_from_float(&bt_mesh_sensor_format_illuminance, amb, &value));
 
 	zassert_ok(sensor_status_id_encode(&buf, 3, BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL));
 	zassert_ok(sensor_value_encode(&buf, &bt_mesh_sensor_present_amb_light_level, &value));
@@ -589,18 +577,15 @@ static void check_default_cfg(void)
 	zassert_equal(light_ctrl_srv.reg->cfg.accuracy, CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY,
 		      "Invalid default value");
 
-	zassert_mem_equal(&light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_STANDBY],
-			  &(struct sensor_value)
-			  { .val1 = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY },
-			  sizeof(struct sensor_value), "Invalid default value");
-	zassert_mem_equal(&light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_ON],
-			  &(struct sensor_value)
-			  { .val1 = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON },
-			  sizeof(struct sensor_value), "Invalid default value");
-	zassert_mem_equal(&light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_PROLONG],
-			  &(struct sensor_value)
-			  { .val1 = CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG },
-			  sizeof(struct sensor_value), "Invalid default value");
+	zassert_equal(light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_STANDBY],
+			  CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY * 100,
+			  "Invalid default value");
+	zassert_equal(light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_ON],
+			  CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON * 100,
+			  "Invalid default value");
+	zassert_equal(light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_PROLONG],
+			  CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG * 100,
+			  "Invalid default value");
 }
 
 ZTEST(light_ctrl_test, test_default_cfg)
@@ -625,10 +610,10 @@ ZTEST(light_ctrl_test, test_default_cfg)
 	light_ctrl_srv.reg->cfg.kp.down = 9;
 
 	light_ctrl_srv.reg->cfg.accuracy = 11;
-
-	light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_STANDBY] = float_to_sensor_value(13);
-	light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_ON] = float_to_sensor_value(15);
-	light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_PROLONG] = float_to_sensor_value(17);
+	/*Lux unit resolution is 0.01 */
+	light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_STANDBY] = 13 * 100;
+	light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_ON] = 15 * 100;
+	light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_PROLONG] = 17 * 100;
 
 	expect_ctrl_disable();
 	_bt_mesh_light_ctrl_srv_cb.reset(&mock_ligth_ctrl_model);
@@ -975,7 +960,7 @@ ZTEST(light_ctrl_pi_reg_test, test_target_luxlevel_for_pi_regulator)
 		      expected_lightness, pi_reg_test_ctx.lightness);
 
 	/* Set Ambient LuxLevel to target LuxLevel to stop PI Regulator changing lightness value. */
-	send_amb_lux_level(sensor_to_float(&light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_ON]));
+	send_amb_lux_level((float)light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_ON] * 0.01f);
 	/* It will take long time to finish the test so that the regulator will drop the last
 	 * measured ambient value. Don't let it do that.
 	 */
@@ -1000,7 +985,7 @@ ZTEST(light_ctrl_pi_reg_test, test_target_luxlevel_for_pi_regulator)
 		      expected_lightness, pi_reg_test_ctx.lightness);
 
 	/* Set Ambient LuxLevel to target LuxLevel to stop PI Regulator changing lightness value. */
-	send_amb_lux_level(sensor_to_float(&light_ctrl_srv.cfg.lux[LIGHT_CTRL_STATE_PROLONG]));
+	send_amb_lux_level((float)light_ctrl_srv.cfg.centilux[LIGHT_CTRL_STATE_PROLONG] * 0.01f);
 	expected_lightness -= light_ctrl_srv.reg->cfg.kp.up;
 	trigger_pi_reg(1, true);
 	zassert_equal(pi_reg_test_ctx.lightness, expected_lightness, "Expected: %d, got: %d",

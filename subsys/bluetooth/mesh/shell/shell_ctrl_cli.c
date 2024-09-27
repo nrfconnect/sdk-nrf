@@ -197,7 +197,7 @@ static int cmd_light_onoff_set_unack(const struct shell *shell, size_t argc, cha
 	return light_onoff_set(shell, argc, argv, false);
 }
 
-static void prop_print(const struct shell *shell, int err, sensor_value_type *rsp)
+static void prop_print(const struct shell *shell, int err, struct bt_mesh_sensor_value *rsp)
 {
 	if (!err) {
 		shell_fprintf(shell, SHELL_NORMAL, "Property value: ");
@@ -222,7 +222,7 @@ static int cmd_prop_get(const struct shell *shell, size_t argc, char *argv[])
 	}
 
 	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
-	sensor_value_type rsp;
+	struct bt_mesh_sensor_value rsp;
 
 	err = bt_mesh_light_ctrl_cli_prop_get(cli, NULL, id, &rsp);
 	prop_print(shell, err, &rsp);
@@ -247,7 +247,7 @@ static int prop_set(const struct shell *shell, size_t argc, char *argv[], bool a
 		return -ENOENT;
 	}
 
-	sensor_value_type set = shell_model_strtosensorval(prop_format, argv[2], &err);
+	struct bt_mesh_sensor_value set = shell_model_strtosensorval(prop_format, argv[2], &err);
 
 	if (err) {
 		shell_warn(shell, "Unable to parse input string arg");
@@ -261,7 +261,7 @@ static int prop_set(const struct shell *shell, size_t argc, char *argv[], bool a
 	struct bt_mesh_light_ctrl_cli *cli = mod->rt->user_data;
 
 	if (acked) {
-		sensor_value_type rsp;
+		struct bt_mesh_sensor_value rsp;
 		err = bt_mesh_light_ctrl_cli_prop_set(cli, NULL, id, &set, &rsp);
 
 		prop_print(shell, err, &rsp);
