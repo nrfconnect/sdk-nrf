@@ -22,6 +22,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 
 set(SPHINXOPTS "-j auto -W --keep-going -T" CACHE STRING "Default Sphinx Options")
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
+set(NO_DTS_BINDINGS OFF CACHE BOOL "Do not generate dts bindings documentation")
 
 separate_arguments(SPHINXOPTS)
 separate_arguments(SPHINXOPTS_EXTRA)
@@ -221,6 +222,12 @@ file(MAKE_DIRECTORY ${HTML_DIR})
 #-------------------------------------------------------------------------------
 # docset: Zephyr
 
+set(DTS_ARGS)
+
+if(NO_DTS_BINDINGS)
+  list(APPEND DTS_ARGS --turbo-mode)
+endif()
+
 add_custom_target(
   zephyr-devicetree
   COMMAND ${CMAKE_COMMAND} -E env
@@ -231,6 +238,7 @@ add_custom_target(
     --vendor-prefixes ${ZEPHYR_BASE}/dts/bindings/vendor-prefixes.txt
     --dts-root ${ZEPHYR_BASE}
     ${ZEPHYR_BINARY_DIR}/src/build/dts/api
+    ${DTS_ARGS}
   VERBATIM
   USES_TERMINAL
   COMMENT "Generating Devicetree bindings documentation..."
