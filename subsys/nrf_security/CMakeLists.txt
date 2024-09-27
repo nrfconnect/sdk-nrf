@@ -39,7 +39,24 @@ if(CONFIG_BUILD_WITH_TFM)
   include(${NRF_SECURITY_ROOT}/cmake/config_to_tf-m.cmake)
 endif()
 
-if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
+if(CONFIG_PSA_SSF_CRYPTO_CLIENT AND NOT CONFIG_NRF_SECURITY)
+  zephyr_compile_definitions(MBEDTLS_PSA_CRYPTO_CONFIG)
+  zephyr_compile_definitions(MBEDTLS_PSA_CRYPTO_CLIENT)
+  zephyr_compile_definitions(MBEDTLS_PSA_CRYPTO_CONFIG_FILE="ssf_crypto_config_empty.h")
+  zephyr_compile_definitions(MBEDTLS_CONFIG_FILE="ssf_crypto_config_empty.h")
+
+  zephyr_include_directories(
+    ${NRF_SECURITY_ROOT}/include
+    # Oberon PSA headers
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library
+    # Mbed TLS (mbedcrypto) PSA headers
+    ${ARM_MBEDTLS_PATH}/include
+    ${ARM_MBEDTLS_PATH}/library
+  )
+
+  zephyr_sources(${CMAKE_CURRENT_LIST_DIR}/src/ssf_secdom/ssf_crypto.c)
+elseif(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
   # We enable either TF-M or the SSF client PSA crypto interface but we are
   # not in the secure image build
 
@@ -88,50 +105,54 @@ else()
   nrf_security_debug("Building for pure Zephyr")
 endif()
 
-set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG  True)
+# This check is needed for the cases that CONFIG_PSA_SSF_CRYPTO_CLIENT
+# is enabled but the CONFIG_NRF_SECURITY is not enabled
+if(CONFIG_NRF_SECURITY)
+  set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG  True)
 
-# Add library for crypto configs (NS/S-only build)
-# The name and intent of this comes from TF-M distribution
-add_library(psa_crypto_config INTERFACE)
+  # Add library for crypto configs (NS/S-only build)
+  # The name and intent of this comes from TF-M distribution
+  add_library(psa_crypto_config INTERFACE)
 
-# Add config files required for PSA crypto interface
-target_compile_definitions(psa_crypto_config
-  INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
-)
+  # Add config files required for PSA crypto interface
+  target_compile_definitions(psa_crypto_config
+    INTERFACE
+      -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
+      -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
+  )
 
-# Add library for crypto configs (S-only or Secure image build)
-# The name and intent of this comes from TF-M distribution
-add_library(psa_crypto_library_config INTERFACE)
+  # Add library for crypto configs (S-only or Secure image build)
+  # The name and intent of this comes from TF-M distribution
+  add_library(psa_crypto_library_config INTERFACE)
 
-# Add config files required for PSA core
-target_compile_definitions(psa_crypto_library_config
-  INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
-)
+  # Add config files required for PSA core
+  target_compile_definitions(psa_crypto_library_config
+    INTERFACE
+      -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
+      -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
+      -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
+  )
 
-# Add a library for crypto includes for the PSA interface (NS, S-only and TF-M)
-# The name and intent of this comes from TF-M distribution
-add_library(psa_interface INTERFACE)
+  # Add a library for crypto includes for the PSA interface (NS, S-only and TF-M)
+  # The name and intent of this comes from TF-M distribution
+  add_library(psa_interface INTERFACE)
 
-# Add the includes from nrf_security, Oberon PSA core, and Arm Mbed TLS
-# to the psa_interface library
-target_include_directories(psa_interface
-  INTERFACE
-    # Oberon PSA headers
-    ${OBERON_PSA_CORE_PATH}/include
-    ${OBERON_PSA_CORE_PATH}/library
-    # Mbed TLS (mbedcrypto) PSA headers
-    ${ARM_MBEDTLS_PATH}/library
-    ${ARM_MBEDTLS_PATH}/include
-    ${ARM_MBEDTLS_PATH}/include/library
-)
+  # Add the includes from nrf_security, Oberon PSA core, and Arm Mbed TLS
+  # to the psa_interface library
+  target_include_directories(psa_interface
+    INTERFACE
+      # Oberon PSA headers
+      ${OBERON_PSA_CORE_PATH}/include
+      ${OBERON_PSA_CORE_PATH}/library
+      # Mbed TLS (mbedcrypto) PSA headers
+      ${ARM_MBEDTLS_PATH}/library
+      ${ARM_MBEDTLS_PATH}/include
+      ${ARM_MBEDTLS_PATH}/include/library
+  )
 
-# Finally adding the crypto lib
-add_subdirectory(${NRFXLIB_DIR}/crypto crypto_copy)
+  # Finally adding the crypto lib
+  add_subdirectory(${NRFXLIB_DIR}/crypto crypto_copy)
 
-# Add mbed TLS Libraries
-add_subdirectory(src)
+  # Add mbed TLS Libraries
+  add_subdirectory(src)
+endif()
