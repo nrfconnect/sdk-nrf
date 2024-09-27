@@ -6,6 +6,7 @@
 
 # TFM documentation build configuration file
 
+import os
 from pathlib import Path
 import sys
 
@@ -25,7 +26,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "Trusted Firmware-M"
 copyright = "2017-2021, ARM CE-OSS"
 author = "ARM CE-OSS"
-version = "2.0.0"
+version = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))

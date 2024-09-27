@@ -61,6 +61,7 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 # Args:
 # - name: Docset name.
 # - sources: Sources.
+# - version: Docset version.
 # - STANDALONE: Use if docset is Doxygen-only, i.e., without Sphinx.
 #
 # Configured targets (if STANDALONE):
@@ -71,10 +72,11 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 # - ${name}-doxygen: Run Doxygen build.
 # - ${name}-doxygen-clean: Clean build artifacts.
 #
-function(add_doxygen_docset name sources)
+function(add_doxygen_docset name sources version)
   cmake_parse_arguments(DOXYGEN "STANDALONE" "" "" ${ARGN})
   set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/html)
   set(DOCSET_SOURCE_BASE ${sources})
+  set(DOCSET_VERSION ${version})
 
   if(NOT DOXYGEN_STANDALONE)
     set(SUFFIX "-doxygen")
@@ -101,6 +103,7 @@ endfunction()
 #
 # Args:
 # - name: Docset name.
+# - version: Docset version.
 # - DODGY: Enable/disable "dodgy" mode. If enabled "-W" (warnings as errors)
 #   option will be disabled. It can be useful for external docsets that are
 #   likely to generate build warnings.
@@ -122,7 +125,7 @@ endfunction()
 # - ${name}-linkcheck: Run Sphinx "linkcheck" target.
 # - ${name}-clean: Clean build artifacts.
 #
-function(add_docset name)
+function(add_docset name version)
   cmake_parse_arguments(DOCSET "DODGY" "" "" ${ARGN})
 
   set(DOCSET_CFG_DIR ${CMAKE_CURRENT_LIST_DIR}/${name})
@@ -132,7 +135,7 @@ function(add_docset name)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
   set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR};${DOCSET_HTML_DIR})
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
-  set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE})
+  set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE};DOCSET_VERSION=${version})
 
   if(${DOCSET_DODGY})
     list(REMOVE_ITEM SPHINXOPTS "-W" "--keep-going")
@@ -292,55 +295,58 @@ add_custom_target(
   COMMENT "Generating Devicetree bindings documentation..."
 )
 
-add_docset(zephyr)
-add_doxygen_docset(zephyr ${ZEPHYR_BASE})
+add_docset(zephyr ${Zephyr_VERSION})
+add_doxygen_docset(zephyr ${ZEPHYR_BASE} ${Zephyr_VERSION})
 add_dependencies(zephyr zephyr-devicetree)
 add_dependencies(zephyr-all zephyr-devicetree)
 
 #-------------------------------------------------------------------------------
 # docset: nrf
 
-add_docset(nrf)
-add_doxygen_docset(nrf ${NRF_BASE})
+file(READ "${NRF_BASE}/VERSION" NRF_VERSION)
+string(STRIP ${NRF_VERSION} NRF_VERSION)
+
+add_docset(nrf ${NRF_VERSION})
+add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
 
-add_docset(mcuboot)
+add_docset(mcuboot "2.0.99")
 
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} STANDALONE)
+add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-add_docset(tfm DODGY)
+add_docset(tfm "2.0.0" DODGY)
 
 #-------------------------------------------------------------------------------
 # docset: matter
 
-add_docset(matter DODGY)
+add_docset(matter "1.3.0" DODGY)
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
 
-add_docset(nrfxlib DODGY)
-add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR})
+add_docset(nrfxlib ${NRF_VERSION} DODGY)
+add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR} ${NRF_VERSION})
 
 #-------------------------------------------------------------------------------
 # docset: internal
 
 if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   message(STATUS "Internal documentation included")
-  add_docset(internal)
+  add_docset(internal "")
 endif()
 
 #-------------------------------------------------------------------------------
 # docset: kconfig
 
-add_docset(kconfig)
+add_docset(kconfig "")
 
 #-------------------------------------------------------------------------------
 # Global targets

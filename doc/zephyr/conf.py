@@ -79,6 +79,7 @@ doxyrunner_fmt_vars = {
     "NRF_BASE": str(NRF_BASE),
     "DOCSET_SOURCE_BASE": str(ZEPHYR_BASE),
     "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
+    "DOCSET_VERSION": version,
 }
 
 # -- Options for zephyr.warnings_filter ----------------------------------------

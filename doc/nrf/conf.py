@@ -28,7 +28,7 @@ MCUBOOT_BASE = utils.get_projdir("mcuboot")
 project = "nRF Connect SDK"
 copyright = "2019-2024, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "2.7.99"
+version = release = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
@@ -129,6 +129,7 @@ doxyrunner_fmt_vars = {
     "NRF_BASE": str(NRF_BASE),
     "DOCSET_SOURCE_BASE": str(NRF_BASE),
     "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
+    "DOCSET_VERSION": version,
 }
 
 # create mbedtls config header (needed for Doxygen)

@@ -6,6 +6,7 @@
 
 # MCUboot documentation build configuration file
 
+import os
 from pathlib import Path
 import sys
 
@@ -24,7 +25,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 project = "MCUboot"
 copyright = "2019-2024, Nordic Semiconductor"
-version = release = "2.0.99"
+version = release = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
