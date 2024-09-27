@@ -22,6 +22,8 @@ void nrf_security_mutex_init(mbedtls_threading_mutex_t * mutex)
 	if((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
 		k_mutex_init(&mutex->mutex);
 	}
+
+	mutex->flags |= NRF_SECURITY_MUTEX_FLAGS_INITIALIZED;
 }
 
 void nrf_security_mutex_free(mbedtls_threading_mutex_t * mutex)
