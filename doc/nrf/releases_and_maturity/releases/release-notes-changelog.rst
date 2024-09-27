@@ -269,8 +269,6 @@ nRF Desktop
     For details, see :ref:`nrf_desktop_usb_state_sof_synchronization`.
   * Local HID report buffering in :ref:`nrf_desktop_usb_state`.
     This ensures that the memory buffer passed to the USB next stack is valid until a HID report is sent and allows to enqueue up to two HID input reports for a USB HID instance (used only when :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is enabled).
-  * Kconfig dependency that prevents enabling USB remote wakeup (:ref:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP <config_desktop_app_options>`) for the nRF54H20 SoC.
-    The DWC2 USB device controller driver used by the nRF54H20 SoC does not support the remote wakeup capability.
   * Bootup logs with the manifest semantic version information to :ref:`nrf_desktop_dfu_mcumgr` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
   * Manifest semantic version information to the firmware information response in :ref:`nrf_desktop_dfu` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
   * A missing DTS node compatible with ``zephyr,hid-device`` to the nRF52840 DK in the MCUboot QSPI configuration.
