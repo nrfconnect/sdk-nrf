@@ -81,8 +81,9 @@ doxyrunner_doxyfile = NRF_BASE / "doc" / "nrfxlib" / "nrfxlib.doxyfile.in"
 doxyrunner_outdir = utils.get_builddir() / "html" / "nrfxlib" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
-    "NRFXLIB_BASE": str(NRFXLIB_BASE),
-    "OUTPUT_DIRECTORY": str(doxyrunner_outdir),
+    "NRF_BASE": str(NRF_BASE),
+    "DOCSET_SOURCE_BASE": str(NRFXLIB_BASE),
+    "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
 }
 
 # -- Options for doxybridge plugin ---------------------------------------------
