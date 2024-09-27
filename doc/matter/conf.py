@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+import os
 from pathlib import Path
 import sys
 
@@ -23,7 +24,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "Matter SDK"
 copyright = "2020-2024, Matter Contributors"
 author = "Matter Contributors"
-version = "1.3.0"
+version = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
