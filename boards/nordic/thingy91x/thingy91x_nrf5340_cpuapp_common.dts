@@ -51,10 +51,10 @@
 		compatible = "nordic,nrf-gpio-forwarder";
 		status = "okay";
 		uart {
-			gpios = <&gpio0 22 0>, // nrf700x-coex req-gpios
-				<&gpio0 23 0>, // nrf700x-coex status0-gpios
-				<&gpio0 20 0>, // nrf700x-coex grant-gpios
-				<&gpio0 6 0>;  // nrf700x-coex swctrl1-gpios
+			gpios = <&gpio0 22 0>, /* nrf7002-coex req-gpios     */
+				<&gpio0 23 0>, /* nrf7002-coex status0-gpios */
+				<&gpio0 20 0>, /* nrf7002-coex grant-gpios   */
+				<&gpio0 6 0>;  /* nrf7002-coex swctrl1-gpios */
 		};
 	};
 
@@ -99,7 +99,7 @@
 	int1-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>; //INT4
 };
 
-&nrf700x {
+&nrf70 {
 	iovdd-ctrl-gpios = <&gpio0 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
 	bucken-gpios = <&gpio0 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
 	host-irq-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;

@@ -24,6 +24,6 @@
 };
 
 /* enable nRF70 */
-&nrf700x {
+&nrf70 {
 	status = "okay";
 };
