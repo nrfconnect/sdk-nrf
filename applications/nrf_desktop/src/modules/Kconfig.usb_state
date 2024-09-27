@@ -16,14 +16,9 @@ config DESKTOP_USB_REMOTE_WAKEUP
 	bool "Enable USB remote wakeup"
 	default y
 	depends on DESKTOP_USB_PM_ENABLE
-	depends on !UDC_DWC2
 	help
 	  Enable USB remote wakeup functionality. The USB wakeup request is
 	  triggered on wake_up_event.
-
-	  The DWC2 USB device controller driver used by the nRF54H20 SoC does
-	  not support the remote wakeup capability. Because of that, the feature
-	  is disabled in the configuration.
 
 config DESKTOP_USB_SUBSCRIBER_REPORT_PRIORITY
 	int "USB HID reports subscriber priority"
