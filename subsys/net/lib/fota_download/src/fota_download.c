@@ -36,6 +36,13 @@ static const char *dl_file;
 static uint32_t dl_host_hash;
 static uint32_t dl_file_hash;
 static struct download_client dlc;
+static int download_client_callback(const struct download_client_evt *event);
+static char dlc_buf[CONFIG_FOTA_DOWNLOAD_FULL_MODEM_BUF_SZ];
+static struct download_client_cfg dlc_config = {
+	.callback = download_client_callback,
+	.buf = dlc_buf,
+	.buf_size = sizeof(dlc_buf),
+};
 /** SMP MCUBoot image type */
 static bool use_smp_dfu_target;
 static struct k_work_delayable  dlc_with_offset_work;
@@ -410,19 +417,6 @@ stop_and_clear_flags:
 	return;
 }
 
-static bool is_ip_address(const char *host)
-{
-	struct sockaddr sa;
-
-	if (zsock_inet_pton(AF_INET, host, sa.data) == 1) {
-		return true;
-	} else if (zsock_inet_pton(AF_INET6, host, sa.data) == 1) {
-		return true;
-	}
-
-	return false;
-}
-
 int fota_download_b1_file_parse(char *s0_s1_files)
 {
 #if !defined(PM_S1_ADDRESS)
@@ -607,10 +601,6 @@ int fota_download(const char *host, const char *file,
 
 		config.sec_tag_count = sec_tag_count;
 		config.sec_tag_list = sec_tag_list_copy;
-
-		if (!is_ip_address(host)) {
-			config.set_tls_hostname = true;
-		}
 	}
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
@@ -679,7 +669,7 @@ static int fota_download_object_init(void)
 
 	k_work_init_delayable(&dlc_with_offset_work, download_with_offset);
 
-	err = download_client_init(&dlc, download_client_callback);
+	err = download_client_init(&dlc, &dlc_config);
 	if (err != 0) {
 		return err;
 	}

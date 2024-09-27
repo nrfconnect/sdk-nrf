@@ -12,9 +12,9 @@
 #include <zephyr/net/socket_ncs.h>
 #include <zephyr/net/tls_credentials.h>
 
-#include <zephyr/logging/log.h>
 #include "download_client_internal.h"
 
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 
 #define SIN6(A) ((struct sockaddr_in6 *)(A))
@@ -35,33 +35,7 @@ static const char *str_family(int family)
 	}
 }
 
-static int socket_recv_timeout_set(int fd, int timeout_ms)
-{
-	int err;
-
-	if (timeout_ms <= 0) {
-		return 0;
-	}
-
-	if (fd == -1) {
-		return -1;
-	}
-
-	struct timeval timeo = {
-		.tv_sec = (timeout_ms / 1000),
-		.tv_usec = (timeout_ms % 1000) * 1000,
-	};
-
-	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
-	if (err) {
-		LOG_WRN("Failed to set socket timeout, errno %d", errno);
-		return -1;
-	}
-
-	return 0;
-}
-
-static int socket_send_timeout_set(int fd, int timeout_ms)
+int client_socket_send_timeout_set(int fd, int timeout_ms)
 {
 	int err;
 
@@ -77,7 +51,7 @@ static int socket_send_timeout_set(int fd, int timeout_ms)
 	err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
 	if (err) {
 		LOG_WRN("Failed to set socket timeout, errno %d", errno);
-		return -1;
+		return -errno;
 	}
 
 	return 0;
@@ -113,24 +87,17 @@ static int socket_sectag_set(int fd, const int * const sec_tag_list, uint8_t sec
 	return 0;
 }
 
-static int socket_tls_hostname_set(int fd, const char * const hostname)
+static int socket_tls_hostname_set(int fd, const char * const host)
 {
-	__ASSERT_NO_MSG(hostname);
+	__ASSERT_NO_MSG(host);
 
-	char parsed_host[HOSTNAME_SIZE];
 	int err;
 
-	err = url_parse_host(hostname, parsed_host, sizeof(parsed_host));
-	if (err) {
-		LOG_ERR("Failed to parse host, err %d", err);
-		return err;
-	}
-
-	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, parsed_host,
-			 strlen(parsed_host));
+	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, host,
+			 strlen(host));
 	if (err) {
 		LOG_ERR("Failed to setup TLS hostname (%s), errno %d",
-			parsed_host, errno);
+			host, errno);
 		return -errno;
 	}
 
@@ -152,77 +119,77 @@ static int socket_pdn_id_set(int fd, int pdn_id)
 	return 0;
 }
 
+static bool is_ip_address(const char *hostname)
+{
+	struct sockaddr sa;
 
-static int host_lookup(const char *host, int family, uint8_t pdn_id,
-		       struct sockaddr *sa)
+	if (zsock_inet_pton(AF_INET, hostname, sa.data) == 1) {
+		return true;
+	} else if (zsock_inet_pton(AF_INET6, hostname, sa.data) == 1) {
+		return true;
+	}
+
+	return false;
+}
+
+int client_socket_host_lookup(const char * const hostname, uint8_t pdn_id, struct sockaddr *sa)
 {
 	int err;
 	char pdnserv[4];
-	char hostname[HOSTNAME_SIZE];
+	char *servname = NULL;
+	//char hostname[HOSTNAME_SIZE];
 	struct addrinfo *ai;
+	struct addrinfo hints;
 
-	struct addrinfo hints = {
-		.ai_family = family,
-	};
-
-	/* Extract the hostname, without protocol or port */
-	err = url_parse_host(host, hostname, sizeof(hostname));
-	if (err) {
-		return err;
-	}
+	printk("host lookup %s, pdn id %d\n", hostname, pdn_id);
 
 	if (pdn_id) {
 		hints.ai_flags = AI_PDNSERV;
 		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
-		err = getaddrinfo(hostname, pdnserv, &hints, &ai);
-	} else {
-		err = getaddrinfo(hostname, NULL, &hints, &ai);
+		servname = pdnserv;
 	}
 
+#if CONFIG_NET_IPV6
+	hints.ai_family = AF_INET6;
+	err = getaddrinfo(hostname, servname, &hints, &ai);
 	if (err) {
-		LOG_DBG("Failed to resolve hostname %s on %s",
-			hostname, str_family(family));
+		LOG_DBG("Failed to resolve hostname %s on %s, err %d",
+			hostname, str_family(hints.ai_family), err);
+	} else {
+		goto out;
+	}
+#endif
+
+	hints.ai_family = AF_INET;
+	err = getaddrinfo(hostname, servname, &hints, &ai);
+
+	if (err) {
+		LOG_ERR("Failed to resolve hostname %s on %s, err %d",
+			hostname, str_family(hints.ai_family), err);
 		return -EHOSTUNREACH;
 	}
 
+out:
 	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
 	freeaddrinfo(ai);
 
 	return 0;
 }
 
-int client_socket_configure_and_connect(struct download_client *dlc)
+int client_socket_configure_and_connect(
+	int *fd, int proto, int type, uint16_t port, struct sockaddr *remote_addr,
+	const char *hostname, struct download_client_host_cfg *host_cfg)
 {
 	int err;
 	socklen_t addrlen;
 
-	err = -ENOTSUP;
-	/* Attempt IPv6 connection if configured, fallback to IPv4 on error */
-	if ((dlc->host_config.family == AF_UNSPEC) || (dlc->host_config.family == AF_INET6)) {
-		err = host_lookup(dlc->host_config.hostname, AF_INET6,
-				  dlc->host_config.pdn_id, &dlc->sock.remote_addr);
-		/* err is checked later */
-	}
-
-	if (((dlc->host_config.family == AF_UNSPEC) && err) ||
-	     (dlc->host_config.family == AF_INET)) {
-		err = host_lookup(dlc->host_config.hostname, AF_INET,
-				  dlc->host_config.pdn_id, &dlc->sock.remote_addr);
-		/* err is checked later */
-	}
-
-	if (err) {
-		LOG_ERR("DNS lookup failed %s", dlc->host_config.hostname);
-		return err;
-	}
-
-	switch (dlc->sock.remote_addr.sa_family) {
+	switch (remote_addr->sa_family) {
 	case AF_INET6:
-		SIN6(&dlc->sock.remote_addr)->sin6_port = htons(dlc->sock.port);
+		SIN6(remote_addr)->sin6_port = htons(port);
 		addrlen = sizeof(struct sockaddr_in6);
 		break;
 	case AF_INET:
-		SIN(&dlc->sock.remote_addr)->sin_port = htons(dlc->sock.port);
+		SIN(remote_addr)->sin_port = htons(port);
 		addrlen = sizeof(struct sockaddr_in);
 		break;
 	default:
@@ -231,43 +198,46 @@ int client_socket_configure_and_connect(struct download_client *dlc)
 	}
 
 	LOG_DBG("family: %d, type: %d, proto: %d",
-		dlc->sock.remote_addr.sa_family, dlc->sock.type, dlc->sock.proto);
+		remote_addr->sa_family, type, proto);
 
-	dlc->sock.fd = socket(dlc->sock.remote_addr.sa_family, dlc->sock.type, dlc->sock.proto);
-	if (dlc->sock.fd < 0) {
+	*fd = socket(remote_addr->sa_family, type, proto);
+	if (*fd < 0) {
 		err = -errno;
 		LOG_ERR("Failed to create socket, errno %d", -err);
 		goto cleanup;
 	}
 
-	if (dlc->host_config.pdn_id) {
-		err = socket_pdn_id_set(dlc->sock.fd, dlc->host_config.pdn_id);
+	LOG_DBG("Socket opened, fd %d", *fd);
+
+	if (host_cfg->pdn_id) {
+		err = socket_pdn_id_set(*fd, host_cfg->pdn_id);
 		if (err) {
 			goto cleanup;
 		}
 	}
 
-	if ((dlc->sock.proto == IPPROTO_TLS_1_2 || dlc->sock.proto == IPPROTO_DTLS_1_2) &&
-	    (dlc->host_config.sec_tag_list != NULL) && (dlc->host_config.sec_tag_count > 0)) {
-		err = socket_sectag_set(dlc->sock.fd, dlc->host_config.sec_tag_list,
-					dlc->host_config.sec_tag_count);
+	if ((proto == IPPROTO_TLS_1_2 || proto == IPPROTO_DTLS_1_2) &&
+	    (host_cfg->sec_tag_list != NULL) && (host_cfg->sec_tag_count > 0)) {
+		err = socket_sectag_set(*fd, host_cfg->sec_tag_list,
+					host_cfg->sec_tag_count);
 		if (err) {
 			goto cleanup;
 		}
 
-		if (dlc->host_config.set_tls_hostname) {
-			err = socket_tls_hostname_set(dlc->sock.fd, dlc->host_config.hostname);
+		if (proto == IPPROTO_TLS_1_2 &&
+		    !is_ip_address(hostname)) { //TODO former dlc->host_cfg.set_tls_hostname, is this ok?
+			err = socket_tls_hostname_set(*fd, hostname);
 			if (err) {
 				err = -errno;
 				goto cleanup;
 			}
 		}
 
-		if (dlc->sock.proto == IPPROTO_DTLS_1_2 && IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_CID)) {
+		if (proto == IPPROTO_DTLS_1_2 && IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_CID)) {
 			/* Enable connection ID */
 			uint32_t dtls_cid = TLS_DTLS_CID_ENABLED;
 
-			err = setsockopt(dlc->sock.fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
+			err = setsockopt(*fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
 					 sizeof(dtls_cid));
 			if (err) {
 				err = -errno;
@@ -281,19 +251,19 @@ int client_socket_configure_and_connect(struct download_client *dlc)
 		char ip_addr_str[NET_IPV6_ADDR_LEN];
 		void *sin_addr;
 
-		if (dlc->sock.remote_addr.sa_family == AF_INET6) {
-			sin_addr = &((struct sockaddr_in6 *)&dlc->sock.remote_addr)->sin6_addr;
+		if (remote_addr->sa_family == AF_INET6) {
+			sin_addr = &((struct sockaddr_in6 *)remote_addr)->sin6_addr;
 		} else {
-			sin_addr = &((struct sockaddr_in *)&dlc->sock.remote_addr)->sin_addr;
+			sin_addr = &((struct sockaddr_in *)remote_addr)->sin_addr;
 		}
-		inet_ntop(dlc->sock.remote_addr.sa_family, sin_addr,
+		inet_ntop(remote_addr->sa_family, sin_addr,
 			  ip_addr_str, sizeof(ip_addr_str));
 		LOG_INF("Connecting to %s", ip_addr_str);
 	}
 	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
-		dlc->sock.fd, addrlen, str_family(dlc->sock.remote_addr.sa_family), dlc->sock.port);
+		*fd, addrlen, str_family(remote_addr->sa_family), port);
 
-	err = connect(dlc->sock.fd, &dlc->sock.remote_addr, addrlen);
+	err = connect(*fd, remote_addr, addrlen);
 	if (err) {
 		err = -errno;
 		LOG_ERR("Unable to connect, errno %d", -err);
@@ -307,45 +277,37 @@ int client_socket_configure_and_connect(struct download_client *dlc)
 
 cleanup:
 	if (err) {
-		if (dlc->sock.fd != -1) {
-			close(dlc->sock.fd);
-			dlc->sock.fd = -1;
-		}
+		client_socket_close(fd);
 	}
 
 	return err;
 }
 
-int client_socket_close(struct download_client *dlc)
+int client_socket_close(int *fd)
 {
 	int err = 0;
 
-	if (dlc->sock.fd != -1) {
-		err = close(dlc->sock.fd);
+	if (*fd != -1) {
+		err = close(*fd);
 		if (err && errno != EBADF) {
 			err = -errno;
 			LOG_ERR("Failed to close socket, errno %d", -err);
 		}
-	}
 
-	dlc->sock.fd = -1;
+		LOG_DBG("Socket closed, fd %d", *fd);
+		*fd = -1;
+	}
 
 	return err;
 }
 
-int client_socket_send(const struct download_client *dlc, size_t len, int timeout)
+int client_socket_send(int fd, void *buf, size_t len)
 {
-	int err;
 	int sent;
 	size_t off = 0;
 
-	err = socket_send_timeout_set(dlc->sock.fd, timeout);
-	if (err) {
-		return -errno;
-	}
-
 	while (len) {
-		sent = send(dlc->sock.fd, dlc->config.buf + off, len, 0);
+		sent = send(fd, (uint8_t *)buf + off, len, 0);
 		if (sent < 0) {
 			return -errno;
 		}
@@ -357,30 +319,43 @@ int client_socket_send(const struct download_client *dlc, size_t len, int timeou
 	return 0;
 }
 
-ssize_t client_socket_recv(struct download_client *dlc)
+int client_socket_recv_timeout_set(int fd, int timeout_ms)
 {
-	int err, timeout = 0;
+	int err;
+	struct timeval timeo;
 
-	if (use_http(dlc)) {
-		timeout = CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS;
-#if CONFIG_COAP
-	} else if (use_coap(dlc)) {
-		timeout = coap_get_recv_timeout(dlc);
-			if (timeout == 0) {
-				errno = ETIMEDOUT;
-				return -1;
-			}
-#endif
-	} else {
-		LOG_ERR("unhandled proto");
-		return -1;
+	if (timeout_ms <= 0) {
+		return 0;
 	}
 
-	err = socket_recv_timeout_set(dlc->sock.fd, timeout);
+	if (fd == -1) {
+		return -EINVAL;
+	}
+
+	timeo.tv_sec = (timeout_ms / 1000);
+	timeo.tv_usec = (timeout_ms % 1000) * 1000;
+
+	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
 	if (err) {
-		return -1;
+		LOG_WRN("Failed to set socket timeout, errno %d", errno);
+		return -errno;
 	}
 
-	return recv(dlc->sock.fd, dlc->config.buf + dlc->buf_offset,
-		    dlc->config.buf_size - dlc->buf_offset, 0);
+	return 0;
+}
+
+ssize_t client_socket_recv(int fd, void *buf, size_t len)
+{
+	int err = 0;
+
+	if (fd == -1) {
+		return -EINVAL;
+	}
+
+	err = recv(fd, buf, len, 0);
+	if (err < 0) {
+		return -errno;
+	}
+
+	return err;
 }

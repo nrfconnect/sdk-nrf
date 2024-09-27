@@ -16,10 +16,20 @@ LOG_MODULE_DECLARE(download_client);
 static char host[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
 static char file[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 
-static int sec_tag_list[1];
+static int callback(const struct download_client_evt *event);
+
+static char dlc_buf[2048];
 static struct download_client downloader;
+static struct download_client_cfg config = {
+	.callback = callback,
+	.buf = dlc_buf,
+	.buf_size = sizeof(dlc_buf),
+};
+
+static int sec_tag_list[1];
 static struct download_client_host_cfg host_config = {
 	.sec_tag_list = sec_tag_list,
+	.hostname =  host,
 };
 
 static const struct shell *shell_instance;
@@ -61,9 +71,14 @@ static int callback(const struct download_client_evt *event)
 	return 0;
 }
 
-static int download_shell_init(void)
+static int cmd_dc_init(const struct shell *shell, size_t argc, char **argv)
 {
-	return download_client_init(&downloader, callback);
+	return download_client_init(&downloader, &config);
+}
+
+static int cmd_dc_deinit(const struct shell *shell, size_t argc, char **argv)
+{
+	return download_client_deinit(&downloader);
 }
 
 static int cmd_dc_config(const struct shell *shell, size_t argc, char **argv)
@@ -72,11 +87,11 @@ static int cmd_dc_config(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-static int cmd_dc_config_pdn_id(const struct shell *shell, size_t argc,
+static int cmd_dc_set_pdn_id(const struct shell *shell, size_t argc,
 			     char **argv)
 {
 	if (argc != 2) {
-		shell_warn(shell, "usage: dc host_config pdn <pdn_id>\n");
+		shell_warn(shell, "usage: dc set pdn <pdn_id>\n");
 		return -EINVAL;
 	}
 
@@ -86,11 +101,11 @@ static int cmd_dc_config_pdn_id(const struct shell *shell, size_t argc,
 	return 0;
 }
 
-static int cmd_dc_config_sec_tag(const struct shell *shell, size_t argc,
+static int cmd_dc_set_sec_tag(const struct shell *shell, size_t argc,
 				 char **argv)
 {
 	if (argc != 2) {
-		shell_warn(shell, "usage: dc host_config sec_tag <sec_tag>\n");
+		shell_warn(shell, "usage: dc set sec_tag <sec_tag>\n");
 		return -EINVAL;
 	}
 
@@ -113,13 +128,6 @@ static int cmd_dc_set_host(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	memcpy(host, argv[1], MIN(strlen(argv[1]) + 1, sizeof(host)));
-
-	err = download_client_connect(&downloader, host, &host_config);
-	if (err) {
-		shell_warn(shell, "download_client_connect() failed, err %d",
-			   err);
-		return -ENOEXEC;
-	}
 
 	return 0;
 }
@@ -178,7 +186,7 @@ static int cmd_dc_get(const struct shell *shell, size_t argc, char **argv)
 	}
 
 
-	err = download_client_get(&downloader, host, &host_config, f, from);
+	err = download_client_get(&downloader, &host_config, f, from);
 
 	if (err) {
 		shell_warn(shell, "download_client_get() failed, err %d",
@@ -190,28 +198,31 @@ static int cmd_dc_get(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-static int cmd_dc_disconnect(const struct shell *shell, size_t argc,
-			     char **argv)
-{
-	return download_client_stop(&downloader);
-}
+SHELL_STATIC_SUBCMD_SET_CREATE(set_options,
+	SHELL_CMD(hostname, NULL, "Set a target host", cmd_dc_set_host),
+	SHELL_CMD(sec_tag, NULL, "Set security tag", cmd_dc_set_sec_tag),
+	SHELL_CMD(pdn_id, NULL, "Set PDN ID", cmd_dc_set_pdn_id),
+	SHELL_CMD(range_override, NULL, "Set a target host", cmd_dc_set_range_override),
+	SHELL_CMD(native_tls, NULL, "Set a target host", cmd_dc_set_tls_hostname),
+	SHELL_CMD(close_when_done, NULL, "Set a target host", cmd_dc_set_tls_hostname),
+	SHELL_SUBCMD_SET_END
+);
 
-SHELL_STATIC_SUBCMD_SET_CREATE(sub_config,
-	SHELL_CMD(pdn_id, NULL, "Set PDN ID", cmd_dc_config_pdn_id),
-	SHELL_CMD(sec_tag, NULL, "Set security tag", cmd_dc_config_sec_tag),
+SHELL_STATIC_SUBCMD_SET_CREATE(download_options,
+	SHELL_CMD(start, NULL, "Start downloading file", cmd_dc_dl_start),
+	SHELL_CMD(stop, NULL, "Stop download", cmd_dc_dl_stop),
+	SHELL_CMD(fget, NULL, "Get file", cmd_dc_dl_get),
+	SHELL_CMD(file_size, NULL, "Get file size", cmd_dc_dl_f_size),
+	SHELL_CMD(downloaded_size, NULL, "Retrieve number of bytes downloaded", cmd_dc_dl_size),
 	SHELL_SUBCMD_SET_END
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_dc,
-	SHELL_CMD(host_config, &sub_config, "Configure", cmd_dc_config),
-	SHELL_CMD(set_host, NULL, "Set a target host", cmd_dc_set_host),
-	SHELL_CMD(disconnect, NULL, "Disconnect from a host",
-		  cmd_dc_disconnect),
-	SHELL_CMD(download, NULL, "Download a file", cmd_dc_download),
-	SHELL_CMD(get, NULL, "Download", cmd_dc_get),
+	SHELL_CMD(init, NULL, "Initialize download client", cmd_dc_init),
+	SHELL_CMD(deinit, NULL, "Deinitialize download client", cmd_dc_deinit),
+	SHELL_CMD(set, &set_options, "Set configuration option", cmd_dc_set),
+	SHELL_CMD(download, &download_options, "Download options", cmd_dc_download),
 	SHELL_SUBCMD_SET_END
 );
-
-SYS_INIT(download_shell_init, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 SHELL_CMD_REGISTER(dc, &sub_dc, "Download client", NULL);

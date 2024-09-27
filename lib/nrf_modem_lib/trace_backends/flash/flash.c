@@ -98,6 +98,9 @@ static int buffer_flush_to_flash(void)
 			loc_flush.fe_sector = 0;
 			loc_flush.fe_elem_off = 0;
 			err = fcb_getnext(&trace_fcb, &loc_flush);
+			if (err) {
+				LOG_ERR("fcb_getnext failed, err %d", err);
+			}
 
 			/* Walk sector to remove unread trace data from count. */
 			err = fcb_walk(&trace_fcb, loc_flush.fe_sector, fcb_walk_callback, NULL);

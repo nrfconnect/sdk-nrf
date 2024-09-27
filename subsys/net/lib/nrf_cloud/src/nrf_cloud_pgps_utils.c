@@ -47,13 +47,20 @@ static struct nrf_cloud_pgps_header saved_header;
 
 static K_SEM_DEFINE(dl_active, 1, 1);
 
+static char dlc_buf[2048];
 static struct download_client dlc;
+static int download_client_callback(const struct download_client_evt *event);
+static struct download_client_cfg dlc_config = {
+	.callback = download_client_callback,
+	.buf = dlc_buf,
+	.buf_size = sizeof(dlc_buf),
+};
+
 static int sec_tag_list[1];
 static int socket_retries_left;
 static npgps_buffer_handler_t buffer_handler;
 static npgps_eot_handler_t eot_handler;
 
-static int download_client_callback(const struct download_client_evt *event);
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg);
 
@@ -473,7 +480,7 @@ int npgps_download_init(npgps_buffer_handler_t buf_handler, npgps_eot_handler_t 
 	buffer_handler = buf_handler;
 	eot_handler = end_handler;
 
-	return download_client_init(&dlc, download_client_callback);
+	return download_client_init(&dlc, &dlc_config);
 }
 
 int npgps_download_start(const char *host, const char *file, int sec_tag,
@@ -502,7 +509,6 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 			.sec_tag_list = NULL,
 			.pdn_id = pdn_id,
 			.range_override = fragment_size,
-			.set_tls_hostname = false,
 			.family = family
 		},
 		.dlc = &dlc
@@ -512,7 +518,6 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 		sec_tag_list[0] = sec_tag;
 		dl.dl_cfg.sec_tag_list = sec_tag_list;
 		dl.dl_cfg.sec_tag_count = 1;
-		dl.dl_cfg.set_tls_hostname = true;
 	}
 
 	socket_retries_left = SOCKET_RETRIES;
