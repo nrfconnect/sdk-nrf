@@ -141,7 +141,6 @@ int nrf_flash_sync_init(void)
 
 void nrf_flash_sync_set_context(uint32_t duration)
 {
-	LOG_DBG("duration: %u", duration);
 	_context.request_length_us = duration;
 }
 
@@ -168,7 +167,7 @@ bool nrf_flash_sync_is_required(void)
 
 int nrf_flash_sync_exe(struct flash_op_desc *op_desc)
 {
-	LOG_DBG("");
+	LOG_DBG("duration: %u", _context.request_length_us);
 
 	int errcode = MULTITHREADING_LOCK_ACQUIRE();
 	__ASSERT_NO_MSG(errcode == 0);
