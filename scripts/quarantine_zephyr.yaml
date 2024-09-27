@@ -6,22 +6,6 @@
 
 - scenarios:
     - libraries.hash_map.newlib.cxx_unordered_map.djb2
-  platforms:
-    - nrf52dk/nrf52832
-    - nrf9160dk/nrf9160/ns
-    - mps2_an521
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf52840dk/nrf52840
-    - nrf9160dk/nrf9160
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf5340dk/nrf5340/cpunet
-    - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54l15dk/nrf54l15/cpuflpr
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54l15pdk/nrf54l15/cpuapp
-    - nrf54l15pdk/nrf54l15/cpuflpr
-    - nrf54h20dk/nrf54h20/cpuppr
-    - nrf54h20dk/nrf54h20/cpurad
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-21219"
 
 - scenarios:
@@ -175,6 +159,27 @@
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Test not aligned for nrf54l15 but selected due to jedec,spi-nor"
 
+- scenarios:
+    - llext.simple.*
+  platforms:
+    - nrf54h20dk/nrf54h20/cpurad
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpunet
+    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54l15pdk/nrf54l15/cpuflpr
+    - qemu_cortex_m3
+  comment: "overflow, to report/fix in the upstream @permac and put ticket # here"
+
+- scenarios:
+    - sample.net.mqtt.nrf70.tls
+  comment: "To report @chaitanya and put ticket # here"
+
+- scenarios:
+    - storage.flash_map
+  platforms:
+    - nrf9160dk/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29462"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -212,9 +217,6 @@
 
 - scenarios:
     - libraries.uoscore
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54l15pdk/nrf54l15/cpuapp
   comment: "Won't be fixes - We don't support uoscore since it doesn't use NRF security"
 
 - scenarios:
@@ -270,6 +272,7 @@
     - message_bus.zbus.general_unittests_without_priority_boost
     - message_bus.zbus.general_unittests
     - logging.thread
+    - logging.immediate.*
     - libraries.heap
     - libraries.libc.c11_threads.minimal
     - libraries.libc.c11_threads.picolibc.notls
@@ -284,6 +287,7 @@
     - libraries.libc.common.picolibc
     - libraries.libc.common.picolibc.module
     - libraries.libc.common.picolibc.notls
+    - libraries.encoding.json
     - libraries.net_buf.buf
     - libraries.ring_buffer
     - libraries.hash_map.cxx.djb2
@@ -307,8 +311,7 @@
     - net.mqtt_sn.packet
     - net.http.server.common
     - net.coap.server.common
-    - sample.zbus.msg_subscriber_static
-    - sample.zbus.msg_subscriber_dynamic
+    - sample.zbus.msg_subscriber.*
     - sample.sensor.shell.pytest
     - sample.sensor.shell
     - benchmark.kernel.core
@@ -333,6 +336,7 @@
     - kernel.common
     - net.http.server.crime
     - drivers.gpio.build
+    - sample.perf
   platforms:
     - nrf54h20dk/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
@@ -378,12 +382,15 @@
     - sample.net.sockets.dumb_http_server
     - sample.net.sockets.http_get
     - sample.net.sockets.socketpair
+    - sample.posix.eventfd
     - sample.posix.gettimeofday
     - sample.sensor.shell
     - sample.sensor.shell.pytest
     - sample.shell.shell_module
+    - sample.shell.shell_module.getopt
+    - sample.shell.shell_module.login
   platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l15/cpuflpr
     - nrf54l15pdk/nrf54l15/cpuflpr
   comment: "region RAM/FLASH overflowed"
 
@@ -407,7 +414,7 @@
   comment: "Not fixable during upmerge, fix will be included in next upmerge"
 
 - scenarios:
-    - sample.filesystem.fat_fs.nrf54l15pdk:
+    - sample.filesystem.fat_fs.nrf54l15pdk
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54l15pdk/nrf54l15/cpuapp
