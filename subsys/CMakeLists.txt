@@ -21,7 +21,10 @@ if(NOT SYSBUILD)
   endif()
 endif()
 
-add_subdirectory_ifdef(CONFIG_NRF_SECURITY nrf_security)
+if(CONFIG_NRF_SECURITY OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
+add_subdirectory(nrf_security)
+endif()
+
 add_subdirectory_ifdef(CONFIG_TRUSTED_STORAGE trusted_storage)
 
 add_subdirectory(net)
