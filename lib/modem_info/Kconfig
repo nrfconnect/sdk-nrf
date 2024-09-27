@@ -6,7 +6,7 @@
 
 menuconfig MODEM_INFO
 	bool "nRF91 modem information library"
-	select NRF_MODEM_LIB
+	depends on NRF_MODEM_LIB
 	select AT_PARSER
 	select AT_MONITOR
 
