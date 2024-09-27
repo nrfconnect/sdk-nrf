@@ -293,6 +293,7 @@ add_custom_target(
 )
 
 add_docset(zephyr)
+add_doxygen_docset(zephyr ${ZEPHYR_BASE})
 add_dependencies(zephyr zephyr-devicetree)
 add_dependencies(zephyr-all zephyr-devicetree)
 
@@ -300,6 +301,7 @@ add_dependencies(zephyr-all zephyr-devicetree)
 # docset: nrf
 
 add_docset(nrf)
+add_doxygen_docset(nrf ${NRF_BASE})
 
 #-------------------------------------------------------------------------------
 # docset: mcuboot
@@ -325,6 +327,7 @@ add_docset(matter DODGY)
 # docset: nrfxlib
 
 add_docset(nrfxlib DODGY)
+add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR})
 
 #-------------------------------------------------------------------------------
 # docset: internal
