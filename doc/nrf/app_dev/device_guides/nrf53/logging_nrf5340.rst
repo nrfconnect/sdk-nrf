@@ -32,7 +32,7 @@ In the default configuration, they are set up as follows:
 To use the middle COM port in the nRF5340 DK v1.0.0, complete the following steps:
 
 1. Map RX, TX, CTS and RTS pins to four different pins on the development kit, using, for example, :ref:`devicetree overlays<zephyr:devicetree-intro>`.
-   See the following example, using the :ref:`zephyr:dtbinding_nordic_nrf_uarte` bindings.
+   See the following example, using the :dtcompatible:`nordic,nrf-uarte` bindings.
 
    .. code-block:: devicetree
 

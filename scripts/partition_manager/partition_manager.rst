@@ -561,7 +561,7 @@ After the ``nordic,pm-ext-flash`` value is set, you can place partitions in the 
      You must add a ``chosen`` entry for ``nordic,pm-ext-flash`` in your devicetree to make this option available.
      See :file:`tests/subsys/partition_manager` for example configurations.
 
-   * If the external flash device is not using the :ref:`QSPI NOR <zephyr:dtbinding_nordic_qspi_nor>` driver, you must enable :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` to override the Partition Manager's external flash driver check, and the required driver must also be enabled for all applications that need it.
+   * If the external flash device is not using the :dtcompatible:`nordic,qspi-nor` driver, you must enable :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` to override the Partition Manager's external flash driver check, and the required driver must also be enabled for all applications that need it.
 
 See :ref:`ug_bootloader_external_flash` for more details on using external flash memory with MCUboot.
 
