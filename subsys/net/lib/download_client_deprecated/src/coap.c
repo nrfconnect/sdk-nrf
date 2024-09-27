@@ -23,7 +23,7 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 extern char *strtok_r(char *str, const char *sep, char **state);
 
 int url_parse_file(const char *url, char *file, size_t len);
-int client_socket_send(const struct download_client *dlc, size_t len, int timeout);
+int socket_send(const struct download_client *client, size_t len, int timeout);
 
 static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
 {
@@ -37,37 +37,31 @@ static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
 	return GET_BLOCK_NUM(block) << (GET_BLOCK_SIZE(block) + 4);
 }
 
-static bool has_pending(struct download_client *dlc)
+static bool has_pending(struct download_client *client)
 {
-	return dlc->coap.pending.timeout > 0;
+	return client->coap.pending.timeout > 0;
 }
 
-int coap_block_init(struct download_client *dlc, size_t from)
+int coap_block_init(struct download_client *client, size_t from)
 {
-	if (dlc->coap.initialized) {
-		return 0;
-	}
-
-	coap_block_transfer_init(&dlc->coap.block_ctx,
+	coap_block_transfer_init(&client->coap.block_ctx,
 				 CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE, 0);
-	dlc->coap.block_ctx.current = from;
-	coap_pending_clear(&dlc->coap.pending);
-
-	dlc->coap.initialized = true;
+	client->coap.block_ctx.current = from;
+	coap_pending_clear(&client->coap.pending);
 	return 0;
 }
 
-int coap_get_recv_timeout(struct download_client *dlc)
+int coap_get_recv_timeout(struct download_client *dl)
 {
 	int timeout;
 
-	__ASSERT(has_pending(dlc), "Must have coap pending");
+	__ASSERT(has_pending(dl), "Must have coap pending");
 
 	/* Retransmission is cycled in case recv() times out. In case sending request
 	 * blocks, the time that is used for sending request must be substracted next time
 	 * recv() is called.
 	 */
-	timeout = dlc->coap.pending.t0 + dlc->coap.pending.timeout - k_uptime_get_32();
+	timeout = dl->coap.pending.t0 + dl->coap.pending.timeout - k_uptime_get_32();
 	if (timeout < 0) {
 		/* All time is spent when sending request and time this
 		 * method is called, there is no time left for receiving;
@@ -80,13 +74,13 @@ int coap_get_recv_timeout(struct download_client *dlc)
 	return timeout;
 }
 
-int coap_initiate_retransmission(struct download_client *dlc)
+int coap_initiate_retransmission(struct download_client *dl)
 {
-	if (dlc->coap.pending.timeout == 0) {
+	if (dl->coap.pending.timeout == 0) {
 		return -EINVAL;
 	}
 
-	if (!coap_pending_cycle(&dlc->coap.pending)) {
+	if (!coap_pending_cycle(&dl->coap.pending)) {
 		LOG_ERR("CoAP max-retransmissions exceeded");
 		return -1;
 	}
@@ -94,13 +88,13 @@ int coap_initiate_retransmission(struct download_client *dlc)
 	return 0;
 }
 
-static int coap_block_update(struct download_client *dlc, struct coap_packet *pkt,
+static int coap_block_update(struct download_client *client, struct coap_packet *pkt,
 			     size_t *blk_off, bool *more)
 {
 	int err, new_current;
 
-	*blk_off = dlc->coap.block_ctx.current %
-		   coap_block_size_to_bytes(dlc->coap.block_ctx.block_size);
+	*blk_off = client->coap.block_ctx.current %
+		   coap_block_size_to_bytes(client->coap.block_ctx.block_size);
 	if (*blk_off) {
 		LOG_DBG("%d bytes of current block already downloaded",
 			*blk_off);
@@ -112,27 +106,27 @@ static int coap_block_update(struct download_client *dlc, struct coap_packet *pk
 		return new_current;
 	}
 
-	if (new_current < dlc->coap.block_ctx.current) {
+	if (new_current < client->coap.block_ctx.current) {
 		LOG_WRN("Block out of order %d, expected %d", new_current,
-			dlc->coap.block_ctx.current);
+			client->coap.block_ctx.current);
 		return -1;
-	} else if (new_current > dlc->coap.block_ctx.current) {
+	} else if (new_current > client->coap.block_ctx.current) {
 		LOG_WRN("Block out of order %d, expected %d", new_current,
-			dlc->coap.block_ctx.current);
+			client->coap.block_ctx.current);
 		return -1;
 	}
 
-	err = coap_update_from_block(pkt, &dlc->coap.block_ctx);
+	err = coap_update_from_block(pkt, &client->coap.block_ctx);
 	if (err) {
 		return err;
 	}
 
-	if (dlc->file_size == 0 && dlc->coap.block_ctx.total_size > 0) {
-		LOG_DBG("Total size: %d", dlc->coap.block_ctx.total_size);
-		dlc->file_size = dlc->coap.block_ctx.total_size;
+	if (client->file_size == 0 && client->coap.block_ctx.total_size > 0) {
+		LOG_DBG("Total size: %d", client->coap.block_ctx.total_size);
+		client->file_size = client->coap.block_ctx.total_size;
 	}
 
-	*more = coap_next_block(pkt, &dlc->coap.block_ctx);
+	*more = coap_next_block(pkt, &client->coap.block_ctx);
 	if (!*more) {
 		LOG_DBG("Last block received");
 	}
@@ -140,7 +134,7 @@ static int coap_block_update(struct download_client *dlc, struct coap_packet *pk
 	return 0;
 }
 
-int coap_parse(struct download_client *dlc, size_t len)
+int coap_parse(struct download_client *client, size_t len)
 {
 	int err;
 	size_t blk_off;
@@ -154,19 +148,19 @@ int coap_parse(struct download_client *dlc, size_t len)
 	 * and we can just request the same block again using retry mechanism
 	 */
 
-	err = coap_packet_parse(&response, dlc->config.buf, len, NULL, 0);
+	err = coap_packet_parse(&response, client->buf, len, NULL, 0);
 	if (err) {
 		LOG_ERR("Failed to parse CoAP packet, err %d", err);
 		return -EBADMSG;
 	}
 
 
-	if (coap_header_get_id(&response) != dlc->coap.pending.id) {
+	if (coap_header_get_id(&response) != client->coap.pending.id) {
 		LOG_ERR("Response is not pending");
 		return -EBADMSG;
 	}
 
-	coap_pending_clear(&dlc->coap.pending);
+	coap_pending_clear(&client->coap.pending);
 
 	if (coap_header_get_type(&response) != COAP_TYPE_ACK) {
 		LOG_ERR("Response must be of coap type ACK");
@@ -180,7 +174,7 @@ int coap_parse(struct download_client *dlc, size_t len)
 		return -EBADMSG;
 	}
 
-	err = coap_block_update(dlc, &response, &blk_off, &more);
+	err = coap_block_update(client, &response, &blk_off, &more);
 	if (err) {
 		return -EBADMSG;
 	}
@@ -198,22 +192,21 @@ int coap_parse(struct download_client *dlc, size_t len)
 	 */
 	LOG_DBG("CoAP response: %d, copying %d bytes",
 		coap_header_get_code(&response), payload_len - blk_off);
-	memcpy(dlc->config.buf + dlc->buf_offset, payload + blk_off,
+	memcpy(client->buf + client->offset, payload + blk_off,
 	       payload_len - blk_off);
 
-	dlc->buf_offset += payload_len - blk_off;
-	dlc->progress += payload_len - blk_off;
+	client->offset += payload_len - blk_off;
+	client->progress += payload_len - blk_off;
 
 	if (!more) {
 		/* Mark the end, in case we did not know the total size */
-		dlc->file_size = dlc->progress;
+		client->file_size = client->progress;
 	}
 
-	dlc->new_data_req = true;
 	return 0;
 }
 
-int coap_request_send(struct download_client *dlc)
+int coap_request_send(struct download_client *client)
 {
 	int err;
 	uint16_t id;
@@ -222,20 +215,20 @@ int coap_request_send(struct download_client *dlc)
 	char *path_elem_saveptr;
 	struct coap_packet request;
 
-	if (has_pending(dlc)) {
-		id = dlc->coap.pending.id;
+	if (has_pending(client)) {
+		id = client->coap.pending.id;
 	} else {
 		id = coap_next_id();
 	}
 
-	err = coap_packet_init(&request, dlc->config.buf, dlc->config.buf_size, COAP_VER,
+	err = coap_packet_init(&request, client->buf, CONFIG_DOWNLOAD_CLIENT_BUF_SIZE, COAP_VER,
 			       COAP_TYPE_CON, 8, coap_next_token(), COAP_METHOD_GET, id);
 	if (err) {
 		LOG_ERR("Failed to init CoAP message, err %d", err);
 		return err;
 	}
 
-	err = url_parse_file(dlc->file, file, sizeof(file));
+	err = url_parse_file(client->file, file, sizeof(file));
 	if (err) {
 		LOG_ERR("Unable to parse url");
 		return err;
@@ -251,35 +244,35 @@ int coap_request_send(struct download_client *dlc)
 		}
 	} while ((path_elem = strtok_r(NULL, COAP_PATH_ELEM_DELIM, &path_elem_saveptr)));
 
-	err = coap_append_block2_option(&request, &dlc->coap.block_ctx);
+	err = coap_append_block2_option(&request, &client->coap.block_ctx);
 	if (err) {
 		LOG_ERR("Unable to add block2 option");
 		return err;
 	}
 
-	err = coap_append_size2_option(&request, &dlc->coap.block_ctx);
+	err = coap_append_size2_option(&request, &client->coap.block_ctx);
 	if (err) {
 		LOG_ERR("Unable to add size2 option");
 		return err;
 	}
 
-	if (!has_pending(dlc)) {
+	if (!has_pending(client)) {
 		struct coap_transmission_parameters params = coap_get_transmission_parameters();
 
 		params.max_retransmission =
 			CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT;
-		err = coap_pending_init(&dlc->coap.pending, &request, &dlc->sock.remote_addr,
+		err = coap_pending_init(&client->coap.pending, &request, &client->remote_addr,
 					&params);
 		if (err < 0) {
 			return -EINVAL;
 		}
 
-		coap_pending_cycle(&dlc->coap.pending);
+		coap_pending_cycle(&client->coap.pending);
 	}
 
-	LOG_DBG("CoAP next block: %d", dlc->coap.block_ctx.current);
+	LOG_DBG("CoAP next block: %d", client->coap.block_ctx.current);
 
-	err = client_socket_send(dlc, request.offset, dlc->coap.pending.timeout);
+	err = socket_send(client, request.offset, client->coap.pending.timeout);
 	if (err) {
 		LOG_ERR("Failed to send CoAP request, errno %d", errno);
 		return err;

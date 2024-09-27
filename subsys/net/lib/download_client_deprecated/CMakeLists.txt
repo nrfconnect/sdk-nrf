@@ -9,7 +9,6 @@ zephyr_library_sources(
 	src/parse.c
 	src/http.c
 	src/sanity.c
-	src/client_socket.c
 )
 
 zephyr_library_sources_ifdef(

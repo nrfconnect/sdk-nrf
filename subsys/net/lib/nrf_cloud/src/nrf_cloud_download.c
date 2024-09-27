@@ -370,7 +370,7 @@ static int fota_start(struct nrf_cloud_download_data *const dl)
 #else
 	return fota_download_start_with_image_type(dl->host, dl->path,
 		dl->dl_cfg.sec_tag_count ? dl->dl_cfg.sec_tag_list[0] : -1,
-		dl->dl_cfg.pdn_id, dl->dl_cfg.frag_size_override, dl->fota.expected_type);
+		dl->dl_cfg.pdn_id, dl->dl_cfg.range_override, dl->fota.expected_type);
 #endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 #endif /* CONFIG_FOTA_DOWNLOAD */
 	return -ENOTSUP;
@@ -394,7 +394,7 @@ static int dlc_disconnect(struct nrf_cloud_download_data *const dl)
 	return coap_dl_disconnect();
 #endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 
-	return download_client_disconnect(dl->dlc);
+	return download_client_stop(dl->dlc);
 }
 
 static void active_dl_reset(void)
