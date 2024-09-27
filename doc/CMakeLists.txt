@@ -61,27 +61,38 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 # Args:
 # - name: Docset name.
 # - sources: Sources.
+# - STANDALONE: Use if docset is Doxygen-only, i.e., without Sphinx.
 #
-# Configured targets:
+# Configured targets (if STANDALONE):
 # - ${name}: Run Doxygen build.
 # - ${name}-clean: Clean build artifacts.
 #
+# Configured targets (if NOT STANDALONE):
+# - ${name}-doxygen: Run Doxygen build.
+# - ${name}-doxygen-clean: Clean build artifacts.
+#
 function(add_doxygen_docset name sources)
+  cmake_parse_arguments(DOXYGEN "STANDALONE" "" "" ${ARGN})
   set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/html)
   set(DOCSET_SOURCE_BASE ${sources})
+
+  if(NOT DOXYGEN_STANDALONE)
+    set(SUFFIX "-doxygen")
+    set(DOCSET_BUILD_DIR ${DOCSET_BUILD_DIR}/${name}/doxygen)
+  endif()
 
   configure_file(${CMAKE_CURRENT_LIST_DIR}/${name}/${name}.doxyfile.in ${CMAKE_BINARY_DIR}/${name}.doxyfile)
 
   add_custom_target(
-    ${name}
+    ${name}${SUFFIX}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${DOCSET_BUILD_DIR}
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/${name}.doxyfile
     USES_TERMINAL
-    COMMENT "Building ${name} docset..."
+    COMMENT "Building ${name} Doxygen docset..."
   )
 
   add_custom_target(
-    ${name}-clean
+    ${name}${SUFFIX}-clean
     COMMAND ${CMAKE_COMMAND} -E rm -rf ${DOCSET_BUILD_DIR}
   )
 endfunction()
@@ -298,7 +309,7 @@ add_docset(mcuboot)
 #-------------------------------------------------------------------------------
 # docset: nrfx
 
-add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR})
+add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} STANDALONE)
 
 #-------------------------------------------------------------------------------
 # docset: tfm
