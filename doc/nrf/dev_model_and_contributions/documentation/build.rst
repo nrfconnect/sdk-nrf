@@ -95,6 +95,9 @@ On subsequent builds, it is recommended to just run the following command:
 
 The last couple of targets mentioned in :ref:`documentation_sets` will only invoke the build for the corresponding documentation set (referred by *docset-name*), assuming that all of its dependencies are available.
 
+Additionally, the ``*docset-name*-live-all`` and ``*docset-name*-live`` targets are provided with equal functionality plus hot reloading.
+The advantage of using ``live`` targets is that by just editing and saving changes, a re-build will be triggered and browser window will be refreshed.
+
 .. _caching_and_cleaning:
 
 Caching and cleaning
