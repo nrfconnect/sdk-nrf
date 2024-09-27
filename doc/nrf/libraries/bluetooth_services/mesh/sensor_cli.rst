@@ -7,12 +7,6 @@ Sensor Client
    :local:
    :depth: 2
 
-.. note::
-   A new sensor API is introduced as of |NCS| v2.6.0.
-   The old API is deprecated, but still available by enabling the Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`.
-   The Kconfig option is enabled by default in the deprecation period.
-   See the documentation for |NCS| versions prior to v2.6.0 for documentation about the old sensor API.
-
 The Sensor Client model reads and configures the sensors exposed by :ref:`bt_mesh_sensor_srv_readme` models.
 
 Unlike the Sensor Server model, the Sensor Client only creates a single model instance in the mesh composition data.

@@ -7,13 +7,6 @@ Light Lightness Control Server
    :local:
    :depth: 2
 
-.. note::
-   This model interacts with the new sensor API introduced as of |NCS| v2.6.0.
-   As a consequence, parts of the model API have been changed as well.
-   The old API is deprecated, but still available by enabling the Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`.
-   The Kconfig option is enabled by default in the deprecation period.
-   See the documentation for |NCS| versions prior to v2.6.0 for documentation about the old sensor API.
-
 The Light Lightness Control (LC) Server controls a single :ref:`bt_mesh_lightness_srv_readme` instance on the same device with a state machine.
 
 The state machine defines common behavior for a light fixture through three states, each with its own timing parameters and light levels.

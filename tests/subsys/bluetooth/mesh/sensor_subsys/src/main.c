@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,2456 +7,972 @@
 #include <math.h>
 #include <stdint.h>
 #include <float.h>
+#include <zephyr/sys/byteorder.h>
 
 #include <zephyr/ztest.h>
-#include <bluetooth/mesh/properties.h>
 #include <bluetooth/mesh/sensor_types.h>
-#include <model_utils.h>
-#include <sensor.h> // private header from the source folder
+#include <sensor.h> /* private header from the source folder */
 
-BUILD_ASSERT(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__,
-	     "This test is only supported on little endian platforms");
+#ifndef CONFIG_LITTLE_ENDIAN
+BUILD_ASSERT(false, "This test is only supported on little endian platforms");
+#endif
 
-/****************** types section **********************************/
-
-struct __packed uint24_t  { uint32_t v:24; };
+#define MICRO (1000000LL)
 
 /****************** types section **********************************/
+struct format_spec {
+	size_t size;
+	double ratio;
+	double min;
+	double max;
+	struct {
+		uint32_t *max_or_greater;
+		uint32_t *min_or_less;
+		uint32_t *unknown;
+		uint32_t *invalid;
+		uint32_t *prohibited; /* A single prohibited value to test */
+	} specials;
+};
 
-/****************** mock section **********************************/
-/****************** mock section **********************************/
+#define SPECIAL(_name, _val) ._name = &(uint32_t){(_val)}
 
-/****************** callback section ******************************/
-/****************** callback section ******************************/
-
-static int64_t int_pow(int a, int b)
-{
-	int64_t res = 1;
-
-	for (int i = 0; i < b; i++) {
-		res *= a;
-	}
-	return res;
+#define FORMAT_SPEC(_size, _M, _d, _b, _min, _max, ...)                        \
+{                                                                              \
+	.size = (_size),                                                       \
+	.ratio = ((_M) * pow(10.0, (_d)) * exp2((_b))),                        \
+	.min = (_min),                                                         \
+	.max = (_max),                                                         \
+	.specials = { __VA_ARGS__ }                                            \
 }
 
-static int64_t raw_scalar_value_get(int64_t r, int m, int d, int b)
+struct channel_spec {
+	int size;
+	const struct bt_mesh_sensor_format *format;
+};
+
+#define CHANNEL(_format, _size) {                                              \
+	.size = _size,                                                         \
+	.format = &bt_mesh_sensor_format_##_format                             \
+}
+/****************** types section **********************************/
+
+static void check_from_micro(const struct bt_mesh_sensor_format *format,
+			     int64_t micro, int expected_err,
+			     uint32_t expected_raw, bool exact)
 {
-	/* Powers < 1 will be clamped to 1, so this works for both
-	 * positive and negative d and b
+	struct bt_mesh_sensor_value val = { 0 };
+	int err = bt_mesh_sensor_value_from_micro(format, micro, &val);
+
+	zassert_equal(err, expected_err);
+	zassert_equal(val.format, format);
+
+	uint32_t raw = sys_get_le32(val.raw);
+
+	double error;
+
+	if (expected_raw == 0 || exact) {
+		zassert_mem_equal(val.raw, &expected_raw, 4);
+	} else if (micro < 0) {
+		int32_t expected_raw_signed = *(int32_t *)(&expected_raw);
+		int32_t raw_signed = *(int32_t *)(&raw);
+
+		error = (double)raw_signed / expected_raw_signed;
+		zassert_between_inclusive(error, 0.99999, 1.00001);
+	} else {
+		error = (double)raw / expected_raw;
+		zassert_between_inclusive(error, 0.99999, 1.00001);
+	}
+}
+
+static void check_to_micro(const struct bt_mesh_sensor_format *format,
+			   uint32_t raw,
+			   enum bt_mesh_sensor_value_status expected_status,
+			   int64_t expected_micro, bool exact)
+{
+	struct bt_mesh_sensor_value val = { .format = format };
+	enum bt_mesh_sensor_value_status status;
+	int64_t micro = 0;
+
+	memcpy(val.raw, &raw, 4);
+	status = bt_mesh_sensor_value_to_micro(&val, &micro);
+	zassert_equal(status, expected_status);
+	if (expected_micro == 0 || exact) {
+		zassert_equal(micro, expected_micro);
+	} else {
+		double error = (double)micro / (double)expected_micro;
+
+		zassert_between_inclusive(error, 0.99999, 1.00001);
+	}
+}
+
+static void check_from_float(const struct bt_mesh_sensor_format *format,
+			     float f, int expected_err,
+			     uint32_t expected_raw, bool exact)
+{
+	struct bt_mesh_sensor_value val = { 0 };
+	int err = bt_mesh_sensor_value_from_float(format, f, &val);
+
+	zassert_equal(err, expected_err);
+	zassert_equal(val.format, format);
+
+	uint32_t raw = sys_get_le32(val.raw);
+
+	double error;
+
+	if (expected_raw == 0 || exact) {
+		zassert_equal(raw, expected_raw);
+	} else if (f < 0) {
+		int32_t expected_raw_signed = *(int32_t *)(&expected_raw);
+		int32_t raw_signed = *(int32_t *)(&raw);
+
+		error = (double)raw_signed / expected_raw_signed;
+		zassert_between_inclusive(error, 0.99999, 1.00001);
+	} else {
+		error = (double)raw / expected_raw;
+		zassert_between_inclusive(error, 0.99999, 1.00001);
+	}
+}
+
+static void check_to_float(const struct bt_mesh_sensor_format *format,
+			   uint32_t raw,
+			   enum bt_mesh_sensor_value_status expected_status,
+			   float expected_f, bool exact)
+{
+	struct bt_mesh_sensor_value val = { .format = format };
+	enum bt_mesh_sensor_value_status status;
+	float f = 0.0f;
+
+	memcpy(val.raw, &raw, 4);
+	status = bt_mesh_sensor_value_to_float(&val, &f);
+	zassert_equal(status, expected_status);
+	if (expected_f == 0 || exact) {
+		zassert_equal(f, expected_f);
+	} else {
+		double error = (double)f / (double)expected_f;
+
+		zassert_between_inclusive(error, 0.99999, 1.00001);
+	}
+}
+
+static void check_from_special(const struct bt_mesh_sensor_format *format,
+			       enum bt_mesh_sensor_value_status special,
+			       int expected_err, uint32_t expected_raw)
+{
+	struct bt_mesh_sensor_value val = { 0 };
+	int err = bt_mesh_sensor_value_from_special_status(format, special, &val);
+
+	zassert_equal(err, expected_err);
+	if (expected_err == 0) {
+		zassert_mem_equal(val.raw, &expected_raw, 4);
+		zassert_equal(val.format, format);
+	}
+}
+
+static void check_to_status(const struct bt_mesh_sensor_format *format,
+			    uint32_t raw,
+			    enum bt_mesh_sensor_value_status expected_status)
+{
+	struct bt_mesh_sensor_value val = { .format = format };
+	enum bt_mesh_sensor_value_status status;
+
+	memcpy(val.raw, &raw, 4);
+	status = bt_mesh_sensor_value_get_status(&val);
+	zassert_equal(status, expected_status);
+}
+
+static uint32_t encoded(const struct format_spec *spec, double value)
+{
+	int64_t val = round(value / spec->ratio);
+
+	val &= GENMASK((spec->size * 8) - 1, 0);
+	return (uint32_t)val;
+}
+
+/** Finds the biggest float less than or equal to @c limit. */
+static float biggest_float_leq(double limit)
+{
+	float val = limit;
+
+	return (double)val <= limit ? val : nextafterf(val, -INFINITY);
+}
+
+/** Finds the smallest float greater than or equal to @c limit. */
+static float smallest_float_geq(double limit)
+{
+	float val = limit;
+
+	return (double)val >= limit ? val : nextafterf(val, INFINITY);
+}
+
+static void check_scalar_format(const struct bt_mesh_sensor_format *format,
+				const struct format_spec *spec)
+{
+	/* Decoded values inside [min, max] range */
+	int64_t micro_max = round(spec->max * MICRO);
+	int64_t micro_min = round(spec->min * MICRO);
+	float float_max = biggest_float_leq(spec->max);
+	float float_min = smallest_float_geq(spec->min);
+
+	/* Checking encoding/decoding maximum value */
+	check_from_micro(format, micro_max, 0, encoded(spec, spec->max), true);
+	check_from_float(format, float_max, 0, encoded(spec, float_max), false);
+	check_to_micro(format, encoded(spec, spec->max),
+		       BT_MESH_SENSOR_VALUE_NUMBER, micro_max, true);
+	check_to_float(format, encoded(spec, spec->max),
+		       BT_MESH_SENSOR_VALUE_NUMBER, spec->max, false);
+	check_to_status(format, encoded(spec, spec->max), BT_MESH_SENSOR_VALUE_NUMBER);
+
+	/* Checking encoding/decoding minimum value */
+	check_from_micro(format, micro_min, 0, encoded(spec, spec->min), true);
+	check_from_float(format, float_min, 0, encoded(spec, float_min), false);
+	check_to_micro(format, encoded(spec, spec->min),
+		       BT_MESH_SENSOR_VALUE_NUMBER, micro_min, true);
+	check_to_float(format, encoded(spec, spec->min),
+		       BT_MESH_SENSOR_VALUE_NUMBER, spec->min, false);
+	check_to_status(format, encoded(spec, spec->min), BT_MESH_SENSOR_VALUE_NUMBER);
+
+	/* Decoded values outside [min, max] range */
+	int64_t micro_max_plus_one = micro_max + round(MICRO * spec->ratio);
+	int64_t micro_min_minus_one = micro_min - round(MICRO * spec->ratio);
+	float float_max_plus_one = spec->max + spec->ratio;
+	float float_min_minus_one = spec->min - spec->ratio;
+
+	uint32_t special_raw;
+
+	/* Checking values bigger than maximum */
+	if (spec->specials.max_or_greater) {
+		/* Checking special value "maximum or greater" */
+		special_raw = *(spec->specials.max_or_greater);
+		check_from_micro(format, micro_max_plus_one, 0, special_raw, true);
+		check_from_float(format, float_max_plus_one, 0, special_raw, true);
+		check_from_special(format, BT_MESH_SENSOR_VALUE_MAX_OR_GREATER, 0, special_raw);
+		check_to_micro(format, special_raw, BT_MESH_SENSOR_VALUE_MAX_OR_GREATER,
+			       micro_max_plus_one, true);
+		check_to_float(format, special_raw, BT_MESH_SENSOR_VALUE_MAX_OR_GREATER,
+			       float_max_plus_one, false);
+		check_to_status(format, special_raw, BT_MESH_SENSOR_VALUE_MAX_OR_GREATER);
+
+		/* Checking clamping of values out of range */
+		int64_t micro_max_plus_two = micro_max + round(MICRO * 2 * spec->ratio);
+		float float_max_plus_two = spec->max + (2 * spec->ratio);
+
+		check_from_micro(format, micro_max_plus_two, -ERANGE, special_raw, true);
+		check_from_float(format, float_max_plus_two, -ERANGE, special_raw, true);
+	} else {
+		/* Checking clamping of values out of range */
+		check_from_micro(format, micro_max_plus_one, -ERANGE,
+				 encoded(spec, spec->max), true);
+		check_from_float(format, float_max_plus_one, -ERANGE,
+				 encoded(spec, spec->max), true);
+
+		/* Checking non-supported special value */
+		check_from_special(format, BT_MESH_SENSOR_VALUE_MAX_OR_GREATER, -ERANGE, 0);
+	}
+
+	/* Checking values smaller than minimum */
+	if (spec->specials.min_or_less) {
+		/* Checking special value "minimum or less" */
+		special_raw = *(spec->specials.min_or_less);
+		check_from_micro(format, micro_min_minus_one, 0, special_raw, true);
+		check_from_float(format, float_min_minus_one, 0, special_raw, true);
+		check_from_special(format, BT_MESH_SENSOR_VALUE_MIN_OR_LESS, 0, special_raw);
+		check_to_micro(format, special_raw, BT_MESH_SENSOR_VALUE_MIN_OR_LESS,
+			       micro_min_minus_one, true);
+		check_to_float(format, special_raw, BT_MESH_SENSOR_VALUE_MIN_OR_LESS,
+			       float_min_minus_one, false);
+		check_to_status(format, special_raw, BT_MESH_SENSOR_VALUE_MIN_OR_LESS);
+
+		/* Checking clamping of values out of range */
+		int64_t micro_min_minus_two = micro_min - round(MICRO * 2 * spec->ratio);
+		float float_min_minus_two = spec->min - (2 * spec->ratio);
+
+		check_from_micro(format, micro_min_minus_two, -ERANGE, special_raw, true);
+		check_from_float(format, float_min_minus_two, -ERANGE, special_raw, true);
+	} else {
+		/* Checking clamping of values out of range */
+		check_from_micro(format, micro_min_minus_one, -ERANGE,
+				 encoded(spec, spec->min), true);
+		check_from_float(format, float_min_minus_one, -ERANGE,
+				 encoded(spec, spec->min), true);
+
+		/* Checking non-supported special value */
+		check_from_special(format, BT_MESH_SENSOR_VALUE_MIN_OR_LESS, -ERANGE, 0);
+	}
+
+	if (spec->specials.unknown) {
+		/* Checking special value "value is not known" */
+		special_raw = *(spec->specials.unknown);
+		check_from_special(format, BT_MESH_SENSOR_VALUE_UNKNOWN, 0, special_raw);
+		check_to_status(format, special_raw, BT_MESH_SENSOR_VALUE_UNKNOWN);
+		check_to_float(format, special_raw, BT_MESH_SENSOR_VALUE_UNKNOWN, 0.0f, true);
+		check_to_micro(format, special_raw, BT_MESH_SENSOR_VALUE_UNKNOWN, 0, true);
+	} else {
+		/* Checking non-supported special value "value is not known" */
+		check_from_special(format, BT_MESH_SENSOR_VALUE_UNKNOWN, -ERANGE, 0);
+	}
+
+	if (spec->specials.invalid) {
+		/* Checking special value "value is invalid" */
+		special_raw = *(spec->specials.invalid);
+		check_from_special(format, BT_MESH_SENSOR_VALUE_INVALID, 0, special_raw);
+		check_to_status(format, special_raw, BT_MESH_SENSOR_VALUE_INVALID);
+		check_to_float(format, special_raw, BT_MESH_SENSOR_VALUE_INVALID, 0.0f, true);
+		check_to_micro(format, special_raw, BT_MESH_SENSOR_VALUE_INVALID, 0, true);
+	} else {
+		/* Checking non-supported special value "value is invalid" */
+		check_from_special(format, BT_MESH_SENSOR_VALUE_INVALID, -ERANGE, 0);
+	}
+
+	if (spec->specials.prohibited) {
+		/* Checking decoding a prohibited raw value */
+		special_raw = *(spec->specials.prohibited);
+		check_to_status(format, special_raw, BT_MESH_SENSOR_VALUE_CONVERSION_ERROR);
+		check_to_float(format, special_raw, BT_MESH_SENSOR_VALUE_CONVERSION_ERROR,
+			       0.0f, true);
+		check_to_micro(format, special_raw, BT_MESH_SENSOR_VALUE_CONVERSION_ERROR,
+			       0, true);
+	}
+}
+
+#define TEST_SCALAR_FORMAT(_name, _spec)                                       \
+ZTEST(sensor_types_test, test_format_##_name)                              \
+{                                                                              \
+	struct format_spec spec = _spec;                                       \
+	check_scalar_format(&bt_mesh_sensor_format_##_name, &spec);            \
+}
+
+static void check_sensor_type(const struct bt_mesh_sensor_type *type,
+			      uint16_t id,
+			      const struct channel_spec *channels,
+			      size_t channels_count)
+{
+	uint8_t test_data[BT_MESH_SENSOR_ENCODED_VALUE_MAXLEN];
+	struct bt_mesh_sensor_value values[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	int total_size = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(test_data); i++) {
+		test_data[i] = i + 1;
+	}
+
+	for (int i = 0; i < channels_count; i++) {
+		total_size += channels[i].size;
+	}
+
+	zassert_equal(bt_mesh_sensor_type_get(id), type);
+	zassert_true(total_size <= ARRAY_SIZE(test_data),
+		     "Not enough test data available to test this type");
+
+	NET_BUF_SIMPLE_DEFINE(buf, total_size);
+	(void)net_buf_simple_add_mem(&buf, test_data, total_size);
+
+	zassert_equal(buf.len, total_size);
+	zassert_true(channels_count <= CONFIG_BT_MESH_SENSOR_CHANNELS_MAX);
+	zassert_ok(sensor_value_decode(&buf, type, values));
+	zassert_equal(buf.len, 0);
+
+	const uint8_t *current_data = test_data;
+
+	for (int i = 0; i < channels_count; i++) {
+		zassert_equal(values[i].format, channels[i].format);
+		zassert_equal(values[i].format->size, channels[i].size);
+		zassert_mem_equal(values[i].raw, current_data, channels[i].size);
+		current_data += channels[i].size;
+	}
+
+	net_buf_simple_reset(&buf);
+	memset(buf.data, 0, total_size);
+	zassert_ok(sensor_value_encode(&buf, type, values));
+	zassert_equal(buf.len, total_size);
+	zassert_mem_equal(buf.data, test_data, total_size);
+}
+
+#define TEST_SENSOR_TYPE(_name, _id, ...)                                      \
+ZTEST(sensor_types_test, test_type_##_name)                                \
+{                                                                              \
+	check_sensor_type(                                                     \
+		&bt_mesh_sensor_##_name,                                       \
+		(_id),                                                         \
+		((struct channel_spec[]){ __VA_ARGS__ }),                      \
+		ARRAY_SIZE(((struct channel_spec[]){ __VA_ARGS__ })));         \
+}
+
+TEST_SCALAR_FORMAT(percentage_8,
+		   FORMAT_SPEC(1, 1, 0, -1, 0.0, 100.0,
+			       SPECIAL(unknown, 0xff),
+			       SPECIAL(prohibited, 0xC9)))
+
+TEST_SCALAR_FORMAT(percentage_16,
+		   FORMAT_SPEC(2, 1, -2, 0, 0.0, 100.0,
+			       SPECIAL(unknown, 0xffff),
+			       SPECIAL(prohibited, 0x2711)))
+
+TEST_SCALAR_FORMAT(percentage_delta_trigger,
+		   FORMAT_SPEC(2, 1, -2, 0, 0.0, 655.35))
+
+TEST_SCALAR_FORMAT(temp_8,
+		   FORMAT_SPEC(1, 1, 0, -1, -64.0, 63.0,
+			       SPECIAL(unknown, 0x7f)))
+
+TEST_SCALAR_FORMAT(temp,
+		   FORMAT_SPEC(2, 1, -2, 0, -273.15, 327.67,
+			       SPECIAL(unknown, 0x8000),
+			       SPECIAL(prohibited, 0x954C)))
+
+TEST_SCALAR_FORMAT(co2_concentration,
+		   FORMAT_SPEC(2, 1, 0, 0, 0, 65533,
+			       SPECIAL(max_or_greater, 0xFFFE),
+			       SPECIAL(unknown, 0xFFFF)))
+
+TEST_SCALAR_FORMAT(noise,
+		   FORMAT_SPEC(1, 1, 0, 0, 0, 253,
+			       SPECIAL(max_or_greater, 0xFE),
+			       SPECIAL(unknown, 0xFF)))
+
+TEST_SCALAR_FORMAT(voc_concentration,
+		   FORMAT_SPEC(2, 1, 0, 0, 0, 65533,
+			       SPECIAL(max_or_greater, 0xFFFE),
+			       SPECIAL(unknown, 0xFFFF)))
+
+TEST_SCALAR_FORMAT(wind_speed,
+		   FORMAT_SPEC(2, 1, -2, 0, 0, 655.35))
+
+TEST_SCALAR_FORMAT(temp_8_wide,
+		   FORMAT_SPEC(1, 1, 0, 0, -128, 127))
+
+TEST_SCALAR_FORMAT(gust_factor,
+		   FORMAT_SPEC(1, 1, -1, 0, 0, 25.5))
+
+/* GSS specifies d = -7. Implemented in the stack as d = -1 with unit of
+ * microtesla, to be able to work with full precision using to_micro/from_micro
+ * and to/from sensor_value.
+ * Testing using d = -1
+ */
+TEST_SCALAR_FORMAT(magnetic_flux_density,
+		   FORMAT_SPEC(2, 1, -1, 0, -3276.8, 3276.7))
+
+TEST_SCALAR_FORMAT(pollen_concentration,
+		   FORMAT_SPEC(3, 1, 0, 0, 0, 16777215))
+
+TEST_SCALAR_FORMAT(pressure,
+		   FORMAT_SPEC(4, 1, -1, 0, 0, 429496729.5))
+
+TEST_SCALAR_FORMAT(rainfall,
+		   FORMAT_SPEC(2, 1, -3, 0, 0, 65.535))
+
+TEST_SCALAR_FORMAT(uv_index,
+		   FORMAT_SPEC(1, 1, 0, 0, 0, 255))
+
+TEST_SCALAR_FORMAT(time_decihour_8,
+		   FORMAT_SPEC(1, 1, -1, 0, 0, 23.9,
+			       SPECIAL(unknown, 0xFF),
+			       SPECIAL(prohibited, 0xF0)))
+
+TEST_SCALAR_FORMAT(time_hour_24,
+		   FORMAT_SPEC(3, 1, 0, 0, 0, 16777214,
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+TEST_SCALAR_FORMAT(time_second_16,
+		   FORMAT_SPEC(2, 1, 0, 0, 0, 65534,
+			       SPECIAL(unknown, 0xFFFF)))
+
+TEST_SCALAR_FORMAT(time_millisecond_24,
+		   FORMAT_SPEC(3, 1, -3, 0, 0, 16777.214,
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+ZTEST(sensor_types_test, test_format_time_exp_8)
+{
+	const struct bt_mesh_sensor_format *fmt = &bt_mesh_sensor_format_time_exp_8;
+
+	/*                         Specially encoded 0
+	 *                         |     Lowest normal value
+	 *                         |     |     Encodes "1"
+	 *                         |     |     |     Encodes "1.1"
+	 *                         |     |     |     |     Middle of range
+	 *                         |     |     |     |     |     Highest normal value
+	 *                         v     v     v     v     v     v
 	 */
-	int64_t div = m * int_pow(10, d) * int_pow(2, b);
-	int64_t mul = int_pow(10, -d) * int_pow(2, -b);
-
-	return ROUNDED_DIV(r, div) * mul;
-}
-
-static void sensor_type_sanitize(const struct bt_mesh_sensor_type *sensor_type)
-{
-	zassert_not_null(sensor_type, "NULL sensor type pointer");
-	zassert_not_null(sensor_type->channels, "NULL sensor channels pointer");
-	zassert_true(sensor_type->channel_count > 0, "Wrong channel number");
-
-	for (int i = 0; i < sensor_type->channel_count; i++) {
-		printk("Sensor channel name: %s\n", sensor_type->channels[i].name);
-	}
-}
-
-static void voltage_helper(uint16_t test_value, struct sensor_value *in_value, uint16_t *expected)
-{
-	in_value->val1 = test_value;
-	in_value->val2 = 0;
-	*expected = test_value > 1022 ?
-			test_value == UINT16_MAX ? UINT16_MAX
-			: raw_scalar_value_get(1022, 1, 0, -6)
-			: raw_scalar_value_get(test_value, 1, 0, -6);
-}
-
-static void encoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
-				      const struct sensor_value *value,
-				      const void *expected,
-				      size_t size)
-{
-	int err;
-
-	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SENSOR_OP_SETTING_SET,
-				BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET);
-	bt_mesh_model_msg_init(&buf, BT_MESH_SENSOR_OP_SETTING_SET);
-
-	err = sensor_value_encode(&buf, sensor_type, value);
-	zassert_ok(err, "Encoding failed with error code: %i", err);
-
-	zassert_mem_equal(&buf.data[1], expected, size,
-		"Encoded value is not equal expected");
-}
-
-static void decoding_checking_proceed_with_tolerance(
-			const struct bt_mesh_sensor_type *sensor_type,
-			const void *value,
-			size_t size,
-			const struct sensor_value *expected,
-			double tolerance)
-{
-	struct sensor_value out_value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
-	int err;
-
-	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SENSOR_OP_SETTING_SET,
-				BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET);
-	bt_mesh_model_msg_init(&buf, BT_MESH_SENSOR_OP_SETTING_SET);
-
-	(void)net_buf_simple_add_mem(&buf, value, size);
-	(void)net_buf_simple_pull_u8(&buf);
-
-	err = sensor_value_decode(&buf, sensor_type, out_value);
-	zassert_ok(err, "Decoding failed with error code: %i", err);
-
-	for (int i = 0; i < sensor_type->channel_count; i++) {
-		if (tolerance == 0.0 || (expected[i].val1 == 0 && expected[i].val2 == 0)) {
-			zassert_equal(expected[i].val1, out_value[i].val1,
-				"Channel: %i - encoded value val1: %i is not equal decoded: %i",
-				i, expected[i].val1, out_value[i].val1);
-			zassert_equal(expected[i].val2, out_value[i].val2,
-				"Channel: %i - encoded value val2: %i is not equal decoded: %i",
-				i, expected[i].val2, out_value[i].val2);
-		} else {
-			double in_d = expected[i].val1 + expected[i].val2 * 0.000001;
-			double out_d = out_value[i].val1 + out_value[i].val2 * 0.000001;
-			double ratio = out_d / in_d;
-
-			zassert_within(ratio, 1.0, tolerance,
-				"Channel: %i - decoded value %i.%i is more than %f away "
-				"from encoded value %i.%i, and is outside tolerance.",
-				i, out_value[i].val1, out_value[i].val2,
-				tolerance, expected[i].val1, expected[i].val2);
-		}
-	}
-}
-
-static void decoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
-				      const void *value,
-				      size_t size,
-				      const struct sensor_value *expected)
-{
-	decoding_checking_proceed_with_tolerance(sensor_type, value, size, expected, 0.0);
-}
-
-static void invalid_encoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
-					      const struct sensor_value *value)
-{
-	int err;
-
-	BT_MESH_MODEL_BUF_DEFINE(msg, BT_MESH_SENSOR_OP_SETTING_SET,
-				BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET);
-	bt_mesh_model_msg_init(&msg, BT_MESH_SENSOR_OP_SETTING_SET);
-
-	err = sensor_value_encode(&msg, sensor_type, value);
-	zassert_equal(err, -ERANGE, "Invalid error code when encoding: %i", err);
-}
-
-static void invalid_decoding_checking_proceed(const struct bt_mesh_sensor_type *sensor_type,
-					      const void *value,
-					      size_t size)
-{
-	struct sensor_value out_value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX] = {};
-	int err;
-
-	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_SENSOR_OP_SETTING_SET,
-				BT_MESH_SENSOR_MSG_MAXLEN_SETTING_SET);
-	bt_mesh_model_msg_init(&buf, BT_MESH_SENSOR_OP_SETTING_SET);
-
-	(void)net_buf_simple_add_mem(&buf, value, size);
-	(void)net_buf_simple_pull_u8(&buf);
-
-	err = sensor_value_decode(&buf, sensor_type, out_value);
-	zassert_equal(err, -ERANGE, "Invalid error code when decoding: %i", err);
-}
-
-static void percentage8_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint8_t test_vector[] = {0, 25, 50, 75, 100, 0xFF};
+	uint32_t test_vector[] = { 0x00, 0x01, 0x40, 0x41, 0x80, 0xfd};
 
 	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
+		/* Representation: decoded value = 1.1^(encoded - 64) seconds */
+		uint32_t raw = test_vector[i];
+		/* raw value == 0 is defined to be 0 seconds */
+		double exp_1_1 = raw == 0 ? 0.0 : pow(1.1, raw - 64.0);
+		float f = exp_1_1;
+		int64_t micro = exp_1_1 * MICRO;
 
-		uint8_t expected = test_vector[i] == 0xFF ?
-			0xFF : raw_scalar_value_get(test_vector[i], 1, 0, -1);
-
-		encoding_checking_proceed(sensor_type, &in_value, &expected, 1);
-		decoding_checking_proceed(sensor_type, &expected, 1, &in_value);
+		check_from_micro(fmt, micro, 0, raw, true);
+		check_from_float(fmt, f, 0, raw, true);
+		/* Checking with exact == false for to_micro because in this case it is computed
+		 * via float.
+		 */
+		check_to_micro(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER, micro, false);
+		check_to_float(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER, f, false);
+		check_to_status(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER);
 	}
+
+	/* Checking special values*/
+	uint32_t total_device_life_raw = 0xFE;
+	uint32_t unknown_raw = 0xFF;
+
+	check_from_special(fmt, BT_MESH_SENSOR_VALUE_TOTAL_DEVICE_LIFE, 0, total_device_life_raw);
+	check_to_micro(fmt, total_device_life_raw,
+		       BT_MESH_SENSOR_VALUE_TOTAL_DEVICE_LIFE, 0, true);
+	check_to_float(fmt, total_device_life_raw,
+		       BT_MESH_SENSOR_VALUE_TOTAL_DEVICE_LIFE, 0.0f, true);
+	check_to_status(fmt, total_device_life_raw, BT_MESH_SENSOR_VALUE_TOTAL_DEVICE_LIFE);
+
+	check_from_special(fmt, BT_MESH_SENSOR_VALUE_UNKNOWN, 0, unknown_raw);
+	check_to_micro(fmt, unknown_raw, BT_MESH_SENSOR_VALUE_UNKNOWN, 0, true);
+	check_to_float(fmt, unknown_raw, BT_MESH_SENSOR_VALUE_UNKNOWN, 0.0f, true);
+	check_to_status(fmt, unknown_raw, BT_MESH_SENSOR_VALUE_UNKNOWN);
 }
 
-static void count16_check(const struct bt_mesh_sensor_type *sensor_type)
+TEST_SCALAR_FORMAT(electric_current,
+		   FORMAT_SPEC(2, 1, -2, 0, 0, 655.34,
+			       SPECIAL(unknown, 0xFFFF)))
+
+/* GSS defines this in a weird way compared to all other characteristics, where
+ * the values for min (0.0) and max (1022.0) are actually the values for
+ * "0.0 or less" and "1022.0 or greater". Since the test format spec expects
+ * these special values to be excluded from the min and max range specified,
+ * the min and max used here are 0 + 2^-6 and 1022.0 - 2^-6.
+ */
+TEST_SCALAR_FORMAT(voltage,
+		   FORMAT_SPEC(2, 1, 0, -6, 0.015625, 1021.984375,
+			       SPECIAL(unknown, 0xFFFF),
+			       SPECIAL(max_or_greater, 0xFF80),
+			       SPECIAL(min_or_less, 0x0000),
+			       SPECIAL(prohibited, 0xFF81)))
+
+TEST_SCALAR_FORMAT(energy32,
+		   FORMAT_SPEC(4, 1, -3, 0, 0, 4294967.293,
+			       SPECIAL(invalid, 0xFFFFFFFE),
+			       SPECIAL(unknown, 0xFFFFFFFF)))
+
+TEST_SCALAR_FORMAT(apparent_energy32,
+		   FORMAT_SPEC(4, 1, -3, 0, 0, 4294967.293,
+			       SPECIAL(invalid, 0xFFFFFFFE),
+			       SPECIAL(unknown, 0xFFFFFFFF)))
+
+TEST_SCALAR_FORMAT(apparent_power,
+		   FORMAT_SPEC(3, 1, -1, 0, 0, 1677721.3,
+			       SPECIAL(invalid, 0xFFFFFE),
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+TEST_SCALAR_FORMAT(power,
+		   FORMAT_SPEC(3, 1, -1, 0, 0, 1677721.4,
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+TEST_SCALAR_FORMAT(energy,
+		   FORMAT_SPEC(3, 1, 0, 0, 0, 16777214,
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+TEST_SCALAR_FORMAT(chromatic_distance,
+		   FORMAT_SPEC(2, 1, -5, 0, -0.05, 0.05,
+			       SPECIAL(invalid, 0x7FFF),
+			       SPECIAL(unknown, 0x7FFE),
+			       SPECIAL(prohibited, 0x1389)))
+
+/* Note: According to GSS, "Unit is unitless with a resolution of 1/65535" and
+ * "Maximum: 1.0". However, it also states that "b = -16". Since this is
+ * contradictory and the stack currently encodes/decodes according to
+ * "b = -16", the max is recomputed in this test to 0.9999847 (~= 65535/65536)
+ */
+TEST_SCALAR_FORMAT(chromaticity_coordinate,
+		   FORMAT_SPEC(2, 1, 0, -16, 0, 0.9999847))
+
+TEST_SCALAR_FORMAT(correlated_color_temp,
+		   FORMAT_SPEC(2, 1, 0, 0, 800, 65534,
+			       SPECIAL(unknown, 0xFFFF),
+			       SPECIAL(prohibited, 0x031f)))
+
+TEST_SCALAR_FORMAT(illuminance,
+		   FORMAT_SPEC(3, 1, -2, 0, 0, 167772.14,
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+TEST_SCALAR_FORMAT(luminous_efficacy,
+		   FORMAT_SPEC(2, 1, -1, 0, 0, 1800,
+			       SPECIAL(unknown, 0xFFFF),
+			       SPECIAL(prohibited, 0x4651)))
+
+TEST_SCALAR_FORMAT(luminous_energy,
+		   FORMAT_SPEC(3, 1, 3, 0, 0, 16777214000.0,
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+TEST_SCALAR_FORMAT(luminous_exposure,
+		   FORMAT_SPEC(3, 1, 3, 0, 0, 16777214000.0,
+			       SPECIAL(unknown, 0xFFFFFF)))
+
+TEST_SCALAR_FORMAT(luminous_flux,
+		   FORMAT_SPEC(2, 1, 0, 0, 0, 65534,
+			       SPECIAL(unknown, 0xFFFF)))
+
+TEST_SCALAR_FORMAT(perceived_lightness,
+		   FORMAT_SPEC(2, 1, 0, 0, 0, 65535))
+
+TEST_SCALAR_FORMAT(direction_16,
+		   FORMAT_SPEC(2, 1, -2, 0, 0, 359.99,
+			       SPECIAL(prohibited, 0x8CA0)))
+
+TEST_SCALAR_FORMAT(count_16,
+		   FORMAT_SPEC(2, 1, 0, 0, 0, 65534,
+			       SPECIAL(unknown, 0xFFFF)))
+
+TEST_SCALAR_FORMAT(gen_lvl,
+		   FORMAT_SPEC(2, 1, 0, 0, 0, 65535))
+
+/* GSS specifies d = -2, however, it also says that the value is
+ * "expressed as Cos(theta) x 100, with a resolution of 1", implying d = 1.
+ * Min = -100 and max = 100 are also specified in terms of 100ths of the cosine.
+ * The stack currently returns values in hundredths, i.e. d = 0, so this is
+ * what is tested.
+ */
+TEST_SCALAR_FORMAT(cos_of_the_angle,
+		   FORMAT_SPEC(1, 1, 0, 0, -100, 100,
+			       SPECIAL(unknown, 0x7F),
+			       SPECIAL(prohibited, 0x9B)))
+
+ZTEST(sensor_types_test, test_format_boolean)
 {
-	struct sensor_value in_value = {0};
-	uint16_t test_vector[] = {0, 0x000F, 0x00FF, 0x0FFF, 0xFFFF};
+	const struct bt_mesh_sensor_format *fmt = &bt_mesh_sensor_format_boolean;
 
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
+	/* Checking false (0) */
+	check_from_micro(fmt, 0, 0, 0x00, true);
+	check_from_float(fmt, 0.0f, 0, 0x00, true);
+	check_to_micro(fmt, 0x00, BT_MESH_SENSOR_VALUE_NUMBER, 0, true);
+	check_to_float(fmt, 0x00, BT_MESH_SENSOR_VALUE_NUMBER, 0.0f, true);
+	check_to_status(fmt, 0x00, BT_MESH_SENSOR_VALUE_NUMBER);
 
-		uint16_t expected = raw_scalar_value_get(test_vector[i], 1, 0, 0);
+	/* Checking true (1) */
+	check_from_micro(fmt, 1 * MICRO, 0, 0x01, true);
+	check_from_float(fmt, 1.0f, 0, 0x01, true);
+	check_to_micro(fmt, 0x01, BT_MESH_SENSOR_VALUE_NUMBER, 1 * MICRO, true);
+	check_to_float(fmt, 0x01, BT_MESH_SENSOR_VALUE_NUMBER, 1.0f, true);
+	check_to_status(fmt, 0x01, BT_MESH_SENSOR_VALUE_NUMBER);
 
-		encoding_checking_proceed(sensor_type, &in_value, &expected, 2);
-		decoding_checking_proceed(sensor_type, &expected, 2, &in_value);
-	}
+	/* Checking out of range float/micro */
+	check_from_micro(fmt, 2 * MICRO, -ERANGE, 0x01, true);
+	check_from_float(fmt, 2.0f, -ERANGE, 0x01, true);
+
+	/* Checking prohibited */
+	check_to_micro(fmt, 0x02, BT_MESH_SENSOR_VALUE_CONVERSION_ERROR, 0, true);
+	check_to_float(fmt, 0x02, BT_MESH_SENSOR_VALUE_CONVERSION_ERROR, 0.0f, true);
 }
 
-static void boolean_check(const struct bt_mesh_sensor_type *sensor_type)
+ZTEST(sensor_types_test, test_format_coefficient)
 {
-	struct sensor_value in_value = {0};
-	uint8_t test_vector[] = {0, 1};
+	const struct bt_mesh_sensor_format *fmt = &bt_mesh_sensor_format_coefficient;
 
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		uint8_t expected = test_vector[i];
-
-		encoding_checking_proceed(sensor_type, &in_value, &expected, 1);
-		decoding_checking_proceed(sensor_type, &expected, 1, &in_value);
-	}
-}
-
-static void time_second16_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint16_t test_vector[] = {0, 0x000F, 0x00FF, 0x0FFF, 0xFFFF};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		uint16_t expected = raw_scalar_value_get(test_vector[i], 1, 0, 0);
-
-		encoding_checking_proceed(sensor_type, &in_value, &expected, 2);
-		decoding_checking_proceed(sensor_type, &expected, 2, &in_value);
-	}
-}
-
-static void time_millisecond24_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value val;
-		uint32_t expected;
-	} test_vector[] = {
-		{ { 0, 0 }, 0 },
-		{ { 0, 1000 }, 1 },
-		{ { 1, 0 }, 1000 },
-		{ { 123, 456000 }, 123456 },
-		{ { 16777, 214000 }, 16777214 },
-		{ { 0xFFFFFF, 0 }, 0xFFFFFF }
+	/* Coefficient is encoded as a raw 32 bit float */
+	float test_vector_float[] = {
+		-FLT_MAX, -FLT_MIN, 0.0, FLT_MIN, *(float *)&(uint32_t){ 0x12345678 }, FLT_MAX
 	};
 
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(
-			sensor_type, &test_vector[i].val, &test_vector[i].expected, 3);
-		decoding_checking_proceed(
-			sensor_type, &test_vector[i].expected, 3, &test_vector[i].val);
-	}
-}
-
-static void humidity_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint16_t test_vector[] = {0, 1000, 5000, 10000, UINT16_MAX};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		if (test_vector[i] == UINT16_MAX) {
-			in_value.val1 = UINT16_MAX;
-			in_value.val2 = 0;
-		} else {
-			in_value.val1 = test_vector[i] / 100;
-			in_value.val2 = test_vector[i] % 100 * 10000;
-		}
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
-	}
-
-	/* Test invalid range. */
-	uint16_t invalid_test_vector = 10001;
-
-	in_value.val1 = invalid_test_vector / 100;
-	in_value.val2 = invalid_test_vector % 100 * 10000;
-	invalid_encoding_checking_proceed(sensor_type, &in_value);
-}
-
-static void temp8_signed_celsius_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	int8_t test_vector[] = {-128, -50, 0, 50, 127};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 1);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 1, &in_value);
-	}
-}
-
-static void plane_angle_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint16_t test_vector[] = {0, 1000, 5000, 10000, 35999};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i] / 100;
-		in_value.val2 = test_vector[i] % 100 * 10000;
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
-	}
-
-	/* Test invalid range. */
-	uint16_t invalid_test_vector = 36000;
-
-	in_value.val1 = invalid_test_vector / 100;
-	in_value.val2 = invalid_test_vector % 100 * 10000;
-	invalid_encoding_checking_proceed(sensor_type, &in_value);
-}
-
-static void wind_speed_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint16_t test_vector[] = {0, 1000, 5432, 12345, UINT16_MAX};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i] / 100;
-		in_value.val2 = test_vector[i] % 100 * 10000;
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
-	}
-}
-
-static void pressure_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint32_t test_vector[] = {0, UINT32_MAX / 2, UINT32_MAX};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i] / 10;
-		in_value.val2 = test_vector[i] % 10 * 100000;
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 4);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 4, &in_value);
-	}
-}
-
-static void gust_factor_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint8_t test_vector[] = {0, 25, 50, 75, 100, UINT8_MAX};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i] / 10;
-		in_value.val2 = test_vector[i] % 10 * 100000;
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 1);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 1, &in_value);
-	}
-}
-
-static void concentration_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint32_t test_vector[] = {0, 1000,
-		UINT16_MAX - 2, UINT16_MAX - 1, UINT16_MAX, UINT16_MAX + 1};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		uint16_t expected = test_vector[i] > 65533 ?
-			test_vector[i] == UINT16_MAX ?
-				UINT16_MAX : UINT16_MAX - 1 : test_vector[i];
-
-		encoding_checking_proceed(sensor_type, &in_value, &expected, 2);
-		in_value.val1 = expected;
-		decoding_checking_proceed(sensor_type, &expected, 2, &in_value);
-	}
-}
-
-static void noise_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint16_t test_vector[] = {0, 50,
-		UINT8_MAX - 2, UINT8_MAX - 1, UINT8_MAX, UINT8_MAX + 1};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		uint8_t expected = test_vector[i] > 253 ?
-			test_vector[i] == UINT8_MAX ?
-				UINT8_MAX : UINT8_MAX - 1 : test_vector[i];
-
-		encoding_checking_proceed(sensor_type, &in_value, &expected, 1);
-		in_value.val1 = expected;
-		decoding_checking_proceed(sensor_type, &expected, 1, &in_value);
-	}
-}
-
-static void pollen_concentration_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint32_t test_vector[] = {0, 0xFF, 0xFFFF, 0xFFFFFF};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 3, &in_value);
-	}
-}
-
-static void rainfall_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint16_t test_vector[] = {0, 1000, 15000, 30000, UINT16_MAX};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i] / 1000;
-		in_value.val2 = test_vector[i] % 1000 * 1000;
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 2, &in_value);
-	}
-}
-
-static void uv_index_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	uint8_t test_vector[] = {0, 25, 50, 200, UINT8_MAX};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		encoding_checking_proceed(sensor_type, &in_value, &test_vector[i], 1);
-		decoding_checking_proceed(sensor_type, &test_vector[i], 1, &in_value);
-	}
-}
-
-static void flux_density_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	int16_t test_vector[] = {INT16_MIN, -30000, -15000, 0, 15000, 30000, INT16_MAX};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		int16_t expected[sensor_type->channel_count];
-
-		for (int j = 0; j < sensor_type->channel_count; j++) {
-			in_value[j].val1 = test_vector[i] / 10;
-			in_value[j].val2 = test_vector[i] % 10 * 100000;
-			expected[j] = test_vector[i];
-		}
-
-		encoding_checking_proceed(sensor_type, in_value, expected, sizeof(expected));
-		decoding_checking_proceed(sensor_type, expected, sizeof(expected), in_value);
-	}
-}
-
-static void chromaticity_coordinates_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented[2];
-		uint16_t raw[2];
-	} test_vector[] = {
-		{{{0, 250000}, {0, 750000}}, {16384, 49152}},
-		{{{0, 500000}, {0, 625000}}, {32768, 40960}},
-		{{{0, 875000}, {0, 125000}}, {57344, 8192}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
-					  &test_vector[i].raw[0], 4);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw[0], 4,
-					  &test_vector[i].represented[0]);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_test_vector[][2] = {
-		{{0, -100000}, {0, 250000}},
-		{{1, 0}, {0, 250000}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, invalid_test_vector[i]);
-	}
-}
-
-static void illuminance_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{83886, 70000}, 0x7FFFFF},
-		{{3000, 0}, 0x493E0},
-		{{10000, 500000}, 0xF4272},
-		{{167772, 140000}, 0xFFFFFE},
-		{{0xFFFFFF, 0}, 0xFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_test_vector[] = {
-		{-1, 0},
-		{167772, 150000},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_test_vector[i]);
-	}
-}
-
-static void correlated_color_temp_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint16_t raw;
-	} test_vector[] = {
-		{{800, 0}, 800},
-		{{1234, 0}, 1234},
-		{{65534, 0}, 65534},
-		{{65535, 0}, 65535},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 2,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{0, 0},
-		{799, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-
-	/* Test invalid range on decoding. */
-	uint16_t invalid_decoding_test_vector[] = {
-		0,
-		799,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
-		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 2);
-	}
-}
-
-static void luminous_flux_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint16_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{800, 0}, 800},
-		{{1234, 0}, 1234},
-		{{65534, 0}, 65534},
-		{{65535, 0}, 65535},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 2,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-1, 0},
-		{65536, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void luminous_flux_range_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented[2];
-		uint16_t raw[2];
-	} test_vector[] = {
-		{{{0, 0}, {1, 0}}, {0, 1}},
-		{{{800, 0}, {400, 0}}, {800, 400}},
-		{{{1234, 0}, {5678, 0}}, {1234, 5678}},
-		{{{65534, 0}, {65535, 0}}, {65534, 65535}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
-					  &test_vector[i].raw[0], 4);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw[0], 4,
-					  &test_vector[i].represented[0]);
-	}
-
-	/* Test invalid range. */
-	struct sensor_value invalid_encoding_test_vector[][2] = {
-		{{-1, 0}, {0, 0}},
-		{{65536, 0}, {65534, 0}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
-	}
-}
-
-static void chromatic_distance_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, -50000}, -5000},
-		{{0, 0}, 0},
-		{{0, -10}, -1},
-		{{0, 10}, 1},
-		{{0, 50000}, 5000},
-		{{0x7FFF, 0}, 0x7FFF},
-		{{0x7FFE, 0}, 0x7FFE},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 2,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{0, -60000},
-		{0, 60000},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-
-	/* Test invalid range on decoding. */
-	uint16_t invalid_decoding_test_vector[] = {
-		5001,
-		-5001,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
-		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 2);
-	}
-}
-
-static void percentage8_illuminance_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented[3];
-		struct __packed {
-			uint8_t p;
-			struct uint24_t i[2];
-		} raw;
-	} test_vector[] = {
-		{{{1, 0}, {0, 0}, {83886, 70000}}, {2, {{0}, {0x7FFFFF}}}},
-		{{{25, 0}, {10000, 500000}, {3000, 0}}, {50, {{0xF4272}, {0x493E0}}}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
-					  &test_vector[i].raw, 7);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 7,
-					  &test_vector[i].represented[0]);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[][3] = {
-		{{256, 0}, {0x1000000, 0}, {83886, 70000}},
-		{{-1, 0}, {0, 0}, {-1, 0}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
-	}
-
-	/* Test invalid range on decoding. */
-	struct __packed {
-		uint8_t p;
-		struct uint24_t i[2];
-	} invalid_decoding_test_vector[] = {
-		{201, {{0x1FFFFF}, {0x7FFFFF}}},
-		{253, {{0}, {0xFF}}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
-		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 7);
-	}
-}
-
-static void time_hour_24_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{1000, 0}, 1000},
-		{{12345678, 0}, 12345678},
-		{{16777214, 0}, 16777214},
-		{{0xFFFFFF, 0}, 0xFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-1, 0},
-		{0x1000000, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void luminous_efficacy_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint16_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{450, 500000}, 4505},
-		{{900, 0}, 9000},
-		{{1300, 200000}, 13002},
-		{{1800, 0}, 18000},
-		{{0xFFFF, 0}, 0xFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 2);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 2,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{1800, 100000},
-		{0xFFFE, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-
-	/* Test invalid range on decoding. */
-	uint32_t invalid_decoding_test_vector[] = {
-		18001,
-		0xFFFE,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
-		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 2);
-	}
-}
-
-static void luminous_energy_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{54321, 0}, 54321},
-		{{8765432, 0}, 8765432},
-		{{16777214, 0}, 16777214},
-		{{0xFFFFFF, 0}, 0xFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-1, 0},
-		{0x1000000, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void luminous_exposure_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{54321, 0}, 54321},
-		{{8765432, 0}, 8765432},
-		{{16777214, 0}, 16777214},
-		{{0xFFFFFF, 0}, 0xFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-1, 0},
-		{0x1000000, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void temp8_in_period_of_day_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	int8_t test_vector_temp[] = {-64, -32, 0, 32, 53, 0x7F};
-	uint8_t test_vector_time[] = {0, 5, 10, 17, 23, 0xff};
-	uint8_t expected[3];
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_temp); i++) {
-		in_value[0].val1 = test_vector_temp[i];
-		in_value[1].val1 = test_vector_time[i];
-		in_value[2].val1 = test_vector_time[i];
-
-		expected[0] = test_vector_temp[i] == 0x7F ?
-			0x7F : raw_scalar_value_get(test_vector_temp[i], 1, 0, -1);
-		expected[1] = test_vector_time[i] == 0xFF ?
-			0xFF : raw_scalar_value_get(test_vector_time[i], 1, -1, 0);
-		expected[2] = expected[1];
-
-		encoding_checking_proceed(sensor_type, in_value, expected, 3 * sizeof(uint8_t));
-		decoding_checking_proceed(sensor_type, expected, 3*sizeof(uint8_t), in_value);
-	}
-}
-
-static void temp8_statistics_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	int8_t test_vector[] = {-64, -32, 0, 32, 63, 0x7F};
-
-	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
-	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
-	 * to themselves as they represent 0 seconds, total device lifetime
-	 * and unknown value, respectively)
-	 */
-	int32_t test_vector_time[] = {0, 1, 2999, 66560640, 0xFFFFFFFE,
-				      0xFFFFFFFF};
-	uint8_t expected_time[] = {0, 64, 148, 253, 0xFE, 0xFF};
-	uint8_t expected[5];
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		for (int j = 0; j < (sensor_type->channel_count - 1); j++) {
-			in_value[j].val1 = test_vector[i];
-		}
-		in_value[sensor_type->channel_count - 1].val1 =
-				test_vector_time[i];
-		int8_t expected_temp = test_vector[i] == 0x7F ?
-			0x7F : raw_scalar_value_get(test_vector[i], 1, 0, -1);
-		expected[0] = expected_temp;
-		expected[1] = expected_temp;
-		expected[2] = expected_temp;
-		expected[3] = expected_temp;
-		expected[4] = expected_time[i];
-
-		encoding_checking_proceed(sensor_type, in_value, expected, 5 * sizeof(uint8_t));
-		decoding_checking_proceed_with_tolerance(sensor_type, expected,
-							 5 * sizeof(uint8_t), in_value, 0.001);
-	}
-}
-
-static void temp8_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value = {0};
-	int8_t test_vector[] = {-64, -32, 0, 32, 63, 0x7F};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		in_value.val1 = test_vector[i];
-
-		int8_t expected = test_vector[i] == 0x7F ?
-			0x7F : raw_scalar_value_get(test_vector[i], 1, 0, -1);
-
-		encoding_checking_proceed(sensor_type, &in_value, &expected, sizeof(uint8_t));
-		decoding_checking_proceed(sensor_type, &expected, sizeof(uint8_t), &in_value);
-	}
-}
-
-static void temp_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	int32_t test_vector[] = {0x8000, -273, 0, 100, 327};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		int16_t expected[sensor_type->channel_count];
-
-		for (int j = 0; j < sensor_type->channel_count; j++) {
-			in_value[j].val1 = test_vector[i];
-			in_value[j].val2 = 0;
-			expected[j] = test_vector[i] == 0x8000 ?
-				0x8000 : raw_scalar_value_get(test_vector[i], 1, -2, 0);
-		}
-
-		encoding_checking_proceed(sensor_type, in_value, expected, sizeof(expected));
-		decoding_checking_proceed(sensor_type, expected, sizeof(expected), in_value);
-	}
-}
-
-static void power_specification_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented[3];
-		struct uint24_t raw[3];
-	} test_vector[] = {
-		{
-			{{0, 0}, {1, 0}, {65536, 0}},
-			{{0}, {10}, {655360}}
-		},
-		{
-			{{1234, 0}, {838860, 500000}, {1677721, 400000}},
-			{{12340}, {8388605}, {16777214}}
-		},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
-					  &test_vector[i].raw, 9);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 9,
-					  &test_vector[i].represented[0]);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[][3] = {
-		{{1, 0}, {-1, 0}, {0, 0}},
-		{{1234, 0}, {4567, 0}, {0x1000000, 0}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
-	}
-}
-
-static void power_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{1234, 0}, 12340},
-		{{87654, 300000}, 876543},
-		{{1677721, 400000}, 0xFFFFFE},
-		{{0xFFFFFF, 0}, 0xFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-1, 0},
-		{0x1000000, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void energy_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{1000, 0}, 1000},
-		{{12345678, 0}, 12345678},
-		{{16777214, 0}, 16777214},
-		{{0xFFFFFF, 0}, 0xFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-1, 0},
-		{0x1000000, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void energy32_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{1000, 0}, 1000000},
-		{{1234567, 890000}, 1234567890},
-		{{4294967, 293000}, 0xFFFFFFFD},
-		{{0xFFFFFFFE, 0}, 0xFFFFFFFE},
-		{{0xFFFFFFFF, 0}, 0xFFFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 4);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 4,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-3, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void cos_of_the_angle_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint8_t raw;
-	} test_vector[] = {
-		{{-100, 0}, 0x9C},
-		{{-50, 0}, 0xCE},
-		{{0, 0}, 0},
-		{{50, 0}, 0x32},
-		{{100, 0}, 0x64},
-		{{0x7F, 0}, 0x7F},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 1);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 1,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-101, 0},
-		{101, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-
-	/* Test invalid range on decoding. */
-	uint32_t invalid_decoding_test_vector[] = {
-		0x9B,
-		0x7E,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
-		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 1);
-	}
-}
-
-static void energy_in_a_period_of_day_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented[3];
-		struct __packed {
-			struct uint24_t energy;
-			uint8_t start_time;
-			uint8_t end_time;
-		} raw;
-	} test_vector[] = {
-		{{{0, 0}, {0, 0}, {1, 0}}, {{0}, 0, 10}},
-		{{{1000, 0}, {10, 100000}, {12, 200000}}, {{1000}, 101, 122}},
-		{{{16777214, 0}, {15, 500000}, {23, 900000}}, {{16777214}, 155, 239}},
-		{{{1, 0}, {2, 0}, {0xFF, 0}}, {{1}, 20, 0xFF}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
-					  &test_vector[i].raw, 5);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 5,
-					  &test_vector[i].represented[0]);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[][3] = {
-		{{-1, 0}, {0, 0}, {0, 0}},
-		{{0, 0}, {-1, 0}, {0, 0}},
-		{{0, 0}, {0, 0}, {-1, 0}},
-		{{1, 0}, {24, 0}, {0, 0}},
-		{{1, 0}, {0, 0}, {24, 0}},
-		{{0x1000000, 0}, {0, 0}, {0, 0}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
-	}
-
-	/* Test invalid range on decoding. */
-	struct __packed {
-		struct uint24_t energy;
-		uint8_t start_time;
-		uint8_t end_time;
-	} invalid_decoding_test_vector[] = {
-		{{0}, 241, 0},
-		{{0}, 0, 254},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
-		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 5);
-	}
-}
-
-static void relative_runtime_in_a_generic_level_range_check(
-						const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented[3];
-		struct __packed {
-			uint8_t relative;
-			uint16_t min;
-			uint16_t max;
-		} raw;
-	} test_vector[] = {
-		{{{0, 0}, {0, 0}, {0, 0}}, {0, 0, 0}},
-		{{{50, 0}, {32767, 0}, {16384, 0}}, {100, 32767, 16384}},
-		{{{100, 0}, {65535, 0}, {8192, 0}}, {200, 65535, 8192}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented[0],
-					  &test_vector[i].raw, 5);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 5,
-					  &test_vector[i].represented[0]);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[][3] = {
-		{{0, 0}, {-1, 0}, {0, 0}},
-		{{0, 0}, {0, 0}, {-1, 0}},
-		{{100, 500000}, {0, 0}, {0, 0}},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i][0]);
-	}
-
-	/* Test invalid range on decoding. */
-	struct __packed {
-		uint8_t relative;
-		uint16_t min;
-		uint16_t max;
-	} invalid_decoding_test_vector[] = {
-		{251, 0, 0},
-		{254, 0, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_decoding_test_vector); i++) {
-		invalid_decoding_checking_proceed(sensor_type, &invalid_decoding_test_vector[i], 5);
-	}
-}
-
-static void apparent_energy32_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{1000, 0}, 1000000},
-		{{1234567, 890000}, 1234567890},
-		{{4294967, 293000}, 0xFFFFFFFD},
-		{{0xFFFFFFFE, 0}, 0xFFFFFFFE},
-		{{0xFFFFFFFF, 0}, 0xFFFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 4);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 4,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-3, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void apparent_power_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct {
-		struct sensor_value represented;
-		uint32_t raw;
-	} test_vector[] = {
-		{{0, 0}, 0},
-		{{1234, 0}, 12340},
-		{{87654, 300000}, 876543},
-		{{1677721, 300000}, 0xFFFFFD},
-		{{0xFFFFFF, 0}, 0xFFFFFF},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		encoding_checking_proceed(sensor_type, &test_vector[i].represented,
-					  &test_vector[i].raw, 3);
-		decoding_checking_proceed(sensor_type, &test_vector[i].raw, 3,
-					  &test_vector[i].represented);
-	}
-
-	/* Test invalid range on encoding. */
-	struct sensor_value invalid_encoding_test_vector[] = {
-		{-1, 0},
-		{1677721, 400000},
-		{0x1000000, 0},
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(invalid_encoding_test_vector); i++) {
-		invalid_encoding_checking_proceed(sensor_type, &invalid_encoding_test_vector[i]);
-	}
-}
-
-static void electric_current_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		uint16_t expected[sensor_type->channel_count];
-
-		for (int j = 0; j < sensor_type->channel_count; j++) {
-			expected[j] = test_vector[i];
-			in_value[j].val1 = test_vector[i] == UINT16_MAX ?
-					UINT16_MAX : test_vector[i] / 100;
-			in_value[j].val2 = test_vector[i] == UINT16_MAX ?
-					0 : test_vector[i] % 100 * 10000;
-		}
-
-		encoding_checking_proceed(sensor_type, in_value, expected, sizeof(expected));
-		decoding_checking_proceed(sensor_type, expected, sizeof(expected), in_value);
-	}
-}
+	for (int i = 0; i < ARRAY_SIZE(test_vector_float); i++) {
+		float f = test_vector_float[i];
+		uint32_t raw = *(uint32_t *)&f;
 
-static void voltage_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector[] = {0, 1, 159, 1000, 1022, 1023, UINT16_MAX};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector); i++) {
-		uint16_t expected[sensor_type->channel_count];
-
-		for (int j = 0; j < sensor_type->channel_count; j++) {
-			voltage_helper(test_vector[i], &in_value[j], &expected[j]);
-		}
-
-		encoding_checking_proceed(sensor_type, in_value, expected, sizeof(expected));
-		for (int j = 0; j < sensor_type->channel_count; j++) {
-			in_value[j].val1 = test_vector[i] > 1022 ?
-				test_vector[i] == UINT16_MAX ? UINT16_MAX
-				: 1022 : test_vector[i];
-		}
-		decoding_checking_proceed(sensor_type, expected, sizeof(expected), in_value);
+		check_from_float(fmt, f, 0, raw, true);
+		check_to_float(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER, f, true);
+		check_to_status(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER);
 	}
-}
-
-static void average_current_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_current[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
-	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
-	 * to themselves as they represent 0 seconds, total device lifetime
-	 * and unknown value, respectively)
-	 */
-	int32_t test_vector_time[] = {0, 1, 2999, 66560640, 0xFFFFFFFE,
-				      0xFFFFFFFF};
-	uint8_t expected_time[] = {0, 64, 148, 253, 0xFE, 0xFF};
-	struct __packed {
-		uint16_t expected_current;
-		uint8_t expected_time;
-	} expected;
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_current); i++) {
-		in_value[0].val1 = test_vector_current[i] == UINT16_MAX ?
-				UINT16_MAX : test_vector_current[i] / 100;
-		in_value[0].val2 = test_vector_current[i] == UINT16_MAX ?
-				0 : test_vector_current[i] % 100 * 10000;
-
-		in_value[1].val1 = test_vector_time[i];
-		in_value[1].val2 = 0;
-
-		expected.expected_current = test_vector_current[i];
-		expected.expected_time = expected_time[i];
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed_with_tolerance(sensor_type, &expected,
-				sizeof(expected), in_value, 0.001);
-	}
-}
-
-static void average_voltage_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_voltage[] = {0, 1, 159, 1022, 1023, UINT16_MAX};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
-	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
-	 * to themselves as they represent 0 seconds, total device lifetime
-	 * and unknown value, respectively)
-	 */
-	int32_t test_vector_time[] = {0, 1, 2999, 66560640, 0xFFFFFFFE,
-				      0xFFFFFFFF};
-	uint8_t expected_time[] = {0, 64, 148, 253, 0xFE, 0xFF};
-	struct __packed {
-		uint16_t expected_voltage;
-		uint8_t expected_time;
-	} expected;
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_voltage); i++) {
-		uint16_t tmp;
-
-		voltage_helper(test_vector_voltage[i], &in_value[0], &tmp);
-		expected.expected_voltage = tmp;
-
-		in_value[1].val1 = test_vector_time[i];
-		in_value[1].val2 = 0;
-
-		expected.expected_time = expected_time[i];
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed_with_tolerance(sensor_type, &expected,
-				sizeof(expected), in_value, 0.001);
-	}
-}
-
-static void current_stat_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_current[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
-	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
-	 * to themselves as they represent 0 seconds, total device lifetime
-	 * and unknown value, respectively)
-	 */
-	int32_t test_vector_time[] = {0, 1, 2999, 66560640, 0xFFFFFFFE,
-				      0xFFFFFFFF};
-	uint8_t expected_time[] = {0, 64, 148, 253, 0xFE, 0xFF};
-	struct __packed {
-		uint16_t expected_current[4];
-		uint8_t expected_time;
-	} expected;
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_current); i++) {
-		for (int j = 0; j < sensor_type->channel_count - 1; j++) {
-			in_value[j].val1 = test_vector_current[i] == UINT16_MAX ?
-					UINT16_MAX : test_vector_current[i] / 100;
-			in_value[j].val2 = test_vector_current[i] == UINT16_MAX ?
-					0 : test_vector_current[i] % 100 * 10000;
-			expected.expected_current[j] = test_vector_current[i];
-		}
-
-		in_value[sensor_type->channel_count - 1].val1 = test_vector_time[i];
-		in_value[sensor_type->channel_count - 1].val2 = 0;
-		expected.expected_time = expected_time[i];
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed_with_tolerance(sensor_type, &expected,
-				sizeof(expected), in_value, 0.001);
-	}
-}
-
-static void voltage_stat_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_voltage[] = {0, 1, 159, 1022, 1023, UINT16_MAX};
-
-	memset(in_value, 0, sizeof(in_value));
-
-	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
-	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
-	 * to themselves as they represent 0 seconds, total device lifetime
-	 * and unknown value, respectively)
-	 */
-	int32_t test_vector_time[] = {0, 1, 2999, 66560640, 0xFFFFFFFE,
-				      0xFFFFFFFF};
-	uint8_t expected_time[] = {0, 64, 148, 253, 0xFE, 0xFF};
-	struct __packed {
-		uint16_t expected_voltage[4];
-		uint8_t expected_time;
-	} expected;
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_voltage); i++) {
-		for (int j = 0; j < sensor_type->channel_count - 1; j++) {
-			uint16_t tmp;
-
-			voltage_helper(test_vector_voltage[i], &in_value[j], &tmp);
-			expected.expected_voltage[j] = tmp;
-		}
-
-		in_value[sensor_type->channel_count - 1].val1 = test_vector_time[i];
-		in_value[sensor_type->channel_count - 1].val2 = 0;
-		expected.expected_time = expected_time[i];
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed_with_tolerance(sensor_type, &expected,
-				sizeof(expected), in_value, 0.001);
-	}
-}
-
-static void rel_runtime_in_current_range_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_current[] = {0, 1234, 5555, 11111, 65534, UINT16_MAX};
-	uint8_t test_vector_percentage8[] = {0, 25, 50, 75, 100, 0xFF};
-	struct __packed {
-		uint8_t expected_percentage8;
-		uint16_t expected_current[2];
-	} expected;
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_current); i++) {
-		for (int j = 1; j < sensor_type->channel_count; j++) {
-			expected.expected_current[j - 1] = test_vector_current[i];
-			in_value[j].val1 = test_vector_current[i] == UINT16_MAX ?
-					UINT16_MAX : test_vector_current[i] / 100;
-			in_value[j].val2 = test_vector_current[i] == UINT16_MAX ?
-					0 : test_vector_current[i] % 100 * 10000;
-		}
-
-		in_value[0].val1 = test_vector_percentage8[i];
-		in_value[0].val2 = 0;
-		expected.expected_percentage8 = test_vector_percentage8[i] == 0xFF ?
-			0xFF : raw_scalar_value_get(test_vector_percentage8[i], 1, 0, -1);
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed(sensor_type, &expected, sizeof(expected), in_value);
-	}
-}
-
-static void rel_runtime_in_voltage_range_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	uint16_t test_vector_voltage[] = {0, 1, 159, 1022, 1023, UINT16_MAX};
-	uint8_t test_vector_percentage8[] = {0, 25, 50, 75, 100, 0xFF};
-	struct __packed {
-		uint8_t expected_percentage8;
-		uint16_t expected_voltage[2];
-	} expected;
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_voltage); i++) {
-		for (int j = 1; j < sensor_type->channel_count; j++) {
-			uint16_t tmp;
-
-			voltage_helper(test_vector_voltage[i], &in_value[j], &tmp);
-			expected.expected_voltage[j - 1] = tmp;
-		}
-
-		in_value[0].val1 = test_vector_percentage8[i];
-		in_value[0].val2 = 0;
-		expected.expected_percentage8 = test_vector_percentage8[i] == 0xFF ?
-			0xFF : raw_scalar_value_get(test_vector_percentage8[i], 1, 0, -1);
-
-		for (int j = 1; j < sensor_type->channel_count; j++) {
-			in_value[j].val1 = test_vector_voltage[i] > 1022 ?
-				test_vector_voltage[i] == UINT16_MAX ? UINT16_MAX
-				: 1022 : test_vector_voltage[i];
-		}
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed(sensor_type, &expected, sizeof(expected), in_value);
-	}
-}
-
-static void temp_stat_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	int32_t test_vector_temp[] = {0x8000, -273, 0, 100, 327};
-
-	/* Time exponential, represented = 1.1^(N-64), where N is raw value.
-	 * Expected raw values precomputed. (0, 0xFE and 0xFF map
-	 * to themselves as they represent 0 seconds, total device lifetime
-	 * and unknown value, respectively)
-	 */
-	int32_t test_vector_time[] = {0, 1, 66560640, 0xFFFFFFFE,
-				      0xFFFFFFFF};
-	uint8_t expected_time[] = {0, 64, 253, 0xFE, 0xFF};
-	struct __packed {
-		uint16_t expected_temp[4];
-		uint8_t expected_time;
-	} expected;
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_temp); i++) {
-		for (int j = 0; j < 4; j++) {
-			in_value[j].val1 = test_vector_temp[i];
-			expected.expected_temp[j] = test_vector_temp[i] == 0x8000 ?
-				0x8000 : raw_scalar_value_get(test_vector_temp[i], 1, -2, 0);
-		}
-		in_value[4].val1 = test_vector_time[i];
-		expected.expected_time = expected_time[i];
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed_with_tolerance(sensor_type, &expected, sizeof(expected),
-							 in_value, 0.001);
-	}
-}
-
-static void rel_val_in_a_temp_range_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[sensor_type->channel_count];
-	int32_t test_vector_temp[] = {0x8000, -273, 0, 100, 327};
-	int32_t test_vector_percentage8[] = {0, 25, 50, 100, 0xFF};
-
-	struct __packed {
-		uint8_t expected_percentage8;
-		uint16_t expected_temp[2];
-	} expected;
-
-	memset(in_value, 0, sizeof(in_value));
-
-	for (int i = 0; i < ARRAY_SIZE(test_vector_temp); i++) {
-		in_value[0].val1 = test_vector_percentage8[i];
-		in_value[1].val1 = test_vector_temp[i];
-		in_value[2].val1 = test_vector_temp[i];
-
-		uint16_t expected_temp = test_vector_temp[i] == 0x8000 ?
-			0x8000 : raw_scalar_value_get(test_vector_temp[i], 1, -2, 0);
-
-		expected.expected_percentage8 = test_vector_percentage8[i] == 0xFF ?
-			0xFF : raw_scalar_value_get(test_vector_percentage8[i], 1, 0, -1);
-		expected.expected_temp[0] = expected_temp;
-		expected.expected_temp[1] = expected_temp;
-
-		encoding_checking_proceed(sensor_type, in_value, &expected, sizeof(expected));
-		decoding_checking_proceed(sensor_type, &expected, sizeof(expected), in_value);
-	}
-}
-
-static void gain_check(const struct bt_mesh_sensor_type *sensor_type)
-{
-	struct sensor_value in_value[] = {{-10, -999999}, {0, -99999}, {0, 99999},
-			{10, 1111}, {9, 999999}};
-
-	for (int i = 0; i < ARRAY_SIZE(in_value); i++) {
-		float expected = (float)in_value[i].val1 + in_value[i].val2 / 1000000.0f;
-
-		encoding_checking_proceed(sensor_type, &in_value[i], &expected, sizeof(float));
-		decoding_checking_proceed(sensor_type, &expected, sizeof(float), &in_value[i]);
-	}
-}
-
-/* Occupancy sensors */
-
-ZTEST(sensor_types_test, test_motion_sensor)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MOTION_SENSED);
-	sensor_type_sanitize(sensor_type);
-	percentage8_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_motion_threshold)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MOTION_THRESHOLD);
-	sensor_type_sanitize(sensor_type);
-	percentage8_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_people_count)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PEOPLE_COUNT);
-	sensor_type_sanitize(sensor_type);
-	count16_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_presence_detected)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENCE_DETECTED);
-	sensor_type_sanitize(sensor_type);
-	boolean_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_time_since_motion_sensed)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TIME_SINCE_MOTION_SENSED);
-	sensor_type_sanitize(sensor_type);
-	time_millisecond24_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_time_since_presence_detected)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TIME_SINCE_PRESENCE_DETECTED);
-	sensor_type_sanitize(sensor_type);
-	time_second16_check(sensor_type);
-}
-
-/* Environmental sensors */
-
-ZTEST(sensor_types_test, test_apparent_wind_direction)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_WIND_DIRECTION);
-	sensor_type_sanitize(sensor_type);
-	plane_angle_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_apparent_wind_speed)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_WIND_SPEED);
-	sensor_type_sanitize(sensor_type);
-	wind_speed_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_dew_point)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEW_POINT);
-	sensor_type_sanitize(sensor_type);
-	temp8_signed_celsius_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_gust_factor)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_GUST_FACTOR);
-	sensor_type_sanitize(sensor_type);
-	gust_factor_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_heat_index)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_HEAT_INDEX);
-	sensor_type_sanitize(sensor_type);
-	temp8_signed_celsius_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_present_amb_rel_humidity)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_REL_HUMIDITY);
-	sensor_type_sanitize(sensor_type);
-	humidity_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_present_amb_co2_concentration)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_CO2_CONCENTRATION);
-	sensor_type_sanitize(sensor_type);
-	concentration_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_present_amb_voc_concentration)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_VOC_CONCENTRATION);
-	sensor_type_sanitize(sensor_type);
-	concentration_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_present_amb_noise)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_NOISE);
-	sensor_type_sanitize(sensor_type);
-	noise_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_present_indoor_relative_humidity)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_INDOOR_RELATIVE_HUMIDITY);
-	sensor_type_sanitize(sensor_type);
-	humidity_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_present_outdoor_relative_humidity)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTDOOR_RELATIVE_HUMIDITY);
-	sensor_type_sanitize(sensor_type);
-	humidity_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_magnetic_declination)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MAGNETIC_DECLINATION);
-	sensor_type_sanitize(sensor_type);
-	plane_angle_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_magnetic_flux_density_2d)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_2D);
-	sensor_type_sanitize(sensor_type);
-	flux_density_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_magnetic_flux_density_3d)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_MAGNETIC_FLUX_DENSITY_3D);
-	sensor_type_sanitize(sensor_type);
-	flux_density_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_pollen_concentration)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_POLLEN_CONCENTRATION);
-	sensor_type_sanitize(sensor_type);
-	pollen_concentration_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_air_pressure)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AIR_PRESSURE);
-	sensor_type_sanitize(sensor_type);
-	pressure_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_pressure)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESSURE);
-	sensor_type_sanitize(sensor_type);
-	pressure_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_rainfall)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_RAINFALL);
-	sensor_type_sanitize(sensor_type);
-	rainfall_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_true_wind_direction)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TRUE_WIND_DIRECTION);
-	sensor_type_sanitize(sensor_type);
-	plane_angle_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_true_wind_speed)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TRUE_WIND_SPEED);
-	sensor_type_sanitize(sensor_type);
-	wind_speed_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_uv_index)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_UV_INDEX);
-	sensor_type_sanitize(sensor_type);
-	uv_index_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_wind_chill)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_WIND_CHILL);
-	sensor_type_sanitize(sensor_type);
-	temp8_signed_celsius_check(sensor_type);
-}
-
-/* Photometry sensors */
-
-ZTEST(sensor_types_test, test_cie_1931_chromaticity_coords)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	uint16_t sensor[] = {
-		BT_MESH_PROP_ID_INITIAL_CIE_1931_CHROMATICITY_COORDS,
-		BT_MESH_PROP_ID_PRESENT_CIE_1931_CHROMATICITY_COORDS,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(sensor); i++) {
-		sensor_type = bt_mesh_sensor_type_get(sensor[i]);
-		sensor_type_sanitize(sensor_type);
-		chromaticity_coordinates_check(sensor_type);
-	}
-}
-
-ZTEST(sensor_types_test, test_present_amb_light_level)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_LIGHT_LEVEL);
-	sensor_type_sanitize(sensor_type);
-	illuminance_check(sensor_type);
-}
 
-ZTEST(sensor_types_test, test_correlated_col_temp)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	uint16_t sensor[] = {
-		BT_MESH_PROP_ID_INITIAL_CORRELATED_COL_TEMP,
-		BT_MESH_PROP_ID_PRESENT_CORRELATED_COL_TEMP,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(sensor); i++) {
-		sensor_type = bt_mesh_sensor_type_get(sensor[i]);
-		sensor_type_sanitize(sensor_type);
-		correlated_color_temp_check(sensor_type);
-	}
-}
-
-ZTEST(sensor_types_test, test_present_illuminance)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+	int64_t test_vector_micro[] = { INT64_MIN, 0, 1, 1000000, INT64_MAX };
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_ILLUMINANCE);
-	sensor_type_sanitize(sensor_type);
-	illuminance_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_luminous_flux)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	uint16_t sensor[] = {
-		BT_MESH_PROP_ID_INITIAL_LUMINOUS_FLUX,
-		BT_MESH_PROP_ID_PRESENT_LUMINOUS_FLUX,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(sensor); i++) {
-		sensor_type = bt_mesh_sensor_type_get(sensor[i]);
-		sensor_type_sanitize(sensor_type);
-		luminous_flux_check(sensor_type);
-	}
-}
+	for (int i = 0; i < ARRAY_SIZE(test_vector_micro); i++) {
+		int64_t micro = test_vector_micro[i];
+		float f = micro / (double)MICRO;
+		uint32_t raw = *(uint32_t *)&f;
 
-ZTEST(sensor_types_test, test_planckian_distance)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	uint16_t sensor[] = {
-		BT_MESH_PROP_ID_INITIAL_PLANCKIAN_DISTANCE,
-		BT_MESH_PROP_ID_PRESENT_PLANCKIAN_DISTANCE,
-	};
-
-	for (int i = 0; i < ARRAY_SIZE(sensor); i++) {
-		sensor_type = bt_mesh_sensor_type_get(sensor[i]);
-		sensor_type_sanitize(sensor_type);
-		chromatic_distance_check(sensor_type);
+		check_from_micro(fmt, micro, 0, raw, false);
+		check_to_micro(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER, micro, false);
+		check_to_status(fmt, raw, BT_MESH_SENSOR_VALUE_NUMBER);
 	}
-}
-
-ZTEST(sensor_types_test, test_rel_exposure_time_in_an_illuminance_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(
-					BT_MESH_PROP_ID_REL_EXPOSURE_TIME_IN_AN_ILLUMINANCE_RANGE);
-	sensor_type_sanitize(sensor_type);
-	percentage8_illuminance_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_tot_light_exposure_time)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TOT_LIGHT_EXPOSURE_TIME);
-	sensor_type_sanitize(sensor_type);
-	time_hour_24_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_lumen_maintenance_factor)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_LUMEN_MAINTENANCE_FACTOR);
-	sensor_type_sanitize(sensor_type);
-	percentage8_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_luminous_efficacy)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_LUMINOUS_EFFICACY);
-	sensor_type_sanitize(sensor_type);
-	luminous_efficacy_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_luminous_energy_since_turn_on)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_LUMINOUS_ENERGY_SINCE_TURN_ON);
-	sensor_type_sanitize(sensor_type);
-	luminous_energy_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_luminous_exposure)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_LUMINOUS_EXPOSURE);
-	sensor_type_sanitize(sensor_type);
-	luminous_exposure_check(sensor_type);
-}
 
-ZTEST(sensor_types_test, test_luminous_flux_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+	/* Check clamping behavior for converting large numbers to micro */
+	float gt_i64_max = nextafterf(INT64_MAX, INFINITY);
+	float lt_i64_min = nextafterf(INT64_MIN, -INFINITY);
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_LUMINOUS_FLUX_RANGE);
-	sensor_type_sanitize(sensor_type);
-	luminous_flux_range_check(sensor_type);
+	check_to_micro(fmt, *(uint32_t *)&gt_i64_max,
+		       BT_MESH_SENSOR_VALUE_CLAMPED, INT64_MAX, true);
+	check_to_micro(fmt, *(uint32_t *)&lt_i64_min,
+		       BT_MESH_SENSOR_VALUE_CLAMPED, INT64_MIN, true);
 }
 
-/* Ambient temperature sensors */
+TEST_SENSOR_TYPE(motion_sensed, 0x0042, CHANNEL(percentage_8, 1))
 
-ZTEST(sensor_types_test, test_avg_amb_temp_in_period_of_day)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(motion_threshold, 0x0043, CHANNEL(percentage_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_AMB_TEMP_IN_A_PERIOD_OF_DAY);
-	sensor_type_sanitize(sensor_type);
-	temp8_in_period_of_day_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_indoor_amb_temp_stat_values)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INDOOR_AMB_TEMP_STAT_VALUES);
-	sensor_type_sanitize(sensor_type);
-	temp8_statistics_check(sensor_type);
-}
-
-ZTEST(sensor_types_test, test_outdoor_stat_values)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTDOOR_STAT_VALUES);
-	sensor_type_sanitize(sensor_type);
-	temp8_statistics_check(sensor_type);
-}
+TEST_SENSOR_TYPE(people_count, 0x004c, CHANNEL(count_16, 2))
 
-ZTEST(sensor_types_test, test_present_amb_temp)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(presence_detected, 0x004d, CHANNEL(boolean, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_AMB_TEMP);
-	sensor_type_sanitize(sensor_type);
-	temp8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(time_since_motion_sensed, 0x0068, CHANNEL(time_millisecond_24, 3))
 
-ZTEST(sensor_types_test, test_present_indoor_amb_temp)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(time_since_presence_detected, 0x0069, CHANNEL(time_second_16, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_INDOOR_AMB_TEMP);
-	sensor_type_sanitize(sensor_type);
-	temp8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(avg_amb_temp_in_day, 0x0001,
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(time_decihour_8, 1),
+		 CHANNEL(time_decihour_8, 1))
 
-ZTEST(sensor_types_test, test_present_outdoor_amb_temp)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(indoor_amb_temp_stat_values, 0x001C,
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(time_exp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTDOOR_AMB_TEMP);
-	sensor_type_sanitize(sensor_type);
-	temp8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(outdoor_stat_values, 0x0045,
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(temp_8, 1),
+		 CHANNEL(time_exp_8, 1))
 
-ZTEST(sensor_types_test, test_desired_amb_temp)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_amb_temp, 0x004f, CHANNEL(temp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DESIRED_AMB_TEMP);
-	sensor_type_sanitize(sensor_type);
-	temp8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_indoor_amb_temp, 0x0056, CHANNEL(temp_8, 1))
 
-ZTEST(sensor_types_test, test_precise_present_amb_temp)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_outdoor_amb_temp, 0x005b, CHANNEL(temp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRECISE_PRESENT_AMB_TEMP);
-	sensor_type_sanitize(sensor_type);
-	temp_check(sensor_type);
-}
+TEST_SENSOR_TYPE(desired_amb_temp, 0x0071, CHANNEL(temp_8, 1))
 
-/* Energy management sensors */
+TEST_SENSOR_TYPE(precise_present_amb_temp, 0x0075, CHANNEL(temp, 2))
 
-ZTEST(sensor_types_test, test_dev_power_range_spec)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(apparent_wind_direction, 0x0085, CHANNEL(direction_16, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_POWER_RANGE_SPEC);
-	sensor_type_sanitize(sensor_type);
-	power_specification_check(sensor_type);
-}
+TEST_SENSOR_TYPE(apparent_wind_speed, 0x0086, CHANNEL(wind_speed, 2))
 
-ZTEST(sensor_types_test, test_present_dev_input_power)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(dew_point, 0x0087, CHANNEL(temp_8_wide, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_DEV_INPUT_POWER);
-	sensor_type_sanitize(sensor_type);
-	power_check(sensor_type);
-}
+TEST_SENSOR_TYPE(gust_factor, 0x008a, CHANNEL(gust_factor, 1))
 
-ZTEST(sensor_types_test, test_present_dev_op_efficiency)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(heat_index, 0x008b, CHANNEL(temp_8_wide, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_DEV_OP_EFFICIENCY);
-	sensor_type_sanitize(sensor_type);
-	percentage8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_amb_rel_humidity, 0x0076, CHANNEL(percentage_16, 2))
 
-ZTEST(sensor_types_test, test_tot_dev_energy_use)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_amb_co2_concentration, 0x0077, CHANNEL(co2_concentration, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_TOT_DEV_ENERGY_USE);
-	sensor_type_sanitize(sensor_type);
-	energy_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_amb_voc_concentration, 0x0078, CHANNEL(voc_concentration, 2))
 
-ZTEST(sensor_types_test, test_precise_tot_dev_energy_use)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_amb_noise, 0x0079, CHANNEL(noise, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRECISE_TOT_DEV_ENERGY_USE);
-	sensor_type_sanitize(sensor_type);
-	energy32_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_indoor_relative_humidity, 0x00a7, CHANNEL(percentage_16, 2))
 
-ZTEST(sensor_types_test, test_dev_energy_use_since_turn_on)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_outdoor_relative_humidity, 0x00a8, CHANNEL(percentage_16, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_ENERGY_USE_SINCE_TURN_ON);
-	sensor_type_sanitize(sensor_type);
-	energy_check(sensor_type);
-}
+TEST_SENSOR_TYPE(magnetic_declination, 0x00a1, CHANNEL(direction_16, 2))
 
-ZTEST(sensor_types_test, test_power_factor)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(magnetic_flux_density_2d, 0x00a2,
+		 CHANNEL(magnetic_flux_density, 2),
+		 CHANNEL(magnetic_flux_density, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_POWER_FACTOR);
-	sensor_type_sanitize(sensor_type);
-	cos_of_the_angle_check(sensor_type);
-}
+TEST_SENSOR_TYPE(magnetic_flux_density_3d, 0x00a3,
+		 CHANNEL(magnetic_flux_density, 2),
+		 CHANNEL(magnetic_flux_density, 2),
+		 CHANNEL(magnetic_flux_density, 2))
 
-ZTEST(sensor_types_test, test_rel_dev_energy_use_in_a_period_of_day)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(
-					BT_MESH_PROP_ID_REL_DEV_ENERGY_USE_IN_A_PERIOD_OF_DAY);
-	sensor_type_sanitize(sensor_type);
-	energy_in_a_period_of_day_check(sensor_type);
-}
+TEST_SENSOR_TYPE(pollen_concentration, 0x00a6, CHANNEL(pollen_concentration, 3))
 
-ZTEST(sensor_types_test, test_apparent_energy)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(air_pressure, 0x0082, CHANNEL(pressure, 4))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_ENERGY);
-	sensor_type_sanitize(sensor_type);
-	apparent_energy32_check(sensor_type);
-}
+TEST_SENSOR_TYPE(pressure, 0x00a9, CHANNEL(pressure, 4))
 
-ZTEST(sensor_types_test, test_apparent_power)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(rainfall, 0x00aa, CHANNEL(rainfall, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_APPARENT_POWER);
-	sensor_type_sanitize(sensor_type);
-	apparent_power_check(sensor_type);
-}
+TEST_SENSOR_TYPE(true_wind_direction, 0x00af, CHANNEL(direction_16, 2))
 
-ZTEST(sensor_types_test, test_active_energy_loadside)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(true_wind_speed, 0x00b0, CHANNEL(wind_speed, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_ACTIVE_ENERGY_LOADSIDE);
-	sensor_type_sanitize(sensor_type);
-	energy32_check(sensor_type);
-}
+TEST_SENSOR_TYPE(uv_index, 0x00b1, CHANNEL(uv_index, 1))
 
-ZTEST(sensor_types_test, test_active_power_loadside)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(wind_chill, 0x00b2, CHANNEL(temp_8_wide, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_ACTIVE_POWER_LOADSIDE);
-	sensor_type_sanitize(sensor_type);
-	power_check(sensor_type);
-}
+TEST_SENSOR_TYPE(dev_op_temp_range_spec, 0x0013, CHANNEL(temp, 2), CHANNEL(temp, 2))
 
-/* Warranty and service sensors */
+TEST_SENSOR_TYPE(dev_op_temp_stat_values, 0x0014,
+		 CHANNEL(temp, 2),
+		 CHANNEL(temp, 2),
+		 CHANNEL(temp, 2),
+		 CHANNEL(temp, 2),
+		 CHANNEL(time_exp_8, 1))
 
-ZTEST(sensor_types_test, test_rel_dev_runtime_in_a_generic_level_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_dev_op_temp, 0x0054, CHANNEL(temp, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(
-					BT_MESH_PROP_ID_REL_DEV_RUNTIME_IN_A_GENERIC_LEVEL_RANGE);
-	sensor_type_sanitize(sensor_type);
-	relative_runtime_in_a_generic_level_range_check(sensor_type);
-}
+TEST_SENSOR_TYPE(rel_runtime_in_a_dev_op_temp_range, 0x0064,
+		 CHANNEL(percentage_8, 1),
+		 CHANNEL(temp, 2),
+		 CHANNEL(temp, 2))
 
-ZTEST(sensor_types_test, test_gain)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(avg_input_current, 0x0002,
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(time_exp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_SENSOR_GAIN);
-	sensor_type_sanitize(sensor_type);
-	gain_check(sensor_type);
-}
+TEST_SENSOR_TYPE(avg_input_voltage, 0x0003,
+		 CHANNEL(voltage, 2),
+		 CHANNEL(time_exp_8, 1))
 
-/* Electrical input sensors */
+TEST_SENSOR_TYPE(input_current_range_spec, 0x0021,
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2))
 
-ZTEST(sensor_types_test, test_avg_input_current)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(input_current_stat, 0x0022,
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(time_exp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_INPUT_CURRENT);
-	sensor_type_sanitize(sensor_type);
-	average_current_check(sensor_type);
-}
+TEST_SENSOR_TYPE(input_voltage_range_spec, 0x0028,
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2))
 
-ZTEST(sensor_types_test, test_avg_input_voltage)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(input_voltage_stat, 0x002a,
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(time_exp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_INPUT_VOLTAGE);
-	sensor_type_sanitize(sensor_type);
-	average_voltage_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_input_current, 0x0057, CHANNEL(electric_current, 2))
 
-ZTEST(sensor_types_test, test_input_current_range_spec)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_input_ripple_voltage, 0x0058, CHANNEL(percentage_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INPUT_CURRENT_RANGE_SPEC);
-	sensor_type_sanitize(sensor_type);
-	electric_current_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_input_voltage, 0x0059, CHANNEL(voltage, 2))
 
-ZTEST(sensor_types_test, test_input_current_stat)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(rel_runtime_in_an_input_current_range, 0x0065,
+		 CHANNEL(percentage_8, 1),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INPUT_CURRENT_STAT);
-	sensor_type_sanitize(sensor_type);
-	current_stat_check(sensor_type);
-}
+TEST_SENSOR_TYPE(rel_runtime_in_an_input_voltage_range, 0x0066,
+		 CHANNEL(percentage_8, 1),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2))
 
-ZTEST(sensor_types_test, test_input_voltage_range_spec)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(dev_power_range_spec, 0x0016,
+		 CHANNEL(power, 3),
+		 CHANNEL(power, 3),
+		 CHANNEL(power, 3))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INPUT_VOLTAGE_RANGE_SPEC);
-	sensor_type_sanitize(sensor_type);
-	voltage_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_dev_input_power, 0x0052, CHANNEL(power, 3))
 
-ZTEST(sensor_types_test, test_input_voltage_stat)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_dev_op_efficiency, 0x0053, CHANNEL(percentage_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_INPUT_VOLTAGE_STAT);
-	sensor_type_sanitize(sensor_type);
-	voltage_stat_check(sensor_type);
-}
+TEST_SENSOR_TYPE(tot_dev_energy_use, 0x006a, CHANNEL(energy, 3))
 
-ZTEST(sensor_types_test, test_present_input_current)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(precise_tot_dev_energy_use, 0x0072, CHANNEL(energy32, 4))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_INPUT_CURRENT);
-	sensor_type_sanitize(sensor_type);
-	electric_current_check(sensor_type);
-}
+TEST_SENSOR_TYPE(dev_energy_use_since_turn_on, 0x000d, CHANNEL(energy, 3))
 
-ZTEST(sensor_types_test, test_present_input_ripple_voltage)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(power_factor, 0x0073, CHANNEL(cos_of_the_angle, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_INPUT_RIPPLE_VOLTAGE);
-	sensor_type_sanitize(sensor_type);
-	percentage8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(rel_dev_energy_use_in_a_period_of_day, 0x0060,
+		 CHANNEL(energy, 3),
+		 CHANNEL(time_decihour_8, 1),
+		 CHANNEL(time_decihour_8, 1))
 
-ZTEST(sensor_types_test, test_present_input_voltage)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(apparent_energy, 0x0083, CHANNEL(apparent_energy32, 4))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_INPUT_VOLTAGE);
-	sensor_type_sanitize(sensor_type);
-	voltage_check(sensor_type);
-}
+TEST_SENSOR_TYPE(apparent_power, 0x0084, CHANNEL(apparent_power, 3))
 
-ZTEST(sensor_types_test, test_rel_runtime_in_an_input_current_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(
-		BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_CURRENT_RANGE);
-	sensor_type_sanitize(sensor_type);
-	rel_runtime_in_current_range_check(sensor_type);
-}
+TEST_SENSOR_TYPE(active_energy_loadside, 0x0080, CHANNEL(energy32, 4))
 
-ZTEST(sensor_types_test, test_rel_runtime_in_an_input_voltage_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
-
-	sensor_type = bt_mesh_sensor_type_get(
-		BT_MESH_PROP_ID_REL_RUNTIME_IN_AN_INPUT_VOLTAGE_RANGE);
-	sensor_type_sanitize(sensor_type);
-	rel_runtime_in_voltage_range_check(sensor_type);
-}
+TEST_SENSOR_TYPE(active_power_loadside, 0x0081, CHANNEL(power, 3))
 
-/* Device operating temperature sensors */
+TEST_SENSOR_TYPE(present_amb_light_level, 0x004E, CHANNEL(illuminance, 3))
 
-ZTEST(sensor_types_test, test_dev_op_temp_range_spec)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(initial_cie_1931_chromaticity_coords, 0x001d,
+		 CHANNEL(chromaticity_coordinate, 2),
+		 CHANNEL(chromaticity_coordinate, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_OP_TEMP_RANGE_SPEC);
-	sensor_type_sanitize(sensor_type);
-	temp_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_cie_1931_chromaticity_coords, 0x0050,
+		 CHANNEL(chromaticity_coordinate, 2),
+		 CHANNEL(chromaticity_coordinate, 2))
 
-ZTEST(sensor_types_test, test_present_dev_op_temp)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(initial_correlated_col_temp, 0x001e, CHANNEL(correlated_color_temp, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_DEV_OP_TEMP);
-	sensor_type_sanitize(sensor_type);
-	temp_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_correlated_col_temp, 0x0051, CHANNEL(correlated_color_temp, 2))
 
-ZTEST(sensor_types_test, test_dev_op_temp_stat_values)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_illuminance, 0x0055, CHANNEL(illuminance, 3))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_DEV_OP_TEMP_STAT_VALUES);
-	sensor_type_sanitize(sensor_type);
-	temp_stat_check(sensor_type);
-}
+TEST_SENSOR_TYPE(initial_luminous_flux, 0x001f, CHANNEL(luminous_flux, 2))
 
-ZTEST(sensor_types_test, test_rel_runtime_in_a_dev_op_temp_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_luminous_flux, 0x005a, CHANNEL(luminous_flux, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_REL_RUNTIME_IN_A_DEV_OP_TEMP_RANGE);
-	sensor_type_sanitize(sensor_type);
-	rel_val_in_a_temp_range_check(sensor_type);
-}
+TEST_SENSOR_TYPE(initial_planckian_distance, 0x0020, CHANNEL(chromatic_distance, 2))
 
-/* Power output supply sensors*/
+TEST_SENSOR_TYPE(present_planckian_distance, 0x005e, CHANNEL(chromatic_distance, 2))
 
-ZTEST(sensor_types_test, test_avg_output_current)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(rel_exposure_time_in_an_illuminance_range, 0x0062,
+		 CHANNEL(percentage_8, 1),
+		 CHANNEL(illuminance, 3),
+		 CHANNEL(illuminance, 3))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_OUTPUT_CURRENT);
-	sensor_type_sanitize(sensor_type);
-	average_current_check(sensor_type);
-}
+TEST_SENSOR_TYPE(tot_light_exposure_time, 0x006f, CHANNEL(time_hour_24, 3))
 
-ZTEST(sensor_types_test, test_avg_output_voltage)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(lumen_maintenance_factor, 0x003d, CHANNEL(percentage_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_AVG_OUTPUT_VOLTAGE);
-	sensor_type_sanitize(sensor_type);
-	average_voltage_check(sensor_type);
-}
+TEST_SENSOR_TYPE(luminous_efficacy, 0x003e, CHANNEL(luminous_efficacy, 2))
 
-ZTEST(sensor_types_test, test_output_current_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(luminous_energy_since_turn_on, 0x003f, CHANNEL(luminous_energy, 3))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_CURRENT_RANGE);
-	sensor_type_sanitize(sensor_type);
-	electric_current_check(sensor_type);
-}
+TEST_SENSOR_TYPE(luminous_exposure, 0x0040, CHANNEL(luminous_exposure, 3))
 
-ZTEST(sensor_types_test, test_output_current_stat)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(luminous_flux_range, 0x0041,
+		 CHANNEL(luminous_flux, 2),
+		 CHANNEL(luminous_flux, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_CURRENT_STAT);
-	sensor_type_sanitize(sensor_type);
-	current_stat_check(sensor_type);
-}
+TEST_SENSOR_TYPE(avg_output_current, 0x0004,
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(time_exp_8, 1))
 
-ZTEST(sensor_types_test, test_output_ripple_voltage_spec)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(avg_output_voltage, 0x0005,
+		 CHANNEL(voltage, 2),
+		 CHANNEL(time_exp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_RIPPLE_VOLTAGE_SPEC);
-	sensor_type_sanitize(sensor_type);
-	percentage8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(output_current_range, 0x0046,
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2))
 
-ZTEST(sensor_types_test, test_output_voltage_range)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(output_current_stat, 0x0047,
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(electric_current, 2),
+		 CHANNEL(time_exp_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_VOLTAGE_RANGE);
-	sensor_type_sanitize(sensor_type);
-	voltage_check(sensor_type);
-}
+TEST_SENSOR_TYPE(output_ripple_voltage_spec, 0x0048, CHANNEL(percentage_8, 1))
 
-ZTEST(sensor_types_test, test_output_voltage_stat)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(output_voltage_range, 0x0049,
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_OUTPUT_VOLTAGE_STAT);
-	sensor_type_sanitize(sensor_type);
-	voltage_stat_check(sensor_type);
-}
+TEST_SENSOR_TYPE(output_voltage_stat, 0x004a,
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(voltage, 2),
+		 CHANNEL(time_exp_8, 1))
 
-ZTEST(sensor_types_test, test_present_output_current)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_output_current, 0x005c, CHANNEL(electric_current, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTPUT_CURRENT);
-	sensor_type_sanitize(sensor_type);
-	electric_current_check(sensor_type);
-}
+TEST_SENSOR_TYPE(present_output_voltage, 0x005d, CHANNEL(voltage, 2))
 
-ZTEST(sensor_types_test, test_present_output_voltage)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(present_rel_output_ripple_voltage, 0x005f, CHANNEL(percentage_8, 1))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_OUTPUT_VOLTAGE);
-	sensor_type_sanitize(sensor_type);
-	voltage_check(sensor_type);
-}
+TEST_SENSOR_TYPE(gain, 0x0074, CHANNEL(coefficient, 4))
 
-ZTEST(sensor_types_test, test_present_rel_output_ripple_voltage)
-{
-	const struct bt_mesh_sensor_type *sensor_type;
+TEST_SENSOR_TYPE(rel_dev_runtime_in_a_generic_level_range, 0x0061,
+		 CHANNEL(percentage_8, 1),
+		 CHANNEL(gen_lvl, 2),
+		 CHANNEL(gen_lvl, 2))
 
-	sensor_type = bt_mesh_sensor_type_get(BT_MESH_PROP_ID_PRESENT_REL_OUTPUT_RIPPLE_VOLTAGE);
-	sensor_type_sanitize(sensor_type);
-	percentage8_check(sensor_type);
-}
+TEST_SENSOR_TYPE(total_dev_runtime, 0x006e, CHANNEL(time_hour_24, 3))
 
 ZTEST_SUITE(sensor_types_test, NULL, NULL, NULL, NULL, NULL);

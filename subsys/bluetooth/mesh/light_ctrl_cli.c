@@ -9,7 +9,7 @@
 #include "sensor.h"
 
 union prop_value {
-	sensor_value_type prop;
+	struct bt_mesh_sensor_value prop;
 	float coeff;
 };
 struct prop_status_ctx {
@@ -365,11 +365,7 @@ int bt_mesh_light_ctrl_cli_light_onoff_set_unack(
 int bt_mesh_light_ctrl_cli_prop_get(struct bt_mesh_light_ctrl_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
 				    enum bt_mesh_light_ctrl_prop id,
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-				    struct sensor_value *rsp)
-#else
 				    struct bt_mesh_sensor_value *rsp)
-#endif
 {
 	struct prop_status_ctx ack = {
 		.id = id,
@@ -402,14 +398,8 @@ int bt_mesh_light_ctrl_cli_prop_get(struct bt_mesh_light_ctrl_cli *cli,
 int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
 				    struct bt_mesh_msg_ctx *ctx,
 				    enum bt_mesh_light_ctrl_prop id,
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-				    const struct sensor_value *val,
-				    struct sensor_value *rsp)
-#else
 				    const struct bt_mesh_sensor_value *val,
 				    struct bt_mesh_sensor_value *rsp)
-
-#endif
 {
 	const struct bt_mesh_sensor_format *format;
 	struct prop_status_ctx ack = {
@@ -455,11 +445,7 @@ int bt_mesh_light_ctrl_cli_prop_set(struct bt_mesh_light_ctrl_cli *cli,
 int bt_mesh_light_ctrl_cli_prop_set_unack(struct bt_mesh_light_ctrl_cli *cli,
 					  struct bt_mesh_msg_ctx *ctx,
 					  enum bt_mesh_light_ctrl_prop id,
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-					  const struct sensor_value *val)
-#else
 					  const struct bt_mesh_sensor_value *val)
-#endif
 {
 	const struct bt_mesh_sensor_format *format;
 	int err;

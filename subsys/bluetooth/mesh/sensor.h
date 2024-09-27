@@ -55,18 +55,6 @@ extern const struct bt_mesh_sensor_unit bt_mesh_sensor_unit_unitless;
 
 /** @} */
 
-/* Temporary typedef while we need to support two different sensor value types
- * in the deprecation period. Can be removed once support for
- * struct sensor_value is removed, and internal APIs changed to use
- * struct bt_mesh_sensor_value.
- */
-#ifdef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
-typedef struct sensor_value sensor_value_type;
-#else
-typedef struct bt_mesh_sensor_value sensor_value_type;
-#endif
-
-#ifndef CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE
 /** @brief Check if a value change breaks the delta threshold.
  *
  *  Sensors should publish their value if the measured sample is outside the
@@ -87,11 +75,10 @@ typedef struct bt_mesh_sensor_value sensor_value_type;
  */
 bool bt_mesh_sensor_delta_threshold(const struct bt_mesh_sensor *sensor,
 				    const struct bt_mesh_sensor_value *value);
-#endif /* CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE */
 
 int sensor_status_encode(struct net_buf_simple *buf,
 			 const struct bt_mesh_sensor *sensor,
-			 const sensor_value_type *values);
+			 const struct bt_mesh_sensor_value *values);
 
 int sensor_status_id_encode(struct net_buf_simple *buf, uint8_t len, uint16_t id);
 void sensor_status_id_decode(struct net_buf_simple *buf, uint8_t *len, uint16_t *id);
@@ -103,17 +90,17 @@ void sensor_descriptor_encode(struct net_buf_simple *buf,
 
 int sensor_value_encode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
-			const sensor_value_type *values);
+			const struct bt_mesh_sensor_value *values);
 int sensor_value_decode(struct net_buf_simple *buf,
 			const struct bt_mesh_sensor_type *type,
-			sensor_value_type *values);
+			struct bt_mesh_sensor_value *values);
 
 int sensor_ch_encode(struct net_buf_simple *buf,
 		     const struct bt_mesh_sensor_format *format,
-		     const sensor_value_type *value);
+		     const struct bt_mesh_sensor_value *value);
 int sensor_ch_decode(struct net_buf_simple *buf,
 		     const struct bt_mesh_sensor_format *format,
-		     sensor_value_type *value);
+		     struct bt_mesh_sensor_value *value);
 
 int sensor_column_value_encode(struct net_buf_simple *buf,
 			       struct bt_mesh_sensor_srv *srv,
@@ -128,7 +115,7 @@ int sensor_column_encode(struct net_buf_simple *buf,
 int sensor_column_decode(
 	struct net_buf_simple *buf, const struct bt_mesh_sensor_type *type,
 	struct bt_mesh_sensor_column *col,
-	sensor_value_type value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX]);
+	struct bt_mesh_sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX]);
 
 int sensor_cadence_encode(struct net_buf_simple *buf,
 			  const struct bt_mesh_sensor_type *sensor_type,
@@ -147,7 +134,7 @@ uint64_t sensor_powtime_decode_us(uint8_t val);
 uint8_t sensor_pub_div_get(const struct bt_mesh_sensor *s, uint32_t base_period);
 
 void sensor_cadence_update(struct bt_mesh_sensor *sensor,
-			   const sensor_value_type *value);
+			   const struct bt_mesh_sensor_value *value);
 
 #ifdef __cplusplus
 }

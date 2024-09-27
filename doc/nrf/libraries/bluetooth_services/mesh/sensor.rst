@@ -7,12 +7,6 @@ Bluetooth Mesh sensors
    :local:
    :depth: 2
 
-.. note::
-   A new sensor API is introduced as of |NCS| v2.6.0.
-   The old API is deprecated, but still available by enabling the Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE`.
-   The Kconfig option is enabled by default in the deprecation period.
-   See the documentation for |NCS| versions prior to v2.6.0 for documentation about the old sensor API.
-
 The Bluetooth® Mesh specification provides a common scheme for representing all sensors.
 A single Bluetooth Mesh sensor instance represents a single physical sensor, and a mesh device may present any number of sensors to the network through a Sensor Server model.
 Sensors represent their measurements as a list of sensor channels, as described by the sensor's assigned type.
