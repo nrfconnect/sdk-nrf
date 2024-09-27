@@ -27,7 +27,7 @@
  */
 #define PROVISIONING_SLOT 250
 
-extern nrf_security_mutex_t cracen_mutex_symmetric;
+extern mbedtls_threading_mutex_t cracen_mutex_symmetric;
 
 /* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
  * by the linker scripts. We do that for both the secure and non-secure builds.
