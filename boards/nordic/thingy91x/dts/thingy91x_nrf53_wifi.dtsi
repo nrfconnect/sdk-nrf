@@ -14,7 +14,7 @@
 / {
 	chosen {
 		nordic,pm-ext-flash = &flash_ext;
-		zephyr,wifi = &nordic_wlan0;
+		zephyr,wifi = &wlan0;
 	};
 };
 
@@ -39,7 +39,7 @@
 };
 
 /* enable nRF70 */
-&nrf700x {
+&nrf70 {
 	status = "okay";
 };
 

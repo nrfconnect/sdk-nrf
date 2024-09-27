@@ -24,9 +24,9 @@
 		zephyr,ieee802154 = &ieee802154;
 	};
 
-	nrf_radio_coex: nrf7001-coex {
+	nrf_radio_coex: wifi-coex {
 		status = "okay";
-		compatible = "nordic,nrf700x-coex";
+		compatible = "nordic,nrf7002-coex";
 		req-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
 		status0-gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
 		grant-gpios = <&gpio0 20 (GPIO_PULL_DOWN | GPIO_ACTIVE_LOW)>;
