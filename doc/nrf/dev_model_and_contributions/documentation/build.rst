@@ -119,6 +119,15 @@ To clean the build folders for a particular documentation set:
 
 Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 
+
+.. _optimizing_doc_build_speed:
+
+Optimizing build speed
+**********************
+
+When working with documentation locally, you can enable the ``-DNO_DTS_BINDINGS=ON`` option when configuring the build.
+This option skips generating devicetree bindings pages, which speeds up the Zephyr documentation set build process.
+
 .. _testing_versions:
 
 Testing locally
