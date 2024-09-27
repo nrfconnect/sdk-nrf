@@ -273,6 +273,8 @@ nRF Desktop
     The DWC2 USB device controller driver used by the nRF54H20 SoC does not support the remote wakeup capability.
   * Bootup logs with the manifest semantic version information to :ref:`nrf_desktop_dfu_mcumgr` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
   * Manifest semantic version information to the firmware information response in :ref:`nrf_desktop_dfu` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
+  * A missing DTS node compatible with ``zephyr,hid-device`` to the nRF52840 DK in the MCUboot QSPI configuration.
+    This ensures support for HID over USB when the USB next stack is selected.
 
 * Updated:
 
