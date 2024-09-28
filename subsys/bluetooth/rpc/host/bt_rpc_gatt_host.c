@@ -1515,7 +1515,7 @@ static void bt_gatt_subscribe_params_dec(struct nrf_rpc_cbor_ctx *ctx,
 					 struct bt_gatt_subscribe_params *data)
 {
 	data->notify = nrf_rpc_decode_bool(ctx) ? bt_gatt_subscribe_params_notify : NULL;
-	data->write = (bt_gatt_write_func_t)nrf_rpc_decode_callbackd(
+	data->subscribe = (bt_gatt_subscribe_func_t)nrf_rpc_decode_callbackd(
 		ctx, bt_gatt_subscribe_params_write_encoder);
 	data->value_handle = nrf_rpc_decode_uint(ctx);
 	data->ccc_handle = nrf_rpc_decode_uint(ctx);
