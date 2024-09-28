@@ -1430,7 +1430,7 @@ int bt_gatt_write_without_response_cb(struct bt_conn *conn, uint16_t handle,
 static const size_t bt_gatt_subscribe_params_buf_size =
 	/* Placeholder for the notify callback. */
 	1 +
-	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, write) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, subscribe) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, ccc_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value) +
@@ -1444,7 +1444,7 @@ static void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 					 const struct bt_gatt_subscribe_params *data)
 {
 	nrf_rpc_encode_bool(encoder, data->notify != NULL);
-	nrf_rpc_encode_callback(encoder, data->write);
+	nrf_rpc_encode_callback(encoder, data->subscribe);
 	nrf_rpc_encode_uint(encoder, data->value_handle);
 	nrf_rpc_encode_uint(encoder, data->ccc_handle);
 	nrf_rpc_encode_uint(encoder, data->value);
@@ -1587,16 +1587,16 @@ decoding_error:
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_subscribe_params_notify,
 	BT_GATT_SUBSCRIBE_PARAMS_NOTIFY_RPC_CMD, bt_gatt_subscribe_params_notify_rpc_handler, NULL);
 
-static void bt_gatt_subscribe_params_write_rpc_handler(const struct nrf_rpc_group *group,
-						       struct nrf_rpc_cbor_ctx *ctx,
-						       void *handler_data)
+static void bt_gatt_subscribe_params_subscribe_rpc_handler(const struct nrf_rpc_group *group,
+							   struct nrf_rpc_cbor_ctx *ctx,
+							   void *handler_data)
 {
 	struct bt_conn *conn;
 	uint8_t err;
-	struct bt_gatt_write_params params;
-	struct bt_gatt_write_params *params_ptr;
+	struct bt_gatt_subscribe_params params;
+	struct bt_gatt_subscribe_params *params_ptr;
 	struct nrf_rpc_scratchpad scratchpad;
-	bt_gatt_write_func_t func;
+	bt_gatt_subscribe_func_t func;
 
 	NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 
@@ -1605,15 +1605,16 @@ static void bt_gatt_subscribe_params_write_rpc_handler(const struct nrf_rpc_grou
 	if (nrf_rpc_decode_is_null(ctx)) {
 		params_ptr = NULL;
 	} else {
-		size_t len;
-
-		params.handle = nrf_rpc_decode_uint(ctx);
-		params.offset = nrf_rpc_decode_uint(ctx);
-		params.data = nrf_rpc_decode_buffer_into_scratchpad(&scratchpad, &len);
-		params.length = len;
+		params.value_handle = nrf_rpc_decode_uint(ctx);
+		params.ccc_handle = nrf_rpc_decode_uint(ctx);
+		params.value = nrf_rpc_decode_uint(ctx);
+#if defined(CONFIG_BT_SMP)
+		params.min_security = nrf_rpc_decode_uint(ctx);
+#endif /* defined(CONFIG_BT_SMP) */
+		atomic_set(params.flags, (atomic_val_t)nrf_rpc_decode_uint(ctx));
 		params_ptr = &params;
 	}
-	func = (bt_gatt_write_func_t)nrf_rpc_decode_callback_call(ctx);
+	func = (bt_gatt_subscribe_func_t)nrf_rpc_decode_callback_call(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		goto decoding_error;
@@ -1626,10 +1627,12 @@ static void bt_gatt_subscribe_params_write_rpc_handler(const struct nrf_rpc_grou
 
 	return;
 decoding_error:
-	report_decoding_error(BT_GATT_SUBSCRIBE_PARAMS_WRITE_RPC_CMD, handler_data);
+	report_decoding_error(BT_GATT_SUBSCRIBE_PARAMS_SUBSCRIBE_RPC_CMD, handler_data);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_subscribe_params_write,
-	BT_GATT_SUBSCRIBE_PARAMS_WRITE_RPC_CMD, bt_gatt_subscribe_params_write_rpc_handler, NULL);
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_gatt_subscribe_params_subscribe,
+	BT_GATT_SUBSCRIBE_PARAMS_SUBSCRIBE_RPC_CMD,
+	bt_gatt_subscribe_params_subscribe_rpc_handler, NULL);
 
 #endif /* CONFIG_BT_GATT_CLIENT */
