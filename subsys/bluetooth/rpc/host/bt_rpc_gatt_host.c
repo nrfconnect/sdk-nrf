@@ -1474,49 +1474,63 @@ static uint8_t bt_gatt_subscribe_params_notify(struct bt_conn *conn,
 	return result;
 }
 
-static void bt_gatt_subscribe_params_write(struct bt_conn *conn, uint8_t err,
-					   struct bt_gatt_write_params *params,
+static const size_t bt_gatt_subscribe_params_buf_size =
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value_handle) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, ccc_handle) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value) +
+#if defined(CONFIG_BT_SMP)
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, min_security) +
+#endif
+	/* Placeholder for the flags field */
+	2;
+
+static void bt_gatt_subscribe_params_subscribe(struct bt_conn *conn, uint8_t err,
+					   struct bt_gatt_subscribe_params *params,
 					   uint32_t callback_slot)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	size_t params_size;
-	size_t scratchpad_size = 0;
-	size_t buffer_size_max = 26;
+	size_t buffer_size_max = 20;
 
 	if (params != NULL) {
-		params_size = sizeof(uint8_t) * params->length;
-		buffer_size_max += params_size;
-		scratchpad_size += NRF_RPC_SCRATCHPAD_ALIGN(params_size);
+		buffer_size_max += bt_gatt_subscribe_params_buf_size;
+	} else {
+		buffer_size_max += 1;
 	}
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-	nrf_rpc_encode_uint(&ctx, scratchpad_size);
 
 	bt_rpc_encode_bt_conn(&ctx, conn);
 	nrf_rpc_encode_uint(&ctx, err);
+	nrf_rpc_encode_uint(&ctx, (uintptr_t)params);
 	if (params != NULL) {
-		nrf_rpc_encode_uint(&ctx, params->handle);
-		nrf_rpc_encode_uint(&ctx, params->offset);
-		nrf_rpc_encode_buffer(&ctx, params->data, params->length);
+		nrf_rpc_encode_uint(&ctx, params->value_handle);
+		nrf_rpc_encode_uint(&ctx, params->ccc_handle);
+		nrf_rpc_encode_uint(&ctx, params->value);
+	#if defined(CONFIG_BT_SMP)
+		nrf_rpc_encode_uint(&ctx, params->min_security);
+	#endif /* defined(CONFIG_BT_SMP) */
+		nrf_rpc_encode_uint(&ctx, (uint16_t)atomic_get(params->flags));
 	} else {
 		nrf_rpc_encode_null(&ctx);
 	}
 	nrf_rpc_encode_uint(&ctx, callback_slot);
 
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_SUBSCRIBE_PARAMS_WRITE_RPC_CMD, &ctx,
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_GATT_SUBSCRIBE_PARAMS_SUBSCRIBE_RPC_CMD, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
 }
 
-NRF_RPC_CBKPROXY_HANDLER(bt_gatt_subscribe_params_write_encoder, bt_gatt_subscribe_params_write,
-			 (struct bt_conn *conn, uint8_t err, struct bt_gatt_write_params *params),
+NRF_RPC_CBKPROXY_HANDLER(bt_gatt_subscribe_params_subscribe_encoder,
+			 bt_gatt_subscribe_params_subscribe,
+			 (struct bt_conn *conn, uint8_t err,
+			  struct bt_gatt_subscribe_params *params),
 			 (conn, err, params));
 
 static void bt_gatt_subscribe_params_dec(struct nrf_rpc_cbor_ctx *ctx,
 					 struct bt_gatt_subscribe_params *data)
 {
 	data->notify = nrf_rpc_decode_bool(ctx) ? bt_gatt_subscribe_params_notify : NULL;
-	data->write = (bt_gatt_write_func_t)nrf_rpc_decode_callbackd(
-		ctx, bt_gatt_subscribe_params_write_encoder);
+	data->subscribe = (bt_gatt_subscribe_func_t)nrf_rpc_decode_callbackd(
+		ctx, bt_gatt_subscribe_params_subscribe_encoder);
 	data->value_handle = nrf_rpc_decode_uint(ctx);
 	data->ccc_handle = nrf_rpc_decode_uint(ctx);
 	data->value = nrf_rpc_decode_uint(ctx);
