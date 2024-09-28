@@ -92,6 +92,8 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. include:: /includes/nRF54H20_erase_UICR.txt
+
 Testing
 =======
 
