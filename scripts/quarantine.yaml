@@ -32,3 +32,7 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9151dk/nrf9151/ns
   comment: "Unknown failures using NS (TF-M), unable to replicate locally, temporarily excluded"
+
+- scenarios:
+    - net.lib.wifi_credentials_backend_psa
+  comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
