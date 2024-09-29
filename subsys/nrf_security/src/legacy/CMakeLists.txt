@@ -56,7 +56,7 @@ endif()
 # There is a function expected to be built inside psa_crypto.c that is used
 # by md. This makes MD not work with TF-M. Temporarily adding this check-function
 # to a self-contained file an use this when PSA crypto is not built locally
-if(CONFIG_BUILD_WITH_TFM)
+if(CONFIG_BUILD_WITH_TFM OR CONFIG_SOC_NRF54H20_CPURAD OR CONFIG_SOC_NRF54H20_CPUAPP)
   list(APPEND src_crypto_legacy
     ${CMAKE_CURRENT_LIST_DIR}/md_ext.c
   )
