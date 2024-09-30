@@ -1236,6 +1236,13 @@ ci_tests_benchmarks_spi_endless:
     - nrf/tests/benchmarks/spi_endless/
     - zephyr/drivers/spi/
 
+ci_tests_benchmarks_current_consumption:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/benchmarks/current_consumption/
+    - zephyr/drivers/serial/
+    - zephyr/soc/nordic/
+
 ci_tests_drivers_fprotect:
   files:
     - nrf/lib/fprotect/
