@@ -59,6 +59,10 @@
 		in-polling-period-us = <125>;
 		in-report-size = <64>;
 	};
+
+	aliases {
+		nrfdesktop-dvfs-clock = &cpuapp_hsfll;
+	};
 };
 
 &cpusec_cpuapp_ipc {
