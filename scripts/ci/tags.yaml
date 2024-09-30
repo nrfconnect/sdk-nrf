@@ -1248,6 +1248,12 @@ ci_tests_benchmarks_current_consumption:
     - zephyr/drivers/gpio/
     - zephyr/drivers/serial/
     - zephyr/dts/common/nordic/
+    - zephyr/drivers/adc/
+    - zephyr/drivers/gpio/
+    - zephyr/drivers/flash/
+    - zephyr/drivers/i2c/
+    - zephyr/drivers/spi/
+    - zephyr/drivers/counter/
     - zephyr/soc/nordic/
 
 ci_tests_drivers_fprotect:

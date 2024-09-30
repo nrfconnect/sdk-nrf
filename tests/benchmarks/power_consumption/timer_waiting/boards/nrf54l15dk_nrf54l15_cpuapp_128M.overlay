@@ -1,0 +1,11 @@
+/* TIMER00, 128MHz */
+
+/ {
+	aliases {
+		counter = &timer00;
+	};
+};
+
+&timer00 {
+	status = "okay";
+};
