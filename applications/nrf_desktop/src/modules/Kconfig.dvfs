@@ -7,12 +7,27 @@
 menuconfig DESKTOP_DVFS
 	bool "DVFS module"
 	depends on SOC_NRF54H20_CPUAPP
+	select NRFS_DVFS_SERVICE_ENABLED
+	select CLOCK_CONTROL
+	select CLOCK_CONTROL_NRF2
 	default y
 	help
 	  This option enable DVFS module which switches frequency and voltage according
 	  to application needs.
 
 if DESKTOP_DVFS
+
+config DESKTOP_DVFS_FREQ_HIGH
+	int
+	default 320000000
+
+config DESKTOP_DVFS_FREQ_MED
+	int
+	default 128000000
+
+config DESKTOP_DVFS_FREQ_LOW
+	int
+	default 64000000
 
 config DESKTOP_DVFS_RETRY_BUSY_TIMEOUT_MS
 	int "Retry timeout"
