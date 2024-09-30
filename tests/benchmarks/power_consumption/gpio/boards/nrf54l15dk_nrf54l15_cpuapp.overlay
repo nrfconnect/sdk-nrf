@@ -1,0 +1,29 @@
+/ {
+	aliases {
+		/delete-property/ sw1;
+		/delete-property/ sw2;
+		out0 = &output0;
+		in0 = &input0;
+	};
+
+	outputs {
+		compatible = "gpio-leds";
+
+		output0: output_0 {
+			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+			label = "GPIO output 0";
+		};
+	};
+
+	inputs {
+		compatible = "gpio-keys";
+
+		input0: input_0 {
+			gpios = <&gpio1 9 (GPIO_ACTIVE_HIGH)>;
+			label = "GPIO input 0";
+		};
+	};
+};
+
+/delete-node/ &button1;
+/delete-node/ &button2;
