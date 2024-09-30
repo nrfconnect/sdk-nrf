@@ -819,6 +819,20 @@ config MBEDTLS_512_SMALLER
 
 endmenu # SHA - Secure Hash Algorithm
 
+config MBEDTLS_FORCE_LEGACY_MD
+	bool
+	prompt "Force using legacy crypto for MD"
+	default y if BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Should only be used when TF-M MINIMAL profile is used
+
+config MBEDTLS_FORCE_LEGACY_CIPHER
+	bool
+	prompt "Force using legacy crypto for cipher"
+	default y if BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Should only be used when TF-M MINIMAL profile is used
+
 endif #MBEDTLS_LEGACY_CRYPTO_C
 
 config MBEDTLS_CIPHER_C
@@ -869,5 +883,6 @@ config MBEDTLS_PEM_WRITE_C
 	bool
 	prompt "Support writing PEM files"
 	depends on MBEDTLS_BASE64_C
+
 
 endmenu # Legacy mbed TLS crypto APIs
