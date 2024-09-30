@@ -190,6 +190,8 @@ int nrf_cloud_coap_init(void)
 {
 	int err;
 
+	(void)nrf_cloud_print_details();
+
 	internal_cc.authenticated = false;
 
 	if (!internal_cc.initialized) {

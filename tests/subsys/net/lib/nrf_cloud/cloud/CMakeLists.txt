@@ -46,6 +46,7 @@ if (CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_MODEM_LIB)
 			${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fsm.c
 			${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_transport.c
 			${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_codec.c
+			${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_info.c
 			DIRECTORY ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/
 			PROPERTIES HEADER_FILE_ONLY ON
 		)

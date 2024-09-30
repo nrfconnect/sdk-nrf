@@ -627,6 +627,7 @@ static int dc_connection_handler(const struct nct_evt *nct_evt)
 		nfsm_set_current_state_and_notify(STATE_DC_CONNECTED, &evt);
 	}
 
+	(void)nrf_cloud_print_cloud_details();
 	return 0;
 }
 
