@@ -19,8 +19,7 @@
 #include <zephyr/kernel.h>
 
 
-#define PM_MAX_LATENCY_HCI_COMMANDS_US 4999999
-#define MAX_DELAY_SINCE_READING_PARAMS_US 50
+#define PM_MAX_LATENCY_HCI_COMMANDS_US 499999
 
 #define TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US 1000
 #define RETRY_TIME_MAX_US (UINT32_MAX - TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US)
@@ -185,7 +184,7 @@ void test_register_and_derigster_event(void)
 		 LATENCY_FUNC_REGISTER, PM_MAX_LATENCY_HCI_COMMANDS_US},
 		/* Register event. */
 		{false, true, {10000, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 1},
-		 EVENT_FUNC_REGISTER, 10000 - MAX_DELAY_SINCE_READING_PARAMS_US,
+		 EVENT_FUNC_REGISTER, 10000,
 		 LATENCY_FUNC_NONE, 0},
 		/* Deregister event. */
 		{false, true, {0, MPSL_PM_EVENT_STATE_NO_EVENTS_LEFT, 2},
@@ -204,7 +203,7 @@ void test_register_enter_and_derigster_event(void)
 		 LATENCY_FUNC_REGISTER, PM_MAX_LATENCY_HCI_COMMANDS_US},
 		 /* Register event. */
 		{false, true, {10000, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 1},
-		 EVENT_FUNC_REGISTER, 10000 - MAX_DELAY_SINCE_READING_PARAMS_US,
+		 EVENT_FUNC_REGISTER, 10000,
 		 LATENCY_FUNC_NONE, 0},
 		/* Pretend to be in event */
 		{false, true, {0, MPSL_PM_EVENT_STATE_IN_EVENT, 2},
@@ -227,11 +226,11 @@ void test_register_update_enter_and_deregister_event(void)
 		 LATENCY_FUNC_REGISTER, PM_MAX_LATENCY_HCI_COMMANDS_US},
 		/* Register event. */
 		{false, true, {10000, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 1},
-		 EVENT_FUNC_REGISTER, 10000 - MAX_DELAY_SINCE_READING_PARAMS_US,
+		 EVENT_FUNC_REGISTER, 10000,
 		 LATENCY_FUNC_NONE, 0},
 		/* Update event. */
 		{false, true, {15000, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 2},
-		 EVENT_FUNC_UPDATE, 15000 - MAX_DELAY_SINCE_READING_PARAMS_US,
+		 EVENT_FUNC_UPDATE, 15000,
 		 LATENCY_FUNC_NONE, 0},
 		/* Pretend to be in event */
 		{false, true, {0, MPSL_PM_EVENT_STATE_IN_EVENT, 3},
@@ -254,7 +253,7 @@ void test_register_enter_and_update_event(void)
 		 LATENCY_FUNC_REGISTER, PM_MAX_LATENCY_HCI_COMMANDS_US},
 		/* Register event. */
 		{false, true, {10000, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 1},
-		 EVENT_FUNC_REGISTER, 10000 - MAX_DELAY_SINCE_READING_PARAMS_US,
+		 EVENT_FUNC_REGISTER, 10000,
 		 LATENCY_FUNC_NONE, 0},
 		/* Pretend to be in event */
 		{false, true, {0, MPSL_PM_EVENT_STATE_IN_EVENT, 2},
@@ -262,7 +261,7 @@ void test_register_enter_and_update_event(void)
 		 LATENCY_FUNC_UPDATE, 0},
 		/* Update event (before we get the state no events left). */
 		{false, true, {15000, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 3},
-		 EVENT_FUNC_UPDATE, 15000 - MAX_DELAY_SINCE_READING_PARAMS_US,
+		 EVENT_FUNC_UPDATE, 15000,
 		 LATENCY_FUNC_UPDATE, PM_MAX_LATENCY_HCI_COMMANDS_US},
 	};
 	run_test(&test_vectors[0], ARRAY_SIZE(test_vectors));
@@ -289,7 +288,7 @@ void test_event_delayed_work(void)
 		{false, true, {retry_evt_time - RETRY_TIME_MAX_US - RETRY_TIME_MAX_US,
 				MPSL_PM_EVENT_STATE_BEFORE_EVENT, 3},
 		 EVENT_FUNC_REGISTER, retry_evt_time - RETRY_TIME_MAX_US -
-				      RETRY_TIME_MAX_US - MAX_DELAY_SINCE_READING_PARAMS_US,
+				      RETRY_TIME_MAX_US,
 		 LATENCY_FUNC_NONE, 0},
 		/* Pretend to be in event */
 		{false, true, {0, MPSL_PM_EVENT_STATE_IN_EVENT, 4},
