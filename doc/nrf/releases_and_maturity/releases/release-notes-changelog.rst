@@ -849,8 +849,13 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_log` library:
 
-  * Added support for dictionary logs using REST.
-  * Added support for dictionary (binary) logs when connected to nRF Cloud using CoAP.
+  * Added:
+
+    * Support for dictionary logs using REST.
+    * Support for dictionary (binary) logs when connected to nRF Cloud using CoAP.
+
+  * Fixed the missing log source when passing a direct log call to the nRF Cloud logging backend.
+    This caused the log parser to incorrectly use the first declared log source with direct logs when using dictionary mode.
 
 * :ref:`lib_nrf_cloud_fota` library:
 
