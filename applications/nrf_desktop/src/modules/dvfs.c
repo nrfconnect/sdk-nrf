@@ -16,7 +16,28 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_DVFS_LOG_LEVEL);
 
-#include <ld_dvfs_handler.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#include <zephyr/devicetree.h>
+
+#define CLOCK_NODE DT_ALIAS(nrfdesktop_dvfs_clock)
+
+#if !DT_NODE_HAS_STATUS(CLOCK_NODE, okay)
+#error "Alias 'nrfdesktop-dvfs-clock' is not defined in the device tree!"
+#endif
+
+static const struct device *dvfs_clock_dev = DEVICE_DT_GET(CLOCK_NODE);
+static struct onoff_client cli;
+
+/* The used nrf_clock_control driver implementation does not support
+ * clock precision and clock accuracy ppm.
+ */
+#define DESKTOP_DVFS_CLOCK_PRECISION	0
+#define DESKTOP_DVFS_CLOCK_ACCURACY_PPM	0
+
+static struct nrf_clock_spec spec = {
+	.accuracy = DESKTOP_DVFS_CLOCK_ACCURACY_PPM,
+	.precision = DESKTOP_DVFS_CLOCK_PRECISION,
+};
 
 #define DVFS_RETRY_INITIALIZATION_TIMEOUT	K_MSEC(CONFIG_DESKTOP_DVFS_RETRY_INIT_TIMEOUT_MS)
 #define DVFS_RETRY_BUSY_TIMEOUT			K_MSEC(CONFIG_DESKTOP_DVFS_RETRY_BUSY_TIMEOUT_MS)
@@ -66,16 +87,33 @@ enum dvfs_state {
 	LIST_FOR_DVFS_STATE(DVFS_STATE)
 };
 
-static const uint8_t dvfs_high_freq_bitmask = INITIALIZE_DVFS_FREQ_MASK(ACTIVE_FREQ_HIGH);
-static const uint8_t dvfs_medlow_freq_bitmask = INITIALIZE_DVFS_FREQ_MASK(ACTIVE_FREQ_MEDLOW);
+struct dvfs_frequency {
+	uint32_t freq;
+	uint8_t bitmask;
+};
+
+static const struct dvfs_frequency dvfs_freq_array[] = {
+	{
+		.freq = CONFIG_DESKTOP_DVFS_FREQ_HIGH,
+		.bitmask = INITIALIZE_DVFS_FREQ_MASK(ACTIVE_FREQ_HIGH)
+	},
+	{
+		.freq = CONFIG_DESKTOP_DVFS_FREQ_MED,
+		.bitmask = INITIALIZE_DVFS_FREQ_MASK(ACTIVE_FREQ_MEDLOW)
+	},
+	{
+		.freq = CONFIG_DESKTOP_DVFS_FREQ_LOW,
+		.bitmask = UINT8_MAX
+	},
+};
 
 /* Binary mask tracking which states are requested. */
 static uint8_t dfvs_requests_state_bitmask;
 
-static enum dvfs_frequency_setting current_freq = DVFS_FREQ_HIGH;
+/* SoC starts with 320MHz frequency */
+static uint32_t current_freq = dvfs_freq_array[0].freq;
 
-BUILD_ASSERT(sizeof(dvfs_high_freq_bitmask) == sizeof(dfvs_requests_state_bitmask));
-BUILD_ASSERT(sizeof(dvfs_medlow_freq_bitmask) == sizeof(dfvs_requests_state_bitmask));
+BUILD_ASSERT(sizeof(dvfs_freq_array[0].bitmask) == sizeof(dfvs_requests_state_bitmask));
 BUILD_ASSERT(CHAR_BIT * sizeof(dfvs_requests_state_bitmask) >= DVFS_STATE_COUNT);
 
 static struct dvfs_retry {
@@ -88,19 +126,13 @@ struct dvfs_state_timeout {
 	uint16_t timeout_ms;
 };
 
+static struct k_work dvfs_notify_work;
+static uint32_t requested_freq;
+static bool request_in_progress;
+
 static struct dvfs_state_timeout dvfs_state_timeouts[DVFS_STATE_COUNT] = {
 	LIST_FOR_DVFS_STATE(INITIALIZE_DVFS_STATE_TIMEOUT)
 };
-
-static const char *get_dvfs_frequency_setting_name(enum dvfs_frequency_setting setting)
-{
-	switch (setting) {
-	case DVFS_FREQ_HIGH: return "DVFS_FREQ_HIGH";
-	case DVFS_FREQ_MEDLOW: return "DVFS_FREQ_MEDLOW";
-	case DVFS_FREQ_LOW: return "DVFS_FREQ_LOW";
-	default: return "Unknown";
-	}
-}
 
 static const char *get_dvfs_state_name(enum dvfs_state state)
 {
@@ -111,19 +143,21 @@ static const char *get_dvfs_state_name(enum dvfs_state state)
 	}
 }
 
-static void cancel_dvfs_retry_work(void)
+static void dvfs_fatal_error(void)
 {
+	module_set_state(MODULE_STATE_ERROR);
+	module_state = STATE_ERROR;
 	(void) k_work_cancel_delayable(&dvfs_retry.retry_work);
-	dvfs_retry.retries_cnt = 0;
+	for (size_t i = 0; i < ARRAY_SIZE(dvfs_state_timeouts); i++) {
+		(void) k_work_cancel_delayable(&dvfs_state_timeouts[i].timeout_work);
+	}
 }
 
 static void handle_dvfs_error(int32_t err)
 {
 	if (dvfs_retry.retries_cnt >= DVFS_NUMBER_OF_RETRIES) {
 		LOG_ERR("DVFS retry count exceeded.");
-		module_set_state(MODULE_STATE_ERROR);
-		module_state = STATE_ERROR;
-		cancel_dvfs_retry_work();
+		dvfs_fatal_error();
 		return;
 	}
 	dvfs_retry.retries_cnt++;
@@ -137,37 +171,113 @@ static void handle_dvfs_error(int32_t err)
 		timeout = DVFS_RETRY_INITIALIZATION_TIMEOUT;
 	} else {
 		LOG_ERR("DVFS freq change returned with error: %d", err);
-		module_set_state(MODULE_STATE_ERROR);
-		module_state = STATE_ERROR;
-		cancel_dvfs_retry_work();
+		dvfs_fatal_error();
 		return;
 	}
 	(void) k_work_reschedule(&dvfs_retry.retry_work, timeout);
 }
 
-static void set_dvfs_freq(enum dvfs_frequency_setting target_freq)
+static uint32_t check_required_frequency(void)
 {
-	int32_t ret = dvfs_service_handler_change_freq_setting(target_freq);
+	for (size_t i = 0; i < ARRAY_SIZE(dvfs_freq_array) - 1; i++) {
+		if (dfvs_requests_state_bitmask & dvfs_freq_array[i].bitmask) {
+			return dvfs_freq_array[i].freq;
+		}
+	}
 
+	/* If no state is active, return the lowest frequency. */
+	return dvfs_freq_array[ARRAY_SIZE(dvfs_freq_array) - 1].freq;
+}
+
+static void dvfs_notify_cb(struct onoff_manager *srv,
+			   struct onoff_client *cli,
+			   uint32_t state,
+			   int res)
+{
+	(void) k_work_submit(&dvfs_notify_work);
+}
+
+static void set_dvfs_freq(uint32_t target_freq)
+{
+	int ret;
+
+	if (spec.frequency != 0) {
+		ret = nrf_clock_control_release(dvfs_clock_dev, &spec);
+		if (ret < 0) {
+			LOG_ERR("Failed to release requested clock specs, error: %d", ret);
+			dvfs_fatal_error();
+			return;
+		}
+	}
+
+	sys_notify_init_callback(&cli.notify, dvfs_notify_cb);
+
+	spec.frequency = target_freq;
+	ret = nrf_clock_control_request(dvfs_clock_dev, &spec, &cli);
 	if (ret) {
 		handle_dvfs_error(ret);
 	} else {
-		current_freq = target_freq;
-		LOG_INF("Have requested %s frequency",
-			get_dvfs_frequency_setting_name(target_freq));
-		cancel_dvfs_retry_work();
+		LOG_INF("Have requested %" PRIu32 " frequency", target_freq);
+		requested_freq = target_freq;
+		request_in_progress = true;
 	}
 }
 
-static enum dvfs_frequency_setting check_required_frequency(void)
+static void dvfs_frequency_update(void)
 {
-	if (dfvs_requests_state_bitmask & dvfs_high_freq_bitmask) {
-		return DVFS_FREQ_HIGH;
-	} else if (dfvs_requests_state_bitmask & dvfs_medlow_freq_bitmask) {
-		return DVFS_FREQ_MEDLOW;
-	} else {
-		return DVFS_FREQ_LOW;
+	uint32_t required_freq = check_required_frequency();
+
+	if ((!k_work_delayable_is_pending(&dvfs_retry.retry_work)) &&
+	    !request_in_progress && (required_freq != current_freq)) {
+		set_dvfs_freq(required_freq);
+	} else if ((required_freq == current_freq) &&
+		   (k_work_delayable_is_pending(&dvfs_retry.retry_work))) {
+		(void) k_work_cancel_delayable(&dvfs_retry.retry_work);
+		/* retry_cnt should be only cleared on successful frequency change. */
 	}
+}
+
+static void dvfs_notify_work_handler(struct k_work *work)
+{
+	int res;
+	int ret = sys_notify_fetch_result(&cli.notify, &res);
+
+	if (ret < 0) {
+		LOG_ERR("Work not completed, verify usage of notify API");
+		dvfs_fatal_error();
+		return;
+	}
+
+	__ASSERT_NO_MSG(request_in_progress);
+	request_in_progress = false;
+
+	if (res < 0) {
+		handle_dvfs_error(res);
+		return;
+	}
+	ret = clock_control_get_rate(dvfs_clock_dev, NULL, &current_freq);
+	if (ret < 0) {
+		LOG_ERR("Failed to get current frequency with error: %d", ret);
+		dvfs_fatal_error();
+		return;
+	}
+	if (requested_freq != current_freq) {
+		/*
+		 * In current solution it is assumed that no other module
+		 * will change cpu frequency.
+		 */
+		LOG_ERR("Requested frequency %" PRIu32
+			" is not the same as current frequency %" PRIu32,
+			requested_freq, current_freq);
+		dvfs_fatal_error();
+		return;
+	}
+
+	dvfs_retry.retries_cnt = 0;
+	LOG_INF("DVFS completed, current frequency is: %" PRIu32, current_freq);
+
+	/* Check if there were any new requests. */
+	dvfs_frequency_update();
 }
 
 static void process_dvfs_states(enum dvfs_state state, bool turn_on)
@@ -184,15 +294,7 @@ static void process_dvfs_states(enum dvfs_state state, bool turn_on)
 		LOG_DBG("%s NOT ACTIVE", get_dvfs_state_name(state));
 	}
 
-	enum dvfs_frequency_setting required_freq = check_required_frequency();
-
-	if ((required_freq != current_freq) &&
-	    (!k_work_delayable_is_pending(&dvfs_retry.retry_work))) {
-		set_dvfs_freq(required_freq);
-	} else if ((required_freq == current_freq) &&
-	    (k_work_delayable_is_pending(&dvfs_retry.retry_work))) {
-		cancel_dvfs_retry_work();
-	}
+	dvfs_frequency_update();
 }
 
 static bool handle_ble_peer_conn_params_event(const struct ble_peer_conn_params_event *event)
@@ -226,10 +328,9 @@ static void dvfs_retry_work_handler(struct k_work *work)
 {
 	LOG_DBG("Retrying to change DVFS frequency.");
 
-	enum dvfs_frequency_setting required_freq = check_required_frequency();
+	uint32_t required_freq = check_required_frequency();
 
 	__ASSERT_NO_MSG(required_freq != current_freq);
-
 	set_dvfs_freq(required_freq);
 }
 
@@ -252,27 +353,37 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			__ASSERT_NO_MSG((dvfs_high_freq_bitmask & dvfs_medlow_freq_bitmask) == 0);
+			BUILD_ASSERT(ARRAY_SIZE(dvfs_freq_array) == 3,
+				"Add asserts if frequency array is extended");
+			__ASSERT_NO_MSG((dvfs_freq_array[0].bitmask &
+					 dvfs_freq_array[1].bitmask) == 0);
 
-			k_work_init_delayable(&dvfs_retry.retry_work,
-					      dvfs_retry_work_handler);
+			k_work_init(&dvfs_notify_work, dvfs_notify_work_handler);
+			k_work_init_delayable(&dvfs_retry.retry_work, dvfs_retry_work_handler);
 			for (size_t i = 0; i < ARRAY_SIZE(dvfs_state_timeouts); i++) {
 				k_work_init_delayable(&dvfs_state_timeouts[i].timeout_work,
 						      dvfs_state_timeout_work_handler);
 			}
+			int ret = clock_control_get_rate(dvfs_clock_dev,
+					NULL, &current_freq);
+
+			if (ret < 0) {
+				LOG_ERR("Failed to get current frequency with error: %d",
+					ret);
+				dvfs_fatal_error();
+				return false;
+			}
 			module_state = STATE_READY;
 
 			if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_INITIALIZING_ENABLE)) {
-				if (module_flags_check_zero(&req_modules_bm)) {
-					process_dvfs_states(DVFS_STATE_INITIALIZING, true);
-				}
 				get_req_modules(&req_modules_bm);
-			} else {
-				enum dvfs_frequency_setting required_freq =
-								check_required_frequency();
-				if (required_freq != current_freq) {
-					set_dvfs_freq(required_freq);
+				if (!module_flags_check_zero(&req_modules_bm)) {
+					process_dvfs_states(DVFS_STATE_INITIALIZING, true);
+				} else {
+					dvfs_frequency_update();
 				}
+			} else {
+				dvfs_frequency_update();
 			}
 		}
 
