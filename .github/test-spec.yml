@@ -591,6 +591,7 @@
   - "samples/event_manager_proxy/**/*"
   - "snippets/emulated-*/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
+  - "tests/benchmarks/current_consumption/**/*"
   - "tests/benchmarks/multicore/**/*"
   - "tests/benchmarks/peripheral_load/**/*"
   - "tests/drivers/pwm/**/*"
