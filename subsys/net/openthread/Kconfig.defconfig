@@ -92,6 +92,10 @@ config NET_PKT_TX_COUNT
 	default 4 if OPENTHREAD_COPROCESSOR_RCP
 	default 16
 
+config OPENTHREAD_DYNAMIC_STORE_FRAME_AHEAD_COUNTER
+	bool
+	default y
+
 config OPENTHREAD_MANUAL_START
 	bool
 	default y
