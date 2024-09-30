@@ -20,9 +20,8 @@ LOG_MODULE_REGISTER(mpsl_pm_utils, CONFIG_MPSL_LOG_LEVEL);
  * absolute time instead of relative time. This would remove the need for safety
  * margins and allow optimal power savings.
  */
-#define MAX_DELAY_SINCE_READING_PARAMS_US 50
 #define TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US 1000
-#define PM_MAX_LATENCY_HCI_COMMANDS_US 4999999
+#define PM_MAX_LATENCY_HCI_COMMANDS_US 499999
 
 static void m_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(pm_work, m_work_handler);
@@ -71,22 +70,21 @@ void mpsl_pm_utils_work_handler(void)
 	}
 	case MPSL_PM_EVENT_STATE_BEFORE_EVENT:
 	{
-		/* Event scheduled */
-		uint64_t event_time_us = params.event_time_rel_us -
-						MAX_DELAY_SINCE_READING_PARAMS_US;
-
 		/* In case we missed a state and are in zero-latency, set low-latency.*/
 		m_update_latency_request(PM_MAX_LATENCY_HCI_COMMANDS_US);
 
-		if (event_time_us > UINT32_MAX) {
+		/* Event scheduled */
+		if (params.event_time_abs_us > UINT32_MAX) {
 			mpsl_work_schedule(&pm_work, K_USEC(RETRY_TIME_MAX_US));
 			return;
 		}
 
 		if (m_pm_event_is_registered) {
-			pm_policy_event_update(&m_evt, event_time_us);
+			pm_policy_event_update(&m_evt,
+					       k_us_to_cyc_floor32(params.event_time_abs_us));
 		} else {
-			pm_policy_event_register(&m_evt, event_time_us);
+			pm_policy_event_register(&m_evt,
+						 k_us_to_cyc_floor32(params.event_time_abs_us));
 			m_pm_event_is_registered = true;
 		}
 		break;
