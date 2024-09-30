@@ -24,7 +24,7 @@
 #include <net/nrf_cloud_coap.h>
 #include <net/nrf_cloud_log.h>
 
-LOG_MODULE_DECLARE(nrf_cloud_log, CONFIG_NRF_CLOUD_LOG_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_cloud_log_backend, CONFIG_NRF_CLOUD_LOG_LOG_LEVEL);
 
 #define RING_BUF_SIZE CONFIG_NRF_CLOUD_LOG_RING_BUF_SIZE
 
@@ -112,7 +112,7 @@ static const char * const filtered_modules[] = {
 	"net_ipv4",
 	"net_ipv6",
 	"nrf_cloud",
-	"nrf_cloud_log",
+	"nrf_cloud_log_backend",
 	"nrf_cloud_codec",
 	"nrf_cloud_codec_internal"
 };
