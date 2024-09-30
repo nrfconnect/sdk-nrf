@@ -1,0 +1,16 @@
+common:
+  sysbuild: true
+  tags: ci_tests_benchmarks_current_consumption ppk_power_measure
+
+tests:
+  benchmarks.current_consumption.uart_idle:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_rx_wakeup_54L_uart_idle"
+    timeout: 80
