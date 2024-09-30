@@ -591,6 +591,9 @@ static void remove_cr_lf(char *str)
 static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
 uint32_t num_files_added;
 
+/**
+ * @brief Recursively traverse the SD card tree.
+ */
 static int traverse_down(char *path, uint8_t level)
 {
 	int ret;
@@ -599,10 +602,11 @@ static int traverse_down(char *path, uint8_t level)
 	size_t buf_size = FOLDER_BUF_MAX;
 
 	if (level > SD_LEVEL_MAX) {
-		LOG_DBG("At level %d, max level reached", level);
+		LOG_WRN("At tree level %u, greater than %u", level, SD_LEVEL_MAX);
 		return 0;
 	}
 
+	/* Search for folders */
 	if (strstr(path, ".") == NULL) {
 		ret = sd_card_list_files(path, tmp_file_buf, &buf_size, false);
 		if (ret == -ENOENT) {
@@ -615,13 +619,13 @@ static int traverse_down(char *path, uint8_t level)
 		return 0;
 	}
 
-	LOG_DBG("level %d tmp_file_buf is: %s", level, tmp_file_buf);
+	LOG_DBG("At level %d tmp_file_buf is: %s", level, tmp_file_buf);
 
 	char *token = strtok_r(tmp_file_ptr, "\r\n", &tmp_file_ptr);
 
 	while (token != NULL) {
 		if (strstr(token, "System Volume Information") != NULL) {
-			LOG_DBG("Skipping System Volume Information");
+			/* Skipping System Volume Information */
 			token = strtok_r(NULL, "\n", &tmp_file_ptr);
 			continue;
 		}
@@ -633,7 +637,6 @@ static int traverse_down(char *path, uint8_t level)
 		}
 
 		remove_cr_lf(token);
-		LOG_DBG("level %d, token is: %s.", level, token);
 		char fullPath[SD_PATHLEN_MAX] = {'\0'};
 
 		if (path != NULL) {
@@ -646,16 +649,18 @@ static int traverse_down(char *path, uint8_t level)
 		LOG_DBG("Fullpath: %s", fullPath);
 
 		if (strstr(token, ".lc3") != NULL) {
-			strcpy(sd_paths_and_files[num_files_added], fullPath);
-			num_files_added++;
-			LOG_DBG("Added file num %d %s", num_files_added, fullPath);
 			if (num_files_added >= SD_FILECOUNT_MAX) {
 				LOG_WRN("Max file count reached");
+				return -ENOMEM;
 			}
+			strcpy(sd_paths_and_files[num_files_added], fullPath);
+			num_files_added++;
+			LOG_DBG("Added file num: %d at: %s", num_files_added, fullPath);
+
 		} else {
 			ret = traverse_down(fullPath, level + 1);
 			if (ret) {
-				LOG_DBG("Going up on level.");
+				LOG_ERR("Failed to traverse down: %d", ret);
 			}
 		}
 		token = strtok_r(NULL, "\n", &tmp_file_ptr);
