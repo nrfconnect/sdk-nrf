@@ -270,7 +270,16 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 	bool clear_registers = true;
 
 	switch (NRF_SICR->UROT.UPDATE.STATUS) {
-	case SICR_UROT_UPDATE_STATUS_CODE_None: {
+	case SICR_UROT_UPDATE_STATUS_CODE_None:
+	case SICR_UROT_UPDATE_STATUS_CODE_UROTActivated: {
+	/*
+	 * None state means no update was done recently - regular operation.
+	 *
+	 * UROTActivated state means SDFW update just finished successfully.
+	 * Depending on installation order defined in manifest,
+	 * SDRFW update might still be needed or was already done in previous steps.
+	 * As such, perform similar checks to those done in None state.
+	 */
 		err = check_urot_none(buf, size);
 		/* Potential start of update process - SecROM needs the registers to be set */
 		clear_registers = false;
@@ -288,7 +297,6 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 		 *       NCSDK-26939
 		 */
 
-	case SICR_UROT_UPDATE_STATUS_CODE_UROTActivated:
 	case SICR_UROT_UPDATE_STATUS_CODE_VerifyOK:
 	case SICR_UROT_UPDATE_STATUS_CODE_AROTRecovery: {
 		LOG_ERR("Unsupported Recovery update status: 0x%08X", NRF_SICR->UROT.UPDATE.STATUS);
