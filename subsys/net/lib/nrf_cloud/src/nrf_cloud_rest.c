@@ -172,6 +172,13 @@ static void close_connection(struct nrf_cloud_rest_context *const rest_ctx)
 static void init_rest_client_request(struct nrf_cloud_rest_context const *const rest_ctx,
 	struct rest_client_req_context *const req, const enum http_method meth)
 {
+	static bool printed;
+
+	if (!printed) {
+		printed = true;
+		(void)nrf_cloud_print_details();
+	}
+
 	memset(req, 0, sizeof(*req));
 
 	req->connect_socket	= rest_ctx->connect_socket;

@@ -406,10 +406,8 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
-  * Added:
-
-    * Support for setting the FOTA update check interval using the config section in the shadow.
-    * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
+  * Added support for setting the FOTA update check interval using the config section in the shadow.
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -417,7 +415,6 @@ Cellular samples
 
     * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
     * A handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` to stop sensors and location services.
-    * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
     * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
@@ -430,19 +427,21 @@ Cellular samples
     * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
 
   * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
   * Added:
 
     * Support for dictionary logs using REST.
-    * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
     * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
 
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
+
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
-    * Added a call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 Cryptography samples
 --------------------
@@ -819,8 +818,9 @@ Libraries for networking
     * The function :c:func:`nrf_cloud_client_id_runtime_set` to set the device ID string if the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option is enabled.
     * The functions :c:func:`nrf_cloud_sec_tag_set` and :c:func:`nrf_cloud_sec_tag_get` to set and get the sec tag used for nRF Cloud credentials.
     * A new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` which is generated when a device is deleted from nRF Cloud.
-    * The function :c:func:`nrf_cloud_print_details` to log common nRF Cloud connection information in a uniform way.
-    * The :kconfig:option:`CONFIG_NRF_CLOUD_VERBOSE_DETAILS` Kconfig option to enable the :c:func:`nrf_cloud_print_details` function to print all details instead of only the device ID.
+    * The functions :c:func:`nrf_cloud_print_details` and :c:func:`nrf_cloud_print_cloud_details` to log common nRF Cloud connection information in a uniform way.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_PRINT_DETAILS` Kconfig option to enable the above functions.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_VERBOSE_DETAILS` Kconfig option to print all details instead of only the device ID.
 
   * Updated:
 

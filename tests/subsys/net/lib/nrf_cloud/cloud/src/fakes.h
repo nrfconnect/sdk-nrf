@@ -45,6 +45,7 @@ FAKE_VOID_FUNC(nrf_cloud_free, void *);
 FAKE_VALUE_FUNC(int, poll, struct zsock_pollfd *, int, int);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encode, struct nrf_cloud_obj *const);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encoded_free, struct nrf_cloud_obj *const);
+FAKE_VALUE_FUNC(int, nrf_cloud_print_details);
 
 /* Custom fakes implementation */
 int fake_nct_initialize__succeeds(const struct nrf_cloud_init_param *param)
@@ -345,4 +346,9 @@ int fake_nrf_cloud_obj_cloud_encode__fails(struct nrf_cloud_obj *const obj)
 {
 	ARG_UNUSED(obj);
 	return -ENOMEM;
+}
+
+int fake_nrf_cloud_print_details__succeeds(void)
+{
+	return 0;
 }

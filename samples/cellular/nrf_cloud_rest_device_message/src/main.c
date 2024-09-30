@@ -527,11 +527,6 @@ static int init(void)
 		return -EFAULT;
 	}
 
-	err = nrf_cloud_print_details();
-	if (err) {
-		LOG_ERR("Error printing cloud information: %d", err);
-	}
-
 	/* If provisioning library is disabled, ensure device has credentials installed
 	 * before proceeding
 	 */

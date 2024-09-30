@@ -714,13 +714,25 @@ int nrf_cloud_uninit(void);
 /**
  * @brief Print details about cloud connection.
  *
- * if @kconfig{CONFIG_NRF_CLOUD_VERBOSE_DETAILS} is not enabled,
+ * If @kconfig{CONFIG_NRF_CLOUD_VERBOSE_DETAILS} is not enabled,
  * only print the device id. If enabled, also print the protocol,
- * sec tag, host name, stage, and team id.
+ * sec tag, and host name.
  *
  * @return A negative value indicates an error.
  */
 int nrf_cloud_print_details(void);
+
+/**
+ * @brief Print details about cloud connection after connected.
+ *
+ * Some information is only available after the device is connected.
+ * When using MQTT, the tenant will be printed.
+ *
+ * When using CoAP and REST, there is no further information to print.
+ *
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_print_cloud_details(void);
 
 /**
  * @brief Retrieve the IMEI.

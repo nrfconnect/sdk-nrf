@@ -347,11 +347,6 @@ int init(void)
 		return -EFAULT;
 	}
 
-	err = nrf_cloud_print_details();
-	if (err) {
-		LOG_ERR("Error printing cloud information: %d", err);
-	}
-
 	err = nrf_cloud_fota_poll_init(&fota_ctx);
 	if (err) {
 		LOG_ERR("FOTA support init failed: %d", err);

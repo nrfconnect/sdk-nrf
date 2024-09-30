@@ -133,6 +133,7 @@ int nrf_cloud_init(const struct nrf_cloud_init_param *param)
 	if (err) {
 		return err;
 	}
+	(void)nrf_cloud_print_details();
 
 	app_event_handler = param->event_handler;
 
