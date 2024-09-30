@@ -301,6 +301,7 @@ tests:
       - thingy91/nrf9160/ns
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="PROJECTKEY"
+      - CONFIG_LOG_MODE_MINIMAL=y
     extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-memfault.conf"
     tags: ci_build sysbuild ci_applications_asset_tracker_v2
   applications.asset_tracker_v2.memfault-low-power:
