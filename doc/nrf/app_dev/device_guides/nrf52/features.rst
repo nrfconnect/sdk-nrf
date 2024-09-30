@@ -10,10 +10,11 @@ Features of nRF52 Series
 The nRF52 Series of System-on-Chip (SoC) devices embed an Arm Cortex-M4 processor with Nordic Semiconductor's 2.4 GHz RF transceivers.
 All of the nRF52 Series SoCs have support for Bluetooth® 5 features, in addition to multiprotocol capabilities.
 
+To get started with the nRF52 Series, download and run the `Quick Start`_ application from `nRF Connect for Desktop`_.
+
 For additional information, see the following documentation:
 
 * `nRF52 Series`_ for the technical documentation on the nRF52 Series chips and associated kits.
-* :ref:`ug_nrf52_gs`.
 * :ref:`ug_nrf52` for more advanced topics related to the nRF52 Series.
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 

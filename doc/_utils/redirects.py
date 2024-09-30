@@ -32,13 +32,15 @@ NRF = [
     ("ug_nrf7002_gs", "gsg_guides/nrf7002_gs"), # Getting started with nRF7002 DK
     ("working_with_nrf/nrf70/gs", "gsg_guides/nrf7002_gs"),
     ("device_guides/working_with_nrf/nrf70/gs", "gsg_guides/nrf7002_gs"),
-    ("device_guides/working_with_nrf/nrf53/nrf5340_gs", "gsg_guides/nrf5340_gs"), # Getting started with nRF5340 DK
+    ("device_guides/working_with_nrf/nrf53/nrf5340_gs", "gsg_guides"), # Getting started with nRF5340 DK (removed in v2.8.0)
+    ("gsg_guides/nrf5340_gs", "gsg_guides"),
     ("ug_thingy53_gs", "gsg_guides/thingy53_gs"), # Getting started with Thingy:53
     ("working_with_nrf/nrf53/thingy53_gs", "gsg_guides/thingy53_gs"),
     ("device_guides/working_with_nrf/nrf53/thingy53_gs", "gsg_guides/thingy53_gs"),
-    ("ug_nrf52_gs", "gsg_guides/nrf52_gs"), # Getting started with nRF52 Series
-    ("working_with_nrf/nrf52/gs", "gsg_guides/nrf52_gs"),
-    ("device_guides/working_with_nrf/nrf52/gs", "gsg_guides/nrf52_gs"),
+    ("ug_nrf52_gs", "gsg_guides"), # Getting started with nRF52 Series (removed in v2.8.0)
+    ("working_with_nrf/nrf52/gs", "gsg_guides"),
+    ("device_guides/working_with_nrf/nrf52/gs", "gsg_guides"),
+    ("gsg_guides/nrf52_gs", "gsg_guides"),
     ("gs_assistant", "installation/install_ncs"), # Installing the nRF Connect SDK
     ("getting_started", "installation"),
     ("getting_started/assistant", "installation/install_ncs"),

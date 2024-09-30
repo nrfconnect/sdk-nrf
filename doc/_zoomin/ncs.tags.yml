@@ -24,12 +24,13 @@ mapping_topics:
   - nrf/gsg_guides/thingy91_gsg.html: ["nrf91-series", "thingy91", "nrf9160", "nrf52840", "lte",
                                        "prototyping-platforms"]
   - nrf/gsg_guides/nrf7002_gs.html: ["nrf70-series", "nrf7002", "development-kits"]
-  - nrf/gsg_guides/nrf5340_gs.html: ["nrf53-series", "nrf5340", "development-kits"]
   - nrf/gsg_guides/thingy53_gs.html: ["nrf53-series", "thingy53", "prototyping-platforms"]
-  - nrf/gsg_guides/nrf52_gs.html: ["nrf52-series", "development-kits", "nrf52840", "nrf52833",
-                                   "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805"]
-  - nrf/gsg_guides/gsg_other.html: ["nrf9161", "nrf9151", "development-kits", "npm1300", "nrf54h20",
-                                    "nrf54l15", "nrf7002", "evaluation-kits", "pmic"]
+  - nrf/gsg_guides/gsg_other.html: ["nrf52-series", "nrf52840", "nrf52833",
+                                    "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
+                                    "nrf53-series", "nrf5340", "thingy53", "nrf9161",
+                                    "nrf9160", "nrf9151", "thingy91", "development-kits",
+                                    "npm1300", "nrf54h20", "nrf54l15", "nrf7002", "evaluation-kits",
+                                    "pmic"]
   - nrf/installation.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                             "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                             "nrf9161", "nrf9151", "nrf9131", "nrf54h20", "nrf54l15", "nrf5340",
