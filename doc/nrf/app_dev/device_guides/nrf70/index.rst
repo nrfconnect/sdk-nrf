@@ -35,28 +35,28 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - PCA10095
      - ``nrf5340dk/nrf5340/cpuapp``
      - | `Product Specification <nRF5340 Product Specification_>`_
-       | :ref:`Getting started <ug_nrf5340_gs>`
+       | `Quick Start`_
        | `User Guide <nRF5340 DK User Guide_>`_
    * - :ref:`zephyr:nrf52840dk_nrf52840`
      - nRF7002 EK
      - PCA10056
      - ``nrf52840dk/nrf52840``
      - | `Product Specification <nRF52840 Product Specification_>`_
-       | :ref:`Getting started <ug_nrf52_gs>`
+       | `Quick Start`_
        | `User Guide <nRF52840 DK User Guide_>`_
    * - :ref:`zephyr:nrf9151dk_nrf9151`
      - nRF7002 EK
      - PCA10171
      - ``nrf9151dk/nrf9151/ns``
      - | `Product Specification <nRF9151 Product Specification_>`_
-       | :ref:`Getting started <gsg_other>`
+       | `Quick Start`_
        | `User Guide <nRF9151 DK Hardware_>`_
    * - :ref:`zephyr:nrf9161dk_nrf9161`
      - nRF7002 EK
      - PCA10153
      - ``nrf9161dk/nrf9161/ns``
      - | `Product Specification <nRF9161 Product Specification_>`_
-       | :ref:`Getting started <gsg_other>`
+       | `Quick Start`_
        | `User Guide <nRF9161 DK Hardware_>`_
    * - :ref:`zephyr:nrf9160dk_nrf9160`
      - nRF7002 EK

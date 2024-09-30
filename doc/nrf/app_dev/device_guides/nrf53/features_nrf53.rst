@@ -10,11 +10,12 @@ Features of nRF53 Series
 The nRF53 Series System-on-Chips (SoC) integrate a high-performance Arm® Cortex®-M33 dual-core processor with a 2.4 GHz RF transceiver, in addition to advanced security features.
 All nRF53 Series SoC support Bluetooth® 5.1 and Bluetooth Mesh, in addition to multiprotocol capabilities.
 
+To get started with the nRF5340 DK, download and run the `Quick Start`_ application from `nRF Connect for Desktop`_.
+
 For additional information, refer to the following resources:
 
 * `nRF53 Series`_ for the technical documentation on the nRF53 Series chips and associated kits.
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_nrf5340_gs` guide for getting started with the nRF5340 DK.
 * :ref:`ug_thingy53_gs` for getting started with the Thingy:53.
 
 Dual-core architecture
