@@ -1239,7 +1239,11 @@ ci_tests_benchmarks_spi_endless:
 ci_tests_benchmarks_current_consumption:
   files:
     - modules/hal/nordic/nrfx/
+    - nrf/include/nfc/
+    - nrf/subsys/nfc/
     - nrf/tests/benchmarks/current_consumption/
+    - nrfxlib/nfc/
+    - zephyr/drivers/gpio/
     - zephyr/drivers/serial/
     - zephyr/soc/nordic/
 
