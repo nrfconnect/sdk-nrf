@@ -80,6 +80,22 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type);
 
 /**
+ * @brief Delete all credentials for a given sectag from persistent storage.
+ *
+ * @note If used when the LTE link is active, the function will return
+ *	 an error and the credentials will not be deleted.
+ *
+ * @param[in] sec_tag		The security tag of the credential to delete.
+ *
+ * @retval 0		On success.
+ * @retval -ENOBUFS	Internal buffer is too small.
+ * @retval -EACCES	Access to credential not allowed.
+ * @retval -EPERM	Not permitted when the LTE link is active.
+ * @retval -ECANCELED	Canceled because voltage is low (power off warning).
+ */
+int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag);
+
+/**
  * @brief Read a credential from persistent storage.
  *
  * @param[in]		sec_tag		The security tag of the credential.

@@ -137,6 +137,17 @@ The following code snippet shows how to delete a CA chain certificate stored in 
            printk("Failed to delete existing certificate, err %d\n", err);
    }
 
+The following code snippet shows how to delete all credentials associated with a security tag in the modem:
+
+.. code-block:: c
+
+   int err;
+
+   err = modem_key_mgmt_clear(<YOUR_SEC_TAG>);
+   if (err) {
+           printk("Failed to clear credentials on sectag, err %d\n", err);
+   }
+
 API documentation
 *****************
 
