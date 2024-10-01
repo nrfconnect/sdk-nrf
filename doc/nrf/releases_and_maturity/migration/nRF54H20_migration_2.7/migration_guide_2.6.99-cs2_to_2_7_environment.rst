@@ -18,10 +18,10 @@ The following is a summary of the most important ones:
 Updated |NCS| toolchain
   The |NCS| toolchain has been updated.
 
-SDFW and SCFW firmware bundle
-  A new version (v0.5.0) of the SDFW and SCFW firmware bundle was released.
+SDFW and SCFW SoC binaries
+  A new version (v0.5.0) of the nRF54H20 SoC binaries bundle was released.
   This is the only version compatible with the |NCS| v2.7.0.
-  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new firmware bundle.
+  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new SoC binaries.
 
 Minimum requirements
 ********************
@@ -155,7 +155,7 @@ Verify the LCS of the device
 
 The current nRF54H20 DK is delivered with its lifecycle state (LCS) set to ``EMPTY``.
 To correctly operate, its lifecycle state must be transitioned to Root of Trust (``RoT``) through the bring-up steps.
-To be compatible with |NCS| v2.7.0, the SDFW and SCFW firmware bundle programmed on the nRF54H20 DK during through the bring-up steps must be v0.5.0.
+To be compatible with |NCS| v2.7.0, the nRF54H20 SoC binaries programmed on the nRF54H20 DK during through the bring-up steps must be v0.5.0.
 
 .. note::
    The forward transition to LCS ``RoT`` is permanent.
@@ -187,11 +187,11 @@ The output will look similar to the following::
 If the lifecycle state (``psa_lifecycle``) shown is not ``RoT`` (``LIFECYCLE_EMPTY (0x1000)`` means the LCS is set to ``EMPTY``) you can follow the bring-up steps in the next chapter.
 If the lifecycle state (``psa_lifecycle``) shown is ``RoT`` (``LIFECYCLE_ROT (0x2000)``), the device is in Root of Trust:
 
-* If your nRF54H20 DK was already programmed with the SDFW and SCFW firmware bundle version 0.5.0, you can jump to the :ref:`migration_cs2_to_2_7_env_nextsteps` chapter.
-* If your current nRF54H20 DK was programmed with a firmware bundle version 0.3.x:
+* If your nRF54H20 DK was already programmed with the nRF54H20 SoC binaries version 0.5.0, you can jump to the :ref:`migration_cs2_to_2_7_env_nextsteps` chapter.
+* If your current nRF54H20 DK was programmed with the SoC binaries version 0.3.x:
 
   * Use a different nRF54H20 DK with LCS ``EMPTY`` and continue to the nRF54H20 bring-up.
-  * Use a different nRF54H20 DK with LCS ``RoT`` and already programmed with the firmware bundle version 0.5.0.
+  * Use a different nRF54H20 DK with LCS ``RoT`` and already programmed with the SoC binaries version 0.5.0.
 
 nRF54H20 DK bring-up
 ********************
@@ -231,9 +231,9 @@ Provisioning the SDFW and SCFW
 ==============================
 
 After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.5.0.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
-To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
+To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 firmware bundle v0.5.0`_.
+1. Download the `nRF54H20 SoC binaries v0.5.0`_.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -251,7 +251,7 @@ Updating the FICR
    This step is required only if your nRF54H20 DK is version PCA10175 v0.7.2 or v0.8.0 ES3.3.
    Jump to the next step if your DK is version ES4, meaning v0.8.0 with no ES markings.
 
-After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
+After programming the SDFW and SCFW from the SoC binaries, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
 To update the FICR, you must run a J-Link script:
 
 1. Get the Jlink script that updates the FICR::

@@ -28,10 +28,10 @@ Hardware Model v2
   A new hardware model was recently introduced in the |NCS|.
   For more information, see :ref:`hwmv1_to_v2_migration`.
 
-SDFW and SCFW firmware bundle
-  A new version (v0.5.0) of the SDFW and SCFW firmware bundle was released.
+nRF54H20 SoC binaries
+  A new version (v0.5.0) of the nRF54H20 SoC binaries was released.
   This is the only version compatible with the |NCS| v2.7.0.
-  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new firmware bundle.
+  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new SoC binaries.
 
 DTS changes
   The layout of DTS files and the names of DTS nodes related to the updated board names have been updated, which also affects overlay files from applications and samples.

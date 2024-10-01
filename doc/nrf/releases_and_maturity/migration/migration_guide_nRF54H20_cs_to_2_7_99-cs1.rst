@@ -47,14 +47,14 @@ nRF54H20 BICR
         nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Application --serial-number <serialnumber>
 
 SDFW and SCFW firmwares
-  The *nRF54H20 firmware bundle* has been updated to version 0.6.2.
+  The *nRF54H20 SoC binaries* have been updated to version 0.6.2.
 
   .. caution::
-     Before proceeding with the firmware bundle update, you must first update the BICR as described in the previous chapter.
+     Before proceeding with the SoC binaries update, you must first update the BICR as described in the previous chapter.
 
-  To update the firmware bundle of your development kit while in Root of Trust, do the following:
+  To update the SoC binaries of your development kit while in Root of Trust, do the following:
 
-  1. Download the `nRF54H20 firmware bundle v0.6.2`_.
+  1. Download the `nRF54H20 SoC binaries v0.6.2`_.
 
      .. note::
         On MacOS, ensure that the ZIP file is not unpacked automatically upon download.

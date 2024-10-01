@@ -29,9 +29,8 @@ See the following documents, based on the version you are migrating from.
    nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2_7_environment
    nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2.7_application
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Other relevant migration documents
 
-   migration_hwmv2
-   migration_sysbuild
+Consult also the following pages about *Hardware model v2* and *Sysbuild*:
+
+* :ref:`hwmv1_to_v2_migration`
+* :ref:`child_parent_to_sysbuild_migration`
