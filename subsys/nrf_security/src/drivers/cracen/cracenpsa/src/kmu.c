@@ -474,7 +474,7 @@ psa_status_t convert_to_psa_attributes(kmu_metadata *metadata, psa_key_attribute
 	case KMU_METADATA_SCHEME_PROTECTED:
 		/* Only AES keys are supported. */
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
-			return PSA_ERROR_CORRUPTION_DETECTED;
+			return PSA_ERROR_NOT_SUPPORTED;
 		}
 
 		/* It is not possible to provision protected keys with export or copy key usage. */
