@@ -22,7 +22,7 @@ We highly recommend using the PCB layouts and component values provided by Nordi
 * For optimal performance, the output impedance of the **P6** and **P7** ports should match the PCB and external device pin impedance.
 * Use one of the following power supply options:
 
-  * VDDH higher than 2.2V
+  * VDDH higher than 2.05V.
   * VDDH shorted to VDD at 1.8V
 
 Prepare the configuration files for your custom board in the |NCS|
