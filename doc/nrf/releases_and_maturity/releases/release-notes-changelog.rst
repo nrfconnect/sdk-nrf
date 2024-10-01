@@ -753,6 +753,9 @@ Modem libraries
       Use the ``AT%XFACTORYRESET`` AT command instead.
       Refer to the :ref:`migration guide <migration_2.8>` for more details.
     * The :c:enum:`lte_lc_factory_reset_type` type has been deprecated.
+    * The :c:func:`lte_lc_reduced_mobility_get` and :c:func:`lte_lc_reduced_mobility_set` functions have been deprecated.
+      Refer to the :ref:`migration guide <migration_2.8>` for more details.
+    * The :c:enum:`lte_lc_reduced_mobility_mode` type has been deprecated.
       Refer to the :ref:`migration guide <migration_2.8>` for more details.
 
 * :ref:`lib_location` library:
