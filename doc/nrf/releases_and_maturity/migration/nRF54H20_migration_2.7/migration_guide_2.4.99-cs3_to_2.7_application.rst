@@ -31,10 +31,10 @@ DTS changes
   The layout of DTS files and the names of DTS nodes related to the updated board names have been updated, which also affects overlay files from applications and samples.
   If your application required a specific custom board, you must update the custom board files to match the changes done to the nRF54H20 SoC DTS files.
 
-SDFW and SCFW firmware bundle
+nRF54H20 SoC binaries
   The Secure Domain Firmware (SDFW) and System Controller Firmware (SCFW) are no longer built from the source during the application build process.
-  They are provided as a firmware bundle (v0.5.0) and provisioned to the nRF54H20 during the bring-up steps.
-  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new firmware bundle.
+  They are provided as a SoC binaries bundle (v0.5.0) and provisioned to the nRF54H20 during the bring-up steps.
+  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new SoC binaries.
   For additional details, see :ref:`transition_cs3_to_2_7_env_bringup`.
 
 nRF Util is now the main command line backend utility.

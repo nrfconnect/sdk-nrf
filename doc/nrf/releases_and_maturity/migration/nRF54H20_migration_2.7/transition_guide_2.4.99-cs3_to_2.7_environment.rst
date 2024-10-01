@@ -14,8 +14,8 @@ The main development environment changes introduced by v2.7.0 for the nRF54H20 D
 * The |NCS| toolchain has been updated.
 * nRF Util is now used by the build system.
 * The Secure Domain Firmware (SDFW) and System Controller Firmware (SCFW) are no longer built from the source during the application build process.
-  They are provided as a firmware bundle (v0.5.0) and provisioned to the nRF54H20 during the bring-up steps.
-  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new firmware bundle.
+  They are provided as a SoC binaries bundle (v0.5.0) and provisioned to the nRF54H20 during the bring-up steps.
+  The nRF54H20 DK must be in lifecycle state ``EMPTY`` to be provisioned with the new SoC binaries.
   For additional details, see :ref:`transition_cs3_to_2_7_env_bringup`.
   See the details in the `nRF54H20 DK bring-up`_ section below.
 * To correctly operate the nRF54H20 DK, its lifecycle state must be set to ``RoT`` after the bring-up.
@@ -236,9 +236,9 @@ Programming the SDFW and SCFW
 =============================
 
 After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.5.0.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
-To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the firmware bundle to the nRF54H20 DK, do the following:
+To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the System Controller Firmware (SCFW) from the SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 firmware bundle v0.5.0`_.
+1. Download the `nRF54H20 SoC binaries v0.5.0`_.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -258,7 +258,7 @@ Updating the FICR
    This step is required only if your nRF54H20 DK is version PCA10175 v0.7.2 or v0.8.0 ES3.3.
    Jump to the next step if your DK is version ES4, meaning v0.8.0 with no ES markings.
 
-After programming the SDFW and SCFW from the firmware bundle, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
+After programming the SDFW and SCFW from the SoC binaries, you must update the Factory Information Configuration Registers (FICR) to correctly configure some trims of the nRF54H20 SoC.
 To update the FICR, you must run a J-Link script:
 
 1. Get the J-Link script that updates the FICR::

@@ -62,7 +62,7 @@ SDFW and SCFW firmwares
   The *nRF54H20 SoC binaries* bundle has been updated to version 0.6.5.
 
   .. caution::
-     If migrating from |NCS| v2.7.0, before proceeding with the firmware bundle update, you must first update the BICR as described in the previous chapter.
+     If migrating from |NCS| v2.7.0, before proceeding with the SoC binaries update, you must first update the BICR as described in the previous chapter.
 
   To update the SoC binaries bundle of your development kit while in Root of Trust, do the following:
 
