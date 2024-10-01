@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config WIFI_NRF70
+	default y if BOARD_NRF7002DK
+
 #### Radio core
 config NRF_DEFAULT_IPC_RADIO
 	default y
