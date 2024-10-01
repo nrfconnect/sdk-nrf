@@ -568,116 +568,23 @@ static void broadcast_config_clear(void)
 	}
 }
 
-/**
- * @brief	Replaces first carriage return or line feed with null terminator.
- */
-static void remove_cr_lf(char *str)
-{
-	char *p = str;
-
-	while (*p != '\0') {
-		if (*p == '\r' || *p == '\n') {
-			*p = '\0';
-			break;
-		}
-		p++;
-	}
-}
-
 #define SD_FILECOUNT_MAX 420
 #define SD_PATHLEN_MAX	 190
-#define FOLDER_BUF_MAX	 800
-#define SD_LEVEL_MAX	 7
 static char sd_paths_and_files[SD_FILECOUNT_MAX][SD_PATHLEN_MAX] = {'\0'};
-uint32_t num_files_added;
-
-/**
- * @brief Recursively traverse the SD card tree.
- */
-static int traverse_down(char *path, uint8_t level)
-{
-	int ret;
-	char tmp_file_buf[FOLDER_BUF_MAX] = {'\0'};
-	char *tmp_file_ptr = tmp_file_buf;
-	size_t buf_size = FOLDER_BUF_MAX;
-
-	if (level > SD_LEVEL_MAX) {
-		LOG_WRN("At tree level %u, greater than %u", level, SD_LEVEL_MAX);
-		return 0;
-	}
-
-	/* Search for folders */
-	if (strstr(path, ".") == NULL) {
-		ret = sd_card_list_files(path, tmp_file_buf, &buf_size, false);
-		if (ret == -ENOENT) {
-			/* Not able to open, hence likely not a folder */
-			return 0;
-		} else if (ret) {
-			return ret;
-		}
-	} else {
-		return 0;
-	}
-
-	LOG_DBG("At level %d tmp_file_buf is: %s", level, tmp_file_buf);
-
-	char *token = strtok_r(tmp_file_ptr, "\r\n", &tmp_file_ptr);
-
-	while (token != NULL) {
-		if (strstr(token, "System Volume Information") != NULL) {
-			/* Skipping System Volume Information */
-			token = strtok_r(NULL, "\n", &tmp_file_ptr);
-			continue;
-		}
-
-		if (strstr(token, ".wav") != NULL) {
-			LOG_DBG("Skipping wav files");
-			token = strtok_r(NULL, "\n", &tmp_file_ptr);
-			continue;
-		}
-
-		remove_cr_lf(token);
-		char fullPath[SD_PATHLEN_MAX] = {'\0'};
-
-		if (path != NULL) {
-			remove_cr_lf(path);
-			strcat(fullPath, path);
-			strcat(fullPath, "/");
-		}
-
-		strcat(fullPath, token);
-		LOG_DBG("Fullpath: %s", fullPath);
-
-		if (strstr(token, ".lc3") != NULL) {
-			if (num_files_added >= SD_FILECOUNT_MAX) {
-				LOG_WRN("Max file count reached");
-				return -ENOMEM;
-			}
-			strcpy(sd_paths_and_files[num_files_added], fullPath);
-			num_files_added++;
-			LOG_DBG("Added file num: %d at: %s", num_files_added, fullPath);
-
-		} else {
-			ret = traverse_down(fullPath, level + 1);
-			if (ret) {
-				LOG_ERR("Failed to traverse down: %d", ret);
-			}
-		}
-		token = strtok_r(NULL, "\n", &tmp_file_ptr);
-	}
-
-	return 0;
-}
+static uint32_t num_files_added;
 
 static int sd_card_toc_gen(void)
 {
 	/* Traverse SD tree */
 	int ret;
 
-	ret = traverse_down(NULL, 0);
-	if (ret) {
+	ret = sd_card_list_files_match(SD_FILECOUNT_MAX, SD_PATHLEN_MAX, sd_paths_and_files, NULL,
+				       ".lc3");
+	if (ret < 0) {
 		return ret;
 	}
+
+	num_files_added = ret;
 
 	LOG_INF("Number of *.lc3 files on SD card: %d", num_files_added);
 

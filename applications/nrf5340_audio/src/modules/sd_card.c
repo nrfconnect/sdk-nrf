@@ -16,7 +16,7 @@
 #include <zephyr/devicetree.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sd_card, CONFIG_MODULE_SD_CARD_LOG_LEVEL);
+LOG_MODULE_REGISTER(sd_card, 4);
 
 #define SD_ROOT_PATH "/SD:/"
 /* Maximum length for path support by Windows file system */
@@ -31,6 +31,135 @@ static struct fs_mount_t mnt_pt = {
 	.fs_data = &fat_fs,
 };
 
+#define TMP_BUF_SIZE 800
+#define SD_DEPTH_MAX 7
+
+/**
+ * @brief	Replaces first carriage return or line feed with null terminator.
+ */
+static void cr_lf_remove(char *str)
+{
+	char *p = str;
+
+	while (*p != '\0') {
+		if (*p == '\r' || *p == '\n') {
+			*p = '\0';
+			break;
+		}
+		p++;
+	}
+}
+
+static uint32_t num_files_added;
+
+/**
+ * @brief Recursively traverse the SD card tree.
+ */
+static int traverse_down(char *path, uint8_t curr_depth, uint16_t result_file_num_max,
+			 uint16_t result_path_len_max, char result[][result_path_len_max])
+{
+	int ret;
+	char tmp_buf[TMP_BUF_SIZE] = {'\0'};
+	char *tmp_buf_ptr = tmp_buf;
+
+	if (curr_depth > SD_DEPTH_MAX) {
+		LOG_WRN("At tree curr_depth %u, greater than %u", curr_depth, SD_DEPTH_MAX);
+		return 0;
+	}
+
+	size_t buf_size = ARRAY_SIZE(tmp_buf);
+
+	/* Search for folders */
+	ret = sd_card_list_files(path, tmp_buf, &buf_size, false);
+	if (ret == -ENOENT) {
+		/* Not able to open, hence likely not a folder */
+		return 0;
+	} else if (ret) {
+		return ret;
+	}
+
+	LOG_WRN("At curr_depth %d tmp_buf is: %s", curr_depth, tmp_buf);
+
+	char *token = strtok_r(tmp_buf_ptr, "\r\n", &tmp_buf_ptr);
+
+	while (token != NULL) {
+		if (strstr(token, "System Volume Information") != NULL) {
+			/* Skipping System Volume Information */
+			token = strtok_r(NULL, "\n", &tmp_buf_ptr);
+			continue;
+		}
+
+		if (strstr(token, ".wav") != NULL) {
+			LOG_DBG("Skipping wav files");
+			token = strtok_r(NULL, "\n", &tmp_buf_ptr);
+			continue;
+		}
+
+		cr_lf_remove(token);
+		char fullPath[300] = {'\0'};
+
+		if (path != NULL) {
+			cr_lf_remove(path);
+			strcat(fullPath, path);
+			strcat(fullPath, "/");
+		}
+
+		strcat(fullPath, token);
+		LOG_DBG("Fullpath: %s", fullPath);
+
+		if (strstr(token, ".lc3") != NULL) {
+			if (num_files_added >= result_file_num_max) {
+				LOG_WRN("Max file count reached");
+				return -ENOMEM;
+			}
+			strcpy(result[num_files_added], fullPath);
+			num_files_added++;
+			LOG_DBG("Added file num: %d at: %s", num_files_added, fullPath);
+
+		} else {
+			ret = traverse_down(fullPath, curr_depth + 1, result_file_num_max,
+					    result_path_len_max, result);
+			if (ret) {
+				LOG_ERR("Failed to traverse down: %d", ret);
+			}
+		}
+		token = strtok_r(NULL, "\n", &tmp_buf_ptr);
+	}
+
+	return 0;
+}
+
+int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_path_len_max,
+			     char result[][result_path_len_max], char *path,
+			     char const *const pattern)
+{
+
+	int ret;
+
+	if (result == NULL) {
+		return -EINVAL;
+	}
+
+	if (result_file_num_max == 0) {
+		return -EINVAL;
+	}
+
+	if (result_path_len_max == 0) {
+		return -EINVAL;
+	}
+
+	if (pattern == NULL) {
+		return -EINVAL;
+	}
+
+	ret = traverse_down(path, 0, result_file_num_max, result_path_len_max, result);
+	if (ret) {
+		return ret;
+	}
+
+	return num_files_added;
+}
+
 int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool extra_info)
 {
 	int ret;
@@ -44,7 +173,6 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool
 	}
 
 	fs_dir_t_init(&dirp);
-
 	if (path == NULL) {
 		ret = fs_opendir(&dirp, sd_root_path);
 		if (ret) {
@@ -298,7 +426,7 @@ int sd_card_init(void)
 
 	sd_card_size_bytes = (uint64_t)sector_count * sector_size;
 
-	LOG_INF("SD card volume size: %d MB", (uint32_t)(sd_card_size_bytes >> 20));
+	LOG_INF("SD card volume size: %lld B", sd_card_size_bytes);
 
 	mnt_pt.mnt_point = sd_root_path;
 
