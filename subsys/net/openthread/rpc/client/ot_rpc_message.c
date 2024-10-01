@@ -193,17 +193,18 @@ uint16_t otMessageRead(const otMessage *aMessage, uint16_t aOffset, void *aBuf, 
 
 	decoded_ok = zcbor_bstr_decode(ctx.zs, &zst);
 
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
-
 	if (!decoded_ok) {
 		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group, OT_RPC_CMD_MESSAGE_READ,
 			    NRF_RPC_PACKET_TYPE_RSP);
+		nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
 		goto exit;
 	}
 
 	ret = zst.len < aLength ? zst.len : aLength;
 
 	memcpy(aBuf, zst.value, ret);
+
+	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
 
 exit:
 	return ret;
