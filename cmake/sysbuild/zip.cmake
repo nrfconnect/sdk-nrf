@@ -97,8 +97,13 @@ function(dfu_app_zip_package)
         )
       endif()
     else()
-      set(app_update_name "${DEFAULT_IMAGE}.bin")
-      set(secondary_app_update_name mcuboot_secondary_app.bin)
+      if(SB_CONFIG_BOOT_ENCRYPTION)
+        set(app_update_name "${DEFAULT_IMAGE}.signed.encrypted.bin")
+      else()
+        set(app_update_name "${DEFAULT_IMAGE}.signed.bin")
+        set(secondary_app_update_name mcuboot_secondary_app.signed.bin)
+      endif()
+
       mcuboot_image_number_to_slot(slot_primary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
       mcuboot_image_number_to_slot(slot_secondary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
 
@@ -111,10 +116,15 @@ function(dfu_app_zip_package)
             "${app_update_name}slot_index_secondary=${slot_secondary}"
             "${app_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
            )
-        list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin")
+        if(SB_CONFIG_BOOT_ENCRYPTION)
+          list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.encrypted.bin")
+          set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.encrypted.bin)
+        else()
+          list(APPEND bin_files "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin")
+          set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin)
+        endif()
         list(APPEND zip_names ${app_update_name})
         list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts)
-        set(exclude_files EXCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin)
         set(include_files INCLUDE ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin)
       else()
         # Application in DirectXIP mode
@@ -133,12 +143,12 @@ function(dfu_app_zip_package)
              "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
              "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
         )
-        list(APPEND zip_names "${app_update_name};${secondary_app_update_name}")
-        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
         set(exclude_files EXCLUDE
             ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
             ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
         )
+        list(APPEND zip_names "${app_update_name};${secondary_app_update_name}")
+        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
         set(include_files INCLUDE
             ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
             ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
