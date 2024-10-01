@@ -22,7 +22,7 @@ if SOC_SERIES_NRF53X
 config NRF70_RADIO_TEST_COMBO
 	bool "Enable radio test combo build for nRF5340"
 	depends on SOC_NRF5340_CPUAPP
-	select BOARD_ENABLE_CPUNET
+	select SOC_NRF53_CPUNET_ENABLE
 
 config NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE
 	bool "Add empty_app_core as a child image"
@@ -113,7 +113,7 @@ endif # NCS_INCLUDE_RPMSG_CHILD_IMAGE
 
 config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
 	bool
-	depends on SOC_NRF5340_CPUAPP && BOARD_ENABLE_CPUNET
+	depends on SOC_NRF5340_CPUAPP && SOC_NRF53_CPUNET_ENABLE
 	depends on NRF53_UPGRADE_NETWORK_CORE && !NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	default y
 	help
@@ -121,7 +121,7 @@ config NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE
 
 config NCS_SAMPLE_PROVISIONING_NET_CORE_CHILD_IMAGE
 	bool "Add provisioning_image_netcore sample as a child image"
-	depends on SOC_NRF5340_CPUAPP && BOARD_ENABLE_CPUNET
+	depends on SOC_NRF5340_CPUAPP && SOC_NRF53_CPUNET_ENABLE
 	depends on !NCS_INCLUDE_RPMSG_CHILD_IMAGE
 	help
 	  nRF5340 network core provisioning image as a child image.
