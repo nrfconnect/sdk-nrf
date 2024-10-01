@@ -24,14 +24,14 @@ menu "SDFW Service Framework"
 
 config SSF_CLIENT_DOMAIN_ID
 	int
-	default 2 if SOC_NRF54H20_CPUAPP
-	default 3 if SOC_NRF54H20_CPURAD
+	default 2 if SOC_NRF54H20_CPUAPP || SOC_NRF9280_CPUAPP
+	default 3 if SOC_NRF54H20_CPURAD || SOC_NRF9280_CPURAD
 	default 0
 
 config SSF_CLIENT_NRF_RPC_GROUP_NAME
 	string
-	default "app" if SOC_NRF54H20_CPUAPP
-	default "rad" if SOC_NRF54H20_CPURAD
+	default "app" if SOC_NRF54H20_CPUAPP || SOC_NRF9280_CPUAPP
+	default "rad" if SOC_NRF54H20_CPURAD || SOC_NRF9280_CPURAD
 	default ""
 
 config SSF_CLIENT_SYS_INIT
