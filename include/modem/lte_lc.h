@@ -742,7 +742,11 @@ enum lte_lc_modem_evt {
 	LTE_LC_MODEM_EVT_CE_LEVEL_3,
 };
 
-/** Type of factory reset to perform. */
+/**
+ * Type of factory reset to perform.
+ *
+ * @deprecated since v2.8.0.
+ */
 enum lte_lc_factory_reset_type {
 	/** Reset all modem data to factory settings. */
 	LTE_LC_FACTORY_RESET_ALL = 0,
@@ -1789,6 +1793,8 @@ int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
  *
  * @retval 0 if factory reset was performed successfully.
  * @retval -EFAULT if an AT command failed.
+ *
+ * @deprecated since v2.8.0.
  */
 int lte_lc_factory_reset(enum lte_lc_factory_reset_type type);
 

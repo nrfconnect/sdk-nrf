@@ -2354,7 +2354,7 @@ show_usage:
 static int link_shell_settings(const struct shell *shell, size_t argc, char **argv)
 {
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
-	enum lte_lc_factory_reset_type mreset_type = LTE_LC_FACTORY_RESET_INVALID;
+	enum link_factory_reset_type mreset_type = LINK_FACTORY_RESET_INVALID;
 
 	optreset = 1;
 	optind = 1;
@@ -2372,10 +2372,10 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 			break;
 
 		case LINK_SHELL_OPT_MRESET_ALL:
-			mreset_type = LTE_LC_FACTORY_RESET_ALL;
+			mreset_type = LINK_FACTORY_RESET_ALL;
 			break;
 		case LINK_SHELL_OPT_MRESET_USER:
-			mreset_type = LTE_LC_FACTORY_RESET_USER;
+			mreset_type = LINK_FACTORY_RESET_USER;
 			break;
 
 		case 'h':
@@ -2395,7 +2395,7 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 	if (operation == LINK_OPERATION_READ) {
 		link_sett_all_print();
 	} else if (operation == LINK_OPERATION_RESET ||
-		   mreset_type != LTE_LC_FACTORY_RESET_INVALID) {
+		   mreset_type != LINK_FACTORY_RESET_INVALID) {
 		if (operation == LINK_OPERATION_RESET) {
 			link_sett_defaults_set();
 			if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
@@ -2403,10 +2403,10 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 						       CONFIG_LTE_MODE_PREFERENCE_VALUE);
 			}
 		}
-		if (mreset_type == LTE_LC_FACTORY_RESET_ALL) {
-			link_sett_modem_factory_reset(LTE_LC_FACTORY_RESET_ALL);
-		} else if (mreset_type == LTE_LC_FACTORY_RESET_USER) {
-			link_sett_modem_factory_reset(LTE_LC_FACTORY_RESET_USER);
+		if (mreset_type == LINK_FACTORY_RESET_ALL) {
+			link_sett_modem_factory_reset(mreset_type);
+		} else if (mreset_type == LINK_FACTORY_RESET_USER) {
+			link_sett_modem_factory_reset(mreset_type);
 		}
 	} else {
 		goto show_usage;
