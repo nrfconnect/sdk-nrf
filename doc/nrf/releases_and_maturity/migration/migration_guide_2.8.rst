@@ -155,6 +155,47 @@ LTE link control library
 
             err = nrf_modem_at_printf("AT%%XFACTORYRESET=1");
 
+     * Replace the use of the :c:func:`lte_lc_reduced_mobility_get` function with the following:
+
+      .. code-block:: C
+
+         #include <nrf_modem_at.h>
+
+         uint16_t mode;
+
+         ret = nrf_modem_at_scanf("AT%REDMOB?", "%%REDMOB: %hu", &mode);
+         if (ret != 1) {
+            /* Handle failure. */
+         } else {
+            /* Handle success. */
+         }
+
+     * Replace the use of the :c:func:`lte_lc_reduced_mobility_set` function with the following:
+
+      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_DEFAULT` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%REDMOB=0");
+
+      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_NORDIC` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%REDMOB=1");
+
+      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_DISABLED` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%REDMOB=2");
+
 AT command parser
 -----------------
 

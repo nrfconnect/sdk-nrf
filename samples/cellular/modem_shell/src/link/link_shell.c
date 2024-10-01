@@ -1998,7 +1998,7 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 {
 	int ret;
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
-	enum lte_lc_reduced_mobility_mode redmob_mode = LINK_REDMOB_NONE;
+	enum link_reduced_mobility_mode redmob_mode = LINK_REDUCED_MOBILITY_NONE;
 	char snum[10];
 
 	optreset = 1;
@@ -2017,10 +2017,10 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 			break;
 
 		case LINK_SHELL_OPT_REDMOB_DEFAULT:
-			redmob_mode = LTE_LC_REDUCED_MOBILITY_DEFAULT;
+			redmob_mode = LINK_REDUCED_MOBILITY_DEFAULT;
 			break;
 		case LINK_SHELL_OPT_REDMOB_NORDIC:
-			redmob_mode = LTE_LC_REDUCED_MOBILITY_NORDIC;
+			redmob_mode = LINK_REDUCED_MOBILITY_NORDIC;
 			break;
 
 		case 'h':
@@ -2038,21 +2038,21 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 	}
 
 	if (operation == LINK_OPERATION_DISABLE) {
-		redmob_mode = LTE_LC_REDUCED_MOBILITY_DISABLED;
+		redmob_mode = LINK_REDUCED_MOBILITY_DISABLED;
 	}
 	if (operation == LINK_OPERATION_READ) {
-		enum lte_lc_reduced_mobility_mode mode;
+		enum link_reduced_mobility_mode mode;
 
-		ret = lte_lc_reduced_mobility_get(&mode);
-		if (ret) {
+		ret = nrf_modem_at_scanf("AT%REDMOB?", "%%REDMOB: %hu", &mode);
+		if (ret != 1) {
 			mosh_error("Cannot get reduced mobility mode: %d", ret);
 		} else {
 			mosh_print(
 				"Reduced mobility mode read successfully: %s",
 				link_shell_redmob_mode_to_string(mode, snum));
 		}
-	} else if (redmob_mode != LINK_REDMOB_NONE) {
-		ret = lte_lc_reduced_mobility_set(redmob_mode);
+	} else if (redmob_mode != LINK_REDUCED_MOBILITY_NONE) {
+		ret = nrf_modem_at_printf("AT%%REDMOB=%d", redmob_mode);
 		if (ret) {
 			mosh_error("Cannot set reduced mobility mode: %d", ret);
 		} else {

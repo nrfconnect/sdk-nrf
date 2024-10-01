@@ -652,7 +652,10 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_UNKNOWN	= UINT8_MAX,
 };
 
-/** Reduced mobility mode. */
+/** Reduced mobility mode.
+ *
+ *  @deprecated since v2.8.0.
+ */
 enum lte_lc_reduced_mobility_mode {
 	/** Functionality according to the 3GPP relaxed monitoring feature. */
 	LTE_LC_REDUCED_MOBILITY_DEFAULT = 0,
@@ -1767,6 +1770,8 @@ int lte_lc_periodic_search_request(void);
  * @retval 0 if a mode was found and written to the provided pointer.
  * @retval -EINVAL if input parameter was @c NULL.
  * @retval -EFAULT if an AT command failed.
+ *
+ * @deprecated since v2.8.0.
  */
 int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
 
@@ -1779,6 +1784,8 @@ int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
  *
  * @retval 0 if the new reduced mobility mode was accepted by the modem.
  * @retval -EFAULT if an AT command failed.
+ *
+ * @deprecated since v2.8.0.
  */
 int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
 
