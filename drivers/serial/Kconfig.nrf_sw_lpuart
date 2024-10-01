@@ -7,6 +7,7 @@ config NRF_SW_LPUART
 	bool "Low Power UART using REQ/RDY lines"
 	select GPIO
 	select UART_ASYNC_API
+	select RING_BUFFER
 	help
 	  Low power UART implements UART API and extends standard UART
 	  communication with 2 pins protocol for receiver wake up and flow control.
