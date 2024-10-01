@@ -139,7 +139,12 @@ static void pairing_confirm(struct bt_conn *conn)
 	pairing_confirmation_conn = bt_conn_ref(conn);
 
 	printk("Pairing confirmation required for %s\n", addr);
-	printk("Press Button 1 to confirm, Button 2 to reject.\n");
+
+	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF54LX)) {
+		printk("Press Button 0 to confirm, Button 1 to reject.\n");
+	} else {
+		printk("Press Button 1 to confirm, Button 2 to reject.\n");
+	}
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)

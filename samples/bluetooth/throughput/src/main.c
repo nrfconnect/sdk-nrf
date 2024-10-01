@@ -650,8 +650,14 @@ int main(void)
 	}
 
 	printk("\n");
-	printk("Press button 1 or type \"central\" on the central board.\n");
-	printk("Press button 2 or type \"peripheral\" on the peripheral board.\n");
+
+	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF54LX)) {
+		printk("Press button 0 or type \"central\" on the central board.\n");
+		printk("Press button 1 or type \"peripheral\" on the peripheral board.\n");
+	} else {
+		printk("Press button 1 or type \"central\" on the central board.\n");
+		printk("Press button 2 or type \"peripheral\" on the peripheral board.\n");
+	}
 
 	buttons_init();
 
