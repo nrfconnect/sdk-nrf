@@ -339,7 +339,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		return false;
 	}
 
-	PRINT("Trying to get Firmware version\n\r");
+	//PRINT("Trying to get Firmware version\n\r");
 
 #ifdef CONFIG_NRFX_NVMC
 	uint16_t stored_version;
