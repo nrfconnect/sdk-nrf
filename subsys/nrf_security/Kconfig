@@ -30,7 +30,7 @@ config NORDIC_SECURITY_BACKEND
 	  Note that this will enable nrf_oberon by default. Multiple backends is
 	  not supported.
 
-config NRF_PSA_SSF_CRYPTO_CLIENT
+config PSA_SSF_CRYPTO_CLIENT
 	bool
 	prompt "PSA crypto provided through SSF"
 	default y
