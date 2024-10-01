@@ -749,6 +749,11 @@ Modem libraries
 
     * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
     * The :c:func:`lte_lc_neighbor_cell_measurement` function to return an error for invalid GCI count.
+    * The :c:func:`lte_lc_factory_reset` function has been deprecated.
+      Use the ``AT%XFACTORYRESET`` AT command instead.
+      Refer to the :ref:`migration guide <migration_2.8>` for more details.
+    * The :c:enum:`lte_lc_factory_reset_type` type has been deprecated.
+      Refer to the :ref:`migration guide <migration_2.8>` for more details.
 
 * :ref:`lib_location` library:
 

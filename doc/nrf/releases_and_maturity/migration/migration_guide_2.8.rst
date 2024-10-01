@@ -137,6 +137,23 @@ LTE link control library
      * Remove the use of the ``CONFIG_LTE_NETWORK_USE_FALLBACK`` Kconfig option.
        Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
        In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
+     * Replace the use of the :c:func:`lte_lc_factory_reset` function with the following:
+
+      * If the :c:enumerator:`LTE_LC_FACTORY_RESET_ALL` value is used with the :c:func:`lte_lc_factory_reset` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%XFACTORYRESET=0");
+
+      * If the :c:enumerator:`LTE_LC_FACTORY_RESET_USER` value is used with the :c:func:`lte_lc_factory_reset` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%XFACTORYRESET=1");
 
 AT command parser
 -----------------
