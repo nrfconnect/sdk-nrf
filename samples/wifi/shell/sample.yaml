@@ -56,7 +56,7 @@ tests:
   sample.nrf7002_eks_cpunet.shell:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002ek CONFIG_BOARD_ENABLE_CPUNET=y
+    extra_args: SHIELD=nrf7002ek CONFIG_SOC_NRF53_CPUNET_ENABLE=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
@@ -66,7 +66,7 @@ tests:
     build_only: true
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - CONFIG_BOARD_ENABLE_CPUNET=y
+      - CONFIG_SOC_NRF53_CPUNET_ENABLE=y
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
@@ -75,7 +75,7 @@ tests:
   sample.nrf7001_eks_cpunet.shell:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002ek_nrf7001 CONFIG_BOARD_ENABLE_CPUNET=y
+    extra_args: SHIELD=nrf7002ek_nrf7001 CONFIG_SOC_NRF53_CPUNET_ENABLE=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
@@ -173,7 +173,7 @@ tests:
   sample.nrf7002_eb.thingy53.shell:
     sysbuild: true
     build_only: true
-    extra_args: shell_SHIELD=nrf7002eb CONFIG_BOARD_ENABLE_CPUNET=y
+    extra_args: shell_SHIELD=nrf7002eb CONFIG_SOC_NRF53_CPUNET_ENABLE=y
     integration_platforms:
       - thingy53/nrf5340/cpuapp
     platform_allow: thingy53/nrf5340/cpuapp

@@ -6,7 +6,7 @@
 
 source "Kconfig.zephyr"
 
-config BOARD_ENABLE_CPUNET
+config SOC_NRF53_CPUNET_ENABLE
 	bool
 	depends on BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default y

@@ -257,7 +257,7 @@ Direct use of the radio peripheral
 Samples that directly use the radio peripheral can run on the network core of the nRF5340.
 They do not require any functionality from the application core.
 
-However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :kconfig:option:`CONFIG_BOARD_ENABLE_CPUNET` and the code in :file:`zephyr/boards/nordic/nrf5340dk/nrf5340_cpunet_reset.c`).
+However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :kconfig:option:`CONFIG_SOC_NRF53_CPUNET_ENABLE` and the code in :file:`zephyr/boards/nordic/nrf5340dk/nrf5340_cpunet_reset.c`).
 Therefore, you must always program the application core, even if the firmware is supposed to run only on the network core.
 
 You can use the :ref:`nrf5340_empty_app_core` sample for this purpose.
@@ -287,4 +287,4 @@ Samples that do not need radio communication can run on the application core of 
 They do not require any firmware on the network core.
 Therefore, the network core can remain empty.
 
-If you want to enable the network core anyway, set the :kconfig:option:`CONFIG_BOARD_ENABLE_CPUNET` option in the image for the application core.
+If you want to enable the network core anyway, set the :kconfig:option:`CONFIG_SOC_NRF53_CPUNET_ENABLE` option in the image for the application core.
