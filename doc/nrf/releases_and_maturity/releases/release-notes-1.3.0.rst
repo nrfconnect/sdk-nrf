@@ -168,7 +168,7 @@ nRF5340 SoC
 -----------
 
 * Added :ref:`nrf5340_empty_app_core` for samples running purely on the nRF5340 network core.
-* When building a Bluetooth sample for nRF5340, the :ref:`zephyr:bluetooth-hci-ipc-sample` sample is now automatically built as child image.
+* When building a Bluetooth sample for nRF5340, the :zephyr:code-sample:`bluetooth_hci_ipc` sample is now automatically built as child image.
 
 Multiprotocol Service Layer (MPSL)
 -----------------------------------

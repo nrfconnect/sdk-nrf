@@ -701,9 +701,9 @@ int wifi_tput_ot_tput(bool test_wifi, bool is_ant_mode_sep, bool test_thread, bo
 			LOG_ERR("further is not meaningful. So, exiting the test");
 			return ret;
 		}
-#if defined(CONFIG_NRF700X_SR_COEX)
+#if defined(CONFIG_NRF70_SR_COEX)
 		config_pta(is_ant_mode_sep, is_ot_client, is_wifi_server, is_sr_protocol_ble);
-#endif/* CONFIG_NRF700X_SR_COEX */
+#endif/* CONFIG_NRF70_SR_COEX */
 	}
 	if (test_thread) {
 		LOG_INF("Thread operating channel = %d", CONFIG_OT_CHANNEL);

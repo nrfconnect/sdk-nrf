@@ -38,7 +38,7 @@ static volatile uint32_t expected_fatal;
 static uint32_t actual_fatal;
 static uint8_t read_buf[BUF_SIZE];
 
-void k_sys_fatal_error_handler(unsigned int reason, const z_arch_esf_t *pEsf)
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *pEsf)
 {
 	printk("Caught system error -- reason %d\n", reason);
 	actual_fatal++;

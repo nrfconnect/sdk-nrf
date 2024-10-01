@@ -423,7 +423,7 @@ Bluetooth samples
     * Automatic switching to the not discoverable advertising with the show UI indication mode after 10 minutes of discoverable advertising.
     * Automatic switching from discoverable advertising to the not discoverable advertising with the show UI indication mode after a Bluetooth Central successfully pairs.
 
-* :ref:`bluetooth_direction_finding_connectionless_tx` sample:
+* :zephyr:code-sample:`ble_direction_finding_connectionless_tx` sample:
 
   * Fixed a build error related to the missing :kconfig:option:`CONFIG_BT_DF_CONNECTIONLESS_CTE_TX` Kconfig option.
     The option has been added and set to ``y`` in the sample's :file:`prj.conf` file.
@@ -434,22 +434,22 @@ Bluetooth samples
     These were too low because the total transfer time incorrectly included 500ms delay without including the actual transfer.
   * Updated by optimizing throughput speed by increasing MTU to 498 and using the maximum connection event time.
 
-* :ref:`bluetooth_direction_finding_central` sample:
+* :zephyr:code-sample:`bluetooth_direction_finding_central` sample:
 
   * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
     This enables the radio peripheral's Direction Finding Extension for antenna switching.
 
-* :ref:`bluetooth_direction_finding_connectionless_rx` sample:
+* :zephyr:code-sample:`ble_direction_finding_connectionless_rx` sample:
 
   * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
     This enables the radio peripheral's Direction Finding Extension for antenna switching.
 
-* :ref:`bluetooth_direction_finding_connectionless_tx` sample:
+* :zephyr:code-sample:`ble_direction_finding_connectionless_tx` sample:
 
   * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
     This enables the radio peripheral's Direction Finding Extension for antenna switching.
 
-* :ref:`bluetooth_direction_finding_peripheral` sample:
+* :zephyr:code-sample:`bluetooth_direction_finding_peripheral` sample:
 
   * Added devicetree overlay file for the nRF5340 application core that configures GPIO pin forwarding.
     This enables the radio peripheral's Direction Finding Extension for antenna switching.

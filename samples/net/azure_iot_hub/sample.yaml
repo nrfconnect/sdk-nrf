@@ -8,13 +8,11 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
     tags: ci_build sysbuild ci_samples_net
   sample.net.azure_iot_hub.dps:
@@ -24,12 +22,10 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-      - nrf7002dk/nrf5340/cpuapp/ns
     extra_args: OVERLAY_CONFIG=overlay-dps.conf
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"

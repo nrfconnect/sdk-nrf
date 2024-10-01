@@ -21,7 +21,7 @@ tests:
   sample.nrf7002.radio_test_combo:
     sysbuild: true
     build_only: true
-    extra_args: CONFIG_NRF700X_RADIO_TEST_COMBO=y
+    extra_args: CONFIG_NRF70_RADIO_TEST_COMBO=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -29,7 +29,7 @@ tests:
   sample.nrf5340.radio_test_combo:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf7002ek CONFIG_NRF700X_RADIO_TEST_COMBO=y
+    extra_args: SHIELD=nrf7002ek CONFIG_NRF70_RADIO_TEST_COMBO=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp

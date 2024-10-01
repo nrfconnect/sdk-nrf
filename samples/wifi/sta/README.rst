@@ -62,7 +62,7 @@ Quad Serial Peripheral Interface (QSPI) encryption
 **************************************************
 
 This sample demonstrates QSPI encryption API usage.
-You can set the key using the :kconfig:option:`CONFIG_NRF700X_QSPI_ENCRYPTION_KEY` Kconfig option.
+You can set the key using the :kconfig:option:`CONFIG_NRF70_QSPI_ENCRYPTION_KEY` Kconfig option.
 
 If encryption of the QSPI traffic is required for the production devices, matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
 The key from non-volatile storage must be set as the encryption key using the APIs.
@@ -193,7 +193,7 @@ Application's network connection will be lost during the recovery process, and i
 Testing
 =======
 
-To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF700X_UTIL` Kconfig options.
+To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF70_UTIL` Kconfig options.
 
 #. Trigger RPU recovery using the following command:
 

@@ -24,7 +24,7 @@ static struct bt_conn_cb conn_callbacks;
 
 void ble_enable(void)
 {
-	struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
+	const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 		BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME, ADV_INT_MIN, ADV_INT_MAX, NULL);
 
 	bt_enable(NULL);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2020-2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -9,6 +9,7 @@
 #include <zephyr/storage/stream_flash.h>
 #include <stdio.h>
 #include <dfu/dfu_target_stream.h>
+#include <dfu_stream_flatten.h>
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
 #define MODULE "dfu"
@@ -219,7 +220,7 @@ int dfu_target_stream_done(bool successful)
 
 int dfu_target_stream_reset(void)
 {
-	int err;
+	int err = 0;
 
 	stream.buf_bytes = 0;
 	stream.bytes_written = 0;
@@ -240,8 +241,7 @@ int dfu_target_stream_reset(void)
 	/* Erase just the first page. Stream write will take care of erasing remaining pages
 	 * on a next buffered_write round
 	 */
-	err = stream_flash_erase_page(&stream, stream.offset);
-
+	err = stream_flash_flatten_page(&stream, stream.offset);
 	current_id = NULL;
 
 	return err;

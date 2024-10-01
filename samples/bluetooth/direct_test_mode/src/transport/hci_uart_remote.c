@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <zephyr/logging/log.h>
 #include <nrf_rpc/nrf_rpc_ipc.h>
 #include <nrf_rpc_cbor.h>

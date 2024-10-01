@@ -167,7 +167,7 @@ USB HID configuration in USB next stack
 For the USB next stack, the :ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>` selects the :kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT` Kconfig option.
 Every USB HID-class instance is configured through a separate DTS node compatible with ``zephyr,hid-device``.
 The DTS node configures, among others, the used HID boot protocol, the size of the longest HID input report, and the HID polling rate.
-You can configure your preferred USB HID polling rate using the ``in-polling-rate`` property of the DTS node.
+You can configure your preferred USB HID polling rate using the ``in-polling-period-us`` property of the DTS node.
 The lowest polling rate that is supported by the USB High-Speed is 125 µs, which corresponds to 8 kHz report rate.
 The lowest polling rate supported by devices that do not support USB High-Speed is 1000 µs, which corresponds to 1 kHz report rate.
 Make sure to update the DTS configuration to match requirements of your application.

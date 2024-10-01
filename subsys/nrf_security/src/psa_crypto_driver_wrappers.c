@@ -196,7 +196,7 @@ psa_status_t psa_driver_wrapper_sign_message(const psa_key_attributes_t *attribu
 					     size_t signature_size, size_t *signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -258,7 +258,7 @@ psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attri
 					       size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -317,7 +317,7 @@ psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes
 					  size_t signature_size, size_t *signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -379,7 +379,7 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 					    size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -453,8 +453,8 @@ psa_driver_wrapper_get_key_buffer_size_from_key_data(const psa_key_attributes_t 
 						     const uint8_t *data, size_t data_length,
 						     size_t *key_buffer_size)
 {
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
-	psa_key_type_t key_type = attributes->core.type;
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
+	psa_key_type_t key_type = attributes->type;
 
 	*key_buffer_size = 0;
 	switch (location) {
@@ -490,9 +490,9 @@ psa_driver_wrapper_get_key_buffer_size_from_key_data(const psa_key_attributes_t 
 psa_status_t psa_driver_wrapper_get_key_buffer_size(const psa_key_attributes_t *attributes,
 						    size_t *key_buffer_size)
 {
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
-	psa_key_type_t key_type = attributes->core.type;
-	size_t key_bits = attributes->core.bits;
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
+	psa_key_type_t key_type = attributes->type;
+	size_t key_bits = attributes->bits;
 
 	*key_buffer_size = 0;
 	switch (location) {
@@ -519,7 +519,7 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 					     size_t *key_buffer_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -527,7 +527,7 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
 		/* Transparent drivers are limited to generating asymmetric keys */
-		if (PSA_KEY_TYPE_IS_ASYMMETRIC(attributes->core.type)) {
+		if (PSA_KEY_TYPE_IS_ASYMMETRIC(attributes->type)) {
 			/* Cycle through all known transparent accelerators */
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 			status = cracen_generate_key(attributes, key_buffer, key_buffer_size,
@@ -733,7 +733,7 @@ psa_status_t psa_driver_wrapper_get_builtin_key(psa_drv_slot_number_t slot_numbe
 						uint8_t *key_buffer, size_t key_buffer_size,
 						size_t *key_buffer_length)
 {
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
@@ -764,7 +764,7 @@ psa_status_t psa_driver_wrapper_copy_key(psa_key_attributes_t *attributes,
 					 size_t *target_key_buffer_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
@@ -788,7 +788,7 @@ psa_status_t psa_driver_wrapper_derive_key(const psa_key_attributes_t *attribute
 					   uint8_t *key_buffer, size_t key_buffer_size,
 					   size_t *key_buffer_length)
 {
-	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime)) {
+	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
 #ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER
@@ -821,7 +821,7 @@ psa_status_t psa_driver_wrapper_cipher_encrypt(const psa_key_attributes_t *attri
 					       size_t output_size, size_t *output_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -897,7 +897,7 @@ psa_status_t psa_driver_wrapper_cipher_decrypt(const psa_key_attributes_t *attri
 					       size_t output_size, size_t *output_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -953,7 +953,7 @@ psa_status_t psa_driver_wrapper_cipher_encrypt_setup(psa_cipher_operation_t *ope
 						     size_t key_buffer_size, psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -1019,7 +1019,7 @@ psa_status_t psa_driver_wrapper_cipher_decrypt_setup(psa_cipher_operation_t *ope
 						     size_t key_buffer_size, psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -1165,7 +1165,8 @@ psa_status_t psa_driver_wrapper_cipher_finish(psa_cipher_operation_t *operation,
 
 psa_status_t psa_driver_wrapper_cipher_abort(psa_cipher_operation_t *operation)
 {
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
+	(void) status;
 
 	switch (operation->id) {
 #if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
@@ -1207,7 +1208,7 @@ psa_status_t psa_driver_wrapper_hash_compute(psa_algorithm_t alg, const uint8_t 
 	}
 #endif
 
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 
 	/* Try accelerators first */
 #if defined(PSA_NEED_CRACEN_HASH_DRIVER)
@@ -1242,7 +1243,7 @@ psa_status_t psa_driver_wrapper_hash_compute(psa_algorithm_t alg, const uint8_t 
 
 psa_status_t psa_driver_wrapper_hash_setup(psa_hash_operation_t *operation, psa_algorithm_t alg)
 {
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 
 #if !defined(PSA_WANT_ALG_SHA_1)
 	if (alg == PSA_ALG_SHA_1) {
@@ -1397,7 +1398,7 @@ psa_status_t psa_driver_wrapper_aead_encrypt(const psa_key_attributes_t *attribu
 					     size_t *ciphertext_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -1471,7 +1472,7 @@ psa_status_t psa_driver_wrapper_aead_decrypt(const psa_key_attributes_t *attribu
 					     size_t *plaintext_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -1543,7 +1544,7 @@ psa_status_t psa_driver_wrapper_aead_encrypt_setup(psa_aead_operation_t *operati
 						   size_t key_buffer_size, psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -1610,7 +1611,7 @@ psa_status_t psa_driver_wrapper_aead_decrypt_setup(psa_aead_operation_t *operati
 						   size_t key_buffer_size, psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -1879,7 +1880,7 @@ psa_status_t psa_driver_wrapper_mac_compute(const psa_key_attributes_t *attribut
 					    size_t *mac_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 #if !defined(PSA_WANT_ALG_SHA_1)
 	if (PSA_ALG_HMAC_GET_HASH(alg) == PSA_ALG_SHA_1) {
@@ -1944,7 +1945,7 @@ psa_status_t psa_driver_wrapper_mac_sign_setup(psa_mac_operation_t *operation,
 					       psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 #if !defined(PSA_WANT_ALG_SHA_1)
 	if (PSA_ALG_HMAC_GET_HASH(alg) == PSA_ALG_SHA_1) {
@@ -2011,7 +2012,7 @@ psa_status_t psa_driver_wrapper_mac_verify_setup(psa_mac_operation_t *operation,
 						 psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 #if !defined(PSA_WANT_ALG_SHA_1)
 	if (PSA_ALG_HMAC_GET_HASH(alg) == PSA_ALG_SHA_1) {
@@ -2111,7 +2112,7 @@ psa_status_t psa_driver_wrapper_mac_update(psa_mac_operation_t *operation, const
 psa_status_t psa_driver_wrapper_mac_sign_finish(psa_mac_operation_t *operation, uint8_t *mac,
 						size_t mac_size, size_t *mac_length)
 {
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
 
 	switch (operation->id) {
 #if defined(PSA_NEED_CRACEN_MAC_DRIVER)
@@ -2139,14 +2140,14 @@ psa_status_t psa_driver_wrapper_mac_sign_finish(psa_mac_operation_t *operation, 
 		(void)mac;
 		(void)mac_size;
 		(void)mac_length;
-		return PSA_ERROR_INVALID_ARGUMENT;
+		return status;
 	}
 }
 
 psa_status_t psa_driver_wrapper_mac_verify_finish(psa_mac_operation_t *operation,
 						  const uint8_t *mac, size_t mac_length)
 {
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
 
 	switch (operation->id) {
 #if defined(PSA_NEED_CRACEN_MAC_DRIVER)
@@ -2171,7 +2172,7 @@ psa_status_t psa_driver_wrapper_mac_verify_finish(psa_mac_operation_t *operation
 	default:
 		(void)mac;
 		(void)mac_length;
-		return PSA_ERROR_INVALID_ARGUMENT;
+		return status;
 	}
 }
 
@@ -2201,7 +2202,7 @@ psa_status_t psa_driver_wrapper_mac_abort(psa_mac_operation_t *operation)
 psa_status_t psa_driver_wrapper_key_derivation_setup(psa_key_derivation_operation_t *operation,
 						     psa_algorithm_t alg)
 {
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 
 #if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
 	status = cracen_key_derivation_setup(&operation->ctx.cracen_kdf_ctx, alg);
@@ -2224,7 +2225,7 @@ psa_status_t psa_driver_wrapper_key_derivation_setup(psa_key_derivation_operatio
 	(void)status;
 	(void)operation;
 	(void)alg;
-	return PSA_ERROR_NOT_SUPPORTED;
+	return status;
 }
 
 psa_status_t
@@ -2371,7 +2372,7 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -2434,7 +2435,7 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 					   const psa_pake_cipher_suite_t *cipher_suite)
 {
 	psa_status_t status;
-	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime)) {
+	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
 #ifdef PSA_NEED_CRACEN_PAKE_DRIVER
@@ -2658,7 +2659,7 @@ psa_status_t psa_driver_wrapper_asymmetric_encrypt(
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -2718,7 +2719,7 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -2868,7 +2869,7 @@ psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bit
 
 psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *attributes)
 {
-	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->core.lifetime);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)

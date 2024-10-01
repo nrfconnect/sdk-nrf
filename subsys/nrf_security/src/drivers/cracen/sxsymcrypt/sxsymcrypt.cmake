@@ -12,9 +12,9 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   ${CMAKE_CURRENT_LIST_DIR}/src/sha3.c
   ${CMAKE_CURRENT_LIST_DIR}/src/trng.c
-
   ${CMAKE_CURRENT_LIST_DIR}/src/platform/baremetal/cmdma_hw.c
-  )
+  ${CMAKE_CURRENT_LIST_DIR}/src/platform/baremetal/interrupts.c
+)
 
 list(APPEND cracen_driver_include_dirs
     ${CMAKE_CURRENT_LIST_DIR}/include

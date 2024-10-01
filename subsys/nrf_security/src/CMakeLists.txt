@@ -5,79 +5,56 @@
 #
 
 #
-# File including instructions to build PSA APIs.
+# File including instructions to build PSA crypto APIs.
 #
-# Can be executed by both the NCS and TF-M build systems.
+# This is executed both in NCS (NS, secure only) build of Mbed TLS as
+# well as TF-M build
 #
-# The variable BUILD_INSIDE_TFM can be used to distinguish between being
-# within the TF-M build system or the NCS build system.
-#
-# For TF-M the nrf_security/tfm/CMakeLists.txt file will execute this file. BUILD_INSIDE_TFM=True
-# For NCS  the nrf_security/CMakeLists.txt     file will execute this file. BUILD_INSIDE_TFM=False
-#
+# The Mbed TLS configuration MBEDTLS_PSA_CRYPTO_SPM used to check if this is
+# used inside a TF-M build.
 
-set(OBERON_PSA_PATH ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR})
+# The interface is only generated in the NS image if TF-M is used
+include(${NRF_SECURITY_ROOT}/cmake/generate_configs.cmake)
+generate_mbedcrypto_interface_configs()
+generate_mbedcrypto_library_configs()
 
-# Library for mbedcrypto includes and configurations
-add_library(mbedcrypto_common INTERFACE)
+# This configuration is used for regex matching of the PSA crypto config interface path
+# This regex is used by nrf_security_add_zephyr_options when adding includes from
+# the zephyr_interface to nrf_security libraries
+string(REPLACE "/" "\\/" PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX ${PSA_CRYPTO_CONFIG_INTERFACE_PATH})
 
-# Add the config-file entry point
-target_compile_definitions(mbedcrypto_common
+# Add include folders for psa_crypto_config (interface builds)
+target_include_directories(psa_crypto_config
   INTERFACE
-    -DMBEDTLS_CONFIG_FILE="${CONFIG_MBEDTLS_CFG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE="${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}"
-    -DMBEDTLS_PSA_CRYPTO_CONFIG
+    ${PSA_CRYPTO_CONFIG_INTERFACE_PATH}
+    ${NRF_SECURITY_ROOT}/include
 )
 
-# Add the user config only if it is set
-if(NOT ${CONFIG_MBEDTLS_USER_CONFIG_FILE} STREQUAL "nrf-config-user-empty.h" )
-  target_compile_definitions(mbedcrypto_common
-    INTERFACE
-      -DMBEDTLS_USER_CONFIG_FILE="${CONFIG_MBEDTLS_USER_CONFIG_FILE}"
-  )
+# Add fallback include folders from Mbed TLS for driver context structures
+# This is only necessary when building with legacy code which will include <psa/crypto.h>
+if(NOT (CMAKE_BUILD_WITH_TFM OR CONFIG_MBEDTLS_PSA_CRYPTO_C))
+target_include_directories(psa_crypto_config
+  INTERFACE
+    ${OBERON_PSA_CORE_PATH}/include
+)
 endif()
 
-if(BUILD_INSIDE_TFM)
-  # In order to support FPU in TF-M the following is documented by the TF-M
-  # build system:
-  #
-  #   Secure and non-secure libraries are compiled with COMPILER_CP_FLAG and
-  #   linked with LINKER_CP_OPTION for different FP ABI types. All those
-  #   libraries shall be built with COMPILER_CP_FLAG
-  target_compile_options(mbedcrypto_common
-    INTERFACE
-      ${COMPILER_CP_FLAG}
-  )
+# Add a meta-target of the PSA config interface to avoid using generator expressions
+add_library(psa_crypto_config_chosen INTERFACE)
 
-  target_link_options(mbedcrypto_common
-    INTERFACE
-      ${LINKER_CP_OPTION}
-  )
-endif()
-
-set(generated_include_path ${CMAKE_CURRENT_BINARY_DIR}/include/generated)
-
-# Empty out previous versions of config-files
-file(REMOVE_RECURSE ${generated_include_path})
-
-# Generate PSA WANT configurations
-include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_want_config.cmake)
-
-# Generate mbed TLS configurations
-if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR NOT COMPILE_PSA_APIS)
-  include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
+if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
+  target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_config)
 else()
-  include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_config.cmake)
+  target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_library_config)
 endif()
 
-if(CONFIG_GENERATE_MBEDTLS_CFG_FILE)
-  # Add the generated CONFIG_MBEDTLS_CFG_FILE file to the include path
-  target_include_directories(mbedcrypto_common
-    INTERFACE
-    ${generated_include_path} # From cmake/*_crypto_config.cmake
+
+# Add include folders for psa_crypto_library_config (library build in S-only and inside TF-M)
+target_include_directories(psa_crypto_library_config
+  INTERFACE
+    ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
+    ${NRF_SECURITY_ROOT}/include
 )
-endif()
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
   if (CONFIG_BUILD_WITH_TFM)
@@ -90,25 +67,35 @@ if(CONFIG_MBEDTLS_ENABLE_HEAP)
   endif()
 endif()
 
-if (COMPILE_PSA_APIS)
-  # Add the local version of psa_crypto_driver_wrappers.c
-  list(APPEND src_crypto
-    psa_crypto_driver_wrappers.c
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND NOT BUILD_INSIDE_TFM)
+  append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
+    pem.c
+    pkcs12.c
+    pkcs5.c
+    pkparse.c
+    pkwrite.c
+    dhm.c
+    cipher.c
+    cipher_wrap.c
+    md.c
+    pk.c
+    pk_ecc.c
+    pk_wrap.c
+    pkwrite.c
+    psa_util.c
   )
 endif()
-
-append_with_prefix(src_crypto ${ARM_MBEDTLS_PATH}/library
-  pem.c
-  pkcs12.c
-  pkcs5.c
-  pkparse.c
-  pkwrite.c
-)
 
 # Library for mbed TLS crypto toolbox functionality
 add_library(${mbedcrypto_target}
   STATIC
     ${src_crypto}
+)
+
+target_link_libraries(${mbedcrypto_target}
+  INTERFACE
+    psa_crypto_config_chosen
+    psa_interface
 )
 
 if(CONFIG_PSA_SSF_CRYPTO_CLIENT)
@@ -124,12 +111,27 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   base64.c
   bignum.c
   bignum_core.c
+  block_cipher.c
   nist_kw.c
   oid.c
   padlock.c
   version.c
   constant_time.c
 )
+
+# Legacy APIs were missing files added by Oberon PSA core (not built in
+# certain instances. This adds the same platform support as the Oberon PSA core)
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
+  append_with_prefix(src_crypto_base  ${OBERON_PSA_CORE_PATH}/library/
+    platform.c
+    platform_util.c
+  )
+endif()
+
+
+# Add threading support for PSA core (if enabled)
+include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
+include(${NRF_SECURITY_ROOT}/src/utils/nrf_security_utils.cmake)
 
 # Add base library with files required by all drivers/backends.
 add_library(mbedcrypto_base
@@ -139,43 +141,71 @@ add_library(mbedcrypto_base
 
 target_link_libraries(mbedcrypto_base
   PRIVATE
-    mbedcrypto_common
+    psa_crypto_config_chosen
+    $<TARGET_NAME_IF_EXISTS:platform_s>
+    nrf_security_utils
+  PUBLIC
+    psa_interface
 )
+
+nrf_security_add_zephyr_options(mbedcrypto_base)
+
+# Misusing the psa_crypto_config and psa_crypto_library_config awareness to
+# set compiler-flags to ensure right floating-point types are set
+if(COMPILER_CP_FLAG)
+  target_compile_options(psa_crypto_config
+    INTERFACE
+      ${COMPILER_CP_FLAG}
+  )
+
+  target_compile_options(psa_crypto_library_config
+    INTERFACE
+      ${COMPILER_CP_FLAG}
+  )
+endif()
+
+# Misusing the psa_crypto_config and psa_crypto_library_config awareness to
+# set linker-options to ensure right floating-point types are set
+if(LINKER_CP_OPTION)
+  target_link_options(psa_crypto_config
+    INTERFACE
+      ${LINKER_CP_OPTION}
+  )
+
+  target_link_options(psa_crypto_library_config
+  INTERFACE
+    ${LINKER_CP_OPTION}
+)
+endif()
 
 target_link_libraries(${mbedcrypto_target}
   PRIVATE
     mbedcrypto_base
 )
 
-# Add regular mbedcrypto common includes and configurations
-target_link_libraries(${mbedcrypto_target}
-  PUBLIC
-    mbedcrypto_common
+# Disable compile warnings for Mbed TLS sources for files that are
+# added to the build for legacy APIs but are not enabled due to
+# configurations not being set.
+#
+# These can be removed when NCSDK-28901 is addressed.
+target_compile_options(${mbedcrypto_target}
+  PRIVATE
+    -Wno-unused-function
+    -Wno-unused-variable
 )
 
-target_compile_options(${mbedcrypto_target} PRIVATE
-  # Don't be too strict with warnings on mbedtls code. This code is not
-  # ours, so it's not necessary to do too much static analysis on
-  # it. And any warnings that do pop up are difficult to fix as they
-  # require changes far upstream.
-  -Wno-unused-function
-  -Wno-unused-variable
-  # Disable warnings showing up in Oberon PSA crypto code.
-  -Wno-stringop-overflow
-  -Wno-stringop-overread
-  -Wno-strict-aliasing
-  )
+# Add PSA core
+if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
+  add_subdirectory(core)
+endif()
 
-add_subdirectory(core)
-
-# Add drivers if enabled
+# Add drivers (for legacy and PSA crypto build)
 add_subdirectory(drivers)
 
-# Add legacy mbed TLS APIs
-add_subdirectory(legacy)
-
-# Print all files in the mbedcrypto_target (with optional legacy-additions)
-nrf_security_debug_list_target_files(${mbedcrypto_target})
+# Add legacy Mbed TLS APIs
+if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
+  add_subdirectory(legacy)
+endif()
 
 # In TF-M build, a psa_interface lib is created and we must inherit its settings
 set_property(TARGET ${mbedcrypto_target}
@@ -202,20 +232,20 @@ if (CONFIG_MBEDTLS_X509_LIBRARY)
     x509write_csr.c
   )
 
-  add_library(${mbedx509_target} STATIC
+  add_library(mbedx509 STATIC
     ${src_x509}
   )
 
-  # Add options from Zephyr build
-  nrf_security_add_zephyr_options(${mbedx509_target})
-
-  target_link_libraries(${mbedx509_target}
+  # Link with
+  target_link_libraries(mbedx509
     PRIVATE
+      psa_crypto_config_chosen
       ${mbedcrypto_target}
       mbedcrypto_base
-    PUBLIC
-      mbedcrypto_common
   )
+
+  nrf_security_add_zephyr_options(mbedx509)
+
 endif()
 
 # Library for TLS protocol support
@@ -240,29 +270,27 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
   )
 
   if (CONFIG_MBEDTLS_DEBUG)
-	list(APPEND src_tls
-	  ${ARM_MBEDTLS_PATH}/library/ssl_debug_helpers_generated.c
-	)
+    list(APPEND src_tls
+      ${ARM_MBEDTLS_PATH}/library/ssl_debug_helpers_generated.c
+    )
   endif()
 
-  add_library(${mbedtls_target} STATIC
+  add_library(mbedtls STATIC
     ${src_tls}
   )
 
-  # Add options from Zephyr build
-  nrf_security_add_zephyr_options(${mbedtls_target})
-
-  target_link_libraries(${mbedtls_target}
+  target_link_libraries(mbedtls
     PRIVATE
-      ${mbedx509_target}
+      psa_crypto_config_chosen
+      mbedx509
       ${mbedcrypto_target}
       mbedcrypto_base
-    PUBLIC
-      mbedcrypto_common
   )
+
+  nrf_security_add_zephyr_options(mbedtls)
 endif()
 
-if (NOT BUILD_INSIDE_TFM)
+if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   # Add zephyr-specific code
   add_subdirectory(zephyr)
 endif()

@@ -6,15 +6,16 @@
 
 # Additional build logic for Zephyr builds
 
-# Add mbedcrypto common includes and definitions to zephyr build
-target_link_libraries(zephyr_interface INTERFACE mbedcrypto_common)
+# Add the PSA interface to the zephyr_interface for use by the 
+# main app. Note that this doesn't include psa_crypto_library_config
+# to ensure that MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER is not set.
+target_link_libraries(zephyr_interface
+  INTERFACE
+    psa_crypto_config_chosen
+    psa_interface
+)
 
 if (CONFIG_MBEDTLS_DEBUG)
-  # Add Zephyr's mbedlts module include path because we need rely on their headers for debug logs.
-  target_include_directories(mbedcrypto_common
-      INTERFACE
-        ${ZEPHYR_BASE}/modules/mbedtls/include
-  )
   zephyr_library_sources(${ZEPHYR_BASE}/modules/mbedtls/debug.c)
   zephyr_library_sources(debug_init.c)
 endif()
@@ -49,10 +50,6 @@ if(DEFINED src_zephyr)
 
   zephyr_library_sources(${src_zephyr})
 
-  zephyr_library_include_directories(
-    $<TARGET_PROPERTY:${mbedcrypto_target},INTERFACE_INCLUDE_DIRECTORIES>
-  )
-
   zephyr_library_compile_definitions(
     $<TARGET_PROPERTY:${mbedcrypto_target},INTERFACE_COMPILE_DEFINITIONS>
   )
@@ -69,10 +66,6 @@ if(DEFINED src_zephyr)
   zephyr_library_app_memory(k_mbedtls_partition)
 
 endif()
-
-# Add configuration/options from zephyr interface libraries
-nrf_security_add_zephyr_options(${mbedcrypto_target})
-nrf_security_add_zephyr_options(mbedcrypto_base)
 
 # Add the generic mbedtls_external library to interface with zephyr
 add_library(mbedtls_external INTERFACE)

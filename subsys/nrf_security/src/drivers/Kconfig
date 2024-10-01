@@ -27,12 +27,12 @@ config PSA_CRYPTO_DRIVER_CC3XX
 	  all supported key sizes are included in the build.
 
 config PSA_CRYPTO_DRIVER_CRACEN
-	bool "Enable the Cracen PSA driver" if !NRF_SECURITY_LEGACY_AND_PSA
+	bool "Enable the Cracen PSA driver"
 	depends on MBEDTLS_PSA_CRYPTO_C
 	depends on CRACEN_HW_PRESENT
 	# CRACEN uses the k_event_ API
 	select EVENTS if MULTITHREADING
-	default y if !NRF_SECURITY_LEGACY_AND_PSA
+	default y
 	help
 	  PSA crypto driver for the CRACEN HW peripheral.
 

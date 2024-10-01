@@ -8,7 +8,7 @@
 #define __FLASH_LAYOUT_H__
 
 #include <pm_config.h>
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 /* This header file is included from linker scatter file as well, where only a
  * limited C constructs are allowed. Therefore it is not possible to include

@@ -845,7 +845,7 @@ It uses the following Zephyr libraries:
 * :ref:`gpio_api`
 * :ref:`lwm2m_interface`
 * :ref:`pwm_api`
-* :ref:`sensor_api`
+* :ref:`zephyr:sensor`
 
 In addition, it uses the following secure firmware component:
 

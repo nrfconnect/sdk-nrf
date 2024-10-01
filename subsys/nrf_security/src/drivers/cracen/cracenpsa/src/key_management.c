@@ -31,7 +31,7 @@
 
 extern const uint8_t cracen_N3072[384];
 
-extern nrf_security_mutex_t cracen_mutex_symmetric;
+extern mbedtls_threading_mutex_t cracen_mutex_symmetric;
 
 #define DEFAULT_KEY_SIZE(bits) (bits), PSA_BITS_TO_BYTES(bits), (1 + 2 * PSA_BITS_TO_BYTES(bits))
 static struct {
@@ -774,8 +774,6 @@ static psa_status_t ecc_export_key(const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size, uint8_t *data,
 				   size_t data_size, size_t *data_length)
 {
-	psa_status_t psa_status;
-
 	if (data_size < key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
@@ -1345,7 +1343,7 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 		 * use case. Here the decision was to avoid defining another mutex to handle the
 		 * push buffer for the rest of the use cases.
 		 */
-		nrf_security_mutex_lock(cracen_mutex_symmetric);
+		nrf_security_mutex_lock(&cracen_mutex_symmetric);
 		status = cracen_kmu_prepare_key(key_buffer);
 		if (status == SX_OK) {
 			memcpy(data, kmu_push_area, key_out_size);
@@ -1353,7 +1351,7 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 		}
 
 		(void)cracen_kmu_clean_key(key_buffer);
-		nrf_security_mutex_unlock(cracen_mutex_symmetric);
+		nrf_security_mutex_unlock(&cracen_mutex_symmetric);
 
 		return silex_statuscodes_to_psa(status);
 	}
@@ -1389,7 +1387,7 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 	psa_status_t psa_status;
 	size_t key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 
-	nrf_security_mutex_lock(cracen_mutex_symmetric);
+	nrf_security_mutex_lock(&cracen_mutex_symmetric);
 	status = cracen_kmu_prepare_key(source_key);
 
 	if (status == SX_OK) {
@@ -1401,7 +1399,7 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 	}
 
 	(void)cracen_kmu_clean_key(source_key);
-	nrf_security_mutex_unlock(cracen_mutex_symmetric);
+	nrf_security_mutex_unlock(&cracen_mutex_symmetric);
 
 	if (status != SX_OK) {
 		return silex_statuscodes_to_psa(status);

@@ -12,7 +12,7 @@
 #include <zcbor_decode.h>
 #include <zephyr/storage/flash_map.h>
 #include <suit_dfu_cache.h>
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 /* Adding 5 bytes for bstring header and 1 byte for indefinite map header and
  * 9 bytes for tstr

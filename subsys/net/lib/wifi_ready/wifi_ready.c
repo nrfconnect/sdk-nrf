@@ -22,8 +22,8 @@ static wifi_ready_callback_t wifi_ready_callbacks[CONFIG_WIFI_READY_MAX_CALLBACK
 static unsigned char callback_count;
 static K_MUTEX_DEFINE(wifi_ready_mutex);
 
-#define WPA_SUPP_EVENTS (NET_EVENT_WPA_SUPP_READY) | \
-			(NET_EVENT_WPA_SUPP_NOT_READY)
+#define WPA_SUPP_EVENTS (NET_EVENT_SUPPLICANT_READY) | \
+			(NET_EVENT_SUPPLICANT_NOT_READY)
 
 static struct net_mgmt_event_callback net_wpa_supp_cb;
 
@@ -68,10 +68,10 @@ static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 
 	LOG_DBG("Event received: %d", mgmt_event);
 	switch (mgmt_event) {
-	case NET_EVENT_WPA_SUPP_READY:
+	case NET_EVENT_SUPPLICANT_READY:
 		handle_wpa_supp_event(iface, true);
 		break;
-	case NET_EVENT_WPA_SUPP_NOT_READY:
+	case NET_EVENT_SUPPLICANT_NOT_READY:
 		handle_wpa_supp_event(iface, false);
 		break;
 	default:

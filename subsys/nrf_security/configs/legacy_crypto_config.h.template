@@ -538,25 +538,11 @@
 #cmakedefine MBEDTLS_CIPHER_MODE_CBC
 
 /**
- * \def MBEDTLS_CIPHER_MODE_CFB
- *
- * Enable Cipher Feedback mode (CFB) for symmetric ciphers.
- */
-#cmakedefine MBEDTLS_CIPHER_MODE_CFB
-
-/**
  * \def MBEDTLS_CIPHER_MODE_CTR
  *
  * Enable Counter Block Cipher mode (CTR) for symmetric ciphers.
  */
 #cmakedefine MBEDTLS_CIPHER_MODE_CTR
-
-/**
- * \def MBEDTLS_CIPHER_MODE_OFB
- *
- * Enable Output Feedback mode (OFB) for symmetric ciphers.
- */
-#cmakedefine MBEDTLS_CIPHER_MODE_OFB
 
 /**
  * \def MBEDTLS_CIPHER_MODE_XTS
@@ -1070,7 +1056,7 @@
  * Note that this option is meant for internal use only and may be removed
  * without notice. It is incompatible with MBEDTLS_USE_PSA_CRYPTO.
  */
-//#define MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+#cmakedefine MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 
 /**
  * \def MBEDTLS_MEMORY_DEBUG
@@ -1616,7 +1602,9 @@
  *
  * Comment this macro to disable support for key export
  */
+#ifndef MBEDTLS_SSL_EXPORT_KEYS
 #cmakedefine MBEDTLS_SSL_EXPORT_KEYS
+#endif /* MBEDTLS_SSL_EXPORT_KEYS */
 
 /**
  * \def MBEDTLS_SSL_SERVER_NAME_INDICATION
@@ -1756,7 +1744,7 @@
  * This feature is still experimental and is not ready for production since
  * it is not completed.
  */
-//#define MBEDTLS_PSA_CRYPTO_CONFIG
+#define MBEDTLS_PSA_CRYPTO_CONFIG
 
 /**
  * \def MBEDTLS_VERSION_FEATURES

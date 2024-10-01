@@ -18,7 +18,7 @@ Trying to change them directly in an image will result in the new value being ov
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
 | :kconfig:option:`CONFIG_BT_FAST_PAIR`                                   +               ``SB_CONFIG_BT_FAST_PAIR``                                  | Main application        |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_WIFI_NRF700X`                                   +               ``SB_CONFIG_WIFI_NRF700X``                                  |                         |
+| :kconfig:option:`CONFIG_WIFI_NRF70`                                     +               ``SB_CONFIG_WIFI_NRF70``                                    |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_DISABLED`            +               ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_DISABLED``               |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
@@ -26,13 +26,13 @@ Trying to change them directly in an image will result in the new value being ov
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE`               +               ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE``                  |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_NRF700X_SYSTEM_MODE`                            +               ``SB_CONFIG_WIFI_NRF700X_SYSTEM_MODE``                      |                         |
+| :kconfig:option:`CONFIG_NRF70_SYSTEM_MODE`                              +               ``SB_CONFIG_WIFI_NRF70_SYSTEM_MODE``                        |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_NRF700X_SCAN_ONLY`                              +               ``SB_CONFIG_WIFI_NRF700X_SCAN_ONLY``                        |                         |
+| :kconfig:option:`CONFIG_NRF70_SCAN_ONLY`                                +               ``SB_CONFIG_WIFI_NRF70_SCAN_ONLY``                          |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_NRF700X_RADIO_TEST`                             +               ``SB_CONFIG_WIFI_NRF700X_RADIO_TEST``                       |                         |
+| :kconfig:option:`CONFIG_NRF70_RADIO_TEST`                               +               ``SB_CONFIG_WIFI_NRF70_RADIO_TEST``                         |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES`                  +               ``SB_CONFIG_WIFI_NRF700X_SYSTEM_WITH_RAW_MODES``            |                         |
+| :kconfig:option:`CONFIG_NRF70_SYSTEM_WITH_RAW_MODES`                    +               ``SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES``              |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU`                          +               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``         |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |

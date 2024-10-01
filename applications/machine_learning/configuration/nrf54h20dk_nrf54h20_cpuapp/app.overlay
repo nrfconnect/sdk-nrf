@@ -97,6 +97,15 @@ ipc1: &cpuapp_cpuppr_ipc {
        };
 };
 
+/* Remove DTS nodes associated with the cpuflpr target as they refer to the
+ * cpuflpr_code_partition label from the cpuapp_rx_partitions node. The label has
+ * been removed in this file due to the modification of the cpuapp_rx_partitions
+ * node. The cpuflpr_vpr and cpuapp_cpuflpr_ipc DTS nodes are removed to prevent
+ * build failures.
+ */
+/delete-node/ &cpuflpr_vpr;
+/delete-node/ &cpuapp_cpuflpr_ipc;
+
 /* Disable unused sensors and peripherals. */
 /delete-node/ &bme688;
 

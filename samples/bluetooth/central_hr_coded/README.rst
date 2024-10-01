@@ -7,7 +7,7 @@ Bluetooth: Central Heart Rate Monitor with Coded PHY
    :local:
    :depth: 2
 
-The Central Heart Rate Monitor with Coded PHY offers similar functionality to the :ref:`zephyr:bluetooth_central_hr` sample from Zephyr.
+The Central Heart Rate Monitor with Coded PHY offers similar functionality to the :zephyr:code-sample:`ble_central_hr` sample from Zephyr.
 However, this sample specifically looks for heart rate monitors using LE Coded PHY.
 
 Requirements

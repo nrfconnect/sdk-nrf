@@ -117,7 +117,7 @@
 	status = "okay";
 };
 
-&nrf700x {
+&nrf70 {
 	iovdd-ctrl-gpios = <&gpio0 27 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
 	bucken-gpios = <&gpio0 28 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
 	host-irq-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;

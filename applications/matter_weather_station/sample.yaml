@@ -50,7 +50,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: matter_weather_station_SHIELD=nrf7002eb FILE_SUFFIX=release
-                SB_CONFIG_WIFI_NRF700X=y CONFIG_CHIP_WIFI=y
+                SB_CONFIG_WIFI_NRF70=y CONFIG_CHIP_WIFI=y
     platform_allow: thingy53/nrf5340/cpuapp
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:

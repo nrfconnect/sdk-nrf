@@ -140,7 +140,7 @@ nRF9160
     * Added handling of sensor channel ``get`` commands received from `nRF Connect for Cloud`_.
     * Added event handler for :ref:`lte_lc_readme` events.
     * Added the detection feature when there is no SIM card in the slot.
-    * Added support for Bosch BSEC library 1.4.8.0 (see :ref:`zephyr:bme680`).
+    * Added support for Bosch BSEC library 1.4.8.0 (see Zephyr BME680 sample).
       This breaks compatibility with older versions of the library.
     * Added a timestamp for sensor or cloud data, or both.
     * Added the ``CONFIG_UI_LED_PWM_FREQUENCY`` Kconfig option for setting the LED PWM frequency.
@@ -482,7 +482,7 @@ Build system
   * Added the ``ncs_add_partition_manager_config`` function that allows out-of-tree users to specify partition manager configuration files.
   * Added a warning if no static partition manager configuration is provided when one image (or more) is not built from source in a multi-image build.
 
-* Enabled choosing a build strategy for Zephyr's :ref:`zephyr:bluetooth-hci-ipc-sample` sample when it is built as a child image.
+* Enabled choosing a build strategy for Zephyr's :zephyr:code-sample:`bluetooth_hci_ipc` sample when it is built as a child image.
   See :ref:`ug_multi_image` for details.
 * Improved multi-core builds by disassociating domain names from board names.
 * Bugfixes:

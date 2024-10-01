@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(bt_vol_rend, CONFIG_BT_VOL_LOG_LEVEL);
  * @note	This callback handler will be triggered if volume state has changed,
  *		or the playback was muted or unmuted from the volume_controller.
  */
-static void vcs_state_rend_cb_handler(int err, uint8_t volume, uint8_t mute)
+static void vcs_state_rend_cb_handler(struct bt_conn *conn, int err, uint8_t volume, uint8_t mute)
 {
 	int ret;
 
@@ -52,7 +52,7 @@ static void vcs_state_rend_cb_handler(int err, uint8_t volume, uint8_t mute)
  *
  * @note	This callback handler will be triggered if the VCS flags has changed.
  */
-static void vcs_flags_rend_cb_handler(int err, uint8_t flags)
+static void vcs_flags_rend_cb_handler(struct bt_conn *conn, int err, uint8_t flags)
 {
 	if (err) {
 		LOG_ERR("VCS flag callback error: %d", err);

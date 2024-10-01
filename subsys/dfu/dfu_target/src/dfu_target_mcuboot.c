@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nordic Semiconductor ASA
+ * Copyright (c) 2019-2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -23,6 +23,7 @@
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
 #include <zephyr/devicetree.h>
+#include <dfu_stream_flatten.h>
 
 LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
@@ -186,9 +187,9 @@ int dfu_target_mcuboot_done(bool successful)
 
 	if (successful) {
 		stream_buf_bytes = 0;
-
-		err = stream_flash_erase_page(dfu_target_stream_get_stream(),
+		err = stream_flash_flatten_page(dfu_target_stream_get_stream(),
 					secondary_last_address[curr_sec_img]);
+
 		if (err != 0) {
 			LOG_ERR("Unable to delete last page: %d", err);
 			return err;

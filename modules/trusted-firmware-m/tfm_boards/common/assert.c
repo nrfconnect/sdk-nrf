@@ -5,7 +5,7 @@
  */
 
 #include <pm_config.h>
-#include "autoconf.h"
+#include "zephyr/autoconf.h"
 #include "region_defs.h"
 #include "utilities.h"
 

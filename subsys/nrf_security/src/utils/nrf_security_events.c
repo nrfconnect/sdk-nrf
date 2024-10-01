@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <stdbool.h>
-#include <nrf_security_events.h>
+#include "nrf_security_events.h"
 
 #if defined(__NRF_TFM__)
 #include "cmsis.h"

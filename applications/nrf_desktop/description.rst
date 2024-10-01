@@ -1054,7 +1054,7 @@ See the following list of possible scenarios and best practices:
 
   * If you use the USB legacy stack, you can configure your preferred USB HID poll interval using the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option.
     By default, the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option is set to ``1`` to request the lowest possible poll interval.
-  * If you use the USB next stack, you can configure your preferred USB HID polling rate using the ``in-polling-rate`` property of a DTS node compatible with ``zephyr,hid-device``.
+  * If you use the USB next stack, you can configure your preferred USB HID polling rate using the ``in-polling-period-us`` property of a DTS node compatible with ``zephyr,hid-device``.
     The lowest polling rate that is supported by the USB High-Speed is 125 µs, which corresponds to 8 kHz report rate.
     The lowest polling rate supported by devices that do not support USB High-Speed is 1000 µs, which corresponds to 1 kHz report rate.
 

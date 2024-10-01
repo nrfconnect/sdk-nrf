@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <zephyr/logging/log.h>
 #include <nrf_rpc/nrf_rpc_ipc.h>
 #include <nrf_rpc_cbor.h>
@@ -124,7 +124,7 @@ NRF_RPC_CBOR_CMD_DECODER(hci_group, hci_uart_init, RPC_HCI_UART_INIT_CMD,
 
 static void dtm_hci_put_wrapper(struct net_buf *buf)
 {
-	net_buf_put(&dtm_put_queue, buf);
+	k_fifo_put(&dtm_put_queue, buf);
 }
 
 static void dtm_put_thread(void)
@@ -132,7 +132,7 @@ static void dtm_put_thread(void)
 	struct net_buf *buf;
 
 	for (;;) {
-		buf = net_buf_get(&dtm_put_queue, K_FOREVER);
+		buf = k_fifo_get(&dtm_put_queue, K_FOREVER);
 
 		__ASSERT_NO_MSG(buf != NULL);
 

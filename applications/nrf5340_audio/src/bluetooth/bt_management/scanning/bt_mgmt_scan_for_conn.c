@@ -307,10 +307,10 @@ static void conn_in_coord_set_check(struct bt_conn *conn, void *data)
 		return;
 	}
 
-	member = bt_csip_set_coordinator_csis_member_by_conn(conn);
+	member = bt_csip_set_coordinator_set_member_by_conn(conn);
 
-	if (memcmp((void *)server_sirk, (void *)member->insts[0].info.set_sirk,
-		   BT_CSIP_SET_SIRK_SIZE) == 0) {
+	if (memcmp((void *)server_sirk, (void *)member->insts[0].info.sirk, BT_CSIP_SIRK_SIZE) ==
+	    0) {
 		(*num_filled)++;
 	}
 }

@@ -10,7 +10,7 @@
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/bos.h>
 #include <zephyr/usb/msos_desc.h>
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <usb_descriptor.h>
 
 #define MODULE bulk_interface

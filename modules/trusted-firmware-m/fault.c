@@ -58,12 +58,12 @@ LOG_MODULE_DECLARE(os, CONFIG_KERNEL_LOG_LEVEL);
 
 #endif /* CONFIG_ARMV8_M_SE */
 
-void z_arm_fatal_error(unsigned int reason, const z_arch_esf_t *esf);
+void z_arm_fatal_error(unsigned int reason, const struct arch_esf *esf);
 
 static struct tfm_ns_fault_service_handler_context g_context;
 
 #if (CONFIG_FAULT_DUMP == 1)
-static void fault_show(const z_arch_esf_t *esf, int fault)
+static void fault_show(const struct arch_esf *esf, int fault)
 {
 	uint32_t cfsr = g_context.status.cfsr;
 	uint32_t sfsr = g_context.status.sfsr;
@@ -85,14 +85,14 @@ static void fault_show(const z_arch_esf_t *esf, int fault)
  *
  * For Dump level 0, no information needs to be generated.
  */
-static void fault_show(const z_arch_esf_t *esf, int fault)
+static void fault_show(const struct arch_esf *esf, int fault)
 {
 	(void)esf;
 	(void)fault;
 }
 #endif /* FAULT_DUMP == 1 */
 
-static int bus_fault(z_arch_esf_t *esf)
+static int bus_fault(struct arch_esf *esf)
 {
 	uint32_t reason = K_ERR_ARM_BUS_GENERIC;
 	uint32_t cfsr = g_context.status.cfsr;
@@ -145,7 +145,7 @@ static int bus_fault(z_arch_esf_t *esf)
 	return reason;
 }
 
-static uint32_t secure_fault(const z_arch_esf_t *esf)
+static uint32_t secure_fault(const struct arch_esf *esf)
 {
 	uint32_t reason = K_ERR_ARM_SECURE_GENERIC;
 	uint32_t sfsr = g_context.status.sfsr;
@@ -204,7 +204,7 @@ static uint32_t spu_fault(void)
 	return reason;
 }
 
-static void reserved_exception(const z_arch_esf_t *esf, int fault)
+static void reserved_exception(const struct arch_esf *esf, int fault)
 {
 	ARG_UNUSED(esf);
 
@@ -214,7 +214,7 @@ static void reserved_exception(const z_arch_esf_t *esf, int fault)
 }
 
 
-static uint32_t fault_handle(z_arch_esf_t *esf, int fault)
+static uint32_t fault_handle(struct arch_esf *esf, int fault)
 {
 	uint32_t reason = K_ERR_CPU_EXCEPTION;
 
@@ -258,7 +258,7 @@ static inline bool is_nested_exc(uint32_t exc_return)
  * The stack frame is already determined by the ns callback service, so we can
  * assume that we have the right exception stack frame already.
  */
-void arm_fault(uint32_t exc_return, z_arch_esf_t *esf)
+void arm_fault(uint32_t exc_return, struct arch_esf *esf)
 {
 	uint32_t reason;
 	int fault = g_context.status.vectactive;
@@ -285,7 +285,7 @@ void arm_fault(uint32_t exc_return, z_arch_esf_t *esf)
 
 void tfm_ns_fault_handler_callback(void)
 {
-	z_arch_esf_t esf;
+	struct arch_esf esf;
 	uint32_t exc_return;
 	CONTROL_Type ctrl_ns;
 

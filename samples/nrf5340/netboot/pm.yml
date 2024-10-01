@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 b0n:
   size: CONFIG_B0N_SIZE

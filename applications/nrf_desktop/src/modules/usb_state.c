@@ -66,13 +66,22 @@ enum {
 
 BUILD_ASSERT(REPORT_BUFFER_SIZE_INPUT_REPORT <= UINT8_MAX);
 
-/* Ensuring memory alignment for sent buffer is required by USB next stack. */
+#ifdef CONFIG_DESKTOP_USB_STACK_NEXT
+#define _USB_HID_BUF_ALIGN (UDC_BUF_ALIGN)
+#define _USB_HID_BUF_SIZE  (ROUND_UP(REPORT_ID_SIZE + REPORT_BUFFER_SIZE_INPUT_REPORT, \
+				     UDC_BUF_GRANULARITY))
+#else
+#define _USB_HID_BUF_ALIGN (sizeof(void *))
+#define _USB_HID_BUF_SIZE  (ROUND_UP(REPORT_ID_SIZE + REPORT_BUFFER_SIZE_INPUT_REPORT, \
+				     sizeof(void *)))
+#endif /* CONFIG_DESKTOP_USB_STACK_NEXT */
+
+/* Ensuring memory alignment and size for a sent buffer is required by USB next stack. */
 struct usb_hid_buf {
-	/* An extra byte allows to store HID report ID next to HID report data. */
-	uint8_t data[REPORT_ID_SIZE + REPORT_BUFFER_SIZE_INPUT_REPORT];
+	uint8_t data[_USB_HID_BUF_SIZE];
 	uint8_t size;
 	uint8_t status_bm;
-} __aligned(sizeof(void *));
+} __aligned(_USB_HID_BUF_ALIGN);
 
 struct usb_hid_device {
 	const struct device *dev;
@@ -272,8 +281,6 @@ static void usb_hid_buf_send(struct usb_hid_device *usb_hid, struct usb_hid_buf 
 	int err;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT)) {
-		/* USB next stack expects buffer alignment. */
-		__ASSERT_NO_MSG(IS_ALIGNED(data, sizeof(void *)));
 		err = hid_device_submit_report(usb_hid->dev, size, data);
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
@@ -1306,6 +1313,7 @@ static void usb_init_next_status_cb(struct usbd_context *const usbd,
 		module_set_state(MODULE_STATE_ERROR);
 		break;
 
+	case USBD_MSG_CONFIGURATION:
 	case USBD_MSG_CDC_ACM_LINE_CODING:
 	case USBD_MSG_CDC_ACM_CONTROL_LINE_STATE:
 		/* Ignore */
@@ -1424,8 +1432,8 @@ static struct usbd_context *usb_init_next_usbd_init(void)
 	static const uint8_t attributes = IS_ENABLED(CONFIG_DESKTOP_USB_REMOTE_WAKEUP) ?
 					  (USB_SCD_REMOTE_WAKEUP) : (0);
 
-	USBD_CONFIGURATION_DEFINE(fs_config, attributes, max_power);
-	USBD_CONFIGURATION_DEFINE(hs_config, attributes, max_power);
+	USBD_CONFIGURATION_DEFINE(fs_config, attributes, max_power, NULL);
+	USBD_CONFIGURATION_DEFINE(hs_config, attributes, max_power, NULL);
 
 	if (!usbd_can_detect_vbus(&usbd)) {
 		LOG_ERR("USBD controller cannot detect VBUS state change");

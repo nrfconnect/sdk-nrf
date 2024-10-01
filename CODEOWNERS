@@ -70,7 +70,6 @@
 /drivers/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /drivers/sensor/paw3212/                  @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-bluebagel
 /drivers/sensor/pmw3360/                  @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-bluebagel
-/drivers/wifi/nrf700x/                    @nrfconnect/ncs-co-networking @krish2718 @sachinthegreen @rado17
 
 # Devicetree
 /dts/                                     @nrfconnect/ncs-co-drivers
@@ -157,7 +156,6 @@
 
 # Modules
 /modules/                                 @nrfconnect/ncs-co-build-system
-/modules/hostap/                          @nrfconnect/ncs-co-networking @krish2718 @rado17 @sachinthegreen
 /modules/mcuboot/                         @nrfconnect/ncs-pluto
 /modules/cjson/                           @nrfconnect/ncs-cia @plskeggs
 /modules/trusted-firmware-m/              @nrfconnect/ncs-aegir

@@ -13,7 +13,7 @@ config MPSL_CX_ANY_SUPPORT
 	help
 	  Indicates that the device tree contains a nrf_radio_coex node.
 
-config MPSL_CX_NRF700X_SUPPORT
+config MPSL_CX_NRF70_SUPPORT
 	bool
 	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF700X))
 	help
@@ -57,7 +57,7 @@ choice MPSL_CX_CHOICE
 	prompt "Radio Coexistence interface implementation"
 
 config MPSL_CX_NRF700X
-	depends on MPSL_CX_NRF700X_SUPPORT
+	depends on MPSL_CX_NRF70_SUPPORT
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
 	imply NRF_RPC if SOC_SERIES_NRF53X

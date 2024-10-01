@@ -18,7 +18,6 @@ config NORDIC_SECURITY_BACKEND
 	bool
 	prompt "Use nRF Security with Mbed TLS legacy crypto APIs support" \
 		if !NORDIC_SECURITY_PROMPTLESS
-	default y if BUILD_WITH_TFM
 	depends on SOC_FAMILY_NORDIC_NRF
 	select NRF_SECURITY
 	select MBEDTLS_LEGACY_CRYPTO_C
@@ -38,54 +37,16 @@ config NRF_SECURITY
 	# entropy is provided by PSA and NRF_SECURITY on NRF54LX
 	default y if ENTROPY_PSA_CRYPTO_RNG && SOC_SERIES_NRF54LX
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
-	# Generating random requires a CRACEN PSA Crypto driver on nrf54L
-	select PSA_CRYPTO_DRIVER_CRACEN if (PSA_WANT_GENERATE_RANDOM && SOC_SERIES_NRF54LX) && !NRF_SECURITY_LEGACY_AND_PSA
 	# NCS does not use TF-M's BL2 bootloader, but uses it's own fork
 	# of MCUBoot instead (CONFIG_BOOTLOADER_MCUBOOT).
 	#
 	# Select TFM_BL2_NOT_SUPPORTED to prevent users from enabling
 	# CONFIG_TFM_BL2.
 	select TFM_BL2_NOT_SUPPORTED if BUILD_WITH_TFM
+	select PSA_CRYPTO_CLIENT
 	help
 	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).
-
-config NRF_SECURITY_LEGACY_AND_PSA
-	bool
-	default y
-	select EXPERIMENTAL
-	# This configuration will include the CTR_DRBG from CRACEN
-	# which requires EVENTS to be enabled
-	select EVENTS if SOC_SERIES_NRF54LX
-	depends on MBEDTLS_LEGACY_CRYPTO_C && MBEDTLS_PSA_CRYPTO_C
-	# This configuration doesn't affect TF-M builds since the PSA
-	# APIs are provided by TF-M.
-	# When this configuration is enabled we manually enable
-	# some symbols in the build_config.h file in the Oberon PSA core.
-	# This requires only the Oberon PSA crypto driver to be enabled,
-	# it requires the CC3XX platform library to get random data and
-	# the trusted storage for ITS support. The depenedencies here
-	# match what we enable in the build_config.h file so if we need to
-	# modify the dependencies here we also need to modify the build_config.h.
-	depends on PSA_CRYPTO_DRIVER_OBERON && !PSA_CRYPTO_DRIVER_CC3XX
-	depends on NRF_CC3XX_PLATFORM || SOC_SERIES_NRF54LX
-	depends on TRUSTED_STORAGE
-	# We cannot support the encrypted backend for trusted storage in nRF54L15
-	# since it requires KMU support. The KMU driver in nRF54L15 is tightly coupled
-	# with the CRACEN PSA driver which is incompatible with legacy and PSA option.
-	depends on TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID || !SOC_SERIES_NRF54LX
-	depends on !BUILD_WITH_TFM
-	help
-	   This is an option to support legacy mbedTLS and PSA crypto APIs
-	   at the same time. This is not recommended as it is not fully
-	   supported in our system. This feature might get changed/removed at
-	   any time in the future. You are advised to use the PSA APIs
-	   for any new developments.
-
-	   This option doesn't use the nrf_security for the internal
-	   PSA configuration. It always use the Oberon PSA driver
-	   for all the crypto operations expect for the PRNG which
-	   uses the nrf_cc3xx_platform library.
 
 config PSA_PROMPTLESS
 	bool
@@ -99,40 +60,25 @@ config MBEDTLS_CFG_FILE
 	  Name of the config file for mbed TLS. This configuration file is used
 	  in configurations with or without PSA APIs supported.
 
-config MBEDTLS_USER_CONFIG_FILE
-	string "mbed TLS user configuration file"
-	default "nrf-config-user-empty.h"
-	help
-	  Name of the file that will contain additional configurations for mbed TLS.
-	  This file is empty by default.
+config MBEDTLS_PSA_CRYPTO_CONFIG
+	bool
+	default y
 
 config MBEDTLS_PSA_CRYPTO_CONFIG_FILE
 	string "PSA want configuration file"
-	default "nrf-psa-crypto-want-config.h"
+	default "nrf-psa-crypto-config.h"
 	help
-	  Name of the config file containins the PSA configuration.
-	  This file may be generated and will contain PSA configurations if PSA APIs
-	  are generated in the system.
+	  Name of the config file for PSA crypto (Containins PSA_WANT_XXXX configurations).
+	  This file is generated and will contain PSA configurations if PSA crypto APIs
+	  are enabled in the system.
 
 config MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
 	string "Additional PSA configuration file"
-	default "nrf-psa-crypto-config.h"
+	default "nrf-psa-crypto-user-config.h"
 	help
 	  Name of the file containing extra PSA configuration.
 	  This file may be generated andd will contain exte PSA configurations like the
 	  PSA_NEED defines for different crypto accelerators.
-
-config GENERATE_MBEDTLS_CFG_FILE
-	bool
-	prompt "Generate mbed TLS config files"
-	default y
-	help
-	  nrf_security will generate mbed TLS configuration file(s)
-	  based on the selection of configuration options in Kconfig.
-	  However, if the generated configuration file needs custom
-	  adjustments, this setting can be used to disable generating the
-	  mbed TLS configuration file. Only disable this setting if you know
-	  what you are doing.
 
 config MBEDTLS_ENABLE_HEAP
 	bool "Enable global heap for mbed TLS"

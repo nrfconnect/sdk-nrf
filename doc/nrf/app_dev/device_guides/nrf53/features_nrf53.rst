@@ -127,7 +127,7 @@ Bluetooth Low Energy
 
    * - Network core
      - Application core
-   * - :ref:`zephyr:bluetooth-hci-ipc-sample`
+   * - :zephyr:code-sample:`bluetooth_hci_ipc`
      - | :ref:`Bluetooth Low Energy samples <ble_samples>`
        | :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`
    * - :ref:`ble_rpc_host` (supported for development)
@@ -143,7 +143,7 @@ Split Controller and Host
 
 When splitting the Bluetooth LE Controller and the Host, run the Bluetooth LE Controller on the network core and the host part of the Bluetooth LE stack and the application logic on the application core.
 
-For the network core, the |NCS| provides the :ref:`zephyr:bluetooth-hci-ipc-sample` sample.
+For the network core, the |NCS| provides the :zephyr:code-sample:`bluetooth_hci_ipc` sample.
 This Zephyr sample is designed specifically to enable the Bluetooth LE Controller functionality on a remote MCU using the `RPMsg Messaging Protocol`_ as a transport for Bluetooth HCI.
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with a Bluetooth Host stack that runs on a separate core (in this case, the nRF5340 application core).
 
@@ -182,7 +182,7 @@ IEEE 802.15.4 (Thread and Zigbee)
 
    * - Network core
      - Application core
-   * - :ref:`zephyr:nrf-ieee802154-rpmsg-sample`
+   * - :zephyr:code-sample:`nrf_ieee802154_rpmsg`
      - | :ref:`Thread samples <openthread_samples>`
        | :ref:`Zigbee samples <zigbee_samples>`
        | :ref:`Matter samples <matter_samples>`
@@ -194,7 +194,7 @@ When using IEEE 802.15.4 on the nRF5340, run the IEEE 802.15.4 radio driver on t
 
    IEEE 802.15.4 Protocol architecture in multicore SoC
 
-For the network core, the |NCS| provides the :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample.
+For the network core, the |NCS| provides the :zephyr:code-sample:`nrf_ieee802154_rpmsg` sample.
 This Zephyr sample is designed specifically to enable the nRF IEEE 802.15.4 radio driver and its serialization library on a remote MCU using the `RPMsg Messaging Protocol`_ as a transport for the nRF 802.15.4 radio driver serialization.
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with the nRF IEEE 802.15.4 radio driver serialization host that runs on a separate core (in this case, the nRF5340 application core).
 
@@ -229,7 +229,7 @@ When using Thread or Zigbee in parallel with Bluetooth LE, run the low-level rad
    Bluetooth LE and IEEE 802.15.4 multiprotocol architecture in multicore SoC
 
 For the network core, the |NCS| provides the :ref:`multiprotocol-rpmsg-sample` sample.
-It is a combination of the :ref:`zephyr:bluetooth-hci-ipc-sample` sample (for Bluetooth LE) and the :ref:`zephyr:nrf-ieee802154-rpmsg-sample` sample (for IEEE 802.15.4).
+It is a combination of the :zephyr:code-sample:`bluetooth_hci_ipc` sample (for Bluetooth LE) and the :zephyr:code-sample:`nrf_ieee802154_rpmsg` sample (for IEEE 802.15.4).
 This means that it enables both the Bluetooth LE Controller and the nRF IEEE 802.15.4 radio driver and simultaneously exposes the functionality of both stacks to the application core using the `RPMsg Messaging Protocol`_.
 Separate RPMsg endpoints are used to obtain independent inter-core connections for each stack.
 

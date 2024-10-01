@@ -84,7 +84,7 @@ Then follow the instructions in :ref:`ug_nrf5340_building` to build and program 
 
 .. note::
    To try out the network core bootloader sample, use the :ref:`peripheral_uart` sample as the basis for the multi-image build.
-   This sample automatically includes the network core sample :ref:`bluetooth-hci-ipc-sample` when built for the nRF5340 DK.
+   This sample automatically includes the network core sample :zephyr:code-sample:`bluetooth_hci_ipc` when built for the nRF5340 DK.
    Then apply the options mentioned to include the network core bootloader sample with MCUboot.
 
 Testing

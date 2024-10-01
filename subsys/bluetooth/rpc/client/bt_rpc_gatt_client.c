@@ -1430,7 +1430,7 @@ int bt_gatt_write_without_response_cb(struct bt_conn *conn, uint16_t handle,
 static const size_t bt_gatt_subscribe_params_buf_size =
 	/* Placeholder for the notify callback. */
 	1 +
-	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, write) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, subscribe) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, ccc_handle) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_gatt_subscribe_params, value) +
@@ -1444,7 +1444,7 @@ static void bt_gatt_subscribe_params_enc(struct nrf_rpc_cbor_ctx *encoder,
 					 const struct bt_gatt_subscribe_params *data)
 {
 	nrf_rpc_encode_bool(encoder, data->notify != NULL);
-	nrf_rpc_encode_callback(encoder, data->write);
+	nrf_rpc_encode_callback(encoder, data->subscribe);
 	nrf_rpc_encode_uint(encoder, data->value_handle);
 	nrf_rpc_encode_uint(encoder, data->ccc_handle);
 	nrf_rpc_encode_uint(encoder, data->value);

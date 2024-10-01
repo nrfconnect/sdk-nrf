@@ -46,8 +46,8 @@ The high-performance mode consumes more power but is able to erase and write at 
 Use the device tree property ``mxicy,mx25r-power-mode`` to configure MX25R6435 in either high-performance or low-power mode.
 In this sample, the MX25R6435 is configured in high-performance mode.
 
-The use of :kconfig:option:`CONFIG_SPI_NOR_IDLE_IN_DPD` option to enable deep-power-down mode significantly reduces the stand-by power consumption.
-However, it adds overhead for each SPI instruction, which causes an approximately 20% reduction in write performance.
+The use of :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` option to enable deep-power-down mode significantly reduces the stand-by power consumption.
+However, it adds overhead to SPI instructions, which causes a reduction in write performance.
 
 The sample uses the :ref:`nrfxlib:nrf_modem` to turn on and off the modem traces and also enable and disable the modem.
 In addition, it uses the :ref:`zephyr:uart_api` to send modem traces over UART1.

@@ -552,7 +552,7 @@ static uint8_t audio_map_location_get(struct bt_bap_stream *bap_stream)
 	int ret;
 	enum bt_audio_location loc;
 
-	ret = bt_audio_codec_cfg_get_chan_allocation(bap_stream->codec_cfg, &loc);
+	ret = bt_audio_codec_cfg_get_chan_allocation(bap_stream->codec_cfg, &loc, false);
 	if (ret) {
 		LOG_WRN("Unable to find location, defaulting to left");
 		return AUDIO_CH_L;
@@ -730,10 +730,7 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
 			&subgroups.group_lc3_preset.codec_cfg);
 	}
 
-	uint8_t src[3] = "eng";
-
-	bt_audio_codec_cfg_meta_set_stream_lang(&subgroups.group_lc3_preset.codec_cfg,
-						(uint32_t)sys_get_le24(src));
+	bt_audio_codec_cfg_meta_set_lang(&subgroups.group_lc3_preset.codec_cfg, "eng");
 }
 
 int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,

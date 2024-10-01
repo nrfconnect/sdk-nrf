@@ -10,7 +10,7 @@
 #include "fp_fmdn_state.h"
 #include "fp_storage_ak.h"
 
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_fmdn_auth, CONFIG_BT_FAST_PAIR_LOG_LEVEL);

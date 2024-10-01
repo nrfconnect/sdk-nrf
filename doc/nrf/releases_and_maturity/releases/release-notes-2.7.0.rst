@@ -59,7 +59,7 @@ Added the following features as supported:
   * :ref:`zephyr:sysbuild`, an improved and extensible system for multi-image build, replacing :ref:`ug_multi_image` (parent/child images).
     See `Migrating from multi-image builds to sysbuild`_.
   * Samples and applications that use short-range radio and run on multi-core SoCs were migrated to use the :ref:`ipc_radio` as the default image for the network/radio core.
-    Samples previously used for the network/radio core are no longer used in the default builds: :ref:`zephyr:bluetooth-hci-ipc-sample`, :ref:`zephyr:nrf-ieee802154-rpmsg-sample`, :ref:`multiprotocol-rpmsg-sample`, and :ref:`ble_rpc_host`.
+    Samples previously used for the network/radio core are no longer used in the default builds: :zephyr:code-sample:`bluetooth_hci_ipc`, :zephyr:code-sample:`nrf_ieee802154_rpmsg`, :ref:`multiprotocol-rpmsg-sample`, and :ref:`ble_rpc_host`.
 
 Added the following features as experimental:
 
@@ -389,7 +389,7 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
-Applications that used :ref:`zephyr:bluetooth-hci-ipc-sample`, :ref:`zephyr:nrf-ieee802154-rpmsg-sample`, or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
+Applications that used :zephyr:code-sample:`bluetooth_hci_ipc`, :zephyr:code-sample:`nrf_ieee802154_rpmsg`, or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
 
 Asset Tracker v2
 ----------------
@@ -612,7 +612,7 @@ Bluetooth samples
     * :ref:`peripheral_uart` sample
     * :ref:`central_uart` sample
 
-* Updated the Bluetooth samples that used the :ref:`zephyr:bluetooth-hci-ipc-sample` radio core firmware so that now they use the :ref:`ipc_radio`.
+* Updated the Bluetooth samples that used the :zephyr:code-sample:`bluetooth_hci_ipc` radio core firmware so that now they use the :ref:`ipc_radio`.
 
 * :ref:`direct_test_mode` sample:
 
@@ -631,7 +631,7 @@ Bluetooth Fast Pair samples
   * Updated:
 
     * The sample is moved to the :ref:`bt_fast_pair_samples` category.
-    * Replaced the :ref:`zephyr:bluetooth-hci-ipc-sample` radio core firmware with the :ref:`ipc_radio`.
+    * Replaced the :zephyr:code-sample:`bluetooth_hci_ipc` radio core firmware with the :ref:`ipc_radio`.
 
   * Removed unnecessary :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig configuration.
 
@@ -652,7 +652,7 @@ Bluetooth Mesh samples
   * :ref:`bluetooth_mesh_light_lc` sample
   * :ref:`ble_mesh_dfu_distributor` sample
 
-* Updated the Bluetooth Mesh samples that used the :ref:`zephyr:bluetooth-hci-ipc-sample` radio core firmware so that they now use the :ref:`ipc_radio`.
+* Updated the Bluetooth Mesh samples that used the :zephyr:code-sample:`bluetooth_hci_ipc` radio core firmware so that they now use the :ref:`ipc_radio`.
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
@@ -811,7 +811,7 @@ Matter samples
 
 * Updated:
 
-  * Matter samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
+  * Matter samples that used :zephyr:code-sample:`nrf_ieee802154_rpmsg` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, now use the :ref:`ipc_radio`.
   * Enabled the Bluetooth LE Extended Announcement feature for all samples, and increased advertising timeout from 15 minutes to 1 hour.
 
 * Removed:
@@ -913,7 +913,7 @@ Thread samples
 
 * Added new :ref:`feature set <thread_ug_feature_sets>` Kconfig option :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_RCP`.
 
-* Updated the Thread samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, so that they now use the :ref:`ipc_radio`.
+* Updated the Thread samples that used :zephyr:code-sample:`nrf_ieee802154_rpmsg` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, so that they now use the :ref:`ipc_radio`.
 
 * :ref:`ot_cli_sample` sample:
 
@@ -927,7 +927,7 @@ Thread samples
 Zigbee samples
 --------------
 
-* Updated the Zigbee samples that used :ref:`zephyr:nrf-ieee802154-rpmsg-sample` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, so that they now use the :ref:`ipc_radio`.
+* Updated the Zigbee samples that used :zephyr:code-sample:`nrf_ieee802154_rpmsg` or :ref:`multiprotocol-rpmsg-sample` radio core firmware, so that they now use the :ref:`ipc_radio`.
 
 Wi-Fi samples
 -------------
@@ -938,7 +938,7 @@ Wi-Fi samples
   * The :ref:`wifi_thread_coex_sample` sample that demonstrates Wi-Fi and Thread coexistence.
   * The :ref:`wifi_promiscuous_sample` sample that demonstrates how to set Promiscuous mode, establish a connection to an Access Point (AP), analyze incoming Wi-Fi packets, and print packet statistics.
 
-* Updated the Wi-Fi samples that used :ref:`zephyr:bluetooth-hci-ipc-sample` or :ref:`zephyr:nrf-ieee802154-rpmsg-sample` radio core firmware, so that they now use the :ref:`ipc_radio`.
+* Updated the Wi-Fi samples that used :zephyr:code-sample:`bluetooth_hci_ipc` or :zephyr:code-sample:`nrf_ieee802154_rpmsg` radio core firmware, so that they now use the :ref:`ipc_radio`.
 
 * :ref:`wifi_softap_sample` sample:
 

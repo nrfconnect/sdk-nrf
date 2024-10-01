@@ -11,7 +11,6 @@
 #include <assert.h>
 #include <errno.h>
 #include <zephyr/bluetooth/mesh.h>
-#include <zephyr/bluetooth/testing.h>
 #include <zephyr/bluetooth/mesh/cfg.h>
 #include <zephyr/sys/byteorder.h>
 #include <app_keys.h>
@@ -19,7 +18,7 @@
 #define LOG_LEVEL CONFIG_BT_MESH_LOG_LEVEL
 #include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(bttester_mesh);
-
+#include "mesh/testing.h"
 #include "model_handler.h"
 #include "bttester.h"
 
@@ -391,18 +390,18 @@ static void incomp_timer_exp_cb(void)
 		    CONTROLLER_INDEX, NULL, 0);
 }
 
-static struct bt_test_cb bt_test_cb = {
-	.mesh_net_recv = net_recv_ev,
-	.mesh_model_bound = model_bound_cb,
-	.mesh_model_unbound = model_unbound_cb,
-	.mesh_prov_invalid_bearer = invalid_bearer_cb,
-	.mesh_trans_incomp_timer_exp = incomp_timer_exp_cb,
+static struct bt_mesh_test_cb mesh_test_cb = {
+	.net_recv = net_recv_ev,
+	.model_bound = model_bound_cb,
+	.model_unbound = model_unbound_cb,
+	.prov_invalid_bearer = invalid_bearer_cb,
+	.trans_incomp_timer_exp = incomp_timer_exp_cb,
 };
 
 uint8_t tester_init_mesh(void)
 {
 	if (IS_ENABLED(CONFIG_BT_TESTING)) {
-		bt_test_cb_register(&bt_test_cb);
+		bt_mesh_test_cb_register(&mesh_test_cb);
 	}
 
 	return BTP_STATUS_SUCCESS;

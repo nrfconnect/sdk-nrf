@@ -82,7 +82,7 @@ static uint8_t expected_key[16] = {
 static uint32_t expected_fatal;
 static uint32_t actual_fatal;
 
-void k_sys_fatal_error_handler(unsigned int reason, const z_arch_esf_t *pEsf)
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *pEsf)
 {
 	printk("Caught system error -- reason %d\n", reason);
 	actual_fatal++;

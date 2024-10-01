@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/net/buf.h>
+#include <zephyr/net_buf.h>
 #include <string.h>
 #include <stdio.h>
 #include <zephyr/mgmt/mcumgr/smp/smp_client.h>

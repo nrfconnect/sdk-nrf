@@ -7,7 +7,7 @@
 menuconfig WIFI_READY_LIB
 	bool "Wi-Fi ready event handling library"
 	select EXPERIMENTAL
-	depends on WPA_SUPP
+	depends on WIFI_NM_WPA_SUPPLICANT
 	depends on NET_MGMT
 	help
 	  Enable WiFi ready management subsystem that allows the application to

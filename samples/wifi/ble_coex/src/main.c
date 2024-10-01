@@ -332,10 +332,10 @@ int main(void)
 	int ret = 0;
 	bool test_wlan = IS_ENABLED(CONFIG_TEST_TYPE_WLAN);
 	bool test_ble = IS_ENABLED(CONFIG_TEST_TYPE_BLE);
-#ifdef CONFIG_NRF700X_SR_COEX
+#ifdef CONFIG_NRF70_SR_COEX
 	enum nrf_wifi_pta_wlan_op_band wlan_band;
 	bool separate_antennas = IS_ENABLED(CONFIG_COEX_SEP_ANTENNAS);
-#endif /* CONFIG_NRF700X_SR_COEX */
+#endif /* CONFIG_NRF70_SR_COEX */
 	bool is_sr_protocol_ble = IS_ENABLED(CONFIG_SR_PROTOCOL_BLE);
 
 #if !defined(CONFIG_COEX_SEP_ANTENNAS) && \
@@ -368,14 +368,14 @@ int main(void)
 	LOG_INF("test_wlan = %d and test_ble = %d\n", test_wlan, test_ble);
 
 
-#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
+#ifdef CONFIG_NRF70_SR_COEX_RF_SWITCH
 	/* Configure SR side (nRF5340 side) switch for nRF700x DK */
 	ret = nrf_wifi_config_sr_switch(separate_antennas);
 	if (ret != 0) {
 		LOG_ERR("Unable to configure SR side switch: %d\n", ret);
 		goto err;
 	}
-#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
+#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
 	if (test_wlan) {
 		/* Wi-Fi connection */
@@ -389,7 +389,7 @@ int main(void)
 			goto err;
 		}
 
-#ifdef CONFIG_NRF700X_SR_COEX
+#ifdef CONFIG_NRF70_SR_COEX
 		/* Configure Coexistence Hardware */
 		LOG_INF("\n");
 		LOG_INF("Configuring non-PTA registers.\n");
@@ -411,7 +411,7 @@ int main(void)
 			LOG_ERR("Failed to configure PTA coex hardware: %d\n", ret);
 			goto err;
 		}
-#endif /* CONFIG_NRF700X_SR_COEX */
+#endif /* CONFIG_NRF70_SR_COEX */
 	}
 
 	if (test_ble) {

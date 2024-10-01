@@ -39,7 +39,7 @@
       a. Build and program the one of the following Bluetooth LE samples to an additional development kit compatible with the sample:
 
          * :ref:`peripheral_lbs`
-         * :ref:`peripheral_esp`
+         * :zephyr:code-sample:`ble_peripheral_esp`
 
       #. Connect the development kit that is running the Bluetooth LE sample to the PC.
       #. |connect_terminal_ANSI|

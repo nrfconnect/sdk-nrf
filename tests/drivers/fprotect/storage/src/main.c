@@ -22,7 +22,7 @@ BUILD_ASSERT(STORAGE_AREA_ADDRESS % CONFIG_NRF_RRAM_REGION_ADDRESS_RESOLUTION ==
 static uint32_t expected_fatal;
 static uint32_t actual_fatal;
 
-void k_sys_fatal_error_handler(unsigned int reason, const z_arch_esf_t *pEsf)
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *pEsf)
 {
 	printk("Caught system error -- reason %d\n", reason);
 	actual_fatal++;

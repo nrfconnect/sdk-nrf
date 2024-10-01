@@ -6,7 +6,7 @@
 
 config WIFI_MGMT_EXT
 	bool "Extended commands for Wi-Fi management"
-	depends on WPA_SUPP
+	depends on WIFI_NM_WPA_SUPPLICANT
 	depends on WIFI_CREDENTIALS
 	default y
 	help

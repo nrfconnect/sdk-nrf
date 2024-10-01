@@ -25,9 +25,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
-	     "A maximum of one source stream is currently supported");
-
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
@@ -59,13 +56,16 @@ static const uint8_t cap_adv_data[] = {
 #define AVAILABLE_SINK_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
 #endif /* CONFIG_BT_AUDIO_RX */
 
-static struct bt_cap_stream *cap_tx_streams[CONFIG_BT_ASCS_ASE_SRC_COUNT];
+static struct bt_cap_stream *cap_tx_streams[CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT];
 
 #if defined(CONFIG_BT_AUDIO_TX)
 #define AVAILABLE_SOURCE_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
 #else
 #define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
 #endif /* CONFIG_BT_AUDIO_TX */
+
+static struct bt_bap_unicast_server_register_param unicast_server_params = {
+	CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT, CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT};
 
 static uint8_t unicast_server_adv_data[] = {
 	BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL),
@@ -159,10 +159,10 @@ static struct bt_pacs_cap caps[] = {
 /* clang-format on */
 
 static struct bt_cap_stream
-	cap_audio_streams[CONFIG_BT_ASCS_ASE_SNK_COUNT + CONFIG_BT_ASCS_ASE_SRC_COUNT];
+	cap_audio_streams[CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT + CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT];
 
 #if (CONFIG_BT_AUDIO_TX)
-BUILD_ASSERT(CONFIG_BT_ASCS_ASE_SRC_COUNT <= 1,
+BUILD_ASSERT(CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT <= 1,
 	     "CIS headset only supports one source stream for now");
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
@@ -607,7 +607,7 @@ int unicast_server_send(struct le_audio_encoded_audio enc_audio)
 	int ret;
 	uint8_t num_active_streams = 0;
 
-	struct le_audio_tx_info tx[CONFIG_BT_ASCS_ASE_SRC_COUNT];
+	struct le_audio_tx_info tx[CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT];
 
 	for (int i = 0; i < ARRAY_SIZE(cap_tx_streams); i++) {
 		if (!le_audio_ep_state_check(cap_tx_streams[i]->bap_stream.ep,
@@ -650,7 +650,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	int ret;
 	static bool initialized;
 
-	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SET_SIRK_SIZE,
+	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SIRK_SIZE,
 		 "SIRK incorrect size, must be 16 bytes");
 
 	if (initialized) {
@@ -665,6 +665,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	receive_cb = recv_cb;
 
+	bt_bap_unicast_server_register(&unicast_server_params);
 	bt_bap_unicast_server_register_cb(&unicast_server_cb);
 
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA)) {
@@ -677,8 +678,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 				"before production");
 		}
 
-		memcpy(csip_param.set_sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY,
-		       BT_CSIP_SET_SIRK_SIZE);
+		memcpy(csip_param.sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY, BT_CSIP_SIRK_SIZE);
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(caps); i++) {

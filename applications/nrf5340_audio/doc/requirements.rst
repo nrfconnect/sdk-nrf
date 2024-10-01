@@ -62,4 +62,4 @@ For each application, only one of the following :file:`.conf` files is included 
   See :ref:`nrf53_audio_app_building` for details.
 
 In addition, the application features the :file:`child_image` directory with :file:`hci_ipc.conf`.
-This file contains the necessary configurations for nRF5340 Audio applications to run the :ref:`bluetooth-hci-ipc-sample` sample with :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` support.
+This file contains the necessary configurations for nRF5340 Audio applications to run the :zephyr:code-sample:`bluetooth_hci_ipc` sample with :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` support.

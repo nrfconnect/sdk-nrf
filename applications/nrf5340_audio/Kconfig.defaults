@@ -33,15 +33,6 @@ config RESET_ON_FATAL_ERROR
 config BT
 	default y
 
-config BOARD_ENABLE_DCDC_APP
-	default y
-
-config BOARD_ENABLE_DCDC_NET
-	default y
-
-config BOARD_ENABLE_CPUNET
-	default y
-
 config ZBUS
 	default y
 

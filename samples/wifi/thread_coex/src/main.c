@@ -43,14 +43,14 @@ int main(void)
 		return -1;
 	}
 
-#if !defined(CONFIG_COEX_SEP_ANTENNAS) && !(CONFIG_NRF700X_SR_COEX_RF_SWITCH)
+#if !defined(CONFIG_COEX_SEP_ANTENNAS) && !(CONFIG_NRF70_SR_COEX_RF_SWITCH)
 	BUILD_ASSERT("Shared antenna support is not available with nRF7002 shields");
 #endif
 
 	/* register callback functions */
 	wifi_init();
 
-#ifdef CONFIG_NRF700X_SR_COEX_RF_SWITCH
+#ifdef CONFIG_NRF70_SR_COEX_RF_SWITCH
 	/* Configure SR side (nRF5340 side) switch in nRF700x */
 	/* LOG_INF("Configure SR side switch"); */
 	ret = nrf_wifi_config_sr_switch(is_ant_mode_sep);
@@ -58,9 +58,9 @@ int main(void)
 		LOG_ERR("Unable to configure SR side switch: %d", ret);
 		return ret;
 	}
-#endif /* CONFIG_NRF700X_SR_COEX_RF_SWITCH */
+#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
-#if defined(CONFIG_NRF700X_SR_COEX)
+#if defined(CONFIG_NRF70_SR_COEX)
 	/* Configure non-PTA registers of Coexistence Hardware */
 	/* LOG_INF("Configuring non-PTA registers."); */
 	ret = nrf_wifi_coex_config_non_pta(is_ant_mode_sep, is_sr_protocol_ble);
@@ -68,7 +68,7 @@ int main(void)
 		LOG_ERR("Configuring non-PTA registers of CoexHardware FAIL");
 		return ret;
 	}
-#endif /* CONFIG_NRF700X_SR_COEX */
+#endif /* CONFIG_NRF70_SR_COEX */
 
 	ret = wifi_tput_ot_tput(test_wifi, is_ant_mode_sep,
 		test_thread, is_ot_client, is_wifi_server, is_wifi_zperf_udp, is_ot_zperf_udp,

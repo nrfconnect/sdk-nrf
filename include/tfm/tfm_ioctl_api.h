@@ -26,7 +26,7 @@
 /* Include core IOCTL services */
 #include <tfm_ioctl_core_api.h>
 
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 #if CONFIG_FW_INFO
 #include <fw_info_bare.h>

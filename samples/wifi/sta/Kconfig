@@ -12,7 +12,7 @@ config CONNECTION_IDLE_TIMEOUT
 	int "Time to be waited for a station to connect"
 	default 30
 
-config NRF700X_QSPI_ENCRYPTION_KEY
+config NRF70_QSPI_ENCRYPTION_KEY
 	string "16 bytes QSPI encryption key, only for testing purposes"
 	depends on BOARD_NRF7002DK_NRF5340_CPUAPP
 	help

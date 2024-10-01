@@ -35,4 +35,5 @@ target_compile_options(app
 set_property(
 	SOURCE ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/wifi_credentials/wifi_credentials_backend_psa.c
 	PROPERTY COMPILE_FLAGS "-include ${CMAKE_CURRENT_SOURCE_DIR}/src/normalized_crypto.h"
+	PROPERTY COMPILE_FLAGS "-include ${CMAKE_CURRENT_SOURCE_DIR}/include/mbedtls_config.h"
 )

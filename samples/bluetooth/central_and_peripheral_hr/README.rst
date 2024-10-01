@@ -24,17 +24,17 @@ The sample supports the following development kits:
 To test just the Bluetooth® LE Central Role operation, you need one of the following setups:
 
   * A smartphone or a tablet running a compatible application.
-  * Another development kit running the :ref:`zephyr:peripheral_hr` sample.
+  * Another development kit running the :zephyr:code-sample:`ble_peripheral_hr` sample.
     See the documentation for that sample for detailed instructions.
 
 To test the Relay mode operation, you need one of the following setups:
 
   * A smartphone or a tablet running a compatible application.
-  * Two additional development kits running :ref:`zephyr:bluetooth_central_hr` and :ref:`zephyr:peripheral_hr` samples.
+  * Two additional development kits running :zephyr:code-sample:`ble_central_hr` and :zephyr:code-sample:`ble_peripheral_hr` samples.
 
 You can also mix devices when testing this sample.
 For a simple echo test, you only need one additional device.
-Alternatively, you can use a smartphone providing the HRS functionality and a development kit running the :ref:`zephyr:bluetooth_central_hr` sample.
+Alternatively, you can use a smartphone providing the HRS functionality and a development kit running the :zephyr:code-sample:`ble_central_hr` sample.
 
 For testing, you can also use `nRF Connect for Desktop`_.
 
@@ -91,7 +91,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it either by connecting to other development kits that are running the :ref:`zephyr:peripheral_hr` sample, or by using the Bluetooth Low Energy app from the `nRF Connect for Desktop`_, which emulates an HRS server.
+After programming the sample to your development kit, test it either by connecting to other development kits that are running the :zephyr:code-sample:`ble_peripheral_hr` sample, or by using the Bluetooth Low Energy app from the `nRF Connect for Desktop`_, which emulates an HRS server.
 
 Testing with other development kits
 -----------------------------------
@@ -101,7 +101,7 @@ Testing with other development kits
    .. group-tab:: nRF52 and nRF53 DKs
 
       1. |connect_terminal_specific|
-      #. Program the other development kit with the :ref:`zephyr:peripheral_hr` sample and reset it.
+      #. Program the other development kit with the :zephyr:code-sample:`ble_peripheral_hr` sample and reset it.
       #. Wait until the HRS is detected by the central.
          Observe that **LED 2** is on.
       #. In the terminal window, check for information similar to the following::
@@ -119,10 +119,10 @@ Testing with other development kits
 
          Notifications will be displayed periodically with a frequency determined by the HR server.
 
-      #. Program another development kit with the :ref:`zephyr:bluetooth_central_hr` sample and reset it.
+      #. Program another development kit with the :zephyr:code-sample:`ble_central_hr` sample and reset it.
       #. Wait until central is connected to your development kit.
          Observe that **LED 3** is lit.
-      #. In terminal windows connected to device with the :ref:`zephyr:bluetooth_central_hr` sample, check for information similar to following::
+      #. In terminal windows connected to device with the :zephyr:code-sample:`ble_central_hr` sample, check for information similar to following::
 
             [NOTIFICATION] data 0x20006779 length 2
 
@@ -131,7 +131,7 @@ Testing with other development kits
    .. group-tab:: nRF54 DKs
 
       1. |connect_terminal_specific|
-      #. Program the other development kit with the :ref:`zephyr:peripheral_hr` sample and reset it.
+      #. Program the other development kit with the :zephyr:code-sample:`ble_peripheral_hr` sample and reset it.
       #. Wait until the HRS is detected by the central.
          Observe that **LED 1** is on.
       #. In the terminal window, check for information similar to the following::
@@ -149,10 +149,10 @@ Testing with other development kits
 
          Notifications will be displayed periodically with a frequency determined by the HR server.
 
-      #. Program another development kit with the :ref:`zephyr:bluetooth_central_hr` sample and reset it.
+      #. Program another development kit with the :zephyr:code-sample:`ble_central_hr` sample and reset it.
       #. Wait until central is connected to your development kit.
          Observe that **LED 2** is lit.
-      #. In terminal windows connected to device with the :ref:`zephyr:bluetooth_central_hr` sample, check for information similar to following::
+      #. In terminal windows connected to device with the :zephyr:code-sample:`ble_central_hr` sample, check for information similar to following::
 
             [NOTIFICATION] data 0x20006779 length 2
 

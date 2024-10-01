@@ -9,31 +9,65 @@
 
 #include <errno.h>
 #include <stdbool.h>
-#include <nrf_security_mutexes.h>
+#include "nrf_security_mutexes.h"
 
 #if !defined(__NRF_TFM__)
 #include <zephyr/kernel.h>
 #endif
 
 #if defined(CONFIG_MULTITHREADING) && !defined(__NRF_TFM__)
-int nrf_security_mutex_lock(nrf_security_mutex_t mutex)
+
+void nrf_security_mutex_init(mbedtls_threading_mutex_t * mutex)
 {
-	return k_mutex_lock(mutex, K_FOREVER);
+	if((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
+		k_mutex_init(&mutex->mutex);
+	}
+
+	mutex->flags |= NRF_SECURITY_MUTEX_FLAGS_INITIALIZED;
 }
 
-int nrf_security_mutex_unlock(nrf_security_mutex_t mutex)
+void nrf_security_mutex_free(mbedtls_threading_mutex_t * mutex)
 {
-	return k_mutex_unlock(mutex);
+	(void)mutex;
+}
+
+int nrf_security_mutex_lock(mbedtls_threading_mutex_t * mutex)
+{
+	if((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
+		return k_mutex_lock(&mutex->mutex, K_FOREVER);
+	} else {
+		return -EINVAL;
+	}
+}
+
+int nrf_security_mutex_unlock(mbedtls_threading_mutex_t * mutex)
+{
+	if((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
+		return k_mutex_unlock(&mutex->mutex);
+	} else {
+		return -EINVAL;
+	}
 }
 
 #else
-int nrf_security_mutex_lock(nrf_security_mutex_t mutex)
+
+void nrf_security_mutex_init(mbedtls_threading_mutex_t * mutex)
+{
+	(void)mutex;
+}
+
+void nrf_security_mutex_free(mbedtls_threading_mutex_t * mutex)
+{
+	(void)mutex;
+}
+
+int nrf_security_mutex_lock(mbedtls_threading_mutex_t * mutex)
 {
 	(void)mutex;
 	return 0;
 }
 
-int nrf_security_mutex_unlock(nrf_security_mutex_t mutex)
+int nrf_security_mutex_unlock(mbedtls_threading_mutex_t * mutex)
 {
 	(void)mutex;
 	return 0;

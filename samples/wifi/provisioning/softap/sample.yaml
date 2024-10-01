@@ -4,7 +4,7 @@ tests:
   sample.softap.wifi.provision:
     sysbuild: true
     build_only: true
+    platform_allow: nrf7002dk/nrf5340/cpuapp/ns
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
-    platform_allow: nrf7002dk/nrf5340/cpuapp/ns
     tags: ci_build sysbuild ci_samples_wifi

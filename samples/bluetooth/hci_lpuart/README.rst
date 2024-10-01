@@ -7,7 +7,7 @@ Bluetooth: HCI low power UART
    :local:
    :depth: 2
 
-The HCI low power UART sample is based on the :ref:`zephyr:bluetooth-hci-uart-sample` but is using the :ref:`uart_nrf_sw_lpuart` for HCI UART communication.
+The HCI low power UART sample is based on the :zephyr:code-sample:`bluetooth_hci_uart` but is using the :ref:`uart_nrf_sw_lpuart` for HCI UART communication.
 
 Requirements
 ************

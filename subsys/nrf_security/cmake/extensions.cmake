@@ -82,16 +82,32 @@ macro(kconfig_check_and_set_base_to_one_depends base)
   kconfig_check_and_set_base_to_val_depends(${base} 1 ${ARGN})
 endmacro()
 
+
 #
-# Internal macro to configure file if Kconfig config is set
+# Internal macro that makes a backup of a given configuration (suffixed by _COPY)
+# This stores the current state of a Kconfig (CONFIG_ is expected)
 #
-# This needs some work
+macro(kconfig_backup_current_config config)
+  if(${config})
+    message("Backup: ${config}: True")
+    set(${config}_COPY True})
+  else()
+    message("Backup: ${config}: False")
+    set(${config}_COPY False)
+  endif()
+endmacro()
+
 #
-macro(nrf_security_configure_file config location file)
-  if (${mbedtls_config})
-    nrf_security_debug("Configure file: ${file}")
-    get_filename_component(file_name ${file} NAME)
-    configure_file(${file} ${location}/${file_name} COPYONLY)
+# Internal macro that restore a backed up copy of a given configuration (suffixed by _COPY)
+# This restores the backed up state of a Kconfig (CONFIG_ is expected)
+#
+macro(kconfig_restore_backup_config config)
+  if(${config}_COPY)
+    message("Restore: ${config}: True")
+    set(${config} True)
+  else()
+    message("Restore: ${config}: False")
+    set(${config} False)
   endif()
 endmacro()
 
@@ -123,7 +139,7 @@ endfunction(append_with_prefix)
 #
 macro(nrf_security_add_zephyr_options lib_name)
   if(TARGET zephyr_interface)
-    # Add compile options and includes from zephyr
+    # Add an all includes from zephyr_interface (unfiltered)
     target_compile_options(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>)
     target_compile_definitions(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_DEFINITIONS>)
     target_include_directories(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_INCLUDE_DIRECTORIES>)
@@ -140,6 +156,43 @@ macro(nrf_security_add_zephyr_options lib_name)
     )
   endif()
 endmacro()
+
+#
+# Add common configurations/options from the zephyr interface libraries (library version)
+#
+# This includes
+# Compile options
+# Standard includes
+# C flags/Linker flags
+#
+macro(nrf_security_add_zephyr_options_library lib_name)
+  if(TARGET zephyr_interface)
+    # Add an an filtered version of zephyr_interface (PSA crypto interface filtered out)
+    target_compile_options(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>)
+    target_compile_definitions(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_DEFINITIONS>)
+    # Ensure that the PSA crypto interface include folder isn't added in library builds (filtered out)
+    target_include_directories(${lib_name} 
+      PRIVATE
+        $<FILTER:$<TARGET_PROPERTY:zephyr_interface,INTERFACE_INCLUDE_DIRECTORIES>,EXCLUDE,${PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX}>
+    )
+    # Ensure that the PSA crypto interface include folder isn't added in library builds (filtered out)
+    target_include_directories(${lib_name} 
+      PRIVATE
+        $<FILTER:$<TARGET_PROPERTY:zephyr_interface,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>,EXCLUDE,${PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX}>
+    )
+    add_dependencies(${lib_name} zephyr_interface)
+
+    # Unsure if these are needed any more
+    target_compile_options(${lib_name} PRIVATE ${TOOLCHAIN_C_FLAGS})
+    target_ld_options(${lib_name} PRIVATE ${TOOLCHAIN_LD_FLAGS})
+  else()
+    target_compile_options(${lib_name} PRIVATE "SHELL: -imacros ${ZEPHYR_AUTOCONF}")
+    target_include_directories(${lib_name} PRIVATE
+      $<$<TARGET_EXISTS:nrf_cc3xx_platform>:$<TARGET_PROPERTY:nrf_cc3xx_platform,INTERFACE_INCLUDE_DIRECTORIES>>
+    )
+  endif()
+endmacro()
+
 
 # Include debugging
 include(${CMAKE_CURRENT_LIST_DIR}/nrf_security_debug.cmake)

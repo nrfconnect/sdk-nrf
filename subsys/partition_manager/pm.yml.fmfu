@@ -1,4 +1,4 @@
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 
 fmfu_storage:
   placement: {before: [end]}

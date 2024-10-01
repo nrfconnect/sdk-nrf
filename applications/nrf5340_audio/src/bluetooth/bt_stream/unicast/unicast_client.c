@@ -1378,11 +1378,11 @@ static void unicast_discovery_complete_cb(struct bt_conn *conn, int err,
 		msg.sirk = NULL;
 	} else {
 		LOG_DBG("\tErr: %d, set_size: %d", err, csis_inst->info.set_size);
-		LOG_HEXDUMP_DBG(csis_inst->info.set_sirk, BT_CSIP_SET_SIRK_SIZE, "\tSIRK:");
+		LOG_HEXDUMP_DBG(csis_inst->info.sirk, BT_CSIP_SIRK_SIZE, "\tSIRK:");
 
 		unicast_servers[idx.lvl1][idx.lvl2][idx.lvl3].member = member;
 		msg.set_size = csis_inst->info.set_size;
-		msg.sirk = csis_inst->info.set_sirk;
+		msg.sirk = csis_inst->info.sirk;
 	}
 
 	LOG_DBG("Unicast discovery complete cb");

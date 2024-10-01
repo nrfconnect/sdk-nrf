@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 #include <nrfx.h>
 
 #define TFM_PERIPHERAL_DCNF_SECURE CONFIG_NRF_DCNF_SECURE

@@ -678,7 +678,7 @@ void test_nrf9x_socket_offload_accept_ipv4_success(void)
 	int addrlen = sizeof(address);
 	int addrlen_unchanged = addrlen;
 	int backlog = 1;
-	/* `z_reserve_fd` reserves fd = 1 first */
+	/* `zvfs_reserve_fd` reserves fd = 1 first */
 	int z_fd = 1;
 
 	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM, 0, nrf_fd);
@@ -716,7 +716,7 @@ void test_nrf9x_socket_offload_accept_ipv4_success(void)
 
 	TEST_ASSERT_EQUAL(ret, 0);
 
-	z_free_fd(z_fd);
+	zvfs_free_fd(z_fd);
 }
 
 void test_nrf9x_socket_offload_accept_ipv6_success(void)
@@ -729,7 +729,7 @@ void test_nrf9x_socket_offload_accept_ipv6_success(void)
 	int addrlen = sizeof(address);
 	int addrlen_unchanged = addrlen;
 	int backlog = 1;
-	/* `z_reserve_fd` reserves fd = 1 first */
+	/* `zvfs_reserve_fd` reserves fd = 1 first */
 	int z_fd = 1;
 
 	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET6, NRF_SOCK_STREAM, 0, nrf_fd);
@@ -767,7 +767,7 @@ void test_nrf9x_socket_offload_accept_ipv6_success(void)
 
 	TEST_ASSERT_EQUAL(ret, 0);
 
-	z_free_fd(z_fd);
+	zvfs_free_fd(z_fd);
 }
 
 void test_nrf9x_socket_offload_setsockopt_ebadf(void)

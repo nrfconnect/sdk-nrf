@@ -5,5 +5,4 @@
 #
 
 osource "$(NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG)"
-rsource "hostap/Kconfig"
 rsource "wfa-qt/Kconfig"

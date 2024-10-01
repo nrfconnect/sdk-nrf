@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config WIFI_NRF70
+	default y if BOARD_NRF7002DK_NRF5340_CPUAPP_NS
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

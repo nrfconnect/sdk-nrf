@@ -41,8 +41,8 @@ endif
 
 config DFU_TARGET_STREAM
 	bool "Generic DFU stream target"
-	depends on STREAM_FLASH_ERASE
 	depends on STREAM_FLASH
+	select STREAM_FLASH_ERASE if FLASH_HAS_EXPLICIT_ERASE
 
 config DFU_TARGET_MCUBOOT_SAVE_PROGRESS
 	bool "Store write progress to flash (MCUboot) [DEPRECATED]"

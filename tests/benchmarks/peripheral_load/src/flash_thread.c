@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(flash, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(flash_thd, LOG_LEVEL_INF);
 
 #include <zephyr/drivers/flash.h>
 #include <zephyr/devicetree.h>
