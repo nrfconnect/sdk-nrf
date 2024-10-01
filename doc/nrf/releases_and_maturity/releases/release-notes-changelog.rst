@@ -790,6 +790,10 @@ Modem libraries
 
   * Fixed a potential issue with scanf in the :c:func:`modem_info_get_current_band` function, which could lead to memory corruption.
 
+* :ref:`modem_key_mgmt` library:
+
+  * Added the :c:func:`modem_key_mgmt_clear` function to delete all credentials associated with a security tag.
+
 * :ref:`pdn_readme` library:
 
   * Added the event ``PDN_EVENT_CTX_DESTROYED`` to indicate when a PDP context is destroyed.

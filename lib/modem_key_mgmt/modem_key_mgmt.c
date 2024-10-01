@@ -272,6 +272,41 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 	return 0;
 }
 
+int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
+{
+	int err;
+	bool cmee_was_enabled;
+	char *token;
+	uint32_t tag, type;
+
+	cmee_enable(&cmee_was_enabled);
+
+	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf), "AT%%CMNG=1, %d", sec_tag);
+	if (err) {
+		return translate_error(err);
+	}
+
+	token = strtok(scratch_buf, "\n");
+
+	while (token != NULL) {
+		err = sscanf(token, "%%CMNG: %u,%u,\"", &tag, &type);
+		if (tag == sec_tag) {
+			err = nrf_modem_at_printf("AT%%CMNG=3,%u,%u", sec_tag, type);
+		}
+		token = strtok(NULL, "\n");
+	}
+
+	if (!cmee_was_enabled) {
+		cmee_disable();
+	}
+
+	if (err) {
+		return translate_error(err);
+	}
+
+	return 0;
+}
+
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
 			  bool *exists)
