@@ -99,7 +99,7 @@ static void modem_params_get(void)
 
 	err = modem_info_get_snr(&snr);
 	if (err) {
-		LOG_DBG("Failed to get SNR")
+		LOG_DBG("Failed to get SNR");
 		return;
 	}
 
@@ -120,6 +120,17 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	}
 
 	switch (evt->type) {
+	case LTE_LC_EVT_CELL_UPDATE:
+		err = MEMFAULT_METRIC_SET_SIGNED(ncs_lte_cell_id, evt->cell.id);
+		if (err) {
+			LOG_ERR("Failed to set ncs_lte_cell_id");
+		}
+
+		err = MEMFAULT_METRIC_SET_SIGNED(ncs_lte_tracking_area_code, evt->cell.tac);
+		if (err) {
+			LOG_ERR("Failed to set ncs_lte_tracking_area_code");
+		}
+		break;
 	case LTE_LC_EVT_NW_REG_STATUS:
 		switch (evt->nw_reg_status) {
 

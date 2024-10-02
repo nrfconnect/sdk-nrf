@@ -31,6 +31,8 @@ MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_edrx_ptw_ms, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_mode, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_on_time_ms, kMemfaultMetricType_Timer)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_reset_loop_detected_count, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_cell_id, kMemfaultMetricType_Signed)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_tracking_area_code, kMemfaultMetricType_Signed)
 #endif /* CONFIG_MEMFAULT_NCS_LTE_METRICS */
 
 #ifdef CONFIG_MEMFAULT_NCS_BT_METRICS
