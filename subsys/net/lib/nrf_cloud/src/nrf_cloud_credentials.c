@@ -147,6 +147,30 @@ int nrf_cloud_credentials_configured_check(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) || IS_ENABLED(CONFIG_NRF_CLOUD_REST)) {
+		if (!cs.ca_aws && cs.ca_coap) {
+			/* There is a CA, but not large enough to be correct */
+			LOG_WRN("Connection using MQTT or REST may fail as the size of the CA "
+				"cert indicates it is a CoAP root CA.");
+			ret = -ENOPROTOOPT;
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP)) {
+		if (!cs.ca_coap && cs.ca_aws) {
+			LOG_WRN("Connection using CoAP "
+				"may fail as the size of the CA cert indicates "
+				"CoAP CA certificate is missing but AWS CA is present.");
+			ret = -ENOPROTOOPT;
+		} else if (!IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)) {
+			if (cs.ca && (!cs.ca_coap || !cs.ca_aws)) {
+				LOG_WRN("Connection using CoAP and downloading using HTTP "
+					"may fail as the size of the CA cert indicates both "
+					"CoAP and AWS root CA certs are not present.");
+				ret = -ENOPROTOOPT;
+			}
+		}
+	}
 	return ret;
 }
 
@@ -177,6 +201,34 @@ static int cred_exists(uint32_t sec_tag, int type, bool *exists)
 	return err;
 }
 
+static int cred_size_get(uint32_t sec_tag, int type, size_t *cred_sz)
+{
+	int err;
+
+	*cred_sz = 0; /* We just want to determine the size */
+
+#if defined(CONFIG_NRF_CLOUD_CREDENTIALS_MGMT_MODEM)
+	uint8_t buf[1];
+
+	err = modem_key_mgmt_read(sec_tag, (enum modem_key_mgmt_cred_type)cred_type[type],
+				  buf, cred_sz);
+	if (err && (err != -ENOMEM)) {
+		LOG_ERR("modem_key_mgmt_read() failed for type %d in sec tag %u, error: %d",
+			(enum modem_key_mgmt_cred_type)cred_type[type], sec_tag, err);
+	} else {
+		err = 0;
+	}
+#else
+	err = tls_credential_get(sec_tag, (enum tls_credential_type)cred_type[type],
+				 NULL, cred_sz);
+	if (err == -EFBIG) { /* Error expected since we only want the size */
+		err = 0;
+	}
+#endif
+
+	return err;
+}
+
 int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs)
 {
 	if (!cs) {
@@ -192,27 +244,56 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs)
 
 	ret = cred_exists(cs->sec_tag, CA_CERT, &exists);
 	if (ret < 0) {
+		LOG_ERR("Error checking CA exists");
 		return -EIO;
 	}
 	cs->ca = exists;
+	if (exists) {
+		ret = cred_size_get(cs->sec_tag, CA_CERT, &cs->ca_size);
+		if (ret < 0) {
+			LOG_ERR("Error checking CA size");
+			return -EIO;
+		}
+		/* These flags are approximate and only useful for logging to help diagnose
+		 * possible provisioning mistakes.
+		 */
+		size_t coap_min_sz = CONFIG_NRF_CLOUD_COAP_CA_CERT_SIZE_THRESHOLD;
+		size_t aws_min_sz = CONFIG_NRF_CLOUD_AWS_CA_CERT_SIZE_THRESHOLD;
+		size_t combined_min_sz = aws_min_sz + coap_min_sz;
+
+		if (cs->ca_size > combined_min_sz) {
+			cs->ca_aws = true;
+			cs->ca_coap = true;
+		} else if (cs->ca_size > aws_min_sz) {
+			cs->ca_aws = true;
+		} else if (cs->ca_size > coap_min_sz) {
+			cs->ca_coap = true;
+		}
+	}
 
 	ret = cred_exists(cs->sec_tag, CLIENT_CERT, &exists);
 	if (ret < 0) {
+		LOG_ERR("Error checking client cert exists");
 		return -EIO;
 	}
 	cs->client_cert = exists;
 
 	ret = cred_exists(cs->sec_tag, PRIVATE_KEY, &exists);
 	if (ret < 0) {
+		LOG_ERR("Error checking private key exists");
 		return -EIO;
 	}
 	cs->prv_key = exists;
 
-	LOG_DBG("Sec Tag: %u, CA: %s, Client Cert: %s, Private Key: %s",
+	LOG_INF("Sec Tag: %u; CA: %s, Client Cert: %s, Private Key: %s",
 		cs->sec_tag,
 		cs->ca		? "Yes" : "No",
 		cs->client_cert	? "Yes" : "No",
 		cs->prv_key	? "Yes" : "No");
+	LOG_INF("CA Size: %zd, AWS: %s, CoAP: %s",
+		cs->ca_size,
+		cs->ca_aws ? "Likely" : "Unlikely",
+		cs->ca_coap ? "Likely" : "Unlikely");
 
 	return 0;
 }
