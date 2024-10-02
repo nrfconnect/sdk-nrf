@@ -168,7 +168,7 @@ static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
 	struct net_if *iface = NULL;
 	int ret;
 
-	*sockfd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
+	*sockfd = socket(AF_PACKET, SOCK_RAW, htons(IPPROTO_RAW));
 	if (*sockfd < 0) {
 		LOG_ERR("Unable to create a socket %d", errno);
 		return -1;
