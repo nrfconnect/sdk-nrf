@@ -582,9 +582,12 @@ struct nrf_cloud_gnss_pvt {
 struct nrf_cloud_credentials_status {
 	/* Configured sec_tag for nRF Cloud */
 	uint32_t sec_tag;
+	size_t ca_size;
 
 	/* Flags to indicate if the specified credentials exist */
 	uint8_t ca:1;
+	uint8_t ca_coap:1;
+	uint8_t ca_aws:1;
 	uint8_t client_cert:1;
 	uint8_t prv_key:1;
 };
@@ -1179,11 +1182,14 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs);
 /**
  * @brief Check if the credentials required for connecting to nRF Cloud exist.
  *        The application's configuration is used to determine which credentials
- *        are required.
+ *        are required. Check the size of the root CA certificates installed
+ *        and return an error code if the size of the root CA certificate(s) is not
+ *        appropriate for the configured transport type.
  *
  * @retval 0 Required credentials exist.
  * @retval -EIO Error checking if credentials exists.
  * @retval -ENOTSUP Required credentials do not exist.
+ * @retval -ENOPROTOOPT Size of root CA is not appropriate for the configured transport type.
  * @return A negative value indicates an error.
  */
 int nrf_cloud_credentials_configured_check(void);
