@@ -290,13 +290,11 @@ static psa_status_t check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_fam
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (PSA_ALG_IS_ECDSA(key_alg)) {
-		return PSA_SUCCESS;
-	} else if (PSA_ALG_IS_ECDH(key_alg)) {
+	if (PSA_ALG_IS_ECDH(key_alg)) {
 		return check_wstr_publ_key_for_ecdh(curve, key_bits, data, data_length);
 	}
 
-	return PSA_ERROR_NOT_SUPPORTED;
+	return PSA_SUCCESS;
 }
 
 static psa_status_t import_ecc_public_key(const psa_key_attributes_t *attributes,
