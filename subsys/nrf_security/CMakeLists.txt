@@ -117,6 +117,15 @@ target_compile_definitions(psa_crypto_library_config
 # The name and intent of this comes from TF-M distribution
 add_library(psa_interface INTERFACE)
 
+# In nRF54L this configuration is required for the HUK keys to work
+if(CONFIG_SOC_SERIES_NRF54LX AND (CONFIG_HW_UNIQUE_KEY OR CONFIG_IDENTITY_KEY))
+# Add config files required for PSA crypto interface
+target_compile_definitions(psa_interface
+  INTERFACE
+  MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
+)
+endif()
+
 # Add the includes from nrf_security, Oberon PSA core, and Arm Mbed TLS
 # to the psa_interface library
 target_include_directories(psa_interface
