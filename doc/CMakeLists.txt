@@ -332,7 +332,7 @@ add_docset(matter "1.3.0" DODGY)
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
 
-add_docset(nrfxlib ${NRF_VERSION} DODGY)
+add_docset(nrfxlib ${NRF_VERSION})
 add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR} ${NRF_VERSION})
 
 #-------------------------------------------------------------------------------
