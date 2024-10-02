@@ -6,7 +6,7 @@ Bluetooth® technology provides full stack support for a wide and expanding rang
 Audio streaming
 ***************
 
-The |NCS| supports the Bluetooth LE Audio standard, including Auracast broadcast audio.
+The |NCS| supports the Bluetooth LE Audio standard, including `Auracast™`_ (broadcast) audio.
 See :ref:`nrf53_audio_app` to get started.
 
 Note that Nordic Semiconductor SoCs do not support Bluetooth Classic Audio, which is based on the Bluetooth BR/EDR radio.
