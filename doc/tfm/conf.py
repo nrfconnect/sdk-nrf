@@ -34,6 +34,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 extensions = [
     "m2r2",
     "sphinx.ext.autosectionlabel",
+    "sphinx.ext.intersphinx",
     "sphinxcontrib.plantuml",
     "sphinx_tabs.tabs",
     "zephyr.external_content",
@@ -67,6 +68,14 @@ html_theme_options = {
 
 autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 2
+
+# Options for intersphinx ------------------------------------------------------
+
+intersphinx_mapping = {
+    "TF-M-Tests": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-tests/en/tf-mv{version}/", None),
+    "TF-M-Tools": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-tools/en/tf-mv{version}/", None),
+    "TF-M-Extras": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-extras/en/tf-mv{version}/", None),
+}
 
 # Options for external_content -------------------------------------------------
 
