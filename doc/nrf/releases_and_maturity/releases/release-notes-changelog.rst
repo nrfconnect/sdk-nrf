@@ -759,9 +759,10 @@ Modem libraries
       Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
       In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
 
-  * Added:
+  * Deprecated the :c:macro:`LTE_LC_ON_CFUN` macro.
+    Use the :c:macro:`NRF_MODEM_LIB_ON_CFUN` macro instead.
 
-    * A new :c:enum:`LTE_LC_EVT_RAI_UPDATE` event that is enabled with the :kconfig:option:`CONFIG_LTE_RAI_REQ` Kconfig option.
+  * Added a new :c:enum:`LTE_LC_EVT_RAI_UPDATE` event that is enabled with the :kconfig:option:`CONFIG_LTE_RAI_REQ` Kconfig option.
 
   * Updated:
 

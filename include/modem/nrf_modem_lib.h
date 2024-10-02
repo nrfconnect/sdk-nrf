@@ -166,8 +166,7 @@ struct nrf_modem_lib_at_cfun_cb {
  * configurations that require the modem to be turned on in offline mode. It cannot be used to
  * change the modem functional mode. Calls to @c lte_lc_connect and CFUN AT calls are not
  * allowed, and must be done after @c nrf_modem_lib_init has returned. If a library needs to
- * perform operations after the link is up, it can use the link controller and subscribe to a
- * @c LTE_LC_ON_CFUN callback.
+ * perform operations after the link is up, it can subscribe to a @c NRF_MODEM_LIB_ON_CFUN callback.
  *
  * @param name Callback name
  * @param _callback Callback function name

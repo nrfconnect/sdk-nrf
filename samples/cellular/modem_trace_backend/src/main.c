@@ -10,10 +10,10 @@
 #include <nrf_modem_at.h>
 
 /* define callback */
-LTE_LC_ON_CFUN(cfun_hook, on_cfun, NULL);
+NRF_MODEM_LIB_ON_CFUN(cfun_hook, on_cfun, NULL);
 
 /* callback implementation */
-static void on_cfun(enum lte_lc_func_mode mode, void *context)
+static void on_cfun(int mode, void *context)
 {
 	printk("LTE mode changed to %d\n", mode);
 }
