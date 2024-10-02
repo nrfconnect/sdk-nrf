@@ -83,8 +83,9 @@ int main(void)
 		return -1;
 	}
 
+	/* UART is disabled so expect error. */
 	err = uart_rx_disable(uart_dev);
-	if (err != 0) {
+	if (err != -EFAULT) {
 		printk("Unexpected error when disabling RX: %d\n", err);
 		return -1;
 	}
