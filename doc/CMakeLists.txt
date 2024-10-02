@@ -322,12 +322,12 @@ add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-add_docset(tfm "2.0.0" DODGY)
+add_docset(tfm "2.0.0")
 
 #-------------------------------------------------------------------------------
 # docset: matter
 
-add_docset(matter "1.3.0" DODGY)
+add_docset(matter "1.3.0")
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
