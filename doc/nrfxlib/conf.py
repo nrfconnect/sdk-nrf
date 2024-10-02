@@ -35,6 +35,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.mscgen",
     "inventory_builder",
+    "warnings_filter",
     "zephyr.kconfig",
     "zephyr.external_content",
     "zephyr.doxyrunner",
@@ -90,6 +91,11 @@ doxyrunner_fmt_vars = {
 # -- Options for doxybridge plugin ---------------------------------------------
 
 doxybridge_dir = doxyrunner_outdir
+
+# -- Options for warnings_filter -----------------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "nrfxlib" / "warnings-inventory.txt")
+warnings_filter_builders = ["inventory"]
 
 # Options for external_content -------------------------------------------------
 
