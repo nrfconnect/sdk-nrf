@@ -18,7 +18,6 @@ extern "C" {
  *
  * @defgroup nfc_ndef_msg Custom NDEF messages
  * @{
- * @ingroup  nfc_modules
  *
  * @brief    Generation of NFC NDEF messages for the NFC tag.
  *
