@@ -245,4 +245,10 @@ config PM_SRAM_SIZE
 	default 0x40000 if SOC_NRF54L15_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l15_cpuflpr.dtsi
 	default $(dt_node_reg_size_hex,/soc/memory@20000000)
 
+config PM_USE_CONFIG_SRAM_SIZE
+	bool
+	help
+	  Hidden option that, if set, will use the Kconfig value of PM_SRAM_SIZE for the SRAM size
+	  value instead of the partition-manager project generated output value
+
 endmenu # Partition Manager
