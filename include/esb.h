@@ -22,7 +22,6 @@ extern "C" {
 
 /** @defgroup esb Enhanced ShockBurst
  * @{
- * @ingroup proprietary_api
  *
  * @brief Enhanced ShockBurst (ESB) is a basic protocol that supports two-way
  *        data packet communication including packet buffering, packet
