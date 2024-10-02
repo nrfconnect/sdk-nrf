@@ -33,6 +33,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "m2r2",
+    "warnings_filter",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.intersphinx",
     "sphinxcontrib.plantuml",
@@ -78,6 +79,10 @@ intersphinx_mapping = {
     "TF-M-Tools": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-tools/en/tf-mv{version}/", None),
     "TF-M-Extras": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-extras/en/tf-mv{version}/", None),
 }
+
+# Options for warnings_filter --------------------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "tfm" / "known-warnings.txt")
 
 # Options for external_content -------------------------------------------------
 
