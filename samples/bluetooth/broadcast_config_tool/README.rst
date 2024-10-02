@@ -1,13 +1,13 @@
 .. _broadcast_configuration_tool:
 
-Broadcast Configuration Tool
-############################
+Auracast: Broadcast Configuration Tool
+######################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Broadcast Configuration Tool sample implements the :ref:`BIS gateway mode <nrf53_audio_app_overview>` and may act as an Auracast broadcaster if you are using a preset compatible with Auracast.
+The Broadcast Configuration Tool sample implements the :ref:`BIS gateway mode <nrf53_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
 The sample features a shell interface that allows you to configure the broadcast source in many different ways.
 
 In the BIS gateway mode, transmitting audio from the broadcast source happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
