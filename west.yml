@@ -157,7 +157,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 1807c6ecb18ee25cd95ebb01d668d500ff39607a
+      revision: d541dd74830dcca3e370e666fbe69f2394053924
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
