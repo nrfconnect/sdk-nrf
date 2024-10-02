@@ -136,23 +136,13 @@ Testing with NFC Poller Device
 Testing with NFC TNEP Poller Device
 -----------------------------------
 
-.. tabs::
+For nRF52 and nRF53 DKs, perform the following steps:
 
-   .. group-tab:: nRF52 and nRF53 DKs
-
-      1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 2** is lit.
-      #. Observe the output log.
-         The content of the exchanged NDEF messages is printed there.
-      #. Check the security level of the paring on the terminal.
-      #. Move the NFC antenna away from the NFC Poller Device.
-
-   .. group-tab:: nRF54 DKs
-
-      1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 1** is lit.
-      #. Observe the output log.
-         The content of the exchanged NDEF messages is printed there.
-      #. Check the security level of the paring on the terminal.
-      #. Move the NFC antenna away from the NFC Poller Device.
+   1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 2** is lit.
+   #. Observe the output log.
+      The content of the exchanged NDEF messages is printed there.
+   #. Check the security level of the paring on the terminal.
+   #. Move the NFC antenna away from the NFC Poller Device.
 
 Dependencies
 ************
