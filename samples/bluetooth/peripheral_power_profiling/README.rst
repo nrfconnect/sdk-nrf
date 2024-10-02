@@ -41,10 +41,21 @@ The only mechanisms that are functional in this mode are reset and wake-up.
 
 To wake up your development kit from the system off state, you have the following options:
 
-* Press the **RESET** button on your development kit.
-* Press **Button 1** to start connectable advertising.
-* Press **Button 2** to start non-connectable advertising.
-* Approach the NFC field of the development kit antenna.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      * Press the **RESET** button on your development kit.
+      * Press **Button 1** to start connectable advertising.
+      * Press **Button 2** to start non-connectable advertising.
+      * Approach the NFC field of the development kit antenna.
+
+   .. group-tab:: nRF54 DKs
+
+      * Press the **RESET** button on your development kit.
+      * Press **Button 0** to start connectable advertising.
+      * Press **Button 1** to start non-connectable advertising.
+      * Approach the NFC field of the development kit antenna.
 
   The development kit starts advertising automatically.
   If you use a mobile phone, it connects and bonds with your device.
@@ -106,18 +117,37 @@ User interface
 
 The sample uses buttons and LEDs to provide a simple user interface.
 
-LED 1:
-   Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
-   Off when the device is in system off state.
+.. tabs::
 
-LED 2:
-   Lit when an NFC field is detected.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-Button 1:
-   Starts connectable advertising and wakes up the SoC from the system off state.
+      LED 1:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+         Off when the device is in system off state.
 
-Button 2:
-   Starts non-connectable advertising and wakes up the SoC from the system off state.
+      LED 2:
+         Lit when an NFC field is detected.
+
+      Button 1:
+         Starts connectable advertising and wakes up the SoC from the system off state.
+
+      Button 2:
+         Starts non-connectable advertising and wakes up the SoC from the system off state.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
+         Off when the device is in system off state.
+
+      LED 1:
+         Lit when an NFC field is detected.
+
+      Button 0:
+         Starts connectable advertising and wakes up the SoC from the system off state.
+
+      Button 1:
+         Starts non-connectable advertising and wakes up the SoC from the system off state.
 
 .. note::
    When you use buttons to wake up the SoC from the system off state, the button state is read in the main thread after booting the Zephyr kernel.
