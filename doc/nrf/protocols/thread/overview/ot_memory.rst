@@ -36,6 +36,15 @@ The tables provide memory requirements for the following device type variants:
 Some tables also list a *master* variant, which is an FTD with additional features, such as being able to have the *commissioner* or *border router* commissioning roles.
 See :ref:`thread_device_types` for more information on device types, and :ref:`thread_ot_commissioning` for more information on commissioning roles.
 
+.. _thread_ot_memory_54l15:
+
+nRF5340 DK RAM and flash memory requirements
+*********************************************
+
+The following tables present memory requirements for samples running on the :ref:`nRF54L15 DK <programming_board_names>` (:ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>`) with the software cryptography support provided by the :ref:`nrfxlib:nrf_oberon_readme` module.
+
+.. include:: memory_tables/nrf54l15.txt
+
 .. _thread_ot_memory_5340:
 
 nRF5340 DK RAM and flash memory requirements
