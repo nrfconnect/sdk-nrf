@@ -193,11 +193,6 @@ static int fp_storage_eik_reset_perform(void)
 	return 0;
 }
 
-static void fp_storage_eik_reset_prepare(void)
-{
-	/* intentionally left empty */
-}
-
 SETTINGS_STATIC_HANDLER_DEFINE(fp_storage_eik,
 			       SETTINGS_EIK_SUBTREE_NAME,
 			       NULL,
@@ -207,6 +202,5 @@ SETTINGS_STATIC_HANDLER_DEFINE(fp_storage_eik,
 
 FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_eik,
 				   fp_storage_eik_reset_perform,
-				   fp_storage_eik_reset_prepare,
 				   fp_storage_eik_init,
 				   fp_storage_eik_uninit);
