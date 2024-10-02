@@ -85,4 +85,5 @@ CHIP_ERROR SimulatedOnOffLightSwitchDataProvider::UpdateState(chip::ClusterId cl
 	default:
 		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
+	return CHIP_NO_ERROR;
 }
