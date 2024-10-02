@@ -192,6 +192,11 @@ config SW_CODEC_LC3
 	help
 	  LC3 is the mandatory codec for LE Audio.
 
+config SW_CODEC_NONE
+	bool "None"
+	help
+	  Choose this if no software (SW) codec is needed.
+
 # Leave room for other codecs
 endchoice
 

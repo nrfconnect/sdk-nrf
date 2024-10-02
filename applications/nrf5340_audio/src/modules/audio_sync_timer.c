@@ -158,7 +158,7 @@ static int audio_sync_timer_init(void)
 		return -ENODEV;
 	}
 
-	IRQ_CONNECT(RTC0_IRQn, IRQ_PRIO_LOWEST, nrfx_rtc_0_irq_handler, NULL, 0);
+	IRQ_CONNECT(RTC0_IRQn, IRQ_PRIO_LOWEST, nrfx_isr, nrfx_rtc_0_irq_handler, 0);
 	nrfx_rtc_overflow_enable(&audio_sync_lf_timer_instance, true);
 
 	/* Initialize capturing of I2S frame start event timestamps */

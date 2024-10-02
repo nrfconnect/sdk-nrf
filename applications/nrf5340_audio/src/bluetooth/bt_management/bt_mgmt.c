@@ -12,6 +12,7 @@
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/byteorder.h>
+#include <nrfx.h>
 
 #include "macros_common.h"
 #include "zbus_common.h"

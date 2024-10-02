@@ -107,6 +107,10 @@ module = BLE
 module-str = ble
 source "subsys/logging/Kconfig.template.log_config"
 
+module = BT_LE_AUDIO_TX
+module-str = bt_le_audio_tx
+source "subsys/logging/Kconfig.template.log_config"
+
 endmenu # Log levels
 
 #----------------------------------------------------------------------------#
