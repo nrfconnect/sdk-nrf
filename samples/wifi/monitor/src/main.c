@@ -397,7 +397,7 @@ static int setup_raw_socket(int *sock)
 	struct sockaddr_ll dst = { 0 };
 	int ret;
 
-	*sock = socket(AF_PACKET, SOCK_RAW, ETH_P_ALL);
+	*sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (*sock < 0) {
 		LOG_ERR("Failed to create RAW socket : %d",
 				errno);

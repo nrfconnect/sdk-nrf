@@ -99,7 +99,8 @@ static bool open_ppp_sockets(void)
 {
 	int ret;
 
-	ppp_fds[ZEPHYR_FD_IDX] = socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE, IPPROTO_RAW);
+	ppp_fds[ZEPHYR_FD_IDX] = socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE,
+				        htons(IPPROTO_RAW));
 	if (ppp_fds[ZEPHYR_FD_IDX] < 0) {
 		LOG_ERR("Zephyr socket creation failed (%d).", errno);
 		return false;
