@@ -653,6 +653,8 @@ Bluetooth libraries and services
       This configuration is now selected only by the Fast Pair use cases that require the Device Information Service (DIS).
     * The default override for the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option that was set to :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` if :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` was enabled.
       The default override is now handled in the Kconfig of the Zephyr Device Information Service (DIS) module and is based on Zephyr's :ref:`zephyr:app-version-details` that uses the :file:`VERSION` file.
+    * The :c:func:`bt_fast_pair_factory_reset_user_action_prepare` weak function definition, which could previously be overridden to prepare for the incoming Fast Pair factory reset.
+      You can still override the :c:func:`bt_fast_pair_factory_reset_user_action_perform` weak function to perform custom actions during the Fast Pair factory reset.
 
   * Updated the default values of the following Fast Pair Kconfig options:
 

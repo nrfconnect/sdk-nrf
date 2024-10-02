@@ -850,8 +850,7 @@ Custom user reset action
 
 Use the :kconfig:option:`CONFIG_BT_FAST_PAIR_STORAGE_USER_RESET_ACTION` Kconfig option to enable a custom user reset action that executes together with the factory reset operation.
 To define the custom user reset action, you need to implement the ``bt_fast_pair_factory_reset_user_action_perform`` function in your application code.
-Optionally, you can also define the ``bt_fast_pair_factory_reset_user_action_prepare`` function if you want an earlier notification that the reset operation is due to begin.
-Both functions are defined as weak no-op functions.
+The function is defined as a weak, no-op function.
 Ensure that your reset action implementation executes correctly in the following execution contexts:
 
 * In the :c:func:`bt_fast_pair_factory_reset` function context - The factory reset action is triggered by calling the :c:func:`bt_fast_pair_factory_reset` function.

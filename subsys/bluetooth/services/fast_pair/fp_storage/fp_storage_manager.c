@@ -42,13 +42,6 @@ static int fp_settings_load_reset_in_progress(size_t len, settings_read_cb read_
 	return 0;
 }
 
-static void modules_reset_prepare(void)
-{
-	STRUCT_SECTION_FOREACH(fp_storage_manager_module, module) {
-		module->module_reset_prepare();
-	}
-}
-
 static int fp_settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg)
 {
 	int err = 0;
@@ -123,8 +116,6 @@ int fp_storage_factory_reset(void)
 	if (err) {
 		return err;
 	}
-
-	modules_reset_prepare();
 
 	err = modules_reset();
 	if (err) {

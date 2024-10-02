@@ -504,13 +504,8 @@ static int fp_storage_ak_reset(void)
 	return 0;
 }
 
-static void reset_prepare(void)
-{
-	/* intentionally left empty */
-}
-
 SETTINGS_STATIC_HANDLER_DEFINE(fp_storage_ak, SETTINGS_AK_SUBTREE_NAME, NULL, fp_settings_set,
 			       NULL, NULL);
 
-FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_ak, fp_storage_ak_reset, reset_prepare,
+FP_STORAGE_MANAGER_MODULE_REGISTER(fp_storage_ak, fp_storage_ak_reset,
 				   fp_storage_ak_init, fp_storage_ak_uninit);
