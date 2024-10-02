@@ -17,3 +17,5 @@ This section lists the available |NCS| samples for the :ref:`ug_bt` protocol.
    :glob:
 
    ../../../samples/bluetooth/*/README
+   ../../tests/bluetooth/bsim/nrf_auraconfig/README
+   ../../tests/bluetooth/bsim/nrf_auraconfig/tester/README
