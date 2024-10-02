@@ -18,6 +18,8 @@ Configuration options
 =====================
 
 - ``warnings_filter_config``: Configuration file.
+- ``warnings_filter_builders``: If set, only filter for the given builders, e.g.
+  ``html``.
 - ``warnings_filter_silent``: Silent flag. If True, warning is hidden. If False
   the warning is converted to an information message and displayed.
 """
@@ -87,6 +89,13 @@ def configure(app: Sphinx) -> None:
         app: Sphinx application instance.
     """
 
+    if (
+        app.config.warnings_filter_builders
+        and app.builder.name not in app.config.warnings_filter_builders
+    ):
+        app.env.warnings_filter_expressions = list()
+        return
+
     # load expressions from configuration file
     with open(app.config.warnings_filter_config) as f:
         expressions = list()
@@ -121,6 +130,7 @@ def finished(app: Sphinx, exception: Optional[Exception]):
 
 def setup(app: Sphinx) -> Dict[str, Any]:
     app.add_config_value("warnings_filter_config", "", "")
+    app.add_config_value("warnings_filter_builders", [], "")
     app.add_config_value("warnings_filter_silent", True, "")
 
     app.connect("builder-inited", configure)
