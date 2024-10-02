@@ -75,6 +75,7 @@ static void modem_params_get(void)
 
 	err = modem_info_get_rsrp(&rsrp);
 	if (err) {
+		LOG_DBG("Failed to get RSRP");
 		return;
 	}
 
@@ -86,6 +87,7 @@ static void modem_params_get(void)
 
 	err = modem_info_get_current_band(&band);
 	if (err) {
+		LOG_DBG("Failed to get band");
 		return;
 	}
 
@@ -97,6 +99,7 @@ static void modem_params_get(void)
 
 	err = modem_info_get_snr(&snr);
 	if (err) {
+		LOG_DBG("Failed to get SNR")
 		return;
 	}
 
