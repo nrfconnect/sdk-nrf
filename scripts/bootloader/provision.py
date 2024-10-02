@@ -20,12 +20,25 @@ NUM_BYTES_PROVISIONED_ELSEWHERE = LCS_STATE_SIZE + IMPLEMENTATION_ID_SIZE
 
 # These variable names and values are copied from bl_storage.h and
 # should be kept in sync
+BL_COLLECTION_TYPE_MONOTONIC_COUNTERS = 0x1
+BL_COLLECTION_TYPE_VARIABLE_DATA = 0x9312
+
 BL_MONOTONIC_COUNTERS_DESC_NSIB = 1
 BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0 = 2
 
+BL_VARIABLE_DATA_TYPE_VERIFICATION_SERVICE_URL = 0x1
+BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE = 0x2
+BL_VARIABLE_DATA_TYPE_PROFILE_DEFINITION = 0x3
+
+# Maximum lengths for the TF-M attestation variable data fields.
+# These are defined in tfm_attest_hal.h and in tfm_plat_device_id.h.
+VERIFICATION_URL_MAX_SIZE = 32
+CERTIFICATION_REF_MAX_SIZE = 19
+PROFILE_DEFINITION_MAX_SIZE = 32
+
 def generate_provision_intel_hex_file(provision_data, provision_address, output, max_size):
     assert len(provision_data) <= max_size, """Provisioning data doesn't fit.
-Reduce the number of public keys or counter slots and try again."""
+Reduce the number of public keys, counter slots or variable data and try again."""
 
     ih = IntelHex()
     ih.frombytes(provision_data, offset=provision_address)
@@ -41,7 +54,7 @@ def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_
     assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
     assert mcuboot_counters_slots    % 2 == 0, "--mcuboot-counters-slots     must be an even number"
 
-    provision_data += struct.pack('H', 1) # Type "counter collection"
+    provision_data += struct.pack('H', BL_COLLECTION_TYPE_MONOTONIC_COUNTERS)
     provision_data += struct.pack('H', num_counters) # Could be 0, 1, or 2
 
     if num_counter_slots_version > 0:
@@ -57,7 +70,7 @@ def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_
     return provision_data
 
 
-def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size, mcuboot_counters_slots):
+def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size, mcuboot_counters_slots, variable_data):
     # This function generates a .hex file with the provisioned data
     # for the uncommon use-case where MCUBoot is present, but NSIB is
     # not.
@@ -89,15 +102,16 @@ def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size
 
     provision_data = add_hw_counters(provision_data, 0, mcuboot_counters_slots)
 
+    provision_data += variable_data
+
     generate_provision_intel_hex_file(provision_data, provision_address, output, max_size)
 
 
 def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
-                                num_counter_slots_version, mcuboot_counters_slots):
+                                num_counter_slots_version, mcuboot_counters_slots, variable_data):
 
     provision_data = struct.pack('III', s0_address, s1_address,
                                  len(hashes))
-
     idx = 0
     for mhash in hashes:
         provision_data += struct.pack('I', 0x50FAFFFF | (idx << 24)) # Invalidation token
@@ -105,6 +119,8 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
         idx += 1
 
     provision_data = add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_slots)
+
+    provision_data += variable_data
 
     generate_provision_intel_hex_file(provision_data, provision_address, output, max_size)
 
@@ -132,6 +148,12 @@ def parse_args():
                         help="The MCUBOOT bootloader is used without the NSIB bootloader. Only the provision address, the MCUBOOT counters and the MCUBOOT counters slots arguments will be used.")
     parser.add_argument('--mcuboot-counters-slots', required=False, type=int, default=0,
                         help='Number of monotonic counter slots for every MCUBOOT counter.')
+    parser.add_argument('--verification-service-url', required=False, type=str, default=None,
+                        help='(Optional) Address of the verification service for the TF-M attestation token.')
+    parser.add_argument('--psa-certificate-reference', required=False, type=str, default=None,
+                        help='(Optional) PSA certificate reference for the TF-M attestation token.')
+    parser.add_argument('--profile-definition', required=False, type=str, default=None,
+                        help='(Optional) Profile definition for the TF-M attestation token.')
     return parser.parse_args()
 
 
@@ -151,6 +173,53 @@ def get_hashes(public_key_files, verify_hashes):
 
     return hashes
 
+def get_variable_data(verification_service_url, profile_definition, psa_certification_reference):
+    # Get variable data to be written to the OTP-region.
+    #
+    # Variable data, if present, starts with variable data collection ID, followed
+    # by amount of variable data entries and the variable data entries themselves.
+    # [Collection ID][Variable count][Type][Variable data length][Variable data][Type]...
+    # 2 bytes        2 bytes         1 byte 1 byte                0-255 bytes
+    #
+    variable_data = b''
+    variable_data_count = 0
+
+    def add_variable_data(variable_data_type, data):
+        nonlocal variable_data
+        nonlocal variable_data_count
+
+        variable_data += struct.pack('B', variable_data_type)
+        variable_data += struct.pack('B', len(data))
+        variable_data += data.encode('ascii')
+        variable_data_count += 1
+
+    if verification_service_url:
+        if len(verification_service_url) > VERIFICATION_URL_MAX_SIZE:
+            raise RuntimeError(f"Verification service URL is too long. Maximum length is {VERIFICATION_URL_MAX_SIZE} characters.")
+        add_variable_data(BL_VARIABLE_DATA_TYPE_VERIFICATION_SERVICE_URL, verification_service_url)
+
+    if psa_certification_reference:
+        if len(psa_certification_reference) > CERTIFICATION_REF_MAX_SIZE:
+            raise RuntimeError(f"PSA certification reference is too long. Maximum length is {CERTIFICATION_REF_MAX_SIZE} characters.")
+        add_variable_data(BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE, psa_certification_reference)
+
+    if profile_definition:
+        if len(profile_definition) > PROFILE_DEFINITION_MAX_SIZE:
+            raise RuntimeError(f"Profile definition is too long. Maximum length is {PROFILE_DEFINITION_MAX_SIZE} characters.")
+        add_variable_data(BL_VARIABLE_DATA_TYPE_PROFILE_DEFINITION, profile_definition)
+
+
+    if variable_data_count:
+        # Add the variable data header at the beginning of the variable data.
+        variable_data = struct.pack('H', BL_COLLECTION_TYPE_VARIABLE_DATA) + \
+            struct.pack('H', variable_data_count) +  \
+            variable_data
+
+        # Padding to align to 4 bytes.
+        padding_length = 4 - (len(variable_data) % 4)
+        variable_data += b'\x00' * padding_length
+
+    return variable_data
 
 def main():
     args = parse_args()
@@ -158,12 +227,19 @@ def main():
     if not args.mcuboot_only and args.s0_addr is None:
         raise RuntimeError("Either --mcuboot-only or --s0-addr must be specified")
 
+    variable_data = get_variable_data(
+        verification_service_url=args.verification_service_url,
+        profile_definition=args.profile_definition,
+        psa_certification_reference=args.psa_certificate_reference
+    )
+
     if args.mcuboot_only:
         generate_mcuboot_only_provision_hex_file(
             provision_address=args.provision_addr,
             output=args.output,
             max_size=args.max_size,
-            mcuboot_counters_slots=args.mcuboot_counters_slots
+            mcuboot_counters_slots=args.mcuboot_counters_slots,
+            variable_data=variable_data
         )
         return
 
@@ -193,7 +269,8 @@ def main():
         output=args.output,
         max_size=max_size,
         num_counter_slots_version=args.num_counter_slots_version,
-        mcuboot_counters_slots=args.mcuboot_counters_slots
+        mcuboot_counters_slots=args.mcuboot_counters_slots,
+        variable_data=variable_data
     )
 
 

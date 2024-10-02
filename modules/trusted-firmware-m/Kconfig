@@ -43,8 +43,9 @@ config TFM_PLATFORM_SP_STACK_SIZE
 
 config TFM_PLATFORM_NV_COUNTER_MODULE_DISABLED
 	bool "Disable Non-volatile counter module"
-	default y if TFM_PROFILE_TYPE_MINIMAL
-
+	default n if SOC_NRF54L15_ENGA_CPUAPP
+	default n if TFM_PARTITION_PROTECTED_STORAGE && TFM_PS_ROLLBACK_PROTECTION
+	default y
 endmenu
 
 # Copied from secure_fw/partitions/crypto/Kconfig, appended the TFM prefix

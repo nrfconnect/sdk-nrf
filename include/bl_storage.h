@@ -26,6 +26,12 @@ extern "C" {
 /* We truncate the 32 byte sha256 down to 16 bytes before storing it */
 #define SB_PUBLIC_KEY_HASH_LEN 16
 
+/* Supported collection types. */
+enum collection_type {
+	BL_COLLECTION_TYPE_MONOTONIC_COUNTERS = 1,
+	BL_COLLECTION_TYPE_VARIABLE_DATA = 0x9312,
+};
+
 /* Counter used by NSIB to check the firmware version */
 #define BL_MONOTONIC_COUNTERS_DESC_NSIB 0x1
 
@@ -34,6 +40,56 @@ extern "C" {
  * images in the future.
  */
 #define BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0 0x2
+
+struct monotonic_counter {
+	/* Counter description. What the counter is used for. See
+	 * BL_MONOTONIC_COUNTERS_DESC_x.
+	 */
+	uint16_t description;
+	/* Number of entries in 'counter_slots' list. */
+	uint16_t num_counter_slots;
+	uint16_t counter_slots[1];
+};
+
+/** Common part for all collections. */
+struct collection {
+	uint16_t type;
+	uint16_t count;
+};
+
+/** The second data structure in the provision page. It has unknown length since
+ *  'counters' is repeated. Note that each entry in counters also has unknown
+ *  length, and each entry can have different length from the others, so the
+ *  entries beyond the first cannot be accessed via array indices.
+ */
+struct counter_collection {
+	struct collection collection;  /* Type must be BL_COLLECTION_TYPE_MONOTONIC_COUNTERS */
+	struct monotonic_counter counters[1];
+};
+
+/* Variable data types. */
+enum variable_data_type {
+	BL_VARIABLE_DATA_TYPE_VERIFICATION_SERVICE_URL = 0x1,
+	BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE = 0x2,
+	BL_VARIABLE_DATA_TYPE_PROFILE_DEFINITION = 0x3,
+};
+struct variable_data {
+	uint8_t type;
+	uint8_t length;
+	uint8_t data[1];
+};
+
+/* The third data structure in the provision page. It has unknown length since
+ * 'variable_data' is repeated. The collection starts immediately after the
+ * counter collection. As the counter collection has unknown length, the start
+ * of the variable data collection must be calculated dynamically. Similarly,
+ * the entries in the variable data collection have unknown length, so they
+ * cannot be accessed via array indices.
+ */
+struct variable_data_collection {
+	struct collection collection; /* Type must be BL_COLLECTION_TYPE_VARIABLE_DATA */
+	struct variable_data variable_data[1];
+};
 
 /** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
  *  - Device assembly and test
@@ -59,7 +115,7 @@ struct life_cycle_state_data {
 
 /** The first data structure in the bootloader storage. It has unknown length
  *  since 'key_data' is repeated. This data structure is immediately followed by
- *  struct counter_collection.
+ *  struct counter_collection, which is then followed by struct variable_data_collection.
  */
 struct bl_storage_data {
 	/* NB: When placed in OTP, reads must be 4 bytes and 4 byte aligned */
@@ -72,6 +128,27 @@ struct bl_storage_data {
 		uint32_t valid;
 		uint8_t hash[SB_PUBLIC_KEY_HASH_LEN];
 	} key_data[1];
+
+	/* Monotonic counters:
+	 * uint16_t type;
+	 * uint16_t count;
+	 * struct {
+	 *	uint16_t description;
+	 *	uint16_t num_counter_slots;
+	 *	uint16_t counter_slots[1];
+	 * } counters[1];
+	 */
+
+	/* Variable data:
+	 * uint16_t type;
+	 * uint16_t count;
+	 * struct {
+	 *	uint8_t type;
+	 *	uint8_t length;
+	 *	uint8_t data[1];
+	 * } variable_data[1];
+	 * uint8_t padding[1];  // Padding to align to 4 bytes
+	 */
 };
 
 #define BL_STORAGE ((const volatile struct bl_storage_data *)(PM_PROVISION_ADDRESS))
@@ -96,13 +173,6 @@ uint32_t s0_address_read(void);
  * @return Address of slot 1.
  */
 uint32_t s1_address_read(void);
-
-/**
- * @brief Function for reading number of public key data slots.
- *
- * @return Number of public key data slots.
- */
-uint32_t num_public_keys_read(void);
 
 /**
  * @brief Function for reading number of public key data slots.
@@ -177,6 +247,38 @@ int get_monotonic_counter(uint16_t counter_desc, uint16_t *counter_value);
 int set_monotonic_counter(uint16_t counter_desc, uint16_t new_counter);
 
 /**
+ * @brief Function for reading number of public key data slots.
+ *
+ * @return Number of public key data slots.
+ */
+NRFX_STATIC_INLINE uint32_t num_public_keys_read(void)
+{
+	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->num_public_keys);
+}
+
+/**
+ * @brief Get the first collection after the public keys.
+ *
+ * @return Pointer to the first collection.
+ */
+NRFX_STATIC_INLINE const struct collection *get_first_collection(void)
+{
+	return (const struct collection *)&BL_STORAGE->key_data[num_public_keys_read()];
+}
+
+/**
+ * @brief Get the collection type.
+ *
+ * @param[in] collection Pointer to the collection.
+ *
+ * @return Collection type.
+ */
+NRFX_STATIC_INLINE uint16_t get_collection_type(const struct collection *collection)
+{
+	return nrfx_nvmc_otp_halfword_read((uint32_t)&collection->type);
+}
+
+/**
  * @brief The PSA life cycle states a device can be in.
  *
  * The LCS can be only transitioned in the order they are defined here.
@@ -194,21 +296,41 @@ enum lcs {
  * time. Writes to @p dst are done a byte at a time.
  *
  * @param[out] dst destination buffer.
- * @param[in] src source buffer in OTP. Must be 4-byte-aligned.
- * @param[in] size number of *bytes* in src to copy into dst. Must be divisible by 4.
+ * @param[in] src source buffer in OTP.
+ * @param[in] size number of *bytes* in src to copy into dst.
  */
-NRFX_STATIC_INLINE void otp_copy32(uint8_t *restrict dst, uint32_t volatile * restrict src,
-				   size_t size)
+NRFX_STATIC_INLINE void otp_copy(uint8_t *restrict dst, uint8_t volatile * restrict src,
+				 size_t size)
 {
-	for (int i = 0; i < size / 4; i++) {
-		/* OTP is in UICR */
-		uint32_t val = nrfx_nvmc_uicr_word_read(src + i);
+	size_t copied = 0;			/* Bytes copied. */
+	uint8_t src_offset = (uint32_t)src % 4; /* Align the source address to 32-bits. */
 
-		for (int j = 0; j < 4; j++) {
-			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
+	uint32_t val;	   /* 32-bit value read from the OTP. */
+	uint8_t copy_size; /* Number of bytes to copy. */
+
+	while (copied < size) {
+
+		/* Read 32-bits. */
+		val = nrfx_nvmc_uicr_word_read((uint32_t *)(src + copied - src_offset));
+
+		/* Calculate the size to copy. */
+		copy_size = sizeof(val) - src_offset;
+		if (size - copied < copy_size) {
+			copy_size = size - copied;
 		}
+
+		/* Copy the data one byte at a time. */
+		for (int i = 0; i < copy_size; i++) {
+			*dst++ = (val >> (8 * (i + src_offset))) & 0xFF;
+		}
+
+		/* Source address is aligned to 32-bits after the first iteration. */
+		src_offset = 0;
+
+		copied += copy_size;
 	}
 }
+
 /**
  * Read the implementation id from OTP and copy it into a given buffer.
  *
@@ -220,7 +342,7 @@ NRFX_STATIC_INLINE void read_implementation_id_from_otp(uint8_t *buf)
 		return;
 	}
 
-	otp_copy32(buf, (uint32_t *)&BL_STORAGE->implementation_id,
+	otp_copy(buf, (uint8_t *)&BL_STORAGE->implementation_id,
 		   BL_STORAGE_IMPLEMENTATION_ID_SIZE);
 }
 
@@ -335,6 +457,124 @@ NRFX_STATIC_INLINE int update_life_cycle_state(enum lcs next_lcs)
 	/* This will be the case if any invalid transition is tried */
 	return -EINVALIDLCS;
 }
+
+#if CONFIG_BUILD_WITH_TFM
+
+static uint32_t get_monotonic_counter_collection_size(const struct counter_collection *collection)
+{
+	/* Add only the constant part of the counter_collection. */
+	uint32_t size = sizeof(struct collection);
+	uint16_t num_counters =
+		nrfx_nvmc_otp_halfword_read((uint32_t)&collection->collection.count);
+	const struct monotonic_counter *counter = collection->counters;
+
+	for (int i = 0; i < num_counters; i++) {
+		/* Add only the constant part of the monotonic_counter. */
+		size += sizeof(struct monotonic_counter) - sizeof(uint16_t);
+
+		uint16_t num_slots =
+			nrfx_nvmc_otp_halfword_read((uint32_t)&counter->num_counter_slots);
+		size += (num_slots * sizeof(uint16_t));
+
+		/* Move to the next monotonic counter. */
+		counter = (const struct monotonic_counter *)&counter->counter_slots[num_slots];
+	}
+
+	return size;
+}
+
+static const struct variable_data_collection *get_variable_data_collection(void)
+{
+	/* We expect to find variable data after the monotonic counters. */
+	const struct collection *collection = get_first_collection();
+
+	if (get_collection_type(collection) == BL_COLLECTION_TYPE_MONOTONIC_COUNTERS) {
+
+		/* Advance to next collection. */
+		collection = (const struct collection *)((uint8_t *)collection +
+							 get_monotonic_counter_collection_size(
+								 (const struct counter_collection *)
+									 collection));
+
+		/* Verify that we found variable collection. */
+		return get_collection_type(collection) == BL_COLLECTION_TYPE_VARIABLE_DATA
+			       ? (const struct variable_data_collection *)collection
+			       : NULL;
+
+	} else if (get_collection_type(collection) == BL_COLLECTION_TYPE_VARIABLE_DATA) {
+		/* Bit of a special scenario where monotonic counters are not present. */
+		return (const struct variable_data_collection *)collection;
+	}
+
+	return NULL;
+}
+
+/**
+ * @brief Read variable data from OTP.
+ *
+ * Variable data starts with variable data collection ID, followed by amount of variable data
+ * entries and the variable data entries themselves.
+ * [Collection ID][Variable count][Type][Variable data length][Variable data][Type]...
+ *  2 bytes        2 bytes         1 byte 1 byte                0-255 bytes
+ *
+ * @note If data is not found, function does not fail. Instead, 0 length is returned.
+ *
+ * @param[in] data_type Type of the variable data to read.
+ * @param[out] buf      Buffer to store the variable data.
+ * @param[in,out] buf_len  On input, the size of the buffer. On output, the length of the data.
+ *
+ * @retval 0            Variable data read successfully, or not found.
+ * @retval -EINVAL      No buffer provided.
+ * @retval -ENOMEM      Buffer too small.
+ */
+int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t *buf_len)
+{
+	if (buf == NULL) {
+		return -EINVAL;
+	}
+
+	const struct variable_data_collection *collection = get_variable_data_collection();
+
+	if (collection == NULL) {
+		/* Variable data collection does not necessarily exist. Exit gracefully. */
+		*buf_len = 0;
+		return 0;
+	}
+
+	const struct variable_data *variable_data = collection->variable_data;
+	const uint16_t count = nrfx_nvmc_otp_halfword_read((uint32_t)&collection->collection.count);
+	uint8_t type;
+	uint8_t length;
+
+	/* Loop through all variable data entries. */
+	for (int i = 0; i < count; i++) {
+
+		/* Read the type and length of the variable data. */
+		otp_copy((uint8_t *)&type, (uint8_t *)&variable_data->type, sizeof(type));
+		otp_copy((uint8_t *)&length, (uint8_t *)&variable_data->length, sizeof(length));
+
+		if (type == data_type) {
+			/* Found the requested variable data. */
+			if (*buf_len < length) {
+				return -ENOMEM;
+			}
+
+			/* Copy the variable data into the buffer. */
+			otp_copy(buf, (uint8_t *)&variable_data->data, length);
+			*buf_len = length;
+			return 0;
+		}
+		/* Move to the next variable data entry. */
+		variable_data =
+			(const struct variable_data *)((uint8_t *)&variable_data->data + length);
+	}
+
+	/* No matching variable data. */
+	*buf_len = 0;
+
+	return 0;
+}
+#endif
 
   /** @} */
 

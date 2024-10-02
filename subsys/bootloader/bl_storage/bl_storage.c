@@ -12,7 +12,6 @@
 #include <nrfx_nvmc.h>
 #include <zephyr/kernel.h>
 
-#define TYPE_COUNTERS 1 /* Type referring to counter collection. */
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
 #ifdef CONFIG_SB_NUM_VER_COUNTER_SLOTS
@@ -31,26 +30,6 @@ BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
  *  necessary so the counter can be used in the OTP section of the UICR
  *  (available on e.g. nRF91 and nRF53).
  */
-struct monotonic_counter {
-	/* Counter description. What the counter is used for. See
-	 * BL_MONOTONIC_COUNTERS_DESC_x.
-	 */
-	uint16_t description;
-	/* Number of entries in 'counter_slots' list. */
-	uint16_t num_counter_slots;
-	uint16_t counter_slots[1];
-};
-
-/** The second data structure in the provision page. It has unknown length since
- *  'counters' is repeated. Note that each entry in counters also has unknown
- *  length, and each entry can have different length from the others, so the
- *  entries beyond the first cannot be accessed via array indices.
- */
-struct counter_collection {
-	uint16_t type; /* Must be "monotonic counter". */
-	uint16_t num_counters; /* Number of entries in 'counters' list. */
-	struct monotonic_counter counters[1];
-};
 
 /*
  * BL_STORAGE is usually, but not always, in UICR. For code simplicity
@@ -65,11 +44,6 @@ uint32_t s0_address_read(void)
 uint32_t s1_address_read(void)
 {
 	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->s1_address);
-}
-
-uint32_t num_public_keys_read(void)
-{
-	return nrfx_nvmc_uicr_word_read(&BL_STORAGE->num_public_keys);
 }
 
 /* Value written to the invalidation token when invalidating an entry. */
@@ -136,14 +110,7 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf)
 
 	p_key = BL_STORAGE->key_data[key_idx].hash;
 
-	/* Ensure word alignment, since the data is stored in memory region
-	 * with word sized read limitation. Perform both build time and run
-	 * time asserts to catch the issue as soon as possible.
-	 */
-	BUILD_ASSERT(offsetof(struct bl_storage_data, key_data) % 4 == 0);
-	__ASSERT(((uint32_t)p_key % 4 == 0), "Key address is not word aligned");
-
-	otp_copy32(p_buf, (volatile uint32_t *restrict)p_key, SB_PUBLIC_KEY_HASH_LEN);
+	otp_copy(p_buf, (volatile uint8_t *restrict)p_key, SB_PUBLIC_KEY_HASH_LEN);
 
 	return SB_PUBLIC_KEY_HASH_LEN;
 }
@@ -162,10 +129,11 @@ void invalidate_public_key(uint32_t key_idx)
 /** Get the counter_collection data structure in the provision data. */
 static const struct counter_collection *get_counter_collection(void)
 {
-	const struct counter_collection *collection = (struct counter_collection *)
-		&BL_STORAGE->key_data[num_public_keys_read()];
-	return nrfx_nvmc_otp_halfword_read((uint32_t)&collection->type) == TYPE_COUNTERS
-		? collection : NULL;
+	const struct collection *collection = get_first_collection();
+
+	return get_collection_type(collection) == BL_COLLECTION_TYPE_MONOTONIC_COUNTERS
+		       ? (const struct counter_collection *)collection
+		       : NULL;
 }
 
 /** Get one of the (possibly multiple) counters in the provision data.
@@ -183,7 +151,7 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description)
 	const struct monotonic_counter *current = counters->counters;
 
 	for (size_t i = 0; i < nrfx_nvmc_otp_halfword_read(
-		(uint32_t)&counters->num_counters); i++) {
+		(uint32_t)&counters->collection.count); i++) {
 		uint16_t num_slots = nrfx_nvmc_otp_halfword_read(
 					(uint32_t)&current->num_counter_slots);
 

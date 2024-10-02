@@ -80,6 +80,18 @@ function(provision application prefix_name)
     set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
   endif()
 
+  if(SB_CONFIG_TFM_OTP_VERIFICATION_SERVICE_URL)
+    set(verification_service_url --verification-service-url ${SB_CONFIG_TFM_OTP_VERIFICATION_SERVICE_URL})
+  endif()
+
+  if(SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE AND SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE)
+    set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
+  endif()
+
+  if(SB_CONFIG_TFM_OTP_PROFILE_DEFINITION)
+    set(profile_definition --profile-definition ${SB_CONFIG_TFM_OTP_PROFILE_DEFINITION})
+  endif()
+
   if(CONFIG_SECURE_BOOT)
     add_custom_command(
       OUTPUT
@@ -96,6 +108,9 @@ function(provision application prefix_name)
       ${monotonic_counter_arg}
       ${no_verify_hashes_arg}
       ${mcuboot_counters_slots}
+      ${verification_service_url}
+      ${psa_certificate_reference}
+      ${profile_definition}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
       ${PROVISION_DEPENDS}
@@ -118,6 +133,9 @@ function(provision application prefix_name)
       --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
       ${mcuboot_counters_num}
       ${mcuboot_counters_slots}
+      ${verification_service_url}
+      ${psa_certificate_reference}
+      ${profile_definition}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
       WORKING_DIRECTORY
