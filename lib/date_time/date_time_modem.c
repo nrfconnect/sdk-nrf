@@ -22,6 +22,9 @@ LOG_MODULE_DECLARE(date_time, CONFIG_DATE_TIME_LOG_LEVEL);
 
 extern struct k_work_q date_time_work_q;
 
+#define MODEM_CFUN_NORMAL 1
+#define MODEM_CFUN_ACTIVATE_LTE 21
+
 #if defined(CONFIG_DATE_TIME_AUTO_UPDATE)
 /* AT monitor for %XTIME notifications */
 AT_MONITOR(xtime, "%XTIME", date_time_at_xtime_handler);
@@ -241,7 +244,7 @@ static void date_time_modem_on_cfun(int mode, void *ctx)
 {
 	ARG_UNUSED(ctx);
 
-	if (mode == LTE_LC_FUNC_MODE_NORMAL || mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+	if (mode == MODEM_CFUN_NORMAL || mode == MODEM_CFUN_ACTIVATE_LTE) {
 		k_work_submit_to_queue(&date_time_work_q, &date_time_modem_xtime_subscribe_work);
 	}
 }

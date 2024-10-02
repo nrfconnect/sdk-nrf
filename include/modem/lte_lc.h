@@ -1193,6 +1193,8 @@ struct lte_lc_cfun_cb {
  * @param name Callback name.
  * @param _callback Callback function.
  * @param _context User-defined context.
+ *
+ * @deprecated since v2.8.0, use @ref NRF_MODEM_LIB_ON_CFUN instead.
  */
 #define LTE_LC_ON_CFUN(name, _callback, _context)                                                  \
 	static void _callback(enum lte_lc_func_mode, void *ctx);                                   \
