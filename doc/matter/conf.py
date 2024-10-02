@@ -31,6 +31,7 @@ sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "recommonmark",
+    "warnings_filter",
     "sphinx_markdown_tables",
     "zephyr.external_content"
 ]
@@ -50,6 +51,10 @@ html_theme_options = {
     "docsets": utils.ALL_DOCSETS,
     "subtitle": "nRF Connect SDK",
 }
+
+# Options for warnings_filter --------------------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "matter" / "known-warnings.txt")
 
 # Options for external_content -------------------------------------------------
 
