@@ -15,7 +15,11 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE);
 
-static uint8_t usb_serial_str[] = "THINGY91_12PLACEHLDRS";
+#if defined(CONFIG_SOC_SERIES_NRF52X)
+static uint8_t usb_serial_str[sizeof("THINGY91_XXXXXXXXXXXX")];
+#else
+static uint8_t usb_serial_str[sizeof("THINGY91X_") + HW_ID_LEN];
+#endif
 
 /* Overriding weak function to set iSerialNumber at runtime. */
 uint8_t *usb_update_sn_string_descriptor(void)
