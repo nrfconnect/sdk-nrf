@@ -41,7 +41,9 @@ extensions = [
 ]
 source_suffix = [".rst", ".md"]
 
-exclude_patterns = ["readme.rst"]
+exclude_patterns = [
+  "platform/cypress/psoc64/security/keys/readme.rst"
+]
 
 numfig = True
 
@@ -81,8 +83,6 @@ intersphinx_mapping = {
 
 external_content_contents = [
     (TFM_BASE / "docs", "**/*"),
-    (TFM_BASE, "platform/**/*"),
-    (TFM_BASE, "tools/**/*"),
 ]
 
 
