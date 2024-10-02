@@ -15,6 +15,8 @@
     - ".*nrf7002_eb.*"
     - ".thingy91x_nrf700.*"
     - ".thingy91x_wifi.*"
+    - applications.matter_bridge.lto.br_ble.nrf54h20.wifi
+    - applications.matter_bridge.release.br_ble.nrf54h20.wifi
   comment: "nRF7002EB, Thingy91x are not support in the upstream nRF70 driver yet"
 
 - scenarios:
