@@ -32,7 +32,7 @@ extern struct k_poll_signal mosh_signal;
 extern struct k_work_q mosh_common_work_q;
 
 /* Maximum number of sockets takes into account AT command socket */
-#define MAX_SOCKETS (CONFIG_POSIX_MAX_FDS - 1)
+#define MAX_SOCKETS (CONFIG_POSIX_OPEN_MAX - 1)
 #define SOCK_SEND_BUFFER_SIZE_UDP 1200
 /* This should be multiple of TCP window size (708) to make it more efficient */
 #define SOCK_SEND_BUFFER_SIZE_TCP 3540
@@ -588,7 +588,7 @@ int sock_open_and_connect(
 				"system exceeded (%d). Notice that all file descriptors in the "
 				"system are taken into account and not just sockets created "
 				"through this application.",
-				CONFIG_POSIX_MAX_FDS);
+				CONFIG_ZVFS_OPEN_MAX);
 		} else {
 			mosh_error("Socket create failed, errno %d", errno);
 		}

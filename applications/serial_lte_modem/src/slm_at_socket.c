@@ -21,7 +21,7 @@
 
 LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 
-#define SLM_MAX_SOCKET_COUNT CONFIG_POSIX_MAX_FDS
+#define SLM_MAX_SOCKET_COUNT CONFIG_POSIX_OPEN_MAX
 
 /*
  * Known limitation in this version
