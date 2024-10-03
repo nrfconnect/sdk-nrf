@@ -120,11 +120,13 @@ This is a reference configuration that can be modified in the production firmwar
      - Trusted Firmware-M (TF-M)
 
 .. [1] The CryptoCell backend is used in parallel with the Oberon backend.
-       It is only used to implement Random Nuber Generation (RNG), and the AED keys derivation driver (only for Thread networking).
-       For all other cryptographic operations, the Oberon backend is used.
+       By default, the CryptoCell backend is used only for Random Number Generation (RNG) and the AEAD key derivation driver.
+       To enable the CryptoCell backend for additional operations, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CC3XX` Kconfig option to true.
 
-.. [2] When the CRACEN driver is used in parallel with the Oberon driver, you need to disable specific CRACEN cryptographic operations to use the Oberon ones.
-       This is because the CRACEN driver has priority when both are enabled.
+.. [2] The CRACEN backend is used in parallel with the Oberon backend.
+       The CRACEN backend is used by default for any supported cryptographic operations.
+       For all other operations not supported by CRACEN, the Oberon backend is used.
+       To use the Oberon backend for specific cryptographic operations supported by both drivers, disable those operations in the CRACEN driver, as it takes priority when both are enabled.
        See the :ref:`nrf_security_drivers` documentation for more information.
 
 Securing production devices

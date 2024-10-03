@@ -84,3 +84,12 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     tags: sysbuild ci_samples_matter
+  sample.matter.template.cc3xx_backend:
+    sysbuild: true
+    build_only: true
+    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
+    tags: sysbuild ci_samples_matter
