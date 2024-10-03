@@ -38,6 +38,10 @@ DEF_DFU_TARGET(smp);
 #include "dfu/dfu_target_suit.h"
 DEF_DFU_TARGET(suit);
 #endif
+#ifdef CONFIG_DFU_TARGET_CUSTOM
+#include "dfu/dfu_target_custom.h"
+DEF_DFU_TARGET(custom);
+#endif
 
 #define MIN_SIZE_IDENTIFY_BUF 32
 
@@ -64,6 +68,11 @@ enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len
 #ifdef CONFIG_DFU_TARGET_FULL_MODEM
 	if (dfu_target_full_modem_identify(buf)) {
 		return DFU_TARGET_IMAGE_TYPE_FULL_MODEM;
+	}
+#endif
+#ifdef CONFIG_DFU_TARGET_CUSTOM
+	if (dfu_target_custom_identify(buf)) {
+		return DFU_TARGET_IMAGE_TYPE_CUSTOM;
 	}
 #endif
 	LOG_ERR("No supported image type found");
@@ -111,6 +120,11 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 #ifdef CONFIG_DFU_TARGET_SUIT
 	if (img_type == DFU_TARGET_IMAGE_TYPE_SUIT) {
 		new_target = &dfu_target_suit;
+	}
+#endif
+#ifdef CONFIG_DFU_TARGET_CUSTOM
+	if (img_type == DFU_TARGET_IMAGE_TYPE_CUSTOM) {
+		new_target = &dfu_target_custom;
 	}
 #endif
 

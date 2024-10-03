@@ -125,6 +125,12 @@ config DFU_TARGET_SUIT
 	help
 	  Enable support for updates using DFU target based on SUIT
 
+config DFU_TARGET_CUSTOM
+	bool "Custom application controlled update support"
+	default n
+	help
+	  Enable support for custom updates using DFU target
+
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade

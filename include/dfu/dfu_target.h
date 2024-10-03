@@ -36,6 +36,8 @@ enum dfu_target_image_type {
 	DFU_TARGET_IMAGE_TYPE_FULL_MODEM = 4,
 	/** SMP external MCU */
 	DFU_TARGET_IMAGE_TYPE_SMP = 8,
+	/** Custom update implementation, e.g. for external MCU */
+	DFU_TARGET_IMAGE_TYPE_CUSTOM = 16,
 	/** Any application image type */
 	DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION = DFU_TARGET_IMAGE_TYPE_MCUBOOT,
 	/** Any modem image */
@@ -44,7 +46,7 @@ enum dfu_target_image_type {
 	/** Any DFU image type */
 	DFU_TARGET_IMAGE_TYPE_ANY =
 		(DFU_TARGET_IMAGE_TYPE_MCUBOOT | DFU_TARGET_IMAGE_TYPE_MODEM_DELTA |
-		 DFU_TARGET_IMAGE_TYPE_FULL_MODEM),
+		 DFU_TARGET_IMAGE_TYPE_FULL_MODEM | DFU_TARGET_IMAGE_TYPE_CUSTOM),
 };
 
 enum dfu_target_evt_id {
