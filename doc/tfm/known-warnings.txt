@@ -1,3 +1,4 @@
 # Add here warnings caused by upstream docs, and that cannot be fixed due to
 # our build process tweaks
 .*document isn't included in any toctree.*
+unknown document: 'TF-M-Extras:partitions/adac/index'
