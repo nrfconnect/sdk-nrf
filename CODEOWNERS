@@ -275,9 +275,10 @@
 /subsys/audio/audio_module_template/      @nrfconnect/ncs-audio
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
-/subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
-/subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @nrfconnect/ncs-si-bluebagel
+/subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
+/subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
+/subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/services/fast_pair/     @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bootloader/                       @nrfconnect/ncs-pluto
