@@ -4,10 +4,9 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - scripts/west_commands/mypy.ini
-      - scripts/west_commands/ncs_commands.py
-      - scripts/west_commands/ncs_west_helpers.py
-      - scripts/west_commands/pygit2_helpers.py
+      - scripts/west_commands/**
+      - scripts/requirements-west-ncs-sbom.txt
+      - scripts/requirements-extra.txt
 
 jobs:
   west_commands_job:
@@ -15,16 +14,11 @@ jobs:
     name: Run Python checks for west commands on patch series (PR)
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: nrfconnect/action-checkout-west-update@main
         with:
           path: ncs/nrf
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - name: cache-pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-doc-pip
+          git-ref: ${{ github.event.pull_request.head.sha }}
+          git-fetch-depth: 0
       - name: Install python dependencies
         working-directory: ncs/nrf
         run: |
@@ -38,3 +32,31 @@ jobs:
         working-directory: ncs/nrf/scripts/west_commands
         run: |
           python3 -m mypy --config-file mypy.ini ncs_west_helpers.py pygit2_helpers.py ncs_commands.py
+
+  run-west-cmds:
+    name: Run smoke tests for ncs west commands
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-13, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
+        with:
+          git-fetch-depth: 0
+          path: nrf
+      - name: Install requirements
+        shell: bash
+        run: |
+          pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
+          pip3 install -r nrf/scripts/requirements-extra.txt
+      - name: Test ncs-sbom with asset tracker sample
+        shell: bash
+        run: |
+          west ncs-sbom --input-files nrf/applications/asset_tracker_v2/**/*.c
+      - name: Smoke test ncs-loot & ncs-compare
+        shell: bash
+        run: |
+          west ncs-loot -h
+          west ncs-compare -h
