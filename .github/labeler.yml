@@ -21,7 +21,11 @@
 "changelog-entry-required":
 - all:
   - changed-files:
-    - all-globs-to-all-files: ["!doc/nrf/releases_and_maturity/releases/release-notes-changelog.rst"]
+    - all-globs-to-all-files:
+      - "!doc/nrf/releases_and_maturity/releases/release-notes-changelog.rst"
+      - "!.github/*"
+      - "!CODEOWNERS"
+      - "!.*"
 
 "ble mesh":
 - changed-files:
