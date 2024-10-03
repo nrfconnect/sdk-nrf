@@ -493,7 +493,7 @@ out:
 	/* To even the load on server side */
 	retry_s += spread_s;
 
-	LOG_DBG("Connecting in %llds", retry_s);
+	LOG_INF("Checking for provisioning commands in %llds seconds", retry_s);
 	reschedule = false;
 
 	return retry_s;
