@@ -7,7 +7,7 @@ Processing environments
    :local:
    :depth: 2
 
-The :ref:`boards supported by the SDK <app_boards_names>` distinguish entries according to the CPU to target (for multi-core SoCs) and whether Cortex-M Security Extensions (CMSE) are used or not (addition of the ``*/ns`` :ref:`variant <app_boards_names>` if they are used).
+The :ref:`boards supported by the SDK <app_boards_names>` distinguish entries according which CPU is to be targeted (for multi-core SoCs) and whether Cortex-M Security Extensions (CMSE) are used or not (addition of the ``*/ns`` :ref:`variant <app_boards_names>` if they are used).
 
 When CMSE is used, the firmware is split in accordance with the security by separation architecture principle to better protect sensitive assets and code.
 With CMSE, the firmware is stored in one of two security environments (flash partitions), either Secure Processing Environment (SPE) or Non-Secure Processing Environment (NSPE).

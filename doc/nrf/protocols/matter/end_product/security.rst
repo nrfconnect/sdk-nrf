@@ -25,7 +25,7 @@ Depending on the networking backend, the |NCS| Matter samples currently use the 
   Support for PSA Cryptography API for the Wi-Fi backend is planned for a future release.
 
 Both APIs are integrated in the :ref:`nrf_security` library.
-This library offers various configuration possibilities and backends that can be employed to implement :ref:`cryptographic operations <cryptographic_operations_in_ncs>`.
+This library offers various configuration possibilities and backends that can be employed to implement :ref:`cryptographic operations <security_index>`.
 You can find an overview of the cryptography layer configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
 
 Trusted storage

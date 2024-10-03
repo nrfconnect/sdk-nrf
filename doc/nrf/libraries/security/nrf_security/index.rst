@@ -4,7 +4,8 @@
 nRF Security
 ############
 
-The nRF Security subsystem (nrf_security) provides an integration between Mbed TLS and software libraries that provide hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs as well as alternate software-based implementations of the Mbed TLS APIs.
+The nRF Security subsystem (nrf_security) provides an integration between `Mbed TLS`_ and software libraries that provide hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs as well as alternate software-based implementations of the Mbed TLS APIs.
+These libraries include the binary versions of accelerated cryptographic libraries listed in :ref:`nrfxlib:crypto`, and the open source Mbed TLS implementation in |NCS| located in `sdk-mbedtls`_.
 The subsystem includes a PSA driver abstraction layer to enable both hardware-accelerated and software-based implementation at the same time.
 
 The nRF Security subsystem can interface with the :ref:`nrf_cc3xx_mbedcrypto_readme`.

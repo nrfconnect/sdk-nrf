@@ -163,8 +163,8 @@ mapping_topics:
   - nrf/test_and_optimize/optimizing/power_general.html: ["power-profiler-kit"]
   - nrf/test_and_optimize/optimizing/power_nrf91.html: ["power-profiler-kit", "nrf9160", "nrf9161",
                                                         "nrf9151", "nrf9131", "lte"]
-  - nrf/security/security.html: ["kconfig"]
-  - nrf/security/ap_protect.html: ["kconfig"]
+  - nrf/security.html: ["kconfig"]
+  - nrf/security/*.html: ["kconfig"]
   - nrf/protocols/*.html: ["protocols"]
   - nrf/protocols.html: ["sidewalk", "ble", "blemesh", "esb", "gazell", "matter", "multiprotocol",
                          "nfc", "thread", "zigbee", "wifi", "dect-nr+", "protocols"]
