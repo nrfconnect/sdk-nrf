@@ -385,6 +385,15 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0
+
+KRKNWK-19524: Reliability issues with multicast message delivery for certain Access Points.
+  Certain Access Points require Wi-Fi devices to send Multicast Listener Discovery version 2 (MLDv2) Report messages for multicast packets to be properly delivered to a given address.
+  Matter over Wi-Fi devices only subscribed to multicast addresses within the internal IPv6 stack, without notifying the Access Points, leading to reliability issues with multicast message delivery.
+
+  **Workaround:** To ensure reliable multicast communication, use the :c:func:`net_ipv6_mld_join` and :c:func:`net_ipv6_mld_leave` functions to explicitly subscribe or unsubscribe to multicast addresses.
+  For reference, see the commit with the fix in the ``sdk-connectedhomeip`` repository (commit hash: ``TBD``).
+
 .. rst-class:: v2-7-0
 
 KRKNWK-19443: The device commissioning window can be opened for longer than 900 seconds, which violates the Matter specification.
