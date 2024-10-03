@@ -37,7 +37,7 @@ if(CONFIG_BUILD_WITH_TFM)
   include(${NRF_SECURITY_ROOT}/cmake/config_to_tf-m.cmake)
 endif()
 
-if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
+if(CONFIG_BUILD_WITH_TFM OR (CONFIG_PSA_SSF_CRYPTO_CLIENT AND CONFIG_NRF_SECURITY))
   # We enable either TF-M or the SSF client PSA crypto interface but we are
   # not in the secure image build
 
@@ -102,8 +102,29 @@ endif()
 
 set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG  True)
 
+if(CONFIG_PSA_SSF_CRYPTO_CLIENT AND NOT CONFIG_NRF_SECURITY)
+  zephyr_compile_definitions(MBEDTLS_PSA_CRYPTO_CONFIG)
+  zephyr_compile_definitions(MBEDTLS_PSA_CRYPTO_CLIENT)
+  zephyr_compile_definitions(MBEDTLS_PSA_CRYPTO_CONFIG_FILE="ssf_crypto_config_empty.h")
+  zephyr_compile_definitions(MBEDTLS_CONFIG_FILE="ssf_crypto_config_empty.h")
+
+  zephyr_include_directories(
+    ${NRF_SECURITY_ROOT}/include
+    # Oberon PSA headers
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
+    ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/library
+    # Mbed TLS (mbedcrypto) PSA headers
+    ${ARM_MBEDTLS_PATH}/include
+    ${ARM_MBEDTLS_PATH}/library
+  )
+
+  zephyr_sources(${CMAKE_CURRENT_LIST_DIR}/src/ssf_secdom/ssf_crypto.c)
+
+else()
+
 # Finally adding the crypto lib
 add_subdirectory(${NRFXLIB_DIR}/crypto crypto_copy)
 
 # Add mbed TLS Libraries
 add_subdirectory(src)
+endif()
