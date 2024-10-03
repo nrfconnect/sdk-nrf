@@ -55,3 +55,10 @@
 - scenarios:
     - applications.matter_bridge.lto.nrf5340.wifi
   comment: "nRF7002EK is not support in the upstream nRF70 driver yet"
+
+- scenarios:
+    - applications.zigbee_weather_station
+    - applications.zigbee_weather_station.debug
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29488"
