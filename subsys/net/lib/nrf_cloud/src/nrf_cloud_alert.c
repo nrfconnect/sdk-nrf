@@ -195,7 +195,7 @@ void nrf_cloud_alert_control_set(bool enable)
 	if (!IS_ENABLED(CONFIG_NRF_CLOUD_ALERT)) {
 		return;
 	}
-	LOG_DBG("Changing alerts_enabled from:%d to:%d", alerts_enabled, enable);
+	LOG_INF("Changing alerts enabled from:%d to:%d", alerts_enabled, enable);
 	if (alerts_enabled != enable) {
 		alerts_enabled = enable;
 	}
