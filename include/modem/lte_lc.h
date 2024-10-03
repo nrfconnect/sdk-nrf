@@ -399,14 +399,14 @@ struct lte_lc_ncell {
 	/**
 	 * RSRP.
 	 *
-	 * Format is the same as for @c rsrp member of struct @ref lte_lc_cell.
+	 * Format is the same as for @c lte_lc_cell.rsrp member.
 	 */
 	int16_t rsrp;
 
 	/**
 	 * RSRQ.
 	 *
-	 * Format is the same as for @c rsrq member of struct @ref lte_lc_cell.
+	 * Format is the same as for @c lte_lc_cell.rsrq member.
 	 */
 	int16_t rsrq;
 };
@@ -466,13 +466,15 @@ struct lte_lc_cell {
 	/**
 	 * RSRP.
 	 *
+	 * Can be converted into dBm using @ref RSRP_IDX_TO_DBM macro.
+	 *
 	 * * -17: RSRP < -156 dBm
 	 * * -16: -156 ≤ RSRP < -155 dBm
 	 * * ...
 	 * * -3: -143 ≤ RSRP < -142 dBm
 	 * * -2: -142 ≤ RSRP < -141 dBm
 	 * * -1: -141 ≤ RSRP < -140 dBm
-	 * * 0: RSRP < -140 dBm
+	 * * 0: Not used.
 	 * * 1: -140 ≤ RSRP < -139 dBm
 	 * * 2: -139 ≤ RSRP < -138 dBm
 	 * * ...
@@ -486,12 +488,14 @@ struct lte_lc_cell {
 	/**
 	 * RSRQ.
 	 *
-	 * * -30: RSRQ < -34 dB
+	 * Can be converted into dB using @ref RSRQ_IDX_TO_DB macro.
+	 *
+	 * * -30: RSRQ < -34.5 dB
 	 * * -29: -34 ≤ RSRQ < -33.5 dB
 	 * * ...
 	 * * -2: -20.5 ≤ RSRQ < -20 dB
 	 * * -1: -20 ≤ RSRQ < -19.5 dB
-	 * * 0: RSRQ < -19.5 dB
+	 * * 0: Not used.
 	 * * 1: -19.5 ≤ RSRQ < -19 dB
 	 * * 2: -19 ≤ RSRQ < -18.5 dB
 	 * * ...
@@ -807,13 +811,15 @@ struct lte_lc_conn_eval_params {
 	/**
 	 * Current RSRP level at time of report.
 	 *
+	 * Can be converted into dBm using @ref RSRP_IDX_TO_DBM macro.
+	 *
 	 * * -17: RSRP < -156 dBm
 	 * * -16: -156 ≤ RSRP < -155 dBm
 	 * * ...
 	 * * -3: -143 ≤ RSRP < -142 dBm
 	 * * -2: -142 ≤ RSRP < -141 dBm
 	 * * -1: -141 ≤ RSRP < -140 dBm
-	 * * 0: RSRP < -140 dBm
+	 * * 0: Not used.
 	 * * 1: -140 ≤ RSRP < -139 dBm
 	 * * 2: -139 ≤ RSRP < -138 dBm
 	 * * ...
@@ -827,12 +833,14 @@ struct lte_lc_conn_eval_params {
 	/**
 	 * Current RSRQ level at time of report.
 	 *
+	 * Can be converted into dB using @ref RSRQ_IDX_TO_DB macro.
+	 *
 	 * * -30: RSRQ < -34 dB
 	 * * -29: -34 ≤ RSRQ < -33.5 dB
 	 * * ...
 	 * * -2: -20.5 ≤ RSRQ < -20 dB
 	 * * -1: -20 ≤ RSRQ < -19.5 dB
-	 * * 0: RSRQ < -19.5 dB
+	 * * 0: Not used.
 	 * * 1: -19.5 ≤ RSRQ < -19 dB
 	 * * 2: -19 ≤ RSRQ < -18.5 dB
 	 * * ...
