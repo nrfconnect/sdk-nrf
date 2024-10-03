@@ -158,9 +158,9 @@ choice TRUSTED_STORAGE_STORAGE_BACKEND
 
 config TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 	bool "Settings storage backend"
-	depends on SETTINGS_NVS
+	depends on SETTINGS_NVS || SETTINGS_ZMS
 	help
-	  Use the Settings subsystem with NVS to store the assets
+	  Use the Settings subsystem to store the assets
 
 config TRUSTED_STORAGE_STORAGE_BACKEND_CUSTOM
 	bool "Custom storage backend"
