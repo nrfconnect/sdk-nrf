@@ -1203,7 +1203,8 @@ ci_tests_benchmarks_multicore:
     - modules/hal/nordic/nrfx/
     - nrf/tests/benchmarks/multicore/
     - zephyr/boards/nordic/
-    - zephyr/boards/nordic/
+    - zephyr/dts/common/nordic/
+    - zephyr/soc/nordic/
 
 ci_tests_benchmarks_i2c_endless:
   files:
@@ -1243,8 +1244,10 @@ ci_tests_benchmarks_current_consumption:
     - nrf/subsys/nfc/
     - nrf/tests/benchmarks/current_consumption/
     - nrfxlib/nfc/
+    - zephyr/boards/nordic/
     - zephyr/drivers/gpio/
     - zephyr/drivers/serial/
+    - zephyr/dts/common/nordic/
     - zephyr/soc/nordic/
 
 ci_tests_drivers_fprotect:
