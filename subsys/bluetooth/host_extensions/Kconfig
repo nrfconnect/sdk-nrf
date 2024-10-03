@@ -5,10 +5,9 @@
 #
 
 config BT_RADIO_NOTIFICATION_CONN_CB
-	bool "Radio Notification connection callback [EXPERIMENTAL]"
+	bool "Radio Notification connection callback"
 	depends on BT_LL_SOFTDEVICE || \
 		   (BT_LL_SOFTDEVICE_HEADERS_INCLUDE && !SOC_COMPATIBLE_NRF5340_CPUAPP)
-	select EXPERIMENTAL
 	select BT_HCI_VS_EVT_USER
 	select BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT
 	help
