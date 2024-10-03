@@ -81,8 +81,8 @@ int coap_fota_thread_fn(void)
 		 */
 		err = nrf_cloud_fota_poll_process(&ctx);
 		if (err == -EAGAIN) {
-			LOG_DBG("Retrying in %d minute(s)",
-				CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES);
+			LOG_INF("Checking for FOTA job in %d seconds",
+				CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES * SEC_PER_MIN);
 			k_sleep(K_MINUTES(CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES));
 			continue;
 		}

@@ -16,6 +16,7 @@
 #include <net/nrf_cloud_coap.h>
 #include "fota_support_coap.h"
 #endif
+#include <net/nrf_provisioning.h>
 
 #include "cloud_connection.h"
 #include "provisioning_support.h"
@@ -143,6 +144,12 @@ static void cloud_ready(void)
 	/* Notify that the nRF Cloud connection is ready for use. */
 	k_event_post(&cloud_events, CLOUD_READY);
 	LOG_DBG("Setting CLOUD_READY");
+
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
+		LOG_INF("Reducing provisioning check interval to %d minutes",
+			CONFIG_POST_PROVISIONING_INTERVAL_M);
+		nrf_provisioning_set_interval(CONFIG_POST_PROVISIONING_INTERVAL_M * SEC_PER_MIN);
+	}
 }
 
 /* A callback that the application may register in order to handle custom device messages.
@@ -614,10 +621,22 @@ static void check_credentials(void)
 			LOG_WRN("nRF Cloud credentials are not installed. "
 				"Please install and reboot.");
 		}
-		k_sleep(K_FOREVER);
-	} else if (status) {
-		LOG_ERR("Error while checking for credentials: %d. Proceeding anyway.", status);
+	} else if (status == -ENOPROTOOPT) {
+		LOG_WRN("Required root CA certificate is missing.");
+	} else {
+		if (status) {
+			LOG_ERR("Error while checking for credentials: %d. Proceeding anyway.",
+				status);
+		}
+		return;
 	}
+	if (!IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
+		/* Save power since credentials will not work, and we are not using the
+		 * cloud-based nrf_provisioning service.
+		 */
+		conn_mgr_all_if_down(true);
+	}
+	k_sleep(K_FOREVER);
 }
 
 void cloud_connection_thread_fn(void)
