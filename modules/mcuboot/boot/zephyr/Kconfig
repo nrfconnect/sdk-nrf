@@ -172,3 +172,13 @@ config MCUBOOT_CLEANUP_UNUSABLE_SECONDARY
 	  supported primary images.
 	  This behaviour is desired when configuration allows to use one secondary
 	  slot for collecting image for multiple primary slots.
+
+# disabled for reduce footprint
+config BOOT_SERIAL_IMG_GRP_HASH
+	bool
+	default n
+
+# disabled for reduce footprint
+config BOOT_SERIAL_IMG_GPR_SLOT_INFO
+	bool
+	default n
