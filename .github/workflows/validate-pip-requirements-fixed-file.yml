@@ -1,16 +1,13 @@
 name: Validate pip requirements-fixed.txt
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - main
       - 'v*-branch'
     paths:
       - 'scripts/requirements*.txt'
-
-env:
-  REACT_EMOTE: 'eyes'
 
 jobs:
   check-requirements:
@@ -30,7 +27,7 @@ jobs:
           echo "python_version=$PYTHON_VERSION" >> $GITHUB_OUTPUT
 
       - name: Setup python version
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '${{ steps.pyv.outputs.python_version }}'
 
@@ -40,31 +37,11 @@ jobs:
           pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
 
       - name: Execute script diff action
-        uses: nrfconnect/action-script-diff@v0.2
+        uses: nrfconnect/action-script-diff@v0.3
         with:
-          github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
-          message_diff: |
-            This pr introduces changes to requirements files.
-            The compiled requirements-fixed.txt has changed.
-            To automatically add the changed file to this pr react with the :$REACT_EMOTE: emote to this comment and re-run the check.
-            [Check Run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
-            <details>
-              <summary>requirements-fixed.txt diff</summary>
-
-              \`\`\` diff
-              $GITDIFF
-              \`\`\`
-            </details>
-          message_success: |
-            The changes to the 'requirements-fixed.txt' have been added to this PR.
-            All further changes to any of the requirements file will automatically be applied as long an :$REACT_EMOTE: is present.
-          git_diff_root: ncs/nrf
-          diff_path: scripts
-          diff_file: requirements-fixed.txt
-          reaction_emote: "${{ env.REACT_EMOTE }}"
-          git_user_name: "Nordic Builder"
-          git_user_email: "pylon@nordicsemi.no"
+          diff_file: "ncs/nrf/scripts/requirements-fixed.txt"
           script_call: |
+            cd ncs
             OUT_FILE="nrf/scripts/requirements-fixed.txt"
             echo "Writing frozen requirements to: $OUT_FILE"
             echo "Log python version: $(python --version)"
