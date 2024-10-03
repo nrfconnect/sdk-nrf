@@ -82,33 +82,6 @@ tests:
       - nrf9151dk/nrf9151/ns
     tags: ci_build cc3xx_oberon dtls sysbuild ci_samples_crypto
   ################################################################################
-  ## PSA APIs with Oberon
-  ################################################################################
-  sample.psa_tls.server.ecdsa.oberon:
-    sysbuild: true
-    build_only: true
-    extra_args: >
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
-    platform_allow: >
-      nrf54l15dk/nrf54l15/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
-    tags: ci_build oberon sysbuild ci_samples_crypto
-  sample.psa_tls.client.ecdsa.oberon:
-    sysbuild: true
-    build_only: true
-    extra_args: >
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
-    platform_allow: >
-      nrf54l15dk/nrf54l15/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
-    tags: ci_build oberon sysbuild ci_samples_crypto
-  ################################################################################
   ## PSA APIs with Cracen
   ################################################################################
   sample.psa_tls.server.ecdsa.cracen:
