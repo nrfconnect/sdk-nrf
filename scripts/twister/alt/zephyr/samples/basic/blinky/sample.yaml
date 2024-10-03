@@ -49,3 +49,22 @@ tests:
       regex:
         - "LED state: ON"
         - "LED state: OFF"
+
+  sample.basic.blinky.egpio_icbmsg:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: SB_CONFIG_SDP=y
+                SB_CONFIG_EGPIO_FLPR_APPLICATION=y
+                SB_CONFIG_EGPIO_BACKEND_ICBMSG=y
+                SB_CONFIG_PARTITION_MANAGER=n
+                EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_egpio.overlay"
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "LED state: ON"
+        - "LED state: OFF"
