@@ -298,8 +298,8 @@ NRF = [
     ("app_dev/optimizing/memory", "test_and_optimize/optimizing/memory"),
     ("app_power_opt", "test_and_optimize/optimizing/power"), # Power optimization
     ("app_dev/optimizing/power", "test_and_optimize/optimizing/power"),
-    ("security_chapter", "security/security"), # Security (landing)
-    ("security", "security/security"),
+    ("security_chapter", "security"), # Security (landing)
+    ("security/security", "security"), # Security (subpage -- removed in v2.8.0)
     ("ug_tfm", "security/tfm"), # Running applications with Trusted Firmware-M
     ("app_dev/tfm/index", "security/tfm"),
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
