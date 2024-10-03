@@ -245,6 +245,13 @@ config SEND_ONLINE_ALERT
 	  Enable this to demonstrate the alert feature of nRF Cloud. Reception of this alert
 	  indicates the device has rebooted.
 
+config POST_PROVISIONING_INTERVAL_M
+	int "Delay in minutes between provisioning checks once connected"
+	default 30
+	help
+	  Use a slower rate to check for provisioning after we have successfully connected.
+	  Until then use CONFIG_NRF_PROVISIONING_INTERVAL_S.
+
 if NRF_CLOUD_COAP
 
 menuconfig COAP_FOTA
