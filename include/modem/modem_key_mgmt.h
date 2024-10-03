@@ -106,7 +106,8 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag);
  *
  * @retval 0		On success.
  * @retval -ENOBUFS	Internal buffer is too small.
- * @retval -ENOMEM	Credential does not fit in @p buf.
+ * @retval -ENOMEM	Credential does not fit in @p buf. Check *len for
+ *			required size.
  * @retval -ENOENT	No credential associated with the given
  *			@p sec_tag and @p cred_type.
  * @retval -EACCES	Access to credential not allowed.
