@@ -60,7 +60,7 @@ if (CONFIG_BOARD_HAS_NRF5_BOOTLOADER)
   ncs_add_partition_manager_config(pm.yml.nrf5_mbr)
 endif()
 
-if (CONFIG_SETTINGS_FCB OR CONFIG_SETTINGS_NVS)
+if (CONFIG_SETTINGS_FCB OR CONFIG_SETTINGS_NVS OR CONFIG_SETTINGS_ZMS)
   ncs_add_partition_manager_config(pm.yml.settings)
 endif()
 
@@ -74,6 +74,10 @@ endif()
 
 if (CONFIG_NVS AND NOT CONFIG_SETTINGS_NVS)
   ncs_add_partition_manager_config(pm.yml.nvs)
+endif()
+
+if (CONFIG_ZMS AND NOT CONFIG_SETTINGS_ZMS)
+  ncs_add_partition_manager_config(pm.yml.zms)
 endif()
 
 if (CONFIG_NRF_MODEM_LIB)
