@@ -20,3 +20,8 @@
 &bme680 {
 	status = "okay";
 };
+
+/* Switch to nrf7000 emulation so that scan-only mode is used. */
+&nrf70 {
+	compatible = "nordic,nrf7000-spi";
+};
