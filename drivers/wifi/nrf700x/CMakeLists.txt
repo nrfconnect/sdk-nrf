@@ -79,6 +79,10 @@ zephyr_library_sources_ifdef(CONFIG_NRF700X_SYSTEM_MODE
   src/wifi_mgmt.c
 )
 
+zephyr_library_sources_ifdef(CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES
+  src/wifi_mgmt.c
+)
+
 zephyr_library_sources_ifdef(CONFIG_NRF700X_SCAN_ONLY
   src/wifi_mgmt_scan.c
 )

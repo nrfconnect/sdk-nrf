@@ -22,7 +22,7 @@
 #ifdef CONFIG_NETWORKING
 #include <net_if.h>
 #endif /* CONFIG_NETWORKING */
-#ifdef CONFIG_NRF700X_STA_MODE
+#if defined(CONFIG_NRF700X_STA_MODE)
 #include <drivers/driver_zephyr.h>
 #endif /* CONFIG_NRF700X_STA_MODE */
 #endif /* !CONFIG_NRF700X_RADIO_TEST */
@@ -58,9 +58,14 @@ struct nrf_wifi_vif_ctx_zep {
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
-#ifdef CONFIG_NRF700X_STA_MODE
-	unsigned int assoc_freq;
+#if defined(CONFIG_NRF700X_STA_MODE) || defined(CONFIG_NRF700X_SYSTEM_WITH_RAW_MODES)
 	enum nrf_wifi_fmac_if_carr_state if_carr_state;
+#ifdef CONFIG_NRF700X_DATA_TX
+	struct k_work nrf_wifi_net_iface_work;
+#endif /* CONFIG_NRF700X_DATA_TX */
+#endif
+#if defined(CONFIG_NRF700X_STA_MODE)
+	unsigned int assoc_freq;
 	struct wpa_signal_info *signal_info;
 	struct wpa_conn_info *conn_info;
 	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
@@ -70,9 +75,6 @@ struct nrf_wifi_vif_ctx_zep {
 	bool ps_config_info_evnt;
 	bool authorized;
 	bool cookie_resp_received;
-#ifdef CONFIG_NRF700X_DATA_TX
-	struct k_work nrf_wifi_net_iface_work;
-#endif /* CONFIG_NRF700X_DATA_TX */
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
 #endif /* CONFIG_NRF700X_STA_MODE */

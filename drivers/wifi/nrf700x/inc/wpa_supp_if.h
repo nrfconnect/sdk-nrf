@@ -14,7 +14,7 @@
 
 
 #define RPU_RESP_EVENT_TIMEOUT  5000
-#ifdef CONFIG_NRF700X_STA_MODE
+#if defined(CONFIG_NRF700X_STA_MODE)
 #include <drivers/driver_zephyr.h>
 
 void *nrf_wifi_wpa_supp_dev_init(void *supp_drv_if_ctx, const char *iface_name,
