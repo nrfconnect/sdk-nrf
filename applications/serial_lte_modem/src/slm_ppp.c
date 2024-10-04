@@ -246,7 +246,7 @@ static int ppp_start_internal(void)
 	modem_ppp_attach(&ppp_module, ppp_pipe);
 
 #if !defined(CONFIG_SLM_CMUX)
-	ret = modem_pipe_open(ppp_pipe);
+	ret = modem_pipe_open(ppp_pipe, K_SECONDS(CONFIG_SLM_MODEM_PIPE_TIMEOUT));
 	if (ret) {
 		LOG_ERR("Failed to open PPP pipe (%d).", ret);
 		return ppp_start_failure(ret);
@@ -297,7 +297,7 @@ static void ppp_stop_internal(void)
 	}
 
 #if !defined(CONFIG_SLM_CMUX)
-	modem_pipe_close(ppp_pipe);
+	modem_pipe_close(ppp_pipe, K_SECONDS(CONFIG_SLM_MODEM_PIPE_TIMEOUT));
 #endif
 
 	modem_ppp_release(&ppp_module);

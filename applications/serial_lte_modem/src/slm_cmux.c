@@ -30,6 +30,7 @@ LOG_MODULE_REGISTER(slm_cmux, CONFIG_SLM_LOG_LEVEL);
 static struct {
 	/* UART backend */
 	struct modem_pipe *uart_pipe;
+	bool uart_pipe_open;
 	struct modem_backend_uart uart_backend;
 	uint8_t uart_backend_receive_buf[RECV_BUF_LEN];
 	uint8_t uart_backend_transmit_buf[TRANSMIT_BUF_LEN];
@@ -138,17 +139,19 @@ static void close_pipe(struct modem_pipe **pipe)
 
 static int cmux_stop(void)
 {
-	if (cmux.uart_pipe && cmux.uart_pipe->state == MODEM_PIPE_STATE_OPEN) {
+	if (cmux.uart_pipe && cmux.uart_pipe_open) {
 		/* CMUX is running. Just close the UART pipe to pause and be able to resume.
 		 * This allows AT data to be cached by the CMUX module while the UART is off.
 		 */
 		modem_pipe_close_async(cmux.uart_pipe);
+		cmux.uart_pipe_open = false;
 		return 0;
 	}
 
 	modem_cmux_release(&cmux.instance);
 
 	close_pipe(&cmux.uart_pipe);
+	cmux.uart_pipe_open = false;
 
 	for (size_t i = 0; i != ARRAY_SIZE(cmux.dlcis); ++i) {
 		close_pipe(&cmux.dlcis[i].pipe);
@@ -222,8 +225,9 @@ static int cmux_start(void)
 	int ret;
 
 	if (cmux_is_started()) {
-		ret = modem_pipe_open(cmux.uart_pipe);
+		ret = modem_pipe_open(cmux.uart_pipe, K_SECONDS(CONFIG_SLM_MODEM_PIPE_TIMEOUT));
 		if (!ret) {
+			cmux.uart_pipe_open = true;
 			LOG_INF("CMUX resumed.");
 		}
 		return ret;
@@ -249,7 +253,10 @@ static int cmux_start(void)
 		return ret;
 	}
 
-	ret = modem_pipe_open(cmux.uart_pipe);
+	ret = modem_pipe_open(cmux.uart_pipe, K_SECONDS(CONFIG_SLM_MODEM_PIPE_TIMEOUT));
+	if (!ret) {
+		cmux.uart_pipe_open = true;
+	}
 	return ret;
 }
 
