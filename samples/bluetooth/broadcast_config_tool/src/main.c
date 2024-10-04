@@ -1037,6 +1037,8 @@ static int broadcaster_stop(const struct shell *shell, uint8_t big_index)
 	per_adv_buf[big_index].data_len = 0;
 	per_adv_buf[big_index].type = 0;
 
+	memset(pba_data[big_index], 0, sizeof(pba_data[big_index]));
+
 	for (size_t j = 0; j < ARRAY_SIZE(ext_adv_buf[big_index]); j++) {
 		ext_adv_buf[big_index][j].data_len = 0;
 		ext_adv_buf[big_index][j].type = 0;
