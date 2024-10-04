@@ -248,7 +248,7 @@ static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 	 *  - a CA for the TLS connections
 	 *  - a private key to sign the JWT
 	 */
-	return (cs->ca && cs->prv_key);
+	return (cs->ca && cs->ca_aws && cs->prv_key);
 }
 
 static void await_credentials(void)
