@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-# Convert all platform and TLS/DTLS and X.509 Kconfig variables for Mbed TLS 
+# Convert all platform and TLS/DTLS and X.509 Kconfig variables for Mbed TLS
 # (strip CONFIG_)
 
 # TF-M
