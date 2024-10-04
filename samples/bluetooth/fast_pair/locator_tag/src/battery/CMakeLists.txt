@@ -12,13 +12,11 @@ target_include_directories(app_battery PRIVATE include_priv)
 # Platform indepedent source files.
 target_sources(app_battery PRIVATE common.c)
 
-# DK specific
 if(CONFIG_APP_PLATFORM_DK)
   target_sources(app_battery PRIVATE platform_dk.c)
   target_link_libraries(app_battery PRIVATE app_ui)
-endif()
-
-# Thingy specific
-if(CONFIG_APP_PLATFORM_THINGY)
+elseif(CONFIG_APP_PLATFORM_THINGY)
   target_sources(app_battery PRIVATE platform_thingy.c)
+else()
+  message(FATAL_ERROR "Unsupported platform")
 endif()
