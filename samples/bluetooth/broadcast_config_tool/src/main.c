@@ -948,6 +948,12 @@ static int big_enable(const struct shell *shell, uint8_t big_index)
 		return -EINVAL;
 	}
 
+	if (broadcast_source_is_streaming(big_index)) {
+		LOG_WRN("BIG %d is already streaming", big_index);
+		/* Do not return error code as this might be called from a for-loop */
+		return 0;
+	}
+
 	ret = broadcast_source_enable(&broadcast_param[big_index], big_index);
 	if (ret) {
 		shell_error(shell, "Failed to enable broadcaster: %d", ret);
