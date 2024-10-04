@@ -8,9 +8,12 @@ zephyr_library_named(app_motion_detector)
 
 target_include_directories(app_motion_detector PUBLIC include)
 
+target_link_libraries(app_motion_detector PRIVATE app_ui)
+
 if(CONFIG_APP_PLATFORM_DK)
   target_sources(app_motion_detector PRIVATE platform_dk.c)
-  target_link_libraries(app_motion_detector PRIVATE app_ui)
+elseif(CONFIG_APP_PLATFORM_THINGY)
+  target_sources(app_motion_detector PRIVATE platform_thingy.c)
 else()
-  target_sources(app_motion_detector PRIVATE platform_default.c)
+  message(FATAL_ERROR "Unsupported platform")
 endif()
