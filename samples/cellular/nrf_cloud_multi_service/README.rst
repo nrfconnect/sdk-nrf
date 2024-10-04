@@ -797,14 +797,21 @@ The device is identified using its UUID rather than its IMEI, since both overlay
 Building with nRF7002 Wi-Fi scanning support
 ============================================
 
-To build the sample with Wi-Fi scanning support for the nRF7002 EK shield attached to an nRF91xx DK, use the ``-DSHIELD=nrf7002ek``, ``-DSB_CONF_FILE=sysbuild_nrf700x-wifi-scan.conf``, and ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only`` options.
+To build the sample with Wi-Fi scanning support for the nRF7002 EK shield attached to an nRF91xx DK, use the ``-DSHIELD=nrf7002ek_nrf7000``, ``-DSB_CONF_FILE=sysbuild_nrf700x-wifi-scan.conf``, and ``-DEXTRA_CONF_FILE=overlay-nrf7002ek-wifi-scan-only`` options.
 
 This enables the Wi-Fi location tracking method automatically.
 
 .. parsed-literal::
    :class: highlight
 
-   west build -p -b *board_target* -- -DSHIELD=nrf7002ek -DSB_CONF_FILE="sysbuild_nrf700x-wifi-scan.conf" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+   west build -p -b *board_target* -- -DSHIELD=nrf7002ek_nrf7000 -DSB_CONF_FILE="sysbuild_nrf700x-wifi-scan.conf" -DEXTRA_CONF_FILE="overlay-nrf7002ek-wifi-scan-only.conf"
+
+.. note::
+
+   The ``nrf7002ek_nrf7000`` shield is used here, rather than the ``nrf7002ek`` shield, to put the nRF7002 EK into nRF7000 emulation mode.
+   This is required in order to use scan-only mode.
+
+   To build the sample with Wi-Fi connectivity instead, see :ref:`nrf_cloud_multi_service_building_lte`.
 
 |board_target|
 

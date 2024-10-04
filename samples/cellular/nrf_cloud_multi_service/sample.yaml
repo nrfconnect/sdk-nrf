@@ -94,7 +94,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
     platform_allow: nrf5340dk/nrf5340/cpuapp/ns
-    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek_nrf7000
+    extra_args: nrf_cloud_multi_service_SHIELD=nrf7002ek
       EXTRA_CONF_FILE="overlay_nrf700x_wifi_mqtt_no_lte.conf"
       SB_CONF_FILE="sysbuild_nrf700x-wifi-conn.conf"
     tags: ci_build sysbuild ci_samples_cellular
