@@ -2,6 +2,6 @@ tests:
   unity.lte_lc_api_test:
     sysbuild: true
     tags: lte_lc_api sysbuild ci_tests_lib_lte_lc
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim

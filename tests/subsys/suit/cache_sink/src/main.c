@@ -346,7 +346,7 @@ ZTEST(cache_sink_tests, test_cache_get_slot_nok_not_enough_space)
 	ret = sink.release(sink.ctx);
 	zassert_equal(ret, SUIT_PLAT_SUCCESS, "Failed to release sink: %i", ret);
 
-#ifdef CONFIG_BOARD_NATIVE_POSIX
+#ifdef CONFIG_BOARD_NATIVE_SIM
 	ret = suit_dfu_cache_sink_get(&sink, 1, uri4, sizeof(uri4), true);
 	zassert_not_equal(ret, SUIT_PLAT_SUCCESS,
 			  "Get sink should have failed due to lack of free space: %i", ret);
@@ -357,7 +357,7 @@ ZTEST(cache_sink_tests, test_cache_get_slot_nok_not_enough_space)
 	ret = sink.write(sink.ctx, data3, sizeof(data3));
 	zassert_not_equal(ret, SUIT_PLAT_SUCCESS,
 			  "Write to sink should fail due to lack of space: %i", ret);
-#endif /* CONFIG_BOARD_NATIVE_POSIX */
+#endif /* CONFIG_BOARD_NATIVE_SIM */
 
 	printk("\nReleasing sink\n");
 	ret = sink.release(sink.ctx);
