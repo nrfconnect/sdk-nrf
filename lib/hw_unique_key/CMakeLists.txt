@@ -7,15 +7,15 @@
 zephyr_library()
 
 if (CONFIG_CRACEN_HW_PRESENT)
-  zephyr_library_sources(hw_unique_key_cracen.c)
+  zephyr_library_sources(hw_unique_key_cracen_kmu.c)
 else()
-  zephyr_library_sources(hw_unique_key.c)
+  zephyr_library_sources(hw_unique_key_cc3xx.c)
 
   if (DEFINED CONFIG_HAS_HW_NRF_ACL)
-    zephyr_library_sources(hw_unique_key_acl.c)
+    zephyr_library_sources(hw_unique_key_cc3xx_acl.c)
   else()
-    zephyr_library_sources(hw_unique_key_kmu.c)
+    zephyr_library_sources(hw_unique_key_cc3xx_kmu.c)
   endif()
 
-  ncs_add_partition_manager_config(pm.yml.huk)
+  ncs_add_partition_manager_config(pm.yml.huk_cc3xx)
 endif()
