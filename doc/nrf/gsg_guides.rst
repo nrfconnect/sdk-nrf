@@ -14,9 +14,13 @@ They provide a guided experience using Nordic Semiconductor tools and precompile
 This is not a comprehensive section that includes all of the available getting started guides for Nordic Semiconductor devices.
 
 .. note::
-   * To get started with the nRF91x1 DKs and the nRF54L15 PDK, complete the steps in the `Quick Start`_ app, available from `nRF Connect for Desktop`_.
-   * To get started with the nRF54H20 DK, the installation of the |NCS| is required.
-     See :ref:`ug_nrf54h20_gs`.
+
+   The guides in the getting started section are being gradually replaced by the `Quick Start`_ app, available from `nRF Connect for Desktop`_.
+   The Quick Start app currently supports the nRF52 DK, nRF52833 DK, nRF52840 DK, nRF5340 DK, nRF91x1 DKs, and nRF54L15 PDK.
+
+   Other guides are located outside of this section and are not yet ported to the Quick Start app:
+
+   * To get started with the nRF54H20 DK, see :ref:`ug_nrf54h20_gs`.
    * To get started with the nPM1300 EK, see the `Get started <nPM1300 EK get started_>`_ section of the nPM1300 EK product page.
    * To get started with the nRF7002 EB, see the `Get started <nRF7002 EB get started_>`_ section of the nRF7002 EB product page.
 
@@ -27,7 +31,5 @@ This is not a comprehensive section that includes all of the available getting s
    gsg_guides/nrf9160_gs
    gsg_guides/thingy91_gsg
    gsg_guides/nrf7002_gs
-   gsg_guides/nrf5340_gs
    gsg_guides/thingy53_gs
-   gsg_guides/nrf52_gs
    gsg_guides/gsg_other

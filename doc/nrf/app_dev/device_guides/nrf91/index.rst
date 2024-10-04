@@ -25,7 +25,7 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
      - PCA10153
      - ``nrf9161dk/nrf9161``, ``nrf9161dk/nrf9161/ns``
      - | `Product Specification <nRF9161 Product Specification_>`_
-       | :ref:`Getting started <gsg_other>`
+       | `Quick Start`_
        | `User Guide <nRF9161 DK Hardware_>`_
      - | `nRF9161 DK product page`_
        | `nRF9161 System in Package (SiP) <nRF9161 product website_>`_
@@ -41,7 +41,7 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
      - PCA10171
      - ``nrf9151dk/nrf9151``, ``nrf9151dk/nrf9151/ns``
      - | `Product Specification <nRF9151 Product Specification_>`_
-       | :ref:`Getting started <gsg_other>`
+       | `Quick Start`_
        | `User Guide <nRF9151 DK Hardware_>`_
      - | `nRF9151 DK product page`_
        | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
