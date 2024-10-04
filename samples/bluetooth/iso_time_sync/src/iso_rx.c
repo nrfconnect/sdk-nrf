@@ -26,7 +26,7 @@ static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason);
 
 static void (*iso_chan_disconnected_cb)(void);
 
-static struct gpio_dt_spec led_sdu_received = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led1), gpios, {0});
+static struct gpio_dt_spec led_sdu_received = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios, {0});
 
 static struct bt_iso_chan_ops iso_ops = {
 	.recv = iso_recv,

@@ -54,8 +54,8 @@ int timed_led_toggle_init(void)
 	const nrfx_gpiote_task_config_t task_cfg_led_toggle = {
 		.task_ch = gpiote_chan_led_toggle,
 		.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
-		.init_val = (led.dt_flags & GPIO_ACTIVE_HIGH) ?
-			NRF_GPIOTE_INITIAL_VALUE_LOW : NRF_GPIOTE_INITIAL_VALUE_HIGH,
+		.init_val = (led.dt_flags & GPIO_ACTIVE_LOW) ?
+			NRF_GPIOTE_INITIAL_VALUE_HIGH : NRF_GPIOTE_INITIAL_VALUE_LOW,
 	};
 
 	if (nrfx_gpiote_output_configure(&gpiote, LED_PIN, &gpiote_output_cfg,
