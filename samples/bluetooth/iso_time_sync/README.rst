@@ -40,15 +40,15 @@ The sample demonstrates the following features:
    .. group-tab:: nRF52 and nRF53 DKs
 
       This sample configures a single device as a transmitter of its **Button 1** state.
-      The transmitting and receiving devices toggle **LED 1** synchronously with the accuracy of a few microseconds.
-      When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 2** is toggled upon sending or receiving data.
+      The transmitting and receiving devices toggle **LED 2** synchronously with the accuracy of a few microseconds.
+      When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled upon sending or receiving data.
       This allows you to measure the minimal end-to-end latency.
 
    .. group-tab:: nRF54 DKs
 
       This sample configures a single device as a transmitter of its **Button 0** state.
-      The transmitting and receiving devices toggle **LED 0** synchronously with the accuracy of a few microseconds.
-      When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled upon sending or receiving data.
+      The transmitting and receiving devices toggle **LED 1** synchronously with the accuracy of a few microseconds.
+      When the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 0** is toggled upon sending or receiving data.
       This allows you to measure the minimal end-to-end latency.
 
 .. note::
@@ -69,7 +69,7 @@ Check and configure the following Kconfig options:
 .. _CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE:
 
 CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE
-   This configuration option enables immediate toggling of **LED 2** (nRF52 and nRF53 DKs) or **LED 1** (nRF54 DKs) when isochronous data is sent or received.
+   This configuration option enables immediate toggling of **LED 1** (nRF52 and nRF53 DKs) or **LED 0** (nRF54 DKs) when isochronous data is sent or received.
    It allows for measurement of the minimum end-to-end latency.
 
 .. _CONFIG_SDU_INTERVAL_US:
@@ -180,9 +180,9 @@ The sample code is divided into multiple source files, which makes it easier to 
 
       When a valid SDU is received, the following operations are performed:
 
-      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 2** is toggled immediately.
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled immediately.
         You can use this to observe that different receivers may receive the SDU at different points in time.
-      * A timer trigger is configured to toggle **LED 1** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
+      * A timer trigger is configured to toggle **LED 2** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
         This ensures that all receivers and the transmitter toggle it at the same time.
 
     ``iso_tx.c``
@@ -195,9 +195,9 @@ The sample code is divided into multiple source files, which makes it easier to 
       * The SDU is transmitted on all the established isochronous channels with the same timestamp.
         This ensures that all the receivers can toggle their corresponding LEDs at the same time.
         The very first SDU is provided without a timestamp, because the timestamp is not known at this point in time.
-      * **LED 1** is configured to toggle synchronously with the **LED 1** on all the receivers.
+      * **LED 2** is configured to toggle synchronously with the **LED 2** on all the receivers.
         The toggle time is determined by the TX timestamp and defined relative to the synchronization reference on the receiver.
-      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 2** is toggled right before sending the SDU.
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled right before sending the SDU.
         You can use this to observe the end-to-end latency.
 
     ``timed_led_toggle.c``
@@ -257,9 +257,9 @@ The sample code is divided into multiple source files, which makes it easier to 
 
       When a valid SDU is received, the following operations are performed:
 
-      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled immediately.
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 0** is toggled immediately.
         You can use this to observe that different receivers may receive the SDU at different points in time.
-      * A timer trigger is configured to toggle **LED 0** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
+      * A timer trigger is configured to toggle **LED 1** :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` after the received timestamp.
         This ensures that all receivers and the transmitter toggle it at the same time.
 
     ``iso_tx.c``
@@ -272,9 +272,9 @@ The sample code is divided into multiple source files, which makes it easier to 
       * The SDU is transmitted on all the established isochronous channels with the same timestamp.
         This ensures that all the receivers can toggle their corresponding LEDs at the same time.
         The very first SDU is provided without a timestamp, because the timestamp is not known at this point in time.
-      * **LED 0** is configured to toggle synchronously with the **LED 0** on all the receivers.
+      * **LED 1** is configured to toggle synchronously with the **LED 1** on all the receivers.
         The toggle time is determined by the TX timestamp and defined relative to the synchronization reference on the receiver.
-      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 1** is toggled right before sending the SDU.
+      * If the :ref:`CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE <CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE>` Kconfig option is enabled, **LED 0** is toggled right before sending the SDU.
         You can use this to observe the end-to-end latency.
 
     ``timed_led_toggle.c``
@@ -318,7 +318,7 @@ After programming the sample to the development kits, perform the following step
       #. Select which BIS the receiver should synchronize to.
       #. Observe that the device(s) synchronize to the broadcaster and start receiving isochronous data.
       #. Press **Button 1** on the broadcaster.
-      #. Observe that **LED 1** toggles on both the broadcaster and the receivers.
+      #. Observe that **LED 2** toggles on both the broadcaster and the receivers.
 
    .. group-tab:: nRF54 DKs
 
@@ -331,7 +331,7 @@ After programming the sample to the development kits, perform the following step
       #. Select which BIS the receiver should synchronize to.
       #. Observe that the device(s) synchronize to the broadcaster and start receiving isochronous data.
       #. Press **Button 0** on the broadcaster.
-      #. Observe that **LED 0** toggles on both the broadcaster and the receivers.
+      #. Observe that **LED 1** toggles on both the broadcaster and the receivers.
 
 Testing connected isochronous streams
 =====================================
@@ -353,7 +353,7 @@ After programming the sample to the development kits, perform the following step
       #. Select data direction.
       #. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
       #. Press **Button 1** on the central device.
-      #. Observe that **LED 1** toggles on both the central and peripheral devices.
+      #. Observe that **LED 2** toggles on both the central and peripheral devices.
 
    .. group-tab:: nRF54 DKs
 
@@ -368,7 +368,7 @@ After programming the sample to the development kits, perform the following step
       #. Select data direction.
       #. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
       #. Press **Button 0** on the central device.
-      #. Observe that **LED 0** toggles on both the central and peripheral devices.
+      #. Observe that **LED 1** toggles on both the central and peripheral devices.
 
 
 Observe time-synchronized ISO data processing
@@ -378,12 +378,12 @@ Observe time-synchronized ISO data processing
 
    .. group-tab:: nRF52 and nRF53 DKs
 
-      When you press **Button 1** on the transmitting device, you can observe that **LED 1** toggles simultaneously on all devices.
+      When you press **Button 1** on the transmitting device, you can observe that **LED 2** toggles simultaneously on all devices.
       To observe the accurate toggling, use a logic analyzer or an oscilloscope.
 
    .. group-tab:: nRF54 DKs
 
-      When you press **Button 0** on the transmitting device, you can observe that **LED 0** toggles simultaneously on all devices.
+      When you press **Button 0** on the transmitting device, you can observe that **LED 1** toggles simultaneously on all devices.
       To observe the accurate toggling, use a logic analyzer or an oscilloscope.
 
 Sample output

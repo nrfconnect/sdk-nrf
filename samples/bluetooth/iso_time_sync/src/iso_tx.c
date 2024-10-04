@@ -30,7 +30,7 @@
 #include "iso_time_sync.h"
 
 static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET_OR(DT_ALIAS(sw0), gpios, {0});
-static struct gpio_dt_spec led_on_sdu_send = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led1), gpios, {0});
+static struct gpio_dt_spec led_on_sdu_send = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led0), gpios, {0});
 
 static void iso_sent(struct bt_iso_chan *chan);
 static void iso_connected(struct bt_iso_chan *chan);
