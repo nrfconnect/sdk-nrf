@@ -1,0 +1,7 @@
+name: nrf54h20-psa-rng
+
+boards:
+  nrf54h20dk/nrf54h20/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf54h20_psa_rng.overlay
+      EXTRA_CONF_FILE: nrf54h20_psa_rng.conf
