@@ -88,5 +88,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/mds.c`
 
 .. doxygengroup:: bt_mds
-   :project: nrf
-   :members:

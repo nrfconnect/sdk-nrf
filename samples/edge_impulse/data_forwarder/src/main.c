@@ -20,7 +20,7 @@ const static enum sensor_channel sensor_channels[] = {
 };
 
 static const struct device *sensor_dev = DEVICE_DT_GET(DT_NODELABEL(sensor_sim));
-static const struct device *uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
+static const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_ei_uart));
 static atomic_t uart_busy;
 
 

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "zephyr/ztest_assert.h"
 #include <mock_nrf_rpc_transport.h>
 
 #include <zephyr/kernel.h>
@@ -85,9 +86,13 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 	expected = &ctx->expected[ctx->cur_expected];
 	response = &ctx->response[ctx->cur_expected];
 	++ctx->cur_expected;
+	log_payload("Expected nRF RPC packet", expected->data, expected->len);
 
-	zassert_equal(expected->len, length, "Unexpected nRF RPC packet sent");
-	zassert_mem_equal(expected->data, data, length, "Unexpected nRF RPC packet sent");
+	if (expected->len != length) {
+		zexpect_true(false, "Unexpected nRF RPC packet sent");
+	} else {
+		zexpect_mem_equal(expected->data, data, length, "Unexpected nRF RPC packet sent");
+	}
 	k_free((void *)data);
 
 	if (response->len > 0) {
@@ -146,7 +151,7 @@ void mock_nrf_rpc_tr_expect_done(void)
 {
 	mock_nrf_rpc_tr_ctx_t *ctx = mock_nrf_rpc_tr.ctx;
 
-	zassert_equal(ctx->cur_expected, ctx->num_expected,
+	zexpect_equal(ctx->cur_expected, ctx->num_expected,
 		      "%zu nRF RPC packets expected but not sent",
 		      ctx->num_expected - ctx->cur_expected);
 

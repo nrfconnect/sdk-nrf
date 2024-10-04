@@ -141,5 +141,3 @@ API documentation
 | Source files: :file:`lib/modem_key_mgmt/`
 
 .. doxygengroup:: modem_key_mgmt
-   :project: nrf
-   :members:

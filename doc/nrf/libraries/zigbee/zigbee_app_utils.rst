@@ -489,5 +489,3 @@ API documentation
 | Source file: :file:`subsys/zigbee/lib/zigbee_app_utils/zigbee_app_utils.c`
 
 .. doxygengroup:: zigbee_app_utils
-   :project: nrf
-   :members:

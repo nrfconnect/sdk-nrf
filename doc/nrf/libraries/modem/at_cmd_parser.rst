@@ -37,5 +37,3 @@ API documentation
 | Source file: :file:`lib/at_cmd_parser/at_cmd_parser.c`
 
 .. doxygengroup:: at_cmd_parser
-   :project: nrf
-   :members:

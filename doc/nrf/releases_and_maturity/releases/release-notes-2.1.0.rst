@@ -982,7 +982,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
     * :kconfig:option:`CONFIG_PM_PARTITION_REGION_LITTLEFS_EXTERNAL`, :kconfig:option:`CONFIG_PM_PARTITION_REGION_SETTINGS_STORAGE_EXTERNAL`, and :kconfig:option:`CONFIG_PM_PARTITION_REGION_NVS_STORAGE_EXTERNAL` Kconfig options to specify that the relevant partition must be located in external flash memory.
     * :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` to override the external driver check.
-      This is needed when using an external flash which is not using the :ref:`QSPI NOR <zephyr:dtbinding_nordic_qspi_nor>` driver from Zephyr.
+      This is needed when using an external flash which is not using the :dtcompatible:`nordic,qspi-nor` driver from Zephyr.
 
 MCUboot
 =======

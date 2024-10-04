@@ -78,5 +78,3 @@ API documentation
 | Source file: :file:`subsys/nfc/ndef/text_rec.c`
 
 .. doxygengroup:: nfc_text_rec
-   :project: nrf
-   :members:

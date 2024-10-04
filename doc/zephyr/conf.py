@@ -69,6 +69,19 @@ kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
 
+# -- Options for doxyrunner plugin ---------------------------------------------
+
+doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
+doxyrunner_doxyfile = NRF_BASE / "doc" / "zephyr" / "zephyr.doxyfile.in"
+doxyrunner_outdir = utils.get_builddir() / "html" / "zephyr" / "doxygen"
+doxyrunner_fmt = True
+doxyrunner_fmt_vars = {
+    "NRF_BASE": str(NRF_BASE),
+    "DOCSET_SOURCE_BASE": str(ZEPHYR_BASE),
+    "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
+    "DOCSET_VERSION": version,
+}
+
 # -- Options for zephyr.warnings_filter ----------------------------------------
 
 warnings_filter_silent = True

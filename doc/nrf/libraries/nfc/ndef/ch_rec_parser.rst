@@ -35,5 +35,3 @@ API documentation
 .. _nfc_ndef_ch_record_parser:
 
 .. doxygengroup:: nfc_ndef_ch_record_parser
-   :project: nrf
-   :members:

@@ -143,5 +143,3 @@ API documentation
 | Source file: :file:`drivers/sensor/paw3212/paw3212.c`
 
 .. doxygengroup:: paw3212
-   :project: nrf
-   :members:

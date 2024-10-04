@@ -39,5 +39,3 @@ This section lists the types common to the Light xyL mesh models.
 | Header file: :file:`include/bluetooth/mesh/light_xyl.h`
 
 .. doxygengroup:: bt_mesh_light_xyl
-   :project: nrf
-   :members:

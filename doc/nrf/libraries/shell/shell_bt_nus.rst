@@ -95,5 +95,3 @@ API documentation
 | Source file: :file:`subsys/shell/shell_bt_nus.c`
 
 .. doxygengroup:: shell_bt_nus
-   :project: nrf
-   :members:

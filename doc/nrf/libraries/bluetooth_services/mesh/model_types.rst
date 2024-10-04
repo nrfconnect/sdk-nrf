@@ -21,5 +21,3 @@ API documentation
 | Header file: :file:`include/bluetooth/mesh/model_types.h`
 
 .. doxygengroup:: bt_mesh_model_types
-   :project: nrf
-   :members:

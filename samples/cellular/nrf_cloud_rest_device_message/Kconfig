@@ -33,6 +33,12 @@ config REST_DEVICE_MESSAGE_KEEP_ALIVE
 	  direct logging message can reuse it. This reduces data and power
 	  consumption, but is not compatible with the cloud logging backend.
 
+config SEND_ONLINE_ALERT
+	bool "Sends a routine ALERT_TYPE_DEVICE_NOW_ONLINE on startup"
+	help
+	  Enable this to demonstrate the alert feature of nRF Cloud. Reception of this alert
+	  indicates the device has rebooted.
+
 endmenu
 
 menu "Zephyr Kernel"

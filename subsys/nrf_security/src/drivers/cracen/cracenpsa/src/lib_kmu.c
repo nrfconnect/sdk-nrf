@@ -26,6 +26,7 @@ void lib_kmu_clear_all_events(void)
 	NRF_KMU_S->EVENTS_PROVISIONED = 0;
 	NRF_KMU_S->EVENTS_PUSHED = 0;
 	NRF_KMU_S->EVENTS_REVOKED = 0;
+	NRF_KMU_S->EVENTS_PUSHBLOCKED = 0;
 }
 
 static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
@@ -70,8 +71,12 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
 		return -LIB_KMU_NULL_PNT;
 	}
 
-	/* DEST must be on a 64-bit boundary */
-	__ASSERT(IS_PTR_ALIGNED(kmu_src->dest, uint64_t), "unaligned kmu_src->dest");
+	/* The DEST address must be 64-bit aligned on nrf54l15pdk.
+	 * On nrf54l15dk, the alignment requirement changed to 128 bits.
+	 */
+	__ASSERT(IS_PTR_ALIGNED_BYTES(kmu_src->dest,
+				      (IS_ENABLED(CONFIG_SOC_NRF54L15_ENGA_CPUAPP) ? 8 : 16)),
+		 "DEST misaligned");
 
 	int result = 1;
 

@@ -64,5 +64,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/fota_download/src/`
 
 .. doxygengroup:: fota_download
-   :project: nrf
-   :members:

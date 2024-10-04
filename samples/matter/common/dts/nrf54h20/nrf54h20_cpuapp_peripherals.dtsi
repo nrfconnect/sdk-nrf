@@ -24,7 +24,7 @@
 	status = "okay";
 };
 
-/* Communication between Application Core and Secure domain for SUIT */
+/* Communication between Application Core and Secure Domain */
 &cpusec_cpuapp_ipc {
 	status = "okay";
 };

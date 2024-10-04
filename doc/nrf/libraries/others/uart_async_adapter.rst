@@ -98,5 +98,3 @@ API documentation
 | Source files: :file:`subsys/uart_async_adapter/`
 
 .. doxygengroup:: uart_async_adapter
-   :project: nrf
-   :members:

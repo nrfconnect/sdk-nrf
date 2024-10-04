@@ -33,5 +33,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/nus_client.c`
 
 .. doxygengroup:: bt_nus_client
-   :project: nrf
-   :members:

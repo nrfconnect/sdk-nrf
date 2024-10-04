@@ -58,8 +58,6 @@ int location_utils_event_handler_remove(location_event_handler_t handler);
  * @brief Dispatch events for the registered event handlers.
  *
  * @param evt Event.
- *
- * @return Zero on success, negative errno code if the API call fails.
  */
 void location_utils_event_dispatch(const struct location_event_data *const evt);
 

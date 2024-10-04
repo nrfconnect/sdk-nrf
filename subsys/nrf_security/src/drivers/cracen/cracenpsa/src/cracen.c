@@ -58,7 +58,7 @@ void cracen_acquire(void)
 							     CRACEN_ENABLE_RNG_Msk |
 							     CRACEN_ENABLE_PKEIKG_Msk);
 		irq_enable(CRACEN_IRQn);
-		LOG_DBG_MSG("Power on CRACEN.");
+		LOG_DBG_MSG("Powered on CRACEN.");
 	}
 
 	nrf_security_mutex_unlock(cracen_mutex);

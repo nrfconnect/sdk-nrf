@@ -76,5 +76,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/azure_fota/`
 
 .. doxygengroup:: azure_fota
-   :project: nrf
-   :members:

@@ -92,5 +92,3 @@ API documentation
 | Source files: :file:`modules/lib/hw_unique_key/`
 
 .. doxygengroup:: hw_unique_key
-   :project: nrf
-   :members:

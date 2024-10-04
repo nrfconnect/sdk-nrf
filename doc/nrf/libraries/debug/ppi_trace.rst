@@ -23,5 +23,3 @@ API documentation
 | Source files: :file:`subsys/debug/ppi_trace/`
 
 .. doxygengroup:: ppi_trace
-   :project: nrf
-   :members:

@@ -29,5 +29,3 @@ This section lists the types common to Distance Measurement vendor models.
 | Header file: :file:`include/bluetooth/mesh/vnd/dm_common.h`
 
 .. doxygengroup:: bt_mesh_dm
-   :project: nrf
-   :members:

@@ -111,5 +111,3 @@ API documentation
 | Source files: :file:`asset_tracker_v2/src/events/debug_module_event.c`
 
 .. doxygengroup:: debug_module_event
-   :project: nrf
-   :members:

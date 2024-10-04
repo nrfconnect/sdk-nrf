@@ -28,12 +28,8 @@ API documentation
 | Source file: :file:`subsys/nfc/t4t/isodep.c`
 
 .. doxygengroup:: nfc_t4t_isodep
-   :project: nrf
-   :members:
 
 ISO-DEP protocol errors
 =======================
 
 .. doxygengroup:: isodep_error
-   :project: nrf
-   :members:

@@ -34,5 +34,3 @@ API documentation
 .. _nfc_ndef_le_oob_rec_parser:
 
 .. doxygengroup:: nfc_ndef_le_oob_rec_parser
-   :project: nrf
-   :members:

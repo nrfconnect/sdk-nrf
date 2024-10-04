@@ -111,5 +111,3 @@ API documentation
 | Source files: :file:`subsys/net_core_monitor/`
 
 .. doxygengroup:: net_core_monitor
-   :project: nrf
-   :members:

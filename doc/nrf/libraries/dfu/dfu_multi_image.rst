@@ -52,5 +52,3 @@ API documentation
 | Source files: :file:`subsys/dfu/dfu_multi_image/src/`
 
 .. doxygengroup:: dfu_multi_image
-   :project: nrf
-   :members:

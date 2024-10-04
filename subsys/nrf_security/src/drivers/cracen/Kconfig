@@ -31,17 +31,25 @@ config CRACEN_LIB_KMU
 	help
 	  The CRACEN KMU library.
 
-config CRACEN_LOAD_KMU_SEED
-	bool
-	prompt "Load the CRACEN IKG seed"
+config CRACEN_IKG_SEED_LOAD
+	bool "Load the CRACEN IKG seed"
 	depends on CRACEN_LIB_KMU
 	default y
 	help
-	  Configuration to load a The CRACEN IKG seed value from KMU.
-	  The KMU seed is used to give support for key derived from IKG.
+	  The IKG seed is used to derive the keys in the IKG.
 	  If there is no seed in KMU, it is expected to be generated.
 	  Note that this is not required to be used if a bootloader is loading
 	  KMU seed.
+
+config CRACEN_IKG_SEED_KMU_SLOT
+	int "KMU slot of the CRACEN IKG seed"
+	range 0 183
+	default 183
+	help
+	  The CRACEN IKG seed spans over 3 KMU slots:
+	  the one defined here and the two subsequent ones.
+	  This defines the KMU slot (along with the two following it) to which
+	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
 
 rsource 'psa_driver.Kconfig'
 

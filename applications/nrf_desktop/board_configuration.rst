@@ -103,24 +103,18 @@ Sample dongle (``nrf5340dk/nrf5340``)
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default.
 
-Sample mouse or keyboard (``nrf54l15pdk/nrf54l15/cpuapp``)
-      * The configuration uses the nRF54L15 Preview Development Kit (PDK).
+Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
+      * The configuration uses the nRF54L15 Development Kit (DK).
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
-        On the PDK PCA10156, revision v0.2.1, GPIOs assigned to **Button 3** and **Button 4** do not support interrupts.
-        Because of this, the application cannot use those buttons.
       * On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
-        Because of that, the PDK PCA10156 has the following limitations:
-
-        * On the PDK revision v0.2.1, **LED 1** cannot be used for PWM output.
-        * On the PDK revision v0.3.0, **LED 0** and **LED 2** cannot be used for PWM output.
-
+        Because of that, on the DK PCA10156 revision v0.8.1, **LED 0** and **LED 2** cannot be used for PWM output.
         You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
       * In debug configurations, logs are provided through the UART.
-        For detailed information on working with the nRF54L15 PDK, see the :ref:`ug_nrf54l15_gs` documentation.
+        For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.

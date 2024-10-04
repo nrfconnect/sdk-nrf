@@ -22,5 +22,3 @@ API documentation
 | Source file: :file:`lib/pcm_stream_channel_modifier/pcm_stream_channel_modifier.c`
 
 .. doxygengroup:: pscm
-   :project: nrf
-   :members:

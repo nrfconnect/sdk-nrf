@@ -16,8 +16,6 @@ Edge Impulse Data Forwarder Event
 | Source file: :file:`applications/machine_learning/src/events/ei_data_forwarder_event.c`
 
 .. doxygengroup:: ei_data_forwarder_event
-   :project: nrf
-   :members:
 
 Machine Learning Application Mode Event
 ***************************************
@@ -26,8 +24,6 @@ Machine Learning Application Mode Event
 | Source file: :file:`applications/machine_learning/src/events/ml_app_mode_event.c`
 
 .. doxygengroup:: ml_app_mode_event
-   :project: nrf
-   :members:
 
 Machine Learning Result Event
 *****************************
@@ -36,8 +32,6 @@ Machine Learning Result Event
 | Source file: :file:`applications/machine_learning/src/events/ml_result_event.c`
 
 .. doxygengroup:: ml_result_event
-   :project: nrf
-   :members:
 
 Sensor Simulator Event
 **********************
@@ -46,5 +40,3 @@ Sensor Simulator Event
 | Source file: :file:`applications/machine_learning/src/events/sensor_sim_event.c`
 
 .. doxygengroup:: sensor_sim_event
-   :project: nrf
-   :members:

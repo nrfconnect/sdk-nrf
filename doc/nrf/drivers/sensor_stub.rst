@@ -41,5 +41,3 @@ API documentation
 | Source file: :file:`drivers/sensor/sensor_stub/sensor_stub.c`
 
 .. doxygengroup:: sensor_stub
-   :project: nrf
-   :members:

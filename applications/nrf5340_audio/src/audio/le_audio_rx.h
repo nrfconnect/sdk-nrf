@@ -16,8 +16,6 @@
  * @param[in] sdu_ref		SDU reference timestamp.
  * @param[in] channel_index	Which channel is received.
  * @param[in] desired_data_size	The expected data size.
- *
- * @return 0 if successful, error otherwise.
  */
 void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, bool bad_frame,
 			      uint32_t sdu_ref, enum audio_channel channel_index,

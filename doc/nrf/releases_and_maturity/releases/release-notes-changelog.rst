@@ -56,8 +56,14 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-* Added documentation for :ref:`qspi_xip_split_image` functionality.
-* Added a section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+* Added:
+
+  * Documentation for :ref:`qspi_xip_split_image` functionality.
+  * A section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+
+* Updated the procedure for signing the application image built for booting by MCUboot in direct-XIP mode with revert support.
+  Now, the Intel-Hex file of the application image automatically receives a confirmation flag.
+
 * Removed secure bootloader Kconfig ``CONFIG_SECURE_BOOT_DEBUG`` and replaced with usage of logging subsystem.
 
 See also the `MCUboot`_ section.
@@ -106,7 +112,7 @@ Developing with PMICs
 Security
 ========
 
-|no_changes_yet_note|
+* The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option was added to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed.
 
 Protocols
 =========
@@ -267,6 +273,8 @@ nRF Desktop
     The DWC2 USB device controller driver used by the nRF54H20 SoC does not support the remote wakeup capability.
   * Bootup logs with the manifest semantic version information to :ref:`nrf_desktop_dfu_mcumgr` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
   * Manifest semantic version information to the firmware information response in :ref:`nrf_desktop_dfu` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
+  * A missing DTS node compatible with ``zephyr,hid-device`` to the nRF52840 DK in the MCUboot QSPI configuration.
+    This ensures support for HID over USB when the USB next stack is selected.
 
 * Updated:
 
@@ -370,7 +378,19 @@ Bluetooth Fast Pair samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board in the following samples:
+
+  * :ref:`bluetooth_mesh_sensor_client`
+  * :ref:`bluetooth_mesh_sensor_server`
+  * :ref:`bluetooth_ble_peripheral_lbs_coex`
+  * :ref:`bt_mesh_chat`
+  * :ref:`bluetooth_mesh_light_switch`
+  * :ref:`bluetooth_mesh_silvair_enocean`
+  * :ref:`bluetooth_mesh_light_dim`
+  * :ref:`bluetooth_mesh_light`
+  * :ref:`bluetooth_mesh_light_lc`
+  * :ref:`ble_mesh_dfu_target`
+  * :ref:`ble_mesh_dfu_distributor`
 
 Cellular samples
 ----------------
@@ -386,10 +406,8 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
-  * Added:
-
-    * Support for setting the FOTA update check interval using the config section in the shadow.
-    * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
+  * Added support for setting the FOTA update check interval using the config section in the shadow.
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -397,8 +415,9 @@ Cellular samples
 
     * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
     * A handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` to stop sensors and location services.
-    * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
+    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
 
   * Updated:
 
@@ -408,17 +427,21 @@ Cellular samples
     * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
 
   * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
   * Added:
 
     * Support for dictionary logs using REST.
-    * A call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
+    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
+
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 * :ref:`nrf_cloud_rest_cell_pos_sample` sample:
 
-    * Added a call to the :c:func:`nrf_cloud_print_details` function and removed redundant logging.
+  * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 Cryptography samples
 --------------------
@@ -795,8 +818,9 @@ Libraries for networking
     * The function :c:func:`nrf_cloud_client_id_runtime_set` to set the device ID string if the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME` Kconfig option is enabled.
     * The functions :c:func:`nrf_cloud_sec_tag_set` and :c:func:`nrf_cloud_sec_tag_get` to set and get the sec tag used for nRF Cloud credentials.
     * A new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` which is generated when a device is deleted from nRF Cloud.
-    * The function :c:func:`nrf_cloud_print_details` to log common nRF Cloud connection information in a uniform way.
-    * The :kconfig:option:`CONFIG_NRF_CLOUD_VERBOSE_DETAILS` Kconfig option to enable the :c:func:`nrf_cloud_print_details` function to print all details instead of only the device ID.
+    * The functions :c:func:`nrf_cloud_print_details` and :c:func:`nrf_cloud_print_cloud_details` to log common nRF Cloud connection information in a uniform way.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_PRINT_DETAILS` Kconfig option to enable the above functions.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_VERBOSE_DETAILS` Kconfig option to print all details instead of only the device ID.
 
   * Updated:
 
@@ -806,6 +830,7 @@ Libraries for networking
     * The handling of MQTT JITP device association to improve speed and reliability.
     * To use nRF Cloud's custom MQTT topics instead of the default AWS topics.
     * MQTT and CoAP transports to use a single unified DNS lookup mechanism that supports IPv4 and IPv6, fallback to IPv4, and handling of multiple addresses returned by :c:func:`getaddrinfo`.
+    * The log module in the :file:`nrf_cloud_fota_common.c` file from ``NRF_CLOUD`` to ``NRF_CLOUD_FOTA``.
 
   * Deprecated:
 
@@ -836,8 +861,13 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_log` library:
 
-  * Added support for dictionary logs using REST.
-  * Added support for dictionary (binary) logs when connected to nRF Cloud using CoAP.
+  * Added:
+
+    * Support for dictionary logs using REST.
+    * Support for dictionary (binary) logs when connected to nRF Cloud using CoAP.
+
+  * Fixed the missing log source when passing a direct log call to the nRF Cloud logging backend.
+    This caused the log parser to incorrectly use the first declared log source with direct logs when using dictionary mode.
 
 * :ref:`lib_nrf_cloud_fota` library:
 
@@ -845,6 +875,7 @@ Libraries for networking
 
     * FOTA status callback.
     * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST` Kconfig option to disconnect the CoAP client on a failed request.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_SMP` Kconfig option to enable experimental support for SMP FOTA using MQTT.
 
   * Updated:
 

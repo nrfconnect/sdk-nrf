@@ -3,6 +3,10 @@
 Developing with Front-End Modules
 #################################
 
+.. |nrf_series| replace:: Front-End Module devices
+
+.. include:: /includes/guides_complementary_to_app_dev.txt
+
 Zephyr and the |NCS| provides support for developing applications with the following :term:`Front-End Module (FEM)` devices:
 
 .. list-table::

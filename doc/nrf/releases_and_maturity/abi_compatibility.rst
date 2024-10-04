@@ -18,8 +18,8 @@ When ABI compatibility is maintained, binaries of one component can interface co
 For example, adding a new function to a library is typically an ABI-compatible change, as existing binaries remain functional.
 However, changes that affect data structure layouts, such as altering field order or size, break ABI compatibility as they change the memory layout expected by existing binaries.
 
-ABI Compatibility Matrix for the for the nrf54h20_soc_binary bundle
-===================================================================
+ABI Compatibility Matrix for the nrf54h20_soc_binary bundle
+===========================================================
 
 The following table illustrates ABI compatibility between different versions of the nRF54H20 SoC binaries bundle and the |NCS|:
 

@@ -69,5 +69,3 @@ API documentation
 | Source file: :file:`subsys/zigbee/lib/zigbee_scenes/zigbee_zcl_scenes.c`
 
 .. doxygengroup:: zigbee_scenes
-   :project: nrf
-   :members:

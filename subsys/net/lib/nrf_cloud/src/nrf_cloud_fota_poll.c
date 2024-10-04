@@ -463,7 +463,8 @@ static int start_download(void)
 		},
 		.fota = {
 			.expected_type = ctx_ptr->img_type,
-			.img_sz = job.file_size
+			.img_sz = job.file_size,
+			.cb = http_fota_dl_handler
 		}
 	};
 

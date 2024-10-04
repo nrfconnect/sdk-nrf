@@ -40,5 +40,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/ftp_client/src/`
 
 .. doxygengroup:: ftp_client
-   :project: nrf
-   :members:

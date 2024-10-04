@@ -71,5 +71,3 @@ API documentation
 | Source file: :file:`subsys/gazell/`
 
 .. doxygengroup:: gzp
-   :project: nrf
-   :members:

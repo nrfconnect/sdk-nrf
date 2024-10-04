@@ -826,8 +826,6 @@ Azure IoT Hub API
 | Source files: :file:`subsys/net/lib/azure_iot_hub/src/azure_iot_hub.c`
 
 .. doxygengroup:: azure_iot_hub
-   :project: nrf
-   :members:
 
 .. _azure_iot_hub_dps_api:
 
@@ -838,5 +836,3 @@ Azure IoT Hub DPS API
 | Source files: :file:`subsys/net/lib/azure_iot_hub/src/azure_iot_hub_dps.c`
 
 .. doxygengroup:: azure_iot_hub_dps
-   :project: nrf
-   :members:

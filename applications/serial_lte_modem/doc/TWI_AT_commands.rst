@@ -33,7 +33,7 @@ The ``<index>`` parameter corresponds to the following TWI instances:
 * ``2`` - TWI2 (``i2c2``).
 * ``3`` - TWI3 (``i2c3``).
 
-  See :ref:`zephyr:dtbinding_nordic_nrf_twi`.
+  See :dtcompatible:`nordic,nrf-twi`.
 
 Example
 ~~~~~~~
@@ -81,7 +81,7 @@ Syntax
   * ``2`` - Use TWI2 (``i2c2``).
   * ``3`` - Use TWI3 (``i2c3``).
 
-  See :ref:`zephyr:dtbinding_nordic_nrf_twi`.
+  See :dtcompatible:`nordic,nrf-twi`.
 
 * The ``<dev_addr>`` parameter is a hexadecimal string.
   It represents the peripheral device address to write to.
@@ -206,7 +206,7 @@ Syntax
   * ``2`` - Use TWI2 (``i2c2``).
   * ``3`` - Use TWI3 (``i2c3``).
 
-  See :ref:`zephyr:dtbinding_nordic_nrf_twi`.
+  See :dtcompatible:`nordic,nrf-twi`.
 
 * The ``<dev_addr>`` parameter is a hexadecimal string.
   It represents the peripheral device address to write to.

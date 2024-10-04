@@ -39,5 +39,3 @@ API documentation
 | Source files: :file:`subsys/dfu/pcd/`
 
 .. doxygengroup:: pcd
-   :project: nrf
-   :members:

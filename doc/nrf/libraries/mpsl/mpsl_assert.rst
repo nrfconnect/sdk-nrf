@@ -20,5 +20,3 @@ API documentation
 | Header file: :file:`include/mpsl/mpsl_assert.h`
 
 .. doxygengroup:: mpsl_assert
-   :project: nrf
-   :members:

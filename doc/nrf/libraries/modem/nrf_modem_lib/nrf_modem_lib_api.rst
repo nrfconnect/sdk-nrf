@@ -7,9 +7,5 @@ API documentation
 | Source file: :file:`lib/nrf_modem_lib.c`
 
 .. doxygengroup:: nrf_modem_lib
-   :project: nrf
-   :members:
 
 .. doxygengroup:: nrf_modem_lib_trace
-   :project: nrf
-   :members:

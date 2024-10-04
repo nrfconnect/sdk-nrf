@@ -28,26 +28,25 @@ MCUBOOT_BASE = utils.get_projdir("mcuboot")
 project = "nRF Connect SDK"
 copyright = "2019-2024, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "2.7.99"
+version = release = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "sphinx.ext.intersphinx",
-    "breathe",
-    "interbreathe",
     "table_from_rows",
     "options_from_kconfig",
     "ncs_include",
     "manifest_revisions_table",
     "sphinxcontrib.mscgen",
     "zephyr.html_redirects",
-    "zephyr.warnings_filter",
     "zephyr.kconfig",
     "zephyr.external_content",
     "zephyr.doxyrunner",
+    "zephyr.doxybridge",
     "zephyr.link-roles",
+    "zephyr.dtcompatible-role",
     "zephyr.domain",
     "sphinx_tabs.tabs",
     "software_maturity_table",
@@ -112,10 +111,6 @@ kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
 
-nrfx_mapping = utils.get_intersphinx_mapping("nrfx")
-if nrfx_mapping:
-    intersphinx_mapping["nrfx"] = nrfx_mapping
-
 matter_mapping = utils.get_intersphinx_mapping("matter")
 if matter_mapping:
     intersphinx_mapping["matter"] = matter_mapping
@@ -128,11 +123,13 @@ if tfm_mapping:
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
 doxyrunner_doxyfile = NRF_BASE / "doc" / "nrf" / "nrf.doxyfile.in"
-doxyrunner_outdir = utils.get_builddir() / "nrf" / "doxygen"
+doxyrunner_outdir = utils.get_builddir() / "html" / "nrf" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
     "NRF_BASE": str(NRF_BASE),
-    "NRF_BINARY_DIR": str(utils.get_builddir() / "nrf"),
+    "DOCSET_SOURCE_BASE": str(NRF_BASE),
+    "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
+    "DOCSET_VERSION": version,
 }
 
 # create mbedtls config header (needed for Doxygen)
@@ -150,12 +147,9 @@ with open(fin_path) as fin, open(fout_path, "w") as fout:
         )
     )
 
-# Options for breathe ----------------------------------------------------------
+# -- Options for doxybridge plugin ---------------------------------------------
 
-breathe_projects = {"nrf": str(doxyrunner_outdir / "xml")}
-breathe_default_project = "nrf"
-breathe_domain_by_extension = {"h": "c", "c": "c"}
-breathe_separate_member_pages = True
+doxybridge_dir = doxyrunner_outdir
 
 # Options for ncs_include ------------------------------------------------------
 
@@ -168,10 +162,6 @@ ncs_include_mapping = {
 # Options for html_redirect ----------------------------------------------------
 
 html_redirect_pages = redirects.NRF
-
-# -- Options for zephyr.warnings_filter ----------------------------------------
-
-warnings_filter_config = str(NRF_BASE / "doc" / "nrf" / "known-warnings.txt")
 
 # Options for zephyr.link-roles ------------------------------------------------
 

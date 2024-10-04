@@ -1,0 +1,1 @@
+Information in this section complements the general :ref:`ug_app_dev` guides (such as :ref:`configuration_and_build` or :ref:`programming`) with information specific to |nrf_series|.

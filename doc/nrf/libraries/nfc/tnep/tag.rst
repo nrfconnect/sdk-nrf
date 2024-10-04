@@ -141,5 +141,3 @@ API documentation
 | Source file: :file:`subsys/tnep/tag.c`
 
 .. doxygengroup:: nfc_tnep_tag
-   :project: nrf
-   :members:

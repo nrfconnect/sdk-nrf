@@ -17,7 +17,7 @@ DEFINE_FFF_GLOBALS;
 int poll(struct zsock_pollfd *fds, int nfds, int timeout);
 
 /* Fake functions declaration */
-FAKE_VALUE_FUNC(int, nct_initialize, const char *);
+FAKE_VALUE_FUNC(int, nct_initialize, const struct nrf_cloud_init_param *);
 FAKE_VALUE_FUNC(int, nfsm_init);
 FAKE_VALUE_FUNC(int, nrf_cloud_codec_init, struct nrf_cloud_os_mem_hooks *);
 FAKE_VOID_FUNC(nrf_cloud_set_app_version, const char *const);
@@ -45,17 +45,18 @@ FAKE_VOID_FUNC(nrf_cloud_free, void *);
 FAKE_VALUE_FUNC(int, poll, struct zsock_pollfd *, int, int);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encode, struct nrf_cloud_obj *const);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encoded_free, struct nrf_cloud_obj *const);
+FAKE_VALUE_FUNC(int, nrf_cloud_print_details);
 
 /* Custom fakes implementation */
-int fake_nct_initialize__succeeds(const char *const client_id)
+int fake_nct_initialize__succeeds(const struct nrf_cloud_init_param *param)
 {
-	ARG_UNUSED(client_id);
+	ARG_UNUSED(param);
 	return 0;
 }
 
-int fake_nct_initialize__fails(const char *const client_id)
+int fake_nct_initialize__fails(const struct nrf_cloud_init_param *param)
 {
-	ARG_UNUSED(client_id);
+	ARG_UNUSED(param);
 	return -ENODEV;
 }
 
@@ -345,4 +346,9 @@ int fake_nrf_cloud_obj_cloud_encode__fails(struct nrf_cloud_obj *const obj)
 {
 	ARG_UNUSED(obj);
 	return -ENOMEM;
+}
+
+int fake_nrf_cloud_print_details__succeeds(void)
+{
+	return 0;
 }

@@ -18,5 +18,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/cts_client.c`
 
 .. doxygengroup:: bt_gatt_cts_c
-   :project: nrf
-   :members:

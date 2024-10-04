@@ -91,8 +91,6 @@ struct module_data {
 /** @brief Purge a module's queue.
  *
  *  @param[in] module Pointer to a structure containing module metadata.
- *
- *  @return 0 if successful, otherwise a negative error code.
  */
 void module_purge_queue(struct module_data *module);
 

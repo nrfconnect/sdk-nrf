@@ -43,5 +43,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/lbs.c`
 
 .. doxygengroup:: bt_lbs
-   :project: nrf
-   :members:

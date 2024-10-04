@@ -101,5 +101,3 @@ API documentation
   * :file:`subsys/bluetooth/services/ancs_app_attr_get.c`
 
 .. doxygengroup:: bt_ancs_client
-   :project: nrf
-   :members:

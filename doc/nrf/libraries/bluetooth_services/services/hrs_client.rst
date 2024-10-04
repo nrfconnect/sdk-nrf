@@ -74,5 +74,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/hrs_client.c`
 
 .. doxygengroup:: bt_hrs_client
-   :project: nrf
-   :members:

@@ -34,5 +34,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/aws_jobs/`
 
 .. doxygengroup:: aws_jobs
-   :project: nrf
-   :members:

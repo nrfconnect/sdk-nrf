@@ -96,5 +96,3 @@ API documentation
 | Source file: :file:`lib/at_parser/src/at_parser.c`
 
 .. doxygengroup:: at_parser
-   :project: nrf
-   :members:

@@ -2,18 +2,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-
-config NRF_CLOUD_LOG_DIRECT
-	bool "nRF Cloud direct logging"
-	default y
-	depends on NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_COAP
-	select CBPRINTF_LIBC_SUBSTS if !NRF_CLOUD_LOG_BACKEND
-	help
-	  Enable direct log message transfer to the cloud. If
-	  NRF_CLOUD_LOG_BACKEND is enabled, these messages will be
-	  routed there, where buffering will occur. Otherwise, they will
-	  be sent directly to the cloud, with the assumption that a valid
-	  network connection is available.
+menu "Logging"
 
 menuconfig NRF_CLOUD_LOG_BACKEND
 	bool "nRF Cloud logging system"
@@ -48,6 +37,18 @@ backend-str = nrf_cloud
 source "subsys/logging/Kconfig.template.log_format_config"
 
 endif # NRF_CLOUD_LOG_BACKEND
+
+config NRF_CLOUD_LOG_DIRECT
+	bool "nRF Cloud direct logging"
+	default y
+	depends on NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_COAP
+	select CBPRINTF_LIBC_SUBSTS if !NRF_CLOUD_LOG_BACKEND
+	help
+	  Enable direct log message transfer to the cloud. If
+	  NRF_CLOUD_LOG_BACKEND is enabled, these messages will be
+	  routed there, where buffering will occur. Otherwise, they will
+	  be sent directly to the cloud, with the assumption that a valid
+	  network connection is available.
 
 config NRF_CLOUD_LOG_OUTPUT_LEVEL
 	int "Only log entries less than or equal to this will be sent"
@@ -87,3 +88,5 @@ config NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED
 module = NRF_CLOUD_LOG
 module-str = nRF Cloud Log
 source "subsys/logging/Kconfig.template.log_config"
+
+endmenu

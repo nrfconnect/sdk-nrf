@@ -3,6 +3,10 @@
 Developing with PMICs
 #####################
 
+.. |nrf_series| replace:: Power Management IC devices
+
+.. include:: /includes/guides_complementary_to_app_dev.txt
+
 Zephyr and the |NCS| provides support for developing applications with the following Power Management IC devices:
 
 .. list-table::

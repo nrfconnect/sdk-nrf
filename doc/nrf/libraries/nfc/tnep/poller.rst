@@ -52,5 +52,3 @@ API documentation
 | Source file: :file:`subsys/tnep/poller.c`
 
 .. doxygengroup:: nfc_tnep_poller
-   :project: nrf
-   :members:

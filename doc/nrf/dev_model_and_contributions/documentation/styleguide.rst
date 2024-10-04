@@ -106,22 +106,18 @@ For example, on this page, the ``|gl|`` tag is defined for local usage and will 
 This tag is not available on other pages.
 The page is also using the ``|NCS|`` tag that is defined in :file:`shortcuts.txt` and can be used on all documentation pages in the |NCS| project.
 
-Breathe
--------
+Doxybridge
+----------
 
-The Breathe Sphinx plugin provides a bridge between RST and doxygen.
+The Doxybridge Sphinx plugin provides a bridge between RST and doxygen.
 
 The doxygen documentation is not automatically included in RST.
 Therefore, every group must be explicitly added to an RST file.
 For example, the code below adds the ``bluetooth_throughput`` group to the RST document, and includes the public members of any classes in the group.
-The `Breathe documentation`_ contains information about what you can link to and how to do it.
 
 .. code-block:: none
 
    .. doxygengroup:: bluetooth_throughput
-      :project: nrf
-      :members:
-
 
 .. note::
    Including a group on a page does not include all its subgroups automatically.
@@ -129,7 +125,7 @@ The `Breathe documentation`_ contains information about what you can link to and
 
    However, if subgroups are defined in separate files, you should rather list them manually on the page of the group they belong to, so that you can include information on where they are defined.
 
-To link directly to a doxygen reference from RST, use the following Breathe domains:
+To link directly to a doxygen reference from RST, use the following C domain roles:
 
 * Function: ``:c:func:``
 * Structure: ``:c:struct:``
@@ -338,7 +334,6 @@ Structs
 =======
 
 The documentation block must precede the documented element.
-Make sure to add ``:members:`` when you include the API documentation in RST; otherwise, the member documentation will not show up.
 
 In the RST file:
 
@@ -351,8 +346,6 @@ In the RST file:
    | Source file: :file:`subsys/bluetooth/gatt_dm.c`
 
    .. doxygengroup:: bt_gatt_dm
-      :project: nrf
-      :members:
 
 In the header file:
 
@@ -389,10 +382,6 @@ To link to functions, enums, or structs from within doxygen itself, use the ``@r
     *  Use this structure with the function @ref function_name and
     *  this structure is related to another structure, @ref structure_name.
     */
-
-.. note::
-   Linking to functions does not currently work due to `Breathe issue #438`_.
-
 
 Typedefs
 ========

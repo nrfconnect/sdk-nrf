@@ -585,5 +585,3 @@ The configurable application modules (configuration channel listeners) do not us
 | Source file: :file:`applications/nrf_desktop/src/util/config_channel_transport.c`
 
 .. doxygengroup:: config_channel_transport
-   :project: nrf
-   :members:

@@ -38,5 +38,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_battery_srv.c`
 
 .. doxygengroup:: bt_mesh_battery_srv
-   :project: nrf
-   :members:

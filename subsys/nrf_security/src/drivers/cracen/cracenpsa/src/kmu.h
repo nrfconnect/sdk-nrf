@@ -6,7 +6,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "cracen_psa.h"
+#include <cracen_psa.h>
 
 #define CRACEN_KMU_MAX_KEY_SIZE	 32
 #define CRACEN_KMU_SLOT_KEY_SIZE 16
@@ -26,27 +26,6 @@ typedef struct {
 	uint8_t number_of_slots: 3;  /* Number of slots to push. */
 	uint8_t slot_id;	     /* KMU slot number. */
 } kmu_opaque_key_buffer;
-
-enum kmu_metadata_key_usage_scheme {
-	/**
-	 * These keys can only be pushed to Cracen's protected RAM.
-	 * The keys are not encrypted. Only AES supported.
-	 */
-	KMU_METADATA_SCHEME_PROTECTED,
-	/**
-	 * These keys use 3 key slots. Pushed to the seed register.
-	 */
-	KMU_METADATA_SCHEME_SEED,
-	/**
-	 * These keys are stored in encrypted form. They will be decrypted
-	 * to @ref kmu_push_area for usage.
-	 */
-	KMU_METADATA_SCHEME_ENCRYPTED,
-	/**
-	 * These keys are not encrypted. Pushed to @ref kmu_push_area.
-	 */
-	KMU_METADATA_SCHEME_RAW
-};
 
 extern uint8_t kmu_push_area[64];
 

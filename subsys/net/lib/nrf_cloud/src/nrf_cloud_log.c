@@ -90,8 +90,20 @@ static void log_inject(int log_level, const char *fmt, va_list ap)
 	/* Idempotent so is OK to call every time. */
 	nrf_cloud_log_init();
 
+	const void *source;
+
+	/* There is no logging API call to retrieve a pointer to the current source.
+	 * Instead, access it using the local variable name declared by the
+	 * LOG_MODULE_REGISTER macro.
+	 */
+#if defined(CONFIG_LOG_RUNTIME_FILTERING)
+	source = __log_current_dynamic_data;
+#else
+	source = __log_current_const_data;
+#endif
+
 	/* Cloud logging is enabled, so send it through the main logging system. */
-	z_log_msg_runtime_vcreate(Z_LOG_LOCAL_DOMAIN_ID, NULL, log_level,
+	z_log_msg_runtime_vcreate(Z_LOG_LOCAL_DOMAIN_ID, source, log_level,
 				  NULL, 0, Z_LOG_MSG_CBPRINTF_FLAGS(0), fmt, ap);
 }
 

@@ -108,7 +108,7 @@ void sx_pk_wrreg(struct sx_regs *regs, uint32_t addr, uint32_t v)
 	volatile uint32_t *p = (uint32_t *)(regs->base + addr);
 
 #ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_pk_wrreg(addr=0x%x, sum=0x%x, val=0x%x);\n", addr, (uint32_t)p, v);
+	printk("sx_pk_wrreg(addr=0x%x, sum=0x%x, val=0x%x);\r\n", addr, (uint32_t)p, v);
 #endif
 
 	*p = v;
@@ -122,8 +122,8 @@ uint32_t sx_pk_rdreg(struct sx_regs *regs, uint32_t addr)
 	v = *p;
 
 #ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_pk_rdreg(addr=0x%x, sum=0x%x);\n", addr, (uint32_t)p);
-	printk("result = 0x%x\n", v);
+	printk("sx_pk_rdreg(addr=0x%x, sum=0x%x);\r\n", addr, (uint32_t)p);
+	printk("result = 0x%x\r\n", v);
 #endif
 
 	return v;

@@ -61,5 +61,3 @@ API documentation
 | Source files: :file:`lib/st25r3911b/`
 
 .. doxygengroup:: st25r3911b_nfca
-   :project: nrf
-   :members:

@@ -156,8 +156,6 @@ Protected storage
 | Source files: :file:`subsys/secure_storage/src/protected_storage/backend_interface.c`
 
 .. doxygengroup:: protected_storage
-   :project: nrf
-   :members:
 
 Internal trusted storage
 ========================
@@ -166,5 +164,3 @@ Internal trusted storage
 | Source files: :file:`subsys/secure_storage/src/internal_trusted_storage/backend_interface.c`
 
 .. doxygengroup:: internal_trusted_storage
-   :project: nrf
-   :members:

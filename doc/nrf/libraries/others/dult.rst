@@ -64,5 +64,3 @@ API documentation
 | Source files: :file:`subsys/dult`
 
 .. doxygengroup:: dult
-   :project: nrf
-   :members:

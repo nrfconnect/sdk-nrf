@@ -117,5 +117,3 @@ API documentation
 | Source files: :file:`subsys/dm/`
 
 .. doxygengroup:: dm
-   :project: nrf
-   :members:

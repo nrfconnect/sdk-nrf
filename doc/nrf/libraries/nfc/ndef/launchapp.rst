@@ -85,8 +85,6 @@ Launch App messages
 | Source file: :file:`subsys/nfc/ndef/launchapp_msg.c`
 
 .. doxygengroup:: nfc_launchapp_msg
-   :project: nrf
-   :members:
 
 .. _nfc_launchapp_rec:
 
@@ -97,5 +95,3 @@ Launch App records
 | Source file: :file:`subsys/nfc/ndef/launchapp_rec.c`
 
 .. doxygengroup:: nfc_launchapp_rec
-   :project: nrf
-   :members:

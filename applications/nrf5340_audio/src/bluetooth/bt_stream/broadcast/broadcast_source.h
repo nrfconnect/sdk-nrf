@@ -103,6 +103,8 @@ struct broadcast_source_big {
 	uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE + 1];
 	char broadcast_name[BROADCAST_SOURCE_ADV_NAME_MAX + 1];
 	char adv_name[CONFIG_BT_DEVICE_NAME_MAX + 1];
+	bool fixed_id;
+	uint32_t broadcast_id;
 };
 
 /**
@@ -143,13 +145,17 @@ struct broadcast_source_per_adv_data {
  *
  * @param[in]	big_index		Index of the Broadcast Isochronous Group (BIG) to get
  *					advertising data for.
+ * @param[in]	fixed_id		Flag to indicate if the broadcast ID will be random or not.
+ * @param[in]	broadcast_id		Broadcast ID to be used in the advertising data if
+ *					@p fixed_id is set to true. The broadcast ID is three octets
+ *					long.
  * @param[in]	ext_adv_data		Pointer to the extended advertising buffers.
  * @param[out]	ext_adv_buf		Pointer to the bt_data used for extended advertising.
  * @param[out]	ext_adv_buf_vacant	Pointer to unused size of @p ext_adv_buf.
  *
  * @return	Negative values for errors or number of elements added to @p ext_adv_buf.
  */
-int broadcast_source_ext_adv_populate(uint8_t big_index,
+int broadcast_source_ext_adv_populate(uint8_t big_index, bool fixed_id, uint32_t broadcast_id,
 				      struct broadcast_source_ext_adv_data *ext_adv_data,
 				      struct bt_data *ext_adv_buf, size_t ext_adv_buf_vacant);
 
@@ -198,6 +204,20 @@ int broadcast_source_start(uint8_t big_index, struct bt_le_ext_adv *ext_adv);
  * @return	0 for success, error otherwise.
  */
 int broadcast_source_stop(uint8_t big_index);
+
+/**
+ * @brief	Get the broadcast ID for the given Broadcast Isochronous Group (BIG).
+ *
+ * @note	The broadcast ID is used to identify the broadcast. Its value is three octets long.
+ *		This function should only be called after the BIG has been created.
+ *
+ * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to get the broadcast
+ *				ID for.
+ * @param[out]	broadcast_id	Pointer to the broadcast ID.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int broadcast_source_id_get(uint8_t big_index, uint32_t *broadcast_id);
 
 /**
  * @brief	Broadcast the Bluetooth LE Audio data.

@@ -1,23 +1,23 @@
 .. _nrf54l_features:
 
-Features of the nRF54L15 PDK
-############################
+Features of the nRF54L Series
+#############################
 
 .. contents::
    :local:
    :depth: 2
 
-The nRF54L15 PDK embeds an Arm® Cortex®-M33 processor with multiprotocol 2.4 GHz transceiver and supports Bluetooth® 5.4.
+The nRF54L15 DK embeds an Arm® Cortex®-M33 processor with multiprotocol 2.4 GHz transceiver and supports Bluetooth® 5.4.
 
 For additional information, see the following documentation:
 
-* Zephyr page on the :ref:`zephyr:nrf54l15pdk_nrf54l15`
+* Zephyr page on the :ref:`zephyr:nrf54l15dk_nrf54l15`
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
 Supported protocols
 *******************
 
-The nRF54L15 PDK supports Bluetooth Low Energy (LE), proprietary protocols (including Enhanced ShockBurst), Matter, and Thread.
+The nRF54L15 DK supports Bluetooth Low Energy (LE), proprietary protocols (including Enhanced ShockBurst), Matter, and Thread.
 
 Amazon Sidewalk
 ===============
@@ -37,7 +37,7 @@ This stack is split into two core components: the Bluetooth Host and the Bluetoo
 The :ref:`ug_ble_controller` user guide contains more information about the two available Bluetooth LE Controllers, and instructions for switching between them.
 
 See the :ref:`zephyr:bluetooth` section of the Zephyr documentation for information on the Bluetooth Host and open source Bluetooth LE Controller.
-The |NCS| contains :ref:`ble_samples` that can be run on the nRF54L15 PDK device.
+The |NCS| contains :ref:`ble_samples` that can be run on the nRF54L15 DK device.
 In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included from Zephyr.
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
@@ -90,18 +90,18 @@ See the :ref:`nfc_samples` and :ref:`lib_nfc` for the samples and libraries that
 MCUboot bootloader support
 **************************
 
-The nRF54L15 PDK supports MCUboot as its bootloader, in the experimental phase.
+The nRF54L15 DK supports MCUboot as its bootloader, in the experimental phase.
 This means the following:
 
   * Only software cryptography is supported.
-  * Single image pair is supported for dual-bank Device Firmware Update (DFU) targeted at the CPU application (the ``nrf54l15pdk/nrf54l51/cpuapp`` board target).
+  * Single image pair is supported for dual-bank Device Firmware Update (DFU) targeted at the CPU application (the ``nrf54l15dk/nrf54l51/cpuapp`` board target).
   * MCUboot can be configured as a first-stage bootloader (second-stage bootloader functionality is not yet available).
   * Serial recovery mode is also not yet supported.
 
 Supported DFU protocols
 =======================
 
-The DFU process in the nRF54L15 PDK uses the MCUmgr protocol.
+The DFU process in the nRF54L15 DK uses the MCUmgr protocol.
 It can be used for performing updates over Bluetooth® Low Energy (LE) and serial connections.
 
 For instructions on testing, see :ref:`nrf54l_testing_dfu`.

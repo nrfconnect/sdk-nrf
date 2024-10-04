@@ -19,8 +19,6 @@ LwM2M carrier library start up
 ==============================
 
 .. doxygengroup:: lwm2m_carrier_init
-   :project: nrf
-   :members:
 
 .. _liblwm2m_carrier_events:
 
@@ -28,15 +26,11 @@ LwM2M carrier library events
 ============================
 
 .. doxygengroup:: lwm2m_carrier_events
-   :project: nrf
-   :members:
 
 LwM2M carrier library API
 =============================
 
 .. doxygengroup:: lwm2m_carrier_api
-   :project: nrf
-   :members:
 
 .. _liblwm2m_carrier_objects:
 
@@ -44,8 +38,6 @@ LwM2M carrier library objects
 =============================
 
 .. doxygengroup:: lwm2m_carrier_objects
-   :project: nrf
-   :members:
 
 .. _liblwm2m_os:
 
@@ -59,12 +51,8 @@ LwM2M OS layer
 ==============
 
 .. doxygengroup:: lwm2m_carrier_os
-   :project: nrf
-   :members:
 
 LwM2M OS DFU image type
 =======================
 
 .. doxygengroup:: lwm2m_os_dfu_img_type
-   :project: nrf
-   :members:

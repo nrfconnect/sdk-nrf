@@ -18,5 +18,3 @@ API documentation
 | Header file: :file:`include/mpsl/mpsl_lib.h`
 
 .. doxygengroup:: mpsl_lib
-   :project: nrf
-   :members:

@@ -91,5 +91,3 @@ API documentation
 | Source files: :file:`lib/modem_battery/`
 
 .. doxygengroup:: modem_battery
-   :project: nrf
-   :members:

@@ -34,5 +34,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/latency.c`
 
 .. doxygengroup::  bt_latency
-   :project: nrf
-   :members:

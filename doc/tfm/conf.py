@@ -6,6 +6,7 @@
 
 # TFM documentation build configuration file
 
+import os
 from pathlib import Path
 import sys
 
@@ -25,21 +26,25 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "Trusted Firmware-M"
 copyright = "2017-2021, ARM CE-OSS"
 author = "ARM CE-OSS"
-version = "2.0.0"
+version = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "m2r2",
+    "warnings_filter",
     "sphinx.ext.autosectionlabel",
+    "sphinx.ext.intersphinx",
     "sphinxcontrib.plantuml",
     "sphinx_tabs.tabs",
     "zephyr.external_content",
 ]
 source_suffix = [".rst", ".md"]
 
-exclude_patterns = ["readme.rst"]
+exclude_patterns = [
+  "platform/cypress/psoc64/security/keys/readme.rst"
+]
 
 numfig = True
 
@@ -67,12 +72,22 @@ html_theme_options = {
 autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 2
 
+# Options for intersphinx ------------------------------------------------------
+
+intersphinx_mapping = {
+    "TF-M-Tests": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-tests/en/tf-mv{version}/", None),
+    "TF-M-Tools": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-tools/en/tf-mv{version}/", None),
+    "TF-M-Extras": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-extras/en/tf-mv{version}/", None),
+}
+
+# Options for warnings_filter --------------------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "tfm" / "known-warnings.txt")
+
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [
     (TFM_BASE / "docs", "**/*"),
-    (TFM_BASE, "platform/**/*"),
-    (TFM_BASE, "tools/**/*"),
 ]
 
 

@@ -102,5 +102,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/time_cli.c`
 
 .. doxygengroup:: bt_mesh_time_cli
-   :project: nrf
-   :members:

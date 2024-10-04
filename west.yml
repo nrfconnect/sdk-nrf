@@ -72,7 +72,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f869e11484287622d9a3b63fd50151371966dd0e
+      revision: 8005d4e87b9bcba25f441a51f4f5d29b541022b9
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -140,7 +140,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: f30dce197f34d4df77d8e66997dff0ce948c2b82
+      revision: 763edd653b1b9a5efd643221333e9ea16767da11
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -190,7 +190,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 77cac0c8c707305f946b5b6cb008158fe81f47b8
+      revision: c50013d7baef93669a74e3fc12f66782cc5ba64a
       groups:
         - nrf-802154
     - name: soc-hwmv1
@@ -203,7 +203,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: c3da9a7fe9e1d321cd3fbe9a94f1c9d310ddfbfe
+      revision: 03063719e160e07413b0d7c2448cbd822a38640a
       submodules: true
       groups:
         - dragoon
@@ -247,14 +247,14 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 2aeb8b833ba760ec29d5f340dd1ce7bcb61c5d56
+      revision: ncs-thread-reference-20241002
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: 35f1ab74d886dc4795ea737596040854ea3b524e
+      revision: 11ac20ff63e256aa3a0facccdf001be2463bfc2a
       path: modules/lib/suit-generator
     - name: suit-processor
       revision: ee58d543994256d545c692e14badf3efa9830237
@@ -262,7 +262,7 @@ manifest:
     - name: doc-internal
       repo-path: doc-internal
       path: modules/doc-internal
-      revision: a0aeb01ca944734486138d93575baa8afd24cb63
+      revision: 1d6454a152aaa6946b89c8628d91780de5d91f6f
       groups:
         - doc-internal
 

@@ -56,5 +56,3 @@ API documentation
 | Source files: :file:`subsys/debug/etb_trace/`
 
 .. doxygengroup:: etb_trace
-   :project: nrf
-   :members:

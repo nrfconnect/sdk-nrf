@@ -86,6 +86,7 @@ If you have not built all documentation sets before, it is recommended to run th
 
 Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 This target will build the :ref:`documentation sets <documentation_sets>` that are needed for *docset-name*.
+Note that Doxygen-only docsets like ``nrfx`` do not have the ``-all`` target as they have no dependencies.
 
 On subsequent builds, it is recommended to just run the following command:
 
@@ -94,6 +95,9 @@ On subsequent builds, it is recommended to just run the following command:
    ninja *docset-name*
 
 The last couple of targets mentioned in :ref:`documentation_sets` will only invoke the build for the corresponding documentation set (referred by *docset-name*), assuming that all of its dependencies are available.
+
+Additionally, the ``*docset-name*-live-all`` and ``*docset-name*-live`` targets are provided with equal functionality plus hot reloading.
+The advantage of using ``live`` targets is that by just editing and saving changes, a re-build will be triggered and browser window will be refreshed.
 
 .. _caching_and_cleaning:
 
@@ -119,6 +123,15 @@ To clean the build folders for a particular documentation set:
 
 Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 
+
+.. _optimizing_doc_build_speed:
+
+Optimizing build speed
+**********************
+
+When working with documentation locally, you can enable the ``-DNO_DTS_BINDINGS=ON`` option when configuring the build.
+This option skips generating devicetree bindings pages, which speeds up the Zephyr documentation set build process.
+
 .. _testing_versions:
 
 Testing locally
@@ -137,16 +150,3 @@ To test the version drop-down locally, complete the following steps:
 #. Access http://localhost:8000/latest/index.html with your browser to see the documentation.
 
 To add other versions of the documentation to your local documentation output, build the versions from a tagged release and rename the :file:`html` folder to the respective version (for example, |release_number_tt|).
-
-Dealing with warnings
-*********************
-
-When building the documentation, all warnings are regarded as errors, so they will make the documentation build fail.
-
-However, there are some known issues with Sphinx and Breathe that generate Sphinx warnings even though the input is valid C code.
-To deal with such unavoidable warnings, Zephyr provides the Sphinx extension ``zephyr.warnings_filter`` that filters out warnings based on a set of regular expressions.
-You can find the extension together with usage details at :file:`ncs/zephyr/doc/_extensions/zephyr/warnings_filter.py`.
-
-The configuration file that defines the expected warnings for the nrf documentation set is located at :file:`ncs/nrf/doc/nrf/known-warnings.txt`.
-It contains regular expressions to filter out warnings related to duplicate C declarations.
-These warnings are caused by different objects (for example, a struct and a function or nested elements) sharing the same name.

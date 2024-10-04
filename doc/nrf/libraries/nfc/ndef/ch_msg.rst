@@ -58,8 +58,6 @@ Connection Handover records
 | Source file: :file:`subsys/nfc/ndef/ch.c`
 
 .. doxygengroup:: nfc_ndef_ch
-   :project: nrf
-   :members:
 
 
 .. _nfc_pair_msg:
@@ -71,5 +69,3 @@ Connection Handover messages
 | Source file: :file:`subsys/nfc/ndef/ch_msg.c`
 
 .. doxygengroup:: nfc_ndef_ch_msg
-   :project: nrf
-   :members:

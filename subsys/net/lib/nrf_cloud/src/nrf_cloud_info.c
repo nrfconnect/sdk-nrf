@@ -92,6 +92,7 @@ int nrf_cloud_get_modem_fw(char *buf, size_t buf_sz)
 
 int nrf_cloud_print_details(void)
 {
+#if defined(CONFIG_NRF_CLOUD_PRINT_DETAILS)
 	int err;
 	const char *device_id;
 
@@ -110,19 +111,19 @@ int nrf_cloud_print_details(void)
 	err = nrf_cloud_get_imei(buf, sizeof(buf));
 	if (!err) {
 		LOG_INF("IMEI:      %s", buf);
-	} else {
+	} else if (err != -ENOTSUP) {
 		LOG_ERR("Error requesting the IMEI: %d", err);
 	}
 	err = nrf_cloud_get_uuid(buf, sizeof(buf));
 	if (!err) {
 		LOG_INF("UUID:      %s", buf);
-	} else {
+	} else if (err != -ENOTSUP) {
 		LOG_ERR("Error requesting the UUID: %d", err);
 	}
 	err = nrf_cloud_get_modem_fw(buf, sizeof(buf));
 	if (!err) {
 		LOG_INF("Modem FW:  %s", buf);
-	} else {
+	} else if (err != -ENOTSUP) {
 		LOG_ERR("Error requesting the modem fw version: %d", err);
 	}
 
@@ -140,25 +141,30 @@ int nrf_cloud_print_details(void)
 	LOG_INF("Sec tag:   %d", nrf_cloud_sec_tag_get());
 	LOG_INF("Host name: %s", host_name);
 
-	/* Tenant will not be known unless device is connected to cloud with MQTT. */
-#if defined(CONFIG_NRF_CLOUD_MQTT)
-	char stage[NRF_CLOUD_STAGE_ID_MAX_LEN];
-	char tenant[NRF_CLOUD_TENANT_ID_MAX_LEN];
-
-	err = nct_stage_get(stage, sizeof(stage));
-	if (!err) {
-		LOG_INF("Stage:     %s", stage);
-	} else {
-		LOG_ERR("Error determining nRF Cloud stage: %d", err);
-	}
-	err = nct_tenant_id_get(tenant, sizeof(tenant));
-	if (!err) {
-		LOG_INF("Team ID:    %s", tenant);
-	} else {
-		LOG_ERR("Error determining team ID: %d", err);
-	}
-#endif
 #endif /* CONFIG_NRF_CLOUD_VERBOSE_DETAILS */
 
+	return err;
+#else
+	return 0;
+#endif /* CONFIG_NRF_CLOUD_PRINT_DETAILS */
+}
+
+int nrf_cloud_print_cloud_details(void)
+{
+	int err = 0;
+#if defined(CONFIG_NRF_CLOUD_VERBOSE_DETAILS)
+
+#if defined(CONFIG_NRF_CLOUD_MQTT)
+	char tenant[NRF_CLOUD_TENANT_ID_MAX_LEN];
+
+	err = nct_tenant_id_get(tenant, sizeof(tenant));
+	if (!err) {
+		LOG_INF("Team ID:   %s", tenant);
+	} else {
+		LOG_ERR("Error determining Team ID: %d", err);
+	}
+#endif
+
+#endif
 	return err;
 }

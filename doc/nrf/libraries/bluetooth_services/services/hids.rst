@@ -60,5 +60,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/hids.c`
 
 .. doxygengroup:: bt_hids
-   :project: nrf
-   :members:

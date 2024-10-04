@@ -172,6 +172,3 @@ API documentation
 | Source file: :file:`subsys/net/lib/lwm2m_client_utils/location/location_assistance.c`
 
 .. doxygengroup:: lwm2m_client_utils_location
-   :project: nrf
-   :members:
-   :inner:

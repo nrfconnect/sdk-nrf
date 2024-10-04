@@ -11,7 +11,6 @@
  *
  * @defgroup nfc_ndef_le_oob_rec LE OOB records
  * @{
- * @ingroup  nfc_ndef_messages
  *
  * @brief    Generation of NFC NDEF LE OOB records for NDEF messages.
  *

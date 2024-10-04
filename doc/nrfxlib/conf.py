@@ -26,20 +26,20 @@ NRFXLIB_BASE = utils.get_projdir("nrfxlib")
 project = "nrfxlib"
 copyright = "2019-2024, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "2.7.99"
+version = release = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "sphinx.ext.intersphinx",
-    "breathe",
     "sphinxcontrib.mscgen",
     "inventory_builder",
+    "warnings_filter",
     "zephyr.kconfig",
-    "zephyr.warnings_filter",
     "zephyr.external_content",
     "zephyr.doxyrunner",
+    "zephyr.doxybridge",
 ]
 master_doc = "README"
 
@@ -75,27 +75,27 @@ nrf_mapping = utils.get_intersphinx_mapping("nrf")
 if nrf_mapping:
     intersphinx_mapping["nrf"] = nrf_mapping
 
-# -- Options for zephyr.warnings_filter ----------------------------------------
-
-warnings_filter_config = str(NRF_BASE / "doc" / "nrfxlib" / "known-warnings.txt")
-
 # -- Options for doxyrunner plugin ---------------------------------------------
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
 doxyrunner_doxyfile = NRF_BASE / "doc" / "nrfxlib" / "nrfxlib.doxyfile.in"
-doxyrunner_outdir = utils.get_builddir() / "nrfxlib" / "doxygen"
+doxyrunner_outdir = utils.get_builddir() / "html" / "nrfxlib" / "doxygen"
 doxyrunner_fmt = True
 doxyrunner_fmt_vars = {
-    "NRFXLIB_BASE": str(NRFXLIB_BASE),
-    "OUTPUT_DIRECTORY": str(doxyrunner_outdir),
+    "NRF_BASE": str(NRF_BASE),
+    "DOCSET_SOURCE_BASE": str(NRFXLIB_BASE),
+    "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
+    "DOCSET_VERSION": version,
 }
 
-# Options for breathe ----------------------------------------------------------
+# -- Options for doxybridge plugin ---------------------------------------------
 
-breathe_projects = {"nrfxlib": str(doxyrunner_outdir / "xml")}
-breathe_default_project = "nrfxlib"
-breathe_domain_by_extension = {"h": "c", "c": "c"}
-breathe_separate_member_pages = True
+doxybridge_dir = doxyrunner_outdir
+
+# -- Options for warnings_filter -----------------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "nrfxlib" / "warnings-inventory.txt")
+warnings_filter_builders = ["inventory"]
 
 # Options for external_content -------------------------------------------------
 

@@ -78,5 +78,3 @@ API documentation
 | Source files: :file:`lib/edge_impulse/`
 
 .. doxygengroup:: ei_wrapper
-   :project: nrf
-   :members:

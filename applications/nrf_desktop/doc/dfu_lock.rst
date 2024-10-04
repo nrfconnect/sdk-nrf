@@ -47,5 +47,3 @@ API documentation
 | Source files: :file:`applications/nrf_desktop/src/util/dfu_lock.c`
 
 .. doxygengroup:: dfu_lock
-   :project: nrf
-   :members:

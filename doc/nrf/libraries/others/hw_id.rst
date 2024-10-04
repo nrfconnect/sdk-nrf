@@ -32,5 +32,3 @@ API documentation
 | Source files: :file:`lib/hw_id/`
 
 .. doxygengroup:: hw_id
-   :project: nrf
-   :members:

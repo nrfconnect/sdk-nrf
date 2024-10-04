@@ -101,5 +101,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/enocean.c`
 
 .. doxygengroup:: bt_enocean
-   :project: nrf
-   :members:

@@ -142,11 +142,16 @@ endif # CHIP_WIFI
 config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	default y
 
+# PSA SSF Crypto Client is not ready for the secure storage backend
+if !PSA_SSF_CRYPTO_CLIENT
+
 config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
 	default y if !CHIP_WIFI
 
 config NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
 	default n if !CHIP_WIFI
+
+endif
 
 # Increase the storage capacity if the schedules are enabled with secure storage
 # This also implies increasing of the OT and Matter stacks because some operations

@@ -102,5 +102,3 @@ API documentation
 | Source file: :file:`lib/modem_slm/modem_slm_monitor.c`
 
 .. doxygengroup:: modem_slm
-   :project: nrf
-   :members:

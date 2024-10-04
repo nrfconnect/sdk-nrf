@@ -28,18 +28,12 @@ function(ExternalNcsVariantProject_Add)
     BUILD_ONLY true
   )
 
-  get_cmake_property(sysbuild_cache CACHE_VARIABLES)
-  foreach(var_name ${sysbuild_cache})
-    if("${var_name}" MATCHES "^(${VBUILD_APPLICATION}_.*)$")
-      string(LENGTH "${VBUILD_APPLICATION}" tmplen)
-      string(SUBSTRING "${var_name}" ${tmplen} -1 tmp)
-      set(${VBUILD_VARIANT}${tmp} "${${var_name}}" CACHE UNINITIALIZED "" FORCE)
-    endif()
-  endforeach()
-
-  ExternalProject_Get_Property(${VBUILD_VARIANT} BINARY_DIR)
+  set_property(TARGET ${VBUILD_VARIANT} PROPERTY NCS_VARIANT_APPLICATION ${VBUILD_APPLICATION})
   set_property(TARGET ${VBUILD_VARIANT} APPEND PROPERTY _EP_CMAKE_ARGS
     -DCONFIG_NCS_IS_VARIANT_IMAGE=y
     -DPRELOAD_BINARY_DIR=${${VBUILD_APPLICATION}_BINARY_DIR}
   )
+
+  # Configure variant image after application so that the configuration is present
+  sysbuild_add_dependencies(CONFIGURE ${VBUILD_VARIANT} ${VBUILD_APPLICATION})
 endfunction()

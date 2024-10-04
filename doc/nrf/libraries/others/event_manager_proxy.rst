@@ -168,5 +168,3 @@ API documentation
 | Source files: :file:`subsys/event_manager_proxy/`
 
 .. doxygengroup:: event_manager_proxy
-   :project: nrf
-   :members:

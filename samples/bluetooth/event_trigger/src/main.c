@@ -20,11 +20,8 @@
 
 #include <hal/nrf_egu.h>
 
-#if defined(DPPIC_PRESENT)
-#define SWI_IRQn EGU0_IRQn
-#else
-#define SWI_IRQn SWI0_IRQn
-#endif
+#define EGU_NODE DT_ALIAS(egu)
+#define NRF_EGU ((NRF_EGU_Type *) DT_REG_ADDR(EGU_NODE))
 
 #define NUM_TRIGGERS   (50)
 #define INTERVAL_10MS  (0x8)
@@ -48,9 +45,9 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
-static void egu0_handler(const void *context)
+static void egu_handler(const void *context)
 {
-	nrf_egu_event_clear(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED0);
+	nrf_egu_event_clear(NRF_EGU, NRF_EGU_EVENT_TRIGGERED0);
 
 	if (timestamp_log_index < NUM_TRIGGERS) {
 		k_work_submit(&work);
@@ -83,14 +80,15 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 	 */
 	if (enable) {
 		cmd_params.task_address =
-			nrf_egu_task_address_get(NRF_EGU0, NRF_EGU_TASK_TRIGGER0);
-		IRQ_DIRECT_CONNECT(SWI_IRQn, 5, egu0_handler, 0);
-		nrf_egu_int_enable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
-		NVIC_EnableIRQ(SWI_IRQn);
+			nrf_egu_task_address_get(NRF_EGU, NRF_EGU_TASK_TRIGGER0);
+
+		IRQ_DIRECT_CONNECT(DT_IRQN(EGU_NODE), 5, egu_handler, 0);
+		nrf_egu_int_enable(NRF_EGU, NRF_EGU_INT_TRIGGERED0);
+		NVIC_EnableIRQ(DT_IRQN(EGU_NODE));
 	} else {
 		cmd_params.task_address = 0;
-		nrf_egu_int_disable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
-		NVIC_DisableIRQ(SWI_IRQn);
+		nrf_egu_int_disable(NRF_EGU, NRF_EGU_INT_TRIGGERED0);
+		NVIC_DisableIRQ(DT_IRQN(EGU_NODE));
 	}
 
 	err = hci_vs_sdc_set_event_start_task(&cmd_params);

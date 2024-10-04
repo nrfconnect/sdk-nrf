@@ -199,5 +199,3 @@ API documentation
                 :file:`asset_tracker_v2/src/modules/sensor_module.c`
 
 .. doxygengroup:: sensor_module_event
-   :project: nrf
-   :members:

@@ -133,5 +133,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/scene_srv.c`
 
 .. doxygengroup:: bt_mesh_scene_srv
-   :project: nrf
-   :members:

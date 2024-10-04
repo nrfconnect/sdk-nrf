@@ -41,5 +41,3 @@ API documentation
 | Source files: :file:`modules/lib/identity_key/`
 
 .. doxygengroup:: identity_key
-   :project: nrf
-   :members:

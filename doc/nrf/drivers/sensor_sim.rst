@@ -63,5 +63,3 @@ API documentation
 | Source file: :file:`drivers/sensor/sensor_sim/sensor_sim.c`
 
 .. doxygengroup:: sensor_sim
-   :project: nrf
-   :members:

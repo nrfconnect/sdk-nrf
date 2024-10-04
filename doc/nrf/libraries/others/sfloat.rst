@@ -57,5 +57,3 @@ API documentation
 | Source file: :file:`lib/sfloat/sfloat.c`
 
 .. doxygengroup:: sfloat
-   :project: nrf
-   :members:

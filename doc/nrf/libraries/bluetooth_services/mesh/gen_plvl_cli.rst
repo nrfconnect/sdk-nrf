@@ -109,5 +109,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_plvl_cli.c`
 
 .. doxygengroup:: bt_mesh_plvl_cli
-   :project: nrf
-   :members:

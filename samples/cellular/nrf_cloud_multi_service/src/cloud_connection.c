@@ -255,8 +255,6 @@ static bool connect_cloud(void)
 	/* Clear the disconnected flag, no longer accurate. */
 	k_event_clear(&cloud_events, CLOUD_DISCONNECTED);
 
-	nrf_cloud_print_details();
-
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	/* Connect to nRF Cloud -- Non-blocking. State updates are handled in callbacks. */
 	err = nrf_cloud_connect();
@@ -467,7 +465,6 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		 * device's shadow based on the build configuration.
 		 * See config NRF_CLOUD_SEND_SHADOW_INFO for details.
 		 */
-
 		break;
 	case NRF_CLOUD_EVT_SENSOR_DATA_ACK:
 		LOG_DBG("NRF_CLOUD_EVT_SENSOR_DATA_ACK");

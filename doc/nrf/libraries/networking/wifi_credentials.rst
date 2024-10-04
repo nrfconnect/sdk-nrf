@@ -68,5 +68,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/wifi_credentials`
 
 .. doxygengroup:: wifi_credentials
-   :project: nrf
-   :members:

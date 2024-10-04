@@ -42,8 +42,6 @@ enum nrf_modem_lib_trace_event {
  * @note This callback must be defined by the application with some trace backends.
  *
  * @param evt Occurring event
- *
- * @return Zero on success, non-zero otherwise.
  */
 extern void nrf_modem_lib_trace_callback(enum nrf_modem_lib_trace_event evt);
 

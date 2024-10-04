@@ -33,5 +33,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/gatt_pool.c`
 
 .. doxygengroup:: bt_gatt_pool
-   :project: nrf
-   :members:

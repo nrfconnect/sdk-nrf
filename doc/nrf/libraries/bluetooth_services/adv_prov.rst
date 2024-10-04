@@ -106,8 +106,6 @@ API documentation
 | Source files: :file:`subsys/bluetooth/adv_prov/`
 
 .. doxygengroup:: bt_le_adv_prov
-   :project: nrf
-   :members:
 
 Fast Pair provider API
 ======================
@@ -116,8 +114,6 @@ Fast Pair provider API
 | Source files: :file:`subsys/bluetooth/adv_prov/providers/fast_pair.c`
 
 .. doxygengroup:: bt_le_adv_prov_fast_pair
-   :project: nrf
-   :members:
 
 Swift Pair provider API
 =======================
@@ -126,5 +122,3 @@ Swift Pair provider API
 | Source files: :file:`subsys/bluetooth/adv_prov/providers/swift_pair.c`
 
 .. doxygengroup:: bt_le_adv_prov_swift_pair
-   :project: nrf
-   :members:

@@ -24,5 +24,3 @@ API documentation
 | Source file: :file:`lib/data_fifo/data_fifo.c`
 
 .. doxygengroup:: data_fifo
-   :project: nrf
-   :members:

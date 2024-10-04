@@ -34,9 +34,9 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-bluebagel
+/applications/sdp/                        @masz-nordic
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
-/applications/sw_io_devices/              @masz-nordic
 /applications/zigbee_weather_station/     @milewr
 /applications/**/*.rst                    @nrfconnect/ncs-doc-owners
 
@@ -275,9 +275,10 @@
 /subsys/audio/audio_module_template/      @nrfconnect/ncs-audio
 /subsys/audio_module/                     @nrfconnect/ncs-audio
 /subsys/bluetooth/                        @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
-/subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
-/subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @nrfconnect/ncs-si-bluebagel
+/subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
+/subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
+/subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/services/fast_pair/     @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bootloader/                       @nrfconnect/ncs-pluto
@@ -339,10 +340,12 @@
 
 # Tests
 /tests/                                   @nrfconnect/ncs-co-verification @katgiadla
+/tests/benchmarks/current_consumption/    @nrfconnect/ncs-low-level-test
+/tests/benchmarks/i2c_endless/            @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/              @carlescufi
 /tests/benchmarks/multicore/idle/         @adamkondraciuk @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle_gpio/    @adamkondraciuk @nrfconnect/ncs-low-level-test
-/tests/benchmarks/i2c_endless/            @nrfconnect/ncs-low-level-test
+/tests/benchmarks/peripheral_load/        @nrfconnect/ncs-low-level-test
 /tests/benchmarks/spi_endless/            @nrfconnect/ncs-low-level-test
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan

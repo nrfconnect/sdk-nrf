@@ -22,5 +22,3 @@ API documentation
 | Source files: :file:`asset_tracker_v2/src/modules_common.c`
 
 .. doxygengroup:: modules_common
-   :project: nrf
-   :members:

@@ -177,5 +177,3 @@ API documentation
 | Source files: :file:`subsys/bluetooth/services/wifi_prov`
 
 .. doxygengroup:: bt_wifi_prov
-   :project: nrf
-   :members:

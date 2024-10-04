@@ -109,5 +109,3 @@ API documentation
 | Source files: :file:`lib/date_time/src/`
 
 .. doxygengroup:: date_time
-   :project: nrf
-   :members:

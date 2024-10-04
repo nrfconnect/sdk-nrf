@@ -59,5 +59,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/vnd/silvair_enocean_srv.c`
 
 .. doxygengroup:: bt_mesh_silvair_enocean_srv
-   :project: nrf
-   :members:

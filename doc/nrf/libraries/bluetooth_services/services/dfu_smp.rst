@@ -80,5 +80,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/dfu_smp.c`
 
 .. doxygengroup:: bt_dfu_smp
-   :project: nrf
-   :members:

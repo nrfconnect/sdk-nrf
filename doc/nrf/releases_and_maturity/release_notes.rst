@@ -21,6 +21,7 @@ This page is included only in the latest documentation, because it might contain
    :caption: Subpages:
 
    releases/release-notes-changelog
+   releases/release-notes-2.7.99-cs2
    releases/release-notes-2.7.99-cs1
    releases/release-notes-2.7.0
    releases/release-notes-2.6.2

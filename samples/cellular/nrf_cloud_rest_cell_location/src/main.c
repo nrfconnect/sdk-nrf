@@ -442,11 +442,7 @@ int init(void)
 		LOG_ERR("Failed to get device ID, error: %d", err);
 		return err;
 	}
-
-	err = nrf_cloud_print_details();
-	if (err) {
-		LOG_ERR("Error printing cloud information: %d", err);
-	}
+	LOG_INF("Device ID: %s", device_id);
 
 	/* Check modem FW version */
 	check_modem_fw_version();

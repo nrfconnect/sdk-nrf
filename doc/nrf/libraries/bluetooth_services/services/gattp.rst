@@ -17,5 +17,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/gattp.c`
 
 .. doxygengroup:: bt_gattp
-   :project: nrf
-   :members:

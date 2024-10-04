@@ -90,5 +90,3 @@ API documentation
 .. _nfc_tnep_ch:
 
 .. doxygengroup:: nfc_tnep_ch
-   :project: nrf
-   :members:

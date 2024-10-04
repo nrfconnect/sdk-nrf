@@ -30,5 +30,3 @@ This section lists the types common to the Scene mesh models.
 | Header file: :file:`include/bluetooth/mesh/scene.h`
 
 .. doxygengroup:: bt_mesh_scene
-   :project: nrf
-   :members:

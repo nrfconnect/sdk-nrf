@@ -224,5 +224,3 @@ API documentation
 | Source files: :file:`lib/supl/`
 
 .. doxygengroup:: supl_os
-   :project: nrf
-   :members:

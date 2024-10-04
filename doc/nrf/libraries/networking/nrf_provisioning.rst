@@ -190,5 +190,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/nrf_provisioning/src/`
 
 .. doxygengroup:: nrf_provisioning
-   :project: nrf
-   :members:

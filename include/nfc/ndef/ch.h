@@ -337,9 +337,6 @@ int nfc_ndef_ch_rec_payload_encode(const struct nfc_ndef_ch_rec *ch_rec,
  * This function clears local records of the Connection Handover records.
  *
  * @param[in, out] ch_rec Pointer to the Connection Handover record descriptor.
- *
- * @retval 0 If the operation was successful.
- *         Otherwise, a (negative) error code is returned.
  */
 void nfc_ndef_ch_rec_local_record_clear(struct nfc_ndef_record_desc *ch_rec);
 

@@ -7,6 +7,10 @@
 Developing with nRF52 Series
 ############################
 
+.. |nrf_series| replace:: devices of the nRF52 Series
+
+.. include:: /includes/guides_complementary_to_app_dev.txt
+
 Zephyr and the |NCS| provide support and contain board definitions for developing on the following nRF52 Series devices:
 
 .. list-table::

@@ -27,13 +27,36 @@ Enter ``g`` to grant or ``d`` to deny Bluetooth radio activity.
 * The number of packets transmitted is tracked by counting the RADIO->READY event.
 * The total number of transmitted packets is printed every second.
 
+Wiring
+******
+
 The application generates a grant signal on the pin selected by ``coex-pta-grant-gpios``.
 Connect this pin to the pin defined by the ``grant-gpios`` property in the DTS using a jumper cable.
 
-On the ``nrf52840dk_nrf52840`` target, the default pins are **P0.26** and **P0.02**.
+The following table shows the default pins used for this sample for each supported target:
+
+.. table::
+   :align: center
+
+   +----------------------------+----------------------+-------------+
+   | Target                     | coex-pta-grant-gpios | grant-gpios |
+   +============================+======================+=============+
+   | nrf52840dk/nrf52840        | P0.26                | P0.02       |
+   +----------------------------+----------------------+-------------+
+   | nrf54l15dk/nrf54l15/cpuapp | P0.00                | P0.02       |
+   +----------------------------+----------------------+-------------+
+   | nrf54h20dk/nrf54h20/cpurad | P0.00                | P0.02       |
+   +----------------------------+----------------------+-------------+
+
 
 The board's :ref:`/zephyr,user <dt-zephyr-user>` node must have the ``coex-pta-grant-gpios`` property set in the devicetree.
 You can use this sample's board overlay as an example.
+
+.. note::
+   For the ``nrf54h20dk/nrf54h20/cpurad`` target in the board's devicetree file, you must define a node with the compatible property set to ``coex-pta-grant-gpios``.
+   Then set the ``coex-pta-grant-gpios`` property of that node to the desired pin.
+   This is needed to properly configure the UICR register and get a pin access from the core the application is running on.
+   See the :file:`boards/nrf54h20dk_nrf54h20_cpurad.overlay` file for an example.
 
 Building and running
 ********************

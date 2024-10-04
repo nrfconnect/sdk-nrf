@@ -29,5 +29,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/gatt_dm.c`
 
 .. doxygengroup:: bt_gatt_dm
-   :project: nrf
-   :members:

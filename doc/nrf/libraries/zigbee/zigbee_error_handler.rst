@@ -32,5 +32,3 @@ API documentation
 | Source file: :file:`../nrfxlib/zboss/src/zb_error/zb_error_to_string.c`
 
 .. doxygengroup:: zb_error
-   :project: nrf
-   :members:

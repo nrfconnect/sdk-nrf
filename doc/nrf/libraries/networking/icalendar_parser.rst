@@ -38,5 +38,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/icalendar_parser/src/`
 
 .. doxygengroup:: icalendar_parser
-   :project: nrf
-   :members:

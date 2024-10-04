@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+import os
 from pathlib import Path
 import sys
 
@@ -23,13 +24,14 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 project = "Matter SDK"
 copyright = "2020-2024, Matter Contributors"
 author = "Matter Contributors"
-version = "1.3.0"
+version = os.environ.get("DOCSET_VERSION")
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
     "recommonmark",
+    "warnings_filter",
     "sphinx_markdown_tables",
     "zephyr.external_content"
 ]
@@ -49,6 +51,10 @@ html_theme_options = {
     "docsets": utils.ALL_DOCSETS,
     "subtitle": "nRF Connect SDK",
 }
+
+# Options for warnings_filter --------------------------------------------------
+
+warnings_filter_config = str(NRF_BASE / "doc" / "matter" / "known-warnings.txt")
 
 # Options for external_content -------------------------------------------------
 

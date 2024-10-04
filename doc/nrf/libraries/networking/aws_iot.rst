@@ -44,8 +44,14 @@ If you want to use AWS FOTA, the ``AmazonS3FullAccess`` policy can be used to ob
 
 To complete the steps described in this document, make sure that the following prerequisites are met:
 
-* Install `AWS Command Line Interface`_ on your system and login as a user with appropriate permissions.
+* Install `AWS Command Line Interface`_ on your system and configure AWS with the ``aws configure`` command to generate the key pair.
+  See the `Authentication and access credentials`_ page for more details on AWS configuration.
 * To use the ``nrfcredstore`` tool, the dependencies in the :file:`nrf/scripts/requirements-extra.txt` file must be installed.
+  Enter the following command in a terminal window to install all the dependencies in the file:
+
+  .. code-block:: console
+
+     pip3 install -r nrf/scripts/requirements-extra.txt
 
 .. rst-class:: numbered-step
 
@@ -188,8 +194,13 @@ There are multiple ways to generate and register these certificates:
 
       #. Take note of the certificate ARN, as it will be required later.
       #. Download the `Amazon Root CA 1`_ PEM file as :file:`ca-cert.pem`.
+         If the file is saved as :file:`.txt` file, you need to rename it back to a :file:`.pem` file.
       #. Place the PEM files into the folder path specified by the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER` option, default is :file:`<app_src_dir>/certs/`.
          Ensure that the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` option is set.
+
+		   .. note::
+		      It is not necessary to set the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER` Kconfig option if the file is placed in a folder named :file:`certs` under the application source directory.
+
       #. If the files are placed correctly, the :ref:`lib_mqtt_helper` library finds the certificates and provisions them to the Mbed TLS stack when connecting to AWS IoT.
 
 .. rst-class:: numbered-step
@@ -486,5 +497,3 @@ API documentation
 | Source files: :file:`subsys/net/lib/aws_iot/src/`
 
 .. doxygengroup:: aws_iot
-   :project: nrf
-   :members:

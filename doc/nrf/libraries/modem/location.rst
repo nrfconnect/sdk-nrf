@@ -411,5 +411,3 @@ API documentation
 | Source files: :file:`lib/location/`
 
 .. doxygengroup:: location
-   :project: nrf
-   :members:

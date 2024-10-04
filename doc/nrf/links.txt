@@ -115,8 +115,6 @@
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_JOINER.md
 .. _`BBTC Client`: https://github.com/nrfconnect/sdk-openthread/tree/main/tools/tcat_ble_client
 
-.. _`Breathe issue #437`: https://github.com/michaeljones/breathe/issues/437
-.. _`Breathe issue #438`: https://github.com/michaeljones/breathe/issues/438
 .. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
@@ -462,6 +460,7 @@
 
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
+.. _`Repositories and revisions for v2.7.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs2/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-2.6.2/page/nrf/releases_and_maturity/repository_revisions.html
@@ -554,6 +553,7 @@
 .. _`Migrating to the current hardware model`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_hwmv2.html
 
 
+.. _`Migration notes for nRF Connect SDK v2.7.99-cs2 and the nRF54H20 DK`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7_99-cs2.html
 .. _`Migration notes for nRF Connect SDK v2.7.99-cs1 and the nRF54H20 DK`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7_99-cs1.html
 .. _`Migration notes for nRF Connect SDK v2.7.0 for nRF54H20 DK users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7.html
 .. _`Transition your development environment to nRF Connect SDK v2.7.0 for v2.4.99-cs3 users`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/transition_guide_2.4.99-cs3_to_2.7_environment.html
@@ -648,6 +648,7 @@
 .. _`External memory section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/external_memory.html
 .. _`Device programming section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/operating_modes/mcu_device_programming.html
 .. _`VDD supply rail section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/power_sources_vdd.html
+.. _`nRF9160 RESETREAS`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/power.html#ariaid-title16
 
 .. _`nRF9161 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/nRF9161_html5_keyfeatures.html
 .. _`nRF9161 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/gps.html
@@ -1126,6 +1127,7 @@
 .. _`Security best practices in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
 .. _`AWS IoT Core Server Authentication`: https://docs.aws.amazon.com/iot/latest/developerguide/server-authentication.html
 .. _`CA certificates for server authentication in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/server-authentication.html#server-authentication-certs
+.. _`Authentication and access credentials`: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-authentication.html
 
 .. _`AWS IoT console`: https://console.aws.amazon.com/iot/home
 .. _`AWS S3 console`: https://console.aws.amazon.com/s3/home
@@ -1354,8 +1356,6 @@
 .. _`LVFS building fwupd`: https://lvfs.readthedocs.io/en/latest/custom-plugin.html#building-fwupd
 
 .. ### Source: *.readthedocs.io
-
-.. _`Breathe documentation`: https://breathe.readthedocs.io/en/latest/directives.html#directives
 
 .. _`IntelHex`: https://python-intelhex.readthedocs.io/en/latest/
 

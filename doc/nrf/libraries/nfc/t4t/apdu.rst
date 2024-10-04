@@ -67,19 +67,13 @@ API documentation
 | Source file: :file:`subsys/nfc/t4t/apdu.c`
 
 .. doxygengroup:: nfc_t4t_apdu
-   :project: nrf
-   :members:
 
 Parameters for selecting instruction code in C-APDU
 ===================================================
 
 .. doxygengroup:: nfc_t4t_apdu_select
-   :project: nrf
-   :members:
 
 Status codes contained in R-APDU
 ================================
 
 .. doxygengroup:: nfc_t4t_apdu_status
-   :project: nrf
-   :members:

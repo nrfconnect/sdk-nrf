@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+menu "Alerts"
 
 menuconfig NRF_CLOUD_ALERT
 	bool "nRF Cloud Alert System"
@@ -21,3 +22,5 @@ endif # NRF_CLOUD_ALERT
 module = NRF_CLOUD_ALERT
 module-str = nRF Cloud Alert
 source "subsys/logging/Kconfig.template.log_config"
+
+endmenu

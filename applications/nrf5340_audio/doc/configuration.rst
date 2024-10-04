@@ -38,10 +38,10 @@ The walkie-talkie demo uses one or two bidirectional streams from the gateway to
 The PDM microphone is used as input on both the gateway and headset device.
 To switch to using the walkie-talkie, set the ``CONFIG_WALKIE_TALKIE_DEMO`` Kconfig option to ``y``  in the :file:`applications/nrf5340_audio/prj.conf` file (for the debug version) or in the :file:`applications/nrf5340_audio/prj_release.conf` file (for the release version).
 
-Enabling the Auracast/Broadcast mode
-====================================
+Enabling the Auracast™ (broadcast) mode
+=======================================
 
-If you want to work with Auracast/broadcast sources and sinks, set the :kconfig:option:`CONFIG_TRANSPORT_BIS` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
+If you want to work with `Auracast™`_ (broadcast) sources and sinks, set the :kconfig:option:`CONFIG_TRANSPORT_BIS` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
 
 .. _nrf53_audio_app_configuration_select_bis_two_gateways:
 

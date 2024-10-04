@@ -47,5 +47,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/nsms.c`
 
 .. doxygengroup:: bt_nsms
-   :project: nrf
-   :members:

@@ -30,5 +30,3 @@ API documentation
 | Source file: :file:`lib/pcm_mix/pcm_mix.c`
 
 .. doxygengroup:: pcm_mix
-   :project: nrf
-   :members:

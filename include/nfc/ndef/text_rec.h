@@ -11,7 +11,6 @@
  *
  * @defgroup nfc_text_rec Text records
  * @{
- * @ingroup  nfc_ndef_messages
  *
  * @brief    Generation of NFC NDEF Text record descriptions.
  *

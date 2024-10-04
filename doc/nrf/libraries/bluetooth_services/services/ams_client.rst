@@ -21,5 +21,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/services/ams_client.c`
 
 .. doxygengroup:: bt_ams_client
-   :project: nrf
-   :members:

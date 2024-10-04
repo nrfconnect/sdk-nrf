@@ -45,5 +45,3 @@ API documentation
 | Source file: :file:`subsys/bluetooth/mesh/gen_onoff_srv.c`
 
 .. doxygengroup:: bt_mesh_onoff_srv
-   :project: nrf
-   :members:

@@ -30,5 +30,3 @@ API documentation
 | Source files: :file:`lib/ram_pwrdn/`
 
 .. doxygengroup:: ram_pwrdn
-   :project: nrf
-   :members:

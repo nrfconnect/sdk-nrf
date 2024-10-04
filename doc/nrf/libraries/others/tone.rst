@@ -22,5 +22,3 @@ API documentation
 | Source file: :file:`lib/tone/tone.c`
 
 .. doxygengroup:: tone_gen
-   :project: nrf
-   :members:

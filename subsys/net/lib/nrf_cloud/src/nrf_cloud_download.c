@@ -12,6 +12,10 @@
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include "../coap/include/nrf_cloud_coap_transport.h"
 #endif
+#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
+#include <mcumgr_smp_client.h>
+#include <fota_download_util.h>
+#endif
 #include "nrf_cloud_download.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_download, CONFIG_NRF_CLOUD_LOG_LEVEL);
@@ -362,17 +366,47 @@ static void resume_work_fn(struct k_work *unused)
 }
 #endif /* NRF_CLOUD_COAP_DOWNLOADS */
 
+#if defined(CONFIG_FOTA_DOWNLOAD)
+static int smp_fota_dl_cancel(void)
+{
+#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
+	return mcumgr_smp_client_download_cancel();
+#else
+	return -ENOTSUP;
+#endif /* CONFIG_NRF_CLOUD_FOTA_SMP */
+}
+
+static void smp_fota_dl_util_init(const struct nrf_cloud_download_fota *const fota)
+{
+#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
+	fota_download_util_client_init(fota->cb, true);
+#endif
+}
+#endif /* CONFIG_FOTA_DOWNLOAD */
+
 static int fota_start(struct nrf_cloud_download_data *const dl)
 {
 #if defined(CONFIG_FOTA_DOWNLOAD)
+
+	/* Download using CoAP if enabled */
 #if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
 	return coap_dl(dl);
-#else
+#endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
+
+	if (dl->fota.expected_type == DFU_TARGET_IMAGE_TYPE_SMP) {
+		/* This needs to be called to set the SMP flag in fota_download */
+		smp_fota_dl_util_init(&dl->fota);
+	} else {
+		/* This needs to be called to clear the SMP flag */
+		(void)fota_download_init(dl->fota.cb);
+	}
+
 	return fota_download_start_with_image_type(dl->host, dl->path,
 		dl->dl_cfg.sec_tag_count ? dl->dl_cfg.sec_tag_list[0] : -1,
 		dl->dl_cfg.pdn_id, dl->dl_cfg.frag_size_override, dl->fota.expected_type);
-#endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
+
 #endif /* CONFIG_FOTA_DOWNLOAD */
+
 	return -ENOTSUP;
 }
 
@@ -403,6 +437,20 @@ static void active_dl_reset(void)
 	active_dl.type = NRF_CLOUD_DL_TYPE_NONE;
 }
 
+static int fota_dl_cancel(struct nrf_cloud_download_data *const dl)
+{
+	int ret = -ENOTSUP;
+
+#if defined(CONFIG_FOTA_DOWNLOAD)
+	if (dl->fota.expected_type == DFU_TARGET_IMAGE_TYPE_SMP) {
+		ret = smp_fota_dl_cancel();
+	} else {
+		ret = fota_download_cancel();
+	}
+#endif /* CONFIG_FOTA_DOWNLOAD */
+	return ret;
+}
+
 void nrf_cloud_download_cancel(void)
 {
 	int ret = 0;
@@ -410,9 +458,7 @@ void nrf_cloud_download_cancel(void)
 	k_mutex_lock(&active_dl_mutex, K_FOREVER);
 
 	if (active_dl.type == NRF_CLOUD_DL_TYPE_FOTA) {
-#if defined(CONFIG_FOTA_DOWNLOAD)
-		ret = fota_download_cancel();
-#endif
+		ret = fota_dl_cancel(&active_dl);
 	} else if (active_dl.type == NRF_CLOUD_DL_TYPE_DL_CLIENT) {
 		ret = dlc_disconnect(&active_dl);
 	} else {
@@ -454,8 +500,17 @@ int nrf_cloud_download_start(struct nrf_cloud_download_data *const dl)
 		return -EINVAL;
 	}
 
-	if (!IS_ENABLED(CONFIG_FOTA_DOWNLOAD) && (dl->type == NRF_CLOUD_DL_TYPE_FOTA)) {
-		return -ENOTSUP;
+	if (dl->type == NRF_CLOUD_DL_TYPE_FOTA) {
+		if (!IS_ENABLED(CONFIG_FOTA_DOWNLOAD)) {
+			return -ENOTSUP;
+		}
+		if (!dl->fota.cb) {
+			return -ENOEXEC;
+		}
+		if ((dl->fota.expected_type == DFU_TARGET_IMAGE_TYPE_SMP) &&
+		    !IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)) {
+			return -ENOSYS;
+		}
 	}
 
 	if (!check_fota_file_path_len(dl->path)) {

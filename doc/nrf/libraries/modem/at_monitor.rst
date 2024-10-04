@@ -126,5 +126,3 @@ API documentation
 | Source file: :file:`lib/at_monitor/at_monitor.c`
 
 .. doxygengroup:: at_monitor
-   :project: nrf
-   :members:

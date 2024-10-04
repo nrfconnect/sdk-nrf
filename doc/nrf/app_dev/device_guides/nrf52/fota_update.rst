@@ -106,9 +106,8 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mod
     west build -b *board_target* -- -DSB_CONFIG_BOOTLOADER_MCUBOOT=y -DSB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
 
 .. note::
-   When building the application for the first time with MCUboot in direct-xip mode and the revert mechanism support, use an additional option ``-DCONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS=\"--confirm\"``.
-   This option will mark the application as ``confirmed`` during the image signing process.
-   If the application is built without this option, it will fail to boot.
+   When building the application with MCUboot in direct-XIP mode with revert mechanism support, the signed image intended for flashing is automatically marked as confirmed.
+   Without this configuration, the application will fail to boot.
    It must, however, be disabled when building update images.
 
 Both the ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`` and ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT`` Kconfig options automatically build application update images for both slots.
