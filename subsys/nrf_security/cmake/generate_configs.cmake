@@ -44,7 +44,7 @@ macro(generate_mbedcrypto_interface_configs)
     # Empty out previous versions of interface config-files
     file(REMOVE_RECURSE ${generated_include_path})
 
-    # Generate MBEDCRYPTO_CONFIG_FILE 
+    # Generate MBEDCRYPTO_CONFIG_FILE
     if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
       include(${NRF_SECURITY_ROOT}/cmake/legacy_crypto_config.cmake)
     else()
@@ -56,7 +56,7 @@ macro(generate_mbedcrypto_interface_configs)
 
     # Note: Interface doesn't need PSA_CRYPTO_USER_CONFIG_FILE
 
-    # Restore the backup configurations 
+    # Restore the backup configurations
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
@@ -129,7 +129,7 @@ macro(generate_mbedcrypto_library_configs)
     # Generate the PSA_CRYPTO_USER_CONFIG_FILE (PSA_NEED configurations)
     include(${NRF_SECURITY_ROOT}/cmake/psa_crypto_config.cmake)
 
-    # Restore the backup configurations 
+    # Restore the backup configurations
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)

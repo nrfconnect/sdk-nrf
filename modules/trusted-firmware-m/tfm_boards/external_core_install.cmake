@@ -30,7 +30,7 @@ install(
   FILES
     ${OBERON_PSA_CORE_PATH}/include/mbedtls/build_info.h
     ${OBERON_PSA_CORE_PATH}/include/mbedtls/config_psa.h
-  DESTINATION 
+  DESTINATION
     ${INSTALL_INTERFACE_INC_DIR}/mbedtls
 )
 

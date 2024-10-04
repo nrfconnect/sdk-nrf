@@ -13,8 +13,6 @@ if(NOT PSA_CRYPTO_EXTERNAL_CORE)
     return()
 endif()
 
-# Note that 
-
 # Adjusting includes from spe-CMakeLists.txt which has the following heading:
 #
 # This CMake script is prepard by TF-M for building the non-secure side
@@ -47,7 +45,7 @@ if(TARGET psa_interface)
             # Mbed TLS (mbedcrypto) PSA headers
             ${ARM_MBEDTLS_PATH}/library
             ${ARM_MBEDTLS_PATH}/include
-            ${ARM_MBEDTLS_PATH}/include/library 
+            ${ARM_MBEDTLS_PATH}/include/library
     )
 endif()
 

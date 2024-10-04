@@ -40,7 +40,7 @@ typedef mbedtls_svc_key_id_t psa_key_handle_t;
  */
 static inline int psa_key_handle_is_null(psa_key_handle_t handle)
 {
-    return mbedtls_svc_key_id_is_null(handle);
+	return mbedtls_svc_key_id_is_null(handle);
 }
 
 /** Open a handle to an existing persistent key.
@@ -104,7 +104,7 @@ static inline int psa_key_handle_is_null(psa_key_handle_t handle)
  *         results in this error code.
  */
 psa_status_t psa_open_key(mbedtls_svc_key_id_t key,
-                          psa_key_handle_t *handle);
+						  psa_key_handle_t *handle);
 
 /** Close a key handle.
  *
@@ -160,7 +160,7 @@ psa_status_t psa_close_key(psa_key_handle_t handle);
  *             a future version of the library.
  */
 #define PSA_DH_FAMILY_CUSTOM                                            \
-    ((psa_dh_family_t) MBEDTLS_DEPRECATED_NUMERIC_CONSTANT(0x7e))
+	((psa_dh_family_t) MBEDTLS_DEPRECATED_NUMERIC_CONSTANT(0x7e))
 
 /**
  * \brief Set domain parameters for a key.
@@ -179,15 +179,15 @@ psa_status_t psa_close_key(psa_key_handle_t handle);
  * \retval #PSA_ERROR_NOT_SUPPORTED \emptydescription
  */
 static inline psa_status_t MBEDTLS_DEPRECATED psa_set_key_domain_parameters(
-    psa_key_attributes_t *attributes,
-    psa_key_type_t type, const uint8_t *data, size_t data_length)
+	psa_key_attributes_t *attributes,
+	psa_key_type_t type, const uint8_t *data, size_t data_length)
 {
-    (void) data;
-    if (data_length != 0) {
-        return PSA_ERROR_NOT_SUPPORTED;
-    }
-    psa_set_key_type(attributes, type);
-    return PSA_SUCCESS;
+	(void) data;
+	if (data_length != 0) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+	psa_set_key_type(attributes, type);
+	return PSA_SUCCESS;
 }
 
 /**
@@ -205,21 +205,21 @@ static inline psa_status_t MBEDTLS_DEPRECATED psa_set_key_domain_parameters(
  * \retval #PSA_SUCCESS \emptydescription
  */
 static inline psa_status_t MBEDTLS_DEPRECATED psa_get_key_domain_parameters(
-    const psa_key_attributes_t *attributes,
-    uint8_t *data, size_t data_size, size_t *data_length)
+	const psa_key_attributes_t *attributes,
+	uint8_t *data, size_t data_size, size_t *data_length)
 {
-    (void) attributes;
-    (void) data;
-    (void) data_size;
-    *data_length = 0;
-    return PSA_SUCCESS;
+	(void) attributes;
+	(void) data;
+	(void) data_size;
+	*data_length = 0;
+	return PSA_SUCCESS;
 }
 
 /** Safe output buffer size for psa_get_key_domain_parameters().
  *
  */
 #define PSA_KEY_DOMAIN_PARAMETERS_SIZE(key_type, key_bits)      \
-    MBEDTLS_DEPRECATED_NUMERIC_CONSTANT(1u)
+	MBEDTLS_DEPRECATED_NUMERIC_CONSTANT(1u)
 #endif /* MBEDTLS_DEPRECATED_REMOVED */
 
 /**@}*/
