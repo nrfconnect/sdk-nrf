@@ -35,6 +35,11 @@ config EGPIO_BACKEND_ICMSG
 	help
 	  Use ICMSG backend driver for eGPIO.
 
+config EGPIO_BACKEND_ICBMSG
+	bool "ICBMSG backend for eGPIO"
+	help
+	  Use ICBMSG backend driver for eGPIO.
+
 endchoice
 
 endif # SDP
