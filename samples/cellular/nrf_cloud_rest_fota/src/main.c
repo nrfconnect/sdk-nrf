@@ -473,6 +473,9 @@ static void check_credentials(void)
 		LOG_ERR("Required nRF Cloud credentials were not found");
 		LOG_INF("Install credentials and then reboot the device");
 		k_sleep(K_FOREVER);
+	} else if (err == -ENOPROTOOPT) {
+		LOG_ERR("Required root CA certificate is missing.");
+		k_sleep(K_FOREVER);
 	} else if (err) {
 		LOG_ERR("nrf_cloud_credentials_configured_check() failed, error: %d", err);
 		LOG_WRN("Continuing without verifying that credentials are installed");
@@ -552,7 +555,7 @@ int main(void)
 		/* Wait for the configured duration or a button press */
 		(void)nrf_cloud_rest_disconnect(&rest_ctx);
 
-		LOG_INF("Retrying in %d minute(s) or when button %d is pressed",
+		LOG_INF("Checking for FOTA job in %d minute(s) or when button %d is pressed",
 			fota_check_rate, CONFIG_REST_FOTA_BUTTON_EVT_NUM);
 
 		(void)k_sem_take(&button_press_sem, K_MINUTES(fota_check_rate));
