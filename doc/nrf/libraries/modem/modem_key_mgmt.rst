@@ -117,8 +117,11 @@ The following code snippet shows how to read a CA chain certificate stored in th
 
    int err;
    char cert[CERT_SIZE];
+   size_t len;
 
-   err = modem_key_mgmt_read(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
+   len = sizeof(cert);
+
+   err = modem_key_mgmt_read(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, &len);
    if (err) {
            printk("Failed to read certificate\n");
    }
