@@ -9,7 +9,7 @@
 set(PSA_CRYPTO_EXTERNAL_CORE                  ON    CACHE BOOL      "Enable building PSA core externally")
 
 # This file is populated with paths needed building nrf_security with and without TF-M
-# It is added to circumvent issues with install-targets inside TF-M and to unify the 
+# It is added to circumvent issues with install-targets inside TF-M and to unify the
 # CMake code with Zephyr builds
 set(NRFXLIB_DIR          ${ZEPHYR_NRFXLIB_MODULE_DIR}            CACHE STRING "nrfxlib folder")
 set(NRF_SECURITY_ROOT    ${NRF_DIR}/subsys/nrf_security          CACHE STRING "nrf_security root folder")

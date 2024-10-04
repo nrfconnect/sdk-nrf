@@ -5,7 +5,7 @@
  *
  */
 /* The include guards used here ensures that a different Mbed TLS config is not
- * added to the build and used by accident. Hence, this guard is not 
+ * added to the build and used by accident. Hence, this guard is not
  * equivalent to naming of this file.
  */
 #ifndef MBEDTLS_CONFIG_FILE_H

@@ -167,16 +167,16 @@ endmacro()
 #
 macro(nrf_security_add_zephyr_options_library lib_name)
   if(TARGET zephyr_interface)
-    # Add an an filtered version of zephyr_interface (PSA crypto interface filtered out)
+    # Add an filtered version of zephyr_interface (PSA crypto interface filtered out)
     target_compile_options(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>)
     target_compile_definitions(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_DEFINITIONS>)
     # Ensure that the PSA crypto interface include folder isn't added in library builds (filtered out)
-    target_include_directories(${lib_name} 
+    target_include_directories(${lib_name}
       PRIVATE
         $<FILTER:$<TARGET_PROPERTY:zephyr_interface,INTERFACE_INCLUDE_DIRECTORIES>,EXCLUDE,${PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX}>
     )
     # Ensure that the PSA crypto interface include folder isn't added in library builds (filtered out)
-    target_include_directories(${lib_name} 
+    target_include_directories(${lib_name}
       PRIVATE
         $<FILTER:$<TARGET_PROPERTY:zephyr_interface,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>,EXCLUDE,${PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX}>
     )
