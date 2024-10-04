@@ -11,6 +11,9 @@
 
 /* All valid power levels (in dBm) supported by the SoC. */
 const int8_t nrf_power_value[] = {
+#if defined(RADIO_TXPOWER_TXPOWER_Neg100dBm)
+	-100,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg100dBm) */
 #if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm)
 	-70,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) */
@@ -23,10 +26,16 @@ const int8_t nrf_power_value[] = {
 #if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm)
 	-30,
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) */
-#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm)
-	-26,
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg28dBm)
+	-28,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg28dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg22dBm)
+	-22,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg22dBm) */
 	-20,
+#if defined(RADIO_TXPOWER_TXPOWER_Neg18dBm)
+	-18,
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg18dBm) */
 	-16,
 #if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm)
 	-14,

@@ -746,6 +746,11 @@ static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 	 * to the appropriate radio register enumerator.
 	 */
 	switch (tx_power) {
+#if defined(RADIO_TXPOWER_TXPOWER_Neg100dBm)
+	case -100:
+		return RADIO_TXPOWER_TXPOWER_Neg100dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg100dBm) */
+
 #if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm)
 	case -70:
 		return RADIO_TXPOWER_TXPOWER_Neg70dBm;
@@ -766,13 +771,23 @@ static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 		return RADIO_TXPOWER_TXPOWER_Neg30dBm;
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) */
 
-#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm)
-	case -26:
-		return RADIO_TXPOWER_TXPOWER_Neg26dBm;
-#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) */
+#if defined(RADIO_TXPOWER_TXPOWER_Neg28dBm)
+	case -28:
+		return RADIO_TXPOWER_TXPOWER_Neg28dBm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg28dBm) */
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg22dBm)
+	case -22:
+		return RADIO_TXPOWER_TXPOWER_Neg22Bm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg22dBm) */
 
 	case -20:
 		return RADIO_TXPOWER_TXPOWER_Neg20dBm;
+
+#if defined(RADIO_TXPOWER_TXPOWER_Neg18dBm)
+	case -18:
+		return RADIO_TXPOWER_TXPOWER_Neg18Bm;
+#endif /* defined(RADIO_TXPOWER_TXPOWER_Neg18dBm) */
 
 	case -16:
 		return RADIO_TXPOWER_TXPOWER_Neg16dBm;
