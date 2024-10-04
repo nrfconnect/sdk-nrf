@@ -193,6 +193,14 @@ config SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE
 
 endif
 
+if SLM_CMUX || SLM_PPP
+
+config SLM_MODEM_PIPE_TIMEOUT
+	int "Timeout for the CMUX and PPP modem pipe operations in seconds"
+	default 10
+
+endif
+
 module = SLM
 module-str = serial modem
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
