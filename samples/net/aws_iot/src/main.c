@@ -9,15 +9,32 @@
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 #include <net/aws_iot.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <hw_id.h>
 #include <modem/modem_info.h>
+#include <supp_events.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/net_event.h>
+#include <net/wifi_mgmt_ext.h>
 
 #include "json_payload.h"
+
+#define WIFI_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT | \
+			  NET_EVENT_WIFI_DISCONNECT_RESULT)
+
+#define WPA_SUPP_EVENTS (NET_EVENT_WPA_SUPP_READY)
+
+static struct net_mgmt_event_callback net_l2_mgmt_cb;
+static struct net_mgmt_event_callback net_wpa_supp_cb;
+int connection_status;
+
+K_SEM_DEFINE(wpa_supp_ready_sem, 0, 1);
+
+/* Store a local reference to the connection binding */
+static struct net_if *wifi_iface;
 
 /* Register log module */
 LOG_MODULE_REGISTER(aws_iot_sample, CONFIG_AWS_IOT_SAMPLE_LOG_LEVEL);
@@ -47,12 +64,10 @@ static char hw_id[HW_ID_LEN];
 
 /* Forward declarations. */
 static void shadow_update_work_fn(struct k_work *work);
-static void connect_work_fn(struct k_work *work);
 static void aws_iot_event_handler(const struct aws_iot_evt *const evt);
 
 /* Work items used to control some aspects of the sample. */
 static K_WORK_DELAYABLE_DEFINE(shadow_update_work, shadow_update_work_fn);
-static K_WORK_DELAYABLE_DEFINE(connect_work, connect_work_fn);
 
 /* Static functions */
 
@@ -158,35 +173,10 @@ static void shadow_update_work_fn(struct k_work *work)
 				K_SECONDS(CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS));
 }
 
-static void connect_work_fn(struct k_work *work)
-{
-	int err;
-	const struct aws_iot_config config = {
-		.client_id = hw_id,
-	};
-
-	LOG_INF("Connecting to AWS IoT");
-
-	err = aws_iot_connect(&config);
-	if (err == -EAGAIN) {
-		LOG_INF("Connection attempt timed out, "
-			"Next connection retry in %d seconds",
-			CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS);
-
-		(void)k_work_reschedule(&connect_work,
-				K_SECONDS(CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS));
-	} else if (err) {
-		LOG_ERR("aws_iot_connect, error: %d", err);
-		FATAL_ERROR();
-	}
-}
-
 /* Functions that are executed on specific connection-related events. */
 
 static void on_aws_iot_evt_connected(const struct aws_iot_evt *const evt)
 {
-	(void)k_work_cancel_delayable(&connect_work);
-
 	/* If persistent session is enabled, the AWS IoT library will not subscribe to any topics.
 	 * Topics from the last session will be used.
 	 */
@@ -204,65 +194,17 @@ static void on_aws_iot_evt_connected(const struct aws_iot_evt *const evt)
 	(void)k_work_reschedule(&shadow_update_work, K_NO_WAIT);
 }
 
-static void on_aws_iot_evt_disconnected(void)
-{
-	(void)k_work_cancel_delayable(&shadow_update_work);
-	(void)k_work_reschedule(&connect_work, K_SECONDS(5));
-}
-
 static void on_aws_iot_evt_fota_done(const struct aws_iot_evt *const evt)
 {
-	int err;
-
-	/* Tear down MQTT connection. */
-	(void)aws_iot_disconnect();
-	(void)k_work_cancel_delayable(&connect_work);
-
 	/* If modem FOTA has been carried out, the modem needs to be reinitialized.
 	 * This is carried out by bringing the network interface down/up.
 	 */
-	if (evt->data.image & DFU_TARGET_IMAGE_TYPE_ANY_MODEM) {
-		LOG_INF("Modem FOTA done, reinitializing the modem");
-
-		err = conn_mgr_all_if_down(true);
-		if (err) {
-			LOG_ERR("conn_mgr_all_if_down, error: %d", err);
-			FATAL_ERROR();
-			return;
-		}
-
-		err = conn_mgr_all_if_up(true);
-		if (err) {
-			LOG_ERR("conn_mgr_all_if_up, error: %d", err);
-			FATAL_ERROR();
-			return;
-		}
-
-		err = conn_mgr_all_if_connect(true);
-		if (err) {
-			LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
-			FATAL_ERROR();
-			return;
-		}
-
-	} else if (evt->data.image & DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION) {
+	if (evt->data.image & DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION) {
 		LOG_INF("Application FOTA done, rebooting");
 		IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)));
 	} else {
 		LOG_WRN("Unexpected FOTA image type");
 	}
-}
-
-static void on_net_event_l4_connected(void)
-{
-	(void)k_work_reschedule(&connect_work, K_SECONDS(5));
-}
-
-static void on_net_event_l4_disconnected(void)
-{
-	(void)aws_iot_disconnect();
-	(void)k_work_cancel_delayable(&connect_work);
-	(void)k_work_cancel_delayable(&shadow_update_work);
 }
 
 /* Event handlers */
@@ -279,7 +221,6 @@ static void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 		break;
 	case AWS_IOT_EVT_DISCONNECTED:
 		LOG_INF("AWS_IOT_EVT_DISCONNECTED");
-		on_aws_iot_evt_disconnected();
 		break;
 	case AWS_IOT_EVT_DATA_RECEIVED:
 		LOG_INF("AWS_IOT_EVT_DATA_RECEIVED");
@@ -324,67 +265,96 @@ static void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 	}
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint32_t event,
-			     struct net_if *iface)
+static void net_l2_wifi_connect_result(struct net_mgmt_event_callback *cb)
 {
-	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
-		LOG_INF("Network connectivity established");
-		on_net_event_l4_connected();
-		break;
-	case NET_EVENT_L4_DISCONNECTED:
-		LOG_INF("Network connectivity lost");
-		on_net_event_l4_disconnected();
-		break;
-	default:
-		/* Don't care */
-		return;
+	const struct wifi_status *status =
+		(const struct wifi_status *) cb->info;
+
+	const struct aws_iot_config config = {
+		.client_id = hw_id,
+	};
+
+	if (status->status) {
+		connection_status = WIFI_STATE_DISCONNECTED;
+	} else {
+		LOG_ERR("Wi-Fi connected");
+
+		int err = aws_iot_connect(&config);
+
+		if (err) {
+			LOG_ERR("aws_iot_connect, error: %d", err);
+			FATAL_ERROR();
+			return;
+		}
+
+		connection_status = WIFI_STATE_COMPLETED;
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint32_t event,
-				       struct net_if *iface)
+static void net_l2_wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
+				    uint32_t mgmt_event, struct net_if *iface)
 {
-	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
-		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
-		FATAL_ERROR();
+	if (iface != wifi_iface) {
 		return;
+	}
+
+	switch (mgmt_event) {
+	case NET_EVENT_WIFI_CONNECT_RESULT:
+		net_l2_wifi_connect_result(cb);
+		break;
+	case NET_EVENT_WIFI_DISCONNECT_RESULT:
+		LOG_ERR("Wi-Fi disconnected")
+		break;
+	default:
+		break;
+	}
+}
+
+static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
+				    uint32_t mgmt_event, struct net_if *iface)
+{
+	switch (mgmt_event) {
+	case NET_EVENT_WPA_SUPP_READY:
+		k_sem_give(&wpa_supp_ready_sem);
+		break;
+	default:
+		break;
 	}
 }
 
 int main(void)
 {
-	LOG_INF("The AWS IoT sample started, version: %s", CONFIG_AWS_IOT_SAMPLE_APP_VERSION);
-
 	int err;
 
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
+	LOG_INF("The AWS IoT sample started, version: %s", CONFIG_AWS_IOT_SAMPLE_APP_VERSION);
 
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
+	struct net_if *wifi_iface = net_if_get_default();
 
-	/* Connecting to the configured connectivity layer.
-	 * Wi-Fi or LTE depending on the board that the sample was built for.
-	 */
-	LOG_INF("Bringing network interface up and connecting to the network");
-
-	err = conn_mgr_all_if_up(true);
-	if (err) {
-		LOG_ERR("conn_mgr_all_if_up, error: %d", err);
+	if (!wifi_iface) {
+		LOG_ERR("Wi-Fi interface not found");
 		FATAL_ERROR();
-		return err;
+		return -ENODEV;
 	}
 
-	err = conn_mgr_all_if_connect(true);
+	net_mgmt_init_event_callback(&net_l2_mgmt_cb,
+				     net_l2_wifi_mgmt_event_handler,
+				     WIFI_MGMT_EVENTS);
+	net_mgmt_add_event_callback(&net_l2_mgmt_cb);
+
+	net_mgmt_init_event_callback(&net_wpa_supp_cb,
+				     wpa_supp_event_handler,
+				     WPA_SUPP_EVENTS);
+	net_mgmt_add_event_callback(&net_wpa_supp_cb);
+
+	k_sem_take(&wpa_supp_ready_sem, K_FOREVER);
+
+	LOG_INF("Connecting to the network");
+
+	err = net_mgmt(NET_REQUEST_WIFI_CONNECT_STORED, wifi_iface, NULL, 0);
+
 	if (err) {
-		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
-		FATAL_ERROR();
-		return err;
+		LOG_ERR("net management connect_stored request failed: %d\n", err);
+		return -ENOEXEC;
 	}
 
 #if defined(CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID)
@@ -404,16 +374,6 @@ int main(void)
 		LOG_ERR("aws_iot_client_init, error: %d", err);
 		FATAL_ERROR();
 		return err;
-	}
-
-	/* Resend connection status if the sample is built for QEMU x86.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
 	}
 
 	return 0;
