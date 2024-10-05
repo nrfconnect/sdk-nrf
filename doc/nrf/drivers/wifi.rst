@@ -5,3 +5,4 @@ Wi-Fi drivers
    :maxdepth: 2
 
    wifi/nrf70_native
+   wifi/nrf70_portable
