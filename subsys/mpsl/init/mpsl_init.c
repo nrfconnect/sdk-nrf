@@ -15,6 +15,9 @@
 #include <mpsl/mpsl_work.h>
 #include "multithreading_lock.h"
 #include <nrfx.h>
+#if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)
+#include <nrfx_power.h>
+#endif
 #if defined(CONFIG_NRFX_DPPI)
 #include <nrfx_dppi.h>
 #endif
@@ -395,7 +398,8 @@ static int32_t mpsl_lib_init_internal(void)
 
 	mpsl_clock_hfclk_latency_set(CONFIG_MPSL_HFCLK_LATENCY);
 
-	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT)) {
+	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT) &&
+		!IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)) {
 		mpsl_pan_rfu();
 	}
 
@@ -508,6 +512,26 @@ int32_t mpsl_lib_uninit(void)
 	return -NRF_EPERM;
 #endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 }
+
+#if defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
+void mpsl_constlat_request_callback(void)
+{
+#if defined(CONFIG_NRFX_POWER)
+	nrfx_power_constlat_mode_request();
+#else
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+#endif
+}
+
+void mpsl_lowpower_request_callback(void)
+{
+#if defined(CONFIG_NRFX_POWER)
+	nrfx_power_constlat_mode_free();
+#else
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
+#endif
+}
+#endif /* defined(CONFIG_SOC_COMPATIBLE_NRF54LX) */
 
 SYS_INIT(mpsl_lib_init_sys, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 SYS_INIT(mpsl_low_prio_init, POST_KERNEL,
