@@ -1,8 +1,8 @@
 # Copyright (c) 2024 Nordic Semiconductor
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-description: Emulated GPIO node
+description: Software defined GPIO node
 
-compatible: "nordic,nrf-egpio"
+compatible: "nordic,nrfe-gpio"
 
 include: [gpio-controller.yaml, base.yaml]
 

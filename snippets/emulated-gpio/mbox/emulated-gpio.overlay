@@ -7,7 +7,7 @@
 	status = "okay";
 
 	egpio: gpio {
-		compatible = "nordic,nrf-egpio";
+		compatible = "nordic,nrfe-gpio";
 		gpio-controller;
 		#gpio-cells = <0x2>;
 		ngpios = <0x10>;

@@ -2,16 +2,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 menuconfig GPIO_NRFE
-	bool "Emulated GPIO"
+	bool "Software Defined GPIO"
 	default y
-	depends on DT_HAS_NORDIC_NRF_EGPIO_ENABLED
+	depends on DT_HAS_NORDIC_NRFE_GPIO_ENABLED
 	select IPC_SERVICE
 	select MBOX
 	help
-	  Use emulated GPIO driver.
+	  Use Software Defined GPIO driver.
 
 config GPIO_NRFE_INIT_PRIORITY
-	int "Emulated GPIO init priority"
+	int "Software Defined GPIO init priority"
 	depends on GPIO_NRFE
 	default 48
 	help
