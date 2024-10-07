@@ -266,6 +266,13 @@ DRGN-21390: The `disconnected` callback might not get called on nRF5340
 
   **Workaround:** Either disable host flow control (:kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL`) or cherry-pick commits from the upstream: `Zephyr PR #65272 <https://github.com/zephyrproject-rtos/zephyr/pull/65272>`_.
 
+.. rst-class:: v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-1 v1-9-0 v1-8-0 v1-7-1
+
+DRGN-23518: ACL reassembly may deadlock
+  This can happen if  the value of :kconfig:option:`CONFIG_BT_BUF_ACL_RX_COUNT` Kconfig option is less than or equal to the value of :kconfig:option:`CONFIG_BT_MAX_CONN`.
+
+  **Workaround:** Ensure that the value of :kconfig:option:`CONFIG_BT_BUF_ACL_RX_COUNT` is greater than the value of :kconfig:option:`CONFIG_BT_MAX_CONN`.
+
 Bluetooth Mesh
 ==============
 
