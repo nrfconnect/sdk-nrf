@@ -52,3 +52,4 @@ To learn more, refer to the following documentation pages:
    mcuboot_nsib/bootloader_mcuboot_nsib
    qspi_xip_split_image
    dfu_tools_mcumgr_cli
+   mcuboot_image_compression

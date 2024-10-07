@@ -11,6 +11,8 @@ FOTA updates with nRF5340 DK
    :start-after: fota_upgrades_intro_start
    :end-before: fota_upgrades_intro_end
 
+.. _ug_nrf53_developing_ble_fota_steps:
+
 FOTA over Bluetooth Low Energy
 ******************************
 
@@ -27,6 +29,8 @@ Bluetooth buffers configuration introduced by the :kconfig:option:`CONFIG_NCS_SA
 .. include:: /app_dev/device_guides/nrf52/fota_update.rst
    :start-after: fota_upgrades_over_ble_additional_information_start
    :end-before: fota_upgrades_over_ble_additional_information_end
+
+.. _ug_nrf53_developing_ble_fota_steps_testing:
 
 Testing steps
 =============
