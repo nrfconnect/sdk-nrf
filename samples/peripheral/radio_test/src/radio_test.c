@@ -637,6 +637,17 @@ static void radio_disable(void)
 #endif /* CONFIG_FEM */
 }
 
+static void mltpan_6(nrf_radio_mode_t mode)
+{
+#if defined(NRF54L_SERIES)
+	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
+		*((volatile uint32_t *)0x5008A810) = 2;
+	}
+#else
+	ARG_UNUSED(mode);
+#endif /* defined(NRF54L_SERIES) */
+}
+
 #if NRF53_ERRATA_117_PRESENT
 static void errata_117(nrf_radio_mode_t mode)
 {
@@ -663,6 +674,7 @@ static void radio_mode_set(NRF_RADIO_Type *reg, nrf_radio_mode_t mode)
 {
 	errata_117(mode);
 	nrf_radio_mode_set(reg, mode);
+	mltpan_6(mode);
 }
 
 static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel)
