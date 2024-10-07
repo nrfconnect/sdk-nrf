@@ -37,7 +37,7 @@
 /applications/sdp/                        @masz-nordic
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
-/applications/zigbee_weather_station/     @milewr
+/applications/zigbee_weather_station/     @nrfconnect/ncs-zigbee
 /applications/**/*.rst                    @nrfconnect/ncs-doc-owners
 
 # Boards
@@ -209,7 +209,7 @@
 /samples/peripheral/802154_phy_test/      @nrfconnect/ncs-radio-sw
 /samples/peripheral/802154_sniffer/       @e-rk
 /samples/tfm/                             @nrfconnect/ncs-aegir
-/samples/zigbee/                          @milewr
+/samples/zigbee/                          @nrfconnect/ncs-zigbee
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-pluto
 /samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /samples/sdfw/                            @nrfconnect/ncs-aurora
@@ -329,7 +329,7 @@
 /subsys/trusted_storage/                  @nrfconnect/ncs-aegir
 /subsys/uart_async_adapter/               @nrfconnect/ncs-si-muffin
 /subsys/net_core_monitor/                 @nrfconnect/ncs-si-muffin
-/subsys/zigbee/                           @milewr
+/subsys/zigbee/                           @nrfconnect/ncs-zigbee
 
 # Sysbuild
 /sysbuild/                                @nrfconnect/ncs-co-build-system
@@ -417,7 +417,7 @@
 /tests/subsys/pcd/                        @nrfconnect/ncs-pluto
 /tests/subsys/nrf_profiler/               @nrfconnect/ncs-si-bluebagel
 /tests/subsys/sdfw_services/              @nrfconnect/ncs-aurora
-/tests/subsys/zigbee/                     @milewr
+/tests/subsys/zigbee/                     @nrfconnect/ncs-zigbee
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
 /tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
