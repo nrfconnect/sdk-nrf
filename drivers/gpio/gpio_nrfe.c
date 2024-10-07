@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#define DT_DRV_COMPAT nordic_nrf_egpio
+#define DT_DRV_COMPAT nordic_nrfe_gpio
 
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/gpio/gpio_utils.h>
