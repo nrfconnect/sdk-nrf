@@ -212,3 +212,14 @@ static void ot_rpc_cmd_get_link_mode(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_get_link_mode, OT_RPC_CMD_THREAD_GET_LINK_MODE,
 			 ot_rpc_cmd_get_link_mode, NULL);
+
+static void ot_rpc_cmd_get_version(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+				   void *handler_data)
+{
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	nrf_rpc_rsp_send_uint(group, otThreadGetVersion());
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_get_version, OT_RPC_CMD_THREAD_GET_VERSION,
+			 ot_rpc_cmd_get_version, NULL);
