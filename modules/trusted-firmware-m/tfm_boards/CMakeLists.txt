@@ -24,32 +24,32 @@ target_include_directories(platform_region_defs INTERFACE ${partition_includes})
 
 target_compile_definitions(platform_s
   PRIVATE
-    $<$<BOOL:${PLATFORM_DEFAULT_CRYPTO_KEYS}>:PLATFORM_DEFAULT_CRYPTO_KEYS>
-    FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
-    EXT_API_MAGIC=${EXT_API_MAGIC}
+  $<$<BOOL:${PLATFORM_DEFAULT_CRYPTO_KEYS}>:PLATFORM_DEFAULT_CRYPTO_KEYS>
+  FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
+  EXT_API_MAGIC=${EXT_API_MAGIC}
 )
 
 target_include_directories(platform_s
   PUBLIC
-    include
-    ${partition_includes}
-    ${board_includes}
-    services/include
-    ${ZEPHYR_NRF_MODULE_DIR}/include
+  include
+  ${partition_includes}
+  ${board_includes}
+  services/include
+  ${ZEPHYR_NRF_MODULE_DIR}/include
 )
 
 target_sources(platform_s
   PRIVATE
-    common/tfm_hal_platform.c
-    $<$<OR:$<BOOL:${TFM_PARTITION_INITIAL_ATTESTATION}>,$<BOOL:${NRF_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/attest_hal.c>
-    common/assert.c
-    $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
-    $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_SYSTEM_RESET_HALT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/tfm_hal_reset_halt.c>
+  common/tfm_hal_platform.c
+  $<$<OR:$<BOOL:${TFM_PARTITION_INITIAL_ATTESTATION}>,$<BOOL:${NRF_PROVISIONING}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/attest_hal.c>
+  common/assert.c
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_SYSTEM_RESET_HALT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/tfm_hal_reset_halt.c>
 )
 
 target_link_libraries(platform_s
   PRIVATE
-    tfm_sprt
+  tfm_sprt
 )
 
 if (NOT ${PLATFORM_DEFAULT_PROVISIONING})
@@ -68,44 +68,45 @@ endif()
 
 target_sources(tfm_sprt
     PRIVATE
-        $<$<NOT:$<BOOL:${TFM_SP_LOG_RAW_ENABLED}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_tfm_sp_log_raw.c>
+    $<$<NOT:$<BOOL:${TFM_SP_LOG_RAW_ENABLED}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_tfm_sp_log_raw.c>
 )
 
 if (${TFM_PARTITION_CRYPTO})
   if(CRYPTO_TFM_BUILTIN_KEYS_DRIVER)
     target_sources(platform_crypto_keys
       PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
+      ${CMAKE_CURRENT_LIST_DIR}/common/crypto_keys.c
     )
   endif()
 
 
-   if (${CONFIG_HW_UNIQUE_KEY})
-     target_compile_definitions(platform_s PUBLIC
-       CONFIG_HW_UNIQUE_KEY
-       $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>)
+  if (${CONFIG_HW_UNIQUE_KEY})
+    target_compile_definitions(platform_s PUBLIC
+      CONFIG_HW_UNIQUE_KEY
+      $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>
+    )
 
-       # nrf54l15 uses the PSA headers in the hw_unique_key_cracen.c file, which means
-       # that we need to make sure that the nrf_security PSA headers are included
-       # before any other PSA-related headers.
-       if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
-          target_link_libraries(platform_crypto_keys
-           PRIVATE
-           psa_crypto_library_config
-          )
+    # nrf54l15 uses the PSA headers in the hw_unique_key_cracen.c file, which means
+    # that we need to make sure that the nrf_security PSA headers are included
+    # before any other PSA-related headers.
+    if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
+      target_link_libraries(platform_crypto_keys
+        PRIVATE
+        psa_crypto_library_config
+      )
 
-          target_sources(platform_crypto_keys
-            PRIVATE
-             ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cracen.c
-          )
-       else()
-          target_sources(platform_s
-            PRIVATE
-              ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key.c
-              ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
-          )
-       endif()
-   endif()
+      target_sources(platform_crypto_keys
+        PRIVATE
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cracen.c
+      )
+    else()
+      target_sources(platform_s
+        PRIVATE
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key.c
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
+      )
+    endif()
+  endif()
 
   target_link_libraries(platform_crypto_keys
     PUBLIC
@@ -117,7 +118,7 @@ if (${TFM_PARTITION_CRYPTO})
   if (${TFM_PARTITION_INITIAL_ATTESTATION})
     target_sources(platform_s
       PRIVATE
-        ${ZEPHYR_NRF_MODULE_DIR}/lib/identity_key/identity_key.c
+      ${ZEPHYR_NRF_MODULE_DIR}/lib/identity_key/identity_key.c
     )
   endif()
 
@@ -137,7 +138,7 @@ if (NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
   target_compile_definitions(platform_s PUBLIC NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
   target_sources(platform_s
     PRIVATE
-      common/ns_fault_service.c
+    common/ns_fault_service.c
   )
 endif()
 
@@ -177,15 +178,15 @@ if(TFM_PARTITION_PLATFORM)
 
   target_include_directories(platform_s
     PUBLIC
-      include
-      ${ZEPHYR_NRF_MODULE_DIR}/include/tfm
-      ${ZEPHYR_NRF_MODULE_DIR}/include
+    include
+    ${ZEPHYR_NRF_MODULE_DIR}/include/tfm
+    ${ZEPHYR_NRF_MODULE_DIR}/include
   )
 
   target_sources(platform_s
     PRIVATE
-      ${src_dir}/tfm_platform_system.c
-      ${src_dir}/tfm_ioctl_s_api.c
+    ${src_dir}/tfm_platform_system.c
+    ${src_dir}/tfm_ioctl_s_api.c
   )
 
 endif()
