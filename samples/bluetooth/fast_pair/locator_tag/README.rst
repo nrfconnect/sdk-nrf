@@ -148,7 +148,6 @@ The bootloader configuration varies depending on the board target:
 |                                         | * ``nrf52833dk/nrf52833`` (only ``release`` configuration) |
 |                                         | * ``nrf52840dk/nrf52840``                                  |
 |                                         | * ``nrf54l15dk/nrf54l15/cpuapp``                           |
-|                                         | * ``nrf54l15pdk/nrf54l15/cpuapp``                          |
 +-----------------------------------------+------------------------------------------------------------+
 | MCUboot, overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                             |
 |                                         | * ``nrf5340dk/nrf5340/cpuapp/ns``                          |
