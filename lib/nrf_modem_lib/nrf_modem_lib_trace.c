@@ -333,21 +333,19 @@ trace_reset:
 				continue;
 
 			case -ENOSR:
-					if (k_sem_take(&modem_trace_level_sem, K_NO_WAIT) != 0) {
-						/** If modem trace level is off, we wait for modem
-						 *  trace level semaphore, indicating modem traces
-						 *  are enabled. This is always available unless
-						 *  nrf_modem_lib_trace_level_set() is called with
-						 *  level 0 (off).
-						 */
-						k_sem_give(&trace_done_sem);
-						k_sem_take(&modem_trace_level_sem, K_FOREVER);
-						k_sem_take(&trace_done_sem, K_FOREVER);
-
-					}
-
-					k_sem_give(&modem_trace_level_sem);
+				if (k_sem_take(&modem_trace_level_sem, K_NO_WAIT) != 0) {
+					/** If modem trace level is off, we wait for modem
+					 *  trace level semaphore, indicating modem traces
+					 *  are enabled. This is always available unless
+					 *  nrf_modem_lib_trace_level_set() is called with
+					 *  level 0 (off).
+					 */
+					k_sem_give(&trace_done_sem);
+					k_sem_take(&modem_trace_level_sem, K_FOREVER);
+					k_sem_take(&trace_done_sem, K_FOREVER);
 				}
+
+				k_sem_give(&modem_trace_level_sem);
 
 				/* Try the same fragment again */
 				i--;
@@ -497,6 +495,9 @@ int nrf_modem_lib_trace_read(uint8_t *buf, size_t len)
 	read = trace_backend.read(buf, len);
 	if (read > 0) {
 		UPDATE_TRACE_BYTES_READ(read);
+		/* Traces are read, we can attempt to write more. */
+		has_space = true;
+		k_sem_give(&trace_clear_sem);
 	}
 
 	return read;

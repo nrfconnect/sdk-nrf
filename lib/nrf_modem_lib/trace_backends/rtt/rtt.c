@@ -55,13 +55,10 @@ int trace_backend_write(const void *data, size_t len)
 
 		ret = SEGGER_RTT_WriteNoLock(trace_rtt_channel, &buf[idx], transfer_len);
 		if (!ret) {
-			failed_write_count++;
-			if (failed_write_count > 10) {
-				if (remaining_bytes != len) {
-					return (len - remaining_bytes);
-				}
-
-				return -ENOSPC;
+			if (failed_write_count < 10) {
+				failed_write_count++;
+				k_msleep(10);
+				continue;
 			}
 
 			return (remaining_bytes == len ? -ENOSR : (len - remaining_bytes));
