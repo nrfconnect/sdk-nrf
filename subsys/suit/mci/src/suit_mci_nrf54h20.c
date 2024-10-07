@@ -423,9 +423,10 @@ mci_err_t suit_mci_memory_access_rights_validate(const suit_manifest_class_id_t 
 		return MCI_ERR_NOACCESS;
 
 	case SUIT_MANIFEST_SEC_SDFW:
-		/* Sec manifest - TODO - implement checks based on UICR/SICR
+		/* SDFW & SDFW Recovery manifest - ability to operate on memory ranges intentionally
+		 * blocked.
 		 */
-		return SUIT_PLAT_SUCCESS;
+		return MCI_ERR_NOACCESS;
 
 	case SUIT_MANIFEST_SEC_SYSCTRL:
 		/* Sysctrl manifest - TODO - implement checks based on UICR/SICR
