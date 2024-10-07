@@ -13,7 +13,6 @@ if NET_L2_OPENTHREAD
 menu "OpenThread"
 
 config NORDIC_SECURITY_PROMPTLESS
-	bool
 	default y if !CUSTOM_OPENTHREAD_SECURITY
 
 choice OPENTHREAD_SECURITY
@@ -64,7 +63,6 @@ config OPENTHREAD_NRF_SECURITY_PSA
 	  functions if available as well as fast oberon backend for software encryption.
 
 config OPENTHREAD_NRF_SECURITY_PSA
-	bool
 	select MBEDTLS_PSA_CRYPTO_STORAGE_C if (!PSA_SSF_CRYPTO_CLIENT && !BUILD_WITH_TFM)
 	imply TRUSTED_STORAGE if (!PSA_SSF_CRYPTO_CLIENT && !BUILD_WITH_TFM)
 	# TRUSTED_STORAGE requires Settings
