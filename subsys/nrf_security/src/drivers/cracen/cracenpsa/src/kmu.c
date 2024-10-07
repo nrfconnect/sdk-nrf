@@ -189,15 +189,15 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 	const kmu_opaque_key_buffer *key = (const kmu_opaque_key_buffer *)user_data;
 
 	switch (key->key_usage_scheme) {
-	case KMU_METADATA_SCHEME_RAW:
-	case KMU_METADATA_SCHEME_PROTECTED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 		for (size_t i = 0; i < key->number_of_slots; i++) {
 			if (lib_kmu_push_slot(key->slot_id + i) != 0) {
 				return SX_ERR_UNKNOWN_ERROR;
 			}
 		}
 		return SX_OK;
-	case KMU_METADATA_SCHEME_ENCRYPTED: {
+	case CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED: {
 		kmu_metadata metadata;
 
 		if (lib_kmu_read_metadata((int)key->slot_id, (uint32_t *)&metadata) != 0) {
@@ -333,7 +333,7 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
 		psa_status_t status;
 
 		if (CRACEN_PSA_GET_KEY_USAGE_SCHEME(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(
-			    psa_get_key_id(attributes))) == KMU_METADATA_SCHEME_ENCRYPTED) {
+			    psa_get_key_id(attributes))) == CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED) {
 			num_slots += 2;
 		}
 
@@ -374,7 +374,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	psa_set_key_lifetime(key_attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 					       key_persistence, PSA_KEY_LOCATION_CRACEN_KMU));
 
-	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_SEED) {
+	if (metadata->key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_SEED) {
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_RAW_DATA);
 		psa_set_key_bits(key_attr, PSA_BYTES_TO_BITS(HUK_SIZE_BYTES));
 		return PSA_SUCCESS;
@@ -472,7 +472,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	}
 
 	switch (metadata->key_usage_scheme) {
-	case KMU_METADATA_SCHEME_PROTECTED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 		/* Only AES keys are supported. */
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
 			return PSA_ERROR_CORRUPTION_DETECTED;
@@ -501,16 +501,16 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 		MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(key_attr)));
 
 	switch (metadata->key_usage_scheme) {
-	case KMU_METADATA_SCHEME_PROTECTED:
-	case KMU_METADATA_SCHEME_SEED:
-	case KMU_METADATA_SCHEME_ENCRYPTED:
-	case KMU_METADATA_SCHEME_RAW:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_SEED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
 		break;
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_PROTECTED) {
+	if (metadata->key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED) {
 		if (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_EXPORT) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
@@ -519,7 +519,7 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 		}
 	}
 
-	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_SEED) {
+	if (metadata->key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_SEED) {
 		metadata->rpolicy = LIB_KMU_REV_POLICY_LOCKED;
 		metadata->size = METADATA_ALG_KEY_BITS_384_SEED;
 		return PSA_SUCCESS;
@@ -646,7 +646,7 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 	metadata->key_usage_scheme = CRACEN_PSA_GET_KEY_USAGE_SCHEME(
 		MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(key_attr)));
 
-	if (metadata->key_usage_scheme == KMU_METADATA_SCHEME_PROTECTED) {
+	if (metadata->key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED) {
 		if (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_EXPORT) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
@@ -699,21 +699,21 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	}
 
 	switch (metadata.key_usage_scheme) {
-	case KMU_METADATA_SCHEME_PROTECTED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 		push_address = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 		/* Only 128, 192 and 256 bit keys are supported. */
 		if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
-	case KMU_METADATA_SCHEME_ENCRYPTED:
-	case KMU_METADATA_SCHEME_RAW:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
 		push_address = (uint8_t *)kmu_push_area;
 		if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
-	case KMU_METADATA_SCHEME_SEED:
+	case CRACEN_KMU_KEY_USAGE_SCHEME_SEED:
 		push_address = (uint8_t *)NRF_CRACEN->SEED;
 		if (key_buffer_size != HUK_SIZE_BYTES) {
 			return PSA_ERROR_INVALID_ARGUMENT;
@@ -723,7 +723,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (metadata.key_usage_scheme == KMU_METADATA_SCHEME_ENCRYPTED) {
+	if (metadata.key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED) {
 		/* Copy key material to workbuffer, zero-pad key and align to key slot size. */
 		memcpy(encrypted_workmem + CRACEN_KMU_SLOT_KEY_SIZE, key_buffer, key_buffer_size);
 		status = cracen_kmu_encrypt(encrypted_workmem + CRACEN_KMU_SLOT_KEY_SIZE,
@@ -897,7 +897,7 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 			return PSA_ERROR_DATA_INVALID;
 		}
 
-		if (key->key_usage_scheme == KMU_METADATA_SCHEME_ENCRYPTED) {
+		if (key->key_usage_scheme == CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED) {
 			key->number_of_slots += 2;
 		}
 
