@@ -9,9 +9,9 @@ MCUboot and NSIB
    :local:
    :depth: 2
 
-If you are new to bootloaders and Device Firmware Update (DFU), see the :ref:`bootloader_quick_start`.
+If you are new to bootloaders and Device Firmware Upgrade (DFU), see the :ref:`bootloader_quick_start`.
 If you have worked with them before and prefer a standard bootloader setup in your application, read the :ref:`bootloader_partitioning` documentation page.
-Following that, you can :ref:`Add MCUBoot as an immutable bootloader<ug_bootloader_adding_immutable>`.
+Following that, you can :ref:`add an immutable bootloader<ug_bootloader_adding_sysbuild_immutable>`.
 
 .. toctree::
    :maxdepth: 2
