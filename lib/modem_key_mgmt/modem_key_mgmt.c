@@ -66,6 +66,18 @@ static int translate_error(int err)
 
 	/* In case of CME error translate to an errno value */
 	switch (nrf_modem_at_err(err)) {
+	case 0: /* phone failure. invalid command, parameter, or other unexpected error */
+		LOG_WRN("Phone failure");
+		return -EIO;
+	case 23: /* memory failure. unexpected error in memory handling */
+		LOG_WRN("Memory failure");
+		return -E2BIG;
+	case 50: /* incorrect parameters in a command */
+		LOG_WRN("Incorrect parameters in command");
+		return -EINVAL;
+	case 60: /* system error */
+		LOG_WRN("System error");
+		return -ENOEXEC;
 	case 513: /* not found */
 		LOG_WRN("Key not found");
 		return -ENOENT;
