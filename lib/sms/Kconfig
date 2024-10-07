@@ -18,6 +18,13 @@ config SMS_SUBSCRIBERS_MAX_CNT
 	help
 	  Maximum number of subscribers that can register to SMS library.
 
+config SMS_STATUS_REPORT
+	bool "SMS status reports"
+	default y
+	help
+	  Request SMS status report by setting TP-SRR bit in SMS header, and
+	  setting <ds> field enabled in SMS registration with AT+CNMI.
+
 module=SMS
 module-dep=LOG
 module-str= SMS library

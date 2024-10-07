@@ -293,7 +293,7 @@ static int sms_submit_encode(
 {
 	int err = 0;
 	int msg_size;
-	uint8_t sms_submit_header_byte;
+	uint8_t sms_submit_header_byte = 0x01; /* Indicates SMS-SUBMIT message type */
 	uint8_t ud_start_index;
 	uint8_t udh_size = (udh_str == NULL) ? 0 : strlen(udh_str) / 2;
 
@@ -309,8 +309,14 @@ static int sms_submit_encode(
 		udh_size +
 		encoded_data_size_octets;
 
-	/* Set header byte. If User-Data-Header is added to SMS-SUBMIT, UDHI bit must be set */
-	sms_submit_header_byte = (udh_str == NULL) ? 0x21 : 0x61;
+#if defined(CONFIG_SMS_STATUS_REPORT)
+	/* Request SMS-STATUS-REPORT message with TP-SRR field (bit #5) */
+	sms_submit_header_byte |= 0x20;
+#endif
+	/* If User-Data-Header is added to SMS-SUBMIT, UDHI bit #6 must be set */
+	if (udh_str != NULL) {
+		sms_submit_header_byte |= 0x40;
+	}
 
 	/* First, compose SMS header without User-Data so that we get an index for
 	 * User-Data-Header to be added later

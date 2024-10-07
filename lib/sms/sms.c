@@ -25,8 +25,15 @@ LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);
 
 /** @brief AT command to check if a client already exist. */
 #define AT_SMS_SUBSCRIBER_READ "AT+CNMI?"
-/** @brief AT command to register an SMS client. */
+/**
+ * @brief AT command to register an SMS client. Value depends on
+ * whether status reports are required or not.
+ */
+#if defined(CONFIG_SMS_STATUS_REPORT)
 #define AT_SMS_SUBSCRIBER_REGISTER "AT+CNMI=3,2,0,1"
+#else
+#define AT_SMS_SUBSCRIBER_REGISTER "AT+CNMI=3,2,0,0"
+#endif
 /** @brief AT command to unregister an SMS client. */
 #define AT_SMS_SUBSCRIBER_UNREGISTER "AT+CNMI=0,0,0,0"
 /** @brief AT command to an ACK in PDU mode. */
@@ -77,8 +84,10 @@ static struct sms_subscriber subscribers[CONFIG_SMS_SUBSCRIBERS_MAX_CNT];
  * errors (CMS).
  */
 AT_MONITOR_ISR(sms_at_handler_cmt, "+CMT", sms_at_cmd_handler_cmt, PAUSED);
-AT_MONITOR_ISR(sms_at_handler_cds, "+CDS", sms_at_cmd_handler_cds, PAUSED);
 AT_MONITOR_ISR(sms_at_handler_cms, "+CMS", sms_at_cmd_handler_cms, PAUSED);
+#if defined(CONFIG_SMS_STATUS_REPORT)
+AT_MONITOR_ISR(sms_at_handler_cds, "+CDS", sms_at_cmd_handler_cds, PAUSED);
+#endif
 
 /* Keep this function public so that it can be called by tests. */
 void sms_ack_resp_handler(const char *resp)
@@ -139,8 +148,10 @@ static void sms_reregister(struct k_work *work)
 		LOG_ERR("Unable to re-register SMS client, err: %d", err);
 		/* Pause AT commands notifications. */
 		at_monitor_pause(&sms_at_handler_cmt);
-		at_monitor_pause(&sms_at_handler_cds);
 		at_monitor_pause(&sms_at_handler_cms);
+#if defined(CONFIG_SMS_STATUS_REPORT)
+		at_monitor_pause(&sms_at_handler_cds);
+#endif
 
 		/* Clear all observers. */
 		for (size_t i = 0; i < ARRAY_SIZE(subscribers); i++) {
@@ -189,6 +200,7 @@ sms_ack_send:
 	k_work_reschedule(&sms_ack_work, K_NO_WAIT);
 }
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 /**
  * @brief Callback handler for CDS notification.
  *
@@ -206,6 +218,7 @@ static void sms_at_cmd_handler_cds(const char *at_notif)
 	k_work_submit(&sms_notify_work);
 	k_work_reschedule(&sms_ack_work, K_NO_WAIT);
 }
+#endif
 
 /**
  * @brief Callback handler for CMS notification.
@@ -266,15 +279,19 @@ static int sms_init(void)
 
 	/* Register for AT commands notifications before creating the client. */
 	at_monitor_resume(&sms_at_handler_cmt);
-	at_monitor_resume(&sms_at_handler_cds);
 	at_monitor_resume(&sms_at_handler_cms);
+#if defined(CONFIG_SMS_STATUS_REPORT)
+	at_monitor_resume(&sms_at_handler_cds);
+#endif
 
 	/* Register this module as an SMS client. */
 	ret = nrf_modem_at_printf(AT_SMS_SUBSCRIBER_REGISTER);
 	if (ret) {
 		at_monitor_pause(&sms_at_handler_cmt);
-		at_monitor_pause(&sms_at_handler_cds);
 		at_monitor_pause(&sms_at_handler_cms);
+#if defined(CONFIG_SMS_STATUS_REPORT)
+		at_monitor_pause(&sms_at_handler_cds);
+#endif
 		LOG_ERR("Unable to register a new SMS client, err: %d", ret);
 		return ret;
 	}
@@ -367,9 +384,10 @@ static void sms_uninit(void)
 
 	/* Pause AT commands notifications. */
 	at_monitor_pause(&sms_at_handler_cmt);
-	at_monitor_pause(&sms_at_handler_cds);
 	at_monitor_pause(&sms_at_handler_cms);
-
+#if defined(CONFIG_SMS_STATUS_REPORT)
+	at_monitor_pause(&sms_at_handler_cds);
+#endif
 	sms_client_registered = false;
 }
 

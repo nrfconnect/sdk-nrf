@@ -782,6 +782,8 @@ Modem libraries
 
 * :ref:`sms_readme` library:
 
+  * Added the :kconfig:option:`CONFIG_SMS_STATUS_REPORT` Kconfig option to configure whether the SMS status report is requested.
+
   * Updated:
 
     * To use the ``AT+CMMS`` AT command when sending concatenated SMS message.

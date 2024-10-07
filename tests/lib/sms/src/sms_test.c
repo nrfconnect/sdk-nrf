@@ -80,8 +80,11 @@ static void sms_reg_helper(void)
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(resp, sizeof(resp));
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,1", 0);
-
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,0", 0);
+#endif
 	test_handle = sms_register_listener(sms_callback, NULL);
 	TEST_ASSERT_EQUAL(0, test_handle);
 }
@@ -108,7 +111,11 @@ void test_sms_reregister(void)
 {
 	sms_reg_helper();
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,1", 0);
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,0", 0);
+#endif
 	/* Notify that SMS client has been unregistered */
 	at_monitor_dispatch("+CMS ERROR: 524\r\n");
 
@@ -222,7 +229,11 @@ void test_sms_init_fail_cnmi_set_ret_err(void)
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(resp, sizeof(resp));
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,1", -EIO);
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,0", -EIO);
+#endif
 	int handle = sms_register_listener(sms_callback, NULL);
 
 	TEST_ASSERT_EQUAL(-EIO, handle);
@@ -279,7 +290,11 @@ void test_sms_reregister_cnmi_query_ret_err(void)
 {
 	sms_reg_helper();
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,1", -EBUSY);
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,0", -EBUSY);
+#endif
 	/* Notify that SMS client has been unregistered */
 	at_monitor_dispatch("+CMS ERROR: 524\r\n");
 
@@ -326,7 +341,11 @@ void test_sms_lte_lc_cb_reregisteration(void)
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(cnmi_reg_nok, sizeof(cnmi_reg_nok));
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,1", 0);
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,0", 0);
+#endif
 
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
 	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_ACTIVATE_LTE, NULL);
@@ -425,13 +444,19 @@ void test_send_len3_number10plus(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=15\r0021000A912143658709000003CD771A\x1A", 0);
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=15\r0001000A912143658709000003CD771A\x1A", 0);
+#endif
 
 	int ret = sms_send_text("+1234567890", "Moi");
 
 	TEST_ASSERT_EQUAL(0, ret);
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	/* Receive SMS-STATUS-REPORT */
 	test_sms_data.type = SMS_TYPE_STATUS_REPORT;
 
@@ -441,6 +466,7 @@ void test_send_len3_number10plus(void)
 	at_monitor_dispatch("+CDS: 24\r\n06550A912143658709122022118314801220221183148000\r\n");
 	k_sleep(K_MSEC(1));
 	sms_ack_resp_handler("OK");
+#endif
 
 	sms_unreg_helper();
 }
@@ -450,6 +476,9 @@ void test_send_len3_number10plus(void)
  */
 void test_send_len1_number20plus(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	sms_reg_helper();
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
@@ -484,6 +513,9 @@ void test_send_len1_number20plus(void)
  */
 void test_send_len7_number11(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -505,6 +537,9 @@ void test_send_len7_number11(void)
  */
 void test_send_len8_number1(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -525,6 +560,9 @@ void test_send_len8_number1(void)
  */
 void test_send_len9_number5(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -552,15 +590,25 @@ void test_send_concat_220chars_2msgs(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CMMS=1", 0);
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=153\r0061010C912143658709210000A005000301020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966\x1A",
 		0);
-
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=153\r0041010C912143658709210000A005000301020162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966\x1A",
+		0);
+#endif
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CMMS=0", 0);
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=78\r0061020C9121436587092100004A0500030102026835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD703918\x1A",
 		0);
-
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=78\r0041020C9121436587092100004A0500030102026835DB0D9783C564335ACD76C3E56031D98C56B3DD7039584C36A3D56C375C0E1693CD6835DB0D9783C564335ACD76C3E56031D98C56B3DD703918\x1A",
+		0);
+#endif
 	int ret = sms_send_text("+123456789012",
 		"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
@@ -573,6 +621,9 @@ void test_send_concat_220chars_2msgs(void)
  */
 void test_send_concat_291chars_2msgs(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -601,6 +652,9 @@ void test_send_concat_291chars_2msgs(void)
  */
 void test_send_concat_700chars_5msgs(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -643,6 +697,9 @@ void test_send_concat_700chars_5msgs(void)
  */
 void test_send_special_characters(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -671,6 +728,9 @@ void test_send_special_characters(void)
  */
 void test_send_concat_special_character_split(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -696,6 +756,9 @@ void test_send_concat_special_character_split(void)
 /** Text is empty. Message will be sent successfully. */
 void test_send_text_empty(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -715,6 +778,9 @@ void test_send_text_empty(void)
 /** Test type approval SIM. */
 void test_send_ta_sim_no_sca(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -739,6 +805,9 @@ void test_send_ta_sim_no_sca(void)
 /** Test type approval SIM with SCA field included. */
 void test_send_ta_sim_sca(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -763,6 +832,9 @@ void test_send_ta_sim_sca(void)
 /** Test EFAD query with invalid <sw1>. */
 void test_send_ta_sim_query_sw1_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(111);
@@ -780,6 +852,9 @@ void test_send_ta_sim_query_sw1_fail(void)
 /** Test EFAD query with invalid <sw2>. */
 void test_send_ta_sim_query_sw2_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -797,6 +872,9 @@ void test_send_ta_sim_query_sw2_fail(void)
 /** Test EFAD query with missing parameters. */
 void test_send_ta_sim_query_params_missing_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 1);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -812,6 +890,9 @@ void test_send_ta_sim_query_params_missing_fail(void)
 /** Test EFAD query with empty CRSM <response>. */
 void test_send_ta_sim_query_crsm_resp_empty_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -829,6 +910,9 @@ void test_send_ta_sim_query_crsm_resp_empty_fail(void)
 /** Test EFSMSP query with invalid <sw1>. */
 void test_send_ta_sim_sca_query_sw1_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -852,6 +936,9 @@ void test_send_ta_sim_sca_query_sw1_fail(void)
 /** Test EFSMSP query with invalid <sw2>. */
 void test_send_ta_sim_sca_query_sw2_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -876,6 +963,9 @@ void test_send_ta_sim_sca_query_sw2_fail(void)
 /** Test EFSMSP query with too many parameters. */
 void test_send_ta_sim_sca_query_too_many_params_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -900,6 +990,9 @@ void test_send_ta_sim_sca_query_too_many_params_fail(void)
 /** Test EFSMSP query with too short CRSM <response>. */
 void test_send_ta_sim_sca_query_crsm_resp_too_short_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -924,6 +1017,9 @@ void test_send_ta_sim_sca_query_crsm_resp_too_short_fail(void)
 /** Test EFSMSP query with non-integer parameter_indicator. */
 void test_send_ta_sim_sca_query_invalid_parameter_indicator_fail(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -990,6 +1086,9 @@ void test_send_fail_text_null(void)
 /** Failing AT command response to CMGS command. */
 void test_send_fail_atcmd(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -1007,6 +1106,9 @@ void test_send_fail_atcmd(void)
 /** Failing AT command response to CMGS command when sending concatenated message. */
 void test_send_fail_atcmd_concat(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
@@ -1028,6 +1130,9 @@ void test_send_fail_atcmd_concat(void)
 /** Data has special characters. */
 void test_send_gsm7bit_special_characters(void)
 {
+#if !defined(CONFIG_SMS_STATUS_REPORT)
+	TEST_IGNORE();
+#endif
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT+CRSM=176,28589,0,0,0", "+CRSM: %d, %d, \"%511[^\"]\"", 3);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(144);
@@ -2270,12 +2375,18 @@ void send_basic(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0);
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("00FFFF02");
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CMGS=15\r0021000A912143658709000003CD771A\x1A", 0);
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CMGS=15\r0001000A912143658709000003CD771A\x1A", 0);
+#endif
 	int ret = sms_send_text("+1234567890", "Moi");
 
 	TEST_ASSERT_EQUAL(0, ret);
 
+#if defined(CONFIG_SMS_STATUS_REPORT)
 	/* Receive SMS-STATUS-REPORT */
 	test_sms_data.type = SMS_TYPE_STATUS_REPORT;
 
@@ -2283,6 +2394,7 @@ void send_basic(void)
 	sms_callback_called_expected = true;
 	test_sms_header_exists = false;
 	at_monitor_dispatch("+CDS: 24\r\n06550A912143658709122022118314801220221183148000\r\n");
+#endif
 	k_sleep(K_MSEC(1));
 }
 
