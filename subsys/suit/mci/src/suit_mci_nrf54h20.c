@@ -5,6 +5,7 @@
  */
 #include <suit_mci.h>
 #include <drivers/nrfx_common.h>
+#include <suit_storage.h>
 #include <suit_storage_mpi.h>
 #include <suit_execution_mode.h>
 #include <sdfw/lcs.h>
@@ -373,6 +374,43 @@ mci_err_t suit_mci_memory_access_rights_validate(const suit_manifest_class_id_t 
 
 	if (suit_storage_mpi_role_get(class_id, &role) != SUIT_PLAT_SUCCESS) {
 		return MCI_ERR_MANIFESTCLASSID;
+	}
+
+	/* If the SUIT orchestrator is currently processing update candidate,
+	 * block all MEM components (regardless of the manifest class ID)
+	 * that points to the DFU partition, or any other region that contains
+	 * update candidate.
+	 * This check is necessary to ensure that the digest of the
+	 * authenticated digest of manifest or involved new firmware components
+	 * remains unchanged during the whole update procedure.
+	 */
+	if (suit_execution_mode_updating()) {
+		const suit_plat_mreg_t *update_regions = NULL;
+		size_t update_regions_len = 0;
+		suit_plat_err_t plat_err =
+			suit_storage_update_cand_get(&update_regions, &update_regions_len);
+
+		if (plat_err != SUIT_PLAT_SUCCESS) {
+			/* Should never happen as the execution mode indicates processing of
+			 * a pending update candiadate.
+			 */
+			return SUIT_PLAT_ERR_CRASH;
+		}
+
+		/* Ensure that the regions are mutually exclusive.
+		 *
+		 * The condition below is a negation of the following condition:
+		 *   (start_a) >= (start_b + size_b)
+		 *   or
+		 *   (start_b) >= (start_a + size_a)
+		 */
+		for (size_t i = 0; i < update_regions_len; i++) {
+			if ((((uint8_t *)address) <
+			     (update_regions[i].mem + update_regions[i].size)) &&
+			    (update_regions[i].mem < (((uint8_t *)address) + mem_size))) {
+				return MCI_ERR_NOACCESS;
+			}
+		}
 	}
 
 	switch (role) {
