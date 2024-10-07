@@ -69,7 +69,7 @@ jobs:
             BUILD_CONF="-DNO_DTS_BINDINGS=ON"
           fi
 
-          cmake -GNinja -Bdoc/_build -Sdoc ${BUILD_CONF}
+          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-q" ${BUILD_CONF}
           ninja -C doc/_build
 
       - name: Check version
