@@ -15,5 +15,6 @@ zephyr_library_sources_ifdef(CONFIG_SUIT_MCI_IMPL_NRF54H20_SDFW src/suit_mci_nrf
 zephyr_library_sources(src/suit_generic_ids.c)
 
 zephyr_library_link_libraries(suit_mci)
+zephyr_library_link_libraries(suit_utils)
 zephyr_library_link_libraries_ifdef(CONFIG_SUIT_STORAGE suit_storage_interface)
 zephyr_library_link_libraries(suit_execution_mode)
