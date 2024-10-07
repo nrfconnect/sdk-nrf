@@ -98,7 +98,7 @@ void bt_rpc_encode_gatt_attr(struct nrf_rpc_cbor_ctx *encoder, const struct bt_g
 	int err;
 
 	err = bt_rpc_gatt_attr_to_index(attr, &attr_index);
-	__ASSERT(err = 0, "Service attribute not found. Service database might be out of sync");
+	__ASSERT(err == 0, "Service attribute not found. Service database might be out of sync");
 
 	nrf_rpc_encode_uint(encoder, attr_index);
 }
