@@ -589,7 +589,6 @@ static void process_tcp4(void)
 	ret = setup_server(&tcp4_sock, (struct sockaddr *)&addr4, sizeof(addr4));
 	if (ret < 0) {
 		LOG_ERR("Failed to create IPv4 socket %d", ret);
-		FATAL_ERROR();
 		return;
 	}
 
@@ -610,16 +609,16 @@ static void process_tcp6(void)
 	};
 
 	ret = setup_server(&tcp6_sock, (struct sockaddr *)&addr6, sizeof(addr6));
+
+	k_sem_give(&ipv6_setup_sem);
+
 	if (ret < 0) {
 		LOG_ERR("Failed to create IPv6 socket %d", ret);
-		FATAL_ERROR();
 		return;
 	}
 
 	LOG_INF("Waiting for IPv6 HTTP connections on port %d, sock %d",
 		SERVER_PORT, tcp6_sock);
-
-	k_sem_give(&ipv6_setup_sem);
 
 	while (true) {
 		process_tcp(AF_INET6, &tcp6_sock, tcp6_accepted);
