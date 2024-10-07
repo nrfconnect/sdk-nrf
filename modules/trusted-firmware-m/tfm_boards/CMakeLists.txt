@@ -79,20 +79,21 @@ if (${TFM_PARTITION_CRYPTO})
     )
   endif()
 
-  target_link_libraries(platform_crypto_keys
-    PUBLIC
-      platform_s
-      # Link with tfm_sprt to get the include path for tfm_sp_log.h
-      tfm_sprt
-  )
 
    if (${CONFIG_HW_UNIQUE_KEY})
      target_compile_definitions(platform_s PUBLIC
        CONFIG_HW_UNIQUE_KEY
        $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>)
 
-
+       # nrf54l15 uses the PSA headers in the hw_unique_key_cracen.c file, which means
+       # that we need to make sure that the nrf_security PSA headers are included
+       # before any other PSA-related headers.
        if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
+          target_link_libraries(platform_crypto_keys
+           PRIVATE
+           psa_crypto_library_config
+          )
+
           target_sources(platform_crypto_keys
             PRIVATE
              ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cracen.c
@@ -105,6 +106,13 @@ if (${TFM_PARTITION_CRYPTO})
           )
        endif()
    endif()
+
+  target_link_libraries(platform_crypto_keys
+    PUBLIC
+    platform_s
+    # Link with tfm_sprt to get the include path for tfm_sp_log.h
+    tfm_sprt
+  )
 
   if (${TFM_PARTITION_INITIAL_ATTESTATION})
     target_sources(platform_s
