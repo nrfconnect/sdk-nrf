@@ -7,6 +7,7 @@
 #include <suit_mci.h>
 #include <suit_plat_decode_util.h>
 #include <suit_platform_internal.h>
+#include <suit_storage_mpi.h>
 
 /* -1 indicates no boot capability for given cpu id */
 #define NO_BOOT_CAPABILITY_CPU_ID 255
@@ -14,6 +15,7 @@
 int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *class_id,
 					    struct zcbor_string *component_id)
 {
+	suit_manifest_role_t role = SUIT_MANIFEST_UNKNOWN;
 	suit_manifest_class_id_t *decoded_class_id;
 	suit_component_type_t type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	intptr_t address;
@@ -37,6 +39,10 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 
+	if (suit_storage_mpi_role_get(class_id, &role) != SUIT_PLAT_SUCCESS) {
+		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
 	switch (type) {
 	case SUIT_COMPONENT_TYPE_MEM:
 		/* Decode component_id */
@@ -57,6 +63,7 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 			return SUIT_ERR_UNAUTHORIZED_COMPONENT;
 		}
 		break;
+
 	case SUIT_COMPONENT_TYPE_SOC_SPEC:
 		if (suit_plat_decode_component_number(component_id, &number) != SUIT_PLAT_SUCCESS) {
 			return SUIT_ERR_DECODING;
@@ -67,11 +74,36 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 			return SUIT_ERR_UNAUTHORIZED_COMPONENT;
 		}
 		break;
+
 	case SUIT_COMPONENT_TYPE_CAND_MFST:
+		if (suit_plat_decode_component_number(component_id, &number) != SUIT_PLAT_SUCCESS) {
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		if ((role != SUIT_MANIFEST_SEC_TOP) && (role != SUIT_MANIFEST_APP_ROOT) &&
+		    (role != SUIT_MANIFEST_APP_RECOVERY)) {
+			return SUIT_ERR_UNAUTHORIZED_COMPONENT;
+		}
+		break;
+
 	case SUIT_COMPONENT_TYPE_CAND_IMG:
+		if (suit_plat_decode_component_number(component_id, &number) != SUIT_PLAT_SUCCESS) {
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		if ((role == SUIT_MANIFEST_SEC_TOP) || (role == SUIT_MANIFEST_APP_ROOT)) {
+			return SUIT_ERR_UNAUTHORIZED_COMPONENT;
+		}
+		break;
+
 	case SUIT_COMPONENT_TYPE_CACHE_POOL:
 		if (suit_plat_decode_component_number(component_id, &number) != SUIT_PLAT_SUCCESS) {
 			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		if ((role == SUIT_MANIFEST_SEC_TOP) || (role == SUIT_MANIFEST_SEC_SDFW) ||
+		    (role == SUIT_MANIFEST_SEC_SYSCTRL) || (role == SUIT_MANIFEST_APP_ROOT)) {
+			return SUIT_ERR_UNAUTHORIZED_COMPONENT;
 		}
 		break;
 
@@ -90,6 +122,7 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 		}
 
 		break;
+
 	default:
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}

@@ -23,6 +23,10 @@ FAKE_VALUE_FUNC(int, suit_storage_install_envelope, const suit_manifest_class_id
 FAKE_VALUE_FUNC(int, suit_storage_update_cand_get, const suit_plat_mreg_t **, size_t *);
 FAKE_VALUE_FUNC(int, suit_storage_update_cand_set, suit_plat_mreg_t *, size_t);
 
+/* suit_storage_mpi.c */
+FAKE_VALUE_FUNC(int, suit_storage_mpi_role_get, const suit_manifest_class_id_t *,
+		suit_manifest_role_t *);
+
 static inline void mock_suit_storage_reset(void)
 {
 	RESET_FAKE(suit_storage_init);
@@ -30,6 +34,7 @@ static inline void mock_suit_storage_reset(void)
 	RESET_FAKE(suit_storage_install_envelope);
 	RESET_FAKE(suit_storage_update_cand_get);
 	RESET_FAKE(suit_storage_update_cand_set);
+	RESET_FAKE(suit_storage_mpi_role_get);
 }
 
 #endif /* MOCK_SUIT_STORAGE_H__ */
