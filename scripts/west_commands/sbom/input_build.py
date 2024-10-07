@@ -16,6 +16,7 @@ from west import log, util
 from args import args
 from data_structure import Data, FileInfo
 from common import SbomException, command_execute
+import yaml
 
 
 DEFAULT_BUILD_DIR = 'build'
@@ -399,7 +400,13 @@ def check_external_tools(build_dir: Path):
         return result
 
     try:
-        with open(build_dir / 'CMakeCache.txt', 'r') as fd:
+        domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml'), 'r'))
+        cmakecache = os.path.join(build_dir, domains['default'], 'CMakeCache.txt')
+    except FileNotFoundError:
+        cmakecache = os.path.join(build_dir, 'CMakeCache.txt')
+
+    try:
+        with open(cmakecache, 'r') as fd:
             cmake_cache = fd.read()
     except FileNotFoundError as ex:
         raise SbomException('Cannot find "CMakeCache.txt".\n'
@@ -427,9 +434,16 @@ def generate_input(data: Data):
         log.wrn('Fetching input files from a build directory is experimental for now.')
         check_external_tools(Path(args.build_dir[0][0]))
         for build_dir, *targets in args.build_dir:
-            if len(targets) == 0:
-                targets = [DEFAULT_TARGET]
-            log.dbg(f'INPUT: build directory: {build_dir}, targets: {targets}')
-            b = InputBuild(data, build_dir)
-            for target in targets:
-                b.generate_from_target(target)
+            try:
+                domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml'), 'r'))
+                domains = [d['name'] for d in domains['domains']]
+            except FileNotFoundError:
+                domains = ['.']
+            for domain in domains:
+                domain_build_dir = Path(os.path.join(build_dir, domain))
+                if len(targets) == 0:
+                    targets = [DEFAULT_TARGET]
+                log.dbg(f'INPUT: build directory: {domain_build_dir}, targets: {targets}')
+                b = InputBuild(data, domain_build_dir)
+                for target in targets:
+                    b.generate_from_target(target)
