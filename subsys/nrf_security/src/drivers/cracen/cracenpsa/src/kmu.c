@@ -700,6 +700,10 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 
 	switch (metadata.key_usage_scheme) {
 	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
+		/* Only AES keys are supported. */
+		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 		push_address = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 		/* Only 128, 192 and 256 bit keys are supported. */
 		if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32) {
