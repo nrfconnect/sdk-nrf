@@ -8,7 +8,7 @@ Partitioning device memory
    :depth: 2
 
 Partitioning device memory is a crucial aspect of managing how a device's storage is utilized, especially when dealing with firmware updates and bootloader configurations.
-By default, the Partition Manager in the system dynamically generates a partition map, which is suitable for most applications that do not use Device Firmware Updates (DFU).
+By default, the Partition Manager in the system dynamically generates a partition map, which is suitable for most applications that do not use Device Firmware Upgrades (DFU).
 For scenarios involving DFU, read the following sections.
 
 .. _ug_bootloader_flash_static_requirement:
