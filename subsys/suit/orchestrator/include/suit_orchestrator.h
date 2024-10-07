@@ -14,14 +14,31 @@ extern "C" {
 /**
  * @brief Initialize the SUIT orchestrator before it can be used.
  *
- * @return 0 on success, non-zero value otherwise.
+ * @retval 0       if successful.
+ * @retval -EFAULT if internal module initialization failed.
+ * @retval -EROFS  if unable to access SUIT storage area.
+ * @retval -EIO    if unable to modify internal state.
  */
 int suit_orchestrator_init(void);
 
 /**
  * @brief Main function of the orchestrator, starting boot or update.
  *
- * @return 0 on success, negative value otherwise.
+ *
+ * @retval 0          if successful.
+ * @retval -EPERM     if application MPI is missing (invalid digest).
+ * @retval -EOVERFLOW if MPI has invalid format (i.e. version, values).
+ * @retval -EBADF     if essential (Nordic, root) roles are unprovisioned.
+ * @retval -ENOTSUP   if provided MPI configuration is not supported.
+ * @retval -EINVAL    if called in invalid SUIT execution mode.
+ * @retval -EFAULT    if internal error encountered.
+ * @retval -EIO       if unable to modify SUIT storage area.
+ * @retval -ENOENT    if attemmpted to boot non-existing manifest.
+ * @retval -ENOEXEC   if unable to find or parse installed or candidate manifest.
+ * @retval -EILSEQ    if manifest sequence execution failed.
+ * @retval -EMSGSIZE  if update candidate size is invalid.
+ * @retval -EACCES    if update candiadate manifest is invalid.
+ * @retval -ESRCH     if update candiadate manifest class is unsupported.
  */
 int suit_orchestrator_entry(void);
 

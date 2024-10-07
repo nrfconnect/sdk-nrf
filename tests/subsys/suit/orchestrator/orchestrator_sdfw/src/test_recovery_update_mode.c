@@ -237,7 +237,7 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_invalid_exec_mode)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-EMSGSIZE, err, "Unexpected error code");
 	/* ... and the candidate availability flag remains cleared */
 	assert_post_recovery_install_state();
 }
