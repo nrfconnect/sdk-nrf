@@ -4,6 +4,7 @@
 mapping_global:
   - nrf-apis
   - nrf-apis-__VERSION__
+  - cluster-nrf-apis-__VERSION__
 
 # Tags for individual topics:
 mapping_topics: []
