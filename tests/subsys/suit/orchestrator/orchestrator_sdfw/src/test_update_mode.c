@@ -238,7 +238,7 @@ ZTEST(orchestrator_update_tests, test_envelope_size_zero)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-ENOEXEC, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -258,7 +258,7 @@ ZTEST(orchestrator_update_tests, test_manipulated_envelope)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-ENOEXEC, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -277,7 +277,7 @@ ZTEST(orchestrator_update_tests, test_update_invalid_exec_mode)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-EMSGSIZE, err, "Unexpected error code");
 	/* ... and the candidate availability flag remains cleared */
 	assert_post_install_state();
 }
@@ -302,7 +302,7 @@ ZTEST(orchestrator_update_tests, test_invalid_address_and_size)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EFAULT, err, "Unexpected error code");
+	zassert_equal(-EMSGSIZE, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -327,7 +327,7 @@ ZTEST(orchestrator_update_tests, test_candidate_empty_size)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EFAULT, err, "Unexpected error code");
+	zassert_equal(-EMSGSIZE, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -363,7 +363,7 @@ ZTEST(orchestrator_update_tests, test_candidate_too_many_caches)
 	err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EINVAL, err, "Unexpected error code");
+	zassert_equal(-EMSGSIZE, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -383,7 +383,7 @@ ZTEST(orchestrator_update_tests, test_unsupported_component)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-ENOEXEC, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -403,7 +403,7 @@ ZTEST(orchestrator_update_tests, test_wrong_manifest_version)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-ENOEXEC, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -423,7 +423,7 @@ ZTEST(orchestrator_update_tests, test_signed_with_different_key)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-ENOEXEC, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -464,7 +464,7 @@ ZTEST(orchestrator_update_tests, test_unsupported_command)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-ENOEXEC, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -487,7 +487,7 @@ ZTEST(orchestrator_update_tests, test_seq_cand_varification_fail)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-EILSEQ, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -508,7 +508,7 @@ ZTEST(orchestrator_update_tests, test_seq_cand_varification_no_install)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-EILSEQ, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -529,7 +529,7 @@ ZTEST(orchestrator_update_tests, test_seq_cand_varification_install_fail)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator returns error code... */
-	zassert_equal(-EACCES, err, "Unexpected error code");
+	zassert_equal(-EILSEQ, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
 	assert_post_install_state();
 }
@@ -566,7 +566,7 @@ ZTEST(orchestrator_update_tests, test_seq_cand_varification_install)
 ZTEST(orchestrator_update_tests, test_invalid_update_candidate_address)
 {
 	/* GIVEN update candidate with invalid address... */
-	setup_update_candidate((uint8_t *) 0x00000FF0, 0x50);
+	setup_update_candidate((uint8_t *)0x00000FF0, 0x50);
 	/* ... and suit orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized");
 	/* ... and the execution mode is set to install mode */

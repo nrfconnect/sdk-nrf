@@ -190,7 +190,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_invalid_recovery_envelope)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator fails (hard)... */
-	zassert_equal(-EACCES, err, "Orchestrator did not fail");
+	zassert_equal(-ENOEXEC, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
@@ -256,7 +256,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_no_validate)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator fails (hard)... */
-	zassert_equal(-EACCES, err, "Orchestrator did not fail");
+	zassert_equal(-EILSEQ, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
@@ -289,7 +289,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_fail)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator fails (hard)... */
-	zassert_equal(-EACCES, err, "Orchestrator did not fail");
+	zassert_equal(-EILSEQ, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
@@ -322,7 +322,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_load_fail)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator fails (hard)... */
-	zassert_equal(-EACCES, err, "Orchestrator did not fail");
+	zassert_equal(-EILSEQ, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
@@ -355,7 +355,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_load_no_invoke)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator fails (hard)... */
-	zassert_equal(-EACCES, err, "Orchestrator did not fail");
+	zassert_equal(-EILSEQ, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
@@ -388,7 +388,7 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_load_invoke_fail)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator fails (hard)... */
-	zassert_equal(-EACCES, err, "Orchestrator did not fail");
+	zassert_equal(-EILSEQ, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
