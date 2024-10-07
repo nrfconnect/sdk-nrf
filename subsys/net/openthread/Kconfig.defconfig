@@ -35,46 +35,36 @@ choice LIBC_IMPLEMENTATION
 endchoice
 
 config NEWLIB_LIBC_NANO
-	bool
 	default y
 
 config NUM_METAIRQ_PRIORITIES
-	int
 	default 1
 
 config SYSTEM_WORKQUEUE_STACK_SIZE
-	int
 	default 320 if OPENTHREAD_COPROCESSOR_RCP
 	default 1120
 
 config MAIN_STACK_SIZE
-	int
 	default 1024 if OPENTHREAD_COPROCESSOR_RCP
 	default 2560
 
 config LOG_BUFFER_SIZE
-	int
 	default 4048 if LOG
 
 config INIT_STACKS
-	bool
 	default y
 
 config NET_IPV6_NBR_CACHE
-	bool
 	default n
 
 config NET_IPV6_MLD
-	bool
 	default n
 
 config NET_PKT_RX_COUNT
-	int
 	default 4 if OPENTHREAD_COPROCESSOR_RCP
 	default 10
 
 config NET_PKT_TX_COUNT
-	int
 	default 4 if OPENTHREAD_COPROCESSOR_RCP
 	default 16
 
@@ -82,11 +72,9 @@ config OPENTHREAD_CLI_TCP_ENABLE
 	default n
 
 config OPENTHREAD_DYNAMIC_STORE_FRAME_AHEAD_COUNTER
-	bool
 	default y
 
 config OPENTHREAD_MANUAL_START
-	bool
 	default y
 
 choice OPENTHREAD_SECURITY
@@ -97,67 +85,52 @@ config MBEDTLS_PROMPTLESS
 	default n
 
 config MBEDTLS_SSL_PROTO_DTLS
-	bool
 	default n if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 	default y
 
 config MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
-	bool
 	default n if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 	default y
 
 config MBEDTLS_ENTROPY_C
-	bool
 	default y
 
 config MBEDTLS_CIPHER_MODE_CBC
-	bool
 	default n
 
 config MBEDTLS_CIPHER_MODE_CTR
-	bool
 	default n
 
 config MBEDTLS_CHACHA20_C
-	bool
 	default n
 
 config MBEDTLS_POLY1305_C
-	bool
 	default n
 
 config MBEDTLS_CHACHAPOLY_C
-	bool
 	default n
 
 config MBEDTLS_DHM_C
-	bool
 	default n
 
 config MBEDTLS_RSA_C
-	bool
 	default n
 
 config MBEDTLS_SHA512_C
-	bool
 	default n
 
 config MBEDTLS_GCM_C
-	bool
 	default n
 
 config MBEDTLS_CIPHER_MODE_XTS
-	bool
 	default n
 
 if !(OPENTHREAD_BORDER_AGENT || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 
 config MBEDTLS_SSL_SRV_C
-	bool
 	default n
 
 config MBEDTLS_SSL_COOKIE_C
-	bool
 	default n
 
 endif # !(OPENTHREAD_BORDER_AGENT || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
@@ -165,11 +138,9 @@ endif # !(OPENTHREAD_BORDER_AGENT || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS
 if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 
 config MBEDTLS_SSL_CLI_C
-	bool
 	default n
 
 config MBEDTLS_SSL_TLS_C
-	bool
 	default n
 
 endif # !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
@@ -177,65 +148,52 @@ endif # !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
 # Note: MBEDTLS_HEAP_SIZE value for OPENTHREAD_NRF_SECURITY_PSA is experimental.
 # It might be changed in the future.
 config MBEDTLS_HEAP_SIZE
-	int
 	default 20360 if OPENTHREAD_BLE_TCAT
 	default 15360 if OPENTHREAD_NRF_SECURITY_PSA
 	default 12440 if !OPENTHREAD_NRF_SECURITY_PSA
 
 config OPENTHREAD_PING_SENDER
-	bool
 	default y
 
 if !OPENTHREAD_THREAD_VERSION_1_1
 
 # Thread 1.2 dependencies
 config NRF_802154_ENCRYPTION
-	bool
 	default y
 
 config NET_PKT_TXTIME
-	bool
 	default y
 
 config NET_PKT_TIMESTAMP
-	bool
 	default y
 
 # CSL Transmitter configuration
 config OPENTHREAD_PLATFORM_CSL_UNCERT
-	int
 	default 30 if BOARD_NRF54L15DK_NRF54L15_CPUAPP
 	default 12
 
 config IEEE802154_NRF5_DELAY_TRX_ACC
-	int
 	default 50 if BOARD_NRF52840DONGLE_NRF52840 || BOARD_NRF54L15DK_NRF54L15_CPUAPP
 	default 20
 
 if OPENTHREAD_CSL_RECEIVER
 
 config IEEE802154_CSL_ENDPOINT
-	bool
 	default y
 
 config OPENTHREAD_CSL_RECEIVE_TIME_AHEAD
-	int
 	default 5000
 
 config OPENTHREAD_MIN_RECEIVE_ON_AHEAD
-	int
 	default 104
 
 config OPENTHREAD_MIN_RECEIVE_ON_AFTER
-	int
 	default 0
 
 config OPENTHREAD_CSL_TIMEOUT
-	int
 	default 20
 
 config OPENTHREAD_CSL_RECEIVER_LOCAL_TIME_SYNC
-	bool
 	default y if NRF_802154_SER_HOST
 
 endif # OPENTHREAD_CSL_RECEIVER
@@ -245,27 +203,21 @@ endif # !OPENTHREAD_THREAD_VERSION_1_1
 if OPENTHREAD_COPROCESSOR_RCP
 
 config MBEDTLS_PSA_KEY_SLOT_COUNT
-	int
 	default 1
 
 config ISR_STACK_SIZE
-	int
 	default 640
 
 config IDLE_STACK_SIZE
-	int
 	default 128
 
 config MPSL_WORK_STACK_SIZE
-	int
 	default 512
 
 config NET_RX_STACK_SIZE
-	int
 	default 300
 
 config NET_TX_STACK_SIZE
-	int
 	default 300
 
 endif # OPENTHREAD_COPROCESSOR_RCP
@@ -273,23 +225,18 @@ endif # OPENTHREAD_COPROCESSOR_RCP
 if OPENTHREAD_BLE_TCAT
 
 config MBEDTLS_GCM_C
-	bool
 	default y
 
 config MBEDTLS_SSL_OUT_CONTENT_LEN
-	int
 	default 2048
 
 config MBEDTLS_SSL_IN_CONTENT_LEN
-	int
 	default 2048
 
 config MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
-	bool
 	default y
 
 config OPENTHREAD_BLE_TCAT_THREAD_STACK_SIZE
-	int
 	default 8196 if SOC_NRF54L15
 	default 6144
 
