@@ -364,6 +364,23 @@ Bluetooth samples
 
    * Fixed an issue where the HCI LE Set Extended Advertising Enable command was called with a NULL pointer.
 
+* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board in the following samples:
+
+  * :ref:`central_bas`
+  * :ref:`bluetooth_central_hr_coded`
+  * :ref:`multiple_adv_sets`
+  * :ref:`peripheral_bms`
+  * :ref:`peripheral_cgms`
+  * :ref:`peripheral_cts_client`
+  * :ref:`peripheral_gatt_dm`
+  * :ref:`peripheral_hr_coded`
+  * :ref:`peripheral_mds`
+  * :ref:`peripheral_nfc_pairing`
+  * :ref:`power_profiling`
+  * :ref:`peripheral_rscs`
+  * :ref:`shell_bt_nus`
+  * :ref:`ble_throughput`
+
 Bluetooth Fast Pair samples
 ---------------------------
 
