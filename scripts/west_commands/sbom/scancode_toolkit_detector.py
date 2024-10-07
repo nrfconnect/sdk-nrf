@@ -64,7 +64,17 @@ def detect(data: Data, optional: bool):
     decoded = map(run_scancode, filtered)
 
     for result, file in zip(decoded, filtered):
-        for i in result['files'][0]['licenses']:
+
+        current = result['files'][0]
+        if 'licenses' in current:
+            licenses = result['files'][0]['licenses']
+        elif 'license_detections' in current:
+            licenses = result['files'][0]['license_detections']
+        else:
+            print('No license information for {}'.format(current['path']))
+            continue
+
+        for i in licenses:
 
             friendly_id = ''
             if 'spdx_license_key' in i and i['spdx_license_key'] != '':
