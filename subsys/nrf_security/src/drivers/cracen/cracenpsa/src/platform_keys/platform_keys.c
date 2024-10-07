@@ -544,8 +544,6 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 	platform_key key;
 	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), &key);
 
-	uint32_t domain = PLATFORM_KEY_GET_DOMAIN(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
-
 	psa_status_t status = verify_access(MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id),
 					    MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
 	if (status != PSA_SUCCESS) {
