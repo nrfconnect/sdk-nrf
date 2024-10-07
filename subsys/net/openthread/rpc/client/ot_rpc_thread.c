@@ -200,3 +200,61 @@ otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 
 	return mode;
 }
+
+uint16_t otThreadGetVersion(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	uint16_t version;
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_VERSION, &ctx,
+				nrf_rpc_rsp_decode_u16, &version);
+
+	return version;
+}
+
+const char *otThreadErrorToString(otError error)
+{
+	static const char *const error_str[OT_NUM_ERRORS] = {
+		"OK",			      /* (0)  kErrorNone */
+		"Failed",		      /* (1)  kErrorFailed */
+		"Drop",			      /* (2)  kErrorDrop */
+		"NoBufs",		      /* (3)  kErrorNoBufs */
+		"NoRoute",		      /* (4)  kErrorNoRoute */
+		"Busy",			      /* (5)  kErrorBusy */
+		"Parse",		      /* (6)  kErrorParse */
+		"InvalidArgs",		      /* (7)  kErrorInvalidArgs */
+		"Security",		      /* (8)  kErrorSecurity */
+		"AddressQuery",		      /* (9)  kErrorAddressQuery */
+		"NoAddress",		      /* (10) kErrorNoAddress */
+		"Abort",		      /* (11) kErrorAbort */
+		"NotImplemented",	      /* (12) kErrorNotImplemented */
+		"InvalidState",		      /* (13) kErrorInvalidState */
+		"NoAck",		      /* (14) kErrorNoAck */
+		"ChannelAccessFailure",	      /* (15) kErrorChannelAccessFailure */
+		"Detached",		      /* (16) kErrorDetached */
+		"FcsErr",		      /* (17) kErrorFcs */
+		"NoFrameReceived",	      /* (18) kErrorNoFrameReceived */
+		"UnknownNeighbor",	      /* (19) kErrorUnknownNeighbor */
+		"InvalidSourceAddress",	      /* (20) kErrorInvalidSourceAddress */
+		"AddressFiltered",	      /* (21) kErrorAddressFiltered */
+		"DestinationAddressFiltered", /* (22) kErrorDestinationAddressFiltered */
+		"NotFound",		      /* (23) kErrorNotFound */
+		"Already",		      /* (24) kErrorAlready */
+		"ReservedError25",	      /* (25) Error 25 is reserved */
+		"Ipv6AddressCreationFailure", /* (26) kErrorIp6AddressCreationFailure */
+		"NotCapable",		      /* (27) kErrorNotCapable */
+		"ResponseTimeout",	      /* (28) kErrorResponseTimeout */
+		"Duplicated",		      /* (29) kErrorDuplicated */
+		"ReassemblyTimeout",	      /* (30) kErrorReassemblyTimeout */
+		"NotTmf",		      /* (31) kErrorNotTmf */
+		"NonLowpanDataFrame",	      /* (32) kErrorNotLowpanDataFrame */
+		"ReservedError33",	      /* (33) Error 33 is reserved */
+		"LinkMarginLow",	      /* (34) kErrorLinkMarginLow */
+		"InvalidCommand",	      /* (35) kErrorInvalidCommand */
+		"Pending",		      /* (36) kErrorPending */
+		"Rejected",		      /* (37) kErrorRejected */
+	};
+
+	return error < OT_NUM_ERRORS ? error_str[error] : "UnknownErrorType";
+}

@@ -21,6 +21,7 @@ FAKE_VALUE_FUNC(otError, otThreadSetEnabled, otInstance *, bool);
 FAKE_VALUE_FUNC(otDeviceRole, otThreadGetDeviceRole, otInstance *);
 FAKE_VALUE_FUNC(otError, otThreadSetLinkMode, otInstance *, otLinkModeConfig);
 FAKE_VALUE_FUNC(otLinkModeConfig, otThreadGetLinkMode, otInstance *);
+FAKE_VALUE_FUNC(uint16_t, otThreadGetVersion);
 FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
@@ -276,6 +277,21 @@ ZTEST(ot_rpc_thread, test_otThreadGetLinkMode_rdn)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otThreadGetLinkMode_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetVersion() command.
+ * Test serialization of the result: 1.4.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetVersion)
+{
+	otThreadGetVersion_fake.return_val = OT_THREAD_VERSION_1_4;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_THREAD_VERSION_1_4), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_VERSION));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetVersion_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_thread, NULL, NULL, tc_setup, NULL, NULL);

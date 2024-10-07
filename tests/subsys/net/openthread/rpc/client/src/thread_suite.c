@@ -249,4 +249,16 @@ ZTEST(ot_rpc_thread, test_otThreadGetLinkMode_rdn)
 	zassert_true(mode.mNetworkData);
 }
 
+/* Test serialization of otThreadGetVersion() returning 1.4 */
+ZTEST(ot_rpc_thread, test_otThreadGetVersion)
+{
+	uint16_t version;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_VERSION),
+				   RPC_RSP(OT_THREAD_VERSION_1_4));
+	version = otThreadGetVersion();
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(version, OT_THREAD_VERSION_1_4);
+}
+
 ZTEST_SUITE(ot_rpc_thread, NULL, NULL, tc_setup, NULL, NULL);
