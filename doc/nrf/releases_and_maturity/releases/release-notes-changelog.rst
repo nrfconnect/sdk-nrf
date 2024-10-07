@@ -507,7 +507,9 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`http_server` sample:
+
+  * Fixed not to fail with a fatal error if IPv4 or IPv6 server setup fails.
 
 NFC samples
 -----------
