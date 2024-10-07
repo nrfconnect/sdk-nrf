@@ -163,7 +163,7 @@ static void sms_at_cmd_handler_cmt(const char *at_notif)
 
 	__ASSERT_NO_MSG(at_notif != NULL);
 
-	memset(&sms_data_info, 0, sizeof(struct sms_data));
+	k_work_reschedule(&sms_ack_work, K_NO_WAIT);
 
 	/* Parse AT command and SMS PDU */
 	err = sscanf(
@@ -173,20 +173,18 @@ static void sms_at_cmd_handler_cmt(const char *at_notif)
 		sms_buf_tmp);
 	if (err < 1) {
 		LOG_ERR("Unable to parse CMT notification, err=%d: %s", err, at_notif);
-		goto sms_ack_send;
+		return;
 	}
 
+	memset(&sms_data_info, 0, sizeof(struct sms_data));
 	sms_data_info.type = SMS_TYPE_DELIVER;
 	err = sms_deliver_pdu_parse(sms_buf_tmp, &sms_data_info);
 	if (err) {
-		goto sms_ack_send;
+		return;
 	}
 	LOG_DBG("Valid SMS notification decoded");
 
 	k_work_submit(&sms_notify_work);
-
-sms_ack_send:
-	k_work_reschedule(&sms_ack_work, K_NO_WAIT);
 }
 
 /**
@@ -203,8 +201,8 @@ static void sms_at_cmd_handler_cds(const char *at_notif)
 	memset(&sms_data_info, 0, sizeof(struct sms_data));
 	sms_data_info.type = SMS_TYPE_STATUS_REPORT;
 
-	k_work_submit(&sms_notify_work);
 	k_work_reschedule(&sms_ack_work, K_NO_WAIT);
+	k_work_submit(&sms_notify_work);
 }
 
 /**
