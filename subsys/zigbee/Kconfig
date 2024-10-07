@@ -77,7 +77,7 @@ config ZIGBEE_CHANNEL_MASK
 	   - bits 26..11: bit n enables its corresponding channel
 	   - bits 10..0: UNUSED, should be cleared
 
-choice
+choice ZIGBEE_ROLE
 	prompt "Select Zigbee device role"
 
 config ZIGBEE_ROLE_END_DEVICE
@@ -117,7 +117,7 @@ config ZIGBEE_DEBUG_FUNCTIONS
 	  It may be helpful when debugging but using this functions can cause instability of the device.
 
 # Configure default behavior of zb_osif_abort() function called as ZBOSS assert handler
-choice
+choice ZBOSS_ASSERT_HANDLER
 	prompt "Default behavior for ZBOSS stack internal assert handler"
 	default ZBOSS_RESET_ON_ASSERT
 
@@ -146,7 +146,7 @@ config ZIGBEE_ERROR_TO_STRING_ENABLED
 	  Include functions for mapping ZBOSS errors to string.
 
 # Configure ZBOSS_TRACE_LOG_LEVEL
-choice
+choice ZBOSS_TRACE_LOG_LEVEL_CHOICE
 	prompt "Max compiled-in log level for ZBOSS trace"
 	default ZBOSS_TRACE_LOG_LEVEL_OFF
 
@@ -229,7 +229,7 @@ config ZBOSS_TRAF_DUMP
 
 if ZIGBEE_HAVE_SERIAL
 
-choice
+choice ZBOSS_TRACE_LOGGING_METHOD
 	prompt "Select ZBOSS trace logging method: hexdump, binary, NCP transport"
 	default ZBOSS_TRACE_HEXDUMP_LOGGING
 
@@ -260,7 +260,7 @@ endif # (ZBOSS_TRACE_HEXDUMP_LOGGING || ZBOSS_TRACE_BINARY_LOGGING)
 
 if ZBOSS_TRACE_BINARY_LOGGING
 
-choice
+choice ZBOSS_TRACE_LOGGING_BACKEND
 	prompt "Backend used to log ZBOSS Traces"
 	default ZBOSS_TRACE_UART_LOGGING
 
@@ -368,7 +368,7 @@ config ZIGBEE_TC_REJOIN_ENABLED
 
 DT_CHOSEN_NCS_ZIGBEE_TIMER := ncs,zigbee-timer
 
-choice
+choice ZIGBEE_TIME_SOURCE
 	prompt "ZBOSS time source"
 	default ZIGBEE_TIME_COUNTER if ZIGBEE_LIBRARY_PRODUCTION && \
 		$(dt_chosen_enabled,$(DT_CHOSEN_NCS_ZIGBEE_TIMER))
