@@ -83,9 +83,14 @@ function(suit_generate_dfu_zip)
     GLOBAL PROPERTY
     SUIT_DFU_ARTIFACTS
   )
+  get_property(
+    additional_script_params
+    GLOBAL PROPERTY
+    SUIT_DFU_ZIP_ADDITIONAL_SCRIPT_PARAMS
+  )
 
   set(root_name "${SB_CONFIG_SUIT_ENVELOPE_ROOT_ARTIFACT_NAME}.suit")
-  set(script_params "${root_name}type=suit-envelope")
+  set(script_params "${root_name}type=suit-envelope;${additional_script_params}")
 
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
@@ -339,13 +344,16 @@ function(suit_create_package)
         "--input" "\"${IMAGE_CACHE_URI},${BINARY_DIR}/zephyr/${BINARY_FILE}.bin\""
       )
     endforeach()
-    list(APPEND CACHE_CREATE_ARGS "--output-file" "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${CACHE_PARTITION_NUM}.bin")
 
     if(SUIT_DFU_CACHE_PARTITION_${CACHE_PARTITION_NUM}_EB_SIZE)
       list(APPEND CACHE_CREATE_ARGS "--eb-size" "${SUIT_DFU_CACHE_PARTITION_${CACHE_PARTITION_NUM}_EB_SIZE}")
     endif()
 
-    suit_create_cache_partition("${CACHE_CREATE_ARGS}")
+    suit_create_cache_partition(
+      "${CACHE_CREATE_ARGS}"
+      "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${CACHE_PARTITION_NUM}.bin"
+      ${CACHE_PARTITION_NUM}
+    )
   endforeach()
 
   if(SB_CONFIG_SUIT_BUILD_RECOVERY)
