@@ -228,7 +228,8 @@ After programming the sample to your development kit, complete the following ste
          If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter to it.
       #. |connect_terminal|
       #. Reset the kit.
-      #. Observe that **LED 1** is blinking and that the device is advertising with the device name that is configured in :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
+      #. Observe that **LED 1** is blinking and the device is advertising under the default name **Nordic_UART_Service**.
+         You can configure this name using the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option.
       #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 
    .. group-tab:: nRF54 DKs
@@ -241,7 +242,8 @@ After programming the sample to your development kit, complete the following ste
          If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter.
       #. |connect_terminal|
       #. Reset the kit.
-      #. Observe that **LED 0** is blinking and that the device is advertising with the device name that is configured in :kconfig:option:`CONFIG_BT_DEVICE_NAME`.
+      #. Observe that **LED 0** is blinking and the device is advertising under the default name **Nordic_UART_Service**.
+         You can configure this name using the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option.
       #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
 
 .. _peripheral_uart_testing_mobile:
