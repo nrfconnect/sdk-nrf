@@ -68,7 +68,7 @@ bool hw_unique_key_are_any_written(void)
 	mbedtls_svc_key_id_t key_id;
 
 	key_id = mbedtls_svc_key_id_make(0, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
-						KMU_METADATA_SCHEME_SEED,
+						CRACEN_KMU_KEY_USAGE_SCHEME_SEED,
 						CONFIG_CRACEN_IKG_SEED_KMU_SLOT));
 	return cracen_kmu_get_key_slot(key_id, &lifetime, &slot_number) == PSA_SUCCESS;
 }
@@ -85,7 +85,7 @@ int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)
 
 	psa_set_key_id(&seed_attr,
 		       mbedtls_svc_key_id_make(0, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
-							KMU_METADATA_SCHEME_SEED,
+							CRACEN_KMU_KEY_USAGE_SCHEME_SEED,
 							CONFIG_CRACEN_IKG_SEED_KMU_SLOT)));
 	psa_set_key_type(&seed_attr, PSA_KEY_TYPE_RAW_DATA);
 	psa_set_key_lifetime(&seed_attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
