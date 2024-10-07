@@ -18,6 +18,8 @@ See the :ref:`app_dfu` page for general Device Firmware Update (DFU) information
 
 .. fota_upgrades_intro_end
 
+.. _ug_nrf52_developing_ble_fota_steps:
+
 FOTA over Bluetooth Low Energy
 ******************************
 
@@ -124,6 +126,8 @@ To read about the files that are built when the option is enabled, refer to the 
 .. fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_end
 
 .. fota_upgrades_over_ble_mcuboot_direct_xip_information_end
+
+.. _ug_nrf52_developing_ble_fota_steps_testing:
 
 Testing steps
 =============
