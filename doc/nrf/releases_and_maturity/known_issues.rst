@@ -144,8 +144,6 @@ KRKNWK-14299: NRPA MAC address cannot be set in Zephyr
 Bluetooth LE
 ============
 
-The issues in this section are related to :ref:`ug_ble_controller`.
-
 .. rst-class:: v2-7-0
 
 DRGN-22930 The SoftDevice Controller may de-reference a ``NULL`` pointer
