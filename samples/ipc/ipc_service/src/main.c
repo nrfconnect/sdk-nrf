@@ -101,7 +101,7 @@ int main(void)
 	p_payload->size = CONFIG_APP_IPC_SERVICE_MESSAGE_LEN;
 	p_payload->cnt = 0;
 
-	printk("IPC-service %s demo started\n", CONFIG_BOARD);
+	printk("IPC-service %s demo started\n", CONFIG_BOARD_TARGET);
 
 	ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 
