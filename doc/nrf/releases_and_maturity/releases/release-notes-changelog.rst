@@ -883,7 +883,10 @@ Libraries for networking
       Support for statically configured nRF Cloud IP Addresses will soon be removed.
       Leave :kconfig:option:`CONFIG_NRF_CLOUD_STATIC_IPV4` disabled to instead use automatic DNS lookup.
 
-  * Fixed an issue in the :c:func:`nrf_cloud_send` function that prevented data in the provided :c:struct:`nrf_cloud_obj` structure from being sent to the bulk and bin topics.
+  * Fixed:
+
+  * An issue in the :c:func:`nrf_cloud_send` function that prevented data in the provided :c:struct:`nrf_cloud_obj` structure from being sent to the bulk and bin topics.
+  * An issue where the modem was not shut down from bootloader mode before attempting to initialize in normal mode after an unsuccessful update.
 
 * :ref:`lib_nrf_cloud_coap` library:
 
