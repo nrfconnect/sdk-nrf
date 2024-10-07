@@ -734,20 +734,20 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN_KMU) {
 		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
-		enum kmu_metadata_key_usage_scheme key_usage_scheme = key->key_usage_scheme;
+		enum cracen_kmu_metadata_key_usage_scheme key_usage_scheme = key->key_usage_scheme;
 
 		k->clean_key = cracen_kmu_clean_key;
 		k->prepare_key = cracen_kmu_prepare_key;
 		k->user_data = key_buffer;
 
 		switch (key_usage_scheme) {
-		case KMU_METADATA_SCHEME_RAW:
-		case KMU_METADATA_SCHEME_ENCRYPTED:
+		case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
+		case CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED:
 			k->sz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 			k->key = kmu_push_area;
 
 			return PSA_SUCCESS;
-		case KMU_METADATA_SCHEME_PROTECTED:
+		case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 			k->sz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 			k->key = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 
