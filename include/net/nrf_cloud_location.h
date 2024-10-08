@@ -95,7 +95,9 @@ struct nrf_cloud_location_result {
 
 /** @brief Location request config */
 struct nrf_cloud_location_config {
-	/** If true, nRF Cloud will send the location to the device. */
+	/** If true, nRF Cloud will send the location to the device.
+	 * The location info is always stored in nRF Cloud, regardless of this flag's value.
+	 */
 	bool do_reply;
 	/** If true, uncertainty of result will be 95%, otherwise 68%. */
 	bool hi_conf;

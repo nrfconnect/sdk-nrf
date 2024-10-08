@@ -451,7 +451,12 @@ struct nrf_cloud_svc_info_fota {
 	uint8_t _rsvd:3;
 };
 
-/** @brief DEPRECATED - No longer used by nRF Cloud */
+/** @brief DEPRECATED - No longer used by nRF Cloud
+ * The device data cards on the nRF Cloud portal automatically appear when the device
+ * sends messages with the proper schema:
+ * https://github.com/nRFCloud/application-protocols/tree/v1/schemas/deviceToCloud
+ * Custom cards are generated for appIds that are not present in the schema.
+ */
 struct nrf_cloud_svc_info_ui {
 	/* Items with UI support on nRF Cloud */
 	/** Temperature */
@@ -517,7 +522,9 @@ struct nrf_cloud_svc_info {
 	/** Specify FOTA components to enable, set to NULL to remove the FOTA entry */
 	struct nrf_cloud_svc_info_fota *fota;
 
-	/** DEPRECATED - nRF Cloud no longer requires the device to set UI values in the shadow */
+	/** DEPRECATED - nRF Cloud no longer requires the device to set UI values in the shadow.
+	 * See @ref nrf_cloud_svc_info_ui for more information.
+	 */
 	struct nrf_cloud_svc_info_ui *ui;
 };
 
@@ -632,10 +639,11 @@ struct nrf_cloud_ctrl_data {
 	 *  If false, alerts will be suppressed.
 	 */
 	bool alerts_enabled;
-	/** If 0, the nrf_cloud library logging backend will be disabled.
-	 *  If values from 1 to 4, this level and any lower levels will
-	 *  be sent to the cloud. Level 1 is most urgent (LOG_ERR),
-	 *  level 4 least (LOG_DBG).
+	/** If 0: None - the nrf_cloud library logging backend is disabled.
+	 *     4: LOG_DBG (least urgent) and all levels below are sent to the cloud.
+	 *     3: LOG_INF and all levels below are sent to the cloud.
+	 *     2: LOG_WRN and all levels below are sent to the cloud.
+	 *     1: only LOG_ERR (most urgent) is sent to the cloud.
 	 */
 	int log_level;
 };
