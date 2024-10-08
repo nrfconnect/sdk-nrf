@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../include/main.h"
+#include "backend.h"
 #include <zephyr/drivers/mbox.h>
 
 static const struct mbox_dt_spec rx_channel = MBOX_DT_SPEC_GET(DT_PATH(mbox_consumer), rx);
+static backend_callback_t cbck;
 
 /**
  * @brief Callback function for when a message is received from the mailbox
@@ -40,7 +41,7 @@ static void mbox_callback(const struct device *instance, uint32_t channel, void 
 
 	nrfe_gpio_data_packet_t *packet = (nrfe_gpio_data_packet_t *)&rx_data->data;
 
-	process_packet(packet);
+	cbck(packet);
 
 	/* Clear shared_data.buffer_size (there is no more data available)
 	 * This is necessary so that the other core knows that the data has been read
@@ -73,9 +74,10 @@ static int mbox_init(void *shared_data)
 	return mbox_set_enabled_dt(&rx_channel, true);
 }
 
-int backend_init(void)
+int backend_init(backend_callback_t callback)
 {
 	int ret = 0;
+	cbck = callback;
 
 	static nrfe_gpio_mbox_data_t *rx_data =
 		(nrfe_gpio_mbox_data_t *)((uint8_t *)(DT_REG_ADDR(DT_NODELABEL(sram_rx))));
