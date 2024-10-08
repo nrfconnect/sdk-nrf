@@ -61,6 +61,11 @@ int nrf_cloud_coap_init(void);
 
 /**
  * @brief Connect to and obtain authorization to access the nRF Cloud CoAP server.
+ * The full DTLS handshake is performed, and on success, a connection ID (CID) is
+ * obtained. The CID allows the connection to be paused with @ref nrf_cloud_coap_pause and resumed
+ * with @ref nrf_cloud_coap_resume without redoing the full handshake.
+ * Use @ref nrf_cloud_coap_keepopen_is_supported to check if network conditions allow the pause and
+ * resume actions.
  *
  * This function must return 0 indicating success so that the other functions below,
  * other than nrf_cloud_coap_disconnect(), will not immediately return an error when called.
@@ -269,7 +274,7 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 				struct nrf_cloud_location_result *const result);
 
 /**
- * @brief Request current nRF Cloud FOTA job info for the specified device.
+ * @brief Request current nRF Cloud FOTA job info for the device.
  *
  * @param[out]    job Parsed job info. If no job exists, type will
  *                    be set to invalid. If a job exists, user must call
@@ -310,7 +315,10 @@ int nrf_cloud_coap_fota_job_update(const char *const job_id,
 	const enum nrf_cloud_fota_status status, const char * const details);
 
 /**
- * @brief Query the device's delta or desired shadow section.
+ * @brief Query the device's delta or desired shadow section. The delta section indicates
+ * differences between the desired and reported sections. Clear the delta by aligning the
+ * desired and reported sections using @ref nrf_cloud_coap_shadow_desired_update or
+ * @ref nrf_cloud_coap_shadow_state_update, respectively.
  *
  * @param[in,out] buf     Pointer to memory in which to receive the delta.
  * @param[in,out] buf_len Size of buffer, will be set to the incoming length.
@@ -364,7 +372,8 @@ int nrf_cloud_coap_shadow_state_update(const char * const shadow_json);
 int nrf_cloud_coap_shadow_desired_update(const char * const shadow_json);
 
 /**
- * @brief Update the device status in the shadow's reported state section.
+ * @brief Update the device's reported shadow section with information about the device, network,
+ * modem, SIM card, and FOTA capabilities.
  *
  * @param[in]     dev_status Device status to be encoded.
  *
@@ -378,7 +387,8 @@ int nrf_cloud_coap_shadow_device_status_update(const struct nrf_cloud_device_sta
 					       *const dev_status);
 
 /**
- * @brief Update the device's "serviceInfo" in the shadow.
+ * @brief Update the device's "serviceInfo" section in the shadow. This section informs nRF Cloud
+ * of the device's FOTA capabilities.
  *
  * @param[in]     svc_inf Service info items to be updated in the shadow.
  *
