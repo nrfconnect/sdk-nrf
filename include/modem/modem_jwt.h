@@ -74,8 +74,8 @@ struct jwt_data {
  * Subject and audience fields may be NULL in which case those fields are left out
  * from generated JWT token.
  *
- * If sec_tag value is given as zero, JWT is signed with Nordic's own keys that
- * already exist in the modem.
+ * If sec_tag value is given as zero, JWT is signed with the device's identity key that
+ * already exists in the modem.
  *
  * @param[in,out] jwt Pointer to struct containing JWT parameters and result.
  *
@@ -87,6 +87,9 @@ int modem_jwt_generate(struct jwt_data *const jwt);
 /**
  * @brief Gets the device and/or modem firmware UUID from the modem
  * and returns it as a NULL terminated string in the supplied struct(s).
+ * The device UUID can be used as a device identifier for cloud services and
+ * for secure device management using the nRF Cloud Identity Service.
+ * The modem firmware UUID represents the installed modem firmware version.
  *
  * Uses internally @ref modem_jwt_generate and parses JWT token for "iss"
  * "jti" fields which contains given UUID values.
