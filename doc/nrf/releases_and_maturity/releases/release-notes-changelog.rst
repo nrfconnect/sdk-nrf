@@ -396,6 +396,11 @@ Bluetooth Mesh samples
   * :ref:`ble_mesh_dfu_target`
   * :ref:`ble_mesh_dfu_distributor`
 
+* :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
+
+  * Updated the usage of the :c:macro:`BT_LE_ADV_CONN` macro.
+    See the Bluetooth Host section in Zephyr's :ref:`zephyr:migration_3.7`.
+
 Cellular samples
 ----------------
 
