@@ -4,10 +4,6 @@
 Developing with nRF54L Series
 #############################
 
-.. note::
-
-  All software for the nRF54L15 SoC is experimental and hardware availability is restricted to the participants in the limited sampling program.
-
 .. |nrf_series| replace:: devices of the nRF54L Series
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
@@ -28,10 +24,13 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - :ref:`Getting started <gsg_other>`
      - `nRF54L15 System-on-Chip`_
 
+.. note::
+
+  When building your project with the nRF54L15 DK v0.8.1 (Engineering B silicon), that is marked as PDK, and the nRF54L15 DK v0.9.1 (Engineering B silicon), you must use the ``nrf54l15dk/nrf54l51/cpuapp`` board target.
+
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:
 
    features
    testing_dfu
-   peripheral_sensor_node_shield
