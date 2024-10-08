@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Offloaded Raw TX sample"
+
+config GENERATE_MAC_ADDRESS
+	bool "Random Wi-Fi MAC address"
+	depends on ENTROPY_GENERATOR
+	help
+		The option specifies the MAC address to be used by the sample.
+		This is only used when the nRF7002 OTP is not programmed with a MAC address.
+
+config BEACON_INTERVAL
+	int "Beacon interval in milliseconds"
+	default 100
+	range 20 10000
+	help
+		The option sets the time Time interval (in ms) between beacon transmissions.
+endmenu
