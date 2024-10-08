@@ -238,7 +238,7 @@ int cracen_kmu_clean_key(const uint8_t *user_data)
  */
 bool is_secondary_slot(kmu_metadata *metadata)
 {
-	uint32_t value = 0xffffffff;
+	uint32_t value = UINT32_MAX;
 
 	return memcmp(&value, metadata, sizeof(value)) == 0;
 }
@@ -763,10 +763,11 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	struct kmu_src_t kmu_desc = {};
 
 	for (size_t i = 0; i < num_slots; i++) {
-		kmu_desc.dest = push_address + (CRACEN_KMU_SLOT_KEY_SIZE * i);
-		kmu_desc.metadata = UINT32_MAX;
+		kmu_desc.dest = (uint32_t)push_address + (CRACEN_KMU_SLOT_KEY_SIZE * i);
 		if (i == 0) {
-			memcpy(&kmu_desc.metadata, &metadata, sizeof(metadata));
+			memcpy(&kmu_desc.metadata, &metadata, sizeof(kmu_desc.metadata));
+		} else {
+			kmu_desc.metadata = UINT32_MAX;
 		}
 		kmu_desc.rpolicy = metadata.rpolicy;
 		memcpy(kmu_desc.value, key_buffer + CRACEN_KMU_SLOT_KEY_SIZE * i,
