@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../include/main.h"
-
+#include "./backend/backend.h"
+#include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
+#include <drivers/gpio/nrfe_gpio.h>
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
@@ -144,7 +145,7 @@ int main(void)
 {
 	int ret = 0;
 
-	ret = backend_init();
+	ret = backend_init(process_packet);
 	if (ret < 0) {
 		return 0;
 	}

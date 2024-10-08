@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../include/main.h"
+#include "backend.h"
 #include <zephyr/ipc/ipc_service.h>
 
 static struct ipc_ept ep;
-
-volatile uint32_t bound_sem = 1;
+static backend_callback_t cbck;
+static volatile uint32_t bound_sem = 1;
 
 static void ep_bound(void *priv)
 {
@@ -21,7 +21,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	(void)len;
 	(void)priv;
 
-	process_packet((nrfe_gpio_data_packet_t *)data);
+	cbck((nrfe_gpio_data_packet_t *)data);
 }
 
 static struct ipc_ept_cfg ep_cfg = {
@@ -31,11 +31,12 @@ static struct ipc_ept_cfg ep_cfg = {
 	},
 };
 
-int backend_init(void)
+int backend_init(backend_callback_t callback)
 {
 	int ret = 0;
 	const struct device *ipc0_instance;
 	volatile uint32_t delay = 0;
+	cbck = callback;
 
 #if !defined(CONFIG_SYS_CLOCK_EXISTS)
 	/* Wait a little bit for IPC service to be ready on APP side */
