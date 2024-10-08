@@ -66,7 +66,7 @@ struct kmu_src_t {
 	/** 32-bit destination address. Cannot point to SICR and must be on a
 	 * 128-bit boundary.
 	 */
-	uint8_t *dest;
+	uint32_t dest;
 	/** 32 bits of any clear-text metadata that belongs with the key slot.
 	 */
 	uint32_t metadata;
