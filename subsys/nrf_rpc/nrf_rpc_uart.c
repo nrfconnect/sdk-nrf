@@ -22,6 +22,17 @@ enum {
 	HDLC_CHAR_DELIMITER = 0x7e,
 };
 
+enum flip_state {
+	FLIP_ZERO,
+	FLIP_ONE,
+	FLIP_ANY
+};
+
+struct trx_flips {
+	uint8_t tx_flip : 2;
+	uint8_t rx_flip : 2;
+};
+
 typedef enum {
 	HDLC_STATE_UNSYNC,
 	HDLC_STATE_FRAME_START,
@@ -54,6 +65,7 @@ struct nrf_rpc_uart {
 	struct k_sem ack_sem;
 	uint16_t ack_payload;
 	struct k_mutex ack_tx_lock;
+	struct trx_flips flips;
 
 	/* TX lock */
 	struct k_mutex tx_lock;
@@ -96,6 +108,52 @@ static void ack_tx(struct nrf_rpc_uart *uart_tr, uint16_t ack_pld)
 	uart_poll_out(uart_tr->uart, HDLC_CHAR_DELIMITER);
 
 	k_mutex_unlock(&uart_tr->ack_tx_lock);
+}
+
+static uint16_t tx_flip(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
+{
+	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
+		return crc_val;
+	}
+
+	if (uart_tr->flips.tx_flip == FLIP_ZERO) {
+		crc_val &= 0x7fffu;
+		uart_tr->flips.tx_flip = FLIP_ONE;
+	} else {
+		crc_val |= 0x8000u;
+		uart_tr->flips.tx_flip = FLIP_ZERO;
+	}
+
+	return crc_val;
+}
+
+static bool rx_flip_check(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
+{
+	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
+		return false;
+	}
+
+	if (uart_tr->flips.rx_flip == FLIP_ZERO && (crc_val & 0x8000u) == 0) {
+		uart_tr->flips.rx_flip = FLIP_ONE;
+		return false;
+	} else if (uart_tr->flips.rx_flip == FLIP_ONE && (crc_val & 0x8000u) == 0x8000u) {
+		uart_tr->flips.rx_flip = FLIP_ZERO;
+		return false;
+	} else if (uart_tr->flips.rx_flip == FLIP_ANY) {
+		uart_tr->flips.rx_flip = crc_val & 0x8000u ? FLIP_ZERO : FLIP_ONE;
+		return false;
+	}
+
+	return true;
+}
+
+static bool crc_compare(uint16_t rx_crc, uint16_t calc_crc)
+{
+	if (IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
+		return (rx_crc & 0x7fffu) == (calc_crc & 0x7fffu);
+	}
+
+	return rx_crc == calc_crc;
 }
 
 static void hdlc_decode_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
@@ -151,7 +209,7 @@ static void work_handler(struct k_work *work)
 			crc_received = sys_get_le16(uart_tr->rx_packet + uart_tr->rx_packet_len);
 			crc_calculated =
 				crc16_ccitt(0xffff, uart_tr->rx_packet, uart_tr->rx_packet_len);
-			if (crc_calculated != crc_received) {
+			if (!crc_compare(crc_received, crc_calculated)) {
 				LOG_ERR("Invalid CRC, calculated %4x received %4x", crc_calculated,
 					crc_received);
 				uart_tr->rx_packet_len = 0;
@@ -161,8 +219,14 @@ static void work_handler(struct k_work *work)
 
 			ack_tx(uart_tr, crc_received);
 
-			uart_tr->receive_callback(transport, uart_tr->rx_packet,
-						  uart_tr->rx_packet_len, uart_tr->receive_ctx);
+			if (rx_flip_check(uart_tr, crc_received)) {
+				LOG_WRN("Duplicated frame was filtered (crc:%#4x)", crc_received);
+			} else {
+				uart_tr->receive_callback(transport, uart_tr->rx_packet,
+							  uart_tr->rx_packet_len,
+							  uart_tr->receive_ctx);
+			}
+
 			uart_tr->rx_packet_len = 0;
 			uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
 		}
@@ -254,6 +318,8 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	if (IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
 		k_mutex_init(&uart_tr->ack_tx_lock);
 		k_sem_init(&uart_tr->ack_sem, 0, 1);
+		uart_tr->flips.tx_flip = FLIP_ZERO;
+		uart_tr->flips.rx_flip = FLIP_ANY;
 	}
 
 	k_work_queue_init(&uart_tr->rx_workq);
@@ -309,6 +375,7 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 		}
 
 		crc_val = crc16_ccitt(0xffff, data, length);
+		crc_val = tx_flip(uart_tr, crc_val);
 		sys_put_le16(crc_val, crc);
 		send_byte(uart_tr->uart, crc[0]);
 		send_byte(uart_tr->uart, crc[1]);
