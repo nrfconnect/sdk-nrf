@@ -344,7 +344,8 @@ Bluetooth samples
 
 * :ref:`bluetooth_isochronous_time_synchronization`:
 
-  * Fixed issues related to RTC wrapping that prevented the **LED** to toggle at the correct point in time.
+  * Fixed **LED** toggling issues on nRF52 and nRF53 Series devices that would occur after RTC wraps that occur every ~8.5 minutes.
+    The **LED** previously toggled unintentionally, at the wrong point in time, or not at all.
 
 * :ref:`ble_event_trigger` sample:
 
