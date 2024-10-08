@@ -290,6 +290,8 @@ nRF Desktop
     Removed the ``CONFIG_DESKTOP_HWINFO_BLE_ADDRESS_FICR_POSTFIX`` Kconfig option as a postfix constant is no longer needed for the Zephyr native driver.
     The driver uses ``BLE.ADDR``, ``BLE.IR``, and ``BLE.ER`` fields of the Factory Information Configuration Registers (FICR) to provide 8 bytes of unique hardware ID.
   * The :ref:`nrf_desktop_dfu_mcumgr` to recognize the MCUmgr custom group ID (:kconfig:option:`CONFIG_MGMT_GROUP_ID_SUIT`) from the SUITFU subsystem (:kconfig:option:`CONFIG_MGMT_SUITFU`) as a DFU-related command group.
+  * All build configurations with the DFU over MCUmgr support to require encryption for operations on the Bluetooth GATT SMP service (see the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_ENCRYPT` Kconfig option).
+    The Bluetooth pairing procedure of the unpaired Bluetooth peers must now be performed before the DFU operation.
 
 
 nRF Machine Learning (Edge Impulse)

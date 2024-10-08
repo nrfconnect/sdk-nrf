@@ -317,6 +317,10 @@ The update image can also be transferred in the background through one of the fo
 
 The `nRF Connect Device Manager`_ application transfers the image update files over the Simple Management Protocol (SMP).
 
+.. note::
+   If your DFU target is not paired through Bluetooth with your Android device, the DFU procedure automatically triggers the pairing procedure.
+   The nRF Desktop configurations with the DFU support over SMP require encryption for operations on the Bluetooth GATT SMP service (see the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_ENCRYPT` Kconfig option).
+
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
 .. tabs::
