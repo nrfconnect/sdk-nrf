@@ -60,5 +60,11 @@ int main(void)
 	clock_init();
 #endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	/* Apply HMPAN-102 workaround for nRF54H series */
+	*(volatile uint32_t *)0x5302C7E4 =
+				(((*((volatile uint32_t *)0x5302C7E4)) & 0xFF000FFF) | 0x0012C000);
+#endif
+
 	return 0;
 }

@@ -1763,6 +1763,12 @@ int esb_init(const struct esb_config *config)
 		*(volatile uint32_t *)0x4000173C |= (1 << 10);
 	}
 
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	/* Apply HMPAN-102 workaround for nRF54H series */
+	*(volatile uint32_t *)0x5302C7E4 =
+				(((*((volatile uint32_t *)0x5302C7E4)) & 0xFF000FFF) | 0x0012C000);
+#endif
+
 	return 0;
 }
 
