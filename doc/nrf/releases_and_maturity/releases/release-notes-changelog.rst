@@ -463,7 +463,7 @@ Debug samples
 DECT NR+ samples
 ----------------
 
-|no_changes_yet_note|
+* Added the :ref:`dect_shell_application` sample.
 
 Edge Impulse samples
 --------------------

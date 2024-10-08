@@ -124,9 +124,10 @@ A subset of the following |NCS| libraries are used for DECT NR+:
 Applications and samples
 ========================
 
-The following sample use DECT NR+ in the |NCS|:
+The following samples use DECT NR+ in the |NCS|:
 
 * :ref:`nrf_modem_dect_phy_hello`
+* :ref:`dect_shell_application`
 
 Power optimization
 ==================
