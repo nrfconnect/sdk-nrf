@@ -639,11 +639,11 @@ struct nrf_cloud_ctrl_data {
 	 *  If false, alerts will be suppressed.
 	 */
 	bool alerts_enabled;
-	/** If 0: None - the nrf_cloud library logging backend will be disabled.
-	 *     4: LOG_DBG (least urgent) and all levels below will be sent to the cloud.
-	 *     3: LOG_INF and all levels below will be sent to the cloud.
-	 *     2: LOG_WRN and all levels below will be sent to the cloud.
-	 *     1: only LOG_ERR (most urgent) will be sent to the cloud.
+	/** If 0: None - the nrf_cloud library logging backend is disabled.
+	 *     4: LOG_DBG (least urgent) and all levels below are sent to the cloud.
+	 *     3: LOG_INF and all levels below are sent to the cloud.
+	 *     2: LOG_WRN and all levels below are sent to the cloud.
+	 *     1: only LOG_ERR (most urgent) is sent to the cloud.
 	 */
 	int log_level;
 };

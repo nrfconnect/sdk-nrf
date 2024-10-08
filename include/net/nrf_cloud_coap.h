@@ -61,7 +61,7 @@ int nrf_cloud_coap_init(void);
 
 /**
  * @brief Connect to and obtain authorization to access the nRF Cloud CoAP server.
- * The full DTLS handshake will be performed, and on success, a connection ID (CID) will be
+ * The full DTLS handshake is performed, and on success, a connection ID (CID) is
  * obtained. The CID allows the connection to be paused with @ref nrf_cloud_coap_pause and resumed
  * with @ref nrf_cloud_coap_resume without redoing the full handshake.
  * Use @ref nrf_cloud_coap_keepopen_is_supported to check if network conditions allow the pause and
