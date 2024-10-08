@@ -49,8 +49,6 @@ tests:
     extra_args:
       - FILE_SUFFIX=bt
       - SB_CONFIG_SUIT_BUILD_RECOVERY=y
-    extra_configs:
-      - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
     tags: suit bluetooth ci_samples_suit
 
   sample.suit.smp_transfer.full_processing.extflash.bt:
