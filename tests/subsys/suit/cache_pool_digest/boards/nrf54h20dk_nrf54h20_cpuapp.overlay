@@ -26,8 +26,7 @@
 	cpuapp_rw_partitions: cpuapp-rw-partitions {
 		compatible = "nordic,owned-partitions", "fixed-partitions";
 		status = "okay";
-		perm-read;
-		perm-write;
+		nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
 		#address-cells = < 0x1 >;
 		#size-cells = < 0x1 >;
 
