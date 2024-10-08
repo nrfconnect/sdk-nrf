@@ -69,9 +69,9 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define PRES_COMP_NUM_DATA_PTS (DRIFT_MEAS_PERIOD_US / CONFIG_AUDIO_FRAME_DURATION_US)
 
 /* Audio clock - nRF5340 Analog Phase-Locked Loop (APLL) */
-#define APLL_FREQ_CENTER 39854
-#define APLL_FREQ_MIN	 36834
-#define APLL_FREQ_MAX	 42874
+#define APLL_FREQ_MIN	 HFCLKAUDIO_12_165_MHZ
+#define APLL_FREQ_CENTER HFCLKAUDIO_12_288_MHZ
+#define APLL_FREQ_MAX	 HFCLKAUDIO_12_411_MHZ
 /* Use nanoseconds to reduce rounding errors */
 /* clang-format off */
 #define APLL_FREQ_ADJ(t) (-((t)*1000) / 331)

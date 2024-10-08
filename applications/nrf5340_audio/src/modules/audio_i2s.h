@@ -15,6 +15,17 @@
  * be 10 or 7.5 ms. Since we can't have floats in a define we use 15/2 instead
  */
 
+/**
+ * Calculation:
+ * FREQ_VALUE = 2^16 * ((12 * f_out / 32M) - 4)
+ * f_out == 12.288
+ * 39845.888 = 2^16 * ((12 * 12.288 / 32M) - 4)
+ * 39846 = 0x9BA6
+ */
+#define HFCLKAUDIO_12_288_MHZ 0x9BA6
+#define HFCLKAUDIO_12_165_MHZ 0x8FD8
+#define HFCLKAUDIO_12_411_MHZ 0xA774
+
 #if ((CONFIG_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_SW_CODEC_LC3)
 
 #define FRAME_SIZE_BYTES                                                                           \
