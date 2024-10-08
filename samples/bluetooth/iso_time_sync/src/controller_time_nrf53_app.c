@@ -25,6 +25,7 @@
 static const nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(0);
 static const nrfx_timer_t app_timer_instance = NRFX_TIMER_INSTANCE(0);
 
+static uint8_t ppi_chan_on_rtc_match;
 static volatile uint32_t num_rtc_overflows;
 
 static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
@@ -134,7 +135,6 @@ static int timer_config(void)
  */
 int config_egu_trigger_on_rtc_and_timer_match(void)
 {
-	uint8_t ppi_chan_on_rtc_match;
 	uint8_t ppi_chan_on_timer_match;
 
 	if (nrfx_gppi_channel_alloc(&ppi_chan_on_rtc_match) != NRFX_SUCCESS) {
@@ -149,8 +149,9 @@ int config_egu_trigger_on_rtc_and_timer_match(void)
 
 	nrfx_gppi_group_clear(NRFX_GPPI_CHANNEL_GROUP0);
 	nrfx_gppi_group_disable(NRFX_GPPI_CHANNEL_GROUP0);
-	nrfx_gppi_channels_include_in_group(BIT(ppi_chan_on_timer_match),
-					    NRFX_GPPI_CHANNEL_GROUP0);
+	nrfx_gppi_channels_include_in_group(
+		BIT(ppi_chan_on_timer_match) | BIT(ppi_chan_on_rtc_match),
+		NRFX_GPPI_CHANNEL_GROUP0);
 
 	nrfx_gppi_channel_endpoints_setup(ppi_chan_on_rtc_match,
 					  nrfx_rtc_event_address_get(&app_rtc_instance,
@@ -162,8 +163,6 @@ int config_egu_trigger_on_rtc_and_timer_match(void)
 					  nrfx_gppi_task_address_get(NRFX_GPPI_TASK_CHG0_DIS));
 	nrfx_gppi_fork_endpoint_setup(ppi_chan_on_timer_match,
 				      nrf_egu_task_address_get(NRF_EGU0, NRF_EGU_TASK_TRIGGER0));
-
-	nrfx_gppi_channels_enable(BIT(ppi_chan_on_rtc_match));
 
 	return 0;
 }
@@ -254,6 +253,7 @@ void controller_time_trigger_set(uint64_t timestamp_us)
 	}
 
 	nrfx_timer_compare(&app_timer_instance, 0, timer_val, false);
+	nrfx_gppi_channels_enable(BIT(ppi_chan_on_rtc_match));
 }
 
 uint32_t controller_time_trigger_event_addr_get(void)
