@@ -187,6 +187,12 @@
     - nrf54l15pdk/nrf54l15/cpuflpr
   comment: "Missing support for nrf54l15pdk"
 
+- scenarios:
+    - sample.filesystem.fat_fs.nrf54l15dk
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Test not aligned for nrf54l15 - missing PM configuration"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
