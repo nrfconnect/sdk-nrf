@@ -46,31 +46,38 @@ Depending on your preferred development environment, install the following requi
 
    .. group-tab:: nRF Connect for Visual Studio Code
 
-      * The latest version of the :ref:`requirements_clt` package.
-        Download it from the `nRF Command Line Tools`_ page.
-      * The |jlink_ver| of :ref:`SEGGER J-Link <requirements_jlink>`.
-        Download it from the `J-Link Software and Documentation Pack`_ page.
-      * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
-      * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
-      * Linux users: `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
+      * All operating systems:
+
+        * The latest version of the :ref:`requirements_clt` package.
+          Download it from the `nRF Command Line Tools`_ page.
+        * The |jlink_ver_vsc| of :ref:`SEGGER J-Link <requirements_jlink>`.
+          Download it from the `J-Link Software and Documentation Pack`_ page.
+        * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
+        * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
+
+      * Additionally for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
    .. group-tab:: Command line
 
-      * The latest version of `nRF Util development tool`_, a unified command line utility for Nordic products.
+      * All operating systems:
 
-        .. note::
-            After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
-            On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
+        * The latest version of `nRF Util development tool`_, a unified command-line utility for Nordic Semiconductor products.
 
-      * The latest version of the :ref:`requirements_clt` package.
-        Download it from the `nRF Command Line Tools`_ page.
+          .. note::
+              After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
+              On macOS and Linux, you need to give execute rights to the downloaded file.
+              Type `chmod +x nrfutil` or check the checkbox in the file properties.
 
-        .. note::
-            After downloading and installing the tools, add nrfjprog to the system :envvar:`PATH` in the environment variables.
+        * The latest version of the :ref:`requirements_clt` package.
+          Download it from the `nRF Command Line Tools`_ page.
 
-      * The latest version of :ref:`SEGGER J-Link <requirements_jlink>`.
-        Download it from the `J-Link Software and Documentation Pack`_ page.
-      * Linux users: `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
+         .. note::
+               After downloading and installing the tools, add nrfjprog to the system :envvar:`PATH` in the environment variables.
+
+        * The |jlink_ver| of :ref:`SEGGER J-Link <requirements_jlink>`.
+          Download it from the `J-Link Software and Documentation Pack`_ page.
+
+      * Additionally for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:
@@ -83,7 +90,8 @@ Install the |NCS| toolchain
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
 These include the :ref:`required tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
 
-When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.
+.. note::
+    When you first install the |NCS|, it is recommended to install the latest released, stable versions of the SDK and the toolchain.
 
 Depending on your preferred development environment, complete the following steps:
 
@@ -186,7 +194,7 @@ Simply put, you can work with the following versions of the |NCS|:
      - `sdk-nrf`_ repository
 
 .. note::
-   Unless you are familiar with the :ref:`development process <dev-model>`, you should always work with a specific release of the |NCS|.
+   Unless you are familiar with the :ref:`development process <dev-model>`, you should always work with a specific, stable release of the |NCS|.
 
 For more information about the repository and development model, see the :ref:`dm_code_base` page.
 
@@ -611,15 +619,15 @@ To install the |NCS| system-wide, complete the following steps:
 Installation with Toolchain Manager
 ***********************************
 
-.. note::
+Toolchain Manager is a SDK and toolchain installer for the |NCS|.
+It is available from `nRF Connect for Desktop`_, a cross-platform tool that provides different development applications for the |NCS| and Nordic Semiconductor products.
+Both Toolchain Manager and nRF Connect for Desktop are available for Windows, Linux, and macOS.
 
+.. note::
    The Toolchain Manager installation is recommended only when using the nRF54H20 DK with the |NCS| v2.7.0.
-   When using any other DK, the Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier versions.
+   Since the release of the |NCS| v2.0.0, the |nRFVSC| is the recommended IDE for managing the |NCS| Toolchain and working with the |NCS|.
 
 .. toggle::
-
-   Toolchain Manager is a tool available from `nRF Connect for Desktop`_, a cross-platform tool that provides different applications that simplify installing the |NCS|.
-   Both the tool and the application are available for Windows, Linux, and macOS.
 
    To install the toolchain and the SDK using the Toolchain Manager app, complete the following steps:
 

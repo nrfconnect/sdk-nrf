@@ -59,11 +59,11 @@ You also need the following:
 
          * From the Command Prompt::
 
-            JLink_Windows_V794e_x86_64.exe -InstUSBDriver=1
+            JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
 
          * From PowerShell::
 
-            .\JLink_Windows_V794e_x86_64.exe -InstUSBDriver=1
+            .\JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
 
       #. In the :guilabel:`Choose optional components` window, select :guilabel:`update existing installation`.
       #. Add the J-Link executable to the system path on Linux and MacOS, or to the environment variables on Windows, to run it from anywhere on the system.
