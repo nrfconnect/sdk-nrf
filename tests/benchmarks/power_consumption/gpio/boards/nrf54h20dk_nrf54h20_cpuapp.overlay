@@ -1,18 +1,4 @@
 / {
-	power-states {
-		idle: idle {
-			compatible = "zephyr,power-state";
-			power-state-name = "suspend-to-idle";
-			min-residency-us = <100000>;
-		};
-
-		s2ram: s2ram {
-			compatible = "zephyr,power-state";
-			power-state-name = "suspend-to-ram";
-			min-residency-us = <800000>;
-		};
-	};
-
 	aliases {
 		out0 = &output0;
 		in0 = &input0;
@@ -35,8 +21,4 @@
 			label = "GPIO input 0";
 		};
 	};
-};
-
-&cpu {
-	cpu-power-states = <&idle &s2ram>;
 };
