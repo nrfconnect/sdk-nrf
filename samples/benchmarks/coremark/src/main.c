@@ -50,7 +50,8 @@ static K_SEM_DEFINE(start_coremark, 0, 1);
 static atomic_t coremark_in_progress;
 
 /* Enforce synchronous logging as the sample doesn't flush logs. */
-BUILD_ASSERT(IS_ENABLED(CONFIG_LOG_MODE_MINIMAL) || IS_ENABLED(CONFIG_LOG_MODE_IMMEDIATE),
+BUILD_ASSERT(IS_ENABLED(CONFIG_LOG_MODE_MINIMAL) || IS_ENABLED(CONFIG_LOG_MODE_IMMEDIATE) ||
+	     IS_ENABLED(CONFIG_LOG_FRONTEND_ONLY),
 	     "Logs should be processed synchronously to avoid negative impact on the "
 	     "benchamrk performance");
 

@@ -40,3 +40,11 @@
 	owned-channels = <6>;
 	status = "okay";
 };
+
+/* Disable the default UART node for the radio core, as logs are forwarded
+ * with STM and the application core UART. This setting also prevents access
+ * issues to the same UART instance from two or more different cores.
+ */
+&uart135 {
+	status = "disabled";
+};

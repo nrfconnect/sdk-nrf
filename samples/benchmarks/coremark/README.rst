@@ -146,13 +146,6 @@ SB_CONFIG_APP_CPUPPR_RUN - Enable execution for the PPR core
 
 .. note::
    PPR code is run from RAM.
-   You must use the ``nordic-ppr`` snippet for the application core to be able to boot the PPR core.
-   Use the build argument ``coremark_SNIPPET=nordic-ppr``.
-   To build the sample with the execution for the PPR core enabled, run the following command:
-
-   .. code-block:: console
-
-      west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_APP_CPUNET_RUN=n -DSB_CONFIG_APP_CPUPPR_RUN=y -Dcoremark_SNIPPET=nordic-ppr
 
 Building and running
 ********************
