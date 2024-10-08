@@ -16,7 +16,14 @@
 
 #define I2S_NL DT_NODELABEL(i2s0)
 
-#define HFCLKAUDIO_12_288_MHZ 0x9BAE
+/**
+ * Calculation:
+ * FREQ_VALUE = 2^16 * ((12 * f_out / 32M) - 4)
+ * f_out == 12.288
+ * 39845.888 = 2^16 * ((12 * 12.288 / 32M) - 4)
+ * 39846 = 0x9BA6
+ */
+#define HFCLKAUDIO_12_288_MHZ 0x9BA6
 
 enum audio_i2s_state {
 	AUDIO_I2S_STATE_UNINIT,
