@@ -16,8 +16,6 @@
 
 #define I2S_NL DT_NODELABEL(i2s0)
 
-#define HFCLKAUDIO_12_288_MHZ 0x9BAE
-
 enum audio_i2s_state {
 	AUDIO_I2S_STATE_UNINIT,
 	AUDIO_I2S_STATE_IDLE,
