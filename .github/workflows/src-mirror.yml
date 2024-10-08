@@ -21,9 +21,9 @@ jobs:
           git config --global pack.windowMemory "32m" &&
           west forall -c 'git gc --prune --aggressive'
 
-      - name: Create 7z archive
+      - name: Create tar archive
         run: |
-          7z a -t7z src.7z ./workspace/
+          tar -C ./workspace -czvf src.tar.gz .
 
       - name: Set up JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4
@@ -32,7 +32,7 @@ jobs:
         env:
           ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
           REPOSITORY: ncs-src-mirror
-          FILE_PATH: src.7z
+          FILE_PATH: src.tar.gz
           TARGET_PATH: external/${{ github.ref_name }}/
         run: >
           jfrog rt u $FILE_PATH $REPOSITORY/$TARGET_PATH
