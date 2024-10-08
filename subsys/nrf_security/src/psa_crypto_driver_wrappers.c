@@ -19,9 +19,9 @@
 
 #if defined(MBEDTLS_PSA_CRYPTO_C)
 
-#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && !defined(CONFIG_BUILD_WITH_TFM)
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT)
 #include <hw_unique_key.h>
-#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT && !CONFIG_BUILD_WITH_TFM */
+#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT */
 
 #if defined(MBEDTLS_PSA_CRYPTO_DRIVERS)
 
@@ -139,7 +139,7 @@
 psa_status_t prng_test_generate_random(uint8_t *output, size_t output_size);
 #endif
 
-#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && !defined(CONFIG_BUILD_WITH_TFM)
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT)
 static psa_status_t hw_unique_key_provisioning(void)
 {
 	if (!hw_unique_key_are_any_written()) {
@@ -152,7 +152,7 @@ static psa_status_t hw_unique_key_provisioning(void)
 
 	return PSA_SUCCESS;
 }
-#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT && !CONFIG_BUILD_WITH_TFM */
+#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT */
 
 psa_status_t psa_driver_wrapper_init(void)
 {
@@ -173,12 +173,12 @@ psa_status_t psa_driver_wrapper_init(void)
 	}
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
 
-#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT) && !defined(CONFIG_BUILD_WITH_TFM)
+#if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT)
 	status = hw_unique_key_provisioning();
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT && !CONFIG_BUILD_WITH_TFM */
+#endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT */
 
 	return PSA_SUCCESS;
 }
