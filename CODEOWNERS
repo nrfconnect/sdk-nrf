@@ -43,6 +43,7 @@
 # Boards
 /boards/                                  @nrfconnect/ncs-co-boards
 /boards/nordic/thingy91*                  @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
+/boards/shields/coverage_support/         @nrfconnect/ncs-low-level-test
 
 # SUIT configuration files
 /config/suit/                             @nrfconnect/ncs-charon
