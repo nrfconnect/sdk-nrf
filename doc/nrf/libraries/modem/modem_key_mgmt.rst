@@ -67,11 +67,12 @@ The following code snippet shows how to write a CA chain certificate to the mode
 .. code-block:: c
 
    int err;
+   nrf_sec_tag_t sec_tag = 42;
    static const char cert[] = {
            #include "YourCert.pem.inc"
    };
 
-   err = modem_key_mgmt_write(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
+   err = modem_key_mgmt_write(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
    if (err) {
            printk("Failed to provision certificate, err %d\n", err);
    }
@@ -81,9 +82,10 @@ The following code snippet shows how to check if a CA chain certificate exists i
 .. code-block:: c
 
    int err;
+   nrf_sec_tag_t sec_tag = 42;
    bool exists;
 
-   err = modem_key_mgmt_exists(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists);
+   err = modem_key_mgmt_exists(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists);
    if (err) {
            printk("Failed to check if credential exists\n");
            return;
@@ -100,11 +102,12 @@ The following code snippet shows how to check if the CA chain certificate stored
 .. code-block:: c
 
    int mismatch;
+   nrf_sec_tag_t sec_tag = 42;
    static const char cert[] = {
            #include "YourCert.pem.inc"
    };
 
-   mismatch = modem_key_mgmt_cmp(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
+   mismatch = modem_key_mgmt_cmp(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, sizeof(cert));
    if (mismatch) {
            printk("Certificate mismatch\n");
    } else {
@@ -116,12 +119,13 @@ The following code snippet shows how to read a CA chain certificate stored in th
 .. code-block:: c
 
    int err;
+   nrf_sec_tag_t sec_tag = 42;
    char cert[CERT_SIZE];
    size_t len;
 
    len = sizeof(cert);
 
-   err = modem_key_mgmt_read(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, &len);
+   err = modem_key_mgmt_read(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, cert, &len);
    if (err) {
            printk("Failed to read certificate\n");
    }
@@ -131,8 +135,9 @@ The following code snippet shows how to delete a CA chain certificate stored in 
 .. code-block:: c
 
    int err;
+   nrf_sec_tag_t sec_tag = 42;
 
-   err = modem_key_mgmt_delete(<YOUR_SEC_TAG>, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
+   err = modem_key_mgmt_delete(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
    if (err) {
            printk("Failed to delete existing certificate, err %d\n", err);
    }
@@ -142,8 +147,9 @@ The following code snippet shows how to delete all credentials associated with a
 .. code-block:: c
 
    int err;
+   nrf_sec_tag_t sec_tag = 42;
 
-   err = modem_key_mgmt_clear(<YOUR_SEC_TAG>);
+   err = modem_key_mgmt_clear(sec_tag);
    if (err) {
            printk("Failed to clear credentials on sectag, err %d\n", err);
    }
