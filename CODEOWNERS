@@ -514,6 +514,7 @@
 /samples/wifi/softap/                     @D-Triveni @krish2718
 /samples/wifi/monitor/                    @D-Triveni
 /samples/wifi/promiscuous/                @D-Triveni
+/samples/wifi/offloaded_raw_tx/           @kapbh @sachinthegreen
 /samples/zigbee/                          @nrfconnect/ncs-zigbee
 
 /samples/app_event_manager/*.rst          @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc

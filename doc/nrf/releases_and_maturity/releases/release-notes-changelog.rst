@@ -256,6 +256,7 @@ Wi-Fi
 -----
 
 * The WPA supplicant is now switched to Zephyr upstream's fork instead of |NCS|.
+* Added the :ref:`ug_nrf70_developing_offloaded_raw_tx` page.
 
 Applications
 ============
@@ -692,6 +693,10 @@ Zigbee samples
 
 Wi-Fi samples
 -------------
+
+* Added:
+
+  * The :ref:`wifi_offloaded_raw_tx_packet_sample` sample that demonstrates transmission of raw packets.
 
 * :ref:`wifi_radio_test` sample:
 
