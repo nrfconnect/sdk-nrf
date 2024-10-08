@@ -53,6 +53,13 @@ config PSA_PROMPTLESS
 
 if NRF_SECURITY
 
+config MBEDTLS_ENABLE_BUILTIN_KEYS
+	bool
+	default y if SOC_SERIES_NRF54LX && (HW_UNIQUE_KEY || IDENTITY_KEY)
+	default y if SOC_SERIES_NRF54HX && (SOC_NRF54H20_CPUSEC)
+	help
+	  Promptless option used to control if MBEDTLS should have support for builtin keys or not.
+
 config MBEDTLS_CFG_FILE
 	string "mbed TLS configuration file"
 	default "nrf-config.h"
