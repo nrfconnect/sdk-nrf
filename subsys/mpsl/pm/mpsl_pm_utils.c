@@ -26,8 +26,6 @@ LOG_MODULE_REGISTER(mpsl_pm_utils, CONFIG_MPSL_LOG_LEVEL);
 static void m_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(pm_work, m_work_handler);
 
-#define RETRY_TIME_MAX_US (UINT32_MAX - TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US)
-
 static uint8_t                          m_pm_prev_flag_value;
 static bool                             m_pm_event_is_registered;
 static uint32_t                         m_prev_lat_value_us;
@@ -73,12 +71,32 @@ void mpsl_pm_utils_work_handler(void)
 		/* In case we missed a state and are in zero-latency, set low-latency.*/
 		m_update_latency_request(PM_MAX_LATENCY_HCI_COMMANDS_US);
 
-		/* Event scheduled */
-		if (params.event_time_abs_us > UINT32_MAX) {
-			mpsl_work_schedule(&pm_work, K_USEC(RETRY_TIME_MAX_US));
+		/* Note: Considering an overflow could only happen if the system runs many years,
+		 * it needen't be considered here.
+		 */
+		int64_t current_time_us = k_uptime_get() * 1000;
+		uint64_t relative_time_us = params.event_time_abs_us - current_time_us;
+		uint64_t max_cycles_until_event = k_us_to_cyc_floor64(relative_time_us);
+
+		if (max_cycles_until_event > UINT32_MAX) {
+			/* The event is too far in the future and would
+			 * exceed the 32-bit cycle limit.
+			 */
+			uint64_t event_delay_us = params.event_time_abs_us - current_time_us -
+						  TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US;
+#ifdef CONFIG_TIMEOUT_64BIT
+			mpsl_work_schedule(&pm_work, K_USEC(event_delay_us));
+#else
+			if (event_delay_us > UINT32_MAX) {
+				mpsl_work_schedule(&pm_work, K_USEC(UINT32_MAX));
+			} else {
+				mpsl_work_schedule(&pm_work, K_USEC((uint32_t)event_delay_us));
+			}
+#endif
 			return;
 		}
 
+		/* Event scheduled */
 		if (m_pm_event_is_registered) {
 			pm_policy_event_update(&m_evt,
 					       k_us_to_cyc_floor32(params.event_time_abs_us));
