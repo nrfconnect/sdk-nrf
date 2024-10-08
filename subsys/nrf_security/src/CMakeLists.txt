@@ -117,6 +117,7 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   padlock.c
   version.c
   constant_time.c
+  des.c
 )
 
 # Legacy APIs were missing files added by Oberon PSA core (not built in
