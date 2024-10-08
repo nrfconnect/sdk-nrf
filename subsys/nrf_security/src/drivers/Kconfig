@@ -59,18 +59,6 @@ config PSA_USE_HMAC_DRBG_DRIVER
 
 endmenu
 
-config PSA_WANT_ALG_CFB
-	bool "PSA stream cipher using CFB block cipher mode support"
-
-config PSA_WANT_ALG_OFB
-	bool "PSA stream cipher using OFB block cipher mode support"
-
-config PSA_WANT_ALG_CHACHA20
-	bool "PSA stream cipher using CHACHA20 support"
-
-config PSA_WANT_ALG_SHAKE256_512
-	bool "PSA SHAKE256 512 bits support"
-
 menu "CryptoCell PSA Driver Configuration"
 if PSA_CRYPTO_DRIVER_CC3XX
 

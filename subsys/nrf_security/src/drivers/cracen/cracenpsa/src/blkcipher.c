@@ -228,10 +228,6 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 		IF_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES,
 			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
-	case PSA_ALG_OFB:
-		IF_ENABLED(PSA_NEED_CRACEN_OFB_AES,
-			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
-		break;
 	default:
 		is_supported = false;
 		break;
@@ -263,17 +259,6 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 									     &operation->keyref,
 									     operation->iv)
 					    : sx_blkcipher_create_aescbc_enc(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv);
-		}
-		break;
-	case PSA_ALG_OFB:
-		if (IS_ENABLED(PSA_NEED_CRACEN_OFB_AES)) {
-			sx_status = operation->dir == CRACEN_DECRYPT
-					    ? sx_blkcipher_create_aesofb_dec(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv)
-					    : sx_blkcipher_create_aesofb_enc(&operation->cipher,
 									     &operation->keyref,
 									     operation->iv);
 		}

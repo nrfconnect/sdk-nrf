@@ -81,8 +81,6 @@ struct sxblkcipher;
  *  --------: | :----------: | :-----------
  *        ECB | N * 16 bytes | N > 0
  *        CBC | N * 16 bytes | N > 0
- *        CFB | N * 16 bytes | N > 0
- *        OFB | N * 16 bytes | N > 0
  *        XTS | >= 16 bytes  | none
  *        CTR | > 0 bytes    | none
  *
