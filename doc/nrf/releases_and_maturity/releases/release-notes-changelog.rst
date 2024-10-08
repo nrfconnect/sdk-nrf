@@ -1113,7 +1113,6 @@ Documentation
 * Added:
 
   * The :ref:`ug_app_dev` section, which includes pages from the :ref:`configuration_and_build` section and from the removed Device configuration guides section.
-  * The :ref:`peripheral_sensor_node_shield` page.
   * The :ref:`dfu_tools_mcumgr_cli` page after it was removed from the Zephyr repository.
   * The :ref:`ug_nrf54h20_suit_soc_binaries` page.
   * The :ref:`ug_nrf54h20_suit_push` page documentating the SUIT push model-based update process.

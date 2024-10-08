@@ -201,8 +201,6 @@ NRF = [
     ("app_dev/device_guides/working_with_nrf/nrf54l/nrf54l15_gs", "gsg_guides"),
     ("device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/testing_dfu"), # Testing the DFU solution
     ("app_dev/device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/testing_dfu"),
-    ("device_guides/working_with_nrf/nrf54l/peripheral_sensor_node_shield", "app_dev/device_guides/nrf54l/peripheral_sensor_node_shield"), # Developing with Peripheral Sensor node shield
-    ("app_dev/device_guides/working_with_nrf/nrf54l/peripheral_sensor_node_shield", "app_dev/device_guides/nrf54l/peripheral_sensor_node_shield"),
     ("device_guides/nrf54h", "app_dev/device_guides/nrf54h"), # Developing with nRF54H Series
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs"), # Getting started with the nRF54H20 DK
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
