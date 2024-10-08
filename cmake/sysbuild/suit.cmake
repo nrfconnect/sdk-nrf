@@ -110,9 +110,14 @@ function(suit_generate_recovery_dfu_zip)
     GLOBAL PROPERTY
     SUIT_RECOVERY_DFU_ARTIFACTS
   )
+  get_property(
+    additional_script_params
+    GLOBAL PROPERTY
+    SUIT_RECOVERY_DFU_ZIP_ADDITIONAL_SCRIPT_PARAMS
+  )
 
   set(root_name "${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_ARTIFACT_NAME}.suit")
-  set(script_params "${root_name}type=suit-envelope")
+  set(script_params "${root_name}type=suit-envelope;${additional_script_params}")
 
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
@@ -321,17 +326,30 @@ function(suit_create_package)
     )
   endforeach()
 
-  # First parse which images should be extracted to which cache partition
+  # First parse which images should be extracted to which cache partitions
   set(DFU_CACHE_PARTITIONS_USED "")
+  set(RECOVERY_DFU_CACHE_PARTITIONS_USED "")
+
   foreach(image ${IMAGES})
     sysbuild_get(EXTRACT_TO_CACHE IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE KCONFIG)
     if(EXTRACT_TO_CACHE)
       sysbuild_get(CACHE_PARTITION_NUM IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_PARTITION KCONFIG)
-      list(APPEND DFU_CACHE_PARTITIONS_USED ${CACHE_PARTITION_NUM})
-      list(APPEND SUIT_CACHE_PARTITION_${CACHE_PARTITION_NUM} ${image})
+
+      unset(CONFIG_SUIT_RECOVERY)
+      sysbuild_get(CONFIG_SUIT_RECOVERY IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
+
+      if(CONFIG_SUIT_RECOVERY)
+        list(APPEND RECOVERY_DFU_CACHE_PARTITIONS_USED ${CACHE_PARTITION_NUM})
+        list(APPEND SUIT_RECOVERY_CACHE_PARTITION_${CACHE_PARTITION_NUM} ${image})
+      else()
+        list(APPEND DFU_CACHE_PARTITIONS_USED ${CACHE_PARTITION_NUM})
+        list(APPEND SUIT_CACHE_PARTITION_${CACHE_PARTITION_NUM} ${image})
+      endif()
     endif()
   endforeach()
+
   list(REMOVE_DUPLICATES DFU_CACHE_PARTITIONS_USED)
+  list(REMOVE_DUPLICATES RECOVERY_DFU_CACHE_PARTITIONS_USED)
 
   # Then create the cache partitions
   foreach(CACHE_PARTITION_NUM ${DFU_CACHE_PARTITIONS_USED})
@@ -353,10 +371,36 @@ function(suit_create_package)
       "${CACHE_CREATE_ARGS}"
       "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${CACHE_PARTITION_NUM}.bin"
       ${CACHE_PARTITION_NUM}
+      FALSE
     )
   endforeach()
 
   if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+
+    # Create cache partitions for the recovery images
+    foreach(CACHE_PARTITION_NUM ${RECOVERY_DFU_CACHE_PARTITIONS_USED})
+      set(CACHE_CREATE_ARGS "")
+      foreach(image ${SUIT_RECOVERY_CACHE_PARTITION_${CACHE_PARTITION_NUM}})
+        sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
+        sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+        sysbuild_get(IMAGE_CACHE_URI IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI KCONFIG)
+        list(APPEND CACHE_CREATE_ARGS
+          "--input" "\"${IMAGE_CACHE_URI},${BINARY_DIR}/zephyr/${BINARY_FILE}.bin\""
+        )
+      endforeach()
+
+      if(SUIT_DFU_CACHE_PARTITION_${CACHE_PARTITION_NUM}_EB_SIZE)
+        list(APPEND CACHE_CREATE_ARGS "--eb-size" "${SUIT_DFU_CACHE_PARTITION_${CACHE_PARTITION_NUM}_EB_SIZE}")
+      endif()
+
+      suit_create_cache_partition(
+        "${CACHE_CREATE_ARGS}"
+        "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_recovery_${CACHE_PARTITION_NUM}.bin"
+        ${CACHE_PARTITION_NUM}
+        TRUE
+      )
+    endforeach()
+
     suit_get_manifest(${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_TEMPLATE_FILENAME} INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE)
 
     # create app recovery envelope if defined
