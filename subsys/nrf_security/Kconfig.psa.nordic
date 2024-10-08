@@ -296,6 +296,14 @@ config PSA_WANT_ECC_SECT_R2_163
 config PSA_WANT_ECC_FRP_V1_256
 	bool "PSA ECC FRP256v1 support" if !PSA_PROMPTLESS
 
+config PSA_WANT_ALG_CHACHA20
+	bool "PSA CHACHA20 stream cipher support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SHAKE256_512
+	bool "PSA SHAKE256 512 bits support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
 comment "Nordic addded RNG configuration"
 
 config PSA_WANT_GENERATE_RANDOM
