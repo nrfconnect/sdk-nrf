@@ -180,6 +180,13 @@
     - nrf9160dk/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29462"
 
+- scenarios:
+    - drivers.watchdog
+  platforms:
+    - nrf54l15pdk/nrf54l15/cpuapp
+    - nrf54l15pdk/nrf54l15/cpuflpr
+  comment: "Missing support for nrf54l15pdk"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
