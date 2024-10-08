@@ -7,6 +7,7 @@
 .. |release_number_tt| replace:: ``2.7.0``
 
 .. |jlink_ver| replace:: v7.94i
+.. |jlink_ver_vsc| replace:: v7.94i
 
 .. ### Config shortcuts
 

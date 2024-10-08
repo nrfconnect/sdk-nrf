@@ -185,7 +185,7 @@ Use the following steps depending on the application placement:
 
       You can now start :ref:`configuring and building <configuration_and_build>` the application.
 
-      See the `extension documentation <west module management_>`_ for more information about west workspace and workspace applications in the extension.
+      See the `extension documentation <west module management_>`_ for more information about working with workspace applications in the extension.
 
    .. group-tab:: Freestanding application
 
@@ -213,7 +213,7 @@ Use the following steps depending on the application placement:
       .. note::
           You can transform your freestanding application into a workspace application at any moment by completing the step 7 under the Workspace application tab.
 
-See the `extension documentation <Application support overview_>`_ for more information about the differences between the applications types from the extension's perspective.
+For more information about the differences between the applications types from the extension's perspective, see the `Applications <Application support overview_>`_ page in the extension documentation.
 
 .. _creating_cmd:
 
