@@ -82,6 +82,10 @@ static int setup_slot_hook(void)
 	mgmt_callback_register(&image_slot_callback);
 	k_work_init(&slot_output_work, slot_output_handler);
 
+#if defined(CONFIG_OUTPUT_BOOT_MESSAGE)
+	LOG_INF("Dummy message indicating new firmware is running...");
+#endif
+
 	return 0;
 }
 
