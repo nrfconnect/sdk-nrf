@@ -182,4 +182,4 @@ static struct conn_mgr_conn_api l2_wifi_conn_api = {
 	.init = net_l2_wifi_init,
 };
 
-CONN_MGR_CONN_DEFINE(L2_CONN_WLAN0, &l2_wifi_conn_api);
+CONN_MGR_CONN_DEFINE(CONNECTIVITY_WIFI_MGMT, &l2_wifi_conn_api);
