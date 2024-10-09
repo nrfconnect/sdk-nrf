@@ -12,4 +12,5 @@ Other samples
    ../../../samples/ipc/*/README
    ../../../samples/mpsl/*/README
    ../../../samples/benchmarks/*/README
+   ../../../samples/nrf_compress/*/README
    ../../../tests/benchmarks/multicore/*/README
