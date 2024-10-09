@@ -226,6 +226,17 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endforeach()
 
+    # The NRF54LX goes with PSA crypto by default
+    if(SB_CONFIG_SOC_SERIES_NRF54LX AND SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+      set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
+
+      if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU)
+        set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU y)
+      else()
+        set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU n)
+      endif()
+    endif()
+
     # A v1 board doesn't define board qualifiers, thus below test will just test the pure board
     # name for a v1 board. A v2 board will match against the board qualifier.
     if("${BOARD}${BOARD_QUALIFIERS}" MATCHES "(_|/)ns$")
