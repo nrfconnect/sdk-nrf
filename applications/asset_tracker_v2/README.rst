@@ -7,7 +7,10 @@ Asset Tracker v2
    :local:
    :depth: 2
 
-The Asset Tracker v2 is a real-time configurable ultra-low power capable application firmware for the nRF91 Series :term:`System in Package (SiP)`.
+.. important::
+   |ATv2_maintenance_note|
+
+Asset Tracker v2 is a real-time configurable ultra-low power capable application firmware for the nRF91 Series :term:`System in Package (SiP)`.
 
 See the subpages for detailed documentation on the application and its modules:
 

@@ -7,6 +7,9 @@ Modem module
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The modem module communicates with the modem to control the LTE connection and retrieve information from the modem about the device and LTE network.
 
 Features

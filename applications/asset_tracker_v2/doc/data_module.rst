@@ -7,6 +7,9 @@ Data module
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The data module gathers data that has been sampled by other modules in the system and stores it into ring buffers.
 It keeps track of data requested by the :ref:`asset_tracker_v2_app_module` and decides when data is sent to the cloud.
 

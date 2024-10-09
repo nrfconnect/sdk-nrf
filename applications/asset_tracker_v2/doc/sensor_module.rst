@@ -7,6 +7,9 @@ Sensor module
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The sensor module interacts with external sensors present on the `Thingy:91 <Thingy\:91 product page_>`_ and Thingy:91 X.
 It collects environmental data and detects motion over a set threshold value.
 

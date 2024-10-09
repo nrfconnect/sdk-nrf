@@ -225,7 +225,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-|no_changes_yet_note|
+* Added a note that the :ref:`asset_tracker_v2` application is in the maintenance mode and recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
 
 Connectivity Bridge
 -------------------

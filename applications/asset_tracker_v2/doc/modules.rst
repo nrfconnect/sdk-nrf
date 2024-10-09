@@ -3,6 +3,10 @@
 Application modules
 ###################
 
+.. important::
+   |ATv2_maintenance_note|
+
+
 The Asset Tracker v2 application consists of a set of modules.
 See :ref:`asset_tracker_v2_architecture` for more information on how the application is structured.
 

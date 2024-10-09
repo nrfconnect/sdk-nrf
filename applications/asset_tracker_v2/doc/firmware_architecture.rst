@@ -7,6 +7,9 @@ Firmware architecture
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The Asset Tracker v2 application has a modular structure, where each module has a defined scope of responsibility.
 The application makes use of the :ref:`app_event_manager` to distribute events between modules in the system.
 The Application Event Manager is used for all the communication between the modules.

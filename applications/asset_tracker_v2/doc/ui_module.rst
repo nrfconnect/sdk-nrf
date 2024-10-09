@@ -7,6 +7,9 @@ User Interface module
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The User Interface module controls and monitors the UI elements on nRF91 Series development kits, Thingy:91, and Thingy:91 X.
 
 Features

@@ -7,6 +7,9 @@ Application behavior and functionality
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 This section describes the general functioning of the Asset Tracker v2 application.
 
 Data types

@@ -7,6 +7,9 @@ Unit tests
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The internal modules of the :ref:`asset_tracker_v2` application have a set of unit tests in the :file:`asset_tracker_v2/tests` folder.
 Following are the modules that have unit tests:
 
