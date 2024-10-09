@@ -59,8 +59,8 @@ include(ExternalProject)
 ExternalProject_Add(edge_impulse_project
     URL              ${EI_URI_LIST}
     HTTP_HEADER      "Accept: application/zip"
-    DOWNLOAD_EXTRACT_TIMESTAMP True
                      ${EI_API_KEY_HEADER}
+    DOWNLOAD_EXTRACT_TIMESTAMP True
     PREFIX           ${EDGE_IMPULSE_DIR}
     SOURCE_DIR       ${EDGE_IMPULSE_SOURCE_DIR}
     BINARY_DIR       ${EDGE_IMPULSE_BINARY_DIR}
