@@ -19,7 +19,8 @@
 
 #include <identity_key.h>
 
-#define TFM_NS_PARTITION_ID -1
+#define MAPPED_TZ_NS_AGENT_DEFAULT_CLIENT_ID -0x3c000000
+#define TFM_NS_PARTITION_ID                  MAPPED_TZ_NS_AGENT_DEFAULT_CLIENT_ID
 
 #ifdef CONFIG_HW_UNIQUE_KEY
 static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len, size_t *key_len,
