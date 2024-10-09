@@ -7,6 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+
 if(NOT SYSBUILD)
 	message(FATAL_ERROR
 		" This is a multi-image application that should be built using sysbuild.\n"
