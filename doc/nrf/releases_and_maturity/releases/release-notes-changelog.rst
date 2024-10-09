@@ -71,7 +71,10 @@ See also the `MCUboot`_ section.
 Developing with nRF91 Series
 ============================
 
-* Added the :ref:`nRF91 modem tracing with RTT backend snippet <nrf91_modem_trace_rtt_snippet>` to enable modem tracing using the RTT trace backend.
+* Added:
+
+  * The :ref:`nRF91 modem tracing with RTT backend snippet <nrf91_modem_trace_rtt_snippet>` to enable modem tracing using the RTT trace backend.
+  * The :ref:`nRF91 modem tracing with RAM backend snippet <nrf91_modem_trace_ram_snippet>` to enable modem tracing using the RAM trace backend.
 
 Developing with nRF70 Series
 ============================

@@ -16,6 +16,8 @@ The trace backend can be selected in one of the following ways:
   See :ref:`nrf91_modem_trace_rtt_snippet` for more details.
 * Adding the ``nrf91-modem-trace-ext-flash`` snippet to store modem traces in external flash.
   See :ref:`nrf91_modem_trace_ext_flash_snippet` for more details.
+* Adding the ``nrf91-modem-trace-ram`` snippet to store modem traces in RAM.
+  See :ref:`nrf91_modem_trace_ram_snippet` for more details.
 
 To reduce the amount of trace data sent from the modem, a different trace level can be selected.
 Complete the following steps to configure the modem trace level at compile time:
