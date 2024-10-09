@@ -46,7 +46,7 @@ The following snippets are available:
 * ``debug`` - Enables debugging the sample by enabling :c:func:`__ASSERT()` statements globally and verbose logging.
 * ``log_rpc`` - Enables logging over RPC.
 * ``openthread`` - Enables the server part of the OpenThread RPC.
-* ``nfc`` - Enables the server part of the NFC RPC.
+* ``nfc`` - Enables the server part of the :ref:`NFC RPC <nfc_rpc>`.
 
 User interface
 **************
