@@ -7,6 +7,9 @@ Utility module
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The utility module provides the functionality to administer and monitor mechanisms in the application architecture.
 
 Features

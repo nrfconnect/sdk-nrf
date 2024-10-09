@@ -7,6 +7,9 @@ Cloud module
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The cloud module establishes and maintains the connection to a supported cloud service.
 It uses the :ref:`Cloud wrapper API <api_cloud_wrapper>` to integrate and handle the client libraries present in the |NCS|.
 

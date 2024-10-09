@@ -7,6 +7,9 @@ Cloud wrapper API
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The cloud wrapper API is a generic API used for controlling the connection to a supported |NCS| client library through :ref:`Integration layers <integration_layers>`.
 It exposes generic functions such as ``send``, ``connect``, and ``disconnect``, hiding the functionality that is specific to a single client library implementation.
 

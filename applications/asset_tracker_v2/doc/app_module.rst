@@ -7,6 +7,9 @@ Application module
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The application module controls key mechanisms in the Asset Tracker v2.
 It decides when to sample data, what types of data to sample, and has explicit control over some aspects of the application.
 

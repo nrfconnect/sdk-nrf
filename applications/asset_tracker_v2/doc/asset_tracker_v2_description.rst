@@ -7,6 +7,9 @@ Application description
    :local:
    :depth: 2
 
+.. important::
+   |ATv2_maintenance_note|
+
 The Asset Tracker v2 application is built on the following principles:
 
 * Ultra-low power by design - The application highlights the power saving features of the nRF91 Series SiP, which is critical for successfully developing small form-factor devices and products which need very long battery lifetime.
