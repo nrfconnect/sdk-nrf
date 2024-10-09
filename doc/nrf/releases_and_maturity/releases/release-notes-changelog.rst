@@ -943,6 +943,10 @@ Libraries for networking
 
   * Added support for the ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
 
+* :ref:`lib_mqtt_helper` library:
+
+  * Updated the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option to depend on :kconfig:option:`CONFIG_TLS_CREDENTIALS` instead of specific boards.
+
 Libraries for NFC
 -----------------
 
