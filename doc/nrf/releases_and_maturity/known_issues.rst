@@ -268,6 +268,13 @@ DRGN-21390: The `disconnected` callback might not get called on nRF5340
 
   **Workaround:** Either disable host flow control (:kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL`) or cherry-pick commits from the upstream: `Zephyr PR #65272 <https://github.com/zephyrproject-rtos/zephyr/pull/65272>`_.
 
+.. rst-class:: v2-8-0
+
+DRGN-23511: Building of multilink Bluetooth applications fails.
+  This happens when the :kconfig:option:`CONFIG_BT_BUF_RX_COUNT` Kconfig option is not explicitly set.
+
+  **Workaround:** Set the Kconfig value explicitly.
+
 Bluetooth Mesh
 ==============
 
