@@ -85,6 +85,16 @@ uintptr_t suit_plat_mem_nvm_offset_get(uint8_t *ptr);
  */
 uint8_t *suit_plat_mem_nvm_ptr_get(uintptr_t offset);
 
+/** @brief Clear values of SICR.UROT.UPDATE.OPERATION and SICR.UROT.UPDATE.STATUS registers.
+ *
+ * @note The values are first checked and mramc access is done only when they need to be changed.
+ *       Also mramc write mode is adjusted only when it is needed.
+ *
+ * @returns true when registers were cleared successfully or did not require clearing
+ * @returns false when any of the registers was not cleared
+ */
+bool suit_plat_mem_clear_sicr_update_registers(void);
+
 #ifdef __cplusplus
 }
 #endif
