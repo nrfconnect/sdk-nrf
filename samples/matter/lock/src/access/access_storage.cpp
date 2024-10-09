@@ -11,7 +11,11 @@
 #include <zephyr/sys/cbprintf.h>
 
 #ifdef CONFIG_LOCK_PRINT_STORAGE_STATUS
+#ifdef CONFIG_NVS
 #include <zephyr/fs/nvs.h>
+#elif CONFIG_ZMS
+#include <zephyr/fs/zms.h>
+#endif /* CONFIG_NVS */
 #include <zephyr/logging/log.h>
 #include <zephyr/settings/settings.h>
 
@@ -27,11 +31,15 @@ bool GetStorageFreeSpace(size_t &freeBytes)
 		LOG_ERR("AccessStorage: Cannot read NVS free space [error: %d]", status);
 		return false;
 	}
+#ifdef CONFIG_NVS
 	freeBytes = nvs_calc_free_space(static_cast<nvs_fs *>(storage));
+#elif CONFIG_ZMS
+	freeBytes = zms_calc_free_space(static_cast<zms_fs *>(storage));
+#endif /* NVS */
 	return true;
 }
 } /* namespace */
-#endif
+#endif /* CONFIG_LOCK_PRINT_STORAGE_STATUS */
 
 /* Currently the secure storage is available only for non-Wi-Fi builds,
    because NCS Wi-Fi implementation does not support PSA API yet. */

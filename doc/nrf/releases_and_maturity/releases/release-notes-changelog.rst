@@ -191,8 +191,13 @@ Matter
 
   * The :ref:`ug_matter_device_memory_profiling` section to the :ref:`ug_matter_device_optimizing_memory` page.
     The section contains useful commands for measuring memory and troubleshooting tips.
+  * The ZMS file subsystem to all devices that contain RRAM, such as the nRF54L Series devices.
 
-* Changed the default Trusted Storage AEAD key to Hardware Unique Key (HUK) for supported nRF54L Series devices.
+* Changed:
+
+  * The default Trusted Storage AEAD key to Hardware Unique Key (HUK) for supported nRF54L Series devices.
+  * Renamed the ``CONFIG_CHIP_FACTORY_RESET_ERASE_NVS`` Kconfig option to :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS`.
+    The new Kconfig option now works for both NVS and ZMS file system backends.
 
 Matter fork
 +++++++++++

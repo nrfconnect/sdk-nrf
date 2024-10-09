@@ -91,7 +91,7 @@ config THREAD_WIFI_SWITCHING
 	depends on SOC_SERIES_NRF53X
 	depends on NET_L2_OPENTHREAD
 	depends on CHIP_WIFI
-	depends on !CHIP_FACTORY_RESET_ERASE_NVS
+	depends on !CHIP_FACTORY_RESET_ERASE_SETTINGS
 	select EXPERIMENTAL
 	help
 	  Build the application with both Thread and Wi-Fi support and initialize
