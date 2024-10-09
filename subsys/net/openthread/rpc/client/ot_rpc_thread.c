@@ -145,7 +145,7 @@ otDeviceRole otThreadGetDeviceRole(otInstance *aInstance)
 otError otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint8_t mode_mask;
+	uint8_t mode_mask = 0;
 
 	ARG_UNUSED(aInstance);
 
