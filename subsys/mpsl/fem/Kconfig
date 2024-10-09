@@ -6,6 +6,7 @@
 
 DT_COMPAT_NORDIC_NRF21540_GPIO := nordic,nrf21540-fem
 DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
+DT_COMPAT_HOT_POTATO := hot_potato
 DT_COMPAT_NORDIC_NRF2220 := nordic,nrf2220-fem
 DT_COMPAT_NORDIC_NRF2240 := nordic,nrf2240-fem
 
@@ -25,6 +26,10 @@ config MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
 config MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	bool
 	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_GENERIC_FEM_2_CTRL_PIN))
+
+config MPSL_FEM_HOT_POTATO_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_HOT_POTATO))
 
 config MPSL_FEM_NRF2220_SUPPORT
 	bool
@@ -110,6 +115,19 @@ config MPSL_FEM_SIMPLE_GPIO
 	  This option was originally designed to support the SKY66112-11,
 	  but is potentially compatible with other devices with the same
 	  control method.
+
+config MPSL_FEM_HOT_POTATO
+	depends on MPSL_FEM_HOT_POTATO_SUPPORT
+	select NRFX_GPIOTE
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_GPPI if SOC_SERIES_NRF54LX
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	select POWER_MAP_MODEL if OPENTHREAD
+	select NRFX_TEMP
+	bool "HOT_POTATO front-end module"
+	help
+	  FEM device is HOT_POTATO.
 
 config MPSL_FEM_NRF2220
 	depends on MPSL_FEM_NRF2220_SUPPORT
@@ -322,6 +340,11 @@ config MPSL_FEM_INIT_PRIORITY
 	default 51 if (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
 		      (MPSL_FEM_NRF2240 && MPSL_FEM_NRF2240_TWI_SUPPORT)
 	default KERNEL_INIT_PRIORITY_DEVICE
+
+if MPSL_FEM_HOT_POTATO
+rsource "hot_potato/Kconfig"
+rsource "hot_potato/models/power_map/Kconfig"
+endif # MPSL_FEM_HOT_POTATO
 
 module=MPSL_FEM
 module-str=MPSL_FEM

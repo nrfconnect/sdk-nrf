@@ -21,6 +21,8 @@ if(CONFIG_MPSL_FEM_NCS_SUPPORTED_FEM_USED)
 
   zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_SIMPLE_GPIO simple_gpio/mpsl_fem_simple_gpio.c)
 
+    add_subdirectory_ifdef(CONFIG_MPSL_FEM_HOT_POTATO hot_potato)
+
   add_subdirectory_ifdef(CONFIG_MPSL_FEM_NRF2220 nrf2220)
 
   add_subdirectory_ifdef(CONFIG_MPSL_FEM_NRF2240 nrf2240)
