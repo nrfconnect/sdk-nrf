@@ -575,6 +575,7 @@
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
 /snippets/nrf70-wifi/                     @krish2718 @sachinthegreen
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
+/snippets/nrf91-modem-trace-ram/          @nrfconnect/ncs-modem
 /snippets/nrf91-modem-trace-rtt/          @nrfconnect/ncs-modem
 /snippets/nrf91-modem-trace-uart/         @nrfconnect/ncs-modem
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia

@@ -85,7 +85,10 @@ See also the `MCUboot`_ section.
 Developing with nRF91 Series
 ============================
 
-* Added the :ref:`nRF91 modem tracing with RTT backend snippet <nrf91_modem_trace_rtt_snippet>` to enable modem tracing using the RTT trace backend.
+* Added:
+
+  * The :ref:`nRF91 modem tracing with RTT backend snippet <nrf91_modem_trace_rtt_snippet>` to enable modem tracing using the RTT trace backend.
+  * The :ref:`nRF91 modem tracing with RAM backend snippet <nrf91_modem_trace_ram_snippet>` to enable modem tracing using the RAM trace backend.
 
 Developing with nRF70 Series
 ============================
@@ -871,7 +874,7 @@ Modem libraries
     * The RTT trace backend to allocate the RTT channel at boot, instead of when the modem is activated.
     * The flash trace backend to solve concurrency issues when reading traces while writing, and when reinitializing the application (warm start).
     * Renamed the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
-    * The :ref:`modem_trace_module` to let the trace thread sleep when the modem trace level is set to :c:enum:`NRF_MODEM_LIB_TRACE_LEVEL_OFF` using the :c:func:`nrf_modem_lib_trace_level_set` function, and the trace backend returns ``-ENOSPC``.
+    * The :ref:`modem_trace_module` to let the trace thread sleep when the modem trace level is set to :c:enumerator:`NRF_MODEM_LIB_TRACE_LEVEL_OFF` using the :c:func:`nrf_modem_lib_trace_level_set` function, and the trace backend returns ``-ENOSPC``.
       The trace thread wakes up when another trace level is set.
     * The RTT trace backend to return ``-ENOSPC`` when the RTT buffer is full.
       This allows the trace thread to sleep to save power.

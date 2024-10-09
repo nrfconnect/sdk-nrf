@@ -25,6 +25,9 @@ On nRF91 Series devices, you can enable the following functionalities using snip
    * - :ref:`nrf91_modem_trace_rtt_snippet`
      - ``nrf91-modem-trace-rtt``
      - :ref:`All nRF91 Series board targets <ug_nrf91>`
+   * - :ref:`nrf91_modem_trace_ram_snippet`
+     - ``nrf91-modem-trace-ram``
+     - :ref:`All nRF91 Series board targets <ug_nrf91>`
    * - :ref:`tfm_enable_share_uart`
      - ``tfm-enable-share-uart``
      - :ref:`All nRF91 Series board targets <ug_nrf91>`
@@ -43,6 +46,21 @@ To enable modem traces with the flash backend, use the following command pattern
    :class: highlight
 
    west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash"
+
+.. _nrf91_modem_trace_ram_snippet:
+
+nRF91 modem traces with RAM backend using snippets
+****************************************************
+
+The ``nrf91-modem-trace-ram`` snippet enables modem tracing and configures it to store modem traces to a dedicated partition on the RAM.
+To change the partition size, the project needs to configure the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RAM_LENGTH` Kconfig option.
+
+To enable modem traces with the RAM backend, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ram"
 
 .. _nrf91_modem_trace_uart_snippet:
 
