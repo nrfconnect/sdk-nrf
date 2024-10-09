@@ -224,6 +224,8 @@ Matter
   * The default Trusted Storage AEAD key to Hardware Unique Key (HUK) for supported nRF54L Series devices.
   * Renamed the ``CONFIG_CHIP_FACTORY_RESET_ERASE_NVS`` Kconfig option to :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS`.
     The new Kconfig option now works for both NVS and ZMS file system backends.
+  * The firmware version format used for informational purposes when using the :file:``VERSION`` file.
+    The format now includes the optional ``EXTRAVERSION`` component.
 
 Matter fork
 +++++++++++
