@@ -147,6 +147,13 @@ config MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS
 	default y
 	depends on SOC_SERIES_NRF54LX && !SECURE_BOOT_APPCORE
 
+config MCUBOOT_SIGNATURE_USING_KMU
+	bool "Use KMU stored keys for signature verification"
+	depends on SOC_SERIES_NRF54LX
+	depends on BOOT_SIGNATURE_TYPE_ED25519
+	help
+	  The device needs to be provisioned with proper set of keys.
+
 endif
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
