@@ -36,6 +36,13 @@ The module selects the following configurations:
 * :kconfig:option:`CONFIG_MCUMGR` - This option enables the MCUmgr support, which is required for the DFU process.
   For details, see :ref:`zephyr:mcu_mgr` in the Zephyr documentation.
 
+* :kconfig:option:`CONFIG_MCUMGR_GRP_OS` - This option enables the MCUmgr OS management handlers that are required for the DFU process.
+  For details, see :ref:`zephyr:device_mgmt` in the Zephyr documentation.
+
+  MCUmgr OS management handlers:
+
+    * :kconfig:option:`CONFIG_MCUMGR_GRP_OS_BOOTLOADER_INFO` - MCUmgr handler responsible for providing the bootloader information.
+
 * :kconfig:option:`CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS` - This option enables the MCUmgr notification hook support, which allows the module to listen for an MCUmgr event.
   For details, see :ref:`zephyr:mcumgr_callbacks` in the Zephyr documentation.
 
@@ -79,14 +86,9 @@ MCUmgr configuration using MCUboot backend
 
 The MCUboot backend configuration selects the following options:
 
-* MCUmgr groups:
-
-  * :kconfig:option:`CONFIG_MCUMGR_GRP_IMG` - This option enables the MCUmgr image management handlers that are required for the DFU process.
-    For details, see :ref:`zephyr:device_mgmt` in the Zephyr documentation.
-  * :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_MUTEX`
-  * :kconfig:option:`CONFIG_MCUMGR_GRP_OS` - This option enables the MCUmgr OS management handlers that are required for the DFU process.
-    For details, see :ref:`zephyr:device_mgmt` in the Zephyr documentation.
-
+* :kconfig:option:`CONFIG_MCUMGR_GRP_IMG` - This option enables the MCUmgr image management handlers that are required for the DFU process.
+  For details, see :ref:`zephyr:device_mgmt` in the Zephyr documentation.
+* :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_MUTEX`
 * :kconfig:option:`CONFIG_IMG_MANAGER`
 * :kconfig:option:`CONFIG_STREAM_FLASH`
 * :kconfig:option:`CONFIG_MCUBOOT_BOOTUTIL_LIB`
