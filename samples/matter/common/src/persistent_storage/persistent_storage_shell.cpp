@@ -6,7 +6,11 @@
 
 #include "persistent_storage_shell.h"
 
+#ifdef CONFIG_NVS
 #include <zephyr/fs/nvs.h>
+#elif CONFIG_ZMS
+#include <zephyr/fs/zms.h>
+#endif
 #include <zephyr/settings/settings.h>
 #include <zephyr/shell/shell.h>
 
@@ -14,12 +18,26 @@ using namespace Nrf;
 
 namespace
 {
-nvs_fs *sNvsStorage = nullptr;
+#ifdef CONFIG_NVS
+nvs_fs *sStorage = nullptr;
+#elif CONFIG_ZMS
+zms_fs *sStorage = nullptr;
+#endif
+
 size_t sPeakSize = 0;
 
 struct SettingsParams {
 	const struct shell *shell;
 };
+
+int CalculateFreeSpace()
+{
+#ifdef CONFIG_NVS
+	return nvs_calc_free_space(sStorage);
+#elif CONFIG_ZMS
+	return zms_calc_free_space(sStorage);
+#endif
+}
 
 int SettingsReadClb(const char *key, size_t len, settings_read_cb read_cb, void *cb_arg, void *param)
 {
@@ -41,13 +59,12 @@ int SettingsReadClb(const char *key, size_t len, settings_read_cb read_cb, void 
 
 int PeakHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!sNvsStorage) {
+	if (!sStorage) {
 		return -ENODEV;
 	}
 
-	size_t maxSize = sNvsStorage->sector_size * sNvsStorage->sector_count;
-	size_t freeSpace = nvs_calc_free_space(sNvsStorage);
-
+	size_t maxSize = sStorage->sector_size * sStorage->sector_count;
+	size_t freeSpace = CalculateFreeSpace();
 	size_t currentPeak = maxSize - freeSpace;
 
 	if (currentPeak > sPeakSize) {
@@ -68,7 +85,7 @@ int ResetHandler(const struct shell *shell, size_t argc, char **argv)
 
 int GetSizeHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!sNvsStorage) {
+	if (!sStorage) {
 		return -ENODEV;
 	}
 
@@ -81,12 +98,12 @@ int GetSizeHandler(const struct shell *shell, size_t argc, char **argv)
 
 int CurrentHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!sNvsStorage) {
+	if (!sStorage) {
 		return -ENODEV;
 	}
 
-	size_t maxSize = sNvsStorage->sector_size * sNvsStorage->sector_count;
-	size_t freeSpace = nvs_calc_free_space(sNvsStorage);
+	size_t maxSize = sStorage->sector_size * sStorage->sector_count;
+	size_t freeSpace = CalculateFreeSpace();
 
 	shell_fprintf(shell, SHELL_NORMAL, "%zu\n", maxSize - freeSpace);
 
@@ -95,11 +112,11 @@ int CurrentHandler(const struct shell *shell, size_t argc, char **argv)
 
 int FreeHandler(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!sNvsStorage) {
+	if (!sStorage) {
 		return -ENODEV;
 	}
 
-	size_t freeSpace = nvs_calc_free_space(sNvsStorage);
+	size_t freeSpace = CalculateFreeSpace();
 
 	shell_fprintf(shell, SHELL_NORMAL, "%zu\n", freeSpace);
 
@@ -116,7 +133,11 @@ bool PersistentStorageShell::Init()
 		return false;
 	}
 
-	sNvsStorage = reinterpret_cast<nvs_fs *>(storage);
+#ifdef CONFIG_NVS
+	sStorage = reinterpret_cast<nvs_fs *>(storage);
+#elif CONFIG_ZMS
+	sStorage = reinterpret_cast<zms_fs *>(storage);
+#endif
 
 	return true;
 }
