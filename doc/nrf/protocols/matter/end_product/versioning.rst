@@ -16,13 +16,14 @@ There are two primary approaches for maintaining versioning:
 * Utilizing a :file:`VERSION` file as detailed on the :ref:`app-version-details` page of the Zephyr Project documentation.
   This method involves defining the version information in a specific file format.
 
-* Implementing dedicated Kconfig configurations.
-  This approach uses Kconfig system configurations to set and manage the versioning details.
+* Utilizing dedicated Kconfig configurations.
+  This approach uses Kconfig options to set and manage the versioning details.
 
 Choose the approach that best aligns with your project requirements and infrastructure.
 
 .. note::
-  These approaches should not be used simultaneously.
+  These approaches cannot be used simultaneously.
+  The Kconfig options for configuring the versioning details are unavailable if the :file:`VERSION` file is present.
 
 Using :file:`VERSION` file
 **************************
@@ -35,6 +36,7 @@ To implement versioning based on a :file:`VERSION` file, you must create a file 
     VERSION_MINOR =
     PATCHLEVEL =
     VERSION_TWEAK =
+    EXTRAVERSION =
 
 .. note::
    You must assign a value to at least one of the variables.
@@ -48,13 +50,20 @@ For example:
    VERSION_MINOR = 5
    PATCHLEVEL = 99
    VERSION_TWEAK = 0
+   EXTRAVERSION = dev
 
-A :file:`VERSION` file is responsible for assigning values in the following format for:
+The :file:`VERSION` file is used to derive the firmware version in the following format for:
 
-* MCUboot version: ``MAJOR . MINOR . PATCHLEVEL + TWEAK``.
-  The above example would be formatted as ``2 . 5 . 99 + 0``.
-* Matter OTA: in the 32-bit integer where each variable is 8 bits long.
+* MCUboot image: ``MAJOR.MINOR.PATCHLEVEL+TWEAK``.
+  The above example would be formatted as ``2.5.99+0``.
+* Matter OTA image: 32-bit integer where each numeric variable is represented by 8 bits within the integer.
   The above example would be formatted as ``0x02056300``.
+* Informational purposes, for example displayed in the ecosystem applications:
+
+  * If ``EXTRAVERSION`` is non-empty: ``MAJOR.MINOR.PATCHLEVEL-EXTRA+TWEAK``.
+    The above example would be formatted as ``2.5.99-dev+0``.
+  * Otherwise: ``MAJOR.MINOR.PATCHLEVEL+TWEAK``.
+    The above example would be formatted as ``2.5.99+0``.
 
 Using Kconfig options
 *********************
