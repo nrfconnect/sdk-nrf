@@ -24,7 +24,7 @@
 
 LOG_MODULE_REGISTER(suit_sdfw_recovery_sink, CONFIG_SUIT_LOG_LEVEL);
 
-typedef int sdf_sink_err_t;
+typedef int sdfw_sink_err_t;
 
 struct sdfw_recovery_sink_context {
 	bool in_use;
@@ -130,7 +130,7 @@ static suit_plat_err_t schedule_sdfw_recovery_update(const uint8_t *buf, size_t 
 	return SUIT_PLAT_SUCCESS;
 }
 
-static sdf_sink_err_t check_update_candidate(const uint8_t *buf, size_t size)
+static sdfw_sink_err_t check_update_candidate(const uint8_t *buf, size_t size)
 {
 	uint8_t *candidate_binary_start =
 		(uint8_t *)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET);

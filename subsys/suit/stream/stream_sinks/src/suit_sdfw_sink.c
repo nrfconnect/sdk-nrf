@@ -22,7 +22,7 @@
 
 LOG_MODULE_REGISTER(suit_sdfw_sink, CONFIG_SUIT_LOG_LEVEL);
 
-typedef int sdf_sink_err_t;
+typedef int sdfw_sink_err_t;
 
 struct sdfw_sink_context {
 	bool in_use;
@@ -96,13 +96,13 @@ static suit_plat_err_t schedule_sdfw_update(const uint8_t *buf, size_t size)
 	return SUIT_PLAT_SUCCESS;
 }
 
-static sdf_sink_err_t check_update_candidate(const uint8_t *buf, size_t size)
+static sdfw_sink_err_t check_update_candidate(const uint8_t *buf, size_t size)
 {
 	uint8_t *candidate_digest_in_manifest =
 		(uint8_t *)(buf + CONFIG_SUIT_SDFW_UPDATE_DIGEST_OFFSET);
 	uint8_t *current_sdfw_digest = (uint8_t *)(NRF_SICR->UROT.SM.TBS.FW.DIGEST);
 
-	sdf_sink_err_t err = SUIT_PLAT_SUCCESS;
+	sdfw_sink_err_t err = SUIT_PLAT_SUCCESS;
 
 	bool digests_match =
 		memcmp(candidate_digest_in_manifest, current_sdfw_digest,
