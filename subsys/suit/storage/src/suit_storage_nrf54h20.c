@@ -1061,3 +1061,67 @@ suit_plat_err_t suit_storage_report_read(size_t index, const uint8_t **buf, size
 
 	return suit_storage_report_internal_read(area_addr, area_size, buf, len);
 }
+
+suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	struct suit_storage_rad *rad_storage = (struct suit_storage_rad *)SUIT_STORAGE_RAD_ADDRESS;
+	struct suit_storage_app *app_storage = (struct suit_storage_app *)SUIT_STORAGE_APP_ADDRESS;
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
+	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
+	int err = 0;
+
+	if (!device_is_ready(fdev)) {
+		return SUIT_PLAT_ERR_HW_NOT_READY;
+	}
+
+	switch (domain) {
+	case SUIT_MANIFEST_DOMAIN_APP:
+		/* Clear regular entry, inluding NVV and NVV backup. */
+		err = flash_erase(fdev,
+				  suit_plat_mem_nvm_offset_get((uint8_t *)&app_storage->app_area),
+				  sizeof(app_storage->app_area));
+		if (err == 0) {
+			/* Clear MPI backup. */
+			err = flash_erase(fdev,
+					  suit_plat_mem_nvm_offset_get(
+						  (uint8_t *)&nordic_storage->nordic.app_mpi_bak),
+					  sizeof(nordic_storage->nordic.app_mpi_bak));
+		}
+
+		/* Clear reports (incl. recovery flag and update candidate info). */
+		ret = suit_storage_report_clear(0);
+		break;
+
+	case SUIT_MANIFEST_DOMAIN_RAD:
+		/* Clear regular entry. */
+		err = flash_erase(fdev,
+				  suit_plat_mem_nvm_offset_get((uint8_t *)&rad_storage->rad_area),
+				  sizeof(rad_storage->rad_area));
+		if (err == 0) {
+			/* Clear MPI backup. */
+			err = flash_erase(fdev,
+					  suit_plat_mem_nvm_offset_get(
+						  (uint8_t *)&nordic_storage->nordic.rad_mpi_bak),
+					  sizeof(nordic_storage->nordic.rad_mpi_bak));
+		}
+		break;
+
+	default:
+		return SUIT_PLAT_ERR_INVAL;
+	}
+
+	/* Reinitialize SUIT storage internal structures.
+	 * Ignore return code as an init failure on erased SUIT storage area
+	 * does not indicate that the purge failed.
+	 */
+	(void)suit_storage_init();
+
+	/* In case of IO error, ignore the suit processor return code. */
+	if (err != 0) {
+		return SUIT_PLAT_ERR_IO;
+	}
+
+	return ret;
+}

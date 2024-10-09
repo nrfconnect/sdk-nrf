@@ -181,6 +181,20 @@ suit_plat_err_t suit_storage_report_save(size_t index, const uint8_t *buf, size_
  */
 suit_plat_err_t suit_storage_report_read(size_t index, const uint8_t **buf, size_t *len);
 
+/**
+ * @brief Purge all manifests, NVVs as well as MPIs assigned to the domain.
+ *
+ * @note By default, NVVs are locates in the Application manifest domain.
+ *
+ * @param[in]  domain  Manifest domain to purge.
+ *
+ * @retval SUIT_PLAT_SUCCESS            if area was successfully erased.
+ * @retval SUIT_PLAT_ERR_INVAL          if one of the input arguments is invalid (i.e. NULL).
+ * @retval SUIT_PLAT_ERR_HW_NOT_READY   if NVM controller is unavailable.
+ * @retval SUIT_PLAT_ERR_IO             if unable to change NVM contents.
+ */
+suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain);
+
 #ifdef __cplusplus
 }
 #endif

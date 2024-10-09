@@ -109,6 +109,21 @@ typedef enum {
 	SUIT_MANIFEST_RAD_LOCAL_2 = 0x32,
 } suit_manifest_role_t;
 
+/* Manifest domain nibble. */
+typedef enum {
+	/** Manifest domain uninitialized (invalid). */
+	SUIT_MANIFEST_DOMAIN_UNKNOWN = 0x00,
+
+	/** Manifest domain for Nordic-controlled manifests. */
+	SUIT_MANIFEST_DOMAIN_SEC = 0x10,
+
+	/** Manifest domain for Application-controlled manifests. */
+	SUIT_MANIFEST_DOMAIN_APP = 0x20,
+
+	/** Manifest domain for Radio-controlled manifests. */
+	SUIT_MANIFEST_DOMAIN_RAD = 0x30,
+} suit_manifest_domain_t;
+
 /** The 128-bit UUID, used for identifying vendors as well as classes. */
 typedef struct {
 	uint8_t raw[16];
