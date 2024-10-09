@@ -805,6 +805,10 @@ Modem libraries
 
   * Fixed a potential issue with scanf in the :c:func:`modem_info_get_current_band` function, which could lead to memory corruption.
 
+* :ref:`modem_key_mgmt` library:
+
+  * Updated to handle generic CME errors from all ``AT%CMNG`` commands.
+
 * :ref:`pdn_readme` library:
 
   * Added the event ``PDN_EVENT_CTX_DESTROYED`` to indicate when a PDP context is destroyed.
