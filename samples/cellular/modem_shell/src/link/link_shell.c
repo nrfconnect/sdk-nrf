@@ -2042,11 +2042,13 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 	}
 	if (operation == LINK_OPERATION_READ) {
 		enum link_reduced_mobility_mode mode;
+		uint16_t mode_tmp;
 
-		ret = nrf_modem_at_scanf("AT%REDMOB?", "%%REDMOB: %hu", &mode);
+		ret = nrf_modem_at_scanf("AT%REDMOB?", "%%REDMOB: %hu", &mode_tmp);
 		if (ret != 1) {
 			mosh_error("Cannot get reduced mobility mode: %d", ret);
 		} else {
+			mode = mode_tmp;
 			mosh_print(
 				"Reduced mobility mode read successfully: %s",
 				link_shell_redmob_mode_to_string(mode, snum));
