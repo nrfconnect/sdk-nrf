@@ -85,18 +85,20 @@ typedef int suit_plat_err_t;
 #define SUIT_PLAT_ERR_INVAL  -22 /**< Invalid parameter value */
 #define SUIT_PLAT_ERR_TIME   -62 /**< Timeout */
 
-#define SUIT_PLAT_ERR_CRASH	       -2001 /**< Execution crashed */
-#define SUIT_PLAT_ERR_SIZE	       -2002 /**< Invalid parameter size */
-#define SUIT_PLAT_ERR_OUT_OF_BOUNDS    -2003 /**< Out of bounds */
-#define SUIT_PLAT_ERR_NOT_FOUND	       -2004 /**< Entity not found */
-#define SUIT_PLAT_ERR_INCORRECT_STATE  -2005 /**< Incorrect state to perform the operation */
-#define SUIT_PLAT_ERR_HW_NOT_READY     -2006 /**< Hardware is not ready */
-#define SUIT_PLAT_ERR_AUTHENTICATION   -2007 /**< Authentication failed */
-#define SUIT_PLAT_ERR_UNREACHABLE_PATH -2008 /**< Firmware executed an unreachable path */
-#define SUIT_PLAT_ERR_CBOR_DECODING    -2009 /**< CBOR string decoding error */
-#define SUIT_PLAT_ERR_UNSUPPORTED      -2010 /**< Attempt to perform an unsupported operation */
-#define SUIT_PLAT_ERR_IPC	       -2011 /**< IPC error */
-#define SUIT_PLAT_ERR_NO_RESOURCES     -2012 /**< Not enough resources */
+#define SUIT_PLAT_ERR_CRASH			   -2001 /**< Execution crashed */
+#define SUIT_PLAT_ERR_SIZE			   -2002 /**< Invalid parameter size */
+#define SUIT_PLAT_ERR_OUT_OF_BOUNDS		   -2003 /**< Out of bounds */
+#define SUIT_PLAT_ERR_NOT_FOUND			   -2004 /**< Entity not found */
+#define SUIT_PLAT_ERR_INCORRECT_STATE		   -2005 /**< Incorrect state to perform the operation */
+#define SUIT_PLAT_ERR_HW_NOT_READY		   -2006 /**< Hardware is not ready */
+#define SUIT_PLAT_ERR_AUTHENTICATION		   -2007 /**< Authentication failed */
+#define SUIT_PLAT_ERR_UNREACHABLE_PATH		   -2008 /**< Firmware executed an unreachable path */
+#define SUIT_PLAT_ERR_CBOR_DECODING		   -2009 /**< CBOR string decoding error */
+#define SUIT_PLAT_ERR_UNSUPPORTED		   -2010 /**< Attempt to perform an unsupported operation */
+#define SUIT_PLAT_ERR_IPC			   -2011 /**< IPC error */
+#define SUIT_PLAT_ERR_NO_RESOURCES		   -2012 /**< Not enough resources */
+#define SUIT_PLAT_ERR_SDFW_RECOVERY_UPDATE_FAILURE -2013 /**< Failure during SDFW Recovery update  \
+							  */
 
 /**
  * If the error code is a common platform error code return it.
