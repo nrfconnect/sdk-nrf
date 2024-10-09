@@ -106,11 +106,10 @@ static void date_time_core_schedule_retry(void)
 		return;
 	}
 
-	/* Scheduling new update cannot fail because we are never doing retries
-	 * if we have fresh enough time
-	 */
-	date_time_core_schedule_work(CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
-	LOG_DBG("Date time update retry in: %d seconds", CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
+	if (date_time_core_schedule_work(CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS) == 0) {
+		LOG_DBG("Date time update retry in: %d seconds",
+			CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
+	}
 }
 
 static void date_time_update_work_fn(struct k_work *work)
