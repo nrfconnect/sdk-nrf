@@ -175,47 +175,11 @@ static otError ot_cli_command_discover(const struct shell *sh, size_t argc, char
 				discover_cb, (void *)sh);
 }
 
-static otError ot_cli_command_active_tlvs(const struct shell *sh, size_t argc, char *argv[])
-{
-	otOperationalDatasetTlvs dataset;
-	otError error;
-
-	if (argc <= 1) {
-		error = otDatasetGetActiveTlvs(NULL, &dataset);
-
-		if (error == OT_ERROR_NONE) {
-			shell_print(sh, "%s", "Operational Dataset TLVs: ");
-			shell_hexdump(sh, dataset.mTlvs, dataset.mLength);
-		} else {
-			shell_warn(sh, "Operational Dataset TLVs not found err:%i", error);
-		}
-
-		return error;
-	}
-
-	if (argc != 2) {
-		return OT_ERROR_INVALID_COMMAND;
-	}
-
-	dataset.mLength = hex2bin(argv[1], strlen(argv[1]), dataset.mTlvs, sizeof(dataset.mTlvs));
-	error = otDatasetSetActiveTlvs(NULL, &dataset);
-
-	if (error != OT_ERROR_NONE) {
-		shell_warn(sh, "Unable to set Operational Dataset TLVs err:%i", error);
-	}
-
-	return error;
-}
-
 static int cmd_discover(const struct shell *sh, size_t argc, char *argv[])
 {
 	return ot_cli_command_invoke(ot_cli_command_discover, sh, argc, argv);
 }
 
-static int cmd_active_tlvs(const struct shell *sh, size_t argc, char *argv[])
-{
-	return ot_cli_command_invoke(ot_cli_command_active_tlvs, sh, argc, argv);
-}
 static otError ot_cli_command_ifconfig(const struct shell *sh, size_t argc, char *argv[])
 {
 	if (argc <= 1) {
@@ -782,7 +746,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(state, NULL, "Current role", cmd_state, 1, 1),
 	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
 	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
-	SHELL_CMD_ARG(active_tlvs, NULL, "Set active dataset", cmd_active_tlvs, 1, 1),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_CMD_ARG(test_udp_init, NULL, "Test udp init API", cmd_test_udp_init, 1, 0),
 	SHELL_CMD_ARG(test_udp_send, NULL, "Test udp send API", cmd_test_udp_send, 1, 0),
