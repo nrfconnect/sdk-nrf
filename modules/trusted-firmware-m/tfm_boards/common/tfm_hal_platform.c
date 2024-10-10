@@ -147,6 +147,8 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
 	enum tfm_security_lifecycle_t lcs = tfm_attest_hal_get_security_lifecycle();
 
 	if (lcs != TFM_SLC_PSA_ROT_PROVISIONING && lcs != TFM_SLC_SECURED) {
+		SPMLOG_ERRMSGVAL("Invalid LCS: ", lcs);
+		SPMLOG_DBGMSG("Ensure that the device has been provisioned.\r\n");
 		return TFM_HAL_ERROR_BAD_STATE;
 	}
 #endif /* defined(NRF_PROVISIONING) */

@@ -1419,6 +1419,7 @@
 .. _`GNU Arm Embedded Toolchain`: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
 .. _`IDAU`: https://developer.arm.com/docs/100690/latest/attribution-units-sau-and-idau
 .. _`ARM CoreSight`: https://developer.arm.com/documentation/100536/0302
+.. _`ARM Platform Security Model 1.1`: https://developer.arm.com/documentation/den0128/0101b/
 
 .. ### Source: etsi.org
 

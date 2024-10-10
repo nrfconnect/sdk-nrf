@@ -11,7 +11,7 @@ The identity key library manages an asymmetric key used for identity services on
 It's used to provision identity keys and can only be used by a Zephyr image in Secure Processing Environment (SPE).
 It is not supported from images for Non-Secure Processing Environment (NSPE), from a Trusted Firmware-M image, or from MCUboot.
 
-The identity key is equivalent to the Initial Attestation Key (IAK), as described in the ARM Platform Security Model 1.1, when Trusted Firmware-M (TF-M) is enabled.
+The identity key is equivalent to the Initial Attestation Key (IAK), as described in the `ARM Platform Security Model 1.1`_, when Trusted Firmware-M (TF-M) is enabled.
 TF-M has access to the identity key using internal APIs and does not need to use this library.
 
 Functionality
