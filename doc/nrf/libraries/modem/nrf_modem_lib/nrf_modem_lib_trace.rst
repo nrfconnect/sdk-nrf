@@ -7,14 +7,17 @@ Modem trace module
    :local:
    :depth: 2
 
-To enable the tracing functionality, enable the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig in your project configuration.
 The module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c` and consists of a thread that initializes, deinitializes, and forwards modem traces to a backend.
 The trace backend can be selected in one of the following ways:
 
 * Adding the ``nrf91-modem-trace-uart`` snippet to send modem traces over UART.
   See :ref:`nrf91_modem_trace_uart_snippet` for more details.
-* Enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RTT` Kconfig option to send modem traces over SEGGER RTT.
-* Enabling the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH` Kconfig option to write modem traces to external flash.
+* Adding the ``nrf91-modem-trace-rtt`` snippet to send modem traces over RTT.
+  See :ref:`nrf91_modem_trace_rtt_snippet` for more details.
+* Adding the ``nrf91-modem-trace-ext-flash`` snippet to store modem traces in external flash.
+  See :ref:`nrf91_modem_trace_ext_flash_snippet` for more details.
+* Adding the ``nrf91-modem-trace-ram`` snippet to store modem traces in RAM.
+  See :ref:`nrf91_modem_trace_ram_snippet` for more details.
 
 To reduce the amount of trace data sent from the modem, a different trace level can be selected.
 Complete the following steps to configure the modem trace level at compile time:

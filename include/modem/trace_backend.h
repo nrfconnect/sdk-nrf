@@ -58,6 +58,9 @@ struct nrf_modem_lib_trace_backend {
 	 *          -ENOSPC if no space is available and the backend has to be cleared before
 	 *                  tracing can continue. For some trace backends, space is also cleared
 	 *                  when performing the read operation.
+	 *          -ENOSR  if no space is available and the backend has aborted the write. If
+	 *                  modem trace level is off, the trace thread will suspend itself until
+	 *                  modem traces are enabled. Else, the thread wil re-attempt the write.
 	 *          -EAGAIN if no data were written due to e.g. flow control and the operation
 	 *                  should be retried.
 	 */
