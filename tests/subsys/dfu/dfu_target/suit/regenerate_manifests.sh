@@ -5,13 +5,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Scrtipt to regenerate SUIT manifests for DFU target tests.
+# Script to regenerate SUIT manifests for DFU target tests.
 # To use this script you must have the following tools installed:
 # - suit-generator
 # - zcbor
 #
 # The script will update the following files:
-# - dfu_cache_partition_1.c which conatins the binary cache as C code
+# - dfu_cache_partition_1.c which contains the binary cache as C code
 # - manifest.c which contains the signed manifest as C code
 #
 # Before using this script paste the following files into

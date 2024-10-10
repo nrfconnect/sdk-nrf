@@ -369,8 +369,8 @@ function(suit_create_package)
   endif()
 
   if(SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD)
-    include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
-    include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_multi_image.cmake)
 
     set(suit_multi_image_ids)
     set(suit_multi_image_paths)
@@ -381,10 +381,10 @@ function(suit_create_package)
     list(APPEND suit_multi_image_paths "${SUIT_ROOT_DIRECTORY}root.suit")
     list(APPEND suit_multi_image_targets "${SUIT_ROOT_DIRECTORY}root.suit")
     # Include cache partition to the multi image package to store it in cache_partition
-    foreach(CACHE_PARTITION_NUM ${DFU_CACHE_PARTITIONS_USED})
-      math(EXPR DFU_IMAGE_ID "${CACHE_PARTITION_NUM} + 1")
-      list(APPEND suit_multi_image_ids ${DFU_IMAGE_ID})
-      list(APPEND suit_multi_image_paths "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${CACHE_PARTITION_NUM}.bin")
+    foreach(cache_partition_num ${DFU_CACHE_PARTITIONS_USED})
+      math(EXPR dfu_image_id "${cache_partition_num} + 1")
+      list(APPEND suit_multi_image_ids ${dfu_image_id})
+      list(APPEND suit_multi_image_paths "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${cache_partition_num}.bin")
     endforeach()
 
     dfu_multi_image_package(
