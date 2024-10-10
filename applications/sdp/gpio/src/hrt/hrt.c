@@ -3,19 +3,26 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
+#include "hrt.h"
 #include <hal/nrf_vpr_csr_vio.h>
 
-void set_direction(void)
+extern volatile uint16_t irq_arg;
+
+void hrt_set_bits(void)
 {
-	nrf_vpr_csr_vio_dir_set(0xA);
-	nrf_vpr_csr_vio_dir_set(0xB);
-	nrf_vpr_csr_vio_dir_set(0xC);
+	uint16_t outs = nrf_vpr_csr_vio_out_get();
+
+	nrf_vpr_csr_vio_out_set(outs | irq_arg);
 }
 
-void set_output(void)
+void hrt_clear_bits(void)
 {
-	nrf_vpr_csr_vio_out_set(0xA);
-	nrf_vpr_csr_vio_dir_set(0xB);
-	nrf_vpr_csr_vio_dir_set(0xC);
+	uint16_t outs = nrf_vpr_csr_vio_out_get();
+
+	nrf_vpr_csr_vio_out_set(outs & ~irq_arg);
+}
+
+void hrt_toggle_bits(void)
+{
+	nrf_vpr_csr_vio_out_toggle_set(irq_arg);
 }
