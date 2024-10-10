@@ -609,6 +609,7 @@ Zigbee samples
 * :ref:`zigbee_light_switch_sample` sample:
 
   * Added the option to configure transmission power.
+  * Fixed the FOTA configuration for the nRF5340 DK.
 
 Wi-Fi samples
 -------------
