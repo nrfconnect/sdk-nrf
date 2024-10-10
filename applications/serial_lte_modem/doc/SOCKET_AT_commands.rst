@@ -571,6 +571,10 @@ Syntax
         Indicates that the socket is in active use by a server application.
         This lets the modem stay in connected mode longer.
 
+  * ``62`` - :c:macro:`SO_IPV6_DELAYED_ADDR_REFRESH`.
+
+    * ``<value>`` is an integer that indicates whether delayed IPv6 address refresh is enabled.
+      It is ``0`` for disabled or ``1`` for enabled.
 
 See :ref:`nRF socket options <nrfxlib:nrf_sockets>` for explanation of the supported options.
 

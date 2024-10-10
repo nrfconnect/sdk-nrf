@@ -314,6 +314,7 @@ Serial LTE modem
   * DTLS support for the ``#XUDPSVR`` and ``#XSSOCKET`` (UDP server sockets) AT commands when the :file:`overlay-native_tls.conf` configuration file is used.
   * The :kconfig:option:`CONFIG_SLM_PPP_FALLBACK_MTU` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
   * Handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON``.
+  * Support for socket option ``AT_SO_IPV6_DELAYED_ADDR_REFRESH``.
 
 * Removed:
 
@@ -807,9 +808,14 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
+  * Added support for socket option ``SO_IPV6_DELAYED_ADDR_REFRESH``.
   * Updated the RTT trace backend to allocate the RTT channel at boot, instead of when the modem is activated.
   * Rename the nRF91 socket offload layer from ``nrf91_sockets`` to ``nrf9x_sockets`` to reflect that the offload layer is not exclusive to the nRF91 Series SiPs.
-  * Removed support for deprecated RAI socket options ``SO_RAI_LAST``, ``SO_RAI_NO_DATA``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE``.
+
+  * Removed:
+
+    * Support for deprecated RAI socket options ``SO_RAI_LAST``, ``SO_RAI_NO_DATA``, ``SO_RAI_ONE_RESP``, ``SO_RAI_ONGOING``, and ``SO_RAI_WAIT_MORE``.
+    * The mutex in the :c:func:`nrf9x_socket_offload_getaddrinfo` function after updating the :c:func:`nrf_getaddrinfo` function to handle concurrent requests.
 
 * :ref:`modem_info_readme` library:
 
