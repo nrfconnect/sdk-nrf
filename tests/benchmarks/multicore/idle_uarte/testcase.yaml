@@ -11,7 +11,6 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - FILE_SUFFIX=s2ram
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
     harness_config:
       fixture: ppk_power_measure

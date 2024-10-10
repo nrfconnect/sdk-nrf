@@ -89,7 +89,7 @@ int main(void)
 			return ret;
 		}
 
-		/* Sleep 1 second */
+		/* Sleep / enter low power state */
 		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);
 	}
 
