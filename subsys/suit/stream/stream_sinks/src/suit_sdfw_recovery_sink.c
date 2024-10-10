@@ -40,6 +40,7 @@ static suit_plat_err_t schedule_update(const uint8_t *buf, size_t size)
 {
 	int err = 0;
 
+	LOG_WRN("adsz: SIMULATE SDFW RECOVERY UPDATE ERROR!");
 	const struct sdfw_update_blob update_blob = {
 		.manifest_addr =
 			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_SIGNED_MANIFEST_OFFSET),
@@ -48,7 +49,8 @@ static suit_plat_err_t schedule_update(const uint8_t *buf, size_t size)
 		.signature_addr =
 			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_SIGNATURE_OFFSET),
 		.firmware_addr =
-			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET),
+			// (uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET),
+			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET) + 512,
 		.max_size = CONFIG_SUIT_SDFW_RECOVERY_UPDATE_MAX_SIZE,
 	};
 
@@ -106,6 +108,24 @@ static suit_plat_err_t schedule_update_and_reboot(const uint8_t *buf, size_t siz
 	return err;
 }
 
+static suit_plat_err_t clear_urot_update_status(void)
+{
+	mram_erase((uintptr_t)&NRF_SICR->UROT.UPDATE,
+		   sizeof(NRF_SICR->UROT.UPDATE) / CONFIG_SDFW_MRAM_WORD_SIZE);
+
+	/* Clearing the registers is crucial for correct handling by SecROM. */
+	/* Incorrect mram_erase behavior was observed on FPGA. */
+	/* Since mram_erase returns void, there is a need for extra check and returning error code
+	 * to handle such case.
+	 */
+	if (NRF_SICR->UROT.UPDATE.STATUS == SICR_UROT_UPDATE_STATUS_CODE_None &&
+	    NRF_SICR->UROT.UPDATE.OPERATION == SICR_UROT_UPDATE_OPERATION_OPCODE_Nop) {
+		return SUIT_PLAT_SUCCESS;
+	} else {
+		return SUIT_PLAT_ERR_IO;
+	}
+}
+
 static suit_plat_err_t update_already_ongoing(const uint8_t *buf, size_t size)
 {
 	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
@@ -130,6 +150,20 @@ static suit_plat_err_t update_already_ongoing(const uint8_t *buf, size_t size)
 		 * Because of that, set specific error code instead of SUIT_PLAT_ERR_CRASH.
 		 */
 		err = SUIT_PLAT_ERR_SDRFW_FAILURE;
+
+		suit_plat_err_t clear_err = clear_urot_update_status();
+		if (clear_err) {
+			LOG_ERR("Failed to clear UROT update status");
+			/* If the only error was during register clearing - report it. */
+			/* Otherwise report the original cause of failure. */
+			if (err == SUIT_PLAT_SUCCESS) {
+				err = clear_err;
+			}
+		} else {
+			/* TODO: Change to dbg */
+			LOG_INF("UROT update status cleared");
+		}
+
 		break;
 	}
 	}
@@ -155,10 +189,25 @@ static suit_plat_err_t update_needed(const uint8_t *buf, size_t size)
 		break;
 	}
 	case SDFW_UPDATE_OPERATION_UROT_ACTIVATE: {
-		/* SDFW update is onging - ignore it */
-		/* TODO: Check if this is correct approach */
-		LOG_WRN("adsz: SDFW Recovery update attempt while already updating SDFW!");
-		err = SUIT_PLAT_SUCCESS;
+		/* SDFW update was onging  */
+
+		/* TODO: Consider moving it to schedule function! */
+		suit_plat_err_t clear_err = clear_urot_update_status();
+		if (clear_err) {
+			LOG_ERR("Failed to clear UROT update status");
+			/* If the only error was during register clearing - report it. */
+			/* Otherwise report the original cause of failure. */
+			// if (err == SUIT_PLAT_SUCCESS) {
+			// 	err = clear_err;
+			// }
+		} else {
+			/* TODO: Change to dbg */
+			LOG_INF("UROT update status cleared");
+		}
+
+		/* TODO: Change from WRN */
+		LOG_WRN("Proceed with SDFW Recovery update");
+		err = schedule_update_and_reboot(buf, size);
 		break;
 	}
 	default: {
