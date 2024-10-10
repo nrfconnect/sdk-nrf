@@ -203,22 +203,24 @@ AT command parser
 
   * The :c:func:`at_parser_cmd_type_get` has been renamed to :c:func:`at_parser_at_cmd_type_get`.
 
+nRF Cloud
+---------
+
+.. toggle::
+
+   * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option has been enabled by default for nRF Cloud CoAP projects using the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` or :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig option.
+     Set the :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig option to at least ``80`` for P-GPS and ``192`` for FOTA.
+
 nRF Security
 ------------
 
 .. toggle::
 
    * The ``CONFIG_CRACEN_LOAD_KMU_SEED`` Kconfig option was renamed to :kconfig:option:`CONFIG_CRACEN_IKG_SEED_LOAD`.
+   * The ``CONFIG_MBEDTLS_CIPHER_MODE_CFB`` and ``CONFIG_MBEDTLS_CIPHER_MODE_OFB`` Kconfig options have been removed.
+     Use other cipher modes instead.
 
 .. _migration_2.8_recommended:
-
-nRF Security
-------------
-
-.. toggle::
-
-  * The ``CONFIG_MBEDTLS_CIPHER_MODE_CFB`` and ``CONFIG_MBEDTLS_CIPHER_MODE_OFB`` Kconfig options have been removed.
-    Use other cipher modes instead.
 
 Recommended changes
 *******************

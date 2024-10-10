@@ -543,7 +543,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		}
 		break;
 	case DOWNLOAD_CLIENT_EVT_DONE:
-		LOG_INF("Download client done");
+		LOG_DBG("Download client done");
 		break;
 	case DOWNLOAD_CLIENT_EVT_ERROR: {
 		if ((event->error == -ECANCELED) && IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)) {

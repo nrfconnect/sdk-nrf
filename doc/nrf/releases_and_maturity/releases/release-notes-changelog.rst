@@ -443,6 +443,8 @@ Cellular samples
     * Handling of JITP association to improve speed and reliability.
     * Renamed the :file:`overlay_nrf7002ek_wifi_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_mqtt_no_lte.conf`.
     * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
+    * The value of the :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig option in the :file:`overlay_coap.conf` file.
+      A larger value is required now that the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option is enabled.
 
   * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
@@ -909,6 +911,9 @@ Libraries for networking
 
     * To use a shorter resource string for the ``d2c/bulk`` resource.
     * The function :c:func:`nrf_cloud_coap_shadow_get` to return ``-E2BIG`` if the received shadow data was truncated because the provided buffer was not big enough.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option to be enabled by default if either the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` or :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig option is enabled.
+
+  * Removed the experimental status (:kconfig:option:`CONFIG_EXPERIMENTAL`) from the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option.
 
 * :ref:`lib_lwm2m_client_utils` library:
 
