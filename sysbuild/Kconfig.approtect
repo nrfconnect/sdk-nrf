@@ -1,0 +1,66 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+choice APPROTECT_HANDLING
+	prompt "APPROTECT handling"
+	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF53X || \
+		   SOC_SERIES_NRF91X
+	default APPROTECT_NO_SYSBUILD
+	help
+	  Specifies how the SystemInit() function of all the images should
+	  handle the APPROTECT mechanism.
+
+config APPROTECT_USE_UICR
+	bool "Use UICR"
+	help
+	  Enable CONFIG_NRF_APPROTECT_USE_UICR in all images.
+
+config APPROTECT_LOCK
+	bool "Lock"
+	help
+	  Enable CONFIG_NRF_APPROTECT_LOCK in all images.
+
+config APPROTECT_USER_HANDLING
+	bool "Allow user handling"
+	depends on !SOC_SERIES_NRF52X
+	help
+	  Enable CONFIG_NRF_APPROTECT_USER_HANDLING in all images.
+
+config APPROTECT_NO_SYSBUILD
+	bool "No sysbuild level configuration"
+	help
+	  Approtect handling is not configured at sysbuild level.
+
+endchoice
+
+choice SECURE_APPROTECT_HANDLING
+	prompt "Secure APPROTECT handling"
+	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
+	default SECURE_APPROTECT_NO_SYSBUILD
+	help
+	  Specifies how the SystemInit() function of all the images should
+	  handle the secure APPROTECT mechanism.
+
+config SECURE_APPROTECT_USE_UICR
+	bool "Use UICR"
+	help
+	  Enable CONFIG_NRF_SECURE_APPROTECT_USE_UICR in all images.
+
+config SECURE_APPROTECT_LOCK
+	bool "Lock"
+	help
+	  Enable CONFIG_NRF_SECURE_APPROTECT_LOCK in all images.
+
+config SECURE_APPROTECT_USER_HANDLING
+	bool "Allow user handling"
+	depends on !SOC_SERIES_NRF52X
+	help
+	  Enable CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING in all images.
+
+config SECURE_APPROTECT_NO_SYSBUILD
+	bool "No sysbuild level configuration"
+	help
+	  Secure approtect handling is not configured at sysbuild level.
+
+endchoice
