@@ -8,6 +8,8 @@ menu "Common"
 
 rsource "src/Kconfig.ml_app"
 rsource "src/modules/Kconfig"
+rsource "src/events/Kconfig"
+rsource "src/hw_interface/Kconfig"
 
 config APP_SENSOR_SLEEP_TO
 	int "Sensor default time in seconds before sensor goes to sleep"

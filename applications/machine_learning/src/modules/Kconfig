@@ -14,5 +14,6 @@ rsource "Kconfig.ml_runner"
 rsource "Kconfig.usb_state"
 rsource "Kconfig.sensor_sim_ctrl"
 rsource "Kconfig.ei_result_nsms"
+rsource "Kconfig.bas"
 
 endmenu

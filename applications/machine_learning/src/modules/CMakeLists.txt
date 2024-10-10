@@ -30,3 +30,6 @@ target_sources_ifdef(CONFIG_ML_APP_USB_STATE
 
 target_sources_ifdef(CONFIG_ML_APP_SENSOR_SIM_CTRL
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sensor_sim_ctrl.c)
+
+target_sources_ifdef(CONFIG_ML_APP_BAS_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/bas.c)
