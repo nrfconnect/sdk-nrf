@@ -36,6 +36,8 @@ static struct sdfw_recovery_sink_context *get_new_context(void)
 	return NULL;
 }
 
+/* TODO: Since it is called in single place only and error code is ignored, it might as well be a
+ * void function! */
 static suit_plat_err_t clear_urot_update_status(void)
 {
 	mram_erase((uintptr_t)&NRF_SICR->UROT.UPDATE,
@@ -63,12 +65,11 @@ static suit_plat_err_t schedule_update(const uint8_t *buf, size_t size)
 		/* There is not much we can do about it - just continue */
 	} else {
 		/* TODO: Change to dbg */
-		LOG_INF("UROT update status cleared");
+		LOG_INF("Update status cleared");
 	}
 
 	int err = 0;
 
-	LOG_WRN("adsz: SIMULATE SDFW RECOVERY UPDATE ERROR!");
 	const struct sdfw_update_blob update_blob = {
 		.manifest_addr =
 			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_SIGNED_MANIFEST_OFFSET),
@@ -77,8 +78,7 @@ static suit_plat_err_t schedule_update(const uint8_t *buf, size_t size)
 		.signature_addr =
 			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_SIGNATURE_OFFSET),
 		.firmware_addr =
-			// (uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET),
-			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET) + 512,
+			(uintptr_t)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET),
 		.max_size = CONFIG_SUIT_SDFW_RECOVERY_UPDATE_MAX_SIZE,
 	};
 
@@ -174,22 +174,16 @@ static suit_plat_err_t update_needed(const uint8_t *buf, size_t size)
 	enum sdfw_update_operation initial_operation = sdfw_update_initial_operation_get();
 
 	switch (initial_operation) {
-	case SDFW_UPDATE_OPERATION_NOP: {
-		/* No update ongoing - start SDFW Recovery update */
+	case SDFW_UPDATE_OPERATION_NOP:
+	case SDFW_UPDATE_OPERATION_UROT_ACTIVATE: {
+		/* No previously running update or after the other slot update. */
+		/* Schedule an update of this slot. */
 		err = schedule_update_and_reboot(buf, size);
 		break;
 	}
 	case SDFW_UPDATE_OPERATION_RECOVERY_ACTIVATE: {
 		/* SDFW Recovery update already ongoing */
 		err = update_already_ongoing(buf, size);
-		break;
-	}
-	case SDFW_UPDATE_OPERATION_UROT_ACTIVATE: {
-		/* SDFW update was onging  */
-
-		/* TODO: Change from WRN */
-		LOG_WRN("Proceed with SDFW Recovery update");
-		err = schedule_update_and_reboot(buf, size);
 		break;
 	}
 	default: {
