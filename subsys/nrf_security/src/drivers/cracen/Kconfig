@@ -16,7 +16,7 @@ if PSA_CRYPTO_DRIVER_CRACEN
 
 config CRACEN_LOAD_MICROCODE
 	bool
-	depends on SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
+	depends on (SOC_SERIES_NRF54LX && !SOC_NRF54L20) || SOC_SERIES_NRF54HX
 	default y
 	help
 	  Prompt-less configuration to load the CRACEN microcode.
