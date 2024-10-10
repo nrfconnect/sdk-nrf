@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice BOOTLOADER
+	default BOOTLOADER_MCUBOOT if !BOARD_NATIVE_SIM
+endchoice
+
+config SECURE_BOOT_APPCORE
+	default y if BOARD_NRF9160DK_NRF9160_NS \
+		|| BOARD_NRF9151DK_NRF9151_NS \
+		|| BOARD_NRF9161DK_NRF9161_NS
+
+config WIFI_NRF700X
+	default y if BOARD_THINGY91X_NRF9151_NS
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	default y if BOARD_NRF9151DK_NRF9151_NS || BOARD_NRF9161DK_NRF9161_NS
+	default y if BOARD_NRF9160DK_NRF9160_NS \
+		&& "${BOARD_REVISION}" != "0.1.0" \
+		&& "${BOARD_REVISION}" != "0.7.0" \
+		&& "${BOARD_REVISION}" != "0.7.1" \
+		&& "${BOARD_REVISION}" != "0.8.0" \
+		&& "${BOARD_REVISION}" != "0.8.2" \
+		&& "${BOARD_REVISION}" != "0.8.3" \
+		&& "${BOARD_REVISION}" != "0.8.5" \
+		&& "${BOARD_REVISION}" != "0.9.0"
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
