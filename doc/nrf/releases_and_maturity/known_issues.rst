@@ -1425,6 +1425,13 @@ KRKNWK-7836: Coordinator asserting when flooded with ZDO commands
 KRKNWK-6073: Potential delay during FOTA
   There might be a noticeable delay (~220 ms) between calling the ZBOSS API and on-the-air activity.
 
+.. rst-class:: v2-7-0
+
+KRKNWK-19263: FOTA DFU on nRF5340 fails due to invalid update image
+  Performing fota dfu on nrf5340 throws an error during an attempt to install the new image.
+
+  **Workaround:** Manually cherry-pick and apply commit with fix from main (commit hash: ``to be updated: pull/17796 not yet merged``).
+
 Applications
 ************
 
