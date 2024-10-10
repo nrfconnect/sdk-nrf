@@ -49,7 +49,7 @@ static char utc_offset[UTC_OFFSET_STR_LEN] = "";
 static char timezone[TIMEZONE_STR_LEN] = "";
 #define APP_DEVICE_TYPE "OMA-LWM2M Client"
 #if defined(APP_VERSION)
-#define CLIENT_SW_VER STRINGIFY(APP_VERSION)
+#define CLIENT_SW_VER ("v" NCS_VERSION_STRING "-" NCS_COMMIT_STRING)
 #else
 #define CLIENT_SW_VER "unknown"
 #endif
