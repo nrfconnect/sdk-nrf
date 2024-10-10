@@ -15,4 +15,5 @@ config APP_INCLUDE_REMOTE_IMAGE
 
 config APP_REMOTE_BOARD
 	string "The name of the CORE to be used by remote image"
+	default "nrf5340dk/nrf5340/cpunet"
 	depends on APP_INCLUDE_REMOTE_IMAGE
