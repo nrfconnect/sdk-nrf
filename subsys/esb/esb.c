@@ -546,6 +546,24 @@ static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
 	packet_config.balen = (esb_addr.addr_length - 1);
 	packet_config.statlen = 0;
 	packet_config.maxlen = CONFIG_ESB_MAX_PAYLOAD_LENGTH;
+#if defined(RADIO_PCNF0_PLEN_Msk)
+	if (esb_cfg.bitrate == ESB_BITRATE_2MBPS) {
+		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+	}
+
+#if defined(RADIO_MODE_MODE_Ble_2Mbit)
+	if (esb_cfg.bitrate == ESB_BITRATE_2MBPS_BLE) {
+		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+	}
+#endif /* defined(RADIO_MODE_MODE_Ble_2Mbit) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
+	if (esb_cfg.bitrate == ESB_BITRATE_4MBPS) {
+		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+	}
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
+
+#endif /* defined(RADIO_PCNF0_PLEN_Msk) */
 
 	nrf_radio_packet_configure(NRF_RADIO, &packet_config);
 }
