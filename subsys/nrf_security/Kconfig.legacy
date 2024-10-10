@@ -345,6 +345,7 @@ config OBERON_BACKEND
 	prompt "Configuration to enable nrf_oberon for legacy mbed TLS APIs"
 	select NRF_OBERON
 	depends on !(CC3XX_BACKEND_FORCED || CC3XX_BACKEND)
+	default y if PSA_SSF_CRYPTO_CLIENT
 	help
 	  This configuration enables legacy mbed TLS APIs using nrf_oberon.
 	  PSA_CRYPTO_DRIVER_OBERON should be used instead and will replace this once
