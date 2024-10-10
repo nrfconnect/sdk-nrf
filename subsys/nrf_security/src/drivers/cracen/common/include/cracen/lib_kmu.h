@@ -58,7 +58,7 @@ enum lib_kmu_rev_policy {
 /**
  * @brief Source struct for KMU slot provisioning.
  */
-struct kmu_src_t {
+struct kmu_src {
 	/** Asset contents/value. */
 	uint32_t value[4];
 	/** Revocation policy. */
@@ -81,7 +81,7 @@ struct kmu_src_t {
  *  @return -LIB_KMU_ERROR         If the operation returned an error.
  *  @return -LIB_KMU_NULL_POINTER  If the KMU source is NULL.
  */
-int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src);
+int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src);
 
 /** @brief Push the KMU slot to its destination address.
  *
