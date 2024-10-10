@@ -11,15 +11,31 @@
 #include <zephyr/fs/fs.h>
 
 /**
+ * @brief Finds all files on SD card that match the given pattern.
+ *
+ * @param result[out] Pointer to the result array of dimension result_file_num_max x
+ * result_file_len_max.
+ * @param result_file_num_max[in] Maximum number of files to be found.
+ * @param result_file_len_max[in] Maximum length of each file name including total path length
+ * @param path[in] NULL, search from root, otherwise search from the given path.
+ * @param pattern[in] Null terminated pattern to find, e.g. *.lc3 or *.wav
+ * @return int
+ */
+int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_file_len_max,
+			     char result[][result_file_len_max], char *path,
+			     char const *const pattern);
+
+/**
  * @brief	Print out the contents under SD card root path and write the content to buffer.
  *
  * @param[in]		path		Path of the folder which is going to be listed.
- *					If assigned path is null, then listing the contents under
+ *					If assigned path is NULL, then listing the contents under
  *					root. If assigned path doesn't exist, an error will be
  *					returned.
  * @param[out]		buf		Buffer where data is written. If set to NULL, it will be
  *					ignored.
  * @param[in, out]	buf_size	Buffer size.
+ * @param[in]		extra_info	Will append DIR/FILE info to string.
  *
  * @retval	0 on success.
  * @retval	-EPERM SD card operation is ongoing somewhere else.
@@ -28,7 +44,7 @@
  * @retval	-FR_INVALID_NAME Path is too long.
  * @retval	Otherwise, error from underlying drivers.
  */
-int sd_card_list_files(char const *const path, char *buf, size_t *buf_size);
+int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool extra_info);
 
 /**
  * @brief	Write data from buffer into the file.
