@@ -13,8 +13,8 @@ This sample does not include a TF-M image, it is a Zephyr image intended to be f
 After completion, the device is in the Platform Root-of-Trust (PRoT) security lifecycle state called **PRoT Provisioning**.
 For more information about the PRoT security lifecycle, see Arm's Platform Security Model 1.1 defined in the Platform Security Architecture (PSA).
 
-When built for the nrf5340dk/nrf5340/cpuapp target, this image by default also includes the :ref:`provisioning_image_net_core` sample as a child image for the network core (``nrf5340dk/nrf5340/cpunet`` target).
-The child image demonstrates how to disable the debugging access on the network core by writing to the UICR.APPROTECT register.
+When built for the nrf5340dk/nrf5340/cpuapp target, this image by default also includes the :ref:`provisioning_image_net_core` sample as an additional image for the network core (``nrf5340dk/nrf5340/cpunet`` target).
+The network core image demonstrates how to disable the debugging access on the network core by writing to the UICR.APPROTECT register.
 
 Requirements
 ************
