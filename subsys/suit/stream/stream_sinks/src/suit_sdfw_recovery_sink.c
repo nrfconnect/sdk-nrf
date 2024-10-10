@@ -132,7 +132,7 @@ static suit_plat_err_t process_update_needed_during_update(const uint8_t *buf, s
 		 * installation.
 		 * Because of that, set specific error code instead of SUIT_PLAT_ERR_CRASH.
 		 */
-		err = SUIT_PLAT_ERR_SDFW_RECOVERY_UPDATE_FAILURE;
+		err = SUIT_PLAT_ERR_SDRFW_FAILURE;
 		break;
 	}
 	}
