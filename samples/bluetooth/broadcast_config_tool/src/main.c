@@ -106,6 +106,18 @@ struct subgroup_lc3_stream_info {
 static struct subgroup_lc3_stream_info lc3_stream_infos[CONFIG_BT_ISO_MAX_BIG]
 						       [CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT];
 
+/* Find the most significant 1 in bits, bits will not be 0. */
+static int8_t context_msb_one(uint16_t bits)
+{
+	uint8_t pos = 0;
+
+	while (bits >>= 1) {
+		pos++;
+	}
+
+	return pos;
+}
+
 static struct bt_bap_lc3_preset *preset_find(const char *name)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(bap_presets); i++) {
@@ -615,8 +627,10 @@ int main(void)
 
 static void context_print(const struct shell *shell)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(contexts); i++) {
-		shell_print(shell, "%s", contexts[i].name);
+	shell_print(shell, "%s", bt_audio_context_bit_to_str(0));
+
+	for (int i = 0; i <= context_msb_one(BT_AUDIO_CONTEXT_TYPE_ANY); i++) {
+		shell_print(shell, "%s", bt_audio_context_bit_to_str(BIT(i)));
 	}
 }
 
@@ -732,12 +746,13 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 
 		shell_print(shell, "\t\tContext(s):");
 
-		/* Context container is a bit field with length 16 */
-		for (size_t j = 0U; j < 16; j++) {
+		/* Context container is a bit field */
+		for (size_t j = 0U; j <= context_msb_one(BT_AUDIO_CONTEXT_TYPE_ANY); j++) {
 			const uint16_t bit_val = BIT(j);
 
 			if (brdcst_param->subgroups[i].context & bit_val) {
-				shell_print(shell, "\t\t\t%s", context_bit_to_str(bit_val));
+				shell_print(shell, "\t\t\t%s",
+					    bt_audio_context_bit_to_str(bit_val));
 			}
 		}
 
@@ -758,7 +773,8 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 
 		for (size_t j = 0; j < brdcst_param->subgroups[i].num_bises; j++) {
 			shell_print(shell, "\t\t\tBIS %d: %s", j,
-				    location_bit_to_str(brdcst_param->subgroups[i].location[j]));
+				    bt_audio_location_bit_to_str(
+					    brdcst_param->subgroups[i].location[j]));
 		}
 
 		shell_print(shell, "\t\tFiles:");
@@ -1347,9 +1363,10 @@ static int cmd_context(const struct shell *shell, size_t argc, char **argv)
 		return -EINVAL;
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(contexts); i++) {
-		if (strcasecmp(argv[1], contexts[i].name) == 0) {
-			context = contexts[i].context;
+	/* Context container is a bit field */
+	for (size_t i = 0U; i <= context_msb_one(BT_AUDIO_CONTEXT_TYPE_ANY); i++) {
+		if (strcasecmp(argv[1], bt_audio_context_bit_to_str(BIT(i))) == 0) {
+			context = BIT(i);
 			break;
 		}
 	}
@@ -1387,7 +1404,7 @@ static void location_print(const struct shell *shell)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(locations); i++) {
 		shell_print(shell, "%s - %s", locations[i].name,
-			    location_bit_to_str(locations[i].location));
+			    bt_audio_location_bit_to_str(locations[i].location));
 	}
 }
 
@@ -1429,6 +1446,7 @@ static int cmd_location(const struct shell *shell, size_t argc, char **argv)
 	int location = location_find(shell, argv[1]);
 
 	if (location < 0) {
+		shell_error(shell, "Location not found");
 		return -EINVAL;
 	}
 
