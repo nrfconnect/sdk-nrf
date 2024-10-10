@@ -3,9 +3,11 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
 #include <zephyr/bluetooth/bluetooth.h>
 #include "iso_broadcast_src.h"
 #include "iso_broadcast_sink.h"
+#include "acl_central.h"
 #include "nrfx_clock.h"
 
 #include <zephyr/logging/log.h>
@@ -30,7 +32,6 @@ static int hfclock_config_and_start(void)
 	return 0;
 }
 
-
 int main(void)
 {
 	int err;
@@ -49,10 +50,12 @@ int main(void)
 		LOG_ERR("iso_broadcast_src_init failed (err %d)", err);
 	}
 
-	err = iso_broadcast_sink_init();
+	err = iso_broadcast_sink_init(NULL);
 	if (err) {
 		LOG_ERR("iso_broadcaster_sink_init failed (err %d)", err);
 	}
+
+	err = acl_central_init();
 
 	return 0;
 }
