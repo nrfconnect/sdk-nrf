@@ -23,7 +23,7 @@ Overview
 
 The sample performs the following operations:
 
-1. Registers callbacks during compile time for modem initialization, functional mode changes, and shutdown using the :c:macro:`NRF_MODEM_LIB_ON_INIT`, :c:macro:`LTE_LC_ON_CFUN` and :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macros respectively.
+1. Registers callbacks during compile time for modem initialization, functional mode changes, and shutdown using the :c:macro:`NRF_MODEM_LIB_ON_INIT`, :c:macro:`NRF_MODEM_LIB_ON_CFUN` and :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macros respectively.
 #. Initializes the :ref:`nrfxlib:nrf_modem`.
 #. Changes functional mode using the :c:func:`lte_lc_func_mode_set` function in the :ref:`lte_lc_readme` library
 #. Shuts down the :ref:`nrfxlib:nrf_modem`.

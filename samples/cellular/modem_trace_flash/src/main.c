@@ -25,10 +25,10 @@ LOG_MODULE_REGISTER(modem_trace_flash_sample, CONFIG_MODEM_TRACE_FLASH_SAMPLE_LO
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART1_DT_NODE);
 
-LTE_LC_ON_CFUN(cfun_hook, on_cfun, NULL);
+NRF_MODEM_LIB_ON_CFUN(cfun_hook, on_cfun, NULL);
 
 /* Callback for when modem functional mode is changed */
-static void on_cfun(enum lte_lc_func_mode mode, void *context)
+static void on_cfun(int mode, void *context)
 {
 	LOG_INF("LTE mode changed to %d\n", mode);
 }

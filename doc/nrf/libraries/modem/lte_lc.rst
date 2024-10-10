@@ -184,40 +184,6 @@ To enable modem sleep and TAU pre-warning notifications, enable the following op
 
 For additional configurations related to these features, see the API documentation.
 
-Functional mode changes callback
-================================
-
-The library allows the application to define compile-time callbacks to receive the modem's functional mode changes.
-These callbacks allow any part of the application to perform certain operations when the modem enters or re-enters a certain functional mode using the library :c:func:`lte_lc_func_mode_set` API.
-For example, one kind of operation that the application or a library may need to perform and repeat, whenever the modem enters a certain functional mode is the subscription to AT notifications.
-The application can set up a callback for modem`s functional mode changes using the :c:macro:`LTE_LC_ON_CFUN` macro.
-
-.. important::
-   When the :c:macro:`LTE_LC_ON_CFUN` macro is used, the application must not call :c:func:`nrf_modem_at_cfun_handler_set` as that will override the handler set by the modem library integration layer.
-
-.. note::
-   The CFUN callback is not supported with :c:func:`nrf_modem_at_cmd_async`.
-
-The following code snippet shows how to use the :c:macro:`LTE_LC_ON_CFUN` macro:
-
-.. code-block:: c
-
-   /* Define a callback */
-   LTE_LC_ON_CFUN(cfun_hook, on_cfun, NULL);
-
-   /* Callback implementation */
-   static void on_cfun(enum lte_lc_func_mode mode, void *context)
-   {
-           printk("Functional mode changed to %d\n", mode);
-   }
-
-   int main(void)
-   {
-           /* Change functional mode using the LTE link control API */
-           lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
-           return 0;
-   }
-
 Dependencies
 ************
 

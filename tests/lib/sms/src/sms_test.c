@@ -32,10 +32,15 @@ static void sms_callback(struct sms_data *const data, void *context);
  */
 extern void at_monitor_dispatch(const char *at_notif);
 
-/* lte_lc_on_modem_cfun() is implemented in SMS library and
+
+#define CFUN_MODE_OFFLINE 0
+#define CFUN_MODE_NORMAL 1
+#define CFUN_MODE_ACTIVATE_LTE 21
+
+/* sms_on_cfun() is implemented in SMS library and
  * we'll call it directly to fake notification of functional modem change
  */
-extern void lte_lc_on_modem_cfun(int mode, void *ctx);
+extern void sms_on_cfun(int mode, void *ctx);
 
 /* sms_ack_resp_handler() is implemented in SMS library and
  * we'll call it directly to fake response to AT+CNMA=1.
@@ -330,7 +335,7 @@ void test_sms_lte_lc_cb_reregisteration(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_OFFLINE, NULL);
+	sms_on_cfun(CFUN_MODE_OFFLINE, NULL);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
@@ -348,7 +353,7 @@ void test_sms_lte_lc_cb_reregisteration(void)
 #endif
 
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_ACTIVATE_LTE, NULL);
+	sms_on_cfun(CFUN_MODE_ACTIVATE_LTE, NULL);
 
 	sms_unreg_helper();
 }
@@ -375,7 +380,7 @@ void test_sms_lte_lc_cb_registration_already_exists(void)
 	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(cnmi_reg_ok, sizeof(cnmi_reg_ok));
 
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_NORMAL, NULL);
+	sms_on_cfun(CFUN_MODE_NORMAL, NULL);
 
 	sms_unreg_helper();
 }
@@ -392,7 +397,7 @@ void test_sms_lte_lc_cb_reregisteration_fail(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_OFFLINE, NULL);
+	sms_on_cfun(CFUN_MODE_OFFLINE, NULL);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
@@ -403,7 +408,7 @@ void test_sms_lte_lc_cb_reregisteration_fail(void)
 	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
 
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_NORMAL, NULL);
+	sms_on_cfun(CFUN_MODE_NORMAL, NULL);
 
 	/* Unregister listener. SMS got unregistered already above */
 	sms_unregister_listener(test_handle);
@@ -420,13 +425,13 @@ void test_sms_lte_lc_cb_registeration_not_exists(void)
 {
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_OFFLINE, NULL);
+	sms_on_cfun(CFUN_MODE_OFFLINE, NULL);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=21", 0);
 	lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_ACTIVATE_LTE, NULL);
+	sms_on_cfun(CFUN_MODE_ACTIVATE_LTE, NULL);
 }
 
 /********* SMS SEND TEXT TESTS ***********************/

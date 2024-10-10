@@ -16,6 +16,7 @@
 #include <modem/lte_lc.h>
 #endif
 #include <modem/sms.h>
+#include <modem/nrf_modem_lib.h>
 
 #include "sms_submit.h"
 #include "sms_deliver.h"
@@ -40,6 +41,9 @@ LOG_MODULE_REGISTER(sms, CONFIG_SMS_LOG_LEVEL);
 #define AT_SMS_PDU_ACK "AT+CNMA=1"
 /** @brief AT notification informing that SMS client has been unregistered. */
 #define AT_SMS_UNREGISTERED_NTF "+CMS ERROR: 524"
+
+#define MODEM_CFUN_NORMAL 1
+#define MODEM_CFUN_ACTIVATE_LTE 21
 
 /** @brief SMS structure where received SMS is parsed. */
 static struct sms_data sms_data_info;
@@ -418,11 +422,12 @@ int sms_send(const char *number, const uint8_t *data, uint16_t data_len, enum sm
 	}
 	return sms_submit_send(number, data, data_len, type);
 }
-
-#if defined(CONFIG_LTE_LINK_CONTROL)
-LTE_LC_ON_CFUN(sms_cfun_hook, sms_on_cfun, NULL);
-
-static void sms_on_cfun(enum lte_lc_func_mode mode, void *ctx)
+#ifdef CONFIG_UNITY
+void sms_on_cfun(int mode, void *ctx)
+#else
+NRF_MODEM_LIB_ON_CFUN(sms_cfun_hook, sms_on_cfun, NULL)
+static void sms_on_cfun(int mode, void *ctx)
+#endif
 {
 	int err;
 
@@ -430,8 +435,8 @@ static void sms_on_cfun(enum lte_lc_func_mode mode, void *ctx)
 	 * if it had been registered earlier.
 	 */
 	if (sms_client_registered) {
-		if (mode == LTE_LC_FUNC_MODE_NORMAL ||
-		    mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
+		if (mode == MODEM_CFUN_NORMAL ||
+		    mode == MODEM_CFUN_ACTIVATE_LTE) {
 
 			LOG_DBG("Reinitialize SMS subscription when LTE is set ON");
 
@@ -442,4 +447,3 @@ static void sms_on_cfun(enum lte_lc_func_mode mode, void *ctx)
 		}
 	}
 }
-#endif /* CONFIG_LTE_LINK_CONTROL */

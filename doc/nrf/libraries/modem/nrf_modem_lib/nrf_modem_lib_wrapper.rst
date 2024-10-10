@@ -40,7 +40,7 @@ The result of the initialization and the callback context are provided to these 
   The callback can be used to perform modem and library configurations that require the modem to be turned on in offline mode.
   The callback cannot be used to change the modem's functional mode.
   Calls to :c:func:`lte_lc_connect` and ``CFUN`` AT calls are not allowed, and must be done after :c:func:`nrf_modem_lib_init` has returned.
-  If a library needs to perform operations after the link is up, it can use the :ref:`lte_lc_readme` and subscribe to a :c:macro:`LTE_LC_ON_CFUN` callback.
+  If a library needs to perform operations after the link is up, it can use the :c:macro:`NRF_MODEM_LIB_ON_CFUN` callback.
 
 Callbacks for the macro :c:macro:`NRF_MODEM_LIB_ON_INIT` must have the signature ``void callback_name(int ret, void *ctx)``, where ``ret`` is the result of the initialization and ``ctx`` is the context passed to the macro.
 The callbacks registered using the :c:macro:`NRF_MODEM_LIB_ON_SHUTDOWN` macro are executed before the library is shut down.
