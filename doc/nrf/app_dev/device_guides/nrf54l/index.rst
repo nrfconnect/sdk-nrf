@@ -24,7 +24,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - Product pages
    * - :ref:`zephyr:nrf54l15dk_nrf54l15`
      - PCA10156
-     - ``nrf54l15dk/nrf54l51/cpuapp``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
      - :ref:`Getting started <gsg_other>`
      - `nRF54L15 System-on-Chip`_
 
