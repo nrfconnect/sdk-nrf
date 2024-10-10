@@ -74,7 +74,12 @@ SUIT_Envelope_Tagged:
     suit-current-version: {{ DEFAULT_VERSION }}
 {%- endif %}
 
+{%- if application['dt'].label2node['suit_storage_partition'].regs[0].size == 24576 %}
+    # Application DTS contains larger SUIT storage - use legacy encoding
+    suit-install-legacy:
+{%- else %}
     suit-install:
+{%- endif %}
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
 {%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in application['config'] and application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}
