@@ -36,7 +36,7 @@
 
 	mbox_consumer {
 		compatible = "vnd,mbox-consumer";
-		mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
+		mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
 		mbox-names = "rx", "tx";
 	};
 };
