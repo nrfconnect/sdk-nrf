@@ -563,6 +563,61 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 		/* preamble, address (BALEN + PREFIX), lflen and payload */
 		total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		break;
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5)
+	case NRF_RADIO_MODE_NRF_4MBIT_H_0_5:
+		/* Packet configuration:
+		 * S1 size = 0 bits,
+		 * S0 size = 0 bytes,
+		 * 16-bit preamble.
+		 */
+		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+
+		/* preamble, address (BALEN + PREFIX), lflen and payload */
+		total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
+		break;
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_25)
+	case NRF_RADIO_MODE_NRF_4MBIT_H_0_25:
+		/* Packet configuration:
+		 * S1 size = 0 bits,
+		 * S0 size = 0 bytes,
+		 * 16-bit preamble.
+		 */
+		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+
+		/* preamble, address (BALEN + PREFIX), lflen and payload */
+		total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
+		break;
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_25) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
+	case NRF_RADIO_MODE_NRF_4MBIT_BT_0_6:
+		/* Packet configuration:
+		 * S1 size = 0 bits,
+		 * S0 size = 0 bytes,
+		 * 16-bit preamble.
+		 */
+		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+
+		/* preamble, address (BALEN + PREFIX), lflen and payload */
+		total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
+		break;
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
+
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT4)
+	case NRF_RADIO_MODE_NRF_4MBIT_BT_0_4:
+		/* Packet configuration:
+		 * S1 size = 0 bits,
+		 * S0 size = 0 bytes,
+		 * 16-bit preamble.
+		 */
+		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+
+		/* preamble, address (BALEN + PREFIX), lflen and payload */
+		total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
+		break;
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT4) */
 
 	default:
 		/* Packet configuration:
