@@ -132,7 +132,7 @@ static bool dect_phy_rf_tool_rx_mode(enum dect_phy_rf_tool_mode mode);
 
 /**************************************************************************************************/
 
-void dect_phy_rf_tool_initialize_cb(const uint64_t *time, int16_t temperature,
+static void dect_phy_rf_tool_initialize_cb(const uint64_t *time, int16_t temperature,
 				    enum nrf_modem_dect_phy_err status,
 				    const struct nrf_modem_dect_phy_modem_cfg *modem_configuration)
 {
@@ -149,13 +149,13 @@ void dect_phy_rf_tool_initialize_cb(const uint64_t *time, int16_t temperature,
 					  sizeof(struct dect_phy_common_op_initialized_params));
 }
 
-void dect_phy_rf_tool_rx_op_stop_cb(uint64_t const *time, enum nrf_modem_dect_phy_err status,
+static void dect_phy_rf_tool_rx_op_stop_cb(uint64_t const *time, enum nrf_modem_dect_phy_err status,
 				    uint32_t handle)
 {
 	dect_app_modem_time_save(time);
 }
 
-void dect_phy_rf_tool_op_complete_cb(uint64_t const *time, int16_t temperature,
+static void dect_phy_rf_tool_op_complete_cb(uint64_t const *time, int16_t temperature,
 				     enum nrf_modem_dect_phy_err status, uint32_t handle)
 {
 	struct dect_phy_common_op_completed_params rf_tool_op_completed_params = {
@@ -196,7 +196,7 @@ static void dect_phy_rf_tool_rx_pcc_cb(uint64_t const *time,
 					  sizeof(struct dect_phy_common_op_pcc_rcv_params));
 }
 
-void dect_phy_rf_tool_pcc_crc_failure_cb(
+static void dect_phy_rf_tool_pcc_crc_failure_cb(
 	uint64_t const *time, struct nrf_modem_dect_phy_rx_pcc_crc_failure const *crc_failure)
 {
 	struct dect_phy_common_op_pcc_crc_fail_params pdc_crc_fail_params = {
@@ -210,7 +210,7 @@ void dect_phy_rf_tool_pcc_crc_failure_cb(
 					  sizeof(struct dect_phy_common_op_pcc_crc_fail_params));
 }
 
-void dect_phy_rf_tool_rx_pdc_cb(uint64_t const *time,
+static void dect_phy_rf_tool_rx_pdc_cb(uint64_t const *time,
 				struct nrf_modem_dect_phy_rx_pdc_status const *p_rx_status,
 				void const *p_data, uint32_t length)
 {
@@ -240,7 +240,7 @@ void dect_phy_rf_tool_rx_pdc_cb(uint64_t const *time,
 	}
 }
 
-void dect_phy_rf_tool_on_pdc_crc_failure_cb(
+static void dect_phy_rf_tool_on_pdc_crc_failure_cb(
 	uint64_t const *time, struct nrf_modem_dect_phy_rx_pdc_crc_failure const *crc_failure)
 {
 	struct dect_phy_common_op_pdc_crc_fail_params pdc_crc_fail_params = {
@@ -254,29 +254,37 @@ void dect_phy_rf_tool_on_pdc_crc_failure_cb(
 					  sizeof(struct dect_phy_common_op_pdc_crc_fail_params));
 }
 
-void dect_phy_rf_tool_on_rssi_cb(const uint64_t *time,
+static void dect_phy_rf_tool_on_rssi_cb(const uint64_t *time,
 				 const struct nrf_modem_dect_phy_rssi_meas *p_result)
 {
 	printk("WARN: Unexpectedly in %s\n", (__func__));
 }
 
-void dect_phy_rf_tool_link_configuration_cb(uint64_t const *time,
+static void dect_phy_rf_tool_link_configuration_cb(uint64_t const *time,
 					    enum nrf_modem_dect_phy_err status)
 {
 	printk("WARN: Unexpectedly in %s\n", (__func__));
 }
 
-void dect_phy_rf_tool_time_query_cb(uint64_t const *time, enum nrf_modem_dect_phy_err status)
+static void dect_phy_rf_tool_time_query_cb(
+	uint64_t const *time, enum nrf_modem_dect_phy_err status)
 {
 }
 
-void dect_phy_rf_tool_capability_get_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err,
-					const struct nrf_modem_dect_phy_capability *capabilities)
+static void dect_phy_rf_tool_capability_get_cb(
+	const uint64_t *time, enum nrf_modem_dect_phy_err err,
+	const struct nrf_modem_dect_phy_capability *capabilities)
 {
 	dect_app_modem_time_save(time);
 }
 
-void dect_phy_rf_tool_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void dect_phy_rf_tool_stf_cover_seq_control_cb(
+	const uint64_t *time, enum nrf_modem_dect_phy_err err)
+{
+	printk("WARN: Unexpectedly in %s\n", (__func__));
+}
+
+static void dect_phy_rf_tool_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
 {
 	dect_phy_rf_tool_msgq_non_data_op_add(DECT_PHY_RF_TOOL_EVT_MDM_DEINITIALIZED);
 }
@@ -293,6 +301,7 @@ static const struct nrf_modem_dect_phy_callbacks rf_tool_phy_api_config = {
 	.link_config = dect_phy_rf_tool_link_configuration_cb,
 	.time_get = dect_phy_rf_tool_time_query_cb,
 	.capability_get = dect_phy_rf_tool_capability_get_cb,
+	.stf_cover_seq_control = dect_phy_rf_tool_stf_cover_seq_control_cb,
 	.deinit = dect_phy_rf_tool_deinit_cb,
 };
 
