@@ -6,22 +6,14 @@
 
 #include <sdfw/sdfw_services/echo_service.h>
 #include <sdfw/sdfw_services/reset_evt_service.h>
-#include <sdfw/sdfw_services/sdfw_update_service.h>
 
-#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ssf_client_sample, CONFIG_SSF_CLIENT_SAMPLE_LOG_LEVEL);
-
-#if CONFIG_IMPRIMATUR_ENABLED
-#define IMPRIMATUR_UPDATE_IMAGE_OFFSET CONFIG_IMPRIMATUR_UPDATE_IMAGE_OFFSET
-#else
-#define IMPRIMATUR_UPDATE_IMAGE_OFFSET (0xe155000)
-#endif
 
 static void echo_request(void)
 {
 	int err;
-	char req_str[] = "Hello " CONFIG_BOARD;
+	char req_str[] = "Hello " CONFIG_BOARD_TARGET;
 	char rsp_str[sizeof(req_str) + 1];
 
 	LOG_INF("Calling ssf_echo, str: \"%s\"", req_str);
@@ -52,27 +44,9 @@ static void reset_evt_subscribe(void)
 	}
 }
 
-static void sdfw_update(void)
-{
-	int err;
-
-	uintptr_t *image_data = (uintptr_t *)IMPRIMATUR_UPDATE_IMAGE_OFFSET;
-
-	if (IS_ENABLED(CONFIG_UPDATE_REQUEST_CHECK_DATA) && *image_data == 0xFFFFFFFF) {
-		LOG_WRN("No update download data.");
-		return;
-	}
-
-	err = ssf_sdfw_update(IMPRIMATUR_UPDATE_IMAGE_OFFSET);
-	if (err != 0) {
-		LOG_ERR("Unable to perform sdfw update, err: %d", err);
-		return;
-	}
-}
-
 int main(void)
 {
-	LOG_INF("ssf client sample (%s)", CONFIG_BOARD);
+	LOG_INF("ssf client sample (" CONFIG_BOARD_TARGET ")");
 
 	if (IS_ENABLED(CONFIG_ENABLE_ECHO_REQUEST)) {
 		echo_request();
@@ -80,10 +54,6 @@ int main(void)
 
 	if (IS_ENABLED(CONFIG_ENABLE_RESET_EVT_SUBSCRIBE_REQUEST)) {
 		reset_evt_subscribe();
-	}
-
-	if (IS_ENABLED(CONFIG_ENABLE_SDFW_UPDATE_REQUEST)) {
-		sdfw_update();
 	}
 
 	return 0;

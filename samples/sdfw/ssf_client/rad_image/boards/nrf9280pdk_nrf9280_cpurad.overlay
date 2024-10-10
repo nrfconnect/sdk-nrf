@@ -4,10 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&cpusec_cpuapp_ipc {
-	status = "okay";
-};
-
-&cpusec_bellboard {
-	status = "okay";
-};
+#include "../../boards/nrf9280pdk_nrf9280_cpurad.overlay"
