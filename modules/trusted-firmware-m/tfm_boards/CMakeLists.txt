@@ -86,10 +86,10 @@ if (${TFM_PARTITION_CRYPTO})
       $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>
     )
 
-    # nrf54l15 uses the PSA headers in the hw_unique_key_cracen.c file, which means
+    # nrf54l15 uses the PSA headers in the hw_unique_key_cracen_kmu.c file, which means
     # that we need to make sure that the nrf_security PSA headers are included
     # before any other PSA-related headers.
-    if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
+    if(NRF_SOC_VARIANT STREQUAL nrf54l15)
       target_link_libraries(platform_crypto_keys
         PRIVATE
         psa_crypto_library_config
@@ -97,13 +97,13 @@ if (${TFM_PARTITION_CRYPTO})
 
       target_sources(platform_crypto_keys
         PRIVATE
-        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cracen.c
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cracen_kmu.c
       )
     else()
       target_sources(platform_s
         PRIVATE
-        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key.c
-        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_kmu.c
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cc3xx.c
+        ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cc3xx_kmu.c
       )
     endif()
   endif()
@@ -213,7 +213,7 @@ file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
      DESTINATION ${INSTALL_PLATFORM_NS_DIR})
 
 
-if((NRF_SOC_VARIANT STREQUAL nrf54l15) OR (target STREQUAL nrf54l15))
+if(NRF_SOC_VARIANT STREQUAL nrf54l15)
   file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
        DESTINATION ${INSTALL_INTERFACE_INC_DIR})
   file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_kmu.h

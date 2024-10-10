@@ -27,6 +27,8 @@
  */
 #define PROVISIONING_SLOT 250
 
+#define SECONDARY_SLOT_METADATA_VALUE UINT32_MAX
+
 extern mbedtls_threading_mutex_t cracen_mutex_symmetric;
 
 /* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
@@ -236,11 +238,25 @@ int cracen_kmu_clean_key(const uint8_t *user_data)
  * @brief Checks whether this is the secondary slot. If true, the metadata resides in
  *        one of the previous slots;
  */
-bool is_secondary_slot(kmu_metadata *metadata)
+static bool is_secondary_slot(kmu_metadata *metadata)
 {
-	uint32_t value = 0xffffffff;
+	const uint32_t value = SECONDARY_SLOT_METADATA_VALUE;
 
+	_Static_assert(sizeof(value) == sizeof(*metadata));
 	return memcmp(&value, metadata, sizeof(value)) == 0;
+}
+
+static psa_status_t read_primary_slot_metadata(unsigned int slot_id, kmu_metadata *metadata)
+{
+	const int kmu_status = lib_kmu_read_metadata(slot_id, (uint32_t *)metadata);
+
+	if (kmu_status == -LIB_KMU_REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+	if (kmu_status == -LIB_KMU_ERROR || is_secondary_slot(metadata)) {
+		return PSA_ERROR_DOES_NOT_EXIST;
+	}
+	return PSA_SUCCESS;
 }
 
 static bool can_sign(const psa_key_attributes_t *key_attr)
@@ -292,7 +308,7 @@ static psa_status_t clean_up_unfinished_provisioning(void)
  */
 static psa_status_t set_provisioning_in_progress(uint32_t slot_id, uint32_t num_slots)
 {
-	struct kmu_src_t kmu_desc = {};
+	struct kmu_src kmu_desc = {};
 
 	kmu_desc.metadata = slot_id << 8 | num_slots;
 	kmu_desc.rpolicy = LIB_KMU_REV_POLICY_ROTATING;
@@ -756,13 +772,14 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		}
 	}
 
-	struct kmu_src_t kmu_desc = {};
+	struct kmu_src kmu_desc = {};
 
 	for (size_t i = 0; i < num_slots; i++) {
-		kmu_desc.dest = push_address + (CRACEN_KMU_SLOT_KEY_SIZE * i);
-		kmu_desc.metadata = UINT32_MAX;
+		kmu_desc.dest = (uint32_t)push_address + (CRACEN_KMU_SLOT_KEY_SIZE * i);
 		if (i == 0) {
-			memcpy(&kmu_desc.metadata, &metadata, sizeof(metadata));
+			memcpy(&kmu_desc.metadata, &metadata, sizeof(kmu_desc.metadata));
+		} else {
+			kmu_desc.metadata = SECONDARY_SLOT_METADATA_VALUE;
 		}
 		kmu_desc.rpolicy = metadata.rpolicy;
 		memcpy(kmu_desc.value, key_buffer + CRACEN_KMU_SLOT_KEY_SIZE * i,
@@ -792,18 +809,12 @@ exit:
 psa_status_t cracen_kmu_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 				     psa_drv_slot_number_t *slot_number)
 {
-	kmu_metadata metadata;
-
 	unsigned int slot_id = CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
+	kmu_metadata metadata;
+	const psa_status_t ret = read_primary_slot_metadata(slot_id, &metadata);
 
-	int kmu_status = lib_kmu_read_metadata((int)slot_id, (uint32_t *)&metadata);
-
-	if (kmu_status == -LIB_KMU_REVOKED) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
-	if (kmu_status == -LIB_KMU_ERROR || is_secondary_slot(&metadata)) {
-		return PSA_ERROR_DOES_NOT_EXIST;
+	if (ret != PSA_SUCCESS) {
+		return ret;
 	}
 
 	psa_key_persistence_t read_only = metadata.rpolicy == LIB_KMU_REV_POLICY_ROTATING
@@ -845,18 +856,13 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 					size_t key_buffer_size, size_t *key_buffer_length)
 {
 	kmu_metadata metadata;
-	int kmu_status = lib_kmu_read_metadata((int)slot_number, (uint32_t *)&metadata);
+	psa_status_t status = read_primary_slot_metadata(slot_number, &metadata);
 
-	if (kmu_status == -LIB_KMU_REVOKED) {
-		return PSA_ERROR_NOT_PERMITTED;
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
-	if (kmu_status == -LIB_KMU_ERROR || is_secondary_slot(&metadata)) {
-		return PSA_ERROR_DOES_NOT_EXIST;
-	}
-
-	psa_status_t status = clean_up_unfinished_provisioning();
-
+	status = clean_up_unfinished_provisioning();
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

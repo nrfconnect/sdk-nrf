@@ -26,7 +26,7 @@ tfm_storage:
 # In nRF54L15 we place the tfm_storage partitions before the
 # TF-M non-secure application to avoid splitting the secure/non-secure
 # partitions more than necessary.
-#if defined(CONFIG_SOC_NRF54L15_ENGA_CPUAPP) || defined(CONFIG_SOC_NRF54L15_CPUAPP)
+#if defined(CONFIG_SOC_NRF54L15_CPUAPP)
 
 tfm_ps:
   placement:
@@ -81,7 +81,7 @@ tfm_otp_nv_counters:
   inside: tfm_storage
   size: CONFIG_PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
 
-#endif /* (CONFIG_SOC_NRF54L15_ENGA_CPUAPP || CONFIG_SOC_NRF54L15_CPUAPP)*/
+#endif /* CONFIG_SOC_NRF54L15_CPUAPP */
 
 #endif /* CONFIG_PM_PARTITION_TFM_STORAGE */
 

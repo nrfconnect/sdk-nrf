@@ -12,10 +12,7 @@
 
 #include <nrf.h>
 
-#if !defined(__NRF_TFM__)
-#include <hal/nrf_rramc.h>
 #include <nrfx_rramc.h>
-#endif
 
 #include <cracen/lib_kmu.h>
 
@@ -65,7 +62,7 @@ static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 	return result;
 }
 
-int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
+int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 {
 	if (kmu_src == NULL) {
 		return -LIB_KMU_NULL_PNT;
@@ -80,7 +77,15 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
 
 	int result = 1;
 
-#if !defined(__NRF_TFM__)
+#if defined(__NRF_TFM__)
+	nrf_rramc_config_t rramc_config;
+
+	nrf_rramc_config_get(NRF_RRAMC_S, &rramc_config);
+	const uint8_t orig_write_buf_size = rramc_config.write_buff_size;
+
+	rramc_config.write_buff_size = 0;
+	nrf_rramc_config_set(NRF_RRAMC_S, &rramc_config);
+#else
 	nrfx_rramc_write_enable_set(true, 0);
 #endif
 
@@ -90,7 +95,10 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
 	result = trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_PROVISION),
 							  &(NRF_KMU_S->EVENTS_PROVISIONED));
 
-#if !defined(__NRF_TFM__)
+#if defined(__NRF_TFM__)
+	rramc_config.write_buff_size = orig_write_buf_size;
+	nrf_rramc_config_set(NRF_RRAMC_S, &rramc_config);
+#else
 	nrfx_rramc_write_enable_set(false, 0);
 #endif
 

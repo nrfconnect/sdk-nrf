@@ -58,7 +58,7 @@ enum lib_kmu_rev_policy {
 /**
  * @brief Source struct for KMU slot provisioning.
  */
-struct kmu_src_t {
+struct kmu_src {
 	/** Asset contents/value. */
 	uint32_t value[4];
 	/** Revocation policy. */
@@ -66,7 +66,7 @@ struct kmu_src_t {
 	/** 32-bit destination address. Cannot point to SICR and must be on a
 	 * 128-bit boundary.
 	 */
-	uint8_t *dest;
+	uint32_t dest;
 	/** 32 bits of any clear-text metadata that belongs with the key slot.
 	 */
 	uint32_t metadata;
@@ -81,7 +81,7 @@ struct kmu_src_t {
  *  @return -LIB_KMU_ERROR         If the operation returned an error.
  *  @return -LIB_KMU_NULL_POINTER  If the KMU source is NULL.
  */
-int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src);
+int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src);
 
 /** @brief Push the KMU slot to its destination address.
  *
