@@ -33,4 +33,13 @@ config BT_NUS_UART_RX_WAIT_TIME
 	help
 	  Wait for RX complete event time in microseconds
 
+config SETTINGS
+	default y
+
+config ZMS
+	default y if SOC_FLASH_NRF_RRAM
+
+config NVS
+	default y if !SOC_FLASH_NRF_RRAM
+
 endmenu

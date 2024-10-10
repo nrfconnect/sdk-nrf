@@ -71,4 +71,13 @@ config BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX
 	help
 	  Non-connectable advertising maximum interval in 0.625 milliseconds unit.
 
+config SETTINGS
+	default y
+
+config ZMS
+	default y if SOC_FLASH_NRF_RRAM
+
+config NVS
+	default y if !SOC_FLASH_NRF_RRAM
+
 endmenu

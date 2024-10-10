@@ -30,6 +30,15 @@ config NFC_TAG_CH_REQUESTER
 
 endchoice
 
+config SETTINGS
+	default y
+
+config ZMS
+	default y if SOC_FLASH_NRF_RRAM
+
+config NVS
+	default y if !SOC_FLASH_NRF_RRAM
+
 endmenu
 
 menu "Zephyr Kernel"

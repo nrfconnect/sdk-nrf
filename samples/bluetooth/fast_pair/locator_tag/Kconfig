@@ -23,6 +23,15 @@ rsource "src/Kconfig.dfu"
 rsource "src/ui/Kconfig.ui"
 rsource "src/battery/Kconfig.battery"
 
+config SETTINGS
+	default y
+
+config ZMS
+	default y if SOC_FLASH_NRF_RRAM
+
+config NVS
+	default y if !SOC_FLASH_NRF_RRAM
+
 endmenu
 
 source "Kconfig.zephyr"
