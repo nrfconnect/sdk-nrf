@@ -59,6 +59,8 @@ static void date_time_core_notify_event(enum date_time_evt_type time_source)
 
 	if (app_evt_handler != NULL) {
 		app_evt_handler(&evt);
+	} else {
+		LOG_DBG("No date-time event handler registered");
 	}
 }
 
@@ -241,6 +243,8 @@ int date_time_core_now_local(int64_t *local_time_ms)
 
 int date_time_core_update_async(date_time_evt_handler_t evt_handler)
 {
+	LOG_DBG("Requesting date-time update asynchronously");
+
 	if (evt_handler) {
 		app_evt_handler = evt_handler;
 	} else if (app_evt_handler == NULL) {
