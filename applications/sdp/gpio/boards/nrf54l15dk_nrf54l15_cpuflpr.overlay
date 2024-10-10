@@ -23,6 +23,9 @@
 
 &cpuflpr_vevif_rx {
 	status = "okay";
+	interrupts = <16 NRF_DEFAULT_IRQ_PRIORITY>;
+	nordic,tasks = <1>;
+	nordic,tasks-mask = <0x00010000>;
 };
 
 &cpuflpr_vevif_tx {
