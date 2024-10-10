@@ -24,7 +24,7 @@ int suit_plat_err_to_processor_err_convert(suit_plat_err_t plat_err)
 	case SUIT_PLAT_ERR_CBOR_DECODING:
 		proc_err = SUIT_ERR_DECODING;
 		break;
-	case SUIT_PLAT_ERR_SDFW_RECOVERY_UPDATE_FAILURE:
+	case SUIT_PLAT_ERR_SDRFW_FAILURE:
 		proc_err = SUIT_FAIL_CONDITION;
 		break;
 	/* To be extended */
