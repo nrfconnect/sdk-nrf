@@ -9,8 +9,34 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "lte_lc_helpers.h"
+#include "include/modules/cscon.h"
 #include "lte_lc.h"
+
+extern int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_str,
+		      char *ptw_str);
+
+extern int parse_cereg(const char *at_response, enum lte_lc_nw_reg_status *reg_status,
+		       struct lte_lc_cell *cell, enum lte_lc_lte_mode *lte_mode,
+		       struct lte_lc_psm_cfg *psm_cfg);
+
+extern int parse_xt3412(const char *at_response, uint64_t *time);
+
+extern int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_sleep);
+
+extern int parse_rrc_mode(const char *at_response, enum lte_lc_rrc_mode *mode, size_t mode_index);
+
+extern int psm_parse(const char *active_time_str, const char *tau_ext_str,
+		     const char *tau_legacy_str, struct lte_lc_psm_cfg *psm_cfg);
+
+extern int psm_encode(char *tau_ext_str, char *active_time_str, int rptau, int rat);
+
+extern int mdmev_parse(const char *at_response, enum lte_lc_modem_evt *modem_evt);
+
+extern int periodicsearchconf_parse(const char *const pattern_str,
+				    struct lte_lc_periodic_search_pattern *pattern);
+extern char *
+periodicsearchconf_pattern_get(char *const buf, size_t buf_size,
+			       const struct lte_lc_periodic_search_pattern *const pattern);
 
 /* The unity_main is not declared in any header file. It is only defined in the generated test
  * runner because of ncs' unity configuration. It is therefore declared here to avoid a compiler
@@ -290,7 +316,7 @@ void test_parse_rrc_mode(void)
 
 }
 
-void test_parse_psm(void)
+void test_psm_parse(void)
 {
 	int err;
 	struct lte_lc_psm_cfg psm_cfg;
@@ -340,7 +366,7 @@ void test_parse_psm(void)
 		.tau_legacy = "11100000",
 	};
 
-	err = parse_psm(psm_disabled_tau_ext.active_time,
+	err = psm_parse(psm_disabled_tau_ext.active_time,
 			psm_disabled_tau_ext.tau_ext,
 			psm_disabled_tau_ext.tau_legacy,
 			&psm_cfg);
@@ -350,7 +376,7 @@ void test_parse_psm(void)
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(psm_disabled_tau_legacy.active_time,
+	err = psm_parse(psm_disabled_tau_legacy.active_time,
 			psm_disabled_tau_legacy.tau_ext,
 			psm_disabled_tau_legacy.tau_legacy,
 			&psm_cfg);
@@ -360,7 +386,7 @@ void test_parse_psm(void)
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(tau_legacy.active_time,
+	err = psm_parse(tau_legacy.active_time,
 			tau_legacy.tau_ext,
 			tau_legacy.tau_legacy,
 			&psm_cfg);
@@ -370,7 +396,7 @@ void test_parse_psm(void)
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(invalid_no_tau.active_time,
+	err = psm_parse(invalid_no_tau.active_time,
 			invalid_no_tau.tau_ext,
 			invalid_no_tau.tau_legacy,
 			&psm_cfg);
@@ -378,7 +404,7 @@ void test_parse_psm(void)
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(invalid_values.active_time,
+	err = psm_parse(invalid_values.active_time,
 			invalid_values.tau_ext,
 			invalid_values.tau_legacy,
 			&psm_cfg);
@@ -386,7 +412,7 @@ void test_parse_psm(void)
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(valid_values_0.active_time,
+	err = psm_parse(valid_values_0.active_time,
 			valid_values_0.tau_ext,
 			valid_values_0.tau_legacy,
 			&psm_cfg);
@@ -396,7 +422,7 @@ void test_parse_psm(void)
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(valid_values_1.active_time,
+	err = psm_parse(valid_values_1.active_time,
 			valid_values_1.tau_ext,
 			valid_values_1.tau_legacy,
 			&psm_cfg);
@@ -406,7 +432,7 @@ void test_parse_psm(void)
 
 	memset(&psm_cfg, 0, sizeof(psm_cfg));
 
-	err = parse_psm(valid_values_2.active_time,
+	err = psm_parse(valid_values_2.active_time,
 			valid_values_2.tau_ext,
 			valid_values_2.tau_legacy,
 			&psm_cfg);
@@ -415,13 +441,13 @@ void test_parse_psm(void)
 	TEST_ASSERT_EQUAL(32, psm_cfg.active_time);
 }
 
-void test_encode_psm(void)
+void test_psm_encode(void)
 {
 	int err;
 	char tau_ext_str[9] = "";
 	char active_time_str[9] = "";
 
-	err = encode_psm(tau_ext_str, active_time_str, 11400, 60);
+	err = psm_encode(tau_ext_str, active_time_str, 11400, 60);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL_STRING("00010011", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("00011110", active_time_str);
@@ -430,7 +456,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 
 	/* Test value -1 */
-	err = encode_psm(tau_ext_str, active_time_str, -1, -1);
+	err = psm_encode(tau_ext_str, active_time_str, -1, -1);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL_STRING("", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("", active_time_str);
@@ -439,7 +465,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 
 	/* Test too big TAU */
-	err = encode_psm(tau_ext_str, active_time_str, 35712001, 61);
+	err = psm_encode(tau_ext_str, active_time_str, 35712001, 61);
 	TEST_ASSERT_EQUAL(-EINVAL, err);
 	TEST_ASSERT_EQUAL_STRING("", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("00011111", active_time_str);
@@ -448,7 +474,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 
 	/* Test too big active time */
-	err = encode_psm(tau_ext_str, active_time_str, 61, 11161);
+	err = psm_encode(tau_ext_str, active_time_str, 61, 11161);
 	TEST_ASSERT_EQUAL(-EINVAL, err);
 	TEST_ASSERT_EQUAL_STRING("01111111", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("", active_time_str);
@@ -457,7 +483,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 
 	/* Test value 1 rounding to 2*/
-	err = encode_psm(tau_ext_str, active_time_str, 1, 1);
+	err = psm_encode(tau_ext_str, active_time_str, 1, 1);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL_STRING("01100001", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("00000001", active_time_str);
@@ -466,7 +492,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 
 	/* Test maximum values */
-	err = encode_psm(tau_ext_str, active_time_str, 35712000, 11160);
+	err = psm_encode(tau_ext_str, active_time_str, 35712000, 11160);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL_STRING("11011111", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("01011111", active_time_str);
@@ -475,7 +501,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 
 	/****************************************/
-	err = encode_psm(tau_ext_str, active_time_str, 123456, 89);
+	err = psm_encode(tau_ext_str, active_time_str, 123456, 89);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL_STRING("01000100", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("00100010", active_time_str);
@@ -484,7 +510,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 
 	/****************************************/
-	err = encode_psm(tau_ext_str, active_time_str, 62, 63);
+	err = psm_encode(tau_ext_str, active_time_str, 62, 63);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL_STRING("01111111", tau_ext_str);
 	TEST_ASSERT_EQUAL_STRING("00100010", active_time_str);
@@ -493,7 +519,7 @@ void test_encode_psm(void)
 	memset(active_time_str, 0, sizeof(active_time_str));
 }
 
-void test_parse_mdmev(void)
+void test_mdmev_parse(void)
 {
 	int err;
 	enum lte_lc_modem_evt modem_evt;
@@ -512,59 +538,59 @@ void test_parse_mdmev(void)
 	const char *ce_level_invalid = "%MDMEV: PRACH CE-LEVEL 4\r\n";
 	const char *ce_level_long = "%MDMEV: PRACH CE-LEVEL 0 and then some\r\n";
 
-	err = parse_mdmev(light_search, &modem_evt);
+	err = mdmev_parse(light_search, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE, modem_evt);
 
-	err = parse_mdmev(search, &modem_evt);
+	err = mdmev_parse(search, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_SEARCH_DONE, modem_evt);
 
-	err = parse_mdmev(reset, &modem_evt);
+	err = mdmev_parse(reset, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_RESET_LOOP, modem_evt);
 
-	err = parse_mdmev(battery_low, &modem_evt);
+	err = mdmev_parse(battery_low, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_BATTERY_LOW, modem_evt);
 
-	err = parse_mdmev(overheated, &modem_evt);
+	err = mdmev_parse(overheated, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_OVERHEATED, modem_evt);
 
-	err = parse_mdmev(status_3, &modem_evt);
+	err = mdmev_parse(status_3, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
 
-	err = parse_mdmev(light_search_long, &modem_evt);
+	err = mdmev_parse(light_search_long, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
 
-	err = parse_mdmev("%MDMEV: ", &modem_evt);
+	err = mdmev_parse("%MDMEV: ", &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
 
-	err = parse_mdmev(no_imei, &modem_evt);
+	err = mdmev_parse(no_imei, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_NO_IMEI, modem_evt);
 
-	err = parse_mdmev(ce_level_0, &modem_evt);
+	err = mdmev_parse(ce_level_0, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_0, modem_evt);
 
-	err = parse_mdmev(ce_level_1, &modem_evt);
+	err = mdmev_parse(ce_level_1, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_1, modem_evt);
 
-	err = parse_mdmev(ce_level_2, &modem_evt);
+	err = mdmev_parse(ce_level_2, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_2, modem_evt);
 
-	err = parse_mdmev(ce_level_3, &modem_evt);
+	err = mdmev_parse(ce_level_3, &modem_evt);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_MODEM_EVT_CE_LEVEL_3, modem_evt);
 
-	err = parse_mdmev(ce_level_invalid, &modem_evt);
+	err = mdmev_parse(ce_level_invalid, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
 
-	err = parse_mdmev(ce_level_long, &modem_evt);
+	err = mdmev_parse(ce_level_long, &modem_evt);
 	TEST_ASSERT_EQUAL(-ENODATA, err);
 }
 
@@ -640,41 +666,48 @@ void test_periodic_search_pattern_get(void)
 		},
 	};
 
-	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_1));
+	TEST_ASSERT_EQUAL_PTR(buf, periodicsearchconf_pattern_get(buf, sizeof(buf),
+								  &pattern_range_1));
 	TEST_ASSERT_EQUAL_STRING("\"0,60,3600,300,600\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_range_2));
+	TEST_ASSERT_EQUAL_PTR(buf, periodicsearchconf_pattern_get(buf, sizeof(buf),
+								  &pattern_range_2));
 	TEST_ASSERT_EQUAL_STRING("\"0,60,3600,,600\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_1));
+	TEST_ASSERT_EQUAL_PTR(buf, periodicsearchconf_pattern_get(buf, sizeof(buf),
+								  &pattern_table_1));
 	TEST_ASSERT_EQUAL_STRING("\"1,60\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_2));
+	TEST_ASSERT_EQUAL_PTR(buf, periodicsearchconf_pattern_get(buf, sizeof(buf),
+								  &pattern_table_2));
 	TEST_ASSERT_EQUAL_STRING("\"1,20,80\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_3));
+	TEST_ASSERT_EQUAL_PTR(buf, periodicsearchconf_pattern_get(buf, sizeof(buf),
+								  &pattern_table_3));
 	TEST_ASSERT_EQUAL_STRING("\"1,10,70,300\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_4));
+	TEST_ASSERT_EQUAL_PTR(buf, periodicsearchconf_pattern_get(buf, sizeof(buf),
+								  &pattern_table_4));
 	TEST_ASSERT_EQUAL_STRING("\"1,1,60,120,3600\"", buf);
 
 	memset(buf, 0, sizeof(buf));
 
-	TEST_ASSERT_EQUAL_PTR(buf, periodic_search_pattern_get(buf, sizeof(buf), &pattern_table_5));
+	TEST_ASSERT_EQUAL_PTR(buf, periodicsearchconf_pattern_get(buf, sizeof(buf),
+								  &pattern_table_5));
 	TEST_ASSERT_EQUAL_STRING("\"1,2,30,40,900,3000\"", buf);
 }
 
-void test_parse_periodic_search_pattern(void)
+void test_periodicsearchconf_parse(void)
 {
 	int err;
 	struct lte_lc_periodic_search_pattern pattern;
@@ -688,7 +721,7 @@ void test_parse_periodic_search_pattern(void)
 	const char *pattern_table_5 = "1,50,60,70,80,90";
 	const char *pattern_table_empty = "1";
 
-	err = parse_periodic_search_pattern(pattern_range_1, &pattern);
+	err = periodicsearchconf_parse(pattern_range_1, &pattern);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE, pattern.type);
 	TEST_ASSERT_EQUAL(60, pattern.range.initial_sleep);
@@ -698,7 +731,7 @@ void test_parse_periodic_search_pattern(void)
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_range_2, &pattern);
+	err = periodicsearchconf_parse(pattern_range_2, &pattern);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_RANGE, pattern.type);
 	TEST_ASSERT_EQUAL(60, pattern.range.initial_sleep);
@@ -708,12 +741,12 @@ void test_parse_periodic_search_pattern(void)
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_range_empty, &pattern);
+	err = periodicsearchconf_parse(pattern_range_empty, &pattern);
 	TEST_ASSERT_EQUAL(-EBADMSG, err);
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_table_1, &pattern);
+	err = periodicsearchconf_parse(pattern_table_1, &pattern);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
 	TEST_ASSERT_EQUAL(10, pattern.table.val_1);
@@ -724,7 +757,7 @@ void test_parse_periodic_search_pattern(void)
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_table_2, &pattern);
+	err = periodicsearchconf_parse(pattern_table_2, &pattern);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
 	TEST_ASSERT_EQUAL(20, pattern.table.val_1);
@@ -735,7 +768,7 @@ void test_parse_periodic_search_pattern(void)
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_table_3, &pattern);
+	err = periodicsearchconf_parse(pattern_table_3, &pattern);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
 	TEST_ASSERT_EQUAL(30, pattern.table.val_1);
@@ -746,7 +779,7 @@ void test_parse_periodic_search_pattern(void)
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_table_4, &pattern);
+	err = periodicsearchconf_parse(pattern_table_4, &pattern);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
 	TEST_ASSERT_EQUAL(40, pattern.table.val_1);
@@ -757,7 +790,7 @@ void test_parse_periodic_search_pattern(void)
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_table_5, &pattern);
+	err = periodicsearchconf_parse(pattern_table_5, &pattern);
 	TEST_ASSERT_EQUAL(0, err);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, pattern.type);
 	TEST_ASSERT_EQUAL(50, pattern.table.val_1);
@@ -768,7 +801,7 @@ void test_parse_periodic_search_pattern(void)
 
 	memset(&pattern, 0, sizeof(pattern));
 
-	err = parse_periodic_search_pattern(pattern_table_empty, &pattern);
+	err = periodicsearchconf_parse(pattern_table_empty, &pattern);
 	TEST_ASSERT_EQUAL(-EBADMSG, err);
 }
 

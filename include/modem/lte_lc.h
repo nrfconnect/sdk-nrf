@@ -214,6 +214,7 @@ enum lte_lc_evt_type {
 	 */
 	LTE_LC_EVT_NW_REG_STATUS,
 
+#if defined(CONFIG_LTE_LC_PSM)
 	/**
 	 * PSM parameters provided by the network.
 	 *
@@ -221,7 +222,9 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_psm_cfg in the event.
 	 */
 	LTE_LC_EVT_PSM_UPDATE,
+#endif /* CONFIG_LTE_LC_PSM */
 
+#if defined(CONFIG_LTE_LC_EDRX)
 	/**
 	 * eDRX parameters provided by the network.
 	 *
@@ -229,6 +232,7 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_edrx_cfg in the event.
 	 */
 	LTE_LC_EVT_EDRX_UPDATE,
+#endif /* CONFIG_LTE_LC_EDRX */
 
 	/**
 	 * RRC connection state.
@@ -260,6 +264,7 @@ enum lte_lc_evt_type {
 	 */
 	LTE_LC_EVT_LTE_MODE_UPDATE,
 
+#if defined(CONFIG_LTE_LC_TAU_PRE_WARNING)
 	/**
 	 * Tracking Area Update pre-warning.
 	 *
@@ -271,7 +276,9 @@ enum lte_lc_evt_type {
 	 * The associated payload is the @c lte_lc_evt.time member of type @c uint64_t in the event.
 	 */
 	LTE_LC_EVT_TAU_PRE_WARNING,
+#endif /* CONFIG_LTE_LC_TAU_PRE_WARNING */
 
+#if defined(CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS)
 	/**
 	 * Neighbor cell measurement results.
 	 *
@@ -279,7 +286,9 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_cells_info in the event.
 	 */
 	LTE_LC_EVT_NEIGHBOR_CELL_MEAS,
+#endif /* CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS */
 
+#if defined(CONFIG_LTE_LC_MODEM_SLEEP)
 	/**
 	 * Modem sleep pre-warning.
 	 *
@@ -308,6 +317,7 @@ enum lte_lc_evt_type {
 	 * the duration of the sleep.
 	 */
 	LTE_LC_EVT_MODEM_SLEEP_ENTER,
+#endif /* CONFIG_LTE_LC_MODEM_SLEEP */
 
 	/**
 	 * Information about modem operation.
@@ -317,6 +327,7 @@ enum lte_lc_evt_type {
 	 */
 	LTE_LC_EVT_MODEM_EVENT,
 
+#if defined(CONFIG_LTE_LC_RAI)
 	/**
 	 * Information about RAI (Release Assistance Indication) configuration.
 	 *
@@ -326,6 +337,7 @@ enum lte_lc_evt_type {
 	 * @note This event is only supported by modem firmware versions >= 2.0.2.
 	 */
 	LTE_LC_EVT_RAI_UPDATE,
+#endif /* CONFIG_LTE_LC_RAI */
 };
 
 /** RRC connection state. */
@@ -1213,11 +1225,15 @@ struct lte_lc_evt {
 		/** Payload for event @ref LTE_LC_EVT_RRC_UPDATE. */
 		enum lte_lc_rrc_mode rrc_mode;
 
+#if defined(CONFIG_LTE_LC_PSM)
 		/** Payload for event @ref LTE_LC_EVT_PSM_UPDATE. */
 		struct lte_lc_psm_cfg psm_cfg;
+#endif /* CONFIG_LTE_LC_PSM */
 
+#if defined(CONFIG_LTE_LC_EDRX)
 		/** Payload for event @ref LTE_LC_EVT_EDRX_UPDATE. */
 		struct lte_lc_edrx_cfg edrx_cfg;
+#endif /* CONFIG_LTE_LC_EDRX */
 
 		/** Payload for event @ref LTE_LC_EVT_CELL_UPDATE. */
 		struct lte_lc_cell cell;
@@ -1225,11 +1241,13 @@ struct lte_lc_evt {
 		/** Payload for event @ref LTE_LC_EVT_LTE_MODE_UPDATE. */
 		enum lte_lc_lte_mode lte_mode;
 
+#if defined(CONFIG_LTE_LC_MODEM_SLEEP)
 		/**
 		 * Payload for events @ref LTE_LC_EVT_MODEM_SLEEP_EXIT_PRE_WARNING,
 		 * @ref LTE_LC_EVT_MODEM_SLEEP_EXIT and @ref LTE_LC_EVT_MODEM_SLEEP_ENTER.
 		 */
 		struct lte_lc_modem_sleep modem_sleep;
+#endif /* CONFIG_LTE_LC_MODEM_SLEEP */
 
 		/** Payload for event @ref LTE_LC_EVT_MODEM_EVENT. */
 		enum lte_lc_modem_evt modem_evt;
@@ -1241,11 +1259,15 @@ struct lte_lc_evt {
 		 */
 		uint64_t time;
 
+#if defined(CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS)
 		/** Payload for event @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS. */
 		struct lte_lc_cells_info cells_info;
+#endif /* CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS */
 
+#if defined(CONFIG_LTE_LC_RAI)
 		/** Payload for event @ref LTE_LC_EVT_RAI_UPDATE. */
 		struct lte_lc_rai_cfg rai_cfg;
+#endif /* CONFIG_LTE_LC_RAI */
 	};
 };
 
@@ -1276,7 +1298,6 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
 
 /**
  * Connect to LTE network.
- *
  *
  * @note After initialization, the system mode will be set to the default mode selected with Kconfig
  *       and LTE preference set to automatic selection.
@@ -1339,6 +1360,8 @@ int lte_lc_normal(void);
  * For encoding of the variables, see nRF AT Commands Reference Guide, 3GPP 27.007 Ch. 7.38., and
  * 3GPP 24.008 Ch. 10.5.7.4a and Ch. 10.5.7.3.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PSM} to be enabled.
+ *
  * @param[in] rptau
  * @parblock
  *          Requested periodic TAU as a null-terminated 8 character long bit field string.
@@ -1399,6 +1422,8 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat);
  * For more information about the encodings, see the description of the
  * lte_lc_psm_param_set() function.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PSM} to be enabled.
+ *
  * @param[in] rptau
  * @parblock
  *          Requested periodic TAU in seconds as a non-negative integer. Range 0 - 35712000 s.
@@ -1441,6 +1466,8 @@ int lte_lc_psm_param_set_seconds(int rptau, int rat);
  *       conflicts may arise with the value set by @kconfig{CONFIG_LTE_PSM_REQ} if it is called
  *       during modem initialization.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PSM} to be enabled.
+ *
  * @param[in] enable @c true to enable PSM, @c false to disable PSM.
  *
  * @retval 0 if successful.
@@ -1450,6 +1477,8 @@ int lte_lc_psm_req(bool enable);
 
 /**
  * Get the current PSM (Power Saving Mode) configuration.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PSM} to be enabled.
  *
  * @param[out] tau Periodic TAU interval in seconds. A non-negative integer.
  * @param[out] active_time Active time in seconds. A non-negative integer,
@@ -1484,6 +1513,8 @@ int lte_lc_psm_get(int *tau, int *active_time);
  *
  * @note This feature is only supported by modem firmware versions >= v2.0.0.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PSM} to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
  */
@@ -1499,6 +1530,8 @@ int lte_lc_proprietary_psm_req(bool enable);
  * use default PTW values.
  *
  * For reference to which values can be set, see subclause 10.5.5.32 of 3GPP TS 24.008.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_EDRX} to be enabled.
  *
  * @param[in] mode LTE mode to which the PTW value applies.
  * @param[in] ptw Paging Time Window value as a null-terminated string.
@@ -1516,6 +1549,8 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
  * NB-IoT.
  *
  * For reference see 3GPP 27.007 Ch. 7.40.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_EDRX} to be enabled.
  *
  * @param[in] mode LTE mode to which the eDRX value applies.
  * @param[in] edrx eDRX value as a null-terminated string.
@@ -1542,6 +1577,8 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
  *       noted that conflicts may arise with the value set by @kconfig{CONFIG_LTE_EDRX_REQ} if it is
  *       called during modem initialization.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_EDRX} to be enabled.
+ *
  * @param[in] enable @c true to enable eDRX, @c false to disable eDRX.
  *
  * @retval 0 if successful.
@@ -1553,6 +1590,8 @@ int lte_lc_edrx_req(bool enable);
  * Get the eDRX parameters currently provided by the network.
  *
  * @param[out] edrx_cfg eDRX configuration.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_EDRX} to be enabled.
  *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
@@ -1643,6 +1682,8 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  *
  * @note This feature is only supported by modem firmware versions >= 1.3.0.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS} to be enabled.
+ *
  * @param[in] params Search type parameters or @c NULL to initiate a measurement with the default
  *                   parameters. See @ref lte_lc_ncellmeas_params for more information.
  *
@@ -1656,6 +1697,8 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
 /**
  * Cancel an ongoing neighbor cell measurement.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS} to be enabled.
+ *
  * @retval 0 if neighbor cell measurement was cancelled.
  * @retval -EFAULT if AT command failed.
  */
@@ -1666,6 +1709,8 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  *
  * Connection evaluation parameters can be used to determine the energy efficiency of data
  * transmission before the actual data transmission.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_CONN_EVAL} to be enabled.
  *
  * @param[out] params Connection evaluation parameters.
  *
@@ -1717,6 +1762,8 @@ int lte_lc_modem_events_disable(void);
  * "nRF91 AT Commands - Command Reference Guide" for more information and in-depth explanations of
  * periodic search configuration.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH} to be enabled.
+ *
  * @param[in] cfg Periodic search configuration.
  *
  * @retval 0 if the configuration was successfully sent to the modem.
@@ -1728,6 +1775,8 @@ int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cf
 
 /**
  * Get the configured periodic search parameters.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH} to be enabled.
  *
  * @param[out] cfg Periodic search configuration.
  *
@@ -1743,6 +1792,8 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg);
 /**
  * Clear the configured periodic search parameters.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH} to be enabled.
+ *
  * @retval 0 if the configuration was cleared.
  * @retval -EFAULT if an AT command could not be sent to the modem.
  * @retval -EBADMSG if the modem responded with an error to an AT command.
@@ -1755,6 +1806,8 @@ int lte_lc_periodic_search_clear(void);
  * This can be used for example when modem is in sleep state between periodic searches. The search
  * is performed only when the modem is in sleep state between periodic searches.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH} to be enabled.
+ *
  * @retval 0 if the search request was successfully delivered to the modem.
  * @retval -EFAULT if an AT command could not be sent to the modem.
  */
@@ -1764,6 +1817,8 @@ int lte_lc_periodic_search_request(void);
  * Read the current reduced mobility mode.
  *
  * @note This feature is only supported by modem firmware versions >= 1.3.2.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_REDMOB} to be enabled.
  *
  * @param[out] mode Reduced mobility mode.
  *
@@ -1780,6 +1835,8 @@ int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
  *
  * @note This feature is only supported by modem firmware versions >= 1.3.2.
  *
+ * @note Requires @kconfig{CONFIG_LTE_LC_REDMOB} to be enabled.
+ *
  * @param[in] mode Reduced mobility mode.
  *
  * @retval 0 if the new reduced mobility mode was accepted by the modem.
@@ -1795,6 +1852,8 @@ int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
  * This operation is allowed only when the modem is not activated.
  *
  * @note This feature is only supported by modem firmware versions >= 1.3.0.
+ *
+ * @note Requires @kconfig{CONFIG_LTE_LC_FACTORY_RESET} to be enabled.
  *
  * @param[in] type Factory reset type.
  *
