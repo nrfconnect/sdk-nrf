@@ -141,10 +141,12 @@ int fp_storage_ak_find(struct fp_account_key *account_key,
 	return -ESRCH;
 }
 
-int fp_storage_ak_save(const struct fp_account_key *account_key)
+int fp_storage_ak_save(const struct fp_account_key *account_key, const void *conn_ctx)
 {
 	int err;
 	struct account_key_data data;
+
+	ARG_UNUSED(conn_ctx);
 
 	if (!is_enabled) {
 		return -EACCES;

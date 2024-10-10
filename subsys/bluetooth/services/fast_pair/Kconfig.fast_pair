@@ -140,10 +140,12 @@ if BT_FAST_PAIR_REGISTRATION_DATA
 config BT_FAST_PAIR_REGISTRATION_DATA_INIT_PRIORITY
 	int
 	range 0 9
-	default 3
+	default 0
 	help
 	  Fast Pair registration data module initialization priority.
 	  Used when registering initialization function to Fast Pair activation module.
+	  This module should be initialized before all other Fast Pair modules to avoid using
+	  Fast Pair subsystem when the Fast Pair provisioning data is not configured properly.
 
 endif # BT_FAST_PAIR_REGISTRATION_DATA
 
@@ -169,6 +171,22 @@ config BT_FAST_PAIR_STORAGE_INTEGRATION_INIT_PRIORITY
 	  Used when registering to Fast Pair activation module.
 
 endif # BT_FAST_PAIR_STORAGE_INTEGRATION
+
+config BT_FAST_PAIR_BOND_MANAGER
+	bool "Fast Pair bond management functionality [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select BT_FAST_PAIR_STORAGE_AK_BOND
+	help
+	  If this option is enabled, the Fast Pair subsystem tracks the Bluetooth bonds created
+	  through the Fast Pair Procedure and unpairs them if the Fast Pair Procedure is incomplete
+	  or the Account Key associated with the bonds is removed. It also unpairs the Fast Pair
+	  Bluetooth bonds on Fast Pair factory reset. Keep in mind that when the Fast Pair subsystem
+	  is disabled, the Bluetooth bonds are not tracked. Do not perform operations on the Fast
+	  Pair Bluetooth bonds apart from the Fast Pair factory reset when the Fast Pair subsystem
+	  is disabled. When this option is enabled, non-volatile storage is used to store the bond
+	  information. You can enable this option during DFU, but you cannot disable it during DFU
+	  if you used it earlier unless you erase whole Fast Pair non-volatile storage. Otherwise,
+	  the Fast Pair enable operation will fail.
 
 module = BT_FAST_PAIR
 module-str = Fast Pair Service
