@@ -414,7 +414,12 @@ static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	LOG_INF("Passkey for %s: %06u", addr, passkey);
-	LOG_INF("Press Button 1 to confirm, Button 2 to reject.");
+
+	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF54LX)) {
+		LOG_INF("Press Button 0 to confirm, Button 1 to reject.");
+	} else {
+		LOG_INF("Press Button 1 to confirm, Button 2 to reject.");
+	}
 }
 
 
