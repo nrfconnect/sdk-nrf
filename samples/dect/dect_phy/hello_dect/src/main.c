@@ -136,6 +136,11 @@ static void capability_get(const uint64_t *time, enum nrf_modem_dect_phy_err err
 	LOG_DBG("capability_get cb time %"PRIu64" status %d", *time, err);
 }
 
+static void stf_cover_seq_control(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+{
+	LOG_WRN("Unexpectedly in %s\n", (__func__));
+}
+
 /* Dect PHY callbacks. */
 static struct nrf_modem_dect_phy_callbacks dect_phy_callbacks = {
 	.init = init,
@@ -150,6 +155,7 @@ static struct nrf_modem_dect_phy_callbacks dect_phy_callbacks = {
 	.link_config = link_config,
 	.time_get = time_get,
 	.capability_get = capability_get,
+	.stf_cover_seq_control = stf_cover_seq_control,
 };
 
 /* Dect PHY init parameters. */
