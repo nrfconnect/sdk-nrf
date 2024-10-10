@@ -10,6 +10,10 @@
  */
 #ifndef MBEDTLS_CONFIG_FILE_H
 #define MBEDTLS_CONFIG_FILE_H
+/****************************************************************/
+#if defined(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER) || defined(CONFIG_PSA_NEED_CRACEN_KMU_DRIVER)
+#define MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
+#endif
 
 /* This file includes configurations for Mbed TLS for platform and TLS/DTLS and X.509
  * and it should be used inside TF-M build and when CONFIG_MBEDTLS_LEGACY_CRYPTO_C is
