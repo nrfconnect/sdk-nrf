@@ -65,7 +65,6 @@ static bool is_request_exist(struct dm_request *req)
 int timeslot_queue_append(struct dm_request *req, uint32_t start_ref_tick,
 			  uint32_t window_len_us, uint32_t timeslot_len_us)
 {
-	uint32_t distance;
 	uint32_t start_time;
 	uint32_t delay;
 	size_t list_size;
@@ -88,8 +87,7 @@ int timeslot_queue_append(struct dm_request *req, uint32_t start_ref_tick,
 		last = SYS_SLIST_PEEK_TAIL_CONTAINER(&timeslot_list, last, node);
 		list_unlock();
 
-		distance = time_distance_get(last->timeslot_req.start_time, start_time);
-		if (distance < US_TO_RTC_TICKS(last->timeslot_req.timeslot_length_us +
+		if (start_time < US_TO_RTC_TICKS(last->timeslot_req.timeslot_length_us +
 					       MIN_TIME_BETWEEN_TIMESLOTS_US)) {
 			return -EBUSY;
 		}
