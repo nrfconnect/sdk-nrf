@@ -106,6 +106,7 @@ int nrf_cloud_print_details(void)
 #if defined(CONFIG_NRF_CLOUD_VERBOSE_DETAILS)
 	const char *protocol = "Unknown";
 	const char *host_name = "Unknown";
+	const char *download_protocol;
 	char buf[100];
 
 	err = nrf_cloud_get_imei(buf, sizeof(buf));
@@ -137,9 +138,15 @@ int nrf_cloud_print_details(void)
 	protocol = "REST";
 	host_name = CONFIG_NRF_CLOUD_REST_HOST_NAME;
 #endif
-	LOG_INF("Protocol:  %s", protocol);
-	LOG_INF("Sec tag:   %d", nrf_cloud_sec_tag_get());
-	LOG_INF("Host name: %s", host_name);
+#if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
+	download_protocol = "CoAP";
+#else
+	download_protocol = "HTTPS";
+#endif
+	LOG_INF("Protocol:          %s", protocol);
+	LOG_INF("Download protocol: %s", download_protocol);
+	LOG_INF("Sec tag:           %d", nrf_cloud_sec_tag_get());
+	LOG_INF("Host name:         %s", host_name);
 
 #endif /* CONFIG_NRF_CLOUD_VERBOSE_DETAILS */
 

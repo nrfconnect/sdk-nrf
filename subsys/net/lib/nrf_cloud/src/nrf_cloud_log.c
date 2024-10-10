@@ -305,7 +305,7 @@ int nrf_cloud_log_control_get(void)
 void nrf_cloud_log_level_set(int level)
 {
 	if (nrf_cloud_log_level != level) {
-		LOG_DBG("Changing log level from:%d to:%d", nrf_cloud_log_level, level);
+		LOG_INF("Changing cloud log level from:%d to:%d", nrf_cloud_log_level, level);
 		nrf_cloud_log_level = level;
 	} else {
 		LOG_DBG("No change in log level from %d", level);
@@ -319,7 +319,7 @@ void nrf_cloud_log_enable(bool enable)
 		logs_backend_enable(enable);
 #endif
 		enabled = enable;
-		LOG_DBG("enabled = %d", enabled);
+		LOG_INF("Changing cloud logging enabled to:%d", enabled);
 	}
 }
 

@@ -581,7 +581,7 @@ static void check_credentials(void)
 {
 	int err = nrf_cloud_credentials_configured_check();
 
-	if (err == -ENOTSUP) {
+	if ((err == -ENOTSUP) || (err == -ENOPROTOOPT)) {
 		LOG_ERR("Required nRF Cloud credentials were not found");
 		LOG_INF("Install credentials and then reboot the device");
 		k_sleep(K_FOREVER);

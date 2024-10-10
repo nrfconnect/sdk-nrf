@@ -107,6 +107,23 @@ config NRF_CLOUD_JWT_SOURCE_CUSTOM
 	help
 	  JWTs are created and signed by the nRF Cloud library, not the modem.
 	  The signing key is obtained from the TLS credentials module.
+
+config NRF_CLOUD_AWS_CA_CERT_SIZE_THRESHOLD
+	int "Root CA size above which AWS cert is likely present"
+	default 1150
+	help
+	  This value is necessarily inexact as the underlying PEM data varies
+	  a bit in size when credentials are rotated or replaced. This is useful
+	  to determine if a sectag likely contains only an AWS root CA
+	  certificate.
+
+config NRF_CLOUD_COAP_CA_CERT_SIZE_THRESHOLD
+	int "Root CA size above which a CoAP cert is likely present"
+	default 550
+	help
+	  This necessarily inexact value is useful to determine if a sectag
+	  likely contains only a CoAP root CA certificate.
+
 endmenu # "Credentials"
 
 rsource "Kconfig.nrf_cloud_client_id"

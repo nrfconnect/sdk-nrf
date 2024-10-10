@@ -179,6 +179,7 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 	}
 
 	if (end - begin > *len) {
+		*len = end - begin; /* Let caller know how large their buffer should be. */
 		err = -ENOMEM;
 		goto end;
 	}
