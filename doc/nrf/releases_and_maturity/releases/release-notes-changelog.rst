@@ -141,14 +141,15 @@ Developing with PMICs
 Security
 ========
 
-Added:
+* Added:
 
-* The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed. The default IKG seed slot is now 183 (previously 0).
-* TF-M support to the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``).
+  * The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed.
+    The default IKG seed slot is now 183 (previously 0).
+  * TF-M support to the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``).
 
-Removed:
+* Removed:
 
-* TF-M support from the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
+  * TF-M support from the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
 
 Protocols
 =========
@@ -1114,6 +1115,11 @@ Other libraries
 Security libraries
 ------------------
 
+* :ref:`nrf_security_readme` library:
+
+  * Added the :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC` Kconfig option to key derivation function configurations in :ref:`nrf_security_driver_config`.
+    The Kconfig option enables support for the derivation function SP 800-108r1 CMAC in counter mode, which is supported by the nrf_cracen driver.
+
 * :ref:`trusted_storage_readme` library:
 
   * Added support for Zephyr Memory Storage (ZMS), as an alternative to the NVS file system.
@@ -1264,3 +1270,5 @@ Documentation
   * The :ref:`programming_params` section on the :ref:`programming` page with information about readback protection moved from the :ref:`ug_nrf5340_building` page.
   * The :ref:`security` page with a table that provides an overview of the available general security features.
     This table replaces the subpage that was previously describing these features in more detail and was duplicating information available in other sections.
+  * The :ref:`nrf_security_drivers_cracen` section with a reference to the :ref:`ug_nrf54l_cryptography` page.
+  * The :ref:`ug_tfm` page with the correct list of samples demonstrating TF-M.

@@ -88,7 +88,7 @@ See the related hardware documentation for more information about which implemen
      - n/a
      - ✔
      - *Documentation not yet available*
-     - Can also use the lifecycle state management mechanism as an alternative to AP-Protect
+     - Also supports Secure AP-Protect (see note below)
    * - nRF5340
      - n/a
      - ✔
@@ -131,7 +131,7 @@ See the related hardware documentation for more information about which implemen
      -
 
 .. note::
-    The SoCs or SiPs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe` (nRF5340 and nRF91 Series) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
+    The SoCs or SiPs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe` (nRF5340, nRF54L15 and nRF91 Series) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
     While AP-Protect blocks access to all CPU registers and memories, Secure AP-Protect limits access to the CPU to only non-secure accesses.
     This means that the CPU is entirely unavailable while it is running the code in the Secure Processing Environment, and only non-secure registers and address-mapped resources can be accessed.
 
