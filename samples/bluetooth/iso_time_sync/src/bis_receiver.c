@@ -167,7 +167,7 @@ void bis_receiver_start(uint8_t bis_index_to_sync_to)
 		memset(&big_sync_param, 0, sizeof(big_sync_param));
 		big_sync_param.bis_channels = iso_rx_channels_get();
 		big_sync_param.num_bis = 1;
-		big_sync_param.bis_bitfield = BIT(bis_index_to_sync_to);
+		big_sync_param.bis_bitfield = BIT(bis_index_to_sync_to - 1);
 		big_sync_param.mse = BT_ISO_SYNC_MSE_ANY;
 		big_sync_param.sync_timeout = 100; /* in 10 ms units */
 
