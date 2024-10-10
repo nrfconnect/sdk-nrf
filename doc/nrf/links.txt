@@ -212,6 +212,7 @@
 
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
+.. _`PSA Certified Crypto API`: https://arm-software.github.io/psa-api/crypto/
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
 .. _`PSA Certified Crypto API 1.2.1`: https://arm-software.github.io/psa-api/crypto/1.2/
 .. _`PSA Certified Crypto API 1.2 PAKE Extension Final 1`: https://arm-software.github.io/psa-api/crypto/1.2/ext-pake/
@@ -1552,7 +1553,7 @@
 
 .. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
 
-.. _`Mbed TLS`: https://developer.trustedfirmware.org/w/mbed-tls/
+.. _`Mbed TLS`: https://www.trustedfirmware.org/projects/mbed-tls/
 .. _`Trusted Firmware M`: https://www.trustedfirmware.org/projects/tf-m/
 
 .. _`Nanopb`: https://jpa.kapsi.fi/nanopb/

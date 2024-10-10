@@ -7,7 +7,7 @@ Running applications with Trusted Firmware-M
    :local:
    :depth: 2
 
-On nRF5340 and nRF91 Series devices, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
+On nRF5340, nRF54L15 and nRF91 Series devices, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
 
 Overview
 ********
@@ -19,17 +19,17 @@ This is achieved by a set of secure run time services such as Secure Storage, Cr
 Additionally, secure boot through MCUboot in TF-M ensures integrity of runtime software and supports firmware upgrade.
 
 .. note::
-   Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in |NCS| is currently :ref:`experimental <software_maturity>`.
+   Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in the |NCS| is currently :ref:`experimental <software_maturity>`.
 
 For official documentation, see the `TF-M documentation`_.
 
-The TF-M implementation in |NCS| is currently demonstrated in the following samples:
+The TF-M implementation in |NCS| is demonstrated in the following samples:
 
-- All :ref:`tfm_samples` in this SDK
-- All :ref:`cryptography samples <crypto_samples>` in this SDK
-- A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
-- The :ref:`https_client` sample for nRF91 Series devices in this SDK
-- The :ref:`openthread_samples` that support the ``nrf5340dk/nrf5340/cpuapp/ns`` board target in this SDK
+* All :ref:`tfm_samples` in this SDK
+* All :ref:`cryptography samples <crypto_samples>` in this SDK
+* A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
+
+In addition, the TF-M implementation is used in all samples and applications in this SDK that support the ``*/ns`` :ref:`variant <app_boards_names>` of the boards, due to :ref:`Cortex-M Security Extensions (CMSE) <app_boards_spe_nspe>` support.
 
 Building
 ********
@@ -48,6 +48,7 @@ To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_PROFILE_T
 You must build TF-M using a non-secure board target.
 The following platforms are currently supported:
 
+* nRF54L15
 * nRF5340
 * nRF91 Series
 
@@ -65,7 +66,7 @@ In such case, the Kconfig configurations in the Nordic Security Backend control 
 You can configure what crypto modules to include in TF-M by using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options found in file :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules`.
 
 TF-M utilizes :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
-For more information about the PSA cryptography and the API, see `PSA Cryptography API 1.0.1`_.
+For more information about the PSA cryptography and the API, see `PSA Certified Crypto API`_.
 
 .. _tfm_minimal_build:
 
@@ -193,8 +194,8 @@ TF-M partition alignment requirements
 TF-M requires that secure and non-secure partition addresses must be aligned to the flash region size :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE`.
 |NCS| ensures that they in fact are aligned and comply with the TF-M requirements.
 
-In nRF53 and nRF91 series TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the SPU flash region size.
-In nRF54L15 TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the MPC region size.
+On nRF53 and nRF91 Series devices, TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the SPU flash region size.
+On nRF54L15 devices, TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the MPC region size.
 
 When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
 But when the static partitions are used, the user is responsible for following the alignment requirements.
