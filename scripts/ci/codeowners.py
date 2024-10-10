@@ -110,6 +110,10 @@ def ls_owned_files(codeowners):
                 continue
 
             git_patrn = match.group(1)
+            if git_patrn == '*':
+                logger.info('Skipping default \'*\' entry')
+                continue
+
             glob = git_pattern_to_glob(git_patrn)
             files = []
             for abs_path in top_path.glob(glob):
