@@ -62,7 +62,7 @@ static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 	return result;
 }
 
-int lib_kmu_provision_slot(int slot_id, struct kmu_src_t *kmu_src)
+int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 {
 	if (kmu_src == NULL) {
 		return -LIB_KMU_NULL_PNT;

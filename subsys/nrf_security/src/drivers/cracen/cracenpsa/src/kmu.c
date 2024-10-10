@@ -27,6 +27,8 @@
  */
 #define PROVISIONING_SLOT 250
 
+#define SECONDARY_SLOT_METADATA_VALUE UINT32_MAX
+
 extern mbedtls_threading_mutex_t cracen_mutex_symmetric;
 
 /* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
@@ -238,9 +240,9 @@ int cracen_kmu_clean_key(const uint8_t *user_data)
  */
 static bool is_secondary_slot(kmu_metadata *metadata)
 {
-	uint32_t value = UINT32_MAX;
-	_Static_assert(sizeof(value) == sizeof(*metadata));
+	const uint32_t value = SECONDARY_SLOT_METADATA_VALUE;
 
+	_Static_assert(sizeof(value) == sizeof(*metadata));
 	return memcmp(&value, metadata, sizeof(value)) == 0;
 }
 
@@ -306,7 +308,7 @@ static psa_status_t clean_up_unfinished_provisioning(void)
  */
 static psa_status_t set_provisioning_in_progress(uint32_t slot_id, uint32_t num_slots)
 {
-	struct kmu_src_t kmu_desc = {};
+	struct kmu_src kmu_desc = {};
 
 	kmu_desc.metadata = slot_id << 8 | num_slots;
 	kmu_desc.rpolicy = LIB_KMU_REV_POLICY_ROTATING;
@@ -774,14 +776,14 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		}
 	}
 
-	struct kmu_src_t kmu_desc = {};
+	struct kmu_src kmu_desc = {};
 
 	for (size_t i = 0; i < num_slots; i++) {
 		kmu_desc.dest = (uint32_t)push_address + (CRACEN_KMU_SLOT_KEY_SIZE * i);
 		if (i == 0) {
 			memcpy(&kmu_desc.metadata, &metadata, sizeof(kmu_desc.metadata));
 		} else {
-			kmu_desc.metadata = UINT32_MAX;
+			kmu_desc.metadata = SECONDARY_SLOT_METADATA_VALUE;
 		}
 		kmu_desc.rpolicy = metadata.rpolicy;
 		memcpy(kmu_desc.value, key_buffer + CRACEN_KMU_SLOT_KEY_SIZE * i,
