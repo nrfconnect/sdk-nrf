@@ -1057,6 +1057,13 @@ Zigbee
 
 The issues in this section are related to the :ref:`ug_zigbee` protocol.
 
+.. rst-class:: v2-7-0
+
+KRKNWK-19263: FOTA DFU on the nRF5340 DK fails due to an invalid update image
+  Performing FOTA DFU throws an error during an attempt to install the new image.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from ``main`` (commit hash: ``cc5ae95668566b47b9f6bfccb99b3796de8cb076``).
+
 .. rst-class:: v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
 NCSISB-1204: Corrupted ZBOSS NVRAM causes an infinite boot loop
