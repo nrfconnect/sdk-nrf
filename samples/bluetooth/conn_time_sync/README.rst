@@ -29,8 +29,16 @@ To observe that the LEDs are toggled synchronously, use a logic analyzer or an o
 
 Overview
 ********
+.. tabs::
 
-The Central and Peripheral devices toggle **LED 1** synchronously and within a few microseconds of one another.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      The Central and Peripheral devices toggle **LED 2** synchronously and within a few microseconds of one another.
+
+   .. group-tab:: nRF54 DKs
+
+      The Central and Peripheral devices toggle **LED 1** synchronously and within a few microseconds of one another.
+
 The LEDs are toggled at the timestamp specified by the Central device.
 
 Clock synchronization
@@ -99,9 +107,17 @@ On nRF52 and nRF53 Series devices, you also need one RTC peripheral, one TIMER p
 
 User interface
 **************
+.. tabs::
 
-LED 1:
-   Blinks simultaneously on all devices after synchronization takes place.
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      LED 2:
+         Blinks simultaneously on all devices after synchronization takes place.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 1:
+         Blinks simultaneously on all devices after synchronization takes place.
 
 Building and running
 ********************
