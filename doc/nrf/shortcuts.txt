@@ -239,7 +239,3 @@
 
 .. |nrf54_buttons_leds_numbering| replace:: The nRF54 DKs use a different numbering pattern for LED and buttons.
    See the User interface section for full overview.
-
-.. |br|     raw:: html        .. force a line break in HTML output (blank lines needed here)
-
-   <br />

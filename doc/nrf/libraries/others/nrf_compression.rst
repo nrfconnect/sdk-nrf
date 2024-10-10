@@ -3,45 +3,90 @@
 nRF Compression
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Compression library in the |NCS| provides a streamlined API for data compression and decompression on devices.
+
+.. _nrf_compression_config:
+
+Configuration
+*************
+
 You can enable different compression types by configuring the appropriate Kconfig options.
+See :ref:`configuring_kconfig` for information about the different ways you can set Kconfig options in the |NCS|.
+
 To enable this library, set the :kconfig:option:`CONFIG_NRF_COMPRESS` Kconfig option.
 For decompression, set the :kconfig:option:`CONFIG_NRF_COMPRESS_DECOMPRESSION` Kconfig option.
-Compression functionality is not currently supported.
+
+.. note::
+    The compression functionality is not currently supported.
+
+.. _nrf_compression_config_compression_types:
+
+Compression types configuration
+===============================
 
 You can use the available compression types by enabling their respective Kconfig options:
 
-+------------------+---------------------------------------------------------------------------------------------------------+------------------------------------------------------+
-| Name             | Kconfig                                                                                                 | Implementation details                               |
-+==================+=========================================================================================================+======================================================+
-| LZMA version 1   | :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA` and :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA1` | Exclusive/cannot be enabled with LZMA version 2. |br||
-|                  |                                                                                                         | Fixed probability size of 14272 bytes. |br|          |
-|                  |                                                                                                         | Fixed dictionary size of 128 KiB.                    |
-+------------------+---------------------------------------------------------------------------------------------------------+------------------------------------------------------+
-| LZMA version 2   | :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA` and :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2` | Exclusive/cannot be enabled with LZMA version 1. |br||
-|                  |                                                                                                         | Fixed probability size of 14272 bytes. |br|          |
-|                  |                                                                                                         | Fixed dictionary size of 128 KiB.                    |
-+------------------+---------------------------------------------------------------------------------------------------------+------------------------------------------------------+
-| ARM thumb filter | :kconfig:option:`NRF_COMPRESS_ARM_THUMB`                                                                | --                                                   |
-+------------------+---------------------------------------------------------------------------------------------------------+------------------------------------------------------+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Kconfig options
+     - Implementation details
+   * - LZMA version 1
+     - :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA` and :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA1`
+     - | Exclusive: cannot be enabled with LZMA version 2.
+       | Fixed probability size of 14272 bytes.
+       | Fixed dictionary size of 128 KiB.
+   * - LZMA version 2
+     - :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA` and :kconfig:option:`CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2`
+     - | Exclusive: cannot be enabled with LZMA version 1.
+       | Fixed probability size of 14272 bytes.
+       | Fixed dictionary size of 128 KiB.
+   * - ARM thumb filter
+     - :kconfig:option:`NRF_COMPRESS_ARM_THUMB`
+     - ---
+
+Memory allocation configuration options
+=======================================
 
 Compression and decompression can use a significant amount of memory.
 To manage this, use the following Kconfig options to choose between static and dynamic (malloc) allocations from the system heap:
 
-* :kconfig:option:`CONFIG_NRF_COMPRESS_MEMORY_TYPE_STATIC` - This is the default option that uses static buffers, ensuring their availability but preventing other uses of the memory.
-* :kconfig:option:`CONFIG_NRF_COMPRESS_MEMORY_TYPE_MALLOC` - The option uses dynamic memory allocation, requiring the heap to have sufficient contiguous free memory for buffer allocation upon initializing the compression type.
+:kconfig:option:`CONFIG_NRF_COMPRESS_MEMORY_TYPE_STATIC`
+  This is the default option that uses static buffers, ensuring their availability but preventing other uses of the memory.
+
+:kconfig:option:`CONFIG_NRF_COMPRESS_MEMORY_TYPE_MALLOC`
+  The option uses dynamic memory allocation, requiring the heap to have sufficient contiguous free memory for buffer allocation upon initializing the compression type.
   This allows other parts of the application to utilize the memory when the compression system is not in use.
 
-Other Kconfig options for this subsystem include:
+Other configuration options
+===========================
 
-* :kconfig:option:`CONFIG_NRF_COMPRESS_CHUNK_SIZE` - This option specifies the chunk size, which is the maximum amount of data that can be input to a compression library.
+:kconfig:option:`CONFIG_NRF_COMPRESS_CHUNK_SIZE`
+  This option specifies the chunk size, which is the maximum amount of data that can be input to a compression library.
   It determines the size of buffers that are statically or dynamically allocated, unless the compression type has a different memory allocation due to how it works.
-* :kconfig:option:`CONFIG_NRF_COMPRESS_CLEANUP` - This option enables memory buffer cleanup upon calling the :c:func:`nrf_compress_deinit_func_t` function.
+
+:kconfig:option:`CONFIG_NRF_COMPRESS_CLEANUP`
+  This option enables memory buffer cleanup upon calling the :c:func:`nrf_compress_deinit_func_t` function.
   It is performed to prevent possible leakage of sensitive data.
   If data security is not a concern, this option can be disabled to reduce flash usage.
 
+Samples using the library
+*************************
+
+The :ref:`nrf_compression_mcuboot_compressed_update` sample uses this library.
+
+Application integration
+***********************
+
+The following sections describe how to integrate the nRF Compression library in your application.
+
 Implementing a compression type
-*******************************
+===============================
 
 You can implement custom compression types by using a shim over the compression source files.
 
@@ -52,10 +97,10 @@ You can implement custom compression types by using a shim over the compression 
 .. note::
 
     The function definitions include ``inst`` as the first argument, which is reserved for future use.
-    It should be set to NULL when initializing the compression library.
+    It should be set to ``NULL`` when initializing the compression library.
 
-Init/deinit
------------
+Initialization and deinitialization
+===================================
 
 The following initialization and deinitialization functions are necessary for managing the lifecycle of the compression library within your application or module:
 
@@ -65,13 +110,13 @@ The following initialization and deinitialization functions are necessary for ma
   If the :kconfig:option:`CONFIG_NRF_COMPRESS_CLEANUP` Kconfig option is enabled, it also ensures that all buffers are cleared prior to releasing them to prevent any possible data leakage.
 
 Reset
------
+=====
 
 The :c:func:`nrf_compress_reset_func_t` function is used to reset the compression library if it is partially used.
 It resets the internal variables and buffers without performing deinitialization, which allows the compression library to be reused with a new file.
 
 Decompression
--------------
+=============
 
 There are two functions for decompression:
 
@@ -86,7 +131,7 @@ There are two functions for decompression:
   This is crucial as some compression libraries require this information.
 
 Defining compression type
--------------------------
+=========================
 
 Once the code is developed, the library must be defined in an iterable section using the :c:macro:`NRF_COMPRESS_IMPLEMENTATION_DEFINE` macro, located in the header file :file:`include/nrf_compress/implementation.h`.
 There are following requirements depending on the library's capabilities:
@@ -99,8 +144,8 @@ All other functions are always mandatory and must always be defined.
 Additionally, you must define a unique ID for the compression library.
 It should be globally available, allowing applications or modules use it.
 
-Using the compression subsystem
-*******************************
+Integrating the compression subsystem
+=====================================
 
 To decompress data using the nRF Compression library, complete the following steps:
 
@@ -123,8 +168,12 @@ To decompress data using the nRF Compression library, complete the following ste
 #. Repeat the process of calling the :c:type:`nrf_compress_decompress_bytes_needed_t` function followed by  :c:func:`nrf_compress_decompress_func_t` until all the data has been processed.
 #. Call the :c:func:`nrf_compress_deinit_func_t` function to clean up the compression library.
 
-.. figure:: nrf_compression_image.png
-    :alt: nRF compress library decompression flowchart
+See the following figure for the overview of the decompression flow:
+
+.. figure:: images/nrf_compression_image.png
+    :alt: nRF Compression library decompression flowchart
+
+    nRF Compression library decompression flowchart
 
 API documentation
 *****************
