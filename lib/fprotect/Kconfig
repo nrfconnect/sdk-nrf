@@ -72,4 +72,11 @@ config FPROTECT_APP
 	  'pm_config.h' in your build directory, or by invoking the
 	  'partition_manager_report' target.
 
+config FPROTECT_ALLOW_COMBINED_REGIONS
+	bool "Use both RRAMC_regions"
+	depends on SOC_SERIES_NRF54LX && MCUBOOT
+	help
+	  Intended for use with NRF54L series devices. Gives total of 62kB
+	  lockable memory.
+
 endif # FPROTECT
