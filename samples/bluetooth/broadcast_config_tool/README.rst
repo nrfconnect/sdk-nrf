@@ -15,6 +15,7 @@ In the BIS gateway mode, transmitting audio from the broadcast source happens us
 The following limitations apply to this sample:
 
 * Audio input: Pre-encoded LC3 data from an SD-card.
+  See :ref:`broadcast_configuration_tool_configuration_sd` for more information.
 * Maximum two BIG with four BIS streams each.
 
 .. _broadcast_configuration_tool_requirements:
@@ -761,6 +762,15 @@ The sample is pre-configured with a generous default memory allocation, suitable
 You can modify these default settings in the :file:`prj.conf` file.
 Using aggressive configurations can reduce air time availability for all streams, depending on the combination of options selected (like high bitrates, increased re-transmits, specific PHY settings).
 
+.. _broadcast_configuration_tool_configuration_sd:
+
+SD card setup
+*************
+
+The sample only supports pre-encoded LC3 data stored as LC3 files on an SD card.
+
+Make sure you format the SD card with a FAT file system.
+
 .. _broadcast_configuration_tool_building:
 
 Building and running
@@ -782,6 +792,7 @@ In this testing procedure, the development kit is programmed with the Broadcast 
 
 To test the Broadcast Configuration Tool sample, complete the following steps:
 
+1. Insert the SD card loaded with the pre-encoded LC3 data.
 #. Turn on the development kit.
 #. Set up the serial connection with the development kit.
 #. Configure a BIG using use case 1:
