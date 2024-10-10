@@ -433,6 +433,12 @@ static int fem_configure(bool rx, nrf_radio_mode_t mode,
 
 static void radio_start(bool rx, bool force_egu)
 {
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	/* Apply HMPAN-102 workaround for nRF54H series */
+	*(volatile uint32_t *)0x5302C7E4 =
+				(((*((volatile uint32_t *)0x5302C7E4)) & 0xFF000FFF) | 0x0012C000);
+#endif
+
 	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
 		nrf_egu_task_trigger(RADIO_TEST_EGU, RADIO_TEST_EGU_TASK);
 	} else {
