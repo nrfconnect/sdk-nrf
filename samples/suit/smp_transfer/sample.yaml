@@ -55,6 +55,7 @@ tests:
 
   sample.suit.smp_transfer.full_processing.extflash.bt:
     extra_args:
+      - SNIPPET=nrf54h-sdfw-v8
       - FILE_SUFFIX=bt
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_extflash.overlay"
       - SB_CONFIG_SUIT_BUILD_FLASH_COMPANION=y
