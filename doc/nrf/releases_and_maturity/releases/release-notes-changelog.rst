@@ -710,7 +710,9 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* :ref:`lib_fmfu_fdev`:
+
+  * Regenerated the code files using zcbor v0.9.0.
 
 Gazell libraries
 ----------------
@@ -981,6 +983,11 @@ Shell libraries
 ---------------
 
 |no_changes_yet_note|
+
+Secure Domain Firmware (SDFW) libraries
+---------------------------------------
+
+* sdfw_services: Regenerated generated code files using zcbor 0.9.0.
 
 Libraries for Zigbee
 --------------------
