@@ -26,13 +26,13 @@
 #include <nrf_socket.h>
 #include <nrf_modem_at.h>
 #endif
+#include <net/nrf_cloud.h>
 
 #include "nrfc_dtls.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(dtls, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
-static int sectag = CONFIG_NRF_CLOUD_COAP_SEC_TAG;
 static bool dtls_cid_active;
 static bool cid_supported = true;
 static bool keepopen_supported;
@@ -66,6 +66,7 @@ static int get_device_ip_address(uint8_t *d4_addr)
 int nrfc_dtls_setup(int sock)
 {
 	int err;
+	int sectag;
 	uint8_t d4_addr[4];
 
 	/* once connected, cache the connection info */
@@ -87,7 +88,9 @@ int nrfc_dtls_setup(int sock)
 		return -errno;
 	}
 
+	sectag = nrf_cloud_sec_tag_get();
 	LOG_DBG("  sectag: %d", sectag);
+
 	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, &sectag, sizeof(sectag));
 	if (err) {
 		LOG_ERR("Error setting sectag list: %d", -errno);
