@@ -154,6 +154,7 @@
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
 /lib/sample_rate_converter/               @nrfconnect/ncs-audio
 /lib/tone/                                @nrfconnect/ncs-audio
+/lib/uicc_lwm2m/                          @stig-bjorlykke
 
 # Modules
 /modules/                                 @nrfconnect/ncs-co-build-system
@@ -202,6 +203,7 @@
 /samples/cellular/modem_trace_flash/      @eivindj-nordic
 /samples/cellular/slm_shell/              @nrfconnect/ncs-iot-oulu
 /samples/cellular/sms/                    @trantanen @tokangas
+/samples/cellular/uicc_lwm2m/             @stig-bjorlykke
 /samples/openthread/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-bluebagel
 /samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
@@ -383,6 +385,7 @@
 /tests/lib/pcm_stream_channel_modifier/   @nrfconnect/ncs-audio
 /tests/lib/sample_rate_converter/         @nrfconnect/ncs-audio
 /tests/lib/tone/                          @nrfconnect/ncs-audio
+/tests/lib/uicc_lwm2m/                    @stig-bjorlykke
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-pluto
