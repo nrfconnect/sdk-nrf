@@ -101,7 +101,7 @@ SUIT_Envelope_Tagged:
     - RFC4122_UUID:
         namespace: {{ mpi_rad_recovery_vendor_name }}
         name: {{ mpi_rad_recovery_class_name }}
-  suit-integrated-payloads:
 {%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE' not in rad_recovery['config'] or rad_recovery['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE'] == '' %}
+  suit-integrated-payloads:
     '#{{ rad_recovery['name'] }}': {{ rad_recovery['binary'] }}
 {%- endif %}

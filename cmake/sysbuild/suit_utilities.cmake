@@ -84,7 +84,10 @@ function(suit_create_envelope input_file output_file create_signature)
   endif()
 endfunction()
 
-function(suit_create_cache_partition args)
+function(suit_create_cache_partition args output_file partition_num recovery)
+
+  list(APPEND args "--output-file" "${output_file}")
+
   set_property(
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
@@ -92,4 +95,16 @@ function(suit_create_cache_partition args)
     ${args}
     BYPRODUCTS ${output_file}
   )
+
+  get_filename_component(output_file_name ${output_file} NAME)
+
+  if (recovery)
+    set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ARTIFACTS ${output_file})
+    set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ZIP_ADDITIONAL_SCRIPT_PARAMS
+                 "${output_file_name}type=cache;${output_file_name}partition=${partition_num};")
+  else()
+    set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${output_file})
+    set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ZIP_ADDITIONAL_SCRIPT_PARAMS
+                 "${output_file_name}type=cache;${output_file_name}partition=${partition_num};")
+  endif()
 endfunction()
