@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <modem/modem_info.h>
+#include <ncs_version.h>
+#include <ncs_commit.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(modem_info_params);
@@ -42,7 +44,7 @@ int modem_info_params_init(struct modem_param_info *modem)
 	modem->device.battery.type		= MODEM_INFO_BATTERY;
 	modem->device.imei.type			= MODEM_INFO_IMEI;
 	modem->device.board			= CONFIG_BOARD;
-	modem->device.app_version		= STRINGIFY(APP_VERSION);
+	modem->device.app_version		= NCS_VERSION_STRING "-" NCS_COMMIT_STRING;
 
 #ifdef PROJECT_NAME
 	modem->device.app_name			= STRINGIFY(PROJECT_NAME);
