@@ -18,8 +18,6 @@
 
 LOG_MODULE_REGISTER(suit_sdfw_recovery_sink, CONFIG_SUIT_LOG_LEVEL);
 
-typedef int sdfw_sink_err_t;
-
 struct sdfw_recovery_sink_context {
 	bool in_use;
 	bool write_called;
@@ -108,8 +106,7 @@ static suit_plat_err_t schedule_update_and_reboot(const uint8_t *buf, size_t siz
 	return err;
 }
 
-// TODO: Find a better name
-static suit_plat_err_t process_update_needed_during_update(const uint8_t *buf, size_t size)
+static suit_plat_err_t update_already_ongoing(const uint8_t *buf, size_t size)
 {
 	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
 
@@ -140,7 +137,7 @@ static suit_plat_err_t process_update_needed_during_update(const uint8_t *buf, s
 	return err;
 }
 
-static suit_plat_err_t process_update_needed(const uint8_t *buf, size_t size)
+static suit_plat_err_t update_needed(const uint8_t *buf, size_t size)
 {
 	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
 
@@ -154,12 +151,13 @@ static suit_plat_err_t process_update_needed(const uint8_t *buf, size_t size)
 	}
 	case SDFW_UPDATE_OPERATION_RECOVERY_ACTIVATE: {
 		/* SDFW Recovery update already ongoing */
-		err = process_update_needed_during_update(buf, size);
+		err = update_already_ongoing(buf, size);
 		break;
 	}
 	case SDFW_UPDATE_OPERATION_UROT_ACTIVATE: {
 		/* SDFW update is onging - ignore it */
-		// TODO: Check if this is correct approach
+		/* TODO: Check if this is correct approach */
+		LOG_WRN("adsz: SDFW Recovery update attempt while already updating SDFW!");
 		err = SUIT_PLAT_SUCCESS;
 		break;
 	}
@@ -213,7 +211,7 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 
 	if (is_update_needed(buf, size)) {
 		LOG_INF("Update needed");
-		err = process_update_needed(buf, size);
+		err = update_needed(buf, size);
 	} else {
 		LOG_INF("Update not needed");
 	}
