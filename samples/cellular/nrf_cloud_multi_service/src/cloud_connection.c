@@ -627,6 +627,9 @@ void cloud_connection_thread_fn(void)
 	LOG_INF("Enabling connectivity...");
 	conn_mgr_all_if_connect(true);
 
+	//Un-comment this double call, and connect will work! Why?
+	//conn_mgr_all_if_connect(true);
+
 	LOG_INF("Setting up nRF Cloud library...");
 	if (setup_cloud()) {
 		LOG_ERR("Fatal: nRF Cloud library setup failed");
