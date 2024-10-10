@@ -14,6 +14,7 @@ extern "C" {
 #include <stdbool.h>
 #include <fw_info.h>
 #include <zephyr/types.h>
+#include <bl_storage.h>
 
 /** @defgroup bl_validation Bootloader firmware validation
  * @{
@@ -72,7 +73,7 @@ struct bl_validate_fw_ext_api {
  *
  * @return See @ref set_monotonic_counter.
  */
-int set_monotonic_version(uint16_t version, uint16_t slot);
+int set_monotonic_version(counter_t version, uint16_t slot);
 
 /** Write the stored 15-bit version to the 16-bit output parameter 'version_out'.
  *
@@ -81,7 +82,7 @@ int set_monotonic_version(uint16_t version, uint16_t slot);
  * @retval 0       Success
  * @retval -EINVAL Error during reading the version or version is NULL.
  */
-int get_monotonic_version(uint16_t *version_out);
+int get_monotonic_version(counter_t *version_out);
 
 /** Write the stored slot to the output parameter 'slot_out'.
  *
@@ -90,7 +91,7 @@ int get_monotonic_version(uint16_t *version_out);
  * @retval 0       Success
  * @retval -EINVAL Error during reading the version or version is NULL.
  */
-int get_monotonic_slot(uint16_t *slot_out);
+int get_monotonic_slot(counter_t *slot_out);
 
   /** @} */
 

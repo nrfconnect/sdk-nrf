@@ -627,6 +627,13 @@ Wi-Fi samples
   * Added support for running the full stack on the Thingy:91 X.
      This is a special configuration that uses the nRF5340 as the host chip instead of the nRF9151.
 
+Nordic Immutable Secure Bootloader |NSIB|
+-----------------------------------------
+
+* :ref:`bootloader` Changed allowed firmware info offsets:
+
+  * :ref:`doc_fw_info` Can now be placed at offset 0x600. Note that this offset cannot be used for any applications with |NSIB| compiled before this change.
+
 Other samples
 -------------
 
