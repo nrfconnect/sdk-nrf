@@ -10,7 +10,9 @@
 #include <zephyr/kernel.h>
 #include <drivers/gpio/nrfe_gpio.h>
 
-#if !defined(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG) && !defined(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX)
+#if !defined(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG) &&    \
+	!defined(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX) && \
+	!defined(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG)
 #error "Define communication backend type"
 #endif
 
