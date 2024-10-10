@@ -37,6 +37,7 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_ADV_ISO_SUPPORT
 	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
 	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
+	select BT_CTLR_CHANNEL_SOUNDING_SUPPORT if HAS_HW_NRF_RADIO_CS
 	select BT_HAS_HCI_VS
 	select BT_CTLR_DF_SUPPORT if HAS_HW_NRF_RADIO_DFE
 	select BT_CTLR_LE_POWER_CONTROL_SUPPORT
@@ -572,6 +573,13 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  HCI command used to configure the CIG will fail.
 	  If this parameter is set to zero, the subevent length
 	  is chosen by the controller.
+
+config BT_CTLR_SDC_CS_COUNT
+	int "Number of concurrent connections supporting CS procedure"
+	default 1
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set the number of concurrent connections that can support Channel Sounding procedure.
 
 endmenu
 endif  # BT_LL_SOFTDEVICE

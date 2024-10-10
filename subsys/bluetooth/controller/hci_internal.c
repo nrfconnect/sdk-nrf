@@ -66,6 +66,15 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_CREATE_BIG_TEST:
 	case SDC_HCI_OPCODE_CMD_LE_TERMINATE_BIG:
 	case SDC_HCI_OPCODE_CMD_LE_SUBRATE_REQUEST:
+#if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
+	case SDC_HCI_OPCODE_CMD_LE_CS_READ_REMOTE_SUPPORTED_CAPABILITIES:
+	case SDC_HCI_OPCODE_CMD_LE_CS_SECURITY_ENABLE:
+	case SDC_HCI_OPCODE_CMD_LE_CS_READ_REMOTE_FAE_TABLE:
+	case SDC_HCI_OPCODE_CMD_LE_CS_CREATE_CONFIG:
+	case SDC_HCI_OPCODE_CMD_LE_CS_REMOVE_CONFIG:
+	case SDC_HCI_OPCODE_CMD_LE_CS_PROCEDURE_ENABLE:
+	case SDC_HCI_OPCODE_CMD_LE_CS_TEST_END:
+#endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
 		return false;
 	default:
 		return true;
@@ -620,6 +629,22 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #endif
 	cmds->hci_le_subrate_request_command = 1;
 #endif /* CONFIG_BT_CTLR_SUBRATING */
+#if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
+	cmds->hci_le_cs_read_remote_fae_table = 1;
+	cmds->hci_le_cs_write_cached_remote_fae_table = 1;
+	cmds->hci_le_cs_create_config = 1;
+	cmds->hci_le_cs_remove_config = 1;
+	cmds->hci_le_cs_read_local_supported_capabilities = 1;
+	cmds->hci_le_cs_read_remote_supported_capabilities = 1;
+	cmds->hci_le_cs_write_cached_remote_supported_capabilities = 1;
+	cmds->hci_le_cs_test = 1;
+	cmds->hci_le_cs_test_end = 1;
+	cmds->hci_le_cs_security_enable = 1;
+	cmds->hci_le_cs_set_default_settings = 1;
+	cmds->hci_le_cs_set_channel_classification = 1;
+	cmds->hci_le_cs_set_procedure_parameters = 1;
+	cmds->hci_le_cs_procedure_enable = 1;
+#endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
 }
 
 #if defined(CONFIG_BT_HCI_VS)
@@ -799,6 +824,10 @@ void hci_internal_le_supported_features(
 #if defined(CONFIG_BT_CTLR_SUBRATING)
 	features->params.connection_subrating = 1;
 #endif
+#if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
+	features->params.channel_sounding = 1;
+	features->params.channel_sounding_tone_quality_indication = 1;
+#endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
 }
 
 static void le_read_supported_states(uint8_t *buf)
@@ -1556,6 +1585,45 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_SUBRATE_REQUEST:
 		return sdc_hci_cmd_le_subrate_request((void *)cmd_params);
 #endif /* CONFIG_BT_CTLR_SUBRATING */
+
+#if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
+	case SDC_HCI_OPCODE_CMD_LE_CS_READ_LOCAL_SUPPORTED_CAPABILITIES:
+		*param_length_out +=
+			sizeof(sdc_hci_cmd_le_cs_read_local_supported_capabilities_return_t);
+		return sdc_hci_cmd_le_cs_read_local_supported_capabilities(
+			(void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_READ_REMOTE_SUPPORTED_CAPABILITIES:
+		return sdc_hci_cmd_le_cs_read_remote_supported_capabilities((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_SECURITY_ENABLE:
+		return sdc_hci_cmd_le_cs_security_enable((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_SET_DEFAULT_SETTINGS:
+		*param_length_out += sizeof(sdc_hci_cmd_le_cs_set_default_settings_return_t);
+		return sdc_hci_cmd_le_cs_set_default_settings((void *)cmd_params,
+							(void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_READ_REMOTE_FAE_TABLE:
+		return sdc_hci_cmd_le_cs_read_remote_fae_table((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_WRITE_CACHED_REMOTE_FAE_TABLE:
+		*param_length_out +=
+			sizeof(sdc_hci_cmd_le_cs_write_cached_remote_fae_table_return_t);
+		return sdc_hci_cmd_le_cs_write_cached_remote_fae_table((void *)cmd_params,
+							(void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_CREATE_CONFIG:
+		return sdc_hci_cmd_le_cs_create_config((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_REMOVE_CONFIG:
+		return sdc_hci_cmd_le_cs_remove_config((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_SET_CHANNEL_CLASSIFICATION:
+		return sdc_hci_cmd_le_cs_set_channel_classification((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_SET_PROCEDURE_PARAMS:
+		*param_length_out += sizeof(sdc_hci_cmd_le_cs_set_procedure_params_return_t);
+		return sdc_hci_cmd_le_cs_set_procedure_params((void *)cmd_params,
+							(void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_PROCEDURE_ENABLE:
+		return sdc_hci_cmd_le_cs_procedure_enable((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_TEST:
+		return sdc_hci_cmd_le_cs_test((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_TEST_END:
+		return sdc_hci_cmd_le_cs_test_end();
+#endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
