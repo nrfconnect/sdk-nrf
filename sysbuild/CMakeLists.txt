@@ -490,6 +490,20 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   if(SB_CONFIG_SDP)
     include_sdp()
   endif()
+
+  foreach(config APPROTECT_USE_UICR APPROTECT_LOCK APPROTECT_USER_HANDLING
+  SECURE_APPROTECT_USE_UICR SECURE_APPROTECT_USER_HANDLING SECURE_APPROTECT_LOCK)
+    if(SB_CONFIG_${config})
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        set_config_bool(mcuboot CONFIG_NRF_${config} y)
+      endif()
+      if(SB_CONFIG_SECURE_BOOT_APPCORE)
+        set_config_bool(b0 CONFIG_NRF_${config} y)
+      endif()
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_NRF_${config} y)
+    endif()
+  endforeach()
+
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
