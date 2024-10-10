@@ -107,6 +107,10 @@ The SUIT backend configuration selects the following options:
 
 * :kconfig:option:`CONFIG_MGMT_SUITFU` - This option enables the SUIT Firmware Update Management that implements MCUmgr image management handlers required for the DFU process.
 * :kconfig:option:`CONFIG_MGMT_SUITFU_GRP_SUIT` - This option is needed to upload information about all manifests present on the device.
+* :kconfig:option:`CONFIG_MGMT_SUITFU_GRP_OS_BOOTLOADER_INFO_HOOK` - This option is needed to override the default MCUmgr handler intended for MCUboot bootloader information and replace it with the SUIT bootloader information.
+* :kconfig:option:`CONFIG_MCUMGR_GRP_OS`
+* :kconfig:option:`CONFIG_MCUMGR_GRP_OS_BOOTLOADER_INFO`
+* :kconfig:option:`CONFIG_MCUMGR_GRP_OS_BOOTLOADER_INFO_HOOK`
 * :kconfig:option:`CONFIG_SSF_SUIT_SERVICE_ENABLED`
 * :kconfig:option:`CONFIG_ZCBOR_CANONICAL`
 * :kconfig:option:`CONFIG_MCUMGR_SMP_LEGACY_RC_BEHAVIOUR`
