@@ -56,7 +56,8 @@ static uint32_t num_files_added;
  * @brief Recursively traverse the SD card tree.
  */
 static int traverse_down(char *path, uint8_t curr_depth, uint16_t result_file_num_max,
-			 uint16_t result_path_len_max, char result[][result_path_len_max])
+			 uint16_t result_path_len_max, char result[][result_path_len_max],
+			 char const *const search_pattern)
 {
 	int ret;
 	char tmp_buf[TMP_BUF_SIZE] = {'\0'};
@@ -107,7 +108,7 @@ static int traverse_down(char *path, uint8_t curr_depth, uint16_t result_file_nu
 		strcat(fullPath, token);
 		LOG_DBG("Fullpath: %s", fullPath);
 
-		if (strstr(token, ".lc3") != NULL) {
+		if (strstr(token, search_pattern) != NULL) {
 			if (num_files_added >= result_file_num_max) {
 				LOG_WRN("Max file count reached");
 				return -ENOMEM;
@@ -118,7 +119,7 @@ static int traverse_down(char *path, uint8_t curr_depth, uint16_t result_file_nu
 
 		} else {
 			ret = traverse_down(fullPath, curr_depth + 1, result_file_num_max,
-					    result_path_len_max, result);
+					    result_path_len_max, result, search_pattern);
 			if (ret) {
 				LOG_ERR("Failed to traverse down: %d", ret);
 			}
@@ -131,10 +132,11 @@ static int traverse_down(char *path, uint8_t curr_depth, uint16_t result_file_nu
 
 int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_path_len_max,
 			     char result[][result_path_len_max], char *path,
-			     char const *const pattern)
+			     char const *const search_pattern)
 {
 
 	int ret;
+	num_files_added = 0;
 
 	if (result == NULL) {
 		return -EINVAL;
@@ -148,11 +150,12 @@ int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_path_
 		return -EINVAL;
 	}
 
-	if (pattern == NULL) {
+	if (search_pattern == NULL) {
 		return -EINVAL;
 	}
 
-	ret = traverse_down(path, 0, result_file_num_max, result_path_len_max, result);
+	ret = traverse_down(path, 0, result_file_num_max, result_path_len_max, result,
+			    search_pattern);
 	if (ret) {
 		return ret;
 	}
@@ -189,7 +192,7 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool
 
 		ret = fs_opendir(&dirp, abs_path_name);
 		if (ret) {
-			LOG_WRN("Open assigned path failed %d. %s", ret, abs_path_name);
+			LOG_INF("Open assigned path failed %d. %s", ret, abs_path_name);
 			return ret;
 		}
 	}
