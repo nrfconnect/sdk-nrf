@@ -43,11 +43,6 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
   # We enable either TF-M or the SSF client PSA crypto interface but we are
   # not in the secure image build
 
-  # Add replacement platform.c for NS build
-  list(APPEND src_zephyr
-    ${ARM_MBEDTLS_PATH}/library/platform.c
-  )
-
   # The current version of the mbed TLS deliverables requires mbedcrypto built
   # and linked in the NS image (e.g. for mbedtls and mbedx509 library).
   # If CC3XX_BACKEND is enabled, configurations need to be converted to
@@ -55,8 +50,12 @@ if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
 
   get_cmake_property(all_vars VARIABLES)
 
-  # 1. Non-secure should not build the PSA core or drivers
-  set(CONFIG_MBEDTLS_PSA_CRYPTO_C               False)
+  # 1. TF-M enabled samples should not enable the PSA core or drivers
+  #    We still need to state CONFIG_MBEDTLS_PSA_CRYPTO_C for 
+  #    nRF54H20 devices which is not the same as an NS build...
+  if(NOT CONFIG_PSA_SSF_CRYPTO_CLIENT)
+    set(CONFIG_MBEDTLS_PSA_CRYPTO_C               False)
+  endif()
 
   # 2. Enable OBERON_BACKEND, disable CC3XX_BACKEND
   set(CONFIG_NRF_OBERON                         True)
