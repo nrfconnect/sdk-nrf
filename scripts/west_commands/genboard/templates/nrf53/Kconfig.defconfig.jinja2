@@ -1,0 +1,129 @@
+{% if ncs_version < hwmv2_since %}
+if  BOARD_{{ board | upper }}_CPUAPP || BOARD_{{ board | upper }}_CPUAPP_NS
+{% else %}
+if  BOARD_{{ board | upper }}_NRF5340_CPUAPP || BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
+{% endif %}
+
+{% if ncs_version < hwmv2_since %}
+config BOARD
+	default "{{ board }}_cpuapp"
+
+{% endif %}
+# Code Partition:
+#
+# For the secure version of the board the firmware is linked at the beginning
+# of the flash, or into the code-partition defined in DT if it is intended to
+# be loaded by MCUboot. If the secure firmware is to be combined with a non-
+# secure image (TRUSTED_EXECUTION_SECURE=y), the secure FW image shall always
+# be restricted to the size of its code partition.
+#
+# For the non-secure version of the board, the firmware
+# must be linked into the code-partition (non-secure) defined in DT, regardless.
+# Apply this configuration below by setting the Kconfig symbols used by
+# the linker according to the information extracted from DT partitions.
+
+# SRAM Partition:
+#
+# If the secure firmware is to be combined with a non-secure image
+# (TRUSTED_EXECUTION_SECURE=y), the secure FW image SRAM shall always
+# be restricted to the secure image SRAM partition (sram-secure-partition).
+# Otherwise (if TRUSTED_EXECUTION_SECURE is not set) the whole zephyr,sram
+# may be used by the image.
+#
+# For the non-secure version of the board, the firmware image SRAM is
+# always restricted to the allocated non-secure SRAM partition.
+DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
+DT_CHOSEN_Z_SRAM_PARTITION := zephyr,sram-secure-partition
+
+{% if ncs_version < hwmv2_since %}
+if BOARD_{{ board | upper }}_CPUAPP && TRUSTED_EXECUTION_SECURE
+{% else %}
+if BOARD_{{ board | upper }}_NRF5340_CPUAPP && TRUSTED_EXECUTION_SECURE
+{% endif %}
+
+config FLASH_LOAD_SIZE
+	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+config SRAM_SIZE
+	default $(dt_chosen_reg_size_int,$(DT_CHOSEN_Z_SRAM_PARTITION),0,K)
+
+{% if ncs_version < hwmv2_since %}
+endif # BOARD_{{ board | upper }}_CPUAPP && TRUSTED_EXECUTION_SECURE
+{% else %}
+endif # BOARD_{{ board | upper }}_NRF5340_CPUAPP && TRUSTED_EXECUTION_SECURE
+{% endif %}
+
+{% if ncs_version < hwmv2_since %}
+if BOARD_{{ board | upper }}_CPUAPP_NS
+{% else %}
+if BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
+{% endif %}
+
+config FLASH_LOAD_OFFSET
+	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+config FLASH_LOAD_SIZE
+	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+{% if ncs_version < hwmv2_since %}
+endif # BOARD_{{ board | upper }}_CPUAPP_NS
+{% else %}
+endif # BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
+{% endif %}
+
+{% if ncs_version >= (2, 7, 99) %}
+config BT_HCI_IPC
+	default y if BT
+
+config HEAP_MEM_POOL_ADD_SIZE_BOARD
+	int
+	default 4096 if BT_HCI_IPC
+{% elif ncs_version >= (2, 7, 0) %}
+choice BT_HCI_BUS_TYPE
+	default BT_HCI_IPC if BT
+endchoice
+
+config HEAP_MEM_POOL_ADD_SIZE_BOARD
+	int
+	default 4096 if BT_HCI_IPC
+{% elif ncs_version >= (2, 6, 0) %}
+choice BT_HCI_BUS_TYPE
+	default BT_HCI_IPC if BT
+endchoice
+
+config HEAP_MEM_POOL_SIZE
+	default 4096 if BT_HCI_IPC
+{% else %}
+choice BT_HCI_BUS_TYPE
+	default BT_RPMSG if BT
+endchoice
+
+config HEAP_MEM_POOL_SIZE
+	default 4096 if BT_RPMSG
+{% endif %}
+
+{% if ncs_version < hwmv2_since %}
+endif #  BOARD_{{ board | upper }}_CPUAPP || BOARD_{{ board | upper }}_CPUAPP_NS
+{% else %}
+endif #  BOARD_{{ board | upper }}_NRF5340_CPUAPP || BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
+{% endif %}
+
+{% if ncs_version < hwmv2_since %}
+if BOARD_{{ board | upper }}_CPUNET
+{% else %}
+if BOARD_{{ board | upper }}_NRF5340_CPUNET
+{% endif %}
+
+{% if ncs_version < hwmv2_since %}
+config BOARD
+	default "{{ board }}_cpunet"
+
+{% endif %}
+config BT_CTLR
+	default y if BT
+
+{% if ncs_version < hwmv2_since %}
+endif # BOARD_{{ board | upper }}_CPUNET
+{% else %}
+endif # BOARD_{{ board | upper }}_NRF5340_CPUNET
+{% endif %}

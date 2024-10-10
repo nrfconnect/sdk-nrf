@@ -1,0 +1,7 @@
+config BOARD_{{ board | upper }}
+{% if ncs_version < hwmv2_since %}
+	bool "{{ board_desc }}"
+	depends on SOC_{{ soc | upper }}_{{ variant | upper}}
+{% else %}
+	select SOC_{{ soc | upper }}_{{ variant | upper}}
+{% endif %}
