@@ -24,6 +24,10 @@ config NRF_CLOUD_COAP_SEC_TAG
 	int "Security tag for credentials"
 	default NRF_CLOUD_SEC_TAG
 
+config NRF_CLOUD_COAP_JWT_SEC_TAG
+	int "Security tag for JWT credentials"
+	default NRF_CLOUD_COAP_SEC_TAG
+
 config NRF_CLOUD_COAP_SERVER_PORT
 	int "CoAP server port"
 	default 5684

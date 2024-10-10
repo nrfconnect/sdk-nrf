@@ -11,7 +11,7 @@ LOG_MODULE_REGISTER(nrf_cloud_sec_tag, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 static sec_tag_t nrf_cloud_sec_tag =
 #if defined(CONFIG_NRF_CLOUD_COAP)
-	CONFIG_NRF_CLOUD_COAP_SEC_TAG;
+	CONFIG_NRF_CLOUD_COAP_JWT_SEC_TAG;
 #else
 	CONFIG_NRF_CLOUD_SEC_TAG;
 #endif
