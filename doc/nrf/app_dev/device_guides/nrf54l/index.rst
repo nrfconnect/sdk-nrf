@@ -33,5 +33,6 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    :caption: Subpages:
 
    features
+   cryptography
    testing_dfu
    peripheral_sensor_node_shield
