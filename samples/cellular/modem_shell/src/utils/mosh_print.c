@@ -15,6 +15,8 @@
 #include <zephyr/shell/shell.h>
 #include <modem/modem_info.h>
 #include <net/nrf_cloud.h>
+#include <ncs_version.h>
+#include <ncs_commit.h>
 
 #include "mosh_print.h"
 
@@ -180,11 +182,7 @@ void mosh_print_version_info(void)
 	/* shell_print() is not used here, because this function is called early during
 	 * application startup and the shell might not be ready yet.
 	 */
-#if defined(APP_VERSION)
-	printk("\nMOSH version:       %s\n", STRINGIFY(APP_VERSION));
-#else
-	printk("\nMOSH version:       unknown\n");
-#endif
+	printk("\nMOSH version:       v%s-%s\n", NCS_VERSION_STRING, NCS_COMMIT_STRING);
 
 #if defined(BUILD_ID)
 	printk("MOSH build id:      v%s\n", STRINGIFY(BUILD_ID));

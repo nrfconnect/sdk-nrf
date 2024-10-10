@@ -19,8 +19,6 @@
 #include <ncs_version.h>
 #include <ncs_commit.h>
 
-#define SDK_VERSION NCS_VERSION_STRING "-" NCS_COMMIT_STRING
-
 #include "desh_print.h"
 
 extern const struct shell *desh_shell;
@@ -154,7 +152,7 @@ void desh_print_version_info(void)
 	/* shell_print() is not used here, because this function is called early during
 	 * application startup and the shell might not be ready yet.
 	 */
-	printk("\nDESH version:       %s\n", SDK_VERSION);
+	printk("\nDESH version:       v%s-%s\n", NCS_VERSION_STRING, NCS_COMMIT_STRING);
 
 #if defined(BUILD_ID)
 	printk("DESH build id:      v%s\n", STRINGIFY(BUILD_ID));
