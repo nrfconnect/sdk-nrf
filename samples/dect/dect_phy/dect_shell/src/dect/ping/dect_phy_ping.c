@@ -785,6 +785,12 @@ static void dect_phy_ping_capability_get_cb(const uint64_t *time, enum nrf_modem
 	dect_app_modem_time_save(time);
 }
 
+static void dect_phy_ping_stf_cover_seq_control_cb(
+	const uint64_t *time, enum nrf_modem_dect_phy_err err)
+{
+	printk("WARN: Unexpectedly in %s\n", (__func__));
+}
+
 static void dect_phy_ping_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
 {
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_PING_CMD_DONE);
@@ -802,6 +808,7 @@ static const struct nrf_modem_dect_phy_callbacks ping_phy_api_config = {
 	.link_config = dect_phy_ping_link_configuration_cb,
 	.time_get = dect_phy_ping_time_query_cb,
 	.capability_get = dect_phy_ping_capability_get_cb,
+	.stf_cover_seq_control = dect_phy_ping_stf_cover_seq_control_cb,
 	.deinit = dect_phy_ping_deinit_cb,
 };
 
