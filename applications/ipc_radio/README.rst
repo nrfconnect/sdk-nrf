@@ -76,9 +76,6 @@ You can select the Bluetooth Low Energy serialization using the :kconfig:option:
 
 The Bluetooth Low Energy and IEEE 802.15.4 functionalities can operate simultaneously and are only limited by available memory.
 
-.. note::
-   The IEEE 802.15.4 is currently not supported on the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
-
 Sysbuild Kconfig options
 ========================
 
