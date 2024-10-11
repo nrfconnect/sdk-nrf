@@ -35,7 +35,7 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-bluebagel
-/applications/sdp/                        @masz-nordic
+/applications/sdp/                        @nrfconnect/ncs-ll-ursus
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
 /applications/zigbee_weather_station/     @nrfconnect/ncs-zigbee
@@ -68,7 +68,7 @@
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
-/drivers/gpio/                            @nrfconnect/ncs-co-drivers @masz-nordic
+/drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/hw_cc3xx/                        @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/net/                             @nrfconnect/ncs-co-drivers @doki-nordic
@@ -103,7 +103,7 @@
 /include/dfu/suit_dfu_fetch_source.h      @nrfconnect/ncs-charon
 /include/dfu/suit_dfu.h                   @nrfconnect/ncs-charon
 /include/drivers/flash/                   @nrfconnect/ncs-co-drivers
-/include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @masz-nordic
+/include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -291,7 +291,7 @@
 
 # Snippets
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
-/snippets/emulated*/                      @masz-nordic
+/snippets/emulated*/                      @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
