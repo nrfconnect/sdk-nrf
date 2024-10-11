@@ -75,6 +75,14 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 		return SUIT_ERR_AUTHENTICATION;
 	}
 
+#ifdef CONFIG_ZTEST
+	ret = suit_mci_signing_key_id_get(class_id, &public_key_id);
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Unable to find volatile key ID: MCI err %i", ret);
+		return SUIT_ERR_AUTHENTICATION;
+	}
+#endif /* CONFIG_ZTEST */
+
 #ifdef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 	mbedtls_svc_key_id_t key;
 

@@ -34,6 +34,7 @@ FAKE_VALUE_FUNC(int, suit_mci_independent_update_policy_get, const suit_manifest
 		suit_independent_updateability_policy_t *);
 FAKE_VALUE_FUNC(int, suit_mci_manifest_class_id_validate, const suit_manifest_class_id_t *);
 FAKE_VALUE_FUNC(int, suit_mci_signing_key_id_validate, const suit_manifest_class_id_t *, uint32_t);
+FAKE_VALUE_FUNC(int, suit_mci_signing_key_id_get, const suit_manifest_class_id_t *, uint32_t *);
 FAKE_VALUE_FUNC(int, suit_mci_processor_start_rights_validate, const suit_manifest_class_id_t *,
 		int);
 FAKE_VALUE_FUNC(int, suit_mci_memory_access_rights_validate, const suit_manifest_class_id_t *,
@@ -65,6 +66,7 @@ static inline void mock_suit_mci_reset(void)
 	RESET_FAKE(suit_mci_independent_update_policy_get);
 	RESET_FAKE(suit_mci_manifest_class_id_validate);
 	RESET_FAKE(suit_mci_signing_key_id_validate);
+	RESET_FAKE(suit_mci_signing_key_id_get);
 	RESET_FAKE(suit_mci_processor_start_rights_validate);
 	RESET_FAKE(suit_mci_memory_access_rights_validate);
 	RESET_FAKE(suit_mci_platform_specific_component_rights_validate);

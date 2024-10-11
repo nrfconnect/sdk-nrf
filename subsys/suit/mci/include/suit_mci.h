@@ -160,6 +160,25 @@ mci_err_t suit_mci_manifest_class_id_validate(const suit_manifest_class_id_t *cl
 mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id,
 					   uint32_t key_id);
 
+#ifdef CONFIG_ZTEST
+/**
+ * @brief Return key ID bits assigned to the manifest.
+ *
+ * @details This API is dedicated for tests that import volatile keys during setup.
+ *          In such case, the key ID is returned by PSA APIs and cannot be predicted.
+ *
+ * @param[in]   class_id	Manifest class id
+ * @param[out]  key_id		Identifier of key utilized for manifest signing.
+ *
+ * @retval SUIT_PLAT_SUCCESS        on success
+ * @retval SUIT_PLAT_ERR_INVAL      invalid parameter, i.e. null pointer
+ * @retval MCI_ERR_MANIFESTCLASSID  manifest class id unsupported
+ * @retval MCI_ERR_WRONGKEYID       provided key ID is invalid for signing
+ *                                  for provided manifest class
+ */
+mci_err_t suit_mci_signing_key_id_get(const suit_manifest_class_id_t *class_id, uint32_t *key_id);
+#endif /* CONFIG_ZTEST */
+
 /**
  * @brief Verifies if manifest with specific class id is entitled to start (invoke) code on specific
  * processor

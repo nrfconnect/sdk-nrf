@@ -239,6 +239,14 @@ int suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id, u
 		return MCI_ERR_MANIFESTCLASSID;
 	}
 
+#ifdef CONFIG_ZTEST
+#if defined(CONFIG_MBEDTLS) || defined(CONFIG_NRF_SECURITY)
+	if (PSA_KEY_ID_VENDOR_MIN == key_id) {
+		return SUIT_PLAT_SUCCESS;
+	}
+#endif /* CONFIG_MBEDTLS || CONFIG_NRF_SECURITY*/
+#endif /* CONFIG_ZTEST */
+
 	if ((manifest_config->signing_key_bits & manifest_config->signing_key_mask) !=
 	    (key_id & manifest_config->signing_key_mask)) {
 		return MCI_ERR_WRONGKEYID;
@@ -246,6 +254,29 @@ int suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id, u
 
 	return SUIT_PLAT_SUCCESS;
 }
+
+#ifdef CONFIG_ZTEST
+int suit_mci_signing_key_id_get(const suit_manifest_class_id_t *class_id, uint32_t *key_id)
+{
+	if ((NULL == class_id) || (NULL == key_id)) {
+		return SUIT_PLAT_ERR_INVAL;
+	}
+
+	const manifest_config_t *manifest_config = find_manifest_config(class_id);
+
+	if (NULL == manifest_config) {
+		return MCI_ERR_MANIFESTCLASSID;
+	}
+
+#if defined(CONFIG_MBEDTLS) || defined(CONFIG_NRF_SECURITY)
+	if (PSA_KEY_ID_VENDOR_MIN == *key_id) {
+		*key_id = manifest_config->signing_key_bits;
+	}
+#endif /* CONFIG_MBEDTLS || CONFIG_NRF_SECURITY*/
+
+	return SUIT_PLAT_SUCCESS;
+}
+#endif /* CONFIG_ZTEST */
 
 int suit_mci_processor_start_rights_validate(const suit_manifest_class_id_t *class_id,
 					     int processor_id)
