@@ -52,14 +52,20 @@ For example:
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek_fwd -Dmultiprotocol_rpmsg_SHIELD=nrf21540ek
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek_fwd -Dipc_radio_SHIELD=nrf21540ek
 
-In this command, the *childImageName_* parameter has the ``multiprotocol_rpmsg_`` value and builds a multiprotocol application with support for 802.15.4 and Bluetooth.
-The *childImageName_* parameter can take the following values:
+In this command, the *childImageName_* parameter has the ``ipc_radio_`` value as default and builds the application with support for the combination of 802.15.4 and Bluetooth.
+The ``ipc_radio`` has been used since the build system migration to sysbuild.
+See :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
+Setting the correct sysbuild option enables support for 802.15.4 and Bluetooth :ref:`ipc_radio`.
 
-*  ``multiprotocol_rpmsg_`` for multiprotocol applications with support for 802.15.4 and Bluetooth
-*  ``802154_rpmsg_`` for applications with support for 802.15.4, but without support for Bluetooth
-*  ``hci_ipc_`` for application with support for Bluetooth, but without support for 802.15.4
+``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
+You can configure your application using the following sysbuild configurations:
+
+* ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
+* ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for application having support for Bluetooth, but not for 802.15.4.
+* ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+
 
 .. note::
    On nRF53 devices, ``SPIM0`` and ``UARTE0`` are mutually exclusive AHB bus masters on the network core as described in the `Product Specification <nRF5340 Product Specification_>`_, Section 6.4.3.1, Table 22.

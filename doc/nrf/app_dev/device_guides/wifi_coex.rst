@@ -128,14 +128,17 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
    The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
    The second element is the pin number on that port.
 
-#. On the nRF5340, apply the same devicetree node mentioned in Step 1 to the network core.
-   Apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
+#. On the nRF5340, you must also apply the same devicetree node mentioned in step 1 to the network core using sysbuild build system. For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
+   To do so, apply the overlay to the correct network core child image by creating an overlay file named :file:`sysbuild/*childImageName*/boards/nrf5340dk_nrf5340_cpunet.overlay.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
 
-   The ``*childImageName*`` string must assume one of the following values:
+   The ``*childImageName*`` default value is set to ``ipc_radio`` :ref:`ipc_radio`.
 
-   *  ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
-   *  ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
-   *  ``hci_ipc`` for application having support for Bluetooth, but not for 802.15.4.
+   ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
+   You can configure your application using the following sysbuild configurations:
+
+   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
+   * ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for application having support for Bluetooth, but not for 802.15.4.
+   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
 
 #. Enable the following Kconfig options:
 
@@ -206,14 +209,18 @@ To enable the generic three-wire coexistence, do the following:
    The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
    The second element is the pin number on that port.
 
-#. On the nRF5340, apply the same devicetree node mentioned in Step 1 to the network core.
-   Apply the overlay to the correct network-core child image by creating an overlay file named :file:`child_image/*childImageName*.overlay` in your application directory, for example :file:`child_image/multiprotocol_rpmsg.overlay`.
+#. On nRF53 devices, you must also apply the same devicetree node mentioned in **Step 1** to the network core using sysbuild.
+   To apply the overlay to the correct network core child image, create an overlay file named :file:`sysbuild/*childImageName*/boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
+   For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
 
-   The ``*childImageName*`` string must assume one of the following values:
+   The *childImageName* default value is set to ``ipc_radio``:
 
-   * ``multiprotocol_rpmsg`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
-   * ``802154_rpmsg`` for applications having support for 802.15.4, but not for Bluetooth.
-   * ``hci_ipc`` for application having support for Bluetooth, but not for 802.15.4.
+   ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
+   You can configure your application using the following sysbuild configurations:
+
+   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
+   * ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for application having support for Bluetooth, but not for 802.15.4.
+   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
 
 #. Enable the following Kconfig options:
 
