@@ -96,8 +96,15 @@ config DESKTOP_USB_STACK_NEXT
 	bool "USB next stack [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	select USB_DEVICE_STACK_NEXT
+	imply SOC_FLASH_NRF_PARTIAL_ERASE
 	help
 	  Use experimental integration of USB next stack.
+
+	  The option implies partial erase of nRF SoC flash in the driver
+	  configuration to improve stability of the USB next stack. The partial
+	  erase feature works around device errors that might be reported by
+	  Windows USB host in Device Manager if USB cable is connected while
+	  erasing secondary image slot in background.
 
 config DESKTOP_USB_STACK_LEGACY
 	bool "USB legacy stack"

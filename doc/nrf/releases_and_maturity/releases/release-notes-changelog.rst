@@ -285,6 +285,9 @@ nRF Desktop
   * Manifest semantic version information to the firmware information response in :ref:`nrf_desktop_dfu` when the module is used for SUIT DFU and the SDFW supports semantic versioning (requires v0.6.2 and higher).
   * A missing DTS node compatible with ``zephyr,hid-device`` to the nRF52840 DK in the MCUboot QSPI configuration.
     This ensures support for HID over USB when the USB next stack is selected.
+  * The USB next stack (:ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>`) implies partial erase feature of the nRF SoC flash driver (:kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE`).
+    This is done to improve stability of the USB next stack.
+    The partial erase feature works around device errors that might be reported by Windows USB host in Device Manager if USB cable is connected while erasing secondary image slot in the background.
 
 * Updated:
 
@@ -299,7 +302,6 @@ nRF Desktop
   * The :ref:`nrf_desktop_dfu_mcumgr` to recognize the MCUmgr custom group ID (:kconfig:option:`CONFIG_MGMT_GROUP_ID_SUIT`) from the SUITFU subsystem (:kconfig:option:`CONFIG_MGMT_SUITFU`) as a DFU-related command group.
   * All build configurations with the DFU over MCUmgr support to require encryption for operations on the Bluetooth GATT SMP service (see the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_ENCRYPT` Kconfig option).
     The Bluetooth pairing procedure of the unpaired Bluetooth peers must now be performed before the DFU operation.
-
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
