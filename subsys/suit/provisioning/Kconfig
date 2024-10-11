@@ -9,10 +9,12 @@ menu "SUIT provisioning"
 config SUIT_MPI_GENERATE
 	bool "Generate SUIT Manifest Provisioning Information binary"
 	default y if SOC_SERIES_NRF54HX
+	default y if SOC_SERIES_NRF92X
 
 if SUIT_MPI_GENERATE
 
 rsource "soc/Kconfig.nrf54h20"
+rsource "soc/Kconfig.nrf9280"
 
 endif # SUIT_MPI_GENERATE
 

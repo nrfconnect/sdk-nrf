@@ -19,7 +19,7 @@ static int suit_plat_check_image_match_soc_spec_sdfw(struct zcbor_string *compon
 						     enum suit_cose_alg alg_id,
 						     struct zcbor_string *digest)
 {
-#ifdef CONFIG_SOC_SERIES_NRF54HX
+#if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF92X)
 	if (suit_cose_sha512 != alg_id) {
 		LOG_ERR("Unsupported digest algorithm: %d", alg_id);
 		return SUIT_ERR_UNSUPPORTED_PARAMETER;
@@ -40,9 +40,9 @@ static int suit_plat_check_image_match_soc_spec_sdfw(struct zcbor_string *compon
 	}
 
 	return SUIT_SUCCESS;
-#else  /* CONFIG_SOC_SERIES_NRF54HX */
+#else  /* CONFIG_SOC_SERIES_NRF54HX || CONFIG_SOC_SERIES_NRF92X */
 	return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
-#endif /* CONFIG_SOC_SERIES_NRF54HX */
+#endif /* CONFIG_SOC_SERIES_NRF54HX || CONFIG_SOC_SERIES_NRF92X */
 }
 
 static int suit_plat_check_image_match_soc_spec(struct zcbor_string *component_id,

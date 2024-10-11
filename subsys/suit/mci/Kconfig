@@ -20,6 +20,11 @@ config SUIT_MCI_IMPL_NRF54H20_SDFW
 	bool "nRF54H20: Secure domain"
 	depends on SUIT_PLATFORM_VARIANT_SDFW
 
+config SUIT_MCI_IMPL_NRF9280_SDFW
+	bool "nRF9280: Secure domain"
+	depends on SOC_SERIES_NRF92X
+	depends on SUIT_PLATFORM_VARIANT_SDFW
+
 config SUIT_MCI_IMPL_CUSTOM
 	bool "custom"
 
