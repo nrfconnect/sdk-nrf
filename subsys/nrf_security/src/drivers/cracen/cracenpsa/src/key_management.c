@@ -26,6 +26,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <sxsymcrypt/trng.h>
+#include <sxsymcrypt/keyref.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/byteorder.h>
 
@@ -1213,7 +1214,7 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	 * attributes, and update the `lifetime` field to be more specific.
 	 */
 	switch (slot_number) {
-	case CRACEN_IDENTITY_KEY_SLOT_NUMBER:
+	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 							 PSA_KEY_PERSISTENCE_READ_ONLY,
 							 PSA_KEY_LOCATION_CRACEN));
@@ -1231,18 +1232,18 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		 */
 		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
 			*key_buffer_length = cracen_get_opaque_size(attributes);
-			*((ikg_opaque_key *)key_buffer) =
-				(ikg_opaque_key){.slot_number = slot_number,
-						 .owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(
-							 psa_get_key_id(attributes))};
+			*((ikg_opaque_key *)key_buffer) = (ikg_opaque_key){
+				/* The slot number is not used for the identity key */
+				.owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(
+					psa_get_key_id(attributes))};
 			return PSA_SUCCESS;
 		} else {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
 		break;
 
-	case CRACEN_MKEK_SLOT_NUMBER:
-	case CRACEN_MEXT_SLOT_NUMBER:
+	case CRACEN_BUILTIN_MKEK_ID:
+	case CRACEN_BUILTIN_MEXT_ID:
 		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 							 PSA_KEY_PERSISTENCE_READ_ONLY,
 							 PSA_KEY_LOCATION_CRACEN));
@@ -1257,8 +1258,11 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		 */
 		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
 			*key_buffer_length = cracen_get_opaque_size(attributes);
+			uint8_t cracen_internal_ikg_index = (slot_number == CRACEN_BUILTIN_MKEK_ID)
+								    ? CRACEN_INTERNAL_HW_KEY1_ID
+								    : CRACEN_INTERNAL_HW_KEY2_ID;
 			*((ikg_opaque_key *)key_buffer) =
-				(ikg_opaque_key){.slot_number = slot_number,
+				(ikg_opaque_key){.slot_number = cracen_internal_ikg_index,
 						 .owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(
 							 psa_get_key_id(attributes))};
 			return PSA_SUCCESS;
@@ -1285,13 +1289,13 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 {
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id)) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
-		*slot_number = CRACEN_IDENTITY_KEY_SLOT_NUMBER;
+		*slot_number = CRACEN_BUILTIN_IDENTITY_KEY_ID;
 		break;
 	case CRACEN_BUILTIN_MKEK_ID:
-		*slot_number = CRACEN_MKEK_SLOT_NUMBER;
+		*slot_number = CRACEN_BUILTIN_MKEK_ID;
 		break;
 	case CRACEN_BUILTIN_MEXT_ID:
-		*slot_number = CRACEN_MEXT_SLOT_NUMBER;
+		*slot_number = CRACEN_BUILTIN_MEXT_ID;
 		break;
 	default:
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER

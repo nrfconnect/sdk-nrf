@@ -782,18 +782,15 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		default:
 			if (key_buffer_size == 0) {
 				return PSA_ERROR_CORRUPTION_DETECTED;
+			} else if (key_buffer_size == sizeof(ikg_opaque_key)) {
+				return PSA_ERROR_INVALID_ARGUMENT;
 			}
 
-			if (key_buffer_size == sizeof(ikg_opaque_key)) {
-				k->cfg = ((ikg_opaque_key *)key_buffer)->slot_number;
-				k->owner_id = ((ikg_opaque_key *)key_buffer)->owner_id;
-			} else {
-				/* Normal transparent key. */
-				k->prepare_key = NULL;
-				k->clean_key = NULL;
-				k->key = key_buffer;
-				k->sz = key_buffer_size;
-			}
+			/* Normal transparent key. */
+			k->prepare_key = NULL;
+			k->clean_key = NULL;
+			k->key = key_buffer;
+			k->sz = key_buffer_size;
 		}
 	} else {
 		k->key = key_buffer;

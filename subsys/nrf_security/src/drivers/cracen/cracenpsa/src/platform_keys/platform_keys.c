@@ -126,16 +126,10 @@ typedef struct derived_key {
 	char label[DERIVED_KEY_MAX_LABEL_SIZE];
 } derived_key;
 
-typedef struct ikg_key {
-	uint32_t slot_number;
-	uint32_t domain;
-} ikg_key;
-
 typedef union {
 	sicr_key sicr;
 	embedded_key embedded;
 	derived_key derived;
-	ikg_key ikg;
 } platform_key;
 
 typedef enum {
@@ -253,18 +247,9 @@ static key_type find_key(uint32_t id, platform_key *key)
 	}
 
 	if (usage == USAGE_IAK || usage == USAGE_MKEK || usage == USAGE_MEXT) {
-		key->ikg.domain = domain;
-		switch (usage) {
-		case USAGE_IAK:
-			key->ikg.slot_number = CRACEN_IDENTITY_KEY_SLOT_NUMBER;
-			break;
-		case USAGE_MKEK:
-			key->ikg.slot_number = CRACEN_MKEK_SLOT_NUMBER;
-			break;
-		case USAGE_MEXT:
-			key->ikg.slot_number = CRACEN_MEXT_SLOT_NUMBER;
-			break;
-		}
+		/* IKG keys are populated in cracen_load_keyref and cracen_get_builtin_key
+		 * so we don't need to populate them here.
+		 */
 		return IKG;
 	}
 
@@ -562,7 +547,7 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 	}
 
 	if (type == IKG) {
-		*slot_number = key.ikg.slot_number;
+		*slot_number = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id);
 		*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 			PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN);
 
