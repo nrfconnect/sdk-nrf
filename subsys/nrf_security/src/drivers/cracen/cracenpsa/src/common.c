@@ -28,6 +28,9 @@
 #include <psa/nrf_platform_key_ids.h>
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
+#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#include "platform_keys/platform_keys.h"
+#endif
 
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
@@ -725,6 +728,58 @@ static int cracen_clean_ik_key(const uint8_t *user_data)
 	return SX_OK;
 }
 
+static bool cracen_is_ikg_key(const psa_key_attributes_t *attributes)
+{
+#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+	return cracen_platform_keys_is_ikg_key(attributes);
+#else
+	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
+	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
+	case CRACEN_BUILTIN_MKEK_ID:
+	case CRACEN_BUILTIN_MEXT_ID:
+		return true;
+	default:
+		return false;
+	}
+#endif
+};
+
+static psa_status_t cracen_load_ikg_keyref(const psa_key_attributes_t *attributes,
+					   const uint8_t *key_buffer, size_t key_buffer_size,
+					   struct sxkeyref *k)
+{
+	k->prepare_key = cracen_prepare_ik_key;
+	k->clean_key = cracen_clean_ik_key;
+
+#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+	if (key_buffer_size != sizeof(ikg_opaque_key)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	k->cfg = ((ikg_opaque_key *)key_buffer)->slot_number;
+	k->owner_id = ((ikg_opaque_key *)key_buffer)->owner_id;
+#else
+	/* IKG keys are identified from the ID */
+	(void)key_buffer;
+	(void)key_buffer_size;
+
+	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
+	case CRACEN_BUILTIN_MKEK_ID:
+		k->cfg = CRACEN_INTERNAL_HW_KEY1_ID;
+		break;
+	case CRACEN_BUILTIN_MEXT_ID:
+		k->cfg = CRACEN_INTERNAL_HW_KEY2_ID;
+		break;
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
+	};
+
+	k->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
+#endif
+	k->user_data = (uint8_t *)&k->owner_id;
+	return PSA_SUCCESS;
+}
+
 psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, struct sxkeyref *k)
 {
@@ -761,39 +816,28 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
 
-		k->prepare_key = cracen_prepare_ik_key;
-		k->clean_key = cracen_clean_ik_key;
+		if (cracen_is_ikg_key(attributes)) {
+			return cracen_load_ikg_keyref(attributes, key_buffer, key_buffer_size, k);
+		}
+
 		k->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
 		k->user_data = (uint8_t *)&k->owner_id;
+		k->prepare_key = NULL;
+		k->clean_key = NULL;
 
 		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
-		case CRACEN_BUILTIN_MKEK_ID:
-			k->cfg = CRACEN_INTERNAL_HW_KEY1_ID;
-			break;
-		case CRACEN_BUILTIN_MEXT_ID:
-			k->cfg = CRACEN_INTERNAL_HW_KEY2_ID;
-			break;
 		case CRACEN_PROTECTED_RAM_AES_KEY0_ID:
 			k->sz = 32;
 			k->key = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
-			k->prepare_key = NULL;
-			k->clean_key = NULL;
 			break;
 		default:
 			if (key_buffer_size == 0) {
 				return PSA_ERROR_CORRUPTION_DETECTED;
 			}
 
-			if (key_buffer_size == sizeof(ikg_opaque_key)) {
-				k->cfg = ((ikg_opaque_key *)key_buffer)->slot_number;
-				k->owner_id = ((ikg_opaque_key *)key_buffer)->owner_id;
-			} else {
-				/* Normal transparent key. */
-				k->prepare_key = NULL;
-				k->clean_key = NULL;
-				k->key = key_buffer;
-				k->sz = key_buffer_size;
-			}
+			/* Normal transparent key. */
+			k->key = key_buffer;
+			k->sz = key_buffer_size;
 		}
 	} else {
 		k->key = key_buffer;
@@ -803,30 +847,38 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 	return PSA_SUCCESS;
 }
 
+static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *attributes,
+						   size_t *key_size)
+{
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+	return cracen_platform_keys_get_size(attributes, key_size);
+#else
+	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
+	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
+		if (psa_get_key_type(attributes) ==
+		    PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
+			*key_size = sizeof(ikg_opaque_key);
+			return PSA_SUCCESS;
+		}
+		break;
+	case CRACEN_BUILTIN_MEXT_ID:
+	case CRACEN_BUILTIN_MKEK_ID:
+		if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
+			*key_size = sizeof(ikg_opaque_key);
+			return PSA_SUCCESS;
+		}
+		break;
+	}
+
+	return PSA_ERROR_INVALID_ARGUMENT;
+#endif /* CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS */
+}
+
 psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size)
 {
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
-		case CRACEN_BUILTIN_IDENTITY_KEY_ID:
-			if (psa_get_key_type(attributes) ==
-			    PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-				*key_size = sizeof(ikg_opaque_key);
-				return PSA_SUCCESS;
-			}
-			break;
-		case CRACEN_BUILTIN_MEXT_ID:
-		case CRACEN_BUILTIN_MKEK_ID:
-			if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
-				*key_size = sizeof(ikg_opaque_key);
-				return PSA_SUCCESS;
-			}
-			break;
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-		default:
-			return cracen_platform_keys_get_size(attributes, key_size);
-#endif
-		}
+		return cracen_get_ikg_opaque_key_size(attributes, key_size);
 	}
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==

@@ -16,6 +16,10 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 psa_status_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes,
 					   size_t *key_size);
 
+bool cracen_platform_keys_is_ikg_key(psa_key_attributes_t const *attributes);
+
+uint32_t cracen_platform_keys_get_owner(psa_key_attributes_t const *attributes);
+
 psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 					  psa_drv_slot_number_t *slot_number);
 
