@@ -8,6 +8,8 @@ on:
       - 'v*-branch'
     paths:
       - 'scripts/requirements*.txt'
+      - '.github/workflows/validate-pip-requirements-fixed-file.yml'
+
 
 jobs:
   check-requirements:
@@ -58,8 +60,6 @@ jobs:
             mkvirtualenv pip-fixed-venv  > /dev/null 2>&1 || true
             workon pip-fixed-venv  > /dev/null 2>&1
             pip3 install pip-tools > /dev/null 2>&1
-            # Use setuptools==71.1.0 due to https://github.com/pypa/setuptools/issues/4519
-            pip3 install setuptools==71.1.0 --upgrade
 
             pip-compile \
                 --build-isolation \
@@ -71,7 +71,8 @@ jobs:
                 zephyr/scripts/requirements.txt  \
                 nrf/scripts/requirements.txt \
                 nrf/scripts/requirements-ci.txt \
-                nrf/scripts/requirements-extra.txt
+                nrf/scripts/requirements-extra.txt \
+                nrf/scripts/requirements-west-ncs-sbom.txt
 
             deactivate
             rmvirtualenv pip-fixed-venv
