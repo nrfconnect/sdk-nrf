@@ -53,7 +53,7 @@ config NRF_WIFI_FW_FLASH_CHUNK_SIZE
 config NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
 	bool "Enable integrity check of nRF70 FW patches"
 	select FLASH_AREA_CHECK_INTEGRITY
-	default y
+	# TODO: Fix MbedTLS dependency issues to enable this option
 	help
 	  Select this option to enable integrity check of nRF70 FW patches using
 	  SHA-256 verification algorithm.This option impacts the loading time of the
