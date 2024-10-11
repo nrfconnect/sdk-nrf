@@ -18,3 +18,7 @@
 &cpurad_slot0_partition {
 	reg = <0x66000 DT_SIZE_K(128)>;
 };
+
+&uart136 {
+	hw-flow-control;
+};

@@ -11,3 +11,7 @@
 &slot0_partition {
 	reg = <0x10000 DT_SIZE_K(388)>;
 };
+
+&uart20 {
+	hw-flow-control;
+};
