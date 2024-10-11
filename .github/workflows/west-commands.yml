@@ -26,7 +26,7 @@ jobs:
           pip3 install -U setuptools
           pip3 install -U wheel
           pip3 install -U mypy types-colorama types-editdistance types-PyYAML
-          grep -E "west==" scripts/requirements-fixed.txt | cut -f1 -d"#" | xargs pip3 install -U
+          grep -E "west==" scripts/requirements-fixed.txt | cut -f1 -d"#" | cut -d ' ' -f '1'| xargs pip3 install -U
           pip3 show -f west
       - name: Run mypy
         working-directory: ncs/nrf/scripts/west_commands
