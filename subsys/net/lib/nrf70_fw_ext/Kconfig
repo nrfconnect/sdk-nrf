@@ -4,10 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if WIFI_NRF70 && !NRF_WIFI_BUILD_ONLY_MODE
+if WIFI_NRF70
+
+# NCS always uses the external handling of the nRF70 FW patches
+choice NRF_WIFI_FW_BLOB_HANDLING
+	default NRF_WIFI_PATCHES_EXTERNAL
+endchoice
 
 choice NRF_WIFI_PATCHES_EXT_FLASH_SUPPORT
-	bool "Store nRF700x FW patches in external flash"
+	prompt "Store nRF700x FW patches in external flash"
+	default NRF_WIFI_PATCHES_EXT_FLASH_DISABLED
 	help
 	  Select this option to store nRF700x FW patches in external flash.
 	  This option helps to reduce the code memory size of the application, but
@@ -15,7 +21,6 @@ choice NRF_WIFI_PATCHES_EXT_FLASH_SUPPORT
 
 config NRF_WIFI_PATCHES_EXT_FLASH_DISABLED
 	bool "Store nRF700x FW patches in RAM"
-	select NRF_WIFI_PATCHES_BUILTIN
 
 config NRF_WIFI_PATCHES_EXT_FLASH_XIP
 	bool "Relocate nRF700x FW patches to external memory and execute from there"
