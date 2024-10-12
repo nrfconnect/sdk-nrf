@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	bool "Use external clock control [EXPERIMENTAL]"
+	depends on MPSL
+	select CLOCK_CONTROL
+	default y if SOC_SERIES_NRF54HX
+	select EXPERIMENTAL if SOC_SERIES_NRF52X || SOC_SERIES_NRF53X
+	help
+	  This option configures MPSL to use an an external clock driver, and
+	  not the clock driver provided as part of the MPSL library.
