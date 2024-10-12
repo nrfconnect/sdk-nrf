@@ -20,6 +20,7 @@ rsource "cx/Kconfig"
 rsource "init/Kconfig"
 rsource "pin_debug/Kconfig"
 rsource "pm/Kconfig"
+rsource "clock_ctrl/Kconfig"
 
 endif # !MPSL_FEM_ONLY
 
