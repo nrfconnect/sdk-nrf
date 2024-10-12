@@ -1523,10 +1523,15 @@ static int hci_driver_init(const struct device *dev)
 	return err;
 }
 
+#if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
+BUILD_ASSERT(CONFIG_BT_LL_SOFTDEVICE_INIT_PRIORITY > CONFIG_MPSL_INIT_PRIORITY,
+			 "MPSL must be initialized before SoftDevice Controller");
+#endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
+
 #define BT_HCI_CONTROLLER_INIT(inst) \
 	static struct hci_driver_data data_##inst; \
 	DEVICE_DT_INST_DEFINE(inst, hci_driver_init, NULL, &data_##inst, NULL, POST_KERNEL, \
-			      CONFIG_KERNEL_INIT_PRIORITY_DEVICE, &hci_driver_api)
+			      CONFIG_BT_LL_SOFTDEVICE_INIT_PRIORITY, &hci_driver_api)
 
 /* Only a single instance is supported */
 BT_HCI_CONTROLLER_INIT(0)

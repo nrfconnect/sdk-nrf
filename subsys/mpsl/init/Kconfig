@@ -50,6 +50,7 @@ config MPSL_DYNAMIC_INTERRUPTS
 config MPSL_TRIGGER_IPC_TASK_ON_RTC_START
 	bool "Trigger an IPC task when the RTC starts"
 	depends on SOC_NRF5340_CPUNET
+	depends on CLOCK_CONTROL_MPSL
 	help
 	  This option configures MPSL to trigger an IPC task at the time the
 	  RTC starts. This can be used for synchronizing time betwen the
@@ -98,12 +99,21 @@ config MPSL_HFCLK_LATENCY
 
 config MPSL_CALIBRATION_PERIOD
 	int "Calibration callback period in milliseconds"
-	depends on (SOC_SERIES_NRF54LX || CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION) && !SOC_SERIES_NRF54HX
+	depends on CLOCK_CONTROL_MPSL && (SOC_SERIES_NRF54LX || CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION)
 	default CLOCK_CONTROL_NRF_CALIBRATION_PERIOD if CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
 	default 4000
 	help
 	  This configuration means how often the calibration callback to mpsl is called.
 	  On 54L, this still needs to be called even if LFRC is not used.
+
+config MPSL_INIT_PRIORITY
+	int
+	default 52 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  This option configures MPSL system init priority level. For nRF54H SoC series the priority
+	  must be lower than CONFIG_NRFS_BACKEND_IPC_SERVICE_INIT_PRIO. The nrf2 clock control depends
+	  on the nRFS backend.
 
 module=MPSL
 module-str=MPSL
