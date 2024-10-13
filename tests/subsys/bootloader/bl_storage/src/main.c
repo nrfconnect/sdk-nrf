@@ -11,7 +11,7 @@
 
 ZTEST(bl_storage_test, test_monotonic_counter)
 {
-	uint16_t counter_value;
+	counter_t counter_value;
 	uint16_t counter_slots;
 	/* The initial counter is written by B0 and the function
 	 * set_monotonic_version. This function calculates the counter
