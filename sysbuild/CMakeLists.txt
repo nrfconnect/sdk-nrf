@@ -498,7 +498,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_BT_FAST_PAIR y)
 
     if(DEFINED FP_MODEL_ID AND DEFINED FP_ANTI_SPOOFING_KEY)
-      include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/fast_pair_hex.cmake)
+      if(SB_CONFIG_PARTITION_MANAGER)
+        include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/fast_pair_hex.cmake)
+      endif()
+
       set(FP_DATA_PRESENT "y" CACHE INTERNAL "Fast Pair provisioning data provided" FORCE)
     else()
       message(WARNING "Fast Pair support is enabled but `FP_MODEL_ID` or `FP_ANTI_SPOOFING_KEY` were not provided, this is likely to cause a build error")
@@ -612,6 +615,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   set(SYSBUILD y)
 
   set_property(GLOBAL PROPERTY DOMAIN_APP_APP ${DEFAULT_IMAGE})
+
+  # Include any files that need to merge files with uicr_merged.hex before including suit
+  if(FP_DATA_PRESENT AND NOT SB_CONFIG_PARTITION_MANAGER)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/fast_pair_hex.cmake)
+  endif()
 
   include_packaging()
   include_suit()
