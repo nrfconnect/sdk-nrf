@@ -2,7 +2,7 @@
 # Copyright (c) 2024, Arm Limited. All rights reserved.
 # Copyright (c) 2024, Nordic Semiconductor ASA.
 #
-# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 #-------------------------------------------------------------------------------
 
@@ -129,5 +129,16 @@ if(TARGET tfm_sprt)
         PRIVATE
             psa_crypto_config
             psa_interface
+    )
+endif()
+
+if(TARGET platform_s)
+    target_compile_definitions(platform_s
+        PRIVATE
+            # Required for system_nrfxx_approtect.h.
+            $<$<BOOL:${CONFIG_NRF_APPROTECT_LOCK}>:ENABLE_APPROTECT>
+            $<$<BOOL:${CONFIG_NRF_APPROTECT_USER_HANDLING}>:ENABLE_APPROTECT_USER_HANDLING>
+            $<$<BOOL:${CONFIG_NRF_SECURE_APPROTECT_LOCK}>:ENABLE_SECURE_APPROTECT>
+            $<$<BOOL:${CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING}>:ENABLE_SECURE_APPROTECT_USER_HANDLING>
     )
 endif()
