@@ -11,6 +11,7 @@ zephyr_library_sources(
   ot_rpc_coap.c
   ot_rpc_diag.c
   ot_rpc_dataset.c
+  ot_rpc_dns_client.c
   ot_rpc_instance.c
   ot_rpc_ip6.c
   ot_rpc_link.c
