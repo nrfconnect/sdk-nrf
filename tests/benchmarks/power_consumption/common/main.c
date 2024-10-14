@@ -32,8 +32,10 @@ K_TIMER_DEFINE(timer, timer_handler, NULL);
 
 int main(void)
 {
+	int rc;
 
-	gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	rc = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	__ASSERT_NO_MSG(rc == 0);
 
 	k_timer_start(&timer, K_SECONDS(1), K_SECONDS(1));
 
