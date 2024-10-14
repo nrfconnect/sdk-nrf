@@ -138,64 +138,6 @@ LTE link control library
      * Remove the use of the ``CONFIG_LTE_NETWORK_USE_FALLBACK`` Kconfig option.
        Use the :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT` or :kconfig:option:`CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS` Kconfig option instead.
        In addition, you can control the priority between LTE-M and NB-IoT using the :kconfig:option:`CONFIG_LTE_MODE_PREFERENCE` Kconfig option.
-     * Replace the use of the :c:func:`lte_lc_factory_reset` function with the following:
-
-      * If the :c:enumerator:`LTE_LC_FACTORY_RESET_ALL` value is used with the :c:func:`lte_lc_factory_reset` function:
-
-         .. code-block:: C
-
-            #include <nrf_modem_at.h>
-
-            err = nrf_modem_at_printf("AT%%XFACTORYRESET=0");
-
-      * If the :c:enumerator:`LTE_LC_FACTORY_RESET_USER` value is used with the :c:func:`lte_lc_factory_reset` function:
-
-         .. code-block:: C
-
-            #include <nrf_modem_at.h>
-
-            err = nrf_modem_at_printf("AT%%XFACTORYRESET=1");
-
-     * Replace the use of the :c:func:`lte_lc_reduced_mobility_get` function with the following:
-
-      .. code-block:: C
-
-         #include <nrf_modem_at.h>
-
-         uint16_t mode;
-
-         ret = nrf_modem_at_scanf("AT%REDMOB?", "%%REDMOB: %hu", &mode);
-         if (ret != 1) {
-            /* Handle failure. */
-         } else {
-            /* Handle success. */
-         }
-
-     * Replace the use of the :c:func:`lte_lc_reduced_mobility_set` function with the following:
-
-      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_DEFAULT` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
-
-         .. code-block:: C
-
-            #include <nrf_modem_at.h>
-
-            err = nrf_modem_at_printf("AT%%REDMOB=0");
-
-      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_NORDIC` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
-
-         .. code-block:: C
-
-            #include <nrf_modem_at.h>
-
-            err = nrf_modem_at_printf("AT%%REDMOB=1");
-
-      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_DISABLED` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
-
-         .. code-block:: C
-
-            #include <nrf_modem_at.h>
-
-            err = nrf_modem_at_printf("AT%%REDMOB=2");
 
 AT command parser
 -----------------
@@ -434,6 +376,72 @@ AT command parser
            * `&type` pointer to the returned command type.
            */
           at_parser_cmd_type_get(&at_parser, &type);
+
+LTE link control library
+------------------------
+
+.. toggle::
+
+   * For applications using :ref:`lte_lc_readme`:
+
+     * Replace the use of the :c:func:`lte_lc_factory_reset` function with the following:
+
+      * If the :c:enumerator:`LTE_LC_FACTORY_RESET_ALL` value is used with the :c:func:`lte_lc_factory_reset` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%XFACTORYRESET=0");
+
+      * If the :c:enumerator:`LTE_LC_FACTORY_RESET_USER` value is used with the :c:func:`lte_lc_factory_reset` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%XFACTORYRESET=1");
+
+     * Replace the use of the :c:func:`lte_lc_reduced_mobility_get` function with the following:
+
+      .. code-block:: C
+
+         #include <nrf_modem_at.h>
+
+         uint16_t mode;
+
+         ret = nrf_modem_at_scanf("AT%REDMOB?", "%%REDMOB: %hu", &mode);
+         if (ret != 1) {
+            /* Handle failure. */
+         } else {
+            /* Handle success. */
+         }
+
+     * Replace the use of the :c:func:`lte_lc_reduced_mobility_set` function with the following:
+
+      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_DEFAULT` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%REDMOB=0");
+
+      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_NORDIC` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%REDMOB=1");
+
+      * If the :c:enumerator:`LTE_LC_REDUCED_MOBILITY_DISABLED` value is used with the :c:func:`lte_lc_reduced_mobility_set` function:
+
+         .. code-block:: C
+
+            #include <nrf_modem_at.h>
+
+            err = nrf_modem_at_printf("AT%%REDMOB=2");
 
 Snippets
 ========
