@@ -98,7 +98,7 @@ See :doc:`matter:nrfconnect_examples_cli` in the Matter documentation for the li
 Matter Settings shell commands
 ------------------------------
 
-You can enable the Matter Settings shell commands to monitor the current usage of the Zephyr Settings NVS.
+You can enable the Matter Settings shell commands to monitor the current usage of the Zephyr Settings using :ref:`NVS (Non-Volatile Storage) <zephyr:nvs_api>` or :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` backends.
 These commands are useful for verifying that the ``settings`` partition has the proper size and meets the application requirements.
 
 To enable the Matter Settings shell module, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
@@ -110,10 +110,6 @@ You can use the following shell commands:
 * ``matter_settings get_size <name>`` - Get the size of the specific entry.
 * ``matter_settings current`` - Get the size of the current settings usage.
 * ``matter_settings free`` - Get the size of the current free settings space.
-
-.. note::
-
-  The Matter Settings shell module is available only for the NVS Zephyr Settings backend.
 
 .. _ug_matter_configuring_device_identification:
 
