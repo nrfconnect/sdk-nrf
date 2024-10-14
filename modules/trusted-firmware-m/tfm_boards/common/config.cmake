@@ -27,7 +27,9 @@ set(NRF_PROVISIONING                          OFF         CACHE BOOL      "Use N
 set(CONFIG_NFCT_PINS_AS_GPIOS                 OFF         CACHE BOOL      "Use NFCT pins as GPIOs.")
 set(CONFIG_NRF_TRACE_PORT                     OFF         CACHE BOOL      "Enable trace port.")
 set(CONFIG_NRF_APPROTECT_LOCK                 OFF         CACHE BOOL      "Enable approtect.")
+set(CONFIG_NRF_APPROTECT_USER_HANDLING        OFF         CACHE BOOL      "Enable approtect user handling.")
 set(CONFIG_NRF_SECURE_APPROTECT_LOCK          OFF         CACHE BOOL      "Enable secure approtect.")
+set(CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING OFF         CACHE BOOL      "Enable secure approtect user handling.")
 
 set(CONFIG_HW_UNIQUE_KEY                      ON          CACHE BOOL      "Enable Hardware Unique Key")
 set(CONFIG_HW_UNIQUE_KEY_RANDOM               ON          CACHE BOOL      "Write a new Hardware Unique Key if none exists")
