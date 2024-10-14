@@ -6,6 +6,7 @@
 
 #include <openthread/ip6.h>
 #include <openthread/netdata.h>
+
 #include "ot_rpc_common.h"
 #include "zcbor_common.h"
 #include "zcbor_encode.h"
@@ -336,4 +337,43 @@ void ot_rpc_decode_sockaddr(struct nrf_rpc_cbor_ctx *ctx, otSockAddr *sockaddr)
 {
 	nrf_rpc_decode_buffer(ctx, sockaddr->mAddress.mFields.m8, OT_IP6_ADDRESS_SIZE);
 	sockaddr->mPort = nrf_rpc_decode_uint(ctx);
+}
+
+void ot_rpc_encode_dns_query_config(struct nrf_rpc_cbor_ctx *ctx,
+				    const struct otDnsQueryConfig *config)
+{
+	if (config == NULL) {
+		nrf_rpc_encode_null(ctx);
+		return;
+	}
+
+	nrf_rpc_encode_buffer(ctx, config->mServerSockAddr.mAddress.mFields.m8,
+			      OT_IP6_ADDRESS_SIZE);
+	nrf_rpc_encode_uint(ctx, config->mServerSockAddr.mPort);
+	nrf_rpc_encode_uint(ctx, config->mResponseTimeout);
+	nrf_rpc_encode_uint(ctx, config->mMaxTxAttempts);
+	nrf_rpc_encode_uint(ctx, config->mRecursionFlag);
+	nrf_rpc_encode_uint(ctx, config->mNat64Mode);
+	nrf_rpc_encode_uint(ctx, config->mServiceMode);
+	nrf_rpc_encode_uint(ctx, config->mTransportProto);
+}
+
+bool ot_rpc_decode_dns_query_config(struct nrf_rpc_cbor_ctx *ctx, struct otDnsQueryConfig *config)
+{
+	if (nrf_rpc_decode_is_null(ctx)) {
+		return false;
+	}
+
+	nrf_rpc_decode_buffer(ctx, config->mServerSockAddr.mAddress.mFields.m8,
+			      OT_IP6_ADDRESS_SIZE);
+
+	config->mServerSockAddr.mPort = nrf_rpc_decode_uint(ctx);
+	config->mResponseTimeout = nrf_rpc_decode_uint(ctx);
+	config->mMaxTxAttempts = nrf_rpc_decode_uint(ctx);
+	config->mRecursionFlag = nrf_rpc_decode_uint(ctx);
+	config->mNat64Mode = nrf_rpc_decode_uint(ctx);
+	config->mServiceMode = nrf_rpc_decode_uint(ctx);
+	config->mTransportProto = nrf_rpc_decode_uint(ctx);
+
+	return true;
 }

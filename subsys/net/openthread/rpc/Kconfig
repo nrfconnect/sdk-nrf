@@ -15,6 +15,14 @@ menuconfig OPENTHREAD_RPC
 
 if OPENTHREAD_RPC
 
+config OPENTHREAD_RPC_DNS_MAX_TXT_DATA_SIZE
+	int "Maximum size of TXT data that can be serialized by DNS API"
+	default 255
+	help
+	  During serialization of a service information the server must allocate
+	  a stack allocated buffer for storing TXT data. This value controls the
+	  buffer size.
+
 choice OPENTHREAD_RPC_ROLE_CHOICE
 	prompt "OpenThread over RPC role selection"
 	default OPENTHREAD_RPC_CLIENT
