@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "common_fakes.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
 #include <test_rpc_env.h>
 
-#include <zephyr/fff.h>
 #include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
 
@@ -28,7 +29,6 @@ FAKE_VALUE_FUNC(uint32_t, otThreadGetPartitionId, otInstance *);
 FAKE_VALUE_FUNC(const char *, otThreadGetNetworkName, otInstance *);
 FAKE_VALUE_FUNC(const otExtendedPanId *, otThreadGetExtendedPanId, otInstance *);
 FAKE_VALUE_FUNC(const otMeshLocalPrefix *, otThreadGetMeshLocalPrefix, otInstance *);
-FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otThreadDiscover);                                                                       \
