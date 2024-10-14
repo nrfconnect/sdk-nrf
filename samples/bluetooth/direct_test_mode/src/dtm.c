@@ -778,7 +778,7 @@ static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg22dBm)
 	case -22:
-		return RADIO_TXPOWER_TXPOWER_Neg22Bm;
+		return RADIO_TXPOWER_TXPOWER_Neg22dBm;
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg22dBm) */
 
 	case -20:
@@ -786,7 +786,7 @@ static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 
 #if defined(RADIO_TXPOWER_TXPOWER_Neg18dBm)
 	case -18:
-		return RADIO_TXPOWER_TXPOWER_Neg18Bm;
+		return RADIO_TXPOWER_TXPOWER_Neg18dBm;
 #endif /* defined(RADIO_TXPOWER_TXPOWER_Neg18dBm) */
 
 	case -16:
