@@ -205,12 +205,15 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		const struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
+			/* tell the rest of the system that we are busy. */
+			module_set_state(MODULE_STATE_READY);
+
 			/* Add MS OS 2.0 BOS descriptor to BOS structure */
 			usb_bos_register_cap((void *)&bos_cap_msosv2);
 			/* Point interface index to string descriptor */
 			iface_string_desc_init(&dapusb_config);
 
-			/* tell the usb_cdc_handler we are done */
+			/* tell the usb_cdc_handler we are done. */
 			module_set_state(MODULE_STATE_STANDBY);
 		}
 		return false;
