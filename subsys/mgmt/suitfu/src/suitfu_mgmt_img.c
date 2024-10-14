@@ -255,8 +255,12 @@ static int suitfu_mgmt_img_state_read(struct smp_streamer *ctx)
 	}
 
 	if (ok) {
+#if !CONFIG_SUIT_RECOVERY
 		ok = ENCODE_FLAG(zse, "bootable", 1) && ENCODE_FLAG(zse, "confirmed", 1) &&
 		     ENCODE_FLAG(zse, "active", 1) && ENCODE_FLAG(zse, "permanent", 1);
+#else
+		ok = ENCODE_FLAG(zse, "pending", 1);
+#endif
 		LOG_DBG("Manifest flags encoded: %d", ok);
 	}
 
