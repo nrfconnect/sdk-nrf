@@ -35,7 +35,7 @@ else()
   # it seems to be to link with a full path instead.
   target_link_libraries(nrf_security_utils
     PRIVATE
-      ${CMAKE_BINARY_DIR}/zephyr/kernel/libkernel.a
+      ${Zephyr-Kernel_BINARY_DIR}/zephyr/kernel/libkernel.a
   )
 endif()
 
