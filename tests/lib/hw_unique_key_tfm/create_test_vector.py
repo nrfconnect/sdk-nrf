@@ -15,7 +15,17 @@ common_huk_label = b"TFM_HW_UNIQ_KEY\0"
 # The function tfm_builtin_key_loader_get_builtin_key
 # uses the owner ID as label when the HUK is being
 # used for key derivation.
-label_owner_id = b"\xff\xff\xff\xff"
+
+# The owner ID is the caller ID of the ns agent, calculated by
+# the function `tz_ns_agent_client_id_translate` in tfm_spm_ns_ctx.c
+# via the function `tfm_nspm_get_current_client_id`.
+#
+# tx_ns_agent_client_id_translate takes DEFAULT_NS_CLIENT_ID (0xFFFFFFFF)
+# as input when TFM_NS_MANAGE_NSID is not set, and returns 0xC4000000.
+owner_id = 0xc4000000
+
+# Convert to little endian
+label_owner_id = owner_id.to_bytes(4, byteorder='little')
 
 key_nrf53 = [
     0xc5, 0xa8, 0x08, 0xeb, 0xe3, 0x1e, 0xa5, 0xb4,
