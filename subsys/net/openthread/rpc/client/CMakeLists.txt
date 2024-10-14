@@ -20,6 +20,7 @@ zephyr_library_sources(
   ot_rpc_srp_client.c
   ot_rpc_thread.c
   ot_rpc_udp.c
+  ot_rpc_dns_client.c
 )
 
 zephyr_library_include_directories(

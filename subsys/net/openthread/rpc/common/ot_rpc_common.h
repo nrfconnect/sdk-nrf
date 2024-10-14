@@ -8,6 +8,7 @@
 #define OT_RPC_COMMON_H_
 
 #include <openthread/dataset.h>
+#include <openthread/dns_client.h>
 
 #include <nrf_rpc_cbor.h>
 #include <openthread/ip6.h>
@@ -60,6 +61,10 @@
 	1 + sizeof(info->mHopLimit) + \
 	4 /* mEcn, mIsHostInterface, mAllowZeroHopLimit, mMulticastLoop */
 
+#define OT_RPC_DNS_QUERY_CONFIG_SIZE \
+	1 + OT_IP6_ADDRESS_SIZE + \
+	6 * (1 + sizeof(uint32_t))
+
 NRF_RPC_GROUP_DECLARE(ot_group);
 
 void ot_rpc_decode_error(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
@@ -87,4 +92,10 @@ bool ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					const otBorderRouterConfig *service_config);
 bool ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					otBorderRouterConfig *service_config);
+
+bool ot_rpc_encode_dns_query_config(struct nrf_rpc_cbor_ctx *ctx,
+				    const struct otDnsQueryConfig *config);
+
+bool ot_rpc_decode_dns_query_config(struct nrf_rpc_cbor_ctx *ctx, bool *is_null,
+				    struct otDnsQueryConfig *config);
 #endif /* OT_RPC_COMMON_H_ */

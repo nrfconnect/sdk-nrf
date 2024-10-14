@@ -6,6 +6,7 @@
 
 #include <openthread/ip6.h>
 #include <openthread/netdata.h>
+
 #include "ot_rpc_common.h"
 #include "zcbor_common.h"
 #include "zcbor_encode.h"
@@ -536,6 +537,116 @@ bool ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx, otBorderRo
 
 	if (!zcbor_uint_decode(ctx->zs, &config->mRloc16, sizeof(config->mRloc16))) {
 		return false;
+	}
+
+	return true;
+}
+
+bool ot_rpc_encode_dns_query_config(struct nrf_rpc_cbor_ctx *ctx,
+				    const struct otDnsQueryConfig *config)
+{
+	if (config == NULL) {
+		return zcbor_nil_put(ctx->zs, NULL);
+	}
+
+	if (!zcbor_bstr_encode_ptr(ctx->zs, config->mServerSockAddr.mAddress.mFields.m8,
+				   OT_IP6_ADDRESS_SIZE)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_put(ctx->zs, config->mServerSockAddr.mPort)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_put(ctx->zs, config->mResponseTimeout)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_put(ctx->zs, config->mMaxTxAttempts)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_put(ctx->zs, config->mRecursionFlag)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_put(ctx->zs, config->mNat64Mode)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_put(ctx->zs, config->mServiceMode)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_put(ctx->zs, config->mTransportProto)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool ot_rpc_decode_dns_query_config(struct nrf_rpc_cbor_ctx *ctx, bool *decoded_config,
+				    struct otDnsQueryConfig *config)
+{
+	uint32_t tmp;
+	struct zcbor_string bstr;
+
+	if (nrf_rpc_decode_is_null(ctx)) {
+		if (decoded_config) {
+			*decoded_config = false;
+		}
+
+		return true;
+	}
+
+	if (!zcbor_bstr_decode(ctx->zs, &bstr) || bstr.len != OT_IP6_ADDRESS_SIZE) {
+		return false;
+	}
+
+	memcpy(config->mServerSockAddr.mAddress.mFields.m8, bstr.value, OT_IP6_ADDRESS_SIZE);
+
+	if (!zcbor_uint32_decode(ctx->zs, &tmp)) {
+		return false;
+	}
+
+	config->mServerSockAddr.mPort = (uint16_t)tmp;
+
+	if (!zcbor_uint32_decode(ctx->zs, &config->mResponseTimeout)) {
+		return false;
+	}
+
+	if (!zcbor_uint32_decode(ctx->zs, &tmp)) {
+		return false;
+	}
+
+	config->mMaxTxAttempts = (uint8_t)tmp;
+
+	if (!zcbor_uint32_decode(ctx->zs, &tmp)) {
+		return false;
+	}
+
+	config->mRecursionFlag = (otDnsRecursionFlag)tmp;
+
+	if (!zcbor_uint32_decode(ctx->zs, &tmp)) {
+		return false;
+	}
+
+	config->mNat64Mode = (otDnsNat64Mode)tmp;
+
+	if (!zcbor_uint32_decode(ctx->zs, &tmp)) {
+		return false;
+	}
+
+	config->mServiceMode = (otDnsServiceMode)tmp;
+
+	if (!zcbor_uint32_decode(ctx->zs, &tmp)) {
+		return false;
+	}
+
+	config->mTransportProto = (otDnsTransportProto)tmp;
+
+	if (decoded_config) {
+		*decoded_config = true;
 	}
 
 	return true;
