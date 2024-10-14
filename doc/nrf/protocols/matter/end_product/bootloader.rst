@@ -66,9 +66,19 @@ The nRF Connect platform in Matter uses Zephyr's :ref:`zephyr:settings_api` API 
 This requires that you define the ``settings_storage`` partition in the flash.
 The recommended minimum size of the partition is 32 kB, but you can reserve even more space if your application uses the storage extensively.
 
-The Zephyr settings storage is implemented by the Zephyr NVS (Non-Volatile Storage) module.
-The NVS uses multiple sectors of 4 kB each and it has to use the appropriate number of sectors to cover all settings partition area.
-To configure the number of sectors used by the NVS, set the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option to the desired value.
+The Zephyr settings storage is implemented by the :ref:`Zephyr NVS (Non-Volatile Storage) <zephyr:nvs_api>` or :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` backends.
+You can select either backend, and the selection affects several factors, such as the operational performance or memory lifetime.
+To achieve the optimal experience, it is recommended to use:
+
+* NVS backend for the flash-based nRF52 and nRF53 SoC families.
+* ZMS backend for the RRAM- and MRAM-based nRF54 SoC families.
+
+The settings backend uses multiple sectors of 4 kB each, and it must use the appropriate number of sectors to cover the entire settings partition area.
+To configure the number of sectors used by the backend, set the corresponding Kconfig option to the desired value:
+
+* :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` for the NVS
+* :kconfig:option:`CONFIG_SETTINGS_ZMS_SECTOR_COUNT` for the ZMS
+
 For example, to cover a settings partition of 32 kB in size, you require 8 sectors.
 
 As you can see in :ref:`ug_matter_hw_requirements_layouts`, Matter samples in the |NCS| reserve exactly 32 kB for the ``settings_storage`` partition.
