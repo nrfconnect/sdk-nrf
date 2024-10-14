@@ -1,0 +1,102 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if WIFI_NRF70
+
+# NCS always uses the external handling of the nRF70 FW patches
+choice NRF_WIFI_FW_BLOB_HANDLING
+	default NRF_WIFI_PATCHES_EXTERNAL
+endchoice
+
+choice NRF_WIFI_PATCHES_EXT_FLASH_SUPPORT
+	prompt "Store nRF700x FW patches in external flash"
+	default NRF_WIFI_PATCHES_EXT_FLASH_DISABLED
+	help
+	  Select this option to store nRF700x FW patches in external flash.
+	  This option helps to reduce the code memory size of the application, but
+	  requires external memory to be available for storing the FW patches.
+
+config NRF_WIFI_PATCHES_EXT_FLASH_DISABLED
+	bool "Store nRF700x FW patches in RAM"
+
+config NRF_WIFI_PATCHES_EXT_FLASH_XIP
+	bool "Relocate nRF700x FW patches to external memory and execute from there"
+	# nRF7002 supports SPI based external flash access with no XIP
+	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
+	# Disable until Matter DFU changes are ready
+	# default y if BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF52840DK_NRF52840
+	# For accessing external flash
+	select FLASH
+	# For relocation code to external flash
+	select XIP
+	select NORDIC_QSPI_NOR
+	select BUILD_NO_GAP_FILL
+	select CODE_DATA_RELOCATION
+	select HAVE_CUSTOM_LINKER_SCRIPT
+
+config NRF_WIFI_PATCHES_EXT_FLASH_STORE
+	bool "Store nRF700x FW patches in external memory but execute from RAM"
+	# nRF7002 supports SPI based external memory access but missing tools support
+	# TODO: Enable when tools support is available (NRFJPROG-157)
+	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
+	select FLASH
+	select FLASH_MAP
+endchoice
+
+if NRF_WIFI_PATCHES_EXT_FLASH_STORE
+config NRF_WIFI_FW_FLASH_CHUNK_SIZE
+	int "Chunk size for nRF70 FW patches to be read from external flash"
+	default 8192
+	help
+	  Chunk size for nRF70 FW patches to be read from external flash.
+	  This option impacts the loading time of the nRF70 FW patches and
+	  RAM usage (heap) of the application.
+
+config NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
+	bool "Enable integrity check of nRF70 FW patches"
+	select FLASH_AREA_CHECK_INTEGRITY
+	# TODO: Fix MbedTLS dependency issues to enable this option
+	help
+	  Select this option to enable integrity check of nRF70 FW patches using
+	  SHA-256 verification algorithm.This option impacts the loading time of the
+	  nRF70 FW patches but protects against corrupted FW patches.
+
+config NRF_WIFI_FW_PATCH_DFU
+	bool "Direct Firmware Update of nRF70 FW patch"
+	depends on PARTITION_MANAGER_ENABLED
+	depends on BOOTLOADER_MCUBOOT
+	depends on !XIP_SPLIT_IMAGE
+	help
+	  Enabling this option adds support for Device Firmware Update (DFU)
+	  for the nRF70 Series Firmware Patch.
+
+	  This feature requires the addition of an MCUBoot partition pair:
+	  a primary and a secondary partition. These partitions are used to
+	  store the new firmware patch. The specific partition numbers to be used
+	  depend on the number of partitions already in use.
+
+	  The "nrf70_wifi_fw" partition must be added to the newly created
+	  MCUBoot primary partition. Once this Kconfig option is enabled,
+	  the nRF70.hex file will be signed by MCUBoot. The signed image
+	  will then be merged with the application image and flashed onto
+	  the target board.
+
+	  Ensure that the required MCUBoot partitions are properly configured
+	  before enabling this option. Refer to the documentation for detailed
+	  instructions on partition configuration and the DFU process.
+
+# TC is the default but Wi-Fi uses MbedTLS, so, to avoid loading another library.
+if NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
+choice FLASH_AREA_CHECK_INTEGRITY_BACKEND
+	default FLASH_AREA_CHECK_INTEGRITY_MBEDTLS
+endchoice
+endif
+endif
+
+config CUSTOM_LINKER_SCRIPT
+	string "Custom linker script for nRF70 FW patches in external flash"
+	default "${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf70_fw_ext/rpu_fw_patches.ld"
+endif
