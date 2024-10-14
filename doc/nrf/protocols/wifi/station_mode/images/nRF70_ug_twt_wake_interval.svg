@@ -57,50 +57,49 @@
 			<title>Dynamic connector.20</title>
 			<path d="M7.07 121.35 L7.11 56" class="st5"/>
 		</g>
-		<g id="shape20-23" v:mID="20" v:groupContext="shape" transform="translate(13.6423,-55.0049)">
+		<g id="shape20-23" v:mID="20" v:groupContext="shape" transform="translate(18.5052,-55.0049)">
 			<title>Sheet.20</title>
-			<desc>TWT Wake Duration/Service Period</desc>
+			<desc>TWT Wake Interval/Service Period</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="47.4803" cy="110.718" width="94.97" height="21.2598"/>
-			<rect x="0" y="100.089" width="94.9606" height="21.2598" class="st6"/>
-			<text x="10.14" y="108.32" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>TWT <tspan
-						class="st8" v:langID="1033">Wake Duration/</tspan><tspan x="21.47" dy="1.2em" class="st8" v:langID="1033">Service Period</tspan></text>		</g>
-		<g id="shape21-28" v:mID="21" v:groupContext="shape" transform="translate(96.5557,-1)">
+			<v:textRect cx="42.6174" cy="110.718" width="85.24" height="21.2598"/>
+			<rect x="0" y="100.089" width="85.2349" height="21.2598" class="st6"/>
+			<text x="7.28" y="108.32" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>TWT Wake Interval/<tspan
+						x="16.61" dy="1.2em" class="st8">Service Period</tspan></text>		</g>
+		<g id="shape21-27" v:mID="21" v:groupContext="shape" transform="translate(96.5557,-1)">
 			<title>Nordic Blue.24</title>
 			<desc>Sleep</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
 			<v:textRect cx="61.3498" cy="105.758" width="122.7" height="31.1811"/>
 			<rect x="0" y="90.1673" width="122.7" height="31.1811" class="st3"/>
 			<text x="47.28" y="109.06" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Sleep</text>		</g>
-		<g id="shape29-31" v:mID="29" v:groupContext="shape" transform="translate(219.255,-1)">
+		<g id="shape29-30" v:mID="29" v:groupContext="shape" transform="translate(219.255,-1)">
 			<title>Nordic Blue.29</title>
 			<desc>Active</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
 			<v:textRect cx="38.2677" cy="105.758" width="76.54" height="31.1811"/>
 			<rect x="0" y="90.1673" width="76.5354" height="31.1811" class="st3"/>
 			<text x="23.29" y="109.06" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Active</text>		</g>
-		<g id="shape30-34" v:mID="30" v:groupContext="shape" transform="translate(295.791,-1)">
+		<g id="shape30-33" v:mID="30" v:groupContext="shape" transform="translate(295.791,-1)">
 			<title>Nordic Blue.30</title>
 			<desc>Sleep</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)"/>
 			<v:textRect cx="61.3498" cy="105.758" width="122.7" height="31.1811"/>
 			<rect x="0" y="90.1673" width="122.7" height="31.1811" class="st3"/>
 			<text x="47.28" y="109.06" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1" v:bulletSize="0.166667"/><v:tabList/>Sleep</text>		</g>
-		<g id="shape31-37" v:mID="31" v:groupContext="shape" v:layerMember="0" transform="translate(103.642,-32.1811)">
+		<g id="shape31-36" v:mID="31" v:groupContext="shape" v:layerMember="0" transform="translate(103.642,-32.1811)">
 			<title>Dynamic connector.31</title>
 			<path d="M-7.09 121.35 L-7.09 101.93" class="st5"/>
 		</g>
-		<g id="shape34-40" v:mID="34" v:groupContext="shape" v:layerMember="0" transform="translate(12.9134,-32.1811)">
+		<g id="shape34-39" v:mID="34" v:groupContext="shape" v:layerMember="0" transform="translate(12.9134,-32.1811)">
 			<title>Dynamic connector.34</title>
 			<path d="M7.07 121.35 L7.11 56" class="st5"/>
 		</g>
-		<g id="shape36-43" v:mID="36" v:groupContext="shape" transform="translate(79.5478,-99.0885)">
+		<g id="shape36-42" v:mID="36" v:groupContext="shape" transform="translate(79.5478,-99.0885)">
 			<title>Sheet.36</title>
-			<desc>TWT Wake Interval</desc>
+			<desc>TWT Interval</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="38.2677" cy="110.718" width="76.54" height="21.2598"/>
 			<rect x="0" y="100.089" width="76.5354" height="21.2598" class="st6"/>
-			<text x="4.04" y="113.12" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>TWT <tspan class="st8"
-						v:langID="1033">Wake Interval</tspan></text>		</g>
+			<text x="15.38" y="113.12" class="st7" v:langID="1044"><v:paragraph v:horizAlign="1"/><v:tabList/>TWT Interval</text>		</g>
 	</g>
 </svg>
