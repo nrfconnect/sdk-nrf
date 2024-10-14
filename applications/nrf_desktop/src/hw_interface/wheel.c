@@ -114,9 +114,16 @@ static void data_ready_handler(const struct device *dev, const struct sensor_tri
 		k_spin_unlock(&lock, key);
 	}
 
+	int err = sensor_sample_fetch_chan(qdec_dev, SENSOR_CHAN_ROTATION);
+
+	if (err) {
+		LOG_ERR("Cannot fetch sensor sample (err %d)", err);
+		return;
+	}
+
 	struct sensor_value value;
 
-	int err = sensor_channel_get(qdec_dev, SENSOR_CHAN_ROTATION, &value);
+	err = sensor_channel_get(qdec_dev, SENSOR_CHAN_ROTATION, &value);
 	if (err) {
 		LOG_ERR("Cannot get sensor value");
 		return;
