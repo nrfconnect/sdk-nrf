@@ -9,14 +9,17 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     harness: pytest
     harness_config:
-      fixture: ppk_power_measure
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_placeholder"
   benchmarks.power_consumption.gpio_nrf54h:
+    sysbuild: true
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
     harness: pytest
     harness_config:
       fixture: gpio_loopback

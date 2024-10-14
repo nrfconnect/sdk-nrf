@@ -18,20 +18,41 @@ static struct gpio_callback input_active_cb_data;
 
 void input_active(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-	gpio_pin_toggle_dt(&led);
+	int rc;
+
+	rc = gpio_pin_toggle_dt(&led);
+	__ASSERT_NO_MSG(rc == 0);
 }
 
 void thread_definition(void)
 {
-	gpio_pin_configure_dt(&output, GPIO_OUTPUT);
-	gpio_pin_configure_dt(&input, GPIO_INPUT);
+	int rc;
 
-	gpio_pin_interrupt_configure_dt(&input, GPIO_INT_EDGE_TO_ACTIVE);
+	rc = gpio_is_ready_dt(&input);
+	__ASSERT_NO_MSG(rc == 0);
+
+	rc = gpio_is_ready_dt(&output);
+	__ASSERT_NO_MSG(rc == 0);
+
+	rc = gpio_pin_configure_dt(&input, GPIO_INPUT);
+	__ASSERT_NO_MSG(rc == 0);
+
+	rc = gpio_pin_configure_dt(&output, GPIO_OUTPUT);
+	__ASSERT_NO_MSG(rc == 0);
+
+	rc = gpio_pin_interrupt_configure_dt(&input, GPIO_INT_LEVEL_ACTIVE);
+	__ASSERT_NO_MSG(rc == 0);
+
 	gpio_init_callback(&input_active_cb_data, input_active, BIT(input.pin));
-	gpio_add_callback(input.port, &input_active_cb_data);
+	gpio_add_callback_dt(&input, &input_active_cb_data);
 
 	while (1) {
-		gpio_pin_toggle_dt(&output);
+		rc = gpio_pin_set_dt(&output, 0);
+		__ASSERT_NO_MSG(rc == 0);
+		rc = gpio_pin_set_dt(&output, 1);
+		__ASSERT_NO_MSG(rc == 0);
+		rc = gpio_pin_set_dt(&output, 0);
+
 		k_msleep(10);
 	}
 }
