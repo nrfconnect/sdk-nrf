@@ -8,6 +8,7 @@
 #include <hal/nrf_power.h>
 #include <zephyr/pm/pm.h>
 #include <zephyr/sys/reboot.h>
+#include <zephyr/sys/poweroff.h>
 
 #define MODULE power_handler
 #include "module_state_event.h"
@@ -49,6 +50,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			__ASSERT_NO_MSG(module_active_count >= 0);
 
 			if (module_active_count == 0) {
+				/* All modules went into standby, shutting down system. */
 				k_work_reschedule(&power_down_work, K_SECONDS(1));
 			}
 		}
@@ -56,9 +58,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (is_power_down_event(aeh)) {
-#if defined(CONFIG_SOC_SERIES_NRF52X)
-		nrf_power_system_off(NRF_POWER);
-#endif
+		/* Put the chip in SYSTEM OFF mode, to be rebooted when USB is connected. */
+		sys_poweroff();
 	}
 
 	/* If event is unhandled, unsubscribe. */

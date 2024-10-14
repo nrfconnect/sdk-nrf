@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-target_sources_ifdef(CONFIG_PM_DEVICE
+target_sources_ifdef(CONFIG_POWEROFF
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/power_handler.c)
 
 target_sources_ifdef(CONFIG_SERIAL
