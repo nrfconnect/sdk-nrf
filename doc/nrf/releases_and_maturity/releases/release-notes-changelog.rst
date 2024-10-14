@@ -568,7 +568,9 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` to the PMIC samples.
+* Added:
+
+  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15` and :ref:`zephyr:nrf54h20dk_nrf54h20` to the PMIC samples.
 
 * :ref:`npm1300_fuel_gauge` sample:
 
