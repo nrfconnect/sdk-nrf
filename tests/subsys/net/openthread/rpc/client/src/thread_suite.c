@@ -14,7 +14,6 @@
 
 #include <openthread/thread.h>
 
-static int slot_cnt;
 static bool cb_called;
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
@@ -40,8 +39,10 @@ ZTEST(ot_rpc_thread, test_otThreadDiscover)
 	otHandleActiveScanResult cb = (otHandleActiveScanResult)0xdeadbeef;
 	void *cb_ctx = (void *)0xcafeface;
 
+	int slot = nrf_rpc_cbkproxy_in_set(cb);
+
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER, CBOR_UINT32(0x7fff800),
-					   CBOR_UINT16(0x4321), CBOR_FALSE, CBOR_TRUE, slot_cnt,
+					   CBOR_UINT16(0x4321), CBOR_FALSE, CBOR_TRUE, slot,
 					   CBOR_UINT32(0xcafeface)),
 				   RPC_RSP(OT_ERROR_NONE));
 	error = otThreadDiscover(NULL, scan_channels, pan_id, joiner, enable_eui64_filtering, cb,
@@ -82,7 +83,6 @@ ZTEST(ot_rpc_dataset, test_discover_cb_handler)
 
 	int in_slot = nrf_rpc_cbkproxy_in_set(discover_cb);
 
-	slot_cnt++;
 	cb_called = false;
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, EXT_ADDR, NWK_NAME,
@@ -109,7 +109,6 @@ ZTEST(ot_rpc_dataset, test_discover_cb_handler_empty)
 
 	int in_slot = nrf_rpc_cbkproxy_in_set(discover_empty_cb);
 
-	slot_cnt++;
 	cb_called = false;
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, CBOR_NULL,
