@@ -465,6 +465,7 @@ Cellular samples
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
     * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
+    * The :kconfig:option:`CONFIG_POST_PROVISIONING_INTERVAL_M` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
 
   * Updated:
 
@@ -474,6 +475,7 @@ Cellular samples
     * Renamed the :file:`overlay_nrf7002ek_wifi_coap_no_lte.conf` overlay to :file:`overlay_nrf700x_wifi_coap_no_lte.conf`.
     * The value of the :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig option in the :file:`overlay_coap.conf` file.
       A larger value is required now that the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option is enabled.
+    * Handling of credentials check to disable network if not using the provisioning service.
 
   * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
@@ -485,6 +487,11 @@ Cellular samples
     * Support for dictionary logs using REST.
     * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
+
+  * Updated:
+
+    * Credentials check to also see if AWS root CA cert is likely present.
+    * Credentials check failure to disable network if not using the provisioning service.
 
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
@@ -886,6 +893,10 @@ Modem libraries
   * Added the :kconfig:option:`CONFIG_AT_SHELL_UNESCAPE_LF` Kconfig option to enable reception of multiline AT commands.
   * Updated the :c:func:`at_shell` function to replace ``\n`` with ``<CR><LF>`` if :kconfig:option:`CONFIG_AT_SHELL_UNESCAPE_LF` is enabled.
 
+* :ref:`modem_key_mgmt` library:
+
+  * Updated the :c:func:`modem_key_mgmt_read()` function to return the actual size buffer required to read the certificate if the size provided is too small.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
@@ -922,6 +933,7 @@ Libraries for networking
     * The :kconfig:option:`CONFIG_NRF_CLOUD_VERBOSE_DETAILS` Kconfig option to print all details instead of only the device ID.
     * Experimental support for shadow transform requests over MQTT using the :c:func:`nrf_cloud_shadow_transform_request` function.
       This functionality is enabled by the :kconfig:option:`CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS` Kconfig option.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_COMBINED_CA_CERT_SIZE_THRESHOLD` and :kconfig:option:`CONFIG_NRF_CLOUD_COAP_CA_CERT_SIZE_THRESHOLD` Kconfig options to compare with the current root CA certificate size.
 
   * Updated:
 
@@ -932,6 +944,8 @@ Libraries for networking
     * To use nRF Cloud's custom MQTT topics instead of the default AWS topics.
     * MQTT and CoAP transports to use a single unified DNS lookup mechanism that supports IPv4 and IPv6, fallback to IPv4, and handling of multiple addresses returned by :c:func:`getaddrinfo`.
     * The log module in the :file:`nrf_cloud_fota_common.c` file from ``NRF_CLOUD`` to ``NRF_CLOUD_FOTA``.
+    * The :c:func:`nrf_cloud_credentials_configured_check` function to retrieve the size of the root CA, and compare it to thresholds to decide whether the CoAP, AWS, or both root CA certs are present.
+      Use this information to log helpful information and decide whether the root CA certificates are compatible with the configured connection type.
 
   * Deprecated:
 
@@ -976,6 +990,8 @@ Libraries for networking
   * Fixed the missing log source when passing a direct log call to the nRF Cloud logging backend.
     This caused the log parser to incorrectly use the first declared log source with direct logs when using dictionary mode.
 
+  * Updated to use INF log level when the cloud side changes the log level.
+
 * :ref:`lib_nrf_cloud_fota` library:
 
   * Added:
@@ -990,13 +1006,18 @@ Libraries for networking
       The range of the option is now from 128 to 1900 bytes, and the default value is 1700 bytes.
     * The function :c:func:`nrf_cloud_fota_poll_process` to be used asynchrounously if a callback to handle errors is provided.
 
-* :ref:`lib_nrf_provisioning` library:
-
-  * Added support for the ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
-
 * :ref:`lib_mqtt_helper` library:
 
   * Updated the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option to depend on :kconfig:option:`CONFIG_TLS_CREDENTIALS` instead of specific boards.
+
+* :ref:`lib_nrf_provisioning` library:
+
+  * Added support for the ``SO_KEEPOPEN`` socket option to keep the socket open even during PDN disconnect and reconnect.
+  * Updated the check interval logging to use INF to improve customer experience.
+
+* :ref:`lib_nrf_cloud_alert` library:
+
+  * Updated to use INF log level when cloud side changes the alert enable flag.
 
 Libraries for NFC
 -----------------
