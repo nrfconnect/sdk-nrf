@@ -8,7 +8,9 @@
 #include <suit_storage_nvv.h>
 #include <suit_storage_internal.h>
 #include <zephyr/logging/log.h>
+#ifdef CONFIG_SUIT_CRYPTO
 #include <psa/crypto.h>
+#endif /* CONFIG_SUIT_CRYPTO */
 
 LOG_MODULE_REGISTER(suit_storage, CONFIG_SUIT_LOG_LEVEL);
 
@@ -277,9 +279,10 @@ static suit_plat_err_t find_manifest_area(suit_manifest_role_t role, const uint8
 static suit_plat_err_t sha256_check(const uint8_t *addr, size_t size,
 				    const suit_storage_digest_t *exp_digest)
 {
+	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
+#ifdef CONFIG_SUIT_CRYPTO
 	const psa_algorithm_t psa_alg = PSA_ALG_SHA_256;
 	const size_t exp_digest_length = PSA_HASH_LENGTH(psa_alg);
-	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
 	psa_hash_operation_t operation = {0};
 
 	if ((addr == NULL) || (exp_digest == NULL)) {
@@ -334,6 +337,7 @@ static suit_plat_err_t sha256_check(const uint8_t *addr, size_t size,
 			}
 		}
 	}
+#endif /* CONFIG_SUIT_CRYPTO */
 
 	return err;
 }
@@ -350,9 +354,10 @@ static suit_plat_err_t sha256_check(const uint8_t *addr, size_t size,
  */
 static suit_plat_err_t sha256_get(const uint8_t *addr, size_t size, suit_storage_digest_t *digest)
 {
+	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
+#ifdef CONFIG_SUIT_CRYPTO
 	const psa_algorithm_t psa_alg = PSA_ALG_SHA_256;
 	size_t digest_length = PSA_HASH_LENGTH(psa_alg);
-	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
 	psa_hash_operation_t operation = {0};
 
 	if ((addr == NULL) || (digest == NULL)) {
@@ -398,6 +403,7 @@ static suit_plat_err_t sha256_get(const uint8_t *addr, size_t size, suit_storage
 			LOG_ERR("psa_hash_abort error %d", status);
 		}
 	}
+#endif /* CONFIG_SUIT_CRYPTO */
 
 	return err;
 }
