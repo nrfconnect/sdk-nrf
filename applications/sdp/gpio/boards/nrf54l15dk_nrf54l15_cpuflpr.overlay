@@ -10,15 +10,20 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			sram_tx: memory@20018000 {
-				reg = <0x20018000 0x0800>;
+			sram_tx: memory@2003c000 {
+				reg = <0x2003c000 0x0800>;
 			};
 
-			sram_rx: memory@20020000 {
-				reg = <0x20020000 0x0800>;
+			sram_rx: memory@2003c800 {
+				reg = <0x2003c800 0x0800>;
 			};
 		};
 	};
+};
+
+&cpuflpr_sram {
+	reg = <0x2003d000 DT_SIZE_K(12)>;
+	ranges = <0x0 0x2003d000 0x3000>;
 };
 
 &cpuflpr_vevif_rx {
