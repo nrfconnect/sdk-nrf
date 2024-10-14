@@ -82,7 +82,7 @@ static void prv_location_method_results_record(enum location_method method,
 		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_lte_method_time_ms, ncs_loc,
 						     details->elapsed_time_method);
 		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_lte_method_result, ncs_loc, id);
-		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_lte_neighbor_cells_count,
+		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_lte_neighbor_cells_count, ncs_loc,
 						     details->cellular.ncells_count);
 		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_lte_gci_cells_count, ncs_loc,
 						     details->cellular.gci_cells_count);
