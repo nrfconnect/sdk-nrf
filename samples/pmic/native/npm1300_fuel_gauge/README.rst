@@ -85,6 +85,10 @@ To connect your DK to the nPM1300 EK, complete the following steps:
    * On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
    * On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
 
+.. note::
+
+   When using the :ref:`zephyr:nrf54l15dk_nrf54l15`, the nPM1300 **GPIO3** interrupt pin assignment uses the DK's **LED 1** pin.
+
 Building and running
 ********************
 

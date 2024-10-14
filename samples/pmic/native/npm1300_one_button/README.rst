@@ -86,6 +86,10 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - GND
         - GND
 
+.. note::
+
+   When using the :ref:`zephyr:nrf54l15dk_nrf54l15`, the nPM1300 **GPIO3** interrupt pin assignment uses the DK's **LED 1** pin.
+
 Building and running
 ********************
 
