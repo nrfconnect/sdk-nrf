@@ -383,6 +383,7 @@
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/crypto/                            @stephen-nordic @magnev
+/tests/drivers/gpio/egpio_basic_api/      @nrfconnect/ncs-ll-ursus
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
