@@ -183,6 +183,49 @@ Serial LTE Modem (SLM)
    The :file:`overlay-native_tls.conf` overlay file is no longer supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
    If you need to use native TLS with Thingy:91, you must disable features from the :file:`prj.conf` and :file:`overlay-native_tls.conf` configuration files to free up flash memory.
 
+Devicetree
+----------
+
+.. toggle::
+
+   The ``nordic,owned-memory`` and ``nordic,owned-partitions`` bindings have been updated, making these properties deprecated:
+
+     * ``owner-id``
+     * ``perm-read``
+     * ``perm-write``
+     * ``perm-execute``
+     * ``perm-secure``
+     * ``non-secure-callable``
+
+   It is recommended to use the ``nordic,access`` property instead.
+   The board files and sample overlays in the |NCS| are already updated to use it.
+   See :file:`ncs/zephyr/dts/bindings/reserved-memory/nordic,owned-memory.yaml` for more details.
+
+   If both of the new and deprecated properties are set on the same devicetree node, then only ``nordic,access`` will take effect.
+   Therefore, it may not be possible to override the default permissions of an existing memory node using the old properties.
+
+   Example before:
+
+   .. code-block:: devicetree
+
+      &cpuapp_ram0x_region {
+         compatible = "nordic,owned-memory";
+         owner-id = <2>;
+         perm-read;
+         perm-write;
+         perm-execute;
+         perm-secure;
+      };
+
+   Example after:
+
+   .. code-block:: devicetree
+
+      &cpuapp_ram0x_region {
+         compatible = "nordic,owned-memory";
+         nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RWXS>;
+      };
+
 Libraries
 =========
 

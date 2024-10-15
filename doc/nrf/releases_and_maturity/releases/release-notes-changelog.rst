@@ -66,6 +66,17 @@ Build and configuration system
      This feature has never been functional.
      To configure the signing key, use any available Kconfig method.
 
+* Deprecated the following devicetree properties:
+
+  * ``owner-id``
+  * ``perm-read``
+  * ``perm-write``
+  * ``perm-execute``
+  * ``perm-secure``
+  * ``non-secure-callable``
+
+  It is recommended to replace them with the new devicetree property: ``nordic,access``.
+  See the :ref:`migration guide <migration_2.8_recommended>` for more information.
 
 Bootloaders and DFU
 ===================
