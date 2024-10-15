@@ -72,7 +72,7 @@ static int coap_dl_connect_and_auth(void)
 
 static int fota_dl_evt_send(const struct download_client_evt *evt)
 {
-#if defined(CONFIG_FOTA_DOWNLOAD)
+#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
 	return fota_download_external_evt_handle(evt);
 #endif
 	return -ENOTSUP;
@@ -293,12 +293,16 @@ static int coap_dl(struct nrf_cloud_download_data *const dl)
 	}
 
 	if (dl->type == NRF_CLOUD_DL_TYPE_FOTA) {
+#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
 		ret = fota_download_external_start(dl->host, file_path, dl->fota.expected_type,
 						  (size_t)dl->fota.img_sz);
 		if (ret) {
 			LOG_ERR("Failed to start FOTA download, error: %d", ret);
 			return ret;
 		}
+#else
+		return -ENOTSUP;
+#endif
 	}
 
 	return coap_dl_start(dl, 0);
