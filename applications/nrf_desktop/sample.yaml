@@ -1,6 +1,8 @@
 sample:
-  name: nRF Desktop
-  description: HID device reference design
+  name: nRF Desktop - HID reference design
+  description: The nRF Desktop is an HID reference design application.
+    It can be configured to function as a mouse, keyboard or USB dongle
+    bridging radio connected HID peripheral.
 common:
   sysbuild: true
   tags: ci_build sysbuild ci_applications_nrf_desktop
