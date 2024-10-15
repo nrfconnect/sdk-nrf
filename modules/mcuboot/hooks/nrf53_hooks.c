@@ -15,8 +15,17 @@
 #include "bootutil/fault_injection_hardening.h"
 #include "flash_map_backend/flash_map_backend.h"
 
-#define NET_CORE_SECONDARY_SLOT 1
+#if CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1
+/* Sysbuild */
+/* MCUboot image update image number */
+#define NET_CORE_SECONDARY_IMAGE CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
+/* MCUboot serial recovery slot number */
+#define NET_CORE_VIRTUAL_PRIMARY_SLOT (CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER * 2) + 1
+#else
+/* Legacy child/parent */
+#define NET_CORE_SECONDARY_IMAGE 1
 #define NET_CORE_VIRTUAL_PRIMARY_SLOT 3
+#endif
 
 #include <dfu/pcd.h>
 #if defined(CONFIG_PCD_APP) && defined(CONFIG_NRF53_MULTI_IMAGE_UPDATE) \
@@ -53,7 +62,6 @@ int pcd_version_cmp_net(const struct flash_area *fap, struct image_header *hdr)
 
 	firmware_info = fw_info_find((uint32_t)&read_buf);
 	if (firmware_info != NULL) {
-
 		if (firmware_info->version > version) {
 			return 1;
 		}
@@ -71,7 +79,7 @@ int pcd_version_cmp_net(const struct flash_area *fap, struct image_header *hdr)
 
 int boot_read_image_header_hook(int img_index, int slot, struct image_header *img_head)
 {
-	if (img_index == 1 && slot == 0) {
+	if (img_index == NET_CORE_SECONDARY_IMAGE && slot == 0) {
 		img_head->ih_magic = IMAGE_MAGIC;
 		img_head->ih_hdr_size = PM_MCUBOOT_PAD_SIZE;
 		img_head->ih_load_addr = PM_MCUBOOT_PRIMARY_1_ADDRESS;
@@ -90,7 +98,7 @@ int boot_read_image_header_hook(int img_index, int slot, struct image_header *im
 
 fih_ret boot_image_check_hook(int img_index, int slot)
 {
-	if (img_index == 1 && slot == 0) {
+	if (img_index == NET_CORE_SECONDARY_IMAGE && slot == 0) {
 		FIH_RET(FIH_SUCCESS);
 	}
 
@@ -106,7 +114,7 @@ int boot_perform_update_hook(int img_index, struct image_header *img_head,
 int boot_read_swap_state_primary_slot_hook(int image_index,
 		struct boot_swap_state *state)
 {
-	if (image_index == 1) {
+	if (image_index == NET_CORE_SECONDARY_IMAGE) {
 		/* Populate with fake data */
 		state->magic = BOOT_MAGIC_UNSET;
 		state->swap_type = BOOT_SWAP_TYPE_NONE;
@@ -160,7 +168,7 @@ int network_core_update(bool wait)
 int boot_copy_region_post_hook(int img_index, const struct flash_area *area,
 		size_t size)
 {
-	if (img_index == NET_CORE_SECONDARY_SLOT) {
+	if (img_index == NET_CORE_SECONDARY_IMAGE) {
 		return network_core_update(true);
 	}
 
