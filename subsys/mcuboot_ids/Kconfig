@@ -29,4 +29,24 @@ config MCUBOOT_MCUBOOT_IMAGE_NUMBER
 #	depends on MCUBOOT
 	default -1
 
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_MAJOR
+	int "MCUboot (S0/S1) package major version number (informative only, do not change)"
+	depends on MCUBOOT
+	default -1
+
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_MINOR
+	int "MCUboot (S0/S1) package minor version number (informative only, do not change)"
+	depends on MCUBOOT
+	default -1
+
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_REVISION
+	int "MCUboot (S0/S1) package revision version number (informative only, do not change)"
+	depends on MCUBOOT
+	default -1
+
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_BUILD_NUMBER
+	int "MCUboot (S0/S1) package build number version number (informative only, do not change)"
+	depends on MCUBOOT
+	default -1
+
 endmenu
