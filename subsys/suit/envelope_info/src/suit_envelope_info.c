@@ -48,7 +48,7 @@ suit_plat_err_t suit_dfu_partition_envelope_info_get(const uint8_t **address, si
 	uintptr_t mapped_address = 0;
 
 	if (!suit_memory_nvm_address_to_global_address(&device_offset, &mapped_address)) {
-		LOG_ERR("Cannot obtain memory-mapped DFU Partition address");
+		LOG_ERR("Cannot obtain memory-mapped DFU partition address");
 		return SUIT_PLAT_ERR_IO;
 	}
 
@@ -56,7 +56,7 @@ suit_plat_err_t suit_dfu_partition_envelope_info_get(const uint8_t **address, si
 	size_t envelope_size = DFU_PARTITION_SIZE;
 
 	if (*((uint32_t *)envelope_address) == EMPTY_STORAGE_VALUE) {
-		LOG_DBG("DFU Partition empty");
+		LOG_DBG("DFU partition empty");
 		return SUIT_PLAT_ERR_NOT_FOUND;
 	}
 
@@ -107,4 +107,27 @@ suit_plat_err_t suit_dfu_partition_device_info_get(struct suit_nvm_device_info *
 	}
 
 	return SUIT_PLAT_SUCCESS;
+}
+
+bool suit_dfu_partition_is_empty(void)
+{
+	struct nvm_address device_offset = {
+		.fdev = DFU_PARTITION_DEVICE,
+		.offset = DFU_PARTITION_OFFSET,
+	};
+
+	uintptr_t mapped_address = 0;
+
+	if (!suit_memory_nvm_address_to_global_address(&device_offset, &mapped_address)) {
+		LOG_ERR("Cannot obtain memory-mapped DFU partition address");
+		return false;
+	}
+
+	for (size_t i = 0; i < DFU_PARTITION_SIZE / sizeof(uint32_t); i++) {
+		if (*(((uint32_t *)mapped_address) + i) != EMPTY_STORAGE_VALUE) {
+			return false;
+		}
+	}
+
+	return true;
 }

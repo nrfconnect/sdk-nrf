@@ -34,6 +34,12 @@ LOG_MODULE_REGISTER(suit_dfu, CONFIG_SUIT_LOG_LEVEL);
 
 static int dfu_partition_erase(void)
 {
+
+	if (suit_dfu_partition_is_empty()) {
+		LOG_DBG("DFU partition is arleady erased");
+		return 0;
+	}
+
 	struct suit_nvm_device_info device_info;
 	int err = suit_dfu_partition_device_info_get(&device_info);
 
@@ -45,6 +51,7 @@ static int dfu_partition_erase(void)
 		return -ENODEV;
 	}
 
+	LOG_DBG("Erasing DFU partition");
 	int rc = flash_erase(device_info.fdev, device_info.partition_offset,
 			     device_info.partition_size);
 	if (rc < 0) {
@@ -61,8 +68,6 @@ int suit_dfu_initialize(void)
 	LOG_DBG("Enter");
 
 	struct suit_nvm_device_info device_info;
-	const uint8_t *uc_env_addr = NULL;
-	size_t uc_env_size = 0;
 	int err = suit_dfu_partition_device_info_get(&device_info);
 
 	if (err != SUIT_PLAT_SUCCESS) {
@@ -73,6 +78,13 @@ int suit_dfu_initialize(void)
 	LOG_INF("DFU partition detected, addr: %p, size %d bytes",
 		(void *)device_info.mapped_address, device_info.partition_size);
 
+#if CONFIG_SUIT_CLEANUP_ON_INIT
+	suit_dfu_cleanup();
+
+#else /* CONFIG_SUIT_CLEANUP_ON_INIT */
+	const uint8_t *uc_env_addr = NULL;
+	size_t uc_env_size = 0;
+
 	err = suit_dfu_partition_envelope_info_get(&uc_env_addr, &uc_env_size);
 	if (err == SUIT_PLAT_SUCCESS) {
 		LOG_INF("Update candidate envelope detected, addr: %p, size %d bytes",
@@ -82,6 +94,8 @@ int suit_dfu_initialize(void)
 #if CONFIG_SUIT_CACHE_RW
 	suit_dfu_cache_validate_content();
 #endif /* CONFIG_SUIT_CACHE_RW */
+
+#endif /* CONFIG_SUIT_CLEANUP_ON_INIT */
 
 #if CONFIG_SUIT_STREAM_IPC_PROVIDER
 	suit_ipc_streamer_provider_init();

@@ -14,4 +14,9 @@ config SUIT_ORCHESTRATOR_APP_CANDIDATE_PROCESSING
 	bool "Enable processing of the candidate envelope by the SUIT application orchestrator"
 	depends on SUIT_ENVELOPE_INFO
 
+config SUIT_CLEANUP_ON_INIT
+	bool "Performs cleanup on DFU and DFU cache partitions as part of initialization"
+	depends on SUIT_ORCHESTRATOR_APP_CANDIDATE_PROCESSING
+	default y
+
 endif # SUIT_ORCHESTRATOR_APP
