@@ -234,6 +234,19 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     tags: ci_build sysbuild ci_samples_cellular
+  sample.cellular.modem_shell.pgps_coap:
+    sysbuild: true
+    build_only: true
+    extra_args: EXTRA_CONF_FILE="overlay-pgps.conf;overlay-cloud_coap.conf"
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    tags: ci_build sysbuild ci_samples_cellular
   sample.cellular.modem_shell.location_service_ext:
     sysbuild: true
     build_only: true
