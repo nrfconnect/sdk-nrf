@@ -582,3 +582,20 @@ int nrf_cloud_fota_smp_version_get(char **smp_ver_out)
 #endif
 	return -ENOTSUP;
 }
+
+int nrf_cloud_fota_smp_client_init(const void *smp_reset_cb)
+{
+	int ret = -ENOTSUP;
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
+	ret = mcumgr_smp_client_init((dfu_target_reset_cb_t)smp_reset_cb);
+	if (ret != 0) {
+		LOG_ERR("Failed to init SMP client, error: %d", ret);
+		return ret;
+	}
+
+	(void)nrf_cloud_fota_smp_version_read();
+#endif /* CONFIG_NRF_CLOUD_FOTA_SMP */
+
+	return ret;
+}

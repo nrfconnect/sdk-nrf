@@ -1009,6 +1009,8 @@ Libraries for networking
 
   * Removed the experimental status (:kconfig:option:`CONFIG_EXPERIMENTAL`) from the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option.
 
+  * Added the :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST` Kconfig option to disconnect the CoAP client on a failed request.
+
 * :ref:`lib_lwm2m_client_utils` library:
 
   * Fixed an issue where a failed delta update for the modem would not clear the state and blocks future delta updates.
@@ -1031,8 +1033,7 @@ Libraries for networking
   * Added:
 
     * FOTA status callback.
-    * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST` Kconfig option to disconnect the CoAP client on a failed request.
-    * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_SMP` Kconfig option to enable experimental support for SMP FOTA using MQTT.
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_SMP` Kconfig option to enable experimental support for SMP FOTA.
 
   * Updated:
 
