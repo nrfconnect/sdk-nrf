@@ -130,7 +130,6 @@ endif # NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
 
 config NRF_CLOUD_FOTA_SMP
 	bool "SMP FOTA updates"
-	depends on NRF_CLOUD_FOTA
 	select NRF_MCUMGR_SMP_CLIENT
 	select EXPERIMENTAL
 	help

@@ -79,6 +79,12 @@ struct nrf_cloud_fota_poll_ctx {
 	 * If the function is not provided, @ref nrf_cloud_fota_poll_process will be blocking.
 	 */
 	nrf_cloud_fota_poll_handler_t status_fn;
+
+	/** Callback of type @ref dfu_target_reset_cb_t for resetting the SMP device to enter
+	 * MCUboot recovery mode.
+	 * Used if @kconfig{CONFIG_NRF_CLOUD_FOTA_SMP} is enabled.
+	 */
+	void *smp_reset_cb;
 };
 
 /**

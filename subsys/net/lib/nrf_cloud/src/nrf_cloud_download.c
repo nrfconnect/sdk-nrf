@@ -392,11 +392,6 @@ static int fota_start(struct nrf_cloud_download_data *const dl)
 {
 #if defined(CONFIG_FOTA_DOWNLOAD)
 
-	/* Download using CoAP if enabled */
-#if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
-	return coap_dl(dl);
-#endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
-
 	if (dl->fota.expected_type == DFU_TARGET_IMAGE_TYPE_SMP) {
 		/* This needs to be called to set the SMP flag in fota_download */
 		smp_fota_dl_util_init(&dl->fota);
@@ -404,6 +399,11 @@ static int fota_start(struct nrf_cloud_download_data *const dl)
 		/* This needs to be called to clear the SMP flag */
 		(void)fota_download_init(dl->fota.cb);
 	}
+
+	/* Download using CoAP if enabled */
+#if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
+	return coap_dl(dl);
+#endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 
 	return fota_download_start_with_image_type(dl->host, dl->path,
 		dl->dl_cfg.sec_tag_count ? dl->dl_cfg.sec_tag_list[0] : -1,
