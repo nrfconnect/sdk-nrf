@@ -39,7 +39,7 @@ The configuration overlay file :file:`overlay-dfu.conf` and the :ref:`sysbuild <
 
 * nrf52840dk/nrf52840
 * nrf21540dk/nrf52840
-* nrf54l15pdk/nrf54l15/cpuapp
+* nrf54l15dk/nrf54l15/cpuapp
 
 While this overlay configuration is only applicable for the mentioned platforms in this sample, DFU over Bluetooth Low Energy may be used on other platforms as well.
 
