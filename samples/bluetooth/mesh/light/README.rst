@@ -39,7 +39,7 @@ The configuration overlay file :file:`overlay-dfu.conf` and the :ref:`sysbuild <
 
 * nrf52840dk/nrf52840
 * nrf21540dk/nrf52840
-* nrf54l15pdk/nrf54l15/cpuapp
+* nrf54l15dk/nrf54l15/cpuapp
 
 While this overlay configuration is only applicable for the mentioned platforms in this sample, DFU over Bluetooth Low Energy may be used on other platforms as well.
 
@@ -134,7 +134,7 @@ DFU configuration
 
 .. tabs::
 
-   .. tab:: nRF52840 DK and nRF54L15 PDK
+   .. tab:: nRF52840 DK and nRF54L15 DK
 
       To enable the DFU feature for the nRF52840 and nRF54L15 development kits, set :makevar:`SB_CONF_FILE` to :file:`sysbuild-dfu.conf` and :makevar:`EXTRA_CONF_FILE` to :file:`overlay-dfu.conf` when building the sample.
       For example, when building from the command line, use the following command, where *board_target* is the target for the development kit for which you are building:
