@@ -144,6 +144,15 @@ KRKNWK-14299: NRPA MAC address cannot be set in Zephyr
 Bluetooth LE
 ============
 
+.. rst-class:: v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-4-4 v2-4-3
+
+DRGN-23231: The Bluetooth subsystem may sometimes deadlock when a Bluetooth link is lost during data transfer
+  When this happens, the disconnected event is never delivered to the application.
+  The issue occurs when the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option is enabled.
+  This option is enabled by default on the nRF5340 DK.
+
+  **Affected platforms:** nRF5340
+
 .. rst-class:: v2-7-0
 
 DRGN-22930 The SoftDevice Controller may de-reference a ``NULL`` pointer

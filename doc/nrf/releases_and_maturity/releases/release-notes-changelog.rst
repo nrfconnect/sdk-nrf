@@ -152,6 +152,10 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
+* Fixed an issue where the Bluetooth subsystem deadlocked when a Bluetooth link was lost during data transfer.
+  In this scenario, the disconnected event was never delivered to the application.
+  The issue only occurred when the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option was enabled.
+  This option is enabled by default on the nRF5340 DK.
 * The correct SoftDevice Controller library :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE_MULTIROLE` will now be selected automatically when using coexistence based on :kconfig:option:`CONFIG_MPSL_CX` for nRF52-series devices.
 * Added the APIs :c:func:`bt_hci_err_to_str` and :c:func:`bt_security_err_to_str` to allow printing error codes as strings.
   Each API returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
