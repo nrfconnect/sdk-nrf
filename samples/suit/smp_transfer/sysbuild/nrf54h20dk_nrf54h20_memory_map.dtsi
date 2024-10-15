@@ -14,6 +14,16 @@
 		reg = <0xe5000 DT_SIZE_K(72)>;
 	};
 };
+
+/delete-node/ &suit_storage_partition;
+/ {
+	reserved-memory {
+		suit_storage_partition: memory@e1eb000 {
+			reg = <0xe1eb000 DT_SIZE_K(16)>;
+		};
+	};
+};
+
 &cpurad_rx_partitions {
 	compatible = "nordic,owned-partitions", "fixed-partitions";
 	perm-read;
