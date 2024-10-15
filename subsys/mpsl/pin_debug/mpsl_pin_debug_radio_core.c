@@ -103,12 +103,14 @@ static int m_ppi_config(void)
 	uint8_t dppi_chan_ready_disabled;
 	uint8_t dppi_chan_address_end;
 
-	if (nrfx_dppi_channel_alloc(&dppi_chan_ready_disabled) != NRFX_SUCCESS) {
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
+	if (nrfx_dppi_channel_alloc(&dppi, &dppi_chan_ready_disabled) != NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating DPPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_dppi_channel_alloc(&dppi_chan_address_end) != NRFX_SUCCESS) {
+	if (nrfx_dppi_channel_alloc(&dppi, &dppi_chan_address_end) != NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating DPPI chan");
 		return -ENOMEM;
 	}
@@ -132,12 +134,12 @@ static int m_ppi_config(void)
 		nrfx_gpiote_out_task_address_get(&gpiote,
 						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
-	if (nrfx_dppi_channel_enable(dppi_chan_ready_disabled) != NRFX_SUCCESS) {
+	if (nrfx_dppi_channel_enable(&dppi, dppi_chan_ready_disabled) != NRFX_SUCCESS) {
 		LOG_ERR("Failed enabling channel");
 		return -ENOMEM;
 	}
 
-	if (nrfx_dppi_channel_enable(dppi_chan_address_end) != NRFX_SUCCESS) {
+	if (nrfx_dppi_channel_enable(&dppi, dppi_chan_address_end) != NRFX_SUCCESS) {
 		LOG_ERR("Failed enabling channel");
 		return -ENOMEM;
 	}
