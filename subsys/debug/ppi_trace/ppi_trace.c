@@ -51,6 +51,10 @@ LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 	[DT_PROP(gpio_node, port)] = \
 		NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance)),
 
+#ifdef DPPI_PRESENT
+static nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+#endif
+
 static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
 {
 	static const nrfx_gpiote_t gpiote[GPIO_COUNT] = {
@@ -73,7 +77,7 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 		*ch = *PUBLISH_ADDR(evt) & DPPIC_SUBSCRIBE_CHG_EN_CHIDX_Msk;
 		err = NRFX_SUCCESS;
 	} else {
-		err = nrfx_dppi_channel_alloc(ch);
+		err = nrfx_dppi_channel_alloc(&dppi, ch);
 	}
 #else
 	err = nrfx_ppi_channel_alloc((nrf_ppi_channel_t *)ch);
