@@ -592,6 +592,7 @@
   - "snippets/emulated-*/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/benchmarks/multicore/idle/**/*"
+  - "tests/drivers/gpio/egpio_basic_api/**/*"
   - "tests/drivers/pwm/**/*"
   - "tests/drivers/sensor/**/*"
 

@@ -1,0 +1,28 @@
+common:
+  tags:
+    - drivers
+    - gpio
+    - ci_tests_drivers_egpio
+  depends_on: gpio
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+
+tests:
+  drivers.egpio.loopback_icmsg:
+    min_flash: 64
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: SB_CONFIG_EGPIO_BACKEND_ICMSG=y
+
+  drivers.egpio.loopback_mbox:
+    min_flash: 64
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: SB_CONFIG_EGPIO_BACKEND_MBOX=y
