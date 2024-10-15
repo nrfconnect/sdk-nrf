@@ -16,6 +16,10 @@
 #include <nrfx_dppi.h>
 #endif
 
+#ifdef DPPI_PRESENT
+static nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+#endif
+
 int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 {
 	nrfx_err_t err = NRFX_ERROR_NOT_SUPPORTED;
@@ -24,7 +28,7 @@ int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 		IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
 			(err = nrfx_ppi_channel_alloc(&ppi_channels[i]);));
 		IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
-			(err = nrfx_dppi_channel_alloc(&ppi_channels[i]);));
+			(err = nrfx_dppi_channel_alloc(&dppi, &ppi_channels[i]);));
 		if (err != NRFX_SUCCESS) {
 			return -ENOMEM;
 		}
