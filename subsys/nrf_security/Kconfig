@@ -48,6 +48,9 @@ config NRF_SECURITY
 	  Set this configuration to enable nRF Security. This provides
 	  Arm PSA cryptography APIs with RNG support (optionally).
 
+# Include Nordic-only PSA configurations
+rsource "Kconfig.psa.nordic"
+
 config PSA_PROMPTLESS
 	bool
 
