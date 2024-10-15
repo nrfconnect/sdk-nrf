@@ -350,7 +350,7 @@ int cereg_status_get(enum lte_lc_nw_reg_status *status)
 	}
 
 	/* Read network registration status */
-	err = nrf_modem_at_scanf("AT+CEREG?",
+	err = nrf_modem_at_scanf(AT_CEREG_READ,
 				 "+CEREG: "
 				 "%*u,"	    /* <n> */
 				 "%hu,"	    /* <stat> */
