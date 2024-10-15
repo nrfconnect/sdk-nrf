@@ -531,7 +531,7 @@ Every Bluetooth LE bridged device uses a separate Bluetooth LE connection, so yo
 Since the Matter stack uses one Bluetooth LE connection for commissioning, the maximum number of connections you can use for bridged devices is one less than is configured using the :kconfig:option:`CONFIG_BT_MAX_CONN` Kconfig option.
 
 Increasing the number of Bluetooth LE connections affects the RAM usage on both the application and network cores.
-The current maximum number of Bluetooth LE connections that can be selected using the default configuration is ``10``.
+The current maximum number of Bluetooth LE connections that can be selected using the default configuration is ``10``, which effectively means 9 bridged devices.
 
 .. tabs::
 
@@ -547,7 +547,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
 
             You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
 
-            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the size of Bluetooth LE TX/RX buffers:
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the size of Bluetooth LE TX/RX buffers:
 
             .. parsed-literal::
                :class: highlight
@@ -559,7 +559,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
             You can not increase the default number of Bluetooth LE connections in this configuration using overlays.
             This is because the configuration uses both Thread and Bluetooth LE protocols, and limited RAM memory.
             You can still increase the number of connections by modifying the board files and decreasing the buffer sizes.
-            The default number of connections is nine.
+            The default number of connections is ``10``, which effectively means 9 bridged devices.
 
    .. group-tab:: nRF54 DKs
 
@@ -571,7 +571,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
 
             You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
 
-            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
 
              .. parsed-literal::
                :class: highlight
@@ -582,7 +582,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
 
             You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
 
-            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
 
              .. parsed-literal::
                :class: highlight
@@ -599,7 +599,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
 
             You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
 
-            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` by decreasing the sizes of Bluetooth LE TX/RX buffers:
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
 
              .. parsed-literal::
                :class: highlight
