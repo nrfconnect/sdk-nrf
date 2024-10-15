@@ -38,7 +38,9 @@ config MGMT_SUITFU_GRP_IMG
 config MGMT_SUITFU_GRP_OS_BOOTLOADER_INFO_HOOK
 	bool "Bootloader identification hook"
 	default y
-	depends on MCUMGR_GRP_OS_BOOTLOADER_INFO_HOOK
+	depends on MCUMGR_GRP_OS_BOOTLOADER_INFO
+	select MCUMGR_GRP_OS_BOOTLOADER_INFO_HOOK
+	select MCUMGR_MGMT_NOTIFICATION_HOOKS
 
 config MGMT_SUITFU_GRP_SUIT
 	bool "Extended SUIT commands over USER group"
