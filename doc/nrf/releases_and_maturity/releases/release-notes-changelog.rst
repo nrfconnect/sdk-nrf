@@ -455,7 +455,7 @@ Bluetooth Fast Pair samples
 Bluetooth Mesh samples
 ----------------------
 
-* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board in the following samples:
+* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board and removed support for the nRF54L15 PDK in the following samples:
 
   * :ref:`bluetooth_mesh_sensor_client`
   * :ref:`bluetooth_mesh_sensor_server`
