@@ -29,7 +29,9 @@
 LOG_MODULE_REGISTER(bt_lbs, CONFIG_BT_LBS_LOG_LEVEL);
 
 static bool                   notify_enabled;
+#ifdef CONFIG_BT_LBS_POLL_BUTTON
 static bool                   button_state;
+#endif
 static struct bt_lbs_cb       lbs_cb;
 
 static void lbslc_ccc_cfg_changed(const struct bt_gatt_attr *attr,
