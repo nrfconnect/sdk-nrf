@@ -835,7 +835,7 @@ void test_lte_lc_psm_req_disable_success(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
-void test_lte_lc_psm_param_set_seconds_enable_both_set(void)
+void test_lte_lc_psm_param_set_seconds_enable_both_set_1(void)
 {
 	int ret;
 
@@ -844,6 +844,19 @@ void test_lte_lc_psm_param_set_seconds_enable_both_set(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn(
 		"AT+CPSMS=1,,,\"01111110\",\"00101010\"", EXIT_SUCCESS);
+	ret = lte_lc_psm_req(true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_psm_param_set_seconds_enable_both_set_2(void)
+{
+	int ret;
+
+	ret = lte_lc_psm_param_set_seconds(123456, 89);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CPSMS=1,,,\"01000100\",\"00100010\"", EXIT_SUCCESS);
 	ret = lte_lc_psm_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -873,11 +886,49 @@ void test_lte_lc_psm_param_set_seconds_enable_both_default(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
-void test_lte_lc_psm_param_set_seconds_too_large(void)
+void test_lte_lc_psm_param_set_seconds_enable_both_1_rounding_to_2(void)
 {
 	int ret;
 
-	ret = lte_lc_psm_param_set_seconds(1000000000, 1000000000);
+	ret = lte_lc_psm_param_set_seconds(1, 1);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CPSMS=1,,,\"01100001\",\"00000001\"", EXIT_SUCCESS);
+	ret = lte_lc_psm_req(true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_psm_param_set_seconds_enable_both_max_values(void)
+{
+	int ret;
+
+	ret = lte_lc_psm_param_set_seconds(35712000, 11160);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT+CPSMS=1,,,\"11011111\",\"01011111\"", EXIT_SUCCESS);
+	ret = lte_lc_psm_req(true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_psm_param_set_seconds_tau_too_big(void)
+{
+	int ret;
+
+	ret = lte_lc_psm_param_set_seconds(35712001, 61);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", EXIT_SUCCESS);
+	ret = lte_lc_psm_req(true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_psm_param_set_seconds_active_time_too_big(void)
+{
+	int ret;
+
+	ret = lte_lc_psm_param_set_seconds(61, 11161);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CPSMS=1", EXIT_SUCCESS);
@@ -1299,6 +1350,12 @@ void test_lte_lc_edrx_on_modem_cfun(void)
 void test_lte_lc_cedrxp_no_params_fail(void)
 {
 	strcpy(at_notif, "+CEDRXP:\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_cedrxp_invalid_mode_fail(void)
+{
+	strcpy(at_notif, "+CEDRXP: 1,\"1000\",\"0101\",\"1011\"\r\n");
 	at_monitor_dispatch(at_notif);
 }
 
@@ -1924,9 +1981,13 @@ void test_lte_lc_cereg_with_xmonitor(void)
 	k_sleep(K_MSEC(1));
 }
 
-void test_lte_lc_cereg_with_xmonitor_badmsg(void)
+/* Tests:
+ * - <Active-Time> and <Periodic-TAU> missing from CEREG
+ * - AT%XMONITOR failing
+ */
+void test_lte_lc_cereg_active_time_tau_missing_with_xmonitor_badmsg(void)
 {
-	strcpy(at_notif, "+CEREG: 1,\"5678\",\"87654321\",9,,,\"11100000\",\"11100000\"\r\n");
+	strcpy(at_notif, "+CEREG: 1,\"5678\",\"87654321\",9,,\r\n");
 
 	static const char xmonitor_resp[] =
 		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"5678\",9,20,\"87654321\","
@@ -1964,9 +2025,13 @@ void test_lte_lc_cereg_with_xmonitor_badmsg(void)
 	k_sleep(K_MSEC(1));
 }
 
-void test_lte_lc_cereg_with_xmonitor_fail(void)
+/* Tests:
+ * - <Periodic-TAU> missing from CEREG
+ * - AT%XMONITOR failing
+ */
+void test_lte_lc_cereg_tau_missing_with_xmonitor_fail(void)
 {
-	strcpy(at_notif, "+CEREG: 5,\"5678\",\"87654321\",9,,,\"11100000\",\"11100000\"\r\n");
+	strcpy(at_notif, "+CEREG: 5,\"5678\",\"87654321\",9,,,\"11100000\",\r\n");
 
 	lte_lc_callback_count_expected = 1;
 
@@ -1985,19 +2050,47 @@ void test_lte_lc_cereg_with_xmonitor_fail(void)
 	k_sleep(K_MSEC(1));
 }
 
-void test_lte_lc_cereg_with_xmonitor_tau_ext_not_8_fail(void)
+void test_lte_lc_cereg_active_time_not_8_with_xmonitor_tau_ext_not_8_fail(void)
 {
-	strcpy(at_notif, "+CEREG: 1,\"5678\",\"87654321\",9,,,\"11100000\",\"111000\"\r\n");
+	strcpy(at_notif, "+CEREG: 1,\"5678\",\"87654321\",9,,,\"1110\",\"11100000\"\r\n");
 
 	static const char xmonitor_resp[] =
 		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"5678\",9,20,\"87654321\","
 		"334,6200,66,44,\"\","
-		"\"11100000\",\"001001\",\"01001001\"";
+		"\"11100000\",\"0010\",\"01001001\"";
 
 	lte_lc_callback_count_expected = 1;
 
 	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
 	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+
+	/* No LTE_LC_EVT_CELL_UPDATE because same values */
+	/* No LTE_LC_EVT_LTE_MODE_UPDATE because same values */
+	/* No LTE_LC_EVT_PSM_UPDATE because XMONITOR parsing fails */
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%XMONITOR", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)xmonitor_resp, sizeof(xmonitor_resp));
+
+	at_monitor_dispatch(at_notif);
+	k_sleep(K_MSEC(1));
+}
+
+void test_lte_lc_cereg_with_xmonitor_active_time_valid_tau_disabled_fail(void)
+{
+	strcpy(at_notif, "+CEREG: 5,\"5678\",\"87654321\",9,,,\"00001000\",\"11100000\"\r\n");
+
+	static const char xmonitor_resp[] =
+		"%XMONITOR: 1,\"Operator\",\"OP\",\"20065\",\"5678\",9,20,\"87654321\","
+		"334,6200,66,44,\"\","
+		"\"00001000\",\"11100000\",\"11100000\"";
+
+	lte_lc_callback_count_expected = 1;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTERED_ROAMING;
 
 	/* No LTE_LC_EVT_CELL_UPDATE because same values */
 	/* No LTE_LC_EVT_LTE_MODE_UPDATE because same values */
@@ -2050,14 +2143,85 @@ void test_lte_lc_cereg_no_tac_but_tau(void)
 	at_monitor_dispatch(at_notif);
 }
 
+/* Test CEREG reject cause, which is not visible in events but there is only code to log it. */
+void test_lte_lc_cereg_unknown_reject_cause(void)
+{
+	strcpy(at_notif, "+CEREG: 2,\"ABBA\",\"12345678\",7,0,13\r\n");
+
+	lte_lc_callback_count_expected = 3;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_SEARCHING;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.mcc = 0;
+	test_event_data[1].cell.mnc = 0;
+	test_event_data[1].cell.id = 0x12345678;
+	test_event_data[1].cell.tac = 0xABBA;
+	test_event_data[1].cell.earfcn = 0;
+	test_event_data[1].cell.timing_advance = 0;
+	test_event_data[1].cell.timing_advance_meas_time = 0;
+	test_event_data[1].cell.measurement_time = 0;
+	test_event_data[1].cell.phys_cell_id = 0;
+	test_event_data[1].cell.rsrp = 0;
+	test_event_data[1].cell.rsrq = 0;
+
+	/* Because previous test leaves the mode to LTE_LC_LTE_MODE_NONE,
+	 * there is a change to LTE_LC_LTE_MODE_LTEM in this test
+	 */
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_LTEM;
+
+	at_monitor_dispatch(at_notif);
+}
+
 void test_lte_lc_cereg_3_registration_denied(void)
 {
 	strcpy(at_notif, "+CEREG: 3\r\n");
 
-	lte_lc_callback_count_expected = 1;
+	lte_lc_callback_count_expected = 3;
 
 	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
 	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_REGISTRATION_DENIED;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[1].cell.tac = -1;
+
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_NONE;
+
+	at_monitor_dispatch(at_notif);
+}
+
+/* Test unknown CEREG reject cause type */
+void test_lte_lc_cereg_unknown_reject_cause_unknown_type(void)
+{
+	strcpy(at_notif, "+CEREG: 2,\"ABBA\",\"87654321\",7,1,1\r\n");
+
+	lte_lc_callback_count_expected = 3;
+
+	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_SEARCHING;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.mcc = 0;
+	test_event_data[1].cell.mnc = 0;
+	test_event_data[1].cell.id = 0x87654321;
+	test_event_data[1].cell.tac = 0xABBA;
+	test_event_data[1].cell.earfcn = 0;
+	test_event_data[1].cell.timing_advance = 0;
+	test_event_data[1].cell.timing_advance_meas_time = 0;
+	test_event_data[1].cell.measurement_time = 0;
+	test_event_data[1].cell.phys_cell_id = 0;
+	test_event_data[1].cell.rsrp = 0;
+	test_event_data[1].cell.rsrq = 0;
+
+	/* Because previous test leaves the mode to LTE_LC_LTE_MODE_NONE,
+	 * there is a change to LTE_LC_LTE_MODE_LTEM in this test
+	 */
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_LTEM;
 
 	at_monitor_dispatch(at_notif);
 }
@@ -2066,10 +2230,17 @@ void test_lte_lc_cereg_90_uicc_fail(void)
 {
 	strcpy(at_notif, "+CEREG: 90\r\n");
 
-	lte_lc_callback_count_expected = 1;
+	lte_lc_callback_count_expected = 3;
 
 	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
 	test_event_data[0].nw_reg_status = LTE_LC_NW_REG_UICC_FAIL;
+
+	test_event_data[1].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[1].cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[1].cell.tac = -1;
+
+	test_event_data[2].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[2].lte_mode = LTE_LC_LTE_MODE_NONE;
 
 	at_monitor_dispatch(at_notif);
 }
@@ -2176,12 +2347,24 @@ void test_lte_lc_xt3412(void)
 	strcpy(at_notif, "%XT3412: 1000\r\n");
 	at_monitor_dispatch(at_notif);
 
+	/* TAU with max value */
+	strcpy(at_notif, "%XT3412: 35712000000\r\n");
+	at_monitor_dispatch(at_notif);
+
 	/* Too big TAU pre-warning time */
 	strcpy(at_notif, "%XT3412: 35712000001\r\n");
 	at_monitor_dispatch(at_notif);
 
 	/* Time not included */
 	strcpy(at_notif, "%XT3412:\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Negative TAU */
+	strcpy(at_notif, "%XT3412: -100\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* TAU not a number */
+	strcpy(at_notif, "%XT3412: invalid\r\n");
 	at_monitor_dispatch(at_notif);
 }
 
@@ -3764,6 +3947,12 @@ void test_lte_lc_modem_events_fail(void)
 
 	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 4\r\n");
 	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 1 and then some\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 0 and then some\r\n");
+	at_monitor_dispatch(at_notif);
 }
 
 void test_lte_lc_periodic_search_request(void)
@@ -4061,6 +4250,49 @@ void test_lte_lc_periodic_search_set_patterns4_success(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
+void test_lte_lc_periodic_search_set_pattern_table_values_success(void)
+{
+	int ret;
+	struct lte_lc_periodic_search_cfg cfg = { 0 };
+
+	cfg.pattern_count = 4;
+	cfg.loop = 1;
+	cfg.return_to_pattern = 3;
+	cfg.band_optimization = 5;
+	cfg.patterns[0].type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE;
+	cfg.patterns[0].table.val_1 = 11;
+	cfg.patterns[0].table.val_2 = -1;
+	cfg.patterns[0].table.val_3 = -1;
+	cfg.patterns[0].table.val_4 = -1;
+	cfg.patterns[0].table.val_5 = -1;
+	cfg.patterns[1].type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE;
+	cfg.patterns[1].table.val_1 = 21;
+	cfg.patterns[1].table.val_2 = 22;
+	cfg.patterns[1].table.val_3 = -1;
+	cfg.patterns[1].table.val_4 = -1;
+	cfg.patterns[1].table.val_5 = -1;
+	cfg.patterns[2].type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE;
+	cfg.patterns[2].table.val_1 = 31;
+	cfg.patterns[2].table.val_2 = 32;
+	cfg.patterns[2].table.val_3 = 33;
+	cfg.patterns[2].table.val_4 = -1;
+	cfg.patterns[2].table.val_5 = -1;
+	cfg.patterns[3].type = LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE;
+	cfg.patterns[3].table.val_1 = 41;
+	cfg.patterns[3].table.val_2 = 42;
+	cfg.patterns[3].table.val_3 = 43;
+	cfg.patterns[3].table.val_4 = 44;
+	cfg.patterns[3].table.val_5 = -1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=0,1,3,5,\"1,11\",\"1,21,22\","
+		"\"1,31,32,33\",\"1,41,42,43,44\"",
+		EXIT_SUCCESS);
+
+	ret = lte_lc_periodic_search_set(&cfg);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
 void test_lte_lc_periodic_search_set_max_values_fail(void)
 {
 	int ret;
@@ -4293,7 +4525,7 @@ void test_lte_lc_periodic_search_get_pattern3_range_too_few_params_fail(void)
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
-void test_lte_lc_periodic_search_get_pattern4_fail(void)
+void test_lte_lc_periodic_search_get_pattern4_range_empty_fail(void)
 {
 	int ret;
 	struct lte_lc_periodic_search_cfg cfg;
@@ -4308,7 +4540,28 @@ void test_lte_lc_periodic_search_get_pattern4_fail(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,30,600"); /* pattern_buf */
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,30,600"); /* pattern_buf */
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,30,600"); /* pattern_buf */
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,,"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("0"); /* pattern_buf */
+
+	ret = lte_lc_periodic_search_get(&cfg);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_periodic_search_get_pattern4_table_empty_fail(void)
+{
+	int ret;
+	struct lte_lc_periodic_search_cfg cfg;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=1",
+		"%%PERIODICSEARCHCONF: %hu,%hu,%hu,\"%40[^\"]\",\"%40[^\"]\",\"%40[^\"]\",\"%40[^\"]\"",
+		7);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(0); /* loop */
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(0); /* return_to_pattern */
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(10); /* band_optimization */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,30,600"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,30,600"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,30,600"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("1"); /* pattern_buf */
 
 	ret = lte_lc_periodic_search_get(&cfg);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
@@ -4355,7 +4608,7 @@ void test_lte_lc_periodic_search_get_patterns4_success(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,60,3600,,600"); /* pattern_buf */
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("0,30,1800,20,48"); /* pattern_buf */
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("1,10,20,30,40,50"); /* pattern_buf */
-	__mock_nrf_modem_at_scanf_ReturnVarg_string("1,11,21,31"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("1,11"); /* pattern_buf */
 
 	ret = lte_lc_periodic_search_get(&cfg);
 	TEST_ASSERT_EQUAL(0, cfg.loop);
@@ -4379,8 +4632,44 @@ void test_lte_lc_periodic_search_get_patterns4_success(void)
 	TEST_ASSERT_EQUAL(50, cfg.patterns[2].table.val_5);
 	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, cfg.patterns[3].type);
 	TEST_ASSERT_EQUAL(11, cfg.patterns[3].table.val_1);
-	TEST_ASSERT_EQUAL(21, cfg.patterns[3].table.val_2);
-	TEST_ASSERT_EQUAL(31, cfg.patterns[3].table.val_3);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_periodic_search_get_patterns4_table_values_success(void)
+{
+	int ret;
+	struct lte_lc_periodic_search_cfg cfg;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%PERIODICSEARCHCONF=1",
+		"%%PERIODICSEARCHCONF: %hu,%hu,%hu,\"%40[^\"]\",\"%40[^\"]\",\"%40[^\"]\",\"%40[^\"]\"",
+		7);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(0); /* loop */
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(0); /* return_to_pattern */
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(10); /* band_optimization */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("1,11"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("1,21,22"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("1,31,32,33"); /* pattern_buf */
+	__mock_nrf_modem_at_scanf_ReturnVarg_string("1,41,42,43,44"); /* pattern_buf */
+
+	ret = lte_lc_periodic_search_get(&cfg);
+	TEST_ASSERT_EQUAL(0, cfg.loop);
+	TEST_ASSERT_EQUAL(0, cfg.return_to_pattern);
+	TEST_ASSERT_EQUAL(10, cfg.band_optimization);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, cfg.patterns[2].type);
+	TEST_ASSERT_EQUAL(11, cfg.patterns[0].table.val_1);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, cfg.patterns[2].type);
+	TEST_ASSERT_EQUAL(21, cfg.patterns[1].table.val_1);
+	TEST_ASSERT_EQUAL(22, cfg.patterns[1].table.val_2);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, cfg.patterns[2].type);
+	TEST_ASSERT_EQUAL(31, cfg.patterns[2].table.val_1);
+	TEST_ASSERT_EQUAL(32, cfg.patterns[2].table.val_2);
+	TEST_ASSERT_EQUAL(33, cfg.patterns[2].table.val_3);
+	TEST_ASSERT_EQUAL(LTE_LC_PERIODIC_SEARCH_PATTERN_TABLE, cfg.patterns[3].type);
+	TEST_ASSERT_EQUAL(41, cfg.patterns[3].table.val_1);
+	TEST_ASSERT_EQUAL(42, cfg.patterns[3].table.val_2);
+	TEST_ASSERT_EQUAL(43, cfg.patterns[3].table.val_3);
+	TEST_ASSERT_EQUAL(44, cfg.patterns[3].table.val_4);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
