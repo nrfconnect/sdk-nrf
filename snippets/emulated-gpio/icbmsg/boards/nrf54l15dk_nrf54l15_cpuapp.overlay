@@ -41,7 +41,7 @@
 			rx-region = <&sram_rx>;
 			tx-blocks = <16>;
 			rx-blocks = <18>;
-			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
+			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
 			mbox-names = "rx", "tx";
 			status = "okay";
 		};
@@ -50,7 +50,7 @@
 
 &cpuapp_sram {
 	reg = <0x20000000 DT_SIZE_K(242)>;
-	ranges = <0x0 0x20000000 0x3d000>;
+	ranges = <0x0 0x20000000 0x3c800>;
 };
 
 &cpuflpr_vpr {
