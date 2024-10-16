@@ -88,28 +88,33 @@ Kconfig configuration
 Devicetree specification configuration
 ======================================
 
-The maximum transmit power achieved on a nRF70 Series device-based product depends on the frequency band and operating channel.
-This varies from chip to chip as well as over different :term:`Printed Circuit Board (PCB)` designs.
+The maximum transmit power achieved on an nRF70 Series device-based product depends on the frequency band and operating channel.
+This varies across different :term:`Printed Circuit Board (PCB)` designs.
 
 Multiple calibrations and checks are implemented to ensure consistency across channels and devices.
-However, these values have a dependency on PCB design, which may result in Error Vector Magnitude (EVM) and spectral mask failures.
+However, these values depend on PCB design, which may result in Error Vector Magnitude (EVM) and spectral mask failures.
 To avoid this problem, you can specify the power ceiling at which the EVM and spectral mask are met for a given PCB design.
 Additionally, build-time parameters are made available to drivers through the DTS overlay file.
 
-The following code snippet shows an example of the DTS overlay file:
+The following code snippet shows an example of the DTS overlay file.
+Note that the numbers used in this following example do not represent any particular PCB design or package type.
+
+You must replace these values with measurements obtained from transmitter testing on your own PCB designs.
+The values are represented in 1 dB increments.
+To configure 15 dBm, use the value ``15``.
 
 .. code-block:: devicetree
 
    &nrf70 {
-			wifi-max-tx-pwr-2g-dsss = <0x54>;
-			wifi-max-tx-pwr-2g-mcs0 = <0x40>;
-			wifi-max-tx-pwr-2g-mcs7 = <0x40>;
-			wifi-max-tx-pwr-5g-low-mcs0 = <0x38>;
-			wifi-max-tx-pwr-5g-low-mcs7 = <0x38>;
-			wifi-max-tx-pwr-5g-mid-mcs0 = <0x38>;
-			wifi-max-tx-pwr-5g-mid-mcs7 = <0x38>;
-			wifi-max-tx-pwr-5g-high-mcs0 = <0x38>;
-			wifi-max-tx-pwr-5g-high-mcs7 = <0x38>;
-		};
+      wifi-max-tx-pwr-2g-dsss = <21>;
+      wifi-max-tx-pwr-2g-mcs0 = <16>;
+      wifi-max-tx-pwr-2g-mcs7 = <16>;
+      wifi-max-tx-pwr-5g-low-mcs0 = <14>;
+      wifi-max-tx-pwr-5g-low-mcs7 = <14>;
+      wifi-max-tx-pwr-5g-mid-mcs0 = <14>;
+      wifi-max-tx-pwr-5g-mid-mcs7 = <14>;
+      wifi-max-tx-pwr-5g-high-mcs0 = <14>;
+      wifi-max-tx-pwr-5g-high-mcs7 = <14>;
+   };
 
-Please see the DTS binding documentation for more information.
+See the DTS binding documentation for more information.
