@@ -15,3 +15,21 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_wakeups"
     timeout: 80
+  benchmarks.current_consumption.systemoff.gpio_wakeup_retained_mem:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - "DTC_OVERLAY_FILE=
+         boards/nrf54l15dk_nrf54l15_cpuapp_gpio_wakeup.overlay;
+         boards/nrf54l15dk_nrf54l15_cpuapp_ret_mem.overlay"
+    extra_configs:
+      - CONFIG_APP_USE_RETAINED_MEM=y
+      - CONFIG_RETAINED_MEM=y
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_wakeups"
+    timeout: 80
