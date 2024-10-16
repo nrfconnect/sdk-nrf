@@ -25,11 +25,31 @@ LOG_MODULE_REGISTER(wifi_mgmt_ext, CONFIG_WIFI_MGMT_EXT_LOG_LEVEL);
 		     "CONFIG_WIFI_CREDENTIALS_STATIC_SSID required");
 #endif /* defined(CONFIG_WIFI_CREDENTIALS_STATIC) */
 
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+static const char ca_cert_test[] = {
+	#include <wifi_enterprise_test_certs/ca.pem.inc>
+	'\0'
+};
+
+static const char client_cert_test[] = {
+	#include <wifi_enterprise_test_certs/client.pem.inc>
+	'\0'
+};
+
+static const char client_key_test[] = {
+	#include <wifi_enterprise_test_certs/client-key.pem.inc>
+	'\0'
+};
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
+
 static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
 				struct wifi_connect_req_params *params)
 {
 	char *ssid = NULL;
 	char *psk = NULL;
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+	char *key_passwd = NULL;
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 	int ret;
 
 	/* SSID */
@@ -70,6 +90,27 @@ static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
 
 	/* Defaults */
 	params->security = creds->header.type;
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+	if (params->security == WIFI_SECURITY_TYPE_EAP_TLS) {
+		if (creds->header.key_passwd_length > 0) {
+			key_passwd = (char *)k_malloc(creds->header.key_passwd_length + 1);
+			if (!key_passwd) {
+				LOG_ERR("Failed to allocate memory for key_passwd\n");
+				ret = -ENOMEM;
+				goto err_out;
+			}
+			memset(key_passwd, 0, creds->header.key_passwd_length + 1);
+			ret = snprintf(key_passwd, creds->header.key_passwd_length + 1, "%s", creds->header.key_passwd);
+			if (ret > creds->header.key_passwd_length) {
+				LOG_ERR("key_passwd string truncated\n");
+				ret = -EINVAL;
+				goto err_out;
+			}
+			params->key_passwd = key_passwd;
+			params->key_passwd_length = creds->header.key_passwd_length;
+		}
+	}
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 
 	/* If channel is set to 0 we default to ANY. 0 is not a valid Wi-Fi channel. */
 	params->channel = (creds->header.channel != 0) ? creds->header.channel : WIFI_CHANNEL_ANY;
@@ -108,6 +149,12 @@ err_out:
 		k_free(psk);
 		psk = NULL;
 	}
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+	if (key_passwd) {
+		k_free(key_passwd);
+		key_passwd = NULL;
+	}
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 	return ret;
 }
 
@@ -128,6 +175,27 @@ static inline const char *wpa_supp_security_txt(enum wifi_security_type security
 	}
 }
 
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+static int wifi_set_enterprise_creds(struct net_if *iface)
+{
+	struct wifi_enterprise_creds_params params = {0};
+
+	params.ca_cert = (uint8_t *)ca_cert_test;
+	params.ca_cert_len = ARRAY_SIZE(ca_cert_test);
+	params.client_cert = (uint8_t *)client_cert_test;
+	params.client_cert_len = ARRAY_SIZE(client_cert_test);
+	params.client_key = (uint8_t *)client_key_test;
+	params.client_key_len = ARRAY_SIZE(client_key_test);
+
+	if (net_mgmt(NET_REQUEST_WIFI_ENTERPRISE_CREDS, iface, &params, sizeof(params))) {
+		LOG_ERR("Set enterprise credentials failed\n");
+		return -1;
+	}
+
+	return 0;
+}
+#endif
+
 static int add_network_from_credentials_struct_personal(struct wifi_credentials_personal *creds,
 							struct net_if *iface)
 {
@@ -139,6 +207,12 @@ static int add_network_from_credentials_struct_personal(struct wifi_credentials_
 		goto out;
 	}
 
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+	/* Load the enterprise credentials if needed */
+	if (cnx_params.security == WIFI_SECURITY_TYPE_EAP_TLS) {
+		wifi_set_enterprise_creds(iface);
+	}
+#endif
 	if (net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
 		     &cnx_params, sizeof(struct wifi_connect_req_params))) {
 		LOG_ERR("Connection request failed\n");
