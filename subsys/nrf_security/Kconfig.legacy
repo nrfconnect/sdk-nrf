@@ -21,8 +21,13 @@ config MBEDTLS_MEMORY_BUFFER_ALLOC_C
 	default y
 
 config MBEDTLS_THREADING_C
-	bool
+	bool "Threading support for Mbed TLS and PSA crypto"
 	default y if CC3XX_BACKEND || MBEDTLS_PSA_CRYPTO_C
+	help
+	  Threading support is used when PSA crypto is built locally or
+	  when legacy APIs implemented using CryptoCell is in use.
+	  Note: If this configuration is disabled then PSA crypto APIs
+	  aren't thread-safe. This configuration is not used when TF-M is enabled.
 
 config MBEDTLS_BASE64_C
 	bool
@@ -66,6 +71,7 @@ config MBEDTLS_THREADING_ALT
 	bool
 	default y if CC3XX_BACKEND || MBEDTLS_PSA_CRYPTO_C
 	depends on !BUILD_WITH_TFM
+	depends on MBEDTLS_THREADING_C
 
 # Legacy configurations for _ALT defines
 config MBEDTLS_AES_SETKEY_ENC_ALT
