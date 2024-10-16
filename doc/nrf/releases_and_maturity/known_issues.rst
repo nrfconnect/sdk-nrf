@@ -280,6 +280,11 @@ DRGN-23511: Building of multilink Bluetooth applications fails
 
   **Workaround:** Set the Kconfig value explicitly.
 
+.. rst-class:: v2-8-0
+
+NCSDK-29354: Bluetooth traffic stalls while writing or erasing flash
+  This only occurs when the Bluetooth Controller runs on the same core as the flash operations.
+
 Bluetooth Mesh
 ==============
 
