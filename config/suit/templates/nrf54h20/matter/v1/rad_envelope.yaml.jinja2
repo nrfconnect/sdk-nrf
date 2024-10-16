@@ -127,7 +127,7 @@ SUIT_Envelope_Tagged:
 {%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in radio['config'] and radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}
         suit-parameter-uri: '{{ radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}'
 {%- else %}
-        suit-parameter-uri: '#{{ radio['name'] }}'
+        suit-parameter-uri: 'file://{{ radio['filename'] }}'
 {%- endif %}
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
@@ -135,17 +135,11 @@ SUIT_Envelope_Tagged:
             file: {{ radio['binary'] }}
     - suit-directive-fetch:
       - suit-send-record-failure
-    - suit-directive-try-each:
-      - - suit-condition-image-match:
-          - suit-send-record-success
-          - suit-send-record-failure
-          - suit-send-sysinfo-success
-          - suit-send-sysinfo-failure
-      - - suit-condition-image-match:
-          - suit-send-record-success
-          - suit-send-record-failure
-          - suit-send-sysinfo-success
-          - suit-send-sysinfo-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
 
     suit-manifest-component-id:
     - INSTLD_MFST

@@ -531,14 +531,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_MATTER_OTA)
     include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
-    if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
+    if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD OR SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD)
       chip_ota_image(chip-ota-image
         INPUT_FILES ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
-        OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME}
-      )
-    elseif(SB_CONFIG_SUIT_ENVELOPE)
-      chip_ota_image(chip-ota-image
-        INPUT_FILES ${CMAKE_BINARY_DIR}/DFU/root.suit
         OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME}
       )
     endif()
