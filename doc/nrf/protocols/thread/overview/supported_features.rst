@@ -7,7 +7,7 @@ Supported Thread features
    :local:
    :depth: 2
 
-The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.3.0 Specification that are required for the Thread 1.3 Certification program:
+The OpenThread implementation of the Thread protocol supports all features defined in the Thread 1.4 Specification that are required for the Thread 1.4 Certification program:
 
 * All Thread networking layers:
 
@@ -26,13 +26,19 @@ The OpenThread implementation of the Thread protocol supports all features defin
   * Multicast across Thread networks
   * Thread Domain unicast addressing
 
-* Features introduced with Thread 1.3.0:
+* Features introduced with Thread 1.3:
 
   * Service Registration Protocol (SRP) client
   * Transport Control Protocol (TCP)
 
+* Features introduced with Thread 1.4:
+
+  * Enhanced Internet Connectivity
+  * Enhanced Network Diagnostics
+  * Secure Commissioning at Scale with TCAT
+
 In the |NCS|, you can choose which version of the Thread protocol to use in your application.
-By default, the |NCS| supports Thread 1.3, which includes support for Thread 1.2.
+By default, the |NCS| supports Thread 1.4, which includes support for Thread 1.3 and Thread 1.2.
 You can enable and configure any Thread version by using :ref:`dedicated options <thread_ug_thread_specification_options>`.
 
 .. _thread_ug_supported_features_v12:
@@ -151,7 +157,51 @@ An alternative TCP stack implementation incorporated from the OpenThread project
 
 See the :file:`tcp.conf` configuration file in the :file:`snippets/tcp/` directory of the :ref:`ot_cli_sample` sample for an example how to enable the alternative TCP implementation.
 
-Limitations for Thread 1.3 support
+.. _thread_ug_supported_features_v14:
+
+Thread 1.4 features
+*******************
+
+For more information about this Thread version, see the official `Thread 1.4 Features White Paper`_.
+
+.. note::
+  See :ref:`thread_ug_thread_specification_options` for how to enable the 1.4 features that are currently available in the |NCS|.
+
+Enhanced Internet Connectivity
+==============================
+
+Thread 1.4 introduces significant enhancements to how Thread devices can connect to the public internet.
+This expansion is achieved through robust support for both IPv6 and IPv4, ensuring a future-proof compatibility with the existing internet infrastructure.
+
+Enhanced Network Diagnostics
+============================
+
+The Enhanced Network Diagnostics added in Thread 1.4 include:
+
+* EUI-64
+* Thread Protocol Version and Thread Stack Version
+* Vendor Name, Vendor Model, and Vendor Software Version
+* Detailed Child information - for Thread Mesh Extenders only
+* Child IPv6 Address List - for Thread Mesh Extenders only
+* Mesh Extender (Router) Neighbors - for Thread Mesh Extenders only
+* Mesh Link Establishment (MLE) Protocol Counters
+* Vendor App URL
+* A method ("Answer TLV") to split a particularly large diagnostic data set over multiple UDP messages
+
+The entity collecting the Thread diagnostic information may itself be directly connected to a Thread network, for example situated on a Thread 1.4 Border Router.
+The collected information can then be retrieved via an authenticated, secure connection from an app or back-end to this Border Router.
+The entity could also be situated outside the Thread Network, collecting diagnostic information in the role of a Thread Commissioner - via a secured IPv6 link to a Thread Border Router.
+
+Thread Commissioning over Authenticated TLS (TCAT)
+==================================================
+
+Thread 1.4 introduces TCAT to enable fast and secure commissioning of large volumes of Thread devices.
+This feature uses an authenticated, certificate-based TLS session between the new Thread device and a commissioning tool/device.
+TCAT support is optional and is expected to be used primarily in commercial (B2B) markets.
+
+See the :file:`tcat.conf` configuration file in the :file:`snippets/tcat/` directory of the :ref:`ot_cli_sample` sample for an example how to enable the TCAT functionality.
+
+Limitations for Thread 1.4 support
 ==================================
 
-Transport Control Protocol (TCP) as defined by the Thread 1.3 Specification is only supported in experimental mode by the |NCS|.
+Thread Commissioning over Authenticated TLS (TCAT) is an optional feature and is only supported in experimental mode by the |NCS|.

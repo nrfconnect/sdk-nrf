@@ -103,15 +103,16 @@ See the following files for more options that you might want to change:
 Thread Specification options
 ============================
 
-The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification, the :ref:`Thread 1.2 Specification <thread_ug_supported_features_v12>`, or the :ref:`Thread 1.3 Specification <thread_ug_supported_features_v13>`.
+The OpenThread stack can be configured to operate in compliance with either the Thread 1.1 Specification, the :ref:`Thread 1.2 Specification <thread_ug_supported_features_v12>`, the :ref:`Thread 1.3 Specification <thread_ug_supported_features_v13>`, or the :ref:`Thread 1.4 Specification <thread_ug_supported_features_v14>`.
 You can change the stack version by using the following Kconfig options:
 
 * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_1` - Selects the Thread stack version that is compliant with the Thread 1.1 Specification.
 * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_2` - Selects the Thread stack version that is compliant with the Thread 1.2 Specification.
 * :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_3` - Selects the Thread stack version that is compliant with the Thread 1.3 Specification.
+* :kconfig:option:`CONFIG_OPENTHREAD_THREAD_VERSION_1_4` - Selects the Thread stack version that is compliant with the Thread 1.4 Specification.
   This option is enabled by default if no other option is selected.
 
-By enabling support for Thread 1.2, you enable the following :ref:`thread_ug_supported_features_v12` in addition to the Thread 1.1 features:
+By selecting support for Thread 1.2, you enable the following :ref:`thread_ug_supported_features_v12` in addition to the Thread 1.1 features:
 
 * Coordinated Sampled Listening (CSL)
 * Link Metrics Probing
@@ -120,12 +121,16 @@ By enabling support for Thread 1.2, you enable the following :ref:`thread_ug_sup
 * Enhanced Frame Pending
 * Enhanced Keep Alive
 
-By selecting support for Thread 1.3, you enable the following features in addition to the :ref:`Thread 1.2 features <thread_ug_supported_features>`:
+By selecting support for Thread 1.3, you enable the following :ref:`thread_ug_supported_features_v13` in addition to the :ref:`thread_ug_supported_features_v12`:
 
 * Service Registration Protocol (SRP) client
 
+By selecting support for Thread 1.4, you enable the following :ref:`thread_ug_supported_features_v14` in addition to the :ref:`thread_ug_supported_features_v13` and :ref:`thread_ug_supported_features_v12`:
+
+* Enhanced Internet Connectivity
+* Enhanced Network Diagnostics
+
 For a list of all supported features in the |NCS|, see the :ref:`thread_ug_feature_sets`.
-For more information about Thread 1.2 features, see the `Thread 1.2 Base Features`_ document.
 
 .. _ug_thread_configuring_eui64:
 
