@@ -6,9 +6,6 @@
 
 source "Kconfig.zephyr"
 
-config SETTINGS
-	default y
-
 config ZMS
 	default y if SOC_FLASH_NRF_RRAM
 
