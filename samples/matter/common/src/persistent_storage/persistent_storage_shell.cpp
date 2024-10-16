@@ -6,9 +6,9 @@
 
 #include "persistent_storage_shell.h"
 
-#ifdef CONFIG_NVS
+#if defined(CONFIG_NVS)
 #include <zephyr/fs/nvs.h>
-#elif CONFIG_ZMS
+#elif defined(CONFIG_ZMS)
 #include <zephyr/fs/zms.h>
 #endif
 #include <zephyr/settings/settings.h>
@@ -18,9 +18,9 @@ using namespace Nrf;
 
 namespace
 {
-#ifdef CONFIG_NVS
+#if defined(CONFIG_NVS)
 nvs_fs *sStorage = nullptr;
-#elif CONFIG_ZMS
+#elif defined(CONFIG_ZMS)
 zms_fs *sStorage = nullptr;
 #endif
 
@@ -32,9 +32,9 @@ struct SettingsParams {
 
 int CalculateFreeSpace()
 {
-#ifdef CONFIG_NVS
+#if defined(CONFIG_NVS)
 	return nvs_calc_free_space(sStorage);
-#elif CONFIG_ZMS
+#elif defined(CONFIG_ZMS)
 	return zms_calc_free_space(sStorage);
 #endif
 }
@@ -133,9 +133,9 @@ bool PersistentStorageShell::Init()
 		return false;
 	}
 
-#ifdef CONFIG_NVS
+#if defined(CONFIG_NVS)
 	sStorage = reinterpret_cast<nvs_fs *>(storage);
-#elif CONFIG_ZMS
+#elif defined(CONFIG_ZMS)
 	sStorage = reinterpret_cast<zms_fs *>(storage);
 #endif
 
