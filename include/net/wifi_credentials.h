@@ -29,10 +29,16 @@ extern "C" {
 #define WIFI_CREDENTIALS_FLAG_2_4GHz		BIT(2)
 /* this entry can use the 5 GHz band */
 #define WIFI_CREDENTIALS_FLAG_5GHz		BIT(3)
+/* this entry can use the 5 GHz band */
+#define WIFI_CREDENTIALS_FLAG_6GHz		BIT(4)
 /* this entry requires management frame protection */
-#define WIFI_CREDENTIALS_FLAG_MFP_REQUIRED	BIT(4)
+#define WIFI_CREDENTIALS_FLAG_MFP_REQUIRED	BIT(5)
 /* this entry disables management frame protection */
-#define WIFI_CREDENTIALS_FLAG_MFP_DISABLED	BIT(5)
+#define WIFI_CREDENTIALS_FLAG_MFP_DISABLED	BIT(6)
+/* this entry has anonymous identity configured */
+#define WIFI_CREDENTIALS_FLAG_ANONYMOUS_IDENTITY  BIT(7)
+/* this entry has key password configured */
+#define WIFI_CREDENTIALS_FLAG_KEY_PASSWORD  BIT(8)
 
 #define WIFI_CREDENTIALS_MAX_PASSWORD_LEN\
 	MAX(WIFI_PSK_MAX_LEN, CONFIG_WIFI_CREDENTIALS_SAE_PASSWORD_LENGTH)
@@ -53,6 +59,10 @@ struct wifi_credentials_header {
 	uint32_t flags;
 	uint8_t channel;
 	uint32_t timeout;
+	char anon_id[WIFI_ENT_IDENTITY_MAX_LEN];
+	uint8_t aid_length; /* Max 64 */
+	char key_passwd[WIFI_ENT_PSWD_MAX_LEN];
+	uint8_t key_passwd_length; /* Max 128 */
 };
 
 /**
