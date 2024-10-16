@@ -7,7 +7,7 @@ How to customize the SUIT DFU process
    :local:
    :depth: 2
 
-Nordic Semiconductor provides a Software Update Internet of Things (SUIT) sample (:ref:`ug_nrf54h20_suit_intro`) which uses predefined configurations in the build system.
+Nordic Semiconductor provides a :ref:`Software Update for Internet of Things (SUIT) sample <nrf54h_suit_sample>` which uses predefined configurations in the build system.
 The specified Kconfig options in the sample can be used to customize the DFU process and integrate the DFU solution with external build systems.
 This guide provides a comprehensive set of instructions for modifying values in the :ref:`SUIT manifest <ug_nrf54h20_suit_manifest_overview>`.
 
@@ -61,7 +61,7 @@ Build system configuration
 **************************
 
 By default the build system generates SUIT envelopes using predefined manifest templates provided by Nordic Semiconductor.
-These templates can be found in :file:`modules/lib/suit-generator/ncs`, and are suitable for standard development needs.
+These templates can be found in :file:`nrf/config/suit/templates` and are suitable for typical development needs.
 
 Three manifests are used in the most common case:
 
@@ -98,7 +98,7 @@ The build system searches for the manifest templates in the following order:
 
 #. It checks if :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` exists in the :file:`<sample-dir>/suit/${SB_CONFIG_SOC}/` file.
 
-#. It checks if :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` exists in the :file:`<sdk-nrf-dir>/config/suit/templates/${SB_CONFIG_SOC}/${SB_CONFIG_SUIT_BASE_MANIFEST_VARIANT}/` file.
+#. It checks if :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` exists in the :file:`<sdk-nrf-dir>/nrf/config/suit/templates/${SB_CONFIG_SOC}/${SB_CONFIG_SUIT_BASE_MANIFEST_VARIANT}/` file.
 
 The build system selects the set of files from the first successful step.
 
@@ -230,16 +230,17 @@ The manifest templates have access to the following:
 
 Some of these values are stored in the Python dictionaries that are named after the target name.
 (Therefore, Python is used within the ``.jinja2`` files to fill in the necessary values in the manifest(s).)
-For example, for the :ref:`nrf54h_suit_sample` there will be two variables available: ``application`` and ``radio``.
+For example, for the ``sample.suit.smp_transfer.bt`` configuration (simple bluetooth configuration) in :ref:`nrf54h_suit_sample` there will be two variables available: ``application`` and ``radio``.
 The target names (the names of these variables) can be changed using the :kconfig:option:`CONFIG_SUIT_ENVELOPE_TARGET` Kconfig option for a given image.
 Each variable is a Python dictionary type (``dict``) containing the following keys:
 
 * ``name`` - Name of the target
 * ``dt`` -  Devicetree representation (`edtlib`_ object)
+* ``config`` - Kconfig options
 * ``binary`` - Path to the binary, which holds the firmware for the target
 
 Additionally, the Python dictionary holds all the variables defined inside the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.
-The default templates searches for the following options inside the :file:`VERSION` file:
+The default templates search for the following options inside the :file:`VERSION` file:
 
 * ``APP_ROOT_SEQ_NUM`` - Sets the application root manifest sequence number.
 * ``APP_ROOT_VERSION`` - Sets the application root manifest current (semantic) version.
@@ -264,6 +265,7 @@ With the Python dictionary you are able to, for example:
 * Obtain the size of partition with ``application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size``
 * Get the pair of URI name and the binary path by using ``'#{{ application['name'] }}': {{ application['binary'] }}``
 * Get the root manifest sequence number with ``suit-manifest-sequence-number: {{ APP_ROOT_SEQ_NUM }}``
+* Get the vendor name by using ``application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']``
 
 Additionally, the **get_absolute_address** method is available to recalculate the absolute address of the partition.
 With these variables and methods, you can define templates which will next be filled out by the build system and use them to prepare the output binary SUIT envelope.
@@ -274,7 +276,7 @@ The examples below demonstrate the use of these variables and methods.
 Set component definition and memory ranges
 ------------------------------------------
 
-In :file:`modules/lib/suit-generator/ncs/app_envelope.yaml.jinja2`
+In :file:`nrf/config/suit/templates/nrf54h20/default/v1/app_envelope.yaml.jinja2`
 , the component definition and memory ranges are filled out by using the ``edtlib`` (devicetree values) object like so:
 
 .. code-block::
@@ -286,12 +288,12 @@ In :file:`modules/lib/suit-generator/ncs/app_envelope.yaml.jinja2`
     - ``{{ application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size }}``
 
 .. note::
-   See the :ref:`ug_suit_dfu_component_def` page for a full list and table of the available customizable components.
+   See the :ref:`ug_nrf54h20_suit_components` page for a full list and table of the available customizable components.
 
 Set integrated payload
 ----------------------
 
-In :file:`modules/lib/suit-generator/ncs/app_envelope.yaml.jinja2`
+In :file:`nrf/config/suit/templates/nrf54h20/default/v1/app_envelope.yaml.jinja2`
 , the integrated payload definition is done using the target name and binary location:
 
 .. code-block::
@@ -304,7 +306,7 @@ In :file:`modules/lib/suit-generator/ncs/app_envelope.yaml.jinja2`
 Root manifest template
 ----------------------
 
-The file :file:`modules/lib/suit-generator/ncs/root_with_binary_nordic_top.yaml.jinja2` contains content that is dynamically created, depending on how many targets are built.
+The file :file:`nrf/config/suit/templates/nrf54h20/default/v1/root_with_binary_nordic_top.yaml.jinja2` contains content that is dynamically created, depending on how many targets are built.
 The following example only shows a selected portion of the root manifest file.
 For more information, see the file available in the sample and `Jinja documentation`_:
 

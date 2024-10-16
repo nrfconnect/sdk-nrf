@@ -19,7 +19,6 @@ The following are basic SUIT concepts you need to understand to be able to custo
 * SUIT envelopes are generated from manifest templates.
 * The SUIT manifest is like a blueprint that tells the system how to create a SUIT envelope, and contains instructions and metadata for the DFU procedure.
 * Default SUIT manifest templates are provided, but customization, especially for UUIDs, is recommended.
-* The manifest templates are automatically created and copied to the sample directory on the first build of SUIT samples.
 
 .. figure:: images/nrf54h20_suit_dfu_overview.png
    :alt: Overview of the SUIT DFU procedure
@@ -32,8 +31,10 @@ SUIT DFU process
 ================
 
 The SUIT DFU process involves creating a SUIT envelope, which includes a manifest outlining the steps for the update.
-When you first build the SUIT sample in the |NCS|, you receive default manifest templates which you can customize according to your project's requirements.
-This guide will walk you through how to customize the SUIT manifest to target your specific device.
+By default, manifests templates provided in :file:`nrf/config/suit/templates` are used to create the envelopes.
+These templates can be copied and customized according to your project's requirements.
+
+This guide will walk you through how to customize the SUIT DFU process to target your specific device.
 
 For a complete guide on all customizable aspects of the SUIT DFU procedure, see the :ref:`ug_nrf54h20_suit_customize_dfu` user guide.
 
@@ -115,7 +116,6 @@ The SUIT DFU procedure can further be customized by:
 
 * Creating and modifying your own manifests
 * Generating raw UUID values
-* Changing the default location of the manifests
 
 Instructions for these actions and further customization are described in the :ref:`ug_nrf54h20_suit_customize_dfu` page.
 Additionally, you can modify SUIT components within the manifest (see the :ref:`ug_nrf54h20_suit_components` page for more information).
