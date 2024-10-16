@@ -159,26 +159,23 @@ static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 {
 	const size_t cbor_buffer_size = 1;
 	struct nrf_rpc_cbor_ctx ctx;
-	int error = 0;
-
-	const otExtAddress *mac = otLinkGetExtendedAddress(0);
 
 	if (!state) {
 		otRemoveStateChangeCallback(NULL, ot_state_changed_handler, iface);
 	}
-
-	net_if_set_link_addr(iface, (uint8_t *)mac->m8, 8, NET_LINK_IEEE802154);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	zcbor_bool_put(ctx.zs, state);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_ENABLE, &ctx, ot_rpc_decode_void, NULL);
 
 	if (state) {
+		net_if_set_link_addr(iface, (uint8_t *)otLinkGetExtendedAddress(NULL)->m8,
+				     OT_EXT_ADDRESS_SIZE, NET_LINK_IEEE802154);
 		update_netif_addrs(iface);
 		otSetStateChangedCallback(NULL, ot_state_changed_handler, iface);
 	}
 
-	return error;
+	return 0;
 }
 
 static enum net_l2_flags ot_rpc_l2_flags(struct net_if *iface)
@@ -195,7 +192,6 @@ static int ot_rpc_dev_init(const struct device *dev)
 
 static void ot_rpc_if_init(struct net_if *iface)
 {
-	/* TODO: auto-start the interface when nRF RPC transport is ready? */
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);
 	net_if_flag_set(iface, NET_IF_IPV6_NO_ND);
 	net_if_flag_set(iface, NET_IF_IPV6_NO_MLD);
