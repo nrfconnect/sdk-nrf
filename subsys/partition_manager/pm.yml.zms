@@ -3,7 +3,7 @@
 # In nRF54L15 we place the TF-M non-secure storage partitions after the
 # TF-M non-secure application to avoid splitting the secure/non-secure
 # partitions more than necessary.
-#if defined(CONFIG_SOC_NRF54L15_ENGA_CPUAPP) || defined(CONFIG_SOC_NRF54L15_CPUAPP)
+#if defined(CONFIG_SOC_NRF54L15_CPUAPP)
 zms_storage:
   placement:
     after: [app]
@@ -14,7 +14,6 @@ zms_storage:
   inside: [nonsecure_storage]
 #endif
   size: CONFIG_PM_PARTITION_SIZE_ZMS_STORAGE
-
 
 #else
 zms_storage:
@@ -30,4 +29,4 @@ zms_storage:
 #endif
   size: CONFIG_PM_PARTITION_SIZE_ZMS_STORAGE
 
-#endif /* (CONFIG_SOC_NRF54L15_ENGA_CPUAPP || CONFIG_SOC_NRF54L15_CPUAPP) */
+#endif /* CONFIG_SOC_NRF54L15_CPUAPP */
