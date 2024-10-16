@@ -58,6 +58,7 @@ Except for scan-only mode, the driver uses the host access point daemon (hostapd
 
 Radio Test mode
 ===============
+
 The nRF Wi-Fi driver supports Radio Test mode, which you can use to test the RF performance of the nRF70 Series device.
 This is a build time option that you can enable using the :kconfig:option:`CONFIG_NRF70_RADIO_TEST` Kconfig option.
 
@@ -83,18 +84,23 @@ Kconfig configuration
 .. options-from-kconfig::
    :show-type:
 
-Devicetree Specification configuration
+Devicetree specification configuration
 ======================================
 
-The maximum transmit power achieved on a nRF70 Series device-based product depends on the frequency band and operating channel.
-This varies from chip to chip as well as over different :term:`Printed Circuit Board (PCB)` designs.
+The maximum transmit power achieved on an nRF70 Series device-based product depends on the frequency band and operating channel.
+This varies across different :term:`Printed Circuit Board (PCB)` designs.
 
 Multiple calibrations and checks are implemented to ensure consistency across channels and devices.
-However, these values have a dependency on PCB design, which may result in Error Vector Magnitude (EVM) and spectral mask failures.
+However, these values depend on PCB design, which may result in Error Vector Magnitude (EVM) and spectral mask failures.
 To avoid this problem, you can specify the power ceiling at which the EVM and spectral mask are met for a given PCB design.
-Additionally, build-time parameters are made available to drivers through the DTS overlay file.
+This ensures that the final maximum transmit power won't be above these specified values. Additionally, build-time parameters are made available to drivers through the DTS overlay file.
 
-The following code snippet shows an example of the DTS overlay file:
+The following code snippet provides an example of a DTS overlay file.
+The numbers in this example do not correspond to any specific PCB design or package type.
+
+You must replace these values with measurements obtained from transmitter testing on your own PCB designs.
+The values are represented in 0.25 dB increments.
+To configure 15 dBm, use the value ``60`` (``0x3c`` in hexadecimal number).
 
 .. code-block:: devicetree
 
@@ -110,4 +116,4 @@ The following code snippet shows an example of the DTS overlay file:
 			wifi-max-tx-pwr-5g-high-mcs7 = <0x38>;
 		};
 
-Please see the DTS binding documentation for more information.
+See the DTS binding documentation for more information.
