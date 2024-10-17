@@ -101,7 +101,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_msink_OK)
 		.len = sizeof(valid_dst_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -145,7 +145,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_OK)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &component_handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &component_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -187,7 +187,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_OK)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &component_handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &component_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -219,7 +219,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_NOK_uri_not_in_cache)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &component_handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &component_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -252,7 +252,7 @@ ZTEST(fetch_tests, test_fetch_to_memptr_NOK_invalid_component_id)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &component_handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &component_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -284,7 +284,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_data_ptr_NULL)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &component_handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &component_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -312,7 +312,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_data_size_zero)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &component_handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &component_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -339,7 +339,7 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_NOK_handle_NULL)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &component_handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &component_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 

@@ -94,7 +94,7 @@ int suit_plat_release_component_handle(suit_component_t handle)
 	return SUIT_SUCCESS;
 }
 
-int suit_plat_create_component_handle(struct zcbor_string *component_id,
+int suit_plat_create_component_handle(struct zcbor_string *component_id, bool dependency,
 				      suit_component_t *component_handle)
 {
 	suit_memptr_storage_err_t err;
@@ -128,6 +128,12 @@ int suit_plat_create_component_handle(struct zcbor_string *component_id,
 	if (suit_plat_decode_component_type(component_id, &component_type) != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Error decoding component type");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
+	if (dependency && (component_type != SUIT_COMPONENT_TYPE_CAND_MFST) &&
+	    (component_type != SUIT_COMPONENT_TYPE_INSTLD_MFST)) {
+		LOG_ERR("Unsupported dependency component type: %d", component_type);
+		return SUIT_ERR_UNAUTHORIZED_COMPONENT;
 	}
 
 	if ((component_type == SUIT_COMPONENT_TYPE_CAND_IMG) ||

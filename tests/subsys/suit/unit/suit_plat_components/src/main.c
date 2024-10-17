@@ -115,7 +115,8 @@ static void create_valid_component(suit_component_type_t type)
 	suit_memptr_storage_get_fake.custom_fake = suit_memptr_storage_get_correct_fake_func;
 	suit_plat_decode_component_type_fake.custom_fake =
 		suit_plat_decode_component_type_correct_fake_func;
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 
 	/* Reset mocks to only look at the results of the next call*/
@@ -128,7 +129,7 @@ ZTEST_SUITE(suit_plat_components_tests, NULL, NULL, test_before, NULL, NULL);
 
 ZTEST(suit_plat_components_tests, test_create_component_handle_null_component_handle)
 {
-	int ret = suit_plat_create_component_handle(&valid_mem_component_id, NULL);
+	int ret = suit_plat_create_component_handle(&valid_mem_component_id, false, NULL);
 
 	zassert_equal(SUIT_ERR_UNSUPPORTED_PARAMETER, ret, "Failed to catch null argument");
 
@@ -144,7 +145,7 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_null_component_ha
 
 ZTEST(suit_plat_components_tests, test_create_component_handle_null_component_id)
 {
-	int ret = suit_plat_create_component_handle(NULL, &component_handles[0]);
+	int ret = suit_plat_create_component_handle(NULL, false, &component_handles[0]);
 
 	zassert_equal(SUIT_ERR_UNSUPPORTED_PARAMETER, ret, "Failed to catch null argument");
 
@@ -164,7 +165,7 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_too_many_componen
 	int ret;
 
 	for (size_t i = 0; i < SUIT_MAX_NUM_COMPONENT_PARAMS; i++) {
-		ret = suit_plat_create_component_handle(&valid_mem_component_id,
+		ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
 							&component_handles[i]);
 		zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 	}
@@ -174,7 +175,7 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_too_many_componen
 	FFF_RESET_HISTORY();
 	mocks_return_values_reset();
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &test_handle);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false, &test_handle);
 
 	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret,
 		      "Failed to record overflow in "
@@ -199,7 +200,8 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_other_component_t
 
 	component_type = SUIT_COMPONENT_TYPE_SOC_SPEC;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 
@@ -228,7 +230,8 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_mem_ok)
 	component_type = SUIT_COMPONENT_TYPE_MEM;
 	memptr_address = 0x12345000;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 
@@ -261,7 +264,8 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_mem_decode_compon
 
 	suit_plat_decode_component_type_fake.return_val = SUIT_PLAT_ERR_CBOR_DECODING;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 
 	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Incorrect returned error code");
 
@@ -292,7 +296,8 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_mem_decode_addres
 
 	component_type = SUIT_COMPONENT_TYPE_MEM;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 
 	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Incorrect returned error code");
 
@@ -326,7 +331,8 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_mem_memptr_storag
 	component_type = SUIT_COMPONENT_TYPE_MEM;
 	memptr_address = 0x12345000;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 
 	zassert_equal(SUIT_ERR_CRASH, ret, "Incorrect returned error code");
 
@@ -357,7 +363,8 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_cand_img_memptr_s
 
 	component_type = SUIT_COMPONENT_TYPE_CAND_IMG;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 
 	zassert_equal(SUIT_ERR_CRASH, ret, "Incorrect returned error code");
 
@@ -392,7 +399,8 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_mem_memptr_storag
 	component_type = SUIT_COMPONENT_TYPE_MEM;
 	memptr_address = 0x12345000;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 
 	zassert_equal(SUIT_ERR_CRASH, ret, "Incorrect returned error code");
 
@@ -429,7 +437,7 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_cand_img_ok)
 
 	component_type = SUIT_COMPONENT_TYPE_CAND_IMG;
 
-	ret = suit_plat_create_component_handle(&valid_cand_img_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_cand_img_id, false, &component_handles[0]);
 
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 
@@ -457,7 +465,7 @@ ZTEST(suit_plat_components_tests, test_create_component_handle_cand_mfst_ok)
 
 	component_type = SUIT_COMPONENT_TYPE_CAND_MFST;
 
-	ret = suit_plat_create_component_handle(&valid_cand_mfst_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_cand_mfst_id, true, &component_handles[0]);
 
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 
@@ -492,7 +500,8 @@ ZTEST(suit_plat_components_tests, test_release_component_handle_invalid_handle)
 		      "Incorrect number of suit_memptr_storage_release() calls");
 
 	/* Unaligned handle */
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 	/* Reset mocks to only look at the results of the next call*/
 	mocks_reset();
@@ -513,7 +522,8 @@ ZTEST(suit_plat_components_tests, test_release_component_handle_already_released
 {
 	int ret;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 
 	ret = suit_plat_release_component_handle(component_handles[0]);
@@ -537,7 +547,8 @@ ZTEST(suit_plat_components_tests, test_release_component_handle_decoding_type_fa
 {
 	int ret;
 
-	ret = suit_plat_create_component_handle(&valid_mem_component_id, &component_handles[0]);
+	ret = suit_plat_create_component_handle(&valid_mem_component_id, false,
+						&component_handles[0]);
 	zassert_equal(SUIT_SUCCESS, ret, "Failed to create valid component handle");
 
 	/* Reset mocks to only look at the results of the next call*/

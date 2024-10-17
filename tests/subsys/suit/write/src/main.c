@@ -49,7 +49,7 @@ ZTEST(write_tests, test_write_to_flash_sink_OK)
 		.len = sizeof(valid_dst_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -96,7 +96,7 @@ ZTEST(write_tests, test_write_to_ram_sink_OK)
 		.len = sizeof(valid_dst_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -127,7 +127,7 @@ ZTEST(write_tests, test_write_flash_sink_NOK_size_not_aligned)
 		.len = sizeof(valid_dst_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -169,7 +169,7 @@ ZTEST(write_tests, test_write_to_flash_sink_NOK_source_null)
 		.len = sizeof(valid_dst_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -198,7 +198,7 @@ ZTEST(write_tests, test_write_to_flash_sink_NOK_source_value_null)
 		.len = sizeof(valid_dst_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -228,7 +228,7 @@ ZTEST(write_tests, test_write_to_flash_sink_NOK_source_len_0)
 		.len = sizeof(valid_dst_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 

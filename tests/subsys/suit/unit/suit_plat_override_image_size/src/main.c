@@ -78,7 +78,7 @@ static void test_before(void *data)
 		suit_plat_decode_component_type_fake_mem_ok;
 	suit_plat_decode_address_size_fake.custom_fake = suit_plat_decode_address_size_fake_ok;
 
-	int err = suit_plat_create_component_handle(&component_id, &component);
+	int err = suit_plat_create_component_handle(&component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test setup error - create_component_handle failed: %d",
 		      err);
@@ -268,7 +268,7 @@ ZTEST(suit_platform_override_image_size_tests,
 	suit_plat_decode_component_type_fake.custom_fake =
 		suit_plat_decode_component_type_fake_mem_ok;
 	suit_plat_decode_address_size_fake.custom_fake = suit_plat_decode_address_size_fake_ok;
-	err = suit_plat_create_component_handle(&component_id, &component);
+	err = suit_plat_create_component_handle(&component_id, false, &component);
 	zassert_equal(SUIT_SUCCESS, err, "test setup error - create_component_handle failed: %d",
 		      err);
 }

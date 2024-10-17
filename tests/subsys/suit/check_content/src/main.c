@@ -50,7 +50,7 @@ ZTEST(suit_check_content_tests, test_mem_matching)
 	};
 
 	suit_component_t component;
-	int err = suit_plat_create_component_handle(&matching_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&matching_src_component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -88,7 +88,7 @@ ZTEST(suit_check_content_tests, test_mem_different_size)
 	};
 
 	suit_component_t component;
-	int err = suit_plat_create_component_handle(&valid_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&valid_src_component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -127,7 +127,8 @@ ZTEST(suit_check_content_tests, test_mem_not_matching)
 	};
 
 	suit_component_t component;
-	int err = suit_plat_create_component_handle(&not_matching_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&not_matching_src_component_id, false,
+						    &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
