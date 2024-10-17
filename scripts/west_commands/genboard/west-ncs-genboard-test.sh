@@ -128,8 +128,8 @@ do
 			fi
 		elif [[ ${socarr[0]} == nrf54l* ]]; then
 			west build -p -b $board/${socarr[0]}/cpuapp $HELLO_WORLD
-			west build -p -b $board/${socarr[0]}/cpuflpr $HELLO_WORLD
-			west build -p -b $board/${socarr[0]}/cpuflpr/xip $HELLO_WORLD
+			# west build -p -b $board/${socarr[0]}/cpuflpr $HELLO_WORLD
+			# west build -p -b $board/${socarr[0]}/cpuflpr/xip $HELLO_WORLD
 		elif [[ ${socarr[0]} == nrf91* ]]; then
 			if verlt $ncs_version "2.7.0"; then
 				west build -p -b $board $HELLO_WORLD
