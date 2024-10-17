@@ -13,6 +13,10 @@
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
 
+#include <zephyr/drivers/gpio.h>
+#define LED5_NODE DT_ALIAS(led5)
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED5_NODE, gpios);
+
 static nrf_gpio_pin_pull_t get_pull(gpio_flags_t flags)
 {
 	if (flags & GPIO_PULL_UP) {
@@ -115,6 +119,7 @@ static void gpio_nrfe_port_toggle_bits(uint16_t toggle_mask)
 void process_packet(nrfe_gpio_data_packet_t *packet)
 {
 	if (packet->port != 2) {
+
 		return;
 	}
 
@@ -132,6 +137,7 @@ void process_packet(nrfe_gpio_data_packet_t *packet)
 		break;
 	}
 	case NRFE_GPIO_PIN_TOGGLE: {
+		gpio_pin_toggle_dt(&led);
 		gpio_nrfe_port_toggle_bits(packet->pin);
 		break;
 	}
@@ -143,7 +149,16 @@ void process_packet(nrfe_gpio_data_packet_t *packet)
 
 int main(void)
 {
-	int ret = 0;
+	int ret;
+
+	if (!gpio_is_ready_dt(&led)) {
+		return 0;
+	}
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	if (ret < 0) {
+		return 0;
+	}
 
 	ret = backend_init(process_packet);
 	if (ret < 0) {
