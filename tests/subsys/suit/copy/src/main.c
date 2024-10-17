@@ -45,7 +45,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_OK)
 		.len = sizeof(valid_src_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_src_component_id, &src_handle);
+	int ret = suit_plat_create_component_handle(&valid_src_component_id, false, &src_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -80,7 +80,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_OK)
 		.len = sizeof(valid_dst_value),
 	};
 
-	ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
 	arbiter_mem_access_check_fake.return_val = ARBITER_STATUS_OK;
@@ -132,7 +132,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_dst_hand
 		.len = sizeof(valid_src_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_src_component_id, &src_handle);
+	int ret = suit_plat_create_component_handle(&valid_src_component_id, false, &src_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -167,7 +167,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_dst_hand
 		.len = sizeof(valid_dst_value),
 	};
 
-	ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
 	ret = suit_plat_release_component_handle(dst_handle);
@@ -203,7 +203,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_src_hand
 		.len = sizeof(valid_src_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_src_component_id, &src_handle);
+	int ret = suit_plat_create_component_handle(&valid_src_component_id, false, &src_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -238,7 +238,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_src_hand
 		.len = sizeof(valid_dst_value),
 	};
 
-	ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
 	ret = suit_plat_release_component_handle(src_handle);
@@ -271,7 +271,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_memptr_e
 		.len = sizeof(valid_src_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_src_component_id, &src_handle);
+	int ret = suit_plat_create_component_handle(&valid_src_component_id, false, &src_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -286,7 +286,7 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_memptr_e
 		.len = sizeof(valid_dst_value),
 	};
 
-	ret = suit_plat_create_component_handle(&valid_dst_component_id, &dst_handle);
+	ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
 	ret = suit_plat_copy(dst_handle, src_handle, NULL);

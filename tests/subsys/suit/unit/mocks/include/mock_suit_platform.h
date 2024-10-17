@@ -17,7 +17,8 @@ FAKE_VALUE_FUNC(int, suit_plat_check_digest, enum suit_cose_alg, struct zcbor_st
 FAKE_VALUE_FUNC(int, suit_plat_authenticate_manifest, struct zcbor_string *, enum suit_cose_alg,
 		struct zcbor_string *, struct zcbor_string *, struct zcbor_string *);
 FAKE_VALUE_FUNC(int, suit_plat_authorize_unsigned_manifest, struct zcbor_string *);
-FAKE_VALUE_FUNC(int, suit_plat_create_component_handle, struct zcbor_string *, suit_component_t *);
+FAKE_VALUE_FUNC(int, suit_plat_create_component_handle, struct zcbor_string *, bool,
+		suit_component_t *);
 FAKE_VALUE_FUNC(int, suit_plat_release_component_handle, suit_component_t);
 
 #ifdef CONFIG_CHECK_IMAGE_MATCH_TEST
