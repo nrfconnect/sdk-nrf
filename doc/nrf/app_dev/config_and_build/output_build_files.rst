@@ -101,6 +101,13 @@ Which files you are going to use depends on the application configuration and no
 |                                      | (customizable by user, sample name by default).                                                        |                                                                                     |
 |                                      | For example: :file:`127F-0141-01020003-light_switch.zigbee`.                                           |                                                                                     |
 +--------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| :file:`<version_string>_<number>.bin`| Set of application update images specific for :ref:`liblwm2m_carrier_readme`. It is required for the   | Divided FOTA over LwM2M using the :ref:`liblwm2m_carrier_readme` library for        |
+| in :file:`lwm2m_carrier_divided_dfu` | divided FOTA procedure in the SoftBank network.                                                        | single-core applications certified in the SoftBank network.                         |
+| folder                               | See :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA` for more information.                 |                                                                                     |
+|                                      | The *<version_string>* is the value of ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU_VERSION``.                |                                                                                     |
+|                                      | The *<number>* is a zero-padded three digit number that corresponds to the number of the file in the   |                                                                                     |
+|                                      | update sequence. For example: :file:`versionA_001.bin`.                                                |                                                                                     |
++--------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
 
 .. _app_build_mcuboot_output:
 
