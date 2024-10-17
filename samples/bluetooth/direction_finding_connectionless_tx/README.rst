@@ -48,11 +48,20 @@ Configuration
 Angle of arrival mode
 =====================
 
-To build this sample with AoA mode only, set :makevar:`EXTRA_CONF_FILE` to the :file:`overlay-aoa.conf` file using the respective :ref:`CMake option <cmake_options>`.
+This sample builds the angle of arrival (AoA) mode by default.
+
+.. bt_dir_finding_tx_aoa_mode_end
+
+.. bt_dir_finding_tx_aod_mode_start
+
+Angle of departure mode
+=======================
+
+To build this sample with the angle of departure (AoD) mode, set :makevar:`EXTRA_CONF_FILE` to ``overlay-aod.conf;overlay-bt_ll_sw_split.conf`` and set :makevar:`SNIPPET` to ``bt-ll-sw-split`` using the respective :ref:`CMake option <cmake_options>`.
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
-.. bt_dir_finding_tx_aoa_mode_end
+.. bt_dir_finding_tx_aod_mode_end
 
 .. bt_dir_finding_tx_ant_aod_start
 
