@@ -52,8 +52,6 @@ To build this sample with AoA mode only, set :makevar:`EXTRA_CONF_FILE` to the :
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
-To build this sample for :ref:`nRF5340 DK <ug_nrf5340>`, with AoA mode only, add content of :file:`overlay-aoa.conf` file to :file:`child_image/hci_ipc.conf` file.
-
 .. bt_dir_finding_tx_aoa_mode_end
 
 .. bt_dir_finding_tx_ant_aod_start
