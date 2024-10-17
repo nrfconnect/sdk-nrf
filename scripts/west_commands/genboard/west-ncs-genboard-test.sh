@@ -119,7 +119,9 @@ do
 		elif [[ ${socarr[0]} == nrf53* ]]; then
 			if verlt $ncs_version "2.7.0"; then
 				west build -p -b ${board}_cpuapp $HELLO_WORLD
-				west build -p -b ${board}_cpuapp_ns $HELLO_WORLD
+				if verlte "2.6.0" $ncs_version; then
+					west build -p -b ${board}_cpuapp_ns $HELLO_WORLD
+				fi
 				west build -p -b ${board}_cpunet $HELLO_WORLD
 			else
 				west build -p -b $board/${socarr[0]}/cpuapp $HELLO_WORLD
@@ -133,7 +135,9 @@ do
 		elif [[ ${socarr[0]} == nrf91* ]]; then
 			if verlt $ncs_version "2.7.0"; then
 				west build -p -b $board $HELLO_WORLD
-				west build -p -b ${board}_ns $HELLO_WORLD
+				if verlte "2.6.0" $ncs_version; then
+					west build -p -b ${board}_ns $HELLO_WORLD
+				fi
 			else
 				west build -p -b $board/${socarr[0]} $HELLO_WORLD
 				west build -p -b $board/${socarr[0]}/ns $HELLO_WORLD
