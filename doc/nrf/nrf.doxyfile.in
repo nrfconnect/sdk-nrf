@@ -2464,7 +2464,15 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_ZIGBEE_ROLE_END_DEVICE=y" \
                          "CONFIG_ZIGBEE_FACTORY_RESET=y" \
                          "CONFIG_NRF_CLOUD_GATEWAY=y" \
-                         "CONFIG_BT_CENTRAL"
+                         "CONFIG_BT_CENTRAL" \
+                         "CONFIG_LTE_LC_CONN_EVAL=y" \
+                         "CONFIG_LTE_LC_EDRX=y" \
+                         "CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS=y" \
+                         "CONFIG_LTE_LC_PERIODIC_SEARCH=y" \
+                         "CONFIG_LTE_LC_PSM=y" \
+                         "CONFIG_LTE_LC_RAI=y" \
+                         "CONFIG_LTE_LC_MODEM_SLEEP=y" \
+                         "CONFIG_LTE_LC_TAU_PRE_WARNING=y"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
