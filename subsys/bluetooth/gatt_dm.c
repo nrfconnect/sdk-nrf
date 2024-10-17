@@ -9,6 +9,7 @@
 #include <zephyr/logging/log.h>
 
 #include <bluetooth/gatt_dm.h>
+#include "host/long_wq.h"
 
 LOG_MODULE_REGISTER(bt_gatt_dm, CONFIG_BT_GATT_DM_LOG_LEVEL);
 
@@ -277,12 +278,29 @@ static void discovery_complete_error(struct bt_gatt_dm *dm, int err)
 	}
 }
 
+static struct gatt_discover_work_params {
+	struct k_work work;
+	struct bt_gatt_dm *dm;
+} gatt_work_data;
+
+static void gatt_discover_work(struct k_work *work)
+{
+	struct gatt_discover_work_params *wd =
+		CONTAINER_OF(work, struct gatt_discover_work_params, work);
+	__ASSERT(wd->dm->state_flags[STATE_ATTRS_LOCKED], "Attributes not locked");
+
+	int err = bt_gatt_discover(wd->dm->conn, &(wd->dm->discover_params));
+
+	if (err) {
+		LOG_ERR("GATT discover failed, error: %d.", err);
+		discovery_complete_error(wd->dm, -ENOMEM);
+	}
+}
+
 static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 				      const struct bt_gatt_attr *attr,
 				      struct bt_gatt_discover_params *params)
 {
-	int err;
-
 	if (!attr) {
 		discovery_complete_not_found(dm);
 		return BT_GATT_ITER_STOP;
@@ -336,13 +354,10 @@ static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 	dm->discover_params.type         = BT_GATT_DISCOVER_ATTRIBUTE;
 	dm->discover_params.start_handle = cur_attr->handle + 1;
 	LOG_DBG("Starting descriptors discovery");
-	err = bt_gatt_discover(dm->conn, &(dm->discover_params));
 
-	if (err) {
-		LOG_ERR("Descriptor discover failed, error: %d.", err);
-		discovery_complete_error(dm, -ENOMEM);
-		return BT_GATT_ITER_STOP;
-	}
+	gatt_work_data.dm = dm;
+	k_work_init(&gatt_work_data.work, gatt_discover_work);
+	bt_long_wq_submit(&gatt_work_data.work);
 
 	return BT_GATT_ITER_STOP;
 }
@@ -360,15 +375,10 @@ static uint8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 				dm->attrs[0].handle + 1;
 			dm->discover_params.type =
 				BT_GATT_DISCOVER_CHARACTERISTIC;
-			int err = bt_gatt_discover(dm->conn,
-						   &(dm->discover_params));
 
-			if (err) {
-				LOG_ERR("Characteristic discover failed,"
-					" error: %d.",
-					err);
-				discovery_complete_error(dm, err);
-			}
+			gatt_work_data.dm = dm;
+			k_work_init(&gatt_work_data.work, gatt_discover_work);
+			bt_long_wq_submit(&gatt_work_data.work);
 		} else {
 			discovery_complete(dm);
 		}
