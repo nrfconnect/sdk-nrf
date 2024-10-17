@@ -1,0 +1,12 @@
+common:
+  tags:
+    - drivers
+    - can
+  depends_on: can
+
+tests:
+  drivers.can.api_additional:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
