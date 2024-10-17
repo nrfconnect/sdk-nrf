@@ -93,7 +93,6 @@ if(TARGET psa_crypto_library_config)
     target_compile_definitions(psa_crypto_library_config
         INTERFACE
             MBEDTLS_PSA_CRYPTO_DRIVERS
-            MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
             $<$<BOOL:${CRYPTO_TFM_BUILTIN_KEYS_DRIVER}>:PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER>
     )
 endif()
