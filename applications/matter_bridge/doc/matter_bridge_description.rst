@@ -734,8 +734,7 @@ Configure the functionality of the Matter-Bridge device
 
 To enable the Matter smart plugin functionality, run the following command with *board_target* replaced with the board target name:
 
-.. parsed-literal::
-   :class: highlight
+.. tabs::
 
    .. group-tab:: nRF54 DKs
 
