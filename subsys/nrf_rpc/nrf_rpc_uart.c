@@ -214,7 +214,7 @@ static void work_handler(struct k_work *work)
 					crc_received);
 				uart_tr->rx_packet_len = 0;
 				uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
-				return;
+				continue;
 			}
 
 			ack_tx(uart_tr, crc_received);
