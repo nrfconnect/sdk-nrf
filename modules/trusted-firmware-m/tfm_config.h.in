@@ -78,6 +78,9 @@
 /* The stack size of the Crypto Secure Partition */
 #cmakedefine CRYPTO_STACK_SIZE @CRYPTO_STACK_SIZE@
 
+/* ABI compatibility between client and crypto service */
+#cmakedefine01 CRYPTO_LIBRARY_ABI_COMPAT
+
 /* FWU Partition Configs */
 
 /* Size of the FWU internal data transfer buffer */
