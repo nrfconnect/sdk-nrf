@@ -305,6 +305,7 @@ NRF = [
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
     ("ug_ble_controller", "protocols/bt/index"), # Bluetooth LE Controller
     ("protocols/ble/index", "protocols/bt/index"),
+    ("protocols/bt/ble/index", "protocols/bt/bt_stack_arch"),
     ("protocols/bt/ble/radio_notification_conn_cb", "libraries/bluetooth_services/radio_notification_conn_cb"),
     ("ug_bt_mesh", "protocols/bt/bt_mesh/index"), # Bluetooth Mesh (landing)
     ("protocols/bt_mesh/index", "protocols/bt/bt_mesh/index"),
@@ -414,6 +415,7 @@ NRF = [
     ("ug_zigbee_tools", "protocols/zigbee/tools"), # Zigbee tools
     ("applications/nrf5340_audio/README", "applications/nrf5340_audio/index"), # nRF5340 Audio applications (landing)
     ("samples/samples_bl", "samples/bl"), # Bluetooth samples (landing)
+    ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
     ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
     ("samples/samples_edge", "samples/edge"), # Edge Impulse samples (landing)
