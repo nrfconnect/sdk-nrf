@@ -27,9 +27,11 @@ static const struct device *const i2c_device = DEVICE_DT_GET(I2C_TEST_NODE);
  */
 static uint8_t read_sensor_register(uint8_t register_address)
 {
+	int rc;
 	uint8_t response;
 
-	i2c_reg_read_byte(i2c_device, DEVICE_ADDRESS, register_address, &response);
+	rc = i2c_reg_read_byte(i2c_device, DEVICE_ADDRESS, register_address, &response);
+	__ASSERT_NO_MSG(rc == 0);
 	printk("I2C read reg, addr: 0x%x, val: 0x%x\n", register_address, response);
 	return response;
 }
