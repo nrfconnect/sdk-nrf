@@ -357,9 +357,12 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
 
+	crc_val = crc16_ccitt(0xffff, data, length);
+
 #if CONFIG_NRF_RPC_UART_RELIABLE
 	int attempts = 0;
 
+	crc_val = tx_flip(uart_tr, crc_val);
 	acked = false;
 
 	do {
@@ -374,8 +377,6 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 			send_byte(uart_tr->uart, data[i]);
 		}
 
-		crc_val = crc16_ccitt(0xffff, data, length);
-		crc_val = tx_flip(uart_tr, crc_val);
 		sys_put_le16(crc_val, crc);
 		send_byte(uart_tr->uart, crc[0]);
 		send_byte(uart_tr->uart, crc[1]);
@@ -396,7 +397,6 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 		} else {
 			LOG_WRN("Ack timeout expired.");
 		}
-
 	} while (!acked && attempts < CONFIG_NRF_RPC_UART_TX_ATTEMPTS);
 #endif /* CONFIG_NRF_RPC_UART_RELIABLE */
 
