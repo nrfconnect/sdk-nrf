@@ -5,6 +5,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if [ -z "$1" ]; then
+    echo "error: This script is not meant to be called directly"
+    exit 1
+fi
+
 SIM_ID="$1"
 VERBOSITY=2
 

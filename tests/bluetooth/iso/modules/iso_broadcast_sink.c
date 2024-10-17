@@ -264,7 +264,7 @@ static struct bt_iso_chan *bis[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
 static struct bt_iso_big_sync_param big_sync_param = {
 	.bis_channels = bis,
 	.num_bis = 1,
-	.bis_bitfield = BIT_MASK(1),
+	.bis_bitfield = (BIT_MASK(1)), /* TODO: Change to dynamic */
 	.mse = BT_ISO_SYNC_MSE_ANY,
 	.sync_timeout = 100, /* in 10 ms units */
 	.encryption = false,
