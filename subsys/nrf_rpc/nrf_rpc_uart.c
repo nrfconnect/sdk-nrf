@@ -24,13 +24,13 @@ enum {
 
 enum flip_state {
 	FLIP_ZERO,
-	FLIP_ONE,
-	FLIP_ANY
+	FLIP_ONE
 };
 
 struct trx_flips {
-	uint8_t tx_flip : 2;
-	uint8_t rx_flip : 2;
+	uint8_t tx_flip : 1;
+	uint8_t rx_flip_any : 1;
+	uint16_t last_rx_crc;
 };
 
 typedef enum {
@@ -129,18 +129,17 @@ static uint16_t tx_flip(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
 
 static bool rx_flip_check(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
 {
+	uint16_t last_rx_crc;
+
 	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
 		return false;
 	}
 
-	if (uart_tr->flips.rx_flip == FLIP_ZERO && (crc_val & 0x8000u) == 0) {
-		uart_tr->flips.rx_flip = FLIP_ONE;
-		return false;
-	} else if (uart_tr->flips.rx_flip == FLIP_ONE && (crc_val & 0x8000u) == 0x8000u) {
-		uart_tr->flips.rx_flip = FLIP_ZERO;
-		return false;
-	} else if (uart_tr->flips.rx_flip == FLIP_ANY) {
-		uart_tr->flips.rx_flip = crc_val & 0x8000u ? FLIP_ZERO : FLIP_ONE;
+	last_rx_crc = uart_tr->flips.last_rx_crc;
+	uart_tr->flips.last_rx_crc = crc_val;
+
+	if (uart_tr->flips.rx_flip_any == 1 || last_rx_crc != crc_val) {
+		uart_tr->flips.rx_flip_any = 0;
 		return false;
 	}
 
@@ -319,7 +318,7 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 		k_mutex_init(&uart_tr->ack_tx_lock);
 		k_sem_init(&uart_tr->ack_sem, 0, 1);
 		uart_tr->flips.tx_flip = FLIP_ZERO;
-		uart_tr->flips.rx_flip = FLIP_ANY;
+		uart_tr->flips.rx_flip_any = 1;
 	}
 
 	k_work_queue_init(&uart_tr->rx_workq);
