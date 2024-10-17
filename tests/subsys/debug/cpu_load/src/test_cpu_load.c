@@ -46,10 +46,12 @@ ZTEST(cpu_load, test_cpu_load)
 	config.frequency = NRFX_MHZ_TO_HZ(1);
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
 
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
 	err = nrfx_timer_init(&timer, &config, timer_handler);
 	zassert_equal(err, NRFX_SUCCESS, "Unexpected error:%d", err);
 
-	err = nrfx_dppi_channel_alloc(&ch);
+	err = nrfx_dppi_channel_alloc(&dppi, &ch);
 	zassert_equal(err, NRFX_SUCCESS, "Unexpected error:%d", err);
 
 	nrfx_gppi_channel_endpoints_setup(ch, evt, tsk);
@@ -62,7 +64,7 @@ ZTEST(cpu_load, test_cpu_load)
 		nrfx_gppi_channels_disable(BIT(ch));
 		nrfx_gppi_event_endpoint_clear(ch, evt);
 		nrfx_gppi_task_endpoint_clear(ch, tsk);
-		err = nrfx_dppi_channel_free(ch);
+		err = nrfx_dppi_channel_free(&dppi, ch);
 	}
 #endif
 
