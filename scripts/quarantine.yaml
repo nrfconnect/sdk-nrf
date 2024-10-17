@@ -40,23 +40,6 @@
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
 
 - scenarios:
-    - sample.matter.lock.smp_dfu
-    - sample.matter.light_bulb.aws
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: "Flash or RAM overflow, temporarily excluded"
-
-- scenarios:
-    - sample.matter.lock.thread_wifi_switched.lto.smp_dfu
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "Flash or RAM overflow, temporarily excluded"
-
-- scenarios:
-    - applications.matter_bridge.lto.nrf5340.wifi
-  comment: "nRF7002EK is not support in the upstream nRF70 driver yet"
-
-- scenarios:
     - applications.zigbee_weather_station
     - applications.zigbee_weather_station.debug
   platforms:
