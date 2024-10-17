@@ -183,10 +183,12 @@ config BT_FAST_PAIR_BOND_MANAGER
 	  Bluetooth bonds on Fast Pair factory reset. Keep in mind that when the Fast Pair subsystem
 	  is disabled, the Bluetooth bonds are not tracked. Do not perform operations on the Fast
 	  Pair Bluetooth bonds apart from the Fast Pair factory reset when the Fast Pair subsystem
-	  is disabled. When this option is enabled, non-volatile storage is used to store the bond
-	  information. You can enable this option during DFU, but you cannot disable it during DFU
-	  if you used it earlier unless you erase whole Fast Pair non-volatile storage. Otherwise,
-	  the Fast Pair enable operation will fail.
+	  is disabled. Also do not perform Bluetooth bonding when the Fast Pair subsystem is
+	  disabled as it may lead to those new bonds being incorrectly considered as Fast Pair bonds
+	  by the Fast Pair subsystem. When this option is enabled, non-volatile storage is used to
+	  store the bond information. You can enable this option during DFU, but you cannot disable
+	  it during DFU if you used it earlier unless you erase whole Fast Pair non-volatile
+	  storage. Otherwise, the Fast Pair enable operation will fail.
 
 module = BT_FAST_PAIR
 module-str = Fast Pair Service
