@@ -29,7 +29,7 @@ ZTEST(invoke_tests, test_invoke_OK)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -52,7 +52,7 @@ ZTEST(invoke_tests, test_invoke_NOK_unsupported_component_type)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -73,7 +73,7 @@ ZTEST(invoke_tests, test_invoke_NOK_unsupported_cpu_id)
 		.len = sizeof(valid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 

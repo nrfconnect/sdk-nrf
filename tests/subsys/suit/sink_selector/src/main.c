@@ -34,7 +34,7 @@ ZTEST(sink_selector_tests, test_select_memptr_sink_OK)
 	};
 	struct stream_sink sink;
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -56,7 +56,7 @@ ZTEST(sink_selector_tests, test_select_flash_sink_OK)
 	};
 	struct stream_sink sink;
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -80,7 +80,7 @@ ZTEST(sink_selector_tests, test_select_ram_sink_OK)
 	};
 	struct stream_sink sink;
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -103,7 +103,7 @@ ZTEST(sink_selector_tests, test_select_sdfw_sink_OK)
 	};
 	struct stream_sink sink;
 
-	int ret = suit_plat_create_component_handle(&valid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&valid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
@@ -126,7 +126,7 @@ ZTEST(sink_selector_tests, test_select_invalid_component_id)
 		.len = sizeof(invalid_value),
 	};
 
-	int ret = suit_plat_create_component_handle(&invalid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&invalid_component_id, false, &handle);
 
 	zassert_equal(ret, SUIT_ERR_UNSUPPORTED_COMPONENT_ID,
 		      "create_component_handle unexpected error %i", ret);
@@ -146,7 +146,7 @@ ZTEST(sink_selector_tests, test_select_unsupported_component)
 	};
 	struct stream_sink sink;
 
-	int ret = suit_plat_create_component_handle(&invalid_component_id, &handle);
+	int ret = suit_plat_create_component_handle(&invalid_component_id, true, &handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
