@@ -408,8 +408,13 @@ Currently, the following types of firmware upgrades are supported:
 
 * MCUboot-style upgrades (:c:macro:`LWM2M_OS_DFU_IMG_TYPE_APPLICATION`)
 * Modem delta upgrades (:c:macro:`LWM2M_OS_DFU_IMG_TYPE_MODEM_DELTA`)
+* Proprietary application upgrades over multiple files (:c:macro:`LWM2M_OS_DFU_IMG_TYPE_APPLICATION_FILE`)
 
 The type of upgrade is determined when the library calls the :c:func:`lwm2m_os_dfu_img_type` function in the abstraction layer upon receiving a new firmware image.
 
 If MCUboot-style upgrades are enabled, the LwM2M carrier library uses the function :c:func:`lwm2m_os_dfu_application_update_validate` to validate the application image update.
 A ``__weak`` implementation of the function is included, which checks if the currently running image is not yet confirmed as valid (which is the case after an upgrade) and marks it appropriately.
+
+The proprietary application upgrades over multiple files are currently only supported if the :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA` Kconfig option is enabled.
+This allows the library to perform the non-standard divided FOTA procedure in the SoftBank network.
+The application update files required for this type of firmware upgrade can be generated during the building process by enabling the ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option.

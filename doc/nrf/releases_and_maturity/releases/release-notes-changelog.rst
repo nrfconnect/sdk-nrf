@@ -69,6 +69,8 @@ Build and configuration system
   * ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
   * ``SB_CONFIG_SECURE_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
 
+* Added the ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
+
 * Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
 
   .. note::

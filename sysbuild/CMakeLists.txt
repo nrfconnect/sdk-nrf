@@ -579,6 +579,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/mesh_dfu_metadata.cmake)
   endif()
 
+  if(SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/lwm2m_carrier_divided_dfu.cmake)
+  endif()
+
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/extensions.cmake)
   if(SB_CONFIG_PARTITION_MANAGER)
     # Run partition manager for each image before running CMake.
