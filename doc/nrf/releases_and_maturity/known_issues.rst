@@ -282,6 +282,18 @@ DRGN-23518: ACL reassembly may deadlock
 
   **Workaround:** Ensure that the value of :kconfig:option:`CONFIG_BT_BUF_ACL_RX_COUNT` is greater than the value of :kconfig:option:`CONFIG_BT_MAX_CONN`.
 
+.. rst-class:: v2-8-0
+
+DRGN-23511: Building of multilink Bluetooth applications fails
+  This happens when the :kconfig:option:`CONFIG_BT_BUF_RX_COUNT` Kconfig option is not explicitly set.
+
+  **Workaround:** Set the Kconfig value explicitly.
+
+.. rst-class:: v2-8-0
+
+NCSDK-29354: Bluetooth traffic stalls while writing or erasing flash
+  This only occurs when the Bluetooth Controller runs on the same core as the flash operations.
+
 Bluetooth Mesh
 ==============
 
