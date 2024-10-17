@@ -375,6 +375,7 @@ Sidewalk:
     - nrf/subsys/nrf_security/
     - nrf/subsys/partition_manager/
     - nrf/subsys/pcd/
+    - nrf/subsys/trusted_storage/
     - nrfxlib/crypto/
     - sidewalk/
     - zephyr/include/dfu/
