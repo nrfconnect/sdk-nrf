@@ -66,6 +66,17 @@ config MPSL_CX_NRF700X
 	help
 	  Radio Coexistence supporting nRF70 interface.
 
+config MPSL_CX_THREAD
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	depends on !BT
+	bool "Thread Radio Coexistence [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Radio Coexistence interface implementation according to Thread Radio
+	  Coexistence Practical recommendations for using a 3-wire PTA
+	  implementation for co-located 2.4 GHz radios.
+
 config MPSL_CX_3WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
