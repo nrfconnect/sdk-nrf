@@ -1,0 +1,402 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+comment "Nordic-added meta types"
+
+config PSA_HAS_AEAD_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_CCM || \
+		   PSA_WANT_ALG_GCM || \
+		   PSA_WANT_ALG_CHACHA20_POLY1305
+	help
+	  Prompt-less configuration that states that AEAD is supported.
+
+config PSA_HAS_ASYM_ENCRYPT_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_RSA_OAEP || \
+		   PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
+	help
+	  Prompt-less configuration that states that asymmetric encryption
+	  is supported.
+
+config PSA_HAS_ASYM_SIGN_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_DETERMINISTIC_ECDSA	|| \
+		   PSA_WANT_ALG_ECDSA 			|| \
+		   PSA_WANT_ALG_ECDSA_ANY		|| \
+		   PSA_WANT_ALG_ED25519PH               || \
+		   PSA_WANT_ALG_ED448PH                 || \
+		   PSA_WANT_ALG_PURE_EDDSA              || \
+		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN	|| \
+		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW   || \
+		   PSA_WANT_ALG_RSA_PSS                 || \
+		   PSA_WANT_ALG_RSA_PSS_ANY_SALT
+	help
+	  Prompt-less configuration that states that asymmetric signing
+	  is supported.
+
+config PSA_HAS_CIPHER_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_ECB_NO_PADDING		|| \
+		   PSA_WANT_ALG_CBC_NO_PADDING		|| \
+		   PSA_WANT_ALG_CBC_PKCS7		|| \
+		   PSA_WANT_ALG_CCM_STAR_NO_TAG 	|| \
+		   PSA_WANT_ALG_CTR			|| \
+		   PSA_WANT_ALG_XTS			|| \
+		   PSA_WANT_ALG_STREAM_CIPHER
+	help
+	  Prompt-less configuration that states that cipher is supported.
+
+config PSA_HAS_HASH_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_MD5		|| \
+		   PSA_WANT_ALG_SHA_1		|| \
+		   PSA_WANT_ALG_SHA_224		|| \
+		   PSA_WANT_ALG_SHA_256		|| \
+		   PSA_WANT_ALG_SHA_384		|| \
+		   PSA_WANT_ALG_SHA_512		|| \
+		   PSA_WANT_ALG_SHA_512_224	|| \
+		   PSA_WANT_ALG_SHA_512_256	|| \
+		   PSA_WANT_ALG_SHA3_224	|| \
+		   PSA_WANT_ALG_SHA3_256	|| \
+		   PSA_WANT_ALG_SHA3_384	|| \
+		   PSA_WANT_ALG_SHA3_512
+	help
+	  Prompt-less configuration that states that hash is supported.
+
+config PSA_HAS_KEY_AGREEMENT
+	bool
+	default y
+	depends on PSA_WANT_ALG_ECDH
+	help
+	  Promt-less configuration that states that key agreement is supported.
+
+config PSA_HAS_KEY_DERIVATION
+	bool
+	default y
+	depends on PSA_WANT_ALG_HKDF			|| \
+		   PSA_WANT_ALG_HKDF_EXPAND		|| \
+		   PSA_WANT_ALG_HKDF_EXTRACT		|| \
+		   PSA_WANT_ALG_PBKDF2_HMAC		|| \
+		   PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128	|| \
+		   PSA_WANT_ALG_TLS12_PRF		|| \
+		   PSA_WANT_ALG_TLS12_PSK_TO_MS		|| \
+		   PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS
+	help
+	  Prompt-less configuration that states that key derivation is supported.
+
+config PSA_HAS_KEY_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_AES 			|| \
+		   PSA_WANT_KEY_TYPE_CHACHA20			|| \
+		   PSA_WANT_KEY_TYPE_DERIVE			|| \
+		   PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT	|| \
+		   PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT	|| \
+		   PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE	|| \
+		   PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE	|| \
+		   PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY		|| \
+		   PSA_WANT_KEY_TYPE_HMAC			|| \
+		   PSA_WANT_KEY_TYPE_PASSWORD			|| \
+		   PSA_WANT_KEY_TYPE_PASSWORD_HASH		|| \
+		   PSA_WANT_KEY_TYPE_PEPPER			|| \
+		   PSA_WANT_KEY_TYPE_RAW_DATA			|| \
+		   PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT	|| \
+		   PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT	|| \
+		   PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE	|| \
+		   PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE	|| \
+		   PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY		|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT	|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT	|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE	|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE	|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY		|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT	|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT	|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT	|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE	|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE	|| \
+		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+	help
+	  Prompt-less configuration that states that key types are supported.
+
+config PSA_HAS_MAC_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_CMAC	|| \
+		   PSA_WANT_ALG_HMAC
+	help
+	  Prompt-less configuration that states that MAC is supported.
+
+config PSA_HAS_PAKE_SUPPORT
+	bool
+	default y
+	depends on PSA_WANT_ALG_JPAKE			|| \
+		   PSA_WANT_ALG_SPAKE2P_HMAC		|| \
+		   PSA_WANT_ALG_SPAKE2P_CMAC		|| \
+		   PSA_WANT_ALG_SPAKE2P_MATTER 		|| \
+		   PSA_WANT_ALG_SRP_6 			|| \
+		   PSA_WANT_ALG_SRP_PASSWORD_HASH
+	help
+	  Prompt-less configuration that states that PAKE is supported.
+
+comment "Nordic added alg types"
+
+config PSA_WANT_ALG_ECDSA_ANY
+	bool "PSA ECDSA support, without hashing" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_ED25519PH
+	bool "PSA ED25519PH support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_ED448PH
+	bool "PSA ED448PH support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_PURE_EDDSA
+	bool "PSA PURE_EDDSA support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW
+	bool "PSA RSA raw PKCS#1 v1.5 message signature support, without hashing)" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_RSA_PSS_ANY_SALT
+	bool "PSA RSA PSS message signature support, any salt length" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SHA_512_224
+	bool "PSA SHA-512/224 support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SHA_512_256
+	bool "PSA SHA-512/256 support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SPAKE2P_HMAC
+	bool "PSA SPAKE2+ HMAC support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SPAKE2P_CMAC
+	bool "PSA SPAKE2+ CMAC support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SPAKE2P_MATTER
+	bool "PSA SPAKE2+ MATTER support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SP800_108_COUNTER_HMAC
+	bool "Add PSA SP800-108r1 CTR HMAC KBKDF support"
+	default y if PSA_CRYPTO_ENABLE_ALL
+	depends on PSA_WANT_ALG_HMAC
+
+config PSA_WANT_ALG_SP800_108_COUNTER_CMAC
+	bool "Add PSA SP800-108r1 CTR CMAC KBKDF support"
+	default y if PSA_CRYPTO_ENABLE_ALL
+	depends on PSA_WANT_ALG_CMAC
+
+config PSA_WANT_ALG_SRP_6
+	bool "PSA SRP-6 support" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SRP_PASSWORD_HASH
+	bool "PSA SRP password hash support" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_XTS
+	bool "PSA XTS block cipher mode support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+comment "Nordic added ECC curve types"
+
+config PSA_WANT_ECC_BRAINPOOL_P_R1_160
+	bool "PSA ECC BrainpoolP160r1 support (weak)"  if !PSA_PROMPTLESS
+	help
+	  Warning: The 160-bit curve brainpoolP160r1 is weak and deprecated and
+	  is only recommended for use in legacy protocols.
+
+config PSA_WANT_ECC_BRAINPOOL_P_R1_192
+	bool "PSA ECC BrainpoolP192r1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_BRAINPOOL_P_R1_224
+	bool "PSA ECC BrainpoolP224r1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_BRAINPOOL_P_R1_320
+	bool "PSA ECC BrainpoolP320r1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_TWISTED_EDWARDS_255
+	bool "PSA ECC Edwards25519 (Ed25519) support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_TWISTED_EDWARDS_448
+	bool "PSA ECC Edwards448 (Ed448) support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECP_K1_224
+	bool "PSA ECC secp224k1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECP_R2_160
+	bool "PSA ECC secp160r2 support (weak)" if !PSA_PROMPTLESS
+	help
+	  Warning: his family of curves is weak and deprecated.
+
+config PSA_WANT_ECC_SECT_K1_163
+	bool "PSA ECC sect163k1 support (weak)" if !PSA_PROMPTLESS
+	help
+	  Warning: The 163-bit curve sect163k1 is weak and deprecated and is
+	  only recommended for use in legacy protocols.
+
+config PSA_WANT_ECC_SECT_K1_233
+	bool "PSA ECC sect233k1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_K1_239
+	bool "PSA ECC sect239k1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_K1_283
+	bool "PSA ECC sect283k1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_K1_409
+	bool "PSA ECC sect409k1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_K1_571
+	bool "PSA ECC sect571k1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_R1_163
+	bool "PSA ECC sect163r1 support (weak)" if !PSA_PROMPTLESS
+	help
+	  Warning: The 163-bit curve sect163r1 is weak and deprecated and is
+	  only recommended for use in legacy protocols.
+
+config PSA_WANT_ECC_SECT_R1_233
+	bool "PSA ECC sect233r1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_R1_283
+	bool "PSA ECC sect283r1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_R1_409
+	bool "PSA ECC sect409r1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_R1_571
+	bool "PSA ECC sect571r1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ECC_SECT_R2_163
+	bool "PSA ECC sect163r2 support (weak)" if !PSA_PROMPTLESS
+	help
+	  Warning: The 163-bit curve sect163r2 is weak and deprecated and is
+	  only recommended for use in legacy protocols.
+
+config PSA_WANT_ECC_FRP_V1_256
+	bool "PSA ECC FRP256v1 support" if !PSA_PROMPTLESS
+
+config PSA_WANT_ALG_CHACHA20
+	bool "PSA CHACHA20 stream cipher support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SHAKE256_512
+	bool "PSA SHAKE256 512 bits support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+comment "Nordic addded RNG configuration"
+
+config PSA_WANT_GENERATE_RANDOM
+	bool "PSA RNG support" if !MBEDTLS_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+comment "Nordic added key types"
+
+config PSA_WANT_KEY_TYPE_PEPPER
+	bool "PSA pepper key type support" if !MBEDTLS_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT	|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT	|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE	|| \
+		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE
+	help
+	  SPAKE2+ key pair: Basic key support
+
+config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT
+	bool "SPAKE2+ key pair import support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SPAKE2+ key pair: Import key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT
+	bool "SPAKE2+ key pair export support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SPAKE2+ key pair: Export key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE
+	bool "SPAKE2+ key pair generate support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SPAKE2+ key pair: Generate key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE
+	bool "SPAKE2+ key pair derive support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SPAKE2+ key pair: Derive key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	bool "SPAKE2+ public key support" if !MBEDTLS_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SPAKE2+ public key support.
+
+config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_BASIC
+	bool
+	default y
+	depends on PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT	|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT	|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE	|| \
+		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE
+
+config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT
+	bool "SRP key pair import support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SRP key pair: import key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT
+	bool "SRP key pair export support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SRP key pair: export key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE
+	bool "SRP key pair export support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SRP key pair: export key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE
+	bool "SRP key pair derive support" if !MBEDTLS_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+	default y if PSA_CRYPTO_ENABLE_ALL
+	help
+	  SRP key pair: derive key for both the private and public key.
+
+config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+	bool "SRP public key support" if !MBEDTLS_PROMPTLESS
+	help
+	  SRP public key support.
