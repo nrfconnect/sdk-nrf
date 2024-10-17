@@ -79,18 +79,16 @@ endif # BOOTLOADER_MCUBOOT
 
 if SOC_SERIES_NRF54HX
 
-# Currently Matter OTA is not available for nRF54 SoC series
-config MATTER_OTA
-	default n if SOC_SERIES_NRF54HX
-
 config SUIT_ENVELOPE
 	default y
 
 config SUIT_BUILD_FLASH_COMPANION
 	default y
 
-endif # SOC_SERIES_NRF54HX
+config SUIT_MULTI_IMAGE_PACKAGE_BUILD
+	default y if MATTER_OTA
 
+endif # SOC_SERIES_NRF54HX
 
 #### Enable generating factory data
 config MATTER_FACTORY_DATA_GENERATE
