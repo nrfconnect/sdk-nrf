@@ -66,6 +66,8 @@ Build and configuration system
      This feature has never been functional.
      To configure the signing key, use any available Kconfig method.
 
+* Added the ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M Carrier divided FOTA procedure.
+
 
 Bootloaders and DFU
 ===================
