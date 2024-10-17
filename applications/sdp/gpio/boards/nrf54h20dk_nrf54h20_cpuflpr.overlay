@@ -28,6 +28,25 @@ ipc0: &cpuapp_cpuflpr_ipc {
 	status = "disabled";
 };
 
-&grtc {
+&gpio9 {
+	status = "okay";
+};
+
+&gpiote130 {
 	status = "disabled";
+	/delete-property/gpiote-instance;
+};
+
+/ {
+	leds {
+ 		compatible = "gpio-leds";
+ 
+ 		led5: led_5 {
+ 			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
+		};
+ 	};
+
+	aliases {
+		led5 = &led5;
+	};
 };
