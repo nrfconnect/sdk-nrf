@@ -203,7 +203,7 @@ endif()
 add_subdirectory(drivers)
 
 # Add legacy Mbed TLS APIs
-if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C)
+if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR (CONFIG_NRF_OBERON AND CONFIG_BUILD_WITH_TFM))
   add_subdirectory(legacy)
 endif()
 
