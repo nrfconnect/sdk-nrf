@@ -686,6 +686,7 @@ Thread samples
 * :ref:`ot_cli_sample` sample:
 
   * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` in the low-power snippet.
+  * Added experimental support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 SoC.
 
 Zigbee samples
 --------------
