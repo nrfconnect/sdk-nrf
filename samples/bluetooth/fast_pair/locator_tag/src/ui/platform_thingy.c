@@ -40,6 +40,7 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
 #define LED_RECOVERY_MODE			LED_COLOR_ID_RED
 #define LED_FP_ADV				LED_COLOR_ID_WHITE
 #define LED_DFU_MODE				LED_COLOR_ID_PURPLE
+#define LED_MOTION_DETECTOR_ACTIVE		LED_COLOR_ID_CYAN
 
 /* UI state status LEDs handling. */
 #define LED_BLINK_STATE_STATUS_ON_MS		500
@@ -148,12 +149,13 @@ static K_WORK_DELAYABLE_DEFINE(btn_press_beep_work, btn_press_beep_work_handle);
 
 static ATOMIC_DEFINE(ui_state_status, APP_UI_STATE_COUNT);
 static const struct led_state_id_map led_state_id_maps[] = {
-	{.state = APP_UI_STATE_APP_RUNNING,	.id = LED_RUN_STATUS},
-	{.state = APP_UI_STATE_PROVISIONED,	.id = LED_PROVISIONED},
-	{.state = APP_UI_STATE_ID_MODE,		.id = LED_ID_MODE},
-	{.state = APP_UI_STATE_RECOVERY_MODE,	.id = LED_RECOVERY_MODE},
-	{.state = APP_UI_STATE_FP_ADV,		.id = LED_FP_ADV},
-	{.state = APP_UI_STATE_DFU_MODE,	.id = LED_DFU_MODE},
+	{.state = APP_UI_STATE_APP_RUNNING,		.id = LED_RUN_STATUS},
+	{.state = APP_UI_STATE_PROVISIONED,		.id = LED_PROVISIONED},
+	{.state = APP_UI_STATE_ID_MODE,			.id = LED_ID_MODE},
+	{.state = APP_UI_STATE_RECOVERY_MODE,		.id = LED_RECOVERY_MODE},
+	{.state = APP_UI_STATE_FP_ADV,			.id = LED_FP_ADV},
+	{.state = APP_UI_STATE_DFU_MODE,		.id = LED_DFU_MODE},
+	{.state = APP_UI_STATE_MOTION_DETECTOR_ACTIVE,	.id = LED_MOTION_DETECTOR_ACTIVE},
 };
 
 static void speaker_beep_play(uint8_t cnt, uint32_t on_ms, uint32_t off_ms)
