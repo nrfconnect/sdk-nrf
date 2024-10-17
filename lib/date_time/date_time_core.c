@@ -59,6 +59,8 @@ static void date_time_core_notify_event(enum date_time_evt_type time_source)
 
 	if (app_evt_handler != NULL) {
 		app_evt_handler(&evt);
+	} else {
+		LOG_DBG("No date-time event handler registered");
 	}
 }
 
@@ -104,10 +106,11 @@ static void date_time_core_schedule_retry(void)
 		return;
 	}
 
-	if (date_time_core_schedule_work(CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS) == 0) {
-		LOG_DBG("Date time update retry in: %d seconds",
-			CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
-	}
+	/* Scheduling new update cannot fail because we are never doing retries
+	 * if we have fresh enough time
+	 */
+	date_time_core_schedule_work(CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
+	LOG_DBG("Date time update retry in: %d seconds", CONFIG_DATE_TIME_RETRY_INTERVAL_SECONDS);
 }
 
 static void date_time_update_work_fn(struct k_work *work)
@@ -241,6 +244,8 @@ int date_time_core_now_local(int64_t *local_time_ms)
 
 int date_time_core_update_async(date_time_evt_handler_t evt_handler)
 {
+	LOG_DBG("Requesting date-time update asynchronously");
+
 	if (evt_handler) {
 		app_evt_handler = evt_handler;
 	} else if (app_evt_handler == NULL) {

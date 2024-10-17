@@ -76,7 +76,7 @@ int date_time_modem_get(int64_t *date_time_ms, int *date_time_tz)
 	/* Want to match 6 or 7 args */
 	if (rc != 6 && rc != 7) {
 		LOG_WRN("Did not get time from cellular network (error: %d). "
-			"This is normal as some cellular networks don't provide it or "
+			"This may be normal as some cellular networks don't provide it or "
 			"time may not be available yet.", rc);
 		return -ENODATA;
 	}
@@ -125,9 +125,6 @@ static void date_time_at_xtime_handler(const char *notif)
 	int err;
 	int tz;
 
-	if (notif == NULL) {
-		return;
-	}
 	modem_valid_network_time = true;
 
 	/* Check if current time is valid */
@@ -163,7 +160,8 @@ static void date_time_at_xtime_handler(const char *notif)
 	time_buf_len = hex2bin(time_str_start, 14, time_buf, sizeof(time_buf));
 
 	if (time_buf_len < sizeof(time_buf)) {
-		LOG_ERR("%%XTIME notification decoding failed (ret=%d): %s", time_buf_len, notif);
+		LOG_ERR("Time value decoding failed from %%XTIME notification (ret=%d): %s",
+			time_buf_len, notif);
 		return;
 	}
 
@@ -174,6 +172,12 @@ static void date_time_at_xtime_handler(const char *notif)
 	date_time.tm_min  = semioctet_to_dec(time_buf[4]);
 	date_time.tm_sec  = semioctet_to_dec(time_buf[5]);
 
+	/* 3GPP TS 23.040 Section 9.2.3.11 says about the time zone as follows:
+	 * The Time Zone indicates the difference, expressed in quarters of an hour,
+	 * between the local time and GMT. In the first of the two semi octets,
+	 * the first bit (bit 3 of the seventh octet of the TP Service Centre Time Stamp field)
+	 * represents the algebraic sign of this difference (0: positive, 1: negative).
+	 */
 	tz = semioctet_to_dec(time_buf[6] & 0xF7);
 	if (time_buf[6] & 0x08) {
 		tz = -tz;
@@ -238,9 +242,13 @@ void date_time_modem_xtime_subscribe_work_fn(struct k_work *work_item)
 	}
 }
 
+#if defined(CONFIG_UNITY)
+void date_time_modem_on_cfun(int mode, void *ctx)
+#else
 NRF_MODEM_LIB_ON_CFUN(date_time_cfun_hook, date_time_modem_on_cfun, NULL);
 
 static void date_time_modem_on_cfun(int mode, void *ctx)
+#endif
 {
 	ARG_UNUSED(ctx);
 
