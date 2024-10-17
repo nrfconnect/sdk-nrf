@@ -131,7 +131,7 @@ endif # BT_FAST_PAIR_GATT_SERVICE
 config BT_FAST_PAIR_REGISTRATION_DATA
 	bool
 	default y
-	select PM_SINGLE_IMAGE
+	select PM_SINGLE_IMAGE if !(SOC_SERIES_NRF54HX)
 	help
 	  Add Fast Pair registration data source files.
 
