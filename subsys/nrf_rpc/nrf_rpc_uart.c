@@ -31,6 +31,7 @@ enum flip_state {
 struct trx_flips {
 	uint8_t tx_flip : 2;
 	uint8_t rx_flip : 2;
+	uint16_t last_rx_crc;
 };
 
 typedef enum {
@@ -81,11 +82,9 @@ static void ack_rx(struct nrf_rpc_uart *uart_tr)
 		return;
 	}
 
-	if (uart_tr->rx_packet_len == CRC_SIZE) {
-		uart_tr->ack_payload = sys_get_le16(uart_tr->rx_packet);
-		k_sem_give(&uart_tr->ack_sem);
-		k_yield();
-	}
+	uart_tr->ack_payload = sys_get_le16(uart_tr->rx_packet);
+	k_sem_give(&uart_tr->ack_sem);
+	k_yield();
 }
 
 static void ack_tx(struct nrf_rpc_uart *uart_tr, uint16_t ack_pld)
@@ -129,7 +128,18 @@ static uint16_t tx_flip(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
 
 static bool rx_flip_check(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
 {
+	uint16_t last_rx_crc;
+
 	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
+		return false;
+	}
+
+	last_rx_crc = uart_tr->flips.last_rx_crc;
+	uart_tr->flips.last_rx_crc = crc_val;
+
+	if (uart_tr->flips.rx_flip == FLIP_ANY ||
+	    (last_rx_crc & 0x7fffu) != (crc_val & 0x7fffu)) {
+		uart_tr->flips.rx_flip = crc_val & 0x8000u ? FLIP_ZERO : FLIP_ONE;
 		return false;
 	}
 
@@ -138,9 +148,6 @@ static bool rx_flip_check(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
 		return false;
 	} else if (uart_tr->flips.rx_flip == FLIP_ONE && (crc_val & 0x8000u) == 0x8000u) {
 		uart_tr->flips.rx_flip = FLIP_ZERO;
-		return false;
-	} else if (uart_tr->flips.rx_flip == FLIP_ANY) {
-		uart_tr->flips.rx_flip = crc_val & 0x8000u ? FLIP_ZERO : FLIP_ONE;
 		return false;
 	}
 
@@ -159,6 +166,12 @@ static bool crc_compare(uint16_t rx_crc, uint16_t calc_crc)
 static void hdlc_decode_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 {
 	/* TODO: handle frame buffer overflow */
+	if (uart_tr->hdlc_state == HDLC_STATE_UNSYNC) {
+		if (byte == HDLC_CHAR_DELIMITER) {
+			uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
+		}
+		return;
+	}
 
 	if (uart_tr->hdlc_state == HDLC_STATE_ESCAPE) {
 		uart_tr->rx_packet[uart_tr->rx_packet_len++] = byte ^ 0x20;
@@ -166,23 +179,28 @@ static void hdlc_decode_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 	} else if (byte == HDLC_CHAR_ESCAPE) {
 		uart_tr->hdlc_state = HDLC_STATE_ESCAPE;
 	} else if (byte == HDLC_CHAR_DELIMITER) {
-		uart_tr->hdlc_state = (uart_tr->hdlc_state == HDLC_STATE_FRAME_START)
-					      ? HDLC_STATE_FRAME_FOUND
-					      : HDLC_STATE_UNSYNC;
+		uart_tr->hdlc_state = HDLC_STATE_FRAME_FOUND;
 	} else {
 		uart_tr->rx_packet[uart_tr->rx_packet_len++] = byte;
-		uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
 	}
 
 	if (uart_tr->hdlc_state == HDLC_STATE_FRAME_FOUND) {
 		LOG_HEXDUMP_DBG(uart_tr->rx_packet, uart_tr->rx_packet_len, "Received frame");
 		if (uart_tr->rx_packet_len > CRC_SIZE) {
 			uart_tr->rx_packet_len -= CRC_SIZE;
-		} else {
+			return;
+		} else if (uart_tr->rx_packet_len == CRC_SIZE) {
 			ack_rx(uart_tr);
-			uart_tr->rx_packet_len = 0;
-			uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
+		} else if (uart_tr->rx_packet_len == 0) {
+			/* seems like the delimeter was lost and the second delimiter is start of
+			 * the new frame
+			 */
+			uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
+			LOG_WRN("attempt of recovery the lost delimiter");
+			return;
 		}
+		uart_tr->rx_packet_len = 0;
+		uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
 	}
 }
 
@@ -214,7 +232,7 @@ static void work_handler(struct k_work *work)
 					crc_received);
 				uart_tr->rx_packet_len = 0;
 				uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
-				return;
+				continue;
 			}
 
 			ack_tx(uart_tr, crc_received);
@@ -357,9 +375,12 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
 
+	crc_val = crc16_ccitt(0xffff, data, length);
+
 #if CONFIG_NRF_RPC_UART_RELIABLE
 	int attempts = 0;
 
+	crc_val = tx_flip(uart_tr, crc_val);
 	acked = false;
 
 	do {
@@ -374,8 +395,6 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 			send_byte(uart_tr->uart, data[i]);
 		}
 
-		crc_val = crc16_ccitt(0xffff, data, length);
-		crc_val = tx_flip(uart_tr, crc_val);
 		sys_put_le16(crc_val, crc);
 		send_byte(uart_tr->uart, crc[0]);
 		send_byte(uart_tr->uart, crc[1]);
@@ -396,7 +415,6 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 		} else {
 			LOG_WRN("Ack timeout expired.");
 		}
-
 	} while (!acked && attempts < CONFIG_NRF_RPC_UART_TX_ATTEMPTS);
 #endif /* CONFIG_NRF_RPC_UART_RELIABLE */
 
