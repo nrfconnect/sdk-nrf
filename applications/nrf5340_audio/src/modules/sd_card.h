@@ -11,15 +11,39 @@
 #include <zephyr/fs/fs.h>
 
 /**
+ * @brief Finds all files on SD card that match the given pattern.
+ *
+ * @note The function uses a recursive approach with internal buffers. Memory intensive.
+ *
+ * @param[in] result_file_num_max	Maximum number of files to be found.
+ * @param[in] result_file_len_max	Maximum length of each file name including total path length
+ * @param[out] result		Pointer to the result array of dimension result_file_num_max
+ *				* result_file_len_max.
+ * @param[in] path		NULL, search from root, otherwise search from the given path.
+ *				Note not to add an ending "/"
+ * @param[in] pattern		Null terminated pattern to find, e.g. *.lc3 or *.wav
+ * @retval			Number of files found.
+ * @retval			-EINVAL invalid parameters.
+ * @retval			-ENOMEM out of memory.
+ * @retval			-ENODEV SD init failed. SD likely not inserted.
+ * @retval			-EPERM SD card operation is ongoing somewhere else.
+ * @retval			-Other, error from underlying drivers.
+ */
+int sd_card_list_files_match(uint16_t result_file_num_max, uint16_t result_file_len_max,
+			     char result[][result_file_len_max], char *path,
+			     char const *const pattern);
+
+/**
  * @brief	Print out the contents under SD card root path and write the content to buffer.
  *
  * @param[in]		path		Path of the folder which is going to be listed.
- *					If assigned path is null, then listing the contents under
+ *					If assigned path is NULL, then listing the contents under
  *					root. If assigned path doesn't exist, an error will be
  *					returned.
  * @param[out]		buf		Buffer where data is written. If set to NULL, it will be
  *					ignored.
  * @param[in, out]	buf_size	Buffer size.
+ * @param[in]		extra_info	Will append DIR/FILE info to string.
  *
  * @retval	0 on success.
  * @retval	-EPERM SD card operation is ongoing somewhere else.
@@ -28,7 +52,7 @@
  * @retval	-FR_INVALID_NAME Path is too long.
  * @retval	Otherwise, error from underlying drivers.
  */
-int sd_card_list_files(char const *const path, char *buf, size_t *buf_size);
+int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool extra_info);
 
 /**
  * @brief	Write data from buffer into the file.
