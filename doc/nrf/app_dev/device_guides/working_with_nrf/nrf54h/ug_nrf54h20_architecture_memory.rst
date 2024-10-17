@@ -42,18 +42,22 @@ Local RAM is present in each of local domains
 Application core RAM
 --------------------
 
-.. image:: images/nrf54h20_memory_map_app.svg
-   :width: 300 px
-
 The application core contains 32 KB of local RAM.
 Accessing this memory from the application core CPU has minimal latency, but accessing it from any other core adds significant latency.
 Because of this property, the local RAM in the application domain should be used mainly to store data frequently accessed by the application core, or to store timing-critical parts of the code executed by the application core.
 
-Address range
-   0x22000000 - 0x22008000
+.. table:: Application core RAM layout in the nRF54H20
 
-Size
-   32 KB
+   +-------------+-----------+---------+----------+-----------------------------+
+   |Start Address|End Address|Size (KB)|Total (KB)|Content                      |
+   +=============+===========+=========+==========+=============================+
+   |config       |0x22008000 |config   |32        |Application's Non-Secure data|
+   +-------------+-----------+---------+          +-----------------------------+
+   |0x22000000   |config     |config   |          |Application's Secure data    |
+   +-------------+-----------+---------+----------+-----------------------------+
+
+.. note::
+   *Config* means that you can configure the address to meet the specific needs of the application.
 
 Access control
    Application domain local RAM is accessible by the application core.
@@ -70,16 +74,22 @@ Access control
 Radio core RAM
 --------------
 
-The radio core contains 96 KB of local RAM.
 Any access to this memory has minimal latency if originated either from radio core CPU or from peripherals with EasyDMA located in the radio core.
 Any access from any other core has a significant latency.
 Because of this property, local RAM in the radio core should be used mainly to store data frequently accessed by the radio core CPU or the radio protocol frames to be accessed by CCM or RADIO peripherals, or to store timing critical parts of the code executed by the radio core CPU.
 
-Address range
-   0x23000000 - 0x23030000
+.. table:: Radio core RAM layout in the nRF54H20
 
-Size
-   192 KB
+   +-------------+-----------+---------+----------+-----------------------------+
+   |Start Address|End Address|Size (KB)|Total (KB)|Content                      |
+   +=============+===========+=========+==========+=============================+
+   |config       |0x23030000 |config   |192       |Radio's Non-Secure data      |
+   +-------------+-----------+---------+          +-----------------------------+
+   |0x23000000   |config     |config   |          |Radio's Secure data          |
+   +-------------+-----------+---------+----------+-----------------------------+
+
+.. note::
+   *Config* means that you can configure the address to meet the specific needs of the application.
 
 Access control
    The radio core local RAM is accessible by the radio core.
@@ -290,8 +300,6 @@ Each of the local cores (Application, Radio, Secure Domain) has an allocated par
 Each of the cores has full control on the data layout and management in the assigned MRAM partition.
 There is also a Device Firmware Upgrade partition used to store firmware images used during the upgrade procedure.
 If code and data for the application core do not fit in MRAM_10, it can be partially or fully placed in MRAM_11.
-
-.. to review
 
 Address range
    0x0E100000 - 0x0E200000
