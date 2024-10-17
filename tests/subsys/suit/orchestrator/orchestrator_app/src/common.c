@@ -8,7 +8,7 @@
 
 /* Mocks - ssf services have to be mocked, as real communication with secure domain
  * cannot take place in these tests. This is for two reasons:
- * - native_posix and nrf52 platforms do not have the secure domain to communicate with
+ * - native_sim and nrf52 platforms do not have the secure domain to communicate with
  * - on nRF54H calling suit_trigger_update would reset a device, which would stop the tests
  */
 DEFINE_FFF_GLOBALS;

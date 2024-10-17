@@ -1,7 +1,7 @@
 tests:
   net.lib.wifi_credentials:
     sysbuild: true
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
     tags: sysbuild ci_tests_subsys_net

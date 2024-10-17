@@ -60,7 +60,7 @@ static int dummy_nrf_provisioning_modem_mode_cb(enum lte_lc_func_mode new_mode, 
 	return 0;
 }
 
-/* Malloc and free are to be used in native_posix environment */
+/* Malloc and free are to be used in native_sim environment */
 void *__wrap_k_malloc(size_t size)
 {
 	return malloc(size);

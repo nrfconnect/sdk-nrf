@@ -19,7 +19,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
-    platform_exclude: native_posix
+    platform_exclude: native_sim
     tags: sysbuild ci_samples_peripheral_lpuart
   sample.peripheral.lpuart_nrf52840_debug:
     sysbuild: true
