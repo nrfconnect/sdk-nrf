@@ -44,8 +44,9 @@
  *
  */
 
-#if DT_NODE_EXISTS(DT_NODELABEL(nrf_radio_coex))
-#define CX_NODE DT_NODELABEL(nrf_radio_coex)
+
+#if DT_NODE_EXISTS(DT_NODELABEL(nrf70_1))
+#define CX_NODE DT_NODELABEL(nrf70_1)
 #else
 #define CX_NODE DT_INVALID_NODE
 #error No enabled coex nodes registered in DTS.

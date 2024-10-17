@@ -4,26 +4,26 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-DT_COMPAT_CX_NRF700X := nordic,nrf700x-coex
+DT_COMPAT_CX_NRF700X := nordic,nrf70-coex
 DT_COMPAT_CX_SOFTWARE := nordic,software-coex
 
 config MPSL_CX_ANY_SUPPORT
 	bool
-	default $(dt_nodelabel_enabled,nrf_radio_coex)
+	default $(dt_nodelabel_enabled,nrf70_1)
 	help
-	  Indicates that the device tree contains a nrf_radio_coex node.
+	  Indicates that the device tree contains a nrf70 node.
 
-config MPSL_CX_NRF70_SUPPORT
+config MPSL_CX_NRF700X_SUPPORT
 	bool
-	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF700X))
+	default $(dt_nodelabel_has_compat,nrf70_1,$(DT_COMPAT_CX_NRF700X))
 	help
-	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,nrf700x-coex".
+	  Indicates that the device tree contains a nrf70 node compatible with "nordic,nrf70-coex".
 
 config MPSL_CX_SOFTWARE_SUPPORT
 	bool
-	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_SOFTWARE))
+	default $(dt_nodelabel_has_compat,nrf70_1,$(DT_COMPAT_CX_SOFTWARE))
 	help
-	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,software-coex".
+	  Indicates that the device tree contains a nrf70 node compatible with "nordic,software-coex".
 
 config MPSL_CX
 	bool "Radio Coexistence interface support"
@@ -57,14 +57,14 @@ choice MPSL_CX_CHOICE
 	prompt "Radio Coexistence interface implementation"
 
 config MPSL_CX_NRF700X
-	depends on MPSL_CX_NRF70_SUPPORT
+	depends on MPSL_CX_NRF700X_SUPPORT
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
 	select GPIO if !MPSL_CX_PIN_FORWARDER
 	imply NRF_RPC if SOC_SERIES_NRF53X
 	imply NRF_RPC_CBOR if SOC_SERIES_NRF53X
-	bool "nRF700x Radio Coexistence"
+	bool "nRF70 Radio Coexistence"
 	help
-	  Radio Coexistence supporting nRF700x interface.
+	  Radio Coexistence supporting nRF70 interface.
 
 config MPSL_CX_3WIRE
 	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
