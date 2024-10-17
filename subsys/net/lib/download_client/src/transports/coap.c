@@ -430,6 +430,13 @@ static int dlc_coap_connect(struct download_client *dlc)
 	err = -1;
 	ns_err = -1;
 
+	if (!coap->sock.remote_addr.sa_family) {
+		err = client_socket_host_lookup(dlc->hostname, dlc->host_config.pdn_id, &http->sock.remote_addr);
+		if (err) {
+			return err;
+		}
+	}
+
 	err = client_socket_configure_and_connect(
 		&coap->sock.fd, coap->sock.proto, coap->sock.type, coap->sock.port,
 		&coap->sock.remote_addr, dlc->hostname, &dlc->host_config);

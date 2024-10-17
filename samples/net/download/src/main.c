@@ -239,9 +239,9 @@ static int callback(const struct download_client_evt *event)
 #endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
-		(void)conn_mgr_if_disconnect(net_if);
-		(void)conn_mgr_all_if_down(true);
-		printk("Bye\n");
+		//(void)conn_mgr_if_disconnect(net_if);
+		//(void)conn_mgr_all_if_down(true);
+		//printk("Bye\n");
 		return 0;
 
 	case DOWNLOAD_CLIENT_EVT_ERROR:

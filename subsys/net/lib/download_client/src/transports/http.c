@@ -432,7 +432,10 @@ static int dlc_http_connect(struct download_client *dlc)
 	ns_err = -1;
 
 	if (!http->sock.remote_addr.sa_family) {
-		client_socket_host_lookup(dlc->hostname, dlc->host_config.pdn_id, &http->sock.remote_addr);
+		err = client_socket_host_lookup(dlc->hostname, dlc->host_config.pdn_id, &http->sock.remote_addr);
+		if (err) {
+			return err;
+		}
 	}
 
 	err = client_socket_configure_and_connect(

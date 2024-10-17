@@ -65,18 +65,81 @@ static bool is_state(struct download_client *dlc, enum download_client_state sta
 	return ret;
 }
 
+static int transport_init(struct download_client *dlc,
+			  struct download_client_host_cfg *host_config, const char *uri) {
+	int err;
+
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
+	}
+
+	err = ((struct dlc_transport *)dlc->transport)->init(dlc, host_config, uri);
+
+	return err;
+}
+
+static int transport_deinit(struct download_client *dlc) {
+	int err;
+
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
+	}
+
+	err = ((struct dlc_transport *)dlc->transport)->deinit(dlc);
+
+	return err;
+}
+
+static int transport_connect(struct download_client *dlc) {
+	int err;
+
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
+	}
+
+	err = ((struct dlc_transport *)dlc->transport)->connect(dlc);
+
+	return err;
+}
+
+static int transport_close(struct download_client *dlc) {
+	int err;
+
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
+	}
+
+	err = ((struct dlc_transport *)dlc->transport)->close(dlc);
+	close_evt_send(dlc);
+
+	return err;
+}
+
+static int transport_download(struct download_client *dlc) {
+	int err;
+
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
+	}
+
+	err = ((struct dlc_transport *)dlc->transport)->download(dlc);
+
+	return err;
+}
+
+
 static int reconnect(struct download_client *dlc)
 {
 	int err = 0;
 
 	LOG_INF("Reconnecting...");
 
-	err = ((struct dlc_transport *)dlc->transport)->close(dlc);
+	err = transport_close(dlc);
 	if (err) {
 		LOG_DBG("disconnect failed, %d", err);
 	}
 
-	((struct dlc_transport *)dlc->transport)->close(dlc);
+	err = transport_connect(dlc);
 
 	state_set(dlc, DOWNLOAD_CLIENT_CONNECTING);
 
@@ -89,9 +152,8 @@ static void restart_and_suspend(struct download_client *dlc) {
 		return;
 	}
 
-	if (dlc->host_config.close_when_done) {
-		((struct dlc_transport *)dlc->transport)->close(dlc);
-		close_evt_send(dlc);
+	if (!dlc->host_config.keep_connection) {
+		transport_close(dlc);
 		state_set(dlc, DOWNLOAD_CLIENT_IDLE);
 		return;
 	}
@@ -212,13 +274,13 @@ void download_thread(void *cli, void *a, void *b)
 
 		if (is_state(dlc, DOWNLOAD_CLIENT_IDLE)) {
 			/* Client idle, wait for action */
-			k_sem_take(&dlc->wait_for_download, K_FOREVER);
+			k_sem_take(&dlc->event_sem, K_FOREVER);
 		}
 
 		/* Connect to the target host */
 		if (is_state(dlc, DOWNLOAD_CLIENT_CONNECTING)) {
 			/* Client */
-			rc = ((struct dlc_transport *)dlc->transport)->connect(dlc);
+			rc = transport_connect(dlc);
 			if (rc) {
 				state_set(dlc, DOWNLOAD_CLIENT_IDLE);
 				error_evt_send(dlc, rc);
@@ -231,14 +293,14 @@ void download_thread(void *cli, void *a, void *b)
 
 		if (is_state(dlc, DOWNLOAD_CLIENT_CONNECTED)) {
 			/* Client connected, wait for action */
-			k_sem_take(&dlc->wait_for_download, K_FOREVER);
+			k_sem_take(&dlc->event_sem, K_FOREVER);
 		}
 
 		if (is_state(dlc, DOWNLOAD_CLIENT_DOWNLOADING)) {
 			/* Download untill transport returns an error or the download is complete
 			 * (separate event).
 			 */
-			rc = ((struct dlc_transport *)dlc->transport)->download(dlc);
+			rc = transport_download(dlc);
 			if (rc) {
 				rc = error_evt_send(dlc, rc);
 				if (rc) {
@@ -253,8 +315,9 @@ void download_thread(void *cli, void *a, void *b)
 		}
 
 		if (is_state(dlc, DOWNLOAD_CLIENT_DEINITIALIZING)) {
-			((struct dlc_transport *)dlc->transport)->close(dlc);
-			close_evt_send(dlc);
+			printk("Deinitializing download client");
+			transport_close(dlc);
+			transport_deinit(dlc);
 			state_set(dlc, DOWNLOAD_CLIENT_DEINITIALIZED);
 			deinit_evt_send(dlc);
 			return;
@@ -276,7 +339,7 @@ int download_client_init(struct download_client *const dlc,
 
 	memset(dlc, 0, sizeof(*dlc));
 	dlc->config = *config;
-	k_sem_init(&dlc->wait_for_download, 0, 1);
+	k_sem_init(&dlc->event_sem, 0, 1);
 	k_mutex_init(&dlc->mutex);
 
 	k_mutex_lock(&dlc->mutex, K_FOREVER);
@@ -301,11 +364,12 @@ int download_client_init(struct download_client *const dlc,
 
 int download_client_deinit(struct download_client *const dlc)
 {
-	if (dlc == NULL) {
+	if (!dlc) {
 		return -EINVAL;
 	}
 
 	state_set(dlc, DOWNLOAD_CLIENT_DEINITIALIZING);
+	k_sem_give(&dlc->event_sem);
 
 	return 0;
 }
@@ -365,6 +429,8 @@ int download_client_start(struct download_client *dlc,
 
 	dlc->transport = NULL;
 
+	printk("Finding transport for %s\n", uri);
+
 	STRUCT_SECTION_FOREACH(dlc_transport_entry, entry) {
 		if (entry->transport->proto_supported(dlc, uri)) {
 			dlc->transport = entry->transport;
@@ -373,9 +439,11 @@ int download_client_start(struct download_client *dlc,
 	}
 
 	if (!dlc->transport) {
-		LOG_ERR("Protocol not specified");
+		LOG_ERR("Protocol not specified for %s", uri);
 		return -EINVAL;
 	};
+
+	printk("Found transport, state is %d", dlc->state);
 
 	if (is_state(dlc, DOWNLOAD_CLIENT_CONNECTED)) {
 		if (dlc->transport == transport_connected) {
@@ -394,13 +462,22 @@ int download_client_start(struct download_client *dlc,
 	}
 
 	memset(dlc->transport_internal, 0, sizeof(dlc->transport_internal));
-	err = ((struct dlc_transport *)dlc->transport)->init(dlc, &dlc->host_config, uri);
+	err = transport_init(dlc, &dlc->host_config, uri);
+	if (err) {
+		state_set(dlc, DOWNLOAD_CLIENT_IDLE);
+		k_mutex_unlock(&dlc->mutex);
+		LOG_ERR("Failed to initialize transport, err %d", err);
+		return err;
+	}
+
+	printk("Transport initialized\n");
+	k_sleep(K_MSEC(1000));
 
 out:
 	k_mutex_unlock(&dlc->mutex);
 
 	/* Let the thread run */
-	k_sem_give(&dlc->wait_for_download);
+	k_sem_give(&dlc->event_sem);
 	return 0;
 }
 
@@ -410,7 +487,7 @@ int download_client_stop(struct download_client *const dlc)
 		return -EINVAL;
 	}
 
-	((struct dlc_transport *)dlc->transport)->close(dlc);
+	transport_close(dlc);
 	close_evt_send(dlc);
 	state_set(dlc, DOWNLOAD_CLIENT_IDLE);
 
@@ -419,18 +496,20 @@ int download_client_stop(struct download_client *const dlc)
 
 int download_client_get(struct download_client *dlc,
 			const struct download_client_host_cfg *host_config,
-			const char *url, size_t from)
+			const char *uri, size_t from)
 {
 	int rc;
 
-	if (dlc == NULL || url == NULL) {
+	if (dlc == NULL || uri == NULL) {
 		return -EINVAL;
 	}
 
+	printk("Get file\n");
+	k_sleep(K_SECONDS(1));
+
 	k_mutex_lock(&dlc->mutex, K_FOREVER);
 
-	dlc->host_config.close_when_done = true;
-	rc = download_client_start(dlc, host_config, url, from);
+	rc = download_client_start(dlc, host_config, uri, from);
 
 	k_mutex_unlock(&dlc->mutex);
 

@@ -155,8 +155,8 @@ struct download_client_host_cfg {
 	size_t range_override;
 	/** Set socket to native TLS */
 	bool set_native_tls;
-	/** Close connection when done */
-	bool close_when_done;
+	/** Keep connection to server when done */
+	bool keep_connection;
 };
 
 /**
@@ -201,6 +201,8 @@ struct download_client {
 	/** Transport parameters. */
 	uint8_t transport_internal[CONFIG_DOWNLOAD_CLIENT_TRANSPORT_PARAMS_SIZE];
 
+	/** Ensure that thread is ready for download */
+	struct k_sem event_sem;
 	/** Protect shared variables. */
 	struct k_mutex mutex;
 	/** Download client state. */
@@ -209,12 +211,9 @@ struct download_client {
 	struct k_thread thread;
 	/** Internal thread ID. */
 	k_tid_t tid;
-	/** Ensure that thread is ready for download */
-	struct k_sem wait_for_download;
 
 	/* Internal thread stack. */
-	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
+	K_THREAD_STACK_MEMBER(thread_stack, CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
 };
 
 /**
