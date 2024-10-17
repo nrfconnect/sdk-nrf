@@ -77,9 +77,7 @@ Specifying the image files
 ==========================
 
 Before building the sample, you must specify where the image files are located.
-If you do not want to host the files yourself, you can upload them to a public S3 bucket on Amazon Web Services (AWS).
-
-If you do not want to host the image file, you can also upload it to a public S3 bucket on Amazon Web Services (AWS).
+If you do not want to host the image file, you can upload it to a public S3 bucket on Amazon Web Services (AWS).
 
 .. include:: /includes/aws_s3_bucket.txt
 
