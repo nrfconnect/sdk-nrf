@@ -37,6 +37,11 @@ function(dfu_app_zip_package)
 
       if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         # Application
+        math(EXPR internal_slot_primary "${internal_slot_primary} + 1")
+        math(EXPR internal_slot_secondary "${internal_slot_secondary} + 1")
+        math(EXPR external_slot_primary "${external_slot_primary} + 1")
+        math(EXPR external_slot_secondary "${external_slot_secondary} + 1")
+
         set(generate_script_app_params
             "${app_internal_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
             "${app_internal_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
@@ -109,6 +114,9 @@ function(dfu_app_zip_package)
 
       if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         # Application
+        math(EXPR slot_primary "${slot_primary} + 1")
+        math(EXPR slot_secondary "${slot_secondary} + 1")
+
         set(generate_script_app_params
             "${app_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
             "${app_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
@@ -166,6 +174,8 @@ function(dfu_app_zip_package)
 
     mcuboot_image_number_to_slot(net_update_slot_primary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} n)
     mcuboot_image_number_to_slot(net_update_slot_secondary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} y)
+    math(EXPR net_update_slot_primary "${net_update_slot_primary} + 1")
+    math(EXPR net_update_slot_secondary "${net_update_slot_secondary} + 1")
 
     set(generate_script_app_params
         ${generate_script_app_params}
@@ -186,6 +196,8 @@ function(dfu_app_zip_package)
     # nRF7x Wifi patch
     mcuboot_image_number_to_slot(nrf70_patches_slot_primary ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} n)
     mcuboot_image_number_to_slot(nrf70_patches_slot_secondary ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} y)
+    math(EXPR nrf70_patches_slot_primary "${nrf70_patches_slot_primary} + 1")
+    math(EXPR nrf70_patches_slot_secondary "${nrf70_patches_slot_secondary} + 1")
 
     list(APPEND generate_script_app_params
          "nrf70.binimage_index=${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}"
