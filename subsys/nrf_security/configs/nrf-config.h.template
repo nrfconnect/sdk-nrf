@@ -23,6 +23,7 @@
 #cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
 #cmakedefine MBEDTLS_PSA_CRYPTO_C
 #cmakedefine MBEDTLS_USE_PSA_CRYPTO
+#cmakedefine MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 /* Avoid redefinition as TF-M defines this on the command line */
 #ifndef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 #cmakedefine MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
