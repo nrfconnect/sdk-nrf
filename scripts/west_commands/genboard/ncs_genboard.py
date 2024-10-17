@@ -22,6 +22,7 @@ CONFIG = SCRIPT_DIR / "config.yml"
 
 NCS_VERSION_MIN = (2, 0, 0)
 HWMV2_SINCE = (2, 7, 0)
+TFM_SINCE = (2, 6, 0)
 
 NCS_VERSION_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 VENDOR_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
@@ -118,7 +119,7 @@ class NcsGenboard(WestCommand):
                             "core": core["name"],
                             "ram": core["ram"],
                             "flash": core["flash"],
-                            "ns": core.get("ns", False),
+                            "ns": core.get("ns", False) if ncs_version >= TFM_SINCE else False,
                             "xip": core.get("xip", False),
                             "arch": core.get("arch", "arm"),
                         }
@@ -136,7 +137,7 @@ class NcsGenboard(WestCommand):
                     target = {
                         "ram": variant["ram"],
                         "flash": variant["flash"],
-                        "ns": variant.get("ns", False),
+                        "ns": variant.get("ns", False) if ncs_version >= TFM_SINCE else False,
                         "xip": variant.get("xip", False),
                         "arch": variant.get("arch", "arm"),
                     }
