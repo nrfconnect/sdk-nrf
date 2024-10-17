@@ -18,6 +18,13 @@ function(provision application prefix_name)
   set(PROVISION_HEX_NAME     ${prefix_name}provision.hex)
   set(PROVISION_HEX          ${CMAKE_BINARY_DIR}/${PROVISION_HEX_NAME})
 
+  # This calculation is based on the LCS cycle state datacycle state data struct in bl_storage.h
+  if(CONFIG_SOC_SERIES_NRF54LX)
+    set(lcs_state_struct_size 0x10) # 4 * 4 bytes
+  else()
+    set(lcs_state_struct_size 0x8) # 4 * 2 bytes
+  endif()
+
   if(CONFIG_SECURE_BOOT)
     if(DEFINED CONFIG_SB_MONOTONIC_COUNTER)
       set(monotonic_counter_arg
@@ -96,6 +103,7 @@ function(provision application prefix_name)
       ${monotonic_counter_arg}
       ${no_verify_hashes_arg}
       ${mcuboot_counters_slots}
+      --lcs-state-size ${lcs_state_struct_size}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
       ${PROVISION_DEPENDS}
@@ -118,6 +126,7 @@ function(provision application prefix_name)
       --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
       ${mcuboot_counters_num}
       ${mcuboot_counters_slots}
+      --lcs-state-size ${lcs_state_struct_size}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
       WORKING_DIRECTORY
