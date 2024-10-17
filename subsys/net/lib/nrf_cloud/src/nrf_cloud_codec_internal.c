@@ -2248,6 +2248,8 @@ int nrf_cloud_rest_fota_execution_decode(const char *const response,
 		job->type = NRF_CLOUD_FOTA_BOOTLOADER;
 	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_APP)) {
 		job->type = NRF_CLOUD_FOTA_APPLICATION;
+	} else if (!strcmp(type, NRF_CLOUD_FOTA_TYPE_SMP)) {
+		job->type = NRF_CLOUD_FOTA_SMP;
 	} else {
 		LOG_WRN("Unhandled FOTA type: %s", type);
 		job->type = NRF_CLOUD_FOTA_TYPE__INVALID;

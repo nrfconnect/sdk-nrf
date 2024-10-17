@@ -154,6 +154,7 @@ Firmware over-the-air (FOTA) updates
 The nRF Cloud library supports FOTA updates for your nRF91 Series device.
 The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` Kconfig option is enabled by default when :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is set.
 This enables FOTA functionality in the application.
+FOTA support for applications using CoAP or REST is enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` Kconfig option.
 
 nRF Cloud FOTA enables the following additional features and libraries:
 
@@ -181,6 +182,7 @@ Following are the supported FOTA types:
   Consider the power and network costs before deploying full modem FOTA updates.
 * ``"MODEM"`` - :ref:`Delta modem FOTA <nrf_modem_delta_dfu>` applies incremental changes between specific versions of the modem firmware.
   Delta modem updates are much smaller in size and do not require external memory.
+* ``"SMP"`` - Updates an auxiliary device's firmware using the :ref:`Simple Management Protocol <zephyr:device_mgmt>`.
 
 For example, a device that supports all the FOTA types writes the following data into the device shadow:
 

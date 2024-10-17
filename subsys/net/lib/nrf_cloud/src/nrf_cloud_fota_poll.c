@@ -302,6 +302,13 @@ int nrf_cloud_fota_poll_init(struct nrf_cloud_fota_poll_ctx *ctx)
 	ctx->full_modem_fota_supported = true;
 #endif
 
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)) {
+		err = nrf_cloud_fota_smp_client_init(ctx->smp_reset_cb);
+		if (err) {
+			return err;
+		}
+	}
+
 	err = fota_download_init(http_fota_dl_handler);
 	if (err) {
 		LOG_ERR("Failed to initialize FOTA download, error: %d", err);
@@ -435,6 +442,14 @@ static int start_download(void)
 			ret = -EFTYPE;
 		}
 		break;
+	case NRF_CLOUD_FOTA_SMP:
+		if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)) {
+			ctx_ptr->img_type = DFU_TARGET_IMAGE_TYPE_SMP;
+		} else {
+			LOG_ERR("Not configured for SMP FOTA");
+			ret = -EFTYPE;
+		}
+		break;
 	default:
 		LOG_ERR("Unhandled FOTA type: %d", job.type);
 		return -EFTYPE;
@@ -524,6 +539,21 @@ static void handle_download_succeeded_and_reboot(struct nrf_cloud_fota_poll_ctx 
 		err = nrf_cloud_fota_fmfu_apply();
 		if (err) {
 			LOG_ERR("Failed to apply full modem FOTA update %d", err);
+			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
+		} else {
+			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_PASS;
+		}
+	}
+#endif
+
+#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
+	if (job.type == NRF_CLOUD_FOTA_SMP) {
+		bool reboot_required = false;
+
+		LOG_INF("Installing SMP FOTA update...");
+		err = nrf_cloud_pending_fota_job_process(&pending_job, &reboot_required);
+		if (err < 0) {
+			LOG_ERR("Failed to install SMP FOTA update %d", err);
 			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_FAIL;
 		} else {
 			pending_job.validate = NRF_CLOUD_FOTA_VALIDATE_PASS;

@@ -32,9 +32,6 @@
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
-#include <mcumgr_smp_client.h>
-#endif
 
 LOG_MODULE_REGISTER(nrf_cloud_fota, CONFIG_NRF_CLOUD_FOTA_LOG_LEVEL);
 
@@ -232,15 +229,12 @@ int nrf_cloud_fota_init(struct nrf_cloud_fota_init_param const *const init)
 
 	event_cb = init->evt_cb;
 
-#if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
-	ret = mcumgr_smp_client_init((dfu_target_reset_cb_t)init->smp_reset_cb);
-	if (ret != 0) {
-		LOG_ERR("Failed to init SMP client, error: %d", ret);
-		return ret;
+	if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)) {
+		ret = nrf_cloud_fota_smp_client_init(init->smp_reset_cb);
+		if (ret) {
+			return ret;
+		}
 	}
-
-	(void)nrf_cloud_fota_smp_version_read();
-#endif /* CONFIG_NRF_CLOUD_FOTA_SMP */
 
 	if (initialized) {
 		return 0;

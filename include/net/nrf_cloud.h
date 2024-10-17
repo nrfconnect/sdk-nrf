@@ -1136,6 +1136,20 @@ bool nrf_cloud_fota_is_type_enabled(const enum nrf_cloud_fota_type type);
 int nrf_cloud_fota_job_start(void);
 
 /**
+ * @brief Initialize the SMP client.
+ *        Called automatically if @kconfig{CONFIG_NRF_CLOUD_FOTA} or
+ *        @kconfig{CONFIG_NRF_CLOUD_FOTA_POLL} is enabled.
+ *
+ * @param smp_reset_cb Callback of type @ref dfu_target_reset_cb_t for resetting the SMP device to
+ *                     enter MCUboot recovery mode.
+ *
+ * @retval 0        SMP client successfully initialized.
+ * @retval -ENOTSUP Error; @kconfig{CONFIG_NRF_CLOUD_FOTA_SMP} is not enabled.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_fota_smp_client_init(const void *smp_reset_cb);
+
+/**
  * @brief Install a downloaded SMP FOTA job.
  *        Called automatically if @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled (MQTT FOTA).
  *
