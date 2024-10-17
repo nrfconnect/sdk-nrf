@@ -16,9 +16,7 @@
 };
 &cpurad_rx_partitions {
 	compatible = "nordic,owned-partitions", "fixed-partitions";
-	perm-read;
-	perm-execute;
-	perm-secure;
+	nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RXS>;
 	#address-cells = < 0x1 >;
 	#size-cells = < 0x1 >;
 	cpurad_slot0_partition: partition@66000 {
