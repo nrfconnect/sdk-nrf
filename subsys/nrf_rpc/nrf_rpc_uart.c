@@ -81,11 +81,9 @@ static void ack_rx(struct nrf_rpc_uart *uart_tr)
 		return;
 	}
 
-	if (uart_tr->rx_packet_len == CRC_SIZE) {
-		uart_tr->ack_payload = sys_get_le16(uart_tr->rx_packet);
-		k_sem_give(&uart_tr->ack_sem);
-		k_yield();
-	}
+	uart_tr->ack_payload = sys_get_le16(uart_tr->rx_packet);
+	k_sem_give(&uart_tr->ack_sem);
+	k_yield();
 }
 
 static void ack_tx(struct nrf_rpc_uart *uart_tr, uint16_t ack_pld)
@@ -159,6 +157,12 @@ static bool crc_compare(uint16_t rx_crc, uint16_t calc_crc)
 static void hdlc_decode_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 {
 	/* TODO: handle frame buffer overflow */
+	if (uart_tr->hdlc_state == HDLC_STATE_UNSYNC) {
+		if (byte == HDLC_CHAR_DELIMITER) {
+			uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
+		}
+		return;
+	}
 
 	if (uart_tr->hdlc_state == HDLC_STATE_ESCAPE) {
 		uart_tr->rx_packet[uart_tr->rx_packet_len++] = byte ^ 0x20;
@@ -166,23 +170,28 @@ static void hdlc_decode_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 	} else if (byte == HDLC_CHAR_ESCAPE) {
 		uart_tr->hdlc_state = HDLC_STATE_ESCAPE;
 	} else if (byte == HDLC_CHAR_DELIMITER) {
-		uart_tr->hdlc_state = (uart_tr->hdlc_state == HDLC_STATE_FRAME_START)
-					      ? HDLC_STATE_FRAME_FOUND
-					      : HDLC_STATE_UNSYNC;
+		uart_tr->hdlc_state = HDLC_STATE_FRAME_FOUND;
 	} else {
 		uart_tr->rx_packet[uart_tr->rx_packet_len++] = byte;
-		uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
 	}
 
 	if (uart_tr->hdlc_state == HDLC_STATE_FRAME_FOUND) {
 		LOG_HEXDUMP_DBG(uart_tr->rx_packet, uart_tr->rx_packet_len, "Received frame");
 		if (uart_tr->rx_packet_len > CRC_SIZE) {
 			uart_tr->rx_packet_len -= CRC_SIZE;
-		} else {
+			return;
+		} else if (uart_tr->rx_packet_len == CRC_SIZE) {
 			ack_rx(uart_tr);
-			uart_tr->rx_packet_len = 0;
-			uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
+		} else if (uart_tr->rx_packet_len == 0) {
+			/* seems like the delimeter was lost and the second delimiter is start of
+			 * the new frame
+			 */
+			uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
+			LOG_WRN("attempt of recovery the lost delimiter");
+			return;
 		}
+		uart_tr->rx_packet_len = 0;
+		uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
 	}
 }
 
