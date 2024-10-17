@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2019 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+/ {
+	uart2: uart {
+		status = "okay";
+		compatible = "zephyr,native-posix-uart";
+		/* Dummy current-speed entry to comply with serial
+		 * DTS binding
+		 */
+		 current-speed = <0>;
+	};
+
+	chosen {
+		zephyr,console = &uart2;
+		zephyr,shell-uart = &uart2;
+	};
+	leds {
+		compatible = "gpio-leds";
+		led1: led_1 {
+			gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
+			label = "Green LED 1";
+		};
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		button0: button_0 {
+			gpios = <&gpio0 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 0";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	aliases {
+		led1 = &led1;
+		sw0 = &button0;
+	};
+};
