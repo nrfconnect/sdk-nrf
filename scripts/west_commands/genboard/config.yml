@@ -1,0 +1,105 @@
+products:
+  - series: nrf52
+    socs:
+      - name: nrf52805
+        variants:
+          - name: caaa
+            ram: 24
+            flash: 192
+      - name: nrf52810
+        variants:
+          - name: qfaa
+            ram: 24
+            flash: 192
+      - name: nrf52811
+        variants:
+          - name: qfaa
+            ram: 24
+            flash: 192
+      - name: nrf52820
+        variants:
+          - name: qdaa
+            ram: 32
+            flash: 256
+      - name: nrf52832
+        variants:
+          - name: ciaa
+            ram: 64
+            flash: 512
+          - name: qfaa
+            ram: 64
+            flash: 512
+          - name: qfab
+            ram: 64
+            flash: 512
+      - name: nrf52833
+        variants:
+          - name: qdaa
+            ram: 128
+            flash: 512
+            since: 2.5.0
+          - name: qiaa
+            ram: 128
+            flash: 512
+      - name: nrf52840
+        variants:
+          - name: qfaa
+            ram: 256
+            flash: 1024
+            since: 2.5.0
+          - name: qiaa
+            ram: 256
+            flash: 1024
+  - series: nrf53
+    socs:
+      - name: nrf5340
+        variants:
+          - name: qkaa
+            cores:
+              - name: cpuapp
+                ns: true
+                ram: 512
+                flash: 1024
+              - name: cpunet
+                ram: 64
+                flash: 246
+  - series: nrf54l
+    socs:
+      - name: nrf54l15
+        variants:
+          - name: qfaa
+            since: 2.7.0
+            cores:
+              - name: cpuapp
+                arch: arm
+                ram: 188
+                flash: 324
+  - series: nrf91
+    socs:
+      - name: nrf9131
+        variants:
+          - name: laca
+            ram: 256
+            flash: 1024
+            ns: true
+            since: 2.5.0
+      - name: nrf9151
+        variants:
+          - name: laca
+            ram: 256
+            flash: 1024
+            ns: true
+            since: 2.6.0
+      - name: nrf9160
+        variants:
+          - name: sica
+            ram: 256
+            flash: 1024
+            ns: true
+      - name: nrf9161
+        variants:
+          - name: laca
+            since: 2.5.0
+            ram: 256
+            flash: 1024
+            ns: true

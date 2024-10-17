@@ -1,0 +1,16 @@
+{% if ncs_version < hwmv2_since %}
+if(CONFIG_BOARD_{{ board | upper }}_NS)
+{% else %}
+if(CONFIG_BOARD_{{ board | upper }}_{{ soc | upper }}_NS)
+{% endif %}
+  set(TFM_PUBLIC_KEY_FORMAT "full")
+endif()
+
+if(CONFIG_TFM_FLASH_MERGED_BINARY)
+  set_property(TARGET runners_yaml_props_target PROPERTY hex_file tfm_merged.hex)
+endif()
+
+board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") }}_{{ 'xxAA' if soc == 'nrf9160' else 'xxCA' }}" "--speed=4000")
+
+include(${ZEPHYR_BASE}/boards/common/nrfjprog.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
