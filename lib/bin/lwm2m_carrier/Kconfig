@@ -324,7 +324,6 @@ config LWM2M_CARRIER_AUTO_REGISTER
 	  manually. Consequently, registrations must be triggered manually after network
 	  coverage is lost.
 
-
 config LWM2M_CARRIER_WORKQ_STACK_SIZE
 	int "LwM2M carrier work queue stack size"
 	default 2048 if NEWLIB_LIBC

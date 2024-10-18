@@ -101,6 +101,12 @@ Which files you are going to use depends on the application configuration and no
 |                                      | (customizable by user, sample name by default).                                                        |                                                                                     |
 |                                      | For example: :file:`127F-0141-01020003-light_switch.zigbee`.                                           |                                                                                     |
 +--------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| :file:`<version_string>_<number>.bin`| :ref:`lwm2m_carrier`-specific set of application update images required for the divided FOTA procedure | Divided FOTA over LwM2M via the :ref:`lwm2m_carrier` library for single-core        |
+| in :file:`lwm2m_carrier_divided_dfu` | in SoftBank network (see :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA`).                | applications certified in SoftBank network.                                         |
+| folder                               | The *<version_string>* is the value of ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU_VERSION``.                |                                                                                     |
+|                                      | The *<number>* is a zero-padded three digit number that corresponds to the number of the file in the   |                                                                                     |
+|                                      | update sequence. For example: :file:`versionA_001.bin`.                                                |                                                                                     |
++--------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
 
 .. _app_build_mcuboot_output:
 
