@@ -5,6 +5,7 @@
 #
 
 menuconfig BT_GATT_DM
+	select BT_LONG_WQ
 	bool "GATT Discovery Manager library"
 	help
 	  Enable BLE GATT Discovery Manager library
