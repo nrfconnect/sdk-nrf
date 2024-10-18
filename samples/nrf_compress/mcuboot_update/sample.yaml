@@ -1,6 +1,6 @@
 common:
   sysbuild: true
-  tags: sysbuild
+  tags: sysbuild ci_samples_nrf_compress
   build_only: true
 tests:
   nrf_compress.mcuboot_update:

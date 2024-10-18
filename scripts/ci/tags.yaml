@@ -351,6 +351,24 @@ ci_samples_nfc:
     - nrf/subsys/nfc/
     - nrfxlib/nfc/
 
+ci_samples_nrf_compress:
+  files:
+    - bootloader/mcuboot/
+    - modules/lib/zcbor/
+    - nrf/samples/nrf_compress/
+    - nrf/subsys/nrf_compress/
+    - zephyr/subsys/storage/
+
+ci_tests_lib_date_time_unity:
+  files:
+    - nrf/lib/at_monitor/
+    - nrf/lib/at_parser/
+    - nrf/lib/date_time/
+    - nrf/lib/lte_link_control/
+    - nrf/tests/include/
+    - nrf/tests/lib/date_time/
+    - nrf/tests/mocks/nrf_modem_at/
+
 Sidewalk:
   files:
     - bootloader/mcuboot/
@@ -931,9 +949,12 @@ ci_tests_subsys_mpsl:
 
 ci_tests_subsys_nrf_compress:
   files:
-    - nrf/subsys/nrf_compress/
+    - bootloader/mcuboot/
     - nrf/include/nrf_compress/
+    - nrf/subsys/nrf_compress/
     - nrf/tests/subsys/nrf_compress/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/storage/
 
 ci_tests_subsys_nfc:
   files:

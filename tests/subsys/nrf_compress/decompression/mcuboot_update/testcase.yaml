@@ -1,6 +1,6 @@
 common:
   sysbuild: true
-  tags: sysbuild
+  tags: sysbuild ci_tests_subsys_nrf_compress
 tests:
   nrf_compress.decompression.mcuboot_update:
     platform_allow:
