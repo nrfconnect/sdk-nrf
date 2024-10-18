@@ -399,12 +399,52 @@
 /samples/app_event_manager/               @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/benchmarks/coremark/             @nrfconnect/ncs-si-bluebagel
-/samples/bluetooth/                       @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
 /samples/bluetooth/broadcast_config_tool/ @nrfconnect/ncs-audio
-/samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
-/samples/bluetooth/direction_finding_connectionless_rx/ @ppryga-nordic
-/samples/bluetooth/direction_finding_connectionless_tx/ @ppryga-nordic
+/samples/bluetooth/central_and_peripheral_hr @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_bas            @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_hids/          @nrfconnect/ncs-si-bluebagel
+/samples/bluetooth/central_hr_coded/      @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_smp_client/    @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_uart/          @nrfconnect/ncs-si-muffin
+/samples/bluetooth/conn_time_sync/        @nrfconnect/ncs-dragoon
+/samples/bluetooth/direction_finding_central/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/direction_finding_connectionless_rx/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/direction_finding_connectionless_tx/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/direction_finding_peripheral/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/direct_test_mode/      @nrfconnect/ncs-si-muffin
+/samples/bluetooth/enocean/               @nrfconnect/ncs-paladin
+/samples/bluetooth/event_trigger/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
+/samples/bluetooth/hci_lpuart/            @nordic-krch
+/samples/bluetooth/iso_combined_bis_and_cis/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/iso_time_sync/         @nrfconnect/ncs-dragoon
+/samples/bluetooth/llpm/                  @nrfconnect/ncs-dragoon
+/samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
+/samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-si-muffin
+/samples/bluetooth/nrf_dm/                @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_ams_client/ @leewkb4567
+/samples/bluetooth/peripheral_ancs_client/ @leewkb4567
+/samples/bluetooth/peripheral_bms/        @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_cgms/       @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_cts_client/ @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_gatt_dm/    @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_hids_keyboard/ @nrfconnect/ncs-si-bluebagel
+/samples/bluetooth/peripheral_hids_mouse/ @nrfconnect/ncs-si-bluebagel
+/samples/bluetooth/peripheral_hr_coded/   @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_lbs/        @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_mds/        @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_nfc_pairing/ @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_power_profiling/ @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_rscs/       @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_status/     @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_uart/       @nrfconnect/ncs-si-muffin
+/samples/bluetooth/radio_coex_1wire/      @nrfconnect/ncs-dragoon
+/samples/bluetooth/radio_notification_cb/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/rpc_host/              @nrfconnect/ncs-si-muffin
+/samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-si-muffin
+/samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
+/samples/bluetooth/throughput/            @nrfconnect/ncs-si-muffin
 /samples/bootloader/                      @nrfconnect/ncs-pluto
 /samples/caf/                             @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
