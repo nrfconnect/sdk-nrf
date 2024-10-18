@@ -86,10 +86,10 @@ int download_client_file_size_get(struct download_client *client, size_t *size)
 	return 0;
 }
 
-int download_client_init(struct download_client *client,
-			 download_client_callback_t callback)
+int download_client_init(struct download_client *const dlc,
+			 struct download_client_cfg *config)
 {
-	download_client_event_handler = callback;
+	download_client_event_handler = config->callback;
 	client->fd = -1;
 	return 0;
 }
@@ -100,7 +100,7 @@ enum dfu_target_image_type dfu_target_smp_img_type_check(const void *const buf, 
 }
 
 int download_client_get(struct download_client *client, const char *host,
-			const struct download_client_cfg *config, const char *file, size_t from)
+			const struct download_client_host_cfg *config, const char *file, size_t from)
 {
 	if (fail_on_connect == true) {
 		return -1;
@@ -122,7 +122,7 @@ int download_client_get(struct download_client *client, const char *host,
 	return 0;
 }
 
-int download_client_disconnect(struct download_client *client)
+int download_client_stop(struct download_client *client)
 {
 	const struct download_client_evt evt = {
 		.id = DOWNLOAD_CLIENT_EVT_CLOSED,
