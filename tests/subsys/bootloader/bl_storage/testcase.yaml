@@ -6,11 +6,13 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
+      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
+      - nrf54l15dk/nrf54l15/cpuapp
     tags: b0 sysbuild ci_tests_subsys_bootloader
     harness: console
     harness_config:
