@@ -49,3 +49,41 @@ function(sdp_assembly_generate hrt_srcs)
   add_dependencies(asm_gen syscall_list_h_target)
 
 endfunction()
+
+function(sdp_assembly_check hrt_srcs)
+  set(asm_check_msg "Checking if ASM files for Hard Real Time have changed.")
+
+  if(TARGET asm_check)
+    message(FATAL_ERROR "sdp_assembly_check() already called, please note that
+      sdp_assembly_check() must be called only once with a list of all source files."
+    )
+  endif()
+
+  string(REPLACE ";" "$<SEMICOLON>" hrt_srcs_semi "${hrt_srcs}")
+
+  add_custom_target(asm_check
+    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_check.cmake
+    COMMENT ${asm_check_msg}
+  )
+
+  add_dependencies(asm_check asm_gen)
+
+endfunction()
+
+function(sdp_assembly_prepare_install hrt_srcs)
+  set(asm_install_msg "Updating ASM files for Hard Real Time.")
+
+  if(TARGET asm_install)
+    message(FATAL_ERROR "sdp_assembly_prepare_install() already called, please note that
+      sdp_assembly_prepare_install() must be called only once with a list of all source files."
+    )
+  endif()
+
+  string(REPLACE ";" "$<SEMICOLON>" hrt_srcs_semi "${hrt_srcs}")
+
+  add_custom_target(asm_install
+    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_install.cmake
+    COMMENT ${asm_install_msg}
+  )
+
+endfunction()
