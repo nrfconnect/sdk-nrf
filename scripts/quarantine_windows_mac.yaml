@@ -31,3 +31,13 @@
   platforms:
     - nrf9160dk/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-26461"
+
+- scenarios:
+    - sample.nrf7001_eks.ble-wifi-provision
+    - sample.nrf7002_eks.ble-wifi-provision
+    - sample.nrf7002.ble-wifi-provision
+    - sample.softap.wifi.provision
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/SHEL-3161"
