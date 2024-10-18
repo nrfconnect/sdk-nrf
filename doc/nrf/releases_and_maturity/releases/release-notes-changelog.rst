@@ -60,6 +60,14 @@ Build and configuration system
 
 * Added the ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
 
+* Added the AP-Protect sysbuild Kconfig options to enable corresponding AP-Protect Kconfigs for all the images in build:
+    * ``SB_CONFIG_APPROTECT_LOCK`` for :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option.
+    * ``SB_CONFIG_APPROTECT_USER_HANDLING`` for :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option.
+    * ``SB_CONFIG_APPROTECT_USE_UICR`` for :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option.
+    * ``SB_CONFIG_SECURE_APPROTECT_LOCK`` for :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option.
+    * ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` for :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
+    * ``SB_CONFIG_SECURE_APPROTECT_USE_UICR`` for :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
+
 * Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
 
   .. note::
@@ -1219,6 +1227,7 @@ Documentation
   * The :ref:`dfu_tools_mcumgr_cli` page after it was removed from the Zephyr repository.
   * The :ref:`ug_nrf54h20_suit_soc_binaries` page.
   * The :ref:`ug_nrf54h20_suit_push` page documentating the SUIT push model-based update process.
+  * The :ref:`app_secure_approtect` section to the :ref:`app_approtect` page.
 
 * Restructured the :ref:`app_bootloaders` documentation and combined the DFU and bootloader articles.
   Additionally, created a new bootloader :ref:`bootloader_quick_start`.
@@ -1239,3 +1248,4 @@ Documentation
   * The :ref:`programming_params` section on the :ref:`programming` page with information about readback protection moved from the :ref:`ug_nrf5340_building` page.
   * The :ref:`security` page with a table that provides an overview of the available general security features.
     This table replaces the subpage that was previously describing these features in more detail and was duplicating information available in other sections.
+  * The :ref:`app_approtect_ncs` section on the :ref:`app_approtect` page with details on setting the Kconfigs and register values to enable AP-Protect.
