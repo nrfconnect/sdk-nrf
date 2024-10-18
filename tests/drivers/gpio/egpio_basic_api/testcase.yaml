@@ -18,6 +18,15 @@ tests:
     sysbuild: true
     extra_args: SB_CONFIG_EGPIO_BACKEND_ICMSG=y
 
+  drivers.egpio.loopback_icbmsg:
+    min_flash: 64
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: SB_CONFIG_EGPIO_BACKEND_ICBMSG=y
+
   drivers.egpio.loopback_mbox:
     min_flash: 64
     platform_allow:
