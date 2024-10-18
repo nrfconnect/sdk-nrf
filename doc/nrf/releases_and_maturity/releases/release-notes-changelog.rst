@@ -257,6 +257,8 @@ Wi-Fi
 
 * The WPA supplicant is now switched to Zephyr upstream's fork instead of |NCS|.
 * Added the :ref:`ug_nrf70_developing_offloaded_raw_tx` page.
+* Added support for EAP-TLS authentication in the Wi-Fi stack.
+* Added :ref:`Platform Security Architecture (PSA) APIs support <ug_nrf70_developing_wifi_psa_support>`  for WPA2 security profiles.
 
 Applications
 ============
@@ -709,6 +711,7 @@ Wi-Fi samples
 
   * Added support for running the full stack on the Thingy:91 X.
      This is a special configuration that uses the nRF5340 as the host chip instead of the nRF9151.
+  * Added overlay to support enterprise mode.
 
 Other samples
 -------------

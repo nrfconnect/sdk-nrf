@@ -14,3 +14,4 @@ The following subpages cover topics related to the transmission and reception of
    sniffer_rx_operation
    promiscuous_operation
    offloaded_raw_tx
+   wifi_advanced_security_modes.rst
