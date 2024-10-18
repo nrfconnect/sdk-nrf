@@ -2,31 +2,31 @@ tests:
   unity.location_test:
     sysbuild: true
     tags: location sysbuild ci_tests_lib_location
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
   unity.location_test.no_agnss:
     sysbuild: true
     tags: location_no_agnss sysbuild ci_tests_lib_location
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
     extra_configs:
       - CONFIG_LOCATION_TEST_AGNSS=n
   unity.location_test.no_wifi:
     sysbuild: true
     tags: location_no_wifi sysbuild ci_tests_lib_location
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
     extra_configs:
       - CONFIG_LOCATION_METHOD_WIFI=n
   unity.location_test.service_external:
     sysbuild: true
     tags: location_service_external sysbuild ci_tests_lib_location
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
     extra_configs:
       - CONFIG_LOCATION_SERVICE_EXTERNAL=y
       - CONFIG_LOCATION_SERVICE_HERE=n
@@ -34,8 +34,8 @@ tests:
   unity.location_test.data_details:
     sysbuild: true
     tags: location_data_details sysbuild ci_tests_lib_location
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
     extra_configs:
       - CONFIG_LOCATION_DATA_DETAILS=y
