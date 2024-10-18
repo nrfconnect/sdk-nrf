@@ -117,14 +117,6 @@ target_compile_definitions(psa_crypto_library_config
 # The name and intent of this comes from TF-M distribution
 add_library(psa_interface INTERFACE)
 
-if(CONFIG_MBEDTLS_ENABLE_BUILTIN_KEYS)
-# Add config files required for PSA crypto interface
-target_compile_definitions(psa_interface
-  INTERFACE
-  MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
-)
-endif()
-
 # Add the includes from nrf_security, Oberon PSA core, and Arm Mbed TLS
 # to the psa_interface library
 target_include_directories(psa_interface
