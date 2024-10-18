@@ -106,7 +106,7 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	ret = verify_and_get_sink(dst_handle, &dst_sink, uri, &dst_component_type, false);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to verify component and get end sink");
-		return ret;
+		return SUIT_FAIL_CONDITION;
 	}
 
 	/*
@@ -119,6 +119,7 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
+			ret = SUIT_FAIL_CONDITION;
 		}
 #else
 		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
@@ -156,7 +157,7 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	ret = verify_and_get_sink(dst_handle, &dst_sink, uri, &dst_component_type, true);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to verify component end get end sink");
-		return ret;
+		return SUIT_FAIL_CONDITION;
 	}
 
 	/*
@@ -169,6 +170,7 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
+			ret = SUIT_FAIL_CONDITION;
 		}
 #else
 		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
@@ -197,6 +199,7 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 		ret = dst_sink.erase(dst_sink.ctx);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Sink mem erase failed: %i", ret);
+			ret = SUIT_FAIL_CONDITION;
 		}
 	}
 
@@ -204,6 +207,9 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	if (ret == SUIT_SUCCESS) {
 		ret = suit_plat_fetch_domain_specific(dst_handle, dst_component_type, &dst_sink,
 						      uri);
+		if (ret != SUIT_SUCCESS) {
+			ret = SUIT_FAIL_CONDITION;
+		}
 	}
 
 	/*
@@ -238,12 +244,12 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to decode component type: %i", ret);
-		return ret;
+		return SUIT_FAIL_CONDITION;
 	}
 
 	/* Check if destination component is supported by the fetch operation. */
 	if (!suit_plat_fetch_integrated_domain_specific_is_type_supported(dst_component_type)) {
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		return SUIT_FAIL_CONDITION;
 	}
 
 #ifndef CONFIG_SUIT_STREAM_SOURCE_MEMPTR
@@ -258,7 +264,7 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 	ret = suit_sink_select(dst_handle, &dst_sink);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Selecting sink failed: %i", ret);
-		return ret;
+		return SUIT_FAIL_CONDITION;
 	}
 
 	/* Append decryption filter if encryption info is provided. */
@@ -269,7 +275,7 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}
 #else
-		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
+		ret = SUIT_FAIL_CONDITION;
 #endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
 	}
 
@@ -305,12 +311,12 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to decode component type: %i", ret);
-		return ret;
+		return SUIT_FAIL_CONDITION;
 	}
 
 	/* Check if destination component is supported by the fetch operation. */
 	if (!suit_plat_fetch_integrated_domain_specific_is_type_supported(dst_component_type)) {
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		return SUIT_FAIL_CONDITION;
 	}
 
 #ifndef CONFIG_SUIT_STREAM_SOURCE_MEMPTR
@@ -325,7 +331,7 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	ret = suit_sink_select(dst_handle, &dst_sink);
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Selecting sink failed: %i", ret);
-		return ret;
+		return SUIT_FAIL_CONDITION;
 	}
 
 	/* Append decryption filter if encryption info is provided. */
@@ -336,7 +342,7 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}
 #else
-		ret = SUIT_ERR_UNSUPPORTED_PARAMETER;
+		ret = SUIT_FAIL_CONDITION;
 #endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
 	}
 
@@ -363,7 +369,7 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 		plat_ret = dst_sink.erase(dst_sink.ctx);
 		if (plat_ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Sink mem erase failed, err code: %d", plat_ret);
-			ret = suit_plat_err_to_processor_err_convert(plat_ret);
+			ret = SUIT_FAIL_CONDITION;
 		}
 	}
 
@@ -371,6 +377,9 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	if (ret == SUIT_SUCCESS) {
 		ret = suit_plat_fetch_integrated_domain_specific(dst_handle, dst_component_type,
 								 &dst_sink, payload);
+		if (ret != SUIT_SUCCESS) {
+			ret = SUIT_FAIL_CONDITION;
+		}
 	}
 
 	/*

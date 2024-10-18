@@ -182,5 +182,9 @@ int suit_plat_check_image_match(suit_component_t component, enum suit_cose_alg a
 	}
 	}
 
+	if (err != SUIT_SUCCESS) {
+		err = SUIT_FAIL_CONDITION;
+	}
+
 	return err;
 }
