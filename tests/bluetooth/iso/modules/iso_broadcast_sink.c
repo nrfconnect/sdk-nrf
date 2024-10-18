@@ -266,7 +266,7 @@ static struct bt_iso_chan *bis[CONFIG_BIS_ISO_CHAN_COUNT_MAX];
 static struct bt_iso_big_sync_param big_sync_param = {
 	.bis_channels = bis,
 	.num_bis = 1,
-	.bis_bitfield = (BIT_MASK(1) << 1),
+	.bis_bitfield = BIT_MASK(1),
 	.mse = BT_ISO_SYNC_MSE_ANY,
 	.sync_timeout = 100, /* in 10 ms units */
 	.encryption = false,
@@ -507,7 +507,7 @@ static int param_set(const struct shell *shell, size_t argc, char **argv)
 		switch (opt) {
 		case 'n':
 			big_sync_param.num_bis = result;
-			big_sync_param.bis_bitfield = (BIT_MASK(result) << 1);
+			big_sync_param.bis_bitfield = BIT_MASK(result);
 			LOG_INF("num_bis: %d", big_sync_param.num_bis);
 			break;
 		case ':':
