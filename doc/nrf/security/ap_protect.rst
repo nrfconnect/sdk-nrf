@@ -173,8 +173,16 @@ Based on the available implementation types, you can configure the access port p
 Enabling AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK`
 ====================================================================
 
-Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option to ``y`` and compiling the firmware is enough to enable the access port protection mechanism for SoCs of the nRF53 Series and those SoCs of the nRF52 Series that feature the hardware and software type of AP-Protect.
-The access port protection configured in this way cannot be disabled without erasing the flash.
+Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option to ``y`` and compiling the firmware enables the access protection mechanism for SoCs of the nRF53 Series and those SoCs of the nRF52 Series that feature the hardware and software type of AP-Protect.
+
+The setting writes the debugger register in SystemInit() in order to lock the access port protection in every boot. In addition to this, the UICR.APPROTECT register should also be written as instructed in `app_approtect_uicr_approtect`_.
+
+.. note::
+    With multi-image builds, this setting needs to be set for the first image (usually a bootloader). Otherwise the AP-Protect will not be sufficient and debugger can be attached to the device.
+    With sysbuild, use the SB_CONFIG_APPROTECT_LOCK, which sets this for all the images.
+
+.. important::
+    With nRF91x1 series devices, the registry setting related to :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` does not persist in System ON IDLE mode. You MUST lock the UICR.APPROTECT register to enable the AP-Protect mechanism as instructed in `app_approtect_uicr_approtect`_.
 
 .. _app_approtect_ncs_user_handling:
 
@@ -187,6 +195,10 @@ This option in fact does not touch the mechanism and keeps it closed.
 You can use this option for example to implement the authenticated debug and lock.
 See the SoC or SiP hardware documentation for more information.
 
+.. note::
+    With multi-image builds, this setting needs to be set for all the images. The default value is to open the device, if the UICR.APPROTECT is not set. This will allow the debugger to be attached to the device.
+    With sysbuild, use the SB_CONFIG_APPROTECT_USER_HANDLING, which sets this for all the images.
+
 .. _app_approtect_ncs_use_uicr:
 
 Enabling AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR`
@@ -197,16 +209,80 @@ This is the default setting in the |NCS|.
 
 You can start debugging the firmware without additional steps needed.
 
-Once you are done debugging, run the following command to enable the access port protection:
+.. _app_approtect_uicr_approtect:
+
+Enabling AP-Protect by locking the UICR.APPROTECT
+=================================================
+
+For the devices in production, you are highly recommended to lock the UICR.APPROTECT register to prevent unauthorized access to the device. The access port protection configured in this way cannot be disabled without erasing the flash.
+
+.. note::
+    This is the only mechanism supported for the nRF52 series and nRF9160 devices that do not have firmware support for AP-Protect.
+
+To lock the UICR.APPROTECT register, follow these steps:
 
 .. code-block:: console
 
    nrfjprog --rbp ALL
 
-This command enables the AP-Protect and resets the device.
+This command enables the AP-Protect (and Secure AP-Protect) and resets the device.
+
+Secure AP-Protect
+=================
+
+With Trusted Firmware-M (TF-M) we have a Secure Processing Environment (SPE) that is isolated from the Non-Secure Processing Environment (NSPE). TF-M is available for the nRF53 and nRF91 Series devices.
+While AP-Protect blocks access to all CPU registers and memories, Secure AP-Protect limits access to the CPU to only non-secure accesses.
+This allows debugging of the NSPE, while SPE debugging is blocked.
+
+The following Kconfig settings are available for nRF91x1 and nRF53 Series devices:
+
+Enabling Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK`
+==================================================================================
+
+Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option to ``y`` and compiling the firmware enables the secure access protection mechanism for SoCs of the nRF53 Series.
+
+The setting writes the secure debugger register in SystemInit() in order to lock the secure access port protection in every boot. In addition to this, the UICR.SECUREAPPROTECT register should also be written as instructed in `app_secure_approtect_uicr_approtect`_.
+
+.. note::
+    With multi-image builds, this setting needs to be set for the first image (usually a bootloader). Otherwise the secure AP-Protect will not be sufficient and debugger can be attached to the SPE.
+    With sysbuild, use the SB_CONFIG_SECURE_APPROTECT_LOCK, which sets this for all the images.
+
+.. important::
+    With nRF91x1 series devices, the registry setting related to :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` does not persist in System ON IDLE mode. You MUST lock the UICR.SECUREAPPROTECT register to enable the secure AP-Protect mechanism as instructed in `app_secure_approtect_uicr_approtect`_.
+
+Enabling secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING`
+===========================================================================================
+
+Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option to ``y`` and compiling the firmware allows you to handle the state of secure AP-Protect at a later stage.
+This option in fact does not touch the mechanism and keeps it closed.
+
+You can use this option for example to implement the authenticated debug and lock of the SPE.
+See the SoC or SiP hardware documentation for more information.
+
+.. note::
+    With multi-image builds, this setting needs to be set for all the images. The default value is to open the device, if the UICR.SECUREAPPROTECT is not set. This will allow the debugger to be attached to the device.
+    With sysbuild, use the SB_CONFIG_SECURE_APPROTECT_USER_HANDLING, which sets this for all the images.
+
+Enabling secure AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR`
+===============================================================================
+
+Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option to ``y`` and compiling the firmware makes the secure AP-Protect disabled by default.
+This is the default setting in the |NCS|.
+
+You can start debugging the SPE without additional steps needed.
+
+.. _app_secure_approtect_uicr_approtect:
+
+Enabling secure AP-Protect by locking the UICR.SECUREAPPROTECT
+==============================================================
 
 To enable only the Secure AP-Protect, run the following command:
+
+.. note::
+    This is the only mechanism supported for the nRF9160 devices that do not have firmware support for secure AP-Protect.
 
 .. code-block:: console
 
    nrfjprog --rbp SECURE
+
+This command enables the secure AP-Protect and resets the device.
