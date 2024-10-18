@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+
+config BUILD_ALSO_FOR_RADIO_CORE
+	bool "Build also for the radio CPU"
+
+config RADIO_IMAGE_BOARD
+	string "The board used for cpurad target"
+	depends on BUILD_ALSO_FOR_RADIO_CORE
+	default "nrf54h20dk/nrf54h20/cpurad" if BOARD_NRF54H20DK_NRF54H20_CPUAPP
+	default "nrf9280pdk/nrf9280/cpurad" if BOARD_NRF9280PDK_NRF9280_CPUAPP

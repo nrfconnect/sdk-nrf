@@ -55,6 +55,5 @@ It uses the following Zephyr libraries:
 
 * :ref:`zephyr:ipc_service_backend_icmsg`
 * :ref:`zephyr:logging_api`
-* :ref:`zephyr:kernel_api`
 
 The sample also uses drivers from `nrfx`_.
