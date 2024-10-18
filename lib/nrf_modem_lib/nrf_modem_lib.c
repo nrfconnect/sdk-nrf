@@ -77,7 +77,7 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 
 static const struct nrf_modem_init_params init_params = {
 	.shmem.ctrl = {
-		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm)),
+		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
 		.size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE,
 	},
 	.shmem.tx = {
@@ -91,6 +91,12 @@ static const struct nrf_modem_init_params init_params = {
 	.fault_handler = nrf_modem_fault_handler,
 	.dfu_handler = nrf_modem_lib_dfu_handler,
 };
+
+BUILD_ASSERT(
+	CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE <=
+		DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
+	"CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE exceeds 'cpuapp_cpucell_ipc_shm_ctrl' in devicetree");
+
 #endif /* CONFIG_SOC_SERIES_NRF92X */
 
 #if CONFIG_NRF_MODEM_LIB_TRACE
