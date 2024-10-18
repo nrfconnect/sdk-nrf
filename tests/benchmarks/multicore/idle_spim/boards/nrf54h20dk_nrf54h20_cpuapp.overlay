@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&spi131 {
+	zephyr,pm-device-runtime-auto;
+};
+
+&exmif {
+	status = "disabled";
+};
