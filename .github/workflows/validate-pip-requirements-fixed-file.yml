@@ -8,6 +8,8 @@ on:
       - 'v*-branch'
     paths:
       - 'scripts/requirements*.txt'
+      - '.github/workflows/validate-pip-requirements-fixed-file.yml'
+
 
 jobs:
   check-requirements:
@@ -71,7 +73,8 @@ jobs:
                 zephyr/scripts/requirements.txt  \
                 nrf/scripts/requirements.txt \
                 nrf/scripts/requirements-ci.txt \
-                nrf/scripts/requirements-extra.txt
+                nrf/scripts/requirements-extra.txt \
+                nrf/scripts/requirements-west-ncs-sbom.txt
 
             deactivate
             rmvirtualenv pip-fixed-venv
