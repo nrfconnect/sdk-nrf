@@ -4,8 +4,6 @@ sample:
 tests:
   sample.bluetooth.direction_finding_connectionless_tx.aoa.sdc.nrf52_nrf53:
     sysbuild: true
-    extra_args:
-      - OVERLAY_CONFIG="overlay-aoa.conf"
     build_only: true
     platform_allow:
       - nrf52833dk/nrf52833
@@ -20,7 +18,7 @@ tests:
     sysbuild: false
     build_only: true
     extra_args:
-      - OVERLAY_CONFIG="overlay-aoa.conf;overlay-bt_ll_sw_split.conf"
+      - OVERLAY_CONFIG="overlay-bt_ll_sw_split.conf"
       - SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf52833dk/nrf52833
@@ -33,7 +31,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - OVERLAY_CONFIG="overlay-aoa.conf"
       - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf"
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
@@ -45,7 +42,7 @@ tests:
     sysbuild: false
     build_only: true
     extra_args:
-      - OVERLAY_CONFIG="overlay-bt_ll_sw_split.conf"
+      - OVERLAY_CONFIG="overlay-aod.conf;overlay-bt_ll_sw_split.conf"
       - SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf52833dk/nrf52833
@@ -58,6 +55,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
+      - OVERLAY_CONFIG="overlay-aod.conf"
       - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf"
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
