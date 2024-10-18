@@ -328,6 +328,9 @@ nRF Desktop
   * The USB next stack (:ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>`) implies partial erase feature of the nRF SoC flash driver (:kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE`).
     This is done to improve stability of the USB next stack.
     The partial erase feature works around device errors that might be reported by Windows USB host in Device Manager if USB cable is connected while erasing secondary image slot in the background.
+  * Bluetooth connectivity support (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`) implies using a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) if MPSL is used for synchronization between the flash memory driver and radio (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL`).
+    This is done to work around the timeout in MPSL flash synchronization (``NCSDK-29354`` known issue).
+    See :ref:`known_issues` for details.
 
 * Updated:
 
