@@ -81,11 +81,19 @@ static void ack_rx(struct nrf_rpc_uart *uart_tr)
 		return;
 	}
 
-	if (uart_tr->rx_packet_len == CRC_SIZE) {
-		uart_tr->ack_payload = sys_get_le16(uart_tr->rx_packet);
-		k_sem_give(&uart_tr->ack_sem);
-		k_yield();
+	if (uart_tr->rx_packet_len != CRC_SIZE) {
+		return;
 	}
+
+	uint16_t rx_ack = sys_get_le16(uart_tr->rx_packet);
+
+	if (uart_tr->ack_payload != rx_ack) {
+		LOG_WRN("Wrong ack. Expected: %#4x. Received: %#4x.", uart_tr->ack_payload, rx_ack);
+		return;
+	}
+
+	k_sem_give(&uart_tr->ack_sem);
+	k_yield();
 }
 
 static void ack_tx(struct nrf_rpc_uart *uart_tr, uint16_t ack_pld)
@@ -362,6 +370,7 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 	int attempts = 0;
 
 	crc_val = tx_flip(uart_tr, crc_val);
+	uart_tr->ack_payload = crc_val;
 	acked = false;
 
 	do {
@@ -386,13 +395,8 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 		k_mutex_unlock(&uart_tr->ack_tx_lock);
 		if (k_sem_take(&uart_tr->ack_sem, K_MSEC(CONFIG_NRF_RPC_UART_ACK_WAITING_TIME)) ==
 		    0) {
-			acked = uart_tr->ack_payload == crc_val;
-			if (!acked) {
-				LOG_WRN("Wrong ack. Expected: %#4x. Received: %#4x.", crc_val,
-					uart_tr->ack_payload);
-			} else {
-				LOG_DBG("Acked successfully.");
-			}
+			acked = true;
+			LOG_DBG("Acked successfully.");
 		} else {
 			LOG_WRN("Ack timeout expired.");
 		}
