@@ -1139,8 +1139,8 @@ static const char dect_rx_usage_str[] =
 	"                            [-e <dbm>]\n"
 	"                            [-i <secs] [--free_th <dbm_value>] [--busy_th <dbm_value>]\n"
 	"Subcommands:\n"
-	"  start,		Start RX.\n"
-	"  stop,		Stop RX.\n"
+	"  start,               Start RX.\n"
+	"  stop,                Stop RX.\n"
 	"Starting options:\n"
 	"  -c <ch_nbr>, --c_ch,         Channel number. Default: 1665\n"
 	"  -t, --c_scan_time <int>,     Scanning duration in seconds\n"
@@ -1201,7 +1201,7 @@ static int dect_phy_rx_cmd(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	optreset = 1;
-	optind = 1;
+	optind = 2;
 	if (argv[1] != NULL && !strcmp(argv[1], "stop")) {
 		dect_phy_ctrl_rx_stop();
 	} else if (argv[1] != NULL && !strcmp(argv[1], "start")) {
