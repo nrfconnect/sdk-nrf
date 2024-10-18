@@ -59,4 +59,34 @@ function(sdp_assembly_generate)
 
 endfunction()
 
+function(sdp_assembly_check)
+  set(hrt_dir ${PROJECT_SOURCE_DIR}/src/hrt)
+  set(asm_check_msg "Checking if ASM files for Hard Real Time have changed.")
+
+  add_custom_target(asm_check
+    COMMAND ${CMAKE_COMMAND} -D hrt_dir=${hrt_dir} -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_check.cmake
+    WORKING_DIRECTORY "${hrt_dir}"
+    COMMAND_EXPAND_LISTS
+    COMMENT ${asm_check_msg}
+  )
+
+  add_dependencies(asm_check asm_gen)
+
+endfunction()
+
+function(sdp_assembly_update)
+  set(hrt_dir ${PROJECT_SOURCE_DIR}/src/hrt)
+  set(asm_check_msg "Updating ASM files for Hard Real Time.")
+
+  add_custom_target(asm_update
+    COMMAND ${CMAKE_COMMAND} -D hrt_dir=${hrt_dir} -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_update.cmake
+    WORKING_DIRECTORY "${hrt_dir}"
+    COMMAND_EXPAND_LISTS
+    COMMENT ${asm_check_msg}
+  )
+
+endfunction()
+
 sdp_assembly_generate()
+sdp_assembly_check()
+sdp_assembly_update()
