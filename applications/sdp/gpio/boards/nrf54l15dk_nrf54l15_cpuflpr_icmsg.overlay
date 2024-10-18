@@ -32,6 +32,14 @@
 	};
 };
 
+&cpuflpr_rram {
+	reg = <0x17a000 DT_SIZE_K(12)>;
+};
+
+&cpuflpr_code_partition {
+	reg = <0x0 DT_SIZE_K(12)>;
+};
+
 &cpuflpr_sram {
 	reg = <0x2003d000 DT_SIZE_K(12)>;
 	ranges = <0x0 0x2003d000 0x3000>;
