@@ -7,11 +7,11 @@ How to fetch payloads
    :local:
    :depth: 2
 
-In the Software Updates for Internet of Things (SUIT), it is possible for a device to obtain a new firmware in two ways:
+In the Software Updates for Internet of Things (SUIT), a device can obtain new firmware in two ways:
 
-1. The push model - where all necessary candidate images are integrated into the SUIT envelope, and uploaded to a device as a single unit.
+1. Using the push model - where all necessary candidate images are uploaded to the device along with the envelope before triggering the envelope processing.
 
-#. The fetch model - where the envelope contains 0 or not all necessary candidate images.
+#. Using the fetch model - where not all the required payloads are uploaded to the device before triggering the envelope processing.
    The manifest contains logic that instructs the device to fetch other required candidate images through a user-defined mechanism during the envelope processing.
 
 This guide explains how to reconfigure an application that uses the push model to a fetch model-based upgrade.
@@ -25,9 +25,11 @@ The push model does not require the SUIT processor to be built into the applicat
 The fetch model, on the other hand, requires the SUIT processor to be built into the application firmware in order to execute the ``suit-payload-fetch`` sequence.
 You can enable this by using the :kconfig:option:`CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL` Kconfig option.
 
-In the push model, the envelope along with all necessary candidate images must be stored in a continuous memory region in the MCU's non-volatile storage.
-In the fetch model, the envelope must still be stored in a continuous memory region in the MCU, but it does not occupy as much space because not all candidate images are integrated into it.
-Some or all candidate images can be stored in separate memory regions from the envelope, or on a completely different storage device altogether.
+In both models, the SUIT envelope must be stored in a continuous memory region in the MCU's non-volatile storage.
+Some or all candidate images can be stored either in separate memory regions from the envelope or on a completely different storage device.
+
+In the push model, all candidate images must be uploaded to the device before the envelope processing starts.
+In the fetch model, the device can fetch the candidate images after the envelope processing has started.
 
 Reasons to use the fetch model
 ******************************
@@ -40,10 +42,6 @@ The fetch model has greater flexibility compared to the push model in the follow
 * Custom fetch source can be implemented.
   Nordic Semiconductor provides a reference fetch source implementation which uses the SMP protocol over serial or Bluetooth® LE.
   You have the option to implement any fetching mechanism needed for the application, such as fetching from an HTTP resource.
-
-* Candidate images can be stored in a different memory partition than the envelope itself.
-  The SUIT envelope itself must always be stored in non-volatile storage that is integrated into the MCU.
-  The fetched candidate images do not have restrictions on where they are placed and can be stored on an external memory chip.
 
 Migrating from push-based to fetch-based firmware upgrade
 *********************************************************
