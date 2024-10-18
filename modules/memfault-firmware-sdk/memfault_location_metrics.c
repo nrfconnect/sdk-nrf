@@ -91,6 +91,7 @@ static void prv_location_method_results_record(enum location_method method,
 		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_wifi_method_result, ncs_loc, id);
 		MEMFAULT_METRIC_SESSION_SET_UNSIGNED(ncs_loc_wifi_ap_count, ncs_loc,
 						     details->wifi.ap_count);
+		break;
 #endif /* CONFIG_LOCATION_METHOD_CELLULAR && CONFIG_LOCATION_METHOD_WIFI */
 	default:
 		LOG_ERR("Unsupported location method id=%d", method);
