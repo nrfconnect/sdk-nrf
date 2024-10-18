@@ -458,7 +458,7 @@ static int start_download(void)
 			.sec_tag_list = &sec_tag,
 			.sec_tag_count = (sec_tag < 0 ? 0 : 1),
 			.pdn_id = 0,
-			.frag_size_override = ctx_ptr->fragment_size ? ctx_ptr->fragment_size :
+			.range_override = ctx_ptr->fragment_size ? ctx_ptr->fragment_size :
 					      CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
 		},
 		.fota = {

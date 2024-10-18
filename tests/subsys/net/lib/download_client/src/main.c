@@ -14,7 +14,14 @@
 #include "mock/dl_coap.h"
 
 K_PIPE_DEFINE(event_pipe, 10, _Alignof(struct download_client_evt));
+static int download_client_callback(const struct download_client_evt *event);
 static struct download_client client;
+static char dlc_buf[2048];
+static struct download_client_cfg dlc_config = {
+	.callback = download_client_callback,
+	.buf = dlc_buf,
+	.buf_size = sizeof(dlc_buf),
+};
 static const struct sockaddr_in addr_coap_me_http = {
 	.sin_family = AF_INET,
 	.sin_port = htons(80),
@@ -79,9 +86,9 @@ static struct download_client_evt get_next_event(k_timeout_t timeout)
 	return evt;
 }
 
-static struct download_client_cfg config = {
+static struct download_client_host_cfg config = {
 	.pdn_id = 0,
-	.frag_size_override = 0,
+	.range_override = 0,
 };
 
 static void init(void)
@@ -91,7 +98,7 @@ static void init(void)
 
 	if (!initialized) {
 		memset(&client, 0, sizeof(struct download_client));
-		err = download_client_init(&client, download_client_callback);
+		err = download_client_init(&client, &dlc_config);
 		zassert_ok(err, NULL);
 		initialized = true;
 	}

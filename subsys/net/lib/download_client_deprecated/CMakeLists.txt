@@ -7,18 +7,13 @@ zephyr_library()
 zephyr_library_sources(
 	src/download_client.c
 	src/parse.c
+	src/http.c
 	src/sanity.c
-	src/client_socket.c
 )
 
 zephyr_library_sources_ifdef(
-	CONFIG_DOWNLOAD_CLIENT_TRANSPORT_HTTP
-	src/transports/http.c
-)
-
-zephyr_library_sources_ifdef(
-	CONFIG_DOWNLOAD_CLIENT_TRANSPORT_COAP
-	src/transports/coap.c
+	CONFIG_COAP
+	src/coap.c
 )
 
 zephyr_library_sources_ifdef(
@@ -27,4 +22,3 @@ zephyr_library_sources_ifdef(
 )
 
 zephyr_include_directories(./include)
-zephyr_linker_sources(RODATA dlc_transports.ld)
