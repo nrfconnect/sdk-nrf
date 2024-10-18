@@ -172,7 +172,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
-    set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES}\n")
+    math(EXPR mcuboot_total_images "${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES} + ${SB_CONFIG_MCUBOOT_ADDITIONAL_UPDATEABLE_IMAGES}")
+
+    set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${mcuboot_total_images}\n")
 
     if(SB_CONFIG_MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES)
       set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_UPDATEABLE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES}\n")
@@ -315,6 +317,46 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       if(SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
         add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf)
       endif()
+
+      # Provide MCUboot image IDs to main application and MCUboot
+      set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}\n")
+      set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}\n")
+      set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}\n")
+      set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}\n")
+      set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER}\n")
+
+      if(SB_CONFIG_SECURE_BOOT_APPCORE)
+        # Get the s0/s1 MCUboot update package version and split it up into the fields so it can
+        # be supplied to the MCUboot image
+        string(REPLACE "." ";" s0_s1_package_version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION})
+        string(REPLACE "+" ";" s0_s1_package_version "${s0_s1_package_version}")
+
+        list(GET s0_s1_package_version 0 s0_s1_package_version_major)
+        list(GET s0_s1_package_version 1 s0_s1_package_version_minor)
+        list(GET s0_s1_package_version 2 s0_s1_package_version_revision)
+        list(GET s0_s1_package_version 3 s0_s1_package_version_build_number)
+
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_MAJOR=${s0_s1_package_version_major}\n")
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_MINOR=${s0_s1_package_version_minor}\n")
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_REVISION=${s0_s1_package_version_revision}\n")
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_BUILD_NUMBER=${s0_s1_package_version_build_number}\n")
+
+        set(s0_s1_package_version)
+        set(s0_s1_package_version_major)
+        set(s0_s1_package_version_minor)
+        set(s0_s1_package_version_revision)
+        set(s0_s1_package_version_build_number)
+      else()
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_MAJOR=-1\n")
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_MINOR=-1\n")
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_REVISION=-1\n")
+        set_property(TARGET mcuboot APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_BUILD_NUMBER=-1\n")
+      endif()
+
+      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}\n")
+      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}\n")
+      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}\n")
+      set_property(TARGET ${DEFAULT_IMAGE} APPEND_STRING PROPERTY CONFIG "CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}\n")
     endif()
 
     if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
