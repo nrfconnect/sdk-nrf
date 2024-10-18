@@ -34,8 +34,9 @@ static void mbox_callback(const struct device *instance, uint32_t channel, void 
 	nrfe_gpio_mbox_data_t *rx_data = (nrfe_gpio_mbox_data_t *)user_data;
 
 	/* Try and get lock for the shared data structure */
-	if (atomic_flag_test_and_set(&rx_data->lock.locked)) {
-		/* Return in case lock is not acquired (used by other core)*/
+	if (!atomic_cas(&rx_data->lock.locked, DATA_LOCK_STATE_WITH_DATA, DATA_LOCK_STATE_BUSY)) {
+		/* Return in case buffer is without data */
+		atomic_set(&rx_data->lock.locked, DATA_LOCK_STATE_READY);
 		return;
 	}
 
@@ -49,7 +50,7 @@ static void mbox_callback(const struct device *instance, uint32_t channel, void 
 	rx_data->lock.data_size = 0;
 
 	/* We are finished with the shared data structure, so we can release the lock */
-	atomic_flag_clear(&rx_data->lock.locked);
+	atomic_set(&rx_data->lock.locked, DATA_LOCK_STATE_READY);
 }
 
 /**
@@ -88,8 +89,8 @@ int backend_init(backend_callback_t callback)
 	}
 
 	/* clear the buffer locks and their size holders */
-	atomic_flag_clear(&rx_data->lock.locked);
 	rx_data->lock.data_size = 0;
+	atomic_set(&rx_data->lock.locked, DATA_LOCK_STATE_READY);
 
 	return 0;
 }
