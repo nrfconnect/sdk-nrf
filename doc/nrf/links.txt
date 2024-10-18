@@ -949,6 +949,7 @@
 
 .. ### Source: www.segger.com
 
+.. _`Adjusting Trace Timings and General Troubleshooting`: https://wiki.segger.com/Adjusting_trace_timings_and_general_troubleshooting#Type_3:_Trace_clock_delayed
 .. _`SEGGER J-Link`:
 .. _`J-Link Software and Documentation Pack`: https://www.segger.com/downloads/jlink
 
