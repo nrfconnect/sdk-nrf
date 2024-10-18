@@ -57,37 +57,6 @@ config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	  report pipeline with two sequential reports is required to ensure that
 	  the USB peripheral can provide a HID report on every USB poll.
 
-config DESKTOP_USB_INIT_THREAD
-	bool
-	default y if SOC_SERIES_NRF54HX
-	help
-	  Initialize USB stack in a separate thread instead of doing it in
-	  the context of the system workqueue.
-	  For the nRF54HX SoC use-case, the usbd_init() function blocks while
-	  waiting for a synchronization object that is received after the system
-	  controller sends the USB service event through the NRFS and IPC with
-	  the ICMSG backend to the application core.
-	  The ICMSG backend uses the system workqueue context for both
-	  initialization and on the incoming message handling, so calling the
-	  usbd_init() function from the same context causes deadlock during
-	  application boot.
-
-config DESKTOP_USB_INIT_THREAD_STACK_SIZE
-	int
-	default 2048
-
-config DESKTOP_USB_INIT_THREAD_PRIORITY
-	int
-	default -1
-
-config DESKTOP_USB_INIT_THREAD_DELAY_MS
-	int
-	default 30
-	help
-	  Due to an issue in the USB stack initialization on the nRF54HX SoC,
-	  the usbd_init() cannot be called too early. The delay is introduced
-	  to delay this call.
-
 choice DESKTOP_USB_STACK
 	prompt "USB stack"
 	default DESKTOP_USB_STACK_LEGACY
@@ -206,20 +175,29 @@ config USBD_HID_IN_BUF_COUNT
 config DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL
 	bool
 	default y if SOC_SERIES_NRF54HX
-	depends on DESKTOP_USB_INIT_THREAD
-	select REBOOT
 	help
-	  Disable USB stack on VBUS removal. This is a workaround for the USB
-	  driver not working correctly on the nRF54HX SoC. After the USB cable
-	  is removed, the USB driver is powered down and doesn't call appropriate
-	  callbacks to the USB stack. It may lead to the USB stack ending in a
-	  broken state. Calling usbd_disable() on VBUS removal workarounds this
-	  issue. When this option is enabled, the usb_init_thread will be used to
-	  call the usbd_enable() and usbd_disable() functions on VBUS events. This
-	  is done because the usbd_enable() function blocks if the USB cable is
-	  not connected. A separate thread allows the application to trigger a
-	  reboot from the workqueue context to prevent blocking the application
-	  forever.
+	  Disable the USB stack on VBUS removal and enable it on VBUS ready to
+	  workaround UDC driver limitations of the nRF54HX SoC.
+
+	  After the USB cable is removed, the USB driver is powered down and
+	  doesn't call appropriate callbacks to the USB stack. It may lead to
+	  the USB stack ending in a broken state. Calling usbd_disable() on VBUS
+	  removal workarounds this issue.
+
+	  The usbd_enable() function blocks until USB cable is connected. If the
+	  cable is not connected during the predefined wait period
+	  (CONFIG_UDC_DWC2_USBHS_VBUS_READY_TIMEOUT), the function returns
+	  earlier with a timeout error. The function is called on VBUS ready to
+	  avoid calling usbd_enable() periodically.
+
+config UDC_DWC2_USBHS_VBUS_READY_TIMEOUT
+	int
+	depends on SOC_SERIES_NRF54HX
+	default 100
+	help
+	  For the nRF54HX SoC the timeout must be set to a non-zero value to
+	  prevent the usbd_enable() function from blocking the application
+	  forever when the USB cable is not connected.
 
 choice USBD_LOG_LEVEL_CHOICE
 	default USBD_LOG_LEVEL_WRN

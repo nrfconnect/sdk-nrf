@@ -236,17 +236,15 @@ The module sends the report using :c:struct:`hid_report_event`, that is handled 
 nRF54H20 support
 ================
 
-Due to the characteristics of the nRF54H20 USB Device Controller (UDC), several changes have been made in the USB state module to support the nRF54H20 platform:
+Due to the characteristics of the nRF54H20 USB Device Controller (UDC), following change has been made in the USB state module to support the nRF54H20 platform:
 
-* The USB state module creates a separate thread to initialize, enable, and disable the USB stack.
 * The module disables the USB stack when the USB cable is disconnected and enables the stack when the cable is connected.
 
-These changes are applicable to the nRF54H20 platform only.
-They are necessary to ensure proper USB stack operation on the nRF54H20 platform.
+This change is applicable to the nRF54H20 platform only.
+It is necessary to ensure proper USB stack operation on the nRF54H20 platform.
 
-The USB stack cannot be initialized from the system workqueue thread, because it causes a deadlock.
-Because of that, a separate thread is used to initialize the USB stack.
-For more details, see the :ref:`CONFIG_DESKTOP_USB_INIT_THREAD <config_desktop_app_options>` Kconfig option.
+The :kconfig:option:`CONFIG_UDC_DWC2_USBHS_VBUS_READY_TIMEOUT` Kconfig option is set to a non-zero value to prevent the :c:func:`usbd_enable` function from blocking the application forever when the USB cable is not connected.
+Instead, the function returns an error on timeout.
 The UDC is powered down whenever the USB cable is disconnected, failing to trigger the necessary callbacks to the USB stack.
 It may cause the USB stack to become non-functional.
 The USB stack is disabled upon disconnecting the cable to work around this issue.
