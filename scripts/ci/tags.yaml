@@ -949,9 +949,12 @@ ci_tests_subsys_mpsl:
 
 ci_tests_subsys_nrf_compress:
   files:
-    - nrf/subsys/nrf_compress/
+    - bootloader/mcuboot/
     - nrf/include/nrf_compress/
+    - nrf/subsys/nrf_compress/
     - nrf/tests/subsys/nrf_compress/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/storage/
 
 ci_tests_subsys_nfc:
   files:
