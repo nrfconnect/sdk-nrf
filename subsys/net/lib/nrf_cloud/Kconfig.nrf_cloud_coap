@@ -23,6 +23,22 @@ config NRF_CLOUD_COAP_SERVER_HOSTNAME
 config NRF_CLOUD_COAP_SEC_TAG
 	int "Security tag for credentials"
 	default NRF_CLOUD_SEC_TAG
+	help
+	  Security tag containing the nRF Cloud CoAP CA certificate and private key required for
+	  the DTLS connection to nRF Cloud.
+	  NRF_CLOUD_COAP_JWT_SEC_TAG defaults to the same sec tag value, so the private key
+	  is also used for authentication.
+
+config NRF_CLOUD_COAP_JWT_SEC_TAG
+	int "[For Debug Use] Security tag for JWT credentials"
+	default NRF_CLOUD_COAP_SEC_TAG
+	help
+	  Security tag containing the private key used to sign CoAP JWTs for nRF Cloud
+	  authentication.
+	  The private key in this sec tag must have its corresponding public key registered for
+	  the device on nRF Cloud.
+	  Using this option allows for a different private key to be stored in
+	  NRF_CLOUD_COAP_SEC_TAG that can be used to decrypt DTLS traffic.
 
 config NRF_CLOUD_COAP_SERVER_PORT
 	int "CoAP server port"

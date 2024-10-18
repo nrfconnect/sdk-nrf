@@ -470,12 +470,14 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 	const char *id_ptr;
 	struct jwt_data jwt = {
 		.audience = NULL,
-		.sec_tag = nrf_cloud_sec_tag_get(),
 		.key = JWT_KEY_TYPE_CLIENT_PRIV,
 		.alg = JWT_ALG_TYPE_ES256,
 		.jwt_buf = jwt_buf,
 		.jwt_sz = jwt_buf_sz
 	};
+
+	jwt.sec_tag = IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ?
+		      nrf_cloud_sec_tag_coap_jwt_get() : nrf_cloud_sec_tag_get();
 
 #if defined(CONFIG_MODEM_JWT)
 	/* Check if modem time is valid */
