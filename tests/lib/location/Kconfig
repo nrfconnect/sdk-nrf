@@ -12,6 +12,9 @@ config LOCATION_METHOD_GNSS
 	bool "Internal"
 	#depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
+	select LTE_LC_NEIGHBOR_CELL_MEAS_MODULE if LOCATION_METHOD_GNSS_LTE_LC
+	select LTE_LC_PSM_MODULE if LOCATION_METHOD_GNSS_LTE_LC
+	select LTE_LC_MODEM_SLEEP_MODULE if LOCATION_METHOD_GNSS_LTE_LC
 	default y
 	help
 	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
@@ -20,9 +23,20 @@ config LOCATION_METHOD_CELLULAR
 	bool "Internal"
 	#depends on NRF_MODEM_LIB
 	depends on LTE_LINK_CONTROL
+	select LTE_LC_NEIGHBOR_CELL_MEAS_MODULE if LOCATION_METHOD_CELLULAR_LTE_LC
 	default y
 	help
 	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config LOCATION_METHOD_GNSS_LTE_LC
+	bool
+	depends on LOCATION_METHOD_GNSS
+	default n
+
+config LOCATION_METHOD_CELLULAR_LTE_LC
+	bool
+	depends on LOCATION_METHOD_CELLULAR
+	default n
 
 config LOCATION_METHOD_WIFI
 	bool "Internal"
