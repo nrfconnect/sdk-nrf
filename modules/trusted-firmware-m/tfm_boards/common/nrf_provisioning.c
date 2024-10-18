@@ -16,6 +16,51 @@
 #include "nrf_provisioning.h"
 #include <identity_key.h>
 #include <tfm_spm_log.h>
+#include <pm_config.h>
+#if defined(NRF53_SERIES) && defined(PM_CPUNET_APP_ADDRESS)
+#include <dfu/pcd_common.h>
+#include <spu.h>
+#include <hal/nrf_reset.h>
+
+#define DEBUG_LOCK_TIMEOUT_MS 3000
+#define USEC_IN_MSEC 1000
+#define USEC_IN_SEC 1000000
+
+static enum tfm_plat_err_t disable_netcore_debug(void)
+{
+	/* NRF_RESET to secure.
+	 * It will be configured to the original value after the provisioning is done.
+	 */
+	spu_peripheral_config_secure(NRF_RESET_S_BASE, SPU_LOCK_CONF_UNLOCKED);
+
+	/* Ensure that the network core is stopped. */
+	nrf_reset_network_force_off(NRF_RESET, true);
+
+	/* Debug lock command will be read in b0n startup. */
+	pcd_write_cmd_lock_debug();
+
+	/* Start the network core. */
+	nrf_reset_network_force_off(NRF_RESET, false);
+
+	/* Wait 1 second for the network core to start up. */
+	NRFX_DELAY_US(USEC_IN_SEC);
+
+	/* Wait for the debug lock to complete. */
+	for (int i = 0; i < DEBUG_LOCK_TIMEOUT_MS; i++) {
+		if (!pcd_read_cmd_lock_debug()) {
+			break;
+		}
+		NRFX_DELAY_US(USEC_IN_MSEC);
+	}
+
+	if (!pcd_read_cmd_done()) {
+		SPMLOG_ERRMSG("Failed to lock debug in network core.");
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
+	return TFM_PLAT_ERR_SUCCESS;
+}
+#endif /* NRF53_SERIES && PM_CPUNET_APP_ADDRESS */
 
 static enum tfm_plat_err_t verify_debug_disabled(void)
 {
@@ -71,9 +116,17 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 	 * that secure boot is already enabled at this stage
 	 */
 
+	/* Application debug should already be disabled */
 	if (verify_debug_disabled() != TFM_PLAT_ERR_SUCCESS) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
+
+#if defined(NRF53_SERIES) && defined(PM_CPUNET_APP_ADDRESS)
+	/* Disable network core debug in here */
+	if (disable_netcore_debug() != TFM_PLAT_ERR_SUCCESS) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+#endif
 
 	/* Transition to the SECURED lifecycle state */
 	if (tfm_attest_update_security_lifecycle_otp(TFM_SLC_SECURED) != 0) {
