@@ -68,9 +68,7 @@ ipc1: &cpuapp_cpuppr_ipc {
        cpuapp_rx_partitions: cpuapp-rx-partitions {
 	       compatible = "nordic,owned-partitions", "fixed-partitions";
 	       status = "okay";
-	       perm-read;
-	       perm-execute;
-	       perm-secure;
+	       nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RXS>;
 	       #address-cells = <1>;
 	       #size-cells = <1>;
 
@@ -86,8 +84,7 @@ ipc1: &cpuapp_cpuppr_ipc {
        cpuapp_rw_partitions: cpuapp-rw-partitions {
 	       compatible = "nordic,owned-partitions", "fixed-partitions";
 	       status = "okay";
-	       perm-read;
-	       perm-write;
+	       nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
 	       #address-cells = < 0x1 >;
 	       #size-cells = < 0x1 >;
 
