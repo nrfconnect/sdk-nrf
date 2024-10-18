@@ -279,14 +279,6 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 	}
 	LOG_DBG("Found installed envelope");
 
-	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
-				    SUIT_SEQ_PARSE);
-	if (err != SUIT_SUCCESS) {
-		LOG_ERR("Failed to validate installed manifest: %d", err);
-		return -ENOEXEC;
-	}
-	LOG_DBG("Validated installed manifest");
-
 	unsigned int seq_num;
 	suit_semver_raw_t version;
 
