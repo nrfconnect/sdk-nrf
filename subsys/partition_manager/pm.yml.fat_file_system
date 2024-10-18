@@ -1,0 +1,24 @@
+#include <autoconf.h>
+
+fatfs_storage:
+  placement:
+    before: [end]
+#ifdef CONFIG_BUILD_WITH_TFM
+    align: {start: CONFIG_NRF_SPU_FLASH_REGION_SIZE}
+#else
+    align: {start: 4096}
+#endif
+#ifdef CONFIG_PM_PARTITION_REGION_FATFS_EXTERNAL
+  region: external_flash
+#else
+  inside: [nonsecure_storage]
+#endif
+  affiliation:
+    - disk
+  extra_params: {
+    disk_name: CONFIG_PM_PARTITION_FATFS_DISK_NAME,
+    disk_cache_size: 4096,
+    disk_sector_size: 512,
+    disk_read_only: 0
+  }
+  size: CONFIG_PM_PARTITION_SIZE_FATFS
