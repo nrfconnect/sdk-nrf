@@ -1216,6 +1216,10 @@ int nrf_cloud_credentials_configured_check(void);
  * @note This API only needs to be called if the default configured sec tag value is no
  *       longer applicable. This function does not perform any management of the
  *       device's connection to nRF Cloud.
+ *       For CoAP, changing this value will change the sec tag used for the DTLS connection only.
+ *       Use @ref nrf_cloud_sec_tag_coap_jwt_set to set the sec tag used for JWT signing.
+ *       For normal operation, the DTLS and JWT sec tags should be the same. They should only
+ *       differ for debugging purposes (network traffic decryption).
  *
  * @param sec_tag The sec tag.
  *
@@ -1228,6 +1232,31 @@ void nrf_cloud_sec_tag_set(const sec_tag_t sec_tag);
  * @return The sec tag.
  */
 sec_tag_t nrf_cloud_sec_tag_get(void);
+
+/**
+ * @brief Set the sec tag containing the private key used to sign CoAP JWTs for nRF Cloud
+ *        authentication.
+ *        The default sec tag value is @kconfig{CONFIG_NRF_CLOUD_COAP_JWT_SEC_TAG}.
+ *
+ * @note This API requires @kconfig{CONFIG_NRF_CLOUD_COAP} to be enabled.
+ *       This API only needs to be called if the default configured sec tag value is no
+ *       longer applicable. This function does not perform any management of the
+ *       device's authentication status with nRF Cloud.
+ *
+ * @param sec_tag The sec tag.
+ *
+ */
+void nrf_cloud_sec_tag_coap_jwt_set(const sec_tag_t sec_tag);
+
+/**
+ * @brief Get the sec tag containing the private key used to sign CoAP JWTs for nRF Cloud
+ *        authentication.
+ *
+ * @note This API requires @kconfig{CONFIG_NRF_CLOUD_COAP} to be enabled.
+ *
+ * @return The sec tag.
+ */
+sec_tag_t nrf_cloud_sec_tag_coap_jwt_get(void);
 
 /** @} */
 
