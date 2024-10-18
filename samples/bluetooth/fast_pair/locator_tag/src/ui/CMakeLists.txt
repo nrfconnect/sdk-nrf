@@ -11,15 +11,15 @@ target_include_directories(app_ui PRIVATE include_priv)
 
 target_sources(app_ui PRIVATE common.c)
 
-target_sources_ifdef(CONFIG_APP_PLATFORM_DK
-                     app_ui PRIVATE
-                     platform_dk.c)
-
-target_sources_ifdef(CONFIG_APP_PLATFORM_THINGY
-                     app_ui PRIVATE
-                     platform_thingy.c)
-target_sources_ifdef(CONFIG_APP_PLATFORM_THINGY
-                     app_ui PRIVATE
-                     platform_thingy_speaker.c)
+if(CONFIG_APP_PLATFORM_DK)
+  target_sources(app_ui PRIVATE platform_dk.c)
+elseif(CONFIG_APP_PLATFORM_THINGY)
+  target_sources(app_ui PRIVATE
+    platform_thingy.c
+    platform_thingy_speaker.c
+  )
+else()
+  message(FATAL_ERROR "Unsupported platform")
+endif()
 
 zephyr_linker_sources(DATA_SECTIONS request_listener.ld)
