@@ -111,6 +111,7 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag);
  * @retval -ENOENT	No credential associated with the given
  *			@p sec_tag and @p cred_type.
  * @retval -EACCES	Access to credential not allowed.
+ * @retval -E2BIG	Memory failure.
  */
 int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 			enum modem_key_mgmt_cred_type cred_type,
