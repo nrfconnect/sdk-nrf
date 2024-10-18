@@ -29,10 +29,10 @@ void thread_definition(void)
 	int rc;
 
 	rc = gpio_is_ready_dt(&input);
-	__ASSERT_NO_MSG(rc == 0);
+	__ASSERT_NO_MSG(rc);
 
 	rc = gpio_is_ready_dt(&output);
-	__ASSERT_NO_MSG(rc == 0);
+	__ASSERT_NO_MSG(rc);
 
 	rc = gpio_pin_configure_dt(&input, GPIO_INPUT);
 	__ASSERT_NO_MSG(rc == 0);
