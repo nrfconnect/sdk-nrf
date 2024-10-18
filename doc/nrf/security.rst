@@ -39,13 +39,14 @@ Some of them are documented in detail in other parts of this documentation, whil
       On nRF5340 and nRF91 Series devices, TF-M is used to configure and boot an application with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>`.
     - See :ref:`ug_tfm`.
     - | - :ref:`tfm_samples`
-      | - :ref:`cryptography samples <crypto_samples>`
+      | - :ref:`crypto_samples`
       | - :ref:`https_client` sample
       | - :ref:`openthread_samples`
       | - :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` in Zephyr
   * - Cryptographic operations (:ref:`nrf_security`)
     - The :ref:`nrf_security` library acts as an orchestrator for the different cryptographic libraries available in the system.
       HW accelerated libraries are prioritized over SW libraries when both are enabled.
+      | Find more information on nRF54L Series-specific cryptography operations and the related configuration in :ref:`ug_nrf54l_cryptography`.
     - :kconfig:option:`CONFIG_NRF_SECURITY` (:ref:`more info<nrf_security_config>`)
     - | - :ref:`nrf_security` library with :ref:`nrf_security_drivers`
       | - :ref:`nrfxlib:crypto`
