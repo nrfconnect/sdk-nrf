@@ -18,9 +18,9 @@ LOG_MODULE_REGISTER(idle_spim);
 static struct spi_dt_spec spim_spec =
 	SPI_DT_SPEC_GET(DT_NODELABEL(bmi270), SPI_OP_MODE_MASTER | SPI_MODE, 0);
 
-int spi_read_register(uint8_t register_address, uint8_t *register_value)
+void spi_read_register(uint8_t register_address, uint8_t *register_value)
 {
-	int err;
+	int rc;
 	uint8_t tx_buffer[3] = {register_address | SPI_READ_MASK, 0xFF, 0xFF};
 	uint8_t rx_buffer[3];
 
@@ -29,32 +29,25 @@ int spi_read_register(uint8_t register_address, uint8_t *register_value)
 	struct spi_buf rx_spi_bufs = {.buf = rx_buffer, .len = sizeof(rx_buffer)};
 	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_bufs, .count = 1};
 
-	err = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
+	rc = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
+	__ASSERT(rc == 0, "Error: spi_transceive_dt, err: %d\n", rc);
 	*register_value = rx_buffer[2];
 
-	printk("'spi_transceive_dt', err: %d, rx_data: %x %x %x\n", err, rx_buffer[0], rx_buffer[1],
+	printk("'spi_transceive_dt', rx_data: %x %x %x\n", rx_buffer[0], rx_buffer[1],
 	       rx_buffer[2]);
-	return err;
 }
 
 int main(void)
 {
-	int err;
+	bool status;
 	uint8_t response;
 
-	err = spi_is_ready_dt(&spim_spec);
-	if (!err) {
-		printk("Error: SPI device is not ready, err: %d\n", err);
-		return -1;
-	}
+	status = spi_is_ready_dt(&spim_spec);
+	__ASSERT(status, "Error: SPI device is not ready");
 
 	while (1) {
 		for (int read_index = 0; read_index < SPI_READ_COUNT; read_index++) {
-			err = spi_read_register(CHIP_ID_REGISTER_ADDRESS, &response);
-			if (!err) {
-				printk("SPI read returned error: %d\n", err);
-				return -1;
-			}
+			spi_read_register(CHIP_ID_REGISTER_ADDRESS, &response);
 			printk("Chip ID: 0x%x\n", response);
 		}
 		k_msleep(2000);
