@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if(CONFIG_NRF_WIFI_BUILD_ONLY_MODE)
+  return()
+endif()
+
 if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_DISABLED)
   # The C source is same as that for built-in
   zephyr_library_sources(${ZEPHYR_BASE}/drivers/wifi/nrfwifi/src/fw_load.c)
