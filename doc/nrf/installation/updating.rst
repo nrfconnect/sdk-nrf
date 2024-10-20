@@ -67,6 +67,8 @@ Depending on your preferred development method, you can start the correct CLI to
 
       ..
 
+      See the documentation for nRF Util's `Toolchain Manager command`_ for the list of supported shells.
+
 .. _gs_updating_repos:
 .. _gs_updating_repos_examples:
 .. _updating_repos_examples:
