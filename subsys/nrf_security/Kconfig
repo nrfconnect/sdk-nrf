@@ -55,7 +55,7 @@ if NRF_SECURITY
 
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	bool
-	default y if SOC_SERIES_NRF54LX && (HW_UNIQUE_KEY || IDENTITY_KEY)
+	default y if SOC_SERIES_NRF54LX && PSA_CRYPTO_DRIVER_CRACEN
 	default y if SOC_SERIES_NRF54HX && (SOC_NRF54H20_CPUSEC || SOC_NRF54H20_ENGB_CPUSEC)
 	help
 	  Promptless option used to control if the PSA Crypto core should have support for builtin keys or not.
