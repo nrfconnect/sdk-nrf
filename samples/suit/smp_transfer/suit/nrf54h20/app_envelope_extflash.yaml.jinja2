@@ -54,12 +54,6 @@ SUIT_Envelope_Tagged:
         - suit-send-record-failure
         - suit-send-sysinfo-success
         - suit-send-sysinfo-failure
-      - suit-directive-set-component-index: 1
-      - suit-directive-override-parameters:
-          suit-parameter-image-digest:
-            suit-digest-algorithm-id: cose-alg-sha-256
-            suit-digest-bytes:
-              file: {{ application['binary'] }}
 {%- if flash_companion is defined %}
       - suit-directive-set-component-index: 3
       - suit-directive-override-parameters:
@@ -70,11 +64,21 @@ SUIT_Envelope_Tagged:
 {%- endif %}
     suit-validate:
     - suit-directive-set-component-index: 0
-    - suit-condition-image-match:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
+    # In the case of streaming operations it is worth to retry them at least once.
+    # This increases the robustness against bit flips on the transport,
+    # for example when storing the data on an external memory device.
+    # The suit-directive-try-each will complete on the first successful subsequence.
+    - suit-directive-try-each:
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
     suit-invoke:
     - suit-directive-set-component-index: 0
     - suit-directive-invoke:
@@ -90,7 +94,7 @@ SUIT_Envelope_Tagged:
     suit-payload-fetch:
     - suit-directive-set-component-index: 2
     - suit-directive-override-parameters:
-        suit-parameter-uri: 'file://{{ application['filename'] }}'
+        suit-parameter-uri: "file://{{ application['filename'] }}"
     - suit-directive-fetch:
       - suit-send-record-failure
 {%- endif %}
@@ -104,7 +108,7 @@ SUIT_Envelope_Tagged:
 {%- if flash_companion is defined %}
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ flash_companion['name'] }}'
+        suit-parameter-uri: "#{{ flash_companion['name'] }}"
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:
@@ -119,22 +123,36 @@ SUIT_Envelope_Tagged:
     - suit-directive-set-component-index: 3
     - suit-directive-override-parameters:
         suit-parameter-source-component: 1
-    - suit-directive-copy:
-      - suit-send-record-failure
-    - suit-condition-image-match:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
+    # When copying the data it is worth to retry the sequence of
+    # suit-directive-copy and suit-condition-image-match at least once.
+    # If a bit flip occurs, it might be due to a transport issue, not
+    # a corrupted candidate image. In this case the bit flip is recoverable
+    # and it is worth retrying the operation.
+    # The suit-directive-try-each will complete on the first successful subsequence.
+    - suit-directive-try-each:
+      - - suit-directive-copy:
+          - suit-send-record-failure
+        - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+      - - suit-directive-copy:
+          - suit-send-record-failure
+        - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
     - suit-directive-invoke:
       - suit-send-record-failure
 {%- endif %}
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
 {%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in application['config'] and application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}
-        suit-parameter-uri: '{{ application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}'
+        suit-parameter-uri: "{{ application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}"
 {%- else %}
-        suit-parameter-uri: 'file://{{ application['filename'] }}'
+        suit-parameter-uri: "file://{{ application['filename'] }}"
 {%- endif %}
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
@@ -142,23 +160,112 @@ SUIT_Envelope_Tagged:
             file: {{ application['binary'] }}
     - suit-directive-fetch:
       - suit-send-record-failure
-    - suit-condition-image-match:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
+    - suit-directive-try-each:
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
     - suit-directive-set-component-index: 0
     - suit-directive-override-parameters:
         suit-parameter-source-component: 1
-    - suit-directive-copy:
+    # When copying the data it is worth to retry the sequence of
+    # suit-directive-copy and suit-condition-image-match at least once.
+    # If a bit flip occurs, it might be due to a transport issue, not
+    # a corrupted candidate image. In this case the bit flip is recoverable
+    # and it is worth retrying the operation.
+    # The suit-directive-try-each will complete on the first successful subsequence.
+    - suit-directive-try-each:
+      - - suit-directive-copy:
+          - suit-send-record-failure
+        - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+      - - suit-directive-copy:
+          - suit-send-record-failure
+        - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+    suit-text:
+      suit-digest-algorithm-id: cose-alg-sha-256
+
+    suit-candidate-verification:
+{%- if flash_companion is defined %}
+    - suit-directive-set-component-index: 1
+    - suit-directive-override-parameters:
+        suit-parameter-uri: "#{{ flash_companion['name'] }}"
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            file: {{ flash_companion['binary'] }}
+    - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
       - suit-send-record-success
       - suit-send-record-failure
       - suit-send-sysinfo-success
       - suit-send-sysinfo-failure
-    suit-text:
-      suit-digest-algorithm-id: cose-alg-sha-256
+    - suit-directive-set-component-index: 3
+    - suit-directive-override-parameters:
+        suit-parameter-source-component: 1
+    # When copying the data it is worth to retry the sequence of
+    # suit-directive-copy and suit-condition-image-match at least once.
+    # If a bit flip occurs, it might be due to a transport issue, not
+    # a corrupted candidate image. In this case the bit flip is recoverable
+    # and it is worth retrying the operation.
+    # The suit-directive-try-each will complete on the first successful subsequence.
+    - suit-directive-try-each:
+      - - suit-directive-copy:
+          - suit-send-record-failure
+        - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+      - - suit-directive-copy:
+          - suit-send-record-failure
+        - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+    - suit-directive-invoke:
+      - suit-send-record-failure
+{%- endif %}
+    - suit-directive-set-component-index: 1
+    - suit-directive-override-parameters:
+{%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in application['config'] and application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}
+        suit-parameter-uri: "{{ application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}"
+{%- else %}
+        suit-parameter-uri: "file://{{ application['filename'] }}"
+{%- endif %}
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            file: {{ application['binary'] }}
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-directive-try-each:
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+
     suit-manifest-component-id:
     - INSTLD_MFST
     - RFC4122_UUID:
@@ -175,6 +282,6 @@ SUIT_Envelope_Tagged:
         suit-text-component-version: v1.0.0
   suit-integrated-payloads: {
 {%- if flash_companion is defined %}
-    '#{{ flash_companion['name'] }}': {{ flash_companion['binary'] }}
+    "#{{ flash_companion['name'] }}": {{ flash_companion['binary'] }}
 {%- endif %}
   }

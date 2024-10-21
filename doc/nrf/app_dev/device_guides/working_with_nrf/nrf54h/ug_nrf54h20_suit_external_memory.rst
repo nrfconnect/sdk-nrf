@@ -137,16 +137,69 @@ Common steps for both push and fetch models
       In this example, the component index is ``3``.
       In the following steps, the companion image component is selected with ``suit-directive-set-component-index: 3``.
 
-   #. Modify the ``suit-install`` sequence in the application manifest file (:file:`app_envelope.yaml.jinja2`) to boot the companion image before accessing the candidate images stored in the external memory:
+   #. Append directives to the ``suit-shared-sequence`` sequence in the application manifest file (:file:`app_envelope.yaml.jinja2`) to set the expected digest of the companion application:
+
+      .. code-block:: yaml
+
+         suit-shared-sequence:
+         - suit-directive-set-component-index: 3
+         - suit-directive-override-parameters:
+             suit-parameter-image-digest:
+               suit-digest-algorithm-id: cose-alg-sha-256
+               suit-digest-bytes:
+                 file: {{ flash_companion['binary'] }}
+
+   #. Modify the ``suit-install`` sequence in the application manifest file (:file:`app_envelope.yaml.jinja2`) to load into RAM and boot the companion image before accessing the candidate images stored in the external memory:
 
       .. code-block:: yaml
 
          suit-install:
+         # Use CAND_IMG component to access flash companion binary, stored as one of the integrated payloads.
+         - suit-directive-set-component-index: 1
+         - suit-directive-override-parameters:
+             suit-parameter-uri: "#{{ flash_companion['name'] }}"
+             suit-parameter-image-digest:
+               suit-digest-algorithm-id: cose-alg-sha-256
+               suit-digest-bytes:
+                 file: {{ flash_companion['binary'] }}
+         - suit-directive-fetch:
+           - suit-send-record-failure
+         # Verify integrity of the companion binary in the envelope.
+         - suit-condition-image-match:
+           - suit-send-record-success
+           - suit-send-record-failure
+           - suit-send-sysinfo-success
+           - suit-send-sysinfo-failure
+         # Copy companion into local RAM.
          - suit-directive-set-component-index: 3
+         - suit-directive-override-parameters:
+             suit-parameter-source-component: 1
+         - suit-directive-copy:
+           - suit-send-record-failure
+         # Verify integrity of the companion binary in the local RAM.
+         - suit-condition-image-match:
+           - suit-send-record-success
+           - suit-send-record-failure
+           - suit-send-sysinfo-success
+           - suit-send-sysinfo-failure
+         # Boot the companion application.
          - suit-directive-invoke:
-            - suit-send-record-failure
+           - suit-send-record-failure
 
-      The companion image can be optionally upgraded and have its integrity checked.
+      To further improve the update procedure robustness, you can copy all integrity checks from the ``suit-install`` to the ``suit-candidate-verification`` sequence.
+
+   #. Append the flash companion binary as integrated payload inside SUIT envelope:
+
+      .. code-block:: yaml
+
+         SUIT_Envelope_Tagged:
+            suit-authentication-wrapper: { ... }
+            suit-manifest: { .. }
+
+            suit-integrated-payloads:
+               "#{{ flash_companion['name'] }}": {{ flash_companion['binary'] }}
+
+      The flash companion binary must be available before the driver of the external memory is booted, so it must be transferred as part of the update candidate envelope and fit within the DFU partition inside the internal MRAM memory.
 
 Steps specific for the push model
 =================================
@@ -157,7 +210,7 @@ Steps specific for the push model
 
 #. Modify the manifest files for all domains by completing the following steps:
 
-   a. Ensure that the URI used by the ``suit-payload-fetch`` sequence to fetch a given image matches the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI` Kconfig option.
+   a. Ensure that the URI used by the ``suit-directive-fetch`` command to fetch a given image matches the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI` Kconfig option.
 
    #. Ensure that the envelope integrates the specified image within the envelope integrated payloads section.
       This is ensured by default if you use the provided SUIT envelope templates.
@@ -193,7 +246,79 @@ Steps specific for the fetch model
          - suit-directive-fetch:
            - suit-send-record-failure
 
-      This snippet assumes that ``CACHE_POOL`` is the third component on the manifest's components list (so its component index is 2)
+      This snippet assumes that ``CACHE_POOL`` is the third component on the manifest's components list (so its component index is ``2``)
+
+#. If your application uses the radio core, complete the following steps to modify the radio core manifest file :file:`rad_envelope.yaml.jinja2`:
+
+   a. Modify the ``CACHE_POOL`` identifier in the SUIT manifest:
+
+      .. code-block:: yaml
+
+         suit-components:
+             ...
+         - - CACHE_POOL
+           - 1
+
+      The ``CACHE_POOL`` identifier must match the identifier of the cache partition defined in the DTS file.
+
+   #. Add the ``suit-payload-fetch`` sequence:
+
+      .. code-block:: yaml
+
+         suit-payload-fetch:
+         - suit-directive-set-component-index: 2
+         - suit-directive-override-parameters:
+             suit-parameter-uri: 'file://{{ radio['binary'] }}'
+         - suit-directive-fetch:
+           - suit-send-record-failure
+
+      This snippet assumes that ``CACHE_POOL`` is the third component on the manifest's components list (so its component index is ``2``)
+
+#. Complete the following steps to modify the root manifest file :file:`root_with_binary_nordic_top_extflash.yaml.jinja2`:
+
+   a. Add the ``suit-payload-fetch`` sequence:
+
+      .. code-block:: yaml
+
+         suit-payload-fetch:
+         - suit-directive-set-component-index: 0
+         - suit-directive-override-parameters:
+             suit-parameter-uri: "#{{ application['name'] }}"
+         - suit-directive-fetch:
+           - suit-send-record-failure
+         - suit-condition-dependency-integrity:
+           - suit-send-record-success
+           - suit-send-record-failure
+           - suit-send-sysinfo-success
+           - suit-send-sysinfo-failure
+         - suit-directive-process-dependency:
+           - suit-send-record-success
+           - suit-send-record-failure
+           - suit-send-sysinfo-success
+           - suit-send-sysinfo-failure
+
+      This snippet assumes that ``CAND_MFST`` is the first component on the manifest's components list (so its component index is ``0``).
+
+   #. If your application uses the radio core, append the following to the ``suit-payload-fetch`` sequence:
+
+      .. code-block:: yaml
+
+         suit-payload-fetch:
+         - suit-directive-set-component-index: 0
+         - suit-directive-override-parameters:
+             suit-parameter-uri: "#{{ radio['name'] }}"
+         - suit-directive-fetch:
+           - suit-send-record-failure
+         - suit-condition-dependency-integrity:
+           - suit-send-record-success
+           - suit-send-record-failure
+           - suit-send-sysinfo-success
+           - suit-send-sysinfo-failure
+         - suit-directive-process-dependency:
+           - suit-send-record-success
+           - suit-send-record-failure
+           - suit-send-sysinfo-success
+           - suit-send-sysinfo-failure
 
 Testing the application with external flash support
 ===================================================
@@ -242,4 +367,5 @@ Limitations
 * The Secure Domain, System Controller and companion image update candidates must always be stored in the MRAM.
   Trying to store those candidates in external memory will result in a failure during the installation process.
 
-* The companion image needs a dedicated area in the executable region of the MRAM that is assigned to the application domain.
+* The companion image needs either a dedicated area in the executable region of the MRAM or it needs to fit within the local RAM that is assigned to the application domain.
+  The default flash companion application uses local RAM, so there is no need to reserve additional area in the main application memory map.
