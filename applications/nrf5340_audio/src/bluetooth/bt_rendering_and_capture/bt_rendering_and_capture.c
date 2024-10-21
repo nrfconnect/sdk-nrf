@@ -136,8 +136,6 @@ int bt_r_and_c_discover(struct bt_conn *conn)
 			LOG_WRN("Failed to discover VCS: %d", ret);
 			return ret;
 		}
-	} else {
-		return -ENOTSUP;
 	}
 
 	return 0;
