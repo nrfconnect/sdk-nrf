@@ -60,7 +60,7 @@ ZTEST(check_image_match_tests, test_mem_valid)
 	void *impl_data = NULL;
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&valid_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&valid_src_component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -96,7 +96,7 @@ ZTEST(check_image_match_tests, test_mem_wrong_size)
 	void *impl_data = NULL;
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&valid_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&valid_src_component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -134,7 +134,7 @@ ZTEST(check_image_match_tests, test_mem_wrong_digest)
 	void *impl_data = NULL;
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&valid_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&valid_src_component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -171,7 +171,7 @@ ZTEST(check_image_match_tests, test_mem_invalid_component)
 	suit_component_t component;
 
 	/* WHEN a component handle is created */
-	int err = suit_plat_create_component_handle(&invalid_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&invalid_src_component_id, false, &component);
 
 	/* THEN it is not supported */
 	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, err,
@@ -185,7 +185,8 @@ ZTEST(check_image_match_tests, test_cand_img_match)
 	/* GIVEN CAND_IMG component pointing to the data */
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&valid_cand_img_component_id, &component);
+	int err =
+		suit_plat_create_component_handle(&valid_cand_img_component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -215,7 +216,8 @@ ZTEST(check_image_match_tests, test_cand_img_mismatch)
 	/* GIVEN CAND_IMG component pointing to the data */
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&valid_cand_img_component_id, &component);
+	int err =
+		suit_plat_create_component_handle(&valid_cand_img_component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -252,7 +254,7 @@ ZTEST(check_image_match_tests, test_soc_spec_1)
 	void *impl_data = NULL;
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&component_id, &component);
+	int err = suit_plat_create_component_handle(&component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -284,7 +286,7 @@ ZTEST(check_image_match_tests, test_soc_spec_2)
 	void *impl_data = NULL;
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&component_id, &component);
+	int err = suit_plat_create_component_handle(&component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -317,7 +319,7 @@ ZTEST(check_image_match_tests, test_soc_spec_3)
 	void *impl_data = NULL;
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&component_id, &component);
+	int err = suit_plat_create_component_handle(&component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -348,7 +350,7 @@ ZTEST(check_image_match_tests, test_soc_spec_none)
 	void *impl_data = NULL;
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&component_id, &component);
+	int err = suit_plat_create_component_handle(&component_id, false, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 
@@ -387,7 +389,7 @@ ZTEST(check_image_match_tests, test_unhandled_component)
 	};
 	suit_component_t component;
 
-	int err = suit_plat_create_component_handle(&valid_src_component_id, &component);
+	int err = suit_plat_create_component_handle(&valid_src_component_id, true, &component);
 
 	zassert_equal(SUIT_SUCCESS, err, "test error - create_component_handle failed: %d", err);
 

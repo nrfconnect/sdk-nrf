@@ -107,7 +107,8 @@ ZTEST(cache_pool_digest_tests, test_cache_get_slot_ok)
 
 	suit_component_t dst_component;
 
-	ret = suit_plat_create_component_handle(&valid_cand_img_component_id, &dst_component);
+	ret = suit_plat_create_component_handle(&valid_cand_img_component_id, false,
+						&dst_component);
 	zassert_equal(SUIT_SUCCESS, ret, "test error - create_component_handle failed: %d", ret);
 
 	struct zcbor_string src_uri = {
