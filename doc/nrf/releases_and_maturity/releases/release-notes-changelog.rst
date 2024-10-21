@@ -462,19 +462,11 @@ Bluetooth Fast Pair samples
 Bluetooth Mesh samples
 ----------------------
 
-* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board and removed support for the nRF54L15 PDK in the following samples:
+* For all Bluetooth Mesh samples:
 
-  * :ref:`bluetooth_mesh_sensor_client`
-  * :ref:`bluetooth_mesh_sensor_server`
-  * :ref:`bluetooth_ble_peripheral_lbs_coex`
-  * :ref:`bt_mesh_chat`
-  * :ref:`bluetooth_mesh_light_switch`
-  * :ref:`bluetooth_mesh_silvair_enocean`
-  * :ref:`bluetooth_mesh_light_dim`
-  * :ref:`bluetooth_mesh_light`
-  * :ref:`bluetooth_mesh_light_lc`
-  * :ref:`ble_mesh_dfu_target`
-  * :ref:`ble_mesh_dfu_distributor`
+  * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board.
+  * Added support for Zephyr Memory Storage (ZMS) when compiling for the :ref:`zephyr:nrf54l15dk_nrf54l15` board.
+  * Removed support for the nRF54L15 PDK.
 
 * :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
 
