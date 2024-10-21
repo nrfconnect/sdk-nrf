@@ -19,6 +19,13 @@ Major and minor releases always come with their respective :ref:`migration_guide
 
 If an issue is found in a release after it has taken place, those issues are listed on the :ref:`known_issues` page.
 
+* Updated:
+
+  * The procedure for signing the application image built for booting by MCUboot in direct-XIP mode with revert support.
+    Now, the Intel-Hex file of the application image automatically receives a confirmation flag.
+  * The allowed offset for :ref:`doc_fw_info` in the :ref:`bootloader`.
+    It can now be placed at offset 0x600, however, it cannot be used for any applications with |NSIB| compiled before this change.
+
 .. toctree::
    :maxdepth: 1
    :caption: Subpages:
