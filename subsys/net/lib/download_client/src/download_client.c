@@ -9,1054 +9,535 @@
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/toolchain.h>
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/unistd.h>
-#include <zephyr/posix/netdb.h>
-#include <zephyr/posix/sys/time.h>
-#include <zephyr/posix/sys/socket.h>
-#include <arpa/inet.h>
-#else
-#include <zephyr/net/socket.h>
-#endif
-#include <zephyr/net/socket_ncs.h>
-#include <zephyr/net/tls_credentials.h>
 #include <net/download_client.h>
-#include <zephyr/logging/log.h>
+#include <net/download_client_transport.h>
+
 #include "download_client_internal.h"
 
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
-
-#define SIN6(A) ((struct sockaddr_in6 *)(A))
-#define SIN(A) ((struct sockaddr_in *)(A))
 
 #define HOSTNAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
 
-static int handle_disconnect(struct download_client *client);
-static int error_evt_send(const struct download_client *dl, int error);
+static int close_evt_send(struct download_client *dlc);
 
-static bool is_idle(struct download_client *client)
+#if CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL_DBG
+char *state_to_str(int state)
+{
+	switch (state) {
+	case DOWNLOAD_CLIENT_IDLE:
+		return "IDLE";
+	case DOWNLOAD_CLIENT_CONNECTING:
+		return "CONNECTING";
+	case DOWNLOAD_CLIENT_CONNECTED:
+		return "CONNECTED";
+	case DOWNLOAD_CLIENT_DOWNLOADING:
+		return "DOWNLOADING";
+	case DOWNLOAD_CLIENT_DEINITIALIZING:
+		return "DEINITIALIZING";
+	case DOWNLOAD_CLIENT_DEINITIALIZED:
+		return "DEINITIALIZED";
+	}
+
+	return "unknown";
+}
+#else
+char *state_to_str(int state) {
+	return "";
+}
+#endif
+
+static void state_set(struct download_client *dlc, int state)
+{
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
+	dlc->state = state;
+	k_mutex_unlock(&dlc->mutex);
+	LOG_DBG("state = %d (%s)", state, state_to_str(state));
+}
+
+static bool is_state(struct download_client *dlc, enum download_client_state state)
 {
 	bool ret;
 
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_IDLE;
-	k_mutex_unlock(&client->mutex);
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
+	ret = dlc->state == state;
+	k_mutex_unlock(&dlc->mutex);
 	return ret;
 }
 
-static bool is_connecting(struct download_client *client)
-{
-	bool ret;
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_CONNECTING;
-	k_mutex_unlock(&client->mutex);
-	return ret;
-}
-
-static bool is_downloading(struct download_client *client)
-{
-	bool ret;
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_DOWNLOADING;
-	k_mutex_unlock(&client->mutex);
-	return ret;
-}
-
-static bool is_closing(struct download_client *client)
-{
-	bool ret;
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_CLOSING;
-	k_mutex_unlock(&client->mutex);
-	return ret;
-}
-
-static bool is_finished(struct download_client *client)
-{
-	bool ret;
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	ret = client->state == DOWNLOAD_CLIENT_FINISHED;
-	k_mutex_unlock(&client->mutex);
-	return ret;
-}
-
-static void set_state(struct download_client *client, int state)
-{
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	/* Prevent moving back to CLOSING from IDLE */
-	if ((state != DOWNLOAD_CLIENT_CLOSING) || (client->state != DOWNLOAD_CLIENT_IDLE)) {
-		client->state = state;
-	}
-	k_mutex_unlock(&client->mutex);
-	LOG_DBG("state = %d", state);
-}
-
-static const char *str_family(int family)
-{
-	switch (family) {
-	case AF_INET:
-		return "IPv4";
-	case AF_INET6:
-		return "IPv6";
-	default:
-		__ASSERT(false, "Unsupported family");
-		return NULL;
-	}
-}
-
-static int set_recv_socket_timeout(int fd, int timeout_ms)
-{
+static int transport_init(struct download_client *dlc,
+			  struct download_client_host_cfg *host_config, const char *uri) {
 	int err;
 
-	if (timeout_ms <= 0) {
-		return 0;
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
 	}
 
-	if (fd == -1) {
-		return -1;
-	}
-
-	struct timeval timeo = {
-		.tv_sec = (timeout_ms / 1000),
-		.tv_usec = (timeout_ms % 1000) * 1000,
-	};
-
-	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeo, sizeof(timeo));
-	if (err) {
-		LOG_WRN("Failed to set socket timeout, errno %d", errno);
-		return -1;
-	}
-
-	return 0;
-}
-
-static int set_snd_socket_timeout(int fd, int timeout_ms)
-{
-	int err;
-
-	if (timeout_ms <= 0) {
-		return 0;
-	}
-
-	struct timeval timeo = {
-		.tv_sec = (timeout_ms / 1000),
-		.tv_usec = (timeout_ms % 1000) * 1000,
-	};
-
-	err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeo, sizeof(timeo));
-	if (err) {
-		LOG_WRN("Failed to set socket timeout, errno %d", errno);
-		return -1;
-	}
-
-	return 0;
-}
-
-static int socket_sectag_set(int fd, const int * const sec_tag_list, uint8_t sec_tag_count)
-{
-	int err;
-	int verify;
-
-	enum {
-		NONE = 0,
-		OPTIONAL = 1,
-		REQUIRED = 2,
-	};
-
-	verify = REQUIRED;
-
-	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
-	if (err) {
-		LOG_ERR("Failed to setup peer verification, errno %d", errno);
-		return -errno;
-	}
-
-	LOG_INF("Setting up TLS credentials, sec tag count %u", sec_tag_count);
-	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
-			 sizeof(sec_tag_t) * sec_tag_count);
-	if (err) {
-		LOG_ERR("Failed to setup socket security tag list, errno %d", errno);
-		return -errno;
-	}
-
-	return 0;
-}
-
-static int socket_tls_hostname_set(int fd, const char * const hostname)
-{
-	__ASSERT_NO_MSG(hostname);
-
-	char parsed_host[HOSTNAME_SIZE];
-	int err;
-
-	err = url_parse_host(hostname, parsed_host, sizeof(parsed_host));
-	if (err) {
-		LOG_ERR("Failed to parse host, err %d", err);
-		return err;
-	}
-
-	err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, parsed_host,
-			 strlen(parsed_host));
-	if (err) {
-		LOG_ERR("Failed to setup TLS hostname (%s), errno %d",
-			parsed_host, errno);
-		return -errno;
-	}
-
-	return 0;
-}
-
-static int socket_pdn_id_set(int fd, int pdn_id)
-{
-	int err;
-
-	LOG_INF("Binding to PDN ID: %d", pdn_id);
-	err = setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn_id, sizeof(pdn_id));
-	if (err) {
-		LOG_ERR("Failed to bind socket to PDN ID %d, err %d",
-			pdn_id, errno);
-		return -ENETDOWN;
-	}
-
-	return 0;
-}
-
-static int host_lookup(const char *host, int family, uint8_t pdn_id,
-		       struct sockaddr *sa)
-{
-	int err;
-	char pdnserv[4];
-	char hostname[HOSTNAME_SIZE];
-	struct addrinfo *ai;
-
-	struct addrinfo hints = {
-		.ai_family = family,
-	};
-
-	/* Extract the hostname, without protocol or port */
-	err = url_parse_host(host, hostname, sizeof(hostname));
-	if (err) {
-		return err;
-	}
-
-	if (pdn_id) {
-		hints.ai_flags = AI_PDNSERV;
-		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
-		err = getaddrinfo(hostname, pdnserv, &hints, &ai);
-	} else {
-		err = getaddrinfo(hostname, NULL, &hints, &ai);
-	}
-
-	if (err) {
-		LOG_DBG("Failed to resolve hostname %s on %s",
-			hostname, str_family(family));
-		return -EHOSTUNREACH;
-	}
-
-	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
-	freeaddrinfo(ai);
-
-	return 0;
-}
-
-static int client_socket_connect(struct download_client *dl, int type, uint16_t port)
-{
-	int err;
-	socklen_t addrlen;
-
-	switch (dl->remote_addr.sa_family) {
-	case AF_INET6:
-		SIN6(&dl->remote_addr)->sin6_port = htons(port);
-		addrlen = sizeof(struct sockaddr_in6);
-		break;
-	case AF_INET:
-		SIN(&dl->remote_addr)->sin_port = htons(port);
-		addrlen = sizeof(struct sockaddr_in);
-		break;
-	default:
-		err = -EAFNOSUPPORT;
-		goto cleanup;
-	}
-
-	LOG_DBG("family: %d, type: %d, proto: %d",
-		dl->remote_addr.sa_family, type, dl->proto);
-
-	dl->fd = socket(dl->remote_addr.sa_family, type, dl->proto);
-	if (dl->fd < 0) {
-		err = -errno;
-		LOG_ERR("Failed to create socket, errno %d", -err);
-		goto cleanup;
-	}
-
-	if (dl->config.pdn_id) {
-		err = socket_pdn_id_set(dl->fd, dl->config.pdn_id);
-		if (err) {
-			goto cleanup;
-		}
-	}
-
-	if ((dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2) &&
-	    (dl->config.sec_tag_list != NULL) && (dl->config.sec_tag_count > 0)) {
-		err = socket_sectag_set(dl->fd, dl->config.sec_tag_list, dl->config.sec_tag_count);
-		if (err) {
-			goto cleanup;
-		}
-
-		if (dl->config.set_tls_hostname) {
-			err = socket_tls_hostname_set(dl->fd, dl->host);
-			if (err) {
-				err = -errno;
-				goto cleanup;
-			}
-		}
-
-		if (dl->proto == IPPROTO_DTLS_1_2 && IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_CID)) {
-			/* Enable connection ID */
-			uint32_t dtls_cid = TLS_DTLS_CID_ENABLED;
-
-			err = setsockopt(dl->fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
-					 sizeof(dtls_cid));
-			if (err) {
-				err = -errno;
-				LOG_ERR("Failed to enable TLS_DTLS_CID: %d", err);
-				/* Not fatal, so continue */
-			}
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_LOG)) {
-		char ip_addr_str[NET_IPV6_ADDR_LEN];
-		void *sin_addr;
-
-		if (dl->remote_addr.sa_family == AF_INET6) {
-			sin_addr = &((struct sockaddr_in6 *)&dl->remote_addr)->sin6_addr;
-		} else {
-			sin_addr = &((struct sockaddr_in *)&dl->remote_addr)->sin_addr;
-		}
-		inet_ntop(dl->remote_addr.sa_family, sin_addr, ip_addr_str, sizeof(ip_addr_str));
-		LOG_INF("Connecting to %s", ip_addr_str);
-	}
-	LOG_DBG("fd %d, addrlen %d, fam %s, port %d",
-		dl->fd, addrlen, str_family(dl->remote_addr.sa_family), port);
-
-	err = connect(dl->fd, &dl->remote_addr, addrlen);
-	if (err) {
-		err = -errno;
-		LOG_ERR("Unable to connect, errno %d", -err);
-		/* Make sure that ECONNRESET is not returned as it has a special meaning
-		 * in the download client API
-		 */
-		if (err == -ECONNRESET) {
-			err = -ECONNREFUSED;
-		}
-	}
-
-cleanup:
-	if (err) {
-		if (dl->fd != -1) {
-			close(dl->fd);
-			dl->fd = -1;
-		}
-	}
+	err = ((struct dlc_transport *)dlc->transport)->init(dlc, host_config, uri);
 
 	return err;
 }
 
-static int client_connect(struct download_client *dl)
-{
+static int transport_deinit(struct download_client *dlc) {
 	int err;
-	int ns_err;
-	int type;
-	uint16_t port;
 
-	err = url_parse_proto(dl->host, &dl->proto, &type);
-	if (err == -EINVAL) {
-		LOG_DBG("Protocol not specified, defaulting to HTTP(S)");
-		type = SOCK_STREAM;
-		if (dl->config.sec_tag_list && (dl->config.sec_tag_count > 0)) {
-			dl->proto = IPPROTO_TLS_1_2;
-		} else {
-			dl->proto = IPPROTO_TCP;
-		}
-	} else if (err) {
-		goto cleanup;
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
 	}
 
-	if (dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2) {
-		if (!IS_ENABLED(CONFIG_COAP)) {
-			err = -EPROTONOSUPPORT;
-			goto cleanup;
-		}
-	}
-
-	if (dl->proto == IPPROTO_TLS_1_2 || dl->proto == IPPROTO_DTLS_1_2) {
-		if (dl->config.sec_tag_list == NULL || dl->config.sec_tag_count == 0) {
-			LOG_WRN("No security tag provided for TLS/DTLS");
-			err = -EINVAL;
-			goto cleanup;
-		}
-	}
-
-	if ((dl->config.sec_tag_list == NULL || dl->config.sec_tag_count == 0) &&
-	    dl->config.set_tls_hostname) {
-		LOG_WRN("set_tls_hostname flag is set for non-TLS connection");
-		err = -EINVAL;
-		goto cleanup;
-	}
-
-	err = url_parse_port(dl->host, &port);
-	if (err) {
-		switch (dl->proto) {
-		case IPPROTO_TLS_1_2:
-			port = 443;
-			break;
-		case IPPROTO_TCP:
-			port = 80;
-			break;
-		case IPPROTO_DTLS_1_2:
-			port = 5684;
-			break;
-		case IPPROTO_UDP:
-			port = 5683;
-			break;
-		}
-		LOG_DBG("Port not specified, using default: %d", port);
-	}
-
-	if (dl->set_native_tls) {
-		LOG_DBG("Enabled native TLS");
-		type |= SOCK_NATIVE_TLS;
-	}
-
-	err = -1;
-	ns_err = -1;
-
-	/* Attempt IPv6 connection if configured, fallback to IPv4 on error */
-	if ((dl->config.family == AF_UNSPEC) || (dl->config.family == AF_INET6)) {
-		ns_err = host_lookup(dl->host, AF_INET6, dl->config.pdn_id, &dl->remote_addr);
-		if (!ns_err) {
-			err = client_socket_connect(dl, type, port);
-		}
-	}
-
-	if (((dl->config.family == AF_UNSPEC) && err) || (dl->config.family == AF_INET)) {
-		ns_err = host_lookup(dl->host, AF_INET, dl->config.pdn_id, &dl->remote_addr);
-		if (!ns_err) {
-			err = client_socket_connect(dl, type, port);
-		}
-	}
-	if (ns_err) {
-		LOG_ERR("DNS lookup failed %s", dl->host);
-		err = ns_err;
-	}
-
-cleanup:
-	if (err) {
-		error_evt_send(dl, -err);
-
-		/* Unable to connect, close socket */
-		handle_disconnect(dl);
-	}
+	err = ((struct dlc_transport *)dlc->transport)->deinit(dlc);
 
 	return err;
 }
 
-int socket_send(const struct download_client *client, size_t len, int timeout)
-{
-	int err;
-	int sent;
-	size_t off = 0;
-
-	err = set_snd_socket_timeout(client->fd, timeout);
-	if (err) {
-		return -errno;
-	}
-
-	while (len) {
-		sent = send(client->fd, client->buf + off, len, 0);
-		if (sent < 0) {
-			return -errno;
-		}
-
-		off += sent;
-		len -= sent;
-	}
-
-	return 0;
-}
-
-static int request_send(struct download_client *dl)
-{
-	if (dl->fd < 0) {
-		return -1;
-	}
-	switch (dl->proto) {
-	case IPPROTO_TCP:
-	case IPPROTO_TLS_1_2:
-		return http_get_request_send(dl);
-	case IPPROTO_UDP:
-	case IPPROTO_DTLS_1_2:
-		if (IS_ENABLED(CONFIG_COAP)) {
-			return coap_request_send(dl);
-		}
-	}
-
-	return 0;
-}
-
-static int fragment_evt_send(struct download_client *client)
-{
-	__ASSERT(client->offset <= CONFIG_DOWNLOAD_CLIENT_BUF_SIZE,
-		 "Buffer overflow!");
-
-	const struct download_client_evt evt = {
-		.id = DOWNLOAD_CLIENT_EVT_FRAGMENT,
-		.fragment = {
-			.buf = client->buf,
-			.len = client->offset,
-		}
-	};
-
-	client->offset = 0;
-
-	return client->callback(&evt);
-}
-
-static int error_evt_send(const struct download_client *dl, int error)
-{
-	/* Error will be sent as negative. */
-	__ASSERT_NO_MSG(error > 0);
-
-	const struct download_client_evt evt = {
-		.id = DOWNLOAD_CLIENT_EVT_ERROR,
-		.error = -error
-	};
-
-	return dl->callback(&evt);
-}
-
-static int reconnect(struct download_client *dl)
-{
+static int transport_connect(struct download_client *dlc) {
 	int err;
 
-	LOG_INF("Reconnecting...");
-	if (dl->fd >= 0) {
-		err = close(dl->fd);
-		if (err) {
-			LOG_DBG("disconnect failed, %d", err);
-		}
-		dl->fd = -1;
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
 	}
-	err = client_connect(dl);
+
+	err = ((struct dlc_transport *)dlc->transport)->connect(dlc);
 
 	return err;
 }
 
-static ssize_t socket_recv(struct download_client *dl)
-{
-	int err, timeout = 0;
+static int transport_close(struct download_client *dlc) {
+	int err;
 
-	switch (dl->proto) {
-	case IPPROTO_TCP:
-	case IPPROTO_TLS_1_2:
-		timeout = CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS;
-		break;
-	case IPPROTO_UDP:
-	case IPPROTO_DTLS_1_2:
-		if (IS_ENABLED(CONFIG_COAP)) {
-			timeout = coap_get_recv_timeout(dl);
-			if (timeout == 0) {
-				errno = ETIMEDOUT;
-				return -1;
-			}
-			break;
-		}
-	default:
-		LOG_ERR("unhandled proto");
-		return -1;
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
 	}
 
-	err = set_recv_socket_timeout(dl->fd, timeout);
-	if (err) {
-		return -1;
-	}
+	err = ((struct dlc_transport *)dlc->transport)->close(dlc);
+	close_evt_send(dlc);
 
-	return recv(dl->fd, dl->buf + dl->offset, sizeof(dl->buf) - dl->offset, 0);
+	return err;
 }
 
-static int request_resend(struct download_client *dl)
-{
-	int rc;
+static int transport_download(struct download_client *dlc) {
+	int err;
 
-	if (dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2) {
-		LOG_DBG("Socket timeout, resending");
-
-		if (IS_ENABLED(CONFIG_COAP)) {
-			rc = coap_initiate_retransmission(dl);
-			if (rc) {
-				error_evt_send(dl, ETIMEDOUT);
-				return -1;
-			}
-		}
-
-		return 1;
+	if (!dlc || !dlc->transport) {
+		return -EINVAL;
 	}
 
-	return 0;
+	err = ((struct dlc_transport *)dlc->transport)->download(dlc);
+
+	return err;
 }
 
-/**
- * @brief Handle socket errors.
- *
- * @param dl
- * @return negative value to stop the handler loop, zero to retry the query.
- */
-static int handle_socket_error(struct download_client *dl, ssize_t len)
-{
-	int rc;
 
-	if (dl->fd == -1) {
-		/* download was aborted */
-		return -1;
-	}
-
-	/* If there is a partial data payload in our buffer,
-	 * and it has been accounted in our progress, we have
-	 * to hand it to the application before discarding it.
-	 */
-	if ((dl->offset > 0) && (dl->http.has_header)) {
-		rc = fragment_evt_send(dl);
-		if (rc) {
-			/* Restart and suspend */
-			LOG_INF("Fragment refused, download stopped.");
-			return -1;
-		}
-	}
-
-	rc = ECONNRESET;
-
-	if (len == -1) {
-		if ((errno == ETIMEDOUT) || (errno == EWOULDBLOCK) ||
-			(errno == EAGAIN)) {
-			k_mutex_lock(&dl->mutex, K_FOREVER);
-			rc = request_resend(dl);
-			k_mutex_unlock(&dl->mutex);
-			if (rc == -1) {
-				return -1;
-			} else if (rc == 1) {
-				return 0;
-			}
-			rc = ETIMEDOUT;
-		}
-		LOG_ERR("Error in recv(), errno %d", errno);
-	}
-
-	if (len == 0) {
-		LOG_WRN("Peer closed connection!");
-	}
-
-	/* Notify the application of the error via en event.
-	 * Attempt to reconnect and resume the download
-	 * if the application returns Zero via the event.
-	 */
-	rc = error_evt_send(dl, rc);
-	if (rc) {
-		/* Restart and suspend */
-		return -1;
-	}
-
-	k_mutex_lock(&dl->mutex, K_FOREVER);
-	rc = reconnect(dl);
-	k_mutex_unlock(&dl->mutex);
-	if (rc) {
-		return -1;
-	}
-
-	return 0;
-}
-
-/* Return:
- * 1 wait for more data,
- * -1 to stop
- * 0 to send a next request
- */
-static int handle_received(struct download_client *dl, ssize_t len)
-{
-	int rc;
-
-	LOG_DBG("Read %d bytes from socket", len);
-
-	if (dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) {
-		rc = http_parse(dl, len);
-		if (rc > 0 &&
-		    (!dl->http.has_header || dl->offset < sizeof(dl->buf))) {
-			/* Wait for more data (full buffer).
-			 * Forward only full buffers to callback.
-			 */
-			return 1;
-		}
-	} else if (IS_ENABLED(CONFIG_COAP)) {
-		rc = coap_parse(dl, (size_t)len);
-		if (rc == 1) {
-			/* Duplicate packet received */
-			return 1;
-		}
-	} else {
-		/* Unknown protocol */
-		rc = -EBADMSG;
-	}
-
-	if (rc < 0) {
-		/* Something was wrong with the packet
-		 * Restart and suspend
-		 */
-		error_evt_send(dl, -rc);
-		return -1;
-	}
-
-	if (dl->file_size) {
-		LOG_INF("Downloaded %u/%u bytes (%d%%)", dl->progress, dl->file_size,
-			(dl->progress * 100) / dl->file_size);
-	} else {
-		LOG_INF("Downloaded %u bytes", dl->progress);
-	}
-
-	/* Send fragment to application.
-	 * If the application callback returns non-zero, stop.
-	 */
-	if (fragment_evt_send(dl)) {
-		/* Restart and suspend */
-		LOG_INF("Fragment refused, download stopped.");
-		rc = -1;
-	}
-
-	if (dl->progress == dl->file_size) {
-		LOG_INF("Download complete");
-		const struct download_client_evt evt = {
-			.id = DOWNLOAD_CLIENT_EVT_DONE,
-		};
-		dl->callback(&evt);
-		/* Restart and suspend */
-		rc = -1;
-	} else if ((dl->proto == IPPROTO_TCP || dl->proto == IPPROTO_TLS_1_2) &&
-		   IS_ENABLED(CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS)) {
-		/* Request a next range */
-		rc = 0;
-	}
-
-	/* Attempt to reconnect if the connection was closed */
-	if (dl->http.connection_close && rc >= 0) {
-		dl->http.connection_close = false;
-		k_mutex_lock(&dl->mutex, K_FOREVER);
-		rc = reconnect(dl);
-		k_mutex_unlock(&dl->mutex);
-		if (rc) {
-			error_evt_send(dl, EHOSTDOWN);
-			rc = -1;
-		}
-	}
-	return rc;
-}
-
-static int handle_disconnect(struct download_client *client)
+static int reconnect(struct download_client *dlc)
 {
 	int err = 0;
 
-	k_mutex_lock(&client->mutex, K_FOREVER);
+	LOG_INF("Reconnecting...");
 
-	if (client->fd != -1) {
-		err = close(client->fd);
-		if (err) {
-			err = -errno;
-			LOG_ERR("Failed to close socket, errno %d", -err);
-		}
+	err = transport_close(dlc);
+	if (err) {
+		LOG_DBG("disconnect failed, %d", err);
 	}
 
-	client->fd = -1;
-	client->close_when_done = false;
-	client->host = NULL;
-	client->file = NULL;
-	set_state(client, DOWNLOAD_CLIENT_IDLE);
-	const struct download_client_evt evt = {
-		.id = DOWNLOAD_CLIENT_EVT_CLOSED,
-	};
-	client->callback(&evt);
+	err = transport_connect(dlc);
 
-	k_mutex_unlock(&client->mutex);
+	state_set(dlc, DOWNLOAD_CLIENT_CONNECTING);
 
 	return err;
 }
 
-void download_thread(void *client, void *a, void *b)
+static void restart_and_suspend(struct download_client *dlc) {
+
+	if (!is_state(dlc, DOWNLOAD_CLIENT_DOWNLOADING)) {
+		return;
+	}
+
+	if (!dlc->host_config.keep_connection) {
+		transport_close(dlc);
+		state_set(dlc, DOWNLOAD_CLIENT_IDLE);
+		return;
+	}
+	state_set(dlc, DOWNLOAD_CLIENT_CONNECTED);
+}
+
+static int data_evt_send(const struct download_client *dlc, void *data, size_t len)
+{
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_FRAGMENT,
+		.fragment = {
+			.buf = data,
+			.len = len,
+		}
+	};
+
+	return dlc->config.callback(&evt);
+}
+
+static int download_complete_evt_send(const struct download_client *dlc)
+{
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_DONE,
+	};
+
+	return dlc->config.callback(&evt);
+}
+
+static int close_evt_send(struct download_client *dlc)
+{
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_CLOSED,
+	};
+
+	return dlc->config.callback(&evt);
+}
+
+static int error_evt_send(const struct download_client *dlc, int error)
+{
+	/* Error will be sent as negative. */
+	__ASSERT_NO_MSG(error < 0);
+
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_ERROR,
+		.error = error
+	};
+
+	return dlc->config.callback(&evt);
+}
+
+static int deinit_evt_send(const struct download_client *dlc)
+{
+	const struct download_client_evt evt = {
+		.id = DOWNLOAD_CLIENT_EVT_DEINITIALIZED,
+	};
+
+	return dlc->config.callback(&evt);
+}
+
+/* Events from the transport */
+int dlc_transport_evt_connected(struct download_client *dlc)
+{
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
+	if (dlc->state == DOWNLOAD_CLIENT_CONNECTING) {
+		state_set(dlc, DOWNLOAD_CLIENT_CONNECTED);
+	}
+	k_mutex_unlock(&dlc->mutex);
+
+	return 0;
+}
+
+int dlc_transport_evt_disconnected(struct download_client *dlc)
+{
+	state_set(dlc, DOWNLOAD_CLIENT_IDLE);
+
+	return 0;
+}
+
+int dlc_transport_evt_data(struct download_client *dlc, void *data, size_t len)
+{
+	int err;
+
+	LOG_DBG("Read %d bytes from transport", len);
+
+	if (dlc->file_size) {
+		LOG_INF("Downloaded %u/%u bytes (%d%%)",
+			dlc->progress, dlc->file_size,
+			(dlc->progress * 100) / dlc->file_size);
+	} else {
+		LOG_INF("Downloaded %u bytes", dlc->progress);
+	}
+
+	err = data_evt_send(dlc, data, len);
+	if (err) {
+		/* Application refused data, suspend */
+		restart_and_suspend(dlc);
+	}
+
+	return 0;
+}
+
+int dlc_transport_evt_download_complete(struct download_client *dlc)
+{
+	LOG_INF("Download complete");
+	download_complete_evt_send(dlc);
+	restart_and_suspend(dlc);
+
+	return 0;
+}
+
+void download_thread(void *cli, void *a, void *b)
 {
 	int rc;
-	ssize_t len;
-	struct download_client *const dl = client;
-	bool send_request = false;
+	struct download_client *const dlc = cli;
 
 	while (true) {
 		rc = 0;
 
-		/* Wait for action */
-		k_sem_take(&dl->wait_for_download, K_FOREVER);
+		if (is_state(dlc, DOWNLOAD_CLIENT_IDLE)) {
+			/* Client idle, wait for action */
+			k_sem_take(&dlc->event_sem, K_FOREVER);
+		}
 
 		/* Connect to the target host */
-		if (is_connecting(dl)) {
-			rc = client_connect(dl);
-
+		if (is_state(dlc, DOWNLOAD_CLIENT_CONNECTING)) {
+			/* Client */
+			rc = transport_connect(dlc);
 			if (rc) {
+				state_set(dlc, DOWNLOAD_CLIENT_IDLE);
+				error_evt_send(dlc, rc);
 				continue;
 			}
 
-			/* Initialize CoAP */
-			if (IS_ENABLED(CONFIG_COAP) &&
-				(dl->proto == IPPROTO_UDP || dl->proto == IPPROTO_DTLS_1_2)) {
-				coap_block_init(client, dl->progress);
-			}
-
-			len = 0;
-			send_request = true;
-
-			set_state(dl, DOWNLOAD_CLIENT_DOWNLOADING);
+			/* Connection successful */
+			state_set(dlc, DOWNLOAD_CLIENT_DOWNLOADING);
 		}
 
-		/* Request loop */
-		while (is_downloading(dl)) {
-			if (send_request) {
-				/* Request next fragment */
-				dl->offset = 0;
-				rc = request_send(dl);
-				send_request = false;
+		if (is_state(dlc, DOWNLOAD_CLIENT_CONNECTED)) {
+			/* Client connected, wait for action */
+			k_sem_take(&dlc->event_sem, K_FOREVER);
+		}
+
+		if (is_state(dlc, DOWNLOAD_CLIENT_DOWNLOADING)) {
+			/* Download untill transport returns an error or the download is complete
+			 * (separate event).
+			 */
+			rc = transport_download(dlc);
+			if (rc) {
+				rc = error_evt_send(dlc, rc);
 				if (rc) {
-					rc = error_evt_send(dl, ECONNRESET);
-					if (rc) {
-						/* Restart and suspend */
-						break;
-					}
-
-					rc = reconnect(dl);
-					if (rc) {
-						break;
-					}
-					/* Send request again */
-					send_request = true;
-					continue;
+					restart_and_suspend(dlc);
 				}
-			}
 
-			__ASSERT(dl->offset < sizeof(dl->buf), "Buffer overflow");
-
-			if (sizeof(dl->buf) - dl->offset == 0) {
-				LOG_ERR("Could not fit HTTP header from server (> %d)",
-					sizeof(dl->buf));
-				error_evt_send(dl, E2BIG);
-				break;
-			}
-
-			LOG_DBG("Receiving up to %d bytes at %p...", (sizeof(dl->buf) - dl->offset),
-				(void *)(dl->buf + dl->offset));
-
-			len = socket_recv(dl);
-
-			if ((len == 0) || (len == -1)) {
-				/* We just had an unexpected socket error or closure */
-				rc = handle_socket_error(dl, len);
+				rc = reconnect(dlc);
 				if (rc) {
-					break;
-				}
-				/* Send request again */
-				send_request = true;
-
-			} else {
-				rc = handle_received(dl, len);
-				if (rc < 0) {
-					break;
-				} else if (rc == 0) {
-					/* Send request again */
-					send_request = true;
+					restart_and_suspend(dlc);
 				}
 			}
 		}
 
-		if (is_downloading(dl)) {
-			if (dl->close_when_done) {
-				set_state(dl, DOWNLOAD_CLIENT_CLOSING);
-			} else {
-				set_state(dl, DOWNLOAD_CLIENT_FINISHED);
-			}
+		if (is_state(dlc, DOWNLOAD_CLIENT_DEINITIALIZING)) {
+			printk("Deinitializing download client");
+			transport_close(dlc);
+			transport_deinit(dlc);
+			state_set(dlc, DOWNLOAD_CLIENT_DEINITIALIZED);
+			deinit_evt_send(dlc);
+			return;
 		}
-
-		if (is_closing(dl)) {
-			handle_disconnect(dl);
-			LOG_DBG("Connection closed");
-		}
-
-		/* Do not let the thread return, since it can't be restarted */
 	}
 }
 
-int download_client_init(struct download_client *const client,
-			 download_client_callback_t callback)
+int download_client_init(struct download_client *const dlc,
+			 struct download_client_cfg *config)
 {
-	if (client == NULL || callback == NULL) {
+	if (dlc == NULL || config == NULL || config->callback == NULL ||
+	    config->buf == NULL || config->buf_size == 0) {
 		return -EINVAL;
 	}
 
-	memset(client, 0, sizeof(*client));
-	client->fd = -1;
-	client->callback = callback;
-	k_sem_init(&client->wait_for_download, 0, 1);
-	k_mutex_init(&client->mutex);
+	if (dlc->state != DOWNLOAD_CLIENT_DEINITIALIZED) {
+		return -EALREADY;
+	}
 
-	k_mutex_lock(&client->mutex, K_FOREVER);
+	memset(dlc, 0, sizeof(*dlc));
+	dlc->config = *config;
+	k_sem_init(&dlc->event_sem, 0, 1);
+	k_mutex_init(&dlc->mutex);
+
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
 
 	/* The thread is spawned now, but it will suspend itself;
 	 * it is resumed when the download is started via the API.
 	 */
-	client->tid =
-		k_thread_create(&client->thread, client->thread_stack,
-				K_THREAD_STACK_SIZEOF(client->thread_stack),
-				download_thread, client, NULL, NULL,
+	dlc->tid =
+		k_thread_create(&dlc->thread, dlc->thread_stack,
+				K_THREAD_STACK_SIZEOF(dlc->thread_stack),
+				download_thread, dlc, NULL, NULL,
 				K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
 
-	k_thread_name_set(client->tid, "download_client");
+	k_thread_name_set(dlc->tid, "download_client");
 
-	k_mutex_unlock(&client->mutex);
+	state_set(dlc, DOWNLOAD_CLIENT_IDLE);
 
-	return 0;
-}
-
-int download_client_set_host(struct download_client *client, const char *host,
-			    const struct download_client_cfg *config)
-{
-	if (client == NULL || host == NULL || config == NULL) {
-		return -EINVAL;
-	}
-
-	if (config->frag_size_override > CONFIG_DOWNLOAD_CLIENT_BUF_SIZE) {
-		LOG_ERR("The configured fragment size is larger than buffer");
-		return -E2BIG;
-	}
-
-
-	k_mutex_lock(&client->mutex, K_FOREVER);
-
-	if (!is_idle(client)) {
-		k_mutex_unlock(&client->mutex);
-		return -EALREADY;
-	}
-
-	client->config = *config;
-	client->host = host;
-	client->close_when_done = false;
-	k_mutex_unlock(&client->mutex);
-	return 0;
-}
-
-int download_client_disconnect(struct download_client *const client)
-{
-	if (client == NULL || is_idle(client)) {
-		return -EINVAL;
-	}
-
-	set_state(client, DOWNLOAD_CLIENT_CLOSING);
-	k_sem_give(&client->wait_for_download);
+	k_mutex_unlock(&dlc->mutex);
 
 	return 0;
 }
 
-int download_client_start(struct download_client *client, const char *file,
-			  size_t from)
+int download_client_deinit(struct download_client *const dlc)
 {
-	if (client == NULL) {
+	if (!dlc) {
 		return -EINVAL;
 	}
 
-	k_mutex_lock(&client->mutex, K_FOREVER);
+	state_set(dlc, DOWNLOAD_CLIENT_DEINITIALIZING);
+	k_sem_give(&dlc->event_sem);
 
-	if (client->host == NULL) {
-		k_mutex_unlock(&client->mutex);
+	return 0;
+}
+
+int download_client_start(struct download_client *dlc,
+			  const struct download_client_host_cfg *host_config,
+			  const char *uri, size_t from)
+{
+	int err;
+	struct dlc_transport *transport_connected = NULL;
+
+	if (dlc == NULL || host_config == NULL || uri == NULL) {
 		return -EINVAL;
 	}
 
-	if (!is_idle(client) && !is_finished(client)) {
-		k_mutex_unlock(&client->mutex);
-		return -EALREADY;
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
+
+	if (!is_state(dlc, DOWNLOAD_CLIENT_IDLE) &&
+	    !is_state(dlc, DOWNLOAD_CLIENT_CONNECTED)) {
+		LOG_ERR("Invalid start state: %d", dlc->state);
+		k_mutex_unlock(&dlc->mutex);
+		return -EPERM;
 	}
 
-	client->file = file;
-	client->file_size = 0;
-	client->progress = from;
-	client->offset = 0;
-	client->http.has_header = false;
-	if (is_idle(client)) {
-		set_state(client, DOWNLOAD_CLIENT_CONNECTING);
+	/* Check if we are already connected to the correct host */
+	if (is_state(dlc, DOWNLOAD_CLIENT_CONNECTED)) {
+		char hostname[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
+
+		err = url_parse_host(uri, hostname, sizeof(hostname));
+		if (err) {
+			LOG_ERR("Failed to parse hostname");
+			return EINVAL;
+		}
+		if (strncmp(hostname, dlc->hostname, sizeof(hostname)) == 0) {
+			transport_connected = dlc->transport;
+		}
+	}
+
+	/* Extract the hostname, without protocol or port */
+	err = url_parse_host(uri, dlc->hostname, sizeof(dlc->hostname));
+	if (err) {
+		LOG_ERR("Failed to parse hostname");
+		return EINVAL;
+	}
+
+	/* Extract the filename, without protocol or port */
+	err = url_parse_file(uri, dlc->file, sizeof(dlc->file));
+	if (err) {
+		LOG_ERR("Failed to parse filename");
+		return EINVAL;
+	}
+
+	dlc->host_config = *host_config;
+	dlc->file_size = 0;
+	dlc->progress = from;
+	dlc->buf_offset = 0;
+
+	dlc->transport = NULL;
+
+	printk("Finding transport for %s\n", uri);
+
+	STRUCT_SECTION_FOREACH(dlc_transport_entry, entry) {
+		if (entry->transport->proto_supported(dlc, uri)) {
+			dlc->transport = entry->transport;
+			break;
+		}
+	}
+
+	if (!dlc->transport) {
+		LOG_ERR("Protocol not specified for %s", uri);
+		return -EINVAL;
+	};
+
+	printk("Found transport, state is %d", dlc->state);
+
+	if (is_state(dlc, DOWNLOAD_CLIENT_CONNECTED)) {
+		if (dlc->transport == transport_connected) {
+			state_set(dlc, DOWNLOAD_CLIENT_DOWNLOADING);
+			goto out;
+		} else {
+			/* We are connected to the wrong host */
+			LOG_DBG("Closing connection to connect different host or protocol");
+			transport_connected->close(dlc);
+			transport_connected->deinit(dlc);
+			state_set(dlc, DOWNLOAD_CLIENT_CONNECTING);
+		}
 	} else {
-		set_state(client, DOWNLOAD_CLIENT_DOWNLOADING);
+		/* IDLE */
+		state_set(dlc, DOWNLOAD_CLIENT_CONNECTING);
 	}
 
-	k_mutex_unlock(&client->mutex);
+	memset(dlc->transport_internal, 0, sizeof(dlc->transport_internal));
+	err = transport_init(dlc, &dlc->host_config, uri);
+	if (err) {
+		state_set(dlc, DOWNLOAD_CLIENT_IDLE);
+		k_mutex_unlock(&dlc->mutex);
+		LOG_ERR("Failed to initialize transport, err %d", err);
+		return err;
+	}
 
-	LOG_INF("Downloading: %s [%u]", client->file, client->progress);
+	printk("Transport initialized\n");
+	k_sleep(K_MSEC(1000));
+
+out:
+	k_mutex_unlock(&dlc->mutex);
 
 	/* Let the thread run */
-	k_sem_give(&client->wait_for_download);
+	k_sem_give(&dlc->event_sem);
 	return 0;
 }
 
-int download_client_get(struct download_client *client, const char *host,
-			const struct download_client_cfg *config, const char *file, size_t from)
+int download_client_stop(struct download_client *const dlc)
+{
+	if (dlc == NULL || is_state(dlc, DOWNLOAD_CLIENT_IDLE)) {
+		return -EINVAL;
+	}
+
+	transport_close(dlc);
+	close_evt_send(dlc);
+	state_set(dlc, DOWNLOAD_CLIENT_IDLE);
+
+	return 0;
+}
+
+int download_client_get(struct download_client *dlc,
+			const struct download_client_host_cfg *host_config,
+			const char *uri, size_t from)
 {
 	int rc;
 
-	if (client == NULL) {
+	if (dlc == NULL || uri == NULL) {
 		return -EINVAL;
 	}
 
-	if (file == NULL) {
-		file = host;
-	}
+	printk("Get file\n");
+	k_sleep(K_SECONDS(1));
 
-	k_mutex_lock(&client->mutex, K_FOREVER);
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
 
-	rc = download_client_set_host(client, host, config);
+	rc = download_client_start(dlc, host_config, uri, from);
 
-	if (rc == 0) {
-		client->close_when_done = true;
-		rc = download_client_start(client, file, from);
-	}
-
-	k_mutex_unlock(&client->mutex);
+	k_mutex_unlock(&dlc->mutex);
 
 	return rc;
 }
 
-int download_client_file_size_get(struct download_client *client, size_t *size)
+int download_client_file_size_get(struct download_client *dlc, size_t *size)
 {
-	if (!client || !size) {
+	if (!dlc || !size) {
 		return -EINVAL;
 	}
 
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	*size = client->file_size;
-	k_mutex_unlock(&client->mutex);
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
+	*size = dlc->file_size;
+	k_mutex_unlock(&dlc->mutex);
 
 	return 0;
 }
 
-int download_client_downloaded_size_get(struct download_client *client, size_t *size)
+int download_client_downloaded_size_get(struct download_client *dlc, size_t *size)
 {
-	if (!client || !size) {
+	if (!dlc || !size) {
 		return -EINVAL;
 	}
 
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	*size = client->progress;
-	k_mutex_unlock(&client->mutex);
+	k_mutex_lock(&dlc->mutex, K_FOREVER);
+	*size = dlc->progress;
+	k_mutex_unlock(&dlc->mutex);
 
 	return 0;
 }

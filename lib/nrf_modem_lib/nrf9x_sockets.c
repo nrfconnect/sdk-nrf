@@ -772,7 +772,7 @@ static int nrf9x_socket_offload_getaddrinfo(const char *node,
 	}
 
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
-
+	printk("GETADDRINFO RETURN %d \n", retval);
 	if (retval != 0) {
 		return retval;
 	}

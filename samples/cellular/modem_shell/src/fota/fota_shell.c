@@ -13,33 +13,19 @@
 #include "fota.h"
 #include "mosh_print.h"
 
-static const char fota_server_eu[] = "nrf-test-eu.s3.amazonaws.com";
-static const char fota_server_usa[] = "nrf-test-us.s3.amazonaws.com";
-static const char fota_server_jpn[] = "nrf-test-jpn.s3.amazonaws.com";
-static const char fota_server_au[] = "nrf-test-au.s3.amazonaws.com";
+//static const char fota_server_eu[] = "nrf-test-eu.s3.amazonaws.com";
+//static const char fota_server_usa[] = "nrf-test-us.s3.amazonaws.com";
+//static const char fota_server_jpn[] = "nrf-test-jpn.s3.amazonaws.com";
+//static const char fota_server_au[] = "nrf-test-au.s3.amazonaws.com";
 
 static int cmd_fota_download(const struct shell *shell, size_t argc,
 			     char **argv)
 {
 	int err;
-	const char *fota_server;
-
-	if (strcmp(argv[1], "eu") == 0) {
-		fota_server = fota_server_eu;
-	} else if (strcmp(argv[1], "us") == 0) {
-		fota_server = fota_server_usa;
-	} else if (strcmp(argv[1], "jpn") == 0) {
-		fota_server = fota_server_jpn;
-	} else if (strcmp(argv[1], "au") == 0) {
-		fota_server = fota_server_au;
-	} else {
-		mosh_error("FOTA: Unknown server: %s", argv[1]);
-		return -EINVAL;
-	}
 
 	mosh_print("FOTA: Starting download...");
 
-	err = fota_start(fota_server, argv[2]);
+	err = fota_start(argv[1]);
 
 	if (err) {
 		mosh_error("Failed to start FOTA download, error %d",
