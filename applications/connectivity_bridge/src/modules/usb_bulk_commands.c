@@ -8,6 +8,9 @@
 #include <zephyr/sys/reboot.h>
 #include <zephyr/drivers/gpio.h>
 #include <dk_buttons_and_leds.h>
+#include <fw_info.h>
+#include <bl_storage.h>
+#include <ncs_commit.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bulk_commands, CONFIG_BRIDGE_BULK_LOG_LEVEL);
@@ -16,16 +19,20 @@ LOG_MODULE_REGISTER(bulk_commands, CONFIG_BRIDGE_BULK_LOG_LEVEL);
 #define ID_DAP_VENDOR15			(0x80 + 15)
 #define ID_DAP_VENDOR16			(0x80 + 16)
 #define ID_DAP_VENDOR17			(0x80 + 17)
+#define ID_DAP_VENDOR18			(0x80 + 18)
 #define ID_DAP_VENDOR_NRF53_BOOTLOADER	ID_DAP_VENDOR14
 #define ID_DAP_VENDOR_NRF91_BOOTLOADER	ID_DAP_VENDOR15
 #define ID_DAP_VENDOR_NRF53_RESET	ID_DAP_VENDOR16
 #define ID_DAP_VENDOR_NRF91_RESET	ID_DAP_VENDOR17
+#define ID_DAP_VENDOR_NRF53_VERSION	ID_DAP_VENDOR18
 
 #define DAP_COMMAND_SUCCESS		0x00
 #define DAP_COMMAND_FAILED		0xFF
 
 #define NRF91_RESET_DURATION K_MSEC(100)
 #define NRF91_BUTTON1_DURATION K_MSEC(1000)
+
+#define USB_BULK_PACKET_SIZE  64
 
 static const struct gpio_dt_spec reset_pin =
 	GPIO_DT_SPEC_GET_OR(DT_PATH(zephyr_user), reset_gpios, {});
@@ -124,6 +131,24 @@ size_t dap_execute_cmd(uint8_t *in, uint8_t *out)
 			k_work_reschedule(&nrf91_reset_work, K_NO_WAIT);
 		}
 		goto success;
+	}
+	if (in[0] == ID_DAP_VENDOR_NRF53_VERSION) {
+		const struct fw_info *s0_info = fw_info_find(s0_address_read());
+		const struct fw_info *s1_info = fw_info_find(s1_address_read());
+		const size_t VERSION_STRING_LEN = USB_BULK_PACKET_SIZE - 2;
+
+		__ASSERT_NO_MSG(s0_info != NULL);
+		__ASSERT_NO_MSG(s1_info != NULL);
+		int len = snprintf(out + 2, VERSION_STRING_LEN,
+				   "S0: %u, S1: %u, app: " NCS_COMMIT_STRING,
+				   s0_info->version, s1_info->version);
+		if (len < 0 || len >= VERSION_STRING_LEN) {
+			LOG_ERR("Failed to format version string");
+			goto error;
+		}
+		out[0] = in[0];
+		out[1] = len;
+		return len + 2;
 	}
 
 error:
