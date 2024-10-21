@@ -31,6 +31,9 @@ ZBUS_CHAN_DECLARE(sdu_ref_chan);
 ZBUS_CHAN_DECLARE(le_audio_chan);
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 
+/* SD card detection */
+static bool sd_card_present = true;
+
 static struct k_thread le_audio_msg_sub_thread_data;
 static k_tid_t le_audio_msg_sub_thread_id;
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
@@ -226,7 +229,38 @@ static void subgroup_send(struct stream_index stream_idx)
 
 	if (ret != 0 && ret != prev_ret) {
 		if (ret == -ECANCELED) {
-			LOG_WRN("Sending operation cancelled");
+			LOG_WRN("Sending cancelled");
+		} else {
+			LOG_WRN("broadcast_source_send returned: %d", ret);
+		}
+	}
+
+	prev_ret = ret;
+}
+
+static void stream_frame_dummy_get_and_send(struct stream_index stream_idx)
+{
+	int ret;
+	static int prev_ret;
+	static uint8_t frame_value;
+
+	uint8_t num_bis = subgroups[stream_idx.lvl1][stream_idx.lvl2].num_bises;
+	size_t frame_size = subgroups[stream_idx.lvl1][stream_idx.lvl2].group_lc3_preset.qos.sdu;
+	uint8_t frame_buffer[num_bis][frame_size];
+
+	for (int i = 0; i < num_bis; i++) {
+		memset(frame_buffer[i], frame_value, frame_size);
+	}
+	frame_value++;
+
+	struct le_audio_encoded_audio enc_audio = {
+		.data = (uint8_t *)frame_buffer, .size = frame_size * num_bis, .num_ch = num_bis};
+
+	ret = broadcast_source_send(stream_idx.lvl1, stream_idx.lvl2, enc_audio);
+
+	if (ret != 0 && ret != prev_ret) {
+		if (ret == -ECANCELED) {
+			LOG_WRN("Sending cancelled");
 		} else {
 			LOG_WRN("broadcast_source_send returned: %d", ret);
 		}
@@ -309,15 +343,26 @@ static void le_audio_msg_sub_thread(void)
 
 		switch (msg.event) {
 		case LE_AUDIO_EVT_STREAM_SENT:
-			LOG_DBG("LE_AUDIO_EVT_STREAM_SENT for stream big %d sub: %d bis: %d",
+			LOG_DBG("LE_AUDIO_EVT_STREAM_SENT for stream BIG %d sub: %d BIS: %d",
 				msg.idx.lvl1, msg.idx.lvl2, msg.idx.lvl3);
 
-			stream_frame_get_and_send(msg.idx);
+			if (sd_card_present) {
+				stream_frame_get_and_send(msg.idx);
+			} else {
+				stream_frame_dummy_get_and_send(msg.idx);
+			}
 
 			break;
 
 		case LE_AUDIO_EVT_STREAMING:
-			stream_frame_get_and_send(msg.idx);
+			LOG_DBG("LE audio evt streaming for stream BIG %d sub: %d BIS: %d",
+				msg.idx.lvl1, msg.idx.lvl2, msg.idx.lvl3);
+
+			if (sd_card_present) {
+				stream_frame_get_and_send(msg.idx);
+			} else {
+				stream_frame_dummy_get_and_send(msg.idx);
+			}
 
 			break;
 
@@ -562,9 +607,11 @@ static void broadcast_config_clear(void)
 {
 	int ret;
 
-	ret = lc3_streamer_close_all_streams();
-	if (ret) {
-		LOG_ERR("Failed to close all LC3 streams: %d", ret);
+	if (sd_card_present) {
+		ret = lc3_streamer_close_all_streams();
+		if (ret) {
+			LOG_ERR("Failed to close all LC3 streams: %d", ret);
+		}
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(broadcast_param); i++) {
@@ -628,7 +675,10 @@ int main(void)
 	ERR_CHK_MSG(ret, "Failed to link zbus producers and observers");
 
 	ret = lc3_streamer_init();
-	ERR_CHK_MSG(ret, "Failed to initialize LC3 streamer");
+	if (ret) {
+		LOG_WRN("Failed to initialize LC3 streamer. Transmitting fixed buffers");
+		sd_card_present = false;
+	}
 
 	for (int i = 0; i < CONFIG_BT_ISO_MAX_BIG; i++) {
 		for (int j = 0; j < CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT; j++) {
@@ -641,8 +691,11 @@ int main(void)
 
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
-	ret = sd_card_toc_gen();
-	ERR_CHK_MSG(ret, "Failed to generate SD card table");
+
+	if (sd_card_present) {
+		ret = sd_card_toc_gen();
+		ERR_CHK_MSG(ret, "Failed to generate SD card table");
+	}
 
 	return 0;
 }
@@ -729,9 +782,9 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 
 		ret = le_audio_bitrate_get(codec_cfg, &bitrate);
 		if (ret) {
-			shell_error(shell, "Failed to get bitrate: %d", ret);
+			shell_error(shell, "Failed to get bit rate: %d", ret);
 		} else {
-			shell_print(shell, "\t\tBitrate: %d bps", bitrate);
+			shell_print(shell, "\t\tBit rate: %d bps", bitrate);
 		}
 
 		int frame_duration = 0;
@@ -804,7 +857,9 @@ static void broadcast_config_print(const struct shell *shell, uint8_t group_inde
 		for (size_t j = 0; j < brdcst_param->subgroups[i].num_bises; j++) {
 			uint8_t streamer_idx = lc3_stream_infos[group_index][i].lc3_streamer_idx[j];
 
-			if (streamer_idx == LC3_STREAMER_INDEX_UNUSED) {
+			if (!sd_card_present) {
+				shell_print(shell, "\t\t\tBIS %d: Fixed data", j);
+			} else if (streamer_idx == LC3_STREAMER_INDEX_UNUSED) {
 				shell_print(shell, "\t\t\tBIS %d: Not set", j);
 			} else {
 				char file_name[CONFIG_FS_FATFS_MAX_LFN];
@@ -1619,6 +1674,11 @@ static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
 	size_t buf_size = FILE_LIST_BUF_SIZE;
 	char *dir_path = NULL;
 
+	if (!sd_card_present) {
+		shell_error(shell, "No SD card present: files cannot be listed");
+		return -EFAULT;
+	}
+
 	if (argc > 2) {
 		shell_error(shell, "Usage: bct file list [dir path]");
 		return -EINVAL;
@@ -1646,6 +1706,11 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 	uint8_t bis_index;
 
+	if (!sd_card_present) {
+		shell_error(shell, "No SD card present: files cannot be selected");
+		return -EFAULT;
+	}
+
 	if (argc != 5) {
 		shell_error(shell,
 			    "Usage: bct file select <file path> <BIG index> <subgroup index> "
@@ -1660,7 +1725,7 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (broadcast_source_is_streaming(big_index)) {
-		shell_error(shell, "Files cannot be selected while already streaming");
+		shell_error(shell, "Files cannot be selected while streaming");
 		return -EFAULT;
 	}
 
@@ -1701,7 +1766,7 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 
 	ret = le_audio_bitrate_get(codec_cfg, &cfg.bit_rate_bps);
 	if (ret) {
-		shell_error(shell, "Failed to get bitrate: %d", ret);
+		shell_error(shell, "Failed to get bit rate: %d", ret);
 	}
 
 	/* Verify that the file header matches the stream configurationn */
@@ -2109,9 +2174,9 @@ static void lecture_set(const struct shell *shell)
 
 	cmd_num_bises(shell, 4, num_bis_argv);
 
-	cmd_file_select(shell, 5, fileselect_argv);
-
-	cmd_show(shell, 0, NULL);
+	if (sd_card_present) {
+		cmd_file_select(shell, 5, fileselect_argv);
+	}
 }
 
 static void silent_tv_1_set(const struct shell *shell)
@@ -2156,10 +2221,10 @@ static void silent_tv_1_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FL_argv);
 	cmd_location(shell, 5, location_FR_argv);
 
-	cmd_file_select(shell, 5, fileselect0_argv);
-	cmd_file_select(shell, 5, fileselect1_argv);
-
-	cmd_show(shell, 0, NULL);
+	if (sd_card_present) {
+		cmd_file_select(shell, 5, fileselect0_argv);
+		cmd_file_select(shell, 5, fileselect1_argv);
+	}
 }
 
 static void silent_tv_2_set(const struct shell *shell)
@@ -2205,8 +2270,10 @@ static void silent_tv_2_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FL0_argv);
 	cmd_location(shell, 5, location_FR0_argv);
 
-	cmd_file_select(shell, 5, fileselect00_argv);
-	cmd_file_select(shell, 5, fileselect01_argv);
+	if (sd_card_present) {
+		cmd_file_select(shell, 5, fileselect00_argv);
+		cmd_file_select(shell, 5, fileselect01_argv);
+	}
 
 	/* BIG1 */
 	char *preset1_argv[3] = {"preset", "48_2_1", "1"};
@@ -2250,12 +2317,12 @@ static void silent_tv_2_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FL1_argv);
 	cmd_location(shell, 5, location_FR1_argv);
 
-	cmd_file_select(shell, 5, fileselect10_argv);
-	cmd_file_select(shell, 5, fileselect11_argv);
-
 	cmd_rtn(shell, 4, num_rtn_argv);
 
-	cmd_show(shell, 0, NULL);
+	if (sd_card_present) {
+		cmd_file_select(shell, 5, fileselect10_argv);
+		cmd_file_select(shell, 5, fileselect11_argv);
+	}
 }
 
 static void multi_language_set(const struct shell *shell)
@@ -2315,11 +2382,11 @@ static void multi_language_set(const struct shell *shell)
 	cmd_rtn(shell, 4, num_rtn1_argv);
 	cmd_rtn(shell, 4, num_rtn2_argv);
 
-	cmd_file_select(shell, 5, fileselect0_argv);
-	cmd_file_select(shell, 5, fileselect1_argv);
-	cmd_file_select(shell, 5, fileselect2_argv);
-
-	cmd_show(shell, 0, NULL);
+	if (sd_card_present) {
+		cmd_file_select(shell, 5, fileselect0_argv);
+		cmd_file_select(shell, 5, fileselect1_argv);
+		cmd_file_select(shell, 5, fileselect2_argv);
+	}
 }
 
 static void personal_sharing_set(const struct shell *shell)
@@ -2357,10 +2424,10 @@ static void personal_sharing_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FL_argv);
 	cmd_location(shell, 5, location_FR_argv);
 
-	cmd_file_select(shell, 5, fileselect0_argv);
-	cmd_file_select(shell, 5, fileselect1_argv);
-
-	cmd_show(shell, 0, NULL);
+	if (sd_card_present) {
+		cmd_file_select(shell, 5, fileselect0_argv);
+		cmd_file_select(shell, 5, fileselect1_argv);
+	}
 }
 
 static void personal_multi_language_set(const struct shell *shell)
@@ -2423,15 +2490,15 @@ static void personal_multi_language_set(const struct shell *shell)
 	cmd_location(shell, 5, location_FL1_argv);
 	cmd_location(shell, 5, location_FR1_argv);
 
-	cmd_file_select(shell, 5, fileselect000_argv);
-	cmd_file_select(shell, 5, fileselect001_argv);
-	cmd_file_select(shell, 5, fileselect010_argv);
-	cmd_file_select(shell, 5, fileselect011_argv);
-
 	cmd_rtn(shell, 4, num_rtn000_argv);
 	cmd_rtn(shell, 4, num_rtn010_argv);
 
-	cmd_show(shell, 0, NULL);
+	if (sd_card_present) {
+		cmd_file_select(shell, 5, fileselect000_argv);
+		cmd_file_select(shell, 5, fileselect001_argv);
+		cmd_file_select(shell, 5, fileselect010_argv);
+		cmd_file_select(shell, 5, fileselect011_argv);
+	}
 }
 
 static int cmd_usecase(const struct shell *shell, size_t argc, char **argv)
@@ -2458,6 +2525,11 @@ static int cmd_usecase(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
+	if (use_case_nr > ARRAY_SIZE(pre_defined_use_cases)) {
+		shell_error(shell, "Use case not found");
+		return -EINVAL;
+	}
+
 	/* Clear previous configurations */
 	broadcast_config_clear();
 
@@ -2482,8 +2554,10 @@ static int cmd_usecase(const struct shell *shell, size_t argc, char **argv)
 		break;
 	default:
 		shell_error(shell, "Use case not found");
-		break;
+		return -EINVAL;
 	}
+
+	cmd_show(shell, 0, NULL);
 
 	return 0;
 }

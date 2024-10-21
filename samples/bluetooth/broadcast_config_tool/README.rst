@@ -12,11 +12,8 @@ The sample features a shell interface that allows you to configure the broadcast
 
 In the BIS gateway mode, transmitting audio from the broadcast source happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
 
-The following limitations apply to this sample:
-
-* Audio input: Pre-encoded LC3 data from an SD-card.
-  See :ref:`broadcast_configuration_tool_configuration_sd` for more information.
-* Maximum two BIG with four BIS streams each.
+.. note::
+     This sample is meant to be used with maximum two BIG with four BIS streams each.
 
 .. _broadcast_configuration_tool_requirements:
 
@@ -767,7 +764,9 @@ Using aggressive configurations can reduce air time availability for all streams
 SD card setup
 *************
 
-The sample only supports pre-encoded LC3 data stored as LC3 files on an SD card.
+This sample can support pre-encoded LC3 data stored as LC3 files on an SD card.
+If you are not using an SD card, the system defaults to sending dummy data.
+The purpose of the dummy data is to test that the broadcast source has been correctly configured.
 
 Make sure you format the SD card with a FAT file system.
 
@@ -792,7 +791,7 @@ In this testing procedure, the development kit is programmed with the Broadcast 
 
 To test the Broadcast Configuration Tool sample, complete the following steps:
 
-1. Insert the SD card loaded with the pre-encoded LC3 data.
+1. If you are using an :ref:`SD card loaded with the pre-encoded LC3 data <broadcast_configuration_tool_configuration_sd>`, insert it into your development kit.
 #. Turn on the development kit.
 #. Set up the serial connection with the development kit.
 #. Configure a BIG using use case 1:
