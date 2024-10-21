@@ -25,6 +25,7 @@ config DESKTOP_CONSTLAT_ENABLE
 
 config DESKTOP_CONSTLAT_DISABLE_ON_STANDBY
 	bool "Disable constant latency interrupts on standby"
+	depends on CAF_PM_EVENTS
 	depends on DESKTOP_CONSTLAT_ENABLE
 	help
 	  When enabled constant latency interrupts will be disabled when
