@@ -126,7 +126,6 @@
   - "include/mgmt/*"
   - "include/dfu/**/*"
   - "include/net/**/*"
-  - "cmake/*"
   - "lib/lte_link_control/**/*"
   - "modules/mcuboot/**/*"
   - "modules/trusted-firmware-m/*"
@@ -154,8 +153,6 @@
   - "include/fw_info.*"
   - "include/mgmt/*"
   - "include/net/**/*"
-  - "cmake/**/*"
-  - "sysbuild/**/*"
   - "modules/mcuboot/**/*"
   - "modules/trusted-firmware-m/*"
   - "samples/nrf5340/netboot/**/*"
@@ -174,9 +171,10 @@
 
 "CI-all-test":
   - "subsys/partition_manager/**/*"
+  - "cmake/**/*"
+  - "sysbuild/**/*"
 
 "CI-tfm-test":
-  - "cmake/*"
   - "include/tfm/**/*"
   - "modules/nrfxlib/**/*"
   - "modules/tfm/**/*"
@@ -272,7 +270,6 @@
   - "boards/nordic/*mouse/**/*"
   - "boards/nordic/*kbd/**/*"
   - "boards/nordic/*dongle/**/*"
-  - "cmake/*"
   - "drivers/sensor/paw3212/**/*"
   - "drivers/sensor/pmw3360/**/*"
   - "dts/bindings/sensor/pixart*"
@@ -289,7 +286,6 @@
   - "subsys/partition_manager/**/*"
 
 "CI-crypto-test":
-  - "cmake/*"
   - "drivers/entropy/*"
   - "drivers/hw_cc3xx/*"
   - "drivers/net/*"
@@ -379,7 +375,6 @@
 "CI-find-my-test":
   - "CMakeLists.txt"
   - "Kconfig.nrf"
-  - "cmake/**/*"
   - "drivers/entropy/**/*"
   - "drivers/hw_cc3xx/**/*"
   - "drivers/mpsl/**/*"
@@ -559,8 +554,6 @@
   - "include/fprotect.h"
   - "include/dfu/*suit*"
   - "include/sdfw/sdfw_services/*"
-  - "cmake/**/*"
-  - "sysbuild/**/*"
   - "lib/dk_buttons_and_leds/**/*"
   - "subsys/dfu/*"
   - "subsys/nrf_rpc/**/*"
