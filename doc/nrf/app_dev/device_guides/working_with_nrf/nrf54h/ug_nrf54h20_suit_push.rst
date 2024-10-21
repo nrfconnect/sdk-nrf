@@ -87,14 +87,14 @@ To reconfigure the sample to allow for pushing images into DFU cache partitions,
    * Optionally, modify :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_PARTITION` to select the partition where the image will be pushed (default is partition 1).
    * Optionally, modify the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI` to modify the URI used as key for the given image in the DFU cache.
 
-#. Ensure that the URI used by the ``suit-payload-fetch`` sequence to fetch a given image matches the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI` Kconfig option.
+#. Ensure that the URI used by the ``suit-directive-fetch`` command to fetch a given image matches the :kconfig:option:`CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI` Kconfig option.
    This is done by default when using the manifest templates provided by Nordic Semiconductor.
    For the application image URI, you can do that as follows (assuming the target name ``application`` for the image):
 
    .. code-block:: yaml
 
       - suit-directive-override-parameters:
-         suit-parameter-uri: '{{ application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}'
+         suit-parameter-uri: "{{ application['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] }}"
       - suit-directive-fetch:
         - suit-send-record-failure
 
