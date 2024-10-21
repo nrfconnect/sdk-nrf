@@ -15,41 +15,50 @@ It supports a wide range of existing technologies, including Wi-Fi, Thread, and 
 
 .. matter_intro_end
 
-The |NCS| allows you to develop applications with different versions of Matter, as per the following table:
+|NCS| |release| allows you to develop applications with Matter specification version 1.3.0 and `Matter SDK version`_ 1.3.0.0.
+For a full list of |NCS| and Matter versions, view the following table:
 
-+--------------------------+-----------------------------------------------------+------------------------+
-| nRF Connect SDK version  | Matter specification version                        | `Matter SDK version`_  |
-+==========================+=====================================================+========================+
-| |release|                | :ref:`1.3.0 <ug_matter_overview_dev_model_support>` | 1.3.0.0                |
-+--------------------------+-----------------------------------------------------+------------------------+
-| v2.6.1                   | :ref:`1.2.0 <ug_matter_overview_dev_model_support>` | 1.2.0.1                |
-+--------------------------+                                                     |                        |
-| v2.6.0                   |                                                     |                        |
-+--------------------------+-----------------------------------------------------+------------------------+
-| v2.5.2                   | :ref:`1.1.0 <ug_matter_overview_dev_model_support>` | 1.1.0.1                |
-+--------------------------+                                                     |                        |
-| v2.5.1                   |                                                     |                        |
-+--------------------------+                                                     |                        |
-| v2.5.0                   |                                                     |                        |
-+--------------------------+                                                     |                        |
-| v2.4.3                   |                                                     |                        |
-+--------------------------+                                                     |                        |
-| v2.4.2                   |                                                     |                        |
-+--------------------------+                                                     |                        |
-| v2.4.1                   |                                                     |                        |
-+--------------------------+                                                     |                        |
-| v2.4.0                   |                                                     |                        |
-+--------------------------+-----------------------------------------------------+------------------------+
-| v2.3.0                   | :ref:`1.0.0 <ug_matter_overview_dev_model_support>` | 1.0.0.2                |
-+--------------------------+                                                     +------------------------+
-| v2.2.0                   |                                                     | 1.0.0.0                |
-+--------------------------+                                                     +------------------------+
-| v2.1.4                   |                                                     | 1.0.0.0                |
-+--------------------------+                                                     +------------------------+
-| v2.1.3                   |                                                     | 1.0.0.0                |
-+--------------------------+                                                     +------------------------+
-| v2.1.2                   |                                                     | 1.0.0.0                |
-+--------------------------+-----------------------------------------------------+------------------------+
+.. toggle:: nRF Connect SDK, Matter specification, and Matter SDK versions
+
+   +--------------------------+-----------------------------------------------------+------------------------+
+   | nRF Connect SDK version  | Matter specification version                        | Matter SDK version     |
+   +==========================+=====================================================+========================+
+   | |release|                | :ref:`1.3.0 <ug_matter_overview_dev_model_support>` | 1.3.0.0                |
+   +--------------------------+-----------------------------------------------------+------------------------+
+   | v2.6.2                   | :ref:`1.2.0 <ug_matter_overview_dev_model_support>` | 1.2.0.1                |
+   +--------------------------+                                                     |                        |
+   | v2.6.1                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.6.0                   |                                                     |                        |
+   +--------------------------+-----------------------------------------------------+------------------------+
+   | v2.5.3                   | :ref:`1.1.0 <ug_matter_overview_dev_model_support>` | 1.1.0.1                |
+   +--------------------------+                                                     |                        |
+   | v2.5.2                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.5.1                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.5.0                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.4.4                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.4.3                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.4.2                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.4.1                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.4.0                   |                                                     |                        |
+   +--------------------------+-----------------------------------------------------+------------------------+
+   | v2.3.0                   | :ref:`1.0.0 <ug_matter_overview_dev_model_support>` | 1.0.0.2                |
+   +--------------------------+                                                     +------------------------+
+   | v2.2.0                   |                                                     | 1.0.0.0                |
+   +--------------------------+                                                     +------------------------+
+   | v2.1.4                   |                                                     | 1.0.0.0                |
+   +--------------------------+                                                     +------------------------+
+   | v2.1.3                   |                                                     | 1.0.0.0                |
+   +--------------------------+                                                     +------------------------+
+   | v2.1.2                   |                                                     | 1.0.0.0                |
+   +--------------------------+-----------------------------------------------------+------------------------+
 
 .. note::
    The Matter SDK version is taken as the base for the `dedicated Matter fork`_, which can then include additional changes for each |NCS| release.
@@ -62,7 +71,7 @@ The |NCS| allows you to develop applications with different versions of Matter, 
 
 For more information about Matter compatibility, see :ref:`ug_matter_overview_dev_model_support` and :ref:`supported Matter features per SoC <software_maturity_protocol_matter>`.
 
-See :ref:`matter_samples` for the list of available samples, :ref:`Matter Weather Station <matter_weather_station_app>` or :ref:`Matter bridge <matter_bridge_app>` for specific Matter application.
+See :ref:`matter_samples` for the list of available samples, or :ref:`Matter Weather Station <matter_weather_station_app>` or :ref:`Matter bridge <matter_bridge_app>` for specific Matter applications.
 If you are new to Matter, you can follow along with the video tutorials on Nordic Semiconductor's YouTube channel, for example `Developing Matter 1.0 products with nRF Connect SDK`_.
 
 .. note::
