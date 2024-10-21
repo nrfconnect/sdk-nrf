@@ -946,6 +946,7 @@ int nrf_cloud_modem_fota_completed(const bool fota_success);
  * @param[in] id_buf_sz  Size of buffer, maximum size is NRF_CLOUD_CLIENT_ID_MAX_LEN + 1.
  *
  * @retval 0         If successful.
+ * @retval -EINVAL   The id_buf parameter is NULL and/or the id_buf_sz parameter is 0.
  * @retval -EMSGSIZE The provided buffer is too small.
  * @retval -EIO      The client ID could not be initialized.
  * @retval -ENXIO    The Kconfig option @kconfig{CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME} is enabled
@@ -965,6 +966,8 @@ int nrf_cloud_client_id_get(char *id_buf, size_t id_buf_sz);
  *                      Max string length is NRF_CLOUD_CLIENT_ID_MAX_LEN.
  *
  * @retval 0 If successful.
+ * @retval -EINVAL	The length of the client_id provided exceeds the maximum allowed.
+ * @retval -ENODATA	The client_id cannot be empty.
  * @return A negative value indicates an error.
  */
 int nrf_cloud_client_id_runtime_set(const char *const client_id);
