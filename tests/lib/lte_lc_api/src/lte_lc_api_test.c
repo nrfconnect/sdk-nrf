@@ -4797,6 +4797,191 @@ void test_lte_lc_rai_update_fail(void)
 	at_monitor_dispatch(at_notif);
 }
 
+void test_lte_lc_plmn_access_list_write_success(void)
+{
+	int ret;
+
+	struct lte_lc_plmn_entry allowed_list[2] = {
+		{
+			.mcc_mnc = "24415",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_WBS1 | LTE_LC_PLMN_ACT_BIT_NBS1
+		},
+		{
+			.mcc_mnc = "24291",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_NBS1
+		}
+	};
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PALL=0,0,\"24415\",3,\"24291\",2", 0);
+	ret = lte_lc_plmn_access_list_write(allowed_list, ARRAY_SIZE(allowed_list), true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	struct lte_lc_plmn_entry unallowed_list[2] = {
+		{
+			.mcc_mnc = "33401",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_WBS1
+		},
+		{
+			.mcc_mnc = "422123",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_NBS1
+		}
+	};
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PALL=0,1,\"33401\",1,\"422123\",2", 0);
+	ret = lte_lc_plmn_access_list_write(unallowed_list, ARRAY_SIZE(unallowed_list), false);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_plmn_access_list_write_einval(void)
+{
+	int ret;
+
+	struct lte_lc_plmn_entry allowed_list[2] = {
+		{
+			.mcc_mnc = "24415",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_WBS1 | LTE_LC_PLMN_ACT_BIT_NBS1
+		},
+		{
+			.mcc_mnc = "24291",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_NBS1
+		}
+	};
+
+	/* Larger list than maximum expected. */
+	ret = lte_lc_plmn_access_list_write(allowed_list, LTE_LC_PLMN_ENTRY_LIST_MAX + 1, true);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_plmn_access_list_write(allowed_list, LTE_LC_PLMN_ENTRY_LIST_MAX + 1, false);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_plmn_access_list_write_efault(void)
+{
+	int ret;
+
+	struct lte_lc_plmn_entry allowed_list[2] = {
+		{
+			.mcc_mnc = "24415",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_WBS1 | LTE_LC_PLMN_ACT_BIT_NBS1
+		},
+		{
+			.mcc_mnc = "24291",
+			.act_bitmask = LTE_LC_PLMN_ACT_BIT_NBS1
+		}
+	};
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PALL=0,0,\"24415\",3,\"24291\",2",
+						   -NRF_EAGAIN);
+	ret = lte_lc_plmn_access_list_write(allowed_list, ARRAY_SIZE(allowed_list), true);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PALL=0,1,\"24415\",3,\"24291\",2",
+						   -NRF_EAGAIN);
+	ret = lte_lc_plmn_access_list_write(allowed_list, ARRAY_SIZE(allowed_list), false);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_plmn_access_list_read_success(void)
+{
+	int ret;
+
+	struct lte_lc_plmn_entry unallowed_list[3] = { 0 };
+
+	static const char pall_resp[] = "%PALL:1,\"33401\",1,\"422123\",2\r\nOK\r\n";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%PALL=1", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)pall_resp, sizeof(pall_resp));
+
+	size_t unallowed_list_size = ARRAY_SIZE(unallowed_list);
+
+	ret = lte_lc_plmn_access_list_read(unallowed_list, &unallowed_list_size, true);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	TEST_ASSERT_EQUAL(2, unallowed_list_size);
+	TEST_ASSERT_EQUAL_MEMORY("33401", unallowed_list[0].mcc_mnc,
+				 strlen(unallowed_list[0].mcc_mnc));
+	TEST_ASSERT_EQUAL(1, unallowed_list[0].act_bitmask);
+	TEST_ASSERT_EQUAL_MEMORY("422123", unallowed_list[1].mcc_mnc,
+				 strlen(unallowed_list[1].mcc_mnc));
+	TEST_ASSERT_EQUAL(2, unallowed_list[1].act_bitmask);
+}
+
+void test_lte_lc_plmn_access_list_read_einval(void)
+{
+	int ret;
+
+	struct lte_lc_plmn_entry unallowed_list[3] = { 0 };
+
+	size_t unallowed_list_size = LTE_LC_PLMN_ENTRY_LIST_MAX + 1;
+
+	ret = lte_lc_plmn_access_list_read(unallowed_list, &unallowed_list_size, true);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_plmn_access_list_read(unallowed_list, &unallowed_list_size, false);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_plmn_access_list_read_at_cmd_efault(void)
+{
+	int ret;
+
+	struct lte_lc_plmn_entry unallowed_list[3] = { 0 };
+
+	static const char pall_resp[] = "%PALL:1,\"33401\",1,\"422123\",2\r\nOK\r\n";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%PALL=1", -NRF_EAGAIN);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)pall_resp, sizeof(pall_resp));
+
+	size_t unallowed_list_size = ARRAY_SIZE(unallowed_list);
+
+	ret = lte_lc_plmn_access_list_read(unallowed_list, &unallowed_list_size, true);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_plmn_access_list_read_at_parser_efault(void)
+{
+	int ret;
+
+	struct lte_lc_plmn_entry unallowed_list[3] = { 0 };
+
+	/* Malformed AT response has double quotes at index 2. */
+	static const char pall_resp[] = "%PALL:1,\"\"33401\",1,\"422123\",2\r\nOK\r\n";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT%%PALL=1", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)pall_resp, sizeof(pall_resp));
+
+	size_t unallowed_list_size = ARRAY_SIZE(unallowed_list);
+
+	ret = lte_lc_plmn_access_list_read(unallowed_list, &unallowed_list_size, true);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_plmn_access_list_clear_success(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PALL=2", 0);
+	ret = lte_lc_plmn_access_list_clear();
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_plmn_access_list_clear_efault(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%PALL=2", -NRF_EAGAIN);
+	ret = lte_lc_plmn_access_list_clear();
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
 /* It is required to be added to each test. That is because unity's
  * main may return nonzero, while zephyr's main currently must
  * return 0 in all cases (other values are reserved).
