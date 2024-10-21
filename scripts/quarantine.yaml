@@ -45,9 +45,3 @@
   platforms:
     - thingy53/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29488"
-
-- scenarios:
-    - sample.softap.wifi.provision
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29815"
