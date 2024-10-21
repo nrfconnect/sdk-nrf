@@ -562,7 +562,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_not_found)
 	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
 
 	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	zassert_equal(SUIT_ERR_UNAVAILABLE_PAYLOAD, ret, "Invalid manifest retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -606,7 +606,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_addres
 	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
 
 	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	zassert_equal(SUIT_ERR_UNAVAILABLE_PAYLOAD, ret, "Invalid manifest retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,
@@ -650,7 +650,7 @@ ZTEST(suit_platform_retrieve_manifest_tests, test_instld_manifest_invalid_size)
 	int ret = suit_plat_retrieve_manifest(TEST_COMPONENT_HANDLE, &envelope_str, &envelope_len);
 
 	/* THEN manifest is not returned... */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, ret, "Invalid manifest retrieved");
+	zassert_equal(SUIT_ERR_UNAVAILABLE_PAYLOAD, ret, "Invalid manifest retrieved");
 
 	/* ... and component ID for given component handle was fetched */
 	zassert_equal(suit_plat_component_id_get_fake.call_count, 1,

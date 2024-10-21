@@ -37,7 +37,7 @@ int suit_plat_retrieve_manifest_domain_specific(struct zcbor_string *component_i
 		ret = suit_storage_installed_envelope_get(class_id, envelope_str, envelope_len);
 		if ((ret != SUIT_PLAT_SUCCESS) || (*envelope_str == NULL) || (*envelope_len == 0)) {
 			LOG_ERR("Unable to find installed envelope (err: %d)", ret);
-			ret = SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+			ret = SUIT_ERR_UNAVAILABLE_PAYLOAD;
 			break;
 		}
 
