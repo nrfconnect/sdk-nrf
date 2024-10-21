@@ -670,19 +670,19 @@ static int fota_download_object_init(void)
 {
 	int err;
 
-#ifdef CONFIG_FOTA_DOWNLOAD_NATIVE_TLS
-	/* Enable native TLS for the download client socket
-	 * if configured.
-	 */
-	dlc.set_native_tls = CONFIG_FOTA_DOWNLOAD_NATIVE_TLS;
-#endif
-
 	k_work_init_delayable(&dlc_with_offset_work, download_with_offset);
 
 	err = download_client_init(&dlc, download_client_callback);
 	if (err != 0) {
 		return err;
 	}
+
+#ifdef CONFIG_FOTA_DOWNLOAD_NATIVE_TLS
+	/* Enable native TLS for the download client socket
+	 * if configured.
+	 */
+	dlc.set_native_tls = true;
+#endif
 
 	initialized = true;
 	return 0;
