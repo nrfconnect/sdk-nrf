@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void arm_thumb_filter(uint8_t *buf, uint32_t buf_size, uint32_t pos, bool compress);
+void arm_thumb_filter(uint8_t *buf, uint32_t buf_size, uint32_t pos, bool compress,
+		      bool *end_part_match);
 
 #endif
