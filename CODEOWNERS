@@ -390,11 +390,11 @@
 /lib/wave_gen/                            @nrfconnect/ncs-si-muffin
 
 # Modules
-/modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia @plskeggs
-/modules/cjson/                           @nrfconnect/ncs-cia @plskeggs
+/modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia
+/modules/cjson/                           @nrfconnect/ncs-cia @nrfconnect/ncs-nrf-cloud
 /modules/coremark/                        @nrfconnect/ncs-si-bluebagel
 /modules/mcuboot/                         @nrfconnect/ncs-pluto
-/modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia @plskeggs
+/modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia
 /modules/nrfxlib/                         @nrfconnect/ncs-code-owners
 /modules/trusted-firmware-m/              @nrfconnect/ncs-aegir
 /modules/wfa-qt/                          @nrfconnect/ncs-wifi
