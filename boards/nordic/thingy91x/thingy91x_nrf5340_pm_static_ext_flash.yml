@@ -70,16 +70,21 @@ settings_storage:
   region: flash_primary
 
 external_flash:
-  device: GD25LB256E
+  device: DT_CHOSEN(nordic_pm_ext_flash)
   address: 0x0
   size: 0x2000000
   span: [mcuboot_secondary]
   region: external_flash
 mcuboot_secondary:
-  device: GD25LB256E
+  device: DT_CHOSEN(nordic_pm_ext_flash)
   address: 0x0
   size: 0xcc000
   share_size: [mcuboot_primary]
+  region: external_flash
+mcuboot_secondary_1:
+  address: 0xcc000
+  size: 0x40000
+  device: DT_CHOSEN(nordic_pm_ext_flash)
   region: external_flash
 pcd_sram:
   address: 0x20000000
