@@ -254,6 +254,7 @@ Wi-Fi
 -----
 
 * The WPA supplicant is now switched to Zephyr upstream's fork instead of |NCS|.
+* Added Platform Security Architecture (PSA) APIs support for WPA2 security profiles.
 
 Applications
 ============
