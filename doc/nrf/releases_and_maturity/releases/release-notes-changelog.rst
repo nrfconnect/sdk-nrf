@@ -1041,6 +1041,10 @@ Libraries for networking
 
   * Updated to use INF log level when the cloud side changes the log level.
 
+* :ref:`lib_fota_download` library:
+
+  * Fixed an issue where the download client instance did not use native TLS although the :kconfig:option:`CONFIG_FOTA_DOWNLOAD_NATIVE_TLS` Kconfig option was enabled.
+
 * :ref:`lib_nrf_cloud_fota` library:
 
   * Added:
