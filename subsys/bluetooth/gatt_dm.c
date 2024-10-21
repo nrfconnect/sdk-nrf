@@ -22,6 +22,24 @@ LOG_MODULE_REGISTER(bt_gatt_dm, CONFIG_BT_GATT_DM_LOG_LEVEL);
 BUILD_ASSERT(sizeof(struct bt_gatt_service_val) % DATA_ALIGN == 0);
 BUILD_ASSERT(sizeof(struct bt_gatt_chrc) % DATA_ALIGN == 0);
 
+#if defined(CONFIG_BT_GATT_DM_WORKQ_OWN)
+K_THREAD_STACK_DEFINE(bt_gatt_dm_wq_stack_area, CONFIG_BT_GATT_DM_WORKQ_STACK_SIZE);
+static struct k_work_q bt_gatt_dm_wq;
+
+static int gatt_dm_wq_init(void)
+{
+	const struct k_work_queue_config cfg = {.name = "BT GATT DM WQ"};
+
+	k_work_queue_init(&bt_gatt_dm_wq);
+	k_work_queue_start(&bt_gatt_dm_wq, bt_gatt_dm_wq_stack_area,
+			   K_THREAD_STACK_SIZEOF(bt_gatt_dm_wq_stack_area),
+			   CONFIG_BT_GATT_DM_WORKQ_PRIO, &cfg);
+	return 0;
+}
+
+SYS_INIT(gatt_dm_wq_init, POST_KERNEL, CONFIG_BT_GATT_DM_WORKQ_INIT_PRIO);
+#endif
+
 /* Flags for parsed attribute array state */
 enum {
 	STATE_ATTRS_LOCKED,
@@ -277,12 +295,29 @@ static void discovery_complete_error(struct bt_gatt_dm *dm, int err)
 	}
 }
 
+static struct gatt_discover_work_params {
+	struct k_work work;
+	struct bt_gatt_dm *dm;
+} gatt_work_data;
+
+static void gatt_discover_work(struct k_work *work)
+{
+	struct gatt_discover_work_params *wd =
+		CONTAINER_OF(work, struct gatt_discover_work_params, work);
+	__ASSERT(wd->dm->state_flags[STATE_ATTRS_LOCKED], "Attributes not locked");
+
+	int err = bt_gatt_discover(wd->dm->conn, &(wd->dm->discover_params));
+
+	if (err) {
+		LOG_ERR("GATT discover failed, error: %d.", err);
+		discovery_complete_error(wd->dm, -ENOMEM);
+	}
+}
+
 static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 				      const struct bt_gatt_attr *attr,
 				      struct bt_gatt_discover_params *params)
 {
-	int err;
-
 	if (!attr) {
 		discovery_complete_not_found(dm);
 		return BT_GATT_ITER_STOP;
@@ -336,13 +371,15 @@ static uint8_t discovery_process_service(struct bt_gatt_dm *dm,
 	dm->discover_params.type         = BT_GATT_DISCOVER_ATTRIBUTE;
 	dm->discover_params.start_handle = cur_attr->handle + 1;
 	LOG_DBG("Starting descriptors discovery");
-	err = bt_gatt_discover(dm->conn, &(dm->discover_params));
 
-	if (err) {
-		LOG_ERR("Descriptor discover failed, error: %d.", err);
-		discovery_complete_error(dm, -ENOMEM);
-		return BT_GATT_ITER_STOP;
-	}
+	gatt_work_data.dm = dm;
+	k_work_init(&gatt_work_data.work, gatt_discover_work);
+
+#if defined(CONFIG_BT_GATT_DM_WORKQ_OWN)
+	k_work_submit_to_queue(&bt_gatt_dm_wq, &gatt_work_data.work);
+#else
+	k_work_submit(&gatt_work_data.work);
+#endif
 
 	return BT_GATT_ITER_STOP;
 }
@@ -360,15 +397,14 @@ static uint8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 				dm->attrs[0].handle + 1;
 			dm->discover_params.type =
 				BT_GATT_DISCOVER_CHARACTERISTIC;
-			int err = bt_gatt_discover(dm->conn,
-						   &(dm->discover_params));
 
-			if (err) {
-				LOG_ERR("Characteristic discover failed,"
-					" error: %d.",
-					err);
-				discovery_complete_error(dm, err);
-			}
+			gatt_work_data.dm = dm;
+			k_work_init(&gatt_work_data.work, gatt_discover_work);
+#if defined(CONFIG_BT_GATT_DM_WORKQ_OWN)
+			k_work_submit_to_queue(&bt_gatt_dm_wq, &gatt_work_data.work);
+#else
+			k_work_submit(&gatt_work_data.work);
+#endif
 		} else {
 			discovery_complete(dm);
 		}
