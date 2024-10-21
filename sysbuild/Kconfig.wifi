@@ -25,6 +25,9 @@ config WIFI_NRF70_SCAN_ONLY
 	help
 	  Select this option to enable scan only mode of the nRF700x driver
 
+config WIFI_NRF70_OFFLOADED_RAW_TX
+	bool "Offloaded raw tx mode of the nRF700x driver"
+
 config WIFI_NRF70_RADIO_TEST
 	bool "Radio test mode of the nRF700x driver"
 
