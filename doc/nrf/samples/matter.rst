@@ -84,6 +84,12 @@ In addition to these samples, check also the following Matter applications:
 * :ref:`Thingy:53 Matter weather station <matter_weather_station_app>`
 * :ref:`Matter bridge <matter_bridge_app>`
 
+.. include:: ../samples.rst
+    :start-after: samples_general_info_start
+    :end-before: samples_general_info_end
+
+|filter_samples_by_board|
+
 .. toctree::
    :maxdepth: 1
    :caption: Subpages
