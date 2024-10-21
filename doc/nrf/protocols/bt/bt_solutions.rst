@@ -1,5 +1,11 @@
+.. _ug_bt_solution:
+
 Bluetooth solution areas
 ########################
+
+.. contents::
+   :local:
+   :depth: 2
 
 Bluetooth® technology provides full stack support for a wide and expanding range of use cases.
 

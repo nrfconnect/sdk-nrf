@@ -548,6 +548,7 @@
 .. _`LwM2M carrier library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 
 
+.. _`Migration guide for nRF Connect SDK v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.8.html
 .. _`Migration guide for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.7.html
 .. _`Migration guide for nRF Connect SDK v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.6.html
 .. _`Migration guide for nRF Connect SDK v2.5.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.5.html
