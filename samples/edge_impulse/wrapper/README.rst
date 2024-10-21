@@ -8,7 +8,7 @@ Edge Impulse: Wrapper
    :depth: 2
 
 The Edge Impulse wrapper sample demonstrates the functionality of the :ref:`ei_wrapper`.
-It shows how to use the wrapper to run a custom `Edge Impulse`_ machine learning model when :ref:`integrating Edge Impulse with the |NCS| <ug_edge_impulse>`.
+It shows how to use the wrapper to run a custom `Edge Impulse`_ machine learning model when :ref:`integrating Edge Impulse with the nRF Connect SDK <ug_edge_impulse>`.
 
 Requirements
 ************
