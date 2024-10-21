@@ -22,7 +22,7 @@ endif()
 if(DEFINED CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_DISABLED OR
    DEFINED CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP)
   # NCS doesn't rely on hal_nordic blobs for nRF70 device driver
-  set(FW_BINS_BASE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi/ncs_fw_blobs)
+  set(FW_BINS_BASE ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi/bin/ncs)
   # RPU FW patch binaries based on the selected configuration
   if(CONFIG_NRF70_SYSTEM_MODE)
     set(NRF70_PATCH ${FW_BINS_BASE}/default/nrf70.bin)
