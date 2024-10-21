@@ -48,6 +48,10 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is in the `
        The register used is ``RESET`` (address offset: ``0x00``).
    * - ``RESET_PIN``
      - J-Link toggles the **RESET** pin via OBD.
+   * - ``RESET_VIA_SECDOM``
+     - Not supported.
+   * - ``RESET_DEFAULT``
+     - Selects ``RESET_HARD``.
 
 Reset types in LCS ROT or DEPLOYED
 -----------------------------------
@@ -60,16 +64,23 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
    * - Reset kind in LCS ``ROT`` or ``DEPLOYED``
      - Reset behavior
    * - ``RESET_SYSTEM``
-     - In the Secure Domain, this reset is mapped to the ``SYS_RESET_REQUEST`` bit, as described in the ARM specification for the *Application Interrupt and Register Controller*.
-       This reset triggers a reset of the Secure Domain, which subsequently resets the entire system.
-
-       In the local domains, this reset is available only if the other domains have a valid configuration in the ``CPUCONF`` register and their access port is unprotected.
-       The PC tool uses the CTRL-AP mailbox to send a local domain reset request to the Secure Domain Firmware (SDFW).
+     - Not supported.
    * - ``RESET_HARD``
      - Initiates a reset using the CTRL-AP through the On-Board Debugger (OBD).
        The register used is ``RESET`` (address offset: ``0x00``).
    * - ``RESET_PIN``
      - J-Link toggles the ``RESET`` pin via OBD.
+   * - ``RESET_VIA_SECDOM``
+     - Uses the CTRL-AP mailbox to send a local domain reset request to the Secure Domain Firmware (SDFW).
+
+       SDFW resets nonessential local domains and global peripherals owned by these domains.
+       Nonessential domains include all local domains except the Secure Domain.
+
+       Only domains with a populated UICR are reset.
+       After the reset, the affected CPUs do not restart.
+
+   * - ``RESET_DEFAULT``
+     - Selects ``RESET_HARD``.
 
 Reset your device using nRF Util
 ================================

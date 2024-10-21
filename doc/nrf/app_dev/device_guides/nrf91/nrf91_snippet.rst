@@ -40,12 +40,31 @@ nRF91 modem traces with flash backend using snippets
 The ``nrf91-modem-trace-ext-flash`` snippet enables modem tracing, the flash backend, and external flash and configures them to store modem traces to a dedicated partition on the external flash for supported boards.
 To change the partition size, the project needs to configure the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE` Kconfig option.
 
-To enable modem traces with the flash backend, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+To enable modem traces with the flash backend, add the ``nrf91-modem-trace-ext-flash`` snippet to the :term:`build configuration`.
+You can do this in one of the following ways:
 
-.. parsed-literal::
-   :class: highlight
+.. tabs::
 
-   west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash"
+   .. group-tab:: west
+
+      To add the modem traces with the flash backend snippet when building an application with west, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+
+      .. parsed-literal::
+         :class: highlight
+
+          west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash"
+
+   .. group-tab:: CMake
+
+      To add the modem traces with the flash backend snippet when building an application with CMake, add the following command to the CMake arguments:
+
+      .. code-block:: console
+
+         -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash" [...]
+
+      To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash" [...]`` in the **Extra CMake arguments** field.
+
+      See :ref:`cmake_options` for more details.
 
 .. _nrf91_modem_trace_ram_snippet:
 
@@ -55,12 +74,31 @@ nRF91 modem traces with RAM backend using snippets
 The ``nrf91-modem-trace-ram`` snippet enables modem tracing and configures it to store modem traces to a dedicated partition on the RAM.
 To change the partition size, the project needs to configure the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_RAM_LENGTH` Kconfig option.
 
-To enable modem traces with the RAM backend, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+To enable modem traces with the RAM backend, add the ``nrf91-modem-trace-ram`` snippet to the :term:`build configuration`.
+You can do this in one of the following ways:
 
-.. parsed-literal::
-   :class: highlight
+.. tabs::
 
-   west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ram"
+   .. group-tab:: west
+
+      To add modem traces with the RAM backend when building an application with west, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-ram"
+
+   .. group-tab:: CMake
+
+      To add the modem traces with the RAM backend snippet when building an application with CMake, add the following command to the CMake arguments:
+
+      .. code-block:: console
+
+         -D<image_name>_SNIPPET="nrf91-modem-trace-ram" [...]
+
+      To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-ram" [...]`` in the **Extra CMake arguments** field.
+
+      See :ref:`cmake_options` for more details.
 
 .. _nrf91_modem_trace_uart_snippet:
 
@@ -74,8 +112,8 @@ If this configuration does not match your requirements, you can add a snippet or
 .. note::
     If you are using the nRF9160 DK, remember to :ref:`set the board controller switch to the **nRF91** position <build_pgm_nrf9160_board_controller>` before programming.
 
-To enable modem tracing with the UART trace backend on a nRF91 device, add the ``nrf91-modem-trace-uart`` snippet to the :term:`build configuration`.
-This can be done in one of the following ways:
+To enable modem tracing with the UART trace backend on a nRF91 Series device, add the ``nrf91-modem-trace-uart`` snippet to the :term:`build configuration`.
+You can do this in one of the following ways:
 
 .. tabs::
 
@@ -98,7 +136,7 @@ This can be done in one of the following ways:
 
       .. code-block:: console
 
-        -D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]
+         -D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]
 
       To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
 
@@ -111,22 +149,61 @@ nRF91 modem traces with RTT backend using snippets
 
 The ``nrf91-modem-trace-rtt`` snippet enables the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` Kconfig option and chooses the RTT trace backend with the necessary Kconfig options.
 
-To enable modem traces with the RTT backend, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+To enable modem tracing with the RTT backend, add the ``nrf91-modem-trace-rtt`` snippet to the :term:`build configuration`.
+You can do this in one of the following ways:
 
-.. parsed-literal::
-   :class: highlight
+.. tabs::
 
-   west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-rtt"
+   .. group-tab:: west
+
+      To add modem traces with the RTT backend when building an application with west, use the following command pattern, where *board_target* corresponds to your board target and `<image_name>` to your application image name:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build --board *board_target* -- -D<image_name>_SNIPPET="nrf91-modem-trace-rtt"
+
+   .. group-tab:: CMake
+
+       To add the modem traces with the RTT backend snippet when building an application with CMake, add the following command to the CMake arguments:
+
+       .. code-block:: console
+
+          -D<image_name>_SNIPPET="nrf91-modem-trace-rtt" [...]
+
+       To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-rtt" [...]`` in the **Extra CMake arguments** field.
+
+       See :ref:`cmake_options` for more details.
 
 .. _tfm_enable_share_uart:
 
 Shared UART for application and TF-M logging
 ********************************************
 
-If you want to activate TF-M logging while having modem traces enabled, it can be useful to direct the TF-M logs to the UART (**UART0**) used by the application.
-To activate both modem traces and TF-M logs, use the following command pattern, where *board_target* corresponds to your board target:
+If you want to activate TF-M logging while having modem traces with the UART backend enabled, it can be useful to direct the TF-M logs to the UART (**UART0**) used by the application.
 
-.. parsed-literal::
-   :class: highlight
+To enable modem traces and TF-M logs, add the ``nrf91-modem-trace-uart`` and ``tfm-enable-share-uart`` snippets to the :term:`build configuration`.
+You can do this in one of the following ways:
 
-   west build --board *board_target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart
+.. tabs::
+
+   .. group-tab:: west
+
+      To activate both modem traces and TF-M logs when building an application with west, use the following command pattern, where *board_target* corresponds to your board target:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build --board *board_target* -S nrf91-modem-trace-uart -S tfm-enable-share-uart
+
+   .. group-tab:: CMake
+
+      To activate TF-M logs when building an application with CMake, add the following command to the CMake arguments:
+
+      .. code-block:: console
+
+         -D<image_name>_SNIPPET="tfm-enable-share-uart" [...]
+
+      To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="tfm-enable-share-uart" [...]`` in the **Extra CMake arguments** field.
+
+      See :ref:`cmake_options` for more details.
