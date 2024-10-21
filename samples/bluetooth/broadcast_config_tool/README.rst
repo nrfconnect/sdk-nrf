@@ -767,7 +767,8 @@ Using aggressive configurations can reduce air time availability for all streams
 SD card setup
 *************
 
-The sample only supports pre-encoded LC3 data stored as LC3 files on an SD card.
+The sample supports pre-encoded LC3 data stored as LC3 files on an SD card.
+If an SD card is not inserted the system will default to sending dummy data for testing the broadcast server has correctly been configured.
 
 Make sure you format the SD card with a FAT file system.
 
@@ -792,7 +793,7 @@ In this testing procedure, the development kit is programmed with the Broadcast 
 
 To test the Broadcast Configuration Tool sample, complete the following steps:
 
-1. Insert the SD card loaded with the pre-encoded LC3 data.
+1. Insert the SD card loaded with the pre-encoded LC3 data, if using.
 #. Turn on the development kit.
 #. Set up the serial connection with the development kit.
 #. Configure a BIG using use case 1:
