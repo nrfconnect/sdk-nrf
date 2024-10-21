@@ -289,14 +289,25 @@ static int uart_init(void)
 static void discovery_complete(struct bt_gatt_dm *dm,
 			       void *context)
 {
+	int err;
 	struct bt_nus_client *nus = context;
 	LOG_INF("Service discovery completed");
 
 	bt_gatt_dm_data_print(dm);
 
-	bt_nus_handles_assign(dm, nus);
-	bt_nus_subscribe_receive(nus);
+	err = bt_nus_handles_assign(dm, nus);
+	if (err) {
+		LOG_INF("bt_nus_handles_assign failed (err %d)", err);
+		goto cleanup;
+	}
 
+	err = bt_nus_subscribe_receive(nus);
+	if (err) {
+		LOG_INF("bt_nus_subscribe_receive failed (err %d)", err);
+		goto cleanup;
+	}
+
+cleanup:
 	bt_gatt_dm_data_release(dm);
 }
 
