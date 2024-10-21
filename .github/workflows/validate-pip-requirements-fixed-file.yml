@@ -57,21 +57,16 @@ jobs:
             # For no aparent reason it returns 1 with the same output as local.
             mkvirtualenv pip-fixed-venv  > /dev/null 2>&1 || true
             workon pip-fixed-venv  > /dev/null 2>&1
-            pip3 install pip-tools > /dev/null 2>&1
-            # Use setuptools==71.1.0 due to https://github.com/pypa/setuptools/issues/4519
-            pip3 install setuptools==71.1.0 --upgrade
 
-            pip-compile \
-                --build-isolation \
-                --strip-extras \
-                --annotation-style line \
-                --allow-unsafe \
-                --output-file $OUT_FILE \
-                bootloader/mcuboot/scripts/requirements.txt \
-                zephyr/scripts/requirements.txt  \
-                nrf/scripts/requirements.txt \
-                nrf/scripts/requirements-ci.txt \
-                nrf/scripts/requirements-extra.txt
+            pip3 install pip-compile-cross-platform==1.4.2 --upgrade > /dev/null 2>&1
+            pip-compile-cross-platform \
+              bootloader/mcuboot/scripts/requirements.txt \
+              nrf/scripts/requirements-ci.txt \
+              nrf/scripts/requirements-extra.txt \
+              nrf/scripts/requirements.txt \
+              zephyr/scripts/requirements.txt \
+              --output-file nrf/scripts/requirements-fixed.txt \
+              --min-python-version 3.10
 
             deactivate
             rmvirtualenv pip-fixed-venv
