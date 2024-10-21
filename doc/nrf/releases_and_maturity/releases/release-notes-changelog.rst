@@ -60,6 +60,8 @@ Build and configuration system
 
 * Added the ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
 
+* Added the ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
+
 * Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
 
   .. note::
