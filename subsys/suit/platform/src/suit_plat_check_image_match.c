@@ -64,7 +64,14 @@ int suit_plat_check_image_match_mem_mapped(suit_component_t component, enum suit
 	}
 
 	err = suit_generic_address_streamer_stream(data, size, &digest_sink);
-	if (err != SUIT_PLAT_SUCCESS) {
+	if (err == SUIT_PLAT_ERR_INVAL)
+	{
+		LOG_ERR("Invalid value passed to digest sink");
+		/* This can result from an NULL/zero size source payload.
+		 * This case should be treated as a digest mismatch */
+		err = SUIT_FAIL_CONDITION;
+	}
+	else if (err != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Failed to stream to digest sink: %d", err);
 		err = suit_plat_err_to_processor_err_convert(err);
 	} else {
@@ -104,6 +111,10 @@ int suit_plat_check_image_match_mfst(suit_component_t component, enum suit_cose_
 	enum suit_cose_alg alg;
 
 	ret = suit_plat_retrieve_manifest(component, &envelope_str, &envelope_len);
+	if (ret == SUIT_ERR_UNAVAILABLE_PAYLOAD)
+	{
+		return SUIT_FAIL_CONDITION;
+	}
 	if (ret != SUIT_SUCCESS) {
 		LOG_ERR("Failed to check image digest: unable to retrieve manifest contents "
 			"(handle: %p)\r\n",
@@ -181,6 +192,10 @@ int suit_plat_check_image_match(suit_component_t component, enum suit_cose_alg a
 		break;
 	}
 	}
+
+	// if (err != SUIT_SUCCESS) {
+	// 	err = SUIT_FAIL_CONDITION;
+	// }
 
 	return err;
 }

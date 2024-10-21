@@ -78,6 +78,15 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 		ret = suit_ipc_streamer_stream(uri->value, uri->len, dst_sink,
 					       CONFIG_SUIT_STREAM_IPC_STREAMER_CHUNK_TIMEOUT,
 					       CONFIG_SUIT_STREAM_IPC_STREAMER_REQUESTING_PERIOD);
+		if (ret != SUIT_PLAT_SUCCESS)
+		{
+			/** If we arrived here we can treat the source data as unavailable.
+		 	  * This is a case where suit-condition-image-match will detect
+		 	  * the failure, however suit-plat-fetch should return success to allow
+		 	  * soft failures.
+			  */
+			return SUIT_PLAT_SUCCESS;
+		}
 	}
 #endif /* CONFIG_SUIT_STREAM_IPC_REQUESTOR */
 
