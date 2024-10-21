@@ -289,12 +289,20 @@ config MBEDTLS_MPI_MAX_SIZE
 	default 384 if CC312_BACKEND
 	range 256 2048
 
+config MBEDTLS_LEGACY_CRYPTO_C_SILENCE_DEPRECATION
+	bool
+	help
+	  Prompt-less configuration that can be set by subsystems that still are
+	  dependent on legacy Mbed TLS APIs to build and run. Setting this
+	  removes warnings for the deprecated MBEDTLS_LEGACY_CRYPTO_C Kconfig.
+
 config MBEDTLS_LEGACY_CRYPTO_C
 	bool
 	prompt "Enable (legacy) mbed TLS crypto APIs"
+	select DEPRECATED if !MBEDTLS_LEGACY_CRYPTO_C_SILENCE_DEPRECATION
 	help
 	  Enable support for legacy mbed TLS APIs.
-	  Note that this is a configuration that may be removed at some point.
+	  Note that this is a configuration that will be removed.
 	  It is only provided during a transition period while PSA Crypto APIs become
 	  the defacto front-end. Enabling this will enable nrf_oberon for all features that
 	  are supported and builtin for the remaining functionality.
