@@ -24,13 +24,13 @@ enum {
 
 enum flip_state {
 	FLIP_ZERO,
-	FLIP_ONE,
-	FLIP_ANY
+	FLIP_ONE
 };
 
 struct trx_flips {
-	uint8_t tx_flip : 2;
-	uint8_t rx_flip : 2;
+	uint8_t tx_flip : 1;
+	uint8_t rx_flip_any : 1;
+	uint16_t last_rx_crc;
 };
 
 typedef enum {
@@ -81,11 +81,19 @@ static void ack_rx(struct nrf_rpc_uart *uart_tr)
 		return;
 	}
 
-	if (uart_tr->rx_packet_len == CRC_SIZE) {
-		uart_tr->ack_payload = sys_get_le16(uart_tr->rx_packet);
-		k_sem_give(&uart_tr->ack_sem);
-		k_yield();
+	if (uart_tr->rx_packet_len != CRC_SIZE) {
+		return;
 	}
+
+	uint16_t rx_ack = sys_get_le16(uart_tr->rx_packet);
+
+	if (uart_tr->ack_payload != rx_ack) {
+		LOG_WRN("Wrong ack. Expected: %#4x. Received: %#4x.", uart_tr->ack_payload, rx_ack);
+		return;
+	}
+
+	k_sem_give(&uart_tr->ack_sem);
+	k_yield();
 }
 
 static void ack_tx(struct nrf_rpc_uart *uart_tr, uint16_t ack_pld)
@@ -129,18 +137,17 @@ static uint16_t tx_flip(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
 
 static bool rx_flip_check(struct nrf_rpc_uart *uart_tr, uint16_t crc_val)
 {
+	uint16_t last_rx_crc;
+
 	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
 		return false;
 	}
 
-	if (uart_tr->flips.rx_flip == FLIP_ZERO && (crc_val & 0x8000u) == 0) {
-		uart_tr->flips.rx_flip = FLIP_ONE;
-		return false;
-	} else if (uart_tr->flips.rx_flip == FLIP_ONE && (crc_val & 0x8000u) == 0x8000u) {
-		uart_tr->flips.rx_flip = FLIP_ZERO;
-		return false;
-	} else if (uart_tr->flips.rx_flip == FLIP_ANY) {
-		uart_tr->flips.rx_flip = crc_val & 0x8000u ? FLIP_ZERO : FLIP_ONE;
+	last_rx_crc = uart_tr->flips.last_rx_crc;
+	uart_tr->flips.last_rx_crc = crc_val;
+
+	if (uart_tr->flips.rx_flip_any == 1 || last_rx_crc != crc_val) {
+		uart_tr->flips.rx_flip_any = 0;
 		return false;
 	}
 
@@ -214,7 +221,7 @@ static void work_handler(struct k_work *work)
 					crc_received);
 				uart_tr->rx_packet_len = 0;
 				uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
-				return;
+				continue;
 			}
 
 			ack_tx(uart_tr, crc_received);
@@ -319,7 +326,7 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 		k_mutex_init(&uart_tr->ack_tx_lock);
 		k_sem_init(&uart_tr->ack_sem, 0, 1);
 		uart_tr->flips.tx_flip = FLIP_ZERO;
-		uart_tr->flips.rx_flip = FLIP_ANY;
+		uart_tr->flips.rx_flip_any = 1;
 	}
 
 	k_work_queue_init(&uart_tr->rx_workq);
@@ -357,9 +364,13 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 
 	LOG_HEXDUMP_DBG(data, length, "Sending frame");
 
+	crc_val = crc16_ccitt(0xffff, data, length);
+
 #if CONFIG_NRF_RPC_UART_RELIABLE
 	int attempts = 0;
 
+	crc_val = tx_flip(uart_tr, crc_val);
+	uart_tr->ack_payload = crc_val;
 	acked = false;
 
 	do {
@@ -374,8 +385,6 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 			send_byte(uart_tr->uart, data[i]);
 		}
 
-		crc_val = crc16_ccitt(0xffff, data, length);
-		crc_val = tx_flip(uart_tr, crc_val);
 		sys_put_le16(crc_val, crc);
 		send_byte(uart_tr->uart, crc[0]);
 		send_byte(uart_tr->uart, crc[1]);
@@ -386,17 +395,11 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 		k_mutex_unlock(&uart_tr->ack_tx_lock);
 		if (k_sem_take(&uart_tr->ack_sem, K_MSEC(CONFIG_NRF_RPC_UART_ACK_WAITING_TIME)) ==
 		    0) {
-			acked = uart_tr->ack_payload == crc_val;
-			if (!acked) {
-				LOG_WRN("Wrong ack. Expected: %#4x. Received: %#4x.", crc_val,
-					uart_tr->ack_payload);
-			} else {
-				LOG_DBG("Acked successfully.");
-			}
+			acked = true;
+			LOG_DBG("Acked successfully.");
 		} else {
 			LOG_WRN("Ack timeout expired.");
 		}
-
 	} while (!acked && attempts < CONFIG_NRF_RPC_UART_TX_ATTEMPTS);
 #endif /* CONFIG_NRF_RPC_UART_RELIABLE */
 
