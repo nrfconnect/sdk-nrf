@@ -919,6 +919,8 @@ Modem libraries
 
   * Added the :c:func:`modem_key_mgmt_clear` function to delete all credentials associated with a security tag.
 
+  * Updated to handle generic CME errors from all ``AT%CMNG`` commands.
+
 * :ref:`pdn_readme` library:
 
   * Added the event ``PDN_EVENT_CTX_DESTROYED`` to indicate when a PDP context is destroyed.
