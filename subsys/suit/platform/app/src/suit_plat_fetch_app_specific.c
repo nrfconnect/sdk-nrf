@@ -50,6 +50,8 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 				    struct stream_sink *dst_sink, struct zcbor_string *uri)
 {
 	int ret = SUIT_SUCCESS;
+	bool hard_failure = false;
+
 	/* Select streamer */
 	switch (dst_component_type) {
 #ifdef CONFIG_SUIT_STREAM_FETCH_SOURCE_MGR
@@ -68,11 +70,21 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 #endif
 	default:
 		ret = SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		hard_failure = true;
 		break;
 	}
 
 	if (ret == SUIT_SUCCESS && dst_component_type == SUIT_COMPONENT_TYPE_CACHE_POOL) {
 		suit_dfu_cache_sink_commit(dst_sink->ctx);
+	}
+
+	if (!hard_failure) {
+		/* Failures without hard_failure flag set are treated as "unavailable payload"
+		 * failures. These are cases where suit-condition-image-match will detect
+		 * the failure, however suit-plat-fetch should return success to allow
+		 * soft failures.
+		 */
+		ret = SUIT_SUCCESS;
 	}
 
 	return ret;

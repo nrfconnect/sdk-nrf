@@ -212,8 +212,9 @@ ZTEST(fetch_tests, test_fetch_to_memptr_NOK_uri_not_in_cache)
 	setup_cache_with_sample_entries();
 
 	ret = suit_plat_fetch(component_handle, &uri, NULL);
-	zassert_not_equal(ret, SUIT_SUCCESS,
-			  "suit_plat_fetch should fail - supplied uri is not in cache", ret);
+	zassert_equal(ret, SUIT_SUCCESS,
+			  "suit_plat_fetch should succeed - supplied uri is not in cache, "
+			  "treated as empty payload");
 
 	ret = suit_plat_release_component_handle(component_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "Handle release failed - error %i", ret);

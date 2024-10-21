@@ -109,7 +109,7 @@ ZTEST(suit_platform_app_fetch_tests, test_fetch_dfu_cache_streamer_fail)
 	zassert_equal(suit_plat_fetch_domain_specific(TEST_COMPONENT_HANDLE,
 						      SUIT_COMPONENT_TYPE_CAND_IMG, &dummy_sink,
 						      &dummy_uri),
-		      SUIT_ERR_CRASH, "Failed to return correct error code");
+		      SUIT_SUCCESS, "Failed when URI not found in cache (should succeed)");
 	zassert_equal(suit_dfu_cache_streamer_stream_fake.call_count, 1,
 		      "Incorrect number of suit_dfu_cache_streamer_stream() calls");
 	zassert_equal(suit_dfu_cache_streamer_stream_fake.arg0_val, dummy_uri.value,
@@ -168,7 +168,7 @@ ZTEST(suit_platform_app_fetch_tests, test_fetch_fetch_source_streamer_fail)
 	zassert_equal(suit_plat_fetch_domain_specific(TEST_COMPONENT_HANDLE,
 						      SUIT_COMPONENT_TYPE_CACHE_POOL, &dummy_sink,
 						      &dummy_uri),
-		      SUIT_ERR_CRASH, "Failed to return correct error code");
+		      SUIT_SUCCESS, "Failed when unable to fetch payload (should succeed)");
 	zassert_equal(suit_fetch_source_stream_fake.call_count, 1,
 		      "Incorrect number of suit_fetch_source_stream() calls");
 	zassert_equal(suit_fetch_source_stream_fake.arg0_val, dummy_uri.value,

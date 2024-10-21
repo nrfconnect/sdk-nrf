@@ -78,8 +78,20 @@ int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 		ret = suit_ipc_streamer_stream(uri->value, uri->len, dst_sink,
 					       CONFIG_SUIT_STREAM_IPC_STREAMER_CHUNK_TIMEOUT,
 					       CONFIG_SUIT_STREAM_IPC_STREAMER_REQUESTING_PERIOD);
+		if (ret != SUIT_PLAT_SUCCESS) {
+			ret = SUIT_PLAT_ERR_NOT_FOUND;
+		}
 	}
 #endif /* CONFIG_SUIT_STREAM_IPC_REQUESTOR */
+
+	if (ret == SUIT_PLAT_ERR_NOT_FOUND) {
+		/* If we arrived here we can treat the source data as unavailable.
+		 * This is a case where suit-condition-image-match will detect
+		 * the failure, however suit-plat-fetch should return success to allow
+		 * soft failures.
+		 */
+		return SUIT_SUCCESS;
+	}
 
 	if (ret == SUIT_PLAT_SUCCESS) {
 		/* Flush any remaining data before reading used storage size */

@@ -397,7 +397,7 @@ ZTEST(check_image_match_tests, test_unhandled_component)
 	err = suit_plat_check_image_match(component, suit_cose_sha256, &valid_digest);
 
 	/* THEN appropriate error code is returned */
-	zassert_equal(SUIT_ERR_UNSUPPORTED_COMPONENT_ID, err, "unexpected error code: %d", err);
+	zassert_equal(SUIT_FAIL_CONDITION, err, "unexpected error code: %d", err);
 
 	/* Cleanup */
 	err = suit_plat_release_component_handle(component);
