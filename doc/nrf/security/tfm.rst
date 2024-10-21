@@ -7,7 +7,7 @@ Running applications with Trusted Firmware-M
    :local:
    :depth: 2
 
-On nRF5340 and nRF91 Series devices, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
+On the nRF5340, nRF54L15 and nRF91 Series devices, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
 
 Overview
 ********
@@ -19,17 +19,16 @@ This is achieved by a set of secure run time services such as Secure Storage, Cr
 Additionally, secure boot through MCUboot in TF-M ensures integrity of runtime software and supports firmware upgrade.
 
 .. note::
-   Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in |NCS| is currently :ref:`experimental <software_maturity>`.
+   Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in the |NCS| is currently :ref:`experimental <software_maturity>`.
 
 For official documentation, see the `TF-M documentation`_.
 
-The TF-M implementation in |NCS| is currently demonstrated in the following samples:
+The TF-M implementation in |NCS| is demonstrated in the following samples:
 
-- All :ref:`tfm_samples` in this SDK
-- All :ref:`cryptography samples <crypto_samples>` in this SDK
-- A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
-- The :ref:`https_client` sample for nRF91 Series devices in this SDK
-- The :ref:`openthread_samples` that support the ``nrf5340dk/nrf5340/cpuapp/ns`` board target in this SDK
+* All :ref:`tfm_samples` in this SDK
+* A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
+
+In addition, the TF-M implementation is used in all samples and applications in this SDK that support the ``*/ns`` :ref:`variant <app_boards_names>` of the boards (due to Cortex-M Security Extensions (CMSE) support, see :ref:`app_boards_spe_nspe` for more details).
 
 Building
 ********
@@ -48,6 +47,7 @@ To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_PROFILE_T
 You must build TF-M using a non-secure board target.
 The following platforms are currently supported:
 
+* nRF54L15
 * nRF5340
 * nRF91 Series
 
@@ -193,8 +193,8 @@ TF-M partition alignment requirements
 TF-M requires that secure and non-secure partition addresses must be aligned to the flash region size :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE`.
 |NCS| ensures that they in fact are aligned and comply with the TF-M requirements.
 
-In nRF53 and nRF91 series TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the SPU flash region size.
-In nRF54L15 TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the MPC region size.
+On the nRF53 and nRF91 Series devices, TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the SPU flash region size.
+On the nRF54L15 devices, TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the MPC region size.
 
 When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
 But when the static partitions are used, the user is responsible for following the alignment requirements.

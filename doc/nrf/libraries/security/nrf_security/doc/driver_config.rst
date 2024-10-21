@@ -209,25 +209,27 @@ Key derivation function configurations
 
 To enable key derivation function (KDF) support, set one or more of the Kconfig options in the following table:
 
-+--------------------------+---------------------------------------------------------------+
-| KDF algorithm            | Configuration option                                          |
-+==========================+===============================================================+
-| HKDF                     | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`                    |
-+--------------------------+---------------------------------------------------------------+
-| HKDF-Extract             | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXTRACT`            |
-+--------------------------+---------------------------------------------------------------+
-| HKDF-Expand              | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXPAND`             |
-+--------------------------+---------------------------------------------------------------+
-| PBKDF2-HMAC              | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC`             |
-+--------------------------+---------------------------------------------------------------+
-| PBKDF2-AES-CMAC-PRF-128  | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128` |
-+--------------------------+---------------------------------------------------------------+
-| TLS 1.2 PRF              | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`               |
-+--------------------------+---------------------------------------------------------------+
-| TLS 1.2 PSK to MS        | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`         |
-+--------------------------+---------------------------------------------------------------+
-| TLS 1.2 EC J-PAKE to PMS | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`    |
-+--------------------------+---------------------------------------------------------------+
++-----------------------------+---------------------------------------------------------------+
+| KDF algorithm               | Configuration option                                          |
++=============================+===============================================================+
+| HKDF                        | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`                    |
++-----------------------------+---------------------------------------------------------------+
+| HKDF-Extract                | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXTRACT`            |
++-----------------------------+---------------------------------------------------------------+
+| HKDF-Expand                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXPAND`             |
++-----------------------------+---------------------------------------------------------------+
+| PBKDF2-HMAC                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC`             |
++-----------------------------+---------------------------------------------------------------+
+| PBKDF2-AES-CMAC-PRF-128     | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128` |
++-----------------------------+---------------------------------------------------------------+
+| TLS 1.2 PRF                 | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`               |
++-----------------------------+---------------------------------------------------------------+
+| TLS 1.2 PSK to MS           | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`         |
++-----------------------------+---------------------------------------------------------------+
+| TLS 1.2 EC J-PAKE to PMS    | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`    |
++-----------------------------+---------------------------------------------------------------+
+| SP 800-108r1 CMAC w/counter | :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC`  |
++-----------------------------+---------------------------------------------------------------+
 
 
 Key derivation function support
@@ -235,25 +237,27 @@ Key derivation function support
 
 The following table shows key derivation function (KDF) support for each driver:
 
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| KDF algorithm            | nrf_cc3xx driver support | nrf_oberon driver support  | nrf_cracen driver support |
-+==========================+==========================+============================+===========================+
-| HKDF                     | Not supported            | Supported                  | Supported                 |
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| HKDF-Extract             | Not supported            | Supported                  | Not Supported             |
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| HKDF-Expand              | Not supported            | Supported                  | Not Supported             |
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| PBKDF2-HMAC              | Not supported            | Supported                  | Supported                 |
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| PBKDF2-AES-CMAC-PRF-128  | Not supported            | Supported                  | Supported                 |
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| TLS 1.2 PRF              | Not supported            | Supported                  | Not Supported             |
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| TLS 1.2 PSK to MS        | Not supported            | Supported                  | Not Supported             |
-+--------------------------+--------------------------+----------------------------+---------------------------+
-| TLS 1.2 EC J-PAKE to PMS | Not supported            | Supported                  | Supported                 |
-+--------------------------+--------------------------+----------------------------+---------------------------+
++------------------------------+--------------------------+----------------------------+---------------------------+
+| KDF algorithm                | nrf_cc3xx driver support | nrf_oberon driver support  | nrf_cracen driver support |
++==============================+==========================+============================+===========================+
+| HKDF                         | Not supported            | Supported                  | Supported                 |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| HKDF-Extract                 | Not supported            | Supported                  | Not Supported             |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| HKDF-Expand                  | Not supported            | Supported                  | Not Supported             |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| PBKDF2-HMAC                  | Not supported            | Supported                  | Supported                 |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| PBKDF2-AES-CMAC-PRF-128      | Not supported            | Supported                  | Supported                 |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| TLS 1.2 PRF                  | Not supported            | Supported                  | Not Supported             |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| TLS 1.2 PSK to MS            | Not supported            | Supported                  | Not Supported             |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| TLS 1.2 EC J-PAKE to PMS     | Not supported            | Supported                  | Supported                 |
++------------------------------+--------------------------+----------------------------+---------------------------+
+| SP 800-108r1 CMAC w/counter  | Not supported            | Not supported              | Supported                 |
++------------------------------+--------------------------+----------------------------+---------------------------+
 
 The configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Key derivation function configurations`_.
 
