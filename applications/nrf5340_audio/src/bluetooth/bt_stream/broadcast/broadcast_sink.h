@@ -10,6 +10,29 @@
 #include "bt_le_audio_tx.h"
 
 /**
+ * @brief	Put the UUIDs from this module into the buffer.
+ *
+ * @note	This partial data is used to build a complete extended advertising packet.
+ *
+ * @param[out]	uuid_buf	Buffer being populated with UUIDs.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int broadcast_sink_uuid_populate(struct net_buf_simple *uuid_buf);
+
+/**
+ * @brief	Put the advertising data from this module into the buffer.
+ *
+ * @note	This partial data is used to build a complete extended advertising packet.
+ *
+ * @param[out]	adv_buf		Buffer being populated with ext adv elements.
+ * @param[in]	adv_buf_vacant	Number of vacant elements in @p adv_buf.
+ *
+ * @return	Negative values for errors or number of elements added to @p adv_buf.
+ */
+int broadcast_sink_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant);
+
+/**
  * @brief	Change the active audio stream if the broadcast isochronous group (BIG) contains
  *              more than one broadcast isochronous stream (BIS).
  *

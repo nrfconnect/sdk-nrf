@@ -61,12 +61,6 @@ K_THREAD_STACK_DEFINE(bt_mgmt_msg_sub_thread_stack, CONFIG_BT_MGMT_MSG_SUB_STACK
 
 static enum stream_state strm_state = STATE_PAUSED;
 
-static const struct bt_data ad[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_BASS_VAL)),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_PACS_VAL)),
-};
-
 /* Function for handling all stream state changes */
 static void stream_state_set(enum stream_state stream_state_new)
 {
@@ -493,6 +487,66 @@ static int zbus_link_producers_observers(void)
 	return 0;
 }
 
+/*
+ * @brief  The following configures the data for the extended advertising.
+ *
+ * @param  ext_adv_buf       Pointer to the bt_data used for extended advertising.
+ * @param  ext_adv_buf_size  Size of @p ext_adv_buf.
+ * @param  ext_adv_count     Pointer to the number of elements added to @p adv_buf.
+ *
+ * @return  0 for success, error otherwise.
+ */
+static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size,
+			    size_t *ext_adv_count)
+{
+	int ret;
+	size_t ext_adv_buf_cnt = 0;
+
+	NET_BUF_SIMPLE_DEFINE_STATIC(uuid_buf, CONFIG_EXT_ADV_UUID_BUF_MAX);
+
+	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_ALL;
+	ext_adv_buf[ext_adv_buf_cnt].data = uuid_buf.data;
+	ext_adv_buf_cnt++;
+
+	ret = bt_mgmt_manufacturer_uuid_populate(&uuid_buf, CONFIG_BT_DEVICE_MANUFACTURER_ID);
+	if (ret) {
+		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
+		return ret;
+	}
+
+	ret = broadcast_sink_uuid_populate(&uuid_buf);
+	if (ret < 0) {
+		LOG_ERR("Failed to add UUID with broadcast sink: %d", ret);
+		return ret;
+	}
+
+	ret = bt_r_and_c_uuid_populate(&uuid_buf);
+	if (ret) {
+		LOG_ERR("Failed to add adv data from renderer: %d", ret);
+		return ret;
+	}
+
+	ret = broadcast_sink_adv_populate(&ext_adv_buf[ext_adv_buf_cnt],
+					  ext_adv_buf_size - ext_adv_buf_cnt);
+
+	if (ret < 0) {
+		LOG_ERR("Failed to add adv data from broadcast sink: %d", ret);
+		return ret;
+	}
+
+	ext_adv_buf_cnt += ret;
+
+	/* Add the number of UUIDs */
+	ext_adv_buf[0].data_len = uuid_buf.len;
+
+	LOG_DBG("Size of adv data: %d, num_elements: %d", sizeof(struct bt_data) * ext_adv_buf_cnt,
+		ext_adv_buf_cnt);
+
+	*ext_adv_count = ext_adv_buf_cnt;
+
+	return 0;
+}
+
 uint8_t stream_state_get(void)
 {
 	return strm_state;
@@ -538,9 +592,18 @@ int main(void)
 	ERR_CHK_MSG(ret, "Failed to enable broadcast sink");
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_SCAN_DELEGATOR)) {
+		static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
+		size_t ext_adv_buf_cnt = 0;
+
 		bt_mgmt_scan_delegator_init();
 
-		ret = bt_mgmt_adv_start(0, ad, ARRAY_SIZE(ad), NULL, 0, true);
+		ret = bt_r_and_c_init();
+		ERR_CHK(ret);
+
+		ret = ext_adv_populate(ext_adv_buf, ARRAY_SIZE(ext_adv_buf), &ext_adv_buf_cnt);
+		ERR_CHK(ret);
+
+		ret = bt_mgmt_adv_start(0, ext_adv_buf, ext_adv_buf_cnt, NULL, 0, true);
 		ERR_CHK(ret);
 	} else {
 		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
