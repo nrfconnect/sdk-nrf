@@ -25,8 +25,11 @@
 
 #if defined(DPPI_PRESENT)
 #include <nrfx_dppi.h>
+
+static nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
 #define gppi_channel_t uint8_t
-#define gppi_channel_alloc nrfx_dppi_channel_alloc
+#define gppi_channel_alloc(x) nrfx_dppi_channel_alloc(&dppi, x)
 #else
 #include <nrfx_ppi.h>
 #define gppi_channel_t nrf_ppi_channel_t
