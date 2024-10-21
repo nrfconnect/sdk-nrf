@@ -12,6 +12,8 @@
 #include <bl_storage.h>
 #include <ncs_commit.h>
 
+#include <cmsis_dap.h>
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bulk_commands, CONFIG_BRIDGE_BULK_LOG_LEVEL);
 
@@ -100,12 +102,17 @@ static void nrf53_reset_work_handler(struct k_work *work)
 /* This is a placeholder implementation until proper CMSIS-DAP support is available.
  * Only custom vendor commands are supported.
  */
-size_t dap_execute_cmd(uint8_t *in, uint8_t *out)
+size_t dap_execute_vendor_cmd(uint8_t *in, uint8_t *out)
 {
 	LOG_DBG("got command 0x%02X", in[0]);
-	int ret;
+
+	if (in[0] < ID_DAP_VENDOR0) {
+		return dap_execute_cmd(in, out);
+	}
 
 #if IS_ENABLED(CONFIG_RETENTION_BOOT_MODE)
+	int ret;
+
 	if (in[0] == ID_DAP_VENDOR_NRF53_BOOTLOADER) {
 		ret = bootmode_set(BOOT_MODE_TYPE_BOOTLOADER);
 		if (ret) {
