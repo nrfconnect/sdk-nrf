@@ -68,6 +68,10 @@ if (CONFIG_FILE_SYSTEM_LITTLEFS)
   ncs_add_partition_manager_config(pm.yml.file_system)
 endif()
 
+if (CONFIG_FAT_FILESYSTEM_ELM)
+  ncs_add_partition_manager_config(pm.yml.fat_file_system)
+endif()
+
 if (CONFIG_ZIGBEE)
   ncs_add_partition_manager_config(pm.yml.zboss)
 endif()
