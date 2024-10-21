@@ -874,6 +874,7 @@
 .. _`Debugging overview`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_concepts.html
 .. _`How to debug`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_use.html
 .. _`How to debug applications for a multi-core System on Chip`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_use.html#how-to-debug-applications-for-a-multi-core-system-on-chip
+.. _`How to work with the Memory Explorer`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_mem_explorer.html
 .. _`source control with west`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/west_about.html
 .. _`west module management`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/west_module_management.html
 .. _`Custom launch and debug configurations`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/debug_custom.html
