@@ -52,8 +52,8 @@ Choices and backends
 The trusted storage library comes with two choices:
 
 * ``TRUSTED_STORAGE_BACKEND`` that defines a backend for handling of encryption, authentication or other means of validation of the stored data.
-  It is responsible for what is happening with the data before and after they are read from or written to non-volatile storage.
-* ``TRUSTED_STORAGE_STORAGE_BACKEND`` that defines a backend that handles how the data are written to non-volatile storage.
+  It is responsible for what is happening with the data before and after they are read from or written to a non-volatile storage.
+* ``TRUSTED_STORAGE_STORAGE_BACKEND`` that defines a backend that handles how the data are written to a non-volatile storage.
 
 In other words, ``TRUSTED_STORAGE_BACKEND`` is responsible for modifying the assets before they are forwarded to the ``TRUSTED_STORAGE_STORAGE_BACKEND``, which again handles storing of data in the non-volatile storage.
 
@@ -83,8 +83,11 @@ Before using the trusted storage library with its default settings and options, 
 * The hardware unique key (HUK) :ref:`library <lib_hw_unique_key>` and :ref:`sample <hw_unique_key_usage>` are enabled and ready for use to derive an AEAD key.
 * Zephyr's settings subsystem has to be enabled for use by setting the Kconfig option :kconfig:option:`CONFIG_SETTINGS`.
 
-  * The settings subsystem uses the :ref:`zephyr:nvs_api` file system by default.
-    This file system has to be mounted to a mount point at application startup. For more information about this, see :ref:`zephyr:file_system_api`.
+  * The library supports two storage options for the settings subsystem, :ref:`zephyr:zms_api` and :ref:`zephyr:nvs_api`.
+    ZMS is the only allowed storage option for the nRF54L Series devices, while other devices using the trusted storage library can choose between the two options.
+  * You have to mount the file system to a mount point at application startup.
+    For more information about how to do this, see :ref:`zephyr:file_system_api`.
+    Also, see the Mounting the Storage system section of the :ref:`ZMS documentation <zephyr:zms_api>`.
 
 .. _trusted_storage_configuration:
 

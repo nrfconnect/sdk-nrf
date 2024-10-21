@@ -1104,7 +1104,9 @@ Other libraries
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* :ref:`trusted_storage_readme` library:
+
+  * Added support for the Zephyr Memory Storage (ZMS), as an alternative to the NVS file system.
 
 Shell libraries
 ---------------
