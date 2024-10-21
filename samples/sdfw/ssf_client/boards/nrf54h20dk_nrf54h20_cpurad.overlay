@@ -15,7 +15,3 @@
 &cpusec_bellboard {
 	status = "okay";
 };
-
-&cpurad_bellboard {
-	status = "okay";
-};
