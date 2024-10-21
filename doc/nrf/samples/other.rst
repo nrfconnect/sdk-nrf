@@ -3,6 +3,14 @@
 Other samples
 #############
 
+This section lists single |NCS| samples for various uses that are not part of other sections.
+
+.. include:: ../samples.rst
+    :start-after: samples_general_info_start
+    :end-before: samples_general_info_end
+
+|filter_samples_by_board|
+
 .. toctree::
    :maxdepth: 1
    :caption: Subpages

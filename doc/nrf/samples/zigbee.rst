@@ -75,6 +75,12 @@ Read the table symbols in the following manner:
 
 Some variants and extensions might also require additional hardware and software, such as mobile applications for testing purposes.
 
+.. include:: ../samples.rst
+    :start-after: samples_general_info_start
+    :end-before: samples_general_info_end
+
+|filter_samples_by_board|
+
 .. toctree::
    :maxdepth: 1
    :caption: Subpages
