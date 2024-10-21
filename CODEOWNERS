@@ -597,6 +597,7 @@
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
+/scripts/sdp/                             @nrfconnect/ncs-ll-ursus
 
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-bluebagel-doc
 /scripts/memfault/*.rst                   @nrfconnect/ncs-cia-doc
