@@ -34,3 +34,8 @@ west-commands:
       - name: ncs-genboard
         class: NcsGenboard
         help: generate board skeleton files for any Nordic SoC
+  - file: scripts/west_commands/ncs-provision.py
+    commands:
+      - name: ncs-provision
+        class: NcsProvision
+        help: Provision utility
