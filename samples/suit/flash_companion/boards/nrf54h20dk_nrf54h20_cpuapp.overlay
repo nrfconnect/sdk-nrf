@@ -43,6 +43,3 @@
 	status = "disabled";
 };
 
-&prng {
-	status = "disabled";
-};
