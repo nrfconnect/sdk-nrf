@@ -15,12 +15,17 @@ config DESKTOP_BT
 	select BT_SETTINGS
 	select BT_SIGNING
 	select BT_SMP
+	imply BT_CONN_TX_NOTIFY_WQ if SOC_FLASH_NRF_RADIO_SYNC_MPSL
 	help
 	  Enable support for Bluetooth connectivity in the nRF Desktop
 	  application. Specific Bluetooth configurations and application
 	  modules are selected according to the HID device role. Apart from
 	  that, the defaults of Bluetooth-related Kconfigs are aligned with
 	  the nRF Desktop use case.
+
+	  nRF Desktop conditionally implies using a separate workqueue for
+	  connection TX notify processing. This is done to workaround MPSL flash
+	  synchronization timeout known issue (NCSDK-29354).
 
 if DESKTOP_BT
 
