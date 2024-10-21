@@ -22,6 +22,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/gpio.h>
+#include <soc_nrf_common.h>
 
 #include "hal/nrf_gpio.h"
 #include <nrfx_gpiote.h>
