@@ -341,6 +341,7 @@ nRF Desktop
   * All build configurations with the DFU over MCUmgr support to require encryption for operations on the Bluetooth GATT SMP service (see the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_ENCRYPT` Kconfig option).
     The Bluetooth pairing procedure of the unpaired Bluetooth peers must now be performed before the DFU operation.
   * The :ref:`nrf_desktop_dfu_mcumgr` to enable the MCUmgr handler that is used to report the bootloader information (see the :kconfig:option:`CONFIG_MCUMGR_GRP_OS_BOOTLOADER_INFO` Kconfig option).
+  * The MCUboot image configurations for the :ref:`zephyr:nrf54l15dk_nrf54l15` board to enable Link Time Optimization (LTO) (see the :kconfig:option:`CONFIG_LTO` Kconfig option) and reduce the memory footprint of the bootloader.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
