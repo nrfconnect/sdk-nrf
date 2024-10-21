@@ -748,6 +748,10 @@ Bluetooth libraries and services
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING` Kconfig option allowing the user to control the support for the Fast Pair subsequent pairing feature.
     * The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE` Kconfig choice option allowing the user to select their target Fast Pair use case.
       The :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_UNKNOWN`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_LOCATOR_TAG` and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig options represent the supported use cases that can be selected as part of this Kconfig choice option.
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_BOND_MANAGER` Kconfig option that enables the Fast Pair bond management functionality.
+      If this option is enabled, the Fast Pair subsystem tracks the Bluetooth bonds created through the Fast Pair Procedure and unpairs them if the procedure is incomplete or the Account Key associated with the bonds is removed.
+      It also unpairs the Fast Pair Bluetooth bonds on Fast Pair factory reset.
+      The option is enabled by default for Fast Pair use cases that are selected using :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE` and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig options.
 
   * Removed:
 

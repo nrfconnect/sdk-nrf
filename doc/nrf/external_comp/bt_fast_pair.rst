@@ -632,6 +632,25 @@ In the Fast Pair not discoverable advertising mode, the Provider informs the lis
 You can also use the :c:func:`bt_fast_pair_has_account_key` function to check whether your Provider has any Account Keys.
 This API is especially useful after a system reboot when some Account Keys may already be stored in non-volatile memory.
 
+.. _ug_bt_fast_pair_gatt_service_bond_management:
+
+Fast Pair bond management functionality
+=======================================
+
+To enable the Fast Pair bond management functionality, use the :kconfig:option:`CONFIG_BT_FAST_PAIR_BOND_MANAGER` Kconfig option.
+When this functionality is enabled, the Fast Pair subsystem tracks the Bluetooth bonds created through the Fast Pair Procedure and unpairs them if the procedure is incomplete or the Account Key associated with the bonds is removed.
+It also unpairs the Fast Pair Bluetooth bonds on Fast Pair factory reset, because the factory reset removes all Account Keys stored on device.
+Enabling the functionality imposes additional limitations related to enabling Fast Pair in runtime (:c:func:`bt_fast_pair_enable`).
+See the :kconfig:option:`CONFIG_BT_FAST_PAIR_BOND_MANAGER` Kconfig option help for more datails about using the functionality.
+
+The Fast Pair bond management functionality is disabled by default.
+Make sure that it is enabled for the following use cases of the Google Fast Pair application as it is highly recommended:
+
+* Input device
+* Mouse
+
+See :ref:`ug_bt_fast_pair_use_case` for more details about the use cases of the Google Fast Pair application.
+
 FMDN extension
 ==============
 
