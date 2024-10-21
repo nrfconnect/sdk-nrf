@@ -565,8 +565,6 @@ After the ``nordic,pm-ext-flash`` value is set, you can place partitions in the 
 
 See :ref:`ug_bootloader_external_flash` for more details on using external flash memory with MCUboot.
 
-.. _pm_build_system:
-
 A partition can be accessible at runtime only if the flash device where it resides has its driver enabled at compile time.
 Partition manager ignores partitions that are located in a region without its driver enabled.
 To let partition manager know which Kconfig option ensures the existence of the driver, the option ``DEFAULT_DRIVER_KCONFIG`` is used.
@@ -591,6 +589,8 @@ As partition manager does not know if partitions are used at runtime, consider t
 
    When using an application configured with an MCUboot child image, both images use the same partition manager configuration, which means that the app and MCUboot have exactly the same partition maps.
    The accessibility at runtime of flash partitions depends on the configurations of both the application and MCUboot and the values they give to the ``DEFAULT_DRIVER_KCONFIG`` option of the partition manager region specification.
+
+.. _pm_build_system:
 
 Build system
 ************
