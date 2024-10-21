@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include <hal/nrf_power.h>
+#include <nrfx_power.h>
 
 #define MODULE constlat
 #include <caf/events/module_state_event.h>
@@ -25,8 +25,8 @@ static void constlat_on(void)
 		return;
 	}
 
-	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
-	LOG_INF("Constant latency enabled");
+	(void)nrfx_power_constlat_mode_request();
+	LOG_INF("Constant latency requested");
 
 	enabled = true;
 }
@@ -37,8 +37,8 @@ static void constlat_off(void)
 		return;
 	}
 
-	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
-	LOG_INF("Constant latency disabled");
+	(void)nrfx_power_constlat_mode_free();
+	LOG_INF("Constant latency freed");
 
 	enabled = false;
 }
