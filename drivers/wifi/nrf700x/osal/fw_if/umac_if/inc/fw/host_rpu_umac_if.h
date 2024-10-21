@@ -140,7 +140,9 @@ enum nrf_wifi_umac_commands {
 	/** Set listen interval @ref nrf_wifi_umac_cmd_set_listen_interval */
 	NRF_WIFI_UMAC_CMD_SET_LISTEN_INTERVAL,
 	/** Configure extended power save @ref nrf_wifi_umac_cmd_config_extended_ps */
-	NRF_WIFI_UMAC_CMD_CONFIG_EXTENDED_PS
+	NRF_WIFI_UMAC_CMD_CONFIG_EXTENDED_PS,
+	/** Command to specify power save exit strategy */
+	NRF_WIFI_UMAC_CMD_PS_EXIT_STRATEGY,
 };
 
  /**
@@ -2907,6 +2909,8 @@ struct nrf_wifi_umac_event_power_save_info {
 	unsigned int ps_timeout;
 	/** Listen interval value */
 	unsigned short listen_interval;
+	/** Power save exit strategy */
+	unsigned char ps_exit_strategy;
 	/** Number TWT flows */
 	unsigned char num_twt_flows;
 	/** TWT info of each flow @ref nrf_wifi_umac_config_twt_info */
@@ -3467,6 +3471,18 @@ struct nrf_wifi_umac_event_cmd_status {
 	unsigned int cmd_id;
 	/** Status codes */
 	unsigned int cmd_status;
+} __NRF_WIFI_PKD;
+
+/**
+ * @brief This structure defines the command used to configure the power save exit
+ * strategy for retrieving buffered data from the AP in power save mode.
+ *
+ */
+struct nrf_wifi_cmd_ps_exit_strategy {
+	/** Header @ref nrf_wifi_umac_hdr */
+	struct nrf_wifi_umac_hdr umac_hdr;
+	/** Power save exit strategy */
+	unsigned char ps_exit_strategy;
 } __NRF_WIFI_PKD;
 
 #endif /* __HOST_RPU_UMAC_IF_H */

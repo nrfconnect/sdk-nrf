@@ -3187,4 +3187,43 @@ out:
 
 	return status;
 }
+
+enum nrf_wifi_status nrf_wifi_fmac_set_ps_exit_strategy(void *dev_ctx,
+							 unsigned char if_idx,
+							 unsigned int ps_exit_strategy)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_cmd_ps_exit_strategy *set_ps_exit_strategy_cmd = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+
+	(void)if_idx;
+
+	fmac_dev_ctx = dev_ctx;
+
+	set_ps_exit_strategy_cmd = nrf_wifi_osal_mem_zalloc(fmac_dev_ctx->fpriv->opriv,
+							    sizeof(*set_ps_exit_strategy_cmd));
+
+	if (!set_ps_exit_strategy_cmd) {
+		nrf_wifi_osal_log_err(fmac_dev_ctx->fpriv->opriv,
+				      "%s: Unable to allocate memory\n", __func__);
+		goto out;
+	}
+
+	set_ps_exit_strategy_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_PS_EXIT_STRATEGY;
+	set_ps_exit_strategy_cmd->umac_hdr.ids.wdev_id = if_idx;
+	set_ps_exit_strategy_cmd->umac_hdr.ids.valid_fields |=
+		NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+	set_ps_exit_strategy_cmd->ps_exit_strategy = ps_exit_strategy;
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      set_ps_exit_strategy_cmd,
+			      sizeof(*set_ps_exit_strategy_cmd));
+out:
+	if (set_ps_exit_strategy_cmd) {
+		nrf_wifi_osal_mem_free(fmac_dev_ctx->fpriv->opriv,
+				       set_ps_exit_strategy_cmd);
+	}
+
+	return status;
+}
 #endif /* CONFIG_NRF700X_STA_MODE */
