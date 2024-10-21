@@ -9,7 +9,8 @@
 
 #include <drivers/gpio/nrfe_gpio.h>
 
-#if !defined(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG) && !defined(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX)
+#if !IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG) &&                                           \
+	!IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX)
 #error "Define communication backend type"
 #endif
 

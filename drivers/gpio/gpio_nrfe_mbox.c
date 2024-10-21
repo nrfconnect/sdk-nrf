@@ -7,7 +7,6 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/gpio/gpio_utils.h>
 #include <zephyr/drivers/mbox.h>
-#include <zephyr/sys/printk.h>
 
 #include "gpio_nrfe.h"
 
@@ -18,19 +17,15 @@ static nrfe_gpio_mbox_data_t *tx_data =
 
 int gpio_send(nrfe_gpio_data_packet_t *msg)
 {
-	printk("Sending opcode: %d, pin %d, port %d, flag: %d\n", msg->opcode, msg->pin, msg->port,
-	       msg->flags);
-	/* Try and get lock */
-	if (atomic_flag_test_and_set(&tx_data->lock.locked)) {
-		/* Return -1 in case lock is not acquired (used by other core)*/
-		return -1;
+	/* Wait for the access to the shared data structure */
+	while (!atomic_cas(&tx_data->lock.locked, DATA_LOCK_STATE_READY, DATA_LOCK_STATE_BUSY)) {
 	}
 
 	memcpy((void *)&tx_data->data, (void *)msg, sizeof(nrfe_gpio_data_packet_t));
 	tx_data->lock.data_size = sizeof(nrfe_gpio_data_packet_t);
 
-	/* Release lock */
-	atomic_flag_clear(&tx_data->lock.locked);
+	/* Inform the consumer that new data is available */
+	atomic_set(&tx_data->lock.locked, DATA_LOCK_STATE_WITH_DATA);
 
 	return mbox_send_dt(&tx_channel, NULL);
 }
