@@ -1,3 +1,5 @@
+.. _ug_bt_stack_arch:
+
 Bluetooth stack architecture
 ############################
 
