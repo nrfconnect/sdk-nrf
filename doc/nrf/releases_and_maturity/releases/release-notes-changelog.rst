@@ -369,6 +369,8 @@ nRF Desktop
   * The partition memory configurations for the :ref:`zephyr:nrf54l15dk_nrf54l15` board to optimize the size of the MCUboot bootloader partition.
   * The :ref:`nrf_desktop_constlat` to use the :c:func:`nrfx_power_constlat_mode_request` and :c:func:`nrfx_power_constlat_mode_free` functions instead of :c:func:`nrf_power_task_trigger` to control requesting Constant Latency sub-power mode.
     This ensures correct behavior if another source requests Constant Latency sub-power mode through the nrfx API.
+  * The :ref:`CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY <config_desktop_app_options>` Kconfig option depends on :kconfig:option:`CONFIG_CAF_PM_EVENTS`.
+    CAF Power Management events support is necessary to disable constant latency interrupts on standby.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
