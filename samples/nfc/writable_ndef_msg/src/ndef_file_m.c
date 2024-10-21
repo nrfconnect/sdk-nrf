@@ -16,12 +16,15 @@
 #include <zephyr/kernel.h>
 #include <soc.h>
 #include <zephyr/device.h>
-#include <string.h>
 #include <zephyr/fs/nvs.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/uri_msg.h>
 #include <zephyr/storage/flash_map.h>
-
+#if defined(CONFIG_NVS)
+#include <zephyr/fs/nvs.h>
+#elif defined(CONFIG_ZMS)
+#include <zephyr/fs/zms.h>
+#endif /* defined(CONFIG_NVS) */
 #include "ndef_file_m.h"
 
 #define FLASH_URL_ADDRESS_ID 1 /**< Address of URL message in FLASH */
@@ -30,29 +33,44 @@ static const uint8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". 
 	{'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'};
 
 /* Flash partition for NVS */
-#define NVS_FLASH_DEVICE FIXED_PARTITION_DEVICE(storage_partition)
+#define FLASH_DEVICE FIXED_PARTITION_DEVICE(storage_partition)
 /* Flash block size in bytes */
-#define NVS_SECTOR_SIZE  (DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size))
-#define NVS_SECTOR_COUNT 2
+#define SECTOR_SIZE  (DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size))
+#define SECTOR_COUNT 2
 /* Start address of the filesystem in flash */
-#define NVS_STORAGE_OFFSET FIXED_PARTITION_OFFSET(storage_partition)
+#define STORAGE_OFFSET FIXED_PARTITION_OFFSET(storage_partition)
 
+#if defined(CONFIG_NVS)
 static struct nvs_fs fs = {
-	.sector_size = NVS_SECTOR_SIZE,
-	.sector_count = NVS_SECTOR_COUNT,
-	.offset = NVS_STORAGE_OFFSET,
+	.sector_size = SECTOR_SIZE,
+	.sector_count = SECTOR_COUNT,
+	.offset = STORAGE_OFFSET,
 };
+#elif defined(CONFIG_ZMS)
+static struct zms_fs fs = {
+	.sector_size = SECTOR_SIZE,
+	.sector_count = SECTOR_COUNT,
+	.offset = STORAGE_OFFSET,
+};
+#else
+#error "Please select file system."
+#endif /* defined(CONFIG_NVS) */
 
 int ndef_file_setup(void)
 {
 	int err;
 
-	fs.flash_device = NVS_FLASH_DEVICE;
+	fs.flash_device = FLASH_DEVICE;
 	if (fs.flash_device == NULL) {
 		return -ENODEV;
 	}
 
+#if defined(CONFIG_NVS)
 	err = nvs_mount(&fs);
+#elif defined(CONFIG_ZMS)
+	err = zms_mount(&fs);
+#endif /* defined(CONFIG_NVS) */
+
 	if (err < 0) {
 		printk("Cannot initialize NVS!\n");
 	}
@@ -63,7 +81,11 @@ int ndef_file_setup(void)
 int ndef_file_update(uint8_t const *buff, uint32_t size)
 {
 	/* Update FLASH file with new NDEF message. */
+#if defined(CONFIG_NVS)
 	return nvs_write(&fs, FLASH_URL_ADDRESS_ID, buff, size);
+#elif defined(CONFIG_ZMS)
+	return zms_write(&fs, FLASH_URL_ADDRESS_ID, buff, size);
+#endif /* defined(CONFIG_NVS) */
 }
 
 /** .. include_startingpoint_ndef_file_rst */
@@ -120,7 +142,12 @@ int ndef_file_load(uint8_t *buff, uint32_t size)
 	 * if we can read it from flash, since we don't know the size read the
 	 * maximum possible
 	 */
+#if defined(CONFIG_NVS)
 	err = nvs_read(&fs, FLASH_URL_ADDRESS_ID, buff, size);
+#elif defined(CONFIG_ZMS)
+	err = zms_read(&fs, FLASH_URL_ADDRESS_ID, buff, size);
+#endif /* defined(CONFIG_NVS) */
+
 	if (err > 0) { /* Item was found, show it */
 		printk("Found NDEF file record.\n");
 	} else {
