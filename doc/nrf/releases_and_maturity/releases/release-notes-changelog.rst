@@ -224,6 +224,8 @@ Matter
   * The :ref:`ug_matter_device_memory_profiling` section to the :ref:`ug_matter_device_optimizing_memory` page.
     The section contains useful commands for measuring memory and troubleshooting tips.
   * The ZMS file subsystem to all devices that contain RRAM, such as the nRF54L Series devices.
+  * Migration of the Device Attestation Certificates private key to Key Management Unit (KMU) for the nRF54L Series SoCs.
+    See :ref:`matter_platforms_security_dac_priv_key_kmu` to learn how to enable it in your sample.
 
 * Changed:
 
@@ -232,6 +234,8 @@ Matter
     The new Kconfig option now works for both NVS and ZMS file system backends.
   * The firmware version format used for informational purposes when using the :file:``VERSION`` file.
     The format now includes the optional ``EXTRAVERSION`` component.
+  * Storing the Device Attestation Certificates private key in the Trusted Storage library to be enabled for all platforms that support the PSA crypto API.
+    See :ref:`matter_platforms_security_dac_priv_key_its` for more information.
 
 Matter fork
 +++++++++++
@@ -602,6 +606,10 @@ Matter samples
 * :ref:`matter_lock_sample` sample:
 
     * Added :ref:`Matter Lock schedule snippet <matter_lock_snippets>`, and updated the documentation to use the snippet.
+
+* :ref:`matter_template_sample` sample:
+
+    * Updated the DAC private key migration from factory data to KMU to be enabled for the nRF54L Series SoCs by default.
 
 * Enabled the :ref:`ug_thread_build_report` generation in all samples.
 * Removed support for the nRF54L15 PDK in all samples.
