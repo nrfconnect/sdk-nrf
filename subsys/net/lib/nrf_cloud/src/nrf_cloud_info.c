@@ -146,11 +146,10 @@ int nrf_cloud_print_details(void)
 	LOG_INF("Protocol:          %s", protocol);
 	LOG_INF("Download protocol: %s", download_protocol);
 	LOG_INF("Sec tag:           %d", nrf_cloud_sec_tag_get());
-	LOG_INF("Host name:         %s", host_name);
-
 #if defined(CONFIG_NRF_CLOUD_COAP)
-	LOG_INF("-CoAP JWT: %d", nrf_cloud_sec_tag_coap_jwt_get());
+	LOG_INF("CoAP JWT Sec tag:  %d", nrf_cloud_sec_tag_coap_jwt_get());
 #endif
+	LOG_INF("Host name:         %s", host_name);
 
 #endif /* CONFIG_NRF_CLOUD_VERBOSE_DETAILS */
 
