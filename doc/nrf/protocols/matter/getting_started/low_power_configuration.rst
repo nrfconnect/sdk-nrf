@@ -202,6 +202,18 @@ Disable unused pins and peripherals
    :start-after: disable_unused_pins_start
    :end-before: disable_unused_pins_end
 
+Disable LEDs module
+===================
+
+When performing the power measurements on various development kits, the LEDs can either be included in the measurement circuit or not:
+
+* For the nRF52840 DK and nRF5340 DK, the LEDs are excluded from the measurement circuit, so they can be enabled for the low power configuration and it is not going to impact the measurement results.
+* For the nRF54L15 DK, the MOSFET transistors controlling the LEDs are included in the measurement circuit.
+  This results in measurement results being increased by an additional, small leakage current that appears if an LED is turned on.
+  To measure the current consumption of the nRF54L15 SoC without including development kit components, such as LEDs, it is recommended to disable them.
+
+To disable LEDs in the Matter samples and applications, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_LEDS` Kconfig option to ``n``.
+
 .. _ug_matter_enable_pm_module:
 
 Enable Device Power Management module

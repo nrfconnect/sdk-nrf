@@ -588,6 +588,7 @@ Matter samples
   * Support for the nRF54L15 DK.
   * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 SoC.
   * The :ref:`matter_smoke_co_alarm_sample` sample that demonstrates implementation of Matter Smoke CO alarm device type.
+  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_LEDS` Kconfig option, which can be used to disable the LEDs in the Matter sample or application.
 
 * :ref:`matter_lock_sample` sample:
 
