@@ -319,8 +319,8 @@ static int cmd_list_networks(const struct shell *shell, size_t argc, char *argv[
 	return 0;
 }
 
-SHELL_SUBCMD_SET_CREATE(sub_wifi_cred, (wifi_cred));
-SHELL_SUBCMD_ADD((wifi_cred),
+SHELL_SUBCMD_SET_CREATE(sub_wifi_cred, (nwifi_cred));
+SHELL_SUBCMD_ADD((nwifi_cred),
 		 add, NULL,
 		 "Add network to storage.\n"
 		  "<-s --ssid \"<SSID>\">: SSID.\n"
@@ -338,9 +338,9 @@ SHELL_SUBCMD_ADD((wifi_cred),
 		  "[-K, --key-passwd]: Private key passwd for enterprise mode.\n"
 		  "[-h, --help]: Print out the help for the connect command.\n",
 		  cmd_add_network, 2, 12);
-SHELL_SUBCMD_ADD((wifi_cred),
+SHELL_SUBCMD_ADD((nwifi_cred),
 		 delete, NULL, "Delete network from storage.", cmd_delete_network, 0, 0);
-SHELL_SUBCMD_ADD((wifi_cred),
+SHELL_SUBCMD_ADD((nwifi_cred),
 		 list, NULL, "List stored networks.", cmd_list_networks, 0, 0);
 
 SHELL_CMD_REGISTER(wifi_cred, &sub_wifi_cred, "Wi-Fi Credentials commands", NULL);
