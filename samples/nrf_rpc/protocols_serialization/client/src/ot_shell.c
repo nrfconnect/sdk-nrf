@@ -330,11 +330,11 @@ static otError ot_cli_command_state(const struct shell *sh, size_t argc, char *a
 
 static otError ot_cli_command_thread(const struct shell *sh, size_t argc, char *argv[])
 {
-	if (strcmp(argv[2], "start")) {
+	if (strcmp(argv[1], "start") == 0) {
 		return otThreadSetEnabled(NULL, true);
 	}
 
-	if (strcmp(argv[2], "stop")) {
+	if (strcmp(argv[1], "stop") == 0) {
 		return otThreadSetEnabled(NULL, false);
 	}
 
