@@ -164,6 +164,12 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_no_recovery_envelope)
 	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
 	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
 		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
+	/* ... and execution mode indicates a failed state */
+	zassert_equal(true, suit_execution_mode_failed(), "The device does not enter failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device did not left boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_rec_invalid_recovery_envelope)
@@ -230,6 +236,12 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_valid_recovery_envelope)
 	/* ... and the execution mode is set to the POST INVOKE RECOVERY */
 	zassert_equal(EXECUTION_MODE_POST_INVOKE_RECOVERY, suit_execution_mode_get(),
 		      "Execution mode not changed to the POST INVOKE RECOVERY");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device did not left boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_no_validate)
