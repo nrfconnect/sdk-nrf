@@ -11,7 +11,7 @@
 #include "gpio_nrfe.h"
 
 #if defined(CONFIG_MULTITHREADING)
-K_SEM_DEFINE(bound_sem, 0, 1);
+static K_SEM_DEFINE(bound_sem, 0, 1);
 #else
 static volatile uint32_t bound_sem = 1;
 #endif

@@ -4,22 +4,29 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef NRFE_COMMON_H__
-#define NRFE_COMMON_H__
+#ifndef SDP_NRFE_COMMON_H__
+#define SDP_NRFE_COMMON_H__
 
-#include <stdatomic.h>
+#include <zephyr/sys/atomic.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct __packed {
-	atomic_bool locked;
+enum data_lock_state {
+	DATA_LOCK_STATE_OFF = 0,
+	DATA_LOCK_STATE_BUSY,
+	DATA_LOCK_STATE_WITH_DATA,
+	DATA_LOCK_STATE_READY,
+};
+
+struct nrfe_shared_data_lock {
 	uint32_t data_size;
-} nrfe_shared_data_lock_t;
+	atomic_t locked;
+};
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* NRFE_COMMON_H__ */
+#endif /* SDP_NRFE_COMMON_H__ */
