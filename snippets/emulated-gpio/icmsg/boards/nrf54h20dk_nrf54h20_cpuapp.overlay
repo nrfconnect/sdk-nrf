@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+
+&gpio2 {
+	status = "disabled";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&cpuflpr_vevif {
+	status = "okay";
+};
+
+ipc5: &cpuapp_cpuflpr_ipc {
+	status = "okay";
+};
+
+&egpio {
+  status = "okay";
+};
+
+&led0 {
+        gpios = <&egpio 9 GPIO_ACTIVE_HIGH>;
+};
