@@ -144,7 +144,7 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 	if (data->type == BT_DATA_NAME_COMPLETE || data->type == BT_DATA_NAME_SHORTENED) {
 		size_t srch_name_size = strlen(srch_name);
 		if ((data->data_len == srch_name_size) &&
-		    (strncmp(srch_name, data->data, srch_name_size) == 0)) {
+		    (memcmp(srch_name, data->data, srch_name_size) == 0)) {
 			/* Check if the device is still connected due to waiting for ACL timeout */
 			if (conn_exist_check(addr)) {
 				/* Device is already connected, stop parsing the adv data */
