@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/poweroff.h>
+#include <zephyr/pm/device.h>
 
 #include <nrfx.h>
 #include <hal/nrf_power.h>
@@ -33,6 +34,7 @@
 /* Delayed work that enters system off. */
 static struct k_work_delayable system_off_work;
 
+const struct device *const cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
 /**
  * @brief Function that receives events from NFC.
@@ -136,6 +138,12 @@ static void system_off(struct k_work *work)
 
 	dk_set_led_off(SYSTEM_ON_LED);
 
+	int rc = pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+
+	if (rc < 0) {
+		printk("Could not suspend console (%d)\n", rc);
+	}
+
 	sys_poweroff();
 }
 
@@ -186,6 +194,12 @@ static void print_reset_reason(void)
 
 int main(void)
 {
+	/* Check whether the console is enabled and ready */
+	if (!device_is_ready(cons)) {
+		printk("%s: device not ready.\n", cons->name);
+		return 0;
+	}
+
 	/* Configure LED-pins */
 	if (dk_leds_init() < 0) {
 		printk("Cannot init LEDs!\n");
