@@ -13,6 +13,7 @@
 #include <zephyr/drivers/flash.h>
 #include <zephyr/storage/flash_map.h>
 #include <suit_plat_mem_util.h>
+#include "test_common.h"
 
 #if DT_NODE_EXISTS(DT_NODELABEL(cpuapp_suit_storage))
 #define SUIT_STORAGE_OFFSET FIXED_PARTITION_OFFSET(cpuapp_suit_storage)
@@ -94,6 +95,14 @@ ZTEST(orchestrator_init_tests, test_empty_storage)
 		      "Regular boot not triggered");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode indicates boot mode */
+	zassert_equal(true, suit_execution_mode_booting(), "The device did not enter boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_init_tests, test_empty_storage_with_update_flag)
@@ -112,6 +121,14 @@ ZTEST(orchestrator_init_tests, test_empty_storage_with_update_flag)
 		      "Regular update not triggered");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode indicates update mode */
+	zassert_equal(true, suit_execution_mode_updating(), "The device did not enter update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_init_tests, test_empty_storage_with_recovery_flag)
@@ -130,6 +147,14 @@ ZTEST(orchestrator_init_tests, test_empty_storage_with_recovery_flag)
 		      "Recovery mode not triggered");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode indicates boot mode */
+	zassert_equal(true, suit_execution_mode_booting(), "The device did not enter boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_init_tests, test_empty_storage_with_update_recovery_flag)
@@ -149,4 +174,12 @@ ZTEST(orchestrator_init_tests, test_empty_storage_with_update_recovery_flag)
 		      "Emergency recovery update not triggered");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode indicates update mode */
+	zassert_equal(true, suit_execution_mode_updating(), "The device did not enter update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
