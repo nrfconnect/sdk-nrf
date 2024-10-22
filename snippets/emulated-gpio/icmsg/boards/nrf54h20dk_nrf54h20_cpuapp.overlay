@@ -17,7 +17,7 @@
 	status = "okay";
 };
 
-ipc5: &cpuapp_cpuflpr_ipc {
+ipc_nrfe: &cpuapp_cpuflpr_ipc {
 	status = "okay";
 };
 

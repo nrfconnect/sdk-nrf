@@ -35,7 +35,7 @@
 	};
 
 	ipc {
-		ipc0: ipc0 {
+		ipc_nrfe: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
