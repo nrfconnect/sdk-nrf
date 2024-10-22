@@ -100,7 +100,7 @@ struct broadcast_source_big {
 	uint8_t num_subgroups;
 	uint8_t packing;
 	bool encryption;
-	uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE + 1];
+	uint8_t broadcast_code[BT_ISO_BROADCAST_CODE_SIZE];
 	char broadcast_name[BROADCAST_SOURCE_ADV_NAME_MAX + 1];
 	char adv_name[CONFIG_BT_DEVICE_NAME_MAX + 1];
 	bool fixed_id;

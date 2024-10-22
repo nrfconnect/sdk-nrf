@@ -65,7 +65,7 @@ bool lc3_streamer_file_compatible_check(const char *const filename,
  *
  * @retval 0		Success.
  * @retval -EINVAL	Invalid filename or streamer_idx.
- * @retval -EAGAIN	No stream slot is available
+ * @retval -EAGAIN	No stream slot is available.
  * @retval -EFAULT	Module has not been initialized.
  */
 int lc3_streamer_stream_register(const char *const filename, uint8_t *const streamer_idx,

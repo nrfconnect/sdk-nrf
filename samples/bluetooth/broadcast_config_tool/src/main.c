@@ -1599,9 +1599,9 @@ static int cmd_encrypt(const struct shell *shell, size_t argc, char **argv)
 			return -EINVAL;
 		}
 
-		if (strlen(argv[3]) > BT_AUDIO_BROADCAST_CODE_SIZE) {
+		if (strlen(argv[3]) > BT_ISO_BROADCAST_CODE_SIZE) {
 			shell_error(shell, "Broadcast code must be %d characters long",
-				    BT_AUDIO_BROADCAST_CODE_SIZE);
+				    BT_ISO_BROADCAST_CODE_SIZE);
 			return -EINVAL;
 		}
 		memset(broadcast_param[big_index].broadcast_code, '\0',

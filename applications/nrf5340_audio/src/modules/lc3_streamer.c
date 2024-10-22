@@ -20,6 +20,10 @@ struct k_work_q lc3_streamer_work_q;
 
 #define LC3_STREAMER_BUFFER_NUM_FRAMES 2
 
+#if CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS > UINT8_MAX
+#error "CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS must be less than or equal to UINT8_MAX"
+#endif
+
 enum lc3_stream_states {
 	/* Stream ready to load file and start streaming */
 	STREAM_IDLE = 0,
@@ -342,7 +346,7 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 	}
 
 	/* Check that there's room for the filename and a NULL terminating char */
-	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN - 1) {
+	if (strlen(filename) > (ARRAY_SIZE(streams[*streamer_idx].filename) - 1)) {
 		LOG_ERR("Filename too long");
 		return -EINVAL;
 	}
@@ -369,7 +373,7 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 		return ret;
 	}
 
-	strncpy(streams[*streamer_idx].filename, filename, strlen(filename));
+	strcpy(streams[*streamer_idx].filename, filename);
 
 	ret = data_fifo_init(&streams[*streamer_idx].fifo);
 	if (ret) {

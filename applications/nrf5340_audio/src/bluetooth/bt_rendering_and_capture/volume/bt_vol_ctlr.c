@@ -11,8 +11,6 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/vcp.h>
 
-#include "macros_common.h"
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_vol_ctlr, CONFIG_BT_VOL_LOG_LEVEL);
 

@@ -11,7 +11,6 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/vcp.h>
 
-#include "macros_common.h"
 #include "bt_rendering_and_capture.h"
 
 #include <zephyr/logging/log.h>
