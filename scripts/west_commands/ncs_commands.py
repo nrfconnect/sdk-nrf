@@ -234,13 +234,13 @@ class NcsWestCommand(WestCommand):
         if ncs_sha is None:
             if not self.manifest.is_active(project):
                 help_url = 'https://docs.zephyrproject.org/latest/develop/west/manifest.html#project-groups-and-active-projects'
-                log.err(f"{project.name_and_path}: can't get loot: "
+                log.die(f"{project.name_and_path}: can't get loot: "
                         "project is not cloned and is not active. "
                         'To get loot, first enable these groups: '
                         f"{' '.join(project.groups)} (see {help_url}). "
                         'Then, run "west update".')
             else:
-                log.err(f"{project.name_and_path}: can't get loot: "
+                log.die(f"{project.name_and_path}: can't get loot: "
                         'project is not cloned; please run "west update"')
             return None
         return to_repository(project, ncs_sha)
@@ -265,7 +265,7 @@ class NcsWestCommand(WestCommand):
 
         upstream_sha = self.checked_sha(project, upstream_rev)
         if upstream_sha is None:
-            log.wrn(f"{project.name_and_path}: can't get loot: "
+            log.die(f"{project.name_and_path}: can't get loot: "
                     "please fetch upstream URL "
                     f'{upstream_url} (need revision {upstream_rev})')
             return None
