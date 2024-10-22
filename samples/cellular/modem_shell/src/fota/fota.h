@@ -11,6 +11,6 @@
 
 int fota_init(void);
 
-int fota_start(const char *host, const char *file);
+int fota_start(const char *uri);
 
 #endif /* MOSH_FOTA_H */

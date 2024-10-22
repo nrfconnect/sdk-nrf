@@ -55,34 +55,33 @@ struct fota_download_client_url_data {
 static void start_fota_download(struct k_work *work);
 static K_WORK_DEFINE(download_work, start_fota_download);
 static fota_download_callback_t fota_client_callback;
-static char fota_path[CONFIG_FOTA_DOWNLOAD_FILE_NAME_LENGTH];
-static char fota_host[CONFIG_FOTA_DOWNLOAD_HOST_NAME_LENGTH];
+static char fota_uri[CONFIG_FOTA_DOWNLOAD_URI_LENGTH];
 static int fota_sec_tag = -1;
 static bool download_active;
 static enum dfu_target_image_type active_dfu_type;
 
-int fota_download_parse_dual_resource_locator(char *const file, bool s0_active,
+int fota_download_parse_dual_resource_locator(char *const uri, bool s0_active,
 					     const char **selected_path)
 {
-	if (file == NULL || selected_path == NULL) {
+	if (uri == NULL || selected_path == NULL) {
 		LOG_ERR("Got NULL pointer");
 		return -EINVAL;
 	}
 
-	if (!nrfx_is_in_ram(file)) {
-		LOG_ERR("'file' pointer is not located in RAM");
+	if (!nrfx_is_in_ram(uri)) {
+		LOG_ERR("'uri' pointer is not located in RAM");
 		return -EFAULT;
 	}
 
-	/* Ensure that 'file' is null-terminated. */
-	if (strnlen(file, CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH) ==
+	/* Ensure that 'uri' is null-terminated. */
+	if (strnlen(uri, CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH) ==
 	    CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH) {
 		LOG_ERR("Input is not null terminated");
 		return -ENOTSUP;
 	}
 
 	/* We have verified that there is a null-terminator, so this is safe */
-	char *delimiter = strstr(file, " ");
+	char *delimiter = strstr(uri, " ");
 
 	if (delimiter == NULL) {
 		/* Could not find delimiter in input */
@@ -90,9 +89,9 @@ int fota_download_parse_dual_resource_locator(char *const file, bool s0_active,
 		return 0;
 	}
 
-	/* Insert null-terminator to split the dual filepath into two separate filepaths */
+	/* Insert null-terminator to split the dual URI into two separate URIs */
 	*delimiter = '\0';
-	const char *s0_path = file;
+	const char *s0_path = uri;
 	const char *s1_path = delimiter + 1;
 
 	*selected_path = s0_active ? s1_path : s0_path;
@@ -119,92 +118,11 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	}
 }
 
-static int fota_download_client_url_parse(const char *uri,
-					  struct fota_download_client_url_data *parsed_uri)
-{
-	int len, err, proto, type;
-	char *e, *s;
-
-	len = strlen(uri);
-
-	/* Find the end of protocol marker https:// or coap:// */
-	s = strstr(uri, "://");
-
-	if (!s) {
-		LOG_ERR("Host not found");
-		return -EINVAL;
-	}
-	s += strlen("://");
-
-	/* Verify that download client knows the protocol */
-	err = url_parse_proto(uri, &proto, &type);
-	if (err) {
-		return err;
-	}
-
-	/* Find the end of host name, which is start of path */
-	e = strchr(s, '/');
-
-	if (!e) {
-		LOG_ERR("Path not found");
-		return -EINVAL;
-	}
-
-	parsed_uri->host = uri;
-	parsed_uri->host_len = e - uri;
-	parsed_uri->file = e + 1;
-	parsed_uri->file_len = strlen(uri) - parsed_uri->host_len;
-	parsed_uri->sec_tag_needed =
-		strncmp(uri, "https://", 8) == 0 || strncmp(uri, "coaps://", 8) == 0;
-
-	return 0;
-}
-
-static int download_url_parse(const char *uri, int sec_tag)
-{
-	int ret;
-	struct fota_download_client_url_data parsed_uri;
-
-	LOG_INF("Download url %s", uri);
-
-	ret = fota_download_client_url_parse(uri, &parsed_uri);
-	if (ret) {
-		return ret;
-	}
-
-	if (parsed_uri.host_len >= sizeof(fota_host)) {
-		LOG_ERR("Host name too big %d", parsed_uri.host_len);
-		return -ENOMEM;
-	} else if (parsed_uri.file_len >= sizeof(fota_path)) {
-		LOG_ERR("File name too big %d", parsed_uri.host_len);
-		return -ENOMEM;
-	}
-
-	if (parsed_uri.sec_tag_needed) {
-		if (sec_tag == -1) {
-			LOG_ERR("FOTA SMP sec tag not configured");
-			return -EINVAL;
-		}
-		fota_sec_tag = sec_tag;
-	} else {
-		fota_sec_tag = -1;
-	}
-
-	strncpy(fota_host, parsed_uri.host, parsed_uri.host_len);
-	fota_host[parsed_uri.host_len] = 0;
-
-	strncpy(fota_path, parsed_uri.file, parsed_uri.file_len);
-	fota_path[parsed_uri.file_len] = 0;
-
-	return 0;
-}
-
 static void start_fota_download(struct k_work *work)
 {
 	int ret;
 
-	ret = fota_download_start_with_image_type(fota_host, fota_path, fota_sec_tag, 0, 0,
-						  active_dfu_type);
+	ret = fota_download_start_with_image_type(fota_uri, fota_sec_tag, 0, 0, active_dfu_type);
 	if (ret) {
 		struct fota_download_evt evt;
 
@@ -236,22 +154,32 @@ int fota_download_util_stream_init(void)
 	return ret;
 }
 
-int fota_download_util_download_start(const char *download_uri,
+int fota_download_util_download_start(const char *uri,
 				     enum dfu_target_image_type dfu_target_type, int sec_tag,
 				     fota_download_callback_t client_callback)
 {
 	int ret;
+	bool sectag_needed;
 
 	if (download_active) {
 		return -EBUSY;
 	}
 
-	ret = download_url_parse(download_uri, sec_tag);
-	if (ret) {
-		return ret;
+	strncpy(fota_uri, uri, sizeof(fota_uri));
+	fota_uri[sizeof(fota_uri) -1] = '\0';
+
+	sectag_needed = strncmp(uri, "https://", 8) == 0 || strncmp(uri, "coaps://", 8) == 0;
+	if (sectag_needed) {
+		if (sec_tag == -1) {
+			LOG_ERR("FOTA SMP sec tag not configured");
+			return -EINVAL;
+		}
+		fota_sec_tag = sec_tag;
+	} else {
+		fota_sec_tag = -1;
 	}
 
-	LOG_INF("Download Path %s host %s", fota_path, fota_host);
+	LOG_INF("Download Path %s", fota_uri);
 
 	active_dfu_type = dfu_target_type;
 

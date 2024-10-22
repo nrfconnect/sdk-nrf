@@ -13,6 +13,10 @@
 #include <zephyr/net/conn_mgr_monitor.h>
 #include <net/download_client.h>
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
+
+
 #if CONFIG_MODEM_KEY_MGMT
 #include <modem/modem_key_mgmt.h>
 #else
@@ -49,13 +53,22 @@ static int sec_tag_list[] = { SEC_TAG };
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 #endif
 
+static char dlc_buf[2048];
+
+static int callback(const struct download_client_evt *event);
+
 static struct download_client downloader;
 static struct download_client_cfg config = {
+	.callback = callback,
+	.buf = dlc_buf,
+	.buf_size = sizeof(dlc_buf),
+};
+static struct download_client_host_cfg host_config = {
 #if CONFIG_SAMPLE_SECURE_SOCKET
 	.sec_tag_list = sec_tag_list,
 	.sec_tag_count = ARRAY_SIZE(sec_tag_list),
-	.set_tls_hostname = true,
 #endif
+	.range_override = 0,
 };
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
@@ -162,18 +175,16 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 
 static void progress_print(size_t downloaded, size_t file_size)
 {
+	static int prev_percent = 0;
 	const int percent = (downloaded * 100) / file_size;
-	size_t lpad = (percent * PROGRESS_WIDTH) / 100;
-	size_t rpad = PROGRESS_WIDTH - lpad;
 
-	printk("\r[ %3d%% ] |", percent);
-	for (size_t i = 0; i < lpad; i++) {
-		printk("=");
+	if (percent >= prev_percent && percent < prev_percent + 5) {
+		return;
 	}
-	for (size_t i = 0; i < rpad; i++) {
-		printk(" ");
-	}
-	printk("| (%d/%d bytes)", downloaded, file_size);
+
+	prev_percent = percent;
+
+	LOG_INF("[ %3d%% ] (%d/%d bytes)", percent, downloaded, file_size);
 }
 
 static int callback(const struct download_client_evt *event)
@@ -194,7 +205,7 @@ static int callback(const struct download_client_evt *event)
 		if (file_size) {
 			progress_print(downloaded, file_size);
 		} else {
-			printk("\r[ %d bytes ] ", downloaded);
+			printk("\r[ %d bytes ] \n", downloaded);
 		}
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
@@ -228,9 +239,9 @@ static int callback(const struct download_client_evt *event)
 #endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
-		(void)conn_mgr_if_disconnect(net_if);
-		(void)conn_mgr_all_if_down(true);
-		printk("Bye\n");
+		//(void)conn_mgr_if_disconnect(net_if);
+		//(void)conn_mgr_all_if_down(true);
+		//printk("Bye\n");
 		return 0;
 
 	case DOWNLOAD_CLIENT_EVT_ERROR:
@@ -246,6 +257,9 @@ static int callback(const struct download_client_evt *event)
 		break;
 	case DOWNLOAD_CLIENT_EVT_CLOSED:
 		printk("Socket closed\n");
+		break;
+	case DOWNLOAD_CLIENT_EVT_DEINITIALIZED:
+		printk("Client deinitialized\n");
 		break;
 	}
 
@@ -302,7 +316,7 @@ int main(void)
 
 	printk("Network connected\n");
 
-	err = download_client_init(&downloader, callback);
+	err = download_client_init(&downloader, &config);
 	if (err) {
 		printk("Failed to initialize the client, err %d", err);
 		return 0;
@@ -315,10 +329,10 @@ int main(void)
 
 	ref_time = k_uptime_get();
 
-	err = download_client_get(&downloader, URL, &config, URL, STARTING_OFFSET);
+	err = download_client_get(&downloader, &host_config, URL, STARTING_OFFSET);
 	if (err) {
 		printk("Failed to start the downloader, err %d", err);
-		return 0;
+		k_sleep(K_FOREVER);
 	}
 
 	printk("Downloading %s\n", URL);

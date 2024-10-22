@@ -24,6 +24,8 @@
 #include <zephyr/types.h>
 #include <zephyr/net/coap.h>
 
+/* Predefinition of download client struct used in download client transport. */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -68,7 +70,7 @@ enum download_client_evt_id {
 	 * the download client automatically closes the connection. The application should wait for
 	 * DOWNLOAD_CLIENT_EVT_CLOSED before attempting another download.
 	 * If download is stopped, and it was started using @ref download_client_start
-	 * the application should manually disconnect (@ref download_client_disconnect)
+	 * the application should manually disconnect (@ref download_client_stop)
 	 * to clean up the network socket and wait for DOWNLOAD_CLIENT_EVT_CLOSED before attempting
 	 * another download.
 	 */
@@ -77,6 +79,8 @@ enum download_client_evt_id {
 	DOWNLOAD_CLIENT_EVT_DONE,
 	/** Connection have been closed. Client is now idle, ready for next download */
 	DOWNLOAD_CLIENT_EVT_CLOSED,
+	/** Client deinitialized. Memory can be freed. */
+	DOWNLOAD_CLIENT_EVT_DEINITIALIZED,
 };
 
 struct download_fragment {
@@ -100,37 +104,6 @@ struct download_client_evt {
 };
 
 /**
- * @brief Download client configuration options.
- */
-struct download_client_cfg {
-	/** TLS security tag list.
-	 *  Pass NULL to disable TLS.
-	 * The list must be kept in scope while download is going on.
-	 */
-	const int *sec_tag_list;
-	/** Number of TLS security tags in list.
-	 *  Set to 0 to disable TLS.
-	 */
-	uint8_t sec_tag_count;
-	/**
-	 * PDN ID to be used for the download.
-	 * Zero is the default PDN.
-	 */
-	uint8_t pdn_id;
-	/**
-	 * Address family to be used for the download, AF_INET6 or AF_INET.
-	 * Set to AF_UNSPEC (0) to fallback to AF_INET if AF_INET6 does not work.
-	 */
-	int family;
-	/** Maximum fragment size to download. 0 indicates that values
-	 * configured using Kconfig shall be used.
-	 */
-	size_t frag_size_override;
-	/** Set hostname for TLS Server Name Indication extension */
-	bool set_tls_hostname;
-};
-
-/**
  * @brief Download client asynchronous event handler.
  *
  * Through this callback, the application receives events, such as
@@ -147,88 +120,100 @@ typedef int (*download_client_callback_t)(
 	const struct download_client_evt *event);
 
 /**
+ * @brief
+ */
+struct download_client_cfg {
+	/** Event handler. */
+	download_client_callback_t callback;
+	/** Client buffer. */
+	char *buf;
+	/** Client buffer size. */
+	size_t buf_size;
+};
+
+/**
+ * @brief Download client configuration options.
+ */
+struct download_client_host_cfg {
+	/** TLS security tag list.
+	 *  Pass NULL to disable TLS.
+	 * The list must be kept in scope while download is going on.
+	 */
+	const int *sec_tag_list;
+	/** Number of TLS security tags in list.
+	 *  Set to 0 to disable TLS.
+	 */
+	uint8_t sec_tag_count;
+	/**
+	 * PDN ID to be used for the download.
+	 * Zero is the default PDN.
+	 */
+	uint8_t pdn_id;
+	/** Maximum fragment size to download. 0 indicates that values
+	 * configured using Kconfig shall be used.
+	 */
+	size_t range_override;
+	/** Set socket to native TLS */
+	bool set_native_tls;
+	/** Keep connection to server when done */
+	bool keep_connection;
+};
+
+/**
+ * @brief Download client state.
+ */
+enum download_client_state {
+	DOWNLOAD_CLIENT_DEINITIALIZED,
+	DOWNLOAD_CLIENT_IDLE,
+	DOWNLOAD_CLIENT_CONNECTING,
+	DOWNLOAD_CLIENT_CONNECTED,
+	DOWNLOAD_CLIENT_DOWNLOADING,
+	DOWNLOAD_CLIENT_DEINITIALIZING,
+};
+
+/**
  * @brief Download client instance.
+ *
+ * Members are set internally by the download client.
  */
 struct download_client {
-	/** Protect shared variables. */
-	struct k_mutex mutex;
-
-	/** Socket descriptor. */
-	int fd;
-
-	/** Destination address storage */
-	struct sockaddr remote_addr;
-
-	/** Response buffer. */
-	char buf[CONFIG_DOWNLOAD_CLIENT_BUF_SIZE];
-	/** Buffer offset. */
-	size_t offset;
-
+	/** Client configuration options. */
+	struct download_client_cfg config;
+	/** Host configuration options. */
+	struct download_client_host_cfg host_config;
+	/** Host name, null-terminated.
+	 */
+	char hostname[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
+	/** File name, null-terminated.
+	 */
+	char file[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 	/** Size of the file being downloaded, in bytes. */
 	size_t file_size;
 	/** Download progress, number of bytes downloaded. */
 	size_t progress;
+	/** Buffer offset. */
+	size_t buf_offset;
 
-	/** Server hosting the file, null-terminated.
-	 *  The host name must be kept in scope while download is going on.
+	/** Download client transport, http, CoAP, MQTT, ...
+	 *  Store a pointer to the selected transport per DLC instance to avoid looking it up each call.
 	 */
-	const char *host;
-	/** File name, null-terminated.
-	 *  The file name must be kept in scope while download is going on.
-	 */
-	const char *file;
-	/** Configuration options. */
-	struct download_client_cfg config;
+	void *transport;
+	/** Transport parameters. */
+	uint8_t transport_internal[CONFIG_DOWNLOAD_CLIENT_TRANSPORT_PARAMS_SIZE];
 
-	/** Protocol for current download. */
-	int proto;
-
-	struct  {
-		/** Whether the HTTP header for
-		 * the current fragment has been processed.
-		 */
-		bool has_header;
-		/** The server has closed the connection. */
-		bool connection_close;
-		/** Is using ranged query. */
-		bool ranged;
-	} http;
-
-	struct {
-		/** CoAP block context. */
-		struct coap_block_context block_ctx;
-
-		/** CoAP pending object. */
-		struct coap_pending pending;
-	} coap;
-
-	/** Internal thread ID. */
-	k_tid_t tid;
+	/** Ensure that thread is ready for download */
+	struct k_sem event_sem;
+	/** Protect shared variables. */
+	struct k_mutex mutex;
+	/** Download client state. */
+	enum download_client_state state;
 	/** Internal download thread. */
 	struct k_thread thread;
-	/** Ensure that thread is ready for download */
-	struct k_sem wait_for_download;
+	/** Internal thread ID. */
+	k_tid_t tid;
 
 	/* Internal thread stack. */
-	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
-
-	/** Event handler. */
-	download_client_callback_t callback;
-
-	/** Set socket to native TLS */
-	bool set_native_tls;
-
-	/** Close the socket when finished. */
-	bool close_when_done;
-
-	enum {
-		DOWNLOAD_CLIENT_IDLE,
-		DOWNLOAD_CLIENT_CONNECTING,
-		DOWNLOAD_CLIENT_DOWNLOADING,
-		DOWNLOAD_CLIENT_FINISHED,
-		DOWNLOAD_CLIENT_CLOSING
-	} state;
+	K_THREAD_STACK_MEMBER(thread_stack, CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
 };
 
 /**
@@ -242,22 +227,20 @@ struct download_client {
  *
  * @retval int Zero on success, otherwise a negative error code.
  */
-int download_client_init(struct download_client *client,
-			 download_client_callback_t callback);
+int download_client_init(struct download_client *const dlc,
+			 struct download_client_cfg *config);
 
 /**
- * @brief Set a target hostname.
+ * @brief Deinitialize the download client.
+ *
+ * This function can only be called once in each client instance as
+ * it removes the background thread.
  *
  * @param[in] client	Client instance.
- * @param[in] host	Name of the host to connect to, null-terminated.
- *			Can include scheme and port number, defaults to
- *			HTTP or HTTPS if no scheme is provided.
- * @param[in] config	Configuration options.
  *
- * @retval int Zero on success, a negative error code otherwise.
+ * @retval int Zero on success.
  */
-int download_client_set_host(struct download_client *client, const char *host,
-			    const struct download_client_cfg *config);
+int download_client_deinit(struct download_client *client);
 
 /**
  * @brief Download a file.
@@ -275,8 +258,21 @@ int download_client_set_host(struct download_client *client, const char *host,
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_start(struct download_client *client, const char *file,
-			  size_t from);
+int download_client_start(struct download_client *client,
+			  const struct download_client_host_cfg *host_config,
+			  const char *url, size_t from);
+
+/**
+ * @brief Stop file download and disconnect from server.
+ *
+ * Request client to disconnect from the server. This does not block.
+ * When client have been disconnected, it send @ref DOWNLOAD_CLIENT_EVT_CLOSED event.
+ *
+ * @param[in] client	Client instance.
+ *
+ * @return Zero on success, a negative error code otherwise.
+ */
+int download_client_stop(struct download_client *client);
 
 /**
  * @brief Retrieve the size of the file being downloaded, in bytes.
@@ -303,27 +299,11 @@ int download_client_file_size_get(struct download_client *client, size_t *size);
 int download_client_downloaded_size_get(struct download_client *client, size_t *size);
 
 /**
- * @brief Initiate disconnection.
- *
- * Request client to disconnect from the server. This does not block.
- * When client have been disconnected, it send @ref DOWNLOAD_CLIENT_EVT_CLOSED event.
- *
- * Request client to disconnect from the server. This does not block.
- * When client has been disconnected, it sends @ref DOWNLOAD_CLIENT_EVT_CLOSED event.
- *
- * @param[in] client	Client instance.
- *
- * @return Zero on success, a negative error code otherwise.
- */
-int download_client_disconnect(struct download_client *client);
-
-/**
  * @brief Download a file asynchronously.
  *
  * This initiates an asynchronous connect-download-disconnect sequence to the target
  * host. When only one file is required from a target server, it can be used instead of
- * separate calls to download_client_set_host(), download_client_start()
- * and download_client_disconnect().
+ * separate calls to download_client_start() and download_client_stop().
  *
  * Downloads are handled one at a time. If previous download is not finished
  * this returns -EALREADY.
@@ -345,8 +325,9 @@ int download_client_disconnect(struct download_client *client);
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_get(struct download_client *client, const char *host,
-			const struct download_client_cfg *config, const char *file, size_t from);
+int download_client_get(struct download_client *client,
+			const struct download_client_host_cfg *config,
+			const char *url, size_t from);
 
 #ifdef __cplusplus
 }

@@ -37,5 +37,7 @@ int main(void)
 	enable_xtal();
 	printk("Ready\n");
 
+	nrf_modem_at_printf("AT+CFUN=1");
+
 	return 0;
 }
