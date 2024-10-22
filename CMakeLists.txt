@@ -25,6 +25,7 @@ include(cmake/extensions.cmake)
 include(cmake/version.cmake)
 include(cmake/version_app.cmake)
 include(cmake/multi_image.cmake)
+include(cmake/sdp.cmake)
 
 zephyr_include_directories(include)
 
