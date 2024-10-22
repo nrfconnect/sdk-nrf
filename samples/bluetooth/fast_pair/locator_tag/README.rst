@@ -79,6 +79,18 @@ Recovery mode
 In the provisioned state, you can enter the recovery mode for a limited time.
 This mode allows the Android device to recover a lost provisioning key from the locator tag.
 
+Motion detector mode
+--------------------
+
+In the provisioned state, the accessory can activate the motion detector mode defined in the DULT specification.
+The mode is activated when the accessory is separated from the owner for a sufficient amount of time (see :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN` and :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX` Kconfig options).
+In this state, if motion is detected, the accessory starts the ringing action.
+Emitted sounds help to alert the non-owner that they are carrying an accessory that does not belong to them and might be used by the original owner to track their location.
+On DKs, you can generate the simulated motion by button action.
+On the Thingy:53, the built-in accelerometer is used to detect the motion.
+The motion detector is deactivated for the period set in the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD` Kconfig option after 10 sounds has been played or after the motion has been detected and 20 seconds have passed.
+The motion detector is also deactivated if the accessory reappears near its owner.
+
 FMDN unprovisioning
 ===================
 
@@ -220,11 +232,12 @@ The user interface of the sample depends on the hardware platform you are using.
          * Blinks at a 0.25 second interval if the DFU mode is enabled.
 
       LED 2:
-         Indicates that the ringing action is in progress.
-         Depending on the ringing state:
+         Depending on the motion detected event, the ringing state, and the motion detector state:
 
-         * Lit if the device is ringing.
-         * Off if the device is not ringing.
+         * Blinks fast twice if the motion detected event appears.
+         * Lit if the device is ringing and no motion detection event is being indicated.
+         * Blinks at a 0.25 second interval if the motion detector is active and none of the above conditions are met.
+         * Off if none of the above conditions are met.
 
       LED 3:
          Depending on the FMDN provisioning state and the Fast Pair advertising state:
@@ -248,7 +261,8 @@ The user interface of the sample depends on the hardware platform you are using.
          See the :ref:`fast_pair_locator_tag_fp_adv_policy` section for details.
 
       Button 2:
-         Stops the ongoing ringing action.
+         Stops the ongoing ringing action on a single press.
+         Generates simulated motion event on a double press.
 
       Button 3:
          Decrements the battery level by 10% (the default value in the :ref:`CONFIG_APP_BATTERY_LEVEL_DECREMENT <CONFIG_APP_BATTERY_LEVEL_DECREMENT>` Kconfig option), starting from the full battery level of 100%.
@@ -303,11 +317,12 @@ The user interface of the sample depends on the hardware platform you are using.
          * Blinks at a 0.25 second interval if the DFU mode is enabled.
 
       LED 1:
-         Indicates that the ringing action is in progress.
-         Depending on the ringing state:
+         Depending on the motion detected event, the ringing state, and the motion detector state:
 
-         * Lit if the device is ringing.
-         * Off if the device is not ringing.
+         * Blinks fast twice if the motion detected event appears.
+         * Lit if the device is ringing and no motion detection event is being indicated.
+         * Blinks at a 0.25 second interval if the motion detector is active and none of the above conditions are met.
+         * Off if none of the above conditions are met.
 
       LED 2:
          Depending on the FMDN provisioning state and the Fast Pair advertising state:
@@ -331,7 +346,8 @@ The user interface of the sample depends on the hardware platform you are using.
          See the :ref:`fast_pair_locator_tag_fp_adv_policy` section for details.
 
       Button 1:
-         Stops the ongoing ringing action.
+         Stops the ongoing ringing action on a single press.
+         Generates simulated motion event on a double press.
 
       Button 2:
          Decrements the battery level by 10% (the default value in the :ref:`CONFIG_APP_BATTERY_LEVEL_DECREMENT <CONFIG_APP_BATTERY_LEVEL_DECREMENT>` Kconfig option), starting from the full battery level of 100%.
@@ -390,6 +406,7 @@ The user interface of the sample depends on the hardware platform you are using.
          * Red - Indicates that the recovery mode is active.
          * White - Indicates that the Fast Pair advertising is active.
          * Purple - Indicates that the DFU mode is active.
+         * Cyan - Indicates that the motion detector is active.
 
       Speaker/Buzzer:
          Produces sound when the ringing action is in progress and to indicate a new button action.

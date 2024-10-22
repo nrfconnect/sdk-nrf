@@ -1118,6 +1118,7 @@
 .. _`DULT Manufacturer Network ID Registry`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-manufacturer-network-id-reg
 .. _`DULT Accessory Category Values table`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#_table-accessory-category-values
 .. _`DULT Sound maker`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-sound-maker
+.. _`DULT motion detector`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-motion-detector
 
 .. ### Source: *.amazon.com
 
