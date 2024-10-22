@@ -443,6 +443,12 @@ Bluetooth Fast Pair samples
   * The values for the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option in all configurations, and for the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL` Kconfig option in configurations with the Find My Device Network (FMDN) extension support.
     The values are now aligned with the Fast Pair requirements.
 
+* :ref:`fast_pair_input_device` sample:
+
+  * Updated sample configuration to use a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`).
+    This is done to work around the timeout in MPSL flash synchronization (``NCSDK-29354`` known issue).
+    See :ref:`known_issues` for details.
+
 * :ref:`fast_pair_locator_tag` sample:
 
   * Added:
