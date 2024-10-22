@@ -395,7 +395,7 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 		       brdcst_name_size);
 	}
 
-	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_SOME;
+	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_ALL;
 	ext_adv_buf[ext_adv_buf_cnt].data = ext_adv_data->uuid_buf->data;
 	ext_adv_buf_cnt++;
 
