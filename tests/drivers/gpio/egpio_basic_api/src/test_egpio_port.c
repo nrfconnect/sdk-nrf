@@ -15,12 +15,12 @@ static const struct device *const dev_in = DEVICE_DT_GET(DEV_IN);
 /* Delay after pull input config to allow signal to settle.  The value
  * selected is conservative (higher than may be necessary).
  */
-#define PULL_DELAY_US 1000U
+#define PULL_DELAY_MS K_MSEC(1U)
 
 /* Short-hand for a checked read of PIN_IN raw state */
 static bool raw_in(void)
 {
-	k_busy_wait(PULL_DELAY_US);
+	k_sleep(PULL_DELAY_MS);
 	gpio_port_value_t v;
 	int rc = gpio_port_get_raw(dev_in, &v);
 
@@ -41,7 +41,7 @@ static void raw_out(bool set)
 	}
 	zassert_equal(rc, 0,
 		      "raw_out failed");
-	k_busy_wait(PULL_DELAY_US);
+	k_sleep(PULL_DELAY_MS);
 }
 
 /* Short-hand for a checked write of PIN_OUT logic state */
@@ -56,7 +56,7 @@ static void logic_out(bool set)
 	}
 	zassert_equal(rc, 0,
 		      "raw_out failed");
-	k_busy_wait(PULL_DELAY_US);
+	k_sleep(PULL_DELAY_MS);
 }
 
 /* Verify device, configure for physical in and out, verify
@@ -85,7 +85,7 @@ static int setup(void)
 	zassert_equal(rc, 0,
 		      "pin config output low failed");
 
-	k_busy_wait(PULL_DELAY_US);
+	k_sleep(PULL_DELAY_MS);
 
 	rc = gpio_port_get_raw(dev_in, &v1);
 	zassert_equal(rc, 0,
@@ -114,7 +114,7 @@ static int setup(void)
 	zassert_equal(rc, 0,
 		      "pin config output high failed");
 
-	k_busy_wait(PULL_DELAY_US);
+	k_sleep(PULL_DELAY_MS);
 
 	rc = gpio_port_get_raw(dev_in, &v1);
 	zassert_equal(rc, 0,
