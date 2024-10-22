@@ -446,7 +446,15 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 
 	if (suitable_stream_found) {
 		/* Set the initial active stream based on the defined channel of the device */
-		channel_assignment_get((enum audio_channel *)&active_stream_index);
+		enum audio_channel audio_channel_temp;
+
+		channel_assignment_get(&audio_channel_temp);
+		if (audio_channel_temp > AUDIO_CH_NUM) {
+			LOG_ERR("Invalid channel assignment");
+			return;
+		}
+
+		active_stream_index = (uint8_t)audio_channel_temp;
 
 		/** If the stream matching channel is not present, revert back to first BIS, e.g.
 		 *  mono stream but channel assignment is RIGHT

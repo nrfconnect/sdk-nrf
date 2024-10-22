@@ -41,7 +41,7 @@ static char const *srch_name;
 static uint32_t srch_brdcast_id = BRDCAST_ID_NOT_USED;
 static struct bt_le_per_adv_sync *pa_sync;
 static const struct bt_bap_scan_delegator_recv_state *req_recv_state;
-static uint8_t bt_mgmt_broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE];
+static uint8_t bt_mgmt_broadcast_code[BT_ISO_BROADCAST_CODE_SIZE];
 
 struct broadcast_source {
 	char name[BLE_SEARCH_NAME_MAX_LEN];
@@ -363,13 +363,13 @@ static int pa_sync_term_req_cb(struct bt_conn *conn,
 
 static void broadcast_code_cb(struct bt_conn *conn,
 			      const struct bt_bap_scan_delegator_recv_state *recv_state,
-			      const uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE])
+			      const uint8_t broadcast_code[BT_ISO_BROADCAST_CODE_SIZE])
 {
 	int ret;
 	struct bt_mgmt_msg msg;
 
 	LOG_DBG("Broadcast code received for %p", (void *)recv_state);
-	memcpy(bt_mgmt_broadcast_code, broadcast_code, BT_AUDIO_BROADCAST_CODE_SIZE);
+	memcpy(bt_mgmt_broadcast_code, broadcast_code, BT_ISO_BROADCAST_CODE_SIZE);
 
 	msg.event = BT_MGMT_BROADCAST_CODE_RECEIVED;
 	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
