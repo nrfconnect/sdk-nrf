@@ -866,7 +866,8 @@ ZBUS_LISTENER_DEFINE(sdu_ref_msg_listen, audio_datapath_sdu_ref_update);
 int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 {
 	if (!IN_RANGE(delay_us, CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US)) {
-		LOG_WRN("Presentation delay not supported: %d", delay_us);
+		LOG_WRN("Presentation delay not supported: %d us", delay_us);
+		LOG_WRN("Keeping current value: %d us", ctrl_blk.pres_comp.pres_delay_us);
 		return -EINVAL;
 	}
 
