@@ -8,6 +8,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/poweroff.h>
+#include <zephyr/pm/device.h>
 #include <zephyr/sys/atomic.h>
 #include <zephyr/settings/settings.h>
 
@@ -56,6 +57,8 @@
 #define NOTIFICATION_PIPELINE_SIZE CONFIG_BT_CONN_TX_MAX
 
 #define NFC_BUFFER_SIZE 1024
+
+const struct device *const cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
 static struct bt_le_oob oob_local;
 static uint8_t tk_local[NFC_NDEF_LE_OOB_REC_TK_LEN];
@@ -625,6 +628,12 @@ static void system_off(void)
 
 	dk_set_led_off(RUN_STATUS_LED);
 
+	int rc = pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+
+	if (rc < 0) {
+		printk("Could not suspend console (%d)\n", rc);
+	}
+
 	sys_poweroff();
 }
 
@@ -655,6 +664,11 @@ int main(void)
 	uint32_t has_changed = 0;
 
 	printk("Starting Bluetooth Power Profiling example\n");
+
+	if (!device_is_ready(cons)) {
+		printk("%s: device not ready.\n", cons->name);
+		return 0;
+	}
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
