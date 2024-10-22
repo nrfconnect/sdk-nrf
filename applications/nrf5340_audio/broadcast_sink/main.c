@@ -253,7 +253,6 @@ static void le_audio_msg_sub_thread(void)
 
 			ret = audio_datapath_pres_delay_us_set(pres_delay_us);
 			if (ret) {
-				LOG_ERR("Failed to set presentation delay to %d", pres_delay_us);
 				break;
 			}
 
