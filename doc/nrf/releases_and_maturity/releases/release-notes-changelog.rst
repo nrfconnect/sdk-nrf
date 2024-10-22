@@ -114,7 +114,12 @@ Working with nRF54H Series
 Developing with nRF54L Series
 =============================
 
-* Added the :ref:`ug_nrf54l_cryptography` page, providing more information about the cryptographic peripherals of the nRF54L Series devices, the programming model for referencing keys, and the configuration.
+* Added:
+
+  * :ref:`nRF54l_snippets` to emulate these targets on an nRF54L15 DK.
+    These are used only for development purposes.
+  * The :ref:`ug_nrf54l_cryptography` page that provides more information about the cryptographic peripherals of the nRF54L Series devices, programming model for referencing keys, and configuration.
+
 * Updated the name and the structure of the section, with :ref:`ug_nrf54l` as the landing page.
 * Removed the Getting started with the nRF54L15 PDK page, and instead included the information about the `Quick Start`_ app support.
 
