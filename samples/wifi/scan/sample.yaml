@@ -41,8 +41,10 @@ tests:
   sample.thingy91x_nrf7000.scan:
     sysbuild: true
     build_only: true
+    integration_platforms:
+      - thingy91x/nrf9151/ns
     platform_allow: thingy91x/nrf9151/ns
-    extra_args: SHIELD=nrf7002ek_nrf7000
+    extra_args: SB_CONFIG_WIFI_NRF70=y SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags: ci_build sysbuild ci_samples_wifi
   sample.nrf7002eb_interposer_p1.nrf7002eb.scan:
     sysbuild: true
