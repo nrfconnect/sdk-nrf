@@ -9,7 +9,7 @@ if(${APP_VERSION_NUMBER})
   if(GIT_FOUND)
     execute_process(
       COMMAND ${GIT_EXECUTABLE} rev-parse --absolute-git-dir
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      WORKING_DIRECTORY ${APPLICATION_SOURCE_DIR}
       OUTPUT_VARIABLE app_git_dir
       OUTPUT_STRIP_TRAILING_WHITESPACE
       ERROR_STRIP_TRAILING_WHITESPACE
@@ -32,9 +32,9 @@ if(${APP_VERSION_NUMBER})
       COMMAND ${CMAKE_COMMAND} -DZEPHYR_BASE=${ZEPHYR_BASE} -DNRF_DIR=${NRF_DIR}
         -DOUT_FILE=${PROJECT_BINARY_DIR}/include/generated/app_commit.h
         -DCOMMIT_TYPE=APP
-        -DCOMMIT_PATH=${CMAKE_SOURCE_DIR}
+        -DCOMMIT_PATH=${APPLICATION_SOURCE_DIR}
         -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/gen_commit_h.cmake
-        DEPENDS ${CMAKE_SOURCE_DIR}/VERSION ${APP_GIT_INDEX}
+        DEPENDS ${APPLICATION_SOURCE_DIR}/VERSION ${APP_GIT_INDEX}
     )
     add_custom_target(app_commit_h DEPENDS ${PROJECT_BINARY_DIR}/include/generated/app_commit.h)
     add_dependencies(version_h app_commit_h)
