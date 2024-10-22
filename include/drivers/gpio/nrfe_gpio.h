@@ -33,8 +33,8 @@ typedef struct __packed {
 			 */
 } nrfe_gpio_data_packet_t;
 
-typedef struct __packed {
-	nrfe_shared_data_lock_t lock;
+typedef struct {
+	struct nrfe_shared_data_lock lock;
 	nrfe_gpio_data_packet_t data;
 } nrfe_gpio_mbox_data_t;
 
