@@ -820,6 +820,13 @@ Gazell libraries
 
 |no_changes_yet_note|
 
+Security libraries
+------------------
+
+* :ref:`nrf_security` library:
+
+  * Removed the Kconfig options ``CONFIG_PSA_WANT_ALG_CFB`` and ``CONFIG_PSA_WANT_ALG_OFB`` since the Cipher Feedback (CFB) mode and the Output Feedback (OFB) mode are not tested in the test framework.
+
 Modem libraries
 ---------------
 
