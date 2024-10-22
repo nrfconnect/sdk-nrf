@@ -40,6 +40,13 @@ config NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE
 	  Allow device to perform factory reset if the operational key for Fabric has not been migrated
 	  properly to PSA ITS storage.
 
+config NCS_SAMPLE_MATTER_LEDS
+	bool "Enable LEDs usage"
+	default y
+	depends on DK_LIBRARY
+	help
+	  Enables LEDs module to be used in the application.
+
 config NCS_SAMPLE_MATTER_SETTINGS_SHELL
 	bool "Settings shell for Matter purposes"
 	default y if CHIP_MEMORY_PROFILING

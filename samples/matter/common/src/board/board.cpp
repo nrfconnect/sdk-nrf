@@ -29,6 +29,7 @@ Board Board::sInstance;
 bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler)
 {
 #ifdef CONFIG_DK_LIBRARY
+#ifdef CONFIG_NCS_SAMPLE_MATTER_LEDS
 	/* Initialize LEDs */
 	LEDWidget::InitGpio();
 	LEDWidget::SetStateUpdateCallback(LEDStateUpdateHandler);
@@ -40,6 +41,7 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 	mLED3.Init(DK_LED3);
 	mLED4.Init(DK_LED4);
 #endif
+#endif /* CONFIG_NCS_SAMPLE_MATTER_LEDS */
 
 	/* Initialize buttons */
 	int ret = dk_buttons_init(ButtonEventHandler);
