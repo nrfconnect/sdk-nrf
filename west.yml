@@ -72,7 +72,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: c1dc2ca3cf756b007a87b6d30c5a240c0e013275
+      revision: 08f1c5bc9f202932467d1ba8c0398c8093d29fa4
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -149,7 +149,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 673c2dd895dde6d54d2776e63e66ee1417a096b3
+      revision: 1e25b050dc4cfc767ced5f75174460d67b19b688
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -246,7 +246,7 @@ manifest:
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: v2.8.0-rc1
+      revision: c2e394f319823125a78ea2b0281b27cc7b3acbcf
       path: modules/lib/suit-generator
     - name: suit-processor
       revision: v2.8.0-rc1
