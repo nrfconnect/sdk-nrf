@@ -24,6 +24,7 @@ For a list of available SUIT samples, see the :ref:`suit_samples` page.
 
    ug_nrf54h20_suit_intro.rst
    ug_nrf54h20_suit_manifest_overview.rst
+   ug_nrf54h20_suit_device_config.rst
    ug_nrf54h20_suit_customize_qsg.rst
    ug_nrf54h20_suit_customize_dfu.rst
    ug_nrf54h20_suit_fetch
