@@ -7,15 +7,17 @@
 menuconfig SUIT_MCI
 	bool "Enable SUIT Manifest Configuration Information module"
 	depends on SUIT_METADATA
+	depends on SUIT_EXECUTION_MODE
 
 if SUIT_MCI
 
 choice SUIT_MCI_IMPL
 	prompt "MCI implementation"
+	default SUIT_MCI_IMPL_NRF54H20_SDFW if SOC_SERIES_NRF54HX
+	default SUIT_MCI_IMPL_CUSTOM if !SOC_SERIES_NRF54HX
 
 config SUIT_MCI_IMPL_NRF54H20_SDFW
 	bool "nRF54H20: Secure domain"
-	depends on SOC_SERIES_NRF54HX
 	depends on SUIT_PLATFORM_VARIANT_SDFW
 
 config SUIT_MCI_IMPL_CUSTOM
