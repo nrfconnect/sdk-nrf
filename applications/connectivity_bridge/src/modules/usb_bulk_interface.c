@@ -12,6 +12,7 @@
 #include <zephyr/usb/msos_desc.h>
 #include <zephyr/net_buf.h>
 #include <usb_descriptor.h>
+#include <cmsis_dap.h>
 
 #define MODULE bulk_interface
 #include "module_state_event.h"
@@ -173,8 +174,11 @@ static int dap_usb_process(void)
 	static uint8_t tx_buf[USB_BULK_PACKET_SIZE];
 	struct net_buf *buf = k_fifo_get(&dap_rx_queue, K_FOREVER);
 	uint8_t ep = dapusb_config.endpoint[DAP_USB_EP_IN_IDX].ep_addr;
-
+#if defined(CONFIG_BRIDGE_CMSIS_DAP_NORDIC_COMMANDS)
 	len = dap_execute_vendor_cmd(buf->data, tx_buf);
+#else
+	len = dap_execute_cmd(buf->data, tx_buf);
+#endif /* defined(CONFIG_BRIDGE_CMSIS_DAP_NORDIC_COMMANDS) */
 	LOG_DBG("response length %u, starting with [0x%02X, 0x%02X]", len, tx_buf[0], tx_buf[1]);
 	net_buf_unref(buf);
 
