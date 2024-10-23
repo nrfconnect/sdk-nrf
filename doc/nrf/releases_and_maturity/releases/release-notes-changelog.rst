@@ -662,6 +662,10 @@ Networking samples
 
   * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board in combination with an nRF7002-based shield.
 
+* :ref:`https_client` sample:
+
+  * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board in combination with an nRF7002-based shield.
+
 NFC samples
 -----------
 
