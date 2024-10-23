@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-The MQTT sample communicates with an MQTT broker either over LTE using an nRF91 Series device, or over Wi-Fi®  using an nRF70 Series device.
+The MQTT sample communicates with an MQTT broker either over LTE using an nRF91 Series device, or over Wi-Fi®  using an nRF70 Series device or an nRF54L15 DK connected with nRF7002 EB as a shield.
 
 .. |wifi| replace:: Wi-Fi
 
@@ -109,6 +109,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
+* :file:`nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
 Files that are located under the :file:`/boards` folder is automatically merged with the :file:`prj.conf` file when you build for corresponding target.
@@ -117,6 +118,7 @@ In addition, the sample provides the following overlay configuration files, whic
 
 * :file:`overlay-tls-nrf91.conf` - TLS overlay configuration file for nRF91 Series devices.
 * :file:`overlay-tls-nrf70.conf` - TLS overlay configuration file for nRF70 Series devices.
+* :file:`overlay-tls-nrf54l15-nrf70.conf` - TLS overlay configuration file for nRF54L15 DK.
 * :file:`overlay-tls-native_sim.conf` - TLS overlay configuration file for the native simulator board.
 
 They are located in :file:`samples/net/mqtt` folder.
