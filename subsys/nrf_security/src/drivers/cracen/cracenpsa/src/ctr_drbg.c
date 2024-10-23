@@ -39,7 +39,7 @@
  */
 static cracen_prng_context_t prng;
 
-NRF_SECURITY_MUTEX_DEFINE(cracen_prng_context_mutex);
+extern mbedtls_threading_mutex_t cracen_mutex_prng_context;
 
 /*
  * @brief Internal function to enable TRNG and get entropy for initial seed and
@@ -129,7 +129,8 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context)
 		return PSA_SUCCESS;
 	}
 
-	nrf_security_mutex_lock(&cracen_prng_context_mutex);
+	__ASSERT(mbedtls_mutex_lock(&cracen_mutex_prng_context) == 0,
+		"cracen_mutex_prng_context not initialized (lock)");
 	safe_memset(&prng, sizeof(prng), 0, sizeof(prng));
 
 	/* Get the entropy used to seed the DRBG */
@@ -153,7 +154,8 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context)
 	prng.initialized = CRACEN_PRNG_INITIALIZED;
 
 exit:
-	nrf_security_mutex_unlock(&cracen_prng_context_mutex);
+	__ASSERT(mbedtls_mutex_unlock(&cracen_mutex_prng_context) == 0,
+		"cracen_mutex_prng_context not initialized (unlock)");
 
 	return silex_statuscodes_to_psa(sx_err);
 }
@@ -173,7 +175,8 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	nrf_security_mutex_lock(&cracen_prng_context_mutex);
+	__ASSERT(mbedtls_mutex_lock(&cracen_mutex_prng_context) == 0,
+		"cracen_mutex_prng_context not initialized (lock)");
 
 	if (prng.reseed_counter == 0) {
 		status = cracen_init_random(context);
@@ -238,7 +241,8 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	prng.reseed_counter += 1;
 
 exit:
-	nrf_security_mutex_unlock(&cracen_prng_context_mutex);
+	__ASSERT(mbedtls_mutex_unlock(&cracen_mutex_prng_context) == 0,
+		"cracen_mutex_prng_context not initialized (unlock)");
 	return status;
 }
 

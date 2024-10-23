@@ -24,13 +24,16 @@ static uint32_t prng_pool[PRNG_POOL_SIZE];
 static uint32_t prng_pool_remaining;
 
 
-NRF_SECURITY_MUTEX_DEFINE(cracen_prng_pool_mutex);
+extern mbedtls_threading_mutex_t cracen_mutex_prng_pool;
+
+
 
 int cracen_prng_value_from_pool(uint32_t *prng_value)
 {
 	int status = SX_OK;
 
-	nrf_security_mutex_lock(&cracen_prng_pool_mutex);
+	__ASSERT(mbedtls_mutex_lock(&cracen_mutex_prng_pool) == 0,
+		"cracen_mutex_prng_pool not initialized (lock)");
 
 	if (prng_pool_remaining == 0) {
 		psa_status_t psa_status =
@@ -47,6 +50,7 @@ int cracen_prng_value_from_pool(uint32_t *prng_value)
 	prng_pool_remaining--;
 
 exit:
-	nrf_security_mutex_unlock(&cracen_prng_pool_mutex);
+	__ASSERT(mbedtls_mutex_unlock(&cracen_mutex_prng_pool) == 0,
+		"cracen_mutex_prng_pool not initialized (unlock)");
 	return status;
 }

@@ -24,13 +24,13 @@
  */
 #define CMDMA_INTMASK_EN ((1 << 2) | (1 << 5) | (1 << 4))
 
-NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_symmetric);
+extern mbedtls_threading_mutex_t cracen_mutex_symmetric;
 
 void sx_hw_reserve(struct sx_dmactl *dma)
 {
 	cracen_acquire();
-	nrf_security_mutex_lock(&cracen_mutex_symmetric);
-
+	__ASSERT(mbedtls_mutex_lock(&cracen_mutex_symmetric) == 0,
+		"cracen_mutex_symmetric not initialized (lock)");
 	if (dma) {
 		dma->hw_acquired = true;
 	}
@@ -48,7 +48,8 @@ void sx_cmdma_release_hw(struct sx_dmactl *dma)
 {
 	if (dma == NULL || dma->hw_acquired) {
 		cracen_release();
-		nrf_security_mutex_unlock(&cracen_mutex_symmetric);
+		__ASSERT(mbedtls_mutex_unlock(&cracen_mutex_symmetric) == 0,
+			"cracen_mutex_symmetric not initialized (unlock)");
 		if (dma) {
 			dma->hw_acquired = false;
 		}

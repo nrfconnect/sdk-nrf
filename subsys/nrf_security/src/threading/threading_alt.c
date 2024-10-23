@@ -24,6 +24,14 @@ NRF_SECURITY_MUTEX_DEFINE(mbedtls_threading_key_slot_mutex);
 NRF_SECURITY_MUTEX_DEFINE(mbedtls_threading_psa_globaldata_mutex);
 NRF_SECURITY_MUTEX_DEFINE(mbedtls_threading_psa_rngdata_mutex);
 
+#if defined(CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
+NRF_SECURITY_MUTEX_DEFINE(cracen_mutex);
+NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_prng_context);
+NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_prng_pool);
+NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_asymmetric);
+NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_symmetric);
+#endif
+
 static void mbedtls_mutex_init_fn(mbedtls_threading_mutex_t * mutex)
 {
     if(!k_is_pre_kernel() && !k_is_in_isr()) {
@@ -66,6 +74,13 @@ static int post_kernel_init(void)
     mbedtls_mutex_init(&mbedtls_threading_key_slot_mutex);
     mbedtls_mutex_init(&mbedtls_threading_psa_globaldata_mutex);
     mbedtls_mutex_init(&mbedtls_threading_psa_rngdata_mutex);
+#if defined(CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
+    mbedtls_mutex_init(&cracen_mutex);
+    mbedtls_mutex_init(&cracen_mutex_prng_context);
+    mbedtls_mutex_init(&cracen_mutex_prng_pool);
+    mbedtls_mutex_init(&cracen_mutex_asymmetric);
+    mbedtls_mutex_init(&cracen_mutex_symmetric);
+#endif
     return 0;
 }
 

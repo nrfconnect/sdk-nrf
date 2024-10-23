@@ -1341,7 +1341,8 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 		 * use case. Here the decision was to avoid defining another mutex to handle the
 		 * push buffer for the rest of the use cases.
 		 */
-		nrf_security_mutex_lock(&cracen_mutex_symmetric);
+		__ASSERT(mbedtls_mutex_lock(&cracen_mutex_symmetric) == 0,
+			"cracen_mutex_symmetric not initialized (lock)");
 		status = cracen_kmu_prepare_key(key_buffer);
 		if (status == SX_OK) {
 			memcpy(data, kmu_push_area, key_out_size);
@@ -1349,7 +1350,8 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 		}
 
 		(void)cracen_kmu_clean_key(key_buffer);
-		nrf_security_mutex_unlock(&cracen_mutex_symmetric);
+		__ASSERT(mbedtls_mutex_unlock(&cracen_mutex_symmetric) == 0,
+			"cracen_mutex_symmetric not initialized (unlock)");
 
 		return silex_statuscodes_to_psa(status);
 	}
@@ -1385,7 +1387,8 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 	psa_status_t psa_status;
 	size_t key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 
-	nrf_security_mutex_lock(&cracen_mutex_symmetric);
+	__ASSERT(mbedtls_mutex_lock(&cracen_mutex_symmetric) == 0,
+		"cracen_mutex_symmetric not initialized (lock)");
 	status = cracen_kmu_prepare_key(source_key);
 
 	if (status == SX_OK) {
@@ -1397,7 +1400,8 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 	}
 
 	(void)cracen_kmu_clean_key(source_key);
-	nrf_security_mutex_unlock(&cracen_mutex_symmetric);
+	__ASSERT(mbedtls_mutex_unlock(&cracen_mutex_symmetric) == 0,
+		"cracen_mutex_symmetric not initialized (unlock)");
 
 	if (status != SX_OK) {
 		return silex_statuscodes_to_psa(status);
