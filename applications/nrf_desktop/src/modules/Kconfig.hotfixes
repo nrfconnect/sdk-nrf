@@ -17,11 +17,16 @@ config DESKTOP_HFCLK_LOCK_ENABLE
 
 config DESKTOP_CONSTLAT_ENABLE
 	bool "Constant latency interrupts"
+	depends on !SOC_SERIES_NRF54LX
 	select NRFX_POWER
 	help
-	  When enabled SoC will use configuration for constant latency
+	  When enabled, the SoC uses configuration for constant latency
 	  interrupts. This reduces interrupt propagation time but increases
 	  power consumption.
+
+	  Currently, the nRF54L Series SoCs do not support the nrfx POWER driver
+	  (CONFIG_NRFX_POWER). Because of that, the hotfix cannot be used by
+	  these SoCs.
 
 config DESKTOP_CONSTLAT_DISABLE_ON_STANDBY
 	bool "Disable constant latency interrupts on standby"
