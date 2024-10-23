@@ -61,11 +61,7 @@ config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	  Promptless option used to control if the PSA Crypto core should have support for builtin keys or not.
 
 config MBEDTLS_CFG_FILE
-	string "mbed TLS configuration file"
 	default "nrf-config.h"
-	help
-	  Name of the config file for mbed TLS. This configuration file is used
-	  in configurations with or without PSA APIs supported.
 
 config MBEDTLS_PSA_CRYPTO_CONFIG
 	bool
