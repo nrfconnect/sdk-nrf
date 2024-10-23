@@ -128,6 +128,8 @@ This CPU is intended to implement software-defined peripherals.
 .. note::
    FLPR firmware support is not available during the customer sampling.
 
+.. _ug_nrf54h20_secure_domain:
+
 Secure Domain
 *************
 
@@ -139,6 +141,8 @@ The Secure Domain provides the initial root of trust (RoT), handles all the glob
 Since the nRF54H platform supports global resource sharing, where memory partitions and peripherals in the global domain can be assigned to different local domains, the Secure Domain Firmware controls this partitioning while also acting as the boot master for the entire system.
 
 The Secure Domain Firmware (SDFW) exposes security-related services to the Cores in the system located in local domains (like Application and Radio).
+
+.. _ug_nrf54h20_sys_ctrl:
 
 System Controller
 *****************
