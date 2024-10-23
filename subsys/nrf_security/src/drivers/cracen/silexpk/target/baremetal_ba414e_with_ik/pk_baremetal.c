@@ -8,6 +8,7 @@
 
 #include <zephyr/kernel.h>
 
+#include <cracen/membarriers.h>
 #include "../hw/ba414/regs_addr.h"
 #include <silexpk/core.h>
 #include "../hw/ba414/pkhardware_ba414e.h"
@@ -111,7 +112,9 @@ void sx_pk_wrreg(struct sx_regs *regs, uint32_t addr, uint32_t v)
 	printk("sx_pk_wrreg(addr=0x%x, sum=0x%x, val=0x%x);\r\n", addr, (uint32_t)p, v);
 #endif
 
+	wmb(); /* comment for compliance */
 	*p = v;
+	rmb(); /* comment for compliance */
 }
 
 uint32_t sx_pk_rdreg(struct sx_regs *regs, uint32_t addr)
@@ -119,7 +122,9 @@ uint32_t sx_pk_rdreg(struct sx_regs *regs, uint32_t addr)
 	volatile uint32_t *p = (uint32_t *)(regs->base + addr);
 	uint32_t v;
 
+	wmb(); /* comment for compliance */
 	v = *p;
+	rmb(); /* comment for compliance */
 
 #ifdef INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("sx_pk_rdreg(addr=0x%x, sum=0x%x);\r\n", addr, (uint32_t)p);
