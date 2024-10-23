@@ -115,6 +115,19 @@ To enable full modem FOTA, add the following parameter to your build command:
 Also, if you are using an nRF9160 DK, specify your development kit version by appending it to the board name.
 For example, if you are using version 1.0.1, use the board name ``nrf9160dk@1.0.1/nrf9160/ns`` in your build command.
 
+To enable SMP FOTA (nRF9160 DK only), add the following parameters to your build command:
+
+* ``-DEXTRA_CONF_FILE=overlay_smp_fota.conf``
+* ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_mcumgr_client_uart2.overlay``
+
+The nRF52840 device on your DK must be running an SMP compatible firmware, such as the :ref:`smp_svr` sample.
+Build the :ref:`smp_svr` sample for the ``nrf9160dk/nrf52840`` board with the following parameters:
+
+* ``-DEXTRA_CONF_FILE=overlay_smp_fota.conf``
+* ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_mcumgr_client_uart2.overlay``
+
+To change :ref:`smp_svr` sample's application version, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
+
 Dependencies
 ************
 
