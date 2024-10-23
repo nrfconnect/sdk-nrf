@@ -38,7 +38,10 @@ IDE, OS, and tool support
 Board support
 =============
 
-|no_changes_yet_note|
+* Updated various tests and samples to use Zephyr's :ref:`native_sim<zephyr:native_sim>` instead of Zephyr's :ref:`native_posix<zephyr:native_posix>` for :ref:`running_unit_tests`.
+  This mirrors the deprecation of ``native_posix`` in Zephyr.
+  Support for ``native_posix`` will be removed in Zephyr with the v4.2 release.
+  In the |NCS|, it will be removed once Zephyr v4.2 is upmerged to sdk-nrf.
 
 Build and configuration system
 ==============================
