@@ -6,7 +6,7 @@
 
 menuconfig DESKTOP_DVFS
 	bool "DVFS module"
-	depends on SOC_NRF54H20_CPUAPP
+	depends on SOC_NRF54H20_CPUAPP || SOC_NRF54H20_ENGB_CPUAPP
 	default y
 	help
 	  This option enable DVFS module which switches frequency and voltage according
