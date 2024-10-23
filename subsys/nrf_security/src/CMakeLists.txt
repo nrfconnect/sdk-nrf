@@ -119,15 +119,11 @@ append_with_prefix(src_crypto_base ${ARM_MBEDTLS_PATH}/library
   constant_time.c
 )
 
-# Legacy APIs were missing files added by Oberon PSA core (not built in
-# certain instances. This adds the same platform support as the Oberon PSA core)
-if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_C)
-  append_with_prefix(src_crypto_base  ${OBERON_PSA_CORE_PATH}/library/
-    platform.c
-    platform_util.c
-  )
-endif()
-
+# Add platform files both with and without PSA core enabled
+append_with_prefix(src_crypto_base ${OBERON_PSA_CORE_PATH}/library/
+  platform.c
+  platform_util.c
+)
 
 # Add threading support for PSA core (if enabled)
 include(${CMAKE_CURRENT_LIST_DIR}/threading/threading.cmake)
@@ -195,7 +191,7 @@ target_compile_options(${mbedcrypto_target}
 )
 
 # Add PSA core
-if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
+if(CONFIG_MBEDTLS_PSA_CRYPTO_C AND NOT CONFIG_PSA_CORE_DISABLED)
   add_subdirectory(core)
 endif()
 

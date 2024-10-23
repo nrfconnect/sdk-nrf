@@ -5,11 +5,6 @@
 #
 
 append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_CORE_PATH}/library/
-  platform.c
-  platform_util.c
-)
-
-append_with_prefix(src_crypto_core_oberon ${OBERON_PSA_CORE_PATH}/library/
   psa_crypto.c
   psa_crypto_client.c
   psa_crypto_slot_management.c
@@ -53,4 +48,3 @@ target_link_libraries(${mbedcrypto_target}
   PRIVATE
     oberon_psa_core
 )
-
