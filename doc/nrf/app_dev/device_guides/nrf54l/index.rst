@@ -20,13 +20,27 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - Product pages
    * - :ref:`zephyr:nrf54l15dk_nrf54l15`
      - PCA10156
-     - ``nrf54l15dk/nrf54l51/cpuapp``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
      - :ref:`Getting started <gsg_other>`
      - `nRF54L15 System-on-Chip`_
 
+Ensure to check the revision of your nRF54L15 device to see if it is supported:
+
+.. list-table::
+   :header-rows: 1
+
+   * - DK revision
+     - Status
+   * - nRF54L15 DK v0.9.1
+     - Supported
+   * - nRF54L15 PDK v0.8.1
+     - Supported
+   * - nRF54L15 PDK v0.7.0 or earlier
+     - Deprecated after |NCS| v2.7.0
+
 .. note::
 
-  When building your project with the nRF54L15 DK v0.8.1 (Engineering B silicon), that is marked as PDK, and the nRF54L15 DK v0.9.1 (Engineering B silicon), you must use the ``nrf54l15dk/nrf54l51/cpuapp`` board target.
+  The nRF54L15 DK v0.9.1 and the nRF54L15 PDK v0.8.1 are functionally equal and use the same board target (``nrf54l15dk/nrf54l15/cpuapp``).
 
 .. toctree::
    :maxdepth: 2
