@@ -492,8 +492,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(${DEFAULT_IMAGE} CONFIG_NRF_WIFI_PATCHES_BUILTIN n)
     endif()
 
-    foreach(config NRF700X_SYSTEM_MODE NRF700X_SCAN_ONLY NRF700X_RADIO_TEST
-            NRF700X_SYSTEM_WITH_RAW_MODES)
+    foreach(config NRF70_SYSTEM_MODE NRF70_SCAN_ONLY NRF70_RADIO_TEST
+            NRF70_SYSTEM_WITH_RAW_MODES)
       if(${SB_CONFIG_WIFI_${config}})
         set_config_bool(${DEFAULT_IMAGE} CONFIG_${config} ${SB_CONFIG_WIFI_${config}})
       endif()
