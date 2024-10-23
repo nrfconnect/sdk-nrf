@@ -56,24 +56,22 @@ void SimulatedTemperatureSensorDataProvider::TimerTimeoutCallback(k_timer *timer
 		return;
 	}
 
-	SimulatedTemperatureSensorDataProvider *provider =
-		reinterpret_cast<SimulatedTemperatureSensorDataProvider *>(timer->user_data);
+	DeviceLayer::PlatformMgr().ScheduleWork(
+		[](intptr_t p) {
+			SimulatedTemperatureSensorDataProvider *provider =
+				reinterpret_cast<SimulatedTemperatureSensorDataProvider *>(p);
 
-	/* Get some random data to emulate sensor measurements. */
-	provider->mTemperature =
-		chip::Crypto::GetRandU16() % (kMaxRandomTemperature - kMinRandomTemperature) + kMinRandomTemperature;
+			/* Get some random data to emulate sensor measurements. */
+			provider->mTemperature =
+				chip::Crypto::GetRandU16() % (kMaxRandomTemperature - kMinRandomTemperature) +
+				kMinRandomTemperature;
 
-	LOG_INF("SimulatedTemperatureSensorDataProvider: Updated temperature value to %d", provider->mTemperature);
+			LOG_INF("SimulatedTemperatureSensorDataProvider: Updated temperature value to %d",
+				provider->mTemperature);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
-}
-
-void SimulatedTemperatureSensorDataProvider::NotifyAttributeChange(intptr_t context)
-{
-	SimulatedTemperatureSensorDataProvider *provider =
-		reinterpret_cast<SimulatedTemperatureSensorDataProvider *>(context);
-
-	provider->NotifyUpdateState(Clusters::TemperatureMeasurement::Id,
-				    Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id,
-				    &provider->mTemperature, sizeof(provider->mTemperature));
+			provider->NotifyUpdateState(Clusters::TemperatureMeasurement::Id,
+						    Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id,
+						    &provider->mTemperature, sizeof(provider->mTemperature));
+		},
+		reinterpret_cast<intptr_t>(timer->user_data));
 }
