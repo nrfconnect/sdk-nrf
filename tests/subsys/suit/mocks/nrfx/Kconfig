@@ -4,5 +4,5 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-rsource "nrfx/Kconfig"
-rsource "sdfw/Kconfig"
+config MOCK_NRFX
+	bool "Include nrfx headers mocks"

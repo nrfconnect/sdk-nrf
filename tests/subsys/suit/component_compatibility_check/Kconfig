@@ -4,5 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-rsource "nrfx/Kconfig"
-rsource "sdfw/Kconfig"
+# Include and define MOCK_* Kconfigs
+rsource "../mocks/Kconfig"
+
+source "Kconfig.zephyr"
