@@ -35,10 +35,6 @@ ipc0: &cpuapp_cpurad_ipc {
 	status = "okay";
 };
 
-&cpuapp_cpurad_ram0x_region {
-	status = "okay";
-};
-
 &cpurad_bellboard {
 	status = "okay";
 };
