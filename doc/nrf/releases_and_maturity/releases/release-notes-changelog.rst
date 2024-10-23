@@ -49,6 +49,9 @@ Board support
 * Added support for the Thingy:91 X board.
 * Updated Thingy:91 X board to use the ``nordic,pm-ext-flash`` node instead of external flash device name in static partitions.
 * Removed invalid external flash from static partitions for Thingy:91 X.
+* Following Zephyr RTOS ``native_posix`` has been deprecated in favour of ``native_sim``.
+  * Moved from ``native_posix`` to ``native_sim`` support in various tests and samples.
+  * ``native_posix`` will be removed with Zephyr 4.2 release.
 
 Build and configuration system
 ==============================
