@@ -1,3 +1,16 @@
+# This SUIT manifest template can be for various scenarios,
+# depending on which components are defined in the input context and which payloads
+# are included/detached from the envelope.
+# This manifest will only be installed if the SoC Binaries (nordic_top envelope) installed
+# in the device have a semantic version of at least 0.8.0.
+# If a partial update (only radio or only application) needs to be performed,
+# several rules are enforced:
+# - If the candidate only contains the radio core image, it is ensured that
+#   the major version of the candidate radio manifest is at most greater by 1
+#   than the installed application manifest major version.
+# - If the candidate only contains the application core image, it is ensured that
+#   the semantic version of the candidate application manifest exactly
+#   matches the installed radio manifest semantic version.
 {%- set component_index = 0 %}
 {%- set component_list = [] %}
 {%- set mpi_root_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_ROOT_VENDOR_NAME']|default('nordicsemi.com') %}
@@ -6,6 +19,11 @@
 {%- set mpi_application_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
 {%- set mpi_radio_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
 {%- set mpi_radio_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
+{%- if RAD_LOCAL_1_VERSION is defined %}
+{% set RAD_LOCAL_1_VERSION_MAJOR = ( RAD_LOCAL_1_VERSION.split('.')[0] | int ) %}
+{%- else %}
+{% set RAD_LOCAL_1_VERSION_MAJOR = 0 %}
+{%- endif %}
 {%- if 'SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] != '' %}
   {%- set nordic_top = True %}
 {%- else %}
@@ -66,7 +84,6 @@ SUIT_Envelope_Tagged:
 {%- endif %}
 
 {%- set component_list_without_top = component_list[:] %}
-{%- if nordic_top %}
     {%- set component_index = component_index + 1 %}
     {%- set top_component_index = component_index %}
     {{- component_list.append( top_component_index ) or ""}}
@@ -74,7 +91,6 @@ SUIT_Envelope_Tagged:
         - RFC4122_UUID:
             namespace: nordicsemi.com
             name: nRF54H20_nordic_top
-{%- endif %}
 
       suit-shared-sequence:
       - suit-directive-set-component-index: [{{ component_list|join(',') }}]
@@ -135,37 +151,84 @@ SUIT_Envelope_Tagged:
 
     suit-install:
     - suit-directive-set-component-index: 0
+  # As the candidate-verification sequence has already verified that the envelope includes
+  # either a full set of images or a single image which is compatible with the installed images,
+  # We can blindly proceed with installing the images which are attached to this envelope.
 {%- if radio is defined %}
-    - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ radio['name'] }}'
-    - suit-directive-fetch:
-      - suit-send-record-failure
-    - suit-condition-dependency-integrity:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
-    - suit-directive-process-dependency:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
+    - suit-directive-run-sequence:
+      - suit-directive-set-component-index: 0
+      - suit-directive-override-parameters:
+          suit-parameter-uri: '#{{ radio['name'] }}'
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+          suit-parameter-soft-failure: True
+      # The soft-failure parameter is set to True, so that if only one of the radio or application
+      # payloads is present in the current envelope, the installation process won't fail.
+      # Only processing of the current sequence in suit-directive-run-sequence will be interrupted.
+      # This serves as a "if radio payload is present" condition.
+      - suit-directive-fetch:
+        - suit-send-record-failure
+      - suit-condition-image-match:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      # At this stage it is already known that the radio payload is available in the envelope.
+      # A failure in the commands below means that the attached payload is invalid, which
+      # should result in a failure of the whole update process.
+      # Thus, the soft-failure parameter should be set to false.
+      - suit-directive-override-parameters:
+          suit-parameter-soft-failure: False
+      - suit-condition-dependency-integrity:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-directive-process-dependency:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
 {%- endif %}
 {%- if application is defined %}
-    - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ application['name'] }}'
-    - suit-directive-fetch:
-      - suit-send-record-failure
-    - suit-condition-dependency-integrity:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
-    - suit-directive-process-dependency:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
+    - suit-directive-run-sequence:
+      - suit-directive-set-component-index: 0
+      - suit-directive-override-parameters:
+          suit-parameter-uri: '#{{ application['name'] }}'
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              envelope: {{ artifacts_folder ~ application['name'] }}.suit
+          suit-parameter-soft-failure: True
+      # The soft-failure parameter is set to True, so that if only one of the radio or application
+      # payloads is present in the current envelope, the installation process won't fail.
+      # Only processing of the current sequence in suit-directive-run-sequence will be interrupted.
+      # This serves as a "if application payload is present" condition.
+      - suit-directive-fetch:
+        - suit-send-record-failure
+      - suit-condition-image-match:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      # At this stage it is already known that the application payload is available in the envelope.
+      # A failure in the commands below means that the attached payload is invalid, which
+      # should result in a failure of the whole update process.
+      # Thus, the soft-failure parameter should be set to false.
+      - suit-directive-override-parameters:
+          suit-parameter-soft-failure: False
+      - suit-condition-dependency-integrity:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-directive-process-dependency:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
 {%- endif %}
 {%- if nordic_top %}
     - suit-directive-override-parameters:
@@ -185,77 +248,204 @@ SUIT_Envelope_Tagged:
 {%- endif %}
 
     suit-candidate-verification:
-    - suit-directive-set-component-index: 0
-{%- if radio is defined %}
+    - suit-directive-set-component-index: {{ top_component_index }}
+    # The version check below should be modified if a different installed SoC Binaries version
+    # is required for the update.
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ radio['name'] }}'
-        suit-parameter-image-digest:
-          suit-digest-algorithm-id: cose-alg-sha-256
-          suit-digest-bytes:
-            envelope: {{ artifacts_folder ~ radio['name'] }}.suit
-    - suit-directive-fetch:
+        suit-parameter-version:
+          suit-condition-version-comparison-greater-equal: 0.8.0
+    - suit-condition-version:
+      - suit-send-record-success
       - suit-send-record-failure
-    # In the case of streaming operations it is worth to retry them at least once.
-    # This increases the robustness against bit flips on the transport,
-    # for example when storing the data on an external memory device.
-    # The suit-directive-try-each will complete on the first successful subsequence.
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+
     - suit-directive-try-each:
-      - - suit-condition-image-match:
+{%- if radio is not defined or application is not defined %}
+# suit-directive-try-each needs at least two sequences.
+# If the application is single core, add this dummy sequence,
+# to provide the needed second sequence.
+      - - suit-condition-abort:
+          - suit-send-record-failure
+{%- endif %}
+{%- if radio is defined and application is defined %}
+      - - suit-directive-set-component-index: 0
+        - suit-directive-override-parameters:
+            suit-parameter-uri: '#{{ radio['name'] }}'
+            suit-parameter-image-digest:
+              suit-digest-algorithm-id: cose-alg-sha-256
+              suit-digest-bytes:
+                envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+        - suit-directive-fetch:
+          - suit-send-record-failure
+        - suit-condition-image-match:
           - suit-send-record-success
           - suit-send-record-failure
           - suit-send-sysinfo-success
           - suit-send-sysinfo-failure
-      - - suit-condition-image-match:
+
+        - suit-directive-set-component-index: 0
+        - suit-directive-override-parameters:
+            suit-parameter-uri: '#{{ application['name'] }}'
+            suit-parameter-image-digest:
+              suit-digest-algorithm-id: cose-alg-sha-256
+              suit-digest-bytes:
+                envelope: {{ artifacts_folder ~ application['name'] }}.suit
+        - suit-directive-fetch:
+          - suit-send-record-failure
+        - suit-condition-image-match:
           - suit-send-record-success
           - suit-send-record-failure
           - suit-send-sysinfo-success
           - suit-send-sysinfo-failure
-    - suit-condition-dependency-integrity:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
-    - suit-directive-process-dependency:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
+{%- endif %}
+{%- if radio is defined %}
+      - - suit-directive-set-component-index: 0
+        - suit-directive-override-parameters:
+            suit-parameter-uri: '#{{ radio['name'] }}'
+            suit-parameter-image-digest:
+              suit-digest-algorithm-id: cose-alg-sha-256
+              suit-digest-bytes:
+                envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+        - suit-directive-fetch:
+          - suit-send-record-failure
+        - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+        # Radio payload is available and correct. Proceed with radio verification.
+
+{%- if RAD_LOCAL_1_VERSION_MAJOR > 0 and application is defined %}
+        - suit-directive-set-component-index: {{ app_component_index }}
+        - suit-directive-override-parameters:
+            suit-parameter-version:
+              # Verify that the major version of the new radio manifest is greater from the
+              # currently installed application manifest major version by at most 1.
+              suit-condition-version-comparison-greater-equal: {{ RAD_LOCAL_1_VERSION_MAJOR - 1 }}.0.0
+            suit-parameter-soft-failure: False
+        - suit-condition-version:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+{%- endif %}
+
 {%- endif %}
 {%- if application is defined %}
-    - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ application['name'] }}'
-        suit-parameter-image-digest:
-          suit-digest-algorithm-id: cose-alg-sha-256
-          suit-digest-bytes:
-            envelope: {{ artifacts_folder ~ application['name'] }}.suit
-    - suit-directive-fetch:
-      - suit-send-record-failure
-    # In the case of streaming operations it is worth to retry them at least once.
-    # This increases the robustness against bit flips on the transport,
-    # for example when storing the data on an external memory device.
-    # The suit-directive-try-each will complete on the first successful subsequence.
-    - suit-directive-try-each:
-      - - suit-condition-image-match:
+      # Radio payload is unavailable.
+      # Verify that the application payload is available and compatible with the currently installed
+      # radio image. In the case of this manifest this means the semantic version number of the
+      # candidate application manifest is identical to that of the installed radio manifest.
+      - - suit-directive-set-component-index: 0
+        - suit-directive-override-parameters:
+            suit-parameter-uri: '#{{ application['name'] }}'
+            suit-parameter-image-digest:
+              suit-digest-algorithm-id: cose-alg-sha-256
+              suit-digest-bytes:
+                envelope: {{ artifacts_folder ~ application['name'] }}.suit
+        - suit-directive-fetch:
+          - suit-send-record-failure
+        - suit-condition-image-match:
           - suit-send-record-success
           - suit-send-record-failure
           - suit-send-sysinfo-success
           - suit-send-sysinfo-failure
-      - - suit-condition-image-match:
+    {%- if radio is defined %}
+        # Ensure that the application manifest version matches exactly the installed radio manifest version.
+        - suit-directive-set-component-index: {{ rad_component_index }}
+        - suit-directive-override-parameters:
+            suit-parameter-version:
+              suit-condition-version-comparison-equal: {{ APP_LOCAL_1_VERSION }}
+            suit-parameter-soft-failure: False
+        - suit-condition-version:
           - suit-send-record-success
           - suit-send-record-failure
           - suit-send-sysinfo-success
           - suit-send-sysinfo-failure
-    - suit-condition-dependency-integrity:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
-    - suit-directive-process-dependency:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
+    {%- endif %}
 {%- endif %}
+
+  # At this stage the suit-processor has already verified that the envelope includes
+  # either a full set of images or a single image which is compatible with the installed images,
+  # we can proceed with simply validating the payloads which are attached to this envelope.
+{%- if radio is defined %}
+    - suit-directive-run-sequence:
+      - suit-directive-set-component-index: 0
+      - suit-directive-override-parameters:
+          suit-parameter-uri: '#{{ radio['name'] }}'
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+          suit-parameter-soft-failure: True
+      # The soft-failure parameter is set to True, so that if only one of the radio or application
+      # payloads is present in the current envelope, the installation process won't fail.
+      # Only processing of the current sequence in suit-directive-run-sequence will be interrupted.
+      # This serves as a "if radio payload is present" condition.
+      - suit-directive-fetch:
+        - suit-send-record-failure
+      - suit-condition-image-match:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      # At this stage it is already known that the radio payload is available in the envelope.
+      # A failure in the commands below means that the attached payload is invalid, which
+      # should result in a failure of the whole update process.
+      # Thus, the soft-failure parameter should be set to false.
+      - suit-directive-override-parameters:
+          suit-parameter-soft-failure: False
+      - suit-condition-dependency-integrity:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-directive-process-dependency:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+{%- endif %}
+{%- if application is defined %}
+    - suit-directive-run-sequence:
+      - suit-directive-set-component-index: 0
+      - suit-directive-override-parameters:
+          suit-parameter-uri: '#{{ application['name'] }}'
+          suit-parameter-image-digest:
+            suit-digest-algorithm-id: cose-alg-sha-256
+            suit-digest-bytes:
+              envelope: {{ artifacts_folder ~ application['name'] }}.suit
+          suit-parameter-soft-failure: True
+      # The soft-failure parameter is set to True, so that if only one of the radio or application
+      # payloads is present in the current envelope, the installation process won't fail.
+      # Only processing of the current sequence in suit-directive-run-sequence will be interrupted.
+      # This serves as a "if application payload is present" condition.
+      - suit-directive-fetch:
+        - suit-send-record-failure
+      - suit-condition-image-match:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      # At this stage it is already known that the application payload is available in the envelope.
+      # A failure in the commands below means that the attached payload is invalid, which
+      # should result in a failure of the whole update process.
+      # Thus, the soft-failure parameter should be set to false.
+      - suit-directive-override-parameters:
+          suit-parameter-soft-failure: False
+      - suit-condition-dependency-integrity:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-directive-process-dependency:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+{%- endif %}
+
 {%- if nordic_top %}
     - suit-directive-override-parameters:
         suit-parameter-uri: '#top'
@@ -265,21 +455,11 @@ SUIT_Envelope_Tagged:
             envelope: {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] }}/nordic_top.suit
     - suit-directive-fetch:
       - suit-send-record-failure
-    # In the case of streaming operations it is worth to retry them at least once.
-    # This increases the robustness against bit flips on the transport,
-    # for example when storing the data on an external memory device.
-    # The suit-directive-try-each will complete on the first successful subsequence.
-    - suit-directive-try-each:
-      - - suit-condition-image-match:
-          - suit-send-record-success
-          - suit-send-record-failure
-          - suit-send-sysinfo-success
-          - suit-send-sysinfo-failure
-      - - suit-condition-image-match:
-          - suit-send-record-success
-          - suit-send-record-failure
-          - suit-send-sysinfo-success
-          - suit-send-sysinfo-failure
+    - suit-condition-image-match:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
     - suit-condition-dependency-integrity:
       - suit-send-record-success
       - suit-send-record-failure
