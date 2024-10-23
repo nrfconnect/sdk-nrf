@@ -15,6 +15,6 @@ boards:
   thingy53/nrf5340/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf5340dk_nrf5340_cpuapp.overlay
-  nrf54l15pdk/nrf54l15/cpuapp:
+  nrf54l15dk/nrf54l15/cpuapp:
     append:
-      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15pdk_nrf54l15_cpuapp.overlay
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.overlay
