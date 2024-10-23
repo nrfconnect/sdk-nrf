@@ -456,7 +456,7 @@ suit_plat_err_t suit_dfu_cache_validate_content(void)
 
 			suit_plat_err_t err = suit_dfu_cache_partition_is_initialized(&cache_pool);
 
-			if (err != SUIT_PLAT_SUCCESS) {
+			if (err == SUIT_PLAT_ERR_NOT_FOUND) {
 				LOG_INF("DFU Cache pool, id: %d does not contain valid content",
 					partition->id);
 
@@ -466,6 +466,10 @@ suit_plat_err_t suit_dfu_cache_validate_content(void)
 						partition->id);
 					erase_on_sink(partition->address, partition->size);
 				}
+			} else if (err != SUIT_PLAT_SUCCESS) {
+				LOG_ERR("DFU Cache pool, id: %d unavailable, err: %d",
+					partition->id, err);
+				return err;
 			}
 		}
 	}

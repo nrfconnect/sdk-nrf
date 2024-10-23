@@ -149,6 +149,10 @@ suit_plat_err_t suit_dfu_cache_partition_is_initialized(struct dfu_cache_pool *p
 			return SUIT_PLAT_ERR_NOT_FOUND;
 		}
 
+		if (err != SUIT_PLAT_SUCCESS) {
+			return SUIT_PLAT_ERR_IO;
+		}
+
 		return SUIT_PLAT_SUCCESS;
 	}
 
