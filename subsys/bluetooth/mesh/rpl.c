@@ -134,3 +134,6 @@ void bt_mesh_rpl_reset(void)
 
 void bt_mesh_rpl_pending_store(uint16_t addr)
 {}
+
+void bt_mesh_rpl_pending_store_all_nodes(void)
+{}
