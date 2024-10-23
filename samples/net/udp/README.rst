@@ -8,7 +8,7 @@ UDP
 	:depth: 2
 
 The UDP sample demonstrates how to perform sequential transmissions of UDP packets to a server using an IP-connected device.
-The sample connects to an LTE network using an nRF91 Series DK or a Thingy:91, or to Wi-Fi® using the nRF7002 DK.
+The sample connects to an LTE network using an nRF91 Series DK or a Thingy:91, or to Wi-Fi® using an nRF7002 DK or an nRF54L15 DK connected with nRF7002 EB as a shield.
 
 .. |wifi| replace:: Wi-Fi
 
@@ -74,6 +74,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
+* :file:`nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
 
 Building and running
