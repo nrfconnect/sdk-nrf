@@ -5,6 +5,6 @@
 #
 
 config WIFI_NRF70
-	default y if BOARD_NRF7002DK_NRF5340_CPUAPP_NS
+	default y if BOARD_NRF7002DK_NRF5340_CPUAPP_NS || BOARD_NRF54L15DK_NRF54L15_CPUAPP
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
