@@ -1630,6 +1630,9 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	}
 }
 
+uint8_t sdc_hci_cmd_vs_app_put(uint8_t const *const cmd, uint8_t *const raw_event_out,
+			       uint8_t *param_length_out);
+
 #if defined(CONFIG_BT_HCI_VS)
 static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out,
 			  uint8_t *param_length_out)
@@ -1773,7 +1776,11 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		(sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t const *)cmd_params);
 #endif
 	default:
+#if defined(CONFIG_BT_CTLR_SDC_VS_CMD_UNKNOWN_APP_HANDLE)
+		return sdc_hci_cmd_vs_app_put(cmd, raw_event_out, param_length_out);
+#else
 		return BT_HCI_ERR_UNKNOWN_CMD;
+#endif
 	}
 }
 #endif /* CONFIG_BT_HCI_VS */

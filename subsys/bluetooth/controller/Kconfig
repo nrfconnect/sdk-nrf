@@ -112,6 +112,12 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 	int
 	default 2048 if BT_LL_SOFTDEVICE
 
+config BT_CTLR_SDC_VS_CMD_UNKNOWN_APP_HANDLE
+	bool "Defer handling of unknown vendor-specific commands to the application"
+	help
+	  If an unknown vendor-specific command is received, forward it to the application for
+	  handling instead of dropping. The expected function name is `sdc_hci_cmd_vs_app_put`.
+
 config BT_CTLR_SDC_LLPM
 	bool "Enable Low Latency Packet Mode support"
 	select BT_CONN_PARAM_ANY if !BT_HCI_RAW
