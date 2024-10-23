@@ -261,7 +261,11 @@ int suitfu_mgmt_init(void)
 #ifdef CONFIG_MGMT_SUITFU_GRP_OS_BOOTLOADER_INFO_HOOK
 	suitfu_mgmt_register_bootloader_info_hook();
 #endif /* CONFIG_MGMT_SUITFU_GRP_OS_BOOTLOADER_INFO_HOOK */
+#ifdef CONFIG_MGMT_SUITFU_INITIALIZE_SUIT
 	return suit_dfu_initialize();
+#else
+	return 0;
+#endif /* CONFIG_MGMT_SUITFU_INITIALIZE_SUIT */
 }
 
 SYS_INIT(suitfu_mgmt_init, APPLICATION, 0);
