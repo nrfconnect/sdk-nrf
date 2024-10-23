@@ -40,3 +40,12 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
     tags: ci_build sysbuild ci_samples_net
+  sample.net.https_client.nrf54l15.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags: ci_build sysbuild ci_samples_net
+    extra_args: https_client_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
