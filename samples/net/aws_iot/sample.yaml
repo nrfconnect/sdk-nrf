@@ -19,3 +19,13 @@ tests:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
       - native_sim
+  sample.net.aws_iot.nrf54l15.wifi:
+    sysbuild: true
+    tags: ci_build sysbuild ci_samples_net
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: aws_iot_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
