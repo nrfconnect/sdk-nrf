@@ -56,24 +56,23 @@ void SimulatedHumiditySensorDataProvider::TimerTimeoutCallback(k_timer *timer)
 		return;
 	}
 
-	SimulatedHumiditySensorDataProvider *provider =
-		reinterpret_cast<SimulatedHumiditySensorDataProvider *>(timer->user_data);
+	DeviceLayer::PlatformMgr().ScheduleWork(
+		[](intptr_t p) {
+			SimulatedHumiditySensorDataProvider *provider =
+				reinterpret_cast<SimulatedHumiditySensorDataProvider *>(p);
 
-	/* Get some random data to emulate sensor measurements. */
-	provider->mHumidity =
-		chip::Crypto::GetRandU16() % (kMaxRandomTemperature - kMinRandomTemperature) + kMinRandomTemperature;
+			/* Get some random data to emulate sensor measurements. */
+			provider->mHumidity =
+				chip::Crypto::GetRandU16() % (kMaxRandomTemperature - kMinRandomTemperature) +
+				kMinRandomTemperature;
 
-	LOG_INF("SimulatedHumiditySensorDataProvider: Updated humidity value to %d", provider->mHumidity);
+			LOG_INF("SimulatedHumiditySensorDataProvider: Updated humidity value to %d",
+				provider->mHumidity);
 
-	DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
-}
-
-void SimulatedHumiditySensorDataProvider::NotifyAttributeChange(intptr_t context)
-{
-	SimulatedHumiditySensorDataProvider *provider =
-		reinterpret_cast<SimulatedHumiditySensorDataProvider *>(context);
-
-	provider->NotifyUpdateState(Clusters::RelativeHumidityMeasurement::Id,
-				    Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id,
-				    &provider->mHumidity, sizeof(provider->mHumidity));
+			provider->NotifyUpdateState(
+				Clusters::RelativeHumidityMeasurement::Id,
+				Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id,
+				&provider->mHumidity, sizeof(provider->mHumidity));
+		},
+		reinterpret_cast<intptr_t>(timer->user_data));
 }

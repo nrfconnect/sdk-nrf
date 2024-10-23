@@ -17,8 +17,6 @@ public:
 			       size_t dataSize) override;
 	CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
 
-	static void NotifyAttributeChange(intptr_t context);
-
 private:
 	static void TimerTimeoutCallback(k_timer *timer);
 

@@ -291,8 +291,6 @@ The following steps show how to add support for a new Matter device type, using 
 
          .. code-block:: C++
 
-            static void NotifyAttributeChange(intptr_t context);
-
             static constexpr uint16_t kMeasurementsIntervalMs = 10000;
             static constexpr int16_t kMinRandomPressure = 95;
             static constexpr int16_t kMaxRandomPressure = 101;
@@ -323,18 +321,20 @@ The following steps show how to add support for a new Matter device type, using 
                if (!timer || !timer->user_data) {
                   return;
                }
-               SimulatedPressureSensorDataProvider *provider = reinterpret_cast<SimulatedPressureSensorDataProvider *>(timer->user_data);
-               /* Get some random data to emulate sensor measurements. */
-               provider->mPressure = chip::Crypto::GetRandU16() % (kMaxRandomPressure - kMinRandomPressure) + kMinRandomPressure;
-               DeviceLayer::PlatformMgr().ScheduleWork(NotifyAttributeChange, reinterpret_cast<intptr_t>(provider));
-            }
 
-            void SimulatedPressureSensorDataProvider::NotifyAttributeChange(intptr_t context)
-            {
-               SimulatedPressureSensorDataProvider *provider = reinterpret_cast<SimulatedPressureSensorDataProvider *>(context);
-               provider->NotifyUpdateState(Clusters::PressureMeasurement::Id,
+               DeviceLayer::PlatformMgr().ScheduleWork(
+		            [](intptr_t p) {
+			            SimulatedPressureSensorDataProvider *provider =
+				         reinterpret_cast<SimulatedPressureSensorDataProvider *>(p);
+
+			            /* Get some random data to emulate sensor measurements. */
+			            provider->mPressure = chip::Crypto::GetRandU16() % (kMaxRandomPressure - kMinRandomPressure) + kMinRandomPressure;
+
+			            provider->NotifyUpdateState(Clusters::PressureMeasurement::Id,
                            Clusters::PressureMeasurement::Attributes::MeasuredValue::Id,
                            &provider->mPressure, sizeof(provider->mPressure));
+                  },
+		            reinterpret_cast<intptr_t>(timer->user_data));
             }
 
    #. Implement the body of the :c:func:`NotifyUpdateState` method that shall be called after every data change related to the Pressure Sensor device.

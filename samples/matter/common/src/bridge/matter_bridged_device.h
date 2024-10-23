@@ -135,8 +135,6 @@ public:
 	static constexpr uint16_t GetIdentifyClusterRevision() { return 4; }
 	static constexpr uint32_t GetIdentifyClusterFeatureMap() { return 0; }
 
-	static void NotifyAttributeChange(intptr_t context);
-
 	EmberAfEndpointType *mEp;
 	const EmberAfDeviceType *mDeviceTypeList;
 	size_t mDeviceTypeListSize;
