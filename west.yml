@@ -185,11 +185,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-<<<<<<< HEAD
-      revision: f6b4290ab51c02526de43b06b18d2c253251c198
-=======
       revision: 46675c05e69fd6bd8b5e820e470d9b7ed3322bb2
->>>>>>> 27a0457a19... manifest: Update sdk-nrfxlib revision (auto-manifest PR)
       groups:
         - nrf-802154
     - name: soc-hwmv1
