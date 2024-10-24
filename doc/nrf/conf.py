@@ -54,6 +54,7 @@ extensions = [
     "sphinx_copybutton",
     "notfound.extension",
     "ncs_tool_versions",
+    "vuln_table",
     "page_filter",
 ]
 
