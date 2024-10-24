@@ -536,7 +536,11 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
-  * Added support for setting the FOTA update check interval using the config section in the shadow.
+  * Added:
+
+    * Support for setting the FOTA update check interval using the config section in the shadow.
+    * Support for SMP FOTA on the nRF9160 DK.
+
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
 * :ref:`nrf_cloud_multi_service` sample:
