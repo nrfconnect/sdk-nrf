@@ -576,7 +576,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
              .. parsed-literal::
                :class: highlight
 
-               west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+               west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf7002eb_interposer_p1 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
 
          .. group-tab:: Matter bridge over Thread
 
@@ -719,7 +719,7 @@ Once connected, run the following command to build the sample:
 
    .. code-block:: console
 
-      west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk
+      west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf7002eb_interposer_p1
 
 Selecting a configuration
 =========================
@@ -734,19 +734,10 @@ Configure the functionality of the Matter-Bridge device
 
 To enable the Matter smart plugin functionality, run the following command with *board_target* replaced with the board target name:
 
-.. tabs::
+.. parsed-literal::
+   :class: highlight
 
-   .. group-tab:: nRF54 DKs
-
-      .. code-block:: console
-
-         west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf700x_nrf54h20dk -DCONFIG_BRIDGED_DEVICE_BT=y -Dmatter_bridge_SNIPPET=onoff_plug
-
-   .. group-tab:: nRF70 DKs
-
-      .. code-block:: console
-
-         west build -b nrf7002dk/nrf5340/cpuapp -p -- -DCONFIG_BRIDGED_DEVICE_BT=y -Dmatter_bridge_SNIPPET=onoff_plug
+   west build -b *board_target* -p -- -Dmatter_bridge_SNIPPET=onoff_plug
 
 .. _matter_bridge_testing:
 
