@@ -59,10 +59,10 @@ struct wifi_credentials_header {
 	uint32_t flags;
 	uint8_t channel;
 	uint32_t timeout;
-	char anon_id[WIFI_ENT_IDENTITY_MAX_LEN];
-	uint8_t aid_length; /* Max 64 */
-	char key_passwd[WIFI_ENT_PSWD_MAX_LEN];
-	uint8_t key_passwd_length; /* Max 128 */
+	char anon_id[16];
+	uint8_t aid_length;
+	char key_passwd[16];
+	uint8_t key_passwd_length;
 };
 
 /**
