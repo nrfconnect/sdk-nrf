@@ -11,6 +11,48 @@ Partitioning device memory is a crucial aspect of managing how a device's storag
 By default, the Partition Manager in the system dynamically generates a partition map, which is suitable for most applications that do not use Device Firmware Upgrades (DFU).
 For scenarios involving DFU, read the following sections.
 
+.. _bootloader_partitioning_partitions_file:
+
+Partition map file
+******************
+
+After you enable the Partition Manager, it will :ref:`start generating <pm_build_system>` the :file:`partitions.yml` file in the build folder directory.
+In this file, you will see detailed information about the memory layout used for the build.
+
+The :file:`partitions.yml` file is present also if the Partition Manager generates the partition map dynamically.
+You can use this file as a base for your static partition map.
+
+.. _bootloader_partitioning_partitions_file_report:
+
+Partition reports
+=================
+
+After building the application, you can print a report of how the partitioning has been handled for a bootloader, or combination of bootloaders, by using partition memory reports.
+
+Depending on your development environment, you can use one of the following options:
+
+.. tabs::
+
+   .. group-tab:: nRF Connect for VS Code
+
+      Use the extension's `Memory report`_ feature, which shows the size and percentage of memory that each symbol uses on your device for RAM, ROM, and partitions.
+      Click the :guilabel:`Memory report` button in the :guilabel:`Actions View` to generate the report.
+      The partition map is available in the :guilabel:`Partitions` tab.
+
+      Alternatively, you can also use the `Memory Explorer <How to work with the Memory Explorer_>`_ feature of the extension's nRF Debug to check memory sections for the partitions.
+      This feature requires `enabling debugging in the build configuration <How to debug_>`_ and providing the partition addresses manually.
+
+   .. group-tab:: Command line
+
+      Use the Partition Manager's :ref:`pm_partition_reports` feature.
+      Run the following command:
+
+      .. code-block:: console
+
+         west build -t partition_manager_report
+
+      This command generates an output in ASCII with the addresses and sizes of each partition.
+
 .. _ug_bootloader_flash_static_requirement:
 
 Static partition requirement for DFU
@@ -22,13 +64,6 @@ This is important also when you use a precompiled HEX file as a child image (sub
 In such cases, the newly generated application images may no longer use a partition map that is compatible with the partition map used by the bootloader.
 As a result, the newly built application image may not be bootable by the bootloader.
 
-.. note::
-   For detailed information about the memory layout used for the build, see the partition configuration in the :file:`partitions.yml` file, located in the build folder directory, or run ``ninja partition_manager_report``.
-   You must enable the Partition Manager to make the :file:`partitions.yml` file and the ``partition_manager_report`` target available.
-
-   The :file:`partitions.yml` file is present also if the Partition Manager generates the partition map dynamically.
-   You can use this file as a base for your static partition map.
-
 The memory partitions that must be defined in the static partition map depend on the selected bootloader chain.
 For details, see :ref:`ug_bootloader_flash`.
 
@@ -39,7 +74,7 @@ Flash memory partitions
 
 Each bootloader handles flash memory partitioning differently.
 
-After building the application, you can print a report of how the flash partitioning has been handled for a bootloader, or combination of bootloaders, by using :ref:`pm_partition_reports`.
+After building the application, you can print a report of how the flash partitioning has been handled for a bootloader, or combination of bootloaders, by using :ref:`bootloader_partitioning_partitions_file_report`.
 
 .. _ug_bootloader_flash_b0:
 
@@ -64,7 +99,7 @@ This is particularly useful in memory-constrained devices to avoid providing spa
 See the *Image Slots* section in the :doc:`MCUboot documentation <mcuboot:design>` for more information.
 
 The |NCS| variant of MCUboot uses the :ref:`partition_manager` to configure the flash memory partitions for these image slots.
-In the default configuration, defined in :file:`bootloader/mcuboot/boot/zephyr/pm.yml`, the partition manager dynamically sets up the partitions as required for MCUboot.
+In the default configuration, defined in :file:`bootloader/mcuboot/boot/zephyr/pm.yml`, the Partition Manager dynamically sets up the partitions as required for MCUboot.
 For example, the partition layout for :file:`zephyr/samples/hello_world` using MCUboot on the ``nrf52840dk`` board would look like the following:
 
 .. code-block:: console
@@ -82,15 +117,10 @@ For example, the partition layout for :file:`zephyr/samples/hello_world` using M
 You can also store secondary slot images in external flash memory when using MCUboot.
 See :ref:`ug_bootloader_external_flash` for more information.
 
-
 .. _ug_bootloader_external_flash:
 
 Using external flash memory partitions
 **************************************
-
-.. contents::
-   :local:
-   :depth: 2
 
 When using MCUboot, you can store the storage partition for the secondary slot in the external flash memory, using a driver for the external flash memory that supports the following features:
 
@@ -112,7 +142,7 @@ To enable external flash with MCUboot, complete the following steps:
 
 .. note::
 
-   The :ref:`partition_manager` will only support run-time access to flash partitions defined in regions placed on external flash devices that have drivers compiled in.
+   The Partition Manager will only support run-time access to flash partitions defined in regions placed on external flash devices that have drivers compiled in.
    The Partition Manager cannot determine which partitions will be used at runtime, but only those that have drivers enabled, and those are included into the partition map.
    Lack of partition access will cause MCUboot to fail at runtime.
    For more details on configuring and enabling access to external flash devices, see :ref:`pm_external_flash`.
@@ -125,6 +155,11 @@ See also :ref:`ug_multi_image_variables` for more details on how to pass configu
 
 Troubleshooting
 ***************
+
+This section describes some of the issues you might come across when partitioning device memory.
+
+MCUboot failure
+===============
 
 MCUboot could fail, reporting the following error:
 
@@ -139,7 +174,7 @@ MCUboot could fail, reporting the following error:
 
 This error could be caused by the following issues:
 
-  * The external flash driver for the application image partitions used by MCUboot is not enabled or an incorrect Kconfig option has been given to the ``DEFAULT_DRIVER_KCONFIG`` of the partition manager external region definition.
+  * The external flash driver for the application image partitions used by MCUboot is not enabled or an incorrect Kconfig option has been given to the ``DEFAULT_DRIVER_KCONFIG`` of the Partition Manager external region definition.
     See :ref:`pm_external_flash` for details.
 
   * An out-of-tree external flash driver is not selecting :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_HAS_DRIVER`, resulting in partitions for images located in the external flash memory being not accessible.
@@ -147,6 +182,9 @@ This error could be caused by the following issues:
 
   * Insufficient value set for the ``CONFIG_BOOT_MAX_IMG_SECTORS`` Kconfig option, as MCUboot typically increases slot sizes when external flash is enabled.
     See `MCUboot's Kconfig options used in Zephyr <https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370>`_ for details.
+
+Compilation failure
+===================
 
 The compilation could fail, reporting a linker error similar to following:
 
