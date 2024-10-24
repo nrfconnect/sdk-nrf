@@ -20,3 +20,4 @@ See the subpages for detailed documentation on how to update the application and
 
    nrf91_dk_updating_fw_programmer
    thingy91_updating_fw_programmer
+   thingy91x_updating_fw_programmer
