@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-# If it is enabled, include the SDP GPIO FLPR application in the build
-if(SB_CONFIG_EGPIO_FLPR_APPLICATION)
+# If it is enabled, include the SDP GPIO application in the build
+if(SB_CONFIG_SDP_GPIO)
   # Extract SoC name from related variables
   string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
