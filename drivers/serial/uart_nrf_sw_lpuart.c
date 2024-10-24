@@ -133,8 +133,9 @@ static inline const struct lpuart_config *get_dev_config(const struct device *de
 
 #define GPIOTE_NODE(gpio_node) DT_PHANDLE(gpio_node, gpiote_instance)
 #define GPIOTE_INST_AND_COMMA(gpio_node) \
+	IF_ENABLED(DT_NODE_HAS_PROP(gpio_node, gpiote_instance), ( \
 	[DT_PROP(gpio_node, port)] = \
-		NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance)),
+		NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance)),))
 
 static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
 {
@@ -327,7 +328,8 @@ static bool rdy_pin_blink(struct lpuart_data *data)
 	 * this pin high.
 	 */
 	k_busy_wait(1);
-	if (nrf_gpio_pin_read(data->rdy_pin) == 0 && !nrf_gpiote_event_check(NRF_GPIOTE, event)) {
+	if (nrf_gpio_pin_read(data->rdy_pin) == 0 &&
+	    !nrf_gpiote_event_check(gpiote->p_reg, event)) {
 		/* Suspicious pin state (low). It might be that context was preempted
 		 * for long enough and transfer ended (in that case event will be set)
 		 * or transmitter is working abnormally or pin is just floating.
@@ -1139,14 +1141,25 @@ static const struct uart_driver_api lpuart_api = {
 
 #define GPIO_HAS_PIN(gpio_node, pin_prop)				  \
 	(DT_PROP(gpio_node, port) == (DT_INST_PROP(0, pin_prop) >> 5))
+
+/* There may be GPIO ports which cannot be used with GPIOTE. Check if pins are
+ * not from those ports.
+ */
+#define CHECK_GPIOTE_AVAILABLE(gpio_node) \
+	BUILD_ASSERT((!GPIO_HAS_PIN(gpio_node, req_pin) &&		  \
+		      !GPIO_HAS_PIN(gpio_node, rdy_pin)) ||		  \
+		     DT_NODE_HAS_PROP(gpio_node, gpiote_instance));
+
 #define CHECK_GPIOTE_IRQ_PRIORITY(gpio_node)				  \
+	IF_ENABLED(DT_NODE_HAS_PROP(gpio_node, gpiote_instance), (	  \
 	BUILD_ASSERT((!GPIO_HAS_PIN(gpio_node, req_pin) &&		  \
 		      !GPIO_HAS_PIN(gpio_node, rdy_pin)) ||		  \
 		     DT_IRQ(DT_PARENT(DT_NODELABEL(lpuart)), priority) == \
 		     DT_IRQ(GPIOTE_NODE(gpio_node), priority),		  \
-		     "UARTE and GPIOTE interrupt priority must match.");
+		     "UARTE and GPIOTE interrupt priority must match.");))
 
 DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, CHECK_GPIOTE_IRQ_PRIORITY)
+DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, CHECK_GPIOTE_AVAILABLE)
 
 DEVICE_DT_DEFINE(DT_NODELABEL(lpuart), lpuart_init, NULL,
 	      &lpuart_data, &lpuart_config,
