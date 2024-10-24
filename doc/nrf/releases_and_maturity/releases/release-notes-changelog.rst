@@ -1359,6 +1359,5 @@ Documentation
 
   * The Device configuration guides section and moved its contents to :ref:`ug_app_dev`.
   * The Advanced building procedures page and moved its contents to the :ref:`building` page.
-  * nRF70 Series support is upstreamed to Zephyr, hence the documentation is removed from the |NCS|.
   * The standalone pages for getting started with nRF52 Series and with the nRF5340 DK.
     These pages have been replaced by the `Quick Start`_ app, which now supports the nRF52 Series devices and the nRF5340 DK.

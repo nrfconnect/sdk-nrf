@@ -336,6 +336,11 @@ add_docset(nrfxlib ${NRF_VERSION})
 add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR} ${NRF_VERSION})
 
 #-------------------------------------------------------------------------------
+# docset: wifi
+
+add_doxygen_docset(wifi ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
+
+#-------------------------------------------------------------------------------
 # docset: internal
 
 if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
@@ -405,6 +410,7 @@ add_dependencies(build-all
     tfm-all
     matter-all
     kconfig-all
+    wifi
 )
 if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(build-all internal-all)

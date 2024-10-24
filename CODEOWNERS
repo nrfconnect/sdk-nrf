@@ -98,6 +98,7 @@
 /doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
+/doc/nrf/drivers/wifi                     @sachinthegreen @krish2718
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/external_comp/bt_fast_pair.rst   @nrfconnect/ncs-si-bluebagel-doc
@@ -266,6 +267,7 @@
 /doc/nrf/templates/                       @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/               @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/optimizing/power_nrf91.rst @nrfconnect/ncs-cia-doc
+/doc/wifi                                 @sachinthegreen @krish2718
 
 /doc/**/*.svg                             @nrfconnect/ncs-doc-leads
 /doc/**/*.png                             @nrfconnect/ncs-doc-leads
