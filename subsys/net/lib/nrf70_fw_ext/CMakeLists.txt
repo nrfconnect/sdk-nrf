@@ -32,6 +32,8 @@ if(DEFINED CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_DISABLED OR
     set(NRF70_PATCH ${FW_BINS_BASE}/scan_only/nrf70.bin)
   elseif (CONFIG_NRF70_SYSTEM_WITH_RAW_MODES)
     set(NRF70_PATCH ${FW_BINS_BASE}/system_with_raw/nrf70.bin)
+  elseif(CONFIG_NRF70_OFFLOADED_RAW_TX)
+    set(NRF70_PATCH ${FW_BINS_BASE}/offloaded_raw_tx/nrf70.bin)
   else()
     # Error
     message(FATAL_ERROR "Unsupported nRF70 patch configuration")

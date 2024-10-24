@@ -290,7 +290,16 @@ Zigbee
 Wi-Fi
 -----
 
-* Updated the WPA supplicant to switch to Zephyr upstream's fork instead of |NCS|.
+* Added:
+
+   * The :ref:`ug_nrf70_developing_offloaded_raw_tx` page.
+   * Support for :ref:`EAP-TLS <ug_nrf70_wifi_advanced_security_modes>` Enterprise security mode.
+   * Support for :ref:`Platform Security Architecture (PSA) crypto APIs <ug_nrf70_developing_wifi_psa_support>` for WPA2™ security profiles.
+
+* Updated:
+
+   * The WPA supplicant is now switched to Zephyr upstream's fork instead of |NCS|.
+   * The WPA supplicant now uses ``kernel heap`` instead of ``application (libc) heap``.
 
 Applications
 ============
@@ -747,6 +756,10 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
+* Added:
+
+  * The :ref:`wifi_offloaded_raw_tx_packet_sample` sample that demonstrates transmission of raw packets.
+
 * :ref:`wifi_radio_test` sample:
 
   * Added capture timeout as a parameter for packet capture.
@@ -759,7 +772,8 @@ Wi-Fi samples
 * :ref:`wifi_shell_sample` sample:
 
   * Added support for running the full stack on the Thingy:91 X.
-    This is a special configuration that uses the nRF5340 as the host chip instead of the nRF9151.
+     This is a special configuration that uses the nRF5340 as the host chip instead of the nRF9151.
+  * Added overlay to support Enterprise mode.
 
 Other samples
 -------------

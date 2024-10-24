@@ -125,6 +125,19 @@ Libraries
 
 This section describes the changes related to libraries.
 
+Wi-Fi®
+------
+
+.. toggle::
+
+   * For :ref:`lib_wifi_credentials` library:
+
+     * Syntax for ``add`` command has been modified to support ``getopt`` model.
+         For example, the following command with old syntax:
+         ``wifi_cred add SSID WPA2-PSK password`` should be replaced with the following command with new syntax:
+         ``wifi_cred add -s SSID -k 1 -p password``.
+         ``wifi_cred add --help`` command will provide more information on the new syntax.
+
 LTE link control library
 ------------------------
 

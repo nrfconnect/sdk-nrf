@@ -1,9 +1,0 @@
-# Copyright (c) 2022 Nordic Semiconductor ASA
-# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-
-
-description: This is a representation of the nRF700x Wi-Fi chip.
-
-compatible: "nordic,nrf700x-spi"
-
-include: ["nordic,nrf700x.yaml", "spi-device.yaml"]

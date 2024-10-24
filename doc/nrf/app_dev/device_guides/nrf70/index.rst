@@ -130,3 +130,4 @@ The following subpages cover topics related to developing applications with the 
    power_profiling
    nrf7002ek_dev_guide
    nrf7002eb_dev_guide
+   wifi_advanced_security_modes
