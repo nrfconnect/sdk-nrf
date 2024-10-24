@@ -218,6 +218,8 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 
 .. rst-class:: numbered-step
 
+.. _ug_nrf54h20_SoC_binaries:
+
 Programming the nRF54H20 SoC binaries
 =====================================
 

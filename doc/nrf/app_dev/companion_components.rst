@@ -59,3 +59,13 @@ The following table lists the available companion components:
      - :ref:`Sample requirements <suit_recovery_reqs>`
      - :file:`samples/suit/recovery`
      - :ref:`Sample's building and running section <suit_recovery_build_run>`
+   * - :ref:`Secure Domain Firmware <ug_nrf54h20_secure_domain>`
+     - Secure Domain Firmware exposes security services to the other cores through an IPC interface and is part of Platform Root of Trust (PRoT).
+     - :ref:`nRF54H20 DK <ug_nrf54h20_gs>`
+     - :file:`nrf54h20_soc_binaries_v0.6.5.zip` (This component is not yet fully integrated in the |NCS| and is currently distributed as a bundle.)
+     - :ref:`ug_nrf54h20_SoC_binaries`
+   * - :ref:`System Controller <ug_nrf54h20_sys_ctrl>`
+     - System Controller Firmware performs system clock and power management operations delegated by Secure Domain and is part of Platform Root of Trust (PRoT).
+     - :ref:`nRF54H20 DK <ug_nrf54h20_gs>`
+     - :file:`nrf54h20_soc_binaries_v0.6.5.zip` (This component is not yet fully integrated in the |NCS| and is currently distributed as a bundle.)
+     - :ref:`ug_nrf54h20_SoC_binaries`
