@@ -16,10 +16,8 @@
 #endif /* CONFIG_FEM */
 
 #include <zephyr/kernel.h>
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#endif /* #if defined(CONFIG_CLOCK_CONTROL_NRF) */
 #include <zephyr/sys/__assert.h>
 #if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
 #include <hal/nrf_nvmc.h>
@@ -27,6 +25,10 @@
 
 #include <hal/nrf_egu.h>
 #include <hal/nrf_radio.h>
+
+#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+#include <hal/nrf_lrcconf.h>
+#endif
 
 #ifdef NRF53_SERIES
 #include <hal/nrf_vreqctrl.h>
@@ -671,7 +673,43 @@ static int clock_init(void)
 
 	return err;
 }
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
+
+#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+
+int clock_init(void)
+{
+	int err;
+	int res;
+	const struct device *radio_clk_dev =
+		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
+	struct onoff_client radio_cli;
+
+	/** Keep radio domain powered all the time to reduce latency. */
+	nrf_lrcconf_poweron_force_set(NRF_LRCCONF010, NRF_LRCCONF_POWER_DOMAIN_1, true);
+
+	sys_notify_init_spinwait(&radio_cli.notify);
+
+	err = nrf_clock_control_request(radio_clk_dev, NULL, &radio_cli);
+
+	do {
+		err = sys_notify_fetch_result(&radio_cli.notify, &res);
+		if (!err && res) {
+			printk("Clock could not be started: %d\n", res);
+			return res;
+		}
+	} while (err == -EAGAIN);
+
+#if defined(NRF54L15_XXAA)
+	/* MLTPAN-20 */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54L15_XXAA) */
+
+	return 0;
+}
+
+#else
+BUILD_ASSERT(false, "No Clock Control driver");
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF2) */
 
 static int timer_init(void)
 {
@@ -1102,12 +1140,10 @@ int dtm_init(dtm_iq_report_callback_t callback)
 {
 	int err;
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	err = clock_init();
 	if (err) {
 		return err;
 	}
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
 	/* Apply HMPAN-102 workaround for nRF54H series */
