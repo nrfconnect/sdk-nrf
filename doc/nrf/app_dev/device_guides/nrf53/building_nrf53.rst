@@ -40,7 +40,7 @@ You can build and program separate images or combined images using the |nRFVSC|.
 Program the sample or application
 ---------------------------------
 
-Complete the following steps to program the sample or application onto Thingy:91:
+Complete the following steps to program the sample or application onto nRF5340 DK:
 
 #. Connect the nRF5340 development kit to your PC using a USB cable.
 #. Make sure that the nRF5340 DK and the external debug probe are powered on.
