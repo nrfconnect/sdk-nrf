@@ -67,6 +67,17 @@ static int setup(void)
 	int rc;
 	gpio_port_value_t v1;
 
+	TC_PRINT("-> Test uses following backend: ");
+	if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG)) {
+		TC_PRINT("ICMsg\n");
+	} else if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG)) {
+		TC_PRINT("ICBMsg\n");
+	} else if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX)) {
+		TC_PRINT("MBOX\n");
+	} else {
+		TC_PRINT("unknown\n");
+	}
+
 	TC_PRINT("Validate device %s\n", dev_out->name);
 	zassert_true(device_is_ready(dev_out), "GPIO dev_out is not ready");
 
@@ -462,6 +473,38 @@ static int bits_logical(void)
 	return TC_PASS;
 }
 
+/**
+ * @brief Stress test - send many GPIO requests one by one
+ */
+static int stress_gpio_pin_set_raw(void)
+{
+	int rc;
+	int rc_acc = 0;
+
+	TC_PRINT("- %s\n", __func__);
+
+	for (int i = 0; i < 300000; i++) {
+		rc = gpio_pin_set_raw(dev_out, PIN_OUT, (i % 2));
+		/* If TX buffer is full, wait a bit and retry */
+		while (rc == -EIO) {
+			k_usleep(100);
+			rc = gpio_pin_set_raw(dev_out, PIN_OUT, (i % 2));
+		}
+
+		/* Report any other error */
+		if (rc) {
+			TC_PRINT("%d: rc = %d\n", i, rc);
+			break;
+		}
+
+		/* Accumulate error codes */
+		rc_acc += rc;
+	}
+	zassert_equal(rc_acc, 0, "at least one set operation failed, rc_acc = %d)", rc_acc);
+
+	return TC_PASS;
+}
+
 ZTEST(egpio_port, test_egpio_port)
 {
 	zassert_equal(setup(), TC_PASS,
@@ -476,6 +519,8 @@ ZTEST(egpio_port, test_egpio_port)
 		      "check_logic_output_levels failed");
 	zassert_equal(bits_logical(), TC_PASS,
 		      "bits_logical failed");
+	zassert_equal(stress_gpio_pin_set_raw(), TC_PASS,
+		      "stress_gpio_pin_set_raw failed");
 }
 
 /* Test GPIO port configuration */
