@@ -1,7 +1,7 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.8.0-preview1
-###################################
+Changelog for |NCS| v2.7.99
+###########################
 
 .. contents::
    :local:

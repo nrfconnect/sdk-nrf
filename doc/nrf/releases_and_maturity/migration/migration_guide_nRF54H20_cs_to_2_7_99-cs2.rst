@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_nrf54h20_to_2.7.99-cs2:
 
 Migration notes for |NCS| v2.7.99-cs2 and the nRF54H20 DK
