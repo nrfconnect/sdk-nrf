@@ -119,6 +119,7 @@ Developing with nRF91 Series
 
   * The :ref:`nRF91 modem tracing with RTT backend snippet <nrf91_modem_trace_rtt_snippet>` to enable modem tracing using the RTT trace backend.
   * The :ref:`nRF91 modem tracing with RAM backend snippet <nrf91_modem_trace_ram_snippet>` to enable modem tracing using the RAM trace backend.
+  * Guides for Thingy:91 X on the :ref:`ug_nrf91` documentation.
 
 Developing with nRF70 Series
 ============================

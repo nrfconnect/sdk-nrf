@@ -73,7 +73,7 @@ nRF Cloud supports a variety of device ID formats:
 
 Nordic development kits such as the nRF9160 DK have a sticker on the back indicating the device's IMEI and PIN.
 They are preprovisioned with just-in-time provisioning (JITP) certificates so they can be added easily to nRF Cloud using the device ID ``nrf-IMEI`` and PIN.
-Device IDs that start with ``nrf-`` are checked against a database of genuine Nordic development kits and Thingy:91s.
+Device IDs that start with ``nrf-`` are checked against a database of genuine Nordic development kits and Thingy:91 and Thingy:91 X.
 If the device ID (and the accompanying PIN or Hardware ID) is not found in the database, the device cannot connect.
 This means that customers using custom hardware cannot use the ``nrf-`` prefix for their device IDs.
 Choose your own PIN when creating creating JITP credentials for a custom device.

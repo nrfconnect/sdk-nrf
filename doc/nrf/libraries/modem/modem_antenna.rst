@@ -7,7 +7,7 @@ Modem antenna
    :local:
    :depth: 2
 
-You can use this library to set the antenna configuration on an nRF91 Series DK or a Thingy:91.
+You can use this library to set the antenna configuration on an nRF91 Series DK, a Thingy:91, or a Thingy:91 X.
 
 Overview
 ********

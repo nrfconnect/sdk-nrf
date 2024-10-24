@@ -159,8 +159,8 @@ The band lock mask allows you to set the bands on which you want the modem to op
 Each bit in the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` option represents one band.
 The maximum length of the string is 88 characters (bit string, 88 bits).
 
-For Thingy:91, you can configure the modem to use specific LTE bands by using the band lock AT command.
-The preprogrammed firmware configures the modem to use the bands currently certified on the Thingy:91 hardware.
+For Thingy:91 and Thingy:91 X, you can configure the modem to use specific LTE bands by using the band lock AT command.
+The preprogrammed firmware configures the modem to use the bands currently certified on the hardware.
 When building the firmware, you can configure which bands must be enabled.
 
 For more detailed information, see the `band lock section in the nRF9160 AT Commands Reference Guide`_ or the `band lock section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using.
@@ -262,7 +262,7 @@ Therefore, the performance is not ideal when there are obstructions overhead or 
 Customers who are developing their own hardware with the nRF9160 are strongly recommended to use the `nRF9160 Antenna and RF Interface Guidelines`_ as a reference.
 See `GPS interface and antenna`_ for more details on GNSS interface and antenna.
 
-Thingy:91 has a GNSS receiver, which allows the device to be located globally using GNSS signals if it is activated.
+Thingy:91 and Thingy:91 X have a GNSS receiver, which allows the device to be located globally using GNSS signals if it is activated.
 In :ref:`asset_tracker_v2`, the GNSS receiver is activated by default.
 
 .. note::
