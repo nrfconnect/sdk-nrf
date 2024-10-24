@@ -11,6 +11,51 @@ menuconfig BT_GATT_DM
 
 if BT_GATT_DM
 
+choice BT_GATT_DM_WORKQ_CHOICE
+	prompt "GATT Discovery Manager workqueue selection"
+	default BT_GATT_DM_WORKQ_OWN
+	help
+	  Select the workqueue implementation for GATT Discovery Manager.
+
+config BT_GATT_DM_WORKQ_OWN
+	bool "Use own workqueue"
+	help
+	  Use own workqueue for GATT Discovery Manager.
+
+config BT_GATT_DM_WORKQ_SYS
+	bool "Use system workqueue"
+	select EXPERIMENTAL
+	help
+	  Use system workqueue for GATT Discovery Manager. Can be used if creating a new thread
+	  is not viable due to memory constraints, but it is not recommended to have potential
+	  blocking calls in the system workqueue.
+
+endchoice
+
+if BT_GATT_DM_WORKQ_OWN
+
+config BT_GATT_DM_WORKQ_STACK_SIZE
+	# Hidden option for workqueue stack size. Should be derived from system
+	# requirements.
+	int
+	default 1300 if BT_GATT_CACHING
+	default 1140 if BT_TINYCRYPT_ECC
+	default 1024
+
+config BT_GATT_DM_WORKQ_PRIO
+	int "GATT Discovery Manager workqueue priority."
+	default 10
+	help
+	  Priority level for the GATT Discovery Manager workqueue.
+
+config BT_GATT_DM_WORKQ_INIT_PRIO
+	int "GATT Discovery Manager workqueue init priority"
+	default 50
+	help
+	  Init priority level to setup the GATT Discovery Manager workqueue.
+
+endif # BT_GATT_DM_WORKQ_OWN
+
 config BT_GATT_DM_MAX_ATTRS
 	int "Maximum number of attributes that can be present in the discovered service"
 	default 35
