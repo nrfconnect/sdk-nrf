@@ -16,5 +16,5 @@ jobs:
         days-before-close: 14
         stale-issue-label: 'Stale'
         stale-pr-label: 'Stale'
-        exempt-pr-labels: 'DNM,In progress,RFC'
+        exempt-pr-labels: 'In progress,RFC'
         exempt-issue-labels: 'In progress,Enhancement,Feature,Feature Request,RFC,Meta'
