@@ -34,11 +34,13 @@ config GPIO_NRFE_EGPIO_BACKEND_MBOX
 
 config GPIO_NRFE_EGPIO_BACKEND_ICMSG
 	bool "ICMSG"
+	select IPC_SERVICE_BACKEND_ICMSG
 	help
 	  Use ICMSG backend driver for SDP GPIO.
 
 config GPIO_NRFE_EGPIO_BACKEND_ICBMSG
 	bool "ICBMSG"
+	select IPC_SERVICE_BACKEND_ICBMSG
 	help
 	  Use ICBMSG backend driver for SDP GPIO.
 
