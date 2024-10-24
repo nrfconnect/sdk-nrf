@@ -617,7 +617,7 @@
 
 # Snippets
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
-/snippets/emulated*/                      @nrfconnect/ncs-ll-ursus
+/snippets/sdp/                            @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
