@@ -933,11 +933,11 @@ static void initialize_fifos(void)
 	for (size_t i = 0; i < CONFIG_ESB_TX_FIFO_SIZE; i++) {
 		ack_pl_wrap[i].p_payload = &tx_payload[i];
 		ack_pl_wrap[i].in_use = false;
-		ack_pl_wrap[i].p_next = 0;
+		ack_pl_wrap[i].p_next = NULL;
 	}
 
 	for (size_t i = 0; i < CONFIG_ESB_PIPE_COUNT; i++) {
-		ack_pl_wrap_pipe[i] = 0;
+		ack_pl_wrap_pipe[i] = NULL;
 	}
 }
 
@@ -1390,7 +1390,7 @@ static void on_radio_disabled_rx_dpl(bool retransmit_payload,
 
 	uint32_t pipe = nrf_radio_rxmatch_get(NRF_RADIO);
 
-	if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != 0) {
+	if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != NULL) {
 		current_payload = ack_pl_wrap_pipe[pipe]->p_payload;
 
 		/* Pipe stays in ACK with payload until TX FIFO is empty */
@@ -1399,7 +1399,7 @@ static void on_radio_disabled_rx_dpl(bool retransmit_payload,
 			ack_pl_wrap_pipe[pipe]->in_use = false;
 			ack_pl_wrap_pipe[pipe] = ack_pl_wrap_pipe[pipe]->p_next;
 			tx_fifo.count--;
-			if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != 0) {
+			if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != NULL) {
 				current_payload = ack_pl_wrap_pipe[pipe]->p_payload;
 			} else {
 				current_payload = 0;
@@ -1884,18 +1884,18 @@ int esb_write_payload(const struct esb_payload *payload)
 
 		if (new_ack_payload != 0) {
 			new_ack_payload->in_use = true;
-			new_ack_payload->p_next = 0;
+			new_ack_payload->p_next = NULL;
 			memcpy(new_ack_payload->p_payload, payload, sizeof(struct esb_payload));
 
 			pids[payload->pipe] = (pids[payload->pipe] + 1) % (PID_MAX + 1);
 			new_ack_payload->p_payload->pid = pids[payload->pipe];
 
-			if (ack_pl_wrap_pipe[payload->pipe] == 0) {
+			if (ack_pl_wrap_pipe[payload->pipe] == NULL) {
 				ack_pl_wrap_pipe[payload->pipe] = new_ack_payload;
 			} else {
 				struct payload_wrap *pl = ack_pl_wrap_pipe[payload->pipe];
 
-				while (pl->p_next != 0) {
+				while (pl->p_next != NULL) {
 					pl = (struct payload_wrap *)pl->p_next;
 				}
 				pl->p_next = (struct payload_wrap *)new_ack_payload;
@@ -2048,6 +2048,15 @@ int esb_flush_tx(void)
 	tx_fifo.count = 0;
 	tx_fifo.back = 0;
 	tx_fifo.front = 0;
+
+	for (size_t i = 0; i < CONFIG_ESB_TX_FIFO_SIZE; i++) {
+		ack_pl_wrap[i].in_use = false;
+		ack_pl_wrap[i].p_next = NULL;
+	}
+
+	for (size_t i = 0; i < CONFIG_ESB_PIPE_COUNT; i++) {
+		ack_pl_wrap_pipe[i] = NULL;
+	}
 
 	irq_unlock(key);
 
