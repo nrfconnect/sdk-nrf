@@ -12,6 +12,17 @@ config MBEDTLS_PSA_CRYPTO_C
 	  Enable the Platform Security Architecture cryptography API.
 	  Corresponds to setting in mbed TLS config file.
 
+config MBEDTLS_PSA_CRYPTO_DISABLE_THREAD_SAFETY
+	bool
+	prompt "Disable PSA crypto thread safety"
+	help
+	  Setting this configuration disables thread-safety for front-end PSA crypto APIs.
+	  This disables the three mutexes that was added in Mbed TLS 3.6.0 that is built
+	  into the PSA core without disabling mutexes used by the legacy Mbed TLS APIs or
+	  in HW accelerators.
+	  The addition of mutexes for legacy APIs and HW accelerators is still controlled
+	  by enabling the Kconfig MBEDTLS_TREADING_C in the build.
+
 if MBEDTLS_PSA_CRYPTO_C
 
 config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER

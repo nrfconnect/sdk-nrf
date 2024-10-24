@@ -9,7 +9,7 @@
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
 #include "platform_keys/platform_keys.h"
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecc.h>

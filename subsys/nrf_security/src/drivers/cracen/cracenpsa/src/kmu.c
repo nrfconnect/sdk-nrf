@@ -7,7 +7,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/lib_kmu.h>
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 #include <nrfx.h>
 #include <psa/crypto.h>
 #include <stdint.h>

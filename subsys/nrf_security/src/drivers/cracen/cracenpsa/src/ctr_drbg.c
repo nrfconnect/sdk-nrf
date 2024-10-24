@@ -22,7 +22,7 @@
 #include <sxsymcrypt/keyref.h>
 
 #include <zephyr/kernel.h>
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 
 #define MAX_BITS_PER_REQUEST (1 << 19)		 /* NIST.SP.800-90Ar1:Table 3 */
 #define RESEED_INTERVAL	     ((uint64_t)1 << 48) /* 2^48 as per NIST spec */

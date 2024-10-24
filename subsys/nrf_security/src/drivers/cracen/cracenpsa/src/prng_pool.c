@@ -10,7 +10,7 @@
 #include <cracen/statuscodes.h>
 #include <security/cracen.h>
 #include <zephyr/kernel.h>
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 
 /* We want to avoid reserving excessive RAM and invoking
  * the PRNG too often. 32 was arbitrarily chosen here

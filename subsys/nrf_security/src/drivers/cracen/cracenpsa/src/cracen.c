@@ -14,7 +14,7 @@
 
 #include "common.h"
 #include "microcode_binary.h"
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #define LOG_ERR_MSG(msg) LOG_ERR(msg)

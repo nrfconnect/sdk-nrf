@@ -12,7 +12,7 @@
 #include <security/cracen.h>
 #include <cracen/statuscodes.h>
 
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 
 #include <zephyr/kernel.h>
 /* Enable interrupts showing that an operation finished or aborted.

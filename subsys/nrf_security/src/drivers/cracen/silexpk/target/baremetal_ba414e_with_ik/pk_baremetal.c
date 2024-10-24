@@ -21,7 +21,7 @@
 
 #include <hal/nrf_cracen.h>
 #include <security/cracen.h>
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 
 #ifndef ADDR_BA414EP_REGS_BASE
 #define ADDR_BA414EP_REGS_BASE CRACEN_ADDR_BA414EP_REGS_BASE
