@@ -573,6 +573,10 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  If this parameter is set to zero, the subevent length
 	  is chosen by the controller.
 
+config BT_CTLR_CHANNEL_SOUNDING
+	bool "Channel Sounding support [EXPERIMENTAL]"
+	select EXPERIMENTAL
+
 config BT_CTLR_SDC_CS_COUNT
 	int "Number of concurrent connections supporting CS procedure"
 	default 1
