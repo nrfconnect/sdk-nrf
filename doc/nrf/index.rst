@@ -4,11 +4,6 @@
 Introduction
 ############
 
-.. important::
-
-   |NCS| v2.8.0-preview1 is a development tag used for development purposes but is not recommended to use in a production environment.
-   This tag may be replaced by a release in the future.
-
 The |NCS| is a modern, unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, nRF54, nRF70, and nRF91 Series wireless devices.
 It supports :ref:`Microsoft Windows, Linux, and macOS <requirements>` for development.
 
