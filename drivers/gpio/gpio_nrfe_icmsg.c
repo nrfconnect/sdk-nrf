@@ -46,14 +46,14 @@ int gpio_send(nrfe_gpio_data_packet_t *msg)
 
 int gpio_nrfe_init(const struct device *port)
 {
-	const struct device *ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
-	int ret = ipc_service_open_instance(ipc0_instance);
+	const struct device *ipc_nrfe_instance = DEVICE_DT_GET(DT_NODELABEL(ipc_nrfe));
+	int ret = ipc_service_open_instance(ipc_nrfe_instance);
 
 	if ((ret < 0) && (ret != -EALREADY)) {
 		return ret;
 	}
 
-	ret = ipc_service_register_endpoint(ipc0_instance, &ep, &ep_cfg);
+	ret = ipc_service_register_endpoint(ipc_nrfe_instance, &ep, &ep_cfg);
 	if (ret < 0) {
 		return ret;
 	}
