@@ -285,8 +285,8 @@ TAB_SIZE               = 4
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                = "tagGreenTick=\htmlonly<CENTER><font color=\"green\">✔</font></CENTER>\endhtmlonly \xmlonly<verbatim>embed:rst:inline :green:`✔`</verbatim>\endxmlonly" \
-                         "tagRedCross=\htmlonly<CENTER><font color=\"red\">✖</font></CENTER>\endhtmlonly \xmlonly<verbatim>embed:rst:inline :red:`✖`</verbatim>\endxmlonly" \
+ALIASES                = "tagGreenTick=\htmlonly<CENTER><font color=\"green\">✔</font></CENTER>\endhtmlonly" \
+                         "tagRedCross=\htmlonly<CENTER><font color=\"red\">✖</font></CENTER>\endhtmlonly" \
                          "nRF5340pinAssignmentsURL=\"https://infocenter.nordicsemi.com/index.jsp?topic=%2Fps_nrf5340%2Fchapters%2Fpin.html\"" \
                          "refhal{1}=\sa \1 \copydoc \1"
 
