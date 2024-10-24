@@ -10,6 +10,8 @@ menuconfig GPIO_NRFE
 	help
 	  Use SDP GPIO driver.
 
+if GPIO_NRFE
+
 config GPIO_NRFE_INIT_PRIORITY
 	int "SDP GPIO init priority"
 	depends on GPIO_NRFE
@@ -45,3 +47,5 @@ config GPIO_NRFE_EGPIO_BACKEND_ICBMSG
 	  Use ICBMSG backend driver for SDP GPIO.
 
 endchoice
+
+endif

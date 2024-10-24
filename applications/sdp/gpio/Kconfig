@@ -1,0 +1,18 @@
+choice SDP_GPIO_BACKEND
+	prompt "Backend"
+	default SDP_GPIO_BACKEND_ICMSG
+
+config SDP_GPIO_BACKEND_MBOX
+	bool "mbox"
+
+config SDP_GPIO_BACKEND_ICMSG
+	bool "icmsg"
+	select IPC_SERVICE
+
+config SDP_GPIO_BACKEND_ICBMSG
+	bool "icbmsg"
+	select IPC_SERVICE
+
+endchoice
+
+source "Kconfig.zephyr"
