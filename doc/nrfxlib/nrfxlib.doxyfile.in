@@ -962,11 +962,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @DOCSET_SOURCE_BASE@ \
-                         @DOCSET_SOURCE_BASE@/nrf_wifi/fw_if/umac_if/inc/fmac_api_common.h \
-                         @DOCSET_SOURCE_BASE@/nrf_wifi/fw_if/umac_if/inc/fmac_structs_common.h \
-                         @DOCSET_SOURCE_BASE@/nrf_wifi/fw_if/umac_if/inc/default \
-                         @DOCSET_SOURCE_BASE@/nrf_wifi/fw_if/umac_if/inc/radio_test/fmac_api.h
+INPUT                  = @DOCSET_SOURCE_BASE@
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
