@@ -33,6 +33,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    :caption: Subpages:
 
    features
+   zms
    cryptography
    testing_dfu
    snippets
