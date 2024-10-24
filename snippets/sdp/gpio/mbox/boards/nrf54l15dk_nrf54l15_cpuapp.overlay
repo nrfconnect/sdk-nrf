@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../../sdp_gpio_app.overlay"
+
 / {
 	soc {
 		reserved-memory {

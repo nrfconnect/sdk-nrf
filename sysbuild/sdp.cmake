@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-# If it is enabled, include the eGPIO FLPR application in the build
-if(SB_CONFIG_EGPIO_FLPR_APPLICATION)
+# If it is enabled, include the SDP GPIO application in the build
+if(SB_CONFIG_SDP_GPIO)
   # Extract SoC name from related variables
   string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
@@ -11,7 +11,7 @@ if(SB_CONFIG_EGPIO_FLPR_APPLICATION)
   set(target_soc)
 
   ExternalZephyrProject_Add(
-    APPLICATION flpr_egpio
+    APPLICATION sdp
     SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/gpio
     BOARD ${board_target_flpr}
     BOARD_REVISION ${BOARD_REVISION}

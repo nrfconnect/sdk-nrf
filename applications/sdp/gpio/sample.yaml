@@ -5,37 +5,23 @@ common:
   integration_platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
 tests:
-  applications.sdp.egpio_mbox:
+  applications.sdp.gpio.mbox:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
     tags: ci_build sysbuild gpio
-    extra_args:
-      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuflpr_mbox.overlay"
-    extra_configs:
-      - CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX=y
+    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_MBOX=y
 
-  applications.sdp.egpio_icmsg:
+  applications.sdp.gpio.icmsg:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
     tags: ci_build sysbuild gpio
-    extra_args:
-      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuflpr_icmsg.overlay"
-    extra_configs:
-      - CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG=y
-      - CONFIG_IPC_SERVICE=y
-      - CONFIG_IPC_SERVICE_BACKEND_ICMSG=y
+    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICMSG=y
 
-  applications.sdp.egpio_icbmsg:
+  applications.sdp.gpio.icbmsg:
     sysbuild: true
     build_only: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
-    tags: ci_build sysbuild
-    extra_args:
-      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuflpr_icbmsg.overlay"
-    extra_configs:
-      - CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG=y
-      - CONFIG_IPC_SERVICE=y
-      - CONFIG_IPC_SERVICE_BACKEND_ICBMSG=y
-      - CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
+    tags: ci_build sysbuild gpio
+    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICBMSG=y

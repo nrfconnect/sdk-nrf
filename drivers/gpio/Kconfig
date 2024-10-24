@@ -10,6 +10,8 @@ menuconfig GPIO_NRFE
 	help
 	  Use Software Defined GPIO driver.
 
+if GPIO_NRFE
+
 config GPIO_NRFE_INIT_PRIORITY
 	int "Software Defined GPIO init priority"
 	depends on GPIO_NRFE
@@ -34,12 +36,16 @@ config GPIO_NRFE_EGPIO_BACKEND_MBOX
 
 config GPIO_NRFE_EGPIO_BACKEND_ICMSG
 	bool "ICMSG"
+	select IPC_SERVICE_BACKEND_ICMSG
 	help
 	  Use ICMSG backend driver for eGPIO.
 
 config GPIO_NRFE_EGPIO_BACKEND_ICBMSG
-	bool "ICBMSG backend for eGPIO"
+	bool "ICBMSG"
+	select IPC_SERVICE_BACKEND_ICBMSG
 	help
 	  Use ICBMSG backend driver for eGPIO.
 
 endchoice
+
+endif

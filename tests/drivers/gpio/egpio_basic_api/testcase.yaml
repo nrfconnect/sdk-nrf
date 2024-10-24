@@ -16,7 +16,7 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     sysbuild: true
-    extra_args: SB_CONFIG_EGPIO_BACKEND_ICMSG=y
+    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICMSG=y
 
   drivers.egpio.loopback_icbmsg:
     min_flash: 64
@@ -25,7 +25,7 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     sysbuild: true
-    extra_args: SB_CONFIG_EGPIO_BACKEND_ICBMSG=y
+    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICBMSG=y
 
   drivers.egpio.loopback_mbox:
     min_flash: 64
@@ -34,4 +34,4 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     sysbuild: true
-    extra_args: SB_CONFIG_EGPIO_BACKEND_MBOX=y
+    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_MBOX=y
