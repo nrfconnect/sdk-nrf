@@ -1,0 +1,11 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config TEST_DURATION
+	int "Test duration in ms"
+	default 8000
+	help
+	  Test will run for (at least) defined time.
+	  This value affects how many times GPIOs will be toggled.
+
+source "Kconfig.zephyr"
