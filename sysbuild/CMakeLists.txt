@@ -226,6 +226,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endforeach()
 
+    if(SB_CONFIG_MCUBOOT_CRYPTO_LIBRARY_PSA)
+      set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
+      set_config_bool(mcuboot CONFIG_MBEDTLS n)
+      set_config_bool(mcuboot CONFIG_BOOT_ED25519_PSA y)
+      set_config_string(mcuboot CONFIG_MBEDTLS_CFG_FILE "nrf-config.h")
+    endif()
+
     # A v1 board doesn't define board qualifiers, thus below test will just test the pure board
     # name for a v1 board. A v2 board will match against the board qualifier.
     if("${BOARD}${BOARD_QUALIFIERS}" MATCHES "(_|/)ns$")

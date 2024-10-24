@@ -142,6 +142,19 @@ choice BOOT_SIGNATURE_TYPE
 
 endchoice
 
+choice MCUBOOT_CRYPTO_LIBRARY
+	prompt "Library used by cryptographic functions of MCUboot"
+	default MCUBOOT_CRYPTO_LIBRARY_DEFAULT
+
+config MCUBOOT_CRYPTO_LIBRARY_PSA
+	bool "Enforce use of PSA as cryptographic library"
+	depends on BOOT_SIGNATURE_TYPE_ED25519
+
+config MCUBOOT_CRYPTO_LIBRARY_DEFAULT
+	bool "Use whatever library used, by default, to support selected algorithm"
+
+endchoice
+
 endif
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
