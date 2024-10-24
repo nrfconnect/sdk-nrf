@@ -19,7 +19,7 @@
 #include <zephyr/types.h>
 
 /**
- * @brief   Function for initializing the NVS module.
+ * @brief   Function for initializing the storage module.
  *
  * @return 0 when module has been set up properly,
  * error code otherwise.
@@ -29,7 +29,7 @@ int ndef_file_setup(void);
 /**
  * @brief   Function for updating NDEF message in the flash file.
  *
- * @details NVS update operation is performed on main loop.
+ * @details Storage update operation is performed on main loop.
  *
  * @param buff Pointer to the NDEF message to be stored in flash.
  * @param size Size of NDEF message.

@@ -32,7 +32,7 @@
 static const uint8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". */
 	{'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'};
 
-/* Flash partition for NVS */
+/* Flash partition for storage*/
 #define FLASH_DEVICE FIXED_PARTITION_DEVICE(storage_partition)
 /* Flash block size in bytes */
 #define SECTOR_SIZE  (DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size))
@@ -72,7 +72,7 @@ int ndef_file_setup(void)
 #endif /* defined(CONFIG_NVS) */
 
 	if (err < 0) {
-		printk("Cannot initialize NVS!\n");
+		printk("Cannot initialize storage!\n");
 	}
 
 	return err;
