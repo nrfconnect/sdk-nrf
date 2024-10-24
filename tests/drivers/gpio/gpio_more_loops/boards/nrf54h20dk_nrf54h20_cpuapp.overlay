@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/* Test requirements:
+	 * out-gpios[0] wire connected with in-gpios[0],
+	 * out-gpios[1] wire connected with in-gpios[1],
+	 * etc.
+	 * Output-input GPIO pair must have identical active level flag.
+	 */
+	test_gpios {
+		compatible = "gpio-leds";
+		out_gpios: out_gpios {
+			gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>, <&gpio2 8 GPIO_ACTIVE_HIGH>,
+					<&gpio1 2 GPIO_ACTIVE_HIGH>, <&gpio7 2 GPIO_ACTIVE_HIGH>,
+					<&gpio7 6 GPIO_ACTIVE_HIGH>, <&gpio1 5 GPIO_ACTIVE_HIGH>;
+		};
+
+		in_gpios: in_gpios {
+			gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>, <&gpio2 9 GPIO_ACTIVE_HIGH>,
+					<&gpio1 3 GPIO_ACTIVE_HIGH>, <&gpio1 0 GPIO_ACTIVE_HIGH>,
+					<&gpio7 7 GPIO_ACTIVE_HIGH>, <&gpio7 1 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <7>;
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpio7 {
+	status = "okay";
+};
