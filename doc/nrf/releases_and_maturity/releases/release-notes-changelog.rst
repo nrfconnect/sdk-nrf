@@ -864,6 +864,10 @@ DFU libraries
   * Added SUIT cache processing to the DFU Target SUIT library, as described in the :ref:`lib_dfu_target_suit_style_update` section.
   * Updated the DFU Target SUIT implementation to the newest version of the SUIT.
 
+* :ref:`lib_fmfu_fdev`:
+
+  * Regenerated the zcbor-generated code files using v0.9.0.
+
 Gazell libraries
 ----------------
 
@@ -1215,6 +1219,11 @@ Shell libraries
 ---------------
 
 |no_changes_yet_note|
+
+Secure Domain Firmware (SDFW) libraries
+---------------------------------------
+
+* sdfw_services: Regenerated the zcbor-generated code files using v0.9.0.
 
 Libraries for Zigbee
 --------------------
