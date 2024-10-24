@@ -1,0 +1,22 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config NUMBER_OF_LOOPBACKS
+	int "Number of GPIO loopbacks"
+	default 3
+	help
+		This test must be run on setups that have 'gpio_loopback' fixture.
+		Depending on target, this fixture may provide different number
+		of GPIO loopbacks.
+		This value must be aligned with the definition
+		of "test_gpios" node in the board overlay.
+		Test code supports up to five GPIO loopbacks.
+
+config TEST_DURATION
+	int "Test duration in ms"
+	default 8000
+	help
+		Test will run for (at least) defined time.
+		This value affects how many times GPIOs will be toggled.
+
+source "Kconfig.zephyr"
