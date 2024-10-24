@@ -48,6 +48,8 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 {
 	nrfx_err_t err;
 #ifdef DPPI_PRESENT
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
 	if (*PUBLISH_ADDR(evt) != 0) {
 		if (!IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
 			return NRFX_ERROR_BUSY;
@@ -60,7 +62,7 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 		err = NRFX_SUCCESS;
 		shared_ch_mask |= BIT(*ch);
 	} else {
-		err = nrfx_dppi_channel_alloc(ch);
+		err = nrfx_dppi_channel_alloc(&dppi, ch);
 	}
 #else
 	err = nrfx_ppi_channel_alloc((nrf_ppi_channel_t *)ch);
@@ -71,9 +73,11 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 static nrfx_err_t ppi_free(uint8_t ch)
 {
 #ifdef DPPI_PRESENT
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
 	if (!IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)
 		|| ((BIT(ch) & shared_ch_mask) == 0)) {
-		return nrfx_dppi_channel_free(ch);
+		return nrfx_dppi_channel_free(&dppi, ch);
 	} else {
 		return NRFX_SUCCESS;
 	}
