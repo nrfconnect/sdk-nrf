@@ -126,7 +126,7 @@ int main(void)
 		printk("Cannot initialize board!\n");
 		goto fail;
 	}
-	/* Initialize NVS. */
+	/* Initialize storage. */
 	if (ndef_file_setup() < 0) {
 		printk("Cannot setup NDEF file!\n");
 		goto fail;
