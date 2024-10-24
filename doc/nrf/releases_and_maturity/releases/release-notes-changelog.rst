@@ -191,6 +191,10 @@ Bluetooth® LE
   The SoftDevice Controller driver uses a devicetree node named ``bt_hci_sdc`` with a devicetree binding compatible with ``nordic,bt-hci-sdc``.
   The Zephyr Bluetooth LE Controller uses a devicetree node named ``bt_hci_controller`` with a devicetree binding compatible with ``zephyr,bt-hci-ll-sw-split``.
   Applications using the Zephyr Bluetooth Controller need to be updated (see the :ref:`migration guide <migration_2.8>`).
+* Host calls in GATT Discovery Manager (DM) callbacks are now scheduled in a workqueue.
+  The :kconfig:option:`BT_GATT_DM_WORKQ_CHOICE` Kconfig option allows you to select the workqueue implementation.
+  You can select either a workqueue specific to GATT DM (default) or the system workqueue.
+  You can use the system workqueue if creating a new thread is not viable due to memory constraints, but it is not recommended to have potential blocking calls in the system workqueue.
 
 Bluetooth Mesh
 --------------
