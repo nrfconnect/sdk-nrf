@@ -38,7 +38,7 @@ config GPIO_NRFE_EGPIO_BACKEND_ICMSG
 	  Use ICMSG backend driver for eGPIO.
 
 config GPIO_NRFE_EGPIO_BACKEND_ICBMSG
-	bool "ICBMSG backend for eGPIO"
+	bool "ICBMSG"
 	help
 	  Use ICBMSG backend driver for eGPIO.
 
