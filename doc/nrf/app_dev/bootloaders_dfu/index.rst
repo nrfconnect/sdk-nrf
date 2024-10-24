@@ -53,3 +53,4 @@ To learn more, refer to the following documentation pages:
    qspi_xip_split_image
    dfu_tools_mcumgr_cli
    mcuboot_image_compression
+   sysbuild_image_ids
