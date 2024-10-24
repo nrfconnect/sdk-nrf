@@ -47,6 +47,7 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
    :caption: Subpages:
 
    features
+   zms
    cryptography
    testing_dfu
    snippets
