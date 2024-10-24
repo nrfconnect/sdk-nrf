@@ -11,7 +11,7 @@ if(SB_CONFIG_EGPIO_FLPR_APPLICATION)
   set(target_soc)
 
   ExternalZephyrProject_Add(
-    APPLICATION flpr_egpio
+    APPLICATION sdp
     SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/gpio
     BOARD ${board_target_flpr}
     BOARD_REVISION ${BOARD_REVISION}
