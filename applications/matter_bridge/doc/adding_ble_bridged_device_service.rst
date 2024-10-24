@@ -236,7 +236,6 @@ The following steps show how to add support for a new Bluetooth LE service calle
                mGattSubscribeParams.value = BT_GATT_CCC_NOTIFY;
                mGattSubscribeParams.notify = MyBtServiceDataProvider::GattNotifyCallback;
                mGattSubscribeParams.subscribe = nullptr;
-               mGattSubscribeParams.write = nullptr;
                return bt_gatt_subscribe(mDevice.mConn, &mGattSubscribeParams);
             }
 

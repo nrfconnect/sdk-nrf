@@ -180,6 +180,12 @@ endchoice
 
 endif # NET_L2_OPENTHREAD
 
+# Dummy Kconfig just to select experimental for some of the configurations.
+config BRIDGE_EXPERIMENTAL
+	bool
+	default y if NET_L2_OPENTHREAD || BRIDGE_SMART_PLUG_SUPPORT
+	select EXPERIMENTAL if NET_L2_OPENTHREAD || BRIDGE_SMART_PLUG_SUPPORT
+
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
 source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/Kconfig"
