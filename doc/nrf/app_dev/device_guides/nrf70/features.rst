@@ -49,6 +49,8 @@ The nRF70 Series devices also support the following functionalities:
 
 * :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`: Allows the injection of raw IEEE 802.11 frames in Station and Monitor modes.
 * :ref:`Promiscuous reception <ug_nrf70_developing_promiscuous_packet_reception>`: Allows the reception of IEEE 802.11 packets from a connected BSSID when operating in Station mode.
+* :ref:`Offloaded raw transmission <ug_nrf70_developing_offloaded_raw_tx>`: Allows the offloading of raw IEEE 802.11 frame transmission to the nRF Wi-Fi driver.
+* :ref:`Wi-Fi advanced security modes <ug_nrf70_wifi_advanced_security_modes>`: Allows the use of advanced security modes, certificate-based Wi-Fi security, and the Platform Security Architecture (PSA) security framework.
 
 Peer-to-peer support in the form of Wi-Fi Direct® will be available in the future.
 

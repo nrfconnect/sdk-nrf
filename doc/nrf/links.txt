@@ -911,6 +911,8 @@
 
 .. _`Testing the nRF Connect platform with Apple, Google and Samsung ecosystems`: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/matter-testing-nrf-connect-sdk-platform-with-apple-google-and-samsung-ecosystems-218911247#mcetoc_1gkq24ojdf
 
+.. _`Online Power Profiler for Wi-Fi`: https://devzone.nordicsemi.com/power/w/opp/14/online-power-profiler-for-wi-fi
+
 .. ### Source: App stores (play.google.com & apps.apple.com)
 
 .. _`Fast Pair Validator app`: https://play.google.com/store/apps/details?id=com.google.location.nearby.apps.fastpair.validator

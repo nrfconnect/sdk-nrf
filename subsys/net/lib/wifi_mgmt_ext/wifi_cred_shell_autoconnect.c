@@ -27,5 +27,5 @@ static int cmd_auto_connect(const struct shell *shell, size_t argc, char *argv[]
 	return 0;
 }
 
-SHELL_SUBCMD_ADD((wifi_cred),
+SHELL_SUBCMD_ADD((nwifi_cred),
 		 auto_connect, NULL, "Connect to any stored network.", cmd_auto_connect, 0, 0);
