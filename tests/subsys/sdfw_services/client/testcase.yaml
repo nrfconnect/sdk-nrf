@@ -1,7 +1,7 @@
 tests:
   ssf.client:
     sysbuild: true
-    platform_allow: native_posix
+    platform_allow: native_sim
     integration_platforms:
-      - native_posix
+      - native_sim
     tags: ssf sysbuild ci_tests_subsys_sdfw_services
