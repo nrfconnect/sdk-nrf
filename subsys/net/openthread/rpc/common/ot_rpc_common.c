@@ -540,3 +540,33 @@ bool ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx, otBorderRo
 
 	return true;
 }
+
+bool ot_rpc_encode_sockaddr(struct nrf_rpc_cbor_ctx *ctx, const otSockAddr *sockaddr)
+{
+	struct zcbor_string bstr = { .value = &sockaddr->mAddress, .len = OT_IP6_ADDRESS_SIZE };
+
+	if (!zcbor_bstr_encode(ctx->zs, &bstr) || !zcbor_uint_encode(ctx->zs, &sockaddr->mPort,
+								     sizeof(sockaddr->mPort))) {
+		return false;
+	}
+
+	return true;
+}
+
+bool ot_rpc_decode_sockaddr(struct nrf_rpc_cbor_ctx *ctx, otSockAddr *sockaddr)
+{
+	struct zcbor_string bstr;
+
+	if (!zcbor_bstr_decode(ctx->zs, &bstr) || !zcbor_uint_decode(ctx->zs, &sockaddr->mPort,
+								     sizeof(sockaddr->mPort))) {
+		return false;
+	}
+
+	if (bstr.len != OT_IP6_ADDRESS_SIZE) {
+		return false;
+	}
+
+	memcpy(&sockaddr->mAddress, bstr.value, OT_IP6_ADDRESS_SIZE);
+
+	return true;
+}
