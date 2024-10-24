@@ -279,13 +279,7 @@ TAB_SIZE               = 8
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                = "rst=\verbatim embed:rst" \
-                         "endrst=\endverbatim" \
-                         "rststar=\verbatim embed:rst:leading-asterisk" \
-                         "endrststar=\endverbatim" \
-                         "r=\verbatim embed:rst:leading-asterisk" \
-                         "er=\endverbatim" \
-                         "kconfig{1}=\verbatim embed:rst:inline :kconfig:option:`\1` \endverbatim" \
+ALIASES                = "kconfig{1}=\verbatim \1 \endverbatim" \
                          "req=\xrefitem req \"Requirement\" \"Requirements\""
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
