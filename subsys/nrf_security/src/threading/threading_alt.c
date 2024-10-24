@@ -32,23 +32,32 @@ NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_asymmetric);
 NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_symmetric);
 #endif
 
+static bool inline is_pre_kernel_or_isr(void)
+{
+#if defined(CONFIG_MULTITHREADING) && !defined(__NRF_TFM__)
+    return k_is_pre_kernel() || k_is_in_isr();
+#else
+    return 0;
+#endif
+}
+
 static void mbedtls_mutex_init_fn(mbedtls_threading_mutex_t * mutex)
 {
-    if(!k_is_pre_kernel() && !k_is_in_isr()) {
+    if(!is_pre_kernel_or_isr()) {
         nrf_security_mutex_init(mutex);
     }
 }
 
 static void mbedtls_mutex_free_fn(mbedtls_threading_mutex_t * mutex)
 {
-    if(!k_is_pre_kernel() && !k_is_in_isr()) {
+    if(!is_pre_kernel_or_isr()) {
         nrf_security_mutex_free(mutex);
     }
 }
 
 static int mbedtls_mutex_lock_fn(mbedtls_threading_mutex_t * mutex)
 {
-    if(!k_is_pre_kernel() && !k_is_in_isr()) {
+    if(!is_pre_kernel_or_isr()) {
         return nrf_security_mutex_lock(mutex);
     } else {
         return 0;
@@ -57,7 +66,7 @@ static int mbedtls_mutex_lock_fn(mbedtls_threading_mutex_t * mutex)
 
 static int mbedtls_mutex_unlock_fn(mbedtls_threading_mutex_t * mutex)
 {
-    if(!k_is_pre_kernel() && !k_is_in_isr()) {
+    if(!is_pre_kernel_or_isr()) {
         return nrf_security_mutex_unlock(mutex);
     } else {
         return 0;
