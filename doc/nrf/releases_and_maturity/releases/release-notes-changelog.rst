@@ -1319,6 +1319,7 @@ Documentation
   * The :ref:`ug_nrf54h20_suit_soc_binaries` page.
   * The :ref:`ug_nrf54h20_suit_push` page documentating the SUIT push model-based update process.
   * The :ref:`app_secure_approtect` section to the :ref:`app_approtect` page.
+  * The :ref:`nfc_rpc` page documenting the NFC Remote Procedure Call (RPC) solution.
 
 * Restructured the :ref:`app_bootloaders` documentation and combined the DFU and bootloader articles.
   Additionally, created a new bootloader :ref:`bootloader_quick_start`.
