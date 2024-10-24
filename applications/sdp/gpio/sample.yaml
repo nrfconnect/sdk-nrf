@@ -1,11 +1,11 @@
 sample:
-  name: eGPIO application
-  description: SW-defined GPIO application
+  name: SDP GPIO application
+  description: SDP GPIO application
 common:
   integration_platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
 tests:
-  applications.sdp.egpio_mbox:
+  applications.sdp.gpio.mbox:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
@@ -15,7 +15,7 @@ tests:
     extra_configs:
       - CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX=y
 
-  applications.sdp.egpio_icmsg:
+  applications.sdp.gpio.icmsg:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
@@ -27,7 +27,7 @@ tests:
       - CONFIG_IPC_SERVICE=y
       - CONFIG_IPC_SERVICE_BACKEND_ICMSG=y
 
-  applications.sdp.egpio_icbmsg:
+  applications.sdp.gpio.icbmsg:
     sysbuild: true
     build_only: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
