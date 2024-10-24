@@ -884,6 +884,34 @@ static int nrf_wifi_util_trigger_rpu_recovery(const struct shell *shell,
 }
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
+
+static int nrf_wifi_util_show_temp(const struct shell *shell,
+				  size_t argc,
+				  const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	int temp;
+
+	fmac_dev_ctx = ctx->rpu_ctx;
+
+	status = nrf_wifi_fmac_temp_get(fmac_dev_ctx, &temp);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_INFO,
+			      "Failed to get current temperature\n");
+		return -ENOEXEC;
+	}
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "Temperature: %d\n",
+		      temp);
+
+	return status;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf_wifi_util_subcmds,
 	SHELL_CMD_ARG(he_ltf,
@@ -981,6 +1009,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      0),
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+	SHELL_CMD_ARG(show_temp,
+		      NULL,
+		      "Displays current temperature\n",
+		      nrf_wifi_util_show_temp,
+		      1,
+		      0),
 	SHELL_SUBCMD_SET_END);
 
 
