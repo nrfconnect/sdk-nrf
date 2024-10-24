@@ -462,6 +462,23 @@ static int bits_logical(void)
 	return TC_PASS;
 }
 
+/**
+ * @brief Stress test - send many GPIO requests one by one
+ */
+static int stress_gpio_pin_set_raw(void)
+{
+	int rc = 0;
+
+	TC_PRINT("- %s\n", __func__);
+
+	for (int i = 0; i < 300000; i++) {
+		rc += gpio_pin_set_raw(dev_out, PIN_OUT, (i % 2));
+	}
+	zassert_equal(rc, 0, "at least one set operation failed, rc = %d)", rc);
+
+	return TC_PASS;
+}
+
 ZTEST(egpio_port, test_egpio_port)
 {
 	zassert_equal(setup(), TC_PASS,
@@ -476,6 +493,8 @@ ZTEST(egpio_port, test_egpio_port)
 		      "check_logic_output_levels failed");
 	zassert_equal(bits_logical(), TC_PASS,
 		      "bits_logical failed");
+	zassert_equal(stress_gpio_pin_set_raw(), TC_PASS,
+		      "stress_gpio_pin_set_raw failed");
 }
 
 /* Test GPIO port configuration */
