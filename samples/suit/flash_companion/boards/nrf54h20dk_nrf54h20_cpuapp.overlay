@@ -43,6 +43,6 @@
 	status = "disabled";
 };
 
-&prng {
+&psa_rng {
 	status = "disabled";
 };
