@@ -37,6 +37,18 @@ static const char client_cert_test[] = {
 static const char client_key_test[] = {
 #include <wifi_enterprise_test_certs/client-key.pem.inc>
 	'\0'};
+
+static const char ca_cert2_test[] = {
+	#include <wifi_enterprise_test_certs/ca2.pem.inc>
+	'\0'};
+
+static const char client_cert2_test[] = {
+	#include <wifi_enterprise_test_certs/client2.pem.inc>
+	'\0'};
+
+static const char client_key2_test[] = {
+	#include <wifi_enterprise_test_certs/client-key2.pem.inc>
+	'\0'};
 #endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 
 static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
@@ -184,6 +196,12 @@ static int wifi_set_enterprise_creds(struct net_if *iface)
 	params.client_cert_len = ARRAY_SIZE(client_cert_test);
 	params.client_key = (uint8_t *)client_key_test;
 	params.client_key_len = ARRAY_SIZE(client_key_test);
+	params.ca_cert2 = (uint8_t *)ca_cert2_test;
+	params.ca_cert2_len = ARRAY_SIZE(ca_cert2_test);
+	params.client_cert2 = (uint8_t *)client_cert2_test;
+	params.client_cert2_len = ARRAY_SIZE(client_cert2_test);
+	params.client_key2 = (uint8_t *)client_key2_test;
+	params.client_key2_len = ARRAY_SIZE(client_key2_test);
 
 	if (net_mgmt(NET_REQUEST_WIFI_ENTERPRISE_CREDS, iface, &params, sizeof(params))) {
 		LOG_ERR("Set enterprise credentials failed\n");
