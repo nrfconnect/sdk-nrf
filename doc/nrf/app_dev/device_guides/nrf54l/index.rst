@@ -59,5 +59,7 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
    features
    zms
    cryptography
+   fota_update
+   kmu_provision
    testing_dfu
    snippets
