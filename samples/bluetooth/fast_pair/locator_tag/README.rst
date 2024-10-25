@@ -530,6 +530,24 @@ For example, when building from the command line, you can add it as follows:
 
    west build -b *board_target* -- -DFILE_SUFFIX=release
 
+.. _fast_pair_locator_tag_motion_detector_test_build:
+
+Motion detector test build
+==========================
+
+If you want to make testing the motion detector easier, enable the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` Kconfig option to shorten the period between the device entering the Unwanted Tracking Protection mode and the activation of the motion detector.
+With this option enabled, the values of the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN` and :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX` Kconfig options that are responsible for this period are shortened to three minutes.
+Otherwise, the period would be a random value between 8 and 24 hours.
+The :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` Kconfig option also shortens the motion detector backoff period (:kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD`) from six hours to two minutes.
+
+See :ref:`configuring_kconfig` for detailed instructions on how to enable the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` Kconfig option in your build.
+For example, when building from the command line, you can enable it as follows:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DCONFIG_DULT_MOTION_DETECTOR_TEST_MODE=y
+
 .. _fast_pair_locator_tag_testing:
 
 Testing
@@ -540,7 +558,7 @@ Testing
    The debug device model name is covered by asterisks and the default Fast Pair logo is displayed instead of the one specified during the device model registration.
 
    If the test Android device uses a primary email account that is not on Google's email allow list for the FMDN feature, testing steps will fail at the FMDN provisioning stage for the default debug (uncertified) device model.
-   To be able to test with debug device models, register your development email account by completing Google's device proposal form.
+   To be able to test with debug device models and use the "Inspect Spot device" tool in the `Find My Device app`_, register your development email account by completing Google's device proposal form.
    You can find the link to the device proposal form in the `Fast Pair Find My Device Network extension`_ specification.
 
 |test_sample|
@@ -757,6 +775,135 @@ To test this feature, complete the following steps:
          Navigate to your accessory view, and tap the :guilabel:`Find nearby` button.
       #. Start the ringing action on your device by tapping the :guilabel:`Play sound` button.
       #. Observe that **LED 1** is lit to confirm that the Android device is able to connect to your development kit after a clock synchronization.
+
+Motion detector
+---------------
+
+To test this feature, complete the following steps:
+
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. Enable the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` Kconfig option in the sample configuration to shorten the motion detector activation periods.
+         Refer to the :ref:`fast_pair_locator_tag_motion_detector_test_build` section for details on how to build the sample in the motion detector test mode.
+      #. Build and flash the application in the motion detector test mode on your target device.
+      #. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FMDN provisioning operation.
+      #. Observe that **LED 3** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Double-click **Button 2** to simulate the motion event.
+      #. Observe that **LED 2** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that the ringing action does not start, because the motion detector is inactive.
+      #. Put the device into the Unwanted Tracking Protection mode.
+         You can do it in two ways.
+         If you have access to the "Inspect Spot device" tool in the Find My Device Android app, you can:
+
+         1. Open the Find My Device app.
+         #. Tap your accessory in the list.
+            The accessory should have "Nearby" written under its name.
+         #. Tap the gear icon next to the device name
+         #. Tap the 3-dot menu and then :guilabel:`Inspect Spot device (internal)`.
+         #. Tap the 3-dot menu and then :guilabel:`Activate Unwanted Tracking Mode`.
+         #. Observe the "Changed unwanted tracking mode successfully" message on the screen.
+         #. Turn off your Android device to prevent it from automatically deactivating the mode.
+            Do this as quickly as possible after activating the mode.
+
+         Otherwise, you can:
+
+         1. Turn off your Android device.
+         #. Wait for minimum 30 minutes for other Android device to put the device into the Unwanted Tracking Protection mode.
+            The other Android device can belong to anyone around you.
+            It is recommended to be in a crowded area.
+
+      #. Wait for three minutes (random value between the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN` and :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX` Kconfig options) for the motion detector to be activated.
+      #. Observe that **LED 2** blinks at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 2** to simulate the motion event.
+      #. Observe that **LED 2** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after up to 10 seconds, the ringing action starts for one second, which is indicated by **LED 2** being lit.
+      #. Observe that **LED 2** goes back to blinking at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 2** to simulate the motion event.
+      #. Observe that **LED 2** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after up to 0.5 second, the ringing action starts for one second, which is indicated by **LED 2** being lit.
+      #. Observe that **LED 2** goes back to blinking at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 2** to simulate the motion event.
+      #. Observe that **LED 2** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after up to 0.5 second, the ringing action starts, which is indicated by **LED 2** being lit.
+      #. Double-click **Button 2** to simulate the motion event while the **LED 2** is still lit (ringing action is still in progress).
+      #. Observe that **LED 2** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after 0.5 second, of not ringing, the ringing action starts again for one second, which is indicated by **LED 2** being lit.
+      #. Observe that **LED 2** goes back to blinking at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Observe that after 20 seconds from the first motion event or after 10 ringing actions completes, the **LED 2** is off, which indicates that the motion detector is inactive.
+      #. Double-click **Button 2** to simulate the motion event.
+      #. Observe that **LED 2** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that the ringing action does not start, because the motion detector is inactive.
+      #. Wait for two minutes (the backoff period defined by the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD` Kconfig option) for the motion detector to be activated again.
+      #. Observe that **LED 2** blinks at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 2** to simulate the motion event and observe the ringing action just as before.
+      #. Wait for 20 seconds for the **LED 2** to go off, which indicates that the motion detector is inactive.
+      #. Wait for two minutes for the motion detector to be activated again.
+      #. Observe that **LED 2** blinks at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Turn on your Android device.
+      #. Observe that after up to few hours the **LED 2** goes off, which means that the motion detector has been deactivated, because the device is no longer in the Unwanted Tracking Protection mode.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Enable the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` Kconfig option in the sample configuration to shorten the motion detector activation periods.
+         Refer to the :ref:`fast_pair_locator_tag_motion_detector_test_build` section for details on how to build the sample in the motion detector test mode.
+      #. Build and flash the application in the motion detector test mode on your target device.
+      #. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FMDN provisioning operation.
+      #. Observe that **LED 2** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Double-click **Button 1** to simulate the motion event.
+      #. Observe that **LED 1** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that the ringing action does not start, because the motion detector is inactive.
+      #. Put the device into the Unwanted Tracking Protection mode.
+         You can do it in two ways.
+         If you have access to the "Inspect Spot device" tool in the Find My Device Android app, you can:
+
+         1. Open the Find My Device app.
+         #. Tap your accessory in the list.
+            The accessory should have "Nearby" written under its name.
+         #. Tap the gear icon next to the device name
+         #. Tap the 3-dot menu and then :guilabel:`Inspect Spot device (internal)`.
+         #. Tap the 3-dot menu and then :guilabel:`Activate Unwanted Tracking Mode`.
+         #. Observe the "Changed unwanted tracking mode successfully" message on the screen.
+         #. Turn off your Android device to prevent it from automatically deactivating the mode.
+            Do this as quickly as possible after activating the mode.
+
+         Otherwise, you can:
+
+         1. Turn off your Android device.
+         #. Wait for minimum 30 minutes for other Android device to put the device into the Unwanted Tracking Protection mode.
+            The other Android device can belong to anyone around you.
+            It is recommended to be in a crowded area.
+
+      #. Wait for three minutes (random value between the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN` and :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX` Kconfig options) for the motion detector to be activated.
+      #. Observe that **LED 1** blinks at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 1** to simulate the motion event.
+      #. Observe that **LED 1** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after up to 10 seconds, the ringing action starts for one second, which is indicated by **LED 1** being lit.
+      #. Observe that **LED 1** goes back to blinking at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 1** to simulate the motion event.
+      #. Observe that **LED 1** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after up to 0.5 second, the ringing action starts for one second, which is indicated by **LED 1** being lit.
+      #. Observe that **LED 1** goes back to blinking at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 1** to simulate the motion event.
+      #. Observe that **LED 1** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after up to 0.5 second, the ringing action starts, which is indicated by **LED 1** being lit.
+      #. Double-click **Button 1** to simulate the motion event while the **LED 1** is still lit (ringing action is still in progress).
+      #. Observe that **LED 1** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that after 0.5 second, of not ringing, the ringing action starts again for one second, which is indicated by **LED 1** being lit.
+      #. Observe that **LED 1** goes back to blinking at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Observe that after 20 seconds from the first motion event or after 10 ringing actions completes, the **LED 1** is off, which indicates that the motion detector is inactive.
+      #. Double-click **Button 1** to simulate the motion event.
+      #. Observe that **LED 1** blinks fast twice, which indicates that the motion detected event appears.
+      #. Observe that the ringing action does not start, because the motion detector is inactive.
+      #. Wait for two minutes (the backoff period defined by the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD` Kconfig option) for the motion detector to be activated again.
+      #. Observe that **LED 1** blinks at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Double-click **Button 1** to simulate the motion event and observe the ringing action just as before.
+      #. Wait for 20 seconds for the **LED 1** to go off, which indicates that the motion detector is inactive.
+      #. Wait for two minutes for the motion detector to be activated again.
+      #. Observe that **LED 1** blinks at a 0.25 second interval, which indicates that the motion detector is active.
+      #. Turn on your Android device.
+      #. Observe that after up to few hours the **LED 1** goes off, which means that the motion detector has been deactivated, because the device is no longer in the Unwanted Tracking Protection mode.
 
 Performing the DFU procedure
 ----------------------------
