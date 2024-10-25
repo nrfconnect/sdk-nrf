@@ -31,8 +31,8 @@ if(SB_CONFIG_PARTITION_MANAGER)
 endif()
 
 # Add a dependency so that the remote image will be built first.
-sysbuild_add_dependencies(CONFIGURE machine_learning ipc_radio remote)
+sysbuild_add_dependencies(CONFIGURE ${DEFAULT_IMAGE} ipc_radio remote)
 # Add dependency so that the remote image is flashed first.
-sysbuild_add_dependencies(FLASH machine_learning ipc_radio remote)
+sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} ipc_radio remote)
 
 endif()

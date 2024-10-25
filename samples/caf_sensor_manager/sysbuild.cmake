@@ -33,6 +33,6 @@ if(SB_CONFIG_PARTITION_MANAGER)
 endif()
 
 # Add a dependency so that the remote sample will be built and flashed first
-sysbuild_add_dependencies(CONFIGURE caf_sensor_manager remote)
+sysbuild_add_dependencies(CONFIGURE ${DEFAULT_IMAGE} remote)
 # Add dependency so that the remote image is flashed first.
-sysbuild_add_dependencies(FLASH caf_sensor_manager remote)
+sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} remote)

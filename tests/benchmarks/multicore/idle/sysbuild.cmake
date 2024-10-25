@@ -21,6 +21,6 @@ set_property(GLOBAL PROPERTY DOMAIN_APP_CPUNET remote)
 set(CPUNET_PM_DOMAIN_DYNAMIC_PARTITION remote CACHE INTERNAL "")
 
 # Add a dependency so that the remote image will be built and flashed first
-add_dependencies(idle remote)
+add_dependencies(${DEFAULT_IMAGE} remote)
 # Add dependency so that the remote image is flashed first.
-sysbuild_add_dependencies(FLASH idle remote)
+sysbuild_add_dependencies(FLASH ${DEFAULT_IMAGE} remote)
