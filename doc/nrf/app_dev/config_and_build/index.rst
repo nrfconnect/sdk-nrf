@@ -43,5 +43,6 @@ Make sure to consider :ref:`app_bootloaders` and :ref:`app_dfu` already at this 
    kconfig/index
    sysbuild/index
    multi_image
+   config_settings_zms
    building
    output_build_files
