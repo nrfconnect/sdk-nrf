@@ -494,11 +494,9 @@ static int stress_gpio_pin_set_raw(void)
 		/* Report any other error */
 		if (rc) {
 			TC_PRINT("%d: rc = %d\n", i, rc);
+			rc_acc += rc;
 			break;
 		}
-
-		/* Accumulate error codes */
-		rc_acc += rc;
 	}
 	zassert_equal(rc_acc, 0, "at least one set operation failed, rc_acc = %d)", rc_acc);
 
