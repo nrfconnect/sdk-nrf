@@ -11,11 +11,12 @@ LOG_MODULE_REGISTER(suit_memptr_sink, CONFIG_SUIT_LOG_LEVEL);
 
 static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size);
 static suit_plat_err_t used_storage(void *ctx, size_t *size);
+static suit_plat_err_t erase(void *ctx);
 
 suit_plat_err_t suit_memptr_sink_get(struct stream_sink *sink, memptr_storage_handle_t handle)
 {
 	if ((sink != NULL) && (handle != NULL)) {
-		sink->erase = NULL;
+		sink->erase = erase;
 		sink->write = write;
 		sink->seek = NULL;
 		sink->flush = NULL;
@@ -69,6 +70,26 @@ static suit_plat_err_t used_storage(void *ctx, size_t *size)
 
 		LOG_ERR("Storage get failed");
 		return SUIT_PLAT_ERR_NOT_FOUND;
+	}
+
+	LOG_ERR("Invalid argument.");
+	return SUIT_PLAT_ERR_INVAL;
+}
+
+static suit_plat_err_t erase(void *ctx)
+{
+	suit_memptr_storage_err_t err;
+
+	if (ctx != NULL) {
+		err = suit_memptr_storage_ptr_store(ctx, NULL, 0);
+		if (err != SUIT_PLAT_SUCCESS) {
+			/* In the current conditions suit_memptr_storage_ptr_store will only
+			 * fail with SUIT_MEMPTR_STORAGE_ERR_UNALLOCATED_RECORD
+			 */
+			return SUIT_PLAT_ERR_NOT_FOUND;
+		}
+
+		return SUIT_PLAT_SUCCESS;
 	}
 
 	LOG_ERR("Invalid argument.");

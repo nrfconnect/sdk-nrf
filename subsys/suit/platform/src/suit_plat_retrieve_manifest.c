@@ -50,6 +50,10 @@ int suit_plat_retrieve_manifest(suit_component_t component_handle, const uint8_t
 		}
 
 		ret = suit_memptr_storage_ptr_get(handle, envelope_str, envelope_len);
+		if ((*envelope_str == NULL) || (*envelope_len == 0)) {
+			LOG_WRN("Pointer to manifest candidate is empty");
+			return SUIT_ERR_UNAVAILABLE_PAYLOAD;
+		}
 		if ((ret != SUIT_PLAT_SUCCESS) || (*envelope_str == NULL) || (*envelope_len == 0)) {
 			LOG_ERR("Unable to fetch pointer to manifest candidate"
 				"(memptr storage err: %d)",
