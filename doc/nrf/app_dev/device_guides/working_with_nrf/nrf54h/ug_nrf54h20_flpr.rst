@@ -11,10 +11,23 @@ Working with the FLPR core
    The FLPR core support in the |NCS| is currently :ref:`experimental<software_maturity>`.
 
 The nRF54H20 SoC includes a dedicated VPR CPU, based on RISC-V architecture, known as the *fast lightweight peripheral processor* (FLPR).
-The FLPR core can be used to manage specific peripherals through the appropriate Zephyr Device Driver API:
+The FLPR core can be used to manage specific peripherals through the appropriate Zephyr Device Driver API.
+These peripherals have IRQs routed to FLPR:
 
-* UARTE120
-* GPIO
+* USBHS
+* EXMIF
+* I3C120
+* CAN120
+* I3C121
+* TIMER120
+* TIMER121
+* PWM120
+* SPIS120
+* SPIM120/UARTE120
+* SPIM121
+
+All other peripherals available to the application core can also be used with FLPR.
+However, they require the use of *polling mode*.
 
 .. _vpr_flpr_nrf54h20_initiating:
 
