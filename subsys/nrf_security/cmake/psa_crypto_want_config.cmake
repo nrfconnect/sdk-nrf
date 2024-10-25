@@ -139,6 +139,12 @@ kconfig_check_and_set_base_to_one(PSA_WANT_ALG_SP800_108_COUNTER_HMAC)
 
 kconfig_check_and_set_base_int(PSA_MAX_RSA_KEY_BITS)
 
+# Enable PSA crypto (core) thread safety based on checking that MBEDTLS_THREADING_C
+# is set but not MBEDTLS_PSA_CRYPTO_DISABLE_THREAD_SAFETY
+if(CONFIG_MBEDTLS_THREADING_C AND NOT CONFIG_MBEDTLS_PSA_CRYPTO_DISABLE_THREAD_SAFETY)
+  set(PSA_CRYPTO_THREAD_SAFE True)
+endif()
+
 # Create the Mbed TLS PSA crypto config file (Contains all the PSA_WANT definitions)
 configure_file(${NRF_SECURITY_ROOT}/configs/psa_crypto_want_config.h.template
   ${generated_include_path}/${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}

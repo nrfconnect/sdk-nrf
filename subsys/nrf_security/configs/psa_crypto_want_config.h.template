@@ -145,4 +145,7 @@
 /* The Adjusting is done in this file */
 #define PSA_CRYPTO_ADJUST_KEYPAIR_TYPES_H
 
+/* Configuration for PSA crypto front-end APIs being thread safe */
+#cmakedefine PSA_CRYPTO_THREAD_SAFE
+
 #endif /* PSA_CRYPTO_CONFIG_H */

@@ -7,7 +7,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/lib_kmu.h>
-#include <nrf_security_mutexes.h>
+#include <threading_alt.h>
 #include <nrfx.h>
 #include <psa/crypto.h>
 #include <stdint.h>
@@ -844,13 +844,15 @@ static psa_status_t push_kmu_key_to_ram(uint8_t *key_buffer, size_t key_buffer_s
 	 * Here the decision was to avoid defining another mutex to handle the push buffer for the
 	 * rest of the use cases.
 	 */
-	nrf_security_mutex_lock(&cracen_mutex_symmetric);
+	__ASSERT(mbedtls_mutex_lock(&cracen_mutex_symmetric) == 0,
+			"cracen_mutex_symmetric not initialized (lock)");
 	status = silex_statuscodes_to_psa(cracen_kmu_prepare_key(key_buffer));
 	if (status == PSA_SUCCESS) {
 		memcpy(key_buffer, kmu_push_area, key_buffer_size);
 		safe_memzero(kmu_push_area, sizeof(kmu_push_area));
 	}
-	nrf_security_mutex_unlock(&cracen_mutex_symmetric);
+	__ASSERT(mbedtls_mutex_unlock(&cracen_mutex_symmetric) == 0,
+		"cracen_mutex_symmetric not initialized (unlock)");
 
 	return status;
 }
