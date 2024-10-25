@@ -8,7 +8,8 @@ tests:
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
-    platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf54l15dk/nrf54l15/cpuapp
     tags: bluetooth sysbuild
   sample.bluetooth.central_dfu_smp.build:
     sysbuild: true
