@@ -43,6 +43,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/dfu.rst
    doc/dfu_mcumgr.rst
    doc/dfu_lock.rst
+   doc/dvfs.rst
    doc/factory_reset.rst
    doc/failsafe.rst
    doc/fast_pair_app.rst

@@ -362,6 +362,11 @@ nRF Desktop
     This is done to work around the timeout in MPSL flash synchronization (``NCSDK-29354`` known issue).
     See :ref:`known_issues` for details.
 
+* Added DVFS module to the nRF Desktop application.
+  The module is responsible for switching the frequency and voltage according to the application's needs.
+  The module ensures that if there are no DVFS requests application is running on the lowest frequency and voltage.
+  Module listens for events that are sent and applies state activity according to the event.
+
 * Updated:
 
   * The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` Kconfig option value in configurations with the Fast Pair support.
