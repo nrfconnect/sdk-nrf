@@ -85,7 +85,8 @@ config SUIT_PLAT_CHECK_COMPONENT_COMPATIBILITY
 	bool "Enable component ID check against supported manifest class IDs"
 	depends on SUIT_UTILS
 	depends on SUIT_METADATA
+	depends on SUIT_MCI
 
 config SUIT_PLAT_CHECK_CLASSES
 	bool "Enable vendor/class/device class ID checks"
-	depends on SUIT_PLAT_CHECK_COMPONENT_COMPATIBILITY
+	depends on SUIT_PLAT_CHECK_COMPONENT_COMPATIBILITY || SSF_SUIT_SERVICE_ENABLED

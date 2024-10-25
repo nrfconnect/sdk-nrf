@@ -8,7 +8,9 @@
 #include <suit_storage.h>
 #include <suit_storage_mpi.h>
 #include <suit_execution_mode.h>
+#ifdef CONFIG_SDFW_LCS
 #include <sdfw/lcs.h>
+#endif /* CONFIG_SDFW_LCS */
 #include <zephyr/logging/log.h>
 #include <sdfw/arbiter.h>
 

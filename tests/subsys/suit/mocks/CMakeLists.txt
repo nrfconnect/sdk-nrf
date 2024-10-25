@@ -4,4 +4,5 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory(sdfw)
+add_subdirectory_ifdef(CONFIG_MOCK_NRFX nrfx)
+add_subdirectory_ifdef(CONFIG_MOCK_SDFW_ARBITER sdfw)
