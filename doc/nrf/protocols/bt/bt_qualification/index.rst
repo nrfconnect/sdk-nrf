@@ -7,6 +7,9 @@ Bluetooth qualification
    :local:
    :depth: 2
 
+.. note::
+   This page has not been updated to reflect the new process defined in Qualification Program Reference Document (QPRD) v3.
+
 Every product using the *Bluetooth®* Low Energy technology must be certified (qualified) by Bluetooth Special Interest Group (SIG).
 Only when your product is qualified, you will be authorized to do the following:
 

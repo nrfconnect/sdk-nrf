@@ -21,19 +21,23 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    * - :ref:`zephyr:nrf54l15dk_nrf54l15`
      - PCA10156
      - ``nrf54l15dk/nrf54l15/cpuapp``
-     - * `nRF54L15 Datasheet`_
-       * :ref:`Getting started <gsg_other>`
-     - `nRF54L15 System-on-Chip`_
+     - | `Datasheet <nRF54L15 Datasheet_>`_
+       | :ref:`Getting started <gsg_other>`
+       | `User Guide <nRF54L15 DK user guide_>`_
+     - | `nRF54L15 DK product page <nRF54L15 DK_>`_
+       | `nRF54L15 System-on-Chip (SoC) <nRF54L05_>`_
    * - :ref:`nRF54L05 emulation on the nRF54L15 DK <emulated-nrf54l05>`
      - PCA10156
      - ``nrf54l15dk/nrf54l15/cpuapp``
-     - --
-     - --
+     - | `Datasheet <nRF54L15 Datasheet_>`_
+     - | `nRF54L05 System-on-Chip (SoC) <nRF54L15 System-on-Chip_>`_
    * - :ref:`nRF54L10 emulation on the nRF54L15 DK <emulated-nrf54l10>`
      - PCA10156
      - ``nrf54l15dk/nrf54l15/cpuapp``
-     - --
-     - --
+     - | `Datasheet <nRF54L15 Datasheet_>`_
+     - | `nRF54L10 System-on-Chip (SoC) <nRF54L10_>`_
+
+.. _ug_nrf54L15_revision:
 
 Ensure to check the revision of your nRF54L15 device to see if it is supported:
 

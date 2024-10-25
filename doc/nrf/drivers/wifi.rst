@@ -1,3 +1,5 @@
+.. _wifi_drivers:
+
 Wi-Fi drivers
 #############
 

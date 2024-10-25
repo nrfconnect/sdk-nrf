@@ -48,9 +48,6 @@ LTO is an advanced compilation technique that performs optimization across all c
 
 To enable LTO, set the :kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION` Kconfig options to ``y``.
 
-.. note::
-   Support for Link Time Optimization is experimental.
-
 .. _ug_matter_device_memory_profiling:
 
 Profiling memory in Matter applications

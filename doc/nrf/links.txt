@@ -313,6 +313,10 @@
 .. _`Cellular IoT SiPs`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/Products?lang=en#infotabs
 
 .. _`nRF54L15 System-on-Chip`: https://www.nordicsemi.com/Products/nRF54L15
+.. _`nRF54L15 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54L15-DK
+.. _`nRF54L15 DK distributors`: https://www.nordicsemi.com/About-us/BuyOnline?search_token=nRF54L15%20DK
+.. _`nRF54L05`: https://www.nordicsemi.com/Products/nRF54L05
+.. _`nRF54L10`: https://www.nordicsemi.com/Products/nRF54L10
 
 .. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
 .. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
@@ -360,6 +364,7 @@
 
 .. #### Source: www.nordicsemi.com/Events/
 
+.. _`nRF Connect SDK v2.8.0 webinar`: https://webinars.nordicsemi.com/events
 .. _`nRF Connect SDK v2.7.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v270
 .. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
 .. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
@@ -417,6 +422,7 @@
 .. _`nRF Connect SDK latest documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v2.8.0`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/releases_and_maturity/known_issues.html?v=v2-8-0
 .. _`known issues for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-7-0
 .. _`known issues for nRF Connect SDK v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-2
 .. _`known issues for nRF Connect SDK v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-6-1
@@ -465,6 +471,7 @@
 
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
+.. _`Repositories and revisions for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs2/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/releases_and_maturity/repository_revisions.html
@@ -495,6 +502,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
+.. _`Modem library changelog for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-2.6.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -522,6 +530,7 @@
 .. _`Modem library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
+.. _`LwM2M carrier library changelog for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-2.6.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -699,6 +708,7 @@
 .. _`nRF91x1 modem trace activation %XMODEMTRACE`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
 
 .. _`nRF54L15 Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/keyfeatures_html5.html
+.. _`nRF54L15 DK user guide`: https://docs.nordicsemi.com/bundle/ug_nrf54l15_dk/page/UG/nRF54L15_DK/intro/intro.html
 
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 
@@ -1077,7 +1087,7 @@
 
 .. _`Windows Hardware Lab Kit`: https://docs.microsoft.com/en-us/windows-hardware/test/hlk/
 
-.. _`Swift Pair`: https://docs.microsoft.com/en-us/windows-hardware/design/device-experiences/bluetooth-swift-pair
+.. _`Swift Pair`: https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair
 
 .. _`Windows path length limitations`: https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
 
@@ -1298,9 +1308,9 @@
 .. _`nRF Cloud Device ID`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/DeviceId.html
 .. _`nRF Cloud Device Shadows`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/Shadows.html
 .. _`nRF Cloud Security`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Security/Security.html
-.. _`nRF Cloud Auto-onboarding`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html#auto-onboarding
+.. _`nRF Cloud Auto-onboarding`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#auto-onboarding
 .. _`nRF Cloud device claiming`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ClaimingDevices/ClaimingDeviceOwnershipPortal.html
-.. _`nRF Cloud Preconnect Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html#preconnect-provisioning
+.. _`nRF Cloud Preconnect Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#preconnect-onboarding
 .. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html#just-in-time-provisioning
 .. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html
@@ -1496,7 +1506,7 @@
 
 .. _`Developing Matter 1.0 products with nRF Connect SDK`: https://www.youtube.com/watch?v=9Ar13rMxGIk
 .. _`Accelerate cellular product development`: https://youtu.be/b1YW1J4aUps
-.. _`How nRF9160 enables cellular IoT asset tracking`: https://webinars.nordicsemi.com/how-nrf9160-enables-cellular-iot-4
+.. _`How nRF9160 enables cellular IoT asset tracking`: https://webinars.nordicsemi.com/events/12113311018?n=How+nRF9160+enables+cellular+IoT+asset+tracking&event_id=12113311018
 
 .. ### Source: onomondo.com
 
@@ -1523,6 +1533,12 @@
 .. _`ADXL362`: https://www.analog.com/en/products/adxl362.html#product-overview
 .. _`ADXL372`: https://www.analog.com/en/products/adxl372.html#product-overview
 .. _`ADXL367`: https://www.analog.com/en/products/ADXL367.html#product-overview
+
+.. ### Source: files.nordicsemi.com
+
+.. _`Twister test report for nRF Connect SDK v2.8.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.8.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
+.. _`Hardware test report for nRF Connect SDK v2.8.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.8.0/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
+.. _`nRF Auracast configuration files`: https://files.nordicsemi.com/ui/repos/tree/General/ncs-audio/external/nRF-Aura-Config
 
 .. ### Source: other (2 links or less from the same URL)
 
@@ -1663,8 +1679,6 @@
 .. _`Wireless Logic LTE-M/NB-IoT network coverage`: https://www.wirelesslogic.com/simclaim/nsctrial/
 
 .. _`ISO 639-2 code`: https://www.loc.gov/standards/iso639-2/php/code_list.php
-
-.. _`nRF Auracast configuration files`: https://files.nordicsemi.com/ui/repos/tree/General/ncs-audio/external/nRF-Aura-Config
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
