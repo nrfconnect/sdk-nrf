@@ -1273,6 +1273,16 @@ struct lte_lc_evt {
 	};
 };
 
+#define LTE_LC_PLMN_ACT_BIT_WBS1 1
+#define LTE_LC_PLMN_ACT_BIT_NBS1 1 << 1
+#define LTE_LC_PLMN_MCC_MNC_MAX 6
+#define LTE_LC_PLMN_ENTRY_LIST_MAX 25
+
+struct lte_lc_plmn_entry {
+	char mcc_mnc[LTE_LC_PLMN_MCC_MNC_MAX + 1];
+	char act_bitmask;
+};
+
 /**
  * Handler for LTE events.
  *
@@ -1859,6 +1869,38 @@ int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
  * @deprecated since v2.8.0.
  */
 int lte_lc_factory_reset(enum lte_lc_factory_reset_type type);
+
+/**
+ * todo
+ *
+ * @param[in] entries todo
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -ENOMEM todo
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_plmn_access_list_write(struct lte_lc_plmn_entry *entries, size_t size, bool allowed);
+
+/**
+ * todo
+ *
+ * @param[out] entries todo
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -ENOMEM todo
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_plmn_access_list_read(struct lte_lc_plmn_entry *entries, size_t *size, bool allowed);
+
+/**
+ * todo
+ *
+ * @retval 0 if successful.
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_plmn_access_list_clear(void);
 
 /** @} */
 
