@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Include and define MOCK_* Kconfigs
+rsource "../mocks/Kconfig"
+
+source "Kconfig.zephyr"

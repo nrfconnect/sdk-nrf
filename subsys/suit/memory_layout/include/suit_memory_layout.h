@@ -145,6 +145,17 @@ bool suit_memory_global_address_to_external_memory_offset(uintptr_t address, uin
  */
 const struct device *suit_memory_external_memory_device_get(void);
 
+/**
+ * @brief Get allowed address range for placement of SDFW Update Candidate
+ *
+ * @param[out] address Start address of NVM area capable to store SDFW update candidate
+ * @param[out] size Size of NVM area capable to store SDFW update candidate
+ *
+ * @return True for SoCs where SDFW Update Candidate shall be placed in
+ * dedicated address rande, false otherwise.
+ */
+bool suit_memory_sdfw_update_area_info_get(uintptr_t *address, size_t *size);
+
 #ifdef __cplusplus
 }
 #endif

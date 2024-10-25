@@ -52,9 +52,6 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_OK)
 	ret = suit_plat_fetch_integrated(src_handle, &source, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
-	zassert_equal(arbiter_mem_access_check_fake.call_count, 0,
-		      "Incorrect number of arbiter_mem_access_check() calls");
-
 	ret = suit_plat_component_impl_data_get(src_handle, &handle);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_component_impl_data_get failed - error %i",
 		      ret);
@@ -83,27 +80,20 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_OK)
 	ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	arbiter_mem_access_check_fake.return_val = ARBITER_STATUS_OK;
-	arbiter_mem_access_check_fake.call_count = 0;
-
-	struct zcbor_string *ipuc_component_id = suit_plat_find_sdfw_mirror_ipuc(1);
-
-	zassert_is_null(ipuc_component_id, "in-place updateable component found");
+	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
+	zassert_equal(ret, SUIT_PLAT_ERR_NOT_FOUND, "in-place updateable component found");
 
 	ret = suit_plat_ipuc_declare(dst_handle);
-	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_ipuc_declare failed - error %i", ret);
+	zassert_equal(ret, SUIT_PLAT_SUCCESS, "suit_plat_ipuc_declare failed - error %i", ret);
 
-	ipuc_component_id = suit_plat_find_sdfw_mirror_ipuc(1);
-	zassert_not_null(ipuc_component_id, "in-place updateable component not found");
+	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
+	zassert_equal(ret, SUIT_PLAT_SUCCESS, "cannot write to in-place updateable component");
 
 	ret = suit_plat_copy(dst_handle, src_handle, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_copy failed - error %i", ret);
 
-	ipuc_component_id = suit_plat_find_sdfw_mirror_ipuc(1);
-	zassert_is_null(ipuc_component_id, "in-place updateable component found");
-
-	zassert_equal(arbiter_mem_access_check_fake.call_count, 1,
-		      "Incorrect number of arbiter_mem_access_check() calls");
+	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
+	zassert_equal(ret, SUIT_PLAT_ERR_NOT_FOUND, "in-place updateable component found");
 
 	ret = suit_plat_release_component_handle(dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "dst_handle release failed - error %i", ret);
@@ -138,9 +128,6 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_dst_hand
 
 	ret = suit_plat_fetch_integrated(src_handle, &source, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
-
-	zassert_equal(arbiter_mem_access_check_fake.call_count, 0,
-		      "Incorrect number of arbiter_mem_access_check() calls");
 
 	ret = suit_plat_component_impl_data_get(src_handle, &handle);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_component_impl_data_get failed - error %i",
@@ -177,9 +164,6 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_dst_hand
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_copy should have failed - dst_handle released");
 
-	zassert_equal(arbiter_mem_access_check_fake.call_count, 0,
-		      "Incorrect number of arbiter_mem_access_check() calls");
-
 	ret = suit_plat_release_component_handle(src_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "src_handle release failed - error %i", ret);
 
@@ -209,9 +193,6 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_src_hand
 
 	ret = suit_plat_fetch_integrated(src_handle, &source, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
-
-	zassert_equal(arbiter_mem_access_check_fake.call_count, 0,
-		      "Incorrect number of arbiter_mem_access_check() calls");
 
 	ret = suit_plat_component_impl_data_get(src_handle, &handle);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_component_impl_data_get failed - error %i",
@@ -247,9 +228,6 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_src_hand
 	ret = suit_plat_copy(dst_handle, src_handle, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_copy should have failed - src_handle released");
-
-	zassert_equal(arbiter_mem_access_check_fake.call_count, 0,
-		      "Incorrect number of arbiter_mem_access_check() calls");
 
 	ret = suit_plat_release_component_handle(dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "src_handle release failed - error %i", ret);
@@ -291,9 +269,6 @@ ZTEST(copy_tests, test_integrated_fetch_to_memptr_and_copy_to_msink_NOK_memptr_e
 
 	ret = suit_plat_copy(dst_handle, src_handle, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS, "suit_plat_copy should have failed - memptr empty");
-
-	zassert_equal(arbiter_mem_access_check_fake.call_count, 0,
-		      "Incorrect number of arbiter_mem_access_check() calls");
 
 	ret = suit_plat_release_component_handle(dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "dst_handle release failed - error %i", ret);

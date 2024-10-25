@@ -10,11 +10,10 @@
 
 /* Definitions for SOC internal nonvolatile memory */
 #if (DT_NODE_EXISTS(DT_NODELABEL(mram1x))) /* nrf54H20 */
-#define INTERNAL_NVM_START (DT_REG_ADDR(DT_NODELABEL(mram1x)))
-#define INTERNAL_NVM_SIZE  DT_REG_SIZE(DT_NODELABEL(mram1x))
-#elif (DT_NODE_EXISTS(DT_NODELABEL(mram10))) /* nrf54H20 */
-#define INTERNAL_NVM_START (DT_REG_ADDR(DT_NODELABEL(mram10)))
-#define INTERNAL_NVM_SIZE  DT_REG_SIZE(DT_NODELABEL(mram10)) + DT_REG_SIZE(DT_NODELABEL(mram11))
+#define INTERNAL_NVM_START    (DT_REG_ADDR(DT_NODELABEL(mram1x)))
+#define INTERNAL_NVM_SIZE     DT_REG_SIZE(DT_NODELABEL(mram1x))
+#define SDFW_UPDATE_AREA_ADDR (INTERNAL_NVM_START + INTERNAL_NVM_SIZE / 2)
+#define SDFW_UPDATE_AREA_SIZE (INTERNAL_NVM_SIZE / 2)
 #elif (DT_NODE_EXISTS(DT_NODELABEL(flash0))) /* nrf52 or flash simulator */
 #define INTERNAL_NVM_START DT_REG_ADDR(DT_NODELABEL(flash0))
 #define INTERNAL_NVM_SIZE  DT_REG_SIZE(DT_NODELABEL(flash0))
@@ -85,13 +84,13 @@ static struct ram_area ram_area_map[] = {
 		.ra_start = DT_REG_ADDR(DT_NODELABEL(cpuapp_ram0x_region)),
 		.ra_size = DT_REG_SIZE(DT_NODELABEL(cpuapp_ram0x_region)),
 	},
-#endif							/* ram0x */
+#endif						/* ram0x */
 #if (DT_NODE_EXISTS(DT_NODELABEL(cpuapp_ram0))) /* nrf54H20 */
 	{
 		.ra_start = DT_REG_ADDR(DT_NODELABEL(cpuapp_ram0)),
 		.ra_size = DT_REG_SIZE(DT_NODELABEL(cpuapp_ram0)),
 	},
-#endif						/* cpuapp_ram0 */
+#endif							/* cpuapp_ram0 */
 #if (DT_NODE_EXISTS(DT_NODELABEL(shared_ram20_region))) /* nrf54H20 */
 	{
 		.ra_start = DT_REG_ADDR(DT_NODELABEL(shared_ram20_region)),
@@ -301,4 +300,20 @@ bool suit_memory_global_address_to_external_memory_offset(uintptr_t address, uin
 const struct device *suit_memory_external_memory_device_get(void)
 {
 	return EXTERNAL_NVM_DEV;
+}
+
+bool suit_memory_sdfw_update_area_info_get(uintptr_t *address, size_t *size)
+{
+#if defined SDFW_UPDATE_AREA_ADDR && defined SDFW_UPDATE_AREA_SIZE
+	if (address) {
+		*address = SDFW_UPDATE_AREA_ADDR;
+	}
+	if (size) {
+		*size = SDFW_UPDATE_AREA_SIZE;
+	}
+
+	return true;
+#else
+	return false;
+#endif
 }
