@@ -29,9 +29,17 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
 #if defined(CONFIG_SOC_SERIES_NRF53X)
 	#define LOG_OFFLOAD_IRQn SWI1_IRQn
+	#define MPSL_TIMER0 NRF_TIMER0
 #elif defined(CONFIG_SOC_SERIES_NRF52X)
 	#define LOG_OFFLOAD_IRQn SWI1_EGU1_IRQn
-#endif
+	#define MPSL_TIMER0 NRF_TIMER0
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+	#define LOG_OFFLOAD_IRQn EGU10_IRQn
+	#define MPSL_TIMER0 NRF_TIMER10
+#elif defined(CONFIG_SOC_SERIES_NRF54HX)
+	#define LOG_OFFLOAD_IRQn EGU020_IRQn
+	#define MPSL_TIMER0 NRF_TIMER020
+#endif /* CONFIG_SOC_SERIES_NRF53X */
 
 static bool request_in_cb = true;
 
@@ -127,9 +135,9 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 		/* Setup timer to trigger an interrupt (and thus the TIMER0
 		 * signal) before timeslot end.
 		 */
-		nrf_timer_cc_set(NRF_TIMER0, NRF_TIMER_CC_CHANNEL0,
+		nrf_timer_cc_set(MPSL_TIMER0, NRF_TIMER_CC_CHANNEL0,
 			TIMER_EXPIRY_US);
-		nrf_timer_int_enable(NRF_TIMER0, NRF_TIMER_INT_COMPARE0_MASK);
+		nrf_timer_int_enable(MPSL_TIMER0, NRF_TIMER_INT_COMPARE0_MASK);
 		input_data_len = ring_buf_put(&callback_high_priority_ring_buf, &input_data, 1);
 		if (input_data_len != 1) {
 			LOG_ERR("Full ring buffer, enqueue data with length %d", input_data_len);
@@ -139,8 +147,8 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 	case MPSL_TIMESLOT_SIGNAL_TIMER0:
 
 		/* Clear event */
-		nrf_timer_int_disable(NRF_TIMER0, NRF_TIMER_INT_COMPARE0_MASK);
-		nrf_timer_event_clear(NRF_TIMER0, NRF_TIMER_EVENT_COMPARE0);
+		nrf_timer_int_disable(MPSL_TIMER0, NRF_TIMER_INT_COMPARE0_MASK);
+		nrf_timer_event_clear(MPSL_TIMER0, NRF_TIMER_EVENT_COMPARE0);
 
 		if (request_in_cb) {
 			/* Request new timeslot when callback returns */

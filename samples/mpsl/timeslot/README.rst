@@ -18,6 +18,7 @@ The sample supports any one of the following development kits:
 
 .. note::
    For the nRF5340 DK, this sample is only supported on the network core (``nrf5340dk_nrf5340_cpunet``), and the :ref:`nrf5340_empty_app_core` sample must be programmed to the application core.
+   For the nRF54H20 DK, this sample is only supported on the radio core (``nrf54h20dk_nrf4h20_cpurad``).
 
 Overview
 ********
@@ -30,9 +31,14 @@ The sample opens a timeslot session and starts requesting timeslots when a key i
 The first timeslot is always of type "earliest".
 Any following timeslots are of type "normal".
 In each timeslot callback, the signal type of the callback is posted to a message queue.
-Upon reception of the timeslot start signal, ``timer0`` is configured to be triggered before the timeslot ends.
+Upon reception of the timeslot start signal, ``mpsl timer0`` is configured to be triggered before the timeslot ends.
 A separate thread reads the message queue and prints the timeslot signal type.
 The timeslot session is closed when any key is pressed in the terminal.
+
+.. note::
+   For the nRF52 and nRF53 Series ``mpsl_timer0`` is the ``timer0`` instance.
+   For the nRF54L Series ``mpsl_timer0`` is the ``timer10`` instance.
+   For the nRF54H Series ``mpsl_timer0`` is the ``timer020`` instance.
 
 Building and running
 ********************
