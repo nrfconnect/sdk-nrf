@@ -62,7 +62,9 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
  *
  * @param cache_pool  Pointer to the SUIT cache pool structure.
  *
- * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
+ * @retval SUIT_PLAT_ERR_IO        if unable to read parition contents.
+ * @retval SUIT_PLAT_ERR_NOT_FOUND if partition contains inconsistent data.
+ * @retval SUIT_PLAT_SUCCESS       if partition initialized.
  */
 suit_plat_err_t suit_dfu_cache_partition_is_initialized(struct dfu_cache_pool *cache_pool);
 
@@ -86,8 +88,7 @@ suit_plat_err_t suit_dfu_cache_partition_is_empty(struct dfu_cache_pool *cache_p
  * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
  */
 suit_plat_err_t suit_dfu_cache_partition_find_free_space(struct dfu_cache_pool *cache_pool,
-							 uintptr_t *address,
-							 bool *needs_erase);
+							 uintptr_t *address, bool *needs_erase);
 
 /**
  * @brief Memcpy-like helper for writing streamable data into a memory buffer.
