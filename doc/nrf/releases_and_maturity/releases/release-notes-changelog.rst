@@ -251,6 +251,7 @@ Matter
   * The ZMS file subsystem to all devices that contain RRAM, such as the nRF54L Series devices.
   * Migration of the Device Attestation Certificates private key to Key Management Unit (KMU) for the nRF54L Series SoCs.
     See :ref:`matter_platforms_security_dac_priv_key_kmu` to learn how to enable it in your sample.
+  * Support for the Device Firmware Upgrade over Bluetooth LE SMP and Matter Over-the-air Software Update (OTA) on nRF54H20 SoC.
 
 * Updated:
 
@@ -261,6 +262,8 @@ Matter
     The format now includes the optional ``EXTRAVERSION`` component.
   * Storing the Device Attestation Certificates private key in the Trusted Storage library to be enabled for all platforms that support the PSA crypto API.
     See :ref:`matter_platforms_security_dac_priv_key_its` for more information.
+  * Increased stack sizes for OpenThread and CHIP (Matter) threads for the targets using CrAcEn crypto backend.
+  * Updated the IPv6 multicast subscription mechanism for Wi-Fi to enable MLDv2 join procedure and improve reliability in multicast communication.
 
 Matter fork
 +++++++++++
@@ -634,16 +637,27 @@ Matter samples
   * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 SoC.
   * The :ref:`matter_smoke_co_alarm_sample` sample that demonstrates implementation of Matter Smoke CO alarm device type.
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_LEDS` Kconfig option, which can be used to disable the LEDs in the Matter sample or application.
+  * Enabled Matter OTA on nRF54H20 DK.
 
 * Updated all samples to enable the :ref:`ug_thread_build_report` generation.
 
 * :ref:`matter_lock_sample` sample:
 
   * Added :ref:`Matter Lock schedule snippet <matter_lock_snippets>` and updated the documentation to use the snippet.
+  * Enabled low power configuration for the nRF54L15 DK target.
+  * Enabled Link-Time Optimization (LTO) for the nRF7002 DK target.
+
+* :ref:`matter_smoke_co_alarm_sample` sample:
+
+  * Enabled low power configuration for the nRF54L15 DK target.
 
 * :ref:`matter_template_sample` sample:
 
   * Updated the DAC private key migration from factory data to KMU to be enabled for the nRF54L Series SoCs by default.
+
+* :ref:`matter_window_covering_sample` sample:
+
+  * Enabled low power configuration for the nRF54L15 DK target.
 
 * Removed support for the nRF54L15 PDK from all samples.
 
