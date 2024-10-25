@@ -13,16 +13,9 @@
 - scenarios:
     - ".*nrf7002eb.*"
     - ".*nrf7002_eb.*"
-    - ".thingy91x_nrf700.*"
     - applications.matter_bridge.lto.br_ble.nrf54h20.wifi
     - applications.matter_bridge.release.br_ble.nrf54h20.wifi
-  comment: "nRF7002EB, Thingy91x are not support in the upstream nRF70 driver yet"
-
-- scenarios:
-    - applications.asset_tracker_v2.nrf_cloud
-    - ".*thingy.*nrf70.*"
-    - ".*thingy.*wifi.*"
-  comment: "Thingy is not supported in the upstream nRF70 driver yet"
+  comment: "nRF7002EB not support in the upstream nRF70 driver yet"
 
 - scenarios:
     - sample.cellular.modem_shell.location_service_ext_pgps_nrf7002ek_wifi
