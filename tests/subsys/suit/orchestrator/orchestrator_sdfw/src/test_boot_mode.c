@@ -161,6 +161,12 @@ ZTEST(orchestrator_boot_tests, test_boot_invalid_exec_mode)
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_POST_INVOKE, suit_execution_mode_get(),
 		      "Execution mode modified");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device did not left boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
 }
 
 ZTEST(orchestrator_boot_tests, test_no_root_envelope)
@@ -191,6 +197,12 @@ ZTEST(orchestrator_boot_tests, test_no_root_envelope)
 		      "Emergency flag not set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode indicates boot mode */
+	zassert_equal(true, suit_execution_mode_booting(), "The device left boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
 }
 
 ZTEST(orchestrator_boot_tests, test_invalid_root_envelope)

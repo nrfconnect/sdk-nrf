@@ -44,6 +44,67 @@ static void setup_erased_flash(void *f)
 		      "Unable to clear recovery flag before test execution");
 }
 
+static void setup_update_candidate(const uint8_t *buf, size_t len)
+{
+	zassert_not_null(buf, "NULL buf");
+
+	suit_plat_mreg_t update_candidate[1] = {{
+		.mem = buf,
+		.size = len,
+	}};
+
+	int err = suit_storage_update_cand_set(update_candidate, ARRAY_SIZE(update_candidate));
+
+	zassert_equal(SUIT_PLAT_SUCCESS, err,
+		      "Unable to set update candidate before test execution (0x%x, %d)", buf, len);
+}
+
+static void check_startup_failure(void)
+{
+	suit_execution_mode_t mode_before = suit_execution_mode_get();
+	bool has_failed = suit_execution_mode_failed();
+
+	if (suit_execution_mode_booting()) {
+		/* Update execution mode to leave transient states. */
+		suit_execution_mode_startup_failed();
+
+		/* If the device was booting - it should enter EXECUTION_MODE_FAIL_STARTUP state. */
+		zassert_equal(false, suit_execution_mode_booting(),
+			      "The device did not left boot mode");
+		zassert_equal(false, suit_execution_mode_updating(),
+			      "The device entered update mode");
+		zassert_equal(true, suit_execution_mode_failed(),
+			      "The device did not enter failed mode");
+		zassert_equal(EXECUTION_MODE_FAIL_STARTUP, suit_execution_mode_get(),
+			      "FAILED state not set after boot startup failed");
+	} else if (suit_execution_mode_updating()) {
+		/* Update execution mode to leave transient states. */
+		suit_execution_mode_startup_failed();
+
+		/* If the device was updating - it should enter EXECUTION_MODE_FAIL_STARTUP state.
+		 */
+		zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+		zassert_equal(false, suit_execution_mode_updating(),
+			      "The device did not left update mode");
+		zassert_equal(true, suit_execution_mode_failed(),
+			      "The device did not enter failed mode");
+		zassert_equal(EXECUTION_MODE_FAIL_STARTUP, suit_execution_mode_get(),
+			      "FAILED state not set after update startup failed");
+	} else {
+		/* Update execution mode to leave transient states. */
+		suit_execution_mode_startup_failed();
+
+		/* If the device was in final state - it should stay in the same state state. */
+		zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+		zassert_equal(false, suit_execution_mode_updating(),
+			      "The device entered update mode");
+		zassert_equal(has_failed, suit_execution_mode_failed(),
+			      "The device changed failed mode");
+		zassert_equal(mode_before, suit_execution_mode_get(),
+			      "Unexpected execution mode change");
+	}
+}
+
 static void write_empty_mpi_area_app(void)
 {
 	/* Digest of the content defined in assert_empty_mpi_area_app(). */
@@ -252,6 +313,14 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_no_mpi)
 		      "Lack of MPIs not detected");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode indicates a failed state */
+	zassert_equal(true, suit_execution_mode_failed(), "The device did not enter failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_no_root_mpi)
@@ -269,6 +338,14 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_no_root_mpi)
 		      "Lack of ROOT MPIs not detected");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode indicates a failed state */
+	zassert_equal(true, suit_execution_mode_failed(), "The device did not enter failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_invalid_mpi_version)
@@ -286,6 +363,14 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_invalid_mpi_version)
 		      "Malformed ROOT MPI not detected");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode indicates a failed state */
+	zassert_equal(true, suit_execution_mode_failed(), "The device did not enter failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_duplicate_class_id)
@@ -303,6 +388,14 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_duplicate_class_id)
 		      "Malformed ROOT MPI not detected");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode indicates a failed state */
+	zassert_equal(true, suit_execution_mode_failed(), "The device did not enter failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_unupdateable_root)
@@ -320,6 +413,41 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_unupdateable_root)
 		      "Non-updateable ROOT MPI not detected");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode indicates a failed state */
+	zassert_equal(true, suit_execution_mode_failed(), "The device did not enter failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
+}
+
+ZTEST(orchestrator_nrf54h20_init_tests, test_no_mpi_sdsc_update)
+{
+	const uint8_t update_candidate[] = {0xA, 0xB, 0xC, 0xD};
+
+	/* GIVEN empty flash (suit storage and backup is erased)... */
+	/* ... and update candidate flag is set... */
+	setup_update_candidate(update_candidate, ARRAY_SIZE(update_candidate));
+	/* ... and emergency flag is not set */
+
+	/* WHEN orchestrator is initialized */
+	int err = suit_orchestrator_init();
+
+	/* THEN failed state with Nordic top update is triggered... */
+	zassert_equal(EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP, suit_execution_mode_get(),
+		      "Nordic top update in failed state blocked");
+	/* ... and orchestrator is initialized */
+	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode does not indicate boot mode */
+	zassert_equal(false, suit_execution_mode_booting(), "The device entered boot mode");
+	/* ... and execution mode does indicates update mode */
+	zassert_equal(true, suit_execution_mode_updating(), "The device did not enter update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
 
 ZTEST(orchestrator_nrf54h20_init_tests, test_valid_root)
@@ -337,4 +465,12 @@ ZTEST(orchestrator_nrf54h20_init_tests, test_valid_root)
 		      "Valid ROOT MPI not accepted");
 	/* ... and orchestrator is initialized */
 	zassert_equal(0, err, "Orchestrator not initialized");
+	/* ... and execution mode does not indicate a failed state */
+	zassert_equal(false, suit_execution_mode_failed(), "The device entered failed mode");
+	/* ... and execution mode indicates boot mode */
+	zassert_equal(true, suit_execution_mode_booting(), "The device did not enter boot mode");
+	/* ... and execution mode does not indicate update mode */
+	zassert_equal(false, suit_execution_mode_updating(), "The device entered update mode");
+	/* ... and the startup failure is correctly handled */
+	check_startup_failure();
 }
