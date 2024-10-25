@@ -121,10 +121,10 @@ SUIT_Envelope_Tagged:
 {%- endif %}
 
     suit-payload-fetch:
-{%- if application is defined %}
+{%- if radio is defined %}
     - suit-directive-set-component-index: 0
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ application['name'] }}'
+        suit-parameter-uri: "#{{ radio['name'] }}"
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-dependency-integrity:
@@ -138,10 +138,10 @@ SUIT_Envelope_Tagged:
       - suit-send-sysinfo-success
       - suit-send-sysinfo-failure
 {%- endif %}
-{%- if radio is defined %}
+{%- if application is defined %}
     - suit-directive-set-component-index: 0
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ radio['name'] }}'
+        suit-parameter-uri: "#{{ application['name'] }}"
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-dependency-integrity:
@@ -156,16 +156,16 @@ SUIT_Envelope_Tagged:
       - suit-send-sysinfo-failure
 {%- endif %}
 
-{%- if application['dt'].label2node['suit_storage_partition'].regs[0].size == 24576 %}
-    # Application DTS contains larger SUIT storage - use legacy encoding
+{%- if main_config['dt'].label2node['suit_storage_partition'].regs[0].size == 24576 %}
+    # Main DTS contains larger SUIT storage - use legacy encoding
     suit-install-legacy:
 {%- else %}
     suit-install:
 {%- endif %}
     - suit-directive-set-component-index: 0
-{%- if application is defined %}
+{%- if radio is defined %}
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ application['name'] }}'
+        suit-parameter-uri: '#{{ radio['name'] }}'
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-dependency-integrity:
@@ -179,9 +179,9 @@ SUIT_Envelope_Tagged:
       - suit-send-sysinfo-success
       - suit-send-sysinfo-failure
 {%- endif %}
-{%- if radio is defined %}
+{%- if application is defined %}
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ radio['name'] }}'
+        suit-parameter-uri: '#{{ application['name'] }}'
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-dependency-integrity:
@@ -214,13 +214,13 @@ SUIT_Envelope_Tagged:
 
     suit-candidate-verification:
     - suit-directive-set-component-index: 0
-{%- if application is defined %}
+{%- if radio is defined %}
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ application['name'] }}'
+        suit-parameter-uri: '#{{ radio['name'] }}'
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:
-            envelope: {{ artifacts_folder ~ application['name'] }}.suit
+            envelope: {{ artifacts_folder ~ radio['name'] }}.suit
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
@@ -239,13 +239,13 @@ SUIT_Envelope_Tagged:
       - suit-send-sysinfo-success
       - suit-send-sysinfo-failure
 {%- endif %}
-{%- if radio is defined %}
+{%- if application is defined %}
     - suit-directive-override-parameters:
-        suit-parameter-uri: '#{{ radio['name'] }}'
+        suit-parameter-uri: '#{{ application['name'] }}'
         suit-parameter-image-digest:
           suit-digest-algorithm-id: cose-alg-sha-256
           suit-digest-bytes:
-            envelope: {{ artifacts_folder ~ radio['name'] }}.suit
+            envelope: {{ artifacts_folder ~ application['name'] }}.suit
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-image-match:
