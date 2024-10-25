@@ -12,10 +12,11 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf52dk/nrf52810
       nrf5340dk/nrf5340/cpuapp nrf5340dk/nrf5340/cpuapp/ns thingy53/nrf5340/cpuapp
-      thingy53/nrf5340/cpuapp/ns nrf54h20dk/nrf54h20/cpuapp
+      thingy53/nrf5340/cpuapp/ns nrf54l15dk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
     tags: bluetooth ci_build sysbuild
   sample.bluetooth.peripheral_nsms_no_security:
     sysbuild: true
@@ -28,8 +29,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf52dk/nrf52810
       nrf5340dk/nrf5340/cpuapp nrf5340dk/nrf5340/cpuapp/ns thingy53/nrf5340/cpuapp
-      thingy53/nrf5340/cpuapp/ns nrf54h20dk/nrf54h20/cpuapp
+      thingy53/nrf5340/cpuapp/ns nrf54l15dk/nrf54l15/cpuapp nrf54h20dk/nrf54h20/cpuapp
     tags: bluetooth ci_build sysbuild

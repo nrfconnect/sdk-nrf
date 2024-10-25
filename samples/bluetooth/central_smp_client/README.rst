@@ -42,8 +42,17 @@ The response is decoded using the `zcbor`_ library and displayed after that.
 User interface
 **************
 
-Button 1:
-   Send an echo command.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      Button 1:
+         Send an echo command.
+
+   .. group-tab:: nRF54 DKs
+
+      Button 0:
+         Send an echo command.
 
 
 Building and running
@@ -60,29 +69,59 @@ Testing
 
 |test_sample|
 
-1. |connect_kit|
-#. |connect_terminal|
-#. Reset the kit.
-#. Observe that the text "Starting Bluetooth Central SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
-#. Program the :zephyr:code-sample:`smp-svr` to another development kit.
-   See the documentation for that sample only in the section "Building the sample application".
-   When you have built the :zephyr:code-sample:`smp-svr`, call the following command to program it to the development kit::
+.. tabs::
 
-      west flash
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. Observe that the kits connect.
-   When service discovery is completed, the event logs are printed on the Central's terminal.
-   If you connect to the Server with a terminal emulator, you can observe that it prints "connected".
-#. Press **Button 1** on the Client.
-   Observe messages similar to the following::
+      1. |connect_kit|
+      #. |connect_terminal|
+      #. Reset the kit.
+      #. Observe that the text "Starting Bluetooth Central SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
+      #. Program the :zephyr:code-sample:`smp-svr` to another development kit.
+         See the documentation for that sample only in the section "Building the sample application".
+         When you have built the sample, run the following command to program it to the development kit::
 
-      Echo test: 1
-      Echo response part received, size: 28.
-      Total response received - decoding
-      {_"r": "Echo message: 1"}
+            west flash
 
-#. Disconnect the devices by, for example, pressing the Reset button on the Central.
-   Observe that the kits automatically reconnect and that it is again possible to send data between the two kits.
+      #. Observe that the kits connect.
+         When service discovery is completed, the event logs are printed on the Central's terminal.
+         If you connect to the Server with a terminal emulator, you can observe that it prints "connected".
+      #. Press **Button 1** on the Client.
+         Observe messages similar to the following::
+
+            Echo test: 1
+            Echo response part received, size: 28.
+            Total response received - decoding
+            {_"r": "Echo message: 1"}
+
+      #. Press the Reset button on the Central to disconnect the devices.
+         Observe that the kits automatically reconnect and that it is again possible to send data between the two kits.
+
+   .. group-tab:: nRF54 DKs
+
+      1. |connect_kit|
+      #. |connect_terminal|
+      #. Reset the kit.
+      #. Observe that the text "Starting Bluetooth Central SMP Client example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with SMP.
+      #. Program the :zephyr:code-sample:`smp-svr` to another development kit.
+         See the documentation for that sample only in the section "Building the sample application".
+         When you have built the sample, run the following command to program it to the development kit::
+
+            west flash
+
+      #. Observe that the kits connect.
+         When service discovery is completed, the event logs are printed on the Central's terminal.
+         If you connect to the Server with a terminal emulator, you can observe that it prints "connected".
+      #. Press **Button 0** on the Client.
+         Observe messages similar to the following::
+
+            Echo test: 1
+            Echo response part received, size: 28.
+            Total response received - decoding
+            {_"r": "Echo message: 1"}
+
+      #. Press the Reset button on the Central to disconnect the devices.
+         Observe that the kits automatically reconnect and that it is again possible to send data between the two kits.
 
 Dependencies
 ************
