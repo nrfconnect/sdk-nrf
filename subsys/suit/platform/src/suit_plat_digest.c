@@ -22,6 +22,9 @@ int suit_plat_check_digest(enum suit_cose_alg alg_id, struct zcbor_string *diges
 	case suit_cose_sha256:
 		psa_alg = PSA_ALG_SHA_256;
 		break;
+	case suit_cose_sha512:
+		psa_alg = PSA_ALG_SHA_512;
+		break;
 	default:
 		LOG_ERR("Unsupported digest algorithm: %d", alg_id);
 		return SUIT_ERR_DECODING;
