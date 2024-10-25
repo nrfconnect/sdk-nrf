@@ -38,7 +38,7 @@ See :ref:`thread_device_types` for more information on device types, and :ref:`t
 
 .. _thread_ot_memory_54l15:
 
-nRF5340 DK RAM and flash memory requirements
+nRF54L15 DK RAM and flash memory requirements
 *********************************************
 
 The following tables present memory requirements for samples running on the :ref:`nRF54L15 DK <programming_board_names>` (:ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>`) with the software cryptography support provided by the :ref:`nrfxlib:nrf_oberon_readme` module.
