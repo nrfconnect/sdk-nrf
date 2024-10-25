@@ -1,7 +1,7 @@
 .. _dfu_tools_mcumgr_cli:
 
-Command-line tool
-#################
+MCUmgr Command-line tool
+########################
 
 .. contents::
    :local:

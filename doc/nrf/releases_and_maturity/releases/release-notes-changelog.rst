@@ -1,6 +1,8 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.7.99
+Changelog for |NCS| v2.8.99
 ###########################
 
 .. contents::
@@ -23,7 +25,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See :ref:`known_issues` for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.8.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -48,7 +50,8 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* Updated the allowed offset for :ref:`doc_fw_info` in the :ref:`bootloader`.
+  It can now be placed at offset ``0x600``, however, it cannot be used for any applications with |NSIB| compiled before this change.
 
 Developing with nRF91 Series
 ============================
@@ -157,7 +160,7 @@ Thread
 Zigbee
 ------
 
-* Fixed the :file:`zb_add_ota_header.py` script not being able to handle an ``APPLICATION_VERSION_STRING`` which includes a tweak, such as ``1.0.0+3``.
+|no_changes_yet_note|
 
 Wi-Fi
 -----

@@ -1,21 +1,21 @@
 .. _ug_nrf54h20_suit_soc_binaries:
 
-Upgrade the nRF54h20 SOC binaries with SUIT
+Upgrade the nRF54H20 SoC binaries with SUIT
 ###########################################
 
 .. contents::
    :local:
    :depth: 2
 
-The nRF54H20 SoC includes the *nRF54h20 SOC binaries*, precompiled firmware components provided by Nordic Semiconductor that provide basic functionality and security features.
+The nRF54H20 SoC includes the *nRF54H20 SoC binaries*, precompiled firmware components provided by Nordic Semiconductor that provide basic functionality and security features.
 
-To see which version of the nRF54h20 SOC binaries to use with the given version of the nRF Connect SDK, see :ref:`abi_compatibility`.
+To see which version of the nRF54H20 SoC binaries to use with the given version of the nRF Connect SDK, see :ref:`abi_compatibility`.
 
-Updating the nRF54h20 SOC binaries
+Updating the nRF54H20 SoC binaries
 **********************************
 
-You can update the nRF54h20 SoC binaries in two ways.
-Both methods require using the :file:`nordic_top.suit` envelope, which can be found inside the nRF54h20 SOC binaries ZIP file.
+You can update the nRF54H20 SoC binaries in two ways.
+Both methods require using the :file:`nordic_top.suit` envelope, which can be found inside the nRF54H20 SOC binaries ZIP file.
 
 The two methods for updating are the following:
 
@@ -24,7 +24,7 @@ The two methods for updating are the following:
 * Updating along with the manufacturer application, by attaching the :file:`nordic_top.suit` envelope to the manufacturer root manifest, updating both the SoC binaries and the manufacturer's application simultaneously.
 
 
-Updating the nRF54h20 SOC binaries separately from the manufacturer application
+Updating the nRF54H20 SoC binaries separately from the manufacturer application
 ===============================================================================
 
 When using this method, two separate updates are performed:
