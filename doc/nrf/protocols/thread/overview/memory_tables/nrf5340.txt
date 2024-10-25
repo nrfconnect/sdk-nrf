@@ -2,45 +2,45 @@
 
    .. group-tab:: Single protocol
 
-      .. table:: nRF5340 single protocol Thread 1.3 memory requirements
+      .. table:: nRF5340 single protocol Thread 1.4 memory requirements
 
          +-----------------------------+-------+-------+
          |                             |   FTD |   MTD |
          +=============================+=======+=======+
-         | ROM OT stack + App [kB]     |   329 |   275 |
+         | ROM OT stack + App [kB]     |   330 |   276 |
          +-----------------------------+-------+-------+
          | ROM Bluetooth LE stack [kB] |     0 |     0 |
          +-----------------------------+-------+-------+
          | Persistent storage [kB]     |    32 |    32 |
          +-----------------------------+-------+-------+
-         | Free ROM [kB]               |   663 |   717 |
+         | Free ROM [kB]               |   662 |   716 |
          +-----------------------------+-------+-------+
-         | RAM OT stack + App [kB]     |   101 |    90 |
+         | RAM OT stack + App [kB]     |   101 |    91 |
          +-----------------------------+-------+-------+
          | RAM Bluetooth LE stack [kB] |     0 |     0 |
          +-----------------------------+-------+-------+
-         | Free RAM [kB]               |   411 |   422 |
+         | Free RAM [kB]               |   411 |   421 |
          +-----------------------------+-------+-------+
 
 
    .. group-tab:: Multiprotocol
 
-      .. table:: nRF5340 multiprotocol Thread 1.3 memory requirements
+      .. table:: nRF5340 multiprotocol Thread 1.4 memory requirements
 
          +-----------------------------+-------+-------+
          |                             |   FTD |   MTD |
          +=============================+=======+=======+
-         | ROM OT stack + App [kB]     |   329 |   275 |
+         | ROM OT stack + App [kB]     |   330 |   276 |
          +-----------------------------+-------+-------+
          | ROM Bluetooth LE stack [kB] |    30 |    30 |
          +-----------------------------+-------+-------+
          | Persistent storage [kB]     |    32 |    32 |
          +-----------------------------+-------+-------+
-         | Free ROM [kB]               |   633 |   687 |
+         | Free ROM [kB]               |   632 |   686 |
          +-----------------------------+-------+-------+
-         | RAM OT stack + App [kB]     |   101 |    90 |
+         | RAM OT stack + App [kB]     |   101 |    91 |
          +-----------------------------+-------+-------+
-         | RAM Bluetooth LE stack [kB] |    13 |    14 |
+         | RAM Bluetooth LE stack [kB] |    13 |    13 |
          +-----------------------------+-------+-------+
          | Free RAM [kB]               |   398 |   408 |
          +-----------------------------+-------+-------+
