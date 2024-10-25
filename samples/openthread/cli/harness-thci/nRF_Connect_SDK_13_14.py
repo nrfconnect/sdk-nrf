@@ -3139,7 +3139,7 @@ class OpenThreadTHCI(object):
         return self.__executeCommand(cmd)[-1] == "Done"
 
     @API
-    def setCSLperiod(self, period=3125):
+    def setCSLperiod(self, period=500):
         """set Csl Period
         Args:
             period: csl period in ms
@@ -3148,7 +3148,7 @@ class OpenThreadTHCI(object):
         period is converted from unit ms to ten symbols (160us per 10 symbols).
 
         """
-        cmd = "csl period %u" % (period * 160)
+        cmd = "csl period %u" % (period * 1000)
         return self.__executeCommand(cmd)[-1] == "Done"
 
     @staticmethod
