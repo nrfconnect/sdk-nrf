@@ -35,6 +35,13 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+nRF54L Series
+-------------
+
+.. toggle::
+
+   * Use the :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` file subsystem for all devices that contain RRAM, such as the nRF54L Series devices.
+
 Serial LTE Modem (SLM)
 ----------------------
 
