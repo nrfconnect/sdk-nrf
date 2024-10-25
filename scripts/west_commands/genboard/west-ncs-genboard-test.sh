@@ -16,7 +16,8 @@ declare -a NCS_VERSIONS=(
 	"2.5.0"
 	"2.6.0"
 	"2.7.0"
-	"2.7.99"
+	"2.8.0"
+	"2.8.99"
 )
 
 declare -a SOCS=(
