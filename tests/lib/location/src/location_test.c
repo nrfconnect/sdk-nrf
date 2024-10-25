@@ -576,6 +576,150 @@ int nrf_cloud_rest_agnss_data_get_Stub(
 	return 0;
 }
 
+/* Test that no A-GNSS data is requested when less than 3 GPS satellites have expired
+ * ephemerides, even when all other data is expired.
+ */
+void test_location_gnss_agnss_no_request(void)
+{
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_GNSS};
+
+#if !defined(CONFIG_LOCATION_TEST_AGNSS)
+	TEST_IGNORE();
+#endif
+
+	location_config_defaults_set(&config, 1, methods);
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_STARTED;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
+	location_cb_expected++;
+#endif
+
+	test_pvt_data.flags = NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID;
+	test_pvt_data.latitude = 61.005;
+	test_pvt_data.longitude = -45.997;
+	test_pvt_data.accuracy = 15.83;
+	test_pvt_data.datetime.year = 2021;
+	test_pvt_data.datetime.month = 8;
+	test_pvt_data.datetime.day = 13;
+	test_pvt_data.datetime.hour = 12;
+	test_pvt_data.datetime.minute = 34;
+	test_pvt_data.datetime.seconds = 56;
+	test_pvt_data.datetime.ms = 789;
+	test_pvt_data.sv[0].sv = 2;
+	test_pvt_data.sv[0].flags = NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX;
+	test_pvt_data.sv[1].sv = 4;
+	test_pvt_data.sv[1].flags = NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX;
+	test_pvt_data.sv[2].sv = 6;
+	test_pvt_data.sv[2].flags = NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX;
+	test_pvt_data.sv[3].sv = 8;
+	test_pvt_data.sv[3].flags = NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX;
+	test_pvt_data.sv[4].sv = 10;
+	test_pvt_data.sv[4].flags = NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX;
+
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_LOCATION;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
+	test_location_event_data[location_cb_expected].location.latitude = 61.005;
+	test_location_event_data[location_cb_expected].location.longitude = -45.997;
+	test_location_event_data[location_cb_expected].location.accuracy = 15.83;
+	test_location_event_data[location_cb_expected].location.datetime.valid = true;
+	test_location_event_data[location_cb_expected].location.datetime.year = 2021;
+	test_location_event_data[location_cb_expected].location.datetime.month = 8;
+	test_location_event_data[location_cb_expected].location.datetime.day = 13;
+	test_location_event_data[location_cb_expected].location.datetime.hour = 12;
+	test_location_event_data[location_cb_expected].location.datetime.minute = 34;
+	test_location_event_data[location_cb_expected].location.datetime.second = 56;
+	test_location_event_data[location_cb_expected].location.datetime.ms = 789;
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].location.details.gnss.satellites_tracked = 5;
+	test_location_event_data[location_cb_expected].location.details.gnss.satellites_used = 5;
+	test_location_event_data[location_cb_expected].location.details.gnss.elapsed_time_gnss = 50;
+	test_location_event_data[location_cb_expected].location.details.gnss.pvt_data =
+		test_pvt_data;
+#endif
+	location_cb_expected++;
+
+	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
+
+	/* The expiry times are in minutes. Most of the data types are considered expired when
+	 * there's less than 80 minutes left.
+	 */
+	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
+		/* All generic assistance data is expired. */
+		.data_flags =
+			NRF_MODEM_GNSS_AGNSS_GPS_UTC_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_NEQUICK_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
+			NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST,
+		.utc_expiry = 50, /* expired */
+		.klob_expiry = 50, /* expired */
+		.neq_expiry = 50, /* expired */
+		.integrity_expiry = 50, /* expired */
+		.position_expiry = 0, /* expired, no expiry threshold used for position */
+		.sv_count = 32 + 10 /* expired */
+	};
+
+	/* Two GPS satellites have expired ephemerides, all GPS satellites have expired almanacs. */
+	for (int i = 0; i < 32; i++) {
+		agnss_expiry.sv[i].sv_id = i + 1;
+		agnss_expiry.sv[i].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
+		agnss_expiry.sv[i].ephe_expiry = 120; /* valid */
+		agnss_expiry.sv[i].alm_expiry = 50; /* expired */
+	}
+	agnss_expiry.sv[0].ephe_expiry = 50; /* expired */
+	agnss_expiry.sv[1].ephe_expiry = 50; /* expired */
+
+	/* All QZSS satellites have expired ephemerides and almanacs. */
+	for (int i = 0; i < 10; i++) {
+		agnss_expiry.sv[i + 32].sv_id = i + 1;
+		agnss_expiry.sv[i + 32].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
+		/* No expiry threshold used for QZSS. */
+		agnss_expiry.sv[i + 32].ephe_expiry = 0; /* expired */
+		agnss_expiry.sv[i + 32].alm_expiry = 0; /* expired */
+	}
+
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ExpectAndReturn(NULL, 0);
+	__cmock_nrf_modem_gnss_agnss_expiry_get_IgnoreArg_agnss_expiry();
+	__cmock_nrf_modem_gnss_agnss_expiry_get_ReturnMemThruPtr_agnss_expiry(
+		&agnss_expiry, sizeof(agnss_expiry));
+
+	__cmock_nrf_modem_gnss_fix_interval_set_ExpectAndReturn(1, 0);
+	__cmock_nrf_modem_gnss_use_case_set_ExpectAndReturn(
+		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
+	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* NB-IoT support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* GNSS support */
+	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* LTE preference */
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+#endif
+
+	/* An event other than NRF_MODEM_GNSS_EVT_PVT to see that no actions are done */
+	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_FIX);
+	k_sleep(K_MSEC(1));
+
+	__cmock_nrf_modem_gnss_read_ExpectAndReturn(
+		NULL, sizeof(test_pvt_data), NRF_MODEM_GNSS_DATA_PVT, 0);
+	__cmock_nrf_modem_gnss_read_IgnoreArg_buf();
+	__cmock_nrf_modem_gnss_read_ReturnMemThruPtr_buf(&test_pvt_data, sizeof(test_pvt_data));
+	__cmock_nrf_modem_gnss_stop_ExpectAndReturn(0);
+	method_gnss_event_handler(NRF_MODEM_GNSS_EVT_PVT);
+	k_sleep(K_MSEC(1));
+}
+
 /* Test successful GNSS location request. */
 void test_location_gnss(void)
 {
@@ -645,51 +789,49 @@ void test_location_gnss(void)
 	__cmock_nrf_modem_gnss_event_handler_set_ExpectAndReturn(&method_gnss_event_handler, 0);
 
 #if defined(CONFIG_LOCATION_TEST_AGNSS)
-	/* Zero triggers new AGNSS data request */
+	/* The expiry times are in minutes. Most of the data types are considered expired when
+	 * there's less than 80 minutes left.
+	 */
 	struct nrf_modem_gnss_agnss_expiry agnss_expiry = {
-		.data_flags = NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST,
-		.utc_expiry = 1,
-		.klob_expiry = 2,
-		.neq_expiry = 3,
-		.integrity_expiry = 4,
-		.position_expiry = 5,
-		.sv_count = 6,
+		/* Only position is expired, but all generic assistance data should be
+		 * requested at the same time.
+		 */
+		.data_flags = NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST,
+		.utc_expiry = 120, /* valid */
+		.klob_expiry = 120, /* valid */
+		.neq_expiry = 120, /* valid */
+		.integrity_expiry = 120, /* valid */
+		.position_expiry = 0, /* expired */
+		.sv_count = 4,
 		.sv = {
+			/* Three expired GPS ephes and almanacs are needed to trigger a request. */
 			{
 				.sv_id = 1,
 				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
-				.ephe_expiry = 1,
-				.alm_expiry = 4
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
 			},
 			{
 				.sv_id = 2,
 				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
-				.ephe_expiry = 100,
-				.alm_expiry = 4
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
 			},
 			{
 				.sv_id = 3,
 				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
-				.ephe_expiry = 0,
-				.alm_expiry = 101
+				.ephe_expiry = 50, /* expired */
+				.alm_expiry = 50 /* expired */
 			},
-			{
-				.sv_id = 4,
-				.system_id = NRF_MODEM_GNSS_SYSTEM_GPS,
-				.ephe_expiry = 6,
-				.alm_expiry = 1
-			},
+			/* QZSS ephes and almanacs are requested at the same time with GPS, when
+			 * QZSS is supported. It's enough to have one QZSS SV and data doesn't
+			 * even have to be expired.
+			 */
 			{
 				.sv_id = 193,
 				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
-				.ephe_expiry = 0,
-				.alm_expiry = 100
-			},
-			{
-				.sv_id = 202,
-				.system_id = NRF_MODEM_GNSS_SYSTEM_QZSS,
-				.ephe_expiry = 100,
-				.alm_expiry = 4
+				.ephe_expiry = 120, /* valid */
+				.alm_expiry = 120 /* valid */
 			},
 		}
 	};
@@ -740,7 +882,7 @@ void test_location_gnss(void)
 		test_agnss_data, sizeof(test_agnss_data), 0);
 #endif
 #endif
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
+
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
@@ -842,7 +984,6 @@ void test_location_gnss_location_request_timeout(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
@@ -1452,7 +1593,6 @@ void test_location_request_default(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
@@ -1684,7 +1824,6 @@ void test_location_request_mode_all_cellular_gnss(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
@@ -1786,7 +1925,6 @@ void test_location_request_mode_all_cellular_error_gnss_timeout(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
@@ -1885,7 +2023,6 @@ void test_location_gnss_periodic(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
@@ -1947,7 +2084,6 @@ void test_location_gnss_periodic(void)
 		NRF_MODEM_GNSS_USE_CASE_MULTIPLE_HOT_START, 0);
 	__cmock_nrf_modem_gnss_start_ExpectAndReturn(0);
 
-	/* TODO: Cannot determine the used system mode but it's set as zero by default in lte_lc */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
 		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* LTE-M support */
