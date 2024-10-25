@@ -30,6 +30,15 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
+Build and configuration system
+==============================
+
+* Sysbuild now handles MCUboot image ID assignments, as such:
+
+  * MCUboot updates (using b0) are automatically assigned to MCUboot, ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` should not be incremented to include this image
+  * Applications and MCUboot should use the MCUboot assigned image ID Kconfig values to refer to image IDs instead of hardcoding them
+  * Depending upon enabled images, some image IDs might differ in |NCS| 2.8 and beyond than from previous releases
+
 Samples and applications
 ========================
 
