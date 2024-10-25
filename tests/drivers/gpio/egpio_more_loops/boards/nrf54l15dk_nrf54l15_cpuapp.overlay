@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	resources {
+		compatible = "test-egpio";
+		/* Test requirements:
+		 * All output GPIOs must be on the same device.
+		 * All input GPIOs must be on the same device.
+		 * out-gpios[0] wire connected with in-gpios[0],
+		 * out-gpios[1] wire connected with in-gpios[1],
+		 * etc.
+		 * Output-input GPIO pair must have identical active level flag.
+		 */
+		out-gpios = <&egpio 10 0>, <&egpio 9 0>, <&egpio 8 0>, <&egpio 7 0>,
+			<&egpio 6 0>;
+		in-gpios = <&gpio1 14 0>, <&gpio1 13 0>, <&gpio1 12 0>, <&gpio1 11 0>,
+			<&gpio1 10 0>;
+	};
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
