@@ -47,6 +47,7 @@ The DULT integration in the |NCS| consists of the following steps:
 #. :ref:`Managing the identification process <ug_dult_identifier>`
 #. :ref:`Using the sound callbacks and managing the sound state <ug_dult_sound>`
 #. :ref:`Managing the battery information <ug_dult_battery>`
+#. :ref:`Interacting with the motion detector <ug_dult_motion_detector>`
 
 These steps are described in the following sections.
 
@@ -128,6 +129,7 @@ Use the following functions to register callbacks:
 
   * :c:func:`dult_id_read_state_cb_register` (mandatory)
   * :c:func:`dult_sound_cb_register` (mandatory)
+  * :c:func:`dult_motion_detector_cb_register` (mandatory if the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option is enabled)
 
 Preset configuration
 ====================
@@ -213,6 +215,9 @@ There are following sound sources available:
 
 * Bluetooth GATT (:c:enum:`DULT_SOUND_SRC_BT_GATT`) - Sound source type originating from the Bluetooth ANOS.
   The non-owner device can trigger the sound callbacks by sending the relevant request message over the DULT GATT service.
+* Motion detector (:c:enum:`DULT_SOUND_SRC_MOTION_DETECTOR`) - Sound source type originating from the motion detector.
+  The motion detector may trigger the sound callbacks if the accessory separated from the owner for a sufficient amount of time is moving.
+  Used only when the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option is enabled.
 * External (:c:enum:`DULT_SOUND_SRC_EXTERNAL`) - Sound source type originating from the location unknown to the DULT module.
   The accessory-locating network often provides a native mechanism for playing sounds.
   The :c:enum:`DULT_SOUND_SRC_EXTERNAL` sound source is used to notify the DULT module that externally defined sound action is in progress.
@@ -221,12 +226,12 @@ To register the sound callbacks, use the :c:func:`dult_sound_cb_register` functi
 All sound callbacks defined in the :c:struct:`dult_sound_cb` structure are mandatory to register:
 
 * The sound start request is indicated by the :c:member:`dult_sound_cb.sound_start` callback.
-  The minimum duration for the DULT sound action is defined by the :c:macro:`DULT_SOUND_DURATION_MIN_MS`.
-  The upper layer determines the sound duration, and the duration must be greater than the value set in the :c:macro:`DULT_SOUND_DURATION_MIN_MS` macro.
+  The minimum duration for the DULT sound action originating from the Bluetooth ANOS is defined by the :c:macro:`DULT_SOUND_DURATION_BT_GATT_MIN_MS`.
+  The upper layer determines the sound duration, and, in case of the sound action originating from the Bluetooth ANOS, the duration must be greater than the value set in the :c:macro:`DULT_SOUND_DURATION_BT_GATT_MIN_MS` macro.
+  In case of the sound action originating from the motion detector, the minimum duration is not defined.
 * The sound stop request is indicated by the :c:member:`dult_sound_cb.sound_stop` callback.
 
-All callbacks pass the sound source as a first parameter and only report the internal sound sources.
-Currently, callbacks always use the :c:enum:`DULT_SOUND_SRC_BT_GATT` (internal) sound source.
+All callbacks pass the sound source as a first parameter and only report the internal sound sources (:c:enum:`DULT_SOUND_SRC_BT_GATT` or :c:enum:`DULT_SOUND_SRC_MOTION_DETECTOR`).
 The :c:enum:`DULT_SOUND_SRC_EXTERNAL` never appears as the callback parameter as the external sound source cannot originate from the DULT module.
 You must treat all callbacks from the :c:struct:`dult_sound_cb` structure as requests.
 The internal sound state of the DULT subsystem is not automatically changed on any callback event.
@@ -241,6 +246,41 @@ You must configure the following fields in the :c:struct:`dult_sound_state_param
 
 The :c:func:`dult_sound_state_update` function can be used to change the sound state asynchronously, as it is often impossible to execute sound playing action on the speaker device in the context of the requesting callbacks.
 Asynchronous support is also necessary to report sound state changes that are triggered by an external source unknown to the DULT subsystem.
+
+.. rst-class:: numbered-step
+
+.. _ug_dult_motion_detector:
+
+Interacting with the motion detector
+************************************
+
+DULT motion detector is an optional feature of the DULT subsystem.
+For more details, see the `DULT Motion detector`_ section of the DULT documentation.
+You can enable the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option to support the DULT motion detector feature in your project.
+
+To integrate the motion detector feature, set the motion detector unwanted tracking accessory capability bit (:c:enum:`DULT_ACCESSORY_CAPABILITY_MOTION_DETECTOR_UT_BIT_POS`) in the accessory capabilities bitmask.
+You must do this when registering the DULT user to indicate support for this feature.
+
+To register the motion detector callbacks, use the :c:func:`dult_motion_detector_cb_register` function.
+All motion detector callbacks defined in the :c:struct:`dult_motion_detector_cb` structure are mandatory to register:
+
+* The motion detector start request is indicated by the :c:member:`dult_motion_detector_cb.start` callback.
+  After this callback is called, the motion detector events are polled periodically with the :c:member:`dult_motion_detector_cb.period_expired` callback.
+  Typical action after the motion detector start request is to power up the accelerometer and start collecting motion data.
+* The motion detector period expired event is indicated by the :c:member:`dult_motion_detector_cb.period_expired` callback.
+  This callback is called at the end of each motion detector period.
+  The :c:member:`dult_motion_detector_cb.start` callback indicates the beginning of the first motion detector period.
+  The next period is started as soon as the previous period expires.
+  The user should notify the DULT module if motion was detected in the previous period.
+  The return value of this callback is used to pass this information.
+  The motion must be considered as detected if it fulfills the requirements defined in the `DULT Motion detector`_ section of the DULT documentation.
+* The motion detector stop request is indicated by the :c:member:`dult_motion_detector_cb.stop` callback.
+  It concludes the motion detector activity that was started by the :c:member:`dult_motion_detector_cb.start` callback.
+  Typical action after the motion detector stop request is to power down the accelerometer.
+
+The motion detector is started by the DULT subsystem when the accessory is in the separated state for a sufficient amount of time.
+When the motion is detected during the motion detector active period, the DULT subsystem calls the :c:member:`dult_sound_cb.sound_start` callback to request the sound action.
+It is done to inform the non-owner that is moving the accessory, that the device might have been used to track the non-owner.
 
 .. rst-class:: numbered-step
 

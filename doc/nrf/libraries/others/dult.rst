@@ -44,6 +44,24 @@ The following Kconfig options are also available for this module:
   * :kconfig:option:`CONFIG_DULT_BT_ANOS_INDICATION_COUNT` - This option allows to configure the number of simultaneously processed GATT indications by the ANOS.
     The default value is set to ``2``.
 
+* :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` - This option enables support for motion detector.
+  The motion detector is an optional feature in the DULT specification.
+  For more details see the `DULT Motion detector`_ section of the DULT specification.
+  By default, this option is disabled.
+
+  * :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` - This option allows to configure motion detector parameters for testing purposes.
+    These values are defined in the DULT specification and should not be changed in the production code.
+    By default, this option is disabled.
+  * :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD` - This option allows to configure the period in minutes to disable the motion detector if the accessory is in the separated state.
+    If the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` is enabled, this option is configurable and its default value is set to ``2``.
+    Otherwise, the option is not configurable and its default value is set to ``360`` according to the DULT specification.
+  * :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN` - This option allows to configure the minimum time span in minutes in separated state before enabling motion detector.
+    If the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` is enabled, this option is configurable and its default value is set to ``3``.
+    Otherwise, the option is not configurable and its default value is set to ``480`` according to the DULT specification.
+  * :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX` - This option allows to configure the maximum time span in minutes in separated state before enabling motion detector.
+    If the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` is enabled, this option is configurable and its default value is set to ``3``.
+    Otherwise, the option is not configurable and its default value is set to ``1440`` according to the DULT specification.
+
 See the Kconfig help for details.
 
 Implementation details

@@ -498,6 +498,7 @@ Bluetooth Fast Pair samples
     * An application versioning using the :file:`VERSION` file.
     * The DFU support which can be enabled using the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
       DFU is available for all supported targets except the ``debug`` configurations of :ref:`zephyr:nrf52dk_nrf52832` and :ref:`zephyr:nrf52833dk_nrf52833` due to size constraints.
+    * The DULT motion detector feature integration in the sample.
 
   * Updated:
 
@@ -812,6 +813,8 @@ Bluetooth libraries and services
       If this option is enabled, the Fast Pair subsystem tracks the Bluetooth bonds created through the Fast Pair Procedure and unpairs them if the procedure is incomplete or the Account Key associated with the bonds is removed.
       It also unpairs the Fast Pair Bluetooth bonds on Fast Pair factory reset.
       The option is enabled by default for Fast Pair use cases that are selected using :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_INPUT_DEVICE` and :kconfig:option:`CONFIG_BT_FAST_PAIR_USE_CASE_MOUSE` Kconfig options.
+    * The DULT motion detector feature integration in the FMDN extension.
+      It can be enabled using :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option.
 
   * Updated the default values of the following Fast Pair Kconfig options:
 
@@ -1271,7 +1274,8 @@ CoreMark integration
 DULT integration
 ----------------
 
-|no_changes_yet_note|
+* Added DULT motion detector feature integration.
+  It can be enabled using :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option.
 
 MCUboot
 =======

@@ -284,6 +284,7 @@ You can use the following API functions only in the *unready* state of the FMDN 
   * The :c:func:`bt_fast_pair_fmdn_info_cb_register` function (optional)
   * The :c:func:`bt_fast_pair_fmdn_ring_cb_register` function (mandatory with the Kconfig configuration for at least one ringing component)
   * The :c:func:`bt_fast_pair_fmdn_read_mode_cb_register` function (optional)
+  * The :c:func:`bt_fast_pair_fmdn_motion_detector_cb_register` function (mandatory if the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option is enabled)
 
 * The :c:func:`bt_fast_pair_fmdn_id_set` API function used for assigning Bluetooth identity to FMDN activities (like advertising and connections)
 * The :c:func:`bt_fast_pair_factory_reset` API function used for performing factory reset of all Fast Pair data
@@ -768,6 +769,8 @@ The following sources of ringing activity are supported:
 * :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_FMDN_BT_GATT` - This ringing source originates from the Bluetooth Fast Pair service and its Beacon Actions characteristic that is defined in the FMDN Accessory specification.
 * :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT` - This ringing source originates from the Bluetooth Accessory Non-owner service and its characteristic that are defined in the DULT specification.
   This source is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled.
+* :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR` - This ringing source originates from the DULT motion detector module.
+  This source is available only when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option is enabled.
 
 The following callbacks are defined in the :c:struct:`bt_fast_pair_fmdn_ring_cb` structure:
 
@@ -780,6 +783,8 @@ The following callbacks are defined in the :c:struct:`bt_fast_pair_fmdn_ring_cb`
     * Ringing timeout in deciseconds.
       The timeout value of the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT` Kconfig option is used for the :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_BT_GATT` DULT source.
       The default value of this Kconfig is in line with the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
+      The timeout value of the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option is used for the :c:enum:`BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR` DULT source.
+      There are no specific requirements for this Kconfig value in neither the FMDN nor the DULT specification.
     * Ringing volume level.
 
   The :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback can be called again when the ringing action has already started.
@@ -834,6 +839,38 @@ This update policy applies to all listed stop trigger types.
 
 To satisfy the requirements from the DULT specification when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled, the FMDN extension communicates with the DULT module to receive ringing requests from the DULT peers and to send updates regarding the ringing state.
 For more details on the ringing mechanism in the DULT module, see the :ref:`ug_dult_sound` documentation.
+
+.. _ug_bt_fast_pair_gatt_service_fmdn_dult_motion_detector:
+
+Interacting with the motion detector from DULT
+----------------------------------------------
+
+The motion detector is an optional feature of the DULT subsystem that can be integrated into the FMDN extension.
+For more details about the feature, see the `DULT Motion detector`_ section of the DULT specification.
+You can enable the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option to support the DULT motion detector functionality in the FMDN extension.
+The FMDN extension implementation acts as a thin wrapper for the DULT motion detector module callbacks.
+It passes callbacks from the DULT motion detector module to the user application.
+
+To register the motion detector callbacks, use the :c:func:`bt_fast_pair_fmdn_motion_detector_cb_register` function.
+All motion detector callbacks defined in the :c:struct:`bt_fast_pair_fmdn_motion_detector_cb` structure are mandatory to register:
+
+* The motion detector start request is indicated by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.start` callback.
+  After this callback is called, the motion detector events are polled periodically with the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.period_expired` callback.
+  Typical action after the motion detector start request is to power up the accelerometer and start collecting motion data.
+* The motion detector period expired event is indicated by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.period_expired` callback.
+  This callback is called at the end of each motion detector period.
+  The :c:member:`bt_fast_pair_fmdn_motion_detector_cb.start` callback indicates the beginning of the first motion detector period.
+  The next period is started as soon as the previous period expires.
+  The user should notify the DULT module if motion was detected in the previous period.
+  The return value of this callback is used to pass this information.
+  The motion must be considered as detected if it fulfills the requirements defined in the `DULT Motion detector`_ section of the DULT documentation.
+* The motion detector stop request is indicated by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.stop` callback.
+  It concludes the motion detector activity that was started by the :c:member:`bt_fast_pair_fmdn_motion_detector_cb.start` callback.
+  Typical action after the motion detector stop request is to power down the accelerometer.
+
+The motion detector is started by the DULT subsystem when the accessory is in the separated state for a sufficient amount of time.
+When the motion is detected during the motion detector active period, the :c:member:`bt_fast_pair_fmdn_ring_cb.start_request` callback is called to request the ringing action.
+It is done to inform the non-owner that is moving the accessory, that the device might have been used to track the non-owner.
 
 .. _ug_bt_fast_pair_gatt_service_fmdn_battery_dult:
 

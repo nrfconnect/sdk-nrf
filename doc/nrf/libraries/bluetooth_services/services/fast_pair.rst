@@ -62,6 +62,7 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MODEL_NAME` - The option configures the model name parameter.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_ACCESSORY_CATEGORY` - The option configures the accessory category parameter.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION` - These options configure the firmware version parameter.
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` - The option enables the DULT motion detector functionality support in the FMDN extension (see :ref:`ug_bt_fast_pair_gatt_service_fmdn_dult_motion_detector`).
 
   * There are following advertising configuration options for the FMDN extension (see :ref:`ug_bt_fast_pair_advertising_fmdn`):
 
@@ -89,6 +90,8 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
       The option with no ringing component is enabled by default.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_VOLUME` - The option enables ringing volume support.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT` - The option configures the ringing timeout for connected peers that use DULT-based ringing mechanism.
+      This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` is enabled.
+    * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` - The option configures the ringing timeout for ringing requests from the DULT motion detector.
       This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` is enabled.
 
   * There are following beacon clock service configuration options for the FMDN extension (see :ref:`ug_bt_fast_pair_prerequisite_ops_fmdn_clock_svc`):
@@ -192,6 +195,9 @@ The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` of the FMDN extension select
 The FMDN extension implementation also acts as middleware between the user application and the DULT module.
 The DULT module integration is required for small and not easily discoverable accessories.
 The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` is enabled by default.
+
+The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` of the FMDN extension selects the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option to enable the motion detector feature of the DULT module.
+With this option enabled, the FMDN extension passes the DULT motion detector callbacks from the DULT module to application.
 
 The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` of the FMDN extension selects the :kconfig:option:`CONFIG_DULT_BATTERY` Kconfig option to enable the battery support in the DULT module.
 With this option enabled, the FMDN extension passes the battery information also to the DULT module.
