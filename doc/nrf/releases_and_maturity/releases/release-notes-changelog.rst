@@ -70,6 +70,10 @@ Build and configuration system
     * ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
     * ``SB_CONFIG_SECURE_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
 
+  * CMake warning when static partition manager file has been changed but changes will not be read until a pristine build is performed.
+  * Encrypted firmware update to dfu_application.zip instead of the unencrypted firmware update when encrypted image support is enabled in sysbuild.
+  * Sysbuild-assigned MCUboot image IDs feature which deals with MCUboot image IDs for different components in a project.
+
 * Added the ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
 
 * Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
@@ -96,6 +100,11 @@ Build and configuration system
      This feature has never been functional.
      To configure the signing key, use any available Kconfig method.
 
+* Fixed issue with |NCS| boot banner using ``CMAKE_SOURCE_DIR`` instead of ``APPLICATION_SOURCE_DIR``.
+* Fixed issue with :kconfig:option:`CONFIG_MBEDTLS_CFG_FILE` having a prompt which would, in some circumstances, lead to a sticky value if configuration was changed.
+* Fixed issue with changes to image configurations in a ``sysbuild.cmake`` file not being applied to variant images.
+* Fixed issue with nRF7x signing variables not expanding strings.
+
 Bootloaders and DFU
 ===================
 
@@ -104,11 +113,16 @@ Bootloaders and DFU
   * Documentation for :ref:`mcuboot_image_compression`.
   * Documentation for :ref:`qspi_xip_split_image` functionality.
   * A section in the sysbuild-related migration guide about the migration of :ref:`child_parent_to_sysbuild_migration_qspi_xip` from child/parent image to sysbuild.
+  * ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig to allow setting network core application updates for MCUboot.
+  * Direct-XIP (without revert) support added to QSPI split image for sysbuild.
 
 * Updated the procedure for signing the application image built for booting by MCUboot in direct-XIP mode with revert support.
   Now, the Intel-Hex file of the application image automatically receives a confirmation flag.
 
 * Removed secure bootloader Kconfig ``CONFIG_SECURE_BOOT_DEBUG`` and replaced with usage of logging subsystem.
+
+* Fixed issue with bl_validation not using logging for message output.
+* Fixed issue with Direct-XIP (with revert) images not being marked as confirmed.
 
 See also the `MCUboot`_ section.
 
@@ -791,6 +805,8 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
+* A new :ref:`compression/decompression library <nrf_compression>` has been added.
+
 Binary libraries
 ----------------
 
@@ -1282,7 +1298,14 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+* Added:
+
+  * :ref:`Compressed firmware update support <mcuboot_image_compression>`.
+
+* Fixed issue with wrong network core address checking in MCUboot for nRF5340 network core firmware updates.
+* Fixed issue with MCUboot updates in MCUboot when a swap mode was selected which could lead to possible data corruption by implementing additional NSIB-specific (overwrite-only) upgrade mode for sysbuild.
+* Fixed multiple issues with checking firmware update slot selection in MCUboot for sysbuild.
+* Fixed issue with MCUboot cleanup unused slots feature which could lead to possible empty firmware update of the main image and bricking the device for sysbuild.
 
 Zephyr
 ======
