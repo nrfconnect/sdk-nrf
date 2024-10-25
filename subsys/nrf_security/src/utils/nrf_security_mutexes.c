@@ -19,7 +19,7 @@
 
 void nrf_security_mutex_init(mbedtls_threading_mutex_t * mutex)
 {
-	if((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
+	if ((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) == 0) {
 		k_mutex_init(&mutex->mutex);
 	}
 
@@ -33,7 +33,7 @@ void nrf_security_mutex_free(mbedtls_threading_mutex_t * mutex)
 
 int nrf_security_mutex_lock(mbedtls_threading_mutex_t * mutex)
 {
-	if((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
+	if ((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
 		return k_mutex_lock(&mutex->mutex, K_FOREVER);
 	} else {
 		return -EINVAL;
@@ -42,7 +42,7 @@ int nrf_security_mutex_lock(mbedtls_threading_mutex_t * mutex)
 
 int nrf_security_mutex_unlock(mbedtls_threading_mutex_t * mutex)
 {
-	if((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
+	if ((mutex->flags & NRF_SECURITY_MUTEX_FLAGS_INITIALIZED) != 0) {
 		return k_mutex_unlock(&mutex->mutex);
 	} else {
 		return -EINVAL;
