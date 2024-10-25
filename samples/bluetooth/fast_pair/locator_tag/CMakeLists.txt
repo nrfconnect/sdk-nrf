@@ -18,6 +18,9 @@ if(NOT DEFINED FP_MODEL_ID AND NOT DEFINED FP_ANTI_SPOOFING_KEY AND NOT SYSBUILD
   set(FP_ANTI_SPOOFING_KEY "rie10A7ONqwd77VmkxGsblPUbMt384qjDgcEJ/ctT9Y=")
 endif()
 
+# The sample uses a separate directory for configuration files.
+set(APPLICATION_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}/configuration")
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(locator_tag)
 
