@@ -11,7 +11,7 @@ tests:
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_placeholder"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc_async_54L"
   benchmarks.power_consumption.adc_async_nrf54h:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -21,4 +21,4 @@ tests:
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_placeholder"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc_async_54H"
