@@ -52,7 +52,7 @@ int bt_r_and_c_volume_mute(bool from_vcp);
 int bt_r_and_c_volume_unmute(void);
 
 /**
- * @brief	Discover the rendering services.
+ * @brief	Discover the rendering and capture services.
  *
  * @param[in]	conn	Pointer to the connection on which to do the discovery.
  *
