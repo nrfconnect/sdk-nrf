@@ -31,7 +31,7 @@ The Secure Domain Firmware uses the IPC service to read, erase, or write data to
 The sample is meant to be booted by the Secure Domain while performing the firmware update process using the :ref:`SUIT <ug_nrf54h20_suit_dfu>` firmware upgrade.
 
 The flash companion sample is not a standalone application.
-It is designed to work with the ``smp_transfer`` sample to facilitate firmware transfer to external flash.
+It is designed to work with the :ref:`nrf54h_suit_sample` sample to facilitate firmware transfer to external flash.
 
 .. _suit_flash_companion_config:
 

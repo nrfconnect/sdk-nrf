@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_2.8:
 
-Migration guide for |NCS| v2.8.0 (Working draft)
-################################################
+Migration guide for |NCS| v2.8.0
+################################
 
 .. contents::
    :local:
@@ -21,15 +23,82 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
+.. _migration_2.8_required:
+
+Required changes
+****************
+
+The following changes are mandatory to make your application work in the same way as in previous releases.
+
+Build and configuration system
+==============================
+
+.. toggle::
+
+   * Sysbuild now handles the following MCUboot image ID assignments:
+
+     * MCUboot updates (using b0) are automatically assigned to MCUboot.
+       The ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` Kconfig option must not be incremented to include this image.
+     * Applications and MCUboot must now use the MCUboot assigned image ID Kconfig values to refer to image IDs instead of hardcoding them.
+     * Applications interacting with the device using MCUboot serial recovery MCUmgr must use the image IDs assigned to them, as well as MCUboot or MCUmgr hooks.
+     * Depending upon enabled images, some image IDs might differ in |NCS| 2.8 and higher than from previous releases.
+
+
+Nordic Secure Immutable Bootloader (NSIB, B0, or B0n)
+=====================================================
+
+.. toggle::
+
+   * Custom printing has been dropped in favor of using the logging subsystem, with output printed out to the default logging device.
+     The ``CONFIG_SECURE_BOOT_DEBUG`` Kconfig option has been removed.
+     To disable logging in b0 or b0n, set the :kconfig:option:`CONFIG_LOG` option to ``n``.
+     To send logs over RTT instead of UART, apply the following settings:
+
+     * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
+     * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
+
+nRF70 Series
+============
+
+.. toggle::
+
+   * The nRF70 Series support is now part of Zephyr upstream and it requires the following changes:
+
+     * The nRF70 Series driver namespace has been renamed from ``NRF700X`` to ``NRF70``.
+       For example, ``CONFIG_NRF700X_RAW_DATA_RX`` to ``CONIFG_NRF70_RAW_DATA_RX``.
+       Update your application configurations to use the new namespace.
+
+     * The nRF70 Series driver now uses per-module kernel heap with a higher default.
+       If a sample or an application uses the kernel heap but uses less than the default size, a build warning is displayed.
+       Use the :kconfig:option:`CONFIG_HEAP_MEM_POOL_IGNORE_MIN` Kconfig option and enable it to suppress the warning.
+
+   * The WPA supplicant is also now part of Zephyr upstream and it requires the following changes:
+
+     * The WPA supplicant namespace has been renamed from ``WPA_SUPP`` to ``WIFI_NM_WPA_SUPPLICANT``.
+       For example, ``CONFIG_WPA_SUPP=y`` to ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``.
+       Update your application configurations to use the new namespace.
+
+   * The SR co-existence feature should now be explicitly enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX` Kconfig option.
+     The RF switch feature should be enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX_RF_SWITCH` Kconfig option.
+
+nRF54L Series
+=============
+
+.. toggle::
+
+   * Use the :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` storage system for all devices with RRAM memory technology.
+     See the :ref:`memory_storage` page for more details on how to enable ZMS for an nRF54L Series.
+
 .. _migration_2.8_nrf54h:
 
 nRF54H20
-********
+========
 
 This section describes the changes specific to the nRF54H20 SoC and DK support in the |NCS|.
+For more information on changes related to samples and applications usage on the nRF54H20 DK, see :ref:`migration_2.8_required_nrf54h`.
 
 DK compatibility
-================
+----------------
 
 .. toggle::
 
@@ -41,12 +110,12 @@ DK compatibility
       Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 
 Dependencies
-============
+------------
 
 The following required dependencies for the nRF54H20 SoC and DK have been updated.
 
 nRF54H20 BICR
--------------
++++++++++++++
 
 .. toggle::
 
@@ -73,7 +142,7 @@ nRF54H20 BICR
           nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Application --serial-number <serial_number>
 
 nRF54H20 SoC binaries
----------------------
++++++++++++++++++++++
 
 .. toggle::
 
@@ -109,7 +178,7 @@ nRF54H20 SoC binaries
             nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.7.0_<revision>.zip --serial-number <serial_number> --update-candidate-info-address 0x0e1ef340
 
 nrfutil device
---------------
+++++++++++++++
 
 .. toggle::
 
@@ -122,7 +191,7 @@ nrfutil device
     For more information, consult the `nRF Util`_ documentation.
 
 nrfutil-trace
--------------
++++++++++++++
 
 .. toggle::
 
@@ -135,7 +204,7 @@ nrfutil-trace
     For more information, consult the `nRF Util`_ documentation.
 
 nrf-regtool
------------
++++++++++++
 
 .. toggle::
 
@@ -148,7 +217,7 @@ nrf-regtool
 
 
 SEGGER J-Link
--------------
++++++++++++++
 
 .. toggle::
 
@@ -174,7 +243,7 @@ SEGGER J-Link
     Using this feature also requires ``nrfutil-trace`` version 2.10.0 or later.
 
 nRF Connect Device Manager
---------------------------
+++++++++++++++++++++++++++
 
 .. toggle::
 
@@ -183,27 +252,7 @@ nRF Connect Device Manager
 Samples and applications
 ========================
 
-For more information on changes related to samples and applications usage on the nRF54H20 DK, see :ref:`migration_2.8_required_nrf54h`.
-
-.. _migration_2.8_required:
-
-Required changes
-****************
-
-The following changes are mandatory to make your application work in the same way as in previous releases.
-
-Samples and applications
-========================
-
 This section describes the changes related to samples and applications.
-
-nRF54L Series
--------------
-
-.. toggle::
-
-   * Use the :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` storage system for all devices with RRAM memory technology, such as the nRF54L Series devices.
-     See the :ref:`memory_storage` page for more details on how to enable ZMS for the nRF54L Series devices.
 
 Serial LTE Modem (SLM)
 ----------------------
@@ -268,59 +317,34 @@ nRF54H20
   * Some Kconfig options and SUIT manifests have been modified, changing names and configurations.
     Ensure the compatibility of your application with these changes.
 
-Nordic Secure Immutable Bootloader (NSIB, B0, or B0n)
------------------------------------------------------
-
-.. toggle::
-
-   * Custom printing has been dropped in favor of using the logging subsystem, with output printed out to the default logging device.
-     The ``CONFIG_SECURE_BOOT_DEBUG`` Kconfig option has been removed.
-     To disable logging in B0 or B0n, set the :kconfig:option:`CONFIG_LOG` option to ``n``.
-     To send logs over RTT instead of UART, apply the following settings:
-
-     * Enable the :kconfig:option:`CONFIG_USE_SEGGER_RTT` and :kconfig:option:`CONFIG_RTT_CONSOLE` Kconfig options.
-     * Disable the :kconfig:option:`CONFIG_UART_CONSOLE` and :kconfig:option:`CONFIG_SERIAL` Kconfig options.
-
-nRF70 Series
-------------
-
-.. toggle::
-
-   * The nRF70 Series support is now part of Zephyr upstream and it requires the following changes:
-
-    * The nRF70 Series driver namespace has been renamed from ``NRF700X`` to ``NRF70``.
-      For example, ``CONFIG_NRF700X_RAW_DATA_RX`` to ``CONIFG_NRF70_RAW_DATA_RX``.
-      Update your application configurations to use the new namespace.
-    * The nRF70 Series driver now uses per-module kernel heap with a higher default.
-      If a sample or an application uses the kernel heap but uses less than the default size, a build warning is displayed.
-      Use the :kconfig:option:`CONFIG_HEAP_MEM_POOL_IGNORE_MIN` Kconfig option and enable it to suppress the warning.
-
-   * The WPA supplicant is also now part of Zephyr upstream and it requires the following changes:
-
-    * The WPA supplicant namespace has been renamed from ``WPA_SUPP`` to ``WIFI_NM_WPA_SUPPLICANT``.
-      For example, ``CONFIG_WPA_SUPP=y`` to ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``.
-      Update your application configurations to use the new namespace.
-
-   * The SR co-existence feature should now be explicitly enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX` Kconfig option.
-     The RF switch feature should be enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX_RF_SWITCH` Kconfig option.
-
 Libraries
 =========
 
 This section describes the changes related to libraries.
 
-Wi-Fi®
-------
+AT command parser
+-----------------
 
 .. toggle::
 
-   * For :ref:`lib_wifi_credentials` library:
+   * The :c:func:`at_parser_cmd_type_get` has been renamed to :c:func:`at_parser_at_cmd_type_get`.
 
-     * Syntax for ``add`` command has been modified to support ``getopt`` model.
-         For example, the following command with old syntax:
-         ``wifi_cred add SSID WPA2-PSK password`` should be replaced with the following command with new syntax:
-         ``wifi_cred add -s SSID -k 1 -p password``.
-         ``wifi_cred add --help`` command will provide more information on the new syntax.
+nRF Cloud
+---------
+
+.. toggle::
+
+   * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option has been enabled by default for nRF Cloud CoAP projects using the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` or :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig option.
+     Set the :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig option to at least ``80`` for P-GPS and ``192`` for FOTA.
+
+nRF Security
+------------
+
+.. toggle::
+
+   * The ``CONFIG_CRACEN_LOAD_KMU_SEED`` Kconfig option was renamed to :kconfig:option:`CONFIG_CRACEN_IKG_SEED_LOAD`.
+   * The ``CONFIG_MBEDTLS_CIPHER_MODE_CFB`` and ``CONFIG_MBEDTLS_CIPHER_MODE_OFB`` Kconfig options have been removed.
+     Use other cipher modes instead.
 
 LTE link control library
 ------------------------
@@ -403,29 +427,26 @@ LTE link control library
 
          You must use the new :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE` Kconfig option.
 
-AT command parser
------------------
+LwM2M carrier library
+---------------------
 
 .. toggle::
 
-   * The :c:func:`at_parser_cmd_type_get` has been renamed to :c:func:`at_parser_at_cmd_type_get`.
+   The bootstrap from smartcard feature is no longer enabled by default in the library and the ``CONFIG_LWM2M_CARRIER_BOOTSTRAP_SMARTCARD`` Kconfig option has been removed.
+   To continue using this functionality, the :ref:`lib_uicc_lwm2m` library must be included in the project by enabling the :kconfig:option:`CONFIG_UICC_LWM2M` Kconfig option.
 
-nRF Cloud
----------
-
-.. toggle::
-
-   * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_DOWNLOADS` Kconfig option has been enabled by default for nRF Cloud CoAP projects using the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL` or :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig option.
-     Set the :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig option to at least ``80`` for P-GPS and ``192`` for FOTA.
-
-nRF Security
-------------
+Wi-Fi®
+------
 
 .. toggle::
 
-   * The ``CONFIG_CRACEN_LOAD_KMU_SEED`` Kconfig option was renamed to :kconfig:option:`CONFIG_CRACEN_IKG_SEED_LOAD`.
-   * The ``CONFIG_MBEDTLS_CIPHER_MODE_CFB`` and ``CONFIG_MBEDTLS_CIPHER_MODE_OFB`` Kconfig options have been removed.
-     Use other cipher modes instead.
+   * For :ref:`lib_wifi_credentials` library:
+
+     * Syntax for ``add`` command has been modified to support ``getopt`` model.
+       For example, the following command with old syntax:
+       ``wifi_cred add SSID WPA2-PSK password`` should be replaced with the following command with new syntax:
+       ``wifi_cred add -s SSID -k 1 -p password``.
+       ``wifi_cred add --help`` command will provide more information on the new syntax.
 
 .. _migration_2.8_recommended:
 
@@ -434,21 +455,8 @@ Recommended changes
 
 The following changes are recommended for your application to work optimally after the migration.
 
-Samples and applications
-========================
-
-This section describes the changes related to samples and applications.
-
-Serial LTE Modem (SLM)
-----------------------
-
-.. toggle::
-
-   * The :file:`overlay-native_tls.conf` overlay file is no longer supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
-     If you need to use native TLS with Thingy:91, you must disable features from the :file:`prj.conf` and :file:`overlay-native_tls.conf` configuration files to free up flash memory.
-
 Devicetree
-----------
+==========
 
 .. toggle::
 
@@ -489,6 +497,45 @@ Devicetree
          compatible = "nordic,owned-memory";
          nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RWXS>;
       };
+
+
+Snippets
+========
+
+This section describes the changes related to snippets.
+
+.. toggle::
+
+   The existing snippet ``nrf70-debug`` has been removed and divided into three sub-snippets as below:
+
+   * ``nrf70-driver-debug`` - To enable the nRF70 driver debug logs.
+   * ``nrf70-driver-verbose-logs`` - To enable the nRF70 driver, firmware interface, and BUS interface debug logs.
+   * ``wpa-supplicant-debug`` - To enable supplicant logs.
+
+Protocols
+=========
+
+This section provides detailed lists of changes by :ref:`protocol <protocols>`.
+
+Bluetooth® LE
+-------------
+
+.. toggle::
+
+   *  To use the Zephyr Bluetooth LE Controller, use the :ref:`bt-ll-sw-split <zephyr:snippet-bt-ll-sw-split>` snippet (see :ref:`app_build_snippets`).
+
+Samples and applications
+========================
+
+This section describes the changes related to samples and applications.
+
+Serial LTE Modem (SLM)
+----------------------
+
+.. toggle::
+
+   * The :file:`overlay-native_tls.conf` overlay file is no longer supported with the ``thingy91/nrf9160/ns`` board target due to flash memory constraints.
+     If you need to use native TLS with Thingy:91, you must disable features from the :file:`prj.conf` and :file:`overlay-native_tls.conf` configuration files to free up flash memory.
 
 Libraries
 =========
@@ -751,28 +798,3 @@ LTE link control library
             #include <nrf_modem_at.h>
 
             err = nrf_modem_at_printf("AT%%REDMOB=2");
-
-Snippets
-========
-
-This section describes the changes related to snippets.
-
-.. toggle::
-
-   The existing snippet ``nrf70-debug`` has been removed and divided into three sub-snippets as below:
-
-   * ``nrf70-driver-debug`` - To enable the nRF70 driver debug logs.
-   * ``nrf70-driver-verbose-logs`` - To enable the nRF70 driver, firmware interface, and BUS interface debug logs.
-   * ``wpa-supplicant-debug`` - To enable supplicant logs.
-
-Protocols
-=========
-
-This section provides detailed lists of changes by :ref:`protocol <protocols>`.
-
-Bluetooth® LE
--------------
-
-.. toggle::
-
-   *  To use the Zephyr Bluetooth LE Controller, use the :ref:`bt-ll-sw-split <zephyr:snippet-bt-ll-sw-split>` snippet (see :ref:`app_build_snippets`).

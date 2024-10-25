@@ -50,8 +50,8 @@ The following table summarizes key similarities and differences between MCUmgr a
 |                             | a list                  |                                  |
 +-----------------------------+-------------------------+----------------------------------+
 | Slot/Image Configuration    | Slots defined in        | Slot definitions can be modified |
-|                             | MCUboot; difficult to   | via the SUIT manifest, allowing  |
-|                             | change after deployment | greater flexibility              |
+|                             | MCUboot; difficult to   | through the SUIT manifest,       |
+|                             | change after deployment | allowing greater flexibility     |
 +-----------------------------+-------------------------+----------------------------------+
 | Installation/Boot           | Limited by static       | Customizable through SUIT        |
 | Customization               | image metadata          | manifest commands                |
@@ -354,7 +354,7 @@ CBOR data of request:
 where:
 
 * *stream_session_id* - Session identifier.
-  The same value as obtained via Get Missing Image Info Request.
+  The same value as obtained using Get Missing Image Info Request.
   Must appear when "off" is 0.
 * *len* - Length of an image.
   Must appear when "off" is 0.
