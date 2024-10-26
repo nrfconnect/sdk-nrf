@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-DT_COMPAT_CX_NRF700X := nordic,nrf700x-coex
+DT_COMPAT_CX_NRF70 := nordic,nrf7002-coex
 DT_COMPAT_CX_SOFTWARE := nordic,software-coex
 
 config MPSL_CX_ANY_SUPPORT
@@ -15,7 +15,7 @@ config MPSL_CX_ANY_SUPPORT
 
 config MPSL_CX_NRF70_SUPPORT
 	bool
-	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF700X))
+	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF70))
 	help
 	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,nrf700x-coex".
 
