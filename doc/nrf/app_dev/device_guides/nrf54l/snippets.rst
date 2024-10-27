@@ -17,15 +17,18 @@ You can emulate the nRF54L05 and nRF54L10 targets on an nRF54L15 device using th
      - Compatible board targets
    * - :ref:`emulated-nrf54l05`
      - ``emulated-nrf54l05``
-     - ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp/ns``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
    * - :ref:`emulated-nrf54l10`
      - ``emulated-nrf54l10``
-     - ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp/ns``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
 
 .. important::
    You cannot use these snippets with the FLPR core because all memory, including RAM and RRAM, is allocated to the application core.
 
 Currently, using the snippets is supported only on the :ref:`zephyr:nrf54l15dk_nrf54l15` board.
+
+.. note::
+   Trusted Firmware-M (TF-M) is not yet supported for nRF54L05 and nRF54L10 emulated targets.
 
 .. _emulated-nrf54l05:
 
