@@ -9,6 +9,23 @@ tests:
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
       - CONFIG_TEST_BUSY_SIM=y
+  lpuart.loopback.nrf54l:
+    sysbuild: true
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags: lpuart sysbuild ci_tests_drivers_lpuart
+    extra_configs:
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+  lpuart.loopback.nrf54l.busy_sim:
+    sysbuild: true
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags: lpuart sysbuild ci_tests_drivers_lpuart
+    extra_configs:
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+      - CONFIG_TEST_BUSY_SIM=y
   lpuart.loopback_busy_sim_no_hfxo:
     sysbuild: true
     platform_allow: nrf9160dk/nrf9160
