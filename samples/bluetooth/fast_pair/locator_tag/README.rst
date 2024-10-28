@@ -498,9 +498,6 @@ To build the sample in a release variant, set the ``FILE_SUFFIX=release`` CMake 
 The build will use the :file:`prj_release.conf` configuration file instead of :file:`prj.conf`.
 Check the contents of both files to learn which configuration changes you should apply when preparing the production build of your end product.
 
-.. note::
-   The sample does not support the DFU functionality.
-
 The release build reduces the code size and RAM usage of the sample by disabling logging functionality and performing other optimizations.
 Additionally, it enables the Link Time Optimization (LTO) configuration through the :kconfig:option:`CONFIG_LTO` Kconfig option, which further reduces the code size.
 LTO is an advanced compilation technique that optimizes across all compiled units of an application at the link stage, rather than optimizing each unit separately.
