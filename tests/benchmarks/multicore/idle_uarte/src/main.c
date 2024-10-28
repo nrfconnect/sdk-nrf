@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/drivers/uart.h>
+#include <zephyr/pm/device_runtime.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -23,6 +24,7 @@ LOG_MODULE_REGISTER(idle_uarte);
 #define TEST_BUFFER_LEN		    10
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
+static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
 const uint8_t test_pattern[TEST_BUFFER_LEN] = {0x11, 0x12, 0x13, 0x14, 0x15,
 					       0x16, 0x17, 0x18, 0x19, 0x20};
@@ -94,6 +96,11 @@ int main(void)
 	if (err != 0) {
 		printk("Unexpected error when setting callback %d\n", err);
 		return -1;
+	}
+
+	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
+		pm_device_runtime_enable(uart_dev);
+		pm_device_runtime_enable(console_dev);
 	}
 
 	while (1) {
