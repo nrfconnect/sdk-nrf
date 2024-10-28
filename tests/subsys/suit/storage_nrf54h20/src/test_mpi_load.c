@@ -20,6 +20,7 @@ ZTEST_SUITE(suit_storage_nrf54h20_mpi_load_tests, NULL, NULL, test_suite_before,
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_vid_uuid_zeros)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -35,6 +36,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_vid_uuid_zeros)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -44,6 +46,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_vid_uuid_zeros)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_vid_uuid_ones)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -59,6 +62,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_vid_uuid_ones)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -68,6 +72,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_vid_uuid_ones)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_cid_uuid_zeros)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -83,6 +88,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_cid_uuid_zeros)
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -92,6 +98,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_cid_uuid_zeros)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_cid_uuid_ones)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -107,6 +114,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_cid_uuid_ones)
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -116,6 +124,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_cid_uuid_ones)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_recovery_without_updates)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -131,6 +140,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_recovery_without_updates)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_RECOVERY, mpi, sizeof(mpi));
@@ -140,6 +150,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_recovery_without_updates)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_root_without_updates)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -155,6 +166,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_root_without_updates)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -164,6 +176,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_root_without_updates)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_nonerased_reserved)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -179,6 +192,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_nonerased_reserved)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -188,6 +202,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_nonerased_reserved)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_empty_new_version)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x02, /* unsupported version */
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -197,6 +212,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_empty_new_version)
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -206,6 +222,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_empty_new_version)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_downgrade_prevention_zero)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x00, /* unknown downgrade prevention policy */
@@ -221,6 +238,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_downgrade_prevention_zero)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -231,6 +249,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_downgrade_prevention_zero)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_independent_updateability_zero)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -246,6 +265,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_independent_updateability_zero)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -256,6 +276,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_independent_updateability_zero)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_signature_check_zero)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -271,6 +292,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_signature_check_zero)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	suit_plat_err_t err =
 		suit_storage_mpi_configuration_load(SUIT_MANIFEST_APP_ROOT, mpi, sizeof(mpi));
@@ -280,6 +302,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_signature_check_zero)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_fake_nordic_top_manifest)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -295,6 +318,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_fake_nordic_top_manifest)
 		0xf0, 0x3d, 0x38, 0x5e, 0xa7, 0x31, 0x56, 0x05,
 		0xb1, 0x5d, 0x03, 0x7f, 0x6d, 0xa6, 0x09, 0x7f,
 	};
+	/* clang-format on */
 
 	/* GIVEN the Nordic top manifest is already loaded */
 	suit_plat_err_t err =
@@ -312,6 +336,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_fake_nordic_top_manifest)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_two_root_manifests)
 {
+	/* clang-format off */
 	uint8_t mpi[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -327,6 +352,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_two_root_manifests)
 		0x97, 0x05, 0x48, 0x23, 0x4c, 0x3d, 0x59, 0xa1,
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
+	/* clang-format on */
 
 	/* GIVEN the ROOT manifest is already loaded */
 	suit_plat_err_t err =
@@ -344,6 +370,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_two_root_manifests)
 
 ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_too_many_roles)
 {
+	/* clang-format off */
 	suit_manifest_role_t roles[] = {
 		SUIT_MANIFEST_SEC_TOP,
 		SUIT_MANIFEST_SEC_SDFW,
@@ -373,6 +400,7 @@ ZTEST(suit_storage_nrf54h20_mpi_load_tests, test_too_many_roles)
 		0x89, 0x86, 0xa5, 0x46, 0x60, 0xa1, 0x4b, 0x0a,
 	};
 	uint8_t mpi_array[sizeof(mpi) * ARRAY_SIZE(roles)];
+	/* clang-format on */
 
 	for (size_t i = 0; i < ARRAY_SIZE(roles); i++) {
 		/* Fake CID so each entry is different */
