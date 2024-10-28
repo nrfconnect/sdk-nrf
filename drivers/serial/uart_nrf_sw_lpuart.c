@@ -92,8 +92,6 @@ struct lpuart_data {
 	uint8_t *rx_buf;
 	size_t rx_len;
 
-	int32_t rx_timeout;
-
 	uart_callback_t user_callback;
 	void *user_data;
 
@@ -385,8 +383,7 @@ static void activate_rx(struct lpuart_data *data)
 	LOG_DBG("RX: Ready");
 	data->rx_got_data = false;
 	data->rx_state = RX_ACTIVE;
-	err = uart_rx_enable(data->uart, data->rx_buf,
-				data->rx_len, data->rx_timeout);
+	err = uart_rx_enable(data->uart, data->rx_buf, data->rx_len, SYS_FOREVER_US);
 	__ASSERT(err == 0, "RX: Enabling failed (err:%d)", err);
 
 	/* Ready. Confirm by toggling the pin. */
@@ -722,6 +719,7 @@ static int api_tx_abort(const struct device *dev)
 static int api_rx_enable(const struct device *dev, uint8_t *buf,
 			 size_t len, int32_t timeout)
 {
+	ARG_UNUSED(timeout);
 	struct lpuart_data *data = get_dev_data(dev);
 
 	__ASSERT_NO_MSG(data->rx_state == RX_OFF);
@@ -731,7 +729,6 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf,
 	}
 
 	data->rx_len = len;
-	data->rx_timeout = timeout;
 	data->rx_state = RX_IDLE;
 
 	LOG_DBG("RX: Enabling");
