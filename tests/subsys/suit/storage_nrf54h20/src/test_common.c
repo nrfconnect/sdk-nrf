@@ -8,6 +8,7 @@
 #include <suit_storage_mpi.h>
 #include "test_common.h"
 
+/* clang-format off */
 /* RFC4122 uuid5(uuid.NAMESPACE_DNS, 'nordicsemi.com') */
 static uint8_t nordic_vid[] = {
 	0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85,
@@ -69,6 +70,7 @@ uint8_t nvv_sample[64] = {
 	0x6a, 0x65, 0xbe, 0x14, 0xcb, 0x2e, 0x83, 0x6a,
 	0x3b, 0xc9, 0xfd, 0x87, 0xf6, 0xde, 0x79, 0x05,
 };
+/* clang-format on */
 
 void erase_area_nordic(void)
 {
@@ -166,6 +168,7 @@ void write_area_app_nvv(void)
 
 void write_empty_area_app(void)
 {
+	/* clang-format off */
 	/* Digest of the content defined in assert_empty_mpi_area_app(). */
 	uint8_t app_digest[] = {
 		0xd6, 0xc4, 0x94, 0x17, 0xb1, 0xca, 0x0a, 0x67,
@@ -173,6 +176,7 @@ void write_empty_area_app(void)
 		0x49, 0x6d, 0x05, 0xdf, 0x7f, 0x8c, 0x8b, 0x1b,
 		0x98, 0x14, 0x09, 0x7e, 0x9d, 0x62, 0xc8, 0xe1,
 	};
+	/* clang-format on */
 
 	/* Write the digest of application area filled with 0xFF */
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
@@ -187,6 +191,7 @@ void write_empty_area_app(void)
 
 void write_empty_area_rad(void)
 {
+	/* clang-format off */
 	/* Digest of the content defined in assert_empty_mpi_area_rad(). */
 	uint8_t rad_digest[] = {
 		0xd1, 0x69, 0xf6, 0x75, 0x42, 0x29, 0xc2, 0x00,
@@ -194,6 +199,7 @@ void write_empty_area_rad(void)
 		0x3c, 0x47, 0xce, 0x89, 0x39, 0xdb, 0x4b, 0x7a,
 		0x11, 0xc2, 0x24, 0x92, 0x1b, 0x98, 0x25, 0x21,
 	};
+	/* clang-format on */
 
 	/* Write the digest of radio area filled with 0xFF */
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
@@ -208,6 +214,7 @@ void write_empty_area_rad(void)
 
 void write_area_app_root(void)
 {
+	/* clang-format off */
 	uint8_t mpi_root[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -230,6 +237,7 @@ void write_area_app_root(void)
 		0x2b, 0x17, 0x45, 0x90, 0x16, 0xe1, 0xc7, 0xf5,
 		0xc1, 0xdc, 0x3f, 0xb4, 0x58, 0x96, 0x1e, 0x44,
 	};
+	/* clang-format on */
 
 	/* Write the sample application area (just the root MPI) and corresponding digest */
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
@@ -248,6 +256,7 @@ void write_area_app_root(void)
 
 void write_area_rad(void)
 {
+	/* clang-format off */
 	uint8_t mpi_rad[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -270,6 +279,7 @@ void write_area_rad(void)
 		0x17, 0x42, 0x32, 0xf7, 0x03, 0x9f, 0xf8, 0xa4,
 		0x8d, 0x52, 0xc6, 0x8d, 0xea, 0xdc, 0x33, 0x3b,
 	};
+	/* clang-format on */
 
 	/* Write the sample radio area (just one MPI entry) and corresponding digest */
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
@@ -289,6 +299,7 @@ void write_area_nordic_root(void)
 {
 	uintptr_t mpi_root_backup_offset =
 		SUIT_STORAGE_NORDIC_OFFSET + SUIT_STORAGE_RAD_MPI_SIZE + SUIT_STORAGE_DIGEST_SIZE;
+	/* clang-format off */
 	uint8_t mpi_root[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -311,6 +322,7 @@ void write_area_nordic_root(void)
 		0x2b, 0x17, 0x45, 0x90, 0x16, 0xe1, 0xc7, 0xf5,
 		0xc1, 0xdc, 0x3f, 0xb4, 0x58, 0x96, 0x1e, 0x44,
 	};
+	/* clang-format on */
 
 	/* Write the sample application backup area (just the root MPI) and corresponding digest */
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
@@ -331,6 +343,7 @@ void write_area_nordic_root(void)
 void write_area_nordic_rad(void)
 {
 	uintptr_t mpi_rad_backup_offset = SUIT_STORAGE_NORDIC_OFFSET;
+	/* clang-format off */
 	uint8_t mpi_rad[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -353,6 +366,7 @@ void write_area_nordic_rad(void)
 		0x17, 0x42, 0x32, 0xf7, 0x03, 0x9f, 0xf8, 0xa4,
 		0x8d, 0x52, 0xc6, 0x8d, 0xea, 0xdc, 0x33, 0x3b,
 	};
+	/* clang-format on */
 
 	/* Write the sample radio backup area (just one MPI entry) and corresponding digest */
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
@@ -373,6 +387,7 @@ void write_area_nordic_old_root(void)
 {
 	uintptr_t mpi_root_backup_offset =
 		SUIT_STORAGE_NORDIC_OFFSET + SUIT_STORAGE_RAD_MPI_SIZE + SUIT_STORAGE_DIGEST_SIZE;
+	/* clang-format off */
 	uint8_t mpi_root[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -394,6 +409,7 @@ void write_area_nordic_old_root(void)
 		0x96, 0x28, 0xc2, 0x0c, 0x69, 0xe5, 0xf5, 0x23,
 		0x0c, 0x92, 0xd6, 0x2d, 0x36, 0x69, 0x27, 0x58,
 	};
+	/* clang-format on */
 
 	/* Write the sample application backup area (just the root MPI with altered class) and
 	 * corresponding digest
@@ -416,6 +432,7 @@ void write_area_nordic_old_root(void)
 void write_area_nordic_old_rad(void)
 {
 	uintptr_t mpi_rad_backup_offset = SUIT_STORAGE_NORDIC_OFFSET;
+	/* clang-format off */
 	uint8_t mpi_rad[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -437,6 +454,7 @@ void write_area_nordic_old_rad(void)
 		0x6f, 0x1f, 0x82, 0x16, 0x28, 0xae, 0x68, 0x71,
 		0xc3, 0xc1, 0x8e, 0x5b, 0xb9, 0xf0, 0x2f, 0xdd,
 	};
+	/* clang-format on */
 
 	/* Write the sample radio backup area (just the sample MPI with altered class) and
 	 * corresponding digest
@@ -520,7 +538,7 @@ void assert_sample_root_rad_class(void)
 	zassert_equal(class_infos_len, 5,
 		      "Invalid number of supported manifest classes (%d != %d).", class_infos_len,
 		      5);
-	/* ... and the sample application root manifest class is supported */
+	/* ... and the sample radio recovery manifest class is supported */
 	zassert_mem_equal(class_infos[3].vendor_id, nordic_vid, sizeof(nordic_vid));
 	zassert_mem_equal(class_infos[3].class_id, rad_cid, sizeof(rad_cid));
 	zassert_equal(class_infos[3].role, SUIT_MANIFEST_RAD_RECOVERY,
@@ -534,6 +552,7 @@ void assert_sample_root_rad_class(void)
 
 void assert_empty_mpi_area_app(uint8_t *addr, size_t size)
 {
+	/* clang-format off */
 	uint8_t empty_mpi_app[] = {
 		/* 0xFF * 240 */
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -572,6 +591,7 @@ void assert_empty_mpi_area_app(uint8_t *addr, size_t size)
 		0x49, 0x6d, 0x05, 0xdf, 0x7f, 0x8c, 0x8b, 0x1b,
 		0x98, 0x14, 0x09, 0x7e, 0x9d, 0x62, 0xc8, 0xe1,
 	};
+	/* clang-format on */
 
 	zassert_equal(size, sizeof(empty_mpi_app), "Incorrect application area size (0x%x != 0x%x)",
 		      size, sizeof(empty_mpi_app));
@@ -582,6 +602,7 @@ void assert_empty_mpi_area_app(uint8_t *addr, size_t size)
 
 void assert_valid_mpi_area_app(uint8_t *addr, size_t size)
 {
+	/* clang-format off */
 	uint8_t valid_mpi_app[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -627,6 +648,7 @@ void assert_valid_mpi_area_app(uint8_t *addr, size_t size)
 		0x2b, 0x17, 0x45, 0x90, 0x16, 0xe1, 0xc7, 0xf5,
 		0xc1, 0xdc, 0x3f, 0xb4, 0x58, 0x96, 0x1e, 0x44,
 	};
+	/* clang-format on */
 
 	zassert_equal(size, sizeof(valid_mpi_app), "Incorrect application area size (0x%x != 0x%x)",
 		      size, sizeof(valid_mpi_app));
@@ -637,6 +659,7 @@ void assert_valid_mpi_area_app(uint8_t *addr, size_t size)
 
 void assert_empty_mpi_area_rad(uint8_t *addr, size_t size)
 {
+	/* clang-format off */
 	uint8_t empty_mpi_rad[] = {
 		/* 0xFF * 144 */
 		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -663,6 +686,7 @@ void assert_empty_mpi_area_rad(uint8_t *addr, size_t size)
 		0x3c, 0x47, 0xce, 0x89, 0x39, 0xdb, 0x4b, 0x7a,
 		0x11, 0xc2, 0x24, 0x92, 0x1b, 0x98, 0x25, 0x21,
 	};
+	/* clang-format on */
 
 	zassert_equal(size, sizeof(empty_mpi_rad), "Incorrect radio area size (0x%x != 0x%x)", size,
 		      sizeof(empty_mpi_rad));
@@ -673,6 +697,7 @@ void assert_empty_mpi_area_rad(uint8_t *addr, size_t size)
 
 void assert_valid_mpi_area_rad(uint8_t *addr, size_t size)
 {
+	/* clang-format off */
 	uint8_t valid_mpi_rad[] = {
 		0x01, /* version */
 		0x01, /* downgrade prevention disabled */
@@ -706,6 +731,7 @@ void assert_valid_mpi_area_rad(uint8_t *addr, size_t size)
 		0x17, 0x42, 0x32, 0xf7, 0x03, 0x9f, 0xf8, 0xa4,
 		0x8d, 0x52, 0xc6, 0x8d, 0xea, 0xdc, 0x33, 0x3b,
 	};
+	/* clang-format on */
 
 	zassert_equal(size, sizeof(valid_mpi_rad), "Incorrect radio area size (0x%x != 0x%x)", size,
 		      sizeof(valid_mpi_rad));

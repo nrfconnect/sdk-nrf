@@ -170,7 +170,7 @@ ZTEST(suit_storage_nrf54h20_init_tests, test_with_old_root_rad_backup)
 	erase_area_nordic();
 	write_area_nordic_old_root();
 	write_area_nordic_old_rad();
-	/* .. and the device is provisioned with new application MPI with root config without radio
+	/* .. and the device is provisioned with new application MPI with root config and new radio
 	 * config
 	 */
 	erase_area_rad();
