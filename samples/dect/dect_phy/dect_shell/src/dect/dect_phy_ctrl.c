@@ -612,7 +612,12 @@ static void dect_phy_ctrl_mdm_on_rssi_cb(const uint64_t *time,
 				  const struct nrf_modem_dect_phy_rssi_meas *p_result)
 {
 	dect_app_modem_time_save(time);
-	dect_phy_scan_rssi_cb_handle(NRF_MODEM_DECT_PHY_SUCCESS, p_result);
+
+	if (ctrl_data.rssi_scan_on_going) {
+		dect_phy_scan_rssi_cb_handle(NRF_MODEM_DECT_PHY_SUCCESS, p_result);
+	} else if (ctrl_data.ext_cmd.direct_rssi_cb != NULL) {
+		ctrl_data.ext_cmd.direct_rssi_cb(p_result);
+	}
 }
 
 static void dect_phy_ctrl_mdm_on_link_configuration_cb(uint64_t const *time,

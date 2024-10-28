@@ -44,6 +44,20 @@ static struct dect_phy_mac_cluster_beacon_data {
 	struct dect_phy_mac_beacon_start_params start_params;
 } beacon_data;
 
+struct dect_phy_mac_cluster_beacon_lms_rssi_scan_data {
+	int8_t busy_rssi_limit;
+	int8_t free_rssi_limit;
+
+	/* Cluster reservations in symbol resolution within a frame */
+	bool cluster_beacon_reserved_symbols_in_frame[DECT_RADIO_FRAME_SYMBOL_COUNT];
+	bool cluster_ra_reserved_symbols_in_frame[DECT_RADIO_FRAME_SYMBOL_COUNT];
+
+	enum dect_phy_rssi_scan_data_result_verdict
+		scan_result_symbols_in_frame[DECT_RADIO_FRAME_SYMBOL_COUNT];
+} lms_rssi_scan_data;
+
+static void dect_phy_mac_cluster_beacon_scheduler_list_items_remove(void);
+
 static int dect_phy_mac_cluster_beacon_encode(struct dect_phy_mac_beacon_start_params *params,
 					      uint8_t **target_ptr, /* In/Out */
 					      union nrf_modem_dect_phy_hdr *out_phy_header)
@@ -182,6 +196,82 @@ static int dect_phy_mac_cluster_beacon_encode(struct dect_phy_mac_beacon_start_p
 	return header.packet_length;
 }
 
+void dect_phy_mac_ctrl_lms_rssi_scan_data_init(int beacon_tx_slot_count)
+{
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+
+	memset(&lms_rssi_scan_data, 0, sizeof(lms_rssi_scan_data));
+
+	lms_rssi_scan_data.busy_rssi_limit = current_settings->rssi_scan.busy_threshold;
+	lms_rssi_scan_data.free_rssi_limit = current_settings->rssi_scan.free_threshold;
+
+	int beacon_tx_symbols =
+		beacon_tx_slot_count * DECT_RADIO_SLOT_SYMBOL_COUNT;
+
+	for (int i = 0; i < beacon_tx_symbols && i < DECT_RADIO_FRAME_SYMBOL_COUNT; i++) {
+		lms_rssi_scan_data.cluster_beacon_reserved_symbols_in_frame[i] = true;
+	}
+
+	int beacon_ra_start_symbols = (DECT_PHY_MAC_CLUSTER_BEACON_RA_START_SUBSLOT *
+				       DECT_PHY_MAC_CLUSTER_BEACON_RA_LENGTH_SLOTS) - 1;
+	int beacon_ra_end_symbols =
+		beacon_ra_start_symbols +
+		(DECT_PHY_MAC_CLUSTER_BEACON_RA_LENGTH_SLOTS * DECT_RADIO_SLOT_SYMBOL_COUNT);
+
+	for (int i = beacon_ra_start_symbols;
+	     i < beacon_ra_end_symbols && i < DECT_RADIO_FRAME_SYMBOL_COUNT; i++) {
+		lms_rssi_scan_data.cluster_ra_reserved_symbols_in_frame[i] = true;
+	}
+}
+
+void dect_phy_mac_ctrl_cluster_beacon_phy_api_direct_rssi_cb(
+	const struct nrf_modem_dect_phy_rssi_meas *p_meas_results)
+{
+	/* Handle Last Minute Scan results. This assumes that start time was frame start. */
+	bool busy_in_beacon_tx = false;
+	bool busy_in_rach = false;
+
+	for (int i = 0; i < p_meas_results->meas_len && i < DECT_RADIO_FRAME_SYMBOL_COUNT; i++) {
+		int8_t curr_meas = p_meas_results->meas[i];
+		enum dect_phy_rssi_scan_data_result_verdict current_verdict;
+
+		if (curr_meas < 0) {
+			if (curr_meas > lms_rssi_scan_data.busy_rssi_limit) {
+				current_verdict = DECT_PHY_RSSI_SCAN_VERDICT_BUSY;
+			} else if (curr_meas <= lms_rssi_scan_data.free_rssi_limit) {
+				current_verdict = DECT_PHY_RSSI_SCAN_VERDICT_FREE;
+			} else {
+				current_verdict = DECT_PHY_RSSI_SCAN_VERDICT_POSSIBLE;
+			}
+			lms_rssi_scan_data.scan_result_symbols_in_frame[i] = current_verdict;
+
+			if (current_verdict == DECT_PHY_RSSI_SCAN_VERDICT_BUSY) {
+				if (lms_rssi_scan_data
+					.cluster_beacon_reserved_symbols_in_frame[i]) {
+					busy_in_beacon_tx = true;
+				} else if (lms_rssi_scan_data
+						.cluster_ra_reserved_symbols_in_frame[i]) {
+					busy_in_rach = true;
+				}
+			}
+		}
+	}
+
+	/* As a consequence of the LMS, we are simply stopping beacon if detecting BUSY in
+	 * beacon TX or in RACH subslots.
+	 */
+	if (busy_in_beacon_tx) {
+		/* Remove beacon tx ASAP */
+		dect_phy_api_scheduler_th_list_item_remove_dealloc_by_phy_op_handle(
+			DECT_PHY_MAC_BEACON_TX_HANDLE);
+		dect_phy_mac_ctrl_cluster_beacon_stop(
+			DECT_PHY_MAC_CTRL_BEACON_STOP_CAUSE_LMS_BEACON_TX);
+	} else  if (busy_in_rach) {
+		dect_phy_mac_ctrl_cluster_beacon_stop(
+			DECT_PHY_MAC_CTRL_BEACON_STOP_CAUSE_LMS_RACH);
+	}
+}
+
 int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params *params)
 {
 
@@ -209,14 +299,56 @@ int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params
 	slot_count = ret + 1;
 	beacon_data.start_params = *params;
 
+	dect_phy_mac_ctrl_lms_rssi_scan_data_init(slot_count);
+
 	/* Schedule beaconing */
 	uint64_t first_possible_tx;
 	uint64_t time_now = dect_app_modem_time_now();
 	uint64_t start_time = 0;
 
-	first_possible_tx =
-		time_now + (US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us) * 2);
+	first_possible_tx = time_now + (SECONDS_TO_MODEM_TICKS(1));
 	start_time = first_possible_tx;
+
+	/* Schedule Last Minute Scannings (LMS) before beacon TX and
+	 * announcing random access resources.
+	 * Due to scheduling delays and lack of stopping of a scheduled TX operation in phy api.
+	 * LMS is done 2 frames before beacon TX but all slots at that frame are covered where
+	 * we are TX/RA.
+	 * Note: this is not exactly compliant with the LMS in MAC spec (which requires
+	 * the scan to be 1 and/or 0.5 frames before resources being announced or own transmission).
+	 */
+	struct dect_phy_api_scheduler_list_item_config *rssi_list_item_conf;
+	struct dect_phy_api_scheduler_list_item *rssi_list_item =
+		dect_phy_api_scheduler_list_item_alloc_rssi_element(&rssi_list_item_conf);
+
+	if (!rssi_list_item) {
+		desh_error("(%s): dect_phy_api_scheduler_list_item_alloc_tx_element failed: No "
+			   "memory to TX a beacon");
+		return -ENOMEM;
+	}
+	rssi_list_item->phy_op_handle = DECT_PHY_MAC_BEACON_LMS_RSSI_SCAN_HANDLE;
+
+	rssi_list_item_conf->channel = params->beacon_channel;
+	rssi_list_item_conf->frame_time =
+		start_time - (2 * DECT_RADIO_FRAME_DURATION_IN_MODEM_TICKS);
+	rssi_list_item_conf->start_slot = 0;
+
+	/* Let it run in intervals in a scheduler */
+	rssi_list_item_conf->interval_mdm_ticks = interval_mdm_ticks;
+	rssi_list_item_conf->rssi.rssi_op_params.start_time = rssi_list_item_conf->frame_time;
+	rssi_list_item_conf->rssi.rssi_op_params.handle = rssi_list_item->phy_op_handle;
+	rssi_list_item_conf->rssi.rssi_op_params.carrier = rssi_list_item_conf->channel;
+	rssi_list_item_conf->rssi.rssi_op_params.duration = DECT_RADIO_FRAME_SUBSLOT_COUNT;
+	rssi_list_item_conf->rssi.rssi_op_params.reporting_interval =
+		NRF_MODEM_DECT_PHY_RSSI_INTERVAL_24_SLOTS;
+
+	/* Add RSSI measurement operation to scheduler list */
+	if (!dect_phy_api_scheduler_list_item_add(rssi_list_item)) {
+		desh_error("(%s): dect_phy_api_scheduler_list_item_add failed for RSSI "
+			   "measurement -- continue",
+			(__func__));
+		dect_phy_api_scheduler_list_item_dealloc(rssi_list_item);
+	}
 
 	struct dect_phy_api_scheduler_list_item_config *sched_list_item_conf;
 	struct dect_phy_api_scheduler_list_item *sched_list_item =
@@ -248,12 +380,7 @@ int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params
 	sched_list_item_conf->length_slots = slot_count;
 	sched_list_item_conf->length_subslots = 0;
 
-	/* Note: we are using LBT for cluster beacon because we do not have Last Minute Scan.
-	 * Thus, we are not compliant with MAC spec.
-	 */
-	sched_list_item_conf->tx.phy_lbt_period = NRF_MODEM_DECT_LBT_PERIOD_MAX;
-	sched_list_item_conf->tx.phy_lbt_rssi_threshold_max =
-		current_settings->rssi_scan.busy_threshold;
+	sched_list_item_conf->tx.phy_lbt_period = 0;
 
 	sched_list_item->priority = DECT_PRIORITY1_TX;
 
@@ -278,7 +405,10 @@ int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params
 		return -EBUSY;
 	}
 
-	/* Schedule RACH RXes */
+	/* Schedule RACH RXes. Note: no specific LMS for all of these, ie. not strictly
+	 * as mac spec intended. However, LBT shall be used and is used in desh when sending
+	 * to random access resource.
+	 */
 	uint32_t rach_handle = DECT_PHY_MAC_BEACON_RX_RACH_HANDLE_START;
 	uint64_t rach_frame_time = beacon_frame_time;
 
@@ -348,14 +478,20 @@ int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params
 	return 0;
 }
 
-void dect_phy_mac_cluster_beacon_tx_stop(void)
+static void dect_phy_mac_cluster_beacon_scheduler_list_items_remove(void)
 {
+	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
+		DECT_PHY_MAC_BEACON_LMS_RSSI_SCAN_HANDLE);
 	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
 		DECT_PHY_MAC_BEACON_TX_HANDLE);
 	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(
 		DECT_PHY_MAC_BEACON_RX_RACH_HANDLE_START, DECT_PHY_MAC_BEACON_RX_RACH_HANDLE_END);
+}
+
+void dect_phy_mac_cluster_beacon_tx_stop(void)
+{
+	dect_phy_mac_cluster_beacon_scheduler_list_items_remove();
 	beacon_data.running = false;
-	desh_print("Beacon TX stopped.");
 }
 
 void dect_phy_mac_cluster_beacon_update(void)

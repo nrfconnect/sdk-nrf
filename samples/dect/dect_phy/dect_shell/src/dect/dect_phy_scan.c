@@ -22,11 +22,6 @@
 #include "dect_phy_scan.h"
 #include "dect_phy_rx.h"
 
-enum dect_phy_rssi_scan_data_result_verdict {
-	DECT_PHY_RSSI_SCAN_VERDICT_FREE,
-	DECT_PHY_RSSI_SCAN_VERDICT_POSSIBLE,
-	DECT_PHY_RSSI_SCAN_VERDICT_BUSY,
-};
 struct dect_phy_rssi_scan_data_result {
 	uint16_t channel;
 	enum dect_phy_rssi_scan_data_result_verdict result;

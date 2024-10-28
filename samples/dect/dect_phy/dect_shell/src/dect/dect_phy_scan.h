@@ -8,6 +8,12 @@
 #define DECT_PHY_SCAN_H
 #include <zephyr/kernel.h>
 
+enum dect_phy_rssi_scan_data_result_verdict {
+	DECT_PHY_RSSI_SCAN_VERDICT_FREE,
+	DECT_PHY_RSSI_SCAN_VERDICT_POSSIBLE,
+	DECT_PHY_RSSI_SCAN_VERDICT_BUSY,
+};
+
 struct dect_phy_rssi_channel_scan_result_t {
 	enum nrf_modem_dect_phy_err phy_status;
 

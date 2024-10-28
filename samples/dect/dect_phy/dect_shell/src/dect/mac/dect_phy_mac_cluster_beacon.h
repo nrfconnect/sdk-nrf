@@ -34,6 +34,9 @@ void dect_phy_mac_cluster_beacon_update(void);
 
 void dect_phy_mac_cluster_beacon_status_print(void);
 
+void dect_phy_mac_ctrl_cluster_beacon_phy_api_direct_rssi_cb(
+	const struct nrf_modem_dect_phy_rssi_meas *meas_results);
+
 /******************************************************************************/
 
 void dect_phy_mac_cluster_beacon_association_req_handle(

@@ -427,7 +427,9 @@ DeSh command: ``dect mac``
 
 This command demostrates basic sample of DECT NR+ MAC layer on top of PHY API based on ETSI TS 103 636-4 V1.4.8 (2024-01).
 With this command you can start a cluster beacon, scan for beacons, associate/dissociate, and send data to beacon random access RX window.
-Note: this is just a basic sample and not a full MAC implementation.
+
+Disclaimer: this is just a basic sample for initials and not a full MAC implementation, it does not support all the features of the DECT NR+ MAC layer and is not fully compliant with the MAC specification.
+For example cluster beaconing with RA allocation, and LMS implementations overall are not what is required by the MAC specification.
 
 Example: starting of cluster beacon and sending RA data to it
 -------------------------------------------------------------

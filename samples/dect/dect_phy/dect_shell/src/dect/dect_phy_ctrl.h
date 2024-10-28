@@ -106,6 +106,10 @@ typedef bool (*dect_phy_ctrl_ext_phy_api_pdc_rx_cb_t)(
 int dect_phy_ctrl_th_register_default_phy_api_pdc_rcv_cb(
 	dect_phy_ctrl_ext_phy_api_pdc_rx_cb_t default_pdc_rcv_cb);
 
+/* Callback for receiving RSSI measurement results */
+typedef void (*dect_phy_ctrl_ext_phy_api_direct_rssi_cb_t)(
+	const struct nrf_modem_dect_phy_rssi_meas *meas_results);
+
 /* Callback for receiving modem operation complete events */
 typedef void (*dect_phy_ctrl_ext_phy_api_mdm_op_complete_cb_t)(
 	struct dect_phy_common_op_completed_params *params);
@@ -130,6 +134,7 @@ struct dect_phy_ctrl_ext_callbacks {
 	dect_phy_ctrl_ext_phy_api_pcc_rx_cb_t direct_pcc_rcv_cb;
 	dect_phy_ctrl_ext_phy_api_pcc_rx_cb_t pcc_rcv_cb;
 	dect_phy_ctrl_ext_phy_api_direct_pdc_rx_cb_t direct_pdc_rcv_cb;
+	dect_phy_ctrl_ext_phy_api_direct_rssi_cb_t direct_rssi_cb;
 	dect_phy_ctrl_ext_phy_api_pdc_rx_cb_t pdc_rcv_cb;
 	dect_phy_ctrl_ext_phy_api_mdm_op_complete_cb_t op_complete_cb;
 	dect_phy_ctrl_ext_settings_changed_cb_t sett_changed_cb;
