@@ -288,7 +288,7 @@ show_usage:
 static void dect_phy_mac_beacon_stop_cmd(const struct shell *shell, size_t argc, char **argv)
 {
 	desh_print("Stopping beacon.");
-	dect_phy_mac_ctrl_cluster_beacon_stop();
+	dect_phy_mac_ctrl_cluster_beacon_stop(DECT_PHY_MAC_CTRL_BEACON_STOP_CAUSE_USER_INITIATED);
 }
 
 /**************************************************************************************************/

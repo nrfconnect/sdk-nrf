@@ -233,6 +233,7 @@ typedef struct {
 
 #define DECT_RADIO_FRAME_SUBSLOT_COUNT_IN_SLOT (2)
 #define DECT_RADIO_FRAME_SLOT_COUNT	       (24)
+
 #define DECT_RADIO_FRAME_SUBSLOT_COUNT                                                             \
 	(DECT_RADIO_FRAME_SUBSLOT_COUNT_IN_SLOT * DECT_RADIO_FRAME_SLOT_COUNT)
 #define DECT_RADIO_FRAME_DURATION_US		(10000)
@@ -246,6 +247,11 @@ typedef struct {
 #define DECT_PHY_TX_RX_SCHEDULING_OFFSET_MDM_TICKS (2 * DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS)
 
 #define MS_TO_SUBSLOTS(x) (((x) / 10) * 48)
+
+#define DECT_RADIO_SLOT_SYMBOL_COUNT (10)
+#define DECT_RADIO_SUBSLOT_SYMBOL_COUNT (5)
+
+#define DECT_RADIO_FRAME_SYMBOL_COUNT (DECT_RADIO_FRAME_SLOT_COUNT * DECT_RADIO_SLOT_SYMBOL_COUNT)
 
 /******************************************************************************/
 #endif /* DECT_COMMON_H */

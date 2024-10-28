@@ -51,6 +51,12 @@ struct dect_phy_mac_ctrl_beacon_starter_data {
 };
 static struct dect_phy_mac_ctrl_beacon_starter_data beacon_starter_work_data;
 
+struct dect_phy_mac_ctrl_beacon_stopper_data {
+	struct k_work work;
+	enum dect_phy_mac_ctrl_beacon_stop_cause cause;
+};
+static struct dect_phy_mac_ctrl_beacon_stopper_data beacon_stopper_work_data;
+
 static void dect_phy_mac_ctrl_beacon_start_work_handler(struct k_work *work_item)
 {
 	struct dect_phy_mac_ctrl_beacon_starter_data *data =
@@ -157,6 +163,7 @@ int dect_phy_mac_ctrl_cluster_beacon_start(struct dect_phy_mac_beacon_start_para
 		return -EALREADY;
 	}
 
+	mac_data.ext_cmd.direct_rssi_cb = dect_phy_mac_ctrl_cluster_beacon_phy_api_direct_rssi_cb;
 	mac_data.ext_cmd.direct_pdc_rcv_cb = dect_phy_mac_ctrl_th_phy_api_direct_pdc_rx_cb;
 	ret = dect_phy_ctrl_ext_command_start(mac_data.ext_cmd);
 	if (ret) {
@@ -169,8 +176,26 @@ int dect_phy_mac_ctrl_cluster_beacon_start(struct dect_phy_mac_beacon_start_para
 	return 0;
 }
 
-void dect_phy_mac_ctrl_cluster_beacon_stop(void)
+/**************************************************************************************************/
+
+const char *dect_phy_mac_ctrl_beacon_stop_cause_to_string(int type, char *out_str_buff)
 {
+	struct mapping_tbl_item const mapping_table[] = {
+		{DECT_PHY_MAC_CTRL_BEACON_STOP_CAUSE_USER_INITIATED, "User Initiated"},
+		{DECT_PHY_MAC_CTRL_BEACON_STOP_CAUSE_LMS_BEACON_TX,
+			"LMS resulted BUSY on beacon tx"},
+		{DECT_PHY_MAC_CTRL_BEACON_STOP_CAUSE_LMS_RACH, "LMS resulted BUSY on RACH"},
+		{-1, NULL}};
+
+	return dect_common_utils_map_to_string(mapping_table, type, out_str_buff);
+}
+
+static void dect_phy_mac_ctrl_beacon_stop_work_handler(struct k_work *work_item)
+{
+	struct dect_phy_mac_ctrl_beacon_stopper_data *data =
+		CONTAINER_OF(work_item, struct dect_phy_mac_ctrl_beacon_stopper_data, work);
+	char tmp_str[128] = {0};
+
 	dect_phy_mac_cluster_beacon_tx_stop();
 	mac_data.ext_cmd.direct_pdc_rcv_cb = NULL;
 	dect_phy_ctrl_ext_command_stop();
@@ -178,6 +203,14 @@ void dect_phy_mac_ctrl_cluster_beacon_stop(void)
 #if defined(CONFIG_DK_LIBRARY)
 	dk_set_led_off(DECT_BEACON_ON_STATUS_LED);
 #endif
+	desh_print("Beacon TX stopped, cause: %s.",
+		dect_phy_mac_ctrl_beacon_stop_cause_to_string(data->cause, tmp_str));
+}
+
+void dect_phy_mac_ctrl_cluster_beacon_stop(enum dect_phy_mac_ctrl_beacon_stop_cause cause)
+{
+	beacon_stopper_work_data.cause = cause;
+	k_work_submit_to_queue(&dect_phy_ctrl_work_q, &beacon_stopper_work_data.work);
 }
 
 /**************************************************************************************************/
@@ -311,14 +344,7 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 		dect_common_utils_modem_phy_err_to_string(params->status, params->temperature,
 							  tmp_str);
 		if (params->handle == DECT_PHY_MAC_BEACON_TX_HANDLE) {
-			if (params->status == NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
-				/* TODO: beacons aren't supposed to be sent with LBT.*/
-				desh_warn("%s: cannot TX beacon due to LBT, "
-					  "channel was busy",
-					  __func__, params->status);
-			} else {
-				desh_error("%s: cannot TX beacon: %s", __func__, tmp_str);
-			}
+			desh_error("%s: cannot TX beacon: %s", __func__, tmp_str);
 		} else if (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE) {
 			if (params->status == NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
 				desh_warn("%s: cannot TX client data due to LBT, "
@@ -372,6 +398,7 @@ static int dect_phy_mac_ctrl_init(void)
 	mac_data.ext_cmd.channel_has_nbr_cb = NULL; /* MAC got its own dedicated for this */
 
 	k_work_init(&beacon_starter_work_data.work, dect_phy_mac_ctrl_beacon_start_work_handler);
+	k_work_init(&beacon_stopper_work_data.work, dect_phy_mac_ctrl_beacon_stop_work_handler);
 
 	return 0;
 }

@@ -59,6 +59,7 @@ typedef enum {
 	DECT_PRIORITY0_FORCE_RX, /* Possible to schedule past of the scheduler mdm RX window */
 	DECT_PRIORITY1_TX,
 	DECT_PRIORITY1_RX,
+	DECT_PRIORITY1_RX_RSSI,
 	DECT_PRIORITY2_TX,
 	DECT_PRIORITY2_RX,
 	DECT_PRIORITY_LOWEST_RX
@@ -104,6 +105,10 @@ struct dect_phy_api_scheduler_list_item_config_rx {
 	enum nrf_modem_dect_phy_rx_mode mode;
 };
 
+struct dect_phy_api_scheduler_list_item_config_rx_rssi {
+	struct nrf_modem_dect_phy_rssi_params rssi_op_params;
+};
+
 struct dect_phy_api_scheduler_list_item_config {
 	dect_mac_address_info_t address_info;
 
@@ -139,8 +144,9 @@ struct dect_phy_api_scheduler_list_item_config {
 	uint16_t length_slots;
 	uint16_t length_subslots;
 
-	struct dect_phy_api_scheduler_list_item_config_rx rx; /* RX specifics */
-	struct dect_phy_api_scheduler_list_item_config_tx tx; /* TX specifics */
+	struct dect_phy_api_scheduler_list_item_config_rx rx;        /* RX specifics */
+	struct dect_phy_api_scheduler_list_item_config_tx tx;        /* TX specifics */
+	struct dect_phy_api_scheduler_list_item_config_rx_rssi rssi; /* RSSI specifics */
 };
 
 struct dect_phy_api_scheduler_list_item {
@@ -166,6 +172,8 @@ struct dect_phy_api_scheduler_list_item *dect_phy_api_scheduler_list_item_alloc_
 	struct dect_phy_api_scheduler_list_item_config **item_conf);
 struct dect_phy_api_scheduler_list_item *dect_phy_api_scheduler_list_item_alloc_rx_element(
 	struct dect_phy_api_scheduler_list_item_config **item_conf);
+struct dect_phy_api_scheduler_list_item *dect_phy_api_scheduler_list_item_alloc_rssi_element(
+	struct dect_phy_api_scheduler_list_item_config **item_conf);
 void dect_phy_api_scheduler_list_item_dealloc(struct dect_phy_api_scheduler_list_item *list_item);
 struct dect_phy_api_scheduler_list_item *dect_phy_api_scheduler_list_item_create_new_copy(
 	struct dect_phy_api_scheduler_list_item *item_to_be_copied, uint64_t new_frame_time,
@@ -182,6 +190,8 @@ dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(uint16_t handle);
 void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle);
 void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(uint16_t range_start,
 									    uint16_t range_end);
+
+void dect_phy_api_scheduler_th_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle);
 
 void dect_phy_api_scheduler_list_item_pdu_payload_update_by_phy_handle(
 	uint16_t handle, uint8_t *new_encoded_payload_pdu, uint16_t size);

@@ -20,16 +20,17 @@
 /* Internals */
 
 /* Internal events to scheduler thread */
-#define DECT_PHY_API_EVENT_SCHEDULER_NEXT_FRAME		  1
-#define DECT_PHY_API_EVENT_SCHEDULER_OP_COMPLETED	  2
-#define DECT_PHY_API_EVENT_SCHEDULER_OP_PDC_DATA_RECEIVED 3
-#define DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_PURGE	  4
-#define DECT_PHY_API_EVENT_SCHEDULER_LED_TX_ON		  5
-#define DECT_PHY_API_EVENT_SCHEDULER_LED_TX_OFF		  6
-#define DECT_PHY_API_EVENT_SCHEDULER_OP_SUSPEND		  7
-#define DECT_PHY_API_EVENT_SCHEDULER_OP_RESUME		  8
-#define DECT_PHY_API_EVENT_SCHEDULER_OP_RECONFIG_ON	  9
-#define DECT_PHY_API_EVENT_SCHEDULER_OP_RECONFIG_OFF	  10
+#define DECT_PHY_API_EVENT_SCHEDULER_NEXT_FRAME			1
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_COMPLETED		2
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_PDC_DATA_RECEIVED	3
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_PURGE		4
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_ITEM_RM_DEALLOC	5
+#define DECT_PHY_API_EVENT_SCHEDULER_LED_TX_ON			6
+#define DECT_PHY_API_EVENT_SCHEDULER_LED_TX_OFF			7
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_SUSPEND			8
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_RESUME			9
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_RECONFIG_ON		10
+#define DECT_PHY_API_EVENT_SCHEDULER_OP_RECONFIG_OFF		11
 
 /* Scheduler states */
 enum dect_phy_api_scheduler_state {
@@ -276,6 +277,13 @@ dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(uint16_t handle)
 	}
 	k_mutex_unlock(&to_be_sheduled_list_mutex);
 	return iterator;
+}
+
+void dect_phy_api_scheduler_th_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle)
+{
+	(void)dect_phy_api_scheduler_raise_event_with_data(
+		DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_ITEM_RM_DEALLOC, (void *)&handle,
+		sizeof(uint16_t));
 }
 
 void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle)
@@ -687,6 +695,24 @@ struct dect_phy_api_scheduler_list_item *dect_phy_api_scheduler_list_item_alloc_
 	return p_elem;
 }
 
+struct dect_phy_api_scheduler_list_item *dect_phy_api_scheduler_list_item_alloc_rssi_element(
+	struct dect_phy_api_scheduler_list_item_config **item_conf)
+{
+	struct dect_phy_api_scheduler_list_item *p_elem =
+		k_calloc(1, sizeof(struct dect_phy_api_scheduler_list_item));
+
+	if (p_elem == NULL) {
+		printk("%s: cannot allocate memory for scheduler list item\n", (__func__));
+		return NULL;
+	}
+	p_elem->priority = DECT_PRIORITY1_RX_RSSI;
+	p_elem->sched_config.tx.encoded_payload_pdu = NULL;
+	p_elem->silent_fail = false;
+	*item_conf = &p_elem->sched_config;
+
+	return p_elem;
+}
+
 void dect_phy_api_scheduler_list_item_dealloc(struct dect_phy_api_scheduler_list_item *list_item)
 {
 	if (list_item != NULL) {
@@ -1033,6 +1059,15 @@ dect_phy_api_scheduler_core_mdm_phy_op(struct dect_phy_api_scheduler_list_item *
 					DECT_PHY_API_EVENT_SCHEDULER_LED_TX_ON);
 #endif
 			}
+		} else if (list_item->priority == DECT_PRIORITY1_RX_RSSI) {
+			struct nrf_modem_dect_phy_rssi_params rssi_params =
+				list_item->sched_config.rssi.rssi_op_params;
+
+			err = nrf_modem_dect_phy_rssi(&rssi_params);
+			if (err) {
+				desh_error("(%s): nrf_modem_dect_phy_rssi failed %d",
+					(__func__), err);
+			}
 		} else {
 			struct nrf_modem_dect_phy_rx_params rx_op = {
 				.rssi_interval = NRF_MODEM_DECT_PHY_RSSI_INTERVAL_OFF,
@@ -1155,6 +1190,10 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 					}
 					iterator->phy_op_handle = next_handle;
 				}
+				if (iterator->priority == DECT_PRIORITY1_RX_RSSI) {
+					iterator->sched_config.rssi.rssi_op_params.start_time =
+						new_frame_time;
+				}
 
 				if (!dect_phy_api_scheduler_list_item_add(iterator)) {
 					printk("(%s)/1: dect_phy_api_scheduler_list_item_add for "
@@ -1273,6 +1312,10 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 								      .phy_op_handle_range_start;
 					}
 					iterator->phy_op_handle = next_handle;
+				}
+				if (iterator->priority == DECT_PRIORITY1_RX_RSSI) {
+					iterator->sched_config.rssi.rssi_op_params.start_time =
+						new_frame_time;
 				}
 
 				if (!dect_phy_api_scheduler_list_item_add(iterator)) {
@@ -1404,6 +1447,13 @@ static void dect_phy_api_scheduler_th_handler(void)
 		case DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_PURGE: {
 			dect_phy_api_scheduler_list_purge();
 			dect_phy_api_scheduler_done_list_purge();
+			break;
+		}
+		case DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_ITEM_RM_DEALLOC: {
+			uint16_t *phy_handle = (uint16_t *)event.data;
+
+			dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
+				*phy_handle);
 			break;
 		}
 		case DECT_PHY_API_EVENT_SCHEDULER_OP_SUSPEND: {

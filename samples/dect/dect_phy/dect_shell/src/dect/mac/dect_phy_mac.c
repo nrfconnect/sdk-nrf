@@ -371,6 +371,7 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 				beacon_msg = &sdu_list_item->message.cluster_beacon;
 			} else if (sdu_list_item->message_type ==
 				   DECT_PHY_MAC_MESSAGE_RANDOM_ACCESS_RESOURCE_IE) {
+				/* Note: there could be many of these, this takes only the last */
 				ra_ie = &sdu_list_item->message.rach_ie;
 			}
 		}
