@@ -96,3 +96,30 @@
     - ankuns
     - dawidprzybylo
     - piotrkoziar
+
+- scenarios:
+    - applications.sdp.gpio.mbox
+  platforms:
+    - all
+  rom_size: 3800
+  ram_size: 7100
+  codeowners:
+    - nrfconnect/ncs-ll-ursus
+
+- scenarios:
+    - applications.sdp.gpio.icmsg
+  platforms:
+    - all
+  rom_size: 5300
+  ram_size: 8600
+  codeowners:
+    - nrfconnect/ncs-ll-ursus
+
+- scenarios:
+    - applications.sdp.gpio.icbmsg
+  platforms:
+    - all
+  rom_size: 8400
+  ram_size: 12000
+  codeowners:
+    - nrfconnect/ncs-ll-ursus
