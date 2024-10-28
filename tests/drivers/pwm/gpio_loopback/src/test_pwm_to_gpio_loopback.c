@@ -11,9 +11,6 @@
 
 #include "test_pwm_to_gpio_loopback.h"
 
-#define TEST_PWM_PERIOD_USEC 200000
-#define TEST_PWM_PULSE_USEC  100000
-
 #define NUMBER_OF_CYCLE_TO_CAPTURE 5
 
 static struct gpio_callback pwm_input_cb_data;
@@ -56,14 +53,20 @@ static void test_capture(uint32_t period, uint32_t pulse, pwm_flags_t flags)
 
 	int err = 0;
 
-	TC_PRINT("Testing PWM capture @ %u/%u usec\n", pulse, period);
+	TC_PRINT("Pulse/period: %u/%u usec\n", pulse, period);
 
 	get_test_devices(&out, &in);
 
+	/* clear edge counters */
+	high = 0;
+	low = 0;
+
+	/* configure and enable PWM */
 	err = pwm_set(out.dev, out.channel, PWM_USEC(period), PWM_USEC(pulse),
 		      out.flags ^= (flags & PWM_POLARITY_MASK));
 	zassert_equal(err, 0, "failed to set pwm output (err %d)", err);
 
+	/* configure and enable GPIOTE */
 	err = gpio_pin_configure_dt(&in, GPIO_INPUT);
 	zassert_equal(err, 0, "failed to configure input pin (err %d)", err);
 
@@ -73,23 +76,22 @@ static void test_capture(uint32_t period, uint32_t pulse, pwm_flags_t flags)
 	gpio_init_callback(&pwm_input_cb_data, pwm_input_captured_callback, BIT(in.pin));
 	gpio_add_callback(in.port, &pwm_input_cb_data);
 
-	if (gpio_pin_get_dt(&in)) {
-		high = 1;
-		low = 0;
-	} else {
-		high = 0;
-		low = 1;
-	}
-
-	k_usleep(NUMBER_OF_CYCLE_TO_CAPTURE * period);
+	/* NUMBER_OF_CYCLE_TO_CAPTURE periods plus 1/4 of period to catch the last edge */
+	k_usleep((NUMBER_OF_CYCLE_TO_CAPTURE * period) + (period >> 2));
 
 	TC_PRINT("PWM output -high state counter: %d -low state counter: %d\n", high, low);
 	zassert((high >= NUMBER_OF_CYCLE_TO_CAPTURE) && (low >= NUMBER_OF_CYCLE_TO_CAPTURE),
 		"PWM not captured");
 }
 
-ZTEST(pwm_loopback, test_pulse_capture)
+ZTEST(pwm_loopback, test_pwm_polarity_normal)
 {
-	test_capture(TEST_PWM_PERIOD_USEC, TEST_PWM_PULSE_USEC, PWM_POLARITY_NORMAL);
-	test_capture(TEST_PWM_PERIOD_USEC, TEST_PWM_PULSE_USEC, PWM_POLARITY_INVERTED);
+	test_capture(CONFIG_TEST_PWM_PERIOD_USEC, (CONFIG_TEST_PWM_PERIOD_USEC >> 1),
+		PWM_POLARITY_NORMAL);
+}
+
+ZTEST(pwm_loopback, test_pwm_polarity_inverted)
+{
+	test_capture(CONFIG_TEST_PWM_PERIOD_USEC, (CONFIG_TEST_PWM_PERIOD_USEC >> 1),
+		PWM_POLARITY_INVERTED);
 }
