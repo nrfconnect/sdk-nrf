@@ -272,11 +272,20 @@ It adds the following subcommands to interact with the :ref:`lib_wifi_credential
      - Description
    * - add
      - | Add a network to the credentials storage with following parameters:
-       | <SSID>
-       | <Passphrase> (optional: valid only for secured SSIDs)
-       | <BSSID> (optional)
-       | <Band> (optional: 2.4GHz, 5GHz)
-       | favorite (optional, makes the network higher priority in automatic connection)
+       | <-s --ssid \"<SSID>\">: SSID.
+       | [-c --channel]: Channel that needs to be scanned for connection. 0:any channel
+       | [-b, --band] 0: any band (2:2.4GHz, 5:5GHz, 6:6GHz)
+       | [-p, --passphrase]: Passphrase (valid only for secure SSIDs)
+       | [-k, --key-mgmt]: Key management type.
+       | 0:None, 1:WPA2-PSK, 2:WPA2-PSK-256, 3:SAE-HNP, 4:SAE-H2E, 5:SAE-AUTO, 6:WAPI,"
+       | " 7:EAP-TLS, 8:WEP, 9: WPA-PSK, 10: WPA-Auto-Personal, 11: DPP
+       | [-w, --ieee-80211w]: MFP (optional: needs security type to be specified)
+       | : 0:Disable, 1:Optional, 2:Required.
+       | [-m, --bssid]: MAC address of the AP (BSSID).
+       | [-t, --timeout]: Duration after which connection attempt needs to fail.
+       | [-a, --identity]: Identity for enterprise mode.
+       | [-K, --key-passwd]: Private key passwd for enterprise mode.
+       | [-h, --help]: Print out the help for the connect command.
    * - delete <SSID>
      - Removes network from credentials storage.
    * - list

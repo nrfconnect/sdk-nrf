@@ -1001,7 +1001,7 @@ Once your device has been flashed with this sample, you can add a credential by 
 .. parsed-literal::
    :class: highlight
 
-   wifi_cred add *NetworkSSID* WPA2-PSK *NetworkPassword*
+   wifi_cred add -s *NetworkSSID* -k 1 -p *NetworkPassword*
 
 Where *NetworkSSID* is replaced with the SSID of the Wi-Fi access point you want your device to connect to, and *NetworkPassword* is its password.
 Then either reboot the device or use the ``wifi_cred auto_connect`` command to manually trigger a connection attempt.
