@@ -467,58 +467,309 @@ The following table indicates the software maturity levels of the support for ea
         - nRF9151
         - nRF9160
         - nRF9161
-      * - **Bluetooth LE Peripheral/Central**
-        - Supported
-        - Supported
-        - Experimental
+      * - **2 Mbps PHY**
         - Supported
         - Supported
         - Supported
         - Supported
-        - Experimental
-        - Experimental
-        - --
-        - --
-        - --
-        - --
-      * - **Connectionless/Connected CTE Transmitter**
-        - --
+        - Supported
+        - Supported
         - Supported
         - Experimental
-        - --
         - Supported
         - --
-        - Supported
-        - Experimental
-        - Experimental
         - --
         - --
         - --
-        - --
-      * - **LE Coded PHY**
+      * - **Coded PHY (Long Range)**
         - --
         - Supported
-        - Experimental
+        - Supported
         - --
         - Supported
         - Supported
         - Supported
         - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Concurrent Roles**\ :sup:`1`
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Data Length Extensions**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Advertising Extensions**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Periodic Advertising with Responses**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Periodic Advertising Sync Transfer**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Isochronous Channels**
+        - Supported\ :sup:`2`
+        - Supported\ :sup:`2`
+        - Supported
+        - Supported\ :sup:`2`
+        - Supported
+        - Supported\ :sup:`2`
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Direction Finding**\ :sup:`3`
+        - --
+        - Supported
+        - Supported
+        - --
+        - Supported
+        - --
+        - Supported
+        - Experimental
         - Experimental
         - --
         - --
         - --
         - --
-      * - **LLPM**
+      * - **LE Power Control**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
         - --
         - --
         - --
+        - --
+      * - **Connection Subrating**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Channel Sounding**
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+        - --
+      * - **GATT Database Hash**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Enhanced ATT**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **L2CAP Connection Oriented Channels**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+
+  | [1]: Concurrent central, observer, peripheral, and broadcaster roles with up to 20 concurrent connections along with one Observer and one Broadcaster (subject to RAM availability)
+  | [2]: Do not support encrypting and decrypting the Isochronous Channels packets
+  | [3]: Only AoA transmitter is supported
+
+The following table indicates the software maturity levels of the support for each proprietary Bluetooth feature:
+
+.. toggle::
+
+   .. list-table::
+      :widths: auto
+      :header-rows: 1
+
+      * -
+        - nRF52810
+        - nRF52811
+        - nRF52820
+        - nRF52832
+        - nRF52833
+        - nRF52840
+        - nRF5340
+        - nRF54H20
+        - nRF54L15
+        - nRF9131
+        - nRF9151
+        - nRF9160
+        - nRF9161
+      * - **Low Latency Packet Mode**
+        - Supported
+        - Supported
+        - Supported
         - Supported
         - Supported
         - Supported
         - --
         - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Multi-protocol Support**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
         - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **QoS Conn Event Reports**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **QoS Channel Survey**
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - Experimental
+        - --
+        - --
+        - --
+        - --
+      * - **Radio Coexistence**
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
         - --
         - --
         - --
