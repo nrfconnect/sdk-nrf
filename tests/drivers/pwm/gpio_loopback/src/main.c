@@ -18,6 +18,10 @@ static void *pwm_loopback_setup(void)
 	k_object_access_grant(out.dev, k_current_get());
 	k_object_access_grant(in.port, k_current_get());
 
+	TC_PRINT("Testing PWM device %s, channel %d\n", out.dev->name, out.channel);
+	TC_PRINT("GPIO loopback at %s, pin %d\n", in.port->name, in.pin);
+	TC_PRINT("===================================================================\n");
+
 	return NULL;
 }
 
