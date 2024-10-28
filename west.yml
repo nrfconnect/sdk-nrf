@@ -277,7 +277,7 @@ manifest:
     - name: bsim
       repo-path: bsim_west
       remote: babblesim
-      revision: 9ee22c707970f6621adba0375841c0a609e24628
+      revision: 1f242f4ed7fc141fdfcfeca8d21c6d9e801179d7
       import:
         path-prefix: tools
     - name: bme68x
