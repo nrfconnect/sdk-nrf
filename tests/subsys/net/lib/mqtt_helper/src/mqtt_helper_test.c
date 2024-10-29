@@ -69,6 +69,11 @@ void setUp(void)
 
 	/* Force all tests to start in uninitialized state. */
 	mqtt_state = MQTT_STATE_UNINIT;
+
+	/* Reset mqtt_helper_msg_id_get() internal counter */
+	while (UINT16_MAX != mqtt_helper_msg_id_get()) {
+		/* Do nothing */
+	};
 }
 
 /* Stubs */
@@ -447,7 +452,9 @@ void test_mqtt_helper_subscribe_when_connected(void)
 
 void test_mqtt_helper_subscribe_when_disconnected(void)
 {
-	struct mqtt_subscription_list sub_list_dummy = { 0 };
+	struct mqtt_subscription_list sub_list_dummy = {
+		.message_id = mqtt_helper_msg_id_get(),
+	};
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
@@ -456,11 +463,20 @@ void test_mqtt_helper_subscribe_when_disconnected(void)
 
 void test_mqtt_helper_subscribe_mqtt_api_error(void)
 {
-	struct mqtt_subscription_list sub_list_dummy = { 0 };
+	struct mqtt_subscription_list sub_list_dummy = {
+		.message_id = mqtt_helper_msg_id_get(),
+	};
 
 	__cmock_mqtt_subscribe_ExpectAndReturn(&mqtt_client, &sub_list_dummy, -EINVAL);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
+
+	TEST_ASSERT_EQUAL(-EINVAL, mqtt_helper_subscribe(&sub_list_dummy));
+}
+
+void test_mqtt_helper_subscribe_invalid_message_id(void)
+{
+	struct mqtt_subscription_list sub_list_dummy = { 0 };
 
 	TEST_ASSERT_EQUAL(-EINVAL, mqtt_helper_subscribe(&sub_list_dummy));
 }
@@ -493,11 +509,20 @@ void test_mqtt_helper_publish_when_connected(void)
 
 void test_mqtt_helper_publish_when_disconnected(void)
 {
-	struct mqtt_publish_param pub_param_dummy = { 0 };
+	struct mqtt_publish_param pub_param_dummy = {
+		.message_id = mqtt_helper_msg_id_get(),
+	};
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
 	TEST_ASSERT_EQUAL(-EOPNOTSUPP, mqtt_helper_publish(&pub_param_dummy));
+}
+
+void test_mqtt_helper_publish_invalid_message_id(void)
+{
+	struct mqtt_publish_param pub_param_dummy = { 0 };
+
+	TEST_ASSERT_EQUAL(-EINVAL, mqtt_helper_publish(&pub_param_dummy));
 }
 
 void test_mqtt_helper_deinit_when_disconnected(void)
@@ -603,6 +628,15 @@ void test_mqtt_helper_poll_loop_pollerr(void)
 
 	k_sem_give(&connection_poll_sem);
 	mqtt_helper_poll_loop();
+}
+
+void test_mqtt_helper_msg_id_get_returns_valid_ids(void)
+{
+	for (int i = 1; i == UINT16_MAX; i++) {
+		TEST_ASSERT_EQUAL((i), mqtt_helper_msg_id_get());
+	}
+
+	TEST_ASSERT_EQUAL(1, mqtt_helper_msg_id_get());
 }
 
 int main(void)

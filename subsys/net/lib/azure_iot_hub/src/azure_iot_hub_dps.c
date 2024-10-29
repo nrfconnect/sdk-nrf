@@ -394,7 +394,7 @@ static void reg_status_request_send(void)
 		.message.payload.data = NULL,
 		.message.payload.len = 0,
 		.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE,
-		.message_id = k_uptime_get_32(),
+		.message_id = mqtt_helper_msg_id_get(),
 	};
 	char topic[CONFIG_AZURE_IOT_HUB_DPS_TOPIC_BUFFER_SIZE];
 	size_t topic_len;
@@ -603,7 +603,7 @@ static int topic_subscribe(void)
 	struct mqtt_subscription_list sub_list = {
 		.list = &dps_sub_topic,
 		.list_count = 1,
-		.message_id = k_uptime_get_32(),
+		.message_id = mqtt_helper_msg_id_get(),
 	};
 
 	for (size_t i = 0; i < sub_list.list_count; i++) {
@@ -626,7 +626,7 @@ static int dps_send_reg_request(void)
 {
 	struct mqtt_publish_param param = {
 		.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE,
-		.message_id = k_uptime_get_32(),
+		.message_id = mqtt_helper_msg_id_get(),
 	};
 	char topic_buf[CONFIG_AZURE_IOT_HUB_DPS_TOPIC_BUFFER_SIZE];
 	size_t topic_len = sizeof(topic_buf);
