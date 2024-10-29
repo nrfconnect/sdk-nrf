@@ -266,6 +266,7 @@
 /doc/nrf/templates/                       @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/               @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/optimizing/power_nrf91.rst @nrfconnect/ncs-cia-doc
+/doc/nrf/warnings.txt                     @nrfconnect/ncs-co-doc
 
 /doc/**/*.svg                             @nrfconnect/ncs-doc-leads
 /doc/**/*.png                             @nrfconnect/ncs-doc-leads
