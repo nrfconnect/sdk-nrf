@@ -426,6 +426,7 @@ void test_on_publish_assigning(void)
 	__cmock_mqtt_helper_init_ExpectAnyArgsAndReturn(0);
 	__cmock_mqtt_helper_connect_Stub(mqtt_helper_connect_stub_defaults);
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	err = azure_iot_hub_dps_init(&config);
 	TEST_ASSERT_EQUAL(0, err);

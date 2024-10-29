@@ -185,7 +185,7 @@ static int topic_subscribe(void)
 	struct mqtt_subscription_list sub_list = {
 		.list = sub_topics,
 		.list_count = ARRAY_SIZE(sub_topics),
-		.message_id = k_uptime_get_32(),
+		.message_id = mqtt_helper_msg_id_get(),
 	};
 
 	err = mqtt_helper_subscribe(&sub_list);
@@ -932,7 +932,7 @@ int azure_iot_hub_send(const struct azure_iot_hub_msg *const msg)
 		.message.payload.data = msg->payload.ptr,
 		.message.payload.len = msg->payload.size,
 		.message.topic.qos = msg->qos,
-		.message_id = msg->message_id,
+		.message_id = (msg->message_id == 0) ? mqtt_helper_msg_id_get() : msg->message_id,
 		.dup_flag = msg->dup_flag,
 		.retain_flag = msg->retain_flag,
 	};

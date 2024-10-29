@@ -214,6 +214,7 @@ static int publish(struct mqtt_client *const client, const uint8_t *job_id,
 		   size_t payload_data_len, uint8_t *topic_buf)
 {
 	struct mqtt_topic topic;
+	uint32_t msg_id = k_cycle_get_32();
 
 	int ret = construct_topic(client->client_id.utf8, job_id, conf,
 				  topic_buf, &topic, true);
@@ -229,7 +230,7 @@ static int publish(struct mqtt_client *const client, const uint8_t *job_id,
 		.message.topic = topic,
 		.message.payload.data = payload_data,
 		.message.payload.len = payload_data_len,
-		.message_id = k_cycle_get_32(),
+		.message_id = (uint16_t)msg_id ? msg_id : 1,
 		.dup_flag = 0,
 		.retain_flag = 0,
 	};
