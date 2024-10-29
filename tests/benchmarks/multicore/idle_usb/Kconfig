@@ -1,0 +1,3 @@
+source "${ZEPHYR_BASE}/samples/subsys/usb/common/Kconfig.sample_usbd"
+
+source "Kconfig.zephyr"
