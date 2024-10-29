@@ -400,7 +400,7 @@
 /samples/app_event_manager/               @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/benchmarks/coremark/             @nrfconnect/ncs-si-bluebagel
-/samples/bluetooth/broadcast_config_tool/ @nrfconnect/ncs-audio
+/samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
 /samples/bluetooth/central_and_peripheral_hr/ @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_bas/           @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_hids/          @nrfconnect/ncs-si-bluebagel
@@ -521,7 +521,7 @@
 /samples/app_event_manager_profiler_tracer/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/benchmarks/coremark/*.rst        @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/**/*.rst               @nrfconnect/ncs-dragoon-doc @nrfconnect/ncs-si-muffin-doc
-/samples/bluetooth/broadcast_config_tool/*.rst @nrfconnect/ncs-audio-doc
+/samples/bluetooth/nrf_auraconfig/*.rst   @nrfconnect/ncs-audio-doc
 /samples/bluetooth/fast_pair/**/*.rst     @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/mesh/**/*.rst          @nrfconnect/ncs-paladin-doc
 /samples/bootloader/*.rst                 @nrfconnect/ncs-pluto-doc

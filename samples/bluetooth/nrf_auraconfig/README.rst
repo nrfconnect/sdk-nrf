@@ -1,13 +1,13 @@
-.. _broadcast_configuration_tool:
+.. _nrf_auraconfig:
 
-Auracast: Broadcast Configuration Tool
-######################################
+nRF Auraconfig
+##############
 
 .. contents::
    :local:
    :depth: 2
 
-The Broadcast Configuration Tool sample implements the :ref:`BIS gateway mode <nrf53_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
+The nRF Auraconfig sample implements the :ref:`BIS gateway mode <nrf53_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
 The sample features a shell interface that allows you to configure the broadcast source in many different ways.
 
 In the BIS gateway mode, transmitting audio from the broadcast source happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
@@ -15,7 +15,7 @@ In the BIS gateway mode, transmitting audio from the broadcast source happens us
 .. note::
      This sample is meant to be used with maximum two BIG with four BIS streams each.
 
-.. _broadcast_configuration_tool_requirements:
+.. _nrf_auraconfig_requirements:
 
 Requirements
 ************
@@ -32,12 +32,12 @@ The sample supports only and exclusively the following development kits:
 
    * Revisions 0.8.0 and above.
 
-.. _broadcast_configuration_tool_ui:
+.. _nrf_auraconfig_ui:
 
 Shell commands list
 *******************
 
-The Broadcast Configuration Tool uses a shell interface for all user interactions.
+The nRF Auraconfig uses a shell interface for all user interactions.
 This section lists the supported commands.
 
 Description convention
@@ -50,14 +50,14 @@ The command argument description uses the following convention:
   .. parsed-literal::
      :class: highlight
 
-     bct <*arg*>
+     nac <*arg*>
 
 * Square brackets mean that an argument is optional:
 
   .. parsed-literal::
      :class: highlight
 
-     bct [*arg*]
+     nac [*arg*]
 
 ----
 
@@ -74,7 +74,7 @@ Usage:
 
 .. code-block:: console
 
-   bct start [BIG_index]
+   nac start [BIG_index]
 
 Examples:
 
@@ -82,13 +82,13 @@ Examples:
 
   .. code-block:: console
 
-     bct start
+     nac start
 
 * The following command starts only the BIG 0:
 
   .. code-block:: console
 
-     bct start 0
+     nac start 0
 
 ----
 
@@ -102,7 +102,7 @@ Usage:
 
 .. code-block:: console
 
-   bct stop [BIG_index]
+   nac stop [BIG_index]
 
 Examples:
 
@@ -110,13 +110,13 @@ Examples:
 
   .. code-block:: console
 
-     bct stop
+     nac stop
 
 * The following command stops only the BIG 0:
 
   .. code-block:: console
 
-     bct stop 0
+     nac stop 0
 
 ----
 
@@ -129,7 +129,7 @@ Usage:
 
 .. code-block:: console
 
-   bct show
+   nac show
 
 Example output:
 
@@ -176,13 +176,13 @@ Usage:
 
 .. code-block:: console
 
-      bct file list [directory]
+      nac file list [directory]
 
 Example output:
 
 .. code-block:: console
 
-   bct file list
+   nac file list
 
    [DIR ]  16000hz
    [DIR ]  24000hz
@@ -202,13 +202,13 @@ Usage:
 
 .. code-block:: console
 
-   bct file select <file> <BIG index> <subgroup index> <BIS index>
+   nac file select <file> <BIG index> <subgroup index> <BIS index>
 
 Example:
 
   .. code-block:: console
 
-     bct file select 16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3 1 2 0
+     nac file select 16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3 1 2 0
 
 This command command selects the file :file:`16000hz/24_kbps/left-channel-announcement_16kHz_left_24kbps.lc3` for the BIS 0 in the subgroup 2 in the BIG 1.
 
@@ -223,13 +223,13 @@ Usage:
 
 .. code-block:: console
 
-   bct packing <seq/int> <BIG index>
+   nac packing <seq/int> <BIG index>
 
 Example:
 
 .. code-block:: console
 
-   bct packing int 0
+   nac packing int 0
 
 This command sets the packing for the BIG 0 to interleaved.
 
@@ -240,13 +240,13 @@ preset
 
 Set the BAP preset for a BIG or subgroup.
 The presets are defined in the `Basic Audio Profile specification`_.
-The supported presets can be listed with the ``bct preset print`` command.
+The supported presets can be listed with the ``nac preset print`` command.
 
 Usage:
 
 .. code-block:: console
 
-   bct preset <preset> <BIG index> [subgroup index]
+   nac preset <preset> <BIG index> [subgroup index]
 
 Examples:
 
@@ -254,13 +254,13 @@ Examples:
 
   .. code-block:: console
 
-     bct preset 24_2_1 0
+     nac preset 24_2_1 0
 
 * The following command sets the preset for the subgroup 0 in the BIG 0 to ``24_2_1``:
 
   .. code-block:: console
 
-     bct preset 24_2_1 0 0
+     nac preset 24_2_1 0 0
 
 ----
 
@@ -273,7 +273,7 @@ Usage:
 
 .. code-block:: console
 
-   bct lang <language> <BIG index> <Subgroup index>
+   nac lang <language> <BIG index> <Subgroup index>
 
 The ``language`` argument is a three-letter `ISO 639-2 code`_.
 
@@ -281,7 +281,7 @@ Example:
 
 .. code-block:: console
 
-   bct lang eng 0 0
+   nac lang eng 0 0
 
 This command sets the language for the subgroup 0 in the BIG 0 to English.
 
@@ -296,13 +296,13 @@ Usage:
 
 .. code-block:: console
 
-   bct immediate <0/1> <BIG index> <Subgroup index>
+   nac immediate <0/1> <BIG index> <Subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct immediate 1 0 0
+   nac immediate 1 0 0
 
 This command sets the immediate rendering flag for the subgroup 0 in the BIG 0 to ``true``.
 
@@ -318,13 +318,13 @@ Usage:
 
 .. code-block:: console
 
-   bct num_subgroups <number> <BIG index>
+   nac num_subgroups <number> <BIG index>
 
 Example:
 
 .. code-block:: console
 
-   bct num_subgroups 2 0
+   nac num_subgroups 2 0
 
 This command sets the number of subgroups for the BIG 0 to 2.
 
@@ -340,13 +340,13 @@ Usage:
 
 .. code-block:: console
 
-   bct num_bises <number> <BIG index> <Subgroup index>
+   nac num_bises <number> <BIG index> <Subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct num_bises 2 0 0
+   nac num_bises 2 0 0
 
 This command sets the number of BISes for the subgroup 0 in the BIG 0 to 2.
 
@@ -356,19 +356,19 @@ context
 =======
 
 Sets the context metadata for a subgroup.
-The supported contexts can be listed with the ``bct context print`` command.
+The supported contexts can be listed with the ``nac context print`` command.
 
 Usage:
 
 .. code-block:: console
 
-   bct context <context> <BIG index> <Subgroup index>
+   nac context <context> <BIG index> <Subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct context Media 0 0
+   nac context Media 0 0
 
 This command sets the context for the subgroup 0 in the BIG 0 to Media.
 
@@ -378,19 +378,19 @@ location
 ========
 
 Set the location metadata for a BIS.
-The supported locations can be listed with the ``bct location print`` command.
+The supported locations can be listed with the ``nac location print`` command.
 
 Usage:
 
 .. code-block:: console
 
-   bct location <location> <BIG index> <Subgroup index> <BIS index>
+   nac location <location> <BIG index> <Subgroup index> <BIS index>
 
 Example:
 
 .. code-block:: console
 
-   bct location fl 0 0 0
+   nac location fl 0 0 0
 
 This command sets the location for the BIS 0 in the subgroup 0 in the BIG 0 to Front Left.
 
@@ -405,7 +405,7 @@ Usage:
 
 .. code-block:: console
 
-   bct broadcast_name <name> <BIG index>
+   nac broadcast_name <name> <BIG index>
 
 Examples:
 
@@ -413,13 +413,13 @@ Examples:
 
   .. code-block:: console
 
-     bct broadcast_name Lecture 0
+     nac broadcast_name Lecture 0
 
 * The following command uses quotation marks for a longer name with spaces:
 
   .. code-block:: console
 
-     bct broadcast_name "Lecture hall" 0
+     nac broadcast_name "Lecture hall" 0
 
 ----
 
@@ -433,7 +433,7 @@ Usage:
 
 .. code-block:: console
 
-   bct encrypt <0/1> <BIG index> [broadcast_code]
+   nac encrypt <0/1> <BIG index> [broadcast_code]
 
 Examples:
 
@@ -441,13 +441,13 @@ Examples:
 
   .. code-block:: console
 
-     bct encrypt 1 0 Auratest
+     nac encrypt 1 0 Auratest
 
 * The following command disables encryption for the BIG 0 after setting it:
 
   .. code-block:: console
 
-     bct encrypt 0 0
+     nac encrypt 0 0
 
 ----
 
@@ -458,13 +458,13 @@ Set a pre-defined use case.
 A use case is a set of configurations that are commonly used together.
 The command typically sets the number of subgroups, the number of BISes, the context, the location, and potentially metadata.
 
-All pre-defined use cases can be listed with the ``bct usecase print`` command.
+All pre-defined use cases can be listed with the ``nac usecase print`` command.
 
 Usage:
 
 .. code-block:: console
 
-   bct usecase <use_case>
+   nac usecase <use_case>
 
 The ``use_case`` argument can either be an index or the name of a use case.
 
@@ -472,7 +472,7 @@ Example:
 
 .. code-block:: console
 
-   bct usecase 0
+   nac usecase 0
 
 This command sets a unique configuration for the given use case and then calls ``show`` to display the configuration.
 
@@ -487,7 +487,7 @@ Usage:
 
 .. code-block:: console
 
-   bct clear
+   nac clear
 
 ----
 
@@ -503,7 +503,7 @@ Usage:
 
 .. code-block:: console
 
-   bct adv_name <name> <BIG index>
+   nac adv_name <name> <BIG index>
 
 The maximum length of the advertising name is given by :kconfig:option:`CONFIG_BT_DEVICE_NAME_MAX`.
 
@@ -511,7 +511,7 @@ Example:
 
 .. code-block:: console
 
-   bct adv_name "Lecture hall" 0
+   nac adv_name "Lecture hall" 0
 
 This command sets the advertising name for the BIG 0 to "Lecture hall".
 
@@ -529,13 +529,13 @@ Usage:
 
 .. code-block:: console
 
-   bct program_info <info> <BIG index> <Subgroup index>
+   nac program_info <info> <BIG index> <Subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct program_info "Mathematics 101" 0 0
+   nac program_info "Mathematics 101" 0 0
 
 This command sets the program info for the subgroup 0 in the BIG 0 to "Mathematics 101".
 
@@ -555,13 +555,13 @@ Usage:
 
 .. code-block:: console
 
-   bct phy <phy> <BIG index> <subgroup index>
+   nac phy <phy> <BIG index> <subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct phy 2 0 0
+   nac phy 2 0 0
 
 This command sets the PHY for the subgroup 0 in the BIG 0 to 2M.
 
@@ -576,13 +576,13 @@ Usage:
 
 .. code-block:: console
 
-   bct framing <unframed/framed> <BIG index> <subgroup index>
+   nac framing <unframed/framed> <BIG index> <subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct framing unframed 0 0
+   nac framing unframed 0 0
 
 This command sets the framing for the subgroup 0 in the BIG 0 to ``unframed``.
 
@@ -597,13 +597,13 @@ Usage:
 
 .. code-block:: console
 
-   bct rtn <number> <BIG index> <subgroup index>
+   nac rtn <number> <BIG index> <subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct rtn 2 0 0
+   nac rtn 2 0 0
 
 This command sets the number of retransmits for the subgroup 0 in the BIG 0 to 2.
 
@@ -622,13 +622,13 @@ Usage:
 
 .. code-block:: console
 
-   bct sdu <octets> <BIG index> <subgroup index>
+   nac sdu <octets> <BIG index> <subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct sdu 60 0 0
+   nac sdu 60 0 0
 
 This command sets the SDU size for the subgroup 0 in the BIG 0 to 60 octets.
 
@@ -643,13 +643,13 @@ Usage:
 
 .. code-block:: console
 
-   bct mtl <ms> <BIG index> <subgroup index>
+   nac mtl <ms> <BIG index> <subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct mtl 10 0 0
+   nac mtl 10 0 0
 
 This command sets the maximum transport latency for the subgroup 0 in the BIG 0 to 10 ms.
 
@@ -668,13 +668,13 @@ Usage:
 
 .. code-block:: console
 
-   bct frame_interval <us> <BIG index> <subgroup index>
+   nac frame_interval <us> <BIG index> <subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct frame_interval 10000 0 0
+   nac frame_interval 10000 0 0
 
 This command sets the frame interval for the subgroup 0 in the BIG 0 to 10 ms (10000 us).
 
@@ -689,13 +689,13 @@ Usage:
 
 .. code-block:: console
 
-   bct pd <us> <BIG index> <subgroup index>
+   nac pd <us> <BIG index> <subgroup index>
 
 Example:
 
 .. code-block:: console
 
-   bct pd 40000 0 0
+   nac pd 40000 0 0
 
 This command sets the presentation delay for the subgroup 0 in BIG0 to 40 ms (40000 us).
 
@@ -712,13 +712,13 @@ Usage:
 
 .. code-block:: console
 
-   bct broadcast_id fixed <BIG index> <broadcast_id in hexadecimal (3 octets)>
+   nac broadcast_id fixed <BIG index> <broadcast_id in hexadecimal (3 octets)>
 
 Examples:
 
 .. code-block:: console
 
-   bct broadcast_id fixed 0 0xAA1234
+   nac broadcast_id fixed 0 0xAA1234
 
 This command sets a fixed broadcast ID for the BIG 0 to ``0xAA1234``.
 This value will remain if the broadcast is stopped and started again.
@@ -736,19 +736,19 @@ Usage:
 
 .. code-block:: console
 
-   bct broadcast_id random <BIG index>
+   nac broadcast_id random <BIG index>
 
 Examples:
 
 .. code-block:: console
 
-   bct broadcast_id random 0
+   nac broadcast_id random 0
 
 This command sets a random broadcast ID for the BIG 0 each time it is started.
 
 ----
 
-.. _broadcast_configuration_tool_configuration:
+.. _nrf_auraconfig_configuration:
 
 Configuration
 *************
@@ -759,7 +759,7 @@ The sample is pre-configured with a generous default memory allocation, suitable
 You can modify these default settings in the :file:`prj.conf` file.
 Using aggressive configurations can reduce air time availability for all streams, depending on the combination of options selected (like high bitrates, increased re-transmits, specific PHY settings).
 
-.. _broadcast_configuration_tool_configuration_sd:
+.. _nrf_auraconfig_configuration_sd:
 
 SD card setup
 *************
@@ -770,43 +770,43 @@ The purpose of the dummy data is to test that the broadcast source has been corr
 
 Make sure you format the SD card with a FAT file system.
 
-.. _broadcast_configuration_tool_building:
+.. _nrf_auraconfig_building:
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/broadcast_config_tool`
+.. |sample path| replace:: :file:`samples/bluetooth/nrf_auraconfig`
 
 .. include:: /includes/build_and_run.txt
 
 The nRF5340 Audio DK comes pre-programmed with basic firmware that indicates if the kit is functional.
 See :ref:`nrf53_audio_app_dk_testing_out_of_the_box` for more information.
 
-.. _broadcast_configuration_tool_testing:
+.. _nrf_auraconfig_testing:
 
 Testing
 *******
 
-In this testing procedure, the development kit is programmed with the Broadcast Configuration Tool sample.
+In this testing procedure, the development kit is programmed with the nRF Auraconfig sample.
 
-To test the Broadcast Configuration Tool sample, complete the following steps:
+To test the nRF Auraconfig sample, complete the following steps:
 
-1. If you are using an :ref:`SD card loaded with the pre-encoded LC3 data <broadcast_configuration_tool_configuration_sd>`, insert it into your development kit.
+1. If you are using an :ref:`SD card loaded with the pre-encoded LC3 data <nrf_auraconfig_configuration_sd>`, insert it into your development kit.
 #. Turn on the development kit.
 #. Set up the serial connection with the development kit.
 #. Configure a BIG using use case 1:
 
    .. code-block:: console
 
-      bct usecase 1
+      nac usecase 1
 
 #. Start the broadcaster:
 
    .. code-block:: console
 
-      bct start
+      nac start
 
-You can now send other shell commands, as listed in the :ref:`broadcast_configuration_tool_ui`.
+You can now send other shell commands, as listed in the :ref:`nrf_auraconfig_ui`.
 
 Dependencies
 ************
