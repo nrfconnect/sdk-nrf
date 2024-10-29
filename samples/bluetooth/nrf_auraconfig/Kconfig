@@ -14,8 +14,8 @@ rsource "${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/utils/Kconfig"
 config TRANSPORT_BIS
 	bool "Use BIS (Broadcast Isochronous Stream)"
 
-config BROADCAST_CONFIG_TOOL
-	bool "Broadcast Configuration Tool"
+config NRF_AURACONFIG
+	bool "nRF Auraconfig"
 	depends on TRANSPORT_BIS
 	select EXPERIMENTAL
 	default y

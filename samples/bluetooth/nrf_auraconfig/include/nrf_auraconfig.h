@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _BROADCAST_CONFIG_TOOL_H_
-#define _BROADCAST_CONFIG_TOOL_H_
+#ifndef _NRF_AURACONFIG_H_
+#define _NRF_AURACONFIG_H_
 
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
@@ -173,4 +173,4 @@ static struct usecase_info pre_defined_use_cases[] = {
 	{.use_case = PERSONAL_MULTI_LANGUAGE, .name = "Personal multi-language"},
 };
 
-#endif /* _BROADCAST_CONFIG_TOOL_H_ */
+#endif /* _NRF_AURACONFIG_H_ */

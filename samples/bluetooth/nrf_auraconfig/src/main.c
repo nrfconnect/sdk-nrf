@@ -14,7 +14,7 @@
 #include <zephyr/shell/shell.h>
 #include <nrfx_clock.h>
 
-#include "broadcast_config_tool.h"
+#include "nrf_auraconfig.h"
 #include "broadcast_source.h"
 #include "zbus_common.h"
 #include "macros_common.h"
@@ -603,7 +603,7 @@ static void broadcast_create(uint8_t big_index)
 /**
  * @brief	Clear all broadcast configurations.
  */
-static void broadcast_config_clear(void)
+static void nrf_auraconfig_clear(void)
 {
 	int ret;
 
@@ -728,7 +728,7 @@ static void codec_qos_print(const struct shell *shell, struct bt_audio_codec_qos
 	shell_print(shell, "\t\t\tPresentation Delay: %d us", qos->pd);
 }
 
-static void broadcast_config_print(const struct shell *shell, uint8_t group_index)
+static void nrf_auraconfig_print(const struct shell *shell, uint8_t group_index)
 {
 	int ret;
 
@@ -1191,7 +1191,7 @@ static int cmd_show(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "BIG %d:", i);
 		shell_print(shell, "\tStreaming: %s", (streaming ? "true" : "false"));
 
-		broadcast_config_print(shell, i);
+		nrf_auraconfig_print(shell, i);
 	}
 
 	return 0;
@@ -1211,7 +1211,7 @@ static int cmd_preset(const struct shell *shell, size_t argc, char **argv)
 
 	if (argc < 3) {
 		shell_error(shell,
-			    "Usage: bct preset <preset> <BIG index> optional:<subgroup index>");
+			    "Usage: nac preset <preset> <BIG index> optional:<subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1219,7 +1219,7 @@ static int cmd_preset(const struct shell *shell, size_t argc, char **argv)
 
 	if (!preset) {
 		shell_error(shell,
-			    "Preset not found, use 'bct preset print' to see available presets");
+			    "Preset not found, use 'nac preset print' to see available presets");
 		return -EINVAL;
 	}
 
@@ -1255,7 +1255,7 @@ static int cmd_packing(const struct shell *shell, size_t argc, char **argv)
 	uint8_t big_index;
 
 	if (argc < 3) {
-		shell_error(shell, "Usage: bct packing <seq/int> <BIG index>");
+		shell_error(shell, "Usage: nac packing <seq/int> <BIG index>");
 		return -EINVAL;
 	}
 
@@ -1283,7 +1283,7 @@ static int cmd_lang_set(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 
 	if (argc < 4) {
-		shell_error(shell, "Usage: bct lang_set <language> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac lang_set <language> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1313,7 +1313,7 @@ static int cmd_immediate_set(const struct shell *shell, size_t argc, char **argv
 	uint8_t sub_index;
 
 	if (argc < 3) {
-		shell_error(shell, "Usage: bct immediate <0/1> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac immediate <0/1> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1357,7 +1357,7 @@ static int cmd_num_subgroups(const struct shell *shell, size_t argc, char **argv
 	uint8_t big_index;
 
 	if (argc < 3) {
-		shell_error(shell, "Usage: bct num_subgroups <num> <BIG index>");
+		shell_error(shell, "Usage: nac num_subgroups <num> <BIG index>");
 		return -EINVAL;
 	}
 
@@ -1391,7 +1391,7 @@ static int cmd_num_bises(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 
 	if (argc < 4) {
-		shell_error(shell, "Usage: bct num_bises <num> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac num_bises <num> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1436,7 +1436,7 @@ static int cmd_context(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (argc < 4) {
-		shell_error(shell, "Usage: bct context <context> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac context <context> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1449,7 +1449,7 @@ static int cmd_context(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (!context) {
-		shell_error(shell, "Context not found, use bct context print to see "
+		shell_error(shell, "Context not found, use 'nac context print' to see "
 				   "available contexts");
 		return -EINVAL;
 	}
@@ -1497,7 +1497,7 @@ static int cmd_location(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (argc < 4) {
-		shell_error(shell, "Usage: bct location <location> <BIG index> <subgroup "
+		shell_error(shell, "Usage: nac location <location> <BIG index> <subgroup "
 				   "index> <BIS index>");
 		return -EINVAL;
 	}
@@ -1538,7 +1538,7 @@ static int cmd_broadcast_name(const struct shell *shell, size_t argc, char **arg
 	uint8_t big_index;
 
 	if (argc < 2) {
-		shell_error(shell, "Usage: bct broadcast_name <name> <BIG index>");
+		shell_error(shell, "Usage: nac broadcast_name <name> <BIG index>");
 		return -EINVAL;
 	}
 
@@ -1570,7 +1570,7 @@ static int cmd_encrypt(const struct shell *shell, size_t argc, char **argv)
 
 	if (argc < 3) {
 		shell_error(shell,
-			    "Usage: bct encrypt <0/1> <BIG index> Optional:<broadcast_code>");
+			    "Usage: nac encrypt <0/1> <BIG index> Optional:<broadcast_code>");
 		return -EINVAL;
 	}
 
@@ -1618,7 +1618,7 @@ static int cmd_adv_name(const struct shell *shell, size_t argc, char **argv)
 	uint8_t big_index;
 
 	if (argc < 2) {
-		shell_error(shell, "Usage: bct device_name <name> <BIG index>");
+		shell_error(shell, "Usage: nac device_name <name> <BIG index>");
 		return -EINVAL;
 	}
 
@@ -1646,7 +1646,7 @@ static int cmd_program_info(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 
 	if (argc != 4) {
-		shell_error(shell, "Usage: bct program_info \"info\" <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac program_info \"info\" <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1680,7 +1680,7 @@ static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (argc > 2) {
-		shell_error(shell, "Usage: bct file list [dir path]");
+		shell_error(shell, "Usage: nac file list [dir path]");
 		return -EINVAL;
 	}
 
@@ -1713,7 +1713,7 @@ static int cmd_file_select(const struct shell *shell, size_t argc, char **argv)
 
 	if (argc != 5) {
 		shell_error(shell,
-			    "Usage: bct file select <file path> <BIG index> <subgroup index> "
+			    "Usage: nac file select <file path> <BIG index> <subgroup index> "
 			    "<BIS index>");
 		return -EINVAL;
 	}
@@ -1800,7 +1800,7 @@ static int cmd_phy(const struct shell *shell, size_t argc, char **argv)
 
 	if (argc != 4) {
 		shell_error(shell,
-			    "Usage: bct phy <1, 2 or 4 (coded)> <BIG index> <subgroup index>");
+			    "Usage: nac phy <1, 2 or 4 (coded)> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1836,7 +1836,7 @@ static int cmd_framing(const struct shell *shell, size_t argc, char **argv)
 
 	if (argc != 4) {
 		shell_error(shell,
-			    "Usage: bct framing <unframed/framed> <BIG index> <subgroup index>");
+			    "Usage: nac framing <unframed/framed> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1868,7 +1868,7 @@ static int cmd_rtn(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 
 	if (argc != 4) {
-		shell_error(shell, "Usage: bct rtn <num> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac rtn <num> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1902,7 +1902,7 @@ static int cmd_sdu(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 
 	if (argc != 4) {
-		shell_error(shell, "Usage: bct sdu <octets> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac sdu <octets> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1936,7 +1936,7 @@ static int cmd_mtl(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 
 	if (argc != 4) {
-		shell_error(shell, "Usage: bct mtl <time in ms> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac mtl <time in ms> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -1971,7 +1971,7 @@ static int cmd_frame_interval(const struct shell *shell, size_t argc, char **arg
 
 	if (argc != 4) {
 		shell_error(shell,
-			    "Usage: bct frame_interval <time in us> <BIG index> <subgroup index>");
+			    "Usage: nac frame_interval <time in us> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -2011,7 +2011,7 @@ static int cmd_pd(const struct shell *shell, size_t argc, char **argv)
 	uint8_t sub_index;
 
 	if (argc != 4) {
-		shell_error(shell, "Usage: bct pd <time us> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac pd <time us> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -2043,7 +2043,7 @@ static int cmd_random_id(const struct shell *shell, size_t argc, char **argv)
 	uint8_t big_index;
 
 	if (argc < 2) {
-		shell_error(shell, "Usage: bct broadcast_id random <BIG index>");
+		shell_error(shell, "Usage: nac broadcast_id random <BIG index>");
 		return -EINVAL;
 	}
 
@@ -2074,7 +2074,7 @@ static int cmd_fixed_id(const struct shell *shell, size_t argc, char **argv)
 	uint8_t big_index;
 
 	if (argc < 3) {
-		shell_error(shell, "Usage: bct broadcast_id fixed <BIG index> <broadcast_id in hex "
+		shell_error(shell, "Usage: nac broadcast_id fixed <BIG index> <broadcast_id in hex "
 				   "(3 octets)>");
 		return -EINVAL;
 	}
@@ -2509,7 +2509,7 @@ static int cmd_usecase(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (argc < 2) {
-		shell_error(shell, "Usage: bct usecase <use_case> - Either index or text");
+		shell_error(shell, "Usage: nac usecase <use_case> - Either index or text");
 		return -EINVAL;
 	}
 
@@ -2531,7 +2531,7 @@ static int cmd_usecase(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	/* Clear previous configurations */
-	broadcast_config_clear();
+	nrf_auraconfig_clear();
 
 	switch (use_case_nr) {
 	case LECTURE:
@@ -2567,7 +2567,7 @@ static int cmd_clear(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	broadcast_config_clear();
+	nrf_auraconfig_clear();
 
 	return 0;
 }
@@ -2640,4 +2640,4 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		       NULL),
 	SHELL_SUBCMD_SET_END);
 
-SHELL_CMD_REGISTER(bct, &configuration_cmd, "Broadcast Configuration Tool", NULL);
+SHELL_CMD_REGISTER(nac, &configuration_cmd, "nRF Auraconfig", NULL);
