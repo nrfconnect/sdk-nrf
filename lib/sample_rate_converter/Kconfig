@@ -5,8 +5,7 @@
 #
 
 menuconfig SAMPLE_RATE_CONVERTER
-	bool "Sample Rate conversion library [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "Sample Rate conversion library"
 	select CMSIS_DSP
 	select CMSIS_DSP_FILTERING
 	select TIMING_FUNCTIONS
