@@ -27,11 +27,6 @@ FAKE_VALUE_FUNC(otError, otIp6SubscribeMulticastAddress, otInstance *, const otI
 FAKE_VALUE_FUNC(otError, otIp6UnsubscribeMulticastAddress, otInstance *, const otIp6Address *);
 FAKE_VALUE_FUNC(otError, otIp6SetEnabled, otInstance *, bool);
 FAKE_VALUE_FUNC(bool, otIp6IsEnabled, otInstance *);
-FAKE_VALUE_FUNC(otError, otNetDataGet, otInstance *, bool, uint8_t *, uint8_t *);
-FAKE_VALUE_FUNC(otError, otNetDataGetNextService, otInstance *, otNetworkDataIterator *,
-		otServiceConfig *);
-FAKE_VALUE_FUNC(otError, otNetDataGetNextOnMeshPrefix, otInstance *, otNetworkDataIterator *,
-		otBorderRouterConfig *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otCliInit);                                                                              \
@@ -41,10 +36,7 @@ FAKE_VALUE_FUNC(otError, otNetDataGetNextOnMeshPrefix, otInstance *, otNetworkDa
 	f(otIp6SubscribeMulticastAddress);                                                         \
 	f(otIp6UnsubscribeMulticastAddress);                                                       \
 	f(otIp6SetEnabled);                                                                        \
-	f(otIp6IsEnabled);                                                                         \
-	f(otNetDataGet);                                                                           \
-	f(otNetDataGetNextService);                                                                \
-	f(otNetDataGetNextOnMeshPrefix);
+	f(otIp6IsEnabled);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {

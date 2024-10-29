@@ -18,58 +18,44 @@
 static void ot_rpc_cmd_netdata_get(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				   void *handler_data)
 {
-	struct nrf_rpc_cbor_ctx rsp_ctx;
-	otError error = OT_ERROR_NONE;
 	bool stable;
-	bool decoded_ok;
-	bool buff_allocated = false;
-	uint8_t length = 0;
+	uint8_t length;
+	otError error;
+	uint8_t *netdata;
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+	size_t cbor_buffer_size = 0;
 
-	decoded_ok = zcbor_bool_decode(ctx->zs, &stable);
+	stable = nrf_rpc_decode_bool(ctx);
+	length = nrf_rpc_decode_uint(ctx);
 
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_NETDATA_GET);
+		return;
 	}
 
-	decoded_ok = zcbor_uint_decode(ctx->zs, &length, sizeof(length));
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
+	netdata = malloc(UINT8_MAX);
 
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + length + 3);
-	buff_allocated = true;
-
-	if (!zcbor_bstr_start_encode(rsp_ctx.zs)) {
-		error = OT_ERROR_FAILED;
-		goto exit;
+	if (!netdata) {
+		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_RECV, group, OT_RPC_CMD_NETDATA_GET,
+			    NRF_RPC_PACKET_TYPE_RSP);
+		return;
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
-
-	error = otNetDataGet(openthread_get_default_instance(), stable, rsp_ctx.zs[0].payload_mut,
-			     &length);
-	rsp_ctx.zs[0].payload_mut += length;
-
+	error = otNetDataGet(openthread_get_default_instance(), stable, netdata, &length);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-	if (!zcbor_bstr_end_encode(rsp_ctx.zs, NULL)) {
-		goto exit;
+	cbor_buffer_size += 1 + sizeof(error);
+	cbor_buffer_size += (error == OT_ERROR_NONE) ? 2 + length : 0;
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, cbor_buffer_size);
+	nrf_rpc_encode_uint(&rsp_ctx, error);
+
+	if (error == OT_ERROR_NONE) {
+		nrf_rpc_encode_buffer(&rsp_ctx, netdata, length);
 	}
 
-exit:
-	if (!decoded_ok) {
-		nrf_rpc_cbor_decoding_done(group, ctx);
-	}
-
-	if (!buff_allocated) {
-		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);
-	}
-
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(error));
+	free(netdata);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
