@@ -43,6 +43,6 @@ void thread_definition(void)
 			printk("Issue with transferring data, terminating thread.");
 			return;
 		}
-		k_usleep(200);
+		k_usleep(400);
 	}
 }
