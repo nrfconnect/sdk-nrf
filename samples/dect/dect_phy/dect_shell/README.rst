@@ -45,6 +45,14 @@ Main command structure:
        rf_tool
        status
        rx
+      mac
+        beacon_scan
+        beacon_start
+        beacon_stop
+        rach_tx
+        associate
+        dissociate
+        status
 
 Application settings
 ====================
@@ -76,7 +84,7 @@ Examples
 
      dect sett --tx_pwr -16
 
-* Change the default band to ``2`` (has impact when automatic channel selection is used, in other words, the set channel is zero in ``dect rssi_scan``):
+* Change the default band to ``2`` (has impact when automatic channel selection is used, in other words, the set channel is zero in ``dect rssi_scan`` or in ``dect mac beacon_start`` command):
 
   .. code-block:: console
 
@@ -411,6 +419,276 @@ Example 4: Bi-directional testing with more data
 
      client:
      dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 50 -c 1677 --tx_pwr 15 -t 39
+
+Dect NR+ PHY MAC
+================
+
+DeSh command: ``dect mac``
+
+This command demostrates basic sample of DECT NR+ MAC layer on top of PHY API based on ETSI TS 103 636-4 V1.4.8 (2024-01).
+With this command you can start a cluster beacon, scan for beacons, associate/dissociate, and send data to beacon random access RX window.
+Note: this is just a basic sample and not a full MAC implementation.
+
+Example: starting of cluster beacon and sending RA data to it
+-------------------------------------------------------------
+
+* FT/Beacon device - start periodic cluster beacon TX at default band #1 and at the 1st free channel:
+
+  .. code-block:: console
+
+      desh:~$ dect sett --reset
+      desh:~$ dect sett -t 1234
+
+      desh:~$ dect mac beacon_start
+      Beacon starting
+      RSSI scan started.
+      RSSI scan duration: scan_time_ms 2010 (subslots 9648)
+      RSSI scanning results:
+      channel                               1657
+      total scanning count                  201
+         saturations                         30
+      highest RSSI                          -59
+      lowest RSSI                           -104
+      RSSI scanning results:
+      channel                               1659
+      total scanning count                  201
+         saturations                         30
+      highest RSSI                          -73
+      lowest RSSI                           -105
+      RSSI scanning results:
+      channel                               1661
+      total scanning count                  201
+         saturations                         30
+      highest RSSI                          -95
+      lowest RSSI                           -104
+      RSSI scan done. Found 1 free, 1 possible and 1 busy channels.
+      Scheduled beacon TX: interval 2000ms, tx pwr 0 dbm, channel 1661, payload PDU byte count: 50
+      "Free" channel 1661 was chosen for the beacon.
+      Beacon TX started.
+
+* FT/Beacon device - Check MAC status:
+
+  .. code-block:: console
+
+      desh:~$ dect mac status
+      dect-phy-mac status:
+      Cluster beacon status:
+      Beacon running: yes
+      Beacon channel:                1661
+      Beacon tx power:               0 dBm
+      Beacon interval:               2000 ms
+      Beacon payload PDU byte count: 50
+      Neighbor list status:
+
+* FT/Beacon device - Check generated long and short RD IDs from settings:
+
+  .. code-block:: console
+
+      desh:~$ dect sett -r
+      Common settings:
+      network id (32bit).............................305419896 (0x12345678)
+      transmitter id (long RD ID)....................1234 (0x000004d2)
+      short RD ID....................................10031 (0x272f)
+      band number....................................1
+
+* PT/client side: Scan beacon:
+
+  .. code-block:: console
+
+      desh:~$ dect mac beacon_scan -c 1661
+      Starting RX: channel 1661, rssi_level 0, duration 4 secs.
+      RX started.
+      Beacon scan started.
+      RSSI scanning results:
+      channel                               1661
+      total scanning count                  100
+      highest RSSI                          -87
+      lowest RSSI                           -106
+      PCC received (stf start time 9246147106): status: "valid - PDC can be received", snr 96, RSSI-2 -101 (RSSI -50)
+      phy header: short nw id 120 (0x78), transmitter id 10031
+      receiver id: 0
+      len 1, MCS 0, TX pwr: 0 dBm
+      PDC received (stf start time 9246147106): snr 99, RSSI-2 -101 (RSSI -50), len 50
+      DECT NR+ MAC PDU:
+      MAC header:
+         Version: 0
+         Security: MAC security is not used
+         Type: Beacon Header
+            Network ID (24bit MSB):  1193046 (0x123456)
+            Transmitter ID:          1234 (0x000004d2)
+      SDU 1:
+         MAC MUX header:
+            IE type: Cluster Beacon message
+            Payload length: 5
+            Received cluster beacon:
+            System frame number:  39
+      ...
+      ...
+      Neighbor with long rd id 1234 (0x000004d2), short rd id 10031 (0x272f), nw (24bit MSB: 1193046 (0x123456), 8bit LSB: 120 (0x78))
+      updated with time 9384387106 to nbr list.
+      RX DONE
+
+* PT/client side: See that scanned beacon can be found from neighbor list:
+
+  .. code-block:: console
+
+      desh:~$ dect mac status
+      dect-phy-mac status:
+      Cluster beacon status:
+      Beacon running: no
+      Neighbor list status:
+      Neighbor 1:
+         network ID (24bit MSB): 1193046 (0x123456)
+         network ID (8bit LSB):  120 (0x78)
+         network ID (32bit):     305419896 (0x12345678)
+         long RD ID:             1234
+         short RD ID:            10031
+         channel:                1661
+         last seen time:         9384387106
+
+* PT/client side: Send association request to scanned beacon:
+
+  .. code-block:: console
+
+      desh:~$ dect mac client_associate -t 1234
+      Sending association_req to beacon 1234 RACH window
+      Scheduled random access data TX/RX:
+      target long rd id 1234 (0x000004d2), short rd id 10031 (0x272f),
+      target 32bit nw id 305419896 (0x12345678), tx pwr 0 dbm,
+      channel 1661, payload PDU byte count: 50,
+      beacon interval 2000, frame time 39244529506, beacon received 9384387106
+      Association request TX started.
+      TX for Association Request completed.
+      PCC received (stf start time 39245148746): status: "valid - PDC can be received", snr 97, RSSI-2 -106 (RSSI -53)
+      phy header: short nw id 120 (0x78), transmitter id 10031
+      receiver id: 60629
+      len 0, MCS 0, TX pwr: 0 dBm
+      PDC received (stf start time 39245148746): snr 99, RSSI-2 -106 (RSSI -53), len 17
+      DECT NR+ MAC PDU:
+      MAC header:
+         Version: 0
+         Security: MAC security is not used
+         Type: Unicast Header
+            Reset: yes
+            Seq Nbr: 0
+            Receiver: 38 (0x00000026)
+            Transmitter: 1234 (0x000004d2)
+      SDU 1:
+         MAC MUX header:
+            IE type: Association Response message
+            Payload length: 1
+            Received Association Response message:
+            Acknowledgment:  ACK
+            Flow count: 0b111: All flows accepted as configured in association request.
+      SDU 2:
+         MAC MUX header:
+            IE type: Padding
+            Payload length: 0
+            Received padding data, len 0, payload is not printed
+      SDU 3:
+         MAC MUX header:
+            IE type: Padding
+            Payload length: 1
+            Received padding data, len 1, payload is not printed
+      RX for Association Response completed.
+
+* PT/client side: Send RA data to scanned beacon:
+
+  .. code-block:: console
+
+      desh:~$ dect mac client_rach_tx -t 1234 -d "TAPPARA!"
+      Sending data TAPPARA! to beacon 1234 RACH window
+      Scheduled random access data TX:
+      target long rd id 1234 (0x000004d2), short rd id 10031 (0x272f),
+      target 32bit nw id 305419896 (0x12345678), tx pwr 0 dbm,
+      channel 1661, payload PDU byte count: 17,
+      beacon interval 2000, frame time 44497548706, beacon received 9384387106
+      Client TX to RACH started.
+      Client data TX completed.
+
+* FT/Beacon device: Observe that data was received:
+
+  .. code-block:: console
+
+      PCC received (stf start time 47697522080): status: "valid - PDC can be received", snr 91, RSSI-2 -112 (RSSI -56)
+      phy header: short nw id 120 (0x78), transmitter id 60629
+      receiver id: 10031
+      len 0, MCS 0, TX pwr: 0 dBm
+      PDC received (stf start time 47697522080): snr 96, RSSI-2 -112 (RSSI -56), len 17
+      DECT NR+ MAC PDU:
+      MAC header:
+         Version: 0
+         Security: MAC security is not used
+         Type: DATA MAC PDU header
+            Reset: yes
+            Seq Nbr: 1
+      SDU 1:
+         MAC MUX header:
+            IE type: User plane data - flow 1
+            Payload length: 10
+            DLC IE type: Data: DLC Service type 0 without a routing header (0x01)
+            Received data, len 9, payload as ascii string print:
+               TAPPARA!
+      SDU 2:
+         MAC MUX header:
+            IE type: Padding
+            Payload length: 0
+            Received padding data, len 0, payload is not printed
+
+* PT/client side: Send association release to scanned beacon:
+
+  .. code-block:: console
+
+      desh:~$ dect mac client_dissociate -t 1234
+      Sending association release to beacon 1234 RACH window
+      Scheduled random access data TX/RX:
+      target long rd id 1234 (0x000004d2), short rd id 10031 (0x272f),
+      target 32bit nw id 305419896 (0x12345678), tx pwr 0 dbm,
+      channel 1661, payload PDU byte count: 17,
+      beacon interval 2000, frame time 61501068706, beacon received 9384387106
+      Association Release TX started.
+      TX for Association Release completed.
+
+* FT/Beacon device: See that Association Release message was received:
+
+  .. code-block:: console
+
+      PCC received (stf start time 64701043040): status: "valid - PDC can be received", snr 99, RSSI-2 -104 (RSSI -52)
+      phy header: short nw id 120 (0x78), transmitter id 60629
+      receiver id: 10031
+      len 0, MCS 0, TX pwr: 0 dBm
+      PDC received (stf start time 64701043040): snr 102, RSSI-2 -104 (RSSI -52), len 17
+      DECT NR+ MAC PDU:
+      MAC header:
+         Version: 0
+         Security: MAC security is not used
+         Type: Unicast Header
+            Reset: yes
+            Seq Nbr: 3
+            Receiver: 1234 (0x000004d2)
+            Transmitter: 38 (0x00000026)
+      SDU 1:
+         MAC MUX header:
+            IE type: Association Release message
+            Payload length: 1
+            Received Association Release message:
+            Release Cause:  Connection termination. (value: 0)
+      SDU 2:
+         MAC MUX header:
+            IE type: Padding
+            Payload length: 1
+            Received padding data, len 1, payload is not printed
+
+* FT/Beacon device: Stop beacon
+
++  .. code-block:: console
+
+      desh:~$ dect mac beacon_stop
+      Stopping beacon.
+      Beacon TX stopped.
+
+----
+
 
 Building
 ********
