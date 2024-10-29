@@ -428,6 +428,8 @@ int lte_auto_connect(void)
 {
 	int err = 0;
 #if defined(CONFIG_SLM_AUTO_CONNECT)
+	int ret;
+	int n;
 	int stat;
 	struct network_config {
 		/* Refer to AT command manual of %XSYSTEMMODE for system mode settings */
@@ -447,8 +449,8 @@ int lte_auto_connect(void)
 #include "slm_auto_connect.h"
 	};
 
-	err = slm_util_at_scanf("AT+CEREG?", "+CEREG: %d", &stat);
-	if (err != 1 || (stat == 1 || stat == 5)) {
+	ret = slm_util_at_scanf("AT+CEREG?", "+CEREG: %d,%d", &n, &stat);
+	if (ret != 2 || (stat == 1 || stat == 5)) {
 		return 0;
 	}
 
