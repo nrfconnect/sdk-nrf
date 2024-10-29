@@ -276,8 +276,8 @@ void ot_rpc_decode_service_config(struct nrf_rpc_cbor_ctx *ctx, otServiceConfig 
 
 	buf = nrf_rpc_decode_buffer_ptr_and_size(ctx, &size);
 	if (buf && size) {
-		size = MIN(size, sizeof(config->mServerConfig.mServerData));
-		memcpy(config->mServerConfig.mServerData, buf, size);
+		size = MIN(size, sizeof(config->mServiceData));
+		memcpy(config->mServiceData, buf, size);
 		config->mServiceDataLength = size;
 	}
 
@@ -285,8 +285,8 @@ void ot_rpc_decode_service_config(struct nrf_rpc_cbor_ctx *ctx, otServiceConfig 
 
 	buf = nrf_rpc_decode_buffer_ptr_and_size(ctx, &size);
 	if (buf && size) {
-		size = MIN(size, sizeof(config->mServiceData));
-		memcpy(config->mServiceData, buf, size);
+		size = MIN(size, sizeof(config->mServerConfig.mServerData));
+		memcpy(config->mServerConfig.mServerData, buf, size);
 		config->mServerConfig.mServerDataLength = size;
 	}
 
@@ -314,7 +314,7 @@ bool ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 
 	tmp = config->mPreference;
 
-	if (!zcbor_uint_encode(ctx->zs, &tmp, sizeof(tmp))) {
+	if (!zcbor_int_encode(ctx->zs, &tmp, sizeof(tmp))) {
 		return false;
 	}
 

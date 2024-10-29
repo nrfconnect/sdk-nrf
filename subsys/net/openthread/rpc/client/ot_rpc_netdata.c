@@ -15,26 +15,34 @@
 otError otNetDataGet(otInstance *aInstance, bool aStable, uint8_t *aData, uint8_t *aDataLength)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error = OT_ERROR_NONE;
-	size_t size = 0;
-	const void *buf = NULL;
+	otError error;
+	const uint8_t *netdata = NULL;
+	size_t netdata_len;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 5);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + 1 + sizeof(*aDataLength));
 	nrf_rpc_encode_bool(&ctx, aStable);
 	nrf_rpc_encode_uint(&ctx, *aDataLength);
+
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_NETDATA_GET, &ctx);
-
-	buf = nrf_rpc_decode_buffer_ptr_and_size(&ctx, &size);
-
-	if (buf && size) {
-		memcpy(aData, buf, MIN(size, *aDataLength));
-	}
 
 	error = nrf_rpc_decode_uint(&ctx);
 
+	/* Only expect the network data buffer if the error indicates success. */
+	if (nrf_rpc_decode_valid(&ctx) && error == OT_ERROR_NONE) {
+		netdata = nrf_rpc_decode_buffer_ptr_and_size(&ctx, &netdata_len);
+	}
+
+	if (netdata) {
+		if (netdata_len <= *aDataLength) {
+			memcpy(aData, netdata, netdata_len);
+			*aDataLength = netdata_len;
+		} else {
+			nrf_rpc_decoder_invalid(&ctx, ZCBOR_ERR_UNKNOWN);
+		}
+	}
+
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
 		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_NETDATA_GET);
-		return OT_ERROR_FAILED;
 	}
 
 	return error;

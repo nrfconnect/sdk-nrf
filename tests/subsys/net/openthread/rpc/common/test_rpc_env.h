@@ -53,7 +53,6 @@
 #define HOP_LIMIT 64
 #define DNS_NAME                                                                                   \
 	STR_SEQUENCE(63), '.', STR_SEQUENCE(63), '.', STR_SEQUENCE(63), '.', STR_SEQUENCE(63)
-
 #define MADDR_FF02_1  0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01
 #define EXT_ADDR      0x48, INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)
 #define NWK_NAME      0x70, INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE)
@@ -81,3 +80,20 @@
 #define CBOR_ADDR1 0x50, ADDR_1
 
 #define CBOR_SOC_ADDR CBOR_ADDR1, CBOR_UINT16(1024)
+
+#define NETDATA_LENGTH	       254
+#define NETDATA		       INT_SEQUENCE(NETDATA_LENGTH)
+#define NETDATA_SVC_ID	       0x51
+#define NETDATA_SVC_ENTERPRISE 0x51012345
+#define NETDATA_SVC_DATA       INT_SEQUENCE(OT_SERVICE_DATA_MAX_SIZE)
+#define NETDATA_SVR_DATA       INT_SEQUENCE(OT_SERVER_DATA_MAX_SIZE)
+#define NETDATA_SVR_RLOC       0x1234
+#define NETDATA_BR_RLOC	       0x2345
+#define CBOR_NETDATA	       0x58, NETDATA_LENGTH, NETDATA
+#define CBOR_NETDATA_SVC                                                                           \
+	CBOR_UINT8(NETDATA_SVC_ID), CBOR_UINT32(NETDATA_SVC_ENTERPRISE), 0x58,                     \
+		OT_SERVICE_DATA_MAX_SIZE, NETDATA_SVC_DATA, CBOR_TRUE, 0x58,                       \
+		OT_SERVER_DATA_MAX_SIZE, NETDATA_SVR_DATA, CBOR_UINT16(NETDATA_SVR_RLOC)
+#define CBOR_NETDATA_BR                                                                            \
+	CBOR_ADDR1, CBOR_UINT8(64), 0x20, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, \
+		CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_UINT16(NETDATA_BR_RLOC)
