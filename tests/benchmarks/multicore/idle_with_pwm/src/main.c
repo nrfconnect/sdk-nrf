@@ -11,10 +11,10 @@ LOG_MODULE_REGISTER(idle_with_pwm, LOG_LEVEL_INF);
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/pm/device_runtime.h>
 
-#if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUAPP)
+#if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUAPP_COMMON)
 /* Alias pwm-led0 = &pwm_led2 */
 static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
-#elif IS_ENABLED(CONFIG_SOC_NRF54H20_CPURAD)
+#elif IS_ENABLED(CONFIG_SOC_NRF54H20_CPURAD_COMMON)
 /* Alias pwm-led0 = &pwm_led3 */
 static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
 #else
