@@ -1594,6 +1594,9 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 			(void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_LE_CS_READ_REMOTE_SUPPORTED_CAPABILITIES:
 		return sdc_hci_cmd_le_cs_read_remote_supported_capabilities((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_WRITE_CACHED_REMOTE_SUPPORTED_CAPABILITIES:
+		return sdc_hci_cmd_le_cs_write_cached_remote_supported_capabilities(
+			(void *)cmd_params, (void *)event_out_params);
 	case SDC_HCI_OPCODE_CMD_LE_CS_SECURITY_ENABLE:
 		return sdc_hci_cmd_le_cs_security_enable((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_LE_CS_SET_DEFAULT_SETTINGS:
