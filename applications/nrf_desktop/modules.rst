@@ -50,6 +50,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/fn_keys.rst
    doc/bas.rst
    doc/hid_forward.rst
+   doc/hid_reportq.rst
    doc/hid_state.rst
    doc/hid_state_pm.rst
    doc/hids.rst
