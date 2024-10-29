@@ -8,8 +8,8 @@
 LOG_MODULE_REGISTER(idle_with_pwm, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
-#include <zephyr/pm/pm.h>
 #include <zephyr/drivers/pwm.h>
+#include <zephyr/pm/device_runtime.h>
 
 #if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUAPP)
 /* Alias pwm-led0 = &pwm_led2 */
@@ -63,6 +63,10 @@ int main(void)
 
 	LOG_INF("Multicore idle_with_pwm test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Core will sleep for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
+
+	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
+		pm_device_runtime_enable(pwm_led.dev);
+	}
 
 	while (1) {
 		LOG_INF("Multicore idle_with_pwm test iteration %u", cnt++);
