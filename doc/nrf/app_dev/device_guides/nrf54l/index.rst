@@ -23,6 +23,16 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - ``nrf54l15dk/nrf54l15/cpuapp``
      - :ref:`Getting started <gsg_other>`
      - `nRF54L15 System-on-Chip`_
+   * - :ref:`nRF54L05 emulation on the nRF54L15 DK <emulated-nrf54l05>`
+     - PCA10156
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - --
+     - --
+   * - :ref:`nRF54L10 emulation on the nRF54L15 DK <emulated-nrf54l10>`
+     - PCA10156
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - --
+     - --
 
 Ensure to check the revision of your nRF54L15 device to see if it is supported:
 
