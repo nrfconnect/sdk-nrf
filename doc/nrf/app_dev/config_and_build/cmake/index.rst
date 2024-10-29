@@ -115,12 +115,14 @@ This is how you can specify them:
       See `How to build an application`_ in the |nRFVSC| documentation.
       You can specify the additional configuration variables when `setting up a build configuration <How to build an application_>`_:
 
-      * :makevar:`FILE_SUFFIX` (and :makevar:`CONF_FILE`) - Select the configuration in the :guilabel:`Configuration` menu.
-      * :makevar:`EXTRA_CONF_FILE` - Add the Kconfig fragment file in the :guilabel:`Kconfig fragments` menu.
-      * :makevar:`EXTRA_DTC_OVERLAY_FILE` - Add the devicetree overlays in the :guilabel:`Devicetree overlays` menu.
+      * :makevar:`FILE_SUFFIX` (and :makevar:`CONF_FILE`) - Select the configuration in the :guilabel:`Base configuration files` menu.
+      * :makevar:`EXTRA_CONF_FILE` - Add the Kconfig fragment file in the :guilabel:`Extra Kconfig fragments` menu.
+      * :makevar:`DTC_OVERLAY_FILE` - Select the configuration in the :guilabel:`Base devicetree overlays` menu.
+      * :makevar:`EXTRA_DTC_OVERLAY_FILE` - Add the devicetree overlays in the :guilabel:`Extra devicetree overlays` menu.
+      * :makevar:`SNIPPET` - Select the snippet from the list in the :guilabel:`Snippets` menu.
       * Other variables - Provide CMake arguments in the :guilabel:`Extra CMake arguments` field, preceded by ``--``.
 
-      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi support, select ``nrf9161dk/nrf9161/ns`` in the :guilabel:`Board` menu, :file:`overlay-nrf7002ek-wifi-scan-only.conf` in the :guilabel:`Kconfig fragments` menu, and provide ``-- -DSHIELD=nrf7002ek`` in the :guilabel:`Extra CMake arguments` field.
+      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi support, select ``nrf9161dk/nrf9161/ns`` in the :guilabel:`Board` menu, :file:`overlay-nrf7002ek-wifi-scan-only.conf` in the :guilabel:`Extra Kconfig fragments` menu, and provide ``-- -DSHIELD=nrf7002ek`` in the :guilabel:`Extra CMake arguments` field.
 
    .. group-tab:: Command line
 
