@@ -649,6 +649,11 @@ int mqtt_helper_subscribe(struct mqtt_subscription_list *sub_list)
 
 	__ASSERT_NO_MSG(sub_list != NULL);
 
+	if (sub_list->message_id == 0) {
+		LOG_ERR("Invalid message ID");
+		return -EINVAL;
+	}
+
 	if (!mqtt_state_verify(MQTT_STATE_CONNECTED)) {
 		LOG_ERR("Library is in the wrong state (%s), %s required",
 			state_name_get(mqtt_state_get()),
@@ -675,6 +680,11 @@ int mqtt_helper_publish(const struct mqtt_publish_param *param)
 		param->message.topic.topic.size,
 		(char *)param->message.topic.topic.utf8);
 
+	if (param->message_id == 0) {
+		LOG_ERR("Invalid message ID");
+		return -EINVAL;
+	}
+
 	if (!mqtt_state_verify(MQTT_STATE_CONNECTED)) {
 		LOG_ERR("Library is in the wrong state (%s), %s required",
 			state_name_get(mqtt_state_get()),
@@ -684,6 +694,19 @@ int mqtt_helper_publish(const struct mqtt_publish_param *param)
 	}
 
 	return mqtt_publish(&mqtt_client, param);
+}
+
+uint16_t mqtt_helper_msg_id_get(void)
+{
+	static uint16_t id;
+
+	id++;
+
+	if (id == 0) {
+		id++;
+	}
+
+	return id;
 }
 
 int mqtt_helper_deinit(void)

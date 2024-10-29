@@ -627,7 +627,8 @@ int aws_iot_send(const struct aws_iot_data *const tx_data)
 	}
 
 	/* Assign a random message ID if the ID has not been provided by the application. */
-	param.message_id = (tx_data->message_id == 0) ? k_cycle_get_32() : tx_data->message_id;
+	param.message_id = (tx_data->message_id == 0) ? mqtt_helper_msg_id_get() :
+							tx_data->message_id;
 
 	LOG_DBG("Using message ID %d", param.message_id);
 	LOG_DBG("Publishing to topic: %s", (char *)param.message.topic.topic.utf8);
