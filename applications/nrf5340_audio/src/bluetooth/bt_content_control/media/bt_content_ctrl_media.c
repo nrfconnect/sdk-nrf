@@ -137,11 +137,19 @@ static void mcc_discover_mcs_cb(struct bt_conn *conn, int err)
  */
 static void mcc_send_command_cb(struct bt_conn *conn, int err, const struct mpl_cmd *cmd)
 {
+	int ret;
+
 	LOG_DBG("mcc_send_command_cb");
 
 	if (err) {
-		LOG_ERR("MCC: cmd send failed (%d) - opcode: %u, param: %d", err, cmd->opcode,
-			cmd->param);
+		struct bt_conn_info info;
+
+		/* Check that we are actually in a connected state before printing an error */
+		ret = bt_conn_get_info(conn, &info);
+		if (!ret && info.state == (BT_CONN_STATE_CONNECTED)) {
+			LOG_ERR("MCC: cmd send failed (%d) - opcode: %u, param: %d", err,
+				cmd->opcode, cmd->param);
+		}
 	}
 }
 #endif /* defined(CONFIG_BT_MCC_SET_MEDIA_CONTROL_POINT) */
