@@ -11,6 +11,7 @@
 #include "nrf_modem_dect_phy.h"
 
 #include "dect_common.h"
+#include "dect_common_settings.h"
 #include "dect_phy_common.h"
 #include "dect_app_time.h"
 
@@ -119,6 +120,8 @@ struct dect_phy_ping_params {
 
 /******************************************************************************/
 
+#define DECT_PHY_SHELL_RSSI_SCAN_DEFAULT_DURATION_MS \
+	((DECT_PHY_SETT_DEFAULT_BEACON_TX_INTERVAL_SECS * 1000) + 10)
 struct dect_phy_rssi_scan_params {
 	bool reinit_mdm_api;
 	bool suspend_scheduler;
@@ -126,6 +129,7 @@ struct dect_phy_rssi_scan_params {
 
 	int8_t busy_rssi_limit;
 	int8_t free_rssi_limit;
+
 	uint32_t channel;
 	uint32_t scan_time_ms;
 
@@ -133,8 +137,11 @@ struct dect_phy_rssi_scan_params {
 				 * and for reporting interval RX command.
 				 */
 
+	enum dect_phy_settings_rssi_scan_result_verdict_type result_verdict_type;
+	struct dect_phy_settings_rssi_scan_verdict_type_subslot_params type_subslots_params;
+
 	/* "hidden" params */
-	bool stop_on_1st_free_channel;
+	bool stop_on_1st_free_channel; /* stop on 1st totally free channel */
 
 	uint16_t dont_stop_on_this_channel; /* Considered as BUSY */
 	bool dont_stop_on_nbr_channels;	    /* Neighbor channels considered as BUSY */

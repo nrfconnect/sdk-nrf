@@ -112,6 +112,7 @@ struct dect_phy_data_rcv_common_params {
 #define ANSI_COLOR_RED	  "\x1b[31m"
 #define ANSI_COLOR_YELLOW "\x1b[33m"
 #define ANSI_COLOR_GREEN  "\x1b[32m"
+#define ANSI_COLOR_BLUE   "\x1b[34m"
 
 #define DECT_TX_STATUS_LED		 DK_LED1 /* Thingy91x: red */
 #define DECT_BEACON_ON_STATUS_LED	 DK_LED2 /* Thingy91x: blue */

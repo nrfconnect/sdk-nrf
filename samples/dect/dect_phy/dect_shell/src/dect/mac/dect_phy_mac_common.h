@@ -13,11 +13,6 @@
 /******************************************************************************/
 
 struct dect_phy_mac_beacon_start_params {
-	bool ch_acc_bypass_rssi_scan;
-	bool ch_acc_rssi_scan_all;
-	bool ch_acc_busy_channel_use;
-	bool ch_acc_use_all_channels;
-
 	uint16_t beacon_channel;
 	int8_t tx_power_dbm;
 };

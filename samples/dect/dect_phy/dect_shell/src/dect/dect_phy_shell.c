@@ -993,10 +993,19 @@ static const char dect_rssi_scan_usage_str[] =
 	"                                Harmonized standard requirements\n"
 	"                                (ETSI EN 301 406-2, V3.0.1, ch 4.3.2.3\n"
 	"                                Table 2 for 1,726MHz bandwidth).\n"
-	"  -i <interval_secs>,  Scanning interval in seconds.\n"
-	"                       Default: no interval, i.e. one timer.\n"
+	"  --verdict_type_count,         Result verdicted based on SCAN_SUITABLE subslot count,\n"
+	"                                as per MAC spec ch. 5.1.2.\n"
+	"                                SCAN_SUITABLE can be adjusted from settings\n"
+	"                                 (rssi_scan_suitable_percent).\n"
+	"                                Default: Result verdicted based highest/lowest\n"
+	"                                from on all measurements\n"
+	"                                within a given ch_scanning_time_ms.\n"
+	"  --verdict_type_count_details, Same as verdict_type_count but with printing subslot\n"
+	"                                details for busy/possible subslots.\n"
+	"  -i <interval_secs>,        Scanning interval in seconds.\n"
+	"                             Default: no interval, i.e. one timer.\n"
 	"  -t <ch_scanning_time_ms>,  Time that is used to scan per channel.\n"
-	"                             Default from b_rx_rssi_scan_time\n"
+	"                             Default from rssi_scan_time\n"
 	"  --free_th <dbm_value>,     Channel access - considered as free:\n"
 	"                             measured signal level <= <value>.\n"
 	"                             Set a threshold for RSSI scan free threshold (dBm).\n"
@@ -1016,12 +1025,18 @@ static const char dect_rssi_scan_usage_str[] =
 
 /* Following are not having short options: */
 enum {
-	DECT_SHELL_RSSI_SCAN_FREE_TH = 1001,
+	DECT_SHELL_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT = 1001,
+	DECT_SHELL_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT_DETAIL_PRINT,
+	DECT_SHELL_RSSI_SCAN_FREE_TH,
 	DECT_SHELL_RSSI_SCAN_BUSY_TH,
 };
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options_rssi_scan[] = {
+	{"verdict_type_count", no_argument, 0,
+		DECT_SHELL_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT},
+	{"verdict_type_count_details", no_argument, 0,
+		DECT_SHELL_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT_DETAIL_PRINT},
 	{"free_th", required_argument, 0, DECT_SHELL_RSSI_SCAN_FREE_TH},
 	{"busy_th", required_argument, 0, DECT_SHELL_RSSI_SCAN_BUSY_TH},
 	{"force", no_argument, 0, 'f'},
@@ -1055,7 +1070,11 @@ static int dect_phy_rssi_scan_cmd(const struct shell *shell, size_t argc, char *
 	} else {
 		/* Some defaults from settings */
 		params.channel = 1665;
+		params.result_verdict_type = DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_ALL;
 		params.scan_time_ms = current_settings->rssi_scan.time_per_channel_ms;
+		params.type_subslots_params = current_settings->rssi_scan.type_subslots_params;
+		params.type_subslots_params.detail_print = false;
+
 		params.busy_rssi_limit = current_settings->rssi_scan.busy_threshold;
 		params.free_rssi_limit = current_settings->rssi_scan.free_threshold;
 		params.interval_secs = 0; /* One timer */
@@ -1085,6 +1104,13 @@ static int dect_phy_rssi_scan_cmd(const struct shell *shell, size_t argc, char *
 			}
 			case 'a': {
 				params.only_allowed_channels = true;
+				break;
+			}
+			case DECT_SHELL_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT_DETAIL_PRINT:
+				params.type_subslots_params.detail_print = true;
+			case DECT_SHELL_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT: {
+				params.result_verdict_type =
+					DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT;
 				break;
 			}
 			case DECT_SHELL_RSSI_SCAN_FREE_TH: {
@@ -1293,6 +1319,7 @@ enum {
 	DECT_SHELL_SETT_COMMON_RSSI_SCAN_TIME_PER_CHANNEL,
 	DECT_SHELL_SETT_COMMON_RSSI_SCAN_FREE_THRESHOLD,
 	DECT_SHELL_SETT_COMMON_RSSI_SCAN_BUSY_THRESHOLD,
+	DECT_SHELL_SETT_COMMON_RSSI_SCAN_SUITABLE_PERCENT,
 	DECT_SHELL_SETT_COMMON_HARQ_MDM_PROCESS_COUNT,
 	DECT_SHELL_SETT_COMMON_HARQ_MDM_EXPIRY_TIME,
 	DECT_SHELL_SETT_COMMON_SUBSLOT_COUNT_HARQ_FEEDBACK_RX,
@@ -1315,6 +1342,8 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"                             Impacted on when a channel is set as zero\n"
 	"                             (e.g. in rssi_scan).\n"
 	"                             Default: band #1. Other supported bands are: 2, 9 and 22.\n"
+	"  -d, --sche_delay <usecs>,  Estimated scheduling delay (us).\n"
+	"RSSI measurement settings:\n"
 	"      --rssi_scan_time <msecs>,   Channel access: set the time (msec) that is used for\n"
 	"                                  scanning per channel for RSSI measurements.\n"
 	"                                  Default: 2 seconds + frame.\n"
@@ -1327,7 +1356,8 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"                                  Channel access - considered as possible:\n"
 	"                                  rssi_scan_busy_th >= measured signal level >\n"
 	"                                  rssi_scan_free_th\n"
-	"  -d, --sche_delay <usecs>,       Estimated scheduling delay (us).\n"
+	"      --rssi_scan_suitable_percent <int>,  SCAN_SUITABLE as per MAC spec.\n"
+	"                                           Impact only with subslot count based verdict.\n"
 	"Common RX settings:\n"
 	"      --rx_exp_rssi_level,        Set default expected RSSI level on RX (dBm).\n"
 	"Common TX settings:\n"
@@ -1389,6 +1419,8 @@ static struct option long_options_settings[] = {
 	 DECT_SHELL_SETT_COMMON_RSSI_SCAN_FREE_THRESHOLD},
 	{"rssi_scan_busy_th", required_argument, 0,
 	 DECT_SHELL_SETT_COMMON_RSSI_SCAN_BUSY_THRESHOLD},
+	{"rssi_scan_suitable_percent", required_argument, 0,
+	 DECT_SHELL_SETT_COMMON_RSSI_SCAN_SUITABLE_PERCENT},
 	{"reset", no_argument, 0, DECT_SHELL_SETT_RESET_ALL},
 	{"read", no_argument, 0, 'r'},
 	{0, 0, 0, 0}};
@@ -1419,6 +1451,8 @@ static void dect_phy_sett_cmd_print(struct dect_phy_settings *dect_sett)
 		   dect_sett->rssi_scan.busy_threshold, dect_sett->rssi_scan.free_threshold);
 	desh_print("  ch access: RSSI scan free (dBm):...............signal level <= %d",
 		   dect_sett->rssi_scan.free_threshold);
+	desh_print("  ch access: SCAN_SUITABLE%%......................%d%%",
+		   dect_sett->rssi_scan.type_subslots_params.scan_suitable_percent);
 	desh_print("Scheduler common settings:");
 	desh_print("  scheduling offset/delay (us).............................%d",
 		   dect_sett->scheduler.scheduling_delay_us);
@@ -1568,6 +1602,16 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 				return -EINVAL;
 			}
 			newsettings.rssi_scan.busy_threshold = tmp_value;
+			break;
+		}
+		case DECT_SHELL_SETT_COMMON_RSSI_SCAN_SUITABLE_PERCENT: {
+			tmp_value = atoi(optarg);
+			if (tmp_value < 0 || tmp_value > 100) {
+				desh_error("Give decent value (0-100)");
+				return -EINVAL;
+			}
+			newsettings.rssi_scan.type_subslots_params.scan_suitable_percent =
+				tmp_value;
 			break;
 		}
 		case DECT_SHELL_SETT_RESET_ALL: {

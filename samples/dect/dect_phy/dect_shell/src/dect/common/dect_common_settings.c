@@ -40,7 +40,11 @@ static const struct dect_phy_settings_scheduler phy_scheduler_common_settings = 
 };
 
 static const struct dect_phy_settings_rssi_scan phy_rssi_scan_settings_data = {
-	.time_per_channel_ms = (DECT_PHY_SETT_DEFAULT_BEACON_TX_INTERVAL_SECS * 1000) + 10,
+	.result_verdict_type = DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_ALL,
+	.time_per_channel_ms =
+		(DECT_PHY_SETT_DEFAULT_BEACON_TX_INTERVAL_SECS * 1000) + 10,
+	.type_subslots_params.scan_suitable_percent = DECT_PHY_SETT_DEFAULT_SCAN_SUITABLE_PERCENT,
+
 	.busy_threshold = DECT_PHY_SETT_DEFAULT_RSSI_SCAN_THRESHOLD_MAX,
 	.free_threshold = DECT_PHY_SETT_DEFAULT_RSSI_SCAN_THRESHOLD_MIN,
 };

@@ -58,6 +58,8 @@ int dect_phy_ctrl_rssi_scan_start(
 	dect_phy_ctrl_rssi_scan_completed_callback_t fp_result_callback);
 void dect_phy_ctrl_rssi_scan_stop(void);
 
+int dect_phy_ctrl_rssi_scan_results_print_and_best_channel_get(bool print_results);
+
 /******************************************************************************/
 
 bool dect_phy_ctrl_mdm_phy_api_initialized(void);
