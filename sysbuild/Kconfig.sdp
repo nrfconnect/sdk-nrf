@@ -2,43 +2,43 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-menu "SW defined peripherals"
+menu "SDP"
 
 menuconfig SDP
-	bool "Software defined peripherals"
+	bool "SDP"
 
 if SDP
 
 config EGPIO_FLPR_APPLICATION
-	bool "Nordic eGPIO FLPR application"
+	bool "SDP GPIO FLPR application"
 	help
-	  Include FLPR side eGPIO application in build.
-	  FLPR eGPIO application is an eGPIO driver built for an FLPR core that receives commands
+	  Include FLPR side SDP GPIO application in build.
+	  FLPR SDP GPIO application is an SDP GPIO driver built for an FLPR core that receives commands
 	  from the app core and controls the pin states based on them.
 
 choice EGPIO_BACKEND
-	prompt "eGPIO driver backend type"
+	prompt "SDP GPIO driver backend type"
 	depends on EGPIO_FLPR_APPLICATION
 	default EGPIO_BACKEND_ICMSG
 	help
-	  Select the backend type for the eGPIO driver and application.
+	  Select the backend type for the SDP GPIO driver and application.
 
 config EGPIO_BACKEND_MBOX
-	bool "MBOX backend for eGPIO"
+	bool "MBOX backend for SDP GPIO"
 	help
-	  Use MBOX backend driver for eGPIO.
+	  Use MBOX backend driver for SDP GPIO.
 	  The MBOX version is more resource-efficient than the ICMSG backend,
 	  but needs to have a shared structure defined as a communication channel.
 
 config EGPIO_BACKEND_ICMSG
-	bool "ICMSG backend for eGPIO"
+	bool "ICMSG backend for SDP GPIO"
 	help
-	  Use ICMSG backend driver for eGPIO.
+	  Use ICMSG backend driver for SDP GPIO.
 
 config EGPIO_BACKEND_ICBMSG
-	bool "ICBMSG backend for eGPIO"
+	bool "ICBMSG backend for SDP GPIO"
 	help
-	  Use ICBMSG backend driver for eGPIO.
+	  Use ICBMSG backend driver for SDP GPIO.
 
 endchoice
 
