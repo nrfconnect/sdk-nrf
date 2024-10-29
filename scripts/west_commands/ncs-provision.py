@@ -35,7 +35,8 @@ class NcsProvision(WestCommand):
             help="Input .pem file with ED25519 private key"
         )
         upload_parser.add_argument("-s", "--soc", type=str, help="SoC",
-                                   choices=["nrf54l15"],  required=True)
+                                   choices=["nrf54l15"], required=True)
+        upload_parser.add_argument("--dev-id", help="Device serial number")
 
         return parser
 
@@ -50,8 +51,8 @@ class NcsProvision(WestCommand):
                     with open(keyfile, 'rb') as f:
                         priv_key = load_pem_private_key(f.read(), password=None)
                     pub_key = priv_key.public_key()
-                    nrfprovision = subprocess.run(
-                       ["nrfprovision",
+                    command = [
+                        "nrfprovision",
                         "provision",
                         "-r",
                         "REVOKED",
@@ -65,9 +66,15 @@ class NcsProvision(WestCommand):
                         "ED25519",
                         "-d",
                         "0x20000000",
-                        "--verify"],
-                       stderr=subprocess.PIPE,
-                       text=True)
+                        "--verify"
+                    ]
+                    if args.dev_id:
+                        command.extend(["--snr", args.dev_id])
+                    nrfprovision = subprocess.run(
+                        command,
+                        stderr=subprocess.PIPE,
+                        text=True
+                    )
                     stderr = nrfprovision.stderr
                     print(stderr, file=sys.stderr)
                     if re.search('fail', stderr) or nrfprovision.returncode:
