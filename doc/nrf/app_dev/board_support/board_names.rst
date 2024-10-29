@@ -11,10 +11,10 @@ Board names
 The following tables list all boards and corresponding board targets for Nordic Semiconductor's hardware platforms.
 
 The board targets follow Zephyr's :ref:`zephyr:board_terminology` scheme and are used mostly when :ref:`building`.
-For example, the board target ``nrf54l15pdk@0.2.1/nrf54l15/cpuapp`` can be read as made of the following elements:
+For example, the board target ``nrf54l15dk/nrf54l15/cpuapp`` can be read as made of the following elements:
 
 +-------------+----------------+-------------------------+---------------------------------+--------------------------------------------------+
-| nrf54l15pdk |     @0.2.1     |        /nrf54l15        |             /cpuapp             |                                                  |
+| nrf54l15dk  |                |        /nrf54l15        |             /cpuapp             |                                                  |
 +=============+================+=========================+=================================+==================================================+
 | Board name  | Board revision | Board qualifier for SoC | Board qualifier for CPU cluster | Board qualifier for variant (empty in this case) |
 +-------------+----------------+-------------------------+---------------------------------+--------------------------------------------------+

@@ -631,8 +631,8 @@
 
 .. _`nRF pynrfjprog`: https://docs.nordicsemi.com/bundle/ug_pynrfjprog/page/UG/pynrfjprog/pynrfjprog_lpage.html
 
-.. _`Amazon Sidewalk documentation`: https://docs.nordicsemi.com/bundle/sidewalk_2.6.0/page/index.html
-.. _`Setting up the SDK for Amazon Sidewalk`: https://docs.nordicsemi.com/bundle/sidewalk_2.6.0/page/setting_up_sidewalk_environment/setting_up_sdk.html
+.. _`Amazon Sidewalk documentation`: https://docs.nordicsemi.com/bundle/sidewalk_latest/page/index.html
+.. _`Setting up the SDK for Amazon Sidewalk`: https://docs.nordicsemi.com/bundle/sidewalk_latest/page/setting_up_sidewalk_environment/setting_up_sdk.html
 
 .. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
 .. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
