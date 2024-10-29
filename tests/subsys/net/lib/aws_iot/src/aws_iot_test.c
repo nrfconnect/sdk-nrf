@@ -160,6 +160,7 @@ void test_connect_should_use_static_connection_parameters(void)
 
 	__cmock_mqtt_helper_connect_Stub(&mqtt_helper_connect_stub);
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	test_mqtt_helper_cfg.cb.on_connack(MQTT_RESULT_SUCCESS, MQTT_SESSION_VALID);
 
@@ -181,6 +182,7 @@ void test_connect_should_use_run_time_parameters(void)
 
 	__cmock_mqtt_helper_connect_Stub(&mqtt_helper_connect_stub);
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	test_mqtt_helper_cfg.cb.on_connack(MQTT_RESULT_SUCCESS, MQTT_SESSION_VALID);
 
@@ -201,6 +203,7 @@ void test_connect_should_return_success(void)
 
 	__cmock_mqtt_helper_connect_ExpectAnyArgsAndReturn(0);
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	test_mqtt_helper_cfg.cb.on_connack(MQTT_RESULT_SUCCESS, MQTT_SESSION_VALID);
 
@@ -332,6 +335,7 @@ void test_on_connack_should_notify_connected_without_subscribing(void)
 	mqtt_helper_handlers_register(event_handler);
 
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	event_type_expected = AWS_IOT_EVT_CONNECTED;
 
@@ -395,6 +399,7 @@ void test_on_suback_should_notify_connected_on_acked_subscription_lists(void)
 	test_on_connack_should_notify_connected_with_subscribing();
 
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	event_type_expected = AWS_IOT_EVT_CONNECTED;
 

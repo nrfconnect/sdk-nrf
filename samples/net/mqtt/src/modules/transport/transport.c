@@ -132,7 +132,7 @@ static void publish(struct payload *payload)
 		.message.payload.data = payload->string,
 		.message.payload.len = strlen(payload->string),
 		.message.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE,
-		.message_id = k_uptime_get_32(),
+		.message_id = mqtt_helper_msg_id_get(),
 		.message.topic.topic.utf8 = pub_topic,
 		.message.topic.topic.size = strlen(pub_topic),
 	};
