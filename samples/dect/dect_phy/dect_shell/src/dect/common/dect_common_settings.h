@@ -39,6 +39,12 @@
 /* free" if max(RSSI-1) ≤ DECT_PHY_SETT_DEFAULT_RSSI_SCAN_THRESHOLD_MIN*/
 #define DECT_PHY_SETT_DEFAULT_RSSI_SCAN_THRESHOLD_MIN -85
 
+/* SCAN_SUITABLE as per MAC spec */
+#define DECT_PHY_SETT_DEFAULT_SCAN_SUITABLE_PERCENT 75
+
+/* SCAN_MEAS_DURATION as per MAC spec */
+#define DECT_PHY_DETT_DEFAULT_SCAN_MEAS_DURATION_SLOTS 24
+
 /************************************************************************************************/
 struct dect_phy_settings_common_tx {
 	int32_t power_dbm;
@@ -75,11 +81,29 @@ struct dect_phy_settings_scheduler {
 	uint64_t scheduling_delay_us;
 };
 
+enum dect_phy_settings_rssi_scan_result_verdict_type {
+	/* Result verdicted based on highest/lowest measured RSSI value from all measurements */
+	DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_ALL = 1,
+
+	/* Result verdicted SCAN_SUITABLE percent subslot count as per MAC spec ch. 5.1.2 */
+	DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT = 2,
+};
+
+struct dect_phy_settings_rssi_scan_verdict_type_subslot_params {
+	uint8_t scan_suitable_percent;
+	bool detail_print;
+};
+
 struct dect_phy_settings_rssi_scan {
+	enum dect_phy_settings_rssi_scan_result_verdict_type result_verdict_type;
+	struct dect_phy_settings_rssi_scan_verdict_type_subslot_params type_subslots_params;
+
 	uint32_t time_per_channel_ms;
+
 	int32_t free_threshold; /* if equal or less considered as free */
 	/* rssi_scanning_busy_threshold <= possible < rssi_scanning_free_threshold*/
 	int32_t busy_threshold; /* if higher considered as busy */
+
 };
 struct dect_phy_settings_common {
 	uint32_t network_id;

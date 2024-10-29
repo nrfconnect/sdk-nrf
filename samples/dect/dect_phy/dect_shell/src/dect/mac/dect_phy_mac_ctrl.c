@@ -72,19 +72,21 @@ static void dect_phy_mac_ctrl_beacon_start_work_handler(struct k_work *work_item
 
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
 	struct dect_phy_rssi_scan_params rssi_scan_params = {
+		.result_verdict_type = DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT,
+		.type_subslots_params.scan_suitable_percent =
+			current_settings->rssi_scan.type_subslots_params.scan_suitable_percent,
+		.type_subslots_params.detail_print = false,
 		.channel = data->cmd_params.beacon_channel,
 		.scan_time_ms = current_settings->rssi_scan.time_per_channel_ms,
 		.busy_rssi_limit = current_settings->rssi_scan.busy_threshold,
 		.free_rssi_limit = current_settings->rssi_scan.free_threshold,
-		.stop_on_1st_free_channel = true,
+		.stop_on_1st_free_channel = false,
 		.dont_stop_on_this_channel = 0,
 		.dont_stop_on_nbr_channels = true,
 		.reinit_mdm_api = true,
 		.only_allowed_channels = true,
 	};
-	struct dect_phy_rssi_channel_scan_result_t rssi_results;
 
-	dect_phy_scan_rssi_results_get(&rssi_results); /* TODO: why is this? */
 	ret = dect_phy_ctrl_rssi_scan_start(&rssi_scan_params, NULL);
 	if (ret) {
 		desh_error("Cannot start rssi scan, err %d", ret);
@@ -97,35 +99,13 @@ static void dect_phy_mac_ctrl_beacon_start_work_handler(struct k_work *work_item
 		desh_error("(%s): No response for RSSI scan or RSSI scan failed.", (__func__));
 		return;
 	}
-
-	dect_phy_scan_rssi_results_get(&rssi_results);
-	if (!data->cmd_params.ch_acc_busy_channel_use && !rssi_results.free_channels_count &&
-	    !rssi_results.possible_channels_count) {
-		desh_error("No free/possible channels to start a beacon.");
-		return;
-	}
-
-	chosen_channel = data->cmd_params.beacon_channel;
-	sprintf(started_string, "Channel %d was chosen for the beacon.", chosen_channel);
-
-	/* FT/Beacon to select the first FREE channel for a beacon TX.
-	 * If no FREE channels, select the first POSSIBLE channel
-	 * if no FREE or POSSIBLE channels, then beacon cannot be started.
-	 * Note: doesn't do per-subslot measurements like would be needed for ETSI TS 103 636-4.
-	 */
-	if (rssi_results.free_channels_count) {
-		chosen_channel = rssi_results.free_channels[0];
-		sprintf(started_string, "\"Free\" channel %d was chosen for the beacon.",
-			chosen_channel);
-	} else if (rssi_results.possible_channels_count) {
-		chosen_channel = rssi_results.possible_channels[0];
-		sprintf(started_string, "\"Possible\" channel %d was chosen for the beacon.",
-			chosen_channel);
-	} else {
-		sprintf(started_string, "No \"free\" or \"possible\" channel available "
-					"for starting a beacon");
+	chosen_channel = dect_phy_ctrl_rssi_scan_results_print_and_best_channel_get(false);
+	if (chosen_channel <= 0) {
+		sprintf(started_string, "No channel found for beacon.");
 		goto err_exit;
 	}
+
+	sprintf(started_string, "Channel %d was chosen for the beacon.", chosen_channel);
 
 	struct dect_phy_mac_beacon_start_params start_params = data->cmd_params;
 
@@ -135,7 +115,8 @@ static void dect_phy_mac_ctrl_beacon_start_work_handler(struct k_work *work_item
 
 	ret = dect_phy_mac_cluster_beacon_tx_start(&start_params);
 	if (ret) {
-		desh_error("Failed to start beacon TX: err %d", ret);
+		sprintf(started_string, "Failed to start beacon TX: err %d", ret);
+		goto err_exit;
 	} else {
 		mac_data.beacon_tx_on_going = true;
 		desh_print("%s", started_string);

@@ -74,7 +74,6 @@ static struct dect_phy_ctrl_data {
 	bool rssi_scan_on_going;
 	bool rssi_scan_cmd_running;
 	struct dect_phy_rssi_scan_params rssi_scan_params;
-	struct dect_phy_rssi_channel_scan_result_t rssi_scan_results;
 	dect_phy_ctrl_rssi_scan_completed_callback_t rssi_scan_complete_cb;
 
 	/* Registered callbacks for ext command usage */
@@ -91,8 +90,7 @@ K_SEM_DEFINE(phy_api_init, 0, 1);
 
 /**************************************************************************************************/
 
-static void dect_phy_rssi_channel_scan_callback(
-	struct dect_phy_rssi_channel_scan_result_t *p_scan_results);
+static void dect_phy_rssi_channel_scan_completed_cb(enum nrf_modem_dect_phy_err phy_status);
 static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx);
 
 /**************************************************************************************************/
@@ -386,21 +384,30 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 		}
 
 		case DECT_PHY_CTRL_OP_RSSI_SCAN_RUN: {
+			int err = 0;
+
 			if (ctrl_data.rssi_scan_on_going ||
 			    (ctrl_data.rssi_scan_cmd_running &&
 			     ctrl_data.rssi_scan_params.interval_secs)) {
 				if (ctrl_data.rssi_scan_params.suspend_scheduler) {
 					dect_phy_api_scheduler_suspend();
 				}
-				dect_phy_scan_rssi_start(&ctrl_data.rssi_scan_params,
-							 dect_phy_rssi_channel_scan_callback);
+				err = dect_phy_scan_rssi_start(
+					&ctrl_data.rssi_scan_params,
+					dect_phy_rssi_channel_scan_completed_cb);
+				if (err) {
+					desh_error("RSSI scan start failed: %d", err);
+					dect_phy_ctrl_rssi_scan_stop();
+				}
 			}
 			break;
 		}
 		case DECT_PHY_CTRL_OP_PHY_API_MDM_RSSI_CB_ON_RX_OP: {
 			if (ctrl_data.rx_cmd_on_going || ctrl_data.ext_command_running) {
 				dect_phy_scan_rssi_finished_handle(NRF_MODEM_DECT_PHY_SUCCESS);
-				dect_phy_scan_rssi_data_reinit_with_current_params();
+				if (dect_phy_scan_rssi_data_reinit_with_current_params()) {
+					desh_error("Cannot reinit rssi scan data");
+				}
 			}
 			break;
 		}
@@ -613,7 +620,7 @@ static void dect_phy_ctrl_mdm_on_rssi_cb(const uint64_t *time,
 {
 	dect_app_modem_time_save(time);
 
-	if (ctrl_data.rssi_scan_on_going) {
+	if (ctrl_data.rssi_scan_on_going || ctrl_data.rx_cmd_on_going) {
 		dect_phy_scan_rssi_cb_handle(NRF_MODEM_DECT_PHY_SUCCESS, p_result);
 	} else if (ctrl_data.ext_cmd.direct_rssi_cb != NULL) {
 		ctrl_data.ext_cmd.direct_rssi_cb(p_result);
@@ -782,13 +789,18 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params)
 
 	struct dect_phy_rssi_scan_params rssi_params = {
 		.channel = params->channel,
+		.result_verdict_type = DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_ALL,
 		.busy_rssi_limit = params->busy_rssi_limit,
 		.free_rssi_limit = params->free_rssi_limit,
 		.interval_secs = params->rssi_interval_secs,
 	};
 
 	ctrl_data.rx_cmd_params = *params;
-	dect_phy_scan_rssi_data_init(&rssi_params);
+	err = dect_phy_scan_rssi_data_init(&rssi_params);
+	if (err) {
+		desh_error("RSSI scan data init failed: err", err);
+		return err;
+	}
 
 	err = dect_phy_rx_msgq_data_op_add(DECT_PHY_RX_OP_START, (void *)params,
 					   sizeof(struct dect_phy_rx_cmd_params));
@@ -865,48 +877,88 @@ void dect_phy_ctrl_status_get_n_print(void)
 
 /**************************************************************************************************/
 
+int dect_phy_ctrl_rssi_scan_results_print_and_best_channel_get(bool print_results)
+{
+	struct dect_phy_rssi_scan_channel_results scan_results;
+	int err = dect_phy_scan_rssi_channel_results_get(&scan_results);
+	int best_channel = -ENODATA;
+
+	if (err) {
+		desh_error("RSSI scan results not available.");
+		return -ENODATA;
+	}
+	best_channel = dect_phy_scan_rssi_results_based_best_channel_get();
+
+	if (print_results) {
+		desh_print("--------------------------------------------------------------"
+			   "---------------");
+		desh_print(" RSSI scan done. Found %d free, %d possible and "
+			   "%d busy channels.",
+			   scan_results.free_channels_count, scan_results.possible_channels_count,
+			   scan_results.busy_channels_count);
+	}
+
+	if (best_channel <= 0) {
+		desh_print("   No best channel found.");
+		return -ENODATA;
+	}
+
+	char final_verdict_str[10];
+	struct dect_phy_rssi_scan_data_result scan_result;
+
+	if (print_results) {
+		desh_print("   Best channel: %d", best_channel);
+	}
+
+	err = dect_phy_scan_rssi_results_get_by_channel(best_channel, &scan_result);
+	if (err) {
+		desh_warn("   No scan result found for best channel.");
+		return best_channel;
+	}
+
+	if (print_results) {
+		dect_phy_rssi_scan_result_verdict_to_string(scan_result.result, final_verdict_str);
+
+		desh_print("   Final verdict: %s", final_verdict_str);
+
+		if (ctrl_data.rssi_scan_params.result_verdict_type ==
+		    DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT) {
+			desh_print("     Free subslots: %d",
+				   scan_result.subslot_count_type_results.free_subslot_count);
+			desh_print("     Possible subslots: %d",
+				   scan_result.subslot_count_type_results.possible_subslot_count);
+			desh_print("     Busy subslots: %d",
+				   scan_result.subslot_count_type_results.busy_subslot_count);
+		}
+	}
+	return best_channel;
+}
+
 static void dect_phy_ctrl_rssi_scan_timer_handler(struct k_timer *timer_id)
 {
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RSSI_SCAN_RUN);
 }
 K_TIMER_DEFINE(rssi_scan_timer, dect_phy_ctrl_rssi_scan_timer_handler, NULL);
 
-static void dect_phy_rssi_channel_scan_callback(
-	struct dect_phy_rssi_channel_scan_result_t *p_scan_results)
+static void dect_phy_rssi_channel_scan_completed_cb(enum nrf_modem_dect_phy_err phy_status)
 {
-	memcpy(ctrl_data.rssi_scan_results.free_channels, p_scan_results->free_channels,
-	       p_scan_results->free_channels_count * sizeof(uint16_t));
-	ctrl_data.rssi_scan_results.free_channels_count = p_scan_results->free_channels_count;
+	(void)dect_phy_ctrl_rssi_scan_results_print_and_best_channel_get(true);
 
-	memcpy(ctrl_data.rssi_scan_results.possible_channels, p_scan_results->possible_channels,
-	       p_scan_results->possible_channels_count * sizeof(uint16_t));
-	ctrl_data.rssi_scan_results.possible_channels_count =
-		p_scan_results->possible_channels_count;
-
-	memcpy(ctrl_data.rssi_scan_results.busy_channels, p_scan_results->busy_channels,
-	       p_scan_results->busy_channels_count * sizeof(uint16_t));
-	ctrl_data.rssi_scan_results.busy_channels_count = p_scan_results->busy_channels_count;
-
-	desh_print(" RSSI scan done. Found %d free, %d possible and %d busy channels.",
-		   ctrl_data.rssi_scan_results.free_channels_count,
-		   ctrl_data.rssi_scan_results.possible_channels_count,
-		   ctrl_data.rssi_scan_results.busy_channels_count);
-
-	if (p_scan_results->phy_status == NRF_MODEM_DECT_PHY_SUCCESS) {
+	if (phy_status == NRF_MODEM_DECT_PHY_SUCCESS) {
 		k_sem_give(&rssi_scan_sema);
 	} else {
 		char tmp_str[128] = {0};
 
 		dect_common_utils_modem_phy_err_to_string(
-			p_scan_results->phy_status, NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED, tmp_str);
+			phy_status, NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED, tmp_str);
 
 		k_sem_reset(&rssi_scan_sema); /* -EAGAIN should be returned from k_sem_take() */
-		desh_warn(" RSSI scan failed: %s (%d)", tmp_str, p_scan_results->phy_status);
+		desh_warn(" RSSI scan failed: %s (%d)", tmp_str, phy_status);
 	}
 	dect_phy_api_scheduler_resume();
 	ctrl_data.rssi_scan_on_going = false;
 	if (ctrl_data.rssi_scan_complete_cb) {
-		ctrl_data.rssi_scan_complete_cb(p_scan_results->phy_status);
+		ctrl_data.rssi_scan_complete_cb(phy_status);
 	}
 	if (ctrl_data.rssi_scan_cmd_running && ctrl_data.rssi_scan_params.interval_secs) {
 		k_timer_start(&rssi_scan_timer, K_SECONDS(ctrl_data.rssi_scan_params.interval_secs),
@@ -1177,8 +1229,16 @@ bool dect_phy_ctrl_phy_api_scheduler_suspended(void)
 
 int dect_phy_ctrl_ext_command_start(struct dect_phy_ctrl_ext_callbacks ext_callbacks)
 {
-	if (!dect_phy_ctrl_mdm_phy_api_initialized() || ctrl_data.rssi_scan_on_going ||
+	if (!dect_phy_ctrl_mdm_phy_api_initialized()) {
+		desh_error("(%s): Phy api not initialized", (__func__));
+		return -EACCES;
+	}
+
+	if (ctrl_data.rssi_scan_on_going ||
 	    ctrl_data.perf_on_going || ctrl_data.ping_on_going) {
+		desh_error("(%s): Operation already on going. "
+			   "Stop all before starting running ext command.",
+				(__func__));
 		return -EBUSY;
 	}
 	ctrl_data.ext_cmd = ext_callbacks;

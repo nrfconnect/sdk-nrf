@@ -118,6 +118,18 @@ Examples
 
      dect rssi_scan stop
 
+* Execute longer RSSI measurements on all permitted channels, and instead of default high/low RSSI value based verdict; use subslot count based verdict for BUSY/POSSIBLE/FREE and as a end results, see the verdict for the best channel:
+
+  .. code-block:: console
+
+     dect rssi_scan -c 0 --verdict_type_count -t 3000 -a
+
+* Execute longer RSSI measurements on specific channel, and instead of default high/low RSSI value based verdict; use subslot count based verdict for BUSY/POSSIBLE/FREE. Additionally, print BUSY/POSSIBLE measurements:
+
+  .. code-block:: console
+
+     dect rssi_scan -c 1661 --verdict_type_count_details -t 6500
+
 Ping command
 ============
 
@@ -441,31 +453,153 @@ Example: starting of cluster beacon and sending RA data to it
       desh:~$ dect sett --reset
       desh:~$ dect sett -t 1234
 
+      dect common settings saved
       desh:~$ dect mac beacon_start
       Beacon starting
       RSSI scan started.
       RSSI scan duration: scan_time_ms 2010 (subslots 9648)
-      RSSI scanning results:
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 2335226066):
       channel                               1657
       total scanning count                  201
-         saturations                         30
-      highest RSSI                          -59
+      highest RSSI                          -94
       lowest RSSI                           -104
-      RSSI scanning results:
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9648, possible subslots: 0, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 100.00%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 2538716193):
       channel                               1659
       total scanning count                  201
-         saturations                         30
-      highest RSSI                          -73
-      lowest RSSI                           -105
-      RSSI scanning results:
+      highest RSSI                          -97
+      lowest RSSI                           -106
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9648, possible subslots: 0, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 100.00%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 2742115281):
       channel                               1661
       total scanning count                  201
-         saturations                         30
-      highest RSSI                          -95
+      highest RSSI                          -97
       lowest RSSI                           -104
-      RSSI scan done. Found 1 free, 1 possible and 1 busy channels.
-      Scheduled beacon TX: interval 2000ms, tx pwr 0 dbm, channel 1661, payload PDU byte count: 50
-      "Free" channel 1661 was chosen for the beacon.
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9648, possible subslots: 0, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 100.00%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 2945512983):
+      channel                               1663
+      total scanning count                  201
+      highest RSSI                          -96
+      lowest RSSI                           -106
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9648, possible subslots: 0, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 100.00%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 3148976543):
+      channel                               1665
+      total scanning count                  201
+      highest RSSI                          -68
+      lowest RSSI                           -105
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9641, possible subslots: 0, busy subslots: 7
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 99.93%, possible: 99.93%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 3352412279):
+      channel                               1667
+      total scanning count                  201
+      highest RSSI                          -97
+      lowest RSSI                           -105
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9648, possible subslots: 0, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 100.00%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 3555822695):
+      channel                               1669
+      total scanning count                  201
+      highest RSSI                          -78
+      lowest RSSI                           -105
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9645, possible subslots: 3, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 99.97%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 3759189351):
+      channel                               1671
+      total scanning count                  201
+         saturations                         38
+      highest RSSI                          -56
+      lowest RSSI                           -105
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9623, possible subslots: 5, busy subslots: 20
+      not measured subslots: 0, saturated subslots: 8
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 99.74%, possible: 99.79%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 3963049409):
+      channel                               1673
+      total scanning count                  201
+      highest RSSI                          -72
+      lowest RSSI                           -105
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9051, possible subslots: 597, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 93.81%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 4166505944):
+      channel                               1675
+      total scanning count                  201
+      highest RSSI                          -57
+      lowest RSSI                           -105
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9627, possible subslots: 16, busy subslots: 5
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 99.78%, possible: 99.95%
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 4369912341):
+      channel                               1677
+      total scanning count                  201
+      highest RSSI                          -95
+      lowest RSSI                           -105
+      Subslot count based results:
+      total subslots: 9648
+      free subslots: 9648, possible subslots: 0, busy subslots: 0
+      not measured subslots: 0, saturated subslots: 0
+      Final verdict FREE based on SCAN_SUITABLE 75%:
+         free: 100.00%, possible: 100.00%
+      -----------------------------------------------------------------------------
+      RSSI scan done. Found 11 free, 0 possible and 0 busy channels.
+         Best channel: 1659
+         Final verdict: FREE
+         Free subslots: 9648
+         Possible subslots: 0
+         Busy subslots: 0
+      Scheduled beacon TX: interval 2000ms, tx pwr 0 dbm, channel 1659, payload PDU byte count: 50
+      Channel 1659 was chosen for the beacon.
       Beacon TX started.
 
 * FT/Beacon device - Check MAC status:
@@ -475,11 +609,11 @@ Example: starting of cluster beacon and sending RA data to it
       desh:~$ dect mac status
       dect-phy-mac status:
       Cluster beacon status:
-      Beacon running: yes
-      Beacon channel:                1661
-      Beacon tx power:               0 dBm
-      Beacon interval:               2000 ms
-      Beacon payload PDU byte count: 50
+         Beacon running:                yes
+         Beacon channel:                1665
+         Beacon tx power:               0 dBm
+         Beacon interval:               2000 ms
+         Beacon payload PDU byte count: 50
       Neighbor list status:
 
 * FT/Beacon device - Check generated long and short RD IDs from settings:
@@ -490,27 +624,27 @@ Example: starting of cluster beacon and sending RA data to it
       Common settings:
       network id (32bit).............................305419896 (0x12345678)
       transmitter id (long RD ID)....................1234 (0x000004d2)
-      short RD ID....................................10031 (0x272f)
+      short RD ID....................................27462 (0x6b46)
       band number....................................1
 
 * PT/client side: Scan beacon:
 
   .. code-block:: console
 
-      desh:~$ dect mac beacon_scan -c 1661
-      Starting RX: channel 1661, rssi_level 0, duration 4 secs.
-      RX started.
+      desh:~$ dect mac beacon_scan -c 1659
+      -----------------------------------------------------------------------------
       Beacon scan started.
-      RSSI scanning results:
-      channel                               1661
-      total scanning count                  100
-      highest RSSI                          -87
-      lowest RSSI                           -106
-      PCC received (stf start time 9246147106): status: "valid - PDC can be received", snr 96, RSSI-2 -101 (RSSI -50)
-      phy header: short nw id 120 (0x78), transmitter id 10031
-      receiver id: 0
+      Starting RX: channel 1659, rssi_level 0, duration 4 secs.
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 16806798765):
+      channel                               1659
+      total scanning count                  102
+      highest RSSI                          -105
+      lowest RSSI                           -112
+      PCC received (stf start time 16878096625): status: "valid - PDC can be received", snr 97, RSSI-2 -121 (RSSI -60)
+      phy header: short nw id 120 (0x78), transmitter id 27462
       len 1, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 9246147106): snr 99, RSSI-2 -101 (RSSI -50), len 50
+      PDC received (stf start time 16878096625): snr 99, RSSI-2 -122 (RSSI -61), len 50
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0
@@ -523,12 +657,62 @@ Example: starting of cluster beacon and sending RA data to it
             IE type: Cluster Beacon message
             Payload length: 5
             Received cluster beacon:
-            System frame number:  39
+            System frame number:  108
+            Max TX power:         19 dBm
+            Power const:          The RD operating in FT mode does not have power constraints.
+            Frame offset:         not included in the beacon
+            Next cluster channel: current cluster channel.
+            Time to next next:    not included in the beacon.
+                                    The next cluster beacon is
+                                    transmitted based on Cluster beacon period.
+            Network Beacon period 10 ms
+            Cluster Beacon period 2000 ms
+            Count to trigger:     0 (coded value)
+            Relative quality:     0 (coded value)
+            Min quality:          0 (coded value)
+      SDU 2:
+         MAC MUX header:
+            IE type: Random Access Resource IE
+            Payload length: 7
+            Received RACH IE data:
+            Repeat:               Repeated in the following frames as in repetition and validity fields
+               Repetition:         2
+               Validity:           100
+            System frame number:  Not included - resource allocation immediately valid
+            RA Channel:           Not included - resource allocation is valid for current channel
+            RA Response Channel:  Not included - response is sent in same channel as this IE
+            Start subslot:        12
+            Length type:          in slots
+            Length:               10
+            Max RACH length type: in slots
+            Max RACH length:      4
+            CW min sig:           0
+            DECT delay:           resp win starts 0.5 frames after the start of the RA TX
+            Response win:         11 subslots
+            CW max sig:           7
+      SDU 3:
+         MAC MUX header:
+            IE type: Padding
+            Payload length: 24
+            Received padding data, len 24, payload is not printed
+      Neighbor with long rd id 1234 (0x000004d2), short rd id 27462 (0x6b46) stored to nbr list.
+      -----------------------------------------------------------------------------
+      RSSI scanning results (meas #1 mdm time 16878683565):
+      channel                               1659
+         neighbor has been seen in this channel
+      total scanning count                  102
+      highest RSSI                          -104
+      lowest RSSI                           -112
+      -----------------------------------------------------------------------------
       ...
-      ...
-      Neighbor with long rd id 1234 (0x000004d2), short rd id 10031 (0x272f), nw (24bit MSB: 1193046 (0x123456), 8bit LSB: 120 (0x78))
-      updated with time 9384387106 to nbr list.
-      RX DONE
+      -----------------------------------------------------------------------------
+      RX DONE.
+
+* PT/client side: As an alternative to the previous command, and if you don't know in which channel beacon is running, you can scan all channels in a set band:
+
+  .. code-block:: console
+
+      desh:~$ dect mac beacon_scan -c 0
 
 * PT/client side: See that scanned beacon can be found from neighbor list:
 
@@ -544,28 +728,28 @@ Example: starting of cluster beacon and sending RA data to it
          network ID (8bit LSB):  120 (0x78)
          network ID (32bit):     305419896 (0x12345678)
          long RD ID:             1234
-         short RD ID:            10031
-         channel:                1661
-         last seen time:         9384387106
+         short RD ID:            27462
+         channel:                1659
+         last seen time:         17016336625
 
 * PT/client side: Send association request to scanned beacon:
 
   .. code-block:: console
 
-      desh:~$ dect mac client_associate -t 1234
-      Sending association_req to beacon 1234 RACH window
+      desh:~$ dect mac associate -t 1234
+      Sending association_req to FT 1234's random access resource
       Scheduled random access data TX/RX:
-      target long rd id 1234 (0x000004d2), short rd id 10031 (0x272f),
+      target long rd id 1234 (0x000004d2), short rd id 27462 (0x6b46),
       target 32bit nw id 305419896 (0x12345678), tx pwr 0 dbm,
-      channel 1661, payload PDU byte count: 50,
-      beacon interval 2000, frame time 39244529506, beacon received 9384387106
+      channel 1659, payload PDU byte count: 50,
+      beacon interval 2000, frame time 24205018225, beacon received 17016336625
       Association request TX started.
       TX for Association Request completed.
-      PCC received (stf start time 39245148746): status: "valid - PDC can be received", snr 97, RSSI-2 -106 (RSSI -53)
-      phy header: short nw id 120 (0x78), transmitter id 10031
-      receiver id: 60629
+      PCC received (stf start time 24205392665): status: "valid - PDC can be received", snr 94, RSSI-2 -122 (RSSI -61)
+      phy header: short nw id 120 (0x78), transmitter id 27462
+      receiver id: 27761
       len 0, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 39245148746): snr 99, RSSI-2 -106 (RSSI -53), len 17
+      PDC received (stf start time 24205392665): snr 100, RSSI-2 -122 (RSSI -61), len 17
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0
@@ -578,18 +762,13 @@ Example: starting of cluster beacon and sending RA data to it
       SDU 1:
          MAC MUX header:
             IE type: Association Response message
-            Payload length: 1
+            Payload length: 2
             Received Association Response message:
             Acknowledgment:  ACK
             Flow count: 0b111: All flows accepted as configured in association request.
       SDU 2:
          MAC MUX header:
-            IE type: Padding
-            Payload length: 0
-            Received padding data, len 0, payload is not printed
-      SDU 3:
-         MAC MUX header:
-            IE type: Padding
+            IE type: Padding (1 byte)
             Payload length: 1
             Received padding data, len 1, payload is not printed
       RX for Association Response completed.
@@ -598,13 +777,13 @@ Example: starting of cluster beacon and sending RA data to it
 
   .. code-block:: console
 
-      desh:~$ dect mac client_rach_tx -t 1234 -d "TAPPARA!"
-      Sending data TAPPARA! to beacon 1234 RACH window
+      desh:~$ dect mac rach_tx -t 1234 -d "TAPPARA!"
+      Sending data TAPPARA! to FT 1234's random access resource
       Scheduled random access data TX:
-      target long rd id 1234 (0x000004d2), short rd id 10031 (0x272f),
+      target long rd id 1234 (0x000004d2), short rd id 27462 (0x6b46),
       target 32bit nw id 305419896 (0x12345678), tx pwr 0 dbm,
-      channel 1661, payload PDU byte count: 17,
-      beacon interval 2000, frame time 44497548706, beacon received 9384387106
+      channel 1659, payload PDU byte count: 17,
+      beacon interval 2000, frame time 29319898225, beacon received 17016336625
       Client TX to RACH started.
       Client data TX completed.
 
@@ -612,11 +791,11 @@ Example: starting of cluster beacon and sending RA data to it
 
   .. code-block:: console
 
-      PCC received (stf start time 47697522080): status: "valid - PDC can be received", snr 91, RSSI-2 -112 (RSSI -56)
-      phy header: short nw id 120 (0x78), transmitter id 60629
-      receiver id: 10031
+      PCC received (stf start time 32017011258): status: "valid - PDC can be received", snr 91, RSSI-2 -123 (RSSI -61)
+      phy header: short nw id 120 (0x78), transmitter id 27761
+      receiver id: 27462
       len 0, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 47697522080): snr 96, RSSI-2 -112 (RSSI -56), len 17
+      PDC received (stf start time 32017011258): snr 98, RSSI-2 -123 (RSSI -61), len 17
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0
@@ -633,7 +812,7 @@ Example: starting of cluster beacon and sending RA data to it
                TAPPARA!
       SDU 2:
          MAC MUX header:
-            IE type: Padding
+            IE type: Padding (0 byte)
             Payload length: 0
             Received padding data, len 0, payload is not printed
 
@@ -641,13 +820,13 @@ Example: starting of cluster beacon and sending RA data to it
 
   .. code-block:: console
 
-      desh:~$ dect mac client_dissociate -t 1234
-      Sending association release to beacon 1234 RACH window
+      desh:~$ dect mac dissociate -t 1234
+      Sending association release to FT 1234's random access resource
       Scheduled random access data TX/RX:
-      target long rd id 1234 (0x000004d2), short rd id 10031 (0x272f),
+      target long rd id 1234 (0x000004d2), short rd id 27462 (0x6b46),
       target 32bit nw id 305419896 (0x12345678), tx pwr 0 dbm,
-      channel 1661, payload PDU byte count: 17,
-      beacon interval 2000, frame time 61501068706, beacon received 9384387106
+      channel 1659, payload PDU byte count: 17,
+      beacon interval 2000, frame time 34434778225, beacon received 17016336625
       Association Release TX started.
       TX for Association Release completed.
 
@@ -655,18 +834,18 @@ Example: starting of cluster beacon and sending RA data to it
 
   .. code-block:: console
 
-      PCC received (stf start time 64701043040): status: "valid - PDC can be received", snr 99, RSSI-2 -104 (RSSI -52)
-      phy header: short nw id 120 (0x78), transmitter id 60629
-      receiver id: 10031
+      PCC received (stf start time 37131891398): status: "valid - PDC can be received", snr 93, RSSI-2 -123 (RSSI -61)
+      phy header: short nw id 120 (0x78), transmitter id 27761
+      receiver id: 27462
       len 0, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 64701043040): snr 102, RSSI-2 -104 (RSSI -52), len 17
+      PDC received (stf start time 37131891398): snr 94, RSSI-2 -123 (RSSI -61), len 17
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0
          Security: MAC security is not used
          Type: Unicast Header
             Reset: yes
-            Seq Nbr: 3
+            Seq Nbr: 2
             Receiver: 1234 (0x000004d2)
             Transmitter: 38 (0x00000026)
       SDU 1:
@@ -687,7 +866,7 @@ Example: starting of cluster beacon and sending RA data to it
 
       desh:~$ dect mac beacon_stop
       Stopping beacon.
-      Beacon TX stopped.
+      Beacon TX stopped, cause: User Initiated.
 
 ----
 

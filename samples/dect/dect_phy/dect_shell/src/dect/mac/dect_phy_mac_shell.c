@@ -181,12 +181,6 @@ show_usage:
 
 static const char dect_phy_mac_beacon_start_cmd_usage_str[] =
 	"Starts a cluster beacon with the configured settings and given parameters.\n"
-	"Channel selection is done at startup based on RSSI scan measurements and\n"
-	"as set on current settings: only as free/possible judged channels are accepted.\n"
-	"\n"
-	"LBT (Listen Before Talk) is enabled as a default for a max period,\n"
-	"but the LBT max RSSI threshold can be configured in settings\n"
-	"(dect sett ----rssi_scan_busy_th <dbm>).\n"
 	"\n"
 	"Usage: dect mac beacon_start [<options>]\n"
 	"Options:\n"
@@ -204,21 +198,13 @@ static void dect_phy_mac_beacon_start_cmd_print_usage(void)
 }
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_beacon_start[] = {{"bypass_rssi_meas", no_argument, 0, 'm'},
-						    {"rssi_meas_all", no_argument, 0, 'a'},
-						    {"busy_channel_use", no_argument, 0, 'b'},
-						    {"use_all_channels", no_argument, 0, 'h'},
-						    {"b_ch", required_argument, 0, 'c'},
+static struct option long_options_beacon_start[] = {{"b_ch", required_argument, 0, 'c'},
 						    {"b_tx_pwr", required_argument, 0, 'p'},
 						    {0, 0, 0, 0}};
 
 static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc, char **argv)
 {
 	struct dect_phy_mac_beacon_start_params params = {
-		.ch_acc_bypass_rssi_scan = false,
-		.ch_acc_rssi_scan_all = false,
-		.ch_acc_busy_channel_use = false,
-		.ch_acc_use_all_channels = false,
 		.tx_power_dbm = 0,
 		.beacon_channel = 0,
 	};
@@ -230,7 +216,7 @@ static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc
 	optreset = 1;
 	optind = 1;
 
-	while ((opt = getopt_long(argc, argv, "p:c:mbah", long_options_beacon_start,
+	while ((opt = getopt_long(argc, argv, "p:c:", long_options_beacon_start,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 'c': {
@@ -239,22 +225,6 @@ static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc
 		}
 		case 'p': {
 			params.tx_power_dbm = atoi(optarg);
-			break;
-		}
-		case 'a': {
-			params.ch_acc_rssi_scan_all = true;
-			break;
-		}
-		case 'm': {
-			params.ch_acc_bypass_rssi_scan = true;
-			break;
-		}
-		case 'b': {
-			params.ch_acc_busy_channel_use = true;
-			break;
-		}
-		case 'h': {
-			params.ch_acc_use_all_channels = true;
 			break;
 		}
 		default:
