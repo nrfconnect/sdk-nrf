@@ -56,14 +56,14 @@ This design has the following advantages:
 
 It has the following disadvantages:
 
-* For some use cases, the nRF52 Series and nRF53 Series MCUs can be too slow (for example, when the application does complex data processing).
+* For some use cases, the nRF52 Series, nRF53 Series and nRF54L Series MCUs can be too slow (for example, when the application does complex data processing).
 * The application and the network share flash and RAM space, which can limit the application functionality.
 * Might require external flash for DFU if the secondary application slot does not fit in the primary memory because of increased application size.
 
 .. figure:: images/thread_platform_design_soc.svg
-   :alt: Thread-only architecture (nRF52)
+   :alt: Thread-only architecture (nRF52, nRF54L)
 
-   Thread-only architecture on nRF52 Series devices
+   Thread-only architecture on nRF52 Series and nRF54L Series devices
 
 .. figure:: images/thread_platform_design_nRF53.svg
    :alt: Thread-only architecture (nRF53)
@@ -74,14 +74,14 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
 
 .. _thread_architectures_designs_soc_designs_multiprotocol:
 
 Single-chip, multiprotocol (SoC)
 ================================
 
-nRF52 and nRF53 Series devices support multiple wireless technologies, including IEEE 802.15.4 and Bluetooth® Low Energy (Bluetooth LE).
+nRF52 Series, nRF53 Series and nRF54L Series devices support multiple wireless technologies, including IEEE 802.15.4 and Bluetooth® Low Energy (Bluetooth LE).
 
 In a single-chip, multiprotocol design, the application layer and OpenThread run on the same processor.
 
@@ -95,9 +95,9 @@ It has the following disadvantages:
 * Bluetooth LE activity can degrade the connectivity on Thread if not implemented with efficiency in mind.
 
 .. figure:: images/thread_platform_design_multi.svg
-   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52)
+   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
 
-   Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series devices
+   Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series and nRF54L Series devices
 
 .. figure:: images/thread_platform_design_nRF53_multi.svg
    :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
@@ -110,7 +110,7 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns
 
 .. _thread_architectures_designs_cp:
 
@@ -190,7 +190,7 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf21540dk_nrf52840
+   :rows: nrf52833dk_nrf52833, nrf52840dk_nrf52840, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
 
 .. _thread_architectures_designs_cp_uart:
 

@@ -124,15 +124,6 @@ The Thread Domain operational configuration enables Thread Devices to join and p
 A user or network administrator may use functions of either Thread Commissioning or Thread Border Routers to set up a common Thread Domain operational configuration for Thread Devices.
 The Thread Devices can belong to different Thread networks or `Partitions <Thread Partitions_>`_ that have potentially different per-network credentials.
 
-.. _ug_thread_12_support_limitations:
-
-Limitations for Thread 1.2 support
-==================================
-
-The Thread 1.2 Specification support has the following limitation:
-
-* Due to code size limitation, the combination of complete set of Thread 1.2 features with the Bluetooth® LE multiprotocol support is not possible for the nRF52833 DKs.
-
 .. _thread_ug_supported_features_v13:
 
 Thread 1.3 features
