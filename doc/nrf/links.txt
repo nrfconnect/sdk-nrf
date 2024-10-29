@@ -23,6 +23,8 @@
 .. _`Zephyr net capture`: https://docs.zephyrproject.org/latest/samples/net/capture/README.html
 .. _`Zephyr net capture Linux setup`: https://docs.zephyrproject.org/latest/connectivity/networking/usbnet_setup.html#usb-device-networking-setup
 .. _`Zephyr net DHCPv4 server`: https://docs.zephyrproject.org/apidoc/latest/group__dhcpv4__server.html
+.. _`Zephyr Wi-Fi NM API`: https://docs.zephyrproject.org/apidoc/latest/wifi__nm_8h.html
+.. _`Zephyr Wi-Fi management`: https://docs.zephyrproject.org/latest/connectivity/networking/api/wifi.html
 
 .. ### Source: github.com
 
@@ -205,6 +207,8 @@
 .. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
 .. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
 .. _`Memfault-SDK`: https://github.com/memfault/memfault-firmware-sdk
+
+.. _`Zephyr hostap fork`: https://github.com/zephyrproject-rtos/hostap
 
 .. ### Source: github.io
 
