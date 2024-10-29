@@ -135,13 +135,13 @@ Device Firmware Upgrade support
 
 Alternatively, for the nRF54L15 DK, the DFU can be configured to only use the internal MRAM for storage.
 This means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal flash memory.
-This configuration is only available for the :ref:`release configuration <matter_template_custom_configs>`.
+This configuration is enabled by default for the :ref:`debug configuration <matter_template_custom_configs>`.
 
 The following is an example command to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth® SMP, and using internal MRAM only:
 
 .. code-block:: console
 
-    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DPM_STATIC_YML_FILE=pm_static_nrf54l15dk_nrf54l15_cpuapp_internal.yml -Dmcuboot_EXTRA_CONF_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15dk_nrf54l15_cpuapp_internal.conf -Dmcuboot_EXTRA_DTC_OVERLAY_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15dk_nrf54l15_cpuapp_internal.overlay
+    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DPM_STATIC_YML_FILE=pm_static_nrf54l15dk_nrf54l15_cpuapp_internal.yml -Dmcuboot_EXTRA_CONF_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15dk_nrf54l15_cpuapp_internal.conf -Dmcuboot_EXTRA_DTC_OVERLAY_FILE=<absolute_path_to_the_template_sample>/sysbuild/mcuboot/boards/nrf54l15dk_nrf54l15_cpuapp_internal.overlay
 
 Note that in this case, the size of the application partition is half of what it would be when using a configuration with external flash memory support.
 

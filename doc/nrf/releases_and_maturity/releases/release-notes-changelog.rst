@@ -312,7 +312,9 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`matter_template_sample` sample:
+
+  * Updated the internal configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` target to use the DFU image compression and provide more memory space for the application.
 
 Networking samples
 ------------------
