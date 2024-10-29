@@ -273,12 +273,13 @@ Sysbuild enabled by default
 
 :ref:`configuration_system_overview_sysbuild` in the |NCS| works differently than in Zephyr.
 
-The |NCS| `modifies the default behavior <sdk-zephyr west build patch_>`_ of ``west build``, so that the :ref:`standard building procedure <building>` will use sysbuild by default for :ref:`repository applications <create_application_types_repository>` in the :ref:`SDK repositories <dm_repo_types>`.
+The |NCS| `modifies the default behavior <sdk-zephyr west build patch_>`_ of ``west build``: the :ref:`standard building procedure <building>` in the |NCS| uses sysbuild by default for all types of applications in the :ref:`SDK repositories <dm_repo_types>`.
+This includes :ref:`repository applications <create_application_types_repository>` and the out-of-tree applications (:ref:`workspace <create_application_types_workspace>` and :ref:`freestanding applications <create_application_types_freestanding>`).
+
 For this reason, unlike in Zephyr, ``--sysbuild`` does not have to be explicitly mentioned in the command prompt when building a repository application.
 This setting only applies to repositories delivered with the |NCS|, to maintain compatibility with child/parent images.
 
-This setting does not apply to out-of-tree applications, such as :ref:`workspace <create_application_types_workspace>` or :ref:`freestanding applications <create_application_types_freestanding>`.
-In such cases, once you ported your application to sysbuild, it is up to you to either use the ``--sysbuild`` parameter on the command line every time you build or to :ref:`configure west to always use it <sysbuild_enabled_ncs_configuring>`.
+If you want to disable this feature, for example if you want to explicitly use the ``--sysbuild`` parameter on the command line every time you build, :ref:`configure west to disable this default setting <sysbuild_enabled_ncs_configuring>`.
 
 Moreover, this |NCS| setting does not apply to the following areas:
 

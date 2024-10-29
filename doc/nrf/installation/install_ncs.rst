@@ -102,10 +102,11 @@ Depending on your preferred development environment, complete the following step
       #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage toolchains`.
          The list of actions appears in the |VSC|'s quick pick.
       #. Click :guilabel:`Install Toolchain`.
-         The list of available toolchain versions appears in the |VSC|'s quick pick.
+         The list of available stable toolchain versions appears in the |VSC|'s quick pick.
       #. Select the toolchain version to install.
          The toolchain version should match the |NCS| version you are going to work with.
          If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
+         If you are working with a development tag, disable the filter in the quick pick's header to list all available toolchains.
          The toolchain installation starts in the background, as can be seen in the notification that appears.
 
       When you install the toolchain for the first time, the installed version is automatically selected for your project.
@@ -207,7 +208,7 @@ For more information about the repository and development model, see the :ref:`d
       #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage SDKs`.
          The list of actions appears in the |VSC|'s quick pick.
       #. Click :guilabel:`Install SDK`.
-         The list of available SDK versions appears in the |VSC|'s quick pick.
+         The list of available stable SDK versions appears in the |VSC|'s quick pick.
       #. Select the SDK version to install.
          |install_latest_version|
 
