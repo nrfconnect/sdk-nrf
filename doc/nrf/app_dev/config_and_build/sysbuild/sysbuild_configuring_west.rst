@@ -3,16 +3,23 @@
 Configuring sysbuild usage in west
 ##################################
 
-The |NCS| has :ref:`sysbuild enabled by default <sysbuild_enabled_ncs>` for for :ref:`repository applications <create_application_types_repository>` in the :ref:`SDK repositories <dm_repo_types>`.
+The |NCS| has :ref:`sysbuild enabled by default <sysbuild_enabled_ncs>` for :ref:`all types of applications <create_application_types>` in the :ref:`SDK repositories <dm_repo_types>`.
 
-If you work with out-of-tree applications, such as :ref:`workspace <create_application_types_workspace>` or :ref:`freestanding applications <create_application_types_freestanding>`, you can configure your project to use sysbuild by default whenever invoking ``west build``.
+You can configure your project to not sysbuild by default whenever invoking ``west build``.
 You can do this either per-workspace, using the local configuration option, or for all your workspaces, using the global configuration option:
 
 .. tabs::
 
    .. group-tab:: Local sysbuild configuration
 
-      Use the following command to configure west to use sysbuild by default for building all projects in the current workspace (including any freestanding applications that are built against it):
+      Use the following command to configure west not to use sysbuild by default for building all projects in the current workspace:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west config --local build.sysbuild False
+
+      Use the following command to configure west to use sysbuild by default:
 
       .. parsed-literal::
          :class: highlight
@@ -21,7 +28,14 @@ You can do this either per-workspace, using the local configuration option, or f
 
    .. group-tab:: Global sysbuild configuration
 
-      Use the following command to configure west to use sysbuild by default for building all projects in all workspaces:
+      Use the following command to configure west not to use sysbuild by default for building all projects in all workspaces:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west config --global build.sysbuild False
+
+      Use the following command to configure west to use sysbuild by default:
 
       .. parsed-literal::
          :class: highlight
