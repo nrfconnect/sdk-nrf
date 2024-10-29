@@ -261,7 +261,10 @@ static int trace_fragment_write(struct nrf_modem_trace_data *frag)
 		}
 
 		if (ret < 0) {
-			LOG_ERR("trace_backend.write failed with err: %d", ret);
+			if (ret != -ENOSPC) {
+				LOG_ERR("trace_backend.write failed with err: %d", ret);
+			}
+
 			return ret;
 		}
 
@@ -315,6 +318,7 @@ trace_reset:
 		}
 
 		for (int i = 0; i < n_frags; i++) {
+retry:
 			err = trace_fragment_write(&frags[i]);
 			switch (err) {
 			case 0:
@@ -329,8 +333,7 @@ trace_reset:
 				k_sem_give(&trace_done_sem);
 				k_sem_take(&trace_clear_sem, K_FOREVER);
 				/* Try the same fragment again */
-				i--;
-				continue;
+				goto retry;
 
 			case -ENOSR:
 				if (k_sem_take(&modem_trace_level_sem, K_NO_WAIT) != 0) {
@@ -348,8 +351,7 @@ trace_reset:
 				k_sem_give(&modem_trace_level_sem);
 
 				/* Try the same fragment again */
-				i--;
-				continue;
+				goto retry;
 
 			default:
 				/* Irrecoverable error */
@@ -497,7 +499,12 @@ int nrf_modem_lib_trace_read(uint8_t *buf, size_t len)
 		UPDATE_TRACE_BYTES_READ(read);
 		/* Traces are read, we can attempt to write more. */
 		has_space = true;
+/* Flash backend needs to wait for a sector to be cleared and will give the semaphore instead.
+ * This should be cleaned up with a separate API, but we declare the semaphore as extern for now.
+ */
+#if !defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH)
 		k_sem_give(&trace_clear_sem);
+#endif
 	}
 
 	return read;
