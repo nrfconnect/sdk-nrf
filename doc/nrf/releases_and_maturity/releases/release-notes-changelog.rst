@@ -261,7 +261,9 @@ Debug samples
 DECT NR+ samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`dect_shell_application` sample:
+
+  * A brief mac level sample on top of dect_phy api. New commands to create a periodic cluster beacon, scan for it, associate/disassociate a PT/client, and send data to a FT/beacon random access window. Note: this is just a sample/initials of a mac implementation and thus not a full MAC implementation and not fully compliant with dect nr+ mac spec (ETSI TS 103 636-4).
 
 Edge Impulse samples
 --------------------

@@ -30,6 +30,8 @@
 #include "dect_phy_perf.h"
 #include "dect_phy_ping.h"
 #include "dect_phy_rf_tool.h"
+#include "dect_phy_mac.h"
+#include "dect_phy_mac_nbr.h"
 #include "dect_phy_ctrl.h"
 
 #define DECT_PHY_CTRL_STACK_SIZE 4096
@@ -298,8 +300,11 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 						   "transmitter id %u",
 						   params->short_nw_id, params->short_nw_id,
 						   params->transmitter_short_rd_id);
-					desh_print("  receiver id: %u",
-						   params->receiver_short_rd_id);
+					if (params->pcc_status.phy_type == 1) {
+						/* Type 2 header */
+						desh_print("  receiver id: %u",
+							params->receiver_short_rd_id);
+					}
 					desh_print("  len %d, MCS %d, TX pwr: %d dBm",
 						   params->phy_len, params->mcs, params->pwr_dbm);
 				}
@@ -315,7 +320,10 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				(struct dect_phy_commmon_op_pdc_rcv_params *)event.data;
 			bool data_handled = false;
 
-			if (ctrl_data.ext_cmd.pdc_rcv_cb != NULL) {
+			/* 1st try to decode dect mac */
+			data_handled = dect_phy_mac_handle(params);
+
+			if (!data_handled && ctrl_data.ext_cmd.pdc_rcv_cb != NULL) {
 				data_handled = ctrl_data.ext_cmd.pdc_rcv_cb(params);
 			}
 
@@ -1192,7 +1200,7 @@ bool dect_phy_ctrl_nbr_is_in_channel(uint16_t channel)
 	if (ctrl_data.ext_cmd.channel_has_nbr_cb != NULL) {
 		return ctrl_data.ext_cmd.channel_has_nbr_cb(channel);
 	} else {
-		return false;
+		return dect_phy_mac_nbr_is_in_channel(channel);
 	}
 }
 
