@@ -14,10 +14,29 @@ For additional information, see the following documentation:
 * Zephyr page on the :ref:`zephyr:nrf54l15dk_nrf54l15`
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
+VPR core
+********
+
+The nRF54L15 DK has VPR core named *fast lightweight peripheral processor* (FLPR).
+It is designed to support the RISC-V instruction set, and features key enhancements that enable efficient handling of basic and complex operations, as well as streamlined instruction processing.
+It can be used as either a standalone processor or as a helper core.
+
+As a helper processor, FLPR specializes in managing tasks that require real-time attention or low power consumption, effectively boosting the performance of the main processor.
+It is versatile, capable of operating independently or as an integrated peripheral, with accessible components for easy control and customization.
+
+Trusted Firmware-M (TF-M)
+*************************
+
+Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
+When you build your application with CMSE enabled, the TF-M is automatically included in the build.
+
+For more information about the TF-M, see :ref:`ug_tfm`.
+See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
+
 Supported protocols
 *******************
 
-The nRF54L15 DK supports Bluetooth Low Energy (LE), proprietary protocols (including Enhanced ShockBurst), Matter, and Thread.
+The nRF54L15 DK supports Bluetooth® Low Energy (LE) including Bluetooth Mesh, proprietary protocols (including Enhanced ShockBurst), Matter, and Thread.
 
 Amazon Sidewalk
 ===============
@@ -41,6 +60,20 @@ The |NCS| contains :ref:`ble_samples` that can be run on the nRF54L15 DK device.
 In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included from Zephyr.
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
+
+Bluetooth Mesh
+--------------
+
+Bluetooth Mesh operates on Bluetooth Low Energy (LE), and is implemented according to Bluetooth Mesh Profile Specification v1.0.1 and Bluetooth Mesh Model Specification v1.0.1.
+For the application core, the |NCS| provides several :ref:`bt_mesh_samples`.
+In addition, you can find Bluetooth Mesh samples with :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
+
+IEEE 802.15.4
+=============
+
+Implementation of the IEEE 802.15.4 MAC layer frame technology that enhances network efficiency and reliability through intelligent decoding of frame control fields, which manage types, addressing, and control flags.
+
+For the application core, the |NCS| provides a series of samples for the :ref:`Thread <ug_thread>`, and :ref:`Matter <ug_matter>` protocols.
 
 Enhanced ShockBurst
 ===================
