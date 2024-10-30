@@ -29,6 +29,8 @@ Manifest are organized in a hierarchy-tree structure consisting of a single root
 
    Hierarchical manifest topology
 
+.. _suit_default_manifest_topology_for_the_nrf54h20_soc:
+
 Default manifest topology for the nRF54H20 SoC
 **********************************************
 
