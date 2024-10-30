@@ -42,8 +42,17 @@ One of these sets is used to handle all Bluetooth Mesh communication, while the 
 LED Button Service
 ==================
 
-When connected, the :ref:`lbs_readme` sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
-The mobile application on the device can display the received button state and control the state of **LED 2** on the development kit.
+.. tabs::
+
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+
+      When connected, the :ref:`lbs_readme` sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
+      The mobile application on the device can display the received button state and control the state of **LED 2** on the development kit.
+
+   .. group-tab:: nRF54 DKs
+
+      When connected, the :ref:`lbs_readme` sends the state of **Button 0** on the development kit to the connected device, such as a phone or tablet.
+      The mobile application on the device can display the received button state and control the state of **LED 1** on the development kit.
 
 Mesh provisioning
 =================
@@ -68,31 +77,64 @@ The following table shows the mesh light composition data for this sample:
 
 The models are used for the following purposes:
 
-* :ref:`bt_mesh_onoff_srv_readme` instance in element 1 controls **LED 1**.
-* Config Server allows configurator devices to configure the node remotely.
-* Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
-  These callbacks trigger blinking of the LEDs.
+.. tabs::
+
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+
+      * :ref:`bt_mesh_onoff_srv_readme` instance in element 1 controls **LED 1**.
+      * Config Server allows configurator devices to configure the node remotely.
+      * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
+        These callbacks trigger blinking of the LEDs.
+
+   .. group-tab:: nRF54 DKs
+
+      * :ref:`bt_mesh_onoff_srv_readme` instance in element 1 controls **LED 0**.
+      * Config Server allows configurator devices to configure the node remotely.
+      * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
+        These callbacks trigger blinking of the LEDs.
 
 The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control each LED on the development kit according to the matching received messages of Generic OnOff Server.
 
 User interface
 **************
 
-Buttons (Common):
-   Can be used to input the OOB authentication value during provisioning.
-   All buttons have the same functionality during this procedure.
+.. tabs::
 
-Button 1:
-   Send a notification through the LED Button Service with the button pressed or released state.
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
 
-LEDs (Common):
-   Show the OOB authentication value during provisioning if the Push button OOB method is used.
+      Buttons (Common):
+         Can be used to input the OOB authentication value during provisioning.
+         All buttons have the same functionality during this procedure.
 
-LED 1:
-   Controlled by the Generic OnOff Server.
+      Button 1:
+         Send a notification through the LED Button Service with the button pressed or released state.
 
-LED 2:
-   Controlled remotely by the LED Button Service from the connected device.
+      LEDs (Common):
+         Show the OOB authentication value during provisioning if the Push button OOB method is used.
+
+      LED 1:
+         Controlled by the Generic OnOff Server.
+
+      LED 2:
+         Controlled remotely by the LED Button Service from the connected device.
+
+   .. group-tab:: nRF54 DKs
+
+      Buttons (Common):
+         Can be used to input the OOB authentication value during provisioning.
+         All buttons have the same functionality during this procedure.
+
+      Button 0:
+         Send a notification through the LED Button Service with the button pressed or released state.
+
+      LEDs (Common):
+         Show the OOB authentication value during provisioning if the Push button OOB method is used.
+
+      LED 0:
+         Controlled by the Generic OnOff Server.
+
+      LED 1:
+         Controlled remotely by the LED Button Service from the connected device.
 
 Configuration
 *************
@@ -140,33 +182,68 @@ See :ref:`ug_bt_mesh_model_config_app` for details on how to configure the mesh 
 
 Configure the Generic OnOff Server model on the root element of the **Mesh and Peripheral Coex** node:
 
-1. Bind the model to **Application Key 1**.
-   Once the model is bound to the application key, you can control **LED 1** on the device.
+.. tabs::
 
-#. In the model view, tap :guilabel:`ON`/:guilabel:`OFF` (one of the Generic On Off Controls).
-   This switches the **LED 1** on the development kit on and off respectively.
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+
+      1. Bind the model to **Application Key 1**.
+         Once the model is bound to the application key, you can control **LED 1** on the device.
+
+      #. In the model view, tap :guilabel:`ON`/:guilabel:`OFF` (one of the Generic On Off Controls).
+         This switches the **LED 1** on the development kit on and off respectively.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Bind the model to **Application Key 1**.
+         Once the model is bound to the application key, you can control **LED 0** on the device.
+
+      #. In the model view, tap :guilabel:`ON`/:guilabel:`OFF` (one of the Generic On Off Controls).
+         This switches the **LED 0** on the development kit on and off respectively.
 
 Testing LED Button Service (peripheral)
 =======================================
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
-#. Power on the development kit.
-#. Connect to the device from the nRF Connect application.
-   The device is advertising as "Mesh and Peripheral Coex".
-   The services of the connected device are shown.
-#. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
-#. Press **Button 1** on the device.
-#. Observe that notifications with the following values are displayed:
+.. tabs::
 
-   * ``Button released`` when **Button 1** is released.
-   * ``Button pressed`` when **Button 1** is pressed.
+   .. group-tab:: nRF21, nRF52 and nRF53 DKs
 
-#. Write the following values to the LED characteristic in the **Nordic LED Button Service**:
+      1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+      #. Power on the development kit.
+      #. Connect to the device from the nRF Connect application.
+         The device is advertising as "Mesh and Peripheral Coex".
+         The services of the connected device are shown.
+      #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+      #. Press **Button 1** on the device.
+      #. Observe that notifications with the following values are displayed:
 
-   * Value ``OFF`` to switch the **LED 2** on the development kit off.
-   * Value ``ON`` to switch the **LED 2** on the development kit on.
+         * ``Button released`` when **Button 1** is released.
+         * ``Button pressed`` when **Button 1** is pressed.
+
+      #. Write the following values to the LED characteristic in the **Nordic LED Button Service**:
+
+         * Value ``OFF`` to switch the **LED 2** on the development kit off.
+         * Value ``ON`` to switch the **LED 2** on the development kit on.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+      #. Power on the development kit.
+      #. Connect to the device from the nRF Connect application.
+         The device is advertising as "Mesh and Peripheral Coex".
+         The services of the connected device are shown.
+      #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+      #. Press **Button 0** on the device.
+      #. Observe that notifications with the following values are displayed:
+
+         * ``Button released`` when **Button 0** is released.
+         * ``Button pressed`` when **Button 0** is pressed.
+
+      #. Write the following values to the LED characteristic in the **Nordic LED Button Service**:
+
+         * Value ``OFF`` to switch the **LED 1** on the development kit off.
+         * Value ``ON`` to switch the **LED 1** on the development kit on.
 
 .. note::
    Once connected, the device will not advertise with the LBS Service UUID until the device is rebooted.
