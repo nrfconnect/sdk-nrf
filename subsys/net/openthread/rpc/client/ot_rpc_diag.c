@@ -6,7 +6,7 @@
 
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
-
+#include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/error.h>
@@ -27,54 +27,43 @@ static otMeshLocalPrefix mesh_prefix;
 
 static void get_uint_t(int id, void *result, size_t result_size)
 {
-	const size_t cbor_buffer_size = 0;
 	struct nrf_rpc_cbor_ctx ctx;
+	uint32_t value;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, id, &ctx);
 
-	if (!zcbor_uint_decode(ctx.zs, result, result_size)) {
-		nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	value = nrf_rpc_decode_uint(&ctx);
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
 		ot_rpc_report_decoding_error(id);
 		return;
 	}
 
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	memcpy(result, &value, result_size);
 }
 
 static int get_string(int id, char *buffer, size_t buffer_size)
 {
-	const size_t cbor_buffer_size = 0;
-	size_t bytes_copied = 0;
-	struct zcbor_string zst;
 	struct nrf_rpc_cbor_ctx ctx;
+	size_t size = 0;
+	const void *buf = NULL;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, id, &ctx);
 
-	if (!zcbor_bstr_decode(ctx.zs, &zst)) {
-		nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
-		ot_rpc_report_decoding_error(id);
-		goto exit;
+	buf = nrf_rpc_decode_buffer_ptr_and_size(&ctx, &size);
+	if (buf && size) {
+		memcpy(buffer, buf, MIN(size, buffer_size));
 	}
 
-	if (buffer_size >= zst.len) {
-		bytes_copied = zst.len;
-	} else {
-		bytes_copied = 0;
-		nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
 		ot_rpc_report_decoding_error(id);
-		goto exit;
+		return 0;
 	}
 
-	memcpy(buffer, zst.value, bytes_copied);
-
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
-
-exit:
-	return bytes_copied;
+	return buf && size ? MIN(size, buffer_size) : 0;
 }
 
 const char *otGetVersionString(void)

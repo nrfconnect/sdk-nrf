@@ -14,19 +14,6 @@
 
 #include <openthread/thread.h>
 
-static otError decode_ot_error(struct nrf_rpc_cbor_ctx *ctx)
-{
-	otError error;
-
-	if (!zcbor_uint_decode(ctx->zs, &error, sizeof(error))) {
-		error = OT_ERROR_PARSE;
-	}
-
-	nrf_rpc_cbor_decoding_done(&ot_group, ctx);
-
-	return error;
-}
-
 static void ot_rpc_thread_discover_cb_rpc_handler(const struct nrf_rpc_group *group,
 						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
@@ -104,26 +91,22 @@ otError otThreadDiscover(otInstance *aInstance, uint32_t aScanChannels, uint16_t
 otError otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
 {
 	struct nrf_rpc_cbor_ctx ctx;
+	otError error;
 
 	ARG_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
+	nrf_rpc_encode_bool(&ctx, aEnabled);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_SET_ENABLED, &ctx, ot_rpc_decode_error,
+				&error);
 
-	if (!zcbor_bool_encode(ctx.zs, &aEnabled)) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		return OT_ERROR_INVALID_ARGS;
-	}
-
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_SET_ENABLED, &ctx);
-
-	return decode_ot_error(&ctx);
+	return error;
 }
 
 otDeviceRole otThreadGetDeviceRole(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	otDeviceRole role = 0;
-	bool decoded_ok;
 
 	ARG_UNUSED(aInstance);
 
@@ -131,12 +114,10 @@ otDeviceRole otThreadGetDeviceRole(otInstance *aInstance)
 
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_DEVICE_ROLE, &ctx);
 
-	decoded_ok = zcbor_uint_decode(ctx.zs, &role, sizeof(role));
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	role = nrf_rpc_decode_uint(&ctx);
 
-	if (!decoded_ok) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group,
-			    OT_RPC_CMD_THREAD_GET_DEVICE_ROLE, NRF_RPC_PACKET_TYPE_RSP);
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_THREAD_GET_DEVICE_ROLE);
 	}
 
 	return role;
@@ -146,6 +127,7 @@ otError otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	uint8_t mode_mask = 0;
+	otError error;
 
 	ARG_UNUSED(aInstance);
 
@@ -163,14 +145,11 @@ otError otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
 		mode_mask |= BIT(OT_RPC_LINK_MODE_NETWORK_DATA_OFFSET);
 	}
 
-	if (!zcbor_uint_encode(ctx.zs, &mode_mask, sizeof(mode_mask))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		return OT_ERROR_INVALID_ARGS;
-	}
+	nrf_rpc_encode_uint(&ctx, mode_mask);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_SET_LINK_MODE, &ctx,
+				ot_rpc_decode_error, &error);
 
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_SET_LINK_MODE, &ctx);
-
-	return decode_ot_error(&ctx);
+	return error;
 }
 
 otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
@@ -178,20 +157,17 @@ otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	uint8_t mode_mask = 0;
 	otLinkModeConfig mode;
-	bool decoded_ok;
 
 	ARG_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
-
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_LINK_MODE, &ctx);
 
-	decoded_ok = zcbor_uint_decode(ctx.zs, &mode_mask, sizeof(mode_mask));
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	mode_mask = nrf_rpc_decode_uint(&ctx);
 
-	if (!decoded_ok) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group,
-			    OT_RPC_CMD_THREAD_GET_LINK_MODE, NRF_RPC_PACKET_TYPE_RSP);
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_THREAD_GET_LINK_MODE);
+		mode_mask = 0;
 	}
 
 	mode.mRxOnWhenIdle = (mode_mask & BIT(OT_RPC_LINK_MODE_RX_ON_WHEN_IDLE_OFFSET)) != 0;
