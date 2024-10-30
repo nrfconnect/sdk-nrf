@@ -697,6 +697,17 @@ The application supports the following configurations:
 
        Enables the Matter Bridge to work with Wi-Fi on nRF5340 DK.
 
+Factory data support
+====================
+
+.. include:: ../../../samples/matter/lock/README.rst
+    :start-after: matter_door_lock_sample_factory_data_start
+    :end-before: matter_door_lock_sample_factory_data_end
+
+.. include:: ../../../samples/matter/lock/README.rst
+    :start-after: matter_door_lock_sample_factory_data_nrf54h20_start
+    :end-before: matter_door_lock_sample_factory_data_nrf54h20_end
+
 Building and running
 ********************
 
