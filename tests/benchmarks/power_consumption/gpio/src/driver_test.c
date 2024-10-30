@@ -12,16 +12,13 @@
 
 static const struct gpio_dt_spec output = GPIO_DT_SPEC_GET(OUTPUT_NODE, gpios);
 static const struct gpio_dt_spec input = GPIO_DT_SPEC_GET(INPUT_NODE, gpios);
-extern const struct gpio_dt_spec led;
+volatile int counter;
 
 static struct gpio_callback input_active_cb_data;
 
 void input_active(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-	int rc;
-
-	rc = gpio_pin_toggle_dt(&led);
-	__ASSERT_NO_MSG(rc == 0);
+	counter++;
 }
 
 void thread_definition(void)
@@ -47,10 +44,12 @@ void thread_definition(void)
 	gpio_add_callback_dt(&input, &input_active_cb_data);
 
 	while (1) {
+		counter = 0;
 		rc = gpio_pin_set_dt(&output, 0);
 		__ASSERT_NO_MSG(rc == 0);
 		rc = gpio_pin_set_dt(&output, 1);
 		rc = gpio_pin_set_dt(&output, 0);
+		__ASSERT_NO_MSG(counter == 1);
 		__ASSERT_NO_MSG(rc == 0);
 
 		k_msleep(10);
