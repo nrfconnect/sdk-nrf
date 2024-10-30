@@ -733,7 +733,7 @@ int find_interface_ip(char *ipaddr, int ipaddr_len, char *name)
 	if (strcmp(name, get_wireless_interface()))
 		return 0;
 
-	const struct device *dev = device_get_binding(name);
+	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 	struct net_if *wifi_iface = net_if_lookup_by_dev(dev);
 
 	if (net_if_is_wifi(wifi_iface)) {
@@ -879,7 +879,7 @@ int control_interface(char *ifname, char *op)
 
 int set_interface_ip(char *ifname, char *ip)
 {
-	const struct device *dev = device_get_binding(ifname);
+	const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 	struct net_if *wlan_iface = net_if_lookup_by_dev(dev);
 	struct in_addr addr;
 
