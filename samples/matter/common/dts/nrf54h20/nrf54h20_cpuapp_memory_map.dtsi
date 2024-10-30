@@ -12,6 +12,7 @@
 	aliases {
 		factory-data = &factory_data;
 		factory-data-memory-region = &cpuapp_rw_partitions;
+		factory-data-location = &mram1x;
 	};
 };
 

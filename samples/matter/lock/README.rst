@@ -363,6 +363,44 @@ To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_
 
 .. matter_door_lock_sample_factory_data_end
 
+.. matter_door_lock_sample_factory_data_nrf54h20_start
+
+Merging the factory data hex file with the firmware hex file is currently not available on the nRF54H20 DK.
+The factory data support is disabled by default on this board.
+You can still use it, but you need to flash the :file:`factory_data.hex` file manually.
+
+To use factory data on the nRF54H20 DK, complete the following steps:
+
+1. Flash the :file:`factory_data.hex` file into the device using the following command:
+
+   .. code-block:: console
+
+      nrfutil device program --firmware build/template/zephyr/factory_data.hex
+
+#. Enable factory data support by building the sample with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y`` using the following command:
+
+   .. code-block:: console
+
+      west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DCONFIG_CHIP_FACTORY_DATA=y
+
+#. Flash the firmware into the device:
+
+   .. code-block:: console
+
+      west flash --erase
+
+The ``west flash --erase`` command does not clear the factory data partition.
+If you want to clear it, use the following command, and fill the ``<address>`` argument as an address of the factory data partition.
+By default, the address is set to ``0xe174000``.
+
+.. code-block:: console
+
+   nrfutil device erase --pages <address>
+
+Migrating the DAC private key from the factory data set to Trusted Storage is not supported yet on nRF54H20 DK.
+
+.. matter_door_lock_sample_factory_data_nrf54h20_end
+
 User interface
 **************
 
