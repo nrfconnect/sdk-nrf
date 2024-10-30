@@ -21,6 +21,170 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
+.. _migration_2.8_nrf54h:
+
+nRF54H20
+********
+
+This section describes the changes specific to the nRF54H20 SoC and DK support in the |NCS|.
+
+DK compatibility
+================
+
+.. toggle::
+
+  * The |NCS| v2.8.0 is compatible only with the following versions of the nRF54H20 DK, PCA10175:
+
+      * Engineering B - versions ranging from v0.8.0 to 0.8.2
+      * Engineering C - v0.8.3 and later revisions
+
+      Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
+
+Dependencies
+============
+
+The following required dependencies for the nRF54H20 SoC and DK have been updated.
+
+nRF54H20 BICR
+-------------
+
+.. toggle::
+
+  * The nRF54H20 BICR has been updated (from the one supporting |NCS| v2.7.0).
+
+    .. note::
+       BICR update is not required if migrating from |NCS| v2.7.99-cs1 or v2.7.99-cs2.
+
+    To update the BICR of your development kit while in Root of Trust, do the following:
+
+    1. Download the `BICR new binary file`_.
+    #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
+
+       .. note::
+          On MacOS, connecting the DK might repeatedly trigger a popup displaying the message ``Disk Not Ejected Properly``.
+          To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
+
+    #. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
+
+          nrfutil device list
+
+    #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
+
+          nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Application --serial-number <serial_number>
+
+nRF54H20 SoC binaries
+---------------------
+
+.. toggle::
+
+  * The *nRF54H20 SoC binaries* bundle has been updated to version 0.7.0.
+
+    .. caution::
+       If migrating from |NCS| v2.7.0, before proceeding with the SoC binaries update, you must first update the BICR as described in the previous section.
+
+    To update the SoC binaries bundle of your development kit while in Root of Trust, do the following:
+
+    1. Download the nRF54H20 SoC binaries v0.7.0:
+
+       * `nRF54H20 SoC Binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions
+       * `nRF54H20 SoC Binaries v0.7.0 for EngB DKs`_, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
+
+       .. note::
+          On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
+
+    #. Purge the device as follows::
+
+          nrfutil device recover --core Application --serial-number <serial_number>
+          nrfutil device recover --core Network --serial-number <serial_number>
+
+    #. Run ``west update``.
+    #. Move the correct :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using one of the following commands, depending on your DK:
+
+       * For Engineering B::
+
+            nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.7.0_<revision>.zip --serial-number <serial_number>
+
+       * For Engineering C::
+
+            nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.7.0_<revision>.zip --serial-number <serial_number> --update-candidate-info-address 0x0e1ef340
+
+nrfutil device
+--------------
+
+.. toggle::
+
+  * ``nrfutil device`` has been updated to version 2.7.2.
+
+    Install the nRF Util ``device`` command version 2.7.2 as follows::
+
+       nrfutil install device=2.7.2 --force
+
+    For more information, consult the `nRF Util`_ documentation.
+
+nrfutil-trace
+-------------
+
+.. toggle::
+
+  * ``nrfutil-trace`` has been updated to version 2.11.0.
+
+    Install the nRF Util ``trace`` command version 2.11.0 as follows::
+
+       nrfutil install trace=2.11.0 --force
+
+    For more information, consult the `nRF Util`_ documentation.
+
+nrf-regtool
+-----------
+
+.. toggle::
+
+  * ``nrf-regtool`` has been updated to version 7.0.0.
+
+    1. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.7.99-cs2 toolchain, and click the :guilabel:`Open terminal` button.
+    #. In the terminal window, install ``nrf-regtool`` version 7.0.0 as follows::
+
+          pip install nrf-regtool==7.0.0
+
+
+SEGGER J-Link
+-------------
+
+.. toggle::
+
+  * A new version of SEGGER J-Link is supported: `SEGGER J-Link` version 7.94i.
+
+    .. note::
+       On Windows, to update to the new J-link version, including the USB Driver for J-Link, you must manually install J-Link v7.94i from the command line, using the ``-InstUSBDriver=1`` parameter:
+
+      1. Navigate to the download location of the J-Link executable and run one of the following commands:
+
+          * From the Command Prompt::
+
+               JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
+
+          * From PowerShell::
+
+               .\JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
+
+      #. In the :guilabel:`Choose optional components` window, select :guilabel:`update existing installation`.
+      #. Add the J-Link executable to the system path on Linux and MacOS, or to the environment variables on Windows, to run it from anywhere on the system.
+
+  * The STM logging feature for the nRF54H20 SoC was tested using the J-Trace PRO V2 Cortex-M, with firmware compiled on ``Mar 28 2024 15:14:04``.
+    Using this feature also requires ``nrfutil-trace`` version 2.10.0 or later.
+
+nRF Connect Device Manager
+--------------------------
+
+.. toggle::
+
+  * The nRF54H20 SUIT DFU feature now requires `nRF Connect Device Manager`_ version v2.2.2 or higher.
+
+Samples and applications
+========================
+
+For more information on changes related to samples and applications usage on the nRF54H20 DK, see :ref:`migration_2.8_required_nrf54h`.
+
 .. _migration_2.8_required:
 
 Required changes
@@ -61,12 +225,17 @@ Serial LTE Modem (SLM)
     * ``AT#XSOCKETOPT=1,53,`` with ``AT#XSOCKETOPT=1,61,4`` to indicate ``RAI_ONGOING``.
     * ``AT#XSOCKETOPT=1,54,`` with ``AT#XSOCKETOPT=1,61,5`` to indicate ``RAI_WAIT_MORE``.
 
-SUIT DFU for nRF54H20
----------------------
+.. _migration_2.8_required_nrf54h:
+
+nRF54H20
+--------
 
 .. toggle::
 
-  * The manifest sequence number is no longer configured through a :ref:`sysbuild <configuring_sysbuild>` Kconfig option.
+  * When using the nRF54H20 DK Engineering B (from v0.8.0 to 0.8.2), you must build samples and applications using the board revision 0.8.0 with the ``<board>@<revision>`` syntax.
+    For example , ``nrf54h20dk@0.8.0/nrf54h20/cpuapp`` when building for the application core, or ``nrf54h20dk@0.8.0/nrf54h20/cpurad`` when building for the radio core.
+
+  * When using SUIT DFU on the nRF54H20 SoC, the manifest sequence number is no longer configured through a :ref:`sysbuild <configuring_sysbuild>` Kconfig option.
     The values are now read from the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.
     This change to the :ref:`sysbuild <configuring_sysbuild>` Kconfig option requires the following updates in the SUIT templates for your project:
 
@@ -89,6 +258,15 @@ SUIT DFU for nRF54H20
             APP_ROOT_SEQ_NUM = <N>
 
     For the list of all variables, set through the :file:`VERSION`, refer to the :ref:`ug_nrf54h20_suit_customize_dfu`.
+
+  * When using MCU Manager, the ``Confirm`` command is now needed to trigger a device firmware update.
+  * The build command to enable DFU from the external flash is now the following::
+
+      west build ./ -b nrf54h20dk/nrf54h20/cpuapp -T sample.suit.smp_transfer.cache_push.extflash.bt
+
+  * For updating using the SUIT Device Manager application, you can also use the following zip file: :file:`<main_application_build_directory>/zephyr/dfu_suit_recovery.zip`.
+  * Some Kconfig options and SUIT manifests have been modified, changing names and configurations.
+    Ensure the compatibility of your application with these changes.
 
 Nordic Secure Immutable Bootloader (NSIB, B0, or B0n)
 -----------------------------------------------------
