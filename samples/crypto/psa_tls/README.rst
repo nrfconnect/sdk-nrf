@@ -132,7 +132,7 @@ After programming the sample to your development kit, complete the following ste
 
 .. tabs::
 
-   .. tab:: Test the sample as a server
+   .. tab:: Server test
 
       1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
          See :ref:`test_and_optimize` for more information.
@@ -168,18 +168,18 @@ After programming the sample to your development kit, complete the following ste
       #. Check in the terminal emulator that 21 bytes were successfully received and returned.
 
 
-   .. tab:: Test the sample as a client
+   .. tab:: Client test
 
       1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
          See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
-      #. Start the ``eth_rtt_link`` executable as superuser with your development kit's segger-id and the following IPv4 address as parameters:
+      #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:
 
          .. code-block:: console
 
            sudo ./eth_rtt_link --snr 960010000 --ipv4 192.0.2.1
 
-      #. Use ``openssl`` to perform the `client` connection and handshake operation.
+      #. Use ``openssl`` to start the server, which waits for the `client` connection and handshake operation.
 
          .. code-block:: console
 
@@ -199,7 +199,83 @@ After programming the sample to your development kit, complete the following ste
 
            openssl ciphers
 
-      #. Type ``Nordic Semiconductor`` into the ``openssl`` connection session to send the string ``Nordic Semiconductor`` as an encrypted message to the server.
+      #. Type ``Nordic Semiconductor`` into the ``openssl`` connection session to send ``Nordic Semiconductor`` as an encrypted message to the client.
+      #. Check that the TLS sample returns ``Nordic Semiconductor`` in the ``openssl`` session.
+      #. Check in the terminal emulator that 21 bytes were successfully received and returned.
+
+
+   .. tab:: DTLS server test
+
+      Use ``dtls.conf`` overlay when building the sample to enable DTLS support.
+
+      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+         See :ref:`test_and_optimize` for more information.
+      #. Observe the logs from the application using the terminal emulator.
+      #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:
+
+         .. code-block:: console
+
+           sudo ./eth_rtt_link --snr 960010000 --ipv4 192.0.2.2
+
+      #. Use ``openssl`` to perform the `client` connection and handshake operation.
+
+         .. code-block:: console
+
+           openssl s_client -dtls -connect 192.0.2.1:4243 -cipher ECDHE-ECDSA-AES128-SHA256 -CAfile certs/ecdsa/root_cert.pem
+
+         .. note::
+
+            If the sample has been built with an RSA certificate, use this ``openssl`` command:
+
+            .. code-block:: console
+
+               openssl s_client -dtls -connect 192.0.2.1:4243 -cipher AES128-SHA256 -CAfile certs/rsa/root_cert.pem
+
+         For visualizing a list of the available cipher suites for openssl, use the following command:
+
+         .. code-block:: console
+
+           openssl ciphers
+
+      #. Type ``Nordic Semiconductor`` into the ``openssl`` connection session to send ``Nordic Semiconductor`` as an encrypted message to the server.
+      #. Check that the TLS sample returns ``Nordic Semiconductor`` in the ``openssl`` session.
+      #. Check in the terminal emulator that 21 bytes were successfully received and returned.
+
+
+   .. tab:: DTLS client test
+
+      Use ``dtls.conf`` overlay when building the sample to enable DTLS support.
+
+      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+         See :ref:`test_and_optimize` for more information.
+      #. Observe the logs from the application using the terminal emulator.
+      #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:
+
+         .. code-block:: console
+
+           sudo ./eth_rtt_link --snr 960010000 --ipv4 192.0.2.1
+
+      #. Use ``openssl`` to start the server, which waits for the `client` connection and handshake operation.
+
+         .. code-block:: console
+
+           openssl s_server -dtls -accept 4243 -cipher ECDHE-ECDSA-AES128-SHA256 -cert certs/ecdsa/cert.pem -key certs/ecdsa/cert.key
+
+         .. note::
+
+            If the sample has been built with an RSA certificate, use this ``openssl`` command:
+
+            .. code-block:: console
+
+               openssl s_server -dtls -accept 4243 -cipher AES128-SHA256 -cert certs/rsa/cert.pem -key certs/rsa/cert.key
+
+         For visualizing a list of the available cipher suites for openssl, use the following command:
+
+         .. code-block:: console
+
+           openssl ciphers
+
+      #. Type ``Nordic Semiconductor`` into the ``openssl`` connection session to send ``Nordic Semiconductor`` as an encrypted message to the client.
       #. Check that the TLS sample returns ``Nordic Semiconductor`` in the ``openssl`` session.
       #. Check in the terminal emulator that 21 bytes were successfully received and returned.
 
