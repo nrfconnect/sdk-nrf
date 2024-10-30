@@ -1558,52 +1558,54 @@ Trusted Firmware-M support
 
 .. toggle::
 
-  .. list-table::
-     :widths: auto
-     :header-rows: 1
+   .. list-table::
+      :widths: auto
+      :header-rows: 1
 
-     * -
-       - nRF52810
-       - nRF52811
-       - nRF52820
-       - nRF52832
-       - nRF52833
-       - nRF52840
-       - nRF5340
-       - nRF54H20
-       - nRF54L15
-       - nRF9131
-       - nRF9151
-       - nRF9160
-       - nRF9161
-     * - **Full build**
-       - --
-       - --
-       - --
-       - --
-       - --
-       - --
-       - Experimental
-       - --
-       - Experimental
-       - --
-       - Experimental
-       - Experimental
-       - Experimental
-     * - **Minimal Build**
-       - --
-       - --
-       - --
-       - --
-       - --
-       - --
-       - Supported
-       - --
-       - --
-       - Experimental
-       - Supported
-       - Supported
-       - Supported
+      * -
+        - nRF52810
+        - nRF52811
+        - nRF52820
+        - nRF52832
+        - nRF52833
+        - nRF52840
+        - nRF5340
+        - nRF54H20
+        - nRF54L15
+        - nRF9131
+        - nRF9151
+        - nRF9160
+        - nRF9161
+      * - **Full build**
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - Experimental
+        - --
+        - Experimental\ :sup:`1`
+        - --
+        - Experimental
+        - Experimental
+        - Experimental
+      * - **Minimal Build**
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - Supported
+        - --
+        - Experimental
+        - Experimental
+        - Supported
+        - Supported
+        - Supported
+
+   | [1]: The attestation service is not supported.
 
 PSA Crypto support
 ==================
@@ -1628,7 +1630,7 @@ PSA Crypto support
         - nRF9151
         - nRF9160
         - nRF9161
-      * - **PSA Crypto APIs**
+      * - **Oberon PSA core**
         - --
         - --
         - --
@@ -1636,12 +1638,40 @@ PSA Crypto support
         - Supported
         - Supported
         - Supported
+        - --
+        - Supported
         - Experimental
+        - Supported
+        - Supported
+        - Supported
+      * - **TF-M crypto service**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - --
         - Experimental
         - Experimental
         - Supported
         - Supported
         - Supported
+      * - **SSF crypto service**
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - Experimental
+        - --
+        - --
+        - --
+        - --
+        - --
 
 |NSIB|
 ======
@@ -1722,6 +1752,8 @@ Hardware Unique Key
 Trusted storage
 ===============
 
+Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
+
 .. toggle::
 
    .. list-table::
@@ -1742,7 +1774,7 @@ Trusted storage
         - nRF9151
         - nRF9160
         - nRF9161
-      * - **Trusted storage implements the PSA Certified Secure Storage APIs without TF-M**
+      * - **Trusted storage**
         - --
         - --
         - --
@@ -1751,7 +1783,7 @@ Trusted storage
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - Supported
         - Supported
