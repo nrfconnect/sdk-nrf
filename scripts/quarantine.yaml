@@ -30,10 +30,3 @@
 - scenarios:
     - net.lib.wifi_credentials_backend_psa
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
-
-- scenarios:
-    - applications.zigbee_weather_station
-    - applications.zigbee_weather_station.debug
-  platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29488"
