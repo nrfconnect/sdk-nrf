@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #ifndef MBEDTLS_THREADING_ALT_H
 #define MBEDTLS_THREADING_ALT_H
 
-#include "mbedtls/build_info.h"
-#include "nrf_security_mutexes.h"
+#include <zephyr/kernel.h>
+
+typedef struct k_mutex mbedtls_threading_mutex_t;
 
 #endif /* MBEDTLS_THREADING_ALT_H */

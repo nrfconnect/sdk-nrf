@@ -30,7 +30,7 @@ int cracen_prng_value_from_pool(uint32_t *prng_value)
 {
 	int status = SX_OK;
 
-	nrf_security_mutex_lock(&cracen_prng_pool_mutex);
+	nrf_security_mutex_lock(cracen_prng_pool_mutex);
 
 	if (prng_pool_remaining == 0) {
 		psa_status_t psa_status =
@@ -47,6 +47,6 @@ int cracen_prng_value_from_pool(uint32_t *prng_value)
 	prng_pool_remaining--;
 
 exit:
-	nrf_security_mutex_unlock(&cracen_prng_pool_mutex);
+	nrf_security_mutex_unlock(cracen_prng_pool_mutex);
 	return status;
 }
