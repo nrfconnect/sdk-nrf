@@ -20,9 +20,13 @@ Make sure you have all the required hardware and that your computer has one of t
 Hardware
 ========
 
-* nRF54H20 DK, version PCA10175 v0.8.0 (ES4) or later revisions.
-  This is the only version of the nRF54H20 DK compatible with the |NCS| v2.7.99-cs2.
-  Check the version number on your DK's sticker to verify its compatibility with the |NCS| version v2.7.99-cs2.
+* nRF54H20 DK version PCA10175:
+
+  * Engineering B - ranging from v0.8.0 to 0.8.2
+  * Engineering C - v0.8.3 and later revisions
+
+  Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
+
 * USB-C cable.
 
 Software
@@ -81,10 +85,10 @@ To work with the nRF54H20 DK, follow the instructions in the next sections to in
 
 .. _ug_nrf54h20_install_toolchain:
 
-Installing the |NCS| v2.7.99-cs2 and its toolchain
-**************************************************
+Installing the |NCS| and its toolchain
+**************************************
 
-You can install the |NCS| v2.7.99-cs2 and its toolchain by using Toolchain Manager.
+You can install the |NCS| and its toolchain by using Toolchain Manager.
 
 Toolchain Manager is a tool available from `nRF Connect for Desktop`_, a cross-platform tool that provides different applications that simplify installing the |NCS|.
 Both the tool and the application are available for Windows, Linux, and MacOS.
@@ -109,9 +113,9 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
          The Toolchain Manager window
 
    #. Click :guilabel:`SETTINGS` in the navigation bar to specify where you want to install the |NCS|.
-   #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version 2.7.99-cs2.
+   #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version |release|.
 
-      The |NCS| version 2.7.99-cs2 is installed on your machine.
+      The |NCS| version |release| is installed on your machine.
       The :guilabel:`Install` button changes to :guilabel:`Open VS Code`.
 
 #. Set up the preferred building method:
@@ -157,10 +161,11 @@ Both of these terminal emulators start the required :ref:`toolchain environment 
 Installing nRF Util and its commands
 ************************************
 
-Using the nRF54H20 DK with the |NCS| v2.7.99-cs2 requires the following:
+Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * nRF Util version 7.11.1 or above
-* nRF Util ``device`` version 2.5.4
+* nRF Util ``device`` version 2.7.2
+* nrf-regtool version 7.0.0
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
 #. Add nRF Util to the system path on Linux and MacOS, or environment variables on Windows, to run it from anywhere on the system.
@@ -180,11 +185,15 @@ Using the nRF54H20 DK with the |NCS| v2.7.99-cs2 requires the following:
 
       nrfutil self-upgrade
 
-#. Install the nRF Util ``device`` command version 2.5.4 as follows::
+   For more information, consult the `nRF Util`_ documentation.
 
-      nrfutil install device=2.5.4 --force
+#. Install the nRF Util ``device`` command version 2.7.2 as follows::
 
-For more information, consult the `nRF Util`_ documentation.
+      nrfutil install device=2.7.2 --force
+
+#. Install the nrf-regtool version 7.0.0 as follows::
+
+      pip install nrf-regtool==7.0.0
 
 .. _ug_nrf54h20_gs_bringup:
 
@@ -214,7 +223,7 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 
 #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
 
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware build/zephyr/bicr.hex --core Application --serial-number <serialnumber>
+      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex --core Application --serial-number <serial_number>
 
 .. rst-class:: numbered-step
 
@@ -223,10 +232,13 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 Programming the nRF54H20 SoC binaries
 =====================================
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle ( :file:`nrf54h20_soc_binaries_v0.6.5.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC binaries v0.6.5`_.
+1. Download the nRF54H20 SoC binaries v0.7.0:
+
+   * `nRF54H20 SoC Binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions
+   * `nRF54H20 SoC Binaries v0.7.0 for EngB DKs`_, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -249,35 +261,11 @@ To correctly operate, its lifecycle state must be transitioned to Root of Trust 
 
 To transition the LCS to ``RoT``, do the following:
 
-1. Verify the current lifecycle state of the nRF54H20::
-
-      nrfutil device x-adac-discovery --serial-number <serial_number>
-
-   The output will look similar to the following::
-
-      *serial_number*
-      adac_auth_version     1.0
-      vendor_id             Nordic VLSI ASA
-      soc_class             0x00005420
-      soc_id                [e6, 6f, 21, b6, dc, be, 11, ee, e5, 03, 6f, fe, 4d, 7b, 2e, 07]
-      hw_permissions_fixed  [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      hw_permissions_mask   [01, 00, 00, 00, 87, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      psa_lifecycle         LIFECYCLE_EMPTY (0x1000)
-      sda_id                0x01
-      secrom_revision       0xad3b3cd0
-      sysrom_revision       0xebc8f190
-      token_formats         [TokenAdac]
-      cert_formats          [CertAdac]
-      cryptosystems         [Ed25519Sha512]
-      Additional TLVs:
-      TargetIdentity: [ff, ff, ff, ff, ff, ff, ff, ff]
-
-#. If the lifecycle state (``psa_lifecycle``) shown is ``RoT`` (``LIFECYCLE_ROT (0x2000)``), no LCS transition is required.
-   If the lifecycle state (``psa_lifecycle``) shown is not ``RoT`` (``LIFECYCLE_EMPTY (0x1000)`` means the LCS is set to ``EMPTY``), set it to Root of Trust using the following command::
+1. Set the LCS of the nRF54H20 SoC to Root of Trust using the following command::
 
       nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
 
-#. Verify again the current lifecycle state of the nRF54H20::
+#. Verify the new lifecycle state of the nRF54H20::
 
       nrfutil device x-adac-discovery --serial-number <serial_number>
 
@@ -317,11 +305,17 @@ It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
-#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.7.99-cs2 toolchain, and click the :guilabel:`Open terminal` button.
+#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the version |release| toolchain, and click the :guilabel:`Open terminal` button.
 #. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
-#. Build the sample for application and radio cores by running the following command::
+#. Build the sample for application and radio cores by running the following commands:
 
-      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
+   * For Engineering C (DKs 0.8.3 and later revisions)::
+
+         west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
+
+   * For Engineering B (DKs from v0.8.0 to 0.8.2)::
+
+         west build -p -b nrf54h20dk@0.8.0/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
 
 You can now program the sample.
 If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
