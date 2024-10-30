@@ -111,6 +111,7 @@
 .. _`OpenThread CLI Reference`: https://github.com/openthread/openthread/blob/main/src/cli/README.md
 .. _`OpenThread CLI Reference - csl command`: https://github.com/openthread/openthread/blob/main/src/cli/README.md#csl
 .. _`OpenThread CLI Reference - pollperiod command`: https://github.com/openthread/openthread/blob/main/src/cli/README.md#pollperiod
+.. _`OpenThread Factory Diagnostics Module Reference`: https://github.com/openthread/openthread/blob/main/src/core/diags/README.md
 .. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_COMMISSIONER.md
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_JOINER.md
 .. _`BBTC Client`: https://github.com/nrfconnect/sdk-openthread/tree/main/tools/tcat_ble_client
