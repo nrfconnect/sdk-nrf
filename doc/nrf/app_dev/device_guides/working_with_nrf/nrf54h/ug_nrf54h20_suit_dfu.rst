@@ -34,3 +34,4 @@ For a list of available SUIT samples, see the :ref:`suit_samples` page.
    ug_nrf54h20_suit_hierarchical_manifests
    ug_nrf54h20_suit_soc_binaries
    ug_nrf54h20_suit_recovery.rst
+   ug_nrf54h20_suit_sdfw_sdrfw_update.rst

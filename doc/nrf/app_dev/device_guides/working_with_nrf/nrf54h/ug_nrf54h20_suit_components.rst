@@ -12,6 +12,8 @@ Using and modifying the component types allows for operational, fine-tuned custo
 
 See the :ref:`component_ID` section for more information.
 
+.. _suit_component_types:
+
 Component types
 ***************
 
