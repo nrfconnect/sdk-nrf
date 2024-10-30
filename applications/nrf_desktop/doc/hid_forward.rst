@@ -32,16 +32,23 @@ Complete the following steps to configure the module:
    Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` are enabled.
    The HID forward application module is enabled by the :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option which is implied by the :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` option together with other application modules.
    These modules are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
-#. The :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option selects :kconfig:option:`CONFIG_BT_HOGP` to automatically enable the :ref:`hogp_readme`.
-   An nRF Desktop dongle does not generate its own HID input reports.
-   The dongle uses |hid_forward| to forward the HID reports.
-   The reports are received by the HID service client from the peripherals connected over Bluetooth.
 
-   .. note::
+   * The :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option selects :kconfig:option:`CONFIG_BT_HOGP` to automatically enable the :ref:`hogp_readme`.
+     An nRF Desktop dongle does not generate its own HID input reports.
+     The dongle uses |hid_forward| to forward the HID reports.
+     The reports are received by the HID service client from the peripherals connected over Bluetooth.
+
+     .. note::
        The maximum number of supported HID reports (:kconfig:option:`CONFIG_BT_HOGP_REPORTS_MAX`) is set by default for the nRF Desktop dongle, which supports two peripherals with an average of six HID reports each.
        Make sure to align this configuration value for other use cases, for example, if the dongle supports more peripherals.
 
-#. nRF Desktop dongle can forward either mouse or keyboard boot reports.
+   * The :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option selects :ref:`CONFIG_DESKTOP_HID_REPORTQ <config_desktop_app_options>` to automatically enable the HID report queue utility.
+     The HID report queue utility is used to locally enqueue reports at the source to prevent HID report drops.
+     If needed, you can update the maximum number of enqueued HID reports (:ref:`CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS <config_desktop_app_options>`).
+     See :ref:`nrf_desktop_hid_reportq` documentation for details.
+
+#. Check the chosen HID boot protocol.
+   The nRF Desktop dongle can forward either mouse or keyboard boot reports.
    The forwarded boot report type is specified using the following Kconfig options:
 
    * :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` - This option enables forwarding keyboard boot reports.
@@ -55,8 +62,6 @@ Complete the following steps to configure the module:
    By default, the module uses a dedicated HID subscriber (USB HID class instance) for every BLE bonded HID peripheral.
    For more details about interactions with USB, see the `Interaction with the USB`_ section.
 
-You can set the queued HID input reports limit using the :ref:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS <config_desktop_app_options>` Kconfig option.
-
 Implementation details
 **********************
 
@@ -67,7 +72,10 @@ Interaction with the USB
 
 The :ref:`nrf_desktop_usb_state` can be configured to have one or more instances of the HID-class USB device.
 If there is more than one instance of the HID-class USB device, this number must match the maximum number of bonded Bluetooth peripheral devices.
-Each instance of HID-class USB device subscribes to HID reports forwarded by the |hid_forward|.
+Each USB HID class instance subscribes to HID reports forwarded by the |hid_forward|.
+Each USB HID class instance is assigned a separate :ref:`nrf_desktop_hid_reportq` instance when the related HID subscriber connects.
+The assigned HID report queue instance is freed when the related HID subscriber disconnects.
+Subscriber state changes are tracked relying on :c:struct:`hid_report_subscriber_event`.
 
 The |hid_forward| has an array of subscribers, one for each HID-class USB device.
 The possible cases that impact how the host to which the nRF desktop dongle is connected interprets the reports are as follows:
@@ -97,33 +105,27 @@ Forwarding HID input reports
 
 After :ref:`nrf_desktop_ble_discovery` successfully discovers a connected peripheral, the |hid_forward| automatically subscribes for every HID input report provided by the peripheral.
 The subscriber can use either the HID boot protocol or the HID report protocol, but both protocols cannot be used at the same time.
-In the current implementation, the :ref:`nrf_desktop_usb_state` supports either the HID boot keyboard or the HID boot mouse reports, because the HID boot protocol code is set using a single Kconfig option that is common for all of the instances of the USB HID.
+In the current implementation, the :ref:`nrf_desktop_usb_state` supports either the HID boot keyboard or the HID boot mouse reports, because the application does not support assigning HID boot protocol code separately for each USB HID instance.
 
 The :c:func:`hogp_read` callback is called when HID input report is received from the connected peripheral.
-The received HID input report data is converted to ``hid_report_event``.
+The received HID input report data is passed to the HID report queue and converted to a :c:struct:`hid_report_event`.
 
-``hid_report_event`` is submitted and then the HID-class USB device configured by :ref:`nrf_desktop_usb_state` forwards it to the host.
-When a HID report is sent to the host by the HID-class USB device, the |hid_forward| receives a ``hid_report_sent_event`` with the identifier of this device.
+The :c:struct:`hid_report_event` is submitted by the HID report queue and the HID-class USB device configured by :ref:`nrf_desktop_usb_state` forwards it to the host.
+When a HID report is sent to the host by the HID-class USB instance, the |hid_forward| receives a :c:struct:`hid_report_sent_event` with the identifier of the instance.
+The |hid_forward| notifies the HID report queue to ensure proper HID report flow.
 
 Enqueuing incoming HID input reports
 ------------------------------------
 
-The |hid_forward| forwards only one HID input report to the HID-class USB device at a time.
-Another HID input report may be received from a peripheral connected over Bluetooth before the previous one was sent.
-In that case, ``hid_report_event`` is enqueued and submitted later.
-Up to the number of reports specified in :ref:`CONFIG_DESKTOP_HID_FORWARD_MAX_ENQUEUED_REPORTS <config_desktop_app_options>` Kconfig option can be enqueued at a time for each report type and for each HID subscriber (HID-class USB device).
-If there is not enough space to enqueue a new event, the module drops the oldest enqueued event (of the same type) that was enqueued for a given HID subscriber.
-
-Upon receiving the ``hid_report_sent_event``, the |hid_forward| submits the ``hid_report_event`` enqueued for the peripheral that is associated with the HID-class USB device.
-The enqueued report to be sent is chosen by the |hid_forward| in the round-robin fashion.
-The report of the next type will be sent if available.
-If not available, the next report type will be checked until a report is found or there is no report in any of the queues.
-If there is no ``hid_report_event`` in the queue, the module waits for receiving data from peripherals.
+USB HID class instances limit the maximum number of HID input reports that can be handled simultaneously.
+The number of HID input reports received from HID peripherals connected over Bluetooth LE may exceed the limit.
+If needed, the |hid_forward| relies on the HID report queue to locally enqueue HID input reports before providing them to the USB HID subscriber.
+All HID input reports received from a HID peripheral go through the HID report queue utility associated with a given USB HID instance.
 
 Forwarding HID output reports
 =============================
 
-When the |hid_forward| receives a ``hid_report_event`` that contains an output report from a :ref:`nrf_desktop_usb_state`, it tries to forward the output report.
+When the |hid_forward| receives a :c:struct:`hid_report_event` that contains an output report from a :ref:`nrf_desktop_usb_state`, it tries to forward the output report.
 The HID output report is forwarded to all of the Bluetooth connected peripherals that forward the HID data to the HID subscriber that is source of the HID output report.
 The HID output report is never forwarded to peripheral that does not support it.
 
