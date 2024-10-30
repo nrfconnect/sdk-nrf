@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zcbor_encode.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
@@ -32,30 +31,13 @@ otError otUdpConnect(otInstance *aInstance, otUdpSocket *aSocket, const otSockAd
 	}
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + sizeof(otSockAddr) + 6);
-
-	if (!zcbor_uint_encode(ctx.zs, &key, sizeof(key))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	if (!zcbor_bstr_encode_ptr(ctx.zs, (const char *)&aSockName->mAddress.mFields.m8,
-				   sizeof(aSockName->mAddress.mFields.m8))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	if (!zcbor_uint_encode(ctx.zs, (const char *)&aSockName->mPort, sizeof(aSockName->mPort))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
+	nrf_rpc_encode_uint(&ctx, key);
+	nrf_rpc_encode_buffer(&ctx, aSockName->mAddress.mFields.m8,
+			      sizeof(aSockName->mAddress.mFields.m8));
+	nrf_rpc_encode_uint(&ctx, aSockName->mPort);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_CONNECT, &ctx, ot_rpc_decode_error,
 				&error);
 
-exit:
 	return error;
 }
 
@@ -72,16 +54,9 @@ otError otUdpClose(otInstance *aInstance, otUdpSocket *aSocket)
 	}
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 2);
-
-	if (!zcbor_uint_encode(ctx.zs, &key, sizeof(key))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
+	nrf_rpc_encode_uint(&ctx, key);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_CLOSE, &ctx, ot_rpc_decode_error, &error);
 
-exit:
 	return error;
 }
 
@@ -101,78 +76,37 @@ otError otUdpBind(otInstance *aInstance, otUdpSocket *aSocket, const otSockAddr 
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + sizeof(otSockAddr) + sizeof(net_if) + 6);
 
-	if (!zcbor_uint_encode(ctx.zs, &key, sizeof(key))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	if (!zcbor_bstr_encode_ptr(ctx.zs, (const char *)&aSockName->mAddress.mFields.m8,
-				   sizeof(aSockName->mAddress.mFields.m8))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	if (!zcbor_uint_encode(ctx.zs, (const char *)&aSockName->mPort, sizeof(aSockName->mPort))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	if (!zcbor_uint_encode(ctx.zs, &net_if, sizeof(net_if))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
+	nrf_rpc_encode_uint(&ctx, key);
+	nrf_rpc_encode_buffer(&ctx, aSockName->mAddress.mFields.m8,
+			      sizeof(aSockName->mAddress.mFields.m8));
+	nrf_rpc_encode_uint(&ctx, aSockName->mPort);
+	nrf_rpc_encode_uint(&ctx, net_if);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_BIND, &ctx, ot_rpc_decode_error, &error);
 
-exit:
 	return error;
 }
 
 static void ot_rpc_cmd_udp_receive_cb(const struct nrf_rpc_group *group,
 				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	bool decoding_ok;
 	otMessageInfo message_info;
 	ot_msg_key msg_key = 0;
 	ot_socket_key soc_key = 0;
 	otUdpSocket *socket;
 
-	decoding_ok = zcbor_uint_decode(ctx->zs, &soc_key, sizeof(soc_key));
+	soc_key = nrf_rpc_decode_uint(ctx);
+	msg_key = nrf_rpc_decode_uint(ctx);
+	ot_rpc_decode_message_info(ctx, &message_info);
 
-	if (!decoding_ok) {
-		goto exit;
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);
+		return;
 	}
-
-	decoding_ok = zcbor_uint_decode(ctx->zs, &msg_key, sizeof(msg_key));
-
-	if (!decoding_ok) {
-		goto exit;
-	}
-
-	decoding_ok = ot_rpc_decode_message_info(ctx, &message_info);
-
-	if (!decoding_ok) {
-		goto exit;
-	}
-
-	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	socket = (otUdpSocket *)soc_key;
 
-	if (socket == NULL || socket->mHandler == NULL) {
-		goto exit;
-	}
-
-	socket->mHandler(socket->mContext, (otMessage *)msg_key, &message_info);
-
-exit:
-
-	if (!decoding_ok) {
-		nrf_rpc_cbor_decoding_done(group, ctx);
+	if (socket != NULL && socket->mHandler != NULL) {
+		socket->mHandler(socket->mContext, (otMessage *)msg_key, &message_info);
 	}
 
 	nrf_rpc_rsp_send_void(group);
@@ -198,16 +132,9 @@ otError otUdpOpen(otInstance *aInstance, otUdpSocket *aSocket, otUdpReceive aCal
 	aSocket->mHandler = aCallback;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 2);
-
-	if (!zcbor_uint_encode(ctx.zs, &key, sizeof(key))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
+	nrf_rpc_encode_uint(&ctx, key);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_OPEN, &ctx, ot_rpc_decode_error, &error);
 
-exit:
 	return error;
 }
 
@@ -226,26 +153,10 @@ otError otUdpSend(otInstance *aInstance, otUdpSocket *aSocket, otMessage *aMessa
 	}
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(otMessageInfo) + 16);
-
-	if (!zcbor_uint_encode(ctx.zs, &soc_key, sizeof(soc_key))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	if (!zcbor_uint_encode(ctx.zs, &msg_key, sizeof(msg_key))) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	if (!ot_rpc_encode_message_info(&ctx, aMessageInfo)) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
+	nrf_rpc_encode_uint(&ctx, soc_key);
+	nrf_rpc_encode_uint(&ctx, msg_key);
+	ot_rpc_encode_message_info(&ctx, aMessageInfo);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_SEND, &ctx, ot_rpc_decode_error, &error);
-exit:
+
 	return error;
 }

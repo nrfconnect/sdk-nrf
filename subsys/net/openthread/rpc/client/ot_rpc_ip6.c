@@ -18,19 +18,6 @@
 #define OT_RPC_MAX_NUM_UNICAST_ADDRESSES   8
 #define OT_RPC_MAX_NUM_MULTICAST_ADDRESSES 8
 
-static otError decode_ot_error(struct nrf_rpc_cbor_ctx *ctx)
-{
-	otError error;
-
-	if (!zcbor_uint_decode(ctx->zs, &error, sizeof(error))) {
-		error = OT_ERROR_PARSE;
-	}
-
-	nrf_rpc_cbor_decoding_done(&ot_group, ctx);
-
-	return error;
-}
-
 const otNetifAddress *otIp6GetUnicastAddresses(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
@@ -140,26 +127,22 @@ const otNetifMulticastAddress *otIp6GetMulticastAddresses(otInstance *aInstance)
 otError otIp6SetEnabled(otInstance *aInstance, bool aEnabled)
 {
 	struct nrf_rpc_cbor_ctx ctx;
+	otError error;
 
 	ARG_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
+	nrf_rpc_encode_bool(&ctx, aEnabled);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IP6_SET_ENABLED, &ctx, ot_rpc_decode_error,
+				&error);
 
-	if (!zcbor_bool_encode(ctx.zs, &aEnabled)) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		return OT_ERROR_INVALID_ARGS;
-	}
-
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_IP6_SET_ENABLED, &ctx);
-
-	return decode_ot_error(&ctx);
+	return error;
 }
 
 bool otIp6IsEnabled(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool enabled = false;
-	bool decoded_ok;
+	bool enabled;
 
 	ARG_UNUSED(aInstance);
 
@@ -167,12 +150,10 @@ bool otIp6IsEnabled(otInstance *aInstance)
 
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_IP6_IS_ENABLED, &ctx);
 
-	decoded_ok = zcbor_bool_decode(ctx.zs, &enabled);
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	enabled = nrf_rpc_decode_bool(&ctx);
 
-	if (!decoded_ok) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group, OT_RPC_CMD_IP6_IS_ENABLED,
-			    NRF_RPC_PACKET_TYPE_RSP);
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_decoding_error(OT_RPC_CMD_IP6_IS_ENABLED);
 	}
 
 	return enabled;
@@ -181,35 +162,30 @@ bool otIp6IsEnabled(otInstance *aInstance)
 otError otIp6SubscribeMulticastAddress(otInstance *aInstance, const otIp6Address *aAddress)
 {
 	struct nrf_rpc_cbor_ctx ctx;
+	otError error;
 
 	ARG_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_IP6_ADDRESS_SIZE);
+	nrf_rpc_encode_buffer(&ctx, (const char *)aAddress, OT_IP6_ADDRESS_SIZE);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IP6_SUBSCRIBE_MADDR, &ctx,
+				ot_rpc_decode_error, &error);
 
-	if (!zcbor_bstr_encode_ptr(ctx.zs, (const char *)aAddress, OT_IP6_ADDRESS_SIZE)) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		return OT_ERROR_INVALID_ARGS;
-	}
-
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_IP6_SUBSCRIBE_MADDR, &ctx);
-
-	return decode_ot_error(&ctx);
+	return error;
 }
 
 otError otIp6UnsubscribeMulticastAddress(otInstance *aInstance, const otIp6Address *aAddress)
 {
 	struct nrf_rpc_cbor_ctx ctx;
+	otError error;
 
 	ARG_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_IP6_ADDRESS_SIZE);
 
-	if (!zcbor_bstr_encode_ptr(ctx.zs, (const char *)aAddress, OT_IP6_ADDRESS_SIZE)) {
-		NRF_RPC_CBOR_DISCARD(&ot_group, ctx);
-		return OT_ERROR_INVALID_ARGS;
-	}
+	nrf_rpc_encode_buffer(&ctx, (const char *)aAddress, OT_IP6_ADDRESS_SIZE);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IP6_UNSUBSCRIBE_MADDR, &ctx,
+				ot_rpc_decode_error, &error);
 
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_IP6_UNSUBSCRIBE_MADDR, &ctx);
-
-	return decode_ot_error(&ctx);
+	return error;
 }

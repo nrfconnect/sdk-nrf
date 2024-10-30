@@ -6,7 +6,7 @@
 
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
-
+#include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/cli.h>
@@ -37,7 +37,7 @@ void otCliInputLine(char *aBuf)
 	struct nrf_rpc_cbor_ctx ctx;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
-	zcbor_tstr_encode_ptr(ctx.zs, aBuf, buffer_len);
+	nrf_rpc_encode_str(&ctx, aBuf, buffer_len);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_INPUT_LINE, &ctx, ot_rpc_decode_void,
 				NULL);

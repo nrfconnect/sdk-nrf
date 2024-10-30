@@ -78,13 +78,13 @@ void ot_rpc_encode_message_settings(struct nrf_rpc_cbor_ctx *ctx,
 /* The function reports about command decoding error (not responses). */
 void ot_rpc_report_decoding_error(uint8_t cmd_evt_id);
 
-bool ot_rpc_decode_message_info(struct nrf_rpc_cbor_ctx *ctx, otMessageInfo *aMessageInfo);
-bool ot_rpc_encode_message_info(struct nrf_rpc_cbor_ctx *ctx, const otMessageInfo *aMessageInfo);
+void ot_rpc_decode_message_info(struct nrf_rpc_cbor_ctx *ctx, otMessageInfo *aMessageInfo);
+void ot_rpc_encode_message_info(struct nrf_rpc_cbor_ctx *ctx, const otMessageInfo *aMessageInfo);
 bool ot_rpc_encode_service_config(struct nrf_rpc_cbor_ctx *ctx,
 				  const otServiceConfig *service_config);
-bool ot_rpc_decode_service_config(struct nrf_rpc_cbor_ctx *ctx, otServiceConfig *service_config);
+void ot_rpc_decode_service_config(struct nrf_rpc_cbor_ctx *ctx, otServiceConfig *service_config);
 bool ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					const otBorderRouterConfig *service_config);
-bool ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
+void ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					otBorderRouterConfig *service_config);
 #endif /* OT_RPC_COMMON_H_ */
