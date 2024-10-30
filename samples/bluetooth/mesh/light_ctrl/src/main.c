@@ -7,6 +7,7 @@
 /** @file
  *  @brief Nordic mesh light fixture sample
  */
+#include <zephyr/logging/log_ctrl.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/dk_prov.h>
@@ -46,6 +47,8 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 static void app_emds_cb(void)
 {
+	/* Flush logs before halting. */
+	log_panic();
 	dk_set_leds(DK_LED2_MSK | DK_LED3_MSK | DK_LED4_MSK);
 	k_fatal_halt(K_ERR_CPU_EXCEPTION);
 }
@@ -55,8 +58,11 @@ static void isr_emds_cb(void *arg)
 	ARG_UNUSED(arg);
 
 #if defined(CONFIG_BT_CTLR)
-	/* Stop mpsl to reduce power usage. */
-	mpsl_lib_uninit();
+	int32_t err = mpsl_lib_uninit();
+
+	if (err != 0) {
+		printk("Could not stop MPSL (err %d)\n", err);
+	}
 #endif
 
 	emds_store();
