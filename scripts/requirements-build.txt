@@ -8,6 +8,6 @@ intelhex
 pylint
 setuptools==75.2.0
 zcbor~=0.8.0
-nrf-regtool~=7.0.0
+nrf-regtool~=8.0.0
 windows-curses; sys_platform == 'win32'
 unidiff
