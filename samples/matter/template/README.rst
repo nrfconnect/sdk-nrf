@@ -161,6 +161,10 @@ Factory data support
     :start-after: matter_door_lock_sample_factory_data_start
     :end-before: matter_door_lock_sample_factory_data_end
 
+.. include:: ../lock/README.rst
+    :start-after: matter_door_lock_sample_factory_data_nrf54h20_start
+    :end-before: matter_door_lock_sample_factory_data_nrf54h20_end
+
 User interface
 **************
 
