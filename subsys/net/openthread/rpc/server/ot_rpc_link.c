@@ -65,7 +65,7 @@ static void ot_rpc_cmd_set_max_frame_retries_direct(const struct nrf_rpc_group *
 	uint8_t max_retries = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_DIRECT);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_DIRECT);
 		return;
 	}
 
@@ -82,7 +82,7 @@ static void ot_rpc_cmd_set_max_frame_retries_indirect(const struct nrf_rpc_group
 	uint8_t max_retries = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_INDIRECT);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_LINK_SET_MAX_FRAME_RETRIES_INDIRECT);
 		return;
 	}
 
@@ -99,7 +99,7 @@ static void ot_rpc_cmd_set_link_enabled(const struct nrf_rpc_group *group,
 	bool enabled = nrf_rpc_decode_bool(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_LINK_SET_ENABLED);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_LINK_SET_ENABLED);
 		return;
 	}
 

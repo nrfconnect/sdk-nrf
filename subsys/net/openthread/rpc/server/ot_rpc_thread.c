@@ -81,7 +81,7 @@ static void ot_rpc_thread_discover_rpc_handler(const struct nrf_rpc_group *group
 	cb_ctx = (void *)nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_THREAD_DISCOVER);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_THREAD_DISCOVER);
 		return;
 	}
 

@@ -42,7 +42,7 @@ static void ot_rpc_thread_discover_cb_rpc_handler(const struct nrf_rpc_group *gr
 	callback = (otHandleActiveScanResult)nrf_rpc_decode_callback_call(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_THREAD_DISCOVER_CB);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_THREAD_DISCOVER_CB);
 		return;
 	}
 
@@ -117,7 +117,7 @@ otDeviceRole otThreadGetDeviceRole(otInstance *aInstance)
 	role = nrf_rpc_decode_uint(&ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_THREAD_GET_DEVICE_ROLE);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_THREAD_GET_DEVICE_ROLE);
 	}
 
 	return role;
@@ -166,7 +166,7 @@ otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 	mode_mask = nrf_rpc_decode_uint(&ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_THREAD_GET_LINK_MODE);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_THREAD_GET_LINK_MODE);
 		mode_mask = 0;
 	}
 

@@ -33,7 +33,7 @@ otError otNetDataGet(otInstance *aInstance, bool aStable, uint8_t *aData, uint8_
 	error = nrf_rpc_decode_uint(&ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_NETDATA_GET);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_NETDATA_GET);
 		return OT_ERROR_FAILED;
 	}
 
@@ -55,7 +55,7 @@ otError otNetDataGetNextService(otInstance *aInstance, otNetworkDataIterator *aI
 	error = nrf_rpc_decode_uint(&ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_NETDATA_GET_NEXT_SERVICE);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_NETDATA_GET_NEXT_SERVICE);
 		return OT_ERROR_FAILED;
 	}
 
@@ -78,7 +78,7 @@ otError otNetDataGetNextOnMeshPrefix(otInstance *aInstance, otNetworkDataIterato
 	error = nrf_rpc_decode_uint(&ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_NETDATA_GET_NEXT_ON_MESH_PREFIX);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_NETDATA_GET_NEXT_ON_MESH_PREFIX);
 		return OT_ERROR_FAILED;
 	}
 

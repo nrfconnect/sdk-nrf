@@ -88,13 +88,13 @@ static void ot_rpc_cmd_instance_get_id(const struct nrf_rpc_group *group,
 	instance = (otInstance *)nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 
 	if (instance != openthread_get_default_instance()) {
 		/* The instance is unknown to the OT RPC server. */
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 
@@ -117,13 +117,13 @@ static void ot_rpc_cmd_instance_is_initialized(const struct nrf_rpc_group *group
 	instance = (otInstance *)nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 
 	if (instance != openthread_get_default_instance()) {
 		/* The instance is unknown to the OT RPC server. */
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 
@@ -146,13 +146,13 @@ static void ot_rpc_cmd_instance_finalize(const struct nrf_rpc_group *group,
 	instance = (otInstance *)nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 
 	if (instance != openthread_get_default_instance()) {
 		/* The instance is unknown to the OT RPC server. */
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 
@@ -176,13 +176,13 @@ static void ot_rpc_cmd_instance_erase_persistent_info(const struct nrf_rpc_group
 	instance = (otInstance *)nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 
 	if (instance != openthread_get_default_instance()) {
 		/* The instance is unknown to the OT RPC server. */
-		ot_rpc_report_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_INSTANCE_GET_ID);
 		return;
 	}
 

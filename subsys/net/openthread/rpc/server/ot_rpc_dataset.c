@@ -21,7 +21,7 @@ static void ot_rpc_dataset_is_commissioned_rpc_handler(const struct nrf_rpc_grou
 	bool result;
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_IS_COMMISSIONED);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_IS_COMMISSIONED);
 		return;
 	}
 
@@ -47,7 +47,7 @@ static void ot_rpc_data_set_active_tlvs_rpc_handler(const struct nrf_rpc_group *
 	ot_rpc_decode_dataset_tlvs(group, ctx, &data_ptr);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS);
 		return;
 	}
 
@@ -83,7 +83,7 @@ static void ot_rpc_data_get_active_tlvs_rpc_handler(const struct nrf_rpc_group *
 	otError error;
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS);
 		return;
 	}
 
@@ -107,7 +107,7 @@ static void ot_rpc_dataset_set_active_rpc_handler(const struct nrf_rpc_group *gr
 	ot_rpc_decode_dataset(group, ctx, &data_ptr);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE);
 		return;
 	}
 
@@ -134,7 +134,7 @@ static void ot_rpc_dataset_get_active_rpc_handler(const struct nrf_rpc_group *gr
 	otError error;
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE);
 		return;
 	}
 

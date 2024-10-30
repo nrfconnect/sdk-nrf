@@ -65,7 +65,7 @@ static void ot_rpc_cmd_coap_new_message(const struct nrf_rpc_group *group,
 	settings = ot_rpc_decode_message_settings(ctx, &settings_buf);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_NEW_MESSAGE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_NEW_MESSAGE);
 		return;
 	}
 
@@ -107,14 +107,14 @@ static void ot_rpc_cmd_coap_message_init(const struct nrf_rpc_group *group,
 	code = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT);
 		return;
 	}
 
@@ -145,7 +145,7 @@ static void ot_rpc_cmd_coap_message_init_response(const struct nrf_rpc_group *gr
 	code = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT_RESPONSE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT_RESPONSE);
 		return;
 	}
 
@@ -153,7 +153,7 @@ static void ot_rpc_cmd_coap_message_init_response(const struct nrf_rpc_group *gr
 	request = ot_msg_get(request_rep);
 
 	if (!response || !request) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT_RESPONSE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT_RESPONSE);
 		return;
 	}
 
@@ -181,14 +181,14 @@ static void ot_rpc_cmd_coap_message_append_uri_path_options(const struct nrf_rpc
 	nrf_rpc_decode_str(ctx, uri, sizeof(uri));
 
 	if (!nrf_rpc_decode_valid(ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_APPEND_URI_PATH_OPTIONS);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_APPEND_URI_PATH_OPTIONS);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_APPEND_URI_PATH_OPTIONS);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_APPEND_URI_PATH_OPTIONS);
 		return;
 	}
 
@@ -215,14 +215,14 @@ static void ot_rpc_cmd_coap_message_set_payload_marker(const struct nrf_rpc_grou
 	message_rep = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_SET_PAYLOAD_MARKER);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_SET_PAYLOAD_MARKER);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_SET_PAYLOAD_MARKER);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_SET_PAYLOAD_MARKER);
 		return;
 	}
 
@@ -247,14 +247,14 @@ static void ot_rpc_cmd_coap_message_get_type(const struct nrf_rpc_group *group,
 	message_rep = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TYPE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TYPE);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TYPE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TYPE);
 		return;
 	}
 
@@ -278,14 +278,14 @@ static void ot_rpc_cmd_coap_message_get_code(const struct nrf_rpc_group *group,
 	message_rep = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_CODE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_CODE);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_CODE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_CODE);
 		return;
 	}
 
@@ -309,14 +309,14 @@ static void ot_rpc_cmd_coap_message_get_message_id(const struct nrf_rpc_group *g
 	message_rep = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_MESSAGE_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_MESSAGE_ID);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_MESSAGE_ID);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_MESSAGE_ID);
 		return;
 	}
 
@@ -342,14 +342,14 @@ static void ot_rpc_cmd_coap_message_get_token_length(const struct nrf_rpc_group 
 	message_rep = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN_LENGTH);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN_LENGTH);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN_LENGTH);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN_LENGTH);
 		return;
 	}
 
@@ -376,14 +376,14 @@ static void ot_rpc_cmd_coap_message_get_token(const struct nrf_rpc_group *group,
 	message_rep = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN);
 		return;
 	}
 
@@ -410,7 +410,7 @@ static void ot_rpc_cmd_coap_start(const struct nrf_rpc_group *group, struct nrf_
 	port = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_START);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_START);
 		return;
 	}
 
@@ -430,7 +430,7 @@ static void ot_rpc_cmd_coap_stop(const struct nrf_rpc_group *group, struct nrf_r
 	otError error;
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_STOP);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_STOP);
 		return;
 	}
 
@@ -481,7 +481,7 @@ static void ot_rpc_cmd_coap_add_resource(const struct nrf_rpc_group *group,
 	nrf_rpc_decode_str(ctx, uri, sizeof(uri));
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_ADD_RESOURCE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_ADD_RESOURCE);
 		return;
 	}
 
@@ -526,7 +526,7 @@ static void ot_rpc_cmd_coap_remove_resource(const struct nrf_rpc_group *group,
 	nrf_rpc_decode_str(ctx, uri, sizeof(uri));
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_REMOVE_RESOURCE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_REMOVE_RESOURCE);
 		return;
 	}
 
@@ -582,7 +582,7 @@ static void ot_rpc_cmd_coap_set_default_handler(const struct nrf_rpc_group *grou
 	enabled = nrf_rpc_decode_bool(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_SET_DEFAULT_HANDLER);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_SET_DEFAULT_HANDLER);
 		return;
 	}
 
@@ -643,14 +643,14 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 	request_rep = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_SEND_REQUEST);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_SEND_REQUEST);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_SEND_REQUEST);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_SEND_REQUEST);
 		return;
 	}
 
@@ -681,14 +681,14 @@ static void ot_rpc_cmd_coap_send_response(const struct nrf_rpc_group *group,
 	ot_rpc_decode_message_info(ctx, &message_info);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_SEND_RESPONSE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_SEND_RESPONSE);
 		return;
 	}
 
 	message = ot_msg_get(message_rep);
 
 	if (!message) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_COAP_SEND_RESPONSE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_SEND_RESPONSE);
 		return;
 	}
 

@@ -172,9 +172,14 @@ void ot_rpc_encode_message_settings(struct nrf_rpc_cbor_ctx *ctx, const otMessag
 	nrf_rpc_encode_uint(ctx, settings->mPriority);
 }
 
-void ot_rpc_report_decoding_error(uint8_t cmd_evt_id)
+void ot_rpc_report_cmd_decoding_error(uint8_t cmd_evt_id)
 {
 	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group, cmd_evt_id, NRF_RPC_PACKET_TYPE_CMD);
+}
+
+void ot_rpc_report_rsp_decoding_error(uint8_t cmd_evt_id)
+{
+	nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group, cmd_evt_id, NRF_RPC_PACKET_TYPE_RSP);
 }
 
 void ot_rpc_encode_message_info(struct nrf_rpc_cbor_ctx *ctx, const otMessageInfo *aMessageInfo)
