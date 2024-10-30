@@ -1,0 +1,6 @@
+&spi131 {
+	zephyr,pm-device-runtime-auto;
+};
+&exmif {
+	status = "disabled";
+};
