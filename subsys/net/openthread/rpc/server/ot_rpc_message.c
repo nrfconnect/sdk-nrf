@@ -66,7 +66,7 @@ static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	if (!decoding_ok) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_FREE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_FREE);
 		goto exit;
 	}
 
@@ -98,7 +98,7 @@ static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_
 
 	if (!decoding_ok) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
 		error = OT_ERROR_INVALID_ARGS;
 		goto exit;
 	}
@@ -107,7 +107,7 @@ static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_
 
 	if (!decoding_ok) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
 		error = OT_ERROR_INVALID_ARGS;
 		goto exit;
 	}
@@ -169,7 +169,7 @@ static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	if (!decoding_ok) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
 		goto exit;
 	}
 
@@ -202,7 +202,7 @@ static void ot_rpc_get_offset(const struct nrf_rpc_group *group, struct nrf_rpc_
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	if (!decoding_ok) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
 		goto exit;
 	}
 
@@ -235,19 +235,19 @@ static void ot_rpc_msg_read(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 
 	if (!zcbor_uint_decode(ctx->zs, &key, sizeof(key))) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
 		goto exit;
 	}
 
 	if (!zcbor_uint_decode(ctx->zs, &offset, sizeof(offset))) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
 		goto exit;
 	}
 
 	if (!zcbor_uint_decode(ctx->zs, &length, sizeof(length))) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
 		goto exit;
 	}
 

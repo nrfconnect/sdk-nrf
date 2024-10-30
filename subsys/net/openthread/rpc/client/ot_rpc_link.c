@@ -40,7 +40,7 @@ uint32_t otLinkGetPollPeriod(otInstance *aInstance)
 	poll_period = nrf_rpc_decode_uint(&ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_LINK_GET_POLL_PERIOD);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_LINK_GET_POLL_PERIOD);
 	}
 
 	return poll_period;

@@ -354,7 +354,7 @@ static void ot_rpc_cmd_srp_client_cb(const struct nrf_rpc_group *group,
 		if (!service_prev_next) {
 			/* Provided service pointer unknown to the client */
 			nrf_rpc_cbor_decoding_done(&ot_group, ctx);
-			ot_rpc_report_decoding_error(OT_RPC_CMD_SRP_CLIENT_CB);
+			ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_SRP_CLIENT_CB);
 			return;
 		}
 
@@ -369,7 +369,7 @@ static void ot_rpc_cmd_srp_client_cb(const struct nrf_rpc_group *group,
 	}
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_SRP_CLIENT_CB);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_SRP_CLIENT_CB);
 		return;
 	}
 
@@ -392,7 +392,7 @@ static void ot_rpc_cmd_srp_client_auto_start_cb(const struct nrf_rpc_group *grou
 	addr.mPort = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_SRP_CLIENT_AUTO_START_CB);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_SRP_CLIENT_AUTO_START_CB);
 		return;
 	}
 

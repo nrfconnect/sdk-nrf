@@ -129,7 +129,7 @@ static void ot_rpc_cmd_state_changed(const struct nrf_rpc_group *group,
 	flags = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_STATE_CHANGED);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_STATE_CHANGED);
 		return;
 	}
 

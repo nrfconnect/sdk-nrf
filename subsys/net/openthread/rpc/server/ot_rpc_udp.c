@@ -83,7 +83,7 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_UDP_RECEIVE_CB, &ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);
 	}
 
 exit:
@@ -148,7 +148,7 @@ static void ot_rpc_udp_send(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 	ot_rpc_decode_message_info(ctx, &message_info);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_UDP_SEND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_SEND);
 		return;
 	}
 
@@ -233,7 +233,7 @@ static void ot_rpc_udp_bind(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 exit:
 	if (!decoded_ok) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_UDP_BIND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_BIND);
 	}
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);
@@ -275,7 +275,7 @@ static void ot_rpc_udp_close(const struct nrf_rpc_group *group, struct nrf_rpc_c
 exit:
 	if (!decoded_ok) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_UDP_CLOSE);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_CLOSE);
 	}
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);
@@ -333,7 +333,7 @@ static void ot_rpc_udp_connect(const struct nrf_rpc_group *group, struct nrf_rpc
 exit:
 	if (!decoded_ok) {
 		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_decoding_error(OT_RPC_CMD_UDP_BIND);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_BIND);
 	}
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);

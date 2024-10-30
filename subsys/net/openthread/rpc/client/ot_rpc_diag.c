@@ -36,7 +36,7 @@ static void get_uint_t(int id, void *result, size_t result_size)
 
 	value = nrf_rpc_decode_uint(&ctx);
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(id);
+		ot_rpc_report_rsp_decoding_error(id);
 		return;
 	}
 
@@ -59,7 +59,7 @@ static int get_string(int id, char *buffer, size_t buffer_size)
 	}
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(id);
+		ot_rpc_report_rsp_decoding_error(id);
 		return 0;
 	}
 
@@ -93,7 +93,7 @@ const otExtAddress *otLinkGetExtendedAddress(otInstance *aInstance)
 
 	if (ret_size != sizeof(mac.m8)) {
 		LOG_ERR("Received mac addr size is too short");
-		ot_rpc_report_decoding_error(OT_RPC_CMD_LINK_GET_EXTENDED_ADDRESS);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_LINK_GET_EXTENDED_ADDRESS);
 	}
 
 	return &mac;

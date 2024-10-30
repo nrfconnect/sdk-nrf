@@ -99,7 +99,7 @@ static void ot_rpc_cmd_udp_receive_cb(const struct nrf_rpc_group *group,
 	ot_rpc_decode_message_info(ctx, &message_info);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);
 		return;
 	}
 

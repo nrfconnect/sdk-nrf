@@ -153,7 +153,7 @@ bool otIp6IsEnabled(otInstance *aInstance)
 	enabled = nrf_rpc_decode_bool(&ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_decoding_error(OT_RPC_CMD_IP6_IS_ENABLED);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_IP6_IS_ENABLED);
 	}
 
 	return enabled;

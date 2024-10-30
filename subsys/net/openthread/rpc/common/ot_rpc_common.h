@@ -75,9 +75,8 @@ otMessageSettings *ot_rpc_decode_message_settings(struct nrf_rpc_cbor_ctx *ctx,
 						  otMessageSettings *settings);
 void ot_rpc_encode_message_settings(struct nrf_rpc_cbor_ctx *ctx,
 				    const otMessageSettings *settings);
-/* The function reports about command decoding error (not responses). */
-void ot_rpc_report_decoding_error(uint8_t cmd_evt_id);
-
+void ot_rpc_report_cmd_decoding_error(uint8_t cmd_evt_id);
+void ot_rpc_report_rsp_decoding_error(uint8_t cmd_evt_id);
 void ot_rpc_decode_message_info(struct nrf_rpc_cbor_ctx *ctx, otMessageInfo *aMessageInfo);
 void ot_rpc_encode_message_info(struct nrf_rpc_cbor_ctx *ctx, const otMessageInfo *aMessageInfo);
 bool ot_rpc_encode_service_config(struct nrf_rpc_cbor_ctx *ctx,
