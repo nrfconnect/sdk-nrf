@@ -769,6 +769,7 @@
 /tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-muffin
 /tests/subsys/fw_info/                    @nrfconnect/ncs-pluto
+/tests/subsys/kmu/                        @nrfconnect/ncs-pluto
 /tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia

@@ -1,0 +1,12 @@
+common:
+  timeout: 120
+  tags: pytest kmu
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+tests:
+  kmu.west.provision.keys:
+    harness: pytest
+    harness_config:
+      pytest_dut_scope: session
+      pytest_root:
+        - "../pytest/test_kmu_key_provision.py"
