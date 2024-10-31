@@ -49,12 +49,12 @@ HOST:        DEVICE:
 TWIM_SCL  -  TWIS_SCL
 TWIM_SDA  -  TWIS_SDA
 
-When nrf54l15pdk is HOST and nrf54h20dk is DEVICE then:
+When nrf54l15dk is HOST and nrf54h20dk is DEVICE then:
       nrf54l      nrf54h
 SCL:  P1.12   -   P1.03
 SDA:  P1.08   -   P2.09
 
-When nrf54l15pdk is DEVICE and nrf54h20dk is HOST then:
+When nrf54l15dk is DEVICE and nrf54h20dk is HOST then:
       nrf54l      nrf54h
 SCL:  P1.13   -   P1.02
 SDA:  P1.09   -   P2.08
