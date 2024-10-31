@@ -379,7 +379,8 @@ static void sms_uninit(void)
 		return;
 	} else if (ret > 0) {
 		/* Modem returned an error, assume that there is no registration anymore. */
-		LOG_WRN("Failed to unregister the SMS client from modem, err: %d", ret);
+		LOG_DBG("Failed to unregister the SMS client from modem, err: %d. "
+			"Might be that SMS had already been unregistered.", ret);
 	}
 
 	LOG_DBG("SMS client unregistered");
