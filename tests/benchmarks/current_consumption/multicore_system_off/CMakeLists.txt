@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.20.0)
+
+if(NOT nordic-flpr IN_LIST SNIPPET)
+  set(SNIPPET nordic-flpr ${SNIPPET} CACHE STRING "" FORCE)
+endif()
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(multicore_system_off)
+
+target_sources(app PRIVATE src/main.c)
