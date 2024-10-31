@@ -30,31 +30,19 @@ tfm_storage:
 
 tfm_ps:
   placement:
-#ifdef CONFIG_BOOTLOADER_MCUBOOT
-    before: mcuboot_primary
-#else
-    before: tfm_nonsecure
-#endif
+    after: [mcuboot, tfm_secure]
   inside: tfm_storage
   size: CONFIG_PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE
 
 tfm_its:
   placement:
-#ifdef CONFIG_BOOTLOADER_MCUBOOT
-    before: mcuboot_primary
-#else
-    before: tfm_nonsecure
-#endif
+    after: [mcuboot, tfm_secure]
   inside: tfm_storage
   size: CONFIG_PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE
 
 tfm_otp_nv_counters:
   placement:
-#ifdef CONFIG_BOOTLOADER_MCUBOOT
-    before: mcuboot_primary
-#else
-    before: tfm_nonsecure
-#endif
+    after: [mcuboot, tfm_secure]
   inside: tfm_storage
   size: CONFIG_PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS
 
