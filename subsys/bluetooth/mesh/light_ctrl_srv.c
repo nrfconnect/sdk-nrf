@@ -562,6 +562,12 @@ static void timeout(struct k_work *work)
 	if (!is_enabled(srv)) {
 		if (srv->resume && atomic_test_and_clear_bit(&srv->flags, FLAG_RESUME_TIMER)) {
 			LOG_DBG("Resuming LC server");
+			if (IS_ENABLED(CONFIG_BT_MESH_SCENE_SRV)) {
+				/* Resuming the LC server invalidates the current scene as it takes
+				 * control over states that are stored with the scene.
+				 */
+				bt_mesh_scene_invalidate(srv->model);
+			}
 			ctrl_enable(srv);
 			store(srv, FLAG_STORE_STATE);
 		}
