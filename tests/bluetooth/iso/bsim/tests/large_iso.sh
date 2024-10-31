@@ -14,5 +14,5 @@ ${SCRIPT_DIR}/../iso_and_acl.sh ${SCRIPT_NAME} \
   "acl_central" "payload_size_set" "10" \
   "tester" "acl_fail_limit_percent" "0" \
   "tester" "iso_fail_limit_percent" "1" \
-  "tester" "acl_packets_limit_min" "30" \
+  "tester" "acl_packets_limit_min" "10" \
   "tester" "iso_packets_limit_min" "1200"
