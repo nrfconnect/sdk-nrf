@@ -36,6 +36,6 @@ Execute ./bs_nrf5340bsim_nrf5340_cpuapp_tests_bluetooth_iso_bsim_prj_conf \
     -argstest "tester" "dev" PERIPHERAL_SINK "${@:2}"
 
 Execute ./bs_2G4_phy_v1 -v=${VERBOSITY} -s=${SIM_ID} \
-    -D=3 -sim_length=10e6
+    -D=3 -sim_length=14e6
 
 wait_for_background_jobs

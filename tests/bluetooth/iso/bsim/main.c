@@ -8,6 +8,7 @@
 #include <babblekit/testcase.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <zephyr/bluetooth/hci.h>
 
 #include "bstests.h"
 #include "bs_types.h"
@@ -38,6 +39,8 @@ extern enum bst_result_t bst_result;
 #define COLOR_GREEN "\x1B[0;32m"
 #define COLOR_BLUE  "\x1B[0;34m"
 #define COLOR_RESET "\x1b[0m"
+
+#define COMPANY_ID_NORDIC 0x0059
 
 static uint8_t role;
 extern enum bst_result_t bst_result;
@@ -356,6 +359,31 @@ static int modules_start(void)
 	return 0;
 }
 
+int ctlr_manufacturer_get(void)
+{
+	int ret;
+	struct net_buf *rsp;
+
+	ret = bt_hci_cmd_send_sync(BT_HCI_OP_READ_LOCAL_VERSION_INFO, NULL, &rsp);
+	if (ret) {
+		return ret;
+	}
+
+	struct bt_hci_rp_read_local_version_info *rp = (void *)rsp->data;
+
+	if (rp->manufacturer == COMPANY_ID_NORDIC) {
+		/* NOTE: The string below is used by the Nordic CI system */
+		TEST_PRINT("Controller: SoftDevice: Version %s (0x%02x), Revision %d",
+			   bt_hci_get_ver_str(rp->hci_version), rp->hci_version, rp->hci_revision);
+	} else {
+		return -EPERM;
+	}
+
+	net_buf_unref(rsp);
+
+	return 0;
+}
+
 void test_main(void)
 {
 	int err;
@@ -379,6 +407,11 @@ void test_main(void)
 	err = bt_enable(NULL);
 	if (err) {
 		TEST_FAIL("Bluetooth enable failed (err %d)", err);
+	}
+
+	err = ctlr_manufacturer_get();
+	if (err) {
+		TEST_FAIL("Unsupported controller (err %d)", err);
 	}
 
 	err = modules_init();
