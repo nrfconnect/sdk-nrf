@@ -30,3 +30,10 @@
 - scenarios:
     - net.lib.wifi_credentials_backend_psa
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
+
+- scenarios:
+    - applications.machine_learning.sensor_hub.zdebug.singlecore
+    - applications.machine_learning.sensor_hub.zdebug
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30015"
