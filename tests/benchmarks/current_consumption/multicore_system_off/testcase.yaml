@@ -1,0 +1,19 @@
+common:
+  sysbuild: true
+  tags: ci_tests_benchmarks_current_consumption ppk_power_measure
+
+tests:
+  benchmarks.current_consumption.multicore_system_off:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54l15dk_nrf54l15_cpuflpr.conf
+      - SB_CONFIG_PARTITION_MANAGER=n
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_multicore_system_off"
+    timeout: 80
