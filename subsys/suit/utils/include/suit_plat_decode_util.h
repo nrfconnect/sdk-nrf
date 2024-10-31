@@ -10,7 +10,7 @@
 #include <zcbor_common.h>
 #ifdef CONFIG_SUIT_METADATA
 #include <suit_metadata.h>
-#endif /* CONFIG_SUIT_METaDATA */
+#endif /* CONFIG_SUIT_METADATA */
 #ifdef CONFIG_SUIT_PLATFORM
 #include <suit_platform_internal.h>
 #endif /* CONFIG_SUIT_PLATFORM*/
