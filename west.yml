@@ -50,6 +50,7 @@ manifest:
     - -dragoon
     - -find-my
     - -babblesim
+    - -libmodem
     - -sidewalk
     - -bsec
     - -doc-internal
@@ -232,6 +233,10 @@ manifest:
           upstream-url: https://github.com/CirrusLogic/mcu-drivers
           upstream-sha: 1be6ca7253133a21a1e9fe0fbb4656e17d63a936
           compare-by-default: false
+    - name: libmodem
+      revision: 5f5837a5a0c9e2082e76b1e921152532f9f486f2
+      groups:
+        - libmodem
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
