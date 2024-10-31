@@ -183,7 +183,7 @@ suit_plat_err_t suit_plat_ipuc_revoke(suit_component_t handle)
 	intptr_t slot_address = 0;
 	size_t slot_size = 0;
 
-	if (suit_plat_decode_address_size(&p_entry->component_id, &slot_address, &slot_size) ==
+	if (suit_plat_decode_address_size(&ipuc_entry->component_id, &slot_address, &slot_size) ==
 	    SUIT_PLAT_SUCCESS) {
 		LOG_INF("Revoking IPUC, address: %p, size: %d bytes", (void *)slot_address,
 			slot_size);

@@ -12,9 +12,11 @@
 #include <suit_platform_internal.h>
 #include <suit_plat_digest_cache.h>
 #include <suit_plat_memptr_size_update.h>
+#include <suit_memory_layout.h>
 
 #if CONFIG_SUIT_IPUC
 #include <suit_plat_ipuc.h>
+#include <suit_flash_sink.h>
 #endif /* CONFIG_SUIT_IPUC */
 
 #ifdef CONFIG_SUIT_STREAM
@@ -140,6 +142,7 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
+	uint32_t soc_spec_number = 0;
 #ifdef CONFIG_SUIT_STREAM_SOURCE_MEMPTR
 	const uint8_t *payload_ptr;
 	size_t payload_size;
@@ -165,6 +168,29 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 	    (dst_component_type != SUIT_COMPONENT_TYPE_SOC_SPEC)) {
 		LOG_ERR("Unsupported destination component type");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
+	if (dst_component_type == SUIT_COMPONENT_TYPE_SOC_SPEC) {
+		struct zcbor_string *component_id = NULL;
+
+		ret = suit_plat_component_id_get(dst_handle, &component_id);
+		if (ret != SUIT_SUCCESS) {
+			LOG_ERR("suit_plat_component_id_get failed - error %i", ret);
+			return ret;
+		}
+
+		plat_ret = suit_plat_decode_component_number(component_id, &soc_spec_number);
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("suit_plat_decode_component_number failed - error %i", plat_ret);
+			ret = suit_plat_err_to_processor_err_convert(plat_ret);
+			return ret;
+		}
+
+		if (soc_spec_number != SUIT_SECDOM_COMPONENT_NUMBER_SDFW &&
+		    soc_spec_number != SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY) {
+			LOG_ERR("Unsupported destination component type");
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
 	}
 
 	/* Get source component type based on component handle*/
@@ -247,6 +273,92 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 		if (plat_ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("suit_memptr_storage_ptr_get failed - error %i", plat_ret);
 			ret = suit_plat_err_to_processor_err_convert(plat_ret);
+		}
+	}
+
+	if (ret == SUIT_SUCCESS && dst_component_type == SUIT_COMPONENT_TYPE_SOC_SPEC &&
+	    (soc_spec_number == SUIT_SECDOM_COMPONENT_NUMBER_SDFW ||
+	     soc_spec_number == SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY)) {
+		uintptr_t sdfw_update_area_addr = 0;
+		size_t sdfw_update_area_size = 0;
+
+		suit_memory_sdfw_update_area_info_get(&sdfw_update_area_addr,
+						      &sdfw_update_area_size);
+
+		if (sdfw_update_area_size > 0) {
+			/* SoC enforces constrains on update candidate location
+			 */
+			if ((uintptr_t)payload_ptr < sdfw_update_area_addr ||
+			    (uintptr_t)payload_ptr + payload_size >
+				    sdfw_update_area_addr + sdfw_update_area_size) {
+
+				LOG_WRN("SDFW or SDFW_RECOVERY update - candidate mirror required "
+					"(%d bytes)",
+					payload_size);
+#ifdef CONFIG_SUIT_IPUC
+				struct stream_sink mirror_sink;
+				intptr_t mirror_addr =
+					suit_plat_ipuc_sdfw_mirror_addr(payload_size);
+
+				if (mirror_addr == 0) {
+					LOG_ERR("SDFW or SDFW_RECOVERY update - candidate mirror "
+						"not found");
+					ret = suit_plat_err_to_processor_err_convert(
+						SUIT_PLAT_ERR_NOMEM);
+				}
+
+				if (ret == SUIT_SUCCESS) {
+					plat_ret = suit_flash_sink_get(
+						&mirror_sink, (uint8_t *)mirror_addr, payload_size);
+					if (plat_ret != SUIT_PLAT_SUCCESS) {
+						LOG_ERR("Could not acquire SDFW or SDFW_RECOVERY "
+							"mirror sink: %d",
+							plat_ret);
+						ret = suit_plat_err_to_processor_err_convert(
+							plat_ret);
+					}
+				}
+
+				if (ret == SUIT_SUCCESS && mirror_sink.erase != NULL) {
+					plat_ret = mirror_sink.erase(mirror_sink.ctx);
+					if (plat_ret != SUIT_PLAT_SUCCESS) {
+						LOG_ERR("SDFW or SDFW_RECOVERY mirror sink erase "
+							"failed: %d",
+							plat_ret);
+					}
+				}
+
+				if (ret == SUIT_SUCCESS) {
+					LOG_INF("Streaming to SDFW or SDFW_RECOVERY mirror sink, "
+						"%d bytes",
+						payload_size);
+					plat_ret = suit_generic_address_streamer_stream(
+						payload_ptr, payload_size, &mirror_sink);
+
+					if (mirror_sink.flush != NULL) {
+						mirror_sink.flush(mirror_sink.ctx);
+					}
+
+					if (mirror_sink.release != NULL) {
+						mirror_sink.release(mirror_sink.ctx);
+					}
+
+					if (plat_ret != SUIT_PLAT_SUCCESS) {
+						LOG_ERR("Streaming to SDFW or SDFW_RECOVERY mirror "
+							"sink failed: %d",
+							plat_ret);
+						ret = suit_plat_err_to_processor_err_convert(
+							plat_ret);
+					}
+				}
+
+				if (ret == SUIT_SUCCESS) {
+					payload_ptr = (uint8_t *)mirror_addr;
+				}
+#else
+				ret = suit_plat_err_to_processor_err_convert(SUIT_PLAT_ERR_NOMEM);
+#endif
+			}
 		}
 	}
 
