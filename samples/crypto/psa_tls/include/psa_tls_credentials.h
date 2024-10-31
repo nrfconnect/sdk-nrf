@@ -15,6 +15,8 @@ extern "C" {
 #define PSA_PS_CERTIFICATE_UID		(1)
 #define PSA_PS_CERTIFICATE_KEY_UID	(2)
 #define PSA_PS_CA_CERTIFICATE_UID	(3)
+#define PSA_PS_PSK_UID				(4)
+#define PSA_PS_PSK_IDENTITY_UID		(5)
 
 #define APP_SUCCESS			(0)
 #define APP_ERROR			(-1)

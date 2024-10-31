@@ -17,27 +17,6 @@
 LOG_MODULE_REGISTER(psa_tls_sample);
 
 
-static int tls_set_preshared_key(void)
-{
-	LOG_INF("Registering Pre-shared key");
-
-	int err = tls_credential_add(PSK_TAG, TLS_CREDENTIAL_PSK,
-				     psk, sizeof(psk));
-	if (err < 0) {
-		LOG_ERR("Failed to register PSK: %d", err);
-		return err;
-	}
-	err = tls_credential_add(PSK_TAG, TLS_CREDENTIAL_PSK_ID,
-				 psk_id, strlen(psk_id));
-	if (err < 0) {
-		LOG_ERR("Failed to register PSK ID: %d", err);
-		return err;
-	}
-
-	return APP_SUCCESS;
-}
-
-
 int main(void)
 {
 	int err;
@@ -52,11 +31,6 @@ int main(void)
 #endif
 
 	err = tls_set_credentials();
-	if (err < 0) {
-		return APP_ERROR;
-	}
-
-	err = tls_set_preshared_key();
 	if (err < 0) {
 		return APP_ERROR;
 	}

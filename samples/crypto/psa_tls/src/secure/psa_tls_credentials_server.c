@@ -13,10 +13,11 @@ LOG_MODULE_REGISTER(psa_tls_credentials_server_secure);
 #include <zephyr/net/tls_credentials.h>
 #include "psa_tls_credentials.h"
 #include "certificate.h"
+#include "dummy_psk.h"
 
 
-/** @brief Function for registering the server certificate and
- * server private key for the TLS handshake.
+/** @brief Function for registering the server certificate,
+ * server private key and Pre-shared key for the TLS handshake.
  */
 int tls_set_credentials(void)
 {
@@ -36,6 +37,25 @@ int tls_set_credentials(void)
 				 private_key, sizeof(private_key));
 	if (err < 0) {
 		LOG_ERR("Failed to register private key: %d", err);
+		return err;
+	}
+
+	LOG_INF("Registering PSK");
+
+	err = tls_credential_add(PSK_TAG,
+				     TLS_CREDENTIAL_PSK,
+				     psk,
+				     sizeof(psk));
+	if (err < 0) {
+		LOG_ERR("Failed to register PSK: %d", err);
+		return err;
+	}
+
+	err = tls_credential_add(PSK_TAG,
+				 TLS_CREDENTIAL_PSK_ID,
+				 psk_id, strlen(psk_id));
+	if (err < 0) {
+		LOG_ERR("Failed to register PSK ID: %d", err);
 		return err;
 	}
 
