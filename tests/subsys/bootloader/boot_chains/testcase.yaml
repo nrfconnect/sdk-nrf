@@ -2,6 +2,7 @@ common:
   platform_allow:
     nrf52840dk/nrf52840
     nrf5340dk/nrf5340/cpuapp
+    nrf54l15dk/nrf54l15/cpuapp
     # NB: It's not yet supported to boot TF-M from NSIB without
     # MCUBoot enabled as well
   harness: console
