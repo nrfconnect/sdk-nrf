@@ -19,7 +19,7 @@
 #include <zephyr/ipc/pbuf.h>
 
 #define DCACHE_LINE_SIZE (CONFIG_DCACHE_LINE_SIZE)
-BUILD_ASSERT(DCACHE_LINE_SIZE == 32
+BUILD_ASSERT(DCACHE_LINE_SIZE == 32,
 	     "Unexpected data cache line size " STRINGIFY(DCACHE_LINE_SIZE) ", expected 32");
 
 /** Structure to hold pbuf configuration and data. */
