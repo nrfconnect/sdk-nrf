@@ -53,14 +53,14 @@ SPIM_SCK  -  SPIS_SCK
 SPIM_MISO -  SPIS_MISO
 SPIM_MOSI -  SPIS_MOSI
 
-When nrf54l15pdk is HOST and nrf54h20dk is DEVICE then:
+When nrf54l15dk is HOST and nrf54h20dk is DEVICE then:
       nrf54l      nrf54h
 CS:   P2.10   -   P0.11
 SCK:  P1.13   -   P0.01
 MISO: P1.11   -   P0.07
 MOSI: P1.09   -   P0.09
 
-When nrf54l15pdk is DEVICE and nrf54h20dk is HOST then:
+When nrf54l15dk is DEVICE and nrf54h20dk is HOST then:
       nrf54l      nrf54h
 CS:   P1.14   -   P0.10
 SCK:  P1.12   -   P0.00
