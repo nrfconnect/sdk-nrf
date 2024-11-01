@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.9.1
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 10
  */
@@ -28,7 +28,7 @@ extern "C" {
 #define DEFAULT_MAX_QTY 10
 
 struct agnss_req_types_r {
-	int32_t agnss_req_types_int[13];
+	int32_t agnss_req_types_int[17];
 	size_t agnss_req_types_int_count;
 };
 

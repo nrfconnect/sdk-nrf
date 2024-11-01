@@ -2885,6 +2885,21 @@ int nrf_cloud_agnss_type_array_get(const struct nrf_modem_gnss_agnss_data_frame 
 		}
 	}
 
+	system_data_need = system_data_need_get(request, NRF_MODEM_GNSS_SYSTEM_GAL);
+	if (system_data_need) {
+		if (system_data_need->sv_mask_ephe) {
+			array[cnt++] = NRF_CLOUD_AGNSS_GAL_EPHEMERIDES;
+		}
+
+		if (system_data_need->sv_mask_alm) {
+			array[cnt++] = NRF_CLOUD_AGNSS_GAL_ALMANAC;
+		}
+
+		if (request->data_flags & NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST) {
+			array[cnt++] = NRF_CLOUD_AGNSS_GAL_INTEGRITY;
+		}
+	}
+
 	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_KLOBUCHAR_REQUEST) {
 		array[cnt++] = NRF_CLOUD_AGNSS_KLOBUCHAR_CORRECTION;
 	}
@@ -2900,6 +2915,10 @@ int nrf_cloud_agnss_type_array_get(const struct nrf_modem_gnss_agnss_data_frame 
 
 	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST) {
 		array[cnt++] = NRF_CLOUD_AGNSS_LOCATION;
+	}
+
+	if (request->data_flags & NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST) {
+		array[cnt++] = NRF_CLOUD_AGNSS_GGTO;
 	}
 
 	if (cnt == 0) {

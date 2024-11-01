@@ -55,7 +55,7 @@ static void print_ephemeris(struct nrf_modem_gnss_agnss_gps_data_ephemeris *data
 
 static void print_almanac(struct nrf_modem_gnss_agnss_gps_data_almanac *data)
 {
-	printk("almanac\n");
+	printk("almanac:\n");
 	printk("\tsv_id: %u\n", data->sv_id);
 	printk("\twn: %u\n", data->wn);
 	printk("\ttoa: %u\n", data->toa);
@@ -74,7 +74,7 @@ static void print_almanac(struct nrf_modem_gnss_agnss_gps_data_almanac *data)
 
 static void print_klobuchar(struct nrf_modem_gnss_agnss_data_klobuchar *data)
 {
-	printk("klobuchar\n");
+	printk("klobuchar:\n");
 	printk("\talpha0: %d\n", data->alpha0);
 	printk("\talpha1: %d\n", data->alpha1);
 	printk("\talpha2: %d\n", data->alpha2);
@@ -87,7 +87,7 @@ static void print_klobuchar(struct nrf_modem_gnss_agnss_data_klobuchar *data)
 
 static void print_nequick(struct nrf_modem_gnss_agnss_data_nequick *data)
 {
-	printk("nequick\n");
+	printk("nequick:\n");
 	printk("\tai0: %d\n", data->ai0);
 	printk("\tai1: %d\n", data->ai1);
 	printk("\tai2: %d\n", data->ai2);
@@ -97,7 +97,7 @@ static void print_nequick(struct nrf_modem_gnss_agnss_data_nequick *data)
 
 static void print_clock_and_tows(struct nrf_modem_gnss_agnss_gps_data_system_time_and_sv_tow *data)
 {
-	printk("clock_and_tows\n");
+	printk("clock_and_tows:\n");
 	printk("\tdate_day: %u\n", data->date_day);
 	printk("\ttime_full_s: %u\n", data->time_full_s);
 	printk("\ttime_frac_ms: %u\n", data->time_frac_ms);
@@ -113,7 +113,7 @@ static void print_clock_and_tows(struct nrf_modem_gnss_agnss_gps_data_system_tim
 
 static void print_location(struct nrf_modem_gnss_agnss_data_location *data)
 {
-	printk("location\n");
+	printk("location:\n");
 	printk("\tlatitude: %d\n", data->latitude);
 	printk("\tlongitude: %d\n", data->longitude);
 	printk("\taltitude: %d\n", data->altitude);
@@ -122,6 +122,62 @@ static void print_location(struct nrf_modem_gnss_agnss_data_location *data)
 	printk("\torientation_major: %u\n", data->orientation_major);
 	printk("\tunc_altitude: %u\n", data->unc_altitude);
 	printk("\tconfidence: %u\n", data->confidence);
+}
+
+static void print_gal_ephemeris(struct nrf_modem_gnss_agnss_gal_data_ephemeris *data)
+{
+	printk("gal_ephemeris:\n");
+	printk("\tsv_id: %u\n", data->sv_id);
+	printk("\ttoc: %u\n", data->toc);
+	printk("\taf2: %d\n", data->af2);
+	printk("\taf1: %d\n", data->af1);
+	printk("\taf0: %d\n", data->af0);
+	printk("\ttgd: %d\n", data->tgd);
+	printk("\tsisa: %u\n", data->sisa);
+	printk("\ttoe: %u\n", data->toe);
+	printk("\tw: %d\n", data->w);
+	printk("\tdelta_n: %d\n", data->delta_n);
+	printk("\tm0: %d\n", data->m0);
+	printk("\tomega_dot: %d\n", data->omega_dot);
+	printk("\te: %u\n", data->e);
+	printk("\tidot: %d\n", data->idot);
+	printk("\tsqrt_a: %u\n", data->sqrt_a);
+	printk("\ti0: %d\n", data->i0);
+	printk("\tomega0: %d\n", data->omega0);
+	printk("\tcrs: %d\n", data->crs);
+	printk("\tcis: %d\n", data->cis);
+	printk("\tcus: %d\n", data->cus);
+	printk("\tcrc: %d\n", data->crc);
+	printk("\tcic: %d\n", data->cic);
+	printk("\tcuc: %d\n", data->cuc);
+}
+
+static void print_gal_almanac(struct nrf_modem_gnss_agnss_gal_data_almanac *data)
+{
+	printk("gal_almanac:\n");
+	printk("\tsv_id: %u\n", data->sv_id);
+	printk("\twn: %u\n", data->wn);
+	printk("\ttoa: %u\n", data->toa);
+	printk("\tioda: %u\n", data->ioda);
+	printk("\te: %u\n", data->e);
+	printk("\tdelta_i: %d\n", data->delta_i);
+	printk("\tomega_dot: %d\n", data->omega_dot);
+	printk("\tsv_health: %u\n", data->sv_health);
+	printk("\tsqrt_a: %d\n", data->sqrt_a);
+	printk("\tomega0: %d\n", data->omega0);
+	printk("\tw: %d\n", data->w);
+	printk("\tm0: %d\n", data->m0);
+	printk("\taf0: %d\n", data->af0);
+	printk("\taf1: %d\n", data->af1);
+}
+
+static void print_ggto(struct nrf_modem_gnss_agnss_data_ggto *data)
+{
+	printk("ggto:\n");
+	printk("\ta0: %d\n", data->a0);
+	printk("\ta1: %d\n", data->a1);
+	printk("\tt0g: %u\n", data->t0g);
+	printk("\twn: %u\n", data->wn);
 }
 
 static void print_gps_integrity(struct nrf_modem_gnss_agps_data_integrity *data)
@@ -178,6 +234,18 @@ void agnss_print(uint16_t type, void *data)
 	}
 	case NRF_MODEM_GNSS_AGNSS_INTEGRITY: {
 		print_gnss_integrity((struct nrf_modem_gnss_agnss_data_integrity *)data);
+		break;
+	}
+	case NRF_MODEM_GNSS_AGNSS_GAL_EPHEMERIDES: {
+		print_gal_ephemeris((struct nrf_modem_gnss_agnss_gal_data_ephemeris *)data);
+		break;
+	}
+	case NRF_MODEM_GNSS_AGNSS_GAL_ALMANAC: {
+		print_gal_almanac((struct nrf_modem_gnss_agnss_gal_data_almanac *)data);
+		break;
+	}
+	case NRF_MODEM_GNSS_AGNSS_GGTO: {
+		print_ggto((struct nrf_modem_gnss_agnss_data_ggto *)data);
 		break;
 	}
 	default:
