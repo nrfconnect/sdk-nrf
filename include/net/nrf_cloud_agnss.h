@@ -24,7 +24,11 @@ extern "C" {
  * Maximum size of assistance data in bytes when all assistance data types are received.
  * Can be used to set the buffer size for CoAP.
  */
+#if defined(CONFIG_SOC_SERIES_NRF92)
+#define NRF_CLOUD_AGNSS_MAX_DATA_SIZE 7296
+#else
 #define NRF_CLOUD_AGNSS_MAX_DATA_SIZE 4096
+#endif
 
 /** Exclude the mask angle from the A-GNSS request */
 #define NRF_CLOUD_AGNSS_MASK_ANGLE_NONE	0xFF

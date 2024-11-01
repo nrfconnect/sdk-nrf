@@ -9,7 +9,7 @@
 ; ************
 
 agnss_req = {
-	? types => [1*13 int],
+	? types => [1*17 int],
 	? eci => uint,
 	? filtered => bool,
 	? mask => uint,

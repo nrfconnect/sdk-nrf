@@ -29,6 +29,12 @@ extern void agnss_print(enum nrf_cloud_agnss_type type, void *data);
 
 static K_SEM_DEFINE(agnss_injection_active, 1, 1);
 
+enum {
+	PROCESSED_SYSTEM_GPS = 0,
+	PROCESSED_SYSTEM_QZSS,
+	PROCESSED_SYSTEM_GAL,
+};
+
 static bool agnss_print_enabled;
 static struct nrf_modem_gnss_agnss_data_frame processed;
 static K_MUTEX_DEFINE(processed_lock);
@@ -61,8 +67,10 @@ void nrf_cloud_agnss_set_request_in_progress(bool in_progress)
 	if (in_progress) {
 		k_mutex_lock(&processed_lock, K_FOREVER);
 		memset(&processed, 0, sizeof(processed));
-		processed.system_count = 1;
-		processed.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
+		processed.system_count = 3;
+		processed.system[PROCESSED_SYSTEM_GPS].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
+		processed.system[PROCESSED_SYSTEM_QZSS].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
+		processed.system[PROCESSED_SYSTEM_GAL].system_id = NRF_MODEM_GNSS_SYSTEM_GAL;
 		k_mutex_unlock(&processed_lock);
 	}
 }
@@ -232,9 +240,85 @@ static void copy_integrity_qzss(struct nrf_modem_gnss_agnss_data_integrity *dst,
 	__ASSERT_NO_MSG(dst != NULL);
 	__ASSERT_NO_MSG(src != NULL);
 
-	dst->signal_count = 1;
-	dst->signal[0].signal_id = NRF_MODEM_GNSS_SIGNAL_QZSS_L1_CA;
-	dst->signal[0].integrity_mask = src->integrity->integrity_mask;
+	dst->signal[dst->signal_count].signal_id = NRF_MODEM_GNSS_SIGNAL_QZSS_L1_CA;
+	dst->signal[dst->signal_count].integrity_mask = src->integrity->integrity_mask;
+	dst->signal_count++;
+}
+
+static void copy_integrity_gal(struct nrf_modem_gnss_agnss_data_integrity *dst,
+			       struct nrf_cloud_agnss_element *src)
+{
+	__ASSERT_NO_MSG(dst != NULL);
+	__ASSERT_NO_MSG(src != NULL);
+
+	dst->signal[dst->signal_count].signal_id = NRF_MODEM_GNSS_SIGNAL_GAL_E1_OS;
+	dst->signal[dst->signal_count].integrity_mask = src->integrity->integrity_mask;
+	dst->signal_count++;
+}
+
+static void copy_ephemeris_gal(struct nrf_modem_gnss_agnss_gal_data_ephemeris *dst,
+			       struct nrf_cloud_agnss_element *src)
+{
+	__ASSERT_NO_MSG(dst != NULL);
+	__ASSERT_NO_MSG(src != NULL);
+
+	dst->sv_id     = src->gal_ephemeris->sv_id;
+	dst->toc       = src->gal_ephemeris->toc;
+	dst->af2       = src->gal_ephemeris->af2;
+	dst->af1       = src->gal_ephemeris->af1;
+	dst->af0       = src->gal_ephemeris->af0;
+	dst->tgd       = src->gal_ephemeris->tgd;
+	dst->sisa      = src->gal_ephemeris->sisa;
+	dst->toe       = src->gal_ephemeris->toe;
+	dst->w         = src->gal_ephemeris->w;
+	dst->delta_n   = src->gal_ephemeris->delta_n;
+	dst->m0        = src->gal_ephemeris->m0;
+	dst->omega_dot = src->gal_ephemeris->omega_dot;
+	dst->e         = src->gal_ephemeris->e;
+	dst->idot      = src->gal_ephemeris->idot;
+	dst->sqrt_a    = src->gal_ephemeris->sqrt_a;
+	dst->i0        = src->gal_ephemeris->i0;
+	dst->omega0    = src->gal_ephemeris->omega0;
+	dst->crs       = src->gal_ephemeris->crs;
+	dst->cis       = src->gal_ephemeris->cis;
+	dst->cus       = src->gal_ephemeris->cus;
+	dst->crc       = src->gal_ephemeris->crc;
+	dst->cic       = src->gal_ephemeris->cic;
+	dst->cuc       = src->gal_ephemeris->cuc;
+}
+
+static void copy_almanac_gal(struct nrf_modem_gnss_agnss_gal_data_almanac *dst,
+			     struct nrf_cloud_agnss_element *src)
+{
+	__ASSERT_NO_MSG(dst != NULL);
+	__ASSERT_NO_MSG(src != NULL);
+
+	dst->sv_id     = src->gal_almanac->sv_id;
+	dst->wn        = src->gal_almanac->wn;
+	dst->toa       = src->gal_almanac->toa;
+	dst->ioda      = src->gal_almanac->ioda;
+	dst->e         = src->gal_almanac->e;
+	dst->delta_i   = src->gal_almanac->delta_i;
+	dst->omega_dot = src->gal_almanac->omega_dot;
+	dst->sv_health = src->gal_almanac->sv_health;
+	dst->sqrt_a    = src->gal_almanac->sqrt_a;
+	dst->omega0    = src->gal_almanac->omega0;
+	dst->w         = src->gal_almanac->w;
+	dst->m0        = src->gal_almanac->m0;
+	dst->af0       = src->gal_almanac->af0;
+	dst->af1       = src->gal_almanac->af1;
+}
+
+static void copy_ggto(struct nrf_modem_gnss_agnss_data_ggto *dst,
+		      struct nrf_cloud_agnss_element *src)
+{
+	__ASSERT_NO_MSG(dst != NULL);
+	__ASSERT_NO_MSG(src != NULL);
+
+	dst->a0  = src->ggto->a0;
+	dst->a1  = src->ggto->a1;
+	dst->t0g = src->ggto->t0g;
+	dst->wn  = src->ggto->wn;
 }
 
 static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
@@ -260,7 +344,7 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 		struct nrf_modem_gnss_agnss_gps_data_ephemeris ephemeris;
 
 		if (agnss_data->type == NRF_CLOUD_AGNSS_GPS_EPHEMERIDES) {
-			processed.system[0].sv_mask_ephe |=
+			processed.system[PROCESSED_SYSTEM_GPS].sv_mask_ephe |=
 				(1 << (agnss_data->ephemeris->sv_id - 1));
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 			if (agnss_data->ephemeris->health == NRF_CLOUD_PGPS_EMPTY_EPHEM_HEALTH) {
@@ -269,6 +353,9 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 				return 0;
 			}
 #endif
+		} else if (agnss_data->type == NRF_CLOUD_AGNSS_QZSS_EPHEMERIDES) {
+			processed.system[PROCESSED_SYSTEM_QZSS].sv_mask_ephe |=
+				(1 << (agnss_data->ephemeris->sv_id - 193));
 		}
 
 		copy_ephemeris(&ephemeris, agnss_data);
@@ -284,7 +371,11 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 		struct nrf_modem_gnss_agnss_gps_data_almanac almanac;
 
 		if (agnss_data->type == NRF_CLOUD_AGNSS_GPS_ALMANAC) {
-			processed.system[0].sv_mask_alm |= (1 << (agnss_data->almanac->sv_id - 1));
+			processed.system[PROCESSED_SYSTEM_GPS].sv_mask_alm |=
+				(1 << (agnss_data->almanac->sv_id - 1));
+		} else if (agnss_data->type == NRF_CLOUD_AGNSS_QZSS_ALMANAC) {
+			processed.system[PROCESSED_SYSTEM_QZSS].sv_mask_alm |=
+				(1 << (agnss_data->almanac->sv_id - 193));
 		}
 
 		copy_almanac(&almanac, agnss_data);
@@ -354,8 +445,50 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 
 		return send_to_modem(&integrity, sizeof(integrity), NRF_MODEM_GNSS_AGNSS_INTEGRITY);
 	}
+	case NRF_CLOUD_AGNSS_GAL_INTEGRITY: {
+		struct nrf_modem_gnss_agnss_data_integrity integrity = {0};
+
+		processed.data_flags |= NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
+		copy_integrity_gal(&integrity, agnss_data);
+		LOG_DBG("A-GNSS type: NRF_CLOUD_AGNSS_GAL_INTEGRITY");
+
+		return send_to_modem(&integrity, sizeof(integrity),
+				     NRF_MODEM_GNSS_AGNSS_INTEGRITY);
+	}
+	case NRF_CLOUD_AGNSS_GAL_EPHEMERIDES: {
+		struct nrf_modem_gnss_agnss_gal_data_ephemeris ephemeris;
+
+		processed.system[PROCESSED_SYSTEM_GAL].sv_mask_ephe |=
+			(1 << (agnss_data->gal_ephemeris->sv_id - 1));
+		copy_ephemeris_gal(&ephemeris, agnss_data);
+		LOG_DBG("A-GNSS type: GAL EPHEMERIS %d", agnss_data->gal_ephemeris->sv_id);
+
+		return send_to_modem(&ephemeris, sizeof(ephemeris),
+				     NRF_MODEM_GNSS_AGNSS_GAL_EPHEMERIDES);
+	}
+	case NRF_CLOUD_AGNSS_GAL_ALMANAC: {
+		struct nrf_modem_gnss_agnss_gal_data_almanac almanac;
+
+		processed.system[PROCESSED_SYSTEM_GAL].sv_mask_alm |=
+			(1 << (agnss_data->gal_almanac->sv_id - 1));
+		copy_almanac_gal(&almanac, agnss_data);
+		LOG_DBG("A-GNSS type: GAL ALMANAC %d", agnss_data->gal_almanac->sv_id);
+
+		return send_to_modem(&almanac, sizeof(almanac),
+				     NRF_MODEM_GNSS_AGNSS_GAL_ALMANAC);
+	}
+	case NRF_CLOUD_AGNSS_GGTO: {
+		struct nrf_modem_gnss_agnss_data_ggto ggto;
+
+		processed.data_flags |= NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST;
+		copy_ggto(&ggto, agnss_data);
+		LOG_DBG("A-GNSS type: NRF_CLOUD_AGNSS_GGTO");
+
+		return send_to_modem(&ggto, sizeof(ggto),
+				     NRF_MODEM_GNSS_AGNSS_GGTO);
+	}
 	default:
-		LOG_WRN("Unknown AGNSS data type: %d", agnss_data->type);
+		LOG_WRN("Unknown A-GNSS data type: %d", agnss_data->type);
 		break;
 	}
 
@@ -436,6 +569,22 @@ static size_t get_next_agnss_element(struct nrf_cloud_agnss_element *element, co
 	case NRF_CLOUD_AGNSS_QZSS_INTEGRITY:
 		element->integrity = (struct nrf_cloud_agnss_integrity *)(buf + len);
 		len += sizeof(struct nrf_cloud_agnss_integrity);
+		break;
+	case NRF_CLOUD_AGNSS_GAL_INTEGRITY:
+		element->gal_integrity = (struct nrf_cloud_agnss_gal_integrity *)(buf + len);
+		len += sizeof(struct nrf_cloud_agnss_gal_integrity);
+		break;
+	case NRF_CLOUD_AGNSS_GAL_EPHEMERIDES:
+		element->gal_ephemeris = (struct nrf_cloud_agnss_gal_ephemeris *)(buf + len);
+		len += sizeof(struct nrf_cloud_agnss_gal_ephemeris);
+		break;
+	case NRF_CLOUD_AGNSS_GAL_ALMANAC:
+		element->gal_almanac = (struct nrf_cloud_agnss_gal_almanac *)(buf + len);
+		len += sizeof(struct nrf_cloud_agnss_gal_almanac);
+		break;
+	case NRF_CLOUD_AGNSS_GGTO:
+		element->ggto = (struct nrf_cloud_agnss_ggto *)(buf + len);
+		len += sizeof(struct nrf_cloud_agnss_ggto);
 		break;
 	default:
 		LOG_DBG("Unhandled A-GNSS data type: %d", element->type);

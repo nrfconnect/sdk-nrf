@@ -39,11 +39,14 @@ enum nrf_cloud_agnss_type {
 	NRF_CLOUD_AGNSS_GPS_INTEGRITY = 9,
 	/* This value signifies prediction data */
 	NRF_CLOUD_AGNSS__RSVD_PREDICTION_DATA = 10,
-	/* A-GNSS types for modem firmware version v2.0.0 or later */
 	NRF_CLOUD_AGNSS_QZSS_ALMANAC = 11,
 	NRF_CLOUD_AGNSS_QZSS_EPHEMERIDES = 12,
 	NRF_CLOUD_AGNSS_QZSS_INTEGRITY = 13,
-	NRF_CLOUD_AGNSS__LAST = NRF_CLOUD_AGNSS_QZSS_INTEGRITY,
+	NRF_CLOUD_AGNSS_GAL_ALMANAC = 14,
+	NRF_CLOUD_AGNSS_GAL_EPHEMERIDES = 15,
+	NRF_CLOUD_AGNSS_GGTO = 16,
+	NRF_CLOUD_AGNSS_GAL_INTEGRITY = 17,
+	NRF_CLOUD_AGNSS__LAST = NRF_CLOUD_AGNSS_GAL_INTEGRITY,
 	/* Ignore the reserved prediction data enum for the count calculation */
 	NRF_CLOUD_AGNSS__TYPES_COUNT = NRF_CLOUD_AGNSS__LAST - NRF_CLOUD_AGNSS__FIRST
 };
@@ -151,7 +154,61 @@ struct nrf_cloud_agnss_location {
 
 struct nrf_cloud_agnss_integrity {
 	uint32_t integrity_mask;
-};
+} __packed;
+
+struct nrf_cloud_agnss_gal_ephemeris {
+	uint8_t sv_id;
+	uint16_t toc;
+	int8_t af2;
+	int32_t af1;
+	int32_t af0;
+	int16_t tgd;
+	uint8_t sisa;
+	uint16_t toe;
+	int32_t w;
+	int16_t delta_n;
+	int32_t m0;
+	int32_t omega_dot;
+	uint32_t e;
+	int16_t idot;
+	uint32_t sqrt_a;
+	int32_t i0;
+	int32_t omega0;
+	int16_t crs;
+	int16_t cis;
+	int16_t cus;
+	int16_t crc;
+	int16_t cic;
+	int16_t cuc;
+} __packed;
+
+struct nrf_cloud_agnss_gal_almanac {
+	uint8_t sv_id;
+	uint8_t wn;
+	uint16_t toa;
+	uint8_t ioda;
+	uint16_t e;
+	int16_t delta_i;
+	int16_t omega_dot;
+	uint8_t sv_health;
+	int16_t sqrt_a;
+	int16_t omega0;
+	int16_t w;
+	int16_t m0;
+	int16_t af0;
+	int16_t af1;
+} __packed;
+
+struct nrf_cloud_agnss_gal_integrity {
+	uint64_t integrity_mask;
+} __packed;
+
+struct nrf_cloud_agnss_ggto {
+	int16_t a0;
+	int16_t a1;
+	uint16_t t0g;
+	uint16_t wn;
+} __packed;
 
 struct nrf_cloud_agnss_element {
 	enum nrf_cloud_agnss_type type;
@@ -167,6 +224,10 @@ struct nrf_cloud_agnss_element {
 		struct nrf_cloud_agnss_system_time *time_and_tow;
 		struct nrf_cloud_agnss_location *location;
 		struct nrf_cloud_agnss_integrity *integrity;
+		struct nrf_cloud_agnss_gal_ephemeris *gal_ephemeris;
+		struct nrf_cloud_agnss_gal_almanac *gal_almanac;
+		struct nrf_cloud_agnss_gal_integrity *gal_integrity;
+		struct nrf_cloud_agnss_ggto *ggto;
 	};
 };
 
