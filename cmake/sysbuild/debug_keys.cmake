@@ -47,12 +47,14 @@ if(NOT SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM AND "${SB_CONFIG_SECURE_BOOT_SIGNING
     )
   set(SIGN_KEY_FILE_DEPENDS debug_sign_key_target)
 else()
-  if(IS_ABSOLUTE ${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
-    set(SIGNATURE_PRIVATE_KEY_FILE ${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
+  string(CONFIGURE "${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE}" keyfile)
+  if(IS_ABSOLUTE ${keyfile})
+    set(SIGNATURE_PRIVATE_KEY_FILE ${keyfile})
   else()
     # Resolve path relative to the application configuration directory.
-    set(SIGNATURE_PRIVATE_KEY_FILE ${APPLICATION_CONFIG_DIR}/${SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE})
+    set(SIGNATURE_PRIVATE_KEY_FILE ${APPLICATION_CONFIG_DIR}/${keyfile})
   endif()
+  set(keyfile)
 
   if(NOT EXISTS ${SIGNATURE_PRIVATE_KEY_FILE})
     message(FATAL_ERROR "Config points to non-existing PEM file '${SIGNATURE_PRIVATE_KEY_FILE}'")
