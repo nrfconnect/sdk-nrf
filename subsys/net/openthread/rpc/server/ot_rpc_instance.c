@@ -203,9 +203,9 @@ static void ot_state_changed_callback(otChangedFlags aFlags, void *aContext)
 	ot_rpc_callback_t *cb = aContext;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 15);
-	zcbor_uint32_put(ctx.zs, cb->callback);
-	zcbor_uint32_put(ctx.zs, cb->context);
-	zcbor_uint32_put(ctx.zs, aFlags);
+	nrf_rpc_encode_uint(&ctx, cb->callback);
+	nrf_rpc_encode_uint(&ctx, cb->context);
+	nrf_rpc_encode_uint(&ctx, aFlags);
 
 	openthread_api_mutex_unlock(openthread_get_default_context());
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_STATE_CHANGED, &ctx, ot_rpc_decode_void,
@@ -218,18 +218,16 @@ static void ot_rpc_cmd_set_state_changed_callback(const struct nrf_rpc_group *gr
 {
 	uint32_t callback;
 	uint32_t context;
-	bool decoded_ok;
 	ot_rpc_callback_t *cb;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_uint32_decode(ctx->zs, &callback);
-	decoded_ok = decoded_ok && zcbor_uint32_decode(ctx->zs, &context);
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	callback = nrf_rpc_decode_uint(ctx);
+	context = nrf_rpc_decode_uint(ctx);
 
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto out;
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_SET_STATE_CHANGED_CALLBACK);
+		return;
 	}
 
 	cb = ot_rpc_callback_put(callback, context);
@@ -246,7 +244,7 @@ static void ot_rpc_cmd_set_state_changed_callback(const struct nrf_rpc_group *gr
 
 out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint32_put(rsp_ctx.zs, (uint32_t)error);
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -260,16 +258,15 @@ static void ot_rpc_cmd_remove_state_changed_callback(const struct nrf_rpc_group 
 {
 	uint32_t callback;
 	uint32_t context;
-	bool decoded_ok;
 	ot_rpc_callback_t *cb;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_uint32_decode(ctx->zs, &callback);
-	decoded_ok = decoded_ok && zcbor_uint32_decode(ctx->zs, &context);
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	callback = nrf_rpc_decode_uint(ctx);
+	context = nrf_rpc_decode_uint(ctx);
 
-	if (!decoded_ok) {
-		goto out;
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_REMOVE_STATE_CHANGED_CALLBACK);
+		return;
 	}
 
 	cb = ot_rpc_callback_del(callback, context);

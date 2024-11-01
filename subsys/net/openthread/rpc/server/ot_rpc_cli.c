@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/cli.h>
-
 #include <zephyr/net/openthread.h>
 
 #include <stdio.h>
@@ -33,7 +33,7 @@ static int ot_cli_output_callback(void *aContext, const char *aFormat, va_list a
 	num_written = MIN((size_t)result, sizeof(output_line_buffer));
 	cbor_buffer_size += num_written;
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
-	zcbor_tstr_encode_ptr(ctx.zs, output_line_buffer, num_written);
+	nrf_rpc_encode_str(&ctx, output_line_buffer, num_written);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_OUTPUT, &ctx, ot_rpc_decode_void, NULL);
 
@@ -68,27 +68,23 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_init, OT_RPC_CMD_CLI_INIT, ot_
 static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	struct zcbor_string input_line;
 	char input_line_buffer[256];
 	struct nrf_rpc_cbor_ctx rsp_ctx;
+	char *result;
 
 	/* Parse the input */
+	result = nrf_rpc_decode_str(ctx, input_line_buffer, sizeof(input_line_buffer));
 
-	if (!zcbor_tstr_decode(ctx->zs, &input_line)) {
-		goto error;
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_CLI_INPUT_LINE);
+		return;
 	}
 
-	if (input_line.len >= sizeof(input_line_buffer)) {
-		goto error;
+	if (result == NULL) {
+		return;
 	}
-
-	memcpy(input_line_buffer, input_line.value, input_line.len);
-	input_line_buffer[input_line.len] = '\0';
-
-	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	/* Execute OT CLI command */
-
 	openthread_api_mutex_lock(openthread_get_default_context());
 	otCliInputLine(input_line_buffer);
 	openthread_api_mutex_unlock(openthread_get_default_context());
@@ -98,9 +94,6 @@ static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
-
-error:
-	return;
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_input_line, OT_RPC_CMD_CLI_INPUT_LINE,

@@ -45,11 +45,11 @@ static void ot_rpc_cmd_ip6_get_unicast_addrs(const struct nrf_rpc_group *group,
 			((uint16_t)addr->mMeshLocal << OT_RPC_NETIF_ADDRESS_MESH_LOCAL_OFFSET);
 
 		zcbor_list_start_encode(rsp_ctx.zs, 4);
-		zcbor_bstr_encode_ptr(rsp_ctx.zs, (const char *)addr->mAddress.mFields.m8,
+		nrf_rpc_encode_buffer(&rsp_ctx, addr->mAddress.mFields.m8,
 				      sizeof(addr->mAddress.mFields.m8));
-		zcbor_uint32_put(rsp_ctx.zs, addr->mPrefixLength);
-		zcbor_uint32_put(rsp_ctx.zs, addr->mAddressOrigin);
-		zcbor_uint32_put(rsp_ctx.zs, flags);
+		nrf_rpc_encode_uint(&rsp_ctx, addr->mPrefixLength);
+		nrf_rpc_encode_uint(&rsp_ctx, addr->mAddressOrigin);
+		nrf_rpc_encode_uint(&rsp_ctx, flags);
 		zcbor_list_end_encode(rsp_ctx.zs, 4);
 	}
 
@@ -78,8 +78,7 @@ static void ot_rpc_cmd_ip6_get_multicast_addrs(const struct nrf_rpc_group *group
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, addr_count * 17);
 
 	for (; addr; addr = addr->mNext) {
-		zcbor_bstr_encode_ptr(rsp_ctx.zs, (const char *)addr->mAddress.mFields.m8,
-				      OT_IP6_ADDRESS_SIZE);
+		nrf_rpc_encode_buffer(&rsp_ctx, addr->mAddress.mFields.m8, OT_IP6_ADDRESS_SIZE);
 	}
 
 	openthread_api_mutex_unlock(openthread_get_default_context());
@@ -91,25 +90,21 @@ static void ot_rpc_cmd_ip6_set_enabled(const struct nrf_rpc_group *group,
 				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	bool enabled;
-	bool decoded_ok;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_bool_decode(ctx->zs, &enabled);
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto out;
+	enabled = nrf_rpc_decode_bool(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_IP6_SET_ENABLED);
+		return;
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otIp6SetEnabled(openthread_get_default_instance(), enabled);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(error));
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -126,7 +121,7 @@ static void ot_rpc_cmd_ip6_is_enabled(const struct nrf_rpc_group *group,
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
-	zcbor_bool_encode(rsp_ctx.zs, &enabled);
+	nrf_rpc_encode_bool(&rsp_ctx, enabled);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -134,29 +129,31 @@ static void ot_rpc_cmd_ip6_subscribe_multicast_address(const struct nrf_rpc_grou
 						       struct nrf_rpc_cbor_ctx *ctx,
 						       void *handler_data)
 {
-	struct zcbor_string addr_bstr;
+	const uint8_t *addr_str;
+	size_t addr_size = 0;
 	otIp6Address addr;
-	bool decoded_ok;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_bstr_decode(ctx->zs, &addr_bstr);
-	decoded_ok = decoded_ok && (addr_bstr.len == OT_IP6_ADDRESS_SIZE);
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	addr_str = nrf_rpc_decode_buffer_ptr_and_size(ctx, &addr_size);
 
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto out;
+	if (addr_size == OT_IP6_ADDRESS_SIZE) {
+		memcpy(addr.mFields.m8, addr_str, addr_size);
+	} else {
+		nrf_rpc_decoder_invalid(ctx, ZCBOR_ERR_UNKNOWN);
 	}
 
-	memcpy(addr.mFields.m8, addr_bstr.value, addr_bstr.len);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_IP6_SUBSCRIBE_MADDR);
+		return;
+	}
+
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otIp6SubscribeMulticastAddress(openthread_get_default_instance(), &addr);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(error));
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -164,29 +161,35 @@ static void ot_rpc_cmd_ip6_unsubscribe_multicast_address(const struct nrf_rpc_gr
 							 struct nrf_rpc_cbor_ctx *ctx,
 							 void *handler_data)
 {
-	struct zcbor_string addr_bstr;
+	const uint8_t *addr_str;
+	size_t addr_size = 0;
 	otIp6Address addr;
-	bool decoded_ok;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_bstr_decode(ctx->zs, &addr_bstr);
-	decoded_ok = decoded_ok && (addr_bstr.len == OT_IP6_ADDRESS_SIZE);
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	addr_str = nrf_rpc_decode_buffer_ptr_and_size(ctx, &addr_size);
 
-	if (!decoded_ok) {
+	if (addr_size == OT_IP6_ADDRESS_SIZE) {
+		memcpy(addr.mFields.m8, addr_str, addr_size);
+	}
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_IP6_UNSUBSCRIBE_MADDR);
+		return;
+	}
+
+	if (addr_size != OT_IP6_ADDRESS_SIZE) {
 		error = OT_ERROR_INVALID_ARGS;
 		goto out;
 	}
 
-	memcpy(addr.mFields.m8, addr_bstr.value, addr_bstr.len);
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otIp6UnsubscribeMulticastAddress(openthread_get_default_instance(), &addr);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(error));
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 

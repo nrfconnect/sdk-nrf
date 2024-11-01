@@ -58,16 +58,12 @@ static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 			    void *handler_data)
 {
 	ot_msg_key key = 0;
-	bool decoding_ok;
 	otMessage *message;
 
-	decoding_ok = zcbor_uint_decode(ctx->zs, &key, sizeof(key));
-
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoding_ok) {
+	key = nrf_rpc_decode_uint(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_FREE);
-		goto exit;
+		return;
 	}
 
 	message = ot_msg_get(key);
@@ -80,67 +76,56 @@ static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 
 	ot_msg_free(key);
 
-exit:
 	nrf_rpc_rsp_send_void(group);
 }
 
 static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			      void *handler_data)
 {
-	otError error = OT_ERROR_NONE;
+	otError error = OT_ERROR_INVALID_ARGS;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
-	struct zcbor_string zst;
 	uint32_t key;
-	bool decoding_ok;
+	const void *data;
+	size_t size = 0;
 	otMessage *message;
 
-	decoding_ok = zcbor_uint_decode(ctx->zs, &key, sizeof(uint32_t));
+	key = nrf_rpc_decode_uint(ctx);
+	data = nrf_rpc_decode_buffer_ptr_and_size(ctx, &size);
 
-	if (!decoding_ok) {
-		nrf_rpc_cbor_decoding_done(group, ctx);
+	if (data && size && nrf_rpc_decode_valid(ctx)) {
+		message = ot_msg_get(key);
+
+		if (message != NULL) {
+			openthread_api_mutex_lock(openthread_get_default_context());
+			error = otMessageAppend(message, data, size);
+			openthread_api_mutex_unlock(openthread_get_default_context());
+		}
+	}
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
+		return;
 	}
 
-	decoding_ok = zcbor_bstr_decode(ctx->zs, &zst);
-
-	if (!decoding_ok) {
-		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
-		error = OT_ERROR_INVALID_ARGS;
-		goto exit;
-	}
-
-	message = ot_msg_get(key);
-
-	if (message != NULL) {
-		openthread_api_mutex_lock(openthread_get_default_context());
-		error = otMessageAppend(ot_msg_get(key), zst.value, zst.len);
-		openthread_api_mutex_unlock(openthread_get_default_context());
-	} else {
-		error = OT_ERROR_INVALID_ARGS;
-	}
-
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-exit:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(otError) + 1);
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(otError));
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
 static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			       void *handler_data)
 {
-	ot_msg_key key = 0;
+	ot_msg_key key;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	otMessageSettings settings;
 	otMessageSettings *pSettings;
 
 	pSettings = nrf_rpc_decode_buffer(ctx, &settings, sizeof(otMessageSettings));
 
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_NEW_MESSAGE);
+		return;
+	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	key = ot_reg_msg_alloc(otUdpNewMessage(openthread_get_default_instance(), pSettings));
@@ -151,7 +136,7 @@ static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc
 	}
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(key) + 1);
-	zcbor_uint_encode(rsp_ctx.zs, &key, sizeof(key));
+	nrf_rpc_encode_uint(&rsp_ctx, key);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -159,18 +144,14 @@ static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_
 			      void *handler_data)
 {
 	ot_msg_key key;
-	bool decoding_ok;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t length = 0;
 	otMessage *message;
 
-	decoding_ok = zcbor_uint_decode(ctx->zs, &key, sizeof(key));
-
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoding_ok) {
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
-		goto exit;
+	key = nrf_rpc_decode_uint(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_GET_LENGTH);
+		return;
 	}
 
 	message = ot_msg_get(key);
@@ -181,10 +162,8 @@ static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_
 		openthread_api_mutex_unlock(openthread_get_default_context());
 	}
 
-exit:
-
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(length) + 2);
-	zcbor_uint_encode(rsp_ctx.zs, &length, sizeof(length));
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(length) + 1);
+	nrf_rpc_encode_uint(&rsp_ctx, length);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -192,18 +171,14 @@ static void ot_rpc_get_offset(const struct nrf_rpc_group *group, struct nrf_rpc_
 			      void *handler_data)
 {
 	ot_msg_key key;
-	bool decoding_ok;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t offset = 0;
 	otMessage *message;
 
-	decoding_ok = zcbor_uint_decode(ctx->zs, &key, sizeof(key));
-
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoding_ok) {
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
-		goto exit;
+	key = nrf_rpc_decode_uint(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_GET_OFFSET);
+		return;
 	}
 
 	message = ot_msg_get(key);
@@ -214,10 +189,8 @@ static void ot_rpc_get_offset(const struct nrf_rpc_group *group, struct nrf_rpc_
 		openthread_api_mutex_unlock(openthread_get_default_context());
 	}
 
-exit:
-
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(offset) + 1);
-	zcbor_uint_encode(rsp_ctx.zs, &offset, sizeof(offset));
+	nrf_rpc_encode_uint(&rsp_ctx, offset);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -233,32 +206,20 @@ static void ot_rpc_msg_read(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 	uint16_t read = 0;
 	otMessage *message;
 
-	if (!zcbor_uint_decode(ctx->zs, &key, sizeof(key))) {
-		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
-		goto exit;
+	key = nrf_rpc_decode_uint(ctx);
+	offset = nrf_rpc_decode_uint(ctx);
+	length = nrf_rpc_decode_uint(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_READ);
+		return;
 	}
-
-	if (!zcbor_uint_decode(ctx->zs, &offset, sizeof(offset))) {
-		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
-		goto exit;
-	}
-
-	if (!zcbor_uint_decode(ctx->zs, &length, sizeof(length))) {
-		nrf_rpc_cbor_decoding_done(group, ctx);
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_APPEND);
-		goto exit;
-	}
-
-	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, length + 2);
 
 	message = ot_msg_get(key);
 
 	if (message == NULL) {
-		zcbor_nil_put(rsp_ctx.zs, NULL);
+		nrf_rpc_encode_null(&rsp_ctx);
 		goto exit;
 	}
 
