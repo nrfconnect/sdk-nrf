@@ -8,7 +8,7 @@
 SCRIPT_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 SCRIPT_NAME=$(basename "$0")
 
-${SCRIPT_DIR}/../iso_and_acl.sh ${SCRIPT_NAME} \
+${SCRIPT_DIR}/../_iso_and_acl.sh ${SCRIPT_NAME} \
   "iso_brcast_src" "rtn_set" "4" \
   "acl_central" "send_int_set" "1000" \
   "acl_central" "payload_size_set" "20" \

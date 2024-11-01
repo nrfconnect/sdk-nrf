@@ -8,6 +8,6 @@ They should not be treated as a reference for general use, as they are designed 
 
 ## Requirements
 
-The tests support the `nrf5340_audio_dk` and 5340 bsim target.
+The tests support the `nrf5340_audio_dk` and `nrf5340bsim` targets
 
 Tests can be run in parallel by being in the current tests folder, such as bsim/tests and running <userpath>/zephyr/tests/bsim/run_parallel.sh from that location.
