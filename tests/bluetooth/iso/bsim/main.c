@@ -5,11 +5,15 @@
  */
 
 #include <zephyr/bluetooth/bluetooth.h>
-#include <babblekit/testcase.h>
+#include <zephyr/bluetooth/hci.h>
+#include <zephyr/shell/shell_backend.h>
+#include <zephyr/sys/iterable_sections.h>
+
 #include <ctype.h>
 #include <stdarg.h>
-#include <zephyr/bluetooth/hci.h>
+#include <unistd.h>
 
+#include <babblekit/testcase.h>
 #include "bstests.h"
 #include "bs_types.h"
 #include "bs_tracing.h"
@@ -21,11 +25,7 @@
 #include "acl_central.h"
 #include "acl_peripheral.h"
 
-#include <zephyr/shell/shell_backend.h>
-#include <zephyr/sys/iterable_sections.h>
-
 #include <zephyr/logging/log.h>
-#include <unistd.h>
 LOG_MODULE_REGISTER(main, CONFIG_ISO_TEST_LOG_LEVEL);
 
 extern enum bst_result_t bst_result;
@@ -52,7 +52,7 @@ enum transport {
 	ISO,
 };
 
-/* This code is executed by the test framework and not Zephyr */
+/* This code is executed by the test framework before Zephyr has booted */
 static void test_args(int argc, char *argv[])
 {
 	argc_copy = argc;
@@ -78,7 +78,7 @@ struct test_report {
 
 /* Report structure for ACL and ISO results */
 static struct test_report report[2];
-static uint8_t fail_limit_percent[] = {0, 0};
+static uint8_t fail_limit_percent[2];
 static uint32_t packets_limit_min[] = {UINT32_MAX, UINT32_MAX};
 
 static void result_check(uint32_t last_count, uint32_t counts_fail, uint32_t counts_success,
@@ -137,9 +137,10 @@ static void sim_iso_recv_main_cb(uint32_t last_count, uint32_t counts_fail, uint
 
 static bool is_number(const char *str)
 {
-	if (*str == '\0') {
-		return 0;
+	if (*str == '\0' || str == NULL) {
+		return false;
 	}
+
 	uint8_t len = strlen(str);
 	/* Iterate through each character of the string */
 	for (uint8_t i = 0; i < len; i++) {
@@ -153,10 +154,10 @@ static bool is_number(const char *str)
 	return true;
 }
 
-static int cmd_send(size_t argc, ...)
+static int cmd_shell_send(size_t argc, ...)
 {
 	int err;
-	char cmd_str[60] = {'\0'};
+	char cmd_str[MAX_ARG_LEN + 20] = {'\0'};
 	va_list argv;
 
 	va_start(argv, argc);
@@ -198,6 +199,10 @@ static int modules_configure(void)
 	char *arg_command;
 	char *arg_value;
 
+	if (argc_copy % 3 != 0) {
+		TEST_FAIL("Arguments must be in sets of 3");
+	}
+
 	for (int i = 0; i < argc_copy; i = i + 3) {
 		/* Argument meant for tester framework */
 		if (strcmp(argv_copy[i], "tester") == 0) {
@@ -214,7 +219,7 @@ static int modules_configure(void)
 		arg_value = argv_copy[i + 2];
 
 		LOG_INF("Sending to: %s command: %s value: %s", arg_dev, arg_command, arg_value);
-		ret = cmd_send(3, arg_dev, arg_command, arg_value);
+		ret = cmd_shell_send(3, arg_dev, arg_command, arg_value);
 		if (ret) {
 			return ret;
 		}
@@ -329,12 +334,12 @@ static int modules_start(void)
 	if (role == PERIPHERAL_SINK) {
 		TEST_START("ACL peripheral + ISO Broadcast Sink");
 
-		err = cmd_send(2, "acl_peripheral", "start");
+		err = cmd_shell_send(2, "acl_peripheral", "start");
 		if (err) {
 			return err;
 		}
 
-		err = cmd_send(2, "iso_brcast_sink", "start");
+		err = cmd_shell_send(2, "iso_brcast_sink", "start");
 		if (err) {
 			return err;
 		}
@@ -342,12 +347,12 @@ static int modules_start(void)
 	} else if (role == CENTRAL_SOURCE) {
 		TEST_START("ACL central + ISO Broadcast source");
 
-		err = cmd_send(2, "acl_central", "start");
+		err = cmd_shell_send(2, "acl_central", "start");
 		if (err) {
 			return err;
 		}
 
-		err = cmd_send(2, "iso_brcast_src", "start");
+		err = cmd_shell_send(2, "iso_brcast_src", "start");
 		if (err) {
 			return err;
 		}
@@ -447,15 +452,19 @@ static void test_delete(void)
 		selected_color = 0;
 	}
 
-	LOG_WRN("%sReport ACL: Compl: %5u, Limit: %5u, fails: %4u = %05.2f, %% "
-		"limit: %u %%" COLOR_RESET,
-		text_color[selected_color], report[ACL].counts_success, packets_limit_min[ACL],
-		report[ACL].counts_fail, report[ACL].fail_percentage, fail_limit_percent[ACL]);
+	bs_trace_info_time(0,
+			   "%sReport ACL: Compl: %5u, Limit: %5u, fails: %4u = %05.2f, %% "
+			   "limit: %u %%\n" COLOR_RESET,
+			   text_color[selected_color], report[ACL].counts_success,
+			   packets_limit_min[ACL], report[ACL].counts_fail,
+			   report[ACL].fail_percentage, fail_limit_percent[ACL]);
 
-	LOG_WRN("%sReport ISO: Compl: %5u, Limit: %5u, fails: %4u = %05.2f, %% "
-		"limit: %u %%" COLOR_RESET,
-		text_color[selected_color], report[ISO].counts_success, packets_limit_min[ISO],
-		report[ISO].counts_fail, report[ISO].fail_percentage, fail_limit_percent[ISO]);
+	bs_trace_info_time(0,
+			   "%sReport ISO: Compl: %5u, Limit: %5u, fails: %4u = %05.2f, %% "
+			   "limit: %u %%\n" COLOR_RESET,
+			   text_color[selected_color], report[ISO].counts_success,
+			   packets_limit_min[ISO], report[ISO].counts_fail,
+			   report[ISO].fail_percentage, fail_limit_percent[ISO]);
 }
 
 static const struct bst_test_instance test_vector[] = {

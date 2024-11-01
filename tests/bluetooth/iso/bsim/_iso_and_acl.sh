@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# This script is not meant to be called directly.
+# It should rather be invoked by the scripts in the tests folder, which in turn may be called
+# by the run_parallel.sh script in the Zephyr bsim folder.
+
 if [ -z "$1" ]; then
     echo "error: This script is not meant to be called directly"
     exit 1
