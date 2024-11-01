@@ -223,42 +223,21 @@ void ot_rpc_decode_message_info(struct nrf_rpc_cbor_ctx *ctx, otMessageInfo *aMe
 	aMessageInfo->mMulticastLoop = nrf_rpc_decode_bool(ctx);
 }
 
-bool ot_rpc_encode_service_config(struct nrf_rpc_cbor_ctx *ctx, const otServiceConfig *config)
+void ot_rpc_encode_service_config(struct nrf_rpc_cbor_ctx *ctx, const otServiceConfig *config)
 {
 
 	if (config == NULL) {
-		return zcbor_nil_put(ctx->zs, NULL);
+		nrf_rpc_encode_null(ctx);
+		return;
 	}
 
-	if (!zcbor_uint_encode(ctx->zs, &config->mServiceId, sizeof(config->mServiceId))) {
-		return false;
-	}
-
-	if (!zcbor_uint_encode(ctx->zs, &config->mEnterpriseNumber,
-			       sizeof(config->mEnterpriseNumber))) {
-		return false;
-	}
-
-	if (!zcbor_bstr_encode_ptr(ctx->zs, (const char *)&config->mServiceData,
-				   config->mServiceDataLength)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mServerConfig.mStable)) {
-		return false;
-	}
-
-	if (!zcbor_bstr_encode_ptr(ctx->zs, (const char *)&config->mServerConfig.mServerData,
-				   config->mServerConfig.mServerDataLength)) {
-		return false;
-	}
-
-	if (!zcbor_uint_encode(ctx->zs, &config->mServerConfig.mRloc16,
-			       sizeof(config->mServerConfig.mRloc16))) {
-		return false;
-	}
-
-	return true;
+	nrf_rpc_encode_uint(ctx, config->mServiceId);
+	nrf_rpc_encode_uint(ctx, config->mEnterpriseNumber);
+	nrf_rpc_encode_buffer(ctx, config->mServiceData, config->mServiceDataLength);
+	nrf_rpc_encode_bool(ctx, config->mServerConfig.mStable);
+	nrf_rpc_encode_buffer(ctx, config->mServerConfig.mServerData,
+			      config->mServerConfig.mServerDataLength);
+	nrf_rpc_encode_uint(ctx, config->mServerConfig.mRloc16);
 }
 
 void ot_rpc_decode_service_config(struct nrf_rpc_cbor_ctx *ctx, otServiceConfig *config)
@@ -293,72 +272,28 @@ void ot_rpc_decode_service_config(struct nrf_rpc_cbor_ctx *ctx, otServiceConfig 
 	config->mServerConfig.mRloc16 = nrf_rpc_decode_uint(ctx);
 }
 
-bool ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
+void ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					const otBorderRouterConfig *config)
 {
-	signed int tmp;
-
 	if (config == NULL) {
-		return zcbor_nil_put(ctx->zs, NULL);
+		nrf_rpc_encode_null(ctx);
+		return;
 	}
 
-	if (!zcbor_bstr_encode_ptr(ctx->zs, (const char *)config->mPrefix.mPrefix.mFields.m8,
-				   OT_IP6_ADDRESS_SIZE)) {
-		return false;
-	}
-
-	if (!zcbor_uint_encode(ctx->zs, &config->mPrefix.mLength,
-			       sizeof(config->mPrefix.mLength))) {
-		return false;
-	}
-
-	tmp = config->mPreference;
-
-	if (!zcbor_int_encode(ctx->zs, &tmp, sizeof(tmp))) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mPreferred)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mSlaac)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mDhcp)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mConfigure)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mDefaultRoute)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mOnMesh)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mStable)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mNdDns)) {
-		return false;
-	}
-
-	if (!zcbor_bool_put(ctx->zs, config->mDp)) {
-		return false;
-	}
-
-	if (!zcbor_uint_encode(ctx->zs, &config->mRloc16, sizeof(config->mRloc16))) {
-		return false;
-	}
-
-	return true;
+	nrf_rpc_encode_buffer(ctx, config->mPrefix.mPrefix.mFields.m8,
+			      OT_IP6_ADDRESS_SIZE);
+	nrf_rpc_encode_uint(ctx, config->mPrefix.mLength);
+	nrf_rpc_encode_int(ctx, config->mPreference);
+	nrf_rpc_encode_bool(ctx, config->mPreferred);
+	nrf_rpc_encode_bool(ctx, config->mSlaac);
+	nrf_rpc_encode_bool(ctx, config->mDhcp);
+	nrf_rpc_encode_bool(ctx, config->mConfigure);
+	nrf_rpc_encode_bool(ctx, config->mDefaultRoute);
+	nrf_rpc_encode_bool(ctx, config->mOnMesh);
+	nrf_rpc_encode_bool(ctx, config->mStable);
+	nrf_rpc_encode_bool(ctx, config->mNdDns);
+	nrf_rpc_encode_bool(ctx, config->mDp);
+	nrf_rpc_encode_uint(ctx, config->mRloc16);
 }
 
 void ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx, otBorderRouterConfig *config)

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
 
@@ -72,17 +73,14 @@ static void ot_rpc_cmd_if_enable(const struct nrf_rpc_group *group, struct nrf_r
 				 void *handler_data)
 {
 	bool enable;
-	bool decoded_ok;
 	int ret;
 	struct net_if *iface;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_bool_decode(ctx->zs, &enable);
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoded_ok) {
-		NET_ERR("Failed to decode RPC argument");
-		goto out;
+	enable = nrf_rpc_decode_bool(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_IF_ENABLE);
+		return;
 	}
 
 	iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
@@ -134,46 +132,45 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_if_enable, OT_RPC_CMD_IF_ENABLE, o
 static void ot_rpc_cmd_if_send(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			       void *handler_data)
 {
-	struct zcbor_string pkt_data;
-	bool decoded_ok;
+	const uint8_t *pkt_data;
+	size_t pkt_data_len = 0;
 	struct net_if *iface;
 	struct net_pkt *pkt = NULL;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_bstr_decode(ctx->zs, &pkt_data);
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	pkt_data = nrf_rpc_decode_buffer_ptr_and_size(ctx, &pkt_data_len);
 
-	if (!decoded_ok) {
+	if (pkt_data && pkt_data_len) {
+		iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
+		if (iface) {
+			pkt = net_pkt_alloc_with_buffer(iface, pkt_data_len, AF_UNSPEC, 0,
+							K_NO_WAIT);
+		} else {
+			NET_ERR("There is no net interface for OpenThread");
+		}
+
+		if (pkt) {
+			net_pkt_write(pkt, pkt_data, pkt_data_len);
+		} else {
+			NET_ERR("Failed to reserve net pkt");
+		}
+	}
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		NET_ERR("Failed to decode packet data");
-		goto out;
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_IF_SEND);
+		if (pkt) {
+			net_pkt_unref(pkt);
+		}
+		return;
 	}
 
-	iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
-	if (!iface) {
-		NET_ERR("There is no net interface for OpenThread");
-		goto out;
-	}
-
-	pkt = net_pkt_alloc_with_buffer(iface, pkt_data.len, AF_UNSPEC, 0, K_NO_WAIT);
-	if (!pkt) {
-		NET_ERR("Failed to reserve net pkt");
-		goto out;
-	}
-
-	net_pkt_write(pkt, pkt_data.value, pkt_data.len);
-
-	NET_DBG("Sending Ip6 packet to OpenThread");
-
-	if (net_send_data(pkt) < 0) {
-		NET_ERR("net_send_data failed");
-		goto out;
-	}
-
-	pkt = NULL;
-
-out:
 	if (pkt) {
-		net_pkt_unref(pkt);
+		NET_DBG("Sending Ip6 packet to OpenThread");
+		if (net_send_data(pkt) < 0) {
+			NET_ERR("net_send_data failed");
+			net_pkt_unref(pkt);
+		}
 	}
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);

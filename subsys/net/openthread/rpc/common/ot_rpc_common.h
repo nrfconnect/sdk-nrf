@@ -79,10 +79,10 @@ void ot_rpc_report_cmd_decoding_error(uint8_t cmd_evt_id);
 void ot_rpc_report_rsp_decoding_error(uint8_t cmd_evt_id);
 void ot_rpc_decode_message_info(struct nrf_rpc_cbor_ctx *ctx, otMessageInfo *aMessageInfo);
 void ot_rpc_encode_message_info(struct nrf_rpc_cbor_ctx *ctx, const otMessageInfo *aMessageInfo);
-bool ot_rpc_encode_service_config(struct nrf_rpc_cbor_ctx *ctx,
+void ot_rpc_encode_service_config(struct nrf_rpc_cbor_ctx *ctx,
 				  const otServiceConfig *service_config);
 void ot_rpc_decode_service_config(struct nrf_rpc_cbor_ctx *ctx, otServiceConfig *service_config);
-bool ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
+void ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					const otBorderRouterConfig *service_config);
 void ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					otBorderRouterConfig *service_config);

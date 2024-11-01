@@ -19,25 +19,21 @@ static void ot_rpc_cmd_set_poll_period(const struct nrf_rpc_group *group,
 				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	uint32_t poll_period;
-	bool decoded_ok;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_uint_decode(ctx->zs, &poll_period, sizeof(poll_period));
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto out;
+	poll_period = nrf_rpc_decode_uint(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_LINK_SET_POLL_PERIOD);
+		return;
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otLinkSetPollPeriod(openthread_get_default_instance(), poll_period);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(error));
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -54,7 +50,7 @@ static void ot_rpc_cmd_get_poll_period(const struct nrf_rpc_group *group,
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint_encode(rsp_ctx.zs, &poll_period, sizeof(poll_period));
+	nrf_rpc_encode_uint(&rsp_ctx, poll_period);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 

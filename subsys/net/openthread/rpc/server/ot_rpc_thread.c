@@ -100,25 +100,21 @@ static void ot_rpc_cmd_thread_set_enabled(const struct nrf_rpc_group *group,
 					  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	bool enabled;
-	bool decoded_ok;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_bool_decode(ctx->zs, &enabled);
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto out;
+	enabled = nrf_rpc_decode_bool(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_THREAD_SET_ENABLED);
+		return;
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otThreadSetEnabled(openthread_get_default_instance(), enabled);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(error));
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -138,7 +134,7 @@ static void ot_rpc_cmd_thread_get_device_role(const struct nrf_rpc_group *group,
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
-	zcbor_uint_encode(rsp_ctx.zs, &role, sizeof(role));
+	nrf_rpc_encode_uint(&rsp_ctx, role);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -151,16 +147,13 @@ static void ot_rpc_cmd_set_link_mode(const struct nrf_rpc_group *group,
 {
 	uint8_t mode_mask;
 	otLinkModeConfig mode;
-	bool decoded_ok;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_uint_decode(ctx->zs, &mode_mask, sizeof(mode_mask));
-	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	if (!decoded_ok) {
-		error = OT_ERROR_INVALID_ARGS;
-		goto out;
+	mode_mask = nrf_rpc_decode_uint(ctx);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_THREAD_SET_LINK_MODE);
+		return;
 	}
 
 	mode.mRxOnWhenIdle = (mode_mask & BIT(OT_RPC_LINK_MODE_RX_ON_WHEN_IDLE_OFFSET)) != 0;
@@ -171,9 +164,8 @@ static void ot_rpc_cmd_set_link_mode(const struct nrf_rpc_group *group,
 	error = otThreadSetLinkMode(openthread_get_default_instance(), mode);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
-	zcbor_uint_encode(rsp_ctx.zs, &error, sizeof(error));
+	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -206,7 +198,7 @@ static void ot_rpc_cmd_get_link_mode(const struct nrf_rpc_group *group,
 	}
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
-	zcbor_uint_encode(rsp_ctx.zs, &mode_mask, sizeof(mode_mask));
+	nrf_rpc_encode_uint(&rsp_ctx, mode_mask);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
