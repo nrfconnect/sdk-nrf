@@ -53,17 +53,17 @@ static int dect_phy_mac_cmd(const struct shell *shell, size_t argc, char **argv)
 static const char dect_phy_mac_beacon_scan_usage_str[] =
 	"Usage: dect mac beacon_scan [-c <channel>] [<other_options>]\n"
 	"Options:\n"
-	"  -c, --c_ch <integer>,                Channel nbr to be scanned for a beacon.\n"
+	"  -c <integer>,                        Channel nbr to be scanned for a beacon.\n"
 	"                                       Ranges: band #1: 1657-1677, band #2 1680-1700,\n"
-	"                                       band #9 1691-1711. Default: 1665.\n"
-	"  -t, --c_scan_time <integer>,         Scanning duration in seconds (default: 4 "
+	"                                       band #9 1691-1711. Zero value: all in a set band.\n"
+	"                                       Default: 1665.\n"
+	"  -t, --scan_time <integer>,           Scanning duration in seconds (default: 4 "
 	"seconds).\n"
-	"  -e  --c_rx_exp_rssi_level <integer>, Set expected RSSI level on a scan RX (dBm).\n"
+	"  -e, --rx_exp_rssi_level <integer>,   Set expected RSSI level on a scan RX (dBm).\n"
 	"                                       Default: 0 (AGC).\n"
-	"  -D   --clear_nbr_cache,              Clear neighbor storage.\n"
-	"  -f, --force                          Use special force to override current items\n"
-	"                                       in a scheduler so that beacon scans are having\n"
-	"                                       a priority over.\n"
+	"  -D, --clear_nbr_cache,               Clear neighbor storage.\n"
+	"  -f, --force,                         Use special force to override current items\n"
+	"                                       in a scheduler so that beacon scans have priority.\n"
 	"                                       Note: when used, other running items are\n"
 	"                                       not scheduled to modem.\n"
 	"Following options only impacts on RSSI measurements during RX:\n"
@@ -80,7 +80,7 @@ static const char dect_phy_mac_beacon_scan_usage_str[] =
 	"                             Set a threshold for RSSI scan busy threshold (dBm).\n"
 	"                             Default from rssi_scan_free_th\n";
 
-/* Following are not having short options: */
+/* The following do not have short options: */
 enum {
 	DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_FREE_TH = 1001,
 	DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_BUSY_TH,
@@ -88,19 +88,13 @@ enum {
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options_beacon_scan[] = {
-	{"c_ch", required_argument, 0, 'c'},
-	{"c_scan_time", required_argument, 0, 't'},
-	{"c_rx_exp_rssi_level", required_argument, 0, 'e'},
+	{"scan_time", required_argument, 0, 't'},
+	{"rx_exp_rssi_level", required_argument, 0, 'e'},
 	{"clear_nbr_cache", no_argument, 0, 'D'},
 	{"force", no_argument, 0, 'f'},
 	{"free_th", required_argument, 0, DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_FREE_TH},
 	{"busy_th", required_argument, 0, DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_BUSY_TH},
 	{0, 0, 0, 0}};
-
-static void dect_phy_mac_shell_beacon_scan_print_usage(void)
-{
-	desh_print_no_format(dect_phy_mac_beacon_scan_usage_str);
-}
 
 static void dect_phy_mac_beacon_scan_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -123,7 +117,7 @@ static void dect_phy_mac_beacon_scan_cmd(const struct shell *shell, size_t argc,
 	params.free_rssi_limit = current_settings->rssi_scan.free_threshold;
 	params.rssi_interval_secs = 1;
 
-	while ((opt = getopt_long(argc, argv, "c:t:e:i:Df", long_options_beacon_scan,
+	while ((opt = getopt_long(argc, argv, "c:t:e:i:Dfh", long_options_beacon_scan,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 'c': {
@@ -158,11 +152,17 @@ static void dect_phy_mac_beacon_scan_cmd(const struct shell *shell, size_t argc,
 			params.rssi_interval_secs = atoi(optarg);
 			break;
 		}
-
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			desh_error("Unknown option. See usage:");
+			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+	if (optind < argc) {
+		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	ret = dect_phy_mac_ctrl_beacon_scan_start(&params);
@@ -174,7 +174,7 @@ static void dect_phy_mac_beacon_scan_cmd(const struct shell *shell, size_t argc,
 	return;
 
 show_usage:
-	dect_phy_mac_shell_beacon_scan_print_usage();
+	desh_print_no_format(dect_phy_mac_beacon_scan_usage_str);
 }
 
 /**************************************************************************************************/
@@ -184,22 +184,16 @@ static const char dect_phy_mac_beacon_start_cmd_usage_str[] =
 	"\n"
 	"Usage: dect mac beacon_start [<options>]\n"
 	"Options:\n"
-	"  -c, --b_ch <integer>,       Used channel for a beacon.\n"
+	"  -c <integer>,               Used channel for a beacon.\n"
 	"                              Ranges: band #1: 1657-1677 (only odd numbers),\n"
 	"                              band #2 1680-1700, band #9 1691-1711.\n"
 	"                              Default: 0, i.e. automatic selection of\n"
 	"                              free/possible channel on a set band.\n"
-	"  -p, --b_tx_pwr <dbm>,       Set beacon broadcast power (dBm), default: -16.\n"
+	"  -p, --tx_pwr <dbm>,         Set beacon broadcast power (dBm), default: -16.\n"
 	"                              [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23]\n";
 
-static void dect_phy_mac_beacon_start_cmd_print_usage(void)
-{
-	desh_print_no_format(dect_phy_mac_beacon_start_cmd_usage_str);
-}
-
 /* Specifying the expected options (both long and short): */
-static struct option long_options_beacon_start[] = {{"b_ch", required_argument, 0, 'c'},
-						    {"b_tx_pwr", required_argument, 0, 'p'},
+static struct option long_options_beacon_start[] = {{"tx_pwr", required_argument, 0, 'p'},
 						    {0, 0, 0, 0}};
 
 static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -216,7 +210,7 @@ static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc
 	optreset = 1;
 	optind = 1;
 
-	while ((opt = getopt_long(argc, argv, "p:c:", long_options_beacon_start,
+	while ((opt = getopt_long(argc, argv, "p:c:h", long_options_beacon_start,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 'c': {
@@ -227,10 +221,17 @@ static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc
 			params.tx_power_dbm = atoi(optarg);
 			break;
 		}
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			desh_print("See usage:");
+			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+	if (optind < argc) {
+		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	current_settings = dect_common_settings_ref_get();
@@ -252,7 +253,7 @@ static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc
 	return;
 
 show_usage:
-	dect_phy_mac_beacon_start_cmd_print_usage();
+	desh_print_no_format(dect_phy_mac_beacon_start_cmd_usage_str);
 }
 
 static void dect_phy_mac_beacon_stop_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -267,23 +268,18 @@ static const char dect_phy_mac_associate_cmd_usage_str[] =
 	"Usage: dect mac associate [<options>]\n"
 	"Sends Association Request.\n"
 	"Options:\n"
-	"  -t, --c_long_rd_id <id>,  Target long rd id. Default: 38.\n"
-	"  -p, --c_tx_pwr <integer>, TX power (dBm). Default: 0 dBm.\n"
-	"  -m, --c_tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
+	"  -t, --long_rd_id <id>,  Target long rd id. Default: 38.\n"
+	"  -p, --tx_pwr <integer>, TX power (dBm). Default: 0 dBm.\n"
+	"  -m, --tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
 	"Note: LBT (Listen Before Talk) is enabled as a default for a min period,\n"
 	"      but the LBT max RSSI threshold can be configured in settings\n"
 	"      (dect sett ----rssi_scan_busy_th <dbm>).\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_associate[] = {{"c_tx_pwr", required_argument, 0, 'p'},
-							{"c_tx_mcs", required_argument, 0, 'm'},
-							{"c_long_rd_id", required_argument, 0, 't'},
-							{0, 0, 0, 0}};
-
-static void dect_phy_mac_associate_cmd_print_usage(void)
-{
-	desh_print_no_format(dect_phy_mac_associate_cmd_usage_str);
-}
+static struct option long_options_associate[] = {{"tx_pwr", required_argument, 0, 'p'},
+						 {"tx_mcs", required_argument, 0, 'm'},
+						 {"long_rd_id", required_argument, 0, 't'},
+						 {0, 0, 0, 0}};
 
 static int dect_phy_mac_associate_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -299,7 +295,7 @@ static int dect_phy_mac_associate_cmd(const struct shell *shell, size_t argc, ch
 	params.mcs = 0;
 	params.target_long_rd_id = 38;
 
-	while ((opt = getopt_long(argc, argv, "p:m:t:", long_options_associate,
+	while ((opt = getopt_long(argc, argv, "p:m:t:h", long_options_associate,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
@@ -318,11 +314,17 @@ static int dect_phy_mac_associate_cmd(const struct shell *shell, size_t argc, ch
 			params.mcs = atoi(optarg);
 			break;
 		}
-
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			desh_error("Unknown option. See usage:");
+			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+	if (optind < argc) {
+		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	desh_print("Sending association_req to FT %u's random access resource",
@@ -339,7 +341,7 @@ static int dect_phy_mac_associate_cmd(const struct shell *shell, size_t argc, ch
 	return 0;
 
 show_usage:
-	dect_phy_mac_associate_cmd_print_usage();
+	desh_print_no_format(dect_phy_mac_associate_cmd_usage_str);
 	return 0;
 }
 
@@ -349,24 +351,19 @@ static const char dect_phy_mac_dissociate_cmd_usage_str[] =
 	"Usage: dect mac dissociate [<options>]\n"
 	"Sends Association Release message.\n"
 	"Options:\n"
-	"  -t, --c_long_rd_id <id>,  Target long rd id. Default: 38.\n"
-	"  -p, --c_tx_pwr <integer>, TX power (dBm). Default 0 dBm.\n"
-	"  -m, --c_tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
+	"  -t, --long_rd_id <id>,  Target long rd id. Default: 38.\n"
+	"  -p, --tx_pwr <integer>, TX power (dBm). Default 0 dBm.\n"
+	"  -m, --tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
 	"Note: LBT (Listen Before Talk) is enabled as a default for a min period,\n"
 	"      but the LBT max RSSI threshold can be configured in settings\n"
 	"      (dect sett ----rssi_scan_busy_th <dbm>).\n";
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options_dissociate[] = {
-	{"c_tx_pwr", required_argument, 0, 'p'},
-	{"c_tx_mcs", required_argument, 0, 'm'},
-	{"c_long_rd_id", required_argument, 0, 't'},
+	{"tx_pwr", required_argument, 0, 'p'},
+	{"tx_mcs", required_argument, 0, 'm'},
+	{"long_rd_id", required_argument, 0, 't'},
 	{0, 0, 0, 0}};
-
-static void dect_phy_mac_dissociate_cmd_print_usage(void)
-{
-	desh_print_no_format(dect_phy_mac_dissociate_cmd_usage_str);
-}
 
 static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -382,7 +379,7 @@ static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, c
 	params.mcs = 0;
 	params.target_long_rd_id = 38;
 
-	while ((opt = getopt_long(argc, argv, "p:m:t:", long_options_dissociate,
+	while ((opt = getopt_long(argc, argv, "p:m:t:h", long_options_dissociate,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
@@ -401,11 +398,17 @@ static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, c
 			params.mcs = atoi(optarg);
 			break;
 		}
-
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			desh_error("Unknown option. See usage:");
+			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+	if (optind < argc) {
+		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	desh_print("Sending association release to FT %u's random access resource",
@@ -421,7 +424,7 @@ static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, c
 	return 0;
 
 show_usage:
-	dect_phy_mac_dissociate_cmd_print_usage();
+	desh_print_no_format(dect_phy_mac_dissociate_cmd_usage_str);
 	return 0;
 }
 
@@ -430,25 +433,20 @@ show_usage:
 static const char dect_phy_mac_rach_tx_cmd_usage_str[] =
 	"Usage: dect mac rach_tx <c_data> [<options>]\n"
 	"Options:\n"
-	"  -d, --c_data <data_str>,  Data to be sent.\n"
-	"  -p, --c_tx_pwr <integer>, TX power (dBm) (default 0 dBm)\n"
-	"  -m, --c_tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
-	"  -t, --c_long_rd_id <id>,  Target long rd id (default: 38).\n"
+	"  -d, --data <data_str>,  Data to be sent.\n"
+	"  -p, --tx_pwr <integer>, TX power (dBm) (default 0 dBm)\n"
+	"  -m, --tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
+	"  -t, --long_rd_id <id>,  Target long rd id (default: 38).\n"
 	"Note: LBT (Listen Before Talk) is enabled as a default for a min period,\n"
 	"      but the LBT max RSSI threshold can be configured in settings\n"
 	"      (dect sett ----rssi_scan_busy_th <dbm>).\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_rach_tx[] = {{"c_data", required_argument, 0, 'd'},
-						      {"c_tx_pwr", required_argument, 0, 'p'},
-						      {"c_tx_mcs", required_argument, 0, 'm'},
-						      {"c_long_rd_id", required_argument, 0, 't'},
-						      {0, 0, 0, 0}};
-
-static void dect_phy_mac_rach_tx_cmd_print_usage(void)
-{
-	desh_print_no_format(dect_phy_mac_rach_tx_cmd_usage_str);
-}
+static struct option long_options_rach_tx[] = { {"data", required_argument, 0, 'd'},
+						{"tx_pwr", required_argument, 0, 'p'},
+						{"tx_mcs", required_argument, 0, 'm'},
+						{"long_rd_id", required_argument, 0, 't'},
+						{0, 0, 0, 0}};
 
 static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -468,7 +466,7 @@ static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char
 	params.mcs = 0;
 	params.target_long_rd_id = 38;
 
-	while ((opt = getopt_long(argc, argv, "d:p:m:t:", long_options_rach_tx,
+	while ((opt = getopt_long(argc, argv, "d:p:m:t:h", long_options_rach_tx,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
@@ -495,11 +493,17 @@ static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char
 			params.mcs = atoi(optarg);
 			break;
 		}
-
+		case 'h':
+			goto show_usage;
+		case '?':
 		default:
-			desh_error("Unknown option. See usage:");
+			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
 			goto show_usage;
 		}
+	}
+	if (optind < argc) {
+		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
 	}
 
 	desh_print("Sending data %s to FT %u's random access resource", params.tx_data_str,
@@ -515,7 +519,7 @@ static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char
 	return 0;
 
 show_usage:
-	dect_phy_mac_rach_tx_cmd_print_usage();
+	desh_print_no_format(dect_phy_mac_rach_tx_cmd_usage_str);
 	return 0;
 }
 
@@ -535,20 +539,20 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	mac_shell_cmd_sub,
 	SHELL_CMD_ARG(status, NULL, "Usage options: dect mac status", dect_phy_mac_status_cmd, 1,
 		      0),
-	SHELL_CMD_ARG(beacon_start, NULL, "Usage options: dect mac beacon_start -?",
+	SHELL_CMD_ARG(beacon_start, NULL, "Usage options: dect mac beacon_start -h",
 		      dect_phy_mac_beacon_start_cmd, 1, 6),
 	SHELL_CMD_ARG(beacon_stop, NULL, "Usage: dect mac beacon_stop",
 		      dect_phy_mac_beacon_stop_cmd, 1, 0),
-	SHELL_CMD_ARG(beacon_scan, NULL, "Usage options: dect mac beacon_scan -?",
+	SHELL_CMD_ARG(beacon_scan, NULL, "Usage options: dect mac beacon_scan -h",
 		      dect_phy_mac_beacon_scan_cmd, 1, 12),
-	SHELL_CMD_ARG(associate, NULL, "Usage: dect mac associate -?",
+	SHELL_CMD_ARG(associate, NULL, "Usage: dect mac associate -h",
 		      dect_phy_mac_associate_cmd, 1, 11),
-	SHELL_CMD_ARG(dissociate, NULL, "Usage: dect mac dissociate -?",
+	SHELL_CMD_ARG(dissociate, NULL, "Usage: dect mac dissociate -h",
 		      dect_phy_mac_dissociate_cmd, 1, 6),
-	SHELL_CMD_ARG(rach_tx, NULL, "Usage options: dect mac rach_tx -?",
+	SHELL_CMD_ARG(rach_tx, NULL, "Usage options: dect mac rach_tx -h",
 		      dect_phy_mac_rach_tx_cmd, 1, 11),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_SUBCMD_ADD((dect), mac, &mac_shell_cmd_sub,
-		 "Commands for using sample MAC commands on top of libmodem phy api.",
+		 "Commands for using sample MAC commands on top of libmodem PHY API.",
 		 dect_phy_mac_cmd, 1, 0);

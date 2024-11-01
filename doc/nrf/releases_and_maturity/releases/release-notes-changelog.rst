@@ -263,8 +263,16 @@ DECT NR+ samples
 
 * :ref:`dect_shell_application` sample:
 
-  * A brief mac level sample on top of dect_phy api. New commands to create a periodic cluster beacon, scan for it, associate/disassociate a PT/client, and send data to a FT/beacon random access window. Note: this is just a sample/initials of a mac implementation and thus not a full MAC implementation and not fully compliant with dect nr+ mac spec (ETSI TS 103 636-4).
-  * dect rssi_scan: In addition to default high/low rssi_scan: option for MAC spec like rssi_scan: busy/possible/free subslot count based RSSI scan.
+  * Added:
+
+    * The ``dect mac`` command.
+      A brief MAC-level sample on top of DECT PHY interface with new commands to create a periodic cluster beacon, scan for it, associate or disassociate a PT/client, and send data to a FT/beacon random access window.
+      This is not a full MAC implementation and not fully compliant with DECT NR+ MAC specification (`ETSI TS 103 636-4`_).
+
+  * Updated:
+
+    * The ``dect rssi_scan`` command with busy/possible/free subslot count-based RSSI scan.
+    * The ``dect rx`` command to provide the possibility to iterate all channels and to enable RX filter.
 
 Edge Impulse samples
 --------------------
