@@ -9,10 +9,6 @@ Crypto: PSA TLS
 
 The PSA TLS sample shows how to perform a TLS handshake and send encrypted messages with Cortex-M Security Extensions (CMSE) enabled, in both Non-Secure Processing Environment (NSPE) and Secure Processing Environment (SPE) with :ref:`Trusted Firmware-M<ug_tfm>`.
 
-.. note::
-
-   Datagram Transport Layer Security (DTLS) and pre-shared key (PSK) are currently not supported.
-
 For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 Requirements
