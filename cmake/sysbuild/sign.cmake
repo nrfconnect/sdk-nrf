@@ -30,8 +30,8 @@ function(b0_gen_keys)
       -out ${SIGNATURE_PUBLIC_KEY_FILE}
       )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
-    set(SIGNATURE_PUBLIC_KEY_FILE ${SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY})
-    set(SIGNATURE_PUBLIC_KEY_FILE ${SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY} PARENT_SCOPE)
+    string(CONFIGURE "${SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY}" SIGNATURE_PUBLIC_KEY_FILE)
+    set(SIGNATURE_PUBLIC_KEY_FILE ${SIGNATURE_PUBLIC_KEY_FILE} PARENT_SCOPE)
 
     if(NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE} OR IS_DIRECTORY ${SIGNATURE_PUBLIC_KEY_FILE})
       message(WARNING "Invalid public key file: ${SIGNATURE_PUBLIC_KEY_FILE}")
@@ -165,6 +165,7 @@ function(b0_sign_image slot)
       )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     set(custom_sign_cmd "${SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND}")
+    string(CONFIGURE "${custom_sign_cmd}" custom_sign_cmd)
 
     if (("${custom_sign_cmd}" STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
       message(FATAL_ERROR "You must specify a signing command and valid public key file for custom signing.")
