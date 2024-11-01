@@ -96,6 +96,15 @@ config MPSL_HFCLK_LATENCY
 	  the CLOCK peripheral. For the nRF53 Series application core it's
 	  configured by the HFXOCNT register in the UICR.
 
+config MPSL_CALIBRATION_PERIOD
+	int "Calibration callback period in milliseconds"
+	depends on (SOC_SERIES_NRF54LX || CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION) && !SOC_SERIES_NRF54HX
+	default CLOCK_CONTROL_NRF_CALIBRATION_PERIOD if CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
+	default 4000
+	help
+	  This configuration means how often the calibration callback to mpsl is called.
+	  On 54L, this still needs to be called even if LFRC is not used.
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
