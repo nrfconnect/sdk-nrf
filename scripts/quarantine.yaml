@@ -11,23 +11,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-19027"
 
 - scenarios:
-    - ".*nrf7002eb.*"
-    - ".*nrf7002_eb.*"
-    - applications.matter_bridge.lto.br_ble.nrf54h20.wifi
-    - applications.matter_bridge.release.br_ble.nrf54h20.wifi
-  comment: "nRF7002EB not support in the upstream nRF70 driver yet"
-
-- scenarios:
-    - sample.cellular.modem_shell.location_service_ext_pgps_nrf7002ek_wifi
-    - sample.cellular.nrf7002ek_wifi.scan
-    - sample.cellular.nrf7002ek_wifi.conn
-  platforms:
-    - nrf9161dk/nrf9161/ns
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9151dk/nrf9151/ns
-  comment: "Unknown failures using NS (TF-M), unable to replicate locally, temporarily excluded"
-
-- scenarios:
     - net.lib.wifi_credentials_backend_psa
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
 
