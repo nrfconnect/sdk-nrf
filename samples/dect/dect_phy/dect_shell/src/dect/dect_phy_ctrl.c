@@ -56,6 +56,7 @@ static struct dect_phy_ctrl_data {
 	bool ext_command_running;
 
 	bool rx_cmd_on_going;
+	uint16_t rx_cmd_current_channel;
 	struct dect_phy_rx_cmd_params rx_cmd_params;
 
 	bool time_cmd;
@@ -358,7 +359,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 					params->status, params->temperature, tmp_str);
 				if (params->handle == DECT_PHY_COMMON_RSSI_SCAN_HANDLE) {
 					dect_phy_scan_rssi_finished_handle(params->status);
-				} else if (params->handle == DECT_PHY_COMMON_RX_CMD_HANDLE) {
+				} else if (params->handle == ctrl_data.rx_cmd_params.handle) {
 					dect_phy_api_scheduler_resume();
 					desh_error("%s: cannot start RX: %s", __func__, tmp_str);
 					ctrl_data.rx_cmd_on_going = false;
@@ -368,10 +369,17 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 					}
 				}
 			} else {
-				if (params->handle == DECT_PHY_COMMON_RX_CMD_HANDLE) {
-					ctrl_data.rx_cmd_on_going = false;
-					dect_phy_api_scheduler_resume();
-					desh_print("RX DONE.");
+				if (params->handle == ctrl_data.rx_cmd_params.handle) {
+					struct dect_phy_rx_cmd_params copy_params =
+						ctrl_data.rx_cmd_params;
+					int err;
+
+					err = dect_phy_ctrl_rx_start(&copy_params, true);
+					if (err) {
+						ctrl_data.rx_cmd_on_going = false;
+						dect_phy_api_scheduler_resume();
+						desh_print("RX DONE.");
+					}
 				} else if (params->handle == DECT_PHY_COMMON_RSSI_SCAN_HANDLE) {
 					dect_phy_scan_rssi_finished_handle(params->status);
 				} else {
@@ -765,11 +773,11 @@ int dect_phy_ctrl_time_query(void)
 void dect_phy_ctrl_rx_stop(void)
 {
 	ctrl_data.rx_cmd_on_going = false;
-	(void)nrf_modem_dect_phy_rx_stop(DECT_PHY_COMMON_RX_CMD_HANDLE);
+	(void)nrf_modem_dect_phy_rx_stop(ctrl_data.rx_cmd_params.handle);
 	dect_phy_api_scheduler_resume();
 }
 
-int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params)
+int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params, bool restart)
 {
 	int err;
 
@@ -778,7 +786,12 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params)
 		return -EACCES;
 	}
 
-	if (ctrl_data.rx_cmd_on_going) {
+	if (restart && !ctrl_data.rx_cmd_on_going) {
+		desh_warn("Cannot restart RX when RX is not on going.");
+		return -EINVAL;
+	}
+
+	if (ctrl_data.rx_cmd_on_going && !restart) {
 		desh_error("rx cmd already on going.");
 		return -EALREADY;
 	}
@@ -787,15 +800,48 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params)
 		dect_phy_api_scheduler_suspend();
 	}
 
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+
+	if (params->channel == 0) {
+		if (restart) {
+			uint16_t next_channel = dect_common_utils_get_next_channel_in_band_range(
+				current_settings->common.band_nbr,
+				ctrl_data.rx_cmd_current_channel,
+				!params->ch_acc_use_all_channels);
+
+			if (next_channel) {
+				ctrl_data.rx_cmd_current_channel = next_channel;
+			} else {
+				/* We are done */
+				desh_print("All channels in band scanned.");
+				return -ENODATA;
+			}
+		} else {
+			/* All channels in a set band */
+			ctrl_data.rx_cmd_current_channel =
+				dect_common_utils_channel_min_on_band(
+					current_settings->common.band_nbr);
+		}
+	} else {
+		if (restart) {
+			/* Cannot restart RX on a specific channel */
+			return -EINVAL;
+		}
+		ctrl_data.rx_cmd_current_channel = params->channel;
+	}
+
 	struct dect_phy_rssi_scan_params rssi_params = {
-		.channel = params->channel,
+		.channel = ctrl_data.rx_cmd_current_channel,
 		.result_verdict_type = DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_ALL,
 		.busy_rssi_limit = params->busy_rssi_limit,
 		.free_rssi_limit = params->free_rssi_limit,
 		.interval_secs = params->rssi_interval_secs,
 	};
 
+
 	ctrl_data.rx_cmd_params = *params;
+	params->channel = ctrl_data.rx_cmd_current_channel;
+
 	err = dect_phy_scan_rssi_data_init(&rssi_params);
 	if (err) {
 		desh_error("RSSI scan data init failed: err", err);

@@ -210,6 +210,7 @@ int dect_phy_mac_ctrl_beacon_scan_start(struct dect_phy_mac_beacon_scan_params *
 		.busy_rssi_limit = params->busy_rssi_limit,
 		.free_rssi_limit = params->free_rssi_limit,
 		.rssi_interval_secs = params->rssi_interval_secs,
+		.ch_acc_use_all_channels = false,
 	};
 
 	/* Set filter. Broadcast Beacons (with type 1) are always passing filter. */
@@ -217,11 +218,9 @@ int dect_phy_mac_ctrl_beacon_scan_start(struct dect_phy_mac_beacon_scan_params *
 	rx_params.filter.short_network_id = (uint8_t)(current_settings->common.network_id & 0xFF);
 	rx_params.filter.receiver_identity = current_settings->common.transmitter_id;
 
-	ret = dect_phy_ctrl_rx_start(&rx_params);
+	ret = dect_phy_ctrl_rx_start(&rx_params, false);
 	if (ret) {
 		desh_error("Cannot start RX, err %d", ret);
-	} else {
-		desh_print("RX started.");
 	}
 
 	return ret;

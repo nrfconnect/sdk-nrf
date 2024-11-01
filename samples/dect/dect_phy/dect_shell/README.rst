@@ -45,14 +45,14 @@ Main command structure:
        rf_tool
        status
        rx
-      mac
-        beacon_scan
-        beacon_start
-        beacon_stop
-        rach_tx
-        associate
-        dissociate
-        status
+       mac
+         beacon_scan
+         beacon_start
+         beacon_stop
+         rach_tx
+         associate
+         dissociate
+         status
 
 Application settings
 ====================
@@ -118,13 +118,14 @@ Examples
 
      dect rssi_scan stop
 
-* Execute longer RSSI measurements on all permitted channels, and instead of default high/low RSSI value based verdict; use subslot count based verdict for BUSY/POSSIBLE/FREE and as a end results, see the verdict for the best channel:
+* Execute longer RSSI measurements on all permitted channels, and instead of default high/low RSSI value-based verdict, use subslot count-based verdict for BUSY/POSSIBLE/FREE and as an end result, see the verdict for the best channel:
 
   .. code-block:: console
 
      dect rssi_scan -c 0 --verdict_type_count -t 3000 -a
 
-* Execute longer RSSI measurements on specific channel, and instead of default high/low RSSI value based verdict; use subslot count based verdict for BUSY/POSSIBLE/FREE. Additionally, print BUSY/POSSIBLE measurements:
+* Execute longer RSSI measurements on specific channel, and instead of default high/low RSSI value-based verdict, use subslot count-based verdict for BUSY/POSSIBLE/FREE.
+  Additionally, print BUSY/POSSIBLE measurements:
 
   .. code-block:: console
 
@@ -437,16 +438,23 @@ Dect NR+ PHY MAC
 
 DeSh command: ``dect mac``
 
-This command demostrates basic sample of DECT NR+ MAC layer on top of PHY API based on ETSI TS 103 636-4 V1.4.8 (2024-01).
-With this command you can start a cluster beacon, scan for beacons, associate/dissociate, and send data to beacon random access RX window.
+This command demonstrates a basic sample of the DECT NR+ MAC layer on top of PHY API. It is based on MAC specification `ETSI TS 103 636-4`_.
+With this command, you can start a cluster beacon, scan for beacons, associate/dissociate, and send data to the beacon random access RX window.
 
-Disclaimer: this is just a basic sample for initials and not a full MAC implementation, it does not support all the features of the DECT NR+ MAC layer and is not fully compliant with the MAC specification.
-For example cluster beaconing with RA allocation, and LMS implementations overall are not what is required by the MAC specification.
+.. note::
+   This is just an initial basic sample and not a full MAC implementation.
+   It does not support all the features of the DECT NR+ MAC layer and is not fully compliant with the MAC specification.
+   For example, cluster beaconing with RA allocation and LMS implementations overall are not what is required by the specification.
+
+The following abbreviations from MAC specification are used in the examples:
+
+* FT: Fixed Termination point
+* PT: Portable Termination point
 
 Example: starting of cluster beacon and sending RA data to it
 -------------------------------------------------------------
 
-* FT/Beacon device - start periodic cluster beacon TX at default band #1 and at the 1st free channel:
+* FT/Beacon device - Start periodic cluster beacon TX on default band 1 and on the first free channel:
 
   .. code-block:: console
 
@@ -627,7 +635,7 @@ Example: starting of cluster beacon and sending RA data to it
       short RD ID....................................27462 (0x6b46)
       band number....................................1
 
-* PT/client side: Scan beacon:
+* PT/client side - Scan the beacon:
 
   .. code-block:: console
 
@@ -708,13 +716,13 @@ Example: starting of cluster beacon and sending RA data to it
       -----------------------------------------------------------------------------
       RX DONE.
 
-* PT/client side: As an alternative to the previous command, and if you don't know in which channel beacon is running, you can scan all channels in a set band:
+* PT/client side - As an alternative to the previous command, and if you do not know in which channel the beacon is running, you can scan all channels in a set band:
 
   .. code-block:: console
 
       desh:~$ dect mac beacon_scan -c 0
 
-* PT/client side: See that scanned beacon can be found from neighbor list:
+* PT/client side - Check that the scanned beacon is found from neighbor list:
 
   .. code-block:: console
 
@@ -732,7 +740,7 @@ Example: starting of cluster beacon and sending RA data to it
          channel:                1659
          last seen time:         17016336625
 
-* PT/client side: Send association request to scanned beacon:
+* PT/client side - Send association request to the scanned beacon:
 
   .. code-block:: console
 
@@ -773,7 +781,7 @@ Example: starting of cluster beacon and sending RA data to it
             Received padding data, len 1, payload is not printed
       RX for Association Response completed.
 
-* PT/client side: Send RA data to scanned beacon:
+* PT/client side - Send RA data to the scanned beacon:
 
   .. code-block:: console
 
@@ -787,7 +795,7 @@ Example: starting of cluster beacon and sending RA data to it
       Client TX to RACH started.
       Client data TX completed.
 
-* FT/Beacon device: Observe that data was received:
+* FT/Beacon device - Observe that data was received:
 
   .. code-block:: console
 
@@ -816,7 +824,7 @@ Example: starting of cluster beacon and sending RA data to it
             Payload length: 0
             Received padding data, len 0, payload is not printed
 
-* PT/client side: Send association release to scanned beacon:
+* PT/client side - Send association release to the scanned beacon:
 
   .. code-block:: console
 
@@ -830,7 +838,7 @@ Example: starting of cluster beacon and sending RA data to it
       Association Release TX started.
       TX for Association Release completed.
 
-* FT/Beacon device: See that Association Release message was received:
+* FT/Beacon device - Observe that the association release message was received:
 
   .. code-block:: console
 
@@ -860,16 +868,13 @@ Example: starting of cluster beacon and sending RA data to it
             Payload length: 1
             Received padding data, len 1, payload is not printed
 
-* FT/Beacon device: Stop beacon
+* FT/Beacon device - Stop the beacon:
 
-+  .. code-block:: console
+  .. code-block:: console
 
       desh:~$ dect mac beacon_stop
       Stopping beacon.
       Beacon TX stopped, cause: User Initiated.
-
-----
-
 
 Building
 ********

@@ -44,7 +44,7 @@ int dect_phy_ctrl_msgq_data_op_add(uint16_t event_id, void *data, size_t data_si
 
 void dect_phy_ctrl_status_get_n_print(void);
 
-int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params);
+int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params, bool restart);
 void dect_phy_ctrl_rx_stop(void);
 
 int dect_phy_ctrl_time_query(void);

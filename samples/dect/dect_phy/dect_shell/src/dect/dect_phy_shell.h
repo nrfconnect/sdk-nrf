@@ -154,6 +154,7 @@ struct dect_phy_rx_cmd_params {
 	int8_t expected_rssi_level;
 	bool suspend_scheduler;
 
+	bool ch_acc_use_all_channels;
 	int8_t busy_rssi_limit;
 	int8_t free_rssi_limit;
 	uint16_t rssi_interval_secs;
