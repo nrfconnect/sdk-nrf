@@ -8,6 +8,10 @@
 #include <zephyr/pm/device_runtime.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
+#include <nrfs_backend_ipc_service.h>
+#include <nrfs_gdpwr.h>
 
 /* Note: logging is normally disabled for this test
  * Enable only for debugging purposes
@@ -31,6 +35,53 @@ const uint8_t test_pattern[TEST_BUFFER_LEN] = {0x11, 0x12, 0x13, 0x14, 0x15,
 static uint8_t test_buffer[TEST_BUFFER_LEN];
 static volatile uint8_t uart_error_counter;
 
+/* Required to power off the GD2 and GD3 domains
+ * Will be removed when GD handling
+ * is implemented in sdk-zephyr
+ */
+static void gdpwr_handler(nrfs_gdpwr_evt_t const *p_evt, void *context)
+{
+	switch (p_evt->type) {
+	case NRFS_GDPWR_REQ_APPLIED:
+		printk("GDPWR handler - response received: 0x%x, CTX=%d\n", p_evt->type,
+		       (uint32_t)context);
+		break;
+	case NRFS_GDPWR_REQ_REJECTED:
+		printk("GDPWR handler - request rejected: 0x%x, CTX=%d\n", p_evt->type,
+		       (uint32_t)context);
+		break;
+	default:
+		printk("GDPWR handler - unexpected event: 0x%x, CTX=%d\n", p_evt->type,
+		       (uint32_t)context);
+		break;
+	}
+}
+
+/* Required to power off the GD2 and GD3 domains
+ * Will be removed when GD handling
+ * is implemented in sdk-zephyr
+ */
+static void clear_global_power_domains_requests(void)
+{
+	int service_status;
+	int tst_ctx = 1;
+
+	service_status = nrfs_gdpwr_init(gdpwr_handler);
+	printk("Response: %d\n", service_status);
+	printk("Sending GDPWR DISABLE request for: GDPWR_POWER_DOMAIN_ACTIVE_SLOW\n");
+	service_status = nrfs_gdpwr_power_request(GDPWR_POWER_DOMAIN_ACTIVE_SLOW,
+						  GDPWR_POWER_REQUEST_CLEAR, (void *)tst_ctx++);
+	printk("Response: %d\n", service_status);
+	printk("Sending GDPWR DISABLE request for: GDPWR_POWER_DOMAIN_ACTIVE_FAST\n");
+	service_status = nrfs_gdpwr_power_request(GDPWR_POWER_DOMAIN_ACTIVE_FAST,
+						  GDPWR_POWER_REQUEST_CLEAR, (void *)tst_ctx++);
+	printk("Response: %d\n", service_status);
+	printk("Sending GDPWR DISABLE request for: GDPWR_POWER_DOMAIN_MAIN_SLOW\n");
+	service_status = nrfs_gdpwr_power_request(GDPWR_POWER_DOMAIN_MAIN_SLOW,
+						  GDPWR_POWER_REQUEST_CLEAR, (void *)tst_ctx);
+	printk("Response: %d\n", service_status);
+}
+
 /*
  * Callback function for UART async transmission
  */
@@ -53,6 +104,7 @@ static void async_uart_callback(const struct device *dev, struct uart_event *evt
 				printk("Recieived data byte %d does not match pattern 0x%x != "
 				       "0x%x\n",
 				       index, test_buffer[index], test_pattern[index]);
+				__ASSERT_NO_MSG(test_buffer[index] == test_pattern[index]);
 			}
 		}
 		break;
@@ -78,6 +130,13 @@ int main(void)
 					       .stop_bits = UART_CFG_STOP_BITS_1,
 					       .data_bits = UART_CFG_DATA_BITS_8,
 					       .flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS};
+
+	printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
+	printk("UART instance: %s\n", uart_dev->name);
+
+	nrfs_backend_wait_for_connection(K_FOREVER);
+	clear_global_power_domains_requests();
+	k_msleep(250);
 
 	err = uart_configure(uart_dev, &test_uart_config);
 	if (err != 0) {
