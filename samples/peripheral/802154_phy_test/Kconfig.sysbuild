@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice APPCORE
+	default APPCORE_REMOTE_SHELL if SOC_NRF5340_CPUNET || SOC_NRF54H20_CPURAD || SOC_NRF54H20_ENGB_CPURAD
+
+endchoice
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
