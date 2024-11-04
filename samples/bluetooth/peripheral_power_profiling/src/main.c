@@ -58,8 +58,6 @@
 
 #define NFC_BUFFER_SIZE 1024
 
-const struct device *const cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
-
 static struct bt_le_oob oob_local;
 static uint8_t tk_local[NFC_NDEF_LE_OOB_REC_TK_LEN];
 static uint8_t nfc_buffer[NFC_BUFFER_SIZE];
@@ -628,10 +626,16 @@ static void system_off(void)
 
 	dk_set_led_off(RUN_STATUS_LED);
 
-	int rc = pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+	if (IS_ENABLED(CONFIG_PM_DEVICE) && IS_ENABLED(CONFIG_SERIAL)) {
+		static const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+		int err;
+		enum pm_device_state state;
 
-	if (rc < 0) {
-		printk("Could not suspend console (%d)\n", rc);
+		if (dev) {
+			do {
+				err = pm_device_state_get(dev, &state);
+			} while ((err == 0) && (state == PM_DEVICE_STATE_ACTIVE));
+		}
 	}
 
 	sys_poweroff();
@@ -664,11 +668,6 @@ int main(void)
 	uint32_t has_changed = 0;
 
 	printk("Starting Bluetooth Power Profiling example\n");
-
-	if (!device_is_ready(cons)) {
-		printk("%s: device not ready.\n", cons->name);
-		return 0;
-	}
 
 	err = dk_buttons_init(button_handler);
 	if (err) {
