@@ -97,6 +97,7 @@ typedef int suit_plat_err_t;
 #define SUIT_PLAT_ERR_UNSUPPORTED      -2010 /**< Attempt to perform an unsupported operation */
 #define SUIT_PLAT_ERR_IPC	       -2011 /**< IPC error */
 #define SUIT_PLAT_ERR_NO_RESOURCES     -2012 /**< Not enough resources */
+#define SUIT_PLAT_ERR_SDRFW_FAILURE    -2013 /**< Failure during SDFW Recovery update */
 
 /**
  * If the error code is a common platform error code return it.
