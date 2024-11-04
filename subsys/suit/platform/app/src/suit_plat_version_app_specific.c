@@ -36,7 +36,7 @@ int suit_plat_version_domain_specific(struct zcbor_string *component_id,
 								      NULL, NULL, NULL);
 
 		if ((err != SUIT_SUCCESS) || (raw_version.len > *version_len)) {
-			LOG_ERR("Unable to read manifest version (err: %d)", ret);
+			LOG_ERR("Unable to read manifest version (err: %d)", err);
 			return SUIT_ERR_UNSUPPORTED_PARAMETER;
 		}
 
