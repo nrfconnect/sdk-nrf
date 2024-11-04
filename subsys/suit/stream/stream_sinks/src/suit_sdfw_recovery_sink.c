@@ -14,17 +14,9 @@
 #include <sdfw/sdfw_update.h>
 #include <suit_plat_mem_util.h>
 
-#include <suit_digest_sink.h>
-
 #define SUIT_MAX_SDFW_RECOVERY_COMPONENTS 1
 
-#define SDFW_RECOVERY_SINK_ERR_AGAIN                                                               \
-	1 /* Reboot is needed before proceeding. Call the API again.                               \
-	   */
-
 LOG_MODULE_REGISTER(suit_sdfw_recovery_sink, CONFIG_SUIT_LOG_LEVEL);
-
-typedef int sdf_sink_err_t;
 
 struct sdfw_recovery_sink_context {
 	bool in_use;
@@ -44,55 +36,18 @@ static struct sdfw_recovery_sink_context *get_new_context(void)
 	return NULL;
 }
 
-static digest_sink_err_t verify_digest(uint8_t *buf, size_t buf_size, psa_algorithm_t algorithm,
-				       uint8_t *expected_digest)
-{
-	struct stream_sink digest_sink;
-	suit_plat_err_t err = suit_digest_sink_get(&digest_sink, algorithm, expected_digest);
-
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to get digest sink: %d", err);
-		return err;
-	}
-
-	err = digest_sink.write(digest_sink.ctx, buf, buf_size);
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to write to stream: %d", err);
-		(void)digest_sink.release(digest_sink.ctx);
-		return err;
-	}
-
-	digest_sink_err_t ret = suit_digest_sink_digest_match(digest_sink.ctx);
-
-	err = digest_sink.release(digest_sink.ctx);
-	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_WRN("Failed to release stream: %d", err);
-	}
-
-	return ret;
-}
-
-static suit_plat_err_t clear_urot_update_status(void)
-{
-	mram_erase((uintptr_t)&NRF_SICR->UROT.UPDATE,
-		   sizeof(NRF_SICR->UROT.UPDATE) / CONFIG_SDFW_MRAM_WORD_SIZE);
-
-	/* Clearing the registers is crucial for correct handling by SecROM. */
-	/* Incorrect mram_erase behavior was observed on FPGA. */
-	/* Since mram_erase returns void, there is a need for extra check and returning error code
-	 * to handle such case.
-	 */
-	if (NRF_SICR->UROT.UPDATE.STATUS == SICR_UROT_UPDATE_STATUS_CODE_None &&
-	    NRF_SICR->UROT.UPDATE.OPERATION == SICR_UROT_UPDATE_OPERATION_OPCODE_Nop) {
-		return SUIT_PLAT_SUCCESS;
-	} else {
-		return SUIT_PLAT_ERR_IO;
-	}
-}
-
-static suit_plat_err_t schedule_sdfw_recovery_update(const uint8_t *buf, size_t size)
+static suit_plat_err_t schedule_update(const uint8_t *buf, size_t size)
 {
 	int err = 0;
+
+	if (!suit_plat_mem_clear_sicr_update_registers()) {
+		LOG_ERR("Failed to clear update registers");
+		/* By design SDFW Recovery update error should not result in failing whole
+		 * installation.
+		 * Because of that, set specific error code instead of SUIT_PLAT_ERR_CRASH.
+		 */
+		return SUIT_PLAT_ERR_SDRFW_FAILURE;
+	}
 
 	const struct sdfw_update_blob update_blob = {
 		.manifest_addr =
@@ -122,66 +77,22 @@ static suit_plat_err_t schedule_sdfw_recovery_update(const uint8_t *buf, size_t 
 
 	if (err) {
 		LOG_ERR("Failed to schedule SDFW Recovery update: %d", err);
-		return SUIT_PLAT_ERR_CRASH;
+		/* By design SDFW Recovery update error should not result in failing whole
+		 * installation.
+		 * Because of that, set specific error code instead of SUIT_PLAT_ERR_CRASH.
+		 */
+		err = SUIT_PLAT_ERR_SDRFW_FAILURE;
+	} else {
+		err = SUIT_PLAT_SUCCESS;
 	}
 
-	LOG_INF("SDFW Recovery update scheduled");
-
-	return SUIT_PLAT_SUCCESS;
-}
-
-static sdf_sink_err_t check_update_candidate(const uint8_t *buf, size_t size)
-{
-	uint8_t *candidate_binary_start =
-		(uint8_t *)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET);
-	uint8_t *candidate_digest_in_manifest =
-		(uint8_t *)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_DIGEST_OFFSET);
-	uint8_t *current_sdfw_recovery_digest =
-		(uint8_t *)(NRF_SICR->UROT.RECOVERY.SM.TBS.FW.DIGEST);
-
-	/* First check if calculated digest of candidate matches the digest from Signed Manifest */
-	digest_sink_err_t err =
-		verify_digest(candidate_binary_start,
-			      size - (size_t)CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET,
-			      PSA_ALG_SHA_512, candidate_digest_in_manifest);
-
-	if (err != SUIT_PLAT_SUCCESS) {
-		if (err == DIGEST_SINK_ERR_DIGEST_MISMATCH) {
-			LOG_ERR("Candidate inconsistent");
-		} else {
-			LOG_ERR("Failed to calculate digest: %d", err);
-		}
-
-		return SUIT_PLAT_ERR_CRASH;
-	}
-
-	LOG_DBG("Candidate consistent");
-
-	/* Then compare candidate's digest with current SDFW Recovery digest */
-	err = verify_digest(candidate_binary_start,
-			    size - (size_t)CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET,
-			    PSA_ALG_SHA_512, current_sdfw_recovery_digest);
-	if (err == SUIT_PLAT_SUCCESS) {
-		LOG_INF("Same candidate - skip update");
-		return SUIT_PLAT_SUCCESS;
-	} else if (err == DIGEST_SINK_ERR_DIGEST_MISMATCH) {
-		LOG_INF("Different candidate");
-		err = schedule_sdfw_recovery_update(buf, size);
-		if (err == SUIT_PLAT_SUCCESS) {
-			LOG_DBG("Update scheduled");
-			err = SDFW_RECOVERY_SINK_ERR_AGAIN;
-		}
-		return err;
-	}
-
-	LOG_ERR("Failed to calculate digest: %d", err);
-	return SUIT_PLAT_ERR_CRASH;
+	return err;
 }
 
 static void reboot_to_continue(void)
 {
 	if (IS_ENABLED(CONFIG_SUIT_UPDATE_REBOOT_ENABLED)) {
-		LOG_INF("Reboot the system to continue SDFW Recovery update");
+		LOG_INF("Reboot the system to continue update");
 
 		LOG_PANIC();
 
@@ -191,26 +102,15 @@ static void reboot_to_continue(void)
 	}
 }
 
-static suit_plat_err_t check_urot_none(const uint8_t *buf, size_t size)
+static suit_plat_err_t schedule_update_and_reboot(const uint8_t *buf, size_t size)
 {
-	/* Detect update candidate. */
-	/* It is enough to check Public Key Size field which occupies first 4B of Signed Manifest.
-	 */
-	if (*((uint32_t *)buf) == EMPTY_STORAGE_VALUE) {
-		LOG_INF("Update candidate not found");
-		return SUIT_PLAT_ERR_NOT_FOUND;
-	}
+	suit_plat_err_t err = schedule_update(buf, size);
 
-	LOG_INF("Update candidate found");
-
-	suit_plat_err_t err = check_update_candidate(buf, size);
-
-	if (err == SDFW_RECOVERY_SINK_ERR_AGAIN) {
-		/* Update scheduled, continue after reboot */
+	if (err == SUIT_PLAT_SUCCESS) {
 		reboot_to_continue();
 		if (IS_ENABLED(CONFIG_SUIT_UPDATE_REBOOT_ENABLED)) {
 			/* If this code is reached, it means that reboot did not work. */
-			/* In such case report an error and convert the error code. */
+			/* In such case report an error. */
 			LOG_ERR("Expected reboot did not happen");
 			err = SUIT_PLAT_ERR_UNREACHABLE_PATH;
 		}
@@ -219,29 +119,120 @@ static suit_plat_err_t check_urot_none(const uint8_t *buf, size_t size)
 	return err;
 }
 
-static suit_plat_err_t check_recovery_activated(const uint8_t *buf, size_t size)
+static suit_plat_err_t recovery_update_ongoing(const uint8_t *buf, size_t size)
 {
-	uint8_t *candidate_binary_start =
-		(uint8_t *)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET);
-	uint8_t *current_sdfw_digest = (uint8_t *)(NRF_SICR->UROT.RECOVERY.SM.TBS.FW.DIGEST);
+	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
 
-	/* Compare candidate's digest with current SDFW Recovery digest */
-	digest_sink_err_t err =
-		verify_digest(candidate_binary_start,
-			      size - (size_t)CONFIG_SUIT_SDFW_RECOVERY_UPDATE_FIRMWARE_OFFSET,
-			      PSA_ALG_SHA_512, current_sdfw_digest);
-	if (err != SUIT_PLAT_SUCCESS) {
-		if (err == DIGEST_SINK_ERR_DIGEST_MISMATCH) {
-			LOG_ERR("Digest mismatch - update failure");
-			return SUIT_PLAT_ERR_AUTHENTICATION;
-		}
+	enum sdfw_update_status update_status = sdfw_update_initial_status_get();
 
-		LOG_ERR("Failed to calculate digest: %d", err);
-		return SUIT_PLAT_ERR_CRASH;
+	/* Candidate is different than current FW but SDFW Recovery update was ongoing. */
+	switch (update_status) {
+	case SDFW_UPDATE_STATUS_NONE: {
+		/* No pending operation even though operation indicates SDFW Recovery update.
+		 * Yet candidate differs from current FW, so schedule the update.
+		 */
+		err = schedule_update_and_reboot(buf, size);
+		break;
+	}
+	default: {
+		/* SecROM indicates error during update */
+		LOG_ERR("Update failure: %08x", update_status);
+		/* By design SDFW Recovery update error should not result in failing whole
+		 * installation.
+		 * Because of that, set specific error code instead of SUIT_PLAT_ERR_CRASH.
+		 */
+		err = SUIT_PLAT_ERR_SDRFW_FAILURE;
+		break;
+	}
 	}
 
-	LOG_DBG("Digest match - update success");
-	return SUIT_PLAT_SUCCESS;
+	return err;
+}
+
+static suit_plat_err_t sdfw_update_ongoing(const uint8_t *buf, size_t size)
+{
+	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
+
+	enum sdfw_update_status update_status = sdfw_update_initial_status_get();
+
+	/* SDFW update was ongoing. */
+	switch (update_status) {
+	case SDFW_UPDATE_STATUS_NONE: {
+		/* No pending operation even though operation indicates SDFW update.
+		 * Proceed with SDFW Recovery update.
+		 */
+		err = schedule_update_and_reboot(buf, size);
+		break;
+	}
+	case SDFW_UPDATE_STATUS_UROT_ACTIVATED: {
+		/* SDFW was installed successfully.
+		 * Proceed with SDFW Recovery update.
+		 */
+		err = schedule_update_and_reboot(buf, size);
+		break;
+	}
+	default: {
+		/* SecROM indicates error during SDFW update.
+		 * By design SDFW update error should abort installation.
+		 */
+		LOG_ERR("SDFW update failure: %08x", update_status);
+		err = SUIT_PLAT_ERR_CRASH;
+		break;
+	}
+	}
+
+	return err;
+}
+
+static suit_plat_err_t update_needed_action(const uint8_t *buf, size_t size)
+{
+	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
+
+	enum sdfw_update_operation initial_operation = sdfw_update_initial_operation_get();
+
+	switch (initial_operation) {
+	case SDFW_UPDATE_OPERATION_NOP: {
+		/* No previously running update or after the other slot update. */
+		/* Schedule an update of this slot. */
+		err = schedule_update_and_reboot(buf, size);
+		break;
+	}
+	case SDFW_UPDATE_OPERATION_UROT_ACTIVATE: {
+		/* SDFW update was ongoing */
+		err = sdfw_update_ongoing(buf, size);
+		break;
+	}
+	case SDFW_UPDATE_OPERATION_RECOVERY_ACTIVATE: {
+		/* SDFW Recovery update was ongoing */
+		err = recovery_update_ongoing(buf, size);
+		break;
+	}
+	default: {
+		LOG_ERR("Unhandled operation: %08x", initial_operation);
+		/* By design SDFW Recovery update error should not result in failing whole
+		 * installation.
+		 * Because of that, set specific error code instead of SUIT_PLAT_ERR_CRASH.
+		 */
+		err = SUIT_PLAT_ERR_SDRFW_FAILURE;
+		break;
+	}
+	}
+
+	return err;
+}
+
+static bool is_update_needed(const uint8_t *buf, size_t size)
+{
+	const uint8_t *candidate_digest_in_manifest =
+		(uint8_t *)(buf + CONFIG_SUIT_SDFW_RECOVERY_UPDATE_DIGEST_OFFSET);
+	const uint8_t *current_sdfw_recovery_digest =
+		(uint8_t *)(NRF_SICR->UROT.RECOVERY.SM.TBS.FW.DIGEST);
+
+	bool digests_match = memcmp(candidate_digest_in_manifest, current_sdfw_recovery_digest,
+				    PSA_HASH_LENGTH(PSA_ALG_SHA_512)) == 0;
+
+	/* Update is needed when candidate's digest doesn't match current FW digest */
+	return !digests_match;
 }
 
 /* NOTE: Size means size of the SDFW binary to be updated,
@@ -267,57 +258,12 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 	context->write_called = true;
 
 	suit_plat_err_t err = SUIT_PLAT_SUCCESS;
-	bool clear_registers = true;
 
-	switch (NRF_SICR->UROT.UPDATE.STATUS) {
-	case SICR_UROT_UPDATE_STATUS_CODE_None: {
-		err = check_urot_none(buf, size);
-		/* Potential start of update process - SecROM needs the registers to be set */
-		clear_registers = false;
-		break;
-	}
-
-	case SICR_UROT_UPDATE_STATUS_CODE_RecoveryActivated: {
-		err = check_recovery_activated(buf, size);
-		clear_registers = true;
-		break;
-	}
-
-		/* TODO: Add handling of status RecoveryUnconfirmed and RecoveryConfirmed.
-		 *       For now the defines for these states are missing in mdk header files.
-		 *       NCSDK-26939
-		 */
-
-	case SICR_UROT_UPDATE_STATUS_CODE_UROTActivated:
-	case SICR_UROT_UPDATE_STATUS_CODE_VerifyOK:
-	case SICR_UROT_UPDATE_STATUS_CODE_AROTRecovery: {
-		LOG_ERR("Unsupported Recovery update status: 0x%08X", NRF_SICR->UROT.UPDATE.STATUS);
-		err = SUIT_PLAT_ERR_INCORRECT_STATE;
-		clear_registers = true;
-		break;
-	}
-
-	default: {
-		LOG_ERR("SDFW Recovery update failure: 0x%08X", NRF_SICR->UROT.UPDATE.STATUS);
-		err = NRF_SICR->UROT.UPDATE.STATUS;
-		clear_registers = true;
-		break;
-	}
-	}
-
-	if (clear_registers) {
-		suit_plat_err_t clear_err = clear_urot_update_status();
-
-		if (clear_err) {
-			LOG_ERR("Failed to clear UROT update status");
-			/* If the only error was during register clearing - report it. */
-			/* Otherwise report the original cause of failure. */
-			if (err == SUIT_PLAT_SUCCESS) {
-				err = clear_err;
-			}
-		} else {
-			LOG_DBG("UROT update status cleared");
-		}
+	if (is_update_needed(buf, size)) {
+		LOG_INF("Update needed");
+		err = update_needed_action(buf, size);
+	} else {
+		LOG_INF("Update not needed");
 	}
 
 	return err;

@@ -363,9 +363,11 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 	}
 
 	if (ret == SUIT_SUCCESS) {
-		ret = suit_generic_address_streamer_stream(payload_ptr, payload_size, &dst_sink);
-		if (ret != SUIT_PLAT_SUCCESS) {
-			LOG_ERR("memptr_streamer failed - error %i", ret);
+		plat_ret =
+			suit_generic_address_streamer_stream(payload_ptr, payload_size, &dst_sink);
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("memptr_streamer failed - error %i", plat_ret);
+			ret = suit_plat_err_to_processor_err_convert(plat_ret);
 		}
 	}
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
