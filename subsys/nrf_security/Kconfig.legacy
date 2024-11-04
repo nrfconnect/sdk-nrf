@@ -23,6 +23,7 @@ config MBEDTLS_MEMORY_BUFFER_ALLOC_C
 config MBEDTLS_THREADING_C
 	bool "Threading support for Mbed TLS and PSA crypto"
 	default y if CC3XX_BACKEND || MBEDTLS_PSA_CRYPTO_C
+	depends on MULTITHREADING
 	help
 	  Threading support is used when PSA crypto is built locally or
 	  when legacy APIs implemented using CryptoCell is in use.
