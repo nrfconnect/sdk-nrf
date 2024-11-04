@@ -81,7 +81,7 @@ static void setup_update_candidate(const uint8_t *buf, size_t len)
 		      "Unable to set update candidate before test execution (0x%x, %d)", buf, len);
 }
 
-static void assert_post_recovery_install_state(void)
+static void assert_post_fdfu_install_state(void)
 {
 	const suit_plat_mreg_t *regions = NULL;
 	size_t len = 0;
@@ -91,17 +91,15 @@ static void assert_post_recovery_install_state(void)
 	suit_plat_err_t ret = suit_storage_update_cand_get(&regions, &len);
 
 	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, ret, "Update candidate presence not cleared");
-	/* - clear the emergency flag */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
-		      "Recovery flag not cleared");
+	/* - clear the foreground DFU flag */
 	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
-		      "Foreground DFU flag set");
+		      "Foreground DFU flag not cleared");
 	/* - do not modify the execution mode */
-	zassert_equal(EXECUTION_MODE_INSTALL_RECOVERY, suit_execution_mode_get(),
+	zassert_equal(EXECUTION_MODE_INSTALL_FOREGROUND_DFU, suit_execution_mode_get(),
 		      "Execution mode modified");
 }
 
-static void assert_post_recovery_install_failed_state(void)
+static void assert_post_fdfu_install_failed_state(void)
 {
 	const suit_plat_mreg_t *regions = NULL;
 	size_t len = 0;
@@ -111,13 +109,13 @@ static void assert_post_recovery_install_failed_state(void)
 	suit_plat_err_t ret = suit_storage_update_cand_get(&regions, &len);
 
 	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, ret, "Update candidate presence not cleared");
-	/* - do not modify the emergency flag */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+	/* - do not modify the foreground DFU flag */
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Recovery flag changed");
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
 		      "Foreground DFU flag changed");
 	/* - do not modify the execution mode */
-	zassert_equal(EXECUTION_MODE_INSTALL_RECOVERY, suit_execution_mode_get(),
+	zassert_equal(EXECUTION_MODE_INSTALL_FOREGROUND_DFU, suit_execution_mode_get(),
 		      "Execution mode modified");
 }
 
@@ -127,7 +125,7 @@ static void orchestrator_tests_cleanup(void *fixture)
 	suit_dfu_cache_deinitialize();
 }
 
-static void enter_recovery_mode(void *fixture)
+static void enter_fdfu_mode(void *fixture)
 {
 	int err = suit_storage_init();
 
@@ -135,14 +133,14 @@ static void enter_recovery_mode(void *fixture)
 
 	setup_erased_flash();
 
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_set(SUIT_FLAG_RECOVERY),
-		      "Unable to set recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_set(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unable to set foreground DFU flag before test execution");
 }
 
-ZTEST_SUITE(orchestrator_recovery_update_tests, NULL, NULL, enter_recovery_mode,
+ZTEST_SUITE(orchestrator_fdfu_update_tests, NULL, NULL, enter_fdfu_mode,
 	    orchestrator_tests_cleanup, NULL);
 
-ZTEST(orchestrator_recovery_update_tests, test_rec_successful_update)
+ZTEST(orchestrator_fdfu_update_tests, test_fdfu_successful_update)
 {
 	const uint8_t *addr;
 	size_t size;
@@ -151,8 +149,8 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_successful_update)
 	setup_update_candidate(manifest_valid_buf, manifest_valid_len);
 	/* ... and suit orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized");
-	/* ... and the execution mode is set to install recovery mode */
-	zassert_equal(EXECUTION_MODE_INSTALL_RECOVERY, suit_execution_mode_get(),
+	/* ... and the execution mode is set to install foreground DFU mode */
+	zassert_equal(EXECUTION_MODE_INSTALL_FOREGROUND_DFU, suit_execution_mode_get(),
 		      "Unexpected execution mode before test execution");
 
 	/* WHEN orchestrator is launched */
@@ -170,10 +168,10 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_successful_update)
 	zassert_equal(SUIT_PLAT_SUCCESS, err,
 		      "The root envelope was not installed after successful update");
 	/* ... and the candidate availability flag is cleared */
-	assert_post_recovery_install_state();
+	assert_post_fdfu_install_state();
 }
 
-ZTEST(orchestrator_recovery_update_tests, test_rec_successful_update_and_boot)
+ZTEST(orchestrator_fdfu_update_tests, test_fdfu_successful_update_and_boot)
 {
 	const uint8_t *addr_boot;
 	size_t size_boot;
@@ -184,9 +182,9 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_successful_update_and_boot)
 	setup_update_candidate(manifest_valid_buf, manifest_valid_len);
 	/* ... and suit orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized first time");
-	/* ... and the execution mode is set to install recovery mode... */
-	zassert_equal(EXECUTION_MODE_INSTALL_RECOVERY, suit_execution_mode_get(),
-		      "Unexpected execution mode before test preparation");
+	/* ... and the execution mode is set to install foreground DFU mode */
+	zassert_equal(EXECUTION_MODE_INSTALL_FOREGROUND_DFU, suit_execution_mode_get(),
+		      "Unexpected execution mode before test execution");
 	/* ... and orchestrator is launched first time to perform successful update... */
 	zassert_equal(0, suit_orchestrator_entry(), "Unsuccessful first orchestrator launch");
 	/* ... and the root envelope is installed... */
@@ -199,9 +197,9 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_successful_update_and_boot)
 	zassert_equal(SUIT_PLAT_SUCCESS, err,
 		      "The application envelope was not installed after successful update");
 	/* ... and the candidate availability flag is cleared */
-	assert_post_recovery_install_state();
+	assert_post_fdfu_install_state();
 
-	/* WHEN when orchestrator is initialized again (reboot simulation)... */
+	/* WHEN orchestrator is initialized again (reboot simulation)... */
 	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized second time");
 	/* ... and the execution mode is set to invoke mode */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(),
@@ -227,14 +225,15 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_successful_update_and_boot)
 		      "Unexpected execution mode after test execution");
 }
 
-ZTEST(orchestrator_recovery_update_tests, test_rec_invalid_exec_mode)
+ZTEST(orchestrator_fdfu_update_tests, test_fdfu_invalid_exec_mode)
 {
 	/* GIVEN suit storage does not indicate presence of update candidate... */
 	setup_erased_flash();
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized");
-	/* ... and the execution mode is forced to install recovery mode */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_execution_mode_set(EXECUTION_MODE_INSTALL_RECOVERY),
+	/* ... and the execution mode is forced to foreground DFU install mode */
+	zassert_equal(SUIT_PLAT_SUCCESS,
+		      suit_execution_mode_set(EXECUTION_MODE_INSTALL_FOREGROUND_DFU),
 		      "Unable to override execution mode before test execution");
 
 	/* WHEN orchestrator is launched */
@@ -243,18 +242,18 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_invalid_exec_mode)
 	/* THEN orchestrator returns error code... */
 	zassert_equal(-EMSGSIZE, err, "Unexpected error code");
 	/* ... and the candidate availability flag remains cleared */
-	assert_post_recovery_install_state();
+	assert_post_fdfu_install_state();
 }
 
-ZTEST(orchestrator_recovery_update_tests, test_rec_independent_updates_denied)
+ZTEST(orchestrator_fdfu_update_tests, test_fdfu_independent_updates_denied)
 {
 	/* GIVEN suit storage contains recovery FW update... */
 	setup_update_candidate(manifest_valid_recovery_buf, manifest_valid_recovery_len);
 
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(), "Orchestrator not initialized");
-	/* ... and the execution mode is set to install recovery mode */
-	zassert_equal(EXECUTION_MODE_INSTALL_RECOVERY, suit_execution_mode_get(),
+	/* ... and the execution mode is set to install foreground DFU mode */
+	zassert_equal(EXECUTION_MODE_INSTALL_FOREGROUND_DFU, suit_execution_mode_get(),
 		      "Unexpected execution mode before test execution");
 
 	/* WHEN orchestrator is launched */
@@ -263,5 +262,5 @@ ZTEST(orchestrator_recovery_update_tests, test_rec_independent_updates_denied)
 	/* THEN orchestrator returns error code... */
 	zassert_equal(-EACCES, err, "Unexpected error code");
 	/* ... and the candidate availability flag is cleared */
-	assert_post_recovery_install_failed_state();
+	assert_post_fdfu_install_failed_state();
 }

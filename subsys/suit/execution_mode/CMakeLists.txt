@@ -8,6 +8,7 @@
 zephyr_interface_library_named(suit_execution_mode)
 target_include_directories(suit_execution_mode INTERFACE include)
 target_link_libraries(suit_execution_mode INTERFACE suit_platform_err)
+target_link_libraries(suit_execution_mode INTERFACE suit_metadata)
 
 zephyr_library()
 zephyr_library_sources(src/suit_execution_mode.c)

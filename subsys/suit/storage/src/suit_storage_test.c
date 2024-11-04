@@ -5,6 +5,7 @@
  */
 
 #include <suit_storage_mpi.h>
+#include <suit_storage_flags_internal.h>
 #include <suit_storage_internal.h>
 #include <zephyr/logging/log.h>
 
@@ -50,10 +51,16 @@ union suit_config_entry {
 	uint8_t erase_block[EB_SIZE(suit_config_t)];
 };
 
+/* SUIT flags area, aligned to the erase block size. */
+union suit_flags_entry {
+	suit_storage_flags_t flags;
+	uint8_t erase_block[EB_SIZE(suit_storage_flags_t)];
+};
+
 /* SUIT report binary. */
 typedef uint8_t suit_report_t[SUIT_REPORT_SIZE];
 
-/* SUIT rebort area, aligned to the erase block size. */
+/* SUIT report area, aligned to the erase block size. */
 union suit_report_entry {
 	suit_report_t report;
 	uint8_t erase_block[EB_SIZE(suit_report_t)];
@@ -69,6 +76,8 @@ struct suit_storage {
 	union suit_config_entry config_backup;
 	/** The main storage for the SUIT envelopes. */
 	union suit_envelope_entry envelopes[CONFIG_SUIT_STORAGE_N_ENVELOPES];
+	/** Storage for the SUIT flags. */
+	union suit_flags_entry flags;
 	/** Storage for the SUIT reports. */
 	union suit_report_entry reports[SUIT_N_REPORTS];
 };
@@ -217,6 +226,11 @@ suit_plat_err_t suit_storage_init(void)
 	}
 
 	err = suit_storage_report_internal_init();
+	if (err != SUIT_PLAT_SUCCESS) {
+		return err;
+	}
+
+	err = suit_storage_flags_internal_init();
 	if (err != SUIT_PLAT_SUCCESS) {
 		return err;
 	}
@@ -451,4 +465,31 @@ suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
 	}
 
 	return ret;
+}
+
+suit_plat_err_t suit_storage_flags_clear(suit_storage_flag_t flag)
+{
+	struct suit_storage *storage = (struct suit_storage *)SUIT_STORAGE_ADDRESS;
+	uint8_t *area_addr = storage->flags.erase_block;
+	size_t area_size = sizeof(storage->flags.erase_block);
+
+	return suit_storage_flags_internal_clear(area_addr, area_size, flag);
+}
+
+suit_plat_err_t suit_storage_flags_set(suit_storage_flag_t flag)
+{
+	struct suit_storage *storage = (struct suit_storage *)SUIT_STORAGE_ADDRESS;
+	uint8_t *area_addr = storage->flags.erase_block;
+	size_t area_size = sizeof(storage->flags.erase_block);
+
+	return suit_storage_flags_internal_set(area_addr, area_size, flag);
+}
+
+suit_plat_err_t suit_storage_flags_check(suit_storage_flag_t flag)
+{
+	struct suit_storage *storage = (struct suit_storage *)SUIT_STORAGE_ADDRESS;
+	uint8_t *area_addr = storage->flags.erase_block;
+	size_t area_size = sizeof(storage->flags.erase_block);
+
+	return suit_storage_flags_internal_check(area_addr, area_size, flag);
 }

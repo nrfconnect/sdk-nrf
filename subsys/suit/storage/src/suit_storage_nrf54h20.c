@@ -6,6 +6,7 @@
 
 #include <suit_storage_mpi.h>
 #include <suit_storage_nvv.h>
+#include <suit_storage_flags_internal.h>
 #include <suit_storage_internal.h>
 #include <zephyr/logging/log.h>
 #ifdef CONFIG_SUIT_CRYPTO
@@ -44,6 +45,11 @@ BUILD_ASSERT((SUIT_STORAGE_OFFSET <= SUIT_STORAGE_APP_OFFSET) &&
 	     "Application storage must be defined within SUIT storage partition");
 
 typedef uint8_t suit_storage_digest_t[32];
+
+struct suit_storage_flags {
+	/* SUIT boot flags. */
+	uint8_t flags[EB_SIZE(suit_storage_flags_t)];
+};
 
 struct suit_storage_nvv {
 	/* Manifest Runtime Non Volatile Variables. */
@@ -84,12 +90,15 @@ struct suit_storage_nordic {
 	union {
 		struct suit_storage_area_nordic {
 			/* Radio MPI Backup and digest. */
-			struct suit_storage_mpi_rad rad_mpi_bak;
+			struct suit_storage_mpi_rad rad_mpi_bak; /* 176 bytes */
 			/* Application MPI Backup and digest. */
-			struct suit_storage_mpi_app app_mpi_bak;
+			struct suit_storage_mpi_app app_mpi_bak; /* 272 bytes */
+
+			/* Flags used for selecting the boot path. */
+			struct suit_storage_flags flags; /* 16 bytes */
 
 			/* The last SUIT update report. */
-			uint8_t report_0[160];
+			uint8_t report_0[144];
 
 			/* Reserved for Future Use. */
 			uint8_t reserved[160];
@@ -810,6 +819,12 @@ suit_plat_err_t suit_storage_init(void)
 		return ret;
 	}
 
+	ret = suit_storage_flags_internal_init();
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Failed to initialize flags submodule: %d", ret);
+		return ret;
+	}
+
 	ret = suit_storage_nvv_init();
 	if (ret != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Failed to init NVV: %d", ret);
@@ -1084,7 +1099,7 @@ suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
 
 	switch (domain) {
 	case SUIT_MANIFEST_DOMAIN_APP:
-		/* Clear regular entry, inluding NVV and NVV backup. */
+		/* Clear regular entry, including update candidate info, NVV and NVV backup. */
 		err = flash_erase(fdev,
 				  suit_plat_mem_nvm_offset_get((uint8_t *)&app_storage->app_area),
 				  sizeof(app_storage->app_area));
@@ -1096,7 +1111,15 @@ suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
 					  sizeof(nordic_storage->nordic.app_mpi_bak));
 		}
 
-		/* Clear reports (incl. recovery flag and update candidate info). */
+		if (err == 0) {
+			/* Clear boot flags. */
+			err = flash_erase(fdev,
+					  suit_plat_mem_nvm_offset_get(
+						  (uint8_t *)&nordic_storage->nordic.flags),
+					  sizeof(nordic_storage->nordic.flags));
+		}
+
+		/* Clear reports. */
 		ret = suit_storage_report_clear(0);
 		break;
 
@@ -1124,10 +1147,40 @@ suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
 	 */
 	(void)suit_storage_init();
 
-	/* In case of IO error, ignore the suit processor return code. */
+	/* In case of IO error, ignore the suit storage reports return code. */
 	if (err != 0) {
 		return SUIT_PLAT_ERR_IO;
 	}
 
 	return ret;
+}
+
+suit_plat_err_t suit_storage_flags_clear(suit_storage_flag_t flag)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	uint8_t *area_addr = nordic_storage->nordic.flags.flags;
+	size_t area_size = ARRAY_SIZE(nordic_storage->nordic.flags.flags);
+
+	return suit_storage_flags_internal_clear(area_addr, area_size, flag);
+}
+
+suit_plat_err_t suit_storage_flags_set(suit_storage_flag_t flag)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	uint8_t *area_addr = nordic_storage->nordic.flags.flags;
+	size_t area_size = ARRAY_SIZE(nordic_storage->nordic.flags.flags);
+
+	return suit_storage_flags_internal_set(area_addr, area_size, flag);
+}
+
+suit_plat_err_t suit_storage_flags_check(suit_storage_flag_t flag)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	uint8_t *area_addr = nordic_storage->nordic.flags.flags;
+	size_t area_size = ARRAY_SIZE(nordic_storage->nordic.flags.flags);
+
+	return suit_storage_flags_internal_check(area_addr, area_size, flag);
 }

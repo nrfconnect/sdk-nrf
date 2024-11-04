@@ -33,10 +33,14 @@ void suit_execution_mode_startup_failed(void)
 	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
 	/* SUIT processes update candiadate. */
 	case EXECUTION_MODE_INSTALL:
+	/* SUIT processes recovery as foreground update. */
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	/* SUIT processes recovery update. */
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 	/* SUIT boots from root manifest. */
 	case EXECUTION_MODE_INVOKE:
+	/* SUIT boots from recovery manifest as foreground update. */
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	/* SUIT boots from recovery manifest. */
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		current_execution_mode = EXECUTION_MODE_FAIL_STARTUP;
@@ -50,10 +54,14 @@ void suit_execution_mode_startup_failed(void)
 	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
 	/* System not booted, MPI misconfigured. */
 	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+	/* System not booted, unable to boot recovery manifest as foreground update. */
+	case EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU:
 	/* System not booted, unable to boot recovery manifest. */
 	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
 	/* System booted from root manifest. */
 	case EXECUTION_MODE_POST_INVOKE:
+	/* System booted from recovery manifest as foreground update. */
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	/* System booted from recovery manifest. */
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
 	/* System failed before invoking SUIT orchestrator. */
@@ -68,12 +76,16 @@ bool suit_execution_mode_booting(void)
 	switch (current_execution_mode) {
 	/* SUIT processes update candiadate. */
 	case EXECUTION_MODE_INSTALL:
+	/* SUIT processes recovery as foreground update. */
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	/* SUIT processes recovery update. */
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 	/* System is unprovisioned, SUIT updates Nordic components. */
 	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
 	/* System booted from root manifest. */
 	case EXECUTION_MODE_POST_INVOKE:
+	/* System booted from recovery manifest as foreground update. */
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	/* System booted from recovery manifest. */
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
 	/* System not booted, application MPI missing. */
@@ -84,6 +96,8 @@ bool suit_execution_mode_booting(void)
 	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
 	/* System not booted, MPI misconfigured. */
 	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+	/* System not booted, unable to boot recovery manifest as foreground update. */
+	case EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU:
 	/* System not booted, unable to boot recovery manifest. */
 	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
 	/* System failed before invoking SUIT orchestrator. */
@@ -94,6 +108,8 @@ bool suit_execution_mode_booting(void)
 	case EXECUTION_MODE_STARTUP:
 	/* SUIT boots from root manifest. */
 	case EXECUTION_MODE_INVOKE:
+	/* SUIT boots from recovery manifest as foreground update. */
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	/* SUIT boots from recovery manifest. */
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		break;
@@ -108,10 +124,14 @@ bool suit_execution_mode_updating(void)
 	switch (current_execution_mode) {
 	/* SUIT boots from root manifest. */
 	case EXECUTION_MODE_INVOKE:
+	/* SUIT boots from recovery manifest as foreground update. */
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	/* SUIT boots from recovery manifest. */
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 	/* System booted from root manifest. */
 	case EXECUTION_MODE_POST_INVOKE:
+	/* System booted from recovery manifest as foreground update. */
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	/* System booted from recovery manifest. */
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
 	/* System not booted, application MPI missing. */
@@ -122,6 +142,8 @@ bool suit_execution_mode_updating(void)
 	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
 	/* System not booted, MPI misconfigured. */
 	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+	/* System not booted, unable to boot recovery manifest as foreground update. */
+	case EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU:
 	/* System not booted, unable to boot recovery manifest. */
 	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
 	/* System failed before invoking SUIT orchestrator. */
@@ -132,6 +154,8 @@ bool suit_execution_mode_updating(void)
 	case EXECUTION_MODE_STARTUP:
 	/* SUIT processes update candiadate. */
 	case EXECUTION_MODE_INSTALL:
+	/* SUIT processes recovery as foreground update. */
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	/* SUIT processes recovery update. */
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 	/* System is unprovisioned, SUIT updates Nordic components. */
@@ -150,14 +174,20 @@ bool suit_execution_mode_failed(void)
 	case EXECUTION_MODE_STARTUP:
 	/* SUIT processes update candiadate. */
 	case EXECUTION_MODE_INSTALL:
+	/* SUIT processes recovery as foreground update. */
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	/* SUIT processes recovery update. */
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 	/* SUIT boots from root manifest. */
 	case EXECUTION_MODE_INVOKE:
+	/* SUIT boots from recovery manifest as foreground update. */
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	/* SUIT boots from recovery manifest. */
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 	/* System booted from root manifest. */
 	case EXECUTION_MODE_POST_INVOKE:
+	/* System booted from recovery manifest as foreground update. */
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	/* System booted from recovery manifest. */
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
 	/* System is unprovisioned, SUIT updates Nordic components. */
@@ -172,6 +202,8 @@ bool suit_execution_mode_failed(void)
 	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
 	/* System not booted, MPI misconfigured. */
 	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+	/* System not booted, unable to boot recovery manifest as foreground update. */
+	case EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU:
 	/* System not booted, unable to boot recovery manifest. */
 	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
 	/* System failed before invoking SUIT orchestrator. */
@@ -181,4 +213,48 @@ bool suit_execution_mode_failed(void)
 	}
 
 	return true;
+}
+
+suit_boot_mode_t suit_execution_mode_to_boot_mode(suit_execution_mode_t exec_mode)
+{
+	switch (exec_mode) {
+	case EXECUTION_MODE_INVOKE:
+		return SUIT_BOOT_MODE_INVOKE;
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
+		return SUIT_BOOT_MODE_INVOKE_FOREGROUND_DFU;
+	case EXECUTION_MODE_INVOKE_RECOVERY:
+		return SUIT_BOOT_MODE_INVOKE_RECOVERY;
+	case EXECUTION_MODE_INSTALL:
+		return SUIT_BOOT_MODE_INSTALL;
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
+		return SUIT_BOOT_MODE_INSTALL_FOREGROUND_DFU;
+	case EXECUTION_MODE_INSTALL_RECOVERY:
+		return SUIT_BOOT_MODE_INSTALL_RECOVERY;
+	case EXECUTION_MODE_POST_INVOKE:
+		return SUIT_BOOT_MODE_POST_INVOKE;
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
+		return SUIT_BOOT_MODE_POST_INVOKE_FOREGROUND_DFU;
+	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
+		return SUIT_BOOT_MODE_POST_INVOKE_RECOVERY;
+	case EXECUTION_MODE_FAIL_NO_MPI:
+		return SUIT_BOOT_MODE_FAIL_NO_MPI;
+	case EXECUTION_MODE_FAIL_MPI_INVALID:
+		return SUIT_BOOT_MODE_FAIL_MPI_INVALID;
+	case EXECUTION_MODE_FAIL_MPI_INVALID_MISSING:
+		return SUIT_BOOT_MODE_FAIL_MPI_INVALID_MISSING;
+	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
+		return SUIT_BOOT_MODE_FAIL_MPI_UNSUPPORTED;
+	case EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU:
+		return SUIT_BOOT_MODE_FAIL_INVOKE_FOREGROUND_DFU;
+	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
+		return SUIT_BOOT_MODE_FAIL_INVOKE_RECOVERY;
+	case EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP:
+		return SUIT_BOOT_MODE_FAIL_INSTALL_NORDIC_TOP;
+	case EXECUTION_MODE_FAIL_STARTUP:
+		return SUIT_BOOT_MODE_FAIL_STARTUP;
+	default:
+		break;
+	}
+
+	return SUIT_BOOT_MODE_UNKNOWN;
 }

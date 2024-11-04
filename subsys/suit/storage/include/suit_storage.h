@@ -26,6 +26,12 @@
 extern "C" {
 #endif
 
+/** List of possible SUIT boot flags. */
+typedef enum {
+	SUIT_FLAG_RECOVERY,
+	SUIT_FLAG_FOREGROUND_DFU,
+} suit_storage_flag_t;
+
 /**
  * @brief Initialize the SUIT storage.
  *
@@ -194,6 +200,42 @@ suit_plat_err_t suit_storage_report_read(size_t index, const uint8_t **buf, size
  * @retval SUIT_PLAT_ERR_IO             if unable to change NVM contents.
  */
 suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain);
+
+/**
+ * @brief Clear one of the boot flags.
+ *
+ * @param[in]  flag       SUIT boot flag to clear.
+ *
+ * @retval SUIT_PLAT_SUCCESS           if flag was successfully cleared.
+ * @retval SUIT_PLAT_ERR_INVAL         if one of the input arguments is invalid (i.e. NULL).
+ * @retval SUIT_PLAT_ERR_HW_NOT_READY  if NVM controller is unavailable.
+ * @retval SUIT_PLAT_ERR_IO            if unable to change NVM contents.
+ */
+suit_plat_err_t suit_storage_flags_clear(suit_storage_flag_t flag);
+
+/**
+ * @brief Set one of the boot flags.
+ *
+ * @param[in]  flag       SUIT boot flag to set.
+ *
+ * @retval SUIT_PLAT_SUCCESS           if flag was successfully set.
+ * @retval SUIT_PLAT_ERR_INVAL         if one of the input arguments is invalid (i.e. NULL).
+ * @retval SUIT_PLAT_ERR_HW_NOT_READY  if NVM controller is unavailable.
+ * @retval SUIT_PLAT_ERR_IO            if unable to change NVM contents.
+ */
+suit_plat_err_t suit_storage_flags_set(suit_storage_flag_t flag);
+
+/**
+ * @brief Check if one of the boot flags is set.
+ *
+ * @param[in]  flag       SUIT boot flag to be checked.
+ *
+ * @retval SUIT_PLAT_SUCCESS           if flag is set.
+ * @retval SUIT_PLAT_ERR_NOT_FOUND     if flag is cleared.
+ * @retval SUIT_PLAT_ERR_INVAL         if one of the input arguments is invalid (i.e. NULL).
+ * @retval SUIT_PLAT_ERR_HW_NOT_READY  if NVM controller is unavailable.
+ */
+suit_plat_err_t suit_storage_flags_check(suit_storage_flag_t flag);
 
 #ifdef __cplusplus
 }

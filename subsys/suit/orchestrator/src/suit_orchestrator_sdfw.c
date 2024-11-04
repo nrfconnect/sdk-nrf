@@ -13,6 +13,7 @@
 #include <suit.h>
 #include <suit_platform.h>
 #include <suit_storage.h>
+#include <suit_storage_mpi.h>
 #include <suit_plat_mem_util.h>
 #include <suit_plat_decode_util.h>
 #include <suit_mci.h>
@@ -29,10 +30,12 @@ LOG_MODULE_REGISTER(suit_orchestrator, CONFIG_SUIT_LOG_LEVEL);
 enum suit_orchestrator_state {
 	STATE_STARTUP,
 	STATE_INVOKE,
+	STATE_INVOKE_FOREGROUND_DFU,
 	STATE_INVOKE_RECOVERY,
 	STATE_INSTALL,
 	STATE_INSTALL_RECOVERY,
 	STATE_POST_INVOKE,
+	STATE_POST_INVOKE_FOREGROUND_DFU,
 	STATE_POST_INVOKE_RECOVERY,
 	STATE_POST_INSTALL,
 	STATE_ENTER_RECOVERY,
@@ -40,48 +43,61 @@ enum suit_orchestrator_state {
 	STATE_POST_INSTALL_NORDIC_TOP,
 };
 
-static suit_plat_err_t storage_emergency_flag_get(bool *flag)
+static suit_plat_err_t storage_boot_flags_get(bool *recovery_flag, bool *fdfu_flag)
 {
-	const uint8_t *fail_report;
-	size_t fail_report_len;
-	suit_plat_err_t ret = suit_storage_report_read(0, &fail_report, &fail_report_len);
+	suit_plat_err_t ret = suit_storage_flags_check(SUIT_FLAG_RECOVERY);
 
-	if (flag == NULL) {
+	if ((recovery_flag == NULL) || (fdfu_flag == NULL)) {
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
-	if (ret == SUIT_PLAT_ERR_NOT_FOUND) {
-		*flag = false;
-	} else if (ret == SUIT_PLAT_SUCCESS) {
-		*flag = true;
-	} else {
-		LOG_ERR("Unable to read recovery flag: %d", ret);
-		*flag = true;
+	*fdfu_flag = false;
+	*recovery_flag = false;
+
+	if (ret == SUIT_PLAT_SUCCESS) {
+		*recovery_flag = true;
+	} else if (ret == SUIT_PLAT_ERR_NOT_FOUND) {
+		ret = suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU);
+		if (ret == SUIT_PLAT_SUCCESS) {
+			*fdfu_flag = true;
+		} else if (ret == SUIT_PLAT_ERR_NOT_FOUND) {
+			/* The device is neither in recovery nor in FDFU mode. */
+			ret = SUIT_PLAT_SUCCESS;
+		}
+	}
+
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Unable to read SUIT boot flag: %d", ret);
+		*recovery_flag = true;
 		return ret;
 	}
 
-	return SUIT_PLAT_SUCCESS;
+	return ret;
 }
 
-static int enter_emergency_recovery(void)
+static int enter_emergency_recovery(int ret)
 {
-	/* TODO: Report boot status */
-	suit_plat_err_t ret = suit_storage_report_save(0, NULL, 0);
+	suit_plat_err_t plat_ret = suit_storage_flags_set(SUIT_FLAG_RECOVERY);
 
-	if (ret != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Unable to set recovery flag: %d", ret);
+	if (plat_ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Unable to set recovery flag: %d", plat_ret);
 		return -EIO;
 	}
 
 	return 0;
 }
 
-static void leave_emergency_recovery(void)
+static void leave_emergency_recovery_and_foreground_dfu(void)
 {
-	suit_plat_err_t ret = suit_storage_report_clear(0);
+	suit_plat_err_t ret = suit_storage_flags_clear(SUIT_FLAG_RECOVERY);
 
 	if (ret != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Unable to clear recovery flag: %d", ret);
+	}
+
+	ret = suit_storage_flags_clear(SUIT_FLAG_FOREGROUND_DFU);
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Unable to clear foreground DFU flag: %d", ret);
 	}
 }
 
@@ -338,6 +354,7 @@ static int boot_path(bool emergency)
 {
 	const suit_manifest_class_id_t *class_ids_to_boot[CONFIG_SUIT_STORAGE_N_ENVELOPES] = {NULL};
 	size_t class_ids_to_boot_len = ARRAY_SIZE(class_ids_to_boot);
+	const suit_manifest_class_id_t *class_id = NULL;
 	int ret = 0;
 
 	mci_err_t mci_ret = suit_mci_invoke_order_get(
@@ -348,8 +365,7 @@ static int boot_path(bool emergency)
 	}
 
 	for (size_t i = 0; i < class_ids_to_boot_len; i++) {
-		const suit_manifest_class_id_t *class_id =
-			(const suit_manifest_class_id_t *)class_ids_to_boot[i];
+		class_id = (const suit_manifest_class_id_t *)class_ids_to_boot[i];
 
 		ret = boot_envelope(class_id);
 		if (ret != 0) {
@@ -378,6 +394,7 @@ static int boot_path(bool emergency)
 int suit_orchestrator_init(void)
 {
 	bool emergency_flag = true;
+	bool fdfu_flag = false;
 	const suit_plat_mreg_t *update_regions = NULL;
 	size_t update_regions_len = 0;
 
@@ -460,20 +477,24 @@ int suit_orchestrator_init(void)
 		update_regions_len = 0;
 	}
 
-	plat_err = storage_emergency_flag_get(&emergency_flag);
+	plat_err = storage_boot_flags_get(&emergency_flag, &fdfu_flag);
 	if (plat_err != SUIT_PLAT_SUCCESS) {
 		LOG_WRN("Unable to read emergency flag: %d", plat_err);
 		emergency_flag = true;
 	}
 
 	if (update_regions_len > 0) {
-		if (emergency_flag == false) {
+		if (fdfu_flag == true) {
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_INSTALL_FOREGROUND_DFU);
+		} else if (emergency_flag == false) {
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_INSTALL);
 		} else {
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_INSTALL_RECOVERY);
 		}
 	} else {
-		if (emergency_flag == false) {
+		if (fdfu_flag == true) {
+			plat_err = suit_execution_mode_set(EXECUTION_MODE_INVOKE_FOREGROUND_DFU);
+		} else if (emergency_flag == false) {
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_INVOKE);
 		} else {
 			plat_err = suit_execution_mode_set(EXECUTION_MODE_INVOKE_RECOVERY);
@@ -499,12 +520,16 @@ static int suit_orchestrator_run(void)
 	case EXECUTION_MODE_INVOKE:
 		state = STATE_INVOKE;
 		break;
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
+		state = STATE_INVOKE_FOREGROUND_DFU;
+		break;
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		state = STATE_INVOKE_RECOVERY;
 		break;
 	case EXECUTION_MODE_INSTALL:
 		state = STATE_INSTALL;
 		break;
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 		state = STATE_INSTALL_RECOVERY;
 		break;
@@ -521,9 +546,11 @@ static int suit_orchestrator_run(void)
 	case EXECUTION_MODE_FAIL_MPI_UNSUPPORTED:
 		return -ENOTSUP;
 
+	case EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_FAIL_INVOKE_RECOVERY:
 	case EXECUTION_MODE_STARTUP:
 	case EXECUTION_MODE_POST_INVOKE:
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
 	default:
 		break;
@@ -541,7 +568,7 @@ static int suit_orchestrator_run(void)
 			LOG_INF("Recovery update path");
 			ret = update_path();
 			if (ret == 0) {
-				leave_emergency_recovery();
+				leave_emergency_recovery_and_foreground_dfu();
 			}
 
 			state = STATE_POST_INSTALL;
@@ -609,10 +636,16 @@ static int suit_orchestrator_run(void)
 			state = STATE_POST_INVOKE_RECOVERY;
 			break;
 
+		case STATE_INVOKE_FOREGROUND_DFU:
+			LOG_INF("Foreground update boot path");
+			ret = boot_path(true);
+			state = STATE_POST_INVOKE_FOREGROUND_DFU;
+			break;
+
 		case STATE_ENTER_RECOVERY:
 			LOG_INF("Enter recovery mode");
 
-			ret = enter_emergency_recovery();
+			ret = enter_emergency_recovery(ret);
 			if (ret != 0) {
 				LOG_WRN("Unable to enter emergency recovery: %d", ret);
 			}
@@ -643,6 +676,24 @@ static int suit_orchestrator_run(void)
 				    SUIT_PLAT_SUCCESS) {
 					LOG_WRN("Unable to change execution mode to FAIL INVOKE "
 						"RECOVERY");
+				}
+			}
+			return ret;
+
+		case STATE_POST_INVOKE_FOREGROUND_DFU:
+			if (ret == 0) {
+				if (suit_execution_mode_set(
+					    EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU) !=
+				    SUIT_PLAT_SUCCESS) {
+					LOG_WRN("Unable to change execution mode to INVOKE "
+						"FDFU");
+				}
+			} else {
+				if (suit_execution_mode_set(
+					    EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU) !=
+				    SUIT_PLAT_SUCCESS) {
+					LOG_WRN("Unable to change execution mode to FAIL INVOKE "
+						"FDFU");
 				}
 			}
 			return ret;

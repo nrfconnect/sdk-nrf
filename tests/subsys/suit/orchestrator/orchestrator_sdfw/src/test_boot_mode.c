@@ -114,10 +114,14 @@ static void setup_erased_flash(void)
 	err = flash_erase(fdev, SUIT_STORAGE_OFFSET, SUIT_STORAGE_SIZE);
 	zassert_equal(0, err, "Unable to erase storage before test execution");
 
-	suit_plat_err_t ret = suit_storage_report_clear(0);
+	suit_plat_err_t ret = suit_storage_flags_clear(SUIT_FLAG_RECOVERY);
 
 	zassert_equal(SUIT_PLAT_SUCCESS, ret,
 		      "Unable to clear recovery flag before test execution");
+
+	ret = suit_storage_flags_clear(SUIT_FLAG_FOREGROUND_DFU);
+	zassert_equal(SUIT_PLAT_SUCCESS, ret,
+		      "Unable to clear foreground DFU flag before test execution");
 
 	/* Recover MPI area from the backup region. */
 	err = suit_storage_init();
@@ -137,15 +141,14 @@ ZTEST_SUITE(orchestrator_boot_tests, NULL, setup_install_fw, NULL, NULL, NULL);
 
 ZTEST(orchestrator_boot_tests, test_boot_invalid_exec_mode)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -171,15 +174,14 @@ ZTEST(orchestrator_boot_tests, test_boot_invalid_exec_mode)
 
 ZTEST(orchestrator_boot_tests, test_no_root_envelope)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -193,8 +195,10 @@ ZTEST(orchestrator_boot_tests, test_no_root_envelope)
 	/* THEN orchestrator fails (no support for reboots)... */
 	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+		      "Recovery flag not set");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
 	/* ... and execution mode does not indicate a failed state */
@@ -207,9 +211,6 @@ ZTEST(orchestrator_boot_tests, test_no_root_envelope)
 
 ZTEST(orchestrator_boot_tests, test_invalid_root_envelope)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope is installed... */
@@ -218,8 +219,10 @@ ZTEST(orchestrator_boot_tests, test_invalid_root_envelope)
 	setup_install_envelope(&app_class_id, manifest_valid_app_buf, manifest_valid_app_len);
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -233,17 +236,16 @@ ZTEST(orchestrator_boot_tests, test_invalid_root_envelope)
 	/* THEN orchestrator fails (no support for reboots)... */
 	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+		      "Recovery flag not set");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_valid_root_without_app_envelope)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope is installed... */
@@ -251,8 +253,10 @@ ZTEST(orchestrator_boot_tests, test_valid_root_without_app_envelope)
 	/* ... and application envelope is not installed... */
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -266,17 +270,16 @@ ZTEST(orchestrator_boot_tests, test_valid_root_without_app_envelope)
 	/* THEN orchestrator fails (no support for reboots)... */
 	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+		      "Recovery flag not set");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_valid_root_app_envelope)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope is installed... */
@@ -285,8 +288,10 @@ ZTEST(orchestrator_boot_tests, test_valid_root_app_envelope)
 	setup_install_envelope(&app_class_id, manifest_valid_app_buf, manifest_valid_app_len);
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -300,8 +305,11 @@ ZTEST(orchestrator_boot_tests, test_valid_root_app_envelope)
 	/* THEN orchestrator succeeds... */
 	zassert_equal(0, err, "Valid envelopes not accepted (err: %d)", err);
 	/* ... and the emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Emergency flag set");
+	/* ... and the foreground DFU flag is not set... */
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode is set to the POST INVOKE */
 	zassert_equal(EXECUTION_MODE_POST_INVOKE, suit_execution_mode_get(),
 		      "Execution mode modified");
@@ -309,9 +317,6 @@ ZTEST(orchestrator_boot_tests, test_valid_root_app_envelope)
 
 ZTEST(orchestrator_boot_tests, test_seq_no_validate)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope without suit-validate sequence is installed... */
@@ -320,8 +325,10 @@ ZTEST(orchestrator_boot_tests, test_seq_no_validate)
 	/* ... and application envelope is not installed... */
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -335,8 +342,11 @@ ZTEST(orchestrator_boot_tests, test_seq_no_validate)
 	/* THEN orchestrator succeeds... */
 	zassert_equal(0, err, "Envelope without validate sequence not accepted (err: %d)", err);
 	/* ... and the emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Emergency flag set");
+	/* ... and the foreground DFU flag is not set... */
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode is set to the POST INVOKE */
 	zassert_equal(EXECUTION_MODE_POST_INVOKE, suit_execution_mode_get(),
 		      "Execution mode modified");
@@ -344,9 +354,6 @@ ZTEST(orchestrator_boot_tests, test_seq_no_validate)
 
 ZTEST(orchestrator_boot_tests, test_seq_validate_fail)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope with failing suit-validate sequence is installed... */
@@ -355,8 +362,10 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_fail)
 	/* ... and application envelope is not installed... */
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -370,17 +379,16 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_fail)
 	/* THEN orchestrator fails (no support for reboots)... */
 	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+		      "Recovery flag not set");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_seq_validate_load_fail)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope with failing suit-load sequence is installed... */
@@ -389,8 +397,10 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_fail)
 	/* ... and application envelope is not installed... */
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -404,17 +414,16 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_fail)
 	/* THEN orchestrator fails (no support for reboots)... */
 	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+		      "Recovery flag not set");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_seq_validate_load_no_invoke)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope without suit-invoke sequence is installed... */
@@ -423,8 +432,10 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_no_invoke)
 	/* ... and application envelope is not installed... */
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -438,17 +449,16 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_no_invoke)
 	/* THEN orchestrator fails (no support for reboots)... */
 	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+		      "Recovery flag not set");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_seq_validate_load_invoke_fail)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope with failing suit-invoke sequence is installed... */
@@ -457,8 +467,10 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_invoke_fail)
 	/* ... and application envelope is not installed... */
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -472,17 +484,16 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_invoke_fail)
 	/* THEN orchestrator fails (no support for reboots)... */
 	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
 	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
+		      "Recovery flag not set");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_seq_validate_load_invoke)
 {
-	const uint8_t *buf;
-	size_t len;
-
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
 	/* ... and root envelope without dependencies is installed... */
@@ -491,8 +502,10 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_invoke)
 	/* ... and application envelope is not installed... */
 	/* ... and update candidate flag is not set... */
 	/* ... and emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Unexpected emergency recovery flag before test execution");
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Unexpected foreground DFU flag before test execution");
 	/* ... and orchestrator is initialized... */
 	zassert_equal(0, suit_orchestrator_init(),
 		      "Orchestrator not initialized before test execution");
@@ -506,8 +519,11 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_invoke)
 	/* THEN orchestrator succeeds... */
 	zassert_equal(0, err, "Envelope with three sequences not accepted (err: %d)", err);
 	/* ... and the emergency flag is not set... */
-	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_RECOVERY),
 		      "Emergency flag set");
+	/* ... and the foreground DFU flag is not set... */
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_flags_check(SUIT_FLAG_FOREGROUND_DFU),
+		      "Foreground DFU flag set");
 	/* ... and the execution mode is set to the POST INVOKE */
 	zassert_equal(EXECUTION_MODE_POST_INVOKE, suit_execution_mode_get(),
 		      "Execution mode modified");

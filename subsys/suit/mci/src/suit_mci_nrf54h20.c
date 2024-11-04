@@ -60,6 +60,7 @@ mci_err_t suit_mci_invoke_order_get(const suit_manifest_class_id_t **class_id, s
 		}
 		break;
 
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		if (suit_storage_mpi_class_get(SUIT_MANIFEST_SEC_TOP, &class_id[0]) !=
 		    SUIT_PLAT_SUCCESS) {
@@ -143,8 +144,11 @@ mci_err_t suit_mci_independent_update_policy_get(const suit_manifest_class_id_t 
 	 * update candidate before resetting the SoC.
 	 */
 	switch (suit_execution_mode_get()) {
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	case EXECUTION_MODE_INSTALL_RECOVERY:
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
 		if ((role == SUIT_MANIFEST_APP_RECOVERY) || (role == SUIT_MANIFEST_RAD_RECOVERY)) {
 			*policy = SUIT_INDEPENDENT_UPDATE_DENIED;
@@ -248,7 +252,7 @@ mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class
 			return SUIT_PLAT_SUCCESS;
 		} else if ((mpi->signature_verification_policy ==
 			    SUIT_MPI_SIGNATURE_CHECK_ENABLED_ON_UPDATE) &&
-			   (suit_execution_mode_get() == EXECUTION_MODE_INVOKE)) {
+			   suit_execution_mode_booting()) {
 			/* By allowing key_id == 0 in the invoke path, the platform will verify
 			 * the signature only during updates.
 			 */
@@ -641,6 +645,7 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 		}
 		break;
 
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 		if ((parent_role == SUIT_MANIFEST_SEC_TOP) &&
 		    ((child_role == SUIT_MANIFEST_SEC_SYSCTRL) ||
@@ -658,6 +663,7 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 		}
 		break;
 
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		if ((parent_role == SUIT_MANIFEST_SEC_TOP) &&
 		    ((child_role == SUIT_MANIFEST_SEC_SYSCTRL) ||
