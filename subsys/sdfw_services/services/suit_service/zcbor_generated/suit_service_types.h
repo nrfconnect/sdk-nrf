@@ -5,7 +5,7 @@
  */
 
 /*
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.9.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 3
  */
@@ -124,6 +124,10 @@ struct suit_chunk_status_req {
 	uint32_t suit_chunk_status_req_stream_session_id;
 };
 
+struct suit_invoke_confirm_req {
+	int32_t suit_invoke_confirm_req_ret;
+};
+
 struct suit_req {
 	union {
 		struct suit_trigger_update_req suit_req_msg_suit_trigger_update_req_m;
@@ -144,6 +148,7 @@ struct suit_req {
 		struct suit_evt_sub_req suit_req_msg_suit_evt_sub_req_m;
 		struct suit_chunk_enqueue_req suit_req_msg_suit_chunk_enqueue_req_m;
 		struct suit_chunk_status_req suit_req_msg_suit_chunk_status_req_m;
+		struct suit_invoke_confirm_req suit_req_msg_suit_invoke_confirm_req_m;
 	};
 	enum {
 		suit_req_msg_suit_trigger_update_req_m_c,
@@ -160,6 +165,10 @@ struct suit_req {
 		suit_req_msg_suit_evt_sub_req_m_c,
 		suit_req_msg_suit_chunk_enqueue_req_m_c,
 		suit_req_msg_suit_chunk_status_req_m_c,
+		suit_req_msg_suit_boot_mode_read_req_m_c,
+		suit_req_msg_suit_invoke_confirm_req_m_c,
+		suit_req_msg_suit_boot_flags_reset_req_m_c,
+		suit_req_msg_suit_foreground_dfu_required_req_m_c,
 	} suit_req_msg_choice;
 };
 
@@ -246,6 +255,23 @@ struct suit_chunk_status_rsp {
 	size_t suit_chunk_status_rsp_chunk_info_suit_chunk_info_entry_m_count;
 };
 
+struct suit_boot_mode_read_rsp {
+	int32_t suit_boot_mode_read_rsp_ret;
+	uint32_t suit_boot_mode_read_rsp_boot_mode;
+};
+
+struct suit_invoke_confirm_rsp {
+	int32_t suit_invoke_confirm_rsp_ret;
+};
+
+struct suit_boot_flags_reset_rsp {
+	int32_t suit_boot_flags_reset_rsp_ret;
+};
+
+struct suit_foreground_dfu_required_rsp {
+	int32_t suit_foreground_dfu_required_rsp_ret;
+};
+
 struct suit_rsp {
 	union {
 		struct suit_trigger_update_rsp suit_rsp_msg_suit_trigger_update_rsp_m;
@@ -270,6 +296,11 @@ struct suit_rsp {
 		struct suit_evt_sub_rsp suit_rsp_msg_suit_evt_sub_rsp_m;
 		struct suit_chunk_enqueue_rsp suit_rsp_msg_suit_chunk_enqueue_rsp_m;
 		struct suit_chunk_status_rsp suit_rsp_msg_suit_chunk_status_rsp_m;
+		struct suit_boot_mode_read_rsp suit_rsp_msg_suit_boot_mode_read_rsp_m;
+		struct suit_invoke_confirm_rsp suit_rsp_msg_suit_invoke_confirm_rsp_m;
+		struct suit_boot_flags_reset_rsp suit_rsp_msg_suit_boot_flags_reset_rsp_m;
+		struct suit_foreground_dfu_required_rsp
+			suit_rsp_msg_suit_foreground_dfu_required_rsp_m;
 	};
 	enum {
 		suit_rsp_msg_suit_trigger_update_rsp_m_c,
@@ -286,6 +317,10 @@ struct suit_rsp {
 		suit_rsp_msg_suit_evt_sub_rsp_m_c,
 		suit_rsp_msg_suit_chunk_enqueue_rsp_m_c,
 		suit_rsp_msg_suit_chunk_status_rsp_m_c,
+		suit_rsp_msg_suit_boot_mode_read_rsp_m_c,
+		suit_rsp_msg_suit_invoke_confirm_rsp_m_c,
+		suit_rsp_msg_suit_boot_flags_reset_rsp_m_c,
+		suit_rsp_msg_suit_foreground_dfu_required_rsp_m_c,
 	} suit_rsp_msg_choice;
 };
 

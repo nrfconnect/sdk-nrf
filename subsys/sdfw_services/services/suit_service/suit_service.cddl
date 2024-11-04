@@ -301,6 +301,58 @@ suit_chunk_status_rsp = (
 	chunk_info: [ 0*3 suit_chunk_info_entry],
 )
 
+; Read the current boot mode.
+; This service is used to provide an execution context for the companion app.
+suit_boot_mode_read_req = (
+	50,
+)
+
+; See suit_boot_mode_t for boot_mode field possible values.
+suit_boot_mode_read_rsp = (
+	50,
+	ret: int,
+	boot_mode: uint,
+)
+
+; Confirm that the image was booted.
+; This service is use by the companion app to release SUIT orchestrator in case
+; of synchronous invocation.
+suit_invoke_confirm_req = (
+	51,
+	ret: int,
+)
+
+suit_invoke_confirm_rsp = (
+	51,
+	ret: int,
+)
+
+; Reset all SUIT boot flags.
+; This API will reboot the SDFW and attempt to boot the system from installed
+; manifests.
+suit_boot_flags_reset_req = (
+	52,
+)
+
+suit_boot_flags_reset_rsp = (
+	52,
+	ret: int,
+)
+
+; Reboot the system into a foreground DFU mode.
+; In this mode the SUIT orchestrator boots the application recovery image.
+; The recovery image should check the context of invocation through
+; the suit_execution_mode_read_req service.
+; The foreground DFU may be left by providing update candidate or through
+; the suit_boot_flags_reset_req service.
+suit_foreground_dfu_required_req = (
+	53,
+)
+
+suit_foreground_dfu_required_rsp = (
+	53,
+	ret: int,
+)
 
 suit_req = [
 	; Union of different requests
@@ -321,7 +373,12 @@ suit_req = [
 
 		suit_evt_sub_req /
 		suit_chunk_enqueue_req /
-		suit_chunk_status_req
+		suit_chunk_status_req /
+
+		suit_boot_mode_read_req /
+		suit_invoke_confirm_req /
+		suit_boot_flags_reset_req /
+		suit_foreground_dfu_required_req
 	),
 ]
 
@@ -344,7 +401,12 @@ suit_rsp = [
 
 		suit_evt_sub_rsp /
 		suit_chunk_enqueue_rsp /
-		suit_chunk_status_rsp
+		suit_chunk_status_rsp /
+
+		suit_boot_mode_read_rsp /
+		suit_invoke_confirm_rsp /
+		suit_boot_flags_reset_rsp /
+		suit_foreground_dfu_required_rsp
 	),
 ]
 

@@ -5,7 +5,7 @@
  */
 
 /*
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.9.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 3
  */
@@ -21,6 +21,17 @@
 #if DEFAULT_MAX_QTY != 3
 #error "The type file was generated with a different default_max_qty than this file"
 #endif
+
+#define log_result(state, result, func)                                                            \
+	do {                                                                                       \
+		if (!result) {                                                                     \
+			zcbor_trace_file(state);                                                   \
+			zcbor_log("%s error: %s\r\n", func,                                        \
+				  zcbor_error_str(zcbor_peek_error(state)));                       \
+		} else {                                                                           \
+			zcbor_log("%s success\r\n", func);                                         \
+		}                                                                                  \
+	} while (0)
 
 static bool encode_suit_missing_image_evt_nfy(zcbor_state_t *state,
 					      const struct suit_missing_image_evt_nfy *input);
@@ -52,6 +63,8 @@ static bool encode_suit_chunk_enqueue_req(zcbor_state_t *state,
 					  const struct suit_chunk_enqueue_req *input);
 static bool encode_suit_chunk_status_req(zcbor_state_t *state,
 					 const struct suit_chunk_status_req *input);
+static bool encode_suit_invoke_confirm_req(zcbor_state_t *state,
+					   const struct suit_invoke_confirm_req *input);
 static bool encode_suit_trigger_update_rsp(zcbor_state_t *state,
 					   const struct suit_trigger_update_rsp *input);
 static bool encode_suit_check_installed_component_digest_rsp(
@@ -83,6 +96,15 @@ static bool encode_suit_chunk_info_entry(zcbor_state_t *state,
 					 const struct suit_chunk_info_entry *input);
 static bool encode_suit_chunk_status_rsp(zcbor_state_t *state,
 					 const struct suit_chunk_status_rsp *input);
+static bool encode_suit_boot_mode_read_rsp(zcbor_state_t *state,
+					   const struct suit_boot_mode_read_rsp *input);
+static bool encode_suit_invoke_confirm_rsp(zcbor_state_t *state,
+					   const struct suit_invoke_confirm_rsp *input);
+static bool encode_suit_boot_flags_reset_rsp(zcbor_state_t *state,
+					     const struct suit_boot_flags_reset_rsp *input);
+static bool
+encode_suit_foreground_dfu_required_rsp(zcbor_state_t *state,
+					const struct suit_foreground_dfu_required_rsp *input);
 static bool encode_suit_nfy(zcbor_state_t *state, const struct suit_nfy *input);
 static bool encode_suit_rsp(zcbor_state_t *state, const struct suit_rsp *input);
 static bool encode_suit_req(zcbor_state_t *state, const struct suit_req *input);
@@ -92,20 +114,14 @@ static bool encode_suit_missing_image_evt_nfy(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = ((
+	bool res = ((
 		(((zcbor_uint32_put(state, (41)))) &&
 		 ((zcbor_bstr_encode(state, (&(*input).suit_missing_image_evt_nfy_resource_id)))) &&
 		 ((zcbor_uint32_encode(
 			 state, (&(*input).suit_missing_image_evt_nfy_stream_session_id)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_chunk_status_evt_nfy(zcbor_state_t *state,
@@ -113,19 +129,12 @@ static bool encode_suit_chunk_status_evt_nfy(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (42)))) &&
-		   ((zcbor_uint32_encode(
-			   state, (&(*input).suit_chunk_status_evt_nfy_stream_session_id)))))));
+	bool res = (((((zcbor_uint32_put(state, (42)))) &&
+		      ((zcbor_uint32_encode(
+			      state, (&(*input).suit_chunk_status_evt_nfy_stream_session_id)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_cache_info_entry(zcbor_state_t *state,
@@ -133,18 +142,11 @@ static bool encode_suit_cache_info_entry(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_encode(state, (&(*input).suit_cache_info_entry_addr)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).suit_cache_info_entry_size)))))));
+	bool res = (((((zcbor_uint32_encode(state, (&(*input).suit_cache_info_entry_addr)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).suit_cache_info_entry_size)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_trigger_update_req(zcbor_state_t *state,
@@ -152,7 +154,7 @@ static bool encode_suit_trigger_update_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = ((
+	bool res = ((
 		(((zcbor_uint32_put(state, (1)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).suit_trigger_update_req_addr)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).suit_trigger_update_req_size)))) &&
@@ -161,19 +163,13 @@ static bool encode_suit_trigger_update_req(zcbor_state_t *state,
 			    0, 6,
 			    &(*input).suit_trigger_update_req_caches_suit_cache_info_entry_m_count,
 			    (zcbor_encoder_t *)encode_suit_cache_info_entry, state,
-			    (&(*input).suit_trigger_update_req_caches_suit_cache_info_entry_m),
+			    (*&(*input).suit_trigger_update_req_caches_suit_cache_info_entry_m),
 			    sizeof(struct suit_cache_info_entry))) ||
 		    (zcbor_list_map_end_force_encode(state), false)) &&
 		   zcbor_list_end_encode(state, 12))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_check_installed_component_digest_req(
@@ -181,7 +177,7 @@ static bool encode_suit_check_installed_component_digest_req(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = ((
+	bool res = ((
 		(((zcbor_uint32_put(state, (2)))) &&
 		 ((zcbor_bstr_encode(
 			 state,
@@ -191,14 +187,8 @@ static bool encode_suit_check_installed_component_digest_req(
 		 ((zcbor_bstr_encode(
 			 state, (&(*input).suit_check_installed_component_digest_req_digest)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_get_installed_manifest_info_req(
@@ -206,20 +196,14 @@ static bool encode_suit_get_installed_manifest_info_req(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
+	bool res =
 		(((((zcbor_uint32_put(state, (3)))) &&
 		   ((zcbor_bstr_encode(
 			   state,
 			   (&(*input).suit_get_installed_manifest_info_req_manifest_class_id)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool
@@ -228,7 +212,7 @@ encode_suit_authenticate_manifest_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (10)))) &&
 		((zcbor_bstr_encode(
 			state, (&(*input).suit_authenticate_manifest_req_manifest_component_id)))) &&
@@ -240,14 +224,8 @@ encode_suit_authenticate_manifest_req(zcbor_state_t *state,
 		((zcbor_uint32_encode(state,
 				      (&(*input).suit_authenticate_manifest_req_data_size)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_authorize_unsigned_manifest_req(
@@ -255,20 +233,14 @@ static bool encode_suit_authorize_unsigned_manifest_req(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (11)))) &&
 		((zcbor_bstr_encode(
 			state,
 			(&(*input).suit_authorize_unsigned_manifest_req_manifest_component_id)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_authorize_seq_num_req(zcbor_state_t *state,
@@ -276,21 +248,15 @@ static bool encode_suit_authorize_seq_num_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (12)))) &&
 		((zcbor_bstr_encode(
 			state, (&(*input).suit_authorize_seq_num_req_manifest_component_id)))) &&
 		((zcbor_uint32_encode(state, (&(*input).suit_authorize_seq_num_req_command_seq)))) &&
 		((zcbor_uint32_encode(state, (&(*input).suit_authorize_seq_num_req_seq_num)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_check_component_compatibility_req(
@@ -298,7 +264,7 @@ static bool encode_suit_check_component_compatibility_req(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (13)))) &&
 		((zcbor_bstr_encode(
 			state,
@@ -306,14 +272,8 @@ static bool encode_suit_check_component_compatibility_req(
 		((zcbor_bstr_encode(
 			state, (&(*input).suit_check_component_compatibility_req_component_id)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_get_supported_manifest_info_req(
@@ -321,19 +281,12 @@ static bool encode_suit_get_supported_manifest_info_req(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (19)))) &&
-		   ((zcbor_int32_encode(state,
-					(&(*input).suit_get_supported_manifest_info_req_role)))))));
+	bool res = (((((zcbor_uint32_put(state, (19)))) &&
+		      ((zcbor_int32_encode(
+			      state, (&(*input).suit_get_supported_manifest_info_req_role)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_authorize_process_dependency_req(
@@ -341,7 +294,7 @@ static bool encode_suit_authorize_process_dependency_req(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (21)))) &&
 		((zcbor_bstr_encode(
 			state,
@@ -352,32 +305,19 @@ static bool encode_suit_authorize_process_dependency_req(
 		((zcbor_int32_encode(state,
 				     (&(*input).suit_authorize_process_dependency_req_seq_id)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_evt_sub_req(zcbor_state_t *state, const struct suit_evt_sub_req *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (40)))) &&
-		   ((zcbor_bool_encode(state, (&(*input).suit_evt_sub_req_subscribe)))))));
+	bool res = (((((zcbor_uint32_put(state, (40)))) &&
+		      ((zcbor_bool_encode(state, (&(*input).suit_evt_sub_req_subscribe)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_chunk_enqueue_req(zcbor_state_t *state,
@@ -385,24 +325,17 @@ static bool encode_suit_chunk_enqueue_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (43)))) &&
-		   ((zcbor_uint32_encode(state,
-					 (&(*input).suit_chunk_enqueue_req_stream_session_id)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_chunk_id)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_offset)))) &&
-		   ((zcbor_bool_encode(state, (&(*input).suit_chunk_enqueue_req_last_chunk)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_addr)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_size)))))));
+	bool res = (((((zcbor_uint32_put(state, (43)))) &&
+		      ((zcbor_uint32_encode(
+			      state, (&(*input).suit_chunk_enqueue_req_stream_session_id)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_chunk_id)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_offset)))) &&
+		      ((zcbor_bool_encode(state, (&(*input).suit_chunk_enqueue_req_last_chunk)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_addr)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).suit_chunk_enqueue_req_size)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_chunk_status_req(zcbor_state_t *state,
@@ -410,19 +343,24 @@ static bool encode_suit_chunk_status_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (44)))) &&
-		   ((zcbor_uint32_encode(state,
-					 (&(*input).suit_chunk_status_req_stream_session_id)))))));
+	bool res = (((((zcbor_uint32_put(state, (44)))) &&
+		      ((zcbor_uint32_encode(
+			      state, (&(*input).suit_chunk_status_req_stream_session_id)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
+	log_result(state, res, __func__);
+	return res;
+}
 
-	return tmp_result;
+static bool encode_suit_invoke_confirm_req(zcbor_state_t *state,
+					   const struct suit_invoke_confirm_req *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool res = (((((zcbor_uint32_put(state, (51)))) &&
+		      ((zcbor_int32_encode(state, (&(*input).suit_invoke_confirm_req_ret)))))));
+
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_trigger_update_rsp(zcbor_state_t *state,
@@ -430,18 +368,11 @@ static bool encode_suit_trigger_update_rsp(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (1)))) &&
-		   ((zcbor_int32_encode(state, (&(*input).suit_trigger_update_rsp_ret)))))));
+	bool res = (((((zcbor_uint32_put(state, (1)))) &&
+		      ((zcbor_int32_encode(state, (&(*input).suit_trigger_update_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_check_installed_component_digest_rsp(
@@ -449,19 +380,13 @@ static bool encode_suit_check_installed_component_digest_rsp(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
+	bool res =
 		(((((zcbor_uint32_put(state, (2)))) &&
 		   ((zcbor_int32_encode(
 			   state, (&(*input).suit_check_installed_component_digest_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_get_installed_manifest_info_rsp(
@@ -469,7 +394,7 @@ static bool encode_suit_get_installed_manifest_info_rsp(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (3)))) &&
 		((zcbor_int32_encode(state,
 				     (&(*input).suit_get_installed_manifest_info_rsp_ret)))) &&
@@ -479,7 +404,7 @@ static bool encode_suit_get_installed_manifest_info_rsp(
 		  ((zcbor_multi_encode_minmax(
 			   0, 5, &(*input).suit_get_installed_manifest_info_rsp_semver_int_count,
 			   (zcbor_encoder_t *)zcbor_int32_encode, state,
-			   (&(*input).suit_get_installed_manifest_info_rsp_semver_int),
+			   (*&(*input).suit_get_installed_manifest_info_rsp_semver_int),
 			   sizeof(int32_t))) ||
 		   (zcbor_list_map_end_force_encode(state), false)) &&
 		  zcbor_list_end_encode(state, 5))) &&
@@ -490,14 +415,8 @@ static bool encode_suit_get_installed_manifest_info_rsp(
 		((zcbor_bstr_encode(state,
 				    (&(*input).suit_get_installed_manifest_info_rsp_digest)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool
@@ -506,7 +425,7 @@ encode_suit_get_install_candidate_info_rsp(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (4)))) &&
 		((zcbor_int32_encode(state, (&(*input).suit_get_install_candidate_info_rsp_ret)))) &&
 		((zcbor_bstr_encode(
@@ -518,7 +437,7 @@ encode_suit_get_install_candidate_info_rsp(zcbor_state_t *state,
 		  ((zcbor_multi_encode_minmax(
 			   0, 5, &(*input).suit_get_install_candidate_info_rsp_semver_int_count,
 			   (zcbor_encoder_t *)zcbor_int32_encode, state,
-			   (&(*input).suit_get_install_candidate_info_rsp_semver_int),
+			   (*&(*input).suit_get_install_candidate_info_rsp_semver_int),
 			   sizeof(int32_t))) ||
 		   (zcbor_list_map_end_force_encode(state), false)) &&
 		  zcbor_list_end_encode(state, 5))) &&
@@ -527,14 +446,8 @@ encode_suit_get_install_candidate_info_rsp(zcbor_state_t *state,
 		((zcbor_bstr_encode(state,
 				    (&(*input).suit_get_install_candidate_info_rsp_digest)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool
@@ -543,18 +456,12 @@ encode_suit_authenticate_manifest_rsp(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
+	bool res =
 		(((((zcbor_uint32_put(state, (10)))) &&
 		   ((zcbor_int32_encode(state, (&(*input).suit_authenticate_manifest_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_authorize_unsigned_manifest_rsp(
@@ -562,19 +469,12 @@ static bool encode_suit_authorize_unsigned_manifest_rsp(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (11)))) &&
-		   ((zcbor_int32_encode(state,
-					(&(*input).suit_authorize_unsigned_manifest_rsp_ret)))))));
+	bool res = (((((zcbor_uint32_put(state, (11)))) &&
+		      ((zcbor_int32_encode(
+			      state, (&(*input).suit_authorize_unsigned_manifest_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_authorize_seq_num_rsp(zcbor_state_t *state,
@@ -582,18 +482,11 @@ static bool encode_suit_authorize_seq_num_rsp(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (12)))) &&
-		   ((zcbor_int32_encode(state, (&(*input).suit_authorize_seq_num_rsp_ret)))))));
+	bool res = (((((zcbor_uint32_put(state, (12)))) &&
+		      ((zcbor_int32_encode(state, (&(*input).suit_authorize_seq_num_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_check_component_compatibility_rsp(
@@ -601,19 +494,12 @@ static bool encode_suit_check_component_compatibility_rsp(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (13)))) &&
-		   ((zcbor_int32_encode(
-			   state, (&(*input).suit_check_component_compatibility_rsp_ret)))))));
+	bool res = (((((zcbor_uint32_put(state, (13)))) &&
+		      ((zcbor_int32_encode(
+			      state, (&(*input).suit_check_component_compatibility_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_get_supported_manifest_roles_rsp(
@@ -621,7 +507,7 @@ static bool encode_suit_get_supported_manifest_roles_rsp(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = ((
+	bool res = ((
 		(((zcbor_uint32_put(state, (18)))) &&
 		 ((zcbor_int32_encode(state,
 				      (&(*input).suit_get_supported_manifest_roles_rsp_ret)))) &&
@@ -629,19 +515,13 @@ static bool encode_suit_get_supported_manifest_roles_rsp(
 		   ((zcbor_multi_encode_minmax(
 			    0, 20, &(*input).suit_get_supported_manifest_roles_rsp_roles_int_count,
 			    (zcbor_encoder_t *)zcbor_int32_encode, state,
-			    (&(*input).suit_get_supported_manifest_roles_rsp_roles_int),
+			    (*&(*input).suit_get_supported_manifest_roles_rsp_roles_int),
 			    sizeof(int32_t))) ||
 		    (zcbor_list_map_end_force_encode(state), false)) &&
 		   zcbor_list_end_encode(state, 20))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_get_supported_manifest_info_rsp(
@@ -649,7 +529,7 @@ static bool encode_suit_get_supported_manifest_info_rsp(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (19)))) &&
 		((zcbor_int32_encode(state,
 				     (&(*input).suit_get_supported_manifest_info_rsp_ret)))) &&
@@ -669,14 +549,8 @@ static bool encode_suit_get_supported_manifest_info_rsp(
 			state,
 			(&(*input).suit_get_supported_manifest_info_rsp_signature_verification_policy)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_authorize_process_dependency_rsp(
@@ -684,36 +558,23 @@ static bool encode_suit_authorize_process_dependency_rsp(
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (21)))) &&
-		   ((zcbor_int32_encode(state,
-					(&(*input).suit_authorize_process_dependency_rsp_ret)))))));
+	bool res = (((((zcbor_uint32_put(state, (21)))) &&
+		      ((zcbor_int32_encode(
+			      state, (&(*input).suit_authorize_process_dependency_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_evt_sub_rsp(zcbor_state_t *state, const struct suit_evt_sub_rsp *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((((zcbor_uint32_put(state, (40)))) &&
-			     ((zcbor_int32_encode(state, (&(*input).suit_evt_sub_rsp_ret)))))));
+	bool res = (((((zcbor_uint32_put(state, (40)))) &&
+		      ((zcbor_int32_encode(state, (&(*input).suit_evt_sub_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_chunk_enqueue_rsp(zcbor_state_t *state,
@@ -721,18 +582,11 @@ static bool encode_suit_chunk_enqueue_rsp(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_put(state, (43)))) &&
-		   ((zcbor_int32_encode(state, (&(*input).suit_chunk_enqueue_rsp_ret)))))));
+	bool res = (((((zcbor_uint32_put(state, (43)))) &&
+		      ((zcbor_int32_encode(state, (&(*input).suit_chunk_enqueue_rsp_ret)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_chunk_info_entry(zcbor_state_t *state,
@@ -740,18 +594,11 @@ static bool encode_suit_chunk_info_entry(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result =
-		(((((zcbor_uint32_encode(state, (&(*input).suit_chunk_info_entry_chunk_id)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).suit_chunk_info_entry_status)))))));
+	bool res = (((((zcbor_uint32_encode(state, (&(*input).suit_chunk_info_entry_chunk_id)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).suit_chunk_info_entry_status)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_chunk_status_rsp(zcbor_state_t *state,
@@ -759,7 +606,7 @@ static bool encode_suit_chunk_status_rsp(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		((zcbor_uint32_put(state, (44)))) &&
 		((zcbor_int32_encode(state, (&(*input).suit_chunk_status_rsp_ret)))) &&
 		((zcbor_list_start_encode(state, 6) &&
@@ -767,26 +614,72 @@ static bool encode_suit_chunk_status_rsp(zcbor_state_t *state,
 			   0, 3,
 			   &(*input).suit_chunk_status_rsp_chunk_info_suit_chunk_info_entry_m_count,
 			   (zcbor_encoder_t *)encode_suit_chunk_info_entry, state,
-			   (&(*input).suit_chunk_status_rsp_chunk_info_suit_chunk_info_entry_m),
+			   (*&(*input).suit_chunk_status_rsp_chunk_info_suit_chunk_info_entry_m),
 			   sizeof(struct suit_chunk_info_entry))) ||
 		   (zcbor_list_map_end_force_encode(state), false)) &&
 		  zcbor_list_end_encode(state, 6))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
+	log_result(state, res, __func__);
+	return res;
+}
 
-	return tmp_result;
+static bool encode_suit_boot_mode_read_rsp(zcbor_state_t *state,
+					   const struct suit_boot_mode_read_rsp *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool res =
+		(((((zcbor_uint32_put(state, (50)))) &&
+		   ((zcbor_int32_encode(state, (&(*input).suit_boot_mode_read_rsp_ret)))) &&
+		   ((zcbor_uint32_encode(state, (&(*input).suit_boot_mode_read_rsp_boot_mode)))))));
+
+	log_result(state, res, __func__);
+	return res;
+}
+
+static bool encode_suit_invoke_confirm_rsp(zcbor_state_t *state,
+					   const struct suit_invoke_confirm_rsp *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool res = (((((zcbor_uint32_put(state, (51)))) &&
+		      ((zcbor_int32_encode(state, (&(*input).suit_invoke_confirm_rsp_ret)))))));
+
+	log_result(state, res, __func__);
+	return res;
+}
+
+static bool encode_suit_boot_flags_reset_rsp(zcbor_state_t *state,
+					     const struct suit_boot_flags_reset_rsp *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool res = (((((zcbor_uint32_put(state, (52)))) &&
+		      ((zcbor_int32_encode(state, (&(*input).suit_boot_flags_reset_rsp_ret)))))));
+
+	log_result(state, res, __func__);
+	return res;
+}
+
+static bool
+encode_suit_foreground_dfu_required_rsp(zcbor_state_t *state,
+					const struct suit_foreground_dfu_required_rsp *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool res = ((
+		(((zcbor_uint32_put(state, (53)))) &&
+		 ((zcbor_int32_encode(state, (&(*input).suit_foreground_dfu_required_rsp_ret)))))));
+
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_nfy(zcbor_state_t *state, const struct suit_nfy *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		zcbor_list_start_encode(state, 3) &&
 		((((((*input).suit_nfy_msg_choice == suit_nfy_msg_suit_missing_image_evt_nfy_m_c) ?
 			    ((encode_suit_missing_image_evt_nfy(
@@ -800,21 +693,15 @@ static bool encode_suit_nfy(zcbor_state_t *state, const struct suit_nfy *input)
 		 (zcbor_list_map_end_force_encode(state), false)) &&
 		zcbor_list_end_encode(state, 3))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_rsp(zcbor_state_t *state, const struct suit_rsp *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		zcbor_list_start_encode(state, 8) &&
 		((((((*input).suit_rsp_msg_choice == suit_rsp_msg_suit_trigger_update_rsp_m_c) ?
 			    ((encode_suit_trigger_update_rsp(
@@ -884,25 +771,39 @@ static bool encode_suit_rsp(zcbor_state_t *state, const struct suit_rsp *input)
 																		 ((encode_suit_chunk_status_rsp(
 																			 state,
 																			 (&(*input).suit_rsp_msg_suit_chunk_status_rsp_m)))) :
-																		 false)))))))))))))))) ||
+																		 (((*input).suit_rsp_msg_choice ==
+																		   suit_rsp_msg_suit_boot_mode_read_rsp_m_c) ?
+																			  ((encode_suit_boot_mode_read_rsp(
+																				  state,
+																				  (&(*input).suit_rsp_msg_suit_boot_mode_read_rsp_m)))) :
+																			  (((*input).suit_rsp_msg_choice ==
+																			    suit_rsp_msg_suit_invoke_confirm_rsp_m_c) ?
+																				   ((encode_suit_invoke_confirm_rsp(
+																					   state,
+																					   (&(*input).suit_rsp_msg_suit_invoke_confirm_rsp_m)))) :
+																				   (((*input).suit_rsp_msg_choice ==
+																				     suit_rsp_msg_suit_boot_flags_reset_rsp_m_c) ?
+																					    ((encode_suit_boot_flags_reset_rsp(
+																						    state,
+																						    (&(*input).suit_rsp_msg_suit_boot_flags_reset_rsp_m)))) :
+																					    (((*input).suit_rsp_msg_choice ==
+																					      suit_rsp_msg_suit_foreground_dfu_required_rsp_m_c) ?
+																						     ((encode_suit_foreground_dfu_required_rsp(
+																							     state,
+																							     (&(*input).suit_rsp_msg_suit_foreground_dfu_required_rsp_m)))) :
+																						     false)))))))))))))))))))) ||
 		 (zcbor_list_map_end_force_encode(state), false)) &&
 		zcbor_list_end_encode(state, 8))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_suit_req(zcbor_state_t *state, const struct suit_req *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((
+	bool res = (((
 		zcbor_list_start_encode(state, 7) &&
 		((((((*input).suit_req_msg_choice == suit_req_msg_suit_trigger_update_req_m_c) ?
 			    ((encode_suit_trigger_update_req(
@@ -970,18 +871,32 @@ static bool encode_suit_req(zcbor_state_t *state, const struct suit_req *input)
 																		 ((encode_suit_chunk_status_req(
 																			 state,
 																			 (&(*input).suit_req_msg_suit_chunk_status_req_m)))) :
-																		 false)))))))))))))))) ||
+																		 (((*input).suit_req_msg_choice ==
+																		   suit_req_msg_suit_boot_mode_read_req_m_c) ?
+																			  ((zcbor_uint32_put(
+																				  state,
+																				  (50)))) :
+																			  (((*input).suit_req_msg_choice ==
+																			    suit_req_msg_suit_invoke_confirm_req_m_c) ?
+																				   ((encode_suit_invoke_confirm_req(
+																					   state,
+																					   (&(*input).suit_req_msg_suit_invoke_confirm_req_m)))) :
+																				   (((*input).suit_req_msg_choice ==
+																				     suit_req_msg_suit_boot_flags_reset_req_m_c) ?
+																					    ((zcbor_uint32_put(
+																						    state,
+																						    (52)))) :
+																					    (((*input).suit_req_msg_choice ==
+																					      suit_req_msg_suit_foreground_dfu_required_req_m_c) ?
+																						     ((zcbor_uint32_put(
+																							     state,
+																							     (53)))) :
+																						     false)))))))))))))))))))) ||
 		 (zcbor_list_map_end_force_encode(state), false)) &&
 		zcbor_list_end_encode(state, 7))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 int cbor_encode_suit_req(uint8_t *payload, size_t payload_len, const struct suit_req *input,
