@@ -18,7 +18,7 @@ config WFA_QT_CONTROL_APP
 
 config WFA_QT_THREAD_STACK_SIZE
 	int "WFA QT thread stack size"
-	default 4096
+	default 5200
 	help
 	  Set the stack size for WFA QT thread.
 
