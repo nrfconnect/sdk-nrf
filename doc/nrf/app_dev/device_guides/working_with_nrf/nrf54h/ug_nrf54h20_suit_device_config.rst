@@ -57,14 +57,14 @@ The Secure Domain and the System Controller support the following manifests:
 The Secure Domain Manifest is responsible solely for the delivery and initiation of the update process for the Secure Domain Firmware and Secure Domain Recovery Firmware images.
 In the following diagrams, the Secure Domain Manifest is labeled as ``SDFW`` or ``SDFW_RECOVERY``.
 
-.. figure:: images/nrf54h20_suit_manifests.png
+.. figure:: images/nrf54h20_suit_manifests.svg
 
    SUIT manifests supported by the nRF54H20 SoC in the most complex predicted case
 
 This diagram illustrates the most complex predicted configuration.
 You can choose a subset of the manifests supported by the nRF54H20.
 
-.. figure:: images/nrf54h20_suit_manifests_minimal.png
+.. figure:: images/nrf54h20_suit_manifests_minimal.svg
 
    SUIT manifests enabled in nRF54H20, Application and Radio images, without recovery support
 
@@ -73,7 +73,7 @@ This diagram illustrates the minimal predicted configuration that supports the a
 Properties associated to SUIT manifest
 **************************************
 
-.. figure:: images/suit_manifest_properties.png
+.. figure:: images/suit_manifest_properties.svg
 
    An example of property values of the SUIT Application Local Manifest
 
@@ -140,7 +140,7 @@ And two distinct manifest class ID values for Application Local Manifest, for ex
 
     uuid5(acme_vid, 'nRF54H20_roller_shutter_app')
 
-.. figure:: images/suit_acme_manifests.png
+.. figure:: images/suit_acme_manifests.svg
 
    Manifest hierarchies for ACME Corp devices.
 
@@ -247,7 +247,7 @@ The supported SUIT topologies are the following.
 Invocation path (normal booting)
 ================================
 
-.. figure:: images/nrf54h20_invocation_topology.png
+.. figure:: images/nrf54h20_invocation_topology.svg
 
    SUIT topology for nRF54H20 invocation path in the most complex predicted case
 
@@ -267,13 +267,13 @@ To minimize this risk, recovery-dedicated SUIT manifests cannot be updated toget
 
 Update path for elements not dedicated to SUIT recovery:
 
-.. figure:: images/nrf54h20_update_topology_for_non_recovery_elements.png
+.. figure:: images/nrf54h20_update_topology_for_non_recovery_elements.svg
 
    SUIT topology for the nRF54H20 SoC update path in the most complex predicted case for elements not dedicated to SUIT recovery.
 
 Update path for elements dedicated to SUIT recovery:
 
-.. figure:: images/nrf54h20_update_topology_for_recovery_elements.png
+.. figure:: images/nrf54h20_update_topology_for_recovery_elements.svg
 
    SUIT topology for the nRF54H20 SoC update path for elements dedicated to SUIT recovery.
 
@@ -294,7 +294,7 @@ The application recovery manifest has the ability to directly control local appl
 This gives the user flexibility in defining the device's behavior in recovery scenarios.
 One possible scenario is reusing the regular radio image to download a damaged application image.
 
-.. figure:: images/nrf54h20_recovery_invocation_topology.png
+.. figure:: images/nrf54h20_recovery_invocation_topology.svg
 
    SUIT topology for the nRF54H20 SoC recovery path in the most complex predicted case.
 
