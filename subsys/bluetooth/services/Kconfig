@@ -34,6 +34,7 @@ rsource "Kconfig.ddfs"
 rsource "Kconfig.mds"
 rsource "cgms/Kconfig.cgms"
 rsource "fast_pair/Kconfig.fast_pair"
+rsource "ras/Kconfig.ras"
 rsource "wifi_prov/Kconfig.wifi_prov"
 
 endmenu

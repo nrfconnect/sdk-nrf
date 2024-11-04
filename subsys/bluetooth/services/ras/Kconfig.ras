@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_RAS
+	bool
+	help
+	  Common Bluetooth GATT Ranging Service modules.
+
+rsource "rreq/Kconfig.ras_rreq"
+rsource "rrsp/Kconfig.ras_rrsp"

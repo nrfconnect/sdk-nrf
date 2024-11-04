@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_RAS_RRSP
+	bool "Enable GATT Ranging Responder Server [EXPERIMENTAL]"
+	depends on BT_CHANNEL_SOUNDING
+	select EXPERIMENTAL
+	select BT_NRF_SERVICES
+	select BT_RAS
+
+if BT_RAS_RRSP
+
+module = BT_RAS_RRSP
+module-str = RAS_RRSP
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_RAS_RRSP
