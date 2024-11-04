@@ -15,6 +15,7 @@ Here you can find documentation for these scripts.
    ../../scripts/shell/*/*
    ../../scripts/nrf_provision/*/*
    ../../scripts/hid_configurator/*
+   ../../scripts/docker/*
    ../../scripts/partition_manager/*
    ../../scripts/west_commands/sbom/*
    ../../scripts/memfault/*
