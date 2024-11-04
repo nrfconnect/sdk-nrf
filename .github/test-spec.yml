@@ -582,7 +582,7 @@
   - "subsys/event_manager_proxy/**/*"
   - "samples/ipc/**/*"
   - "samples/event_manager_proxy/**/*"
-  - "snippets/emulated-*/**/*"
+  - "snippets/sdp/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/benchmarks/multicore/idle/**/*"
   - "tests/drivers/gpio/egpio_basic_api/**/*"
