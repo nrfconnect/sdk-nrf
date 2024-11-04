@@ -244,4 +244,14 @@ config MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519
+	bool "Use ED25519 signature"
+	help
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
+	bool "Signature is verified over an image rather than sha of an image"
+	help
+	  This is a Kconfig which is informative only, the value should not be changed.
+
 endmenu
