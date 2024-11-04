@@ -30,7 +30,7 @@ config WFA_QT_REBOOT_TIMEOUT_MS
 
 config WFA_QT_DEFAULT_INTERFACE
 	string "Default Wi-Fi interface"
-	default "nordic_wlan0"
+	default "wlan0"
 	help
 	  Set the default Wi-Fi interface.
 
