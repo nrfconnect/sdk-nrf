@@ -152,4 +152,18 @@ ZTEST(ot_rpc_instance, test_otInstanceErasePersistentInfo_error)
 	zassert_equal(error, OT_ERROR_INVALID_STATE);
 }
 
+/* Test serialization of otGetVersionString() */
+ZTEST(ot_rpc_instance, test_otGetVersionString)
+{
+	const char exp_version[] = {VERSION_STR, '\0'};
+	const char *version;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_GET_VERSION_STRING),
+				   RPC_RSP(0x58, 64, VERSION_STR));
+	version = otGetVersionString();
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_str_equal(version, exp_version);
+}
+
 ZTEST_SUITE(ot_rpc_instance, NULL, NULL, tc_setup, NULL, NULL);

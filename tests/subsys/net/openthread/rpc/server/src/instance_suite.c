@@ -22,6 +22,7 @@ FAKE_VALUE_FUNC(uint32_t, otInstanceGetId, otInstance *);
 FAKE_VALUE_FUNC(bool, otInstanceIsInitialized, otInstance *);
 FAKE_VOID_FUNC(otInstanceFinalize, otInstance *);
 FAKE_VALUE_FUNC(otError, otInstanceErasePersistentInfo, otInstance *);
+FAKE_VALUE_FUNC(const char *, otGetVersionString);
 FAKE_VALUE_FUNC(otError, otSetStateChangedCallback, otInstance *, otStateChangedCallback, void *);
 FAKE_VOID_FUNC(otRemoveStateChangeCallback, otInstance *, otStateChangedCallback, void *);
 
@@ -31,6 +32,7 @@ FAKE_VOID_FUNC(otRemoveStateChangeCallback, otInstance *, otStateChangedCallback
 	f(otInstanceIsInitialized);                                                                \
 	f(otInstanceFinalize);                                                                     \
 	f(otInstanceErasePersistentInfo);                                                          \
+	f(otGetVersionString);                                                                     \
 	f(otSetStateChangedCallback);                                                              \
 	f(otRemoveStateChangeCallback);
 
@@ -201,6 +203,22 @@ ZTEST(ot_rpc_instance, test_otInstanceErasePersistentInfo_error)
 
 	zassert_equal(otInstanceErasePersistentInfo_fake.call_count, 1);
 	zassert_equal(otInstanceErasePersistentInfo_fake.arg0_val, (otInstance *)instance);
+}
+
+/*
+ * Test reception of otGetVersionString() command.
+ */
+ZTEST(ot_rpc_instance, test_otGetVersionString)
+{
+	const char version[] = {VERSION_STR, '\0'};
+
+	otGetVersionString_fake.return_val = version;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(0x58, 64, VERSION_STR), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_GET_VERSION_STRING));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otGetVersionString_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_instance, NULL, NULL, tc_setup, NULL, NULL);

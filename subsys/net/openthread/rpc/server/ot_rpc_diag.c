@@ -84,7 +84,7 @@ static bool serialize_mesh_local_prefix(zcbor_state_t *state, const otMeshLocalP
 	static void func_name(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,     \
 			      void *handler_data)                                                  \
 	{                                                                                          \
-		size_t length = 1;                                                                \
+		size_t length;                                                                     \
 		const type *data;                                                                  \
 		struct nrf_rpc_cbor_ctx rsp_ctx;                                                   \
                                                                                                    \
@@ -94,7 +94,7 @@ static bool serialize_mesh_local_prefix(zcbor_state_t *state, const otMeshLocalP
 		data = func_to_call(ptr_call);                                                     \
 		openthread_api_mutex_unlock(openthread_get_default_context());                     \
                                                                                                    \
-		length += ret_size(data);                                                          \
+		length = 2 + ret_size(data);                                                       \
                                                                                                    \
 		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, length);                                        \
 		serialize_bstr(rsp_ctx.zs, data);                                                  \

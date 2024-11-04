@@ -23,6 +23,8 @@ FAKE_VOID_FUNC(otLinkSetMaxFrameRetriesDirect, otInstance *, uint8_t);
 FAKE_VOID_FUNC(otLinkSetMaxFrameRetriesIndirect, otInstance *, uint8_t);
 FAKE_VALUE_FUNC(otError, otLinkSetEnabled, otInstance *, bool);
 FAKE_VOID_FUNC(otLinkGetFactoryAssignedIeeeEui64, otInstance *, otExtAddress *);
+FAKE_VALUE_FUNC(uint8_t, otLinkGetChannel, otInstance *);
+FAKE_VALUE_FUNC(otPanId, otLinkGetPanId, otInstance *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otLinkSetPollPeriod);                                                                    \
@@ -31,7 +33,9 @@ FAKE_VOID_FUNC(otLinkGetFactoryAssignedIeeeEui64, otInstance *, otExtAddress *);
 	f(otLinkSetMaxFrameRetriesDirect);                                                         \
 	f(otLinkSetMaxFrameRetriesIndirect);                                                       \
 	f(otLinkSetEnabled);                                                                       \
-	f(otLinkGetFactoryAssignedIeeeEui64);
+	f(otLinkGetFactoryAssignedIeeeEui64);                                                      \
+	f(otLinkGetChannel);                                                                       \
+	f(otLinkGetPanId);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -173,6 +177,52 @@ ZTEST(ot_rpc_link, test_otLinkGetFactoryAssignedIeeeEui64)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otLinkGetFactoryAssignedIeeeEui64_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otLinkGetChannel() command.
+ * Test serialization of the result: UINT8_MAX.
+ */
+ZTEST(ot_rpc_link, test_otLinkGetChannel)
+{
+	otLinkGetChannel_fake.return_val = UINT8_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT8(UINT8_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_LINK_GET_CHANNEL));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otLinkGetChannel_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otLinkGetExtendedAddress() command.
+ */
+ZTEST(ot_rpc_link, test_otLinkGetExtendedAddress)
+{
+	const otExtAddress ext_addr = {{INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)}};
+
+	otLinkGetExtendedAddress_fake.return_val = &ext_addr;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(EXT_ADDR), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_LINK_GET_EXTENDED_ADDRESS));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otLinkGetExtendedAddress_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otLinkGetPanId() command.
+ * Test serialization of the result: UINT16_MAX.
+ */
+ZTEST(ot_rpc_link, test_otLinkGetPanId)
+{
+	otLinkGetPanId_fake.return_val = UINT16_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT16(UINT16_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_LINK_GET_PAN_ID));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otLinkGetPanId_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_link, NULL, NULL, tc_setup, NULL, NULL);

@@ -261,4 +261,85 @@ ZTEST(ot_rpc_thread, test_otThreadGetVersion)
 	zassert_equal(version, OT_THREAD_VERSION_1_4);
 }
 
+/* Test serialization of otThreadGetExtendedPanId() */
+ZTEST(ot_rpc_thread, test_otThreadGetExtendedPanId)
+{
+	const otExtendedPanId exp_version = {{INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)}};
+	const otExtendedPanId *version;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_EXTENDED_PANID),
+				   RPC_RSP(EXT_PAN_ID));
+	version = otThreadGetExtendedPanId(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_mem_equal(version, &exp_version, OT_EXT_PAN_ID_SIZE);
+}
+
+/* Test serialization of otThreadGetLeaderRouterId() */
+ZTEST(ot_rpc_thread, test_otThreadGetLeaderRouterId)
+{
+	uint8_t id;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_LEADER_ROUTER_ID),
+				   RPC_RSP(CBOR_UINT8(UINT8_MAX)));
+	id = otThreadGetLeaderRouterId(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(id, UINT8_MAX);
+}
+
+/* Test serialization of otThreadGetLeaderWeight() */
+ZTEST(ot_rpc_thread, test_otThreadGetLeaderWeight)
+{
+	uint8_t weight;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_LEADER_WEIGHT),
+				   RPC_RSP(CBOR_UINT8(UINT8_MAX)));
+	weight = otThreadGetLeaderWeight(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(weight, UINT8_MAX);
+}
+
+/* Test serialization of otThreadGetMeshLocalPrefix() */
+ZTEST(ot_rpc_thread, test_otThreadGetMeshLocalPrefix)
+{
+	const otMeshLocalPrefix exp_prefix = {{MESH_LOCAL_PREFIX}};
+	const otMeshLocalPrefix *prefix;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_MESH_LOCAL_PREFIX),
+				   RPC_RSP(CBOR_MESH_LOCAL_PREFIX));
+	prefix = otThreadGetMeshLocalPrefix(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_mem_equal(prefix, &exp_prefix, OT_MESH_LOCAL_PREFIX_SIZE);
+}
+
+/* Test serialization of otThreadGetNetworkName() */
+ZTEST(ot_rpc_thread, test_otThreadGetNetworkName)
+{
+	const char exp_name[] = {STR_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), '\0'};
+	const char *name;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_NETWORK_NAME),
+				   RPC_RSP(0x50, STR_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE)));
+	name = otThreadGetNetworkName(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_str_equal(name, exp_name);
+}
+
+/* Test serialization of otThreadGetPartitionId() */
+ZTEST(ot_rpc_thread, test_otThreadGetPartitionId)
+{
+	uint32_t id;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_PARTITION_ID),
+				   RPC_RSP(CBOR_UINT32(UINT32_MAX)));
+	id = otThreadGetPartitionId(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(id, UINT32_MAX);
+}
+
 ZTEST_SUITE(ot_rpc_thread, NULL, NULL, tc_setup, NULL, NULL);

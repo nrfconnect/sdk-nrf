@@ -6,6 +6,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_types.h>
 #include <test_rpc_env.h>
 
 #include <zephyr/fff.h>
@@ -201,6 +202,75 @@ ZTEST(ot_rpc_ip6, test_otIp6UnsubscribeMulticastAddress_failed)
 
 	zassert_equal(otIp6UnsubscribeMulticastAddress_fake.call_count, 1);
 	zassert_mem_equal(otIp6UnsubscribeMulticastAddress_fake.arg1_val, &addr, sizeof(addr));
+}
+
+/*
+ * Test reception of otIp6GetUnicastAddresses() command.
+ */
+ZTEST(ot_rpc_ip6, test_otIp6GetUnicastAddresses)
+{
+	const uint16_t flags1 = BIT(OT_RPC_NETIF_ADDRESS_PREFERRED_OFFSET) |
+				BIT(OT_RPC_NETIF_ADDRESS_VALID_OFFSET) |
+				BIT(OT_RPC_NETIF_ADDRESS_RLOC_OFFSET) |
+				BIT(OT_RPC_NETIF_ADDRESS_MESH_LOCAL_OFFSET);
+	const uint16_t flags2 = BIT(OT_RPC_NETIF_ADDRESS_SCOPE_VALID_OFFSET) |
+				(ADDR_SCOPE << OT_RPC_NETIF_ADDRESS_SCOPE_OFFSET);
+
+	otNetifAddress addr[2] = {
+		{
+			.mAddress.mFields.m8 = {ADDR_1},
+			.mPrefixLength = ADDR_PREFIX_LENGTH,
+			.mAddressOrigin = OT_ADDRESS_ORIGIN_MANUAL,
+			.mPreferred = true,
+			.mValid = true,
+			.mRloc = true,
+			.mMeshLocal = true,
+		},
+		{
+			.mAddress.mFields.m8 = {ADDR_2},
+			.mPrefixLength = ADDR_PREFIX_LENGTH,
+			.mAddressOrigin = OT_ADDRESS_ORIGIN_DHCPV6,
+			.mScopeOverrideValid = true,
+			.mScopeOverride = ADDR_SCOPE,
+		},
+	};
+
+	addr[0].mNext = &addr[1];
+	otIp6GetUnicastAddresses_fake.return_val = addr;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(0x9f, 0x50, ADDR_1, CBOR_UINT8(ADDR_PREFIX_LENGTH),
+					   OT_ADDRESS_ORIGIN_MANUAL, CBOR_UINT16(flags1), 0xff,
+					   0x9f, 0x50, ADDR_2, CBOR_UINT8(ADDR_PREFIX_LENGTH),
+					   OT_ADDRESS_ORIGIN_DHCPV6, CBOR_UINT8(flags2), 0xff),
+				   NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_IP6_GET_UNICAST_ADDRESSES));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otIp6GetUnicastAddresses_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otIp6GetMulticastAddresses() command.
+ */
+ZTEST(ot_rpc_ip6, test_otIp6GetMulticastAddresses)
+{
+	otNetifMulticastAddress addr[2] = {
+		{
+			.mAddress.mFields.m8 = {MADDR_FF02_1},
+		},
+		{
+			.mAddress.mFields.m8 = {MADDR_FF02_2},
+		},
+	};
+
+	addr[0].mNext = &addr[1];
+	otIp6GetMulticastAddresses_fake.return_val = addr;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(0x50, MADDR_FF02_1, 0x50, MADDR_FF02_2), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_IP6_GET_MULTICAST_ADDRESSES));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otIp6GetMulticastAddresses_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_ip6, NULL, NULL, tc_setup, NULL, NULL);
