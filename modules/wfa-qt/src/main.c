@@ -53,11 +53,13 @@ void qt_main(void)
 	ret = wpa_supp_events_register();
 	if (ret < 0) {
 		LOG_ERR("Failed to register WPA supplicant events");
+		return;
 	}
 
 	ret = wait_for_wpa_s_ready();
 	if (ret < 0) {
 		LOG_ERR("Failed to wait for WPA supplicant to be ready");
+		return;
 	}
 
 	/* Register the callback */
@@ -72,6 +74,7 @@ void qt_main(void)
 		qt_eloop_run();
 	} else {
 		LOG_ERR("Failed to initiate the UDP socket: %s", strerror(errno));
+		return;
 	}
 
 	/* Stop eloop */
