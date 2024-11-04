@@ -177,6 +177,45 @@ suit_ssf_err_t suit_get_supported_manifest_roles(suit_manifest_role_t *roles, si
 suit_ssf_err_t suit_get_supported_manifest_info(suit_manifest_role_t role,
 						suit_ssf_manifest_class_info_t *class_info);
 
+/** @brief Read the current boot mode value.
+ *
+ * @param[out]  mode  Current boot mode.
+ *
+ * @retval SUIT_PLAT_SUCCESS if successful.
+ * @retval SUIT_PLAT_ERR_INVAL if input parameter is invalid.
+ * @retval SUIT_PLAT_ERR_IPC in case of SSF protocol error.
+ */
+suit_ssf_err_t suit_boot_mode_read(suit_boot_mode_t *mode);
+
+/** @brief Confirm that the invoke command finished.
+ *
+ * @param[in]  ret  Invoke command return code. Pass zero if successful.
+ *
+ * @retval SUIT_PLAT_SUCCESS if successful.
+ * @retval SUIT_PLAT_ERR_IPC in case of SSF protocol error.
+ */
+suit_ssf_err_t suit_invoke_confirm(int ret);
+
+/** @brief Reset SUIT boot flags.
+ *
+ * @note After resetting the SUIT boot flags the system will be reset and a regular boot procedure
+ *       will be executed.
+ *
+ * @retval SUIT_PLAT_SUCCESS if successful.
+ * @retval SUIT_PLAT_ERR_IPC in case of SSF protocol error.
+ */
+suit_ssf_err_t suit_boot_flags_reset(void);
+
+/** @brief Request a foreground DFU procedure.
+ *
+ * @note After setting the foreground DFU boot flag the system will be reset and a recovery image
+ *       will be booted.
+ *
+ * @retval SUIT_PLAT_SUCCESS if successful.
+ * @retval SUIT_PLAT_ERR_IPC in case of SSF protocol error.
+ */
+suit_ssf_err_t suit_foreground_dfu_required(void);
+
 #ifdef __cplusplus
 }
 #endif

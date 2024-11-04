@@ -9,6 +9,7 @@ zephyr_library()
 zephyr_library_sources(suit_service.c)
 zephyr_library_sources(suit_update.c)
 zephyr_library_sources(suit_mci.c)
+zephyr_library_sources(suit_invoke.c)
 zephyr_library_sources_ifdef(CONFIG_SUIT_PROCESSOR suit_auth.c)
 
 zephyr_library_link_libraries(suit_utils)

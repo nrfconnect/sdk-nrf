@@ -16,6 +16,13 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(suit_srvc_auth, CONFIG_SSF_SUIT_SERVICE_LOG_LEVEL);
 
+/* __ALIGNED macro is not defined on NATIVE POSIX. This platform uses __aligned macro. */
+#ifndef __ALIGNED
+#ifdef __aligned
+#define __ALIGNED __aligned
+#endif
+#endif
+
 #ifdef CONFIG_DCACHE_LINE_SIZE
 #define CACHE_ALIGNMENT CONFIG_DCACHE_LINE_SIZE
 #else
@@ -36,6 +43,10 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 					   CACHE_ALIGNMENT)] __ALIGNED(CACHE_ALIGNMENT) = {0};
 
 	if (manifest_component_id == NULL || key_id == NULL || signature == NULL || data == NULL) {
+		return SUIT_ERR_DECODING;
+	}
+
+	if (data->len > sizeof(aligned_auth_data)) {
 		return SUIT_ERR_DECODING;
 	}
 
