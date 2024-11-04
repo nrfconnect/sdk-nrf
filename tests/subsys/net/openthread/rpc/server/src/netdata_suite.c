@@ -22,11 +22,15 @@ FAKE_VALUE_FUNC(otError, otNetDataGetNextService, otInstance *, otNetworkDataIte
 		otServiceConfig *);
 FAKE_VALUE_FUNC(otError, otNetDataGetNextOnMeshPrefix, otInstance *, otNetworkDataIterator *,
 		otBorderRouterConfig *);
+FAKE_VALUE_FUNC(uint8_t, otNetDataGetStableVersion, otInstance *);
+FAKE_VALUE_FUNC(uint8_t, otNetDataGetVersion, otInstance *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otNetDataGet);                                                                           \
 	f(otNetDataGetNextService);                                                                \
-	f(otNetDataGetNextOnMeshPrefix);
+	f(otNetDataGetNextOnMeshPrefix);                                                           \
+	f(otNetDataGetStableVersion);                                                              \
+	f(otNetDataGetVersion);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -169,6 +173,36 @@ ZTEST(ot_rpc_netdata, test_otNetDataGetNextOnMeshPrefix)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otNetDataGetNextOnMeshPrefix_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otNetDataGetStableVersion() command.
+ * Test serialization of the result: UINT8_MAX.
+ */
+ZTEST(ot_rpc_netdata, test_otNetDataGetStableVersion)
+{
+	otNetDataGetStableVersion_fake.return_val = UINT8_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT8(UINT8_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_NET_DATA_GET_STABLE_VERSION));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otNetDataGetStableVersion_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otNetDataGetVersion() command.
+ * Test serialization of the result: UINT8_MAX.
+ */
+ZTEST(ot_rpc_netdata, test_otNetDataGetVersion)
+{
+	otNetDataGetVersion_fake.return_val = UINT8_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT8(UINT8_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_NET_DATA_GET_VERSION));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otNetDataGetVersion_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_netdata, NULL, NULL, tc_setup, NULL, NULL);

@@ -123,4 +123,30 @@ ZTEST(ot_rpc_netdata, test_otNetDataGetNextOnMeshPrefix)
 	zassert_true(br.mDp);
 }
 
+/* Test serialization of otNetDataGetStableVersion() */
+ZTEST(ot_rpc_netdata, test_otNetDataGetStableVersion)
+{
+	uint8_t version;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_NET_DATA_GET_STABLE_VERSION),
+				   RPC_RSP(CBOR_UINT8(UINT8_MAX)));
+	version = otNetDataGetStableVersion(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(version, UINT8_MAX);
+}
+
+/* Test serialization of otNetDataGetVersion() */
+ZTEST(ot_rpc_netdata, test_otNetDataGetVersion)
+{
+	uint8_t version;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_NET_DATA_GET_VERSION),
+				   RPC_RSP(CBOR_UINT8(UINT8_MAX)));
+	version = otNetDataGetVersion(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(version, UINT8_MAX);
+}
+
 ZTEST_SUITE(ot_rpc_netdata, NULL, NULL, tc_setup, NULL, NULL);

@@ -31,7 +31,7 @@ typedef struct mock_nrf_rpc_tr_ctx {
 
 static void log_payload(const char *caption, const uint8_t *payload, size_t length)
 {
-	char payload_str[32];
+	char payload_str[128];
 
 	if (!bin2hex(payload, length, payload_str, sizeof(payload_str))) {
 		/*

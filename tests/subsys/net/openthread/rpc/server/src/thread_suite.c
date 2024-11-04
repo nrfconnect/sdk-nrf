@@ -22,6 +22,12 @@ FAKE_VALUE_FUNC(otDeviceRole, otThreadGetDeviceRole, otInstance *);
 FAKE_VALUE_FUNC(otError, otThreadSetLinkMode, otInstance *, otLinkModeConfig);
 FAKE_VALUE_FUNC(otLinkModeConfig, otThreadGetLinkMode, otInstance *);
 FAKE_VALUE_FUNC(uint16_t, otThreadGetVersion);
+FAKE_VALUE_FUNC(uint8_t, otThreadGetLeaderRouterId, otInstance *);
+FAKE_VALUE_FUNC(uint8_t, otThreadGetLeaderWeight, otInstance *);
+FAKE_VALUE_FUNC(uint32_t, otThreadGetPartitionId, otInstance *);
+FAKE_VALUE_FUNC(const char *, otThreadGetNetworkName, otInstance *);
+FAKE_VALUE_FUNC(const otExtendedPanId *, otThreadGetExtendedPanId, otInstance *);
+FAKE_VALUE_FUNC(const otMeshLocalPrefix *, otThreadGetMeshLocalPrefix, otInstance *);
 FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 
 #define FOREACH_FAKE(f)                                                                            \
@@ -30,6 +36,11 @@ FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
 	f(otThreadGetDeviceRole);                                                                  \
 	f(otThreadSetLinkMode);                                                                    \
 	f(otThreadGetLinkMode);                                                                    \
+	f(otThreadGetVersion);                                                                     \
+	f(otThreadGetLeaderRouterId);                                                              \
+	f(otThreadGetLeaderWeight);                                                                \
+	f(otThreadGetPartitionId);                                                                 \
+	f(otThreadGetNetworkName);                                                                 \
 	f(nrf_rpc_cbkproxy_out_get);
 
 extern uint64_t ot_thread_discover_cb_encoder(uint32_t callback_slot, uint32_t _rsv0,
@@ -292,6 +303,99 @@ ZTEST(ot_rpc_thread, test_otThreadGetVersion)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otThreadGetVersion_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetExtendedPanId() command.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetExtendedPanId)
+{
+	const otExtendedPanId ext_pan_id = {{INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)}};
+
+	otThreadGetExtendedPanId_fake.return_val = &ext_pan_id;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(EXT_PAN_ID), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_EXTENDED_PANID));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetExtendedPanId_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetLeaderRouterId() command.
+ * Test serialization of the result: UINT8_MAX.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetLeaderRouterId)
+{
+	otThreadGetLeaderRouterId_fake.return_val = UINT8_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT8(UINT8_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_LEADER_ROUTER_ID));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetLeaderRouterId_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetLeaderWeight() command.
+ * Test serialization of the result: UINT8_MAX.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetLeaderWeight)
+{
+	otThreadGetLeaderWeight_fake.return_val = UINT8_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT8(UINT8_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_LEADER_WEIGHT));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetLeaderWeight_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetMeshLocalPrefix() command.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetMeshLocalPrefix)
+{
+	const otMeshLocalPrefix prefix = {{INT_SEQUENCE(OT_MESH_LOCAL_PREFIX_SIZE)}};
+
+	otThreadGetMeshLocalPrefix_fake.return_val = &prefix;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(EXT_PAN_ID), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_MESH_LOCAL_PREFIX));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetMeshLocalPrefix_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetNetworkName() command.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetNetworkName)
+{
+	const char name[] = {STR_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), '\0'};
+
+	otThreadGetNetworkName_fake.return_val = name;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(0x50, STR_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_NETWORK_NAME));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetNetworkName_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetPartitionId() command.
+ * Test serialization of the result: UINT32_MAX.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetPartitionId)
+{
+	otThreadGetPartitionId_fake.return_val = UINT32_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT32(UINT32_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_PARTITION_ID));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetPartitionId_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_thread, NULL, NULL, tc_setup, NULL, NULL);

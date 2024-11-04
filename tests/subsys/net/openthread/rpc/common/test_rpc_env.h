@@ -48,12 +48,17 @@
 #define ADDR_2                                                                                     \
 	0xfe, 0x80, 0xaa, 0xbb, 0xaa, 0xbb, 0xaa, 0xbb, 0xaa, 0xbb, 0xaa, 0xbb, 0xaa, 0xbb, 0xaa,  \
 		0x02
-#define PORT_1	  0xff01
-#define PORT_2	  0xff02
-#define HOP_LIMIT 64
+#define ADDR_PREFIX_LENGTH 64
+#define ADDR_SCOPE	   15
+#define MESH_LOCAL_PREFIX  INT_SEQUENCE(OT_MESH_LOCAL_PREFIX_SIZE)
+#define PORT_1		   0xff01
+#define PORT_2		   0xff02
+#define HOP_LIMIT	   64
 #define DNS_NAME                                                                                   \
 	STR_SEQUENCE(63), '.', STR_SEQUENCE(63), '.', STR_SEQUENCE(63), '.', STR_SEQUENCE(63)
+#define VERSION_STR STR_SEQUENCE(64)
 #define MADDR_FF02_1  0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01
+#define MADDR_FF02_2  0xff, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x02
 #define EXT_ADDR      0x48, INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)
 #define NWK_NAME      0x70, INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE)
 #define EXT_PAN_ID    0x48, INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)
@@ -78,6 +83,7 @@
 		CBOR_TRUE, CBOR_TRUE, CBOR_TRUE
 #define CBOR_DNS_NAME 0x78, 0xff, DNS_NAME
 #define CBOR_ADDR1 0x50, ADDR_1
+#define CBOR_MESH_LOCAL_PREFIX 0x48, MESH_LOCAL_PREFIX
 
 #define CBOR_SOC_ADDR CBOR_ADDR1, CBOR_UINT16(1024)
 

@@ -40,7 +40,7 @@ static void ot_rpc_cmd_ip6_get_unicast_addrs(const struct nrf_rpc_group *group,
 			((uint16_t)addr->mValid << OT_RPC_NETIF_ADDRESS_VALID_OFFSET) |
 			((uint16_t)addr->mScopeOverrideValid
 			 << OT_RPC_NETIF_ADDRESS_SCOPE_VALID_OFFSET) |
-			((uint16_t)addr->mScopeOverride << OT_RPC_NETIF_ADDRESS_VALID_OFFSET) |
+			((uint16_t)addr->mScopeOverride << OT_RPC_NETIF_ADDRESS_SCOPE_OFFSET) |
 			((uint16_t)addr->mRloc << OT_RPC_NETIF_ADDRESS_RLOC_OFFSET) |
 			((uint16_t)addr->mMeshLocal << OT_RPC_NETIF_ADDRESS_MESH_LOCAL_OFFSET);
 

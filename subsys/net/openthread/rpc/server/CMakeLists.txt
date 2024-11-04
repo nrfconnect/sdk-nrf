@@ -9,6 +9,7 @@ zephyr_library()
 zephyr_library_sources(
   ot_rpc_cli.c
   ot_rpc_coap.c
+  ot_rpc_diag.c
   ot_rpc_dataset.c
   ot_rpc_instance.c
   ot_rpc_ip6.c
@@ -19,7 +20,6 @@ zephyr_library_sources(
 )
 
 zephyr_library_sources_ifdef(CONFIG_NET_L2_OPENTHREAD
-  ot_rpc_diag.c
   ot_rpc_udp.c
 )
 

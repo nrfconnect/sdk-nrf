@@ -116,4 +116,44 @@ ZTEST(ot_rpc_link, test_otLinkGetFactoryAssignedIeeeEui64)
 	zassert_mem_equal(expected_ext_addr.m8, ext_addr.m8, OT_EXT_ADDRESS_SIZE);
 }
 
+/* Test serialization of otLinkGetChannel() */
+ZTEST(ot_rpc_link, test_otLinkGetChannel)
+{
+	uint8_t channel;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_LINK_GET_CHANNEL),
+				   RPC_RSP(CBOR_UINT8(UINT8_MAX)));
+	channel = otLinkGetChannel(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(channel, UINT8_MAX);
+}
+
+/* Test serialization of otLinkGetExtendedAddress() */
+ZTEST(ot_rpc_link, test_otLinkGetExtendedAddress)
+{
+	const otExtAddress exp_extaddr = {{INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)}};
+	const otExtAddress *extaddr;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_LINK_GET_EXTENDED_ADDRESS),
+				   RPC_RSP(EXT_ADDR));
+	extaddr = otLinkGetExtendedAddress(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_mem_equal(extaddr, &exp_extaddr, OT_EXT_ADDRESS_SIZE);
+}
+
+/* Test serialization of otLinkGetPanId() */
+ZTEST(ot_rpc_link, test_otLinkGetPanId)
+{
+	otPanId panid;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_LINK_GET_PAN_ID),
+				   RPC_RSP(CBOR_UINT16(UINT16_MAX)));
+	panid = otLinkGetPanId(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(panid, UINT16_MAX);
+}
+
 ZTEST_SUITE(ot_rpc_link, NULL, NULL, tc_setup, NULL, NULL);
