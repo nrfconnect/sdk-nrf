@@ -61,7 +61,7 @@ endmenu
 
 config NRF_COMPRESS_CHUNK_SIZE
 	int "Chunk size"
-	default 4096
+	default 256
 	help
 	  The chunk size is the default maximum amount of data that if returned by the
 	  decompress_bytes_needed() function. The value is returned by the decompress bytes
