@@ -134,7 +134,7 @@ doxyrunner_fmt_vars = {
 }
 
 # create mbedtls config header (needed for Doxygen)
-doxyrunner_outdir.mkdir(exist_ok=True)
+doxyrunner_outdir.mkdir(exist_ok=True, parents=True)
 
 fin_path = NRF_BASE / "subsys" / "nrf_security" / "configs" / "legacy_crypto_config.h.template"
 fout_path = doxyrunner_outdir / "mbedtls_doxygen_config.h"
