@@ -200,8 +200,7 @@ const uint8_t *otCoapMessageGetToken(const otMessage *aMessage)
 	nrf_rpc_decode_buffer(&ctx, token, sizeof(token));
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &ot_group,
-			    OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN, NRF_RPC_PACKET_TYPE_RSP);
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN);
 	}
 
 	return token;
