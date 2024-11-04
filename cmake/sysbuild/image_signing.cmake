@@ -57,7 +57,9 @@ function(zephyr_mcuboot_tasks)
   # back on mcuboot/scripts/imgtool.py. We exclude the system imgtool when
   # compressed image support is enabled due to needing a version of imgtool
   # that has features not in the most recent public release.
-  if(IMGTOOL AND NOT CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED)
+  if(IMGTOOL AND
+     (NOT CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED AND
+      NOT (CONFIG_SOC_SERIES_NRF54LX AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)))
     set(imgtool_path "${IMGTOOL}")
   elseif(DEFINED ZEPHYR_MCUBOOT_MODULE_DIR)
     set(IMGTOOL_PY "${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py")
@@ -118,6 +120,14 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_hex_extra ${imgtool_bin_extra})
   else()
     set(imgtool_hex_extra)
+  endif()
+
+  if(CONFIG_SOC_SERIES_NRF54LX AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
+    if(NOT CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE)
+      set(imgtool_extra --sha 512 ${imgtool_extra})
+    else()
+      set(imgtool_extra --pure ${imgtool_extra})
+    endif()
   endif()
 
   if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
