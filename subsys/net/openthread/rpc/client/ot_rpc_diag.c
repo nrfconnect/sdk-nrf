@@ -27,20 +27,20 @@ static otMeshLocalPrefix mesh_prefix;
 
 static void get_uint_t(int id, void *result, size_t result_size)
 {
+	const size_t cbor_buffer_size = 0;
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t value;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, id, &ctx);
 
-	value = nrf_rpc_decode_uint(&ctx);
-	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+	if (!zcbor_uint_decode(ctx.zs, result, result_size)) {
+		nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
 		ot_rpc_report_rsp_decoding_error(id);
 		return;
 	}
 
-	memcpy(result, &value, result_size);
+	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
 }
 
 static int get_string(int id, char *buffer, size_t buffer_size)
