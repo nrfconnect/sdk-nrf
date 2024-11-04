@@ -9,23 +9,31 @@
 
 #include <stdbool.h>
 #include <suit_plat_err.h>
+#include <suit_metadata.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/**
+ * @brief SUIT orchestrator execution mode.
+ */
 typedef enum {
 	EXECUTION_MODE_STARTUP = 0,
 	EXECUTION_MODE_INVOKE,
+	EXECUTION_MODE_INVOKE_FOREGROUND_DFU,
 	EXECUTION_MODE_INVOKE_RECOVERY,
 	EXECUTION_MODE_INSTALL,
+	EXECUTION_MODE_INSTALL_FOREGROUND_DFU,
 	EXECUTION_MODE_INSTALL_RECOVERY,
 	EXECUTION_MODE_POST_INVOKE,
+	EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU,
 	EXECUTION_MODE_POST_INVOKE_RECOVERY,
 	EXECUTION_MODE_FAIL_NO_MPI,
 	EXECUTION_MODE_FAIL_MPI_INVALID,
 	EXECUTION_MODE_FAIL_MPI_INVALID_MISSING,
 	EXECUTION_MODE_FAIL_MPI_UNSUPPORTED,
+	EXECUTION_MODE_FAIL_INVOKE_FOREGROUND_DFU,
 	EXECUTION_MODE_FAIL_INVOKE_RECOVERY,
 	EXECUTION_MODE_FAIL_INSTALL_NORDIC_TOP,
 	EXECUTION_MODE_FAIL_STARTUP,
@@ -110,6 +118,16 @@ bool suit_execution_mode_updating(void);
  *          used.
  */
 bool suit_execution_mode_failed(void);
+
+/**
+ * @brief Convert internal execution mode used by the SUIT orchestrator to the
+ *        corresponding value of suit_boot_mode_t enum.
+ *
+ * @param[in] exec_mode The value of SUIT orchestrator execution mode
+ *
+ * @retval Value of the suit_boot_mode_t enum
+ */
+suit_boot_mode_t suit_execution_mode_to_boot_mode(suit_execution_mode_t exec_mode);
 
 #ifdef __cplusplus
 }

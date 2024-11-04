@@ -149,6 +149,7 @@ int suit_mci_invoke_order_get(const suit_manifest_class_id_t **class_id, size_t 
 		class_id[0] = &nordic_root_manifest_class_id;
 		*size = output_size;
 		break;
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		class_id[0] = &nordic_recovery_manifest_class_id;
 		*size = output_size;
@@ -198,6 +199,9 @@ mci_err_t suit_mci_independent_update_policy_get(const suit_manifest_class_id_t 
 	 * update candidate before resetting the SoC.
 	 */
 	switch (suit_execution_mode_get()) {
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:

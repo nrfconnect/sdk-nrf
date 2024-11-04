@@ -6,6 +6,7 @@
 
 config SUIT_EXECUTION_MODE
 	bool "Enable SUIT execution mode module"
+	depends on SUIT_METADATA
 
 config APP_LINK_WITH_SUIT_EXECUTION_MODE
 	bool

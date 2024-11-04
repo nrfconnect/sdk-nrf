@@ -38,10 +38,14 @@ static void setup_erased_flash(void *f)
 	err = flash_erase(fdev, SUIT_BACKUP_OFFSET, SUIT_BACKUP_SIZE);
 	zassert_equal(0, err, "Unable to erase storage backup before test execution");
 
-	suit_plat_err_t ret = suit_storage_report_clear(0);
+	suit_plat_err_t ret = suit_storage_flags_clear(SUIT_FLAG_RECOVERY);
 
 	zassert_equal(SUIT_PLAT_SUCCESS, ret,
 		      "Unable to clear recovery flag before test execution");
+
+	ret = suit_storage_flags_clear(SUIT_FLAG_FOREGROUND_DFU);
+	zassert_equal(SUIT_PLAT_SUCCESS, ret,
+		      "Unable to clear foreground DFU flag before test execution");
 }
 
 static void setup_update_candidate(const uint8_t *buf, size_t len)

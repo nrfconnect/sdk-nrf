@@ -19,6 +19,7 @@ zephyr_library_sources(src/suit_storage_envelope.c)
 zephyr_library_sources(src/suit_storage_mpi.c)
 zephyr_library_sources(src/suit_storage_nvv.c)
 zephyr_library_sources(src/suit_storage_report.c)
+zephyr_library_sources(src/suit_storage_flags.c)
 
 zephyr_library_link_libraries(suit_utils)
 zephyr_library_link_libraries(suit_storage_interface)
