@@ -125,7 +125,7 @@ suit_ssf_err_t suit_get_installed_manifest_info(suit_manifest_class_id_t *manife
 	const uint8_t *rsp_pkt;
 	struct suit_get_installed_manifest_info_req *req_data;
 
-	if (seq_num == NULL || manifest_class_id == NULL) {
+	if (manifest_class_id == NULL) {
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
@@ -156,7 +156,9 @@ suit_ssf_err_t suit_get_installed_manifest_info(suit_manifest_class_id_t *manife
 		return ret;
 	}
 
-	*seq_num = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, seq_num);
+	if (seq_num != NULL) {
+		*seq_num = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, seq_num);
+	}
 
 	if (version != NULL) {
 		memset(version, 0, sizeof(*version));
@@ -209,7 +211,7 @@ suit_ssf_err_t suit_get_install_candidate_info(suit_manifest_class_id_t *manifes
 	struct suit_get_install_candidate_info_rsp *rsp_data;
 	const uint8_t *rsp_pkt;
 
-	if (seq_num == NULL || manifest_class_id == NULL) {
+	if (manifest_class_id == NULL) {
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
@@ -235,9 +237,12 @@ suit_ssf_err_t suit_get_install_candidate_info(suit_manifest_class_id_t *manifes
 		return ret;
 	}
 
+	if (seq_num != NULL) {
+		*seq_num = rsp_data->SSF_SUIT_RSP_ARG(get_install_candidate_info, seq_num);
+	}
+
 	const size_t manifest_digest_len =
 		rsp_data->SSF_SUIT_RSP_ARG(get_install_candidate_info, digest).len;
-	*seq_num = rsp_data->SSF_SUIT_RSP_ARG(get_install_candidate_info, seq_num);
 	if (manifest_digest_len > digest->size) {
 		ssf_client_decode_done(rsp_pkt);
 		return SUIT_PLAT_ERR_NOMEM;
