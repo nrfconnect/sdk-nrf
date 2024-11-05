@@ -4,5 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory_ifdef(CONFIG_BT_RAS_RRSP rrsp)
-add_subdirectory_ifdef(CONFIG_BT_RAS_RREQ rreq)
+zephyr_library_sources_ifdef(
+  CONFIG_BT_RAS_RREQ
+  ras_rreq.c)

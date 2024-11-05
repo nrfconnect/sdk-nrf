@@ -12,6 +12,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/hci_types.h>
+#include <bluetooth/gatt_dm.h>
 
 /** @file
  *  @defgroup bt_ras Ranging Service API
@@ -311,6 +312,170 @@ int bt_ras_rd_buffer_release(struct ras_rd_buffer *buf);
  */
 int bt_ras_rd_buffer_bytes_pull(struct ras_rd_buffer *buf, uint8_t *out_buf, uint16_t max_data_len,
 				uint16_t *read_cursor, bool *empty);
+
+/** @brief Ranging data ready callback. Called when peer has ranging data available.
+ *
+ * @param[in] conn            Connection Object.
+ * @param[in] ranging_counter Ranging counter ready to be requested.
+ */
+typedef void (*bt_ras_rreq_rd_ready_cb_t)(struct bt_conn *conn, uint16_t ranging_counter);
+
+/** @brief Ranging data overwritten callback. Called when peer has overwritten previously available
+ * ranging data.
+ *
+ * @param[in] conn            Connection Object.
+ * @param[in] ranging_counter Ranging counter which has been overwritten.
+ */
+typedef void (*bt_ras_rreq_rd_overwritten_cb_t)(struct bt_conn *conn, uint16_t ranging_counter);
+
+/** @brief Ranging data get complete callback. Called when ranging data get procedure has completed.
+ *
+ * @param[in] conn            Connection Object.
+ * @param[in] ranging_counter Ranging counter which has been completed.
+ * @param[in] err             Error code, 0 if the ranging data get was successful. Otherwise a
+ * negative error code.
+ */
+typedef void (*bt_ras_rreq_ranging_data_get_complete_t)(struct bt_conn *conn,
+							uint16_t ranging_counter, int err);
+
+/** @brief Allocate a RREQ context and assign GATT handles. Takes a reference to the connection.
+ *
+ * @note RREQ context will be freed automatically on disconnect.
+ *
+ * @param[in] dm   Discovery Object.
+ * @param[in] conn Connection Object.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned. No RREQ context will be allocated if
+ * there is an error.
+ */
+int bt_ras_rreq_alloc_and_assign_handles(struct bt_gatt_dm *dm, struct bt_conn *conn);
+
+/** @brief Get ranging data for given ranging counter.
+ *
+ * @note This should only be called after receiving a ranging data ready callback and
+ * when subscribed to ondemand ranging data and RAS-CP.
+ *
+ * @param[in] conn                 Connection Object.
+ * @param[in] ranging_data_out     Simple buffer to store received ranging data.
+ * @param[in] ranging_counter      Ranging counter to get.
+ * @param[in] data_get_complete_cb Callback called when get ranging data completes.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_cp_get_ranging_data(struct bt_conn *conn, struct net_buf_simple *ranging_data_out,
+				    uint16_t ranging_counter,
+				    bt_ras_rreq_ranging_data_get_complete_t data_get_complete_cb);
+
+/** @brief Free RREQ context for connection. This will unsubscribe from any remaining subscriptions.
+ *
+ * @note RREQ context will be freed automatically on disconnect.
+ *
+ * @param[in] conn Connection Object.
+ */
+void bt_ras_rreq_free(struct bt_conn *conn);
+
+/** @brief Subscribe to RAS-CP. Required to be called before @ref bt_ras_rreq_cp_get_ranging_data.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_subscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_cp_subscribe(struct bt_conn *conn);
+
+/** @brief Unsubscribe from RAS-CP.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_unsubscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_cp_unsubscribe(struct bt_conn *conn);
+
+/** @brief Subscribe to on-demand ranging data notifications. Required to be called before @ref
+ * bt_ras_rreq_cp_get_ranging_data.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_subscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_on_demand_rd_subscribe(struct bt_conn *conn);
+
+/** @brief Unsubscribe from on-demand ranging data notifications.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_unsubscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_on_demand_rd_unsubscribe(struct bt_conn *conn);
+
+/** @brief Subscribe to ranging data ready notifications. These notify when on-demand ranging data
+ * is available for a given CS procedure counter.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_subscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ * @param[in] cb   Ranging data ready callback.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_rd_ready_subscribe(struct bt_conn *conn, bt_ras_rreq_rd_ready_cb_t cb);
+
+/** @brief Unsubscribe from ranging data ready notifications.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_unsubscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_rd_ready_unsubscribe(struct bt_conn *conn);
+
+/** @brief Subscribe to ranging data overwritten notifications. These notify when on-demand ranging
+ * data is no longer available for a given CS procedure counter.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_subscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ * @param[in] cb   Ranging data overwritten callback.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_rd_overwritten_subscribe(struct bt_conn *conn, bt_ras_rreq_rd_overwritten_cb_t cb);
+
+/** @brief Unsubscribe from ranging data overwritten notifications.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_unsubscribe will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_rd_overwritten_unsubscribe(struct bt_conn *conn);
 
 #ifdef __cplusplus
 }
