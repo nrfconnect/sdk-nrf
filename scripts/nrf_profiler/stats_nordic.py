@@ -71,13 +71,13 @@ class StatsNordic():
 
         if event_state == EventState.SUBMIT:
             timestamps = np.fromiter(map(lambda x: x.submit.timestamp, trackings),
-                                     dtype=np.float)
+                                     dtype=float)
         elif event_state == EventState.PROC_START:
             timestamps = np.fromiter(map(lambda x: x.proc_start_time, trackings),
-                                     dtype=np.float)
+                                     dtype=float)
         elif event_state == EventState.PROC_END:
             timestamps = np.fromiter(map(lambda x: x.proc_end_time, trackings),
-                                     dtype=np.float)
+                                     dtype=float)
 
         timestamps = timestamps[np.where((timestamps > start_meas)
                                          & (timestamps < end_meas))]
