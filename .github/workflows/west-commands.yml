@@ -49,6 +49,7 @@ jobs:
       - name: Install requirements
         shell: bash
         run: |
+          python3 -m pip install -U pip
           pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
           pip3 install -r nrf/scripts/requirements-extra.txt
       - name: Test ncs-sbom with asset tracker sample
