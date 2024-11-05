@@ -253,7 +253,7 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - Experimental
-     - Experimental
+     - Supported
      - --
      - --
      - --
@@ -281,7 +281,7 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - Experimental
-     - Experimental
+     - Supported
      - --
      - --
      - --
@@ -823,7 +823,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -837,7 +837,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -851,7 +851,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -865,7 +865,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -879,7 +879,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -893,7 +893,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -907,7 +907,21 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Thread 1.4 - Core**
+        - --
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
         - Experimental
+        - Supported
         - --
         - --
         - --
@@ -921,7 +935,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -935,7 +949,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -949,7 +963,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - --
         - --
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -960,10 +974,10 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - Supported
+        - Supported
         - Experimental
-        - Experimental
-        - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -1005,7 +1019,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -1019,7 +1033,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -1033,7 +1047,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -1047,7 +1061,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -1061,7 +1075,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -1075,7 +1089,7 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - Experimental
+        - Supported
         - --
         - --
         - --
@@ -1102,8 +1116,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - Supported
         - Supported
-        - Supported
         - Experimental
+        - Supported
         - --
         - --
         - --
