@@ -1388,8 +1388,8 @@ The following table indicates the software maturity levels of the support for ea
    | [1]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK or nRF7002 EK in nRF7001 emulation mode
    | [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode or nRF7002 EK
    | [3]: Only with nRF7002 EK or nRF7002 EK in nRF7001 emulation mode
-   | [4]: Only with nRF700X_nRF54H20DK
-   | [5]: Only with nRF700X_nRF54L15PDK
+   | [4]: Only with nrf7002 EB and nRF7002 EB-interposer
+   | [5]: Only with nrf7002 EB and nRF7002 EB-interposer
    | [6]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
    | [7]: Only with nRF7002 DK, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 
