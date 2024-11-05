@@ -9,7 +9,7 @@
 #include <zephyr/sys/printk.h>
 #include <pm_config.h>
 #include <fw_info.h>
-#ifdef CONFIG_FPROTECT
+#if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
 #else
 #warning "FPROTECT not enabled, the bootloader will be unprotected."
@@ -17,7 +17,7 @@
 #include <bl_storage.h>
 #include <bl_boot.h>
 #include <bl_validation.h>
-#ifdef CONFIG_NRFX_NVMC
+#if defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
@@ -38,7 +38,7 @@ int load_huk(void)
 
 		if (*(uint32_t *)huk_flag_addr == 0xFFFFFFFF) {
 			printk("First boot, expecting app to write HUK.\n");
-#ifdef CONFIG_NRFX_NVMC
+#if defined(CONFIG_NRFX_NVMC)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
 			nrfx_rramc_word_write(huk_flag_addr, 0);
@@ -128,18 +128,17 @@ static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 
 int main(void)
 {
-	int err = 0;
 
-	if (IS_ENABLED(CONFIG_FPROTECT)) {
-		err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
-	} else {
-		printk("Fprotect disabled. No protection applied.\n\r");
-	}
+#if defined(CONFIG_FPROTECT)
+	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\n\r");
 		return 0;
 	}
+#else
+	printk("Fprotect disabled. No protection applied.\n\r");
+#endif
 
 	uint32_t s0_addr = s0_address_read();
 	uint32_t s1_addr = s1_address_read();
