@@ -92,11 +92,23 @@ config SUIT_RECOVERY_APPLICATION_DEFAULT
 
 endchoice
 
+choice SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST
+	prompt "Select which manifest controls the recovery application FW image"
+	default SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3
+
+config SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3
+	bool "The recovery application FW image is controlled by APP_LOCAL_3 manifest"
+
+config SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_RECOVERY
+	bool "The recovery application FW image is controlled directly by APP_RECOVERY manifest"
+
+endchoice
+
 config SUIT_RECOVERY_APPLICATION_PATH
 	string
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/suit/recovery" if SUIT_RECOVERY_APPLICATION_DEFAULT
 	help
-	  Source directory of the SUIR recovery application.
+	  Source directory of the SUIT recovery application.
 
 config SUIT_ENVELOPE_APP_RECOVERY_TEMPLATE_FILENAME
 	string "Name of the default root envelope template"
@@ -109,7 +121,7 @@ config SUIT_ENVELOPE_APP_RECOVERY_TEMPLATE_FILENAME
 	  If the file is not found the default template from the base template directory is used.
 
 config SUIT_ENVELOPE_APP_RECOVERY_ARTIFACT_NAME
-	string "Name of the root SUIT artifact."
+	string "Name of the root recovery manifest SUIT artifact."
 	default "app_recovery"
 	help
 	  Name of the root SUIT artifact.
