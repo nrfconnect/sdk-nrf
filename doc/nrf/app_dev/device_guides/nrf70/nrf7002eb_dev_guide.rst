@@ -116,13 +116,13 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file by us
 
    set(SHIELD nrf7002eb)
 
-To build for the nRF7002 EB with nRF54H20 DK, use the ``nrf54h20dk/nrf54h20/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf700x_nrf54h20dk``.
-To build for a custom target, set ``-DSHIELD=nrf700x_nrf54h20dk`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
-Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf700x_nrf54h20dk)`` command.
+To build for the nRF7002 EB with nRF54H20 DK, use the ``nrf54h20dk/nrf54h20/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb_interposer_p1 nrf7002eb``.
+To build for a custom target, set ``-DSHIELD=nrf7002eb_interposer_p1;nrf7002eb`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
+Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf7002eb_interposer_p1 nrf7002eb)`` command.
 
-To build for the nRF7002 EB with the nRF54L15 PDK, use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf700x_nrf54l15pdk``.
-To build for a custom target, set ``-DSHIELD=nrf700x_nrf54l15pdk`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
-Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf700x_nrf54l15pdk)`` command.
+To build for the nRF7002 EB with the nRF54L15 PDK, use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb_interposer_p1 nrf7002eb``.
+To build for a custom target, set ``-DSHIELD=nrf7002eb_interposer_p1;nrf7002eb`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
+Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf7002eb_interposer_p1 nrf7002eb)`` command.
 
 Limitations when building with nRF54H20 DK and nRF54L15 PDK
 ***********************************************************

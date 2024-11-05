@@ -110,7 +110,7 @@ The following nRF70 Series shields are available and defined in the :file:`nrf/b
        | `User Guide <nRF7002 EK User Guide_>`_
    * - nRF7002 :term:`Expansion Board (EB)`
      - PCA63561
-     - ``nrf7002eb``, ``nrf700x_nrf54h20dk``, ``nrf700x_nrf54l15pdk``
+     - ``nrf7002eb``, ``nrf7002eb_interposer_p1`` (nRF54 Series)
      - | :ref:`Development guide <ug_nrf7002eb_gs>`
        | `User Guide <nRF7002 EB User Guide_>`_
 
