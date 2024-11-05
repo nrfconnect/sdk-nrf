@@ -17,6 +17,8 @@ To read logs on the nRF54H20 DK, you can use the following methods:
 
 For general information on how logging works in the |NCS|, consult the :ref:`ug_logging` and :ref:`zephyr:logging_api` documentation pages.
 
+
+
 nRF54H20 logging using a direct UART connection
 ***********************************************
 
@@ -32,6 +34,10 @@ This approach has a minimal cost on performance and code size, allowing for a no
 
 The STM implements a frontend of the Zephyr logging subsystem, allowing you to use the standard Zephyr logging API.
 For more information on STM, see :ref:`zephyr:logging_cs_stm`.
+
+.. note::
+   The STM logging feature for the nRF54H20 SoC was tested using the J-Trace PRO V2 Cortex-M, with firmware compiled on ``Mar 28 2024 15:14:04``.
+   Using this feature also requires ``nrfutil-trace`` version 2.10.0 or later.
 
 Embedded Trace Router (ETR)
 ===========================
