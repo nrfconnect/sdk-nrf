@@ -43,7 +43,7 @@ static void bond_connect(const struct bt_bond_info *bond_info, void *user_data)
 {
 	int ret;
 	const bt_addr_le_t *adv_addr = user_data;
-	struct bt_conn *conn;
+	struct bt_conn *conn = NULL;
 	char addr_string[BT_ADDR_LE_STR_LEN];
 
 	if (!bt_addr_le_cmp(&bond_info->addr, adv_addr)) {
@@ -137,7 +137,7 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 {
 	int ret;
 	bt_addr_le_t *addr = user_data;
-	struct bt_conn *conn;
+	struct bt_conn *conn = NULL;
 	char addr_string[BT_ADDR_LE_STR_LEN];
 
 	/* We only care about LTVs with name */
@@ -197,7 +197,7 @@ static bool csip_found(struct bt_data *data, void *user_data)
 {
 	int ret;
 	bt_addr_le_t *addr = user_data;
-	struct bt_conn *conn;
+	struct bt_conn *conn = NULL;
 	char addr_string[BT_ADDR_LE_STR_LEN];
 
 	if (!bt_csip_set_coordinator_is_set_member(server_sirk, data)) {
