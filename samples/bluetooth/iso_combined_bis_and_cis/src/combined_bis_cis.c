@@ -101,7 +101,7 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 	const struct bt_le_conn_param *conn_param =
 		BT_LE_CONN_PARAM(ACL_INTERVAL_BLE_UNITS, ACL_INTERVAL_BLE_UNITS, 0, 400);
 
-	struct bt_conn *conn;
+	struct bt_conn *conn = NULL;
 	int err = bt_conn_le_create(info->addr, BT_CONN_LE_CREATE_CONN, conn_param, &conn);
 
 	if (err) {

@@ -83,7 +83,7 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 		return;
 	}
 
-	struct bt_conn *conn;
+	struct bt_conn *conn = NULL;
 	int err = bt_conn_le_create(info->addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_DEFAULT,
 				    &conn);
 	if (err) {
