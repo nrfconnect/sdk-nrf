@@ -483,7 +483,7 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 	}
 
 	/* Establish connection. */
-	struct bt_conn *conn;
+	struct bt_conn *conn = NULL;
 
 	/* Stop scanning. */
 	bt_scan_stop();

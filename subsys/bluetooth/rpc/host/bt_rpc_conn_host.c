@@ -555,7 +555,7 @@ static void bt_conn_le_create_rpc_handler(const struct nrf_rpc_group *group,
 	const bt_addr_le_t *peer;
 	struct bt_conn_le_create_param create_param;
 	struct bt_le_conn_param conn_param;
-	struct bt_conn *conn_data;
+	struct bt_conn *conn_data = NULL;
 	struct bt_conn **conn = &conn_data;
 	size_t buffer_size_max = 8;
 
