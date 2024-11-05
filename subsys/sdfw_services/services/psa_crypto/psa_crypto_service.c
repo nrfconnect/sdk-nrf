@@ -18,18 +18,7 @@ SSF_CLIENT_SERVICE_DEFINE(psa_crypto_srvc, PSA_CRYPTO, cbor_encode_psa_crypto_re
 
 psa_status_t ssf_psa_crypto_init(void)
 {
-	int err;
-	struct psa_crypto_req req = { 0 };
-	struct psa_crypto_rsp rsp = { 0 };
-
-	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_crypto_init_req_m_c;
-
-	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
-	if (err != 0) {
-		return err;
-	}
-
-	return rsp.psa_crypto_rsp_status;
+	return PSA_SUCCESS;
 }
 
 psa_status_t ssf_psa_get_key_attributes(
