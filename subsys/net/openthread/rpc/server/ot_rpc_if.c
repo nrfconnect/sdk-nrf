@@ -91,12 +91,6 @@ static void ot_rpc_cmd_if_enable(const struct nrf_rpc_group *group, struct nrf_r
 		goto out;
 	}
 
-	ret = enable ? net_if_up(iface) : net_if_down(iface);
-	if (ret) {
-		NET_ERR("Failed to bring interface %s", enable ? "up" : "down");
-		goto out;
-	}
-
 	if (recv_net_context != NULL) {
 		net_context_put(recv_net_context);
 		recv_net_context = NULL;
