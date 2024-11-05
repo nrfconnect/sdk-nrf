@@ -198,7 +198,7 @@ static int device_found(uint8_t type, const uint8_t *data, uint8_t data_len,
 			const bt_addr_le_t *addr)
 {
 	int ret;
-	struct bt_conn *conn;
+	struct bt_conn *conn = NULL;
 
 	if (all_peers_connected()) {
 		LOG_DBG("All peripherals connected");
