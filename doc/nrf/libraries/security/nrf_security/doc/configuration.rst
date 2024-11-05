@@ -32,9 +32,6 @@ Custom Mbed TLS configuration files
 
 The nRF Security Kconfig options are used to generate an Mbed TLS configuration file.
 
-Although not recommended, it is possible to provide a custom Mbed TLS configuration file by disabling :kconfig:option:`CONFIG_GENERATE_MBEDTLS_CFG_FILE`.
-See :ref:`nrf_security_tls_header`.
-
 Building with TF-M
 ******************
 
