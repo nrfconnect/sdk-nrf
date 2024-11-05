@@ -26,7 +26,7 @@ nRF54L with Trusted Firmware-M (TF-M)
 
 On the nRF54L SoC, Matter samples support :ref:`app_boards_spe_nspe` with Trusted Firmware-M (TF-M).
 All cryptographic operations within the Matter stack are performed by utilizing the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment.
-The secure materials like Matter Session keys, DAC private key and other keys, are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
+The secure materials like Matter Session keys and other keys, except for the DAC private key, are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
 Matter samples use the full TF-M library, so you cannot use the :ref:`tfm_minimal_build` version of TF-M.
 
 To build a Matter sample with the TF-M support, :ref:`build <building>` for the :ref:`board target <app_boards_names>` with the ``/ns`` variant.
@@ -37,8 +37,8 @@ While using TF-M, the application partition size and available RAM space for the
 You must keep this in mind and calculate the available space for the application partition.
 The recommended values are provided in the :ref:`ug_matter_hw_requirements_layouts` section.
 
-In addition, you can store the DAC private key in the KMU storage while using TF-M.
-To learn how to do it, see the :ref:`matter_platforms_security_dac_priv_key_kmu` section.
+By default, the DAC private key is stored in the KMU storage while using TF-M.
+See the :ref:`matter_platforms_security_dac_priv_key_kmu` section for more information.
 
 Cryptography
 ************
@@ -142,7 +142,7 @@ This is a reference configuration that can be modified in the production firmwar
      - PSA Crypto API
      - CRACEN
      - Yes
-     - Trusted Firmware-M (TF-M)
+     - Trusted Firmware-M (TF-M) + Key Management Unit (KMU)
 
 .. [1] The CryptoCell backend is used in parallel with the Oberon backend.
        By default, the CryptoCell backend is used only for Random Number Generation (RNG) and the AEAD key derivation driver.
@@ -162,7 +162,7 @@ Storing Device Attestation Certificate private key
 In Matter samples based on the PSA crypto API, the Device Attestation Certificate's private key, which exists in the factory data set, can be migrated to secure storage.
 The secure storage used depends on the platform and the cryptographic backend.
 
-To enable the migration of the DAC private key from the factory data set to secure storage, set the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.
+The migration of the DAC private key from the factory data set to secure storage is controlled by the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option and set to ``y`` by default.
 
 Currently, this feature is available only for the PSA crypto API.
 See the following table to learn about the default secure storage backends for the DAC private key and the available secure storage backends for each platform:
@@ -185,12 +185,12 @@ See the following table to learn about the default secure storage backends for t
      - Not available
      - Not available
    * - nRF54L15 SoC
-     - Trusted Storage library + Hardware Unique Key
+     - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
        | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
        | Trusted Storage library + SHA-256 hash (Zephyr Settings)
    * - nRF54L15 SoC + Trusted Firmware-M (TF-M)
-     - Trusted Firmware-M Storage (TF-M)
+     - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
        | Trusted Firmware-M Storage (TF-M)
 
@@ -207,7 +207,7 @@ DAC in Trusted Storage library
 
 The Device Attestation Certificates private key can be stored in the Trusted Storage library.
 The key is encrypted with the AEAD key derived from the Hardware Unique Key (HUK) or a SHA-256 hash.
-This storage backend is selected by default for all platforms that support the PSA crypto API.
+This storage backend is selected by default for all platforms that support the PSA crypto API, except for the nRF54L Series, which uses Key Management Unit (KMU).
 
 To enable storing the DAC private key in the Trusted Storage library, set the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_ITS` Kconfig option to ``y``.
 To select which encryption to use, set one of the following Kconfig options:
@@ -226,7 +226,7 @@ The Key Management Unit (KMU) is a hardware peripheral that provides secure stor
 It is available in the nRF54L Series SoCs and can be used to store the DAC private key.
 This storage backend can be used with Trusted Firmware-M (TF-M).
 
-You can enable storing the DAC private key in the KMU by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU` Kconfig option to ``y``.
+Storing the DAC private key in the KMU is controlled by the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU` Kconfig option and set to ``y`` by default.
 
 You can additionally encrypt the DAC private key in the KMU storage by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_ENCRYPTED` Kconfig option to ``y``.
 This operation requires two additional KMU slots to store the nonce and the authentication tag, making the total number of slots used four.
