@@ -41,7 +41,7 @@ static void uninit_used_uarte(NRF_UARTE_Type *p_reg)
 
 static void uninit_used_peripherals(void)
 {
-#ifdef CONFIG_UART_NRFX
+#if defined(CONFIG_UART_NRFX)
 #if defined(CONFIG_HAS_HW_NRF_UART0)
 	nrf_uart_disable(NRF_UART0);
 #elif defined(CONFIG_HAS_HW_NRF_UARTE0)
@@ -82,18 +82,17 @@ void bl_boot(const struct fw_info *fw_info)
 	 * bootloader storage data is locked together with the network core
 	 * application.
 	 */
-	int err = 0;
-
-	if (IS_ENABLED(CONFIG_FPROTECT)) {
-		err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
-	} else {
-		printk("Fprotect disabled. No protection applied.\n\r");
-	}
+#if defined(CONFIG_FPROTECT)
+	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
 
 	if (err) {
 		printk("Failed to protect bootloader storage.\n\r");
 		return;
 	}
+#else
+		printk("Fprotect disabled. No protection applied.\n\r");
+#endif
+
 #endif
 
 #if CONFIG_ARCH_HAS_USERSPACE
