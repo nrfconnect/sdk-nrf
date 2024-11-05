@@ -146,8 +146,10 @@ int main(void)
 		coremark_run();
 		LED_OFF();
 
-		if (!IS_ENABLED(CONFIG_APP_MODE_FLASH_AND_RUN)) {
-			LOG_INF("CoreMark finished! Push %s to restart ...\n", BUTTON_LABEL);
+		if (IS_ENABLED(CONFIG_APP_MODE_FLASH_AND_RUN)) {
+			LOG_INF("CoreMark finished! Press the reset button to restart...\n");
+		} else {
+			LOG_INF("CoreMark finished! Press %s to restart ...\n", BUTTON_LABEL);
 		}
 
 		(void)atomic_set(&coremark_in_progress, false);
