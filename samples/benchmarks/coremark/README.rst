@@ -192,8 +192,8 @@ After programming the sample to your development kit, complete the following ste
 
       .. code-block:: console
 
-         *** Booting nRF Connect SDK v2.7.0-b6081ebcf502 ***
-         *** Using Zephyr OS v3.6.99-100befc70c74 ***
+         *** Booting nRF Connect SDK v2.8.99-bd215d43d184 ***
+         *** Using Zephyr OS v3.7.99-02718211f9a9 ***
          I: CoreMark sample for nrf52840dk/nrf52840
          I: Press Push button switch 0 to start the test ...
          I: Push button switch 0 pressed!
@@ -201,9 +201,9 @@ After programming the sample to your development kit, complete the following ste
 
          2K performance run parameters for coremark.
          CoreMark Size    : 666
-         Total ticks      : 400968
-         Total time (secs): 12.236000
-         Iterations/Sec   : 163.452109
+         Total ticks      : 399362
+         Total time (secs): 12.187000
+         Iterations/Sec   : 164.109297
          Iterations       : 2000
          Compiler version : GCC12.2.0
          Compiler flags   : -O3 + see compiler flags added by Zephyr
@@ -214,5 +214,5 @@ After programming the sample to your development kit, complete the following ste
          [0]crcstate      : 0x8e3a
          [0]crcfinal      : 0x4983
          Correct operation validated. See README.md for run and reporting rules.
-         CoreMark 1.0 : 163.452109 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
-         I: CoreMark finished! Push Push button switch 0 to restart ...
+         CoreMark 1.0 : 164.109297 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
+         I: CoreMark finished! Press Push button switch 0 to restart ...
