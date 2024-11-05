@@ -7,3 +7,11 @@
 name: openthread
 append:
   EXTRA_CONF_FILE: openthread.conf
+
+boards:
+  nrf54l15dk/nrf54l15/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.overlay
+  nrf52840dk/nrf52840:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf52840dk_nrf52840.overlay
