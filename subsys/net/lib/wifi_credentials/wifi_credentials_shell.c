@@ -134,6 +134,7 @@ static int cmd_add_network(const struct shell *shell, size_t argc, char *argv[])
 	char bands_str[MAX_BANDS_STR_LEN] = {0};
 	size_t offset = 0;
 	long channel;
+	long mfp = WIFI_MFP_OPTIONAL;
 
 	while ((opt = getopt_long(argc, argv, "s:p:k:w:b:c:m:t:a:K:h", long_options, &opt_index)) !=
 	       -1) {
@@ -220,16 +221,21 @@ static int cmd_add_network(const struct shell *shell, size_t argc, char *argv[])
 		case 'w':
 			if (creds.header.type == WIFI_SECURITY_TYPE_NONE ||
 			    creds.header.type == WIFI_SECURITY_TYPE_WPA_PSK) {
-				shell_error(shell, "MFP not supported for security type %s\n",
+				shell_error(shell, "MFP not supported for security type %s",
 					    wifi_security_txt(creds.header.type));
+				return -ENOTSUP;
+			}
+			mfp = strtol(state->optarg, &endptr, 10);
+			if (*endptr != '\0') {
+				shell_error(shell, "Invalid IEEE 802.11w value: %s", state->optarg);
 				return -EINVAL;
 			}
-			if (!strncmp(state->optarg, "disabled", 8)) {
+			if (mfp == WIFI_MFP_DISABLE) {
 				creds.header.flags |= WIFI_CREDENTIALS_FLAG_MFP_DISABLED;
-			} else if (!strncmp(state->optarg, "required", 8)) {
+			} else if (mfp == WIFI_MFP_REQUIRED) {
 				creds.header.flags |= WIFI_CREDENTIALS_FLAG_MFP_REQUIRED;
-			} else {
-				shell_error(shell, "Invalid IEEE 802.11w value: %s\n",
+			} else if (mfp > 2) {
+				shell_error(shell, "Invalid IEEE 802.11w value: %s",
 					    state->optarg);
 				return -EINVAL;
 			}
