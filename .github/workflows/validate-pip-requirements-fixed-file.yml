@@ -60,7 +60,9 @@ jobs:
             mkvirtualenv pip-fixed-venv  > /dev/null 2>&1 || true
             workon pip-fixed-venv  > /dev/null 2>&1
 
-            pip3 install pip-compile-cross-platform==1.4.2 --upgrade > /dev/null 2>&1
+            pip3 install \
+              --extra-index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
+              pip-compile-cross-platform==1.4.2+nordic --upgrade > /dev/null 2>&1
             pip-compile-cross-platform \
               bootloader/mcuboot/scripts/requirements.txt \
               nrf/scripts/requirements-ci.txt \
