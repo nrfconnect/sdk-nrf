@@ -65,6 +65,10 @@ Testing
 
 To test the client sample, follow the instructions in the :ref:`protocols_serialization_server_sample_testing` section of the protocol serialization server sample test procedure.
 
+.. note::
+   When using the nRF54L15 DK, do not press **Button 1** or **Button 2**.
+   The GPIO pins connected to these buttons are used by the UART peripheral for communication with the server device.
+
 Dependencies
 ************
 

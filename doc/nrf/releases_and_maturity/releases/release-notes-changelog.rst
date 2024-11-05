@@ -350,7 +350,8 @@ PMIC samples
 Protocol serialization samples
 ------------------------------
 
-|no_changes_yet_note|
+* Updated GPIO pins on nRF54L15 DK used for communication between the client and server over UART.
+  One of the previously selected pins was also used to drive an LED, which may have disrupted the UART communication.
 
 SDFW samples
 ------------

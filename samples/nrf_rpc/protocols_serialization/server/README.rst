@@ -52,15 +52,19 @@ User interface
 **************
 
 .. tabs::
+
    .. group-tab:: nRF52840 DK
 
-      Button 4:
+      Button 1:
+
          * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
-            This is used for testing the crash log feature.
+           This is used for testing the crash log feature.
          * Otherwise: not available.
 
    .. group-tab:: nRF54L15 DK
-      Button 3:
+
+      Button 0:
+
          * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
            This is used for testing the crash log feature.
          * Otherwise: not available.
@@ -80,6 +84,10 @@ Testing
 *******
 
 After building the Protocols serialization server sample and programming it to your development kit, connect it to a second device running the :ref:`Protocol serialization client <nrf_rpc_protocols_serialization_client>` sample to test either the Bluetooth LE, OpenThread or NFC functionality.
+
+.. note::
+   When using the nRF54L15 DK, do not press **Button 1** or **Button 2**.
+   The GPIO pins connected to these buttons are used by the UART peripheral for communication with the client device.
 
 .. _protocols_serialization_server_app_connection:
 
@@ -137,17 +145,17 @@ In the protocols serialization samples, one peripheral is used for shell and log
            * - Server
              - Client
              - Function on server
-           * - **P1.10**
-             - **P1.11**
-             - RX
-           * - **P1.11**
-             - **P1.10**
+           * - **P1.8**
+             - **P1.9**
              - TX
-           * - **P1.12**
-             - **P1.13**
-             - RTS (hardware flow control)
-           * - **P1.13**
+           * - **P1.9**
+             - **P1.8**
+             - TX
+           * - **P1.11**
              - **P1.12**
+             - RTS (hardware flow control)
+           * - **P1.12**
+             - **P1.11**
              - CTS (hardware flow control)
            * - **GND**
              - **GND**
@@ -156,7 +164,7 @@ In the protocols serialization samples, one peripheral is used for shell and log
         To enable the communication between the client and the server devices, connect the pins on the two nRF54L15 DKs using jumper wires.
         The following illustration demonstrates the pin connections:
 
-        .. figure:: /images/ps_nrf54l_connections.png
+        .. figure:: /images/ps_nrf54l_connections.webp
             :alt: nRF54L15 DK server and client pin connections
 
 Testing Bluetooth LE API serialization
