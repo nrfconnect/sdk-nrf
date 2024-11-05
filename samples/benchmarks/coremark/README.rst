@@ -196,6 +196,7 @@ After programming the sample to your development kit, complete the following ste
          *** Using Zephyr OS v3.7.99-02718211f9a9 ***
          I: CoreMark sample for nrf52840dk/nrf52840
          I: Press Push button switch 0 to start the test ...
+
          I: Push button switch 0 pressed!
          I: CoreMark started! CPU FREQ: 64000000 Hz, threads: 1, data size: 2000; iterations: 2000
 

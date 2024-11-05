@@ -130,7 +130,7 @@ int main(void)
 			k_panic();
 		}
 
-		LOG_INF("Press %s to start the test ...",  BUTTON_LABEL);
+		LOG_INF("Press %s to start the test ...\n",  BUTTON_LABEL);
 	}
 
 	while (true) {
