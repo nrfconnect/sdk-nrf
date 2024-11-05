@@ -7,6 +7,7 @@
 #ifndef SUIT_PLAT_RUN_CPU_H__
 #define SUIT_PLAT_RUN_CPU_H__
 
+#include <stdint.h>
 #include <suit_plat_err.h>
 
 #ifdef __cplusplus

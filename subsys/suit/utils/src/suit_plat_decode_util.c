@@ -9,6 +9,9 @@
 #include <suit_plat_mem_util.h>
 #include <string.h>
 
+#define SUIT_INVOKE_SYNCHRONOUS_KEY 1
+#define SUIT_INVOKE_TIMEOUT_KEY	    2
+
 suit_plat_err_t suit_plat_decode_component_id(struct zcbor_string *component_id, uint8_t *cpu_id,
 					      intptr_t *run_address, size_t *size)
 {
@@ -210,3 +213,48 @@ suit_plat_err_t suit_plat_decode_manifest_class_id(struct zcbor_string *componen
 	return SUIT_PLAT_ERR_CBOR_DECODING;
 }
 #endif /* CONFIG_SUIT_METADATA */
+
+suit_plat_err_t suit_plat_decode_invoke_args(struct zcbor_string *invoke_args, bool *synchronous,
+					     uint32_t *timeout_ms)
+{
+	bool cbor_synchronous = false;
+	uint32_t cbor_timeout_ms = 0;
+	bool res;
+
+	if ((invoke_args == NULL) || (invoke_args->value == NULL) || (invoke_args->len == 0)) {
+		/* If invoke arguments are not set - assume asynchronous invoke. */
+		if (synchronous != NULL) {
+			*synchronous = false;
+		}
+		if (timeout_ms != NULL) {
+			*timeout_ms = 0;
+		}
+
+		return SUIT_PLAT_SUCCESS;
+	}
+
+	ZCBOR_STATE_D(state, 2, invoke_args->value, invoke_args->len, 1, 0);
+
+	res = zcbor_map_start_decode(state);
+	res = res && zcbor_uint32_expect(state, SUIT_INVOKE_SYNCHRONOUS_KEY);
+	res = res && zcbor_bool_decode(state, &cbor_synchronous);
+	if (res && cbor_synchronous) {
+		/* Timeout value is mandatory if the synchronous flag is set. */
+		res = res && zcbor_uint32_expect(state, SUIT_INVOKE_TIMEOUT_KEY);
+		res = res && zcbor_uint32_decode(state, &cbor_timeout_ms);
+	}
+	res = res && zcbor_map_end_decode(state);
+
+	if (res) {
+		if (synchronous != NULL) {
+			*synchronous = cbor_synchronous;
+		}
+		if (timeout_ms != NULL) {
+			*timeout_ms = cbor_timeout_ms;
+		}
+
+		return SUIT_PLAT_SUCCESS;
+	}
+
+	return SUIT_PLAT_ERR_CBOR_DECODING;
+}

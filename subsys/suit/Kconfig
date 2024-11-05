@@ -174,6 +174,7 @@ config SUIT_ENABLE_DEFAULTS_SDFW
 	imply SUIT_UPDATE_REBOOT_ENABLED
 	imply SUIT_BOOT_RECOVERY_REBOOT_ENABLED
 	imply SUIT_VALIDATOR
+	imply SUIT_EVENTS
 
 config SUIT_ENABLE_DEFAULTS_SDFW_EXTMEM
 	bool "SDFW SUIT defaults with external flash support"
@@ -196,6 +197,7 @@ rsource "envelope_info/Kconfig"
 rsource "execution_mode/Kconfig"
 rsource "memory_layout/Kconfig"
 rsource "validator/Kconfig"
+rsource "events/Kconfig"
 
 # Configure SUIT_LOG_LEVEL
 module = SUIT
