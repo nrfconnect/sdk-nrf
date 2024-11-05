@@ -54,7 +54,7 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
 		return;
 	}
 
-	struct bt_conn *unused_conn;
+	struct bt_conn *unused_conn = NULL;
 
 	err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN,
 				BT_LE_CONN_PARAM_DEFAULT, &unused_conn);
