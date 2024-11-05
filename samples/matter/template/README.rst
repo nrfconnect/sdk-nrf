@@ -124,10 +124,6 @@ For example:
 
     west build -p -b nrf54l15dk/nrf54l15/cpuapp/ns
 
-.. note::
-
-   The firmware built for ``nrf54l15dk/nrf54l15/cpuapp/ns`` will not work on the nRF54L15 PDK.
-
 .. matter_template_build_with_tfm_end
 
 Device Firmware Upgrade support
