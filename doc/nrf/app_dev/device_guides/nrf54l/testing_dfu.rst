@@ -16,7 +16,7 @@ To compile the SMP server sample for testing secondary image slots on external S
 
       .. code-block:: console
 
-         west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash
+         west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash
 
    .. group-tab:: DTS partitioning
 
@@ -24,7 +24,7 @@ To compile the SMP server sample for testing secondary image slots on external S
 
       .. code-block:: console
 
-         west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l_d zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15pdk.ext_flash.pure_dts
+         west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l_d zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts
 
 This configuration sets up the secondary image slot on the serial flash memory installed on the nRF54L15 DK.
 It also enables the relevant SPI and the SPI NOR flash drivers.

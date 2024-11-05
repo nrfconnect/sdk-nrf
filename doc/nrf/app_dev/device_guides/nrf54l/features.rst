@@ -123,13 +123,15 @@ See the :ref:`nfc_samples` and :ref:`lib_nfc` for the samples and libraries that
 MCUboot bootloader support
 **************************
 
-The nRF54L15 DK supports MCUboot as its bootloader, in the experimental phase.
-This means the following:
+The nRF54L15 DK supports MCUboot as its bootloader.
+The following features are supported:
 
-  * Only software cryptography is supported.
-  * Single image pair is supported for dual-bank Device Firmware Update (DFU) targeted at the CPU application (the ``nrf54l15dk/nrf54l15/cpuapp`` board target).
-  * MCUboot can be configured as a first-stage bootloader (second-stage bootloader functionality is not yet available).
-  * Serial recovery mode is also not yet supported.
+  * Software and hardware-based :ref:`cryptography<ug_nrf54l_cryptography>`
+  * Hardware key management
+  * Single image pair for dual-bank Device Firmware Update (DFU) targeted at the CPU application (the ``nrf54l15dk/nrf54l15/cpuapp`` board target)
+  * Configuring MCUboot as a first-stage bootloader
+
+The second-stage bootloader functionality and the serial recovery mode are currently not supported.
 
 Supported DFU protocols
 =======================
