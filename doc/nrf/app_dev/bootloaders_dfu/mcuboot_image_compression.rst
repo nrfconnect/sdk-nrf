@@ -55,17 +55,17 @@ The following shows an example static Partition Manager layout for image compres
 
     .. group-tab:: nRF52840
 
-        .. literalinclude:: ../../../../tests/subsys/nrf_compress/decompression/mcuboot_update/pm_static_nrf52840dk_nrf52840.yml
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/pm_static_nrf52840dk_nrf52840.yml
              :language: yaml
 
     .. group-tab:: nRF5340
 
-        .. literalinclude:: ../../../../tests/subsys/nrf_compress/decompression/mcuboot_update/pm_static_nrf5340dk_nrf5340_cpuapp.yml
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/pm_static_nrf5340dk_nrf5340_cpuapp.yml
              :language: yaml
 
     .. group-tab:: nRF54L15
 
-        .. literalinclude:: ../../../../tests/subsys/nrf_compress/decompression/mcuboot_update/pm_static_nrf54l15dk_nrf54l15_cpuapp.yml
+        .. literalinclude:: ../../../../samples/nrf_compress/mcuboot_update/pm_static_nrf54l15dk_nrf54l15_cpuapp.yml
              :language: yaml
 
 Required sysbuild configuration options
