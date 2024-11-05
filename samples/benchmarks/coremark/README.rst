@@ -232,21 +232,21 @@ After programming the sample to your development kit, complete the following ste
 
          .. code-block:: console
 
-            *** Booting nRF Connect SDK v2.8.99-bd215d43d184 ***
+            *** Booting nRF Connect SDK v2.8.99-bd4a30a3a758 ***
             *** Using Zephyr OS v3.7.99-02718211f9a9 ***
-            I: Standard logging mode
+            [00:00:00.261,383] <inf> app: Standard logging mode
 
-            I: CoreMark sample for nrf52840dk/nrf52840
-            I: Press Push button switch 0 to start the test ...
+            [00:00:00.266,967] <inf> app: CoreMark sample for nrf52840dk/nrf52840
+            [00:00:00.274,139] <inf> app: Press Push button switch 0 to start the test ...
 
-            I: Push button switch 0 pressed!
-            I: CoreMark started! CPU FREQ: 64000000 Hz, threads: 1, data size: 2000; iterations: 2000
+            [00:00:01.267,608] <inf> app: Push button switch 0 pressed!
+            [00:00:01.273,864] <inf> app: CoreMark started! CPU FREQ: 64000000 Hz, threads: 1, data size: 2000; iterations: 2000
 
             2K performance run parameters for coremark.
             CoreMark Size    : 666
-            Total ticks      : 399362
-            Total time (secs): 12.187000
-            Iterations/Sec   : 164.109297
+            Total ticks      : 401215
+            Total time (secs): 12.244000
+            Iterations/Sec   : 163.345312
             Iterations       : 2000
             Compiler version : GCC12.2.0
             Compiler flags   : -O3 + see compiler flags added by Zephyr
@@ -257,8 +257,8 @@ After programming the sample to your development kit, complete the following ste
             [0]crcstate      : 0x8e3a
             [0]crcfinal      : 0x4983
             Correct operation validated. See README.md for run and reporting rules.
-            CoreMark 1.0 : 164.109297 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
-            I: CoreMark finished! Press Push button switch 0 to restart ...
+            CoreMark 1.0 : 163.345312 / GCC12.2.0 -O3 + see compiler flags added by Zephyr / STACK
+            [00:00:13.597,778] <inf> app: CoreMark finished! Press Push button switch 0 to restart ...
 
       .. group-tab:: Multi-domain logging
 

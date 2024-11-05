@@ -387,7 +387,10 @@ Other samples
 
 * :ref:`coremark_sample` sample:
 
-  * Updated configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board to support multi-domain logging using the ARM Coresight STM.
+  * Updated:
+
+    * Configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board to support multi-domain logging using the ARM Coresight STM.
+    * The logging format in the standard logging mode to align it with the format used in the multi-domain logging mode.
 
 Drivers
 =======
