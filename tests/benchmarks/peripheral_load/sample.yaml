@@ -26,6 +26,7 @@ tests:
         - ".*Timer thread has completed"
         - ".*WDT thread has completed"
         - ".*CPU load thread has completed"
+        - ".*Clock thread has completed"
         - ".*all \\d{1,} threads have completed"
     extra_args:
       - SHIELD=pca63566
