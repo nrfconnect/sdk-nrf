@@ -91,6 +91,22 @@ suit_plat_err_t suit_plat_decode_manifest_class_id(struct zcbor_string *componen
 						   suit_manifest_class_id_t **class_id);
 #endif /* CONFIG_SUIT_METADATA */
 
+/**
+ * @brief Decode invoke arguments
+ *
+ * @note It is allowed to pass NULLs as output arguments.
+ *       In such case invoke arguments will decoded, but not set.
+ *
+ * @param[in]  invoke_args  Encoded invoke arguments
+ * @param[out] synchronous  Decoded synchronous invoke flag
+ * @param[out] timeout_ms   Decoded timeout for synchronous invoke
+ *
+ * @retval SUIT_PLAT_SUCCESS            if successful.
+ * @retval SUIT_PLAT_ERR_CBOR_DECODING  if failed to decode arguments.
+ */
+suit_plat_err_t suit_plat_decode_invoke_args(struct zcbor_string *invoke_args, bool *synchronous,
+					     uint32_t *timeout_ms);
+
 #ifdef __cplusplus
 }
 #endif
