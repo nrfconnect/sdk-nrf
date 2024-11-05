@@ -15,6 +15,14 @@
 	};
 };
 
+&cpusec_cpuapp_ipc {
+	status = "disabled";
+};
+
+&cpusec_bellboard{
+	status = "disabled";
+};
+
 /* Split DFU partition into a smaller one and DFU caches. */
 /delete-node/ &dfu_partition;
 /delete-node/ &storage_partition;
