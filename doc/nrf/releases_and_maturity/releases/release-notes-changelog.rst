@@ -261,6 +261,8 @@ Matter
     The format now includes the optional ``EXTRAVERSION`` component.
   * Storing the Device Attestation Certificates private key in the Trusted Storage library to be enabled for all platforms that support the PSA crypto API.
     See :ref:`matter_platforms_security_dac_priv_key_its` for more information.
+  * Storing the Device Attestation Certificates private key in the Key Management Unit (KMU) to be enabled for nRF54L Series devices.
+    See :ref:`matter_platforms_security_dac_priv_key_kmu` for more information.
 
 Matter fork
 +++++++++++
