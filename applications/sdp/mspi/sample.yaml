@@ -1,0 +1,12 @@
+sample:
+  name: SDP mSPI application
+  description: SDP mSPI application
+common:
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+tests:
+  applications.sdp.mspi.icmsg:
+    build_only: true
+    sysbuild: true
+    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    tags: ci_build sysbuild mspi
