@@ -481,6 +481,9 @@ See `Configuration`_ for information about building the sample with the DFU supp
 
     west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dlock_SHIELD=nrf7002eb_interposer_p1
 
+.. note::
+   |54H_engb_2_8|
+
 Selecting a configuration
 =========================
 

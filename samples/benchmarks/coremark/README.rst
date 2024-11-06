@@ -167,6 +167,9 @@ After flashing, messages describing the benchmark state will appear in the conso
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
+.. note::
+   |54H_engb_2_8|
+
 Testing
 =======
 
