@@ -1307,7 +1307,7 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
-        - Experimental\ :sup:`2`
+        - Supported\ :sup:`2`
         - --
         - --
         - --
