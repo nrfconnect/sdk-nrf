@@ -30,7 +30,8 @@ The Secure Domain Firmware uses the IPC service to read, erase, or write data to
 
 The sample is meant to be booted by the Secure Domain while performing the firmware update process using the :ref:`SUIT <ug_nrf54h20_suit_dfu>` firmware upgrade.
 
-The flash companion sample is not a stand-alone firmware, it is intended to be used with the ``nrf54h_suit_sample`` to complete a firmware transfer with external flash.
+The flash companion sample is not a standalone application.
+It is designed to work with the ``smp_transfer`` sample to facilitate firmware transfer to external flash.
 
 .. _suit_flash_companion_config:
 
@@ -108,7 +109,7 @@ Perform the following steps in the main application directory:
       west build -b nrf54h20dk/nrf54h20/cpuapp
       west flash
 
-The flash companion sample will be built flashed automatically by sysbuild.
+The flash companion sample will be built automatically in the first command with use of sysbuild and properly flashed together with the main application during ``west flash``.
 
 Dependencies
 ************
