@@ -640,9 +640,14 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 		}
 
 		if ((parent_role == SUIT_MANIFEST_APP_RECOVERY) &&
-		    (child_role == SUIT_MANIFEST_RAD_RECOVERY)) {
+		    ((child_role == SUIT_MANIFEST_RAD_RECOVERY) ||
+			 ((child_role >= SUIT_MANIFEST_APP_LOCAL_1) &&
+		      (child_role <= SUIT_MANIFEST_APP_LOCAL_3)) ||
+		     ((child_role >= SUIT_MANIFEST_RAD_LOCAL_1) &&
+		      (child_role <= SUIT_MANIFEST_RAD_LOCAL_2)))) {
 			return SUIT_PLAT_SUCCESS;
 		}
+
 		break;
 
 	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
