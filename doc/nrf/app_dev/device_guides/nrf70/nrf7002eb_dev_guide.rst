@@ -1,5 +1,5 @@
 .. _ug_nrf7002eb_gs:
-.. _ug_nrf7002eb_nrf54l15pdk_gs:
+.. _ug_nrf7002eb_nrf54l15dk_gs:
 .. _ug_nrf7002eb_nrf54h20dk_gs:
 
 Developing with nRF7002 EB
@@ -12,7 +12,7 @@ Developing with nRF7002 EB
 The nRF7002 :term:`Expansion Board (EB)` (PCA63561), part of the `nRF70 Series Family <nRF70 Series product page_>`_, can be used to provide Wi-Fi® connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
 For example, you can use it with the :ref:`Nordic Thingy:53 <ug_thingy53>`, an IoT prototyping platform from Nordic Semiconductor.
 
-You can also use the nRF7002 EB to provide Wi-Fi connectivity to the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15pdk_nrf54l15`.
+You can also use the nRF7002 EB to provide Wi-Fi connectivity to the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15dk_nrf54l15`.
 
 .. figure:: images/nRF7002eb.png
    :alt: nRF7002 EB
@@ -29,10 +29,10 @@ The castellated holes on the side of the board allow the EB to be used as a brea
 This way, you can provide Wi-Fi capabilities to develop Wi-Fi applications with another System on Chip (SoC), MPU, or MCU host.
 For the pinout of the castellated holes, see `nRF7002 EB castellated edge holes`_ in the board's `Hardware User Guide <nRF7002 EB User Guide_>`_.
 
-Pin mapping for the nRF54H20 DK and the nRF54L15 PDK
-****************************************************
+Pin mapping for the nRF54H20 DK and the nRF54L15 DK
+***************************************************
 
-For nRF54H20 DK and nRF54L15 PDK, refer to the following tables for the pin mapping for these kits:
+For nRF54H20 DK and nRF54L15 DK, refer to the following tables for the pin mapping for these kits:
 
 .. tabs::
 
@@ -65,10 +65,10 @@ For nRF54H20 DK and nRF54L15 PDK, refer to the following tables for the pin mapp
       .. note::
          Connect ``VIO`` to 1.8 V and ``VBAT`` to 3.6 V and ``GND``.
 
-   .. group-tab:: nRF54L15 PDK
+   .. group-tab:: nRF54L15 DK
 
       +-----------------------------------+-------------------+-----------------------------------------------+
-      | nRF70 Series pin name (EB name)   | nRF54L15 PDK pins | Function                                      |
+      | nRF70 Series pin name (EB name)   | nRF54L15 DK pins | Function                                       |
       +===================================+===================+===============================================+
       | CLK (CLK)                         | P1.11             | SPI Clock                                     |
       +-----------------------------------+-------------------+-----------------------------------------------+
@@ -120,15 +120,15 @@ To build for the nRF7002 EB with nRF54H20 DK, use the ``nrf54h20dk/nrf54h20/cpua
 To build for a custom target, set ``-DSHIELD=nrf7002eb_interposer_p1;nrf7002eb`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
 Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf7002eb_interposer_p1 nrf7002eb)`` command.
 
-To build for the nRF7002 EB with the nRF54L15 PDK, use the ``nrf54l15pdk/nrf54l15/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb_interposer_p1 nrf7002eb``.
+To build for the nRF7002 EB with the nRF54L15 DK, use the ``nrf54l15dk/nrf54l15/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb_interposer_p1 nrf7002eb``.
 To build for a custom target, set ``-DSHIELD=nrf7002eb_interposer_p1;nrf7002eb`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
 Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf7002eb_interposer_p1 nrf7002eb)`` command.
 
-Limitations when building with nRF54H20 DK and nRF54L15 PDK
-***********************************************************
+Limitations when building with nRF54H20 DK and nRF54L15 DK
+**********************************************************
 
 The Wi-Fi support is experimental and has the following limitations:
 
 * It only supports STA mode.
 * It is only suitable for low-throughput applications.
-* For nRF54L15 PDK, WPA3 security mode is not supported.
+* For nRF54L15 DK, WPA3 security mode is not supported.
