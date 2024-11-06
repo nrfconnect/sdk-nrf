@@ -108,7 +108,7 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Updated the Bluetooth LE SoftDevice Controller driver to make the :c:func:`hci_vs_sdc_llpm_mode_set` function return an error if Low Latency Packet Mode (LLPM) is not supported or not enabled in the Bluetooth LE Controller driver configuration (:kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`).
 
 Bluetooth Mesh
 --------------

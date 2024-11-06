@@ -673,7 +673,9 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 	memset(cmds, 0, sizeof(*cmds));
 
 	cmds->read_supported_vs_commands = 1;
+#if defined(CONFIG_BT_CTLR_SDC_LLPM)
 	cmds->llpm_mode_set = 1;
+#endif
 	cmds->conn_update = 1;
 	cmds->conn_event_extend = 1;
 	cmds->qos_conn_event_report_enable = 1;
@@ -1681,8 +1683,10 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		*param_length_out += sizeof(sdc_hci_cmd_vs_read_supported_vs_commands_return_t);
 		vs_supported_commands((void *)event_out_params);
 		return 0;
+#if CONFIG_BT_CTLR_SDC_LLPM
 	case SDC_HCI_OPCODE_CMD_VS_LLPM_MODE_SET:
 		return sdc_hci_cmd_vs_llpm_mode_set((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_SDC_LLPM */
 	case SDC_HCI_OPCODE_CMD_VS_CONN_UPDATE:
 		return sdc_hci_cmd_vs_conn_update((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_CONN_EVENT_EXTEND:
