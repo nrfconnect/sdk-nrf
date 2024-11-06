@@ -218,6 +218,11 @@ CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MIN - Non-connectable adv
 CONFIG_BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX - Non-connectable advertising maximum interval
    Sets the non-connectable advertising maximum interval in 0.625 milliseconds unit.
 
+.. _CONFIG_BT_POWER_PROFILING_LED_DISABLED:
+
+CONFIG_BT_POWER_PROFILING_LED_DISABLED - Disable LEDs
+   Disables the LEDs to reduce power consumption.
+
 Building and running
 ********************
 

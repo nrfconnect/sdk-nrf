@@ -71,6 +71,11 @@ config BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX
 	help
 	  Non-connectable advertising maximum interval in 0.625 milliseconds unit.
 
+config BT_POWER_PROFILING_LED_DISABLED
+	bool "Disable LEDs"
+	help
+	  Disables the LEDs to reduce power consumption.
+
 config SETTINGS
 	default y
 
