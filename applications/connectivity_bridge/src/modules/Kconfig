@@ -98,6 +98,7 @@ config BRIDGE_BUF_SIZE
 
 config BRIDGE_UART_BUF_COUNT
 	int "UART buffer block count"
+	default 16 if BOARD_THINGY91X_NRF5340_CPUAPP
 	default 3
 	range 3 255
 	help
