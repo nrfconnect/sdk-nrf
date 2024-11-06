@@ -7,24 +7,11 @@ on:
       - main
 
 jobs:
-  build:
+  remove:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Install dependencies
-        run: |
-          sudo apt install -y sshpass
-
-      - name: Request removal
+      - name: Try removal of PR-docs
         env:
-          SSHUSER: ${{ secrets.NCS_TRANSFER_DOC_USR }}
-          SSHPASS: ${{ secrets.NCS_TRANSFER_DOC_PWD }}
+          AZCOPY_CONCURRENCY_VALUE: 3000
         run: |
-          # create request file
-          echo "remove PR-${{ github.event.number }}" > monitor_${GITHUB_RUN_ID}.txt
-          # trust server
-          mkdir -p ~/.ssh && \
-            ssh-keyscan -p 2222 transfer.nordicsemi.no >> ~/.ssh/known_hosts
-          # upload request file
-          echo "put monitor_${GITHUB_RUN_ID}.txt" | \
-            sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
+          azcopy rm "${{ vars.NCS_DOC_STORAGE_URL }}PR-${{ github.event.number }}?${{ secrets.NCS_DOC_SAS }}" --recursive=true || true
