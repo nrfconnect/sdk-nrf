@@ -81,7 +81,7 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
-      - OVERLAY_CONFIG=overlay-pgps.conf
+      - EXTRA_CONF_FILE=overlay-pgps.conf
       - gnss_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
