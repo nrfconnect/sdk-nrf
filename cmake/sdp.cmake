@@ -37,10 +37,10 @@ function(sdp_assembly_generate hrt_srcs)
     endif()
     get_filename_component(src_filename ${hrt_src} NAME_WE)  # filename without extension
     add_custom_command(TARGET asm_gen
+      PRE_BUILD
       BYPRODUCTS ${src_filename}-temp.s
       COMMAND ${CMAKE_C_COMPILER} ${compiler_options} ${hrt_opts} -S ${hrt_src} -o ${src_filename}-temp.s
       COMMAND ${PYTHON_EXECUTABLE} ${ZEPHYR_NRF_MODULE_DIR}/scripts/sdp/remove_comments.py ${src_filename}-temp.s
-      DEPENDS ${hrt_src}
       COMMAND_EXPAND_LISTS
       COMMENT "Generating ASM file for ${hrt_src}"
     )
