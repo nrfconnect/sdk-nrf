@@ -36,6 +36,7 @@ The following Kconfig options are also available for this module:
 * :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` - This option enables the Low Latency Packet Mode (LLPM).
   If the Bluetooth controller is enabled as part of the application, this option is enabled by default and depends on :kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`.
   Otherwise, this option is disabled and can be enabled manually.
+  Before enabling the option manually, make sure that the used Bluetooth controller supports the LLPM.
 * :kconfig:option:`CONFIG_CAF_BLE_STATE_SECURITY_REQ` - This option enables setting the security level 2 for a Bluetooth LE connection automatically, right after the connection is established.
   The security level 2 or higher enables connection encryption.
   The device disconnects if establishing the connection security level 2 fails.
@@ -81,4 +82,5 @@ After :c:struct:`ble_peer_event` about disconnection or connection failure is re
 Low Latency Packet Mode
 =======================
 
-If Nordic Semiconductor's SoftDevice Bluetooth LE Link Layer is selected (:kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`) and the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` option is enabled, the |ble_state| sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
+If the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` option is enabled, the |ble_state| sends a Bluetooth HCI command to enable the LLPM when Bluetooth is ready.
+The LLPM is a proprietary Bluetooth extension from Nordic Semiconductor that requires using Nordic Semiconductor's SoftDevice Bluetooth LE Link Layer.
