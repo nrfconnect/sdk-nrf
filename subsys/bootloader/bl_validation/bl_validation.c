@@ -152,7 +152,7 @@ OFFSET_CHECK(struct fw_validation_info, address, 12);
 OFFSET_CHECK(struct fw_validation_info, hash, 16);
 OFFSET_CHECK(struct fw_validation_info, public_key, (16 + CONFIG_SB_HASH_LEN));
 OFFSET_CHECK(struct fw_validation_info, signature, (16 + CONFIG_SB_HASH_LEN
-	+ CONFIG_SB_SIGNATURE_LEN));
+	+ CONFIG_SB_PUBLIC_KEY_LEN));
 
 /* Can be used to make the firmware discoverable in other locations, e.g. when
  * searching backwards. This struct would typically be constructed locally, so
