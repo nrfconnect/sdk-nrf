@@ -8,6 +8,7 @@ menu "Hotfix set"
 
 config DESKTOP_HFCLK_LOCK_ENABLE
 	bool "Keep HF clock enabled [DEPRECATED]"
+	depends on CAF_BLE_USE_LLPM
 	depends on !SOC_SERIES_NRF54HX
 	select DEPRECATED
 	help
