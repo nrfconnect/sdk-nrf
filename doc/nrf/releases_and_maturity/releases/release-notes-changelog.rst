@@ -268,6 +268,8 @@ DECT NR+ samples
     * The ``dect mac`` command.
       A brief MAC-level sample on top of DECT PHY interface with new commands to create a periodic cluster beacon, scan for it, associate or disassociate a PT/client, and send data to a FT/beacon random access window.
       This is not a full MAC implementation and not fully compliant with DECT NR+ MAC specification (`ETSI TS 103 636-4`_).
+    * The ``startup_cmd`` command.
+      This command is used to store shell commands to be run sequentially after bootup.
 
   * Updated:
 

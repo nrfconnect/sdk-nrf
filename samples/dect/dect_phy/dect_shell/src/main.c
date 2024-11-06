@@ -25,11 +25,23 @@
 
 #include <dk_buttons_and_leds.h>
 
+#if defined(CONFIG_DESH_STARTUP_CMDS)
+#include "startup_cmd_ctrl.h"
+#endif
 #include "desh_defines.h"
 #include "desh_print.h"
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_SHELL_BACKEND_SERIAL),
 	     "CONFIG_SHELL_BACKEND_SERIAL shell backend must be enabled");
+
+/***** Work queue and work item definitions *****/
+
+#if defined(CONFIG_DESH_STARTUP_CMDS)
+#define DESH_COMMON_WORKQUEUE_STACK_SIZE 4096
+#define DESH_COMMON_WORKQ_PRIORITY 5
+K_THREAD_STACK_DEFINE(desh_common_workq_stack, DESH_COMMON_WORKQUEUE_STACK_SIZE);
+struct k_work_q desh_common_work_q;
+#endif
 
 /* Global variables */
 const struct shell *desh_shell;
@@ -163,6 +175,18 @@ int main(void)
 	 */
 	desh_print_reset_reason();
 
+#if defined(CONFIG_DESH_STARTUP_CMDS)
+	struct k_work_queue_config cfg = {
+		.name = "desh_common_workq",
+	};
+
+	k_work_queue_start(
+		&desh_common_work_q,
+		desh_common_workq_stack,
+		K_THREAD_STACK_SIZEOF(desh_common_workq_stack),
+		DESH_COMMON_WORKQ_PRIORITY,
+		&cfg);
+#endif
 	err = nrf_modem_lib_init();
 	if (err) {
 		/* Modem library initialization failed. */
@@ -170,7 +194,9 @@ int main(void)
 		printk("Fatal error\n");
 		return 0;
 	}
-
+#if defined(CONFIG_DESH_STARTUP_CMDS)
+	startup_cmd_ctrl_init();
+#endif
 #if defined(CONFIG_DK_LIBRARY)
 	err = dk_leds_init();
 	if (err) {

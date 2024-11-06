@@ -876,6 +876,32 @@ Example: starting of cluster beacon and sending RA data to it
       Stopping beacon.
       Beacon TX stopped, cause: User Initiated.
 
+Running commands at bootup
+==========================
+
+DeSh command: ``startup_cmd``.
+
+You can use the ``startup_cmd`` command to store shell commands to be run sequentially after bootup.
+
+Example: starting of cluster beacon and sending RA data to it
+-------------------------------------------------------------
+
+* FT/Beacon device - Set a command to start a cluster beacon five seconds after bootup:
+
+  .. code-block:: console
+
+      desh:~$ startup_cmd -t 5 --mem_slot 1 --cmd_str "dect sett -t 1234"
+      desh:~$ startup_cmd --mem_slot 2 --cmd_str "dect mac beacon_start"
+
+* PT/Client device - Set a command to start scanning for the beacon 60 seconds after bootup, associate to it, and send RA data to it:
+
+  .. code-block:: console
+
+      desh:~$ startup_cmd -t 60 --mem_slot 1 --cmd_str "dect sett -t 1235"
+      desh:~$ startup_cmd --mem_slot 2 --cmd_str "dect mac beacon_scan -c 0"
+      desh:~$ startup_cmd --mem_slot 3 -d 60 --cmd_str "dect mac associate -t 1234"
+      desh:~$ startup_cmd --mem_slot 4 -d 10 --cmd_str "dect mac rach_tx -t 1234 -d data"
+
 Building
 ********
 
