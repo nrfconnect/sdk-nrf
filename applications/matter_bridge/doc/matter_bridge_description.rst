@@ -732,6 +732,10 @@ Once connected, run the following command to build the sample:
 
       west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf7002eb_interposer_p1
 
+.. note::
+   |54H_engb_2_8|
+
+
 Selecting a configuration
 =========================
 

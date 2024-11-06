@@ -103,6 +103,11 @@ The following is an example of the CLI command:
 
    west build -b nrf7002dk/nrf5340/cpuapp
 
+
+.. note::
+   |54H_engb_2_8|
+
+
 Testing
 =======
 
