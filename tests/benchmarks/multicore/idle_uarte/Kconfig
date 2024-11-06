@@ -1,0 +1,5 @@
+source "Kconfig.zephyr"
+
+config TEST_AUTOMATIC_POWER_CONTROL
+	default n
+	bool "Enable testing without manual UART disable/enable"
