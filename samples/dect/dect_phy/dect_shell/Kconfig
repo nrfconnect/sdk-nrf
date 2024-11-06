@@ -21,4 +21,8 @@ config DESH_DECT_PHY
 	help
 	  DECT NR+ PHY api shell tools
 
+config DESH_STARTUP_CMDS
+	bool "Possibility to run stored shell commands from settings after bootup"
+	default y
+
 endmenu
