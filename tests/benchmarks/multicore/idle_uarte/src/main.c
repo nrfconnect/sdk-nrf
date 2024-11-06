@@ -33,7 +33,6 @@ const uint8_t test_pattern[TEST_BUFFER_LEN] = {0x11, 0x12, 0x13, 0x14, 0x15,
 static uint8_t test_buffer[TEST_BUFFER_LEN];
 static volatile uint8_t uart_error_counter;
 
-
 /*
  * Callback function for UART async transmission
  */
@@ -46,6 +45,8 @@ static void async_uart_callback(const struct device *dev, struct uart_event *evt
 		break;
 	case UART_TX_ABORTED:
 		printk("UART_TX_ABORTED\n");
+		printk("Callback should not enter here\n");
+		__ASSERT_NO_MSG(1 == 0);
 		break;
 	case UART_RX_RDY:
 		printk("UART_RX_RDY\n");
@@ -72,6 +73,33 @@ static void async_uart_callback(const struct device *dev, struct uart_event *evt
 	default:
 		break;
 	}
+}
+
+/* Helper function for enabling UART RX */
+void enable_uart_rx(void)
+{
+	int err;
+
+	printk("Enable UART RX\n");
+	err = uart_rx_enable(uart_dev, test_buffer, TEST_BUFFER_LEN,
+			     5 * UART_ACTION_BASE_TIMEOUT_US);
+	if (err != 0) {
+		printk("Unexpected error when enabling UART RX: %d\n", err);
+	}
+}
+
+/* Helper function for disabling UART RX */
+void disable_uart_rx(void)
+{
+	int err;
+
+	k_msleep(250);
+	printk("Disable UART RX\n");
+	err = uart_rx_disable(uart_dev);
+	if (err != 0) {
+		printk("Unexpected error when disabling RX: %d\n", err);
+	}
+	k_msleep(250);
 }
 
 int main(void)
@@ -112,23 +140,27 @@ int main(void)
 		pm_device_runtime_enable(console_dev);
 	}
 
+#if defined(CONFIG_TEST_AUTOMATIC_POWER_CONTROL)
+	enable_uart_rx();
+#endif
+
 	while (1) {
 		printk("Hello\n");
 
-		err = uart_rx_enable(uart_dev, test_buffer, TEST_BUFFER_LEN,
-				     5 * UART_ACTION_BASE_TIMEOUT_US);
-		if (err != 0) {
-			printk("Unexpected error when enabling UART RX: %d\n", err);
-			return -1;
-		}
+#if !defined(CONFIG_TEST_AUTOMATIC_POWER_CONTROL)
+		enable_uart_rx();
+#endif
+
+		printk("UART test transmission\n");
 		err = uart_tx(uart_dev, test_pattern, TEST_BUFFER_LEN, UART_ACTION_BASE_TIMEOUT_US);
 		if (err != 0) {
 			printk("Unexpected error when sending UART TX data: %d\n", err);
 			return -1;
 		}
-		k_msleep(250);
-		uart_rx_disable(uart_dev);
-		k_msleep(250);
+
+#if !defined(CONFIG_TEST_AUTOMATIC_POWER_CONTROL)
+		disable_uart_rx();
+#endif
 
 		printk("Good night\n");
 		k_msleep(2000);
