@@ -297,15 +297,15 @@ The following table collects a summary of results obtained when throughput tests
 | Profile                | UDP TX    | UDP RX    | TCP TX    | TCP RX    |
 |                        |           |           |           |           |
 +========================+===========+===========+===========+===========+
-| IoT devices            | 5.08 Mbps | 5.43 Mbps | 5.25 Mbps | 3.35 Mbps |
+| IoT devices            | 5.7 Mbps  | 6 Mbps    | 7 Mbps    | 3.2 Mbps  |
 +------------------------+-----------+-----------+-----------+-----------+
-| Memory-optimized       | 5.1 Mbps  | 113 Kbps  | 644 Kbps  | 1.86 Mbps |
+| Memory-optimized       | 5.7 Mbps  | 4.2 Mbps  | 4.8 Mbps  | 6.2 Mbps  |
 +------------------------+-----------+-----------+-----------+-----------+
-| High performance       | 26.2 Mbps | 13.08 Mbps| 14.1 Mbps | 7.76 Mbps |
+| High performance       | 16.5 Mbps | 16.3 Mbps | 9.5 Mbps  | 10.6 Mbps |
 +------------------------+-----------+-----------+-----------+-----------+
-| TX prioritized         | 26.3 Mbps | 12.20 Mbps| 10.5 Mbps | 4.5 Mbps  |
+| TX prioritized         | 16.6 Mbps | 13.4 Mbps | 8.5 Mbps  | 6.6 Mbps  |
 +------------------------+-----------+-----------+-----------+-----------+
-| RX prioritized         | 9.34 Mbps | 13.46 Mbps| 5.48 Mbps | 7.92 Mbps |
+| RX prioritized         | 8.6 Mbps  | 17.9 Mbps | 6.2 Mbps  | 7.7 Mbps  |
 +------------------------+-----------+-----------+-----------+-----------+
 
 .. note::
