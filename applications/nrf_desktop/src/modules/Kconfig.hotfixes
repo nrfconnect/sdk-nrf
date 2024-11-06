@@ -7,8 +7,9 @@
 menu "Hotfix set"
 
 config DESKTOP_HFCLK_LOCK_ENABLE
-	bool "Keep HF clock enabled"
+	bool "Keep HF clock enabled [DEPRECATED]"
 	depends on !SOC_SERIES_NRF54HX
+	select DEPRECATED
 	help
 	  The HF clock needs to be enabled during data transmission over BLE.
 	  Enabling the HF clock right before the data transmission adds an extra
@@ -26,6 +27,12 @@ config DESKTOP_HFCLK_LOCK_ENABLE
 	  Bluetooth stack running on the radio core that HF clock is already
 	  enabled. The clock startup latency unconditionally affects the first
 	  transmitted packet.
+
+	  The hotfix is deprecated and will be removed in the future. Use the
+	  CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK instead. Setting the peripheral
+	  latency LLPM connection parameter to `0` on a peripheral leads to
+	  keeping the HF clock enabled. That mitigates the extra HID report
+	  latency caused by the HF clock startup delay.
 
 config DESKTOP_CONSTLAT_ENABLE
 	bool "Constant latency interrupts"
