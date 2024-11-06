@@ -1,0 +1,41 @@
+sample:
+  name: SDP GPIO application
+  description: SDP GPIO application
+common:
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+tests:
+  applications.sdp.gpio.mbox:
+    build_only: true
+    sysbuild: true
+    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    tags: ci_build sysbuild gpio
+    extra_args:
+      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuflpr_mbox.overlay"
+    extra_configs:
+      - CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX=y
+
+  applications.sdp.gpio.icmsg:
+    build_only: true
+    sysbuild: true
+    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    tags: ci_build sysbuild gpio
+    extra_args:
+      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuflpr_icmsg.overlay"
+    extra_configs:
+      - CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG=y
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_IPC_SERVICE_BACKEND_ICMSG=y
+
+  applications.sdp.gpio.icbmsg:
+    sysbuild: true
+    build_only: true
+    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    tags: ci_build sysbuild
+    extra_args:
+      EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuflpr_icbmsg.overlay"
+    extra_configs:
+      - CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG=y
+      - CONFIG_IPC_SERVICE=y
+      - CONFIG_IPC_SERVICE_BACKEND_ICBMSG=y
+      - CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
