@@ -5,11 +5,8 @@
 #
 
 menuconfig BT_RAS_RREQ
-	bool "Enable GATT Ranging Requester Client [EXPERIMENTAL]"
-	depends on BT_CHANNEL_SOUNDING
+	bool "GATT Ranging Requester Client [EXPERIMENTAL]"
 	select EXPERIMENTAL
-	select BT_NRF_SERVICES
-	select BT_RAS
 
 if BT_RAS_RREQ
 
