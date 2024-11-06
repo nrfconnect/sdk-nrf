@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
@@ -17,23 +17,19 @@ jobs:
           workflow: docbuild.yml
           run_id: ${{ github.event.workflow_run.id }}
 
-      - name: Install dependencies
+      - name: Unzip html archive
+        working-directory: docs
         run: |
-          sudo apt install -y sshpass
+          OUTDIR=$(awk 'NR==1 { if ($3 ~ /^(latest|v([0-9a-z\.\-]+)|PR-[0-9]+)$/) print $3 }' monitor_*.txt)
+          echo "OUTDIR=$OUTDIR" >> "$GITHUB_ENV"
+          unzip legacy-ncs*.zip -d $OUTDIR
 
-      - name: Upload documentation
+      - name: Upload to Azure storage
+        working-directory: docs
         env:
-          SSHUSER: ${{ secrets.NCS_TRANSFER_DOC_USR }}
-          SSHPASS: ${{ secrets.NCS_TRANSFER_DOC_PWD }}
+          AZCOPY_CONCURRENCY_VALUE: 1024
         run: |
-          # trust server
-          mkdir -p ~/.ssh && \
-            ssh-keyscan -p 2222 transfer.nordicsemi.no >> ~/.ssh/known_hosts
-          # upload files
-          for file in docs/legacy*.zip docs/monitor*.txt; do
-            echo "put ${file}" | \
-              sshpass -e sftp -P 2222 -o BatchMode=no -b - $SSHUSER@transfer.nordicsemi.no
-          done
+         azcopy cp $OUTDIR "${{ vars.NCS_DOC_STORAGE_URL }}?${{ secrets.NCS_DOC_SAS}}" --recursive=true
 
       - name: Upload Zoomin documentation
         run: |
@@ -74,9 +70,9 @@ jobs:
           done
 
       - name: Add preview URL comment for PRs
-        uses: carlescufi/action-doc-url@main
+        uses: nrfconnect/action-doc-url@main
         with:
           github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
-          urlroot: ${{ secrets.NCS_DOC_URL_ROOT }}
+          urlroot: ${{ vars.NCS_DOC_HOSTING_URL }}
           pr-prefix: "PR-"
           pr-file: docs/pr.txt
