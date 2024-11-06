@@ -112,6 +112,46 @@ static const struct bt_le_adv_param *non_connectable_ad_params =
 			NON_CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);
 
+static int leds_init(void)
+{
+	if (IS_ENABLED(CONFIG_BT_POWER_PROFILING_LED_DISABLED)) {
+		return 0;
+	} else {
+		return dk_leds_init();
+	}
+}
+
+static int set_led(uint8_t led_idx, uint32_t val)
+{
+	if (IS_ENABLED(CONFIG_BT_POWER_PROFILING_LED_DISABLED)) {
+		ARG_UNUSED(led_idx);
+		ARG_UNUSED(val);
+		return 0;
+	} else {
+		return dk_set_led(led_idx, val);
+	}
+}
+
+static int set_led_on(uint8_t led_idx)
+{
+	if (IS_ENABLED(CONFIG_BT_POWER_PROFILING_LED_DISABLED)) {
+		ARG_UNUSED(led_idx);
+		return 0;
+	} else {
+		return dk_set_led_on(led_idx);
+	}
+}
+
+static int set_led_off(uint8_t led_idx)
+{
+	if (IS_ENABLED(CONFIG_BT_POWER_PROFILING_LED_DISABLED)) {
+		ARG_UNUSED(led_idx);
+		return 0;
+	} else {
+		return dk_set_led_off(led_idx);
+	}
+}
+
 static void nfc_callback(void *context, nfc_t2t_event_t event, const uint8_t *data,
 			 size_t data_length)
 {
@@ -127,12 +167,12 @@ static void nfc_callback(void *context, nfc_t2t_event_t event, const uint8_t *da
 			return;
 		}
 
-		dk_set_led_on(NFC_FIELD_STATUS_LED);
+		set_led_on(NFC_FIELD_STATUS_LED);
 		adv_permission = true;
 		break;
 
 	case NFC_T2T_EVENT_FIELD_OFF:
-		dk_set_led_off(NFC_FIELD_STATUS_LED);
+		set_led_off(NFC_FIELD_STATUS_LED);
 		break;
 
 	case NFC_T2T_EVENT_DATA_READ:
@@ -162,14 +202,14 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 	printk("Connected %s\n", addr);
 
-	dk_set_led_on(CON_STATUS_LED);
+	set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	printk("Disconnected, reason 0x%02x %s\n", reason, bt_hci_err_to_str(reason));
 
-	dk_set_led_off(CON_STATUS_LED);
+	set_led_off(CON_STATUS_LED);
 
 	atomic_set(&notify_pipeline, NOTIFICATION_PIPELINE_SIZE);
 
@@ -627,7 +667,7 @@ static void system_off(void)
 	/* Clear the reset reason if it didn't do previously. */
 	nrfx_reset_reason_clear(nrfx_reset_reason_get());
 
-	dk_set_led_off(RUN_STATUS_LED);
+	set_led_off(RUN_STATUS_LED);
 
 	if (IS_ENABLED(CONFIG_PM_DEVICE) && IS_ENABLED(CONFIG_SERIAL)) {
 		static const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
@@ -689,7 +729,7 @@ int main(void)
 	/* Read the button state after booting to check if advertising start is needed. */
 	dk_read_buttons(&button_state, &has_changed);
 
-	err = dk_leds_init();
+	err = leds_init();
 	if (err) {
 		printk("LEDs init failed (err %d)\n", err);
 		return 0;
@@ -754,7 +794,7 @@ int main(void)
 	}
 
 	for (;;) {
-		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
+		set_led(RUN_STATUS_LED, (++blink_status) % 2);
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 	}
 }
