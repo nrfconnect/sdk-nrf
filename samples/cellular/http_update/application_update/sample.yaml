@@ -16,7 +16,7 @@ tests:
   sample.cellular.http_update.application_update.lwm2m_carrier:
     sysbuild: true
     build_only: true
-    extra_args: OVERLAY_CONFIG=overlay-carrier.conf
+    extra_args: EXTRA_CONF_FILE=overlay-carrier.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
