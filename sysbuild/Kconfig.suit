@@ -112,7 +112,8 @@ config SUIT_RECOVERY_APPLICATION_PATH
 
 config SUIT_ENVELOPE_APP_RECOVERY_TEMPLATE_FILENAME
 	string "Name of the default root envelope template"
-	default "app_recovery_envelope.yaml.jinja2"
+	default "app_recovery_envelope_app_local.yaml.jinja2" if SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3
+	default "app_recovery_envelope_direct.yaml.jinja2" if SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_RECOVERY
 	help
 	  Name of the default application recovery envelope template. This also has a role of the
 	  recovery firmware root envelope template.
