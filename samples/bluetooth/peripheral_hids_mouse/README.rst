@@ -113,6 +113,9 @@ To build this sample with the :ref:`ble_rpc` library, add the following paramete
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
+.. note::
+   |54H_engb_2_8|
+
 Testing
 =======
 

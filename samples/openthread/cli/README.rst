@@ -149,6 +149,9 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
+.. note::
+   |54H_engb_2_8|
+
 To update the OpenThread libraries provided by ``nrfxlib``, use the following commands:
 
 .. parsed-literal::

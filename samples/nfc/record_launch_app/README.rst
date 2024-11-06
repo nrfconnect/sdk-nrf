@@ -57,6 +57,9 @@ Building and running
 .. note::
    |nfc_nfct_driver_note|
 
+.. note::
+   |54H_engb_2_8|
+
 Testing
 =======
 

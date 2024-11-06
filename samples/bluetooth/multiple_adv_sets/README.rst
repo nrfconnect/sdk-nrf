@@ -67,6 +67,9 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
+.. note::
+   |54H_engb_2_8|
+
 .. _multiple_adv_sets_testing:
 
 Testing
