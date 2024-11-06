@@ -4,10 +4,34 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_RAS
-	bool
+menuconfig BT_RAS
+	bool "Ranging Service [EXPERIMENTAL]"
+	depends on BT_CHANNEL_SOUNDING
+	select BT_NRF_SERVICES
+	select EXPERIMENTAL
 	help
-	  Common Bluetooth GATT Ranging Service modules.
+	  Bluetooth GATT Ranging Service modules - RREQ and RRSP.
+
+if BT_RAS
 
 rsource "rreq/Kconfig.ras_rreq"
 rsource "rrsp/Kconfig.ras_rrsp"
+
+config BT_RAS_MAX_ANTENNA_PATHS
+	int "Maximum number of antenna paths supported"
+	default 4
+	range 1 4
+	help
+	  The number of antenna paths per step that can be stored inside RAS.
+	  Must match the supported CS capabilities of the local device.
+	  This affects the per-instance memory usage of RAS.
+
+config BT_RAS_MODE_3_SUPPORTED
+	bool "Support storing Mode 3 CS steps"
+	default y
+	help
+	  If enabled, RAS will allocate memory for storing Mode 3 CS steps.
+	  Must match the supported CS capabilities of the local device.
+	  This affects the per-instance memory usage of RAS.
+
+endif # BT_RAS

@@ -22,6 +22,7 @@ extern "C" {
 #define RASCP_CMD_PARAMS_OFFSET  RASCP_CMD_OPCODE_LEN
 #define RASCP_CMD_PARAMS_MAX_LEN 4
 #define RASCP_WRITE_MAX_LEN      (RASCP_CMD_OPCODE_LEN + RASCP_CMD_PARAMS_MAX_LEN)
+#define RASCP_ACK_DATA_TIMEOUT   K_SECONDS(5)
 
 /** @brief RAS Control Point opcodes as defined in RAS Specification, Table 3.10. */
 enum rascp_opcode {

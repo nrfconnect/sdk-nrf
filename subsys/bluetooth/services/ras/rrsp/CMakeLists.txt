@@ -6,4 +6,5 @@
 
 zephyr_library_sources_ifdef(
   CONFIG_BT_RAS_RRSP
-  ras_rrsp.c)
+  ras_rrsp.c
+  ras_rd_buffer.c)
