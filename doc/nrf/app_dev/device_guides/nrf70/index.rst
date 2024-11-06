@@ -77,11 +77,13 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - ``nrf54h20dk/nrf54h20/cpuapp``
      - | `nRF54H20 Objective Product Specification 0.3.1`_
        | :ref:`Getting started <ug_nrf54h20_gs>`
-   * - :ref:`zephyr:nrf54l15pdk_nrf54l15`
+   * - :ref:`zephyr:nrf54l15dk_nrf54l15`
      - nRF7002 EB
      - PCA20053
-     - ``nrf54l15pdk/nrf54l15/cpuapp``
-     - :ref:`Getting started <ug_nrf54l15_gs>`
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - | `Quick Start`_
+       | :ref:`Developing with nRF54L Series <ug_nrf54l15_gs>`
+
 
 
 The following nRF70 Series shields are available and defined in the :file:`nrf/boards/shields` folder:
