@@ -328,6 +328,23 @@ static inline void receive_signal_raise(void)
 	mpsl_work_submit(&receive_work);
 }
 
+/** Storage for HCI packets from controller to host */
+static struct {
+	/* Buffer for the HCI packet. */
+	uint8_t buf[HCI_RX_BUF_SIZE];
+	/* Type of the HCI packet the buffer contains. */
+	sdc_hci_msg_type_t type;
+} rx_hci_msg;
+
+static void bt_buf_rx_freed_cb(enum bt_buf_type type_mask)
+{
+	if (((rx_hci_msg.type == SDC_HCI_MSG_TYPE_EVT && (type_mask & BT_BUF_EVT) != 0u) ||
+	     (rx_hci_msg.type == SDC_HCI_MSG_TYPE_DATA && (type_mask & BT_BUF_ACL_IN) != 0u) ||
+	     (rx_hci_msg.type == SDC_HCI_MSG_TYPE_ISO && (type_mask & BT_BUF_ISO_IN) != 0u))) {
+		receive_signal_raise();
+	}
+}
+
 static int cmd_handle(struct net_buf *cmd)
 {
 	LOG_DBG("");
@@ -429,16 +446,16 @@ static int hci_driver_send(const struct device *dev, struct net_buf *buf)
 	return err;
 }
 
-static void data_packet_process(const struct device *dev, uint8_t *hci_buf)
+static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
-	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_FOREVER);
+	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ACL_IN, K_NO_WAIT);
 	struct bt_hci_acl_hdr *hdr = (void *)hci_buf;
 	uint16_t hf, handle, len;
 	uint8_t flags, pb, bc;
 
 	if (!data_buf) {
-		LOG_ERR("No data buffer available");
-		return;
+		LOG_DBG("No data buffer available");
+		return -ENOBUFS;
 	}
 
 	len = sys_le16_to_cpu(hdr->len);
@@ -452,8 +469,7 @@ static void data_packet_process(const struct device *dev, uint8_t *hci_buf)
 		LOG_ERR("Event buffer too small. %u > %u",
 			len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
-		k_panic();
-		return;
+		return -ENOMEM;
 	}
 
 	LOG_DBG("Data: handle (0x%02x), PB(%01d), BC(%01d), len(%u)", handle,
@@ -464,28 +480,36 @@ static void data_packet_process(const struct device *dev, uint8_t *hci_buf)
 	struct hci_driver_data *driver_data = dev->data;
 
 	driver_data->recv_func(dev, data_buf);
+
+	return 0;
 }
 
-static void iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
+static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
-	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ISO_IN, K_FOREVER);
+	struct net_buf *data_buf = bt_buf_get_rx(BT_BUF_ISO_IN, K_NO_WAIT);
 	struct bt_hci_iso_hdr *hdr = (void *)hci_buf;
 
 	uint16_t len = sys_le16_to_cpu(hdr->len);
+
+	if (!data_buf) {
+		LOG_DBG("No data buffer available");
+		return -ENOBUFS;
+	}
 
 	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
 		LOG_ERR("Event buffer too small. %u > %u",
 			len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
-		k_panic();
-		return;
+		return -ENOMEM;
 	}
 
 	net_buf_add_mem(data_buf, &hci_buf[0], len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
-	driver_data->recv_func(dev, data_buf);
+	(void)driver_data->recv_func(dev, data_buf);
+
+	return 0;
 }
 
 static bool event_packet_is_discardable(const uint8_t *hci_buf)
@@ -532,7 +556,7 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 	}
 }
 
-static void event_packet_process(const struct device *dev, uint8_t *hci_buf)
+static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
 	bool discardable = event_packet_is_discardable(hci_buf);
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
@@ -542,8 +566,7 @@ static void event_packet_process(const struct device *dev, uint8_t *hci_buf)
 		LOG_ERR("Event buffer too small. %u > %u",
 			hdr->len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
-		k_panic();
-		return;
+		return -ENOMEM;
 	}
 
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
@@ -569,67 +592,85 @@ static void event_packet_process(const struct device *dev, uint8_t *hci_buf)
 		LOG_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
 	}
 
-	evt_buf = bt_buf_get_evt(hdr->evt, discardable,
-				 discardable ? K_NO_WAIT : K_FOREVER);
+	evt_buf = bt_buf_get_evt(hdr->evt, discardable, K_NO_WAIT);
 
 	if (!evt_buf) {
 		if (discardable) {
 			LOG_DBG("Discarding event");
-			return;
+			return 0;
 		}
 
-		LOG_ERR("No event buffer available");
-		return;
+		LOG_DBG("No event buffer available");
+		return -ENOBUFS;
 	}
 
 	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
 
 	struct hci_driver_data *driver_data = dev->data;
 
-	driver_data->recv_func(dev, evt_buf);
+	(void)driver_data->recv_func(dev, evt_buf);
+
+	return 0;
 }
 
-static bool fetch_and_process_hci_msg(const struct device *dev, uint8_t *p_hci_buffer)
+static int fetch_hci_msg(uint8_t *p_hci_buffer, sdc_hci_msg_type_t *msg_type)
 {
 	int errcode;
-	sdc_hci_msg_type_t msg_type;
 
 	errcode = MULTITHREADING_LOCK_ACQUIRE();
 	if (!errcode) {
-		errcode = hci_internal_msg_get(p_hci_buffer, &msg_type);
+		errcode = hci_internal_msg_get(p_hci_buffer, msg_type);
 		MULTITHREADING_LOCK_RELEASE();
 	}
 
-	if (errcode) {
-		return false;
-	}
+	return errcode;
+}
+
+static int process_hci_msg(const struct device *dev, uint8_t *p_hci_buffer,
+			    sdc_hci_msg_type_t msg_type)
+{
+	int err;
 
 	if (msg_type == SDC_HCI_MSG_TYPE_EVT) {
-		event_packet_process(dev, p_hci_buffer);
+		err = event_packet_process(dev, p_hci_buffer);
 	} else if (msg_type == SDC_HCI_MSG_TYPE_DATA) {
-		data_packet_process(dev, p_hci_buffer);
+		err = data_packet_process(dev, p_hci_buffer);
 	} else if (msg_type == SDC_HCI_MSG_TYPE_ISO) {
-		iso_data_packet_process(dev, p_hci_buffer);
+		err = iso_data_packet_process(dev, p_hci_buffer);
 	} else {
 		if (!IS_ENABLED(CONFIG_BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE)) {
 			LOG_ERR("Unexpected msg_type: %u. This if-else needs a new branch",
 				msg_type);
 		}
+		err = 0;
 	}
 
-	return true;
+	return err;
 }
 
 void hci_driver_receive_process(void)
 {
-	static uint8_t hci_buf[HCI_RX_BUF_SIZE];
-
 	const struct device *dev = DEVICE_DT_GET(DT_DRV_INST(0));
+	int err;
 
-	if (fetch_and_process_hci_msg(dev, &hci_buf[0])) {
-		/* Let other threads of same priority run in between. */
-		receive_signal_raise();
+	if (rx_hci_msg.type == SDC_HCI_MSG_TYPE_NONE &&
+	    fetch_hci_msg(&rx_hci_msg.buf[0], &rx_hci_msg.type) != 0) {
+		return;
 	}
+
+	err = process_hci_msg(dev, &rx_hci_msg.buf[0], rx_hci_msg.type);
+	if (err == -ENOBUFS) {
+		/* If we got -ENOBUFS, wait for the signal from the host. */
+		return;
+	} else if (err) {
+		LOG_ERR("Unknown error when processing hci message %d", err);
+		k_panic();
+	}
+
+	rx_hci_msg.type = SDC_HCI_MSG_TYPE_NONE;
+
+	/* Let other threads of same priority run in between. */
+	receive_signal_raise();
 }
 
 static void receive_work_handler(struct k_work *work)
@@ -1410,6 +1451,8 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 
 	driver_data->recv_func = recv_func;
 
+	bt_buf_rx_freed_cb_set(bt_buf_rx_freed_cb);
+
 	return 0;
 }
 
@@ -1441,6 +1484,8 @@ static int hci_driver_close(const struct device *dev)
 	}
 
 	MULTITHREADING_LOCK_RELEASE();
+
+	bt_buf_rx_freed_cb_set(NULL);
 
 	return err;
 }
