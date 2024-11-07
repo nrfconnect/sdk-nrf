@@ -128,7 +128,7 @@ suit_plat_err_t suit_storage_install_envelope(const suit_manifest_class_id_t *id
  * @retval SUIT_PLAT_ERR_SIZE       unable to read NVVs from the provided area.
  * @retval SUIT_PLAT_ERR_NOT_FOUND  if the index value is too big.
  */
-suit_plat_err_t suit_storage_var_get(size_t index, uint32_t *value);
+suit_plat_err_t suit_storage_var_get(size_t index, uint8_t *value);
 
 /**
  * @brief Set the value of manifest non-volatile variable.
@@ -142,7 +142,7 @@ suit_plat_err_t suit_storage_var_get(size_t index, uint32_t *value);
  * @retval SUIT_PLAT_ERR_HW_NOT_READY  if NVM controller is unavailable.
  * @retval SUIT_PLAT_ERR_IO            if unable to change NVM contents.
  */
-suit_plat_err_t suit_storage_var_set(size_t index, uint32_t value);
+suit_plat_err_t suit_storage_var_set(size_t index, uint8_t value);
 
 /**
  * @brief Erase the report area.

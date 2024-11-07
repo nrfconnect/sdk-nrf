@@ -1002,7 +1002,7 @@ suit_plat_err_t suit_storage_install_envelope(const suit_manifest_class_id_t *id
 	return err;
 }
 
-suit_plat_err_t suit_storage_var_get(size_t index, uint32_t *value)
+suit_plat_err_t suit_storage_var_get(size_t index, uint8_t *value)
 {
 	struct suit_storage_app *app_storage = (struct suit_storage_app *)SUIT_STORAGE_APP_ADDRESS;
 	size_t area_size = offsetof(struct suit_storage_nvv, digest);
@@ -1013,7 +1013,7 @@ suit_plat_err_t suit_storage_var_get(size_t index, uint32_t *value)
 	return suit_storage_nvv_get(area_addr, area_size, index, value);
 }
 
-suit_plat_err_t suit_storage_var_set(size_t index, uint32_t value)
+suit_plat_err_t suit_storage_var_set(size_t index, uint8_t value)
 {
 	struct suit_storage_app *app_storage = (struct suit_storage_app *)SUIT_STORAGE_APP_ADDRESS;
 	size_t area_size = offsetof(struct suit_storage_nvv, digest);
