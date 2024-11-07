@@ -101,6 +101,10 @@ The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
 * :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_carrier_shell` and :ref:`lib_at_shell`.
+* :file:`overlay-softbank.conf` and :file:`sysbuild-softbank.conf` - Enable configurations for SoftBank.
+  For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
+* :file:`overlay-lgu.conf` and :file:`sysbuild-lgu.conf` - Enable configurations for LG U+.
+  For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
 
 The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
 
@@ -120,12 +124,21 @@ Building and running
 Building with overlay
 =====================
 
-To build with a Kconfig overlay, set :makevar:`EXTRA_CONF_FILE` to the :file:`overlay-shell.conf` file using the respective :ref:`CMake option <cmake_options>`, as shown in the following example:
+To build with a Kconfig overlay, set :makevar:`EXTRA_CONF_FILE` and :makevar:`SB_CONF_FILE` to the desired overlay files, using the respective :ref:`CMake option <cmake_options>`.
+
+Example of building with the shell:
 
 .. parsed-literal::
    :class: highlight
 
    west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-shell.conf
+
+Example of building with the SoftBank configuration:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-softbank.conf -DSB_CONF_FILE=sysbuild-softbank.conf
 
 |board_target|
 

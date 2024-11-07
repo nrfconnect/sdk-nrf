@@ -102,6 +102,8 @@ config LWM2M_CARRIER_T_MOBILE
 
 config LWM2M_CARRIER_SOFTBANK
 	bool "SoftBank"
+	depends on DFU_TARGET_MCUBOOT
+	depends on FLASH_MAP
 	default y
 	help
 	  If the Softbank SIM Subscriber ID is detected (device is in the Softbank network),
