@@ -86,4 +86,6 @@ void ot_rpc_encode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					const otBorderRouterConfig *service_config);
 void ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx,
 					otBorderRouterConfig *service_config);
+void ot_rpc_encode_sockaddr(struct nrf_rpc_cbor_ctx *ctx, const otSockAddr *sockaddr);
+void ot_rpc_decode_sockaddr(struct nrf_rpc_cbor_ctx *ctx, otSockAddr *sockaddr);
 #endif /* OT_RPC_COMMON_H_ */
