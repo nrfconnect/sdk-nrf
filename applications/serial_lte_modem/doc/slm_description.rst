@@ -311,6 +311,13 @@ The following configuration files are provided:
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
   See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
 
+* :file:`overlay-carrier-softbank.conf` and :file:`sysbuild-softbank.conf` - Configuration files that add SoftBank configurations needed by the carrier library.
+  Used in conjunction with :file:`overlay-carrier.conf`.
+  For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
+* :file:`overlay-carrier-lgu.conf` - This configuration file adds LG U+ configurations needed by the carrier library.
+  Used in conjunction with :file:`overlay-carrier.conf`.
+  For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
+
 * :file:`overlay-full_fota.conf` - Configuration file that adds full modem FOTA support.
   See :ref:`SLM_AT_FOTA` for more information on how to use full modem FOTA functionality.
 

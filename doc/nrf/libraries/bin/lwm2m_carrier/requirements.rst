@@ -35,14 +35,10 @@ Following are some of the requirements and limitations of the application while 
 
 * The LwM2M carrier library uses the TLS socket for FOTA.
 
+  * The application can still use one DTLS session and one TLS session (or two DTLS sessions).
   * If the application is using the TLS socket, it must immediately close it when the :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event is received.
   * The socket is released by the library again upon the next reboot, or in the event of a FOTA error.
   * If the application always needs a TLS socket, it can use `Mbed TLS`_.
-
-* When in the Verizon network, the LwM2M carrier library uses both the DTLS sessions made available through the modem.
-  Therefore, the application cannot run any DTLS or TLS sessions.
-
-  * In other networks, the application can still use one DTLS session and one TLS session (or two DTLS sessions).
   * For more information, see the :c:macro:`LWM2M_CARRIER_EVENT_FOTA_START` event in :ref:`lwm2m_events`.
 
 * The LwM2M carrier library provisions the necessary security credentials to the security tags 25, 26, 27, 28.
@@ -58,6 +54,42 @@ Following are some of the requirements and limitations of the application while 
 * The LwM2M carrier library uses the following NVS record key range: ``0xCA00`` to ``0xCAFF``.
   This range must not be used by the application.
 
+.. _lwm2m_carrier_dependent:
+
+Carrier-specific dependencies
+*****************************
+
+In order for your device to comply with the carrier's specifications, the following additional requirements apply to your application to use the carrier's LwM2M device management:
+
+.. tabs::
+
+   .. group-tab:: Verizon
+
+        * In the Verizon network, the :ref:`liblwm2m_carrier_readme` library uses both DTLS sessions made available through the modem.
+          Therefore, the application must expect to fail (or retry) if it attempts to establish a DTLS or TLS session.
+          The application should never use a DTLS session indefinitely, because this will block the LwM2M carrier library.
+
+   .. group-tab:: SoftBank
+
+        * The application must support application FOTA.
+        * The device must connect using a non-IP APN.
+
+        The :ref:`serial_lte_modem` application and :ref:`lwm2m_carrier` sample feature an extra config file to enable the :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK` dependencies.
+
+        * The device must operate in the NB-IoT system mode.
+
+          * If the :ref:`lte_lc_readme` library is used, you can enable the Kconfig option :kconfig:option:`CONFIG_LTE_NETWORK_MODE_NBIOT` to set the system mode.
+
+          * If the :ref:`lte_lc_readme` library is not used, see the `system mode section in the nRF9160 AT Commands Reference Guide`_ or the `system mode section in the nRF91x1 AT Commands Reference Guide`_, depending on the SiP you are using for more information on setting the NB-IoT system mode.
+
+          * If you are using the :ref:`serial_lte_modem` application, set the mode in the :file:`slm_auto_connect.h` file that is included with the :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` Kconfig option.
+
+   .. group-tab:: LG U+
+
+        * The application must support application FOTA.
+          The :ref:`serial_lte_modem` application and :ref:`lwm2m_carrier` sample contain extra config files to enable the :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS` dependencies.
+        * The application must set the LG U+ configurations listed in the :c:struct:`lwm2m_carrier_lg_uplus_config_t` structure.
+          If you are unsure about which values to supply during certification, reach out to your carrier or your local Nordic Semiconductor sales representative.
 
 .. _lwm2m_lib_size:
 
