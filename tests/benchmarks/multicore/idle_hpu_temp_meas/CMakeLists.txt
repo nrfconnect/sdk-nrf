@@ -16,4 +16,4 @@ endif()
 
 project(idle_hpu_temp_meas)
 
-target_sources(app PRIVATE src/main.c)
+target_sources(app PRIVATE ../../power_consumption/common/remote_sleep_forever/src/main.c)
