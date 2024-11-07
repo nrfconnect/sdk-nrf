@@ -765,6 +765,8 @@ SD card setup
 *************
 
 This sample can support pre-encoded LC3 data stored as LC3 files on an SD card.
+You can use the `nRF Auracast configuration files`_ provided by Nordic Semiconductor for populating the SD-card.
+
 If you are not using an SD card, the system defaults to sending dummy data.
 The purpose of the dummy data is to test that the broadcast source has been correctly configured.
 

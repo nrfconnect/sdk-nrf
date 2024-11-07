@@ -2155,9 +2155,9 @@ static void lecture_set(const struct shell *shell)
 
 	char *num_bis_argv[4] = {"num_bises", "1", "0", "0"};
 
-	char *fileselect_argv[5] = {"file select",
-				    "24000hz/48_kbps/auditorium-english_24kHz_left_48kbps.lc3", "0",
-				    "0", "0"};
+	char *fileselect_argv[5] = {
+		"file select", "10ms/24000hz/48_kbps/auditorium-english_24kHz_left_48kbps_10ms.lc3",
+		"0", "0", "0"};
 
 	cmd_preset(shell, 3, preset_argv);
 	cmd_adv_name(shell, 3, adv_name_argv);
@@ -2198,11 +2198,12 @@ static void silent_tv_1_set(const struct shell *shell)
 	char *location_FL_argv[5] = {"location", "FL", "0", "0", "0"};
 	char *location_FR_argv[5] = {"location", "FR", "0", "0", "1"};
 
-	char *fileselect0_argv[5] = {
-		"file select", "24000hz/48_kbps/left-channel_24kHz_left_48kbps.lc3", "0", "0", "0"};
-	char *fileselect1_argv[5] = {"file select",
-				     "24000hz/48_kbps/right-channel_24kHz_left_48kbps.lc3", "0",
-				     "0", "1"};
+	char *fileselect0_argv[5] = {"file select",
+				     "10ms/24000hz/48_kbps/left-channel_24kHz_left_48kbps_10ms.lc3",
+				     "0", "0", "0"};
+	char *fileselect1_argv[5] = {
+		"file select", "10ms/24000hz/48_kbps/right-channel_24kHz_left_48kbps_10ms.lc3", "0",
+		"0", "1"};
 
 	cmd_preset(shell, 3, preset_argv);
 	cmd_adv_name(shell, 3, adv_name_argv);
@@ -2248,10 +2249,11 @@ static void silent_tv_2_set(const struct shell *shell)
 	char *location_FR0_argv[5] = {"location", "FR", "0", "0", "1"};
 
 	char *fileselect00_argv[5] = {
-		"file select", "24000hz/48_kbps/left-channel_24kHz_left_48kbps.lc3", "0", "0", "0"};
-	char *fileselect01_argv[5] = {"file select",
-				      "24000hz/48_kbps/right-channel_24kHz_left_48kbps.lc3", "0",
-				      "0", "1"};
+		"file select", "10ms/24000hz/48_kbps/left-channel_24kHz_left_48kbps_10ms.lc3", "0",
+		"0", "0"};
+	char *fileselect01_argv[5] = {
+		"file select", "10ms/24000hz/48_kbps/right-channel_24kHz_left_48kbps_10ms.lc3", "0",
+		"0", "1"};
 
 	cmd_preset(shell, 3, preset0_argv);
 	cmd_adv_name(shell, 3, adv_name0_argv);
@@ -2294,10 +2296,11 @@ static void silent_tv_2_set(const struct shell *shell)
 	char *location_FR1_argv[5] = {"location", "FR", "1", "0", "1"};
 
 	char *fileselect10_argv[5] = {
-		"file select", "48000hz/80_kbps/left-channel_48kHz_left_80kbps.lc3", "1", "0", "0"};
-	char *fileselect11_argv[5] = {"file select",
-				      "48000hz/80_kbps/right-channel_48kHz_left_80kbps.lc3", "1",
-				      "0", "1"};
+		"file select", "10ms/48000hz/80_kbps/left-channel_48kHz_left_80kbps_10ms.lc3", "1",
+		"0", "0"};
+	char *fileselect11_argv[5] = {
+		"file select", "10ms/48000hz/80_kbps/right-channel_48kHz_left_80kbps_10ms.lc3", "1",
+		"0", "1"};
 	char *num_rtn_argv[4] = {"rtn", "2", "1", "0"};
 
 	cmd_preset(shell, 3, preset1_argv);
@@ -2349,16 +2352,16 @@ static void multi_language_set(const struct shell *shell)
 	char *num_rtn1_argv[4] = {"rtn", "2", "0", "1"};
 	char *num_rtn2_argv[4] = {"rtn", "2", "0", "2"};
 
-	char *fileselect0_argv[5] = {"file select",
-				     "24000hz/48_kbps/gate-b23-english_24kHz_left_48kbps.lc3", "0",
-				     "0", "0"};
-	char *fileselect1_argv[5] = {"file select",
-				     "24000hz/48_kbps/gate-b23-mandarin_24kHz_left_48kbps.lc3", "0",
-				     "1", "0"};
+	char *fileselect0_argv[5] = {
+		"file select", "10ms/24000hz/48_kbps/gate-b23-english_24kHz_left_48kbps_10ms.lc3",
+		"0", "0", "0"};
+	char *fileselect1_argv[5] = {
+		"file select", "10ms/24000hz/48_kbps/gate-b23-mandarin_24kHz_left_48kbps_10ms.lc3",
+		"0", "1", "0"};
 	char *fileselect2_argv[5] = {
 		"file select",
-		"24000hz/48_kbps/adventuresherlockholmes_01_doyle_24kHz_left_48kbps.lc3", "0", "2",
-		"0"};
+		"10ms/24000hz/48_kbps/adventuresherlockholmes_01_doyle_24kHz_left_48kbps_10ms.lc3",
+		"0", "2", "0"};
 
 	cmd_num_subgroups(shell, 3, num_subs_argv);
 	cmd_preset(shell, 3, preset_argv);
@@ -2405,11 +2408,13 @@ static void personal_sharing_set(const struct shell *shell)
 	char *location_FR_argv[5] = {"location", "FR", "0", "0", "1"};
 
 	char *fileselect0_argv[5] = {
-		"file select", "48000hz/80_kbps/groovy-ambient-funk-201745_48kHz_left_80kbps.lc3",
-		"0", "0", "0"};
+		"file select",
+		"10ms/48000hz/80_kbps/groovy-ambient-funk-201745_48kHz_left_80kbps_10ms.lc3", "0",
+		"0", "0"};
 	char *fileselect1_argv[5] = {
-		"file select", "48000hz/80_kbps/groovy-ambient-funk-201745_48kHz_right_80kbps.lc3",
-		"0", "0", "1"};
+		"file select",
+		"10ms/48000hz/80_kbps/groovy-ambient-funk-201745_48kHz_right_80kbps_10ms.lc3", "0",
+		"0", "1"};
 
 	cmd_preset(shell, 3, preset_argv);
 	cmd_adv_name(shell, 3, adv_name_argv);
@@ -2453,18 +2458,21 @@ static void personal_multi_language_set(const struct shell *shell)
 	char *location_FL1_argv[5] = {"location", "FL", "0", "1", "0"};
 	char *location_FR1_argv[5] = {"location", "FR", "0", "1", "1"};
 
-	char *fileselect000_argv[5] = {"file select",
-				       "24000hz/48_kbps/auditorium-english_24kHz_left_48kbps.lc3",
-				       "0", "0", "0"};
-	char *fileselect001_argv[5] = {"file select",
-				       "24000hz/48_kbps/auditorium-english_24kHz_right_48kbps.lc3",
-				       "0", "0", "1"};
-	char *fileselect010_argv[5] = {"file select",
-				       "24000hz/48_kbps/auditorium-mandarin_24kHz_left_48kbps.lc3",
-				       "0", "1", "0"};
-	char *fileselect011_argv[5] = {"file select",
-				       "24000hz/48_kbps/auditorium-mandarin_24kHz_right_48kbps.lc3",
-				       "0", "1", "1"};
+	char *fileselect000_argv[5] = {
+		"file select", "10ms/24000hz/48_kbps/auditorium-english_24kHz_left_48kbps_10ms.lc3",
+		"0", "0", "0"};
+	char *fileselect001_argv[5] = {
+		"file select",
+		"10ms/24000hz/48_kbps/auditorium-english_24kHz_right_48kbps_10ms.lc3", "0", "0",
+		"1"};
+	char *fileselect010_argv[5] = {
+		"file select",
+		"10ms/24000hz/48_kbps/auditorium-mandarin_24kHz_left_48kbps_10ms.lc3", "0", "1",
+		"0"};
+	char *fileselect011_argv[5] = {
+		"file select",
+		"10ms/24000hz/48_kbps/auditorium-mandarin_24kHz_right_48kbps_10ms.lc3", "0", "1",
+		"1"};
 
 	char *num_rtn000_argv[4] = {"rtn", "2", "0", "0"};
 	char *num_rtn010_argv[4] = {"rtn", "2", "0", "1"};
