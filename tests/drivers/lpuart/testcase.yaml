@@ -1,68 +1,82 @@
+common:
+  tags: lpuart sysbuild ci_tests_drivers_lpuart
+
 tests:
   lpuart.loopback_busy_sim:
     sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
       - CONFIG_TEST_BUSY_SIM=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
   lpuart.loopback.nrf54l:
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
   lpuart.loopback.nrf54l.busy_sim:
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
       - CONFIG_TEST_BUSY_SIM=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
   lpuart.loopback_busy_sim_no_hfxo:
     sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
     extra_configs:
       - CONFIG_NRF_SW_LPUART_HFXO_ON_RX=n
       - CONFIG_TEST_LPUART_LOOPBACK=y
       - CONFIG_TEST_BUSY_SIM=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
   lpuart.loopback:
     sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
   lpuart.loopback_no_hfxo:
     sysbuild: true
     platform_allow: nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
     extra_configs:
       - CONFIG_NRF_SW_LPUART_HFXO_ON_RX=n
       - CONFIG_TEST_LPUART_LOOPBACK=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
   lpuart.two_chip_test:
     sysbuild: true
     platform_allow: nrf9160dk/nrf9160 nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     build_only: true
     extra_configs:
       - CONFIG_TEST_LPUART_TIMEOUT=10
@@ -72,7 +86,6 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     build_only: true
     extra_configs:
       - CONFIG_TEST_LPUART_TIMEOUT=10
@@ -83,7 +96,6 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
-    tags: lpuart sysbuild ci_tests_drivers_lpuart
     build_only: true
     extra_args: OVERLAY_CONFIG=dbg.conf
     extra_configs:
