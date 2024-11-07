@@ -1668,6 +1668,8 @@
 
 .. _`ISO 639-2 code`: https://www.loc.gov/standards/iso639-2/php/code_list.php
 
+.. _`nRF Auracast configuration files`: https://files.nordicsemi.com/ui/repos/tree/General/ncs-audio/external/nRF_Aura_Config_Audio_Files.zip
+
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
 .. _`nrf-regtool`: https://github.com/nrfconnect/nrf-regtool/
