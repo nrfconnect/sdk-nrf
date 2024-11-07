@@ -54,7 +54,6 @@ The configuration files are in the |sample path| directory.
 The following files are available:
 
 * :file:`overlay-nrf700x-wifi-scan-only.conf` - Config overlay for nRF7002 Wi-Fi chip support.
-* :file:`thingy91x-wifi.overlay` - DTC overlay for Thingy:91 X Wi-Fi support.
 * :file:`overlay-pgps.conf` - Config overlay for P-GPS support.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
@@ -83,17 +82,9 @@ For example:
 
 See :ref:`cmake_options` for more instructions on how to add these options.
 
-Thingy:91 X Wi-Fi support
-=========================
-
-To build the Location sample with Thingy:91 X Wi-Fi support, use the ``-DDTC_OVERLAY_FILE=thingy91x_wifi.overlay``, ``-DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf``, ``-DSB_CONFIG_WIFI_NRF70=y``, and ``-DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y`` options.
-For example:
-
-.. code-block:: console
-
-   west build -p -b thingy91x/nrf9151/ns -- -DDTC_OVERLAY_FILE=thingy91x_wifi.overlay -DEXTRA_CONF_FILE=overlay-nrf700x-wifi-scan-only.conf -DSB_CONFIG_WIFI_NRF70=y -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
-
-See :ref:`cmake_options` for more instructions on how to add these options.
+.. note::
+   The Thingy:91 X build supports Wi-Fi by default.
+	You do not need to add any overlays.
 
 P-GPS support
 =============
