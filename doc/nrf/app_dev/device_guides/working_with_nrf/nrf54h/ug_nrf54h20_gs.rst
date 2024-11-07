@@ -54,6 +54,9 @@ You also need the following:
      Before running the initial J-Link installation from the `nRF Command Line Tools`_ package, ensure not to have any other J-Link executables on your system.
      If you have other J-Link installations, uninstall them before proceeding.
 
+   .. note::
+      |nrf_CLT_deprecation_note|
+
 * On Windows, SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
 
    .. note::

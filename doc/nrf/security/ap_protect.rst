@@ -233,6 +233,9 @@ To lock the ``UICR.APPROTECT`` register, complete the following steps:
 
    nrfjprog --rbp ALL
 
+.. note::
+    |nrfjprog_deprecation_note|
+
 This command enables the hardware AP-Protect (and Secure AP-Protect) and resets the device.
 
 .. _app_secure_approtect:
@@ -309,5 +312,8 @@ To enable only the hardware Secure AP-Protect mechanism, run the following comma
 .. code-block:: console
 
    nrfjprog --rbp SECURE
+
+.. note::
+    |nrfjprog_deprecation_note|
 
 This command enables hardware Secure AP-Protect and resets the device.

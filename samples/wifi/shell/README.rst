@@ -96,6 +96,9 @@ The following is an example of the CLI commands:
    # If you see NRF5340_xxAA_REV1, proceed with flashing:
    west flash --erase
 
+.. note::
+    |nrfjprog_deprecation_note|
+
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
 

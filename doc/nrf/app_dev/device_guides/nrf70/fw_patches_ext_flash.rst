@@ -188,6 +188,9 @@ For example, for nrfjprog:
 
    nrfjprog -f nrf53 -s 0 --program build/merged.hex ---sectorerase --qspisectorerase --verify --reset
 
+.. note::
+      |nrfjprog_deprecation_note|
+
 Updating firmware patches
 =========================
 
