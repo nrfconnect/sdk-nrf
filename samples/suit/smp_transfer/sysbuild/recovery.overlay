@@ -5,3 +5,9 @@
  */
 
 #include "../boards/nrf54h20dk_nrf54h20_cpuapp_common.dtsi"
+
+/ {
+	chosen {
+		recovery-button = &button0;
+	};
+};
