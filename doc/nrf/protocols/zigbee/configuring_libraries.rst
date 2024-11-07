@@ -7,6 +7,8 @@ Configuring Zigbee libraries in |NCS|
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The Zigbee protocol in |NCS| can be customized by enabling and configuring several :ref:`Zigbee libraries <lib_zigbee>`.
 This page lists options and steps required for configuring each of them.
 

@@ -5,7 +5,8 @@
 #
 
 menuconfig ZIGBEE
-	bool "Enable Zigbee stack"
+	bool "Enable Zigbee stack [DEPRECATED]"
+	select DEPRECATED
 	imply FPU
 	select APP_LINK_WITH_ZBOSS
 	select PM_SINGLE_IMAGE
