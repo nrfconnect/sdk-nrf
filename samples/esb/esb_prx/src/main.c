@@ -5,10 +5,8 @@
  */
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 #if defined(NRF54L15_XXAA)
 #include <hal/nrf_clock.h>
 #endif /* defined(NRF54L15_XXAA) */
@@ -20,6 +18,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <dk_buttons_and_leds.h>
+#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+#include <hal/nrf_lrcconf.h>
+#endif
 
 LOG_MODULE_REGISTER(esb_prx, CONFIG_ESB_PRX_APP_LOG_LEVEL);
 
@@ -104,7 +105,45 @@ int clocks_start(void)
 	LOG_DBG("HF clock started");
 	return 0;
 }
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
+
+#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+
+int clocks_start(void)
+{
+	int err;
+	int res;
+	const struct device *radio_clk_dev =
+		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
+	struct onoff_client radio_cli;
+
+	/** Keep radio domain powered all the time to reduce latency. */
+	nrf_lrcconf_poweron_force_set(NRF_LRCCONF010, NRF_LRCCONF_POWER_DOMAIN_1, true);
+
+	sys_notify_init_spinwait(&radio_cli.notify);
+
+	err = nrf_clock_control_request(radio_clk_dev, NULL, &radio_cli);
+
+	do {
+		err = sys_notify_fetch_result(&radio_cli.notify, &res);
+		if (!err && res) {
+			LOG_ERR("Clock could not be started: %d", res);
+			return res;
+		}
+	} while (err == -EAGAIN);
+
+#if defined(NRF54L15_XXAA)
+	/* MLTPAN-20 */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54L15_XXAA) */
+
+	LOG_DBG("HF clock started");
+
+	return 0;
+}
+
+#else
+BUILD_ASSERT(false, "No Clock Control driver");
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF2) */
 
 int esb_initialize(void)
 {
@@ -156,12 +195,10 @@ int main(void)
 
 	LOG_INF("Enhanced ShockBurst prx sample");
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	err = clocks_start();
 	if (err) {
 		return 0;
 	}
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 	err = dk_leds_init();
 	if (err) {
