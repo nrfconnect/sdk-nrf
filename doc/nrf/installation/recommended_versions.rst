@@ -375,6 +375,9 @@ nRF Command Line Tools
 Among others, this package includes the nrfjprog executable and library, which the west command uses by default to program the development kits.
 For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
 
+.. note::
+    |nrf_CLT_deprecation_note|
+
 It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
 
 |nRFVSC|

@@ -56,6 +56,8 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
 .. note::
    Programming the nRF5340 DK from the command line with west requires the `nRF Command Line Tools`_ v10.12.0 or later.
 
+   |nrf_CLT_deprecation_note|
+
 .. tabs::
 
    .. group-tab:: Separate images
