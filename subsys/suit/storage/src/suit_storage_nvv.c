@@ -10,11 +10,6 @@
 
 LOG_MODULE_REGISTER(suit_storage_nvv, CONFIG_SUIT_LOG_LEVEL);
 
-typedef struct {
-	uint8_t *addr;
-	size_t size;
-} suit_storage_nvv_entry_t;
-
 suit_plat_err_t suit_storage_nvv_init(void)
 {
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
@@ -29,7 +24,7 @@ suit_plat_err_t suit_storage_nvv_init(void)
 suit_plat_err_t suit_storage_nvv_erase(uint8_t *area_addr, size_t area_size)
 {
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
-	uint8_t nvv_buf[EB_SIZE(suit_storage_nvv_t)];
+	uint8_t nvv_buf[sizeof(suit_storage_nvv_t)];
 
 	if (area_addr == NULL) {
 		return SUIT_PLAT_ERR_INVAL;
@@ -61,7 +56,7 @@ suit_plat_err_t suit_storage_nvv_erase(uint8_t *area_addr, size_t area_size)
 }
 
 suit_plat_err_t suit_storage_nvv_get(const uint8_t *area_addr, size_t area_size, size_t index,
-				     uint32_t *value)
+				     uint8_t *value)
 {
 	suit_storage_nvv_t *vars = (suit_storage_nvv_t *)area_addr;
 
@@ -87,10 +82,10 @@ suit_plat_err_t suit_storage_nvv_get(const uint8_t *area_addr, size_t area_size,
 }
 
 suit_plat_err_t suit_storage_nvv_set(uint8_t *area_addr, size_t area_size, size_t index,
-				     uint32_t value)
+				     uint8_t value)
 {
 	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
-	uint8_t nvv_buf[EB_SIZE(suit_storage_nvv_t)];
+	uint8_t nvv_buf[sizeof(suit_storage_nvv_t)];
 	suit_storage_nvv_t *vars = (suit_storage_nvv_t *)&nvv_buf;
 
 	if (area_addr == NULL) {
@@ -110,6 +105,11 @@ suit_plat_err_t suit_storage_nvv_set(uint8_t *area_addr, size_t area_size, size_
 	}
 
 	memcpy(nvv_buf, area_addr, sizeof(nvv_buf));
+	/* Do not update NVM if the value is already set. */
+	if ((*vars)[index] == value) {
+		return SUIT_PLAT_SUCCESS;
+	}
+
 	(*vars)[index] = value;
 
 	/* Override regular entry. */

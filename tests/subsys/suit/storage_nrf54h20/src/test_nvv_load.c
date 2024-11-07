@@ -50,12 +50,14 @@ ZTEST(suit_storage_nrf54h20_nvv_tests, test_app_nvv_read)
 	/* ... and sample root class is supported */
 	assert_sample_root_class();
 
-	uint32_t constants[SUIT_STORAGE_NVV_N_VARS] = {
-		0x00000000, 0xAAAAAAAA, 0x55AA55AA, 0x01000000,
-		0x00000001, 0xFFFFFFFF, 0x98EFCDAB, 0xFFFFFFFF,
+	uint8_t constants[SUIT_STORAGE_NVV_N_VARS] = {
+		0x00, 0x00, 0x00, 0x00, 0xAA, 0xAA, 0xAA, 0xAA,
+		0xAA, 0x55, 0xAA, 0x55, 0x00, 0x00, 0x00, 0x01,
+		0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+		0xAB, 0xCD, 0xEF, 0x98, 0xFF, 0xFF, 0xFF, 0xFF,
 	};
 	for (size_t i = 0; i < SUIT_STORAGE_NVV_N_VARS; i++) {
-		uint32_t value;
+		uint8_t value;
 
 		/* WHEN the NVV value is read */
 		err = suit_storage_var_get(i, &value);
@@ -105,20 +107,22 @@ ZTEST(suit_storage_nrf54h20_nvv_tests, test_app_nvv_write)
 
 	/* ... and NVV is set with initial values */
 	for (size_t i = 0; i < SUIT_STORAGE_NVV_N_VARS; i++) {
-		uint32_t value;
+		uint8_t value;
 
 		err = suit_storage_var_get(i, &value);
 		zassert_equal(err, SUIT_PLAT_SUCCESS, "Failed to read NVV at index: %d (%d).", i,
 			      err);
-		zassert_equal(value, 0xFFFFFFFF,
+		zassert_equal(value, 0xFF,
 			      "Invalid initial NVV value at index: %d (0x%X != 0x%X).", i, value,
-			      0xFFFFFFFF);
+			      0xFF);
 	}
 
 	/* WHEN NVV variables are updated */
-	uint32_t constants[SUIT_STORAGE_NVV_N_VARS] = {
-		0x00000000, 0xAAAAAAAA, 0x55AA55AA, 0x01000000,
-		0x00000001, 0xFFFFFFFF, 0x98EFCDAB, 0xFFFFFFFF,
+	uint8_t constants[SUIT_STORAGE_NVV_N_VARS] = {
+		0x00, 0x00, 0x00, 0x00, 0xAA, 0xAA, 0xAA, 0xAA,
+		0xAA, 0x55, 0xAA, 0x55, 0x00, 0x00, 0x00, 0x01,
+		0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+		0xAB, 0xCD, 0xEF, 0x98, 0xFF, 0xFF, 0xFF, 0xFF,
 	};
 	for (size_t i = 0; i < SUIT_STORAGE_NVV_N_VARS; i++) {
 		err = suit_storage_var_set(i, constants[i]);
@@ -174,12 +178,14 @@ ZTEST(suit_storage_nrf54h20_nvv_tests, test_app_nvv_ro_backup_read)
 	/* ... and NVV backup is corrupted after initialization*/
 	erase_area_app_nvv_backup();
 
-	uint32_t constants[SUIT_STORAGE_NVV_N_VARS] = {
-		0x00000000, 0xAAAAAAAA, 0x55AA55AA, 0x01000000,
-		0x00000001, 0xFFFFFFFF, 0x98EFCDAB, 0xFFFFFFFF,
+	uint8_t constants[SUIT_STORAGE_NVV_N_VARS] = {
+		0x00, 0x00, 0x00, 0x00, 0xAA, 0xAA, 0xAA, 0xAA,
+		0xAA, 0x55, 0xAA, 0x55, 0x00, 0x00, 0x00, 0x01,
+		0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+		0xAB, 0xCD, 0xEF, 0x98, 0xFF, 0xFF, 0xFF, 0xFF,
 	};
 	for (size_t i = 0; i < SUIT_STORAGE_NVV_N_VARS; i++) {
-		uint32_t value;
+		uint8_t value;
 
 		/* WHEN the NVV value is read */
 		err = suit_storage_var_get(i, &value);
@@ -234,7 +240,7 @@ ZTEST(suit_storage_nrf54h20_nvv_tests, test_app_nvv_ro_backup_write)
 	erase_area_app_nvv_backup();
 
 	/* WHEN NVV variable is updated */
-	err = suit_storage_var_set(0, 0x00000000);
+	err = suit_storage_var_set(0, 0x00);
 
 	/* THEN the NVV update succeeds */
 	zassert_equal(err, SUIT_PLAT_SUCCESS, "Failed to write NVV at index: 0 (%d).", err);
@@ -285,12 +291,14 @@ ZTEST(suit_storage_nrf54h20_nvv_tests, test_app_nvv_ro_read)
 	/* ... and NVV area is corrupted after initialization*/
 	erase_area_app_nvv();
 
-	uint32_t constants[SUIT_STORAGE_NVV_N_VARS] = {
-		0x00000000, 0xAAAAAAAA, 0x55AA55AA, 0x01000000,
-		0x00000001, 0xFFFFFFFF, 0x98EFCDAB, 0xFFFFFFFF,
+	uint8_t constants[SUIT_STORAGE_NVV_N_VARS] = {
+		0x00, 0x00, 0x00, 0x00, 0xAA, 0xAA, 0xAA, 0xAA,
+		0xAA, 0x55, 0xAA, 0x55, 0x00, 0x00, 0x00, 0x01,
+		0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+		0xAB, 0xCD, 0xEF, 0x98, 0xFF, 0xFF, 0xFF, 0xFF,
 	};
 	for (size_t i = 0; i < SUIT_STORAGE_NVV_N_VARS; i++) {
-		uint32_t value;
+		uint8_t value;
 
 		/* WHEN the NVV value is read */
 		err = suit_storage_var_get(i, &value);
@@ -346,7 +354,7 @@ ZTEST(suit_storage_nrf54h20_nvv_tests, test_app_nvv_ro_write)
 	erase_area_app_nvv();
 
 	/* WHEN NVV variable is updated */
-	err = suit_storage_var_set(0, 0xABABABAB);
+	err = suit_storage_var_set(0, 0xAB);
 
 	/* THEN the NVV update fails */
 	zassert_equal(err, SUIT_PLAT_ERR_IO, "NVV corrupted by writing to the read-only area");

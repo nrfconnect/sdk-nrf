@@ -26,9 +26,9 @@
 extern "C" {
 #endif
 
-#define SUIT_STORAGE_NVV_N_VARS 8
+#define SUIT_STORAGE_NVV_N_VARS 32
 
-typedef uint32_t suit_storage_nvv_t[SUIT_STORAGE_NVV_N_VARS];
+typedef uint8_t suit_storage_nvv_t[SUIT_STORAGE_NVV_N_VARS];
 
 /**
  * @brief Initialize the SUIT storage module managing Manifest Non-volatile variables.
@@ -69,7 +69,7 @@ suit_plat_err_t suit_storage_nvv_erase(uint8_t *area_addr, size_t area_size);
  * @retval SUIT_PLAT_ERR_NOT_FOUND  if the index value is too big.
  */
 suit_plat_err_t suit_storage_nvv_get(const uint8_t *area_addr, size_t area_size, size_t index,
-				     uint32_t *value);
+				     uint8_t *value);
 
 /**
  * @brief Set the value of manifest non-volatile variable.
@@ -87,7 +87,7 @@ suit_plat_err_t suit_storage_nvv_get(const uint8_t *area_addr, size_t area_size,
  * @retval SUIT_PLAT_ERR_IO            if unable to change NVM contents.
  */
 suit_plat_err_t suit_storage_nvv_set(uint8_t *area_addr, size_t area_size, size_t index,
-				     uint32_t value);
+				     uint8_t value);
 
 #ifdef __cplusplus
 }
