@@ -325,3 +325,15 @@ void ot_rpc_decode_border_router_config(struct nrf_rpc_cbor_ctx *ctx, otBorderRo
 	config->mDp = nrf_rpc_decode_bool(ctx);
 	config->mRloc16 = nrf_rpc_decode_uint(ctx);
 }
+
+void ot_rpc_encode_sockaddr(struct nrf_rpc_cbor_ctx *ctx, const otSockAddr *sockaddr)
+{
+	nrf_rpc_encode_buffer(ctx, sockaddr->mAddress.mFields.m8, OT_IP6_ADDRESS_SIZE);
+	nrf_rpc_encode_uint(ctx, sockaddr->mPort);
+}
+
+void ot_rpc_decode_sockaddr(struct nrf_rpc_cbor_ctx *ctx, otSockAddr *sockaddr)
+{
+	nrf_rpc_decode_buffer(ctx, sockaddr->mAddress.mFields.m8, OT_IP6_ADDRESS_SIZE);
+	sockaddr->mPort = nrf_rpc_decode_uint(ctx);
+}
