@@ -358,6 +358,7 @@ static void deactivate_rx(struct lpuart_data *data)
 	}
 
 	/* abort rx */
+	LOG_DBG("RX: Deactivate");
 	data->rx_state = RX_TO_IDLE;
 	err = uart_rx_disable(data->uart);
 	if (err < 0 && err != -EFAULT) {
@@ -575,7 +576,7 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 		break;
 
 	case UART_RX_BUF_RELEASED:
-		LOG_DBG("Rx buf released");
+		LOG_DBG("Rx buf released %p", (void *)evt->data.rx_buf.buf);
 		if (!data->rx_got_data) {
 			LOG_ERR("Empty receiver state:%d", data->rx_state);
 		}
@@ -586,7 +587,7 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 	{
 		bool call_cb;
 
-		LOG_DBG("Rx disabled");
+		LOG_DBG("Rx disabled %d", data->rx_state);
 		__ASSERT_NO_MSG((data->rx_state != RX_IDLE) &&
 			 (data->rx_state != RX_OFF));
 
@@ -731,7 +732,7 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf,
 	data->rx_len = len;
 	data->rx_state = RX_IDLE;
 
-	LOG_DBG("RX: Enabling");
+	LOG_DBG("RX: Enabling buf:%p len:%d", (void *)buf, len);
 	rdy_pin_idle(data);
 
 	return 0;
@@ -744,7 +745,7 @@ static int api_rx_buf_rsp(const struct device *dev, uint8_t *buf, size_t len)
 	__ASSERT_NO_MSG((data->rx_state != RX_OFF) &&
 		 (data->rx_state != RX_TO_OFF));
 
-	LOG_DBG("buf rsp, state:%d", data->rx_state);
+	LOG_DBG("buf rsp buf:%p len:%d, state:%d", (void *)buf, len, data->rx_state);
 	if (data->rx_state == RX_TO_IDLE || data->rx_state == RX_BLOCKED) {
 		data->rx_buf = buf;
 		data->rx_len = len;
