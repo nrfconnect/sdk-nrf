@@ -588,8 +588,7 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 		bool call_cb;
 
 		LOG_DBG("Rx disabled %d", data->rx_state);
-		__ASSERT_NO_MSG((data->rx_state != RX_IDLE) &&
-			 (data->rx_state != RX_OFF));
+		__ASSERT_NO_MSG(data->rx_state != RX_OFF);
 
 		if (data->rx_state == RX_TO_IDLE) {
 			if (data->rx_got_data) {
@@ -603,6 +602,25 @@ static void uart_callback(const struct device *uart, struct uart_event *evt,
 				rdy_pin_idle(data);
 			}
 		} else {
+			if (data->rx_state == RX_IDLE && data->rx_buf) {
+				/* This case may happen if control pins are not behaving
+				 * according to the protocol (e.g. they are floating).
+				 * In that case driver goes to off state and releases
+				 * provided buffers.
+				 */
+				struct uart_event buf_rel_evt = {
+					.type = UART_RX_BUF_RELEASED,
+					.data = {
+						.rx_buf = {
+							.buf = data->rx_buf
+						}
+					}
+				};
+
+				LOG_DBG("RX: Rx buf released %p", (void *)data->rx_buf);
+				user_callback(dev, &buf_rel_evt);
+			}
+
 			data->rx_buf = NULL;
 			data->rx_state = RX_OFF;
 			call_cb = true;
