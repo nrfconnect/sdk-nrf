@@ -20,11 +20,6 @@ SCRIPT_DIR = Path(__file__).absolute().parent
 TEMPLATE_DIR = SCRIPT_DIR / "templates"
 CONFIG = SCRIPT_DIR / "config.yml"
 
-NCS_VERSION_MIN = (2, 0, 0)
-HWMV2_SINCE = (2, 7, 0)
-TFM_SINCE = (2, 6, 0)
-
-NCS_VERSION_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 VENDOR_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
 BOARD_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
 
@@ -51,9 +46,6 @@ class NcsGenboard(WestCommand):
         )
         parser.add_argument("-s", "--soc", required=True, help="SoC")
         parser.add_argument("-v", "--variant", required=True, help="Variant")
-        parser.add_argument(
-            "-n", "--ncs-version", required=True, help="NCS target version"
-        )
 
         return parser
 
@@ -62,17 +54,6 @@ class NcsGenboard(WestCommand):
             config = load(f, Loader=Loader)
 
         # validate input
-        m = NCS_VERSION_RE.match(args.ncs_version)
-        if not m:
-            log.err(f"Invalid NCS version: {args.ncs_version}")
-            return
-
-        ncs_version = tuple(int(n) for n in m.groups())
-
-        if ncs_version < NCS_VERSION_MIN:
-            log.err(f"Unsupported NCS version: {args.ncs_version}")
-            return
-
         if not VENDOR_RE.match(args.vendor):
             log.err(f"Invalid vendor name: {args.vendor}")
             return
@@ -100,26 +81,13 @@ class NcsGenboard(WestCommand):
         targets = []
         for variant in soc["variants"]:
             if args.variant == variant["name"]:
-                since = variant.get("since", ".".join(str(i) for i in NCS_VERSION_MIN))
-                m = NCS_VERSION_RE.match(since)
-                if not m:
-                    log.err(f"Malformed NCS version: {since}")
-                    return
-
-                since_version = tuple(int(n) for n in m.groups())
-                if ncs_version < since_version:
-                    log.err(
-                        f"SoC {args.soc}-{args.variant} not supported in NCS version {args.ncs_version}"
-                    )
-                    return
-
                 if "cores" in variant:
                     for core in variant["cores"]:
                         target = {
                             "core": core["name"],
                             "ram": core["ram"],
                             "flash": core["flash"],
-                            "ns": core.get("ns", False) if ncs_version >= TFM_SINCE else False,
+                            "ns": core.get("ns", False),
                             "xip": core.get("xip", False),
                             "arch": core.get("arch", "arm"),
                         }
@@ -137,7 +105,7 @@ class NcsGenboard(WestCommand):
                     target = {
                         "ram": variant["ram"],
                         "flash": variant["flash"],
-                        "ns": variant.get("ns", False) if ncs_version >= TFM_SINCE else False,
+                        "ns": variant.get("ns", False),
                         "xip": variant.get("xip", False),
                         "arch": variant.get("arch", "arm"),
                     }
@@ -161,8 +129,6 @@ class NcsGenboard(WestCommand):
             loader=FileSystemLoader(TEMPLATE_DIR / series),
         )
 
-        env.globals["ncs_version"] = ncs_version
-        env.globals["hwmv2_since"] = HWMV2_SINCE
         env.globals["vendor"] = args.vendor
         env.globals["board"] = args.board
         env.globals["board_desc"] = args.board_desc
@@ -172,11 +138,7 @@ class NcsGenboard(WestCommand):
         env.globals["targets"] = targets
 
         # render templates/copy files
-        if ncs_version < HWMV2_SINCE:
-            out_dir = args.output / "arm" / args.board
-        else:
-            out_dir = args.output / args.vendor / args.board
-
+        out_dir = args.output / args.vendor / args.board
         if not out_dir.exists():
             out_dir.mkdir(parents=True)
 
@@ -192,16 +154,12 @@ class NcsGenboard(WestCommand):
             f.write(tmpl.render())
 
         tmpl = env.get_template("Kconfig.board.jinja2")
-        fname = (
-            "Kconfig.board" if ncs_version < HWMV2_SINCE else f"Kconfig.{args.board}"
-        )
-        with open(out_dir / fname, "w") as f:
+        with open(out_dir / f"Kconfig.{args.board}", "w") as f:
             f.write(tmpl.render())
 
-        if ncs_version >= HWMV2_SINCE:
-            tmpl = env.get_template("board.yml.jinja2")
-            with open(out_dir / f"board.yml", "w") as f:
-                f.write(tmpl.render())
+        tmpl = env.get_template("board.yml.jinja2")
+        with open(out_dir / f"board.yml", "w") as f:
+            f.write(tmpl.render())
 
         tmpl = env.get_template("Kconfig.defconfig.jinja2")
         with open(out_dir / f"Kconfig.defconfig", "w") as f:
@@ -226,12 +184,10 @@ class NcsGenboard(WestCommand):
         for target in targets:
             name = args.board
             if target.get("core"):
-                if ncs_version >= HWMV2_SINCE:
-                    name += f"_{args.soc}"
-                name += f"_{target['core']}"
+                name += f"_{args.soc}_{target['core']}"
             if target["ns"]:
                 name += "_ns"
-            elif target["xip"]:
+            if target["xip"]:
                 name += "_xip"
 
             tmpl = env.get_template("board_defconfig.jinja2")

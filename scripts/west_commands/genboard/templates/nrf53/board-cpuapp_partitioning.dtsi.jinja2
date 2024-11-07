@@ -44,23 +44,11 @@
 			reg = <0x000c0000 DT_SIZE_K(192)>;
 		};
 
-{% if ncs_version <= (2, 4, 0) %}
-		scratch_partition: partition@f0000 {
-			label = "image-scratch";
-			reg = <0x000f0000 DT_SIZE_K(40)>;
-		};
-
-		storage_partition: partition@f8000 {
-			label = "storage";
-			reg = <0x000f8000 DT_SIZE_K(24)>;
-		};
-{% else %}
 		/* 0xf0000 to 0xf7fff reserved for TF-M partitions */
 		storage_partition: partition@f8000 {
 			label = "storage";
 			reg = <0x000f8000 DT_SIZE_K(32)>;
 		};
-{% endif %}
 	};
 };
 

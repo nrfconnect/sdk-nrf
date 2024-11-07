@@ -29,27 +29,6 @@
 			reg = <0x00010000 DT_SIZE_K(256)>;
 		};
 
-{% if ncs_version <= (2, 4, 0) %}
-		slot0_ns_partition: partition@50000 {
-			label = "image-0-nonsecure";
-			reg = <0x00050000 DT_SIZE_K(192)>;
-		};
-
-		slot1_partition: partition@80000 {
-			label = "image-1";
-			reg = <0x00085000 DT_SIZE_K(256)>;
-		};
-
-		slot1_ns_partition: partition@c0000 {
-			label = "image-1-nonsecure";
-			reg = <0x000c5000 DT_SIZE_K(192)>;
-		};
-
-		scratch_partition: partition@f0000 {
-			label = "image-scratch";
-			reg = <0x000f0000 DT_SIZE_K(40)>;
-		};
-{% else %}
 		slot0_ns_partition: partition@50000 {
 			label = "image-0-nonsecure";
 			reg = <0x00050000 DT_SIZE_K(212)>;
@@ -64,7 +43,6 @@
 			label = "image-1-nonsecure";
 			reg = <0x000c5000 DT_SIZE_K(212)>;
 		};
-{% endif %}
 
 		storage_partition: partition@fa000 {
 			label = "storage";

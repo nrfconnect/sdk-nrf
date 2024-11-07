@@ -1,13 +1,4 @@
-{% if ncs_version < hwmv2_since %}
-config BOARD
-	default "{{ board }}"
-
-{% endif %}
-{% if ncs_version < hwmv2_since %}
-if  BOARD_{{ board | upper }} || BOARD_{{ board | upper }}_NS
-{% else %}
 if  BOARD_{{ board | upper }}_{{ soc | upper }} || BOARD_{{ board | upper }}_{{ soc | upper }}_NS
-{% endif %}
 
 # For the secure version of the board the firmware is linked at the beginning of
 # the flash, or into the code-partition defined in DT if it is intended to be
@@ -23,17 +14,9 @@ DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
 
 config FLASH_LOAD_SIZE
 	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
-{% if ncs_version < hwmv2_since %}
-	depends on BOARD_{{ board | upper }} && TRUSTED_EXECUTION_SECURE
-{% else %}
 	depends on BOARD_{{ board | upper }}_{{ soc | upper }} && TRUSTED_EXECUTION_SECURE
-{% endif %}
 
-{% if ncs_version < hwmv2_since %}
-if BOARD_{{ board | upper }}_NS
-{% else %}
 if BOARD_{{ board | upper }}_{{ soc | upper }}_NS
-{% endif %}
 
 config FLASH_LOAD_OFFSET
 	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
@@ -41,14 +24,6 @@ config FLASH_LOAD_OFFSET
 config FLASH_LOAD_SIZE
 	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
 
-{% if ncs_version < hwmv2_since %}
-endif # BOARD_{{ board | upper }}_NS
-{% else %}
 endif # BOARD_{{ board | upper }}_{{ soc | upper }}_NS
-{% endif %}
 
-{% if ncs_version < hwmv2_since %}
-endif # BOARD_{{ board | upper }} || BOARD_{{ board | upper }}_NS
-{% else %}
 endif # BOARD_{{ board | upper }}_{{ soc | upper }} || BOARD_{{ board | upper }}_{{ soc | upper }}_NS
-{% endif %}
