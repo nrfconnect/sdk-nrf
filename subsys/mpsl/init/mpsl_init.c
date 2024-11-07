@@ -31,7 +31,7 @@
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
 static void mpsl_calibration_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(calibration_work, mpsl_calibration_work_handler);
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
@@ -330,7 +330,7 @@ static uint8_t m_config_clock_source_get(void)
 }
 #endif /* !CONFIG_SOC_SERIES_NRF54HX */
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
 static atomic_t do_calibration;
 
 static void mpsl_calibration_work_handler(struct k_work *work)
@@ -344,7 +344,7 @@ static void mpsl_calibration_work_handler(struct k_work *work)
 	mpsl_calibration_timer_handle();
 
 	mpsl_work_schedule(&calibration_work,
-			   K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
+			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
 }
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
@@ -373,8 +373,9 @@ static int32_t mpsl_lib_init_internal(void)
 		    "MPSL requires clock calibration to be enabled when RC is used as LFCLK");
 
 	/* clock_cfg.rc_ctiv is given in 1/4 seconds units.
-	 * CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD is given in ms. */
-	clock_cfg.rc_ctiv = (CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD * 4 / 1000);
+	 * CONFIG_MPSL_CALIBRATION_PERIOD is given in ms.
+	 */
+	clock_cfg.rc_ctiv = (CONFIG_MPSL_CALIBRATION_PERIOD * 4 / 1000);
 	clock_cfg.rc_temp_ctiv = CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP + 1;
 	BUILD_ASSERT(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_TEMP_DIFF == 2,
 		     "MPSL always uses a temperature diff threshold of 0.5 degrees");
@@ -469,10 +470,10 @@ static int mpsl_low_prio_init(void)
 	IRQ_CONNECT(CONFIG_MPSL_LOW_PRIO_IRQN, MPSL_LOW_PRIO,
 		    mpsl_low_prio_irq_handler, NULL, 0);
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
 	atomic_set(&do_calibration, 1);
 	mpsl_work_schedule(&calibration_work,
-			   K_MSEC(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_PERIOD));
+			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
 	return 0;
@@ -499,7 +500,7 @@ int32_t mpsl_lib_init(void)
 int32_t mpsl_lib_uninit(void)
 {
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
-#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
 	atomic_set(&do_calibration, 0);
 #endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC && !CONFIG_SOC_SERIES_NRF54HX */
 
