@@ -7,6 +7,9 @@ Building and programming with nRF54L15 DK
    :local:
    :depth: 2
 
+.. note::
+   The FLPR core support in the |NCS| is currently :ref:`experimental<software_maturity>`.
+
 This guide provides instructions on how to build and program the nRF54L15 development kit.
 Whether you are working with single or multi-image builds, the following sections will guide you through the necessary steps.
 
