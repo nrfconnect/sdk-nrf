@@ -20,8 +20,34 @@ The sample supports the following development kits:
 
 The sample also requires the following pins to be shorted:
 
-* TX (Arduino Digital Pin 10 (4 on nRF21540 DK)) with RX (Arduino Digital Pin 11 (5 on nRF21540 DK))
-* Request Pin (Arduino Digital Pin 12 (6 on nRF21540 DK)) with Response Pin (Arduino Digital Pin 13 (7 on nRF21540 DK))
+   .. list-table:: Pin connections.
+      :widths: auto
+      :header-rows: 1
+
+      * - Development Kit
+        - nRF52 DK
+        - nRF52833 DK
+        - nRF52840 DK
+        - nRF21540 DK
+        - nRF5340 DK pins
+        - nRF54L15 DK pins
+        - nRF9160 DK pins
+      * - Request-Response Pins
+        - P0.24-P0.25
+        - P0.22-P0.23
+        - P1.14-P1.15
+        - P1.07-P1.08
+        - P1.14-P1.15
+        - P1.08-P1.09
+        - P0.12-P0.13
+      * - UART RX-TX Pins
+        - P0.22-P0.23
+        - P0.20-P0.21
+        - P1.12-P1.13
+        - P1.05-P1.06
+        - P1.12-P1.13
+        - P1.10-P1.11
+        - P0.10-P0.11
 
 Additionally, it requires a logic analyzer.
 
