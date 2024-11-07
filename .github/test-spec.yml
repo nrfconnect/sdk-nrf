@@ -582,10 +582,12 @@
   - "subsys/event_manager_proxy/**/*"
   - "samples/ipc/**/*"
   - "samples/event_manager_proxy/**/*"
+  - "samples/peripheral/lpuart/**/*"
   - "snippets/sdp/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/benchmarks/multicore/idle/**/*"
-  - "tests/drivers/gpio/egpio_basic_api/**/*"
+  - "tests/drivers/gpio/**/*"
+  - "tests/drivers/lpuart/**/*"
   - "tests/drivers/pwm/**/*"
   - "tests/drivers/sensor/**/*"
 
