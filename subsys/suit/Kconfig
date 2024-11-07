@@ -198,6 +198,7 @@ rsource "execution_mode/Kconfig"
 rsource "memory_layout/Kconfig"
 rsource "validator/Kconfig"
 rsource "events/Kconfig"
+rsource "recovery_button/Kconfig"
 
 # Configure SUIT_LOG_LEVEL
 module = SUIT
