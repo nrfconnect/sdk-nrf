@@ -145,6 +145,7 @@ static bool check_and_handle_is_host_using_legacy_and_extended_commands(uint8_t 
 	switch (opcode) {
 #if defined(CONFIG_BT_BROADCASTER)
 	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_PARAMS:
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_PARAMS_V2:
 	case SDC_HCI_OPCODE_CMD_LE_READ_NUMBER_OF_SUPPORTED_ADV_SETS:
 #endif /* CONFIG_BT_BROADCASTER */
 #if defined(CONFIG_BT_PER_ADV_SYNC)
@@ -467,6 +468,7 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #if defined(CONFIG_BT_BROADCASTER)
 	cmds->hci_le_set_advertising_set_random_address = 1;
 	cmds->hci_le_set_extended_advertising_parameters = 1;
+	cmds->hci_le_set_extended_advertising_parameters_v2 = 1;
 	cmds->hci_le_set_extended_advertising_data = 1;
 	cmds->hci_le_set_extended_scan_response_data = 1;
 	cmds->hci_le_set_extended_advertising_enable = 1;
@@ -762,6 +764,9 @@ void hci_internal_le_supported_features(
 
 #ifdef CONFIG_BT_CTLR_ADV_EXT
 	features->params.le_extended_advertising = 1;
+#ifdef CONFIG_BT_CTLR_PHY_CODED
+	features->params.advertising_coding_selection = 1;
+#endif
 #endif
 
 #if defined(CONFIG_BT_CTLR_ADV_PERIODIC) || defined(CONFIG_BT_CTLR_SYNC_PERIODIC)
@@ -1217,6 +1222,11 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 #if defined(CONFIG_BT_BROADCASTER)
 	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_SET_RANDOM_ADDRESS:
 		return sdc_hci_cmd_le_set_adv_set_random_address((void *)cmd_params);
+
+	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_PARAMS_V2:
+		*param_length_out += sizeof(sdc_hci_cmd_le_set_ext_adv_params_v2_return_t);
+		return sdc_hci_cmd_le_set_ext_adv_params_v2((void *)cmd_params,
+							    (void *)event_out_params);
 
 	case SDC_HCI_OPCODE_CMD_LE_SET_EXT_ADV_PARAMS:
 		*param_length_out += sizeof(sdc_hci_cmd_le_set_ext_adv_params_return_t);
