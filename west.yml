@@ -33,8 +33,6 @@ manifest:
       url-base: https://projecttools.nordicsemi.no/bitbucket/scm/drgn
     - name: memfault
       url-base: https://github.com/memfault
-    - name: ant-nrfconnect
-      url-base: https://github.com/ant-nrfconnect
     - name: babblesim
       url-base: https://github.com/BabbleSim
     - name: bosch
@@ -51,7 +49,6 @@ manifest:
     - -nrf-802154
     - -dragoon
     - -find-my
-    - -ant
     - -babblesim
     - -sidewalk
     - -bsec
@@ -268,12 +265,6 @@ manifest:
       path: modules/lib/memfault-firmware-sdk
       revision: 1.12.0
       remote: memfault
-    - name: ant
-      repo-path: sdk-ant
-      revision: 3769e919bde8073cfaff62184b07907b92f906be
-      remote: ant-nrfconnect
-      groups:
-        - ant
     - name: bsim
       repo-path: bsim_west
       remote: babblesim
