@@ -1,0 +1,4 @@
+.. note::
+   Support for Zigbee R22 has been deprecated in |NCS| v2.8.0 and it will be removed in one of the future releases, following the :ref:`deprecation policy <api_deprecation>`.
+   As a result, the nRF52833, nRF52840 and nRF5340 SoCs are not recommended for new Zigbee designs.
+   Experimental support for Zigbee R23 is available for the nRF54L Series as an `nRF Connect SDK Add-on <nRF Connect SDK Add-ons_>`_.

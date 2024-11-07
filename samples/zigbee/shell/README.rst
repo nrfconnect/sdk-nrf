@@ -7,6 +7,8 @@ Zigbee: Shell
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 This :ref:`Zigbee <ug_zigbee>` Shell sample demonstrates a Zigbee router (with the possibility of being a coordinator) that uses the :ref:`lib_zigbee_shell` library for interaction.
 
 You can use this sample for several purposes, including:

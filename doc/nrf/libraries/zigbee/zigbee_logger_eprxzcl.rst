@@ -7,6 +7,8 @@ Zigbee endpoint logger
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 .. zigbee_logger_endpoint_intro_start
 
 The Zigbee endpoint logger library provides the :c:func:`zigbee_logger_eprxzcl_ep_handler` function.
