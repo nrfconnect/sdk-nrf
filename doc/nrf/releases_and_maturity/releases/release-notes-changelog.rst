@@ -247,7 +247,13 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`location_sample` sample:
+
+  * Updated:
+
+    * The Thingy:91 X build to support Wi-Fi by default without overlays.
+
+
 Cryptography samples
 --------------------
 
