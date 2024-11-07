@@ -7,6 +7,8 @@ Zigbee architectures
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 This page describes the platform designs that are possible with the Zigbee stack on Nordic Semiconductor devices.
 
 The designs are described from the least to the most complex, that is from simple applications that consist of a single chip running single or multiple protocols to scenarios in which the nRF SoC acts as a network co-processor when the application is running on a much more powerful host processor.

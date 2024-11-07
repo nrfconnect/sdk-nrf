@@ -1126,6 +1126,8 @@ The following table indicates the software maturity levels of the support for ea
 Zigbee feature support
 **********************
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The following table indicates the software maturity levels of the support for each Zigbee feature:
 
 .. toggle::

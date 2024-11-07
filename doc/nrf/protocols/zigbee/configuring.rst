@@ -7,6 +7,8 @@ Configuring Zigbee in |NCS|
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 This page describes what is needed to start working with Zigbee in the |NCS|.
 
 .. _zigbee_ug_libs:

@@ -3,6 +3,8 @@
 Zigbee samples
 ##############
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The nRF Connect SDK provides the following samples showcasing the :ref:`ug_zigbee` protocol.
 You can build the samples for various boards and configure them for different usage scenarios.
 

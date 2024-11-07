@@ -7,6 +7,8 @@ Zigbee: Template
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 This :ref:`Zigbee <ug_zigbee>` sample is a minimal implementation of the Zigbee Router role.
 
 You can use this sample as the starting point for developing your own Zigbee device.

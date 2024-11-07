@@ -7,6 +7,8 @@ Zigbee ZCL scene helper
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The Zigbee ZCL scene helper library provides a set of functions that implement the callbacks required by the ZCL scene cluster in the application.
 You can use this library to implement these mandatory callbacks and save the configured scenes in the non-volatile memory.
 For this purpose, it uses Zephyr's :ref:`settings_api` subsystem.

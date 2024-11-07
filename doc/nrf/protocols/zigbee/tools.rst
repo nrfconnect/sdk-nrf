@@ -7,6 +7,8 @@ Zigbee tools
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The tools listed on this page can be helpful when developing your Zigbee application with the |NCS|.
 
 .. _ug_zigbee_tools_sniffer:

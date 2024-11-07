@@ -7,6 +7,8 @@ Zigbee: NCP
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The :ref:`Zigbee <ug_zigbee>` NCP sample demonstrates the usage of Zigbee's :ref:`ug_zigbee_platform_design_ncp_details` architecture.
 
 Together with the source code from :ref:`ug_zigbee_tools_ncp_host`, you can use this sample to create a complete and functional Zigbee device.

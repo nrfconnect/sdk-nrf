@@ -3,6 +3,8 @@
 Zigbee
 ######
 
+.. include:: /includes/zigbee_deprecation.txt
+
 .. zigbee_ug_intro_start
 
 Zigbee is a portable, low-power software networking protocol that provides connectivity over a mesh network based on the IEEE 802.15.4 radio protocol.
