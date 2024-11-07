@@ -1,8 +1,4 @@
-{% if ncs_version < hwmv2_since %}
-identifier: {{ board }}
-{% else %}
 identifier: {{ board }}/{{ soc }}{{ '/ns' if target['ns'] else '' }}
-{% endif %}
 name: {{ board_desc }}
 vendor: {{ vendor }}
 type: mcu
@@ -16,5 +12,4 @@ flash: 1024
 {% endif %}
 toolchain:
   - zephyr
-supported:
-  - gpio
+supported: []

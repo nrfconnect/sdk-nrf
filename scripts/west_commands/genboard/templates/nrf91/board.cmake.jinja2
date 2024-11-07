@@ -1,8 +1,4 @@
-{% if ncs_version < hwmv2_since %}
-if(CONFIG_BOARD_{{ board | upper }}_NS)
-{% else %}
 if(CONFIG_BOARD_{{ board | upper }}_{{ soc | upper }}_NS)
-{% endif %}
   set(TFM_PUBLIC_KEY_FORMAT "full")
 endif()
 

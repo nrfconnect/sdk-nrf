@@ -37,7 +37,6 @@ products:
           - name: qdaa
             ram: 128
             flash: 512
-            since: 2.5.0
           - name: qiaa
             ram: 128
             flash: 512
@@ -46,7 +45,6 @@ products:
           - name: qfaa
             ram: 256
             flash: 1024
-            since: 2.5.0
           - name: qiaa
             ram: 256
             flash: 1024
@@ -68,7 +66,6 @@ products:
       - name: nrf54l15
         variants:
           - name: qfaa
-            since: 2.7.0
             cores:
               - name: cpuapp
                 arch: arm
@@ -82,14 +79,12 @@ products:
             ram: 256
             flash: 1024
             ns: true
-            since: 2.5.0
       - name: nrf9151
         variants:
           - name: laca
             ram: 256
             flash: 1024
             ns: true
-            since: 2.6.0
       - name: nrf9160
         variants:
           - name: sica
@@ -99,7 +94,6 @@ products:
       - name: nrf9161
         variants:
           - name: laca
-            since: 2.5.0
             ram: 256
             flash: 1024
             ns: true
