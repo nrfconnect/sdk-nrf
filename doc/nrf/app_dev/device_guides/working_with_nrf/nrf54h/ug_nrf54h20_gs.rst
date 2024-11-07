@@ -191,9 +191,12 @@ Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
       nrfutil install device=2.7.2 --force
 
-#. Install the nrf-regtool version 7.0.0 as follows::
+#. Install the nrf-regtool version 7.0.0:
 
-      pip install nrf-regtool==7.0.0
+   a. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the |release| toolchain, and click the :guilabel:`Open terminal` button.
+   #. In the terminal window, install ``nrf-regtool`` version 7.0.0 as follows::
+
+         pip install nrf-regtool==7.0.0
 
 .. _ug_nrf54h20_gs_bringup:
 
@@ -264,31 +267,6 @@ To transition the LCS to ``RoT``, do the following:
 1. Set the LCS of the nRF54H20 SoC to Root of Trust using the following command::
 
       nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
-
-#. Verify the new lifecycle state of the nRF54H20::
-
-      nrfutil device x-adac-discovery --serial-number <serial_number>
-
-   The output will look similar to the following::
-
-      *serial_number*
-      adac_auth_version     1.0
-      vendor_id             Nordic VLSI ASA
-      soc_class             0x00005420
-      soc_id                [e6, 6f, 21, b6, dc, be, 11, ee, e5, 03, 6f, fe, 4d, 7b, 2e, 07]
-      hw_permissions_fixed  [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      hw_permissions_mask   [01, 00, 00, 00, 87, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      psa_lifecycle         LIFECYCLE_ROT (0x2000)
-      sda_id                0x01
-      secrom_revision       0xad3b3cd0
-      sysrom_revision       0xebc8f190
-      token_formats         [TokenAdac]
-      cert_formats          [CertAdac]
-      cryptosystems         [Ed25519Sha512]
-      Additional TLVs:
-      TargetIdentity: [ff, ff, ff, ff, ff, ff, ff, ff]
-
-   The lifecycle state (``psa_lifecycle``) is now correctly set to *Root of Trust* (``LIFECYCLE_ROT (0x2000)``)
 
 #. After the LCS transition, reset the device::
 
