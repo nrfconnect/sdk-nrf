@@ -217,6 +217,9 @@ Programming with the QSPI XIP split image
 Programming of the application is supported using the :ref:`standard procedure <programming>`.
 The standard procedure will program the firmware using the default nrfjprog configuration which, for QSPI, is PP4IO mode.
 
+.. note::
+      |nrfjprog_deprecation_note|
+
 Programming using a different SPI mode
 ======================================
 

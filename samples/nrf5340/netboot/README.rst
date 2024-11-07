@@ -122,6 +122,8 @@ After programming the sample to your development kit, complete the following ste
       Typically, the update image is received through serial interface or Bluetooth.
       For testing purposes, use nrfjprog to program the update image directly into the update slot.
 
+   .. note::
+      |nrfjprog_deprecation_note|
 
 #. Reset the kit.
 #. Observe that the output includes the following lines indicating that the MCUBoot in the application core has read the update image and performed a firmware update of the network core:
