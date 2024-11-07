@@ -395,7 +395,7 @@ static void counter_alarm_callback(const struct device *dev,
 
 static void floating_pins_start(int32_t tx_pin)
 {
-	struct test_data data;
+	static struct test_data data;
 
 	data.alarm_cfg.callback = counter_alarm_callback;
 	data.alarm_cfg.flags = COUNTER_ALARM_CFG_EXPIRE_WHEN_LATE;
