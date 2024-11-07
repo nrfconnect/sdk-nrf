@@ -217,6 +217,9 @@ To test that the bootloader no longer boots images signed with the earlier keys,
 
       nrfjprog -f nRF52 -r --verify --program build/zephyr/signed_by_b0_s0_image.hex --sectorerase
 
+   .. note::
+      |nrfjprog_deprecation_note|
+
 #. Observe the bootloader skipping the invalid image and booting the valid image in the other slot:
 
    .. code-block:: console

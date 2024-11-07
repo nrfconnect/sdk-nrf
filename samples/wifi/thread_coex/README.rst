@@ -181,6 +181,9 @@ Testing
 
       nrfjprog --com
 
+   .. note::
+         |nrfjprog_deprecation_note|
+
    This command returned the following output in the setup used to run the coexistence tests.
 
    .. code-block:: console

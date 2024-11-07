@@ -329,6 +329,8 @@ Follow the instructions in the :ref:`building` page to build and the :ref:`progr
 .. note::
    To flash and debug applications on the nRF7002 DK, you must use the `nRF Command Line Tools`_ version 10.12.0 or above.
 
+   |nrf_CLT_deprecation_note|
+
 Debugging
 =========
 

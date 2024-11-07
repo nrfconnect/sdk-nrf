@@ -65,6 +65,8 @@
 .. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
 .. |nRF21540DK| replace:: nRF21540 DK board (PCA10112)
 
+.. |thingy52_not_supported_note| replace:: Despite being supported in :ref:`Zephyr <zephyr:thingy52_nrf52832>`, the |NCS| does not support `Nordic Thingy:52`_.
+
 .. ### FOTA shortcuts
 
 .. |fota_upgrades_def| replace:: You can update the firmware of the device over the air, thus without a wired connection.
@@ -78,6 +80,21 @@
    The extension includes an interface for managing SDK and toolchain installations, an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the |NCS|, and a serial terminal.
 .. |VSC| replace:: Visual Studio Code
 .. |nRFVSC| replace:: nRF Connect for VS Code extension
+
+.. ### Deprecation shortcuts
+
+.. |file_suffix_related_deprecation_note| replace:: This feature is deprecated and is being replaced by :ref:`suffix-based configurations <app_build_file_suffixes>`.
+    You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
+
+.. |sysbuild_related_deprecation_note| replace:: This feature is deprecated and is being replaced by Zephyr's :ref:`zephyr:sysbuild`.
+   You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
+   For more information, see :ref:`zephyr:sysbuild`, :ref:`sysbuild_images`, :ref:`zephyr_samples_sysbuild`, and :ref:`sysbuild_forced_options`.
+
+.. |nrfjprog_deprecation_note| replace:: Starting with the |NCS| v2.8.0, nrfjprog is officially deprecated and will be removed in an upcoming release.
+   Transition to using `nRF Util (device command) <Device command overview_>`_ for all related tasks going forward.
+
+.. |nrf_CLT_deprecation_note| replace:: Starting with the |NCS| v2.8.0, the nRF Command Line Tools are officially deprecated and will be removed in an upcoming release.
+   Transition to using `nRF Util`_ for all related tasks going forward.
 
 .. ### Thread usage shortcuts
 
@@ -198,6 +215,7 @@
    For these reasons, providing a general guide on how to test with external devices is challenging.
    The suggested approach is to test with Nordic Semiconductor devices on both sides first to verify basic functionalities and get familiar with the solution before using custom devices.
    Contact `Technical Support team <DevZone_>`_ if you need assistance.
+
 .. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` related to serial connection with the USB.
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
@@ -223,19 +241,10 @@
 
 .. |board_target| replace:: Replace the *board_target* with the board target of the nRF91 Series device you are using (see the Requirements section).
 
-.. |thingy52_not_supported_note| replace:: Despite being supported in :ref:`Zephyr <zephyr:thingy52_nrf52832>`, the |NCS| does not support `Nordic Thingy:52`_.
-
-.. |sysbuild_related_deprecation_note| replace:: This feature is deprecated and is being replaced by Zephyr's :ref:`zephyr:sysbuild`.
-   You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
-   For more information, see :ref:`zephyr:sysbuild`, :ref:`sysbuild_images`, :ref:`zephyr_samples_sysbuild`, and :ref:`sysbuild_forced_options`.
-
 .. |sysbuild_autoenabled_ncs| replace:: When building :ref:`repository applications <create_application_types_repository>` in the :ref:`SDK repositories <dm_repo_types>`, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
    If you work with out-of-tree :ref:`freestanding applications <create_application_types_freestanding>`, you need to manually pass the ``--sysbuild`` parameter to every build command or :ref:`configure west to always use it <sysbuild_enabled_ncs_configuring>`.
 
 .. |parameters_override_west_config| replace:: The parameters and options passed in the command line always take precedence over ``west config`` settings.
-
-.. |file_suffix_related_deprecation_note| replace:: This feature is deprecated and is being replaced by :ref:`suffix-based configurations <app_build_file_suffixes>`.
-    You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
 
 .. |multi_image| replace:: These samples are built for the application core and, by default, include the network core application as child image in a multi-image build (see :ref:`ug_nrf5340_multi_image`).
 

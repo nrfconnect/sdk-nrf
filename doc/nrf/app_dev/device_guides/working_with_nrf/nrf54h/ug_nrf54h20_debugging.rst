@@ -76,6 +76,9 @@ To debug a specific core using ``JLinkExe`` do the following:
    * Check the ``SEGGER ID`` printed on the label on the bottom side of the DK.
    * Run the ``nrfjprog --ids`` command.
 
+      .. note::
+         |nrfjprog_deprecation_note|
+
    If just one DK is connected to the machine, defining ``SEGGER-ID`` is not necessary.
    If more than one DK is connected to the machine and ``SEGGER-ID`` is undefined, a pop up window will appear where you can manually select the ID of the DK you want to run J-Link on.
 
