@@ -7,6 +7,8 @@ Zigbee ZBOSS OSIF
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The Zigbee ZBOSS OSIF layer subsystem acts as the linking layer between the :ref:`nrfxlib:zboss` and the |NCS|.
 
 .. _zigbee_osif_configuration:

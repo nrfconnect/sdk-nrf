@@ -3,6 +3,8 @@
 Libraries for Zigbee
 ####################
 
+.. include:: /includes/zigbee_deprecation.txt
+
 |zigbee_description|
 See the :ref:`ug_zigbee` user guide for an overview of the technology.
 

@@ -7,6 +7,8 @@ Zigbee: Light bulb
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 This :ref:`Zigbee <ug_zigbee>` Light bulb sample demonstrates a simple light bulb whose brightness can be adjusted by another device.
 
 You can use this sample with the :ref:`Zigbee Network coordinator <zigbee_network_coordinator_sample>` and the :ref:`Zigbee Light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.

@@ -7,6 +7,8 @@ Zigbee error handler
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 The Zigbee error handler library provides a set of macros that can be used to assert on nrfxlib's :ref:`nrfxlib:zboss` API return codes.
 The assertion is implemented by a call to the :c:func:`zb_osif_abort` function.
 Additionally, you can enable the library to log the error code name before the assertion.

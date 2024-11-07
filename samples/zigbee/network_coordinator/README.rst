@@ -7,6 +7,8 @@ Zigbee: Network coordinator
    :local:
    :depth: 2
 
+.. include:: /includes/zigbee_deprecation.txt
+
 This :ref:`Zigbee <ug_zigbee>` Network coordinator sample establishes the Zigbee network and commissions Zigbee devices that want to join the network.
 
 You can use this sample together with the :ref:`Zigbee Light bulb <zigbee_light_bulb_sample>` and the :ref:`Zigbee Light switch <zigbee_light_switch_sample>` to set up a basic Zigbee network.
