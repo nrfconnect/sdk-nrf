@@ -41,7 +41,10 @@ tests:
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_normal.overlay"
-      - CONFIG_TEST_AUTOMATIC_POWER_CONTROL=y
+      - CONFIG_PRINTK=y
+      - CONFIG_LOG=y
+      - CONFIG_CONSOLE=y
+      - CONFIG_UART_CONSOLE=y
     harness_config:
       fixture: gpio_loopback
       pytest_root:
