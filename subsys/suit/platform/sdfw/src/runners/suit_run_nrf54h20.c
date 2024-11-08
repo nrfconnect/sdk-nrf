@@ -6,9 +6,11 @@
 
 #include <suit_cpu_run.h>
 #include <zephyr/logging/log.h>
-#include <suit_platform_internal.h>
 #include <drivers/nrfx_common.h>
+
+#ifdef CONFIG_SDFW_VPRS
 #include <sdfw/vprs.h>
+#endif /* CONFIG_SDFW_VPRS */
 
 #ifdef CONFIG_SDFW_RESET_HANDLING_ENABLED
 #include <sdfw/reset_mgr.h>
@@ -16,38 +18,46 @@
 
 LOG_MODULE_REGISTER(suit_plat_run, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_cpu_run(uint8_t cpu_id, intptr_t run_address)
+suit_plat_err_t suit_plat_cpu_run(uint8_t cpu_id, uintptr_t run_address)
 {
+	int ret = 0;
+
 	switch (cpu_id) {
 	case NRF_PROCESSOR_APPLICATION: /* AppCore */
-	case NRF_PROCESSOR_RADIOCORE: { /* RadioCore */
+	case NRF_PROCESSOR_RADIOCORE:	/* RadioCore */
 #ifdef CONFIG_SDFW_RESET_HANDLING_ENABLED
+		LOG_INF("Starting Cortex core %d from address 0x%lx", cpu_id, run_address);
 		/* Single run address implies no NSVTOR, so keep at reset value of 0x0. */
-		return reset_mgr_init_and_boot_processor(cpu_id, run_address, 0);
-#else
-		return SUIT_SUCCESS;
+		ret = reset_mgr_init_and_boot_processor(cpu_id, run_address, 0);
+#else  /* CONFIG_SDFW_RESET_HANDLING_ENABLED */
+		LOG_WRN("Cortex core handling not supported - skip CPU %d start", cpu_id);
 #endif /* CONFIG_SDFW_RESET_HANDLING_ENABLED */
-	} break;
+		break;
 
-	case NRF_PROCESSOR_BBPR: { /* BBPR - Baseband Processor */
-		LOG_ERR("No implementation for BBPR invoke");
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
-	} break;
-
-	case NRF_PROCESSOR_SYSCTRL: { /* SysCtrl */
+	case NRF_PROCESSOR_SYSCTRL: /* SysCtrl */
+#ifdef CONFIG_SDFW_VPRS
 		LOG_INF("Starting SysCtrl from address 0x%lx", run_address);
-		return vprs_sysctrl_start((uintptr_t)run_address);
-	} break;
+		ret = vprs_sysctrl_start((uintptr_t)run_address);
+#else  /* CONFIG_SDFW_VPRS */
+		LOG_WRN("SysCtrl core handling not supported - skip VPR start");
+#endif /* CONFIG_SDFW_VPRS */
+		break;
 
-	case NRF_PROCESSOR_PPR:	   /* PPR(VPR) */
-	case NRF_PROCESSOR_FLPR: { /* FLPR(VPR) */
-		LOG_ERR("No implementation for VPR invoke");
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
-	} break;
+	case NRF_PROCESSOR_PPR:	 /* PPR(VPR) */
+	case NRF_PROCESSOR_FLPR: /* FLPR(VPR) */
+		LOG_ERR("Application VPR %d start is not supported in SUIT", cpu_id);
+		return SUIT_PLAT_ERR_UNSUPPORTED;
 
-	default: {
-		LOG_ERR("Unsupported CPU ID");
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
+	default:
+		LOG_ERR("Unsupported CPU ID: %d", cpu_id);
+		return SUIT_PLAT_ERR_INVAL;
 	}
+
+	if (ret != 0) {
+		LOG_ERR("Failed to start CPU %d from address 0x%lx (err: %d)", cpu_id, run_address,
+			ret);
+		return SUIT_PLAT_ERR_CRASH;
 	}
+
+	return SUIT_PLAT_SUCCESS;
 }

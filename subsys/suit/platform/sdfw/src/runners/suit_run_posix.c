@@ -6,11 +6,9 @@
 
 #include <suit_cpu_run.h>
 #include <zephyr/logging/log.h>
-#include <suit_platform_internal.h>
-#include <suit_platform.h>
 
 /*
- *	Meant to be used in integration tests on posix.
+ * Meant to be used in integration tests on posix.
  * May require changes to accommodate other cpu_ids
  */
 
@@ -19,18 +17,16 @@
 
 LOG_MODULE_REGISTER(suit_plat_run, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_cpu_run(uint8_t cpu_id, intptr_t run_address)
+suit_plat_err_t suit_plat_cpu_run(uint8_t cpu_id, uintptr_t run_address)
 {
 	switch (cpu_id) {
 	case NRF_PROCESSORPOSIX_1:
-	case NRF_PROCESSORPOSIX_2: {
+	case NRF_PROCESSORPOSIX_2:
 		LOG_INF("Mock AppCore/RadioCore run");
-		return SUIT_SUCCESS;
-	} break;
+		return SUIT_PLAT_SUCCESS;
 
-	default: {
+	default:
 		LOG_ERR("Unsupported CPU ID (%d)", cpu_id);
-		return SUIT_ERR_UNSUPPORTED_PARAMETER;
-	}
+		return SUIT_PLAT_ERR_INVAL;
 	}
 }
