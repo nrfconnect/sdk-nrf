@@ -13,7 +13,7 @@
 #include <suit_plat_ipuc.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/storage/flash_map.h>
-#include <mocks.h>
+#include <mocks_sdfw.h>
 
 #define WRITE_ADDR 0x1A00080000
 
@@ -22,7 +22,7 @@ static uint8_t test_data[] = {0, 1, 2, 3, 4, 5, 6, 7};
 static void test_before(void *data)
 {
 	/* Reset mocks */
-	mocks_reset();
+	mocks_sdfw_reset();
 
 	/* Reset common FFF internal structures */
 	FFF_RESET_HISTORY();

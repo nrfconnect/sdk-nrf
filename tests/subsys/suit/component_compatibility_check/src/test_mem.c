@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/ztest.h>
-#include <mocks.h>
+#include <mocks_sdfw.h>
 #include <suit_plat_component_compatibility.h>
 #include <suit_storage.h>
 #include <suit_execution_mode.h>
@@ -36,7 +36,7 @@ static void *test_suite_setup(void)
 static void test_before(void *data)
 {
 	/* Reset mocks */
-	mocks_reset();
+	mocks_sdfw_reset();
 
 	/* Reset common FFF internal structures */
 	FFF_RESET_HISTORY();

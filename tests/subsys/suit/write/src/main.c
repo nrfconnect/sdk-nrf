@@ -15,7 +15,7 @@
 #include <zephyr/storage/flash_map.h>
 #include <suit_plat_mem_util.h>
 #include <suit_memory_layout.h>
-#include <mocks.h>
+#include <mocks_sdfw.h>
 
 #define DFU_PARTITION_OFFSET FIXED_PARTITION_OFFSET(dfu_partition)
 #define FLASH_WRITE_ADDR     (suit_plat_mem_nvm_ptr_get(DFU_PARTITION_OFFSET))
@@ -26,7 +26,7 @@ static uint8_t test_data[] = {0xDE, 0xAD, 0xBE, 0xEF};
 static void test_before(void *data)
 {
 	/* Reset mocks */
-	mocks_reset();
+	mocks_sdfw_reset();
 
 	/* Reset common FFF internal structures */
 	FFF_RESET_HISTORY();
