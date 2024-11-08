@@ -534,12 +534,24 @@ function(suit_setup_merge)
       list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_mpi_${IMAGE_TARGET_NAME}_merged.hex)
     endif()
 
+    if(${IMAGE_TARGET_NAME} STREQUAL "application")
+      # Get a list of files (and their dependencies) which need merging into the uicr merged file
+      # and add them at the end of the list, allowing for overwriting, this only applies to the
+      # application core image
+      get_property(merge_files GLOBAL PROPERTY SUIT_MERGE_FILE)
+      get_property(merge_dependencies GLOBAL PROPERTY SUIT_MERGE_DEPENDENCIES)
+    else()
+      set(merge_files)
+      set(merge_dependencies)
+    endif()
+
     set_property(
       GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
       COMMAND ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py
       --overlap replace
       -o ${OUTPUT_HEX_FILE}
-       ${ARTIFACTS_TO_MERGE}
+       ${ARTIFACTS_TO_MERGE} ${merge_files}
+      DEPENDS ${merge_dependencies}
       # fixme: uicr_merged is overwritten by new content, runners_yaml_props_target could be used to define
       #     what shall be flashed, but not sure where to set this! Remove --overlap if ready!
       #     example usage: set_property(TARGET runners_yaml_props_target PROPERTY hex_file ${merged_hex_file})
