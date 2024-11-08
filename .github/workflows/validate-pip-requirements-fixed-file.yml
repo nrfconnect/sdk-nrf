@@ -65,11 +65,11 @@ jobs:
               pip-compile-cross-platform==1.4.2+nordic.2 --upgrade > /dev/null 2>&1
             pip-compile-cross-platform \
               bootloader/mcuboot/scripts/requirements.txt \
+              zephyr/scripts/requirements.txt \
+              nrf/scripts/requirements-west-ncs-sbom.txt \
               nrf/scripts/requirements-ci.txt \
               nrf/scripts/requirements-extra.txt \
               nrf/scripts/requirements.txt \
-              zephyr/scripts/requirements.txt \
-              nrf/scripts/requirements-west-ncs-sbom.txt \
               --output-file nrf/scripts/requirements-fixed.txt \
               --min-python-version 3.10
 
