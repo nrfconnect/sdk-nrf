@@ -108,3 +108,17 @@ function(suit_create_cache_partition args output_file partition_num recovery)
                  "${output_file_name}type=cache;${output_file_name}partition=${partition_num};")
   endif()
 endfunction()
+
+# Usage:
+#   suit_add_merge_hex_file(FILES <files> [DEPENDENCIES <dependencies>]
+#
+# Add files which should be merged into the uicr_merged.hex output file, respecting any
+# dependencies that need to be generated before hand. This will overwrite existing data if it is
+# present in other files
+function(suit_add_merge_hex_file)
+  cmake_parse_arguments(arg "" "" "FILES;DEPENDENCIES" ${ARGN})
+  zephyr_check_arguments_required(${CMAKE_CURRENT_FUNCTION} arg FILES)
+
+  set_property(GLOBAL APPEND PROPERTY SUIT_MERGE_FILE ${arg_FILES})
+  set_property(GLOBAL APPEND PROPERTY SUIT_MERGE_DEPENDENCIES ${arg_DEPENDENCIES})
+endfunction()
