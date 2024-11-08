@@ -10,7 +10,7 @@
 #include <suit_platform_internal.h>
 #include <suit_plat_ipuc.h>
 #include <suit_dfu_cache.h>
-#include <mocks.h>
+#include <mocks_sdfw.h>
 
 #define TEST_DATA_SIZE 64
 #define WRITE_ADDR     0x1A00080000
@@ -79,7 +79,7 @@ static void setup_cache_with_sample_entries(void)
 static void test_before(void *data)
 {
 	/* Reset mocks */
-	mocks_reset();
+	mocks_sdfw_reset();
 
 	/* Reset common FFF internal structures */
 	FFF_RESET_HISTORY();

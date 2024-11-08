@@ -90,21 +90,22 @@ int suit_plat_invoke(suit_component_t image_handle, struct zcbor_string *invoke_
 		return SUIT_ERR_UNSUPPORTED_PARAMETER;
 	}
 
+	if (component_type != SUIT_COMPONENT_TYPE_MEM) {
+		LOG_ERR("Unsupported component type");
+		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
+	ret = suit_plat_cpu_halt(cpu_id);
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Failed to halt CPU %d", cpu_id);
+		return SUIT_ERR_CRASH;
+	}
 #ifdef CONFIG_SUIT_EVENTS
 	/* Clear all pending invoke events */
 	(void)suit_event_clear(cpu_id, SUIT_EVENT_INVOKE_MASK);
 #endif /* CONFIG_SUIT_EVENTS */
 
-	/* Check if component type supports invocation */
-	switch (component_type) {
-	case SUIT_COMPONENT_TYPE_MEM:
-		/* memory-mapped */
-		ret = suit_plat_cpu_run(cpu_id, run_address);
-		break;
-	default:
-		LOG_ERR("Unsupported component type");
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
-	}
+	ret = suit_plat_cpu_run(cpu_id, run_address);
 
 	if ((ret == SUIT_SUCCESS) && synchronous) {
 #ifdef CONFIG_SUIT_EVENTS

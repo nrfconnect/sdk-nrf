@@ -13,6 +13,8 @@ target_include_directories(suit_nrfx_mocks INTERFACE
 if(TARGET zephyr)
   target_link_libraries(zephyr_interface INTERFACE suit_nrfx_mocks)
   zephyr_library_link_libraries(suit_nrfx_mocks)
+elseif(TARGET testbinary)
+  target_link_libraries(testbinary PRIVATE suit_nrfx_mocks)
 else()
   message(FATAL_ERROR "Unknown test binary target name")
 endif()

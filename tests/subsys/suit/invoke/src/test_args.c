@@ -83,7 +83,7 @@ ZTEST(invoke_tests, test_invoke_NOK_unsupported_cpu_id)
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
 	ret = suit_plat_invoke(handle, NULL);
-	zassert_equal(ret, SUIT_PLAT_ERR_INVAL,
+	zassert_equal(ret, SUIT_ERR_CRASH,
 		      "suit_plat_invoke should have failed - unsupported cpu_id");
 	zassert_equal(SUIT_SUCCESS, suit_plat_release_component_handle(handle),
 		      "Unable to release component handle after test");
