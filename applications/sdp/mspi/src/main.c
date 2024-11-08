@@ -7,10 +7,8 @@
 #include "./backend/backend.h"
 #include "./hrt/hrt.h"
 
+#include <stdio.h>
 #include <zephyr/kernel.h>
-#include <zephyr/drivers/gpio.h>
-#include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
-#include <drivers/gpio/nrfe_gpio.h>
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
@@ -25,61 +23,63 @@
 
 volatile uint16_t irq_arg;
 
-void mspi_init()
-{
+#define CS_BIT 5
+#define SCLK_BIT 0
 
-    nrf_vpr_csr_vio_dir_set( (0x1<<CS_BIT)+ (0x1<<SCLK_BIT));
-    nrf_vpr_csr_vio_out_set( (0x1<<CS_BIT)+ (0x0<<SCLK_BIT));
+void mspi_init(void)
+{
+    nrf_vpr_csr_vio_dir_set( (0x1<<CS_BIT)+ (0x1<<SCLK_BIT) + (0x1 << 1));
+    nrf_vpr_csr_vio_out_set( (0x1<<CS_BIT)+ (0x0<<SCLK_BIT) + (0x1 << 1));
+
+	nrf_vpr_csr_vio_config_t vio_config = {
+		.clk_polarity = 0,
+		.input_sel = 0,
+		.stop_cnt = 1,
+	};
+
+	nrf_vpr_csr_vio_config_set(&vio_config);
 }
 
-
-void process_packet(nrfe_gpio_data_packet_t *packet)
-{
-	if (packet->port != 2) {
-		return;
-	}
-
-	switch (packet->opcode) {
-	case NRFE_GPIO_PIN_CONFIGURE: {
-		gpio_nrfe_pin_configure(packet->port, packet->pin, packet->flags);
-		break;
-	}
-	case NRFE_GPIO_PIN_CLEAR: {
-		irq_arg = packet->pin;
-		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_CLEAR));
-		break;
-	}
-	case NRFE_GPIO_PIN_SET: {
-		irq_arg = packet->pin;
-		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_SET));
-		break;
-	}
-	case NRFE_GPIO_PIN_TOGGLE: {
-		irq_arg = packet->pin;
-		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_TOGGLE));
-		break;
-	}
-	default: {
-		break;
-	}
-	}
-}
-
-#define HRT_CONNECT(vevif, handler)                                            \
-	IRQ_DIRECT_CONNECT(vevif, HRT_IRQ_PRIORITY, handler, 0);               \
-	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(vevif), true)
-
+volatile int i = 0;
 
 int main(void)
 {
-	int ret = 0;
+	// printk("Boootttinnggg\n");
+	// k_msleep(100);
 
 	nrf_vpr_csr_rtperiph_enable_set(true);
 
-	ret = backend_init(process_packet);
-	if (ret < 0) {
-		return 0;
-	}
+
+	// nrf_gpio_pin_dir_t dir = NRF_GPIO_PIN_DIR_OUTPUT;
+	// nrf_gpio_pin_input_t input = NRF_GPIO_PIN_INPUT_DISCONNECT;
+	// nrf_gpio_pin_pull_t pull = NRF_GPIO_PIN_NOPULL;
+	// nrf_gpio_pin_drive_t drive = NRF_GPIO_PIN_S0S1;
+
+	// nrfy_gpio_reconfigure(NRF_GPIO_PIN_MAP(2, CS_BIT), &dir, &input, &pull, &drive, NULL);
+
+	nrfy_gpio_pin_control_select(NRF_GPIO_PIN_MAP(2, 0), NRF_GPIO_PIN_SEL_VPR);
+	nrfy_gpio_pin_control_select(NRF_GPIO_PIN_MAP(2, 1), NRF_GPIO_PIN_SEL_VPR);
+	nrfy_gpio_pin_control_select(NRF_GPIO_PIN_MAP(2, 2), NRF_GPIO_PIN_SEL_VPR);
+	nrfy_gpio_pin_control_select(NRF_GPIO_PIN_MAP(2, 3), NRF_GPIO_PIN_SEL_VPR);
+	nrfy_gpio_pin_control_select(NRF_GPIO_PIN_MAP(2, 4), NRF_GPIO_PIN_SEL_VPR);
+	nrfy_gpio_pin_control_select(NRF_GPIO_PIN_MAP(2, CS_BIT), NRF_GPIO_PIN_SEL_VPR);
+
+	mspi_init();
+
+	// printk("Initialized\n");
+
+	uint8_t len = 3;
+	uint32_t to_send[3] = {0x10, 0x30708965, 0x25};
+
+	// for (uint8_t i=0; i< len; i++)
+	// {
+	// 	printk("Word %u: %u\n", i, to_send[i]);
+	// }
+
+	write_single_by_word(to_send, len, 4);
+
+	// k_msleep(100);
+	// printk("Written\n");
 
 	while (true) {
 		k_cpu_idle();
