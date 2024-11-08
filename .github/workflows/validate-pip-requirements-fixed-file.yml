@@ -62,7 +62,7 @@ jobs:
 
             pip3 install \
               --extra-index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
-              pip-compile-cross-platform==1.4.2+nordic --upgrade > /dev/null 2>&1
+              pip-compile-cross-platform==1.4.2+nordic.2 --upgrade > /dev/null 2>&1
             pip-compile-cross-platform \
               bootloader/mcuboot/scripts/requirements.txt \
               nrf/scripts/requirements-ci.txt \
