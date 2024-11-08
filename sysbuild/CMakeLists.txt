@@ -621,16 +621,16 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/fast_pair_hex.cmake)
   endif()
 
+  if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
+    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data_sysbuild.cmake)
+    nrfconnect_generate_factory_data()
+  endif()
+
   include_packaging()
   include_suit()
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     include_provision_hex()
-  endif()
-
-  if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE AND SB_CONFIG_PARTITION_MANAGER)
-    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data_sysbuild.cmake)
-    nrfconnect_generate_factory_data()
   endif()
 
   if(SB_CONFIG_MATTER_OTA)
