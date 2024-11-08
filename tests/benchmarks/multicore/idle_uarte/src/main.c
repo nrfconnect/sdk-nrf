@@ -5,11 +5,10 @@
  */
 
 #include <zephyr/drivers/uart.h>
+#include <zephyr/pm/device.h>
 #include <zephyr/pm/device_runtime.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/pm/device.h>
-#include <zephyr/pm/device_runtime.h>
 
 /* Note: logging is normally disabled for this test
  * Enable only for debugging purposes
@@ -140,28 +139,16 @@ int main(void)
 		pm_device_runtime_enable(console_dev);
 	}
 
-#if defined(CONFIG_TEST_AUTOMATIC_POWER_CONTROL)
-	enable_uart_rx();
-#endif
-
 	while (1) {
 		printk("Hello\n");
-
-#if !defined(CONFIG_TEST_AUTOMATIC_POWER_CONTROL)
 		enable_uart_rx();
-#endif
-
 		printk("UART test transmission\n");
 		err = uart_tx(uart_dev, test_pattern, TEST_BUFFER_LEN, UART_ACTION_BASE_TIMEOUT_US);
 		if (err != 0) {
 			printk("Unexpected error when sending UART TX data: %d\n", err);
 			return -1;
 		}
-
-#if !defined(CONFIG_TEST_AUTOMATIC_POWER_CONTROL)
 		disable_uart_rx();
-#endif
-
 		printk("Good night\n");
 		k_msleep(2000);
 	}
