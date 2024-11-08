@@ -20,7 +20,7 @@ tests:
   sample.matter.lock.release:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=release
+    extra_args: FILE_SUFFIX=release lock_SNIPPET="matter-watchdog"
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -90,7 +90,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=release CONFIG_NCS_SAMPLE_MATTER_LEDS=n
-      CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
+      CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf54l15dk/nrf54l15/cpuapp

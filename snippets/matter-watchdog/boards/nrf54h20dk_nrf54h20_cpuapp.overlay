@@ -1,0 +1,16 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		// Use watchdog cpuapp_wdt010 as the application watchdog
+		watchdog0 = &cpuapp_wdt010;
+	};
+};
+
+/* Watchdog */
+&cpuapp_wdt010 {
+	status = "okay";
+};

@@ -9,11 +9,6 @@
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
 	};
-
-	aliases {
-		// Use watchdog wdt31 as the application watchdog
-		watchdog0 = &wdt31;
-	};
 };
 
 // restore full RRAM and SRAM space - by default some parts are dedicated to FLRP
@@ -32,9 +27,5 @@
 };
 
 &mx25r64 {
-	status = "okay";
-};
-
-&wdt31 {
 	status = "okay";
 };

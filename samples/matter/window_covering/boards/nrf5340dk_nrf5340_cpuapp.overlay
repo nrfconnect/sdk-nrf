@@ -71,3 +71,7 @@
 		};
 	};
 };
+
+&wdt0 {
+	status = "disabled";
+};

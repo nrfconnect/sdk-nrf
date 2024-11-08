@@ -8,6 +8,7 @@ tests:
     extra_args: FILE_SUFFIX=release
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      matter_bridge_SNIPPET="matter-watchdog"
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
@@ -46,6 +47,7 @@ tests:
     extra_args: FILE_SUFFIX=release CONFIG_BRIDGED_DEVICE_BT=y
       CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
       CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      matter_bridge_SNIPPET="matter-watchdog"
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
@@ -89,6 +91,7 @@ tests:
     build_only: true
     extra_args: FILE_SUFFIX=release SB_CONFIG_WIFI_NRF70=y CONFIG_CHIP_WIFI=y
       matter_bridge_SHIELD="nrf7002eb_interposer_p1;nrf7002eb" CONFIG_BRIDGED_DEVICE_BT=y
+      matter_bridge_SNIPPET="matter-watchdog"
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow: nrf54h20dk/nrf54h20/cpuapp

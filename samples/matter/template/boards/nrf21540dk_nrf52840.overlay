@@ -14,3 +14,7 @@
 		zephyr,entropy = &rng;
 	};
 };
+
+&wdt0 {
+	status = "disabled";
+};

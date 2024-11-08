@@ -68,3 +68,6 @@
 &usbd {
 	status = "disabled";
 };
+&wdt0 {
+	status = "disabled";
+};

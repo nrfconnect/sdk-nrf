@@ -14,15 +14,6 @@
 		zephyr,bt-hci-ipc = &ipc0;
 		extmem-device = &mx25uw63;
 	};
-
-	aliases {
-		watchdog0 = &cpuapp_wdt010;
-	};
-};
-
-/* Watchdog */
-&cpuapp_wdt010 {
-	status = "okay";
 };
 
 /* Communication between Application Core and Secure Domain */

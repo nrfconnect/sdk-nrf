@@ -14,7 +14,7 @@ tests:
   sample.matter.smoke_co_alarm.release:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=release
+    extra_args: FILE_SUFFIX=release smoke_co_alarm_SNIPPET="matter-watchdog"
       SB_CONFIG_BOOTLOADER_MCUBOOT=y SB_CONFIG_PARTITION_MANAGER=y
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -36,7 +36,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=release CONFIG_NCS_SAMPLE_MATTER_LEDS=n
-      CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf54l15dk/nrf54l15/cpuapp

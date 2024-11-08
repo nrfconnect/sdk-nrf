@@ -8,9 +8,6 @@
 	aliases {
 		// Configure PWM module for led1 (LED2 on the board)
 		pwm-led1 = &pwm_led1;
-
-		// Use watchdog wdt31 as the application watchdog
-		watchdog0 = &wdt31;
 	};
 
 	chosen {
@@ -63,10 +60,6 @@
 			low-power-enable;
 		};
 	};
-};
-
-&wdt31 {
-	status = "okay";
 };
 
 // Change IRQ ids to handle button interrupts.

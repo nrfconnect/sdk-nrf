@@ -17,7 +17,7 @@ tests:
   sample.matter.light_bulb.release:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=release
+    extra_args: FILE_SUFFIX=release light_bulb_SNIPPET="matter-watchdog"
       SB_CONFIG_BOOTLOADER_MCUBOOT=y SB_CONFIG_PARTITION_MANAGER=y
     integration_platforms:
       - nrf52840dk/nrf52840

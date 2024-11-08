@@ -5,11 +5,6 @@
  */
 
 / {
-	aliases {
-		// Use watchdog wdt31 as the application watchdog
-		watchdog0 = &wdt31;
-	};
-
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
 	};
@@ -31,10 +26,6 @@
 };
 
 &mx25r64 {
-	status = "okay";
-};
-
-&wdt31 {
 	status = "okay";
 };
 

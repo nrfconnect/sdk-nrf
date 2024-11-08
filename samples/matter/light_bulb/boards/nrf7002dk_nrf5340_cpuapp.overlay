@@ -18,7 +18,6 @@
 	*/
 	aliases {
 		pwm-led1 = &pwm_led1;
-		watchdog0 = &wdt0;
 	};
 
 	pwmleds {
@@ -55,4 +54,8 @@
 		};
 	};
 
+};
+
+&wdt0 {
+	status = "disabled";
 };
