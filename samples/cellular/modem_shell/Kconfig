@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "Kconfig.zephyr"
-
 menu "Nordic Modem Shell config"
 
 config MOSH_IPERF3
@@ -130,6 +128,12 @@ config MOSH_COMMON_WORKQUEUE_PRIORITY
 	int "Common workqueue priority"
 	default 5
 
+if NRF_IPERF3
+
+config NRF_IPERF3_RESULTS_WAIT_TIME
+	default 180
+endif
+
 if MOSH_IPERF3 || MOSH_PING
 menu "MoSH iperf3 and ping command selections"
 
@@ -239,3 +243,7 @@ config UART_1_NRF_ASYNC_LOW_POWER
 endif # UART_1_ASYNC
 
 endmenu # Modem Shell
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
