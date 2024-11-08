@@ -279,7 +279,16 @@ DECT NR+ samples
 Edge Impulse samples
 --------------------
 
-|no_changes_yet_note|
+Edge Impulse samples
+--------------------
+
+* :ref:`ei_data_forwarder_sample` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+
+* :ref:`ei_wrapper_sample` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Enhanced ShockBurst samples
 ---------------------------
