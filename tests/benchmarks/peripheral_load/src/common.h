@@ -49,7 +49,7 @@ extern atomic_t completed_threads;
 
 /* FLASH thread: */
 #define FLASH_THREAD_COUNT_MAX	(40)
-#define FLASH_THREAD_STACKSIZE	(1024)
+#define FLASH_THREAD_STACKSIZE	(2048)
 #define FLASH_THREAD_PRIORITY	(5)
 #define FLASH_THREAD_SLEEP		(200)
 
