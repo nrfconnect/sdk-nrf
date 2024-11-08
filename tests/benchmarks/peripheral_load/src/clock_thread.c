@@ -9,7 +9,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(clock, LOG_LEVEL_INF);
 
-#include <nrfs_backend_ipc_service.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/devicetree/clocks.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
@@ -110,21 +109,41 @@ static void test_request_release_clock_spec(const struct device *clk_dev,
 	LOG_INF("Clock under test: %s", clk_dev->name);
 	sys_notify_init_spinwait(&cli.notify);
 	ret = nrf_clock_control_request(clk_dev, clk_spec, &cli);
-	__ASSERT_NO_MSG(ret >= 0 && ret <= 2);
+	LOG_INF("Clock control request return value: %d", ret);
+	if (ret != 0) {
+		LOG_ERR("Clock control request failed");
+		atomic_inc(&completed_threads);
+		return;
+	}
 	do {
 		ret = sys_notify_fetch_result(&cli.notify, &res);
 		k_yield();
 	} while (ret == -EAGAIN);
-	LOG_INF("Clock control request return value: %d", ret);
 	LOG_INF("Clock control request response code: %d", res);
-	__ASSERT_NO_MSG(ret);
-	__ASSERT_NO_MSG(res);
+	if (res != 0) {
+		LOG_ERR("Wrong clock control request response code");
+		atomic_inc(&completed_threads);
+		return;
+	}
 	ret = clock_control_get_rate(clk_dev, NULL, &rate);
-	__ASSERT_NO_MSG(ret);
-	__ASSERT_NO_MSG(rate == clk_spec->frequency);
+	LOG_INF("Clock control get rate response code: %d", ret);
+	if (ret != 0) {
+		LOG_ERR("Clock control get rate failed");
+		atomic_inc(&completed_threads);
+		return;
+	}
+	if (rate != clk_spec->frequency) {
+		LOG_ERR("Invalid rate: %d", rate);
+		atomic_inc(&completed_threads);
+		return;
+	}
 	k_msleep(1000);
 	ret = nrf_clock_control_release(clk_dev, clk_spec);
-	__ASSERT_NO_MSG(ret == ONOFF_STATE_ON);
+	if (ret != ONOFF_STATE_ON) {
+		LOG_ERR("Clock control release failed");
+		atomic_inc(&completed_threads);
+		return;
+	}
 }
 
 static void test_clock_control_request(const struct test_clk_context *clk_contexts,
@@ -161,7 +180,7 @@ static void clock_thread(void *arg1, void *arg2, void *arg3)
 
 	atomic_inc(&started_threads);
 
-	nrfs_backend_wait_for_connection(K_FOREVER);
+	k_msleep(100);
 	test_clock_control_request(cpuapp_hsfll_test_clk_contexts,
 				   ARRAY_SIZE(cpuapp_hsfll_test_clk_contexts));
 
