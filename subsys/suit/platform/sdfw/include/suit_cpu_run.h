@@ -15,6 +15,20 @@ extern "C" {
 #endif
 
 /**
+ * @brief Halt specified CPU.
+ *
+ * @note Implementation depends on SoC on which it's built.
+ *
+ * @param[in] cpu_id  ID of CPU to be halted
+ *
+ * @retval SUIT_PLAT_SUCCESS          in case of successful halt
+ * @retval SUIT_PLAT_ERR_CRASH        if CPU halt failed
+ * @retval SUIT_PLAT_ERR_UNSUPPORTED  if handling CPU halt is not supported
+ * @retval SUIT_PLAT_ERR_INVAL        if CPU ID is unknown
+ */
+suit_plat_err_t suit_plat_cpu_halt(uint8_t cpu_id);
+
+/**
  * @brief Run specified CPU.
  *
  * @note Implementation depends on SoC on which it's built.

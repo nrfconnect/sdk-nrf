@@ -17,6 +17,20 @@
 
 LOG_MODULE_REGISTER(suit_plat_run, CONFIG_SUIT_LOG_LEVEL);
 
+suit_plat_err_t suit_plat_cpu_halt(uint8_t cpu_id)
+{
+	switch (cpu_id) {
+	case NRF_PROCESSORPOSIX_1:
+	case NRF_PROCESSORPOSIX_2:
+		LOG_INF("Mock AppCore/RadioCore halt");
+		return SUIT_PLAT_SUCCESS;
+
+	default:
+		LOG_ERR("Unsupported CPU ID (%d)", cpu_id);
+		return SUIT_PLAT_ERR_INVAL;
+	}
+}
+
 suit_plat_err_t suit_plat_cpu_run(uint8_t cpu_id, uintptr_t run_address)
 {
 	switch (cpu_id) {
