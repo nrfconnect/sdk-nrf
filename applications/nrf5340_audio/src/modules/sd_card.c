@@ -216,7 +216,7 @@ int sd_card_list_files(char const *const path, char *buf, size_t *buf_size, bool
 			return ret;
 		}
 	} else {
-		if (strlen(path) > CONFIG_FS_FATFS_MAX_LFN) {
+		if (strlen(path) > PATH_MAX_LEN) {
 			LOG_ERR("Path is too long");
 			return -FR_INVALID_NAME;
 		}
@@ -290,7 +290,7 @@ int sd_card_open_write_close(char const *const filename, char const *const data,
 		return -ENODEV;
 	}
 
-	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+	if (strlen(filename) > PATH_MAX_LEN) {
 		LOG_ERR("Filename is too long");
 		return -ENAMETOOLONG;
 	}
@@ -338,7 +338,7 @@ int sd_card_open_read_close(char const *const filename, char *const buf, size_t 
 		return -ENODEV;
 	}
 
-	if (strlen(filename) > CONFIG_FS_FATFS_MAX_LFN) {
+	if (strlen(filename) > PATH_MAX_LEN) {
 		LOG_ERR("Filename is too long");
 		return -FR_INVALID_NAME;
 	}
@@ -376,7 +376,7 @@ int sd_card_open(char const *const filename, struct fs_file_t *f_seg_read_entry)
 {
 	int ret;
 	char abs_path_name[PATH_MAX_LEN + 1] = SD_ROOT_PATH;
-	size_t avilable_path_space = PATH_MAX_LEN - strlen(SD_ROOT_PATH);
+	size_t available_path_space = PATH_MAX_LEN - strlen(SD_ROOT_PATH);
 
 	if (!sd_init_success) {
 		return -ENODEV;
@@ -392,7 +392,7 @@ int sd_card_open(char const *const filename, struct fs_file_t *f_seg_read_entry)
 		return -EINVAL;
 	}
 
-	strncat(abs_path_name, filename, avilable_path_space);
+	strncat(abs_path_name, filename, available_path_space);
 
 	LOG_INF("abs path name:\t%s", abs_path_name);
 
