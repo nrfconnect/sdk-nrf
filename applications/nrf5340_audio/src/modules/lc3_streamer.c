@@ -67,6 +67,9 @@ struct lc3_stream {
 };
 
 static struct lc3_stream streams[CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS];
+#if (CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS > UINT8_MAX)
+#error "CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS is larger than UINT8_MAX"
+#endif
 
 static bool initialized;
 
@@ -353,7 +356,7 @@ int lc3_streamer_stream_register(const char *const filename, uint8_t *const stre
 
 	bool free_slot_found = false;
 
-	for (int i = 0; i < ARRAY_SIZE(streams); i++) {
+	for (uint8_t i = 0; i < ARRAY_SIZE(streams); i++) {
 		if (streams[i].state == STREAM_IDLE) {
 			LOG_DBG("Found free stream slot %d", i);
 			*streamer_idx = i;
