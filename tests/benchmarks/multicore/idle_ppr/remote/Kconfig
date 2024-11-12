@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_SLEEP_DURATION_MS
+	int "Amount of time (in miliseconds) the core is sleeping"
+	default 1000
+	help
+	  Set sleep duration to TEST_SLEEP_DURATION_MS miliseconds.
+	  Based on the value of 'min-residency-us' specified for each power state defined in the DTS,
+	  core enters the lowest possible power state.
+
+config APP_PROVIDE_PM_HOOKS
+	bool "Application provides PM hooks"
+	default y
+	select HAS_PM
+	select HAS_POWEROFF
+
+source "Kconfig.zephyr"
