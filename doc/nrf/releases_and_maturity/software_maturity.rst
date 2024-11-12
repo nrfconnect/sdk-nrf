@@ -258,6 +258,20 @@ The following table indicates the software maturity levels of the support for ea
      - --
      - --
      - --
+   * - **NFC**
+     - --
+     - --
+     - --
+     - Supported
+     - Supported
+     - Supported
+     - Supported
+     - Experimental
+     - Supported
+     - --
+     - --
+     - --
+     - --
    * - **Sidewalk**
      - --
      - --
@@ -1122,6 +1136,146 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+
+NFC features support
+********************
+
+The following table indicates the software maturity levels of the support for each NFC feature:
+
+.. toggle::
+
+  .. list-table::
+      :widths: auto
+      :header-rows: 1
+
+      * -
+        - nRF52810
+        - nRF52811
+        - nRF52820
+        - nRF52832
+        - nRF52833
+        - nRF52840
+        - nRF5340
+        - nRF54H20
+        - nRF54L15
+        - nRF9131
+        - nRF9151
+        - nRF9160
+        - nRF9161
+      * - **NFC Type 2 Tag (read-only)**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **NFC Type 4 Tag (read/write)**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **NFC Reader/Writer (polling device)**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+      * - **NFC ISO-DEP protocol (ISO/IEC 14443-4)**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **NDEF encoding/decoding**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **NFC Record Type Definitions: URI, Text, Connection Handover**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **NFC Connection Hadover to Bluetooth carrier, Static and Negotiated Handover**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **NFC Tag NDEF Exchange Protocol (TNEP)**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - Experimental\ :sup:`1`
+        - Supported\ :sup:`1`
+        - --
+        - --
+        - --
+        - --
+
+  | [1]: Only supported on the NFC Tag device
 
 Zigbee feature support
 **********************
