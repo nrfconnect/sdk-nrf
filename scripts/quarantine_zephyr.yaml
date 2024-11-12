@@ -418,6 +418,8 @@
     - libraries.libc.newlib.thread_safety.userspace.stress
   platforms:
     - nrf54h20dk/nrf54h20/cpurad
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "region FLASH overflowed"
 
 - scenarios:
     - libraries.cmsis_dsp.matrix.unary_f64
