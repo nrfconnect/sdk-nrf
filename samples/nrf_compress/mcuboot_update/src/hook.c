@@ -40,9 +40,9 @@ static void slot_output_handler(struct k_work *work)
 	rc = img_mgmt_read_info(SECONDARY_SLOT, NULL, NULL, &slot_flags);
 
 	if (!rc) {
-		slot_flags &= IMAGE_F_COMPRESSED_LZMA2 && IMAGE_F_COMPRESSED_ARM_THUMB_FLT;
+		slot_flags &= IMAGE_F_COMPRESSED_LZMA2 | IMAGE_F_COMPRESSED_ARM_THUMB_FLT;
 
-		if (slot_flags == (IMAGE_F_COMPRESSED_LZMA2 && IMAGE_F_COMPRESSED_ARM_THUMB_FLT)) {
+		if (slot_flags == (IMAGE_F_COMPRESSED_LZMA2 | IMAGE_F_COMPRESSED_ARM_THUMB_FLT)) {
 			LOG_INF(
 			"Secondary slot image is LZMA2 compressed with ARM thumb filter applied");
 		} else if (slot_flags & IMAGE_F_COMPRESSED_LZMA2) {
