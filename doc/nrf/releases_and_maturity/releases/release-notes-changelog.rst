@@ -265,12 +265,17 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
+* Updated the :kconfig:option:`CONFIG_NRF_CLOUD_CHECK_CREDENTIALS` Kconfig option to be optional and enabled by default for the following samples:
+
+  * :ref:`nrf_cloud_rest_cell_pos_sample`
+  * :ref:`nrf_cloud_rest_device_message`
+  * :ref:`nrf_cloud_rest_fota`
+
 * :ref:`location_sample` sample:
 
   * Updated:
 
     * The Thingy:91 X build to support Wi-Fi by default without overlays.
-
 
 Cryptography samples
 --------------------

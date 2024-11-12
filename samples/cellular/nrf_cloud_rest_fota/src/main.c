@@ -472,6 +472,7 @@ static void sample_reboot(enum nrf_cloud_fota_reboot_status status)
 
 static void check_credentials(void)
 {
+#if defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)
 	int err = nrf_cloud_credentials_configured_check();
 
 	if (err == -ENOTSUP) {
@@ -485,6 +486,9 @@ static void check_credentials(void)
 		LOG_ERR("nrf_cloud_credentials_configured_check() failed, error: %d", err);
 		LOG_WRN("Continuing without verifying that credentials are installed");
 	}
+#else
+	LOG_DBG("nRF Cloud credentials check not enabled");
+#endif /* defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS) */
 }
 
 int main(void)

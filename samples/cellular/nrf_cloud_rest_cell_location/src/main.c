@@ -579,6 +579,7 @@ static void connect_to_network(void)
 
 static void check_credentials(void)
 {
+#if defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)
 	int err = nrf_cloud_credentials_configured_check();
 
 	if ((err == -ENOTSUP) || (err == -ENOPROTOOPT)) {
@@ -589,6 +590,9 @@ static void check_credentials(void)
 		LOG_ERR("nrf_cloud_credentials_configured_check() failed, error: %d", err);
 		LOG_WRN("Continuing without verifying that credentials are installed");
 	}
+#else
+	LOG_DBG("nRF Cloud credentials check not enabled");
+#endif /* defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS) */
 }
 
 int main(void)

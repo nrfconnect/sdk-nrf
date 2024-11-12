@@ -236,6 +236,7 @@ static int set_leds_off(void)
 
 static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 {
+#if defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)
 	int ret;
 
 	ret = nrf_cloud_credentials_check(cs);
@@ -248,7 +249,22 @@ static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 	 *  - a CA for the TLS connections
 	 *  - a private key to sign the JWT
 	 */
+
+	if (!cs->ca || !cs->ca_aws || !cs->prv_key) {
+		LOG_WRN("Missing required nRF Cloud credential(s) in sec tag %u:", cs->sec_tag);
+	}
+	if (!cs->ca || !cs->ca_aws) {
+		LOG_WRN("\t-CA Cert");
+	}
+	if (!cs->prv_key) {
+		LOG_WRN("\t-Private Key");
+	}
+
 	return (cs->ca && cs->ca_aws && cs->prv_key);
+#else
+	LOG_DBG("nRF Cloud credentials check not enabled");
+	return true;
+#endif /* defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS) */
 }
 
 static void await_credentials(void)
@@ -256,16 +272,6 @@ static void await_credentials(void)
 	struct nrf_cloud_credentials_status cs;
 
 	if (!cred_check(&cs)) {
-		LOG_WRN("Missing required nRF Cloud credential(s) in sec tag %u:",
-			cs.sec_tag);
-
-		if (!cs.ca) {
-			LOG_WRN("\t-CA Cert");
-		}
-
-		if (!cs.prv_key) {
-			LOG_WRN("\t-Private Key");
-		}
 
 #if defined(CONFIG_NRF_PROVISIONING)
 		LOG_INF("Waiting for credentials to be remotely provisioned...");
