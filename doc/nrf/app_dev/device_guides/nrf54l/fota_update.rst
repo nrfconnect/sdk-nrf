@@ -56,7 +56,8 @@ To enable support for FOTA updates, do the following:
 
 .. fota_upgrades_over_ble_mandatory_mcuboot_start
 
-* Enable ``SB_CONFIG_BOOTLOADER_MCUBOOT`` option to use MCUboot as the immutable bootloader.
+* Enable the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` option to use MCUboot as a bootloader.
+  You can do this by, for example, setting the option in the :file:`sysbuild.conf` file.
   For more information, go to the :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot` page.
 
 .. fota_upgrades_over_ble_mandatory_mcuboot_end
@@ -89,12 +90,14 @@ To perform a FOTA update, complete the following steps:
 
 .. fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
 
-1. Generate the DFU package by building your application with the FOTA support over Bluetooth Low Energy (:kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU`).
-   You can find the generated :file:`dfu_application.zip` archive in the build directory.
+1. Locate the :file:`dfu_application.zip` archive in the build directory.
+   The archive is automatically generated after adding the DFU configuration and building your project.
 
    .. note::
       For each image included in the DFU-generated package, use a higher version number than your currently active firmware.
       You can do this by modifying the VERSION file in the application directory or by making changes to the application code.
+      For the semantic versioning, modify the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
+      For the monotonic counter (HW), modify the ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`` Kconfig option.
       Otherwise, the DFU target may reject the FOTA process due to a downgrade prevention mechanism.
 
 #. Download the :file:`dfu_application.zip` archive to your mobile phone.
