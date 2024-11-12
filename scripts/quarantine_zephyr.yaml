@@ -199,6 +199,13 @@
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Test not aligned for nrf54l15 - missing snippet settings"
 
+- scenarios:
+    - kernel.common.misra
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpurad
+  comment: "nrfs_gdpwr.h: No such file - https://nordicsemi.atlassian.net/browse/NRFX-6718"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
