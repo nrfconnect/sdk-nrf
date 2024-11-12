@@ -1544,7 +1544,7 @@
 .. _`NFC Forum specification overview`: https://nfc-forum.org/build/specifications
 .. _`Bluetooth Secure Simple Pairing Using NFC`: https://nfc-forum.org/build/specifications#application-documents
 
-.. _`ISO/IEC 7816-4`: https://www.iso.org/standard/54550.html
+.. _`ISO/IEC 7816-4`: https://www.iso.org/standard/77180.html
 
 .. _`802.15.2-2003 specification`: https://standards.ieee.org/standard/802_15_2-2003.html
 
