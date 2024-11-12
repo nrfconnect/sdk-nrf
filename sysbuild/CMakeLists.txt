@@ -231,6 +231,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
       set_config_bool(mcuboot CONFIG_BOOT_IMG_HASH_ALG_SHA512 y)
       set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
 
       if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU)
         set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU y)
@@ -245,6 +246,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_TYPE_PURE n)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE n)
       endif()
+    else()
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 n)
     endif()
 
     # A v1 board doesn't define board qualifiers, thus below test will just test the pure board
