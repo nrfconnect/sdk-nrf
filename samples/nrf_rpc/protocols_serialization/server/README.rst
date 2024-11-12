@@ -45,7 +45,7 @@ The following snippets are available:
 * ``coex`` - Enables the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
 * ``debug`` - Enables debugging the sample by enabling :c:func:`__ASSERT()` statements globally and verbose logging.
 * ``log_rpc`` - Enables logging over RPC.
-* ``openthread`` - Enables the server part of the OpenThread RPC.
+* ``openthread`` - Enables the server part of the :ref:`OpenThread RPC <ot_rpc>`.
 * ``nfc`` - Enables the server part of the :ref:`NFC RPC <nfc_rpc>`.
 
 User interface

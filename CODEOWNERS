@@ -169,6 +169,7 @@
 /doc/nrf/libraries/networking/nrf_cloud.rst @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/libraries/networking/nrf_cloud_*.rst @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/libraries/networking/nrf_provisioning.rst @nrfconnect/ncs-iot-oulu-tampere-doc
+/doc/nrf/libraries/networking/ot_rpc.rst @nrfconnect/ncs-terahertz-doc @nrfconnect/ncs-protocols-serialization
 /doc/nrf/libraries/networking/rest_client.rst @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/networking/softap_wifi_provision.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_credentials.rst @nrfconnect/ncs-cia-doc

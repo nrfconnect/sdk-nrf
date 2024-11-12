@@ -1172,6 +1172,7 @@
 .. ### Source: openthread.io
 
 .. _`OpenThread.io`: https://openthread.io/
+.. _`OpenThread Reference`: https://openthread.io/reference
 .. _`Device Types in the OpenThread portal`: https://openthread.io/guides/thread-primer/node-roles-and-types#device_types
 .. _`Thread Commissioning on OpenThread portal`: https://openthread.io/guides/build/commissioning
 .. _`OpenThread logging`: https://openthread.io/guides/build/logs
