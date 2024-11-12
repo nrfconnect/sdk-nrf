@@ -38,6 +38,11 @@ config SSF_CLIENT_SYS_INIT
 	bool "Start SDFW Service Framework client on boot"
 	default y
 
+config SSF_CLIENT_SYS_INIT_PRIORITY
+	int
+	default 47
+	depends on SSF_CLIENT_SYS_INIT
+
 config SSF_CLIENT_REGISTERED_LISTENERS_MAX
 	int "Maximum number of simultaneous registered listeners"
 	default 1
