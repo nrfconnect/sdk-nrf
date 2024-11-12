@@ -13,7 +13,7 @@ static bool state = true;
 extern void thread_definition(void);
 
 K_THREAD_DEFINE(thread_id, 500, thread_definition, NULL, NULL, NULL,
-				5, 0, 0);
+				7, 0, 100);
 
 void timer_handler(struct k_timer *dummy)
 {
@@ -37,7 +37,7 @@ int main(void)
 	rc = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT_NO_MSG(rc == 0);
 
-	k_timer_start(&timer, K_SECONDS(1), K_SECONDS(1));
+	k_timer_start(&timer, K_SECONDS(2), K_SECONDS(2));
 
 	while (1) {
 		k_msleep(1000);
