@@ -56,7 +56,7 @@ static void fota_download_shell_callback(const struct fota_download_evt *evt)
 		break;
 
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		LOG_INF("FOTA download finished");
+		LOG_INF("FOTA downloader finished");
 		active_download = false;
 		break;
 	}

@@ -174,7 +174,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-|no_changes_yet_note|
+* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Connectivity Bridge
 -------------------
@@ -213,7 +213,7 @@ nRF Machine Learning (Edge Impulse)
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -277,6 +277,18 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
+* Updated the following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+
+  * :ref:`http_application_update_sample`
+  * :ref:`http_modem_delta_update_sample`
+  * :ref:`http_modem_full_update_sample`
+  * :ref:`location_sample`
+  * :ref:`lwm2m_carrier`
+  * :ref:`lwm2m_client`
+  * :ref:`modem_shell_application`
+  * :ref:`nrf_cloud_multi_service`
+  * :ref:`nrf_cloud_rest_fota`
+
 * :ref:`modem_shell_application` sample:
 
   * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
@@ -325,7 +337,11 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* Updated the following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+
+  * :ref:`aws_iot`
+  * :ref:`azure_iot_hub`
+  * :ref:`download_sample`
 
 NFC samples
 -----------
@@ -416,7 +432,9 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated the glue to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Bluetooth libraries and services
 --------------------------------
@@ -467,7 +485,17 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* Added the :ref:`lib_downloader` library.
+* Deprecated the :ref:`lib_download_client` library.
+  See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
+
+* Updated the following libraries to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+
+  * :ref:`lib_nrf_cloud`
+  * :ref:`lib_aws_fota`
+  * :ref:`lib_azure_fota`
+  * :ref:`lib_fota_download`
+
 
 Libraries for NFC
 -----------------

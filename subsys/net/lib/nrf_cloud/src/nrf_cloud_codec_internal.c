@@ -2012,7 +2012,6 @@ cleanup:
 		job_info->host = NULL;
 		nrf_cloud_free(job_info->path);
 		job_info->path = NULL;
-
 		job_info->type = NRF_CLOUD_FOTA_TYPE__INVALID;
 	}
 
