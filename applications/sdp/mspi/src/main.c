@@ -62,16 +62,21 @@ int main(void)
 
 	mspi_init();
 
+	uint8_t len1 = 3;
+	uint32_t to_send1[3] = {0x10, 0x25, 0x3278};
+
 	uint8_t len = 5;
 	uint32_t to_send[5] = {0x10, 0x93708965, 0x25, 0x5060, 0x3278};
 
-	write_single_by_word(to_send, len, 4, 32);
+	write_single_by_word(to_send1, len1, 4, 32);
+
+	write_quad_by_word(to_send, len, 4, 32);
 
 	k_msleep(1);
 
 	uint8_t len2 = 3;
 	uint32_t to_send2[3] = {0xff, 0x10, 0xf6};
-	write_single_by_word(to_send2, len2, 4, 15);
+	write_quad_by_word(to_send2, len2, 4, 16);
 
 	while (true) {
 		k_cpu_idle();
