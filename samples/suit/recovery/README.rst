@@ -93,12 +93,24 @@ Testing
 |test_sample|
 
 #. |connect_kit|
-#. Corrupt the currently running main application (for example by flashing a modified version of the application)
-#. Open the Device Manager or the nRF Connect application, and observe the device advertising as "SUIT Recovery"
-#. Recover the application using `nRF Connect Device Manager`_ in the same way as described in the :ref:`nrf54h_suit_sample` sample documentation.
+#. Corrupt the currently running main application.
+   This can be done by overwriting the beginning of the application partition:
 
-  .. note::
-     In recovery state, `nRF Connect Device Manager`_ uses legacy mode.
+.. code-block:: console
+
+   nrfutil device x-write --address 0xE0A5000 --value 0xFFFF --serial-port COM7
+
+#. Reset the device to enter the recovery path:
+
+.. code-block:: console
+
+   nrfutil device reset --serial-port COM7
+
+#. Open the nRF Device Manager app on your mobile phone, and observe the device now advertising itself as *SUIT Recovery*.
+#. Recover the application using the nRF Device Manager app to perform an update, following the process outlined in the :ref:`nrf54h_suit_sample` sample documentation.
+   Use the :file:`root.suit` file generated from the previous build.
+#. After the update completes, the device will reset and launch the application.
+#. Open the nRF Device Manager app on your mobile phone and observe that the device is now advertising as *SUIT SMP Sample*.
 
 Device firmware update for recovery firmware
 ============================================
