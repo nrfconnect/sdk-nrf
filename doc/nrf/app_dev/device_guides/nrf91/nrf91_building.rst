@@ -71,7 +71,7 @@ To perform a FOTA update, complete the following steps:
    See :ref:`upgradable_bootloader` for more information.
 
 #. Make the binary file (or files) available for download.
-   Upload the serialized :file:`.cbor` binary file or files to a web server that is compatible with the :ref:`lib_download_client` library.
+   Upload the serialized :file:`.cbor` binary file or files to a web server that is compatible with the :ref:`lib_downloader` library.
 
 The full FOTA procedure depends on where the binary files are hosted for download.
 

@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig  DOWNLOADER
+	bool "Download client"
+
+if DOWNLOADER
+
+comment "Thread and stack buffers"
+
+config DOWNLOADER_STACK_SIZE
+	int "Thread stack size"
+	range 768 4096
+	default 1280
+
+config DOWNLOADER_MAX_HOSTNAME_SIZE
+	int "Maximum hostname length (stack)"
+	range 8 256
+	default 256
+
+config DOWNLOADER_MAX_FILENAME_SIZE
+	int "Maximum filename length (stack)"
+	range 8 2048
+	default 255
+
+config DOWNLOADER_SHELL
+	bool "Download client shell"
+	depends on SHELL
+
+config DOWNLOADER_TRANSPORT_PARAMS_SIZE
+	int "Maximum transport parameter size"
+	default 128
+
+config DOWNLOADER_TRANSPORT_HTTP
+	bool "HTTP transport"
+	depends on NET_IPV4 || NET_IPV6
+	default y
+
+config DOWNLOADER_TRANSPORT_COAP
+	bool "CoAP transport"
+	depends on COAP
+	depends on NET_IPV4 ||NET_IPV6
+
+module=DOWNLOADER
+module-dep=LOG
+module-str=Download client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if DOWNLOADER_LOG_LEVEL_DBG
+
+config DOWNLOADER_LOG_HEADERS
+	bool "Log protocol headers to console [Debug]"
+
+endif #DOWNLOADER_LOG_LEVEL_DBG
+
+endif #DOWNLOADER
