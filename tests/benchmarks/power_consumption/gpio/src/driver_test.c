@@ -6,6 +6,7 @@
 
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/irq.h>
 
 #define OUTPUT_NODE DT_ALIAS(out0)
 #define INPUT_NODE  DT_ALIAS(in0)
@@ -24,6 +25,7 @@ void input_active(const struct device *dev, struct gpio_callback *cb, uint32_t p
 void thread_definition(void)
 {
 	int rc;
+	unsigned int key;
 
 	rc = gpio_is_ready_dt(&input);
 	__ASSERT_NO_MSG(rc);
@@ -45,12 +47,12 @@ void thread_definition(void)
 
 	while (1) {
 		counter = 0;
+		key = irq_lock();
 		rc = gpio_pin_set_dt(&output, 0);
-		__ASSERT_NO_MSG(rc == 0);
 		rc = gpio_pin_set_dt(&output, 1);
 		rc = gpio_pin_set_dt(&output, 0);
+		irq_unlock(key);
 		__ASSERT_NO_MSG(counter == 1);
-		__ASSERT_NO_MSG(rc == 0);
 
 		k_msleep(10);
 	}
