@@ -1271,6 +1271,7 @@ ci_tests_benchmarks_current_consumption:
     - nrf/include/nfc/
     - nrf/subsys/nfc/
     - nrf/tests/benchmarks/current_consumption/
+    - nrf/tests/benchmarks/power_consumption/
     - nrfxlib/nfc/
     - zephyr/boards/nordic/
     - zephyr/drivers/gpio/
@@ -1283,6 +1284,7 @@ ci_tests_benchmarks_current_consumption:
     - zephyr/drivers/spi/
     - zephyr/drivers/counter/
     - zephyr/soc/nordic/
+    - zephyr/drivers/sensor/nordic/temp/
 
 ci_tests_drivers_egpio:
   files:
