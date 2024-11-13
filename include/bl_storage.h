@@ -102,14 +102,6 @@ struct counter_collection {
 	struct monotonic_counter counters[1];
 };
 
-NRFX_STATIC_INLINE uint32_t bl_storage_word_read(uint32_t address);
-NRFX_STATIC_INLINE uint32_t bl_storage_word_write(uint32_t address, uint32_t value);
-NRFX_STATIC_INLINE counter_t bl_storage_counter_get(uint32_t address);
-NRFX_STATIC_INLINE void bl_storage_counter_set(uint32_t address, counter_t value);
-
-const struct monotonic_counter *get_counter_struct(uint16_t description);
-int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t **free_slot);
-
 /** The first data structure in the bootloader storage. It has unknown length
  *  since 'key_data' is repeated. This data structure is immediately followed by
  *  struct counter_collection.
@@ -243,136 +235,6 @@ enum lcs {
 };
 
 /**
- * Copies @p src into @p dst. Reads from @p src are done 32 bits at a
- * time. Writes to @p dst are done a byte at a time.
- *
- * @param[out] dst destination buffer.
- * @param[in] src source buffer in OTP. Must be 4-byte-aligned.
- * @param[in] size number of *bytes* in src to copy into dst. Must be divisible by 4.
- */
-NRFX_STATIC_INLINE void otp_copy32(uint8_t *restrict dst, uint32_t volatile * restrict src,
-				   size_t size)
-{
-	for (int i = 0; i < size / 4; i++) {
-		/* OTP is in UICR */
-		uint32_t val = bl_storage_word_read((uint32_t)(src + i));
-
-		for (int j = 0; j < 4; j++) {
-			dst[i * 4 + j] = (val >> 8 * j) & 0xFF;
-		}
-	}
-}
-/**
- * Read the implementation id from OTP and copy it into a given buffer.
- *
- * @param[out] buf Buffer that has at least BL_STORAGE_IMPLEMENTATION_ID_SIZE bytes
- */
-NRFX_STATIC_INLINE void read_implementation_id_from_otp(uint8_t *buf)
-{
-	if (buf == NULL) {
-		return;
-	}
-
-	otp_copy32(buf, (uint32_t *)&BL_STORAGE->implementation_id,
-		   BL_STORAGE_IMPLEMENTATION_ID_SIZE);
-}
-
-/* The OTP is 0xFFFF when erased and, like all flash, can only flip
- * bits from 0 to 1 when erasing. By setting all bits to zero we
- * enforce the correct transitioning of LCS until a full erase of the
- * device.
- */
-#define STATE_ENTERED 0x0000
-#define STATE_NOT_ENTERED 0xFFFF
-
-/* The bl_storage functions below are static inline in the header file
- * so that TF-M (that does not include bl_storage.c) can also have
- * access to them.
- * This is a temporary solution until TF-M has access to NSIB functions.
- */
-
-#if defined(CONFIG_NRFX_RRAMC)
-NRFX_STATIC_INLINE uint32_t index_from_address(uint32_t address)
-{
-	return ((address - (uint32_t)BL_STORAGE)/sizeof(uint32_t));
-}
-#endif
-
-NRFX_STATIC_INLINE counter_t bl_storage_counter_get(uint32_t address)
-{
-#if defined(CONFIG_NRFX_NVMC)
-	return ~nrfx_nvmc_otp_halfword_read(address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	return ~nrfx_rramc_otp_word_read(index_from_address(address));
-#endif
-}
-
-NRFX_STATIC_INLINE void bl_storage_counter_set(uint32_t address, counter_t value)
-{
-#if defined(CONFIG_NRFX_NVMC)
-	nrfx_nvmc_halfword_write((uint32_t)address, ~value);
-#elif defined(CONFIG_NRFX_RRAMC)
-	nrfx_rramc_otp_word_write(index_from_address((uint32_t)address), ~value);
-#endif
-}
-
-NRFX_STATIC_INLINE uint32_t bl_storage_word_read(uint32_t address)
-{
-#if defined(CONFIG_NRFX_NVMC)
-	return nrfx_nvmc_uicr_word_read((uint32_t *)address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	return nrfx_rramc_word_read(address);
-#endif
-}
-
-NRFX_STATIC_INLINE uint32_t bl_storage_word_write(uint32_t address, uint32_t value)
-{
-#if defined(CONFIG_NRFX_NVMC)
-	nrfx_nvmc_word_write(address, value);
-	return 0;
-#elif defined(CONFIG_NRFX_RRAMC)
-	nrfx_rramc_word_write(address, value);
-	return 0;
-#endif
-}
-
-NRFX_STATIC_INLINE uint16_t bl_storage_otp_halfword_read(uint32_t address)
-{
-	uint16_t halfword;
-#if defined(CONFIG_NRFX_NVMC)
-	halfword = nrfx_nvmc_otp_halfword_read(address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	uint32_t word = nrfx_rramc_otp_word_read(index_from_address(address));
-
-	if (!(address & 0x3)) {
-		halfword = (uint16_t)(word & 0x0000FFFF); /* C truncates the upper bits */
-	} else {
-		halfword = (uint16_t)(word >> 16); /* Shift the upper half down */
-	}
-#endif
-	return halfword;
-}
-
-NRFX_STATIC_INLINE lcs_data_t bl_storage_lcs_get(uint32_t address)
-{
-#if defined(CONFIG_NRFX_NVMC)
-	return nrfx_nvmc_otp_halfword_read(address);
-#elif defined(CONFIG_NRFX_RRAMC)
-	return nrfx_rramc_otp_word_read(index_from_address(address));
-#endif
-}
-
-NRFX_STATIC_INLINE int bl_storage_lcs_set(uint32_t address, lcs_data_t state)
-{
-#if defined(CONFIG_NRFX_NVMC)
-	nrfx_nvmc_halfword_write(address, state);
-#elif defined(CONFIG_NRFX_RRAMC)
-	bl_storage_word_write(address, state);
-#endif
-	return 0;
-}
-
-/**
  * @brief Read the current life cycle state the device is in from OTP,
  *
  * @param[out] lcs Will be set to the current LCS the device is in
@@ -380,41 +242,7 @@ NRFX_STATIC_INLINE int bl_storage_lcs_set(uint32_t address, lcs_data_t state)
  * @retval 0            The LCS read was successful.
  * @retval -EREADLCS    Error on reading from OTP or invalid OTP content.
  */
-NRFX_STATIC_INLINE int read_life_cycle_state(enum lcs *lcs)
-{
-	if (lcs == NULL) {
-		return -EINVAL;
-	}
-
-	lcs_data_t provisioning = bl_storage_lcs_get(
-		(uint32_t) &BL_STORAGE->lcs.provisioning);
-	lcs_data_t secure = bl_storage_lcs_get((uint32_t) &BL_STORAGE->lcs.secure);
-	lcs_data_t decommissioned = bl_storage_lcs_get(
-		(uint32_t) &BL_STORAGE->lcs.decommissioned);
-
-	if (provisioning == STATE_NOT_ENTERED
-		&& secure == STATE_NOT_ENTERED
-		&& decommissioned == STATE_NOT_ENTERED) {
-		*lcs = BL_STORAGE_LCS_ASSEMBLY;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_NOT_ENTERED
-			   && decommissioned == STATE_NOT_ENTERED) {
-		*lcs = BL_STORAGE_LCS_PROVISIONING;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_ENTERED
-			   && decommissioned == STATE_NOT_ENTERED) {
-		*lcs = BL_STORAGE_LCS_SECURED;
-	} else if (provisioning == STATE_ENTERED
-			   && secure == STATE_ENTERED
-			   && decommissioned == STATE_ENTERED) {
-		*lcs = BL_STORAGE_LCS_DECOMMISSIONED;
-	} else {
-		/* To reach this the OTP must be corrupted or reading failed */
-		return -EREADLCS;
-	}
-
-	return 0;
-}
+int read_life_cycle_state(enum lcs *lcs);
 
 /**
  * @brief Update the life cycle state in OTP.
@@ -426,46 +254,14 @@ NRFX_STATIC_INLINE int read_life_cycle_state(enum lcs *lcs)
  * @retval -EREADLCS    Reading the current state failed.
  * @retval -EINVALIDLCS Invalid next state.
  */
-NRFX_STATIC_INLINE int update_life_cycle_state(enum lcs next_lcs)
-{
-	int err;
-	enum lcs current_lcs = 0;
+int update_life_cycle_state(enum lcs next_lcs);
 
-	if (next_lcs == BL_STORAGE_LCS_UNKNOWN) {
-		return -EINVALIDLCS;
-	}
-
-	err = read_life_cycle_state(&current_lcs);
-	if (err != 0) {
-		return err;
-	}
-
-	if (next_lcs < current_lcs) {
-		/* Is is only possible to transition into a higher state */
-		return -EINVALIDLCS;
-	}
-
-	if (next_lcs == current_lcs) {
-		/* The same LCS is a valid argument, but nothing to do so return success */
-		return 0;
-	}
-
-	/* As the device starts in ASSEMBLY, it is not possible to write it */
-	if (current_lcs == BL_STORAGE_LCS_ASSEMBLY && next_lcs == BL_STORAGE_LCS_PROVISIONING) {
-		return bl_storage_lcs_set((uint32_t)&BL_STORAGE->lcs.provisioning, STATE_ENTERED);
-	}
-
-	if (current_lcs == BL_STORAGE_LCS_PROVISIONING && next_lcs == BL_STORAGE_LCS_SECURED) {
-		return bl_storage_lcs_set((uint32_t)&BL_STORAGE->lcs.secure, STATE_ENTERED);
-	}
-
-	if (current_lcs == BL_STORAGE_LCS_SECURED && next_lcs == BL_STORAGE_LCS_DECOMMISSIONED) {
-		return bl_storage_lcs_set((uint32_t)&BL_STORAGE->lcs.decommissioned, STATE_ENTERED);
-	}
-
-	/* This will be the case if any invalid transition is tried */
-	return -EINVALIDLCS;
-}
+/**
+ * Read the implementation id from OTP and copy it into a given buffer.
+ *
+ * @param[out] buf Buffer that has at least BL_STORAGE_IMPLEMENTATION_ID_SIZE bytes
+ */
+void read_implementation_id_from_otp(uint8_t *buf);
 
   /** @} */
 
