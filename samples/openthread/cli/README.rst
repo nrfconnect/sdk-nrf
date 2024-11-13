@@ -97,6 +97,10 @@ Snippets
 The following snippets are available:
 
 * ``usb`` - Enables USB transport support.
+
+  .. note::
+     The ``usb`` snippet is not supported for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+
 * ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
 * ``debug`` - Enables debugging the Thread sample with GDB thread awareness.
