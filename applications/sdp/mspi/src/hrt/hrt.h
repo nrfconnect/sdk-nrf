@@ -9,6 +9,6 @@
 
 #include <stdint.h>
 
-void write_single_by_word(uint32_t* data, uint8_t data_len, uint32_t counter_top);
+void write_single_by_word(uint32_t* data, uint8_t data_len, uint32_t counter_top, uint8_t word_size);
 
 #endif /* _HRT_H__ */

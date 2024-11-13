@@ -44,11 +44,7 @@ volatile int i = 0;
 
 int main(void)
 {
-	// printk("Boootttinnggg\n");
-	// k_msleep(100);
-
 	nrf_vpr_csr_rtperiph_enable_set(true);
-
 
 	// nrf_gpio_pin_dir_t dir = NRF_GPIO_PIN_DIR_OUTPUT;
 	// nrf_gpio_pin_input_t input = NRF_GPIO_PIN_INPUT_DISCONNECT;
@@ -66,20 +62,16 @@ int main(void)
 
 	mspi_init();
 
-	// printk("Initialized\n");
+	uint8_t len = 5;
+	uint32_t to_send[5] = {0x10, 0x93708965, 0x25, 0x5060, 0x3278};
 
-	uint8_t len = 3;
-	uint32_t to_send[3] = {0x10, 0x30708965, 0x25};
+	write_single_by_word(to_send, len, 4, 32);
 
-	// for (uint8_t i=0; i< len; i++)
-	// {
-	// 	printk("Word %u: %u\n", i, to_send[i]);
-	// }
+	k_msleep(1);
 
-	write_single_by_word(to_send, len, 4);
-
-	// k_msleep(100);
-	// printk("Written\n");
+	uint8_t len2 = 3;
+	uint32_t to_send2[3] = {0xff, 0x10, 0xf6};
+	write_single_by_word(to_send2, len2, 4, 15);
 
 	while (true) {
 		k_cpu_idle();
