@@ -104,9 +104,10 @@ jobs:
             -c origin/${BASE_REF}..
 
     - name: Upload results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       continue-on-error: true
       if: always() && contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       with:
         name: licenses.xml
         path: ncs/${{ inputs.path }}/licenses.xml
+        overwrite: true
