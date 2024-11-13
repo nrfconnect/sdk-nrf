@@ -869,15 +869,15 @@ static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt)
 
 	sec_tag = nrf_cloud_sec_tag_get();
 
-	struct nrf_cloud_download_data dl = {
+	struct nrf_cloud_download_data cloud_dl = {
 		.type = NRF_CLOUD_DL_TYPE_FOTA,
 		.host = job->info.host,
 		.path = job->info.path,
-		.dl_cfg = {
+		.dl_host_conf = {
 			.sec_tag_list = &sec_tag,
 			.sec_tag_count = (sec_tag < 0 ? 0 : 1),
 			.pdn_id = 0,
-			.frag_size_override = CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
+			.range_override = CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
 		},
 		.fota = {
 			.expected_type = img_type,
@@ -886,7 +886,7 @@ static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt)
 		}
 	};
 
-	ret = nrf_cloud_download_start(&dl);
+	ret = nrf_cloud_download_start(&cloud_dl);
 	if (ret) {
 		LOG_ERR("Failed to start FOTA download: %d", ret);
 		ret = -EPIPE;
@@ -1118,11 +1118,10 @@ static int handle_mqtt_evt_publish(const struct mqtt_evt *evt)
 		LOG_INF("Job %s already completed... skipping", last_job);
 		nrf_cloud_fota_job_free(job_info);
 	} else {
-		LOG_DBG("Job ID: %s, type: %d, size: %d",
+		LOG_DBG("Job ID: %s, type: %d, size: %d, file: %s/%s",
 			job_info->id,
 			job_info->type,
-			job_info->file_size);
-		LOG_DBG("File: %s/%s",
+			job_info->file_size,
 			job_info->host,
 			job_info->path);
 	}

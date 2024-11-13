@@ -32,14 +32,12 @@
 #include "fota_download_smp.h"
 #endif
 
-#include "download_client_internal.h"
-
 LOG_MODULE_REGISTER(fota_download_util, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
 /**
  * @brief FOTA download url data.
  */
-struct fota_download_client_url_data {
+struct fota_download_url_data {
 	/** Host name */
 	const char *host;
 	/** Host name length */
@@ -62,7 +60,7 @@ static bool download_active;
 static enum dfu_target_image_type active_dfu_type;
 
 int fota_download_parse_dual_resource_locator(char *const file, bool s0_active,
-					     const char **selected_path)
+					      const char **selected_path)
 {
 	if (file == NULL || selected_path == NULL) {
 		LOG_ERR("Got NULL pointer");
@@ -119,10 +117,10 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 	}
 }
 
-static int fota_download_client_url_parse(const char *uri,
-					  struct fota_download_client_url_data *parsed_uri)
+static int fota_download_url_parse(const char *uri,
+					  struct fota_download_url_data *parsed_uri)
 {
-	int len, err, proto, type;
+	int len;
 	char *e, *s;
 
 	len = strlen(uri);
@@ -135,12 +133,6 @@ static int fota_download_client_url_parse(const char *uri,
 		return -EINVAL;
 	}
 	s += strlen("://");
-
-	/* Verify that download client knows the protocol */
-	err = url_parse_proto(uri, &proto, &type);
-	if (err) {
-		return err;
-	}
 
 	/* Find the end of host name, which is start of path */
 	e = strchr(s, '/');
@@ -163,11 +155,11 @@ static int fota_download_client_url_parse(const char *uri,
 static int download_url_parse(const char *uri, int sec_tag)
 {
 	int ret;
-	struct fota_download_client_url_data parsed_uri;
+	struct fota_download_url_data parsed_uri;
 
 	LOG_INF("Download url %s", uri);
 
-	ret = fota_download_client_url_parse(uri, &parsed_uri);
+	ret = fota_download_url_parse(uri, &parsed_uri);
 	if (ret) {
 		return ret;
 	}
@@ -237,8 +229,8 @@ int fota_download_util_stream_init(void)
 }
 
 int fota_download_util_download_start(const char *download_uri,
-				     enum dfu_target_image_type dfu_target_type, int sec_tag,
-				     fota_download_callback_t client_callback)
+				      enum dfu_target_image_type dfu_target_type, int sec_tag,
+				      fota_download_callback_t client_callback)
 {
 	int ret;
 

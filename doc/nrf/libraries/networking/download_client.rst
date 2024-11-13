@@ -7,6 +7,11 @@ Download client
    :local:
    :depth: 2
 
+.. note::
+
+   The :ref:`lib_download_client` library has been deprecated and it will be removed in one of the future releases.
+   Use the :ref:`lib_downloader` library instead.
+
 The download client library can be used to download files from an HTTP or a CoAP server.
 
 Overview

@@ -1,7 +1,7 @@
 sample:
   name: Download sample
 tests:
-  sample.net.download_client:
+  sample.net.downloader:
     sysbuild: true
     build_only: true
     integration_platforms:
@@ -13,13 +13,13 @@ tests:
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
     tags: ci_build sysbuild ci_samples_net
-  sample.net.download_client.ci:
+  sample.net.downloader.ci:
     sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_SHELL=y
       - CONFIG_COAP=y
-      - CONFIG_DOWNLOAD_CLIENT_SHELL=y
+      - CONFIG_DOWNLOADER_SHELL=y
       - CONFIG_SAMPLE_COMPUTE_HASH=y
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -32,7 +32,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
     tags: ci_build sysbuild ci_samples_net
-  sample.net.download_client.nrf54l15.wifi:
+  sample.net.downloader.nrf54l15.wifi:
     sysbuild: true
     tags: ci_build sysbuild ci_samples_net
     build_only: true

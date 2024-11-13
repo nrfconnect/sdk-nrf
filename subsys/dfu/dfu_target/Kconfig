@@ -68,7 +68,6 @@ config DFU_TARGET_STREAM_SAVE_PROGRESS
 
 config DFU_TARGET_MODEM_DELTA
 	bool "Modem delta update support"
-	imply DOWNLOAD_CLIENT_RANGE_REQUESTS
 	default y
 	depends on SOC_SERIES_NRF91X
 	help

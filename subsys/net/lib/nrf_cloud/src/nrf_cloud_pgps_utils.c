@@ -47,13 +47,20 @@ static struct nrf_cloud_pgps_header saved_header;
 
 static K_SEM_DEFINE(dl_active, 1, 1);
 
-static struct download_client dlc;
+static char dl_buf[2048];
+static struct downloader dl;
+static int downloader_callback(const struct downloader_evt *event);
+static struct downloader_cfg dl_cfg = {
+	.callback = downloader_callback,
+	.buf = dl_buf,
+	.buf_size = sizeof(dl_buf),
+};
+
 static int sec_tag_list[1];
 static int socket_retries_left;
 static npgps_buffer_handler_t buffer_handler;
 static npgps_eot_handler_t eot_handler;
 
-static int download_client_callback(const struct download_client_evt *event);
 static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg);
 
@@ -473,15 +480,13 @@ int npgps_download_init(npgps_buffer_handler_t buf_handler, npgps_eot_handler_t 
 	buffer_handler = buf_handler;
 	eot_handler = end_handler;
 
-	return download_client_init(&dlc, download_client_callback);
+	return downloader_init(&dl, &dl_cfg);
 }
 
 int npgps_download_start(const char *host, const char *file, int sec_tag,
 			 uint8_t pdn_id, size_t fragment_size)
 {
-	if (host == NULL || file == NULL) {
-		return -EINVAL;
-	}
+	int err;
 
 #if defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4)
 	int family = AF_UNSPEC;
@@ -492,32 +497,34 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 #else
 	int family = AF_UNSPEC;
 #endif /* defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4) */
-	int err;
-	struct nrf_cloud_download_data dl = {
+
+	if (host == NULL || file == NULL) {
+		return -EINVAL;
+	}
+
+	struct nrf_cloud_download_data cloud_dl = {
 		.type = NRF_CLOUD_DL_TYPE_DL_CLIENT,
 		.host = host,
 		.path = file,
-		.dl_cfg = {
+		.dl_host_conf = {
 			.sec_tag_count = 0,
 			.sec_tag_list = NULL,
 			.pdn_id = pdn_id,
-			.frag_size_override = fragment_size,
-			.set_tls_hostname = false,
-			.family = family
+			.range_override = fragment_size,
+			.family = family,
 		},
-		.dlc = &dlc
+		.dl = &dl,
 	};
 
 	if (sec_tag != -1) {
 		sec_tag_list[0] = sec_tag;
-		dl.dl_cfg.sec_tag_list = sec_tag_list;
-		dl.dl_cfg.sec_tag_count = 1;
-		dl.dl_cfg.set_tls_hostname = true;
+		cloud_dl.dl_host_conf.sec_tag_list = sec_tag_list;
+		cloud_dl.dl_host_conf.sec_tag_count = 1;
 	}
 
 	socket_retries_left = SOCKET_RETRIES;
 
-	err = nrf_cloud_download_start(&dl);
+	err = nrf_cloud_download_start(&cloud_dl);
 	if (err) {
 		LOG_ERR("Failed to start P-GPS download, error: %d", err);
 		eot_handler(err); /* Let requester know so it can clean up. */
@@ -526,7 +533,7 @@ int npgps_download_start(const char *host, const char *file, int sec_tag,
 	return err;
 }
 
-static int download_client_callback(const struct download_client_evt *event)
+static int downloader_callback(const struct downloader_evt *event)
 {
 	int err = 0;
 
@@ -535,17 +542,17 @@ static int download_client_callback(const struct download_client_evt *event)
 	}
 
 	switch (event->id) {
-	case DOWNLOAD_CLIENT_EVT_FRAGMENT:
+	case DOWNLOADER_EVT_FRAGMENT:
 		err = buffer_handler((uint8_t *)event->fragment.buf,
 				     event->fragment.len);
 		if (!err) {
 			return 0;
 		}
 		break;
-	case DOWNLOAD_CLIENT_EVT_DONE:
+	case DOWNLOADER_EVT_DONE:
 		LOG_DBG("Download client done");
 		break;
-	case DOWNLOAD_CLIENT_EVT_ERROR: {
+	case DOWNLOADER_EVT_ERROR: {
 		if ((event->error == -ECANCELED) && IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)) {
 			eot_handler(event->error);
 			return 0;
@@ -568,9 +575,11 @@ static int download_client_callback(const struct download_client_evt *event)
 		return 0;
 	}
 
-	/* CoAP downloads do not need to disconnect since they don't directly use download_client */
+	/* CoAP downloads do not need to disconnect since they don't directly use downloader */
 #if !defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
-	int ret = download_client_disconnect(&dlc);
+	int ret;
+
+	ret = downloader_cancel(&dl);
 
 	if (ret) {
 		LOG_ERR("Error disconnecting from download client:%d", ret);

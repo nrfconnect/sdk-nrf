@@ -84,7 +84,6 @@ int npgps_download_init(npgps_buffer_handler_t buf_handler, npgps_eot_handler_t 
 int npgps_download_start(const char *host, const char *file, int sec_tag,
 			 uint8_t pdn_id, size_t fragment_size);
 
-
 #ifdef __cplusplus
 }
 #endif

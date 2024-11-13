@@ -8,7 +8,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/hash_function.h>
 #include <net/fota_download.h>
-#include <net/download_client.h>
+#include <net/downloader.h>
 #include <pm_config.h>
 #include <zephyr/net/socket.h>
 
@@ -35,10 +35,19 @@ static const char *dl_host;
 static const char *dl_file;
 static uint32_t dl_host_hash;
 static uint32_t dl_file_hash;
-static struct download_client dlc;
+
+static struct downloader dl;
+static int downloader_callback(const struct downloader_evt *event);
+static char dl_buf[CONFIG_FOTA_DOWNLOAD_BUF_SZ];
+static struct downloader_cfg dl_cfg = {
+	.callback = downloader_callback,
+	.buf = dl_buf,
+	.buf_size = sizeof(dl_buf),
+};
+static struct downloader_host_cfg dl_host_cfg;
 /** SMP MCUBoot image type */
 static bool use_smp_dfu_target;
-static struct k_work_delayable  dlc_with_offset_work;
+static struct k_work_delayable  dl_with_offset_work;
 static int socket_retries_left;
 #ifdef CONFIG_DFU_TARGET_MCUBOOT
 static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ] __aligned(4);
@@ -50,7 +59,7 @@ enum flags_t {
 	FLAG_FIRST_FRAGMENT,
 	FLAG_RESUME,
 	FLAG_NEW_URI,
-	FLAG_CLOSED,
+	FLAG_STOPPED,
 	FLAG_CANCEL,
 };
 static atomic_t flags;
@@ -138,7 +147,7 @@ static size_t file_size_get(size_t *size)
 	*size = ext_file_sz;
 	return 0;
 #endif
-	return download_client_file_size_get(&dlc, size);
+	return downloader_file_size_get(&dl, size);
 }
 
 static size_t downloaded_size_get(size_t *size)
@@ -147,18 +156,18 @@ static size_t downloaded_size_get(size_t *size)
 	*size = ext_rcvd_sz;
 	return 0;
 #endif
-	return download_client_downloaded_size_get(&dlc, size);
+	return downloader_downloaded_size_get(&dl, size);
 }
 
-static int disconnect(void)
+static int dl_cancel(void)
 {
 #if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
 	return 0;
 #endif
-	return download_client_disconnect(&dlc);
+	return downloader_cancel(&dl);
 }
 
-static int download_client_callback(const struct download_client_evt *event)
+static int downloader_callback(const struct downloader_evt *event)
 {
 	static size_t file_size;
 	size_t offset;
@@ -169,7 +178,7 @@ static int download_client_callback(const struct download_client_evt *event)
 	}
 
 	switch (event->id) {
-	case DOWNLOAD_CLIENT_EVT_FRAGMENT: {
+	case DOWNLOADER_EVT_FRAGMENT: {
 		if (atomic_test_and_clear_bit(&flags, FLAG_FIRST_FRAGMENT)) {
 			err = file_size_get(&file_size);
 			if (err != 0) {
@@ -245,10 +254,9 @@ static int download_client_callback(const struct download_client_evt *event)
 					 * schedule new download from offset.
 					 */
 					atomic_set_bit(&flags, FLAG_RESUME);
-					(void)disconnect();
-					k_work_schedule(&dlc_with_offset_work, K_SECONDS(1));
+					(void)dl_cancel();
+					k_work_schedule(&dl_with_offset_work, K_SECONDS(1));
 					LOG_INF("Refuse fragment, restart with offset");
-
 					return -1;
 				}
 			} else {
@@ -291,7 +299,7 @@ static int download_client_callback(const struct download_client_evt *event)
 		break;
 	}
 
-	case DOWNLOAD_CLIENT_EVT_DONE:
+	case DOWNLOADER_EVT_DONE:
 		err = dfu_target_done(true);
 		if (err == 0 && IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
 			err = dfu_target_schedule_update(0);
@@ -303,14 +311,13 @@ static int download_client_callback(const struct download_client_evt *event)
 			goto error_and_close;
 		}
 
-		err = disconnect();
-		if (err != 0) {
-			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
-			goto error_and_close;
-		}
+		atomic_clear_bit(&flags, FLAG_DOWNLOADING);
+		atomic_set_bit(&flags, FLAG_STOPPED);
+		send_evt(FOTA_DOWNLOAD_EVT_FINISHED);
+
 		break;
 
-	case DOWNLOAD_CLIENT_EVT_ERROR:
+	case DOWNLOADER_EVT_ERROR:
 		/* In case of socket errors we can return 0 to retry/continue,
 		 * or non-zero to stop
 		 */
@@ -319,15 +326,17 @@ static int download_client_callback(const struct download_client_evt *event)
 				socket_retries_left);
 			socket_retries_left--;
 			/* Fall through and return 0 below to tell
-			 * download_client to retry
+			 * downloader to retry
 			 */
-		} else if ((event->error == -ECONNABORTED) || (event->error == -ECONNREFUSED)) {
+		} else if ((event->error == -ECONNABORTED) ||
+			   (event->error == -ECONNREFUSED) ||
+			   (event->error == -EHOSTUNREACH)) {
 			LOG_ERR("Download client failed to connect to server");
 			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED);
 
 			goto error_and_close;
 		} else {
-			LOG_ERR("Download client error");
+			LOG_ERR("Downloader error event %d", event->error);
 			err = dfu_target_done(false);
 			if (err == -EACCES) {
 				LOG_DBG("No DFU target was initialized");
@@ -339,13 +348,15 @@ static int download_client_callback(const struct download_client_evt *event)
 			goto error_and_close;
 		}
 		break;
-	case DOWNLOAD_CLIENT_EVT_CLOSED:
-		atomic_set_bit(&flags, FLAG_CLOSED);
+	case DOWNLOADER_EVT_STOPPED:
+		atomic_set_bit(&flags, FLAG_STOPPED);
 		/* Only clear flags if we are not going to resume */
 		if (!atomic_test_bit(&flags, FLAG_RESUME)) {
 			stopped();
 		}
 		break;
+	case DOWNLOADER_EVT_DEINITIALIZED:
+		/* Not implemented in fota download */
 	default:
 		break;
 	}
@@ -354,7 +365,6 @@ static int download_client_callback(const struct download_client_evt *event)
 
 error_and_close:
 	atomic_clear_bit(&flags, FLAG_RESUME);
-	(void)disconnect();
 	dfu_target_done(false);
 	return -1;
 }
@@ -366,7 +376,7 @@ static int get_from_offset(const size_t offset)
 		return 0;
 	}
 
-	int err = download_client_get(&dlc, dl_host, &dlc.config, dl_file, offset);
+	int err = downloader_get_with_host_and_file(&dl, &dl_host_cfg, dl_host, dl_file, offset);
 
 	if (err != 0) {
 		LOG_ERR("%s failed to start download with error %d", __func__, err);
@@ -383,9 +393,9 @@ static void download_with_offset(struct k_work *unused)
 	size_t offset;
 	int err;
 
-	if (!atomic_test_bit(&flags, FLAG_CLOSED)) {
-		/* Re-schedule, wait for socket close */
-		k_work_schedule(&dlc_with_offset_work, K_SECONDS(1));
+	if (!atomic_test_bit(&flags, FLAG_STOPPED)) {
+		/* Re-schedule, wait for previous download to be stopped */
+		k_work_schedule(&dl_with_offset_work, K_SECONDS(1));
 		return;
 	}
 
@@ -407,20 +417,6 @@ static void download_with_offset(struct k_work *unused)
 
 stop_and_clear_flags:
 	stopped();
-	return;
-}
-
-static bool is_ip_address(const char *host)
-{
-	struct sockaddr sa;
-
-	if (zsock_inet_pton(AF_INET, host, sa.data) == 1) {
-		return true;
-	} else if (zsock_inet_pton(AF_INET6, host, sa.data) == 1) {
-		return true;
-	}
-
-	return false;
 }
 
 int fota_download_b1_file_parse(char *s0_s1_files)
@@ -509,17 +505,19 @@ int fota_download_s0_active_get(bool *const s0_active)
 int fota_download_any(const char *host, const char *file, const int *sec_tag_list,
 		      uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size)
 {
-	return fota_download(host, file, sec_tag_list, sec_tag_count, pdn_id,
-			     fragment_size, DFU_TARGET_IMAGE_TYPE_ANY);
+	return fota_download(host, file, sec_tag_list, sec_tag_count, pdn_id, fragment_size,
+			     DFU_TARGET_IMAGE_TYPE_ANY);
 }
 
 static void set_host_and_file(char const *const host, char const *const file)
 {
-	uint32_t host_hash = sys_hash32(host, strlen(host));
-	uint32_t file_hash = sys_hash32(file, strlen(file));
+	uint32_t host_hash;
+	uint32_t file_hash;
 
-	LOG_DBG("URI checksums %d,%d,%d,%d\r\n", host_hash, file_hash,
-						 dl_host_hash, dl_file_hash);
+	host_hash = sys_hash32(host, strlen(host));
+	file_hash = sys_hash32(file, strlen(file));
+
+	LOG_DBG("URI checksums %d,%d,%d,%d\r\n", host_hash, file_hash, dl_host_hash, dl_file_hash);
 
 	/* Verify if the URI is same as last time, if not, prevent resuming. */
 	if (dl_host_hash != host_hash || dl_file_hash != file_hash) {
@@ -536,9 +534,9 @@ static void set_host_and_file(char const *const host, char const *const file)
 }
 
 #if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-int fota_download_external_evt_handle(struct download_client_evt const *const evt)
+int fota_download_external_evt_handle(struct downloader_evt const *const evt)
 {
-	return download_client_callback(evt);
+	return downloader_callback(evt);
 }
 
 int fota_download_external_start(const char *host, const char *file,
@@ -553,7 +551,7 @@ int fota_download_external_start(const char *host, const char *file,
 		return -EALREADY;
 	}
 
-	atomic_clear_bit(&flags, FLAG_CLOSED);
+	atomic_clear_bit(&flags, FLAG_STOPPED);
 	atomic_clear_bit(&flags, FLAG_RESUME);
 	set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR);
 
@@ -587,16 +585,14 @@ int fota_download(const char *host, const char *file,
 
 	int err;
 	static int sec_tag_list_copy[CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX];
-	struct download_client_cfg config = {
-		.pdn_id = pdn_id,
-		.frag_size_override = fragment_size,
-	};
+	dl_host_cfg.pdn_id = pdn_id;
+	dl_host_cfg.range_override = fragment_size;
 
 	if (sec_tag_count > ARRAY_SIZE(sec_tag_list_copy)) {
 		return -E2BIG;
 	}
 
-	atomic_clear_bit(&flags, FLAG_CLOSED);
+	atomic_clear_bit(&flags, FLAG_STOPPED);
 	atomic_clear_bit(&flags, FLAG_RESUME);
 	set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR);
 
@@ -605,12 +601,8 @@ int fota_download(const char *host, const char *file,
 	if ((sec_tag_list != NULL) && (sec_tag_count > 0)) {
 		memcpy(sec_tag_list_copy, sec_tag_list, sec_tag_count * sizeof(sec_tag_list[0]));
 
-		config.sec_tag_count = sec_tag_count;
-		config.sec_tag_list = sec_tag_list_copy;
-
-		if (!is_ip_address(host)) {
-			config.set_tls_hostname = true;
-		}
+		dl_host_cfg.sec_tag_count = sec_tag_count;
+		dl_host_cfg.sec_tag_list = sec_tag_list_copy;
 	}
 
 	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
@@ -636,18 +628,18 @@ int fota_download(const char *host, const char *file,
 
 	atomic_set_bit(&flags, FLAG_FIRST_FRAGMENT);
 
-	err = download_client_get(&dlc, dl_host, &config, dl_file, 0);
+	err = downloader_get_with_host_and_file(&dl, &dl_host_cfg, dl_host, dl_file, 0);
 	if (err != 0) {
 		atomic_clear_bit(&flags, FLAG_DOWNLOADING);
-		(void)disconnect();
+		(void)dl_cancel();
 		return err;
 	}
 
 	return 0;
 }
 
-int fota_download_start(const char *host, const char *file, int sec_tag,
-			uint8_t pdn_id, size_t fragment_size)
+int fota_download_start(const char *host, const char *file, int sec_tag, uint8_t pdn_id,
+			size_t fragment_size)
 {
 	int sec_tag_list[1] = { sec_tag };
 	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
@@ -662,27 +654,27 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 	int sec_tag_list[1] = { sec_tag };
 	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
 
-	return fota_download(host, file, sec_tag_list, sec_tag_count, pdn_id,
-			     fragment_size, expected_type);
+	return fota_download(host, file, sec_tag_list, sec_tag_count, pdn_id, fragment_size,
+			     expected_type);
 }
 
 static int fota_download_object_init(void)
 {
 	int err;
 
-	k_work_init_delayable(&dlc_with_offset_work, download_with_offset);
-
-	err = download_client_init(&dlc, download_client_callback);
-	if (err != 0) {
-		return err;
-	}
-
 #ifdef CONFIG_FOTA_DOWNLOAD_NATIVE_TLS
 	/* Enable native TLS for the download client socket
 	 * if configured.
 	 */
-	dlc.set_native_tls = true;
+	dl_host_cfg.native_tls = CONFIG_FOTA_DOWNLOAD_NATIVE_TLS;
 #endif
+
+	k_work_init_delayable(&dl_with_offset_work, download_with_offset);
+
+	err = downloader_init(&dl, &dl_cfg);
+	if (err != 0) {
+		return err;
+	}
 
 	initialized = true;
 	return 0;
@@ -750,9 +742,9 @@ int fota_download_cancel(void)
 
 	atomic_set_bit(&flags, FLAG_CANCEL);
 
-	err = disconnect();
+	err = dl_cancel();
 	if (err) {
-		LOG_ERR("%s failed to disconnect: %d", __func__, err);
+		LOG_ERR("%s failed to stop download: %d", __func__, err);
 		return err;
 	}
 

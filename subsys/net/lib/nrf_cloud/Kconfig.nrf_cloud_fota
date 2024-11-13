@@ -9,7 +9,7 @@ menuconfig NRF_CLOUD_FOTA
 	select FOTA_DOWNLOAD
 	select FOTA_DOWNLOAD_PROGRESS_EVT
 	select DFU_TARGET
-	select DOWNLOAD_CLIENT
+	select DOWNLOADER
 	select REBOOT
 	select CJSON_LIB
 	select SETTINGS

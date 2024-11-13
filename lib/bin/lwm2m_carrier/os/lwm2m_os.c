@@ -14,7 +14,7 @@
 #include <nrf_modem.h>
 #include <modem/pdn.h>
 #include <modem/sms.h>
-#include <net/download_client.h>
+#include <net/downloader.h>
 #include <zephyr/storage/flash_map.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/__assert.h>
@@ -412,49 +412,57 @@ void lwm2m_os_sms_client_deregister(int handle)
 }
 
 /* Download client module abstractions. */
+static char dl_buf[CONFIG_LWM2M_CARRIER_FIRMWARE_DOWNLOAD_BUF_SIZE];
+static int callback(const struct downloader_evt *event);
 
-static struct download_client http_downloader;
+static struct downloader_cfg dl_cfg = {
+	.callback = callback,
+	.buf = dl_buf,
+	.buf_size = sizeof(dl_buf),
+};
+
+static struct downloader http_downloader;
 static lwm2m_os_download_callback_t lwm2m_os_lib_callback;
 
-int lwm2m_os_download_get(const char *host, const struct lwm2m_os_download_cfg *cfg, size_t from)
+int lwm2m_os_download_get(const char *uri, const struct lwm2m_os_download_cfg *cfg, size_t from)
 {
-	struct download_client_cfg config = {
+	struct downloader_host_cfg dl_host_cfg = {
 		.sec_tag_list = cfg->sec_tag_list,
 		.sec_tag_count = cfg->sec_tag_count,
 		.pdn_id = cfg->pdn_id,
 	};
 
 	if (cfg->family == LWM2M_OS_PDN_FAM_IPV6) {
-		config.family = AF_INET6;
+		dl_host_cfg.family = AF_INET6;
 	} else if (cfg->family == LWM2M_OS_PDN_FAM_IPV4) {
-		config.family = AF_INET;
+		dl_host_cfg.family = AF_INET;
 	}
 
-	return download_client_get(&http_downloader, host, &config, NULL, from);
+	return downloader_get(&http_downloader, &dl_host_cfg, uri, from);
 }
 
 int lwm2m_os_download_disconnect(void)
 {
-	return download_client_disconnect(&http_downloader);
+	return downloader_cancel(&http_downloader);
 }
 
-static void download_client_evt_translate(const struct download_client_evt *event,
-					  struct lwm2m_os_download_evt *lwm2m_os_event)
+static void downloader_evt_translate(const struct downloader_evt *event,
+				     struct lwm2m_os_download_evt *lwm2m_os_event)
 {
 	switch (event->id) {
-	case DOWNLOAD_CLIENT_EVT_FRAGMENT:
+	case DOWNLOADER_EVT_FRAGMENT:
 		lwm2m_os_event->id = LWM2M_OS_DOWNLOAD_EVT_FRAGMENT;
 		lwm2m_os_event->fragment.buf = event->fragment.buf;
 		lwm2m_os_event->fragment.len = event->fragment.len;
 		break;
-	case DOWNLOAD_CLIENT_EVT_DONE:
+	case DOWNLOADER_EVT_DONE:
 		lwm2m_os_event->id = LWM2M_OS_DOWNLOAD_EVT_DONE;
 		break;
-	case DOWNLOAD_CLIENT_EVT_ERROR:
+	case DOWNLOADER_EVT_ERROR:
 		lwm2m_os_event->id = LWM2M_OS_DOWNLOAD_EVT_ERROR;
 		lwm2m_os_event->error = event->error;
 		break;
-	case DOWNLOAD_CLIENT_EVT_CLOSED:
+	case DOWNLOADER_EVT_STOPPED:
 		lwm2m_os_event->id = LWM2M_OS_DOWNLOAD_EVT_CLOSED;
 		break;
 	default:
@@ -462,11 +470,11 @@ static void download_client_evt_translate(const struct download_client_evt *even
 	}
 }
 
-static int callback(const struct download_client_evt *event)
+static int callback(const struct downloader_evt *event)
 {
 	struct lwm2m_os_download_evt lwm2m_os_event;
 
-	download_client_evt_translate(event, &lwm2m_os_event);
+	downloader_evt_translate(event, &lwm2m_os_event);
 
 	return lwm2m_os_lib_callback(&lwm2m_os_event);
 }
@@ -475,12 +483,12 @@ int lwm2m_os_download_init(lwm2m_os_download_callback_t lib_callback)
 {
 	lwm2m_os_lib_callback = lib_callback;
 
-	return download_client_init(&http_downloader, callback);
+	return downloader_init(&http_downloader, &dl_cfg);
 }
 
 int lwm2m_os_download_file_size_get(size_t *size)
 {
-	return download_client_file_size_get(&http_downloader, size);
+	return downloader_file_size_get(&http_downloader, size);
 }
 
 bool lwm2m_os_uicc_bootstrap_is_enabled(void)

@@ -235,7 +235,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`lib_date_time`
 * :ref:`lte_lc_readme`
 * :ref:`modem_info_readme`
-* :ref:`lib_download_client`
+* :ref:`lib_downloader`
 * :ref:`lib_fota_download`
 * :ref:`caf_leds`
 
