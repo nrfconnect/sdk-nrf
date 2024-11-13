@@ -8,8 +8,7 @@
 #    - None
 
 - platforms:
-    - native_posix
-    - native_sim
+    - native_.*
     - qemu_cortex_m3
     - qemu_x86
   comment: "Cannot build samples for Native POSIX and QEMU on Windows OS"
