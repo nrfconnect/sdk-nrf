@@ -68,9 +68,13 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_init, OT_RPC_CMD_CLI_INIT, ot_
 static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	char input_line_buffer[256];
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	char *result;
+
+#if CONFIG_OPENTHREAD_CLI_MAX_LINE_LENGTH > 256
+	static
+#endif
+		char input_line_buffer[CONFIG_OPENTHREAD_CLI_MAX_LINE_LENGTH - 1];
 
 	/* Parse the input */
 	result = nrf_rpc_decode_str(ctx, input_line_buffer, sizeof(input_line_buffer));
