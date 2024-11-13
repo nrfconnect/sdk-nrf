@@ -1,7 +1,7 @@
 .. _ug_nrf54h20_suit_recovery:
 
-Configuring and programming the SUIT manufacturer application recovery firmware
-###############################################################################
+SUIT Recovery
+#############
 
 .. contents::
    :local:
