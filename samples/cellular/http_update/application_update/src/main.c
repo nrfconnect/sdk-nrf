@@ -367,7 +367,6 @@ static int update_download(void)
 	file = CONFIG_DOWNLOAD_FILE_V2;
 #endif
 
-	/* Functions for getting the host and file */
 	err = fota_download_start(CONFIG_DOWNLOAD_HOST, file, SEC_TAG, 0, 0);
 	if (err) {
 		app_dfu_btn_irq_enable();

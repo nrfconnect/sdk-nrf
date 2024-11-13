@@ -292,7 +292,7 @@ Dependencies
 This library uses the following |NCS| libraries:
 
 * :ref:`lib_date_time`
-* :ref:`lib_download_client`
+* :ref:`lib_downloader`
 * :ref:`modem_info_readme`
 * :ref:`lib_nrf_cloud`
 

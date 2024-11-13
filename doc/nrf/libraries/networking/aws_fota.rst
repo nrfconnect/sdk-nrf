@@ -62,7 +62,7 @@ Creating a FOTA job
 #. Click the uploaded image file :file:`app_update.bin` and copy the *Object URL* without the *https://* prefix and folder path.
 #. Create a text file (job document) with content as in the snippet, replacing the following data:
 
-     * *protocol* with either `http` or `https`.
+     * *protocol* with either ``http`` or ``https``.
      * *host_url* with the *Object URL* copied in the previous step (for example, ``examplebucket.s3.eu-central-1.amazonaws.com``).
      * *file_path* with the path and file name (for example, ``app_update.bin``).
 
@@ -105,10 +105,10 @@ Configure the following parameters when using this library:
 * :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` - Sets the maximum payload size for AWS IoT job messages.
 * :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` - Sets the security tag to be used in case of HTTPS downloads.
 
-Additionally, configure the :ref:`lib_download_client` library:
+Additionally, configure the :ref:`lib_downloader` library:
 
-* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` - Sets the maximum length of the host name for the download client.
-* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` - Sets the maximum length of the file name for the download client.
+* :kconfig:option:`CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE` - Sets the maximum length of the host name for the library.
+* :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` - Sets the maximum length of the file name for the library.
 
 .. _aws_fota_implementation:
 
@@ -133,7 +133,7 @@ The following sequence diagram shows how a firmware over-the-air update is imple
 AWS IoT jobs
 ============
 
-The implementation uses a job document like the following (where *protocol* is either `http` or `https`, *bucket_name* is the name of your bucket and *file_name* is the name of your file) for passing information from `AWS IoT jobs`_ to the device:
+The implementation uses a job document like the following (where *protocol* is either ``http`` or ``https``, *bucket_name* is the name of your bucket and *file_name* is the name of your file) for passing information from `AWS IoT jobs`_ to the device:
 
 .. parsed-literal::
    :class: highlight
@@ -191,7 +191,7 @@ Presigned URLs
 
 When using the presigned URLs, you might need to increase the value of the following Kconfig options to accommodate the long file name and payload size of the presigned URL and the secure download of the image:
 
-* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`.
+* :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE`.
 * :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`.
 * :kconfig:option:`CONFIG_MBEDTLS_HEAP_SIZE` - If running Mbed TLS on the application core (Wi-Fi® builds).
 
@@ -199,9 +199,9 @@ Limitations
 ***********
 
 * If the :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` Kconfig option is not configured but HTTPS is selected as the protocol, the update job fails.
-  For further information about HTTPS support, refer to :ref:`the HTTPS section of the download client documentation <download_client_https>`.
+  For further information about HTTPS support, refer to :ref:`the HTTPS section of the Downloader library documentation <downloader_https>`.
 * The library requires a Content-Range header to be present in the HTTP response from the server.
-  This limitation is inherited from the :ref:`lib_download_client` library.
+  This limitation is inherited from the :ref:`lib_downloader` library.
 
 API documentation
 *****************

@@ -31,7 +31,7 @@ It provides an abstraction of the following modules:
   .. lwm2m_osal_mod_list_start
 
   * :ref:`at_monitor_readme`
-  * :ref:`lib_download_client`
+  * :ref:`lib_downloader`
   * :ref:`sms_readme`
   * :ref:`pdn_readme`
   * :ref:`lib_dfu_target`
