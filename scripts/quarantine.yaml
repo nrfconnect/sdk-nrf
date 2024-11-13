@@ -1,14 +1,6 @@
 # The configurations resulting as a product of scenarios and platforms
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
-# To have an empty list use:
-
-
-- scenarios:
-    - sample.matter.light_bulb.memory_profiling.persistent_subscriptions
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-19027"
 
 - scenarios:
     - applications.matter_bridge.lto.br_ble.nrf54h20.wifi
@@ -19,10 +11,3 @@
 - scenarios:
     - net.lib.wifi_credentials_backend_psa
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
-
-- scenarios:
-    - applications.machine_learning.sensor_hub.zdebug.singlecore
-    - applications.machine_learning.sensor_hub.zdebug
-  platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30015"
