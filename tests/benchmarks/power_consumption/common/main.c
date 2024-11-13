@@ -19,11 +19,11 @@ void timer_handler(struct k_timer *dummy)
 {
 	if (state == true) {
 		state = false;
-		gpio_pin_set_dt(&led, 0);
+		gpio_pin_set_dt(&led, 1);
 		k_thread_resume(thread_id);
 	} else {
 		state = true;
-		gpio_pin_set_dt(&led, 1);
+		gpio_pin_set_dt(&led, 0);
 		k_thread_suspend(thread_id);
 	}
 }
