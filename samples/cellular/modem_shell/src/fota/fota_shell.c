@@ -33,8 +33,7 @@ static int cmd_fota_download(const struct shell *shell, size_t argc,
 	} else if (strcmp(argv[1], "au") == 0) {
 		fota_server = fota_server_au;
 	} else {
-		mosh_error("FOTA: Unknown server: %s", argv[1]);
-		return -EINVAL;
+		fota_server = argv[1];
 	}
 
 	mosh_print("FOTA: Starting download...");
@@ -56,7 +55,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_fota,
 	SHELL_CMD_ARG(
 		download, NULL,
-		"<server> <filename>\nDownload and install a FOTA update. Available servers are \"eu\", \"us\", \"jpn\" and \"au\".",
+		"<server> <filename>\nDownload and install a FOTA update. "
+		"Available servers are \"eu\", \"us\", \"jpn\" and \"au\"\n"
+		"You can also use the server address directly, e.g. http://example.com",
 		cmd_fota_download, 3, 0),
 	SHELL_SUBCMD_SET_END);
 

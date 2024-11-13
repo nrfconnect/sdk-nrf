@@ -447,7 +447,7 @@ void lwm2m_os_sms_client_deregister(int handle);
  *
  * @retval  0      If success.
  */
-int lwm2m_os_download_get(const char *host, const struct lwm2m_os_download_cfg *cfg, size_t from);
+int lwm2m_os_download_get(const char *uri, const struct lwm2m_os_download_cfg *cfg, size_t from);
 
 /**
  * @brief Disconnect from the server.

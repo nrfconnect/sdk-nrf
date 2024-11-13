@@ -1,14 +1,14 @@
 .. _download_sample:
 
-Download client
-###############
+Download
+########
 
 .. contents::
    :local:
    :depth: 2
 
-The Download client sample demonstrates how to download a file from an HTTP or a CoAP server, with optional TLS or DTLS.
-It uses the :ref:`lib_download_client` library.
+The Download sample demonstrates how to download a file from an HTTP or a CoAP server, with optional TLS or DTLS.
+It uses the :ref:`lib_downloader` library.
 
 .. |wifi| replace:: Wi-Fi®
 
@@ -35,7 +35,7 @@ The sample then performs the following actions:
 
 1. Establishes a connection to the network
 #. Optionally sets up the secure socket options
-#. Uses the :ref:`lib_download_client` library to download a file from an HTTP server.
+#. Uses the :ref:`lib_downloader` library to download a file from an HTTP server.
 
 
 Downloading from a CoAP server

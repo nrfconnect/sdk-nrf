@@ -55,8 +55,8 @@ if (CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_MODEM_LIB)
 		# NET_SOCKETS_POSIX_NAMES=y in zephyr/net/socket.h, so
 		# it needs to be excluded when NET_SOCKETS_POSIX_NAMES=n
 		set_source_files_properties(
-			${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/src/download_client.c
-			DIRECTORY ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/
+			${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/downloader.c
+			DIRECTORY ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/
 			PROPERTIES HEADER_FILE_ONLY ON
 		)
 

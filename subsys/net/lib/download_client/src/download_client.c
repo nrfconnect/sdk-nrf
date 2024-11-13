@@ -731,7 +731,7 @@ static int handle_received(struct download_client *dl, ssize_t len)
 	if (fragment_evt_send(dl)) {
 		/* Restart and suspend */
 		LOG_INF("Fragment refused, download stopped.");
-		rc = -1;
+		return -1;
 	}
 
 	if (dl->progress == dl->file_size) {

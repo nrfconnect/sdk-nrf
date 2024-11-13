@@ -834,7 +834,7 @@ This sample application uses the following |NCS| libraries and drivers:
 * :ref:`lib_dfu_target`
 * :ref:`lib_fmfu_fdev`
 * :ref:`lib_fota_download`
-* :ref:`lib_download_client`
+* :ref:`lib_downloader`
 
 It uses the following `sdk-nrfxlib`_ library:
 

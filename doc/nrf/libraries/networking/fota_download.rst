@@ -19,7 +19,7 @@ To start a FOTA download, provide the URL for the file that should be downloaded
    * ``file`` - It indicates the path to the file.
      For example, ``path/to/resource/file.bin``.
 
-The FOTA library downloads the image using the :ref:`lib_download_client` library.
+The FOTA library downloads the image using the :ref:`lib_downloader` library.
 After downloading the first fragment, it uses the :ref:`lib_dfu_target` library to identify the type of image that is being downloaded.
 Examples of image types are *modem upgrades* and upgrades handled by a *second-stage bootloader*.
 
@@ -38,7 +38,7 @@ HTTPS downloads
 The FOTA download library is used in the :ref:`http_application_update_sample` sample.
 
 By default, the FOTA download library uses HTTP for downloading the firmware file.
-To use HTTPS, apply the changes described in :ref:`the HTTPS section of the download client documentation <download_client_https>` to the library.
+To use HTTPS, apply the changes described in :ref:`the HTTPS section of the Downloader library documentation <downloader_https>` to the library.
 
 Second-stage bootloader upgrades
 ********************************
