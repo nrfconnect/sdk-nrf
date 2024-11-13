@@ -179,16 +179,16 @@ Depending on if you build the application using the :ref:`nrfxlib:ot_libs` or if
       .. code-block::
 
          ################### OPENTHREAD REPORT ###################
-         + Target device: nrf52840
-         + Thread version: v1.3
+         + Target device: nrf54l15
+         + Thread version: v1.4
          + OpenThread library feature set: Minimal Thread Device (MTD)
          + Thread device type: Sleepy End Device (SED)
-         + OpenThread Library: openthread/lib/cortex-m4/soft-float/v1.3/mtd/
-         + OpenThread NCS revision: thread-reference-20230706-819-gd60aaab22
-         + OpenThread NCS SHA: d60aaab22
-         + NCS revision: v2.7.99-cs1-41-g26ef793b91-dirty
-         + NCS SHA: 26ef793b91
-         + No differences in the used Thread library in comparison to the NCS v2.7.0 release.
+         + OpenThread Library: openthread/lib/nrf54l15_cpuapp/soft-float/v1.4/mtd/
+         + OpenThread NCS revision: ncs-thread-reference-20241002-dirty
+         + OpenThread NCS SHA: ee86dc26d
+         + NCS revision: v2.8.0-preview1-434-g49bcdd3c6d6-dirty
+         + NCS SHA: 49bcdd3c6d6
+         + No differences in the used Thread library in comparison to the NCS v2.8.0 release.
          ###################        END        ###################
 
       The generated build artefact will also include the list of the :ref:`nrfxlib:nrfxlib` repository changes between the current revision and the latest |NCS| release.
@@ -200,16 +200,16 @@ Depending on if you build the application using the :ref:`nrfxlib:ot_libs` or if
       .. code-block::
 
          ################### OPENTHREAD REPORT ###################
-         + Target device: nrf52840
-         + Thread version: v1.3
+         + Target device: nrf54l15
+         + Thread version: v1.4
          + OpenThread library feature set: Minimal Thread Device (MTD)
          + Thread device type: Sleepy End Device (SED)
-         + OpenThread Library: openthread/lib/cortex-m4/soft-float/v1.3/mtd/
-         + OpenThread NCS revision: thread-reference-20230706-819-gd60aaab22
-         + OpenThread NCS SHA: d60aaab22
-         + NCS revision: v2.7.99-cs1-41-g26ef793b91-dirty
-         + NCS SHA: 26ef793b91
-         + Found differences in the nrfxlib repository in comparison to the NCS v2.7.0 release. See the ot_report.txt report file to learn more.
+         + OpenThread Library: openthread/lib/nrf54l15_cpuapp/soft-float/v1.4/mtd/
+         + OpenThread NCS revision: ncs-thread-reference-20241002-dirty
+         + OpenThread NCS SHA: ee86dc26d
+         + NCS revision: v2.8.0-preview1-434-g49bcdd3c6d6-dirty
+         + NCS SHA: 49bcdd3c6d6
+         + Found differences in the nrfxlib repository in comparison to the NCS v2.8.0 release. See the ot_report.txt report file to learn more.
          ###################        END        ###################
 
       You can look at the report file located in the application build directory to see the full list of changes.
@@ -220,15 +220,15 @@ Depending on if you build the application using the :ref:`nrfxlib:ot_libs` or if
       .. code-block::
 
          ################### OPENTHREAD REPORT ###################
-         + Target device: nrf52840
-         + Thread version: v1.3
+         + Target device: nrf54l15
+         + Thread version: v1.4
          + OpenThread library feature set: Minimal Thread Device (MTD)
          + Thread device type: Sleepy End Device (SED)
          + OpenThread library has been built from sources
-         + OpenThread NCS revision: thread-reference-20230706-819-gd60aaab22
-         + OpenThread NCS SHA: d60aaab22
-         + NCS revision: v2.7.99-cs1-41-g26ef793b91-dirty
-         + NCS SHA: 26ef793b91
+         + OpenThread NCS revision: ncs-thread-reference-20241002-dirty
+         + OpenThread NCS SHA: ee86dc26d
+         + NCS revision: v2.8.0-preview1-434-g49bcdd3c6d6-dirty
+         + NCS SHA: 49bcdd3c6d6
          ###################        END        ###################
 
       The information shows that the Thread library has been build from sources, so it cannot be used for :ref:`ug_thread_cert_inheritance_without_modifications`.
