@@ -48,7 +48,7 @@ Following are some of the requirements and limitations of the application while 
   * For example, setting :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_SEC_TAG` to 42 uses the security tag range 43 to 46 instead of 25 to 28.
 
 * The CA certificates that are used for out-of-band FOTA must be provided by the application.
-  Out-of-band FOTA updates are done by the :ref:`lib_download_client`.
+  Out-of-band FOTA updates are done by the :ref:`lib_downloader`.
   Although the certificates are updated as part of the |NCS| releases, you must check the requirements from your carrier to know which certificates are applicable.
 
 * The LwM2M carrier library uses the following NVS record key range: ``0xCA00`` to ``0xCAFF``.

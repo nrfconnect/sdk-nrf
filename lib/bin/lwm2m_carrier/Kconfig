@@ -26,9 +26,9 @@ menuconfig LWM2M_CARRIER
 	depends on NET_SOCKETS
 	depends on NET_SOCKETS_OFFLOAD
 	# Networking NCS
-	depends on DOWNLOAD_CLIENT
-	depends on (DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE >= 64)
-	depends on (DOWNLOAD_CLIENT_MAX_FILENAME_SIZE >= 192)
+	depends on DOWNLOADER
+	depends on (DOWNLOADER_MAX_HOSTNAME_SIZE >= 64)
+	depends on (DOWNLOADER_MAX_FILENAME_SIZE >= 192)
 	# AT libraries
 	depends on AT_MONITOR
 	depends on (AT_MONITOR_HEAP_SIZE >= 320)
@@ -309,6 +309,15 @@ config LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT
 	  the download shall be aborted. This configuration is currently only supported for
 	  PUSH delivery method of firmware images.
 	  Setting this to 0 will disable the use of this timer.
+
+config LWM2M_CARRIER_FIRMWARE_DOWNLOAD_BUF_SIZE
+	int "Firmware download buffer size"
+	range 128 65535
+	default 2048
+	help
+	  Size of the buffer used for the downloader library to download a new firmware image.
+	  Must be large enough to hold the message used to request data from the server, e.g. a
+	  HTTP header.
 
 config LWM2M_CARRIER_AUTO_REGISTER
 	bool "Auto registration on LTE Attach"

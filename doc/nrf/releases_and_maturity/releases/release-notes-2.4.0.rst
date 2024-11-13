@@ -818,7 +818,7 @@ Libraries for networking
 
   * Updated:
 
-    * The ``download_client_connect`` function has been refactored to :c:func:`download_client_set_host` and made it non-blocking.
+    * The :c:func:`download_client_connect` function has been refactored to :c:func:`download_client_set_host` and made it non-blocking.
     * The configuration from one security tag to a list of security tags.
     * The library reports error ``ERANGE`` when HTTP range is requested but not supported by server.
 
