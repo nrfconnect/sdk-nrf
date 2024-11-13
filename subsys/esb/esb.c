@@ -1625,7 +1625,7 @@ static void evt_dynamic_irq_handler(const void *args)
 {
 	ARG_UNUSED(args);
 	if (IS_ENABLED(ESB_EVT_USING_EGU)) {
-		nrf_egu_event_clear(ESB_EGU, ESB_EGU_EVT_TASK);
+		nrf_egu_event_clear(ESB_EGU, ESB_EGU_EVT_EVENT);
 	}
 	esb_evt_irq_handler();
 	ISR_DIRECT_PM();
