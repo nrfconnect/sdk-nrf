@@ -70,7 +70,7 @@ static int coap_dl_connect_and_auth(void)
 	return 0;
 }
 
-static int fota_dl_evt_send(const struct download_client_evt *evt)
+static int fota_dl_evt_send(const struct downloader_evt *evt)
 {
 #if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
 	return fota_download_external_evt_handle(evt);
@@ -79,13 +79,13 @@ static int fota_dl_evt_send(const struct download_client_evt *evt)
 }
 
 static int coap_dl_event_send(struct nrf_cloud_download_data const *const dl,
-			      const struct download_client_evt *const evt)
+			      const struct downloader_evt *const evt)
 {
 	/* Send events as if we are the downoad_client */
 	if (dl->type == NRF_CLOUD_DL_TYPE_FOTA) {
 		return fota_dl_evt_send(evt);
 	} else if (dl->type == NRF_CLOUD_DL_TYPE_DL_CLIENT) {
-		return dl->dlc->callback(evt);
+		return dl->dl->cfg.callback(evt);
 	}
 
 	return -EINVAL;
@@ -104,13 +104,13 @@ static void coap_dl_cb(int16_t result_code, size_t offset, const uint8_t *payloa
 	bool send_done_evt = last_block;
 	bool stop_on_err = false;
 	struct nrf_cloud_download_data *dl = (struct nrf_cloud_download_data *)user_data;
-	struct download_client_evt evt = {0};
+	struct downloader_evt evt = {0};
 
 	LOG_DBG("CoAP result: %d, offset: 0x%X, len: 0x%X, last_block: %d",
 		result_code, offset, len, last_block);
 
 	if (result_code == COAP_RESPONSE_CODE_CONTENT) {
-		evt.id = DOWNLOAD_CLIENT_EVT_FRAGMENT;
+		evt.id = DOWNLOADER_EVT_FRAGMENT;
 		evt.fragment.buf = payload;
 		evt.fragment.len = len;
 	} else if (result_code == -ECANCELED) {
@@ -118,14 +118,14 @@ static void coap_dl_cb(int16_t result_code, size_t offset, const uint8_t *payloa
 		/* This is not actually an error, just use the error event to indicate that
 		 * the transfer has been canceled
 		 */
-		evt.id = DOWNLOAD_CLIENT_EVT_ERROR;
+		evt.id = DOWNLOADER_EVT_ERROR;
 		evt.error = -ECANCELED;
 		(void)coap_dl_event_send(dl, &evt);
 		return;
 	} else if (result_code != COAP_RESPONSE_CODE_OK) {
 		LOG_ERR("Unexpected CoAP result: %d", result_code);
 		LOG_DBG("CoAP response: %.*s", len, payload);
-		evt.id = DOWNLOAD_CLIENT_EVT_ERROR;
+		evt.id = DOWNLOADER_EVT_ERROR;
 		/* Use -ECONNRESET to trigger retry mechanism used by fota_download and
 		 * the P-GPS download event handler
 		 */
@@ -135,7 +135,7 @@ static void coap_dl_cb(int16_t result_code, size_t offset, const uint8_t *payloa
 
 	ret = coap_dl_event_send(dl, &evt);
 
-	if (evt.id == DOWNLOAD_CLIENT_EVT_FRAGMENT) {
+	if (evt.id == DOWNLOADER_EVT_FRAGMENT) {
 		if (ret == 0) {
 			/* Fragment was successfully processed */
 			dl->coap_rcvd_bytes += len;
@@ -164,7 +164,7 @@ static void coap_dl_cb(int16_t result_code, size_t offset, const uint8_t *payloa
 		LOG_INF("Download complete");
 
 		memset(&evt, 0, sizeof(evt));
-		evt.id = DOWNLOAD_CLIENT_EVT_DONE;
+		evt.id = DOWNLOADER_EVT_DONE;
 
 		ret = coap_dl_event_send(dl, &evt);
 		if (ret) {
@@ -186,7 +186,7 @@ static void coap_dl_cb(int16_t result_code, size_t offset, const uint8_t *payloa
 
 	if (send_closed_evt) {
 		memset(&evt, 0, sizeof(evt));
-		evt.id = DOWNLOAD_CLIENT_EVT_CLOSED;
+		evt.id = DOWNLOADER_EVT_STOPPED;
 		(void)coap_dl_event_send(dl, &evt);
 	}
 
@@ -351,19 +351,19 @@ static void resume_work_fn(struct k_work *unused)
 
 	/* On failure, send the events required to generate the error/done status */
 	if (ret) {
-		struct download_client_evt evt = {0};
+		struct downloader_evt evt = {0};
 
 		LOG_ERR("Failed to resume CoAP download");
 
 		/* Send a non-recoverable error event (not ECONN) */
-		evt.id = DOWNLOAD_CLIENT_EVT_ERROR;
+		evt.id = DOWNLOADER_EVT_ERROR;
 		evt.error = -EIO;
 		(void)coap_dl_event_send(&active_dl, &evt);
 
 		/* Send a closed event to ensure the terminal fota_download event is generated */
 		if (active_dl.type == NRF_CLOUD_DL_TYPE_FOTA) {
 			memset(&evt, 0, sizeof(evt));
-			evt.id = DOWNLOAD_CLIENT_EVT_CLOSED;
+			evt.id = DOWNLOADER_EVT_STOPPED;
 			(void)coap_dl_event_send(&active_dl, &evt);
 		}
 	}
@@ -406,33 +406,33 @@ static int fota_start(struct nrf_cloud_download_data *const dl)
 #endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 
 	return fota_download_start_with_image_type(dl->host, dl->path,
-		dl->dl_cfg.sec_tag_count ? dl->dl_cfg.sec_tag_list[0] : -1,
-		dl->dl_cfg.pdn_id, dl->dl_cfg.frag_size_override, dl->fota.expected_type);
+		dl->dl_host_conf.sec_tag_count ? dl->dl_host_conf.sec_tag_list[0] : -1,
+		dl->dl_host_conf.pdn_id, dl->dl_host_conf.range_override, dl->fota.expected_type);
 
 #endif /* CONFIG_FOTA_DOWNLOAD */
 
 	return -ENOTSUP;
 }
 
-static int dlc_start(struct nrf_cloud_download_data *const dl)
+static int dl_start(struct nrf_cloud_download_data *const cloud_dl)
 {
-	__ASSERT(dl->dlc != NULL, "Download client is NULL");
-	__ASSERT(dl->dlc->callback != NULL, "Download client callback is NULL");
+	__ASSERT(cloud_dl->dl != NULL, "Download client is NULL");
 
 #if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
-	return coap_dl(dl);
+	return coap_dl(cloud_dl);
 #endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 
-	return download_client_get(dl->dlc, dl->host, &dl->dl_cfg, dl->path, 0);
+	return downloader_get_with_host_and_file(cloud_dl->dl, &cloud_dl->dl_host_conf,
+						cloud_dl->host, cloud_dl->path, 0);
 }
 
-static int dlc_disconnect(struct nrf_cloud_download_data *const dl)
+static int dl_disconnect(struct nrf_cloud_download_data *const dl)
 {
 #if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
 	return coap_dl_disconnect();
 #endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
 
-	return download_client_disconnect(dl->dlc);
+	return downloader_cancel(dl->dl);
 }
 
 static void active_dl_reset(void)
@@ -464,7 +464,7 @@ void nrf_cloud_download_cancel(void)
 	if (active_dl.type == NRF_CLOUD_DL_TYPE_FOTA) {
 		ret = fota_dl_cancel(&active_dl);
 	} else if (active_dl.type == NRF_CLOUD_DL_TYPE_DL_CLIENT) {
-		ret = dlc_disconnect(&active_dl);
+		ret = dl_disconnect(&active_dl);
 	} else {
 		LOG_WRN("No active download to cancel");
 	}
@@ -497,39 +497,39 @@ static bool check_fota_file_path_len(char const *const file_path)
 	return true;
 }
 
-int nrf_cloud_download_start(struct nrf_cloud_download_data *const dl)
+int nrf_cloud_download_start(struct nrf_cloud_download_data *const cloud_dl)
 {
-	if (!dl || !dl->path || (dl->type <= NRF_CLOUD_DL_TYPE_NONE) ||
-	    (dl->type >= NRF_CLOUD_DL_TYPE_DL__LAST)) {
+	int ret = 0;
+
+	if (!cloud_dl || !cloud_dl->path || (cloud_dl->type <= NRF_CLOUD_DL_TYPE_NONE) ||
+	    (cloud_dl->type >= NRF_CLOUD_DL_TYPE_DL__LAST)) {
 		return -EINVAL;
 	}
 
-	if (dl->type == NRF_CLOUD_DL_TYPE_FOTA) {
+	if (cloud_dl->type == NRF_CLOUD_DL_TYPE_FOTA) {
 		if (!IS_ENABLED(CONFIG_FOTA_DOWNLOAD)) {
 			return -ENOTSUP;
 		}
-		if (!dl->fota.cb) {
+		if (!cloud_dl->fota.cb) {
 			return -ENOEXEC;
 		}
-		if ((dl->fota.expected_type == DFU_TARGET_IMAGE_TYPE_SMP) &&
+		if ((cloud_dl->fota.expected_type == DFU_TARGET_IMAGE_TYPE_SMP) &&
 		    !IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)) {
 			return -ENOSYS;
 		}
 	}
 
-	if (!check_fota_file_path_len(dl->path)) {
+	if (!check_fota_file_path_len(cloud_dl->path)) {
 		LOG_ERR("FOTA download file path is too long");
 		return -E2BIG;
 	}
-
-	int ret = 0;
 
 	k_mutex_lock(&active_dl_mutex, K_FOREVER);
 
 	/* FOTA has priority */
 	if ((active_dl.type == NRF_CLOUD_DL_TYPE_FOTA) ||
 	    ((active_dl.type != NRF_CLOUD_DL_TYPE_NONE) &&
-	     (dl->type != NRF_CLOUD_DL_TYPE_FOTA))) {
+	     (cloud_dl->type != NRF_CLOUD_DL_TYPE_FOTA))) {
 		k_mutex_unlock(&active_dl_mutex);
 		/* A download of equal or higher priority is already active. */
 		return -EBUSY;
@@ -540,21 +540,21 @@ int nrf_cloud_download_start(struct nrf_cloud_download_data *const dl)
 	 */
 	if (active_dl.type == NRF_CLOUD_DL_TYPE_DL_CLIENT) {
 		LOG_INF("Stopping active download, incoming FOTA update download has priority");
-		ret = dlc_disconnect(&active_dl);
+		ret = dl_disconnect(&active_dl);
 
 		if (ret) {
 			LOG_ERR("Download disconnect failed, error %d", ret);
 		}
 	}
 
-	active_dl = *dl;
+	active_dl = *cloud_dl;
 
 	if (active_dl.type == NRF_CLOUD_DL_TYPE_FOTA) {
 		ret = fota_start(&active_dl);
 	} else if (active_dl.type == NRF_CLOUD_DL_TYPE_DL_CLIENT) {
-		ret = dlc_start(&active_dl);
+		ret = dl_start(&active_dl);
 		if (ret) {
-			(void)dlc_disconnect(&active_dl);
+			(void)dl_disconnect(&active_dl);
 		}
 	} else {
 		LOG_WRN("Unhandled download type: %d", active_dl.type);

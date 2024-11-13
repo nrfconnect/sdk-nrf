@@ -72,7 +72,7 @@ static struct k_thread thread;
 /** Ensure that thread is ready for download */
 static K_SEM_DEFINE(update_mutex, 0, 1);
 /* Internal thread stack. */
-static K_THREAD_STACK_MEMBER(thread_stack,
+static K_KERNEL_STACK_MEMBER(thread_stack,
 			     CONFIG_LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_THREAD_STACK_SIZE);
 #endif
 
