@@ -40,6 +40,8 @@ The following table lists the supported features for each of these sets.
 No tick indicates that there is no support for the given feature in the related configuration, while the tick signifies that the feature is selected (``=1`` value).
 Features introduced with the Thread 1.2 Specification are at the bottom of the table and have "Thread 1.2" in parenthesis after the feature name.
 For more information about Thread 1.2 features, see the `Thread 1.2 Base Features`_ document.
+Features introduced with the Thread 1.4 Specification are at the bottom of the table and have "Thread 1.4" in parenthesis after the feature name.
+For more information about Thread 1.4 features, see the `Thread 1.4 Features White Paper`_ document.
 
 .. list-table::
     :widths: auto
@@ -117,6 +119,12 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       - ✔
       -
       -
+    * - EXTERNAL_HEAP
+      - ✔
+      - ✔
+      - ✔
+      -
+      -
     * - IP6_FRAGM
       - ✔
       - ✔
@@ -151,6 +159,12 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       - ✔
       -
       -
+      -
+      -
+    * - NETDIAG_CLIENT
+      - ✔
+      - ✔
+      - ✔
       -
       -
     * - SERVICE
@@ -214,6 +228,30 @@ For more information about Thread 1.2 features, see the `Thread 1.2 Base Feature
       - ✔
       -
     * - MLR (Thread 1.2)
+      - ✔
+      - ✔
+      - ✔
+      -
+      -
+    * - DNS_CLIENT_OVER_TCP (Thread 1.4)
+      - ✔
+      -
+      -
+      -
+      -
+    * - NETDIAG_VENDOR_INFO (Thread 1.4)
+      - ✔
+      - ✔
+      - ✔
+      -
+      -
+    * - TCP (Thread 1.4)
+      - ✔
+      -
+      -
+      -
+      -
+    * - UPTIME (Thread 1.4)
       - ✔
       - ✔
       - ✔

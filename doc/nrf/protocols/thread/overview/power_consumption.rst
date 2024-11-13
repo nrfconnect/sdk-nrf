@@ -56,7 +56,7 @@ The following tables show the power consumption measured with the configuration 
 
 .. tabs::
 
-   .. group-tab:: Thread 1.3 SED
+   .. group-tab:: Thread 1.4 SED
 
       .. table:: Configuration
 
@@ -85,7 +85,7 @@ The following tables show the power consumption measured with the configuration 
          +-------------------------------------------+-----------------------+----------------------------+------------------------------+
 
 
-   .. group-tab:: Thread 1.3 SSED
+   .. group-tab:: Thread 1.4 SSED
 
       .. table:: Configuration
 
