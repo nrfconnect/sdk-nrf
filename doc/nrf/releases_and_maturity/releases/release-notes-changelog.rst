@@ -233,7 +233,9 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`channel_sounding_ras_reflector` sample demonstrating how to implement a Channel Sounding Reflector that exposes the Ranging Responder GATT Service.
 
 Bluetooth Fast Pair samples
 ---------------------------
