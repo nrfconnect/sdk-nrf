@@ -95,6 +95,17 @@ function(zephyr_mcuboot_tasks)
     return()
   endif()
 
+  # Fetch devicetree details for flash and slot information
+  dt_chosen(flash_node PROPERTY "zephyr,flash")
+  dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
+  dt_prop(slot_size PATH "${slot0_flash}" PROPERTY "reg" INDEX 1 REQUIRED)
+  dt_prop(write_block_size PATH "${flash_node}" PROPERTY "write-block-size")
+
+  if(NOT write_block_size)
+    set(write_block_size 4)
+    message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
+  endif()
+
   # Fetch QSPI XIP MCUboot image number from sysbuild
   zephyr_get(qspi_xip_image_number VAR QSPI_XIP_IMAGE_NUMBER SYSBUILD)
 
@@ -116,8 +127,8 @@ function(zephyr_mcuboot_tasks)
   # invalid if a static PM file is updated without pristine build
   set(imgtool_internal_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_internal_rom_command} CACHE STRING "imgtool sign (internal flash) sysbuild replacement")
   set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${qspi_xip_image_number}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
-  set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_internal_sign_sysbuild})
-  set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_external_sign_sysbuild})
+  set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_internal_sign_sysbuild})
+  set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_external_sign_sysbuild})
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
