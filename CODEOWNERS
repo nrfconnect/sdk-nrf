@@ -455,6 +455,7 @@
 /samples/bluetooth/radio_coex_1wire/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/radio_notification_cb/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/rpc_host/              @nrfconnect/ncs-si-muffin
+/samples/bluetooth/scanning_while_connecting/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-si-muffin
 /samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
 /samples/bluetooth/throughput/            @nrfconnect/ncs-si-muffin
