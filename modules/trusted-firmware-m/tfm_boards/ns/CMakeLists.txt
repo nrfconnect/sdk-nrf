@@ -52,6 +52,7 @@ if(TFM_PARTITION_PLATFORM)
         PUBLIC
         FIRMWARE_INFO_MAGIC=${FIRMWARE_INFO_MAGIC}
         EXT_API_MAGIC=${EXT_API_MAGIC}
+        NRF_CONFIG_CPU_FREQ_MHZ=${NRF_CONFIG_CPU_FREQ_MHZ}
     )
 
     target_sources(platform_ns
