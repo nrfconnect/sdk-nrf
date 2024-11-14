@@ -48,8 +48,8 @@ See the following documentation pages for more information:
 
    See :ref:`zephyr:board_porting_guide` for more information.
 
-Configure, generate, and flash BICR
-***********************************
+Configure, generate, and program BICR
+*************************************
 
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
 The power and clock control firmware uses this information to apply the proper regulator and oscillator configurations.
@@ -88,8 +88,8 @@ You can start from this file when editing the values of the devicetree propertie
 .. caution::
    A mismatch between the board and the configuration values in BICR can damage the device or set it in an unrecoverable state.
 
-Generating the BICR binary
-==========================
+Generate the BICR binary
+========================
 
 To generate the BICR binary, you must first set the Kconfig option :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_BICR` to ``y``.
 When running ``west build``, the build system then creates the relevant HEX file (:file:`bicr.hex`) at build time.
@@ -101,8 +101,8 @@ Based on the peripheral definition extracted from the nRF54H20 SVD file, the mod
 You can find the generated :file:`bicr.hex` file in the :file:`build_dir/zephyr/`.
 The presence of a ``bicr`` node in the application devicetree will automatically trigger a build of the BICR binary, and will place this file alongside the other binary outputs such as ``zephyr.hex`` and ``uicr.hex``.
 
-Flashing the BICR binary
-========================
+Program the BICR binary
+=======================
 
 After the |NCS| build system generates the BICR binary, you must flash this binary manually.
 The content of BICR should be loaded to the SoC only once and should not be erased nor modified unless the PCB layout changes.
@@ -139,13 +139,14 @@ After programming the BICR binary onto the device, validate whether the BICR wor
    * ``Error``: This indicates that the device is likely suffering from severe power issues after applying the BICR.
      This state is likely unrecoverable.
 
-Programming the SDFW and SCFW
-=============================
+Program the nRF54H20 SoC binaries
+*********************************
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.6.5.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
+After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC binaries v0.6.5`_.
+1. Download the right nRF54H20 SoC binaries version for your development kit and |NCS| version.
+   You can find the SoC binaries versions listed in the :ref:`abi_compatibility` page.
 #. Move the :file:`ZIP` bundle to a folder of your choice.
 #. |open_terminal_window_with_environment|
 #. Run nRF Util to program the binaries using the following command::
@@ -157,76 +158,6 @@ You can run the following command to confirm that the Secure Domain Firmware has
    nrfutil device x-adac-lcs-change
 
 If issues occur during bundle programming, the system will return an ``ADAC_FAILURE`` error.
-
-Verify the LCS and transition to RoT
-************************************
-
-To successfully run your custom application on your custom board, the SoC must have its Lifecycle State (LCS) set to ``RoT`` (meaning Root of Trust).
-If the LCS is set to ``EMPTY``, you must transition it to ``RoT``.
-
-.. note::
-   The forward transition to LCS ``RoT`` is permanent.
-   After the transition, it is not possible to transition backward to LCS ``EMPTY``.
-
-To transition the LCS to ``RoT``, do the following:
-
-1. |open_terminal_window_with_environment|
-#. Verify the current lifecycle state of the nRF54H20::
-
-      nrfutil device x-adac-discovery --serial-number <serial_number>
-
-   The output will look similar to the following::
-
-      *serial_number*
-      adac_auth_version     1.0
-      vendor_id             Nordic VLSI ASA
-      soc_class             0x00005420
-      soc_id                [e6, 6f, 21, b6, dc, be, 11, ee, e5, 03, 6f, fe, 4d, 7b, 2e, 07]
-      hw_permissions_fixed  [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      hw_permissions_mask   [01, 00, 00, 00, 87, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      psa_lifecycle         LIFECYCLE_EMPTY (0x1000)
-      sda_id                0x01
-      secrom_revision       0xad3b3cd0
-      sysrom_revision       0xebc8f190
-      token_formats         [TokenAdac]
-      cert_formats          [CertAdac]
-      cryptosystems         [Ed25519Sha512]
-      Additional TLVs:
-      TargetIdentity: [ff, ff, ff, ff, ff, ff, ff, ff]
-
-#. If the lifecycle state (``psa_lifecycle``) shown is ``RoT`` (``LIFECYCLE_ROT (0x2000)``), no LCS transition is required.
-   If the lifecycle state (``psa_lifecycle``) shown is not ``RoT`` (``LIFECYCLE_EMPTY (0x1000)`` means the LCS is set to ``EMPTY``), set it to Root of Trust using the following command::
-
-      nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
-
-#. Verify again the current lifecycle state of the nRF54H20::
-
-      nrfutil device x-adac-discovery --serial-number <serial_number>
-
-   The output will look similar to the following::
-
-      *serial_number*
-      adac_auth_version     1.0
-      vendor_id             Nordic VLSI ASA
-      soc_class             0x00005420
-      soc_id                [e6, 6f, 21, b6, dc, be, 11, ee, e5, 03, 6f, fe, 4d, 7b, 2e, 07]
-      hw_permissions_fixed  [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      hw_permissions_mask   [01, 00, 00, 00, 87, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00]
-      psa_lifecycle         LIFECYCLE_ROT (0x2000)
-      sda_id                0x01
-      secrom_revision       0xad3b3cd0
-      sysrom_revision       0xebc8f190
-      token_formats         [TokenAdac]
-      cert_formats          [CertAdac]
-      cryptosystems         [Ed25519Sha512]
-      Additional TLVs:
-      TargetIdentity: [ff, ff, ff, ff, ff, ff, ff, ff]
-
-   The lifecycle state (``psa_lifecycle``) is now correctly set to *Root of Trust* (``LIFECYCLE_ROT (0x2000)``)
-
-#. After the LCS transition, reset the device::
-
-      nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
 
 Create or modify your application for your custom board
 *******************************************************
@@ -247,12 +178,12 @@ When doing so, consider the following:
 
 * You must manually program the BICR if it has been modified.
 
-Update the SDFW and SCFW
-************************
+Update the nRF54H20 SoC binaries
+********************************
 
-When a new version of the nRF54H20 firmware bundle is released, you can update it as follows:
+When a new version of the nRF54H20 SoC binaries compatible with your development kit is released, you can update it as follows:
 
-1. Download the new version of the nRF54H20 firmware bundle (:file:`nrf54h20_soc_binaries_v<x.y.z>.zip`).
+1. Download the new version of the nRF54H20 SoC binaries for your development kit from the :ref:`abi_compatibility` page.
 #. Move the :file:`ZIP` bundle to a folder of your choice and unzip it.
 #. |open_terminal_window_with_environment|
 #. Verify the current version of the nRF54H20 SoC binaries by running the following command::
