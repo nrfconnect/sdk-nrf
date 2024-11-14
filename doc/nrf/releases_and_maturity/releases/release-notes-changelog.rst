@@ -312,6 +312,8 @@ Bluetooth samples
 
     * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
 
+  * The :ref:`bt_scanning_while_connecting` sample demonstrating how to establish multiple connections faster using the :kconfig:option:`CONFIG_BT_SCAN_AND_INITIATE_IN_PARALLEL` Kconfig option.
+
 * Updated:
 
   * Configurations of the following Bluetooth samples to make the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` the default settings backend for all board targets that use the MRAM technology:
