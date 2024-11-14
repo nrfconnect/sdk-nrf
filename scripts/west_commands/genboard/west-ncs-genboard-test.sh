@@ -8,23 +8,23 @@ NCS_BASE="$SCRIPTDIR/../../.."
 SOC=${1}
 
 declare -a SOCS=(
-	"nrf52805 caaa"
-	"nrf52810 qfaa"
-	"nrf52811 qfaa"
-	"nrf52820 qdaa"
-	"nrf52832 ciaa"
-	"nrf52832 qfaa"
-	"nrf52832 qfab"
-	"nrf52833 qdaa"
-	"nrf52833 qiaa"
-	"nrf52840 qfaa"
-	"nrf52840 qiaa"
-	"nrf5340 qkaa"
-	"nrf54l15 qfaa"
-	"nrf9131 laca"
-	"nrf9151 laca"
-	"nrf9160 sica"
-	"nrf9161 laca"
+	"nRF52805-CAAA"
+	"nRF52810-QFAA"
+	"nRF52811-QFAA"
+	"nRF52820-QDAA"
+	"nRF52832-CIAA"
+	"nRF52832-QFAA"
+	"nRF52832-QFAB"
+	"nRF52833-QDAA"
+	"nRF52833-QIAA"
+	"nRF52840-QFAA"
+	"nRF52840-QIAA"
+	"nRF5340-QKAA"
+	"nRF54L15-QFAA"
+	"nRF9131-LACA"
+	"nRF9151-LACA"
+	"nRF9160-SICA"
+	"nRF9161-LACA"
 )
 
 HELLO_WORLD="$NCS_BASE/../zephyr/samples/hello_world"
@@ -32,40 +32,37 @@ HELLO_WORLD="$NCS_BASE/../zephyr/samples/hello_world"
 rm -rf $NCS_BASE/boards/testvnd
 
 for soc in "${SOCS[@]}"; do
-	read -a socarr <<< "$soc"
+	soc_parts=(${soc//-/ })
+	soc_name=$(echo ${soc_parts[0]} | tr "[:upper:]" "[:lower:]")
+	soc_variant=$(echo ${soc_parts[1]} | tr "[:upper:]" "[:lower:]")
 
-	if [ ! -z "$SOC" ] && [ $SOC != ${socarr[0]} ]; then
-		echo "Skipping ${socarr[0]} (not requested)"
+	if [ ! -z "$SOC" ] && [ $SOC != ${soc} ]; then
+		echo "Skipping $soc (not requested)"
 		continue
 	fi
 
-	board=brd_${socarr[0]}_${socarr[1]}
+	board=brd_${soc_name}_${soc_variant}
 
 	echo "Generating board: $board"
 
-	west ncs-genboard \
-		-o $NCS_BASE/boards \
-		-e "testvnd" \
-		-b $board \
-		-d "Test Board" \
-		-s ${socarr[0]} \
-		-v ${socarr[1]} \
+	west ncs-genboard --json-schema-response \
+		"{\"board\": \"$board\", \"description\": \"Test Board\", \"vendor\": \"testvnd\", \"soc\": \"$soc\", \"root\": \"$NCS_BASE\"}"
 
 	echo "Building hello_world for: $board"
 
-	if [[ ${socarr[0]} == nrf52* ]]; then
+	if [[ $soc == nRF52* ]]; then
 		west build -p -b $board $HELLO_WORLD
-	elif [[ ${socarr[0]} == nrf53* ]]; then
-		west build -p -b $board/${socarr[0]}/cpuapp $HELLO_WORLD
-		west build -p -b $board/${socarr[0]}/cpuapp/ns $HELLO_WORLD
-		west build -p -b $board/${socarr[0]}/cpunet $HELLO_WORLD
-	elif [[ ${socarr[0]} == nrf54l* ]]; then
-		west build -p -b $board/${socarr[0]}/cpuapp $HELLO_WORLD
-		# west build -p -b $board/${socarr[0]}/cpuflpr $HELLO_WORLD
-		# west build -p -b $board/${socarr[0]}/cpuflpr/xip $HELLO_WORLD
-	elif [[ ${socarr[0]} == nrf91* ]]; then
-		west build -p -b $board/${socarr[0]} $HELLO_WORLD
-		west build -p -b $board/${socarr[0]}/ns $HELLO_WORLD
+	elif [[ $soc == nRF53* ]]; then
+		west build -p -b $board/$soc_name/cpuapp $HELLO_WORLD
+		west build -p -b $board/$soc_name/cpuapp/ns $HELLO_WORLD
+		west build -p -b $board/$soc_name/cpunet $HELLO_WORLD
+	elif [[ $soc == nRF54L* ]]; then
+		west build -p -b $board/$soc_name/cpuapp $HELLO_WORLD
+		# west build -p -b $board/$soc_name/cpuflpr $HELLO_WORLD
+		# west build -p -b $board/$soc_name/cpuflpr/xip $HELLO_WORLD
+	elif [[ $soc == nRF91* ]]; then
+		west build -p -b $board/$soc_name $HELLO_WORLD
+		west build -p -b $board/$soc_name/ns $HELLO_WORLD
 	fi
 
 	rm -rf $NCS_BASE/boards/testvnd
