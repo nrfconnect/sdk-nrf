@@ -502,11 +502,19 @@ ZTEST(lwm2m_client_utils_security, test_load_credentials_PSK)
 	modem_key_mgmt_write_fake.custom_fake = write_to_modem;
 	modem_key_mgmt_exists_fake.custom_fake = modem_key_mgmt_exists_custom_fake;
 	ctx.bootstrap_mode = false;
+	keys_exist = true;
 
 	rc = ctx.load_credentials(&ctx);
 	zassert_equal(rc, 0, "wrong return value");
-	zassert_equal(modem_key_mgmt_exists_fake.call_count, 5, "Did not check existing (%d)",
+	zassert_equal(modem_key_mgmt_exists_fake.call_count, 8, "Did not check existing (%d)",
 		      modem_key_mgmt_exists_fake.call_count);
+	zassert_equal(modem_key_mgmt_delete_fake.call_count, 3, "Did not remove old keys");
+	zassert_equal(modem_key_mgmt_delete_fake.arg1_history[0], MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+		      "");
+	zassert_equal(modem_key_mgmt_delete_fake.arg1_history[1],
+		      MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT, "");
+	zassert_equal(modem_key_mgmt_delete_fake.arg1_history[2],
+		      MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT, "");
 	zassert_equal(modem_key_mgmt_write_fake.call_count, 2, "Did not write PSK");
 	zassert_equal(lte_lc_func_mode_set_fake.call_count, 1, "Did not set mode");
 	zassert_equal(lte_lc_func_mode_set_fake.arg0_val, LTE_LC_FUNC_MODE_OFFLINE,

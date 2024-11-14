@@ -50,6 +50,7 @@ DECLARE_FAKE_VALUE_FUNC(int, modem_key_mgmt_exists, nrf_sec_tag_t, enum modem_ke
 			bool *);
 DECLARE_FAKE_VALUE_FUNC(int, modem_key_mgmt_write, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
 			const void *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, modem_key_mgmt_delete, nrf_sec_tag_t, enum modem_key_mgmt_cred_type);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_set, enum lte_lc_func_mode);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_connect);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_offline);
@@ -140,6 +141,7 @@ DECLARE_FAKE_VOID_FUNC(boot_write_img_confirmed);
 	FUNC(lwm2m_rd_client_update)                    \
 	FUNC(modem_key_mgmt_exists)                     \
 	FUNC(modem_key_mgmt_write)                      \
+	FUNC(modem_key_mgmt_delete)			\
 	FUNC(modem_info_init)                           \
 	FUNC(modem_info_params_init)                    \
 	FUNC(modem_info_params_get)                     \

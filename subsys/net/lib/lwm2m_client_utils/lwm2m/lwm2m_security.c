@@ -128,11 +128,30 @@ static int write_credential_type(int sec_obj_inst, int sec_tag, int res_id,
 	return 0;
 }
 
+static void delete_credential_if_exist(int sec_tag, enum modem_key_mgmt_cred_type type)
+{
+	bool exist = false;
+	int ret;
+
+	ret = modem_key_mgmt_exists(sec_tag, type, &exist);
+	if (exist) {
+		ret = modem_key_mgmt_delete(sec_tag, type);
+		LOG_DBG("Deleted sec_tag %d, type %d", sec_tag, type);
+	}
+	if (ret < 0) {
+		LOG_ERR("Failed to delete credential %d", ret);
+	}
+}
+
 static int write_sec_obj_to_sec_tag(int sec_obj_inst, int sec_tag, int mode)
 {
 	int ret;
 
 	if (mode == SEC_MODE_PSK) {
+		delete_credential_if_exist(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN);
+		delete_credential_if_exist(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT);
+		delete_credential_if_exist(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT);
+
 		ret = write_credential_type(sec_obj_inst, sec_tag, SECURITY_CLIENT_PK_ID,
 					    MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
 		if (ret) {
@@ -145,6 +164,9 @@ static int write_sec_obj_to_sec_tag(int sec_obj_inst, int sec_tag, int mode)
 			goto out;
 		}
 	} else if (mode == SEC_MODE_CERTIFICATE) {
+		delete_credential_if_exist(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_PSK);
+		delete_credential_if_exist(sec_tag, MODEM_KEY_MGMT_CRED_TYPE_IDENTITY);
+
 		/* Don't fail if we already have a given data in the modem and we did not receive
 		 * that as part of bootstrap. It might have been written as part of EST process.
 		 */

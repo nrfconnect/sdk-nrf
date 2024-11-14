@@ -56,6 +56,7 @@ DEFINE_FAKE_VALUE_FUNC(int, modem_key_mgmt_exists, nrf_sec_tag_t, enum modem_key
 		       bool *);
 DEFINE_FAKE_VALUE_FUNC(int, modem_key_mgmt_write, nrf_sec_tag_t, enum modem_key_mgmt_cred_type,
 		       const void *, size_t);
+DEFINE_FAKE_VALUE_FUNC(int, modem_key_mgmt_delete, nrf_sec_tag_t, enum modem_key_mgmt_cred_type);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_func_mode_set, enum lte_lc_func_mode);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_connect);
 DEFINE_FAKE_VALUE_FUNC(int, lte_lc_offline);
