@@ -856,7 +856,7 @@ static uint8_t rep_read_process(struct bt_conn *conn, uint8_t err,
 		length = UINT8_MAX;
 	}
 	rep->size = (uint8_t)length;
-	(void)rep->read_cb(rep->hogp, rep, 0, data);
+	(void)rep->read_cb(rep->hogp, rep, err, data);
 	rep->read_cb = NULL;
 	return BT_GATT_ITER_STOP;
 }
