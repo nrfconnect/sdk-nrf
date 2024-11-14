@@ -80,7 +80,7 @@ static void setup_boot_report(uint8_t *buf, size_t len)
 
 ZTEST_SUITE(orchestrator_init_tests, NULL, NULL, NULL, NULL, NULL);
 
-ZTEST(orchestrator_init_tests, test_empty_storage)
+ZTEST(orchestrator_init_tests, test_orchestrator_sdfw_empty_storage)
 {
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
@@ -105,7 +105,7 @@ ZTEST(orchestrator_init_tests, test_empty_storage)
 	check_startup_failure();
 }
 
-ZTEST(orchestrator_init_tests, test_empty_storage_with_update_flag)
+ZTEST(orchestrator_init_tests, test_orchestrator_sdfw_empty_storage_with_update_flag)
 {
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
@@ -131,7 +131,7 @@ ZTEST(orchestrator_init_tests, test_empty_storage_with_update_flag)
 	check_startup_failure();
 }
 
-ZTEST(orchestrator_init_tests, test_empty_storage_with_recovery_flag)
+ZTEST(orchestrator_init_tests, test_orchestrator_sdfw_empty_storage_with_recovery_flag)
 {
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();
@@ -157,7 +157,7 @@ ZTEST(orchestrator_init_tests, test_empty_storage_with_recovery_flag)
 	check_startup_failure();
 }
 
-ZTEST(orchestrator_init_tests, test_empty_storage_with_update_recovery_flag)
+ZTEST(orchestrator_init_tests, test_orchestrator_sdfw_empty_storage_with_update_recovery_flag)
 {
 	/* GIVEN empty flash (suit storage is erased)... */
 	setup_erased_flash();

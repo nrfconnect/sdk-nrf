@@ -44,7 +44,7 @@ static void assert_rad_purged(void)
 				   SUIT_STORAGE_RAD_MPI_SIZE + SUIT_STORAGE_DIGEST_SIZE);
 }
 
-ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_populated_storage)
+ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_storage_purge_populated_storage)
 {
 	suit_plat_mreg_t update_candidate[1] = {{
 		.mem = (uint8_t *)0xCAFEFECA,
@@ -103,7 +103,7 @@ ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_populated_storage)
 	assert_only_nordic_classes();
 }
 
-ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_populated_storage_rad_first)
+ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_storage_purge_populated_storage_rad_first)
 {
 	suit_plat_mreg_t update_candidate[1] = {{
 		.mem = (uint8_t *)0xCAFEFECA,
@@ -201,7 +201,7 @@ ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_populated_storage_rad_firs
 	assert_only_nordic_classes();
 }
 
-ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_empty_storage)
+ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_storage_purge_empty_storage)
 {
 	/* GIVEN storage area is not initialized */
 	erase_area_nordic();
@@ -234,7 +234,7 @@ ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_empty_storage)
 	assert_only_nordic_classes();
 }
 
-ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_update_only)
+ZTEST(suit_storage_nrf54h20_bare_recovery_tests, test_storage_purge_update_only)
 {
 	suit_plat_mreg_t update_candidate[1] = {{
 		.mem = (uint8_t *)0xCAFEFECA,
