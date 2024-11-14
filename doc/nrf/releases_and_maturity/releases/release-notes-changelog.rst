@@ -412,7 +412,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`hogp_readme` library:
+
+  * Updated the :c:func:`bt_hogp_rep_read` function to forward the GATT read error code through the registered user callback.
+    This ensures that API user is aware of the error.
 
 Common Application Framework
 ----------------------------
