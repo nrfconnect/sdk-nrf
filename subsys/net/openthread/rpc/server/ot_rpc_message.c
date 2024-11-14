@@ -16,12 +16,16 @@
 
 #include <zephyr/net/openthread.h>
 
-#define OT_MESSAGES_POOL 8
+#define OT_MESSAGES_POOL CONFIG_OPENTHREAD_RPC_MESSAGE_POOL
 
 static otMessage *ot_message_registry[OT_MESSAGES_POOL];
 
 ot_msg_key ot_reg_msg_alloc(otMessage *msg)
 {
+	if (msg == NULL) {
+		return 0;
+	}
+
 	for (ot_msg_key i = 0; i < OT_MESSAGES_POOL; i++) {
 		if (ot_message_registry[i] == NULL) {
 			ot_message_registry[i] = msg;
@@ -118,9 +122,9 @@ static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc
 	ot_msg_key key;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	otMessageSettings settings;
-	otMessageSettings *pSettings;
+	otMessageSettings *p_settings = &settings;
 
-	pSettings = nrf_rpc_decode_buffer(ctx, &settings, sizeof(otMessageSettings));
+	p_settings = ot_rpc_decode_message_settings(ctx, &settings);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_NEW_MESSAGE);
@@ -128,7 +132,7 @@ static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
-	key = ot_reg_msg_alloc(otUdpNewMessage(openthread_get_default_instance(), pSettings));
+	key = ot_reg_msg_alloc(otUdpNewMessage(openthread_get_default_instance(), p_settings));
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	if (ot_msg_get(key) == NULL) {

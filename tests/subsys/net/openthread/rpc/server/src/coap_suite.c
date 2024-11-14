@@ -15,6 +15,8 @@
 
 #include <openthread/coap.h>
 
+#include "common_fakes.h"
+
 /* Message address used when testing serialization of a function that takes otMessage* */
 #define MSG_ADDR UINT32_MAX
 
@@ -28,12 +30,6 @@
 
 /* Fake functions */
 
-FAKE_VALUE_FUNC(otMessage *, otUdpNewMessage, otInstance *, const otMessageSettings *);
-FAKE_VALUE_FUNC(uint16_t, otMessageGetLength, const otMessage *);
-FAKE_VALUE_FUNC(uint16_t, otMessageGetOffset, const otMessage *);
-FAKE_VALUE_FUNC(uint16_t, otMessageRead, const otMessage *, uint16_t, void *, uint16_t);
-FAKE_VOID_FUNC(otMessageFree, otMessage *);
-FAKE_VALUE_FUNC(otError, otMessageAppend, otMessage *, const void *, uint16_t);
 FAKE_VALUE_FUNC(otMessage *, otCoapNewMessage, otInstance *, const otMessageSettings *);
 FAKE_VOID_FUNC(otCoapMessageInit, otMessage *, otCoapType, otCoapCode);
 FAKE_VALUE_FUNC(otError, otCoapMessageInitResponse, otMessage *, const otMessage *, otCoapType,
@@ -56,7 +52,6 @@ FAKE_VALUE_FUNC(otError, otCoapSendResponseWithParameters, otInstance *, otMessa
 		const otMessageInfo *, const otCoapTxParameters *);
 
 #define FOREACH_FAKE(f)                                                                            \
-	f(otUdpNewMessage);                                                                        \
 	f(otMessageGetLength);                                                                     \
 	f(otMessageGetOffset);                                                                     \
 	f(otMessageRead);                                                                          \
