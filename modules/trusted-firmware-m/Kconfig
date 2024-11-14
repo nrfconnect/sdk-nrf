@@ -291,6 +291,17 @@ config TFM_PROFILE_TYPE_MINIMAL
 	  and reproduce the desired configuration through kconfig fragments.
 endchoice
 
+config TFM_CPU_FREQ_MHZ
+	int
+	default $(div, $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency), 1000000) \
+		if $(dt_node_has_prop,/cpus/cpu@0,clock-frequency)
+	default $(div, $(dt_node_int_prop_int,/cpus/cpu@1,clock-frequency), 1000000) \
+		if $(dt_node_has_prop,/cpus/cpu@1,clock-frequency)
+	default 128
+	help
+	  Gives access to the cpu-clock frequency from the device tree when
+	  building with TF-m.
+
 config TFM_NFCT_PINS_AS_GPIOS
 	bool
 	default y if !DT_HAS_NORDIC_NRF_NFCT_ENABLED
