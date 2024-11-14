@@ -237,6 +237,13 @@ if(CONFIG_NFCT_PINS_AS_GPIOS OR CONFIG_TFM_NFCT_PINS_AS_GPIOS)
   )
 endif()
 
+if(CONFIG_TFM_CPU_FREQ_MHZ)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DTFM_CPU_FREQ_MHZ=${CONFIG_TFM_CPU_FREQ_MHZ}
+  )
+endif()
+
 if(CONFIG_NRF_TRACE_PORT)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS
