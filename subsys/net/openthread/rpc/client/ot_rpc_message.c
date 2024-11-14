@@ -45,7 +45,7 @@ otMessage *otUdpNewMessage(otInstance *aInstance, const otMessageSettings *aSett
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(otMessageSettings) + 3);
 
-	nrf_rpc_encode_buffer(&ctx, (const void *)aSettings, sizeof(otMessageSettings));
+	ot_rpc_encode_message_settings(&ctx, aSettings);
 
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_UDP_NEW_MESSAGE, &ctx);
 

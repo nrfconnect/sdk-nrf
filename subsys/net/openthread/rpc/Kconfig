@@ -59,6 +59,18 @@ config OPENTHREAD_RPC_CLIENT_NUM_SENT_COAP_REQUESTS
 
 endmenu # "OpenThread over RPC client configuration"
 
+menu "OpenThread over RPC client configuration"
+	depends on OPENTHREAD_RPC_SERVER
+
+config OPENTHREAD_RPC_MESSAGE_POOL
+	int "Maximum number of messages key identifiers that can be allocated on server"
+	default 8
+	help
+	  Defines maximum number of messages key indentifiers that can be allocated on server at
+	  the same time.
+
+endmenu
+
 config OPENTHREAD_RPC_INITIALIZE_NRF_RPC
 	bool "Automatically initialize nRF RPC library"
 	default n
