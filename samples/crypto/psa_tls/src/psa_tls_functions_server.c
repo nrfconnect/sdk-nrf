@@ -41,7 +41,11 @@ static int setup_tls_server_socket(void)
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(SERVER_PORT);
+#if defined(CONFIG_MBEDTLS_TLS_VERSION_1_3)
+	sock = socket(my_addr.sin_family, SOCK_STREAM, IPPROTO_TLS_1_3);
+#else
 	sock = socket(my_addr.sin_family, SOCK_STREAM, IPPROTO_TLS_1_2);
+#endif
 
 	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 			 sizeof(sec_tag_list));
