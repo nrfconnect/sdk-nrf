@@ -73,12 +73,13 @@ jobs:
         -e KconfigBasicNoModules -e ClangFormat -c origin/${BASE_REF}..
 
     - name: upload-results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       continue-on-error: true
       if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       with:
         name: compliance.xml
         path: ncs/nrf/compliance.xml
+        overwrite: true
 
     - name: check-warns
       working-directory: ncs/nrf
