@@ -139,8 +139,8 @@ After programming the BICR binary onto the device, validate whether the BICR wor
    * ``Error``: This indicates that the device is likely suffering from severe power issues after applying the BICR.
      This state is likely unrecoverable.
 
-Programming the SDFW and SCFW
-=============================
+Program the SDFW and SCFW
+*************************
 
 After programming the BICR, the nRF54H20 SoC requires the provisioning of a bundle ( :file:`nrf54h20_soc_binaries_v0.6.5.zip`) containing the precompiled firmware for the Secure Domain and System Controller.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
