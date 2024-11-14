@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 from pathlib import Path
-import re
+import json
 import shutil
 
 from jinja2 import Environment, FileSystemLoader
 from west.commands import WestCommand
 from west import log
 from yaml import load
+import jsonschema
 
 try:
     from yaml import CLoader as Loader
@@ -19,9 +20,7 @@ except ImportError:
 SCRIPT_DIR = Path(__file__).absolute().parent
 TEMPLATE_DIR = SCRIPT_DIR / "templates"
 CONFIG = SCRIPT_DIR / "config.yml"
-
-VENDOR_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
-BOARD_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
+SCHEMA = SCRIPT_DIR / "schema.json"
 
 
 class NcsGenboard(WestCommand):
@@ -36,31 +35,38 @@ class NcsGenboard(WestCommand):
             self.name, help=self.help, description=self.description
         )
 
-        parser.add_argument(
-            "-o", "--output", required=True, type=Path, help="Output directory"
+        group = parser.add_mutually_exclusive_group(required=True)
+        group.add_argument(
+            "-s", "--json-schema", action="store_true", help="Provide JSON schema"
         )
-        parser.add_argument("-e", "--vendor", required=True, help="Vendor name")
-        parser.add_argument("-b", "--board", required=True, help="Board name")
-        parser.add_argument(
-            "-d", "--board-desc", required=True, help="Board description"
+        group.add_argument(
+            "-r", "--json-schema-response", type=str, help="JSON schema response"
         )
-        parser.add_argument("-s", "--soc", required=True, help="SoC")
-        parser.add_argument("-v", "--variant", required=True, help="Variant")
 
         return parser
 
     def do_run(self, args, unknown_args):
+        with open(SCHEMA, "r") as f:
+            schema = json.loads(f.read())
+
+        if args.json_schema:
+            print(json.dumps(schema))
+            return
+
         with open(CONFIG, "r") as f:
             config = load(f, Loader=Loader)
 
         # validate input
-        if not VENDOR_RE.match(args.vendor):
-            log.err(f"Invalid vendor name: {args.vendor}")
-            return
+        input = json.loads(args.json_schema_response)
 
-        if not BOARD_RE.match(args.board):
-            log.err(f"Invalid board name: {args.board}")
-            return
+        try:
+            jsonschema.validate(input, schema)
+        except jsonschema.ValidationError as e:
+            raise Exception("Board configuration is not valid") from e
+
+        soc_parts = input["soc"].split("-")
+        req_soc = soc_parts[0].lower()
+        req_variant = soc_parts[1].lower()
 
         series = None
         soc = None
@@ -69,18 +75,18 @@ class NcsGenboard(WestCommand):
                 break
 
             for soc_ in product["socs"]:
-                if args.soc == soc_["name"]:
+                if req_soc == soc_["name"]:
                     series = product["series"]
                     soc = soc_
                     break
 
         if not series:
-            log.err(f"Invalid/unsupported SoC: {args.soc}")
+            log.err(f"Invalid/unsupported SoC: {req_soc}")
             return
 
         targets = []
         for variant in soc["variants"]:
-            if args.variant == variant["name"]:
+            if req_variant == variant["name"]:
                 if "cores" in variant:
                     for core in variant["cores"]:
                         target = {
@@ -119,7 +125,7 @@ class NcsGenboard(WestCommand):
                 break
 
         if not targets:
-            log.err(f"Invalid/unsupported variant: {args.variant}")
+            log.err(f"Invalid/unsupported variant: {req_variant}")
             return
 
         # prepare Jinja environment
@@ -129,16 +135,16 @@ class NcsGenboard(WestCommand):
             loader=FileSystemLoader(TEMPLATE_DIR / series),
         )
 
-        env.globals["vendor"] = args.vendor
-        env.globals["board"] = args.board
-        env.globals["board_desc"] = args.board_desc
+        env.globals["vendor"] = input["vendor"]
+        env.globals["board"] = input["board"]
+        env.globals["board_desc"] = input["description"]
         env.globals["series"] = series
-        env.globals["soc"] = args.soc
-        env.globals["variant"] = args.variant
+        env.globals["soc"] = req_soc
+        env.globals["variant"] = req_variant
         env.globals["targets"] = targets
 
         # render templates/copy files
-        out_dir = args.output / args.vendor / args.board
+        out_dir = Path(input["root"]) / "boards" / input["vendor"] / input["board"]
         if not out_dir.exists():
             out_dir.mkdir(parents=True)
 
@@ -147,14 +153,14 @@ class NcsGenboard(WestCommand):
         shutil.copy(tmpl, out_dir)
 
         tmpl = TEMPLATE_DIR / series / "board-pinctrl.dtsi"
-        shutil.copy(tmpl, out_dir / f"{ args.board }-pinctrl.dtsi")
+        shutil.copy(tmpl, out_dir / f"{ input['board'] }-pinctrl.dtsi")
 
         tmpl = env.get_template("board.cmake.jinja2")
         with open(out_dir / "board.cmake", "w") as f:
             f.write(tmpl.render())
 
         tmpl = env.get_template("Kconfig.board.jinja2")
-        with open(out_dir / f"Kconfig.{args.board}", "w") as f:
+        with open(out_dir / f"Kconfig.{input['board']}", "w") as f:
             f.write(tmpl.render())
 
         tmpl = env.get_template("board.yml.jinja2")
@@ -168,23 +174,23 @@ class NcsGenboard(WestCommand):
         # nrf53 specific files
         if series == "nrf53":
             tmpl = env.get_template("board-cpuapp_partitioning.dtsi.jinja2")
-            with open(out_dir / f"{ args.board }-cpuapp_partitioning.dtsi", "w") as f:
+            with open(out_dir / f"{ input['board'] }-cpuapp_partitioning.dtsi", "w") as f:
                 f.write(tmpl.render(config))
 
             tmpl = TEMPLATE_DIR / series / "board-shared_sram.dtsi"
-            shutil.copy(tmpl, out_dir / f"{ args.board }-shared_sram.dtsi")
+            shutil.copy(tmpl, out_dir / f"{ input['board'] }-shared_sram.dtsi")
 
         # nrf91 specific files
         if series == "nrf91":
             tmpl = env.get_template("board-partitioning.dtsi.jinja2")
-            with open(out_dir / f"{ args.board }-partitioning.dtsi", "w") as f:
+            with open(out_dir / f"{ input['board'] }-partitioning.dtsi", "w") as f:
                 f.write(tmpl.render(config))
 
         # per-target files
         for target in targets:
-            name = args.board
+            name = input["board"]
             if target.get("core"):
-                name += f"_{args.soc}_{target['core']}"
+                name += f"_{req_soc}_{target['core']}"
             if target["ns"]:
                 name += "_ns"
             if target["xip"]:
@@ -201,3 +207,5 @@ class NcsGenboard(WestCommand):
             tmpl = env.get_template("board_twister.yml.jinja2")
             with open(out_dir / f"{name}.yml", "w") as f:
                 f.write(tmpl.render(target=target))
+
+        print(f"Board {input['board']} generated successfully")

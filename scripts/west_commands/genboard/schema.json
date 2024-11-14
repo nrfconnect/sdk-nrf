@@ -1,0 +1,54 @@
+{
+  "title": "NCS board",
+  "type": "object",
+  "required": [
+    "board",
+    "description",
+    "vendor",
+    "soc",
+    "root"
+  ],
+  "properties": {
+    "board": {
+      "title": "Board name",
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "vendor": {
+      "title": "Vendor name",
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "soc": {
+      "title": "SoC",
+      "type": "string",
+      "enum": [
+        "nRF52805-CAAA",
+        "nRF52810-QFAA",
+        "nRF52811-QFAA",
+        "nRF52820-QDAA",
+        "nRF52832-CIAA",
+        "nRF52832-QFAA",
+        "nRF52832-QFAB",
+        "nRF52833-QDAA",
+        "nRF52833-QIAA",
+        "nRF52840-QFAA",
+        "nRF52840-QIAA",
+        "nRF5340-QKAA",
+        "nRF54L15-QFAA",
+        "nRF9131-LACA",
+        "nRF9151-LACA",
+        "nRF9160-SICA",
+        "nRF9161-LACA"
+      ]
+    },
+    "root": {
+      "title": "Board root",
+      "type": "string"
+    }
+  }
+}
