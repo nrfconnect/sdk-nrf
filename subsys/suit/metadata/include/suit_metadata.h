@@ -83,8 +83,10 @@ typedef enum {
 	/** Manifest role uninitialized (invalid). */
 	SUIT_MANIFEST_UNKNOWN = 0x00,
 
+#if 1
 	/** Manifest describes the entry-point for all Nordic-controlled manifests. */
 	SUIT_MANIFEST_SEC_TOP = 0x10,
+#endif
 	/** Manifest describes SDFW firmware and recovery updates. */
 	SUIT_MANIFEST_SEC_SDFW = 0x11,
 	/** Manifest describes SYSCTRL firmware update and boot procedures. */
@@ -107,6 +109,13 @@ typedef enum {
 	SUIT_MANIFEST_RAD_LOCAL_1 = 0x31,
 	/** Manifest describes OEM-specific binaries, specific for radio core. */
 	SUIT_MANIFEST_RAD_LOCAL_2 = 0x32,
+
+#if 0
+	/** Manifest describes the entry-point for all Nordic-controlled manifests. */
+	SUIT_MANIFEST_NORDIC_TOP = 0x40,
+#endif
+	/** Manifest describes Cellular Domain firmware update and boot procedures. */
+	SUIT_MANIFEST_NORDIC_CELLFW = 0x41,
 } suit_manifest_role_t;
 
 /* Manifest domain nibble. */
@@ -122,6 +131,9 @@ typedef enum {
 
 	/** Manifest domain for Radio-controlled manifests. */
 	SUIT_MANIFEST_DOMAIN_RAD = 0x30,
+
+	/** Manifest domain for Nordic-controlled manifests (Cellular). */
+	SUIT_MANIFEST_DOMAIN_NORDIC_CELL = 0x40,
 } suit_manifest_domain_t;
 
 /** The 128-bit UUID, used for identifying vendors as well as classes. */

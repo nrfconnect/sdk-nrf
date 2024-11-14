@@ -189,8 +189,8 @@ static const suit_storage_mpi_t mpi_nordic[] = {
 		.vendor_id = {0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85, 0x8f, 0x94, 0xe2,
 			      0x8d, 0x73, 0x5c, 0xe9, 0xf4},
 		/* RFC4122 uuid5(nordic_vid, 'nRF9280_nordic_top') */
-		.class_id = {0x92, 0x54, 0x3b, 0x3b, 0xb9, 0xbc, 0x5c, 0x7c, 0x9f, 0x46, 0x4e, 0x4a,
-			     0x07, 0xb9, 0xac, 0x13},
+        .class_id = {0xa9, 0x6d, 0x08, 0xa3, 0x21, 0x8f, 0x5a, 0x9c, 0xa3, 0x9e, 0xea, 0x33,
+                 0xce, 0x8f, 0x56, 0x50},
 	},
 	{
 		.version = SUIT_MPI_INFO_VERSION,
@@ -204,8 +204,8 @@ static const suit_storage_mpi_t mpi_nordic[] = {
 		.vendor_id = {0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85, 0x8f, 0x94, 0xe2,
 			      0x8d, 0x73, 0x5c, 0xe9, 0xf4},
 		/* RFC4122 uuid5(nordic_vid, 'nRF9280_sec') */
-		.class_id = {0xdc, 0xf1, 0xba, 0x81, 0xdb, 0x65, 0x5a, 0x8c, 0x9b, 0xef, 0x6b, 0x59,
-			     0x33, 0x65, 0xa4, 0x84},
+        .class_id = {0xef, 0x05, 0xbe, 0xf3, 0x7d, 0x8b, 0x58, 0xb7, 0xae, 0xdd, 0xd6, 0x90,
+                  0x4e, 0x86, 0xb6, 0x49},
 	},
 	{
 		.version = SUIT_MPI_INFO_VERSION,
@@ -219,8 +219,8 @@ static const suit_storage_mpi_t mpi_nordic[] = {
 		.vendor_id = {0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85, 0x8f, 0x94, 0xe2,
 			      0x8d, 0x73, 0x5c, 0xe9, 0xf4},
 		/* RFC4122 uuid5(nordic_vid, 'nRF9280_sys') */
-		.class_id = {0x31, 0x39, 0xb5, 0xe8, 0xa9, 0x2d, 0x51, 0x63, 0x9c, 0x3e, 0x3b, 0x6a,
-			     0x41, 0x7e, 0x7f, 0xb4},
+        .class_id = {0xe4, 0xa0, 0xb0, 0xd4, 0xbf, 0xff, 0x5a, 0x9d, 0x8f, 0xb1, 0x61, 0xba,
+                 0xc6, 0xde, 0xc4, 0xbc},
 	}};
 
 static suit_plat_err_t find_manifest_area(suit_manifest_role_t role, const uint8_t **addr,
@@ -245,6 +245,10 @@ static suit_plat_err_t find_manifest_area(suit_manifest_role_t role, const uint8
 	case SUIT_MANIFEST_SEC_SYSCTRL:
 		*addr = nordic_storage->nordic.scfw;
 		*size = sizeof(nordic_storage->nordic.scfw);
+		break;
+	case SUIT_MANIFEST_NORDIC_CELLFW:
+		*addr = nordic_storage_cell->nordic_cell.cellfw;
+		*size = sizeof(nordic_storage_cell->nordic_cell.top);
 		break;
 	case SUIT_MANIFEST_RAD_RECOVERY:
 		*addr = rad_storage->rad.recovery;
@@ -950,17 +954,17 @@ suit_plat_err_t suit_storage_installed_envelope_get(const suit_manifest_class_id
 		return err;
 	}
 
-	LOG_DBG("Decode envelope with role: 0x%x%s address: 0x%lx", role, suit_role_name_get(role),
+	LOG_INF("Decode envelope with role: 0x%x%s address: 0x%lx", role, suit_role_name_get(role),
 		(intptr_t)(*addr));
 
 	err = suit_storage_envelope_get(*addr, *size, id, addr, size);
 	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_WRN("Unable to parse envelope with role 0x%x%s", role,
-			suit_role_name_get(role));
+		LOG_WRN("Unable to parse envelope with role 0x%x%s, address: 0x%lx", role,
+			suit_role_name_get(role), (intptr_t)(*addr));
 		return err;
 	}
 
-	LOG_DBG("Valid envelope with given class ID and role 0x%x%s found", role,
+	LOG_INF("Valid envelope with given class ID and role 0x%x%s found", role,
 		suit_role_name_get(role));
 
 	return err;
@@ -1082,4 +1086,86 @@ suit_plat_err_t suit_storage_report_read(size_t index, const uint8_t **buf, size
 	}
 
 	return suit_storage_report_internal_read(area_addr, area_size, buf, len);
+}
+
+
+suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	struct suit_storage_rad *rad_storage = (struct suit_storage_rad *)SUIT_STORAGE_RAD_ADDRESS;
+	struct suit_storage_app *app_storage = (struct suit_storage_app *)SUIT_STORAGE_APP_ADDRESS;
+	struct suit_storage_nordic_cell *cell_storage = (struct suit_storage_nordic_cell *)SUIT_STORAGE_NORDIC_CELL_ADDRESS;
+	const struct device *fdev = SUIT_PLAT_INTERNAL_NVM_DEV;
+	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
+	int err = 0;
+
+	if (!device_is_ready(fdev)) {
+		return SUIT_PLAT_ERR_HW_NOT_READY;
+	}
+
+	switch (domain) {
+	case SUIT_MANIFEST_DOMAIN_APP:
+		/* Clear regular entry, inluding NVV and NVV backup. */
+		err = flash_erase(fdev,
+				  suit_plat_mem_nvm_offset_get((uint8_t *)&app_storage->app_area),
+				  sizeof(app_storage->app_area));
+		if (err == 0) {
+			/* Clear MPI backup. */
+			err = flash_erase(fdev,
+					  suit_plat_mem_nvm_offset_get(
+						  (uint8_t *)&nordic_storage->nordic.app_mpi_bak),
+					  sizeof(nordic_storage->nordic.app_mpi_bak));
+		}
+
+		/* Clear reports (incl. recovery flag and update candidate info). */
+		ret = suit_storage_report_clear(0);
+		break;
+
+	case SUIT_MANIFEST_DOMAIN_RAD:
+		/* Clear regular entry. */
+		err = flash_erase(fdev,
+				  suit_plat_mem_nvm_offset_get((uint8_t *)&rad_storage->rad_area),
+				  sizeof(rad_storage->rad_area));
+		if (err == 0) {
+			/* Clear MPI backup. */
+			err = flash_erase(fdev,
+					  suit_plat_mem_nvm_offset_get(
+						  (uint8_t *)&nordic_storage->nordic.rad_mpi_bak),
+					  sizeof(nordic_storage->nordic.rad_mpi_bak));
+		}
+		break;
+
+	case SUIT_MANIFEST_DOMAIN_NORDIC_CELL:
+		/* Clear regular entry. */
+		err = flash_erase(fdev,
+				  suit_plat_mem_nvm_offset_get((uint8_t *)&cell_storage->nordic_cell.cellfw),
+				  sizeof(cell_storage->nordic_cell.cellfw));
+#if 0 /* No backup for CellFW */
+		if (err == 0) {
+			/* Clear MPI backup. */
+			err = flash_erase(fdev,
+					  suit_plat_mem_nvm_offset_get(
+						  (uint8_t *)&nordic_storage->nordic.rad_mpi_bak),
+					  sizeof(nordic_storage->nordic.rad_mpi_bak));
+		}
+#endif
+		break;
+
+	default:
+		return SUIT_PLAT_ERR_INVAL;
+	}
+
+	/* Reinitialize SUIT storage internal structures.
+	 * Ignore return code as an init failure on erased SUIT storage area
+	 * does not indicate that the purge failed.
+	 */
+	(void)suit_storage_init();
+
+	/* In case of IO error, ignore the suit processor return code. */
+	if (err != 0) {
+		return SUIT_PLAT_ERR_IO;
+	}
+
+	return ret;
 }
