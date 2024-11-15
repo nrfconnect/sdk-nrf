@@ -1,10 +1,13 @@
 name: Upload Artifact Example
 
 on:
+  pull_request:
+    branches:
+      - 'v*-branch'
   push:
-  workflow_dispatch:
+    branches:
+      - 'v*-branch'
 
-#asfd
 jobs:
   upload-artifact:
     runs-on: ubuntu-latest
