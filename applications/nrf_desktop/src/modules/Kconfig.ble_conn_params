@@ -35,9 +35,22 @@ config DESKTOP_BLE_USB_MANAGED_CI_VALUE
 	  Connection interval used for all connected peers while the USB is
 	  in suspended state.
 
+config DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE
+	int "BLE peripheral latency when USB is suspended"
+	default 1
+	depends on DESKTOP_BLE_USB_MANAGED_CI
+	range 1 10
+	help
+	  Peripheral latency used for all connected peers while the USB is in
+	  suspended state.
+
 if !DESKTOP_BLE_USB_MANAGED_CI
 
 config DESKTOP_BLE_USB_MANAGED_CI_VALUE
+	int
+	default 0
+
+config DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE
 	int
 	default 0
 
