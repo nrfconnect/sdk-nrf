@@ -12,12 +12,14 @@ jobs:
   upload-artifact:
     runs-on: ubuntu-latest
     steps:
-      - name: Create a file to upload
-        run: echo "Hello, World!" > artifact.txt
+      - name: Create directories and file to upload
+        run: |
+          mkdir -p playground/buran
+          echo "Hello, World!" > playground/buran/artifact.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: playground/buran/artifact.txt
-          path: artifact.txt
+          name: my-artifact
+          path: playground/buran/artifact.txt
           overwrite: true
