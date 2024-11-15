@@ -50,35 +50,16 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Print out the parsed arguments for 'nac' and 'nac_test'
-if [ ${#nac_args[@]} -gt 0 ]; then
-    echo "Arguments for 'nac':"
-    for arg in "${nac_args[@]}"; do
-        echo "- $arg"
-    done
-else
-    echo "No arguments found for 'nac'."
-fi
-
-if [ ${#nac_test_args[@]} -gt 0 ]; then
-    echo "Arguments for 'nac_test':"
-    for arg in "${nac_test_args[@]}"; do
-        echo "- $arg"
-    done
-else
-    echo "No arguments found for 'nac_test'."
-fi
-
-
 source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
 cd ${BSIM_OUT_PATH}/bin
 
 Execute ./bs_nrf5340bsim_nrf5340_cpuapp____nrf_tests_bluetooth_bsim_nrf_auraconfig_prj_conf \
-  -v=${VERBOSITY} -s=${SIM_ID} -d=0 -cpu0_testid=nac -argstest ${nac_args[@]}
+  -v=${VERBOSITY} -s=${SIM_ID} -d=0 -RealEncryption=1 -cpu0_testid=nac -argstest ${nac_args[@]}
 
 Execute ./bs_nrf5340bsim_nrf5340_cpuapp____nrf_tests_bluetooth_bsim_nrf_auraconfig_tester_prj_conf \
-  -v=${VERBOSITY} -s=${SIM_ID} -d=1 -cpu0_testid=nac_test -argstest ${nac_test_args[@]}
+  -v=${VERBOSITY} -s=${SIM_ID} -d=1 -RealEncryption=1 -cpu0_testid=nac_test \
+  -argstest ${nac_test_args[@]}
 
-Execute ./bs_2G4_phy_v1 -v=${VERBOSITY} -s=${SIM_ID} -D=2 -sim_length=10e6
+Execute ./bs_2G4_phy_v1 -v=${VERBOSITY} -s=${SIM_ID} -D=2 -sim_length=2e6
 
 wait_for_background_jobs # Wait for all programs in background and return != 0 if any fails

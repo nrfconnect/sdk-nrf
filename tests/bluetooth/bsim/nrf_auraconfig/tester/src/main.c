@@ -17,8 +17,8 @@ LOG_MODULE_REGISTER(nac_tester, CONFIG_NAC_TESTER_LOG_LEVEL);
 
 extern enum bst_result_t bst_result;
 
-#define MAX_ARGS	50
-#define MAX_ARG_LEN	20
+#define MAX_ARGS	200
+#define MAX_ARG_LEN	50
 #define ARG_COMMAND	"nac_test"
 #define MAX_COMMAND_LEN 60
 
@@ -32,10 +32,10 @@ static void test_args(int argc, char *argv[])
 
 	for (int i = 0; i < argc; i++) {
 		if (i > MAX_ARGS) {
-			TEST_FAIL("ENOMEM");
+			TEST_FAIL("ENOMEM, MAX_ARG");
 		}
 		if (strlen(argv[i]) > MAX_ARG_LEN) {
-			TEST_FAIL("ENOMEM");
+			TEST_FAIL("ENOMEM, MAX_ARG_LEN");
 		}
 		memcpy(argv_copy[i], argv[i], strlen(argv[i]) + 1);
 	}
