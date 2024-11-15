@@ -18,6 +18,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
-          path: playground/buran/artifact.txt
+          name: playground/buran/artifact.txt
+          path: artifact.txt
           overwrite: true
