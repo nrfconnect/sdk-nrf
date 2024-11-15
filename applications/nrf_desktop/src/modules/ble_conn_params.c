@@ -164,10 +164,13 @@ static void update_peer_conn_params(struct connected_peer *peer)
 		/* Retry to update the connection parameters after an error. */
 		k_work_reschedule(&conn_params_update, CONN_PARAMS_ERROR_TIMEOUT);
 	} else {
-		LOG_INF("Conn params for peer: %p set: %s, latency: %"PRIu16,
+		LOG_INF("Update conn params for peer: %p (%s, requested latency: %" PRIu16
+			", USB suspended: %s)",
 			(void *)peer->conn,
 			peer->use_llpm ? "LLPM" : "BLE",
-			peer->requested_latency);
+			peer->requested_latency,
+			IS_ENABLED(CONFIG_DESKTOP_BLE_USB_MANAGED_CI) && usb_suspended ?
+				"true" : "false");
 	}
 }
 
