@@ -161,6 +161,20 @@ static struct {
 	} pres_comp;
 } ctrl_blk;
 
+/**
+ * @brief	Get the current number of blocks in the output buffer.
+ */
+static int filled_blocks_get(void)
+{
+	if (ctrl_blk.out.cons_blk_idx < ctrl_blk.out.prod_blk_idx) {
+		return ctrl_blk.out.prod_blk_idx - ctrl_blk.out.cons_blk_idx;
+	} else if (ctrl_blk.out.cons_blk_idx > ctrl_blk.out.prod_blk_idx) {
+		return (FIFO_NUM_BLKS - ctrl_blk.out.cons_blk_idx) + ctrl_blk.out.prod_blk_idx;
+	} else {
+		return 0;
+	}
+}
+
 static bool tone_active;
 /* Buffer which can hold max 1 period test tone at 100 Hz */
 static uint16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 100];
@@ -433,6 +447,7 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 		return;
 	}
 
+	/* Operation to obtain nearest whole number in subsequent operations */
 	if (pres_adj_us >= 0) {
 		pres_adj_us += (BLK_PERIOD_US / 2);
 	} else {
@@ -961,8 +976,7 @@ void audio_datapath_stream_out(const uint8_t *buf, size_t size, uint32_t sdu_ref
 	}
 
 	/*** Add audio data to FIFO buffer ***/
-
-	int32_t num_blks_in_fifo = ctrl_blk.out.prod_blk_idx - ctrl_blk.out.cons_blk_idx;
+	uint32_t num_blks_in_fifo = filled_blocks_get();
 
 	if ((num_blks_in_fifo + NUM_BLKS_IN_FRAME) > FIFO_NUM_BLKS) {
 		LOG_WRN("Output audio stream overrun - Discarding audio frame");
