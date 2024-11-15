@@ -3586,6 +3586,8 @@ NCSDK-30263: direct-xip with revert does not work on nRF54L15
 
   **Affected platforms:** nRF54L15
 
+  **Workaround:** Manually cherry-pick the commit ``ff0e8fabe1566349dbfd1786b31b325b46be205a`` from the main branch of the ``sdk-nrf`` repository.
+
 .. rst-class:: v2-8-0
 
 KRKNWK-18776: MCUboot updates take a long time
