@@ -66,8 +66,6 @@ static struct connected_peer *find_connected_peer(const struct bt_conn *conn)
 
 static int set_le_conn_param(struct bt_conn *conn, uint16_t interval, uint16_t latency)
 {
-	int err;
-
 	struct bt_le_conn_param param = {
 		.interval_min = interval,
 		.interval_max = interval,
@@ -75,14 +73,7 @@ static int set_le_conn_param(struct bt_conn *conn, uint16_t interval, uint16_t l
 		.timeout = CONN_SUPERVISION_TIMEOUT,
 	};
 
-	err = bt_conn_le_param_update(conn, &param);
-
-	if (err == -EALREADY) {
-		/* Connection parameters are already set. */
-		err = 0;
-	}
-
-	return err;
+	return bt_conn_le_param_update(conn, &param);
 }
 
 static int interval_reg_to_us(uint16_t reg)
@@ -140,12 +131,15 @@ static int set_conn_params(struct connected_peer *peer)
 		if (curr_ci_us > CONN_INTERVAL_PRE_LLPM_MAX_US) {
 			err = set_le_conn_param(peer->conn, CONN_INTERVAL_BLE_REG,
 						peer->requested_latency);
-			peer->conn_param_update_pending = true;
 		} else {
 			err = set_llpm_conn_param(peer->conn, peer->requested_latency);
 		}
 	} else {
 		err = set_le_conn_param(peer->conn, CONN_INTERVAL_BLE_REG, peer->requested_latency);
+	}
+
+	if (!err) {
+		peer->conn_param_update_pending = true;
 	}
 
 	return err;
@@ -289,7 +283,7 @@ static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support)
 	if (peer) {
 		peer->use_llpm = IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) && peer_llpm_support;
 		peer->discovered = true;
-		update_peer_conn_params(peer);
+		k_work_reschedule(&conn_params_update, K_NO_WAIT);
 	}
 }
 
