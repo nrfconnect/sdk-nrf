@@ -3385,7 +3385,7 @@ NCSDK-30161 Combination of :kconfig:option:`CONFIG_ASSERT`, :kconfig:option:`CON
 
   **Affected platforms:** nRF54H20
 
-  **Workaround:** Set :kconfig:option:`CONFIG_ASSERT` to ``n`` or :kconfig:option:`CONFIG_SOC_NRF54H20_GPD`to ``n``.
+  **Workaround:** Set :kconfig:option:`CONFIG_ASSERT` to ``n`` or :kconfig:option:`CONFIG_SOC_NRF54H20_GPD` to ``n``.
 
 .. rst-class:: v2-8-0
 
@@ -4959,7 +4959,7 @@ CIA-1182: TF-M flash partition overflow
 
   **Affected platforms:** Thingy:91
 
-  **Workaround:**: Set the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_MINISIZEREL` to ``y``.
+  **Workaround:** Set the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_MINSIZEREL` to ``y``.
 
 .. rst-class:: v2-5-0
 
