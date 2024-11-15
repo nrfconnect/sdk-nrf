@@ -49,16 +49,17 @@
 #define GENERATED_DEFAULTS_COUNT (1)
 
 // This is an array of EmberAfAttributeMinMaxValue structures.
-#define GENERATED_MIN_MAX_DEFAULT_COUNT 2
+#define GENERATED_MIN_MAX_DEFAULT_COUNT 3
 #define GENERATED_MIN_MAX_DEFAULTS                                                                                     \
 	{                                                                                                              \
 		/* Endpoint: 1, Cluster: On/Off (server) */                                                            \
 		{ (uint16_t)0xFF, (uint16_t)0x0, (uint16_t)0x2 }, /* StartUpOnOff */                                   \
                                                                                                                        \
-		/* Endpoint: 1, Cluster: Level Control (server) */                                                     \
+			/* Endpoint: 1, Cluster: Level Control (server) */                                             \
+			{ (uint16_t)0x0, (uint16_t)0x0, (uint16_t)0x3 }, /* Options */                                 \
 		{                                                                                                      \
-			(uint16_t)0x0, (uint16_t)0x0, (uint16_t)0x3                                                    \
-		} /* Options */                                                                                        \
+			(uint16_t)0x32, (uint16_t)0x1, (uint16_t)0xFF                                                  \
+		} /* DefaultMoveRate */                                                                                \
 	}
 
 // This is an array of EmberAfAttributeMetadata structures.
@@ -361,7 +362,7 @@
 			{ ZAP_SIMPLE_DEFAULT(0x000F), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                        \
 			{ ZAP_SIMPLE_DEFAULT(2), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
-			/* Endpoint: 0, Cluster: WiFi Network Diagnostics (server) */                                                 \
+			/* Endpoint: 0, Cluster: Wi-Fi Network Diagnostics (server) */                                                \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000000, 7, ZAP_TYPE(OCTET_STRING),                                                 \
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* BSSID */                          \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000001, 1, ZAP_TYPE(ENUM8),                                                        \
@@ -472,8 +473,9 @@
 			  ZAP_ATTRIBUTE_MASK(WRITABLE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* OnTransitionTime */                       \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000013, 2, ZAP_TYPE(INT16U),                                                       \
 			  ZAP_ATTRIBUTE_MASK(WRITABLE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* OffTransitionTime */                      \
-			{ ZAP_SIMPLE_DEFAULT(50), 0x00000014, 1, ZAP_TYPE(INT8U),                                                     \
-			  ZAP_ATTRIBUTE_MASK(WRITABLE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* DefaultMoveRate */                        \
+			{ ZAP_MIN_MAX_DEFAULTS_INDEX(2), 0x00000014, 1, ZAP_TYPE(INT8U),                                              \
+			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) |                                                \
+				  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* DefaultMoveRate */                                               \
 			{ ZAP_SIMPLE_DEFAULT(255), 0x00004000, 1, ZAP_TYPE(INT8U),                                                    \
 			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(WRITABLE) |                                               \
 				  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* StartUpCurrentLevel */                                           \
@@ -806,7 +808,7 @@
       .eventCount = 0, \
     },\
   { \
-      /* Endpoint: 0, Cluster: WiFi Network Diagnostics (server) */ \
+      /* Endpoint: 0, Cluster: Wi-Fi Network Diagnostics (server) */ \
       .clusterId = 0x00000036, \
       .attributes = ZAP_ATTRIBUTE_INDEX(137), \
       .attributeCount = 12, \
