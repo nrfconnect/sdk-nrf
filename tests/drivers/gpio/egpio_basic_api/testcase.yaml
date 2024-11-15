@@ -9,7 +9,7 @@ common:
     fixture: gpio_loopback
 
 tests:
-  drivers.egpio.loopback_icmsg:
+  drivers.egpio.loopback.icmsg:
     min_flash: 64
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -18,7 +18,7 @@ tests:
     sysbuild: true
     extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICMSG=y
 
-  drivers.egpio.loopback_icbmsg:
+  drivers.egpio.loopback.icbmsg:
     min_flash: 64
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -27,7 +27,7 @@ tests:
     sysbuild: true
     extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICBMSG=y
 
-  drivers.egpio.loopback_mbox:
+  drivers.egpio.loopback.mbox:
     min_flash: 64
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
