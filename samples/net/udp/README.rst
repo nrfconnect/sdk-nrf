@@ -104,7 +104,7 @@ After programming the sample to your device, test it by performing the following
 Troubleshooting
 ===============
 
-If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor`_ documentation to learn how to capture modem traces in order to debug network traffic in Wireshark.
+If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces in order to debug network traffic in Wireshark.
 This sample enables modem traces by default.
 
 Dependencies

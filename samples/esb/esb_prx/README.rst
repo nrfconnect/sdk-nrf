@@ -69,7 +69,7 @@ Complete the following steps to test both the Transmitter and Receiver samples:
 
 1. Power on both kits.
 #. Observe that the LEDs change synchronously on both kits.
-#. Optionally, connect to the kits with a terminal emulator (for example, nRF Connect Serial Terminal).
+#. Optionally, connect to the kits with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings and steps.
 #. Observe the logging output for both kits.
 

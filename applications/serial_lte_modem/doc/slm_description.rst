@@ -407,18 +407,18 @@ To connect to an nRF91 Series DK with a PC:
 1. Verify that ``UART_0`` is selected in the application.
    It is defined in the default configuration.
 
-2. Use `nRF Connect Serial Terminal`_ to connect to the development kit.
+2. Use the `Serial Terminal app`_ to connect to the development kit.
    See :ref:`serial_terminal_connect` for instructions.
-   You can also use the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
-   Using the Cellular Monitor app in combination with the nRF Connect Serial Terminal shows how the modem responds to the different modem commands.
+   You can also use the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor app`_ to open the Serial Terminal app.
+   Using the Cellular Monitor app in combination with the Serial Terminal app shows how the modem responds to the different modem commands.
    You can then use this connection to send or receive AT commands over UART, and to see the log output of the development kit.
 
-   Instead of using nRF Connect Serial Terminal, you can use PuTTY to establish a terminal connection to the development kit, using the :ref:`default serial port connection settings <test_and_optimize>`.
+   Instead of using the Serial Terminal app, you can use PuTTY to establish a terminal connection to the development kit, using the :ref:`default serial port connection settings <test_and_optimize>`.
 
    .. note::
 
       The default AT command terminator is a carriage return followed by a line feed (``\r\n``).
-      nRF Connect Serial Terminal supports this format.
+      The Serial Terminal app supports this format.
       If you want to use another terminal emulator, make sure that the configured AT command terminator corresponds to the line terminator of your terminal.
       When using PuTTY, you must set the :ref:`CONFIG_SLM_CR_TERMINATION <CONFIG_SLM_CR_TERMINATION>` SLM configuration option.
       See :ref:`slm_config_options` for more details.
@@ -642,8 +642,8 @@ If you have an nRF52 Series DK running a client application, you can also use th
 |test_sample|
 
 1. |connect_kit|
-#. :ref:`Connect to the kit with nRF Connect Serial Terminal <serial_terminal_connect>`.
-   You can also use the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
+#. :ref:`Connect to the kit with the Serial Terminal app <serial_terminal_connect>`.
+   You can also use the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor app`_ to open the Serial Terminal app.
    If you want to use a different terminal emulator, see :ref:`slm_connecting_91dk_pc`.
 #. Reset the kit.
 #. Observe that the development kit sends a ``Ready\r\n`` message on UART.

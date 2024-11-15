@@ -327,7 +327,7 @@ The following serial output is from the terminal window that performs the HTTP c
 Troubleshooting
 ***************
 
-If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
+If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
 Modem traces can be enabled by providing a snippet with the west build command as shown in the following example for nRF9161 DK:
 
 .. code-block:: console

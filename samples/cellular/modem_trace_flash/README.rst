@@ -83,7 +83,7 @@ Testing
 After programming the sample and board controller firmware (as mentioned in Requirements section) to your development kit, test it by performing the following steps:
 
 #. |connect_kit|
-#. Open the `Cellular Monitor`_ desktop application and connect the DK.
+#. Open the `Cellular Monitor app`_ and connect the DK.
 #. Select :guilabel:`Autoselect` from the **Modem trace database** drop-down menu, or a modem firmware version that is programmed on the DK.
 #. Select :guilabel:`Reset device on start`.
 #. Make sure that either :guilabel:`Open in Wireshark` or :guilabel:`Save trace file to disk` is selected.
@@ -92,7 +92,7 @@ After programming the sample and board controller firmware (as mentioned in Requ
    The button changes to :guilabel:`Stop` and is greyed out.
 #. When the console output  ``Flushed modem traces to flash`` is received in Serial Terminal, press **Button 1** on the development kit.
    If you are not using a serial terminal, you can approximately wait for one minute after clicking the :guilabel:`Start` button, and then press **Button 1**.
-#. Observe modem traces received on the Cellular Monitor desktop application.
+#. Observe modem traces received on the Cellular Monitor app.
 
 .. note::
    Since the external flash is erased at startup, there will be a few seconds of delay before the first console output is received from the sample.

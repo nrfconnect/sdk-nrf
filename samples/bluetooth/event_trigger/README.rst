@@ -37,7 +37,7 @@ Testing
 
 After programming the sample to both development kits, test it by performing the following steps:
 
-1. Connect to both kits with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+1. Connect to both kits with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings and steps.
 #. Reset both kits.
 

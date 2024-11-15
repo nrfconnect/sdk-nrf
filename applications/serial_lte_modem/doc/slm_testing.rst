@@ -377,8 +377,8 @@ TLS client
 Before completing this test, you must update the CA certificate, the client certificate, and the private key to be used for the TLS connection in the modem.
 The credentials must use the security tag 16842755.
 
-To store the credentials in the modem, use the Cellular Monitor app.
-See `Managing credentials`_ in the Cellular Monitor User Guide for instructions.
+To store the credentials in the modem, use the `Cellular Monitor app`_.
+See `Managing credentials`_ in the Cellular Monitor app documentation for instructions.
 
 You must register the corresponding credentials on the server side.
 

@@ -130,7 +130,7 @@ After programming the sample to your development kit, complete the following ste
 
    .. tab:: Server test
 
-      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+      1. Start a terminal emulator like the `Serial Terminal app`_ and connect to the used serial port with the standard UART settings.
          See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
       #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:
@@ -166,7 +166,7 @@ After programming the sample to your development kit, complete the following ste
 
    .. tab:: Client test
 
-      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+      1. Start a terminal emulator like the `Serial Terminal app`_ and connect to the used serial port with the standard UART settings.
          See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
       #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:
@@ -204,7 +204,7 @@ After programming the sample to your development kit, complete the following ste
 
       Use ``dtls.conf`` overlay when building the sample to enable DTLS support.
 
-      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+      1. Start a terminal emulator like the `Serial Terminal app`_ and connect to the used serial port with the standard UART settings.
          See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
       #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:
@@ -242,7 +242,7 @@ After programming the sample to your development kit, complete the following ste
 
       Use ``dtls.conf`` overlay when building the sample to enable DTLS support.
 
-      1. Start a terminal emulator like nRF Connect Serial Terminal and connect to the used serial port with the standard UART settings.
+      1. Start a terminal emulator like the `Serial Terminal app`_ and connect to the used serial port with the standard UART settings.
          See :ref:`test_and_optimize` for more information.
       #. Observe the logs from the application using the terminal emulator.
       #. Start the ``eth_rtt_link`` executable as a superuser with your development kit's SEGGER ID and the following IPv4 address as parameters:

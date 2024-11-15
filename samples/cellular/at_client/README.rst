@@ -24,7 +24,7 @@ Overview
 
 The AT Client sample acts as a proxy for sending directives to the nRF91 Series modem using AT commands.
 This facilitates the reading of responses or analyzing of events related to the nRF91 Series modem.
-You can initiate the commands manually from a terminal such as the `nRF Connect Serial Terminal`_, or visually using the `Cellular Monitor`_ app.
+You can initiate the commands manually from a terminal such as the `Serial Terminal app`_, or visually using the `Cellular Monitor app`_.
 Both apps are part of `nRF Connect for Desktop`_.
 
 For more information on the AT commands, see the `nRF91x1 AT Commands Reference Guide`_  or `nRF9160 AT Commands Reference Guide`_ depending on the SiP you are using.
@@ -47,7 +47,7 @@ Testing
 After programming the sample to your development kit, test it by performing the following steps:
 
 1. Press the reset button on the nRF91 Series DK to reboot the kit and start the AT Client sample.
-#. :ref:`Connect to the nRF91 Series DK with nRF Connect Serial Terminal <serial_terminal_connect>`.
+#. :ref:`Connect to the nRF91 Series DK with the Serial Terminal app <serial_terminal_connect>`.
 #. Run the following commands from the Serial Terminal:
 
    a. Enter the command: :command:`AT+CFUN?`.

@@ -328,7 +328,7 @@ Developing with nRF54L Series
   * The :ref:`ug_nrf54l_developing_provision_kmu` page, including instructions on generating keys and provisioning them to the board.
 
 * Updated the name and the structure of the section, with :ref:`ug_nrf54l` as the landing page.
-* Removed the Getting started with the nRF54L15 PDK page, and instead included the information about the `Quick Start`_ app support.
+* Removed the Getting started with the nRF54L15 PDK page, and instead included the information about the `Quick Start app`_ support.
 
 Security
 ========
@@ -1546,4 +1546,4 @@ Documentation
   * The Device configuration guides section and moved its contents to :ref:`ug_app_dev`.
   * The Advanced building procedures page and moved its contents to the :ref:`building` page.
   * The standalone pages for getting started with nRF52 Series and with the nRF5340 DK.
-    These pages have been replaced by the `Quick Start`_ app that now supports the nRF52 Series devices and the nRF5340 DK.
+    These pages have been replaced by the `Quick Start app`_ that now supports the nRF52 Series devices and the nRF5340 DK.

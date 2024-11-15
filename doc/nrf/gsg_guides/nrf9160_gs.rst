@@ -40,13 +40,13 @@ On your computer, one of the following operating systems:
 .. _nrf9160_gs_installing_software:
 .. _nrf9160_gs_updating_fw:
 
-Getting started using Quick Start
-*********************************
+Getting started using the Quick Start app
+*****************************************
 
 To work with the nRF9160 DK firmware and certificates, complete the following steps:
 
 1. Install `nRF Connect for Desktop`_.
-#. Start nRF Connect for Desktop and install the Quick Start application, a cross-platform tool for guided setup and installation procedures.
+   This also automatically installs the `Quick Start app`_, a cross-platform tool for guided setup and installation procedures.
 #. Prepare your DK:
 
    a. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.

@@ -92,7 +92,7 @@ After downloading the certificate, you must provision it to your DK.
 
 Complete the following steps to provision the certificate:
 
-1. Start nRF Connect for Desktop and install the `Cellular Monitor`_ app.
+1. Start nRF Connect for Desktop and install the `Cellular Monitor app`_.
 #. Open the Cellular Monitor app.
 #. Connect the DK to the computer with a micro-USB cable, and turn it on.
 #. Click :guilabel:`Select device` and select the DK from the drop-down list.
@@ -102,36 +102,36 @@ Complete the following steps to provision the certificate:
       .. group-tab:: nRF91x1 DK
 
          .. figure:: images/cellularmonitor_selectdevice_nrf9151.png
-            :alt: Cellular Monitor - Select device (nRF9151 DK shown)
+            :alt: Cellular Monitor app - Select device (nRF9151 DK shown)
 
-            Cellular Monitor - Select device (nRF9151 DK shown)
+            Cellular Monitor app - Select device (nRF9151 DK shown)
 
       .. group-tab:: nRF9160 DK
 
          .. figure:: images/cellularmonitor_selectdevice1_nrf9160.png
-            :alt: Cellular Monitor - Select device
+            :alt: Cellular Monitor app - Select device
 
-            Cellular Monitor - Select device
+            Cellular Monitor app - Select device
 
    The drop-down text changes to the type of the selected device, with the SEGGER ID below the name.
 
-#. Click the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor`_ app to open the Serial Terminal.
+#. Click the :guilabel:`Open Serial Terminal` option of the `Cellular Monitor app`_ to open the Serial Terminal app.
 
    .. tabs::
 
       .. group-tab:: nRF91x1 DK
 
          .. figure:: images/cellularmonitor_open_serial_terminal_nrf9151.png
-            :alt: Cellular Monitor - Open Serial Terminal (nRF9151 DK shown)
+            :alt: Cellular Monitor app - Open Serial Terminal (nRF9151 DK shown)
 
-            Cellular Monitor - Open Serial Terminal (nRF9151 DK shown)
+            Cellular Monitor app - Open Serial Terminal (nRF9151 DK shown)
 
       .. group-tab:: nRF9160 DK
 
          .. figure:: images/cellularmonitor_open_serial_terminal.png
-            :alt: Cellular Monitor - Open Serial Terminal (nRF9151 DK shown)
+            :alt: Cellular Monitor app - Open Serial Terminal (nRF9151 DK shown)
 
-            Cellular Monitor - Open Serial Terminal (nRF9151 DK shown)
+            Cellular Monitor app - Open Serial Terminal (nRF9151 DK shown)
 
 #. Enter ``AT+CFUN=4`` in the text field for AT commands and click :guilabel:`Send`.
    This AT command sets the modem to offline state.
@@ -148,16 +148,16 @@ Complete the following steps to provision the certificate:
       .. group-tab:: nRF91x1 DK
 
          .. figure:: images/cellularmonitor_navigationcertificatemanager_nrf9151.png
-            :alt: Cellular Monitor - Certificate Manager (nRF9151 DK shown)
+            :alt: Cellular Monitor app - Certificate Manager (nRF9151 DK shown)
 
-            Cellular Monitor - Certificate Manager (nRF9151 DK shown)
+            Cellular Monitor app - Certificate Manager (nRF9151 DK shown)
 
       .. group-tab:: nRF9160 DK
 
          .. figure:: images/cellularmonitor_navigationcertificatemanager.png
-            :alt: Cellular Monitor - Certificate Manager
+            :alt: Cellular Monitor app - Certificate Manager
 
-            Cellular Monitor - Certificate Manager
+            Cellular Monitor app - Certificate Manager
 
 #. Click :guilabel:`Load from JSON` and select the :file:`*.cert.json` file that you downloaded from nRF Cloud.
    Alternatively, you can drag and drop the file onto the GUI.

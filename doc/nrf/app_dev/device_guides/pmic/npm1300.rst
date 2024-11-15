@@ -63,21 +63,21 @@ The following boards in the `Zephyr`_ open source project and in the |NCS| are c
      - PCA10095
      - ``nrf5340dk/nrf5340/cpuapp``
      - | `Product Specification <nRF5340 Product Specification_>`_
-       | `Quick Start`_
+       | `Quick Start app`_
        | `User Guide <nRF5340 DK User Guide_>`_
    * - :ref:`zephyr:nrf52840dk_nrf52840`
      - nPM1300 EK
      - PCA10056
      - ``nrf52840dk/nrf52840``
      - | `Product Specification <nRF52840 Product Specification_>`_
-       | `Quick Start`_
+       | `Quick Start app`_
        | `User Guide <nRF52840 DK User Guide_>`_
    * - :ref:`zephyr:nrf52dk_nrf52832`
      - nPM1300 EK
      - PCA10040
      - ``nrf52dk/nrf52832``
      - | `Product Specification <nRF52832 Product Specification_>`_
-       | `Quick Start`_
+       | `Quick Start app`_
        | `User Guide <nRF52 DK User Guide_>`_
 
 PMIC samples and libraries
@@ -90,17 +90,17 @@ The |NCS| also provides the :ref:`nrfxlib:nrf_fuel_gauge` that processes battery
 PMIC tools
 **********
 
-The :ref:`nrfxlib:nrf_fuel_gauge` is supported by the `nPM PowerUP`_ application from `nRF Connect for Desktop`_.
+The :ref:`nrfxlib:nrf_fuel_gauge` is supported by the `nPM PowerUP app`_ in `nRF Connect for Desktop`_.
 You can use this application together with the library to derive a battery model for your product.
 For this purpose, you can use the nPM1300 EK either alone (to use the built-in battery models) or together with the additional `nPM Fuel Gauge Board`_ (to generate a custom battery model).
 See `Evaluate nPM1300 using nPM PowerUP`_ in the `nPM1300 EK User Guide`_ for more information.
 
 .. _ug_npm1300_developing_overlay_import:
 
-Importing an overlay from nPM PowerUP
-=====================================
+Importing an overlay from the nPM PowerUP app
+=============================================
 
-The nPM PowerUP application from nRF Connect for Desktop supports exporting a full configuration of the nPM1300 in devicetree overlay format.
+The nPM PowerUP app from nRF Connect for Desktop supports exporting a full configuration of the nPM1300 in devicetree overlay format.
 You can use this exported overlay file to quickly configure the nPM1300 in your application.
 
 If there is no overlay file for your project, include the file directly in your application folder with the name :file:`app.overlay`.

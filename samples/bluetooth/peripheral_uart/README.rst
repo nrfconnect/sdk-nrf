@@ -26,7 +26,7 @@ The sample supports the following development kits:
    * When used with :ref:`zephyr:nrf5340dk_nrf5340`, the sample might support the MCUboot bootloader with serial recovery of the networking core image.
 
 The sample also requires using a compatible application for `Testing`_.
-You can use the `nRF Connect Bluetooth Low Energy`_ or `nRF Connect for Mobile`_ applications (or other similar applications, such as `nRF Blinky`_ or `nRF Toolbox`_).
+You can use the `Bluetooth Low Energy app`_ for desktop or the `nRF Connect for Mobile`_ (or other similar applications, such as `nRF Blinky`_ or `nRF Toolbox`_).
 Using mobile applications for testing requires a smartphone or tablet.
 
 You can also test the application with the :ref:`central_uart` sample.
@@ -321,11 +321,11 @@ Testing with Bluetooth Low Energy app
 -------------------------------------
 
 If you have an nRF52 Series DK with the Peripheral UART sample and either a dongle or second Nordic Semiconductor development kit that supports Bluetooth Low Energy, you can test the sample on your computer.
-Use the `nRF Connect Bluetooth Low Energy`_ app in `nRF Connect for Desktop`_ for testing.
+Use the `Bluetooth Low Energy app`_ in `nRF Connect for Desktop`_ for testing.
 
 To perform the test, complete the following steps:
 
-1. Install the nRF Connect Bluetooth Low Energy app in `nRF Connect for Desktop`_.
+1. Install the Bluetooth Low Energy app in `nRF Connect for Desktop`_.
 #. Connect to your nRF52 Series DK.
 #. Connect the dongle or second development kit to a USB port of your computer.
 #. Open the Bluetooth Low Energy app.
@@ -334,7 +334,7 @@ To perform the test, complete the following steps:
 
    .. note::
       If the dongle or the second development kit has not been used with the Bluetooth Low Energy app before, you may be asked to update the J-Link firmware and connectivity firmware on the nRF SoC to continue.
-      When the nRF SoC has been updated with the correct firmware, the nRF Connect Bluetooth Low Energy app finishes connecting to your device over USB.
+      When the nRF SoC has been updated with the correct firmware, the Bluetooth Low Energy app finishes connecting to your device over USB.
       When the connection is established, the device appears in the main view.
 
 #. Click :guilabel:`Start scan`.

@@ -140,7 +140,7 @@ Testing
 After programming the sample and all prerequisites to the development kit, test it by performing the following steps:
 
 1. Connect the USB cable and power on or reset your nRF91 Series DK.
-#. Use a terminal emulator, like `nRF Connect Serial Terminal`_, to connect to the serial port.
+#. Use a terminal emulator, like the `Serial Terminal app`_, to connect to the serial port.
    See :ref:`test_and_optimize` for the required settings and steps.
 #. Observe that the kit prints the following information::
 

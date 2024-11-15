@@ -28,7 +28,7 @@ Updating firmware image for Thingy:53
 *************************************
 
 You can program the firmware on the Nordic Thingy:53 using an external debug probe and 10-pin JTAG cable, as described in :ref:`thingy53_building_pgming`, using either :ref:`Visual Studio Code <thingy53_build_pgm_vscode>` or :ref:`command line <thingy53_build_pgm_command_line>`.
-You can also update applications running on both the network and application core using the built-in MCUboot bootloader and `nRF Connect Programmer`_ or the `nRF Programmer`_ app for Android and iOS.
+You can also update applications running on both the network and application core using the built-in MCUboot bootloader and the `Programmer app`_ for desktop or the `nRF Programmer`_ app for Android and iOS.
 You can also update the prebuilt application images that way.
 
 See :ref:`thingy53_gs_updating_firmware` for details about updating firmware image.
@@ -54,7 +54,7 @@ You can program the precompiled firmware image using one of the following ways:
   In this scenario, the Thingy is connected directly to your PC through USB.
   For details, refer to the :ref:`thingy53_app_mcuboot_bootloader` section.
 
-  See the :ref:`thingy53_gs_updating_usb` section in the :ref:`ug_thingy53_gs` guide for the detailed procedures on how to program the Thingy:53 using `nRF Connect Programmer`_.
+  See the :ref:`thingy53_gs_updating_usb` section in the :ref:`ug_thingy53_gs` guide for the detailed procedures on how to program the Thingy:53 using the `Programmer app`_.
 * Update the firmware over-the-air (OTA) using Bluetooth LE and the nRF Programmer mobile application for Android or iOS.
   To use this method, the application that is currently programmed on Thingy:53 must support it.
   For details, refer to :ref:`thingy53_app_fota_smp` section.
