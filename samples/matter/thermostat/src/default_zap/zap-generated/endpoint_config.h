@@ -59,7 +59,7 @@
 			{ (uint16_t)0xBB8, (uint16_t)-0x6AB3, (uint16_t)0x7FFF }, /* MaxHeatSetpointLimit */           \
 			{ (uint16_t)0x640, (uint16_t)-0x6AB3, (uint16_t)0x7FFF }, /* MinCoolSetpointLimit */           \
 			{ (uint16_t)0xC80, (uint16_t)-0x6AB3, (uint16_t)0x7FFF }, /* MaxCoolSetpointLimit */           \
-			{ (uint16_t)0x19, (uint16_t)0x0, (uint16_t)0x19 }, /* MinSetpointDeadBand */                   \
+			{ (uint16_t)0x19, (uint16_t)0x0, (uint16_t)0x7F }, /* MinSetpointDeadBand */                   \
 			{ (uint16_t)0x4, (uint16_t)0x0, (uint16_t)0x5 }, /* ControlSequenceOfOperation */              \
 		{                                                                                                      \
 			(uint16_t)0x1, (uint16_t)0x0, (uint16_t)0x9                                                    \
@@ -366,7 +366,7 @@
 			{ ZAP_SIMPLE_DEFAULT(0x000F), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                        \
 			{ ZAP_SIMPLE_DEFAULT(2), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
-			/* Endpoint: 0, Cluster: WiFi Network Diagnostics (server) */                                                 \
+			/* Endpoint: 0, Cluster: Wi-Fi Network Diagnostics (server) */                                                \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000000, 7, ZAP_TYPE(OCTET_STRING),                                                 \
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* BSSID */                          \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000001, 1, ZAP_TYPE(ENUM8),                                                        \
@@ -468,9 +468,9 @@
 			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
 			/* Endpoint: 1, Cluster: Thermostat (server) */                                                               \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                           \
+			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                           \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* LocalTemperature */                                                      \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                           \
+			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                           \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* OutdoorTemperature */                                                    \
 			{ ZAP_SIMPLE_DEFAULT(700), 0x00000003, 2, ZAP_TYPE(TEMPERATURE), 0 }, /* AbsMinHeatSetpointLimit              \
 											       */                                     \
@@ -480,17 +480,17 @@
 												*/                                    \
 			{ ZAP_SIMPLE_DEFAULT(3200), 0x00000006, 2, ZAP_TYPE(TEMPERATURE), 0 }, /* AbsMaxCoolSetpointLimit             \
 												*/                                    \
-			{ ZAP_MIN_MAX_DEFAULTS_INDEX(0), 0x00000011, 2, ZAP_TYPE(INT16S),                                             \
+			{ ZAP_MIN_MAX_DEFAULTS_INDEX(0), 0x00000011, 2, ZAP_TYPE(TEMPERATURE),                                        \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* OccupiedCoolingSetpoint */                 \
-			{ ZAP_MIN_MAX_DEFAULTS_INDEX(1), 0x00000012, 2, ZAP_TYPE(INT16S),                                             \
+			{ ZAP_MIN_MAX_DEFAULTS_INDEX(1), 0x00000012, 2, ZAP_TYPE(TEMPERATURE),                                        \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* OccupiedHeatingSetpoint */                 \
-			{ ZAP_MIN_MAX_DEFAULTS_INDEX(2), 0x00000015, 2, ZAP_TYPE(INT16S),                                             \
+			{ ZAP_MIN_MAX_DEFAULTS_INDEX(2), 0x00000015, 2, ZAP_TYPE(TEMPERATURE),                                        \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* MinHeatSetpointLimit */                    \
-			{ ZAP_MIN_MAX_DEFAULTS_INDEX(3), 0x00000016, 2, ZAP_TYPE(INT16S),                                             \
+			{ ZAP_MIN_MAX_DEFAULTS_INDEX(3), 0x00000016, 2, ZAP_TYPE(TEMPERATURE),                                        \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* MaxHeatSetpointLimit */                    \
-			{ ZAP_MIN_MAX_DEFAULTS_INDEX(4), 0x00000017, 2, ZAP_TYPE(INT16S),                                             \
+			{ ZAP_MIN_MAX_DEFAULTS_INDEX(4), 0x00000017, 2, ZAP_TYPE(TEMPERATURE),                                        \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* MinCoolSetpointLimit */                    \
-			{ ZAP_MIN_MAX_DEFAULTS_INDEX(5), 0x00000018, 2, ZAP_TYPE(INT16S),                                             \
+			{ ZAP_MIN_MAX_DEFAULTS_INDEX(5), 0x00000018, 2, ZAP_TYPE(TEMPERATURE),                                        \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* MaxCoolSetpointLimit */                    \
 			{ ZAP_MIN_MAX_DEFAULTS_INDEX(6), 0x00000019, 1, ZAP_TYPE(INT8S),                                              \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* MinSetpointDeadBand */                     \
@@ -531,6 +531,8 @@
 	};                                                                                                             \
 	const EmberAfGenericClusterFunction chipFuncArrayThermostatServer[] = {                                        \
 		(EmberAfGenericClusterFunction)emberAfThermostatClusterServerInitCallback,                             \
+		(EmberAfGenericClusterFunction)MatterThermostatClusterServerAttributeChangedCallback,                  \
+		(EmberAfGenericClusterFunction)MatterThermostatClusterServerShutdownCallback,                          \
 		(EmberAfGenericClusterFunction)MatterThermostatClusterServerPreAttributeChangedCallback,               \
 	};
 
@@ -793,7 +795,7 @@
       .eventCount = 0, \
     },\
   { \
-      /* Endpoint: 0, Cluster: WiFi Network Diagnostics (server) */ \
+      /* Endpoint: 0, Cluster: Wi-Fi Network Diagnostics (server) */ \
       .clusterId = 0x00000036, \
       .attributes = ZAP_ATTRIBUTE_INDEX(137), \
       .attributeCount = 12, \
@@ -915,7 +917,7 @@
       .attributes = ZAP_ATTRIBUTE_INDEX(184), \
       .attributeCount = 17, \
       .clusterSize = 33, \
-      .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(PRE_ATTRIBUTE_CHANGED_FUNCTION), \
+      .mask = ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION) | ZAP_CLUSTER_MASK(ATTRIBUTE_CHANGED_FUNCTION) | ZAP_CLUSTER_MASK(SHUTDOWN_FUNCTION) | ZAP_CLUSTER_MASK(PRE_ATTRIBUTE_CHANGED_FUNCTION), \
       .functions = chipFuncArrayThermostatServer, \
       .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 72 ), \
       .generatedCommandList = nullptr, \
