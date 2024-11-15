@@ -33,3 +33,9 @@ Additionally, make sure that the following options are set as follows:
 This is to ensure that the device will be blocked after a fatal error and then the watchdog will trigger the reboot.
 
 After the reboot caused either by the watchdog or by the CPU lockup, the failsafe module erases the settings partition and clears the non-volatile settings data.
+
+Implementation details
+**********************
+
+The failsafe module uses the Zephyr :ref:`zephyr:hwinfo_api` driver.
+The module gets the reset reason information with the :c:func:`hwinfo_get_reset_cause` function and clears it with the :c:func:`hwinfo_clear_reset_cause` function.

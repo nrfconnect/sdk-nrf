@@ -198,7 +198,10 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
+    The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the nrfx reset reason helper dependency (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
