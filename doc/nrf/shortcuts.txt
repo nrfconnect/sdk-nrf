@@ -262,5 +262,4 @@
 
 .. |filter_samples_by_board| replace:: If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`_.
 
-.. |54H_engb_2_8| replace:: When using the nRF54H20 DK Engineering B (from v0.8.0 to 0.8.2), you must build samples and applications using the board revision 0.8.0 with the ``<board>@<revision>`` syntax.
-   For example, ``nrf54h20dk@0.8.0/nrf54h20/cpuapp`` when building for the application core, or ``nrf54h20dk@0.8.0/nrf54h20/cpurad`` when building for the radio core.
+.. |54H_engb_2_8| replace:: The nRF54H20 DK Engineering A and B (up to version 0.8.2) are no longer supported starting with |NCS| v2.9.0.
