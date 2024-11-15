@@ -5,6 +5,7 @@
  */
 
 #include "common.h"
+#include "platform_keys/platform_keys.h"
 
 #include <cracen/lib_kmu.h>
 #include <cracen/mem_helpers.h>
