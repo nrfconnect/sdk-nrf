@@ -23,7 +23,7 @@ You need at least two development kits to test this sample:
 
 You can use mix different development kits from the list above.
 
-Additionally, the sample requires connecting each development kit to a serial terminal and using a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+Additionally, the sample requires connecting each development kit to a serial terminal and using a terminal emulator (for example, the `Serial Terminal app`_).
 
 To observe that the LEDs are toggled synchronously, use a logic analyzer or an oscilloscope.
 
@@ -131,7 +131,7 @@ Testing
 
 After programming the sample to all development kits, perform the following steps to test it:
 
-1. Connect to the kits with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+1. Connect to the kits with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings and steps.
 #. Reset the kits.
 #. In one of the terminal emulators, type ``c`` to start the application in the Central role.

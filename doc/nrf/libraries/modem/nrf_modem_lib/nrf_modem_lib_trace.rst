@@ -104,7 +104,7 @@ Sending traces over UART on an nRF91 Series DK
 To send modem traces over UART on an nRF91 Series DK, configuration must be added for the UART device in the devicetree and Kconfig.
 This is done by adding the :ref:`modem trace UART snippet <nrf91_modem_trace_uart_snippet>` when building and programming.
 
-Use the `Cellular Monitor`_ app for capturing and analyzing modem traces.
+Use the `Cellular Monitor app`_ for capturing and analyzing modem traces.
 
 TF-M logging must use the same UART as the application.
 For more details, see :ref:`shared TF-M logging <tfm_enable_share_uart>`.
@@ -178,7 +178,7 @@ To enable modem traces with RTT, enable the :kconfig:option:`CONFIG_NRF_MODEM_LI
 
 The traces can be captured using the J-Link RTT logger software.
 This produces a RAW binary trace file with a ``.log`` extension.
-The RAW binary trace file can be converted to PCAP with the :guilabel:`Open trace file in Wireshark` option in the `Cellular Monitor`_ app of `nRF Connect for Desktop`_.
+The RAW binary trace file can be converted to PCAP with the :guilabel:`Open trace file in Wireshark` option in the `Cellular Monitor app`_ in `nRF Connect for Desktop`_.
 By default, files with the ``.log`` extension are not shown.
 
 .. _adding_custom_modem_trace_backends:

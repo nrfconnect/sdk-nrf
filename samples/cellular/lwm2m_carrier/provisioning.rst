@@ -31,7 +31,7 @@ Alternatively, you can also write the certificates beforehand using the :ref:`at
 
 To pre-program the certificates, use one of the following methods:
 
-* Build and flash the :ref:`at_client_sample` sample and provision the certificates using AT commands and the `Cellular Monitor`_ application.
+* Build and flash the :ref:`at_client_sample` sample and provision the certificates using AT commands and the `Cellular Monitor app`_.
   See `Managing credentials`_ for more information.
 * Build and flash the LwM2M carrier sample, while making sure that:
 

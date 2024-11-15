@@ -115,10 +115,10 @@ There are two ways to update the modem firmware:
 Full update
   You can use either a wired or a wireless connection to do a full update of the modem firmware:
 
-  * When using a wired connection, you can use either the `nRF Connect Programmer`_, which is part of `nRF Connect for Desktop`_, or the `nRF pynrfjprog`_ Python package.
+  * When using a wired connection, you can use either the `Programmer app`_, which is part of `nRF Connect for Desktop`_, or the `nRF pynrfjprog`_ Python package.
     Both methods use the Simple Management Protocol (SMP) to provide an interface over UART, which enables the device to perform the update.
 
-    * You can use the nRF Connect Programmer to perform the update, regardless of the images that are part of the existing firmware of the device.
+    * You can use the Programmer app to perform the update, regardless of the images that are part of the existing firmware of the device.
       For example, you can update the modem on an nRF9160 DK using the instructions described in the :ref:`nrf9160_updating_fw_modem` section.
 
     * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
@@ -207,8 +207,8 @@ For more information on the integration, see :ref:`nrf_modem_lib_readme`.
 Modem trace
 ===========
 
-The modem traces of the nRF91 Series modem can be captured using the Cellular Monitor.
-For more information on how to collect traces using Cellular Monitor, see the `Cellular Monitor`_ documentation.
+The modem traces of the nRF91 Series modem can be captured using the Cellular Monitor app.
+For more information on how to do this, see the `Cellular Monitor app`_ documentation.
 To enable the modem traces in the modem and to forward them to the :ref:`modem_trace_module` over UART, include the ``nrf91-modem-trace-uart`` snippet while building your application as described in :ref:`nrf91_modem_trace_uart_snippet`.
 
 .. note::

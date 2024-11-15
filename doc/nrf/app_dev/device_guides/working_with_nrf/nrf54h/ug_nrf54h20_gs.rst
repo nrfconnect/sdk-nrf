@@ -158,7 +158,7 @@ Installing the Terminal application
 ***********************************
 
 On your computer, install `nRF Connect for Desktop`_.
-You must also install a terminal emulator, such as `nRF Connect Serial Terminal`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
+You must also install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
 Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 Installing nRF Util and its commands
@@ -319,7 +319,7 @@ The logs are output over UART.
 
 To read the logs from the :zephyr:code-sample:`sysbuild_hello_world` sample programmed to the nRF54H20 DK, complete the following steps:
 
-1. Connect to the DK with a terminal emulator (for example, `nRF Connect Serial Terminal`_) using the :ref:`default serial port connection settings <test_and_optimize>`.
+1. Connect to the DK with a terminal emulator (for example, the `Serial Terminal app`_) using the :ref:`default serial port connection settings <test_and_optimize>`.
 #. Press the **Reset** button on the PCB to reset the DK.
 #. Observe the console output for the application core:
 

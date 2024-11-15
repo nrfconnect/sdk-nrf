@@ -40,9 +40,9 @@ Use one of the following methods:
 
 .. tabs::
 
-   .. group-tab:: nRF Connect Serial Terminal
+   .. group-tab:: Serial Terminal app
 
-      You can use the `nRF Connect Serial Terminal`_ app, which you can install from `nRF Connect for Desktop`_.
+      You can use the `Serial Terminal app`_, which you can install from `nRF Connect for Desktop`_.
       It establishes serial communication with the device, sends commands through UART, and also displays the UART output.
 
       The app is available for Windows, Linux, and macOS.
@@ -57,9 +57,9 @@ Use one of the following methods:
       #. Configure the serial port connection parameters using the default serial port connection settings listed at the top of this page.
       #. Click :guilabel:`Connect to port`.
 
-      nRF Connect Serial Terminal starts the serial communication with the kit.
+      The Serial Terminal app starts the serial communication with the kit.
 
-      For more information about how to connect using the app, see the `steps in the Serial Terminal documentation <Connecting using Serial Terminal_>`_.
+      For more information about how to connect using the app, see the `steps in the Serial Terminal documentation <Connecting using the Serial Terminal app_>`_.
 
    .. group-tab:: nRF Connect for Visual Studio Code
 

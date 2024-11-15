@@ -315,7 +315,7 @@ You can now control the devices either with the buttons on the development kits 
 Sample output
 -------------
 
-You can observe the sample logging output through a serial port after connecting with a terminal emulator (for example, nRF Connect Serial Terminal).
+You can observe the sample logging output through a serial port after connecting with a terminal emulator (for example, the `Serial Terminal app`_).
 See :ref:`test_and_optimize` for the required settings and steps.
 
 Dependencies

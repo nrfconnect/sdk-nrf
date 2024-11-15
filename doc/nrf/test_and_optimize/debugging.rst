@@ -159,19 +159,19 @@ The following debugging tools are most commonly used in different areas of the |
    * - Tool
      - Purpose
      - Area
-   * - `nRF Connect Bluetooth Low Energy`_
+   * - `Bluetooth Low Energy app`_
      - Configure and test Bluetooth Low Energy devices. Available from `nRF Connect for Desktop`_.
      - :ref:`ug_bt`
-   * - `nRF Connect Cellular Monitor <Cellular Monitor_>`_
+   * - `Cellular Monitor app`_
      - Capture and analyze modem traces to evaluate communication and view network parameters. Available from `nRF Connect for Desktop`_.
      - :ref:`ug_lte`
-   * - `nRF Connect Direct Test Mode`_
+   * - `Direct Test Mode app`_
      - Perform RF PHY checks of Bluetooth Low Energy devices using a GUI for the Bluetooth-specified Direct Test Mode. Available from `nRF Connect for Desktop`_.
      - :ref:`ug_bt`
-   * - `nRF Connect RSSI Viewer <RSSI Viewer_>`_
+   * - `RSSI Viewer app`_
      - Visualize RSSI and frequency in the 2.4-GHz band in real time. Available from `nRF Connect for Desktop`_.
      - :ref:`ug_bt`
-   * - `nRF Connect Power Profiler`_
+   * - `Power Profiler app`_
      - Measure the real-time power consumption of your designs. Available from `nRF Connect for Desktop`_.
      - :ref:`ug_bt`, :ref:`ug_lte`, :ref:`ug_matter`, :ref:`ug_thread`, :ref:`ug_wifi`, :ref:`ug_zigbee`
    * - `Online Power Profiler (OPP)`_

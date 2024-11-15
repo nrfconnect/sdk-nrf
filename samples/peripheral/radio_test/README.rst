@@ -31,7 +31,7 @@ The sample also requires one of the following testing devices:
 
   * Another development kit with the same sample.
     See :ref:`radio_test_testing_board`.
-  * Another development kit connected to a PC with the `RSSI Viewer`_ application (available in the `nRF Connect for Desktop`_).
+  * Another development kit connected to a PC with the `RSSI Viewer app`_ (available in the `nRF Connect for Desktop`_).
     See :ref:`radio_test_testing_rssi`.
 
 .. note::
@@ -257,8 +257,8 @@ Complete the following steps:
 
 .. _radio_test_testing_rssi:
 
-Testing with RSSI Viewer
-------------------------
+Testing with the RSSI Viewer app
+--------------------------------
 
 Complete the following steps:
 
@@ -269,7 +269,7 @@ Complete the following steps:
 #. Set the end channel with the ``end_channel`` command to 60.
 #. Set the time on channel with the ``time_on_channel`` command to 50 ms.
 #. Set the kit in the TX sweep mode using the ``start_tx_sweep`` command.
-#. Start the `RSSI Viewer`_ application and select the kit to communicate with.
+#. Start the `RSSI Viewer app`_ and select the kit to communicate with.
 #. On the application chart, observe the TX sweep in the form of a wave that starts at 2420 MHz frequency and ends with 2480 MHz.
 
 Dependencies

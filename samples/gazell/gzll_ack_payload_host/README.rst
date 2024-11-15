@@ -106,7 +106,7 @@ After programming the Device sample on one of the development kits and the Host 
    Observe that the Host sample turns off **LED 1** on the other kit.
 #. Press **Button 2** for the Host sample.
    Observe that the Device sample turns off **LED 2** on the other kit.
-#. Optionally, connect to the kits with a terminal emulator (for example, nRF Connect Serial Terminal).
+#. Optionally, connect to the kits with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings and steps.
 #. Observe the logging output for both kits.
 

@@ -539,7 +539,7 @@ After programming the application, perform the following steps to test the nRF M
    After a brief delay, the Bluetooth connection between the sample and the Thingy is established.
    The Thingy forwards the sensor readouts over NUS.
    The LED on the Thingy starts to blink rapidly.
-#. Connect to the sample with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+#. Connect to the sample with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings.
 #. Observe the sensor readouts represented as comma-separated values.
    Every line represents a single sensor readout.
@@ -568,7 +568,7 @@ After programming the application, perform the following steps to test the nRF M
    This signal is marked as an anomaly by the machine learning model, and **LED1** starts breathing.
 #. Press and hold **Button 1** for more than five seconds to switch to the data forwarding mode.
    After the mode is switched, **LED1** starts to blink rapidly.
-#. Connect to the development kit with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+#. Connect to the development kit with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings.
 #. Observe the sensor readouts represented as comma-separated values.
    Every line represents a single sensor readout.
@@ -595,7 +595,7 @@ After programming the application, perform the following steps to test the nRF M
    This signal is marked as an anomaly by the machine learning model, and **LED1** starts breathing.
 #. Press and hold **Button 0** for more than five seconds to switch to the data forwarding mode.
    After the mode is switched, **LED1** starts to blink rapidly.
-#. Connect to the development kit with a terminal emulator (for example, `nRF Connect Serial Terminal`_).
+#. Connect to the development kit with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings.
 #. Observe the sensor readouts represented as comma-separated values.
    Every line represents a single sensor readout.

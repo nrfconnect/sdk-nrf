@@ -375,6 +375,7 @@
 .. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
 .. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
 .. _`Adding Device Firmware Update (DFU/FOTA) Support in nRF Connect SDK`: https://www.nordicsemi.com/Events/2024/Webinar-Adding-Device-Firmware-Update-DFU-FOTA-Support-in-nRF-Connect-SDK
+
 .. #### Source: www.nordicsemi.com/*/Development-Tools
 
 .. _`nRF Command Line Tools`:
@@ -607,25 +608,25 @@
 .. _`Getting started guide for nRF Asset Tracker for Azure`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/azure/GettingStarted/Index.html
 .. _`nRF Asset Tracker Memfault integration`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/memfault/Index.html
 
-.. _`nRF Connect Board Configurator`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
+.. _`Board Configurator app`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
 
-.. _`Serial Terminal from nRF Connect for Desktop`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
-.. _`nRF Connect Serial Terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
-.. _`Connecting using Serial Terminal`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
-.. _`Serial Terminal configuration`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/configuration.html
-.. _`nRF Connect Bluetooth Low Energy`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
-.. _`Cellular Monitor`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
-.. _`nPM PowerUP`: https://docs.nordicsemi.com/bundle/nrf-connect-npm/page/index.html
-.. _`Quick Start`: https://docs.nordicsemi.com/bundle/nrf-connect-quickstart/page/index.html
-.. _`RSSI Viewer`: https://docs.nordicsemi.com/bundle/nrf-connect-rssi-viewer/page/index.html
+.. _`Bluetooth Low Energy app`: https://docs.nordicsemi.com/bundle/nrf-connect-ble/page/index.html
 
+.. _`Cellular Monitor app`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
 
-.. _`nRF Connect Direct Test Mode`: https://docs.nordicsemi.com/bundle/nrf-connect-direct-test-mode/page/index.html
+.. _`nPM PowerUP app`: https://docs.nordicsemi.com/bundle/nrf-connect-npm/page/index.html
+.. _`Quick Start app`: https://docs.nordicsemi.com/bundle/nrf-connect-quickstart/page/index.html
+.. _`RSSI Viewer app`: https://docs.nordicsemi.com/bundle/nrf-connect-rssi-viewer/page/index.html
 
-.. _`nRF Connect Programmer`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/index.html
+.. _`Direct Test Mode app`: https://docs.nordicsemi.com/bundle/nrf-connect-direct-test-mode/page/index.html
+
+.. _`Programmer app`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/index.html
 .. _`Programming the nRF52840 Dongle`:
 .. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
+
+.. _`Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
+.. _`Connecting using the Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
 
 .. _`nRF Thread Topology Monitor`: https://docs.nordicsemi.com/bundle/ug_nrf_ttm/page/UG/nrf_ttm/ttm_introduction.html
 .. _`nRF Sniffer for 802.15.4`: https://docs.nordicsemi.com/bundle/ug_sniffer_802154/page/UG/sniffer_802154/intro_802154.html
@@ -634,7 +635,7 @@
 .. _`Power Profiler Kit II (PPK2)`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Intro.html
 .. _`Install the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/common/nrf_connect_app_installing.html
 .. _`Using the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Running_the_software.html
-.. _`nRF Connect Power Profiler`: https://docs.nordicsemi.com/bundle/nrf-connect-ppk/page/index.html
+.. _`Power Profiler app`: https://docs.nordicsemi.com/bundle/nrf-connect-ppk/page/index.html
 
 .. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 

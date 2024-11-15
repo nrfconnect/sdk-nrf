@@ -90,7 +90,7 @@ Alternatively, you can follow the following steps to manually enable external me
 Common steps for both push and fetch models
 ===========================================
 
-1. Turn on the external flash chip on the nRF54H20 DK using the `nRF Connect Board Configurator`_ app within `nRF Connect for Desktop`_ .
+1. Turn on the external flash chip on the nRF54H20 DK using the `Board Configurator app`_ in `nRF Connect for Desktop`_ .
 
    .. note::
       This step is needed only on nRF54H20 DK. Skip this step if you are using different hardware.

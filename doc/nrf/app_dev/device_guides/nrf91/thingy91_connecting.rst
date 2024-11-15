@@ -7,7 +7,7 @@ Connecting to Thingy:91
    :local:
    :depth: 2
 
-You can connect to Thingy:91 wirelessly (using the `nRF Toolbox`_ app) or over a serial connection (using `nRF Connect Serial Terminal`_, `Cellular Monitor`_, or a serial terminal).
+You can connect to Thingy:91 wirelessly (using the `nRF Toolbox`_ app) or over a serial connection (using the `Serial Terminal app`_, the `Cellular Monitor app`_, or a serial terminal).
 
 Using nRF Toolbox
 *****************
@@ -39,8 +39,8 @@ Thingy:91 uses the following UART baud rate configuration:
    * - UART_1
      - 1000000
 
-Using nRF Connect Serial Terminal
-*********************************
+Using the Serial Terminal app
+*****************************
 
-You can use the `nRF Connect Serial Terminal`_ application to get debug output and send AT commands to the Thingy:91.
-In the case of nRF Connect Serial Terminal or Cellular Monitor, the baud rate for the communication is set automatically.
+You can use the `Serial Terminal app`_ to get debug output and send AT commands to the Thingy:91.
+In the case of the Serial Terminal or the Cellular Monitor apps, the baud rate for the communication is set automatically.

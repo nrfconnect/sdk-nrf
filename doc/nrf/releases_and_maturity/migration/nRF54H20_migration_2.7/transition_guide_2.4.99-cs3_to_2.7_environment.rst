@@ -159,12 +159,12 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
 Updating the Terminal application
 *********************************
 
-To update `Serial Terminal from nRF Connect for Desktop`, follow these steps:
+To update the `Serial Terminal app`_, follow these steps:
 
-1. On your computer, open `nRF Connect for Desktop`_
+1. On your computer, open `nRF Connect for Desktop`_.
    If there is an update available, a pop up will notify you of its availability.
 #. If available, install the update from the pop up screen.
-#. Update `Serial Terminal from nRF Connect for Desktop`.
+#. Update the Serial Terminal app.
 
 If you are using the nRF Terminal application part of the `nRF Connect for Visual Studio Code`_ extension, open Visual Studio Code instead and ensure you are running the newest version of both the editor and the extension.
 
