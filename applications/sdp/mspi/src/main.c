@@ -13,12 +13,20 @@
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
 
+#include <zephyr/mspi.h>
+
 #define HRT_IRQ_PRIORITY          2
 #define HRT_VEVIF_IDX_WRITE_SINGLE  17
 #define HRT_VEVIF_IDX_WRITE_QUAD    18
 
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
+
+struct mspi_config {
+	uint8_t* data;
+	uint8_t data_len;
+	uint8_t word_size;
+}
 
 
 volatile uint16_t counter_top;
@@ -40,30 +48,77 @@ void mspi_configure(void)
 	nrf_vpr_csr_vio_config_set(&vio_config);
 }
 
-void process_packet(nrfe_gpio_data_packet_t *packet)
+void process_packet(const void *data, size_t len)
 {
-	if (packet->port != 2) {
-		return;
+	(void)len;
+	nrfe_mspi_flpr_response_t response;
+	uint8_t opcode = *(uint8_t *)data;
+
+	switch (opcode) {
+		case NRFE_MSPI_CTRL_CONFIG: {
+			response.opcode = NRFE_MSPI_CTRL_CONFIG_DONE;
+			struct mspi_cfg *cfg = (struct mspi_cfg *)data;
+
+			/* Not supported options. Some may be added later, for example, sw_multi_periph. */
+			if (cfg->op_mode == MSPI_OP_MODE_PERIPHERAL |
+				cfg->duplex == MSPI_FULL_DUPLEX |
+				cfg->dqs_support |
+				cfg->sw_multi_periph)
+			{
+				return;
+			}
+
+			for (uint8_t i=0; i < cfg->num_ce_gpios; i++)
+			{
+				//init cfg->ce_group[i]
+			}
+
+			/* Ignore freq_max and re_init for now. */
+			break;
+		}
+		case NRFE_MSPI_DEV_CONFIG: {
+			response.opcode = NRFE_MSPI_DEV_CONFIG_DONE;
+			struct mspi_dev_cfg *cfg = (struct mspi_dev_cfg *)data;
+
+			/* Not supported options. Some may be added later, for example, sw_multi_periph. */
+			if (cfg->data_rate == MSPI_DATA_RATE_S_S_D |
+				cfg->data_rate == MSPI_DATA_RATE_S_D_D |
+				cfg->data_rate == MSPI_DATA_RATE_DUAL |
+				cfg->dqs_enable)
+			{
+				return;
+			}
+			/* TODO: Process device config data */
+			/* Ignore ce_num, freq, mem_boundary and time_to_break for now. */
+			break;
+		}
+		case NRFE_MSPI_XFER_CONFIG: {
+			response.opcode = NRFE_MSPI_XFER_CONFIG_DONE;
+			struct mspi_xfer *cfg = (struct mspi_xfer *)data;
+			/* TODO: Process cfer config data */
+			break;
+		}
+		case NRFE_MSPI_XFER: {
+			struct mspi_xfer_packet *cfg = (struct mspi_xfer_packet *)data;
+
+			if (packet->packet.dir == MSPI_TX) {
+
+				/* TODO: Send data */
+				response.opcode = NRFE_MSPI_TX_DONE;
+			}
+			else if (packet->packet.dir == MSPI_RX) {
+				response.opcode = NRFE_MSPI_RX_DONE;
+			}
+
+			break;
+		}
+		default:
+			break;
 	}
 
-	switch (packet->opcode) {
-	case NRFE_GPIO_PIN_CONFIGURE: {
-		gpio_nrfe_pin_configure(packet->port, packet->pin, packet->flags);
-		break;
-	}
-	case NRFE_GPIO_PIN_CLEAR: {
-		irq_arg = packet->pin;
-		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE_SINGLE));
-		break;
-	}
-	case NRFE_GPIO_PIN_SET: {
-		irq_arg = packet->pin;
-		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE_QUAD));
-		break;
-	}
-	default: {
-		break;
-	}
+	int ret = ipc_service_send(&ep, (const void *)&response.opcode, sizeof(response));
+	if (ret < 0) {
+		// printf("IPC send error: %d\n", ret);
 	}
 }
 
