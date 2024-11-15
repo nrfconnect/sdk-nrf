@@ -1291,14 +1291,14 @@ static int cmd_packing(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-static int cmd_lang_set(const struct shell *shell, size_t argc, char **argv)
+static int cmd_lang(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 	uint8_t big_index;
 	uint8_t sub_index;
 
 	if (argc < 4) {
-		shell_error(shell, "Usage: nac lang_set <language> <BIG index> <subgroup index>");
+		shell_error(shell, "Usage: nac lang <language> <BIG index> <subgroup index>");
 		return -EINVAL;
 	}
 
@@ -2164,7 +2164,7 @@ static void lecture_set(const struct shell *shell)
 	char *broadcast_id_argv[3] = {"fixed", "0", "0x123456"};
 	char *packing_argv[3] = {"packing", "int", "0"};
 
-	char *lang_argv[4] = {"lang_set", "eng", "0", "0"};
+	char *lang_argv[4] = {"lang", "eng", "0", "0"};
 
 	char *context_argv[4] = {"context", "live", "0", "0"};
 
@@ -2184,7 +2184,7 @@ static void lecture_set(const struct shell *shell)
 	cmd_fixed_id(shell, 3, broadcast_id_argv);
 	cmd_packing(shell, 3, packing_argv);
 
-	cmd_lang_set(shell, 4, lang_argv);
+	cmd_lang(shell, 4, lang_argv);
 
 	cmd_context(shell, 4, context_argv);
 
@@ -2356,9 +2356,9 @@ static void multi_language_set(const struct shell *shell)
 	char *name_argv[3] = {"broadcast_name", "Multi-language", "0"};
 	char *packing_argv[3] = {"packing", "int", "0"};
 
-	char *lang0_argv[4] = {"lang_set", "eng", "0", "0"};
-	char *lang1_argv[4] = {"lang_set", "chi", "0", "1"};
-	char *lang2_argv[4] = {"lang_set", "nor", "0", "2"};
+	char *lang0_argv[4] = {"lang", "eng", "0", "0"};
+	char *lang1_argv[4] = {"lang", "chi", "0", "1"};
+	char *lang2_argv[4] = {"lang", "nor", "0", "2"};
 
 	char *context0_argv[4] = {"context", "unspecified", "0", "0"};
 	char *context1_argv[4] = {"context", "unspecified", "0", "1"};
@@ -2389,9 +2389,9 @@ static void multi_language_set(const struct shell *shell)
 	cmd_broadcast_name(shell, 3, name_argv);
 	cmd_packing(shell, 3, packing_argv);
 
-	cmd_lang_set(shell, 4, lang0_argv);
-	cmd_lang_set(shell, 4, lang1_argv);
-	cmd_lang_set(shell, 4, lang2_argv);
+	cmd_lang(shell, 4, lang0_argv);
+	cmd_lang(shell, 4, lang1_argv);
+	cmd_lang(shell, 4, lang2_argv);
 
 	cmd_context(shell, 4, context0_argv);
 	cmd_context(shell, 4, context1_argv);
@@ -2464,8 +2464,8 @@ static void personal_multi_language_set(const struct shell *shell)
 	char *packing_argv[3] = {"packing", "int", "0"};
 	char *encrypt_argv[4] = {"encrypt", "1", "0", "Auratest"};
 
-	char *lang0_argv[4] = {"lang_set", "eng", "0", "0"};
-	char *lang1_argv[4] = {"lang_set", "chi", "0", "1"};
+	char *lang0_argv[4] = {"lang", "eng", "0", "0"};
+	char *lang1_argv[4] = {"lang", "chi", "0", "1"};
 
 	char *context0_argv[4] = {"context", "media", "0", "0"};
 	char *context1_argv[4] = {"context", "media", "0", "1"};
@@ -2504,8 +2504,8 @@ static void personal_multi_language_set(const struct shell *shell)
 	cmd_packing(shell, 3, packing_argv);
 	cmd_encrypt(shell, 4, encrypt_argv);
 
-	cmd_lang_set(shell, 4, lang0_argv);
-	cmd_lang_set(shell, 4, lang1_argv);
+	cmd_lang(shell, 4, lang0_argv);
+	cmd_lang(shell, 4, lang1_argv);
 
 	cmd_context(shell, 4, context0_argv);
 	cmd_context(shell, 4, context1_argv);
@@ -2640,7 +2640,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_COND_CMD(CONFIG_SHELL, show, NULL, "Show current configuration", cmd_show),
 	SHELL_COND_CMD(CONFIG_SHELL, packing, NULL, "Set type of packing", cmd_packing),
 	SHELL_COND_CMD(CONFIG_SHELL, preset, NULL, "Set preset", cmd_preset),
-	SHELL_COND_CMD(CONFIG_SHELL, lang, NULL, "Set language", cmd_lang_set),
+	SHELL_COND_CMD(CONFIG_SHELL, lang, NULL, "Set language", cmd_lang),
 	SHELL_COND_CMD(CONFIG_SHELL, immediate, NULL, "Set immediate rendering flag",
 		       cmd_immediate_set),
 	SHELL_COND_CMD(CONFIG_SHELL, num_subgroups, NULL, "Set number of subgroups",
