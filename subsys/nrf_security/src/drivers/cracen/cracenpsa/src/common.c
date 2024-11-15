@@ -5,6 +5,9 @@
  */
 
 #include "common.h"
+#ifdef NRF54H_SERIES
+#include "platform_keys/platform_keys.h"
+#endif
 
 #include <cracen/lib_kmu.h>
 #include <cracen/mem_helpers.h>
