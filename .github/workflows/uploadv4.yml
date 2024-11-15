@@ -1,6 +1,9 @@
 name: Upload Artifact Example
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:
+
 #asfd
 jobs:
   upload-artifact:
