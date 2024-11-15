@@ -189,6 +189,14 @@ Smart Plugs/Outlets device types
 | Water Valve       | A Water Valve is a device that is capable of being switched on and off       | Certifiable         |                                       |
 |                   | and performing flow measurements.                                            |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Mounted On/Off    | A Mounted On/Off Control is a fixed device that provides power to another    | Certifiable         |                                       |
+| Control           | device that is plugged into it, and is capable of switching that provided    |                     |                                       |
+|                   | power on or off.                                                             |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Mounted Dimmable  | A Mounted Dimmable Load Control is a fixed device that provides power        | Certifiable         |                                       |
+| Load Control      | to another device that is plugged into it, and is capable of being           |                     |                                       |
+|                   | switched on or off and have its level adjusted.                              |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_switches_controls:
 
@@ -409,6 +417,22 @@ Energy device types
 | Electric Vehicle   | An EVSE (Electric Vehicle Supply Equipment) is a device that allows an EV    | Certifiable         |                                       |
 | Supply Equipment   | (Electric Vehicle) to be connected to the mains electricity supply to allow  |                     |                                       |
 |                    | it to be charged                                                             |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Water Heater       | A Water Heater is a device that is installed to heat water for showers,      | Certifiable         |                                       |
+|                    | baths etc.                                                                   |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Solar Power        | A Solar Power device is a device that allows a solar panel array, associated | Certifiable         |                                       |
+|                    | controller and, if appropriate, inverter, to be monitored and controlled     |                     |                                       |
+|                    | by Energy Management System.                                                 |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Battery Storage    | A Battery Storage device is a device that allows a DC battery, an associated | Certifiable         |                                       |
+|                    | controller, and an AC inverter, to be monitored and controlled by            |                     |                                       |
+|                    | an Energy Management System in order to manage the peaks and troughs         |                     |                                       |
+|                    | of supply and demand, and/or to optimize cost of the energy consumed         |                     |                                       |
+|                    | in premises.                                                                 |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Heat Pump          | A Heat Pump device is a device that uses electrical energy to heat either    | Certifiable         |                                       |
+|                    | spaces or water tanks using ground, water or air as the heat source.         |                     |                                       |
 +--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_utility:

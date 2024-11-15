@@ -142,11 +142,37 @@ Matter
 Matter fork
 +++++++++++
 
-The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.3.0.0`` tag.
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.4.0.0`` tag.
 
 The following list summarizes the most important changes inherited from the upstream Matter:
 
-|no_changes_yet_note|
+* Added:
+
+  * Enhanced Network Infrastructure with Home Routers and Access Points (HRAP).
+    This provides requirements for devices such as home routers, modems or access points to create a necessary infrastructure for Matter products.
+  * Enhanced Multi-Admin that aims to simplify the smart home management from the user perspective.
+    This term includes several different features and in this release only Fabric Synchronization was fully delivered.
+    The Fabric Synchronization enables commissioning of devices from one fabric to another without requiring manual user actions, only user consent.
+  * Dynamic SIT LIT switching support that allows the application to switch between these modes, as long as the requirements for these modes are met.
+    This can be enabled using the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option.
+  * The Kconfig option :kconfig:option:`CONFIG_CHIP_ICD_SIT_SLOW_POLL_LIMIT` to limit the slow polling interval value for the device while it is in the SIT mode.
+    This can be used to limit the slow poll interval for the ICD LIT device while it is temporarily working in the SIT mode.
+  * New device types:
+
+    * Water heater
+    * Solar power
+    * Battery storage
+    * Heat pump
+    * Mounted on/off control
+    * Mounted dimmable load control
+
+* Updated:
+
+  * Thermostat cluster with support for scheduling and preset modes, like vacation, and home or away settings.
+  * Electric Vehicle Supply Equipment (EVSE) with support for user-defined charging preferences, like specifying the time when the car will be charged.
+  * Occupancy sensing cluster with features like radar, vision, and ambient sensing.
+  * Intermittently Connected Devices feature with enhancements for the Long Idle Time (LIT) and Check-In Protocol.
+    With this enhancements, the state of this feature is changed from provisional to certifiable.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
