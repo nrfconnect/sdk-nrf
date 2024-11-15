@@ -2749,10 +2749,10 @@ Peripheral samples
 
 .. rst-class:: v2-8-0 v2-7-0
 
-NCSDK-30284: The :ref:`radio_test` sample only transmits the first burst of data in duty-cycle mode on the 4 Mbit data rate on the nRF54L15 SoC
+NCSDK-30284: The :ref:`radio_test` sample only transmits the first burst of data in duty-cycle mode on the 4 Mbit data rate
   When the ``data_rate`` parameter is set to ``nrf_4Mbit_BT04``  or ``nrf_4Mbit_BT06``, sending the ``start_duty_cycle_modulated_tx`` command results in transmission of the first burst of data after which radio becomes inactive.
 
-  **Affected platforms:** nRF54L15
+  **Affected platforms:** nRF54L15, nRF54H20
 
   **Workaround:** For ``nrf_4Mbit_BT04`` or ``nrf_4Mbit_BT06`` data rates, use only the constant transmission command ``start_tx_modulated_carrier`` instead of the duty-cycle one.
 
