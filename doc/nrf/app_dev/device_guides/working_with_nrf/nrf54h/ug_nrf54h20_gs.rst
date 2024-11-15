@@ -20,12 +20,12 @@ Make sure you have all the required hardware and that your computer has one of t
 Hardware
 ========
 
-* nRF54H20 DK version PCA10175:
-
-  * Engineering B - ranging from v0.8.0 to 0.8.2
-  * Engineering C - v0.8.3 and later revisions
+* nRF54H20 DK version PCA10175 Engineering C - v0.8.3 and later revisions
 
   Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
+
+.. note::
+   |54H_engb_2_8|
 
 * USB-C cable.
 
@@ -233,10 +233,7 @@ Programming the nRF54H20 SoC binaries
 After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the nRF54H20 SoC binaries v0.7.0:
-
-   * `nRF54H20 SoC Binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions
-   * `nRF54H20 SoC Binaries v0.7.0 for EngB DKs`_, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
+1. Download the `nRF54H20 SoC Binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -280,15 +277,9 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 #. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the version |release| toolchain, and click the :guilabel:`Open terminal` button.
 #. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
-#. Build the sample for application and radio cores by running the following commands:
+#. Run the following command to build the sample for application and radio cores::
 
-   * For Engineering C (DKs 0.8.3 and later revisions)::
-
-         west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
-
-   * For Engineering B (DKs from v0.8.0 to 0.8.2)::
-
-         west build -p -b nrf54h20dk@0.8.0/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
+      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
 
 You can now program the sample.
 If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
