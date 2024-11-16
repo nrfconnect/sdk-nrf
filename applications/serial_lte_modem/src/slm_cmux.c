@@ -209,7 +209,7 @@ void slm_cmux_release(enum cmux_channel channel)
 {
 	struct cmux_dlci *dlci = cmux_get_dlci(channel);
 
-#if defined(SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE)
+#if defined(CONFIG_SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE)
 	if (channel == CMUX_PPP_CHANNEL) {
 		cmux.at_channel = 0;
 	}
@@ -296,8 +296,8 @@ static int handle_at_cmux(enum at_cmd_type cmd_type, const struct at_param_list 
 		const unsigned int at_channel = at_dlci - 1;
 
 #if defined(CONFIG_SLM_PPP)
-		if (slm_ppp_is_running() && at_channel != cmux.at_channel) {
-			/* The AT channel cannot be changed when PPP is running. */
+		if (!slm_ppp_is_stopped() && at_channel != cmux.at_channel) {
+			/* The AT channel cannot be changed when PPP has a channel reserved. */
 			return -ENOTSUP;
 		}
 #endif
