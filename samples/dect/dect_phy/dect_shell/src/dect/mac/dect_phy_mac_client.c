@@ -9,9 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <zephyr/shell/shell.h>
-#include "desh_print.h"
-#include "nrf_modem_dect_phy.h"
 
+#include <nrf_modem_dect_phy.h>
+#include <nrf_modem_at.h>
+
+#include "desh_print.h"
 #include "dect_common.h"
 #include "dect_common_utils.h"
 #include "dect_common_pdu.h"
@@ -20,6 +22,7 @@
 #include "dect_phy_api_scheduler.h"
 
 #include "dect_phy_shell.h"
+#include "dect_phy_ctrl.h"
 #include "dect_phy_mac_pdu.h"
 #include "dect_phy_mac_nbr.h"
 #include "dect_phy_mac.h"
@@ -27,15 +30,18 @@
 
 /**************************************************************************************************/
 
-static struct dect_phy_mac_ctrl_data {
+extern struct k_work_q dect_phy_ctrl_work_q;
+
+static struct dect_phy_mac_client_data {
 	uint16_t client_seq_nbr;
 
 	uint64_t last_tx_time_mdm_ticks;
-
 } client_data = {
 	.client_seq_nbr = 0,
 	.last_tx_time_mdm_ticks = 0,
 };
+
+/**************************************************************************************************/
 
 static int dect_phy_mac_client_data_pdu_encode(struct dect_phy_mac_rach_tx_params *params,
 					       uint32_t nw_id_24msb, uint8_t nw_id_8lsb,
@@ -196,7 +202,72 @@ static uint64_t dect_phy_mac_client_next_rach_tx_time_get(
 	return ra_start_mdm_ticks;
 }
 
-int dect_phy_mac_client_rach_tx(struct dect_phy_mac_nbr_info_list_item *target_nbr,
+static int dect_phy_mac_client_rach_tx(struct dect_phy_mac_nbr_info_list_item *target_nbr,
+				struct dect_phy_mac_rach_tx_params *params);
+
+struct dect_phy_mac_client_rach_tx_data {
+	struct k_work_delayable work;
+	struct dect_phy_mac_rach_tx_params cmd_params;
+	struct dect_phy_mac_nbr_info_list_item target_nbr;
+};
+static struct dect_phy_mac_client_rach_tx_data client_rach_tx_work_data;
+
+static void dect_phy_mac_client_rach_tx_worker(struct k_work *work_item)
+{
+	struct k_work_delayable *delayable_work = k_work_delayable_from_work(work_item);
+	struct dect_phy_mac_client_rach_tx_data *data =
+		CONTAINER_OF(delayable_work, struct dect_phy_mac_client_rach_tx_data, work);
+	struct dect_phy_mac_rach_tx_params cmd_params;
+	int err;
+
+	cmd_params = data->cmd_params;
+
+	if (data->cmd_params.get_mdm_temp) {
+		char tmp_str[DECT_DATA_MAX_LEN * 2] = {0};
+		int mdm_temperature = dect_phy_ctrl_modem_temperature_get();
+
+		/* Modem temperature to be included in a data JSON */
+		if (mdm_temperature == NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED) {
+			sprintf(tmp_str, "{\"data\":\"%s\",\"m_tmp\":\"N/A\"}",
+				cmd_params.tx_data_str);
+		} else {
+			sprintf(tmp_str, "{\"data\":\"%s\",\"m_tmp\":\"%d\"}",
+				cmd_params.tx_data_str, mdm_temperature);
+		}
+		memset(cmd_params.tx_data_str, 0, DECT_DATA_MAX_LEN);
+		strncpy(cmd_params.tx_data_str, tmp_str, DECT_DATA_MAX_LEN - 1);
+	}
+
+	err = dect_phy_mac_client_rach_tx(&data->target_nbr, &cmd_params);
+	if (err) {
+		desh_error("(%s): client_rach_tx failed: %d", (__func__), err);
+	}
+
+	if (cmd_params.interval_secs) {
+		k_work_schedule_for_queue(&dect_phy_ctrl_work_q,
+					  &client_rach_tx_work_data.work,
+					  K_SECONDS(cmd_params.interval_secs));
+	}
+}
+
+int dect_phy_mac_client_rach_tx_start(
+	struct dect_phy_mac_nbr_info_list_item *target_nbr,
+	struct dect_phy_mac_rach_tx_params *params)
+{
+	client_rach_tx_work_data.cmd_params = *params;
+	client_rach_tx_work_data.target_nbr = *target_nbr;
+	k_work_schedule_for_queue(
+		&dect_phy_ctrl_work_q, &client_rach_tx_work_data.work, K_SECONDS(0));
+
+	return 0;
+}
+
+void dect_mac_client_rach_tx_stop(void)
+{
+	k_work_cancel_delayable(&client_rach_tx_work_data.work);
+}
+
+static int dect_phy_mac_client_rach_tx(struct dect_phy_mac_nbr_info_list_item *target_nbr,
 				struct dect_phy_mac_rach_tx_params *params)
 {
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
@@ -275,6 +346,10 @@ int dect_phy_mac_client_rach_tx(struct dect_phy_mac_nbr_info_list_item *target_n
 
 	sched_list_item->priority = DECT_PRIORITY1_TX;
 	sched_list_item->phy_op_handle = DECT_PHY_MAC_CLIENT_RA_TX_HANDLE;
+
+	if (params->interval_secs) {
+		sched_list_item->phy_op_handle = DECT_PHY_MAC_CLIENT_RA_TX_CONTINUOUS_HANDLE;
+	}
 
 	/* Add tx operation to scheduler list */
 	if (!dect_phy_api_scheduler_list_item_add(sched_list_item)) {
@@ -746,3 +821,11 @@ int dect_phy_mac_client_dissociate(struct dect_phy_mac_nbr_info_list_item *targe
 
 	return 0;
 }
+
+static int dect_phy_mac_client_init(void)
+{
+	k_work_init_delayable(&client_rach_tx_work_data.work, dect_phy_mac_client_rach_tx_worker);
+	return 0;
+}
+
+SYS_INIT(dect_phy_mac_client_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

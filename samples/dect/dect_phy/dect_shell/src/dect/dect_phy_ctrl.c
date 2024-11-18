@@ -15,9 +15,9 @@
 
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
+#include <nrf_modem_dect_phy.h>
 
 #include "desh_print.h"
-#include "nrf_modem_dect_phy.h"
 
 #include "dect_common_utils.h"
 #include "dect_common_settings.h"
@@ -68,6 +68,8 @@ static struct dect_phy_ctrl_data {
 	uint64_t last_received_stf_start_time;
 	uint8_t last_received_pcc_short_nw_id;
 	uint16_t last_received_pcc_transmitter_short_rd_id;
+
+	int16_t last_valid_temperature;
 
 	uint8_t last_received_pcc_phy_len;
 	enum dect_phy_packet_length_type last_received_pcc_phy_len_type;
@@ -196,6 +198,10 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 		case DECT_PHY_CTRL_OP_PHY_API_MDM_INITIALIZED: {
 			struct dect_phy_common_op_initialized_params *params =
 				(struct dect_phy_common_op_initialized_params *)event.data;
+
+			if (params->temperature != NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED) {
+				ctrl_data.last_valid_temperature = params->temperature;
+			}
 
 			if (params->status) {
 				desh_error("(%s): init failed (time %llu, temperature %d, "
@@ -351,6 +357,10 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 		case DECT_PHY_CTRL_OP_PHY_API_MDM_COMPLETED: {
 			struct dect_phy_common_op_completed_params *params =
 				(struct dect_phy_common_op_completed_params *)event.data;
+
+			if (params->temperature != NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED) {
+				ctrl_data.last_valid_temperature = params->temperature;
+			}
 
 			if (params->status != NRF_MODEM_DECT_PHY_SUCCESS) {
 				char tmp_str[128] = {0};
@@ -768,6 +778,11 @@ int dect_phy_ctrl_time_query(void)
 	return nrf_modem_dect_phy_time_get();
 }
 
+int dect_phy_ctrl_modem_temperature_get(void)
+{
+	return ctrl_data.last_valid_temperature;
+}
+
 /**************************************************************************************************/
 
 void dect_phy_ctrl_rx_stop(void)
@@ -861,9 +876,9 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params, bool restart)
 void dect_phy_ctrl_status_get_n_print(void)
 {
 	char tmp_mdm_str[128] = {0};
-	int temperature;
 	int ret;
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+	int temperature = dect_phy_ctrl_modem_temperature_get();
 
 	desh_print("desh-dect-phy status:");
 	ret = nrf_modem_at_scanf("AT+CGMR", "%s", tmp_mdm_str);
@@ -880,8 +895,7 @@ void dect_phy_ctrl_status_get_n_print(void)
 	}
 	desh_print("  HW version:        %s", tmp_mdm_str);
 
-	ret = nrf_modem_at_scanf("AT%XTEMP?", "%%XTEMP: %d", &temperature);
-	if (ret <= 0) {
+	if (temperature == NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED) {
 		sprintf(tmp_mdm_str, "%s", "not known");
 	} else {
 		sprintf(tmp_mdm_str, "%d", temperature);
@@ -1332,6 +1346,7 @@ NRF_MODEM_LIB_ON_INIT(dect_phy_ctrl_init_hook, dect_phy_ctrl_on_modem_lib_init, 
 static int dect_phy_ctrl_init(void)
 {
 	memset(&ctrl_data, 0, sizeof(struct dect_phy_ctrl_data));
+	ctrl_data.last_valid_temperature = NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED;
 
 	ctrl_data.debug = true; /* Debugs enabled as a default */
 	k_work_queue_start(&dect_phy_ctrl_work_q, dect_phy_ctrl_th_stack,

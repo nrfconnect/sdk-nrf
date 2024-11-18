@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <zephyr/shell/shell.h>
-#include "desh_print.h"
-#include "nrf_modem_dect_phy.h"
+#include <nrf_modem_dect_phy.h>
 
+#include "desh_print.h"
 #include "dect_common_utils.h"
 #include "dect_common_pdu.h"
 #include "dect_phy_ping_pdu.h"

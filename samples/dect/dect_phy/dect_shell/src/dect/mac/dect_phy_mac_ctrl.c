@@ -282,7 +282,7 @@ int dect_phy_mac_ctrl_dissociate(struct dect_phy_mac_associate_params *params)
 
 /**************************************************************************************************/
 
-int dect_phy_mac_ctrl_rach_tx(struct dect_phy_mac_rach_tx_params *params)
+int dect_phy_mac_ctrl_rach_tx_start(struct dect_phy_mac_rach_tx_params *params)
 {
 	struct dect_phy_mac_nbr_info_list_item *scan_info =
 		dect_phy_mac_nbr_info_get_by_long_rd_id(params->target_long_rd_id);
@@ -299,12 +299,19 @@ int dect_phy_mac_ctrl_rach_tx(struct dect_phy_mac_rach_tx_params *params)
 		return ret;
 	}
 
-	ret = dect_phy_mac_client_rach_tx(scan_info, params);
+	ret = dect_phy_mac_client_rach_tx_start(scan_info, params);
 	if (ret) {
 		desh_error("Cannot start client_rach_tx: %d\n", ret);
 	}
 
 	return ret;
+}
+
+int dect_phy_mac_ctrl_rach_tx_stop(void)
+{
+	dect_mac_client_rach_tx_stop();
+	dect_phy_ctrl_ext_command_stop();
+	return 0;
 }
 
 /**************************************************************************************************/
@@ -325,7 +332,8 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 							  tmp_str);
 		if (params->handle == DECT_PHY_MAC_BEACON_TX_HANDLE) {
 			desh_error("%s: cannot TX beacon: %s", __func__, tmp_str);
-		} else if (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE) {
+		} else if (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE ||
+			   params->handle == DECT_PHY_MAC_CLIENT_RA_TX_CONTINUOUS_HANDLE) {
 			if (params->status == NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
 				desh_warn("%s: cannot TX client data due to LBT, "
 					  "channel was busy",
@@ -338,7 +346,8 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 				   params->handle, tmp_str);
 		}
 	} else {
-		if (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE) {
+		if (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE ||
+		    params->handle == DECT_PHY_MAC_CLIENT_RA_TX_CONTINUOUS_HANDLE) {
 			desh_print("Client data TX completed.");
 		} else if (params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_TX_HANDLE) {
 			desh_print("TX for Association Request completed.");

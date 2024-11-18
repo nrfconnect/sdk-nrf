@@ -8,7 +8,7 @@
 #define DECT_PHY_SHELL_H
 
 #include <zephyr/kernel.h>
-#include "nrf_modem_dect_phy.h"
+#include <nrf_modem_dect_phy.h>
 
 #include "dect_common.h"
 #include "dect_common_settings.h"
@@ -185,10 +185,11 @@ struct dect_phy_common_op_event_msgq_item {
 
 #define DECT_PHY_MAC_BEACON_RA_RESP_TX_HANDLE 1000
 
-#define DECT_PHY_MAC_CLIENT_RA_TX_HANDLE	      1001
-#define DECT_PHY_MAC_CLIENT_ASSOCIATION_TX_HANDLE     1002
-#define DECT_PHY_MAC_CLIENT_ASSOCIATION_RX_HANDLE     1003
-#define DECT_PHY_MAC_CLIENT_ASSOCIATION_REL_TX_HANDLE 1004
+#define DECT_PHY_MAC_CLIENT_RA_TX_HANDLE		1001
+#define DECT_PHY_MAC_CLIENT_RA_TX_CONTINUOUS_HANDLE	1002
+#define DECT_PHY_MAC_CLIENT_ASSOCIATION_TX_HANDLE	1003
+#define DECT_PHY_MAC_CLIENT_ASSOCIATION_RX_HANDLE	1004
+#define DECT_PHY_MAC_CLIENT_ASSOCIATION_REL_TX_HANDLE	1005
 
 
 #define DECT_PHY_PERF_TX_HANDLE_START 10000

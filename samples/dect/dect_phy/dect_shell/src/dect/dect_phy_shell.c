@@ -19,7 +19,7 @@
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
 
-#include "nrf_modem_dect_phy.h"
+#include <nrf_modem_dect_phy.h>
 
 #include "dect_common_utils.h"
 #include "dect_phy_api_scheduler.h"

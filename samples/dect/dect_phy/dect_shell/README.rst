@@ -639,6 +639,8 @@ Example: starting of cluster beacon and sending RA data to it
 
   .. code-block:: console
 
+      desh:~$ dect sett --reset
+      desh:~$ dect sett -t 1245
       desh:~$ dect mac beacon_scan -c 1659
       -----------------------------------------------------------------------------
       Beacon scan started.
@@ -823,6 +825,18 @@ Example: starting of cluster beacon and sending RA data to it
             IE type: Padding (0 byte)
             Payload length: 0
             Received padding data, len 0, payload is not printed
+
+* PT/client side - Send JSON-formatted periodic RA data in 10-second intervals with the current modem temperature to the scanned beacon:
+
+  .. code-block:: console
+
+      desh:~$ dect mac rach_tx -t 1234 -d "Data from device 1245" -i 10 -j
+
+* PT/client side - Stop periodic RA data sending:
+
+  .. code-block:: console
+
+      desh:~$ dect mac rach_tx stop
 
 * PT/client side - Send association release to the scanned beacon:
 

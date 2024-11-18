@@ -12,8 +12,11 @@
 
 /******************************************************************************/
 
-int dect_phy_mac_client_rach_tx(struct dect_phy_mac_nbr_info_list_item *target_nbr,
-				struct dect_phy_mac_rach_tx_params *params);
+int dect_phy_mac_client_rach_tx_start(
+	struct dect_phy_mac_nbr_info_list_item *target_nbr,
+	struct dect_phy_mac_rach_tx_params *params);
+
+void dect_mac_client_rach_tx_stop(void);
 
 int dect_phy_mac_client_associate(struct dect_phy_mac_nbr_info_list_item *target_nbr,
 				  struct dect_phy_mac_associate_params *params);

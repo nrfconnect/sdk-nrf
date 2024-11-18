@@ -31,8 +31,10 @@ struct dect_phy_mac_beacon_scan_params {
 
 struct dect_phy_mac_rach_tx_params {
 	uint32_t target_long_rd_id;
+	bool get_mdm_temp;
 	uint8_t mcs;
 	int8_t tx_power_dbm;
+	uint16_t interval_secs;
 
 	char tx_data_str[DECT_DATA_MAX_LEN]; /* Note: cannot be that much on payload */
 };
