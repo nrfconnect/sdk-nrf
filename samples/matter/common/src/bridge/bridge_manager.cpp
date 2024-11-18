@@ -11,6 +11,7 @@
 
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/reporting/reporting.h>
+#include <app/util/endpoint-config-api.h>
 #include <app/util/generic-callbacks.h>
 #include <lib/support/Span.h>
 
