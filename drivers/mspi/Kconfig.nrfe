@@ -1,0 +1,28 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+#
+# MSPI_NRFE Driver
+#
+menuconfig MSPI_NRFE
+	bool "SDP MSPI driver"
+	default y
+	depends on DT_HAS_NORDIC_NRFE_MSPI_CONTROLLER_ENABLED
+	select MBOX
+	select IPC_SERVICE
+	select IPC_SERVICE_BACKEND_ICMSG
+	help
+	  Enable SDP MSPI driver.
+
+if MSPI_NRFE
+
+config MSPI_NRFE_INIT_PRIORITY
+	int "SDP MSPI init priority"
+	depends on MSPI_NRFE
+	default MSPI_INIT_PRIORITY
+	help
+	  SDP MSPI driver device initialization priority.
+	  SDP MSPI initialization depends on IPC initialization
+	  which is done at the same init level and has init priority equal to 46.
+
+endif # MSPI_NRFE
