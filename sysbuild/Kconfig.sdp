@@ -12,6 +12,9 @@ if SDP
 config SDP_GPIO
 	bool "SDP GPIO application"
 
+config SDP_MSPI
+	bool "SDP MSPI application"
+
 if SDP_GPIO
 
 choice SDP_GPIO_BACKEND
