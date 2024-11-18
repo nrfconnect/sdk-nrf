@@ -185,16 +185,22 @@ suit_ssf_err_t suit_get_installed_manifest_info(suit_manifest_class_id_t *manife
 	if ((alg_id != NULL) && (digest != NULL)) {
 		const size_t manifest_digest_len =
 			rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, digest).len;
+		const uint8_t *manifest_digest =
+			rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, digest).value;
+
 		if (manifest_digest_len > digest->size) {
 			ssf_client_decode_done(rsp_pkt);
 			return SUIT_PLAT_ERR_NOMEM;
 		}
 
 		*alg_id = rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, alg_id);
-		memcpy((uint8_t *)digest->mem,
-		       rsp_data->SSF_SUIT_RSP_ARG(get_installed_manifest_info, digest).value,
-		       manifest_digest_len);
-		digest->size = manifest_digest_len;
+		if (manifest_digest != NULL) {
+			memcpy((uint8_t *)digest->mem, manifest_digest, manifest_digest_len);
+			digest->size = manifest_digest_len;
+		} else {
+			digest->mem = NULL;
+			digest->size = 0;
+		}
 	}
 
 	ssf_client_decode_done(rsp_pkt);
