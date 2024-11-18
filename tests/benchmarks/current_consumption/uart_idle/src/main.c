@@ -43,6 +43,7 @@ int main(void)
 	int ret;
 
 	ret = device_is_ready(uart_dev);
+	printk("UARTE instance: %s\n", uart_dev->name);
 	if (ret < 0) {
 		printk("device_is_ready: %d\n", ret);
 		return 0;
