@@ -1,0 +1,34 @@
+common:
+  sysbuild: true
+  tags: ci_build ci_tests_benchmarks_multicore ppk_power_measure
+
+tests:
+  benchmarks.multicore.idle_comp.nrf54h20dk_cpuapp_cpurad.s2ram:
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX=s2ram
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - EXTRA_DTC_OVERLAY_FILE="boards/comp.overlay"
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_comp"
+
+  benchmarks.multicore.idle_lpcomp.nrf54h20dk_cpuapp_cpurad.s2ram:
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX=s2ram
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - EXTRA_DTC_OVERLAY_FILE="boards/lpcomp.overlay"
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_lpcomp"
