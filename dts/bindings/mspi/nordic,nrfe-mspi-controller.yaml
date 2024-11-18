@@ -1,0 +1,8 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: Nordic SDP MSPI controller
+
+compatible: "nordic,nrfe-mspi-controller"
+
+include: [mspi-controller.yaml, pinctrl-device.yaml]
