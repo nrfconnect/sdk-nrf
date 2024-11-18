@@ -40,7 +40,7 @@ The build process generates firmware in two formats:
   These file contains bootloaders and applications for each core.
 * Binary files (:file:`zephyr.signed.bin`), containing signed application firmwares for the application and network core, respectively.
   For convenience, the binary files are bundled in :file:`dfu_application.zip`, together with a manifest that describes them.
-  You can use the binary files or the combined zip archive to update application firmware for both cores, with either MCUboot serial recovery or OTA DFU using Bluetooth LE.
+  You can use the binary files or the combined zip archive to update application firmware for both cores, with either MCUboot serial recovery or OTA DFU using Bluetooth® LE.
 
 For more information about files generated as output of the build process, see :ref:`app_build_output_files`.
 

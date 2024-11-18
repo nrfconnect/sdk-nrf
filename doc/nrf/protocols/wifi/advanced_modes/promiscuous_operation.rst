@@ -32,7 +32,7 @@ However, it is recommended to use the functional API ``net_eth_promisc_mode`` fo
 
 The following table provides the parameter details for the ``net_eth_promisc_mode`` API which is used to enable or disable Promiscuous mode for raw packet reception.
 
-.. list-table:: Wi-Fi raw packet reception API parameter details
+.. list-table:: Wi-Fi® raw packet reception API parameter details
    :header-rows: 1
 
    * - API parameter

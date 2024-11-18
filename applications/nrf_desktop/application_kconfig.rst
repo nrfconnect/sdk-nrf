@@ -98,8 +98,8 @@ See the :file:`Kconfig.defaults` file for details related to the default common 
 
 .. _nrf_desktop_bluetooth_configuration:
 
-Bluetooth configuration
-***********************
+Bluetooth® configuration
+************************
 
 The nRF Desktop application introduces application-specific configuration options related to Bluetooth connectivity configuration.
 These options are defined in :file:`Kconfig.ble` file.

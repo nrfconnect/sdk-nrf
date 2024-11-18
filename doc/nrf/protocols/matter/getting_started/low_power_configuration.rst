@@ -127,7 +127,7 @@ To enable this functionality, set the :kconfig:option:`CONFIG_CHIP_ICD_REPORT_ON
 Enable low power mode for the selected networking technology
 ************************************************************
 
-The Matter supports using Thread and Wi-Fi as the IPv6-based networking technologies.
+The Matter supports using Thread and Wi-Fi® as the IPv6-based networking technologies.
 Both of the technologies come with their own solutions for optimizing the protocol behavior in terms of power consumption.
 However, the general goal of the optimization for both is to reduce the time spent in the active state and put the device in the inactive (sleep) state whenever possible.
 Reducing the device activity time usually comes with a higher response time and a lower performance.

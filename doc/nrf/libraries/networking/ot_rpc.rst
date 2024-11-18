@@ -25,7 +25,7 @@ The OpenThread RPC consists of the following libraries:
     This library serializes the OpenThread API using the :ref:`nrf_rpc` library.
     OpenThread RPC Client has to be part of the user application.
   * OpenThread RPC Server, which includes the OpenThread RPC common library and the OpenThread stack.
-    This library enables communication with OpenThread RPC Client, and has to run on a device that has a 802.15.4 radio hardware peripheral.
+    This library enables communication with OpenThread RPC Client, and has to run on a device that has an 802.15.4 radio hardware peripheral.
 
 Configuration
 *************
@@ -34,7 +34,7 @@ These Kconfig options must be enabled to use OpenThread RPC:
 
   * :kconfig:option:`CONFIG_OPENTHREAD_RPC`
   * :kconfig:option:`CONFIG_OPENTHREAD_RPC_CLIENT` (for the user application with OpenThread RPC Client)
-  * :kconfig:option:`CONFIG_OPENTHREAD_RPC_SERVER` (for the device that has a 802.15.4 radio hardware peripheral and OpenThread RPC Server)
+  * :kconfig:option:`CONFIG_OPENTHREAD_RPC_SERVER` (for the device that has an 802.15.4 radio hardware peripheral and OpenThread RPC Server)
 
 These Kconfig options must additionally be enabled for the server:
 

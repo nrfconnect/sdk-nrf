@@ -7,7 +7,7 @@ Wi-Fi: WFA QuickTrack control application
    :local:
    :depth: 2
 
-The QuickTrack sample demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance QuickTrack certification.
+The QuickTrack sample demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance® QuickTrack certification.
 
 Requirements
 ************

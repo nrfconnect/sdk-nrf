@@ -42,11 +42,11 @@ Since Gazell Pairing requires exclusive access to pipes 0 and :c:macro:`GZP_DATA
 
 Do not access the following:
 
-* :c:func:`nrf_gzll_set_base_address_0()`
-* :c:func:`nrf_gzll_set_base_address_1()`
-* :c:func:`nrf_gzll_set_address_prefix_byte()` (not for pipes 0 and 1)
-* :c:func:`nrf_gzll_set_rx_pipes_enabled()` (can be used but the enabled status of pipes 0 and 1 should not be modified)
-* :c:func:`nrf_gzll_set_channel_table()`
+* :c:func:`nrf_gzll_set_base_address_0`
+* :c:func:`nrf_gzll_set_base_address_1`
+* :c:func:`nrf_gzll_set_address_prefix_byte` (not for pipes 0 and 1)
+* :c:func:`nrf_gzll_set_rx_pipes_enabled` (can be used but the enabled status of pipes 0 and 1 should not be modified)
+* :c:func:`nrf_gzll_set_channel_table`
 
 Configuration
 *************

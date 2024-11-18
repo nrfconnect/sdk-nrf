@@ -22,7 +22,7 @@ Module events
 Configuration
 *************
 
-The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
+The module requires the basic Bluetooth® configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 The module can be used only for nRF Desktop Bluetooth Peripheral devices (:ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>`).
 
 Use the option :ref:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY <config_desktop_app_options>` to enable the module.

@@ -121,7 +121,7 @@ Overlay configurations files that enable specific features:
 * :file:`overlay-azure.conf` - Configuration file that enables communication with Azure IoT Hub.
 * :file:`overlay-lwm2m.conf` - Configuration file that enables communication with AVSystem's Coiote IoT Device Management.
 * :file:`overlay-pgps.conf` - Configuration file that enables P-GPS.
-* :file:`overlay-nrf7002ek-wifi-scan-only.conf` - Configuration file that enables Wi-Fi scanning with nRF7002 EK.
+* :file:`overlay-nrf7002ek-wifi-scan-only.conf` - Configuration file that enables Wi-Fi® scanning with nRF7002 EK.
 * :file:`overlay-low-power.conf` - Configuration file that achieves the lowest power consumption by disabling features that consume extra power, such as LED control and logging.
 * :file:`overlay-debug.conf` - Configuration file that adds additional verbose logging capabilities and enables the debug module.
 * :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_.

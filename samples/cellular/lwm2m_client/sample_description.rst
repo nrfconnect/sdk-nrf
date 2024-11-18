@@ -119,7 +119,7 @@ The sample implements the following LwM2M objects:
       - 33626
       - Yes
       - Yes
-   *  - Visible Wi-Fi Access Point
+   *  - Visible Wi-Fi® Access Point
       - 33627
       - Yes
       - Yes

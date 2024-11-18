@@ -207,6 +207,7 @@ NRF = [
     ("device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"), # Testing the DFU solution (removed after 2.8.0)
     ("app_dev/device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"),
     ("app_dev/device_guides/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"),
+    ("app_dev/device_guides/nrf54l/snippets", "app_dev/device_guides/nrf54l/index"), # Snippets for nRF54L05 and nRF54L10 (removed after 2.8.0)
     ("ug_nrf53", "app_dev/device_guides/nrf53/index"), # Developing with nRF53 Series (landing)
     ("nrf53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53", "app_dev/device_guides/nrf53/index"),

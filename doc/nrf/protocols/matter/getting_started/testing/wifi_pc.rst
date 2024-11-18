@@ -7,7 +7,7 @@ Matter over Wi-Fi: Configuring CHIP Tool for Linux or macOS
    :local:
    :depth: 2
 
-In this setup, the Matter controller is installed on PC that is running either Linux or macOS, and a dedicated Wi-Fi Access Point is used.
+In this setup, the Matter controller is installed on PC that is running either Linux or macOS, and a dedicated Wi-Fi® Access Point is used.
 This is the recommended setup for Matter over Wi-Fi.
 
 .. figure:: images/matter_wifi_setup_pc.png

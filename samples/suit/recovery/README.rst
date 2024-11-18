@@ -51,8 +51,8 @@ To achieve this, the appropriate devicetree overlay files from the main applicat
 
 To do this, add the :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay` files in the main application's :ref:`configuration_system_overview_sysbuild` directory.
 The former file will be passed automatically to the recovery application image and the latter to the recovery radio image.
-These devicetree files must define the ``cpuapp_recovery_partition`` and ``cpurad_recovery_partition`` nodes respectively.`
-For an example, see the files in the ``samples/suit/smp_transfer`` sample.
+These devicetree files must define the ``cpuapp_recovery_partition`` and ``cpurad_recovery_partition`` nodes respectively.
+For an example, see the files in the :file:`samples/suit/smp_transfer` folder.
 
 .. _suit_recovery_build_run:
 
