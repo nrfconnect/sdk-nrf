@@ -242,6 +242,7 @@ static void usb_state_event_handler(enum usb_state new_state)
 		usb_suspended = true;
 		break;
 
+	case USB_STATE_DISCONNECTED:
 	case USB_STATE_ACTIVE:
 		usb_suspended = false;
 		break;
