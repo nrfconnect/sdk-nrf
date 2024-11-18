@@ -19,7 +19,7 @@ If the device has sufficiently large external flash storage, the modem can be en
 
 nRF Cloud also helps your devices determine their locations using GNSS.
 It uses both assisted GNSS (A-GNSS) and predicted GPS (P-GPS).
-It can determine device location from cellular and Wi-Fi network information sent by the device.
+It can determine device location from cellular and Wi-Fi® network information sent by the device.
 
 Additionally, nRF Cloud allows devices to report data to the cloud for collection and analysis later.
 To read more about nRF Cloud, see the `nRF Cloud`_ website and the `nRF Cloud documentation`_.

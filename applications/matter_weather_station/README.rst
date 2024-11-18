@@ -23,7 +23,7 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
-To commission the weather station device and control it remotely through a Thread or Wi-Fi network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
+To commission the weather station device and control it remotely through a Thread or Wi-Fi® network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on your setup.
 The recommended way of getting measurement values is using the mobile Matter controller application that comes with a graphical interface, performs measurements automatically and visualizes the data.
 

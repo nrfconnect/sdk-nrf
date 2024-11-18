@@ -46,7 +46,7 @@ See the :ref:`wifi_shell_sample` sample for more information on configuring mode
 
 The following table lists the shell commands and network management APIs used to switch the primary modes of operation needed for raw packet transmission.
 
-.. list-table:: Wi-Fi raw packet transmission network management APIs for primary mode of operation
+.. list-table:: Wi-Fi® raw packet transmission network management APIs for primary mode of operation
    :header-rows: 1
 
    * - Network management APIs

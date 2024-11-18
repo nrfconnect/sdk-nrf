@@ -122,7 +122,7 @@ This is how you can specify them:
       * :makevar:`SNIPPET` - Select the snippet from the list in the :guilabel:`Snippets` menu.
       * Other variables - Provide CMake arguments in the :guilabel:`Extra CMake arguments` field, preceded by ``--``.
 
-      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi support, select ``nrf9161dk/nrf9161/ns`` in the :guilabel:`Board` menu, :file:`overlay-nrf7002ek-wifi-scan-only.conf` in the :guilabel:`Extra Kconfig fragments` menu, and provide ``-- -DSHIELD=nrf7002ek`` in the :guilabel:`Extra CMake arguments` field.
+      For example, to build the :ref:`location_sample` sample for the nRF9161 DK with the nRF7002 EK Wi-Fi® support, select ``nrf9161dk/nrf9161/ns`` in the :guilabel:`Board` menu, :file:`overlay-nrf7002ek-wifi-scan-only.conf` in the :guilabel:`Extra Kconfig fragments` menu, and provide ``-- -DSHIELD=nrf7002ek`` in the :guilabel:`Extra CMake arguments` field.
 
    .. group-tab:: Command line
 

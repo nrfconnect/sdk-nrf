@@ -176,8 +176,8 @@ Protocol-specific recommendations
 
 Besides applying `General recommendations`_, read the following subsections for more information on how to optimize specific subsystems.
 
-Bluetooth Mesh
-==============
+Bluetooth® Mesh
+===============
 
 The Bluetooth Mesh protocol offers the :ref:`ug_bt_mesh_configuring_lpn` feature for optimizing the power consumption of the Bluetooth Mesh devices.
 
@@ -226,8 +226,8 @@ Sleepy End Devices try to limit their power consumption by sleeping most of the 
 The :ref:`ot_cli_sample` sample can be used to perform power consumption measurements when configured following some of the general recommendations.
 See the :ref:`ot_cli_sample_low_power` section of the sample documentation for more information.
 
-Wi-Fi
-=====
+Wi-Fi®
+======
 
 The Wi-Fi protocol introduces the power save mechanism that allows the Station (STA) device to spend the majority of the time in a sleep state and wake up periodically to check for pending traffic.
 For more information about the Wi-Fi power save mechanism, see the :ref:`Wi-Fi MAC layer <wifi_mac_layer>` documentation.

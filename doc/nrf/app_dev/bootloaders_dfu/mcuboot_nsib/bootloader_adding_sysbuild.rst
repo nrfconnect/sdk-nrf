@@ -361,7 +361,7 @@ Using MCUboot in firmware loader mode
 
 MCUboot includes a firmware loader mode supported in sysbuild.
 This mode enables a project configuration that includes MCUboot instance (optionally with serial recovery), a main application not intended for firmware updates, and a secondary application which is dedicated to loading firmware updates.
-The benefit of this configuration is having a dedicated application for loading firmware updates, for example, over Bluetooth.
+The benefit of this configuration is having a dedicated application for loading firmware updates, for example, over Bluetooth®.
 This allows the main application to be larger in comparison to any symmetric size dual-bank mode update, which helps on devices with limited flash or RAM.
 
 To use this mode, you must create a static partition file for the application that designates the addresses and sizes of the main image and firmware loader applications.

@@ -87,6 +87,9 @@ See `User interface`_ for information about how to switch the operation modes.
 Remote testing in a network
 ===========================
 
+.. |Bluetoothsc| replace:: Bluetooth®
+.. |WiFi| replace:: Wi-Fi®
+
 .. include:: ../light_bulb/README.rst
     :start-after: matter_light_bulb_sample_remote_testing_start
     :end-before: matter_light_bulb_sample_remote_testing_end
@@ -107,6 +110,8 @@ Matter smoke CO alarm custom configurations
 
 Device Firmware Upgrade support
 ===============================
+
+.. |Bluetooth| replace:: Bluetooth
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_build_with_dfu_start

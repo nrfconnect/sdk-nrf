@@ -42,7 +42,7 @@ This sample implements or demonstrates the following features:
 * Support for the `nRF Cloud Provisioning Service`_ using the :ref:`lib_nrf_provisioning` library.
   For compatibility with auto-onboarding, the device ID uses the 128 bit UUID format rather than the older nrf-<IMEI> format.
 * Support for remote execution of modem AT commands using application-specific device messages.
-* Periodic cellular, Wi-Fi, and GNSS location tracking using the :ref:`lib_location` library.
+* Periodic cellular, Wi-Fi®, and GNSS location tracking using the :ref:`lib_location` library.
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `nRF9151 DK <Nordic nRF9151 DK_>`_ , `nRF9161 DK <Nordic nRF9161 DK_>`_, or `nRF9160 DK <Nordic nRF9160 DK_>`_.
 * Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
 * Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_.

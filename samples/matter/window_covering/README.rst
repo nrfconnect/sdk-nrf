@@ -75,6 +75,9 @@ You can enable both methods after :ref:`building and running the sample <matter_
 Remote testing in a network
 ---------------------------
 
+.. |Bluetoothsc| replace:: Bluetooth®
+.. |WiFi| replace:: Wi-Fi®
+
 .. include:: ../light_bulb/README.rst
     :start-after: matter_light_bulb_sample_remote_testing_start
     :end-before: matter_light_bulb_sample_remote_testing_end
@@ -103,6 +106,8 @@ Matter window covering with Trusted Firmware-M
 
 Device Firmware Upgrade support
 ===============================
+
+.. |Bluetooth| replace:: Bluetooth
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_build_with_dfu_start

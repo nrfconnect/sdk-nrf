@@ -11,7 +11,7 @@ The nRF70 Series of wireless companion ICs implement the Physical (PHY) and Medi
 The higher layers of the networking stack, namely, the nRF Wi-Fi driver and supplicant, the TCP/IP stack, and the networking application layers, run on the host device.
 Data transfer between the host and the nRF70 companion device can occur through either SPI or QSPI interfaces.
 
-The following figure illustrates the partitioning of the Wi-Fi stack between the nRF70 Series device and the host device:
+The following figure illustrates the partitioning of the Wi-Fi® stack between the nRF70 Series device and the host device:
 
 .. figure:: images/nrf70_ug_overview.svg
    :alt: Overview of nRF70 application architecture

@@ -8,7 +8,7 @@ Matter: Template
    :depth: 2
 
 This sample demonstrates a minimal implementation of the :ref:`Matter <ug_matter>` application layer.
-This basic implementation enables the commissioning on the device, which allows it to join a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi network.
+This basic implementation enables the commissioning on the device, which allows it to join a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi® network.
 Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific Matter device.
 In case of Thread, this device works as a Thread :ref:`Minimal End Device <thread_ot_device_types>`.
 
@@ -49,7 +49,7 @@ Remote testing in a network
 
 Testing in either a Matter-enabled Thread or a Wi-Fi network requires a Matter controller that you can configure on PC or mobile device.
 By default, the Matter accessory device has IPv6 networking disabled.
-You must pair the device with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or a Wi-Fi network.
+You must pair the device with the Matter controller over Bluetooth LE to get the configuration from the controller to use the device within a Thread or a Wi-Fi network.
 You can enable the controller after :ref:`building and running the sample <matter_template_network_testing>`.
 
 To pair the device, the controller must get the :ref:`matter_template_network_mode_onboarding` from the Matter accessory device and commission the device into the network.
@@ -129,6 +129,8 @@ For example:
 Device Firmware Upgrade support
 ===============================
 
+.. |Bluetooth| replace:: Bluetooth
+
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_build_with_dfu_start
     :end-before: matter_door_lock_sample_build_with_dfu_end
@@ -137,7 +139,7 @@ Alternatively, for the nRF54L15 DK, the DFU can be configured to only use the in
 This means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal flash memory.
 This configuration is enabled by default for the :ref:`debug configuration <matter_template_custom_configs>`.
 
-The following is an example command to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth® SMP, and using internal MRAM only:
+The following is an example command to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only:
 
 .. code-block:: console
 
