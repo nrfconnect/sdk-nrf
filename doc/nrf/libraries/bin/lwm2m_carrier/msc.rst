@@ -39,7 +39,7 @@ The following message sequence chart shows that FOTA fails at runtime if an inva
 
     FOTA CRC failure
 
-The following message sequence chart shows the :c:func:`lwm2m_carrier_request()` API being used to deregister from the server:
+The following message sequence chart shows the :c:func:`lwm2m_carrier_request` API being used to deregister from the server:
 
 .. _lwm2m_carrier_request:
 

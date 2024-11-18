@@ -8,7 +8,7 @@ Matter: Thermostat
    :depth: 2
 
 This thermostat sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a thermostat device for monitoring temperature values and controlling the temperature.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi network.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi® network.
 In case of Thread, this device works as a Thread :ref:`Minimal End Device <thread_ot_device_types>`.
 Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific Matter device.
 
@@ -122,6 +122,8 @@ Matter thermostat with Trusted Firmware-M
 Device Firmware Upgrade support
 ===============================
 
+.. |Bluetooth| replace:: Bluetooth
+
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_build_with_dfu_start
     :end-before: matter_door_lock_sample_build_with_dfu_end
@@ -130,6 +132,9 @@ Device Firmware Upgrade support
 
 Remote testing in a network
 ===========================
+
+.. |Bluetoothsc| replace:: Bluetooth
+.. |WiFi| replace:: Wi-Fi
 
 .. include:: ../light_bulb/README.rst
     :start-after: matter_light_bulb_sample_remote_testing_start

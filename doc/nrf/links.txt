@@ -200,9 +200,10 @@
 .. _`nRF Asset Tracker Memfault integration for AWS IoT`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-aws-js
 .. _`nRF Asset Tracker Memfault integration for Azure IoT Hub`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-azure-js
 
+.. _`Memfault-SDK`:
 .. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
 .. _`Memfault WebBluetooth Client source code`: https://github.com/memfault/web-ble-example/blob/main/mds.js
-.. _`Memfault-SDK`: https://github.com/memfault/memfault-firmware-sdk
+
 
 .. _`Zephyr hostap fork`: https://github.com/zephyrproject-rtos/hostap
 
@@ -648,10 +649,10 @@
 .. _`Setting up the SDK for Amazon Sidewalk`: https://docs.nordicsemi.com/bundle/sidewalk_latest/page/setting_up_sidewalk_environment/setting_up_sdk.html
 
 .. _`nRF9160 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/nRF9160_html5_keyfeatures.html
+.. _`nRF9160 DK GPS`:
 .. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
 .. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
 
-.. _`nRF9160 DK GPS`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
 
 .. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
 .. _`Security protocol for cellular IoT`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/security_protocols.html
@@ -747,7 +748,9 @@
 
 .. _`nRF52805 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52805&labelkey=product-specification
 
-.. _`nRF21540`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
+.. _`nRF21540`:
+.. _`nRF21540 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
+
 .. _`nRF21540 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf21540/page/keyfeatures_html5.html
 .. _`nRF21540 Front-End Module`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/front_end_module.html
 
@@ -756,20 +759,19 @@
 .. _`Product specification for nRF70 Series devices`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/keyfeatures_html5.html
 .. _`nRF7002 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf7002_dk/page/UG/nrf7002_DK/intro.html
 .. _`nRF70 Series hardware documentation`:
-.. _`nRF70 Series`: https://docs.nordicsemi.com/category/nrf-70-series
 
 .. _`Measuring current`: https://docs.nordicsemi.com/bundle/ug_nrf7002_dk/page/UG/nrf7002_DK/hw_measure_current.html
-
+.. _`nRF70 Series`:
 .. _`Guidelines and application notes for nRF70 Series devices`: https://docs.nordicsemi.com/category/nrf-70-series
 
 .. _`nRF70 Series power states`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/functional/doc/power_states.html
 
+.. _`nRF7002 EK`:
 .. _`nRF7002 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/intro.html
 .. _`nRF7002 EB User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/intro.html
 .. _`nRF7002 EB PCB edge connector`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/pcb_edge_connector.html
 .. _`Using nRF7002 EB with the Nordic Thingy:53`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/use_thingy53.html
 .. _`nRF7002 EB castellated edge holes`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/castellated_mounting_holes.html
-.. _`nRF7002 EK`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/intro.html
 .. _`nRF7002 companion IC`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/hw_wifi_companion_ic.html
 .. _`Antenna gain compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/antenna_compensation.html
 .. _`Band edge compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/band_compensation.html
@@ -793,15 +795,14 @@
 .. _`nPM Fuel Gauge Board`: https://www.nordicsemi.com/Products/Development-hardware/nPM-Fuel-Gauge-board
 .. _`Using the nPM1300 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/intro.html
 
-.. _`nRF21540 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf21540/page/keyfeatures_html5.html
-.. _`nRF21540 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_dk/page/UG/nrf21540_DK/intro.html
 .. _`nRF21540 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_ek/page/UG/nrf21540_DK/intro.html
 
 .. _`AP-Protect for nRF9151`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
 .. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
 .. _`AP-Protect for nRF5340`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/debugandtrace.html#ariaid-title9
-.. _`AP-Protect for nRF52840`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
+.. _`AP-Protect for nRF52840`:
+.. _`access port protection mechanism`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52833`: https://docs.nordicsemi.com/bundle/ps_nrf52833/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52832`: https://docs.nordicsemi.com/bundle/ps_nrf52832/page/dif.html#d913e149
 .. _`AP-Protect for nRF52820`: https://docs.nordicsemi.com/bundle/ps_nrf52820/page/dif.html#ariaid-title3
@@ -852,8 +853,6 @@
 .. _`nRF9151 SiP revisions and variants`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9151/page/COMP/nrf9151/nrf9151_ic_revision_overview.html
 
 .. _`SWD Select`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/programming_debugging_interface.html
-
-.. _`access port protection mechanism`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
 
 .. _`Wi-Fi Alliance Certification for nRF70 Series`: https://docs.nordicsemi.com/bundle/nwp_045/page/WP/nwp_045/intro.html
 
@@ -978,7 +977,9 @@
 
 .. ### Source: bluetooth.org and bluetooth.com
 
-.. _`Bluetooth Core Specification`: https://www.bluetooth.com/specifications/specs/
+.. _`Bluetooth Core Specification`:
+.. _`Bluetooth Mesh profile specification`:
+.. _`Bluetooth NLC profile specifications`: https://www.bluetooth.com/specifications/specs/
 .. _`Bluetooth® LE Audio specifications`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/le-audio/le-audio-specifications/
 
 .. _`Join Bluetooth SIG`: https://www.bluetooth.com/develop-with-bluetooth/join/
@@ -1009,9 +1010,6 @@
 
 .. _`Bluetooth Mesh model specification`: https://www.bluetooth.com/specifications/specs/mesh-model-1-1/
 .. _`Bluetooth Mesh protocol specification`: https://www.bluetooth.com/specifications/specs/mesh-protocol/
-.. _`Bluetooth Mesh profile specification`: https://www.bluetooth.com/specifications/specs/
-.. _`Bluetooth NLC profile specifications`: https://www.bluetooth.com/specifications/specs/
-
 .. _`Bluetooth Mesh model overview`: https://www.bluetooth.com/bluetooth-resources/bluetooth-mesh-models/
 .. _`Bluetooth Mesh glossary`: https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/mesh/mesh-glossary/
 .. _`Bluetooth Mesh FAQ`: https://www.bluetooth.com/learn-about-bluetooth/bluetooth-technology/topology-options/le-mesh/mesh-faq/
@@ -1163,7 +1161,8 @@
 .. _`Set up your AWS account`: https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html
 .. _`AWS Command Line Interface`: https://aws.amazon.com/cli/
 .. _`AWS IoT Core policy examples`: https://docs.aws.amazon.com/iot/latest/developerguide/example-iot-policies.html
-.. _`Security best practices in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
+.. _`Security best practices in AWS IoT Core`:
+.. _`AWS IoT Developer Guide: Security Best Practices`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
 .. _`AWS IoT Core Server Authentication`: https://docs.aws.amazon.com/iot/latest/developerguide/server-authentication.html
 .. _`CA certificates for server authentication in AWS IoT Core`: https://docs.aws.amazon.com/iot/latest/developerguide/server-authentication.html#server-authentication-certs
 .. _`Authentication and access credentials`: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-authentication.html
@@ -1178,7 +1177,6 @@
 .. _`AWS IoT Developer Guide`: https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html
 .. _`AWS IoT MQTT`: https://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html
 .. _`AWS IoT Developer Guide: Basic Policy Variables`: https://docs.aws.amazon.com/iot/latest/developerguide/basic-policy-variables.html
-.. _`AWS IoT Developer Guide: Security Best Practices`: https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html
 .. _`AWS IoT jobs`:
 .. _`AWS IoT Developer Guide: Jobs`: https://docs.aws.amazon.com/iot/latest/developerguide/iot-jobs.html
 .. _`AWS IoT Developer Guide: Managing Jobs`: https://docs.aws.amazon.com/iot/latest/developerguide/create-manage-jobs.html
@@ -1299,7 +1297,6 @@
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
 .. _`Memfault Demo CLI`: https://docs.memfault.com/docs/mcu/demo-cli/
 
-.. _`Memfault Dashboards`: https://app.memfault.com
 .. _`Memfault debugging`: https://docs.memfault.com/docs/platform/introduction#debugging
 .. _`Memfault OTA`: https://docs.memfault.com/docs/platform/introduction#ota
 .. _`Memfault monitoring`: https://docs.memfault.com/docs/platform/introduction#metrics
@@ -1380,6 +1377,7 @@
 .. _`Distributed Compliance Ledger`: https://webui.dcl.csa-iot.org/
 
 .. _`Matter 1.3 CSA blog post`: https://csa-iot.org/newsroom/matter-1-3-specification-released/
+.. _`CSA press release for Matter 1.4`: https://csa-iot.org/newsroom/matter-1-4-enables-more-capable-smart-homes/
 
 .. ### Source: Chocolatey
 
@@ -1526,7 +1524,7 @@
 
 .. _`Onomondo LTE-M coverage`: https://onomondo.com/product/coverage/lte-m-networks/
 .. _`Onomondo NB-IoT coverage`: https://onomondo.com/product/coverage/nb-iot-networks/
-.. _`Onomondo SoftSIM integration with the nRF91 Series`: https://help.onomondo.com/en/how-to-integrate-the-onomondo-softsim-with-the-nrf9160-from-nordic-semiconductor
+.. _`Onomondo SoftSIM integration with the nRF91 Series`: https://github.com/onomondo/nrf-softsim
 
 .. ### Source: bosch-sensortec.com
 
@@ -1706,7 +1704,7 @@
 .. _`BICR register's PDF file`: https://res.developer.nordicsemi.com/res/nrf54H20/BICR/nRF54H20_BICR_0_11_0.pdf
 .. _`nRF Command Line Tools 10.22.1`: https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools/download
 
-.. _`documentation page on Github Authentication`: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github
+.. _`documentation page on Github Authentication`:
 .. _`documentation page on authentication methods`: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github
 .. _`ssh-agent`: https://www.ssh.com/ssh/agent
 .. _`Connecting to GitHub with SSH`: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh

@@ -8,7 +8,7 @@ Bluetooth LE advertising providers
    :depth: 2
 
 The Bluetooth LE advertising providers library manages advertising data and scan response data.
-It does not control Bluetooth LE advertising by itself.
+It does not control Bluetooth® LE advertising by itself.
 
 Overview
 ********

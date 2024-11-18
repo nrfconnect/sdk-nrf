@@ -38,7 +38,7 @@ You do not necessarily need a fully working NFC Tag for the wake-up.
 You can use the NFCT peripheral registers directly.
 In this case, the reader cannot read anything, but it can wake up the system.
 
-When using the registers to wake up the device, replace :c:func:`start_nfc()` with the following function:
+When using the registers to wake up the device, replace :c:func:`start_nfc` with the following function:
 
 .. code-block:: c
 

@@ -79,7 +79,7 @@ The following APIs are essential for interacting with the bootloader or implemen
      - Supported transfer
    * - :ref:`zephyr:mcu_mgr`
      - Library in Zephyr that implementing the Simple Management Protocol (SMP), which is used to receive or send updates over different protocols.
-     - Wired (SMP over UART or USB virtual serial port) and OTA (SMP over Bluetooth® LE)
+     - Wired (SMP over UART or USB virtual serial port) and OTA (SMP over Bluetooth LE)
    * - :ref:`lib_dfu_target`
      - Library in the |NCS| used to perform DFU for data from any source.
      - | The application provides the data and is responsible for receiving updates.
@@ -87,7 +87,7 @@ The following APIs are essential for interacting with the bootloader or implemen
    * - :ref:`lib_fota_download`
      - | Library in the nRF Connect SDK providing functions for downloading firmware files as upgrade candidates to the DFU target.
        | It is commonly used by IoT libraries, including the nRF Cloud library.
-     - OTA (LTE, Wi-Fi)
+     - OTA (LTE, Wi-Fi®)
    * - :ref:`zephyr:blinfo_api`
      - API that enables applications to access shared data from a bootloader.
      - --
@@ -171,16 +171,16 @@ You can use the following tools to interact with DFU:
    * - Cloud interfaces
      - | Each cloud has its own interface for sending updates to devices.
        | For details, refer to the documentation for :ref:`lib_nrf_cloud`, :ref:`lib_aws_fota`, or :ref:`lib_azure_fota`.
-     - Wired (SMP over UART or USB) and OTA (SMP over Bluetooth® LE).
+     - Wired (SMP over UART or USB) and OTA (SMP over Bluetooth LE).
    * - `nRF Connect Device Manager`_
-     - | Mobile application designed for sending SMP updates over Bluetooth® LE.
+     - | Mobile application designed for sending SMP updates over Bluetooth LE.
        | It also supports additional SMP features.
-     - OTA (SMP over Bluetooth® LE)
+     - OTA (SMP over Bluetooth LE)
    * - `nRF Connect for Mobile`_
-     - General purpose mobile application for sending SMP updates over Bluetooth® LE and other functionalities.
-     - OTA (SMP over Bluetooth® LE)
+     - General purpose mobile application for sending SMP updates over Bluetooth LE and other functionalities.
+     - OTA (SMP over Bluetooth LE)
    * - :ref:`zephyr:mcumgr_smp_protocol_specification`
      - | SMP Client operates on a microcontroller.
-       | For a Bluetooth® LE example, refer to :ref:`bluetooth_central_dfu_smp`.
+       | For a Bluetooth LE example, refer to :ref:`bluetooth_central_dfu_smp`.
        | SMP Client can also be implemented using the :ref:`zephyr:mcu_mgr` library.
-     - Wired (SMP over UART or USB) and OTA (SMP Client over Bluetooth® LE)
+     - Wired (SMP over UART or USB) and OTA (SMP Client over Bluetooth LE)

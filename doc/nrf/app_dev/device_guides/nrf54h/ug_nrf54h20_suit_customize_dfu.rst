@@ -96,9 +96,9 @@ Using Nordic Semiconductor templates directly in a product is strongly discourag
 
 The build system searches for the manifest templates in the following order:
 
-#. It checks if the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` file exists in the :file:`<sample-dir>/suit/${SB_CONFIG_SOC}/` directory.
+#. It checks if the file provided in :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` exists in the :file:`<sample-dir>/suit/${SB_CONFIG_SOC}/` directory.
 
-#. It checks if the :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` file exists in the :file:`<sdk-nrf-dir>/nrf/config/suit/templates/${SB_CONFIG_SOC}/${SB_CONFIG_SUIT_BASE_MANIFEST_VARIANT}/` directory.
+#. It checks if the file provided in :kconfig:option:`SB_CONFIG_SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME` or :kconfig:option:`CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME` exists in the :file:`<sdk-nrf-dir>/nrf/config/suit/templates/${SB_CONFIG_SOC}/${SB_CONFIG_SUIT_BASE_MANIFEST_VARIANT}/` directory.
 
 The build system selects the set of files from the first successful step.
 

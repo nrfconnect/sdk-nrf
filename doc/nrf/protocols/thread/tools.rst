@@ -44,7 +44,7 @@ Thread Border Router
 
 .. tbr_shortdesc_start
 
-The Thread Border Router is a specific type of Border Router device that provides connectivity from the IEEE 802.15.4 network to adjacent networks on other physical layers (such as Wi-Fi or Ethernet).
+The Thread Border Router is a specific type of Border Router device that provides connectivity from the IEEE 802.15.4 network to adjacent networks on other physical layers (such as Wi-Fi® or Ethernet).
 Border Routers provide services for devices within the IEEE 802.15.4 network, including routing services for off-network operations.
 
 .. tbr_shortdesc_end

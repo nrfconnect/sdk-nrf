@@ -102,7 +102,7 @@ Glossary
 
    Buffer Status Report (BSR)
       Carries the information on the amount of data available for each Logical Channel Group (LCG) from UE to eNB.
-      From Wi-Fi perspective, BSR indicates the amount of queued uplink data buffered in the respective STA and access categories to which the queued data belong.
+      From Wi-Fi® perspective, BSR indicates the amount of queued uplink data buffered in the respective STA and access categories to which the queued data belong.
 
    Build configuration
       A set of build scripts.

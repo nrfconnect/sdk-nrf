@@ -7,7 +7,7 @@ Matter hardware and memory requirements
    :local:
    :depth: 2
 
-Hardware that runs Matter protocol applications must meet specification requirements, including providing the right amount of flash memory and being able to run Bluetooth LE and Thread or Wi-Fi concurrently.
+Hardware that runs Matter protocol applications must meet specification requirements, including providing the right amount of flash memory and being able to run Bluetooth® LE and Thread or Wi-Fi® concurrently.
 
 .. _ug_matter_hw_requirements_socs:
 

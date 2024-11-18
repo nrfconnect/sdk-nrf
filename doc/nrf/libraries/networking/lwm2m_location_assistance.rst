@@ -20,7 +20,7 @@ To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 The library adds support for four objects related to location assistance:
 
 * GNSS Assistance object (ID 33625) for requesting and handling A-GNSS and P-GPS assistance data.
-* Ground Fix Location object (ID 33626) for requesting and storing estimated cell and Wi-Fi based location.
+* Ground Fix Location object (ID 33626) for requesting and storing estimated cell and Wi-Fi®-based location.
 * Visible Wi-Fi Access Point object (ID 33627) for storing nearby Wi-Fi Access Point information.
 * ECID-Signal Measurement Information object (ID 10256) for storing the cell neighborhood information.
 

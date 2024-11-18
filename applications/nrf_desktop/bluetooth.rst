@@ -7,7 +7,7 @@ nRF Desktop: Bluetooth
    :local:
    :depth: 2
 
-The nRF Desktop devices use :ref:`Zephyr's Bluetooth API <zephyr:bluetooth>` to handle the Bluetooth LE connections.
+The nRF Desktop devices use :ref:`Zephyr's Bluetooth API <zephyr:bluetooth>` to handle the Bluetooth® LE connections.
 
 This API is used only by the application modules that handle such connections.
 The information about peer and connection state is propagated to other application modules using :ref:`app_event_manager` events.
