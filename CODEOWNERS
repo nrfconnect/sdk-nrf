@@ -294,6 +294,7 @@
 /drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/hw_cc3xx/                        @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
+/drivers/mspi/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/net/                             @nrfconnect/ncs-co-drivers @doki-nordic
 /drivers/serial/                          @nrfconnect/ncs-co-drivers @nordic-krch
 /drivers/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -330,6 +331,7 @@
 /include/drivers/flash/                   @nrfconnect/ncs-co-drivers
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
+/include/drivers/mspi/nrfe_mspi.h         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/emds/                            @balaklaka @nrfconnect/ncs-paladin

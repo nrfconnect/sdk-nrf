@@ -16,6 +16,7 @@ if MPSL && !MPSL_FEM_ONLY
 rsource "mpsl/Kconfig"
 endif
 
+rsource "mspi/Kconfig"
 rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
@@ -23,6 +24,7 @@ rsource "serial/Kconfig"
 config NRFE
 	bool
 	default y if GPIO_NRFE
+	default y if MSPI_NRFE
 	# Temporary kconfig to include DPPI channel allocation for NRFE
 
 endmenu
