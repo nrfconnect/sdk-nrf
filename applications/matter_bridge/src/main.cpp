@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* this does nothing */
+
 #include "app_task.h"
 
 #include <zephyr/logging/log.h>
