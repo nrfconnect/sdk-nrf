@@ -298,7 +298,7 @@ ZTEST(orchestrator_boot_tests, test_valid_root_app_envelope)
 	int err = suit_orchestrator_entry();
 
 	/* THEN orchestrator succeeds... */
-	zassert_equal(0, err, "Orchestrator not initialized");
+	zassert_equal(0, err, "Valid envelopes not accepted (err: %d)", err);
 	/* ... and the emergency flag is not set... */
 	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag set");
@@ -332,13 +332,14 @@ ZTEST(orchestrator_boot_tests, test_seq_no_validate)
 	/* WHEN orchestrator is executed */
 	int err = suit_orchestrator_entry();
 
-	/* THEN orchestrator fails (no support for reboots)... */
-	zassert_equal(-ENOTSUP, err, "Orchestrator did not fail");
-	/* ... and the emergency flag is set... */
-	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
-	/* ... and the execution mode remains unchanged */
-	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
+	/* THEN orchestrator succeeds... */
+	zassert_equal(0, err, "Envelope without validate sequence not accepted (err: %d)", err);
+	/* ... and the emergency flag is not set... */
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+		      "Emergency flag set");
+	/* ... and the execution mode is set to the POST INVOKE */
+	zassert_equal(EXECUTION_MODE_POST_INVOKE, suit_execution_mode_get(),
+		      "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_seq_validate_fail)
@@ -502,11 +503,11 @@ ZTEST(orchestrator_boot_tests, test_seq_validate_load_invoke)
 	/* WHEN orchestrator is executed */
 	int err = suit_orchestrator_entry();
 
-	/* THEN orchestrator fails (no support for reboots)... */
-	zassert_equal(0, err, "Orchestrator not initialized");
+	/* THEN orchestrator succeeds... */
+	zassert_equal(0, err, "Envelope with three sequences not accepted (err: %d)", err);
 	/* ... and the emergency flag is not set... */
 	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
-		      "Emergency flag not set");
+		      "Emergency flag set");
 	/* ... and the execution mode is set to the POST INVOKE */
 	zassert_equal(EXECUTION_MODE_POST_INVOKE, suit_execution_mode_get(),
 		      "Execution mode modified");
