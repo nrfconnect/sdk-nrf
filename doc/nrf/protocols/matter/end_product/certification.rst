@@ -217,8 +217,8 @@ You can also find more information about the Bluetooth QDID in the :ref:`Bluetoo
 
 .. _ug_matter_device_certification_reqs_mowifi:
 
-Matter over Wi-Fi certification requirements
-============================================
+Matter over Wi-Fi® certification requirements
+=============================================
 
 The following table lists Matter over Wi-Fi certification requirements for when a product moves to production.
 

@@ -3,7 +3,7 @@
 Bluetooth samples
 #################
 
-This section lists the available |NCS| samples for the :ref:`ug_bt` protocol.
+This section lists the available |NCS| samples for the :ref:`Bluetooth® <ug_bt>` protocol.
 
 .. include:: ../samples.rst
     :start-after: samples_general_info_start

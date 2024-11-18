@@ -9,7 +9,7 @@ Matter: Light bulb
    :depth: 2
 
 This light bulb sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a white dimmable light bulb device.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi network.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi® network.
 Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific light bulb device.
 You can use this sample as a reference for creating your own application.
 
@@ -59,10 +59,13 @@ You can enable both methods after :ref:`building and running the sample <matter_
 Remote testing in a network
 ===========================
 
+.. |Bluetoothsc| replace:: Bluetooth®
+.. |WiFi| replace:: Wi-Fi
+
 .. matter_light_bulb_sample_remote_testing_start
 
 By default, the Matter accessory device has no IPv6 network configured.
-You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
+You must pair it with the Matter controller over |Bluetoothsc| LE to get the configuration from the controller to use the device within a Thread or |WiFi| network.
 The controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
@@ -119,6 +122,8 @@ Matter light bulb with Trusted Firmware-M
 
 Device Firmware Upgrade support
 ===============================
+
+.. |Bluetooth| replace:: Bluetooth
 
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_build_with_dfu_start

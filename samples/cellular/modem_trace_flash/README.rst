@@ -33,7 +33,7 @@ You can use the sample for creating a trace backend for your own flash device.
 You can store a reduced set of modem traces using the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_LEVEL_CHOICE` option.
 The sample starts storing modem traces when the backend is initialized by the :ref:`nrf_modem_lib_readme` library.
 However, you can also start storing the modem traces during runtime.
-Use the :c:func:`nrf_modem_lib_trace_level_set()` function for enabling or disabling modem traces at runtime.
+Use the :c:func:`nrf_modem_lib_trace_level_set` function for enabling or disabling modem traces at runtime.
 
 Write performance
 =================

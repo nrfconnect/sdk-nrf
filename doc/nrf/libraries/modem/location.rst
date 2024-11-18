@@ -11,7 +11,7 @@ The Location library provides functionality for retrieving the location of a dev
 
 * GNSS satellite positioning including Assisted GNSS (A-GNSS) and Predicted GPS (P-GPS) data.
 * Cellular positioning.
-* Wi-Fi positioning.
+* Wi-Fi® positioning.
 
 Overview
 ********

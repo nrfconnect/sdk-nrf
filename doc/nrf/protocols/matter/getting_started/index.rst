@@ -33,7 +33,7 @@ The pages will guide you through the following getting started process:
 #. In :ref:`ug_matter_device_low_power_configuration` and :ref:`ug_matter_device_optimizing_memory`, you can find information about how to optimize your application's resource usage.
 #. Finally, in :ref:`ug_matter_gs_ecosystem_compatibility_testing`, you will set up and test multiple Matter fabrics, each belonging to a different commercial ecosystem, and test their interoperability.
 
-Some of the pages will make reference to external documentation pages available in the |NCS| documentation under the :ref:`matter_index` tab.
+Some of the pages will make reference to external documentation pages available in the |NCS| documentation under the :ref:`matter_index` section.
 These are built from the files available in the official `Matter GitHub repository`_ and refer to the nRF Connect platform.
 
 .. toctree::

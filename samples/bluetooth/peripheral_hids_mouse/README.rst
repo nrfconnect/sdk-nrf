@@ -129,8 +129,8 @@ Bluetooth Low Energy app build
 
 To build this sample in the configuration variant that is compatible with `Bluetooth Low Energy app`_, disable the following Bluetooth features:
 
-* Privacy (:kconfig:option:`CONFIG_BT_PRIVACY`) - the `Bluetooth Low Energy app`_ does not fully support the Bluetooth Privacy feature by disallowing distribution of the Identity Resolving Key (IRK) during the pairing procedure.
-* High-duty directed advertising (:kconfig:option:`CONFIG_BT_DIRECTED_ADVERTISING`) - high-duty directed advertising with 3.75 ms advertising interval and 1.28 s duration prevents the subsequent undirected advertising from being reported in the scanning list of `Bluetooth Low Energy app`_ .
+* Privacy (:kconfig:option:`CONFIG_BT_PRIVACY`) - The `Bluetooth Low Energy app`_ does not fully support the Bluetooth Privacy feature by disallowing distribution of the Identity Resolving Key (IRK) during the pairing procedure.
+* High-duty directed advertising (:kconfig:option:`CONFIG_BT_DIRECTED_ADVERTISING`) - High-duty directed advertising with 3.75 ms advertising interval and 1.28 s duration prevents the subsequent undirected advertising from being reported in the scanning list of `Bluetooth Low Energy app`_ .
   As a result, it is only possible to connect to the target DK during the very short interval of high-duty directed advertising.
 
 To build the sample in the compatible configuration, use the following command:

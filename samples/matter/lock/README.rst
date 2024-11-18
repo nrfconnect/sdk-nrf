@@ -11,7 +11,7 @@ Matter: Door lock
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
 You can use this sample as a reference for creating your application.
 
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi® network.
 Support for both Thread and Wi-Fi depends on the hardware platform.
 The door lock sample can be built with support for one transport protocol, either Thread or Wi-Fi, or with support for :ref:`switching between Matter over Wi-Fi and Matter over Thread <matter_lock_sample_wifi_thread_switching>`, where the application activates either Thread or Wi-Fi on boot, depending on the runtime configuration.
 
@@ -36,7 +36,7 @@ This requires additional hardware depending on the setup you choose.
 .. note::
     |matter_gn_required_note|
 
-If you want to enable and test :ref:`matter_lock_sample_ble_nus`, you also need a smartphone with either Android (Android 11 or newer) or iOS (iOS 16.1 or newer).
+If you want to enable and test :ref:`Matter Bluetooth® LE with Nordic UART Service <matter_lock_sample_ble_nus>`, you also need a smartphone with either Android (Android 11 or newer) or iOS (iOS 16.1 or newer).
 
 IPv6 network support
 ====================
@@ -63,10 +63,12 @@ You can enable both methods after :ref:`building and running the sample <matter_
 Remote testing in a network
 ===========================
 
+.. |Bluetoothsc| replace:: Bluetooth
+
 .. matter_door_lock_sample_remote_testing_start
 
 By default, the Matter accessory device has IPv6 networking disabled.
-You must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
+You must pair it with the Matter controller over |Bluetoothsc| LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
 You have to make the device discoverable manually (for security reasons).
 The controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
@@ -278,6 +280,8 @@ The following snippet is available:
 Device Firmware Upgrade support
 ===============================
 
+.. |Bluetooth| replace:: Bluetooth
+
 .. matter_door_lock_sample_build_with_dfu_start
 
 .. note::
@@ -287,7 +291,7 @@ Device Firmware Upgrade support
 The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
 
 * Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
-* Simple Management Protocol (SMP) over Bluetooth® LE.
+* Simple Management Protocol (SMP) over |Bluetooth| LE.
   In this case, the DFU can be done either using a smartphone application or a PC command line tool.
   Note that this protocol is not part of the Matter specification.
 

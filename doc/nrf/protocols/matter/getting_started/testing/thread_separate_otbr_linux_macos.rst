@@ -11,7 +11,7 @@ Matter over Thread: Configuring Border Router and Linux/macOS controller on sepa
 
 The recommended approach for Matter over Thread is to run the Thread Border Router and the Matter controller on separate devices.
 With the Thread Border Router installed on Raspberry Pi, this approach provides support for most functionalities.
-For example, it allows using a mobile controller by providing connectivity between a Wi-Fi network and a Thread network.
+For example, it allows using a mobile controller by providing connectivity between a Wi-Fi® network and a Thread network.
 
 In such setup, Raspberry Pi runs the Thread Border Router, which provides communication between the Thread nodes and the Matter controller.
 The controller can be installed on a PC.

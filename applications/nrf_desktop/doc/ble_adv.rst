@@ -7,7 +7,7 @@ Bluetooth LE advertising module
    :local:
    :depth: 2
 
-In nRF Desktop, the |ble_adv| is responsible for controlling the Bluetooth LE advertising for the nRF Desktop peripheral device.
+In nRF Desktop, the |ble_adv| is responsible for controlling the Bluetooth® LE advertising for the nRF Desktop peripheral device.
 
 Module events
 *************
