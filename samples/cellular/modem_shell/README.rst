@@ -446,7 +446,7 @@ Examples
 
      location get
 
-* Retrieve location with Wi-Fi positioning.
+* Retrieve location with Wi-Fi® positioning.
   You need to have a Wi-Fi-enabled device and build the sample with Wi-Fi support.
   If the location is not found, use cellular positioning:
 

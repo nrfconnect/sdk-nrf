@@ -11,7 +11,7 @@ Commissioning is the process that allows a new Thread device to join a Thread ne
 The new device must be authenticated and authorized to become part of the network.
 
 In the commissioning process, devices have different :ref:`thread_ot_commissioning_roles`.
-The whole process can happen within the Thread network (connectivity within the Thread network) or can involve devices that are outside the network (other network provides connectivity, for example Ethernet or Wi-Fi).
+The whole process can happen within the Thread network (connectivity within the Thread network) or can involve devices that are outside the network (other network provides connectivity, for example Ethernet or Wi-Fi®).
 This is the main difference between :ref:`thread_ot_commissioning_types_on-mesh` and :ref:`thread_ot_commissioning_types_external`, respectively.
 The whole commissioning process benefits from :ref:`several security measures <thread_ot_commissioning_roles_authentication>`, especially the DTLS protocol.
 

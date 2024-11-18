@@ -7,7 +7,7 @@ Cellular: Location
    :local:
    :depth: 2
 
-The Location sample demonstrates how you can retrieve the location of a device using GNSS, cellular or Wi-Fi positioning method.
+The Location sample demonstrates how you can retrieve the location of a device using GNSS, cellular or Wi-Fi® positioning method.
 This sample uses the :ref:`lib_location` library.
 
 Requirements
@@ -84,7 +84,7 @@ See :ref:`cmake_options` for more instructions on how to add these options.
 
 .. note::
    The Thingy:91 X build supports Wi-Fi by default.
-	You do not need to add any overlays.
+   You need not add any overlays.
 
 P-GPS support
 =============

@@ -3,7 +3,7 @@
 Wi-Fi samples
 #############
 
-This section lists the available |NCS| samples for the :ref:`ug_wifi` protocol.
+This section lists the available |NCS| samples for the :ref:`Wi-Fi® <ug_wifi>` protocol.
 
 .. include:: ../samples.rst
     :start-after: samples_general_info_start

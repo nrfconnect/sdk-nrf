@@ -8,7 +8,7 @@ nRF Cloud location
    :local:
    :depth: 2
 
-The nRF Cloud location library enables applications to submit cellular network and/or nearby Wi-Fi network information to `nRF Cloud`_ over MQTT to obtain device location.
+The nRF Cloud location library enables applications to submit cellular network and/or nearby Wi-Fi® network information to `nRF Cloud`_ over MQTT to obtain device location.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 
 .. note::

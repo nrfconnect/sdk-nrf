@@ -17,10 +17,10 @@ These macros cannot be altered using dedicated Kconfig options.
 
 .. _ug_matter_configuring_optional_ble_advertising:
 
-Bluetooth LE advertising
-========================
+Bluetooth® LE advertising
+=========================
 
-The Matter specification requires the accessory device to advertise Matter service over Bluetooth® Low Energy (LE) for commissioning purposes.
+The Matter specification requires the accessory device to advertise Matter service over Bluetooth Low Energy (LE) for commissioning purposes.
 By default, the Bluetooth LE advertising start has to be requested by the application (for example, as a result of a button press) and lasts for a maximum duration of 15 minutes.
 This is appropriate for a device with high security requirements that should not advertise its service without a direct trigger, for example a door lock.
 
@@ -155,7 +155,7 @@ For more information about the factory data generation, see the :ref:`Matter Dev
 
 To read more about the FFS technology and its compatibility with Matter, see the following pages in the Amazon developer documentation:
 
-* `Matter Simple Setup for Wi-Fi Overview`_
+* `Matter Simple Setup for Wi-Fi® Overview <Matter Simple Setup for Wi-Fi Overview_>`_
 * `Matter Simple Setup for Thread Overview`_
 
 Reaction to the last Matter fabric removal

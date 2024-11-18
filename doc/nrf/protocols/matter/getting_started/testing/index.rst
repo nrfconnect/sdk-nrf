@@ -8,7 +8,7 @@ Testing Matter in the |NCS|
 When you build any of the available Matter samples to the supported development kits, you automatically build the Matter stack for the nRF Connect platform.
 The development kit and the application running Matter stack that is programmed on the development kit together form the Matter accessory device.
 
-The |NCS| supports Matter stack that is built on top of a low-power, 802.15.4-compatible Thread network, or on top of a Wi-Fi network.
+The |NCS| supports Matter stack that is built on top of a low-power, 802.15.4-compatible Thread network, or on top of a Wi-Fi® network.
 To control the Matter accessory device remotely over either of these networks, you need to set up a Matter controller on a PC or using one of the :ref:`compatible commercial ecosystems <ug_matter_overview_dev_model_ecosystems>`.
 
 |matter_controller_def_nolink|

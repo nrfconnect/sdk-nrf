@@ -190,7 +190,7 @@ The following table indicates the software maturity levels of the support for ea
      - nRF9151
      - nRF9160
      - nRF9161
-   * - **Bluetooth**
+   * - **Bluetooth®**
      - Supported
      - Supported
      - Supported
@@ -318,7 +318,7 @@ The following table indicates the software maturity levels of the support for ea
      - --
      - --
      - --
-   * - **Wi-Fi**
+   * - **Wi-Fi®**
      - --
      - --
      - --

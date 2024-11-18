@@ -31,7 +31,7 @@ This runtime API can be used to disable the Monitor mode in the nRF Wi-Fi driver
 
 Monitor mode on the nRF70 device cannot operate concurrently with other modes, such as Station mode or SoftAP mode.
 
-You must configure the operating Wi-Fi channel on which the nRF70 device will monitor and receive 802.11 packets.
+You must configure the operating Wi-Fi® channel on which the nRF70 device will monitor and receive 802.11 packets.
 When the device operates in Monitor mode, all 802.11 packets received on the configured channel will be sent up the stack by the nRF70 Series device and the nRF Wi-Fi driver.
 
 To set the desired channel for 802.11 packet reception, use the ``NET_REQUEST_WIFI_CHANNEL`` runtime network management API.

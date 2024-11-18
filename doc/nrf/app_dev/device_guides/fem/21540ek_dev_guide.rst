@@ -7,7 +7,7 @@ Developing with the nRF21540 EK
    :local:
    :depth: 2
 
-The nRF21540 :term:`Evaluation Kit (EK)` is an RF :term:`Front-End Module (FEM)` for Bluetooth Low Energy, Bluetooth Mesh, 2.4 GHz proprietary, Thread, and Zigbee range extension.
+The nRF21540 :term:`Evaluation Kit (EK)` is an RF :term:`Front-End Module (FEM)` for Bluetooth® Low Energy, Bluetooth Mesh, 2.4 GHz proprietary, Thread, and Zigbee range extension.
 When combined with an nRF52 or nRF53 Series SoC, the nRF21540 RF FEM's +21 dBm TX output power and 13 dB RX gain ensure a superior link budget for up to 16x range extension.
 
 .. figure:: images/nrf21540ek.png

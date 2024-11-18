@@ -22,7 +22,7 @@ Offloaded raw TX mode in Wi-Fi driver
 
 The offloaded raw transmit operation is supported as a separate stand-alone compile-time mode of operation in the nRF Wi-Fi driver and is exclusive to the following existing modes of operation:
 
-* Wi-Fi mode
+* Wi-Fi® mode
 * Radio Test mode
 
 In addition to providing start or stop control over the offloaded raw transmit operation, the driver supports the update of the following configuration parameters:

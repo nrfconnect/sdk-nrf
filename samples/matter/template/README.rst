@@ -33,7 +33,7 @@ IPv6 network support
 The development kits for this sample offer the following IPv6 network support for Matter:
 
 * Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54h20dk/nrf54h20/cpuapp``.
-* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` or ``nrf54h20dk/nrf54h20/cpuapp`` with the ``nrf7002ek`` shield attached, or for ``nrf7002dk/nrf5340/cpuapp``.
+* Matter over Wi-Fi® is supported for ``nrf5340dk/nrf5340/cpuapp`` or ``nrf54h20dk/nrf54h20/cpuapp`` with the ``nrf7002ek`` shield attached, or for ``nrf7002dk/nrf5340/cpuapp``.
 
 Overview
 ********
@@ -49,7 +49,7 @@ Remote testing in a network
 
 Testing in either a Matter-enabled Thread or a Wi-Fi network requires a Matter controller that you can configure on PC or mobile device.
 By default, the Matter accessory device has IPv6 networking disabled.
-You must pair the device with the Matter controller over Bluetooth® LE to get the configuration from the controller to use the device within a Thread or a Wi-Fi network.
+You must pair the device with the Matter controller over Bluetooth LE to get the configuration from the controller to use the device within a Thread or a Wi-Fi network.
 You can enable the controller after :ref:`building and running the sample <matter_template_network_testing>`.
 
 To pair the device, the controller must get the :ref:`matter_template_network_mode_onboarding` from the Matter accessory device and commission the device into the network.
@@ -137,7 +137,7 @@ Alternatively, for the nRF54L15 DK, the DFU can be configured to only use the in
 This means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal flash memory.
 This configuration is enabled by default for the :ref:`debug configuration <matter_template_custom_configs>`.
 
-The following is an example command to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth® SMP, and using internal MRAM only:
+The following is an example command to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only:
 
 .. code-block:: console
 

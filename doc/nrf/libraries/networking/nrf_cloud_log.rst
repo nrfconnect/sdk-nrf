@@ -82,7 +82,7 @@ Configure one or both of the following Kconfig options to enable direct log mess
 
 If only the first is enabled:
 
-* Calls to the direct log message functions :c:func:`nrf_cloud_log_send()` and :c:func:`nrf_cloud_rest_log_send()` send messages direct to nRF Cloud immediately.
+* Calls to the direct log message functions :c:func:`nrf_cloud_log_send` and :c:func:`nrf_cloud_rest_log_send` send messages direct to nRF Cloud immediately.
 * The cloud logging backend is not available, and consequently, no Zephyr log messages are transmitted to the cloud.
 
 If only the second is enabled:

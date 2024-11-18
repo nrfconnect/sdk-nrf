@@ -40,7 +40,7 @@ nRF52840 Gaming Mouse (``nrf52840gmouse``)
       * The reference design is defined in :file:`nrf/boards/nordic/nrf52840gmouse` for the project-specific hardware.
       * To achieve gaming-grade performance:
 
-        * The application is configured to act as a gaming mouse, with both Bluetooth LE and USB transports enabled.
+        * The application is configured to act as a gaming mouse, with both Bluetooth® LE and USB transports enabled.
         * Bluetooth is configured to use Nordic's SoftDevice link layer.
 
       * The configuration with the B0 bootloader is set as default.

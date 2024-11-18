@@ -12,7 +12,7 @@ It abstracts and hides the details of the transport and the encoding scheme that
 The current implementation supports the following technologies:
 
 * GNSS, TEMP, and other application-specific sensor data
-* Cellular and Wi-Fi location data
+* Cellular and Wi-Fi® location data
 * TLS-secured MQTT, TLS-secured REST, or DTLS-secured CoAP as the communication protocol
 * JSON as the data format for MQTT and REST
 * CBOR and JSON as the data format for CoAP

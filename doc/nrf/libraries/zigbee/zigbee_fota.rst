@@ -104,7 +104,7 @@ Additionally, the following limitations apply on the nRF5340 SoCs:
   Disable the :kconfig:option:`CONFIG_NRF53_ENFORCE_IMAGE_VERSION_EQUALITY` Kconfig option to build update images without inter-dependencies so that they can be applied independently.
 * It is impossible to enable ``SB_CONFIG_MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH`` Kconfig option.
   As a result, the fallback recovery is not available and any valid upgrade will overwrite the previous image.
-  The call to the :c:func:`boot_write_img_confirmed()` will have no effect.
+  The call to the :c:func:`boot_write_img_confirmed` will have no effect.
 * The current DFU limitations and dependencies are enforced by the :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` Kconfig option.
 * The version of the network core image is always set to the same value as the application core image.
   Its value can be configured using the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.

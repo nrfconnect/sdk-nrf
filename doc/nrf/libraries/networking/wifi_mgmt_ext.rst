@@ -7,7 +7,7 @@ Wi-Fi management extension
    :local:
    :depth: 2
 
-The Wi-Fi management extension library adds an automatic connection feature to the Wi-Fi stack.
+The Wi-Fi management extension library adds an automatic connection feature to the Wi-Fi® stack.
 
 Overview
 ********
