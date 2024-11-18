@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuflpr_vpr {
+	status = "okay";
+
+	sdp_mspi: sdp_mspi {
+		compatible = "nordic,nrfe-mspi-controller";
+		#address-cells = <1>;
+		#size-cells = <0>;
+	};
+};
