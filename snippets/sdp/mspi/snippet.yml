@@ -11,6 +11,9 @@ boards:
     append:
       EXTRA_DTC_OVERLAY_FILE: sdp-mspi-app.overlay
       EXTRA_CONF_FILE: app.conf
+  /.*/cpuflpr/:
+    append:
+      EXTRA_CONF_FILE: flpr.conf
   /.*/nrf54l15/cpuapp/:
     append:
       EXTRA_DTC_OVERLAY_FILE: soc/nrf54l15_cpuapp.overlay
