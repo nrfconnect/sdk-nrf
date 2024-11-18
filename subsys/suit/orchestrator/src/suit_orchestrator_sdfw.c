@@ -279,6 +279,7 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 	}
 	LOG_DBG("Found installed envelope");
 
+#ifdef CONFIG_LOG
 	unsigned int seq_num;
 	suit_semver_raw_t version;
 
@@ -293,12 +294,18 @@ static int boot_envelope(const suit_manifest_class_id_t *class_id)
 	}
 	LOG_INF("Booting from manifest version: %d.%d.%d-%d.%d, sequence: 0x%x", version.raw[0],
 		version.raw[1], version.raw[2], -version.raw[3], version.raw[4], seq_num);
+#endif /* CONFIG_LOG */
 
 	err = suit_process_sequence(installed_envelope_address, installed_envelope_size,
 				    SUIT_SEQ_VALIDATE);
 	if (err != SUIT_SUCCESS) {
-		LOG_ERR("Failed to execute suit-validate: %d", err);
-		return -EILSEQ;
+		if (err == SUIT_ERR_UNAVAILABLE_COMMAND_SEQ) {
+			LOG_DBG("Command sequence suit-validate not available - skip it");
+			err = 0;
+		} else {
+			LOG_ERR("Failed to execute suit-validate: %d", err);
+			return -EILSEQ;
+		}
 	}
 
 	LOG_INF("Processed suit-validate");

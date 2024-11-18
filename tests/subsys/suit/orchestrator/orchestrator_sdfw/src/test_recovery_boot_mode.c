@@ -267,14 +267,14 @@ ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_no_validate)
 	/* WHEN orchestrator is executed */
 	int err = suit_orchestrator_entry();
 
-	/* THEN orchestrator fails (hard)... */
-	zassert_equal(-EILSEQ, err, "Orchestrator did not fail");
+	/* THEN orchestrator succeeds... */
+	zassert_equal(0, err, "Envelope without validate sequence not accepted (err: %d)", err);
 	/* ... and the emergency flag is set... */
 	zassert_equal(SUIT_PLAT_SUCCESS, suit_storage_report_read(0, &buf, &len),
 		      "Emergency flag not set");
-	/* ... and the execution mode is set to the FAIL INVOKE RECOVERY */
-	zassert_equal(EXECUTION_MODE_FAIL_INVOKE_RECOVERY, suit_execution_mode_get(),
-		      "Execution mode not changed to the FAIL INVOKE RECOVERY");
+	/* ... and the execution mode is set to the POST INVOKE RECOVERY */
+	zassert_equal(EXECUTION_MODE_POST_INVOKE_RECOVERY, suit_execution_mode_get(),
+		      "Execution mode not changed to the POST INVOKE RECOVERY");
 }
 
 ZTEST(orchestrator_recovery_boot_tests, test_rec_seq_validate_fail)
