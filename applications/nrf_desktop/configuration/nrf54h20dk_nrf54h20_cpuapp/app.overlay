@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* For nRF54H, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
+&wdt010 {
+	status = "okay";
+};
+
 / {
 	/* Redefine leds to fit CAF requirements. */
 	/delete-node/ leds;

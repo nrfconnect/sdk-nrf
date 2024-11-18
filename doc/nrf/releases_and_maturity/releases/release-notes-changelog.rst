@@ -203,7 +203,7 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated the :ref:`zephyr:nrf54h20dk_nrf54h20` release configuration to enable the :ref:`nrf_desktop_watchdog`.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
