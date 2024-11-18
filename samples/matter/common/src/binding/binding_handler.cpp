@@ -123,7 +123,7 @@ namespace Nrf::Matter
             \t+ ClusterId %d \n \
             \t+ RemoteEndpointId %d \n \
             \t+ NodeId %d",
-					(int)entry.fabricIndex, (int)entry.local, (int)entry.clusterId.Value(),
+					(int)entry.fabricIndex, (int)entry.local, (int)entry.clusterId.value(),
 					(int)entry.remote, (int)entry.nodeId);
 				break;
 			case MATTER_MULTICAST_BINDING:
