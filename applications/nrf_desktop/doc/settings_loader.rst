@@ -33,7 +33,11 @@ For details on the default configuration alignment, see the following sections.
 Settings backend
 ================
 
-By default, nRF Desktop devices use non-volatile storage settings backend (:kconfig:option:`CONFIG_SETTINGS_NVS`).
+By default, the nRF Desktop application, depending on the non-volatile memory technology used by the device, uses one of the following settings backends:
+
+* :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` - Used for the devices with non-volatile memory that do not require explicit erase (MRAM, RRAM).
+* :ref:`Non-Volatile Storage (NVS) <zephyr:nvs_api>` - Used for the devices with non-volatile memory that require explicit erase (FLASH).
+
 The storage partition is located in the internal non-volatile memory.
 
 Settings load in a separate thread

@@ -10,8 +10,8 @@ config DESKTOP_SETTINGS_LOADER
 	bool "Settings loader module (CAF)"
 	select CAF_SETTINGS_LOADER
 	select SETTINGS
-	imply ZMS if SOC_FLASH_NRF_RRAM
-	imply NVS if !SOC_FLASH_NRF_RRAM
+	imply ZMS if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	imply NVS if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
 	imply FLASH
 	imply FLASH_MAP
 	imply FLASH_PAGE_LAYOUT
@@ -23,8 +23,8 @@ config DESKTOP_SETTINGS_LOADER
 	  By default, nRF Desktop application, depending on the non-volatile
 	  memory technology used by the device, uses either the Zephyr Memory
 	  Storage (ZMS) or Non-Volatile Storage (NVS) settings backend.
-	  ZMS is used for the devices with the RRAM non-volatile memory that
-	  do not require explicit erase. Otherwise, the NVS is used.
+	  ZMS is used for the devices with the RRAM or MRAM non-volatile memory
+	  that do not require explicit erase. Otherwise, the NVS is used.
 
 if DESKTOP_SETTINGS_LOADER
 
