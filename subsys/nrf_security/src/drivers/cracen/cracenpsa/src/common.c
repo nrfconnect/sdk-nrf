@@ -5,7 +5,7 @@
  */
 
 #include "common.h"
-#ifdef NRF54H_SERIES
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
 #include "platform_keys/platform_keys.h"
 #endif
 
