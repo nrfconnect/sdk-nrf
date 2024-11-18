@@ -362,55 +362,6 @@ static int configure_filters(void)
 	return err;
 }
 
-static bool is_llpm_peer_connected(void)
-{
-	bool llpm_peer_connected = false;
-
-	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM));
-
-	for (size_t i = 0; i < ARRAY_SIZE(subscribed_peers); i++) {
-		const bt_addr_le_t *addr = &subscribed_peers[i].addr;
-
-		if (!bt_addr_le_cmp(addr, BT_ADDR_LE_NONE)) {
-			break;
-		}
-
-		struct bt_conn *conn = bt_conn_lookup_addr_le(BT_ID_DEFAULT, addr);
-
-		if (conn) {
-			bt_conn_unref(conn);
-			if (subscribed_peers[i].llpm_support) {
-				llpm_peer_connected = true;
-				break;
-			}
-		}
-	}
-
-	return llpm_peer_connected;
-}
-
-static void update_init_conn_params(bool llpm_peer_connected)
-{
-	struct bt_le_conn_param cp = {
-		.latency = 0,
-		.timeout = 400,
-	};
-
-	/* In case LLPM peer is already connected, the next peer has to be
-	 * connected with 10 ms connection interval instead of 7.5 ms.
-	 * Connecting with 7.5 ms may cause Bluetooth scheduling issues.
-	 */
-	if (llpm_peer_connected) {
-		cp.interval_min = 8;
-		cp.interval_max = 8;
-	} else {
-		cp.interval_min = 6;
-		cp.interval_max = 6;
-	}
-
-	bt_scan_update_init_conn_params(&cp);
-}
-
 static int scan_start(void)
 {
 	int err = scan_stop();
@@ -418,15 +369,6 @@ static int scan_start(void)
 	if (err) {
 		LOG_ERR("Failed to stop scanning before restart (err %d)", err);
 		return err;
-	}
-
-	if (IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) && (CONFIG_BT_MAX_CONN == 2)) {
-		/* If the central supports the LLPM and more than two
-		 * simultaneous Bluetooth connections, the BLE peers use the
-		 * connection interval of 10 ms instead of 7.5 ms and there is
-		 * no need to update the initial connection parameters.
-		 */
-		update_init_conn_params(is_llpm_peer_connected());
 	}
 
 	err = configure_filters();
