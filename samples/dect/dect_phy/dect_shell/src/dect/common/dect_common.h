@@ -10,7 +10,7 @@
 #include <zephyr/kernel.h>
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
-#include "nrf_modem_dect_phy.h"
+#include <nrf_modem_dect_phy.h>
 
 #define DECT_MAX_TBS	  5600
 #define DECT_DATA_MAX_LEN (DECT_MAX_TBS / 8)

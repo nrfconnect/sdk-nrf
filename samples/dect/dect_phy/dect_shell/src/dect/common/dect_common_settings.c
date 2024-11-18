@@ -12,9 +12,9 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/random/random.h>
+#include <nrf_modem_dect_phy.h>
 
 #include "desh_print.h"
-#include "nrf_modem_dect_phy.h"
 #include "dect_common.h"
 #include "dect_common_settings.h"
 

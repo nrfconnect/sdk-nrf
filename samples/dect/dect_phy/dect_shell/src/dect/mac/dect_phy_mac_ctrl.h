@@ -22,7 +22,8 @@ enum dect_phy_mac_ctrl_beacon_stop_cause {
 int dect_phy_mac_ctrl_cluster_beacon_start(struct dect_phy_mac_beacon_start_params *params);
 void dect_phy_mac_ctrl_cluster_beacon_stop(enum dect_phy_mac_ctrl_beacon_stop_cause cause);
 int dect_phy_mac_ctrl_beacon_scan_start(struct dect_phy_mac_beacon_scan_params *params);
-int dect_phy_mac_ctrl_rach_tx(struct dect_phy_mac_rach_tx_params *params);
+int dect_phy_mac_ctrl_rach_tx_start(struct dect_phy_mac_rach_tx_params *params);
+int dect_phy_mac_ctrl_rach_tx_stop(void);
 int dect_phy_mac_ctrl_associate(struct dect_phy_mac_associate_params *params);
 int dect_phy_mac_ctrl_dissociate(struct dect_phy_mac_associate_params *params);
 

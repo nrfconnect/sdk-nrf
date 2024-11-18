@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "nrf_modem_dect_phy.h"
+#include <nrf_modem_dect_phy.h>
 
 static uint16_t last_rx_op_channel;
 

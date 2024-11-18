@@ -13,10 +13,10 @@
 #include <zephyr/sys/byteorder.h>
 
 #include <dk_buttons_and_leds.h>
+#include <nrf_modem_dect_phy.h>
 
 #include "desh_defines.h"
 #include "desh_print.h"
-#include "nrf_modem_dect_phy.h"
 #include "dect_phy_common_rx.h"
 #include "dect_common_utils.h"
 #include "dect_phy_api_scheduler.h"

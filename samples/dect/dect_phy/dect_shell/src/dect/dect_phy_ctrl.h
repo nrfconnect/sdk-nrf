@@ -49,6 +49,8 @@ void dect_phy_ctrl_rx_stop(void);
 
 int dect_phy_ctrl_time_query(void);
 
+int dect_phy_ctrl_modem_temperature_get(void);
+
 /******************************************************************************/
 
 typedef void (*dect_phy_ctrl_rssi_scan_completed_callback_t)(

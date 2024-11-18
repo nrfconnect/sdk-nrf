@@ -10,11 +10,10 @@
 #include <stdlib.h>
 #include <zephyr/shell/shell.h>
 
+#include <nrf_modem_dect_phy.h>
+
 #include "desh_print.h"
-#include "nrf_modem_dect_phy.h"
-
 #include "dect_phy_shell.h"
-
 #include "dect_phy_scan.h"
 #include "dect_phy_rx.h"
 
