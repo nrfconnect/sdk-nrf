@@ -214,7 +214,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-|no_changes_yet_note|
+* Updated the Wi-Fi configurations to reduce the RAM usage by about 25 kB for the nRF91 Series DK and 12 kB for the Thingy:91 X.
 
 Connectivity Bridge
 -------------------
@@ -339,6 +339,15 @@ Cellular samples
   * Updated:
 
     * The Thingy:91 X build to support Wi-Fi by default without overlays.
+    * The Wi-Fi configurations to reduce the RAM usage by about 25 kB.
+
+* :ref:`modem_shell_application` sample:
+
+  * Updated the Wi-Fi configurations to reduce the RAM usage by about 25 kB.
+
+* :ref:`nrf_cloud_multi_service` sample:
+
+  * Updated the Wi-Fi configurations to reduce the RAM usage by about 12 kB for the nRF91 Series DK and 25 kB for the Thingy:91 X.
 
 Cryptography samples
 --------------------
