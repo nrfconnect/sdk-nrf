@@ -144,6 +144,7 @@ static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
 static int audio_sync_timer_init(void)
 {
 	nrfx_err_t ret;
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
 
 	ret = nrfx_timer_init(&audio_sync_hf_timer_instance, &cfg, unused_timer_isr_handler);
 	if (ret - NRFX_ERROR_BASE_NUM) {
@@ -161,7 +162,7 @@ static int audio_sync_timer_init(void)
 	nrfx_rtc_overflow_enable(&audio_sync_lf_timer_instance, true);
 
 	/* Initialize capturing of I2S frame start event timestamps */
-	ret = nrfx_dppi_channel_alloc(&dppi_channel_i2s_frame_start);
+	ret = nrfx_dppi_channel_alloc(&dppi, &dppi_channel_i2s_frame_start);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel alloc error (I2S frame start): %d", ret);
 		return -ENOMEM;
@@ -177,14 +178,14 @@ static int audio_sync_timer_init(void)
 			      dppi_channel_i2s_frame_start);
 
 	nrf_i2s_publish_set(NRF_I2S0, NRF_I2S_EVENT_FRAMESTART, dppi_channel_i2s_frame_start);
-	ret = nrfx_dppi_channel_enable(dppi_channel_i2s_frame_start);
+	ret = nrfx_dppi_channel_enable(&dppi, dppi_channel_i2s_frame_start);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel enable error (I2S frame start): %d", ret);
 		return -EIO;
 	}
 
 	/* Initialize capturing of current timestamps */
-	ret = nrfx_dppi_channel_alloc(&dppi_channel_curr_time_capture);
+	ret = nrfx_dppi_channel_alloc(&dppi, &dppi_channel_curr_time_capture);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel alloc error (I2S frame start) - Return value: %d", ret);
 		return -ENOMEM;
@@ -200,14 +201,14 @@ static int audio_sync_timer_init(void)
 
 	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED0, dppi_channel_curr_time_capture);
 
-	ret = nrfx_dppi_channel_enable(dppi_channel_curr_time_capture);
+	ret = nrfx_dppi_channel_enable(&dppi, dppi_channel_curr_time_capture);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel enable error (I2S frame start) - Return value: %d", ret);
 		return -EIO;
 	}
 
 	/* Initialize functionality for synchronization between APP and NET core */
-	ret = nrfx_dppi_channel_alloc(&dppi_channel_rtc_start);
+	ret = nrfx_dppi_channel_alloc(&dppi, &dppi_channel_rtc_start);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel alloc error (timer clear): %d", ret);
 		return -ENOMEM;
@@ -222,14 +223,14 @@ static int audio_sync_timer_init(void)
 				   NRF_IPC_CHANNEL_4);
 	nrf_ipc_publish_set(NRF_IPC, AUDIO_SYNC_TIMER_NET_APP_IPC_EVT, dppi_channel_rtc_start);
 
-	ret = nrfx_dppi_channel_enable(dppi_channel_rtc_start);
+	ret = nrfx_dppi_channel_enable(&dppi, dppi_channel_rtc_start);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel enable error (timer clear): %d", ret);
 		return -EIO;
 	}
 
 	/* Initialize functionality for synchronization between RTC and TIMER */
-	ret = nrfx_dppi_channel_alloc(&dppi_channel_timer_sync_with_rtc);
+	ret = nrfx_dppi_channel_alloc(&dppi, &dppi_channel_timer_sync_with_rtc);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel alloc error (timer clear): %d", ret);
 		return -ENOMEM;
@@ -242,7 +243,7 @@ static int audio_sync_timer_init(void)
 
 	nrfx_rtc_tick_enable(&audio_sync_lf_timer_instance, false);
 
-	ret = nrfx_dppi_channel_enable(dppi_channel_timer_sync_with_rtc);
+	ret = nrfx_dppi_channel_enable(&dppi, dppi_channel_timer_sync_with_rtc);
 	if (ret - NRFX_ERROR_BASE_NUM) {
 		LOG_ERR("nrfx DPPI channel enable error (timer clear): %d", ret);
 		return -EIO;
