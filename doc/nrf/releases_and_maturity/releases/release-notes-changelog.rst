@@ -242,6 +242,16 @@ Bluetooth samples
 
   * The :ref:`channel_sounding_ras_reflector` sample demonstrating how to implement a Channel Sounding Reflector that exposes the Ranging Responder GATT Service.
 
+* Updated:
+
+  * Configurations of the following Bluetooth samples to make the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` the default settings backend for all board targets that use the MRAM technology:
+
+      * :ref:`bluetooth_central_hids`
+      * :ref:`peripheral_hids_keyboard`
+      * :ref:`peripheral_hids_mouse`
+
+    As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
