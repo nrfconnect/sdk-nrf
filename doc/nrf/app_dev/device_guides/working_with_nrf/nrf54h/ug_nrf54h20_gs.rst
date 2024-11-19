@@ -168,7 +168,6 @@ Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * nRF Util version 7.11.1 or above
 * nRF Util ``device`` version 2.7.2
-* nrf-regtool version 7.0.0
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
 #. Add nRF Util to the system path on Linux and MacOS, or environment variables on Windows, to run it from anywhere on the system.
@@ -193,13 +192,6 @@ Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 #. Install the nRF Util ``device`` command version 2.7.2 as follows::
 
       nrfutil install device=2.7.2 --force
-
-#. Install the nrf-regtool version 7.0.0:
-
-   a. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the |release| toolchain, and click the :guilabel:`Open terminal` button.
-   #. In the terminal window, install ``nrf-regtool`` version 7.0.0 as follows::
-
-         pip install nrf-regtool==7.0.0
 
 .. _ug_nrf54h20_gs_bringup:
 

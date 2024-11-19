@@ -206,12 +206,12 @@ nrf-regtool
 
 .. toggle::
 
-  * ``nrf-regtool`` has been updated to version 7.0.0.
+  * ``nrf-regtool`` has been updated to version 8.0.0.
 
-    1. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.7.99-cs2 toolchain, and click the :guilabel:`Open terminal` button.
-    #. In the terminal window, install ``nrf-regtool`` version 7.0.0 as follows::
+    1. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the v2.8 toolchain, and click the :guilabel:`Open terminal` button.
+    #. In the terminal window, install ``nrf-regtool`` version 8.0.0 as follows::
 
-          pip install nrf-regtool==7.0.0
+          pip install nrf-regtool==8.0.0
 
 
 SEGGER J-Link
