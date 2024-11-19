@@ -4,11 +4,20 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+"""
+Hash content of a file.
+"""
 
+import argparse
 import hashlib
 import sys
-import argparse
-from intelhex import IntelHex
+
+from intelhex import IntelHex  # type: ignore[import-untyped]
+
+HASH_FUNCTION_FACTORY = {
+    'sha256': hashlib.sha256,
+    'sha512': hashlib.sha512,
+}
 
 
 def parse_args():
@@ -17,20 +26,37 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         allow_abbrev=False)
 
-    parser.add_argument('--infile', '-i', '--in', '-in', required=True,
-                        help='Hash the contents of the specified file. If a *.hex file is given, the contents will '
-                             'first be converted to binary, with all non-specified area being set to 0xff. '
-                             'For all other file types, no conversion is done.')
+    parser.add_argument(
+        '--infile', '-i', '--in', '-in', required=True,
+        help='Hash the contents of the specified file. If a *.hex file is given, the contents will '
+             'first be converted to binary, with all non-specified area being set to 0xff. '
+             'For all other file types, no conversion is done.'
+    )
+    parser.add_argument(
+        '--type', '-t', dest='hash_function', help='Hash function (default: %(default)s)',
+        action='store', choices=HASH_FUNCTION_FACTORY.keys(), default='sha256'
+    )
+
     return parser.parse_args()
 
 
-if __name__ == '__main__':
-    args = parse_args()
-
-    if args.infile.endswith('.hex'):
-        ih = IntelHex(args.infile)
+def generate_hash_digest(file: str, hash_function_name: str) -> bytes:
+    if file.endswith('.hex'):
+        ih = IntelHex(file)
         ih.padding = 0xff  # Allows hashing with empty regions
         to_hash = ih.tobinstr()
     else:
-        to_hash = open(args.infile, 'rb').read()
-    sys.stdout.buffer.write(hashlib.sha256(to_hash).digest())
+        to_hash = open(file, 'rb').read()
+
+    hash_function = HASH_FUNCTION_FACTORY[hash_function_name]
+    return hash_function(to_hash).digest()
+
+
+def main():
+    args = parse_args()
+    sys.stdout.buffer.write(generate_hash_digest(args.infile, args.hash_function))
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
