@@ -1959,6 +1959,60 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
         - Supported
         - Supported
 
+MCUboot bootloader
+******************
+
+The following table indicates the software maturity levels of the support for each MCUboot bootloader feature:
+
+.. toggle::
+
+   .. list-table::
+       :widths: auto
+       :header-rows: 1
+
+       * -
+         - nRF52810
+         - nRF52811
+         - nRF52820
+         - nRF52832
+         - nRF52833
+         - nRF52840
+         - nRF5340
+         - nRF54H20
+         - nRF54L15
+         - nRF9131
+         - nRF9151
+         - nRF9160
+         - nRF9161
+       * - **Immutable MCUboot as part of build**
+         - --
+         - --
+         - --
+         - Supported
+         - Supported
+         - Supported
+         - Supported
+         - --
+         - Supported
+         - --
+         - Supported
+         - Supported
+         - Supported
+       * - **Updatable MCUboot as part of build**
+         - --
+         - --
+         - --
+         - Supported
+         - Supported
+         - Supported
+         - Supported
+         - --
+         - --
+         - --
+         - Supported
+         - Supported
+         - Supported
+
 Power management device support
 *******************************
 
