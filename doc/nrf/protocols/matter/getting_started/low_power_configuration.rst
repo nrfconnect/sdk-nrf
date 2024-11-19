@@ -258,3 +258,12 @@ Configure radio transmitter power
    :end-before: radio_power_end
 
 See :ref:`ug_matter_gs_transmission_power` for more information.
+
+Disable unused RAM sections
+***************************
+
+The :ref:`lib_ram_pwrdn` library allows you to disable unused sections of RAM and save power in low-power applications.
+Unused sections of RAM depend on the SoC architecture and the total amount of used static RAM.
+In Matter, you can use this feature by setting the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option to ``y``.
+
+Once the feature is enabled, the :c:func:`power_down_unused_ram` function is called automatically in the :file:`matter_init.cpp` file during the initialization process.
