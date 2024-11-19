@@ -47,7 +47,7 @@ The following table lists the available companion components:
    * - :ref:`bootloader`
      - Bootloader tailored for the :ref:`two-stage bootloader <immutable_bootloader>`.
      - :ref:`Bootloader requirements <bootloader_rot>`
-     - :file:`samples/bootloader`
+     - :file:`samples/nsib`
      - :ref:`ug_bootloader_adding_immutable_b0`
    * - :ref:`SUIT flash companion <suit_flash_companion>`
      - Companion image that allows the Secure Domain Firmware to access the external memory during the :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>` firmware upgrade.

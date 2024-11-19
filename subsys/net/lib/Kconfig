@@ -45,7 +45,7 @@ rsource "softap_wifi_provision/Kconfig"
 rsource "wifi_mgmt_ext/Kconfig"
 rsource "wifi_ready/Kconfig"
 rsource "mqtt_helper/Kconfig"
-rsource "nrf_provisioning/Kconfig"
+rsource "nrf_device_provisioning/Kconfig"
 rsource "mcumgr_smp_client/Kconfig"
 rsource "nrf70_fw_ext/Kconfig"
 

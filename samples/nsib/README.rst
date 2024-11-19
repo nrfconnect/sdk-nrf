@@ -93,7 +93,7 @@ For information how to erase the entire flash memory when flashing, see :ref:`pr
 Flash memory layout
 ===================
 
-The flash memory layout is defined by the :file:`samples/bootloader/pm.yml` file, which establishes four main partitions:
+The flash memory layout is defined by the :file:`samples/nsib/pm.yml` file, which establishes four main partitions:
 
 * *B0* - The NSIB image.
 * *Provision* - The provisioned data.
@@ -164,7 +164,7 @@ To set options for child images, such as NSIB and MCUboot, see the :ref:`ug_mult
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bootloader`
+.. |sample path| replace:: :file:`samples/nsib`
 
 .. include:: /includes/build_and_run.txt
 
