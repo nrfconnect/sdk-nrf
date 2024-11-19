@@ -160,7 +160,8 @@ int sx_aead_crypt(struct sxaead *c, const char *datain, size_t datainsz, char *d
  * @param[out] tag authentication tag
  * @return ::SX_OK
  * @return ::SX_ERR_UNINITIALIZED_OBJ
- * @return ::SX_ERR_TOO_BIG
+ * @return ::SX_ERR_TOO_SMALL
+ * @return ::SX_ERR_INCOMPATIBLE_HW
  *
  * @pre - one of the sx_aead_feed_aad() or sx_aead_crypt() functions must be
  *        called first
@@ -181,7 +182,8 @@ int sx_aead_produce_tag(struct sxaead *c, char *tag);
  * @param[in] tag authentication tag
  * @return ::SX_OK
  * @return ::SX_ERR_UNINITIALIZED_OBJ
- * @return ::SX_ERR_TOO_BIG
+ * @return ::SX_ERR_TOO_SMALL
+ * @return ::SX_ERR_INCOMPATIBLE_HW
  *
  * @pre - one of the sx_aead_feed_aad() or sx_aead_crypt() functions must be
  *        called first
@@ -299,12 +301,30 @@ int sx_aead_wait(struct sxaead *c);
  */
 int sx_aead_status(struct sxaead *c);
 
-/**
- * @brief Free AEAD operation context.
+/** Shortens the tag size of the AEAD operation.
  *
- * @param[in,out] c AEAD operation context.
+ * This function is optional and should be used only when a smaller tag than
+ * maximum size is required. This function sets the new tag size that will be
+ * used by sx_aead_produce_tag and sx_aead_verify_tag. Based on this new value,
+ * the tag will be truncated and remaining data, up to the maximum tag size
+ * per algorithm, will be discarded.
+ *
+ * The function will return immediately.
+ *
+ * @param[in,out] c AEAD operation context
+ * @param[in] tagsz new size for the tag
+ * @return ::SX_OK
+ * @return ::SX_ERR_UNINITIALIZED_OBJ
+ * @return ::SX_ERR_INVALID_TAG_SIZE
+ * @return ::SX_ERR_INCOMPATIBLE_HW
+ *
+ * @pre - one of the sx_aead_create_*()functions must be called first
+ *
+ * @remark - AES/SM4 CCM tag size is user provided and it must be between 4 and
+ * 16 bytes, multiple of 2. If this function is called, the new tag size must be
+ * between 4 and the value specified during create, sx_aead_create_*ccm_*().
  */
-void sx_aead_free(struct sxaead *c);
+int sx_aead_truncate_tag(struct sxaead *c, const size_t tagsz);
 
 #ifdef __cplusplus
 }
