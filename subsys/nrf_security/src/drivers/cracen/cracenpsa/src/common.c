@@ -31,7 +31,7 @@
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
 
-#ifdef NRF54H_SERIES
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
 /* Address from the IPS. May come from the MDK in the future. */
 #define DEVICE_SECRET_LENGTH 4
 #define DEVICE_SECRET_ADDRESS ((uint32_t *)0x0E001620)
@@ -675,7 +675,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 
 	struct sx_pk_config_ik cfg = {};
 
-#ifdef NRF54H_SERIES
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
 	cfg.device_secret = DEVICE_SECRET_ADDRESS;
 	cfg.device_secret_sz = DEVICE_SECRET_LENGTH;
 
