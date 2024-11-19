@@ -25,6 +25,18 @@ tests:
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
+  sample.eddsa.oberon:
+    sysbuild: true
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf5340dk/nrf5340/cpunet
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
   sample.eddsa.cracen:
     sysbuild: true
     tags: introduction psa cracen sysbuild ci_samples_crypto
