@@ -9,12 +9,16 @@
 	};
 
 	/* delete all buttons except button0 to free GPIO pins assigned to uart21 below */
-	buttons {
-		/delete-node/ button1;
-		/delete-node/ button2;
-		/delete-node/ button3;
+	aliases {
+		/delete-property/ sw1;
+		/delete-property/ sw2;
+		/delete-property/ sw3;
 	};
 };
+
+/delete-node/ &button1;
+/delete-node/ &button2;
+/delete-node/ &button3;
 
 &pinctrl {
 	uart21_default: uart21_default {
