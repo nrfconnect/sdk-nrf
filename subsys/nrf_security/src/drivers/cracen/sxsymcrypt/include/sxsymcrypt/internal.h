@@ -21,7 +21,7 @@ extern "C" {
 #define SX_HASH_PRIV_SZ 344
 #endif
 
-#define SX_BLKCIPHER_PRIV_SZ 16
+#define SX_BLKCIPHER_PRIV_SZ (16)
 #define SX_AEAD_PRIV_SZ	     (70)
 
 /** Mode Register value for context loading */
@@ -29,6 +29,7 @@ extern "C" {
 /** Mode Register value for context saving */
 #define BA417_MODEID_CTX_SAVE (1u << 6)
 
+struct sx3gppalg;
 struct sx_blkcipher_cmdma_cfg;
 struct sx_aead_cmdma_cfg;
 struct sxhashalg;
@@ -97,7 +98,7 @@ struct sxaead {
 	uint8_t ctxsz;
 	const struct sxkeyref *key;
 	struct sx_dmactl dma;
-	struct sxdesc allindescs[7];
+	struct sxdesc descs[7];
 	uint8_t extramem[SX_AEAD_PRIV_SZ];
 };
 
@@ -110,13 +111,27 @@ struct sxaead {
  */
 struct sxblkcipher {
 	const struct sx_blkcipher_cmdma_cfg *cfg;
-	size_t inminsz;
-	size_t granularity;
-	uint32_t mode;
 	struct sxkeyref key;
+	uint32_t textsz;
 	struct sx_dmactl dma;
-	struct sxdesc allindescs[5];
+	struct sxdesc descs[5];
 	char extramem[SX_BLKCIPHER_PRIV_SZ];
+};
+
+/** A simple 3gpp operation
+ *
+ * To be used with sx_3gpp_*() functions.
+ *
+ * All members should be considered INTERNAL and may not be accessed
+ * directly.
+ */
+struct sx3gpp {
+	const struct sx3gppalg *cfg;
+	struct sx_dmactl dma;
+	struct sxdesc descs[5];
+	uint32_t params[2];
+	size_t insz;
+	size_t outsz;
 };
 
 /** A hash operation.
@@ -130,25 +145,14 @@ struct sxhash {
 	const struct sxhashalg *algo;
 	const struct sx_digesttags *dmatags;
 	uint32_t cntindescs;
-	size_t totalsz;
+	size_t totalfeedsz;
 	uint32_t feedsz;
 	void (*digest)(struct sxhash *c, char *digest);
 	struct sx_dmactl dma;
-	struct sxdesc allindescs[7 + SX_EXTRA_IN_DESCS];
+	struct sxdesc descs[7 + SX_EXTRA_IN_DESCS];
 	uint8_t extramem[SX_HASH_PRIV_SZ];
 };
 
-/** A operation to load a countermeasures mask into the hardware.
- *
- * To be used with sx_cm_*() functions.
- *
- * All members should be considered INTERNAL and may not be accessed
- * directly.
- */
-struct sxcmmask {
-	struct sx_dmactl dma;
-	struct sxdesc allindescs[1];
-};
 
 /** A simple MAC(message authentication code) operation
  *
@@ -164,8 +168,25 @@ struct sxmac {
 	int macsz;
 	const struct sxkeyref *key;
 	struct sx_dmactl dma;
-	struct sxdesc allindescs[7];
+	struct sxdesc descs[7];
 	uint8_t extramem[16];
+};
+
+struct sxchannel {
+	struct sx_dmactl dma;
+	struct sxdesc descs[1];
+};
+
+/** A operation to load a countermeasures mask into the hardware.
+ * This operation is based on channel.
+ *
+ * To be used with sx_cm_*() functions.
+ *
+ * All members should be considered INTERNAL and may not be accessed
+ * directly.
+ */
+struct sxcmmask {
+	struct sxchannel channel;
 };
 
 #ifdef __cplusplus
