@@ -415,7 +415,14 @@ The static size is determined by the :kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEA
 To use a dynamic heap size on your Matter device, set them both to ``n``.
 
 The static heap size means that you can define the maximum heap size for your application by setting the :kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP_SIZE` Kconfig value.
-You can also adjust the heap dedicated for MbedTLS purposes by setting the :kconfig:option:`CONFIG_MBEDTLS_HEAP_SIZE` Kconfig option value.
+You can also adjust the heap dedicated for Mbed TLS purposes by setting the :kconfig:option:`CONFIG_MBEDTLS_HEAP_SIZE` Kconfig option value.
+
+Packet buffer pool size
+-----------------------
+
+The Matter application uses a fixed-size pool for packet buffer memory management.
+The pool size is determined by the :kconfig:option:`CONFIG_CHIP_SYSTEM_PACKETBUFFER_POOL_SIZE` Kconfig option.
+You can adjust the pool size to reduce the memory usage of your application, but that can have a negative effect on the performance of the application.
 
 .. note::
    The Thread protocol has a separate configuration for memory allocation.
