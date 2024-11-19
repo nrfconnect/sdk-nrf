@@ -24,6 +24,18 @@ tests:
       - nrf52840dk/nrf52840
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
+  sample.sha256.oberon:
+    sysbuild: true
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf5340dk/nrf5340/cpunet
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
   sample.sha256.cracen:
     sysbuild: true
     tags: introduction psa cracen sysbuild ci_samples_crypto
