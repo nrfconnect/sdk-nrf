@@ -14,9 +14,8 @@ LOG_MODULE_DECLARE(nrf_ps_server, CONFIG_NRF_PS_SERVER_LOG_LEVEL);
 
 static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
-	LOG_ERR("Fatal error button pressed - triggering k_oops");
-
 	if (button_state & DK_BTN1_MSK) {
+		LOG_ERR("Fatal error button pressed - triggering k_oops");
 		k_oops();
 	}
 }
