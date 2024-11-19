@@ -322,7 +322,9 @@ struct esb_config {
 	/* General RF parameters */
 	enum esb_bitrate bitrate;		/**< Bitrate mode. */
 	enum esb_crc crc;			/**< CRC mode. */
-	int8_t tx_output_power;	                /**< Radio TX power. */
+	int8_t tx_output_power;			/**< Radio TX power.
+						  *  Output power in dBm.
+						  */
 
 	uint16_t retransmit_delay; /**< The delay between each retransmission of
 				  *  unacknowledged packets.
