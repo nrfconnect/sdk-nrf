@@ -2,7 +2,7 @@ sample:
   description: Bluetooth Mesh light fixture sample
   name: Bluetooth Mesh light fixture
 tests:
-  sample.bluetooth.mesh.light_ctrl:
+  sample.bluetooth.mesh.light_fixture:
     sysbuild: true
     build_only: true
     integration_platforms:
@@ -33,7 +33,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
-  sample.bluetooth.mesh.light_ctrl.emds:
+  sample.bluetooth.mesh.light_fixture.emds:
     sysbuild: true
     extra_args: OVERLAY_CONFIG="overlay-emds.conf"
     build_only: true

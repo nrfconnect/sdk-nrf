@@ -1,5 +1,6 @@
+# yamllint disable
 #include <zephyr/autoconf.h>
-
+# yamllint enable
 b0:
   size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
   placement:
@@ -36,9 +37,13 @@ s1_image:
   share_size: {one_of: [mcuboot, s0_image]}
   placement:
     after: [s1_pad, s0]
+# yamllint disable
 #ifndef CONFIG_NCS_MCUBOOT_IN_BUILD
+# yamllint enable
     align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
+# yamllint disable
 #endif
+# yamllint enable
     align_next: CONFIG_FPROTECT_BLOCK_SIZE
 
 s1:

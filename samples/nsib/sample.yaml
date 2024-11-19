@@ -1,7 +1,7 @@
 sample:
   name: Bootloader Sample
 tests:
-  sample.bootloader:
+  sample.nsib:
     sysbuild: true
     build_only: true
     integration_platforms:

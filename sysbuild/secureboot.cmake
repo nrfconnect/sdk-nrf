@@ -39,7 +39,7 @@ if(SB_CONFIG_SECURE_BOOT)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_APPCORE)
-    set(secure_boot_source_dir ${ZEPHYR_NRF_MODULE_DIR}/samples/bootloader)
+    set(secure_boot_source_dir ${ZEPHYR_NRF_MODULE_DIR}/samples/nsib)
 
     ExternalZephyrProject_Add(
       APPLICATION b0

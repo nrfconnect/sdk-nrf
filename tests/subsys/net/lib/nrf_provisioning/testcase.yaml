@@ -1,5 +1,5 @@
 tests:
-  nrf_provisioning.unittest_jwt:
+  nrf_device_provisioning.unittest_jwt:
     sysbuild: true
     extra_args: FILE_SUFFIX=jwt
     platform_allow: native_sim
@@ -9,7 +9,7 @@ tests:
       - unittest
       - sysbuild
       - ci_tests_subsys_net
-  nrf_provisioning.unittest_http:
+  nrf_device_provisioning.unittest_http:
     sysbuild: true
     platform_allow: native_sim
     integration_platforms:
@@ -18,7 +18,7 @@ tests:
       - unittest
       - sysbuild
       - ci_tests_subsys_net
-  nrf_provisioning.unittest_coap:
+  nrf_device_provisioning.unittest_coap:
     sysbuild: true
     extra_args: FILE_SUFFIX=coap
     platform_allow: native_sim
