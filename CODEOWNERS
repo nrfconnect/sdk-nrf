@@ -405,7 +405,7 @@
 /samples/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/benchmarks/coremark/             @nrfconnect/ncs-si-bluebagel
 /samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
-/samples/bluetooth/central_and_peripheral_hr/ @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_and_peripheral_hrs/ @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_bas/           @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_hids/          @nrfconnect/ncs-si-bluebagel
 /samples/bluetooth/central_hr_coded/      @nrfconnect/ncs-si-muffin
@@ -451,7 +451,7 @@
 /samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-si-muffin
 /samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
 /samples/bluetooth/throughput/            @nrfconnect/ncs-si-muffin
-/samples/bootloader/                      @nrfconnect/ncs-pluto
+/samples/nsib/                      @nrfconnect/ncs-pluto
 /samples/caf/                             @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/cellular/                        @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
@@ -462,7 +462,7 @@
 /samples/cellular/modem_shell/            @trantanen @jhirsi @tokangas
 /samples/cellular/nidd/                   @stig-bjorlykke
 /samples/cellular/nrf_cloud_*             @nrfconnect/ncs-nrf-cloud
-/samples/cellular/nrf_provisioning/       @nrfconnect/ncs-iot-oulu
+/samples/cellular/nrf_device_provisioning/ @nrfconnect/ncs-iot-oulu
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
 /samples/cellular/slm_shell/              @nrfconnect/ncs-iot-oulu
 /samples/cellular/sms/                    @trantanen @tokangas
@@ -529,7 +529,7 @@
 /samples/bluetooth/nrf_auraconfig/*.rst   @nrfconnect/ncs-audio-doc
 /samples/bluetooth/fast_pair/**/*.rst     @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/mesh/**/*.rst          @nrfconnect/ncs-paladin-doc
-/samples/bootloader/*.rst                 @nrfconnect/ncs-pluto-doc
+/samples/nsib/*.rst                 @nrfconnect/ncs-pluto-doc
 /samples/caf/*.rst                        @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /samples/caf_sensor_manager/*.rst         @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /samples/cellular/**/*.rst                @nrfconnect/ncs-modem-doc
@@ -539,7 +539,7 @@
 /samples/cellular/lwm2m_client/*.rst      @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/cellular/modem_shell/*.rst       @nrfconnect/ncs-iot-positioning-doc
 /samples/cellular/nrf_cloud_*/**/*.rst    @nrfconnect/ncs-nrf-cloud-doc
-/samples/cellular/nrf_provisioning/*.rst  @nrfconnect/ncs-iot-oulu-tampere-doc
+/samples/cellular/nrf_device_provisioning/*.rst  @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/cellular/slm_shell/*.rst         @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/cellular/sms/*.rst               @nrfconnect/ncs-iot-positioning-doc
 /samples/crypto/**/*.rst                  @nrfconnect/ncs-aegir-doc

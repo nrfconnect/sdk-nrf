@@ -695,7 +695,7 @@ ci_tests_subsys_bootloader:
     - nrf/lib/identity_key/
     - nrf/lib/modem_antenna/
     - nrf/lib/nrf_modem_lib/
-    - nrf/samples/bootloader/
+    - nrf/samples/nsib/
     - nrf/subsys/bootloader/
     - nrf/subsys/fw_info/
     - nrf/subsys/nrf_security/
@@ -1298,7 +1298,7 @@ ci_tests_drivers_egpio:
 ci_tests_drivers_fprotect:
   files:
     - nrf/lib/fprotect/
-    - nrf/samples/bootloader/
+    - nrf/samples/nsib/
     - nrf/subsys/bootloader/
     - nrf/tests/drivers/fprotect/
     - zephyr/subsys/storage/
@@ -1331,7 +1331,7 @@ ci_samples_peripheral_lpuart:
 ci_samples_bootloader:
   files:
     - nrf/lib/fprotect/
-    - nrf/samples/bootloader/
+    - nrf/samples/nsib/
     - nrf/subsys/bootloader/
     - nrf/subsys/fw_info/
 

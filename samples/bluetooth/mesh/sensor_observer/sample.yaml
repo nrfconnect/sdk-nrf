@@ -2,7 +2,7 @@ sample:
   description: Bluetooth Mesh sensor observer sample
   name: Bluetooth Mesh sensor observer
 tests:
-  sample.bluetooth.mesh.sensor_client:
+  sample.bluetooth.mesh.sensor_observer:
     sysbuild: true
     build_only: true
     integration_platforms:

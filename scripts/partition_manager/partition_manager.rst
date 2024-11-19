@@ -741,7 +741,7 @@ For example, if you generate a partition placement report on the build of :file:
    | 0xff000: EMPTY_2 (0x1000)                |
    +------------------------------------------+
 
-The sizes of each partition are determined by the associated :file:`pm.yml` file, such as :file:`nrf/samples/bootloader/pm.yml` for |NSIB| and :file:`bootloader/mcuboot/boot/zephyr/pm.yml` for MCUboot.
+The sizes of each partition are determined by the associated :file:`pm.yml` file, such as :file:`nrf/samples/nsib/pm.yml` for |NSIB| and :file:`bootloader/mcuboot/boot/zephyr/pm.yml` for MCUboot.
 
 .. _ug_pm_static:
 
