@@ -42,6 +42,10 @@
 #include "test/test_shell.h"
 #endif
 
+#ifdef CONFIG_RAM_POWER_DOWN_LIBRARY
+#include <ram_pwrdn.h>
+#endif
+
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/OnboardingCodesUtil.h>
@@ -228,6 +232,11 @@ void DoInitChipServer(intptr_t /* unused */)
 
 	/* Set External Flash into sleep mode */
 	ExternalFlashManager::GetInstance().DoAction(ExternalFlashManager::Action::SLEEP);
+
+	/* Disable unused RAM blocks to reduce power consumption */
+#ifdef CONFIG_RAM_POWER_DOWN_LIBRARY
+	power_down_unused_ram();
+#endif
 
 	/* Initialize CHIP server */
 #ifdef CONFIG_CHIP_FACTORY_DATA

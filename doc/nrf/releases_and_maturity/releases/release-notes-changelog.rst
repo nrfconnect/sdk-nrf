@@ -329,6 +329,9 @@ Keys samples
 Matter samples
 --------------
 
+* Updated all Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
+  It is enabled by default for the release configuration of the :ref:`matter_lock_sample`, :ref:`matter_light_switch_sample`, :ref:`matter_smoke_co_alarm_sample`, and :ref:`matter_window_covering_sample` samples.
+
 * :ref:`matter_template_sample` sample:
 
   * Updated the internal configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` target to use the DFU image compression and provide more memory space for the application.
