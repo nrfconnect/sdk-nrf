@@ -24,5 +24,8 @@ int main(void)
 		event->init_value1 = INIT_VALUE1;
 		APP_EVENT_SUBMIT(event);
 	}
+
+	/* TESTING: test-secdom-samples-public */
+
 	return 0;
 }
