@@ -65,6 +65,8 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 {
 	nrfx_err_t err;
 #ifdef DPPI_PRESENT
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
 	if (*PUBLISH_ADDR(evt) != 0) {
 		/* Use mask of one of subscribe registers in the system,
 		 * assuming that all subscribe registers has the same mask for
@@ -73,7 +75,7 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 		*ch = *PUBLISH_ADDR(evt) & DPPIC_SUBSCRIBE_CHG_EN_CHIDX_Msk;
 		err = NRFX_SUCCESS;
 	} else {
-		err = nrfx_dppi_channel_alloc(ch);
+		err = nrfx_dppi_channel_alloc(&dppi, ch);
 	}
 #else
 	err = nrfx_ppi_channel_alloc((nrf_ppi_channel_t *)ch);

@@ -225,44 +225,46 @@ int esb_ppi_init(void)
 
 #else
 
-	err = nrfx_dppi_channel_alloc(&radio_address_timer_stop);
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
+	err = nrfx_dppi_channel_alloc(&dppi, &radio_address_timer_stop);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_alloc(&timer_compare0_radio_disable);
+	err = nrfx_dppi_channel_alloc(&dppi, &timer_compare0_radio_disable);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_alloc(&timer_compare1_radio_txen);
+	err = nrfx_dppi_channel_alloc(&dppi, &timer_compare1_radio_txen);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_alloc(&disabled_phy_end_egu);
+	err = nrfx_dppi_channel_alloc(&dppi, &disabled_phy_end_egu);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_alloc(&egu_timer_start);
+	err = nrfx_dppi_channel_alloc(&dppi, &egu_timer_start);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_alloc(&egu_ramp_up);
+	err = nrfx_dppi_channel_alloc(&dppi, &egu_ramp_up);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_dppi_channel_alloc(&radio_end_timer_start);
+		err = nrfx_dppi_channel_alloc(&dppi, &radio_end_timer_start);
 		if (err != NRFX_SUCCESS) {
 			goto error;
 		}
 	}
 
-	err = nrfx_dppi_group_alloc(&ramp_up_dppi_group);
+	err = nrfx_dppi_group_alloc(&dppi, &ramp_up_dppi_group);
 	if (err != NRFX_SUCCESS) {
 		LOG_ERR("gppi_group_alloc failed with: %d\n", err);
 		return -ENODEV;
@@ -315,44 +317,46 @@ void esb_ppi_deinit(void)
 
 #else
 
-	err = nrfx_dppi_channel_free(radio_address_timer_stop);
+	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
+
+	err = nrfx_dppi_channel_free(&dppi, radio_address_timer_stop);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_free(timer_compare0_radio_disable);
+	err = nrfx_dppi_channel_free(&dppi, timer_compare0_radio_disable);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_free(timer_compare1_radio_txen);
+	err = nrfx_dppi_channel_free(&dppi, timer_compare1_radio_txen);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_free(disabled_phy_end_egu);
+	err = nrfx_dppi_channel_free(&dppi, disabled_phy_end_egu);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_free(egu_timer_start);
+	err = nrfx_dppi_channel_free(&dppi, egu_timer_start);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
-	err = nrfx_dppi_channel_free(egu_ramp_up);
+	err = nrfx_dppi_channel_free(&dppi, egu_ramp_up);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_dppi_channel_free(radio_end_timer_start);
+		err = nrfx_dppi_channel_free(&dppi, radio_end_timer_start);
 		if (err != NRFX_SUCCESS) {
 			goto error;
 		}
 	}
 
-	err = nrfx_dppi_group_free(ramp_up_dppi_group);
+	err = nrfx_dppi_group_free(&dppi, ramp_up_dppi_group);
 	if (err != NRFX_SUCCESS) {
 		goto error;
 	}
