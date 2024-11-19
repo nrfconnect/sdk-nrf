@@ -8,7 +8,6 @@ common:
 tests:
   sample.peripheral.lpuart:
     sysbuild: true
-    build_only: true
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -26,6 +25,13 @@ tests:
       - nrf21540dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     platform_exclude: native_posix
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_lpuart"
+    timeout: 90
   sample.peripheral.lpuart.debug:
     sysbuild: true
     platform_allow:
@@ -59,7 +65,6 @@ tests:
         - ".*app: ASYNC Received data 5 bytes"
   sample.peripheral.lpuart_int_driven:
     sysbuild: true
-    build_only: true
     extra_configs:
       - CONFIG_NRF_SW_LPUART_INT_DRIVEN=y
     integration_platforms:
@@ -72,6 +77,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840 nrf9160dk/nrf9160/ns
       nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840 nrf54l15dk/nrf54l15/cpuapp
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_lpuart"
+    timeout: 90
   sample.peripheral.lpuart_int_driven.debug:
     sysbuild: true
     extra_configs:
