@@ -1,14 +1,23 @@
-/** Authenticated encryption with associated data(AEAD) with ChaCha20-Poly1305.
+/** Authenticated encryption with associated data(AEAD) with ChaCha20-Poly1305
+ * and stream cipher based on ChaCha20 block cipher.
  *
- * The "create operation" functions are specific to ChaCha20-Poly1305 and
- * specify also the direction, encryption or decryption,
+ * ChaCha20-Poly1305 "create operation" functions:
  * sx_aead_create_chacha20poly1305_enc and sx_aead_create_chacha20poly1305_dec.
- * After creation, the user must add the data to be computed by using
- * sx_aead_feed_aad() and sx_aead_crypt(). To start the operation, the user
- * must call sx_aead_produce_tag() when doing an encryption or
- * sx_aead_verify_tag() when doing a decryption. The status of the operation
- * must be checked using sx_aead_status() or sx_aead_wait().
+ * ChaCha20 "create operation" functions:
+ * sx_blkciper_create_chacha20_enc and sx_blkciper_create_chacha20_dec.
  *
+ * After creation of the AEAD operation, the user can feed data by using
+ * sx_aead_feed_aad() and crypt text with sx_aead_crypt(). To start the
+ * operation, the user must call sx_aead_produce_tag() when doing an encryption
+ * or sx_aead_verify_tag() when doing a decryption. The status of the operation
+ * must be checked using sx_aead_status() or sx_aead_wait(). For further details
+ * check aead.h.
+ *
+ * After creation of the block cipher operation, the user can crypt text by using
+ * sx_blkcipher_crypt(). To start the operation, the  user must call
+ * sx_blkcipher_run(). The status of the operation must be checked using
+ * sx_blkcipher_status() or sx_blkcipher_wait(). For further details check
+ * blkcipher.h.
  *
  * @file
  * @copyright Copyright (c) 2023 Nordic Semiconductor ASA
@@ -106,7 +115,7 @@ extern "C" {
  * @remark - \p key and \p nonce buffers should not be changed until the
  *           operation is completed.
  */
-int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, const struct sxkeyref *key,
+int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, struct sxkeyref *key,
 					const char *nonce, size_t tagsz);
 
 /** Prepares a ChaCha20-Poly1305 AEAD decryption operation.
@@ -137,65 +146,58 @@ int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, const struct sxkeyref 
  * @remark - ChaCha20-Poly1305 supports AAD split in multiple chunks, using
  *           context saving.
  */
-int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, const struct sxkeyref *key,
+int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, struct sxkeyref *key,
 					const char *nonce, size_t tagsz);
 
-/** Prepares a ChaCha20 cipher encryption operation.
+/** Prepares a ChaCha20 encryption.
  *
- * This function initializes the user allocated object \p c with a new cipher
- * encryption operation context needed to run the ChaCha20 operation
- * and reserves the HW resource.
+ * This function initializes the user allocated object \p c with a new block
+ * cipher operation context needed to run the ChaCha20 encryption and reserves
+ * the HW resource.
  *
  * After successful execution of this function, the context \p c can be passed
- * to any of the cipher functions.
+ * to any of the block cipher functions.
  *
- * @param[out] c Cipher operation context
- * @param[in] key key used for the cipher operation, expected size 32 bytes
- * @param[in] nonce nonce used for the cipher operation, size must be 16 bytes
- *                  with the first 4 bytes being the counter and the rest 12
- *                  bytes are the nonce
- *
+ * @param[out] c block cipher operation context
+ * @param[in] key key used for the block cipher operation, expected size 32 bytes
+ * @param[in] counter initialization counter, maximum value is 0xFFFFFFFF.
+ * @param[in] nonce nonce used for ChaCha20 operation, size must be 12 bytes
  * @return ::SX_OK
+ * @return ::SX_ERR_INVALID_KEYREF
  * @return ::SX_ERR_INVALID_KEY_SZ
  * @return ::SX_ERR_INCOMPATIBLE_HW
  * @return ::SX_ERR_RETRY
  *
  * @pre - key reference provided by \p key must be initialized using
- *        sx_keyref_load_material()
- *
- * @remark - \p key and \p nonce buffers should not be changed until the
- *           operation is completed.
+ *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
-int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, const struct sxkeyref *key,
+int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, struct sxkeyref *key,
 				     const char *counter, const char *nonce);
 
-/** Prepares a ChaCha20 cipher decryption operation.
+/** Prepares a ChaCha20 decryption.
  *
- * This function initializes the user allocated object \p c with a new cipher
- * decryption operation context needed to run the ChaCha20 operation
- * and reserves the HW resource.
+ * This function initializes the user allocated object \p c with a new block
+ * cipher operation context needed to run the ChaCha20 decryption and reserves
+ * the HW resource.
  *
  * After successful execution of this function, the context \p c can be passed
- * to any of the cipher functions.
+ * to any of the block cipher functions.
  *
- * @param[out] c Cipher operation context
- * @param[in] key key used for the cipher operation, expected size 32 bytes
- * @param[in] nonce nonce used for the cipher operation, size must be 16 bytes
- *                  with the first 4 bytes being the counter and the rest 12
- *                  bytes are the nonce
- *
+ * @param[out] c block cipher operation context
+ * @param[in] key key used for the block cipher operation, expected size 32 bytes
+ * @param[in] counter initialization counter, maximum value is 0xFFFFFFFF, must
+ *                    be provided in little-endian format.
+ * @param[in] nonce nonce used for ChaCha20 operation, size must be 12 bytes
  * @return ::SX_OK
+ * @return ::SX_ERR_INVALID_KEYREF
  * @return ::SX_ERR_INVALID_KEY_SZ
  * @return ::SX_ERR_INCOMPATIBLE_HW
  * @return ::SX_ERR_RETRY
  *
  * @pre - key reference provided by \p key must be initialized using
- *        sx_keyref_load_material()
- *
- * @remark - \p key and \p nonce buffers should not be changed until the
- *           operation is completed.
+ *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
-int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *c, const struct sxkeyref *key,
+int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *c, struct sxkeyref *key,
 				     const char *counter, const char *nonce);
 
 #ifdef __cplusplus

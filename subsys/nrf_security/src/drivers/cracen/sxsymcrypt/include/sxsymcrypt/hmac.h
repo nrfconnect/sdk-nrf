@@ -52,7 +52,7 @@ struct sxmac;
  */
 int sx_mac_create_hmac_sha2_256(struct sxmac *c, struct sxkeyref *keyref);
 
-/** Prepares a HMAC SHA384 MAC operation
+/** Prepares an HMAC SHA384 MAC operation
  *
  * This function initializes the user allocated object \p c with a new MAC
  * operation context and reserves the HW resource.
@@ -136,6 +136,90 @@ int sx_mac_create_hmac_sha1(struct sxmac *c, struct sxkeyref *keyref);
  *              operation is completed.
  */
 int sx_mac_create_hmac_sha2_224(struct sxmac *c, struct sxkeyref *keyref);
+
+/** Prepares an HMAC SHA3-224 MAC operation
+ *
+ * This function initializes the user allocated object \p c with a new MAC
+ * operation context and reserves the HW resource.
+ *
+ * After successful execution of this function, the context \p c can be passed
+ * to any of the hashing functions (except the ones that are specific to
+ * context-saving).
+ *
+ * @param[out] c MAC operation context
+ * @param[in] keyref HMAC key reference @sa keyref.h
+ * @return ::SX_OK
+ * @return ::SX_ERR_INCOMPATIBLE_HW
+ * @return ::SX_ERR_INVALID_KEYREF
+ * @return ::SX_ERR_RETRY
+ *
+ * @remark - \p the key reference contents should not be changed until the
+ *              operation is completed.
+ */
+int sx_mac_create_hmac_sha3_224(struct sxmac *c, struct sxkeyref *keyref);
+
+/** Prepares an HMAC SHA3-256 MAC operation
+ *
+ * This function initializes the user allocated object \p c with a new MAC
+ * operation context and reserves the HW resource.
+ *
+ * After successful execution of this function, the context \p c can be passed
+ * to any of the hashing functions (except the ones that are specific to
+ * context-saving).
+ *
+ * @param[out] c MAC operation context
+ * @param[in] keyref HMAC key reference @sa keyref.h
+ * @return ::SX_OK
+ * @return ::SX_ERR_INCOMPATIBLE_HW
+ * @return ::SX_ERR_INVALID_KEYREF
+ * @return ::SX_ERR_RETRY
+ *
+ * @remark - \p the key reference contents should not be changed until the
+ *              operation is completed.
+ */
+int sx_mac_create_hmac_sha3_256(struct sxmac *c, struct sxkeyref *keyref);
+
+/** Prepares an HMAC SHA3-384 MAC operation
+ *
+ * This function initializes the user allocated object \p c with a new MAC
+ * operation context and reserves the HW resource.
+ *
+ * After successful execution of this function, the context \p c can be passed
+ * to any of the hashing functions (except the ones that are specific to
+ * context-saving).
+ *
+ * @param[out] c MAC operation context
+ * @param[in] keyref HMAC key reference @sa keyref.h
+ * @return ::SX_OK
+ * @return ::SX_ERR_INCOMPATIBLE_HW
+ * @return ::SX_ERR_INVALID_KEYREF
+ * @return ::SX_ERR_RETRY
+ *
+ * @remark - \p the key reference contents should not be changed until the
+ *              operation is completed.
+ */
+int sx_mac_create_hmac_sha3_384(struct sxmac *c, struct sxkeyref *keyref);
+
+/** Prepares an HMAC SHA3-512 MAC operation
+ *
+ * This function initializes the user allocated object \p c with a new MAC
+ * operation context and reserves the HW resource.
+ *
+ * After successful execution of this function, the context \p c can be passed
+ * to any of the hashing functions (except the ones that are specific to
+ * context-saving).
+ *
+ * @param[out] c MAC operation context
+ * @param[in] keyref HMAC key reference @sa keyref.h
+ * @return ::SX_OK
+ * @return ::SX_ERR_INCOMPATIBLE_HW
+ * @return ::SX_ERR_INVALID_KEYREF
+ * @return ::SX_ERR_RETRY
+ *
+ * @remark - \p the key reference contents should not be changed until the
+ *              operation is completed.
+ */
+int sx_mac_create_hmac_sha3_512(struct sxmac *c, struct sxkeyref *keyref);
 
 #ifdef __cplusplus
 }
