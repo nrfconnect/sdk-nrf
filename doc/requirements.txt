@@ -6,6 +6,7 @@
 #   - Keep nrf/installation/recommended_versions.rst up to date
 
 # Extension                       | NCS | Kconfig | Matter | MCUboot | nrfxlib | TF-M | Zephyr |
+anytree                         # |     |         |        |         |         |      |   X    |
 azure-storage-blob              # |  X  |         |        |         |         |      |        |
 doxmlparser                     # |     |         |        |         |         |      |   X    |
 m2r2                            # |     |         |        |         |         |      |        |
