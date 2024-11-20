@@ -94,7 +94,7 @@ static int create_advertising_coded(void)
 {
 	int err;
 	struct bt_le_adv_param param =
-		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE |
+		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONN |
 				     BT_LE_ADV_OPT_EXT_ADV |
 				     BT_LE_ADV_OPT_CODED,
 				     BT_GAP_ADV_FAST_INT_MIN_2,

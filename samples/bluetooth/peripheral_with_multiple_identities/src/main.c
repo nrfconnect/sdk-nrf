@@ -126,7 +126,7 @@ static int setup_advertiser(uint8_t id_adv)
 
 	/* Initialize the parameters for each connecable advertiser. */
 	struct bt_le_adv_param adv_param =
-		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE,
+		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONN,
 				     MIN_ADV_INTERVAL,
 				     MAX_ADV_INTERVAL,
 				     NULL);
