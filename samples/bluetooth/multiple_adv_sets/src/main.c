@@ -37,7 +37,7 @@ static const struct bt_le_adv_param *non_connectable_adv_param =
 			NULL);
 
 static const struct bt_le_adv_param *connectable_adv_param =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN,
 			BT_GAP_ADV_FAST_INT_MIN_2, /* 100 ms */
 			BT_GAP_ADV_FAST_INT_MAX_2, /* 150 ms */
 			NULL);
