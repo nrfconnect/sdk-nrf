@@ -26,7 +26,7 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 
 config ML_APP_INCLUDE_REMOTE_IMAGE
 	bool "Include remote image build"
-	depends on SOC_NRF54H20_CPUAPP || SOC_NRF54H20_ENGB_CPUAPP
+	depends on SOC_NRF54H20_CPUAPP
 
 config ML_APP_REMOTE_BOARD
 	string "The name of the board to be used by remote image"

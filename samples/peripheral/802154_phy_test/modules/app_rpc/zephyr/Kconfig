@@ -7,6 +7,6 @@
 config APP_RPC
 	bool "Enables application module features requiring interaction between cores"
 	depends on SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP || SOC_NRF54H20_CPUAPP \
-		|| SOC_NRF54H20_ENGB_CPUAPP || SOC_NRF54H20_CPURAD || SOC_NRF54H20_ENGB_CPURAD
+		|| SOC_NRF54H20_CPURAD
 	select NRF_RPC
 	select NRF_RPC_CBOR
