@@ -247,6 +247,10 @@ nRF Desktop
     * :ref:`zephyr:nrf54l15dk_nrf54l15`
     * :ref:`zephyr:nrf54h20dk_nrf54h20`
 
+* Removed imply for partial erase feature of the nRF SoC flash driver (:kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE`) for the USB next stack (:ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>`).
+  The partial erase feature was used as a workaround for device errors that might be reported by the Windows USB host in Device Manager if a USB cable is connected while erasing a secondary image slot in the background.
+  The workaround is no longer needed after the nRF UDC driver was improved.
+
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
