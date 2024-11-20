@@ -24,8 +24,6 @@ The sample supports the following development kits:
 You can use one or more of the development kits listed above as the Thread CoAP Client.
 You also need one or more compatible development kits programmed with the :ref:`coap_server_sample` sample.
 
-.. include:: /includes/tfm.txt
-
 Multiprotocol extension requirements
 ====================================
 
@@ -145,7 +143,7 @@ Building and running
 
 |enable_thread_before_testing|
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======
@@ -278,7 +276,3 @@ The following dependencies are added by the optional multiprotocol Bluetooth LE 
   * ``include/bluetooth/gatt.h``
   * ``include/bluetooth/hci.h``
   * ``include/bluetooth/uuid.h``
-
-In addition, it uses the following secure firmware component:
-
-* :ref:`Trusted Firmware-M <ug_tfm>`

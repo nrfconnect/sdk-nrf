@@ -22,8 +22,6 @@ The sample supports the following development kits:
 You can use one or more of these development kits as the Thread CoAP Server.
 You also need one or more compatible development kits programmed with the :ref:`coap_client_sample` sample.
 
-.. include:: /includes/tfm.txt
-
 Overview
 ********
 
@@ -85,7 +83,7 @@ Building and running
 
 |enable_thread_before_testing|
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/build_and_run.txt
 
 Testing
 =======
@@ -138,7 +136,3 @@ In addition, it uses the following Zephyr libraries:
 OpenThread CoAP API is used in this sample:
 
 * `OpenThread CoAP API`_
-
-In addition, it uses the following secure firmware component:
-
-* :ref:`Trusted Firmware-M <ug_tfm>`
