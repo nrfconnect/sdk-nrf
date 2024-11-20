@@ -770,6 +770,8 @@
 .. _`nRF7002 EB castellated edge holes`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/castellated_mounting_holes.html
 .. _`nRF7002 EK`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/intro.html
 .. _`nRF7002 companion IC`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/hw_wifi_companion_ic.html
+.. _`Antenna gain compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/antenna_compensation.html
+.. _`Band edge compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/band_compensation.html
 
 .. _`Programming SoCs with nrfjprog`: https://docs.nordicsemi.com/bundle/ug_nrf_cltools/page/UG/cltools/nrf_nrfjprogexe.html
 

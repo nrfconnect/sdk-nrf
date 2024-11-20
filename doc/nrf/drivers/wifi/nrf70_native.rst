@@ -118,3 +118,31 @@ To configure 15 dBm, use the value ``15``.
    };
 
 See the DTS binding documentation for more information.
+
+.. _nrf70_wifi_tx_power_calculation:
+
+TX power calculation
+********************
+
+This section describes how to determine the accurate transmit (TX) power on the nRF70 Series development platforms.
+The driver will always attempt to set the TX power to the maximum supported level, while ensuring the following constraints are met:
+
+* EVM and Spectral Emission Mask (SEM) for the modulation type or data rate (IEEE 802.11 requirement).
+* In-band regulatory power limits (FCC and CE certification requirements).
+* Out-of-band regulatory power limits (FCC and CE certification requirements).
+
+You can calculate the TX power by using the following formula:
+
+.. math::
+   \begin{aligned}
+   \text{TX power} = \min \left( (P_{\text{reg}} - \text{AntGain}), P_{\text{max}} \right) - \text{EdgeBackoff}
+   \end{aligned}
+
+where the following parameters are used:
+
+* :math:`P_\text{reg}` is the applicable regulatory power limit, as described in :ref:`ug_nrf70_developing_regulatory_support`.
+* ``AntGain`` is the compensation for the antenna gain in the TX direction, as described in `Antenna gain compensation`_.
+* ``EdgeBackoff`` is the backoff applied to band edge channels, as described in `Band edge compensation`_.
+* :math:`P_\text{max} = min (P_\text{ps} , P_\text{max-tx-pwr})`
+* :math:`P_\text{ps}`  is the maximum power level for the package type, modulation, and band as described in `Electrical specification for nRF7002`_.
+* :math:`P_\text{max-tx-pwr}` is the sub-band power limit, dependent on the PCB design.
