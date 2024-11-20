@@ -1,0 +1,3 @@
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+};
