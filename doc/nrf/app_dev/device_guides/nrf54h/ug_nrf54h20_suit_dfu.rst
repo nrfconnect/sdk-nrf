@@ -22,17 +22,17 @@ For a list of available SUIT samples, see the :ref:`suit_samples` page.
    :maxdepth: 2
    :caption: Subpages:
 
-   ug_nrf54h20_suit_intro.rst
-   ug_nrf54h20_suit_manifest_overview.rst
-   ug_nrf54h20_suit_device_config.rst
-   ug_nrf54h20_suit_customize_qsg.rst
-   ug_nrf54h20_suit_customize_dfu.rst
-   ug_nrf54h20_suit_smp.rst
+   ug_nrf54h20_suit_intro
+   ug_nrf54h20_suit_manifest_overview
+   ug_nrf54h20_suit_device_config
+   ug_nrf54h20_suit_customize_qsg
+   ug_nrf54h20_suit_customize_dfu
+   ug_nrf54h20_suit_smp
    ug_nrf54h20_suit_fetch
    ug_nrf54h20_suit_push
    ug_nrf54h20_suit_external_memory
    ug_nrf54h20_suit_components
    ug_nrf54h20_suit_hierarchical_manifests
    ug_nrf54h20_suit_soc_binaries
-   ug_nrf54h20_suit_recovery.rst
-   ug_nrf54h20_suit_sdfw_sdrfw_update.rst
+   ug_nrf54h20_suit_recovery
+   ug_nrf54h20_suit_sdfw_sdrfw_update

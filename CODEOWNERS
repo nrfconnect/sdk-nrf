@@ -83,9 +83,8 @@
 /doc/nrf/app_dev/device_guides/nrf91/     @nrfconnect/ncs-modem-doc
 /doc/nrf/app_dev/device_guides/nrf91/nrf91_snippet.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/app_dev/device_guides/pmic/      @nrfconnect/ncs-pmic-doc
-/doc/nrf/app_dev/device_guides/working_with_nrf/nrf54h/ @FrancescoSer
-/doc/nrf/app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_*.rst @nrfconnect/ncs-charon-doc
-/doc/nrf/app_dev/device_guides/nrf54h.rst @FrancescoSer
+/doc/nrf/app_dev/device_guides/nrf54h/ @FrancescoSer
+/doc/nrf/app_dev/device_guides/nrf54h/ug_nrf54h20_suit_*.rst @nrfconnect/ncs-charon-doc
 /doc/nrf/app_dev/device_guides/wifi_coex.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/dev_model_and_contributions/     @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc
 /doc/nrf/drivers/bh1749.rst               @nrfconnect/ncs-cia-doc
