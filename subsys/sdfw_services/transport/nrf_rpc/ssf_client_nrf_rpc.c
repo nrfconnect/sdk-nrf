@@ -44,12 +44,6 @@ static void ssf_notification_handler(const struct nrf_rpc_group *group, const ui
 NRF_RPC_EVT_DECODER(ssf_group, ssf_notif_decoder, CONFIG_SSF_NRF_RPC_NOTIF_ID,
 		    ssf_notification_handler, NULL);
 
-static void err_handler(const struct nrf_rpc_err_report *report)
-{
-	SSF_CLIENT_LOG_ERR("nRF RPC error %d ocurred. See nRF RPC logs for more details.",
-			   report->code);
-}
-
 int ssf_client_transport_init(ssf_client_transport_notif_handler handler)
 {
 	int err;
@@ -61,8 +55,12 @@ int ssf_client_transport_init(ssf_client_transport_notif_handler handler)
 
 	transport_initialized = false;
 
-	err = nrf_rpc_init(err_handler);
-	if (err != 0) {
+	/* We ignore the nrf_rpc_init on purpose here, the nrf_rpc_init
+	 * will try to initialize all the transports/groups, but we only
+	 * want to check that the ssf_group is initialized.
+	 */
+	err = nrf_rpc_init_group(&ssf_group);
+	if (err < 0) {
 		return -SSF_EINVAL;
 	}
 
