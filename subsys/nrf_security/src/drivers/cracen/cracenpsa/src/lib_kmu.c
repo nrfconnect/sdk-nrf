@@ -68,12 +68,8 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 		return -LIB_KMU_NULL_PNT;
 	}
 
-	/* The DEST address must be 64-bit aligned on nrf54l15pdk.
-	 * On nrf54l15dk, the alignment requirement changed to 128 bits.
-	 */
-	__ASSERT(IS_PTR_ALIGNED_BYTES(kmu_src->dest,
-				      (IS_ENABLED(CONFIG_SOC_NRF54L15_ENGA_CPUAPP) ? 8 : 16)),
-		 "DEST misaligned");
+	 /* On nrf54l15dk, the alignment requirement is 128 bits. */
+	__ASSERT(IS_PTR_ALIGNED_BYTES(kmu_src->dest, 16), "DEST misaligned");
 
 	int result = 1;
 
