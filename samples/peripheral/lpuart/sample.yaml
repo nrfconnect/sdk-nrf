@@ -97,7 +97,6 @@ tests:
       - CONFIG_LOG=y
       - CONFIG_NRF_SW_LPUART_LOG_LEVEL_DBG=y
     integration_platforms:
-      - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160/ns
@@ -105,7 +104,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840 nrf9160dk/nrf9160
+    platform_allow: nrf52833dk/nrf52833 nrf52840dk/nrf52840 nrf9160dk/nrf9160
       nrf9160dk/nrf9160/ns nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840 nrf54l15dk/nrf54l15/cpuapp
     harness: console
     harness_config:
