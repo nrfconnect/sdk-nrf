@@ -74,7 +74,7 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf21540dk_nrf52840
 
 .. _thread_architectures_designs_soc_designs_multiprotocol:
 
@@ -110,7 +110,7 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns
 
 .. _thread_architectures_designs_cp:
 

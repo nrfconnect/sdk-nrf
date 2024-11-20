@@ -397,7 +397,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Removed support for the ``nrf5340dk/nrf5340/cpuapp/ns`` build target for all samples.
 
 Zigbee samples
 --------------

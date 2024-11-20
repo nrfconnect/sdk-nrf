@@ -283,7 +283,6 @@ Trusted Firmware-M support options
 
 To configure your Thread application to run with Trusted Firmware-M, use the following board target:
 
-* ``nrf5340dk/nrf5340/cpuapp/ns`` for the nRF5340 DK
 * ``nrf54l15dk/nrf54l15/cpuapp/ns``` for the nRF54L15 DK
 
 For more Trusted Firmware-M documentation, see :ref:`ug_tfm` and the official `TF-M documentation`_.
