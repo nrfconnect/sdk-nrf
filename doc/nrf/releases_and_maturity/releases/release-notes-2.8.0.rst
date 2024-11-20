@@ -337,7 +337,7 @@ Security
 
   * The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed.
     The default IKG seed slot is now 183 (previously 0).
-  * TF-M support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
+  * TF-M support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
   * The ``west ncs-provision`` command, which allows to provision signature verification keys to the nRF54L15 SoC over the J-Link interface.
 
 * Deprecated legacy Mbed TLS crypto toolbox APIs that are enabled when the :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` Kconfig option is set.
@@ -546,7 +546,7 @@ nRF Desktop
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
+  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
   * A debug configuration enabling the `Fast Pair`_ feature on the nRF54L15 DK with the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
   * An application versioning using the :file:`VERSION` file.
     The versioning is only applied to the application configurations that use the MCUboot bootloader.
@@ -708,7 +708,7 @@ Bluetooth samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
+* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
 
 * Updated:
 
@@ -742,7 +742,7 @@ Bluetooth Mesh samples
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
+  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
   * Support for Zephyr Memory Storage (ZMS) when compiling for the :ref:`zephyr:nrf54l15dk_nrf54l15` board.
 
 * :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
@@ -823,7 +823,7 @@ Cellular samples
 Cryptography samples
 --------------------
 
-* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
+* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
 
 Debug samples
 -------------
@@ -852,7 +852,7 @@ Matter samples
 
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option, which specifies ZAP files location for the sample.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to sample's location that contains the ZAP file and :file:`zap-generated` directory.
-  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15`, replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15`.
+  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15`, replacing the nRF54L15 PDK.
   * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 SoC.
   * The :ref:`matter_smoke_co_alarm_sample` sample that demonstrates implementation of Matter Smoke CO alarm device type.
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_LEDS` Kconfig option, which can be used to disable the LEDs in the Matter sample or application.
@@ -945,7 +945,7 @@ Protocols serialization samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15` (``nrf54l15pdk/nrf54l15/cpuapp/ns``).
+* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the nRF54L15 PDK (``nrf54l15pdk/nrf54l15/cpuapp/ns``).
 
 * :ref:`tfm_psa_template` sample:
 
@@ -1005,7 +1005,7 @@ Other samples
 
 * :ref:`coremark_sample` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the :ref:`zephyr:nrf54l15pdk_nrf54l15` (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
+  * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp``).
   * Updated the logging mode to minimal (:kconfig:option:`CONFIG_LOG_MODE_MINIMAL`) to reduce the sample's memory footprint and ensure no logging interference with the running benchmark.
 
 Drivers
