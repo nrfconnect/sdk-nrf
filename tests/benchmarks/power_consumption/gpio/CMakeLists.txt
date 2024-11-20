@@ -12,4 +12,4 @@ zephyr_include_directories(include)
 project(gpio)
 
 target_sources(app PRIVATE ./../common/main.c)
-target_sources(app PRIVATE src/driver_test.c)
+# target_sources(app PRIVATE src/driver_test.c)
