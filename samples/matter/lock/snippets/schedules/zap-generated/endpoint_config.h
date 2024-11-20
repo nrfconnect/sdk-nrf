@@ -535,7 +535,7 @@
 			{ ZAP_SIMPLE_DEFAULT(0), 0x00000033, 1, ZAP_TYPE(BOOLEAN),                                                    \
 			  ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* RequirePINforRemoteOperation */                                          \
 			{ ZAP_SIMPLE_DEFAULT(0xD91), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                         \
-			{ ZAP_SIMPLE_DEFAULT(7), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
+			{ ZAP_SIMPLE_DEFAULT(8), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
 	}
 
 // clang-format off
@@ -1019,9 +1019,9 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
-		{ 0x00000016, 2 },                                                                                     \
+		{ 0x00000016, 3 },                                                                                     \
 		{                                                                                                      \
-			0x0000000A, 2                                                                                  \
+			0x0000000A, 3                                                                                  \
 		}                                                                                                      \
 	}
 

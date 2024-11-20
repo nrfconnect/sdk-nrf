@@ -537,7 +537,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
 		{                                                                                                      \
-			0x00000016, 2                                                                                  \
+			0x00000016, 3                                                                                  \
 		}                                                                                                      \
 	}
 

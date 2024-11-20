@@ -440,7 +440,7 @@
 			  ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* IdentifyTime */                                                          \
 			{ ZAP_SIMPLE_DEFAULT(0x0), 0x00000001, 1, ZAP_TYPE(ENUM8), 0 }, /* IdentifyType */                            \
 			{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                             \
-			{ ZAP_SIMPLE_DEFAULT(4), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
+			{ ZAP_SIMPLE_DEFAULT(5), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
 			/* Endpoint: 1, Cluster: Groups (server) */                                                                   \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000000, 1, ZAP_TYPE(BITMAP8), 0 }, /* NameSupport */                               \
@@ -468,9 +468,9 @@
 			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
 			/* Endpoint: 1, Cluster: Thermostat (server) */                                                               \
-			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                           \
+			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                           \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* LocalTemperature */                                                      \
-			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                           \
+			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                           \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* OutdoorTemperature */                                                    \
 			{ ZAP_SIMPLE_DEFAULT(700), 0x00000003, 2, ZAP_TYPE(TEMPERATURE), 0 }, /* AbsMinHeatSetpointLimit              \
 											       */                                     \
@@ -500,7 +500,7 @@
 			{ ZAP_MIN_MAX_DEFAULTS_INDEX(8), 0x0000001C, 1, ZAP_TYPE(ENUM8),                                              \
 			  ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* SystemMode */                              \
 			{ ZAP_SIMPLE_DEFAULT(0x23), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                          \
-			{ ZAP_SIMPLE_DEFAULT(6), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
+			{ ZAP_SIMPLE_DEFAULT(8), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
 	}
 
 // clang-format off
@@ -980,9 +980,9 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
-		{ 0x00000016, 2 },                                                                                     \
+		{ 0x00000016, 3 },                                                                                     \
 		{                                                                                                      \
-			0x00000301, 2                                                                                  \
+			0x00000301, 4                                                                                  \
 		}                                                                                                      \
 	}
 
