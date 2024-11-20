@@ -18,7 +18,7 @@ LOG_MODULE_DECLARE(app, CONFIG_MATTER_LOG_LEVEL);
 
 namespace
 {
-constexpr uint32_t kAdvertisingOptions = BT_LE_ADV_OPT_CONNECTABLE;
+constexpr uint32_t kAdvertisingOptions = BT_LE_ADV_OPT_CONN;
 constexpr uint8_t kAdvertisingFlags = BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR;
 constexpr uint8_t kBTUuid[] = { BT_UUID_NUS_VAL };
 } /* namespace */
