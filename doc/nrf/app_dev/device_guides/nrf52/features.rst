@@ -51,7 +51,7 @@ See :ref:`zephyr:bluetooth` for documentation on the Bluetooth Host and open sou
 For documentation about the SoftDevice Controller and information on which controller variants support which chips, see :ref:`nrfxlib:softdevice_controller`.
 
 The |NCS| contains a variety of :ref:`ble_samples` that target nRF52 Series devices.
-In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included from Zephyr.
+In addition, you can run the :zephyr:code-sample-category:`bluetooth` samples that are included from Zephyr.
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
 
@@ -64,7 +64,7 @@ It is optimized for creating large-scale device networks, and implemented accord
 Bluetooth Mesh networking allows one-to-one, one-to-many, and many-to-many communication, using the Bluetooth LE protocol to exchange messages between the mesh nodes in the network.
 
 The |NCS| contains a variety of :ref:`bt_mesh_samples` that target nRF52 Series devices.
-In addition, you can run the :ref:`Bluetooth Mesh samples <zephyr:bluetooth-samples>` that are included from Zephyr.
+In addition, you can run the :zephyr:code-sample-category:`bluetooth` samples that are included from Zephyr.
 
 For available libraries, see :ref:`bt_mesh` (|NCS|) and :ref:`zephyr:bluetooth_mesh` (Zephyr).
 See the :ref:`ug_bt_mesh` user guide for information about how to use the supplied libraries and work with Bluetooth Mesh.
@@ -119,7 +119,7 @@ USB
 
 The |NCS| contains a USB device stack for the USB 2.0 Full Speed peripheral that is available on a number of the nRF52 devices.
 You can find the implementation in the Zephyr repository.
-See :ref:`zephyr:usb_api` for documentation and :ref:`zephyr:usb-samples` for a list of available samples.
+See :ref:`zephyr:usb_api` for documentation and :zephyr:code-sample-category:`usb` for a list of available samples.
 
 The USB stack requires the USBD driver for nRF52 devices, which is available as part of `nrfx`_.
 The nrfx repository is included in the |NCS| as a module of the Zephyr repository.
