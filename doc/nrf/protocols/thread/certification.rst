@@ -103,7 +103,7 @@ Complete the following steps to prepare for the certification tests:
 
       .. code-block::
 
-         <DEVICE name="nRF Connect SDK 1.1 1.2" thumbnail="nRF_Connect_SDK.jpg" description = "Nordic Semiconductor: NCS Baudrate:115200" THCI="nRF_Connect_SDK_11_12">
+         <DEVICE name="nRF_Connect_SDK_11_12" thumbnail="nRF_Connect_SDK.jpg" description = "Nordic Semiconductor: NCS Baudrate:115200" THCI="nRF_Connect_SDK_11_12">
             <ITEM label="Serial Line"
                type="text"
                forParam="SerialPort"
@@ -117,7 +117,7 @@ Complete the following steps to prepare for the certification tests:
                hint="eg: 115200">115200
             </ITEM>
          </DEVICE>
-         <DEVICE name="nRF Connect SDK 1.3 1.4" thumbnail="nRF_Connect_SDK_1_3.jpg" description = "Nordic Semiconductor: NCS Baudrate:115200" THCI="nRF_Connect_SDK_13_14">
+         <DEVICE name="nRF_Connect_SDK_13_14" thumbnail="nRF_Connect_SDK_1_3.jpg" description = "Nordic Semiconductor: NCS Baudrate:115200" THCI="nRF_Connect_SDK_13_14">
             <ITEM label="Serial Line"
                type="text"
                forParam="SerialPort"
