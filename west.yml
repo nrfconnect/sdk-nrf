@@ -207,12 +207,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: f274ce8ab97d1504de4c6b372bb98d4dc41bacc5
+      revision: pull/673/head
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 719d36b15db3f228b0d83c52f13b97145d971ea4
+      revision: pull/260/head
       groups:
         - find-my
     - name: azure-sdk-for-c
