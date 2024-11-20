@@ -1,7 +1,7 @@
 .. _ug_nrf54h:
 
-Working with nRF54H Series
-##########################
+Developing with nRF54H Series
+#############################
 
 .. note::
 
@@ -32,11 +32,11 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    :maxdepth: 2
    :caption: Subpages:
 
-   working_with_nrf/nrf54h/ug_nrf54h20_gs
-   working_with_nrf/nrf54h/ug_nrf54h20_architecture
-   working_with_nrf/nrf54h/ug_nrf54h20_configuration
-   working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu
-   working_with_nrf/nrf54h/ug_nrf54h20_logging
-   working_with_nrf/nrf54h/ug_nrf54h20_debugging
-   working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb
-   working_with_nrf/nrf54h/ug_nrf54h20_flpr
+   ug_nrf54h20_gs
+   ug_nrf54h20_architecture
+   ug_nrf54h20_configuration
+   ug_nrf54h20_suit_dfu
+   ug_nrf54h20_logging
+   ug_nrf54h20_debugging
+   ug_nrf54h20_custom_pcb
+   ug_nrf54h20_flpr

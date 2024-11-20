@@ -205,9 +205,7 @@ mapping_topics:
   - nrf/app_dev/device_guides/nrf70/constrained.html: ["kconfig"]
   - nrf/app_dev/device_guides/nrf54l/*.html: ["nrf54-series", "nrf54l15"]
   - nrf/app_dev/device_guides/nrf54l/snippets.html: ["nrf54l05", "nrf54l10"]
-  - nrf/app_dev/device_guides/nrf54h.html: ["nrf54-series", "nrf54h20", "development-kits"]
-  - nrf/app_dev/device_guides/working_with_nrf/nrf54h/*.html: ["nrf54-series", "nrf54h20",
-                                                               "development-kits"]
+  - nrf/app_dev/device_guides/nrf54h/*.html: ["nrf54-series", "nrf54h20", "development-kits"]
   - nrf/app_dev/device_guides/nrf53/index.html: ["nrf5340", "thingy53", "development-kits",
                                                  "prototyping-platforms"]
   - nrf/app_dev/device_guides/nrf53/*.html: ["nrf53-series"]
