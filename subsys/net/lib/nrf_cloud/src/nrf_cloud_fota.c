@@ -1364,3 +1364,20 @@ int nrf_cloud_fota_ble_job_update(const struct nrf_cloud_fota_ble_job *const ble
 	return publish_and_free_obj(&job_obj, &topic_ble_updt, &param);
 }
 #endif
+
+#if UNIT_TESTING
+void reset_all_static_vars(void)
+{
+	client_mqtt = NULL;
+	event_cb = NULL;
+	ble_cb = NULL;
+	initialized = false;
+	fota_report_ack_pending = false;
+	fota_dl_initialized = false;
+	reboot_on_init = false;
+	last_fota_dl_evt = FOTA_DOWNLOAD_EVT_ERROR;
+	reset_topics();
+	cleanup_job(&current_fota);
+	cleanup_job(&saved_job);
+}
+#endif
