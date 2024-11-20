@@ -487,7 +487,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 Wi-Fi drivers
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`nrf70_wifi_tx_power_calculation` section to the :ref:`nrf70_wifi` page.
 
 Libraries
 =========
