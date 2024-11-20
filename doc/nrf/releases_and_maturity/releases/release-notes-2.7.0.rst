@@ -258,7 +258,7 @@ Amazon Sidewalk
 
 * Added:
 
-  * Experimental support for the Bluetooth LE and sub-GHz protocols on the :ref:`zephyr:nrf54l15pdk_nrf54l15`.
+  * Experimental support for the Bluetooth LE and sub-GHz protocols on the nRF54L15 PDK.
   * Support for the DFU FUOTA.
 
 * Updated:
@@ -349,7 +349,7 @@ Thread
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` in the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
+  * Support for the nRF54L15 PDK in the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
   * New :ref:`feature set <thread_ug_feature_sets>` option :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_RCP`.
 
 Zigbee
@@ -372,7 +372,7 @@ Enhanced ShockBurst (ESB)
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and the :ref:`zephyr:nrf54l15pdk_nrf54l15`.
+  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and the nRF54L15 PDK.
   * Fast switching between radio states for the nRF54H20 SoC.
   * Fast radio channel switching for the nRF54H20 SoC.
 
@@ -381,7 +381,7 @@ Wi-Fi
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15pdk_nrf54l15` boards with :ref:`nRF7002 EB <ug_nrf7002eb_gs>`.
+  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards with :ref:`nRF7002 EB <ug_nrf7002eb_gs>`.
   * General enhancements in low-power mode including watchdog based recovery.
 
 Applications
@@ -483,7 +483,7 @@ nRF Desktop
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
+  * Support for the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target.
 
     The PDK can act as a sample mouse or keyboard.
     It supports the Bluetooth LE HID data transport and uses SoftDevice Link Layer with Low Latency Packet Mode (LLPM) enabled.
@@ -601,7 +601,7 @@ Bluetooth samples
     * :ref:`peripheral_status` sample
     * :ref:`shell_bt_nus` sample
 
-  * Support for both the :ref:`zephyr:nrf54h20dk_nrf54h20` and the :ref:`zephyr:nrf54l15pdk_nrf54l15` boards in the following samples:
+  * Support for both the :ref:`zephyr:nrf54h20dk_nrf54h20` and the nRF54L15 PDK boards in the following samples:
 
     * :ref:`peripheral_lbs` sample
     * :ref:`bluetooth_central_hids` sample
@@ -626,7 +626,7 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_input_device` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the nRF54L15 PDK board.
 
   * Updated:
 
@@ -638,7 +638,7 @@ Bluetooth Fast Pair samples
 Bluetooth Mesh samples
 ----------------------
 
-* Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board in the following samples:
+* Added support for the nRF54L15 PDK board in the following samples:
 
   * :ref:`bluetooth_mesh_sensor_client` sample
   * :ref:`bluetooth_mesh_sensor_server` sample
@@ -743,7 +743,7 @@ Cryptography samples
 * Added:
 
     * :ref:`crypto_spake2p` sample.
-    * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board for all crypto samples.
+    * Support for the nRF54L15 PDK board for all crypto samples.
     * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board in all crypto samples, except :ref:`crypto_persistent_key` and :ref:`crypto_tls`.
     * Support for the :ref:`zephyr:nrf9151dk_nrf9151` board for all crypto samples.
     * Support for the :ref:`nRF9161 DK <ug_nrf9161>` board for the :ref:`crypto_test`.
@@ -771,7 +771,7 @@ Enhanced ShockBurst samples
 
 * :ref:`esb_prx` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15pdk_nrf54l15` boards.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards.
 
 Keys samples
 ------------
@@ -787,7 +787,7 @@ Matter samples
     By utilizing the test event triggers, you can simulate various operational conditions and responses in your Matter device without the need for external setup.
     To get started with using test event triggers in your Matter samples and to understand the capabilities of this feature, refer to the :ref:`ug_matter_test_event_triggers` page.
 
-  * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target to the following Matter samples:
+  * Support for the nRF54L15 PDK with the ``nrf54l15pdk/nrf54l15/cpuapp`` board target to the following Matter samples:
 
     * :ref:`matter_template_sample` sample.
     * :ref:`matter_light_bulb_sample` sample.
@@ -865,8 +865,8 @@ NFC samples
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board in the :ref:`nrf-nfc-system-off-sample` sample.
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15pdk_nrf54l15` boards in the following samples:
+  * Support for the nRF54L15 PDK board in the :ref:`nrf-nfc-system-off-sample` sample.
+  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards in the following samples:
 
     * :ref:`record_launch_app` sample
     * :ref:`record_text` sample
@@ -879,14 +879,14 @@ Peripheral samples
 
 * :ref:`radio_test` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15pdk_nrf54l15` boards.
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards.
 
   * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
     This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
 
 * :ref:`802154_phy_test` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the nRF54L15 PDK board.
 
 * :ref:`802154_sniffer` sample:
 
@@ -917,11 +917,11 @@ Thread samples
 
 * :ref:`ot_cli_sample` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the nRF54L15 PDK board.
 
 * :ref:`ot_coprocessor_sample` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15pdk_nrf54l15` board.
+  * Added support for the nRF54L15 PDK board.
   * Changed the default :ref:`feature set <thread_ug_feature_sets>` from Master to RCP.
 
 Zigbee samples
