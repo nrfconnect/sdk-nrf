@@ -213,8 +213,7 @@ static void advertising_continue(void)
 	} else {
 		int err;
 
-		adv_param = *BT_LE_ADV_CONN;
-		adv_param.options |= BT_LE_ADV_OPT_ONE_TIME;
+		adv_param = *BT_LE_ADV_CONN_FAST_2;
 		err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad),
 				      NULL, 0);
 
