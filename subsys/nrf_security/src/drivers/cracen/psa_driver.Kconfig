@@ -1848,7 +1848,7 @@ config PSA_NEED_CRACEN_PLATFORM_KEYS
 	default y
 	depends on PSA_WANT_ALG_GCM
 	depends on PSA_WANT_AES_KEY_SIZE_256
-	depends on (SOC_NRF54H20_CPUSEC || SOC_NRF54H20_ENGB_CPUSEC)
+	depends on SOC_NRF54H20_CPUSEC
 
 
 endmenu
