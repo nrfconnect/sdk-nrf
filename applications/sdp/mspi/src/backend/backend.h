@@ -9,11 +9,11 @@
 
 #include <drivers/gpio/nrfe_gpio.h>
 
-#if !IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG) && \
-	!IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX) && \
-	!IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG)
-#error "Define communication backend type"
-#endif
+// #if !IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG) && \
+// 	!IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX) && \
+// 	!IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG)
+// #error "Define communication backend type"
+// #endif
 
 /**
  * @brief Callback function called by backend when new packet arrives.
