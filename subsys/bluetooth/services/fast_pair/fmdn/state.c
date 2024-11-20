@@ -125,7 +125,7 @@ static struct bt_le_adv_param fmdn_adv_param = {
 	.options =
 		/* Enable Extended Advertising for the SECP256R1 ECC variant. */
 		(IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_ECC_SECP256R1) * BT_LE_ADV_OPT_EXT_ADV) |
-		BT_LE_ADV_OPT_CONNECTABLE,
+		BT_LE_ADV_OPT_CONN,
 };
 static int8_t fmdn_adv_set_tx_power;
 
