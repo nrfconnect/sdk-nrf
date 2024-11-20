@@ -27,7 +27,7 @@
 /.vscode/                                 @FilipZajdel
 
 # Applications
-/applications/asset_tracker_v2/           @nrfconnect/ncs-cia @coderbyheart
+/applications/asset_tracker_v2/           @nrfconnect/ncs-cia
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/ipc_radio/                  @nrfconnect/ncs-si-muffin
 /applications/machine_learning/           @nrfconnect/ncs-si-muffin
@@ -323,7 +323,7 @@
 /include/mgmt/                            @nrfconnect/ncs-pluto
 /include/modem/                           @nrfconnect/ncs-modem
 /include/mpsl/                            @nrfconnect/ncs-dragoon
-/include/net/azure_*                      @nrfconnect/ncs-cia @coderbyheart
+/include/net/azure_*                      @nrfconnect/ncs-cia
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
@@ -673,8 +673,8 @@
 /subsys/mpsl/fem/                         @ankuns @martintv
 /subsys/net/                              @nrfconnect/ncs-co-networking
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
-/subsys/net/lib/azure_*                   @nrfconnect/ncs-cia @coderbyheart
-/subsys/net/lib/aws_*                     @nrfconnect/ncs-cia @coderbyheart
+/subsys/net/lib/azure_*                   @nrfconnect/ncs-cia
+/subsys/net/lib/aws_*                     @nrfconnect/ncs-cia
 /subsys/net/lib/ftp_client/               @nrfconnect/ncs-iot-oulu
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
