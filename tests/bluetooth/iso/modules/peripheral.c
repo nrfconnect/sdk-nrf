@@ -13,8 +13,7 @@
 LOG_MODULE_REGISTER(peripheral, CONFIG_ACL_TEST_LOG_LEVEL);
 
 #define LE_AUDIO_EXTENDED_ADV_CONN_NAME                                                            \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONNECTABLE |                        \
-				BT_LE_ADV_OPT_USE_NAME,                                            \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_USE_NAME,       \
 			0x100, 0x200, NULL)
 
 static struct k_work adv_work;
