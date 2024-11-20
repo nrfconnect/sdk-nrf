@@ -12,35 +12,11 @@ if DK_LIBRARY
 
 config DK_LIBRARY_BUTTON_SCAN_INTERVAL
 	int "Scanning interval of buttons in milliseconds"
-	default 50 if DK_LIBRARY_BUTTON_NO_ISR
 	default 10
 
 config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
 	bool "Enable the runtime assignable button handler API"
 	default y
-
-config DK_LIBRARY_BUTTON_NO_ISR
-	bool "Poll buttons unconditionally (no interrupts) [EXPERIMENTAL]"
-	# Workaround for buttons on nRF54L15 PDK in revision 0.2.x.
-	default y if BOARD_NRF54L15PDK_NRF54L15_CPUAPP && (BOARD_REVISION = "0.2.0" || BOARD_REVISION = "0.2.1")
-	select EXPERIMENTAL
-	help
-	  With this option disabled, the module periodically scans all the
-	  available buttons until no button is pressed. If no button is
-	  pressed, the module uses GPIO interrupts to detect the first button
-	  press. On the first button press, the module switches back to
-	  periodically scanning buttons.
-
-	  Enable this option to avoid relying on GPIO interrupts at all and
-	  to unconditionally scan all buttons periodically. Please note that
-	  the constant scanning activity increases the overall power
-	  consumption of the system.
-
-	  For example, in case the application uses Button 3 or 4, the option
-	  must be set for the nRF54L15 PDK (PCA10156) revisions
-	  v0.2.0 AA0-ES2, v0.2.0 AA0-ES3, and v0.2.1 AB0-ES5.
-	  These versions of the PDK have Buttons 3 and 4 connected to
-	  the GPIO port which does not support interrupts.
 
 module = DK_LIBRARY
 module-str = DK library
