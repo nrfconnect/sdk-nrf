@@ -12,5 +12,23 @@ tests:
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_rx_wakeup_54L_nfc_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_rx_wakeup_nfc_idle"
+    timeout: 80
+
+  benchmarks.current_consumption.nfc_idle_nrf54h:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_BOOT_BANNER=n
+      - CONFIG_SOC_NRF54H20_NO_MRAM_LATENCY=n
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_rx_wakeup_nfc_idle"
     timeout: 80
