@@ -16,7 +16,6 @@
 #elif defined(DPPI_PRESENT)
 #include <nrfx_dppi.h>
 #include <mpsl_dppi_protocol_api.h>
-#include <hal/nrf_egu.h>
 #endif
 
 const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(0);
@@ -52,24 +51,24 @@ static int m_ppi_config(void)
 
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_ready, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY),
-		nrfx_gpiote_out_task_address_get(
+		nrfx_gpiote_set_task_address_get(
 			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
 
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_disabled,
 		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED),
-		nrfx_gpiote_out_task_address_get(
+		nrfx_gpiote_clr_task_address_get(
 			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
 
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_address,
 		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS),
-		nrfx_gpiote_out_task_address_get(&gpiote,
+		nrfx_gpiote_set_task_address_get(&gpiote,
 						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
 	nrfx_gppi_channel_endpoints_setup(
 		ppi_chan_radio_end, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END),
-		nrfx_gpiote_out_task_address_get(&gpiote,
+		nrfx_gpiote_clr_task_address_get(&gpiote,
 						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
 	if (nrfx_ppi_channel_enable(ppi_chan_radio_ready) != NRFX_SUCCESS) {
@@ -90,59 +89,27 @@ static int m_ppi_config(void)
 	}
 
 #elif defined(DPPI_PRESENT)
-	/* Radio events are published on predefined channels.
-	 */
-	uint8_t ppi_chan_radio_ready = MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX;
-	uint8_t ppi_chan_radio_address = MPSL_DPPI_RADIO_PUBLISH_ADDRESS_CHANNEL_IDX;
-	uint8_t ppi_chan_radio_end = MPSL_DPPI_RADIO_PUBLISH_END_CHANNEL_IDX;
-	uint8_t ppi_chan_radio_disabled = MPSL_DPPI_RADIO_PUBLISH_DISABLED_CH_IDX;
-
-	/* Because the GPIOTE needs to subscribe to only two DPPI channels,
-	 * we use an EGU to route events together.
-	 */
-	uint8_t dppi_chan_ready_disabled;
-	uint8_t dppi_chan_address_end;
-
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
-
-	if (nrfx_dppi_channel_alloc(&dppi, &dppi_chan_ready_disabled) != NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating DPPI chan");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_alloc(&dppi, &dppi_chan_address_end) != NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating DPPI chan");
-		return -ENOMEM;
-	}
-	nrf_egu_subscribe_set(NRF_EGU0, NRF_EGU_TASK_TRIGGER0, ppi_chan_radio_ready);
-	nrf_egu_subscribe_set(NRF_EGU0, NRF_EGU_TASK_TRIGGER1, ppi_chan_radio_disabled);
-	nrf_egu_subscribe_set(NRF_EGU0, NRF_EGU_TASK_TRIGGER2, ppi_chan_radio_address);
-	nrf_egu_subscribe_set(NRF_EGU0, NRF_EGU_TASK_TRIGGER3, ppi_chan_radio_end);
-
-	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED0, dppi_chan_ready_disabled);
-	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED1, dppi_chan_ready_disabled);
-	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED2, dppi_chan_address_end);
-	nrf_egu_publish_set(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED3, dppi_chan_address_end);
+	/* Radio events are published on predefined channels. */
 
 	nrfx_gppi_task_endpoint_setup(
-		dppi_chan_ready_disabled,
-		nrfx_gpiote_out_task_address_get(
+		MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX,
+		nrfx_gpiote_set_task_address_get(
 			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
 
 	nrfx_gppi_task_endpoint_setup(
-		dppi_chan_address_end,
-		nrfx_gpiote_out_task_address_get(&gpiote,
+		MPSL_DPPI_RADIO_PUBLISH_DISABLED_CH_IDX,
+		nrfx_gpiote_clr_task_address_get(
+			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
+
+	nrfx_gppi_task_endpoint_setup(
+		MPSL_DPPI_RADIO_PUBLISH_ADDRESS_CHANNEL_IDX,
+		nrfx_gpiote_set_task_address_get(&gpiote,
 						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
-	if (nrfx_dppi_channel_enable(&dppi, dppi_chan_ready_disabled) != NRFX_SUCCESS) {
-		LOG_ERR("Failed enabling channel");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_enable(&dppi, dppi_chan_address_end) != NRFX_SUCCESS) {
-		LOG_ERR("Failed enabling channel");
-		return -ENOMEM;
-	}
+	nrfx_gppi_task_endpoint_setup(
+		MPSL_DPPI_RADIO_PUBLISH_END_CHANNEL_IDX,
+		nrfx_gpiote_clr_task_address_get(&gpiote,
+						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 #else
 #error "Expect either PPI or DPPI to be present."
 #endif
