@@ -226,6 +226,9 @@ void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_clear(void)
 
 #elif defined(NRF54L_SERIES)
 
+#include <nrfx_ppib.h>
+#include <nrfx_dppi.h>
+
 /* To trigger GRTC.TASKS_CAPTURE[#cc] with RADIO.EVENT_{?}, the following connection chain must be
  * created:
  *    - starting from RADIO domain (_R_):
@@ -238,39 +241,58 @@ void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_clear(void)
  *        {e} DPPIC_20         <-- GRTC.CC
  */
 
-/* Peripherals used for timestamping - located in radio power domain (_R_) */
-/*   - DPPIC_L : DPPIC10 */
-#define DPPIC_R_INST                NRF_DPPIC10
-#define PPIB_R_INST                 NRF_PPIB11
+#define INVALID_CHANNEL UINT8_MAX
 
-/* Peripherals used for timestamping - located in peripheral power domain (_P_) */
-
-/*   - DPPIC_P : DPPIC20 */
-#define DPPIC_P_INST                NRF_DPPIC20
-
-/*  - PPIB_P : PPIB21 */
-#define PPIB_P_INST                 NRF_PPIB21
-
-static uint32_t m_dppi_ch = NRF_802154_SL_HW_TASK_PPI_INVALID;
+static nrfx_dppi_t dppi20 = NRFX_DPPI_INSTANCE(20);
+static nrfx_ppib_interconnect_t ppib11_21 = NRFX_PPIB_INTERCONNECT_INSTANCE(11, 21);
+static uint8_t peri_dppi_ch = INVALID_CHANNEL;
+static uint8_t peri_ppib_ch = INVALID_CHANNEL;
 
 void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_setup(uint32_t cc_channel)
 {
-	/* Intentionally empty. */
+	nrfx_err_t err;
+
+	err = nrfx_dppi_channel_alloc(&dppi20, &peri_dppi_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+
+	err = nrfx_ppib_channel_alloc(&ppib11_21, &peri_ppib_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+
+	/* {c} PPIB_11 <-- PPIB_21
+	 * One of HW-fixed connections, so nothing to do.
+	 */
+
+	/* {d} PPIB_21 <-- DPPIC_20 */
+	NRF_DPPI_ENDPOINT_SETUP(
+		nrfx_ppib_send_task_address_get(&ppib11_21.right, peri_ppib_ch), peri_dppi_ch);
+
+	/* {e} DPPIC_20 <-- GRTC.CC */
+	NRF_DPPI_ENDPOINT_SETUP(
+		z_nrf_grtc_timer_compare_evt_address_get(cc_channel), peri_dppi_ch);
 }
 
 void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_clear(void)
 {
-	/* Intentionally empty. */
+	nrfx_err_t err;
+
+	err = nrfx_ppib_channel_free(&ppib11_21, peri_ppib_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+
+	err = nrfx_dppi_channel_free(&dppi20, peri_dppi_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+
+	peri_dppi_ch = INVALID_CHANNEL;
+	peri_ppib_ch = INVALID_CHANNEL;
 }
 
 void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_setup(uint32_t dppi_ch,
 									   uint32_t cc_channel)
 {
+	nrfx_err_t err;
+
 	if (dppi_ch == NRF_802154_SL_HW_TASK_PPI_INVALID) {
 		return;
 	}
-
-	m_dppi_ch = dppi_ch;
 
 	/* {a} RADIO.TASKS_{?} <-- DPPIC_10[dppi_ch]
 	 * It is the responsibility of the user of this platform to make the {a} connection
@@ -278,31 +300,22 @@ void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_setup(uint3
 	 */
 
 	/* {b} DPPIC_10 <-- PPIB_11 */
-	nrf_ppib_publish_set(PPIB_R_INST, nrf_ppib_receive_event_get(dppi_ch), dppi_ch);
-
-	/* {c} PPIB_11 <-- PPIB_21
-	 * One of HW-fixed connections, so nothing to do.
-	 */
-
-	/* {d} PPIB_21 <-- DPPIC_20 */
-	nrf_ppib_subscribe_set(PPIB_P_INST, nrf_ppib_send_task_get(dppi_ch), dppi_ch);
-
-	/* {e} DPPIC_20 <-- GRTC.CC */
 	NRF_DPPI_ENDPOINT_SETUP(
-		z_nrf_grtc_timer_compare_evt_address_get(cc_channel), dppi_ch);
+		nrfx_ppib_receive_event_address_get(&ppib11_21.left, peri_ppib_ch), dppi_ch);
 
-	nrfy_dppi_channels_enable(DPPIC_P_INST, 1UL << dppi_ch);
+	err = nrfx_dppi_channel_enable(&dppi20, peri_dppi_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
 }
 
 void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_clear(void)
 {
-	uint32_t dppi_ch = m_dppi_ch;
+	nrfx_err_t err;
 
-	if (dppi_ch != NRF_802154_SL_HW_TASK_PPI_INVALID) {
-		nrf_ppib_subscribe_clear(PPIB_R_INST, nrf_ppib_send_task_get(dppi_ch));
-		nrf_ppib_publish_clear(PPIB_P_INST, nrf_ppib_receive_event_get(dppi_ch));
-		nrfy_dppi_channels_disable(DPPIC_P_INST, 1UL << dppi_ch);
-	}
+	NRF_DPPI_ENDPOINT_CLEAR(
+		nrfx_ppib_receive_event_address_get(&ppib11_21.left, peri_ppib_ch));
+
+	err = nrfx_dppi_channel_disable(&dppi20, peri_dppi_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
 }
 
 #endif
