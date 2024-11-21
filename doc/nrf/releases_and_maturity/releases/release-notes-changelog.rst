@@ -614,7 +614,7 @@ Libraries for NFC
 nRF RPC libraries
 -----------------
 
-|no_changes_yet_note|
+* Added the :ref:`nrf_rpc_dev_info` library for obtaining information about a device connected through the :ref:`nrfxlib:nrf_rpc`.
 
 Other libraries
 ---------------

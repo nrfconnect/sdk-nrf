@@ -187,6 +187,8 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_RPC_CBOR
 
+rsource "dev_info/Kconfig"
+
 endif # NRF_RPC
 
 endmenu

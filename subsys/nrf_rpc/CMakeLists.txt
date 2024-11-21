@@ -17,3 +17,5 @@ zephyr_library_sources_ifdef(CONFIG_NRF_RPC_SERIALIZE_API nrf_rpc_serialize.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_CALLBACK_PROXY nrf_rpc_cbkproxy.c)
 
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UART_TRANSPORT nrf_rpc_uart.c)
+
+add_subdirectory_ifdef(CONFIG_NRF_RPC_DEV_INFO dev_info)
