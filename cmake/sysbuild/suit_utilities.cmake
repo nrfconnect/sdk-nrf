@@ -92,6 +92,7 @@ function(suit_create_cache_partition args output_file partition_num recovery)
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
     cache_create
+    from_payloads
     ${args}
     BYPRODUCTS ${output_file}
   )
