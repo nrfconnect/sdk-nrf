@@ -18,7 +18,7 @@ int convert_ba414_status(int code)
 	case (1 << 4):
 		return SX_ERR_POINT_NOT_ON_CURVE;
 	case (1 << 5):
-		return SX_ERR_POINT_AT_INFINITY;
+		return SX_ERR_INVALID_MICROCODE;
 	case (1 << 6):
 		return SX_ERR_OUT_OF_RANGE;
 	case (1 << 7):
@@ -35,6 +35,8 @@ int convert_ba414_status(int code)
 		return SX_ERR_COMPOSITE_VALUE;
 	case (1 << 13):
 		return SX_ERR_NOT_QUADRATIC_RESIDUE;
+	case (1 << 14):
+		return SX_ERR_BAD_ORDER;
 	case (1 << 15):
 		return SX_ERR_EXPIRED;
 	case (1 << 16):

@@ -96,7 +96,7 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 		return SX_ERR_IK_NOT_READY;
 	}
 
-	int max_opsz = caps->max_gfp_opsz;
+	int slot_sz = caps->max_gfp_opsz;
 
 	req->op_size = caps->ik_opsz;
 	uint32_t rval = req->cmd->cmdcode & 0x301;
@@ -108,13 +108,13 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
 		 */
-		cryptoram += max_opsz - req->op_size;
+		cryptoram += slot_sz - req->op_size;
 	}
 	while (slots) {
 		if (slots & 1) {
 			inputs[i++].addr = cryptoram;
 		}
-		cryptoram += max_opsz;
+		cryptoram += slot_sz;
 		slots >>= 1;
 	}
 
