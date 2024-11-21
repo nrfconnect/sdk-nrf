@@ -46,21 +46,10 @@ You also need the following:
 
 * `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively).
 * `curl`_.
-* The latest version of the `nRF Command Line Tools`_ package.
-  After downloading and installing the tools, add the nrfjprog executable to the system path, on Linux and MacOS, or to the environment variables, on Windows.
-  This allows you to run it from anywhere on the system.
-
-  .. note::
-     Before running the initial J-Link installation from the `nRF Command Line Tools`_ package, ensure not to have any other J-Link executables on your system.
-     If you have other J-Link installations, uninstall them before proceeding.
+* SEGGER J-Link |jlink_ver| and, on Windows, also the SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
 
    .. note::
-      |nrf_CLT_deprecation_note|
-
-* On Windows, SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
-
-   .. note::
-      To install the SEGGER USB Driver for J-Link on Windows, you must manually reinstall J-Link |jlink_ver| from the command line using the ``-InstUSBDriver=1`` parameter, updating the installation previously run by the `nRF Command Line Tools`_:
+      To install the SEGGER USB Driver for J-Link on Windows, manually install J-Link |jlink_ver| from the command line using the ``-InstUSBDriver=1`` parameter:
 
       1. Navigate to the download location of the J-Link executable and run one of the following commands:
 
@@ -72,8 +61,8 @@ You also need the following:
 
             .\JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
 
-      #. In the :guilabel:`Choose optional components` window, select :guilabel:`update existing installation`.
-      #. Add the J-Link executable to the system path on Linux and MacOS, or to the environment variables on Windows, to run it from anywhere on the system.
+      #. Follow the on-screen instructions.
+      #. After installing, add the J-Link executable to the system path on Linux and MacOS, or to the environment variables on Windows, to run it from anywhere on the system.
 
 * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
 * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
@@ -102,9 +91,9 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
 
    a. `Download nRF Connect for Desktop`_ for your operating system.
    #. Install and run the tool on your machine.
-   #. In the **APPS** section, click :guilabel:`Install` next to Toolchain Manager.
+   #. In the :guilabel:`APPS` section, click :guilabel:`Install` next to Toolchain Manager.
 
-   The app is installed on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
+   The app installs on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
 
 #. Install the |NCS| source code:
 
@@ -118,7 +107,7 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
    #. Click :guilabel:`SETTINGS` in the navigation bar to specify where you want to install the |NCS|.
    #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version |release|.
 
-      The |NCS| version |release| is installed on your machine.
+      The |NCS| version |release| installs on your machine.
       The :guilabel:`Install` button changes to :guilabel:`Open VS Code`.
 
 #. Set up the preferred building method:
@@ -141,8 +130,7 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
 
          To build on the command line, complete the following steps:
 
-         1. With admin permissions enabled, download and install the `nRF Command Line Tools`_.
-         #. Restart the Toolchain Manager application.
+         1. Restart the Toolchain Manager application.
          #. Click the dropdown menu for the installed nRF Connect SDK version.
 
             .. figure:: ../../../../../nrf/installation/images/gs-assistant_tm_dropdown.png
@@ -154,11 +142,10 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
 
          You can then follow the instructions in :ref:`creating_cmd`.
 
-Installing the Terminal application
-***********************************
+Installing a terminal application
+**********************************
 
-On your computer, install `nRF Connect for Desktop`_.
-You must also install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
+Install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
 Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 Installing nRF Util and its commands
@@ -166,7 +153,7 @@ Installing nRF Util and its commands
 
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
-* nRF Util version 7.11.1 or above
+* nRF Util version 7.11.1 or higher
 * nRF Util ``device`` version 2.7.2
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
@@ -205,14 +192,14 @@ The following sections describe the steps required for the nRF54H20 bring-up.
 Programming the BICR
 ====================
 
-The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
+The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including information about power and clock delivery to the SoC.
 To prepare the nRF54H20 DK for first use, you must manually program the values of the BICR using a precompiled BICR binary file (:file:`bicr.hex`).
 
 1. Download the `BICR new binary file`_.
 #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
 .. note::
-   On MacOS, connecting the DK might cause a popup containing the message ``“Disk Not Ejected Properly`` to repeatedly appear on screen.
+   On MacOS, connecting the DK might cause a popup containing the message ``“Disk Not Ejected Properly`` to appear repeatedly on screen.
    To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
 
 #. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
@@ -230,7 +217,7 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 Programming the nRF54H20 SoC binaries
 =====================================
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
+After programming the BICR, you need to provide the nRF54H20 SoC with the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
 1. Download the `nRF54H20 SoC Binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
@@ -247,12 +234,12 @@ To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 Transitioning the nRF54H20 SoC to RoT
 =====================================
 
-The current nRF54H20 DK is delivered with its lifecycle state (LCS) set to ``EMPTY``.
-To correctly operate, its lifecycle state must be transitioned to Root of Trust (``RoT``).
+The current nRF54H20 DK comes with its lifecycle state (LCS) set to ``EMPTY``.
+To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
 
 .. note::
    The forward transition to LCS ``RoT`` is permanent.
-   After the transition, it is not possible to transition backward to LCS ``EMPTY``.
+   After the transition, it is impossible to transition backward to LCS ``EMPTY``.
 
 To transition the LCS to ``RoT``, do the following:
 
@@ -282,13 +269,13 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
       west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .
 
 You can now program the sample.
-If you have multiple Nordic Semiconductor devices, make sure that only the nRF54H20 DK you want to program is connected.
+If you have multiple Nordic Semiconductor devices, ensure that only the nRF54H20 DK you want to program remains connected.
 
 .. code-block:: console
 
    west flash
 
-The sample will be automatically built and programmed on both the application core and the Peripheral Processor (PPR) of the nRF54H20.
+The sample will be built and programmed automatically on both the application core and the Peripheral Processor (PPR) of the nRF54H20.
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
@@ -312,7 +299,7 @@ To read the logs from the :zephyr:code-sample:`sysbuild_hello_world` sample prog
       Hello world from nrf54h20dk/nrf54h20/cpuapp
 
 .. note::
-   If no output is shown when using nRF Serial Terminal, select a different serial port in the terminal application.
+   If no output appears when using nRF Serial Terminal, select a different serial port in the terminal application.
 
 For more information on how logging works in the |NCS|, consult the :ref:`ug_logging` and :ref:`zephyr:logging_api` documentation pages.
 
