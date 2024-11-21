@@ -226,21 +226,3 @@ ZTEST(ram_sink_tests, test_ram_sink_write_NOK)
 	err = ram_sink.release(ram_sink.ctx);
 	zassert_equal(err, SUIT_PLAT_SUCCESS, "ram_sink.release failed - error %i", err);
 }
-
-ZTEST(ram_sink_tests, test_ram_sink_erase_OK)
-{
-	struct stream_sink ram_sink;
-
-	int err = suit_ram_sink_get(&ram_sink, TEST_DST, sizeof(test_data));
-
-	zassert_equal(err, SUIT_PLAT_SUCCESS, "suit_ram_sink_get failed - error %i", err);
-
-	err = ram_sink.erase(ram_sink.ctx);
-	zassert_equal(err, SUIT_PLAT_SUCCESS, "ram_sink.erase failed - error %i", err);
-
-	err = ram_sink.erase(NULL);
-	zassert_equal(err, SUIT_PLAT_SUCCESS, "ram_sink.erase failed - error %i", err);
-
-	err = ram_sink.release(ram_sink.ctx);
-	zassert_equal(err, SUIT_PLAT_SUCCESS, "ram_sink.release failed - error %i", err);
-}

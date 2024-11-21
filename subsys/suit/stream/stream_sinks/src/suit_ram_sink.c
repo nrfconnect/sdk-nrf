@@ -16,7 +16,6 @@
 
 LOG_MODULE_REGISTER(suit_ram_sink, CONFIG_SUIT_LOG_LEVEL);
 
-static suit_plat_err_t erase(void *ctx);
 static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size);
 static suit_plat_err_t seek(void *ctx, size_t offset);
 static suit_plat_err_t used_storage(void *ctx, size_t *size);
@@ -76,7 +75,7 @@ suit_plat_err_t suit_ram_sink_get(struct stream_sink *sink, uint8_t *dst, size_t
 			ctx->ptr = dst;
 			ctx->in_use = true;
 
-			sink->erase = erase;
+			sink->erase = NULL;
 			sink->write = write;
 			sink->seek = seek;
 			sink->flush = NULL;
@@ -93,25 +92,6 @@ suit_plat_err_t suit_ram_sink_get(struct stream_sink *sink, uint8_t *dst, size_t
 
 	LOG_ERR("Invalid arguments.");
 	return SUIT_PLAT_ERR_INVAL;
-}
-
-static suit_plat_err_t erase(void *ctx)
-{
-	if (ctx != NULL) {
-		struct ram_ctx *ram_ctx = (struct ram_ctx *)ctx;
-		size_t size = ram_ctx->offset_limit - (size_t)ram_ctx->ptr;
-
-		uint8_t *dst = (uint8_t *)suit_memory_global_address_to_ram_address(
-			(uintptr_t)ram_ctx->ptr);
-
-		if (dst == NULL) {
-			return SUIT_PLAT_ERR_INVAL;
-		}
-
-		memset(dst, 0, size);
-	}
-
-	return SUIT_PLAT_SUCCESS;
 }
 
 static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
