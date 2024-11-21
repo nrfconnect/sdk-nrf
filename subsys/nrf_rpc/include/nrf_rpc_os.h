@@ -11,7 +11,7 @@
 #include <nrf_rpc_errno.h>
 
 /**
- * @defgroup nrf_rpc_os_zephyr nRF PRC OS abstraction for Zephyr.
+ * @defgroup nrf_rpc_os_zephyr nRF RPC OS abstraction for Zephyr.
  * @{
  * @brief nRF PRC OS abstraction for Zephyr.
  *

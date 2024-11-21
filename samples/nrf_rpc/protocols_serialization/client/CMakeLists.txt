@@ -18,4 +18,5 @@ zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_RPC src/ot_shell.c)
 zephyr_library_sources_ifdef(CONFIG_MPSL_CX_SOFTWARE src/coex_shell.c)
 zephyr_library_sources_ifdef(CONFIG_LOG_FORWARDER_RPC src/log_rpc_shell.c)
 zephyr_library_sources_ifdef(CONFIG_NFC_RPC src/nfc_shell.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_RPC_DEV_INFO src/dev_info_shell.c)
 # NORDIC SDK APP START
