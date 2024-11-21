@@ -19,7 +19,7 @@ using namespace chip;
 namespace Nrf
 {
 struct CrashDescription {
-	z_arch_esf_t Esf = {};
+	struct arch_esf Esf = {};
 	unsigned int Reason = 0;
 	const char *ThreadName = nullptr;
 	uint32_t *ThreadInt = 0;
