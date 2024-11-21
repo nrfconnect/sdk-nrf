@@ -257,7 +257,7 @@ bool dect_phy_api_scheduler_list_item_remove_by_item(struct dect_phy_api_schedul
 }
 
 struct dect_phy_api_scheduler_list_item *
-dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(uint16_t handle)
+dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(uint32_t handle)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 	bool found = false;
@@ -279,7 +279,7 @@ dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(uint16_t handle)
 	return iterator;
 }
 
-bool dect_phy_api_scheduler_list_item_running_by_phy_op_handle(uint16_t handle)
+bool dect_phy_api_scheduler_list_item_running_by_phy_op_handle(uint32_t handle)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 	bool found = false;
@@ -296,14 +296,14 @@ bool dect_phy_api_scheduler_list_item_running_by_phy_op_handle(uint16_t handle)
 	return found;
 }
 
-void dect_phy_api_scheduler_th_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle)
+void dect_phy_api_scheduler_th_list_item_remove_dealloc_by_phy_op_handle(uint32_t handle)
 {
 	(void)dect_phy_api_scheduler_raise_event_with_data(
 		DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_ITEM_RM_DEALLOC, (void *)&handle,
-		sizeof(uint16_t));
+		sizeof(uint32_t));
 }
 
-void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle)
+void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(uint32_t handle)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 
@@ -311,8 +311,8 @@ void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(uint16_t h
 	dect_phy_api_scheduler_list_item_dealloc(iterator);
 }
 
-void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(uint16_t range_start,
-									    uint16_t range_end)
+void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(uint32_t range_start,
+									    uint32_t range_end)
 {
 	for (int i = range_start; i <= range_end; i++) {
 		dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(i);
@@ -320,7 +320,7 @@ void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(uint
 }
 
 void dect_phy_api_scheduler_list_item_pdu_payload_update_by_phy_handle(
-	uint16_t handle, uint8_t *new_encoded_payload_pdu, uint16_t size)
+	uint32_t handle, uint8_t *new_encoded_payload_pdu, uint16_t size)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 	bool found = false;
@@ -350,7 +350,7 @@ void dect_phy_api_scheduler_list_item_pdu_payload_update_by_phy_handle(
 }
 
 void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
-	uint16_t handle, union nrf_modem_dect_phy_hdr *phy_header,
+	uint32_t handle, union nrf_modem_dect_phy_hdr *phy_header,
 	dect_phy_header_type_t header_type)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
@@ -381,7 +381,7 @@ void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
 }
 
 void dect_phy_api_scheduler_list_item_beacon_tx_sched_config_update_by_phy_op_handle(
-	uint16_t handle, struct dect_phy_api_scheduler_list_item_config *tx_conf)
+	uint32_t handle, struct dect_phy_api_scheduler_list_item_config *tx_conf)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 	bool found = false;
@@ -419,7 +419,7 @@ void dect_phy_api_scheduler_list_item_beacon_tx_sched_config_update_by_phy_op_ha
 }
 
 void dect_phy_api_scheduler_list_item_sched_config_frame_time_update_by_phy_op_handle(
-	uint16_t handle, int64_t frame_time_diff)
+	uint32_t handle, int64_t frame_time_diff)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 	bool found = false;
@@ -1492,7 +1492,7 @@ static void dect_phy_api_scheduler_th_handler(void)
 			break;
 		}
 		case DECT_PHY_API_EVENT_SCHEDULER_OP_LIST_ITEM_RM_DEALLOC: {
-			uint16_t *phy_handle = (uint16_t *)event.data;
+			uint32_t *phy_handle = (uint32_t *)event.data;
 
 			dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
 				*phy_handle);

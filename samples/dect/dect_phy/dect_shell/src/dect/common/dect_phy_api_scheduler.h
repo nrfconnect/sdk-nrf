@@ -186,30 +186,30 @@ struct dect_phy_api_scheduler_list_item *
 dect_phy_api_scheduler_list_item_add(struct dect_phy_api_scheduler_list_item *list_item);
 
 struct dect_phy_api_scheduler_list_item *
-dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(uint16_t handle);
+dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(uint32_t handle);
 
-bool dect_phy_api_scheduler_list_item_running_by_phy_op_handle(uint16_t handle);
+bool dect_phy_api_scheduler_list_item_running_by_phy_op_handle(uint32_t handle);
 
-void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle);
-void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(uint16_t range_start,
-									    uint16_t range_end);
+void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(uint32_t handle);
+void dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(uint32_t range_start,
+									    uint32_t range_end);
 
-void dect_phy_api_scheduler_th_list_item_remove_dealloc_by_phy_op_handle(uint16_t handle);
+void dect_phy_api_scheduler_th_list_item_remove_dealloc_by_phy_op_handle(uint32_t handle);
 
 void dect_phy_api_scheduler_list_item_pdu_payload_update_by_phy_handle(
-	uint16_t handle, uint8_t *new_encoded_payload_pdu, uint16_t size);
+	uint32_t handle, uint8_t *new_encoded_payload_pdu, uint16_t size);
 
 void dect_phy_api_scheduler_list_item_beacon_tx_sched_config_update_by_phy_op_handle(
-	uint16_t handle, struct dect_phy_api_scheduler_list_item_config *tx_conf);
+	uint32_t handle, struct dect_phy_api_scheduler_list_item_config *tx_conf);
 
 void dect_phy_api_scheduler_list_item_sched_config_frame_time_update_by_phy_op_handle(
-	uint16_t handle, int64_t frame_time_diff);
+	uint32_t handle, int64_t frame_time_diff);
 
 void dect_phy_api_scheduler_list_item_beacon_rx_sched_config_update_by_phy_op_handle_range(
 	uint16_t range_start, uint16_t range_end,
 	struct dect_phy_api_scheduler_list_item_config *rx_conf);
 void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
-	uint16_t handle, union nrf_modem_dect_phy_hdr *phy_header,
+	uint32_t handle, union nrf_modem_dect_phy_hdr *phy_header,
 	dect_phy_header_type_t header_type);
 
 void dect_phy_api_scheduler_list_status_print(void);
