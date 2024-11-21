@@ -1,0 +1,53 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Pin mapping suitable for use nRF2240-EK PCA63564 with
+ * Nordic Interposer Board A PCA64172 v0.2.0.
+ * The nRF2240-EK in SLOT 2 of PCA64172.
+ */
+
+/ {
+	nrf_radio_fem: nrf2240_fem {
+		compatible = "nordic,nrf2240-fem";
+		cs-gpios = <&arduino_header 14 GPIO_ACTIVE_HIGH>;	/* D8 */
+		md-gpios = <&arduino_header 13 GPIO_ACTIVE_HIGH>;	/* D7 */
+		pwrmd-gpios = <&arduino_header 4 GPIO_ACTIVE_HIGH>;	/* A4 */
+		twi-if = <&nrf_radio_fem_twi>;
+	};
+};
+
+&arduino_i2c {
+	status = "okay";
+	compatible = "nordic,nrf-twim";
+
+	nrf_radio_fem_twi: nrf2240_fem_twi@30 {
+		compatible = "nordic,nrf2240-fem-twi";
+		status = "okay";
+		reg = <0x30>;
+	};
+
+	/* The nPM1300 on the nRF2240EK is used to supply power to the nRF2240 device. */
+	nrf2240ek_pmic: pmic@6b {
+		compatible = "nordic,npm1300";
+		status = "okay";
+		reg = <0x6b>;
+
+		nrf2240ek_pmic_charger: charger {
+			compatible = "nordic,npm1300-charger";
+			status = "okay";
+			/* When objects are placed close to the PCB antenna of the nRF2240EK shield
+			 * the supply voltage drops on the nRF2240 power supply pin VDDPALDO were observed.
+			 * As a workaround the current limit on VBUS of the PMIC is increased.
+			 */
+			vbus-limit-microamp = <500000>;
+			/* This PMIC does not have a battery, but the settings below are required by the driver */
+			term-microvolt = <4150000>;
+			current-microamp = <150000>;
+			dischg-limit-microamp = <1000000>;
+			thermistor-ohms = <10000>;
+			thermistor-beta = <3380>;
+		};
+	};
+};
