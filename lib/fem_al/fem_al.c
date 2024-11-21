@@ -9,7 +9,9 @@
 
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>
-#include <helpers/nrfx_gppi.h>
+#ifdef DPPI_PRESENT
+#include <nrfx_dppi.h>
+#endif
 #include <nrf_erratas.h>
 
 #include <zephyr/sys/printk.h>
@@ -20,6 +22,16 @@
 #include "fem_al/fem_al.h"
 #include "fem_interface.h"
 #include "radio_def.h"
+
+#ifdef DPPI_PRESENT
+#if defined(NRF53_SERIES)
+#define RADIO_DOMAIN_NRFX_DPPI_INSTANCE NRFX_DPPI_INSTANCE(0)
+#elif defined(NRF54L_SERIES)
+#define RADIO_DOMAIN_NRFX_DPPI_INSTANCE NRFX_DPPI_INSTANCE(10)
+#else
+#error Unsupported SoC type.
+#endif
+#endif
 
 static const struct fem_interface_api *fem_api;
 
@@ -283,6 +295,29 @@ int8_t fem_default_tx_output_power_get(void)
 	return 0;
 }
 
+#if defined(DPPI_PRESENT)
+static nrfx_err_t radio_domain_nrfx_dppi_channel_alloc(uint8_t *channel)
+{
+	nrfx_err_t err;
+	nrfx_dppi_t radio_domain_nrfx_dppi = RADIO_DOMAIN_NRFX_DPPI_INSTANCE;
+
+	err = nrfx_dppi_channel_alloc(&radio_domain_nrfx_dppi, channel);
+
+	return err;
+}
+
+static void radio_domain_nrfx_dppi_channel_enable(uint8_t channel)
+{
+	nrfx_err_t err;
+	nrfx_dppi_t radio_domain_nrfx_dppi = RADIO_DOMAIN_NRFX_DPPI_INSTANCE;
+
+	err = nrfx_dppi_channel_enable(&radio_domain_nrfx_dppi, channel);
+
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	(void)err;
+}
+#endif
+
 int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)
 {
 	if (!timer_instance || (compare_channel_mask == 0)) {
@@ -294,19 +329,18 @@ int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)
 
 #if defined(DPPI_PRESENT)
 	nrfx_err_t err;
-	uint8_t fem_generic_dppi;
+	uint8_t fem_dppi_ch;
 
-	err = nrfx_gppi_channel_alloc(&fem_generic_dppi);
+	err = radio_domain_nrfx_dppi_channel_alloc(&fem_dppi_ch);
 	if (err != NRFX_SUCCESS) {
-		printk("gppi_channel_alloc failed with: %d\n", err);
+		printk("radio_domain_nrfx_dppi_channel_alloc failed with: %d\n", err);
 		return -ENODEV;
 	}
 
-	fem_deactivate_evt.event.generic.event = fem_generic_dppi;
+	fem_deactivate_evt.event.generic.event = fem_dppi_ch;
 
-	nrfx_gppi_event_endpoint_setup(fem_generic_dppi,
-			nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED));
-	nrfx_gppi_channels_enable(BIT(fem_generic_dppi));
+	nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_DISABLED, fem_dppi_ch);
+	radio_domain_nrfx_dppi_channel_enable(fem_dppi_ch);
 #elif defined(PPI_PRESENT)
 	fem_deactivate_evt.event.generic.event =
 				nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
