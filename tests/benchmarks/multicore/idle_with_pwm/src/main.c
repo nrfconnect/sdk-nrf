@@ -66,12 +66,19 @@ int main(void)
 	LOG_INF("Multicore idle_with_pwm test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Core will sleep for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
 
-	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
+#if defined(CONFIG_PM_DEVICE_RUNTIME)
 		pm_device_runtime_enable(pwm_led.dev);
-	}
+#endif
 
 	while (1) {
 		LOG_INF("Multicore idle_with_pwm test iteration %u", cnt++);
+
+#if defined(CONFIG_PM_DEVICE_RUNTIME)
+		/* API for PWM doesn't provide function for device enable/disable.
+		 * Thus PM for PWM has to be managed manually.
+		 */
+		pm_device_runtime_get(pwm_led.dev);
+#endif
 
 		/* Light up LED */
 		current_pulse_width = pulse_min;
@@ -94,6 +101,13 @@ int main(void)
 				0, 0, ret);
 			return ret;
 		}
+
+#if defined(CONFIG_PM_DEVICE_RUNTIME)
+		/* API for PWM doesn't provide function for device enable/disable.
+		 * Thus PM for PWM has to be managed manually.
+		 */
+		pm_device_runtime_put(pwm_led.dev);
+#endif
 
 		/* Sleep / enter low power state */
 		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);
