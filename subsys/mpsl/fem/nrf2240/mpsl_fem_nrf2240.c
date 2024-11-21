@@ -126,7 +126,10 @@ static int fem_nrf2240_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(cs_gpios),
-			.gpiote_ch_id  = cs_gpiote_channel
+			.gpiote_ch_id  = cs_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = cs_gpiote.p_reg,
+#endif
 		},
 		.md_pin_config = {
 			.gpio_pin      = {
@@ -136,7 +139,10 @@ static int fem_nrf2240_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(md_gpios),
-			.gpiote_ch_id  = md_gpiote_channel
+			.gpiote_ch_id  = md_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = md_gpiote.p_reg,
+#endif
 		},
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pwrmd_gpios)
 		.pwrmd_pin_config = {
@@ -177,6 +183,16 @@ static int fem_nrf2240_configure(void)
 	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
 		   (err = mpsl_fem_utils_ppi_channel_alloc(cfg.dppi_channels,
 					ARRAY_SIZE(cfg.dppi_channels));));
+	if (err) {
+		return err;
+	}
+
+	err = mpsl_fem_utils_gpiote_pin_init(&cfg.cs_pin_config);
+	if (err) {
+		return err;
+	}
+
+	err = mpsl_fem_utils_gpiote_pin_init(&cfg.md_pin_config);
 	if (err) {
 		return err;
 	}
