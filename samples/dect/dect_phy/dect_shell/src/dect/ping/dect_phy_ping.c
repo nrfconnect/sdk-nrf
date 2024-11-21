@@ -543,6 +543,8 @@ static void dect_phy_ping_rx_pcc_cb(uint64_t const *time,
 	ctrl_pcc_op_params.pcc_status = *p_rx_status;
 	ctrl_pcc_op_params.phy_header = *p_phy_header;
 	ctrl_pcc_op_params.time = *time;
+	ctrl_pcc_op_params.stf_start_time = p_rx_status->stf_start_time;
+	/* Others from struct dect_phy_common_op_pcc_rcv_params are not needed */
 
 	/* Provide HARQ feedback if requested */
 	if (p_rx_status->header_status == NRF_MODEM_DECT_PHY_HDR_STATUS_VALID &&
@@ -626,7 +628,7 @@ static void dect_phy_ping_rx_pdc_cb(uint64_t const *time,
 
 	dect_app_modem_time_save(time);
 
-	struct dect_phy_commmon_op_pdc_rcv_params ping_pdc_op_params;
+	struct dect_phy_commmon_op_pdc_rcv_params ping_pdc_op_params = { 0 };
 
 	ping_pdc_op_params.rx_status = *p_rx_status;
 
@@ -637,6 +639,9 @@ static void dect_phy_ping_rx_pdc_cb(uint64_t const *time,
 		dect_common_utils_phy_tx_power_to_dbm(ping_data.rx_metrics.rx_phy_transmit_pwr);
 	ping_pdc_op_params.rx_mcs = ping_data.rx_metrics.rx_last_pcc_mcs;
 	ping_pdc_op_params.rx_rssi_level_dbm = rssi_level;
+	ping_pdc_op_params.last_rx_op_channel = ping_data.cmd_params.channel;
+
+	/* Others from struct dect_phy_commmon_op_pdc_rcv_params are not needed */
 
 	if (length <= sizeof(ping_pdc_op_params.data)) {
 		memcpy(ping_pdc_op_params.data, p_data, length);
@@ -1018,6 +1023,9 @@ static int dect_phy_ping_client_start(void)
 	ping_data.client_data.tx_op.data_size = ping_pdu_byte_count;
 	ping_data.client_data.tx_op.data = encoded_data_to_send;
 	ping_data.client_data.tx_op.lbt_period = 0;
+	ping_data.client_data.tx_op.lbt_rssi_threshold_max =
+		current_settings->rssi_scan.busy_threshold;
+
 	ping_data.client_data.tx_op.network_id = current_settings->common.network_id;
 	ping_data.client_data.tx_op.phy_header = &ping_data.client_data.tx_phy_header;
 	ping_data.client_data.tx_op.phy_type = DECT_PHY_HEADER_TYPE2;
@@ -1146,6 +1154,7 @@ static int dect_phy_ping_tx_request_results(void)
 	ping_pdu.header.transmitter_id = current_settings->common.transmitter_id;
 	ping_pdu.header.pwr_ctrl_expected_rssi_level_dbm =
 		params->pwr_ctrl_pdu_expected_rx_rssi_level;
+	ping_pdu.message.results_req.unused = 0;
 	dect_phy_ping_pdu_encode(encoded_data_to_send, &ping_pdu);
 
 	tx_op.bs_cqi = NRF_MODEM_DECT_PHY_BS_CQI_NOT_USED;
@@ -1153,6 +1162,7 @@ static int dect_phy_ping_tx_request_results(void)
 	tx_op.data_size = DECT_PHY_PING_RESULTS_REQ_LEN;
 	tx_op.data = encoded_data_to_send;
 	tx_op.lbt_period = 0;
+	tx_op.lbt_rssi_threshold_max = current_settings->rssi_scan.busy_threshold;
 	tx_op.network_id = current_settings->common.network_id;
 	tx_op.phy_header = &phy_header;
 	tx_op.phy_type = DECT_PHY_HEADER_TYPE2;
@@ -1263,7 +1273,7 @@ dect_phy_ping_client_report_local_results_and_req_server_results(int64_t *elapse
 	ping_data.restarted_count = 0;
 	dect_phy_ping_rx_metrics_reset(params);
 
-	memset(&ping_data.tx_metrics, 0, sizeof(struct dect_phy_ping_rx_metrics));
+	memset(&ping_data.tx_metrics, 0, sizeof(struct dect_phy_ping_tx_metrics));
 
 	return ret;
 }
@@ -1322,11 +1332,14 @@ static int dect_phy_ping_server_results_tx(char *result_str)
 	tx_op.data_size = bytes_to_send;
 	tx_op.data = encoded_data_to_send;
 	tx_op.lbt_period = 0;
+	tx_op.lbt_rssi_threshold_max = current_settings->rssi_scan.busy_threshold;
+
 	tx_op.network_id = current_settings->common.network_id;
 	tx_op.phy_header = &phy_header;
 	tx_op.phy_type = DECT_PHY_HEADER_TYPE2;
 	tx_op.handle = DECT_PHY_PING_RESULTS_RESP_TX_HANDLE;
 	tx_op.start_time = first_possible_tx;
+
 	tx_rx_param.tx = tx_op;
 	tx_rx_param.rx = ping_data.server_data.server_rx_op;
 
@@ -1414,6 +1427,8 @@ static int dect_phy_ping_server_ping_resp_tx(struct dect_phy_data_rcv_common_par
 	tx_op.data_size = bytes_to_send;
 	tx_op.data = encoded_data_to_send;
 	tx_op.lbt_period = 0;
+	tx_op.lbt_rssi_threshold_max = current_settings->rssi_scan.busy_threshold;
+
 	tx_op.network_id = current_settings->common.network_id;
 	tx_op.phy_header = &phy_header;
 	tx_op.phy_type = DECT_PHY_HEADER_TYPE2;

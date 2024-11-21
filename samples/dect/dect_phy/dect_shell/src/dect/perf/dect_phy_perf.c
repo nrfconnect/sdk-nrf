@@ -465,6 +465,8 @@ static void dect_phy_perf_rx_pcc_cb(uint64_t const *time,
 
 	ctrl_pcc_op_params.pcc_status = *p_rx_status;
 	ctrl_pcc_op_params.phy_header = *p_phy_header;
+	ctrl_pcc_op_params.phy_len = header->packet_length;
+	ctrl_pcc_op_params.phy_len_type = header->packet_length_type;
 	ctrl_pcc_op_params.time = *time;
 	ctrl_pcc_op_params.stf_start_time = p_rx_status->stf_start_time;
 
@@ -596,6 +598,7 @@ static void dect_phy_perf_rx_pdc_cb(uint64_t const *time,
 
 	perf_pdc_op_params.rx_pwr_dbm = 0; /* Not needed from PDC */
 	perf_pdc_op_params.rx_rssi_level_dbm = rssi_level;
+	perf_pdc_op_params.last_rx_op_channel = perf_data.cmd_params.channel;
 
 	if (length <= sizeof(perf_pdc_op_params.data)) {
 		memcpy(perf_pdc_op_params.data, p_data, length);
@@ -1062,6 +1065,7 @@ static int dect_phy_perf_tx_request_results(void)
 	memcpy(&phy_header.type_2, &header, sizeof(phy_header.type_2));
 
 	perf_pdu.header.message_type = DECT_MAC_MESSAGE_TYPE_PERF_RESULTS_REQ;
+	perf_pdu.message.results_req.unused = 0;
 	perf_pdu.header.transmitter_id = current_settings->common.transmitter_id;
 	dect_phy_perf_pdu_encode(encoded_data_to_send, &perf_pdu);
 

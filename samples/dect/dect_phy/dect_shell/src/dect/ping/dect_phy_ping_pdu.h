@@ -37,7 +37,7 @@ typedef struct {
 } dect_phy_ping_pdu_results_resp_data;
 
 typedef struct {
-	uint32_t foo;
+	uint32_t unused;
 } dect_phy_ping_pdu_results_req;
 
 typedef struct {

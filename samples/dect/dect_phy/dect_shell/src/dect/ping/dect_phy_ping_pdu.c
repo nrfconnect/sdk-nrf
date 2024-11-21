@@ -44,10 +44,10 @@ uint8_t *dect_phy_ping_pdu_encode(uint8_t *p_target, const dect_phy_ping_pdu_t *
 		p_target = p_target + sizeof(p_input->message.tx_data.pdu_payload);
 	} else if (p_input->header.message_type == DECT_MAC_MESSAGE_TYPE_PING_RESULTS_REQ) {
 		p_target = dect_common_utils_32bit_be_write(p_target,
-							    p_input->message.results_req.foo);
+							    p_input->message.results_req.unused);
 	} else if (p_input->header.message_type == DECT_MAC_MESSAGE_TYPE_PING_RESULTS_RESP) {
 		strncpy(p_target, p_input->message.results.results_str,
-			DECT_PHY_PING_RESULTS_DATA_MAX_LEN);
+			DECT_PHY_PING_RESULTS_DATA_MAX_LEN - 1);
 	}
 
 	return p_target;
@@ -69,7 +69,7 @@ int dect_phy_ping_pdu_decode(dect_phy_ping_pdu_t *p_target, const uint8_t *p_dat
 		       p_target->message.tx_data.payload_length);
 	} else if (p_target->header.message_type == DECT_MAC_MESSAGE_TYPE_PING_RESULTS_RESP) {
 		strncpy(p_target->message.results.results_str, p_ptr,
-			DECT_PHY_PING_RESULTS_DATA_MAX_LEN);
+			DECT_PHY_PING_RESULTS_DATA_MAX_LEN - 1);
 	}
 
 	return 0;
