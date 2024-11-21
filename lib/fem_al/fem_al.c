@@ -162,7 +162,7 @@ uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode)
 
 uint32_t fem_default_ramp_up_time_get(bool rx, nrf_radio_mode_t mode)
 {
-	bool fast_ramp_up = nrf_radio_modecnf0_ru_get(NRF_RADIO);
+	bool fast_ramp_up = nrf_radio_fast_ramp_up_check(NRF_RADIO);
 
 	return rx ? fem_radio_rx_ramp_up_delay_get(fast_ramp_up, mode) :
 		    fem_radio_tx_ramp_up_delay_get(fast_ramp_up, mode);
