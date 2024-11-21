@@ -509,6 +509,7 @@ static void dect_phy_ctrl_mdm_operation_complete_cb(uint64_t const *time, int16_
 		.time = *time,
 	};
 
+
 	dect_app_modem_time_save(time);
 	dect_phy_api_scheduler_mdm_op_completed(&op_completed_params);
 	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_COMPLETED,
@@ -846,8 +847,8 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params, bool restart)
 		.busy_rssi_limit = params->busy_rssi_limit,
 		.free_rssi_limit = params->free_rssi_limit,
 		.interval_secs = params->rssi_interval_secs,
+		.scan_time_ms = params->rssi_interval_secs * 1000,
 	};
-
 
 	ctrl_data.rx_cmd_params = *params;
 	params->channel = ctrl_data.rx_cmd_current_channel;

@@ -47,6 +47,7 @@ struct dect_phy_rssi_scan_data {
 
 	/* Storage for measurement data extracted to subslot level */
 	struct dect_phy_rssi_scan_data_result_measurement_data *measurement_data_ptr;
+	uint16_t measurement_data_count;
 
 	/* Results */
 	uint16_t results_index;
@@ -73,6 +74,7 @@ static void dect_phy_scan_rssi_on_going_set(bool on_going)
 		if (rssi_scan_data.measurement_data_ptr) {
 			k_free(rssi_scan_data.measurement_data_ptr);
 			rssi_scan_data.measurement_data_ptr = NULL;
+			rssi_scan_data.measurement_data_count = 0;
 		}
 	}
 }
@@ -341,6 +343,7 @@ int dect_phy_scan_rssi_data_init(struct dect_phy_rssi_scan_params *params)
 {
 	if (rssi_scan_data.measurement_data_ptr) {
 		k_free(rssi_scan_data.measurement_data_ptr);
+		rssi_scan_data.measurement_data_count = 0;
 	}
 	memset(&rssi_scan_data, 0, sizeof(struct dect_phy_rssi_scan_data));
 	rssi_scan_data.rssi_high_level = -127;
@@ -355,6 +358,8 @@ int dect_phy_scan_rssi_data_init(struct dect_phy_rssi_scan_params *params)
 			DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT) {
 			uint32_t frame_count = params->scan_time_ms / DECT_RADIO_FRAME_DURATION_MS;
 
+			frame_count += 30; /* Add some extra for reinit delay */
+			rssi_scan_data.measurement_data_count = frame_count;
 			rssi_scan_data.measurement_data_ptr =
 			(struct dect_phy_rssi_scan_data_result_measurement_data *)k_calloc(
 				frame_count,
@@ -441,7 +446,8 @@ static void dect_phy_rssi_scan_data_subslot_count_based_results(bool store_verdi
 	 * i: for measurements
 	 * j: for subslots
 	 */
-	for (int i = 0; i < rssi_scan_data.current_scan_count && rssi_scan_data.on_going; i++) {
+	for (int i = 0; i < rssi_scan_data.current_scan_count &&
+			i < rssi_scan_data.measurement_data_count && rssi_scan_data.on_going; i++) {
 		current_measured_subslot_count = 0;
 
 		output_str[0] = '\0';
@@ -549,6 +555,7 @@ static void dect_phy_rssi_scan_data_subslot_count_based_results(bool store_verdi
 
 	dect_phy_rssi_scan_result_verdict_to_string(final_verdict, final_verdict_str);
 
+
 	desh_print("Subslot count based results:");
 	desh_print(
 		"  total subslots: %d\n"
@@ -571,6 +578,11 @@ static void dect_phy_rssi_scan_data_subslot_count_based_results(bool store_verdi
 	rssi_scan_data.results[rssi_scan_data.results_index].subslot_count_type_results
 			.possible_percent = possible_percent;
 
+	if (rssi_scan_data.current_scan_count > rssi_scan_data.measurement_data_count) {
+		desh_warn("  WARNING: Not all measurements were stored. Received %d, "
+			  "Storage size %d",
+			rssi_scan_data.current_scan_count, rssi_scan_data.measurement_data_count);
+	}
 	desh_print(
 		"  Final verdict %s%s%s based on SCAN_SUITABLE %d%%:\n"
 		"    free: %.02f%%, possible: %.02f%%",
@@ -797,8 +809,8 @@ void dect_phy_scan_rssi_cb_handle(enum nrf_modem_dect_phy_err status,
 				}
 			}
 
-			if (rssi_scan_data.cmd_params.result_verdict_type ==
-				DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_ALL) {
+			if (rssi_scan_data.cmd_params.result_verdict_type !=
+				DECT_PHY_RSSI_SCAN_RESULT_VERDICT_TYPE_SUBSLOT_COUNT) {
 				continue;
 			}
 
@@ -829,10 +841,14 @@ void dect_phy_scan_rssi_cb_handle(enum nrf_modem_dect_phy_err status,
 				 * that are for each symbol.
 				 * Store highest RSSI value per subslot
 				 */
-				rssi_scan_data.measurement_data_ptr[
-					rssi_scan_data.current_scan_count]
-						.measurement_highs[k] = subslot_high;
+				__ASSERT_NO_MSG(rssi_scan_data.measurement_data_ptr);
 
+				if (rssi_scan_data.current_scan_count <
+					rssi_scan_data.measurement_data_count) {
+					rssi_scan_data.measurement_data_ptr[
+						rssi_scan_data.current_scan_count]
+							.measurement_highs[k] = subslot_high;
+				}
 				j = 1; /* Next subslot */
 				k++;
 				subslot_high = INT8_MIN;
