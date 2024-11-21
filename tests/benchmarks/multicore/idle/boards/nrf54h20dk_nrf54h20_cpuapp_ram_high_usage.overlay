@@ -20,3 +20,11 @@
 &usbhs {
     status = "disabled";
 };
+
+&cpusec_cpuapp_ipc {
+    status = "disabled";
+};
+
+&cpusec_bellboard {
+    status = "disabled";
+};
