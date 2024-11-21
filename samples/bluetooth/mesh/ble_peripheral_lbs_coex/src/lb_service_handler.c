@@ -119,7 +119,7 @@ static void lbs_adv_start(void)
 {
 	int err;
 	size_t id_count = 0xFF;
-	struct bt_le_adv_param adv_params = *BT_LE_ADV_CONN;
+	struct bt_le_adv_param adv_params = *BT_LE_ADV_CONN_FAST_2;
 	/* Use different identity from Bluetooth Mesh to avoid conflicts with Mesh Provisioning
 	 * Service and Mesh Proxy Service advertisements.
 	 */

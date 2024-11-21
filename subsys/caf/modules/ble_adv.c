@@ -358,7 +358,7 @@ static int setup_accept_list(uint8_t local_id)
 static int ble_adv_start_undirected(void)
 {
 	struct bt_le_adv_param adv_param = {
-		.options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME,
+		.options = BT_LE_ADV_OPT_CONN,
 	};
 
 	__ASSERT_NO_MSG((state == STATE_ACTIVE) || (state == STATE_GRACE_PERIOD));

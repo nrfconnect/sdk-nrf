@@ -100,7 +100,7 @@ static int adv_start_internal(void)
 	 */
 	static const struct bt_le_adv_param adv_param = {
 		.id = BT_ID_DEFAULT,
-		.options = (BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME),
+		.options = BT_LE_ADV_OPT_CONN,
 		.interval_min = BT_GAP_ADV_FAST_INT_MIN_1,
 		.interval_max = BT_GAP_ADV_FAST_INT_MAX_1,
 		.peer = NULL,

@@ -16,13 +16,12 @@
 			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
 #define LE_AUDIO_EXTENDED_ADV_CONN_NAME                                                            \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONNECTABLE |                        \
-				BT_LE_ADV_OPT_USE_NAME,                                            \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_USE_NAME,       \
 			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
 #define LE_AUDIO_EXTENDED_ADV_CONN_NAME_FILTER                                                     \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONNECTABLE |                        \
-				BT_LE_ADV_OPT_USE_NAME | BT_LE_ADV_OPT_FILTER_CONN,                \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_USE_NAME |      \
+				BT_LE_ADV_OPT_FILTER_CONN,                                         \
 			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
 #define LE_AUDIO_PERIODIC_ADV                                                                      \
@@ -30,8 +29,8 @@
 			    BT_LE_PER_ADV_OPT_NONE)
 
 #define BT_LE_ADV_FAST_CONN                                                                        \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, BT_GAP_ADV_FAST_INT_MIN_1,                      \
-			BT_GAP_ADV_FAST_INT_MAX_1, NULL)
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN, BT_GAP_ADV_FAST_INT_MIN_1, BT_GAP_ADV_FAST_INT_MAX_1,  \
+			NULL)
 
 /* Broadcast name can be max 32 bytes long, so this will be the limit for both.
  * Add one for '\0' at the end.

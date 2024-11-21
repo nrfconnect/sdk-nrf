@@ -177,7 +177,7 @@ static int ble_utils_init(struct bt_nus_cb *nus_clbs,
 		goto end;
 	}
 
-	ret = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd,
+	ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd,
 			      ARRAY_SIZE(sd));
 	if (ret) {
 		LOG_ERR("Advertising failed to start (error: %d)", ret);
