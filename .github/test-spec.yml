@@ -14,15 +14,19 @@
 
 "CI-tool-test-linux":
   - "scripts/requirements*.txt"
-  - "scripts/tools-versions-linux.txt"
+  - "scripts/tools-versions-linux.yml"
 
 "CI-tool-test-win":
   - "scripts/requirements*.txt"
-  - "scripts/tools-versions-win10.txt"
+  - "scripts/tools-versions-win10.yml"
 
 "CI-tool-test-darwin":
   - "scripts/requirements*.txt"
-  - "scripts/tools-versions-darwin.txt"
+  - "scripts/tools-versions-darwin.yml"
+
+"CI-doc-internal":
+  - "doc/requirements.txt"
+  - "scripts/tools-versions-linux.yml"
 
 "CI-iot-serial-lte-modem-test":
   - "applications/serial_lte_modem/**/*"
