@@ -299,6 +299,7 @@ Bluetooth samples
 
   * The :ref:`channel_sounding_ras_reflector` sample demonstrating how to implement a Channel Sounding Reflector that exposes the Ranging Responder GATT Service.
   * The :ref:`channel_sounding_ras_initiator` sample demonstrating basic distance estimation with Channel Sounding by setting up a Channel Sounding Initiator that acts as a Ranging Requestor GATT Client.
+  * The :ref:`bt_peripheral_with_multiple_identities` sample demonstrating how to use a single physical device to create and manage multiple advertisers, making it appear as multiple distinct devices by assigning each a unique identity.
   * Support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
 
     * :ref:`direct_test_mode`

@@ -451,6 +451,7 @@
 /samples/bluetooth/peripheral_rscs/       @nrfconnect/ncs-si-muffin
 /samples/bluetooth/peripheral_status/     @nrfconnect/ncs-si-muffin
 /samples/bluetooth/peripheral_uart/       @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_with_multiple_identities/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/radio_coex_1wire/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/radio_notification_cb/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/rpc_host/              @nrfconnect/ncs-si-muffin
