@@ -47,6 +47,7 @@ manifest-mpi-offset=0x2030
 
 menuconfig  SUIT_MPI_$(manifest)
 	bool "Application recovery manifest configuration"
+	default y if SUIT_BUILD_RECOVERY
 
 rsource "Kconfig.template.manifest_config"
 
@@ -84,6 +85,7 @@ manifest-mpi-offset=0x20c0
 
 menuconfig  SUIT_MPI_$(manifest)
 	bool "Application local (3) manifest configuration"
+	default y if SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3
 
 rsource "Kconfig.template.manifest_config"
 
@@ -113,6 +115,7 @@ manifest-mpi-offset=0x1000
 
 menuconfig  SUIT_MPI_$(manifest)
 	bool "Radio recovery manifest configuration"
+	default y if SUIT_BUILD_RECOVERY
 
 rsource "Kconfig.template.manifest_config"
 

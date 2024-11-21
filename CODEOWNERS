@@ -71,6 +71,8 @@
 /cmake/                                   @nrfconnect/ncs-co-build-system
 /cmake/sysbuild/suit.cmake                @nrfconnect/ncs-charon
 /cmake/sysbuild/suit_utilities.cmake      @nrfconnect/ncs-charon
+/cmake/sysbuild/suit_provisioning.cmake   @nrfconnect/ncs-charon
+/cmake/sysbuild/suit_provisioning_nrf54h20.cmake @nrfconnect/ncs-charon
 
 # All doc related files
 /doc/_zoomin/                             @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
@@ -774,6 +776,8 @@
 # Sysbuild
 /sysbuild/                                @nrfconnect/ncs-co-build-system
 /sysbuild/Kconfig.suit                    @nrfconnect/ncs-charon
+/sysbuild/Kconfig.suit_provisioning       @nrfconnect/ncs-charon
+/sysbuild/suit_provisioning/              @nrfconnect/ncs-charon
 /sysbuild/suit.cmake                      @nrfconnect/ncs-charon
 
 # Tests
