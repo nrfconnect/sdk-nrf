@@ -64,10 +64,6 @@ Trying to change them directly in an image will result in the new value being ov
 | :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR`                             +               ``SB_CONFIG_MATTER_OTA``                                    |                         |
 +-------------------------------------------------------------------------+                                                                           |                         |
 | :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_BUILD`                           +                                                                           |                         |
-+-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_SUIT_MPI_APP_RECOVERY`                          +               ``SB_CONFIG_SUIT_BUILD_RECOVERY``                           |                         |
-+-------------------------------------------------------------------------+                                                                           |                         |
-| :kconfig:option:`CONFIG_SUIT_MPI_RAD_RECOVERY`                          +                                                                           |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
 | :kconfig:option:`CONFIG_SINGLE_APPLICATION_SLOT`                        +               ``SB_CONFIG_MCUBOOT_MODE_SINGLE_APP``                       | MCUboot                 |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
