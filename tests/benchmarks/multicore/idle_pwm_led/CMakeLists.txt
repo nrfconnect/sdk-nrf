@@ -14,6 +14,6 @@ if(NOT SYSBUILD)
 		" Add --sysbuild argument to west build command to prepare all the images.")
 endif()
 
-project(idle_with_pwm)
+project(idle_pwm_led)
 
 target_sources(app PRIVATE src/main.c)

@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(idle_with_pwm, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(idle_pwm_led, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/pwm.h>
@@ -63,7 +63,7 @@ int main(void)
 	LOG_DBG("PWM pulse width varies from %u to %u with %u step",
 		pulse_min, pulse_max, pulse_step);
 
-	LOG_INF("Multicore idle_with_pwm test on %s", CONFIG_BOARD_TARGET);
+	LOG_INF("Multicore idle_pwm_led test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Core will sleep for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
 
 #if defined(CONFIG_PM_DEVICE_RUNTIME)
@@ -71,7 +71,7 @@ int main(void)
 #endif
 
 	while (1) {
-		LOG_INF("Multicore idle_with_pwm test iteration %u", cnt++);
+		LOG_INF("Multicore idle_pwm_led test iteration %u", cnt++);
 
 #if defined(CONFIG_PM_DEVICE_RUNTIME)
 		/* API for PWM doesn't provide function for device enable/disable.

@@ -34,19 +34,19 @@ The radio core uses pwm131 to generate PWM signal on GPIO port 0, pin 7.
 
 There are three test configurations in the :file:`testcase.yaml`.
 
-* ``benchmarks.multicore.idle_with_pwm.nrf54h20dk_cpuapp_cpurad.s2ram``
+* ``benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram``
 
   This configuration uses Kconfig options that enable entering low power modes.
   Logging is disabled.
   Core sleeps for time sufficient to enter the ``suspend-to-ram`` power state.
 
-* ``benchmarks.multicore.idle_with_pwm.nrf54h20dk_cpuapp_cpurad.sleep``
+* ``benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.sleep``
 
   This configuration uses Kconfig options that enable entering low power modes.
   Logging is disabled.
   Core sleeps for time sufficient to enter the ``suspend-to-idle`` power state.
 
-* ``benchmarks.multicore.idle_with_pwm.nrf54h20dk_cpuapp_cpurad.no_sleep``
+* ``benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.no_sleep``
 
   You can use this configuration for debug purposes.
   Logging is enabled while power mode is disabled.
@@ -54,7 +54,7 @@ There are three test configurations in the :file:`testcase.yaml`.
 Building and running
 ********************
 
-.. |test path| replace:: :file:`tests/benchmarks/multicore/idle_with_pwm`
+.. |test path| replace:: :file:`tests/benchmarks/multicore/idle_pwm_led`
 
 .. include:: /includes/build_and_run_test.txt
 
@@ -63,7 +63,7 @@ See the example:
 
 .. code-block:: console
 
-   west build -p -b nrf54h20dk/nrf54h20/cpuapp -T benchmarks.multicore.idle_with_pwm.nrf54h20dk_cpuapp_cpurad.s2ram .
+   west build -p -b nrf54h20dk/nrf54h20/cpuapp -T benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram .
 
 Testing
 =======

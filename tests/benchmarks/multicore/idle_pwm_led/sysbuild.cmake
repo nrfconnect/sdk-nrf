@@ -17,6 +17,6 @@ ExternalZephyrProject_Add(
   )
 
 # Add a dependency so that the remote image will be built and flashed first
-add_dependencies(idle_with_pwm remote)
+add_dependencies(idle_pwm_led remote)
 # Add dependency so that the remote image is flashed first.
-sysbuild_add_dependencies(FLASH idle_with_pwm remote)
+sysbuild_add_dependencies(FLASH idle_pwm_led remote)
