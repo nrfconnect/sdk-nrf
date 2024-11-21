@@ -34,7 +34,7 @@ typedef struct {
 	char results_str[DECT_PHY_PERF_RESULTS_DATA_MAX_LEN];
 } dect_phy_perf_pdu_results_resp_data;
 typedef struct {
-	uint32_t foo;
+	uint32_t unused;
 } dect_phy_perf_pdu_results_req;
 
 typedef struct {
@@ -44,7 +44,7 @@ typedef struct {
 } dect_phy_perf_pdu_tx_data;
 
 typedef struct {
-	uint8_t foo_fighters;
+	uint8_t unused;
 } dect_phy_perf_pdu_harq_feedback_t;
 
 typedef union {

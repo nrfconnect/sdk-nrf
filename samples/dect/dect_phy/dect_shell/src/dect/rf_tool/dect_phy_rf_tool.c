@@ -178,6 +178,7 @@ static void dect_phy_rf_tool_rx_pcc_cb(uint64_t const *time,
 				       union nrf_modem_dect_phy_hdr const *p_phy_header)
 {
 	struct dect_phy_common_op_pcc_rcv_params ctrl_pcc_op_params;
+	struct dect_phy_header_type2_format0_t *header = (void *)p_phy_header;
 
 	dect_app_modem_time_save(time);
 
@@ -185,6 +186,8 @@ static void dect_phy_rf_tool_rx_pcc_cb(uint64_t const *time,
 	ctrl_pcc_op_params.phy_header = *p_phy_header;
 	ctrl_pcc_op_params.time = *time;
 	ctrl_pcc_op_params.stf_start_time = p_rx_status->stf_start_time;
+	ctrl_pcc_op_params.phy_len = header->packet_length;
+	ctrl_pcc_op_params.phy_len_type = header->packet_length_type;
 
 	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_RX_PCC,
 					  (void *)&ctrl_pcc_op_params,
@@ -222,6 +225,7 @@ static void dect_phy_rf_tool_rx_pdc_cb(uint64_t const *time,
 
 	rf_tool_pdc_op_params.rx_pwr_dbm = 0;		      /* Taken from PCC */
 	rf_tool_pdc_op_params.rx_rssi_level_dbm = rssi_level; /* Used from PCC */
+	rf_tool_pdc_op_params.last_rx_op_channel = rf_tool_data.cmd_params.channel;
 
 	if (length <= sizeof(rf_tool_pdc_op_params.data)) {
 		memcpy(rf_tool_pdc_op_params.data, p_data, length);
@@ -1191,7 +1195,11 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 			dect_common_utils_subslots_in_bytes(len_subslots, params->tx_mcs);
 
 		if (len_bytes <= 0) {
-			desh_error("Unsupported slot/mcs combination");
+			desh_error("%s: Unsupported slot/mcs combination", __func__);
+			return -1;
+		}
+		if (len_bytes > DECT_DATA_MAX_LEN) {
+			desh_error("%s: Too long TX data: %d bytes", __func__, len_bytes);
 			return -1;
 		}
 
