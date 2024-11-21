@@ -132,5 +132,8 @@ void process_psa_tls(void)
 		LOG_INF("Closing TLS connection");
 		(void)close(client);
 		(void)close(sock);
+
+		/* Give some time to properly close sockets before creating new ones */
+		k_sleep(K_MSEC(200));
 	}
 }
