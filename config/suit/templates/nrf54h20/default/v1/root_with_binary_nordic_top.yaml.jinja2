@@ -1,24 +1,19 @@
 {%- set component_index = 0 %}
 {%- set component_list = [] %}
-{%- if application is not defined %}
-  {%- set main_config = radio %}
-{%- else %}
-  {%- set main_config = application %}
-{%- endif %}
-{%- set mpi_root_vendor_name = main_config['config']['CONFIG_SUIT_MPI_ROOT_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_root_class_name = main_config['config']['CONFIG_SUIT_MPI_ROOT_CLASS_NAME']|default('nRF54H20_sample_root') %}
-{%- set mpi_application_vendor_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_application_class_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
-{%- set mpi_radio_vendor_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_radio_class_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
+{%- set mpi_root_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_ROOT_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_root_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_ROOT_CLASS_NAME']|default('nRF54H20_sample_root') %}
+{%- set mpi_application_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_application_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
+{%- set mpi_radio_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_radio_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
 {%- if 'SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] != '' %}
   {%- set nordic_top = True %}
 {%- else %}
   {%- set nordic_top = False %}
 {%- endif %}
 {%- if 'SB_CONFIG_SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3'] != '' %}
-  {%- set mpi_app_recovery_local_vendor_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_3_VENDOR_NAME']|default('nordicsemi.com') %}
-  {%- set mpi_app_recovery_local_class_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_3_CLASS_NAME']|default('nRF54H20_sample_app_3') %}
+  {%- set mpi_app_recovery_local_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_VENDOR_NAME']|default('nordicsemi.com') %}
+  {%- set mpi_app_recovery_local_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_CLASS_NAME']|default('nRF54H20_sample_app_3') %}
 {%- endif %}
 {%- if app_recovery_img is defined and 'CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP' in app_recovery_img['config'] and app_recovery_img['config'][CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP] != ''  %}
   {%- set recovery_button_check_on_invoke = True %}

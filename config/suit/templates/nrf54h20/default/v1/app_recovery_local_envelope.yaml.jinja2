@@ -1,5 +1,5 @@
-{%- set mpi_app_recovery_local_vendor_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_3_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_app_recovery_local_class_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_3_CLASS_NAME']|default('nRF54H20_sample_app_3') %}
+{%- set mpi_app_recovery_local_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_app_recovery_local_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_CLASS_NAME']|default('nRF54H20_sample_app_3') %}
 SUIT_Envelope_Tagged:
   suit-authentication-wrapper:
     SuitDigest:
