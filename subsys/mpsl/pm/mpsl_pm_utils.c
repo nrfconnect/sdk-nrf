@@ -21,7 +21,8 @@ LOG_MODULE_REGISTER(mpsl_pm_utils, CONFIG_MPSL_LOG_LEVEL);
  * margins and allow optimal power savings.
  */
 #define TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US 1000
-#define PM_MAX_LATENCY_HCI_COMMANDS_US 499999
+/* depends on min-residency-us of idle RAM not retained*/
+#define PM_MAX_LATENCY_HCI_COMMANDS_US (1000 - 1)
 
 static void m_work_handler(struct k_work *work);
 static K_WORK_DELAYABLE_DEFINE(pm_work, m_work_handler);

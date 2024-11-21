@@ -18,7 +18,7 @@
 
 #include <mpsl/mpsl_pm_utils.h>
 
-#define PM_MAX_LATENCY_HCI_COMMANDS_US 499999
+#define PM_MAX_LATENCY_HCI_COMMANDS_US (1000 - 1)
 
 #define TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US 1000
 
