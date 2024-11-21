@@ -16,7 +16,7 @@
 
 /* "callbacks" from scheduler that needs unblocking implementation */
 int dect_phy_api_scheduler_mdm_op_req_failed_evt_send(
-	struct dect_phy_api_scheduler_op_completed_params *params);
+	struct dect_phy_common_op_completed_params *params);
 
 /* Informs that scheduler is suspended/resumed accordingly */
 void dect_phy_api_scheduler_suspended_evt_send(void);

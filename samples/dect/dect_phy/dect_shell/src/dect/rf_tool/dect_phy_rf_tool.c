@@ -164,15 +164,10 @@ static void dect_phy_rf_tool_op_complete_cb(uint64_t const *time, int16_t temper
 		.status = status,
 		.time = *time,
 	};
-	struct dect_phy_api_scheduler_op_completed_params op_completed_params = {
-		.handle = handle,
-		.status = status,
-		.time = *time,
-	};
 
 	dect_app_modem_time_save(time);
 
-	dect_phy_api_scheduler_mdm_op_completed(&op_completed_params);
+	dect_phy_api_scheduler_mdm_op_completed(&rf_tool_op_completed_params);
 	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED,
 					  (void *)&rf_tool_op_completed_params,
 					  sizeof(struct dect_phy_common_op_completed_params));
@@ -906,9 +901,10 @@ static void dect_phy_rf_tool_phy_init(void)
 
 /**************************************************************************************************/
 
-static void dect_phy_rf_tool_rx_to_mdm_cb(uint64_t start_time, uint64_t frame_time, int err)
+static void dect_phy_rf_tool_rx_to_mdm_cb(
+	struct dect_phy_common_op_completed_params *params, uint64_t frame_time)
 {
-	if (!err) {
+	if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
 		if (rf_tool_data.rx_metrics.rx_op_to_mdm_ok_count == 0) {
 			rf_tool_data.rx_metrics.first_rx_mdm_op_frame_time = frame_time;
 		}
@@ -918,9 +914,10 @@ static void dect_phy_rf_tool_rx_to_mdm_cb(uint64_t start_time, uint64_t frame_ti
 	}
 }
 
-static void dect_phy_rf_tool_tx_to_mdm_cb(uint64_t start_time, uint64_t frame_time, int err)
+static void dect_phy_rf_tool_tx_to_mdm_cb(
+	struct dect_phy_common_op_completed_params *params, uint64_t frame_time)
 {
-	if (!err) {
+	if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
 		rf_tool_data.tx_metrics.tx_last_tx_scheduled_frame_time_mdm_ticks = frame_time;
 		rf_tool_data.tx_metrics.tx_last_tx_scheduled_frame_time_mdm_ticks = frame_time;
 	} else {
