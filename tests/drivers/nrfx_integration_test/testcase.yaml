@@ -12,7 +12,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpunet
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
@@ -23,7 +22,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpunet
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
   nrfx_integration_test.build.bt.softdevice:

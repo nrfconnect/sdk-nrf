@@ -91,10 +91,8 @@ tests:
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
     platform_allow: >
       nrf54l15dk/nrf54l15/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build oberon sysbuild ci_samples_crypto
   sample.psa_tls.client.ecdsa.oberon:
     sysbuild: true
@@ -103,10 +101,8 @@ tests:
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-psa.conf"
     platform_allow: >
       nrf54l15dk/nrf54l15/cpuapp
-      nrf54l15pdk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
     tags: ci_build oberon sysbuild ci_samples_crypto
   ################################################################################
   ## PSA APIs with Cracen
@@ -117,11 +113,9 @@ tests:
     extra_args: >
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
     platform_allow: >
-      nrf54l15dk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp/ns
+      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     tags: ci_build cracen sysbuild ci_samples_crypto
   sample.psa_tls.client.ecdsa.cracen:
@@ -130,11 +124,9 @@ tests:
     extra_args: >
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
     platform_allow: >
-      nrf54l15dk/nrf54l15/cpuapp nrf54l15pdk/nrf54l15/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp/ns
+      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15pdk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
     tags: ci_build cracen sysbuild ci_samples_crypto
   ################################################################################
