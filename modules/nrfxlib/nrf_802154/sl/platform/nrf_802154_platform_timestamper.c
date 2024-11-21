@@ -227,22 +227,37 @@ void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dpp
  *        {e} DPPIC_20         --> GRTC.CC
  */
 
-/* Peripherals used for timestamping - located in radio power domain (_R_) */
-/*   - DPPIC_L : DPPIC10 */
-#define DPPIC_R_INST                NRF_DPPIC10
-#define PPIB_R_INST                 NRF_PPIB11
+#include <nrfx_ppib.h>
+#include <nrfx_dppi.h>
 
-/* Peripherals used for timestamping - located in peripheral power domain (_P_) */
+#define INVALID_CHANNEL UINT8_MAX
 
-/*   - DPPIC_P : DPPIC20 */
-#define DPPIC_P_INST                NRF_DPPIC20
-
-/*  - PPIB_P : PPIB21 */
-#define PPIB_P_INST                 NRF_PPIB21
+static nrfx_dppi_t dppi20 = NRFX_DPPI_INSTANCE(20);
+static nrfx_ppib_interconnect_t ppib11_21 = NRFX_PPIB_INTERCONNECT_INSTANCE(11, 21);
+static uint8_t peri_dppi_ch = INVALID_CHANNEL;
+static uint8_t peri_ppib_ch = INVALID_CHANNEL;
 
 void nrf_802154_platform_timestamper_cross_domain_connections_setup(void)
 {
-	/* Intentionally empty. */
+	nrfx_err_t err;
+
+	err = nrfx_dppi_channel_alloc(&dppi20, &peri_dppi_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+
+	err = nrfx_ppib_channel_alloc(&ppib11_21, &peri_ppib_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+
+	/* {d} PPIB_21 --> DPPIC_20 */
+	NRF_DPPI_ENDPOINT_SETUP(
+		nrfx_ppib_receive_event_address_get(&ppib11_21.right, peri_ppib_ch), peri_dppi_ch);
+
+	/* {e} DPPIC_20[dppi_ch] --> GRTC.CC[cc_channel] */
+	nrf_grtc_task_t capture_task =
+		nrfy_grtc_sys_counter_capture_task_get(m_timestamp_cc_channel);
+	NRF_DPPI_ENDPOINT_SETUP(nrfy_grtc_task_address_get(NRF_GRTC, capture_task), peri_dppi_ch);
+
+	err = nrfx_dppi_channel_enable(&dppi20, peri_dppi_ch);
+	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
 }
 
 void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dppi_ch)
@@ -255,21 +270,8 @@ void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dpp
 	 */
 
 	/* {b} DPPIC_10 --> PPIB_11 */
-	nrf_ppib_subscribe_set(PPIB_R_INST, nrf_ppib_send_task_get(dppi_ch), dppi_ch);
-
-	/* {c} PPIB_11 --> PPIB_21
-	 * One of HW-fixed connections, so nothing to do.
-	 */
-
-	/* {d} PPIB_21 --> DPPIC_20 */
-	nrf_ppib_publish_set(PPIB_P_INST, nrf_ppib_receive_event_get(dppi_ch), dppi_ch);
-
-	/* {e} DPPIC_20[dppi_ch] --> GRTC.CC[cc_channel] */
-	nrf_grtc_task_t capture_task =
-		nrfy_grtc_sys_counter_capture_task_get(m_timestamp_cc_channel);
-	NRF_DPPI_ENDPOINT_SETUP(nrfy_grtc_task_address_get(NRF_GRTC, capture_task), dppi_ch);
-
-	nrfy_dppi_channels_enable(DPPIC_P_INST, 1UL << dppi_ch);
+	NRF_DPPI_ENDPOINT_SETUP(
+		nrfx_ppib_send_task_address_get(&ppib11_21.left, peri_ppib_ch), dppi_ch);
 }
 
 #endif
