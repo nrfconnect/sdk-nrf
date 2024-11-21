@@ -72,6 +72,18 @@ function(generate_mpi_hex manifest_role)
     return()
   endif()
 
+  if(SB_CONFIG_SUIT_MPI_${manifest_role}_VENDOR_NAME STREQUAL "nordicsemi.com")
+    message(WARNING "
+      -----------------------------------------------------------
+      --- WARNING: Using default Vendor ID (nordicsemi.com).  ---
+      --- It should not be used for production.               ---
+      --- See SB_CONFIG_SUIT_MPI_${manifest_role}_VENDOR_NAME     \t---
+      --- and SB_CONFIG_SUIT_MPI_${manifest_role}_CLASS_NAME      \t---
+      -----------------------------------------------------------
+      \n"
+    )
+  endif()
+
   MATH(
     EXPR
     SUIT_MPI_${manifest_role}_ADDRESS
