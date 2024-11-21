@@ -199,7 +199,7 @@
 			{ ZAP_EMPTY_DEFAULT(), 0x00000004, 1, ZAP_TYPE(BOOLEAN),                                                         \
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* SupportsConcurrentConnection */                                     \
 			{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                \
-			{ ZAP_SIMPLE_DEFAULT(0x0001), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                        \
+			{ ZAP_SIMPLE_DEFAULT(2), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                             \
                                                                                                                                          \
 			/* Endpoint: 0, Cluster: Network Commissioning (server) */                                                       \
 			{ ZAP_SIMPLE_DEFAULT(0), 0x00000000, 1, ZAP_TYPE(INT8U), 0 }, /* MaxNetworks */                                  \
@@ -460,7 +460,7 @@
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ClusterRevision */                                                  \
                                                                                                                                          \
 			/* Endpoint: 1, Cluster: Temperature Measurement (server) */                                                     \
-			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                              \
+			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                              \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MeasuredValue */                                                            \
 			{ ZAP_SIMPLE_DEFAULT(-4000), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                               \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MinMeasuredValue */                                                         \
@@ -522,7 +522,7 @@
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ClusterRevision */                                                  \
                                                                                                                                          \
 			/* Endpoint: 3, Cluster: Pressure Measurement (server) */                                                        \
-			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000000, 2, ZAP_TYPE(INT16S),                                                   \
+			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000000, 2, ZAP_TYPE(INT16S),                                                   \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MeasuredValue */                                                            \
 			{ ZAP_SIMPLE_DEFAULT(300), 0x00000001, 2, ZAP_TYPE(INT16S),                                                      \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MinMeasuredValue */                                                         \
