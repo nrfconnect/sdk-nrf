@@ -437,7 +437,8 @@ int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params
 		rach_list_item_conf->length_subslots = 0;
 
 		rach_list_item_conf->rx.mode = NRF_MODEM_DECT_PHY_RX_MODE_CONTINUOUS;
-		rach_list_item_conf->rx.expected_rssi_level = 0;
+		rach_list_item_conf->rx.expected_rssi_level =
+			current_settings->rx.expected_rssi_level;
 		rach_list_item_conf->rx.duration =
 			0; /* length_slots used instead duration variable */
 		rach_list_item_conf->rx.network_id = current_settings->common.network_id;
