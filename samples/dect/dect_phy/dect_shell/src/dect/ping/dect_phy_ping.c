@@ -791,9 +791,10 @@ static void dect_phy_ping_stf_cover_seq_control_cb(
 	printk("WARN: Unexpectedly in %s\n", (__func__));
 }
 
+extern struct k_sem dect_phy_ctrl_mdm_api_deinit_sema;
 static void dect_phy_ping_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
 {
-	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_PING_CMD_DONE);
+	k_sem_give(&dect_phy_ctrl_mdm_api_deinit_sema);
 }
 
 static const struct nrf_modem_dect_phy_callbacks ping_phy_api_config = {
@@ -912,15 +913,17 @@ exit:
 
 static void dect_phy_ping_cmd_done(void)
 {
-	int ret = 0;
-
-	ping_data.on_going = false;
-	ret = nrf_modem_dect_phy_deinit();
-	if (ret) {
-		desh_error("nrf_modem_dect_phy_deinit failed, err=%d", ret);
-		dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_PING_CMD_DONE);
+	if (!ping_data.on_going) {
+		desh_error("%s called when not on going - caller %pS",
+			(__func__),
+			__builtin_return_address(0));
+		return;
 	}
-	desh_print("ping command done.");
+	ping_data.on_going = false;
+
+	/* Mdm phy api deinit is done by dect_phy_ctrl */
+
+	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_PING_CMD_DONE);
 }
 
 static int dect_phy_ping_client_start(void)
@@ -1456,7 +1459,9 @@ static void dect_phy_ping_server_report_local_and_tx_results(void)
 {
 
 	if (!ping_data.rx_metrics.rx_total_data_amount) {
-		desh_print("Nothing received on server side - no results to show.");
+		desh_print("Nothing received on server side - "
+			   "no results to show.");
+		goto clear_results;
 	}
 
 	int64_t elapsed_time_ms = ping_data.server_data.rx_last_data_received -
@@ -1502,6 +1507,7 @@ static void dect_phy_ping_server_report_local_and_tx_results(void)
 		desh_error("Cannot start sending server results");
 	}
 
+clear_results:
 	/* Clear results */
 	struct dect_phy_ping_params *params = &(ping_data.cmd_params);
 
@@ -2070,7 +2076,7 @@ int dect_phy_ping_cmd_handle(struct dect_phy_ping_params *params)
 void dect_phy_ping_cmd_stop(void)
 {
 	if (!ping_data.on_going) {
-		desh_print("NO ping command running - nothing to stop.");
+		desh_print("No ping command running - nothing to stop.");
 		return;
 	}
 	if (ping_data.cmd_params.role == DECT_PHY_COMMON_ROLE_CLIENT) {

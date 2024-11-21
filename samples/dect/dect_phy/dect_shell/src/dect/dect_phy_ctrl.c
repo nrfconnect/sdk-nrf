@@ -50,9 +50,9 @@ static struct dect_phy_ctrl_data {
 
 	bool scheduler_suspended;
 
-	bool perf_on_going;
-	bool ping_on_going;
-	bool cert_on_going;
+	bool perf_ongoing;
+	bool ping_ongoing;
+	bool cert_ongoing;
 	bool ext_command_running;
 
 	bool rx_cmd_on_going;
@@ -74,7 +74,7 @@ static struct dect_phy_ctrl_data {
 	uint8_t last_received_pcc_phy_len;
 	enum dect_phy_packet_length_type last_received_pcc_phy_len_type;
 
-	bool rssi_scan_on_going;
+	bool rssi_scan_ongoing;
 	bool rssi_scan_cmd_running;
 	struct dect_phy_rssi_scan_params rssi_scan_params;
 	dect_phy_ctrl_rssi_scan_completed_callback_t rssi_scan_complete_cb;
@@ -88,13 +88,14 @@ static struct dect_phy_ctrl_data {
 
 K_SEM_DEFINE(rssi_scan_sema, 0, 1);
 
-K_SEM_DEFINE(phy_api_deinit, 0, 1);
-K_SEM_DEFINE(phy_api_init, 0, 1);
+K_SEM_DEFINE(dect_phy_ctrl_mdm_api_deinit_sema, 0, 1);
+K_SEM_DEFINE(dect_phy_ctrl_mdm_api_init_sema, 0, 1);
 
 /**************************************************************************************************/
 
 static void dect_phy_rssi_channel_scan_completed_cb(enum nrf_modem_dect_phy_err phy_status);
 static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx);
+static int dect_phy_ctrl_phy_reinit(void);
 
 /**************************************************************************************************/
 
@@ -152,33 +153,27 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			break;
 		}
 		case DECT_PHY_CTRL_OP_PERF_CMD_DONE: {
-			ctrl_data.perf_on_going = false;
+			ctrl_data.perf_ongoing = false;
 			dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
 
-			/* Deinit was done by perf module:
-			 * reinit phy api to have our callbacks back
-			 */
-			dect_phy_ctrl_on_modem_lib_init(0, NULL);
+			dect_phy_ctrl_phy_reinit();
+
+			desh_print("perf command done.");
 			break;
 		}
 		case DECT_PHY_CTRL_OP_PING_CMD_DONE: {
-			ctrl_data.ping_on_going = false;
+			ctrl_data.ping_ongoing = false;
 			dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
 
-			/* Deinit was done by ping module:
-			 * reinit phy api to have our callbacks back
-			 */
-			dect_phy_ctrl_on_modem_lib_init(0, NULL);
+			dect_phy_ctrl_phy_reinit();
+			desh_print("ping command done.");
 			break;
 		}
 		case DECT_PHY_CTRL_OP_RF_TOOL_CMD_DONE: {
-			ctrl_data.cert_on_going = false;
+			ctrl_data.cert_ongoing = false;
 			dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
 
-			/* Deinit was done by rf tool module:
-			 * reinit phy api to have our callbacks back
-			 */
-			dect_phy_ctrl_on_modem_lib_init(0, NULL);
+			dect_phy_ctrl_phy_reinit();
 			break;
 		}
 		case DECT_PHY_CTRL_OP_DEBUG_ON: {
@@ -259,7 +254,6 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 						params->modem_configuration.latency.txrx_tx_to_rx);
 				}
 			}
-			k_sem_give(&phy_api_init);
 			break;
 		}
 
@@ -404,7 +398,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 		case DECT_PHY_CTRL_OP_RSSI_SCAN_RUN: {
 			int err = 0;
 
-			if (ctrl_data.rssi_scan_on_going ||
+			if (ctrl_data.rssi_scan_ongoing ||
 			    (ctrl_data.rssi_scan_cmd_running &&
 			     ctrl_data.rssi_scan_params.interval_secs)) {
 				if (ctrl_data.rssi_scan_params.suspend_scheduler) {
@@ -461,6 +455,7 @@ static void dect_phy_ctrl_mdm_initialize_cb(const uint64_t *time, int16_t temper
 		ctrl_data.phy_api_initialized = true;
 	}
 
+	k_sem_give(&dect_phy_ctrl_mdm_api_init_sema);
 	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_INITIALIZED,
 				       (void *)&ctrl_op_initialized_params,
 				       sizeof(struct dect_phy_common_op_initialized_params));
@@ -634,7 +629,7 @@ static void dect_phy_ctrl_mdm_on_rssi_cb(const uint64_t *time,
 {
 	dect_app_modem_time_save(time);
 
-	if (ctrl_data.rssi_scan_on_going || ctrl_data.rx_cmd_on_going) {
+	if (ctrl_data.rssi_scan_ongoing || ctrl_data.rx_cmd_on_going) {
 		dect_phy_scan_rssi_cb_handle(NRF_MODEM_DECT_PHY_SUCCESS, p_result);
 	} else if (ctrl_data.ext_cmd.direct_rssi_cb != NULL) {
 		ctrl_data.ext_cmd.direct_rssi_cb(p_result);
@@ -717,7 +712,7 @@ static void dect_phy_ctrl_mdm_on_stf_cover_seq_control_cb(
 static void dect_phy_ctrl_mdm_on_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
 {
 	ctrl_data.phy_api_initialized = false;
-	k_sem_give(&phy_api_deinit);
+	k_sem_give(&dect_phy_ctrl_mdm_api_deinit_sema);
 }
 
 static const struct nrf_modem_dect_phy_callbacks dect_phy_api_config = {
@@ -1012,7 +1007,7 @@ static void dect_phy_rssi_channel_scan_completed_cb(enum nrf_modem_dect_phy_err 
 		desh_warn(" RSSI scan failed: %s (%d)", tmp_str, phy_status);
 	}
 	dect_phy_api_scheduler_resume();
-	ctrl_data.rssi_scan_on_going = false;
+	ctrl_data.rssi_scan_ongoing = false;
 	if (ctrl_data.rssi_scan_complete_cb) {
 		ctrl_data.rssi_scan_complete_cb(phy_status);
 	}
@@ -1028,26 +1023,25 @@ static int dect_phy_ctrl_phy_reinit(void)
 {
 	int ret;
 
-	k_sem_reset(&phy_api_deinit);
-
+	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
 	ret = nrf_modem_dect_phy_deinit();
-
 	if (ret) {
 		desh_error("nrf_modem_dect_phy_deinit failed, err=%d", ret);
 		return ret;
 	}
 
 	/* Wait that deinit is done */
-	ret = k_sem_take(&phy_api_deinit, K_SECONDS(5));
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
 	if (ret) {
 		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
 		return -ETIMEDOUT;
 	}
 
-	k_sem_reset(&phy_api_init);
+	k_sem_reset(&dect_phy_ctrl_mdm_api_init_sema);
 	dect_phy_ctrl_phy_init();
 
-	ret = k_sem_take(&phy_api_init, K_SECONDS(5));
+	/* Wait that init is done */
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(60));
 	if (ret) {
 		desh_error("(%s): nrf_modem_dect_phy_init() timeout.", (__func__));
 		return -ETIMEDOUT;
@@ -1065,14 +1059,14 @@ int dect_phy_ctrl_rssi_scan_start(struct dect_phy_rssi_scan_params *params,
 		return -EACCES;
 	}
 
-	if (ctrl_data.rssi_scan_on_going) {
+	if (ctrl_data.rssi_scan_ongoing) {
 		desh_error("RSSI scan already on going.\n");
 		return -EBUSY;
 	}
 
 	k_sem_reset(&rssi_scan_sema);
 
-	ctrl_data.rssi_scan_on_going = true;
+	ctrl_data.rssi_scan_ongoing = true;
 	ctrl_data.rssi_scan_cmd_running = true;
 	ctrl_data.rssi_scan_params = *params;
 	ctrl_data.rssi_scan_complete_cb = fp_result_callback;
@@ -1095,7 +1089,7 @@ int dect_phy_ctrl_rssi_scan_start(struct dect_phy_rssi_scan_params *params,
 void dect_phy_ctrl_rssi_scan_stop(void)
 {
 	ctrl_data.rssi_scan_cmd_running = false;
-	ctrl_data.rssi_scan_on_going = false;
+	ctrl_data.rssi_scan_ongoing = false;
 	k_timer_stop(&rssi_scan_timer);
 	dect_phy_scan_rssi_stop();
 	k_sem_reset(&rssi_scan_sema);
@@ -1104,17 +1098,41 @@ void dect_phy_ctrl_rssi_scan_stop(void)
 
 /**************************************************************************************************/
 
+static bool dect_phy_ctrl_op_ongoing(void)
+{
+	if (ctrl_data.rssi_scan_ongoing) {
+		desh_warn("RSSI scan ongoing.");
+		return true;
+	}
+	if (ctrl_data.perf_ongoing) {
+		desh_warn("Performance test ongoing.");
+		return true;
+	}
+	if (ctrl_data.ping_ongoing) {
+		desh_warn("Ping ongoing.");
+		return true;
+	}
+	if (ctrl_data.cert_ongoing) {
+		desh_warn("Certification ongoing.");
+		return true;
+	}
+	if (ctrl_data.ext_command_running) {
+		desh_warn("External command ongoing.");
+		return true;
+	}
+	return false;
+}
+
 int dect_phy_ctrl_perf_cmd(struct dect_phy_perf_params *params)
 {
 	int ret;
 
-	if (ctrl_data.rssi_scan_on_going || ctrl_data.perf_on_going || ctrl_data.ping_on_going ||
-	    ctrl_data.cert_on_going || ctrl_data.ext_command_running) {
+	if (dect_phy_ctrl_op_ongoing()) {
 		desh_error(
 			"DECT operation already on going. Stop all before starting running perf.");
 		return -EBUSY;
 	}
-	k_sem_reset(&phy_api_deinit);
+	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
 
 	/* We want to have own callbacks for perf command */
 	ret = nrf_modem_dect_phy_deinit();
@@ -1124,14 +1142,14 @@ int dect_phy_ctrl_perf_cmd(struct dect_phy_perf_params *params)
 	}
 
 	/* Wait that deinit is done */
-	ret = k_sem_take(&phy_api_deinit, K_SECONDS(5));
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
 	if (ret) {
 		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
 		return -ETIMEDOUT;
 	}
 
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_OFF);
-	ctrl_data.perf_on_going = true;
+	ctrl_data.perf_ongoing = true;
 	ret = dect_phy_perf_cmd_handle(params);
 	if (ret) {
 		dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_PERF_CMD_DONE);
@@ -1152,13 +1170,11 @@ void dect_phy_ctrl_perf_cmd_stop(void)
 int dect_phy_ctrl_ping_cmd(struct dect_phy_ping_params *params)
 {
 	int ret;
-
-	if (ctrl_data.rssi_scan_on_going || ctrl_data.perf_on_going || ctrl_data.ping_on_going ||
-	    ctrl_data.cert_on_going || ctrl_data.ext_command_running) {
+	if (dect_phy_ctrl_op_ongoing()) {
 		desh_error("Operation already on going. Stop all before starting running ping.");
 		return -EBUSY;
 	}
-	k_sem_reset(&phy_api_deinit);
+	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
 
 	/* We want to have own mdm phy api callbacks for ping command */
 	ret = nrf_modem_dect_phy_deinit();
@@ -1168,14 +1184,14 @@ int dect_phy_ctrl_ping_cmd(struct dect_phy_ping_params *params)
 	}
 
 	/* Wait that deinit is done */
-	ret = k_sem_take(&phy_api_deinit, K_SECONDS(5));
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
 	if (ret) {
 		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
 		return -ETIMEDOUT;
 	}
 
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_OFF);
-	ctrl_data.ping_on_going = true;
+	ctrl_data.ping_ongoing = true;
 	ret = dect_phy_ping_cmd_handle(params);
 	if (ret) {
 		dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_PING_CMD_DONE);
@@ -1193,16 +1209,16 @@ void dect_phy_ctrl_ping_cmd_stop(void)
 
 /**************************************************************************************************/
 
-int dect_phy_ctrl_cert_cmd(struct dect_phy_rf_tool_params *params)
+int dect_phy_ctrl_rf_tool_cmd(struct dect_phy_rf_tool_params *params)
 {
 	int ret;
 
-	if (ctrl_data.rssi_scan_on_going || ctrl_data.perf_on_going || ctrl_data.ping_on_going ||
-	    ctrl_data.cert_on_going || ctrl_data.ext_command_running) {
+	if (dect_phy_ctrl_op_ongoing()) {
 		desh_error("Operation already on going. Stop all before starting running rf_tool.");
 		return -EBUSY;
 	}
-	k_sem_reset(&phy_api_deinit);
+
+	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
 
 	/* We want to have own mdm phy api callbacks for cert command */
 	ret = nrf_modem_dect_phy_deinit();
@@ -1212,14 +1228,14 @@ int dect_phy_ctrl_cert_cmd(struct dect_phy_rf_tool_params *params)
 	}
 
 	/* Wait that deinit is done */
-	ret = k_sem_take(&phy_api_deinit, K_SECONDS(5));
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
 	if (ret) {
 		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
 		return -ETIMEDOUT;
 	}
 
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_OFF);
-	ctrl_data.cert_on_going = true;
+	ctrl_data.cert_ongoing = true;
 	ret = dect_phy_rf_tool_cmd_handle(params);
 	if (ret) {
 		dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RF_TOOL_CMD_DONE);
@@ -1228,7 +1244,7 @@ int dect_phy_ctrl_cert_cmd(struct dect_phy_rf_tool_params *params)
 	return ret;
 }
 
-void dect_phy_ctrl_cert_cmd_stop(void)
+void dect_phy_ctrl_rf_tool_cmd_stop(void)
 {
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
 
@@ -1290,8 +1306,8 @@ int dect_phy_ctrl_ext_command_start(struct dect_phy_ctrl_ext_callbacks ext_callb
 		return -EACCES;
 	}
 
-	if (ctrl_data.rssi_scan_on_going ||
-	    ctrl_data.perf_on_going || ctrl_data.ping_on_going) {
+	if (ctrl_data.rssi_scan_ongoing ||
+	    ctrl_data.perf_ongoing || ctrl_data.ping_ongoing) {
 		desh_error("(%s): Operation already on going. "
 			   "Stop all before starting running ext command.",
 				(__func__));
@@ -1333,7 +1349,15 @@ static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx)
 	ARG_UNUSED(ctx);
 
 	if (!ctrl_data.phy_api_initialized) {
+		k_sem_reset(&dect_phy_ctrl_mdm_api_init_sema);
+
 		dect_phy_ctrl_phy_init();
+
+		/* Wait that init is done */
+		ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(2));
+		if (ret) {
+			desh_error("(%s): nrf_modem_dect_phy_init() timeout.", (__func__));
+		}
 	}
 }
 
