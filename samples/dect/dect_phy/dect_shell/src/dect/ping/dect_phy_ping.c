@@ -521,15 +521,10 @@ static void dect_phy_ping_op_complete_cb(uint64_t const *time, int16_t temperatu
 		.status = status,
 		.time = *time,
 	};
-	struct dect_phy_api_scheduler_op_completed_params op_completed_params = {
-		.handle = handle,
-		.status = status,
-		.time = *time,
-	};
 
 	dect_app_modem_time_save(time);
 
-	dect_phy_api_scheduler_mdm_op_completed(&op_completed_params);
+	dect_phy_api_scheduler_mdm_op_completed(&ping_op_completed_params);
 	dect_phy_ping_msgq_data_op_add(DECT_PHY_PING_EVENT_MDM_OP_COMPLETED,
 				       (void *)&ping_op_completed_params,
 				       sizeof(struct dect_phy_common_op_completed_params));
@@ -822,9 +817,10 @@ static void dect_phy_ping_client_tx_all_intervals_done(uint32_t handle)
 	dect_phy_ping_msgq_non_data_op_add(DECT_PHY_PING_EVENT_CLIENT_SCHEDULER_PINGING_DONE);
 }
 
-static void dect_phy_ping_client_tx_complete_cb(uint64_t time, uint64_t tx_frame_time, int err)
+static void dect_phy_ping_client_tx_complete_cb(
+	struct dect_phy_common_op_completed_params *params, uint64_t tx_frame_time)
 {
-	if (!err) {
+	if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
 		ping_data.client_data.tx_ping_req_tx_scheduled_mdm_ticks = tx_frame_time;
 		ping_data.tx_metrics.tx_total_data_amount += ping_data.client_data.tx_data_len;
 	}

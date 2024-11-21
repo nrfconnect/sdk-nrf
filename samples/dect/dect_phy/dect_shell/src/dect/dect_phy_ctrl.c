@@ -502,22 +502,17 @@ static void dect_phy_ctrl_mdm_rx_operation_stop_cb(uint64_t const *time,
 static void dect_phy_ctrl_mdm_operation_complete_cb(uint64_t const *time, int16_t temperature,
 					     enum nrf_modem_dect_phy_err status, uint32_t handle)
 {
-	struct dect_phy_common_op_completed_params ctrl_op_completed_params = {
+	struct dect_phy_common_op_completed_params op_completed_params = {
 		.handle = handle,
 		.temperature = temperature,
 		.status = status,
 		.time = *time,
 	};
-	struct dect_phy_api_scheduler_op_completed_params op_completed_params = {
-		.handle = handle,
-		.status = status,
-		.time = *time,
-	};
-	dect_app_modem_time_save(time);
 
+	dect_app_modem_time_save(time);
 	dect_phy_api_scheduler_mdm_op_completed(&op_completed_params);
 	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_COMPLETED,
-				       (void *)&ctrl_op_completed_params,
+				       (void *)&op_completed_params,
 				       sizeof(struct dect_phy_common_op_completed_params));
 }
 
