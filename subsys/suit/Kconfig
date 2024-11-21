@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-rsource "provisioning/Kconfig"
-
 menuconfig SUIT
 	bool "Enable SUIT modules"
 
@@ -48,7 +46,6 @@ config SUIT_DFU_CANDIDATE_PROCESSING_MINIMAL
 	imply SUIT_UTILS
 	imply SUIT_METADATA
 	imply SSF_SUIT_SERVICE_ENABLED
-	imply SUIT_MPI_GENERATE
 
 config SUIT_DFU_CANDIDATE_PROCESSING_FULL
 	bool "Application defaults for support of full SUIT envelope processing by the local domain"
@@ -84,7 +81,6 @@ config SUIT_DFU_CANDIDATE_PROCESSING_FULL
 	imply SUIT_PLATFORM
 	imply SUIT_PROCESSOR
 	imply SUIT_MANIFEST_VARIABLES
-	imply SUIT_MPI_GENERATE
 	imply SUIT_SINK_SELECTOR
 
 config SUIT_DFU_CANDIDATE_PROCESSING_PUSH_TO_CACHE
@@ -95,7 +91,6 @@ config SUIT_DFU_CANDIDATE_PROCESSING_PUSH_TO_CACHE
 	imply SUIT_UTILS
 	imply SUIT_METADATA
 	imply SSF_SUIT_SERVICE_ENABLED
-	imply SUIT_MPI_GENERATE
 	imply SUIT_CACHE
 	imply SUIT_CACHE_RW
 	imply SUIT_MEMPTR_STORAGE
@@ -113,7 +108,6 @@ config SUIT_DFU_CANDIDATE_PROCESSING_NONE
 		used by the Secure Domain to fetch additional data with the use of the application
 		core.
 	imply SUIT_ORCHESTRATOR_APP
-	imply SUIT_MPI_GENERATE
 
 endchoice # SUIT_APP_ENVELOPE_PROCESSING_LEVEL
 

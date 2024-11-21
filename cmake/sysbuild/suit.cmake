@@ -509,7 +509,6 @@ function(suit_create_package)
   endif()
 
   # Read SUIT storage addresses, set during MPI generation
-  sysbuild_get(SUIT_STORAGE_ADDRESS IMAGE ${DEFAULT_IMAGE} VAR SUIT_STORAGE_ADDRESS CACHE)
   if(DEFINED SUIT_STORAGE_ADDRESS)
     list(APPEND STORAGE_BOOT_ARGS --storage-address ${SUIT_STORAGE_ADDRESS})
   else()
@@ -521,7 +520,7 @@ function(suit_create_package)
     --storage-output-directory
     "${DEFAULT_BINARY_DIR}/zephyr"
     --zephyr-base ${ZEPHYR_BASE}
-    --config-file "${DEFAULT_BINARY_DIR}/zephyr/.config"
+    --config-file "${PROJECT_BINARY_DIR}/.config"
     ${CORE_ARGS}
   )
   set_property(
@@ -568,19 +567,13 @@ function(suit_setup_merge)
     list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/${IMAGE_BINARY_FILE}.hex)
     list(APPEND ARTIFACTS_TO_MERGE ${IMAGE_BINARY_DIR}/zephyr/uicr.hex)
 
-    unset(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE)
-    sysbuild_get(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE KCONFIG)
-    if(CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE)
-      list(APPEND ARTIFACTS_TO_MERGE ${BINARY_DIR}/zephyr/suit_mpi_${IMAGE_TARGET_NAME}_merged.hex)
-    endif()
-
-    if(${IMAGE_TARGET_NAME} STREQUAL "application")
-      # Get a list of files (and their dependencies) which need merging into the uicr merged file
-      # and add them at the end of the list, allowing for overwriting, this only applies to the
-      # application core image
-      get_property(merge_files GLOBAL PROPERTY SUIT_MERGE_FILE)
-      get_property(merge_dependencies GLOBAL PROPERTY SUIT_MERGE_DEPENDENCIES)
-    else()
+    # Get a list of files (and their dependencies) which need merging into the uicr merged file
+    # and add them at the end of the list, allowing for overwriting
+    unset(merge_files)
+    unset(merge_dependencies)
+    get_property(merge_files GLOBAL PROPERTY SUIT_MERGE_${IMAGE_TARGET_NAME}_FILE)
+    get_property(merge_dependencies GLOBAL PROPERTY SUIT_MERGE_${IMAGE_TARGET_NAME}_DEPENDENCIES)
+    if(NOT DEFINED merge_files)
       set(merge_files)
       set(merge_dependencies)
     endif()
@@ -595,7 +588,7 @@ function(suit_setup_merge)
       # fixme: uicr_merged is overwritten by new content, runners_yaml_props_target could be used to define
       #     what shall be flashed, but not sure where to set this! Remove --overlap if ready!
       #     example usage: set_property(TARGET runners_yaml_props_target PROPERTY hex_file ${merged_hex_file})
-       COMMAND ${CMAKE_COMMAND} -E copy ${OUTPUT_HEX_FILE} ${IMAGE_BINARY_DIR}/zephyr/uicr_merged.hex
+      COMMAND ${CMAKE_COMMAND} -E copy ${OUTPUT_HEX_FILE} ${IMAGE_BINARY_DIR}/zephyr/uicr_merged.hex
     )
   endforeach()
 endfunction()
