@@ -801,7 +801,7 @@
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /tests/benchmarks/multicore/idle_gpio/*.rst @nrfconnect/ncs-si-bluebagel-doc
-/tests/benchmarks/multicore/idle_with_pwm/*.rst @nrfconnect/ncs-si-bluebagel-doc
+/tests/benchmarks/multicore/idle_pwm_led/*.rst @nrfconnect/ncs-si-bluebagel-doc
 
 # CI specific west
 /test-manifests/99-default-test-nrf.yml   @nrfconnect/ncs-ci
