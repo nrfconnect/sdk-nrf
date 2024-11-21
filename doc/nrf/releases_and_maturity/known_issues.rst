@@ -2680,6 +2680,13 @@ Matter samples
 
 The issues in this section are related to :ref:`matter_samples`.
 
+.. rst-class:: v2-8-0
+
+KRKNWK-19691: Smoke CO Alarm sample does not have PM device enabled
+  This leads to not suspending QSPI, while it is not used, and increasing the device power consumption.
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_PM_DEVICE` Kconfig option to ``y`` in the sample's :file:`prj.conf` file.
+
 .. rst-class:: v2-7-0
 
 KRKNWK-19480: Lock sample does not allow for clearing the door lock user when using the schedules feature
