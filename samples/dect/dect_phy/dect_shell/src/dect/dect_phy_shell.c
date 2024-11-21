@@ -500,8 +500,8 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 	optind = 1;
 
 	if (argv[1] != NULL && !strcmp(argv[1], "stop")) {
-		dect_phy_ctrl_cert_cmd_stop();
-		desh_print("cert command stopping.");
+		dect_phy_ctrl_rf_tool_cmd_stop();
+		desh_print("rf_tool command stopping.");
 		return 0;
 	}
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
@@ -709,7 +709,7 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 		params.find_rx_sync = true;
 	}
 
-	ret = dect_phy_ctrl_cert_cmd(&params);
+	ret = dect_phy_ctrl_rf_tool_cmd(&params);
 	if (ret) {
 		desh_error("Cannot start rf_tool command, ret: %d", ret);
 	} else {
@@ -809,8 +809,8 @@ static int dect_phy_ping_cmd(const struct shell *shell, size_t argc, char **argv
 	optind = 1;
 
 	if (argv[1] != NULL && !strcmp(argv[1], "stop")) {
-		dect_phy_ctrl_ping_cmd_stop();
 		desh_print("ping command stopping.");
+		dect_phy_ctrl_ping_cmd_stop();
 		return 0;
 	}
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();

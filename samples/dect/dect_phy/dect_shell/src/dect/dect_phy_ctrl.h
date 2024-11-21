@@ -79,8 +79,8 @@ void dect_phy_ctrl_ping_cmd_stop(void);
 
 /******************************************************************************/
 
-int dect_phy_ctrl_cert_cmd(struct dect_phy_rf_tool_params *params);
-void dect_phy_ctrl_cert_cmd_stop(void);
+int dect_phy_ctrl_rf_tool_cmd(struct dect_phy_rf_tool_params *params);
+void dect_phy_ctrl_rf_tool_cmd_stop(void);
 
 /******************************************************************************/
 

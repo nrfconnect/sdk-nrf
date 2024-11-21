@@ -283,8 +283,10 @@ static void dect_phy_rf_tool_stf_cover_seq_control_cb(
 	printk("WARN: Unexpectedly in %s\n", (__func__));
 }
 
+extern struct k_sem dect_phy_ctrl_mdm_api_deinit_sema;
 static void dect_phy_rf_tool_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
 {
+	k_sem_give(&dect_phy_ctrl_mdm_api_deinit_sema);
 	dect_phy_rf_tool_msgq_non_data_op_add(DECT_PHY_RF_TOOL_EVT_MDM_DEINITIALIZED);
 }
 
@@ -478,15 +480,11 @@ void dect_phy_rf_tool_print_results(void)
 
 static void dect_phy_rf_tool_cmd_done(void)
 {
-	int ret = 0;
-
 	dect_phy_rf_tool_msgq_non_data_op_add(DECT_PHY_RF_TOOL_EVT_STATUS_REPORT);
-	ret = nrf_modem_dect_phy_deinit();
-	desh_print("RF tool command exiting: deiniting modem phy api");
-	if (ret) {
-		desh_error("nrf_modem_dect_phy_deinit failed, err=%d", ret);
-		dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RF_TOOL_CMD_DONE);
-	}
+
+	/* Mdm phy api deinit is done by dect_phy_ctrl */
+	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RF_TOOL_CMD_DONE);
+
 	rf_tool_data.on_going = false;
 }
 
@@ -534,7 +532,6 @@ static void dect_phy_rf_tool_thread_fn(void)
 		case DECT_PHY_RF_TOOL_EVT_MDM_DEINITIALIZED: {
 			desh_print("dect phy api deinitialized for RF tool command.");
 			desh_print("rf_tool command done.");
-			dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RF_TOOL_CMD_DONE);
 			break;
 		}
 		case DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED: {
