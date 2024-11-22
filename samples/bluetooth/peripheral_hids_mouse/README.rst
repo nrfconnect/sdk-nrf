@@ -97,6 +97,20 @@ The HID service specification does not require encryption (:kconfig:option:`CONF
 Building and running
 ********************
 
+.. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_mouse`
+
+.. include:: /includes/build_and_run_ns.txt
+
+.. include:: /includes/nRF54H20_erase_UICR.txt
+
+.. note::
+   |54H_engb_2_8|
+
+.. _peripheral_hids_mouse_bt_rpc_build:
+
+Bluetooth RPC build
+===================
+
 To build this sample with the :ref:`ble_rpc` library, add the following parameters:
 
 * set the :makevar:`SNIPPET` option to ``nordic-bt-rpc``,
@@ -107,14 +121,32 @@ To build this sample with the :ref:`ble_rpc` library, add the following paramete
 
    west build -b *board_target* -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_mouse`
 
-.. include:: /includes/build_and_run_ns.txt
+.. _peripheral_hids_mouse_ncd_build:
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
+nRF Connect for Desktop build
+=============================
+
+To build this sample in the configuration variant that is compatible with `nRF Connect for Desktop`_, disable the following Bluetooth features:
+
+* Privacy (:kconfig:option:`CONFIG_BT_PRIVACY`) - `nRF Connect for Desktop`_ does not fully support the Bluetooth Privacy feature by disallowing distribution of the Identity Resolving Key (IRK) during the pairing procedure.
+* High-duty directed advertising (:kconfig:option:`CONFIG_BT_DIRECTED_ADVERTISING`) - high-duty directed advertising with 3.75 ms advertising interval and 1.28 s duration prevents the subsequent undirected advertising from being reported in the scanning list of `nRF Connect for Desktop`_ .
+  As a result, it is only possible to connect to the target DK during the very short interval of high-duty directed advertising.
+
+To build the sample in the compatible configuration, use the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DCONFIG_BT_DIRECTED_ADVERTISING=n -DCONFIG_BT_PRIVACY=n
 
 .. note::
-   |54H_engb_2_8|
+   If you want to combine this build configuration with the :ref:`peripheral_hids_mouse_bt_rpc_build`, use the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      west build -b *board_target* -S nordic-bt-rpc -- -DFILE_SUFFIX=bt_rpc -DCONFIG_BT_DIRECTED_ADVERTISING=n -DCONFIG_BT_PRIVACY=n -Dipc_radio_CONFIG_BT_PRIVACY=n
 
 Testing
 =======
@@ -160,6 +192,10 @@ Testing with nRF Connect for Desktop
 ------------------------------------
 
 To test with `nRF Connect for Desktop`_, complete the following steps:
+
+.. note::
+   To execute the testing steps below, you must build the sample in the configuration that is compatible with `nRF Connect for Desktop`_.
+   See the :ref:`peripheral_hids_mouse_ncd_build` section to learn how to build a compatible sample configuration.
 
 .. tabs::
 
