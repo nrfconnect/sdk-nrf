@@ -66,7 +66,6 @@ bluetooth:
     - nrfxlib/mpsl/include/
     - nrfxlib/mpsl/lib/
     - nrfxlib/softdevice_controller/include/
-    - nrfxlib/softdevice_controller/lib/
     - zephyr/cmake/
     - zephyr/drivers/bluetooth/
     - zephyr/include/zephyr/bluetooth/
