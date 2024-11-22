@@ -201,6 +201,77 @@ After flashing, messages describing the benchmark state will appear in the conso
 .. note::
    |54H_engb_2_8|
 
+Alternative build configurations
+================================
+
+The default sample configuration uses the following settings for the benchmark execution:
+
+* Memory allocation using the stack memory (see the :kconfig:option:`CONFIG_COREMARK_MEMORY_METHOD_STACK` Kconfig option)
+* Single thread (see the :kconfig:option:`CONFIG_COREMARK_THREADS_NUMBER` Kconfig option)
+* Manual benchmark execution on a button press
+
+You can build the default configuration using the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target*
+
+The following subsections describe alternative configurations.
+The deviation from the default configuration is described.
+Each subsection also provides a build command that demonstrates how to build the described alternative configuration.
+
+Flash and run configuration
+---------------------------
+
+The flash and run configuration changes the trigger for the benchmark execution.
+In this configuration, the benchmark is automatically started on all supported cores after the system boot.
+
+You can build this configuration using the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DFILE_SUFFIX=flash_and_run
+
+Heap memory configuration
+-------------------------
+
+The heap memory configuration changes the method for memory allocation during the benchmark execution.
+In this configuration, the benchmark allocates the memory using the heap memory (see the :kconfig:option:`CONFIG_COREMARK_MEMORY_METHOD_MALLOC` Kconfig option).
+
+You can build this configuration using the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DFILE_SUFFIX=heap_memory
+
+Static memory configuration
+---------------------------
+
+The static memory configuration changes the method for memory allocation during the benchmark execution.
+In this configuration, the benchmark allocates the memory using the static memory (see the :kconfig:option:`CONFIG_COREMARK_MEMORY_METHOD_STATIC` Kconfig option).
+
+You can build this configuration using the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DFILE_SUFFIX=static_memory
+
+Multiple thread configuration
+-----------------------------
+
+The multiple thread configuration uses more than one thread during the benchmark execution (see the :kconfig:option:`CONFIG_COREMARK_THREADS_NUMBER` Kconfig option).
+
+You can build this configuration using the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b *board_target* -- -DFILE_SUFFIX=multiple_threads
+
 Testing
 =======
 

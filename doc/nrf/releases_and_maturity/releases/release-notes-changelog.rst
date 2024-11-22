@@ -419,6 +419,13 @@ Other samples
 
     * Configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board to support multi-domain logging using the ARM Coresight STM.
     * The logging format in the standard logging mode to align it with the format used in the multi-domain logging mode.
+    * Support for alternative configurations to use the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>`.
+      The following file suffixes are supported as alternative configurations:
+
+        * ``flash_and_run``
+        * ``heap_memory``
+        * ``static_memory``
+        * ``multiple_threads``
 
 Drivers
 =======
