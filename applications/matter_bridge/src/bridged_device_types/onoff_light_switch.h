@@ -10,7 +10,7 @@
 
 class OnOffLightSwitchDevice : public Nrf::MatterBridgedDevice {
 public:
-	OnOffLightSwitchDevice(const char *nodeLabel);
+	OnOffLightSwitchDevice(const char *uniqueID, const char *nodeLabel);
 
 	uint16_t GetDeviceType() const override { return Nrf::MatterBridgedDevice::DeviceType::OnOffLightSwitch; }
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,

@@ -5,6 +5,7 @@
  */
 
 #include "bridge_manager.h"
+#include "platform/ConfigurationManager.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include "ble_bridged_device_factory.h"
@@ -48,6 +49,9 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 	char *nodeLabel = nullptr;
 	CHIP_ERROR result = CHIP_NO_ERROR;
 
+	char uniqueID[chip::DeviceLayer::ConfigurationManager::kMaxUniqueIDLength];
+	chip::DeviceLayer::ConfigurationMgrImpl().GenerateUniqueId(uniqueID, sizeof(uniqueID));
+
 #if defined(CONFIG_BRIDGED_DEVICE_BT)
 	int bleDeviceIndex = strtoul(argv[1], NULL, 0);
 
@@ -72,9 +76,9 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 	Nrf::BLEConnectivityManager::ConnectionSecurityRequest request;
 	request.mCallback = BluetoothConnectionSecurityRequest;
 	request.mContext = const_cast<struct shell *>(shell);
-	result = BleBridgedDeviceFactory::CreateDevice(uuid, address, nodeLabel, &request);
+	result = BleBridgedDeviceFactory::CreateDevice(uuid, address, uniqueID, nodeLabel, &request);
 #else
-	result = BleBridgedDeviceFactory::CreateDevice(uuid, address, nodeLabel);
+	result = BleBridgedDeviceFactory::CreateDevice(uuid, uniqueID, address, nodeLabel);
 #endif /* CONFIG_BT_SMP */
 
 #elif defined(CONFIG_BRIDGED_DEVICE_SIMULATED)
@@ -84,7 +88,7 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 		nodeLabel = argv[2];
 	}
 
-	result = SimulatedBridgedDeviceFactory::CreateDevice(deviceType, nodeLabel);
+	result = SimulatedBridgedDeviceFactory::CreateDevice(deviceType, uniqueID, nodeLabel);
 
 #else
 	return -ENOTSUP;

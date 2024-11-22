@@ -60,6 +60,10 @@ CHIP_ERROR MatterBridgedDevice::HandleReadBridgedDeviceBasicInformation(Attribut
 		bool isReachable = GetIsReachable();
 		return CopyAttribute(&isReachable, sizeof(isReachable), buffer, maxReadLength);
 	}
+	case Clusters::BridgedDeviceBasicInformation::Attributes::UniqueID::Id: {
+		MutableByteSpan zclUniqueIDSpan(buffer, maxReadLength);
+		return MakeZclCharString(zclUniqueIDSpan, GetUniqueID());
+	}
 	case Clusters::BridgedDeviceBasicInformation::Attributes::NodeLabel::Id: {
 		MutableByteSpan zclNodeLabelSpan(buffer, maxReadLength);
 		return MakeZclCharString(zclNodeLabelSpan, GetNodeLabel());

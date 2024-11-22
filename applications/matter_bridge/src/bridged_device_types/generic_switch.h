@@ -10,7 +10,7 @@
 
 class GenericSwitchDevice : public Nrf::MatterBridgedDevice {
 public:
-	GenericSwitchDevice(const char *nodeLabel);
+	GenericSwitchDevice(const char *uniqueID, const char *nodeLabel);
 
 	uint16_t GetDeviceType() const override { return Nrf::MatterBridgedDevice::DeviceType::GenericSwitch; }
 	CHIP_ERROR HandleRead(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer,

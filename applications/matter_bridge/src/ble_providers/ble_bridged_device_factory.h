@@ -49,8 +49,8 @@ enum ServiceUuid : uint16_t { LedButtonService = 0xbcd1, EnvironmentalSensorServ
 using UpdateAttributeCallback = Nrf::BridgedDeviceDataProvider::UpdateAttributeCallback;
 using InvokeCommandCallback = Nrf::BridgedDeviceDataProvider::InvokeCommandCallback;
 using DeviceType = uint16_t;
-using BridgedDeviceFactory = Nrf::DeviceFactory<Nrf::MatterBridgedDevice, DeviceType, const char *>;
 using BleDataProviderFactory = Nrf::DeviceFactory<Nrf::BridgedDeviceDataProvider, ServiceUuid, UpdateAttributeCallback, InvokeCommandCallback>;
+using BridgedDeviceFactory = Nrf::DeviceFactory<Nrf::MatterBridgedDevice, DeviceType, const char *, const char *>;
 
 BridgedDeviceFactory &GetBridgedDeviceFactory();
 BleDataProviderFactory &GetDataProviderFactory();
@@ -60,14 +60,15 @@ BleDataProviderFactory &GetDataProviderFactory();
  *
  * @param deviceType the Matter device type of a bridged device to be created
  * @param btAddress the Bluetooth LE address of a device to be bridged with created Matter device
+ * @param uniqueID UniqueID of a Matter device to be created
  * @param nodeLabel node label of a Matter device to be created
  * @param index index that will be assigned to the created device
  * @param endpointId endpoint id that will be assigned to the created device
  * @return CHIP_NO_ERROR on success
  * @return other error code on failure
  */
-CHIP_ERROR CreateDevice(int deviceType, bt_addr_le_t btAddress, const char *nodeLabel, uint8_t index,
-			uint16_t endpointId);
+CHIP_ERROR CreateDevice(int deviceType, bt_addr_le_t btAddress, const char *uniqueID, const char *nodeLabel,
+			uint8_t index, uint16_t endpointId);
 
 /**
  * @brief Create a bridged device using a specific Bluetooth LE service and leaving index and endpoint ID selection to
@@ -75,13 +76,15 @@ CHIP_ERROR CreateDevice(int deviceType, bt_addr_le_t btAddress, const char *node
  *
  * @param uuid the Bluetooth LE service UUID of a bridged device provider that will be paired with bridged device
  * @param btAddress the Bluetooth LE address of a device to be bridged with created Matter device
+ * @param uniqueID UniqueID of a Matter device to be created
  * @param nodeLabel node label of a Matter device to be created
  * @param request address of connection request object for handling additional security information requiered by the connection.
  *				  Can be nullptr, if connection does not use security.
  * @return CHIP_NO_ERROR on success
  * @return other error code on failure
  */
-CHIP_ERROR CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel, Nrf::BLEConnectivityManager::ConnectionSecurityRequest * request = nullptr);
+CHIP_ERROR CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *uniqueID, const char *nodeLabel,
+			Nrf::BLEConnectivityManager::ConnectionSecurityRequest *request = nullptr);
 
 /**
  * @brief Remove bridged device.

@@ -10,7 +10,7 @@
 
 class TemperatureSensorDevice : public Nrf::MatterBridgedDevice {
 public:
-	TemperatureSensorDevice(const char *nodeLabel);
+	TemperatureSensorDevice(const char *uniqueID, const char *nodeLabel);
 
 	int16_t GetMeasuredValue() { return mMeasuredValue; }
 	int16_t GetMinMeasuredValue() { return mMinMeasuredValue; }
