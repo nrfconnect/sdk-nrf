@@ -5,3 +5,8 @@
  */
 
 #include "app_common.dtsi"
+
+/* For nRF54L, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
+&wdt31 {
+	status = "okay";
+};
