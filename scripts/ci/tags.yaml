@@ -63,6 +63,7 @@ bluetooth:
     - nrf/tests/bluetooth/
     - nrf/tests/subsys/bluetooth/
     - nrfxlib/crypto/
+    - nrfxlib/mpsl/fem/include
     - nrfxlib/mpsl/include/
     - nrfxlib/softdevice_controller/include/
     - zephyr/cmake/
