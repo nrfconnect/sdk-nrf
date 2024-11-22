@@ -38,7 +38,7 @@ public:
 		return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
 	}
 
-	static constexpr uint16_t GetOnOffClusterRevision() { return 4; }
+	static constexpr uint16_t GetOnOffClusterRevision() { return 6; }
 	static constexpr uint32_t GetOnOffFeatureMap() { return 1; }
 	static constexpr uint16_t GetBindingClusterRevision() { return 1; }
 	static constexpr uint32_t GetBindingFeatureMap() { return 0; }
