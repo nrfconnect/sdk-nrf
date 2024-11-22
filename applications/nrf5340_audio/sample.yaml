@@ -5,7 +5,6 @@ common:
   integration_platforms:
     - nrf5340_audio_dk/nrf5340/cpuapp
   platform_allow: nrf5340_audio_dk/nrf5340/cpuapp
-  platform_exclude: nrf5340_audio_dk/nrf5340/cpuapp_ns
   sysbuild: true
   build_only: true
   tags: ci_build sysbuild
