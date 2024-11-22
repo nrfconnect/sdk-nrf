@@ -210,6 +210,13 @@ nRF Desktop
     As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations were migrated from the NVS settings backend to the ZMS settings backend.
   * The :ref:`zephyr:nrf54h20dk_nrf54h20` release configuration to enable the :ref:`nrf_desktop_watchdog`.
   * The configuration files of the :ref:`nrf_desktop_click_detector` (:file:`click_detector_def.h`) to allow using them also when Bluetooth LE peer control using a dedicated button (:ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>`) is disabled.
+  * The DTS description for board targets with a different DTS overlay file for each build type to isolate the common configuration that is now defined in the :file:`app_common.dtsi` file.
+    The following board configurations have been updated:
+
+    * :ref:`zephyr:nrf52840dk_nrf52840`
+    * :ref:`zephyr:nrf52840dongle_nrf52840`
+    * :ref:`zephyr:nrf54l15dk_nrf54l15`
+    * :ref:`zephyr:nrf54h20dk_nrf54h20`
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
