@@ -13,7 +13,20 @@
 	cpuapp_recovery_partition: partition@e5000 {
 		reg = <0xe5000 DT_SIZE_K(72)>;
 	};
+
+	/* Delete PPR code partition */
+	/delete-node/ partition@e4000;
+	cpuppr_code_partition: partition@a5010 {
+		reg = < 0xa5010 0x10 >;
+	};
+
+	/* Delete FLPR code partition */
+	/delete-node/ partition@f4000;
+	cpuflpr_code_partition: partition@a5020 {
+		reg = < 0xa5020 0x10 >;
+	};
 };
+
 &cpurad_rx_partitions {
 	compatible = "nordic,owned-partitions", "fixed-partitions";
 	nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RXS>;
