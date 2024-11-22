@@ -43,7 +43,7 @@ config TFM_PLATFORM_SP_STACK_SIZE
 
 config TFM_PLATFORM_NV_COUNTER_MODULE_DISABLED
 	bool "Disable Non-volatile counter module"
-	default y if TFM_PROFILE_TYPE_MINIMAL
+	default y if !TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
 
 endmenu
 
