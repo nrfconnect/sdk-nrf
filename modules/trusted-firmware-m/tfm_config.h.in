@@ -100,6 +100,9 @@
 /* The stack size of the Initial Attestation Secure Partition */
 #cmakedefine ATTEST_STACK_SIZE @ATTEST_STACK_SIZE@
 
+/* Sign message instead of message hash */
+#cmakedefine01 ATTEST_SIGN_MESSAGE
+
 /* Set the initial attestation token profile */
 /* The TF-M config_base.h configuration will do
  * #define ATTEST_TOKEN_PROFILE_PSA_IOT_1 1, if non of the token profiles are
