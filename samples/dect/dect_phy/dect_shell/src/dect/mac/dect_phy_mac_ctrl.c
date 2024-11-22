@@ -62,7 +62,7 @@ static void dect_phy_mac_ctrl_beacon_start_work_handler(struct k_work *work_item
 	struct dect_phy_mac_ctrl_beacon_starter_data *data =
 		CONTAINER_OF(work_item, struct dect_phy_mac_ctrl_beacon_starter_data, work);
 	int ret = 0;
-	uint16_t chosen_channel;
+	int chosen_channel;
 	char started_string[255];
 
 	if (!dect_phy_ctrl_mdm_phy_api_initialized()) {
