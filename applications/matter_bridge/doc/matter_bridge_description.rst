@@ -388,70 +388,78 @@ Check and configure the following configuration options:
 .. _CONFIG_BRIDGED_DEVICE_IMPLEMENTATION:
 
 CONFIG_BRIDGED_DEVICE_IMPLEMENTATION
-   Select bridged device implementation.
+   ``bool`` - Select bridged device implementation.
    See the :ref:`matter_bridge_app_bridged_support_configs` section for more information.
    Accepts the following values:
 
    .. _CONFIG_BRIDGED_DEVICE_SIMULATED:
 
    CONFIG_BRIDGED_DEVICE_SIMULATED
-      Implement a simulated bridged device.
+      ``bool`` - Implement a simulated bridged device.
       You must also configure :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION <CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION>`
 
    .. _CONFIG_BRIDGED_DEVICE_BT:
 
    CONFIG_BRIDGED_DEVICE_BT
-      Implement a Bluetooth LE bridged device.
+      ``bool`` - Implement a Bluetooth LE bridged device.
 
 .. _CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE:
 
 CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
-   Enable support for Humidity Sensor bridged device.
+   ``bool`` - Enable support for Humidity Sensor bridged device.
 
 .. _CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE:
 
 CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
-   Enable support for OnOff Light bridged device.
+   ``bool`` - Enable support for OnOff Light bridged device.
 
 .. _CONFIG_BRIDGE_SWITCH_BRIDGED_DEVICE:
 
 CONFIG_BRIDGE_SWITCH_BRIDGED_DEVICE
-   Enable support for a switch bridged device.
+   ``bool`` - Enable support for a switch bridged device.
    Accepts the following values:
 
    .. _CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE:
 
    CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
-      Enable support for Generic Switch bridged device.
+      ``bool`` - Enable support for Generic Switch bridged device.
 
    .. _CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE:
 
    CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-      Enable support for OnOff Light Switch bridged device.
+      ``bool`` - Enable support for OnOff Light Switch bridged device.
 
 .. _CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE:
 
 CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
-   Enable support for Temperature Sensor bridged device.
+   ``bool`` - Enable support for Temperature Sensor bridged device.
 
-If you selected the simulated device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED <CONFIG_BRIDGED_DEVICE_SIMULATED>` Kconfig option, also check and configure the following option:
+.. _CONFIG_BRIDGE_MIGRATE_PRE_2_7_0:
+
+CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
+``bool`` - Enable migration of bridged device data stored in old scheme from pre nRF SDK 2.7.0 releases.
+
+.. _CONFIG_BRIDGE_MIGRATE_VERSION_1:
+
+CONFIG_BRIDGE_MIGRATE_VERSION_1
+``bool`` - Enable migration of bridged device data stored in version 1 of new scheme.If you selected the simulated device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED <CONFIG_BRIDGED_DEVICE_SIMULATED>` Kconfig option, also check and configure the following option:
 
 .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION:
 
 CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION
-   Select the simulated OnOff device implementation.
+   ``bool`` - Select the simulated OnOff device implementation.
    Accepts the following values:
 
    .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC:
 
    CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
-      Automatically simulated OnOff device.
+      ``bool`` - Automatically simulated OnOff device.
       The simulated device automatically changes its state periodically.
 
    .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL:
 
    CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
-      Shell-controlled simulated OnOff device.
+      ``bool`` - Shell-controlled simulated OnOff device.
       The state of the simulated device is changed using shell commands.
 
 If you selected the Bluetooth LE device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_BT <CONFIG_BRIDGED_DEVICE_BT>` Kconfig option, also check and configure the following options:
@@ -459,29 +467,29 @@ If you selected the Bluetooth LE device implementation using the :ref:`CONFIG_BR
 .. _CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES:
 
 CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES
-   Set the maximum number of scanned devices.
+   ``int`` - Set the maximum number of scanned devices.
 
 .. _CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL:
 
 CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL
-   Set the minimum Bluetooth security level of bridged devices that the bridge device will accept.
+   ``int`` - Set the minimum Bluetooth security level of bridged devices that the bridge device will accept.
    Bridged devices using this or a higher level will be allowed to connect to the bridge.
    See the :ref:`matter_bridge_app_bt_security` section for more information.
 
 .. _CONFIG_BRIDGE_BT_RECOVERY_MAX_INTERVAL:
 
 CONFIG_BRIDGE_BT_RECOVERY_MAX_INTERVAL
-   Set the maximum time (in seconds) between recovery attempts when the Bluetooth LE connection to the bridged device is lost.
+   ``int`` - Set the maximum time (in seconds) between recovery attempts when the Bluetooth LE connection to the bridged device is lost.
 
 .. _CONFIG_BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS:
 
 CONFIG_BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS
-   Set the time (in milliseconds) within which the Bridge will try to re-establish a connection to the lost Bluetooth LE device.
+   ``int`` - Set the time (in milliseconds) within which the Bridge will try to re-establish a connection to the lost Bluetooth LE device.
 
 .. _CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS:
 
 CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS
-   Set the Bluetooth LE scan timeout in milliseconds.
+   ``int`` - Set the Bluetooth LE scan timeout in milliseconds.
 
 The following options affect how many bridged devices the application supports.
 See the :ref:`matter_bridge_app_bridged_support_configs` section for more information.
@@ -489,22 +497,12 @@ See the :ref:`matter_bridge_app_bridged_support_configs` section for more inform
 .. _CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER:
 
 CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER
-   Set the maximum number of physical non-Matter devices supported by the Bridge.
+   ``int`` - Set the maximum number of physical non-Matter devices supported by the Bridge.
 
 .. _CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER:
 
 CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
-   Set the maximum number of dynamic endpoints supported by the Bridge.
-
-.. _CONFIG_BRIDGE_MIGRATE_PRE_2_7_0:
-
-CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
-   Enable migration of bridged device data stored in old scheme from pre nRF SDK 2.7.0 releases.
-
-.. _CONFIG_BRIDGE_MIGRATE_VERSION_1:
-
-CONFIG_BRIDGE_MIGRATE_VERSION_1
-   Enable migration of bridged device data stored in version 1 of new scheme.
+   ``int`` - Set the maximum number of dynamic endpoints supported by the Bridge.
 
 .. _matter_bridge_app_bridged_support_configs:
 

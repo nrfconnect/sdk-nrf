@@ -66,8 +66,8 @@ Alternatively, you can enable each option separately.
 
 The Kconfig option enables the following functionalities on the Matter device:
 
-- :ref:`ug_matter_configuring_settings_shell` by setting the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
-- :doc:`matter:nrfconnect_examples_cli` by setting the :kconfig:option:`CONFIG_CHIP_LIB_SHELL` Kconfig option to ``y``.
+- :ref:`ug_matter_configuring_settings_shell` by setting the :ref:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL<CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL>` Kconfig option to ``y``.
+- :doc:`Command-line interface <matter:nrfconnect_examples_cli>` by setting the :kconfig:option:`CONFIG_CHIP_LIB_SHELL` Kconfig option to ``y``.
 - Zephyr Kernel commands by setting the :kconfig:option:`CONFIG_KERNEL_SHELL` Kconfig option to ``y``.
 - Zephyr Settings shell by setting the :kconfig:option:`CONFIG_SETTINGS_SHELL` Kconfig option to ``y``.
 - OpenThread shell by setting the :kconfig:option:`CONFIG_OPENTHREAD_SHELL` Kconfig option to ``y`` if you build the Matter over Thread variant.

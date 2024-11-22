@@ -81,8 +81,8 @@ The credentials can be used to control remote access to the bolt lock.
 The PIN code assigned by the Matter controller is stored persistently, which means that it can survive a device reboot.
 Depending on the IPv6 network technology in use, the following storage backends are supported by default to store the PIN code credential:
 
-* Matter over Thread - secure storage backend (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option enabled by default).
-* Matter over Wi-Fi - non-secure storage backend (:kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig option enabled by default).
+* Matter over Thread - secure storage backend (:ref:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND<CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND>` Kconfig option enabled by default).
+* Matter over Wi-Fi - non-secure storage backend (:ref:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND<CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND>` Kconfig option enabled by default).
 
 You can learn more about the |NCS| Matter persistent storage module and its configuration in the :ref:`ug_matter_persistent_storage` section of the :ref:`ug_matter_device_advanced_kconfigs` documentation.
 
