@@ -4,6 +4,23 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Test requires two wire connections:
+ *  - SPIM_MOSI with SPIM_MISO -> P7.06 - P7.07;
+ *  - SPI cs-gpios with test-gpios -> P0.10 - P0.11.
+ * Test-gpios and cs-gpios must have identical active level flag.
+ */
+
+/ {
+	zephyr,user {
+		test-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0>;
+};
+
 &pinctrl {
 	spi120_default: spi120_default {
 		group1 {
@@ -36,6 +53,7 @@
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
 	memory-regions = <&dma_fast_region>;
+	cs-gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
 	zephyr,pm-device-runtime-auto;
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
