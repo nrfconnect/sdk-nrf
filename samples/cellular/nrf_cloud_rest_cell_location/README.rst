@@ -1,4 +1,4 @@
-.. _nrf_cloud_rest_cell_pos_sample:
+.. _nrf_cloud_rest_cell_location:
 
 Cellular: nRF Cloud REST cellular location
 ##########################################
