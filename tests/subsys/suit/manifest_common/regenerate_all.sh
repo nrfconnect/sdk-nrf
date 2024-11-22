@@ -89,6 +89,10 @@ declare -A dependency_envelopes=(
     ../orchestrator/manifest/src/manifest_valid_app_54.c"
   ["../orchestrator/manifest/sample_valid.yaml"]="
     ../orchestrator/manifest/src/manifest_valid_app.c"
+  ["../orchestrator/manifest/sample_valid_severable_54.yaml"]="
+    ../orchestrator/manifest/src/manifest_valid_app_severable_54.c"
+  ["../orchestrator/manifest/sample_valid_severable.yaml"]="
+    ../orchestrator/manifest/src/manifest_valid_app_severable.c"
 )
 declare -A root_envelopes=(
   ["../storage/manifest/manifest_root.yaml"]="
@@ -101,6 +105,10 @@ declare -A root_envelopes=(
     ../orchestrator/manifest/src/manifest_valid_54.c"
   ["../orchestrator/manifest/sample_valid_root.yaml"]="
     ../orchestrator/manifest/src/manifest_valid.c"
+  ["../orchestrator/manifest/sample_valid_root_severable_54.yaml"]="
+    ../orchestrator/manifest/src/manifest_valid_severable_54.c"
+  ["../orchestrator/manifest/sample_valid_root_severable.yaml"]="
+    ../orchestrator/manifest/src/manifest_valid_severable.c"
 )
 declare -A envelope_dependency_names=(
   ["../storage/manifest/manifest_app.yaml"]="app.suit"
@@ -114,6 +122,10 @@ declare -A envelope_dependency_names=(
   ["../orchestrator/manifest/sample_valid.yaml"]="sample_app_posix.suit"
   ["../orchestrator/manifest/sample_valid_root_54.yaml"]="sample_root.suit"
   ["../orchestrator/manifest/sample_valid_root.yaml"]="sample_root_posix.suit"
+  ["../orchestrator/manifest/sample_valid_severable_54.yaml"]="sample_app_severable.suit"
+  ["../orchestrator/manifest/sample_valid_severable.yaml"]="sample_app_severable_posix.suit"
+  ["../orchestrator/manifest/sample_valid_root_severable_54.yaml"]="sample_root_severable.suit"
+  ["../orchestrator/manifest/sample_valid_root_severable.yaml"]="sample_root_severable_posix.suit"
 )
 
 
