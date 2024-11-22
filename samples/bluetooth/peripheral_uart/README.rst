@@ -281,6 +281,8 @@ To perform the test, complete the following steps:
          You can write to the UART RX and get the text displayed on the COM listener.
       #. Type "0123456789" and tap :guilabel:`SEND`.
          Verify that the text "0123456789" is displayed on the COM listener.
+      #. Tap the three-dot menu below the device name, and select **Enable CCCDs**.
+         This enables the notifications on the UART TX characteristic on the peripheral (DK) to allow sending UART characters to the phone or tablet.
       #. To send data from the device to your phone or tablet, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
          Observe that a notification is sent to the peer.
       #. Disconnect the device in nRF Connect for Mobile.
@@ -309,6 +311,8 @@ To perform the test, complete the following steps:
          You can write to the UART RX and get the text displayed on the COM listener.
       #. Type "0123456789" and tap :guilabel:`SEND`.
          Verify that the text "0123456789" is displayed on the COM listener.
+      #. Tap the three-dot menu below the device name, and select **Enable CCCDs**.
+         This enables the notifications on the UART TX characteristic on the peripheral (DK) to allow sending UART characters to the phone or tablet.
       #. To send data from the device to your phone or tablet, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
          Observe that a notification is sent to the peer.
       #. Disconnect the device in nRF Connect for Mobile.
