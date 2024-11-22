@@ -440,6 +440,8 @@ Keys samples
 Matter samples
 --------------
 
+* Added the :ref:`matter_samples_config` page that documents Kconfig options and snippets used by Matter samples and applications.
+
 * Updated:
 
   * All Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
@@ -447,7 +449,7 @@ Matter samples
   * All Matter samples to enable the ZMS file subsystem in all devices that contain MRAM, such as the nRF54H Series devices.
 
 * Disabled pausing Matter watchdog while CPU is in idle state in all Matter samples.
-  To enable it set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.
+  To enable it set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP>` Kconfig option to ``y``.
 
 * :ref:`matter_template_sample` sample:
 
@@ -754,5 +756,9 @@ cJSON
 Documentation
 =============
 
-* Added Nordic Thingy:91 X to the list of devices supported by the `Quick Start app`_ on the :ref:`gsg_guides` page.
+* Added:
+
+  * Nordic Thingy:91 X to the list of devices supported by the `Quick Start app`_ on the :ref:`gsg_guides` page.
+  * The :ref:`matter_samples_config` page that documents Kconfig options and snippets shared by Matter samples and applications.
+
 * Fixed an issue on the :ref:`install_ncs` page where an incorrect directory path was provided for Linux and macOS at the end of the :ref:`cloning_the_repositories_win` section.

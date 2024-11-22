@@ -96,3 +96,4 @@ In addition to these samples, check also the following Matter applications:
    :glob:
 
    ../../../samples/matter/*/README
+   ../../../samples/matter/common/config
