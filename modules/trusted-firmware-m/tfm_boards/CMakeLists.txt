@@ -160,13 +160,11 @@ if (CONFIG_NRF_SECURE_APPROTECT_LOCK)
 endif()
 
 if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
-  # Added here to satisfy the following requirement from tfm_crypto.yaml:
-  #
-  # "dependencies": [
-  #   "TFM_INTERNAL_TRUSTED_STORAGE_SERVICE"
-  # ]
+  # Ensure OTP and NV counter support is also disabled when ITS is not enabled
   target_compile_definitions(platform_s PUBLIC
-    TFM_INTERNAL_TRUSTED_STORAGE_SERVICE_SID=0x00000070)
+    -DPLATFORM_DEFAULT_OTP=OFF
+    -DPLATFORM_DEFAULT_OTP_WRITEABLE=OFF
+    -DPLATFORM_DEFAULT_NV_COUNTERS=OFF)
 endif()
 
 if(BL2)
