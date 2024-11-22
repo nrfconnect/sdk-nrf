@@ -242,14 +242,6 @@ int hci_vs_sdc_central_acl_event_spacing_set(
 				 sizeof(*params));
 }
 
-
-int hci_vs_sdc_set_conn_event_trigger(const sdc_hci_cmd_vs_set_conn_event_trigger_t *params)
-{
-	return hci_vs_cmd_no_rsp(SDC_HCI_OPCODE_CMD_VS_SET_CONN_EVENT_TRIGGER,
-				 params,
-				 sizeof(*params));
-}
-
 int hci_vs_sdc_get_next_conn_event_counter(
 	const sdc_hci_cmd_vs_get_next_conn_event_counter_t *params,
 	sdc_hci_cmd_vs_get_next_conn_event_counter_return_t *return_params)

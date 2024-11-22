@@ -398,9 +398,7 @@ config BT_CTLR_SDC_EVENT_TRIGGER
 	  Enable support for the Event Trigger feature.
 	  The event trigger is a proprietary SDC feature which can be used
 	  to perform tasks in synchronization with radio activity.
-	  When enabled, this feature will trigger a (D)PPI task at the start of radio events.
-	  When used for connections, the connection event trigger can be configured to trigger
-	  every N connection events starting from a given connection event counter.
+	  When enabled, this feature will trigger a peripheral task at the start of radio events.
 
 config BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT
 	bool "Connection event anchor point reports"

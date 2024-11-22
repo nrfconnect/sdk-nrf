@@ -273,16 +273,6 @@ int hci_vs_sdc_read_average_rssi(const sdc_hci_cmd_vs_read_average_rssi_t *param
 int hci_vs_sdc_central_acl_event_spacing_set(
 	const sdc_hci_cmd_vs_central_acl_event_spacing_set_t *params);
 
-/** @brief Set Connection Event Trigger.
- *
- * For the complete API description, see sdc_hci_cmd_vs_set_conn_event_trigger().
- *
- * @param[in]  params Input parameters.
- *
- * @return 0 on success or negative error value on failure.
- */
-int hci_vs_sdc_set_conn_event_trigger(const sdc_hci_cmd_vs_set_conn_event_trigger_t *params);
-
 /** @brief Get Next Connection Event Counter.
  *
  * For the complete API description, see sdc_hci_cmd_vs_get_next_conn_event_counter().

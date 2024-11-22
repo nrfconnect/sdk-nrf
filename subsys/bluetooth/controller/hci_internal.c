@@ -688,7 +688,6 @@ static void vs_supported_commands(sdc_hci_vs_supported_vs_commands_t *cmds)
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_EVENT_TRIGGER)
-	cmds->set_conn_event_trigger = 1;
 	cmds->set_event_start_task = 1;
 #endif
 
@@ -1719,8 +1718,6 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		return sdc_hci_cmd_vs_central_acl_event_spacing_set((void *)cmd_params);
 #endif
 #if defined(CONFIG_BT_CTLR_SDC_EVENT_TRIGGER)
-	case SDC_HCI_OPCODE_CMD_VS_SET_CONN_EVENT_TRIGGER:
-		return sdc_hci_cmd_vs_set_conn_event_trigger((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_SET_EVENT_START_TASK:
 		return sdc_hci_cmd_vs_set_event_start_task((void *)cmd_params);
 #endif
