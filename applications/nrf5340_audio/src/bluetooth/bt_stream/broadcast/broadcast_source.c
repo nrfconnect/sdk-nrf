@@ -135,6 +135,27 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	le_audio_print_codec(stream->codec_cfg, BT_AUDIO_DIR_SOURCE);
 }
 
+/**
+ * @brief Check if there are any streaming streams in a broadcast source (BIG).
+ *
+ * @param big_index BIG index.
+ *
+ * @return true if there are streaming streams, false otherwise.
+ */
+static bool source_has_streaming_streams(uint8_t big_index)
+{
+	for (int i = 0; i < CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT; i++) {
+		for (int j = 0; j < CONFIG_BT_BAP_BROADCAST_SRC_STREAM_COUNT; j++) {
+			if (le_audio_ep_state_check(cap_streams[big_index][i][j].bap_stream.ep,
+						    BT_BAP_EP_STATE_STREAMING)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	int ret;
@@ -149,10 +170,12 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)stream, reason);
 
-	if (delete_broadcast_src[idx.lvl1] && broadcast_sources[idx.lvl1] != NULL) {
+	if (delete_broadcast_src[idx.lvl1] && broadcast_sources[idx.lvl1] != NULL &&
+	    !source_has_streaming_streams(idx.lvl1)) {
 		ret = bt_cap_initiator_broadcast_audio_delete(broadcast_sources[idx.lvl1]);
 		if (ret) {
-			LOG_ERR("Unable to delete broadcast source %p", (void *)stream);
+			LOG_ERR("Unable to delete broadcast source %p, ret: %d", (void *)stream,
+				ret);
 			delete_broadcast_src[idx.lvl1] = false;
 			return;
 		}
