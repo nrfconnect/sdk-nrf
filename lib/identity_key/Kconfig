@@ -36,3 +36,12 @@ config IDENTITY_KEY_DUMMY
 	  testing purposes.
 
 endif # IDENTITY_KEY
+
+config IDENTITY_KEY_TFM
+	bool "Identity key support in TF-M"
+	depends on HAS_HW_NRF_CC3XX
+	depends on TRUSTED_EXECUTION_NONSECURE
+	help
+	  This option adds support for an identity key stored in the KMU to TF-M.
+	  The key is stored in an encrypted form and is decrypted by the identity key library.
+	  The identity key is an ECC secp256r1 key pair.

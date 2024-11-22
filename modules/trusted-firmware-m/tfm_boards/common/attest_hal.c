@@ -8,14 +8,26 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <psa/error.h>
+#include <psa/crypto.h>
 #include "tfm_attest_hal.h"
 #include "tfm_plat_boot_seed.h"
 #include "tfm_plat_device_id.h"
-#include <nrf_cc3xx_platform.h>
 #include "tfm_strnlen.h"
 #include "nrf_provisioning.h"
-#include <nrfx_nvmc.h>
 #include <bl_storage.h>
+
+#ifdef CONFIG_NRFX_NVMC
+#include <nrfx_nvmc.h>
+#endif
+#ifdef CONFIG_HAS_HW_NRF_CC3XX
+#include <nrf_cc3xx_platform.h>
+#endif
+
+#if defined(CONFIG_CRACEN_HW_PRESENT)
+static bool boot_seed_set;
+static uint8_t boot_seed[BOOT_SEED_SIZE];
+#endif
 
 static enum tfm_security_lifecycle_t map_bl_storage_lcs_to_tfm_slc(enum lcs lcs)
 {
@@ -101,8 +113,11 @@ enum tfm_plat_err_t tfm_attest_hal_get_profile_definition(uint32_t *size, uint8_
 
 enum tfm_plat_err_t tfm_plat_get_boot_seed(uint32_t size, uint8_t *buf)
 {
+#if defined(CONFIG_HAS_HW_NRF_CC3XX)
 	int nrf_err;
 
+	_Static_assert(NRF_CC3XX_PLATFORM_TFM_BOOT_SEED_SIZE == BOOT_SEED_SIZE,
+		"NRF_CC3XX_PLATFORM_TFM_BOOT_SEED_SIZE must match BOOT_SEED_SIZE");
 	if (size != NRF_CC3XX_PLATFORM_TFM_BOOT_SEED_SIZE) {
 		return TFM_PLAT_ERR_INVALID_INPUT;
 	}
@@ -111,6 +126,24 @@ enum tfm_plat_err_t tfm_plat_get_boot_seed(uint32_t size, uint8_t *buf)
 	if (nrf_err != NRF_CC3XX_PLATFORM_SUCCESS) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
+#elif defined(CONFIG_CRACEN_HW_PRESENT)
+	if (!boot_seed_set) {
+		psa_status_t psa_err = psa_generate_random(boot_seed, sizeof(boot_seed));
+
+		if (psa_err != PSA_SUCCESS) {
+			return TFM_PLAT_ERR_SYSTEM_ERR;
+		}
+
+		boot_seed_set = true;
+	}
+
+	if (size != BOOT_SEED_SIZE) {
+		return TFM_PLAT_ERR_INVALID_INPUT;
+	}
+	memcpy(buf, boot_seed, size);
+#else
+#error "No crypto hardware to generate boot seed available."
+#endif
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
