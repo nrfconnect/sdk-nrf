@@ -10,6 +10,7 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/util/attribute-storage.h>
+#include <platform/ConfigurationManager.h>
 
 namespace Nrf
 {
@@ -43,6 +44,9 @@ namespace Nrf
 		DECLARE_DYNAMIC_ATTRIBUTE(                                                                             \
 			chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::Reachable::Id, BOOLEAN, 1,     \
 			0), /* Reachable */                                                                            \
+		DECLARE_DYNAMIC_ATTRIBUTE(                                                                             \
+			chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::UniqueID::Id, CHAR_STRING, 32, \
+			0), /* UniqueID */                                                                             \
 		DECLARE_DYNAMIC_ATTRIBUTE(                                                                             \
 			chip::app::Clusters::BridgedDeviceBasicInformation::Attributes::FeatureMap::Id, BITMAP32, 4,   \
 			0), /* feature map */                                                                          \
@@ -90,12 +94,16 @@ public:
 	using IdentifyType = chip::app::Clusters::Identify::IdentifyTypeEnum;
 	static constexpr uint8_t kDefaultDynamicEndpointVersion = 3;
 	static constexpr uint8_t kNodeLabelSize = 32;
+	static constexpr uint8_t kUniqueIDSize = chip::DeviceLayer::ConfigurationManager::kMaxUniqueIDLength;
 	static constexpr uint8_t kDescriptorAttributeArraySize = 254;
 
-	explicit MatterBridgedDevice(const char *nodeLabel)
+	explicit MatterBridgedDevice(const char *uniqueID, const char *nodeLabel)
 		: mIdentifyServer(mEndpointId, IdentifyStartDefaultCb, IdentifyStopDefaultCb,
 				  IdentifyType::kVisibleIndicator)
 	{
+		if (uniqueID) {
+			memcpy(mUniqueID, uniqueID, strlen(uniqueID));
+		}
 		if (nodeLabel) {
 			memcpy(mNodeLabel, nodeLabel, strlen(nodeLabel));
 		}
@@ -129,6 +137,7 @@ public:
 	CHIP_ERROR HandleWriteIdentify(chip::AttributeId attributeId, void *data, size_t dataSize);
 
 	bool GetIsReachable() const { return mIsReachable; }
+	const char *GetUniqueID() const { return mUniqueID; }
 	const char *GetNodeLabel() const { return mNodeLabel; }
 	static constexpr uint16_t GetBridgedDeviceBasicInformationClusterRevision() { return 4; }
 	static constexpr uint32_t GetBridgedDeviceBasicInformationFeatureMap() { return 0; }
@@ -149,6 +158,7 @@ protected:
 
 private:
 	bool mIsReachable = true;
+	char mUniqueID[kUniqueIDSize] = "";
 	char mNodeLabel[kNodeLabelSize] = "";
 	Identify mIdentifyServer;
 	uint16_t mIdentifyTime{};

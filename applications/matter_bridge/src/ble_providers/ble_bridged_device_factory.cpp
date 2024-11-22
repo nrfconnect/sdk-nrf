@@ -87,8 +87,10 @@ CHIP_ERROR StoreDevice(MatterBridgedDevice *device, BridgedDeviceDataProvider *p
 
 	bridgedDevice.mEndpointId = device->GetEndpointId();
 	bridgedDevice.mDeviceType = device->GetDeviceType();
+	bridgedDevice.mUniqueIDLength = strlen(device->GetUniqueID());
+	memcpy(bridgedDevice.mUniqueID, device->GetUniqueID(), bridgedDevice.mUniqueIDLength);
 	bridgedDevice.mNodeLabelLength = strlen(device->GetNodeLabel());
-	memcpy(bridgedDevice.mNodeLabel, device->GetNodeLabel(), strlen(device->GetNodeLabel()));
+	memcpy(bridgedDevice.mNodeLabel, device->GetNodeLabel(), bridgedDevice.mNodeLabelLength);
 
 	/* Fill BT address information as a part of implementation specific user data. */
 	bridgedDevice.mUserDataSize = sizeof(addr);
@@ -122,8 +124,8 @@ CHIP_ERROR StoreDevice(MatterBridgedDevice *device, BridgedDeviceDataProvider *p
 	return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR AddMatterDevices(MatterBridgedDevice::DeviceType deviceTypes[], uint8_t count, const char *nodeLabel,
-			    BridgedDeviceDataProvider *provider, uint8_t indexes[] = nullptr,
+CHIP_ERROR AddMatterDevices(MatterBridgedDevice::DeviceType deviceTypes[], uint8_t count, const char *uniqueID,
+			    const char *nodeLabel, BridgedDeviceDataProvider *provider, uint8_t indexes[] = nullptr,
 			    uint16_t endpointIds[] = nullptr)
 {
 	VerifyOrReturnError(provider != nullptr, CHIP_ERROR_INVALID_ARGUMENT, LOG_ERR("No valid data provider!"));
@@ -144,7 +146,7 @@ CHIP_ERROR AddMatterDevices(MatterBridgedDevice::DeviceType deviceTypes[], uint8
 	uint8_t addedDevicesCount = 0;
 	for (; addedDevicesCount < count; addedDevicesCount++) {
 		newBridgedDevices[addedDevicesCount] = BleBridgedDeviceFactory::GetBridgedDeviceFactory().Create(
-			deviceTypes[addedDevicesCount], nodeLabel);
+			deviceTypes[addedDevicesCount], uniqueID, nodeLabel);
 
 		if (!newBridgedDevices[addedDevicesCount]) {
 			LOG_ERR("Cannot allocate Matter device of given type");
@@ -199,6 +201,7 @@ CHIP_ERROR AddMatterDevices(MatterBridgedDevice::DeviceType deviceTypes[], uint8
 struct BluetoothConnectionContext {
 	MatterBridgedDevice::DeviceType deviceTypes[BridgeManager::kMaxBridgedDevicesPerProvider];
 	uint8_t count;
+	char uniqueID[MatterBridgedDevice::kUniqueIDSize] = { 0 };
 	char nodeLabel[MatterBridgedDevice::kNodeLabelSize] = { 0 };
 	BLEBridgedDeviceProvider *provider;
 	bt_addr_le_t address;
@@ -223,7 +226,7 @@ CHIP_ERROR BluetoothDeviceConnected(bool success, void *context)
 	chip::Optional<uint16_t> endpointIds[BridgeManager::kMaxBridgedDevicesPerProvider];
 	/* AddMatterDevices takes the ownership of the passed provider object and will
 	   delete it in case the BridgeManager fails to accept this object. */
-	CHIP_ERROR err = AddMatterDevices(ctx->deviceTypes, ctx->count, ctx->nodeLabel, ctx->provider);
+	CHIP_ERROR err = AddMatterDevices(ctx->deviceTypes, ctx->count, ctx->uniqueID, ctx->nodeLabel, ctx->provider);
 	chip::Platform::Delete(ctx);
 
 	return err;
@@ -232,6 +235,14 @@ CHIP_ERROR BluetoothDeviceConnected(bool success, void *context)
 
 BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridgedDeviceFactory()
 {
+	auto checkUniqueID = [](const char *uniqueID) {
+		/* If node uniqueID is provided it must fit the maximum defined length */
+		if (!uniqueID || (uniqueID && (strlen(uniqueID) < Nrf::MatterBridgedDevice::kUniqueIDSize))) {
+			return true;
+		}
+		return false;
+	};
+
 	auto checkLabel = [](const char *nodeLabel) {
 		/* If node label is provided it must fit the maximum defined length */
 		if (!nodeLabel || (nodeLabel && (strlen(nodeLabel) < MatterBridgedDevice::kNodeLabelSize))) {
@@ -243,47 +254,52 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 	static BridgedDeviceFactory sBridgedDeviceFactory{
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 		{ MatterBridgedDevice::DeviceType::HumiditySensor,
-		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<HumiditySensorDevice>(nodeLabel);
+			  return chip::Platform::New<HumiditySensorDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ MatterBridgedDevice::DeviceType::OnOffLight,
-		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<OnOffLightDevice>(nodeLabel);
+			  return chip::Platform::New<OnOffLightDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ MatterBridgedDevice::DeviceType::TemperatureSensor,
-		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<TemperatureSensorDevice>(nodeLabel);
+			  return chip::Platform::New<TemperatureSensorDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 		{ MatterBridgedDevice::DeviceType::GenericSwitch,
-		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<GenericSwitchDevice>(nodeLabel);
+			  return chip::Platform::New<GenericSwitchDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
 		{ MatterBridgedDevice::DeviceType::OnOffLightSwitch,
-		  [checkLabel](const char *nodeLabel) -> MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<OnOffLightSwitchDevice>(nodeLabel);
+			  return chip::Platform::New<OnOffLightSwitchDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 	};
@@ -311,8 +327,8 @@ BleBridgedDeviceFactory::BleDataProviderFactory &BleBridgedDeviceFactory::GetDat
 	return sDeviceDataProvider;
 }
 
-CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(int deviceType, bt_addr_le_t btAddress, const char *nodeLabel,
-						 uint8_t index, uint16_t endpointId)
+CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(int deviceType, bt_addr_le_t btAddress, const char *uniqueID,
+						 const char *nodeLabel, uint8_t index, uint16_t endpointId)
 {
 	CHIP_ERROR err;
 
@@ -322,8 +338,8 @@ CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(int deviceType, bt_addr_le_t bt
 	 */
 	BLEBridgedDeviceProvider *provider = BLEConnectivityManager::Instance().FindBLEProvider(btAddress);
 	if (provider) {
-		return AddMatterDevices(reinterpret_cast<MatterBridgedDevice::DeviceType *>(&deviceType), 1, nodeLabel,
-					provider, &index, &endpointId);
+		return AddMatterDevices(reinterpret_cast<MatterBridgedDevice::DeviceType *>(&deviceType), 1, uniqueID,
+					nodeLabel, provider, &index, &endpointId);
 	}
 
 	ServiceUuid providerType;
@@ -342,8 +358,8 @@ CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(int deviceType, bt_addr_le_t bt
 	/* Confirm that the first connection was done and this will be only the device recovery. */
 	provider->ConfirmInitialConnection();
 	provider->InitializeBridgedDevice(btAddress, nullptr, nullptr);
-	err = AddMatterDevices(reinterpret_cast<MatterBridgedDevice::DeviceType *>(&deviceType), 1, nodeLabel, provider,
-			       &index, &endpointId);
+	err = AddMatterDevices(reinterpret_cast<MatterBridgedDevice::DeviceType *>(&deviceType), 1, uniqueID, nodeLabel,
+			       provider, &index, &endpointId);
 
 	if (err != CHIP_NO_ERROR) {
 		return err;
@@ -359,7 +375,8 @@ exit:
 	return err;
 }
 
-CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *nodeLabel,
+CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btAddress, const char *uniqueID,
+						 const char *nodeLabel,
 						 BLEConnectivityManager::ConnectionSecurityRequest *request)
 {
 	/* Check if there is already existing provider for given address.
@@ -394,6 +411,10 @@ CHIP_ERROR BleBridgedDeviceFactory::CreateDevice(uint16_t uuid, bt_addr_le_t btA
 	contextPtr->count = count;
 	for (uint8_t i = 0; i < count; i++) {
 		contextPtr->deviceTypes[i] = deviceTypes[i];
+	}
+
+	if (uniqueID) {
+		strcpy(contextPtr->uniqueID, uniqueID);
 	}
 
 	if (nodeLabel) {

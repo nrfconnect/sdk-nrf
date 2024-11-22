@@ -95,7 +95,8 @@ static constexpr EmberAfDeviceType kBridgedOnOffDeviceTypes[] = {
 
 static constexpr uint8_t kLightDataVersionSize = ArraySize(bridgedLightClusters);
 
-OnOffLightDevice::OnOffLightDevice(const char *nodeLabel) : MatterBridgedDevice(nodeLabel)
+OnOffLightDevice::OnOffLightDevice(const char *uniqueID, const char *nodeLabel)
+	: MatterBridgedDevice(uniqueID, nodeLabel)
 {
 	mDataVersionSize = kLightDataVersionSize;
 	mEp = &bridgedLightEndpoint;

@@ -33,7 +33,7 @@ The following steps show how to add support for a new Matter device type, using 
             class PressureSensorDevice : public Nrf::MatterBridgedDevice {
             public:
 
-            PressureSensorDevice(const char *nodeLabel);
+            PressureSensorDevice(const char *uniqueID, const char *nodeLabel);
             static constexpr uint16_t kPressureSensorDeviceTypeId = 0x0305;
 
             };
@@ -44,7 +44,8 @@ The following steps show how to add support for a new Matter device type, using 
 
             #include "pressure_sensor.h"
 
-            PressureSensorDevice::PressureSensorDevice(const char *nodeLabel) : MatterBridgedDevice(nodeLabel) {}
+            PressureSensorDevice::PressureSensorDevice(const char *uniqueID, const char *nodeLabel)
+                  : MatterBridgedDevice(uniqueID, nodeLabel) {}
 
    #. Declare all clusters that are mandatory for the Pressure Sensor device type, according to the Matter device library specification, and fill the appropriate :c:struct:`MatterBridgedDevice` class fields in the :c:struct:`PressureSensorDevice` class constructor.
 
@@ -98,7 +99,8 @@ The following steps show how to add support for a new Matter device type, using 
 
          .. code-block:: C++
 
-            PressureSensorDevice::PressureSensorDevice(const char *nodeLabel) : MatterBridgedDevice(nodeLabel)
+            PressureSensorDevice::PressureSensorDevice(const char *uniqueID, const char *nodeLabel)
+                  : MatterBridgedDevice(uniqueID, nodeLabel)
             {
                   mDataVersionSize = kPressureDataVersionSize;
                   mEp = &bridgedPressureEndpoint;
@@ -394,11 +396,11 @@ The following steps show how to add support for a new Matter device type, using 
       .. code-block:: C++
 
          { PressureSensorDevice::kPressureSensorDeviceTypeId,
-         [checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
-            if (!checkLabel(nodeLabel)) {
+         [checkUniqueID, checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+            if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
                return nullptr;
             }
-            return chip::Platform::New<PressureSensorDevice>(nodeLabel);
+            return chip::Platform::New<PressureSensorDevice>(uniqueID, nodeLabel);
          } },
 
    - :file:`src/simulated_providers/simulated_bridged_device_factory.cpp`, :c:func:`GetDataProviderFactory` method

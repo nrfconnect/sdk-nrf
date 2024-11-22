@@ -70,6 +70,11 @@ bool BridgeStorageManager::MigrateData()
 					return false;
 				}
 
+				if (!LoadBridgedDeviceUniqueID(device.mUniqueID, sizeof(device.mUniqueID),
+							       device.mUniqueIDLength, i)) {
+					return false;
+				}
+
 				/* Ignore an error, as node label is optional, so it may not be found. */
 				if (!LoadBridgedDeviceNodeLabel(device.mNodeLabel, sizeof(device.mNodeLabel),
 								device.mNodeLabelLength, i)) {
@@ -99,6 +104,7 @@ bool BridgeStorageManager::MigrateData()
 
 				/* Remove all information described using an old scheme. */
 				RemoveBridgedDeviceEndpointId(i);
+				RemoveBridgedDeviceUniqueID(i);
 				RemoveBridgedDeviceNodeLabel(i);
 				RemoveBridgedDeviceType(i);
 
@@ -160,6 +166,21 @@ bool BridgeStorageManager::RemoveBridgedDeviceEndpointId(uint8_t bridgedDeviceIn
 	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
 }
 
+bool BridgeStorageManager::LoadBridgedDeviceUniqueID(char *uniqueID, size_t uniqueIDMaxLength, size_t &uniqueIDLength,
+						     uint8_t bridgedDeviceIndex)
+{
+	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceUniqueID);
+
+	return Nrf::GetPersistentStorage().NonSecureLoad(&id, uniqueID, uniqueIDMaxLength, uniqueIDLength);
+}
+
+bool BridgeStorageManager::RemoveBridgedDeviceUniqueID(uint8_t bridgedDeviceIndex)
+{
+	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceUniqueID);
+
+	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
+}
+
 bool BridgeStorageManager::LoadBridgedDeviceNodeLabel(char *label, size_t labelMaxLength, size_t &labelLength,
 						      uint8_t bridgedDeviceIndex)
 {
@@ -195,7 +216,8 @@ bool BridgeStorageManager::LoadBridgedDevice(BridgedDevice &device, uint8_t inde
 	size_t readSize = 0;
 	uint8_t buffer[sizeof(BridgedDevice) + kMaxUserDataSize];
 	uint16_t counter = 0;
-	const uint8_t mandatoryItemsSize = sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mNodeLabelLength);
+	const uint8_t mandatoryItemsSize =
+		sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mUniqueIDLength);
 
 	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDevice) + kMaxUserDataSize, readSize)) {
 		return false;
@@ -211,11 +233,27 @@ bool BridgeStorageManager::LoadBridgedDevice(BridgedDevice &device, uint8_t inde
 	counter += sizeof(device.mEndpointId);
 	memcpy(&device.mDeviceType, buffer + counter, sizeof(device.mDeviceType));
 	counter += sizeof(device.mDeviceType);
+	memcpy(&device.mUniqueIDLength, buffer + counter, sizeof(device.mUniqueIDLength));
+	counter += sizeof(device.mUniqueIDLength);
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < counter + device.mUniqueIDLength) {
+		return false;
+	}
+
+	memcpy(device.mUniqueID, buffer + counter, device.mUniqueIDLength);
+	counter += device.mUniqueIDLength;
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < counter + sizeof(device.mNodeLabelLength)) {
+		return false;
+	}
+
 	memcpy(&device.mNodeLabelLength, buffer + counter, sizeof(device.mNodeLabelLength));
 	counter += sizeof(device.mNodeLabelLength);
 
 	/* Validate that read size is big enough to include all expected data. */
-	if (readSize < mandatoryItemsSize + device.mNodeLabelLength) {
+	if (readSize < counter + device.mNodeLabelLength) {
 		return false;
 	}
 
@@ -264,6 +302,10 @@ bool BridgeStorageManager::StoreBridgedDevice(BridgedDevice &device, uint8_t ind
 	counter += sizeof(device.mEndpointId);
 	memcpy(buffer + counter, &device.mDeviceType, sizeof(device.mDeviceType));
 	counter += sizeof(device.mDeviceType);
+	memcpy(buffer + counter, &device.mUniqueIDLength, sizeof(device.mUniqueIDLength));
+	counter += sizeof(device.mUniqueIDLength);
+	memcpy(buffer + counter, device.mUniqueID, device.mUniqueIDLength);
+	counter += device.mUniqueIDLength;
 	memcpy(buffer + counter, &device.mNodeLabelLength, sizeof(device.mNodeLabelLength));
 	counter += sizeof(device.mNodeLabelLength);
 	memcpy(buffer + counter, device.mNodeLabel, device.mNodeLabelLength);

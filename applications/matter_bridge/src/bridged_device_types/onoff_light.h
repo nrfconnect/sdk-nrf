@@ -10,7 +10,7 @@
 
 class OnOffLightDevice : public Nrf::MatterBridgedDevice {
 public:
-	OnOffLightDevice(const char *nodeLabel);
+	OnOffLightDevice(const char *uniqueID, const char *nodeLabel);
 
 	bool GetOnOff() { return mOnOff; }
 	void Toggle() { mOnOff = !mOnOff; }

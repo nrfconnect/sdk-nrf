@@ -10,7 +10,7 @@
 
 class HumiditySensorDevice : public Nrf::MatterBridgedDevice {
 public:
-	HumiditySensorDevice(const char *nodeLabel);
+	HumiditySensorDevice(const char *uniqueID, const char *nodeLabel);
 
 	uint16_t GetMeasuredValue() { return mMeasuredValue; }
 	uint16_t GetMinMeasuredValue() { return mMinMeasuredValue; }

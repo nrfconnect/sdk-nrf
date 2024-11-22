@@ -41,8 +41,8 @@ namespace SimulatedBridgedDeviceFactory
 using UpdateAttributeCallback = Nrf::BridgedDeviceDataProvider::UpdateAttributeCallback;
 using InvokeCommandCallback = Nrf::BridgedDeviceDataProvider::InvokeCommandCallback;
 using DeviceType = uint16_t;
-using BridgedDeviceFactory = Nrf::DeviceFactory<Nrf::MatterBridgedDevice, DeviceType, const char *>;
 using SimulatedDataProviderFactory = Nrf::DeviceFactory<Nrf::BridgedDeviceDataProvider, DeviceType, UpdateAttributeCallback, InvokeCommandCallback>;
+using BridgedDeviceFactory = Nrf::DeviceFactory<Nrf::MatterBridgedDevice, DeviceType, const char *, const char *>;
 
 BridgedDeviceFactory &GetBridgedDeviceFactory();
 SimulatedDataProviderFactory &GetDataProviderFactory();
@@ -51,6 +51,7 @@ SimulatedDataProviderFactory &GetDataProviderFactory();
  * @brief Create a bridged device.
  *
  * @param deviceType the Matter device type of a bridged device to be created
+ * @param uniqueID UniqueID of a Matter device to be created
  * @param nodeLabel node label of a Matter device to be created
  * @param index optional index object that shall have a valid value set if the value is meant
  * to be used to index assignment, or shall not have a value set if the default index assignment should be used.
@@ -60,7 +61,7 @@ SimulatedDataProviderFactory &GetDataProviderFactory();
  * @return CHIP_NO_ERROR on success
  * @return other error code on failure
  */
-CHIP_ERROR CreateDevice(int deviceType, const char *nodeLabel,
+CHIP_ERROR CreateDevice(int deviceType, const char *uniqueID, const char *nodeLabel,
 			chip::Optional<uint8_t> index = chip::Optional<uint8_t>(),
 			chip::Optional<uint16_t> endpointId = chip::Optional<uint16_t>());
 

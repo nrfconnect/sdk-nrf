@@ -28,8 +28,10 @@ CHIP_ERROR StoreDevice(Nrf::MatterBridgedDevice *device, Nrf::BridgedDeviceDataP
 
 	bridgedDevice.mEndpointId = device->GetEndpointId();
 	bridgedDevice.mDeviceType = device->GetDeviceType();
+	bridgedDevice.mUniqueIDLength = strlen(device->GetUniqueID());
+	memcpy(bridgedDevice.mUniqueID, device->GetUniqueID(), bridgedDevice.mUniqueIDLength);
 	bridgedDevice.mNodeLabelLength = strlen(device->GetNodeLabel());
-	memcpy(bridgedDevice.mNodeLabel, device->GetNodeLabel(), strlen(device->GetNodeLabel()));
+	memcpy(bridgedDevice.mNodeLabel, device->GetNodeLabel(), bridgedDevice.mNodeLabelLength);
 
 	if (!Nrf::BridgeStorageManager::Instance().StoreBridgedDevice(bridgedDevice, index)) {
 		LOG_ERR("Failed to store bridged device");
@@ -62,6 +64,14 @@ CHIP_ERROR StoreDevice(Nrf::MatterBridgedDevice *device, Nrf::BridgedDeviceDataP
 
 SimulatedBridgedDeviceFactory::BridgedDeviceFactory &SimulatedBridgedDeviceFactory::GetBridgedDeviceFactory()
 {
+	auto checkUniqueID = [](const char *uniqueID) {
+		/* If node uniqueID is provided it must fit the maximum defined length */
+		if (!uniqueID || (uniqueID && (strlen(uniqueID) < Nrf::MatterBridgedDevice::kUniqueIDSize))) {
+			return true;
+		}
+		return false;
+	};
+
 	auto checkLabel = [](const char *nodeLabel) {
 		/* If node label is provided it must fit the maximum defined length */
 		if (!nodeLabel || (nodeLabel && (strlen(nodeLabel) < Nrf::MatterBridgedDevice::kNodeLabelSize))) {
@@ -73,47 +83,52 @@ SimulatedBridgedDeviceFactory::BridgedDeviceFactory &SimulatedBridgedDeviceFacto
 	static BridgedDeviceFactory sBridgedDeviceFactory{
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
 		{ Nrf::MatterBridgedDevice::DeviceType::OnOffLight,
-		  [checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<OnOffLightDevice>(nodeLabel);
+			  return chip::Platform::New<OnOffLightDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
 		{ Nrf::MatterBridgedDevice::DeviceType::GenericSwitch,
-		  [checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<GenericSwitchDevice>(nodeLabel);
+			  return chip::Platform::New<GenericSwitchDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
 		{ Nrf::MatterBridgedDevice::DeviceType::OnOffLightSwitch,
-		  [checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<OnOffLightSwitchDevice>(nodeLabel);
+			  return chip::Platform::New<OnOffLightSwitchDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 		{ Nrf::MatterBridgedDevice::DeviceType::TemperatureSensor,
-		  [checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<TemperatureSensorDevice>(nodeLabel);
+			  return chip::Platform::New<TemperatureSensorDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 #ifdef CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 		{ Nrf::MatterBridgedDevice::DeviceType::HumiditySensor,
-		  [checkLabel](const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
-			  if (!checkLabel(nodeLabel)) {
+		  [checkUniqueID, checkLabel](const char *uniqueID,
+					      const char *nodeLabel) -> Nrf::MatterBridgedDevice * {
+			  if (!checkUniqueID(uniqueID) || !checkLabel(nodeLabel)) {
 				  return nullptr;
 			  }
-			  return chip::Platform::New<HumiditySensorDevice>(nodeLabel);
+			  return chip::Platform::New<HumiditySensorDevice>(uniqueID, nodeLabel);
 		  } },
 #endif
 	};
@@ -157,7 +172,7 @@ SimulatedBridgedDeviceFactory::SimulatedDataProviderFactory &SimulatedBridgedDev
 	return sDeviceDataProvider;
 }
 
-CHIP_ERROR SimulatedBridgedDeviceFactory::CreateDevice(int deviceType, const char *nodeLabel,
+CHIP_ERROR SimulatedBridgedDeviceFactory::CreateDevice(int deviceType, const char *uniqueID, const char *nodeLabel,
 						       chip::Optional<uint8_t> index,
 						       chip::Optional<uint16_t> endpointId)
 {
@@ -168,8 +183,8 @@ CHIP_ERROR SimulatedBridgedDeviceFactory::CreateDevice(int deviceType, const cha
 
 	VerifyOrReturnError(provider != nullptr, CHIP_ERROR_INVALID_ARGUMENT, LOG_ERR("No valid data provider!"));
 
-	auto *newBridgedDevice =
-		GetBridgedDeviceFactory().Create(static_cast<Nrf::MatterBridgedDevice::DeviceType>(deviceType), nodeLabel);
+	auto *newBridgedDevice = GetBridgedDeviceFactory().Create(
+		static_cast<Nrf::MatterBridgedDevice::DeviceType>(deviceType), uniqueID, nodeLabel);
 
 	Nrf::MatterBridgedDevice *newBridgedDevices[] = { newBridgedDevice };
 
