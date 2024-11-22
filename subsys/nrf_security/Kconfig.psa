@@ -73,6 +73,7 @@ config MBEDTLS_PSA_KEY_SLOT_COUNT
 config PSA_ITS_ENCRYPTED
 	bool
 	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
+	depends on TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
 

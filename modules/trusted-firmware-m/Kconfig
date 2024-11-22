@@ -201,6 +201,8 @@ config TFM_ITS_ENCRYPTED
 	bool
 	prompt "PSA Internal Trusted Storage with encryption"
 	default y if SOC_SERIES_NRF54LX
+	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
+	depends on TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
 	select PSA_ITS_ENCRYPTED
 	select PSA_WANT_GENERATE_RANDOM
 	help
