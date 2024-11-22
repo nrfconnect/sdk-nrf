@@ -66,6 +66,14 @@ extern size_t manifest_valid_len;
 extern uint8_t manifest_valid_app_buf[];
 extern size_t manifest_valid_app_len;
 
+/* Valid severable root envelope */
+extern uint8_t manifest_valid_severable_buf[];
+extern size_t manifest_valid_severable_len;
+
+/* Valid severable application envelope */
+extern uint8_t manifest_valid_app_severable_buf[];
+extern size_t manifest_valid_app_severable_len;
+
 /* Originally valid envelope with manipulated single byte */
 extern uint8_t manifest_manipulated_buf[];
 extern size_t manifest_manipulated_len;
@@ -276,6 +284,43 @@ ZTEST(orchestrator_boot_tests, test_valid_root_without_app_envelope)
 		      "Foreground DFU flag set");
 	/* ... and the execution mode remains unchanged */
 	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(), "Execution mode modified");
+}
+
+ZTEST(orchestrator_boot_tests, test_valid_severable_root_app_envelope)
+{
+	const uint8_t *buf;
+	size_t len;
+
+	/* GIVEN empty flash (suit storage is erased)... */
+	setup_erased_flash();
+	/* ... and severable root envelope is installed... */
+	setup_install_envelope(&root_class_id, manifest_valid_severable_buf,
+			       manifest_valid_severable_len);
+	/* ... and severable application envelope is installed... */
+	setup_install_envelope(&app_class_id, manifest_valid_app_severable_buf,
+			       manifest_valid_app_severable_len);
+	/* ... and update candidate flag is not set... */
+	/* ... and emergency flag is not set... */
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+		      "Unexpected emergency recovery flag before test execution");
+	/* ... and orchestrator is initialized... */
+	zassert_equal(0, suit_orchestrator_init(),
+		      "Orchestrator not initialized before test execution");
+	/* ... and the execution mode is set to regular boot */
+	zassert_equal(EXECUTION_MODE_INVOKE, suit_execution_mode_get(),
+		      "Unexpected execution mode before test execution");
+
+	/* WHEN orchestrator is executed */
+	int err = suit_orchestrator_entry();
+
+	/* THEN orchestrator succeeds... */
+	zassert_equal(0, err, "Valid envelopes not accepted (err: %d)", err);
+	/* ... and the emergency flag is not set... */
+	zassert_equal(SUIT_PLAT_ERR_NOT_FOUND, suit_storage_report_read(0, &buf, &len),
+		      "Emergency flag set");
+	/* ... and the execution mode is set to the POST INVOKE */
+	zassert_equal(EXECUTION_MODE_POST_INVOKE, suit_execution_mode_get(),
+		      "Execution mode modified");
 }
 
 ZTEST(orchestrator_boot_tests, test_valid_root_app_envelope)
