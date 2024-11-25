@@ -150,8 +150,14 @@ void esb_ppi_for_wait_for_ack_set(void)
 	nrf_timer_publish_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE0,
 			      timer_compare0_radio_disable);
 
+#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
 	nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_SHUTDOWN,
 				radio_address_timer_stop);
+#else
+	nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_STOP,
+				radio_address_timer_stop);
+#endif
+
 	nrf_radio_subscribe_set(NRF_RADIO, NRF_RADIO_TASK_DISABLE, timer_compare0_radio_disable);
 
 	channels_mask = (BIT(radio_address_timer_stop) |
@@ -172,7 +178,13 @@ void esb_ppi_for_wait_for_ack_clear(void)
 	nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
 	nrf_timer_publish_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE0);
 
+#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
 	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_SHUTDOWN);
+#else
+	nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_STOP,
+				radio_address_timer_stop);
+#endif
+
 	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
 }
 

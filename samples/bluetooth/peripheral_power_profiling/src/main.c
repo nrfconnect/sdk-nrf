@@ -644,12 +644,7 @@ static void reset_reason_print(void)
 		printk("Wake up by NFC field detected\n");
 	} else if (reason & NRFX_RESET_REASON_OFF_MASK) {
 		printk("Wake up by the advertising start buttons\n");
-/* Workaround for typo in the NRFX. */
-#if !NRF_POWER_HAS_RESETREAS
-	} else if (reason & NRFX_RESETREAS_SREQ_MASK) {
-#else
 	} else if (reason & NRFX_RESET_REASON_SREQ_MASK) {
-#endif
 		printk("Application soft reset detected\n");
 	} else if (reason & NRFX_RESET_REASON_RESETPIN_MASK) {
 		printk("Reset from pin-reset\n");
