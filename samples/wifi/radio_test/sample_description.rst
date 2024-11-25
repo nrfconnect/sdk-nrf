@@ -144,6 +144,7 @@ Testing
            .. code-block:: console
 
               wifi_radio_test init 11
+              wifi_radio_test bypass_reg_domain 1
               wifi_radio_test tx_pkt_rate 12
               wifi_radio_test tx_pkt_len 4000
               wifi_radio_test tx_power 4
@@ -191,6 +192,7 @@ Testing
            .. code-block:: console
 
               wifi_radio_test init 14
+              wifi_radio_test bypass_reg_domain 1
               wifi_radio_test tx_pkt_preamble 0
               wifi_radio_test tx_pkt_rate 1
               wifi_radio_test tx_pkt_len 1024
@@ -560,7 +562,34 @@ Testing
 
             If ``bypass_reg_domain`` is ``0``, then TX power of the channel will be configured to the minimum value of the user configured TX power value and maximum power supported in the configured regulatory domain.
 
+         You can calculate the TX power when ``tx_power`` command is issued, by using the following formula:
+
+         .. math::
+            \begin{aligned}
+            \text{TX power} = \min \left(P_{\text{rt}} , P_{\text{reg}} \right) - \text{AntGain} - \text{EdgeBackoff}
+            \end{aligned}
+
+         * :math:`P_\text{reg}` is the applicable regulatory power limit, as described in :ref:`ug_nrf70_developing_regulatory_support`.
+         * :math:`P_\text{rt}` is the power set via the ``tx_power`` command when using Radio Test sample, as described in :ref:`wifi_radio_subcommands`.
+         * ``AntGain`` is the compensation for the antenna gain in the TX direction, as described in `Antenna gain compensation`_.
+           ``AntGain`` can be set to ``0`` using ``wifi_radio_test set_ant_gain`` command.
+         * ``EdgeBackoff`` is the backoff applied to band edge channels, as described in `Band edge compensation`_.
+           ``EdgeBackoff`` can be set to ``0`` using ``wifi_radio_test set_edge_bo`` command.
+
+         .. note::
+
             If ``bypass_reg_domain`` is ``1``, then user configured TX power value will be set overriding current configured regulatory domain maximum TX power for the channel.
+
+         You can calculate the TX power when ``bypass_reg_domain`` is ``1`` and the ``tx_power`` command is issued, by using the following formula:
+
+         .. math::
+            \begin{aligned}
+            \text{TX power} = P_{\text{rt}} - \text{EdgeBackoff}
+            \end{aligned}
+
+         * To achieve expected TX power ``EdgeBackoff`` should be set to ``0`` before issuing ``tx_power`` command.
+
+         To calculate the TX power without issuing ``tx_power`` command, see :ref:`nrf70_wifi_tx_power_calculation`.
 
       .. group-tab:: FICR/OTP programming
 
