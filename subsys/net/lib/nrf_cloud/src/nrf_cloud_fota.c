@@ -24,13 +24,20 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/settings/settings.h>
-#include <zephyr/sys/reboot.h>
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 #include <zephyr/dfu/mcuboot.h>
 #endif
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem.h>
+#endif
+
+#if UNIT_TESTING
+#define SYS_REBOOT_WARM 0
+#define SYS_REBOOT_COLD 1
+void sys_reboot(int type);
+#else
+#include <zephyr/sys/reboot.h>
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_fota, CONFIG_NRF_CLOUD_FOTA_LOG_LEVEL);
@@ -243,6 +250,7 @@ int nrf_cloud_fota_init(struct nrf_cloud_fota_init_param const *const init)
 	/* Ensure the codec is initialized */
 	(void)nrf_cloud_codec_init(NULL);
 
+	/*TODO: remove this check and variable */
 	if (!fota_dl_initialized) {
 		ret = fota_download_init(http_fota_handler);
 		if (ret != 0) {
@@ -1378,6 +1386,7 @@ void reset_all_static_vars(void)
 	last_fota_dl_evt = FOTA_DOWNLOAD_EVT_ERROR;
 	reset_topics();
 	cleanup_job(&current_fota);
-	cleanup_job(&saved_job);
+	memset(&saved_job, 0, sizeof(saved_job));
+	saved_job.type = NRF_CLOUD_FOTA_TYPE__INVALID;
 }
 #endif

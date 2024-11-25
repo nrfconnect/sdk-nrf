@@ -12,28 +12,6 @@
 /* reset all static state of nrf_cloud_fota library */
 void reset_all_static_vars(void);
 
-/*
-The following functions need to be tested:
-00000000 T nrf_cloud_fota_init
-00000000 T nrf_cloud_fota_ble_job_update
-00000000 T nrf_cloud_fota_ble_set_handler
-00000000 T nrf_cloud_fota_ble_update_check
-00000000 T nrf_cloud_fota_endpoint_clear
-00000000 T nrf_cloud_fota_endpoint_set
-00000000 T nrf_cloud_fota_endpoint_set_and_report
-00000000 T nrf_cloud_fota_is_active
-00000000 T nrf_cloud_fota_is_available
-00000000 T nrf_cloud_fota_job_start
-00000000 T nrf_cloud_fota_mqtt_evt_handler
-00000000 T nrf_cloud_fota_pending_job_type_get
-00000000 T nrf_cloud_fota_pending_job_validate
-00000000 T nrf_cloud_fota_subscribe
-00000000 T nrf_cloud_fota_uninit
-00000000 T nrf_cloud_fota_unsubscribe
-00000000 T nrf_cloud_fota_update_check
-00000000 T nrf_cloud_modem_fota_completed
-*/
-
 /* This function runs before each test */
 static void run_before(void *fixture)
 {
@@ -55,6 +33,7 @@ static void run_before(void *fixture)
 	RESET_FAKE(fota_download_init);
 	RESET_FAKE(nrf_cloud_free);
 	RESET_FAKE(nrf_cloud_fota_cb_handler);
+	RESET_FAKE(nrf_cloud_fota_smp_client_init);
 	reset_all_static_vars();
 }
 
@@ -66,15 +45,157 @@ static void run_after(void *fixture)
 
 ZTEST_SUITE(nrf_cloud_fota_test, NULL, NULL, run_before, run_after, NULL);
 
-
+/* nrf_cloud_fota_init fails when cb parameter is NULL */
 ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_null_param)
 {
 	zassert_equal(-EINVAL, nrf_cloud_fota_init(NULL),
 		"nrf_cloud_fota_init should check parameter validity");
 }
 
+/* nrf_cloud_fota_init fails when nrf_cloud_fota_smp_client_init fails */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_smp_client_init_fails)
+{
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
 
+	nrf_cloud_fota_smp_client_init_fake.return_val = -ENOTSUP;
 
+	int ret = nrf_cloud_fota_init(&fota_init);
+
+	zassert_equal(-ENOTSUP, ret,
+		"nrf_cloud_fota_init should succeed with valid parameters");
+}
+
+/* nrf_cloud_fota_init fails when fota_download_init fails */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_download_init_fails)
+{
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
+
+	fota_download_init_fake.return_val = -EINVAL;
+
+	int ret = nrf_cloud_fota_init(&fota_init);
+
+	zassert_equal(-EINVAL, ret,
+		"nrf_cloud_fota_init should succeed with valid parameters");
+}
+
+/* nrf_cloud_fota_init: no fota pending and no fota done yet */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_no_job)
+{
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
+
+	nrf_cloud_pending_fota_job_process_fake.return_val = -ENODEV;
+
+	/* ignore return value, doesn't return normally */
+	int ret = nrf_cloud_fota_init(&fota_init);
+
+	zassert_equal(0, ret,
+		"nrf_cloud_fota_init should succeed if there was no pending job");
+}
+
+/* nrf_cloud_fota_init: failed to process fota job */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_pending_job_validate_fails)
+{
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
+
+	nrf_cloud_pending_fota_job_process_fake.return_val = -EINVAL;
+
+	/* ignore return value, doesn't return normally */
+	int ret = nrf_cloud_fota_init(&fota_init);
+
+	zassert_equal(-EINVAL, ret,
+		"nrf_cloud_fota_init should succeed if there was no pending job");
+}
+
+/* nrf_cloud_fota_init: double init skips early */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_double_init_skips)
+{
+	int ret;
+
+	/* first init */
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
+
+	nrf_cloud_fota_is_type_modem_fake.return_val = true;
+
+	ret = nrf_cloud_fota_init(&fota_init);
+
+	zassert_equal(1, ret,
+		"nrf_cloud_fota_init should succeed with valid parameters");
+
+	/* second init */
+	ret = nrf_cloud_fota_init(&fota_init);
+
+	zassert_equal(0, ret,
+		"nrf_cloud_fota_init should the second time as well, having skipped early");
+}
+
+/* nrf_cloud_fota_init: reboot early if reboot_on_init is set */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_double_init_reboot)
+{
+	/* first init */
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
+
+	nrf_cloud_fota_is_type_modem_fake.return_val = false;
+	nrf_cloud_pending_fota_job_process_fake.custom_fake =
+		fake_nrf_cloud_pending_fota_job_process__set_reboot;
+
+	/* ignore return value, doesn't return normally */
+	(void) nrf_cloud_fota_init(&fota_init);
+
+	/* ignore return value, doesn't return normally */
+	(void) nrf_cloud_fota_init(&fota_init);
+
+	printk("sys_reboot_fake.call_count: %d\n", sys_reboot_fake.call_count);
+
+	/* TODO: this is probably broken and only works by chance.
+	 * possibly need to refactor reboot_on_init */
+
+	zassert_equal(2, sys_reboot_fake.call_count,
+		"nrf_cloud_fota_init should have rebooted twice");
+	zassert_equal(SYS_REBOOT_COLD, sys_reboot_fake.arg0_history[0],
+		"nrf_cloud_fota_init should force a cold reboot");
+	zassert_equal(SYS_REBOOT_COLD, sys_reboot_fake.arg0_history[1],
+		"nrf_cloud_fota_init should force a cold reboot");
+}
+
+/* nrf_cloud_fota_init forces cold reboot after successful fota */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_reboot_needed)
+{
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
+
+	nrf_cloud_pending_fota_job_process_fake.return_val = 1;
+
+	/* ignore return value, doesn't return normally */
+	(void) nrf_cloud_fota_init(&fota_init);
+
+	zassert_equal(1, sys_reboot_fake.call_count,
+		"nrf_cloud_fota_init should force a cold reboot after successful fota");
+	zassert_equal(SYS_REBOOT_COLD, sys_reboot_fake.arg0_history[0],
+		"nrf_cloud_fota_init should force a cold reboot after successful fota");
+}
+
+/* nrf_cloud_fota_init succeeds with return code 1
+ * if nrf_cloud_fota_pending_job_validate returns 0 */
 ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_valid_param)
 {
 	struct nrf_cloud_fota_init_param fota_init = {
@@ -83,8 +204,7 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_valid_param)
 	};
 
 	int ret = nrf_cloud_fota_init(&fota_init);
-	printf("ret: %d\n", ret);
 
-	zassert_true((ret == 0) || (ret == 1),
+	zassert_equal(1, ret,
 		"nrf_cloud_fota_init should succeed with valid parameters");
 }
