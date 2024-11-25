@@ -50,6 +50,11 @@ class NcsCreateBoard(WestCommand):
             schema = json.loads(f.read())
 
         if args.json_schema:
+            schema = {
+                "schema": schema,
+                "state": None,
+            }
+
             print(json.dumps(schema))
             return
 
