@@ -130,9 +130,9 @@ public:
 
 	bool GetIsReachable() const { return mIsReachable; }
 	const char *GetNodeLabel() const { return mNodeLabel; }
-	static constexpr uint16_t GetBridgedDeviceBasicInformationClusterRevision() { return 2; }
+	static constexpr uint16_t GetBridgedDeviceBasicInformationClusterRevision() { return 4; }
 	static constexpr uint32_t GetBridgedDeviceBasicInformationFeatureMap() { return 0; }
-	static constexpr uint16_t GetIdentifyClusterRevision() { return 4; }
+	static constexpr uint16_t GetIdentifyClusterRevision() { return 5; }
 	static constexpr uint32_t GetIdentifyClusterFeatureMap() { return 0; }
 
 	EmberAfEndpointType *mEp;
