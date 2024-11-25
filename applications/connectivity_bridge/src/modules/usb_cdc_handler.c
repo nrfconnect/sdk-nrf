@@ -38,6 +38,7 @@ static K_WORK_DEFINE(cdc_dtr_work, cdc_dtr_work_handler);
 K_MEM_SLAB_DEFINE(cdc_rx_slab, USB_CDC_RX_BLOCK_SIZE, USB_CDC_RX_BLOCK_COUNT, USB_CDC_SLAB_ALIGNMENT);
 
 static uint32_t cdc_ready[CDC_DEVICE_COUNT];
+static uint32_t cdc_baudrate[CDC_DEVICE_COUNT];
 
 static uint8_t overflow_buf[64];
 
@@ -54,6 +55,7 @@ static void poll_dtr(void)
 	for (int i = 0; i < CDC_DEVICE_COUNT; ++i) {
 		int err;
 		uint32_t cdc_val;
+		uint32_t baudrate;
 
 		err = uart_line_ctrl_get(devices[i],
 					 UART_LINE_CTRL_DTR,
@@ -63,27 +65,27 @@ static void poll_dtr(void)
 			continue;
 		}
 
-		if (cdc_val != cdc_ready[i]) {
-			uint32_t baudrate;
+		err = uart_line_ctrl_get(devices[i],
+					UART_LINE_CTRL_BAUD_RATE,
+					&baudrate);
+		if (err) {
+			LOG_WRN("uart_line_ctrl_get(BAUD_RATE): %d", err);
+			continue;
+		}
 
-			err = uart_line_ctrl_get(devices[i],
-						UART_LINE_CTRL_BAUD_RATE,
-						&baudrate);
-			if (err) {
-				LOG_WRN("uart_line_ctrl_get(BAUD_RATE): %d", err);
-				continue;
-			}
-
+		if (cdc_val != cdc_ready[i] || baudrate != cdc_baudrate[i]) {
 			struct peer_conn_event *event = new_peer_conn_event();
 
 			event->peer_id = PEER_ID_USB;
 			event->dev_idx = i;
 			event->baudrate = baudrate;
+			event->conn_state_changed = cdc_val != cdc_ready[i];
 			event->conn_state =
 				cdc_val == 0 ? PEER_STATE_DISCONNECTED : PEER_STATE_CONNECTED;
 			APP_EVENT_SUBMIT(event);
 
 			cdc_ready[i] = cdc_val;
+			cdc_baudrate[i] = baudrate;
 		}
 	}
 }
@@ -104,10 +106,7 @@ static void cdc_uart_interrupt_handler(const struct device *dev, void *user_data
 		int err;
 		int data_length;
 
-		if (cdc_ready[dev_idx] == 0) {
-			/* Peer started sending data before timed COM port state poll */
-			poll_dtr();
-		}
+		poll_dtr();
 
 		err = k_mem_slab_alloc(&cdc_rx_slab, &rx_buf, K_NO_WAIT);
 		if (err) {

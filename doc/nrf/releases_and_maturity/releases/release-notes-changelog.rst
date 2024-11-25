@@ -183,7 +183,8 @@ Asset Tracker v2
 Connectivity Bridge
 -------------------
 
-|no_changes_yet_note|
+* Updated the handling of USB CDC ACM baud rate requests to make sure the baud rate is set correctly when the host requests a change.
+  This fixes an issue when using GNU screen with the Thingy:91 X.
 
 IPC radio firmware
 ------------------

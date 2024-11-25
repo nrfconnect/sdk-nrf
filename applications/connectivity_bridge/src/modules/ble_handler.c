@@ -104,6 +104,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	event->dev_idx = 0;
 	event->baudrate = 0; /* Don't care */
 	event->conn_state = PEER_STATE_CONNECTED;
+	event->conn_state_changed = true;
 	APP_EVENT_SUBMIT(event);
 }
 
@@ -125,6 +126,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	event->dev_idx = 0;
 	event->baudrate = 0; /* Don't care */
 	event->conn_state = PEER_STATE_DISCONNECTED;
+	event->conn_state_changed = true;
 	APP_EVENT_SUBMIT(event);
 }
 

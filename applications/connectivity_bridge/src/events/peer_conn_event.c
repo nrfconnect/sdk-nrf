@@ -25,11 +25,12 @@ static void log_peer_conn_event(const struct app_event_header *aeh)
 	__ASSERT_NO_MSG(event->peer_id < PEER_ID_COUNT);
 
 	APP_EVENT_MANAGER_LOG(aeh,
-		"%s:%s_%d baud:%d",
+		"%s:%s_%d changed: %d baud:%d",
 		event->conn_state == PEER_STATE_CONNECTED ?
 			"CONNECTED" : "DISCONNECTED",
 		peer_name[event->peer_id],
 		event->dev_idx,
+		event->conn_state_changed,
 		event->baudrate);
 }
 
