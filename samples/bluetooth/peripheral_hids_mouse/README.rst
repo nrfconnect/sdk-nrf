@@ -144,7 +144,7 @@ To test with a Microsoft Windows computer that has a Bluetooth radio, complete t
 
    .. group-tab:: nRF54 DKs
 
-      1. Power on your development kit.
+      1. Power on your development kit.xxx
       #. On your Windows computer, search for Bluetooth devices and connect to the device named "NCS HIDS mouse".
       #. Push **Button 0** on the kit.
          Observe that the mouse pointer on the computer moves to the left.

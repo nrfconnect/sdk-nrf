@@ -16,7 +16,7 @@ Basically, the sample simulates a computer that connects to a mouse or a keyboar
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kits:xxx
 
 .. table-from-sample-yaml::
 
