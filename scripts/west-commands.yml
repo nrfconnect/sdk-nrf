@@ -39,3 +39,8 @@ west-commands:
       - name: ncs-provision
         class: NcsProvision
         help: Provision utility
+  - file: scripts/west_commands/ncs-bicr.py
+    commands:
+      - name: ncs-bicr
+        class: NcsBICR
+        help: Assist with board BICR creation for any applicable Nordic SoC
