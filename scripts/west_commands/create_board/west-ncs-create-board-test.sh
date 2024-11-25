@@ -43,9 +43,9 @@ for soc in "${SOCS[@]}"; do
 
 	board=brd_${soc_name}_${soc_variant}
 
-	echo "Generating board: $board"
+	echo "Creating board: $board"
 
-	west ncs-genboard --json-schema-response \
+	west ncs-create-board --json-schema-response \
 		"{\"board\": \"$board\", \"description\": \"Test Board\", \"vendor\": \"testvnd\", \"soc\": \"$soc\", \"root\": \"$NCS_BASE\"}"
 
 	echo "Building hello_world for: $board"

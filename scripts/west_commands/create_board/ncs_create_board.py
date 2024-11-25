@@ -23,11 +23,11 @@ CONFIG = SCRIPT_DIR / "config.yml"
 SCHEMA = SCRIPT_DIR / "schema.json"
 
 
-class NcsGenboard(WestCommand):
+class NcsCreateBoard(WestCommand):
 
     def __init__(self):
         super().__init__(
-            "ncs-genboard", "Generate board skeleton files for any Nordic SoC", ""
+            "ncs-create-board", "Create board skeleton files for any Nordic SoC", ""
         )
 
     def do_add_parser(self, parser_adder):
@@ -208,4 +208,4 @@ class NcsGenboard(WestCommand):
             with open(out_dir / f"{name}.yml", "w") as f:
                 f.write(tmpl.render(target=target))
 
-        print(f"Board {input['board']} generated successfully")
+        print(f"Board {input['board']} created successfully")
