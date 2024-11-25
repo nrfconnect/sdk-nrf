@@ -246,7 +246,7 @@ manifest:
       revision: 7bf6a6bfd3df4249e198f83cf6582c34912cce03
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: v2.8.0-rc1
+      revision: 9b4987c1d01746a6558662487c29aa5c24b978ec
       path: modules/lib/suit-processor
     - name: doc-internal
       repo-path: doc-internal
