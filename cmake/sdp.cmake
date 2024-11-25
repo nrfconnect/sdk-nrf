@@ -4,6 +4,24 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+function(sdp_assembly_install target hrt_srcs)
+  sdp_assembly_generate("${hrt_srcs}")
+  sdp_assembly_check("${hrt_srcs}")
+  sdp_assembly_prepare_install("${hrt_srcs}")
+  sdp_assembly_target_sources(${target} "${hrt_srcs}")
+
+  add_dependencies(${target} asm_check)
+endfunction()
+
+function(sdp_assembly_target_sources target hrt_srcs)
+  foreach(hrt_src ${hrt_srcs})
+    get_filename_component(hrt_dir ${hrt_src} DIRECTORY)  # directory
+    get_filename_component(hrt_src_file ${hrt_src} NAME_WE)  # filename without extension
+    set(hrt_s_file "${hrt_dir}/${hrt_src_file}.s")
+    target_sources(${target} PRIVATE ${hrt_s_file})
+  endforeach()
+endfunction()
+
 function(sdp_assembly_generate hrt_srcs)
   set(hrt_msg "Generating ASM files for Hard Real Time files.")
   set(hrt_opts -g0 -fno-ident -fno-verbose-asm)
