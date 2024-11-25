@@ -1,0 +1,13 @@
+if BOARD_{{ board | upper }}_NRF54H20_CPUAPP
+
+config BT_HCI_IPC
+	default y if BT
+
+endif # BOARD_{{ board | upper }}_NRF54H20_CPUAPP
+
+if BOARD_{{ board | upper }}_NRF54H20_CPURAD
+
+config BT_CTLR
+	default y if BT
+
+endif # BOARD_{{ board | upper }}_NRF54H20_CPURAD

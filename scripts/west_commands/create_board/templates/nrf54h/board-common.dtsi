@@ -1,0 +1,12 @@
+#include "{{ board }}-memory_map.dtsi"
+#include "{{ board }}-ipc_conf.dtsi"
+#include "{{ board }}-pinctrl.dtsi"
+
+&hfxo {
+	status = "okay";
+	accuracy-ppm = <30>;
+};
+
+&lfxo {
+	status = "okay";
+};
