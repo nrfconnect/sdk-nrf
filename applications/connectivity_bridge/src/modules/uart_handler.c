@@ -412,6 +412,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			return false;
 		}
 
+		if (!event->conn_state_changed) {
+			set_uart_baudrate(event->dev_idx, event->baudrate);
+			return false;
+		}
+
 		prev_count = subscriber_count[event->dev_idx];
 
 		if (event->conn_state == PEER_STATE_CONNECTED) {

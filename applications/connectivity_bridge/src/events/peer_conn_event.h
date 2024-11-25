@@ -50,6 +50,7 @@ struct peer_conn_event {
 	uint8_t dev_idx;
 	enum peer_conn_state conn_state;
 	uint32_t baudrate;
+	bool conn_state_changed;
 };
 
 APP_EVENT_TYPE_DECLARE(peer_conn_event);
