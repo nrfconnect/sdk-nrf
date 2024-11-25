@@ -51,18 +51,17 @@ To use nRF21540 in GPIO mode, complete the following steps:
 
    The state of the remaining control pins should be set in other ways and according to `nRF21540 Product Specification`_.
 
-#. On nRF53 devices, you must also apply the same devicetree node mentioned in **Step 1** to the network core  using sysbuild.
-   To apply the overlay to the correct network core child image, create an overlay file named :file:`sysbuild/*childImageName*/boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
-   For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
+#. On nRF53 devices, the devicetree nodes described above must be added to the network core.
+   For the application core, you must also add a GPIO forwarder node to its devicetree file:
 
-   The *childImageName* default value is set to ``ipc_radio``:
+   .. code-block:: devicetree
 
-   ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
-   You can configure your application using the following sysbuild configurations:
+      &gpio_fwd {
+         nrf21540-gpio-if {
+            gpios = <&gpio0 13 0>,   /* tx-en-gpios */
+                    <&gpio0 14 0>,   /* rx-en-gpios */
+                    <&gpio0 15 0>;   /* pdn-gpios */
+         };
+      };
 
-   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
-   * ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for application having support for Bluetooth, but not for 802.15.4.
-   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
-
-   .. note::
-       This step is not needed when testing with :ref:`direct_test_mode` and :ref:`radio_test` on the nRF53 Series devices.
+   The pins defined in the GPIO forwarder node in the application core's devicetree file must match the pins defined in the FEM nodes in the network core's devicetree file.
