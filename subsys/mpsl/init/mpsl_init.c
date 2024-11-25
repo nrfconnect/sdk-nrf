@@ -26,7 +26,7 @@
 #endif
 
 #if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
-#include <pm/mpsl_pm_utils.h>
+#include <mpsl/mpsl_pm_utils.h>
 #endif
 
 LOG_MODULE_REGISTER(mpsl_init, CONFIG_MPSL_LOG_LEVEL);
