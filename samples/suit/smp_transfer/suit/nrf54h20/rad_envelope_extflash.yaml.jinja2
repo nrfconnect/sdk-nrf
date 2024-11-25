@@ -172,6 +172,11 @@ SUIT_Envelope_Tagged:
           - suit-send-record-failure
           - suit-send-sysinfo-success
           - suit-send-sysinfo-failure
+    # declare radio image MRAM memory as IPUC
+    - suit-directive-set-component-index: 0
+    - suit-directive-override-parameters:
+        suit-parameter-image-size:
+          raw: 0
 
     suit-manifest-component-id:
     - INSTLD_MFST
