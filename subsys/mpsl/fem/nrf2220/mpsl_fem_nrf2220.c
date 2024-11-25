@@ -34,11 +34,6 @@
 #error "The nRF2220 driver must be used with CONFIG_PINCTRL! Set CONFIG_PINCTRL=y"
 #endif
 
-#if defined(CONFIG_EARLY_CONSOLE)
-#error "The nRF2220 driver cannot be used with CONFIG_EARLY_CONSOLE! \
-	Set CONFIG_BOOT_BANNER=n, CONFIG_EARLY_CONSOLE=n"
-#endif
-
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
 #define MPSL_FEM_TWI_IF     DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), twi_if)
 #endif
