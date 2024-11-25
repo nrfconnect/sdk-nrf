@@ -84,7 +84,8 @@ Developing with nRF52 Series
 Developing with Front-End Modules
 =================================
 
-|no_changes_yet_note|
+* Deprecated the explicit use of ``-DSHIELD=nrf21540ek_fwd`` for boards with ``nrf5340/cpuapp`` qualifiers when the nRF21540 EK shield is used.
+  The build system uses an appropriate overlay file for each core, relying only on the ``-DSHIELD=nrf21540ek`` parameter.
 
 Developing with PMICs
 =====================

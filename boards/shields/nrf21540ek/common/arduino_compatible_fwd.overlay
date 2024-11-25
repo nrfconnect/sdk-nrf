@@ -1,0 +1,20 @@
+/* Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&gpio_fwd {
+	nrf21540-gpio-if {
+		gpios = <&arduino_header 11 0>,		/* tx-en-gpios */
+			<&arduino_header 9 0>,		/* rx-en-gpios */
+			<&arduino_header 15 0>,		/* pdn-gpios */
+			<&arduino_header 10 0>,		/* ant-sel-gpios */
+			<&arduino_header 8 0>;		/* mode-gpios */
+	};
+	nrf21540-spi-if {
+		gpios = <&arduino_header 16 0>,		/* cs-gpios */
+			<&gpio1 15 0>,			/* SPIM_SCK */
+			<&gpio1 14 0>,			/* SPIM_MISO */
+			<&gpio1 13 0>;			/* SPIM_MOSI */
+	};
+};

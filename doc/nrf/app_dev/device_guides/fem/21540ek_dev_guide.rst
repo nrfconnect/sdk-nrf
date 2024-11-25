@@ -46,13 +46,13 @@ Building for a multicore board
 
 When building for a board with an additional network core, like the nRF5340, add the ``-DSHIELD`` variable with the *childImageName_* parameter between ``-D`` and ``SHIELD`` to build for the network core.
 In this case, the application core is only responsible for forwarding to the network core the pins needed to control the nRF21540 EK.
-The application core can be set up to forward the needed pins using the ``-DSHIELD=nrf21540ek_fwd`` setting.
+The application core can be set up to forward the needed pins using the ``-DSHIELD=nrf21540ek`` setting.
 For example:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek_fwd -Dipc_radio_SHIELD=nrf21540ek
+   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek -Dipc_radio_SHIELD=nrf21540ek
 
 In this command, the *childImageName_* parameter has the ``ipc_radio_`` value as default and builds the application with support for the combination of 802.15.4 and Bluetooth.
 The ``ipc_radio`` has been used since the build system migration to sysbuild.

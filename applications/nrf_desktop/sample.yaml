@@ -137,7 +137,7 @@ tests:
     platform_allow: nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args: SHIELD=nrf21540ek_fwd
+    extra_args: SHIELD=nrf21540ek
                 ipc_radio_SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_CAF_BLE_USE_LLPM=n
