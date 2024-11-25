@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a device running an AMS Server to connect with (for example, an iPhone, or a computer with a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
+The sample also requires a device running an AMS Server to connect with (for example, an iPhone, or a computer with a Bluetooth® Low Energy dongle and the `Bluetooth Low Energy app`_).
 
 Overview
 ********
@@ -93,7 +93,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it either by connecting to an iOS device or by using the Bluetooth Low Energy app of `nRF Connect for Desktop`_ that emulates an AMS Server.
+After programming the sample to your development kit, you can test it either by connecting to an iOS device or by using the `Bluetooth Low Energy app`_ of `nRF Connect for Desktop`_ that emulates an AMS Server.
 
 Testing with an iOS device
 --------------------------
@@ -126,12 +126,12 @@ Testing with an iOS device
       #. Press **Button 2** to jump to the next song.
       #. Press **Button 3** to jump to the previous song.
 
-Testing with nRF Connect for Desktop
-------------------------------------
+Testing with Bluetooth Low Energy app
+-------------------------------------
 
 #. |connect_terminal_specific|
 #. Reset the kit.
-#. Start the Bluetooth Low Energy app of `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
+#. Start the `Bluetooth Low Energy app`_ of `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Set up the server:
    a. Select the **Server setup** tab.
    #. Select :guilabel:`Dongle configuration` > :guilabel:`Load setup`.
@@ -140,7 +140,8 @@ Testing with nRF Connect for Desktop
 #. Select the :guilabel:`Connection Map` tab.
 #. Select :guilabel:`Dongle configuration` > :guilabel:`Security parameters`.
 #. Check :guilabel:`Perform Bonding`, and click :guilabel:`Apply`.
-#. Connect to the device from the Bluetooth Low Energy app. The device is advertising as "Nordic_AMS".
+#. Connect to the device from the app.
+   The device is advertising as "Nordic_AMS".
 #. Wait until the bond is established.
    Verify that the UART data is received as follows::
 
@@ -149,7 +150,7 @@ Testing with nRF Connect for Desktop
       Security changed: xx:xx:xx:xx:xx:xx (random) level 2
       Pairing completed: xx:xx:xx:xx:xx:xx (random), bonded: 1
 
-#. After bonding, verify in the Bluetooth Low Energy app that the **Client Characteristic Configuration** (CCCD) value for **Apple Remote Command** and **Apple Entity Update** are set to ``01 00``.
+#. After bonding, verify in the app that the **Client Characteristic Configuration** (CCCD) value for **Apple Remote Command** and **Apple Entity Update** are set to ``01 00``.
 
 Music setup
 ^^^^^^^^^^^
@@ -160,7 +161,7 @@ Music setup
 
       Complete the following steps to initiate a music player setup:
 
-      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
          The following table lists the attributes requested by the MR.
 
          +--------------+-------+----------------+
@@ -176,7 +177,7 @@ Music setup
          +--------------+-------+----------------+
 
       #. Press **Button 1** to enable track attributes notification.
-      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
+      #. In the app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
          The following table lists the attributes requested by the MR.
 
          +--------------+-------+----------------+
@@ -260,7 +261,7 @@ Music setup
 
       Complete the following steps to initiate a music player setup:
 
-      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Entity Update** is initiated to ``00 00 01 02``.
          The following table lists the attributes requested by the MR.
 
          +--------------+-------+----------------+
@@ -276,7 +277,7 @@ Music setup
          +--------------+-------+----------------+
 
       #. Press **Button 0** to enable track attributes notification.
-      #. In the Bluetooth Low Energy app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
+      #. In the app, verify that the **Apple Entity Update** is updated to ``02 00 01 02 03``.
          The following table lists the attributes requested by the MR.
 
          +--------------+-------+----------------+
@@ -366,7 +367,7 @@ To test an audio playback, complete the following steps:
    .. group-tab:: nRF52 and nRF53 DKs
 
       #. Press **Button 2** to start audio playback.
-      #. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``02``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Remote Command** is updated to ``02``.
       #. Set the **Apple Entity Update** value to ``00 01 00 31 2C 31 2E 30 2C 30 2E 30 31 34``.
       #. Verify that the UART output is as follows::
 
@@ -421,7 +422,7 @@ Next track
       To test the next track feature, complete the following steps:
 
       #. Press **Button 3** to jump to next song.
-      #. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``03``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Remote Command** is updated to ``03``.
       #. Set the **Apple Entity Update** value to ``02 03 00 31 38 30 2E 30 30 30``.
       #. Verify that the UART output is as follows::
 
@@ -441,7 +442,7 @@ Next track
       To test the next track feature, complete the following steps:
 
       #. Press **Button 2** to jump to next song.
-      #. In the Bluetooth Low Energy app, verify that the **Apple Remote Command** is updated to ``03``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Remote Command** is updated to ``03``.
       #. Set the **Apple Entity Update** value to ``02 03 00 31 38 30 2E 30 30 30``.
       #. Verify that the UART output is as follows::
 
@@ -459,8 +460,8 @@ Next track
 Disconnect
 ^^^^^^^^^^
 
-Disconnect the device in the Bluetooth Low Energy app.
-As the bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking :guilabel:`Connect`.
+Disconnect the device in the `Bluetooth Low Energy app`_.
+As the bond information is preserved by the app, you can immediately reconnect to the device by clicking :guilabel:`Connect`.
 
 Dependencies
 ************

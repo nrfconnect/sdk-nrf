@@ -320,21 +320,21 @@ To perform the test, complete the following steps:
 Testing with Bluetooth Low Energy app
 -------------------------------------
 
-If you have an nRF52 Series DK with the Peripheral UART sample and either a dongle or second Nordic Semiconductor development kit that supports Bluetooth Low Energy, you can test the sample on your computer.
+If you have an nRF52 Series DK with the Peripheral UART sample and either a dongle or second Nordic Semiconductor development kit that supports the `Bluetooth Low Energy app`_, you can test the sample on your computer.
 Use the `Bluetooth Low Energy app`_ in `nRF Connect for Desktop`_ for testing.
 
 To perform the test, complete the following steps:
 
-1. Install the Bluetooth Low Energy app in `nRF Connect for Desktop`_.
+1. Install the `Bluetooth Low Energy app`_ in `nRF Connect for Desktop`_.
 #. Connect to your nRF52 Series DK.
 #. Connect the dongle or second development kit to a USB port of your computer.
-#. Open the Bluetooth Low Energy app.
+#. Open the app.
 #. Select the serial port that corresponds to the dongle or the second development kit.
    Do not select the kit you want to test just yet.
 
    .. note::
       If the dongle or the second development kit has not been used with the Bluetooth Low Energy app before, you may be asked to update the J-Link firmware and connectivity firmware on the nRF SoC to continue.
-      When the nRF SoC has been updated with the correct firmware, the Bluetooth Low Energy app finishes connecting to your device over USB.
+      When the nRF SoC has been updated with the correct firmware, the app finishes connecting to your device over USB.
       When the connection is established, the device appears in the main view.
 
 #. Click :guilabel:`Start scan`.
@@ -351,7 +351,7 @@ To perform the test, complete the following steps:
 #. In the terminal emulator, enter any text, for example ``Hello``.
 
    The data is transmitted to the DK that runs the Peripheral UART sample.
-   The **UART TX** characteristic displayed in the Bluetooth Low Energy app changes to the corresponding ASCII value.
+   The **UART TX** characteristic displayed in the app changes to the corresponding ASCII value.
    For example, the value for ``Hello`` is ``48 65 6C 6C 6F``.
 
 Dependencies

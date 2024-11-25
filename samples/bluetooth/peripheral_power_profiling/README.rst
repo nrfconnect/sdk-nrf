@@ -81,7 +81,7 @@ The following parameters have an impact on power consumption:
    * Notifications data size and interval
 
 You can configure these parameters with the Kconfig options.
-If your central device is the Bluetooth Low Energy app from `nRF Connect for Desktop`_, you can use it to change the current connection parameters.
+If your central device is the `Bluetooth Low Energy app`_ from `nRF Connect for Desktop`_, you can use it to change the current connection parameters.
 
 Example measurements:
 
@@ -237,11 +237,11 @@ This testing procedure assumes that you are using `nRF Connect for Mobile`_ or `
 After programming the sample to your development kit, you need another device for measuring the power consumption.
 `Power Profiler Kit II (PPK2)`_ is the recommended device for the measurement.
 
-Testing with nRF Connect for Desktop and Power Profiler Kit II (PPK2)
----------------------------------------------------------------------
+Testing with Bluetooth Low Energy app and Power Profiler Kit II (PPK2)
+----------------------------------------------------------------------
 
 1. Set up `Power Profiler Kit II (PPK2)`_ and prepare your development kit for current measurement.
-#. Run the Power Profiler app from nRF Connect for Desktop.
+#. Run the `Power Profiler app`_ from nRF Connect for Desktop.
 #. |connect_terminal_ANSI|
 #. Reset your development kit.
 #. Observe that the sample starts.
@@ -252,7 +252,7 @@ Testing with nRF Connect for Desktop and Power Profiler Kit II (PPK2)
 
    You can measure power consumption during advertising with different intervals.
    Use the Kconfig options to change the interval or other parameters.
-#. Connect to the device through the Bluetooth Low Energy app.
+#. Connect to the device through the `Bluetooth Low Energy app`_.
 
    Observe the power consumption on the current connection interval.
 #. Set different connection parameters:

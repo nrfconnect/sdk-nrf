@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a device running an ANCS Server to connect with (for example, an iPhone which runs iOS, or a Bluetooth® Low Energy dongle and nRF Connect for Desktop).
+The sample also requires a device running an ANCS Server to connect with (for example, an iPhone which runs iOS, or a Bluetooth® Low Energy dongle and the `Bluetooth Low Energy app`_).
 
 User interface
 **************
@@ -80,7 +80,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it either by connecting to an iOS device or by using `nRF Connect for Desktop`_ that emulates an ANCS Server.
+After programming the sample to your development kit, you can test it either by connecting to an iOS device or by using the `Bluetooth Low Energy app`_ that emulates an ANCS Server.
 
 Testing with an iOS device
 --------------------------
@@ -111,13 +111,13 @@ Testing with an iOS device
          For example, requesting the app attributes for "com.apple.mobilecal" yields "Calendar".
       #. If the notification has a flag for a positive or negative action, perform the notification action with **Button 2** or **Button 3**, respectively.
 
-Testing with nRF Connect for Desktop
-------------------------------------
+Testing with Bluetooth Low Energy app
+-------------------------------------
 
 #. |connect_terminal_specific|
 #. Reset the kit.
 #. Start `nRF Connect for Desktop`_.
-#. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+#. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
 #. Click the :guilabel:`SERVER SETUP` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
    Load the :file:`ANCS_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_ancs_client` in the |NCS| folder structure.
@@ -125,7 +125,8 @@ Testing with nRF Connect for Desktop
 #. Click the :guilabel:`CONNECTION MAP` tab.
    Click the dongle configuration and select :guilabel:`Security parameters`.
    Check :guilabel:`Perform Bonding`, and click :guilabel:`Apply`.
-#. Connect to the device from nRF Connect. The device is advertising as "ANCS".
+#. Connect to the device from the app.
+   The device is advertising as "ANCS".
 #. Wait until the bond is established. Verify that the UART data is received as follows::
 
       Connected xx:xx:xx:xx:xx:xx (random)
@@ -134,7 +135,7 @@ Testing with nRF Connect for Desktop
       GATT Service could not be found during the discovery
       The discovery procedure for ANCS succeeded
 
-#. After bonding, verify in the Bluetooth Low Energy app that the **Client Characteristic Configuration** (CCCD) value for **Apple Notification Source** and **Apple Data Source** are set to ``01 00``.
+#. After bonding, verify in the app that the **Client Characteristic Configuration** (CCCD) value for **Apple Notification Source** and **Apple Data Source** are set to ``01 00``.
 
 Send an iOS notification to the application
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -155,7 +156,7 @@ The following table shows the format of a notification that you can send to the 
    | Notification UID | 01 02 03 04   | 67305985 (0x4030201)     |
    +------------------+---------------+--------------------------+
 
-#. In the Bluetooth Low Energy app, set the value of **Apple Notification Source** to ``00 18 06 02 01 02 03 04`` and click :guilabel:`Update`.
+#. In the `Bluetooth Low Energy app`_, set the value of **Apple Notification Source** to ``00 18 06 02 01 02 03 04`` and click :guilabel:`Update`.
 #. Verify that the UART data is received as follows::
 
       Notification
@@ -258,7 +259,7 @@ The following table shows the format of a response that contains some of the req
    .. group-tab:: nRF52 and nRF53 DKs
 
       #. Press **Button 1** to request notification attributes for the iOS notification that was received.
-      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
       #. Respond to the request by sending two notification attributes: the title and the message.
          Set the **Apple Data Source** value in the Server to ``00 01 02 03 04 01 03 00 6E 52 46 03 02 00 35 32``.
       #. The application will print the received data on UART.
@@ -275,7 +276,7 @@ The following table shows the format of a response that contains some of the req
    .. group-tab:: nRF54 DKs
 
       #. Press **Button 0** to request notification attributes for the iOS notification that was received.
-      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
       #. Respond to the request by sending two notification attributes: the title and the message.
          Set the **Apple Data Source** value in the Server to ``00 01 02 03 04 01 03 00 6E 52 46 03 02 00 35 32``.
       #. The application will print the received data on UART.
@@ -328,7 +329,7 @@ The following table shows the format of a response that contains the requested a
    .. group-tab:: nRF52 and nRF53 DKs
 
       #. Press **Button 2** to request app attributes for the app with the app identifier "com" (the last received app identifier).
-      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
       #. Respond to the request by sending the app attribute.
          Set the **Apple Data Source** value in the Server to ``01 63 6F 6D 00 00 04 00 4D 61 69 6C``.
       #. The application will print the received data on UART. Verify that the UART output is as follows::
@@ -338,7 +339,7 @@ The following table shows the format of a response that contains the requested a
    .. group-tab:: nRF54 DKs
 
       #. Press **Button 1** to request app attributes for the app with the app identifier "com" (the last received app identifier).
-      #. In the Bluetooth Low Energy app, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
+      #. In the `Bluetooth Low Energy app`_, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.
       #. Respond to the request by sending the app attribute.
          Set the **Apple Data Source** value in the Server to ``01 63 6F 6D 00 00 04 00 4D 61 69 6C``.
       #. The application will print the received data on UART. Verify that the UART output is as follows::
@@ -348,7 +349,7 @@ The following table shows the format of a response that contains the requested a
 Disconnect
 ^^^^^^^^^^
 
-Disconnect the device in the Bluetooth Low Energy app.
+Disconnect the device in the `Bluetooth Low Energy app`_.
 As the bond information is preserved by the app, you can immediately reconnect to the device by clicking :guilabel:`Connect`.
 
 Dependencies

@@ -203,10 +203,10 @@ To test with a Microsoft Windows computer that has a Bluetooth radio, complete t
       #. Disconnect the computer from the device by removing the device from the computer's devices list.
 
 
-Testing with nRF Connect for Desktop
-------------------------------------
+Testing with Bluetooth Low Energy app
+-------------------------------------
 
-To test with `nRF Connect for Desktop`_, complete the following steps:
+To test with the `Bluetooth Low Energy app`_, complete the following steps:
 
 .. tabs::
 
@@ -217,7 +217,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
          A blinking **LED 1** indicates that the device is advertising.
       #. |connect_terminal|
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app.
+      #. Open the `Bluetooth Low Energy app`_.
       #. Connect to the device from the app. The device is advertising as "NCS HIDS keyboard".
       #. Pair the devices:
 
@@ -247,7 +247,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
          Observe that two notifications are received on one of the HID Report characteristics, denoting press and release for one character of the test message.
          The first one has the value ``02000F0000000000``, the second has the value ``0200000000000000``.
          These values correspond to press and release of character "l" with the Shift key pressed.
-      #. In the Bluetooth Low Energy app, select the HID Report (which has UUID ``0x2A4D`` and the properties ``Read``, ``WriteWithoutResponse``, and ``Write``).
+      #. In the app, select the HID Report (which has UUID ``0x2A4D`` and the properties ``Read``, ``WriteWithoutResponse``, and ``Write``).
          Enter ``02`` in the text box and click the :guilabel:`tick mark` button.
          This sets the modifier bit of the Output Report to 02, which simulates turning Caps Lock ON.
 
@@ -257,10 +257,10 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
          This sets the modifier bit to 00, which simulates turning Caps Lock OFF.
 
          Observe that **LED 3** turns off.
-      #. Disconnect the device in the Bluetooth Low Energy app.
+      #. Disconnect the device in the app.
          Observe that no new notifications are received.
       #. If the advertising did not start automatically, press **Button 4** to continue advertising.
-      #. As bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
+      #. As bond information is preserved by the app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
 
    .. group-tab:: nRF54 DKs
 
@@ -269,8 +269,9 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
          A blinking **LED 0** indicates that the device is advertising.
       #. |connect_terminal|
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app.
-      #. Connect to the device from the app. The device is advertising as "NCS HIDS keyboard".
+      #. Open the `Bluetooth Low Energy app`_.
+      #. Connect to the device from the app.
+         The device is advertising as "NCS HIDS keyboard".
       #. Pair the devices:
 
          a. Click the :guilabel:`Settings` button for the device in the app.
@@ -299,7 +300,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
          Observe that two notifications are received on one of the HID Report characteristics, denoting press and release for one character of the test message.
          The first one has the value ``02000F0000000000``, the second has the value ``0200000000000000``.
          These values correspond to press and release of character "l" with the Shift key pressed.
-      #. In the Bluetooth Low Energy app, select the HID Report (which has UUID ``0x2A4D`` and the properties ``Read``, ``WriteWithoutResponse``, and ``Write``).
+      #. In the app, select the HID Report (which has UUID ``0x2A4D`` and the properties ``Read``, ``WriteWithoutResponse``, and ``Write``).
          Enter ``02`` in the text box and click the :guilabel:`tick mark` button.
          This sets the modifier bit of the Output Report to 02, which simulates turning Caps Lock ON.
 
@@ -309,10 +310,10 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
          This sets the modifier bit to 00, which simulates turning Caps Lock OFF.
 
          Observe that **LED 2** turns off.
-      #. Disconnect the device in the Bluetooth Low Energy app.
+      #. Disconnect the device in the app.
          Observe that no new notifications are received.
       #. If the advertising did not start automatically, press **Button 3** to continue advertising.
-      #. As bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
+      #. As bond information is preserved by the app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
 
 
 Testing with Android using NFC for pairing
