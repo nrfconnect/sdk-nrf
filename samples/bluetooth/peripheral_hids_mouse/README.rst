@@ -124,13 +124,13 @@ To build this sample with the :ref:`ble_rpc` library, add the following paramete
 
 .. _peripheral_hids_mouse_ncd_build:
 
-nRF Connect for Desktop build
-=============================
+Bluetooth Low Energy app build
+==============================
 
-To build this sample in the configuration variant that is compatible with `nRF Connect for Desktop`_, disable the following Bluetooth features:
+To build this sample in the configuration variant that is compatible with `Bluetooth Low Energy app`_, disable the following Bluetooth features:
 
-* Privacy (:kconfig:option:`CONFIG_BT_PRIVACY`) - `nRF Connect for Desktop`_ does not fully support the Bluetooth Privacy feature by disallowing distribution of the Identity Resolving Key (IRK) during the pairing procedure.
-* High-duty directed advertising (:kconfig:option:`CONFIG_BT_DIRECTED_ADVERTISING`) - high-duty directed advertising with 3.75 ms advertising interval and 1.28 s duration prevents the subsequent undirected advertising from being reported in the scanning list of `nRF Connect for Desktop`_ .
+* Privacy (:kconfig:option:`CONFIG_BT_PRIVACY`) - the `Bluetooth Low Energy app`_ does not fully support the Bluetooth Privacy feature by disallowing distribution of the Identity Resolving Key (IRK) during the pairing procedure.
+* High-duty directed advertising (:kconfig:option:`CONFIG_BT_DIRECTED_ADVERTISING`) - high-duty directed advertising with 3.75 ms advertising interval and 1.28 s duration prevents the subsequent undirected advertising from being reported in the scanning list of `Bluetooth Low Energy app`_ .
   As a result, it is only possible to connect to the target DK during the very short interval of high-duty directed advertising.
 
 To build the sample in the compatible configuration, use the following command:
@@ -151,7 +151,7 @@ To build the sample in the compatible configuration, use the following command:
 Testing
 =======
 
-After programming the sample to your development kit, you can test it either by connecting the development kit as a mouse device to a Microsoft Windows computer or by connecting to it with the Bluetooth Low Energy app of the `nRF Connect for Desktop`_.
+After programming the sample to your development kit, you can test it either by connecting the development kit as a mouse device to a Microsoft Windows computer or by connecting to it with the `Bluetooth Low Energy app`_ of the `nRF Connect for Desktop`_.
 
 Testing with a Microsoft Windows computer
 -----------------------------------------
@@ -188,13 +188,13 @@ To test with a Microsoft Windows computer that has a Bluetooth radio, complete t
          Observe that the mouse pointer on the computer moves downward.
       #. Disconnect the computer from the device by removing the device from the computer's devices list.
 
-Testing with nRF Connect for Desktop
-------------------------------------
+Testing with Bluetooth Low Energy app
+-------------------------------------
 
-To test with `nRF Connect for Desktop`_, complete the following steps:
+To test with `Bluetooth Low Energy app`_, complete the following steps:
 
 .. note::
-   To execute the testing steps below, you must build the sample in the configuration that is compatible with `nRF Connect for Desktop`_.
+   To execute the testing steps below, you must build the sample in the configuration that is compatible with `Bluetooth Low Energy app`_.
    See the :ref:`peripheral_hids_mouse_ncd_build` section to learn how to build a compatible sample configuration.
 
 .. tabs::
@@ -203,7 +203,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 
       1. Power on your development kit.
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app.
+      #. Open the `Bluetooth Low Energy app`_.
       #. Connect to the device from the app. The device is advertising as "NCS HIDS mouse"
       #. Optionally, bond to the device.
          Click the :guilabel:`Settings` button for the device in the app, select **Pair**, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
@@ -234,7 +234,7 @@ To test with `nRF Connect for Desktop`_, complete the following steps:
 
       1. Power on your development kit.
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app.
+      #. Open the `Bluetooth Low Energy app`_.
       #. Connect to the device from the app. The device is advertising as "NCS HIDS mouse"
       #. Optionally, bond to the device.
          Click the :guilabel:`Settings` button for the device in the app, select **Pair**, check :guilabel:`Perform Bonding`, and click :guilabel:`Pair`.
