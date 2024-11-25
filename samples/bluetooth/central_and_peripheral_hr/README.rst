@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-To test just the Bluetooth® LE Central Role operation, you need one of the following setups:
+To test just the Bluetooth LE Central Role operation, you need one of the following setups:
 
   * A smartphone or a tablet running a compatible application.
   * Another development kit running the :zephyr:code-sample:`ble_peripheral_hr` sample.
@@ -36,12 +36,12 @@ You can also mix devices when testing this sample.
 For a simple echo test, you only need one additional device.
 Alternatively, you can use a smartphone providing the HRS functionality and a development kit running the :zephyr:code-sample:`ble_central_hr` sample.
 
-For testing, you can also use `nRF Connect for Desktop`_.
+For testing, you can also use the `Bluetooth Low Energy app`_.
 
 Overview
 ********
 
-The sample demonstrates the following Bluetooth® LE roles:
+The sample demonstrates the following Bluetooth LE roles:
 
   * Central role - Scans for a remote device providing Heart Rate Service.
   * Peripheral role - Advertises and exposes a Heart Rate Service.
@@ -94,7 +94,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it either by connecting to other development kits that are running the :zephyr:code-sample:`ble_peripheral_hr` sample, or by using the Bluetooth Low Energy app from the `nRF Connect for Desktop`_, which emulates an HRS server.
+After programming the sample to your development kit, test it either by connecting to other development kits that are running the :zephyr:code-sample:`ble_peripheral_hr` sample, or by using the `Bluetooth Low Energy app`_ from the `nRF Connect for Desktop`_, which emulates an HRS server.
 
 Testing with other development kits
 -----------------------------------
@@ -161,8 +161,8 @@ Testing with other development kits
 
       The sample works now as relay for the Heart Rate Service.
 
-Testing with nRF Connect for Desktop
-------------------------------------
+Testing with Bluetooth Low Energy app
+-------------------------------------
 
 .. tabs::
 
@@ -171,7 +171,7 @@ Testing with nRF Connect for Desktop
       1. |connect_terminal_specific|
       #. Reset the development kit.
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+      #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the **SERVER SETUP** tab.
       #. Click the dongle configuration and select :guilabel:`Load setup`.
       #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
@@ -203,7 +203,7 @@ Testing with nRF Connect for Desktop
 
                      Heart Rate Measurement Value: 128 bpm
 
-            The Bluetooth Low Energy app also detects the Central and Peripheral HRS sample Heart Rate Service.
+            The `Bluetooth Low Energy app`_ also detects the Central and Peripheral HRS sample Heart Rate Service.
 
          #. Enable the notification for the Heart Rate Measurement characteristic.
          #. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.
@@ -217,7 +217,7 @@ Testing with nRF Connect for Desktop
       1. |connect_terminal_specific|
       #. Reset the development kit.
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+      #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the **SERVER SETUP** tab.
       #. Click the dongle configuration and select :guilabel:`Load setup`.
       #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
@@ -249,7 +249,7 @@ Testing with nRF Connect for Desktop
 
                      Heart Rate Measurement Value: 128 bpm
 
-            The Bluetooth Low Energy app also detects the Central and Peripheral HRS sample Heart Rate Service.
+            The `Bluetooth Low Energy app`_ also detects the Central and Peripheral HRS sample Heart Rate Service.
 
          #. Enable the notification for the Heart Rate Measurement characteristic.
          #. Write again value ``06 80`` and click the :guilabel:`Play` button to send a notification.

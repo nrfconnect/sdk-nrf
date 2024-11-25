@@ -22,7 +22,7 @@ Additionally, the sample requires one of the following testing devices:
   See :ref:`direct_test_mode_testing_anritsu`.
 * Another development kit with the same sample.
   See :ref:`direct_test_mode_testing_board`.
-* A computer with the Direct Test Mode app available in the `nRF Connect for Desktop`_.
+* A computer with the `Direct Test Mode app`_ available in the `nRF Connect for Desktop`_.
   See :ref:`direct_test_mode_testing_app`.
 
 Overview
@@ -36,7 +36,7 @@ The sample uses Direct Test Mode (DTM) to test the operation of the following fe
 * Packet error rate
 * Intermodulation performance
 
-Test procedures are defined in the document `Bluetooth® Low Energy RF PHY Test Specification <Bluetooth Low Energy RF PHY Test Specification_>`_: Document number RF-PHY.TS.p15
+Test procedures are defined in the document `Bluetooth Low Energy RF PHY Test Specification <Bluetooth Low Energy RF PHY Test Specification_>`_: Document number RF-PHY.TS.p15
 
 You can carry out conformance tests using dedicated test equipment, such as the Anritsu MT8852 or similar, with an nRF5 running the DTM sample set as device under test (DUT).
 
@@ -455,8 +455,8 @@ Testing with another development kit
 
 .. _direct_test_mode_testing_app:
 
-Testing with nRF Connect for Desktop
-------------------------------------
+Testing with Direct Test Mode app
+---------------------------------
 
 1. |connect_kit|
 #. Connect the kit with a terminal emulator that supports encoding and decoding in the HEX format.
@@ -464,7 +464,7 @@ Testing with nRF Connect for Desktop
 #. Start the ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to the connected development kit.
    This command triggers TX activity on 2402 MHz frequency (1st channel) with ``10101010`` packet pattern and 37-byte packet length.
 #. Observe that you received the ``TEST_STATUS_EVENT`` packet in response with the SUCCESS status field: ``0x00 0x00``.
-#. Start the Direct Test Mode app in nRF Connect for Desktop and select the development kit to communicate with.
+#. Start the `Direct Test Mode app`_ in `nRF Connect for Desktop`_ and select the development kit to communicate with.
 #. Set the Receiver mode and 37th channel in the test configuration menu.
 #. Start the test.
 #. On the application chart, observe that the number of RX packets is increasing for the 2402 MHz channel.

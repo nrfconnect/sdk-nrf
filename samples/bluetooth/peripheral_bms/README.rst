@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires a Bluetooth® Low Energy dongle and nRF Connect for Desktop.
+The sample also requires a Bluetooth® Low Energy dongle and the `Bluetooth Low Energy app`_.
 
 Overview
 ********
@@ -65,7 +65,7 @@ Testing
 1. |connect_terminal_specific|
 #. Reset the kit.
 #. Start `nRF Connect for Desktop`_.
-#. Open the Bluetooth Low Energy app and select the connected device that is used for communication.
+#. Open the `Bluetooth Low Energy app`_ and select the connected device that is used for communication.
 #. Connect to the device from the app.
    The device is advertising as "Nordic_BMS".
 #. Bind with the device:
@@ -77,7 +77,7 @@ Testing
    #. Click :guilabel:`Pair`.
 
 #. Check the logs to verify that the connection security is updated.
-#. Disconnect the device in nRF Connect.
+#. Disconnect the device in the app.
 #. Reconnect again and verify that the connection security is updated automatically.
 #. Verify that the Feature Characteristic of the Bond Management Service displays ``10 08 02``.
    This means that the following features are supported:

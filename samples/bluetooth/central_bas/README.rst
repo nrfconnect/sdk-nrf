@@ -19,7 +19,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample also requires a device running a BAS Server to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth® Low Energy dongle and `nRF Connect for Desktop`_).
+The sample also requires a device running a BAS Server to connect with (for example, another development kit running the :ref:`peripheral_hids_mouse` or :ref:`peripheral_hids_keyboard` sample, or a computer with a Bluetooth® Low Energy dongle and the `Bluetooth Low Energy app`_).
 
 Overview
 ********
@@ -68,7 +68,7 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it either by connecting to another kit that is running the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample, or by using `nRF Connect for Desktop`_ that emulates a BAS Server.
+After programming the sample to your development kit, you can test it either by connecting to another kit that is running the :ref:`peripheral_hids_keyboard` or :ref:`peripheral_hids_mouse` sample, or by using the `Bluetooth Low Energy app`_ that emulates a BAS Server.
 
 
 Testing with another kit
@@ -119,8 +119,8 @@ Testing with another kit
             [xx.xx.xx.xx.xx.xx (random)]: Battery read: 97%
 
 
-Testing with nRF Connect for Desktop
-------------------------------------
+Testing with Bluetooth Low Energy app
+-------------------------------------
 
 .. tabs::
 
@@ -129,7 +129,7 @@ Testing with nRF Connect for Desktop
       1. |connect_terminal_specific|
       #. Reset the kit.
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+      #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
          Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
@@ -137,7 +137,7 @@ Testing with nRF Connect for Desktop
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.
 
-         The current version of the Bluetooth Low Energy app cannot store the advertising setup, so it must be configured manually.
+         The current version of the app cannot store the advertising setup, so it must be configured manually.
          See the following image for the required target configuration:
 
          .. figure:: /images/bt_central_hids_nrfc_ad.png
@@ -178,7 +178,7 @@ Testing with nRF Connect for Desktop
       1. |connect_terminal_specific|
       #. Reset the kit.
       #. Start `nRF Connect for Desktop`_.
-      #. Open the Bluetooth Low Energy app and select the connected dongle that is used for communication.
+      #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
          Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
@@ -186,7 +186,7 @@ Testing with nRF Connect for Desktop
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.
 
-         The current version of the Bluetooth Low Energy app cannot store the advertising setup, so it must be configured manually.
+         The current version of the app cannot store the advertising setup, so it must be configured manually.
          See the following image for the required target configuration:
 
          .. figure:: /images/bt_central_hids_nrfc_ad.png
