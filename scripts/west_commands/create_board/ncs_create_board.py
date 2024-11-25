@@ -185,6 +185,14 @@ class NcsCreateBoard(WestCommand):
             tmpl = TEMPLATE_DIR / series / "board-shared_sram.dtsi"
             shutil.copy(tmpl, out_dir / f"{ input['board'] }-shared_sram.dtsi")
 
+        # nrf54H specific files
+        if series == "nrf54h":
+            tmpl = TEMPLATE_DIR / series / "board-ipc_conf.dtsi"
+            shutil.copy(tmpl, out_dir / f"{ input['board'] }-ipc_conf.dtsi")
+
+            tmpl = TEMPLATE_DIR / series / "board-memory_map.dtsi"
+            shutil.copy(tmpl, out_dir / f"{ input['board'] }-memory_map.dtsi")
+
         # nrf91 specific files
         if series == "nrf91":
             tmpl = env.get_template("board-partitioning.dtsi.jinja2")
@@ -205,7 +213,11 @@ class NcsCreateBoard(WestCommand):
             with open(out_dir / f"{ name }_defconfig", "w") as f:
                 f.write(tmpl.render(target=target))
 
-            tmpl = env.get_template("board.dts.jinja2")
+            if not target["xip"]:
+                tmpl = env.get_template("board.dts.jinja2")
+            else:
+                tmpl = env.get_template("board-xip.dts.jinja2")
+
             with open(out_dir / f"{name}.dts", "w") as f:
                 f.write(tmpl.render(target=target))
 

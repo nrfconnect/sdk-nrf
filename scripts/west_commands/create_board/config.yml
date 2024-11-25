@@ -71,6 +71,30 @@ products:
                 arch: arm
                 ram: 188
                 flash: 324
+  - series: nrf54h
+    socs:
+      - name: nrf54h20
+        variants:
+          - name: ckaa
+            cores:
+              - name: cpuapp
+                arch: arm
+                ram: 256
+                flash: 296
+              - name: cpurad
+                arch: arm
+                ram: 192
+                flash: 256
+              - name: cpuppr
+                arch: riscv
+                ram: 62
+                flash: 62
+                xip: true
+              - name: cpuflpr
+                arch: riscv
+                ram: 46
+                flash: 46
+                xip: true
   - series: nrf91
     socs:
       - name: nrf9131
