@@ -30,6 +30,21 @@
 #define SERVICE_LEASE	  UINT32_MAX
 #define SERVICE_KEY_LEASE (UINT32_MAX - 1)
 
+#define _SERVER_IPV6_START 0x20, 0x01, 0x0D, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
+			   0x00, 0x00, 0x00
+
+#define SERVER_IPV6_ADDR1_BYTES _SERVER_IPV6_START, 0x1
+#define SERVER_IPV6_ADDR2_BYTES _SERVER_IPV6_START, 0x2
+#define SERVER_IPV6_ADDR3_BYTES _SERVER_IPV6_START, 0x3
+#define SERVER_IPV6_ADDR4_BYTES _SERVER_IPV6_START, 0x4
+
+#define CBOR_SERVER_IPV6_ADDR1 0x50, SERVER_IPV6_ADDR1_BYTES
+#define CBOR_SERVER_IPV6_ADDR2 0x50, SERVER_IPV6_ADDR2_BYTES
+#define CBOR_SERVER_IPV6_ADDR3 0x50, SERVER_IPV6_ADDR3_BYTES
+#define CBOR_SERVER_IPV6_ADDR4 0x50, SERVER_IPV6_ADDR4_BYTES
+
+#define SERVER_PORT 12345
+
 /*
  * NOTE:
  * The following service encoding is correct assuming that zcbor encodes arrays and maps
@@ -38,6 +53,16 @@
 
 /* clang-format off */
 #define CBOR_SERVICE \
+	/* Subtypes num: */ \
+	0x2, \
+	/* TXT entry count: */ \
+	0x2, \
+	/* String buffer size (service + instance): */ \
+	0xb, \
+	/* Subtypes' buffer size: */ \
+	0xa, \
+	/* TXT buffer size: */ \
+	0x14, \
 	/* Service type: */ \
 	0x65, SERVICE_TYPE, \
 	/* Service instance: */ \
@@ -385,6 +410,131 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientSetTtl)
 				   RPC_RSP());
 	otSrpClientSetTtl(NULL, UINT32_MAX);
 	mock_nrf_rpc_tr_expect_done();
+}
+
+/* Test serialization of otSrpClientStart() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientStart)
+{
+	otError error;
+	otSockAddr sock_addr = {
+		.mAddress = {{{ SERVER_IPV6_ADDR1_BYTES }}},
+		.mPort = SERVER_PORT,
+	};
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_START, CBOR_SERVER_IPV6_ADDR1,
+				   CBOR_UINT16(SERVER_PORT)), RPC_RSP(OT_ERROR_NONE));
+	error = otSrpClientStart(NULL, &sock_addr);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(error, OT_ERROR_NONE);
+}
+
+/* Test serialization of otSrpClientStop() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientStop)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_STOP), RPC_RSP());
+	otSrpClientStop(NULL);
+	mock_nrf_rpc_tr_expect_done();
+}
+
+/* Test serialization of otSrpClientIsRunning() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientIsRunning)
+{
+	bool err_1st;
+	bool err_2nd;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_IS_RUNNING), RPC_RSP(CBOR_FALSE));
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_IS_RUNNING), RPC_RSP(CBOR_TRUE));
+
+	err_1st = otSrpClientIsRunning(NULL);
+	err_2nd = otSrpClientIsRunning(NULL);
+
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_false(err_1st);
+	zassert_true(err_2nd);
+}
+
+/* Test serialization of otSrpClientGetServerAddress() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientGetServerAddress)
+{
+	const otSockAddr *sock_addr;
+
+	otIp6Address expected_addr = {{{ SERVER_IPV6_ADDR1_BYTES }}};
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_GET_SERVER_ADDRESS),
+				   RPC_RSP(CBOR_SERVER_IPV6_ADDR1, CBOR_UINT16(SERVER_PORT)));
+
+	sock_addr = otSrpClientGetServerAddress(NULL);
+
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_mem_equal(&sock_addr->mAddress, &expected_addr, OT_IP6_ADDRESS_SIZE);
+	zassert_equal(sock_addr->mPort, SERVER_PORT);
+}
+
+/* Test serialization of otSrpClientSetHostAddresses() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientSetHostAddresses)
+{
+	otError error;
+
+	otIp6Address addrs[] = { {{{ SERVER_IPV6_ADDR1_BYTES }}}, {{{ SERVER_IPV6_ADDR2_BYTES }}},
+				 {{{ SERVER_IPV6_ADDR3_BYTES }}}, {{{ SERVER_IPV6_ADDR4_BYTES }}} };
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_SET_HOST_ADDRESSES, 4,
+				   CBOR_LIST(CBOR_SERVER_IPV6_ADDR1, CBOR_SERVER_IPV6_ADDR2,
+					     CBOR_SERVER_IPV6_ADDR3, CBOR_SERVER_IPV6_ADDR4)),
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otSrpClientSetHostAddresses(NULL, addrs, 4);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(error, OT_ERROR_NONE);
+}
+
+/* Test serialization of otSrpClientIsAutoStartModeEnabled() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientIsAutoStartModeEnabled)
+{
+	bool err1;
+	bool err2;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_IS_AUTO_START_MODE_ENABLED),
+				   RPC_RSP(CBOR_FALSE));
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_IS_AUTO_START_MODE_ENABLED),
+				   RPC_RSP(CBOR_TRUE));
+
+	err1 = otSrpClientIsAutoStartModeEnabled(NULL);
+	err2 = otSrpClientIsAutoStartModeEnabled(NULL);
+
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_false(err1);
+	zassert_true(err2);
+}
+
+/* Test serialization of otSrpClientGetLeaseInterval() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientGetLeaseInterval)
+{
+	uint32_t interval;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_GET_LEASE_INTERVAL),
+				   RPC_RSP(CBOR_UINT32(100000)));
+	interval = otSrpClientGetLeaseInterval(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(interval, 100000);
+}
+
+/* Test serialization of otSrpClientGetTtl() */
+ZTEST(ot_rpc_srp_client, test_otSrpClientGetTtl)
+{
+	uint32_t ttl;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_GET_TTL),
+				   RPC_RSP(CBOR_UINT8(120)));
+	ttl = otSrpClientGetTtl(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(ttl, 120);
 }
 
 ZTEST_SUITE(ot_rpc_srp_client, NULL, tc_setup, NULL, tc_after, NULL);

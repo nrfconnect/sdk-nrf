@@ -20,6 +20,8 @@
 /* for value bigger than 0x17 */
 #define CBOR_UINT8(value)  0x18, (value)
 
+#define CBOR_LIST(...) 0x9F, __VA_ARGS__, 0xFF
+
 /* Macros for constructing nRF RPC packets for the OpenThread command group. */
 
 #define RPC_PKT(bytes...)                                                                          \
