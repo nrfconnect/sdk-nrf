@@ -5,6 +5,10 @@
 #
 
 function(sdp_assembly hrt_srcs)
+  # Get SoC name
+  string(REPLACE "/" ";" target_quals ${BOARD_QUALIFIERS})
+  list(GET target_quals 1 target_soc)
+
   sdp_assembly_generate("${CMAKE_SOURCE_DIR}/${hrt_srcs}")
   sdp_assembly_check("${CMAKE_SOURCE_DIR}/${hrt_srcs}")
   sdp_assembly_prepare_install("${CMAKE_SOURCE_DIR}/${hrt_srcs}")
@@ -17,7 +21,7 @@ function(sdp_assembly_target_sources hrt_srcs)
   foreach(hrt_src ${hrt_srcs})
     get_filename_component(hrt_dir ${hrt_src} DIRECTORY)  # directory
     get_filename_component(hrt_src_file ${hrt_src} NAME_WE)  # filename without extension
-    set(hrt_s_file "${hrt_dir}/${hrt_src_file}.s")
+    set(hrt_s_file "${hrt_dir}/${hrt_src_file}-${target_soc}.s")
     target_sources(app PRIVATE ${hrt_s_file})
   endforeach()
 endfunction()
@@ -56,9 +60,9 @@ function(sdp_assembly_generate hrt_srcs)
     get_filename_component(src_filename ${hrt_src} NAME_WE)  # filename without extension
     add_custom_command(TARGET asm_gen
       PRE_BUILD
-      BYPRODUCTS ${src_filename}-temp.s
-      COMMAND ${CMAKE_C_COMPILER} ${compiler_options} ${hrt_opts} -S ${hrt_src} -o ${src_filename}-temp.s
-      COMMAND ${PYTHON_EXECUTABLE} ${ZEPHYR_NRF_MODULE_DIR}/scripts/sdp/remove_comments.py ${src_filename}-temp.s
+      BYPRODUCTS ${src_filename}-${target_soc}-temp.s
+      COMMAND ${CMAKE_C_COMPILER} ${compiler_options} ${hrt_opts} -S ${hrt_src} -o ${src_filename}-${target_soc}-temp.s
+      COMMAND ${PYTHON_EXECUTABLE} ${ZEPHYR_NRF_MODULE_DIR}/scripts/sdp/remove_comments.py ${src_filename}-${target_soc}-temp.s
       COMMAND_EXPAND_LISTS
       COMMENT "Generating ASM file for ${hrt_src}"
     )
@@ -80,7 +84,7 @@ function(sdp_assembly_check hrt_srcs)
   string(REPLACE ";" "$<SEMICOLON>" hrt_srcs_semi "${hrt_srcs}")
 
   add_custom_target(asm_check
-    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_check.cmake
+    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -D target_soc="${target_soc}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_check.cmake
     COMMENT ${asm_check_msg}
   )
 
@@ -100,7 +104,7 @@ function(sdp_assembly_prepare_install hrt_srcs)
   string(REPLACE ";" "$<SEMICOLON>" hrt_srcs_semi "${hrt_srcs}")
 
   add_custom_target(asm_install
-    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_install.cmake
+    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -D target_soc="${target_soc}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_install.cmake
     COMMENT ${asm_install_msg}
   )
 
