@@ -38,7 +38,7 @@ IDE, OS, and tool support
 Board support
 =============
 
-|no_changes_yet_note|
+* Fix an issue with the Thingy:91 X board that caused the UART logging to break when the :ref:`modem trace UART snippet <nrf91_modem_trace_uart_snippet>` was used.
 
 Build and configuration system
 ==============================
