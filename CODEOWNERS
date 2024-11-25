@@ -55,7 +55,7 @@
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-bluebagel
 /boards/nordic/thingy91*                  @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
 /boards/shields/coverage_support/         @nrfconnect/ncs-low-level-test
-
+/boards/shields/nrf2220ek/                @nrfconnect/ncs-radio-sw
 /boards/shields/pca63566/doc/*.rst        @nrfconnect/ncs-doc-leads
 
 # SUIT configuration files
