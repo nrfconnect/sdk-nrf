@@ -52,6 +52,11 @@ To get started with testing the Azure IoT Hub, make sure that the following prer
 
 * Install the `Azure CLI`_.
 * To use the ``nrfcredstore`` tool, the dependencies in the :file:`nrf/scripts/requirements-extra.txt` file must be installed.
+  Enter the following command in a terminal window to install all the dependencies in the file:
+
+  .. code-block:: console
+
+     pip3 install -r nrf/scripts/requirements-extra.txt
 
 .. rst-class:: numbered-step
 
