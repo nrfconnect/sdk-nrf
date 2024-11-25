@@ -757,6 +757,7 @@ static int update_cap_sink_stream_qos(struct le_audio_unicast_server *unicast_se
 		param.streams = streams;
 		param.count = 0;
 		param.type = BT_CAP_SET_TYPE_AD_HOC;
+		param.release = true;
 
 		if (playing_state &&
 		    le_audio_ep_state_check(unicast_server->cap_sink_stream.bap_stream.ep,
@@ -1680,6 +1681,7 @@ int unicast_client_stop(uint8_t cig_index)
 	param.streams = streams;
 	param.count = 0;
 	param.type = BT_CAP_SET_TYPE_AD_HOC;
+	param.release = true;
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, NULL, 0);
 
