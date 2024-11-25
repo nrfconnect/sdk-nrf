@@ -252,7 +252,7 @@ Bluetooth samples
       * :ref:`peripheral_hids_mouse`
 
     As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
-  * Testing steps in the :ref:`peripheral_hids_mouse` to provide the build configuration that is compatible with the `nRF Connect for Desktop`_ testing tool.
+  * Testing steps in the :ref:`peripheral_hids_mouse` to provide the build configuration that is compatible with the `Bluetooth Low Energy app`_ testing tool.
 
 Bluetooth Fast Pair samples
 ---------------------------
