@@ -527,6 +527,7 @@
 /samples/benchmarks/coremark/*.rst        @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/**/*.rst               @nrfconnect/ncs-dragoon-doc @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/nrf_auraconfig/*.rst   @nrfconnect/ncs-audio-doc
+/samples/bluetooth/*_hids*/*.rst          @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/fast_pair/**/*.rst     @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/mesh/**/*.rst          @nrfconnect/ncs-paladin-doc
 /samples/bootloader/*.rst                 @nrfconnect/ncs-pluto-doc
