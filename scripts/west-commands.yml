@@ -29,11 +29,11 @@ west-commands:
       - name: suit-manifest
         class: SuitManifest
         help: SUIT manifest utility
-  - file: scripts/west_commands/genboard/ncs_genboard.py
+  - file: scripts/west_commands/create_board/ncs_create_board.py
     commands:
-      - name: ncs-genboard
-        class: NcsGenboard
-        help: generate board skeleton files for any Nordic SoC
+      - name: ncs-create-board
+        class: NcsCreateBoard
+        help: create board skeleton files for any Nordic SoC
   - file: scripts/west_commands/ncs-provision.py
     commands:
       - name: ncs-provision

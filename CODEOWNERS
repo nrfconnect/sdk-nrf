@@ -597,7 +597,7 @@
 /scripts/ncs-toolchain-version-minimum.txt @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
-/scripts/west_commands/genboard/          @gmarull
+/scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/sbom/              @nrfconnect/ncs-si-muffin
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/west_commands/ncs-provision.py   @nrfconnect/ncs-pluto
