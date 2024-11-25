@@ -658,6 +658,7 @@
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/ncs-bicr.py        @gmarull
+/scripts/west_commands/ncs-board-actions.py @gmarull
 /scripts/west_commands/sbom/              @nrfconnect/ncs-si-muffin
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/west_commands/ncs-provision.py   @nrfconnect/ncs-pluto
