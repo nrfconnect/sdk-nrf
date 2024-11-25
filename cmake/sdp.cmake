@@ -15,7 +15,7 @@ endfunction()
 
 function(sdp_assembly_target_sources hrt_srcs)
   foreach(hrt_src ${hrt_srcs})
-    get_filename_component(hrt_dir ${hrt_src} DIRECTORY)  # directory
+    get_filename_component(hrt_dir ${hrt_src} DIRECTORY)
     get_filename_component(hrt_src_file ${hrt_src} NAME_WE)  # filename without extension
     set(hrt_s_file "${hrt_dir}/${hrt_src_file}.s")
     target_sources(app PRIVATE ${hrt_s_file})
