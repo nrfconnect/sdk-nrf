@@ -445,7 +445,11 @@ static void esb_fem_for_tx_ack(void)
 
 static void esb_fem_reset(void)
 {
+#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
 	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+#else
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+#endif
 
 	mpsl_fem_lna_configuration_clear();
 	mpsl_fem_pa_configuration_clear();
@@ -458,7 +462,11 @@ static void esb_fem_reset(void)
 
 static void esb_fem_lna_reset(void)
 {
+#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
 	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+#else
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+#endif
 
 	esb_ppi_for_fem_clear();
 
@@ -470,7 +478,11 @@ static void esb_fem_pa_reset(void)
 {
 	mpsl_fem_pa_configuration_clear();
 
+#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
 	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+#else
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+#endif
 	esb_ppi_for_fem_clear();
 
 	mpsl_fem_disable();
@@ -1289,7 +1301,11 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		}
 	} else {
 		if (retransmits_remaining-- == 0) {
+#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
 			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+#else
+			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+#endif
 
 			/* All retransmits are expended, and the TX operation is
 			 * suspended
