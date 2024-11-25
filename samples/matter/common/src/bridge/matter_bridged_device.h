@@ -88,7 +88,7 @@ public:
 		GenericSwitch = 0x000F
 	};
 	using IdentifyType = chip::app::Clusters::Identify::IdentifyTypeEnum;
-	static constexpr uint8_t kDefaultDynamicEndpointVersion = 2;
+	static constexpr uint8_t kDefaultDynamicEndpointVersion = 3;
 	static constexpr uint8_t kNodeLabelSize = 32;
 	static constexpr uint8_t kDescriptorAttributeArraySize = 254;
 
