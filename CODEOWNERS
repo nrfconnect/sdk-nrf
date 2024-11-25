@@ -58,6 +58,10 @@
 /boards/shields/nrf2220ek/                @nrfconnect/ncs-radio-sw
 /boards/shields/nrf2240ek/                @nrfconnect/ncs-radio-sw
 /boards/shields/nrf21540ek/               @nrfconnect/ncs-radio-sw
+
+# This shield entry must be below other shield entries (excluding doc), do not move
+**/shields/                               @nrfconnect/ncs-co-build-system
+
 /boards/shields/pca63566/doc/*.rst        @nrfconnect/ncs-doc-leads
 
 # SUIT configuration files
@@ -638,6 +642,10 @@
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
 /snippets/wpa-supplicant-debug/           @krish2718 @sachinthegreen
 /snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
+
+# These snippet entries must be below other snippet entries (excluding doc), do not move
+/snippets/                                @nrfconnect/ncs-co-build-system
+**/snippets/                              @nrfconnect/ncs-co-build-system
 
 /snippets/nordic-bt-rpc/*.rst             @nrfconnect/ncs-doc-leads
 
