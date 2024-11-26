@@ -128,8 +128,8 @@ Use the following steps to enable monitor-mode debugging in the |NCS|:
 2. Attach the debugger to the application.
 3. Depending on debugger you are using, enable monitor-mode debugging:
 
-  * For nRF Debug in the |nRFVSC|, enter ``-exec monitor exec SetMonModeDebug=1`` in the debug console.
-  * For debugging using Ozone, enter ``Exec.Command("SetMonModeDebug = 1");`` in the console.
+   * For nRF Debug in the |nRFVSC|, the monitor-mode is automatically enabled when you set the :kconfig:option:`CONFIG_SEGGER_DEBUGMON` Kconfig option and build your application (``-exec monitor exec SetMonModeDebug=1`` is automatically passed to the debug console).
+   * For debugging using Ozone, enter ``Exec.Command("SetMonModeDebug = 1");`` in the console.
 
 For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
 
