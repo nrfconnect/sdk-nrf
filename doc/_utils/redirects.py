@@ -416,7 +416,10 @@ NRF = [
     ("applications/nrf5340_audio/README", "applications/nrf5340_audio/index"), # nRF5340 Audio applications (landing)
     ("samples/samples_bl", "samples/bl"), # Bluetooth samples (landing)
     ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),
-    ("samples/bluetooth/broadcast_config_tool/README", "samples/bluetooth/nrf_auraconfig/README"),
+    ("samples/bluetooth/broadcast_config_tool/README", "samples/bluetooth/central_and_peripheral_hrs/README")
+    ("samples/bootloader/README", "samples/nsib/README")
+    ("samples/cellular/nrf_provisioning/README", "samples/cellular/nrf_device_provisioning/README")
+    ("samples/bluetooth/mesh/light_ctrl/README", "samples/bluetooth/mesh/light_fixture/README"
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
     ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
     ("samples/samples_edge", "samples/edge"), # Edge Impulse samples (landing)

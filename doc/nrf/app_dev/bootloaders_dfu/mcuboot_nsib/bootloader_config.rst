@@ -9,7 +9,7 @@ Customizing the bootloader
 
 By default, to set Kconfig options, the |NSIB| and MCUboot bootloaders use Kconfig project configuration files, usually called :file:`prj.conf`, located in their source directories:
 
-* |NSIB| - :file:`nrf/samples/bootloader`
+* |NSIB| - :file:`nrf/samples/nsib`
 * MCUboot - :file:`bootloader/mcuboot/boot/zephyr`
 
 However, there are other ways to customize your application using Kconfig options:
