@@ -1078,6 +1078,9 @@ int dect_phy_ctrl_rssi_scan_start(struct dect_phy_rssi_scan_params *params,
 	if (params->reinit_mdm_api) {
 		ret = dect_phy_ctrl_phy_reinit();
 		if (ret) {
+			if (params->suspend_scheduler) {
+				dect_phy_api_scheduler_resume();
+			}
 			return ret;
 		}
 	}
