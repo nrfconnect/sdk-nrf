@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires a device running a Channel Sounding Initiator with Ranging Requestor to connect to.
+The sample also requires a device running a Channel Sounding Initiator with Ranging Requestor to connect to, such as the :ref:`channel_sounding_ras_initiator` sample.
 
 Overview
 ********
@@ -40,11 +40,10 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, you can test it by connecting to another development kit with a Channel Sounding Initiator role with Ranging Requestor.
+After programming the sample to your development kit, you can test it by connecting to another device programmed with a Channel Sounding Initiator role with Ranging Requestor, such as the :ref:`channel_sounding_ras_initiator` sample.
 
 1. |connect_terminal_specific|
 #. Reset the kit.
-#. Program the other kit with the Channel Sounding Initiator with Ranging Requestor sample.
 #. Wait until the advertiser is detected by the Central.
    In the terminal window, check for information similar to the following::
 
