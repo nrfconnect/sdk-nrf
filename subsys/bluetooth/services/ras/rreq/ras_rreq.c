@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net_buf.h>
@@ -858,4 +859,96 @@ int bt_ras_rreq_cp_get_ranging_data(struct bt_conn *conn, struct net_buf_simple 
 	rreq->cp.state = BT_RAS_RREQ_CP_STATE_GET_RD_WRITTEN;
 
 	return 0;
+}
+
+void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data_buf,
+					struct net_buf_simple *local_step_data_buf,
+					enum bt_conn_le_cs_role cs_role,
+					bt_ras_rreq_subevent_header_cb_t subevent_header_cb,
+					bt_ras_rreq_step_data_cb_t step_data_cb, void *user_data)
+{
+	if (!peer_ranging_data_buf || !local_step_data_buf) {
+		LOG_ERR("Tried to parse empty step data.");
+		return;
+	}
+
+	/* Remove ranging data header. */
+	net_buf_simple_pull_mem(peer_ranging_data_buf, sizeof(struct ras_ranging_header));
+
+	while (peer_ranging_data_buf->len >= sizeof(struct ras_subevent_header)) {
+		struct ras_subevent_header *peer_subevent_header_data = net_buf_simple_pull_mem(
+			peer_ranging_data_buf, sizeof(struct ras_subevent_header));
+
+		if (subevent_header_cb &&
+		    !subevent_header_cb(peer_subevent_header_data, user_data)) {
+			return;
+		}
+
+		if (peer_subevent_header_data->num_steps_reported == 0 ||
+		    peer_ranging_data_buf->len == 0) {
+			return;
+		}
+
+		for (uint8_t i = 0; i < peer_subevent_header_data->num_steps_reported; i++) {
+			struct bt_le_cs_subevent_step local_step;
+			struct bt_le_cs_subevent_step peer_step;
+
+			if (local_step_data_buf->len < sizeof(struct bt_le_cs_subevent_step) ||
+			    peer_ranging_data_buf->len < sizeof(struct ras_rd_cs_subevent_step)) {
+				LOG_WRN("Step data appears malformed.");
+			}
+
+			local_step.mode = net_buf_simple_pull_u8(local_step_data_buf);
+			local_step.channel = net_buf_simple_pull_u8(local_step_data_buf);
+			local_step.data_len = net_buf_simple_pull_u8(local_step_data_buf);
+
+			peer_step.mode = net_buf_simple_pull_u8(peer_ranging_data_buf);
+			peer_step.channel = local_step.channel;
+
+			if (peer_step.mode != local_step.mode) {
+				LOG_WRN("Mismatch of local and peer step mode %d != %d",
+					peer_step.mode, local_step.mode);
+				return;
+			}
+
+			if (local_step.data_len == 0) {
+				LOG_WRN("Encountered zero-length step data.");
+				return;
+			}
+
+			peer_step.data = peer_ranging_data_buf->data;
+			local_step.data = local_step_data_buf->data;
+
+			peer_step.data_len = local_step.data_len;
+
+			if (peer_step.mode == 0) {
+				/* Only occassion where peer step mode length is not equal to local
+				 * step mode length is mode 0 steps.
+				 */
+				peer_step.data_len =
+					(cs_role == BT_CONN_LE_CS_ROLE_INITIATOR)
+						? sizeof(struct
+							 bt_hci_le_cs_step_data_mode_0_reflector)
+						: sizeof(struct
+							 bt_hci_le_cs_step_data_mode_0_initiator);
+			}
+
+			if (local_step.data_len > local_step_data_buf->len ||
+			    peer_step.data_len > peer_ranging_data_buf->len) {
+				LOG_WRN("Step data appears malformed.");
+				return;
+			}
+
+			if (step_data_cb && !step_data_cb(&local_step, &peer_step, user_data)) {
+				return;
+			}
+
+			net_buf_simple_pull(peer_ranging_data_buf, peer_step.data_len);
+			net_buf_simple_pull(local_step_data_buf, local_step.data_len);
+		}
+	}
+
+	if (local_step_data_buf->len != 0 || peer_ranging_data_buf->len != 0) {
+		LOG_WRN("Peer or local buffers not fully drained at the end of parsing.");
+	}
 }

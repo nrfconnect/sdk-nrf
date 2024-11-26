@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/hci_types.h>
 #include <bluetooth/gatt_dm.h>
@@ -224,6 +225,14 @@ struct ras_rd_buffer {
 			uint8_t subevents[];
 		} __packed;
 	} procedure;
+};
+
+/** @brief Subevent result step */
+struct ras_rd_cs_subevent_step {
+	/** CS step mode. */
+	uint8_t mode;
+	/** Pointer to role- and mode-specific information. */
+	const uint8_t *data;
 };
 
 /** @brief Allocate Ranging Responder instance for connection.
@@ -476,6 +485,52 @@ int bt_ras_rreq_rd_overwritten_subscribe(struct bt_conn *conn, bt_ras_rreq_rd_ov
  *           Otherwise, a negative error code is returned.
  */
 int bt_ras_rreq_rd_overwritten_unsubscribe(struct bt_conn *conn);
+
+/** @brief Provide step header for each step back to the user.
+ *
+ * @param[in] subevent_header Subevent header data.
+ * @param[in] user_data       User data.
+ *
+ * @retval true If should continue parsing data.
+ *         false If data parsing should be stopped.
+ */
+typedef bool (*bt_ras_rreq_subevent_header_cb_t)(struct ras_subevent_header *subevent_header,
+						 void *user_data);
+
+/** @brief Provide step data for each step back to the user.
+ *
+ * @param[in] local_step Local step data.
+ * @param[in] peer_step  Peer step data.
+ * @param[in] user_data  User data.
+ *
+ * @retval true If should continue parsing data.
+ *         false If data parsing should be stopped.
+ */
+typedef bool (*bt_ras_rreq_step_data_cb_t)(struct bt_le_cs_subevent_step *local_step,
+					   struct bt_le_cs_subevent_step *peer_step,
+					   void *user_data);
+
+/** @brief Parse peer ranging data buffer and local step data buffer.
+ *
+ * A helper for parsing ranging data-formatted buffer, as populated by @ref
+ * bt_ras_rreq_cp_get_ranging_data, and local step data buffer,
+ * where step_data_buf from le_cs_subevent_data_available has been placed together in a struct
+ * net_buf_simple.
+ *
+ * @note All data will be removed from the buffers in this function.
+ *
+ * @param[in] peer_ranging_data_buf Buffer to the peer ranging data to parse.
+ * @param[in] local_step_data_buf   Buffer to the local step data to parse.
+ * @param[in] cs_role               Channel sounding role of local device.
+ * @param[in] subevent_header_cb    Callback called with each subevent header.
+ * @param[in] step_data_cb          Callback called with each peer and local step data.
+ * @param[in] user_data             User data to be passed to the callbacks.
+ */
+void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data_buf,
+					struct net_buf_simple *local_step_data_buf,
+					enum bt_conn_le_cs_role cs_role,
+					bt_ras_rreq_subevent_header_cb_t subevent_header_cb,
+					bt_ras_rreq_step_data_cb_t step_data_cb, void *user_data);
 
 #ifdef __cplusplus
 }
