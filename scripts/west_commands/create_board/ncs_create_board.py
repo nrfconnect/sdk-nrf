@@ -216,4 +216,6 @@ class NcsCreateBoard(WestCommand):
             with open(out_dir / f"{name}.yml", "w") as f:
                 f.write(tmpl.render(target=target))
 
-        print(f"Board {input['board']} created successfully")
+        # return post-commands
+        commands = []
+        print(json.dumps({"commands": commands}))
