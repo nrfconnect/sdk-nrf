@@ -47,11 +47,35 @@ config SUIT_ENVELOPE_ROOT_ARTIFACT_NAME
 	  Name of the root SUIT artifact.
 
 config SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY
-	string "Path to the folder with nordic top artifacts"
+	string "Path to the folder with nordic_top envelope"
 	default ""
 	help
-	  Path to the folder containing nordic-top.suit envelope.
+	  Path to the folder containing nordic_top.suit envelope.
 	  nordic_top.suit won't be included in the root manifest if value is empty.
+
+config SUIT_ENVELOPE_NORDIC_TOP_IN_ROOT
+	bool
+	default y if SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY != ""
+
+if SUIT_ENVELOPE_NORDIC_TOP_IN_ROOT
+
+config SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE
+	bool "Extract payloads from the nordic_top envelope to cache"
+	help
+	  When this option is enabled, the build system extracts payloads from
+	  the nordic_top envelope and stores them into a cache partition file.
+	  Note, if this option is enabled, the installation of the Nordic components
+	  must be orchestrated by the APP_ROOT envelope.
+	  The root envelope must make use of the In-Place Updateable Components (IPUC)
+	  feature - one of the MEM components must be marked as IPUC by setting its
+	  size to 0 in the suit-candidate-verification sequence - so that its
+	  memory can be used as a mirror for the update of the Nordic elements.
+
+config SUIT_ENVELOPE_NORDIC_TOP_CACHE_PARTITION_NUM
+	int "Cache partition number to store the payloads extracted from nordic_top envelope"
+	default 1
+
+endif # SUIT_ENVELOPE_NORDIC_TOP_IN_ROOT
 
 config SUIT_BASE_MANIFEST_TEMPLATE_DIR
 	string "Base manifest directory"
