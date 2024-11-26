@@ -10,11 +10,6 @@
 #include <zephyr/kernel.h>
 #include <stdint.h>
 
-/*
- * Calculate the number of bytes of one frame, as per now, this frame can either
- * be 10 or 7.5 ms. Since we can't have floats in a define we use 15/2 instead
- */
-
 /**
  * Calculation:
  * FREQ_VALUE = 2^16 * ((12 * f_out / 32M) - 4)
@@ -26,6 +21,10 @@
 #define HFCLKAUDIO_12_165_MHZ 0x8FD8
 #define HFCLKAUDIO_12_411_MHZ 0xA774
 
+/*
+ * Calculate the number of bytes of one frame, as per now, this frame can either
+ * be 10 or 7.5 ms. Since we can't have floats in a define we use 15/2 instead
+ */
 #if ((CONFIG_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_SW_CODEC_LC3)
 
 #define FRAME_SIZE_BYTES                                                                           \
