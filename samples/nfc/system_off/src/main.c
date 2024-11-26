@@ -20,7 +20,9 @@
 #include <nfc/ndef/text_rec.h>
 
 #include <dk_buttons_and_leds.h>
-
+#ifdef CONFIG_SOC_NRF54L15_CPUAPP
+#include <hal/nrf_memconf.h>
+#endif
 
 #define SYSTEM_OFF_DELAY_S	3
 
@@ -33,8 +35,6 @@
 
 /* Delayed work that enters system off. */
 static struct k_work_delayable system_off_work;
-
-const struct device *const cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
 /**
  * @brief Function that receives events from NFC.
@@ -138,11 +138,25 @@ static void system_off(struct k_work *work)
 
 	dk_set_led_off(SYSTEM_ON_LED);
 
-	int rc = pm_device_action_run(cons, PM_DEVICE_ACTION_SUSPEND);
+	if (IS_ENABLED(CONFIG_PM_DEVICE) && IS_ENABLED(CONFIG_SERIAL)) {
+		static const struct device *dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+		int err;
+		enum pm_device_state state;
 
-	if (rc < 0) {
-		printk("Could not suspend console (%d)\n", rc);
+		if (dev) {
+			do {
+				err = pm_device_state_get(dev, &state);
+			} while ((err == 0) && (state == PM_DEVICE_STATE_ACTIVE));
+		}
 	}
+
+#ifdef CONFIG_SOC_NRF54L15_CPUAPP
+	/* Disable RAM retention in System OFF as it is not utilized by this sample. */
+	uint32_t ram_sections = 8;
+
+	nrf_memconf_ramblock_ret_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
+	nrf_memconf_ramblock_ret2_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
+#endif
 
 	sys_poweroff();
 }
@@ -194,12 +208,6 @@ static void print_reset_reason(void)
 
 int main(void)
 {
-	/* Check whether the console is enabled and ready */
-	if (!device_is_ready(cons)) {
-		printk("%s: device not ready.\n", cons->name);
-		return 0;
-	}
-
 	/* Configure LED-pins */
 	if (dk_leds_init() < 0) {
 		printk("Cannot init LEDs!\n");
