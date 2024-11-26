@@ -50,7 +50,7 @@ config MBEDTLS_PSA_CRYPTO_SPM
 
 config MBEDTLS_PSA_CRYPTO_STORAGE_C
 	bool "PSA storage for persistent keys" if !BUILD_WITH_TFM
-	default y if BUILD_WITH_TFM
+	default y if BUILD_WITH_TFM && TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
 	help
 	  Corresponds to MBEDTLS_PSA_CRYPTO_STORAGE_C setting in mbed TLS config file.
 
@@ -73,6 +73,7 @@ config MBEDTLS_PSA_KEY_SLOT_COUNT
 config PSA_ITS_ENCRYPTED
 	bool
 	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
+	depends on TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
 
