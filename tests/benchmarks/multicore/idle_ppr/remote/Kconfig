@@ -5,7 +5,7 @@
 #
 
 config TEST_SLEEP_DURATION_MS
-	int "Amount of time (in miliseconds) the core is sleeping"
+	int "Core sleep duration (miliseconds)"
 	default 1000
 	help
 	  Set sleep duration to TEST_SLEEP_DURATION_MS miliseconds.
