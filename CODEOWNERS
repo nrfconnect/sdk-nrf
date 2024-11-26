@@ -367,7 +367,7 @@
 /lib/location/                            @trantanen @jhirsi @tokangas
 /lib/lte_link_control/                    @tokangas @trantanen @jhirsi @nrfconnect/ncs-modem
 /lib/modem_antenna/                       @tokangas @nrfconnect/ncs-modem
-/lib/modem_attest_token/                  @jayteemo
+/lib/modem_attest_token/                  @nrfconnect/ncs-modem
 /lib/modem_battery/                       @nrfconnect/ncs-modem
 /lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem
