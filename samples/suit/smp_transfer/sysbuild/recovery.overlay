@@ -8,6 +8,6 @@
 
 / {
 	chosen {
-		recovery-button = &button0;
+		ncs,recovery-button = &button0;
 	};
 };

@@ -9,7 +9,7 @@
 #include <nrfx_gpiote.h>
 #include <sdfw/sdfw_services/suit_service.h>
 
-#define RECOVERY_BUTTON_NODE DT_CHOSEN(recovery_button)
+#define RECOVERY_BUTTON_NODE DT_CHOSEN(ncs_recovery_button)
 #define RECOVERY_BUTTON_PIN DT_GPIO_PIN(RECOVERY_BUTTON_NODE, gpios)
 #define RECOVERY_BUTTON_PORT_NUM DT_PROP(DT_GPIO_CTLR(RECOVERY_BUTTON_NODE, gpios), port)
 #define RECOVERY_BUTTON_FLAGS DT_GPIO_FLAGS(RECOVERY_BUTTON_NODE, gpios)
@@ -22,7 +22,7 @@
 #define RECOVERY_BUTTON_PRESSED(pin_value) (RECOVERY_BUTTON_FLAGS & GPIO_ACTIVE_LOW ? (!pin_value) \
 					    : pin_value)
 
-BUILD_ASSERT(DT_NODE_EXISTS(DT_CHOSEN(recovery_button)), "No recovery button chosen in dts");
+BUILD_ASSERT(DT_NODE_EXISTS(DT_CHOSEN(ncs_recovery_button)), "No recovery button chosen in dts");
 
 static int recovery_button_check(void)
 {

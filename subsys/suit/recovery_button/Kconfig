@@ -4,9 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+DT_CHOSEN_NCS_RECOVERY_BUTTON := ncs,recovery-button
+
 config SUIT_RECOVERY_BUTTON
 	bool "Enable SUIT enter recovery button checking on startup"
-	depends on $(dt_chosen_enabled,recovery-button)
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_NCS_RECOVERY_BUTTON))
 	select SSF_SUIT_SERVICE_ENABLED
 	help
 	  This will make the firmware check if the recovery button specified in the
