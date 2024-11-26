@@ -8,8 +8,6 @@ common:
 
 tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep:
-    extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -23,7 +21,6 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle:
     tags: ppk_power_measure
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
       remote_CONF_FILE=prj_s2ram.conf
       idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
@@ -37,7 +34,6 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags: ppk_power_measure
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
       remote_CONF_FILE=prj_s2ram.conf
     harness: pytest
@@ -48,7 +44,6 @@ tests:
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep_fast:
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
     harness: console
     harness_config:
@@ -62,7 +57,6 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle_fast:
     tags: ppk_power_measure
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
       remote_CONF_FILE=prj_s2ram.conf
       idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
@@ -77,7 +71,6 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
       remote_CONF_FILE=prj_s2ram.conf
       idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"

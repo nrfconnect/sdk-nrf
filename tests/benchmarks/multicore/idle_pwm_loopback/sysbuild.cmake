@@ -14,4 +14,4 @@ ExternalZephyrProject_Add(
     SOURCE_DIR ${APP_DIR}/remote
     BOARD ${SB_CONFIG_REMOTE_BOARD}
     BOARD_REVISION ${BOARD_REVISION}
-  )
+)
