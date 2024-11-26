@@ -129,9 +129,6 @@ namespace Watchdog
 	private:
 		constexpr static uint8_t kInvalidChannel = -1;
 
-		/* Pause Watchdog when the CPU is in sleep state or is halted by the debugger */
-		constexpr static uint8_t kWatchdogOptions = WDT_OPT_PAUSE_HALTED_BY_DBG | WDT_OPT_PAUSE_IN_SLEEP;
-
 		/* Timer for feeding in the required interval */
 		static void TimerTimeoutCallback(k_timer *timer);
 

@@ -34,7 +34,16 @@ bool Nrf::Watchdog::Enable()
 		return false;
 	}
 
-	if (wdt_setup(wdt, WatchdogSource::kWatchdogOptions) != 0) {
+	/* Pause Watchdog when the CPU is in sleep state or is halted by the debugger */
+	uint8_t watchdogOptions = 0;
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP
+	watchdogOptions |= WDT_OPT_PAUSE_IN_SLEEP;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP */
+#ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_ON_DEBUG
+	watchdogOptions |= WDT_OPT_PAUSE_HALTED_BY_DBG;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_ON_DEBUG */
+
+	if (wdt_setup(wdt, watchdogOptions) != 0) {
 		return false;
 	}
 

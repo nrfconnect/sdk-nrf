@@ -27,16 +27,39 @@ This approach eliminates the need to directly call the ``Feed()`` method in your
 A time window specifies the period within which the feeding signal must be sent to each watchdog channel to reset the timer and prevent the device from rebooting.
 If the feeding signal is sent after the time window has elapsed, it does not prevent the device from rebooting.
 
-To enable the Matter watchdog feature, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option to ``y``.
+To enable the Matter watchdog feature in a matter sample, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option to ``y``.
 The feature is enabled by default for the release build type in all Matter samples and applications.
 
 To set the timeout for the watchdog timer, configure the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT` with a value in milliseconds.
 By default, the timeout is set to 10 seconds.
 
+.. note::
+
+   The Matter watchdog implementation demonstrates how to use the Zephyr watchdog API and is specifically designed for Matter samples within the |NCS|.
+   If you want to use it in your application, refer to the source code and Kconfig options from this implementation.
+
+.. _ug_matter_device_watchdog_pause_mode:
+
+Matter watchdog pause mode
+**************************
+
+You can set the Matter watchdog to pause when the CPU is in idle (sleep) mode or when the CPU is halted by the debugger.
+This means the watchdog timer will stop counting down when the CPU is idle or halted.
+
+If pause mode is disabled, the watchdog must be fed within a specified time window, regardless of the CPU state, otherwise the device will reboot.
+If pause mode is enabled, the device will only reboot if the task feeding the watchdog is blocked for longer than the set time window.
+Pause mode is less accurate and may cause the device to reboot later than expected, but it allows feeding the watchdog only when the CPU is active.
+Non-pause mode requires periodic feeding to avoid a timeout, impacting power consumption as the CPU must wake up periodically.
+
+To enable pause mode while CPU is in the idle state, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.
+To enable pause mode during debugging, set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_ON_DEBUG` Kconfig option to ``y``.
+
+By default, Matter samples enable the pause mode only during debugging.
+
 Creating a Matter watchdog source
 *********************************
 
-The Matter watchdog feature is based on the ``Nrf::WatchdogSource`` class, which is located in the :file:`samples/matter/common/watchdog/watchdog.h` file.
+The Matter watchdog feature is based on the ``Nrf::WatchdogSource`` class, which is located in the :file:`samples\matter\common\src\watchdog\watchdog.h` file.
 Each Matter watchdog source constructor includes two optional arguments:
 
 * ``feedingInterval`` - Specifies the duration in milliseconds for automatically calling the attached feeding callback.
