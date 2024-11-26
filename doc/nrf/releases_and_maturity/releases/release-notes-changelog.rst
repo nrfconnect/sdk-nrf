@@ -138,9 +138,13 @@ Gazell
 Matter
 ------
 
-* Added implementation of the :cpp:class:`Spake2pVerifier` class for the PSA crypto backend.
-  You can use this class to generate the Spake2+ verifier at runtime.
-  To use this class, enable the :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE` Kconfig options.
+* Added:
+
+  * Implementation of the :cpp:class:`Spake2pVerifier` class for the PSA crypto backend.
+    You can use this class to generate the Spake2+ verifier at runtime.
+    To use this class, enable the :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE` Kconfig options.
+  * The Matter watchdog pause mode to the :ref:`ug_matter_device_watchdog` feature.
+
 
 Matter fork
 +++++++++++
@@ -392,6 +396,9 @@ Matter samples
 
 * Updated all Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
   It is enabled by default for the release configuration of the :ref:`matter_lock_sample`, :ref:`matter_light_switch_sample`, :ref:`matter_smoke_co_alarm_sample`, and :ref:`matter_window_covering_sample` samples.
+
+* Disabled pausing Matter watchdog while CPU is in idle state in all Matter samples.
+  To enable it set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.
 
 * :ref:`matter_template_sample` sample:
 
