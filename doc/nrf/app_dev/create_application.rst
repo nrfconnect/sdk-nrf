@@ -171,17 +171,18 @@ Use the following steps depending on the application placement:
          The application creation process starts after you enter the name.
          When the application is created, a VS Code prompt appears asking you what to do with the application.
       #. Click :guilabel:`Open`.
-         This opens the new application and adds it to the :guilabel:`Applications View` in the extension.
+         This will open the new application and add it to the :guilabel:`Applications View` in the extension.
          At this point, you have created a freestanding application.
       #. Add the :file:`west.yml` to create a west workspace around the application:
 
          a. In the :guilabel:`Welcome View`, click the :guilabel:`Manage SDKs` action.
             A quick pick menu appears.
-         #. Click :guilabel:`Create west workspace`.
+         #. Click :guilabel:`Manage West Workspace...`.
+         #. In the :guilabel:`Manage West Workspace...` action menu, click :guilabel:`Create West Workspace`.
          #. Enter a location for the :file:`west.yml` file that matches the location provided in step 4.
          #. Select the SDK version for the west workspace.
-            The west workspace is initialized and the :guilabel:`Manage SDKs` action changes to :guilabel:`Manage west workspace`.
-         #. Click :guilabel:`Manage west workspace` and select :guilabel:`West Update` button to update the workspace modules.
+            The west workspace is initialized.
+         #. Click :guilabel:`Manage SDKs` > :guilabel:`Manage West Workspace` > :guilabel:`West Update` to update the workspace modules.
 
       You can now start :ref:`configuring and building <configuration_and_build>` the application.
 
