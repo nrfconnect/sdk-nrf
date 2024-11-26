@@ -234,6 +234,9 @@ class NcsCreateBoard(WestCommand):
                     "name": "Create BICR",
                     "command": "west",
                     "args": ["ncs-bicr", "--board-dir", str(out_dir.resolve())],
+                    "properties": {
+                        "providesJsonSchema": False,
+                    },
                 }
             )
 
