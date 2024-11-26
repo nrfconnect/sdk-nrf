@@ -25,7 +25,6 @@ tests:
       - CONFIG_PM_S2RAM=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_BOOT_BANNER=n
-      - CONFIG_SOC_NRF54H20_NO_MRAM_LATENCY=n
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
