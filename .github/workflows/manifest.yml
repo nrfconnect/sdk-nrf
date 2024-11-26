@@ -1,14 +1,12 @@
 name: Manifest
-
-on:
-  pull_request_target:
+on: pull_request_target
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  contribs:
+  manifest:
     runs-on: ubuntu-latest
     name: Manifest
     steps:
@@ -20,19 +18,28 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: west setup
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        working-directory: ncs/nrf
+        run: |
+          pip3 install west
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          west init -l . || true
+          # We only import the zephyr manifest
+          west update zephyr
+
       - name: Manifest
-        uses: zephyrproject-rtos/action-manifest@16c4cfa380ae2b6fa3daddb1a35032e69422a20f
+        uses: zephyrproject-rtos/action-manifest@v1.6.0
         with:
           github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
           manifest-path: 'west.yml'
           checkout-path: 'ncs/nrf'
+          use-tree-checkout: 'true'
+          west-import-flag: 'self'
+          check-impostor-commits: 'true'
           label-prefix: 'manifest-'
           verbosity-level: '1'
-
-          # Add one label per line. 'manifest' always adds the label 'manifest'.
-          # 'CI-all-test:zephyr;nrfxlib,' adds the 'CI-all-test' label when the
-          # zephyr module or the nrfxlib module is changed. Each line is comma-
-          # separated.
-          labels: >
-            manifest
+          labels: 'manifest'
           dnm-labels: 'DNM'
