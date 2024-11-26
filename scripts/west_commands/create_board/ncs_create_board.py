@@ -225,4 +225,16 @@ class NcsCreateBoard(WestCommand):
             with open(out_dir / f"{name}.yml", "w") as f:
                 f.write(tmpl.render(target=target))
 
-        print(f"Board {input['board']} created successfully")
+        # return post-commands
+        commands = []
+
+        if series == "nrf54h":
+            commands.append(
+                {
+                    "name": "Create BICR",
+                    "command": "west",
+                    "args": ["ncs-bicr", "--board-dir", str(out_dir.resolve())],
+                }
+            )
+
+        print(json.dumps({"commands": commands}))
