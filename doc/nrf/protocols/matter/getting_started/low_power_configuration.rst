@@ -92,7 +92,7 @@ In such scenarios, the LIT device initiates communication and it is not able to 
 
 The LIT device starts operation in the SIT mode and remains in this state until the first ICD client registers to it.
 This is necessary because the device is not responsive in the LIT mode, so client registration would be difficult.
-Once the ICD client is registered, the ICD device switches to LIT mode in order to save the energy.
+Once the ICD client is registered, the ICD device switches to LIT mode in order to save energy.
 
 The LIT device implementation requires multiple new features, such as Check-In protocol (CIP) support, ICD client registration, and User Active Mode Trigger (UAT).
 These features are not required for SIT device implementation, but can be optionally enabled.
