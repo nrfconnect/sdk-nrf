@@ -249,6 +249,7 @@ Bluetooth samples
 * Added:
 
   * The :ref:`channel_sounding_ras_reflector` sample demonstrating how to implement a Channel Sounding Reflector that exposes the Ranging Responder GATT Service.
+  * The :ref:`channel_sounding_ras_initiator` sample demonstrating basic distance estimation with Channel Sounding by setting up a Channel Sounding Initiator that acts as a Ranging Requestor GATT Client.
 
 * Updated:
 

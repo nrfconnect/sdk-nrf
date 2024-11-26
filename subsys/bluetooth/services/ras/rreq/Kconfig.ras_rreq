@@ -23,4 +23,9 @@ config BT_RAS_RREQ_MAX_ACTIVE_CONN
 	help
 	  The number of simultaneous connections with an instance of RAS RREQ
 
+# GATT DM module requires heap
+config HEAP_MEM_POOL_ADD_SIZE_RAS_RREQ_GATT_DM
+	int
+	default 512
+
 endif # BT_RAS_RREQ

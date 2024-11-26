@@ -1013,6 +1013,9 @@
 .. _`Auracast™`: https://www.bluetooth.com/auracast/how-it-works/
 .. _`Basic Audio Profile specification`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/16212-BAP-html5/out/en/index-en.html#UUID-c9d31763-9ede-2270-6b9c-c042ae684cc3
 
+.. _`Distance estimation based on phase and amplitude information`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Core-60/out/en/architecture,-change-history,-and-conventions/architecture.html#UUID-a8d03618-5fcf-3043-2198-559653272b1b
+.. _`Distance estimation based on RTT packets`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Core-60/out/en/architecture,-change-history,-and-conventions/architecture.html#UUID-9d4969af-baa6-b7e4-03ca-70b340877adf
+
 .. ### Source: openmobilealliance.org
 
 .. _`SUPL context model`: https://www.openmobilealliance.org/release/SUPL/V1_0-20060127-C/OMA-AD-SUPL-V1_0-20060127-C.pdf#page=16
