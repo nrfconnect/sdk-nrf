@@ -4,9 +4,22 @@
 import json
 import os
 import re
+import sys
 from pathlib import Path
 
 from west.commands import WestCommand
+
+
+SCRIPT_DIR = Path(__file__).absolute().parent
+BICRGEN = (
+    SCRIPT_DIR.parents[2]
+    / "zephyr"
+    / "soc"
+    / "nordic"
+    / "nrf54h"
+    / "bicr"
+    / "bicrgen.py"
+)
 
 
 def soc_series_detect(board_dir):
@@ -44,7 +57,10 @@ class NcsBoardActions(WestCommand):
         )
 
         parser.add_argument(
-            "-d", "--board-dir", type=Path, help="Target board directory"
+            "-d",
+            "--board-dir",
+            type=Path,
+            help="Target board directory (defaults to current working directory)",
         )
 
         return parser
@@ -71,7 +87,23 @@ class NcsBoardActions(WestCommand):
                         "properties": {
                             "providesJsonSchema": True,
                         }
-                    }
+                    },
+                    {
+                        "name": "Generate BICR binary",
+                        "command": sys.executable,
+                        "args": [
+                            str(BICRGEN),
+                            "--svd",
+                            "${SVD_FILE}",
+                            "--input",
+                            str((board_dir / "bicr.json").resolve()),
+                            "--output",
+                            "${BICR_HEX_FILE}",
+                        ],
+                        "properties": {
+                            "providesJsonSchema": False,
+                        }
+                    },
                 ]
             )
 
