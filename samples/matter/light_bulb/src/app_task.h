@@ -32,6 +32,7 @@ public:
 	CHIP_ERROR StartApp();
 
 	void UpdateClusterState();
+	void InitPWMDDevice();
 	Nrf::PWMDevice &GetPWMDevice() { return mPWMDevice; }
 
 	static void IdentifyStartHandler(Identify *);

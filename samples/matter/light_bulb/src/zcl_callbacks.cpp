@@ -84,6 +84,8 @@ void emberAfOnOffClusterInitCallback(EndpointId endpoint)
 	if (status == Protocols::InteractionModel::Status::Success) {
 		/* Set actual state to the cluster state that was last persisted */
 #if defined(CONFIG_PWM)
+		AppTask::Instance().InitPWMDDevice();
+
 		AppTask::Instance().GetPWMDevice().InitiateAction(
 			storedValue ? Nrf::PWMDevice::ON_ACTION : Nrf::PWMDevice::OFF_ACTION,
 			static_cast<int32_t>(LightingActor::Remote), reinterpret_cast<uint8_t *>(&storedValue));
