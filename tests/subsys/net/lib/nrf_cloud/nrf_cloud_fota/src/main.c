@@ -6,6 +6,7 @@
 
 #include <net/nrf_cloud.h>
 #include <net/fota_download.h>
+#include <zephyr/net/mqtt.h>
 #include "nrf_cloud_fota.h"
 #include "fakes.h"
 
@@ -18,6 +19,7 @@ static void run_before(void *fixture)
 	ARG_UNUSED(fixture);
 	RESET_FAKE(nrf_cloud_fota_job_free);
 	RESET_FAKE(mqtt_publish);
+	RESET_FAKE(mqtt_unsubscribe);
 	RESET_FAKE(nrf_cloud_obj_cloud_encode);
 	RESET_FAKE(nrf_cloud_obj_free);
 	RESET_FAKE(nrf_cloud_obj_cloud_encoded_free);
@@ -34,6 +36,11 @@ static void run_before(void *fixture)
 	RESET_FAKE(nrf_cloud_free);
 	RESET_FAKE(nrf_cloud_fota_cb_handler);
 	RESET_FAKE(nrf_cloud_fota_smp_client_init);
+	RESET_FAKE(nrf_cloud_obj_fota_ble_job_update_create);
+	RESET_FAKE(mqtt_readall_publish_payload);
+	RESET_FAKE(nrf_cloud_fota_job_decode);
+	RESET_FAKE(mqtt_publish_qos1_ack);
+	RESET_FAKE(nrf_cloud_calloc);
 	reset_all_static_vars();
 }
 
@@ -207,4 +214,38 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_valid_param)
 
 	zassert_equal(1, ret,
 		"nrf_cloud_fota_init should succeed with valid parameters");
+}
+
+typedef void (*http_fota_handler_t)(const struct fota_download_evt *evt);
+
+/* nrf_cloud_fota_uninit fails if FOTA is curently in progress */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
+{
+	/* init fota lib */
+	struct nrf_cloud_fota_init_param fota_init = {
+		.evt_cb = nrf_cloud_fota_cb_handler,
+		.smp_reset_cb = NULL
+	};
+
+	int ret = nrf_cloud_fota_init(&fota_init);
+	zassert_equal(1, ret,
+		"nrf_cloud_fota_init should succeed with valid parameters");
+
+
+	/* simulate new job */
+	// TODO initialize sub_topics[SUB_TOPIC_IDX_RCV].topic.utf8
+	const struct mqtt_evt evt = {
+		.type = MQTT_EVT_PUBLISH,
+		.param.publish.message.payload.data = "some data",
+	};
+	nrf_cloud_fota_mqtt_evt_handler(&evt);
+	/* simulate some progress */
+	// http_fota_handler_t handler = fota_download_init_fake.arg0_history[0];
+	// const struct fota_download_evt evt = { .id = FOTA_DOWNLOAD_EVT_PROGRESS,
+	// 				       .progress = 42 };
+	// handler(&evt);
+
+
+	zassert_equal(-EBUSY, nrf_cloud_fota_uninit(),
+		"nrf_cloud_fota_uninit should fail if FOTA is in progress");
 }

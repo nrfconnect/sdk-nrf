@@ -16,13 +16,16 @@ DEFINE_FFF_GLOBALS;
 
 FAKE_VOID_FUNC(nrf_cloud_fota_job_free, struct nrf_cloud_fota_job_info *const);
 FAKE_VALUE_FUNC(int, mqtt_publish, struct mqtt_client *, const struct mqtt_publish_param *);
+FAKE_VALUE_FUNC(int, mqtt_unsubscribe, struct mqtt_client *, const struct mqtt_subscription_list *);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encode, struct nrf_cloud_obj *const);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_free, struct nrf_cloud_obj *const);
 FAKE_VALUE_FUNC(int, nrf_cloud_obj_cloud_encoded_free, struct nrf_cloud_obj *const);
-FAKE_VALUE_FUNC(int, nrf_cloud_obj_fota_job_update_create, struct nrf_cloud_obj *const , const struct nrf_cloud_fota_job *const);
-FAKE_VALUE_FUNC(int, nrf_cloud_bootloader_fota_slot_set, struct nrf_cloud_settings_fota_job * const);
+FAKE_VALUE_FUNC(int, nrf_cloud_obj_fota_job_update_create, struct nrf_cloud_obj *const,
+		const struct nrf_cloud_fota_job *const);
+FAKE_VALUE_FUNC(int, nrf_cloud_bootloader_fota_slot_set, struct nrf_cloud_settings_fota_job *const);
 FAKE_VALUE_FUNC(int, nrf_cloud_fota_settings_save, struct nrf_cloud_settings_fota_job *);
-FAKE_VALUE_FUNC(int, nrf_cloud_pending_fota_job_process, struct nrf_cloud_settings_fota_job * const , bool * const);
+FAKE_VALUE_FUNC(int, nrf_cloud_pending_fota_job_process, struct nrf_cloud_settings_fota_job *const,
+		bool *const);
 FAKE_VALUE_FUNC(bool, nrf_cloud_fota_is_type_modem, const enum nrf_cloud_fota_type);
 FAKE_VOID_FUNC(sys_reboot, int);
 FAKE_VOID_FUNC(nrf_cloud_download_end);
@@ -32,11 +35,22 @@ FAKE_VALUE_FUNC(int, fota_download_init, fota_download_callback_t);
 FAKE_VALUE_FUNC(int, nrf_cloud_fota_smp_client_init, const void *);
 FAKE_VOID_FUNC(nrf_cloud_free, void *);
 
-FAKE_VOID_FUNC(nrf_cloud_fota_cb_handler, const struct nrf_cloud_fota_evt * const);
+FAKE_VOID_FUNC(nrf_cloud_fota_cb_handler, const struct nrf_cloud_fota_evt *const);
+
+FAKE_VALUE_FUNC(int, nrf_cloud_obj_fota_ble_job_update_create, struct nrf_cloud_obj *const,
+		const struct nrf_cloud_fota_ble_job *const, const enum nrf_cloud_fota_status);
+
+FAKE_VALUE_FUNC(int, mqtt_readall_publish_payload, struct mqtt_client *, uint8_t *, size_t);
+
+FAKE_VALUE_FUNC(int, nrf_cloud_fota_job_decode, struct nrf_cloud_fota_job_info *const,
+		bt_addr_t *const, const struct nrf_cloud_data *const);
+
+FAKE_VALUE_FUNC(int, mqtt_publish_qos1_ack, struct mqtt_client *, const struct mqtt_puback_param *);
+
+FAKE_VALUE_FUNC(void *, nrf_cloud_calloc, size_t , size_t );
 
 int fake_nrf_cloud_pending_fota_job_process__set_reboot(
-	struct nrf_cloud_settings_fota_job * const job,
-	bool * const reboot_required)
+	struct nrf_cloud_settings_fota_job *const job, bool *const reboot_required)
 {
 	ARG_UNUSED(job);
 	*reboot_required = true;
