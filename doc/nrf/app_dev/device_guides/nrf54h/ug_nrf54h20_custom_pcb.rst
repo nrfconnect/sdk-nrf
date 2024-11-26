@@ -16,23 +16,22 @@ First, you need to create your PCB for the nRF54H20 SoC.
 
 We highly recommend using the PCB layouts and component values provided by Nordic Semiconductor, especially for clock and power sources, considering the following limitations:
 
-* The DC/DC inductor must be present on the PCB, and the ``inductor-present;`` node must be configured either in the :file:`zephyr/boards/your_board/nrf54h20dk_bicr.dtsi` file or in the section where ``bicr: bicr@fff87b0`` is present in the devicetree.
-* For the lowest sleep power consumption, use a 32 KHz crystal.
-* The **P9** port cannot be used with internal or external pull-down resistors.
-* For optimal performance, the output impedance of the **P6** and **P7** ports should match the PCB and external device pin impedance.
-* Use one of the following power supply options:
+* The DC/DC inductor must be present on the PCB for any of the supported power schemes.
+  Use one of the following power supply options:
 
   * VDDH higher than 2.05V.
   * VDDH shorted to VDD at 1.8V
 
+* For the lowest sleep power consumption, use a 32 KHz crystal.
+* The **P9** port cannot be used with internal or external pull-down resistors.
+* For optimal performance, the output impedance of the **P6** and **P7** ports should match the PCB and external device pin impedance.
+
 Prepare the configuration files for your custom board in the |NCS|
 ******************************************************************
 
-The nRF54H20 DK uses multiple board files for its configuration.
-You can use these files as a starting point for configuring your own custom board.
-When creating a :ref:`Zephyr repository application <zephyr:zephyr-repo-app>`, copy the files from :file:`sdk-zephyr/boards/nordic/nrf54h20dk` to the :file:`sdk-zephyr/boards/<your_vendor_prefix>/<your_custom_board_name>` file.
+Use the `nRF Connect for VS Code Extension Pack`_ to generate a custom board skeleton.
 
-You must edit the :file:`.dts` and :file:`.overlay` files for your project to match your board configuration, similarly to any new board added to the |NCS| or Zephyr.
+Use the nRF54H20 DK board files found in :file:`sdk-zephyr/boards/nordic/nrf54h20dk` as a reference point for configuring your own custom board.
 
 See the following documentation pages for more information:
 
@@ -60,16 +59,16 @@ The power and clock control firmware uses this information to apply the proper r
 
 BICR allows for the configuration of various components on your custom board, like the following:
 
-* Power rails
-* Low-frequency oscillator
+* Power scheme
+* Low-frequency oscillator (LFXO or LFRC)
 * High-frequency oscillator (HFXO)
 * GPIO ports power and drive control
 * Tamper switches
 * Active shield channels
 
-You can find the details in the DTS specification for the BICR in :file:`sdk-zephyr/dts/bindings/misc/nordic,nrf-bicr.yaml`
+You can find the details in the BICR configuration file scheme in :file:`sdk-zephyr/soc/nordic/nrf54h/bicr/bicr-schema.json`.
 
-When not set, the registers' default value is ``0xFFFFFFFF``.
+When the BICR has not been programmed, all the registers contain ``0xFFFFFFFF``.
 
 The ``LFOSC.LFXOCAL`` register is used by the device to store the calibration of the LFXO.
 
@@ -81,9 +80,9 @@ Each subsequent start will use this initial calibration as the starting point.
 BICR configuration
 ==================
 
-The nRF54H20 DK BICR configuration can be found in the board configuration directory as :file:`sdk-zephyr/boards/nordic/nrf54h20dk/nrf54h20dk_bicr.dtsi`.
+The nRF54H20 DK BICR configuration can be found in the board configuration directory as :file:`sdk-zephyr/boards/nordic/nrf54h20dk/bicr.json`.
 This file is used by the |NCS| build system to generate a corresponding HEX file.
-You can start from this file when editing the values of the devicetree properties inside your custom board folder (:file:`boards/nordic/your_custom_board`), according to your board configuration.
+The scheme for this file can be found in :file:`sdk-zephyr/soc/nordic/nrf54h/bicr/bicr-schema.json`.
 
 .. caution::
    A mismatch between the board and the configuration values in BICR can damage the device or set it in an unrecoverable state.
@@ -91,15 +90,13 @@ You can start from this file when editing the values of the devicetree propertie
 Generate the BICR binary
 ========================
 
-To generate the BICR binary, you must first set the Kconfig option :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_BICR` to ``y``.
-When running ``west build``, the build system then creates the relevant HEX file (:file:`bicr.hex`) at build time.
-Based on the peripheral definition extracted from the nRF54H20 SVD file, the modified registers from the configuration are mapped into their relevant position in memory.
+To generate the BICR binary, you must first set the Kconfig option :kconfig:option:`CONFIG_SOC_NRF54H20_GENERATE_BICR` to ``y``.
+When running ``west build`` for the ``cpuapp`` core, the build system creates the relevant HEX file (:file:`bicr.hex`) at build time.
 
 .. note::
-   If the build system cannot locate the ``bicr`` node inside your custom board's devicetree, or if you did not create a custom :file:`.dtsi` file for it, the BICR generation cannot progress, and the build system will skip it.
+   If the build system is unable to locate the :file:`bicr.json` file inside your custom board's directory, the build system will skip it.
 
-You can find the generated :file:`bicr.hex` file in the :file:`build_dir/zephyr/`.
-The presence of a ``bicr`` node in the application devicetree will automatically trigger a build of the BICR binary, and will place this file alongside the other binary outputs such as ``zephyr.hex`` and ``uicr.hex``.
+You can find the generated :file:`bicr.hex` file in the :file:`build_dir/<sample>/zephyr/`.
 
 Program the BICR binary
 =======================
