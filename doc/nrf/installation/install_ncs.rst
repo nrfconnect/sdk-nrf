@@ -105,8 +105,12 @@ Depending on your preferred development environment, complete the following step
          The list of available stable toolchain versions appears in the |VSC|'s quick pick.
       #. Select the toolchain version to install.
          The toolchain version should match the |NCS| version you are going to work with.
-         If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
-         If you are working with a development tag, disable the filter in the quick pick's header to list all available toolchains.
+         |install_latest_version|
+
+         .. note::
+              If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
+              If you are working with a development tag, disable the filter in the quick pick's header to list all available toolchains.
+
          The toolchain installation starts in the background, as can be seen in the notification that appears.
 
       When you install the toolchain for the first time, the installed version is automatically selected for your project.
@@ -138,14 +142,17 @@ Depending on your preferred development environment, complete the following step
 
          For example:
 
-         .. code-block:: console
+         .. parsed-literal::
+            :class: highlight
 
-            nrfutil toolchain-manager install --ncs-version v2.0.0
+            nrfutil toolchain-manager install --ncs-version |release|
 
-         This example command installs the toolchain required for the |NCS| v2.0.0.
+         This example command installs the toolchain required for the |NCS| |release|.
+         |install_latest_version|
 
       The ``toolchain-manager`` command installs the toolchain by default at :file:`C:/ncs/toolchains` on Windows and at :file:`~/ncs/toolchains` on Linux.
       These can be modified, as explained in the `Toolchain Manager command`_ documentation.
+      To check the current configuration setting, use the ``nrfutil toolchain-manager config --show`` command.
       On macOS, :file:`/opt/nordic/ncs/toolchains` is used and no other location is allowed.
 
       If you have received a custom URL for installing the toolchain, you can use the following command to set it as default, replacing the respective parameter:
@@ -162,8 +169,7 @@ Depending on your preferred development environment, complete the following step
 
          nrfutil toolchain-manager install --bundle-id *custom_bundle_ID*
 
-      To check the current configuration setting, use the ``nrfutil toolchain-manager config --show`` command.
-      To read more about these commands, use the ``nrfutil toolchain-manager --help`` command.
+      To read more about ``toolchain-manager`` commands, use the ``nrfutil toolchain-manager --help`` command.
 
 With the default location to install the toolchain (:file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains/` on Linux, and the non-modifiable :file:`/opt/nordic/ncs/toolchains/` on macOS), your directory structure now looks similar to this:
 
