@@ -55,6 +55,7 @@ public:
 	};
 
 	using BridgedDevice = BridgedDeviceV2;
+	static constexpr uint8_t kCurrentVersion = 2;
 
 	static constexpr auto kMaxIndexLength = 3;
 
@@ -163,16 +164,37 @@ private:
 	/**
 	 * @brief Provides backward compatibility between non-compatible data scheme versions.
 	 *
-	 * It checks the used data scheme version based on version key value.
-	 * If the version key is present it means that the new keys structure is used (only version
-	 * equal to 1 is for now valid and means post nRF Connect SDK 2.6.0).
-	 * Otherwise, the deprecated structure is used, so the migration has to be done. In such a case, method loads
-	 * the data using key names from an old scheme, removes the old data and stores again using the new key names.
+	 * It checks the used data scheme version based on version key value. If the version key is not present (it
+	 * means that the old scheme is used - pre nRF Connect SDK 2.7.0) or if the version is different than
+	 * kCurrentVersion, the migration has to be done.
 	 *
 	 * @return true if migration was successful
 	 * @return false an error occurred
 	 */
 	bool MigrateData();
+
+	/**
+	 * @brief Migrate bridged device data at given index.
+	 *
+	 * It migrates bridge device structure from pre nRF Connect SDK 2.7.0 scheme to current one. Method loads the
+	 * data using key names from an old scheme, removes the old data and stores again using the new key names.
+	 *
+	 * @param bridgedDeviceIndex index describing specific bridged device to be removed
+	 * @return true if migration was successful
+	 * @return false an error occurred
+	 */
+	bool MigrateDataOldScheme(uint8_t bridgedDeviceIndex);
+
+	/**
+	 * @brief Migrate bridged device data at given index.
+	 *
+	 * It migrates bridge device structure from version 1 to current one.
+	 *
+	 * @param bridgedDeviceIndex index describing specific bridged device to be removed
+	 * @return true if migration was successful
+	 * @return false an error occurred
+	 */
+	bool MigrateDataVersion1(uint8_t bridgedDeviceIndex);
 
 	/* The below methods are deprecated and used only for the migration purposes between the older scheme versions.
 	 */
