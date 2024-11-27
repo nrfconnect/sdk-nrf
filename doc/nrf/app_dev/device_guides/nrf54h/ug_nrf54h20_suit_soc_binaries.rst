@@ -15,34 +15,34 @@ Updating the nRF54H20 SoC binaries
 **********************************
 
 You can update the nRF54H20 SoC binaries in two ways.
-Both methods require using the :file:`nordic_top.suit` envelope, which can be found inside the nRF54H20 SOC binaries ZIP file.
+Both methods require using the :file:`nordic_top.suit` envelope, available inside the nRF54H20 SoC binaries ZIP package.
 
 The two methods for updating are the following:
 
-* Updating separately from the manufacturer application.
+* Updating the SoC binaries without the manufacturer application.
 
-* Updating along with the manufacturer application, by attaching the :file:`nordic_top.suit` envelope to the manufacturer root manifest, updating both the SoC binaries and the manufacturer's application simultaneously.
+* Updating along with the manufacturer application by attaching the :file:`nordic_top.suit` envelope to the manufacturer root manifest, updating both the SoC binaries and the manufacturer's application simultaneously.
 
 
-Updating the nRF54H20 SoC binaries separately from the manufacturer application
-===============================================================================
+Updating the nRF54H20 SoC binaries without the manufacturer application
+=======================================================================
 
-When using this method, two separate updates are performed:
+When using this method, you perform two updates:
 
 1. An update using a manufacturer envelope that contains the update candidate.
-2. A second update, provided by the :file:`nordic_top.suit` envelope from the SoC binaries bundle.
+2. A second update provided by the :file:`nordic_top.suit` envelope from the SoC binaries bundle.
 
 Each envelope contains all the necessary information, allowing the device to differentiate between the two updates.
 
-This approach was chosen for the following benefits:
+This approach offers the following benefits:
 
-* A smaller partition is required for storing the update candidate.
+* The update candidate requires a smaller partition.
 * There is no need to integrate the process of downloading Nordic artifacts into the manufacturer application build process.
-* There is no need to update the version and sequence number of the manufacturer root manifest, if only SoC binaries updates are required.
+* There is no need to update the version and sequence number of the manufacturer root manifest when you update only the SoC binaries.
 
 However, there are the following limitations:
 
-* Two separate updates are required, which is not supported by all protocols.
+* This method requires two updates, which is not supported by all protocols.
 * The manufacturer envelope cannot ensure the compatibility of SoC binaries with the manufacturer application.
 
 
@@ -53,12 +53,12 @@ When building an application, you can configure the build system to include the 
 
 This approach has the following benefits:
 
-* The entire update can be performed by pushing a single image to the device, which may be required by some protocols.
-* The manufacturer root manifest can be used to manage dependencies between the manufacturer application and the SoC binaries.
+* You can perform the entire update by pushing a single image to the device, which some protocols may require.
+* You can use the manufacturer root manifest to manage dependencies between the manufacturer application and the SoC binaries.
 
 This approach has the following drawbacks:
 
-* A larger partition is required to store the update candidate, as both the manufacturer and the SoC binaries must fit within it.
+* You need a larger partition to store the update candidate since both the manufacturer application and the SoC binaries must fit within it.
 * The manufacturer must integrate the process of downloading Nordic artifacts into the update package creation process.
 
 To build and perform an update using this method, do the following:
