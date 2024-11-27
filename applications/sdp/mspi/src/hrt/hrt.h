@@ -9,13 +9,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
-#define SCLK_PIN 0
-#define D0_PIN	 1
-#define D1_PIN	 2
-#define D2_PIN	 3
-#define D3_PIN	 4
-#define CS_PIN	 5
+#include <drivers/mspi/nrfe_mspi.h>
 
 /* Max word size. */
 #define MAX_WORD_SIZE NRF_VPR_CSR_VIO_SHIFT_CNT_OUT_BUFFERED_MAX
