@@ -5,8 +5,10 @@ common:
   integration_platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
 tests:
-  applications.sdp.mspi.icmsg:
+  applications.sdp.mspi:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
     tags: ci_build sysbuild mspi
+    required_snippets:
+      - sdp-mspi
