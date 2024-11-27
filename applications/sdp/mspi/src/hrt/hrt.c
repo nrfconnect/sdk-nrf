@@ -22,12 +22,10 @@ void write_single_by_word(volatile struct hrt_ll_xfer xfer_ll_params)
 	NRFX_ASSERT(xfer_ll_params.word_size <= MAX_WORD_SIZE);
 	/* Configuration step */
 	dir = nrf_vpr_csr_vio_dir_get();
-
-	nrf_vpr_csr_vio_dir_set(dir | PIN_DIR_OUT_MASK(D0_PIN));
+	nrf_vpr_csr_vio_dir_set(dir | PIN_DIR_OUT_MASK(VIO(NRFE_MSPI_DQ0_PIN_NUMBER)));
 
 	out = nrf_vpr_csr_vio_out_get();
-
-	nrf_vpr_csr_vio_out_set(out | PIN_OUT_LOW_MASK(D0_PIN));
+	nrf_vpr_csr_vio_out_set(out | PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_DQ0_PIN_NUMBER)));
 
 	nrf_vpr_csr_vio_mode_out_set(&out_mode);
 	nrf_vpr_csr_vio_mode_in_buffered_set(NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS);
@@ -59,9 +57,9 @@ void write_single_by_word(volatile struct hrt_ll_xfer xfer_ll_params)
 
 	/* Enable CS */
 	out = nrf_vpr_csr_vio_out_get();
-	out &= ~PIN_OUT_HIGH_MASK(CS_PIN);
-	out |= xfer_ll_params.ce_enable_state ? PIN_OUT_HIGH_MASK(CS_PIN)
-					      : PIN_OUT_LOW_MASK(CS_PIN);
+	out &= ~PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER));
+	out |= xfer_ll_params.ce_enable_state ? PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER))
+					      : PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER));
 	nrf_vpr_csr_vio_out_set(out);
 
 	/* Start counter */
@@ -84,9 +82,11 @@ void write_single_by_word(volatile struct hrt_ll_xfer xfer_ll_params)
 	/* Disable CS */
 	if (!xfer_ll_params.ce_hold) {
 		out = nrf_vpr_csr_vio_out_get();
-		out &= ~(PIN_OUT_HIGH_MASK(CS_PIN) | PIN_OUT_HIGH_MASK(SCLK_PIN));
-		out |= xfer_ll_params.ce_enable_state ? PIN_OUT_LOW_MASK(CS_PIN)
-						      : PIN_OUT_HIGH_MASK(CS_PIN);
+		out &= ~(PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER)) |
+			 PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_SCK_PIN_NUMBER)));
+		out |= xfer_ll_params.ce_enable_state
+			       ? PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER))
+			       : PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER));
 		nrf_vpr_csr_vio_out_set(out);
 	}
 
@@ -109,13 +109,17 @@ void write_quad_by_word(volatile struct hrt_ll_xfer xfer_ll_params)
 	/* Configuration step */
 	dir = nrf_vpr_csr_vio_dir_get();
 
-	nrf_vpr_csr_vio_dir_set(dir | PIN_DIR_OUT_MASK(D0_PIN) | PIN_DIR_OUT_MASK(D1_PIN) |
-				PIN_DIR_OUT_MASK(D2_PIN) | PIN_DIR_OUT_MASK(D3_PIN));
+	nrf_vpr_csr_vio_dir_set(dir | PIN_DIR_OUT_MASK(VIO(NRFE_MSPI_DQ0_PIN_NUMBER)) |
+				PIN_DIR_OUT_MASK(VIO(NRFE_MSPI_DQ1_PIN_NUMBER)) |
+				PIN_DIR_OUT_MASK(VIO(NRFE_MSPI_DQ2_PIN_NUMBER)) |
+				PIN_DIR_OUT_MASK(VIO(NRFE_MSPI_DQ3_PIN_NUMBER)));
 
 	out = nrf_vpr_csr_vio_out_get();
 
-	nrf_vpr_csr_vio_out_set(out | PIN_OUT_LOW_MASK(D0_PIN) | PIN_OUT_LOW_MASK(D1_PIN) |
-				PIN_OUT_LOW_MASK(D2_PIN) | PIN_OUT_LOW_MASK(D3_PIN));
+	nrf_vpr_csr_vio_out_set(out | PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_DQ0_PIN_NUMBER)) |
+				PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_DQ1_PIN_NUMBER)) |
+				PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_DQ2_PIN_NUMBER)) |
+				PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_DQ3_PIN_NUMBER)));
 
 	nrf_vpr_csr_vio_mode_out_set(&out_mode);
 	nrf_vpr_csr_vio_mode_in_buffered_set(NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS);
@@ -147,9 +151,9 @@ void write_quad_by_word(volatile struct hrt_ll_xfer xfer_ll_params)
 
 	/* Enable CS */
 	out = nrf_vpr_csr_vio_out_get();
-	out &= ~PIN_OUT_HIGH_MASK(CS_PIN);
-	out |= xfer_ll_params.ce_enable_state ? PIN_OUT_HIGH_MASK(CS_PIN)
-					      : PIN_OUT_LOW_MASK(CS_PIN);
+	out &= ~PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER));
+	out |= xfer_ll_params.ce_enable_state ? PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER))
+					      : PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER));
 	nrf_vpr_csr_vio_out_set(out);
 
 	/* Start counter */
@@ -171,9 +175,11 @@ void write_quad_by_word(volatile struct hrt_ll_xfer xfer_ll_params)
 	/* Disable CS */
 	if (!xfer_ll_params.ce_hold) {
 		out = nrf_vpr_csr_vio_out_get();
-		out &= ~(PIN_OUT_HIGH_MASK(CS_PIN) | PIN_OUT_HIGH_MASK(SCLK_PIN));
-		out |= xfer_ll_params.ce_enable_state ? PIN_OUT_LOW_MASK(CS_PIN)
-						      : PIN_OUT_HIGH_MASK(CS_PIN);
+		out &= ~(PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER)) |
+			 PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_SCK_PIN_NUMBER)));
+		out |= xfer_ll_params.ce_enable_state
+			       ? PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER))
+			       : PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER));
 		nrf_vpr_csr_vio_out_set(out);
 	}
 
