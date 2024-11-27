@@ -690,4 +690,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Fixed an issue on the :ref:`install_ncs` page where an incorrect directory path was provided for Linux and macOS at the end of the :ref:`cloning_the_repositories_win` section.
