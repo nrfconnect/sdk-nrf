@@ -44,6 +44,7 @@ config TFM_PLATFORM_SP_STACK_SIZE
 config TFM_PLATFORM_NV_COUNTER_MODULE_DISABLED
 	bool "Disable Non-volatile counter module"
 	default y if TFM_PROFILE_TYPE_MINIMAL
+	default y if !TFM_PARTITION_PROTECTED_STORAGE
 
 endmenu
 
@@ -103,6 +104,7 @@ config TFM_CRYPTO_IOVEC_BUFFER_SIZE
 	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
 	default 1024 if TFM_PROFILE_TYPE_MINIMAL
 	default 16384 if TFM_REGRESSION_S || TFM_REGRESSION_NS
+	default 8192 if TFM_PARTITION_PROTECTED_STORAGE && TFM_PS_MAX_ASSET_SIZE > 2048
 	default 5120
 	help
 	  This parameter applies only to IPC model builds. In IPC model,
@@ -179,17 +181,32 @@ config TFM_ITS_VALIDATE_METADATA_FROM_FLASH
 	  Validate filesystem metadata every time it is read from flash
 
 config TFM_ITS_MAX_ASSET_SIZE
+	range 512 4096
 	default 512
+	help
+	  The maximum asset size to be stored in the Internal Trusted Storage. The maximum value
+	  is limited by the memory block size and by the bookkeeping data that may be stored
+	  in the same memory block when PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE is minimal.
+	  The actual size of the stored asset is not affected by this configuration.
 
 config TFM_ITS_NUM_ASSETS
+	range 1 120
 	default 10
+	help
+	  The maximum number of assets to be stored in the Internal Trusted Storage.
+	  (TF-M does not guarantee that the Internal Trusted Storage is large
+	  enough to store the maximum amount of assets with the maximum size.) Set
+	  PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE according to the needs of the
+	  application.
 
 config TFM_ITS_BUF_SIZE
 	int "Size of the ITS internal data transfer buffer"
+	default TFM_PS_MAX_ASSET_SIZE if TFM_PARTITION_PROTECTED_STORAGE && \
+		TFM_PS_MAX_ASSET_SIZE > TFM_ITS_MAX_ASSET_SIZE
 	default TFM_ITS_MAX_ASSET_SIZE
 	help
-	  Size of the ITS internal data transfer buffer (defaults to
-	  TFM_ITS_MAX_ASSET_SIZE if not set)
+	  Size of the ITS internal data transfer buffer. Set to the maximum asset size
+	  to minimize the number of write and erase operations to the flash.
 
 config TFM_ITS_STACK_SIZE
 	hex "Stack size"
@@ -239,19 +256,28 @@ config TFM_PS_VALIDATE_METADATA_FROM_FLASH
 
 config TFM_PS_MAX_ASSET_SIZE
 	int "Maximum stored asset size"
+	range 512 4024
 	default 2048
 	help
-	  The maximum asset size to be stored in the Protected Storage area
+	  The maximum asset size to be stored in the Protected Storage area. The maximum value
+	  is limited by the memory block size, which must also hold the encryption header.
+	  The actual size of the stored asset is not affected by this configuration.
 
 config TFM_PS_NUM_ASSETS
 	int "Maximum stored assets number"
+	range 1 120
 	default 10
 	help
-	  The maximum number of assets to be stored in the Protected Storage
-	  area
+	  The maximum number of assets to be stored in the Protected Storage area.
+	  (TF-M does not guarantee that the Protected Storage area is large
+	  enough to store the maximum amount of assets with the maximum size.) Set
+	  PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE according to the needs of the
+	  application.
 
 config TFM_PS_STACK_SIZE
 	hex "Stack size"
+	default 0x1200 if TFM_PS_NUM_ASSETS > 70
+	default 0xC00 if TFM_PS_NUM_ASSETS > 30
 	default 0x700
 endmenu
 
@@ -451,6 +477,7 @@ config TFM_ALLOW_NON_SECURE_RESET
 config TFM_ALLOW_NON_SECURE_FAULT_HANDLING
 	bool "Handle faults originating from non-secure code in Zephyr"
 	default y
+	depends on TFM_PARTITION_PLATFORM
 	depends on TFM_EXCEPTION_INFO_DUMP
 	help
 	  When a BusFault or SecureFault originates from non-secure code,
