@@ -1,0 +1,30 @@
+tests:
+  drivers.mspi.api:
+    tags:
+      - drivers
+      - mspi
+      - api
+    filter: dt_compat_enabled("zephyr,mspi-emul-controller") or
+            dt_compat_enabled("ambiq,mspi-controller")
+    harness: ztest
+    platform_allow:
+      - native_sim
+      - apollo3p_evb
+    integration_platforms:
+      - native_sim
+
+  drivers.mspi.api.emspi:
+    tags:
+      - drivers
+      - mspi
+      - api
+    harness: ztest
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - SB_CONFIG_SDP=y
+      - SB_CONFIG_SDP_MSPI=y
