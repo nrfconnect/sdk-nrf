@@ -185,6 +185,11 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			break;
 		}
 		case DECT_PHY_CTRL_OP_SETTINGS_UPDATED: {
+			bool phy_api_reinit_needed = *((bool *)event.data);
+
+			if (phy_api_reinit_needed) {
+				dect_phy_ctrl_phy_reinit();
+			}
 			if (ctrl_data.ext_cmd.sett_changed_cb != NULL) {
 				ctrl_data.ext_cmd.sett_changed_cb();
 			}
@@ -193,17 +198,21 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 		case DECT_PHY_CTRL_OP_PHY_API_MDM_INITIALIZED: {
 			struct dect_phy_common_op_initialized_params *params =
 				(struct dect_phy_common_op_initialized_params *)event.data;
+			char tmp_str[128] = {0};
 
 			if (params->temperature != NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED) {
 				ctrl_data.last_valid_temperature = params->temperature;
 			}
 
 			if (params->status) {
+				dect_common_utils_modem_phy_err_to_string(
+				params->status, params->temperature, tmp_str);
+
 				desh_error("(%s): init failed (time %llu, temperature %d, "
-					   "temp_limit %d): %d",
+					   "temp_limit %d): %d (%s)",
 					   (__func__), params->time, params->temperature,
 					   params->modem_configuration.temperature_limit,
-					   params->status);
+					   params->status, tmp_str);
 			} else {
 				if (ctrl_data.phy_api_init_count <= 1) {
 					desh_print("DECT modem initialized:");
@@ -739,8 +748,13 @@ static void dect_phy_ctrl_phy_init(void)
 
 	ctrl_data.dect_phy_init_params.harq_rx_expiry_time_us =
 		current_settings->harq.mdm_init_harq_expiry_time_us;
+
 	ctrl_data.dect_phy_init_params.harq_rx_process_count =
 		current_settings->harq.mdm_init_harq_process_count;
+	ctrl_data.dect_phy_init_params.reserved = 0;
+	ctrl_data.dect_phy_init_params.band4_support =
+		((current_settings->common.band_nbr == 4) ? 1 : 0);
+
 	if (ret) {
 		printk("nrf_modem_dect_phy_callback_set returned: %i\n", ret);
 	} else {

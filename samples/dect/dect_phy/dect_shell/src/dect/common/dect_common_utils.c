@@ -355,9 +355,6 @@ bool dect_common_utils_channel_is_supported(uint16_t band_nbr, uint16_t channel,
 	} else if (band_nbr == 22) {
 		return (channel >= DECT_PHY_SUPPORTED_CHANNEL_BAND22_MIN &&
 			channel <= DECT_PHY_SUPPORTED_CHANNEL_BAND22_MAX);
-	} else if (band_nbr == 868) {
-		return (channel >= DECT_PHY_SUPPORTED_CHANNEL_BAND_868_FREE_ISM_MIN &&
-			channel <= DECT_PHY_SUPPORTED_CHANNEL_BAND_868_FREE_ISM_MAX);
 	} else {
 		return false;
 	}
@@ -375,8 +372,6 @@ uint16_t dect_common_utils_channel_max_on_band(uint16_t band_nbr)
 		return DECT_PHY_SUPPORTED_CHANNEL_BAND9_MAX;
 	} else if (band_nbr == 22) {
 		return DECT_PHY_SUPPORTED_CHANNEL_BAND22_MAX;
-	} else if (band_nbr == 868) {
-		return DECT_PHY_SUPPORTED_CHANNEL_BAND_868_FREE_ISM_MAX;
 	} else {
 		return 0;
 	}
@@ -394,8 +389,6 @@ uint16_t dect_common_utils_channel_min_on_band(uint16_t band_nbr)
 		return DECT_PHY_SUPPORTED_CHANNEL_BAND9_MIN;
 	} else if (band_nbr == 22) {
 		return DECT_PHY_SUPPORTED_CHANNEL_BAND22_MIN;
-	} else if (band_nbr == 868) {
-		return DECT_PHY_SUPPORTED_CHANNEL_BAND_868_FREE_ISM_MIN;
 	} else {
 		return 0;
 	}
