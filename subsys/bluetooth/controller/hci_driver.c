@@ -1349,7 +1349,7 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 	}
 #endif
 
-	err = sdc_enable(receive_signal_raise, sdc_mempool);
+	err = sdc_enable(hci_driver_receive_process, sdc_mempool);
 	if (err) {
 		MULTITHREADING_LOCK_RELEASE();
 		return err;
