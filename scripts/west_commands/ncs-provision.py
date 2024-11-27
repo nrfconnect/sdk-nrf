@@ -40,6 +40,16 @@ class NcsProvision(WestCommand):
                                    choices=["nrf54l15"], required=True)
         upload_parser.add_argument("--dev-id", help="Device serial number")
 
+        revoke_parser = subparsers.add_parser("revoke", help="Disable key")
+        revoke_parser.add_argument(
+            "-i", "--keyid", type=int, choices=[0, 1, 2], required=True,
+            help="Revocation is possible one slot at a time. Total of 3 slots "
+                 "are available. Counts from 0."
+        )
+        revoke_parser.add_argument("-s", "--soc", type=str, help="SoC",
+                                   choices=["nrf54l15"], required=True)
+        revoke_parser.add_argument("--dev-id", help="Device serial number")
+
         return parser
 
     def upload_with_nrfprovision(self, pub_key, slot, snr=None):
@@ -117,3 +127,11 @@ class NcsProvision(WestCommand):
                     if self.revoke_with_nrfprovision(slot, args.dev_id):
                         sys.exit("Revoking dummy slot failed!")
                     slot += 1
+
+        if args.command == "revoke":
+            if args.soc == "nrf54l15":
+                if args.keyid > len(nrf54l15_key_slots):
+                    sys.exit(
+                        "Error: requested keyid out of range.")
+                if self.revoke_with_nrfprovision(args.keyid, args.dev_id):
+                    sys.exit("Revoking failed!")
