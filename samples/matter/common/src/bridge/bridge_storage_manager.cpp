@@ -6,6 +6,7 @@
 
 #include "bridge_storage_manager.h"
 #include "bridge_manager.h"
+#include "platform/ConfigurationManager.h"
 
 #include <zephyr/logging/log.h>
 
@@ -196,74 +197,148 @@ bool BridgeStorageManager::Init()
 	return MigrateData();
 }
 
-bool BridgeStorageManager::MigrateData()
+bool BridgeStorageManager::MigrateDataOldScheme(uint8_t bridgedDeviceIndex)
 {
-	uint8_t version;
-
-	/* Check if version key is present in settings to provide backward compatibility between post-2.6.0 releases and
-	 * the previous one. If the version key is present it means that the new keys structure is used (only version
-	 * equal to 1 is for now valid). Otherwise, the deprecated structure is used, so the migration has to be done.
-	 */
-	if (!LoadDataToObject(&mVersion, version)) {
-		uint8_t count;
-		uint8_t indexes[BridgeManager::kMaxBridgedDevices] = { 0 };
-		size_t indexesCount = 0;
-
-		if (LoadBridgedDevicesCount(count) &&
-		    LoadBridgedDevicesIndexes(indexes, BridgeManager::kMaxBridgedDevices, indexesCount)) {
-			/* Load all devices based on the read count number. */
-			for (size_t i = 0; i < indexesCount; i++) {
-				BridgedDevice device;
-				if (!LoadBridgedDeviceEndpointId(device.mEndpointId, i)) {
-					return false;
-				}
-
-				/* Ignore an error, as node label is optional, so it may not be found. */
-				if (!LoadBridgedDeviceNodeLabel(device.mNodeLabel, sizeof(device.mNodeLabel),
-								device.mNodeLabelLength, i)) {
-					device.mNodeLabelLength = 0;
-				}
-
-				if (!LoadBridgedDeviceType(device.mDeviceType, i)) {
-					return false;
-				}
-
-#ifdef CONFIG_BRIDGED_DEVICE_BT
-				bt_addr_le_t btAddr;
-
-				if (!LoadBtAddress(btAddr, i)) {
-					return false;
-				}
-
-				/* Insert Bluetooth LE address as a part of implementation specific user data. */
-				device.mUserDataSize = sizeof(btAddr);
-				device.mUserData = reinterpret_cast<uint8_t *>(&btAddr);
-#endif
-
-				/* Store all information using a new scheme. */
-				if (!StoreBridgedDevice(device, i)) {
-					return false;
-				}
-
-				/* Remove all information described using an old scheme. */
-				RemoveBridgedDeviceEndpointId(i);
-				RemoveBridgedDeviceNodeLabel(i);
-				RemoveBridgedDeviceType(i);
-
-#ifdef CONFIG_BRIDGED_DEVICE_BT
-				RemoveBtAddress(i);
-#endif
-			}
-		}
-
-		version = 1;
-		Nrf::GetPersistentStorage().NonSecureStore(&mVersion, &version, sizeof(version));
-
-	} else if (version != 1) {
-		/* Currently only no-version or version equal to 1 is supported. */
+	BridgedDevice device;
+	if (!LoadBridgedDeviceEndpointId(device.mEndpointId, bridgedDeviceIndex)) {
 		return false;
 	}
+
+	/* Ignore an error, as node label is optional, so it may not be found. */
+	if (!LoadBridgedDeviceNodeLabel(device.mNodeLabel, sizeof(device.mNodeLabel), device.mNodeLabelLength,
+					bridgedDeviceIndex)) {
+		device.mNodeLabelLength = 0;
+	}
+
+	if (!LoadBridgedDeviceType(device.mDeviceType, bridgedDeviceIndex)) {
+		return false;
+	}
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+	bt_addr_le_t btAddr;
+
+	if (!LoadBtAddress(btAddr, bridgedDeviceIndex)) {
+		return false;
+	}
+
+	/* Insert Bluetooth LE address as a part of implementation specific user data. */
+	device.mUserDataSize = sizeof(btAddr);
+	device.mUserData = reinterpret_cast<uint8_t *>(&btAddr);
+#endif
+
+	/* Generate UniqueID */
+	CHIP_ERROR result =
+		chip::DeviceLayer::ConfigurationMgrImpl().GenerateUniqueId(device.mUniqueID, sizeof(device.mUniqueID));
+	if (result != CHIP_NO_ERROR) {
+		return false;
+	}
+	device.mUniqueIDLength = strlen(device.mUniqueID);
+
+	/* Store all information using a new scheme. */
+	if (!StoreBridgedDevice(device, bridgedDeviceIndex)) {
+		return false;
+	}
+
+	/* Remove all information described using an old scheme. */
+	RemoveBridgedDeviceEndpointId(bridgedDeviceIndex);
+	RemoveBridgedDeviceNodeLabel(bridgedDeviceIndex);
+	RemoveBridgedDeviceType(bridgedDeviceIndex);
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+	RemoveBtAddress(bridgedDeviceIndex);
+#endif
+
 	return true;
+}
+
+bool BridgeStorageManager::MigrateDataVersion1(uint8_t bridgedDeviceIndex)
+{
+	BridgedDeviceV1 v1;
+	BridgedDevice device;
+
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+	bt_addr_le_t btAddr;
+
+	/* Insert Bluetooth LE address as a part of implementation specific user data. */
+	v1.mUserDataSize = sizeof(btAddr);
+	v1.mUserData = reinterpret_cast<uint8_t *>(&btAddr);
+#endif
+
+	/* Load all information from old scheme */
+	if (!LoadBridgedDevice(v1, bridgedDeviceIndex)) {
+		return false;
+	}
+
+	/* Copy all information to new scheme */
+	device.mEndpointId = v1.mEndpointId;
+	device.mDeviceType = v1.mDeviceType;
+	device.mNodeLabelLength = v1.mNodeLabelLength;
+	memcpy(device.mNodeLabel, v1.mNodeLabel, v1.mNodeLabelLength);
+	device.mUserDataSize = v1.mUserDataSize;
+	device.mUserData = v1.mUserData;
+
+	/* Generate UniqueID */
+	CHIP_ERROR result =
+		chip::DeviceLayer::ConfigurationMgrImpl().GenerateUniqueId(device.mUniqueID, sizeof(device.mUniqueID));
+	if (result != CHIP_NO_ERROR) {
+		return false;
+	}
+	device.mUniqueIDLength = strlen(device.mUniqueID);
+
+	/* Store all information using new scheme */
+	if (!StoreBridgedDevice(device, bridgedDeviceIndex)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool BridgeStorageManager::MigrateData()
+{
+	/* Check if migration is needed to provide backward compatibility between releases.
+	 * Perform migration in following cases:
+	 * 1) If the version key is missing - it means that the pre-2.7.0 release structure is used.
+	 * 2) If the version key is present but the version number does not match kCurrentVersion.
+	 */
+	uint8_t version;
+	const bool versionPresent = LoadDataToObject(&mVersion, version);
+	const bool migrationNeeded = !versionPresent || version != kCurrentVersion;
+
+	if (!migrationNeeded) {
+		/* No migration needed */
+		return true;
+	}
+
+	if (versionPresent && (version < 1 || version > kCurrentVersion)) {
+		/* Not supported version */
+		return false;
+	}
+
+	uint8_t count;
+	uint8_t indexes[BridgeManager::kMaxBridgedDevices] = { 0 };
+	size_t indexesCount = 0;
+
+	if (LoadBridgedDevicesCount(count) &&
+	    LoadBridgedDevicesIndexes(indexes, BridgeManager::kMaxBridgedDevices, indexesCount)) {
+		/* Migrate all devices */
+		for (size_t i = 0; i < indexesCount; i++) {
+			if (!versionPresent) {
+				if (!MigrateDataOldScheme(indexes[i])) {
+					return false;
+				}
+			} else if (version == 1) {
+				if (!MigrateDataVersion1(indexes[i])) {
+					return false;
+				}
+			}
+		}
+	}
+
+	/* Store current version */
+	version = kCurrentVersion;
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureStore(&mVersion, &version, sizeof(version));
+
+	return status == PSErrorCode::Success;
 }
 
 bool BridgeStorageManager::StoreBridgedDevicesCount(uint8_t count)
