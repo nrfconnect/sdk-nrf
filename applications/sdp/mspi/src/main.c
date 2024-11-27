@@ -110,41 +110,39 @@ void process_packet(const void *data, size_t len)
 	nrfe_mspi_flpr_response_t response;
 	uint8_t opcode = *(uint8_t *)data;
 
-	response.opcode = opcode;
-
 	switch (opcode) {
 	case NRFE_MSPI_CONFIG_PINS: {
-		/* TODO: Process pinctrl config data
-		 * nrfe_mspi_pinctrl_soc_pin_t *pins_cfg = (nrfe_mspi_pinctrl_soc_pin_t *)data;
-		 * response.opcode = pins_cfg->opcode;
-		 *
-		 * for (uint8_t i = 0; i < NRFE_MSPI_PINS_MAX; i++) {
-		 *         uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
-		 *         uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
-		 *         NRF_GPIO_Type *reg = nrf_gpio_pin_port_decode(&psel);
-		 * }
-		 */
+		nrfe_mspi_pinctrl_soc_pin_t *pins_cfg = (nrfe_mspi_pinctrl_soc_pin_t *)data;
+
+		response.opcode = pins_cfg->opcode;
+
+		for (uint8_t i = 0; i < NRFE_MSPI_PINS_MAX; i++) {
+			uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
+			uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
+			NRF_GPIO_Type *reg = nrf_gpio_pin_port_decode(&psel);
+			/* TODO: Process pinctrl config data */
+		}
 		break;
 	}
 	case NRFE_MSPI_CONFIG_CTRL: {
-		/* TODO: Process controller config data
-		 * nrfe_mspi_cfg_t *cfg = (nrfe_mspi_cfg_t *)data;
-		 * response.opcode = cfg->opcode;
-		 */
+		nrfe_mspi_cfg_t *cfg = (nrfe_mspi_cfg_t *)data;
+
+		response.opcode = cfg->opcode;
+		/* TODO: Process controller config data */
 		break;
 	}
 	case NRFE_MSPI_CONFIG_DEV: {
-		/* TODO: Process device config data
-		 * nrfe_mspi_dev_cfg_t *cfg = (nrfe_mspi_dev_cfg_t *)data;
-		 * response.opcode = cfg->opcode;
-		 */
+		nrfe_mspi_dev_cfg_t *cfg = (nrfe_mspi_dev_cfg_t *)data;
+
+		response.opcode = cfg->opcode;
+		/* TODO: Process device config data */
 		break;
 	}
 	case NRFE_MSPI_CONFIG_XFER: {
-		/* TODO: Process xfer config data
-		 * nrfe_mspi_xfer_t *xfer = (nrfe_mspi_xfer_t *)data;
-		 * response.opcode = xfer->opcode;
-		 */
+		nrfe_mspi_xfer_t *xfer = (nrfe_mspi_xfer_t *)data;
+
+		response.opcode = xfer->opcode;
+		/* TODO: Process xfer config data */
 		break;
 	}
 	case NRFE_MSPI_TX:

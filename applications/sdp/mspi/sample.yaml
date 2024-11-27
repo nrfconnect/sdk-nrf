@@ -10,3 +10,5 @@ tests:
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
     tags: ci_build sysbuild mspi
+    required_snippets:
+      - sdp-mspi
