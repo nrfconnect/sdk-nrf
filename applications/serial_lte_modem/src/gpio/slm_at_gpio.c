@@ -224,8 +224,7 @@ static int handle_at_gpio_configure(enum at_parser_cmd_type cmd_type,
 	return err;
 }
 
-SLM_AT_CMD_CUSTOM(xgpio_set, "AT#XGPIO=", handle_at_gpio_operate);
-SLM_AT_CMD_CUSTOM(xgpio_read, "AT#XGPIO?", handle_at_gpio_operate);
+SLM_AT_CMD_CUSTOM(xgpio, "AT#XGPIO", handle_at_gpio_operate);
 static int handle_at_gpio_operate(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 				  uint32_t)
 {

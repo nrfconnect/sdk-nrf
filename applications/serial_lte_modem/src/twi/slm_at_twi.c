@@ -160,8 +160,7 @@ static int handle_at_twi_list(enum at_parser_cmd_type cmd_type, struct at_parser
 	return err;
 }
 
-SLM_AT_CMD_CUSTOM(xtwiw_set, "AT#XTWIW=", handle_at_twi_write);
-SLM_AT_CMD_CUSTOM(xtwiw_read, "AT#XTWIW?", handle_at_twi_write);
+SLM_AT_CMD_CUSTOM(xtwiw, "AT#XTWIW", handle_at_twi_write);
 static int handle_at_twi_write(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {

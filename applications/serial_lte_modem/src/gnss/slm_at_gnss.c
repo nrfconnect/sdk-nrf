@@ -688,8 +688,7 @@ static void gnss_event_handler(int event)
 	}
 }
 
-SLM_AT_CMD_CUSTOM(xgps_set, "AT#XGPS=", handle_at_gps);
-SLM_AT_CMD_CUSTOM(xgps_read, "AT#XGPS?", handle_at_gps);
+SLM_AT_CMD_CUSTOM(xgps, "AT#XGPS", handle_at_gps);
 static int handle_at_gps(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			 uint32_t param_count)
 {

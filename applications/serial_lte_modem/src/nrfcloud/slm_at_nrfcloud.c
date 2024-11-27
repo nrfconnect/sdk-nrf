@@ -540,8 +540,7 @@ static int nrf_cloud_datamode_callback(uint8_t op, const uint8_t *data, int len,
 	return ret;
 }
 
-SLM_AT_CMD_CUSTOM(xnrfcloud_set, "AT#XNRFCLOUD=", handle_at_nrf_cloud);
-SLM_AT_CMD_CUSTOM(xnrfcloud_read, "AT#XNRFCLOUD?", handle_at_nrf_cloud);
+SLM_AT_CMD_CUSTOM(xnrfcloud, "AT#XNRFCLOUD", handle_at_nrf_cloud);
 static int handle_at_nrf_cloud(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			       uint32_t param_count)
 {

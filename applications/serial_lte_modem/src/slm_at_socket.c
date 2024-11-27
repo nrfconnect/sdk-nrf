@@ -972,8 +972,7 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 	return ret;
 }
 
-SLM_AT_CMD_CUSTOM(xsocket_set, "AT#XSOCKET=", handle_at_socket);
-SLM_AT_CMD_CUSTOM(xsocket_read, "AT#XSOCKET?", handle_at_socket);
+SLM_AT_CMD_CUSTOM(xsocket, "AT#XSOCKET", handle_at_socket);
 static int handle_at_socket(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			    uint32_t param_count)
 {
@@ -1040,8 +1039,7 @@ static int handle_at_socket(enum at_parser_cmd_type cmd_type, struct at_parser *
 	return err;
 }
 
-SLM_AT_CMD_CUSTOM(xssocket_set, "AT#XSSOCKET=", handle_at_secure_socket);
-SLM_AT_CMD_CUSTOM(xssocket_read, "AT#XSSOCKET?", handle_at_secure_socket);
+SLM_AT_CMD_CUSTOM(xssocket, "AT#XSSOCKET", handle_at_secure_socket);
 static int handle_at_secure_socket(enum at_parser_cmd_type cmd_type,
 				   struct at_parser *parser, uint32_t param_count)
 {
@@ -1405,16 +1403,6 @@ SLM_AT_CMD_CUSTOM(xsend, "AT#XSEND", handle_at_send);
 static int handle_at_send(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			  uint32_t param_count)
 {
-	char at_cmd[32] = {0};
-	size_t at_cmd_size = sizeof(at_cmd);
-
-	if (util_string_get(parser, 0, at_cmd, &at_cmd_size)) {
-		return -EINVAL;
-	}
-	if (!strncasecmp(at_cmd, "AT#XSENDTO", strlen("AT#XSENDTO"))) {
-		return handle_at_sendto(cmd_type, parser, param_count);
-	}
-
 	int err = -EINVAL;
 	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
@@ -1440,8 +1428,7 @@ static int handle_at_send(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 	return err;
 }
 
-SLM_AT_CMD_CUSTOM(xrecv_set, "AT#XRECV=", handle_at_recv);
-SLM_AT_CMD_CUSTOM(xrecv_read, "AT#XRECV?", handle_at_recv);
+SLM_AT_CMD_CUSTOM(xrecv, "AT#XRECV", handle_at_recv);
 static int handle_at_recv(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			  uint32_t param_count)
 {
