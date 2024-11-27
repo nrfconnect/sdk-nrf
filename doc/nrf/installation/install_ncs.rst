@@ -144,7 +144,9 @@ Depending on your preferred development environment, complete the following step
 
          This example command installs the toolchain required for the |NCS| v2.0.0.
 
-      The toolchain is installed by default at :file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains` on Linux, and :file:`/opt/nordic/ncs/toolchains` on macOS.
+      The ``toolchain-manager`` command installs the toolchain by default at :file:`C:/ncs/toolchains` on Windows and at :file:`~/ncs/toolchains` on Linux.
+      These can be modified, as explained in the `Toolchain Manager command`_ documentation.
+      On macOS, :file:`/opt/nordic/ncs/toolchains` is used and no other location is allowed.
 
       If you have received a custom URL for installing the toolchain, you can use the following command to set it as default, replacing the respective parameter:
 
@@ -162,6 +164,16 @@ Depending on your preferred development environment, complete the following step
 
       To check the current configuration setting, use the ``nrfutil toolchain-manager config --show`` command.
       To read more about these commands, use the ``nrfutil toolchain-manager --help`` command.
+
+With the default location to install the toolchain (:file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains/` on Linux, and the non-modifiable :file:`/opt/nordic/ncs/toolchains/` on macOS), your directory structure now looks similar to this:
+
+.. code-block:: none
+
+   ncs
+   └─── toolchains
+      └─── <toolchain-installation>
+
+In this simplified structure preview, *<toolchain-installation>* corresponds to the version name you installed (most commonly, a SHA).
 
 You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
 
@@ -255,8 +267,11 @@ For more information about the repository and development model, see the :ref:`d
          .. parsed-literal::
             :class: highlight
 
-            west init -m https\://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision*
+            west init -m https\://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision* *nRFConnectSDK_revision*
 
+         In this command, the first *nRFConnectSDK_revision* identifies the revision of the |NCS| and the second *nRFConnectSDK_revision* is the name of the workspace directory that will be created by west.
+
+         The command creates the *nRFConnectSDK_revision* subdirectory and checks out the given revision of the |NCS| inside it.
          For example:
 
          * **Specific release:** To check out the |release| release, enter the following command:
@@ -264,19 +279,19 @@ For more information about the repository and development model, see the :ref:`d
            .. parsed-literal::
               :class: highlight
 
-              west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release|
+              west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release| |release|
 
          * **Development tag:** To check out the ``v1.9.2-dev1`` tag, enter the following command:
 
            .. code-block:: console
 
-              west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.9.2-dev1
+              west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.9.2-dev1 v1.9.2-dev1
 
          * **Branch**: To check out the ``main`` branch that includes the latest state of development, enter the following command:
 
            .. code-block:: console
 
-              west init -m https://github.com/nrfconnect/sdk-nrf --mr main
+              west init -m https://github.com/nrfconnect/sdk-nrf --mr main main
 
          This will clone the manifest repository `sdk-nrf`_ into :file:`nrf`.
 
@@ -308,7 +323,7 @@ For more information about the repository and development model, see the :ref:`d
 
 ..
 
-If you used the default locations (:file:`C:/ncs` on Windows, :file:`<home>/ncs` on Linux and MacOS), your directory structure now looks similar to this:
+With the default location to install the toolchain (see the previous step) and the default location to install the SDK (:file:`C:/ncs` on Windows, :file:`~/ncs/` on Linux, and :file:`/opt/nordic/ncs/` on macOS), your directory structure now looks similar to this:
 
 .. code-block:: none
 
@@ -324,7 +339,7 @@ If you used the default locations (:file:`C:/ncs` on Windows, :file:`<home>/ncs`
       ├─── zephyr
       └─── ...
 
-In this simplified structure preview, *<home>* corresponds to :file:`ncs/` and *<toolchain-installation>* and *<west-workspace>* correspond to the version names you installed.
+In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version and *<west-workspace>* corresponds to the SDK version name.
 There are also additional directories, and the structure might change over time, for example if you later :ref:`change the state of development to a different revision <updating_repos>`.
 The full set of repositories and directories is defined in the :ref:`manifest file <zephyr:west-manifest-files>` (`see the file in the repository <west manifest file_>`_).
 
