@@ -191,7 +191,7 @@ function (generate_mpi_area area)
   message(INFO " Generate merged MPI for ${area} (${output})")
 endfunction()
 
-if(DEFINED CONFIG_SOC_SERIES_NRF54HX)
+if(DEFINED CONFIG_SOC_SERIES_NRF54HX OR CONFIG_SOC_SERIES_NRF92X)
 configure_storage_address_cache()
 endif() # CONFIG_SOC_SERIES_NRF54HX
 
@@ -200,5 +200,9 @@ if(DEFINED CONFIG_SUIT_MPI_GENERATE)
 if(DEFINED CONFIG_SUIT_MPI_SOC_NRF54H20)
 include(soc/nrf54h20.cmake)
 endif() # CONFIG_SUIT_MPI_SOC_NRF54H20
+
+if(DEFINED CONFIG_SUIT_MPI_SOC_NRF9280)
+include(soc/nrf9280.cmake)
+endif() # CONFIG_SUIT_MPI_SOC_NRF9280
 
 endif() # CONFIG_SUIT_MPI_GENERATE
