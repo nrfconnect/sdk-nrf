@@ -4,285 +4,181 @@
 	.attribute unaligned_access, 0
 	.attribute stack_align, 4
 	.text
-	.section	.text.write_single_by_word,"ax",@progbits
+	.section	.text.hrt_write,"ax",@progbits
 	.align	1
-	.globl	write_single_by_word
-	.type	write_single_by_word, @function
-write_single_by_word:
+	.globl	hrt_write
+	.type	hrt_write, @function
+hrt_write:
  #APP
-	csrr a5, 3009
+	csrr a3, 3008
  #NO_APP
-	ori	a5,a5,2
-	slli	a5,a5,16
-	srli	a5,a5,16
- #APP
-	csrw 3009, a5
-	csrr a5, 3008
- #NO_APP
+	lbu	a5,23(a0)
+	bne	a5,zero,.L2
+	lbu	a5,21(a0)
+	lbu	a4,21(a0)
+	li	a5,1
+	sll	a5,a5,a4
+	not	a5,a5
+	and	a5,a5,a3
+.L26:
 	slli	a5,a5,16
 	srli	a5,a5,16
  #APP
 	csrw 3008, a5
  #NO_APP
-	li	a5,65536
-	addi	a5,a5,4
- #APP
-	csrw 3043, a5
-	csrw 3045, 0
-	csrr a5, 1996
- #NO_APP
-	andi	a5,a5,17
- #APP
-	csrw 1996, a5
- #NO_APP
-	lbu	a4,1(a0)
-	li	a5,31
-	bleu	a4,a5,.L8
-.L5:
- #APP
-	csrw 2000, 2
- #NO_APP
-	lbu	a5,0(a0)
-	andi	a5,a5,0xff
- #APP
-	csrr a4, 2003
- #NO_APP
-	li	a3,-65536
-	and	a4,a4,a3
-	or	a5,a5,a4
- #APP
-	csrw 2003, a5
- #NO_APP
-	lbu	a5,1(a0)
- #APP
-	csrw 3022, a5
- #NO_APP
-	lbu	a5,1(a0)
-	addi	a5,a5,-1
-	andi	a5,a5,0xff
- #APP
-	csrw 3023, a5
-	csrr a5, 3008
- #NO_APP
-	lbu	a4,10(a0)
-	andi	a5,a5,-33
-	slli	a5,a5,16
-	slli	a4,a4,5
-	srli	a5,a5,16
-	or	a5,a5,a4
- #APP
-	csrw 3008, a5
- #NO_APP
-	lbu	a5,0(a0)
-	li	a4,3
-	mul	a5,a5,a4
- #APP
-	csrw 2005, a5
- #NO_APP
+	li	a4,0
 	li	a5,0
-.L3:
-	lbu	a4,8(a0)
-	bgtu	a4,a5,.L6
- #APP
-	csrw 3012, 0
- #NO_APP
-	li	a5,65536
- #APP
-	csrw 3043, a5
-	csrw 3045, 0
- #NO_APP
-	lbu	a5,9(a0)
-	bne	a5,zero,.L7
- #APP
-	csrr a5, 3008
- #NO_APP
-	lbu	a4,10(a0)
-	andi	a5,a5,-34
-	slli	a5,a5,16
-	xori	a4,a4,1
-	slli	a4,a4,5
-	srli	a5,a5,16
-	or	a5,a5,a4
- #APP
-	csrw 3008, a5
- #NO_APP
-.L7:
- #APP
-	csrw 2000, 0
- #NO_APP
-	ret
+	li	a2,1
+	li	a1,2
 .L4:
-	lw	a4,4(a0)
-	slli	t1,a5,2
-	addi	a5,a5,1
-	add	a4,a4,t1
-	lw	a3,0(a4)
-	lbu	a2,1(a0)
-	lw	a4,4(a0)
+	lw	a3,8(a0)
+	bgtu	a3,a5,.L17
+	lbu	a5,24(a0)
+	beq	a5,zero,.L18
+.L19:
+ #APP
+	csrr a5, 3022
+ #NO_APP
 	andi	a5,a5,0xff
-	sub	a2,a1,a2
-	add	a4,a4,t1
-	sll	a3,a3,a2
-	sw	a3,0(a4)
-.L2:
-	lbu	a4,8(a0)
-	bgtu	a4,a5,.L4
-	j	.L5
-.L8:
-	li	a5,0
-	li	a1,32
-	j	.L2
-.L6:
-	lw	a4,4(a0)
-	slli	a3,a5,2
-	add	a4,a4,a3
-	lw	a4,0(a4)
+	bne	a5,zero,.L19
  #APP
-	csrw 3016, a4
+	csrw 2010, 0
  #NO_APP
-	addi	a5,a5,1
-	andi	a5,a5,0xff
-	j	.L3
-	.size	write_single_by_word, .-write_single_by_word
-	.section	.text.write_quad_by_word,"ax",@progbits
-	.align	1
-	.globl	write_quad_by_word
-	.type	write_quad_by_word, @function
-write_quad_by_word:
- #APP
-	csrr a5, 3009
- #NO_APP
-	ori	a5,a5,30
-	slli	a5,a5,16
-	srli	a5,a5,16
- #APP
-	csrw 3009, a5
-	csrr a5, 3008
- #NO_APP
-	slli	a5,a5,16
-	srli	a5,a5,16
- #APP
-	csrw 3008, a5
- #NO_APP
-	li	a5,262144
-	addi	a5,a5,4
- #APP
-	csrw 3043, a5
-	csrw 3045, 0
-	csrr a5, 1996
- #NO_APP
-	andi	a5,a5,17
- #APP
-	csrw 1996, a5
- #NO_APP
-	lbu	a4,1(a0)
-	li	a5,31
-	bleu	a4,a5,.L16
-.L13:
- #APP
-	csrw 2000, 2
- #NO_APP
-	lbu	a5,0(a0)
-	andi	a5,a5,0xff
- #APP
-	csrr a4, 2003
- #NO_APP
-	li	a3,-65536
-	and	a4,a4,a3
-	or	a5,a5,a4
- #APP
-	csrw 2003, a5
- #NO_APP
-	lbu	a5,1(a0)
-	srli	a5,a5,2
- #APP
-	csrw 3022, a5
- #NO_APP
-	lbu	a5,1(a0)
-	srli	a5,a5,2
-	addi	a5,a5,-1
-	andi	a5,a5,0xff
- #APP
-	csrw 3023, a5
-	csrr a5, 3008
- #NO_APP
-	lbu	a4,10(a0)
-	andi	a5,a5,-33
-	slli	a5,a5,16
-	slli	a4,a4,5
-	srli	a5,a5,16
-	or	a5,a5,a4
- #APP
-	csrw 3008, a5
- #NO_APP
-	lbu	a5,0(a0)
-	li	a4,3
-	mul	a5,a5,a4
- #APP
-	csrw 2005, a5
- #NO_APP
-	li	a5,0
-.L11:
-	lbu	a4,8(a0)
-	bgtu	a4,a5,.L14
- #APP
-	csrw 3012, 0
- #NO_APP
-	li	a5,262144
+.L20:
+	li	a5,65536
  #APP
 	csrw 3043, a5
 	csrw 3045, 0
  #NO_APP
-	lbu	a5,9(a0)
-	bne	a5,zero,.L15
+	lbu	a5,22(a0)
+	bne	a5,zero,.L21
  #APP
-	csrr a5, 3008
+	csrr a3, 3008
  #NO_APP
-	lbu	a4,10(a0)
-	andi	a5,a5,-34
-	slli	a5,a5,16
-	xori	a4,a4,1
-	slli	a4,a4,5
-	srli	a5,a5,16
+	lbu	a5,23(a0)
+	bne	a5,zero,.L22
+	lbu	a5,21(a0)
+	li	a4,1
+	lbu	a2,21(a0)
+	sll	a5,a4,a5
+	not	a5,a5
+	and	a5,a5,a3
+	sll	a4,a4,a2
 	or	a5,a5,a4
+.L30:
+	slli	a5,a5,16
+	srli	a5,a5,16
  #APP
 	csrw 3008, a5
  #NO_APP
-.L15:
+.L21:
  #APP
 	csrw 2000, 0
  #NO_APP
 	ret
-.L12:
-	lw	a4,4(a0)
-	slli	t1,a5,2
-	addi	a5,a5,1
-	add	a4,a4,t1
-	lw	a3,0(a4)
-	lbu	a2,1(a0)
-	lw	a4,4(a0)
-	andi	a5,a5,0xff
-	sub	a2,a1,a2
-	add	a4,a4,t1
-	sll	a3,a3,a2
-	sw	a3,0(a4)
-.L10:
-	lbu	a4,8(a0)
-	bgtu	a4,a5,.L12
-	j	.L13
-.L16:
-	li	a5,0
-	li	a1,32
-	j	.L10
-.L14:
-	lw	a4,4(a0)
-	slli	a3,a5,2
-	add	a4,a4,a3
-	lw	a4,0(a4)
+.L2:
+	lbu	a5,21(a0)
+	li	a4,1
+	lbu	a2,21(a0)
+	sll	a5,a4,a5
+	not	a5,a5
+	and	a5,a5,a3
+	sll	a4,a4,a2
+	or	a5,a5,a4
+	j	.L26
+.L17:
+	lw	a3,8(a0)
+	sub	a3,a3,a5
+	beq	a3,a2,.L5
+	beq	a3,a1,.L6
+.L7:
+	lbu	t1,20(a0)
+	andi	a3,t1,0xff
+	beq	t1,a2,.L12
+	beq	a3,a1,.L13
+	bne	a3,zero,.L11
+	lw	a3,4(a0)
+	add	a3,a3,a4
+	lw	a3,0(a3)
+	j	.L27
+.L5:
+	lbu	a3,12(a0)
+	addi	a3,a3,-1
+	andi	a3,a3,0xff
  #APP
-	csrw 3016, a4
+	csrw 3023, a3
  #NO_APP
+	lbu	t1,20(a0)
+	andi	a3,t1,0xff
+	beq	t1,a2,.L8
+	beq	a3,a1,.L9
+	bne	a3,zero,.L11
+	lw	a3,16(a0)
+.L27:
+ #APP
+	csrw 3012, a3
+ #NO_APP
+.L11:
+	bne	a5,zero,.L15
+	lhu	a3,0(a0)
+ #APP
+	csrw 2005, a3
+	csrr t1, 3022
+ #NO_APP
+	andi	t1,t1,0xff
+.L16:
+ #APP
+	csrr a3, 3022
+ #NO_APP
+	andi	a3,a3,0xff
+	beq	t1,a3,.L16
+.L15:
 	addi	a5,a5,1
-	andi	a5,a5,0xff
+	addi	a4,a4,4
+	j	.L4
+.L8:
+	lw	a3,16(a0)
+.L29:
+ #APP
+	csrw 3016, a3
+ #NO_APP
 	j	.L11
-	.size	write_quad_by_word, .-write_quad_by_word
+.L9:
+	lw	a3,16(a0)
+.L28:
+ #APP
+	csrw 3017, a3
+ #NO_APP
+	j	.L11
+.L6:
+	lbu	a3,13(a0)
+	addi	a3,a3,-1
+	andi	a3,a3,0xff
+ #APP
+	csrw 3023, a3
+ #NO_APP
+	j	.L7
+.L12:
+	lw	a3,4(a0)
+	add	a3,a3,a4
+	lw	a3,0(a3)
+	j	.L29
+.L13:
+	lw	a3,4(a0)
+	add	a3,a3,a4
+	lw	a3,0(a3)
+	j	.L28
+.L18:
+ #APP
+	csrw 3012, 0
+ #NO_APP
+	j	.L20
+.L22:
+	lbu	a5,21(a0)
+	lbu	a4,21(a0)
+	li	a5,1
+	sll	a5,a5,a4
+	not	a5,a5
+	and	a5,a5,a3
+	j	.L30
+	.size	hrt_write, .-hrt_write

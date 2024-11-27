@@ -12,6 +12,7 @@ tests:
       - apollo3p_evb
     integration_platforms:
       - native_sim
+
   drivers.mspi.sdp:
     tags:
       - drivers
