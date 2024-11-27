@@ -135,7 +135,9 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Added implementation of the :cpp:class:`Spake2pVerifier` class for the PSA crypto backend.
+  You can use this class to generate the Spake2+ verifier at runtime.
+  To use this class, enable the :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE` Kconfig options.
 
 Matter fork
 +++++++++++
