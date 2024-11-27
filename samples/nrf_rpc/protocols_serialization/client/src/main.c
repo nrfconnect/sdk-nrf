@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "ot_shell.h"
+
 #include <zephyr/logging/log.h>
 
 #include <nrf_rpc.h>
@@ -25,6 +27,7 @@ static void bound_handler(const struct nrf_rpc_group *group)
 	if (group == &ot_group) {
 		if (ot_group_initialized) {
 			LOG_WRN("OT RPC peer reset detected");
+			ot_shell_server_restarted();
 			/* The code to restore the state of OT on the server can be added here */
 		} else {
 			ot_group_initialized = true;

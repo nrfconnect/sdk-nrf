@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "ot_shell.h"
+
 #include <zephyr/shell/shell.h>
 #include <zephyr/net/net_ip.h>
 
@@ -18,6 +20,7 @@
 
 #include <string.h>
 
+static bool ot_cli_is_initialized;
 static otUdpSocket udp_socket;
 static const char udp_payload[] = "Hello OpenThread World!";
 #define PORT 1212
@@ -33,14 +36,12 @@ static int ot_cli_output_cb(void *context, const char *format, va_list arg)
 
 static void ot_cli_lazy_init(const struct shell *sh)
 {
-	static bool is_initialized;
-
-	if (is_initialized) {
+	if (ot_cli_is_initialized) {
 		return;
 	}
 
 	otCliInit(NULL, ot_cli_output_cb, (void *)sh);
-	is_initialized = true;
+	ot_cli_is_initialized = true;
 }
 
 typedef otError(*ot_cli_command_handler_t)(const struct shell *, size_t argc, char *argv[]);
@@ -764,3 +765,8 @@ SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
 		       "OpenThread subcommands\n"
 		       "Use \"ot help\" to get the list of subcommands",
 		       cmd_ot, 2, 255);
+
+void ot_shell_server_restarted(void)
+{
+	ot_cli_is_initialized = false;
+}
