@@ -84,11 +84,16 @@ Examples
 
      dect sett --tx_pwr -16
 
-* Change the default band to ``2`` (has impact when automatic channel selection is used, in other words, the set channel is zero in ``dect rssi_scan`` or in ``dect mac beacon_start`` command):
+* Change the default band to ``2`` (has impact when automatic channel selection is used, in other words, when the set channel is zero in ``dect rssi_scan`` or in ``dect mac beacon_start`` command):
 
   .. code-block:: console
 
      dect sett -b 2
+
+.. caution::
+   There might be region-specific limitations for radio channel usage.
+   See Regulations and Channel frequency sections of the :ref:`nrfxlib:nrf_modem_dect_phy` page for using different DECT NR+ radio bands and channels in different regions.
+   Make sure to always measure the channel with the ``dect rssi_scan`` command before accessing the band.
 
 RSSI measurement
 ================

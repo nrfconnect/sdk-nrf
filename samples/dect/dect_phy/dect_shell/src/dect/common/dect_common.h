@@ -196,10 +196,6 @@ typedef struct {
 
 /************************************************************************************************/
 
-/* Not in dect specs. This sub GHz band only with custom modem */
-#define DECT_PHY_SUPPORTED_CHANNEL_BAND_868_FREE_ISM_MIN 479
-#define DECT_PHY_SUPPORTED_CHANNEL_BAND_868_FREE_ISM_MAX 485
-
 /* Supported DECT bands. See ETSI TS 103 636-2 v1.3.1 Table 5.4.2-1. (3rd column) */
 
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND1_MIN 1657
@@ -208,7 +204,6 @@ typedef struct {
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND2_MIN 1680
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND2_MAX 1700
 
-/* This sub GHz band only with custom modem */
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND4_MIN 524
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND4_MAX 552
 
@@ -217,8 +212,6 @@ typedef struct {
 
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND22_MIN 1691
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND22_MAX 1711
-
-#define DECT_PHY_BAND_IS_CUSTOM_LOW(x) (x == 4 || x == 868)
 
 /************************************************************************************************/
 

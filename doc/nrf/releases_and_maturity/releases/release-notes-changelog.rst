@@ -308,6 +308,7 @@ DECT NR+ samples
       This is not a full MAC implementation and not fully compliant with DECT NR+ MAC specification (`ETSI TS 103 636-4`_).
     * The ``startup_cmd`` command.
       This command is used to store shell commands to be run sequentially after bootup.
+    * Band 4 support for nRF9151 with modem firmware v1.0.2.
 
   * Updated:
 

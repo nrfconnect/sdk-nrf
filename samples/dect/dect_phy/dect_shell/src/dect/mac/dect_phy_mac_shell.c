@@ -55,7 +55,8 @@ static const char dect_phy_mac_beacon_scan_usage_str[] =
 	"Options:\n"
 	"  -c <integer>,                        Channel nbr to be scanned for a beacon.\n"
 	"                                       Ranges: band #1: 1657-1677, band #2 1680-1700,\n"
-	"                                       band #9 1691-1711. Zero value: all in a set band.\n"
+	"                                       band #4 524-552, band #9 1703-1711,\n"
+	"                                       band #22 1691-1711. Zero value: all in a set band.\n"
 	"                                       Default: 1665.\n"
 	"  -t, --scan_time <integer>,           Scanning duration in seconds (default: 4 "
 	"seconds).\n"
@@ -186,7 +187,8 @@ static const char dect_phy_mac_beacon_start_cmd_usage_str[] =
 	"Options:\n"
 	"  -c <integer>,               Used channel for a beacon.\n"
 	"                              Ranges: band #1: 1657-1677 (only odd numbers),\n"
-	"                              band #2 1680-1700, band #9 1691-1711.\n"
+	"                              band #2 1680-1700, band #4 524-552, band #9 1703-1711,\n"
+	"                              band #22 1691-1711.\n"
 	"                              Default: 0, i.e. automatic selection of\n"
 	"                              free/possible channel on a set band.\n"
 	"  -p, --tx_pwr <dbm>,         Set beacon broadcast power (dBm), default: -16.\n"
@@ -273,7 +275,7 @@ static const char dect_phy_mac_associate_cmd_usage_str[] =
 	"  -m, --tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
 	"Note: LBT (Listen Before Talk) is enabled as a default for a min period,\n"
 	"      but the LBT max RSSI threshold can be configured in settings\n"
-	"      (dect sett ----rssi_scan_busy_th <dbm>).\n";
+	"      (dect sett --rssi_scan_busy_th <dbm>).\n";
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options_associate[] = {{"tx_pwr", required_argument, 0, 'p'},
@@ -356,7 +358,7 @@ static const char dect_phy_mac_dissociate_cmd_usage_str[] =
 	"  -m, --tx_mcs <integer>, TX MCS (integer). Default: 0.\n"
 	"Note: LBT (Listen Before Talk) is enabled as a default for a min period,\n"
 	"      but the LBT max RSSI threshold can be configured in settings\n"
-	"      (dect sett ----rssi_scan_busy_th <dbm>).\n";
+	"      (dect sett --rssi_scan_busy_th <dbm>).\n";
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options_dissociate[] = {
@@ -443,7 +445,7 @@ static const char dect_phy_mac_rach_tx_cmd_usage_str[] =
 	"                                  is encoded in JSON.\n"
 	"Note: LBT (Listen Before Talk) is enabled as a default for a min period,\n"
 	"      but the LBT max RSSI threshold can be configured in settings\n"
-	"      (dect sett ----rssi_scan_busy_th <dbm>).\n";
+	"      (dect sett --rssi_scan_busy_th <dbm>).\n";
 
 #define DECT_PHY_MAC_RACH_TX_DATA_JSON_OVERHEAD 30
 

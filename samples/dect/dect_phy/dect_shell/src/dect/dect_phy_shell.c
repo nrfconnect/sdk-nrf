@@ -405,7 +405,8 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"  -c, --channel <int>,               Channel. Default 1665.\n"
 	"                                     Ranges: band #1: 1657-1677 (only odd numbers as per\n"
 	"                                     ETSI EN 301 406-2, ch 4.3.2.3),\n"
-	"                                     band #2 1680-1700, band #9 1691-1711.\n"
+	"                                     band #2 1680-1700, band #4 524-552,\n"
+	"                                     band #9 1703-1711, band #22 1691-1711.\n"
 	"  -e  --rx_exp_rssi_level <int>,     Set expected RSSI level on RX (dBm).\n"
 	"                                     Default: from common rx settings.\n"
 	"  -p  --tx_pwr <int>,                TX power (dBm),\n"
@@ -1334,7 +1335,8 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"  -b, --band_nbr <#>,        Set used band.\n"
 	"                             Impacted on when a channel is set as zero\n"
 	"                             (e.g. in rssi_scan).\n"
-	"                             Default: band #1. Other supported bands are: 2, 9 and 22.\n"
+	"                             Default: band #1. Other supported bands are:\n"
+	"                             2, 4, 9 and 22.\n"
 	"  -d, --sche_delay <usecs>,  Estimated scheduling delay (us).\n"
 	"RSSI measurement settings:\n"
 	"      --rssi_scan_time <msecs>,   Channel access: set the time (msec) that is used for\n"
@@ -1470,6 +1472,7 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 
 	int long_index = 0;
 	int opt, tmp_value;
+	bool phy_api_reinit_needed = false;
 
 	if (argc < 2) {
 		goto show_usage;
@@ -1510,16 +1513,18 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 		case 'b': {
 			tmp_value = atoi(optarg);
 			if (tmp_value == 1 || tmp_value == 2 || tmp_value == 4 || tmp_value == 9 ||
-			    tmp_value == 22 || tmp_value == 868) {
+			    tmp_value == 22) {
 				newsettings.common.band_nbr = tmp_value;
 			} else {
 				desh_error("Band #%d is not supported.", tmp_value);
 				return -EINVAL;
 			}
-			if (newsettings.common.band_nbr == 4 ||
-			    newsettings.common.band_nbr == 868) {
-				desh_print("Custom low band chosen: "
-					   "custom modem fw is needed to get it working.");
+			if ((newsettings.common.band_nbr == 4 &&
+			     current_settings.common.band_nbr != 4) ||
+			    (current_settings.common.band_nbr == 4 &&
+			     newsettings.common.band_nbr != 4)) {
+				/* If changing to/from 4, we need dto reinit PHY API */
+				phy_api_reinit_needed = true;
 			}
 			break;
 		}
@@ -1604,7 +1609,8 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case DECT_SHELL_SETT_RESET_ALL: {
 			dect_common_settings_defaults_set();
-			return 0;
+			phy_api_reinit_needed = true;
+			goto settings_updated;
 		}
 		case 'h':
 			goto show_usage;
@@ -1620,7 +1626,11 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 	}
 
 	dect_common_settings_write(&newsettings);
-	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_SETTINGS_UPDATED);
+settings_updated:
+	dect_phy_ctrl_msgq_data_op_add(
+		DECT_PHY_CTRL_OP_SETTINGS_UPDATED,
+		(void *)&phy_api_reinit_needed,
+		sizeof(bool));
 	return 0;
 
 show_usage:
