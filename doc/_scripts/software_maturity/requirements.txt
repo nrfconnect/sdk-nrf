@@ -1,4 +1,0 @@
-azure-storage-blob==12.9.0
-azure-core==1.16.0
-kconfiglib==14.1.0
-PyYAML==5.4.1
