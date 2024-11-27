@@ -458,7 +458,7 @@
 			{ ZAP_SIMPLE_DEFAULT(6), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
 			/* Endpoint: 1, Cluster: Level Control (server) */                                                            \
-			{ ZAP_SIMPLE_DEFAULT(0x01), 0x00000000, 1, ZAP_TYPE(INT8U),                                                   \
+			{ ZAP_SIMPLE_DEFAULT(0xFE), 0x00000000, 1, ZAP_TYPE(INT8U),                                                   \
 			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* CurrentLevel */                           \
 			{ ZAP_SIMPLE_DEFAULT(0x0000), 0x00000001, 2, ZAP_TYPE(INT16U), 0 }, /* RemainingTime */                       \
 			{ ZAP_SIMPLE_DEFAULT(0x01), 0x00000002, 1, ZAP_TYPE(INT8U), 0 }, /* MinLevel */                               \
