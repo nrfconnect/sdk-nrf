@@ -148,6 +148,7 @@ config SUIT_ENABLE_DEFAULTS_SDFW
 	imply SUIT_DIGEST
 	imply SUIT_DIGEST_CACHE
 	imply SUIT_IPUC
+	imply SUIT_MANIFEST_VARIABLES
 	imply SUIT_CHECK_IMAGE_MATCH
 	imply SUIT_MCI
 	imply SUIT_METADATA
@@ -199,6 +200,7 @@ rsource "memory_layout/Kconfig"
 rsource "validator/Kconfig"
 rsource "events/Kconfig"
 rsource "recovery_button/Kconfig"
+rsource "manifest_variables/Kconfig"
 
 # Configure SUIT_LOG_LEVEL
 module = SUIT
