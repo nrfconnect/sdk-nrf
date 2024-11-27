@@ -107,8 +107,8 @@ OpenThread uses a message pool to manage memory for message buffers.
 Memory for the message pool can be statically allocated by the OpenThread stack or managed by the platform.
 You can use the :kconfig:option:`CONFIG_OPENTHREAD_PLATFORM_MESSAGE_MANAGEMENT` Kconfig option to enable platform message management.
 
-Message buffer size and number of message buffers in the pool are be configured with the :kconfig:option:`CONFIG_OPENTHREAD_MESSAGE_BUFFER_SIZE` and :kconfig:option:`CONFIG_OPENTHREAD_NUM_MESSAGE_BUFFERS` Kconfig options, respectively.
-By default, both options are set to ``128``.
+Message buffer size and number of message buffers in the pool can be configured with the :kconfig:option:`CONFIG_OPENTHREAD_MESSAGE_BUFFER_SIZE` and :kconfig:option:`CONFIG_OPENTHREAD_NUM_MESSAGE_BUFFERS` Kconfig options, respectively.
+By default, the message buffer size is set to ``128``, and the number of message buffers is set to ``96`` for a Full Thread Device and ``64`` for a Minimal Thread Device.
 
 .. note::
    When using :ref:`thread_ug_prebuilt`, changing the :kconfig:option:`CONFIG_OPENTHREAD_PLATFORM_MESSAGE_MANAGEMENT` Kconfig option will have no effect.
