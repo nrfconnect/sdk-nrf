@@ -74,7 +74,7 @@ properties:
 
   output-power-dbm:
     type: int
-    default: 7
+    default: 14
     description: |
       Output power in dBm at FEM output, when the FEM is in Transmit state
       (power amplifier is used).
