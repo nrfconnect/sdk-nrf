@@ -100,11 +100,3 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     tags: sysbuild ci_samples_matter
-  sample.matter.light_bulb.debug.reference:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    extra_args: light_bulb_SNIPPET="diagnostic-logs"
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
