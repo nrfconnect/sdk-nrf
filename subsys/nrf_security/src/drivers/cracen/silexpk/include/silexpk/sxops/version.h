@@ -27,7 +27,7 @@
  * version number is equal or larger than the minor version number
  * they were written for.
  */
-#define SX_PK_SXOPS_API_MINOR 0
+#define SX_PK_SXOPS_API_MINOR 1
 
 /** Check application has compatible version numbers.
  *
