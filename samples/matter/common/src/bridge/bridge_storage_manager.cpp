@@ -36,16 +36,82 @@ Nrf::PersistentStorageNode CreateIndexNode(uint8_t bridgedDeviceIndex, Nrf::Pers
 namespace Nrf
 {
 
-template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDevice &device, uint8_t index)
+template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV1 &device, uint8_t index)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(index, &mBridgedDevice);
 	size_t readSize = 0;
-	uint8_t buffer[sizeof(BridgedDevice) + kMaxUserDataSize];
+	uint8_t buffer[sizeof(BridgedDeviceV1) + kMaxUserDataSize];
+	uint16_t counter = 0;
+	const uint8_t mandatoryItemsSize =
+		sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mNodeLabelLength);
+
+	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDeviceV1) + kMaxUserDataSize,
+						       readSize)) {
+		return false;
+	}
+
+	/* Validate that read size is big enough to include mandatory data. */
+	if (readSize < mandatoryItemsSize) {
+		return false;
+	}
+
+	/* Deserialize data and copy it from buffer into structure's fields. */
+	memcpy(&device.mEndpointId, buffer, sizeof(device.mEndpointId));
+	counter += sizeof(device.mEndpointId);
+	memcpy(&device.mDeviceType, buffer + counter, sizeof(device.mDeviceType));
+	counter += sizeof(device.mDeviceType);
+	memcpy(&device.mNodeLabelLength, buffer + counter, sizeof(device.mNodeLabelLength));
+	counter += sizeof(device.mNodeLabelLength);
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < mandatoryItemsSize + device.mNodeLabelLength) {
+		return false;
+	}
+
+	memcpy(device.mNodeLabel, buffer + counter, device.mNodeLabelLength);
+	counter += device.mNodeLabelLength;
+
+	/* Check if user prepared a buffer for reading user data. It can be nullptr if not needed. */
+	if (!device.mUserData) {
+		device.mUserDataSize = 0;
+		return true;
+	}
+
+	uint8_t inUserDataSize = device.mUserDataSize;
+	/* Validate if user buffer size is big enough to fit the stored user data size. */
+	if (readSize < counter + sizeof(device.mUserDataSize)) {
+		return false;
+	}
+
+	memcpy(&device.mUserDataSize, buffer + counter, sizeof(device.mUserDataSize));
+	counter += sizeof(device.mUserDataSize);
+
+	/* Validate that user data size value read from the storage is not bigger than the one expected by the user. */
+	if (inUserDataSize < device.mUserDataSize) {
+		return false;
+	}
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < counter + device.mUserDataSize) {
+		return false;
+	}
+
+	memcpy(device.mUserData, buffer + counter, device.mUserDataSize);
+	counter += device.mUserDataSize;
+
+	return true;
+}
+
+template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV2 &device, uint8_t index)
+{
+	Nrf::PersistentStorageNode id = CreateIndexNode(index, &mBridgedDevice);
+	size_t readSize = 0;
+	uint8_t buffer[sizeof(BridgedDeviceV2) + kMaxUserDataSize];
 	uint16_t counter = 0;
 	const uint8_t mandatoryItemsSize =
 		sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mUniqueIDLength);
 
-	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDevice) + kMaxUserDataSize,
+	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDeviceV2) + kMaxUserDataSize,
 						       readSize)) {
 		return false;
 	}

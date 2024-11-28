@@ -34,7 +34,16 @@ class BridgeStorageManager {
 public:
 	static inline constexpr auto kMaxUserDataSize = 128u;
 
-	struct BridgedDevice {
+	struct BridgedDeviceV1 {
+		uint16_t mEndpointId;
+		uint16_t mDeviceType;
+		size_t mNodeLabelLength;
+		char mNodeLabel[MatterBridgedDevice::kNodeLabelSize] = { 0 };
+		size_t mUserDataSize = 0;
+		uint8_t *mUserData = nullptr;
+	};
+
+	struct BridgedDeviceV2 {
 		uint16_t mEndpointId;
 		uint16_t mDeviceType;
 		size_t mUniqueIDLength;
@@ -44,6 +53,8 @@ public:
 		size_t mUserDataSize = 0;
 		uint8_t *mUserData = nullptr;
 	};
+
+	using BridgedDevice = BridgedDeviceV2;
 
 	static constexpr auto kMaxIndexLength = 3;
 
