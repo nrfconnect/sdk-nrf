@@ -37,11 +37,20 @@ void dect_phy_mac_cluster_beacon_status_print(void);
 void dect_phy_mac_ctrl_cluster_beacon_phy_api_direct_rssi_cb(
 	const struct nrf_modem_dect_phy_rssi_meas *meas_results);
 
+bool dect_phy_mac_cluster_beacon_is_running(void);
+
 /******************************************************************************/
 
 void dect_phy_mac_cluster_beacon_association_req_handle(
 	struct dect_phy_commmon_op_pdc_rcv_params *rcv_params,
 	dect_phy_mac_common_header_t *common_header,
 	dect_phy_mac_association_req_t *association_req);
+
+/******************************************************************************/
+
+int64_t dect_phy_mac_cluster_beacon_rcv_time_shift_calculate(
+	dect_phy_mac_cluster_beacon_period_t interval,
+	uint64_t last_rcv_time,
+	uint64_t now_rcv_time);
 
 #endif /* DECT_PHY_MAC_CLUSTER_BEACON_H */

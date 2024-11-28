@@ -184,8 +184,12 @@ static void dect_phy_mac_ctrl_beacon_stop_work_handler(struct k_work *work_item)
 #if defined(CONFIG_DK_LIBRARY)
 	dk_set_led_off(DECT_BEACON_ON_STATUS_LED);
 #endif
-	desh_print("Beacon TX stopped, cause: %s.",
-		dect_phy_mac_ctrl_beacon_stop_cause_to_string(data->cause, tmp_str));
+	if (data->cause == DECT_PHY_MAC_CTRL_BEACON_STOP_CAUSE_USER_INITIATED) {
+		desh_print("Beacon TX stopped by user.");
+	} else {
+		desh_warn("Beacon TX stopped, cause: %s.",
+			dect_phy_mac_ctrl_beacon_stop_cause_to_string(data->cause, tmp_str));
+	}
 }
 
 void dect_phy_mac_ctrl_cluster_beacon_stop(enum dect_phy_mac_ctrl_beacon_stop_cause cause)
@@ -248,6 +252,7 @@ int dect_phy_mac_ctrl_associate(struct dect_phy_mac_associate_params *params)
 	ret = dect_phy_mac_client_associate(scan_info, params);
 	if (ret) {
 		desh_error("Cannot start client_associate: %d", ret);
+		(void)dect_phy_ctrl_ext_command_stop();
 	}
 
 	return ret;
@@ -275,6 +280,7 @@ int dect_phy_mac_ctrl_dissociate(struct dect_phy_mac_associate_params *params)
 	ret = dect_phy_mac_client_dissociate(scan_info, params);
 	if (ret) {
 		desh_error("Cannot start client_dissociate: %d", ret);
+		(void)dect_phy_ctrl_ext_command_stop();
 	}
 
 	return ret;
@@ -301,7 +307,8 @@ int dect_phy_mac_ctrl_rach_tx_start(struct dect_phy_mac_rach_tx_params *params)
 
 	ret = dect_phy_mac_client_rach_tx_start(scan_info, params);
 	if (ret) {
-		desh_error("Cannot start client_rach_tx: %d\n", ret);
+		desh_error("Cannot start client_rach_tx: %d", ret);
+		(void)dect_phy_ctrl_ext_command_stop();
 	}
 
 	return ret;
@@ -341,6 +348,10 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 			} else {
 				desh_error("%s: cannot TX client data: %s", __func__, tmp_str);
 			}
+		} else if (params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATED_BG_SCAN) {
+			desh_warn("%s: client associated bg scan failed: %s", __func__, tmp_str);
+		} else if (params->handle == DECT_PHY_MAC_BEACON_LMS_RSSI_SCAN_HANDLE) {
+			desh_warn("%s: cannot start LMS RSSI scan: %s", __func__, tmp_str);
 		} else {
 			desh_error("%s: operation (handle %d) failed with status: %s", __func__,
 				   params->handle, tmp_str);
@@ -361,7 +372,8 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 	}
 
 	if (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE ||
-	    params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_RX_HANDLE) {
+	    params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_RX_HANDLE ||
+	    params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_REL_TX_HANDLE) {
 		dect_phy_ctrl_ext_command_stop();
 	}
 

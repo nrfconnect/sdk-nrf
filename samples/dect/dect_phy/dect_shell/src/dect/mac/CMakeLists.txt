@@ -12,5 +12,6 @@ target_sources(app PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/dect_phy_mac_client.c
     ${CMAKE_CURRENT_SOURCE_DIR}/dect_phy_mac_pdu.c
     ${CMAKE_CURRENT_SOURCE_DIR}/dect_phy_mac_nbr.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/dect_phy_mac_nbr_bg_scan.c
     ${CMAKE_CURRENT_SOURCE_DIR}/dect_phy_mac.c
     )

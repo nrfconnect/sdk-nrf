@@ -25,6 +25,7 @@
 #include "dect_phy_ctrl.h"
 #include "dect_phy_mac_pdu.h"
 #include "dect_phy_mac_nbr.h"
+#include "dect_phy_mac_nbr_bg_scan.h"
 #include "dect_phy_mac.h"
 #include "dect_phy_mac_client.h"
 
@@ -32,8 +33,24 @@
 
 extern struct k_work_q dect_phy_ctrl_work_q;
 
+enum dect_phy_mac_client_association_states {
+	DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED,
+	DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_WAITING_ASSOCIATION_RESP,
+	DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_ASSOCIATED,
+};
+struct dect_phy_mac_client_association_data {
+	enum dect_phy_mac_client_association_states state;
+	uint32_t target_long_rd_id;
+
+	uint32_t bg_scan_phy_handle;
+	bool bg_scan_on_going;
+
+	struct dect_phy_mac_nbr_info_list_item *target_nbr;
+	struct k_work_delayable association_resp_wait_work;
+};
 static struct dect_phy_mac_client_data {
 	uint16_t client_seq_nbr;
+	struct dect_phy_mac_client_association_data associations[DECT_PHY_MAC_MAX_NEIGBORS];
 
 	uint64_t last_tx_time_mdm_ticks;
 } client_data = {
@@ -189,11 +206,17 @@ static uint64_t dect_phy_mac_client_next_rach_tx_time_get(
 	if (client_data.last_tx_time_mdm_ticks > first_possible_tx) {
 		first_possible_tx = client_data.last_tx_time_mdm_ticks + 1;
 	}
-	/* ...and in 1st RA if ok. Additionally, to get RX really on target:
+	/* ...and in 1st RA (if not associated). Additionally, to get RX really on target:
 	 * delay TX by 2 subslots.
 	 */
 	ra_start_mdm_ticks = next_beacon_frame_start + ((target_nbr->ra_ie.start_subslot + 2) *
 							DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS);
+
+	if (dect_phy_mac_client_associated_by_target_short_rd_id(target_nbr->short_rd_id)) {
+		/* To avoid collision with a background scan that is done with associated client */
+		ra_start_mdm_ticks += ra_interval_mdm_ticks;
+	}
+
 	while (ra_start_mdm_ticks < first_possible_tx &&
 	       ra_start_mdm_ticks < last_valid_rach_rx_frame_time) {
 		ra_start_mdm_ticks += ra_interval_mdm_ticks;
@@ -477,8 +500,9 @@ static int dect_phy_mac_client_association_req_pdu_encode(
 	return header.packet_length;
 }
 
-int dect_phy_mac_client_associate(struct dect_phy_mac_nbr_info_list_item *target_nbr,
-				  struct dect_phy_mac_associate_params *params)
+static int dect_phy_mac_client_associate_msg_send(
+	struct dect_phy_mac_nbr_info_list_item *target_nbr,
+	struct dect_phy_mac_associate_params *params)
 {
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
 
@@ -602,7 +626,7 @@ int dect_phy_mac_client_associate(struct dect_phy_mac_nbr_info_list_item *target
 	rach_list_item_conf->rx.filter.short_network_id = target_nbr->nw_id_8lsb;
 	rach_list_item_conf->rx.filter.receiver_identity = current_settings->common.short_rd_id;
 
-	sched_list_item->priority = DECT_PRIORITY1_RX;
+	sched_list_item->priority = DECT_PRIORITY0_FORCE_RX;
 	sched_list_item->phy_op_handle = DECT_PHY_MAC_CLIENT_ASSOCIATION_RX_HANDLE;
 
 	if (!dect_phy_api_scheduler_list_item_add(sched_list_item)) {
@@ -625,6 +649,163 @@ int dect_phy_mac_client_associate(struct dect_phy_mac_nbr_info_list_item *target
 	return 0;
 err_exit:
 	return -1;
+}
+
+static struct dect_phy_mac_client_association_data *dect_phy_mac_client_free_association_get(void)
+{
+	for (int i = 0; i < DECT_PHY_MAC_MAX_NEIGBORS; i++) {
+		if (client_data.associations[i].state ==
+		    DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED) {
+			return &client_data.associations[i];
+		}
+	}
+	return NULL;
+}
+
+static void dect_phy_mac_client_association_data_init(void)
+{
+	for (int i = 0; i < DECT_PHY_MAC_MAX_NEIGBORS; i++) {
+		client_data.associations[i].state =
+			DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED;
+		client_data.associations[i].target_long_rd_id = 0;
+		client_data.associations[i].bg_scan_phy_handle =
+			DECT_PHY_MAC_CLIENT_ASSOCIATED_BG_SCAN + i;
+		client_data.associations[i].target_nbr = NULL;
+		client_data.associations[i].bg_scan_on_going = false;
+	}
+}
+
+static struct dect_phy_mac_client_association_data *dect_phy_mac_client_association_data_get(
+	uint32_t target_long_rd_id)
+{
+	for (int i = 0; i < DECT_PHY_MAC_MAX_NEIGBORS; i++) {
+		if (client_data.associations[i].target_long_rd_id == target_long_rd_id) {
+			return &client_data.associations[i];
+		}
+	}
+	return NULL;
+}
+
+static void dect_phy_mac_client_associate_resp_wait_worker(struct k_work *work_item)
+{
+	struct k_work_delayable *delayable_work = k_work_delayable_from_work(work_item);
+	struct dect_phy_mac_client_association_data *association_data =
+		CONTAINER_OF(delayable_work, struct dect_phy_mac_client_association_data,
+			     association_resp_wait_work);
+
+	if (association_data->state !=
+		DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_WAITING_ASSOCIATION_RESP) {
+		return;
+	}
+
+	association_data->target_nbr = NULL;
+	association_data->state = DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED;
+	dect_phy_mac_nbr_bg_scan_stop(association_data->bg_scan_phy_handle);
+	association_data->bg_scan_on_going = false;
+
+	desh_warn("Association response timeout: not associated with device long RD ID %d",
+		association_data->target_long_rd_id);
+}
+
+int dect_phy_mac_client_associate(struct dect_phy_mac_nbr_info_list_item *target_nbr,
+				  struct dect_phy_mac_associate_params *params)
+{
+	struct dect_phy_mac_client_association_data *association_data = NULL;
+	int err;
+
+	association_data = dect_phy_mac_client_association_data_get(params->target_long_rd_id);
+	if (association_data == NULL) {
+		association_data = dect_phy_mac_client_free_association_get();
+		if (association_data == NULL) {
+			desh_error("(%s): Max amount of associated clients", (__func__));
+			return -EINVAL;
+		}
+	} else {
+		desh_warn("(%s): Association exists for target long rd id %u - continue",
+			(__func__), params->target_long_rd_id);
+		association_data->target_nbr = target_nbr;
+	}
+	err = dect_phy_mac_client_associate_msg_send(target_nbr, params);
+	if (err) {
+		desh_error("(%s): dect_phy_mac_client_associate_msg_send failed: %d",
+			(__func__), err);
+		return err;
+	}
+	association_data->state = DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_WAITING_ASSOCIATION_RESP;
+	association_data->target_long_rd_id = params->target_long_rd_id;
+	association_data->target_nbr = target_nbr;
+
+	k_work_init_delayable(
+		&association_data->association_resp_wait_work,
+		dect_phy_mac_client_associate_resp_wait_worker);
+
+	/* Start worker for waiting association response */
+	k_work_schedule_for_queue(&dect_phy_ctrl_work_q,
+				  &association_data->association_resp_wait_work,
+				  K_SECONDS(DECT_PHY_MAC_CLIENT_ASSOCIATION_RESP_WAIT_TIME_SEC));
+	return 0;
+}
+
+void dect_phy_mac_client_nbr_scan_completed_cb(
+	struct dect_phy_mac_nbr_bg_scan_op_completed_info *info)
+{
+	struct dect_phy_mac_client_association_data *association_data =
+		dect_phy_mac_client_association_data_get(info->target_long_rd_id);
+
+	if (!association_data) {
+		desh_warn("(%s): No association data found for target long rd id %u",
+			(__func__), info->target_long_rd_id);
+		return;
+	}
+	if (info->cause == DECT_PHY_MAC_NBR_BG_SCAN_OP_COMPLETED_CAUSE_USER_INITIATED) {
+		desh_print("(%s): Background scan completed for target long rd id %u. "
+			   "Cause: user initiated",
+			(__func__), info->target_long_rd_id);
+	} else {
+		__ASSERT_NO_MSG(info->cause ==
+			DECT_PHY_MAC_NBR_BG_SCAN_OP_COMPLETED_CAUSE_UNREACHABLE);
+		desh_warn("(%s): Background scan completed for target long rd id %u. "
+			   "Cause: unreachable for a %d msecs.",
+			(__func__), info->target_long_rd_id,
+			DECT_PHY_MAC_NBR_BG_SCAN_MAX_UNREACHABLE_TIME_MS);
+	}
+	association_data->bg_scan_on_going = false;
+}
+
+void dect_phy_mac_client_associate_resp_handle(
+	dect_phy_mac_common_header_t *common_header,
+	dect_phy_mac_association_resp_t *association_resp)
+{
+	struct dect_phy_mac_client_association_data *association_data =
+		dect_phy_mac_client_association_data_get(common_header->transmitter_id);
+
+	if (!association_data) {
+		desh_warn("(%s): No association data found for transmitter id %u",
+			(__func__), common_header->transmitter_id);
+		return;
+	}
+	k_work_cancel_delayable(&association_data->association_resp_wait_work);
+
+	association_data->state =  DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_ASSOCIATED;
+	desh_print("(%s): associated with device %d - starting background scan",
+		(__func__), common_header->transmitter_id);
+
+	struct dect_phy_mac_nbr_bg_scan_params bg_scan_params;
+
+	bg_scan_params.cb_op_completed = dect_phy_mac_client_nbr_scan_completed_cb;
+	bg_scan_params.target_nbr = association_data->target_nbr;
+	bg_scan_params.target_long_rd_id = association_data->target_long_rd_id;
+	bg_scan_params.phy_op_handle = association_data->bg_scan_phy_handle;
+
+	if (association_data->bg_scan_on_going) {
+		dect_phy_mac_nbr_bg_scan_stop(association_data->bg_scan_phy_handle);
+	}
+
+	if (dect_phy_mac_nbr_bg_scan_start(&bg_scan_params)) {
+		desh_warn("(%s): dect_phy_mac_nbr_bg_scan_start failed", (__func__));
+	} else {
+		association_data->bg_scan_on_going = true;
+	}
 }
 
 /**************************************************************************************************/
@@ -722,8 +903,9 @@ static int dect_phy_mac_client_association_rel_pdu_encode(
 	return header.packet_length;
 }
 
-int dect_phy_mac_client_dissociate(struct dect_phy_mac_nbr_info_list_item *target_nbr,
-				   struct dect_phy_mac_associate_params *params)
+static int dect_phy_mac_client_dissociate_msg_send(
+	struct dect_phy_mac_nbr_info_list_item *target_nbr,
+	struct dect_phy_mac_associate_params *params)
 {
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
 
@@ -822,9 +1004,70 @@ int dect_phy_mac_client_dissociate(struct dect_phy_mac_nbr_info_list_item *targe
 	return 0;
 }
 
+int dect_phy_mac_client_dissociate(struct dect_phy_mac_nbr_info_list_item *target_nbr,
+				   struct dect_phy_mac_associate_params *params)
+{
+	struct dect_phy_mac_client_association_data *association_data =
+		dect_phy_mac_client_association_data_get(target_nbr->long_rd_id);
+	int err;
+
+	if (!association_data) {
+		desh_warn("(%s): Not associated with device %d",
+			(__func__), target_nbr->long_rd_id);
+		return -EINVAL;
+	}
+
+	k_work_cancel_delayable(&association_data->association_resp_wait_work);
+
+	dect_phy_mac_nbr_bg_scan_stop(association_data->bg_scan_phy_handle);
+	association_data->bg_scan_on_going = false;
+
+	association_data->state = DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED;
+	association_data->target_nbr = NULL;
+	association_data->target_long_rd_id = 0;
+
+	err = dect_phy_mac_client_dissociate_msg_send(target_nbr, params);
+	if (err) {
+		desh_error("(%s): dect_phy_mac_client_associate_msg_send failed: %d",
+			(__func__), err);
+	}
+
+	return err;
+}
+
+bool dect_phy_mac_client_associated_by_target_short_rd_id(uint16_t target_short_rd_id)
+{
+	for (int i = 0; i < DECT_PHY_MAC_MAX_NEIGBORS; i++) {
+		if (client_data.associations[i].state ==
+			    DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_ASSOCIATED ||
+		    client_data.associations[i].state ==
+			    DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_WAITING_ASSOCIATION_RESP) {
+			if (client_data.associations[i].target_nbr->short_rd_id ==
+			    target_short_rd_id) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void dect_phy_mac_client_status_print(void)
+{
+	desh_print("Client status:");
+	for (int i = 0; i < DECT_PHY_MAC_MAX_NEIGBORS; i++) {
+		if (client_data.associations[i].state !=
+		    DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED) {
+			desh_print("  Association #%d: long RD ID %u",
+				i + 1, client_data.associations[i].target_long_rd_id);
+		}
+	}
+}
+
 static int dect_phy_mac_client_init(void)
 {
 	k_work_init_delayable(&client_rach_tx_work_data.work, dect_phy_mac_client_rach_tx_worker);
+	dect_phy_mac_client_association_data_init();
+
 	return 0;
 }
 
