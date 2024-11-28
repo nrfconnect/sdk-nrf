@@ -6,9 +6,12 @@
 
 #include <suit_storage_mpi.h>
 #include <suit_storage_nvv.h>
+#include <suit_storage_flags_internal.h>
 #include <suit_storage_internal.h>
 #include <zephyr/logging/log.h>
+#ifdef CONFIG_SUIT_CRYPTO
 #include <psa/crypto.h>
+#endif /* CONFIG_SUIT_CRYPTO */
 
 LOG_MODULE_REGISTER(suit_storage, CONFIG_SUIT_LOG_LEVEL);
 
@@ -45,6 +48,11 @@ BUILD_ASSERT((SUIT_STORAGE_OFFSET <= SUIT_STORAGE_APP_OFFSET) &&
 	     "Application storage must be defined within SUIT storage partition");
 
 typedef uint8_t suit_storage_digest_t[32];
+
+struct suit_storage_flags {
+	/* SUIT boot flags. */
+	uint8_t flags[EB_SIZE(suit_storage_flags_t)];
+};
 
 struct suit_storage_nvv {
 	/* Manifest Runtime Non Volatile Variables. */
@@ -85,15 +93,18 @@ struct suit_storage_nordic {
 	union {
 		struct suit_storage_area_nordic {
 			/* Radio MPI Backup and digest. */
-			struct suit_storage_mpi_rad rad_mpi_bak;
+			struct suit_storage_mpi_rad rad_mpi_bak; /* 176 bytes */
 			/* Application MPI Backup and digest. */
-			struct suit_storage_mpi_app app_mpi_bak;
+			struct suit_storage_mpi_app app_mpi_bak; /* 272 bytes */
 
 			/* Nordic OEM Exposed SUIT Config Backup and digest. */
 			uint8_t oem_config_backup_digest[96];
 
+			/* Flags used for selecting the boot path. */
+			struct suit_storage_flags flags; /* 16 bytes */
+
 			/* The last SUIT update report. */
-			uint8_t report_0[160];
+			uint8_t report_0[144];
 
 			/* Reserved for Future Use. */
 			uint8_t reserved[1344];
@@ -189,8 +200,8 @@ static const suit_storage_mpi_t mpi_nordic[] = {
 		.vendor_id = {0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85, 0x8f, 0x94, 0xe2,
 			      0x8d, 0x73, 0x5c, 0xe9, 0xf4},
 		/* RFC4122 uuid5(nordic_vid, 'nRF9280_nordic_top') */
-        .class_id = {0xa9, 0x6d, 0x08, 0xa3, 0x21, 0x8f, 0x5a, 0x9c, 0xa3, 0x9e, 0xea, 0x33,
-                 0xce, 0x8f, 0x56, 0x50},
+		.class_id = {0xa9, 0x6d, 0x08, 0xa3, 0x21, 0x8f, 0x5a, 0x9c, 0xa3, 0x9e, 0xea, 0x33,
+			     0xce, 0x8f, 0x56, 0x50},
 	},
 	{
 		.version = SUIT_MPI_INFO_VERSION,
@@ -204,8 +215,8 @@ static const suit_storage_mpi_t mpi_nordic[] = {
 		.vendor_id = {0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85, 0x8f, 0x94, 0xe2,
 			      0x8d, 0x73, 0x5c, 0xe9, 0xf4},
 		/* RFC4122 uuid5(nordic_vid, 'nRF9280_sec') */
-        .class_id = {0xef, 0x05, 0xbe, 0xf3, 0x7d, 0x8b, 0x58, 0xb7, 0xae, 0xdd, 0xd6, 0x90,
-                  0x4e, 0x86, 0xb6, 0x49},
+		.class_id = {0xef, 0x05, 0xbe, 0xf3, 0x7d, 0x8b, 0x58, 0xb7, 0xae, 0xdd, 0xd6, 0x90,
+			     0x4e, 0x86, 0xb6, 0x49},
 	},
 	{
 		.version = SUIT_MPI_INFO_VERSION,
@@ -219,8 +230,8 @@ static const suit_storage_mpi_t mpi_nordic[] = {
 		.vendor_id = {0x76, 0x17, 0xda, 0xa5, 0x71, 0xfd, 0x5a, 0x85, 0x8f, 0x94, 0xe2,
 			      0x8d, 0x73, 0x5c, 0xe9, 0xf4},
 		/* RFC4122 uuid5(nordic_vid, 'nRF9280_sys') */
-        .class_id = {0xe4, 0xa0, 0xb0, 0xd4, 0xbf, 0xff, 0x5a, 0x9d, 0x8f, 0xb1, 0x61, 0xba,
-                 0xc6, 0xde, 0xc4, 0xbc},
+		.class_id = {0xe4, 0xa0, 0xb0, 0xd4, 0xbf, 0xff, 0x5a, 0x9d, 0x8f, 0xb1, 0x61, 0xba,
+			     0xc6, 0xde, 0xc4, 0xbc},
 	}};
 
 static suit_plat_err_t find_manifest_area(suit_manifest_role_t role, const uint8_t **addr,
@@ -303,9 +314,10 @@ static suit_plat_err_t find_manifest_area(suit_manifest_role_t role, const uint8
 static suit_plat_err_t sha256_check(const uint8_t *addr, size_t size,
 				    const suit_storage_digest_t *exp_digest)
 {
+	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
+#ifdef CONFIG_SUIT_CRYPTO
 	const psa_algorithm_t psa_alg = PSA_ALG_SHA_256;
 	const size_t exp_digest_length = PSA_HASH_LENGTH(psa_alg);
-	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
 	psa_hash_operation_t operation = {0};
 
 	if ((addr == NULL) || (exp_digest == NULL)) {
@@ -360,6 +372,7 @@ static suit_plat_err_t sha256_check(const uint8_t *addr, size_t size,
 			}
 		}
 	}
+#endif /* CONFIG_SUIT_CRYPTO */
 
 	return err;
 }
@@ -376,9 +389,10 @@ static suit_plat_err_t sha256_check(const uint8_t *addr, size_t size,
  */
 static suit_plat_err_t sha256_get(const uint8_t *addr, size_t size, suit_storage_digest_t *digest)
 {
+	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
+#ifdef CONFIG_SUIT_CRYPTO
 	const psa_algorithm_t psa_alg = PSA_ALG_SHA_256;
 	size_t digest_length = PSA_HASH_LENGTH(psa_alg);
-	suit_plat_err_t err = SUIT_PLAT_ERR_AUTHENTICATION;
 	psa_hash_operation_t operation = {0};
 
 	if ((addr == NULL) || (digest == NULL)) {
@@ -424,6 +438,7 @@ static suit_plat_err_t sha256_get(const uint8_t *addr, size_t size, suit_storage
 			LOG_ERR("psa_hash_abort error %d", status);
 		}
 	}
+#endif /* CONFIG_SUIT_CRYPTO */
 
 	return err;
 }
@@ -830,6 +845,12 @@ suit_plat_err_t suit_storage_init(void)
 		return ret;
 	}
 
+	ret = suit_storage_flags_internal_init();
+	if (ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Failed to initialize flags submodule: %d", ret);
+		return ret;
+	}
+
 	ret = suit_storage_nvv_init();
 	if (ret != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Failed to init NVV: %d", ret);
@@ -1007,7 +1028,7 @@ suit_plat_err_t suit_storage_install_envelope(const suit_manifest_class_id_t *id
 	return err;
 }
 
-suit_plat_err_t suit_storage_var_get(size_t index, uint32_t *value)
+suit_plat_err_t suit_storage_var_get(size_t index, uint8_t *value)
 {
 	struct suit_storage_app *app_storage = (struct suit_storage_app *)SUIT_STORAGE_APP_ADDRESS;
 	size_t area_size = offsetof(struct suit_storage_nvv, digest);
@@ -1018,7 +1039,7 @@ suit_plat_err_t suit_storage_var_get(size_t index, uint32_t *value)
 	return suit_storage_nvv_get(area_addr, area_size, index, value);
 }
 
-suit_plat_err_t suit_storage_var_set(size_t index, uint32_t value)
+suit_plat_err_t suit_storage_var_set(size_t index, uint8_t value)
 {
 	struct suit_storage_app *app_storage = (struct suit_storage_app *)SUIT_STORAGE_APP_ADDRESS;
 	size_t area_size = offsetof(struct suit_storage_nvv, digest);
@@ -1088,7 +1109,6 @@ suit_plat_err_t suit_storage_report_read(size_t index, const uint8_t **buf, size
 	return suit_storage_report_internal_read(area_addr, area_size, buf, len);
 }
 
-
 suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
 {
 	struct suit_storage_nordic *nordic_storage =
@@ -1116,6 +1136,14 @@ suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
 					  suit_plat_mem_nvm_offset_get(
 						  (uint8_t *)&nordic_storage->nordic.app_mpi_bak),
 					  sizeof(nordic_storage->nordic.app_mpi_bak));
+		}
+
+		if (err == 0) {
+			/* Clear boot flags. */
+			err = flash_erase(fdev,
+					  suit_plat_mem_nvm_offset_get(
+						  (uint8_t *)&nordic_storage->nordic.flags),
+					  sizeof(nordic_storage->nordic.flags));
 		}
 
 		/* Clear reports (incl. recovery flag and update candidate info). */
@@ -1168,4 +1196,34 @@ suit_plat_err_t suit_storage_purge(suit_manifest_domain_t domain)
 	}
 
 	return ret;
+}
+
+suit_plat_err_t suit_storage_flags_clear(suit_storage_flag_t flag)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	uint8_t *area_addr = nordic_storage->nordic.flags.flags;
+	size_t area_size = ARRAY_SIZE(nordic_storage->nordic.flags.flags);
+
+	return suit_storage_flags_internal_clear(area_addr, area_size, flag);
+}
+
+suit_plat_err_t suit_storage_flags_set(suit_storage_flag_t flag)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	uint8_t *area_addr = nordic_storage->nordic.flags.flags;
+	size_t area_size = ARRAY_SIZE(nordic_storage->nordic.flags.flags);
+
+	return suit_storage_flags_internal_set(area_addr, area_size, flag);
+}
+
+suit_plat_err_t suit_storage_flags_check(suit_storage_flag_t flag)
+{
+	struct suit_storage_nordic *nordic_storage =
+		(struct suit_storage_nordic *)SUIT_STORAGE_NORDIC_ADDRESS;
+	uint8_t *area_addr = nordic_storage->nordic.flags.flags;
+	size_t area_size = ARRAY_SIZE(nordic_storage->nordic.flags.flags);
+
+	return suit_storage_flags_internal_check(area_addr, area_size, flag);
 }
