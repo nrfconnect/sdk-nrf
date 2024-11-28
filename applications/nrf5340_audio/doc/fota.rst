@@ -68,9 +68,17 @@ The first part of these names is based on :kconfig:option:`CONFIG_BT_DEVICE_NAME
    This is due to restrictions in the DFU system, and the error print is expected.
    The DFU process should still complete successfully.
 
+Building the FOTA configuration
+*******************************
+
+Use the :ref:`nrf53_audio_app_building_standard` procedure to build the nRF5340 Audio applications with the FOTA configuration.
+Make sure to provide the :ref:`correct configuration file <nrf53_audio_app_building_config_files>` :file:`prj_fota.conf` when running the build command.
+
+The :ref:`script-based method <nrf53_audio_app_building_script_running>` does not support building and programming the FOTA upgrades.
+
 .. _nrf53_audio_unicast_client_app_testing_steps_fota:
 
 Testing FOTA upgrades
-=====================
+*********************
 
 To test FOTA for the nRF5340 Audio application, ensure the application is in the DFU mode, and then follow the testing steps in the FOTA over Bluetooth Low Energy section of :ref:`ug_nrf53_developing_ble_fota` (you can skip the configuration steps).

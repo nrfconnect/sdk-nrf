@@ -60,5 +60,8 @@ For each application, only one of the following :file:`.conf` files is included 
   No debug features are enabled in the release application version.
   When building using the command line, you must explicitly specify if :file:`prj_release.conf` is going to be included instead of :file:`prj.conf`.
   See :ref:`nrf53_audio_app_building` for details.
-
-This file contains the necessary configurations for nRF5340 Audio applications to run the :zephyr:code-sample:`bluetooth_hci_ipc` sample with :ref:`SoftDevice Controller for LE Isochronous Channels <nrfxlib:softdevice_controller_iso>` support.
+* :file:`prj_fota.conf` is the optional configuration file used for FOTA DFU.
+  When used, the build system builds the debug version of the application (:file:`prj.conf`), but with the features needed to perform DFU over Bluetooth LE.
+  It also includes bootloaders so that the applications on both the application core and network core can be updated.
+  When building using the command line, you must explicitly specify if :file:`prj_fota.conf` is going to be included instead of :file:`prj.conf`.
+  See :ref:`nrf53_audio_app_fota` for more information.
