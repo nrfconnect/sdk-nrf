@@ -8,9 +8,11 @@ import re
 import sys
 import subprocess
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from west.commands import WestCommand
 
 nrf54l15_key_slots = [226, 228, 230]
+NRF54L15_KMU_SLOT_WIDTH = 2
 
 
 class NcsProvision(WestCommand):
@@ -40,6 +42,57 @@ class NcsProvision(WestCommand):
 
         return parser
 
+    def upload_with_nrfprovision(self, pub_key, slot, snr=None):
+        command = [
+            "nrfprovision",
+            "provision",
+            "-r",
+            "REVOKED",
+            "-v",
+            pub_key.public_bytes_raw().hex(),
+            "-m",
+            "0x10ba0030",
+            "-i",
+            str(slot),
+            "-a",
+            "ED25519",
+            "-d",
+            "0x20000000",
+            "--verify"
+        ]
+        if snr:
+            command.extend(["--snr", snr])
+        nrfprovision = subprocess.run(
+            command,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stderr = nrfprovision.stderr
+        print(stderr, file=sys.stderr)
+        if re.search('fail', stderr) or nrfprovision.returncode:
+            return -1
+
+    def revoke_with_nrfprovision(self, slot, snr=None):
+        command = [
+            "nrfprovision",
+            "revoke",
+            "-i",
+            str(nrf54l15_key_slots[slot]),
+            "-n",
+            str(NRF54L15_KMU_SLOT_WIDTH)
+        ]
+        if snr:
+            command.extend(["--snr", snr])
+        nrfprovision = subprocess.run(
+            command,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stderr = nrfprovision.stderr
+        print(stderr, file=sys.stderr)
+        if re.search('fail', stderr) or nrfprovision.returncode:
+            return -1
+
     def do_run(self, args, unknown_args):
         if args.command == "upload":
             if args.soc == "nrf54l15":
@@ -51,32 +104,16 @@ class NcsProvision(WestCommand):
                     with open(keyfile, 'rb') as f:
                         priv_key = load_pem_private_key(f.read(), password=None)
                     pub_key = priv_key.public_key()
-                    command = [
-                        "nrfprovision",
-                        "provision",
-                        "-r",
-                        "REVOKED",
-                        "-v",
-                        pub_key.public_bytes_raw().hex(),
-                        "-m",
-                        "0x10ba0030",
-                        "-i",
-                        str(nrf54l15_key_slots[slot]),
-                        "-a",
-                        "ED25519",
-                        "-d",
-                        "0x20000000",
-                        "--verify"
-                    ]
-                    if args.dev_id:
-                        command.extend(["--snr", args.dev_id])
-                    nrfprovision = subprocess.run(
-                        command,
-                        stderr=subprocess.PIPE,
-                        text=True
-                    )
-                    stderr = nrfprovision.stderr
-                    print(stderr, file=sys.stderr)
-                    if re.search('fail', stderr) or nrfprovision.returncode:
+                    if(self.upload_with_nrfprovision(pub_key,
+                        nrf54l15_key_slots[slot], args.dev_id)):
                         sys.exit("Uploading failed!")
+                    slot += 1
+                while slot < len(nrf54l15_key_slots):
+                    dummy_priv_key = Ed25519PrivateKey.generate()
+                    dummy_pub_key = dummy_priv_key.public_key()
+                    if(self.upload_with_nrfprovision(dummy_pub_key,
+                        nrf54l15_key_slots[slot], args.dev_id)):
+                        sys.exit("Uploading dummy key failed!")
+                    if self.revoke_with_nrfprovision(slot, args.dev_id):
+                        sys.exit("Revoking dummy slot failed!")
                     slot += 1
