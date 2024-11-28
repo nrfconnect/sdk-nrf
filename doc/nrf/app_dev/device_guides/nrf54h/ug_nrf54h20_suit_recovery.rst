@@ -131,7 +131,7 @@ To turn an application into a recovery application, the following steps have to 
    * :kconfig:option:`CONFIG_SUIT_MPI_GENERATE` set to ``n``
    * :kconfig:option:`CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE` set to ``n``
    * :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_UICR` set to ``n``
-   * :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_BICR` set to ``n``
+   * :kconfig:option:`CONFIG_SOC_NRF54H20_GENERATE_BICR` set to ``n``
 
    To do that you can simply paste the following code snippet into your configuration files:
 
@@ -141,7 +141,7 @@ To turn an application into a recovery application, the following steps have to 
          CONFIG_SUIT_MPI_GENERATE=n
          CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE=n
          CONFIG_NRF_REGTOOL_GENERATE_UICR=n
-         CONFIG_NRF_REGTOOL_GENERATE_BICR=n
+         CONFIG_SOC_NRF54H20_GENERATE_BICR=n
 
 #. Create the overlay files to be used by the recovery application.
    In this guide it is assumed that for the application core they are placed in the custom recovery application directory in the :file:`boards/nrf54h20dk_nrf54h20_cpuapp.overlay` file.
