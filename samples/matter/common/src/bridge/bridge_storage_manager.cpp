@@ -36,6 +36,88 @@ Nrf::PersistentStorageNode CreateIndexNode(uint8_t bridgedDeviceIndex, Nrf::Pers
 namespace Nrf
 {
 
+template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDevice &device, uint8_t index)
+{
+	Nrf::PersistentStorageNode id = CreateIndexNode(index, &mBridgedDevice);
+	size_t readSize = 0;
+	uint8_t buffer[sizeof(BridgedDevice) + kMaxUserDataSize];
+	uint16_t counter = 0;
+	const uint8_t mandatoryItemsSize =
+		sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mUniqueIDLength);
+
+	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDevice) + kMaxUserDataSize,
+						       readSize)) {
+		return false;
+	}
+
+	/* Validate that read size is big enough to include mandatory data. */
+	if (readSize < mandatoryItemsSize) {
+		return false;
+	}
+
+	/* Deserialize data and copy it from buffer into structure's fields. */
+	memcpy(&device.mEndpointId, buffer, sizeof(device.mEndpointId));
+	counter += sizeof(device.mEndpointId);
+	memcpy(&device.mDeviceType, buffer + counter, sizeof(device.mDeviceType));
+	counter += sizeof(device.mDeviceType);
+	memcpy(&device.mUniqueIDLength, buffer + counter, sizeof(device.mUniqueIDLength));
+	counter += sizeof(device.mUniqueIDLength);
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < counter + device.mUniqueIDLength) {
+		return false;
+	}
+
+	memcpy(device.mUniqueID, buffer + counter, device.mUniqueIDLength);
+	counter += device.mUniqueIDLength;
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < counter + sizeof(device.mNodeLabelLength)) {
+		return false;
+	}
+
+	memcpy(&device.mNodeLabelLength, buffer + counter, sizeof(device.mNodeLabelLength));
+	counter += sizeof(device.mNodeLabelLength);
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < counter + device.mNodeLabelLength) {
+		return false;
+	}
+
+	memcpy(device.mNodeLabel, buffer + counter, device.mNodeLabelLength);
+	counter += device.mNodeLabelLength;
+
+	/* Check if user prepared a buffer for reading user data. It can be nullptr if not needed. */
+	if (!device.mUserData) {
+		device.mUserDataSize = 0;
+		return true;
+	}
+
+	uint8_t inUserDataSize = device.mUserDataSize;
+	/* Validate if user buffer size is big enough to fit the stored user data size. */
+	if (readSize < counter + sizeof(device.mUserDataSize)) {
+		return false;
+	}
+
+	memcpy(&device.mUserDataSize, buffer + counter, sizeof(device.mUserDataSize));
+	counter += sizeof(device.mUserDataSize);
+
+	/* Validate that user data size value read from the storage is not bigger than the one expected by the user. */
+	if (inUserDataSize < device.mUserDataSize) {
+		return false;
+	}
+
+	/* Validate that read size is big enough to include all expected data. */
+	if (readSize < counter + device.mUserDataSize) {
+		return false;
+	}
+
+	memcpy(device.mUserData, buffer + counter, device.mUserDataSize);
+	counter += device.mUserDataSize;
+
+	return true;
+}
+
 bool BridgeStorageManager::Init()
 {
 	bool result = Nrf::GetPersistentStorage().NonSecureInit();
@@ -187,87 +269,6 @@ bool BridgeStorageManager::RemoveBridgedDeviceType(uint8_t bridgedDeviceIndex)
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceType);
 
 	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
-}
-
-bool BridgeStorageManager::LoadBridgedDevice(BridgedDevice &device, uint8_t index)
-{
-	Nrf::PersistentStorageNode id = CreateIndexNode(index, &mBridgedDevice);
-	size_t readSize = 0;
-	uint8_t buffer[sizeof(BridgedDevice) + kMaxUserDataSize];
-	uint16_t counter = 0;
-	const uint8_t mandatoryItemsSize =
-		sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mUniqueIDLength);
-
-	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDevice) + kMaxUserDataSize, readSize)) {
-		return false;
-	}
-
-	/* Validate that read size is big enough to include mandatory data. */
-	if (readSize < mandatoryItemsSize) {
-		return false;
-	}
-
-	/* Deserialize data and copy it from buffer into structure's fields. */
-	memcpy(&device.mEndpointId, buffer, sizeof(device.mEndpointId));
-	counter += sizeof(device.mEndpointId);
-	memcpy(&device.mDeviceType, buffer + counter, sizeof(device.mDeviceType));
-	counter += sizeof(device.mDeviceType);
-	memcpy(&device.mUniqueIDLength, buffer + counter, sizeof(device.mUniqueIDLength));
-	counter += sizeof(device.mUniqueIDLength);
-
-	/* Validate that read size is big enough to include all expected data. */
-	if (readSize < counter + device.mUniqueIDLength) {
-		return false;
-	}
-
-	memcpy(device.mUniqueID, buffer + counter, device.mUniqueIDLength);
-	counter += device.mUniqueIDLength;
-
-	/* Validate that read size is big enough to include all expected data. */
-	if (readSize < counter + sizeof(device.mNodeLabelLength)) {
-		return false;
-	}
-
-	memcpy(&device.mNodeLabelLength, buffer + counter, sizeof(device.mNodeLabelLength));
-	counter += sizeof(device.mNodeLabelLength);
-
-	/* Validate that read size is big enough to include all expected data. */
-	if (readSize < counter + device.mNodeLabelLength) {
-		return false;
-	}
-
-	memcpy(device.mNodeLabel, buffer + counter, device.mNodeLabelLength);
-	counter += device.mNodeLabelLength;
-
-	/* Check if user prepared a buffer for reading user data. It can be nullptr if not needed. */
-	if (!device.mUserData) {
-		device.mUserDataSize = 0;
-		return true;
-	}
-
-	uint8_t inUserDataSize = device.mUserDataSize;
-	/* Validate if user buffer size is big enough to fit the stored user data size. */
-	if (readSize < counter + sizeof(device.mUserDataSize)) {
-		return false;
-	}
-
-	memcpy(&device.mUserDataSize, buffer + counter, sizeof(device.mUserDataSize));
-	counter += sizeof(device.mUserDataSize);
-
-	/* Validate that user data size value read from the storage is not bigger than the one expected by the user. */
-	if (inUserDataSize < device.mUserDataSize) {
-		return false;
-	}
-
-	/* Validate that read size is big enough to include all expected data. */
-	if (readSize < counter + device.mUserDataSize) {
-		return false;
-	}
-
-	memcpy(device.mUserData, buffer + counter, device.mUserDataSize);
-	counter += device.mUserDataSize;
-
-	return true;
 }
 
 bool BridgeStorageManager::StoreBridgedDevice(BridgedDevice &device, uint8_t index)

@@ -126,7 +126,7 @@ public:
 	 * @return true if key has been loaded successfully
 	 * @return false an error occurred
 	 */
-	bool LoadBridgedDevice(BridgedDevice &device, uint8_t index);
+	template <typename T = BridgedDevice> bool LoadBridgedDevice(T &device, uint8_t index);
 
 	/**
 	 * @brief Store bridged device into settings. Helper method allowing to store endpoint id, node label and device
