@@ -10,7 +10,7 @@ endif()
 
 if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_DISABLED)
   # The C source is same as that for built-in
-  zephyr_library_sources(${ZEPHYR_BASE}/drivers/wifi/nrfwifi/src/fw_load.c)
+  zephyr_library_sources(${ZEPHYR_BASE}/drivers/wifi/nrf_wifi/src/fw_load.c)
 else()
   zephyr_library_sources(ext_fw_load.c)
   if(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP)
@@ -43,7 +43,7 @@ if(DEFINED CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_DISABLED OR
   zephyr_include_directories(${gen_inc_dir})
   set(gen_dir ${gen_inc_dir}/nrf70_fw_patch)
   generate_inc_file_for_target(
-    nrfwifi
+    nrf_wifi
     ${NRF70_PATCH}
     ${gen_dir}/nrf70.bin.inc
   )

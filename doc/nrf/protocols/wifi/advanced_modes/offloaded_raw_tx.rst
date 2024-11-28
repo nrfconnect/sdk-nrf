@@ -42,7 +42,7 @@ Offloaded raw transmit API
 The offloaded raw transmit functionality of nRF70 Series ICs can be utilized by using the APIs provided by the driver.
 The API reference can be found at:
 
-| Header file: :file:`zephyr/drivers/wifi/nrfwifi/off_raw_tx/off_raw_tx_api.h`
+| Header file: :file:`zephyr/drivers/wifi/nrf_wifi/off_raw_tx/off_raw_tx_api.h`
 
 
 See the :ref:`Offloaded raw transmit sample <wifi_offloaded_raw_tx_packet_sample>` to know more about the offloaded raw transmit API.

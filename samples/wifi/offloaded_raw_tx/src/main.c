@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <zephyr/drivers/wifi/nrfwifi/off_raw_tx/off_raw_tx_api.h>
+#include <zephyr/drivers/wifi/nrf_wifi/off_raw_tx/off_raw_tx_api.h>
 
 #ifdef CONFIG_GENERATE_MAC_ADDRESS
 #include <zephyr/random/random.h>

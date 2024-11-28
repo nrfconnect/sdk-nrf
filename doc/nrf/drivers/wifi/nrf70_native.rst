@@ -34,7 +34,7 @@ Design overview
 ***************
 
 The nRF Wi-Fi driver follows an OS-agnostic design, and the driver implementation is split into OS-agnostic and OS (Zephyr)-specific code.
-The OS-agnostic code is located in the :file:`${ZEPHYR_BASE}/../modules/hal/nordic/drivers/nrf_wifi/` folder, and the Zephyr OS port is located in the :file:`${ZEPHYR_BASE}/drivers/wifi/nrfwifi/` folder.
+The OS-agnostic code is located in the :file:`${ZEPHYR_BASE}/../modules/hal/nordic/drivers/nrf_wifi/` folder, and the Zephyr OS port is located in the :file:`${ZEPHYR_BASE}/drivers/wifi/nrf_wifi/` folder.
 
 The driver supports two modes of operation:
 
@@ -82,7 +82,7 @@ The nRF Wi-Fi driver has the following configuration options:
 Kconfig configuration
 =====================
 
-.. options-from-kconfig:: /../../../../../zephyr/drivers/wifi/nrfwifi/Kconfig.nrfwifi
+.. options-from-kconfig:: /../../../../../zephyr/drivers/wifi/nrf_wifi/Kconfig.nrfwifi
    :show-type:
 
 Devicetree specification configuration
