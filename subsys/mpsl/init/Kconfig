@@ -106,6 +106,15 @@ config MPSL_CALIBRATION_PERIOD
 	  This configuration means how often the calibration callback to mpsl is called.
 	  On 54L, this still needs to be called even if LFRC is not used.
 
+config MPSL_INIT_PRIORITY
+	int
+	default 52 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  This option configures MPSL system init priority level. For nRF54H SoC series the priority
+	  must be lower than CONFIG_NRFS_BACKEND_IPC_SERVICE_INIT_PRIO. The nrf2 clock control depends
+	  on the nRFS backend.
+
 module=MPSL
 module-str=MPSL
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

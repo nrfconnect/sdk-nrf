@@ -156,6 +156,120 @@ static bool m_hfclk_is_running(void)
        return ((m_hfclk_refcnt > 0) ? true : false);
 }
 
+#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+
+/* Temporary macro because there is no system level configuration of LFCLK source and its accuracy
+ * for nRF54H SoC series. What more there is no API to retrieve the information about accuracy of
+ * configured LFCLK.
+ */
+#define MPSL_LFCLK_ACCURACY_PPM 500
+/* Must be global because of use of nrf_clock_control_cancel_or_release in hfclk_release. */
+static struct onoff_client m_radio_cli;
+
+static const struct nrf_clock_spec m_lfclk_specs = {
+	.frequency = 32768,
+	.accuracy = MPSL_LFCLK_ACCURACY_PPM,
+	/* This affects selected LFCLK source. It doesn't switch to higher accuracy but selects more
+	 * current hungry lfclk source.
+	 */
+	.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
+};
+
+static void m_lfclk_calibration_start(void)
+{
+	/* This function should not be called from MPSL if CONFIG_CLOCK_CONTROL_NRF2 is set */
+	__ASSERT_NO_MSG(false);
+}
+
+static bool m_lfclk_calibration_is_enabled(void)
+{
+	/* This function should not be called from MPSL if CONFIG_CLOCK_CONTROL_NRF2 is set */
+	__ASSERT_NO_MSG(false);
+	return false;
+}
+
+static int32_t m_lfclk_request(void)
+{
+	const struct device *lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
+	int err;
+
+	sys_notify_init_spinwait(&m_lfclk_state.cli.notify);
+
+	err = nrf_clock_control_request(lfclk_dev, &m_lfclk_specs, &m_lfclk_state.cli);
+	if (err < 0) {
+		return err;
+	}
+
+	atomic_inc(&m_lfclk_state.m_clk_refcnt);
+
+	return 0;
+}
+
+static int32_t m_lfclk_release(void)
+{
+	const struct device *lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
+	int err;
+
+	err = nrf_clock_control_cancel_or_release(lfclk_dev, &m_lfclk_specs, &m_lfclk_state.cli);
+	if (err < 0) {
+		return err;
+	}
+
+	atomic_dec(&m_lfclk_state.m_clk_refcnt);
+
+	return 0;
+}
+
+static void m_hfclk_request(void)
+{
+	const struct device *radio_clk_dev =
+		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
+	int err;
+
+	if (atomic_inc(&m_hfclk_refcnt) > 0) {
+		return;
+	}
+
+	sys_notify_init_spinwait(&m_radio_cli.notify);
+
+	err = nrf_clock_control_request(radio_clk_dev, NULL, &m_radio_cli);
+	__ASSERT_NO_MSG(err >= 0);
+}
+
+static void m_hfclk_release(void)
+{
+	int err;
+	const struct device *radio_clk_dev =
+		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
+
+	if (m_hfclk_refcnt < 1) {
+		return;
+	}
+
+	if (atomic_dec(&m_hfclk_refcnt) > 1) {
+		return;
+	}
+
+	err = nrf_clock_control_cancel_or_release(radio_clk_dev, NULL, &m_radio_cli);
+	__ASSERT_NO_MSG(err >= 0);
+}
+
+static bool m_hfclk_is_running(void)
+{
+	int res;
+	int err;
+
+	if (m_hfclk_refcnt < 1) {
+		return false;
+	}
+
+	err = sys_notify_fetch_result(&m_radio_cli.notify, &res);
+	if (err < 0 || res != 0 ) {
+		return false;
+	}
+
+	return true;
+}
 #else
 #error "Unsupported clock control"
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
