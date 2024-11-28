@@ -222,6 +222,14 @@
 
 | Native Simulator | | native_sim | ``native_sim`` |
 
+.. nrf54l15dk_nrf54l05_cpuapp
+
+| :ref:`nRF54L15 DK (emulating nRF54L05) <ug_nrf54l>`  | PCA10156 | :ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>` | ``nrf54l15dk/nrf54l05/cpuapp`` |
+
+.. nrf54l15dk_nrf54l10_cpuapp
+
+| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>` | ``nrf54l15dk/nrf54l10/cpuapp`` |
+
 .. nrf54l15dk_nrf54l15_cpuapp
 
 | :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :ref:`nrf54l15dk <zephyr:nrf54l15dk_nrf54l15>` | ``nrf54l15dk/nrf54l15/cpuapp`` |
