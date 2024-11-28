@@ -495,6 +495,11 @@ void dect_phy_mac_cluster_beacon_tx_stop(void)
 	beacon_data.running = false;
 }
 
+bool dect_phy_mac_cluster_beacon_is_running(void)
+{
+	return beacon_data.running;
+}
+
 void dect_phy_mac_cluster_beacon_update(void)
 {
 	uint8_t *pdu_ptr = beacon_data.encoded_cluster_beacon_pdu;
@@ -705,4 +710,39 @@ void dect_phy_mac_cluster_beacon_status_print(void)
 		desh_print("  Beacon payload PDU byte count: %d",
 			   beacon_data.encoded_cluster_beacon_pdu_len);
 	}
+}
+
+int64_t dect_phy_mac_cluster_beacon_rcv_time_shift_calculate(
+	dect_phy_mac_cluster_beacon_period_t interval,
+	uint64_t last_rcv_time,
+	uint64_t now_rcv_time)
+{
+	__ASSERT_NO_MSG(last_rcv_time < now_rcv_time);
+
+	uint64_t next_beacon_frame_start, beacon_interval_mdm_ticks, prev_frame_start;
+	uint64_t now_diff_to_prev_frame;
+	uint64_t now_diff_to_next_frame;
+	int64_t diff_out = 0;
+	int32_t beacon_interval_ms = dect_phy_mac_pdu_cluster_beacon_period_in_ms(interval);
+
+	beacon_interval_mdm_ticks = MS_TO_MODEM_TICKS(beacon_interval_ms);
+
+	next_beacon_frame_start = last_rcv_time;
+	while (next_beacon_frame_start < now_rcv_time) {
+		next_beacon_frame_start += beacon_interval_mdm_ticks;
+	}
+	prev_frame_start = next_beacon_frame_start - beacon_interval_mdm_ticks;
+
+	now_diff_to_prev_frame = now_rcv_time - prev_frame_start;
+
+	now_diff_to_next_frame = next_beacon_frame_start - now_rcv_time;
+
+	if (now_diff_to_prev_frame < now_diff_to_next_frame) {
+		/* we have received later than expected */
+		diff_out = now_diff_to_prev_frame;
+	} else {
+		/* we have received earlier than expected */
+		diff_out = -now_diff_to_next_frame;
+	}
+	return diff_out;
 }

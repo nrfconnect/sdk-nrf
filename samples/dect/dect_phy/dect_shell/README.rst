@@ -623,10 +623,11 @@ Example: starting of cluster beacon and sending RA data to it
       dect-phy-mac status:
       Cluster beacon status:
          Beacon running:                yes
-         Beacon channel:                1665
+         Beacon channel:                1659
          Beacon tx power:               0 dBm
          Beacon interval:               2000 ms
          Beacon payload PDU byte count: 50
+      Client status:
       Neighbor list status:
 
 * FT/Beacon device - Check generated long and short RD IDs from settings:
@@ -736,16 +737,19 @@ Example: starting of cluster beacon and sending RA data to it
       desh:~$ dect mac status
       dect-phy-mac status:
       Cluster beacon status:
-      Beacon running: no
+         Beacon running: no
+      Client status:
       Neighbor list status:
-      Neighbor 1:
-         network ID (24bit MSB): 1193046 (0x123456)
-         network ID (8bit LSB):  120 (0x78)
-         network ID (32bit):     305419896 (0x12345678)
-         long RD ID:             1234
-         short RD ID:            27462
-         channel:                1659
-         last seen time:         17016336625
+         Neighbor 1:
+            network ID (24bit MSB): 1193046 (0x123456)
+            network ID (8bit LSB):  120 (0x78)
+            network ID (32bit):     305419896 (0x12345678)
+            long RD ID:             1234
+            short RD ID:            27462
+            channel:                1659
+            Last seen:              12964 msecs ago
+            Background scan status:
+               Running: false
 
 * PT/client side - Send association request to the scanned beacon:
 
@@ -787,6 +791,33 @@ Example: starting of cluster beacon and sending RA data to it
             Payload length: 1
             Received padding data, len 1, payload is not printed
       RX for Association Response completed.
+
+* PT/client side - Check that the client is associated with the device with long RD ID 1234 and a background scan is running:
+
+  .. code-block:: console
+
+      desh:~$ dect mac status
+      dect-phy-mac status:
+      Cluster beacon status:
+         Beacon running: no
+      Client status:
+         Association #1: long RD ID 1234
+      Neighbor list status:
+         Neighbor 1:
+            network ID (24bit MSB): 1193046 (0x123456)
+            network ID (8bit LSB):  120 (0x78)
+            network ID (32bit):     305419896 (0x12345678)
+            long RD ID:             1234
+            short RD ID:            64945
+            channel:                1671
+            Last seen:              1428 msecs ago
+            Last timestamp: 16878096625 mdm ticks
+            Metrics:
+               Scan info updated count:            1
+               Scan started ok count:              1
+               Scan start fail count:              0
+               Scan info time shift updated count: 0
+               Scan info time shift last value:    0
 
 * PT/client side - Send RA data to the scanned beacon:
 
@@ -886,6 +917,12 @@ Example: starting of cluster beacon and sending RA data to it
             IE type: Padding
             Payload length: 1
             Received padding data, len 1, payload is not printed
+
+* PT/client side - Check that no associations and background scans are running:
+
+  .. code-block:: console
+
+      desh:~$ dect mac status
 
 * FT/Beacon device - Stop the beacon:
 

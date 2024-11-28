@@ -16,10 +16,12 @@
 #include "dect_phy_common.h"
 #include "dect_common_utils.h"
 #include "dect_common_pdu.h"
+#include "dect_phy_ctrl.h"
 
 #include "dect_phy_mac_pdu.h"
 #include "dect_phy_mac_nbr.h"
 #include "dect_phy_mac_cluster_beacon.h"
+#include "dect_phy_mac_client.h"
 #include "dect_phy_mac.h"
 
 /**************************************************************************************************/
@@ -135,6 +137,10 @@ static void dect_phy_mac_message_print(dect_phy_mac_message_type_t message_type,
 		break;
 	}
 	case DECT_PHY_MAC_MESSAGE_TYPE_CLUSTER_BEACON: {
+		int beacon_interval_ms = dect_phy_mac_pdu_cluster_beacon_period_in_ms(
+			message->cluster_beacon.cluster_beacon_period);
+		uint64_t beacon_interval_mdm_ticks = MS_TO_MODEM_TICKS(beacon_interval_ms);
+
 		desh_print("      Received cluster beacon:");
 		desh_print("        System frame number:  %d",
 			   message->cluster_beacon.system_frame_number);
@@ -178,9 +184,8 @@ static void dect_phy_mac_message_print(dect_phy_mac_message_type_t message_type,
 		desh_print("        Network Beacon period %d ms",
 			   dect_phy_mac_pdu_nw_beacon_period_in_ms(
 				   message->cluster_beacon.nw_beacon_period));
-		desh_print("        Cluster Beacon period %d ms",
-			   dect_phy_mac_pdu_cluster_beacon_period_in_ms(
-				   message->cluster_beacon.cluster_beacon_period));
+		desh_print("        Cluster Beacon period %d ms (%lld mdm ticks)",
+			   beacon_interval_ms, beacon_interval_mdm_ticks);
 		desh_print("        Count to trigger:     %d (coded value)",
 			   message->cluster_beacon.count_to_trigger);
 		desh_print("        Relative quality:     %d (coded value)",
@@ -280,61 +285,127 @@ static void dect_phy_mac_message_print(dect_phy_mac_message_type_t message_type,
 	}
 }
 
+static void dect_phy_mac_type_header_print(dect_phy_mac_type_header_t *type_header)
+{
+	char tmp_str[128] = {0};
+
+	desh_print(" DECT NR+ MAC PDU:");
+	desh_print("  MAC header:");
+	desh_print("    Version: %d", type_header->version);
+	desh_print("    Security: %s",
+		   dect_phy_mac_pdu_security_to_string(type_header->version, tmp_str));
+	desh_print("    Type: %s",
+		   dect_phy_mac_pdu_header_type_to_string(type_header->type, tmp_str));
+}
+
+static void dect_phy_mac_common_header_print(dect_phy_mac_type_header_t *type_header,
+					     dect_phy_mac_common_header_t *common_header)
+{
+	if (type_header->type == DECT_PHY_MAC_HEADER_TYPE_BEACON) {
+		desh_print("      Network ID (24bit MSB):  %u (0x%06x)", common_header->nw_id,
+			   common_header->nw_id);
+		desh_print("      Transmitter ID:          %u (0x%08x)",
+			   common_header->transmitter_id, common_header->transmitter_id);
+	} else {
+		desh_print("      Reset: %s", (common_header->reset > 0) ? "yes" : "no");
+		desh_print("      Seq Nbr: %u", common_header->seq_nbr);
+
+		if (type_header->type == DECT_PHY_MAC_HEADER_TYPE_UNICAST) {
+			desh_print("      Receiver: %u (0x%08x)", common_header->receiver_id,
+				   common_header->receiver_id);
+			desh_print("      Transmitter: %u (0x%08x)", common_header->transmitter_id,
+				   common_header->transmitter_id);
+		} else if (type_header->type == DECT_PHY_MAC_HEADER_TYPE_BROADCAST) {
+			desh_print("      Transmitter: %u (0x%08x)", common_header->transmitter_id,
+				   common_header->transmitter_id);
+		}
+	}
+}
+
+static void dect_phy_mac_mux_header_print(dect_phy_mac_mux_header_t *mux_header)
+{
+	char tmp_str[128] = {0};
+
+	desh_print("    MAC MUX header:");
+	desh_print("      IE type: %s", dect_phy_mac_pdu_ie_type_to_string(
+						mux_header->mac_ext, mux_header->payload_length,
+						mux_header->ie_type, tmp_str));
+	desh_print("      Payload length: %u", mux_header->payload_length);
+	if (mux_header->ie_type == DECT_PHY_MAC_IE_TYPE_EXTENSION) {
+		desh_print("      IE extension: 0x%02x", mux_header->ie_ext);
+	}
+}
+
+static void dect_phy_mac_sdu_print(dect_phy_mac_sdu_t *sdu_list_item, int sdu_nbr)
+{
+	desh_print("  SDU %u:", sdu_nbr);
+	dect_phy_mac_mux_header_print(&sdu_list_item->mux_header);
+	dect_phy_mac_message_print(sdu_list_item->message_type, &sdu_list_item->message);
+}
+
 bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 {
 	dect_phy_mac_type_header_t type_header;
 	bool handled = false;
 	uint8_t *data_ptr = rcv_params->data;
 	uint32_t data_len = rcv_params->data_length;
+	bool print = false;
 
 	handled = dect_phy_mac_pdu_type_header_decode(data_ptr, data_len, &type_header);
 	if (!handled) {
 		return false;
 	}
 
+	/* Print only if:
+	 * - client is associating/associated with the target device and
+	 *   the received message is not a beacon from target
+	 * - beacon scan / rx cmd is ongoing
+	 * - beacon tx ongoing and we have announced RA resources.
+	 */
+	if (dect_phy_mac_client_associated_by_target_short_rd_id(
+		rcv_params->last_received_pcc_transmitter_short_rd_id) &&
+		type_header.type != DECT_PHY_MAC_HEADER_TYPE_BEACON) {
+		print = true;
+	}
+	if (dect_phy_ctrl_rx_is_on_going()) {
+		print = true;
+	}
+	if (dect_phy_mac_cluster_beacon_is_running()) {
+		print = true;
+	}
+
 	const uint8_t *p_ptr = data_ptr + 1;
 	struct nrf_modem_dect_phy_rx_pdc_status *p_rx_status = &(rcv_params->rx_status);
 	dect_phy_mac_common_header_t common_header;
 	int16_t rssi_level = p_rx_status->rssi_2 / 2;
-	char tmp_str[128] = {0};
 
-	desh_print("PDC received (stf start time %llu): snr %d, RSSI-2 %d (RSSI %d), len %d",
-		   rcv_params->time, p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
-		   rcv_params->data_length);
+	if (print) {
+		desh_print("PDC received (stf start time %llu): snr %d, "
+			"RSSI-2 %d (RSSI %d), len %d",
+			rcv_params->time, p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
+			rcv_params->data_length);
 
-	desh_print(" DECT NR+ MAC PDU:");
-	desh_print("  MAC header:");
-	desh_print("    Version: %d", type_header.version);
-	desh_print("    Security: %s",
-		   dect_phy_mac_pdu_security_to_string(type_header.version, tmp_str));
-	desh_print("    Type: %s",
-		   dect_phy_mac_pdu_header_type_to_string(type_header.type, tmp_str));
+		dect_phy_mac_type_header_print(&type_header);
+	}
+
 	/* Then continue on: ch. 6.3.3, MAC Common header */
 	handled = dect_phy_mac_pdu_common_header_decode(p_ptr, data_len - 1, &type_header,
 							&common_header);
 	if (!handled) {
+		/* In failure, we want to print what we got */
+		if (!print) {
+			desh_print("PDC received (stf start time %llu): snr %d, "
+				"RSSI-2 %d (RSSI %d), len %d",
+				rcv_params->time, p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
+				rcv_params->data_length);
+		}
 		desh_error("Failed to decode MAC Common header");
 		return false;
 	}
-	if (type_header.type == DECT_PHY_MAC_HEADER_TYPE_BEACON) {
-		desh_print("      Network ID (24bit MSB):  %u (0x%06x)", common_header.nw_id,
-			   common_header.nw_id);
-		desh_print("      Transmitter ID:          %u (0x%08x)",
-			   common_header.transmitter_id, common_header.transmitter_id);
-	} else {
-		desh_print("      Reset: %s", (common_header.reset > 0) ? "yes" : "no");
-		desh_print("      Seq Nbr: %u", common_header.seq_nbr);
-
-		if (type_header.type == DECT_PHY_MAC_HEADER_TYPE_UNICAST) {
-			desh_print("      Receiver: %u (0x%08x)", common_header.receiver_id,
-				   common_header.receiver_id);
-			desh_print("      Transmitter: %u (0x%08x)", common_header.transmitter_id,
-				   common_header.transmitter_id);
-		} else if (type_header.type == DECT_PHY_MAC_HEADER_TYPE_BROADCAST) {
-			desh_print("      Transmitter: %u (0x%08x)", common_header.transmitter_id,
-				   common_header.transmitter_id);
-		}
+	if (print) {
+		dect_phy_mac_common_header_print(&type_header, &common_header);
 	}
+
 	sys_dlist_t sdu_list;
 	uint8_t header_len = dect_phy_mac_pdy_type_n_common_header_len_get(type_header.type);
 	uint8_t *payload_ptr = rcv_params->data + header_len;
@@ -348,43 +419,40 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 	} else {
 		dect_phy_mac_cluster_beacon_t *beacon_msg = NULL;
 		dect_phy_mac_random_access_resource_ie_t *ra_ie = NULL;
+		dect_phy_mac_association_resp_t *association_resp = NULL;
 		uint32_t sdu_count = 0;
 
 		SYS_DLIST_FOR_EACH_CONTAINER(&sdu_list, sdu_list_item, dnode) {
-			desh_print("  SDU %u:", ++sdu_count);
-			desh_print("    MAC MUX header:");
-			desh_print("      IE type: %s",
-				   dect_phy_mac_pdu_ie_type_to_string(
-					   sdu_list_item->mux_header.mac_ext,
-					   sdu_list_item->mux_header.payload_length,
-					   sdu_list_item->mux_header.ie_type, tmp_str));
-			desh_print("      Payload length: %u",
-				   sdu_list_item->mux_header.payload_length);
-			if (sdu_list_item->mux_header.ie_type == DECT_PHY_MAC_IE_TYPE_EXTENSION) {
-				desh_print("      IE extension: 0x%02x",
-					   sdu_list_item->mux_header.ie_ext);
+			if (print) {
+				dect_phy_mac_sdu_print(sdu_list_item, ++sdu_count);
 			}
-			dect_phy_mac_message_print(sdu_list_item->message_type,
-						   &sdu_list_item->message);
+
 			if (sdu_list_item->message_type ==
 			    DECT_PHY_MAC_MESSAGE_TYPE_CLUSTER_BEACON) {
 				beacon_msg = &sdu_list_item->message.cluster_beacon;
 			} else if (sdu_list_item->message_type ==
 				   DECT_PHY_MAC_MESSAGE_RANDOM_ACCESS_RESOURCE_IE) {
-				/* Note: there could be many of these, this takes only the last */
+				/* Note: there could be many of these,
+				 * but this takes only the last
+				 */
 				ra_ie = &sdu_list_item->message.rach_ie;
+			} else if (sdu_list_item->message_type ==
+				   DECT_PHY_MAC_MESSAGE_TYPE_ASSOCIATION_RESP) {
+				association_resp = &sdu_list_item->message.association_resp;
 			}
 		}
-		/* If received cluster beacon with RA IE,
-		 * store as a neighbor
-		 */
+		/* If received cluster beacon with RA IE, store as a neighbor */
 		if (beacon_msg != NULL && ra_ie != NULL) {
 			dect_phy_mac_nbr_info_store_n_update(
 				&rcv_params->time, rcv_params->last_rx_op_channel,
 				common_header.nw_id, rcv_params->last_received_pcc_short_nw_id,
 				common_header.transmitter_id,
 				rcv_params->last_received_pcc_transmitter_short_rd_id, beacon_msg,
-				ra_ie); /* Storing only the last */
+				ra_ie, /* Note: storing only the last RA IE */
+				print);
+		}
+		if (association_resp != NULL) {
+			dect_phy_mac_client_associate_resp_handle(&common_header, association_resp);
 		}
 	}
 	/* Remove all nodes from the list and dealloc */

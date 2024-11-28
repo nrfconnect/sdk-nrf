@@ -12,6 +12,11 @@
 
 #include "desh_print.h"
 
+#include "dect_common.h"
+#include "dect_app_time.h"
+#include "dect_phy_common.h"
+#include "dect_phy_mac_cluster_beacon.h"
+#include "dect_phy_mac_nbr_bg_scan.h"
 #include "dect_phy_mac_nbr.h"
 
 struct dect_phy_mac_nbr_info_list_item nbrs[DECT_PHY_MAC_MAX_NEIGBORS] = {0};
@@ -79,9 +84,10 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 					  uint32_t nw_id_24msb, uint8_t nw_id_8lsb,
 					  uint32_t long_rd_id, uint16_t short_rd_id,
 					  dect_phy_mac_cluster_beacon_t *beacon_msg,
-					  dect_phy_mac_random_access_resource_ie_t *ra_ie)
+					  dect_phy_mac_random_access_resource_ie_t *ra_ie,
+					  bool print_update)
 {
-	bool done = false;
+	bool done = true;
 	struct dect_phy_mac_nbr_info_list_item *nbr_ptr;
 
 	nbr_ptr = dect_phy_mac_nbr_info_get_by_long_rd_id(long_rd_id);
@@ -98,6 +104,7 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 			.nw_id_32bit = ((nw_id_24msb << 8) | nw_id_8lsb),
 			.beacon_msg = *beacon_msg,
 			.ra_ie = *ra_ie,
+			.time_rcvd_shift_mdm_ticks = 0,
 		};
 
 		if (!dect_phy_mac_nbr_info_store(nbr_info)) {
@@ -111,20 +118,32 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 		}
 	} else {
 		/* Already existing beacon: update */
+		int64_t time_shift_mdm_ticks =
+			dect_phy_mac_cluster_beacon_rcv_time_shift_calculate(
+				nbr_ptr->beacon_msg.cluster_beacon_period,
+				nbr_ptr->time_rcvd_mdm_ticks,
+				*rcv_time);
+
 		nbr_ptr->channel = channel;
 		nbr_ptr->short_rd_id = short_rd_id;
 		nbr_ptr->nw_id_24msb = nw_id_24msb;
 		nbr_ptr->nw_id_8lsb = nw_id_8lsb;
 		nbr_ptr->nw_id_32bit = ((nw_id_24msb << 8) | nw_id_8lsb);
 		nbr_ptr->time_rcvd_mdm_ticks = *rcv_time;
+		nbr_ptr->time_rcvd_shift_mdm_ticks = time_shift_mdm_ticks;
+		dect_phy_mac_nbr_bg_scan_rcv_time_shift_update(
+			long_rd_id, *rcv_time, time_shift_mdm_ticks);
 		nbr_ptr->beacon_msg = *beacon_msg;
 		nbr_ptr->ra_ie = *ra_ie; /* Note: storing only one RA IE */
 
-		desh_print("Neighbor with long rd id %u (0x%08x), short rd id %u (0x%04x), "
-			   "nw (24bit MSB: %u (0x%06x), 8bit LSB: %u (0x%02x))\n"
-			   "  updated with time %llu to nbr list.",
-			   long_rd_id, long_rd_id, short_rd_id, short_rd_id, nw_id_24msb,
-			   nw_id_24msb, nw_id_8lsb, nw_id_8lsb, nbr_ptr->time_rcvd_mdm_ticks);
+		if (print_update) {
+			desh_print("Neighbor with long rd id %u (0x%08x), short rd id %u (0x%04x), "
+				"nw (24bit MSB: %u (0x%06x), 8bit LSB: %u (0x%02x))\n"
+				"  updated with time %llu (time shift %lld mdm ticks) to nbr list.",
+				long_rd_id, long_rd_id, short_rd_id, short_rd_id, nw_id_24msb,
+				nw_id_24msb, nw_id_8lsb, nw_id_8lsb, nbr_ptr->time_rcvd_mdm_ticks,
+				time_shift_mdm_ticks);
+		}
 	}
 	k_mutex_unlock(&nbr_list_mutex);
 	return done;
@@ -132,11 +151,15 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 
 void dect_phy_mac_nbr_status_print(void)
 {
-	k_mutex_lock(&nbr_list_mutex, K_FOREVER);
+	uint64_t time_now = dect_app_modem_time_now();
 
+	k_mutex_lock(&nbr_list_mutex, K_FOREVER);
 	desh_print("Neighbor list status:");
 	for (int i = 0; i < DECT_PHY_MAC_MAX_NEIGBORS; i++) {
 		if (nbrs[i].reserved == true) {
+			int64_t time_from_last_received_ms = MODEM_TICKS_TO_MS(
+					time_now - nbrs[i].time_rcvd_mdm_ticks);
+
 			desh_print("  Neighbor %d:", i + 1);
 			desh_print("   network ID (24bit MSB): %u (0x%06x)", nbrs[i].nw_id_24msb,
 				   nbrs[i].nw_id_24msb);
@@ -147,11 +170,12 @@ void dect_phy_mac_nbr_status_print(void)
 			desh_print("   long RD ID:             %u", nbrs[i].long_rd_id);
 			desh_print("   short RD ID:            %u", nbrs[i].short_rd_id);
 			desh_print("   channel:                %u", nbrs[i].channel);
-			desh_print("   last seen time:         %llu\n",
-				   nbrs[i].time_rcvd_mdm_ticks);
+			desh_print("   Last seen:              %d msecs ago",
+				time_from_last_received_ms);
+			dect_phy_mac_nbr_bg_scan_status_print_for_target_long_rd_id(
+				nbrs[i].long_rd_id);
 		}
 	}
-
 	k_mutex_unlock(&nbr_list_mutex);
 }
 

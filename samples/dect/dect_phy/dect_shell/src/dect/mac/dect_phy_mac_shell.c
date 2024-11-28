@@ -25,6 +25,7 @@
 #include "dect_phy_mac_common.h"
 #include "dect_phy_mac_cluster_beacon.h"
 #include "dect_phy_mac_nbr.h"
+#include "dect_phy_mac_client.h"
 #include "dect_phy_mac_ctrl.h"
 
 /**************************************************************************************************/
@@ -418,8 +419,9 @@ static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, c
 
 	ret = dect_phy_mac_ctrl_dissociate(&params);
 	if (ret) {
-		desh_error("Cannot send association to FT %u's random access resource, err %d",
-			   params.target_long_rd_id, ret);
+		desh_error("Cannot send association release to FT %u's random access resource, "
+			   "err %d",
+				params.target_long_rd_id, ret);
 	} else {
 		desh_print("Association Release TX started.");
 	}
@@ -567,6 +569,7 @@ static void dect_phy_mac_status_cmd(const struct shell *shell, size_t argc, char
 	desh_print("dect-phy-mac status:");
 
 	dect_phy_mac_cluster_beacon_status_print();
+	dect_phy_mac_client_status_print();
 	dect_phy_mac_nbr_status_print();
 }
 

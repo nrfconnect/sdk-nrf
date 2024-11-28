@@ -27,6 +27,7 @@ struct dect_phy_mac_nbr_info_list_item {
 	uint32_t nw_id_32bit;
 
 	uint64_t time_rcvd_mdm_ticks;
+	int64_t time_rcvd_shift_mdm_ticks;
 
 	dect_phy_mac_cluster_beacon_t beacon_msg;
 	dect_phy_mac_random_access_resource_ie_t ra_ie; /* Supporting only one RA IE */
@@ -42,7 +43,8 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 					  uint32_t nw_id_24msb, uint8_t nw_id_8lsb,
 					  uint32_t long_rd_id, uint16_t short_rd_id,
 					  dect_phy_mac_cluster_beacon_t *beacon_msg,
-					  dect_phy_mac_random_access_resource_ie_t *ra_ie);
+					  dect_phy_mac_random_access_resource_ie_t *ra_ie,
+					  bool print_update);
 
 bool dect_phy_mac_nbr_is_in_channel(uint16_t channel);
 
