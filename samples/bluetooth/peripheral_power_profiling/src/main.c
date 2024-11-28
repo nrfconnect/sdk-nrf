@@ -27,9 +27,6 @@
 #include <nfc/ndef/le_oob_rec.h>
 
 #include <helpers/nrfx_reset_reason.h>
-#ifdef CONFIG_SOC_NRF54L15_CPUAPP
-#include <hal/nrf_memconf.h>
-#endif
 
 #include "pwr_service.h"
 
@@ -681,14 +678,6 @@ static void system_off(void)
 			} while ((err == 0) && (state == PM_DEVICE_STATE_ACTIVE));
 		}
 	}
-
-#ifdef CONFIG_SOC_NRF54L15_CPUAPP
-	/* Disable RAM retention in System OFF as it is not utilized by this sample. */
-	uint32_t ram_sections = 8;
-
-	nrf_memconf_ramblock_ret_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
-	nrf_memconf_ramblock_ret2_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
-#endif
 
 	sys_poweroff();
 #endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */

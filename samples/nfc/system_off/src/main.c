@@ -20,9 +20,6 @@
 #include <nfc/ndef/text_rec.h>
 
 #include <dk_buttons_and_leds.h>
-#ifdef CONFIG_SOC_NRF54L15_CPUAPP
-#include <hal/nrf_memconf.h>
-#endif
 
 #define SYSTEM_OFF_DELAY_S	3
 
@@ -149,14 +146,6 @@ static void system_off(struct k_work *work)
 			} while ((err == 0) && (state == PM_DEVICE_STATE_ACTIVE));
 		}
 	}
-
-#ifdef CONFIG_SOC_NRF54L15_CPUAPP
-	/* Disable RAM retention in System OFF as it is not utilized by this sample. */
-	uint32_t ram_sections = 8;
-
-	nrf_memconf_ramblock_ret_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
-	nrf_memconf_ramblock_ret2_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
-#endif
 
 	sys_poweroff();
 }
