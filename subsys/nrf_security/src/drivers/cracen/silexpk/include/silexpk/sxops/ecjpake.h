@@ -541,7 +541,7 @@ static inline int sx_ecjpake_gen_sess_key(const struct sx_pk_ecurve *curve,
  * @param[in] x4 Point on the curve
  * @param[in] x3 Point on the curve
  * @param[in] x1 Point on the curve
- * @param[in] x2s (x2 * s) % n [x2 = random, s = password, n = modulus]
+ * @param[in] x2 Ephemeral private key
  * @param[in] s password
  *
  * Truncation or padding should be done by user application
@@ -552,7 +552,7 @@ static inline struct sx_pk_acq_req sx_ecjpake_gen_step_2_go(const struct sx_pk_e
 							    const sx_pk_affine_point *x4,
 							    const sx_pk_affine_point *x3,
 							    const sx_pk_affine_point *x1,
-							    const sx_ecop *x2s, const sx_ecop *s)
+							    const sx_ecop *x2, const sx_ecop *s)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_gen_step_2 inputs;
@@ -572,7 +572,7 @@ static inline struct sx_pk_acq_req sx_ecjpake_gen_step_2_go(const struct sx_pk_e
 	sx_pk_affpt2mem(x4, inputs.x4_1.addr, inputs.x4_2.addr, opsz);
 	sx_pk_affpt2mem(x3, inputs.x3_1.addr, inputs.x3_2.addr, opsz);
 	sx_pk_affpt2mem(x1, inputs.x1_1.addr, inputs.x1_2.addr, opsz);
-	sx_pk_ecop2mem(x2s, inputs.x2s.addr, opsz);
+	sx_pk_ecop2mem(x2, inputs.x2s.addr, opsz);
 	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
 
 	sx_pk_run(pkreq.req);
@@ -591,7 +591,7 @@ static inline struct sx_pk_acq_req sx_ecjpake_gen_step_2_go(const struct sx_pk_e
  * @param[in,out] req The previously acquired acceleration
  * request for this operation
  * @param[out] a Point on the curve
- * @param[out] x2s Generated random * password
+ * @param[out] x2s Ephemeral private key * password
  * @param[out] ga Point on the curve
  */
 static inline void sx_ecjpake_gen_step_2_end(sx_pk_req *req, sx_pk_affine_point *a, sx_ecop *x2s,
@@ -613,17 +613,17 @@ static inline void sx_ecjpake_gen_step_2_end(sx_pk_req *req, sx_pk_affine_point 
  *
  * The step 2 calculation has the following steps:
  *   1. ga = x1 + x3 + x4
- *   2. rx2s = (x2s * s) % curve.n
- *   3. a = ga * rx2s
+ *   2. x2s = (x2 * s) % curve.n
+ *   3. a = ga * x2s
  *
  * @param[in] curve Elliptic curve on which to perform the operation.
  * @param[in] x4 Point on the curve
  * @param[in] x3 Point on the curve
  * @param[in] x1 Point on the curve
- * @param[in] x2s Generated random * password
+ * @param[in] x2 Ephemeral private key
  * @param[in] s Password
  * @param[out] a Point on the curve
- * @param[out] rx2s Generated random * password
+ * @param[out] x2s Ephemeral private key * password
  * @param[out] ga Point on the curve
  *
  * Truncation or padding should be done by user application
@@ -646,21 +646,21 @@ static inline void sx_ecjpake_gen_step_2_end(sx_pk_req *req, sx_pk_affine_point 
  */
 static inline int sx_ecjpake_gen_step_2(const struct sx_pk_ecurve *curve,
 					const sx_pk_affine_point *x4, const sx_pk_affine_point *x3,
-					const sx_pk_affine_point *x1, const sx_ecop *x2s,
-					const sx_ecop *s, sx_pk_affine_point *a, sx_ecop *rx2s,
+					const sx_pk_affine_point *x1, const sx_ecop *x2,
+					const sx_ecop *s, sx_pk_affine_point *a, sx_ecop *x2s,
 					sx_pk_affine_point *ga)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
 
-	pkreq = sx_ecjpake_gen_step_2_go(curve, x4, x3, x1, x2s, s);
+	pkreq = sx_ecjpake_gen_step_2_go(curve, x4, x3, x1, x2, s);
 	if (pkreq.status) {
 		return pkreq.status;
 	}
 
 	status = sx_pk_wait(pkreq.req);
 
-	sx_ecjpake_gen_step_2_end(pkreq.req, a, rx2s, ga);
+	sx_ecjpake_gen_step_2_end(pkreq.req, a, x2s, ga);
 
 	return status;
 }
