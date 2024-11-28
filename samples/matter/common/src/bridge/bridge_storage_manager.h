@@ -247,8 +247,6 @@ private:
 	bool RemoveBtAddress(uint8_t bridgedDeviceIndex);
 #endif
 
-	static constexpr auto kMaxBufferSize = sizeof(MatterBridgedDevice);
-
 	Nrf::PersistentStorageNode mBridge;
 	Nrf::PersistentStorageNode mBridgedDevicesCount;
 	Nrf::PersistentStorageNode mBridgedDevicesIndexes;
