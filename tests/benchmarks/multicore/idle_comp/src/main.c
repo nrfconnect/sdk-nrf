@@ -7,6 +7,7 @@
 #include <zephyr/drivers/comparator.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/pm/device_runtime.h>
 
 static const struct device *test_dev = DEVICE_DT_GET(DT_ALIAS(test_comp));
 static const struct gpio_dt_spec test_pin = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
@@ -24,21 +25,29 @@ int main(void)
 
 	gpio_pin_configure_dt(&test_pin, GPIO_OUTPUT_INACTIVE);
 
+	pm_device_runtime_enable(test_dev);
+	pm_device_runtime_get(test_dev);
+
 	rc = comparator_set_trigger_callback(test_dev, test_callback, NULL);
 	__ASSERT_NO_MSG(rc == 0);
 
 	rc = comparator_set_trigger(test_dev, COMPARATOR_TRIGGER_BOTH_EDGES);
 	__ASSERT_NO_MSG(rc == 0);
-	k_msleep(1000);
 
 	while (1) {
 		counter = 0;
+		k_msleep(200);
 		gpio_pin_set_dt(&test_pin, 1);
-		k_msleep(1000);
+		k_msleep(400);
 		__ASSERT_NO_MSG(counter == 1);
 		gpio_pin_set_dt(&test_pin, 0);
-		k_msleep(1000);
+		k_msleep(400);
 		__ASSERT_NO_MSG(counter == 2);
+		pm_device_runtime_put(test_dev);
+		k_msleep(1000);
+
+		pm_device_runtime_get(test_dev);
+		k_msleep(1);
 	}
 	return 0;
 }
