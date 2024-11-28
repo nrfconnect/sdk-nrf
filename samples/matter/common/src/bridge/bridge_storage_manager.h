@@ -52,7 +52,6 @@ public:
 		  mBridgedDevicesIndexes("brd_ids", strlen("brd_ids"), &mBridge),
 		  mBridgedDevice("brd", strlen("brd"), &mBridge), mVersion("ver", strlen("ver"), &mBridge),
 		  mBridgedDeviceEndpointId("eid", strlen("eid"), &mBridgedDevice),
-		  mBridgedDeviceUniqueID("unique_id", strlen("unique_id"), &mBridgedDevice),
 		  mBridgedDeviceNodeLabel("label", strlen("label"), &mBridgedDevice),
 		  mBridgedDeviceType("type", strlen("type"), &mBridgedDevice)
 #ifdef CONFIG_BRIDGED_DEVICE_BT
@@ -187,28 +186,6 @@ private:
 	bool RemoveBridgedDeviceEndpointId(uint8_t bridgedDeviceIndex);
 
 	/**
-	 * @brief Load bridged device UniqueID from settings
-	 *
-	 * @param uniqueID address of char array to be filled with loaded data
-	 * @param uniqueIDMaxLength maximum size that can be used for UniqueID array
-	 * @param uniqueIDLength reference to the uniqueIDLength object to be filled with size of actually loaded data
-	 * @param bridgedDeviceIndex index describing specific bridged device using given uniqueID
-	 * @return true if key has been loaded successfully
-	 * @return false an error occurred
-	 */
-	bool LoadBridgedDeviceUniqueID(char *uniqueID, size_t uniqueIDMaxLength, size_t &uniqueIDLength,
-				       uint8_t bridgedDeviceIndex);
-
-	/**
-	 * @brief Remove bridged device's UniqueID entry from settings
-	 *
-	 * @param bridgedDeviceIndex index describing specific bridged device's UniqueID to be removed
-	 * @return true if key entry has been removed successfully
-	 * @return false an error occurred
-	 */
-	bool RemoveBridgedDeviceUniqueID(uint8_t bridgedDeviceIndex);
-
-	/**
 	 * @brief Load bridged device node label from settings
 	 *
 	 * @param label address of char array to be filled with loaded data
@@ -281,7 +258,6 @@ private:
 	/* The below fields are deprecated and used only for the migration purposes between the older scheme versions.
 	 */
 	Nrf::PersistentStorageNode mBridgedDeviceEndpointId;
-	Nrf::PersistentStorageNode mBridgedDeviceUniqueID;
 	Nrf::PersistentStorageNode mBridgedDeviceNodeLabel;
 	Nrf::PersistentStorageNode mBridgedDeviceType;
 #ifdef CONFIG_BRIDGED_DEVICE_BT

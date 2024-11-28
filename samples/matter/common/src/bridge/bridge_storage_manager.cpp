@@ -70,11 +70,6 @@ bool BridgeStorageManager::MigrateData()
 					return false;
 				}
 
-				if (!LoadBridgedDeviceUniqueID(device.mUniqueID, sizeof(device.mUniqueID),
-							       device.mUniqueIDLength, i)) {
-					return false;
-				}
-
 				/* Ignore an error, as node label is optional, so it may not be found. */
 				if (!LoadBridgedDeviceNodeLabel(device.mNodeLabel, sizeof(device.mNodeLabel),
 								device.mNodeLabelLength, i)) {
@@ -104,7 +99,6 @@ bool BridgeStorageManager::MigrateData()
 
 				/* Remove all information described using an old scheme. */
 				RemoveBridgedDeviceEndpointId(i);
-				RemoveBridgedDeviceUniqueID(i);
 				RemoveBridgedDeviceNodeLabel(i);
 				RemoveBridgedDeviceType(i);
 
@@ -162,21 +156,6 @@ bool BridgeStorageManager::LoadBridgedDeviceEndpointId(uint16_t &endpointId, uin
 bool BridgeStorageManager::RemoveBridgedDeviceEndpointId(uint8_t bridgedDeviceIndex)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceEndpointId);
-
-	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
-}
-
-bool BridgeStorageManager::LoadBridgedDeviceUniqueID(char *uniqueID, size_t uniqueIDMaxLength, size_t &uniqueIDLength,
-						     uint8_t bridgedDeviceIndex)
-{
-	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceUniqueID);
-
-	return Nrf::GetPersistentStorage().NonSecureLoad(&id, uniqueID, uniqueIDMaxLength, uniqueIDLength);
-}
-
-bool BridgeStorageManager::RemoveBridgedDeviceUniqueID(uint8_t bridgedDeviceIndex)
-{
-	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceUniqueID);
 
 	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
 }
