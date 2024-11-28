@@ -182,7 +182,7 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
+* Added Kconfig options for configuring the MLE child update timeout, child supervision interval, and child supervision check timeout.
 
 Zigbee
 ------

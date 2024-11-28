@@ -16,6 +16,7 @@ The following Matter samples and applications use the low power configuration by
 
 * :ref:`Matter door lock sample <matter_lock_sample>`
 * :ref:`Matter light switch sample <matter_light_switch_sample>`
+* :ref:`Matter smoke CO alarm <matter_smoke_co_alarm_sample>`
 * :ref:`Matter window covering sample <matter_window_covering_sample>`
 * :ref:`Matter weather station application <matter_weather_station_app>`
 
@@ -163,6 +164,18 @@ The SSED uses the Coordinated Sampled Listening (CSL) protocol, which requires e
 Switching the Matter :ref:`ug_matter_device_low_power_icd_modes` and frequently updating polling intervals may result in increasing the device power consumption due to additional exchanges on the Thread protocol layer.
 To avoid this issue, set the :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` and :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` Kconfig options to the same value (for example, ``500``).
 The typical use case that the SSED is best suited for is battery-powered devices that require short response time, such as door locks or window blinds.
+
+Child timeouts configuration
+----------------------------
+
+The device working in a Thread child role uses additional mechanisms for periodically ensuring that the communication with the parent is still possible.
+These mechanisms lead to waking up the device and exchanging the messages with the parent, if the related timeout expires.
+In case of using the SED poll period value greater than any of these timeouts, the device wakes up more often than what is defined by the poll period.
+To ensure that the SED device wakes up exactly at every poll period, set the following Kconfig options to the value greater than the poll period value (for Matter ICD :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`):
+
+* :kconfig:option:`CONFIG_OPENTHREAD_MLE_CHILD_TIMEOUT`
+* :kconfig:option:`CONFIG_OPENTHREAD_CHILD_SUPERVISION_CHECK_TIMEOUT`
+* :kconfig:option:`CONFIG_OPENTHREAD_CHILD_SUPERVISION_INTERVAL`
 
 Matter over Wi-Fi
 =================
