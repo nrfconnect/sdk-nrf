@@ -77,10 +77,12 @@ static inline const char *sx_pk_field_size(const struct sx_pk_ecurve *curve)
 	return curve->params;
 }
 
-/** Return a pointer to the order of the given curve
+/** Return a pointer to the order of the base point of the curve
+ *
+ * This function works only for Weierstrass curves
  *
  * @param[in] curve Initialised curve
- * @return Pointer to the order of the given curve
+ * @return Pointer to the order of the base point of the curve
  */
 static inline const char *sx_pk_curve_order(const struct sx_pk_ecurve *curve)
 {

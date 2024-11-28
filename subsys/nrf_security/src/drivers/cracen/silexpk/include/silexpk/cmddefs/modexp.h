@@ -36,9 +36,7 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_FF_MODEXP;
 
 /** @} */
 
-/** Input slots for ::SX_PK_CMD_MOD_EXP &
- * ::SX_PK_CMD_FF_MODEXP
- */
+/** Input slots for ::SX_PK_CMD_MOD_EXP & ::SX_PK_CMD_FF_MODEXP */
 struct sx_pk_inops_mod_exp {
 	struct sx_pk_slot m;	 /**< Modulus **/
 	struct sx_pk_slot input; /**< Base **/
