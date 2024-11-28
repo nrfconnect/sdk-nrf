@@ -96,15 +96,15 @@ Testing
 #. Corrupt the currently running main application.
    This can be done by overwriting the beginning of the application partition:
 
-.. code-block:: console
+   .. code-block:: console
 
-   nrfutil device x-write --address 0xE0A5000 --value 0xFFFF --serial-port COM7
+      nrfutil device x-write --address 0xE0A5000 --value 0xFFFF --serial-port COM7
 
 #. Reset the device to enter the recovery path:
 
-.. code-block:: console
+   .. code-block:: console
 
-   nrfutil device reset --serial-port COM7
+      nrfutil device reset --serial-port COM7
 
 #. Open the nRF Device Manager app on your mobile phone, and observe the device now advertising itself as *SUIT Recovery*.
 #. Recover the application using the nRF Device Manager app to perform an update, following the process outlined in the :ref:`nrf54h_suit_sample` sample documentation.
