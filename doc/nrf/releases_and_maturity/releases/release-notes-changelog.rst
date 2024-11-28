@@ -231,7 +231,7 @@ Matter Bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Updated the documentation for :ref:`nrf53_audio_app_building` with cross-links and additional information, based on user feedback.
 
 nRF Desktop
 -----------
