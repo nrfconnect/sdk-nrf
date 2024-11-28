@@ -31,7 +31,11 @@ static struct clock_onoff_state m_lfclk_state;
 
 static int32_t m_lfclk_release(void);
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS)
+#define MPSL_LFCLK_REQUEST_WAIT_TIMEOUT_MS CONFIG_CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS
+#else
 #define MPSL_LFCLK_REQUEST_WAIT_TIMEOUT_MS 1000
+#endif /* CONFIG_CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS */
 
 /** @brief LFCLK request callback.
  *
@@ -198,6 +202,106 @@ static bool m_hfclk_is_running(void)
 	return false;
 }
 
+#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+
+/* Temporary macro because there is no system level configuration of LFCLK source and its accuracy
+ * for nRF54H SoC series. What more, there is no API to retrieve the information about accuracy of
+ * available LFCLK.
+ */
+#define MPSL_LFCLK_ACCURACY_PPM 500
+
+static const struct nrf_clock_spec m_lfclk_specs = {
+	.frequency = 32768,
+	.accuracy = MPSL_LFCLK_ACCURACY_PPM,
+	/* This affects selected LFCLK source. It doesn't switch to higher accuracy but selects more
+	 * precise but current hungry lfclk source.
+	 */
+	.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
+};
+
+static void m_lfclk_calibration_start(void)
+{
+	/* This function is not supported when CONFIG_CLOCK_CONTROL_NRF2 is set.
+	 * As of now MPSL does not use this API in this configuration.
+	 */
+	__ASSERT_NO_MSG(false);
+}
+
+static bool m_lfclk_calibration_is_enabled(void)
+{
+	/* This function should not be called from MPSL if CONFIG_CLOCK_CONTROL_NRF2 is set */
+	__ASSERT_NO_MSG(false);
+	return false;
+}
+
+static int32_t m_lfclk_request(void)
+{
+	const struct device *lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
+	int err;
+
+	sys_notify_init_callback(&m_lfclk_state.cli.notify, lfclk_request_cb);
+	k_sem_init(&m_lfclk_state.sem, 0, 1);
+
+	err = nrf_clock_control_request(lfclk_dev, &m_lfclk_specs, &m_lfclk_state.cli);
+	if (err < 0) {
+		return err;
+	}
+
+	atomic_inc(&m_lfclk_state.m_clk_refcnt);
+
+	return 0;
+}
+
+static int32_t m_lfclk_release(void)
+{
+	const struct device *lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
+	int err;
+
+	err = nrf_clock_control_cancel_or_release(lfclk_dev, &m_lfclk_specs, &m_lfclk_state.cli);
+	if (err < 0) {
+		return err;
+	}
+
+	atomic_dec(&m_lfclk_state.m_clk_refcnt);
+
+	return 0;
+}
+
+static void m_hfclk_request(void)
+{
+	if (atomic_inc(&m_hfclk_refcnt) > (atomic_val_t)0) {
+		return;
+	}
+
+	nrf_clock_control_hfxo_request();
+}
+
+static void m_hfclk_release(void)
+{
+	if (atomic_get(&m_hfclk_refcnt) < (atomic_val_t)1) {
+		LOG_WRN("Mismatch between HFCLK request/release");
+		return;
+	}
+
+	if (atomic_dec(&m_hfclk_refcnt) > (atomic_val_t)1) {
+		return;
+	}
+
+	nrf_clock_control_hfxo_release();
+}
+
+static bool m_hfclk_is_running(void)
+{
+	/* As of now assume the HFCLK is running after the request was put.
+	 * This puts the responsibility to the user to check if the time
+	 * since last request is larger than the HFXO rampup time.
+	 */
+	if (atomic_get(&m_hfclk_refcnt) < (atomic_val_t)1) {
+		return false;
+	}
+
+	return true;
+}
 #else
 #error "Unsupported clock control"
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
