@@ -50,7 +50,7 @@ struct sx_ed448_dgst {
 	char bytes[SX_ED448_DGST_SZ];
 };
 
-/** EDDSA point multiplication (ED448)
+/** EdDSA point multiplication (ED448)
  *
  * Compute R = r * G, where r is a scalar which can be up to twice the
  * size of the other operands. G is the generator point for the curve.
@@ -79,9 +79,9 @@ struct sx_ed448_dgst {
  */
 int sx_ed448_ptmult(const struct sx_ed448_dgst *r, struct sx_ed448_pt *pt);
 
-/** Asynchronous EDDSA point multiplication (ED448)
+/** Asynchronous EdDSA point multiplication (ED448)
  *
- * Start an EDDSA point multiplication on the accelerator
+ * Start an EdDSA point multiplication on the accelerator
  * and return immediately.
  *
  * @remark When the operation finishes on the accelerator,
@@ -95,9 +95,9 @@ int sx_ed448_ptmult(const struct sx_ed448_dgst *r, struct sx_ed448_pt *pt);
  */
 struct sx_pk_acq_req sx_async_ed448_ptmult_go(const struct sx_ed448_dgst *r);
 
-/** Collect the result of asynchronous EDDSA point multiplication (ED448)
+/** Collect the result of asynchronous EdDSA point multiplication (ED448)
  *
- * Get the output operands of the EDDSA point multiplication
+ * Get the output operands of the EdDSA point multiplication
  * and release the reserved resources.
  *
  * @pre The operation on the accelerator must be finished before
@@ -111,9 +111,9 @@ struct sx_pk_acq_req sx_async_ed448_ptmult_go(const struct sx_ed448_dgst *r);
  */
 void sx_async_ed448_ptmult_end(sx_pk_req *req, struct sx_ed448_pt *pt);
 
-/** Compute signature scalar s for pure EDDSA (ED448).
+/** Compute signature scalar s for pure EdDSA (ED448).
  *
- * This represents the second step in computing an EDDSA signature.
+ * This represents the second step in computing an EdDSA signature.
  *
  * This step computes sig_s :
  *   sig_s = (r + k * s) % l
@@ -122,7 +122,7 @@ void sx_async_ed448_ptmult_end(sx_pk_req *req, struct sx_ed448_pt *pt);
  * It is interpreted as a scalar with a size double of other operands
  * @param[in] r Secret nonce already used in the first signature step
  * @param[in] s Secret scalar derived from the private key
- * @param[out] sig_s Second part of the EDDSA signature
+ * @param[out] sig_s Second part of the EdDSA signature
  *
  * @return ::SX_OK
  * @return ::SX_ERR_INVALID_PARAM
@@ -140,7 +140,7 @@ void sx_async_ed448_ptmult_end(sx_pk_req *req, struct sx_ed448_pt *pt);
 int sx_ed448_sign(const struct sx_ed448_dgst *k, const struct sx_ed448_dgst *r,
 		  const struct sx_ed448_v *s, struct sx_ed448_v *sig_s);
 
-/** Asynchronous second part signature generation for pure EDDSA (ED448).
+/** Asynchronous second part signature generation for pure EdDSA (ED448).
  *
  * Start an ED448 signature generation on the accelerator
  * and return immediately.
@@ -177,7 +177,7 @@ struct sx_pk_acq_req sx_pk_async_ed448_sign_go(const struct sx_ed448_dgst *k,
  */
 void sx_async_ed448_sign_end(sx_pk_req *req, struct sx_ed448_v *sig_s);
 
-/** Verify an EDDSA signature (ED448)
+/** Verify an EdDSA signature (ED448)
  *
  * It checks if sig_s * G - k * A matches R.
  *

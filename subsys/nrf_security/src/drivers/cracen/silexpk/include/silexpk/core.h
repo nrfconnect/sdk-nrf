@@ -99,8 +99,8 @@ struct sx_pk_acq_req {
 /** Get a SilexPK request instance locked to perform the given operation
  *
  * The returned sx_pk_acq_req structure contains a status and a pointer to
- * a reserved hardware accelerator instance. That pointer is only valid
- * and usable if status is non-zero.
+ * a reserved hardware accelerator instance. The pointer is valid and
+ * usable only if status is ::SX_OK. Otherwise it's NULL.
  *
  * @param[in] cmd The command definition (for example ::SX_PK_CMD_MOD_EXP)
  * @return The acquired acceleration request for this operation

@@ -72,7 +72,7 @@ struct sx_pk_inops_ecjpake_gen_step_2 {
 	struct sx_pk_slot x4_2; /**< Point X4 on the curve, y-coordinate */
 	struct sx_pk_slot x3_1; /**< Point X3 on the curve, x-coordinate */
 	struct sx_pk_slot x3_2; /**< Point X3 on the curve, y-coordinate */
-	struct sx_pk_slot x2s;	/**< Random value * Password */
+	struct sx_pk_slot x2s;  /**< Ephemeral private key (usually called x2) */
 	struct sx_pk_slot x1_1; /**< Point X1 on the curve, x-coordinate */
 	struct sx_pk_slot x1_2; /**< Point X1 on the curve, y-coordinate */
 	struct sx_pk_slot s;	/**< Password */
@@ -84,8 +84,8 @@ struct sx_pk_inops_ecjpake_gen_sess_key {
 	struct sx_pk_slot x4_2; /**< Point X4 on the curve, y-coordinate */
 	struct sx_pk_slot b_1;	/**< Point B on the curve, x-coordinate */
 	struct sx_pk_slot b_2;	/**< Point B on the curve, y-coordinate */
-	struct sx_pk_slot x2;	/**< Random value */
-	struct sx_pk_slot x2s;	/**< Random value * Password */
+	struct sx_pk_slot x2;   /**< Ephemeral private key */
+	struct sx_pk_slot x2s;  /**< Ephemeral private key * password */
 };
 
 #ifdef __cplusplus

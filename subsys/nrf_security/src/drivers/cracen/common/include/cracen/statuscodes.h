@@ -44,8 +44,15 @@
 /** The functionality or operation is not supported */
 #define SX_ERR_NOT_IMPLEMENTED 8
 
+/** An unexpected micro-code instruction (in the PK engine)
+ *
+ * On hardware older than december 2018, this error means a
+ * ::SX_ERR_POINT_AT_INFINITY error
+ */
+#define SX_ERR_INVALID_MICROCODE 9
+
 /** The output operand is a point at infinity */
-#define SX_ERR_POINT_AT_INFINITY 9
+#define SX_ERR_POINT_AT_INFINITY SX_ERR_INVALID_MICROCODE
 
 /** The input value is outside the expected range */
 #define SX_ERR_OUT_OF_RANGE 10
@@ -98,6 +105,11 @@
 
 /** Resources not available for a new operation. Retry later */
 #define SX_ERR_PK_RETRY 19
+
+/** Low-order point during point multiplication
+ *  or check on point order failed
+ */
+#define SX_ERR_BAD_ORDER 20
 
 /** The size passed as part of a request is not valid */
 #define SX_ERR_INVALID_REQ_SZ 100

@@ -20,7 +20,7 @@ struct sx_pk_cmd_def;
  * @{
  */
 
-/** EDDSA point multiplication operation
+/** EdDSA point multiplication operation
  *
  * All operands for this command use a little endian representation.
  * Operands should be decoded and clamped as defined in specifications
@@ -28,7 +28,7 @@ struct sx_pk_cmd_def;
  */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_PTMUL;
 
-/** EDDSA 2nd part of signature operation
+/** EdDSA 2nd part of signature operation
  *
  * All operands for this command use a little endian representation.
  * Operands should be decoded and clamped as defined in specifications
@@ -36,7 +36,7 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_PTMUL;
  */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_SIGN;
 
-/** EDDSA signature verification operation
+/** EdDSA signature verification operation
  *
  * All operands for this command use a little endian representation.
  * Operands should be decoded and clamped as defined in specifications
@@ -77,7 +77,7 @@ struct sx_pk_inops_eddsa_ptmult {
 struct sx_pk_inops_edwards_ptmult {
 	struct sx_pk_slot px;	/**< x-coordinate of custom point **/
 	struct sx_pk_slot py;	/**< y-coordinate of custom point **/
-	struct sx_pk_dblslot r; /**< Scalar **/
+	struct sx_pk_slot r; /**< Scalar **/
 };
 
 #ifdef __cplusplus

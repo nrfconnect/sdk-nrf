@@ -87,6 +87,9 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_ECC_PT_DOUBLE;
 /** Elliptic curve point on curve check */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_ECC_PTONCURVE;
 
+/** Elliptic curve point check order */
+extern const struct sx_pk_cmd_def *const SX_PK_CMD_ECC_CHECK_PT_ORDER;
+
 /** SM2 signature generation operation
  *
  * This operation can be protected with blinding counter measures.
@@ -204,7 +207,7 @@ struct sx_pk_inops_sm2_exchange {
 	struct sx_pk_slot rby; /**< y-coordinate of random value from B **/
 	struct sx_pk_slot cof; /**< Cofactor **/
 	struct sx_pk_slot rax; /**< x-coordinate of random value from A **/
-	struct sx_pk_slot w;   /**< (log2(n)/2)-1, with n the curve order **/
+	struct sx_pk_slot w;   /**< w = 2^[ceil(ceil(log2(n)) / 2) - 1], with n the curve order **/
 };
 
 #ifdef __cplusplus
