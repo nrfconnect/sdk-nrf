@@ -80,13 +80,6 @@ See the following examples of the parameter usage with the command run from the 
 
      python buildprog.py -c app -b debug -d both
 
-* Example 2: The following command builds headset and gateway applications using the script for both the application and the network core (``both``).
-  It builds with the ``release`` application version, with the DFU external flash memory layout enabled, and using the minimal size of the network core bootloader:
-
-  .. code-block:: console
-
-     python buildprog.py -c both -b release -d both -m external -M
-
 The command can be run from any location, as long as the correct path to :file:`buildprog.py` is given.
 
 The build files are saved in the :file:`applications/nrf5340_audio/build` directory.
@@ -117,13 +110,6 @@ Programming with the script
       .. code-block:: console
 
          python buildprog.py -c both -b debug -d both -p --recover_on_fail
-
-   If you want to program firmware that has DFU enabled, you must include the DFU parameters in the command.
-   The command for programming with DFU enabled can look as follows:
-
-   .. code-block:: console
-
-     python buildprog.py -c both -b release -d both -m external -M -p
 
 Getting help
    Run ``python buildprog.py -h`` for information about all available script parameters.
