@@ -54,4 +54,5 @@
 	status = "okay";
 	etrsources = <(NRF_TDDCONF_SOURCE_STMMAINCORE)>;
 	portconfig = <0>;
+	etrbuffer = <&etr_buffer>;
 };
