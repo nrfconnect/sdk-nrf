@@ -47,6 +47,7 @@
 #define REG_HW_PRESENT_BA420 (1u << 11)
 #define REG_HW_PRESENT_BA423 (1u << 12)
 #define REG_HW_PRESENT_BA422 (1u << 13)
+#define REG_HW_PRESENT_BA424 (1u << 14)
 
 #define REG_BA411_CAPS	 0x404
 #define REG_BA411_CTR_SZ 0x408
@@ -63,5 +64,11 @@
 /* Masks HMAC from capabilities register */
 #define REG_BA413_CAPS_HMAC_MASK       (1 << 17)
 #define REG_BA413_CAPS_ALGO_SM3	       (1 << 6)
+
+/* BA418 */
+/* Masks ctxt enable from capabilities register */
+#define REG_BA418_CAPS_CTXT_EN (1 << 0)
+/* Masks HMAC from capabilities register */
+#define REG_BA418_CAPS_HMAC_MASK (1 << 17)
 
 #endif

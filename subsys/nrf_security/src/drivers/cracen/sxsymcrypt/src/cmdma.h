@@ -12,26 +12,23 @@
 #ifndef CMDMA_HEADER_FILE
 #define CMDMA_HEADER_FILE
 
+#define DMATAG_BYPASS	      (0)
 #define DMATAG_BA411	      (1)
 #define DMATAG_BA412	      (2)
 #define DMATAG_BA413	      (3)
 #define DMATAG_BA417	      (4)
 #define DMATAG_BA418	      (5)
-#define DMATAG_AESGCM	      (6)
-#define DMATAG_AESXTS	      (7)
+#define DMATAG_BA415	      (6)
+#define DMATAG_BA416	      (7)
+#define DMATAG_BA421	      (0x0A)
 #define DMATAG_BA419	      (0x0B)
+#define DMATAG_BA423	      (0x0D)
+#define DMATAG_BA422	      (0x0E)
+#define DMATAG_BA424	      (0x0F)
 #define DMATAG_CONFIG(offset) ((1 << 4) | (offset << 8))
 
 /* can be 0, 1 or 2 */
 #define DMATAG_DATATYPE(x)   (x << 6)
-#define DMATAG_CFG_BA415_W   (DMATAG_AESGCM | DMATAG_CONFIG(0))
-#define DMATAG_CFG_BA415_KEY (DMATAG_AESGCM | DMATAG_CONFIG(0x10))
-#define DMATAG_CFG_BA415_IV  (DMATAG_AESGCM | DMATAG_CONFIG(0x30))
-
-#define DMATAG_CFG_BA416_W    (DMATAG_AESXTS | DMATAG_CONFIG(0))
-#define DMATAG_CFG_BA416_IV   (DMATAG_AESXTS | DMATAG_CONFIG(0x10))
-#define DMATAG_CFG_BA416_KEY1 (DMATAG_AESXTS | DMATAG_CONFIG(0x20))
-#define DMATAG_CFG_BA416_KEY2 (DMATAG_AESXTS | DMATAG_CONFIG(0x40))
 
 #define DMATAG_DATATYPE_HEADER	    (1 << 6)
 #define DMATAG_DATATYPE_REFERENCE   (3 << 6)
@@ -41,11 +38,14 @@
 #define DMATAG_IGN(sz)		    ((sz) << DMATAG_INVALID_BYTES_OFFSET)
 
 #define DMA_LAST_DESCRIPTOR ((struct sxdesc *)1)
+#define DMA_CONST_ADDR	    (1 << 28)
 #define DMA_REALIGN	    (1 << 29)
 #define DMA_DISCARD	    (1 << 30)
 
 #define DMA_BUS_FETCHER_ERROR_MASK (1 << 2)
 #define DMA_BUS_PUSHER_ERROR_MASK  (1 << 5)
+
+#define UPDATE_LASTDESC_TAG(dmactl, tag) ((dmactl).d - 1)->dmatag |= tag
 
 #define ADD_CFGDESC(dmactl, baddr, bsz, tag)                                                       \
 	do {                                                                                       \
@@ -106,50 +106,52 @@
 		(dmactl).d++;                                                                      \
 	} while (0)
 
-#define SET_LAST_DESC_IGN(d, bsz, msk)                                                             \
+#define ADD_INDESC_BITS(dmactl, baddr, bsz, tag, msk, bitsz)\
+	do {\
+		size_t bitmask = (msk << 3) | 0x7;\
+		size_t validbitsz = bitsz & bitmask;\
+		if (validbitsz == 0)\
+			validbitsz = bitmask + 1;\
+		uint32_t asz = ALIGN_SZA(bsz, msk);\
+		(dmactl).d->addr = sx_map_usrdatain((char *)(baddr), bsz);\
+		(dmactl).d->sz = asz | DMA_REALIGN;\
+		(dmactl).d->dmatag = tag | DMATAG_IGN((validbitsz - 1)); \
+		(dmactl).d++;\
+	} while (0)
+
+#define SET_LAST_DESC_IGN(dmactl, bsz, msk)                                                        \
 	do {                                                                                       \
 		size_t ign = ALIGN_SZA(bsz, msk) - bsz;                                            \
-		(d)->dmatag |= DMATAG_IGN(ign);                                                    \
-		(d)->sz = ((d)->sz + ign) | DMA_REALIGN;                                           \
+		((dmactl).d - 1)->dmatag |= DMATAG_IGN(ign);                                       \
+		((dmactl).d - 1)->sz = (((dmactl).d - 1)->sz + ign) | DMA_REALIGN;                 \
 	} while (0)
 
-#define ADD_DISCARDDESC(d, bsz)                                                                    \
+#define WR_OUTDESC(dmactl, p, bsz)                                                                 \
 	do {                                                                                       \
-		d->addr = 0;                                                                       \
-		d->sz = (uint32_t)(bsz) | DMA_DISCARD;                                             \
-		d++;                                                                               \
+		(dmactl).out->addr = (p);                                                          \
+		(dmactl).out->sz = (bsz);                                                          \
+		(dmactl).out++;                                                                    \
 	} while (0)
 
-#define ADD_OUTDESCA(d, baddr, bsz, msk)                                                           \
-	do {                                                                                       \
-		uint32_t asz = ALIGN_SZA(bsz, msk);                                                \
-		d->addr = (char *)(baddr);                                                         \
-		d->sz = (uint32_t)bsz;                                                             \
-		d++;                                                                               \
-		if (asz - (bsz))                                                                   \
-			ADD_DISCARDDESC(d, (asz - (bsz)));                                         \
-	} while (0)
+#define ADD_DISCARDDESC(dmactl, bsz) WR_OUTDESC(dmactl, 0, (uint32_t)(bsz) | DMA_DISCARD)
 
-#define ADD_OUTDESC_PRIV(dmactl, d, offset, bsz, msk)                                              \
+#define ADD_OUTDESCA(dmactl, baddr, bsz, msk)                                                      \
 	do {                                                                                       \
 		uint32_t asz = ALIGN_SZA(bsz, msk);                                                \
-		d->addr = dmactl.mapped + offset;                                                  \
-		d->sz = (uint32_t)(bsz);                                                           \
-		d++;                                                                               \
+		WR_OUTDESC(dmactl, (char *)(baddr), bsz);                                          \
 		if (asz - (bsz))                                                                   \
-			ADD_DISCARDDESC(d, (asz - (bsz)));                                         \
+			ADD_DISCARDDESC(dmactl, (asz - (bsz)));                                    \
 	} while (0)
 
-#define ALIGN_SZ(sz)		       ALIGN_SZA(sz, 0xf)
-#define ADD_INDESC(d, baddr, bsz, tag) ADD_INDESCA(d, baddr, bsz, tag, 0xf)
-#define ADD_OUTDESC(d, baddr, bsz)     ADD_OUTDESCA(d, baddr, bsz, 0xf)
+#define ADD_OUTDESC_PRIV(dmactl, offset, bsz, msk)                                                 \
+	do {                                                                                       \
+		uint32_t asz = ALIGN_SZA(bsz, msk);                                                \
+		WR_OUTDESC(dmactl, (dmactl).mapped + offset, bsz);                                 \
+		if (asz - (bsz))                                                                   \
+			ADD_DISCARDDESC(dmactl, (asz - (bsz)));                                    \
+	} while (0)
 
 #define DMA_SZ_MASK (0xFFFFFF)
-
-#define DESC_SZ(desc)	 (size_t)((desc)->sz & DMA_SZ_MASK)
-#define CFGDESC_SZ(desc) DESC_SZ(desc)
-#define INDESC_SZ(desc)	 (DESC_SZ(desc) - ((desc)->dmatag >> 8))
-#define OUTDESC_SZ(desc) DESC_SZ(desc)
 
 #define DMA_MAX_SZ (1u << 24)
 
@@ -160,15 +162,6 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
 
 /** Start input/fetcher DMA at indescs and output/pusher DMA at outdescs */
 void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs);
-
-/** Final preparation of array of descriptors before sx_cmdma_start()
- *
- * The array of descriptors begins at 'start' and ends at 'end'. Each
- * descriptor in the array will be linked to the next one in the array.
- * The last descriptor will have the 'last' dma tag and 'stop' instead
- * of a next descriptor.
- */
-void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end);
 
 /** Return how the DMA is doing.
  *

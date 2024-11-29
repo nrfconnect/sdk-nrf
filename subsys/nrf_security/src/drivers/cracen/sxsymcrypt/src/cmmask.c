@@ -14,27 +14,23 @@
 int sx_cm_load_mask(uint32_t csprng_value)
 {
 	int r;
-	struct sxdesc *out;
-	struct sxcmmask cmmask;
+	struct sxchannel channel;
 
 	/* This is a special case where "cfg" is used to transmit the random
 	 * value instead of a command word.
 	 */
-	sx_cmdma_newcmd(&cmmask.dma, cmmask.allindescs, csprng_value,
+	sx_cmdma_newcmd(&channel.dma, channel.descs, csprng_value,
 			DMATAG_BA411 | DMATAG_CONFIG(0x68));
-	sx_cmdma_finalize_descs(cmmask.allindescs, cmmask.dma.d - 1);
 
-	out = cmmask.dma.dmamem.outdescs;
-	ADD_OUTDESC(out, NULL, 0);
-	sx_cmdma_finalize_descs(cmmask.dma.dmamem.outdescs, out - 1);
+	ADD_OUTDESCA(channel.dma, NULL, 0, 0xf);
 
-	sx_cmdma_start(&cmmask.dma, sizeof(cmmask.allindescs), cmmask.allindescs);
+	sx_cmdma_start(&channel.dma, sizeof(channel.descs), channel.descs);
 
 	r = SX_ERR_HW_PROCESSING;
 	while (r == SX_ERR_HW_PROCESSING) {
 		r = sx_cmdma_check();
 	}
 
-	safe_memzero(&cmmask, sizeof(cmmask));
+	safe_memzero(&channel, sizeof(channel));
 	return r;
 }

@@ -17,7 +17,7 @@
 /* Used for checking if \p k is user provided key */
 #define KEYREF_IS_USR(k) ((k)->cfg == 0)
 
-/** BA411E-AES Config register -> KeySel[1:0] = [7:6], KeySel[4:2] = [30:28] */
-#define KEYREF_BA411E_HWKEY_CONF(index) ((((index)&0x3) << 6) | ((((index) >> 2) & 0x7) << 28))
+/* BA411E-AES and BA415-AES GCM HP Config register -> KeySel[1:0] = [7:6], KeySel[4:2] = [30:28] */
+#define KEYREF_AES_HWKEY_CONF(index) ((((index) & 0x3) << 6) | ((((index) >> 2) & 0x7) << 28))
 
 #endif

@@ -33,9 +33,15 @@ extern const struct sxhashalg sxhashalg_sha2_256;
 extern const struct sxhashalg sxhashalg_sha2_384;
 extern const struct sxhashalg sxhashalg_sha2_512;
 extern const struct sxhashalg sxhashalg_sm3;
+extern const struct sxhashalg sxhashalg_sha3_224;
+extern const struct sxhashalg sxhashalg_sha3_256;
+extern const struct sxhashalg sxhashalg_sha3_384;
+extern const struct sxhashalg sxhashalg_sha3_512;
 
 #define CMDMA_BA413_BUS_MSK 3
 #define HASH_INVALID_BYTES  4 /* number of invalid bytes when empty message, required by HW */
-#define OFFSET_EXTRAMEM(c)  (sizeof((c)->dma.dmamem) + sizeof((c)->allindescs))
+#define OFFSET_EXTRAMEM(c)  (sizeof((c)->dma.dmamem) + sizeof((c)->descs))
+
+#define CMDMA_BA418_BUS_MSK (3)
 
 #endif

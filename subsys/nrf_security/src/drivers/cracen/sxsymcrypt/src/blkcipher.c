@@ -22,6 +22,9 @@
 /** Mode Register value for context saving */
 #define BLKCIPHER_MODEID_CTX_SAVE (1u << 5)
 
+/** AES block cipher context saving state size, in bytes */
+#define AES_BLKCIPHER_STATE_SZ (16)
+
 static const struct sx_blkcipher_cmdma_tags ba411tags = {.cfg = DMATAG_BA411 | DMATAG_CONFIG(0),
 							 .iv_or_state =
 								 DMATAG_BA411 | DMATAG_CONFIG(0x28),
@@ -29,10 +32,50 @@ static const struct sx_blkcipher_cmdma_tags ba411tags = {.cfg = DMATAG_BA411 | D
 							 .key2 = DMATAG_BA411 | DMATAG_CONFIG(0x48),
 							 .data = DMATAG_BA411};
 
-static const struct sx_blkcipher_cmdma_cfg ba411cfg = {
-	.encr = 0,
+static const struct sx_blkcipher_cmdma_cfg ba411ecbcfg = {
 	.decr = CM_CFG_DECRYPT,
 	.dmatags = &ba411tags,
+	.statesz = 0,
+	.mode = BLKCIPHER_MODEID_ECB,
+	.inminsz = 16,
+	.granularity = 16,
+	.blocksz = BLKCIPHER_BLOCK_SZ,
+};
+
+static const struct sx_blkcipher_cmdma_cfg ba411cbccfg = {
+	.decr = CM_CFG_DECRYPT,
+	.ctxsave = BLKCIPHER_MODEID_CTX_SAVE,
+	.ctxload = BLKCIPHER_MODEID_CTX_LOAD,
+	.dmatags = &ba411tags,
+	.statesz = AES_BLKCIPHER_STATE_SZ,
+	.mode = BLKCIPHER_MODEID_CBC,
+	.inminsz = 16,
+	.granularity = 16,
+	.blocksz = BLKCIPHER_BLOCK_SZ,
+};
+
+static const struct sx_blkcipher_cmdma_cfg ba411ctrcfg = {
+	.decr = CM_CFG_DECRYPT,
+	.ctxsave = BLKCIPHER_MODEID_CTX_SAVE,
+	.ctxload = BLKCIPHER_MODEID_CTX_LOAD,
+	.dmatags = &ba411tags,
+	.statesz = AES_BLKCIPHER_STATE_SZ,
+	.mode = BLKCIPHER_MODEID_CTR,
+	.inminsz = 1,
+	.granularity = 1,
+	.blocksz = BLKCIPHER_BLOCK_SZ,
+};
+
+static const struct sx_blkcipher_cmdma_cfg ba411xtscfg = {
+	.decr = CM_CFG_DECRYPT,
+	.ctxsave = BLKCIPHER_MODEID_CTX_SAVE,
+	.ctxload = BLKCIPHER_MODEID_CTX_LOAD,
+	.dmatags = &ba411tags,
+	.statesz = AES_BLKCIPHER_STATE_SZ,
+	.mode = BLKCIPHER_MODEID_XTS,
+	.inminsz = 16,
+	.granularity = 1,
+	.blocksz = BLKCIPHER_BLOCK_SZ,
 };
 
 void sx_blkcipher_free(struct sxblkcipher *c)
@@ -43,23 +86,6 @@ void sx_blkcipher_free(struct sxblkcipher *c)
 	sx_cmdma_release_hw(&c->dma);
 }
 
-static uint32_t get_blkcipher_ctx_load(uint32_t mode)
-{
-	if (mode == BLKCIPHER_MODEID_CHACH20) {
-		return BA417_MODEID_CTX_LOAD;
-	} else {
-		return BLKCIPHER_MODEID_CTX_LOAD;
-	}
-}
-
-static uint32_t get_blkcipher_ctx_save(uint32_t mode)
-{
-	if (mode == BLKCIPHER_MODEID_CHACH20) {
-		return BA417_MODEID_CTX_SAVE;
-	} else {
-		return BLKCIPHER_MODEID_CTX_SAVE;
-	}
-}
 
 static int sx_blkcipher_hw_reserve(struct sxblkcipher *c)
 {
@@ -119,22 +145,18 @@ static int sx_blkcipher_create_aesxts(struct sxblkcipher *c, const struct sxkeyr
 		return err;
 	}
 
-	c->cfg = &ba411cfg;
+	c->cfg = &ba411xtscfg;
 	mode = CMDMA_BLKCIPHER_MODE_SET(BLKCIPHER_MODEID_XTS);
 	keyszfld = 0;
 
-	sx_cmdma_newcmd(&c->dma, c->allindescs,
-			KEYREF_BA411E_HWKEY_CONF(key1->cfg) | mode | keyszfld,
+	sx_cmdma_newcmd(&c->dma, c->descs,
+			KEYREF_AES_HWKEY_CONF(key1->cfg) | mode | keyszfld,
 			c->cfg->dmatags->cfg);
-	c->inminsz = 16;
-	c->granularity = 1;
 	if (KEYREF_IS_USR(key1)) {
 		ADD_CFGDESC(c->dma, key1->key, key1->sz, c->cfg->dmatags->key);
 		ADD_CFGDESC(c->dma, key2->key, key2->sz, c->cfg->dmatags->key2);
 	}
 	ADD_CFGDESC(c->dma, iv, 16, c->cfg->dmatags->iv_or_state);
-
-	c->mode = BLKCIPHER_MODEID_XTS;
 
 	return SX_OK;
 }
@@ -149,7 +171,7 @@ int sx_blkcipher_create_aesxts_enc(struct sxblkcipher *c, const struct sxkeyref 
 		return r;
 	}
 
-	c->dma.dmamem.cfg |= c->cfg->encr;
+	c->dma.dmamem.cfg |= CM_CFG_ENCRYPT;
 
 	return SX_OK;
 }
@@ -170,7 +192,8 @@ int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *c, const struct sxkeyref 
 }
 
 static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *c, const struct sxkeyref *key,
-					 const char *iv, const uint32_t mode, const uint32_t dir)
+					 const char *iv, const struct sx_blkcipher_cmdma_cfg *cfg,
+					 const uint32_t dir)
 {
 	int err;
 
@@ -184,16 +207,16 @@ static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *c, const struct sxk
 	}
 
 	memcpy(&c->key, key, sizeof(c->key));
-	c->cfg = &ba411cfg;
-	c->mode = mode;
+	c->cfg = cfg;
+	c->textsz = 0;
 
 	err = sx_blkcipher_hw_reserve(c);
 	if (err != SX_OK) {
 		return err;
 	}
 
-	sx_cmdma_newcmd(&c->dma, c->allindescs,
-			CMDMA_BLKCIPHER_MODE_SET(mode) | KEYREF_BA411E_HWKEY_CONF(key->cfg) | dir,
+	sx_cmdma_newcmd(&c->dma, c->descs,
+			CMDMA_BLKCIPHER_MODE_SET(cfg->mode) | KEYREF_AES_HWKEY_CONF(key->cfg) | dir,
 			c->cfg->dmatags->cfg);
 	if (KEYREF_IS_USR(key)) {
 		ADD_CFGDESC(c->dma, key->key, key->sz, c->cfg->dmatags->key);
@@ -208,48 +231,36 @@ static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *c, const struct sxk
 int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *c, const struct sxkeyref *key,
 				   const char *iv)
 {
-	c->inminsz = 1;
-	c->granularity = 1;
-	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CTR, ba411cfg.encr);
+	return sx_blkcipher_create_aes_ba411(c, key, iv, &ba411ctrcfg, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *c, const struct sxkeyref *key,
 				   const char *iv)
 {
-	c->inminsz = 1;
-	c->granularity = 1;
-	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CTR, ba411cfg.decr);
+	return sx_blkcipher_create_aes_ba411(c, key, iv, &ba411ctrcfg, ba411ctrcfg.decr);
 }
 
 int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *c, const struct sxkeyref *key
 				   )
 {
-	c->inminsz = 16;
-	c->granularity = 16;
-	return sx_blkcipher_create_aes_ba411(c, key, NULL, BLKCIPHER_MODEID_ECB, ba411cfg.encr);
+	return sx_blkcipher_create_aes_ba411(c, key, NULL, &ba411ecbcfg, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_aesecb_dec(struct sxblkcipher *c, const struct sxkeyref *key)
 {
-	c->inminsz = 16;
-	c->granularity = 16;
-	return sx_blkcipher_create_aes_ba411(c, key, NULL, BLKCIPHER_MODEID_ECB, ba411cfg.decr);
+	return sx_blkcipher_create_aes_ba411(c, key, NULL, &ba411ecbcfg, ba411ecbcfg.decr);
 }
 
 int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *c, const struct sxkeyref *key,
 				   const char *iv)
 {
-	c->inminsz = 16;
-	c->granularity = 16;
-	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CBC, ba411cfg.encr);
+	return sx_blkcipher_create_aes_ba411(c, key, iv, &ba411cbccfg, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *c, const struct sxkeyref *key,
 				   const char *iv)
 {
-	c->inminsz = 16;
-	c->granularity = 16;
-	return sx_blkcipher_create_aes_ba411(c, key, iv, BLKCIPHER_MODEID_CBC, ba411cfg.decr);
+	return sx_blkcipher_create_aes_ba411(c, key, iv, &ba411cbccfg, ba411cbccfg.decr);
 }
 
 int sx_blkcipher_crypt(struct sxblkcipher *c, const char *datain, size_t sz, char *dataout)
@@ -262,44 +273,33 @@ int sx_blkcipher_crypt(struct sxblkcipher *c, const char *datain, size_t sz, cha
 		return SX_ERR_TOO_BIG;
 	}
 
-	c->dma.out = c->dma.dmamem.outdescs;
-
-	ADD_INDESC(c->dma, datain, sz, c->cfg->dmatags->data);
-	ADD_OUTDESC(c->dma.out, dataout, sz);
+	c->textsz += sz;
+	ADD_INDESCA(c->dma, datain, sz, c->cfg->dmatags->data, 0xf);
+	ADD_OUTDESCA(c->dma, dataout, sz, 0xf);
 
 	return SX_OK;
 }
 
 int sx_blkcipher_run(struct sxblkcipher *c)
 {
-	uint32_t sz;
-
 	if (!c->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	/* at this moment we have only one descriptor that holds the message to
-	 * be processed, therefore, it is the last one
-	 */
-	sz = INDESC_SZ(c->dma.d - 1);
-
-	if (sz < c->inminsz) {
+	if (c->textsz < c->cfg->inminsz) {
 		sx_blkcipher_free(c);
 		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 	}
-	if (sz % c->granularity) {
+	if (c->textsz % c->cfg->granularity) {
 		sx_blkcipher_free(c);
 		return SX_ERR_WRONG_SIZE_GRANULARITY;
 	}
 
-	if (c->dma.dmamem.cfg & get_blkcipher_ctx_save(c->mode)) {
-		c->dma.dmamem.cfg &= ~(get_blkcipher_ctx_save(c->mode));
+	if (c->dma.dmamem.cfg & c->cfg->ctxsave) {
+		c->dma.dmamem.cfg &= ~c->cfg->ctxsave;
 	}
 
-	sx_cmdma_finalize_descs(c->allindescs, c->dma.d - 1);
-	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, c->dma.out - 1);
-
-	sx_cmdma_start(&c->dma, sizeof(c->allindescs) + sizeof(c->extramem), c->allindescs);
+	sx_cmdma_start(&c->dma, sizeof(c->descs) + sizeof(c->extramem), c->descs);
 
 	return SX_OK;
 }
@@ -312,7 +312,7 @@ int sx_blkcipher_resume_state(struct sxblkcipher *c)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	if (c->mode == BLKCIPHER_MODEID_ECB) {
+	if (c->cfg->statesz == 0) {
 		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
 	}
 
@@ -321,8 +321,8 @@ int sx_blkcipher_resume_state(struct sxblkcipher *c)
 		return err;
 	}
 
-	c->dma.dmamem.cfg &= ~(get_blkcipher_ctx_save(c->mode));
-	sx_cmdma_newcmd(&c->dma, c->allindescs, c->dma.dmamem.cfg, c->cfg->dmatags->cfg);
+	c->dma.dmamem.cfg &= ~(c->cfg->ctxsave);
+	sx_cmdma_newcmd(&c->dma, c->descs, c->dma.dmamem.cfg, c->cfg->dmatags->cfg);
 	if (KEYREF_IS_USR(&c->key)) {
 		ADD_CFGDESC(c->dma, c->key.key, c->key.sz, c->cfg->dmatags->key);
 	}
@@ -332,46 +332,37 @@ int sx_blkcipher_resume_state(struct sxblkcipher *c)
 	 */
 	ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), 16, c->cfg->dmatags->iv_or_state);
 
-	c->dma.dmamem.cfg |= get_blkcipher_ctx_load(c->mode);
+	c->dma.dmamem.cfg |= c->cfg->ctxload;
+	c->textsz = 0;
 
 	return SX_OK;
 }
 
 int sx_blkcipher_save_state(struct sxblkcipher *c)
 {
-	uint32_t sz;
-
 	if (!c->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	if (c->mode == BLKCIPHER_MODEID_ECB) {
+	if (c->cfg->statesz == 0) {
 		sx_blkcipher_free(c);
 		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
 	}
 
-	/* at this moment we have only one descriptor that holds the message to
-	 * be processed, therefore, it is the last one
-	 */
-	sz = INDESC_SZ(c->dma.d - 1);
-
-	if (sz < BLKCIPHER_BLOCK_SZ) {
+	if (c->textsz < c->cfg->blocksz) {
 		sx_blkcipher_free(c);
 		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 	}
-	if (sz % BLKCIPHER_BLOCK_SZ) {
+	if (c->textsz & (c->cfg->blocksz - 1)) {
 		sx_blkcipher_free(c);
 		return SX_ERR_WRONG_SIZE_GRANULARITY;
 	}
 
-	c->dma.dmamem.cfg |= get_blkcipher_ctx_save(c->mode);
+	c->dma.dmamem.cfg |= c->cfg->ctxsave;
 
-	ADD_OUTDESC_PRIV(c->dma, c->dma.out, OFFSET_EXTRAMEM(c), 16, 0x0F);
+	ADD_OUTDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), 16, 0x0F);
 
-	sx_cmdma_finalize_descs(c->allindescs, c->dma.d - 1);
-	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, c->dma.out - 1);
-
-	sx_cmdma_start(&c->dma, sizeof(c->allindescs) + sizeof(c->extramem), c->allindescs);
+	sx_cmdma_start(&c->dma, sizeof(c->descs) + sizeof(c->extramem), c->descs);
 
 	return SX_OK;
 }
