@@ -16,6 +16,10 @@ tests:
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63566
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
   sample.sensor.accel_polling.nrf54h_cpuppr:
@@ -30,6 +34,10 @@ tests:
     extra_args:
       - accel_polling_SHIELD=pca63566
       - vpr_launcher_SHIELD=pca63566_fwd
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54h20dk/nrf54h20/cpuppr
 
   sample.sensor.accel_polling.nrf54h_coverage:
@@ -42,6 +50,10 @@ tests:
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63566;coverage_support
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
   sample.sensor.accel_polling.nrf54l:
@@ -54,6 +66,10 @@ tests:
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
   sample.sensor.accel_polling.nrf54l_coverage:
@@ -66,6 +82,10 @@ tests:
            \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565;coverage_support
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
   sample.sensor.accel_polling.nrf54l15_cpuflpr:
@@ -80,4 +100,8 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
