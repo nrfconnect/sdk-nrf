@@ -13,12 +13,17 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/ConcreteAttributePath.h>
 
+#ifdef CONFIG_CHIP_ICD_DSLS_SUPPORT
+#include <app/icd/server/ICDNotifier.h>
+#endif
+
 #include <lib/support/logging/CHIPLogging.h>
 
 using namespace ::chip;
 using namespace ::chip::app;
 using namespace ::chip::app::Clusters;
 
+#ifdef CONFIG_CHIP_ICD_DSLS_SUPPORT
 void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &attributePath, uint8_t type,
 				       uint16_t size, uint8_t *value)
 {
@@ -39,15 +44,37 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 
 		if (state == PowerSource::PowerSourceStatusEnum::kActive) {
 			/* Wired source is active, we can switch into the SIT mode. */
-			/* TODO: Add requesting mode update once it will be implemented in the ICDManager. */
-            ChipLogProgress(Zcl, "Wired power source was activated, moving into the ICD SIT mode.");
+			chip::DeviceLayer::PlatformMgr().ScheduleWork(
+				[](intptr_t arg) {
+					chip::app::ICDNotifier::GetInstance().NotifySITModeRequestNotification();
+				},
+				0);
+			ChipLogProgress(Zcl, "Wired power source was activated, moving into the ICD SIT mode.");
 		} else {
 			/* Wired source is inactive, so we need to change mode into LIT to save power. */
-			/* TODO: Add requesting mode update once it will be implemented in the ICDManager. */
-            ChipLogProgress(Zcl, "Wired power source was deactivated, moving into the ICD LIT mode.");
+			chip::DeviceLayer::PlatformMgr().ScheduleWork(
+				[](intptr_t arg) {
+					chip::app::ICDNotifier::GetInstance().NotifySITModeRequestWithdrawal();
+				},
+				0);
+			ChipLogProgress(Zcl, "Wired power source was deactivated, moving into the ICD LIT mode.");
 		}
 	}
 }
+
+void emberAfPowerSourceClusterInitCallback(EndpointId endpoint)
+{
+	Clusters::PowerSource::PowerSourceStatusEnum wiredPowerSourceState;
+	Clusters::PowerSource::Attributes::Status::Get(AppTask::Instance().kWiredPowerSourceEndpointId, &wiredPowerSourceState);
+
+	if (wiredPowerSourceState == Clusters::PowerSource::PowerSourceStatusEnum::kActive) {
+		/* Request switching to SIT, as soon as it's possible. */
+		chip::DeviceLayer::PlatformMgr().ScheduleWork(
+			[](intptr_t arg) { chip::app::ICDNotifier::GetInstance().NotifySITModeRequestNotification(); },
+			0);
+	}
+}
+#endif /* CONFIG_CHIP_ICD_DSLS_SUPPORT */
 
 void emberAfPluginSmokeCoAlarmSelfTestRequestCommand(EndpointId endpointId)
 {

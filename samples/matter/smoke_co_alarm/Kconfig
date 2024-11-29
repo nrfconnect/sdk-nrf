@@ -19,6 +19,9 @@ config CHIP_ENABLE_ICD_SUPPORT
 config CHIP_ICD_LIT_SUPPORT
 	default y
 
+config CHIP_ICD_SIT_SLOW_POLL_LIMIT
+	default 5000
+
 # Increase the supported event triggers due to the multiple alarm triggers
 config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX
 	default 12

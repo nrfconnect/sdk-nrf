@@ -119,6 +119,11 @@ To configure the LIT, CIP, UAT or DSLS, use the following Kconfig options:
   The DSLS support allows the application to dynamically switch between SIT and LIT modes, as long as the requirements for these modes are met.
   This option is by default disabled for the LIT device.
 
+You can enable optional reporting on entering the active mode.
+When enabled, the device sends a data report to the subscribed devices.
+This could be useful especially in the combination with the User Active Mode Trigger (UAT) feature, to inform the subscribed Matter controller that the user triggered an ICD to enter the active mode.
+To enable this functionality, set the :kconfig:option:`CONFIG_CHIP_ICD_REPORT_ON_ACTIVE_MODE` Kconfig option to ``y``.
+
 Enable low power mode for the selected networking technology
 ************************************************************
 
