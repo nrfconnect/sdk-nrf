@@ -235,8 +235,8 @@ int bl_sha512_verify(const uint8_t *data, uint32_t data_len, const uint8_t *expe
  *
  * @param[in]  hash        The hash to validate against.
  * @param[in]  hash_len    The length of the hash.
- * @param[in]  signature   The signature to validate.
  * @param[in]  public_key  The public key to validate with.
+ * @param[in]  signature   The signature to validate.
  *
  * @retval 0         The operation succeeded and the signature is valid for the
  *                   hash.
@@ -245,15 +245,15 @@ int bl_sha512_verify(const uint8_t *data, uint32_t data_len, const uint8_t *expe
  */
 int bl_secp256r1_validate(const uint8_t *hash,
 			  uint32_t hash_len,
-			  const uint8_t *signature,
-			  const uint8_t *public_key);
+			  const uint8_t *public_key,
+			  const uint8_t *signature);
 
 /* Typedef for use in EXT_API declaration */
 typedef int (*bl_secp256r1_validate_t)(
 			  const uint8_t *hash,
 			  uint32_t hash_len,
-			  const uint8_t *signature,
-			  const uint8_t *public_key);
+			  const uint8_t *public_key,
+			  const uint8_t *signature);
 
 /**
  * @brief Validate an ed25519 signature.
