@@ -21,12 +21,15 @@
 #define SX_CHACHAPOLY_KEY_SZ		 32u
 #define SX_CHACHAPOLY_TAG_SIZE		 16u
 #define SX_CHACHAPOLY_CTX_GRANULARITY_SZ 64u
+#define SX_CHACHAPOLY_BLOCK_SZ 64u
 
 /** Size of ChaCha20Poly1305 context saving state, in bytes
  * The ChaCha20Poly1305 context saving state is made of ChaCha20 state(first 16
  * bytes) and Poly1305(next 32 bytes).
  */
 #define CHACHAPOLY_CTX_STATE_SZ (16 + 32)
+
+#define CHACHA20_CTX_STATE_SZ (16)
 
 /** Mode Register value for context loading */
 #define CHACHAPOLY_MODEID_CTX_LOAD (BA417_MODEID_CTX_LOAD)
@@ -46,12 +49,11 @@ static const struct sx_aead_cmdma_tags ba417aeadtags = {
 	.iv_or_state = DMATAG_BA417 | DMATAG_CONFIG(0x28),
 	.nonce = DMATAG_BA417 | DMATAG_CONFIG(0x2C),
 	.aad = DMATAG_BA417 | DMATAG_DATATYPE_HEADER,
-	.tag = 0,
+	.tag = DMATAG_BA417,
 	.data = DMATAG_BA417,
 };
 
 static const struct sx_aead_cmdma_cfg ba417chachapolycfg = {
-	.encr = 0,
 	.decr = CM_CFG_DECRYPT << 2,
 	.mode = BA417_MODE_CHACHA20POLY1305,
 	.dmatags = &ba417aeadtags,
@@ -60,20 +62,27 @@ static const struct sx_aead_cmdma_cfg ba417chachapolycfg = {
 	.ctxsave = CHACHAPOLY_MODEID_CTX_SAVE,
 	.ctxload = CHACHAPOLY_MODEID_CTX_LOAD,
 	.granularity = SX_CHACHAPOLY_CTX_GRANULARITY_SZ,
-	.ctxsz = CHACHAPOLY_CTX_STATE_SZ};
+	.statesz = CHACHAPOLY_CTX_STATE_SZ,
+	.inputminsz = 0,
+};
 
-static const struct sx_blkcipher_cmdma_tags ba417chacha20tags = {
+static const struct sx_blkcipher_cmdma_tags ba417blkciphertags = {
 	.cfg = DMATAG_BA417 | DMATAG_CONFIG(0x00),
 	.key = DMATAG_BA417 | DMATAG_CONFIG(0x04),
-	.key2 = 0,
 	.iv_or_state = DMATAG_BA417 | DMATAG_CONFIG(0x28),
 	.data = DMATAG_BA417,
 };
 
 static const struct sx_blkcipher_cmdma_cfg ba417chacha20cfg = {
-	.encr = 0,
 	.decr = CM_CFG_DECRYPT << 2,
-	.dmatags = &ba417chacha20tags,
+	.ctxsave = CHACHAPOLY_MODEID_CTX_SAVE,
+	.ctxload = CHACHAPOLY_MODEID_CTX_LOAD,
+	.dmatags = &ba417blkciphertags,
+	.statesz = CHACHA20_CTX_STATE_SZ,
+	.mode = 0x01,
+	.inminsz = 1,
+	.granularity = 1,
+	.blocksz = SX_CHACHAPOLY_BLOCK_SZ,
 };
 
 static int lenAlenC_chachapoly(size_t aadsz, size_t datasz, uint8_t *out)
@@ -104,7 +113,7 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyr
 	sx_hw_reserve(&c->dma);
 	c->cfg = &ba417chachapolycfg;
 
-	sx_cmdma_newcmd(&c->dma, c->allindescs, c->cfg->mode | dir, c->cfg->dmatags->cfg);
+	sx_cmdma_newcmd(&c->dma, c->descs, c->cfg->mode | dir, c->cfg->dmatags->cfg);
 	ADD_CFGDESC(c->dma, key->key, SX_CHACHAPOLY_KEY_SZ, c->cfg->dmatags->key);
 
 	/* In AEAD context, for BA417, the counter that must be provided and
@@ -126,15 +135,13 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyr
 	c->totalaadsz = 0;
 	c->datainsz = 0;
 	c->dataintotalsz = 0;
-	c->is_in_ctx = false;
 	c->key = key;
-	c->dma.out = c->dma.dmamem.outdescs;
 
 	return SX_OK;
 }
 
-static int sx_blkcipher_create_chacha20(struct sxblkcipher *c, const struct sxkeyref *key,
-					const char *nonce, const char *counter, const uint32_t dir)
+static int sx_blkcipher_create_chacha20(struct sxblkcipher *c, struct sxkeyref *key,
+					const char *counter, const char *nonce, const uint32_t dir)
 {
 	if (key->sz != SX_CHACHAPOLY_KEY_SZ) {
 		return SX_ERR_INVALID_KEY_SZ;
@@ -144,15 +151,13 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *c, const struct sxke
 	sx_hw_reserve(&c->dma);
 	c->cfg = &ba417chacha20cfg;
 
-	sx_cmdma_newcmd(&c->dma, c->allindescs, BA417_MODE_CHACHA20 | dir, c->cfg->dmatags->cfg);
+	sx_cmdma_newcmd(&c->dma, c->descs, BA417_MODE_CHACHA20 | dir, c->cfg->dmatags->cfg);
 
 	ADD_CFGDESC(c->dma, key->key, SX_CHACHAPOLY_KEY_SZ, c->cfg->dmatags->key);
 	ADD_CFGDESC(c->dma, counter, SX_CHACHAPOLY_COUNTER_SIZE, c->cfg->dmatags->iv_or_state);
 	ADD_CFGDESC(c->dma, nonce, SX_CHACHAPOLY_NONCE_SZ, DMATAG_BA417 | DMATAG_CONFIG(0x2C));
 
-	c->inminsz = 1;
-	c->granularity = 1;
-	c->mode = BLKCIPHER_MODEID_CHACH20;
+	c->textsz = 0;
 
 	return SX_OK;
 }
@@ -160,7 +165,7 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *c, const struct sxke
 int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, const struct sxkeyref *key,
 					const char *nonce, size_t tagsz)
 {
-	return sx_aead_create_chacha20poly1305(c, key, nonce, ba417chachapolycfg.encr, tagsz);
+	return sx_aead_create_chacha20poly1305(c, key, nonce, 0, tagsz);
 }
 
 int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, const struct sxkeyref *key,
@@ -169,14 +174,14 @@ int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, const struct sxkeyref 
 	return sx_aead_create_chacha20poly1305(c, key, nonce, ba417chachapolycfg.decr, tagsz);
 }
 
-int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, const struct sxkeyref *key,
+int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, struct sxkeyref *key,
 				     const char *counter, const char *nonce)
 {
-	return sx_blkcipher_create_chacha20(c, key, nonce, counter, ba417chacha20cfg.encr);
+	return sx_blkcipher_create_chacha20(c, key, counter, nonce, CM_CFG_ENCRYPT);
 }
 
-int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *c, const struct sxkeyref *key,
+int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *c, struct sxkeyref *key,
 				     const char *counter, const char *nonce)
 {
-	return sx_blkcipher_create_chacha20(c, key, nonce, counter, ba417chacha20cfg.decr);
+	return sx_blkcipher_create_chacha20(c, key, counter, nonce, ba417chacha20cfg.decr);
 }

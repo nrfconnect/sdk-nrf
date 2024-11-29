@@ -27,6 +27,8 @@
 #define AEAD_BLOCK_SZ	      (16)
 /** Size of AEAD GCM and CCM context saving state, in bytes */
 #define AES_AEAD_CTX_STATE_SZ (32)
+/** Size of AEAD lenAlenC, in bytes */
+#define AEAD_LENA_LENC_SZ (16)
 
 static int lenAlenC_aesgcm_ba411(size_t aadsz, size_t datasz, uint8_t *out);
 static int lenAlenC_nop(size_t aadsz, size_t datasz, uint8_t *out);
@@ -38,12 +40,11 @@ static const struct sx_aead_cmdma_tags ba411aeadtags = {
 	.iv_or_state = DMATAG_BA411 | DMATAG_CONFIG(0x28),
 	.key = DMATAG_BA411 | DMATAG_CONFIG(0x08),
 	.aad = DMATAG_BA411 | DMATAG_DATATYPE_HEADER,
-	.tag = 0,
+	.tag = DMATAG_BA411,
 	.data = DMATAG_BA411};
 
 #define BA411_MODEID_GCM 6
-static const struct sx_aead_cmdma_cfg ba411gcmcfg = {.encr = 0,
-						     .decr = CM_CFG_DECRYPT,
+static const struct sx_aead_cmdma_cfg ba411gcmcfg = {.decr = CM_CFG_DECRYPT,
 						     .mode = BA411_MODEID_GCM,
 						     .dmatags = &ba411aeadtags,
 						     .verifier = NULL,
@@ -51,11 +52,11 @@ static const struct sx_aead_cmdma_cfg ba411gcmcfg = {.encr = 0,
 						     .ctxsave = AES_AEAD_MODEID_CTX_SAVE,
 						     .ctxload = AES_AEAD_MODEID_CTX_LOAD,
 						     .granularity = AEAD_BLOCK_SZ,
-						     .ctxsz = AES_AEAD_CTX_STATE_SZ};
+						     .statesz = AES_AEAD_CTX_STATE_SZ,
+						     .inputminsz = 0};
 
 #define BA411_MODEID_CCM 5
-static const struct sx_aead_cmdma_cfg ba411ccmcfg = {.encr = 0,
-						     .decr = CM_CFG_DECRYPT,
+static const struct sx_aead_cmdma_cfg ba411ccmcfg = {.decr = CM_CFG_DECRYPT,
 						     .mode = BA411_MODEID_CCM,
 						     .dmatags = &ba411aeadtags,
 						     .verifier = zeros,
@@ -63,7 +64,8 @@ static const struct sx_aead_cmdma_cfg ba411ccmcfg = {.encr = 0,
 						     .ctxsave = AES_AEAD_MODEID_CTX_SAVE,
 						     .ctxload = AES_AEAD_MODEID_CTX_LOAD,
 						     .granularity = AEAD_BLOCK_SZ,
-						     .ctxsz = AES_AEAD_CTX_STATE_SZ};
+						     .statesz = AES_AEAD_CTX_STATE_SZ,
+						     .inputminsz = 0};
 
 static int lenAlenC_nop(size_t aadsz, size_t datasz, uint8_t *out)
 {
@@ -156,8 +158,8 @@ static int sx_aead_create_aesgcm(struct sxaead *c, const struct sxkeyref *key, c
 	c->cfg = &ba411gcmcfg;
 	keyszfld = 0;
 
-	sx_cmdma_newcmd(&c->dma, c->allindescs,
-			CMDMA_AEAD_MODE_SET(c->cfg->mode) | KEYREF_BA411E_HWKEY_CONF(key->cfg) |
+	sx_cmdma_newcmd(&c->dma, c->descs,
+			CMDMA_AEAD_MODE_SET(c->cfg->mode) | KEYREF_AES_HWKEY_CONF(key->cfg) |
 				keyszfld,
 			c->cfg->dmatags->cfg);
 
@@ -169,10 +171,8 @@ static int sx_aead_create_aesgcm(struct sxaead *c, const struct sxkeyref *key, c
 	c->discardaadsz = 0;
 	c->datainsz = 0;
 	c->dataintotalsz = 0;
-	c->is_in_ctx = false;
 	c->tagsz = tagsz;
 	c->expectedtag = c->cfg->verifier;
-	c->dma.out = c->dma.dmamem.outdescs;
 
 	return SX_OK;
 }
@@ -186,8 +186,6 @@ int sx_aead_create_aesgcm_enc(struct sxaead *c, const struct sxkeyref *key, cons
 	if (r) {
 		return r;
 	}
-
-	c->dma.dmamem.cfg |= c->cfg->encr;
 
 	return SX_OK;
 }
@@ -244,8 +242,8 @@ static int sx_aead_create_aesccm(struct sxaead *c, const struct sxkeyref *key, c
 	}
 
 	c->cfg = &ba411ccmcfg;
-	sx_cmdma_newcmd(&c->dma, c->allindescs,
-			CMDMA_AEAD_MODE_SET(c->cfg->mode) | KEYREF_BA411E_HWKEY_CONF(key->cfg) |
+	sx_cmdma_newcmd(&c->dma, c->descs,
+			CMDMA_AEAD_MODE_SET(c->cfg->mode) | KEYREF_AES_HWKEY_CONF(key->cfg) |
 				dir,
 			c->cfg->dmatags->cfg);
 
@@ -257,9 +255,7 @@ static int sx_aead_create_aesccm(struct sxaead *c, const struct sxkeyref *key, c
 	c->discardaadsz = 0;
 	c->datainsz = 0;
 	c->dataintotalsz = 0;
-	c->is_in_ctx = false;
 	c->tagsz = tagsz;
-	c->dma.out = c->dma.dmamem.outdescs;
 	/* For CCM decryption, BA411 engine will compute the output tag as
 	 * tagInputed ^ tagComputed. If inputed tag and computed tag are
 	 * identical, the outputted tag will be an array of zeros with tagsz
@@ -274,8 +270,7 @@ static int sx_aead_create_aesccm(struct sxaead *c, const struct sxkeyref *key, c
 int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
 			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz)
 {
-	return sx_aead_create_aesccm(c, key, nonce, noncesz, tagsz, aadsz, datasz,
-				     ba411ccmcfg.encr);
+	return sx_aead_create_aesccm(c, key, nonce, noncesz, tagsz, aadsz, datasz, 0);
 }
 
 int sx_aead_create_aesccm_dec(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
@@ -302,7 +297,7 @@ int sx_aead_feed_aad(struct sxaead *c, const char *aad, size_t aadsz)
 	c->totalaadsz += aadsz;
 	c->discardaadsz += aadsz;
 
-	ADD_INDESC(c->dma, aad, aadsz, c->cfg->dmatags->aad);
+	ADD_INDESCA(c->dma, aad, aadsz, c->cfg->dmatags->aad, 0xf);
 
 	return SX_OK;
 }
@@ -310,7 +305,7 @@ int sx_aead_feed_aad(struct sxaead *c, const char *aad, size_t aadsz)
 static void sx_aead_discard_aad(struct sxaead *c)
 {
 	if (c->discardaadsz) {
-		ADD_DISCARDDESC(c->dma.out, ALIGN_SZ(c->discardaadsz));
+		ADD_DISCARDDESC(c->dma, ALIGN_SZA(c->discardaadsz, 0xf));
 		c->discardaadsz = 0;
 	}
 }
@@ -325,25 +320,20 @@ int sx_aead_crypt(struct sxaead *c, const char *datain, size_t datainsz, char *d
 		return SX_ERR_TOO_BIG;
 	}
 
-	if (datainsz) {
-		ADD_INDESC(c->dma, datain, datainsz, c->cfg->dmatags->data);
-		c->dataintotalsz += datainsz;
-		c->datainsz = datainsz;
-	}
-
 	sx_aead_discard_aad(c);
 
-	ADD_OUTDESC(c->dma.out, dataout, datainsz);
-
+	if (datainsz) {
+		ADD_INDESCA(c->dma, datain, datainsz, c->cfg->dmatags->data, 0xf);
+		c->dataintotalsz += datainsz;
+		c->datainsz = datainsz;
+		ADD_OUTDESCA(c->dma, dataout, datainsz, 0xf);
+	}
 	return SX_OK;
 }
 
 static int sx_aead_run(struct sxaead *c)
 {
-	sx_cmdma_finalize_descs(c->allindescs, c->dma.d - 1);
-	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, c->dma.out - 1);
-
-	sx_cmdma_start(&c->dma, sizeof(c->allindescs) + sizeof(c->extramem), c->allindescs);
+	sx_cmdma_start(&c->dma, sizeof(c->descs) + sizeof(c->extramem), c->descs);
 
 	return SX_OK;
 }
@@ -354,22 +344,27 @@ int sx_aead_produce_tag(struct sxaead *c, char *tagout)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (c->cfg->mode == BA411_MODEID_CCM) {
-		if ((c->is_in_ctx) && (c->datainsz == 0) && (c->discardaadsz == 0)) {
+		if ((c->dma.dmamem.cfg & c->cfg->ctxload) && (c->datainsz == 0) &&
+		    (c->discardaadsz == 0)) {
 			sx_aead_free(c);
 			return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 		}
 	}
+	if ((c->dataintotalsz + c->totalaadsz) < c->cfg->inputminsz) {
+		sx_aead_free(c);
+		return SX_ERR_INCOMPATIBLE_HW;
+	}
 
 	if (c->cfg->lenAlenC(c->totalaadsz, c->dataintotalsz, &c->extramem[0])) {
-		ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), 16, c->cfg->dmatags->data);
+		ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), AEAD_LENA_LENC_SZ,
+				c->cfg->dmatags->data);
 	}
 
 	sx_aead_discard_aad(c);
 
-	ADD_OUTDESC(c->dma.out, tagout, c->tagsz);
+	ADD_OUTDESCA(c->dma, tagout, c->tagsz, 0xf);
 
 	c->expectedtag = NULL;
-	c->is_in_ctx = false;
 
 	return sx_aead_run(c);
 }
@@ -380,31 +375,33 @@ int sx_aead_verify_tag(struct sxaead *c, const char *tagin)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (c->cfg->mode == BA411_MODEID_CCM) {
-		if ((c->is_in_ctx) && (c->datainsz == 0) && (c->discardaadsz == 0)) {
+		if ((c->dma.dmamem.cfg & c->cfg->ctxload) && (c->datainsz == 0) &&
+		    (c->discardaadsz == 0)) {
 			sx_aead_free(c);
 			return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 		}
 	}
+	if ((c->dataintotalsz + c->totalaadsz) < c->cfg->inputminsz) {
+		sx_aead_free(c);
+		return SX_ERR_INCOMPATIBLE_HW;
+	}
 
 	if (c->cfg->lenAlenC(c->totalaadsz, c->dataintotalsz, &c->extramem[0])) {
-		ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), 16, c->cfg->dmatags->data);
+		ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), AEAD_LENA_LENC_SZ,
+				c->cfg->dmatags->data);
 		c->expectedtag = tagin;
 	} else {
-		ADD_INDESC(c->dma, tagin, c->tagsz, c->cfg->dmatags->data);
+		if (DMATAG_DATATYPE_REFERENCE ==
+		    (c->cfg->dmatags->tag & DMATAG_DATATYPE_REFERENCE)) {
+			UPDATE_LASTDESC_TAG(c->dma, DMATAG_LAST);
+		}
+
+		ADD_INDESCA(c->dma, tagin, c->tagsz, c->cfg->dmatags->tag, 0xf);
 	}
 
 	sx_aead_discard_aad(c);
 
-	if (c->cfg->dmatags->tag) {
-		/* The hardware will output a 4 bytes tag. It will be all 0 if
-		 * authentication with the tag succeeded. Set tagsz to the size
-		 * of that "computed validation tag" for the check by
-		 * sx_aead_status().
-		 */
-		c->tagsz = 4;
-	}
-	ADD_OUTDESC_PRIV(c->dma, c->dma.out, OFFSET_EXTRAMEM(c), c->tagsz, 0xf);
-	c->is_in_ctx = false;
+	ADD_OUTDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), c->tagsz, 0xf);
 
 	return sx_aead_run(c);
 }
@@ -423,16 +420,15 @@ int sx_aead_resume_state(struct sxaead *c)
 	}
 
 	c->dma.dmamem.cfg &= ~(c->cfg->ctxsave);
-	sx_cmdma_newcmd(&c->dma, c->allindescs, c->dma.dmamem.cfg | c->cfg->ctxload,
+	sx_cmdma_newcmd(&c->dma, c->descs, c->dma.dmamem.cfg | c->cfg->ctxload,
 			c->cfg->dmatags->cfg);
 	if (KEYREF_IS_USR(c->key)) {
 		ADD_CFGDESC(c->dma, c->key->key, c->key->sz, c->cfg->dmatags->key);
 	}
-	ADD_INDESC_PRIV(c->dma, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->cfg->ctxsz),
-			c->cfg->ctxsz, c->cfg->dmatags->iv_or_state);
+	ADD_INDESC_PRIV(c->dma, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->cfg->statesz),
+			c->cfg->statesz, c->cfg->dmatags->iv_or_state);
 
 	c->datainsz = 0;
-	c->dma.out = c->dma.dmamem.outdescs;
 	c->discardaadsz = 0;
 
 	return SX_OK;
@@ -444,19 +440,19 @@ int sx_aead_save_state(struct sxaead *c)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
+	if (c->cfg->statesz == 0) {
+		sx_aead_free(c);
+		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
+	}
+
 	sx_aead_discard_aad(c);
 
-	ADD_OUTDESC_PRIV(c->dma, c->dma.out,
-			 (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->cfg->ctxsz), c->cfg->ctxsz,
-			 0x0F);
+	ADD_OUTDESC_PRIV(c->dma, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->cfg->statesz),
+			 c->cfg->statesz, 0x0F);
 
 	c->dma.dmamem.cfg |= c->cfg->ctxsave;
-	c->is_in_ctx = true;
 
-	sx_cmdma_finalize_descs(c->allindescs, c->dma.d - 1);
-	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, c->dma.out - 1);
-
-	sx_cmdma_start(&c->dma, sizeof(c->allindescs) + sizeof(c->extramem), c->allindescs);
+	sx_cmdma_start(&c->dma, sizeof(c->descs) + sizeof(c->extramem), c->descs);
 
 	return SX_OK;
 }
@@ -472,12 +468,16 @@ int sx_aead_status(struct sxaead *c)
 	if (r == SX_ERR_HW_PROCESSING) {
 		return r;
 	}
+	if (r) {
+		sx_aead_free(c);
+		return r;
+	}
 
 #if CONFIG_DCACHE
 	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
-	if ((!r) && (c->expectedtag != NULL) && (!c->is_in_ctx)) {
+	if (!(c->dma.dmamem.cfg & c->cfg->ctxsave) && c->expectedtag != NULL) {
 		r = sx_memdiff(c->expectedtag, (const char *)c->extramem, c->tagsz)
 			    ? SX_ERR_INVALID_TAG
 			    : SX_OK;
