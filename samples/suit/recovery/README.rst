@@ -98,7 +98,7 @@ Testing
 
    .. code-block:: console
 
-      nrfutil device x-write --address 0xE0A5000 --value 0xFFFF --serial-port COM7
+      nrfutil device x-write --address 0xE0BA000 --value 0xFFFF --serial-number <segger_id>
 
 #. Reset the device to enter the recovery path:
 
