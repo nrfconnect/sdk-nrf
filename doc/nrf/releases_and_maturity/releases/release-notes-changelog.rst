@@ -394,8 +394,11 @@ Keys samples
 Matter samples
 --------------
 
-* Updated all Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
-  It is enabled by default for the release configuration of the :ref:`matter_lock_sample`, :ref:`matter_light_switch_sample`, :ref:`matter_smoke_co_alarm_sample`, and :ref:`matter_window_covering_sample` samples.
+* Updated:
+
+  * All Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
+    It is enabled by default for the release configuration of the :ref:`matter_lock_sample`, :ref:`matter_light_switch_sample`, :ref:`matter_smoke_co_alarm_sample`, and :ref:`matter_window_covering_sample` samples.
+  * All Matter samples to enable the ZMS file subsystem in all devices that contain MRAM, such as the nRF54H Series devices.
 
 * Disabled pausing Matter watchdog while CPU is in idle state in all Matter samples.
   To enable it set the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.
