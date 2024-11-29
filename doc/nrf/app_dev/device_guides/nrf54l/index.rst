@@ -26,14 +26,14 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
        | `User Guide <nRF54L15 DK User Guide_>`_
      - | `nRF54L15 DK product page <nRF54L15 DK_>`_
        | `nRF54L15 System-on-Chip (SoC) <nRF54L05_>`_
-   * - :ref:`nRF54L05 emulation on the nRF54L15 DK <emulated-nrf54l05>`
+   * - nRF54L05 emulation on the nRF54L15 DK
      - PCA10156
-     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - ``nrf54l15dk/nrf54l05/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L15 System-on-Chip_>`_
-   * - :ref:`nRF54L10 emulation on the nRF54L15 DK <emulated-nrf54l10>`
+   * - nRF54L10 emulation on the nRF54L15 DK
      - PCA10156
-     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - ``nrf54l15dk/nrf54l10/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_
      - | `nRF54L10 System-on-Chip (SoC) <nRF54L10_>`_
 
@@ -69,4 +69,3 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
    testing_dfu
    vpr_flpr
    building_nrf54l
-   snippets
