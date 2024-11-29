@@ -115,7 +115,7 @@ int bl_root_of_trust_verify_external(
 					firmware, firmware_len, true);
 }
 
-#ifndef CONFIG_BL_SHA256_EXT_API_REQUIRED
+#if !defined(CONFIG_BL_SHA256_EXT_API_REQUIRED) && !defined(CONFIG_SB_CRYPTO_NONE)
 int bl_sha256_verify(const uint8_t *data, uint32_t data_len, const uint8_t *expected)
 {
 	return verify_truncated_hash(data, data_len, expected, CONFIG_SB_HASH_LEN, true);
