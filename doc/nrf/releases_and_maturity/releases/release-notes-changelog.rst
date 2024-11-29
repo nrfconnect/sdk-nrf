@@ -393,6 +393,10 @@ Matter samples
 
   * Updated the internal configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` target to use the DFU image compression and provide more memory space for the application.
 
+* :ref:`matter_smoke_co_alarm_sample` sample:
+
+  * Added support for ICD dynamic SIT LIT switching (DSLS).
+
 Networking samples
 ------------------
 
