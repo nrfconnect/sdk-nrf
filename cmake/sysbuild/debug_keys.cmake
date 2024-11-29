@@ -6,14 +6,20 @@
 
 string(REPLACE "," ";" PUBLIC_KEY_FILES_LIST "${SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES}")
 
+if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
+  set(keygen_algorithm --algorithm ed25519)
+else()
+  set(keygen_algorithm)
+endif()
+
 set(PRIV_CMD
   ${PYTHON_EXECUTABLE}
-  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keygen.py --private
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keygen.py --private ${keygen_algorithm}
   )
 
 set(PUB_CMD
   ${PYTHON_EXECUTABLE}
-  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keygen.py --public
+  ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keygen.py --public ${keygen_algorithm}
   )
 
 # Check if PEM file is specified by user, if not, create one a debug key
