@@ -330,16 +330,33 @@ uint32_t lwm2m_os_rand_get(void);
 
 /**
  * @brief Delete a non-volatile storage entry.
+ *
+ * @param[in] id of the entry to be deleted.
+ *
+ * @retval  0      If success
+ * @retval  -ERRNO errno code if error.
  */
 int lwm2m_os_storage_delete(uint16_t id);
 
 /**
  * @brief Read an entry from non-volatile storage.
+ *
+ * @param[in]     id   of the entry to be read.
+ * @param[out]    data Pointer to data buffer.
+ * @param[in,out] len  Number of bytes to be read.
+ *
+ * @return Number of bytes read. On error, returns a negative value.
  */
 int lwm2m_os_storage_read(uint16_t id, void *data, size_t len);
 
 /**
  * @brief Write an entry to non-volatile storage.
+ *
+ * @param[in]     id   ID of the entry to be written.
+ * @param[in]     data Pointer to the data to be written.
+ * @param[in,out] len  Number of bytes to be written.
+ *
+ * @return Number of bytes written. On error, returns a negative value.
  */
 int lwm2m_os_storage_write(uint16_t id, const void *data, size_t len);
 
