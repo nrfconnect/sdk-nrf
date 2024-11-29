@@ -256,6 +256,22 @@ typedef int (*bl_secp256r1_validate_t)(
 			  const uint8_t *public_key);
 
 /**
+ * @brief Validate an ed25519 signature.
+ *
+ * @param[in]  hash        The hash to validate against.
+ * @param[in]  hash_len    The length of the hash.
+ * @param[in]  signature   The signature to validate.
+ *
+ * @retval 0         The operation succeeded and the signature is valid for the
+ *                   hash.
+ * @retval -EINVAL   A parameter was NULL, or the @p hash_len was not 64 bytes.
+ * @retval -ESIGINV  The signature validation failed.
+ */
+int bl_ed25519_validate(const uint8_t *hash,
+			uint32_t hash_len,
+			const uint8_t *signature);
+
+/**
  * @brief Structure describing the BL_ROT_VERIFY EXT_API.
  */
 struct bl_rot_verify_ext_api {
