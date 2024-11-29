@@ -37,6 +37,7 @@ Nrf::PersistentStorageNode CreateIndexNode(uint8_t bridgedDeviceIndex, Nrf::Pers
 namespace Nrf
 {
 
+#ifdef CONFIG_BRIDGE_MIGRATE_VERSION_1
 template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV1 &device, uint8_t index)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(index, &mBridgedDevice);
@@ -102,6 +103,7 @@ template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV1 &device
 
 	return true;
 }
+#endif
 
 template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV2 &device, uint8_t index)
 {
@@ -197,6 +199,7 @@ bool BridgeStorageManager::Init()
 	return MigrateData();
 }
 
+#ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
 bool BridgeStorageManager::MigrateDataOldScheme(uint8_t bridgedDeviceIndex)
 {
 	BridgedDevice device;
@@ -250,7 +253,9 @@ bool BridgeStorageManager::MigrateDataOldScheme(uint8_t bridgedDeviceIndex)
 
 	return true;
 }
+#endif
 
+#ifdef CONFIG_BRIDGE_MIGRATE_VERSION_1
 bool BridgeStorageManager::MigrateDataVersion1(uint8_t bridgedDeviceIndex)
 {
 	BridgedDeviceV1 v1;
@@ -292,6 +297,7 @@ bool BridgeStorageManager::MigrateDataVersion1(uint8_t bridgedDeviceIndex)
 
 	return true;
 }
+#endif
 
 bool BridgeStorageManager::MigrateData()
 {
@@ -323,13 +329,25 @@ bool BridgeStorageManager::MigrateData()
 		/* Migrate all devices */
 		for (size_t i = 0; i < indexesCount; i++) {
 			if (!versionPresent) {
+#ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
 				if (!MigrateDataOldScheme(indexes[i])) {
 					return false;
 				}
+#else
+				/* Migration not enabled */
+				LOG_ERR("Migration of old data scheme not enabled.");
+				return false;
+#endif
 			} else if (version == 1) {
+#ifdef CONFIG_BRIDGE_MIGRATE_VERSION_1
 				if (!MigrateDataVersion1(indexes[i])) {
 					return false;
 				}
+#else
+				/* Migration not enabled */
+				LOG_ERR("Migration of data scheme version 1 not enabled.");
+				return false;
+#endif
 			}
 		}
 	}
@@ -369,6 +387,7 @@ bool BridgeStorageManager::LoadBridgedDevicesIndexes(uint8_t *indexes, uint8_t m
 	return Nrf::GetPersistentStorage().NonSecureLoad(&mBridgedDevicesIndexes, indexes, maxCount, count);
 }
 
+#ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
 bool BridgeStorageManager::LoadBridgedDeviceEndpointId(uint16_t &endpointId, uint8_t bridgedDeviceIndex)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceEndpointId);
@@ -411,6 +430,7 @@ bool BridgeStorageManager::RemoveBridgedDeviceType(uint8_t bridgedDeviceIndex)
 
 	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
 }
+#endif
 
 bool BridgeStorageManager::StoreBridgedDevice(BridgedDevice &device, uint8_t index)
 {
@@ -454,6 +474,7 @@ bool BridgeStorageManager::RemoveBridgedDevice(uint8_t index)
 	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
 }
 
+#ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 bool BridgeStorageManager::LoadBtAddress(bt_addr_le_t &addr, uint8_t bridgedDeviceIndex)
 {
@@ -468,6 +489,7 @@ bool BridgeStorageManager::RemoveBtAddress(uint8_t bridgedDeviceIndex)
 
 	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
 }
+#endif
 #endif
 
 } /* namespace Nrf */

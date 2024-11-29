@@ -496,6 +496,16 @@ CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER
 CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
    Set the maximum number of dynamic endpoints supported by the Bridge.
 
+.. _CONFIG_BRIDGE_MIGRATE_PRE_2_7_0:
+
+CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
+   Enable migration of bridged device data stored in old scheme from pre nRF SDK 2.7.0 releases.
+
+.. _CONFIG_BRIDGE_MIGRATE_VERSION_1:
+
+CONFIG_BRIDGE_MIGRATE_VERSION_1
+   Enable migration of bridged device data stored in version 1 of new scheme.
+
 .. _matter_bridge_app_bridged_support_configs:
 
 Bridged device configuration
