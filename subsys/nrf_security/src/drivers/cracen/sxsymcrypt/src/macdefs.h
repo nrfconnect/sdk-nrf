@@ -28,7 +28,7 @@ struct sx_mac_cmdma_cfg {
 	const struct sx_mac_cmdma_tags *dmatags;
 };
 
-#define OFFSET_EXTRAMEM(c) (sizeof((c)->dma.dmamem) + sizeof((c)->allindescs))
+#define OFFSET_EXTRAMEM(c) (sizeof((c)->dma.dmamem) + sizeof((c)->descs))
 
 /* Can be used with BA411 or BA419 Config register -> ModeOfOperation [16:8] */
 #define CMDMA_CMAC_MODE_SET(modeid) (1 << (8 + (modeid)))

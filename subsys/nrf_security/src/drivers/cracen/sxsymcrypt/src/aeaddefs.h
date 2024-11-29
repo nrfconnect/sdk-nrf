@@ -20,7 +20,6 @@ struct sx_aead_cmdma_tags {
 };
 
 struct sx_aead_cmdma_cfg {
-	uint32_t encr;
 	uint32_t decr;
 	uint32_t mode;
 	const struct sx_aead_cmdma_tags *dmatags;
@@ -29,14 +28,18 @@ struct sx_aead_cmdma_cfg {
 	uint32_t ctxsave;
 	uint32_t ctxload;
 	int granularity;
-	int ctxsz;
+	int statesz;
+	size_t inputminsz;
 };
 
-#define OFFSET_EXTRAMEM(c) (sizeof((c)->dma.dmamem) + sizeof((c)->allindescs))
+#define OFFSET_EXTRAMEM(c) (sizeof((c)->dma.dmamem) + sizeof((c)->descs))
 
 #define BA411_MODEID_OFFSET 8
 
 /* BA411E-AES Config register -> ModeOfOperation [16:8] */
 #define CMDMA_AEAD_MODE_SET(modeid) (1 << (BA411_MODEID_OFFSET + (modeid)))
+
+/* BA411 and BA419 CCM mode ID */
+#define AEAD_MODEID_CCM 5
 
 #endif

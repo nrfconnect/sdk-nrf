@@ -66,17 +66,15 @@ static int sx_cmac_create_aes_ba411(struct sxmac *c, const struct sxkeyref *key)
 
 	c->cfg = &ba411cfg;
 	c->cntindescs = 1;
-	sx_cmdma_newcmd(&c->dma, c->allindescs,
-			CMDMA_CMAC_MODE_SET(CMAC_MODEID_AES) | KEYREF_BA411E_HWKEY_CONF(key->cfg),
+	sx_cmdma_newcmd(&c->dma, c->descs,
+			CMDMA_CMAC_MODE_SET(CMAC_MODEID_AES) | KEYREF_AES_HWKEY_CONF(key->cfg),
 			c->cfg->dmatags->cfg);
 	if (KEYREF_IS_USR(key)) {
 		ADD_CFGDESC(c->dma, key->key, key->sz, c->cfg->dmatags->key);
 		c->cntindescs++;
 	}
-	c->dma.out = c->dma.dmamem.outdescs;
 	c->feedsz = 0;
 	c->macsz = CMAC_MAC_SZ;
-	c->dma.out = c->dma.dmamem.outdescs;
 
 	return SX_OK;
 }

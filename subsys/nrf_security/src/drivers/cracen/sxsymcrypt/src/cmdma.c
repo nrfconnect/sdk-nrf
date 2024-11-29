@@ -16,14 +16,38 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
 {
 	dma->d = d;
 	dma->dmamem.cfg = cmd;
+	dma->out = dma->dmamem.outdescs;
 
 	dma->mapped = (char *)&dma->dmamem;
 	ADD_INDESC_PRIV(*dma, offsetof(struct sx_dmaslot, cfg), sizeof(dma->dmamem.cfg), tag);
 }
 
+static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
+{
+	struct sxdesc *d;
+
+	for (d = start; d < end; d++) {
+#ifdef DMA_FIFO_ADDR
+		if (d->addr == (char *)DMA_FIFO_ADDR)
+			d->sz |= DMA_CONST_ADDR;
+#endif
+		d->next = d + 1;
+	}
+	end->next = DMA_LAST_DESCRIPTOR;
+	end->dmatag |= DMATAG_LAST;
+	end->sz |= DMA_REALIGN;
+#ifdef DMA_FIFO_ADDR
+	if (end->addr == (char *)DMA_FIFO_ADDR)
+		end->sz |= DMA_CONST_ADDR;
+#endif
+}
+
 void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs)
 {
 	struct sxdesc *m;
+
+	sx_cmdma_finalize_descs(indescs, dma->d - 1);
+	sx_cmdma_finalize_descs(dma->dmamem.outdescs, dma->out - 1);
 
 #ifdef CONFIG_DCACHE
 	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
@@ -44,18 +68,6 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 	sx_wrreg_addr(REG_PUSH_ADDR, m);
 	sx_wrreg(REG_CONFIG, REG_CONFIG_SG);
 	sx_wrreg(REG_START, REG_START_ALL);
-}
-
-void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
-{
-	struct sxdesc *d;
-
-	for (d = start; d < end; d++) {
-		d->next = d + 1;
-	}
-	end->next = DMA_LAST_DESCRIPTOR;
-	end->dmatag |= DMATAG_LAST;
-	end->sz |= DMA_REALIGN;
 }
 
 int sx_cmdma_check(void)
