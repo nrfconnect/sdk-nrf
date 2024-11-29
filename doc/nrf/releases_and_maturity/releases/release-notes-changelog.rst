@@ -304,7 +304,9 @@ Bluetooth samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Updated the MCUboot bootloader configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` board target to enable the :kconfig:option:`CONFIG_FPROTECT` Kconfig option that is used to protect the bootloader partition against memory corruption.
 
 Bluetooth Mesh samples
 ----------------------
