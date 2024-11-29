@@ -131,13 +131,17 @@ struct __packed fw_validation_info {
 	/* The address of the start (vector table) of the firmware. */
 	uint32_t address;
 
+#if defined(CONFIG_SB_VALIDATION_STRUCT_HAS_HASH)
 	/* The hash of the firmware.*/
 	uint8_t  hash[CONFIG_SB_HASH_LEN];
+#endif
 
+#if defined(CONFIG_SB_VALIDATION_STRUCT_HAS_PUBLIC_KEY)
 	/* Public key to be used for signature verification. This must be
 	 * checked against a trusted hash.
 	 */
 	uint8_t  public_key[CONFIG_SB_PUBLIC_KEY_LEN];
+#endif
 
 	/* Signature over the firmware as represented by the address and size in
 	 * the firmware_info.
@@ -149,10 +153,24 @@ struct __packed fw_validation_info {
 /* Static asserts to ensure compatibility */
 OFFSET_CHECK(struct fw_validation_info, magic, 0);
 OFFSET_CHECK(struct fw_validation_info, address, 12);
+
+#if defined(CONFIG_SB_VALIDATION_STRUCT_HAS_HASH)
 OFFSET_CHECK(struct fw_validation_info, hash, 16);
+#if defined(CONFIG_SB_VALIDATION_STRUCT_HAS_PUBLIC_KEY)
 OFFSET_CHECK(struct fw_validation_info, public_key, (16 + CONFIG_SB_HASH_LEN));
 OFFSET_CHECK(struct fw_validation_info, signature, (16 + CONFIG_SB_HASH_LEN
 	+ CONFIG_SB_PUBLIC_KEY_LEN));
+#else
+OFFSET_CHECK(struct fw_validation_info, signature, (16 + CONFIG_SB_HASH_LEN));
+#endif
+#else
+#if defined(CONFIG_SB_VALIDATION_STRUCT_HAS_PUBLIC_KEY)
+OFFSET_CHECK(struct fw_validation_info, public_key, 16);
+OFFSET_CHECK(struct fw_validation_info, signature, (16 + CONFIG_SB_PUBLIC_KEY_LEN));
+#else
+OFFSET_CHECK(struct fw_validation_info, signature, 16);
+#endif
+#endif
 
 /* Can be used to make the firmware discoverable in other locations, e.g. when
  * searching backwards. This struct would typically be constructed locally, so
@@ -222,6 +240,8 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 	bl_root_of_trust_verify_t rot_verify = external ?
 					bl_root_of_trust_verify_external :
 					bl_root_of_trust_verify;
+
+#if defined(CONFIG_SB_VALIDATION_STRUCT_HAS_PUBLIC_KEY)
 	/* Some key data storage backends require word sized reads, hence
 	 * we need to ensure word alignment for 'key_data'
 	 */
@@ -282,6 +302,18 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 			return false;
 		}
 	}
+#else
+	int retval = rot_verify(NULL, NULL, fw_val_info->signature,
+				(const uint8_t *)fw_src_address,
+				fw_size);
+
+	if (retval == 0) {
+		LOG_INF("Firmware signature verified.");
+		return true;
+	}
+
+	LOG_ERR("Firmware validation failed with error %d.", retval);
+#endif
 
 	if (!external) {
 		LOG_ERR("Failed to validate signature.");
