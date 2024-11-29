@@ -1741,6 +1741,8 @@ Trusted Firmware-M support
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -1755,6 +1757,8 @@ Trusted Firmware-M support
         - --
         - Experimental
         - --
+        - --
+        - --
         - Experimental\ :sup:`1`
         - --
         - Experimental
@@ -1768,6 +1772,8 @@ Trusted Firmware-M support
         - --
         - --
         - Supported
+        - --
+        - --
         - --
         - Experimental
         - Experimental
@@ -1795,6 +1801,8 @@ PSA Crypto support
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -1810,6 +1818,8 @@ PSA Crypto support
         - Supported
         - --
         - Supported
+        - Supported
+        - Supported
         - Experimental
         - Supported
         - Supported
@@ -1822,6 +1832,8 @@ PSA Crypto support
         - Supported
         - Supported
         - Supported
+        - --
+        - --
         - --
         - Experimental
         - Experimental
@@ -1837,6 +1849,8 @@ PSA Crypto support
         - --
         - --
         - Experimental
+        - --
+        - --
         - --
         - --
         - --
@@ -1939,6 +1953,8 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -1953,6 +1969,8 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
         - Supported
         - Supported
         - Experimental
+        - Supported
+        - Supported
         - Supported
         - --
         - Supported
