@@ -42,9 +42,9 @@ class NcsProvision(WestCommand):
 
         revoke_parser = subparsers.add_parser("revoke", help="Disable key")
         revoke_parser.add_argument(
-            "-i", "--keyid", type=int, choices=[0, 1, 2], required=True,
-            help="Revocation is possible one slot at a time. Total of 3 slots "
-                 "are available. Counts from 0."
+            "-i", "--keyid", type=int, required=True,
+            help="Revocation is possible one slot at a time. "
+                 "Numbering starts at 0 and is SoC specific."
         )
         revoke_parser.add_argument("-s", "--soc", type=str, help="SoC",
                                    choices=["nrf54l15"], required=True)
@@ -104,8 +104,8 @@ class NcsProvision(WestCommand):
             return -1
 
     def do_run(self, args, unknown_args):
-        if args.command == "upload":
-            if args.soc == "nrf54l15":
+        if args.soc == "nrf54l15":
+            if args.command == "upload":
                 if len(args.keys) > len(nrf54l15_key_slots):
                     sys.exit(
                         "Error: requested upload of more keys than there are designated slots.")
@@ -116,20 +116,19 @@ class NcsProvision(WestCommand):
                     pub_key = priv_key.public_key()
                     if(self.upload_with_nrfprovision(pub_key,
                         nrf54l15_key_slots[slot], args.dev_id)):
-                        sys.exit("Uploading failed!")
+                        sys.exit("Error: uploading failed!")
                     slot += 1
                 while slot < len(nrf54l15_key_slots):
                     dummy_priv_key = Ed25519PrivateKey.generate()
                     dummy_pub_key = dummy_priv_key.public_key()
                     if(self.upload_with_nrfprovision(dummy_pub_key,
                         nrf54l15_key_slots[slot], args.dev_id)):
-                        sys.exit("Uploading dummy key failed!")
+                        sys.exit("Error: uploading dummy key failed!")
                     if self.revoke_with_nrfprovision(slot, args.dev_id):
-                        sys.exit("Revoking dummy slot failed!")
+                        sys.exit("Error: revoking dummy slot failed!")
                     slot += 1
 
-        if args.command == "revoke":
-            if args.soc == "nrf54l15":
+            if args.command == "revoke":
                 if args.keyid > len(nrf54l15_key_slots):
                     sys.exit(
                         "Error: requested keyid out of range.")
