@@ -230,6 +230,12 @@ IPC radio firmware
 Matter Bridge
 -------------
 
+* Added:
+
+  * Support for the ``UniqueID`` attribute in the Bridged Device Basic Information cluster.
+  * Version 2 of bridged device data scheme containing ``UniqueID``.
+  * Kconfig options :ref:`CONFIG_BRIDGE_MIGRATE_PRE_2_7_0 <CONFIG_BRIDGE_MIGRATE_PRE_2_7_0>` and :ref:`CONFIG_BRIDGE_MIGRATE_VERSION_1 <CONFIG_BRIDGE_MIGRATE_VERSION_1>` to enable migration from older data schemes.
+
 |no_changes_yet_note|
 
 nRF5340 Audio
