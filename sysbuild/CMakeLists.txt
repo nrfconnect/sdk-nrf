@@ -461,10 +461,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_FW_INFO y)
 
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256)
-        add_overlay_config(
-          mcuboot
-          ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
-          )
+        if(SB_CONFIG_SOC_SERIES_NRF54LX)
+          set_config_bool(mcuboot CONFIG_BOOT_ECDSA_TINYCRYPT y)
+        else()
+          add_overlay_config(
+            mcuboot
+            ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
+            )
+        endif()
       else()
         message(WARNING "MCUboot and secure boot (application core) are enabled but MCUboot signing key type is not set to ECDSA-P256, this is a non-optimal configuration")
       endif()
@@ -472,11 +476,58 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(${DEFAULT_IMAGE} CONFIG_SECURE_BOOT y)
       set_config_bool(${DEFAULT_IMAGE} CONFIG_FW_INFO y)
     endif()
+
+    # Apply configuration for hashing
+    if(SB_CONFIG_SECURE_BOOT_HASH_TYPE_SHA256 AND NOT SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_NONE)
+      if(SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE)
+        set_config_bool(b0 CONFIG_SB_CRYPTO_CC310_SHA256 y)
+      elseif(SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_SOFTWARE)
+        set_config_bool(b0 CONFIG_SB_CRYPTO_OBERON_SHA256 y)
+      elseif(SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_UNUSED)
+        set_config_bool(b0 CONFIG_SB_CRYPTO_NO_SHA256 y)
+      endif()
+    elseif(SB_CONFIG_SECURE_BOOT_HASH_TYPE_NONE OR SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_NONE)
+      set_config_bool(b0 CONFIG_SB_CRYPTO_NONE y)
+    endif()
+
+    if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
+      if(SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE)
+        set_config_bool(b0 CONFIG_NRF_SECURITY y)
+        set_config_bool(b0 CONFIG_SB_CRYPTO_PSA_ED25519 y)
+      endif()
+    elseif(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ECDSA)
+      if(SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE)
+        set_config_bool(b0 CONFIG_SB_CRYPTO_CC310_ECDSA_SECP256R1 y)
+      elseif(SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_SOFTWARE)
+        set_config_bool(b0 CONFIG_SB_CRYPTO_OBERON_ECDSA_SECP256R1 y)
+      elseif(SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_UNUSED)
+        set_config_bool(b0 CONFIG_SB_CRYPTO_NO_ECDSA_SECP256R1 y)
+      endif()
+    endif()
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
     if(NOT SB_CONFIG_NETCORE_NONE)
       set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_SECURE_BOOT y)
+    endif()
+
+    # Apply configuration for hashing
+    if(SB_CONFIG_SECURE_BOOT_HASH_TYPE_SHA256 AND NOT SB_CONFIG_SECURE_BOOT_NETCORE_HASH_TYPE_NONE)
+      if(SB_CONFIG_SECURE_BOOT_NETCORE_HASH_TYPE_SOFTWARE)
+        set_config_bool(b0n CONFIG_SB_CRYPTO_OBERON_SHA256 y)
+      elseif(SB_CONFIG_SECURE_BOOT_NETCORE_HASH_TYPE_UNUSED)
+        set_config_bool(b0n CONFIG_SB_CRYPTO_NO_SHA256 y)
+      endif()
+    elseif(SB_CONFIG_SECURE_BOOT_HASH_TYPE_NONE OR SB_CONFIG_SECURE_BOOT_NETCORE_HASH_TYPE_NONE)
+      set_config_bool(b0n CONFIG_SB_CRYPTO_NONE y)
+    endif()
+
+    if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ECDSA)
+      if(SB_CONFIG_SECURE_BOOT_NETCORE_SIGNATURE_TYPE_SOFTWARE)
+        set_config_bool(b0n CONFIG_SB_CRYPTO_OBERON_ECDSA_SECP256R1 y)
+      elseif(SB_CONFIG_SECURE_BOOT_NETCORE_SIGNATURE_TYPE_UNUSED)
+        set_config_bool(b0n CONFIG_SB_CRYPTO_NO_ECDSA_SECP256R1 y)
+      endif()
     endif()
 
     if(SB_CONFIG_BOOTLOADER_MCUBOOT)
