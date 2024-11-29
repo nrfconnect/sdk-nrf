@@ -357,20 +357,24 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 	}
 
 	/* Print only if:
+	 * - beacon tx ongoing and we have announced RA resources.
 	 * - client is associating/associated with the target device and
 	 *   the received message is not a beacon from target
 	 * - beacon scan / rx cmd is ongoing
-	 * - beacon tx ongoing and we have announced RA resources.
 	 */
-	if (dect_phy_mac_client_associated_by_target_short_rd_id(
-		rcv_params->last_received_pcc_transmitter_short_rd_id) &&
-		type_header.type != DECT_PHY_MAC_HEADER_TYPE_BEACON) {
-		print = true;
-	}
-	if (dect_phy_ctrl_rx_is_on_going()) {
-		print = true;
-	}
 	if (dect_phy_mac_cluster_beacon_is_running()) {
+		print = true;
+	}
+
+	if (dect_phy_mac_client_associated_by_target_short_rd_id(
+		rcv_params->last_received_pcc_transmitter_short_rd_id)) {
+		print = true;
+		if (type_header.type == DECT_PHY_MAC_HEADER_TYPE_BEACON) {
+			print = false;
+		}
+	}
+
+	if (dect_phy_ctrl_rx_is_ongoing()) {
 		print = true;
 	}
 

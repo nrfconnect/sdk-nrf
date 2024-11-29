@@ -40,7 +40,7 @@ struct dect_phy_mac_nbr_bg_scan_data {
 	struct dect_phy_mac_nbr_bg_scan_params params;
 	struct dect_phy_mac_nbr_bg_scan_metrics_data metrics;
 
-	uint64_t last_updated_rcv_time;
+	uint64_t last_updated_rcv_time_mdm_ticks;
 };
 
 static struct dect_phy_mac_nbr_bg_scan_data nbr_bg_scan_data[DECT_PHY_MAC_MAX_NEIGBORS];
@@ -99,19 +99,20 @@ static void dect_phy_mac_nbr_bg_scan_scheduler_op_completed_cb(
 	}
 	uint64_t time_now = dect_app_modem_time_now();
 	int64_t time_from_last_received_ms =
-		MODEM_TICKS_TO_MS(time_now - bg_scan_data->last_updated_rcv_time);
+		MODEM_TICKS_TO_MS(time_now - bg_scan_data->last_updated_rcv_time_mdm_ticks);
 
-	if (bg_scan_data->last_updated_rcv_time != 0 &&
+	if (bg_scan_data->last_updated_rcv_time_mdm_ticks != 0 &&
 	    time_from_last_received_ms > DECT_PHY_MAC_NBR_BG_SCAN_MAX_UNREACHABLE_TIME_MS) {
 		bg_scan_data->running = false;
 		dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(params->handle);
 		if (bg_scan_data->params.cb_op_completed) {
-			bg_scan_data->params.cb_op_completed(&(
-				struct dect_phy_mac_nbr_bg_scan_op_completed_info){
+			struct dect_phy_mac_nbr_bg_scan_op_completed_info completed_info = {
 				.cause = DECT_PHY_MAC_NBR_BG_SCAN_OP_COMPLETED_CAUSE_UNREACHABLE,
 				.phy_op_handle = params->handle,
 				.target_long_rd_id = bg_scan_data->params.target_long_rd_id,
-			});
+			};
+
+			bg_scan_data->params.cb_op_completed(&completed_info);
 		}
 	}
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
@@ -178,7 +179,9 @@ static int dect_phy_mac_nbr_bg_scan_schedule(struct dect_phy_mac_nbr_bg_scan_par
 
 	sche_list_item_conf->channel = params->target_nbr->channel;
 
-	/* Every 10th beacon */
+	/* Note: this is not exactly compliant with the MAC spec (which requires for every beacon
+	 * in release 1.x
+	 */
 	sche_list_item_conf->interval_mdm_ticks = beacon_interval_mdm_ticks * 10;
 
 	sche_list_item_conf->cb_op_completed = dect_phy_mac_nbr_bg_scan_scheduler_op_completed_cb;
@@ -216,7 +219,7 @@ int dect_phy_mac_nbr_bg_scan_start(struct dect_phy_mac_nbr_bg_scan_params *param
 	if (!err) {
 		free_bg_scan_data_slot->running = true;
 		free_bg_scan_data_slot->params = *params;
-		free_bg_scan_data_slot->last_updated_rcv_time = 0;
+		free_bg_scan_data_slot->last_updated_rcv_time_mdm_ticks = 0;
 		memset(&free_bg_scan_data_slot->metrics, 0,
 		       sizeof(free_bg_scan_data_slot->metrics));
 	}
@@ -237,12 +240,13 @@ int dect_phy_mac_nbr_bg_scan_stop(uint32_t phy_op_handle)
 	dect_phy_api_scheduler_list_item_remove_by_phy_op_handle(phy_op_handle);
 
 	if (bg_scan_data->params.cb_op_completed) {
-		bg_scan_data->params.cb_op_completed(
-			&(struct dect_phy_mac_nbr_bg_scan_op_completed_info){
-				.cause = DECT_PHY_MAC_NBR_BG_SCAN_OP_COMPLETED_CAUSE_USER_INITIATED,
-				.phy_op_handle = phy_op_handle,
-				.target_long_rd_id = bg_scan_data->params.target_long_rd_id,
-			});
+		struct dect_phy_mac_nbr_bg_scan_op_completed_info completed_info = {
+			.cause = DECT_PHY_MAC_NBR_BG_SCAN_OP_COMPLETED_CAUSE_USER_INITIATED,
+			.phy_op_handle = phy_op_handle,
+			.target_long_rd_id = bg_scan_data->params.target_long_rd_id,
+		};
+
+		bg_scan_data->params.cb_op_completed(&completed_info);
 	}
 	return 0;
 }
@@ -258,9 +262,9 @@ void dect_phy_mac_nbr_bg_scan_rcv_time_shift_update(uint32_t nbr_long_rd_id, uin
 		return;
 	}
 
-	if (bg_scan_data->last_updated_rcv_time < time_rcvd) {
+	if (bg_scan_data->last_updated_rcv_time_mdm_ticks < time_rcvd) {
 		bg_scan_data->metrics.scan_info_updated_count++;
-		bg_scan_data->last_updated_rcv_time = time_rcvd;
+		bg_scan_data->last_updated_rcv_time_mdm_ticks = time_rcvd;
 
 		if (time_shift_mdm_ticks == 0) {
 			return;
@@ -285,18 +289,18 @@ void dect_phy_mac_nbr_bg_scan_status_print_for_target_long_rd_id(uint32_t long_r
 	}
 	uint64_t time_now = dect_app_modem_time_now();
 	int64_t time_from_last_received_ms =
-		MODEM_TICKS_TO_MS(time_now - bg_scan_data->last_updated_rcv_time);
+		MODEM_TICKS_TO_MS(time_now - bg_scan_data->last_updated_rcv_time_mdm_ticks);
 
 	desh_print("     Running: true");
 	desh_print("     Phy op handle:  %u", bg_scan_data->params.phy_op_handle);
 
-	if (bg_scan_data->last_updated_rcv_time == 0) {
+	if (bg_scan_data->last_updated_rcv_time_mdm_ticks == 0) {
 		desh_print("     Last seen: never");
 	} else {
-		desh_print("     Last seen:      %d msecs ago",
+		desh_print("     Last seen:      %lld msecs ago",
 				time_from_last_received_ms);
-		desh_print("     Last timestamp: %lld mdm ticks",
-				bg_scan_data->last_updated_rcv_time);
+		desh_print("     Last timestamp: %llu mdm ticks",
+				bg_scan_data->last_updated_rcv_time_mdm_ticks);
 	}
 	desh_print("     Metrics:");
 	desh_print("       Scan info updated count:            %u",

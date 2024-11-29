@@ -40,6 +40,7 @@ static struct dect_phy_mac_cluster_beacon_data {
 
 	dect_phy_mac_cluster_beacon_t last_cluster_beacon_msg;
 	dect_phy_mac_random_access_resource_ie_t last_rach_ie;
+	uint64_t last_tx_frame_time;
 
 	struct dect_phy_mac_beacon_start_params start_params;
 } beacon_data;
@@ -272,6 +273,19 @@ void dect_phy_mac_ctrl_cluster_beacon_phy_api_direct_rssi_cb(
 	}
 }
 
+static void dect_phy_mac_cluster_beacon_to_mdm_cb(
+	struct dect_phy_common_op_completed_params *params, uint64_t frame_time)
+{
+	if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
+		beacon_data.last_tx_frame_time = frame_time;
+	}
+}
+
+uint64_t dect_phy_mac_cluster_beacon_last_tx_frame_time_get(void)
+{
+	return beacon_data.last_tx_frame_time;
+}
+
 int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params *params)
 {
 
@@ -367,6 +381,7 @@ int dect_phy_mac_cluster_beacon_tx_start(struct dect_phy_mac_beacon_start_params
 		current_settings->common.transmitter_id;
 	sched_list_item_conf->address_info.receiver_long_rd_id = DECT_LONG_RD_ID_BROADCAST;
 
+	sched_list_item_conf->cb_op_to_mdm = dect_phy_mac_cluster_beacon_to_mdm_cb;
 	sched_list_item_conf->cb_op_completed = NULL;
 
 	sched_list_item_conf->channel = params->beacon_channel;

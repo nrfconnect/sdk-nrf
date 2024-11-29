@@ -124,7 +124,6 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 				nbr_ptr->time_rcvd_mdm_ticks,
 				*rcv_time);
 
-		nbr_ptr->channel = channel;
 		nbr_ptr->short_rd_id = short_rd_id;
 		nbr_ptr->nw_id_24msb = nw_id_24msb;
 		nbr_ptr->nw_id_8lsb = nw_id_8lsb;

@@ -790,7 +790,7 @@ int dect_phy_ctrl_modem_temperature_get(void)
 
 /**************************************************************************************************/
 
-bool dect_phy_ctrl_rx_is_on_going(void)
+bool dect_phy_ctrl_rx_is_ongoing(void)
 {
 	return ctrl_data.rx_cmd_on_going;
 }

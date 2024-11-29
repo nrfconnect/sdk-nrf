@@ -352,6 +352,9 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 			desh_warn("%s: client associated bg scan failed: %s", __func__, tmp_str);
 		} else if (params->handle == DECT_PHY_MAC_BEACON_LMS_RSSI_SCAN_HANDLE) {
 			desh_warn("%s: cannot start LMS RSSI scan: %s", __func__, tmp_str);
+		} else if (DECT_PHY_MAC_BEACON_RX_RACH_HANDLE_IN_RANGE(params->handle)) {
+			desh_warn("%s: cannot start RA RX: %s, handle %d",
+				__func__, tmp_str, params->handle);
 		} else {
 			desh_error("%s: operation (handle %d) failed with status: %s", __func__,
 				   params->handle, tmp_str);
@@ -371,9 +374,10 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 		}
 	}
 
-	if (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE ||
+	if (!dect_phy_mac_cluster_beacon_is_running() &&
+	   (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE ||
 	    params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_RX_HANDLE ||
-	    params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_REL_TX_HANDLE) {
+	    params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_REL_TX_HANDLE)) {
 		dect_phy_ctrl_ext_command_stop();
 	}
 

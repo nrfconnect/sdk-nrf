@@ -39,6 +39,8 @@ void dect_phy_mac_ctrl_cluster_beacon_phy_api_direct_rssi_cb(
 
 bool dect_phy_mac_cluster_beacon_is_running(void);
 
+uint64_t dect_phy_mac_cluster_beacon_last_tx_frame_time_get(void);
+
 /******************************************************************************/
 
 void dect_phy_mac_cluster_beacon_association_req_handle(
