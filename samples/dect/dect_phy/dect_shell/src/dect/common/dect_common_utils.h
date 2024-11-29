@@ -90,4 +90,8 @@ int8_t dect_common_utils_harq_tx_next_redundancy_version_get(uint8_t current_red
 
 bool dect_common_utils_32bit_network_id_validate(uint32_t network_id);
 
+/******************************************************************************/
+
+bool dect_common_utils_mdm_ticks_is_in_range(uint64_t time, uint64_t start, uint64_t end);
+
 #endif /* DECT_COMMON_UTILS_H */

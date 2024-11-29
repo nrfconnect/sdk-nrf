@@ -26,6 +26,7 @@
 #include "dect_phy_mac_pdu.h"
 #include "dect_phy_mac_nbr.h"
 #include "dect_phy_mac_nbr_bg_scan.h"
+#include "dect_phy_mac_cluster_beacon.h"
 #include "dect_phy_mac.h"
 #include "dect_phy_mac_client.h"
 
@@ -43,7 +44,7 @@ struct dect_phy_mac_client_association_data {
 	uint32_t target_long_rd_id;
 
 	uint32_t bg_scan_phy_handle;
-	bool bg_scan_on_going;
+	bool bg_scan_ongoing;
 
 	struct dect_phy_mac_nbr_info_list_item *target_nbr;
 	struct k_work_delayable association_resp_wait_work;
@@ -176,6 +177,15 @@ static uint64_t dect_phy_mac_client_next_rach_tx_time_get(
 	if (beacon_interval_ms < 0) {
 		return 0;
 	}
+	bool our_beacon_is_running = dect_phy_mac_cluster_beacon_is_running();
+
+	if (our_beacon_is_running) {
+		/* If our beacon is running, send beyond the window to get the priority over others.
+		 * This adds more delay to TX but is more reliable to avoid scheduling collisions.
+		 */
+		first_possible_tx += MS_TO_MODEM_TICKS(DECT_PHY_API_SCHEDULER_OP_TIME_WINDOW_MS);
+	}
+
 	beacon_interval_mdm_ticks = MS_TO_MODEM_TICKS(beacon_interval_ms);
 
 	/* We are sending after next beacon and ...  */
@@ -206,6 +216,21 @@ static uint64_t dect_phy_mac_client_next_rach_tx_time_get(
 	if (client_data.last_tx_time_mdm_ticks > first_possible_tx) {
 		first_possible_tx = client_data.last_tx_time_mdm_ticks + 1;
 	}
+
+	/* ... and try to avoid collisions with our own beacon TX:  */
+	uint64_t next_our_beacon_frame_time = 0;
+
+	if (dect_phy_mac_cluster_beacon_is_running()) {
+		next_our_beacon_frame_time =
+			dect_phy_mac_cluster_beacon_last_tx_frame_time_get();
+		uint32_t our_beacon_interval_mdm_ticks =
+			MS_TO_MODEM_TICKS(DECT_PHY_MAC_CLUSTER_BEACON_INTERVAL_MS);
+
+		while (next_our_beacon_frame_time < first_possible_tx) {
+			next_our_beacon_frame_time += our_beacon_interval_mdm_ticks;
+		}
+	}
+
 	/* ...and in 1st RA (if not associated). Additionally, to get RX really on target:
 	 * delay TX by 2 subslots.
 	 */
@@ -220,6 +245,14 @@ static uint64_t dect_phy_mac_client_next_rach_tx_time_get(
 	while (ra_start_mdm_ticks < first_possible_tx &&
 	       ra_start_mdm_ticks < last_valid_rach_rx_frame_time) {
 		ra_start_mdm_ticks += ra_interval_mdm_ticks;
+		if (next_our_beacon_frame_time && dect_common_utils_mdm_ticks_is_in_range(
+							ra_start_mdm_ticks,
+							next_our_beacon_frame_time,
+							next_our_beacon_frame_time +
+							(DECT_RADIO_FRAME_DURATION_IN_MODEM_TICKS /
+								2))) {
+			ra_start_mdm_ticks += ra_interval_mdm_ticks;
+		}
 	}
 
 	return ra_start_mdm_ticks;
@@ -367,7 +400,7 @@ static int dect_phy_mac_client_rach_tx(struct dect_phy_mac_nbr_info_list_item *t
 	memcpy(&sched_list_item->sched_config.tx.phy_header.type_2, &phy_header.type_2,
 	       sizeof(phy_header.type_2));
 
-	sched_list_item->priority = DECT_PRIORITY1_TX;
+	sched_list_item->priority = DECT_PRIORITY0_FORCE_TX;
 	sched_list_item->phy_op_handle = DECT_PHY_MAC_CLIENT_RA_TX_HANDLE;
 
 	if (params->interval_secs) {
@@ -578,7 +611,7 @@ static int dect_phy_mac_client_associate_msg_send(
 	memcpy(&sched_list_item->sched_config.tx.phy_header.type_2, &phy_header.type_2,
 	       sizeof(phy_header.type_2));
 
-	sched_list_item->priority = DECT_PRIORITY1_TX;
+	sched_list_item->priority = DECT_PRIORITY0_FORCE_TX;
 	sched_list_item->phy_op_handle = DECT_PHY_MAC_CLIENT_ASSOCIATION_TX_HANDLE;
 
 	/* Add tx operation to scheduler list */
@@ -671,7 +704,7 @@ static void dect_phy_mac_client_association_data_init(void)
 		client_data.associations[i].bg_scan_phy_handle =
 			DECT_PHY_MAC_CLIENT_ASSOCIATED_BG_SCAN + i;
 		client_data.associations[i].target_nbr = NULL;
-		client_data.associations[i].bg_scan_on_going = false;
+		client_data.associations[i].bg_scan_ongoing = false;
 	}
 }
 
@@ -686,7 +719,7 @@ static struct dect_phy_mac_client_association_data *dect_phy_mac_client_associat
 	return NULL;
 }
 
-static void dect_phy_mac_client_associate_resp_wait_worker(struct k_work *work_item)
+static void dect_phy_mac_client_associate_resp_timeout_worker(struct k_work *work_item)
 {
 	struct k_work_delayable *delayable_work = k_work_delayable_from_work(work_item);
 	struct dect_phy_mac_client_association_data *association_data =
@@ -701,7 +734,7 @@ static void dect_phy_mac_client_associate_resp_wait_worker(struct k_work *work_i
 	association_data->target_nbr = NULL;
 	association_data->state = DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED;
 	dect_phy_mac_nbr_bg_scan_stop(association_data->bg_scan_phy_handle);
-	association_data->bg_scan_on_going = false;
+	association_data->bg_scan_ongoing = false;
 
 	desh_warn("Association response timeout: not associated with device long RD ID %d",
 		association_data->target_long_rd_id);
@@ -737,7 +770,7 @@ int dect_phy_mac_client_associate(struct dect_phy_mac_nbr_info_list_item *target
 
 	k_work_init_delayable(
 		&association_data->association_resp_wait_work,
-		dect_phy_mac_client_associate_resp_wait_worker);
+		dect_phy_mac_client_associate_resp_timeout_worker);
 
 	/* Start worker for waiting association response */
 	k_work_schedule_for_queue(&dect_phy_ctrl_work_q,
@@ -769,7 +802,7 @@ void dect_phy_mac_client_nbr_scan_completed_cb(
 			(__func__), info->target_long_rd_id,
 			DECT_PHY_MAC_NBR_BG_SCAN_MAX_UNREACHABLE_TIME_MS);
 	}
-	association_data->bg_scan_on_going = false;
+	association_data->bg_scan_ongoing = false;
 }
 
 void dect_phy_mac_client_associate_resp_handle(
@@ -797,14 +830,14 @@ void dect_phy_mac_client_associate_resp_handle(
 	bg_scan_params.target_long_rd_id = association_data->target_long_rd_id;
 	bg_scan_params.phy_op_handle = association_data->bg_scan_phy_handle;
 
-	if (association_data->bg_scan_on_going) {
+	if (association_data->bg_scan_ongoing) {
 		dect_phy_mac_nbr_bg_scan_stop(association_data->bg_scan_phy_handle);
 	}
 
 	if (dect_phy_mac_nbr_bg_scan_start(&bg_scan_params)) {
 		desh_warn("(%s): dect_phy_mac_nbr_bg_scan_start failed", (__func__));
 	} else {
-		association_data->bg_scan_on_going = true;
+		association_data->bg_scan_ongoing = true;
 	}
 }
 
@@ -1020,7 +1053,7 @@ int dect_phy_mac_client_dissociate(struct dect_phy_mac_nbr_info_list_item *targe
 	k_work_cancel_delayable(&association_data->association_resp_wait_work);
 
 	dect_phy_mac_nbr_bg_scan_stop(association_data->bg_scan_phy_handle);
-	association_data->bg_scan_on_going = false;
+	association_data->bg_scan_ongoing = false;
 
 	association_data->state = DECT_PHY_MAC_CLIENT_ASSOCIATION_STATE_DISASSOCIATED;
 	association_data->target_nbr = NULL;

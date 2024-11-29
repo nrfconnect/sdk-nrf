@@ -932,6 +932,92 @@ Example: starting of cluster beacon and sending RA data to it
       Stopping beacon.
       Beacon TX stopped, cause: User Initiated.
 
+Example: two devices sending data to each other
+-----------------------------------------------
+
+* FT/Beacon device 1 - Start periodic cluster beacon TX on default band 1 and on the first free channel:
+
+  .. code-block:: console
+
+      desh:~$ dect sett --reset
+      desh:~$ dect sett -t 1
+      desh:~$ dect mac beacon_start
+      ...
+      Channel 1671 was chosen for the beacon.
+      Beacon TX started.
+
+* FT/Beacon device 2 - Scan the beacon from device 1:
+
+  .. code-block:: console
+
+      desh:~$ dect sett --reset
+      desh:~$ dect sett -t 2
+      desh:~$ dect mac beacon_scan -c 1671
+
+* FT/Beacon device 2 - Start periodic cluster beacon TX on default band 1 and on the first free channel:
+
+  .. code-block:: console
+
+      desh:~$ dect mac beacon_start
+      ...
+      Channel 1675 was chosen for the beacon.
+      Beacon TX started.
+
+* FT/Beacon device 1 - Scan the beacon from device 2 by using special force:
+
+  .. code-block:: console
+
+      desh:~$ dect mac beacon_scan -c 1675 -f
+
+* FT/Beacon device 1 - Send association request to device 2:
+
+  .. code-block:: console
+
+      desh:~$ dect mac associate -t 2
+
+
+* FT/Beacon device 2 - Send association request to device 1:
+
+  .. code-block:: console
+
+      desh:~$ dect mac associate -t 1
+
+* FT/Beacon device 1 - Send JSON-formatted periodic RA data in 10-second intervals with the current modem temperature to the device 2:
+
+  .. code-block:: console
+
+      desh:~$ dect mac rach_tx -t 2 -d "Data from device 1" -i 10 -j
+
+* FT/Beacon device 2 - Send JSON-formatted periodic RA data in 10-second intervals with the current modem temperature to the device 1:
+
+  .. code-block:: console
+
+      desh:~$ dect mac rach_tx -t 1 -d "Data from device 2" -i 10 -j
+
+* FT/Beacon devices 1 & 2 - Stop periodic RA data sending:
+
+  .. code-block:: console
+
+      desh:~$ dect mac rach_tx stop
+
+* FT/Beacon device 1 - Send association release to the device 2:
+
+  .. code-block:: console
+
+      desh:~$ dect mac dissociate -t 2
+
+* FT/Beacon device 2 - Send association release to the device 1:
+
+  .. code-block:: console
+
+      desh:~$ dect mac dissociate -t 1
+
+* FT/Beacon devices 1 & 2 - Stop the beacon:
+
+  .. code-block:: console
+
+      desh:~$ dect mac beacon_stop
+
 Running commands at bootup
 ==========================
 

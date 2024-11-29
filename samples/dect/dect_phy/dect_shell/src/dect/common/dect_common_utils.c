@@ -482,3 +482,10 @@ bool dect_common_utils_32bit_network_id_validate(uint32_t network_id)
 
 	return ((0 != lsb_bits) && (0 != msb_bits));
 }
+
+/**************************************************************************************************/
+
+bool dect_common_utils_mdm_ticks_is_in_range(uint64_t time, uint64_t start, uint64_t end)
+{
+	return (time >= start && time <= end);
+}
