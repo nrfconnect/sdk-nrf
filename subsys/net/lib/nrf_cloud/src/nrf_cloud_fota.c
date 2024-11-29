@@ -1389,4 +1389,35 @@ void reset_all_static_vars(void)
 	memset(&saved_job, 0, sizeof(saved_job));
 	saved_job.type = NRF_CLOUD_FOTA_TYPE__INVALID;
 }
+
+struct nrf_cloud_fota_c_ctx {
+	struct mqtt_client ** client_mqtt;
+	nrf_cloud_fota_callback_t * event_cb;
+	nrf_cloud_fota_ble_callback_t * ble_cb;
+	bool * initialized;
+	bool * fota_dl_initialized;
+	bool * reboot_on_init;
+	bool * fota_report_ack_pending;
+	enum fota_download_evt_id * last_fota_dl_evt;
+	struct nrf_cloud_fota_job * current_fota;
+	struct nrf_cloud_settings_fota_job * saved_job;
+	struct mqtt_topic ** sub_topics;
+	size_t  sub_topics_size;
+};
+
+void access_internal_state (struct nrf_cloud_fota_c_ctx* ctx)
+{
+	ctx->client_mqtt = &client_mqtt;
+	ctx->event_cb = &event_cb;
+	ctx->ble_cb = &ble_cb;
+	ctx->initialized = &initialized;
+	ctx->fota_dl_initialized = &fota_dl_initialized;
+	ctx->reboot_on_init = &reboot_on_init;
+	ctx->fota_report_ack_pending = &fota_report_ack_pending;
+	ctx->last_fota_dl_evt = &last_fota_dl_evt;
+	ctx->current_fota = &current_fota;
+	ctx->saved_job = &saved_job;
+	ctx->sub_topics = &sub_topics;
+	ctx->sub_topics_size = ARRAY_SIZE(sub_topics);
+}
 #endif

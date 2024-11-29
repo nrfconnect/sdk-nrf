@@ -13,6 +13,24 @@
 /* reset all static state of nrf_cloud_fota library */
 void reset_all_static_vars(void);
 
+struct nrf_cloud_fota_c_ctx {
+	struct mqtt_client ** client_mqtt;
+	nrf_cloud_fota_callback_t * event_cb;
+	nrf_cloud_fota_ble_callback_t * ble_cb;
+	bool * initialized;
+	bool * fota_dl_initialized;
+	bool * reboot_on_init;
+	bool * fota_report_ack_pending;
+	enum fota_download_evt_id * last_fota_dl_evt;
+	struct nrf_cloud_fota_job * current_fota;
+	struct nrf_cloud_settings_fota_job * saved_job;
+	struct mqtt_topic ** sub_topics;
+	size_t  sub_topics_size;
+};
+
+/* get pointers to all internal vars of the library */
+void access_internal_state(struct nrf_cloud_fota_c_ctx* ctx);
+
 /* This function runs before each test */
 static void run_before(void *fixture)
 {
@@ -232,12 +250,21 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
 		"nrf_cloud_fota_init should succeed with valid parameters");
 
 
+	// initialize sub_topics
+	struct nrf_cloud_fota_c_ctx ctx;
+	access_internal_state(&ctx);
+	ctx.sub_topics[0]->utf8 = "hello-world";
+	ctx.sub_topics[0]->size = strlen(ctx.sub_topics[0]->utf8);
+
 	/* simulate new job */
-	// TODO initialize sub_topics[SUB_TOPIC_IDX_RCV].topic.utf8
 	const struct mqtt_evt evt = {
 		.type = MQTT_EVT_PUBLISH,
+		.param.publish.message_id = 42,
 		.param.publish.message.payload.data = "some data",
+		.param.publish.message.payload.len = strlen("some data"),
 	};
+	// mqtt_readall_publish_payload
+	// nrf_cloud_fota_job_decode
 	nrf_cloud_fota_mqtt_evt_handler(&evt);
 	/* simulate some progress */
 	// http_fota_handler_t handler = fota_download_init_fake.arg0_history[0];
