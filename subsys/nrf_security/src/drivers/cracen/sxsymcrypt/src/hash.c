@@ -4,6 +4,9 @@
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include "../include/sxsymcrypt/hash.h"
+#include "../include/sxsymcrypt/sha1.h"
+#include "../include/sxsymcrypt/sha2.h"
+#include "../include/sxsymcrypt/sm3.h"
 #include <cracen/statuscodes.h>
 #include "../include/sxsymcrypt/internal.h"
 #include "crypmasterregs.h"
@@ -28,17 +31,23 @@ static const struct sx_digesttags ba413tags = {
 static int sx_hash_create_ba413(struct sxhash *c, size_t csz);
 
 const struct sxhashalg sxhashalg_sha1 = {
-	CMDMA_BA413_MODE(0x02), HASH_HW_PAD, HASH_FINAL, 20, 64, 20, 72, sx_hash_create_ba413};
+	CMDMA_BA413_MODE(0x02), HASH_HW_PAD, HASH_FINAL, SX_HASH_DIGESTSZ_SHA1,
+	SX_HASH_BLOCKSZ_SHA1, 20, 72, sx_hash_create_ba413};
 const struct sxhashalg sxhashalg_sha2_224 = {
-	CMDMA_BA413_MODE(0x04), HASH_HW_PAD, HASH_FINAL, 28, 64, 32, 72, sx_hash_create_ba413};
+	CMDMA_BA413_MODE(0x04), HASH_HW_PAD, HASH_FINAL, SX_HASH_DIGESTSZ_SHA2_224,
+	SX_HASH_BLOCKSZ_SHA2_224, 32, 72, sx_hash_create_ba413};
 const struct sxhashalg sxhashalg_sha2_256 = {
-	CMDMA_BA413_MODE(0x08), HASH_HW_PAD, HASH_FINAL, 32, 64, 32, 72, sx_hash_create_ba413};
+	CMDMA_BA413_MODE(0x08), HASH_HW_PAD, HASH_FINAL, SX_HASH_DIGESTSZ_SHA2_256,
+	SX_HASH_BLOCKSZ_SHA2_256, 32, 72, sx_hash_create_ba413};
 const struct sxhashalg sxhashalg_sha2_384 = {
-	CMDMA_BA413_MODE(0x10), HASH_HW_PAD, HASH_FINAL, 48, 128, 64, 80, sx_hash_create_ba413};
+	CMDMA_BA413_MODE(0x10), HASH_HW_PAD, HASH_FINAL, SX_HASH_DIGESTSZ_SHA2_384,
+	SX_HASH_BLOCKSZ_SHA2_384, 64, 144, sx_hash_create_ba413};
 const struct sxhashalg sxhashalg_sha2_512 = {
-	CMDMA_BA413_MODE(0x20), HASH_HW_PAD, HASH_FINAL, 64, 128, 64, 144, sx_hash_create_ba413};
+	CMDMA_BA413_MODE(0x20), HASH_HW_PAD, HASH_FINAL, SX_HASH_DIGESTSZ_SHA2_512,
+	SX_HASH_BLOCKSZ_SHA2_512, 64, 144, sx_hash_create_ba413};
 const struct sxhashalg sxhashalg_sm3 = {
-	CMDMA_BA413_MODE(0x40), HASH_HW_PAD, HASH_FINAL, 32, 64, 32, 72, sx_hash_create_ba413};
+	CMDMA_BA413_MODE(0x40), HASH_HW_PAD, HASH_FINAL, SX_HASH_DIGESTSZ_SM3,
+	SX_HASH_BLOCKSZ_SM3, 32, 72, sx_hash_create_ba413};
 
 #define CMDMA_BA413_BUS_MSK 3
 
@@ -51,7 +60,7 @@ static void sx_hash_pad(struct sxhash *c)
 {
 	unsigned char *padding = (unsigned char *)c->extramem;
 	size_t padsz;
-	size_t v = c->totalsz;
+	size_t v = c->totalfeedsz;
 
 	/* as per SHA standard, write the full hashed message size in
 	 * big endian form starting with 0x80 and as many 0 bytes as
@@ -59,7 +68,7 @@ static void sx_hash_pad(struct sxhash *c)
 	 */
 	size_t length_field_sz = (c->algo->digestsz >= 48) ? 16 : 8;
 
-	padsz = c->algo->blocksz - (c->totalsz & (c->algo->blocksz - 1));
+	padsz = c->algo->blocksz - (c->totalfeedsz & (c->algo->blocksz - 1));
 	if (padsz < (length_field_sz + 1)) {
 		padsz += c->algo->blocksz;
 	}
@@ -82,7 +91,7 @@ static void sx_hash_pad(struct sxhash *c)
 
 void sx_ba413_digest(struct sxhash *c, char *digest)
 {
-	if (c->totalsz == 0) {
+	if (c->totalfeedsz == 0) {
 		/* If we get here it means an empty message hash will be
 		 * generated. 4 dummy bytes will be added to hash, these bytes
 		 * will be dropped by the hash engine.
@@ -93,16 +102,13 @@ void sx_ba413_digest(struct sxhash *c, char *digest)
 	if (!(c->dma.dmamem.cfg & HASH_HW_PAD)) {
 		sx_hash_pad(c);
 	}
-	SET_LAST_DESC_IGN(c->dma.d - 1, c->feedsz, CMDMA_BA413_BUS_MSK);
+	SET_LAST_DESC_IGN(c->dma, c->feedsz, CMDMA_BA413_BUS_MSK);
 
-	struct sxdesc *out = c->dma.dmamem.outdescs;
-
-	ADD_OUTDESCA(out, digest, c->algo->digestsz, CMDMA_BA413_BUS_MSK);
+	ADD_OUTDESCA(c->dma, digest, c->algo->digestsz, CMDMA_BA413_BUS_MSK);
 
 	if (!(c->dma.dmamem.cfg & HASH_FINAL) && (c->algo->statesz - c->algo->digestsz)) {
-		ADD_DISCARDDESC(out, (c->algo->statesz - c->algo->digestsz));
+		ADD_DISCARDDESC(c->dma, (c->algo->statesz - c->algo->digestsz));
 	}
-	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, out - 1);
 }
 
 static int sx_hash_create_ba413(struct sxhash *c, size_t csz)
@@ -119,9 +125,9 @@ static int sx_hash_create_ba413(struct sxhash *c, size_t csz)
 	sx_hw_reserve(&c->dma);
 
 	c->dmatags = &ba413tags;
-	sx_cmdma_newcmd(&c->dma, c->allindescs, c->algo->cfgword, c->dmatags->cfg);
+	sx_cmdma_newcmd(&c->dma, c->descs, c->algo->cfgword, c->dmatags->cfg);
 	c->feedsz = 0;
-	c->totalsz = 0;
+	c->totalfeedsz = 0;
 	c->digest = sx_ba413_digest;
 
 	c->cntindescs = 1;
@@ -183,13 +189,13 @@ int sx_hash_resume_state(struct sxhash *c)
 	if (!c->algo || c->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
-	size_t totalsz = c->totalsz;
+	size_t totalfeedsz = c->totalfeedsz;
 	int r = c->algo->reservehw(c, sizeof(*c));
 
 	if (r) {
 		return r;
 	}
-	c->totalsz = totalsz;
+	c->totalfeedsz = totalfeedsz;
 	ADD_INDESC_PRIV(c->dma, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->algo->statesz),
 			c->algo->statesz, c->dmatags->initialstate);
 	c->cntindescs += 2; /* ensure that we have a free descriptor for padding */
@@ -207,7 +213,7 @@ int sx_hash_feed(struct sxhash *c, const char *msg, size_t sz)
 		return SX_OK;
 	}
 
-	if (c->cntindescs >= (ARRAY_SIZE(c->allindescs))) {
+	if (c->cntindescs >= (ARRAY_SIZE(c->descs))) {
 		sx_hash_free(c);
 		return SX_ERR_FEED_COUNT_EXCEEDED;
 	}
@@ -219,7 +225,7 @@ int sx_hash_feed(struct sxhash *c, const char *msg, size_t sz)
 
 	ADD_RAW_INDESC(c->dma, msg, sz, c->dmatags->data);
 	c->feedsz += sz;
-	c->totalsz += sz;
+	c->totalfeedsz += sz;
 	c->cntindescs++;
 
 	return SX_OK;
@@ -227,8 +233,7 @@ int sx_hash_feed(struct sxhash *c, const char *msg, size_t sz)
 
 static int start_hash_hw(struct sxhash *c)
 {
-	sx_cmdma_finalize_descs(c->allindescs, c->dma.d - 1);
-	sx_cmdma_start(&c->dma, sizeof(c->allindescs) + sizeof(c->extramem), c->allindescs);
+	sx_cmdma_start(&c->dma, sizeof(c->descs) + sizeof(c->extramem), c->descs);
 
 	return 0;
 }
@@ -239,7 +244,7 @@ int sx_hash_save_state(struct sxhash *c)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	if (c->totalsz % c->algo->blocksz) {
+	if (c->totalfeedsz % c->algo->blocksz) {
 		sx_hash_free(c);
 		return SX_ERR_WRONG_SIZE_GRANULARITY;
 	}
@@ -248,13 +253,10 @@ int sx_hash_save_state(struct sxhash *c)
 		return SX_ERR_ALLOCATION_TOO_SMALL;
 	}
 
-	struct sxdesc *out = c->dma.dmamem.outdescs;
-
 	c->dma.dmamem.cfg ^= c->algo->exportcfg;
 	c->dma.dmamem.cfg ^= c->algo->resumecfg;
-	ADD_OUTDESC_PRIV(c->dma, out, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->algo->statesz),
+	ADD_OUTDESC_PRIV(c->dma, (OFFSET_EXTRAMEM(c) + sizeof(c->extramem) - c->algo->statesz),
 			 c->algo->statesz, CMDMA_BA413_BUS_MSK);
-	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, out - 1);
 
 	return start_hash_hw(c);
 }
@@ -265,7 +267,7 @@ int sx_hash_digest(struct sxhash *c, char *digest)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	if (c->totalsz != c->feedsz) {
+	if (c->totalfeedsz != c->feedsz) {
 		c->dma.dmamem.cfg ^= c->algo->resumecfg;
 	}
 	c->digest(c, digest);

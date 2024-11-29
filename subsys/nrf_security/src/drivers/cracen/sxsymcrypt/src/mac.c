@@ -64,7 +64,7 @@ int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz)
 		sx_mac_free(c);
 		return SX_ERR_TOO_BIG;
 	}
-	if (c->cntindescs >= (ARRAY_SIZE(c->allindescs))) {
+	if (c->cntindescs >= (ARRAY_SIZE(c->descs))) {
 		sx_mac_free(c);
 		return SX_ERR_FEED_COUNT_EXCEEDED;
 	}
@@ -80,17 +80,11 @@ int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz)
 
 static int sx_mac_run(struct sxmac *c)
 {
-	size_t sz = INDESC_SZ(c->dma.d - 1);
-
-	if ((sz == 0) && (c->dma.dmamem.cfg & c->cfg->loadstate)) {
+	if ((c->feedsz == 0) && (c->dma.dmamem.cfg & c->cfg->loadstate)) {
 		sx_mac_free(c);
 		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 	}
-
-	sx_cmdma_finalize_descs(c->allindescs, c->dma.d - 1);
-	sx_cmdma_finalize_descs(c->dma.dmamem.outdescs, c->dma.out - 1);
-
-	sx_cmdma_start(&c->dma, sizeof(c->allindescs), c->allindescs);
+	sx_cmdma_start(&c->dma, sizeof(c->descs), c->descs);
 
 	return SX_OK;
 }
@@ -104,9 +98,9 @@ int sx_mac_generate(struct sxmac *c, char *mac)
 	if (c->feedsz == 0) {
 		ADD_EMPTY_INDESC(c->dma, (c->cfg->cmdma_mask + 1), c->cfg->dmatags->data);
 	}
-	SET_LAST_DESC_IGN(c->dma.d - 1, c->feedsz, c->cfg->cmdma_mask);
+	SET_LAST_DESC_IGN(c->dma, c->feedsz, c->cfg->cmdma_mask);
 
-	ADD_OUTDESCA(c->dma.out, mac, c->macsz, c->cfg->cmdma_mask);
+	ADD_OUTDESCA(c->dma, mac, c->macsz, c->cfg->cmdma_mask);
 
 	c->dma.dmamem.cfg &= ~c->cfg->savestate;
 
@@ -133,7 +127,7 @@ int sx_mac_resume_state(struct sxmac *c)
 		return err;
 	}
 
-	sx_cmdma_newcmd(&c->dma, c->allindescs, c->dma.dmamem.cfg, c->cfg->dmatags->cfg);
+	sx_cmdma_newcmd(&c->dma, c->descs, c->dma.dmamem.cfg, c->cfg->dmatags->cfg);
 	c->cntindescs = 1;
 	if (KEYREF_IS_USR(c->key)) {
 		ADD_CFGDESC(c->dma, c->key->key, c->key->sz, c->cfg->dmatags->key);
@@ -142,7 +136,6 @@ int sx_mac_resume_state(struct sxmac *c)
 	ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), c->cfg->statesz, c->cfg->dmatags->state);
 	c->cntindescs++;
 	c->dma.dmamem.cfg |= c->cfg->loadstate;
-	c->dma.out = c->dma.dmamem.outdescs;
 	c->feedsz = 0;
 
 	return SX_OK;
@@ -155,11 +148,7 @@ int sx_mac_save_state(struct sxmac *c)
 	if (!c->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
-
-	/* at this moment we have only one descriptor that holds the message to
-	 * be processed, therefore, it is the last one
-	 */
-	sz = INDESC_SZ(c->dma.d - 1);
+	sz = c->feedsz;
 
 	if (sz < c->cfg->blocksz) {
 		sx_mac_free(c);
@@ -172,7 +161,7 @@ int sx_mac_save_state(struct sxmac *c)
 
 	c->dma.dmamem.cfg |= c->cfg->savestate;
 
-	ADD_OUTDESC_PRIV(c->dma, c->dma.out, OFFSET_EXTRAMEM(c), c->cfg->statesz, 0x0F);
+	ADD_OUTDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c), c->cfg->statesz, 0x0F);
 
 	return sx_mac_run(c);
 }
