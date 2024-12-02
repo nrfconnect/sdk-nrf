@@ -742,6 +742,11 @@ static const char dect_phy_ping_cmd_usage_str[] =
 	"      --c_tx_pwr <int>,      TX power (dBm),\n"
 	"                             [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23].\n"
 	"                             Default: from common tx settings.\n"
+	"      --c_tx_lbt_period <cnt>,  Listen Before Talk (LBT) period (symbol count).\n"
+	"                                Zero value disables LBT (default).\n"
+	"                                Valid range for symbol count: 2-110.\n"
+	"      --c_tx_lbt_busy_th <dbm>, LBT busy RSSI threshold (dBm). Valid only when LBT\n"
+	"                                is enabled. Default from RSSI busy threshold setting.\n"
 	"      --s_tx_id <id>,        Target server transmitter id (default: 38).\n"
 	"                             Note: lowest 16bits of transmitter id (long RD ID).\n"
 	"  -e  --rx_exp_rssi_level <int>, Set expected RSSI level on RX (dBm).\n"
@@ -771,6 +776,8 @@ enum {
 	DECT_SHELL_PING_PAYLOAD_SLOT_COUNT,
 	DECT_SHELL_PING_TX_PWR,
 	DECT_SHELL_PING_TX_MCS,
+	DECT_SHELL_PING_TX_LBT_PERIOD,
+	DECT_SHELL_PING_TX_LBT_RSSI_BUSY_THRESHOLD,
 	DECT_SHELL_PING_DEST_SERVER_TX_ID,
 	DECT_SHELL_PING_TX_PWR_CTRL_AUTO,
 	DECT_SHELL_PING_TX_PWR_CTRL_PDU_RX_EXPECTED_RSSI_LEVEL,
@@ -789,6 +796,8 @@ static struct option long_options_ping[] = {
 	{"c_slots", required_argument, 0, 'l'},
 	{"c_tx_pwr", required_argument, 0, DECT_SHELL_PING_TX_PWR},
 	{"c_tx_mcs", required_argument, 0, DECT_SHELL_PING_TX_MCS},
+	{"c_tx_lbt_period", required_argument, 0, DECT_SHELL_PING_TX_LBT_PERIOD },
+	{"c_tx_lbt_busy_th", required_argument, 0, DECT_SHELL_PING_TX_LBT_RSSI_BUSY_THRESHOLD },
 	{"rx_exp_rssi_level", required_argument, 0, 'e'},
 	{"s_tx_id", required_argument, 0, DECT_SHELL_PING_DEST_SERVER_TX_ID},
 	{"tx_pwr_ctrl_pdu_rx_exp_rssi_level", required_argument, 0,
@@ -802,6 +811,7 @@ static int dect_phy_ping_cmd(const struct shell *shell, size_t argc, char **argv
 	int ret;
 	int long_index = 0;
 	int opt;
+	int tmp_value;
 
 	if (argc < 2) {
 		goto show_usage;
@@ -827,6 +837,8 @@ static int dect_phy_ping_cmd(const struct shell *shell, size_t argc, char **argv
 	params.expected_rx_rssi_level = current_settings->rx.expected_rssi_level;
 	params.tx_power_dbm = current_settings->tx.power_dbm;
 	params.tx_mcs = current_settings->tx.mcs;
+	params.tx_lbt_period_symbols = 0;
+	params.tx_lbt_rssi_busy_threshold_dbm = current_settings->rssi_scan.busy_threshold;
 	params.debugs = true;
 	params.rssi_reporting_enabled = false;
 	params.pwr_ctrl_pdu_expected_rx_rssi_level = -60;
@@ -887,6 +899,31 @@ static int dect_phy_ping_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case DECT_SHELL_PING_TX_MCS: {
 			params.tx_mcs = atoi(optarg);
+			break;
+		}
+		case DECT_SHELL_PING_TX_LBT_PERIOD: {
+			tmp_value = atoi(optarg);
+			if (tmp_value < DECT_PHY_LBT_PERIOD_MIN_SYM ||
+				tmp_value > DECT_PHY_LBT_PERIOD_MAX_SYM) {
+				desh_error("Invalid LBT period %d (range: [%d,%d])",
+					   tmp_value,
+					   DECT_PHY_LBT_PERIOD_MIN_SYM,
+					   DECT_PHY_LBT_PERIOD_MAX_SYM);
+				goto show_usage;
+			}
+			params.tx_lbt_period_symbols = tmp_value;
+			break;
+		}
+		case DECT_SHELL_PING_TX_LBT_RSSI_BUSY_THRESHOLD: {
+			tmp_value = atoi(optarg);
+			if (tmp_value >= 0 ||
+			    tmp_value < INT8_MIN) {
+				desh_error("Invalid LBT RSSI busy threshold %d (range: [%d,-1])",
+					   tmp_value,
+					   INT8_MIN);
+				goto show_usage;
+			}
+			params.tx_lbt_rssi_busy_threshold_dbm = tmp_value;
 			break;
 		}
 		case DECT_SHELL_PING_CHANNEL: {
