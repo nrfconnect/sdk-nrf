@@ -1,0 +1,11 @@
+identifier: {{ board }}/nrf54h20/{{ target['core'] }}
+name: {{ board_desc }}
+vendor: {{ vendor }}
+type: mcu
+arch: {{ target["arch"] }}
+toolchain:
+  - zephyr
+sysbuild: true
+ram: {{ target["ram"] }}
+flash: {{ target["flash"] }}
+supported: []
