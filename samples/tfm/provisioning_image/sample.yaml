@@ -2,7 +2,9 @@ sample:
   description: Initiates the provisioning of a TF-M image.
   name: Provisioning Image
 common:
-  tags: keys ci_samples_tfm
+  tags:
+    - keys
+    - ci_samples_tfm
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp
     - nrf9151dk/nrf9151
@@ -22,4 +24,8 @@ common:
 tests:
   sample.tfm.provisioning_image:
     sysbuild: true
-    tags: keys ci_build sysbuild ci_samples_tfm
+    tags:
+      - keys
+      - ci_build
+      - sysbuild
+      - ci_samples_tfm

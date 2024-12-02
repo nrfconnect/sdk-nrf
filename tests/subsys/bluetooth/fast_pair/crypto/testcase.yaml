@@ -15,7 +15,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild bluetooth
+    tags:
+      - sysbuild
+      - bluetooth
   fast_pair.crypto.psa:
     sysbuild: true
     platform_allow:
@@ -35,7 +37,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args: FILE_SUFFIX=psa
-    tags: sysbuild bluetooth
+    tags:
+      - sysbuild
+      - bluetooth
   fast_pair.crypto.tinycrypt:
     sysbuild: true
     platform_allow:
@@ -55,4 +59,6 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - qemu_cortex_m3
     extra_args: FILE_SUFFIX=tinycrypt
-    tags: sysbuild bluetooth
+    tags:
+      - sysbuild
+      - bluetooth

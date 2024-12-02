@@ -13,10 +13,17 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15dk/nrf54l15/cpuapp
-      nrf54h20dk/nrf54h20/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.release:
     sysbuild: true
     build_only: true
@@ -28,23 +35,37 @@ tests:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15dk/nrf54l15/cpuapp
-      nrf54h20dk/nrf54h20/cpuapp
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.lto:
     sysbuild: true
     build_only: true
-    extra_args: CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
+    extra_args:
+      - CONFIG_LTO=y
+      - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.smp_dfu:
     sysbuild: true
     build_only: true
@@ -55,9 +76,15 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf7002dk/nrf5340/cpuapp/nrf7001 nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.no_dfu.no_fd:
     sysbuild: true
     build_only: true
@@ -65,33 +92,54 @@ tests:
     integration_platforms:
       - nrf21540dk/nrf52840
     platform_allow: nrf21540dk/nrf52840
-    tags: sysbuild ci_samples_matter
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.thread_wifi_switched.lto.smp_dfu:
     sysbuild: true
     build_only: true
-    extra_args: lock_SHIELD=nrf7002ek
-      FILE_SUFFIX=thread_wifi_switched SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
-      SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3 CONFIG_CHIP_DFU_OVER_BT_SMP=y
-      SB_CONFIG_WIFI_NRF70=y SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y
+    extra_args:
+      - lock_SHIELD=nrf7002ek
+      - FILE_SUFFIX=thread_wifi_switched
+      - SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
+      - SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3
+      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
+      - SB_CONFIG_WIFI_NRF70=y
+      - SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: sysbuild ci_samples_matter
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.nus:
     sysbuild: true
     build_only: true
-    extra_args: CONFIG_CHIP_NUS=y CONFIG_BT_FIXED_PASSKEY=y CONFIG_CHIP_NUS_FIXED_PASSKEY=112233
+    extra_args:
+      - CONFIG_CHIP_NUS=y
+      - CONFIG_BT_FIXED_PASSKEY=y
+      - CONFIG_CHIP_NUS_FIXED_PASSKEY=112233
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.release.nrf54l15.power_consumption:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=release CONFIG_NCS_SAMPLE_MATTER_LEDS=n
-      CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
+    extra_args:
+      - FILE_SUFFIX=release
+      - CONFIG_NCS_SAMPLE_MATTER_LEDS=n
+      - CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y
+      - CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
+    tags:
+      - sysbuild
+      - ci_samples_matter

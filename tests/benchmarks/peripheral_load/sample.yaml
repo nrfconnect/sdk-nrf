@@ -2,8 +2,18 @@ sample:
   name: Peripheral stress test
 
 common:
-  depends_on: adc gpio i2c pwm spi watchdog
-  tags: drivers spi sensors ci_tests_benchmarks_peripheral_load
+  depends_on:
+    - adc
+    - gpio
+    - i2c
+    - pwm
+    - spi
+    - watchdog
+  tags:
+    - drivers
+    - spi
+    - sensors
+    - ci_tests_benchmarks_peripheral_load
   harness: console
 
 tests:

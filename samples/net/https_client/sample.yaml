@@ -16,7 +16,10 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
-    tags: ci_build sysbuild ci_samples_net
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
   sample.net.https_client.lte.tfm-mbedtls:
     sysbuild: true
     build_only: true
@@ -28,7 +31,10 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_net
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
   sample.net.https_client.lte.pdn-ipv4:
     sysbuild: true
     build_only: true
@@ -41,7 +47,10 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_net
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
   sample.net.https_client.nrf54l15.wifi:
     sysbuild: true
     build_only: true
@@ -49,5 +58,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-    tags: ci_build sysbuild ci_samples_net
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
     extra_args: https_client_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"

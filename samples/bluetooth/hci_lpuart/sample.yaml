@@ -7,4 +7,7 @@ tests:
     platform_allow: nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf52840
-    tags: uart bluetooth sysbuild
+    tags:
+      - uart
+      - bluetooth
+      - sysbuild

@@ -10,9 +10,16 @@ tests:
       - nrf52833dk/nrf52833
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
-    platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833 nrf5340dk/nrf5340/cpuapp
-      nrf21540dk/nrf52840
-    tags: ci_build smoke sysbuild ci_samples_zigbee
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf52833dk/nrf52833
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+    tags:
+      - ci_build
+      - smoke
+      - sysbuild
+      - ci_samples_zigbee
   sample.zigbee.light_switch.current_measurement:
     sysbuild: true
     build_only: true
@@ -21,8 +28,15 @@ tests:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
       - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833 nrf5340dk/nrf5340/cpuapp
-    tags: ci_build current_measurement sysbuild ci_samples_zigbee
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf52833dk/nrf52833
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - current_measurement
+      - sysbuild
+      - ci_samples_zigbee
   sample.zigbee.light_switch.fota:
     sysbuild: true
     build_only: true
@@ -31,8 +45,14 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
-    platform_allow: nrf52840dk/nrf52840 nrf21540dk/nrf52840
-    tags: ci_build smoke sysbuild ci_samples_zigbee
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf21540dk/nrf52840
+    tags:
+      - ci_build
+      - smoke
+      - sysbuild
+      - ci_samples_zigbee
   sample.zigbee.light_switch.fota.nrf5340dk:
     sysbuild: true
     build_only: true
@@ -41,25 +61,37 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build smoke sysbuild ci_samples_zigbee
+    tags:
+      - ci_build
+      - smoke
+      - sysbuild
+      - ci_samples_zigbee
   sample.zigbee.light_switch.fota_and_multiprotocol:
     sysbuild: true
     build_only: true
-    extra_args: >
-      FILE_SUFFIX=fota OVERLAY_CONFIG=overlay-multiprotocol_ble.conf
+    extra_args:
+      - FILE_SUFFIX=fota
+      - OVERLAY_CONFIG=overlay-multiprotocol_ble.conf
     integration_platforms:
       - nrf52840dk/nrf52840
     platform_allow: nrf52840dk/nrf52840
-    tags: ci_build sysbuild ci_samples_zigbee
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_zigbee
   sample.zigbee.light_switch.fota_and_multiprotocol.nrf5340dk:
     sysbuild: true
     build_only: true
-    extra_args: >
-      FILE_SUFFIX=fota OVERLAY_CONFIG=overlay-multiprotocol_ble.conf
+    extra_args:
+      - FILE_SUFFIX=fota
+      - OVERLAY_CONFIG=overlay-multiprotocol_ble.conf
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_zigbee
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_zigbee
   sample.zigbee.light_switch.multiprotocol:
     sysbuild: true
     build_only: true
@@ -68,19 +100,35 @@ tests:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
       - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833 nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_zigbee
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf52833dk/nrf52833
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_zigbee
   sample.zigbee.light_switch.with_shell:
     sysbuild: true
     build_only: true
-    extra_args: >
-      CONFIG_ZIGBEE_SHELL=y CONFIG_ZIGBEE_SHELL_DEBUG_CMD=y CONFIG_ZIGBEE_LOGGER_EP=n
-      CONFIG_ZIGBEE_SHELL_ENDPOINT=1 CONFIG_LOG_MODE_DEFERRED=y
+    extra_args:
+      - CONFIG_ZIGBEE_SHELL=y
+      - CONFIG_ZIGBEE_SHELL_DEBUG_CMD=y
+      - CONFIG_ZIGBEE_LOGGER_EP=n
+      - CONFIG_ZIGBEE_SHELL_ENDPOINT=1
+      - CONFIG_LOG_MODE_DEFERRED=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
-    platform_allow: nrf52840dk/nrf52840 nrf52833dk/nrf52833 nrf5340dk/nrf5340/cpuapp
-      nrf21540dk/nrf52840
-    tags: ci_build shell sysbuild ci_samples_zigbee
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf52833dk/nrf52833
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+    tags:
+      - ci_build
+      - shell
+      - sysbuild
+      - ci_samples_zigbee

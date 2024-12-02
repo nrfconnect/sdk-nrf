@@ -1,9 +1,9 @@
 sample:
   name: CoreMark Benchmark
-  description: CoreMark sample for the CPU performance evaluation.
-               Sample runs the CoreMark benchmark that measures the CPU efficiency
-               performing different algorithms like state machine, CRC calculation,
-               matrix manipulation and list processing (find and sort).
+  description: CoreMark sample for the CPU performance evaluation. Sample runs the
+    CoreMark benchmark that measures the CPU efficiency performing different algorithms
+    like state machine, CRC calculation, matrix manipulation and list processing (find
+    and sort).
 tests:
   sample.benchmark.coremark:
     sysbuild: true
@@ -26,7 +26,10 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild ci_samples_benchmarks
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_benchmarks
   sample.benchmark.coremark.flash_and_run:
     sysbuild: true
     build_only: false
@@ -48,7 +51,10 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild ci_samples_benchmarks
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_benchmarks
     harness: console
     harness_config:
       ordered: false
@@ -78,7 +84,10 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild ci_samples_benchmarks
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_benchmarks
     extra_args: FILE_SUFFIX=heap_memory
   sample.benchmark.coremark.static_memory:
     sysbuild: true
@@ -101,7 +110,10 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild ci_samples_benchmarks
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_benchmarks
     extra_args: FILE_SUFFIX=static_memory
   sample.benchmark.coremark.multiple_threads:
     sysbuild: true
@@ -124,5 +136,8 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: ci_build sysbuild ci_samples_benchmarks
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_benchmarks
     extra_args: FILE_SUFFIX=multiple_threads

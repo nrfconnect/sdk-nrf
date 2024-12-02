@@ -8,4 +8,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags: bluetooth ci_build sysbuild
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

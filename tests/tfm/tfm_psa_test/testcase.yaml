@@ -1,5 +1,8 @@
 common:
-  tags: sysbuild tfm ci_tests_tfm
+  tags:
+    - sysbuild
+    - tfm
+    - ci_tests_tfm
   build_only: true
   sysbuild: true
   platform_allow:

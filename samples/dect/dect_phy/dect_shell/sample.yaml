@@ -14,4 +14,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9161dk/nrf9161/ns
       - thingy91x/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_dect
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_dect

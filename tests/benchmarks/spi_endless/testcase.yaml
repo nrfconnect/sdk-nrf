@@ -1,6 +1,9 @@
 common:
   depends_on: spi
-  tags: drivers spi ci_tests_benchmarks_spi_endless
+  tags:
+    - drivers
+    - spi
+    - ci_tests_benchmarks_spi_endless
   harness: console
   harness_config:
     fixture: gpio_spi_bridge_two_boards

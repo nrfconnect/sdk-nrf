@@ -1,7 +1,8 @@
 common:
   sysbuild: true
-  tags: ci_tests_benchmarks_current_consumption ppk_power_measure
-
+  tags:
+    - ci_tests_benchmarks_current_consumption
+    - ppk_power_measure
 tests:
   benchmarks.current_consumption.grtc_idle:
     platform_allow:
