@@ -30,8 +30,9 @@ mapping_topics:
   - nrf/gsg_guides/gsg_other.html: ["nrf52-series", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
                                     "nrf52811", "nrf52810", "nrf52805", "nrf53-series", "nrf5340",
                                     "thingy53", "nrf9161", "nrf9160", "nrf9151", "thingy91",
-                                    "development-kits", "npm1300", "nrf54h20", "nrf54l15",
-                                    "nrf54l05", "nrf54l10", "nrf7002", "evaluation-kits", "pmic"]
+                                    "thingy91x", "development-kits", "npm1300", "nrf54h20",
+                                    "nrf54l15", "nrf54l05", "nrf54l10", "nrf7002",
+                                    "evaluation-kits", "pmic"]
   - nrf/installation.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                             "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                             "thingy91x", "nrf9161", "nrf9151", "nrf9131", "nrf54h20", "nrf54l15",
@@ -176,14 +177,9 @@ mapping_topics:
                                                                    "nrf9161", "development-kits"]
   - nrf/app_dev/device_guides/nrf91/nrf91_cloud_certificate.html: ["nrf9160", "nrf9161", "nrf9151",
                                                                    "development-kits", "nrf-cloud"]
-  - nrf/app_dev/device_guides/nrf91/thingy91_connecting.html: ["thingy91", "prototyping-platforms"]
   - nrf/app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer.html: ["nrf9160", "nrf9161",
                                                                            "nrf9151",
                                                                            "development-kits"]
-  - nrf/app_dev/device_guides/nrf91/thingy91_updating_fw_programmer.html: ["thingy91", "nrf9160",
-                                                                           "prototyping-platforms"]
-  - nrf/app_dev/device_guides/nrf91/thingy91x_updating_fw_programmer.html: ["thingy91x", "nrf9151",
-                                                                            "prototyping-platforms"]
   - nrf/app_dev/device_guides/nrf91/nrf91_building.html: ["nrf9160", "thingy91", "thingy91x",
                                                           "nrf9161", "nrf9151", "development-kits",
                                                           "prototyping-platforms"]
@@ -198,6 +194,12 @@ mapping_topics:
                                                          "development-kits",
                                                          "prototyping-platforms"]
   - nrf/app_dev/device_guides/nrf91/nrf9160_external_flash.html: ["nrf9160", "development-kits"]
+  - nrf/app_dev/device_guides/thingy91/*.html: ["thingy91", "prototyping-platforms", "nrf91-series",
+                                                "lte"]
+  - nrf/app_dev/device_guides/thingy91/thingy91_updating_fw_programmer.html: ["nrf9160"]
+  - nrf/app_dev/device_guides/thingy91x/*.html: ["thingy91x", "prototyping-platforms",
+                                                 "nrf91-series", "lte"]
+  - nrf/app_dev/device_guides/thingy91x/thingy91x_updating_fw_programmer.html: ["nrf9151"]
   - nrf/app_dev/device_guides/nrf70/*.html: ["nrf70-series", "nrf7002", "nrf7001", "nrf7000",
                                              "development-kits"]
   - nrf/app_dev/device_guides/nrf70/index.html: ["evaluation-kits"]

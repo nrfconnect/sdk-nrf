@@ -150,26 +150,29 @@ NRF = [
     ("ug_nrf9161", "app_dev/device_guides/nrf91/index"), ## Developing with nRF9161 (pre-2.7.0; removed)
     ("working_with_nrf/nrf91/nrf9161", "app_dev/device_guides/nrf91/index"),
     ("device_guides/working_with_nrf/nrf91/nrf9161", "app_dev/device_guides/nrf91/index"),
-    ("ug_thingy91", "app_dev/device_guides/nrf91/index"), ## Developing with Thingy:91 (pre-2.7.0; removed)
-    ("working_with_nrf/nrf91/thingy91", "app_dev/device_guides/nrf91/index"),
-    ("device_guides/working_with_nrf/nrf91/thingy91", "app_dev/device_guides/nrf91/index"),
     ("ug_nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"), # Features of nRF91 Series
     ("working_with_nrf/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/working_with_nrf/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/nrf91/nrf91_board_controllers", "app_dev/device_guides/nrf91/nrf91_board_controllers"), # Configuring board controller
     ("device_guides/nrf91/nrf91_cloud_certificate", "app_dev/device_guides/nrf91/nrf91_cloud_certificate"), # Updating the nRF Cloud certificate
-    ("device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/nrf91/thingy91_connecting"), # Connecting to Thingy:91
     ("device_guides/nrf91/nrf91_dk_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the firmware for nRF91 Series devices (landing)
-    ("device_guides/nrf91/nrf91_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_updating_fw_programmer"), # Updating the DK firmware using Programmer
-    ("device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/nrf91/thingy91_updating_fw_programmer"), # Updating the Thingy:91 firmware using Programmer
+    ("device_guides/nrf91/nrf91_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the DK firmware using Programmer
     ("device_guides/nrf91/nrf91_building", "app_dev/device_guides/nrf91/nrf91_building"), # Configuring and building with nRF91 Series
     ("device_guides/nrf91/nrf91_programming", "app_dev/device_guides/nrf91/nrf91_programming"), # Programming onto nRF91 Series devices
     ("device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing_at_client"), # Testing the cellular connection on nRF91 Series DK
     ("device_guides/working_with_nrf/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"), # Snippets for an nRF91 Series device
     ("device_guides/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"),
     ("device_guides/nrf91/nrf9160_external_flash", "app_dev/device_guides/nrf91/nrf9160_external_flash"), # Configuring external flash memory on the nRF9160 DK
-    ("ug_nrf70", "app_dev/device_guides/nrf70/index"), # Developing with nRF70 Series (post-2.7.0 landing)
+    ("ug_thingy91", "app_dev/device_guides/thingy91/index"), ## Developing with Thingy:91 (pre-2.7.0; removed)
+    ("working_with_nrf/nrf91/thingy91", "app_dev/device_guides/thingy91/index"),
+    ("device_guides/working_with_nrf/nrf91/thingy91", "app_dev/device_guides/thingy91/index"),
+    ("device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91/thingy91_connecting"), # Connecting to Thingy:91
+    ("app_dev/device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91/thingy91_connecting"),
+    ("device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_programmer"), # Updating the Thingy:91 firmware using Programmer
+    ("app_dev/device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_programmer"),
+    ("device_guides/nrf91/thingy91x_updating_fw_programmer", "app_dev/device_guides/thingy91x/thingy91x_updating_fw_programmer"), # Updating the Thingy:91 X firmware using nRF Util
+    ("ug_nrf70", "app_dev/device_guides/nrf70/index"), ## Developing with nRF70 Series (post-2.7.0 landing)
     ("device_guides/nrf70", "app_dev/device_guides/nrf70/index"),
     ("device_guides/nrf70/index", "app_dev/device_guides/nrf70/index"),
     ("ug_nrf70_developing", "app_dev/device_guides/nrf70/index"), ## Developing with nRF70 Series (pre-2.7.0 landing; removed)
