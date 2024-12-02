@@ -106,6 +106,8 @@ struct dect_phy_ping_params {
 	int32_t ping_count;
 	int8_t tx_power_dbm;
 	uint8_t tx_mcs;
+	uint8_t tx_lbt_period_symbols;
+	int8_t tx_lbt_rssi_busy_threshold_dbm;
 	uint8_t slot_count;
 
 	int8_t expected_rx_rssi_level;
