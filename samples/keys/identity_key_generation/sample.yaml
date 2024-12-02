@@ -2,7 +2,9 @@ sample:
   description: Generate and write identity key.
   name: Identity Key Generate
 common:
-  tags: keys ci_samples_keys
+  tags:
+    - keys
+    - ci_samples_keys
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp
     - nrf9160dk/nrf9160
@@ -22,8 +24,11 @@ common:
 tests:
   sample.keys.identity_key_generate.random_key:
     sysbuild: true
-    tags: keys ci_build sysbuild ci_samples_keys
-
+    tags:
+      - keys
+      - ci_build
+      - sysbuild
+      - ci_samples_keys
   # The TFM regression tests rely on a specific key in order to pass.
   # This sample configuration is mainly useful for writing that expected key,
   # which is called a "dummy key".
@@ -31,4 +36,8 @@ tests:
     sysbuild: true
     extra_configs:
       - CONFIG_IDENTITY_KEY_DUMMY=y
-    tags: keys ci_build sysbuild ci_samples_keys
+    tags:
+      - keys
+      - ci_build
+      - sysbuild
+      - ci_samples_keys

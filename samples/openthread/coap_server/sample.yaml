@@ -6,11 +6,14 @@ tests:
   sample.openthread.coap_server:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild ci_samples_openthread
-    platform_allow: >
-      nrf52840dk/nrf52840
-      nrf21540dk/nrf52840
-      nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf21540dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
@@ -18,11 +21,14 @@ tests:
   sample.openthread.coap_server.ftd:
     sysbuild: true
     build_only: true
-    tags: ci_build sysbuild ci_samples_openthread
-    platform_allow: >
-      nrf52840dk/nrf52840
-      nrf21540dk/nrf52840
-      nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf21540dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
     extra_args: >
       coap_server_SNIPPET="ci;logging"
     integration_platforms:

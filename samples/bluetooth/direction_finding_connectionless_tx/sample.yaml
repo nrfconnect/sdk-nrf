@@ -9,7 +9,9 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
       - nrf5340dk/nrf5340/cpuapp
-    tags: bluetooth sysbuild
+    tags:
+      - bluetooth
+      - sysbuild
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
@@ -35,7 +37,9 @@ tests:
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
-    tags: bluetooth sysbuild
+    tags:
+      - bluetooth
+      - sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
   sample.bluetooth.direction_finding_connectionless_tx.aod.bt_ll_sw_split.nrf52:
@@ -60,6 +64,8 @@ tests:
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
-    tags: bluetooth sysbuild
+    tags:
+      - bluetooth
+      - sysbuild
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp

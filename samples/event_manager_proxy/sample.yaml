@@ -1,10 +1,14 @@
 sample:
-  description: Sample showing usage of sending the events to another core via Event Manager Proxy
+  description: Sample showing usage of sending the events to another core via Event
+    Manager Proxy
   name: Event Manager proxy sample
 
 common:
   sysbuild: true
-  tags: ipc ci_build ci_samples_event_manager_proxy
+  tags:
+    - ipc
+    - ci_build
+    - ci_samples_event_manager_proxy
   harness: console
   harness_config:
     type: multi_line
@@ -31,8 +35,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    extra_args:
-      FILE_SUFFIX=icmsg
+    extra_args: FILE_SUFFIX=icmsg
   sample.event_manager_proxy.nrf54h20dk_cpuapp:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp

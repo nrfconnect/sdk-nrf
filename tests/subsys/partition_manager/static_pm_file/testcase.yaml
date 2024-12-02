@@ -1,5 +1,7 @@
 common:
-  tags: partition_manager ci_tests_subsys_partition_manager
+  tags:
+    - partition_manager
+    - ci_tests_subsys_partition_manager
 tests:
   static_pm_file.sysbuild:
     sysbuild: true

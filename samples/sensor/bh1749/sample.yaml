@@ -8,4 +8,7 @@ tests:
     integration_platforms:
       - thingy91/nrf9160
     platform_allow: thingy91/nrf9160
-    tags: sensors sysbuild ci_samples_sensor
+    tags:
+      - sensors
+      - sysbuild
+      - ci_samples_sensor

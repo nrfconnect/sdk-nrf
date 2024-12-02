@@ -2,7 +2,10 @@ sample:
   name: BME680 Sensor sample
 common:
   depends_on: i2c
-  tags: drivers i2c sensors
+  tags:
+    - drivers
+    - i2c
+    - sensors
   harness: console
 
 tests:
@@ -12,7 +15,8 @@ tests:
       fixture: pca63566
       type: one_line
       regex:
-        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\.]*$"
+        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
+        .]*$"
     extra_args:
       - SHIELD=pca63566
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
@@ -24,7 +28,8 @@ tests:
       fixture: pca63566
       type: one_line
       regex:
-        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\.]*$"
+        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
+        .]*$"
     extra_args:
       - bme680_SHIELD=pca63566
       - vpr_launcher_SHIELD=pca63566_fwd
@@ -36,7 +41,8 @@ tests:
       fixture: pca63566
       type: one_line
       regex:
-        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\.]*$"
+        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
+        .]*$"
     extra_args:
       - SHIELD=pca63566;coverage_support
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
@@ -47,7 +53,8 @@ tests:
       fixture: pca63565
       type: one_line
       regex:
-        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\.]*$"
+        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
+        .]*$"
     extra_args:
       - SHIELD=pca63565
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
@@ -58,7 +65,8 @@ tests:
       fixture: pca63565
       type: one_line
       regex:
-        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\.]*$"
+        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
+        .]*$"
     extra_args:
       - SHIELD=pca63565;coverage_support
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
@@ -70,7 +78,8 @@ tests:
       fixture: pca63565
       type: one_line
       regex:
-        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\.]*$"
+        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
+        .]*$"
     extra_args:
       - SHIELD=pca63565
       - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"

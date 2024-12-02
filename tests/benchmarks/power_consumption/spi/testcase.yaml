@@ -1,6 +1,8 @@
 common:
-  tags: ppk_power_measure ci_tests_benchmarks_current_consumption
+  tags:
 
+    - ppk_power_measure
+    - ci_tests_benchmarks_current_consumption
 tests:
   benchmarks.power_consumption.spi_nrf54l:
     harness: pytest

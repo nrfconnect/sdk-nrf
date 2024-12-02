@@ -15,7 +15,10 @@ tests:
       - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_cellular
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
   sample.cellular.lwm2m_client.afwu_extcpu:
     build_only: true
     extra_args:
@@ -25,4 +28,7 @@ tests:
       - nrf9160dk/nrf9160/ns
     platform_allow:
       - nrf9160dk/nrf9160/ns
-    tags: ci_build sysbuild ci_samples_cellular
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular

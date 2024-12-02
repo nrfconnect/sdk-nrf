@@ -11,7 +11,9 @@ tests:
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
-    tags: bluetooth sysbuild
+    tags:
+      - bluetooth
+      - sysbuild
   sample.bluetooth.central_hids.build:
     sysbuild: true
     build_only: true
@@ -29,4 +31,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    tags: bluetooth ci_build sysbuild
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

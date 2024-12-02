@@ -7,7 +7,9 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags: ci_build sysbuild
+    tags:
+      - ci_build
+      - sysbuild
   sample.nrf5340.netboot.minimal_size:
     sysbuild: true
     build_only: true
@@ -15,4 +17,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-    tags: ci_build sysbuild
+    tags:
+      - ci_build
+      - sysbuild

@@ -1,6 +1,8 @@
 common:
   sysbuild: true
-  tags: ci_build ci_tests_benchmarks_multicore
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
   platform_allow:
     - nrf54h20dk/nrf54h20/cpuapp
   integration_platforms:
@@ -20,10 +22,10 @@ tests:
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_led_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
-      idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
-      remote_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_pwm_led_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -33,8 +35,8 @@ tests:
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_led_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_led_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -44,11 +46,11 @@ tests:
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_led_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
-      idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
-      remote_CONFIG_TEST_SLEEP_DURATION_MS=500
-      idle_pwm_led_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_0.overlay"
+      - idle_pwm_led_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_pwm_led_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_0.overlay"
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -58,9 +60,9 @@ tests:
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_led_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
-      idle_pwm_led_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_0.overlay"
+      - idle_pwm_led_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_led_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_0.overlay"
     harness: pytest
     harness_config:
       fixture: ppk_power_measure

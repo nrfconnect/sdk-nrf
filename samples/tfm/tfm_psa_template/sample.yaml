@@ -2,7 +2,9 @@ sample:
   description: TF-M PSA Template
   name: TF-M PSA Template
 common:
-  tags: tfm ci_samples_tfm
+  tags:
+    - tfm
+    - ci_samples_tfm
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9151dk/nrf9151/ns
@@ -16,5 +18,8 @@ common:
 tests:
   sample.tfm.psa_template:
     sysbuild: true
-    tags: ci_build sysbuild ci_samples_tfm
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_tfm
     build_only: true

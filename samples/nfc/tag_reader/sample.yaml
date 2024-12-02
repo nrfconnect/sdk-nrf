@@ -9,5 +9,11 @@ tests:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf52dk/nrf52832 nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_nfc
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_nfc

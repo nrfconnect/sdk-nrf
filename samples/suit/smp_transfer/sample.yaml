@@ -13,25 +13,31 @@ common:
   sysbuild: true
 tests:
   sample.suit.smp_transfer:
-    tags: suit ci_samples_suit
-
+    tags:
+      - suit
+      - ci_samples_suit
   sample.suit.smp_transfer.bt:
     extra_args:
       - FILE_SUFFIX=bt
-    tags: suit bluetooth ci_samples_suit
-
+    tags:
+      - suit
+      - bluetooth
+      - ci_samples_suit
   sample.suit.smp_transfer.full_processing:
     extra_configs:
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
-    tags: suit ci_samples_suit
-
+    tags:
+      - suit
+      - ci_samples_suit
   sample.suit.smp_transfer.full_processing.bt:
     extra_args:
       - FILE_SUFFIX=bt
     extra_configs:
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
-    tags: suit bluetooth ci_samples_suit
-
+    tags:
+      - suit
+      - bluetooth
+      - ci_samples_suit
   sample.suit.smp_transfer.full_processing.extflash:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_extflash.overlay"
@@ -43,14 +49,17 @@ tests:
       - CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME="app_envelope_extflash.yaml.jinja2"
       - CONFIG_SUIT_STREAM_SOURCE_FLASH=y
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
-    tags: suit ci_samples_suit
-
+    tags:
+      - suit
+      - ci_samples_suit
   sample.suit.smp_transfer.recovery:
     extra_args:
       - FILE_SUFFIX=bt
       - SB_CONFIG_SUIT_BUILD_RECOVERY=y
-    tags: suit bluetooth ci_samples_suit
-
+    tags:
+      - suit
+      - bluetooth
+      - ci_samples_suit
   sample.suit.smp_transfer.full_processing.extflash.bt:
     extra_args:
       - FILE_SUFFIX=bt
@@ -68,8 +77,10 @@ tests:
       - CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME="app_envelope_extflash.yaml.jinja2"
       - CONFIG_SUIT_STREAM_SOURCE_FLASH=y
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_FULL=y
-    tags: suit bluetooth ci_samples_suit
-
+    tags:
+      - suit
+      - bluetooth
+      - ci_samples_suit
   sample.suit.smp_transfer.cache_push.extflash:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_extflash.overlay"
@@ -82,8 +93,9 @@ tests:
       - CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME="app_envelope_extflash.yaml.jinja2"
       - CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_PUSH_TO_CACHE=y
-    tags: suit ci_samples_suit
-
+    tags:
+      - suit
+      - ci_samples_suit
   sample.suit.smp_transfer.cache_push.extflash.bt:
     extra_args:
       - FILE_SUFFIX=bt
@@ -103,5 +115,7 @@ tests:
       - CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME="app_envelope_extflash.yaml.jinja2"
       - CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE=y
       - CONFIG_SUIT_DFU_CANDIDATE_PROCESSING_PUSH_TO_CACHE=y
-
-    tags: suit bluetooth ci_samples_suit
+    tags:
+      - suit
+      - bluetooth
+      - ci_samples_suit

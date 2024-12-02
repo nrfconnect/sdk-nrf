@@ -8,5 +8,9 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - thingy53/nrf5340/cpunet
-    platform_allow: nrf5340dk/nrf5340/cpunet thingy53/nrf5340/cpunet
-    tags: ci_build sysbuild
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+      - thingy53/nrf5340/cpunet
+    tags:
+      - ci_build
+      - sysbuild

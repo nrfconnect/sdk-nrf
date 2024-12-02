@@ -4,4 +4,7 @@ tests:
     platform_allow: native_sim
     integration_platforms:
       - native_sim
-    tags: dfu sysbuild ci_tests_subsys_dfu
+    tags:
+      - dfu
+      - sysbuild
+      - ci_tests_subsys_dfu

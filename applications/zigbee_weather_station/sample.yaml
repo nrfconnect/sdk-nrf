@@ -6,7 +6,10 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: thingy53/nrf5340/cpuapp
-    tags: ci_build sysbuild zigbee
+    tags:
+      - ci_build
+      - sysbuild
+      - zigbee
     extra_args: FILE_SUFFIX=release
     integration_platforms:
       - thingy53/nrf5340/cpuapp
@@ -14,4 +17,8 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: thingy53/nrf5340/cpuapp
-    tags: ci_build debug sysbuild zigbee
+    tags:
+      - ci_build
+      - debug
+      - sysbuild
+      - zigbee

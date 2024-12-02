@@ -8,4 +8,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: sysbuild ci_samples_nrf_rpc
+    tags:
+      - sysbuild
+      - ci_samples_nrf_rpc
