@@ -1,6 +1,6 @@
 .. _wifi_provisioning_samples:
 
-Wi-Fi: provisioning samples
+Wi-Fi: Provisioning samples
 ###########################
 
 The following samples demonstrate how to provision Wi-Fi® credentials to a Wi-Fi-capable Nordic Semiconductor's device.
@@ -10,4 +10,4 @@ The following samples demonstrate how to provision Wi-Fi® credentials to a Wi-F
    :caption: Subpages
    :glob:
 
-   ../../../samples/wifi/*/*/README
+   ../../../samples/wifi/provisioning/*/README
