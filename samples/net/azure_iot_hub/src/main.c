@@ -313,7 +313,7 @@ exit:
 static void direct_method_handler(struct k_work *work)
 {
 	int err;
-	static char *response = "{\"it\":\"worked\"}";
+	static const char response[] = "{\"it\":\"worked\"}";
 
 	/* Status code 200 indicates successful execution of direct method. */
 	struct azure_iot_hub_result result = {
@@ -322,7 +322,7 @@ static void direct_method_handler(struct k_work *work)
 			.size = strlen(method_data.request_id),
 		},
 		.status = 200,
-		.payload.ptr = response,
+		.payload.ptr = (char *)response,
 		.payload.size = sizeof(response) - 1,
 	};
 	bool led_state = strncmp(method_data.payload, "0", 1) ? 1 : 0;
