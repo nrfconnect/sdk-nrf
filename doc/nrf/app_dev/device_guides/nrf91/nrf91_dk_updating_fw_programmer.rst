@@ -8,6 +8,7 @@ Updating the DK firmware using Programmer
    :local:
    :depth: 2
 
+Updating the firmware for nRF91 Series devices involves several key steps to ensure the device operates with the latest features, improvements, and security updates.
 Before you begin to update the firmware, download and extract the latest application and modem firmware from the `nRF9151 DK Downloads`_, `nRF9161 DK Downloads`_, or `nRF9160 DK Downloads`_ page, depending on the DK you are using.
 
 The downloaded ZIP archive contains the following firmware:
