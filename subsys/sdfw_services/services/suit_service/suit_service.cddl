@@ -179,6 +179,32 @@ suit_check_component_compatibility_rsp = (
 	ret: int,
 )
 
+; Get manifest variable request
+suit_get_manifest_var_req = (
+	14,
+	id: uint,
+)
+
+; Get manifest variable response
+suit_get_manifest_var_rsp = (
+	14,
+	ret: int,
+	value: uint,
+)
+
+; Set manifest variable request
+suit_set_manifest_var_req = (
+	15,
+	id: uint,
+	value: uint,
+)
+
+; Set manifest variable response
+suit_set_manifest_var_rsp = (
+	15,
+	ret: int,
+)
+
 ; Get supported manifest roles request
 suit_get_supported_manifest_roles_req = (
 	18,
@@ -371,6 +397,9 @@ suit_req = [
 		suit_get_supported_manifest_info_req /
 		suit_authorize_process_dependency_req /
 
+		suit_get_manifest_var_req /
+		suit_set_manifest_var_req /
+
 		suit_evt_sub_req /
 		suit_chunk_enqueue_req /
 		suit_chunk_status_req /
@@ -398,6 +427,9 @@ suit_rsp = [
 		suit_get_supported_manifest_roles_rsp /
 		suit_get_supported_manifest_info_rsp /
 		suit_authorize_process_dependency_rsp /
+
+		suit_get_manifest_var_rsp /
+		suit_set_manifest_var_rsp /
 
 		suit_evt_sub_rsp /
 		suit_chunk_enqueue_rsp /
