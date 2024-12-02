@@ -129,10 +129,12 @@ config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
 
 config BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING
 	bool "Allow scanning and initiating at the same time"
-	select EXPERIMENTAL
 	depends on BT_CENTRAL
+	default BT_SCAN_AND_INITIATE_IN_PARALLEL
 	help
-	  Enables support for scanning and initiating at the same time
+	  Enables support for scanning and initiating at the same time.
+	  This feature can be used to reduce the time needed to connect
+	  to many devices.
 
 config BT_CTLR_SDC_PERIPHERAL_COUNT
 	int "Number of concurrent peripheral roles"
