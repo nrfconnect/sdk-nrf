@@ -38,7 +38,7 @@ config ML_APP_EI_RESULT_SECURITY_LEVEL_AUTHEN
 	depends on FLASH
 	depends on FLASH_PAGE_LAYOUT
 	depends on FLASH_MAP
-	depends on NVS
+	depends on NVS || ZMS
 	depends on SETTINGS
 
 endchoice

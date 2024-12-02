@@ -209,7 +209,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Machine learning
 ----------------
 
-|no_changes_yet_note|
+* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Asset Tracker v2
 ----------------
