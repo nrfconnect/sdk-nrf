@@ -128,7 +128,7 @@ SIM card support
 ================
 
 SIMs that are used with the nRF91 Series devices must support LTE-M, NB-IoT, or both.
-The iBasis SIM is bundled with the nRF9160 DK and Thingy:91, the Onomondo SIM with an nRF91x1 DK, and the Wireless Logic SIM card with the nRF9151 DK.
+The iBasis SIM is bundled with the nRF9160 DK and Thingy:91, the Onomondo SIM with an nRF91x1 DK and Thingy:91 X, and the Wireless Logic SIM card with the nRF9151 DK and Thingy:91 X.
 Check the `iBasis IoT network coverage`_, `Onomondo LTE-M coverage`_, `Onomondo NB-IoT coverage`_, or `Wireless Logic LTE-M/NB-IoT network coverage`_ pages to see the network coverage for different countries, depending on the SIM card you are using.
 
 Software SIM

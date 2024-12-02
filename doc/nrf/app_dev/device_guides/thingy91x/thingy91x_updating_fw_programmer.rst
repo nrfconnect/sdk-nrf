@@ -95,7 +95,7 @@ This section describes how you can update the application firmware of the nRF915
 
    .. group-tab:: Through USB and MCUboot
 
-      To update the nRF5340 SoC firmware over USB, complete the following steps:
+      To update the nRF9151 SiP application firmware over USB, complete the following steps:
 
       1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
       #. Connect the Thingy:91 X to your computer with a USB-C cable.
@@ -118,7 +118,7 @@ This section describes how you can update the application firmware of the nRF915
 
    .. group-tab:: Through external debug probe
 
-      To update the nRF5340 firmware using an external debug probe, complete the following steps:
+      To update the nRF9151 SiP application firmware using an external debug probe, complete the following steps:
 
       1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
       #. Connect the Thingy:91 X to your computer with a USB-C cable.
@@ -147,7 +147,7 @@ Updating the modem firmware on the nRF9151 SiP
 .. note::
    Modem firmware update through USB and MCUboot is currently not supported.
 
-To update the nRF5340 firmware using an external debug probe, complete the following steps:
+To update the nRF9151 modem firmware using an external debug probe, complete the following steps:
 
 1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
 #. Connect the Thingy:91 X to your computer with a USB-C cable.
