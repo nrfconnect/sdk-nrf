@@ -1,0 +1,16 @@
+sample:
+  description: Wi-Fi BLE radio test sample
+    application
+  name: Wi-Fi BLE radio test
+tests:
+  sample.nrf70.wifi_ble_radio_test:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - radio_test_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags: ci_build sysbuild ci_samples_wifi
