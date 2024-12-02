@@ -694,4 +694,5 @@ cJSON
 Documentation
 =============
 
+* Added Nordic Thingy:91 X to the list of devices supported by the `Quick Start app`_ on the :ref:`gsg_guides` page.
 * Fixed an issue on the :ref:`install_ncs` page where an incorrect directory path was provided for Linux and macOS at the end of the :ref:`cloning_the_repositories_win` section.

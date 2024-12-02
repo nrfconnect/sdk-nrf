@@ -60,7 +60,7 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
    * - Thingy:91 X
      - PCA20065
      - ``thingy91x/nrf9151``, ``thingy91x/nrf9151/ns``
-     - --
+     - `Quick Start app`_
      - | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
 
 The nRF Connect SDK also offers :ref:`samples <cellular_samples>` dedicated to these devices, as well as compatible :ref:`drivers` and :ref:`libraries`.
