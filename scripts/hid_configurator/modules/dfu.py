@@ -209,7 +209,13 @@ def b0_get_dfu_image_bootloader_var():
 
 
 def mcuboot_common_is_dfu_file_correct(dfu_bin):
-    res, _, _ = imgtool.image.Image.verify(dfu_bin, None)
+    try:
+        res, _, _ = imgtool.image.Image.verify(dfu_bin, None)
+    except ValueError:
+        # `imgtool` from `sdk-mcuboot` repository is needed to support pure ED25519 signature.
+        # This `imgtool` package version modifies the `verify` function signature (the function
+        # returns one more value).
+        res, _, _, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
         print('DFU image is invalid')
@@ -219,7 +225,13 @@ def mcuboot_common_is_dfu_file_correct(dfu_bin):
 
 
 def mcuboot_common_get_dfu_image_version(dfu_bin):
-    res, ver, _ = imgtool.image.Image.verify(dfu_bin, None)
+    try:
+        res, ver, _ = imgtool.image.Image.verify(dfu_bin, None)
+    except ValueError:
+        # `imgtool` from `sdk-mcuboot` repository is needed to support pure ED25519 signature.
+        # This `imgtool` package version modifies the `verify` function signature (the function
+        # returns one more value).
+        res, ver, _, _ = imgtool.image.Image.verify(dfu_bin, None)
 
     if res != imgtool.image.VerifyResult.OK:
         print('Image in file is invalid')
