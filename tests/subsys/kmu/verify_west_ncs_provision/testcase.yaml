@@ -1,6 +1,8 @@
 common:
   timeout: 120
-  tags: pytest kmu
+  tags:
+    - pytest
+    - kmu
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
 tests:

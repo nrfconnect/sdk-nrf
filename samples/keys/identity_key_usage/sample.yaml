@@ -2,7 +2,9 @@ sample:
   description: Use a previously written identity key from KMU.
   name: Identity Key Usage
 common:
-  tags: keys ci_samples_keys
+  tags:
+    - keys
+    - ci_samples_keys
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp
     - nrf9160dk/nrf9160
@@ -21,5 +23,9 @@ common:
 tests:
   sample.keys.identity_key_usage:
     sysbuild: true
-    tags: keys ci_build sysbuild ci_samples_keys
+    tags:
+      - keys
+      - ci_build
+      - sysbuild
+      - ci_samples_keys
     build_only: true

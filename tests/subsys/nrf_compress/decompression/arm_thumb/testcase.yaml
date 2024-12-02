@@ -1,6 +1,11 @@
 common:
   sysbuild: true
-  tags: compress decompression arm_thumb sysbuild ci_tests_subsys_nrf_compress
+  tags:
+    - compress
+    - decompression
+    - arm_thumb
+    - sysbuild
+    - ci_tests_subsys_nrf_compress
   platform_allow:
     - native_sim
     - nrf52840dk/nrf52840

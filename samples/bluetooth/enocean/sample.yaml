@@ -8,5 +8,10 @@ tests:
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
-    platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840
-    tags: bluetooth ci_build sysbuild
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

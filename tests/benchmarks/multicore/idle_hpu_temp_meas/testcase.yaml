@@ -1,7 +1,10 @@
 common:
   sysbuild: true
-  tags: ci_build ci_tests_benchmarks_multicore hpu ppk_power_measure
-
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
+    - hpu
+    - ppk_power_measure
 tests:
   benchmarks.multicore.idle_hpu_temp_meas:
     harness: pytest

@@ -1,5 +1,6 @@
 sample:
-  description: Bluetooth Low Energy Channel Sounding Initiator with Ranging Service Requestor
+  description: Bluetooth Low Energy Channel Sounding Initiator with Ranging Service
+    Requestor
   name: Bluetooth LE Channel Sounding Initiator with RREQ
 tests:
   sample.bluetooth.channel_sounding_ras_initiator:
@@ -13,4 +14,7 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-    tags: bluetooth ci_build sysbuild
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

@@ -8,5 +8,12 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
-    platform_allow: nrf52dk/nrf52832 nrf52840dk/nrf52840 nrf9160dk/nrf9160 nrf21540dk/nrf52840
-    tags: ci_build sysbuild ci_samples_debug
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160
+      - nrf21540dk/nrf52840
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_debug

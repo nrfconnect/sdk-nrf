@@ -9,7 +9,10 @@ tests:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
-    tags: ci_build sysbuild gpio
+    tags:
+      - ci_build
+      - sysbuild
+      - gpio
     required_snippets:
       - sdp-gpio-mbox
 
@@ -17,7 +20,10 @@ tests:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
-    tags: ci_build sysbuild gpio
+    tags:
+      - ci_build
+      - sysbuild
+      - gpio
     required_snippets:
       - sdp-gpio-icmsg
 
@@ -25,6 +31,9 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
-    tags: ci_build sysbuild gpio
+    tags:
+      - ci_build
+      - sysbuild
+      - gpio
     required_snippets:
       - sdp-gpio-icbmsg
