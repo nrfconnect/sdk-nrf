@@ -8,5 +8,11 @@ tests:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
-    platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840
-    tags: ci_build sysbuild ci_samples_gazell
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_gazell

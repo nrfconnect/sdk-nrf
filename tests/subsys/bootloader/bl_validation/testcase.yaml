@@ -17,4 +17,8 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
-    tags: b0 bl_validation sysbuild ci_tests_subsys_bootloader
+    tags:
+      - b0
+      - bl_validation
+      - sysbuild
+      - ci_tests_subsys_bootloader

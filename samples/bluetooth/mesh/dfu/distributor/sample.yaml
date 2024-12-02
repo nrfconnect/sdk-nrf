@@ -8,9 +8,14 @@ tests:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf54l15dk/nrf54l15/cpuapp
-      nrf54l15dk/nrf54l10/cpuapp
-    tags: bluetooth ci_build sysbuild
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
   sample.bluetooth.mesh_dfu_distributor.smp_bt_auth:
     sysbuild: true
     build_only: true
@@ -18,7 +23,12 @@ tests:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf54l15dk/nrf54l15/cpuapp
-      nrf54l15dk/nrf54l10/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
     extra_args: OVERLAY_CONFIG=overlay-smp-bt-auth.conf
-    tags: bluetooth ci_build sysbuild
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

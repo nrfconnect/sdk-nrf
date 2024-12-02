@@ -2,7 +2,10 @@ sample:
   name: Accelerometer polling sample
 common:
   depends_on: spi
-  tags: drivers spi sensors
+  tags:
+    - drivers
+    - spi
+    - sensors
   harness: console
 
 tests:
@@ -12,8 +15,8 @@ tests:
       fixture: pca63566
       type: one_line
       regex:
-        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m\/s\\^2\\]:    \
-           \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63566
     extra_configs:
@@ -28,8 +31,8 @@ tests:
       fixture: pca63566
       type: one_line
       regex:
-        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m\/s\\^2\\]:    \
-           \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - accel_polling_SHIELD=pca63566
       - vpr_launcher_SHIELD=pca63566_fwd
@@ -41,8 +44,8 @@ tests:
       fixture: pca63566
       type: one_line
       regex:
-        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m\/s\\^2\\]:    \
-           \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63566;coverage_support
     extra_configs:
@@ -56,8 +59,8 @@ tests:
       fixture: pca63565
       type: one_line
       regex:
-        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m\/s\\^2\\]:    \
-           \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565
     extra_configs:
@@ -71,8 +74,8 @@ tests:
       fixture: pca63565
       type: one_line
       regex:
-        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m\/s\\^2\\]:    \
-           \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565;coverage_support
     extra_configs:
@@ -87,8 +90,8 @@ tests:
       fixture: pca63565
       type: one_line
       regex:
-        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m\/s\\^2\\]:    \
-           \\(\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565
       - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"

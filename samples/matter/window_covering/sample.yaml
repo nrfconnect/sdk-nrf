@@ -10,38 +10,59 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.window_cover.release:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=release
-      SB_CONFIG_BOOTLOADER_MCUBOOT=y SB_CONFIG_PARTITION_MANAGER=y
+    extra_args:
+      - FILE_SUFFIX=release
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_PARTITION_MANAGER=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.window_cover.lto:
     sysbuild: true
     build_only: true
-    extra_args: CONFIG_LTO=y CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
+    extra_args:
+      - CONFIG_LTO=y
+      - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.window_cover.release.nrf54l15.power_consumption:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=release CONFIG_NCS_SAMPLE_MATTER_LEDS=n
-      CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
+    extra_args:
+      - FILE_SUFFIX=release
+      - CONFIG_NCS_SAMPLE_MATTER_LEDS=n
+      - CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
-    tags: sysbuild ci_samples_matter
+    tags:
+      - sysbuild
+      - ci_samples_matter

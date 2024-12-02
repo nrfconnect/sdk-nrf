@@ -6,12 +6,16 @@ sample:
 
 common:
   build_only: true
-  tags: ci_build ci_samples_sdfw
+  tags:
 
+    - ci_build
+    - ci_samples_sdfw
 tests:
   samples.sdfw.ssf_client:
     sysbuild: true
-    tags: sysbuild ci_samples_sdfw
+    tags:
+      - sysbuild
+      - ci_samples_sdfw
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -24,7 +28,9 @@ tests:
       - nrf9280pdk/nrf9280/cpurad
   samples.sdfw.ssf_client.logging.uart:
     sysbuild: true
-    tags: sysbuild ci_samples_sdfw
+    tags:
+      - sysbuild
+      - ci_samples_sdfw
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad

@@ -1,7 +1,10 @@
 common:
   sysbuild: true
   timeout: 180
-  tags: pytest mcuboot kmu
+  tags:
+    - pytest
+    - mcuboot
+    - kmu
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
   harness: pytest
