@@ -39,6 +39,9 @@ This is the deepest power saving mode the system can enter.
 In this mode, all core functionalities are powered down, and most peripherals are non-functional or non-responsive.
 The only mechanisms that are functional in this mode are reset and wake-up.
 
+.. note::
+   Currently, the **System off** mode is not supported by this sample for the nRF54H20 platform.
+
 To wake up your development kit from the system off state, you have the following options:
 
 .. tabs::

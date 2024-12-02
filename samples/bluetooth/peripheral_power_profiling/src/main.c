@@ -644,8 +644,13 @@ static void reset_reason_print(void)
 		printk("Wake up by NFC field detected\n");
 	} else if (reason & NRFX_RESET_REASON_OFF_MASK) {
 		printk("Wake up by the advertising start buttons\n");
+#if defined(NRF_RESETINFO)
+	} else if (reason & NRFX_RESET_REASON_LOCAL_SREQ_MASK) {
+		printk("Application soft reset detected\n");
+#else
 	} else if (reason & NRFX_RESET_REASON_SREQ_MASK) {
 		printk("Application soft reset detected\n");
+#endif /* defined(NRF_RESETINFO) */
 	} else if (reason & NRFX_RESET_REASON_RESETPIN_MASK) {
 		printk("Reset from pin-reset\n");
 	} else if (reason) {
@@ -657,6 +662,7 @@ static void reset_reason_print(void)
 
 static void system_off(void)
 {
+#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
 	printk("Powering off\n");
 
 	/* Clear the reset reason if it didn't do previously. */
@@ -685,6 +691,7 @@ static void system_off(void)
 #endif
 
 	sys_poweroff();
+#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
 }
 
 static void system_off_work_handler(struct k_work *work)
@@ -696,9 +703,11 @@ static void advertising_terminated(struct bt_le_ext_adv *adv, struct bt_le_ext_a
 {
 	if (!device_conn) {
 		printk("Adverting set %p, terminated.\n", (void *)adv);
+#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
 		printk("Scheduling system off\n");
 
 		k_work_schedule(&system_off_work, K_SECONDS(1));
+#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
 	}
 }
 

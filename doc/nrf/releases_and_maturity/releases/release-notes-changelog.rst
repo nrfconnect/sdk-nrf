@@ -290,6 +290,10 @@ Bluetooth samples
 
     * :ref:`peripheral_hids_mouse`
 
+  * :ref:`power_profiling` sample:
+
+    * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+
 * Updated:
 
   * Configurations of the following Bluetooth samples to make the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` the default settings backend for all board targets that use the MRAM technology:
