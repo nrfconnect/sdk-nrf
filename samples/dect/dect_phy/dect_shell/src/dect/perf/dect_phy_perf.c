@@ -1860,9 +1860,12 @@ static void dect_phy_perf_phy_init(struct nrf_modem_dect_phy_init_params *init_p
 int dect_phy_perf_cmd_handle(struct dect_phy_perf_params *params)
 {
 	int ret;
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
 	struct nrf_modem_dect_phy_init_params perf_phy_init_params = {
 		.harq_rx_expiry_time_us = params->mdm_init_harq_expiry_time_us,
 		.harq_rx_process_count = params->mdm_init_harq_process_count,
+		.reserved = 0,
+		.band4_support = ((current_settings->common.band_nbr == 4) ? 1 : 0),
 	};
 
 	if (perf_data.perf_ongoing) {
