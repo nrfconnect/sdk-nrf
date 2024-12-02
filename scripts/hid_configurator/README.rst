@@ -91,6 +91,18 @@ Complete the following steps:
       py -3 -m pip install -r requirements.txt
       py -3 -m pip install .
 
+.. note::
+   Currently, the ``imgtool`` from PyPI does not support pure ED25519 signature (used by nRF54L-based devices that enable MCUboot hardware cryptography).
+   This may result in rejecting proper DFU images (``DFU image is invalid``).
+   ``imgtool`` supporting pure ED25519 signature can be installed from the ``sdk-mcuboot`` repository (:file:`ncs/bootloader/mcuboot/scripts` directory of the |NCS|).
+   Run the following commands in the source directory to install ``imgtool`` and the required dependencies:
+
+   .. parsed-literal::
+      :class: highlight
+
+      py -3 -m pip install -r requirements.txt
+      py -3 -m pip install .
+
 Debian/Ubuntu/Linux Mint
 ========================
 
@@ -151,6 +163,17 @@ Complete the following steps:
       pip3 install --user -r requirements.txt
       pip3 install --user .
 
+.. note::
+   Currently, the ``imgtool`` from PyPI does not support pure ED25519 signature (used by nRF54L-based devices that enable MCUboot hardware cryptography).
+   This may result in rejecting proper DFU images (``DFU image is invalid``).
+   ``imgtool`` supporting pure ED25519 signature can be installed from the ``sdk-mcuboot`` repository (:file:`ncs/bootloader/mcuboot/scripts` directory of the |NCS|).
+   Run the following commands in the source directory to install ``imgtool`` and the required dependencies:
+
+   .. parsed-literal::
+      :class: highlight
+
+      pip3 install --user -r requirements.txt
+      pip3 install --user .
 
 Stopping fwupd daemon
 =====================
