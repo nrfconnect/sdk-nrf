@@ -15,7 +15,7 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 if PSA_CRYPTO_DRIVER_CRACEN
 
 config CRACEN_LOAD_MICROCODE
-	bool
+	bool "Load CRACEN microcode"
 	depends on (SOC_SERIES_NRF54LX && !SOC_NRF54L20) || SOC_SERIES_NRF54HX
 	default y
 	help
@@ -24,7 +24,7 @@ config CRACEN_LOAD_MICROCODE
 	  required when a bootloader has already loaded the microcode.
 
 config CRACEN_LIB_KMU
-	bool
+	bool "CRACEN KMU library"
 	depends on SOC_SERIES_NRF54LX
 	select NRFX_RRAMC if !BUILD_WITH_TFM
 	default y
