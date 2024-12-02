@@ -26,32 +26,34 @@ static void log_rpc_msg_handler(const struct nrf_rpc_group *group, struct nrf_rp
 				void *handler_data)
 {
 	enum log_rpc_level level;
-	struct zcbor_string message;
-	bool decoded_ok;
+	const char *message;
+	size_t message_size;
 
-	decoded_ok = zcbor_uint_decode(ctx->zs, &level, sizeof(level));
-	decoded_ok = decoded_ok && zcbor_bstr_decode(ctx->zs, &message);
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	level = nrf_rpc_decode_uint(ctx);
+	message = nrf_rpc_decode_buffer_ptr_and_size(ctx, &message_size);
 
-	if (!decoded_ok) {
-		return;
+	if (message) {
+		switch (level) {
+		case LOG_RPC_LEVEL_ERR:
+			LOG_ERR("%.*s", message_size, message);
+			break;
+		case LOG_RPC_LEVEL_WRN:
+			LOG_WRN("%.*s", message_size, message);
+			break;
+		case LOG_RPC_LEVEL_INF:
+			LOG_INF("%.*s", message_size, message);
+			break;
+		case LOG_RPC_LEVEL_DBG:
+			LOG_DBG("%.*s", message_size, message);
+			break;
+		default:
+			break;
+		}
 	}
 
-	switch (level) {
-	case LOG_RPC_LEVEL_ERR:
-		LOG_ERR("%.*s", message.len, message.value);
-		break;
-	case LOG_RPC_LEVEL_WRN:
-		LOG_WRN("%.*s", message.len, message.value);
-		break;
-	case LOG_RPC_LEVEL_INF:
-		LOG_INF("%.*s", message.len, message.value);
-		break;
-	case LOG_RPC_LEVEL_DBG:
-		LOG_DBG("%.*s", message.len, message.value);
-		break;
-	default:
-		break;
+	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group, LOG_RPC_EVT_MSG,
+			    NRF_RPC_PACKET_TYPE_EVT);
 	}
 }
 
@@ -64,9 +66,8 @@ int log_rpc_set_stream_level(enum log_rpc_level level)
 
 	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 1 + sizeof(level));
 	nrf_rpc_encode_uint(&ctx, level);
-	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_SET_STREAM_LEVEL, &ctx);
-
-	nrf_rpc_cbor_decoding_done(&log_rpc_group, &ctx);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_STREAM_LEVEL, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
 
 	return 0;
 }
@@ -74,28 +75,26 @@ int log_rpc_set_stream_level(enum log_rpc_level level)
 int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	struct zcbor_string log_chunk;
-	bool decoded_ok;
+	const uint8_t *log_chunk;
+	size_t log_chunk_size = 0;
 
-	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 10);
-
-	if (!zcbor_uint32_put(ctx.zs, offset) || !zcbor_uint32_put(ctx.zs, buffer_length)) {
-		NRF_RPC_CBOR_DISCARD(&log_rpc_group, ctx);
-		return -ENOBUFS;
-	}
-
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 2 + sizeof(offset) + sizeof(buffer_length));
+	nrf_rpc_encode_uint(&ctx, offset);
+	nrf_rpc_encode_uint(&ctx, buffer_length);
 	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_GET_CRASH_LOG, &ctx);
 
 	/* Parse response */
-	decoded_ok = zcbor_bstr_decode(ctx.zs, &log_chunk);
-	nrf_rpc_cbor_decoding_done(&log_rpc_group, &ctx);
+	log_chunk = nrf_rpc_decode_buffer_ptr_and_size(&ctx, &log_chunk_size);
 
-	if (!decoded_ok) {
-		return -EINVAL;
+	if (log_chunk) {
+		log_chunk_size = MIN(log_chunk_size, buffer_length);
+		memcpy(buffer, log_chunk, log_chunk_size);
 	}
 
-	log_chunk.len = MIN(log_chunk.len, buffer_length);
-	memcpy(buffer, log_chunk.value, log_chunk.len);
+	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, &ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group,
+			    LOG_RPC_CMD_GET_CRASH_LOG, NRF_RPC_PACKET_TYPE_RSP);
+	}
 
-	return log_chunk.len;
+	return log_chunk_size;
 }
