@@ -1,6 +1,9 @@
 common:
   depends_on: i2c
-  tags: drivers i2c ci_tests_benchmarks_i2c_endless
+  tags:
+    - drivers
+    - i2c
+    - ci_tests_benchmarks_i2c_endless
   harness: console
   harness_config:
     fixture: gpio_i2c_bridge_two_boards

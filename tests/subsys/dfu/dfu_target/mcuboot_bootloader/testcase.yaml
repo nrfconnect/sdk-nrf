@@ -13,4 +13,8 @@ tests:
       - nrf9160dk/nrf9160
       - native_sim
       - qemu_cortex_m3
-    tags: dfu mcuboot sysbuild ci_tests_subsys_dfu
+    tags:
+      - dfu
+      - mcuboot
+      - sysbuild
+      - ci_tests_subsys_dfu
