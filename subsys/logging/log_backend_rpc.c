@@ -120,16 +120,16 @@ static void log_rpc_get_crash_log_handler(const struct nrf_rpc_group *group,
 	const struct device *const crash_log = CRASH_LOG_DEV;
 	size_t offset;
 	size_t length;
-	bool decoded_ok;
 	crash_log_header_t header;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	decoded_ok = zcbor_uint_decode(ctx->zs, &offset, sizeof(offset));
-	decoded_ok = decoded_ok && zcbor_uint_decode(ctx->zs, &length, sizeof(length));
-	nrf_rpc_cbor_decoding_done(group, ctx);
+	offset = nrf_rpc_decode_uint(ctx);
+	length = nrf_rpc_decode_uint(ctx);
 
-	if (!decoded_ok) {
-		goto err;
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_GET_CRASH_LOG,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
 	}
 
 	if (retention_is_valid(crash_log) != 1) {
@@ -190,19 +190,10 @@ static void retain(const uint8_t *data, size_t length)
 static void send(const uint8_t *data, size_t length)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	const struct zcbor_string data_string = {
-		.value = data,
-		.len = length,
-	};
 
 	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 4 + length);
-
-	if (!zcbor_uint_encode(ctx.zs, &current_level, sizeof(current_level)) ||
-	    !zcbor_bstr_encode(ctx.zs, &data_string)) {
-		NRF_RPC_CBOR_DISCARD(&log_rpc_group, ctx);
-		return;
-	}
-
+	nrf_rpc_encode_uint(&ctx, current_level);
+	nrf_rpc_encode_buffer(&ctx, data, length);
 	nrf_rpc_cbor_evt_no_err(&log_rpc_group, LOG_RPC_EVT_MSG, &ctx);
 }
 
@@ -342,21 +333,19 @@ LOG_BACKEND_DEFINE(log_backend_rpc, log_backend_rpc_api, true);
 static void log_rpc_set_stream_level_handler(const struct nrf_rpc_group *group,
 					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	struct nrf_rpc_cbor_ctx rsp_ctx;
 	enum log_rpc_level level;
 
 	level = (enum log_rpc_level)nrf_rpc_decode_uint(ctx);
 
-	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, ctx)) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group,
-			    LOG_RPC_CMD_SET_STREAM_LEVEL, NRF_RPC_PACKET_TYPE_CMD);
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_SET_STREAM_LEVEL,
+			    NRF_RPC_PACKET_TYPE_CMD);
 		return;
 	}
 
 	stream_level = level;
 
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	nrf_rpc_rsp_send_void(group);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_stream_level_handler,
