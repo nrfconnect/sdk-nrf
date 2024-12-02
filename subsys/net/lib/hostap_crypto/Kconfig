@@ -141,6 +141,24 @@ config HOSTAP_CRYPTO_ALT_PSA
 
 endchoice
 
+if WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+
+config HOSTAP_CRYPTO_ENTERPRISE
+	bool "Enterprise Crypto support for WiFi using nRF security"
+	select MBEDTLS_ECDH_C
+	select MBEDTLS_ECDSA_C
+	select MBEDTLS_DHM_C
+	select MBEDTLS_SSL_TLS_C
+	select MBEDTLS_SSL_SRV_C
+	select MBEDTLS_SSL_CLI_C
+	select MBEDTLS_X509_LIBRARY
+	select MBEDTLS_TLS_LIBRARY
+	select MBEDTLS_X509_CRL_PARSE_C
+	select MBEDTLS_TLS_VERSION_1_2
+	select MBEDTLS_RSA_C
+	default y
+endif
+
 # PSA crypto is WPA2 only for now
 if HOSTAP_CRYPTO_ALT_PSA
 	config WIFI_NM_WPA_SUPPLICANT_WPA3
