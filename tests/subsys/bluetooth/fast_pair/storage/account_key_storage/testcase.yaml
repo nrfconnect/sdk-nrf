@@ -7,6 +7,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - qemu_cortex_m3
     integration_platforms:
       - nrf52dk/nrf52832
@@ -14,6 +15,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - qemu_cortex_m3
     tags: sysbuild bluetooth
   fast_pair.storage.account_key_storage.6keys:
@@ -64,6 +66,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - qemu_cortex_m3
     integration_platforms:
       - nrf52dk/nrf52832
@@ -71,6 +74,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - qemu_cortex_m3
     extra_args: CONFIG_TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY=y
     tags: sysbuild bluetooth
