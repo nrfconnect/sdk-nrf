@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Nordic Wi-Fi Bluetooth LE Radio test sample"
+
+rsource "../../../../samples/peripheral/radio_test/Kconfig"

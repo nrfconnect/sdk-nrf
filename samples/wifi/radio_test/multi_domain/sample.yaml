@@ -89,7 +89,7 @@ tests:
   sample.nrf7002_eb.thingy53.radio_test:
     sysbuild: true
     build_only: true
-    extra_args: radio_test_SHIELD=nrf7002eb
+    extra_args: multi_domain_SHIELD=nrf7002eb
     integration_platforms:
       - thingy53/nrf5340/cpuapp
     platform_allow: thingy53/nrf5340/cpuapp
@@ -110,7 +110,7 @@ tests:
     build_only: true
     extra_args:
       - FILE_SUFFIX=wifi_combo
-      - radio_test_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - multi_domain_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - SNIPPET=nrf70-wifi
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp

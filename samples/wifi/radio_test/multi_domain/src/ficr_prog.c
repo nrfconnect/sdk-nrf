@@ -34,22 +34,22 @@ unsigned int check_protection(unsigned int *buff, unsigned int off1, unsigned in
 	if ((buff[off1] == OTP_PROGRAMMED) &&
 		(buff[off2] == OTP_PROGRAMMED)  &&
 		(buff[off3] == OTP_PROGRAMMED) &&
-		(buff[off4] == OTP_PROGRAMMED))
+		(buff[off4] == OTP_PROGRAMMED)) {
 		return OTP_PROGRAMMED;
-	else if ((buff[off1] == OTP_FRESH_FROM_FAB) &&
+	} else if ((buff[off1] == OTP_FRESH_FROM_FAB) &&
 		(buff[off2] == OTP_FRESH_FROM_FAB) &&
 		(buff[off3] == OTP_FRESH_FROM_FAB) &&
-		(buff[off4] == OTP_FRESH_FROM_FAB))
+		(buff[off4] == OTP_FRESH_FROM_FAB)) {
 		return OTP_FRESH_FROM_FAB;
-	else if ((buff[off1] == OTP_ENABLE_PATTERN) &&
+	} else if ((buff[off1] == OTP_ENABLE_PATTERN) &&
 		(buff[off2] == OTP_ENABLE_PATTERN) &&
 		(buff[off3] == OTP_ENABLE_PATTERN) &&
-		(buff[off4] == OTP_ENABLE_PATTERN))
+		(buff[off4] == OTP_ENABLE_PATTERN)) {
 		return OTP_ENABLE_PATTERN;
-	else
+	} else {
 		return OTP_INVALID;
+	}
 }
-
 
 static void set_otp_timing_reg_40mhz(void)
 {
@@ -74,15 +74,13 @@ static int poll_otp_ready(void)
 	return -ENOEXEC;
 }
 
-
 static int req_otp_standby_mode(void)
 {
 	write_word(OTP_RWSBMODE_ADDR, 0x0);
 	return poll_otp_ready();
 }
 
-
-static int otp_wr_voltage_2V5(void)
+static int otp_wr_voltage_2v5(void)
 {
 	int err;
 
@@ -136,7 +134,6 @@ static int req_otp_read_mode(void)
 	return poll_otp_ready();
 }
 
-
 static int req_otp_byte_write_mode(void)
 {
 	write_word(OTP_RWSBMODE_ADDR, OTP_BYTE_WRITE_MODE);
@@ -166,8 +163,7 @@ static int  write_otp_location(unsigned int otp_location_offset, unsigned int ot
 	return poll_otp_wrdone();
 }
 
-
-static int otp_rd_voltage_1V8(void)
+static int otp_rd_voltage_1v8(void)
 {
 	int err;
 
@@ -212,9 +208,9 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 
 	set_otp_timing_reg_40mhz();
 
-	err = otp_wr_voltage_2V5();
+	err = otp_wr_voltage_2v5();
 	if (err) {
-		LOG_ERR("error in write_voltage 2V5");
+		LOG_ERR("error in write_voltage 2v5");
 		goto _exit_otp_write;
 	}
 
@@ -344,7 +340,7 @@ int write_otp_memory(unsigned int otp_addr, unsigned int *write_val)
 
 _exit_otp_write:
 	err  = req_otp_standby_mode();
-	err |= otp_rd_voltage_1V8();
+	err |= otp_rd_voltage_1v8();
 	return err;
 }
 
@@ -360,9 +356,9 @@ int read_otp_memory(unsigned int otp_addr, unsigned int *read_val, int len)
 
 	set_otp_timing_reg_40mhz();
 
-	err = otp_rd_voltage_1V8();
+	err = otp_rd_voltage_1v8();
 	if (err) {
-		LOG_ERR("error in read_voltage 1V8");
+		LOG_ERR("error in read_voltage 1v8");
 		return -ENOEXEC;
 	}
 

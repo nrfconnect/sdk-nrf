@@ -17,5 +17,6 @@ This section lists the available |NCS| samples for the :ref:`Wi-Fi® <ug_wifi>` 
    :glob:
 
    ../../../samples/wifi/*/README
+   wifi_radiotest
    wifi_provisioning
    wifi_zephyr
