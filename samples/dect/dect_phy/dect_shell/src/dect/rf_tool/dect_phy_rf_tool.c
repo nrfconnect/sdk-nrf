@@ -881,6 +881,8 @@ static void dect_phy_rf_tool_phy_init(void)
 	struct nrf_modem_dect_phy_init_params rf_tool_phy_init_params = {
 		.harq_rx_expiry_time_us = current_settings->harq.mdm_init_harq_expiry_time_us,
 		.harq_rx_process_count = current_settings->harq.mdm_init_harq_process_count,
+		.reserved = 0,
+		.band4_support = ((current_settings->common.band_nbr == 4) ? 1 : 0),
 	};
 	int ret = nrf_modem_dect_phy_callback_set(&rf_tool_phy_api_config);
 
