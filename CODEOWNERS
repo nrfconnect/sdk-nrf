@@ -521,6 +521,7 @@
 /samples/wifi/softap/                     @D-Triveni @krish2718
 /samples/wifi/monitor/                    @D-Triveni
 /samples/wifi/promiscuous/                @D-Triveni
+/samples/wifi/wfa_qt_app/                 @D-Triveni
 /samples/wifi/offloaded_raw_tx/           @kapbh @sachinthegreen
 /samples/zigbee/                          @nrfconnect/ncs-zigbee
 
