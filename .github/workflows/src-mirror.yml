@@ -39,3 +39,25 @@ jobs:
           --url=$ARTIFACTORY_URL
           --user=${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
           --password=${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+
+      - name: Create and distribute release bundle
+        env:
+          ARTIFACTORY_URL: https://eu.files.nordicsemi.com
+          SRC_PATH: ncs-src-mirror/external/${{ github.ref_name }}
+          VERSION: ${{ github.ref_name }}
+        run: >
+          jfrog c add temp --interactive=false --url=$ARTIFACTORY_URL --user=${{ secrets.COM_NORDICSEMI_FILES_USERNAME }} --password=${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+          jfrog c use temp
+
+          jfrog ds release-bundle-create src-mirror "$VERSION" "$SRC_PATH/**"
+          if [[ "$?" != "0" ]]; then
+              echo "Error createing release bundle" && exit 1
+          fi
+          jfrog ds release-bundle-sign src-mirror "$VERSION"
+          if [[ "$?" != "0" ]]; then
+              echo 'Error signing release bundle' && exit 1
+          fi
+          jfrog ds release-bundle-distribute src-mirror "$VERSION" --create-repo --country-codes 'CN'
+          [[ "$?" != "0" ]] && echo 'Error distributing release bundle' && exit 1
+
+          jfrog c rm temp
