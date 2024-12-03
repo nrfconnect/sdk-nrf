@@ -52,9 +52,12 @@ The sample demonstrates the following features:
       This allows you to measure the minimal end-to-end latency.
 
 .. note::
-   This sample requires less hardware resources when it is run on an nRF54L Series device compared to the nRF52 or nRF53 Series devices.
-   On an nRF54L Series device, only one GRTC channel and PPI channel is needed to set up accurate toggling of an LED.
-   On nRF52 and nRF53 Series devices, you also need one RTC peripheral, one TIMER peripheral, one EGU channel, three PPI channels, and one PPI group.
+   This sample requires fewer hardware resources when it is run on an nRF54 Series device compared to the nRF52 or nRF53 Series devices.
+
+   * On an nRF54L Series device, only one GRTC channel and one DPPI channel are needed to set up accurate toggling of an LED.
+   * On an nRF54H Series device, only one GRTC channel and two local DPPI channels are needed to connect the GRTC and the LED to the local PPIB instances.
+     Additionally, a PPIB channel is used to connect the two PPIB instances.
+   * On nRF52 and nRF53 Series devices, you need one RTC peripheral, one TIMER peripheral, one EGU channel, four PPI channels, and one PPI group.
 
 Configuration
 *************
@@ -209,7 +212,7 @@ The sample code is divided into multiple source files, which makes it easier to 
       These files allow the application to read the current timestamp and set up a PPI trigger at a given point in time.
 
       The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
-      The implementation for nRF54L Series devices uses the GRTC and is simpler to use.
+      The implementation for nRF54 Series devices uses the GRTC and is simpler to use.
 
    .. group-tab:: nRF54 DKs
 
@@ -286,7 +289,7 @@ The sample code is divided into multiple source files, which makes it easier to 
       These files allow the application to read the current timestamp and set up a PPI trigger at a given point in time.
 
       The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
-      The implementation for nRF54L Series devices uses the GRTC and is simpler to use.
+      The implementation for nRF54 Series devices uses the GRTC and is simpler to use.
 
 Building and running
 ********************

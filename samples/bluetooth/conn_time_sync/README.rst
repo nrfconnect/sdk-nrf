@@ -102,10 +102,10 @@ Hardware resource usage
 =======================
 
 This sample requires fewer hardware resources when it is run on an nRF54 Series device compared to the nRF52 or nRF53 Series devices.
-On an nRF54L Series device, only one GRTC channel and PPI channel is needed to set up accurate toggling of an LED.
+On an nRF54L Series device, only one GRTC channel and one PPI channel are needed to set up accurate toggling of an LED.
 On an nRF54H Series device, two local DPPI channels are used to connect the GRTC and the LED to the local PPIB instances.
 A PPIB channel is used to connect the two PPIB instances.
-On nRF52 and nRF53 Series devices, you also need one RTC peripheral, one TIMER peripheral, one EGU channel, three PPI channels, and one PPI group.
+On nRF52 and nRF53 Series devices, you need one RTC peripheral, one TIMER peripheral, one EGU channel, four PPI channels, and one PPI group.
 
 User interface
 **************
