@@ -39,7 +39,7 @@ These issues can occur in the following scenarios:
   If any bugs are overlooked during the development phase, this could result in inconsistencies in the firmware.
 
 Recovery Mode and Recovery Manifests
-*************************************************
+************************************
 
 The recovery manifests form a separate hierarchy from the normal manifests.
 In this hierarchy, the application recovery (``APP_RECOVERY``) manifest is responsible for managing both the application core image and other manifests, such as the radio recovery manifest.
@@ -232,3 +232,185 @@ To turn an application into a recovery application, the following steps have to 
     The value of ``SUIT_RECOVERY_APPLICATION_PATH`` can contain variables like ``${ZEPHYR_NRF_MODULE_DIR}``
 
 #. When building the main application, set ``SB_CONFIG_SUIT_RECOVERY_APPLICATION_CUSTOM`` (or the Kconfig option name if a different one was chosen) to ``y``.
+
+.. _ug_nrf54h20_suit_recovery_enter_recovery_request:
+
+Entering recovery through a request from the local domains
+**********************************************************
+
+Recovery mode can be initiated through a request sent from local domains.
+This functionality is useful for several scenarios, including:
+
+* Device recovery: Provides a recovery mechanism if the main firmware crashes and a J-Link connection is unavailable.
+* Foreground updates: Allows the recovery application to function as a "foreground update" application, reducing space requirements for the main application.
+* Application debugging: Facilitates debugging of the recovery application.
+
+For an exemplary implementation, see :ref:`Entering recovery through button press <ug_nrf54h20_suit_recovery_enter_through_button>`, which implements such a request-based entry.
+The source code of this feature is available in the :file:`nrf/subsys/suit/app_tools/recovery_button` directory.
+
+To request the device to enter recovery mode, invoke the ``suit_foreground_dfu_required()`` function.
+
+To exit recovery mode, invoke the ``suit_boot_flags_reset()`` function from the recovery application.
+If the main application firmware is corrupted, the device will re-enter recovery mode on the next boot, regardless of attempts to reset the boot flags.
+
+"Enter recovery check" by running recovery firmware (companion image) before the main application
+=================================================================================================
+
+In specific scenarios, the device must determine whether to enter recovery mode before starting the main application.
+For example, a developer might require the device to enter recovery mode if a specific button is pressed during boot.
+
+To achieve this, you can configure the recovery application as a companion image in the invocation path preceding the main application.
+Although other companion images can fulfill this purpose, the recovery application is the most commonly used option.
+Using the recovery application as a companion simplifies the system by enabling the recovery firmware to serve multiple purposes.
+
+The recovery (companion) application can check if the device should enter recovery mode and set the recovery flag using ``suit_foreground_dfu_required()`` if needed.
+You must ensure that this is only performed when the device is in the ``SUIT_BOOT_MODE_INVOKE`` boot mode.
+The current boot mode can be determined using the ``suit_boot_mode_read`` function.
+
+If the device should remain in normal boot mode (for example, the condition is not met) or if the device is already in recovery mode, the firmware should call ``suit_invoke_confirm(0)``.
+This ensures that the SUIT manifest is processed further by the Secure Domain Firmware, allowing the main application to boot.
+
+To enable this feature, perform the following steps:
+
+.. note::
+   This assumes that the companion image is orchestrated by the ``APP_LOCAL_3`` SUIT manifest, which is the default configuration when using the recovery firmware as the companion.
+
+
+1. Add the appropriate checking code to the recovery (companion) application in its startup code.
+   Use the following code snippet as a reference:
+
+   .. code-block:: c
+
+      static int should_enter_recovery_check(void)
+      {
+         suit_boot_mode_t mode = SUIT_BOOT_MODE_INVOKE_RECOVERY;
+         suit_ssf_err_t err = SUIT_PLAT_SUCCESS;
+         int ret = 0;
+
+         err = suit_boot_mode_read(&mode);
+
+         if (err != SUIT_PLAT_SUCCESS) {
+            suit_invoke_confirm(-EPIPE);
+            return -EPIPE;
+         }
+
+         if (mode == SUIT_BOOT_MODE_INVOKE) {
+            if (/* add the condition here */) {
+               err = suit_foreground_dfu_required();
+            }
+         }
+
+         if (err != SUIT_PLAT_SUCCESS) {
+            ret = -EPIPE;
+         }
+
+         (void)suit_invoke_confirm(ret);
+
+         return ret;
+      }
+
+      SYS_INIT(should_enter_recovery_check, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+
+   You must place the code in the recovery (companion) application's source code.
+   To implement this, you can do one of the following:
+
+   * Create a module with the code snippet and integrate it into the Nordic-provided recovery application.
+   * Create a custom recovery application or companion image and include the module there.
+
+2. If using the default SUIT manifests and running the recovery image as the companion image, no modifications to the manifest templates are needed.
+   Instead, set the :kconfig:option:`CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP` option in the recovery image.
+   To do so, add ``-Drecovery_CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP=y`` to the build command when building the recovery application.
+
+   If you are not using the default SUIT maifests, you must modify the manifest templates as follows:
+
+   a. In the ``APP_LOCAL_3`` manifest template, add the following code before the ``suit-directive-invoke`` directive on the companion image:
+
+     .. code-block:: yaml
+
+        - suit-directive-override-parameters:
+            suit-parameter-invoke-args:
+              suit-synchronous-invoke: True
+              suit-timeout: 1000
+
+  b. In the root manifest template, add the ``INSTLD_MFST`` component for the local manifest orchestrating the comapanion image.
+     You must ensure it is invoked before the main application images.
+     If the modified template is based on the root manifest template from the |NCS|, it will in most cases be enough to add it as the first manifest in the component list.
+     The following code snippet is responsible for this in the default root manifest template:
+
+   .. code-block:: yaml
+
+      {{- component_list.append( app_recovery_local_component_index ) or ""}}
+      - - INSTLD_MFST
+        - RFC4122_UUID:
+            namespace: {{ mpi_app_recovery_local_vendor_name }}
+            name: {{ mpi_app_recovery_local_class_name }}
+
+
+.. _ug_nrf54h20_suit_recovery_enter_through_button:
+
+Entering recovery mode through button press
+===========================================
+
+A common use case for entering recovery mode is to allow the device to enter recovery mode by pressing a button.
+In the |NCS|, this use case is provided as a simple plug-and-play solution.
+When it is enabled, the device will enter recovery mode if the button is pressed during boot.
+
+.. note::
+   If no modifications or additional modules are added to the recovery application, the only way to exit the recovery mode is by performing a device firmware upgrade.
+
+There are two variants of this feature:
+
+* The recovery button checked in the recovery application running as a companion image during the boot stage (recommended).
+* The recovery button checked in the main application.
+
+The first variant is recommended because it allows the check to be performed independently of the main application.
+
+Recovery button checked in the recovery application
+---------------------------------------------------
+
+In this variant, the recovery application is executed as a companion image before the main application as part of the normal invocation path.
+
+The recovery application checks whether the device is already in recovery mode.
+If the device is in recovery mode, the recovery application continues its normal operation, enabling firmware recovery.
+
+If the device is not in recovery mode, the recovery application checks whether the specified button is pressed.
+If the button is pressed, the recovery application sets the recovery flag and reboots the device.
+Otherwise, it sends a confirmation message to the Secure Domain Firmware, which then halts the recovery application and proceeds with booting the main application.
+
+To enable the feature, add the following code to the :file:`sysbuild/recovery.overlay` file in the main application directory:
+
+   .. code-block:: dts
+
+      / {
+         chosen {
+            ncs,recovery-button = &button0;
+         };
+      };
+
+   Replace ``button0`` with the appropriate button node.
+
+
+.. note::
+   In this option, running the recovery application as a companion image is orchestrated by the root SUIT manifest.
+   Special care must be taken if the root manifest template is modified.
+   Incorrect modifications to the root manifest can result in the button press feature not functioning correctly.
+   This may cause the device to become unrecoverable without a JLink connection in the event of a crash.
+
+
+Recovery button checked in the main application
+-----------------------------------------------
+
+In this variant, a check is performed within the main application firmware at an early stage to determine if the specified button is pressed.
+If the button is pressed, the recovery flag is set, and the device reboots.
+
+To enable this feature in this variant, add the following overlay to the main application's configuration:
+
+   .. code-block:: dts
+
+      / {
+         chosen {
+            ncs,recovery-button = &button0;
+         };
+      };
+
+   Replace ``button0`` with the appropriate button node.
