@@ -22,6 +22,9 @@ struct advertiser_info {
 	uint8_t id;                   /* ID associated with the advertiser */
 };
 
+#define MIN_ADV_INTERVAL (800)
+#define MAX_ADV_INTERVAL (800)
+
 static struct advertiser_info advertisers[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 
 static void start_connectable_advertiser(struct k_work *work);
@@ -124,8 +127,8 @@ static int setup_advertiser(uint8_t id_adv)
 	/* Initialize the parameters for each connecable advertiser. */
 	struct bt_le_adv_param adv_param =
 		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE,
-				     BT_GAP_ADV_SLOW_INT_MIN,
-				     BT_GAP_ADV_SLOW_INT_MAX,
+				     MIN_ADV_INTERVAL,
+				     MAX_ADV_INTERVAL,
 				     NULL);
 
 	printk("Using current id: %u\n", id_adv);
