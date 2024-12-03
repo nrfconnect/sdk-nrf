@@ -22,6 +22,12 @@
 #include <app/clusters/smoke-co-alarm-server/smoke-co-alarm-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 
+#ifdef CONFIG_SAMPLE_MATTER_SYSTEM_OFF
+#include <zephyr/sys/poweroff.h>
+#include <hal/nrf_memconf.h>
+#include <zephyr/drivers/timer/nrf_grtc_timer.h>
+#endif
+
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
@@ -55,6 +61,10 @@ Identify sIdentify = { AppTask::Instance().kSmokeCoAlarmEndpointId, AppTask::Ide
 #ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
 #define UAT_BUTTON_MASK DK_BTN3_MSK
 #endif
+
+#ifdef CONFIG_SAMPLE_MATTER_SYSTEM_OFF
+static K_WORK_DELAYABLE_DEFINE(system_off_work, AppTask::SystemOffWorkHandler);
+#endif
 } /* namespace */
 
 void AppTask::IdentifyStartHandler(Identify *)
@@ -77,6 +87,28 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 	}
 #endif
 }
+
+#ifdef CONFIG_SAMPLE_MATTER_SYSTEM_OFF
+void AppTask::SystemOffWorkHandler(k_work *work)
+{
+	z_nrf_grtc_wakeup_prepare(kSystemOffWakeUpInterval * USEC_PER_MSEC);
+
+	/* Disable RAM retention in System OFF to save more energy. */
+	uint32_t ram_sections = 8;
+
+	nrf_memconf_ramblock_ret_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
+	nrf_memconf_ramblock_ret2_mask_enable_set(NRF_MEMCONF, 0, BIT_MASK(ram_sections), false);
+
+    sys_poweroff();
+ }
+
+void AppTask::OnEnterIdleMode() {
+	if(Server::GetInstance().GetICDManager().GetICDMode() == ICDConfigurationData::ICDMode::LIT) {
+		k_work_schedule(&system_off_work, K_SECONDS(1));
+	}
+};
+
+#endif
 
 void AppTask::UpdatedExpressedLedState()
 {
@@ -441,6 +473,10 @@ CHIP_ERROR AppTask::Init()
 	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTrigger(
 		kPowerSourceOffEventTriggerId,
 		Nrf::Matter::TestEventTrigger::EventTrigger{ 0xFFFF, PowerSourceOffEventCallback }));
+#endif
+
+#ifdef CONFIG_SAMPLE_MATTER_SYSTEM_OFF
+	chip::Server::GetInstance().GetICDManager().RegisterObserver(&Instance());
 #endif
 
 	return Nrf::Matter::StartServer();

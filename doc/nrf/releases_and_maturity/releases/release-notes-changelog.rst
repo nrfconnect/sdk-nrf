@@ -396,6 +396,7 @@ Matter samples
 * :ref:`matter_smoke_co_alarm_sample` sample:
 
   * Added support for ICD dynamic SIT LIT switching (DSLS).
+  * Added support for system off configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` target.
 
 Networking samples
 ------------------

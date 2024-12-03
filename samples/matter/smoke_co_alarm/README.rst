@@ -73,14 +73,37 @@ The sample supports ICD Dynamic SIT LIT switching (DSLS) feature to switch betwe
 The device uses the SIT mode, when the wired power source is active.
 Otherwise, it switches to the LIT mode, to indicate that it is possible to save the energy, when using a battery power source.
 Dynamic switching is possible only if the ICD device meets all criteria for operating in the LIT mode (it has at least one client registered).
-DSLS support is enabled by default.
-To disable it, set the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``n``.
+DSLS support is disabled by default.
+To enable it, set the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``y``.
 
 In the LIT mode, the device responsiveness is much lower than in the SIT mode.
 However, you can request the device to become responsive to, for example, change its configuration.
 To do that, you need to use the User Active Mode Trigger (UAT) feature by pressing the appropriate button.
 
 See `User interface`_ for information about how to switch the operation modes.
+
+System off configuration
+------------------------
+
+The sample supports optional system off configuration, that turns off the whole system once an ICD device enters the idle state.
+Turning off the system, instead of putting it to sleep allows the device to achieve much lower power consumption in the idle state.
+On the other hand, the device wakes up from a sleep state much faster than from the system off, and it sends only Thread data poll frame and Matter data report.
+In case of waking up from the system off, the device has to boot the whole system, initialize platform, re-attach to network and send data report every time, what consumes a lot of energy.
+
+The usage of system off configuration can be beneficial from the perspective of overall power consumption for the scenarios, when the device has relatively big sleep interval and the system boot happens rarely.
+It was proven by measurements that an ICD device achieves better power consumption with the system off enabled for sleep intervals bigger than 15 minutes.
+
+Additionally, the system off solution disables RAM retention, what results in losing the data that could be potentially stored there, like for example diagnostic logs.
+
+This feature is disabled by default, and it is available only for the ``nrf54l15dk/nrf54l15/cpuapp`` target.
+To enable it, set the :kconfig:option:`CONFIG_SAMPLE_MATTER_SYSTEM_OFF` Kconfig option to ``y``.
+You can test the sample configuration that enables system off and configures the device to wake-up every 30 minutes, by applying a dedicated overlay file.
+To build the sample with the overlay file included, run the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf54l15dk/nrf54l15/cpuapp -- -DFILE_SUFFIX=release -DEXTRA_CONF_FILE="overlay-system_off.conf"
 
 .. _matter_smoke_co_alarm_network_mode:
 

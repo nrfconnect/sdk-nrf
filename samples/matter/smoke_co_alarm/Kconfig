@@ -5,6 +5,16 @@
 #
 mainmenu "Matter nRF Connect Smoke CO Alarm Example Application"
 
+config SAMPLE_MATTER_SYSTEM_OFF
+	bool "Enable system off on idle"
+	depends on POWEROFF
+	depends on SOC_SERIES_NRF54LX
+	depends on CHIP_ICD_LIT_SUPPORT
+	help
+	  Enable turning off the whole system on entering the idle state.
+	  This allows for greater energy savings than putting system into a sleep state for large sleep intervals.
+	  The option is available only for nRF54L15 target, as the system is woken up using GRTC.
+
 choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
 	default OPENTHREAD_NORDIC_LIBRARY_MTD
 endchoice
@@ -13,6 +23,7 @@ choice OPENTHREAD_DEVICE_TYPE
 	default OPENTHREAD_MTD
 endchoice
 
+# ICD related configuration
 config CHIP_ENABLE_ICD_SUPPORT
 	default y
 
@@ -21,6 +32,9 @@ config CHIP_ICD_LIT_SUPPORT
 
 config CHIP_ICD_SIT_SLOW_POLL_LIMIT
 	default 5000
+
+config CHIP_ICD_REPORT_ON_ACTIVE_MODE
+	default y
 
 # Increase the supported event triggers due to the multiple alarm triggers
 config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX
