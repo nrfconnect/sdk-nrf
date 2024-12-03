@@ -18,8 +18,8 @@
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #include <nrfx_power.h>
 #endif
-#if defined(CONFIG_NRFX_DPPI)
-#include <nrfx_dppi.h>
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#include <hal/nrf_dppi.h>
 #endif
 #if defined(CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START)
 #include <hal/nrf_ipc.h>
@@ -392,6 +392,13 @@ static int32_t mpsl_lib_init_internal(void)
 	memset(&clock_cfg, 0, sizeof(clock_cfg));
 #endif
 
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	/* Secure domain no longer enables DPPI channels for local domains,
+	 * MPSL now has to enable the ones it uses.
+	 */
+	nrf_dppi_channels_enable(NRF_DPPIC130, DPPI_SINK_CHANNELS);
+	nrf_dppi_channels_enable(NRF_DPPIC132, DPPI_SOURCE_CHANNELS);
+#endif
 	err = mpsl_init(&clock_cfg, CONFIG_MPSL_LOW_PRIO_IRQN, m_assert_handler);
 	if (err) {
 		return err;
