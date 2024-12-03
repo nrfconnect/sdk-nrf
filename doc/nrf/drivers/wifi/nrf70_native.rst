@@ -82,7 +82,7 @@ The nRF Wi-Fi driver has the following configuration options:
 Kconfig configuration
 =====================
 
-.. options-from-kconfig:: /../../../../../zephyr/drivers/wifi/nrfwifi/Kconfig.nrfwifi
+.. options-from-kconfig:: ./../../../../zephyr/drivers/wifi/nrf_wifi/Kconfig.nrfwifi
    :show-type:
 
 Devicetree specification configuration
