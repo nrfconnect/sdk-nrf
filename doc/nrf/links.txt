@@ -25,6 +25,7 @@
 .. _`Zephyr net DHCPv4 server`: https://docs.zephyrproject.org/apidoc/latest/group__dhcpv4__server.html
 .. _`Zephyr Wi-Fi NM API`: https://docs.zephyrproject.org/apidoc/latest/wifi__nm_8h.html
 .. _`Zephyr Wi-Fi management`: https://docs.zephyrproject.org/latest/connectivity/networking/api/wifi.html
+.. _`Zephyr PR #83028`: https://github.com/zephyrproject-rtos/zephyr/pull/83028
 
 .. ### Source: github.com
 
