@@ -19,4 +19,5 @@ target_sources(app PRIVATE
 	src/nrf_wifi_radio_test_main.c
 	src/nrf_wifi_radio_test_shell.c
 	src/nrf_wifi_radio_ficr_shell.c
+	src/ficr_prog.c
 )
