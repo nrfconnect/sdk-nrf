@@ -111,7 +111,7 @@ The following snippets are available:
 * ``usb`` - Enables emulating a serial port over USB for Spinel communication with the host.
 
   .. note::
-     The ``usb`` snippet is not supported for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+     The ``usb`` snippet does not support the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
 
 * ``hci`` - Enables support for the Bluetooth HCI interface parallel to :ref:`Thread RCP <thread_architectures_designs_cp_rcp>`.
 
