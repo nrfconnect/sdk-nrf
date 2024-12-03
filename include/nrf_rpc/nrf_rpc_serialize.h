@@ -232,7 +232,7 @@ char *nrf_rpc_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buff
 /** @brief Decode a string pointer and length. Moves CBOR pointer past string on success.
  *
  * @param[in,out] ctx CBOR decoding context.
- * @param[out]  size String length.
+ * @param[out] len String length.
  *
  * @retval Pointer to a string within CBOR stream or NULL on error.
  */
