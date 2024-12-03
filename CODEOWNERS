@@ -659,7 +659,6 @@
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla
 /scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @nrfconnect/ncs-si-bluebagel
-/scripts/ncs-toolchain-version-minimum.txt @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/west_commands/create_board/      @gmarull
