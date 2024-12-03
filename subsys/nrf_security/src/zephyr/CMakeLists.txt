@@ -6,7 +6,7 @@
 
 # Additional build logic for Zephyr builds
 
-# Add the PSA interface to the zephyr_interface for use by the 
+# Add the PSA interface to the zephyr_interface for use by the
 # main app. Note that this doesn't include psa_crypto_library_config
 # to ensure that MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER is not set.
 target_link_libraries(zephyr_interface
@@ -18,6 +18,7 @@ target_link_libraries(zephyr_interface
 if (CONFIG_MBEDTLS_DEBUG)
   zephyr_library_sources(${ZEPHYR_BASE}/modules/mbedtls/debug.c)
   zephyr_library_sources(debug_init.c)
+  zephyr_include_directories(${ZEPHYR_BASE}/modules/mbedtls/include)
 endif()
 
 # Add mbed TLS heap library - Not for TF-M build
