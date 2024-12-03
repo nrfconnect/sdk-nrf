@@ -10,6 +10,13 @@
   comment: "Flash overflow: https://nordicsemi.atlassian.net/browse/NCSDK-30731"
 
 - scenarios:
+    - sample.nrf7002.shell.psa
+    - sample.nrf7002.enterprise_mode
+  platforms:
+    - nrf7002dk_nrf5340_cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30762"
+
+- scenarios:
     - applications.matter_bridge.lto.br_ble.nrf54h20.wifi
     - applications.matter_bridge.release.br_ble.nrf54h20.wifi
     - sample.matter.template.nrf54h20.nrf7002eb
