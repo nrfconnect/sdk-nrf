@@ -309,6 +309,21 @@ Bluetooth samples
       * :ref:`bluetooth_central_hids`
       * :ref:`peripheral_hids_keyboard`
       * :ref:`peripheral_hids_mouse`
+      * :ref:`central_and_peripheral_hrs`
+      * :ref:`central_bas`
+      * :ref:`central_nfc_pairing`
+      * :ref:`central_uart`
+      * :ref:`peripheral_bms`
+      * :ref:`peripheral_cgms`
+      * :ref:`peripheral_cts_client`
+      * :ref:`peripheral_lbs`
+      * :ref:`peripheral_mds`
+      * :ref:`peripheral_nfc_pairing`
+      * :ref:`power_profiling`
+      * :ref:`peripheral_rscs`
+      * :ref:`peripheral_status`
+      * :ref:`peripheral_uart`
+      * :ref:`ble_rpc_host`
 
     As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
   * Testing steps in the :ref:`peripheral_hids_mouse` to provide the build configuration that is compatible with the `Bluetooth Low Energy app`_ testing tool.
