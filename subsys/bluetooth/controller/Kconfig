@@ -579,11 +579,27 @@ config BT_CTLR_CHANNEL_SOUNDING
 	select EXPERIMENTAL
 
 config BT_CTLR_SDC_CS_COUNT
-	int "Number of concurrent connections supporting CS procedure"
+	int "Number of concurrent connections supporting CS procedure [EXPERIMENTAL]"
 	default 1
 	depends on BT_CTLR_CHANNEL_SOUNDING
 	help
 	  Set the number of concurrent connections that can support Channel Sounding procedure.
+
+config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	int "Max number of Channel Sounding antenna paths supported by the controller [EXPERIMENTAL]"
+	default 1
+	range 1 4
+	depends on BT_CTLR_CHANNEL_SOUNDING
+
+config BT_CTLR_SDC_CS_NUM_ANTENNAS
+	int "Number of antennas used in Channel Sounding procedure supported by the controller [EXPERIMENTAL]"
+	default 1
+	range 1 BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	depends on BT_CTLR_CHANNEL_SOUNDING
+
+config BT_CTLR_SDC_CS_STEP_MODE3
+	bool "Enable optional step mode-3 capability [EXPERIMENTAL]"
+	depends on BT_CTLR_CHANNEL_SOUNDING
 
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
