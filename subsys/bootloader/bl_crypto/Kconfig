@@ -73,8 +73,10 @@ config SB_CRYPTO_CLIENT_ECDSA_SECP256R1
 	  Using EXT_APIs from fw_info.
 
 config SB_CRYPTO_NO_ECDSA_SECP256R1
-	bool "Disable secp256r1 support"
+	bool "secp256r1 without validation"
 	select SB_ECDSA_SECP256R1
+	help
+	  Requires that a secp256r1 signature be present in the image but does no validation.
 
 config SB_CRYPTO_PSA_ED25519
 	bool "PSA ed25519 support"
@@ -137,7 +139,9 @@ config SB_CRYPTO_CLIENT_SHA256
 	  Using EXT_APIs from fw_info.
 
 config SB_CRYPTO_NO_SHA256
-	bool "Disable SHA256 support"
+	bool "SHA256 without validation"
+	help
+	  Requires that a SHA256 hash be present in the image but does no validation.
 
 config SB_CRYPTO_NONE
 	bool "None"
