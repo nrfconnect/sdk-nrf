@@ -99,7 +99,7 @@ The following snippets are available:
 * ``usb`` - Enables USB transport support.
 
   .. note::
-     The ``usb`` snippet is not supported for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+     The ``usb`` snippet does not support the ``nrf54l15dk/nrf54l15/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets.
 
 * ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
@@ -124,6 +124,9 @@ The following snippets are available:
   For using TCAT, refer to the :ref:`thread_tcat` page.
 * ``tcp`` - Enables experimental TCP support in this sample.
 * ``low_power`` - Enables low power consumption mode in this sample.
+
+  .. note::
+     The ``low_power`` snippet does not support the ``nrf54l15dk/nrf54l10/cpuapp`` board target.
 
 FEM support
 ===========
