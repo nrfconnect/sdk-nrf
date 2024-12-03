@@ -40,6 +40,10 @@ config IPC_RADIO_BT_RPC
 
 endchoice # IPC_RADIO_BT_SER
 
+config SETTINGS
+	imply ZMS if SOC_FLASH_NRF_MRAM
+	imply NVS if !SOC_FLASH_NRF_MRAM
+
 config BT_MAX_CONN
 	default 4 if IPC_RADIO_802154
 	default 16 if !IPC_RADIO_802154
