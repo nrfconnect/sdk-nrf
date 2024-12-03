@@ -199,7 +199,7 @@ Zigbee
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* Updated the :ref:`wifi_regulatory_channel_rules` for some countries in the :ref:`ug_nrf70_developing_regulatory_support` documentation.
 
 Applications
 ============
