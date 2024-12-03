@@ -571,6 +571,12 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* :ref:`rreq_readme` library:
+
+  * Added
+
+    * Added the Ranging Service Ranging Requestor library for Channel Sounding.
+
 * :ref:`hogp_readme` library:
 
   * Updated the :c:func:`bt_hogp_rep_read` function to forward the GATT read error code through the registered user callback.
