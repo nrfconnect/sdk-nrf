@@ -318,6 +318,32 @@ char *nrf_rpc_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buff
 	return buffer;
 }
 
+const void *nrf_rpc_decode_str_ptr_and_len(struct nrf_rpc_cbor_ctx *ctx, size_t *len)
+{
+	struct zcbor_string zst = {0};
+
+	if (is_decoder_invalid(ctx)) {
+		return NULL;
+	}
+
+	if (zcbor_nil_expect(ctx->zs, NULL)) {
+		return NULL;
+	}
+
+	if (ctx->zs->constant_state->error != ZCBOR_ERR_WRONG_TYPE) {
+		return NULL;
+	}
+
+	zcbor_pop_error(ctx->zs);
+
+	if (!zcbor_tstr_decode(ctx->zs, &zst)) {
+		return NULL;
+	}
+
+	*len = zst.len;
+	return zst.value;
+}
+
 char *nrf_rpc_decode_str_into_scratchpad(struct nrf_rpc_scratchpad *scratchpad, size_t *len)
 {
 	struct nrf_rpc_cbor_ctx *ctx = scratchpad->ctx;
