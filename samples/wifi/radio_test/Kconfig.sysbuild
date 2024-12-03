@@ -8,8 +8,7 @@ menu "Network core configuration"
 	depends on SUPPORT_NETCORE
 
 config SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST
-	bool
-	default y
+	bool "wi-fi ble radio test combo build"
 
 choice NETCORE
 	prompt "Netcore image"
