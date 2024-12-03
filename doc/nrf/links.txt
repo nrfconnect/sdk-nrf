@@ -984,6 +984,8 @@
 .. _`Current Time Service Specification`: https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=292957
 .. _`Running Speed and Cadence Service Specification`: https://www.bluetooth.com/specifications/specs/running-speed-and-cadence-service-1-0/
 .. _`Continuous Glucose Monitoring Service Specification`: https://www.bluetooth.org/DocMan/handlers/DownloadDoc.ashx?doc_id=531249
+.. _`Ranging Profile Specification`: https://files.bluetooth.com/download/rap_v1-0/
+.. _`Ranging Service Specification`: https://files.bluetooth.com/download/ras_v1-0/
 
 .. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
 
