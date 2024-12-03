@@ -183,7 +183,7 @@ Connectivity Bridge
 IPC radio firmware
 ------------------
 
-|no_changes_yet_note|
+* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system in all devices that contain MRAM, such as the nRF54H Series devices.
 
 Matter Bridge
 -------------
