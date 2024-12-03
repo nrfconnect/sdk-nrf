@@ -16,8 +16,8 @@ config BT_RSCS_SECURITY_ENABLED
 	select FLASH
 	select FLASH_PAGE_LAYOUT
 	select FLASH_MAP
-	select ZMS if SOC_FLASH_NRF_RRAM
-	select NVS if !SOC_FLASH_NRF_RRAM
+	select ZMS if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	select NVS if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
 	select SETTINGS
 	help
 	  "Enable Bluetooth LE security for the Running Speed and Cadence Service"
