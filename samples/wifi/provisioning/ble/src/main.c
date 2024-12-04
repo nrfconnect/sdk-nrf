@@ -17,8 +17,7 @@
 
 #include <zephyr/net/wifi.h>
 #include <zephyr/net/wifi_mgmt.h>
-#include <net/wifi_credentials.h>
-#include <net/wifi_mgmt_ext.h>
+#include <zephyr/net/wifi_credentials.h>
 
 #include <bluetooth/services/wifi_provisioning.h>
 
