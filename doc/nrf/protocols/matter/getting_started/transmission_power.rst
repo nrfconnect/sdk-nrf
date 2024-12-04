@@ -93,6 +93,7 @@ The maximum value of 20 dBm is only recommended for devices that are using :ref:
 | nrf21540dk               | -40 to +20 (:ref:`more information <ug_matter_gs_transmission_power_fem>`)  |
 +--------------------------+-----------------------------------------------------------------------------+
 | nrf54l15dk_nrf54l15      | -8 to +8                                                                    |
+| nrf54l15dk_nrf54l10      |                                                                             |
 +--------------------------+-----------------------------------------------------------------------------+
 
 You can provide the desired value also as a CMake argument when building the sample.
