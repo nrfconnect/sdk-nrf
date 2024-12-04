@@ -139,16 +139,7 @@ endfunction(append_with_prefix)
 #
 macro(nrf_security_add_zephyr_options lib_name)
   if(TARGET zephyr_interface)
-    # Add an all includes from zephyr_interface (unfiltered)
-    target_compile_options(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>)
-    target_compile_definitions(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_DEFINITIONS>)
-    target_include_directories(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_INCLUDE_DIRECTORIES>)
-    target_include_directories(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>)
-    add_dependencies(${lib_name} zephyr_interface)
-
-    # Unsure if these are needed any more
-    target_compile_options(${lib_name} PRIVATE ${TOOLCHAIN_C_FLAGS})
-    target_ld_options(${lib_name} PRIVATE ${TOOLCHAIN_LD_FLAGS})
+    target_link_libraries(${lib_name} PUBLIC zephyr_interface)
   else()
     target_compile_options(${lib_name} PRIVATE "SHELL: -imacros ${ZEPHYR_AUTOCONF}")
     target_include_directories(${lib_name} PRIVATE
@@ -167,24 +158,7 @@ endmacro()
 #
 macro(nrf_security_add_zephyr_options_library lib_name)
   if(TARGET zephyr_interface)
-    # Add an filtered version of zephyr_interface (PSA crypto interface filtered out)
-    target_compile_options(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>)
-    target_compile_definitions(${lib_name} PRIVATE $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_DEFINITIONS>)
-    # Ensure that the PSA crypto interface include folder isn't added in library builds (filtered out)
-    target_include_directories(${lib_name}
-      PRIVATE
-        $<FILTER:$<TARGET_PROPERTY:zephyr_interface,INTERFACE_INCLUDE_DIRECTORIES>,EXCLUDE,${PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX}>
-    )
-    # Ensure that the PSA crypto interface include folder isn't added in library builds (filtered out)
-    target_include_directories(${lib_name}
-      PRIVATE
-        $<FILTER:$<TARGET_PROPERTY:zephyr_interface,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>,EXCLUDE,${PSA_CRYPTO_CONFIG_INTERFACE_PATH_REGEX}>
-    )
-    add_dependencies(${lib_name} zephyr_interface)
-
-    # Unsure if these are needed any more
-    target_compile_options(${lib_name} PRIVATE ${TOOLCHAIN_C_FLAGS})
-    target_ld_options(${lib_name} PRIVATE ${TOOLCHAIN_LD_FLAGS})
+    target_link_libraries(${lib_name} PUBLIC zephyr_interface)
   else()
     target_compile_options(${lib_name} PRIVATE "SHELL: -imacros ${ZEPHYR_AUTOCONF}")
     target_include_directories(${lib_name} PRIVATE
