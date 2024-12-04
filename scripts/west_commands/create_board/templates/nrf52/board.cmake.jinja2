@@ -1,4 +1,6 @@
 board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") }}_xx{{ variant[2:] | upper }}" "--speed=4000")
+
+set(OPENOCD_NRF5_SUBFAMILY "nrf52")
 board_runner_args(pyocd "--target={{ soc }}" "--frequency=4000000")
 
 include(${ZEPHYR_BASE}/boards/common/nrfjprog.board.cmake)
