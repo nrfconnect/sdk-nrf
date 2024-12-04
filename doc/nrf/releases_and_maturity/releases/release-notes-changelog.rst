@@ -113,7 +113,8 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Scanning and initiating at the same time that was introduced in |NCS| 2.7.0 as experimental, is now supported.
+  The sample :ref:`bt_scanning_while_connecting` showcases how this feature is used to reduce the time to establish connections to many devices.
 
 Bluetooth Mesh
 --------------
