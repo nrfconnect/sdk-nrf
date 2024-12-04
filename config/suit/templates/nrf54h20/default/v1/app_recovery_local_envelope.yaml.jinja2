@@ -65,7 +65,7 @@ SUIT_Envelope_Tagged:
           - suit-send-sysinfo-failure
     suit-invoke:
     - suit-directive-set-component-index: 0
-{%- if 'CONFIG_SUIT_RECOVERY_BUTTON' in app_recovery_img['config'] and app_recovery_img['config'][CONFIG_SUIT_RECOVERY_BUTTON] != ''  %}
+{%- if 'CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP' in app_recovery_img['config'] and app_recovery_img['config'][CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP] != ''  %}
     - suit-directive-override-parameters:
         suit-parameter-invoke-args:
           suit-synchronous-invoke: True

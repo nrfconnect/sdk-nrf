@@ -200,7 +200,7 @@ rsource "execution_mode/Kconfig"
 rsource "memory_layout/Kconfig"
 rsource "validator/Kconfig"
 rsource "events/Kconfig"
-rsource "recovery_button/Kconfig"
+rsource "app_tools/Kconfig"
 rsource "manifest_variables/Kconfig"
 
 # Configure SUIT_LOG_LEVEL
