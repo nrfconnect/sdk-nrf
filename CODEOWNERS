@@ -347,7 +347,6 @@
 /include/net/download_client*             @nrfconnect/ncs-modem
 /include/net/downloader*                  @nrfconnect/ncs-modem
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
-/include/net/wifi_credentials.h           @nrfconnect/ncs-cia
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
 /include/nrf_compress/                    @nordicjm
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
@@ -762,7 +761,6 @@
 /subsys/net/lib/nrf_cloud/                @nrfconnect/ncs-nrf-cloud
 /subsys/net/lib/nrf_provisioning/         @nrfconnect/ncs-iot-oulu
 /subsys/net/lib/zzhc/                     @junqingzou
-/subsys/net/lib/wifi_credentials/         @nrfconnect/ncs-cia
 /subsys/net/lib/softap_wifi_provision/    @nrfconnect/ncs-cia
 /subsys/net/openthread/                   @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /subsys/net/openthread/rpc/               @nrfconnect/ncs-protocols-serialization
@@ -873,7 +871,6 @@
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
 /tests/subsys/net/lib/nrf_cloud/          @nrfconnect/ncs-nrf-cloud
 /tests/subsys/net/lib/nrf_provisioning/   @nrfconnect/ncs-iot-oulu
-/tests/subsys/net/lib/wifi_credentials*/  @nrfconnect/ncs-cia
 /tests/subsys/net/lib/tls_credentials*/   @nrfconnect/ncs-co-networking
 /tests/subsys/net/openthread/rpc/         @nrfconnect/ncs-protocols-serialization
 /tests/subsys/nfc/rpc/                    @nrfconnect/ncs-protocols-serialization
