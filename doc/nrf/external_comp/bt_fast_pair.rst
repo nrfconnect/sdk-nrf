@@ -180,13 +180,33 @@ Provisioning registration data onto device
 The Fast Pair standard requires provisioning the device with Model ID and Anti-Spoofing Private Key obtained during device model registration.
 In the |NCS|, the provisioning data is generated as a hexadecimal file using the :ref:`bt_fast_pair_provision_script`.
 
-When building the Fast Pair in the |NCS|, the build system automatically calls the Fast Pair provision script and includes the resulting hexadecimal file in the firmware (the :file:`merged.hex` file).
+When building Fast Pair in the |NCS|, the build system automatically calls the Fast Pair provision script.
+It then includes the resulting hexadecimal file in the final firmware that you can flash onto the device.
+The Fast Pair provisioning data is stored on the dedicated Fast Pair partition, which has to be defined.
+
+Partition definition using the Partition Manager (PM)
+-----------------------------------------------------
+
+For devices that support :ref:`partition_manager` and have the :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option automatically enabled by the Fast Pair build system, the system also automatically creates the ``bt_fast_pair`` partition.
+The partition is defined in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file.
+The :ref:`fast_pair_input_device` sample follows this approach.
+Alternatively, the Fast Pair partition can be defined manually in the application's configuration file.
+To see how to do this, refer to the example in the :file:`samples/bluetooth/fast_pair/locator_tag/configuration/pm_static_nrf52840dk_nrf52840.yml` file which is a part of the :ref:`fast_pair_locator_tag` sample.
+For more information about defining Partition Manager partitions, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.
+
+Partition definition using the Devicetree (DTS)
+-----------------------------------------------
+
+For devices that do not support :ref:`partition_manager`, you must declare the ``bt_fast_pair_partition`` partition manually in the devicetree.
+Currently, the :ref:`zephyr:nrf54h20dk_nrf54h20` is the only device that requires manual partition definition.
+To see how to do this, refer to the example in the :file:`samples/bluetooth/fast_pair/input_device/boards/nrf54h20dk_nrf54h20_cpuapp.overlay` file.
+
 To build an application with the Fast Pair support, include the following additional CMake options:
 
 * ``FP_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``,
 * ``FP_ANTI_SPOOFING_KEY`` - base64-encoded Fast Pair Anti-Spoofing Private Key.
 
-The ``bt_fast_pair`` partition address is provided automatically by the build system.
+The Fast Pair partition address is provided automatically by the build system.
 
 For example, when building an application with the |nRFVSC|, you need to add the following parameters in the **Extra CMake arguments** field on the **Add Build Configuration view**: ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``.
 Make sure to replace ``0xFFFFFF`` and ``AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=`` with values obtained for your device.
@@ -1070,5 +1090,5 @@ The following are the required dependencies for the Fast Pair integration:
 * :ref:`nrfxlib:crypto`
 * :ref:`zephyr:bluetooth`
 * :ref:`zephyr:settings_api`
-* :ref:`partition_manager`
+* :ref:`partition_manager` (only for supported board targets)
 * :ref:`dult_readme`

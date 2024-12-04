@@ -167,7 +167,8 @@ Partition Manager
 -----------------
 
 The Fast Pair provisioning data is preprogrammed to a dedicated flash memory partition.
-The GFPS selects the :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option to enable the :ref:`partition_manager`.
+For targets that support the :ref:`partition_manager`, the GFPS selects the :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option to enable it.
+The :ref:`zephyr:nrf54h20dk_nrf54h20` is the only device that does not support this feature.
 
 Settings
 --------
