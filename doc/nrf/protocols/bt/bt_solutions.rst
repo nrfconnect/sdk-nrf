@@ -35,7 +35,7 @@ Support in the |NCS|:
 
   * :ref:`peripheral_uart` and :ref:`central_uart`: These samples implement a Nordic-defined GATT service and profile that give a simple TX/RX generic data pipe, providing UART communication over Bluetooth LE.
 
-* :ref:`bluetooth-samples` (Zephyr Project): The Zephyr Project offers additional Bluetooth samples.
+* :zephyr:code-sample-category:`bluetooth` (Zephyr Project): The Zephyr Project offers additional Bluetooth samples.
   These samples are not guaranteed to work as part of the |NCS|, but are helpful as starting point for a relevant use case.
 
 Device networks

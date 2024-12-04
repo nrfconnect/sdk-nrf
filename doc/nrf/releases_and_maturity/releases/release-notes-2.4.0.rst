@@ -58,7 +58,7 @@ The following list includes the summary of the most relevant changes introduced 
     * Charger, BUCKs, LDOs, Load Switches, and GPIOs.
     * :ref:`Sample showing fuel gauge functionality <npm1300_fuel_gauge>`.
       The sample calculates battery state of charge, time to empty, time to full and provides updates of these over the terminal once every second.
-    * :ref:`Sample providing a shell interface <zephyr:npm1300_ek_sample>` that supports PMIC features: regulators (BUCKs, LDO) and GPIOs.
+    * :zephyr:code-sample:`npm1300_ek` that supports PMIC features: regulators (BUCKs, LDO) and GPIOs.
 
   * Bluetooth Low Energy:
 

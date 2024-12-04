@@ -40,7 +40,7 @@ Some of them are documented in detail in other parts of this documentation, whil
     - See :ref:`ug_tfm`.
     - | - :ref:`tfm_samples`
       | - :ref:`crypto_samples`
-      | - :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` in Zephyr
+      | - :zephyr:code-sample-category:`tfm_integration` in Zephyr
   * - Cryptographic operations (:ref:`nrf_security`)
     - The :ref:`nrf_security` library acts as an orchestrator for the different cryptographic libraries available in the system.
       HW accelerated libraries are prioritized over SW libraries when both are enabled.

@@ -46,4 +46,4 @@ The following is an example of the CLI command:
 
    west build -b nrf5340dk/nrf5340/cpuapp -S wifi-ipv4 -- -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y
 
-For additional details about running a sample, refer to the respective sample in Zephyr’s :ref:`Samples and Demos documentation <zephyr:samples-and-demos>`.
+For additional details about running a sample, refer to the respective sample in Zephyr’s :zephyr:code-sample-category:`samples`.

@@ -61,7 +61,7 @@ This setup supports both UART and Bluetooth® LE connections.
 The following samples are supported:
 
 * :zephyr:code-sample:`smp-svr`
-* :ref:`zephyr:with_mcuboot`
+* :zephyr:code-sample:`with_mcuboot`
 
 .. rst-class:: numbered-step
 
