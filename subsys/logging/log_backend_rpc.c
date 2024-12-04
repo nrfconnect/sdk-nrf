@@ -11,6 +11,7 @@
  */
 
 #include "log_rpc_group.h"
+#include "log_backend_rpc_history.h"
 
 #include <logging/log_rpc.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
@@ -42,7 +43,8 @@ static bool panic_mode;
 static uint32_t log_format = LOG_OUTPUT_TEXT;
 static enum log_rpc_level current_level;
 static enum log_rpc_level stream_level = LOG_RPC_LEVEL_NONE;
-static uint8_t log_output_buffer[CONFIG_LOG_BACKEND_RPC_BUFFER_SIZE];
+static enum log_rpc_level history_level = LOG_RPC_LEVEL_NONE;
+static uint8_t log_output_buffer[CONFIG_LOG_BACKEND_RPC_OUTPUT_BUFFER_SIZE];
 
 /*
  * Verify that Zephyr logging level can be used as the nRF RPC logging level without translation.
@@ -281,6 +283,13 @@ static void process(const struct log_backend *const backend, union log_msg_gener
 		current_level = level;
 		log_formatter(&log_output_rpc, &msg->log, flags);
 	}
+
+	max_level = history_level;
+
+	if (IS_ENABLED(CONFIG_LOG_BACKEND_RPC_HISTORY) && max_level != LOG_RPC_LEVEL_NONE &&
+	    level <= max_level) {
+		log_rpc_history_push(msg);
+	}
 }
 
 static void panic(struct log_backend const *const backend)
@@ -294,6 +303,10 @@ static void panic(struct log_backend const *const backend)
 static void init(struct log_backend const *const backend)
 {
 	ARG_UNUSED(backend);
+
+	if (IS_ENABLED(CONFIG_LOG_BACKEND_RPC_HISTORY)) {
+		log_rpc_history_init();
+	}
 }
 
 static void dropped(const struct log_backend *const backend, uint32_t cnt)
@@ -350,3 +363,50 @@ static void log_rpc_set_stream_level_handler(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_stream_level_handler,
 			 LOG_RPC_CMD_SET_STREAM_LEVEL, log_rpc_set_stream_level_handler, NULL);
+
+#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
+static void log_rpc_set_history_level_handler(const struct nrf_rpc_group *group,
+					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	enum log_rpc_level level;
+
+	level = (enum log_rpc_level)nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_SET_HISTORY_LEVEL,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	history_level = level;
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_history_level_handler,
+			 LOG_RPC_CMD_SET_HISTORY_LEVEL, log_rpc_set_history_level_handler, NULL);
+
+static void log_rpc_fetch_history_handler(const struct nrf_rpc_group *group,
+					  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_FETCH_HISTORY,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	/* TODO: implement log upload:
+	 * const union log_msg_generic *msg;
+	 * while ((msg = log_rpc_history_pop()) != NULL) {
+	 *   format_and_upload(msg);
+	 *   log_rpc_history_pop(msg);
+	 * }
+	 */
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_fetch_history_handler, LOG_RPC_CMD_FETCH_HISTORY,
+			 log_rpc_fetch_history_handler, NULL);
+
+#endif

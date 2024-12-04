@@ -31,15 +31,38 @@ menuconfig LOG_BACKEND_RPC
 
 if LOG_BACKEND_RPC
 
-config LOG_BACKEND_RPC_BUFFER_SIZE
-	int "nRF RPC logging backend buffer size"
+config LOG_BACKEND_RPC_HISTORY
+	bool "Log history support"
+	help
+	  Enables the feature to continuously store logs in a large ring buffer,
+	  and adds nRF RPC commands for configuring and fetching the log history.
+
+choice LOG_BACKEND_RPC_HISTORY_STORAGE_CHOICE
+	prompt "Log history storage type"
+	depends on LOG_BACKEND_RPC_HISTORY
+	default LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+
+config LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+	bool "RAM buffer"
+
+endchoice
+
+config LOG_BACKEND_RPC_HISTORY_SIZE
+	int "Log history size"
+	depends on LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+	default 16384
+	help
+	  Size of the ring buffer used to store the log history, in bytes.
+
+config LOG_BACKEND_RPC_OUTPUT_BUFFER_SIZE
+	int "Output buffer size"
 	default 256
 	help
 	  Defines the maximum log line length that can be sent to the log forwarder
 	  over nRF RPC without fragmentation.
 
 config LOG_BACKEND_RPC_CRASH_LOG
-	bool "nRF RPC crash log"
+	bool "Crash log support"
 	select RETENTION
 	select RETENTION_MUTEX_FORCE_DISABLE
 	select RETAINED_MEM
