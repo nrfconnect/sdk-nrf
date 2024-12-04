@@ -5,13 +5,13 @@
  */
 
 &cpuapp_rx_partitions {
-	/delete-node/ partition@a6000;
-	cpuapp_recovery_partition: partition@a5000 {
-		reg = <0xa5000 DT_SIZE_K(72)>;
+	/delete-node/ partition@94000;
+	cpuapp_slot0_partition: partition@93000 {
+		reg = <0x93000 DT_SIZE_K(256)>;
 	};
 
-	cpuapp_slot0_partition: partition@b7000 {
-		reg = <0xb7000 DT_SIZE_K(256)>;
+	cpuapp_recovery_partition: partition@d3000 {
+		reg = <0xd3000 DT_SIZE_K(72)>;
 	};
 
 	/* Delete PPR code partition */
@@ -32,11 +32,11 @@
 	nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RXS>;
 	#address-cells = < 0x1 >;
 	#size-cells = < 0x1 >;
-	cpurad_slot0_partition: partition@66000 {
-		reg = < 0x66000 DT_SIZE_K(160) >;
+	cpurad_slot0_partition: partition@54000 {
+		reg = < 0x54000 DT_SIZE_K(160) >;
 	};
 
-	cpurad_recovery_partition: partition@8e000 {
-		reg = < 0x8e000 DT_SIZE_K(92) >;
+	cpurad_recovery_partition: partition@7c000 {
+		reg = < 0x7c000 DT_SIZE_K(92) >;
 	};
 };
