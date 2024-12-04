@@ -10,6 +10,10 @@ Getting started with the nRF54H20 DK
 This document gets you started with your nRF54H20 Development Kit (DK) using the |NCS|.
 It tells you how to install the :zephyr:code-sample:`sysbuild_hello_world` sample and perform a quick test of your DK.
 
+.. note::
+   Do not use the |NCS| v2.9.0 with the nRF54H20 SoC.
+   Use the |NCS| v2.8.0 instead.
+
 .. _ug_nrf54h20_gs_requirements:
 
 Minimum requirements

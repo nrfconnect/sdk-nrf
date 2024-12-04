@@ -1,4 +1,4 @@
-.. _config_gpio_pin:
+.. _gpio_pin_config:
 
 Driving a GPIO pin directly
 ###########################
