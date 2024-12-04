@@ -21,7 +21,8 @@ LOG_MODULE_DECLARE(app_main, LOG_LEVEL_INF);
 #define SPEED_OF_LIGHT_M_PER_S	(299792458.0f)
 #define SPEED_OF_LIGHT_NM_PER_S (SPEED_OF_LIGHT_M_PER_S / 1000000000.0f)
 #define PI			3.14159265358979323846f
-#define MAX_NUM_SAMPLES		256
+#define MAX_NUM_RTT_SAMPLES		256
+#define MAX_NUM_IQ_SAMPLES		256 * CONFIG_BT_RAS_MAX_ANTENNA_PATHS
 
 struct iq_sample_and_channel {
 	bool failed;
@@ -37,12 +38,12 @@ struct rtt_timing {
 	int16_t tod_toa_reflector;
 };
 
-static struct iq_sample_and_channel mode_2_data[MAX_NUM_SAMPLES];
-static struct rtt_timing mode_1_data[MAX_NUM_SAMPLES];
+static struct iq_sample_and_channel iq_sample_channel_data[MAX_NUM_IQ_SAMPLES];
+static struct rtt_timing rtt_timing_data[MAX_NUM_RTT_SAMPLES];
 
 struct processing_context {
-	uint8_t mode_1_data_index;
-	uint8_t mode_2_data_index;
+	uint16_t rtt_timing_data_index;
+	uint16_t iq_sample_channel_data_index;
 	uint8_t n_ap;
 	enum bt_conn_le_cs_role role;
 };
@@ -111,8 +112,8 @@ static float estimate_distance_using_phase_slope(struct iq_sample_and_channel *d
 	int32_t combined_i;
 	int32_t combined_q;
 	uint16_t num_angles = 0;
-	static float theta[MAX_NUM_SAMPLES];
-	static float frequencies[MAX_NUM_SAMPLES];
+	static float theta[MAX_NUM_IQ_SAMPLES];
+	static float frequencies[MAX_NUM_IQ_SAMPLES];
 
 	for (uint8_t i = 0; i < len; i++) {
 		if (!data[i].failed) {
@@ -162,9 +163,9 @@ static float estimate_distance_using_time_of_flight(uint8_t n_samples)
 
 	/* Cumulative Moving Average */
 	for (uint8_t i = 0; i < n_samples; i++) {
-		if (!mode_1_data[i].failed) {
-			tof = (mode_1_data[i].toa_tod_initiator -
-			       mode_1_data[i].tod_toa_reflector) /
+		if (!rtt_timing_data[i].failed) {
+			tof = (rtt_timing_data[i].toa_tod_initiator -
+			       rtt_timing_data[i].tod_toa_reflector) /
 			      2;
 			tof_mean += (tof - tof_mean) / (i + 1);
 		}
@@ -173,6 +174,76 @@ static float estimate_distance_using_time_of_flight(uint8_t n_samples)
 	float tof_mean_ns = tof_mean / 2.0f;
 
 	return tof_mean_ns * SPEED_OF_LIGHT_NM_PER_S;
+}
+
+static void process_tone_info_data(struct processing_context *context,
+			      struct bt_hci_le_cs_step_data_tone_info local_tone_info[],
+			      struct bt_hci_le_cs_step_data_tone_info peer_tone_info[],
+			      uint8_t channel, uint8_t antenna_permutation_index)
+{
+	for (uint8_t i = 0; i < (context->n_ap + 1); i++) {
+		if (local_tone_info[i].extension_indicator != BT_HCI_LE_CS_NOT_TONE_EXT_SLOT ||
+		    peer_tone_info[i].extension_indicator != BT_HCI_LE_CS_NOT_TONE_EXT_SLOT) {
+			continue;
+		}
+
+		if (context->iq_sample_channel_data_index >= MAX_NUM_IQ_SAMPLES) {
+			LOG_WRN("More IQ samples than size of iq_sample_channel_data array");
+			return;
+		}
+
+		iq_sample_channel_data[context->iq_sample_channel_data_index].channel = channel;
+		iq_sample_channel_data[context->iq_sample_channel_data_index].antenna_permutation =
+			antenna_permutation_index;
+		iq_sample_channel_data[context->iq_sample_channel_data_index].local_iq_sample =
+			bt_le_cs_parse_pct(local_tone_info[i].phase_correction_term);
+		iq_sample_channel_data[context->iq_sample_channel_data_index].peer_iq_sample =
+			bt_le_cs_parse_pct(peer_tone_info[i].phase_correction_term);
+
+		if (local_tone_info[i].quality_indicator == BT_HCI_LE_CS_TONE_QUALITY_LOW ||
+		    local_tone_info[i].quality_indicator == BT_HCI_LE_CS_TONE_QUALITY_UNAVAILABLE ||
+		    peer_tone_info[i].quality_indicator == BT_HCI_LE_CS_TONE_QUALITY_LOW ||
+		    peer_tone_info[i].quality_indicator == BT_HCI_LE_CS_TONE_QUALITY_UNAVAILABLE) {
+			iq_sample_channel_data[context->iq_sample_channel_data_index].failed = true;
+		}
+
+		context->iq_sample_channel_data_index++;
+	}
+}
+
+static void process_rtt_timing_data(struct processing_context *context,
+			       struct bt_hci_le_cs_step_data_mode_1 *local_rtt_data,
+			       struct bt_hci_le_cs_step_data_mode_1 *peer_rtt_data)
+{
+	if (context->rtt_timing_data_index >= MAX_NUM_RTT_SAMPLES) {
+		LOG_WRN("More RTT samples processed than size of rtt_timing_data array");
+		return;
+	}
+
+	if (local_rtt_data->packet_quality_aa_check !=
+		    BT_HCI_LE_CS_PACKET_QUALITY_AA_CHECK_SUCCESSFUL ||
+	    local_rtt_data->packet_rssi == BT_HCI_LE_CS_PACKET_RSSI_NOT_AVAILABLE ||
+	    local_rtt_data->tod_toa_reflector == BT_HCI_LE_CS_TIME_DIFFERENCE_NOT_AVAILABLE ||
+	    peer_rtt_data->packet_quality_aa_check !=
+		    BT_HCI_LE_CS_PACKET_QUALITY_AA_CHECK_SUCCESSFUL ||
+	    peer_rtt_data->packet_rssi == BT_HCI_LE_CS_PACKET_RSSI_NOT_AVAILABLE ||
+	    peer_rtt_data->tod_toa_reflector == BT_HCI_LE_CS_TIME_DIFFERENCE_NOT_AVAILABLE) {
+		rtt_timing_data[context->rtt_timing_data_index].failed = true;
+	}
+
+	if (context->role == BT_CONN_LE_CS_ROLE_INITIATOR) {
+		rtt_timing_data[context->rtt_timing_data_index].toa_tod_initiator =
+			local_rtt_data->toa_tod_initiator;
+		rtt_timing_data[context->rtt_timing_data_index].tod_toa_reflector =
+			peer_rtt_data->tod_toa_reflector;
+	} else if (context->role == BT_CONN_LE_CS_ROLE_REFLECTOR) {
+		rtt_timing_data[context->rtt_timing_data_index].tod_toa_reflector =
+			local_rtt_data->tod_toa_reflector;
+		rtt_timing_data[context->rtt_timing_data_index].toa_tod_initiator =
+			peer_rtt_data->toa_tod_initiator;
+	}
+
+	context->rtt_timing_data_index++;
 }
 
 static bool process_step_data(struct bt_le_cs_subevent_step *local_step,
@@ -186,68 +257,31 @@ static bool process_step_data(struct bt_le_cs_subevent_step *local_step,
 		struct bt_hci_le_cs_step_data_mode_2 *peer_step_data =
 			(struct bt_hci_le_cs_step_data_mode_2 *)peer_step->data;
 
-		for (uint8_t i = 0; i < (context->n_ap + 1); i++) {
-			if (local_step_data->tone_info[i].extension_indicator !=
-				    BT_HCI_LE_CS_NOT_TONE_EXT_SLOT ||
-			    peer_step_data->tone_info[i].extension_indicator !=
-				    BT_HCI_LE_CS_NOT_TONE_EXT_SLOT) {
-				continue;
-			}
+		process_tone_info_data(context, local_step_data->tone_info,
+				       peer_step_data->tone_info, local_step->channel,
+				       local_step_data->antenna_permutation_index);
 
-			mode_2_data[context->mode_2_data_index].channel = local_step->channel;
-			mode_2_data[context->mode_2_data_index].antenna_permutation =
-				local_step_data->antenna_permutation_index;
-			mode_2_data[context->mode_2_data_index].local_iq_sample =
-				bt_le_cs_parse_pct(
-					local_step_data->tone_info[i].phase_correction_term);
-			mode_2_data[context->mode_2_data_index].peer_iq_sample = bt_le_cs_parse_pct(
-				peer_step_data->tone_info[i].phase_correction_term);
-
-			if (local_step_data->tone_info[i].quality_indicator ==
-				    BT_HCI_LE_CS_TONE_QUALITY_LOW ||
-			    local_step_data->tone_info[i].quality_indicator ==
-				    BT_HCI_LE_CS_TONE_QUALITY_UNAVAILABLE ||
-			    peer_step_data->tone_info[i].quality_indicator ==
-				    BT_HCI_LE_CS_TONE_QUALITY_LOW ||
-			    peer_step_data->tone_info[i].quality_indicator ==
-				    BT_HCI_LE_CS_TONE_QUALITY_UNAVAILABLE) {
-				mode_2_data[context->mode_2_data_index].failed = true;
-			}
-
-			context->mode_2_data_index++;
-		}
 	} else if (local_step->mode == BT_HCI_OP_LE_CS_MAIN_MODE_1) {
 		struct bt_hci_le_cs_step_data_mode_1 *local_step_data =
 			(struct bt_hci_le_cs_step_data_mode_1 *)local_step->data;
 		struct bt_hci_le_cs_step_data_mode_1 *peer_step_data =
 			(struct bt_hci_le_cs_step_data_mode_1 *)peer_step->data;
 
-		if (local_step_data->packet_quality_aa_check !=
-			    BT_HCI_LE_CS_PACKET_QUALITY_AA_CHECK_SUCCESSFUL ||
-		    local_step_data->packet_rssi == BT_HCI_LE_CS_PACKET_RSSI_NOT_AVAILABLE ||
-		    local_step_data->tod_toa_reflector ==
-			    BT_HCI_LE_CS_TIME_DIFFERENCE_NOT_AVAILABLE ||
-		    peer_step_data->packet_quality_aa_check !=
-			    BT_HCI_LE_CS_PACKET_QUALITY_AA_CHECK_SUCCESSFUL ||
-		    peer_step_data->packet_rssi == BT_HCI_LE_CS_PACKET_RSSI_NOT_AVAILABLE ||
-		    peer_step_data->tod_toa_reflector ==
-			    BT_HCI_LE_CS_TIME_DIFFERENCE_NOT_AVAILABLE) {
-			mode_1_data[context->mode_1_data_index].failed = true;
-		}
+		process_rtt_timing_data(context, local_step_data, peer_step_data);
 
-		if (context->role == BT_CONN_LE_CS_ROLE_INITIATOR) {
-			mode_1_data[context->mode_1_data_index].toa_tod_initiator =
-				local_step_data->toa_tod_initiator;
-			mode_1_data[context->mode_1_data_index].tod_toa_reflector =
-				peer_step_data->tod_toa_reflector;
-		} else if (context->role == BT_CONN_LE_CS_ROLE_REFLECTOR) {
-			mode_1_data[context->mode_1_data_index].tod_toa_reflector =
-				local_step_data->tod_toa_reflector;
-			mode_1_data[context->mode_1_data_index].toa_tod_initiator =
-				peer_step_data->toa_tod_initiator;
-		}
+	} else if (local_step->mode == BT_HCI_OP_LE_CS_MAIN_MODE_3) {
+		struct bt_hci_le_cs_step_data_mode_3 *local_step_data =
+			(struct bt_hci_le_cs_step_data_mode_3 *)local_step->data;
+		struct bt_hci_le_cs_step_data_mode_3 *peer_step_data =
+			(struct bt_hci_le_cs_step_data_mode_3 *)peer_step->data;
 
-		context->mode_1_data_index++;
+		process_rtt_timing_data(context,
+					(struct bt_hci_le_cs_step_data_mode_1 *)local_step_data,
+					(struct bt_hci_le_cs_step_data_mode_1 *)peer_step_data);
+
+		process_tone_info_data(context, local_step_data->tone_info,
+				       peer_step_data->tone_info, local_step->channel,
+				       local_step_data->antenna_permutation_index);
 	}
 
 	return true;
@@ -257,23 +291,23 @@ void estimate_distance(struct net_buf_simple *local_steps, struct net_buf_simple
 		       uint8_t n_ap, enum bt_conn_le_cs_role role)
 {
 	struct processing_context context = {
-		.mode_1_data_index = 0,
-		.mode_2_data_index = 0,
+		.rtt_timing_data_index = 0,
+		.iq_sample_channel_data_index = 0,
 		.n_ap = n_ap,
 		.role = role,
 	};
 
-	memset(mode_1_data, 0, sizeof(mode_1_data));
-	memset(mode_2_data, 0, sizeof(mode_2_data));
+	memset(rtt_timing_data, 0, sizeof(rtt_timing_data));
+	memset(iq_sample_channel_data, 0, sizeof(iq_sample_channel_data));
 
 	bt_ras_rreq_rd_subevent_data_parse(peer_steps, local_steps, context.role, NULL,
 					   process_step_data, &context);
 
-	float phase_slope_based_distance =
-		estimate_distance_using_phase_slope(mode_2_data, context.mode_2_data_index);
+	float phase_slope_based_distance = estimate_distance_using_phase_slope(
+		iq_sample_channel_data, context.iq_sample_channel_data_index);
 
 	float rtt_based_distance =
-		estimate_distance_using_time_of_flight(context.mode_1_data_index);
+		estimate_distance_using_time_of_flight(context.rtt_timing_data_index);
 
 	if (rtt_based_distance == 0.0f && phase_slope_based_distance == 0.0f) {
 		LOG_INF("A reliable distance estimate could not be computed.");
@@ -283,10 +317,10 @@ void estimate_distance(struct net_buf_simple *local_steps, struct net_buf_simple
 
 	if (rtt_based_distance != 0.0f) {
 		LOG_INF("- Round-Trip Timing method: %f meters (derived from %d samples)",
-			(double)rtt_based_distance, context.mode_1_data_index);
+			(double)rtt_based_distance, context.rtt_timing_data_index);
 	}
 	if (phase_slope_based_distance != 0.0f) {
 		LOG_INF("- Phase-Based Ranging method: %f meters (derived from %d samples)",
-			(double)phase_slope_based_distance, context.mode_2_data_index);
+			(double)phase_slope_based_distance, context.iq_sample_channel_data_index);
 	}
 }
