@@ -30,7 +30,6 @@ LOG_MODULE_REGISTER(twt, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_event.h>
 #include <zephyr/drivers/gpio.h>
 
-#include<net/wifi_mgmt_ext.h>
 
 #include "net_private.h"
 #include "traffic_gen.h"
