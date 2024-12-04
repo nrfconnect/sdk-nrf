@@ -9,7 +9,9 @@ DT_CHOSEN_NCS_RECOVERY_BUTTON := ncs,recovery-button
 config SUIT_RECOVERY_BUTTON
 	bool "Enable SUIT enter recovery button checking on startup"
 	depends on $(dt_chosen_enabled,$(DT_CHOSEN_NCS_RECOVERY_BUTTON))
+	default y
 	select SSF_SUIT_SERVICE_ENABLED
+	select SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP
 	help
 	  This will make the firmware check if the recovery button specified in the
 	  device tree is pressed on startup. If it is, the firmware will enter

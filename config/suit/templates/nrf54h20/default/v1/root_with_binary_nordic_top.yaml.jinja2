@@ -20,7 +20,7 @@
   {%- set mpi_app_recovery_local_vendor_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_3_VENDOR_NAME']|default('nordicsemi.com') %}
   {%- set mpi_app_recovery_local_class_name = main_config['config']['CONFIG_SUIT_MPI_APP_LOCAL_3_CLASS_NAME']|default('nRF54H20_sample_app_3') %}
 {%- endif %}
-{%- if app_recovery_img is defined and 'CONFIG_SUIT_RECOVERY_BUTTON' in app_recovery_img['config'] and app_recovery_img['config'][CONFIG_SUIT_RECOVERY_BUTTON] != ''  %}
+{%- if app_recovery_img is defined and 'CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP' in app_recovery_img['config'] and app_recovery_img['config'][CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP] != ''  %}
   {%- set recovery_button_check_on_invoke = True %}
 {%- else %}
   {%- set recovery_button_check_on_invoke = False %}
