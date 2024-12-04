@@ -10,8 +10,8 @@ menuconfig TRUSTED_STORAGE
 	bool "Trusted Storage"
 	depends on !BUILD_WITH_TFM
 	help
-	  The secure storage subsystem allows its users to store in a secure
-	  way data ensuring data integrity and confidentially by using AEAD
+	  The secure storage subsystem allows its users to store data in a
+	  secure way, ensuring data integrity and confidentiality by using AEAD
 	  algorithms. It supports several secure implementation back-ends to
 	  provide various levels of trust depending on the device security
 	  features.
