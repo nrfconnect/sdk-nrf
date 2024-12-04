@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
-#include <qspi_if.h>
+#include <zephyr/drivers/wifi/nrf_wifi/bus/qspi_if.h>
 #endif
 
 #include "net_private.h"
