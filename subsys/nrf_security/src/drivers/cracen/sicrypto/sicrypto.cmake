@@ -10,6 +10,7 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ecdsa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/ed25519ph.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ed448.c
   ${CMAKE_CURRENT_LIST_DIR}/src/hash.c
   ${CMAKE_CURRENT_LIST_DIR}/src/hkdf.c
