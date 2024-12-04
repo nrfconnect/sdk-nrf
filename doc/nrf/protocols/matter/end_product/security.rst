@@ -81,9 +81,9 @@ An important setting, that depends on the hardware platform in use, is the way o
 The recommended and the most secure option is to use :ref:`lib_hw_unique_key` (HUK) library.
 HUK support is automatically enabled with the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK` Kconfig option for compatible configurations.
 
-The HUK library is supported for the nRF52840, nRF5340, and nRF54L15 platforms, but for :ref:`matter_samples` in the |NCS|, it is only enabled for the nRF5340 and NRF54L15 platforms:
+The HUK library is supported for the nRF52840, nRF5340, and nRF54L platforms, but for :ref:`matter_samples` in the |NCS|, it is only enabled for the nRF5340 and nRF54L platforms:
 
-* For the nRF5340 and nRF54L15 platforms, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
+* For the nRF5340, nRF54L platforms, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
   No changes to the existing partition layout are needed for products in the field.
 * For the nRF54L15 NS platform, the HUK generation and management is handled by the Trusted Firmware-M (TF-M) library.
 * For the nRF52840 platform, AEAD keys are derived with a SHA-256 hash (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
@@ -143,6 +143,13 @@ This is a reference configuration that can be modified in the production firmwar
      - CRACEN
      - Yes
      - Trusted Firmware-M (TF-M) + Key Management Unit (KMU)
+   * - nRF54L10 SoC
+     - Thread
+     - PSA Crypto API
+     - CRACEN [2]_
+     - Yes
+     - Trusted Storage library + Hardware Unique Key (HUK) + Key Management Unit (KMU)
+
 
 .. [1] The CryptoCell backend is used in parallel with the Oberon backend.
        By default, the CryptoCell backend is used only for Random Number Generation (RNG) and the AEAD key derivation driver.
@@ -193,6 +200,11 @@ See the following table to learn about the default secure storage backends for t
      - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
        | Trusted Firmware-M Storage (TF-M)
+   * - nRF54L10 SoC
+     - Key Management Unit (KMU)
+     - | Key Management Unit (KMU),
+       | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
+       | Trusted Storage library + SHA-256 hash (Zephyr Settings)
 
 If you migrate the DAC private key to storage based on Zephyr Settings storage, you cannot use the :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS` Kconfig option.
 This is because the factory reset feature will erase the secure storage, including the DAC private key, which has been removed from the factory data.
