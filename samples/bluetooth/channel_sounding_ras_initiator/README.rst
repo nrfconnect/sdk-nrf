@@ -8,7 +8,8 @@ Bluetooth: Channel Sounding Initiator with Ranging Requestor
    :depth: 2
 
 This sample demonstrates how to use the ranging service to request ranging data from a server.
-It also provides a basic distance estimation algorithm to show how channel sounding can be used to estimate distance between two devices.
+It also provides a basic distance estimation algorithm to demonstrate the IQ data handling.
+The accuracy is not representative for Channel Sounding and should be replaced if accuracy is important.
 
 Requirements
 ************
