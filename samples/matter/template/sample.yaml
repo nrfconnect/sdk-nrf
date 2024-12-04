@@ -12,8 +12,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns
+      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns nrf54l15dk/nrf54l10/cpuapp
     tags: sysbuild ci_samples_matter
   sample.matter.template.release:
     sysbuild: true
@@ -26,8 +27,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns
+      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns nrf54l15dk/nrf54l10/cpuapp
     tags: sysbuild ci_samples_matter
   sample.matter.template.lto:
     sysbuild: true
@@ -39,8 +41,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp
+      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l10/cpuapp
     tags: sysbuild ci_samples_matter
   sample.matter.template.smp_dfu:
     sysbuild: true
@@ -53,8 +56,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
     platform_allow: nrf52840dk/nrf52840 nrf5340dk/nrf5340/cpuapp nrf7002dk/nrf5340/cpuapp
-      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns
+      nrf54l15dk/nrf54l15/cpuapp nrf54l15dk/nrf54l15/cpuapp/ns nrf54l15dk/nrf54l10/cpuapp
     tags: sysbuild ci_samples_matter
   sample.matter.template.smp_dfu.nrf54h20:
     sysbuild: true
