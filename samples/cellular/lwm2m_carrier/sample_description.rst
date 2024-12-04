@@ -219,7 +219,7 @@ To test with the sample, complete the following steps:
          $ carrier_config server enable
          Enabled custom server config
 
-   #. Finally, as described in ref:`lwm2m_carrier_shell`, set ``auto_startup`` (or else the sample will wait indefinitely for you to configure all the settings).
+   #. Finally, as described in :ref:`lwm2m_carrier_shell`, set ``auto_startup`` (or else the sample will wait indefinitely for you to configure all the settings).
 
       .. code-block:: console
 
