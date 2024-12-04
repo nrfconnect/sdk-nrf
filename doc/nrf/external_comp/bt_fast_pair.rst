@@ -180,13 +180,16 @@ Provisioning registration data onto device
 The Fast Pair standard requires provisioning the device with Model ID and Anti-Spoofing Private Key obtained during device model registration.
 In the |NCS|, the provisioning data is generated as a hexadecimal file using the :ref:`bt_fast_pair_provision_script`.
 
-When building the Fast Pair in the |NCS|, the build system automatically calls the Fast Pair provision script and includes the resulting hexadecimal file in the firmware (the :file:`merged.hex` file).
+When building the Fast Pair in the |NCS|, the build system automatically calls the Fast Pair provision script and includes the resulting hexadecimal file in the final firmware hexadecimal file that can be flashed onto the device.
+For devices with the :ref:`partition_manager` support for which the :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option is automatically enabled by the Fast Pair build system, the ``bt_fast_pair`` partition is automatically created by the build system.
+For other devices, you must declare the ``bt_fast_pair_partition`` partition manually in the device tree.
+See :file:`samples/bluetooth/fast_pair/input_device/boards/nrf54h20dk_nrf54h20_cpuapp.overlay` for example how it can be done.
 To build an application with the Fast Pair support, include the following additional CMake options:
 
 * ``FP_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``,
 * ``FP_ANTI_SPOOFING_KEY`` - base64-encoded Fast Pair Anti-Spoofing Private Key.
 
-The ``bt_fast_pair`` partition address is provided automatically by the build system.
+The Fast Pair partition address is provided automatically by the build system.
 
 For example, when building an application with the |nRFVSC|, you need to add the following parameters in the **Extra CMake arguments** field on the **Add Build Configuration view**: ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``.
 Make sure to replace ``0xFFFFFF`` and ``AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=`` with values obtained for your device.
@@ -1070,5 +1073,5 @@ The following are the required dependencies for the Fast Pair integration:
 * :ref:`nrfxlib:crypto`
 * :ref:`zephyr:bluetooth`
 * :ref:`zephyr:settings_api`
-* :ref:`partition_manager`
+* :ref:`partition_manager` (only for devices that supports it)
 * :ref:`dult_readme`

@@ -335,6 +335,10 @@ Bluetooth Fast Pair samples
 
   * Updated the MCUboot bootloader configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` board target to enable the :kconfig:option:`CONFIG_FPROTECT` Kconfig option that is used to protect the bootloader partition against memory corruption.
 
+* :ref:`fast_pair_input_device` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+
 Bluetooth Mesh samples
 ----------------------
 
@@ -556,6 +560,9 @@ Bluetooth libraries and services
   * Updated the :c:func:`bt_hogp_rep_read` function to forward the GATT read error code through the registered user callback.
     This ensures that API user is aware of the error.
 
+* :ref:`bt_fast_pair_readme` library:
+  * Added support in build system for devices that do not support the :ref:`partition_manager`.
+
 Common Application Framework
 ----------------------------
 
@@ -646,7 +653,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+Added instruction on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support.
 
 Edge Impulse integration
 ------------------------
