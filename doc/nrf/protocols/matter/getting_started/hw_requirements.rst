@@ -20,6 +20,7 @@ Currently the following SoCs from Nordic Semiconductor are supported for use wit
 * :ref:`nRF5340 + nRF7002 <programming_board_names>` (Matter over Thread and Matter over Wi-Fi)
 * :ref:`nRF52840 <programming_board_names>` (Matter over Thread)
 * :ref:`nRF54L15 <programming_board_names>` (Matter over Thread)
+* :ref:`nRF54L10 <programming_board_names>` (Matter over Thread)
 
 Front-End Modules
 =================
@@ -32,8 +33,12 @@ For more information about the FEM support in the |NCS|, see :ref:`ug_radio_fem`
 External flash
 **************
 
-For the currently supported SoCs, you must use an external memory with at least 1 MB of flash for nRF52840 and 1.5MB for nRF5340.
+For the currently supported SoCs, you must use an external memory with at least 1 MB of flash for nRF52840 and nRF54L10, and 1.5 MB for nRF5340 and nRF54L15.
 This is required to perform the DFU operation.
+
+.. note::
+   The nRF54L15 supports DFU with image compression, which may eliminate the need for external flash.
+   For more details, see :ref:`mcuboot_image_compression`.
 
 The development kits for the supported SoCs from Nordic Semiconductor are supplied with the MX25R64 type of external flash that meets these memory requirements.
 However, it is possible to configure the SoCs with different QSPI or SPI memory if it is supported by Zephyr.
@@ -214,6 +219,7 @@ Values are provided in kilobytes (KB).
    .. tab:: nRF54L15 DK
 
       The following table lists memory requirements for samples running on the :ref:`nRF54L15 DK <programming_board_names>` (:ref:`nrf54l15dk/nrf54l15/cpuapp <zephyr:nrf54l15dk_nrf54l15>`).
+      You can use the table as a reference for the :ref:`nRF54L15 DK (emulating nRF54L10) <programming_board_names>` (:ref:`nrf54l15dk/nrf54l10/cpuapp <zephyr:nrf54l15dk_nrf54l15>`).
 
       +----------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                               |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -645,15 +651,15 @@ For more information about configuration of memory layouts in Matter, see :ref:`
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
         | Partition                               | Offset              | Size              | Partition elements  | Element offset  | Element size      |
         +=========================================+=====================+===================+=====================+=================+===================+
-        | Bootloader (mcuboot)                    | 0kB (0x0)           | 48kB (0xC000)     |-                    |-                |-                  |
+        | Bootloader (mcuboot)                    | 0kB (0x0)           | 52kB (0xD000)     |-                    |-                |-                  |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
-        | Application (mcuboot_primary/app)       | 28kB (0x7000)       | 960kB (0xf0000)   | mcuboot_pad         | 48kB (0xC000)   | 2048B (0x800)     |
+        | Application (mcuboot_primary/app)       | 52kB (0xD000)       | 1428kB (0x165000) | mcuboot_pad         | 52kB (0xD000)   | 2048B (0x800)     |
         |                                         |                     |                   +---------------------+-----------------+-------------------+
-        |                                         |                     |                   | mcuboot_primary_app | 50kB (0xc800)   | 1438kB (0xefe00)  |
+        |                                         |                     |                   | mcuboot_primary_app | 54kB (0xD800)   | 1426kB (0x164800) |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
-        | Factory data (factory_data)             | 1488kB (0x174000)   | 4kB (0x1000)      |-                    |-                |-                  |
+        | Factory data (factory_data)             | 1480kB (0x172000)   | 4kB (0x1000)      |-                    |-                |-                  |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
-        | Non-volatile storage (settings_storage) | 1492kB (0x175000)   | 32kB (0x8000)     |-                    |-                |-                  |
+        | Non-volatile storage (settings_storage) | 1484kB (0x173000)   | 40kB (0xA000)     |-                    |-                |-                  |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
 
       Application core SRAM primary (size: 0x40000 = 256kB)
@@ -674,17 +680,17 @@ For more information about configuration of memory layouts in Matter, see :ref:`
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
         | Partition                               | Offset              | Size              | Partition elements  | Element offset  | Element size      |
         +=========================================+=====================+===================+=====================+=================+===================+
-        | Bootloader (mcuboot)                    | 0kB (0x0)           | 48kB (0xC000)     |-                    |-                |-                  |
+        | Bootloader (mcuboot)                    | 0kB (0x0)           | 52kB (0xD000)     |-                    |-                |-                  |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
-        | Secure part (tfm_secure)                | 48kB (0xc000)       | 128kB (0x20000)   | mcuboot_pad         | 48kB (0xc000)   | 2k (0x800)        |
+        | Secure part (tfm_secure)                | 52kB (0xD000)       | 128kB (0x20000)   | mcuboot_pad         | 52kB (0xD000)   | 2k (0x800)        |
         |                                         |                     |                   +---------------------+-----------------+-------------------+
-        |                                         |                     |                   | tfm                 | 50kB (0xc800)   | 126kB (0x1f800)   |
+        |                                         |                     |                   | tfm                 | 54kB (0xD800)   | 126kB (0x1F800)   |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
-        | Non-Secure part (tfm_nonsecure)         | 176kB (0x2C000)     | 1272kB (0x13E000) | app                 | 176kB (0x2C000) | 1272kB (0x13E000) |
+        | Non-Secure part (tfm_nonsecure)         | 180kB (0x2D000)     | 1268kB (0x13D000) | app                 |180kB (0x2D000)  | 1268kB (0x13D000) |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
         | Factory data (factory_data)             | 1448kB (0x16A000)   | 4kB (0x1000)      |-                    |-                |-                  |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
-        | Non-volatile storage (settings_storage) | 1452kB (0x16B000)   | 40kB (0xa000)     |-                    |-                |-                  |
+        | Non-volatile storage (settings_storage) | 1452kB (0x16B000)   | 40kB (0xA000)     |-                    |-                |-                  |
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
         | TFM storage (tfm_storage)               | 1492kB (0x175000)   | 32kB (0x8000)     | tfm_its             | 8kB (0x175000)  | 8kB (0x2000)      |
         |                                         |                     |                   +---------------------+-----------------+-------------------+
@@ -702,6 +708,35 @@ For more information about configuration of memory layouts in Matter, see :ref:`
         | Secure Static RAM (sram_secure)               | 0kB (0x0)           | 256kB (0xF000)    |-                    |-                |-                |
         +-----------------------------------------------+---------------------+-------------------+---------------------+-----------------+-----------------+
         | Non-Secure Static RAM (sram_nonsecure)        | 256kB (0xF000)      | 196kB (0x31000)   |-                    |-                |-                |
+        +-----------------------------------------------+---------------------+-------------------+---------------------+-----------------+-----------------+
+
+   .. tab:: nRF54L10 emulation on nRF54L15 DK
+
+      The following memory map is valid for Matter applications running on the :ref:`nRF54L15 DK (emulating nRF54L10) <programming_board_names>` (:ref:`nrf54l15dk/nrf54l10/cpuapp <zephyr:nrf54l15dk_nrf54l15>`).
+
+      Application core flash (size: 0xFF800 = 1022kB)
+
+        +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
+        | Partition                               | Offset              | Size              | Partition elements  | Element offset  | Element size      |
+        +=========================================+=====================+===================+=====================+=================+===================+
+        | Bootloader (mcuboot)                    | 0kB (0x0)           | 52kB (0xD000)     |-                    |-                |-                  |
+        +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
+        | Application (mcuboot_primary/app)       | 52kB (0xD000)       | 926kB (0xE7800)   | mcuboot_pad         | 52kB (0xD000)   | 2048B (0x800)     |
+        |                                         |                     |                   +---------------------+-----------------+-------------------+
+        |                                         |                     |                   | mcuboot_primary_app | 54kB (0xD800)   | 924kB (0xE7000)   |
+        +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
+        | Factory data (factory_data)             | 978kB (0xF4800)     | 4kB (0x1000)      |-                    |-                |-                  |
+        +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
+        | Non-volatile storage (settings_storage) | 982kB (0xF5800)     | 40kB (0xA000)     |-                    |-                |-                  |
+        +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
+
+      Application core SRAM primary (size: 0x30000 = 192kB)
+        SRAM is located at the address ``0x20000000`` in the memory address space of the application.
+
+        +-----------------------------------------------+---------------------+-------------------+---------------------+-----------------+-----------------+
+        | Partition                                     | Offset              | Size              | Partition elements  | Element offset  | Element size    |
+        +===============================================+=====================+===================+=====================+=================+=================+
+        | Static RAM (sram_primary)                     | 0kB (0x0)           | 192kB (0x30000)   |-                    |-                |-                |
         +-----------------------------------------------+---------------------+-------------------+---------------------+-----------------+-----------------+
 
 ..
