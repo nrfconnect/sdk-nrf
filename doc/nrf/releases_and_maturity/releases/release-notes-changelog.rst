@@ -474,7 +474,8 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Added instruction on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support.
+  The :ref:`zephyr:nrf54h20dk_nrf54h20` board target is the only example of such device.
 
 Edge Impulse integration
 ------------------------
