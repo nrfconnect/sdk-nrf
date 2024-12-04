@@ -16,8 +16,13 @@ tests:
       fixture: gpio_loopback
   lpuart.loopback.nrf54l:
     sysbuild: true
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
@@ -26,8 +31,13 @@ tests:
       fixture: gpio_loopback
   lpuart.loopback.nrf54l.busy_sim:
     sysbuild: true
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y

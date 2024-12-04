@@ -15,6 +15,8 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf52dk/nrf52832
@@ -23,6 +25,8 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     platform_exclude: native_sim
     tags: ppk_power_measure
@@ -40,6 +44,8 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -74,9 +80,12 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840 nrf9160dk/nrf9160/ns
-      nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840 nrf54l15dk/nrf54l15/cpuapp
+      nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840 nrf54l15dk/nrf54l05/cpuapp
+      nrf54l15dk/nrf54l10/cpuapp nrf54l15dk/nrf54l15/cpuapp
     tags: ppk_power_measure
     harness: pytest
     harness_config:
@@ -100,9 +109,12 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf5340dk/nrf5340/cpuapp
       - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf52dk/nrf52832 nrf52833dk/nrf52833 nrf52840dk/nrf52840 nrf9160dk/nrf9160/ns
-      nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840 nrf54l15dk/nrf54l15/cpuapp
+      nrf5340dk/nrf5340/cpuapp nrf21540dk/nrf52840 nrf54l15dk/nrf54l05/cpuapp
+      nrf54l15dk/nrf54l10/cpuapp nrf54l15dk/nrf54l15/cpuapp
     harness: console
     harness_config:
       fixture: gpio_loopback
