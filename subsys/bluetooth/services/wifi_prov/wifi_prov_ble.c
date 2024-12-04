@@ -21,7 +21,7 @@
 #include <zephyr/net/net_if.h>
 #include <zephyr/net_buf.h>
 
-#include <net/wifi_credentials.h>
+#include <zephyr/net/wifi_credentials.h>
 #include <bluetooth/services/wifi_provisioning.h>
 
 #include "wifi_prov_internal.h"

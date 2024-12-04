@@ -20,8 +20,7 @@
 #include <zephyr/net/dns_sd.h>
 #include <zephyr/net/http/client.h>
 #include <zephyr/net/http/parser.h>
-#include <net/wifi_credentials.h>
-#include <net/wifi_mgmt_ext.h>
+#include <zephyr/net/wifi_credentials.h>
 #include <net/softap_wifi_provision.h>
 
 #include "pb_decode.h"

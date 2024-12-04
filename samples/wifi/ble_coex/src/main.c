@@ -34,7 +34,6 @@ LOG_MODULE_REGISTER(coex, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/socket.h>
 
-#include <net/wifi_mgmt_ext.h>
 
 /* For net_sprint_ll_addr_buf */
 #include "net_private.h"
