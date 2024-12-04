@@ -41,7 +41,7 @@ static void m_update_latency_request(uint32_t lat_value_us)
 	}
 }
 
-void mpsl_pm_utils_work_handler(void)
+void m_register_event(void)
 {
 	mpsl_pm_params_t params	= {0};
 	bool pm_param_valid = mpsl_pm_params_get(&params);
@@ -58,8 +58,6 @@ void mpsl_pm_utils_work_handler(void)
 	switch (params.event_state) {
 	case MPSL_PM_EVENT_STATE_NO_EVENTS_LEFT:
 	{
-		/* No event scheduled, so set latency to restrict deepest sleep states*/
-		m_update_latency_request(PM_MAX_LATENCY_HCI_COMMANDS_US);
 		if (m_pm_event_is_registered) {
 			pm_policy_event_unregister(&m_evt);
 			m_pm_event_is_registered = false;
@@ -68,9 +66,6 @@ void mpsl_pm_utils_work_handler(void)
 	}
 	case MPSL_PM_EVENT_STATE_BEFORE_EVENT:
 	{
-		/* In case we missed a state and are in zero-latency, set low-latency.*/
-		m_update_latency_request(PM_MAX_LATENCY_HCI_COMMANDS_US);
-
 		/* Note: Considering an overflow could only happen if the system runs many years,
 		 * it needen't be considered here.
 		 */
@@ -107,15 +102,38 @@ void mpsl_pm_utils_work_handler(void)
 		}
 		break;
 	}
-	case MPSL_PM_EVENT_STATE_IN_EVENT:
-	{
-		m_update_latency_request(0);
-		break;
-	}
 	default:
 		__ASSERT(false, "MPSL PM is in an undefined state.");
 	}
 	m_pm_prev_flag_value = params.cnt_flag;
+}
+
+static void m_register_latency(void)
+{
+	switch (mpsl_pm_low_latency_state_get()) {
+	case MPSL_PM_LOW_LATENCY_STATE_OFF:
+		if (mpsl_pm_low_latency_requested()) {
+			mpsl_pm_low_latency_state_set(MPSL_PM_LOW_LATENCY_STATE_REQUESTING);
+			m_update_latency_request(0);
+			mpsl_pm_low_latency_state_set(MPSL_PM_LOW_LATENCY_STATE_ON);
+		}
+		break;
+	case MPSL_PM_LOW_LATENCY_STATE_ON:
+		if (!mpsl_pm_low_latency_requested()) {
+			mpsl_pm_low_latency_state_set(MPSL_PM_LOW_LATENCY_STATE_RELEASING);
+			m_update_latency_request(PM_MAX_LATENCY_HCI_COMMANDS_US);
+			mpsl_pm_low_latency_state_set(MPSL_PM_LOW_LATENCY_STATE_OFF);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void mpsl_pm_utils_work_handler(void)
+{
+	m_register_event();
+	m_register_latency();
 }
 
 static void m_work_handler(struct k_work *work)
