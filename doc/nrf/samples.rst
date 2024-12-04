@@ -7,7 +7,7 @@ The |NCS| provides samples that specifically target Nordic Semiconductor devices
 
 Samples showcase a single feature or library, while :ref:`applications` include a variety of libraries to implement a specific use case.
 
-Zephyr also provides a variety of :ref:`zephyr:samples-and-demos`, including very simple :ref:`zephyr:basic-sample`.
+Zephyr also provides a variety of :zephyr:code-sample-category:`samples`, including very simple :zephyr:code-sample-category:`basic`.
 These samples are a good starting point for understanding how to put together your own application.
 However, Zephyr samples and applications are not tested and verified to work with the |NCS| releases.
 

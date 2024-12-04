@@ -130,7 +130,7 @@ Bluetooth Low Energy
      - Application core
    * - :zephyr:code-sample:`bluetooth_hci_ipc`
      - | :ref:`Bluetooth Low Energy samples <ble_samples>`
-       | :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`
+       | :zephyr:code-sample-category:`bluetooth`
    * - :ref:`ble_rpc_host` (supported for development)
      - Some Bluetooth Low Energy samples, for example, :ref:`peripheral_hids_mouse`, :ref:`peripheral_uart` or :ref:`central_uart`
 
@@ -151,7 +151,7 @@ The sample implements the RPMsg transport using the `OpenAMP`_ library to commun
 You can use either the SoftDevice Controller or the Zephyr Bluetooth LE Controller for this sample.
 See :ref:`ug_ble_controller` for more information.
 
-For the application core, the |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`, in addition to the :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
+For the application core, the |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`, in addition to the :zephyr:code-sample-category:`bluetooth` samples.
 |multi_image|
 
 .. note::
@@ -173,7 +173,7 @@ Bluetooth Mesh
 
 Bluetooth Mesh operates on Bluetooth Low Energy (LE), and is implemented according to Bluetooth Mesh Profile Specification v1.0.1 and Bluetooth Mesh Model Specification v1.0.1.
 For the application core, the |NCS| provides several :ref:`bt_mesh_samples`.
-In addition, you can find Bluetooth Mesh samples with :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
+In addition, you can find Bluetooth Mesh samples with :zephyr:code-sample-category:`bluetooth` samples.
 
 IEEE 802.15.4 (Thread and Zigbee)
 ---------------------------------

@@ -27,7 +27,7 @@ The TF-M implementation in |NCS| is demonstrated in the following samples:
 
 * All :ref:`tfm_samples` in this SDK
 * All :ref:`cryptography samples <crypto_samples>` in this SDK
-* A series of :ref:`TF-M integration samples <zephyr:tfm_integration-samples>` available in Zephyr
+* A series of :zephyr:code-sample-category:`tfm_integration` samples available in Zephyr
 
 In addition, the TF-M implementation is used in all samples and applications in this SDK that support the ``*/ns`` :ref:`variant <app_boards_names>` of the boards, due to :ref:`Cortex-M Security Extensions (CMSE) <app_boards_spe_nspe>` support.
 

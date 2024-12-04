@@ -57,7 +57,7 @@ The :ref:`ug_ble_controller` user guide contains more information about the two 
 
 See the :ref:`zephyr:bluetooth` section of the Zephyr documentation for information on the Bluetooth Host and open source Bluetooth LE Controller.
 The |NCS| contains :ref:`ble_samples` that can be run on the nRF54L15 DK device.
-In addition, you can run the :ref:`zephyr:bluetooth-samples` that are included from Zephyr.
+In addition, you can run the :zephyr:code-sample-category:`bluetooth` samples that are included from Zephyr.
 
 For available libraries, see :ref:`lib_bluetooth_services` (|NCS|) and :ref:`zephyr:bluetooth_api` (Zephyr).
 
@@ -66,7 +66,7 @@ Bluetooth Mesh
 
 Bluetooth Mesh operates on Bluetooth Low Energy (LE), and is implemented according to Bluetooth Mesh Profile Specification v1.0.1 and Bluetooth Mesh Model Specification v1.0.1.
 For the application core, the |NCS| provides several :ref:`bt_mesh_samples`.
-In addition, you can find Bluetooth Mesh samples with :ref:`Bluetooth samples in Zephyr <zephyr:bluetooth-samples>`.
+In addition, you can find Bluetooth Mesh samples with :zephyr:code-sample-category:`bluetooth` samples.
 
 IEEE 802.15.4
 =============
