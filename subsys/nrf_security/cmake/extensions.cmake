@@ -148,7 +148,6 @@ macro(nrf_security_add_zephyr_options lib_name)
 
     # Unsure if these are needed any more
     target_compile_options(${lib_name} PRIVATE ${TOOLCHAIN_C_FLAGS})
-    target_ld_options(${lib_name} PRIVATE ${TOOLCHAIN_LD_FLAGS})
   else()
     target_compile_options(${lib_name} PRIVATE "SHELL: -imacros ${ZEPHYR_AUTOCONF}")
     target_include_directories(${lib_name} PRIVATE
@@ -184,7 +183,6 @@ macro(nrf_security_add_zephyr_options_library lib_name)
 
     # Unsure if these are needed any more
     target_compile_options(${lib_name} PRIVATE ${TOOLCHAIN_C_FLAGS})
-    target_ld_options(${lib_name} PRIVATE ${TOOLCHAIN_LD_FLAGS})
   else()
     target_compile_options(${lib_name} PRIVATE "SHELL: -imacros ${ZEPHYR_AUTOCONF}")
     target_include_directories(${lib_name} PRIVATE
