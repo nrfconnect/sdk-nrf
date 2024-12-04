@@ -53,15 +53,5 @@ Limitations
 
 The library has the following limitations:
 
-* It can only be used with Nordic Semiconductor's ``hostap``-based Wi-Fi stack.
-  The Wi-Fi configuration is highly vendor-specific.
 * The commands ``NET_REQUEST_WIFI_CONNECT`` and ``NET_REQUEST_WIFI_CONNECT_STORED`` clear the list of configured Wi-Fi networks in RAM.
   Automatic connection has to be requested again after directly requesting connection to a specific network.
-
-API documentation
-*****************
-
-| Header file: :file:`include/net/wifi_mgmt_ext.h`
-| Source files: :file:`subsys/net/lib/wifi_mgmt_ext`
-
-.. doxygengroup:: wifi_mgmt_ext
