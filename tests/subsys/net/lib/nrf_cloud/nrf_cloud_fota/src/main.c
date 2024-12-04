@@ -24,7 +24,7 @@ struct nrf_cloud_fota_c_ctx {
 	enum fota_download_evt_id * last_fota_dl_evt;
 	struct nrf_cloud_fota_job * current_fota;
 	struct nrf_cloud_settings_fota_job * saved_job;
-	struct mqtt_topic ** sub_topics;
+	struct mqtt_topic * sub_topics;
 	size_t  sub_topics_size;
 };
 
@@ -253,24 +253,31 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
 	// initialize sub_topics
 	struct nrf_cloud_fota_c_ctx ctx;
 	access_internal_state(&ctx);
-	ctx.sub_topics[0]->utf8 = "hello-world";
-	ctx.sub_topics[0]->size = strlen(ctx.sub_topics[0]->utf8);
+	ctx.sub_topics[0].topic.utf8 = "lte-receive-topic";
+	ctx.sub_topics[0].topic.size = strlen(ctx.sub_topics[0].topic.utf8);
+	ctx.sub_topics[1].topic.utf8 = "ble-receive-topic";
+	ctx.sub_topics[1].topic.size = strlen(ctx.sub_topics[1].topic.utf8);
+
+	const char* job_payload = "foo";
 
 	/* simulate new job */
 	const struct mqtt_evt evt = {
 		.type = MQTT_EVT_PUBLISH,
 		.param.publish.message_id = 42,
-		.param.publish.message.payload.data = "some data",
-		.param.publish.message.payload.len = strlen("some data"),
+		.param.publish.message.payload.data = job_payload,
+		.param.publish.message.payload.len = strlen(job_payload),
+		.param.publish.message.topic.topic.utf8 = ctx.sub_topics[0].topic.utf8,
+		.param.publish.message.topic.topic.size = ctx.sub_topics[0].topic.size,
 	};
-	// mqtt_readall_publish_payload
-	// nrf_cloud_fota_job_decode
+	nrf_cloud_calloc_fake.return_val = (char *)job_payload;
+	nrf_cloud_fota_job_decode_fake.custom_fake = fake_nrf_cloud_fota_job_decode__newjob;
+	// mqtt_readall_publish_payload (skip that)
 	nrf_cloud_fota_mqtt_evt_handler(&evt);
 	/* simulate some progress */
-	// http_fota_handler_t handler = fota_download_init_fake.arg0_history[0];
-	// const struct fota_download_evt evt = { .id = FOTA_DOWNLOAD_EVT_PROGRESS,
-	// 				       .progress = 42 };
-	// handler(&evt);
+	http_fota_handler_t handler = fota_download_init_fake.arg0_history[0];
+	const struct fota_download_evt evt2 = { .id = FOTA_DOWNLOAD_EVT_PROGRESS,
+	 				       .progress = 42 };
+	handler(&evt2);
 
 
 	zassert_equal(-EBUSY, nrf_cloud_fota_uninit(),

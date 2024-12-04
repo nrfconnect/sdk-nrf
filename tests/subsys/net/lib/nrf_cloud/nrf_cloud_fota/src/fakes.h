@@ -6,6 +6,7 @@
 
 #include <zephyr/fff.h>
 #include <zephyr/ztest.h>
+#include <net/nrf_cloud.h>
 
 /* define <zephyr/sys/reboot.h> without noreturn flag */
 #define SYS_REBOOT_WARM 0
@@ -56,3 +57,18 @@ int fake_nrf_cloud_pending_fota_job_process__set_reboot(
 	*reboot_required = true;
 	return 0;
 };
+
+int fake_nrf_cloud_fota_job_decode__newjob(struct nrf_cloud_fota_job_info *const job_info,
+			      bt_addr_t *const ble_id,
+			      const struct nrf_cloud_data *const input)
+{
+	ARG_UNUSED(input);
+
+	job_info->id = "job_id";
+	job_info->file_size = 1000;
+	job_info->host = "host";
+	job_info->path = "path";
+	job_info->type = NRF_CLOUD_FOTA_MODEM_DELTA;
+
+	return 0;
+}

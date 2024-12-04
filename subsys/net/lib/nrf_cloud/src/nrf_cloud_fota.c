@@ -1401,7 +1401,7 @@ struct nrf_cloud_fota_c_ctx {
 	enum fota_download_evt_id * last_fota_dl_evt;
 	struct nrf_cloud_fota_job * current_fota;
 	struct nrf_cloud_settings_fota_job * saved_job;
-	struct mqtt_topic ** sub_topics;
+	struct mqtt_topic * sub_topics;
 	size_t  sub_topics_size;
 };
 
@@ -1417,7 +1417,7 @@ void access_internal_state (struct nrf_cloud_fota_c_ctx* ctx)
 	ctx->last_fota_dl_evt = &last_fota_dl_evt;
 	ctx->current_fota = &current_fota;
 	ctx->saved_job = &saved_job;
-	ctx->sub_topics = &sub_topics;
+	ctx->sub_topics = sub_topics;
 	ctx->sub_topics_size = ARRAY_SIZE(sub_topics);
 }
 #endif
