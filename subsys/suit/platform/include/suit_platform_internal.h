@@ -50,6 +50,11 @@ typedef enum {
 	 * be stored, ready for installation.
 	 */
 	SUIT_COMPONENT_TYPE_CACHE_POOL,
+
+	/** Manifest-accessible variables.
+	 */
+	SUIT_COMPONENT_TYPE_MFST_VAR,
+
 } suit_component_type_t;
 
 /** Set the pointer to the implementation-specific data. */
