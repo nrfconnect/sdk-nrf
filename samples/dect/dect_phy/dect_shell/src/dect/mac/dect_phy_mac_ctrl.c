@@ -217,6 +217,10 @@ int dect_phy_mac_ctrl_beacon_scan_start(struct dect_phy_mac_beacon_scan_params *
 		.ch_acc_use_all_channels = false,
 	};
 
+	if (params->clear_nbr_cache_before_scan) {
+		dect_phy_mac_nbr_info_clear_all();
+	}
+
 	/* Set filter. Broadcast Beacons (with type 1) are always passing filter. */
 	rx_params.filter.is_short_network_id_used = true;
 	rx_params.filter.short_network_id = (uint8_t)(current_settings->common.network_id & 0xFF);
