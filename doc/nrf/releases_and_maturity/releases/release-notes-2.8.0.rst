@@ -92,7 +92,7 @@ Added the following features as experimental:
 * Bootloaders and DFU:
 
   * :ref:`mcuboot_image_compression` on nRF52840, nRF5340, and nRF54L15 targets.
-    This feature uses LZMA2 to compress the candidate image by ~30%, which gives more space for the application as it allows slot 1 (DFU slot) to be ~70% smaller than slot 0 (application slot).
+    This feature uses LZMA2 to compress the candidate image by ~30%, which gives more space for the application as it allows slot 1 (DFU slot) to be ~70% the size of slot 0 (application slot).
 
 Improved:
 
