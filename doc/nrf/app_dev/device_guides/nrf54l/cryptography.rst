@@ -10,7 +10,7 @@ nRF54L Series cryptography
 The cryptographic peripherals of the nRF54L Series are supported through a set of standard PSA Crypto APIs, with some additional vendor-specific extensions.
 
 The nRF Security library offers a set of :ref:`nrf_security_drivers`.
-On the nRF54L devices, in addition to the nrf_oberon driver covering the software-based cryptography implementations, the CRACEN driver (nrf_cracen) provides entropy and hardware-accelerated cryptography using the Crypto Accelerator Engine (CRACEN) peripheral.
+On nRF54L Series devices, the CRACEN driver (nrf_cracen) provides entropy and hardware-accelerated cryptography using the Crypto Accelerator Engine (CRACEN) peripheral.
 The CRACEN PSA driver supports the following:
 
 * Executing cryptographic operations using the CRACEN peripheral.
@@ -26,8 +26,16 @@ KMU and CRACEN peripherals
 **************************
 
 The nRF54L Series Crypto Accelerator Engine (CRACEN) and the Key Management Unit (KMU) peripherals, along with the CRACEN PSA driver, are central when ensuring that the assets of an nRF54L device are protected.
-While CRACEN is not accessed by the CPU and typically not directly used by the end-users and their applications, the KMU provides operations to import, use, revoke, and/or delete assets.
+While CRACEN is not accessed by the CPU and typically not directly used by the end-users and their applications, the KMU provides operations to import, use, revoke, or delete assets.
 Only the KMU is able to push assets to CRACEN's protected RAM and the SEED register.
+
+.. note::
+   CRACEN relies on microcode for asymmetric cryptography operations like signature validation.
+   On the nRF54L15, nRF54L10, and nRF54L05 devices, this microcode must be uploaded to a special CRACEN RAM area before first use and after each reset.
+
+   If a bootloader uploads this microcode, there is no need to re-upload it for application use.
+   This saves approximately 5 KB in the crypto driver code.
+   See the :ref:`ug_nrf54l_crypto_configuration` section for more information.
 
 The KMU can store cryptographic keys and 384-bit random seeds for the IKG in key storage slots.
 The CRACEN PSA driver exposes the KMU operations through standard PSA Crypto API calls, with some vendor-specific extensions.
@@ -131,7 +139,6 @@ IKG keys are also accessed using the standard PSA Crypto APIs, and are reference
 +-----------------+-------------------------------------+---------------------------------------------------+
 
 The keys are not exportable, except for the public key associated with the asymmetric key.
-
 
 .. _ug_nrf54l_crypto_kmu_key_programming_model:
 
@@ -284,7 +291,6 @@ Removing or revoking keys from KMU
 Keys are deleted or revoked using the ``psa_destroy_key`` function.
 Calling the ``psa_destroy_key`` function on keys that have the persistence ``CRACEN_KEY_PERSISTENCE_REVOKABLE``, will mark the associated KMU slots as revoked, preventing the slots from being reused for new keys.
 
-
 Using KMU keys
 ==============
 
@@ -307,19 +313,25 @@ You might encounter the following KMU-specific error codes when using the KMU ke
 * ``PSA_ERROR_HARDWARE_FAILURE``: The key slot has invalid data.
 * ``PSA_ERROR_CORRUPTION_DETECTED``: The key slot has invalid data.
 
+.. _ug_nrf54l_crypto_configuration:
+
 Configuration
 *************
 
 See :ref:`configuring_kconfig` for information on how to set the required configuration options temporarily or permanently.
 
-The CRACEN peripheral does not require any configuration.
-Its operation is ensured by hardware.
+The CRACEN peripheral's operation is ensured by hardware.
 
-The following Kconfig options are used to enable support for KMU:
+The following Kconfig option toggles CRACEN microcode upload:
 
-* :kconfig:option:`CONFIG_NRF_SECURITY`: Enables the nRF Security library
-* :kconfig:option:`CONFIG_MBEDTLS_PSA_CRYPTO_C`: Enables the Platform Security Architecture (PSA) cryptography API
-* :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN`: Enables the CRACEN driver
+* :kconfig:option:`CONFIG_CRACEN_LOAD_MICROCODE`: Enabled by default.
+  Set to ``n`` to disable microcode upload.
+
+Use the following Kconfig options to enable KMU support:
+
+* :kconfig:option:`CONFIG_NRF_SECURITY`: Enables the nRF Security library.
+* :kconfig:option:`CONFIG_MBEDTLS_PSA_CRYPTO_C`: Enables the Platform Security Architecture (PSA) cryptography API.
+* :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN`: Enables the CRACEN driver.
 
 The following code block shows how KMU support is enabled:
 
