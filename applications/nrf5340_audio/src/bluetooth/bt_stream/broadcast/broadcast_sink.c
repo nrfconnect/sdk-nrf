@@ -83,6 +83,7 @@ static bool paused;
 static struct bt_csip_set_member_svc_inst *csip;
 
 static uint8_t flags_adv_data;
+static uint8_t bass_service_uuid[BT_UUID_SIZE_16];
 static uint8_t gap_appear_adv_data[BT_UUID_SIZE_16];
 static uint8_t csip_rsi_adv_data[BT_CSIP_RSI_SIZE];
 
@@ -142,6 +143,19 @@ int broadcast_sink_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 		if (ret) {
 			return ret;
 		}
+	}
+
+	/*
+	 * AD format required for broadcast sink with scan delegator.
+	 * Details can be found in Basic Audio Profile Section 3.9.2.
+	 */
+	sys_put_le16(BT_UUID_BASS_VAL, &bass_service_uuid[0]);
+
+	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
+				     sizeof(bass_service_uuid), BT_DATA_SVC_DATA16,
+				     (void *)bass_service_uuid);
+	if (ret) {
+		return ret;
 	}
 
 	sys_put_le16(CONFIG_BT_DEVICE_APPEARANCE, &gap_appear_adv_data[0]);
