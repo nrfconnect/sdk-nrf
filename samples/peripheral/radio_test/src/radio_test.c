@@ -901,7 +901,7 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	 * Mapped per NRF_RADIO->MODE available on nRF5-series devices
 	 */
 	static const uint8_t time_in_us_per_byte[16] = {
-		8, 4, 32, 8, 4, 64, 16, 0, 0, 0, 0, 0, 0, 0, 0, 32
+		8, 4, 32, 8, 4, 64, 16, 0, 0, 2, 2, 0, 0, 0, 0, 32
 	};
 
 	radio_disable();
