@@ -8,9 +8,16 @@
 #include <suit_plat_decode_util.h>
 #include <suit_platform_internal.h>
 #include <suit_storage_mpi.h>
+#include <zephyr/logging/log.h>
+
+#ifdef CONFIG_SUIT_MANIFEST_VARIABLES
+#include <suit_manifest_variables.h>
+#endif /* CONFIG_SUIT_MANIFEST_VARIABLES */
 
 /* -1 indicates no boot capability for given cpu id */
 #define NO_BOOT_CAPABILITY_CPU_ID 255
+
+LOG_MODULE_REGISTER(suit_plat_component_compat, CONFIG_SUIT_LOG_LEVEL);
 
 int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *class_id,
 					    struct zcbor_string *component_id)
@@ -36,6 +43,7 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 	}
 
 	if (suit_plat_decode_component_type(component_id, &type) != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Unrecognized component type");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 
@@ -122,6 +130,26 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 		}
 
 		break;
+
+#ifdef CONFIG_SUIT_MANIFEST_VARIABLES
+
+	case SUIT_COMPONENT_TYPE_MFST_VAR:
+
+		uint32_t val;
+
+		if (suit_plat_decode_component_number(component_id, &number) != SUIT_PLAT_SUCCESS) {
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		/* Let's check if given component is supported by reading out its content
+		 */
+		if (suit_mfst_var_get(number, &val) != SUIT_PLAT_SUCCESS) {
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		break;
+
+#endif /* CONFIG_SUIT_MANIFEST_VARIABLES */
 
 	default:
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;

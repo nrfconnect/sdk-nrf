@@ -84,6 +84,9 @@ suit_plat_err_t suit_plat_decode_component_type(struct zcbor_string *component_i
 	} else if ((tmp.len == strlen("CACHE_POOL")) &&
 		   (memcmp(tmp.value, "CACHE_POOL", tmp.len) == 0)) {
 		*type = SUIT_COMPONENT_TYPE_CACHE_POOL;
+	} else if ((tmp.len == strlen("MFST_VAR")) &&
+		   (memcmp(tmp.value, "MFST_VAR", tmp.len) == 0)) {
+		*type = SUIT_COMPONENT_TYPE_MFST_VAR;
 	} else {
 		*type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 		return SUIT_PLAT_ERR_CBOR_DECODING;
