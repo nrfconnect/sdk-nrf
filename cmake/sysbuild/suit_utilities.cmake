@@ -92,6 +92,7 @@ function(suit_create_cache_partition args output_file partition_num recovery)
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
     cache_create
+    from_payloads
     ${args}
     BYPRODUCTS ${output_file}
   )
@@ -107,6 +108,21 @@ function(suit_create_cache_partition args output_file partition_num recovery)
     set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ZIP_ADDITIONAL_SCRIPT_PARAMS
                  "${output_file_name}type=cache;${output_file_name}partition=${partition_num};")
   endif()
+endfunction()
+
+function(suit_create_nordic_cache_partition args output_file)
+  list(APPEND args "--output-file" "${output_file}")
+  list(APPEND args "--omit-payload-regex" "'(?!.*secdom.*\.bin|.*sysctl_v.*\.bin).*'")
+  list(APPEND args "--dependency-regex" "'(#top|#secdom|#sysctrl)'")
+
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+    COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
+    cache_create
+    from_envelope
+    ${args}
+    BYPRODUCTS ${output_file}
+  )
 endfunction()
 
 # Usage:
