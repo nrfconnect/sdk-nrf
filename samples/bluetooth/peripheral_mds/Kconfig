@@ -11,5 +11,6 @@ config SETTINGS
 
 config ZMS
 	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
 config NVS
 	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
