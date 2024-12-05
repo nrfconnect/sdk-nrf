@@ -12,7 +12,10 @@
 
 #if defined(CONFIG_SOC_COMPATIBLE_NRF52X) || defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 #include <hal/nrf_rtc.h>
-static uint32_t sys_clock_start_to_bt_clk_start_us;
+/* Use signed integer to allow to get time difference no matter of order in which RTCx instances
+ * are started.
+ */
+static int32_t sys_clock_start_to_bt_clk_start_us;
 #endif
 
 static uint32_t configured_prepare_distance_us;
@@ -91,7 +94,7 @@ static bool on_vs_evt(struct net_buf_simple *buf)
 
 #if defined(CONFIG_SOC_COMPATIBLE_NRF52X) || defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 	timer_trigger_us -= sys_clock_start_to_bt_clk_start_us;
-#endif
+#endif /* CONFIG_SOC_COMPATIBLE_NRF52X || CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET */
 
 	/* Start/Restart a timer triggering every conn_interval_us from the last anchor point. */
 	k_timer_start(&timers[conn_index], K_TIMEOUT_ABS_US(timer_trigger_us),
@@ -168,12 +171,10 @@ static int set_sys_clock_start_to_bt_clk_start_us(void)
 		}
 	}
 
-	const uint64_t rtc_ticks_in_femto_units = 30517578125UL;
-
-	__ASSERT_NO_MSG(ticks_difference >= 0);
+	const int64_t rtc_ticks_in_femto_units = 30517578125L;
 
 	sys_clock_start_to_bt_clk_start_us =
-		((ticks_difference * rtc_ticks_in_femto_units) / 1000000000UL);
+		((ticks_difference * rtc_ticks_in_femto_units) / 1000000000L);
 	return 0;
 }
 
