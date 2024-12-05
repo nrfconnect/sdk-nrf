@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 Nordic Semiconductor ASA
+# Copyright (c) 2020-2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 # This file includes extra build system logic that is enabled when
@@ -74,6 +74,17 @@ function(zephyr_mcuboot_tasks)
     return()
   endif()
 
+  # Fetch devicetree details for flash and slot information
+  dt_chosen(flash_node PROPERTY "zephyr,flash")
+  dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
+  dt_prop(slot_size PATH "${slot0_flash}" PROPERTY "reg" INDEX 1 REQUIRED)
+  dt_prop(write_block_size PATH "${flash_node}" PROPERTY "write-block-size")
+
+  if(NOT write_block_size)
+    set(write_block_size 4)
+    message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
+  endif()
+
   set(imgtool_directxip_hex_command)
 
   if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
@@ -95,7 +106,7 @@ function(zephyr_mcuboot_tasks)
   # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
   # invalid if a static PM file is updated without pristine build
   set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 ${imgtool_sign_sysbuild})
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")

@@ -40,6 +40,17 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
     return()
   endif()
 
+  # Fetch devicetree details for flash and slot information
+  sysbuild_dt_chosen(flash_node IMAGE ${DEFAULT_IMAGE} PROPERTY "zephyr,flash")
+  sysbuild_dt_nodelabel(slot0_flash IMAGE ${DEFAULT_IMAGE} NODELABEL "slot0_partition" REQUIRED)
+  sysbuild_dt_prop(slot_size IMAGE ${DEFAULT_IMAGE} PATH "${slot0_flash}" PROPERTY "reg" INDEX 1 REQUIRED)
+  sysbuild_dt_prop(write_block_size IMAGE ${DEFAULT_IMAGE} PATH "${flash_node}" PROPERTY "write-block-size")
+
+  if(NOT write_block_size)
+    set(write_block_size 4)
+    message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
+  endif()
+
   sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION IMAGE ${DEFAULT_IMAGE} VAR CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
   set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,PM_NRF70_WIFI_FW_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
 
