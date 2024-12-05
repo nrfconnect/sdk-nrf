@@ -171,17 +171,17 @@ int main(void)
 
 	printk("Bluetooth ISO Time Sync Demo\n");
 
-	err = timed_led_toggle_init();
-	if (err != 0) {
-		printk("Error failed to init LED device for toggling\n");
-		return err;
-	}
-
 	/* Initialize the Bluetooth Subsystem */
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);
 		return 0;
+	}
+
+	err = timed_led_toggle_init();
+	if (err != 0) {
+		printk("Error failed to init LED device for toggling\n");
+		return err;
 	}
 
 	role = role_select();
