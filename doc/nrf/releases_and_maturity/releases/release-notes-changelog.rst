@@ -114,6 +114,7 @@ Bluetooth® LE
 -------------
 
 * Fixed an issue where a flash operation executed on the system workqueue might result in ``-ETIMEDOUT``, if there is an active Bluetooth LE connection.
+* Fixed an issue where Bluetooth applications built with the ``nordic-bt-rpc`` snippet (in the :ref:`ble_rpc` configuration) did not work on the nRF54H20 devices due to incorrect memory mapping.
 
 Bluetooth Mesh
 --------------
