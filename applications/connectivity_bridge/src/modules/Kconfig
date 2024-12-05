@@ -29,6 +29,13 @@ config BRIDGE_CMSIS_DAP_BULK_ENABLE
 	depends on USB_DEVICE_STACK
 	select USB_DEVICE_BOS
 
+config BRIDGE_CMSIS_DAP_NORDIC_COMMANDS
+	bool "Enable Nordic specific commands"
+	depends on BRIDGE_CMSIS_DAP_BULK_ENABLE
+	help
+	  This option enables Nordic specific commands for CMSIS-DAP Bulk.
+	  Currently, these are only relevant for the Thingy:91 X board.
+
 if BRIDGE_CMSIS_DAP_BULK_ENABLE
 
 module = BRIDGE_BULK

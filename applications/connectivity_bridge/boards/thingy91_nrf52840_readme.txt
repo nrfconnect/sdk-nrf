@@ -8,6 +8,7 @@ https://nordicsemi.com/thingy91
 This USB interface has the following functions:
 * Disk drive containing this file and others
 * COM ports for nRF91 debug, trace, and firmware update
+* CMSIS-DAP 2.1 compliant debug probe interface for accessing the nRF91 SiP
 
 COM Ports
 ====================
