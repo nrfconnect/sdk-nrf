@@ -16,10 +16,6 @@ config APP_INCLUDE_REMOTE_IMAGE
 	default y if (BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS)
 	select PARTITION_MANAGER_ENABLED if SOC_NRF5340_CPUAPP
 
-config APP_REMOTE_BOARD
-	string "The name of the CORE to be used by remote image"
-	depends on APP_INCLUDE_REMOTE_IMAGE
-
 config APP_SYSTEM_INIT_PRIO
 	int "The application preparation initializaition priority"
 	default 0

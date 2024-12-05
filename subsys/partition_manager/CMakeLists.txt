@@ -13,11 +13,7 @@ if (CONFIG_PARTITION_MANAGER_ENABLED)
 endif()
 
 # Hacked location, but currently we need it and child image is not used.
-
-if(SYSBUILD)
-  set_shared(IMAGE ${IMAGE_NAME} PROPERTY ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})
-endif()
-
+set_shared(IMAGE ${IMAGE_NAME} PROPERTY ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})
 
 function(preprocess_pm_yml in_file out_file)
   execute_process(
@@ -36,20 +32,17 @@ function(preprocess_pm_yml in_file out_file)
     message(FATAL_ERROR "command failed with return code: ${ret}")
   endif()
 
-  if (DEFINED IMAGE_NAME OR SYSBUILD)
-    # Share location of original source file so that the parent image can add it
-    # to the CMAKE_CONFIGURE_DEPENDS list.
-    set_shared(IMAGE ${IMAGE_NAME} APPEND PROPERTY PM_YML_DEP_FILES ${in_file})
+  # Share location of original source file so that the parent image can add it
+  # to the CMAKE_CONFIGURE_DEPENDS list.
+  set_shared(IMAGE ${IMAGE_NAME} APPEND PROPERTY PM_YML_DEP_FILES ${in_file})
 
-    # Share location of preprocessed pm.yml file so that the parent image can
-    # use it as source for partition manager configuration.
-    set_shared(IMAGE ${IMAGE_NAME} APPEND PROPERTY PM_YML_FILES ${out_file})
-  endif()
+  # Share location of preprocessed pm.yml file so that the parent image can
+  # use it as source for partition manager configuration.
+  set_shared(IMAGE ${IMAGE_NAME} APPEND PROPERTY PM_YML_FILES ${out_file})
 
   # Re-configure (Re-execute all CMakeLists.txt code) when original
   # (not preprocessed) configuration file changes.
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${in_file})
-
 endfunction()
 
 
@@ -140,24 +133,17 @@ endif()
 
 # We are using partition manager if we are a child image or if we are
 # the root image and the 'partition_manager' target exists.
-if (SYSBUILD)
-  set(using_partition_manager 1)
-else()
-  set(using_partition_manager
-    $<OR:$<BOOL:${IMAGE_NAME}>,$<TARGET_EXISTS:partition_manager>>
-  )
-endif()
 zephyr_compile_definitions(
-  USE_PARTITION_MANAGER=${using_partition_manager}
+  USE_PARTITION_MANAGER=1
   )
 
 # TODO: check how this patch got lost and if more are missing
 set_property(GLOBAL APPEND PROPERTY
   PROPERTY_LINKER_SCRIPT_DEFINES
-  -DUSE_PARTITION_MANAGER=${using_partition_manager}
+  -DUSE_PARTITION_MANAGER=1
   )
 
-if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND (IMAGE_NAME OR (SYSBUILD AND NOT SYSBUILD_MAIN_APP)))
+if((EXISTS ${CMAKE_SOURCE_DIR}/pm.yml) AND (IMAGE_NAME OR NOT SYSBUILD_MAIN_APP))
   # Only preprocess pm.yml when being built as sub image.
 
   preprocess_pm_yml(

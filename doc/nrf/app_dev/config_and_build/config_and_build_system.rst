@@ -149,18 +149,6 @@ If enabled, the memory layout can be controlled in the following ways:
 After CMake has run, a :file:`partitions.yml` file with the memory layout will have been created in the :file:`build` directory.
 This process also creates a set of header files that provides defines, which can be used to refer to memory layout elements.
 
-Child images
-------------
-
-.. important::
-    |sysbuild_related_deprecation_note|
-
-The |NCS| build system allows the application project to become a root for the sub-applications known in the |NCS| as child images.
-Examples of child images are bootloader images, network core images, or security-related images.
-Each child image is a separate application.
-
-For more information, see :ref:`ug_multi_image`.
-
 .. _app_build_file_suffixes:
 
 Custom configurations
@@ -293,11 +281,6 @@ Moreover, this |NCS| setting does not apply to the following areas:
 Custom build types
 ==================
 
-.. important::
-    |file_suffix_related_deprecation_note|
-    It is still required for some applications that use build types with :ref:`multiple images <ug_multi_image>`.
-    Check the application and sample documentation pages for which variable to use.
-
 A build type is a feature that defines the way in which the configuration files are to be handled.
 For example, selecting a build type lets you generate different build configurations for *release* and *debug* versions of the application.
 
@@ -318,25 +301,12 @@ The following software components can be made dependent on the build type:
 
 * The Partition Manager's :ref:`static configuration <ug_pm_static>`.
   When the build type has been inferred, the file :file:`pm_static_<buildtype>.yml` will have precedence over :file:`pm_static.yml`.
-* The :ref:`child image Kconfig configuration <ug_multi_image_permanent_changes>`.
-  Certain child image configuration files located in the :file:`child_image/` directory can be defined per build type.
 
 The devicetree configuration is not affected by the build type.
 
 For more information about how to invoke build types, see :ref:`cmake_options`.
 
 .. _app_build_additions_multi_image:
-
-Multi-image builds
-==================
-
-.. important::
-    |sysbuild_related_deprecation_note|
-
-The |NCS| build system extends Zephyr's with support for multi-image builds.
-You can find out more about these in the :ref:`ug_multi_image` section.
-
-The |NCS| allows you to :ref:`build types <app_build_additions_build_types>` instead of using a single :file:`prj.conf` file.
 
 Boilerplate CMake file
 ======================
