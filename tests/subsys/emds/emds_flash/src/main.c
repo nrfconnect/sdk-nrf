@@ -21,9 +21,13 @@
 #if defined CONFIG_SOC_FLASH_NRF_RRAM
 #define RRAM DT_INST(0, soc_nv_flash)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
+#define EXPECTED_STORE_TIME_BLOCK_SIZE (400)
+#define EXPECTED_STORE_TIME_1024 (3000)
 #else
 #define FLASH DT_INST(0, soc_nv_flash)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
+#define EXPECTED_STORE_TIME_BLOCK_SIZE (200)
+#define EXPECTED_STORE_TIME_1024 (13000)
 #endif
 
 #define ADDR_OFFS_MASK 0x0000FFFF
@@ -631,12 +635,13 @@ ZTEST(emds_flash_tests, test_corrupted_data)
 
 ZTEST(emds_flash_tests, test_write_speed)
 {
-	char data_in[4] = "bee";
+	char data_in[EMDS_FLASH_BLOCK_SIZE];
 	uint8_t data_in_big[1024];
 	int64_t tic;
 	int64_t toc;
 	uint64_t store_time_us;
 
+	memset(data_in, 69, sizeof(data_in));
 	memset(data_in_big, 69, sizeof(data_in_big));
 
 	(void)dk_leds_init();
@@ -658,8 +663,9 @@ ZTEST(emds_flash_tests, test_write_speed)
 	dk_set_led(0, false);
 	toc = k_uptime_ticks();
 	store_time_us = k_ticks_to_us_ceil64(toc - tic);
-	printk("Storing 4 bytes took: %lldus\n", store_time_us);
-	zassert_true(store_time_us < 300, "Storing 4 bytes took to long time");
+	printk("Storing %d bytes took: %lldus\n", sizeof(data_in), store_time_us);
+	zassert_true(store_time_us < EXPECTED_STORE_TIME_BLOCK_SIZE,
+		     "Storing %d bytes took to long time", sizeof(data_in));
 
 	dk_set_led(0, true);
 	tic = k_uptime_ticks();
@@ -667,10 +673,9 @@ ZTEST(emds_flash_tests, test_write_speed)
 	dk_set_led(0, false);
 	toc = k_uptime_ticks();
 	store_time_us = k_ticks_to_us_ceil64(toc - tic);
-	printk("Storing 1024 bytes took: %lldus\n", store_time_us);
-#if !defined CONFIG_SOC_FLASH_NRF_RRAM /* TODO: Fix it with NCSDK-26922 */
-	zassert_true(store_time_us < 13000, "Storing 1024 bytes took to long time");
-#endif
+	printk("Storing %d bytes took: %lldus\n", sizeof(data_in_big), store_time_us);
+	zassert_true(store_time_us < EXPECTED_STORE_TIME_1024,
+		     "Storing %d bytes took to long time", sizeof(data_in_big));
 }
 
 ZTEST_SUITE(emds_flash_tests, NULL, fs_init, NULL, NULL, NULL);

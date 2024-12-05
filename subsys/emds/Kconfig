@@ -9,6 +9,7 @@ menuconfig EMDS
 	select EXPERIMENTAL
 	depends on PARTITION_MANAGER_ENABLED
 	depends on FLASH_MAP
+	depends on CRC
 	default n
 	help
 	  Enable Emergency Data Storage
@@ -36,16 +37,20 @@ config EMDS_THREAD_PRIORITY
 	  priority.
 
 config EMDS_FLASH_TIME_WRITE_ONE_WORD_US
-	int "Time to write one word into flash"
-	default 210 if SOC_FLASH_NRF_RRAM
+	int "Time to write block size into flash/rram"
+	default 107 if SOC_SERIES_NRF54LX
+	default 43 if SOC_SERIES_NRF53X
+	default 43 if SOC_NRF52833
+	default 338 if SOC_NRF52832
 	default 41
 	help
-	  Max time to write one word (4 bytes) in flash (in microseconds). This
-	  value is dependent on the chip used, and should be checked against the
-	  chip datasheet.
-	  For RRAM-based flash drivers, data is written in blocks of 32 bytes over
-	  buffered writing. This value is used to calculate the time to write
-	  one 32-byte block.
+	  Max time to write one block into non-volatile storage (in microseconds).
+	  The block size is dependent on non-volatile storage type and is 4
+	  bytes for flash and 16 bytes for RRAM. The value is dependent on the
+	  chip used, and should be checked against the chip's datasheet.
+	  For RRAM-based flash drivers, data is written in blocks of 16 bytes
+	  over buffered writing. This value is used to calculate the time to
+	  write one 16-byte block.
 
 config EMDS_FLASH_TIME_ENTRY_OVERHEAD_US
 	int "Time to schedule write of one entry"
@@ -55,7 +60,7 @@ config EMDS_FLASH_TIME_ENTRY_OVERHEAD_US
 
 config EMDS_FLASH_TIME_BASE_OVERHEAD_US
 	int "Time to schedule the store process"
-	default 18200 if SETTINGS && SOC_FLASH_NRF_RRAM
+	default 1000 if SETTINGS && SOC_FLASH_NRF_RRAM
 	default 85000 if SETTINGS && !SOC_FLASH_NRF_PARTIAL_ERASE
 	default 9000 if SETTINGS && SOC_FLASH_NRF_PARTIAL_ERASE
 	default 500
@@ -68,8 +73,7 @@ config EMDS_FLASH_TIME_BASE_OVERHEAD_US
 	   worst case scenario, before starting storing entries. This value
 	   is dependent on the chip used, and should be checked against the chip
 	   datasheet.
-	   For RRAM-based flash drivers, the time is defined by the erasing block size.
-	   The default erasing block size is 4096 bytes.
+	   For RRAM-based persistent memory driver, use ERASEPROTECT and disregard the SOC_FLASH_NRF_PARTIAL_ERASE_MS parameter.
 
 module = EMDS
 module-str = emergency data storage
