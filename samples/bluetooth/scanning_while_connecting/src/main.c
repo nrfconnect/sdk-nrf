@@ -161,7 +161,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
-	connection_establishment_ongoing = false;
 	char addr_str[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr_str, sizeof(addr_str));
@@ -182,6 +181,8 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		}
 	}
 
+	connection_establishment_ongoing = false;
+
 	struct bt_le_conn_param conn_param = {
 		.interval_min = 500, /* Minimum Connection Interval (interval_min * 1.25 ms) */
 		.interval_max = 500, /* Maximum Connection Interval (interval_max * 1.25 ms) */
@@ -201,6 +202,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	if (active_conn_establishment_mode == SEQUENTIAL_SCAN_AND_CONNECT) {
 		scan_start();
 	}
+
 }
 
 static void try_connect(void)
@@ -434,6 +436,7 @@ int main(void)
 		active_conn_establishment_mode = conn_establishment_modes[i];
 
 		num_connections = 0;
+		connection_establishment_ongoing = false;
 		ring_buf_reset(&connectable_peers_ring_buf);
 
 		print_conn_establishment_mode(active_conn_establishment_mode);
