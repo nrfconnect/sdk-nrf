@@ -173,23 +173,12 @@ Samples and applications
 Applications using build types
 ------------------------------
 
-.. toggle::
+For applications using build types:
 
-   For applications using build types:
+  * The :makevar:`CONF_FILE` used for :ref:`app_build_additions_build_types` is now deprecated and is being replaced with the :makevar:`FILE_SUFFIX` variable, inherited from Zephyr.
+    You can read more about it in :ref:`app_build_file_suffixes`, :ref:`cmake_options`, and the :ref:`related Zephyr documentation <zephyr:application-file-suffixes>`.
 
-     * The :makevar:`CONF_FILE` used for :ref:`app_build_additions_build_types` is now deprecated and is being replaced with the :makevar:`FILE_SUFFIX` variable, inherited from Zephyr.
-       You can read more about it in :ref:`app_build_file_suffixes`, :ref:`cmake_options`, and the :ref:`related Zephyr documentation <zephyr:application-file-suffixes>`.
-
-       If your application uses build types, it is recommended to update the :file:`sample.yaml` to use the new variable instead of :makevar:`CONF_FILE`.
-
-   For applications using child images:
-
-     * With the inheritance of Zephyr's :ref:`sysbuild in the |NCS| <configuration_system_overview_sysbuild>`, the :ref:`ug_multi_image` are deprecated.
-
-       If your application uses parent and child images, it is recommended to migrate your application to sysbuild before the multi-image builds are removed in one of the upcoming |NCS| releases.
-       See `Migrating from multi-image builds to sysbuild`_.
-
-       See the :ref:`documentation in Zephyr <zephyr:sysbuild>` for more information about sysbuild.
+    If your application uses build types, it is recommended to update the :file:`sample.yaml` to use the new variable instead of :makevar:`CONF_FILE`.
 
 Matter
 ------

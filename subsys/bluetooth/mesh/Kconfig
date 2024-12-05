@@ -129,16 +129,6 @@ choice TFM_PROFILE_TYPE
 	default TFM_PROFILE_TYPE_NOT_SET
 endchoice
 
-config BT_MESH_DFU_METADATA_ON_BUILD
-	bool "Generate DFU metadata on build"
-	default y if BT_MESH_DFU_SRV
-	depends on SIGN_IMAGES
-	help
-	  Generate a JSON file containing all DFU related metadata upon
-	  application build. The JSON will be added to dfu application zip
-	  file stored in the project binary folder of your project, along
-	  with the application update image.
-
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"
 rsource "shell/Kconfig"

@@ -151,7 +151,6 @@ The Quad Serial Peripheral Interface (QSPI) NOR flash memory driver supports the
 
 See the test in :file:`tests/modules/mcuboot/external_flash` for reference.
 This test passes both devicetree overlay files and Kconfig fragments to the MCUboot child image through its :file:`child_image` folder.
-See also :ref:`ug_multi_image_variables` for more details on how to pass configuration files to a child image.
 
 Troubleshooting
 ***************

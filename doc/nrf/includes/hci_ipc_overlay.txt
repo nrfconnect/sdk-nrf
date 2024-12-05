@@ -1,4 +1,0 @@
-.. note::
-
-  If you use nRF5340 DK, the additional configuration of the network core will be taken from the :file:`child_image` directory.
-  For more details, see :ref:`ug_multi_image_variables`.

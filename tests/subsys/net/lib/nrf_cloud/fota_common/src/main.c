@@ -71,12 +71,10 @@ ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_fota_is_type_enabled)
 
 	ret = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_BOOTLOADER);
 	zassert_equal(IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&
-		      IS_ENABLED(CONFIG_BUILD_S1_VARIANT) &&
-		      IS_ENABLED(CONFIG_SECURE_BOOT),
+		      (CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER != -1),
 		      ret,
 		      "BOOT FOTA enabled should correspond to the value of: "
-		      "CONFIG_BOOTLOADER_MCUBOOT + CONFIG_BUILD_S1_VARIANT + "
-		      "CONFIG_SECURE_BOOT");
+		      "CONFIG_BOOTLOADER_MCUBOOT + CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER != -1");
 
 	ret = nrf_cloud_fota_is_type_enabled(NRF_CLOUD_FOTA_MODEM_DELTA);
 	zassert_equal(IS_ENABLED(CONFIG_NRF_MODEM), ret,
