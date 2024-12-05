@@ -69,7 +69,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 0a2e205750dc7eff8767afa543b2fd23a1fbb332
+      revision: v3.7.99-ncs2-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -130,7 +130,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 12e5ee106034972b0f1074d6f2261b2b39d1501b
+      revision: v2.1.0-ncs3-rc1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -139,7 +139,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.6.2-ncs1-rc1
+      revision: v3.6.2-ncs2-rc1
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
@@ -147,11 +147,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 1ab292d04974dc97523c00dfa82eb461fd27bdb1
+      revision: v2.9.0-rc1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: f2bf78452629355e4180dc36756f6c1becc819fa
+      revision: v2.1.1-ncs2-rc1
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -159,7 +159,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: a81c857ededd7a1343ec5d7971e174536dcb3f4d
+      revision: v2.9.0-rc1
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -178,7 +178,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: b5764deaf3c05fc4343a17ed2ac86e07589af4bb
+      revision: v2.9.0-rc1
       groups:
         - nrf-802154
     - name: soc-hwmv1
@@ -206,12 +206,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: a2433e06b653e0f9a47f17af0fef6bd4c5e90a4e
+      revision: v2.9.0-rc1
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 616004ea718636d90a4feb3b470b48f2616532f3
+      revision: v2.9.0-rc1
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -242,10 +242,10 @@ manifest:
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: 8f9ce9039e6fb8584dc915944b2bc275856757c0
+      revision: v2.9.0-rc1
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: 6802f3008cba16a74a8c65814af00808327a7ee7
+      revision: v2.9.0-rc1
       path: modules/lib/suit-processor
     - name: doc-internal
       repo-path: doc-internal
