@@ -193,7 +193,22 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 {
 	operation->alg = alg;
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && (PSA_ALG_IS_HKDF(operation->alg) ||
+	PSA_ALG_IS_HKDF_EXPAND(operation->alg))) {
+		size_t hash_size = PSA_HASH_LENGTH(PSA_ALG_HKDF_GET_HASH(alg));
+
+		if (hash_size == 0) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+
+		operation->capacity =
+			UINT8_MAX * hash_size; /* Max value of counter (1 byte) size of hash. */
+		operation->state = CRACEN_KD_STATE_HKDF_INIT;
+
+		return PSA_SUCCESS;
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF_EXTRACT(operation->alg)) {
 		size_t hash_size = PSA_HASH_LENGTH(PSA_ALG_HKDF_GET_HASH(alg));
 
 		if (hash_size == 0) {
@@ -625,7 +640,20 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 					       psa_key_derivation_step_t step, const uint8_t *data,
 					       size_t data_length)
 {
-	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && (PSA_ALG_IS_HKDF(operation->alg) ||
+	PSA_ALG_IS_HKDF_EXTRACT(operation->alg))) {
+		return cracen_key_derivation_input_bytes_hkdf(operation, step, data, data_length);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF_EXPAND(operation->alg)) {
+		if (step == PSA_KEY_DERIVATION_INPUT_SECRET) {
+			if (data_length > sizeof(operation->hkdf.prk)) {
+				return PSA_ERROR_INSUFFICIENT_MEMORY;
+			}
+			memcpy(operation->hkdf.prk, data, data_length);
+			operation->state = CRACEN_KD_STATE_HKDF_KEYED;
+			return PSA_SUCCESS;
+		}
 		return cracen_key_derivation_input_bytes_hkdf(operation, step, data, data_length);
 	}
 
@@ -1098,13 +1126,24 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 {
 	psa_status_t (*generator)(cracen_key_derivation_operation_t *) = NULL;
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && (PSA_ALG_IS_HKDF(operation->alg) ||
+	PSA_ALG_IS_HKDF_EXPAND(operation->alg))) {
 		if (operation->state < CRACEN_KD_STATE_HKDF_KEYED || !operation->hkdf.info_set) {
 			return PSA_ERROR_BAD_STATE;
 		}
 
 		operation->state = CRACEN_KD_STATE_HKDF_OUTPUT;
 		generator = cracen_key_derivation_hkdf_generate_block;
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF_EXTRACT(operation->alg)) {
+		if (operation->state < CRACEN_KD_STATE_HKDF_KEYED) {
+			return PSA_ERROR_BAD_STATE;
+		}
+
+		operation->state = CRACEN_KD_STATE_HKDF_OUTPUT;
+		memcpy(output, operation->hkdf.prk, 32);
+		return PSA_SUCCESS;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_HMAC) && PSA_ALG_IS_PBKDF2(operation->alg)) {
