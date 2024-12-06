@@ -35,6 +35,7 @@ void access_internal_state(struct nrf_cloud_fota_c_ctx* ctx);
 static void run_before(void *fixture)
 {
 	ARG_UNUSED(fixture);
+	reset_all_static_vars();
 	RESET_FAKE(nrf_cloud_fota_job_free);
 	RESET_FAKE(mqtt_publish);
 	RESET_FAKE(mqtt_unsubscribe);
@@ -59,7 +60,7 @@ static void run_before(void *fixture)
 	RESET_FAKE(nrf_cloud_fota_job_decode);
 	RESET_FAKE(mqtt_publish_qos1_ack);
 	RESET_FAKE(nrf_cloud_calloc);
-	reset_all_static_vars();
+	RESET_FAKE(nrf_cloud_obj_fota_ble_job_request_create);
 }
 
 /* This function runs after each completed test */
@@ -220,7 +221,8 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_reboot_needed)
 }
 
 /* nrf_cloud_fota_init succeeds with return code 1
- * if nrf_cloud_fota_pending_job_validate returns 0 */
+ * if nrf_cloud_fota_pending_job_validate returns 0
+ * also, nrf_cloud_fota_uninit should succeed if FOTA is not in progress */
 ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_valid_param)
 {
 	struct nrf_cloud_fota_init_param fota_init = {
@@ -232,6 +234,9 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_valid_param)
 
 	zassert_equal(1, ret,
 		"nrf_cloud_fota_init should succeed with valid parameters");
+
+	zassert_equal(0, nrf_cloud_fota_uninit(),
+		"nrf_cloud_fota_uninit should succeed if FOTA is not in progress");
 }
 
 typedef void (*http_fota_handler_t)(const struct fota_download_evt *evt);
@@ -258,7 +263,7 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
 	ctx.sub_topics[1].topic.utf8 = "ble-receive-topic";
 	ctx.sub_topics[1].topic.size = strlen(ctx.sub_topics[1].topic.utf8);
 
-	const char* job_payload = "foo";
+	char job_payload[100] = "foo";
 
 	/* simulate new job */
 	const struct mqtt_evt evt = {
@@ -269,7 +274,7 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
 		.param.publish.message.topic.topic.utf8 = ctx.sub_topics[0].topic.utf8,
 		.param.publish.message.topic.topic.size = ctx.sub_topics[0].topic.size,
 	};
-	nrf_cloud_calloc_fake.return_val = (char *)job_payload;
+	nrf_cloud_calloc_fake.return_val = job_payload;
 	nrf_cloud_fota_job_decode_fake.custom_fake = fake_nrf_cloud_fota_job_decode__newjob;
 	// mqtt_readall_publish_payload (skip that)
 	nrf_cloud_fota_mqtt_evt_handler(&evt);
@@ -282,4 +287,138 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
 
 	zassert_equal(-EBUSY, nrf_cloud_fota_uninit(),
 		"nrf_cloud_fota_uninit should fail if FOTA is in progress");
+}
+
+/* nrf_cloud_fota_ble_job_update fails on invalid params */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_job_update_invalid_params)
+{
+	zassert_equal(-EINVAL, nrf_cloud_fota_ble_job_update(NULL, NRF_CLOUD_FOTA_REJECTED),
+		"nrf_cloud_fota_ble_job_update should check parameter validity");
+}
+
+/* nrf_cloud_fota_ble_job_update fails if no client_mqtt is registered */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_job_update_no_client)
+{
+	struct nrf_cloud_fota_ble_job ble_job = {
+		.error = NRF_CLOUD_FOTA_ERROR_NONE,
+		.dl_progress = 0,
+	};
+
+	zassert_equal(-ENXIO, nrf_cloud_fota_ble_job_update(&ble_job, NRF_CLOUD_FOTA_REJECTED),
+		"nrf_cloud_fota_ble_job_update should check that client_mqtt is registered");
+}
+
+/* nrf_cloud_fota_ble_job_update succeeds after initialization
+ * TODO: should we check for lib init? */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_job_update_success)
+{
+	struct nrf_cloud_fota_ble_job ble_job = {
+		.error = NRF_CLOUD_FOTA_ERROR_NONE,
+		.dl_progress = 0,
+	};
+
+	struct mqtt_client client;
+	struct mqtt_utf8 endpoint = {
+		.utf8 = "endpoint",
+		.size = strlen("endpoint"),
+	};
+	char buf[100];
+
+	nrf_cloud_calloc_fake.return_val = buf;
+
+	zassert_equal(0, nrf_cloud_fota_endpoint_set_and_report(&client, "client_id", &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check that topic is set");
+
+	zassert_equal(0, nrf_cloud_fota_ble_job_update(&ble_job, NRF_CLOUD_FOTA_REJECTED),
+		"nrf_cloud_fota_ble_job_update should succeed");
+}
+
+/* nrf_cloud_fota_ble_set_handler fails on invalid param */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_set_handler_invalid_param)
+{
+	zassert_equal(-EINVAL, nrf_cloud_fota_ble_set_handler(NULL),
+		"nrf_cloud_fota_ble_set_handler should check parameter validity");
+}
+
+/* nrf_cloud_fota_ble_set_handler succeeds on valid cb */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_set_handler_success)
+{
+	zassert_equal(0, nrf_cloud_fota_ble_set_handler(fake_nrf_cloud_fota_ble_callback__dummy),
+		"nrf_cloud_fota_ble_set_handler should succeed with valid parameters");
+}
+
+/* nrf_cloud_fota_ble_update_check fails on invalid params */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_update_check_invalid_params)
+{
+	zassert_equal(-EINVAL, nrf_cloud_fota_ble_update_check(NULL),
+		"nrf_cloud_fota_ble_update_check should check parameter validity");
+}
+
+/* nrf_cloud_fota_ble_update_check fails if no client_mqtt is registered */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_update_check_no_client)
+{
+	const bt_addr_t ble_id = { 0 };
+	zassert_equal(-ENXIO, nrf_cloud_fota_ble_update_check(&ble_id),
+		"nrf_cloud_fota_ble_update_check should check that client_mqtt is registered");
+}
+/* nrf_cloud_fota_ble_update_check succeeds after initialization */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_ble_update_check_success)
+{
+	struct mqtt_client client;
+	struct mqtt_utf8 endpoint = {
+		.utf8 = "endpoint",
+		.size = strlen("endpoint"),
+	};
+	char buf[100];
+	const bt_addr_t ble_id = { 0 };
+
+	nrf_cloud_calloc_fake.return_val = buf;
+
+	zassert_equal(0, nrf_cloud_fota_endpoint_set_and_report(&client, "client_id", &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check that topic is set");
+
+	zassert_equal(0, nrf_cloud_fota_ble_update_check(&ble_id),
+		"nrf_cloud_fota_ble_update_check should succeed");
+}
+
+/* nrf_cloud_fota_endpoint_set_and_report fails on invalid params */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_endpoint_set_and_report_invalid_params)
+{
+	struct mqtt_utf8 endpoint = {
+		.utf8 = "endpoint",
+		.size = strlen("endpoint"),
+	};
+	struct mqtt_client client;
+	zassert_equal(-EINVAL, nrf_cloud_fota_endpoint_set_and_report(NULL, "client_id", &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check that topic is set");
+	zassert_equal(-EINVAL, nrf_cloud_fota_endpoint_set_and_report(&client, NULL, &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check parameter validity");
+	zassert_equal(-EINVAL, nrf_cloud_fota_endpoint_set_and_report(&client, "client_id", NULL),
+		"nrf_cloud_fota_endpoint_set_and_report should check parameter validity");
+	endpoint.size = 0;
+	zassert_equal(-EINVAL, nrf_cloud_fota_endpoint_set_and_report(&client, "client_id", &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check that topic is set");
+	endpoint.size = strlen("endpoint");
+	endpoint.utf8 = NULL;
+	zassert_equal(-EINVAL, nrf_cloud_fota_endpoint_set_and_report(&client, "client_id", &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check that topic is set");
+}
+
+/* nrf_cloud_fota_endpoint_set fails if allocation fails, cleanup procedure is followed */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_endpoint_set_allocation_fails)
+{
+	struct mqtt_utf8 endpoint = {
+		.utf8 = "endpoint",
+		.size = strlen("endpoint"),
+	};
+	struct mqtt_client client;
+
+	nrf_cloud_calloc_fake.return_val = NULL;
+
+	zassert_equal(-ENOMEM, nrf_cloud_fota_endpoint_set_and_report(&client, "client_id", &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check that topic is set");
+
+	/* reset_topics does 6 frees and one additional free for the failed alloc (should we do that?)*/
+	zassert_equal(6+6+1, nrf_cloud_free_fake.call_count,
+		"nrf_cloud_fota_endpoint_set_and_report should free memory on failure");
 }

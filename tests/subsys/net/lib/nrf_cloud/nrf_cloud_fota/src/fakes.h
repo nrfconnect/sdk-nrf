@@ -50,6 +50,9 @@ FAKE_VALUE_FUNC(int, mqtt_publish_qos1_ack, struct mqtt_client *, const struct m
 
 FAKE_VALUE_FUNC(void *, nrf_cloud_calloc, size_t , size_t );
 
+FAKE_VALUE_FUNC(int, nrf_cloud_obj_fota_ble_job_request_create, struct nrf_cloud_obj *const,
+		const bt_addr_t *const);
+
 int fake_nrf_cloud_pending_fota_job_process__set_reboot(
 	struct nrf_cloud_settings_fota_job *const job, bool *const reboot_required)
 {
@@ -71,4 +74,8 @@ int fake_nrf_cloud_fota_job_decode__newjob(struct nrf_cloud_fota_job_info *const
 	job_info->type = NRF_CLOUD_FOTA_MODEM_DELTA;
 
 	return 0;
+}
+
+void fake_nrf_cloud_fota_ble_callback__dummy(const struct nrf_cloud_fota_ble_job * const ble_job){
+	ARG_UNUSED(ble_job);
 }
