@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/sys/slist.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_fmdn_callbacks, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
@@ -56,19 +57,6 @@ void fp_fmdn_callbacks_provisioning_state_changed_notify(bool provisioned)
 	}
 }
 
-static bool node_uniqueness_validate(sys_slist_t *slist, sys_snode_t *new_node)
-{
-	sys_snode_t *current_node;
-
-	SYS_SLIST_FOR_EACH_NODE(slist, current_node) {
-		if (current_node == new_node) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 static int cb_register(sys_slist_t *slist, struct bt_fast_pair_fmdn_info_cb *cb)
 {
 	if (bt_fast_pair_is_ready()) {
@@ -83,7 +71,7 @@ static int cb_register(sys_slist_t *slist, struct bt_fast_pair_fmdn_info_cb *cb)
 		return -EINVAL;
 	}
 
-	if (!node_uniqueness_validate(slist, &cb->node)) {
+	if (sys_slist_find(slist, &cb->node, NULL)) {
 		return 0;
 	}
 
