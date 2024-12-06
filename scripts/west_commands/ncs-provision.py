@@ -11,6 +11,8 @@ from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from west.commands import WestCommand
 
 nrf54l15_key_slots = [226, 228, 230]
+nrf54l15_key_policies = {"revokable": "REVOKED",
+                         "lock": "LOCKED"}
 
 
 class NcsProvision(WestCommand):
@@ -34,6 +36,8 @@ class NcsProvision(WestCommand):
             "-k", "--key", type=Path, action='append', dest="keys",
             help="Input .pem file with ED25519 private key"
         )
+        upload_parser.add_argument("-p", "--policy", type=str, help="Keys policy",
+                                   choices=["revokable", "lock"], default="revokable")
         upload_parser.add_argument("-s", "--soc", type=str, help="SoC",
                                    choices=["nrf54l15"], required=True)
         upload_parser.add_argument("--dev-id", help="Device serial number")
@@ -55,7 +59,7 @@ class NcsProvision(WestCommand):
                         "nrfprovision",
                         "provision",
                         "-r",
-                        "REVOKED",
+                        nrf54l15_key_policies[args.policy],
                         "-v",
                         pub_key.public_bytes_raw().hex(),
                         "-m",
