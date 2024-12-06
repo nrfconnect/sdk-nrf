@@ -166,6 +166,9 @@ struct bt_fast_pair_info_cb {
 	 *  @param conn Connection object that wrote the Account Key.
 	 */
 	void (*account_key_written)(struct bt_conn *conn);
+
+	/** Internally used field for list handling. */
+	sys_snode_t node;
 };
 
 /** Enable Fast Pair.
@@ -294,7 +297,7 @@ int bt_fast_pair_battery_set(enum bt_fast_pair_battery_comp battery_comp,
  *
  *  This function registers an instance of information callbacks. The registered instance needs to
  *  persist in the memory after this function exits, as it is used directly without the copy
- *  operation. It is possible to register only one instance of callbacks with this API.
+ *  operation.
  *
  *  This function can only be called before enabling Fast Pair with the @ref bt_fast_pair_enable
  *  API.
@@ -305,7 +308,7 @@ int bt_fast_pair_battery_set(enum bt_fast_pair_battery_comp battery_comp,
  *
  *  @return Zero on success or negative error code otherwise
  */
-int bt_fast_pair_info_cb_register(const struct bt_fast_pair_info_cb *cb);
+int bt_fast_pair_info_cb_register(struct bt_fast_pair_info_cb *cb);
 
 /** Perform a reset to the default factory settings for Google Fast Pair Service.
  *

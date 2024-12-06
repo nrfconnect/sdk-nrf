@@ -419,7 +419,7 @@ static void init_work_handle(struct k_work *w)
 	static struct bt_conn_auth_info_cb auth_info_cb = {
 		.pairing_complete = pairing_complete
 	};
-	static const struct bt_fast_pair_info_cb fp_info_callbacks = {
+	static struct bt_fast_pair_info_cb fp_info_callbacks = {
 		.account_key_written = fp_account_key_written,
 	};
 

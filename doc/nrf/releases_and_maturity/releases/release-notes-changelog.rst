@@ -382,7 +382,9 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_readme` library:
+
+  * Updated the :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
 
 Common Application Framework
 ----------------------------

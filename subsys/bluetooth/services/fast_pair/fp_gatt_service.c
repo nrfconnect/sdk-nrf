@@ -6,6 +6,7 @@
 
 #include <zephyr/net_buf.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/sys/slist.h>
 #include <zephyr/random/random.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
@@ -95,8 +96,10 @@ struct msg_seekers_passkey {
 	uint32_t passkey;
 };
 
-/* Reference to the Fast Pair information callback structure. */
-static const struct bt_fast_pair_info_cb *fast_pair_info_cb;
+/* Fast Pair information callback list. */
+static sys_slist_t fast_pair_info_cb_slist = SYS_SLIST_STATIC_INIT(&fast_pair_info_cb_slist);
+
+static void fp_info_cb_account_key_written_notify(struct bt_conn *conn);
 
 #if CONFIG_BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
 static ssize_t read_model_id(struct bt_conn *conn,
@@ -765,8 +768,8 @@ static ssize_t write_account_key(struct bt_conn *conn,
 finish:
 	if (res < 0) {
 		fp_keys_drop_key(conn);
-	} else if (fast_pair_info_cb && fast_pair_info_cb->account_key_written) {
-		fast_pair_info_cb->account_key_written(conn);
+	} else {
+		fp_info_cb_account_key_written_notify(conn);
 	}
 
 	LOG_DBG("Account Key write: res=%d conn=%p", res, (void *)conn);
@@ -833,7 +836,20 @@ finish:
 	return res;
 }
 
-int bt_fast_pair_info_cb_register(const struct bt_fast_pair_info_cb *cb)
+static void fp_info_cb_account_key_written_notify(struct bt_conn *conn)
+{
+	struct bt_fast_pair_info_cb *listener;
+
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&fast_pair_info_cb_slist, listener, node) {
+		if (listener->account_key_written) {
+			listener->account_key_written(conn);
+		}
+	}
+}
+
+int bt_fast_pair_info_cb_register(struct bt_fast_pair_info_cb *cb)
 {
 	/* It is assumed that this function executes in the cooperative thread context. */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
@@ -847,11 +863,11 @@ int bt_fast_pair_info_cb_register(const struct bt_fast_pair_info_cb *cb)
 		return -EINVAL;
 	}
 
-	if (fast_pair_info_cb) {
-		return -EALREADY;
+	if (sys_slist_find(&fast_pair_info_cb_slist, &cb->node, NULL)) {
+		return 0;
 	}
 
-	fast_pair_info_cb = cb;
+	sys_slist_append(&fast_pair_info_cb_slist, &cb->node);
 
 	return 0;
 }

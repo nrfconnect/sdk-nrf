@@ -217,7 +217,7 @@ static void fp_account_key_written(struct bt_conn *conn)
 	fp_account_key_present = bt_fast_pair_has_account_key();
 }
 
-static const struct bt_fast_pair_info_cb fp_info_callbacks = {
+static struct bt_fast_pair_info_cb fp_info_callbacks = {
 	.account_key_written = fp_account_key_written,
 };
 
