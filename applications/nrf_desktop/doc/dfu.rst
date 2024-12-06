@@ -27,7 +27,7 @@ Configuration
 
 The module can be used for the following devices:
 
-* nRF52 and nRF53 Series - To perform the firmware upgrade, you must enable the bootloader.
+* nRF52, nRF53, and nRF54L Series - To perform the firmware upgrade, you must enable the bootloader.
   You can use the DFU module with either MCUboot or B0 bootloader.
   For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
 
@@ -271,5 +271,5 @@ The module receives the SUIT envelope with update image data over the :ref:`nrf_
 
 After a complete transfer, the :ref:`reboot <dfu_reboot>` command triggers a firmware update using the envelope.
 The module calls the :c:func:`suit_trigger_update` function to trigger an update instead of rebooting the device using the :c:func:`sys_reboot` function.
-Triggering an update using the :ref:`reboot <dfu_reboot>` command makes the user experience consistent with nRF52 and nRF53 Series devices.
+Triggering an update using the :ref:`reboot <dfu_reboot>` command makes the user experience consistent with nRF52, nRF53, and nRF54L Series devices.
 For these devices, the :ref:`reboot <dfu_reboot>` command after a complete update image transfer triggers an image update performed by the bootloader.
