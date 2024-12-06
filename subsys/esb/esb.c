@@ -445,11 +445,8 @@ static void esb_fem_for_tx_ack(void)
 
 static void esb_fem_reset(void)
 {
-#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
-	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
-#else
 	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
-#endif
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
 
 	mpsl_fem_lna_configuration_clear();
 	mpsl_fem_pa_configuration_clear();
@@ -462,11 +459,8 @@ static void esb_fem_reset(void)
 
 static void esb_fem_lna_reset(void)
 {
-#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
-	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
-#else
 	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
-#endif
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
 
 	esb_ppi_for_fem_clear();
 
@@ -478,11 +472,9 @@ static void esb_fem_pa_reset(void)
 {
 	mpsl_fem_pa_configuration_clear();
 
-#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
-	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
-#else
 	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
-#endif
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
+
 	esb_ppi_for_fem_clear();
 
 	mpsl_fem_disable();
@@ -1236,6 +1228,7 @@ static void on_radio_disabled_tx(void)
 	 * received by the time defined in wait_for_ack_timeout_us
 	 */
 
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0,
 			   (wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US), false);
 
@@ -1301,11 +1294,8 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		}
 	} else {
 		if (retransmits_remaining-- == 0) {
-#if defined(TIMER_TASKS_SHUTDOWN_TASKS_SHUTDOWN_Msk)
-			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
-#else
 			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
-#endif
+			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
 
 			/* All retransmits are expended, and the TX operation is
 			 * suspended
