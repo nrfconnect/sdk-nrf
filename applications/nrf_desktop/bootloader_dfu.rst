@@ -35,6 +35,7 @@ The nRF Desktop application can use one of the following bootloaders:
 
   * nRF52 Series
   * nRF53 Series
+  * nRF54L Series
 
   The MCUboot bootloader can be used in the following scenarios:
 
@@ -110,16 +111,14 @@ By default, this change propagates to the :kconfig:option:`CONFIG_MCUBOOT_IMGTOO
 If the nRF Desktop application is configured with the MCUboot in the direct-xip mode, the build system builds two application images: one for the primary slot and the other for the secondary slot, named ``mcuboot_secondary_app``.
 You need to update this configuration only in the main application image, as the ``mcuboot_secondary_app`` image mirrors it.
 
-.. note::
-    When the MCUboot bootloader is in the direct-xip mode, the update image must have a higher version number than the application currently running on the device.
-    This ensures that the update image will be booted after a successful DFU image transfer.
-    Otherwise, the update image can be rejected by the bootloader.
+MCUboot bootloader mode
+-----------------------
 
 The MCUboot bootloader configuration depends on the selected way of performing image upgrade.
 For detailed information about the available MCUboot bootloader modes, see the following sections.
 
 Swap mode
----------
+~~~~~~~~~
 
 In the swap mode, the MCUboot bootloader moves the image to the primary slot before booting it.
 The swap mode is the image upgrade mode used by default for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
@@ -133,7 +132,7 @@ These options allow the :ref:`nrf_desktop_dfu`, :ref:`nrf_desktop_ble_smp`, and 
    For details on using external non-volatile memory for the secondary image slot, see the :ref:`nrf_desktop_pm_external_flash` section.
 
 Direct-xip mode
----------------
+~~~~~~~~~~~~~~~
 
 The direct-xip mode is used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
@@ -153,8 +152,13 @@ To apply the same option for the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop
 It is recommended to also enable the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option in the application configuration to make sure that MCUmgr rejects application image updates with invalid start address.
 This prevents uploading an update image build for improper slot through the MCUmgr's Simple Management Protocol (SMP).
 
+.. note::
+    When the MCUboot bootloader is in the direct-xip mode, the update image must have a higher version number than the application currently running on the device.
+    This ensures that the update image will be booted after a successful DFU image transfer.
+    Otherwise, the update image can be rejected by the bootloader.
+
 Serial recovery mode
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 In the :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>` mode, the MCUboot bootloader uses a built-in foreground DFU transport over serial interface through USB.
 The application is not involved in the foreground DFU transport, therefore it can be directly overwritten by the bootloader.
@@ -184,6 +188,20 @@ For an example of a bootloader Kconfig configuration file defined by the applica
   The nRF Desktop devices use either the serial recovery DFU with a single application slot or the background DFU.
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
   For example, the ``nrf52840dk/nrf52840`` board in ``mcuboot_smp`` file suffix uses only the background DFU and does not enable the serial recovery feature.
+
+MCUboot bootloader on nRF54L
+----------------------------
+
+The nRF54L SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
+The |NCS| allows using hardware cryptography for ED25519 signature (``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519``) on the nRF54L SoC Series.
+
+You can enhance security further by enabling the following sysbuild Kconfig options:
+
+* ``SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE`` - This option enables using a pure signature of the image, verifying signature directly on image, rather than on its hash.
+  However, you cannot use this option if the secondary image slot uses external memory.
+* ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` - This option enables using Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
+  Using KMU requires provisioning the public key manually.
+  See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
 
 .. _nrf_desktop_suit:
 
