@@ -73,6 +73,41 @@ static int32_t m_lfclk_wait(void)
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 
+static void m_hfclk_request(void)
+{
+	/* The z_nrf_clock_bt_ctlr_hf_request doesn't count references to HFCLK,
+	 * it is caller responsibility handle requests and releases counting.
+	 */
+	if (atomic_inc(&m_hfclk_refcnt) > 0) {
+		return;
+	}
+
+	z_nrf_clock_bt_ctlr_hf_request();
+}
+
+static void m_hfclk_release(void)
+{
+	/* The z_nrf_clock_bt_ctlr_hf_request doesn't count references to HFCLK,
+	 * it is caller responsibility to do not release the clock if there is
+	 * other request pending.
+	 */
+	if (m_hfclk_refcnt < 1) {
+		return;
+	}
+
+	if (atomic_dec(&m_hfclk_refcnt) > 1) {
+		return;
+	}
+
+	z_nrf_clock_bt_ctlr_hf_release();
+}
+
+static bool m_hfclk_is_running(void)
+{
+	/* As of now assume the HFCLK is runnig after the request was put */
+	return ((m_hfclk_refcnt > 0) ? true : false);
+}
+
 static void m_lfclk_calibration_start(void)
 {
 	if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_DRIVER_CALIBRATION)) {
@@ -93,6 +128,13 @@ static int32_t m_lfclk_request(void)
 {
 	struct onoff_manager *mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_LF);
 	int32_t err;
+
+	/* Workaround for NRFX-6865. The nrf clock control as well as nrfx_clock doesn't enable
+	 * HFXO when LFSYNTH is selected as LFCLK source. Remove the code when nrfx is fixed.
+	 */
+	if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH)) {
+		m_hfclk_request();
+	}
 
 	sys_notify_init_spinwait(&m_lfclk_state.cli.notify);
 	err = onoff_request(mgr, &m_lfclk_state.cli);
@@ -116,44 +158,16 @@ static int32_t m_lfclk_release(void)
 		return err;
 	}
 
+	/* Workaround for NRFX-6865. The nrf clock control as well as nrfx_clock doesn't enable
+	 * HFXO when LFSYNTH is selected as LFCLK source. Remove the code when nrfx is fixed.
+	 */
+	if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH)) {
+		m_hfclk_release();
+	}
+
 	atomic_dec(&m_lfclk_state.m_clk_refcnt);
 
 	return 0;
-}
-
-static void m_hfclk_request(void)
-{
-       /* The z_nrf_clock_bt_ctlr_hf_request doesn't count references to HFCLK,
-        * it is caller responsibility handle requests and releases counting.
-        */
-       if (atomic_inc(&m_hfclk_refcnt) > 0) {
-               return;
-       }
-
-       z_nrf_clock_bt_ctlr_hf_request();
-}
-
-static void m_hfclk_release(void)
-{
-       /* The z_nrf_clock_bt_ctlr_hf_request doesn't count references to HFCLK,
-        * it is caller responsibility to do not release the clock if there is
-        * other request pending.
-        */
-       if (m_hfclk_refcnt < 1) {
-               return;
-       }
-
-       if (atomic_dec(&m_hfclk_refcnt) > 1) {
-               return;
-       }
-
-       z_nrf_clock_bt_ctlr_hf_release();
-}
-
-static bool m_hfclk_is_running(void)
-{
-       /* As of now assume the HFCLK is runnig after the request was put */
-       return ((m_hfclk_refcnt > 0) ? true : false);
 }
 
 #elif defined(CONFIG_CLOCK_CONTROL_NRF2)
