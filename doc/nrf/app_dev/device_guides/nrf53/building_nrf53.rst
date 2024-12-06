@@ -174,7 +174,6 @@ The board targets of interest for Thingy:53 in the |NCS| are listed in the follo
 | nRF5340 SoC - Network core     |``thingy53/nrf5340/cpunet``                                                                                                       |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------+
 
-The |NCS| uses :ref:`ug_multi_image` for Thingy:53 by default.
 When you choose ``thingy53/nrf5340/cpuapp`` or ``thingy53/nrf5340/cpuapp/ns`` as the board target when building a sample or application, you will generate firmware for both the application core and network core:
 
 * The application core firmware consists of MCUboot bootloader and an application image.

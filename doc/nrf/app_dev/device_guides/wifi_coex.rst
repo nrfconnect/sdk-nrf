@@ -57,7 +57,6 @@ The following are the common requirements to use the coexistence feature:
 
 .. note::
    When using the nRF5340, apply steps 1 and 2 only to the network core.
-   See :ref:`ug_multi_image`.
 
 .. note::
    Do not enable Wi-Fi coexistence on the nRF5340 SoC in conjunction with Coded Phy and FEM, as this can lead to undefined behavior.

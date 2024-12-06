@@ -91,9 +91,6 @@ NRF = [
     ("config_and_build/companion_components", "app_dev/companion_components"), # Using companion components
     ("config_and_build/output_build_files", "app_dev/config_and_build/output_build_files"), # Output build files (image files)
     ("config_and_build/configuring_app/output_build_files", "app_dev/config_and_build/output_build_files"),
-    ("ug_multi_image", "app_dev/config_and_build/multi_image"), # Multi-image build using child and parent images
-    ("app_dev/multi_image/index", "app_dev/config_and_build/multi_image"),
-    ("config_and_build/multi_image", "app_dev/config_and_build/multi_image"),
     ("ug_fw_update", "app_dev/bootloaders_dfu/index"), # Firmware updates (removed after 2.5.0)
     ("app_dev/bootloaders_and_dfu/fw_update", "app_dev/bootloaders_dfu/index"),
     ("config_and_build/bootloaders_and_dfu/fw_update", "app_dev/bootloaders_dfu/index"),
@@ -220,7 +217,6 @@ NRF = [
     ("device_guides/nrf53/features_nrf53", "app_dev/device_guides/nrf53/features_nrf53"), # Features of nRF53 Series
     ("device_guides/nrf53/building_nrf53", "app_dev/device_guides/nrf53/building_nrf53"), # Building and programming with nRF53 Series
     ("device_guides/nrf53/fota_update_nrf5340", "app_dev/device_guides/nrf53/fota_update_nrf5340"), # FOTA updates with nRF5340 DK
-    ("device_guides/nrf53/multi_image_nrf5340", "app_dev/device_guides/nrf53/multi_image_nrf5340"), # Multi-image builds on the nRF5340 DK using child and parent images
     ("device_guides/nrf53/simultaneous_multi_image_dfu_nrf5340", "app_dev/device_guides/nrf53/simultaneous_multi_image_dfu_nrf5340"), # Simultaneous multi-image DFU with nRF5340 DK
     ("device_guides/nrf53/serial_recovery", "app_dev/device_guides/nrf53/serial_recovery"), # MCUboot’s serial recovery of the networking core image
     ("device_guides/nrf53/logging_nrf5340", "app_dev/device_guides/nrf53/logging_nrf5340"), # Getting logging output with nRF5340 DK

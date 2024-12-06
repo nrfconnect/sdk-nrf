@@ -35,7 +35,6 @@ Building
 ********
 
 TF-M is one of the images that are built as part of a multi-image application.
-For more information about multi-image builds, see :ref:`ug_multi_image`.
 
 To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
 
