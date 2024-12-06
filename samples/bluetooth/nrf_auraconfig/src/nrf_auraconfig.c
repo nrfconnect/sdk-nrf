@@ -246,33 +246,38 @@ static void subgroup_send(struct stream_index stream_idx)
 
 static void stream_frame_dummy_get_and_send(struct stream_index stream_idx)
 {
-	int ret;
-	static int prev_ret;
+	struct subgroup_lc3_stream_info *bis_info =
+		&(lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2]);
+
 	static uint8_t frame_value;
 
 	uint8_t num_bis = subgroups[stream_idx.lvl1][stream_idx.lvl2].num_bises;
-	size_t frame_size = subgroups[stream_idx.lvl1][stream_idx.lvl2].group_lc3_preset.qos.sdu;
-	uint8_t frame_buffer[num_bis][frame_size];
+	bis_info->frame_size = subgroups[stream_idx.lvl1][stream_idx.lvl2].group_lc3_preset.qos.sdu;
+
+	uint8_t frame_buffer[bis_info->frame_size];
+
+	memset(frame_buffer, frame_value, bis_info->frame_size);
+
+	bis_info->frame_ptrs[stream_idx.lvl3] = frame_buffer;
+	bis_info->frame_loaded[stream_idx.lvl3] = true;
+
+	int loaded_count = 0;
 
 	for (int i = 0; i < num_bis; i++) {
-		memset(frame_buffer[i], frame_value, frame_size);
-	}
-	frame_value++;
-
-	struct le_audio_encoded_audio enc_audio = {
-		.data = (uint8_t *)frame_buffer, .size = frame_size * num_bis, .num_ch = num_bis};
-
-	ret = broadcast_source_send(stream_idx.lvl1, stream_idx.lvl2, enc_audio);
-
-	if (ret != 0 && ret != prev_ret) {
-		if (ret == -ECANCELED) {
-			LOG_WRN("Sending cancelled");
-		} else {
-			LOG_WRN("broadcast_source_send returned: %d", ret);
+		if (bis_info->frame_loaded[i]) {
+			++loaded_count;
 		}
 	}
 
-	prev_ret = ret;
+	if (loaded_count == num_bis) {
+		frame_value++;
+		subgroup_send(stream_idx);
+
+		for (int i = 0; i < num_bis; i++) {
+			bis_info->frame_loaded[i] = false;
+			bis_info->frame_ptrs[i] = NULL;
+		}
+	}
 }
 
 static void stream_frame_get_and_send(struct stream_index stream_idx)
