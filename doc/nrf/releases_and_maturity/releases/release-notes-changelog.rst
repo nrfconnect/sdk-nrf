@@ -236,6 +236,10 @@ Bluetooth Fast Pair samples
 
 |no_changes_yet_note|
 
+* :ref:`fast_pair_input_device` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+
 Bluetooth Mesh samples
 ----------------------
 
@@ -384,6 +388,9 @@ Bluetooth libraries and services
 
 |no_changes_yet_note|
 
+* :ref:`bt_fast_pair_readme` library:
+  * Added support in build system for devices that do not support the :ref:`partition_manager`.
+
 Common Application Framework
 ----------------------------
 
@@ -474,7 +481,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+Added instruction on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support.
 
 Edge Impulse integration
 ------------------------
