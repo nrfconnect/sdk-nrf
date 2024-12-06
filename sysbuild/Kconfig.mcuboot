@@ -164,6 +164,15 @@ config MCUBOOT_SIGNATURE_USING_KMU
 	help
 	  The device needs to be provisioned with proper set of keys.
 
+config MCUBOOT_SIGNATURE_USING_KMU_SKIP_WARNING
+	bool "Skip KMU provisioning CMake warning"
+	depends on MCUBOOT_SIGNATURE_USING_KMU
+	help
+	  When using KMU stored keys for MCUboot signature verification, build
+	  system emits a CMake warning to ensure that user is aware that manual
+	  provisioning of the KMU keys is necessary. Enable the option to skip
+	  the warning.
+
 endif
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
