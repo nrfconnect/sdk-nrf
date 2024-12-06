@@ -116,6 +116,10 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * In debug configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        All of the configurations enable hardware cryptography for the MCUboot bootloader.
+        Pure ED25519 signature is used to verify application image.
+        Public key used by the MCUboot for the application image validation is securely stored in hardware Key Management Unit (KMU).
+        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
