@@ -8,9 +8,13 @@ import re
 import sys
 import subprocess
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from west.commands import WestCommand
 
 nrf54l15_key_slots = [226, 228, 230]
+nrf54l15_key_policies = {"default": "REVOKED",
+                         "lock": "LOCKED"}
+NRF54L15_KMU_SLOT_WIDTH = 2
 
 
 class NcsProvision(WestCommand):
@@ -34,15 +38,78 @@ class NcsProvision(WestCommand):
             "-k", "--key", type=Path, action='append', dest="keys",
             help="Input .pem file with ED25519 private key"
         )
+        upload_parser.add_argument("-p", "--policy", type=str, help="Keys policy",
+                                   choices=["default", "lock"], default="default")
         upload_parser.add_argument("-s", "--soc", type=str, help="SoC",
                                    choices=["nrf54l15"], required=True)
         upload_parser.add_argument("--dev-id", help="Device serial number")
 
+        revoke_parser = subparsers.add_parser("revoke", help="Disable key")
+        revoke_parser.add_argument(
+            "-i", "--keyid", type=int, required=True,
+            help="Revocation is possible one slot at a time. "
+                 "Numbering starts at 0 and is SoC specific."
+        )
+        revoke_parser.add_argument("-s", "--soc", type=str, help="SoC",
+                                   choices=["nrf54l15"], required=True)
+        revoke_parser.add_argument("--dev-id", help="Device serial number")
+
         return parser
 
+    def upload_with_nrfprovision(self, pub_key, policy, slot, snr=None):
+        command = [
+            "nrfprovision",
+            "provision",
+            "-r",
+            policy,
+            "-v",
+            pub_key.public_bytes_raw().hex(),
+            "-m",
+            "0x10ba0030",
+            "-i",
+            str(slot),
+            "-a",
+            "ED25519",
+            "-d",
+            "0x20000000",
+            "--verify"
+        ]
+        if snr:
+            command.extend(["--snr", snr])
+        nrfprovision = subprocess.run(
+            command,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stderr = nrfprovision.stderr
+        print(stderr, file=sys.stderr)
+        if re.search('fail', stderr) or nrfprovision.returncode:
+            return -1
+
+    def revoke_with_nrfprovision(self, slot, snr=None):
+        command = [
+            "nrfprovision",
+            "revoke",
+            "-i",
+            str(nrf54l15_key_slots[slot]),
+            "-n",
+            str(NRF54L15_KMU_SLOT_WIDTH)
+        ]
+        if snr:
+            command.extend(["--snr", snr])
+        nrfprovision = subprocess.run(
+            command,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stderr = nrfprovision.stderr
+        print(stderr, file=sys.stderr)
+        if re.search('fail', stderr) or nrfprovision.returncode:
+            return -1
+
     def do_run(self, args, unknown_args):
-        if args.command == "upload":
-            if args.soc == "nrf54l15":
+        if args.soc == "nrf54l15":
+            if args.command == "upload":
                 if len(args.keys) > len(nrf54l15_key_slots):
                     sys.exit(
                         "Error: requested upload of more keys than there are designated slots.")
@@ -51,32 +118,23 @@ class NcsProvision(WestCommand):
                     with open(keyfile, 'rb') as f:
                         priv_key = load_pem_private_key(f.read(), password=None)
                     pub_key = priv_key.public_key()
-                    command = [
-                        "nrfprovision",
-                        "provision",
-                        "-r",
-                        "REVOKED",
-                        "-v",
-                        pub_key.public_bytes_raw().hex(),
-                        "-m",
-                        "0x10ba0030",
-                        "-i",
-                        str(nrf54l15_key_slots[slot]),
-                        "-a",
-                        "ED25519",
-                        "-d",
-                        "0x20000000",
-                        "--verify"
-                    ]
-                    if args.dev_id:
-                        command.extend(["--snr", args.dev_id])
-                    nrfprovision = subprocess.run(
-                        command,
-                        stderr=subprocess.PIPE,
-                        text=True
-                    )
-                    stderr = nrfprovision.stderr
-                    print(stderr, file=sys.stderr)
-                    if re.search('fail', stderr) or nrfprovision.returncode:
-                        sys.exit("Uploading failed!")
+                    if(self.upload_with_nrfprovision(pub_key,
+                        nrf54l15_key_policies[args.policy], nrf54l15_key_slots[slot], args.dev_id)):
+                        sys.exit("Error: uploading failed!")
                     slot += 1
+                while slot < len(nrf54l15_key_slots):
+                    dummy_priv_key = Ed25519PrivateKey.generate()
+                    dummy_pub_key = dummy_priv_key.public_key()
+                    if(self.upload_with_nrfprovision(dummy_pub_key,
+                        "REVOKED", nrf54l15_key_slots[slot], args.dev_id)):
+                        sys.exit("Error: uploading dummy key failed!")
+                    if self.revoke_with_nrfprovision(slot, args.dev_id):
+                        sys.exit("Error: revoking dummy slot failed!")
+                    slot += 1
+
+            if args.command == "revoke":
+                if args.keyid > len(nrf54l15_key_slots):
+                    sys.exit(
+                        "Error: requested keyid out of range.")
+                if self.revoke_with_nrfprovision(args.keyid, args.dev_id):
+                    sys.exit("Revoking failed!")
