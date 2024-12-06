@@ -177,8 +177,6 @@ static int32_t m_lfclk_release(void)
  * configured LFCLK.
  */
 #define MPSL_LFCLK_ACCURACY_PPM 500
-/* Must be global because of use of nrf_clock_control_cancel_or_release in hfclk_release. */
-static struct onoff_client m_radio_cli;
 
 static const struct nrf_clock_spec m_lfclk_specs = {
 	.frequency = 32768,
@@ -236,26 +234,15 @@ static int32_t m_lfclk_release(void)
 
 static void m_hfclk_request(void)
 {
-	const struct device *radio_clk_dev =
-		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
-	int err;
-
 	if (atomic_inc(&m_hfclk_refcnt) > 0) {
 		return;
 	}
 
-	sys_notify_init_spinwait(&m_radio_cli.notify);
-
-	err = nrf_clock_control_request(radio_clk_dev, NULL, &m_radio_cli);
-	__ASSERT_NO_MSG(err >= 0);
+	nrf_clock_control_hfxo_request();
 }
 
 static void m_hfclk_release(void)
 {
-	int err;
-	const struct device *radio_clk_dev =
-		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
-
 	if (m_hfclk_refcnt < 1) {
 		return;
 	}
@@ -264,21 +251,12 @@ static void m_hfclk_release(void)
 		return;
 	}
 
-	err = nrf_clock_control_cancel_or_release(radio_clk_dev, NULL, &m_radio_cli);
-	__ASSERT_NO_MSG(err >= 0);
+	nrf_clock_control_hfxo_release();
 }
 
 static bool m_hfclk_is_running(void)
 {
-	int res;
-	int err;
-
 	if (m_hfclk_refcnt < 1) {
-		return false;
-	}
-
-	err = sys_notify_fetch_result(&m_radio_cli.notify, &res);
-	if (err < 0 || res != 0 ) {
 		return false;
 	}
 
