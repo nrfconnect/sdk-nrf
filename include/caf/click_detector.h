@@ -7,6 +7,9 @@
 #ifndef _CLICK_DETECTOR_H_
 #define _CLICK_DETECTOR_H_
 
+#include <stdint.h>
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
