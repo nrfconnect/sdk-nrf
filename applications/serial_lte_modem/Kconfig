@@ -68,6 +68,12 @@ config SLM_UART_TX_BUF_SIZE
 	help
 	  Amount of UART traffic waiting to be sent (TX), that can be held. If the buffers are full, will send synchronously.
 
+config SLM_UART_ECHO
+	bool "Set echo status of UART"
+	default n
+	help
+	  Echo the string which is typed
+
 #
 # GPIO functionality
 #
