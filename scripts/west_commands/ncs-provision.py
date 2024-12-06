@@ -12,6 +12,8 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from west.commands import WestCommand
 
 nrf54l15_key_slots = [226, 228, 230]
+nrf54l15_key_policies = {"default": "REVOKED",
+                         "lock": "LOCKED"}
 NRF54L15_KMU_SLOT_WIDTH = 2
 
 
@@ -36,6 +38,8 @@ class NcsProvision(WestCommand):
             "-k", "--key", type=Path, action='append', dest="keys",
             help="Input .pem file with ED25519 private key"
         )
+        upload_parser.add_argument("-p", "--policy", type=str, help="Keys policy",
+                                   choices=["default", "lock"], default="default")
         upload_parser.add_argument("-s", "--soc", type=str, help="SoC",
                                    choices=["nrf54l15"], required=True)
         upload_parser.add_argument("--dev-id", help="Device serial number")
@@ -52,12 +56,12 @@ class NcsProvision(WestCommand):
 
         return parser
 
-    def upload_with_nrfprovision(self, pub_key, slot, snr=None):
+    def upload_with_nrfprovision(self, pub_key, policy, slot, snr=None):
         command = [
             "nrfprovision",
             "provision",
             "-r",
-            "REVOKED",
+            policy,
             "-v",
             pub_key.public_bytes_raw().hex(),
             "-m",
@@ -115,14 +119,14 @@ class NcsProvision(WestCommand):
                         priv_key = load_pem_private_key(f.read(), password=None)
                     pub_key = priv_key.public_key()
                     if(self.upload_with_nrfprovision(pub_key,
-                        nrf54l15_key_slots[slot], args.dev_id)):
+                        nrf54l15_key_policies[args.policy], nrf54l15_key_slots[slot], args.dev_id)):
                         sys.exit("Error: uploading failed!")
                     slot += 1
                 while slot < len(nrf54l15_key_slots):
                     dummy_priv_key = Ed25519PrivateKey.generate()
                     dummy_pub_key = dummy_priv_key.public_key()
                     if(self.upload_with_nrfprovision(dummy_pub_key,
-                        nrf54l15_key_slots[slot], args.dev_id)):
+                        "REVOKED", nrf54l15_key_slots[slot], args.dev_id)):
                         sys.exit("Error: uploading dummy key failed!")
                     if self.revoke_with_nrfprovision(slot, args.dev_id):
                         sys.exit("Error: revoking dummy slot failed!")
