@@ -81,6 +81,6 @@ This improves the security of the nRF70 device compared to the non-PSA mode.
 Enable PSA support
 ==================
 
-To enable the nRF70 PSA crypto support in your applications, use the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ALT_NCS_PSA` Kconfig option.
+To enable the nRF70 PSA crypto support in your applications, use the :kconfig:option:`CONFIG_HOSTAP_CRYPTO_ALT_PSA` Kconfig option.
 
 The Wi-Fi connection process is similar to the non-PSA mode, however, the only difference is that the cryptographic operations are performed using PSA crypto APIs.
