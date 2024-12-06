@@ -5,4 +5,9 @@ tests:
       - native_sim
     integration_platforms:
       - native_sim
-    tags: b0 bl_validation unittest sysbuild ci_tests_subsys_bootloader
+    tags:
+      - b0
+      - bl_validation
+      - unittest
+      - sysbuild
+      - ci_tests_subsys_bootloader

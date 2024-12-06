@@ -1,6 +1,8 @@
 common:
   sysbuild: true
-  tags: ci_build ci_tests_benchmarks_multicore
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
   platform_allow:
     - nrf54h20dk/nrf54h20/cpuapp
   integration_platforms:
@@ -20,12 +22,12 @@ tests:
   benchmarks.multicore.idle_ppr.idle:
     tags: ppk_power_measure
     extra_args:
-      idle_ppr_CONF_FILE=prj_s2ram.conf
-      remote_rad_CONF_FILE=prj_s2ram.conf
-      remote_ppr_CONF_FILE=prj_s2ram.conf
-      idle_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
-      remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
-      remote_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_ppr_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
+      - remote_ppr_CONF_FILE=prj_s2ram.conf
+      - idle_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
@@ -35,9 +37,9 @@ tests:
   benchmarks.multicore.idle_ppr.s2ram:
     tags: ppk_power_measure
     extra_args:
-      idle_ppr_CONF_FILE=prj_s2ram.conf
-      remote_rad_CONF_FILE=prj_s2ram.conf
-      remote_ppr_CONF_FILE=prj_s2ram.conf
+      - idle_ppr_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
+      - remote_ppr_CONF_FILE=prj_s2ram.conf
     harness: pytest
     harness_config:
       fixture: ppk_power_measure

@@ -1,6 +1,5 @@
 sample:
-  description: Wi-Fi Offloaded Raw Tx Packet sample
-    application
+  description: Wi-Fi Offloaded Raw Tx Packet sample application
   name: Wi-Fi Offloaded Raw Tx Packet sample
 tests:
   sample.nrf7002.offloaded_raw_tx:
@@ -9,7 +8,10 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_wifi
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
   sample.nrf7002_eks.offloaded_raw_tx:
     sysbuild: true
     build_only: true
@@ -17,7 +19,10 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_wifi
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
   sample.nrf7002eb_interposer_p1.nrf7002eb.offloaded_raw_tx:
     sysbuild: true
     build_only: true
@@ -30,4 +35,7 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-    tags: ci_build sysbuild ci_samples_wifi
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi

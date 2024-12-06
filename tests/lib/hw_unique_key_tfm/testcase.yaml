@@ -11,5 +11,8 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf5340dk/nrf5340/cpuapp/ns
-    tags: huk sysbuild ci_tests_lib_hw_unique_key_tfm
+    tags:
+      - huk
+      - sysbuild
+      - ci_tests_lib_hw_unique_key_tfm
     build_only: true
