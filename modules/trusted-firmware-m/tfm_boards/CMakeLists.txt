@@ -71,6 +71,7 @@ target_sources(tfm_sprt
     $<$<NOT:$<BOOL:${TFM_SP_LOG_RAW_ENABLED}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_tfm_sp_log_raw.c>
 )
 
+
 if (${TFM_PARTITION_CRYPTO})
   if(CRYPTO_TFM_BUILTIN_KEYS_DRIVER)
     target_sources(platform_crypto_keys
@@ -146,6 +147,9 @@ if (CONFIG_NFCT_PINS_AS_GPIOS)
   target_compile_definitions(platform_s PUBLIC CONFIG_NFCT_PINS_AS_GPIOS)
 endif()
 
+if (TFM_CPU_FREQ_MHZ)
+  target_compile_definitions(platform_s PUBLIC NRF_CONFIG_CPU_FREQ_MHZ=${TFM_CPU_FREQ_MHZ})
+endif()
 
 if (CONFIG_NRF_TRACE_PORT)
   target_compile_definitions(platform_s PUBLIC ENABLE_TRACE)
