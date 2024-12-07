@@ -28,5 +28,5 @@ zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_SMP
 zephyr_include_directories(./include)
 zephyr_include_directories_ifdef(CONFIG_SECURE_BOOT
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/include)
-zephyr_include_directories_ifdef(CONFIG_DOWNLOAD_CLIENT
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/include)
+zephyr_include_directories_ifdef(CONFIG_DOWNLOADER
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/include)

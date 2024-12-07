@@ -224,17 +224,17 @@ If a new FOTA update is initiated, the console output is like this:
 
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 140
 	<inf> azure_fota: Attempting to download firmware (version 'v0.0.2-dev') from example.com/firmware/app_update.bin
-	<inf> download_client: Downloading: firmware/app_update.bin [0]
+	<inf> downloader: Downloading: firmware/app_update.bin [0]
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_FOTA_START
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED
-	<inf> download_client: Setting up TLS credentials, sec tag count 1
-	<inf> download_client: Connecting to example.com
+	<inf> downloader: Setting up TLS credentials, sec tag count 1
+	<inf> downloader: Connecting to example.com
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 190
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 190
-	<inf> download_client: Downloaded 1800/674416 bytes (0%)
+	<inf> downloader: Downloaded 1800/674416 bytes (0%)
 	...
-	<inf> download_client: Downloaded 674416/674416 bytes (100%)
-	<inf> download_client: Download complete
+	<inf> downloader: Downloaded 674416/674416 bytes (100%)
+	<inf> downloader: Download complete
 	<inf> dfu_target_mcuboot: MCUBoot image-0 upgrade scheduled. Reset device to apply
 	<inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_FOTA_DONE
 	<inf> azure_iot_hub_sample: The device will reboot in 5 seconds to apply update

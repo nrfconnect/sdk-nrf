@@ -1111,8 +1111,8 @@
 - scenarios:
     - sample.net.https_client
     - sample.net.https_client.lte.tfm-mbedtls
-    - sample.net.download_client
-    - sample.net.download_client.ci
+    - sample.net.downloader
+    - sample.net.downloader.ci
   platforms:
     - nrf9161dk/nrf9161/ns
   comment: "Configurations excluded to limit resources usage in integration builds"

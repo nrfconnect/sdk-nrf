@@ -8,7 +8,7 @@ menuconfig NRF_CLOUD_PGPS
 	depends on MODEM_INFO
 	depends on MODEM_INFO_ADD_NETWORK
 	depends on DATE_TIME
-	imply DOWNLOAD_CLIENT
+	imply DOWNLOADER
 	select STREAM_FLASH_ERASE
 	select SETTINGS
 	select CJSON_LIB
@@ -111,7 +111,7 @@ config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
 	bool "Transport P-GPS prediction data over HTTP(S)"
 	help
 	  Enabling this option will make the nRF Cloud P-GPS library use the
-	  download_client library to download prediction data.
+	  downloader library to download prediction data.
 
 config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM
 	bool "Transport P-GPS data using application-supplied transport"

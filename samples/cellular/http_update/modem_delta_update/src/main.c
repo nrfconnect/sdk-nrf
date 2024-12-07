@@ -296,23 +296,22 @@ static int update_download(void)
 		return false;
 	}
 
-	if (is_test_firmware()) {
-		file = CONFIG_DOWNLOAD_FILE_FOTA_TEST_TO_BASE;
-	} else {
-		file = CONFIG_DOWNLOAD_FILE_BASE_TO_FOTA_TEST;
-	}
-
 	err = fota_download_init(fota_dl_handler);
 	if (err) {
 		printk("fota_download_init() failed, err %d\n", err);
 		return err;
 	}
 
-	/* Functions for getting the host and file */
+	file = CONFIG_DOWNLOAD_FILE_BASE_TO_FOTA_TEST;
+
+	if (is_test_firmware()) {
+		file = CONFIG_DOWNLOAD_FILE_FOTA_TEST_TO_BASE;
+	}
+
 	err = fota_download(CONFIG_DOWNLOAD_HOST, file, &sec_tag, sec_tag_count, 0, 0,
-			    DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
+				    DFU_TARGET_IMAGE_TYPE_MODEM_DELTA);
 	if (err) {
-		printk("fota_download_any() failed, err %d\n", err);
+		printk("fota_download() failed, err %d\n", err);
 		return err;
 	}
 
@@ -402,8 +401,10 @@ static void fota_work_cb(struct k_work *work)
 		break;
 	case UPDATE_APPLY:
 		printk("Applying firmware update. This can take a while.\n");
+
 		lte_lc_power_off();
 		/* Re-initialize the modem to apply the update. */
+
 		err = nrf_modem_lib_shutdown();
 		if (err) {
 			printk("Failed to shutdown modem, err %d\n", err);
