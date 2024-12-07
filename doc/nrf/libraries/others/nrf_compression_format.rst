@@ -8,7 +8,8 @@ You do not need to know these details to use the image compression subsystem, bu
 
 For an example, see the following structure of the file:
 
-.. image:: images/decompression.svg
+.. image:: decomp.png
+   :scale: 75%
    :alt: LZMA header
 
 LZMA Header
