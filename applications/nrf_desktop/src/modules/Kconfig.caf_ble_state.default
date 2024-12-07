@@ -8,6 +8,7 @@
 
 config DESKTOP_BLE_STATE
 	bool "Bluetooth LE state module (CAF)"
+	depends on BT
 	select CAF_BLE_STATE
 	help
 	  nRF Desktop uses Bluetooth LE state module from Common Application
