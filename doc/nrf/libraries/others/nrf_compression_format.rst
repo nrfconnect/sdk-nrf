@@ -8,7 +8,7 @@ You do not need to know these details to use the image compression subsystem, bu
 
 For an example, see the following structure of the file:
 
-.. image:: images/decomp.svg
+.. image:: images/decompression.svg
    :alt: LZMA header
 
 LZMA Header
@@ -50,7 +50,7 @@ You can calculate the ``dict_size`` using the following method:
     }
     dict_size = (uint8_t)i;
 
-With this method, ``dict_size``can have one of the following values:
+With this method, ``dict_size`` can have one of the following values:
 
 .. list-table::
    :header-rows: 1
