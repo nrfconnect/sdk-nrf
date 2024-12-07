@@ -33,7 +33,9 @@ enum log_rpc_evt_forwarder {
 
 enum log_rpc_cmd_backend {
 	LOG_RPC_CMD_SET_STREAM_LEVEL = 0,
-	LOG_RPC_CMD_GET_CRASH_LOG = 1,
+	LOG_RPC_CMD_SET_HISTORY_LEVEL = 1,
+	LOG_RPC_CMD_FETCH_HISTORY = 2,
+	LOG_RPC_CMD_GET_CRASH_LOG = 3,
 };
 
 #ifdef __cplusplus
