@@ -60,6 +60,15 @@ static const struct sx_pk_cmd_def CMD_MOD_EXP_FF = {
 	OP_SLOT_PTR_A, SX_PK_OP_FLAGS_MOD_CM};
 const struct sx_pk_cmd_def *const SX_PK_CMD_FF_MODEXP = &CMD_MOD_EXP_FF;
 
+static const struct sx_pk_cmd_def CMD_RSA_PUB_MODEXP = {
+	PK_OP_RSA_PUB_MODEXP,
+	(1 << OP_SLOT_RSA_PUB_MODEXP_RESULT),
+	(1 << OP_SLOT_RSA_PUB_MODEXP_M) | (1 << OP_SLOT_RSA_PUB_MODEXP_EXP)
+	| (1 << OP_SLOT_RSA_PUB_MODEXP_INPUT),
+	OP_SLOT_PTR_A
+};
+const struct sx_pk_cmd_def * const SX_PK_CMD_RSA_PUB_MODEXP = &CMD_RSA_PUB_MODEXP;
+
 static const struct sx_pk_cmd_def CMD_MOD_SQRT = {PK_OP_MOD_SQRT, (1 << OP_SLOT_PTR_C),
 						  (1 << OP_SLOT_PTR_A) | (1 << 0), OP_SLOT_PTR_A};
 const struct sx_pk_cmd_def *const SX_PK_CMD_MOD_SQRT = &CMD_MOD_SQRT;

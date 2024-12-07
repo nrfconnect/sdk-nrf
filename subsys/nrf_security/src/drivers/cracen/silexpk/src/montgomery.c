@@ -33,6 +33,12 @@ struct sx_pk_acq_req sx_async_x25519_ptmult_go(const struct sx_x25519_op *k,
 
 	sx_wrpkmem(inputs.p.addr, pt->bytes, SX_X25519_OP_SZ);
 	sx_wrpkmem(inputs.k.addr, k->bytes, SX_X25519_OP_SZ);
+	/* clamp the scalar */
+	inputs.k.addr[31] |= 1 << 6;
+	inputs.k.addr[31] &= 0x7f;
+	inputs.k.addr[0] &= 0xF8;
+	/* clamp the pt */
+	inputs.p.addr[31] &= 0x7f;
 
 	sx_pk_run(pkreq.req);
 
@@ -83,6 +89,9 @@ struct sx_pk_acq_req sx_async_x448_ptmult_go(const struct sx_x448_op *k,
 
 	sx_wrpkmem(inputs.p.addr, pt->bytes, SX_X448_OP_SZ);
 	sx_wrpkmem(inputs.k.addr, k->bytes, SX_X448_OP_SZ);
+	/* clamp the scalar */
+	inputs.k.addr[55] |= 0x80;
+	inputs.k.addr[0] &= 0xFC;
 
 	sx_pk_run(pkreq.req);
 

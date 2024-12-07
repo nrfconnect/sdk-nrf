@@ -41,7 +41,7 @@ struct sx_x448_op {
  *
  * Compute r = pt * k
  *
- * The operands must be decoded and clamped as defined in specifications
+ * The operands are decoded and clamped as defined in specifications
  * for X25519 and X448.
  *
  * @param[in] k Scalar
@@ -102,7 +102,7 @@ void sx_async_x25519_ptmult_end(sx_pk_req *req, struct sx_x25519_op *r);
  *
  * Compute r = pt * k
  *
- * The operands must be decoded and clamped as defined in specifications
+ * The operands are decoded and clamped as defined in specifications
  * for X25519 and X448.
  *
  * @param[in] k Scalar
