@@ -1,0 +1,129 @@
+name: API Check
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      new_commit:
+        type: string
+        required: true
+        description: New Commit
+      old_commit:
+        type: string
+        required: true
+        description: Old Commit
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout sources
+        uses: nordicbuilder/action-checkout-west-update@main
+        with:
+          git-fetch-depth: 0
+          west-update-args: ''
+
+      - name: cache-pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-doc-pip
+
+      - name: Git rebase
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        working-directory: ncs/nrf
+        run: |
+          git remote -v
+          git branch
+          git rebase origin/${BASE_REF}
+          # debug
+          git log --pretty=oneline -n 5
+
+      - name: Install packages
+        run: |
+          sudo apt update
+          sudo apt-get install -y ninja-build mscgen plantuml
+          sudo snap install yq
+          DOXYGEN_VERSION=$(yq ".doxygen.version" ./ncs/nrf/scripts/tools-versions-linux.yml)
+          wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
+          tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
+          cp -r ncs/nrf/scripts/ci/api_check .
+
+      - name: Install Python dependencies
+        working-directory: ncs
+        run: |
+          sudo pip3 install -U setuptools wheel pip
+          pip3 install -r nrf/doc/requirements.txt
+          pip3 install -r ../api_check/requirements.txt
+
+      - name: West zephyr-export
+        working-directory: ncs
+        run: |
+          west zephyr-export
+
+      - name: Checkout new commit and west update
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ncs/nrf
+        run: |
+          git checkout ${{ github.event.inputs.new_commit }}
+          west update
+
+      - name: Collect data from new commit
+        working-directory: ncs/nrf
+        run: |
+          source ../zephyr/zephyr-env.sh
+          echo =========== NEW COMMIT ===========
+          git log -n 1
+          cmake -GNinja -Bdoc/_build -Sdoc
+          python3 ../../api_check/utils/interrupt_on.py "syncing doxygen output" ninja -C doc/_build nrf
+          python3 ../../api_check/headers doc/_build/nrf/doxygen/xml --save-input ../../headers-new.pkl
+          python3 ../../api_check/dts -n - --save-input ../../dts-new.pkl
+          rm -Rf doc/_build
+
+      - name: Checkout old commit and west update
+        working-directory: ncs/nrf
+        run: |
+          git checkout ${{ github.event.inputs.old_commit }}${{ github.base_ref }}
+          cd ..
+          west update
+
+      - name: Collect data from old commit
+        working-directory: ncs/nrf
+        run: |
+          source ../zephyr/zephyr-env.sh
+          echo =========== OLD COMMIT ===========
+          git log -n 1
+          cmake -GNinja -Bdoc/_build -Sdoc
+          python3 ../../api_check/utils/interrupt_on.py "syncing doxygen output" ninja -C doc/_build nrf
+          python3 ../../api_check/headers doc/_build/nrf/doxygen/xml --save-input ../../headers-old.pkl
+          python3 ../../api_check/dts -n - --save-input ../../dts-old.pkl
+
+      - name: Check
+        working-directory: ncs/nrf
+        run: |
+          python3 ../../api_check/headers --format github --resolve-paths . --relative-to . --save-stats ../../headers-stats.json ../../headers-new.pkl ../../headers-old.pkl || true
+          python3 ../../api_check/dts --format github --relative-to . --save-stats ../../dts-stats.json -n ../../dts-new.pkl -o ../../dts-old.pkl || true
+          echo Headers stats
+          cat ../../headers-stats.json || true
+          echo DTS stats
+          cat ../../dts-stats.json || true
+
+      - name: Update PR
+        if: github.event_name == 'pull_request'
+        working-directory: ncs/nrf
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.NCS_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          python3 ../../api_check/pr ../../headers-stats.json ../../dts-stats.json

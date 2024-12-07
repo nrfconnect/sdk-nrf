@@ -1,0 +1,64 @@
+{#
+    # Copyright (c) 2024 Nordic Semiconductor ASA
+    #
+    # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+    Jinja template for PR comment with API changes results.
+
+    The following variables are available:
+        notice: int - number of notices detected
+        warning: int - number of warnings detected
+        critical: int - number of critical issues detected
+        github_actor: str - github user name responsible for this workflow
+        repo: Repository - https://pygithub.readthedocs.io/en/stable/github_objects/Repository.html
+        pr: PullRequest - https://pygithub.readthedocs.io/en/stable/github_objects/PullRequest.html
+        run: WorkflowRun - https://pygithub.readthedocs.io/en/stable/github_objects/WorkflowRun.html
+
+    You can add the following metadata:
+        <!-- add-label: XYZ -->
+            Add label XYZ to the PR.
+        <!-- remove-label: XYZ -->
+            Remove label XYZ from the PR.
+        <!-- exit-code: N -->
+            Set exit code of the script. Setting exit code different than 0 will cause
+            an error in workflow and it will block the PR.
+#}
+
+{% if critical > 0 %}
+
+<!-- add-label: api-change -->
+<!-- add-label: doc-required -->
+
+> [!CAUTION]
+> **This PR contains API-breaking changes. Remember to add necessary entry in the migration guide.**
+>
+
+&nbsp;          | Count            | Level    | Comment
+----------------|------------------|----------|---------
+:red_circle:    | **{{critical}}** | critical | The modification is a breaking change.
+:yellow_circle: | **{{warning}}**  | warning  | The modification may be a breaking change, but there is not enough context to determine this.
+:white_circle:  | **{{notice}}**   | notice   | The modification to API, but it probably keep the backward compatibility.
+
+See issue details in the [**job summary**]({{run.html_url}}?pr={{pr.number}}).
+
+{% elif notice + warning > 0 %}
+
+<!-- remove-label: api-change -->
+
+:+1: No critical API-breaking changes detected. You have [{{
+    (warning|string) + " warnings" if warning > 1 else "1 warning" if warning > 0 else ""
+}}{{
+    " and " if notice > 0 and warning > 0 else ""
+}}{{
+    (notice|string) + " notices" if notice > 1 else "1 notice" if notice > 0 else ""
+}}]({{run.html_url}}?pr={{pr.number}}) that you can review.
+
+{% else %}
+
+<!-- remove-label: api-change -->
+
+:+1: No API-breaking changes detected.
+
+{% endif %}
+
+<!-- exit-code: 0 -->
