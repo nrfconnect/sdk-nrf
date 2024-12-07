@@ -1,0 +1,63 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+; .. include_startingpoint_device_info_cddl_rst
+
+stat = (SUCCESS: 0) /
+	(INTERNAL_ERROR: 16781313) /
+	(UNPROGRAMMED: 16781314)
+
+entity = (UUID: 0) /
+	(TYPE: 1) /
+	(TESTIMPRINT: 2) /
+	(PARTNO: 3) /
+	(HWREVISION: 4) /
+	(PRODUCTIONREVISION: 5)
+
+; Device Info service request payload.
+read_req = (
+	1,
+	target: entity,
+)
+
+write_req = (
+	2,
+	target: entity,
+	data: [1*8 uint] ; table of at least 1 int - at most 8 int
+)
+
+; Device Info service response to read data.
+read_resp = (
+	1,
+	target: entity,
+	status: stat,
+	data: [1*8 uint] ; table of at least 1 int - at most 8 int
+)
+
+; Device Info service response to write payload.
+write_resp = (
+	2,
+	target: entity,
+	status: stat,
+)
+
+device_info_req = [
+      3,
+      msg: (
+            read_req /
+            write_req
+      ),
+]
+
+device_info_resp = [
+      3,
+      msg: (
+            read_resp /
+            write_resp
+      ),
+]
+
+; .. include_endingpoint_device_info_cddl_rst
