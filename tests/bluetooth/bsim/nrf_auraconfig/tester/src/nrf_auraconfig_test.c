@@ -94,6 +94,18 @@ static uint8_t sink_broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE];
 
 static char broadcast_name_target[ADV_NAME_MAX + 1];
 
+/* Find the most significant 1 in bits, bits will not be 0. */
+static int8_t context_msb_one(uint16_t bits)
+{
+	uint8_t pos = 0;
+
+	while (bits >>= 1) {
+		pos++;
+	}
+
+	return pos;
+}
+
 static void stream_connected_cb(struct bt_bap_stream *stream)
 {
 	LOG_DBG("Stream connected");
@@ -400,7 +412,8 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 
 	k_sem_give(&sem_syncable);
 
-	if (!biginfo->encryption) {
+	/* Give semaphore if no encryption or broadcast code is received */
+	if (!biginfo->encryption || sink_broadcast_code[0] != 0) {
 		/* Use the semaphore as a boolean */
 		k_sem_reset(&sem_broadcast_code_received);
 		k_sem_give(&sem_broadcast_code_received);
@@ -537,7 +550,6 @@ static bool data_cb(struct bt_data *data, void *user_data)
 		memcpy(name, data->data, MIN(data->data_len, ADV_NAME_MAX - 1));
 
 		if ((is_substring(broadcast_name_target, name))) {
-			/* Device found */
 			*device_found = true;
 			return false;
 		}
@@ -746,7 +758,7 @@ static void values_compare(void)
 		LOG_DBG("\tBroadcast_name: " COLOR_GREEN "Success" COLOR_RESET);
 	}
 
-	if (expected.broadcast_id != dut.broadcast_id) {
+	if (expected.broadcast_id != dut.broadcast_id && expected.broadcast_id != 0x00) {
 		LOG_WRN("\tExpected broadcast_id: 0x%06X, received: 0x%06X", expected.broadcast_id,
 			dut.broadcast_id);
 		passing = false;
@@ -886,12 +898,12 @@ void nac_test_loop(void)
 
 	err = k_sem_take(&sem_broadcaster_found, K_FOREVER);
 	if (err != 0) {
-		LOG_DBG("sem_broadcaster_found timed out, resetting");
+		LOG_WRN("sem_broadcaster_found timed out, resetting");
 	}
 
 	err = bt_le_scan_stop();
 	if (err != 0) {
-		LOG_DBG("bt_le_scan_stop failed with %d, resetting", err);
+		LOG_WRN("bt_le_scan_stop failed with %d, resetting", err);
 	}
 
 	LOG_DBG("Attempting to PA sync to the broadcaster with id 0x%06X",
@@ -899,7 +911,7 @@ void nac_test_loop(void)
 
 	err = pa_sync_create();
 	if (err != 0) {
-		LOG_DBG("Could not create Broadcast PA sync: %d, resetting", err);
+		LOG_WRN("Could not create Broadcast PA sync: %d, resetting", err);
 	}
 
 	LOG_DBG("Waiting for PA synced");
@@ -1046,6 +1058,133 @@ static int cmd_big_input(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+static int cmd_adv_name(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<adv_name (string)>");
+		return -EINVAL;
+	}
+
+	memset(expected.adv_name, '\0', sizeof(expected.adv_name));
+	memcpy(expected.adv_name, argv[1], strlen(argv[1]));
+
+	return 0;
+}
+
+static int cmd_broadcast_name(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<broadcast_name (string)>");
+		return -EINVAL;
+	}
+
+	memset(broadcast_name_target, '\0', sizeof(broadcast_name_target));
+	memcpy(broadcast_name_target, argv[1], strlen(argv[1]));
+
+	memset(expected.broadcast_name, '\0', sizeof(expected.broadcast_name));
+	memcpy(expected.broadcast_name, argv[1], strlen(argv[1]));
+
+	return 0;
+}
+
+static int cmd_broadcast_id(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<broadcast_id (6 octets)>");
+		return -EINVAL;
+	}
+
+	expected.broadcast_id = (uint32_t)strtol(argv[1], NULL, 16);
+
+	return 0;
+}
+
+static int cmd_phy(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<phy (1, 2, or 4 (coded))>");
+		return -EINVAL;
+	}
+
+	expected.phy = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_pd_us(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<pd_us (uint32_t)>");
+		return -EINVAL;
+	}
+
+	expected.pd_us = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_encryption(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<encryption (0/1)>");
+		return -EINVAL;
+	}
+
+	expected.encryption = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_broadcast_code(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<broadcast_code (16 chars)>");
+		return -EINVAL;
+	}
+
+	memset(expected.broadcast_code, '\0', sizeof(expected.broadcast_code));
+	memcpy(expected.broadcast_code, argv[1], strlen(argv[1]));
+	memcpy(sink_broadcast_code, argv[1], strlen(argv[1]));
+
+	return 0;
+}
+
+static int cmd_num_subgroups(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<num_subgroups (uint8_t)>");
+		return -EINVAL;
+	}
+
+	expected.num_subgroups = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_std_quality(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<std_quality (0/1)>");
+		return -EINVAL;
+	}
+
+	expected.std_quality = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_high_quality(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 2) {
+		shell_error(shell, "<high_quality (0/1)>");
+		return -EINVAL;
+	}
+
+	expected.high_quality = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
 static int cmd_sub_input(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc < 2) {
@@ -1083,15 +1222,184 @@ static int cmd_sub_input(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-static int cmd_bis_location_input(const struct shell *shell, size_t argc, char **argv)
+static int cmd_sampling_rate(const struct shell *shell, size_t argc, char **argv)
 {
-	if (argc < 4) {
-		shell_error(shell, "<subgroup_index> <bis_index> <location (uint32_t)>");
+	if (argc < 3) {
+		shell_error(shell, "<sampling_rate_hz (uint32_t)> <subgroup_index>");
 		return -EINVAL;
 	}
 
-	int subgroup_index = strtol(argv[1], NULL, 10);
-	int bis_index = strtol(argv[2], NULL, 10);
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	expected.subgroups[subgroup_index].sampling_rate_hz = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_frame_duration(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 3) {
+		shell_error(shell, "<frame_duration_us (uint32_t)> <subgroup_index>");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	expected.subgroups[subgroup_index].frame_duration_us = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_octets_per_frame(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 3) {
+		shell_error(shell, "<octets_per_frame (uint8_t)> <subgroup_index>");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	expected.subgroups[subgroup_index].octets_per_frame = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_lang(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 3) {
+		shell_error(shell, "<lang (3 chars)> <subgroup_index>");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	memcpy(expected.subgroups[subgroup_index].language, argv[1], 3);
+
+	return 0;
+}
+
+static int cmd_immediate(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 3) {
+		shell_error(shell, "<immediate_rend_flag (0/1)> <subgroup_index> ");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	expected.subgroups[subgroup_index].immediate_rend_flag = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_context(const struct shell *shell, size_t argc, char **argv)
+{
+	uint16_t context = 0;
+
+	if (argc < 3) {
+		shell_error(shell, "<context (uint16_t)> <subgroup_index>");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	/* Context container is a bit field */
+	for (size_t i = 0U; i <= context_msb_one(BT_AUDIO_CONTEXT_TYPE_ANY); i++) {
+		if (strcasecmp(argv[1], bt_audio_context_bit_to_str(BIT(i))) == 0) {
+			context = BIT(i);
+			break;
+		}
+	}
+
+	if (!context) {
+		LOG_ERR("Context not found");
+		return -EINVAL;
+	}
+
+	expected.subgroups[subgroup_index].context = context;
+
+	return 0;
+}
+
+static int cmd_program_info(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 3) {
+		shell_error(shell, "<program_info (string)> <subgroup_index>");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	memset(expected.subgroups[subgroup_index].program_info, '\0',
+	       sizeof(expected.subgroups[subgroup_index].program_info));
+	memcpy(expected.subgroups[subgroup_index].program_info, argv[1], strlen(argv[1]));
+
+	return 0;
+}
+
+static int cmd_num_bis(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 3) {
+		shell_error(shell, "<num_bis (uint8_t)> <subgroup_index>");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+
+	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
+		shell_error(shell, "Invalid subgroup index");
+		return -EINVAL;
+	}
+
+	expected.subgroups[subgroup_index].num_bis = strtol(argv[1], NULL, 10);
+
+	return 0;
+}
+
+static int cmd_location(const struct shell *shell, size_t argc, char **argv)
+{
+	if (argc < 4) {
+		shell_error(shell, "<location (uint32_t)> <subgroup_index> <bis_index>");
+		return -EINVAL;
+	}
+
+	int subgroup_index = strtol(argv[2], NULL, 10);
+	int bis_index = strtol(argv[3], NULL, 10);
 
 	if (subgroup_index >= CONFIG_BT_BAP_BROADCAST_SNK_SUBGROUP_COUNT) {
 		shell_error(shell, "Invalid subgroup index");
@@ -1103,7 +1411,7 @@ static int cmd_bis_location_input(const struct shell *shell, size_t argc, char *
 		return -EINVAL;
 	}
 
-	expected.subgroups[subgroup_index].locations[bis_index] = strtol(argv[3], NULL, 16);
+	expected.subgroups[subgroup_index].locations[bis_index] = strtol(argv[1], NULL, 16);
 
 	return 0;
 }
@@ -1126,30 +1434,7 @@ static int cmd_run(const struct shell *shell, size_t argc, char **argv)
 		LOG_DBG("Unable to start scan for broadcast sources: %d", err);
 	}
 
-	return 0;
-}
-
-static int cmd_test_uc0(const struct shell *shell, size_t argc, char **argv)
-{
-	ARG_UNUSED(argc);
-	ARG_UNUSED(argv);
-
-	char *uc0_argv[11] = {"big_input", "Lecture hall", "Lecture", "0x123456", "2", "40000",
-			      "0",	   "blank",	   "1",	      "1",	  "0"};
-
-	cmd_big_input(shell, ARRAY_SIZE(uc0_argv), uc0_argv);
-
-	char *uc1_argv[10] = {"sub_input", "0", "24000", "10000",	    "60",
-			      "eng",	   "1", "64",	 "Mathematics 101", "1"};
-	cmd_sub_input(shell, ARRAY_SIZE(uc1_argv), uc1_argv);
-
-	char *bis_argv[4] = {"bis_location_input", "0", "0", "0x00"};
-
-	cmd_bis_location_input(shell, ARRAY_SIZE(bis_argv), bis_argv);
-
-	cmd_run(shell, 0, NULL);
-
-	LOG_INF("Starting to look for usecase 0");
+	LOG_INF("Started scan for: %s", broadcast_name_target);
 
 	return 0;
 }
@@ -1158,11 +1443,32 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	expected_cmd,
 	SHELL_COND_CMD(CONFIG_SHELL, big_input, NULL, "Expected BIG values", cmd_big_input),
 	SHELL_COND_CMD(CONFIG_SHELL, sub_input, NULL, "Expected subgroup values", cmd_sub_input),
-	SHELL_COND_CMD(CONFIG_SHELL, bis_location_input, NULL, "Expected BIS location",
-		       cmd_bis_location_input),
-	SHELL_COND_CMD(CONFIG_SHELL, run_test, NULL, "Run test", cmd_run),
-	SHELL_COND_CMD(CONFIG_SHELL, test_uc0, NULL,
-		       "Test use case 0 from the nRF Auraconfig sample", cmd_test_uc0),
-	SHELL_SUBCMD_SET_END);
+	SHELL_COND_CMD(CONFIG_SHELL, adv_name, NULL, "Expected adv name", cmd_adv_name),
+	SHELL_COND_CMD(CONFIG_SHELL, broadcast_name, NULL, "Expected broadcast name",
+		       cmd_broadcast_name),
+	SHELL_COND_CMD(CONFIG_SHELL, broadcast_id, NULL, "Expected broadcast ID", cmd_broadcast_id),
+	SHELL_COND_CMD(CONFIG_SHELL, phy, NULL, "Expected PHY", cmd_phy),
+	SHELL_COND_CMD(CONFIG_SHELL, pd_us, NULL, "Expected PD US", cmd_pd_us),
+	SHELL_COND_CMD(CONFIG_SHELL, encryption, NULL, "Expected encryption", cmd_encryption),
+	SHELL_COND_CMD(CONFIG_SHELL, broadcast_code, NULL, "Expected broadcast code",
+		       cmd_broadcast_code),
+	SHELL_COND_CMD(CONFIG_SHELL, num_subgroups, NULL, "Expected num subgroups",
+		       cmd_num_subgroups),
+	SHELL_COND_CMD(CONFIG_SHELL, std_quality, NULL, "Expected std quality", cmd_std_quality),
+	SHELL_COND_CMD(CONFIG_SHELL, high_quality, NULL, "Expected high quality", cmd_high_quality),
+	SHELL_COND_CMD(CONFIG_SHELL, sampling_rate, NULL, "Expected sampling rate",
+		       cmd_sampling_rate),
+	SHELL_COND_CMD(CONFIG_SHELL, frame_duration_us, NULL, "Expected frame duration",
+		       cmd_frame_duration),
+	SHELL_COND_CMD(CONFIG_SHELL, octets_per_frame, NULL, "Expected octets per frame",
+		       cmd_octets_per_frame),
+	SHELL_COND_CMD(CONFIG_SHELL, lang, NULL, "Expected language", cmd_lang),
+	SHELL_COND_CMD(CONFIG_SHELL, immediate, NULL, "Expected immediate rend flag",
+		       cmd_immediate),
+	SHELL_COND_CMD(CONFIG_SHELL, context, NULL, "Expected context", cmd_context),
+	SHELL_COND_CMD(CONFIG_SHELL, program_info, NULL, "Expected program info", cmd_program_info),
+	SHELL_COND_CMD(CONFIG_SHELL, num_bis, NULL, "Expected num BIS", cmd_num_bis),
+	SHELL_COND_CMD(CONFIG_SHELL, location, NULL, "Expected BIS location", cmd_location),
+	SHELL_COND_CMD(CONFIG_SHELL, run_test, NULL, "Run test", cmd_run), SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(nac_test, &expected_cmd, "nrf Auraconfig tester", NULL);

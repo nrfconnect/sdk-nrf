@@ -17,8 +17,8 @@ LOG_MODULE_REGISTER(nac_test, CONFIG_NAC_TEST_LOG_LEVEL);
 
 extern enum bst_result_t bst_result;
 
-#define MAX_ARGS	50
-#define MAX_ARG_LEN	20
+#define MAX_ARGS	200
+#define MAX_ARG_LEN	50
 #define ARG_COMMAND	"nac"
 #define MAX_COMMAND_LEN 60
 
@@ -32,10 +32,10 @@ static void test_args(int argc, char *argv[])
 
 	for (int i = 0; i < argc; i++) {
 		if (i > MAX_ARGS) {
-			TEST_FAIL("ENOMEM");
+			TEST_FAIL("ENOMEM, MAX_ARG");
 		}
 		if (strlen(argv[i]) > MAX_ARG_LEN) {
-			TEST_FAIL("ENOMEM");
+			TEST_FAIL("ENOMEM, MAX_ARG_LEN");
 		}
 
 		memcpy(argv_copy[i], argv[i], strlen(argv[i]) + 1);
@@ -58,7 +58,6 @@ static int modules_configure(void)
 	}
 
 	strcat(cmd_str, argv_copy[0]);
-	strcat(cmd_str, " ");
 
 	/* Parse argv_copy, divide by keyword ARG_COMMAND and send commands to shell */
 	for (int i = 1; i < argc_copy; i++) {
@@ -72,15 +71,14 @@ static int modules_configure(void)
 			memset(cmd_str, '\0', sizeof(cmd_str));
 
 			strcat(cmd_str, argv_copy[i]);
-			strcat(cmd_str, " ");
 		} else {
 			if (strlen(cmd_str) + strlen(argv_copy[i]) > MAX_COMMAND_LEN) {
 				LOG_ERR("Command too long");
 				return -EINVAL;
 			}
 
-			strcat(cmd_str, argv_copy[i]);
 			strcat(cmd_str, " ");
+			strcat(cmd_str, argv_copy[i]);
 		}
 	}
 

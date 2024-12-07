@@ -2,9 +2,6 @@
 # Copyright 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-# Compile all the applications needed by the bsim tests in these subfolders
-#INCR_BUILD=1
-
 BOARD=nrf5340bsim/nrf5340/cpuapp
 set -ue
 
