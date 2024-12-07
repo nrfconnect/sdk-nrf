@@ -38,11 +38,12 @@ static const char *const filtered_out_sources[] = {
 	"NRF_RPC",
 };
 
+static const uint32_t common_output_flags =
+	LOG_OUTPUT_FLAG_TIMESTAMP | LOG_OUTPUT_FLAG_FORMAT_TIMESTAMP;
+
 static bool panic_mode;
 static uint32_t log_format = LOG_OUTPUT_TEXT;
-static enum log_rpc_level current_level;
 static enum log_rpc_level stream_level = LOG_RPC_LEVEL_NONE;
-static uint8_t log_output_buffer[CONFIG_LOG_BACKEND_RPC_BUFFER_SIZE];
 
 /*
  * Verify that Zephyr logging level can be used as the nRF RPC logging level without translation.
@@ -89,29 +90,33 @@ static void crash_log_clear(void)
 	crash_log_max_size = (size_t)rc - sizeof(crash_log_header_t);
 }
 
-static void retain(const uint8_t *data, size_t length)
+static int output_to_retention(uint8_t *data, size_t length, void *output_ctx)
 {
 	const struct device *const crash_log = CRASH_LOG_DEV;
+
 	crash_log_header_t header;
-	int rc;
+	size_t saved_length;
+
+	ARG_UNUSED(output_ctx);
 
 	if (crash_log_cur_size >= crash_log_max_size) {
 		/* Crash log partition overflow. */
-		return;
+		goto out;
 	}
 
-	length = MIN(length, crash_log_max_size - crash_log_cur_size);
+	saved_length = MIN(length, crash_log_max_size - crash_log_cur_size);
 
-	rc = retention_write(crash_log, sizeof(header) + crash_log_cur_size, data, length);
-
-	if (rc) {
-		return;
+	if (retention_write(crash_log, sizeof(header) + crash_log_cur_size, data, saved_length)) {
+		goto out;
 	}
 
-	crash_log_cur_size += length;
+	crash_log_cur_size += saved_length;
 	header.size = crash_log_cur_size;
 
 	(void)retention_write(crash_log, 0, (const uint8_t *)&header, sizeof(header));
+
+out:
+	return (int)length;
 }
 
 static void log_rpc_get_crash_log_handler(const struct nrf_rpc_group *group,
@@ -180,42 +185,105 @@ static void crash_log_clear(void)
 {
 }
 
-static void retain(const uint8_t *data, size_t length)
+static int output_to_retention(uint8_t *data, size_t length, void *output_ctx)
 {
 	ARG_UNUSED(data);
 	ARG_UNUSED(length);
+	ARG_UNUSED(output_ctx);
+
+	return (int)length;
 }
 #endif /* CONFIG_LOG_BACKEND_RPC_CRASH_LOG */
 
-static void send(const uint8_t *data, size_t length)
+static void format_message(struct log_msg *msg, uint32_t flags, log_output_func_t output_func,
+			   void *output_ctx)
 {
-	struct nrf_rpc_cbor_ctx ctx;
+	uint8_t output_buffer[CONFIG_LOG_BACKEND_RPC_OUTPUT_BUFFER_SIZE];
+	struct log_output_control_block control_block = {.ctx = output_ctx};
+	struct log_output output = {
+		.func = output_func,
+		.control_block = &control_block,
+		.buf = output_buffer,
+		.size = sizeof(output_buffer),
+	};
+	log_format_func_t log_formatter;
 
-	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 4 + length);
-	nrf_rpc_encode_uint(&ctx, current_level);
-	nrf_rpc_encode_buffer(&ctx, data, length);
-	nrf_rpc_cbor_evt_no_err(&log_rpc_group, LOG_RPC_EVT_MSG, &ctx);
+	log_formatter = log_format_func_t_get(log_format);
+	log_formatter(&output, msg, flags);
 }
 
-static int flush(uint8_t *data, size_t length, void *context)
-{
-	ARG_UNUSED(context);
+struct output_to_buf_ctx {
+	uint8_t *out;
+	size_t out_len;
+	size_t total_len;
+};
 
-	if (panic_mode) {
-		retain(data, length);
-	} else {
-		send(data, length);
+static int output_to_buf(uint8_t *data, size_t length, void *ctx)
+{
+	struct output_to_buf_ctx *output_ctx = ctx;
+	size_t saved_length;
+
+	if (output_ctx->out != NULL) {
+		saved_length = MIN(length, output_ctx->out_len);
+		memcpy(output_ctx->out, data, saved_length);
+		output_ctx->out += saved_length;
+		output_ctx->out_len -= saved_length;
 	}
 
-	/*
-	 * Log output does not handle error codes gracefully, so pretend the buffer has been
-	 * flushed to move on and not enter an infinite loop.
-	 */
+	output_ctx->total_len += length;
 
 	return (int)length;
 }
 
-LOG_OUTPUT_DEFINE(log_output_rpc, flush, log_output_buffer, sizeof(log_output_buffer));
+static size_t format_message_to_buf(struct log_msg *msg, uint32_t flags, uint8_t *out,
+				    size_t out_len)
+{
+	struct output_to_buf_ctx output_ctx = {
+		.out = out,
+		.out_len = out_len,
+		.total_len = 0,
+	};
+
+	format_message(msg, flags, output_to_buf, &output_ctx);
+
+	return output_ctx.total_len;
+}
+
+static void retain_message(struct log_msg *msg)
+{
+	const uint32_t flags = common_output_flags | LOG_OUTPUT_FLAG_CRLF_LFONLY;
+
+	if (!IS_ENABLED(CONFIG_LOG_BACKEND_RPC_CRASH_LOG)) {
+		return;
+	}
+
+	format_message(msg, flags, output_to_retention, NULL);
+}
+
+static void stream_message(struct log_msg *msg)
+{
+	const uint32_t flags = common_output_flags | LOG_OUTPUT_FLAG_CRLF_NONE;
+
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t length;
+	size_t max_length;
+
+	/* 1. Calculate the formatted message length to allocate a sufficient CBOR encode buffer */
+	length = format_message_to_buf(msg, flags, NULL, 0);
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 6 + length);
+	nrf_rpc_encode_uint(&ctx, log_msg_get_level(msg));
+
+	/* 2. Format the message directly into the CBOR encode buffer. */
+	if (zcbor_bstr_start_encode(ctx.zs)) {
+		max_length = ctx.zs[0].payload_end - ctx.zs[0].payload_mut;
+		length = format_message_to_buf(msg, flags, ctx.zs[0].payload_mut, max_length);
+		ctx.zs[0].payload_mut += MIN(length, max_length);
+		zcbor_bstr_end_encode(ctx.zs, NULL);
+	}
+
+	nrf_rpc_cbor_evt_no_err(&log_rpc_group, LOG_RPC_EVT_MSG, &ctx);
+}
 
 static const char *log_msg_source_name_get(struct log_msg *msg)
 {
@@ -243,26 +311,12 @@ static bool starts_with(const char *str, const char *prefix)
 	return strncmp(str, prefix, strlen(prefix)) == 0;
 }
 
-static void process(const struct log_backend *const backend, union log_msg_generic *msg)
+static void process(const struct log_backend *const backend, union log_msg_generic *msg_generic)
 {
-	const log_format_func_t log_formatter = log_format_func_t_get(log_format);
-	const char *source_name = log_msg_source_name_get(&msg->log);
-	uint32_t flags = LOG_OUTPUT_FLAG_TIMESTAMP | LOG_OUTPUT_FLAG_FORMAT_TIMESTAMP;
-	enum log_rpc_level level = (enum log_rpc_level)log_msg_get_level(&msg->log);
-	enum log_rpc_level max_level = stream_level;
-
-	/*
-	 * Panic mode: logs are appended to the buffer in retained RAM, so include LF characters.
-	 * Otherwise:  if nRF RPC group is ready, logs are sent in separate messages, so skip LFs.
-	 */
-	if (panic_mode) {
-		flags |= LOG_OUTPUT_FLAG_CRLF_LFONLY;
-		max_level = LOG_RPC_LEVEL_DBG;
-	} else if (NRF_RPC_GROUP_STATUS(log_rpc_group)) {
-		flags |= LOG_OUTPUT_FLAG_CRLF_NONE;
-	} else {
-		return;
-	}
+	struct log_msg *msg = &msg_generic->log;
+	const char *source_name = log_msg_source_name_get(msg);
+	enum log_rpc_level level = (enum log_rpc_level)log_msg_get_level(msg);
+	enum log_rpc_level max_level;
 
 	if (source_name != NULL) {
 		for (size_t i = 0; i < ARRAY_SIZE(filtered_out_sources); i++) {
@@ -272,14 +326,20 @@ static void process(const struct log_backend *const backend, union log_msg_gener
 		}
 	}
 
-	/*
-	 * The "max_level != LOG_RPC_LEVEL_NONE" condition seems redundant but is neeed because log
-	 * messages can be generated without specifying the level. Such messages should still be
-	 * rejected if the maximum level is LOG_RPC_LEVEL_NONE.
-	 */
+	if (panic_mode) {
+		retain_message(msg);
+		return;
+	}
+
+	max_level = stream_level;
+
 	if (max_level != LOG_RPC_LEVEL_NONE && level <= max_level) {
-		current_level = level;
-		log_formatter(&log_output_rpc, &msg->log, flags);
+		/*
+		 * The "max_level != LOG_RPC_LEVEL_NONE" condition seems redundant but is in fact
+		 * needed, because a log message can be generated with the level NONE, and such
+		 * a message should also be discarded if the configured maximum level is NONE.
+		 */
+		stream_message(msg);
 	}
 }
 
@@ -303,9 +363,9 @@ static void dropped(const struct log_backend *const backend, uint32_t cnt)
 
 	/*
 	 * Due to an issue in Zephyr logging subsystem (see upstream PR 78145), this function
-	 * may be called more often than the configured periodicity (1000ms by default), which
-	 * might cause sending RPC events to the RPC client indefinitely, wasting the bandwidth
-	 * of the RPC communication.
+	 * may be called more often than the configured periodicity (1000ms by default).
+	 * This might cause sending excessively many RPC events to the RPC client, which would
+	 * waste the RCP transport's bandwidth.
 	 *
 	 * For this reason, do not report the dropped log messages until this issue is fixed.
 	 */

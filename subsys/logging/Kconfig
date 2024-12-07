@@ -31,12 +31,12 @@ menuconfig LOG_BACKEND_RPC
 
 if LOG_BACKEND_RPC
 
-config LOG_BACKEND_RPC_BUFFER_SIZE
-	int "nRF RPC logging backend buffer size"
-	default 256
+config LOG_BACKEND_RPC_OUTPUT_BUFFER_SIZE
+	int "Output buffer size"
+	default 128
 	help
-	  Defines the maximum log line length that can be sent to the log forwarder
-	  over nRF RPC without fragmentation.
+	  Defines the size of stack buffer that is used by the RPC logging backend
+	  while formatting a log message.
 
 config LOG_BACKEND_RPC_CRASH_LOG
 	bool "nRF RPC crash log"
