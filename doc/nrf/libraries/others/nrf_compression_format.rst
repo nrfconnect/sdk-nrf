@@ -1,20 +1,43 @@
-Zephyr Signed Binary File Internals
-===================================
+.. _nrf_compression_format:
 
-This text describes internals of the ``zephyr.signed.bin`` file when image compression is enabled. This knowledge is not required to be able to successfully use the image compression subsystem. However, it can be useful if there is a need for verification or custom integration.
+Zephyr signed binary file internals
+###################################
+
+This article describes the structure of the :file:`zephyr.signed.bin` file when image compression is enabled.
+You do not need to know these details to use the image compression subsystem, but they can be beneficial if you want to use them for verification or custom integration purposes.
+
+For an example, see the following structure of the file:
 
 .. image:: images/decomp.svg
    :alt: LZMA header
 
 LZMA Header
------------
+***********
 
+The Lempel-Ziv-Markov chain Algorithm (LZMA) header is crucial for files compressed using the LZMA method.
+It contains metadata essential for decompression.
 The ``lzma2_header`` encodes compression parameters using two bytes.
 
-Dictionary Size
----------------
+Calculating compression parameters
+**********************************
 
-The ``dict_size`` is calculated using the following method:
+Compression parameters can be calculated, retrieved, or changed depending on your needs.
+For details, see the following sections.
+
+Default values
+==============
+
+Compression parameters have the following default values:
+
+* ``dict_size``: 131072
+* ``pb``: 2
+* ``lc``: 3
+* ``lp``: 1
+
+Adjusting dictionary size
+=========================
+
+You can calculate the ``dict_size`` using the following method:
 
 .. code-block:: c
 
@@ -27,11 +50,10 @@ The ``dict_size`` is calculated using the following method:
     }
     dict_size = (uint8_t)i;
 
-which allows dict size to be one of the following values:
+With this method, ``dict_size``can have one of the following values:
 
 .. list-table::
    :header-rows: 1
-
 
    * - Hex Value
      - Size
@@ -116,80 +138,69 @@ which allows dict size to be one of the following values:
    * - 0x27
      - 3221225472
 
-Literal Context, Literal Pos, and Pos Bits
-------------------------------------------
+Calculating literal context, literal pos, and pos bits
+======================================================
 
-The second byte of the ``lzma2_header`` carries three parameters:
+The second byte of the ``lzma2_header`` carries the following parameters:
 
-- number of "literal context" bits (lc)
-- number of "literal pos" bits (lp)
-- number of "pos" bits (pb)
+* ``lc``, which specifies a number of literal context bits
+* ``lp``, which specifies a number of literal pos bits
+* ``pb``, which specifies a number of pos bits
 
-These parameters are encoded with the following formula:
+  These parameters are encoded with the following formula:
 
-.. code-block:: c
+  .. code-block:: c
 
-    pb_lp_lc = (uint8_t)((pb * 5 + lp) * 9 + lc);
+      pb_lp_lc = (uint8_t)((pb * 5 + lp) * 9 + lc);
 
-In order to retrieve back raw values, the following code is used:
+  To decode these values from the combined ``pb_lp_lc`` byte, run the following code:
 
-.. code-block:: c
+  .. code-block:: c
 
-    lc = pb_lp_lc % 9;
-    pb_lp_lc /= 9;
-    pb = pb_lp_lc / 5;
-    lp = pb_lp_lc % 5;
+      lc = pb_lp_lc % 9;
+      pb_lp_lc /= 9;
+      pb = pb_lp_lc / 5;
+      lp = pb_lp_lc % 5;
 
-Default Parameters
-------------------
+Extracting LZMA stream from image
+*********************************
 
-Currently, the compression parameters are fixed with:
+To extract and decompress the LZMA stream from the image, follow these steps:
 
-- **dictsize**: 131072
-- **pb**: 2
-- **lc**: 3
-- **lp**: 1
+1. Determine the offset of the compressed stream by adding the ``lzma2_header`` size and the value stored under ``image_header.ih_hdr_size``.
+   For the size of the compressed stream, see ``image_header.ih_img_size``.
 
-Extracting LZMA Stream from Image
----------------------------------
+#. If the compressed stream is isolated and stored in a file named :file:`raw.lzma`, you can perform decompression using the following commands:
 
-The offset of the compressed stream can be determined by adding the ``lzma2_header`` size and the value stored in ``image_header.ih_hdr_size``.
+  * Without an ARM thumb filter:
 
-The size of the compressed stream is stored in ``image_header.ih_img_size``.
+    .. code-block:: bash
 
-Assuming the compressed stream is isolated and stored in a file named 'raw.lzma', decompression can be performed with either:
+        unlzma --lzma2 --format=raw --suffix=.lzma raw.lzma
 
-.. code-block:: bash
+  * With an ARM thumb filter:
 
-    unlzma --lzma2 --format=raw --suffix=.lzma raw.lzma
+    .. code-block:: bash
 
-or, in case an ARM thumb filter has been used:
+        unlzma --armthumb --lzma2 --format=raw --suffix=.lzma raw.lzma
 
-.. code-block:: bash
-
-    unlzma --armthumb --lzma2 --format=raw --suffix=.lzma raw.lzma
-
-This creates a file named 'raw' which is identical to the image before compression was performed.
+   Once the command is executed you will see a newly created file named :file:`raw`, which is identical to the image before compression.
 
 TLVs
-----
+****
 
-Additional TLVs have been introduced:
+The following Type-Length-Values (TLVs) are used in the context of decompressed images:
 
-- **DECOMP_SIZE (0x70)**: Size of decompressed image
-- **DECOMP_SHA (0x71)**: Hash of decompressed image
-- **DECOMP_SIGNATURE (0x72)**: Signature of either hash or whole image.
+* ``DECOMP_SIZE (0x70)``: Specifies the size of the decompressed image.
+* ``DECOMP_SHA (0x71)``: Contains the hash of the decompressed image.
+* ``DECOMP_SIGNATURE (0x72)``: Holds the signature of either the hash or the entire image.
 
-The selection of signature and hash type is done the same way as if the image hasn’t been compressed.
+These TLVs are placed in the protected TLV section, ensuring they are included in the hashing and signature calculations during the verification process.
+The process for choosing the type of cryptographic signature and hash algorithm used for securing the image is the same, regardless of whether the image has undergone compression.
 
-These three TLVs are placed in the Protected TLV section, thus included in hashing and signature calculation in the next stage.
+Sample
+******
 
-Example
--------
+For practical implementation, you can find a simple stand-alone verification program under the following path :file:`tests/subsys/nrf_compress/decompression/independent_cmp.c`.
 
-A simple stand-alone verification program can be found at:
-
-.. code-block:: none
-
-    tests/subsys/nrf_compress/decompression/independent_cmp.c
-
+This program demonstrates how to independently verify the integrity and authenticity of a decompressed image using the specified TLVs.
