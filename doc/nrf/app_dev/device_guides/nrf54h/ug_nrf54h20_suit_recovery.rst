@@ -128,8 +128,6 @@ To turn an application into a recovery application, the following steps have to 
 1. For each of the images defined by the custom recovery application, ensure the following configuration is present:
 
    * :kconfig:option:`CONFIG_SUIT_RECOVERY` set to ``y``
-   * :kconfig:option:`CONFIG_SUIT_MPI_GENERATE` set to ``n``
-   * :kconfig:option:`CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE` set to ``n``
    * :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_UICR` set to ``n``
    * :kconfig:option:`CONFIG_NRF_REGTOOL_GENERATE_BICR` set to ``n``
 
@@ -138,8 +136,6 @@ To turn an application into a recovery application, the following steps have to 
       .. code-block:: cfg
 
          CONFIG_SUIT_RECOVERY=y
-         CONFIG_SUIT_MPI_GENERATE=n
-         CONFIG_SUIT_ENVELOPE_OUTPUT_MPI_MERGE=n
          CONFIG_NRF_REGTOOL_GENERATE_UICR=n
          CONFIG_NRF_REGTOOL_GENERATE_BICR=n
 

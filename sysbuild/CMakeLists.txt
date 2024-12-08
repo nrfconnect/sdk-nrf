@@ -59,6 +59,10 @@ function(include_suit)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/suit.cmake)
 endfunction()
 
+function(include_suit_provisioning)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/suit_provisioning.cmake)
+endfunction()
+
 function(include_packaging)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0_mcuboot_signing.cmake)
   include(${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/cmake/packaging.cmake)
@@ -571,15 +575,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endif()
 
-  if(SB_CONFIG_SUIT_BUILD_RECOVERY)
-    set_config_bool(${DEFAULT_IMAGE} CONFIG_SUIT_MPI_APP_RECOVERY y)
-    set_config_bool(${DEFAULT_IMAGE} CONFIG_SUIT_MPI_RAD_RECOVERY y)
-
-    if(SB_CONFIG_SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3)
-      set_config_bool(${DEFAULT_IMAGE} CONFIG_SUIT_MPI_APP_LOCAL_3 y)
-    endif()
-  endif()
-
   if(SB_CONFIG_SDP)
     include_sdp()
   endif()
@@ -661,6 +656,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   include_packaging()
+  include_suit_provisioning()
   include_suit()
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)

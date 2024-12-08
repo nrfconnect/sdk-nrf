@@ -12,7 +12,11 @@ config SUIT_MPI_GENERATE
 
 if SUIT_MPI_GENERATE
 
-rsource "soc/Kconfig.nrf54h20"
+config SUIT_ENVELOPE_OUTPUT_MPI_MERGE
+	bool "Merge MPI files into final SUIT_ENVELOPE_OUTPUT_ARTIFACT"
+	default y
+
+rsource "suit_provisioning/Kconfig.nrf54h20"
 
 endif # SUIT_MPI_GENERATE
 

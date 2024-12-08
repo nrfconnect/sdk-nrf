@@ -1,10 +1,5 @@
-{%- if application is defined %}
-  {%- set main_config = application %}
-{%- else %}
-  {%- set main_config = radio %}
-{%- endif %}
-{%- set mpi_radio_vendor_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_radio_class_name = main_config['config']['CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
+{%- set mpi_radio_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_radio_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_rad') %}
 SUIT_Envelope_Tagged:
   suit-authentication-wrapper:
     SuitDigest:
@@ -88,12 +83,7 @@ SUIT_Envelope_Tagged:
       - suit-send-record-failure
 {%- endif %}
 
-{%- if radio['dt'].label2node['suit_storage_partition'].regs[0].size == 24576 %}
-    # Radio DTS contains larger SUIT storage - use legacy encoding
-    suit-install-legacy:
-{%- else %}
     suit-install:
-{%- endif %}
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:
 {%- if 'CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI' in radio['config'] and radio['config']['CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI'] != '' %}

@@ -184,25 +184,25 @@ Customize Vendor and Class UUIDs
 --------------------------------
 
 Customizing UUIDs used for class and vendor IDs enhances security and is recommended for specific use cases.
-Values for ``class-identifier`` and ``vendor-identifier`` in the manifest are created based on the ``CONFIG_SUIT_MPI_<MANIFEST_ROLE>_VENDOR_NAME`` and ``CONFIG_SUIT_MPI_<MANIFEST_ROLE>_CLASS_NAME`` Kconfig options.
+Values for ``class-identifier`` and ``vendor-identifier`` in the manifest are created based on the ``SB_CONFIG_SUIT_MPI_<MANIFEST_ROLE>_VENDOR_NAME`` and ``SB_CONFIG_SUIT_MPI_<MANIFEST_ROLE>_CLASS_NAME`` sysbuild Kconfig options.
 Specifically, in the basic case:
 
-* :kconfig:option:`CONFIG_SUIT_MPI_ROOT_VENDOR_NAME`
-* :kconfig:option:`CONFIG_SUIT_MPI_ROOT_CLASS_NAME`
-* :kconfig:option:`CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME`
-* :kconfig:option:`CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME`
-* :kconfig:option:`CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME`
-* :kconfig:option:`CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME`
+* :kconfig:option:`SB_CONFIG_SUIT_MPI_ROOT_VENDOR_NAME`
+* :kconfig:option:`SB_CONFIG_SUIT_MPI_ROOT_CLASS_NAME`
+* :kconfig:option:`SB_CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME`
+* :kconfig:option:`SB_CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME`
+* :kconfig:option:`SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_VENDOR_NAME`
+* :kconfig:option:`SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME`
 
 These Kconfig options are used during Manifest Provisioning Information (MPI) generation.
 After the MPI has been flashed, it is read by the Secure Domain Firmware, which can then use it to verify if the UUIDs in a manifest are correct,
 
-As an example, after adding the following lines to the :file:`prj.conf` file:
+As an example, after adding the following lines to the :file:`sysbuild.conf` file:
 
 .. code-block::
 
-   CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME="ACME Corp"
-   CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME="Light bulb"
+   SB_CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME="ACME Corp"
+   SB_CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME="Light bulb"
 
 You will find the following lines in the generated manifest .yaml file :file:`build/DFU/application.yaml`
 
@@ -265,7 +265,7 @@ With the Python dictionary you are able to, for example:
 * Obtain the size of partition with ``application['dt'].chosen_nodes['zephyr,code-partition'].regs[0].size``
 * Get the pair of URI name and the binary path by using ``'#{{ application['name'] }}': {{ application['binary'] }}``
 * Get the root manifest sequence number with ``suit-manifest-sequence-number: {{ APP_ROOT_SEQ_NUM }}``
-* Get the vendor name by using ``application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']``
+* Get the vendor name by using ``sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']``
 
 Additionally, the **get_absolute_address** method is available to recalculate the absolute address of the partition.
 With these variables and methods, you can define templates which will next be filled out by the build system and use them to prepare the output binary SUIT envelope.
