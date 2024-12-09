@@ -10,7 +10,7 @@ Sensor module
 .. important::
    |ATv2_maintenance_note|
 
-The sensor module interacts with external sensors present on the `Thingy:91 <Thingy\:91 product page_>`_ and Thingy:91 X.
+The sensor module interacts with external sensors present on the `Thingy:91 <Thingy\:91 product page_>`_ and `Thingy:91 X <Thingy\:91 X product page_>`_.
 It collects environmental data and detects motion over a set threshold value.
 
 Features
