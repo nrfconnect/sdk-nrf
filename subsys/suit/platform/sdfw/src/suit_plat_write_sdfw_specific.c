@@ -6,7 +6,7 @@
 
 #include <zephyr/logging/log.h>
 #include <stdbool.h>
-#include <suit_platform.h>
+#include <suit_plat_write_domain_specific.h>
 #include <suit_plat_decode_util.h>
 #include <suit_plat_error_convert.h>
 #include <suit_platform_internal.h>
@@ -30,15 +30,28 @@
 #include <suit_decrypt_filter.h>
 #endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
 
-LOG_MODULE_REGISTER(suit_plat_write, CONFIG_SUIT_LOG_LEVEL);
+LOG_MODULE_DECLARE(suit_plat_write, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *content,
-			  struct zcbor_string *manifest_component_id,
-			  struct suit_encryption_info *enc_info)
+bool suit_plat_write_domain_specific_is_type_supported(suit_component_type_t component_type)
+{
+#ifdef CONFIG_SUIT_STREAM
+	/* Check if destination component type is supported */
+	if (component_type == SUIT_COMPONENT_TYPE_MEM) {
+		return true;
+	}
+#endif /* CONFIG_SUIT_STREAM */
+
+	return false;
+}
+
+int suit_plat_check_write_domain_specific(suit_component_t dst_handle,
+					  suit_component_type_t dst_component_type,
+					  struct zcbor_string *content,
+					  struct zcbor_string *manifest_component_id,
+					  struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
-	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
 
@@ -50,16 +63,8 @@ int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *cont
 		return suit_plat_err_to_processor_err_convert(SUIT_PLAT_ERR_INVAL);
 	}
 
-	/* Get destination component type based on component handle*/
-	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
-	if (ret != SUIT_SUCCESS) {
-		LOG_ERR("Failed to decode destination component type");
-		return ret;
-	}
-
 	/* Check if destination component type is supported */
-	if ((dst_component_type != SUIT_COMPONENT_TYPE_MEM) &&
-	    (dst_component_type != SUIT_COMPONENT_TYPE_SOC_SPEC)) {
+	if (dst_component_type != SUIT_COMPONENT_TYPE_MEM) {
 		LOG_ERR("Unsupported destination component type");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
@@ -110,13 +115,14 @@ int suit_plat_check_write(suit_component_t dst_handle, struct zcbor_string *cont
 #endif /* CONFIG_SUIT_STREAM */
 }
 
-int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content,
-		    struct zcbor_string *manifest_component_id,
-		    struct suit_encryption_info *enc_info)
+int suit_plat_write_domain_specific(suit_component_t dst_handle,
+				    suit_component_type_t dst_component_type,
+				    struct zcbor_string *content,
+				    struct zcbor_string *manifest_component_id,
+				    struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
 	struct stream_sink dst_sink;
-	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
 
@@ -128,16 +134,8 @@ int suit_plat_write(suit_component_t dst_handle, struct zcbor_string *content,
 		return suit_plat_err_to_processor_err_convert(SUIT_PLAT_ERR_INVAL);
 	}
 
-	/* Get destination component type based on component handle*/
-	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
-	if (ret != SUIT_SUCCESS) {
-		LOG_ERR("Failed to decode destination component type");
-		return ret;
-	}
-
 	/* Check if destination component type is supported */
-	if ((dst_component_type != SUIT_COMPONENT_TYPE_MEM) &&
-	    (dst_component_type != SUIT_COMPONENT_TYPE_SOC_SPEC)) {
+	if (dst_component_type != SUIT_COMPONENT_TYPE_MEM) {
 		LOG_ERR("Unsupported destination component type");
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}

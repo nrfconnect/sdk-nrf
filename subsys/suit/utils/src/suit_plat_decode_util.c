@@ -156,20 +156,35 @@ suit_plat_err_t suit_plat_decode_component_number(struct zcbor_string *component
 	return SUIT_PLAT_ERR_CBOR_DECODING;
 }
 
-suit_plat_err_t suit_plat_decode_key_id(struct zcbor_string *key_id, uint32_t *integer_key_id)
+static suit_plat_err_t suit_plat_decode_uint32(struct zcbor_string *bstr, uint32_t *value)
 {
-	if ((key_id == NULL) || (key_id->value == NULL) || (key_id->len == 0) ||
-	    (integer_key_id == NULL)) {
-		return SUIT_PLAT_SUCCESS;
+	if ((bstr == NULL) || (bstr->value == NULL) || (bstr->len == 0) || (value == NULL)) {
+		return SUIT_PLAT_ERR_INVAL;
 	}
 
-	ZCBOR_STATE_D(state, 2, key_id->value, key_id->len, 1, 0);
+	ZCBOR_STATE_D(state, 2, bstr->value, bstr->len, 1, 0);
 
-	if (zcbor_uint32_decode(state, integer_key_id)) {
+	if (zcbor_uint32_decode(state, value)) {
 		return SUIT_PLAT_SUCCESS;
 	}
 
 	return SUIT_PLAT_ERR_CBOR_DECODING;
+}
+
+suit_plat_err_t suit_plat_decode_content_uint32(struct zcbor_string *content, uint32_t *value)
+{
+	return suit_plat_decode_uint32(content, value);
+}
+
+suit_plat_err_t suit_plat_decode_key_id(struct zcbor_string *key_id, uint32_t *integer_key_id)
+{
+	suit_plat_err_t ret = suit_plat_decode_uint32(key_id, integer_key_id);
+
+	if (ret == SUIT_PLAT_ERR_INVAL) {
+		return SUIT_PLAT_SUCCESS;
+	}
+
+	return ret;
 }
 
 #ifdef CONFIG_SUIT_METADATA
