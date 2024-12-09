@@ -16,6 +16,10 @@
 
 #include "config_event.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Parse the configuration channel report.
  *
@@ -129,6 +133,10 @@ bool config_channel_transport_rsp_receive(struct config_channel_transport *trans
  * @param transport Pointer to the configuration channel transport instance
  */
 void config_channel_transport_disconnect(struct config_channel_transport *transport);
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * @}

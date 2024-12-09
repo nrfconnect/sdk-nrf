@@ -16,6 +16,10 @@
  * @{
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @brief DFU lock owner descriptor. */
 struct dfu_lock_owner {
 	/** Owner name. */
@@ -68,6 +72,10 @@ int dfu_lock_claim(const struct dfu_lock_owner *new_owner);
  * @retval -EPERM if the DFU lock has not been claimed by the owner.
  */
 int dfu_lock_release(const struct dfu_lock_owner *owner);
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * @}
