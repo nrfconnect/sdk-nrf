@@ -240,9 +240,9 @@ The following table shows key derivation function (KDF) support for each driver:
 +==============================+==========================+============================+===========================+
 | HKDF                         | Not supported            | Supported                  | Supported                 |
 +------------------------------+--------------------------+----------------------------+---------------------------+
-| HKDF-Extract                 | Not supported            | Supported                  | Not Supported             |
+| HKDF-Extract                 | Not supported            | Supported                  | Supported                 |
 +------------------------------+--------------------------+----------------------------+---------------------------+
-| HKDF-Expand                  | Not supported            | Supported                  | Not Supported             |
+| HKDF-Expand                  | Not supported            | Supported                  | Supported                 |
 +------------------------------+--------------------------+----------------------------+---------------------------+
 | PBKDF2-HMAC                  | Not supported            | Supported                  | Supported                 |
 +------------------------------+--------------------------+----------------------------+---------------------------+
