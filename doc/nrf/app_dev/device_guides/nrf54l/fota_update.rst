@@ -13,9 +13,12 @@ FOTA updates on nRF54L Series devices
 You can also use FOTA updates to replace the application.
 See the :ref:`app_dfu` page for general Device Firmware Update (DFU) information, such as supported methods for sending and receiving updates on the device.
 Currently, FOTA updates are supported only for the application core.
+For more information about introducing immutable MCUboot bootloader, refer to :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot`.
 
 .. note::
-   For more information about introducing immutable MCUboot bootloader, refer to :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot`.
+   The nRF54L SoC's support hardware Key Management Unit (KMU), designed to provide authentication keys for DFU purposes.
+   Ensure you complete the :ref:`KMU provisioning<ug_nrf54l_developing_provision_kmu>` during your device's DFU setup with KMU enabled.
+   Failing to do so may prevent your application from booting properly.
 
 .. fota_upgrades_intro_end
 
@@ -139,20 +142,20 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
 
 .. tabs::
 
-    .. group-tab:: nRF54L15 SoCs
+    .. group-tab:: nRF54L SoCs
 
         .. parsed-literal::
            :class: highlight
 
-            west build -b *board_name*/nrf54l15/cpuapp -- -DEXTRA_CONF_FILE=overlay-bt.conf
+            west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf
             west flash
 
-    .. group-tab:: nRF54L15 SoCs with HW cryptography support
+    .. group-tab:: nRF54L SoCs with HW cryptography support
 
         .. parsed-literal::
            :class: highlight
 
-            west build -b *board_name*/nrf54l15/cpuapp -- -DEXTRA_CONF_FILE=overlay-bt.conf -DSB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y -DSB_CONFIG_BOOT_SIGNATURE_TYPE_PURE=y -Dmcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0x10000 -DSB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+            west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf -DSB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y -DSB_CONFIG_BOOT_SIGNATURE_TYPE_PURE=y -Dmcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0x10000 -DSB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
             west flash
 
 
@@ -163,6 +166,15 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
 
             west build -b nrf54l15dk/nrf54l15/cpuapp -T sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash
             west flash
+
+    .. group-tab:: nRF54l15 DK with SPI Flash as update image (DTS partitioning)
+
+       To build with the DTS partitioning, run the following command:
+
+        .. parsed-literal::
+           :class: highlight
+
+            west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l_d zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts
 
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
 This configuration was carefully selected to achieve the maximum possible throughput of the FOTA update transport over Bluetooth with the help of the following features:
@@ -193,13 +205,12 @@ Build configuration additions for MCUboot in the direct-xip mode
 FOTA updates are also supported when MCUboot is in the direct-xip mode.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
 It can be used either with or without the revert mechanism support.
-For more information about the direct-xip mode and the revert mechanism support, go to the Equal slots (direct-xip) section on the :doc:`mcuboot:design` page.
+For more information about the direct-xip mode and the revert mechanism support, go to the *Equal slots* (direct-xip) section on the :doc:`mcuboot:design` page.
 
 .. note::
-   direct-xip mode can not be combined with the image encryption.
-
-.. note::
-   building a project with direct-xip for nRF54l15 SoC target mode requires static partition manager file for partitioning, see known issues.
+   Direct-xip mode cannot be combined with image encryption.
+   In addition, when building a project with direct-xip for the nRF54L SoC targets, a static partition manager file is required for partitioning.
+   See NCSDK-30119 issue on the :ref:`known_issues` page.
 
 To use MCUboot in the direct-xip mode together with FOTA updates, do the following:
 
