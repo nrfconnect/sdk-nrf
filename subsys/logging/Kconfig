@@ -38,8 +38,42 @@ config LOG_BACKEND_RPC_OUTPUT_BUFFER_SIZE
 	  Defines the size of stack buffer that is used by the RPC logging backend
 	  while formatting a log message.
 
+config LOG_BACKEND_RPC_HISTORY
+	bool "Log history support"
+	help
+	  Enables the feature to continuously store logs in a large ring buffer,
+	  and adds nRF RPC commands for configuring and fetching the log history.
+
+if LOG_BACKEND_RPC_HISTORY
+
+choice LOG_BACKEND_RPC_HISTORY_STORAGE_CHOICE
+	prompt "Log history storage type"
+	default LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+
+config LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+	bool "RAM buffer"
+
+endchoice # LOG_BACKEND_RPC_HISTORY_STORAGE_CHOICE
+
+config LOG_BACKEND_RPC_HISTORY_UPLOAD_THREAD_STACK_SIZE
+	int "Log history upload thread stack size"
+	default 1024
+
+config LOG_BACKEND_RPC_HISTORY_UPLOAD_CHUNK_SIZE
+	int "Log history upload chunk size"
+	default 1024
+
+config LOG_BACKEND_RPC_HISTORY_SIZE
+	int "Log history size"
+	depends on LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+	default 16384
+	help
+	  Size of the ring buffer used to store the log history, in bytes.
+
+endif # LOG_BACKEND_RPC_HISTORY
+
 config LOG_BACKEND_RPC_CRASH_LOG
-	bool "nRF RPC crash log"
+	bool "Crash log support"
 	select RETENTION
 	select RETENTION_MUTEX_FORCE_DISABLE
 	select RETAINED_MEM

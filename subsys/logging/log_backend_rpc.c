@@ -11,12 +11,14 @@
  */
 
 #include "log_rpc_group.h"
+#include "log_backend_rpc_history.h"
 
 #include <logging/log_rpc.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
 
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_backend.h>
 #include <zephyr/logging/log_backend_std.h>
@@ -44,6 +46,18 @@ static const uint32_t common_output_flags =
 static bool panic_mode;
 static uint32_t log_format = LOG_OUTPUT_TEXT;
 static enum log_rpc_level stream_level = LOG_RPC_LEVEL_NONE;
+
+#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
+static enum log_rpc_level history_level = LOG_RPC_LEVEL_NONE;
+static void history_transfer_task(struct k_work *work);
+static K_MUTEX_DEFINE(history_transfer_mtx);
+static uint32_t history_transfer_id;
+static union log_msg_generic *history_cur_msg;
+static K_WORK_DEFINE(history_transfer_work, history_transfer_task);
+static K_THREAD_STACK_DEFINE(history_transfer_workq_stack,
+			     CONFIG_LOG_BACKEND_RPC_HISTORY_UPLOAD_THREAD_STACK_SIZE);
+static struct k_work_q history_transfer_workq;
+#endif
 
 /*
  * Verify that Zephyr logging level can be used as the nRF RPC logging level without translation.
@@ -341,6 +355,14 @@ static void process(const struct log_backend *const backend, union log_msg_gener
 		 */
 		stream_message(msg);
 	}
+
+#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
+	max_level = history_level;
+
+	if (max_level != LOG_RPC_LEVEL_NONE && level <= max_level) {
+		log_rpc_history_push(msg_generic);
+	}
+#endif
 }
 
 static void panic(struct log_backend const *const backend)
@@ -354,6 +376,14 @@ static void panic(struct log_backend const *const backend)
 static void init(struct log_backend const *const backend)
 {
 	ARG_UNUSED(backend);
+
+#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
+	log_rpc_history_init();
+	k_work_queue_init(&history_transfer_workq);
+	k_work_queue_start(&history_transfer_workq, history_transfer_workq_stack,
+			   K_THREAD_STACK_SIZEOF(history_transfer_workq_stack),
+			   K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
+#endif
 }
 
 static void dropped(const struct log_backend *const backend, uint32_t cnt)
@@ -410,3 +440,114 @@ static void log_rpc_set_stream_level_handler(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_stream_level_handler,
 			 LOG_RPC_CMD_SET_STREAM_LEVEL, log_rpc_set_stream_level_handler, NULL);
+
+#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
+
+static void log_rpc_set_history_level_handler(const struct nrf_rpc_group *group,
+					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	enum log_rpc_level level;
+
+	level = (enum log_rpc_level)nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_SET_HISTORY_LEVEL,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	history_level = level;
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_history_level_handler,
+			 LOG_RPC_CMD_SET_HISTORY_LEVEL, log_rpc_set_history_level_handler, NULL);
+
+static void history_transfer_task(struct k_work *work)
+{
+	const uint32_t flags = common_output_flags | LOG_OUTPUT_FLAG_CRLF_NONE;
+
+	struct nrf_rpc_cbor_ctx ctx;
+	bool any_msg_consumed = false;
+	struct log_msg *msg;
+	size_t length;
+	size_t max_length;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, CONFIG_LOG_BACKEND_RPC_HISTORY_UPLOAD_CHUNK_SIZE);
+
+	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+	nrf_rpc_encode_uint(&ctx, history_transfer_id);
+
+	while (true) {
+		if (!history_cur_msg) {
+			history_cur_msg = log_rpc_history_pop();
+		}
+
+		if (!history_cur_msg) {
+			break;
+		}
+
+		msg = &history_cur_msg->log;
+		length = 6 + format_message_to_buf(msg, flags, NULL, 0);
+		max_length = ctx.zs[0].payload_end - ctx.zs[0].payload_mut;
+
+		/* Check if there is enough buffer space to fit in the current message. */
+		if (length > max_length) {
+			break;
+		}
+
+		nrf_rpc_encode_uint(&ctx, log_msg_get_level(msg));
+
+		if (zcbor_bstr_start_encode(ctx.zs)) {
+			max_length = ctx.zs[0].payload_end - ctx.zs[0].payload_mut;
+			length = format_message_to_buf(msg, flags, ctx.zs[0].payload_mut,
+						       max_length);
+			ctx.zs[0].payload_mut += MIN(length, max_length);
+			zcbor_bstr_end_encode(ctx.zs, NULL);
+		}
+
+		log_rpc_history_free(history_cur_msg);
+		history_cur_msg = NULL;
+		any_msg_consumed = true;
+	}
+
+	/* Determine if the work should be resubmitted to continue the transfer. */
+	if (any_msg_consumed) {
+		k_work_submit_to_queue(&history_transfer_workq, work);
+	} else {
+		log_rpc_history_free(history_cur_msg);
+		history_cur_msg = NULL;
+	}
+
+	k_mutex_unlock(&history_transfer_mtx);
+
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_PUT_HISTORY_CHUNK, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+}
+
+static void log_rpc_fetch_history_handler(const struct nrf_rpc_group *group,
+					  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	uint32_t transfer_id;
+
+	transfer_id = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_FETCH_HISTORY,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+	history_transfer_id = transfer_id;
+	k_work_submit_to_queue(&history_transfer_workq, &history_transfer_work);
+	k_mutex_unlock(&history_transfer_mtx);
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_fetch_history_handler, LOG_RPC_CMD_FETCH_HISTORY,
+			 log_rpc_fetch_history_handler, NULL);
+
+#endif

@@ -17,10 +17,15 @@
 
 #include <nrf_rpc_cbor.h>
 
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 
 LOG_MODULE_REGISTER(remote);
+
+static K_MUTEX_DEFINE(history_transfer_mtx);
+static uint32_t history_transfer_id;
+static log_rpc_history_handler_t history_handler;
 
 static void log_rpc_msg_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				void *handler_data)
@@ -71,6 +76,94 @@ int log_rpc_set_stream_level(enum log_rpc_level level)
 
 	return 0;
 }
+
+int log_rpc_set_history_level(enum log_rpc_level level)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 1 + sizeof(level));
+	nrf_rpc_encode_uint(&ctx, level);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_HISTORY_LEVEL, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+
+	return 0;
+}
+
+int log_rpc_fetch_history(log_rpc_history_handler_t handler)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	uint32_t transfer_id;
+
+	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+	transfer_id = ++history_transfer_id;
+	history_handler = handler;
+	k_mutex_unlock(&history_transfer_mtx);
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 1 + sizeof(transfer_id));
+	nrf_rpc_encode_uint(&ctx, transfer_id);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_FETCH_HISTORY, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+
+	return 0;
+}
+
+static void log_rpc_put_history_chunk_handler(const struct nrf_rpc_group *group,
+					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	uint32_t transfer_id;
+	enum log_rpc_level level;
+	const char *message;
+	size_t message_size;
+
+	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+
+	transfer_id = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decode_valid(ctx)) {
+		goto out;
+	}
+
+	if (transfer_id != history_transfer_id) {
+		/* Received outdated history chunk. */
+		goto out;
+	}
+
+	if (nrf_rpc_decode_is_null(ctx)) {
+		/* An empty history chunk indicates the end of history. */
+		if (history_handler != NULL) {
+			log_rpc_history_handler_t handler = history_handler;
+
+			history_handler = NULL;
+			handler(LOG_RPC_LEVEL_NONE, NULL, 0);
+		}
+
+		goto out;
+	}
+
+	while (nrf_rpc_decode_valid(ctx) && !nrf_rpc_decode_is_null(ctx)) {
+		level = nrf_rpc_decode_uint(ctx);
+		message = nrf_rpc_decode_buffer_ptr_and_size(ctx, &message_size);
+
+		if (history_handler != NULL && message != NULL) {
+			history_handler(level, message, message_size);
+		}
+	}
+
+out:
+
+	k_mutex_unlock(&history_transfer_mtx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_PUT_HISTORY_CHUNK,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_put_history_chunk_handler,
+			 LOG_RPC_CMD_PUT_HISTORY_CHUNK, log_rpc_put_history_chunk_handler, NULL);
 
 int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length)
 {
