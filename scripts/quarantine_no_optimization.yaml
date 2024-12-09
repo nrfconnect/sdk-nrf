@@ -4,5 +4,16 @@
 # To have an empty list use:
 # - scenarios:
 #     - None
+
 - scenarios:
-    - None
+    - net.openthread.rpc.server
+    - nfc.rpc.server
+  platforms:
+    - native_sim
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30881"
+
+- scenarios:
+    - nrf5340_audio.sd_card_test
+  platforms:
+    - native_sim
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30885"
