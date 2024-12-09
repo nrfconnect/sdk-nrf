@@ -195,6 +195,8 @@
     - wifi.build.crypto_none
     - wifi.build.crypto_default
     - wifi.build.hostapd_ap
+    - wifi.build.dpp
+    - wifi.build.p2p
   platforms:
     - native_sim
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30884"
@@ -430,6 +432,7 @@
 - scenarios:
     - libraries.libc.newlib_nano.thread_safety.userspace.stress
     - libraries.libc.newlib.thread_safety.userspace.stress
+    - arch.arm.swap.common.fpu_sharing.no_optimizations
   platforms:
     - nrf54h20dk/nrf54h20/cpurad
     - nrf54h20dk/nrf54h20/cpuapp
