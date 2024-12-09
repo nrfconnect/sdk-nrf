@@ -74,13 +74,13 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 #
 function(add_doxygen_docset name sources version)
   cmake_parse_arguments(DOXYGEN "STANDALONE" "" "" ${ARGN})
-  set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/html)
+  set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/html/${name})
   set(DOCSET_SOURCE_BASE ${sources})
   set(DOCSET_VERSION ${version})
 
   if(NOT DOXYGEN_STANDALONE)
     set(SUFFIX "-doxygen")
-    set(DOCSET_BUILD_DIR ${DOCSET_BUILD_DIR}/${name}/doxygen)
+    set(DOCSET_BUILD_DIR ${DOCSET_BUILD_DIR}/doxygen)
   endif()
 
   configure_file(${CMAKE_CURRENT_LIST_DIR}/${name}/${name}.doxyfile.in ${CMAKE_BINARY_DIR}/${name}.doxyfile)
