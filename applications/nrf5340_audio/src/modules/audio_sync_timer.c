@@ -58,6 +58,9 @@ static uint8_t dppi_channel_timer_sync_with_rtc;
 
 static volatile uint32_t num_rtc_overflows;
 
+/* Semaphore to wait for one RTC tick when synchronizing the TIMER from a thread callable */
+static K_SEM_DEFINE(sem_sync, 0, 1);
+
 static uint32_t timestamp_from_rtc_and_timer_get(uint32_t ticks, uint32_t remainder_us)
 {
 	const uint64_t rtc_ticks_in_femto_units = 30517578125UL;
@@ -70,12 +73,38 @@ static uint32_t timestamp_from_rtc_and_timer_get(uint32_t ticks, uint32_t remain
 		nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
 		nrfx_err_t ret;
 
+		/* Ensure semphore is taken when here from a thread context */
+		if (k_is_in_isr() == false) {
+			int err;
+
+			do {
+				err = k_sem_take(&sem_sync, K_NO_WAIT);
+			} while (!err);
+		}
+
 		ret = nrfx_dppi_channel_enable(&dppi, dppi_channel_timer_sync_with_rtc);
 		if (ret - NRFX_ERROR_BASE_NUM) {
 			LOG_ERR("nrfx DPPI channel enable error (timer sync): %d", ret);
 		}
 
 		nrfx_rtc_tick_enable(&audio_sync_lf_timer_instance, true);
+
+		/* Ensure to wait for one RTC tick so that TIMER TASKS_CLEAR is triggered */
+		if (k_is_in_isr() == false) {
+			int err;
+
+			/* Semaphore wait of 1 ms is sufficient for 1 RTC tick (~30 us) */
+			err = k_sem_take(&sem_sync, K_MSEC(1));
+			if (err) {
+				LOG_ERR("k_sem_take failed to sync timer: %d", err);
+			}
+
+			/* When thread callable, ensure 1 tick delay between consecutive calls, to
+			 * ensure a new NRF_TIMER TASKS_CAPTURE does not overlap a NRF_RTC
+			 * EVENTS_TICK being triggered.
+			 */
+			k_busy_wait(k_cyc_to_us_floor32(1));
+		}
 	}
 
 	remainder_fs %= rtc_ticks_in_femto_units;
@@ -150,14 +179,17 @@ static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
 		nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
 		nrfx_err_t ret;
 
+		/* Disable further TIMER sync */
 		nrfx_rtc_tick_enable(&audio_sync_lf_timer_instance, false);
 		nrfx_rtc_tick_disable(&audio_sync_lf_timer_instance);
-
 		ret = nrfx_dppi_channel_disable(&dppi, dppi_channel_timer_sync_with_rtc);
 		if (ret - NRFX_ERROR_BASE_NUM) {
 			LOG_ERR("nrfx DPPI channel disable error (timer sync): %d", ret);
 			return;
 		}
+
+		/* Signal any thread context initiated TIMER sync */
+		k_sem_give(&sem_sync);
 	}
 
 	if (int_type == NRFX_RTC_INT_OVERFLOW) {
