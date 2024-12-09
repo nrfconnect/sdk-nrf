@@ -123,8 +123,7 @@ See the :ref:`nfc_samples` and :ref:`lib_nfc` for the samples and libraries that
 MCUboot bootloader support
 **************************
 
-The nRF54L15 DK supports MCUboot as its bootloader.
-The following features are supported:
+Devices in the nRF54L Series support MCUboot as their bootloader and offer the following features:
 
   * Software and hardware-based :ref:`cryptography<ug_nrf54l_cryptography>`
   * Hardware key management
@@ -139,4 +138,4 @@ Supported DFU protocols
 The DFU process in the nRF54L15 DK uses the MCUmgr protocol.
 It can be used for performing updates over Bluetooth® Low Energy (LE) and serial connections.
 
-For instructions on testing, see :ref:`nrf54l_testing_dfu`.
+For details, see :ref:`ug_nrf54l_developing_ble_fota`.

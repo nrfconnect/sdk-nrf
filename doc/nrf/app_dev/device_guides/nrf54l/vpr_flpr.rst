@@ -9,6 +9,7 @@ Working with the FLPR core
 
 .. note::
    The FLPR core support in the |NCS| is currently :ref:`experimental<software_maturity>`.
+   Additionally, it is not yet available for the nRF54L05 and nRF54L10 SoCs.
 
 The nRF54L15 SoC has a dedicated VPR CPU (RISC-V architecture), named *fast lightweight peripheral processor* (FLPR).
 The following peripherals are available for use with the FLPR core, and can be accessed through the appropriate Zephyr Device Driver API:
