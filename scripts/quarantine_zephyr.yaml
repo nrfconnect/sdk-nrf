@@ -187,6 +187,34 @@
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Test not aligned for nrf54l15 - missing snippet settings"
 
+- scenarios:
+    - wifi.build.crypto_enterprise
+    - wifi.build.wps
+    - wifi.build.wpa3
+    - wifi.build.crypto_alt
+    - wifi.build.crypto_none
+    - wifi.build.crypto_default
+    - wifi.build.hostapd_ap
+  platforms:
+    - native_sim
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30884"
+
+- scenarios:
+    - net.sockets.tls12.ec_kex
+    - net.sockets.tls13.ephemeral_kex
+    - net.sockets.tls13.psk_kex.tickets
+    - net.sockets.tls13.ephemeral_kex.tickets
+  platforms:
+    - native_sim
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30873"
+
+- scenarios:
+    - drivers.power_domain.build.pm
+    - drivers.power_domain.build
+  platforms:
+    - native_sim
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30877"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
