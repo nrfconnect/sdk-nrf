@@ -10,9 +10,10 @@
 #include <suit_memptr_storage.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(suit_plat_check_content, CONFIG_SUIT_LOG_LEVEL);
+LOG_MODULE_DECLARE(suit_plat_check_content, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_check_content_mem_mapped(suit_component_t component, struct zcbor_string *content)
+static int suit_plat_check_content_mem_mapped(suit_component_t component,
+					      struct zcbor_string *content)
 {
 	void *impl_data = NULL;
 	int err = suit_plat_component_impl_data_get(component, &impl_data);
@@ -49,22 +50,23 @@ int suit_plat_check_content_mem_mapped(suit_component_t component, struct zcbor_
 	return SUIT_SUCCESS;
 }
 
-int suit_plat_check_content(suit_component_t component, struct zcbor_string *content)
+bool suit_plat_check_content_domain_specific_is_type_supported(suit_component_type_t component_type)
 {
-	struct zcbor_string *component_id = NULL;
-	suit_component_type_t component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
-
-	int err = suit_plat_component_id_get(component, &component_id);
-
-	if (err != SUIT_SUCCESS) {
-		LOG_ERR("Failed to get component id: %d", err);
-		return err;
+	switch (component_type) {
+	case SUIT_COMPONENT_TYPE_MEM:
+		return true;
+	default:
+		break;
 	}
 
-	if (suit_plat_decode_component_type(component_id, &component_type) != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Failed to decode component type");
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
-	}
+	return false;
+}
+
+int suit_plat_check_content_domain_specific(suit_component_t component,
+					    suit_component_type_t component_type,
+					    struct zcbor_string *content)
+{
+	int err = SUIT_ERR_CRASH;
 
 	switch (component_type) {
 	case SUIT_COMPONENT_TYPE_UNSUPPORTED: {
