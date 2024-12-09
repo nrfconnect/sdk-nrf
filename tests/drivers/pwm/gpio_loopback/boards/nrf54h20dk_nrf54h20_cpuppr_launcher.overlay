@@ -18,12 +18,6 @@
 	};
 };
 
-&gpiote130 {
-	owned-channels = < 0 >;
-	nonsecure-channels = < 0 >;
-	child-owned-channels = < 0 >;
-};
-
 &gpio0 {
 	status = "reserved";
 	interrupt-parent = <&cpuppr_clic>;
