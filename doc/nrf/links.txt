@@ -340,6 +340,7 @@
 .. _`Thingy:91 product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91
 .. _`Thingy:91 Downloads`:
 .. _`Thingy:91 product website (downloads)`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91/Download#infotabs
+.. _`Thingy:91 X product page`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-91-X
 
 .. _`nRF21540 DK product page`: https://www.nordicsemi.com/Products/Low-power-short-range-wireless/nRF21540
 .. _`nRF21540 DB product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF21540-DB
@@ -779,8 +780,9 @@
 .. _`Nordic Thingy:53 Regulatory notices`: https://docs.nordicsemi.com/bundle/ug_thingy53/page/UG/thingy53/regulatory/regulatory_notices.html
 
 .. _`Nordic Thingy:91 User Guide`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/intro/frontpage.html
-
 .. _`Measuring Current on Thingy:91`: https://docs.nordicsemi.com/bundle/ug_thingy91/page/UG/thingy91/hw_description/hw_power_current_measurement.html
+
+.. _`Nordic Thingy:91 X User Guide`: https://docs.nordicsemi.com/bundle/ug_thingy91x/page/UG/thingy91x/intro/frontpage.html
 
 .. _`nPM1300`: https://docs.nordicsemi.com/category/npm1300-category
 .. _`nPM1300 Product Specification`: https://docs.nordicsemi.com/bundle/ps_npm1300/page/keyfeatures_html5.html
