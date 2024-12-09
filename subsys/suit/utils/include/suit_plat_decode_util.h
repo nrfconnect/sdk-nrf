@@ -70,11 +70,25 @@ suit_plat_err_t suit_plat_decode_component_number(struct zcbor_string *component
 						  uint32_t *number);
 
 /**
- * @brief Decode uint32_t key_id from zcbor_string
+ * @brief Decode uint32_t key_id from zcbor_string.
  *
- * @param key_id Input zcbor_string key ID
- * @param integer_key_id Output key ID in uint32
- * @return SUIT_PLAT_SUCCESS in case of success, otherwise error code
+ * @param[in]  content  Byte string encoded content.
+ * @param[out] value    Decoded 32-bit unsigned integer content.
+ *
+ * @retval SUIT_PLAT_SUCCESS            On success.
+ * @retval SUIT_PLAT_ERR_INVAL          Invalid parameter, i.e. null pointer.
+ * @retval SUIT_PLAT_ERR_CBOR_DECODING  Unable to decode content as unsigned integer.
+ */
+suit_plat_err_t suit_plat_decode_content_uint32(struct zcbor_string *content, uint32_t *value);
+
+/**
+ * @brief Decode uint32_t key_id from zcbor_string.
+ *
+ * @param[in]  key_id          Input zcbor_string key ID.
+ * @param[out] integer_key_id  Output key ID as uint32.
+ *
+ * @retval SUIT_PLAT_SUCCESS            On success.
+ * @retval SUIT_PLAT_ERR_CBOR_DECODING  Unable to decode content as unsigned integer.
  */
 suit_plat_err_t suit_plat_decode_key_id(struct zcbor_string *key_id, uint32_t *integer_key_id);
 
