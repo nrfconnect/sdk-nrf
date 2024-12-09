@@ -15,6 +15,11 @@
 
 LOG_MODULE_REGISTER(app);
 
+#define MIN_CONN_INTERVAL (500) /* Minimum Connection Interval (interval_min * 1.25 ms) */
+#define MAX_CONN_INTERVAL (500) /* Maximum Connection Interval (interval_min * 1.25 ms) */
+#define CONN_LATENCY      (0)
+#define CONN_TIMEOUT      (400) /* Supervision Timeout (timeout * 10 ms) */
+
 typedef enum {
 	/** The central scans for connectable addresses, then
 	 * disables the scanner before starting to establish a
@@ -179,25 +184,26 @@ static void connected(struct bt_conn *conn, uint8_t err)
 			k_sem_give(&all_devices_connected_sem);
 			return;
 		}
+
+		struct bt_le_conn_param conn_param = {
+			.interval_min = MIN_CONN_INTERVAL,
+			.interval_max = MAX_CONN_INTERVAL,
+			.latency = CONN_LATENCY,
+			.timeout = CONN_TIMEOUT,
+		};
+
+		/** A connection parameter update with a longer connection interval
+		 * is done to make more time available for scanning.
+		 */
+		int zephyr_err = bt_conn_le_param_update(conn, &conn_param);
+
+		if (zephyr_err) {
+			LOG_ERR("bt_conn_le_param_update failed (err %d)", zephyr_err);
+		}
+
 	}
 
 	connection_establishment_ongoing = false;
-
-	struct bt_le_conn_param conn_param = {
-		.interval_min = 500, /* Minimum Connection Interval (interval_min * 1.25 ms) */
-		.interval_max = 500, /* Maximum Connection Interval (interval_max * 1.25 ms) */
-		.latency = 0,
-		.timeout = 400, /* Supervision Timeout (timeout * 10 ms) */
-	};
-
-	/** A connection parameter update with a longer connection interval
-	 * is done to make more time available for scanning.
-	 */
-	int zephyr_err = bt_conn_le_param_update(conn, &conn_param);
-
-	if (zephyr_err) {
-		LOG_ERR("bt_conn_le_param_update failed (err %d)", zephyr_err);
-	}
 
 	if (active_conn_establishment_mode == SEQUENTIAL_SCAN_AND_CONNECT) {
 		scan_start();
