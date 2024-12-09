@@ -79,20 +79,26 @@ if nrf_mapping:
 
 # -- Options for doxyrunner plugin ---------------------------------------------
 
+_doxyrunner_outdir = utils.get_builddir() / "html" / "nrfxlib" / "doxygen"
+
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
-doxyrunner_doxyfile = NRF_BASE / "doc" / "nrfxlib" / "nrfxlib.doxyfile.in"
-doxyrunner_outdir = utils.get_builddir() / "html" / "nrfxlib" / "doxygen"
-doxyrunner_fmt = True
-doxyrunner_fmt_vars = {
-    "NRF_BASE": str(NRF_BASE),
-    "DOCSET_SOURCE_BASE": str(NRFXLIB_BASE),
-    "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
-    "DOCSET_VERSION": version,
+doxyrunner_projects = {
+    "nrfxlib": {
+        "doxyfile": NRF_BASE / "doc" / "nrfxlib" / "nrfxlib.doxyfile.in",
+        "outdir": _doxyrunner_outdir,
+        "fmt": True,
+        "fmt_vars": {
+            "NRF_BASE": str(NRF_BASE),
+            "DOCSET_SOURCE_BASE": str(NRFXLIB_BASE),
+            "DOCSET_BUILD_DIR": str(_doxyrunner_outdir),
+            "DOCSET_VERSION": version,
+        }
+    }
 }
 
 # -- Options for doxybridge plugin ---------------------------------------------
 
-doxybridge_dir = doxyrunner_outdir
+doxybridge_projects = {"nrfxlib": _doxyrunner_outdir}
 
 # -- Options for warnings_filter -----------------------------------------------
 
