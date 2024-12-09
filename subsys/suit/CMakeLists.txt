@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory(provisioning)
 add_subdirectory(app_tools)
 add_subdirectory_ifdef(CONFIG_SUIT plat_err)
 add_subdirectory_ifdef(CONFIG_SUIT memory_layout)

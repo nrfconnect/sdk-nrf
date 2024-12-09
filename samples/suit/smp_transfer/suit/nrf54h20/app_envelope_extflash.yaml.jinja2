@@ -1,5 +1,5 @@
-{%- set mpi_application_vendor_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
-{%- set mpi_application_class_name = application['config']['CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
+{%- set mpi_application_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
+{%- set mpi_application_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
 SUIT_Envelope_Tagged:
   suit-authentication-wrapper:
     SuitDigest:
@@ -99,12 +99,7 @@ SUIT_Envelope_Tagged:
       - suit-send-record-failure
 {%- endif %}
 
-{%- if application['dt'].label2node['suit_storage_partition'].regs[0].size == 24576 %}
-    # Application DTS contains larger SUIT storage - use legacy encoding
-    suit-install-legacy:
-{%- else %}
     suit-install:
-{%- endif %}
 {%- if flash_companion is defined %}
     - suit-directive-set-component-index: 1
     - suit-directive-override-parameters:

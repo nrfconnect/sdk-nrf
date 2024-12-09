@@ -86,14 +86,14 @@ Modifying class and vendor identifiers
 Replacing and using the correct class and vendor UUIDs prevents conflicts in the DFU process.
 The UUIDs allow to ensure that the firmware is compatible with a given device.
 
-This can be done by changing the class and vendor names using Kconfig options (for example in the :file:`prj.conf` file):
+This can be done by changing the class and vendor names using sysbuild Kconfig options (for example in the :file:`sysbuild.conf` file):
 
 .. code-block::
 
-   CONFIG_SUIT_MPI_ROOT_VENDOR_NAME="ACME Corp"
-   CONFIG_SUIT_MPI_ROOT_CLASS_NAME="Light bulb root"
-   CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME="ACME Corp"
-   CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME="Light bulb"
+   SB_CONFIG_SUIT_MPI_ROOT_VENDOR_NAME="ACME Corp"
+   SB_CONFIG_SUIT_MPI_ROOT_CLASS_NAME="Light bulb root"
+   SB_CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME="ACME Corp"
+   SB_CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME="Light bulb"
 
 After rebuilding you can find the following part in the :file:`./build/DFU/application.yaml` file.
 
