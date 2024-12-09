@@ -183,6 +183,7 @@ static bool scan_check_broadcast_source(struct bt_data *data, void *user_data)
 static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf_simple *ad)
 {
 	struct broadcast_source source = {.id = INVALID_BROADCAST_ID};
+	static bool id_change_printed;
 
 	/* We are only interested in non-connectable periodic advertisers */
 	if ((info->adv_props & BT_GAP_ADV_PROP_CONNECTABLE) || info->interval == 0) {
@@ -191,22 +192,32 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 
 	bt_data_parse(ad, scan_check_broadcast_source, (void *)&source);
 
-	if (source.id != INVALID_BROADCAST_ID) {
-		if (srch_brdcast_id < BRDCAST_ID_NOT_USED) {
-			/* Valid srch_brdcast_id supplied */
-			if (source.id != srch_brdcast_id) {
-				/* Broadcaster does not match src_brdcast_id */
-				return;
-			}
+	if (source.id == INVALID_BROADCAST_ID) {
+		return;
+	}
 
-		} else if (strncmp(source.name, srch_name, BLE_SEARCH_NAME_MAX_LEN) != 0) {
-			/* Broadcaster does not match src_name */
+	if (srch_brdcast_id < BRDCAST_ID_NOT_USED) {
+		/* Valid srch_brdcast_id supplied */
+		if (source.id != srch_brdcast_id) {
+			/* Broadcaster does not match src_brdcast_id */
+			if (!id_change_printed &&
+			    strncmp(source.name, srch_name, BLE_SEARCH_NAME_MAX_LEN) == 0) {
+				LOG_INF("%s found with ID: 0x%06x\r\n"
+					"Looking for ID: 0x%06x. Broadcaster may have changed ID",
+					source.name, source.id, srch_brdcast_id);
+				id_change_printed = true;
+			}
 			return;
 		}
 
-		LOG_DBG("Broadcast source %s found, id: 0x%06x", source.name, source.id);
-		periodic_adv_sync(info, source);
+	} else if (strncmp(source.name, srch_name, BLE_SEARCH_NAME_MAX_LEN) != 0) {
+		/* Broadcaster does not match src_name */
+		return;
 	}
+
+	LOG_DBG("Broadcast source %s found, id: 0x%06x", source.name, source.id);
+	id_change_printed = false;
+	periodic_adv_sync(info, source);
 }
 
 static void pa_synced_cb(struct bt_le_per_adv_sync *sync,
