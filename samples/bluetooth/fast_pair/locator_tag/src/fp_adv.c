@@ -141,6 +141,8 @@ static int fp_adv_payload_set(bool rpa_rotated, bool new_session)
 	struct bt_data ad[ad_len];
 	struct bt_data sd[sd_len];
 
+	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+
 	/* Set advertising mode of Fast Pair advertising data provider. */
 	fp_adv_prov_configure(fp_adv_mode);
 
@@ -181,26 +183,27 @@ static int bt_stack_advertising_update(void)
 	int err;
 	struct bt_le_ext_adv_start_param ext_adv_start_param = {0};
 
-	err = bt_le_ext_adv_stop(fp_adv_set);
-	if (err) {
-		LOG_ERR("Fast Pair: cannot stop advertising (err: %d)", err);
-		return err;
-	}
+	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+	__ASSERT(!fp_conn, "Fast Pair: invalid connection state");
 
 	if (fp_adv_mode == APP_FP_ADV_MODE_OFF) {
-		return 0;
-	}
+		err = bt_le_ext_adv_stop(fp_adv_set);
+		if (err) {
+			LOG_ERR("Fast Pair: cannot stop advertising (err: %d)", err);
+			return err;
+		}
+	} else {
+		err = fp_adv_payload_set(false, true);
+		if (err) {
+			LOG_ERR("Fast Pair: cannot set advertising payload (err: %d)", err);
+			return err;
+		}
 
-	err = fp_adv_payload_set(false, true);
-	if (err) {
-		LOG_ERR("Fast Pair: cannot set advertising payload (err: %d)", err);
-		return err;
-	}
-
-	err = bt_le_ext_adv_start(fp_adv_set, &ext_adv_start_param);
-	if (err) {
-		LOG_ERR("Fast Pair: bt_le_ext_adv_start returned error: %d", err);
-		return err;
+		err = bt_le_ext_adv_start(fp_adv_set, &ext_adv_start_param);
+		if (err) {
+			LOG_ERR("Fast Pair: bt_le_ext_adv_start returned error: %d", err);
+			return err;
+		}
 	}
 
 	return 0;
@@ -209,16 +212,6 @@ static int bt_stack_advertising_update(void)
 static void fp_advertising_update(void)
 {
 	int err;
-
-	if (!fp_adv_set) {
-		/* Advertising set is not prepared yet. */
-		return;
-	}
-
-	if (fp_conn) {
-		/* Only one Fast Pair connection is supported. */
-		return;
-	}
 
 	err = bt_stack_advertising_update();
 	if (!err) {
@@ -347,7 +340,9 @@ static int fp_adv_set_teardown(void)
 
 static void fp_adv_restart_work_handle(struct k_work *w)
 {
-	fp_advertising_update();
+	if (app_fp_adv_is_ready()) {
+		fp_advertising_update();
+	}
 }
 
 static void fp_adv_conn_clear(void)
@@ -446,13 +441,17 @@ static uint8_t fp_adv_trigger_idx_get(struct app_fp_adv_trigger *trigger)
 
 static void fp_adv_mode_set(enum app_fp_adv_mode adv_mode)
 {
+	if (fp_adv_mode == adv_mode) {
+		return;
+	}
+
 	fp_adv_mode = adv_mode;
 
 	if (!fp_conn) {
 		/* Support only one connection for the Fast Pair advertising set. */
 		fp_advertising_update();
 	} else {
-		LOG_INF("Fast Pair: automatically switched to %s advertising mode",
+		LOG_INF("Fast Pair: advertising switched to %s mode",
 			fp_adv_mode_description[fp_adv_mode]);
 		LOG_INF("Fast Pair: advertising inactive due to an active connection");
 	}
@@ -493,15 +492,23 @@ void app_fp_adv_request(struct app_fp_adv_trigger *trigger, bool enable)
 	LOG_INF("Fast Pair: advertising request from trigger \"%s\": %sable",
 		trigger->id, enable ? "en" : "dis");
 
-	if (is_enabled) {
+	if (app_fp_adv_is_ready()) {
 		fp_adv_mode_update();
 	}
 }
 
 void app_fp_adv_payload_refresh(void)
 {
-	if (fp_adv_mode != APP_FP_ADV_MODE_OFF) {
-		fp_adv_mode_set(fp_adv_mode);
+	int err;
+
+	if (fp_adv_mode == APP_FP_ADV_MODE_OFF) {
+		return;
+	}
+
+	err = fp_adv_payload_set(false, true);
+	if (err) {
+		LOG_ERR("Fast Pair: cannot refresh the advertising payload (err: %d)", err);
+		return;
 	}
 }
 
