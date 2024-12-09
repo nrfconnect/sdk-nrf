@@ -42,6 +42,7 @@ extern const struct sx_pk_ecurve sx_curve_secp192k1;
 extern const struct sx_pk_ecurve sx_curve_secp256k1;
 extern const struct sx_pk_ecurve sx_curve_x25519;
 extern const struct sx_pk_ecurve sx_curve_x448;
+extern const struct sx_pk_ecurve sx_curve_sm2;
 
 /** Write the generator point of the curve into the slots (internal)
  *
@@ -77,15 +78,31 @@ static inline const char *sx_pk_field_size(const struct sx_pk_ecurve *curve)
 	return curve->params;
 }
 
-/** Return a pointer to the order of the given curve
+/** Return a pointer to the order of the base point of the curve
+ *
+ * This function works only for Weierstrass curves
  *
  * @param[in] curve Initialised curve
- * @return Pointer to the order of the given curve
+ * @return Pointer to the order of the base point of the curve
  */
 static inline const char *sx_pk_curve_order(const struct sx_pk_ecurve *curve)
 {
 	return &curve->params[curve->sz];
 }
+
+/** Export the (x, y) coordinates of the base point of an elliptic curve
+ *
+ * This function works only for Weierstrass curves
+ *
+ * @param[in] curve Initialised curve
+ * @param[out] basepoint Buffer where the coordinates of the base point are written.
+ *
+ * The x and y coordinates are written consecutively in the basepoint output
+ * buffer. The size of this buffer must be 2*sx_pk_curve_opsize().
+ *
+ * The coordinates values are exported in big endian format.
+ */
+void sx_pk_curve_read_base_point(const struct sx_pk_ecurve *curve, char *basepoint);
 
 /**
  * Return a pointer to the generator point of the given curve.
