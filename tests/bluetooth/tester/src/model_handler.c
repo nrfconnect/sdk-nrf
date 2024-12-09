@@ -403,81 +403,6 @@ static void light_ctl_status(struct light_ctl_ctx *ctx,
 				  ctx->light_temp_ctx.remaining);
 }
 
-static void periodic_led_lightness_work(struct k_work *work)
-{
-	struct lightness_ctx *ctx =
-		CONTAINER_OF(work, struct lightness_ctx, work.work);
-
-	ctx->remaining -= ctx->period;
-
-	if ((ctx->remaining <= ctx->period) ||
-	    (abs(ctx->target - ctx->current) <= PWM_SIZE_STEP)) {
-		ctx->current = ctx->target;
-		ctx->remaining = 0;
-		/* Publish the new value at the end of the transition */
-		struct bt_mesh_lightness_status status;
-
-		lightness_status(ctx, &status);
-		bt_mesh_lightness_srv_pub(ctx->srv, NULL, &status);
-		return;
-	} else if (ctx->target > ctx->current) {
-		ctx->current += PWM_SIZE_STEP;
-	} else {
-		ctx->current -= PWM_SIZE_STEP;
-	}
-
-	k_work_reschedule(&ctx->work, K_MSEC(ctx->period));
-}
-
-/* Forward declaration */
-static struct lightness_ctx lightness_ctx;
-
-static void light_set(struct bt_mesh_lightness_srv *srv,
-		      struct bt_mesh_msg_ctx *ctx,
-		      const struct bt_mesh_lightness_set *set,
-		      struct bt_mesh_lightness_status *rsp)
-{
-	uint32_t step_cnt;
-
-	lightness_ctx.target = set->lvl;
-	if (set->transition) {
-		lightness_ctx.remaining = set->transition->time;
-	} else {
-		lightness_ctx.remaining = 0;
-	}
-
-	if (lightness_ctx.remaining) {
-		step_cnt = abs(lightness_ctx.target - lightness_ctx.current) / PWM_SIZE_STEP;
-		start_new_lightness_trans(step_cnt, set->transition, &lightness_ctx);
-	} else {
-		lightness_ctx.current = lightness_ctx.target;
-	}
-
-	lightness_status(&lightness_ctx, rsp);
-}
-
-static void light_get(struct bt_mesh_lightness_srv *srv,
-		      struct bt_mesh_msg_ctx *ctx,
-		      struct bt_mesh_lightness_status *rsp)
-{
-	lightness_status(&lightness_ctx, rsp);
-}
-
-static const struct bt_mesh_lightness_srv_handlers lightness_srv_handlers = {
-	.light_set = light_set,
-	.light_get = light_get,
-};
-
-static struct bt_mesh_lightness_srv lightness_srv = BT_MESH_LIGHTNESS_SRV_INIT(
-			&lightness_srv_handlers);
-
-static struct lightness_ctx lightness_ctx = {
-	.srv = &lightness_srv,
-};
-
-static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
-	BT_MESH_LIGHT_CTRL_SRV_INIT(&lightness_srv);
-
 static void
 start_new_light_temp_trans(uint32_t step_cnt,
 			   const struct bt_mesh_model_transition *transition,
@@ -1159,6 +1084,9 @@ static struct light_xyl_hsl_ctx xyl_hsl_ctx = {
 	}
 };
 
+static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
+	BT_MESH_LIGHT_CTRL_SRV_INIT(&xyl_hsl_lightness_srv);
+
 static void get_faults(uint8_t *faults, uint8_t faults_size, uint8_t *dst,
 		       uint8_t *count)
 {
@@ -1307,17 +1235,13 @@ static struct bt_mesh_elem elements[] = {
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(40,
 		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_LIGHTNESS_SRV(&lightness_srv)),
+			     BT_MESH_MODEL_LIGHTNESS_SRV(&xyl_hsl_lightness_srv),
+			     BT_MESH_MODEL_LIGHT_XYL_SRV(&xyl_hsl_ctx.xyl_ctx.srv),
+			     BT_MESH_MODEL_LIGHT_HSL_SRV(&xyl_hsl_ctx.hsl_ctx.srv)),
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(41,
 		     BT_MESH_MODEL_LIST(
 			     BT_MESH_MODEL_LIGHT_CTRL_SRV(&light_ctrl_srv)),
-		     BT_MESH_MODEL_NONE),
-	BT_MESH_ELEM(50,
-		     BT_MESH_MODEL_LIST(
-			     BT_MESH_MODEL_LIGHTNESS_SRV(&xyl_hsl_lightness_srv),
-			     BT_MESH_MODEL_LIGHT_XYL_SRV(&xyl_hsl_ctx.xyl_ctx.srv),
-			     BT_MESH_MODEL_LIGHT_HSL_SRV(&xyl_hsl_ctx.hsl_ctx.srv)),
 		     BT_MESH_MODEL_NONE),
 	BT_MESH_ELEM(51,
 		     BT_MESH_MODEL_LIST(
@@ -1366,7 +1290,6 @@ static const struct bt_mesh_comp comp = {
 const struct bt_mesh_comp *model_handler_init(void)
 {
 	k_work_init_delayable(&lvl_ctx.work, periodic_led_work);
-	k_work_init_delayable(&lightness_ctx.work, periodic_led_lightness_work);
 	k_work_init_delayable(&xyl_hsl_ctx.xyl_ctx.work, periodic_light_xy_work);
 	k_work_init_delayable(&xyl_hsl_ctx.lightness_ctx.work,
 			      periodic_light_xyl_hsl_lightness_work);
