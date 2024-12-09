@@ -22,8 +22,8 @@ struct advertiser_info {
 	uint8_t id;                   /* ID associated with the advertiser */
 };
 
-#define MIN_ADV_INTERVAL (800)
-#define MAX_ADV_INTERVAL (800)
+#define MIN_ADV_INTERVAL (700)
+#define MAX_ADV_INTERVAL (700)
 
 static struct advertiser_info advertisers[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 
