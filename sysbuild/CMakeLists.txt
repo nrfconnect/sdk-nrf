@@ -242,6 +242,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
       if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU)
         set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU y)
+        if(NOT SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU_SKIP_WARNING)
+          message(WARNING "
+          ------------------------------------------------------------------------------
+          --- WARNING: MCUboot uses KMU stored keys for signature verification. Make ---
+          --- sure to use `west ncs-provision` to manually provision the bootloader. ---
+          ------------------------------------------------------------------------------
+          ")
+        endif()
       else()
         set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU n)
       endif()
