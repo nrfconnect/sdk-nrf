@@ -193,13 +193,12 @@ Build configuration additions for MCUboot in the direct-xip mode
 FOTA updates are also supported when MCUboot is in the direct-xip mode.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
 It can be used either with or without the revert mechanism support.
-For more information about the direct-xip mode and the revert mechanism support, go to the Equal slots (direct-xip) section on the :doc:`mcuboot:design` page.
+For more information about the direct-xip mode and the revert mechanism support, go to the *Equal slots* (direct-xip) section on the :doc:`mcuboot:design` page.
 
 .. note::
-   direct-xip mode can not be combined with the image encryption.
-
-.. note::
-   building a project with direct-xip for nRF54l15 SoC target mode requires static partition manager file for partitioning, see known issues.
+   direct-xip mode cannot be combined with image encryption.
+   In addition, when building a project with direct-xip for the nRF54L15 SoC target, a static partition manager file is required for partitioning.
+   See NCSDK-30119 issue on the :ref:`known_issues` page.
 
 To use MCUboot in the direct-xip mode together with FOTA updates, do the following:
 
