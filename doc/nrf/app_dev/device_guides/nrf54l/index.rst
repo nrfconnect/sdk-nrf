@@ -25,7 +25,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
        | `Quick Start app`_
        | `User Guide <nRF54L15 DK User Guide_>`_
      - | `nRF54L15 DK product page <nRF54L15 DK_>`_
-       | `nRF54L15 System-on-Chip (SoC) <nRF54L05_>`_
+       | `nRF54L15 System-on-Chip (SoC) <nRF54L15 System-on-Chip_>`_
    * - nRF54L10 emulation on the nRF54L15 DK
      - PCA10156
      - ``nrf54l15dk/nrf54l10/cpuapp``
@@ -35,7 +35,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - PCA10156
      - ``nrf54l15dk/nrf54l05/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_
-     - | `nRF54L05 System-on-Chip (SoC) <nRF54L15 System-on-Chip_>`_
+     - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
 
 .. _ug_nrf54L15_revision:
 
@@ -64,7 +64,6 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
    features
    zms
    cryptography
-   testing_dfu
    vpr_flpr
    building_nrf54l
    nrf54l_signing_with_payload

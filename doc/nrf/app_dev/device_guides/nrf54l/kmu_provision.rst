@@ -1,14 +1,13 @@
 .. _ug_nrf54l_developing_provision_kmu:
 
-
-nRF54L15 KMU provisioning
-#########################
+Performing KMU provisioning
+###########################
 
 .. contents::
    :local:
    :depth: 2
 
-The nRF54L15 DK is equipped with Hardware Key Management Unit (KMU), that requires provisioning when in use.
+The nRF54L devices are equipped with Hardware Key Management Unit (KMU), that requires provisioning when in use.
 The |NCS| provides a west command, ``ncs-provision``, allowing to upload keys to the device though the Serial Write Debug (SWD) interface.
 
 Prerequisites
@@ -66,7 +65,6 @@ Once you have an unprovisioned SoC, upload keys to the board by running the foll
     west ncs-provision upload -s nrf54l15 -k ed25519.pem -k ed25519-1.pem -k ed25519-2.pem
 
 * Parameter ``-s (-–soc)`` specifies the target device.
-  Currently, only the nRF54L15 DK is supported.
 
 * Parameter ``-k (-–key)`` specifies the private key PEM files to be provisioned to the SoC.
   You can specify up to three keys.
