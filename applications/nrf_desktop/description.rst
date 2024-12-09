@@ -952,6 +952,21 @@ See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for information abou
 
 .. nrf_desktop_fastpair_important_end
 
+nRF54L MCUboot provisioning
+===========================
+
+nRF54L-based nRF Desktop devices enable hardware cryptography for the MCUboot bootloader.
+Public key used by the MCUboot for the application image validation is securely stored in hardware Key Management Unit (KMU).
+In this use case, application image is automatically signed by the |NCS| build system, but the public key is not automatically provisioned to device together with programming the bootloader and the application images (``west flash``).
+
+Use ``west ncs-provision`` command to provision the MCUboot keys before programming the bootloader and the application images.
+Make sure that the provisioned public key is generated from the private key that was used to sign the application image.
+The private keys are stored in the application configuration directory of the board.
+Path to the used private key is defined by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` sysbuild Kconfig option.
+Only one public key needs to be provisioned to an nRF Desktop device.
+Keep in mind that device must be provisioned again after it is erased.
+See :ref:`ug_nrf54l_developing_provision_kmu` documentation for nRF54L KMU provisionig details.
+
 .. _nrf_desktop_testing_steps:
 
 Testing
