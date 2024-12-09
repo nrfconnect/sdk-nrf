@@ -422,6 +422,15 @@ static struct bt_fast_pair_fmdn_info_cb fmdn_info_cb = {
 	.provisioning_state_changed = fmdn_provisioning_state_changed,
 };
 
+static void fp_adv_state_changed(bool enabled)
+{
+	app_ui_state_change_indicate(APP_UI_STATE_FP_ADV, enabled);
+}
+
+static const struct app_fp_adv_info_cb fp_adv_info_cb = {
+	.state_changed = fp_adv_state_changed,
+};
+
 static int fast_pair_prepare(void)
 {
 	int err;
@@ -435,6 +444,12 @@ static int fast_pair_prepare(void)
 	err = app_fp_adv_id_set(APP_BT_ID);
 	if (err) {
 		LOG_ERR("Fast Pair: app_fp_adv_id_set failed (err %d)", err);
+		return err;
+	}
+
+	err = app_fp_adv_info_cb_register(&fp_adv_info_cb);
+	if (err) {
+		LOG_ERR("Fast Pair: app_fp_adv_info_cb_register failed (err %d)", err);
 		return err;
 	}
 

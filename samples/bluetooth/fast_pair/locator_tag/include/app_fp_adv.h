@@ -108,6 +108,37 @@ int app_fp_adv_id_set(uint8_t id);
  */
 uint8_t app_fp_adv_id_get(void);
 
+/** Fast Pair advertising information callback descriptor. */
+struct app_fp_adv_info_cb {
+	/** Notify that the advertising state has changed.
+	 *
+	 * This information callback is used to track the state of the Fast Pair advertising set.
+	 * The current state can be used to signal the application mode in the user interface
+	 * (for example, on LEDs).
+	 *
+	 *  @param enable True:  Fast Pair advertising is enabled.
+	 *                False: Fast Pair advertising is disabled.
+	 */
+	void (*state_changed)(bool enabled);
+};
+
+/** Register Fast Pair advertising information callbacks.
+ *
+ *  This function registers an instance of information callbacks. The registered instance needs to
+ *  persist in the memory after this function exits, as it is used directly without the copy
+ *  operation. It is possible to register only one instance of callbacks with this API.
+ *
+ *  This function can only be called before enabling Fast Pair with the @ref app_fp_adv_enable
+ *  API.
+ *
+ *  This function must be called in the cooperative thread context.
+ *
+ *  @param cb Callback struct.
+ *
+ *  @return Zero on success or negative error code otherwise
+ */
+int app_fp_adv_info_cb_register(const struct app_fp_adv_info_cb *cb);
+
 /** Initialize the Fast Pair advertising module.
  *
  * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
