@@ -153,6 +153,14 @@ After programming the sample to your development kit, complete the following ste
 
                openssl s_client -connect 192.0.2.1:4243 -cipher AES128-SHA256 -CAfile certs/rsa/root_cert.pem
 
+         .. note::
+
+            To establish the connection with a pre-shared key (PSK), use this ``openssl`` command:
+
+            .. code-block:: console
+
+               openssl s_client -connect 192.0.2.1:4243 -psk 010102030405060708090a0b0c0d0e0f -psk_identity PSK_identity
+
          For visualizing a list of the available cipher suites for openssl, use the following command:
 
          .. code-block:: console
@@ -188,6 +196,14 @@ After programming the sample to your development kit, complete the following ste
             .. code-block:: console
 
                openssl s_server -accept 4243 -cipher AES128-SHA256 -cert certs/rsa/cert.pem -key certs/rsa/cert.key
+
+         .. note::
+
+            To establish the connection with a pre-shared key (PSK), use this ``openssl`` command:
+
+            .. code-block:: console
+
+               openssl s_server -accept 4243 -psk 010102030405060708090a0b0c0d0e0f -psk_identity PSK_identity -nocert
 
          For visualizing a list of the available cipher suites for openssl, use the following command:
 
@@ -227,6 +243,14 @@ After programming the sample to your development kit, complete the following ste
 
                openssl s_client -dtls -connect 192.0.2.1:4243 -cipher AES128-SHA256 -CAfile certs/rsa/root_cert.pem
 
+         .. note::
+
+            To establish the connection with a pre-shared key (PSK), use this ``openssl`` command:
+
+            .. code-block:: console
+
+               openssl s_client -dtls -connect 192.0.2.1:4243 -psk 010102030405060708090a0b0c0d0e0f -psk_identity PSK_identity
+
          For visualizing a list of the available cipher suites for openssl, use the following command:
 
          .. code-block:: console
@@ -264,6 +288,14 @@ After programming the sample to your development kit, complete the following ste
             .. code-block:: console
 
                openssl s_server -dtls -accept 4243 -cipher AES128-SHA256 -cert certs/rsa/cert.pem -key certs/rsa/cert.key
+
+         .. note::
+
+            To establish the connection with a pre-shared key (PSK), use this ``openssl`` command:
+
+            .. code-block:: console
+
+               openssl s_server -dtls -accept 4243 -psk 010102030405060708090a0b0c0d0e0f -psk_identity PSK_identity -nocert
 
          For visualizing a list of the available cipher suites for openssl, use the following command:
 
