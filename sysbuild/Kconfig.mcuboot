@@ -55,6 +55,7 @@ config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
 
 config MCUBOOT_MAX_UPDATEABLE_IMAGES
 	int
+	default 1 if MCUBOOT_MODE_SINGLE_APP
 	default 4
 
 config MCUBOOT_APPLICATION_IMAGE_NUMBER
@@ -63,7 +64,7 @@ config MCUBOOT_APPLICATION_IMAGE_NUMBER
 
 config MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
 	int
-	default 1 if NETCORE_APP_UPDATE
+	default 1 if NETCORE_APP_UPDATE && !MCUBOOT_MODE_SINGLE_APP
 	default -1
 
 config MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
@@ -177,6 +178,7 @@ config MCUBOOT_USE_ALL_AVAILABLE_RAM
 config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 	bool "Network core multi-image update (in single operation)"
 	depends on NETCORE_APP_UPDATE
+	depends on !MCUBOOT_MODE_SINGLE_APP
 	help
 	  If selected, network core image updates can be applied in a single operation. This is
 	  required if the secondary partition resides in off-chip memory.
