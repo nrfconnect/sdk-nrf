@@ -93,7 +93,7 @@ Developing with PMICs
 Security
 ========
 
-|no_changes_yet_note|
+  * Added support for HKDF-Expand and HKDF-Extract in CRACEN.
 
 Protocols
 =========
