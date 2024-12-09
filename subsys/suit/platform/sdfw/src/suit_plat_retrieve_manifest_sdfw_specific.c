@@ -27,8 +27,8 @@ int suit_plat_retrieve_manifest_domain_specific(struct zcbor_string *component_i
 	case SUIT_COMPONENT_TYPE_INSTLD_MFST: {
 		suit_manifest_class_id_t *class_id;
 
-		if (suit_plat_decode_manifest_class_id(component_id, &class_id)
-		    != SUIT_PLAT_SUCCESS) {
+		if (suit_plat_decode_manifest_class_id(component_id, &class_id) !=
+		    SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Unable to decode manifest class ID");
 			ret = SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 			break;

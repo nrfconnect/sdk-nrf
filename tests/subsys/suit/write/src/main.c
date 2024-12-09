@@ -32,6 +32,11 @@ static void test_before(void *data)
 	FFF_RESET_HISTORY();
 }
 
+static struct zcbor_string valid_manifest_component_id = {
+	.value = (const uint8_t *)0x1234,
+	.len = 123,
+};
+
 ZTEST_SUITE(write_tests, NULL, NULL, test_before, NULL, NULL);
 
 ZTEST(write_tests, test_write_to_flash_sink_OK)
@@ -61,7 +66,7 @@ ZTEST(write_tests, test_write_to_flash_sink_OK)
 	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
 	zassert_equal(ret, SUIT_PLAT_SUCCESS, "cannot write to in-place updateable component");
 
-	ret = suit_plat_write(dst_handle, &source, NULL);
+	ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_write failed - error %i", ret);
 
 	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
@@ -92,7 +97,7 @@ ZTEST(write_tests, test_write_to_ram_sink_OK)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_write(dst_handle, &source, NULL);
+	ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_write failed - error %i", ret);
 
 	ret = suit_plat_release_component_handle(dst_handle);
@@ -120,7 +125,7 @@ ZTEST(write_tests, test_write_flash_sink_NOK_size_not_aligned)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_write(dst_handle, &source, NULL);
+	ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS, "suit_plat_write should have failed on erase");
 
 	ret = suit_plat_release_component_handle(dst_handle);
@@ -134,7 +139,7 @@ ZTEST(write_tests, test_write_flash_sink_NOK_handle_released)
 	/* handle that will be used as destination */
 	suit_component_t dst_handle = 0;
 
-	int ret = suit_plat_write(dst_handle, &source, NULL);
+	int ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, NULL);
 
 	zassert_not_equal(ret, SUIT_SUCCESS, "suit_plat_write should have failed - invalid handle");
 }
@@ -156,7 +161,7 @@ ZTEST(write_tests, test_write_to_flash_sink_NOK_source_null)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_write(dst_handle, NULL, NULL);
+	ret = suit_plat_write(dst_handle, NULL, &valid_manifest_component_id, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS, "suit_plat_write should have failed - source null");
 
 	ret = suit_plat_release_component_handle(dst_handle);
@@ -182,7 +187,7 @@ ZTEST(write_tests, test_write_to_flash_sink_NOK_source_value_null)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_write(dst_handle, &source, NULL);
+	ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS,
 			  "suit_plat_write should have failed - source value null");
 
@@ -209,7 +214,7 @@ ZTEST(write_tests, test_write_to_flash_sink_NOK_source_len_0)
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
 
-	ret = suit_plat_write(dst_handle, &source, NULL);
+	ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, NULL);
 	zassert_not_equal(ret, SUIT_SUCCESS, "suit_plat_write should have failed - source len 0");
 
 	ret = suit_plat_release_component_handle(dst_handle);

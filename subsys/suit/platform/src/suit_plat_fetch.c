@@ -92,6 +92,7 @@ static int verify_and_get_sink(suit_component_t dst_handle, struct stream_sink *
 #endif /* CONFIG_SUIT_STREAM */
 
 int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
+			  struct zcbor_string *manifest_component_id,
 			  struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
@@ -99,6 +100,7 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	struct stream_sink dst_sink = {0};
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+	(void)manifest_component_id;
 
 	/*
 	 * Validate streaming operation.
@@ -141,6 +143,7 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 }
 
 int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
+		    struct zcbor_string *manifest_component_id,
 		    struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
@@ -148,6 +151,7 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+	(void)manifest_component_id;
 
 	/*
 	 * Validate streaming operation.
@@ -222,6 +226,7 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 }
 
 int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_string *payload,
+				     struct zcbor_string *manifest_component_id,
 				     struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
@@ -229,6 +234,7 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+	(void)manifest_component_id;
 
 	/*
 	 * Validate streaming operation.
@@ -289,6 +295,7 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 }
 
 int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string *payload,
+			       struct zcbor_string *manifest_component_id,
 			       struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
@@ -296,6 +303,7 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+	(void)manifest_component_id;
 
 	/*
 	 * Validate streaming operation.
