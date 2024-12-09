@@ -204,8 +204,9 @@ NRF = [
     ("app_dev/device_guides/working_with_nrf/nrf54l/features", "app_dev/device_guides/nrf54l/features"),
     ("device_guides/working_with_nrf/nrf54l/nrf54l15_gs", "gsg_guides"), # Getting started with nRF54L15 PDK (removed after 2.8.0)
     ("app_dev/device_guides/working_with_nrf/nrf54l/nrf54l15_gs", "gsg_guides"),
-    ("device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/testing_dfu"), # Testing the DFU solution
-    ("app_dev/device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/testing_dfu"),
+    ("device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"), # Testing the DFU solution (removed after 2.8.0)
+    ("app_dev/device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"),
+    ("app_dev/device_guides/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"),
     ("ug_nrf53", "app_dev/device_guides/nrf53/index"), # Developing with nRF53 Series (landing)
     ("nrf53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53", "app_dev/device_guides/nrf53/index"),
