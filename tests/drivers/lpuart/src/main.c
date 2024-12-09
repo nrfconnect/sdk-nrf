@@ -160,8 +160,7 @@ static void on_rx_buf_req(const struct device *dev)
 	}
 }
 
-static void uart_callback(const struct device *dev,
-			  struct uart_event *evt, void *user_data)
+static void uart_callback(const struct device *dev, struct uart_event *evt, void *user_data)
 {
 	switch (evt->type) {
 	case UART_TX_DONE:
@@ -249,8 +248,7 @@ ZTEST(test_lpuart_stress, test_stress)
 
 static uint8_t tx_buf[] = {0xA, 0xAA, 0xB, 0xBB};
 
-static void resilency_uart_callback(const struct device *dev,
-				    struct uart_event *evt,
+static void resilency_uart_callback(const struct device *dev, struct uart_event *evt,
 				    void *user_data)
 {
 	switch (evt->type) {
@@ -290,6 +288,35 @@ static void resilency_uart_callback(const struct device *dev,
 	}
 }
 
+static void tx_abort_expected_callback(const struct device *dev, struct uart_event *evt,
+				       void *user_data)
+{
+	switch (evt->type) {
+	case UART_TX_ABORTED:
+		tx_abort_cnt++;
+		TC_PRINT("TX aborted.\n");
+		break;
+	case UART_TX_DONE:
+		TC_PRINT("UART_TX_DONE.\n");
+		break;
+	case UART_RX_RDY:
+		TC_PRINT("UART_RX_RDY.\n");
+		break;
+	case UART_RX_BUF_REQUEST:
+		TC_PRINT("UART_RX_BUF_REQUEST.\n");
+		break;
+	case UART_RX_BUF_RELEASED:
+		TC_PRINT("UART_RX_BUF_RELEASED.\n");
+		break;
+	case UART_RX_DISABLED:
+		TC_PRINT("UART_RX_DISABLED.\n");
+		break;
+	case UART_RX_STOPPED:
+		TC_PRINT("UART_RX_STOPPED.\n");
+		break;
+	}
+}
+
 static void validate_lpuart(const struct device *lpuart)
 {
 	int err;
@@ -321,12 +348,8 @@ static void next_alarm(const struct device *counter, struct counter_alarm_cfg *a
 
 static nrf_gpio_pin_pull_t pin_toggle(uint32_t pin, nrf_gpio_pin_pull_t pull)
 {
-	nrf_gpio_cfg(pin,
-		     NRF_GPIO_PIN_DIR_INPUT,
-		     NRF_GPIO_PIN_INPUT_DISCONNECT,
-		     pull,
-		     NRF_GPIO_PIN_S0S1,
-		     NRF_GPIO_PIN_NOSENSE);
+	nrf_gpio_cfg(pin, NRF_GPIO_PIN_DIR_INPUT, NRF_GPIO_PIN_INPUT_DISCONNECT, pull,
+		     NRF_GPIO_PIN_S0S1, NRF_GPIO_PIN_NOSENSE);
 	return (pull == NRF_GPIO_PIN_PULLUP) ? NRF_GPIO_PIN_PULLDOWN : NRF_GPIO_PIN_PULLUP;
 }
 
@@ -361,20 +384,12 @@ static void pins_to_default(int32_t tx_pin)
 {
 	nrfx_gpiote_pin_t req_pin = DT_INST_PROP(0, req_pin);
 
-	nrf_gpio_cfg(req_pin,
-		     NRF_GPIO_PIN_DIR_OUTPUT,
-		     NRF_GPIO_PIN_INPUT_DISCONNECT,
-		     NRF_GPIO_PIN_NOPULL,
-		     NRF_GPIO_PIN_S0S1,
-		     NRF_GPIO_PIN_NOSENSE);
+	nrf_gpio_cfg(req_pin, NRF_GPIO_PIN_DIR_OUTPUT, NRF_GPIO_PIN_INPUT_DISCONNECT,
+		     NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_S0S1, NRF_GPIO_PIN_NOSENSE);
 
 	if (tx_pin > 0) {
-		nrf_gpio_cfg(tx_pin,
-			     NRF_GPIO_PIN_DIR_OUTPUT,
-			     NRF_GPIO_PIN_INPUT_DISCONNECT,
-			     NRF_GPIO_PIN_NOPULL,
-			     NRF_GPIO_PIN_S0S1,
-			     NRF_GPIO_PIN_NOSENSE);
+		nrf_gpio_cfg(tx_pin, NRF_GPIO_PIN_DIR_OUTPUT, NRF_GPIO_PIN_INPUT_DISCONNECT,
+			     NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_S0S1, NRF_GPIO_PIN_NOSENSE);
 	}
 }
 
@@ -383,8 +398,7 @@ struct test_data {
 	int32_t tx_pin;
 };
 
-static void counter_alarm_callback(const struct device *dev,
-				   uint8_t chan_id, uint32_t ticks,
+static void counter_alarm_callback(const struct device *dev, uint8_t chan_id, uint32_t ticks,
 				   void *user_data)
 {
 	struct test_data *data = (struct test_data *)user_data;
@@ -453,6 +467,49 @@ ZTEST(test_lpuart_resilency, test_resilency_no_tx_pin_float)
 ZTEST(test_lpuart_resilency, test_resilency_with_tx_pin_float)
 {
 	test_resilency(true);
+}
+
+ZTEST(test_lpuart_resilency, test_tx_abort_rx_not_enabled)
+{
+	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_LPUART_LOOPBACK);
+
+	int err;
+	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
+
+	zassert_true(device_is_ready(lpuart), NULL);
+	uart_callback_set(lpuart, tx_abort_expected_callback, NULL);
+
+	err = uart_tx(lpuart, tx_buf, sizeof(tx_buf), 1000);
+	zassert_equal(err, 0, "uart_tx - unexpected err: %d", err);
+	k_msleep(10);
+	zassert_equal(tx_abort_cnt, 1, "tx_abort_cnt != 1: %d", tx_abort_cnt);
+	tx_abort_cnt = 0;
+}
+
+ZTEST(test_lpuart_resilency, test_tx_abort_from_api)
+{
+	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_LPUART_LOOPBACK);
+
+	int err;
+	uint8_t tx_buffer[50] = {0};
+	uint8_t rx_buffer[50] = {0};
+	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
+
+	zassert_true(device_is_ready(lpuart), NULL);
+	uart_callback_set(lpuart, tx_abort_expected_callback, NULL);
+
+	err = uart_rx_enable(lpuart, rx_buffer, sizeof(rx_buffer), 100);
+	zassert_equal(err, 0, "uart_rx_enable - unexpected err:%d", err);
+	err = uart_tx(lpuart, tx_buffer, sizeof(tx_buffer), 1000);
+	zassert_equal(err, 0, "uart_tx - unexpected err:%d", err);
+	k_msleep(1);
+	err = uart_tx_abort(lpuart);
+	zassert_equal(err, 0, "uart_tx_abort - unexpected err:%d", err);
+	k_msleep(10);
+	err = uart_rx_disable(lpuart);
+	zassert_equal(err, 0, "uart_rx_disable - unexpected err:%d", err);
+	zassert_equal(tx_abort_cnt, 1, "tx_abort_cnt != 1: %d", tx_abort_cnt);
+	tx_abort_cnt = 0;
 }
 
 static void *suite_setup(void)
