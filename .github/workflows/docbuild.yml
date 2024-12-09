@@ -147,7 +147,7 @@ jobs:
 
           for docset in "${DOXYGEN[@]}"; do
             OUTDIR=doc/_build/html-doxygen/$docset-apis
-            mv doc/_build/html/$docset "$OUTDIR"
+            mv doc/_build/html/$docset/html "$OUTDIR"
 
             # Populate custom.properties, tags.yml
             cp doc/_zoomin/$docset.apis.custom.properties "$OUTDIR/custom.properties"
