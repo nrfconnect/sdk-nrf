@@ -20,7 +20,10 @@ tests:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_debug
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_debug
   sample.debug.memfault.etb:
     sysbuild: true
     build_only: true
@@ -41,4 +44,7 @@ tests:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp
-    tags: ci_build sysbuild ci_samples_debug
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_debug

@@ -11,7 +11,13 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
-    tags: b0 bl_validation negative bl_validation_negative sysbuild ci_tests_subsys_bootloader
+    tags:
+      - b0
+      - bl_validation
+      - negative
+      - bl_validation_negative
+      - sysbuild
+      - ci_tests_subsys_bootloader
     harness: console
     harness_config:
       type: multi_line
@@ -40,7 +46,13 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
-    tags: b0 bl_validation negative bl_validation_negative sysbuild ci_tests_subsys_bootloader
+    tags:
+      - b0
+      - bl_validation
+      - negative
+      - bl_validation_negative
+      - sysbuild
+      - ci_tests_subsys_bootloader
     harness: console
     harness_config:
       type: multi_line

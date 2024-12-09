@@ -1,5 +1,7 @@
 common:
-  tags: tfm ci_tests_tfm
+  tags:
+    - tfm
+    - ci_tests_tfm
   build_only: true
   harness: console
   harness_config:
@@ -12,8 +14,13 @@ common:
 tests:
   tfm.regression_ipc_lvl1:
     sysbuild: true
-    tags: tfm_lvl1 sysbuild ci_tests_tfm
-    extra_args: CONFIG_TFM_IPC=y CONFIG_TFM_ISOLATION_LEVEL=1
+    tags:
+      - tfm_lvl1
+      - sysbuild
+      - ci_tests_tfm
+    extra_args:
+      - CONFIG_TFM_IPC=y
+      - CONFIG_TFM_ISOLATION_LEVEL=1
     timeout: 200
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -29,8 +36,13 @@ tests:
       - nrf9161dk/nrf9161/ns
   tfm.regression_ipc_lvl2.cc3xx:
     sysbuild: true
-    tags: tfm_lvl2 sysbuild ci_tests_tfm
-    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+    tags:
+      - tfm_lvl2
+      - sysbuild
+      - ci_tests_tfm
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
     timeout: 200
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -44,8 +56,13 @@ tests:
       - nrf9161dk/nrf9161/ns
   tfm.regression_ipc_lvl2.oberon:
     sysbuild: true
-    tags: tfm_lvl2 sysbuild ci_tests_tfm
-    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=n CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
+    tags:
+      - tfm_lvl2
+      - sysbuild
+      - ci_tests_tfm
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=n
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
     timeout: 200
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -59,8 +76,13 @@ tests:
       - nrf9161dk/nrf9161/ns
   tfm.regression_ipc_lvl2.cc3xx_oberon:
     sysbuild: true
-    tags: tfm_lvl2 sysbuild ci_tests_tfm
-    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
+    tags:
+      - tfm_lvl2
+      - sysbuild
+      - ci_tests_tfm
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_CC3XX=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
     timeout: 200
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -74,8 +96,13 @@ tests:
       - nrf9161dk/nrf9161/ns
   tfm.regression_ipc_lvl2.cracen:
     sysbuild: true
-    tags: tfm_lvl2 sysbuild ci_tests_tfm
-    extra_args: CONFIG_PSA_CRYPTO_DRIVER_CRACEN=y CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+    tags:
+      - tfm_lvl2
+      - sysbuild
+      - ci_tests_tfm
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
     timeout: 200
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -83,8 +110,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
   tfm.regression_sfn_lvl1:
     sysbuild: true
-    tags: tfm_lvl1 sysbuild ci_tests_tfm
-    extra_args: CONFIG_TFM_SFN=y CONFIG_TFM_ISOLATION_LEVEL=1
+    tags:
+      - tfm_lvl1
+      - sysbuild
+      - ci_tests_tfm
+    extra_args:
+      - CONFIG_TFM_SFN=y
+      - CONFIG_TFM_ISOLATION_LEVEL=1
     timeout: 200
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -100,8 +132,13 @@ tests:
       - nrf9161dk/nrf9161/ns
   tfm.regression_fp_hardabi:
     sysbuild: true
-    tags: tfm_fp sysbuild ci_tests_tfm
-    extra_args: CONFIG_FPU=y CONFIG_FP_HARDABI=y
+    tags:
+      - tfm_fp
+      - sysbuild
+      - ci_tests_tfm
+    extra_args:
+      - CONFIG_FPU=y
+      - CONFIG_FP_HARDABI=y
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp/ns

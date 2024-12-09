@@ -3,7 +3,10 @@ sample:
 tests:
   sample.net.aws_iot:
     sysbuild: true
-    tags: ci_build sysbuild ci_samples_net
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
     build_only: true
     build_on_all: true
     integration_platforms:
@@ -24,7 +27,10 @@ tests:
       - native_sim
   sample.net.aws_iot.nrf54l15.wifi:
     sysbuild: true
-    tags: ci_build sysbuild ci_samples_net
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
     build_only: true
     build_on_all: true
     integration_platforms:
