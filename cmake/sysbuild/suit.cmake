@@ -331,6 +331,7 @@ function(suit_create_package)
   set(RECOVERY_DFU_CACHE_PARTITIONS_USED "")
 
   foreach(image ${IMAGES})
+    unset(EXTRACT_TO_CACHE)
     sysbuild_get(EXTRACT_TO_CACHE IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE KCONFIG)
     if(EXTRACT_TO_CACHE)
       sysbuild_get(CACHE_PARTITION_NUM IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_PARTITION KCONFIG)
@@ -467,6 +468,45 @@ function(suit_create_package)
   endif()
 
   sysbuild_get(DEFAULT_BINARY_DIR IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
+
+  if(SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE)
+    set(CACHE_CREATE_ARGS "")
+    set(nordic_cache_partition_num ${SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_CACHE_PARTITION_NUM})
+    list(APPEND CACHE_CREATE_ARGS
+      "--input-envelope" "${ROOT_ENVELOPE_SUIT_FILE}"
+      "--output-envelope" "${ROOT_ENVELOPE_SUIT_FILE}"
+      "--eb-size" "${SUIT_DFU_CACHE_PARTITION_${nordic_cache_partition_num}_EB_SIZE}"
+      )
+
+    set(NORDIC_DFU_CACHE_PARTITION_FILE "dfu_cache_nordic.bin")
+
+    suit_create_nordic_cache_partition(
+      "${CACHE_CREATE_ARGS}"
+      "${NORDIC_DFU_CACHE_PARTITION_FILE}"
+    )
+
+    set(CACHE_MERGE_ARGS "")
+    list(APPEND CACHE_MERGE_ARGS
+      "--input" "${NORDIC_DFU_CACHE_PARTITION_FILE}"
+      "--output-file" "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${nordic_cache_partition_num}.bin"
+      "--eb-size" "${SUIT_DFU_CACHE_PARTITION_${nordic_cache_partition_num}_EB_SIZE}"
+      )
+
+    if(nordic_cache_partition_num IN_LIST DFU_CACHE_PARTITIONS_USED)
+      # Cache partition already created, merge the old partition file
+      list(APPEND CACHE_MERGE_ARGS
+        "--input" "${SUIT_ROOT_DIRECTORY}dfu_cache_partition_${nordic_cache_partition_num}.bin"
+      )
+    endif()
+
+    set_property(
+      GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+      COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
+      cache_create
+      merge
+      ${CACHE_MERGE_ARGS}
+    )
+  endif()
 
   # Read SUIT storage addresses, set during MPI generation
   sysbuild_get(SUIT_STORAGE_ADDRESS IMAGE ${DEFAULT_IMAGE} VAR SUIT_STORAGE_ADDRESS CACHE)
