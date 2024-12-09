@@ -180,12 +180,12 @@ class TableFromSampleYaml(TableFromRows):
         if not extra_args_raw:
             return
 
-        if isinstance(extra_args_raw, list):
-            extra_args = " ".join(extra_args_raw)
+        if isinstance(extra_args_raw, str):
+            extra_args = extra_args_raw.split()
         else:
             extra_args = extra_args_raw
 
-        shield_args = re.findall(r'SHIELD=(\S*)', extra_args)
+        shield_args = [re.split(r'=', arg)[1] for arg in extra_args if 'SHIELD=' in arg]
         if not shield_args:
             return
 
