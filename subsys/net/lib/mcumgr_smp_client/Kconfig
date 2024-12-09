@@ -9,7 +9,7 @@ menuconfig NRF_MCUMGR_SMP_CLIENT
 	select BASE64
 	select DFU_TARGET
 	select DFU_TARGET_SMP
-	select DOWNLOAD_CLIENT
+	select DOWNLOADER
 	select FOTA_DOWNLOAD
 	select NET_BUF
 	select ZCBOR

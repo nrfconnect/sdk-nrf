@@ -5,7 +5,8 @@
 #
 
 menuconfig  DOWNLOAD_CLIENT
-	bool "Download client"
+	select DEPRECATED
+	bool "[DEPRECATED] Download client"
 
 if DOWNLOAD_CLIENT
 

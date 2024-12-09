@@ -143,8 +143,7 @@ struct download_client_cfg {
  *
  * @return Zero to continue the download, non-zero otherwise.
  */
-typedef int (*download_client_callback_t)(
-	const struct download_client_evt *event);
+typedef int (*download_client_callback_t)(const struct download_client_evt *event);
 
 /**
  * @brief Download client instance.
@@ -210,8 +209,7 @@ struct download_client {
 	struct k_sem wait_for_download;
 
 	/* Internal thread stack. */
-	K_THREAD_STACK_MEMBER(thread_stack,
-			      CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
+	K_THREAD_STACK_MEMBER(thread_stack, CONFIG_DOWNLOAD_CLIENT_STACK_SIZE);
 
 	/** Event handler. */
 	download_client_callback_t callback;
@@ -275,8 +273,7 @@ int download_client_set_host(struct download_client *client, const char *host,
  *
  * @retval int Zero on success, a negative error code otherwise.
  */
-int download_client_start(struct download_client *client, const char *file,
-			  size_t from);
+int download_client_start(struct download_client *client, const char *file, size_t from);
 
 /**
  * @brief Retrieve the size of the file being downloaded, in bytes.
