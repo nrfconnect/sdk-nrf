@@ -217,7 +217,6 @@ mapping_topics:
                                                           "prototyping-platforms",
                                                           "nrf-connect-vsc"]
   - nrf/app_dev/device_guides/nrf53/fota_update_nrf5340.html: ["nrf5340", "development-kits"]
-  - nrf/app_dev/device_guides/nrf53/multi_image_nrf5340.html: ["nrf5340", "development-kits"]
   - nrf/app_dev/device_guides/nrf53/simultaneous_multi_image_dfu_nrf5340.html: ["nrf5340",
                                                                                 "development-kits"]
   - /nrf/app_dev/device_guides/nrf53/serial_recovery.html: ["nrf5340", "development-kits"]

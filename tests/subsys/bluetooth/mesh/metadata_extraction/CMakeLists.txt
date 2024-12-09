@@ -18,12 +18,3 @@ if(CONFIG_COMP_DATA_LAYOUT_SINGLE)
 else()
   list(PREPEND script_args --multiple)
 endif()
-
-list(APPEND script_args childparent)
-
-if(NOT SYSBUILD)
-  add_custom_target(verify_metadata ALL
-    ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/verify_metadata.py ${script_args}
-    DEPENDS parse_mesh_metadata
-  )
-endif()
