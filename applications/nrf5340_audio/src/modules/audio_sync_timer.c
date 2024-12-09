@@ -62,6 +62,23 @@ static uint32_t timestamp_from_rtc_and_timer_get(uint32_t ticks, uint32_t remain
 {
 	const uint64_t rtc_ticks_in_femto_units = 30517578125UL;
 	const uint32_t rtc_overflow_time_us = 512000000UL;
+	uint64_t remainder_fs;
+
+	remainder_fs = (uint64_t)remainder_us * 1000000000UL;
+
+	if (remainder_fs > rtc_ticks_in_femto_units) {
+		nrfx_err_t ret;
+
+		ret = nrfx_dppi_channel_enable(dppi_channel_timer_sync_with_rtc);
+		if (ret - NRFX_ERROR_BASE_NUM) {
+			LOG_ERR("nrfx DPPI channel enable error (timer sync): %d", ret);
+		}
+
+		nrfx_rtc_tick_enable(&audio_sync_lf_timer_instance, true);
+	}
+
+	remainder_fs %= rtc_ticks_in_femto_units;
+	remainder_us = remainder_fs / 1000000000UL;
 
 	return ((ticks * rtc_ticks_in_femto_units) / 1000000000UL) +
 	       (num_rtc_overflows * rtc_overflow_time_us) + remainder_us;
@@ -128,6 +145,18 @@ static void unused_timer_isr_handler(nrf_timer_event_t event_type, void *ctx)
 
 static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
 {
+	if (int_type == NRFX_RTC_INT_TICK) {
+		nrfx_err_t ret;
+
+		nrfx_rtc_tick_enable(&audio_sync_lf_timer_instance, false);
+
+		ret = nrfx_dppi_channel_disable(dppi_channel_timer_sync_with_rtc);
+		if (ret - NRFX_ERROR_BASE_NUM) {
+			LOG_ERR("nrfx DPPI channel disable error (timer sync): %d", ret);
+			return;
+		}
+	}
+
 	if (int_type == NRFX_RTC_INT_OVERFLOW) {
 		num_rtc_overflows++;
 	}
@@ -244,14 +273,6 @@ static int audio_sync_timer_init(void)
 			    dppi_channel_timer_sync_with_rtc);
 	nrf_timer_subscribe_set(audio_sync_hf_timer_instance.p_reg, NRF_TIMER_TASK_CLEAR,
 				dppi_channel_timer_sync_with_rtc);
-
-	ret = nrfx_dppi_channel_enable(dppi_channel_timer_sync_with_rtc);
-	if (ret - NRFX_ERROR_BASE_NUM) {
-		LOG_ERR("nrfx DPPI channel enable error (timer sync): %d", ret);
-		return -EIO;
-	}
-
-	nrfx_rtc_tick_enable(&audio_sync_lf_timer_instance, false);
 
 	nrfx_rtc_enable(&audio_sync_lf_timer_instance);
 
