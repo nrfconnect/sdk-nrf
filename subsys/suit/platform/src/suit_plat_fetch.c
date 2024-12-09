@@ -100,7 +100,9 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	struct stream_sink dst_sink = {0};
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+#if !defined(CONFIG_SUIT_STREAM_FILTER_DECRYPT)
 	(void)manifest_component_id;
+#endif
 
 	/*
 	 * Validate streaming operation.
@@ -118,7 +120,15 @@ int suit_plat_check_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	/* Append decryption filter if encryption info is provided. */
 	if (enc_info != NULL) {
 #ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
-		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		suit_manifest_class_id_t *class_id = NULL;
+
+		if (suit_plat_decode_manifest_class_id(manifest_component_id, &class_id) !=
+		    SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Component ID is not a manifest class");
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, class_id, &dst_sink);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}
@@ -151,7 +161,9 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+#if !defined(CONFIG_SUIT_STREAM_FILTER_DECRYPT)
 	(void)manifest_component_id;
+#endif
 
 	/*
 	 * Validate streaming operation.
@@ -170,7 +182,15 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	/* Append decryption filter if encryption info is provided. */
 	if (enc_info != NULL) {
 #ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
-		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		suit_manifest_class_id_t *class_id = NULL;
+
+		if (suit_plat_decode_manifest_class_id(manifest_component_id, &class_id) !=
+		    SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Component ID is not a manifest class");
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, class_id, &dst_sink);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}
@@ -234,7 +254,9 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+#if !defined(CONFIG_SUIT_STREAM_FILTER_DECRYPT)
 	(void)manifest_component_id;
+#endif
 
 	/*
 	 * Validate streaming operation.
@@ -270,7 +292,15 @@ int suit_plat_check_fetch_integrated(suit_component_t dst_handle, struct zcbor_s
 	/* Append decryption filter if encryption info is provided. */
 	if (enc_info != NULL) {
 #ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
-		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		suit_manifest_class_id_t *class_id = NULL;
+
+		if (suit_plat_decode_manifest_class_id(manifest_component_id, &class_id) !=
+		    SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Component ID is not a manifest class");
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, class_id, &dst_sink);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}
@@ -303,7 +333,10 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
+#if !defined(CONFIG_SUIT_STREAM_FILTER_DECRYPT)
 	(void)manifest_component_id;
+#endif
+
 
 	/*
 	 * Validate streaming operation.
@@ -339,7 +372,15 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	/* Append decryption filter if encryption info is provided. */
 	if (enc_info != NULL) {
 #ifdef CONFIG_SUIT_STREAM_FILTER_DECRYPT
-		ret = suit_decrypt_filter_get(&dst_sink, enc_info, &dst_sink);
+		suit_manifest_class_id_t *class_id = NULL;
+
+		if (suit_plat_decode_manifest_class_id(manifest_component_id, &class_id) !=
+		    SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Component ID is not a manifest class");
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
+
+		ret = suit_decrypt_filter_get(&dst_sink, enc_info, class_id, &dst_sink);
 		if (ret != SUIT_PLAT_SUCCESS) {
 			LOG_ERR("Selecting decryption filter failed: %i", ret);
 		}

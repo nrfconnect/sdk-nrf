@@ -21,6 +21,11 @@
 #define MANIFEST_PUBKEY_RADIO_GEN0	 0x40032100
 #define MANIFEST_PUBKEY_GEN_RANGE	 2
 
+#define FWENC_APPLICATION_GEN0           0x40022000
+#define FWENC_RADIOCORE_GEN0             0x40032000
+#define FWENC_SYSCTRL_GEN0               0x40082000
+#define FWENC_GEN_RANGE	                 1
+
 LOG_MODULE_REGISTER(suit_mci_nrf54h20, CONFIG_SUIT_LOG_LEVEL);
 
 mci_err_t suit_mci_supported_manifest_class_ids_get(suit_manifest_class_info_t *class_info,
@@ -300,6 +305,53 @@ mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class
 	case SUIT_MANIFEST_RAD_LOCAL_2:
 		if (key_id >= MANIFEST_PUBKEY_RADIO_GEN0 &&
 		    key_id <= MANIFEST_PUBKEY_RADIO_GEN0 + MANIFEST_PUBKEY_GEN_RANGE) {
+			return SUIT_PLAT_SUCCESS;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return MCI_ERR_WRONGKEYID;
+}
+
+mci_err_t suit_mci_fw_encryption_key_id_validate(const suit_manifest_class_id_t *class_id,
+						 uint32_t key_id)
+{
+	suit_manifest_role_t role = SUIT_MANIFEST_UNKNOWN;
+
+	if (class_id == NULL) {
+		return SUIT_PLAT_ERR_INVAL;
+	}
+
+	if (suit_storage_mpi_role_get(class_id, &role) != SUIT_PLAT_SUCCESS) {
+		return MCI_ERR_MANIFESTCLASSID;
+	}
+
+	switch (role) {
+	case SUIT_MANIFEST_SEC_SYSCTRL:
+		if (key_id >= FWENC_SYSCTRL_GEN0 &&
+		    key_id <= FWENC_SYSCTRL_GEN0 + FWENC_GEN_RANGE) {
+			return SUIT_PLAT_SUCCESS;
+		}
+		break;
+
+	case SUIT_MANIFEST_APP_RECOVERY:
+	case SUIT_MANIFEST_APP_LOCAL_1:
+	case SUIT_MANIFEST_APP_LOCAL_2:
+	case SUIT_MANIFEST_APP_LOCAL_3:
+		if (key_id >= FWENC_APPLICATION_GEN0 &&
+		    key_id <= FWENC_APPLICATION_GEN0 + FWENC_GEN_RANGE) {
+			return SUIT_PLAT_SUCCESS;
+		}
+		break;
+
+	case SUIT_MANIFEST_RAD_RECOVERY:
+	case SUIT_MANIFEST_RAD_LOCAL_1:
+	case SUIT_MANIFEST_RAD_LOCAL_2:
+		if (key_id >= FWENC_RADIOCORE_GEN0 &&
+		    key_id <= FWENC_RADIOCORE_GEN0 + FWENC_GEN_RANGE) {
 			return SUIT_PLAT_SUCCESS;
 		}
 		break;
