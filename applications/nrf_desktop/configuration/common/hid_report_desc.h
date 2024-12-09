@@ -71,17 +71,32 @@ enum report_id {
 
 /** @brief Input reports map. */
 static const uint8_t input_reports[] = {
+#if CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT || CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE
 	REPORT_ID_MOUSE,
+#endif
+#if CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT || CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
 	REPORT_ID_KEYBOARD_KEYS,
+#endif
+#if CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
 	REPORT_ID_SYSTEM_CTRL,
+#endif
+#if CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
 	REPORT_ID_CONSUMER_CTRL,
+#endif
+	/* Keep boot reports at the end as these don't have own data. */
+#if CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE
 	REPORT_ID_BOOT_MOUSE,
+#endif
+#if CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
 	REPORT_ID_BOOT_KEYBOARD,
+#endif
 };
 
 /** @brief Output reports map. */
 static const uint8_t output_reports[] = {
+#if CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
 	REPORT_ID_KEYBOARD_LEDS,
+#endif
 };
 
 /* Internal definitions used to calculate size of the biggest supported HID input report. */
