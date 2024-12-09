@@ -17,7 +17,6 @@
 #include <bluetooth/services/fast_pair/fmdn.h>
 
 #include "app_fp_adv.h"
-#include "app_ui.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
@@ -39,6 +38,7 @@ static bool fmdn_provisioned;
 
 static struct bt_conn *fp_conn;
 static struct bt_le_ext_adv *fp_adv_set;
+static bool fp_adv_set_active;
 static bool fp_adv_rpa_rotation_suspended;
 static enum app_fp_adv_mode fp_adv_mode = APP_FP_ADV_MODE_OFF;
 static uint32_t fp_adv_request_bm;
@@ -61,6 +61,35 @@ static struct bt_le_adv_param fp_adv_param = {
 static void fp_adv_restart_work_handle(struct k_work *w);
 
 static K_WORK_DEFINE(fp_adv_restart_work, fp_adv_restart_work_handle);
+
+/* Reference to the Fast Pair advertising information callback structure. */
+static const struct app_fp_adv_info_cb *fast_pair_adv_info_cb;
+
+static void fp_adv_state_changed_notify(bool enabled)
+{
+	if (fast_pair_adv_info_cb && fast_pair_adv_info_cb->state_changed) {
+		fast_pair_adv_info_cb->state_changed(enabled);
+	}
+}
+
+int app_fp_adv_info_cb_register(const struct app_fp_adv_info_cb *cb)
+{
+	if (app_fp_adv_is_ready()) {
+		return -EACCES;
+	}
+
+	if (!cb) {
+		return -EINVAL;
+	}
+
+	if (fast_pair_adv_info_cb) {
+		return -EALREADY;
+	}
+
+	fast_pair_adv_info_cb = cb;
+
+	return 0;
+}
 
 static uint16_t fp_adv_rpa_timeout_calculate(void)
 {
@@ -178,18 +207,58 @@ static int fp_adv_payload_set(bool rpa_rotated, bool new_session)
 	return 0;
 }
 
-static int bt_stack_advertising_update(void)
+static int bt_stack_advertising_start(void)
 {
 	int err;
 	struct bt_le_ext_adv_start_param ext_adv_start_param = {0};
 
 	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+
+	if (fp_adv_set_active) {
+		return 0;
+	}
+
+	err = bt_le_ext_adv_start(fp_adv_set, &ext_adv_start_param);
+	if (err) {
+		LOG_ERR("Fast Pair: bt_le_ext_adv_start returned error: %d", err);
+		return err;
+	}
+
+	fp_adv_set_active = true;
+
+	return 0;
+}
+
+static int bt_stack_advertising_stop(void)
+{
+	int err;
+
+	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+
+	if (!fp_adv_set_active) {
+		return 0;
+	}
+
+	err = bt_le_ext_adv_stop(fp_adv_set);
+	if (err) {
+		LOG_ERR("Fast Pair: cannot stop advertising (err: %d)", err);
+		return err;
+	}
+
+	fp_adv_set_active = false;
+
+	return 0;
+}
+
+static int bt_stack_advertising_update(void)
+{
+	int err;
+
 	__ASSERT(!fp_conn, "Fast Pair: invalid connection state");
 
 	if (fp_adv_mode == APP_FP_ADV_MODE_OFF) {
-		err = bt_le_ext_adv_stop(fp_adv_set);
+		err = bt_stack_advertising_stop();
 		if (err) {
-			LOG_ERR("Fast Pair: cannot stop advertising (err: %d)", err);
 			return err;
 		}
 	} else {
@@ -199,9 +268,8 @@ static int bt_stack_advertising_update(void)
 			return err;
 		}
 
-		err = bt_le_ext_adv_start(fp_adv_set, &ext_adv_start_param);
+		err = bt_stack_advertising_start();
 		if (err) {
-			LOG_ERR("Fast Pair: bt_le_ext_adv_start returned error: %d", err);
 			return err;
 		}
 	}
@@ -212,18 +280,18 @@ static int bt_stack_advertising_update(void)
 static void fp_advertising_update(void)
 {
 	int err;
+	bool fp_adv_set_was_active = fp_adv_set_active;
 
 	err = bt_stack_advertising_update();
 	if (!err) {
-		app_ui_state_change_indicate(APP_UI_STATE_FP_ADV,
-					     (fp_adv_mode != APP_FP_ADV_MODE_OFF));
-
 		LOG_INF("Fast Pair: advertising in the %s mode",
 			fp_adv_mode_description[fp_adv_mode]);
 	} else {
-		app_ui_state_change_indicate(APP_UI_STATE_FP_ADV, false);
-
 		LOG_ERR("Fast Pair: advertising failed to start (err %d)", err);
+	}
+
+	if (fp_adv_set_was_active != fp_adv_set_active) {
+		fp_adv_state_changed_notify(fp_adv_set_active);
 	}
 }
 
@@ -231,7 +299,8 @@ static void fp_adv_connected(struct bt_le_ext_adv *adv, struct bt_le_ext_adv_con
 {
 	__ASSERT_NO_MSG(!fp_conn);
 
-	app_ui_state_change_indicate(APP_UI_STATE_FP_ADV, false);
+	fp_adv_set_active = false;
+	fp_adv_state_changed_notify(fp_adv_set_active);
 
 	fp_conn = info->conn;
 }
