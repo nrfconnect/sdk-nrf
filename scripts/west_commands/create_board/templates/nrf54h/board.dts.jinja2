@@ -1,0 +1,312 @@
+/dts-v1/;
+
+#include <nordic/nrf54h20_{{ target["core"] }}.dtsi>
+#include "{{ board }}-memory_map.dtsi"
+#include "{{ board }}-ipc_conf.dtsi"
+#include "{{ board }}-pinctrl.dtsi"
+
+{% if target['core'] == 'cpuapp' %}
+/delete-node/ &cpurad_cpusys_ipc;
+/delete-node/ &cpusec_cpurad_ipc;
+
+/ {
+	model = "{{ board_desc }} (CPUAPP)";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpuapp";
+
+	chosen {
+		zephyr,code-partition = &cpuapp_slot0_partition;
+		zephyr,flash = &mram1x;
+		zephyr,sram = &cpuapp_data;
+		zephyr,bt-hci = &bt_hci_ipc0;
+		zephyr,entropy = &prng;
+	};
+
+	aliases {
+		ipc-to-cpusys = &cpuapp_cpusys_ipc;
+	};
+
+	prng: prng {
+		compatible = "nordic,entropy-prng";
+		status = "okay";
+	};
+};
+
+&cpuapp_ram0x_region {
+	status = "okay";
+};
+
+&etr_buf_ram0x_region {
+	status = "okay";
+};
+
+&ram21_region {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+	interrupts = <96 NRF_DEFAULT_IRQ_PRIORITY>;
+	interrupt-names = "irq0";
+	/* irq0:
+	 *  - 0:  cpuapp-cpusec
+	 *  - 6:  cpuapp-cpusys
+	 *  - 13: cpuapp-cpuppr
+	 *  - 14: cpuapp-cpuflpr
+	 *  - 18: cpuapp-cpurad
+	 */
+	nordic,interrupt-mapping = <0x00046041 0>;
+};
+
+&cpurad_bellboard {
+	status = "okay";
+};
+
+&cpusys_vevif {
+	status = "okay";
+};
+
+&cpusec_cpuapp_ipc {
+	mbox-names = "tx", "rx";
+	tx-region = <&cpuapp_cpusec_ipc_shm>;
+	rx-region = <&cpusec_cpuapp_ipc_shm>;
+};
+
+ipc0: &cpuapp_cpurad_ipc {
+	status = "okay";
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpurad_ipc_shm>;
+	rx-region = <&cpurad_cpuapp_ipc_shm>;
+	tx-blocks = <32>;
+	rx-blocks = <32>;
+
+	bt_hci_ipc0: bt_hci_ipc0 {
+		compatible = "zephyr,bt-hci-ipc";
+		status = "okay";
+	};
+};
+
+&cpuapp_cpusys_ipc {
+	status = "okay";
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpusys_ipc_shm>;
+	rx-region = <&cpusys_cpuapp_ipc_shm>;
+};
+
+&cpuapp_cpuppr_ipc {
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpuppr_ipc_shm>;
+	rx-region = <&cpuppr_cpuapp_ipc_shm>;
+};
+
+&cpuapp_cpuflpr_ipc {
+	mbox-names = "rx", "tx";
+	tx-region = <&cpuapp_cpuflpr_ipc_shm>;
+	rx-region = <&cpuflpr_cpuapp_ipc_shm>;
+};
+
+&cpuapp_dma_region {
+	status = "okay";
+};
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&cpuapp_rx_partitions {
+	status = "okay";
+};
+
+&cpuapp_rw_partitions {
+	status = "okay";
+};
+
+&cpuppr_vpr {
+	execution-memory = <&cpuppr_code_data>;
+	source-memory = <&cpuppr_code_partition>;
+};
+
+&cpuflpr_vpr {
+	execution-memory = <&cpuflpr_code_data>;
+	source-memory = <&cpuflpr_code_partition>;
+};
+
+&hfxo {
+	status = "okay";
+	accuracy-ppm = <30>;
+	startup-time-us = <850>;
+	mode = "crystal";
+};
+
+&lfxo {
+	status = "okay";
+	accuracy-ppm = <20>;
+	startup-time-us = <600000>;
+	mode = "crystal";
+};
+
+&grtc {
+	status = "okay";
+	child-owned-channels = <5 6>;
+	nonsecure-channels = <5 6>;
+	owned-channels = <4 5 6>;
+};
+{% elif target['core'] == 'cpurad' %}
+/delete-node/ &cpuapp_cpuppr_ipc;
+/delete-node/ &cpuapp_cpusys_ipc;
+/delete-node/ &cpuapp_cpuflpr_ipc;
+/delete-node/ &cpusec_cpuapp_ipc;
+
+/ {
+	model = "{{ board_desc }} (CPURAD)";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpurad";
+
+	chosen {
+		zephyr,code-partition = &cpurad_slot0_partition;
+		zephyr,flash = &mram1x;
+		zephyr,sram = &cpurad_ram0;
+		zephyr,bt-hci-ipc = &ipc0;
+		zephyr,entropy = &prng;
+	};
+
+	prng: prng {
+		compatible = "nordic,entropy-prng";
+		status = "okay";
+	};
+
+	aliases {
+		ipc-to-cpusys = &cpurad_cpusys_ipc;
+	};
+};
+
+&cpuapp_cpurad_ram0x_region {
+	status = "okay";
+};
+
+&cpurad_bellboard {
+	status = "okay";
+	interrupts = <96 NRF_DEFAULT_IRQ_PRIORITY>;
+	interrupt-names = "irq0";
+	/* irq0: 0: cpurad-cpusec, 6: cpurad-cpusys, 12: cpurad-cpuapp */
+	nordic,interrupt-mapping = <0x00001041 0>;
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&cpusys_vevif {
+	status = "okay";
+};
+
+&cpusec_cpurad_ipc {
+	mbox-names = "tx", "rx";
+	tx-region = <&cpurad_cpusec_ipc_shm>;
+	rx-region = <&cpusec_cpurad_ipc_shm>;
+};
+
+ipc0: &cpuapp_cpurad_ipc {
+	status = "okay";
+	mbox-names = "tx", "rx";
+	tx-region = <&cpurad_cpuapp_ipc_shm>;
+	rx-region = <&cpuapp_cpurad_ipc_shm>;
+	tx-blocks = <32>;
+	rx-blocks = <32>;
+};
+
+&cpurad_cpusys_ipc {
+	status = "okay";
+	mbox-names = "rx", "tx";
+	tx-region = <&cpurad_cpusys_ipc_shm>;
+	rx-region = <&cpusys_cpurad_ipc_shm>;
+};
+
+&cpurad_dma_region {
+	status = "okay";
+};
+
+&cpurad_rx_partitions {
+	status = "okay";
+};
+
+&hfxo {
+	status = "okay";
+	accuracy-ppm = <30>;
+	startup-time-us = <850>;
+	mode = "crystal";
+};
+
+&lfxo {
+	status = "okay";
+	accuracy-ppm = <20>;
+	startup-time-us = <600000>;
+	mode = "crystal";
+};
+
+&grtc {
+	status = "okay";
+};
+{% elif target['core'] == 'cpuppr' %}
+/delete-node/ &cpuapp_cpurad_ipc;
+/delete-node/ &cpuapp_cpusys_ipc;
+/delete-node/ &cpuapp_cpuflpr_ipc;
+/delete-node/ &cpurad_cpusys_ipc;
+/delete-node/ &cpusec_cpuapp_ipc;
+/delete-node/ &cpusec_cpurad_ipc;
+
+/ {
+	model = "{{ board_desc }} (CPUPPR)";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpuppr";
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	chosen {
+		zephyr,code-partition = &cpuppr_code_partition;
+		zephyr,flash = &mram1x;
+		zephyr,sram = &cpuppr_code_data;
+	};
+};
+
+&cpuapp_cpuppr_ipc {
+	mbox-names = "tx", "rx";
+	tx-region = <&cpuppr_cpuapp_ipc_shm>;
+	rx-region = <&cpuapp_cpuppr_ipc_shm>;
+};
+
+&grtc {
+	status = "okay";
+	owned-channels = <5>;
+};
+{% elif target['core'] == 'cpuflpr' %}
+/delete-node/ &cpuapp_cpurad_ipc;
+/delete-node/ &cpuapp_cpusys_ipc;
+/delete-node/ &cpuapp_cpuppr_ipc;
+/delete-node/ &cpurad_cpusys_ipc;
+/delete-node/ &cpusec_cpuapp_ipc;
+/delete-node/ &cpusec_cpurad_ipc;
+
+/ {
+	model = "{{ board_desc }} (CPUAPP)";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpuflpr";
+
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	chosen {
+		zephyr,code-partition = &cpuflpr_code_partition;
+		zephyr,flash = &mram1x;
+		zephyr,sram = &cpuflpr_code_data;
+	};
+};
+
+&cpuapp_cpuflpr_ipc {
+	mbox-names = "tx", "rx";
+	tx-region = <&cpuflpr_cpuapp_ipc_shm>;
+	rx-region = <&cpuapp_cpuflpr_ipc_shm>;
+};
+
+&grtc {
+	status = "okay";
+	owned-channels = <6>;
+};
+{% endif %}
