@@ -3,13 +3,6 @@
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 
 - scenarios:
-    - applications.matter_bridge.lto.br_ble.memory_profiling
-    - sample.matter.light_switch.persistent_subscriptions
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: "Flash overflow: https://nordicsemi.atlassian.net/browse/NCSDK-30731"
-
-- scenarios:
     - applications.matter_bridge.lto.br_ble.nrf54h20.wifi
     - applications.matter_bridge.release.br_ble.nrf54h20.wifi
     - sample.matter.template.nrf54h20.nrf7002eb
