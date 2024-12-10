@@ -162,7 +162,6 @@ Thingy:53 supports network core upgrade out of the box.
    :start-after: fota_upgrades_over_ble_additional_information_start
    :end-before: fota_upgrades_over_ble_additional_information_end
 
-
 .. _thingy53_app_external_flash:
 
 External flash

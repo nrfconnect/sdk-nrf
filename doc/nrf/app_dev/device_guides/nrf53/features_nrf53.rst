@@ -16,7 +16,6 @@ For additional information, refer to the following resources:
 
 * `nRF53 Series`_ for the technical documentation on the nRF53 Series chips and associated kits.
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_thingy53_gs` for getting started with the Thingy:53.
 
 Dual-core architecture
 **********************
@@ -33,7 +32,6 @@ With one core dedicated to application tasks and the other to connectivity, devi
 The separation of application and network functionalities simplifies firmware updates, allowing modifications on one processor without affecting the other.
 
 This architecture is ideal for devices requiring significant data processing alongside continuous wireless connectivity.
-
 
 .. _ug_nrf5340_intro_net_core:
 
