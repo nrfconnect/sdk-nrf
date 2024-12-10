@@ -102,21 +102,21 @@ ZTEST(nfc_rpc_t2t_srv, test_nfc_t2t_parameter_set)
 	zassert_equal(nfc_t2t_parameter_set_fake.call_count, 1);
 }
 
+/* Test reception of nfc_t2t_parameter_get command. */
 static int nfc_t2t_parameter_get_custom_fake(nfc_t2t_param_id_t id, void *data,
 					     size_t *max_data_length)
 {
 	uint8_t expected_data[DATA_SIZE] = {INT_SEQUENCE(DATA_SIZE)};
 
+	zassert_equal(id, NFC_T2T_PARAM_FDT_MIN);
 	zassert_equal(*max_data_length, DATA_SIZE);
 	memcpy(data, expected_data, *max_data_length);
 
 	return 0;
 }
 
-/* Test reception of nfc_t2t_parameter_get command. */
 ZTEST(nfc_rpc_t2t_srv, test_nfc_t2t_parameter_get)
 {
-	nfc_t2t_parameter_get_fake.return_val = 0;
 	nfc_t2t_parameter_get_fake.custom_fake = nfc_t2t_parameter_get_custom_fake;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(NFC_DATA), NO_RSP);
@@ -125,14 +125,24 @@ ZTEST(nfc_rpc_t2t_srv, test_nfc_t2t_parameter_get)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(nfc_t2t_parameter_get_fake.call_count, 1);
-	zassert_equal(nfc_t2t_parameter_get_fake.arg0_val, NFC_T2T_PARAM_FDT_MIN);
-	zassert_equal(*nfc_t2t_parameter_get_fake.arg2_val, DATA_SIZE);
 }
 
 /* Test reception of nfc_t2t_parameter_get command with returned error. */
+static int nfc_t2t_parameter_get_custom_fake_err(nfc_t2t_param_id_t id, void *data,
+						 size_t *max_data_length)
+{
+	uint8_t expected_data[DATA_SIZE] = {INT_SEQUENCE(DATA_SIZE)};
+
+	zassert_equal(id, NFC_T2T_PARAM_FDT_MIN);
+	zassert_equal(*max_data_length, DATA_SIZE);
+	memcpy(data, expected_data, *max_data_length);
+
+	return -NRF_EINVAL;
+}
+
 ZTEST(nfc_rpc_t2t_srv, test_nfc_t2t_parameter_get_negative)
 {
-	nfc_t2t_parameter_get_fake.return_val = -NRF_EINVAL;
+	nfc_t2t_parameter_get_fake.custom_fake = nfc_t2t_parameter_get_custom_fake_err;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_NULL), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(NFC_RPC_CMD_T2T_PARAMETER_GET, NFC_T2T_PARAM_FDT_MIN,
@@ -140,8 +150,6 @@ ZTEST(nfc_rpc_t2t_srv, test_nfc_t2t_parameter_get_negative)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(nfc_t2t_parameter_get_fake.call_count, 1);
-	zassert_equal(nfc_t2t_parameter_get_fake.arg0_val, NFC_T2T_PARAM_FDT_MIN);
-	zassert_equal(*nfc_t2t_parameter_get_fake.arg2_val, DATA_SIZE);
 }
 
 /* Test reception of nfc_t2t_payload_set command. */
