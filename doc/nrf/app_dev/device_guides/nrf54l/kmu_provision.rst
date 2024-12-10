@@ -71,7 +71,27 @@ Once you have an unprovisioned SoC, upload keys to the board by running the foll
 
 * Parameter ``--dev-id`` specifies the interface serial number and should be used if multiple J-link interfaces are connected to the development machine.
 
+* Parameter ``-p" (--policy)`` specifies the policy applied to the given set of keys.
+  You can apply the following options:
+
+      * ``lock-last`` - Uploads the last key as locked, while the preceding keys are revocable. This option is set by default.
+      * ``revokable`` - Enables revocation for each key.
+      * ``lock`` - Sets all keys to be permanent.
+
 The script generates the public key for each private key and uploads them to your device.
 These public keys generate the verification keys for the application image, which are then used by MCUboot for validation.
 The first key specified in the command is used for signing the application image.
 Currently, the script supports only ED25519 Keys.
+
+For MCUboot, take note of the following:
+
+* By default, it uses one key.
+* KMU support in its configuration needs to be enabled by setting the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` sysbuild Kconfig option.
+  Otherwise, MCUboot will fallback to the compiled in key.
+
+For provision one key to the board run the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+    west ncs-provision upload -s nrf54l15 -k ed25519.pem
