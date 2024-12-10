@@ -118,6 +118,11 @@ config FW_INFO_VALID_VAL
 	help
 	  The value fw_info::valid will have when valid.
 
+config FW_INFO_PROVIDE_ENABLE
+	bool
+	help
+	  Hidden option, set if at least one *_EXT_API_ENABLED option is enabled.
+
 EXT_API = EXT_API_PROVIDE
 id = 0x1200
 flags = 0
