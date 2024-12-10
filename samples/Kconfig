@@ -72,13 +72,6 @@ config NCS_SAMPLE_DTM_REMOTE_HCI_CHILD_IMAGE
 
 if NCS_INCLUDE_RPMSG_CHILD_IMAGE
 
-config NCS_SAMPLE_MULTIPROTOCOL_RPMSG_CHILD_IMAGE
-	bool
-	depends on BT_HCI_IPC && NRF_802154_SER_HOST && !BT_RPC && !NRF70_RADIO_TEST_COMBO
-	default y
-	help
-	  multiprotocol_rpmsg sample as a child image (network core).
-
 config NCS_SAMPLE_HCI_IPC_CHILD_IMAGE
 	bool
 	depends on BT_HCI_IPC && !NRF_802154_SER_HOST && !BT_RPC && !NRF70_RADIO_TEST_COMBO
