@@ -167,6 +167,13 @@ struct bt_hids_rep {
  */
 typedef void (*bt_hids_notify_handler_t) (enum bt_hids_notify_evt evt);
 
+/** @brief HID notification event handler, with report identification.
+ *
+ * @param report_id Report ID defined in the HIDS Report Map.
+ * @param evt Notification event.
+ */
+typedef void (*bt_hids_notify_ext_handler_t) (uint8_t report_id, enum bt_hids_notify_evt evt);
+
 /** @brief HID Report event handler.
  *
  * @param rep	Pointer to the report descriptor.
@@ -176,6 +183,18 @@ typedef void (*bt_hids_notify_handler_t) (enum bt_hids_notify_evt evt);
 typedef void (*bt_hids_rep_handler_t) (struct bt_hids_rep *rep,
 				       struct bt_conn *conn,
 				       bool write);
+
+/** @brief HID Report event handler, with report identification.
+ *
+ * @param report_id Report ID defined in the HIDS Report Map.
+ * @param rep	Pointer to the report descriptor.
+ * @param conn	Pointer to Connection Object.
+ * @param write	@c true if handler is called for report write.
+ */
+typedef void (*bt_hids_rep_ext_handler_t) (uint8_t report_id,
+					   struct bt_hids_rep *rep,
+					   struct bt_conn *conn,
+					   bool write);
 
 /** @brief Input Report.
  */
@@ -225,8 +244,15 @@ struct bt_hids_inp_rep {
 	 */
 	const uint8_t *rep_mask;
 
-	/** Callback with the notification event. */
+	/** Callback with the notification event.
+	 * Used if set and extended callback is not set.
+	 */
 	bt_hids_notify_handler_t handler;
+
+	/** Extended callback with the notification event.
+	 * Has preference over the normal callback.
+	 */
+	bt_hids_notify_ext_handler_t handler_ext;
 };
 
 
@@ -263,8 +289,15 @@ struct bt_hids_outp_feat_rep {
 	 */
 	uint8_t perm;
 
-	/** Callback with updated report data. */
+	/** Callback with updated report data.
+	 * Used if set and extended callback is not set.
+	 */
 	bt_hids_rep_handler_t handler;
+
+	/** Extended callback with updated report data.
+	 * Has preference over the normal callback.
+	 */
+	bt_hids_rep_ext_handler_t handler_ext;
 };
 
 /** @brief Boot Mouse Input Report.
