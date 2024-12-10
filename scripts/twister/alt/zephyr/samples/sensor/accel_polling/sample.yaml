@@ -34,10 +34,6 @@ tests:
     extra_args:
       - accel_polling_SHIELD=pca63566
       - vpr_launcher_SHIELD=pca63566_fwd
-    extra_configs:
-      - CONFIG_LOG=y
-      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
-      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54h20dk/nrf54h20/cpuppr
 
   sample.sensor.accel_polling.nrf54h_coverage:
