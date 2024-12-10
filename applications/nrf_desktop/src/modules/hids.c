@@ -183,41 +183,29 @@ static void boot_keyboard_notif_handler(enum bt_hids_notify_evt evt)
 	async_notif_handler(REPORT_ID_BOOT_KEYBOARD, evt);
 }
 
-static void mouse_report_sent_cb(struct bt_conn *conn, void *user_data)
+static void report_sent_cb(struct bt_conn *conn, void *user_data)
 {
-	ARG_UNUSED(user_data);
-	hid_report_sent(conn, REPORT_ID_MOUSE, false);
+	uint8_t report_id = (uint8_t)(uintptr_t)user_data;
+
+	__ASSERT_NO_MSG(report_id < REPORT_ID_COUNT);
+
+	hid_report_sent(conn, report_id, false);
 }
 static void mouse_notif_handler(enum bt_hids_notify_evt evt)
 {
 	async_notif_handler(REPORT_ID_MOUSE, evt);
 }
 
-static void keyboard_keys_report_sent_cb(struct bt_conn *conn, void *user_data)
-{
-	ARG_UNUSED(user_data);
-	hid_report_sent(conn, REPORT_ID_KEYBOARD_KEYS, false);
-}
 static void keyboard_keys_notif_handler(enum bt_hids_notify_evt evt)
 {
 	async_notif_handler(REPORT_ID_KEYBOARD_KEYS, evt);
 }
 
-static void system_ctrl_report_sent_cb(struct bt_conn *conn, void *user_data)
-{
-	ARG_UNUSED(user_data);
-	hid_report_sent(conn, REPORT_ID_SYSTEM_CTRL, false);
-}
 static void system_ctrl_notif_handler(enum bt_hids_notify_evt evt)
 {
 	async_notif_handler(REPORT_ID_SYSTEM_CTRL, evt);
 }
 
-static void consumer_ctrl_report_sent_cb(struct bt_conn *conn, void *user_data)
-{
-	ARG_UNUSED(user_data);
-	hid_report_sent(conn, REPORT_ID_CONSUMER_CTRL, false);
-}
 static void consumer_ctrl_notif_handler(enum bt_hids_notify_evt evt)
 {
 	async_notif_handler(REPORT_ID_CONSUMER_CTRL, evt);
@@ -410,15 +398,6 @@ static int module_init(void)
 
 static void send_hid_report(const struct hid_report_event *event)
 {
-	static void (*const report_sent_cb[REPORT_ID_COUNT])(struct bt_conn *conn, void *user_data) = {
-		[REPORT_ID_MOUSE]         = mouse_report_sent_cb,
-		[REPORT_ID_KEYBOARD_KEYS] = keyboard_keys_report_sent_cb,
-		[REPORT_ID_SYSTEM_CTRL]   = system_ctrl_report_sent_cb,
-		[REPORT_ID_CONSUMER_CTRL] = consumer_ctrl_report_sent_cb,
-		[REPORT_ID_BOOT_MOUSE] = boot_mouse_report_sent_cb,
-		[REPORT_ID_BOOT_KEYBOARD] = boot_keyboard_report_sent_cb,
-	};
-
 	if (!cur_conn || (cur_conn != event->subscriber)) {
 		/* It's not us */
 		return;
@@ -429,7 +408,6 @@ static void send_hid_report(const struct hid_report_event *event)
 	uint8_t report_id = event->dyndata.data[0];
 
 	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(report_index));
-	__ASSERT_NO_MSG(report_sent_cb[report_id]);
 
 	if (!subscribed[report_id]) {
 		/* Notification disabled */
@@ -450,7 +428,7 @@ static void send_hid_report(const struct hid_report_event *event)
 			err = bt_hids_boot_mouse_inp_rep_send(&hids_obj, cur_conn,
 							      &buffer[0], buffer[1],
 							      buffer[2],
-							      report_sent_cb[report_id]);
+							      boot_mouse_report_sent_cb);
 		}
 		break;
 	case REPORT_ID_BOOT_KEYBOARD:
@@ -459,17 +437,18 @@ static void send_hid_report(const struct hid_report_event *event)
 		} else {
 			err = bt_hids_boot_kb_inp_rep_send(&hids_obj, cur_conn,
 							   buffer, size,
-							   report_sent_cb[report_id]);
+							   boot_keyboard_report_sent_cb);
 		}
 		break;
 	default:
 		if (protocol_boot) {
 			err = -EBADF;
 		} else {
-			err = bt_hids_inp_rep_send(&hids_obj, cur_conn,
-						   report_index[report_id],
-						   buffer, size,
-						   report_sent_cb[report_id]);
+			err = bt_hids_inp_rep_send_userdata(&hids_obj, cur_conn,
+							    report_index[report_id],
+							    buffer, size,
+							    report_sent_cb,
+							    (void *)(uintptr_t)report_id);
 		}
 		break;
 	}
