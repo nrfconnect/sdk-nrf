@@ -65,26 +65,30 @@ ZTEST(ot_rpc_dataset, test_otDatasetIsCommissioned)
 
 	zassert_equal(otDatasetIsCommissioned_fake.call_count, 2);
 }
-
 /*
  * Test reception of otDatasetSetActiveTlvs command.
  * Test serialization of the result: OT_ERROR_NONE.
  */
-ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
+otError dataset_tlvs_set_fake(otInstance *instance, const otOperationalDatasetTlvs *dataset)
 {
 	const otOperationalDatasetTlvs expected_dataset = {
 		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
 		OT_OPERATIONAL_DATASET_MAX_LENGTH};
 
-	otDatasetSetActiveTlvs_fake.return_val = OT_ERROR_NONE;
+	zassert_mem_equal(dataset, &expected_dataset, sizeof(otOperationalDatasetTlvs));
+
+	return OT_ERROR_NONE;
+}
+
+ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
+{
+	otDatasetSetActiveTlvs_fake.custom_fake = dataset_tlvs_set_fake;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, TLVS));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetSetActiveTlvs_fake.call_count, 1);
-	zassert_mem_equal(otDatasetSetActiveTlvs_fake.arg1_val, &expected_dataset,
-			  sizeof(otOperationalDatasetTlvs));
 }
 
 /*
@@ -145,68 +149,70 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs_null)
  * Test reception of otDatasetSetActive command.
  * Test serialization of the result: OT_ERROR_NONE.
  */
-ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
+otError dataset_set_fake(otInstance *instance, const otOperationalDataset *dataset)
 {
-	const otOperationalDataset *expected_dataset;
 	uint8_t net_key[] = {INT_SEQUENCE(OT_NETWORK_KEY_SIZE)};
 	uint8_t nwk_name[] = {INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), 0};
 	uint8_t ext_pan_id[] = {INT_SEQUENCE(OT_EXT_PAN_ID_SIZE)};
 	uint8_t local_prefix[] = {INT_SEQUENCE(OT_IP6_PREFIX_SIZE)};
 	uint8_t pskc[] = {INT_SEQUENCE(OT_PSKC_MAX_SIZE)};
 
-	otDatasetSetActive_fake.return_val = OT_ERROR_NONE;
+	zassert_equal(dataset->mActiveTimestamp.mSeconds, 0x0123456789abcdefull);
+	zassert_equal(dataset->mActiveTimestamp.mTicks, 0x1234);
+	zassert_false(dataset->mActiveTimestamp.mAuthoritative);
+
+	zassert_equal(dataset->mPendingTimestamp.mSeconds, 0x0123456789abcdefull);
+	zassert_equal(dataset->mPendingTimestamp.mTicks, 0x1234);
+	zassert_false(dataset->mPendingTimestamp.mAuthoritative);
+
+	zassert_mem_equal(dataset->mNetworkKey.m8, net_key, OT_NETWORK_KEY_SIZE);
+	zassert_mem_equal(dataset->mNetworkName.m8, nwk_name, OT_NETWORK_NAME_MAX_SIZE + 1);
+	zassert_mem_equal(dataset->mExtendedPanId.m8, ext_pan_id, OT_EXT_PAN_ID_SIZE);
+	zassert_mem_equal(dataset->mMeshLocalPrefix.m8, local_prefix, OT_IP6_PREFIX_SIZE);
+	zassert_equal(dataset->mDelay, 0x12345678ul);
+	zassert_equal(dataset->mPanId, 0xabcd);
+	zassert_equal(dataset->mChannel, 0xef67);
+	zassert_mem_equal(dataset->mPskc.m8, pskc, OT_PSKC_MAX_SIZE);
+
+	zassert_equal(dataset->mSecurityPolicy.mRotationTime, 0x9876);
+	zassert_true(!!dataset->mSecurityPolicy.mObtainNetworkKeyEnabled);
+	zassert_false(!!dataset->mSecurityPolicy.mNativeCommissioningEnabled);
+	zassert_true(!!dataset->mSecurityPolicy.mRoutersEnabled);
+	zassert_false(!!dataset->mSecurityPolicy.mExternalCommissioningEnabled);
+	zassert_true(!!dataset->mSecurityPolicy.mCommercialCommissioningEnabled);
+	zassert_false(!!dataset->mSecurityPolicy.mAutonomousEnrollmentEnabled);
+	zassert_true(!!dataset->mSecurityPolicy.mNetworkKeyProvisioningEnabled);
+	zassert_false(!!dataset->mSecurityPolicy.mTobleLinkEnabled);
+	zassert_true(!!dataset->mSecurityPolicy.mNonCcmRoutersEnabled);
+	zassert_equal(dataset->mSecurityPolicy.mVersionThresholdForRouting, 7);
+
+	zassert_equal(dataset->mChannelMask, 0xfedcba98ul);
+
+	zassert_false(dataset->mComponents.mIsActiveTimestampPresent);
+	zassert_true(dataset->mComponents.mIsPendingTimestampPresent);
+	zassert_false(dataset->mComponents.mIsNetworkKeyPresent);
+	zassert_true(dataset->mComponents.mIsNetworkNamePresent);
+	zassert_false(dataset->mComponents.mIsExtendedPanIdPresent);
+	zassert_true(dataset->mComponents.mIsMeshLocalPrefixPresent);
+	zassert_false(dataset->mComponents.mIsDelayPresent);
+	zassert_true(dataset->mComponents.mIsPanIdPresent);
+	zassert_false(dataset->mComponents.mIsChannelPresent);
+	zassert_true(dataset->mComponents.mIsPskcPresent);
+	zassert_false(dataset->mComponents.mIsSecurityPolicyPresent);
+	zassert_true(dataset->mComponents.mIsChannelMaskPresent);
+
+	return OT_ERROR_NONE;
+}
+
+ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
+{
+	otDatasetSetActive_fake.custom_fake = dataset_set_fake;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE, DATASET));
 	mock_nrf_rpc_tr_expect_done();
 
-	expected_dataset = otDatasetSetActive_fake.arg1_val;
-
 	zassert_equal(otDatasetSetActive_fake.call_count, 1);
-	zassert_equal(expected_dataset->mActiveTimestamp.mSeconds, 0x0123456789abcdefull);
-	zassert_equal(expected_dataset->mActiveTimestamp.mTicks, 0x1234);
-	zassert_false(expected_dataset->mActiveTimestamp.mAuthoritative);
-
-	zassert_equal(expected_dataset->mPendingTimestamp.mSeconds, 0x0123456789abcdefull);
-	zassert_equal(expected_dataset->mPendingTimestamp.mTicks, 0x1234);
-	zassert_false(expected_dataset->mPendingTimestamp.mAuthoritative);
-
-	zassert_mem_equal(expected_dataset->mNetworkKey.m8, net_key, OT_NETWORK_KEY_SIZE);
-	zassert_mem_equal(expected_dataset->mNetworkName.m8, nwk_name,
-			  OT_NETWORK_NAME_MAX_SIZE + 1);
-	zassert_mem_equal(expected_dataset->mExtendedPanId.m8, ext_pan_id, OT_EXT_PAN_ID_SIZE);
-	zassert_mem_equal(expected_dataset->mMeshLocalPrefix.m8, local_prefix, OT_IP6_PREFIX_SIZE);
-	zassert_equal(expected_dataset->mDelay, 0x12345678ul);
-	zassert_equal(expected_dataset->mPanId, 0xabcd);
-	zassert_equal(expected_dataset->mChannel, 0xef67);
-	zassert_mem_equal(expected_dataset->mPskc.m8, pskc, OT_PSKC_MAX_SIZE);
-
-	zassert_equal(expected_dataset->mSecurityPolicy.mRotationTime, 0x9876);
-	zassert_true(!!expected_dataset->mSecurityPolicy.mObtainNetworkKeyEnabled);
-	zassert_false(!!expected_dataset->mSecurityPolicy.mNativeCommissioningEnabled);
-	zassert_true(!!expected_dataset->mSecurityPolicy.mRoutersEnabled);
-	zassert_false(!!expected_dataset->mSecurityPolicy.mExternalCommissioningEnabled);
-	zassert_true(!!expected_dataset->mSecurityPolicy.mCommercialCommissioningEnabled);
-	zassert_false(!!expected_dataset->mSecurityPolicy.mAutonomousEnrollmentEnabled);
-	zassert_true(!!expected_dataset->mSecurityPolicy.mNetworkKeyProvisioningEnabled);
-	zassert_false(!!expected_dataset->mSecurityPolicy.mTobleLinkEnabled);
-	zassert_true(!!expected_dataset->mSecurityPolicy.mNonCcmRoutersEnabled);
-	zassert_equal(expected_dataset->mSecurityPolicy.mVersionThresholdForRouting, 7);
-
-	zassert_equal(expected_dataset->mChannelMask, 0xfedcba98ul);
-
-	zassert_false(expected_dataset->mComponents.mIsActiveTimestampPresent);
-	zassert_true(expected_dataset->mComponents.mIsPendingTimestampPresent);
-	zassert_false(expected_dataset->mComponents.mIsNetworkKeyPresent);
-	zassert_true(expected_dataset->mComponents.mIsNetworkNamePresent);
-	zassert_false(expected_dataset->mComponents.mIsExtendedPanIdPresent);
-	zassert_true(expected_dataset->mComponents.mIsMeshLocalPrefixPresent);
-	zassert_false(expected_dataset->mComponents.mIsDelayPresent);
-	zassert_true(expected_dataset->mComponents.mIsPanIdPresent);
-	zassert_false(expected_dataset->mComponents.mIsChannelPresent);
-	zassert_true(expected_dataset->mComponents.mIsPskcPresent);
-	zassert_false(expected_dataset->mComponents.mIsSecurityPolicyPresent);
-	zassert_true(expected_dataset->mComponents.mIsChannelMaskPresent);
 }
 
 /*
