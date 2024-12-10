@@ -30,30 +30,23 @@ endif()
 
 if(CONFIG_BOOTLOADER_MCUBOOT AND NOT CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY)
   # Configure the secondary partition to be non-secure
-  if(SYSBUILD)
-    function(mcuboot_single_check val)
-      import_kconfig(CONFIG_ "${CMAKE_BINARY_DIR}/../mcuboot/zephyr/.config")
-      set(${val} "${CONFIG_SINGLE_APPLICATION_SLOT}" PARENT_SCOPE)
-    endfunction()
+  function(mcuboot_single_check val)
+    import_kconfig(CONFIG_ "${CMAKE_BINARY_DIR}/../mcuboot/zephyr/.config")
+    set(${val} "${CONFIG_SINGLE_APPLICATION_SLOT}" PARENT_SCOPE)
+  endfunction()
 
-    set(mcuboot_single_slot)
-    mcuboot_single_check(mcuboot_single_slot)
+  set(mcuboot_single_slot)
+  mcuboot_single_check(mcuboot_single_slot)
 
-    if(mcuboot_single_slot)
-      set_property(TARGET zephyr_property_target
-        APPEND PROPERTY TFM_CMAKE_OPTIONS
-        -DNRF_NS_SECONDARY=n
-      )
-    else()
-      set_property(TARGET zephyr_property_target
-        APPEND PROPERTY TFM_CMAKE_OPTIONS
-        -DNRF_NS_SECONDARY=y
-      )
-    endif()
+  if(mcuboot_single_slot)
+    set_property(TARGET zephyr_property_target
+      APPEND PROPERTY TFM_CMAKE_OPTIONS
+      -DNRF_NS_SECONDARY=n
+    )
   else()
     set_property(TARGET zephyr_property_target
       APPEND PROPERTY TFM_CMAKE_OPTIONS
-      -DNRF_NS_SECONDARY=$<TARGET_PROPERTY:partition_manager,PM_mcuboot_secondary_IS_ENABLED>
+      -DNRF_NS_SECONDARY=y
     )
   endif()
 endif()
@@ -359,8 +352,6 @@ set_property(TARGET zephyr_property_target
   -DTFM_EXTRA_CONFIG_PATH="${CMAKE_CURRENT_BINARY_DIR}/config_extra.cmake"
 )
 
-if(SYSBUILD)
-  set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${CMAKE_BINARY_DIR}/zephyr/tfm_merged.hex"
-      CACHE FILEPATH "Kernel hex file" FORCE
-  )
-endif()
+set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${CMAKE_BINARY_DIR}/zephyr/tfm_merged.hex"
+    CACHE FILEPATH "Kernel hex file" FORCE
+)

@@ -1,40 +1,6 @@
 menu "MCUboot"
 
-config BOOT_SIGNATURE_KEY_FILE
-	string "MCUBoot PEM key file"
-	depends on !MCUBOOT_BUILD_STRATEGY_FROM_SOURCE
-	help
-	  Absolute path to PEM key file containing the private key corresponding
-	  to the public key included in MCUBoot. This will be used to sign the
-	  image so that it can be verified by MCUBoot. Since MCUBoot is not
-	  built from source, it is not possible for the build system to deduce
-	  what key was used when compiling it. Hence, it is required that the
-	  key is passed to the build system through this option.
-
-config SIGN_IMAGES
-	bool "Sign images for MCUBoot"
-	default y
-	imply BUILD_OUTPUT_META
-	depends on MCUBOOT_BUILD_STRATEGY_FROM_SOURCE \
-		   || BOOT_SIGNATURE_KEY_FILE != ""
-	help
-	  Sign images for MCUBoot as integrated part of the build stages using
-	  the private key.
-
 if BOOTLOADER_MCUBOOT
-
-config BOOT_BUILD_DIRECT_XIP_VARIANT
-	bool "Build DIRECT_XIP variant"
-	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
-	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
-	help
-	  Build a variant of the 'app' image which can be used for DIRECT_XIP.
-
-# The name of this configuration needs to match the requirements set by the
-# script `partition_manager.py`. See `pm.yml` in the application directory
-# of MCUBoot.
-module=MCUBOOT
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
@@ -98,41 +64,6 @@ config USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY
 	  different swapping methods. This will however give you the potential
 	  of bricking the network core upon reverts.
 
-config DFU_MULTI_IMAGE_PACKAGE_BUILD
-	bool "Build DFU Multi Image package"
-	depends on BOOTLOADER_MCUBOOT
-	help
-	  Build DFU Multi Image package that contains a manifest file followed by
-	  selected update images.
-
-if DFU_MULTI_IMAGE_PACKAGE_BUILD
-
-config DFU_MULTI_IMAGE_PACKAGE_APP
-	bool "Include Application Core image in DFU Multi Image package"
-	default y
-
-config DFU_MULTI_IMAGE_PACKAGE_NET
-	bool "Include Network Core image in DFU Multi Image package"
-	depends on NRF53_UPGRADE_NETWORK_CORE
-	default y
-
-config DFU_MULTI_IMAGE_PACKAGE_MCUBOOT
-	bool "Include MCUboot image in DFU Multi Image package"
-	depends on BUILD_S1_VARIANT
-	# Currently simultaneous application and MCUboot updates are unsupported
-	depends on !DFU_MULTI_IMAGE_PACKAGE_APP && !DFU_MULTI_IMAGE_PACKAGE_NET
-
-endif # DFU_MULTI_IMAGE_PACKAGE_BUILD
-
-config ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS
-	bool "DTS overlay of the sim-flash intermediary for upgrading NET core"
-	depends on BOOTLOADER_MCUBOOT
-	help
-	  Add DTS overlay which defines the flash simulator device which is emulating
-	  the network core primary slot. This slot is required either to allow
-	  multi image update of the network core or to allow serial recovery of
-	  the network core.
-
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
 	bool "Allow MCUBoot to use all available RAM (security implications)"
 	depends on ARM_TRUSTZONE_M
@@ -143,13 +74,3 @@ config MCUBOOT_USE_ALL_AVAILABLE_RAM
 	  RAM partition.
 
 endmenu
-
-config XIP_SPLIT_IMAGE
-	bool "Split XIP image"
-	depends on SOC_NRF5340_CPUAPP
-	depends on !MCUBOOT
-	help
-	  Allows for an image to be split into 2 parts where there is code executing from internal
-	  flash and code from QSPI via XIP. Requires specific project setup for projects to use
-	  this feature: project's cmake which supports code dispatching, linker script for describe QSPI
-	  linking area and dedicated partition manager configuration.

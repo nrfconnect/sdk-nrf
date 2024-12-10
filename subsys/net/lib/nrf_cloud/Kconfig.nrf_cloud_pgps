@@ -130,7 +130,8 @@ config NRF_CLOUD_PGPS_SOCKET_RETRIES
 
 choice NRF_CLOUD_PGPS_STORAGE
 	prompt "nRF Cloud P-GPS persistent storage location"
-	default NRF_CLOUD_PGPS_STORAGE_PARTITION if BUILD_S1_VARIANT
+#TODO: Add MCUBOOT_BOOTLOADER_MODE_RAM_LOAD once included via next upmerge
+	default NRF_CLOUD_PGPS_STORAGE_PARTITION if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP || MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
 	default NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY if BOARD_THINGY91_NRF9160_NS
 	help
 	  The P-GPS subsystem requires a contiguous section of flash memory in
@@ -149,13 +150,14 @@ config NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY
 	bool "Reuse MCUboot secondary partition for P-GPS storage"
 	depends on BOOTLOADER_MCUBOOT
 	depends on IMG_MANAGER
-	depends on !BUILD_S1_VARIANT
+#TODO: Add MCUBOOT_BOOTLOADER_MODE_RAM_LOAD once included via next upmerge
+	depends on !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP && !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
 	help
 	  If set, use the secondary MCUboot partition to also store P-GPS data.
 	  Note that when a FOTA job executes, this data will be lost and will
 	  have to be downloaded again after the FOTA job is complete. This is
 	  not compatible with FOTA updates of MUCboot itself, which is possible
-	  when SECURE_BOOT and BUILD_S1_VARIANT are enabled.
+	  when SECURE_BOOT is enabled.
 
 config NRF_CLOUD_PGPS_STORAGE_CUSTOM
 	bool "Use application-provided location and size in flash"

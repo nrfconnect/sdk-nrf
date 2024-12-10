@@ -80,39 +80,7 @@ function(get_board_without_ns_suffix board_in board_out)
   endif()
 endfunction()
 
-# Add an overlay file to a child image.
-# This can be used by a parent image to set overlay of Kconfig configuration or devicetree
-# in its child images. This function must be called before 'add_child_image(image)'
-# to have effect.
-#
-# Parameters:
-#   'image' - child image name
-#   'overlay_file' - overlay to be added to child image
-#   'overlay_type' - 'OVERLAY_CONFIG' or 'DTC_OVERLAY_FILE'
-function(add_overlay image overlay_file overlay_type)
-  set(old_overlays ${${image}_${overlay_type}})
-  string(FIND "${old_overlays}" "${overlay_file}" found)
-  if (${found} EQUAL -1)
-    set(${image}_${overlay_type} "${old_overlays};${overlay_file}" CACHE STRING
-      "Extra config fragments for ${image} child image" FORCE
-    )
-  endif()
-endfunction()
-
-# Convenience macro to add configuration overlays to child image.
-macro(add_overlay_config image overlay_file)
-  add_overlay(${image} ${overlay_file} EXTRA_CONF_FILE)
-endmacro()
-
-# Convenience macro to add device tree overlays to child image.
-macro(add_overlay_dts image overlay_file)
-  add_overlay(${image} ${overlay_file} EXTRA_DTC_OVERLAY_FILE)
-endmacro()
-
 # Add a partition manager configuration file to the build.
-# Note that is only one image is included in the build,
-# you must set CONFIG_PM_SINGLE_IMAGE=y for the partition manager
-# configuration to take effect.
 function(ncs_add_partition_manager_config config_file)
   get_filename_component(pm_path ${config_file} REALPATH)
   get_filename_component(pm_filename ${config_file} NAME)
@@ -353,59 +321,13 @@ function(set_shared)
   set(multi_args  "PROPERTY")
   cmake_parse_arguments(SHARE "${flags}" "${single_args}" "${multi_args}" ${ARGN})
 
-  if(SYSBUILD)
-    # Sysbuild can read the cache directly, no reason for an extra share file.
-    list(POP_FRONT SHARE_PROPERTY listname)
-    if(SHARE_APPEND)
-      list(APPEND ${listname} ${SHARE_PROPERTY})
-      list(REMOVE_DUPLICATES ${listname})
-      set(SHARE_PROPERTY ${${listname}})
-    endif()
-    set(${listname} "${SHARE_PROPERTY}" CACHE INTERNAL "shared var")
-    return()
+  list(POP_FRONT SHARE_PROPERTY listname)
+  if(SHARE_APPEND)
+    list(APPEND ${listname} ${SHARE_PROPERTY})
+    list(REMOVE_DUPLICATES ${listname})
+    set(SHARE_PROPERTY ${${listname}})
   endif()
-
-  check_arguments_required("set_shared" SHARE IMAGE FILE)
-
-  check_arguments_exclusive("set_shared" SHARE FILE IMAGE PROPERTY APPEND)
-  check_arguments_exclusive("set_shared" SHARE IMAGE FILE)
-
-
-  set(prop_target ${IMAGE_NAME}_shared_property_target)
-  if(NOT TARGET ${prop_target})
-    add_custom_target(${prop_target})
-  endif()
-
-  if(DEFINED SHARE_IMAGE)
-    # When using IMAGE, then PROPERTY is also required.
-    check_arguments_required("set_shared" SHARE PROPERTY)
-
-    set(share_prop_target ${SHARE_IMAGE}_shared_property_target)
-
-    if(SHARE_APPEND)
-      set(SHARE_APPEND APPEND)
-    else()
-      set(SHARE_APPEND)
-    endif()
-
-    get_property(string_targets TARGET ${prop_target} PROPERTY image_targets)
-    if(NOT "add_custom_target(${share_prop_target})" IN_LIST string_targets)
-      set_property(
-        TARGET ${prop_target} APPEND PROPERTY
-        image_targets "add_custom_target(${share_prop_target})"
-      )
-    endif()
-
-    set_property(TARGET ${prop_target} APPEND_STRING PROPERTY shared_vars
-      "set_property(TARGET ${share_prop_target} ${SHARE_APPEND} PROPERTY ${SHARE_PROPERTY})\n"
-    )
-  endif()
-
-  if(DEFINED SHARE_FILE)
-    set_property(TARGET ${prop_target} APPEND_STRING PROPERTY shared_vars
-      "include(${SHARE_FILE})\n"
-    )
-  endif()
+  set(${listname} "${SHARE_PROPERTY}" CACHE INTERNAL "shared var")
 endfunction()
 
 # generate_shared(IMAGE <img> FILE <file>)

@@ -71,6 +71,7 @@ static uint8_t buf[TEST_AREA_BUFFER_SIZE];
 
 ZTEST(flash_driver, test_read_unaligned_address)
 {
+	int rc;
 	zassert_true(device_is_ready(flash_dev));
 
 	for (int i = 0; i < TEST_AREA_BUFFER_SIZE; i++) {
@@ -80,8 +81,8 @@ ZTEST(flash_driver, test_read_unaligned_address)
 			expected[i] = i;
 		}
 	}
-	int rc = flash_erase(flash_dev, TEST_AREA_START_ADDR, TEST_AREA_ERASE_SIZE);
 
+	rc = flash_erase(flash_dev, TEST_AREA_START_ADDR, TEST_AREA_ERASE_SIZE);
 	zassert_equal(rc, 0, "Flash memory erase failed");
 
 	for (off_t addr_o = 0; addr_o < 4; addr_o++) {

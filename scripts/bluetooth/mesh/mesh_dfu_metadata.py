@@ -34,7 +34,6 @@ FILE_NAME = 'dfu_application.zip_ble_mesh_metadata.json'
 def exit_with_error_msg():
     traceback.print_exc()
     print("Extracting BLE Mesh metadata failed")
-    print("You can bypass this script by disabling the CONFIG_BT_MESH_DFU_METADATA_ON_BUILD option in your project config")
     sys.exit(0)
 
 
@@ -399,16 +398,8 @@ if __name__ == "__main__":
         args = input_parse()
 
         sysbuild_config_path = os.path.abspath(os.path.join(args.bin_path, '.config.sysbuild'))
-
-        if os.path.isfile(sysbuild_config_path):
-            # Sysbuild
-            zip_path = os.path.abspath(os.path.join(args.bin_path, '..', '..', 'dfu_application.zip'))
-            sysbuild = True
-        else:
-            # Child/parent image
-            zip_path = os.path.abspath(os.path.join(args.bin_path, 'dfu_application.zip'))
-            sysbuild = False
-
+        zip_path = os.path.abspath(os.path.join(args.bin_path, '..', '..', 'dfu_application.zip'))
+        sysbuild = True
         metadata_path = os.path.abspath(os.path.join(args.bin_path, FILE_NAME))
         config_path = os.path.abspath(os.path.join(args.bin_path, '.config'))
         kconfigs = KConfig.from_file(config_path)

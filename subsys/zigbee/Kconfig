@@ -9,7 +9,6 @@ menuconfig ZIGBEE
 	select DEPRECATED
 	imply FPU
 	select APP_LINK_WITH_ZBOSS
-	select PM_SINGLE_IMAGE
 	select NET_L2_ZIGBEE
 	select NETWORKING
 	select NET_PKT_TXTIME

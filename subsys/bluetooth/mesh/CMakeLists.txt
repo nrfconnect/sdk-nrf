@@ -80,9 +80,3 @@ zephyr_linker_sources(SECTIONS sensor_types.ld)
 zephyr_linker_sources(SECTIONS scene_types.ld)
 
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_RPL_STORAGE_MODE_EMDS rpl.c)
-
-if(CONFIG_SIGN_IMAGES AND CONFIG_BT_MESH_DFU_METADATA_ON_BUILD)
-  # Child/parent image
-  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/mesh_dfu_metadata.cmake)
-  mesh_dfu_metadata()
-endif()
