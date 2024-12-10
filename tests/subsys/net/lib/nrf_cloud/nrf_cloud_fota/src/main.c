@@ -25,6 +25,8 @@ struct nrf_cloud_fota_c_ctx {
 	struct nrf_cloud_fota_job * current_fota;
 	struct nrf_cloud_settings_fota_job * saved_job;
 	struct mqtt_topic * sub_topics;
+	struct mqtt_topic * topic_updt;
+	struct mqtt_topic * topic_req;
 	size_t  sub_topics_size;
 };
 
@@ -235,6 +237,9 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_init_valid_param)
 	zassert_equal(1, ret,
 		"nrf_cloud_fota_init should succeed with valid parameters");
 
+	zassert_equal(false, nrf_cloud_fota_is_active(),
+		"nrf_cloud_fota_is_active should return false if FOTA is not in progress");
+
 	zassert_equal(0, nrf_cloud_fota_uninit(),
 		"nrf_cloud_fota_uninit should succeed if FOTA is not in progress");
 }
@@ -264,6 +269,7 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
 	ctx.sub_topics[1].topic.size = strlen(ctx.sub_topics[1].topic.utf8);
 
 	char job_payload[100] = "foo";
+	enum nrf_cloud_fota_type fota_type = NRF_CLOUD_FOTA_TYPE__INVALID;
 
 	/* simulate new job */
 	const struct mqtt_evt evt = {
@@ -280,13 +286,23 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_uninit_fota_in_progress)
 	nrf_cloud_fota_mqtt_evt_handler(&evt);
 	/* simulate some progress */
 	http_fota_handler_t handler = fota_download_init_fake.arg0_history[0];
-	const struct fota_download_evt evt2 = { .id = FOTA_DOWNLOAD_EVT_PROGRESS,
+	struct fota_download_evt evt2 = { .id = FOTA_DOWNLOAD_EVT_PROGRESS,
 	 				       .progress = 42 };
 	handler(&evt2);
 
+	zassert_equal(true, nrf_cloud_fota_is_active(),
+		"nrf_cloud_fota_is_active should return true if FOTA is in progress");
 
 	zassert_equal(-EBUSY, nrf_cloud_fota_uninit(),
 		"nrf_cloud_fota_uninit should fail if FOTA is in progress");
+
+	/* make FOTA pending */
+	evt2.id = FOTA_DOWNLOAD_EVT_FINISHED;
+	handler(&evt2);
+	(void) nrf_cloud_fota_pending_job_type_get(&fota_type);
+
+	zassert_equal(NRF_CLOUD_FOTA_MODEM_DELTA, fota_type,
+		"nrf_cloud_fota_is_active should return true if FOTA is in progress");
 }
 
 /* nrf_cloud_fota_ble_job_update fails on invalid params */
@@ -422,3 +438,48 @@ ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_endpoint_set_allocation_fails)
 	zassert_equal(6+6+1, nrf_cloud_free_fake.call_count,
 		"nrf_cloud_fota_endpoint_set_and_report should free memory on failure");
 }
+
+/* nrf_cloud_fota_endpoint_clear clears the mqtt client and all topics */
+ZTEST(nrf_cloud_fota_test, test_nrf_cloud_fota_endpoint_clear)
+{
+	struct mqtt_client client;
+	struct mqtt_utf8 endpoint = {
+		.utf8 = "endpoint",
+		.size = strlen("endpoint"),
+	};
+	char buf[100];
+	struct nrf_cloud_fota_c_ctx ctx;
+	access_internal_state(&ctx);
+
+	nrf_cloud_calloc_fake.return_val = buf;
+
+	zassert_equal(0, nrf_cloud_fota_endpoint_set_and_report(&client, "client_id", &endpoint),
+		"nrf_cloud_fota_endpoint_set_and_report should check that topic is set");
+
+	zassert_equal(buf, ctx.sub_topics[0].topic.utf8,
+		"nrf_cloud_fota_endpoint_set_and_report should set topic");
+	zassert_equal(buf, ctx.sub_topics[1].topic.utf8,
+		"nrf_cloud_fota_endpoint_set_and_report should set topic");
+	zassert_equal(buf, ctx.topic_updt->topic.utf8,
+		"nrf_cloud_fota_endpoint_set_and_report should set topic");
+	zassert_equal(buf, ctx.topic_req->topic.utf8,
+		"nrf_cloud_fota_endpoint_set_and_report should set topic");
+	zassert_equal(&client, *ctx.client_mqtt,
+		"nrf_cloud_fota_endpoint_set_and_report should set client");
+
+	nrf_cloud_fota_endpoint_clear();
+
+	zassert_equal(NULL, ctx.sub_topics[0].topic.utf8,
+		"nrf_cloud_fota_endpoint_clear should clear topic");
+	zassert_equal(NULL, ctx.sub_topics[1].topic.utf8,
+		"nrf_cloud_fota_endpoint_clear should clear topic");
+	zassert_equal(NULL, ctx.topic_updt->topic.utf8,
+		"nrf_cloud_fota_endpoint_clear should clear topic");
+	zassert_equal(NULL, ctx.topic_req->topic.utf8,
+		"nrf_cloud_fota_endpoint_clear should clear topic");
+	zassert_equal(NULL, *ctx.client_mqtt,
+		"nrf_cloud_fota_endpoint_clear should clear client");
+}
+
+/* cannot really test nrf_cloud_fota_job_start with CONFIG_NRF_CLOUD_FOTA_AUTO_START_JOB
+ * note: there is nothing using this function in the SDK. */

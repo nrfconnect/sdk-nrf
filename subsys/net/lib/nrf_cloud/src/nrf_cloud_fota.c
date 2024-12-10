@@ -1402,6 +1402,8 @@ struct nrf_cloud_fota_c_ctx {
 	struct nrf_cloud_fota_job * current_fota;
 	struct nrf_cloud_settings_fota_job * saved_job;
 	struct mqtt_topic * sub_topics;
+	struct mqtt_topic * topic_updt;
+	struct mqtt_topic * topic_req;
 	size_t  sub_topics_size;
 };
 
@@ -1419,5 +1421,7 @@ void access_internal_state (struct nrf_cloud_fota_c_ctx* ctx)
 	ctx->saved_job = &saved_job;
 	ctx->sub_topics = sub_topics;
 	ctx->sub_topics_size = ARRAY_SIZE(sub_topics);
+	ctx->topic_updt = &topic_updt;
+	ctx->topic_req = &topic_req;
 }
 #endif
