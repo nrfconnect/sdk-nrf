@@ -1098,6 +1098,7 @@ int azure_iot_hub_method_respond(struct azure_iot_hub_result *result)
 	}
 
 	struct mqtt_publish_param param = {
+		.message_id = mqtt_helper_msg_id_get(),
 		.message.payload.data = result->payload.ptr,
 		.message.payload.len = result->payload.size,
 		.message.topic.topic.utf8 = topic,
