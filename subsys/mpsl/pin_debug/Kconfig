@@ -11,7 +11,8 @@ config MPSL_PIN_DEBUG
 		    BOARD_NRF52833DK_NRF52833 || \
 		    BOARD_NRF52840DK_NRF52840 || \
 		    BOARD_NRF5340DK_NRF5340_CPUNET || \
-		    BOARD_NRF5340DK_NRF5340_CPUAPP)
+		    BOARD_NRF5340DK_NRF5340_CPUAPP || \
+		    BOARD_NRF54L15DK)
 	help
 	  Set this option to enable toggling of GPIO pins upon radio
 	  events. This can be useful for debugging purposes to figure
@@ -27,6 +28,7 @@ config MPSL_PIN_DEBUG_RADIO_CORE
 	bool
 	depends on MPSL_PIN_DEBUG
 	select NRFX_GPIOTE
+	select NRFX_GPPI
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	default y if (SOC_COMPATIBLE_NRF52X || SOC_COMPATIBLE_NRF5340_CPUNET)
@@ -36,13 +38,19 @@ config MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN
 	depends on MPSL_PIN_DEBUG
 	default 3 if SOC_COMPATIBLE_NRF52X
 	default 4 if SOC_COMPATIBLE_NRF53X
+	default 43 if SOC_COMPATIBLE_NRF54LX
 	help
-	  Only PORT0 can be used.
+	  For nRF52 and nRF53 only PORT0 can be used.
+	  For nRF54L only PORT1 can be used. Here the pin number
+	  is 43 - 32 = 11.
 
 config MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN
 	int "Pin toggled upon the events RADIO->EVENTS_ADDRESS and RADIO->EVENTS_END"
 	depends on MPSL_PIN_DEBUG
 	default 4 if SOC_COMPATIBLE_NRF52X
 	default 5 if SOC_COMPATIBLE_NRF53X
+	default 44 if SOC_COMPATIBLE_NRF54LX
 	help
-	  Only PORT0 can be used.
+	  For nRF52 and nRF53 only PORT0 can be used.
+	  For nRF54L only PORT1 can be used. Here the pin number
+	  is 44 - 32 = 12.
