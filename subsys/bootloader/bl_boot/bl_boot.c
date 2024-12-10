@@ -156,7 +156,34 @@ void bl_boot(const struct fw_info *fw_info)
 	__set_MSP(vector_table[0]);
 	__set_PSP(0);
 
+#if CONFIG_SB_CLEANUP_RAM
+	__asm__ volatile (
+		/* vector_table[1] -> r0 */
+		"   mov r0, %0\n"
+		/* Base to write -> r1 */
+		"   mov r1, %1\n"
+		/* Size to write -> r2 */
+		"   mov r2, %2\n"
+		/* Value to write -> r3 */
+		"   mov r3, %3\n"
+		"clear:\n"
+		"   str r3, [r1]\n"
+		"   add r1, r1, #4\n"
+		"   sub r2, r2, #4\n"
+		"   cbz r2, out\n"
+		"   b   clear\n"
+		"out:\n"
+		"   dsb\n"
+		/* Jump to reset vector of an app */
+		"   bx r0\n"
+		:
+		: "r" (vector_table[1]), "i" (CONFIG_SRAM_BASE_ADDRESS),
+		  "i" (CONFIG_SRAM_SIZE * 1024), "i" (0)
+		: "r0", "r1", "r2", "r3", "memory"
+	);
+#else
 	/* Call reset handler. */
 	((void (*)(void))vector_table[1])();
+#endif
 	CODE_UNREACHABLE;
 }

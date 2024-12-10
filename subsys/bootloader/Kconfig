@@ -210,6 +210,13 @@ config SB_BPROT_IN_DEBUG
 	default y
 	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
 
+config SB_CLEANUP_RAM
+	bool "Perform RAM cleanup"
+	depends on !FW_INFO_PROVIDE_ENABLE
+	depends on CPU_CORTEX_M4 || CPU_CORTEX_M33
+	help
+	  Sets contents of memory to 0 before jumping to application.
+
 endif # IS_SECURE_BOOTLOADER
 
 config IS_BOOTLOADER_IMG
