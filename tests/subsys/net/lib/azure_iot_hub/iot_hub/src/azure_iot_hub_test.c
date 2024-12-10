@@ -600,6 +600,7 @@ void test_azure_iot_hub_method_respond(void)
 	iot_hub_state = STATE_CONNECTED;
 
 	__cmock_mqtt_helper_publish_Stub(mqtt_helper_publish_method_respond_stub);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	TEST_ASSERT_EQUAL(0, azure_iot_hub_method_respond(&result));
 }
@@ -607,6 +608,7 @@ void test_azure_iot_hub_method_respond(void)
 void test_azure_iot_hub_method_respond_not_connected(void)
 {
 	struct azure_iot_hub_result result_dummy;
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	TEST_ASSERT_EQUAL(-ENOTCONN, azure_iot_hub_method_respond(&result_dummy));
 }
@@ -626,6 +628,7 @@ void test_azure_iot_hub_method_respond_too_long_request_id(void)
 	};
 
 	iot_hub_state = STATE_CONNECTED;
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	TEST_ASSERT_EQUAL(-EFAULT, azure_iot_hub_method_respond(&result));
 }
@@ -652,6 +655,7 @@ void test_azure_iot_hub_method_respond_mqtt_fail(void)
 	iot_hub_state = STATE_CONNECTED;
 
 	__cmock_mqtt_helper_publish_Stub(mqtt_helper_publish_fail_stub);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
 
 	TEST_ASSERT_EQUAL(-ENXIO, azure_iot_hub_method_respond(&result));
 }
