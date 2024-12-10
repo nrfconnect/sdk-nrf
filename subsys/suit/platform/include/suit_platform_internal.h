@@ -69,6 +69,18 @@ int suit_plat_component_id_get(suit_component_t handle, struct zcbor_string **co
 /** Return component type based on component handle */
 int suit_plat_component_type_get(suit_component_t handle, suit_component_type_t *component_type);
 
+/**
+ * @brief Verify if a manifest with given component ID is entitled to modify the manifest variable.
+ *
+ * @param[in] manifest_component_id  Component ID of a manifest that is requesting write access.
+ * @param[in] id                     Manifest variable ID.
+ *
+ * @retval SUIT_PLAT_SUCCESS                if modifications are allowed.
+ * @retval SUIT_ERR_DECODING                if decoding manifest component ID failed.
+ * @retval SUIT_ERR_UNAUTHORIZED_COMPONENT  if manifest is not allowed to modify the variable.
+ */
+int suit_plat_authorize_var_rw_access(struct zcbor_string *manifest_component_id, uint32_t id);
+
 #ifdef __cplusplus
 }
 #endif
