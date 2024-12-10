@@ -299,7 +299,8 @@ NFC samples
 nRF5340 samples
 ---------------
 
-|no_changes_yet_note|
+* Removed the ``nRF5340: Multiprotocol RPMsg`` sample.
+  Use the :ref:`ipc_radio` application instead.
 
 Peripheral samples
 ------------------
