@@ -183,6 +183,8 @@ The following table indicates the software maturity levels of the support for ea
      - nRF52840
      - nRF5340
      - nRF54H20
+     - nRF54L05
+     - nRF54L10
      - nRF54L15
      - nRF9131
      - nRF9151
@@ -197,6 +199,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - Experimental
+     - --
+     - --
      - Supported
      - --
      - --
@@ -211,12 +215,16 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - --
      - Supported
      - --
      - --
      - --
      - --
    * - **DECT NR+ PHY**
+     - --
+     - --
      - --
      - --
      - --
@@ -240,6 +248,8 @@ The following table indicates the software maturity levels of the support for ea
      - --
      - --
      - --
+     - --
+     - --
      - Supported
      - Supported
      - Supported
@@ -253,6 +263,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - Experimental
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -267,6 +279,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - Experimental
+     - --
+     - --
      - Supported
      - --
      - --
@@ -281,6 +295,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -296,6 +312,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Experimental
      - Supported
+     - Supported
+     - Supported
      - --
      - --
      - --
@@ -309,6 +327,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported\ :sup:`1`
      - Supported\ :sup:`2`
      - Experimental
+     - --
+     - --
      - Experimental
      - --
      - Supported\ :sup:`1`
@@ -322,6 +342,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - Supported
+     - --
+     - --
      - --
      - --
      - --
@@ -352,6 +374,8 @@ The following table indicates the software maturity levels of the support for ea
      - nRF52840
      - nRF5340
      - nRF54H20
+     - nRF54L05
+     - nRF54L10
      - nRF54L15
      - nRF9131
      - nRF9151
@@ -366,6 +390,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -380,6 +406,8 @@ The following table indicates the software maturity levels of the support for ea
      - Experimental
      - Experimental
      - --
+     - --
+     - Experimental
      - Experimental
      - --
      - --
@@ -394,6 +422,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -408,6 +438,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -422,6 +454,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -436,6 +470,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -450,6 +486,8 @@ The following table indicates the software maturity levels of the support for ea
      - Supported
      - Supported
      - --
+     - --
+     - Supported
      - Supported
      - --
      - --
@@ -809,6 +847,8 @@ The following table indicates the software maturity levels of the support for ea
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -828,6 +868,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **Thread - Full Thread Device (FTD)**
         - --
         - --
@@ -837,6 +879,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -851,6 +895,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -865,6 +911,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -879,6 +927,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -893,6 +943,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -907,6 +959,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -921,6 +975,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -935,6 +991,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -949,6 +1007,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -963,6 +1023,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -978,6 +1040,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - Supported
+        - Supported
+        - Supported
         - --
         - --
         - --
@@ -991,6 +1055,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1019,6 +1085,8 @@ The following table indicates the software maturity levels of the support for ea
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -1033,6 +1101,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1047,6 +1117,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1061,6 +1133,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1075,6 +1149,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1089,6 +1165,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1103,6 +1181,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1122,6 +1202,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **OTA DFU over Matter**
         - --
         - --
@@ -1131,6 +1213,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - Supported
         - Supported
         - --
         - --
@@ -1299,6 +1383,8 @@ The following table indicates the software maturity levels of the support for ea
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -1312,6 +1398,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - Supported
         - Supported
+        - --
+        - --
         - --
         - --
         - --
@@ -1332,6 +1420,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **Zigbee + Bluetooth LE multiprotocol**
         - --
         - --
@@ -1346,6 +1436,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **Zigbee + nRF21540 (GPIO)**
         - --
         - --
@@ -1353,6 +1445,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - Supported
+        - --
+        - --
         - --
         - --
         - --
@@ -1374,6 +1468,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **Zigbee Network Co-Processor (NCP)**
         - --
         - --
@@ -1388,6 +1484,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **Zigbee Router**
         - --
         - --
@@ -1396,6 +1494,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Supported
+        - --
+        - --
         - --
         - --
         - --
