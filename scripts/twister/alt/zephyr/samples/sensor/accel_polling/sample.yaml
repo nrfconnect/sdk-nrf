@@ -19,7 +19,6 @@ tests:
     extra_configs:
       - CONFIG_LOG=y
       - CONFIG_SENSOR_LOG_LEVEL_DBG=y
-      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
   sample.sensor.accel_polling.nrf54h_cpuppr:
@@ -49,7 +48,6 @@ tests:
     extra_configs:
       - CONFIG_LOG=y
       - CONFIG_SENSOR_LOG_LEVEL_DBG=y
-      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
   sample.sensor.accel_polling.nrf54l:
@@ -65,7 +63,6 @@ tests:
     extra_configs:
       - CONFIG_LOG=y
       - CONFIG_SENSOR_LOG_LEVEL_DBG=y
-      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
   sample.sensor.accel_polling.nrf54l_coverage:
@@ -81,7 +78,6 @@ tests:
     extra_configs:
       - CONFIG_LOG=y
       - CONFIG_SENSOR_LOG_LEVEL_DBG=y
-      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
   sample.sensor.accel_polling.nrf54l15_cpuflpr:
@@ -99,5 +95,4 @@ tests:
     extra_configs:
       - CONFIG_LOG=y
       - CONFIG_SENSOR_LOG_LEVEL_DBG=y
-      - CONFIG_SPI_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
