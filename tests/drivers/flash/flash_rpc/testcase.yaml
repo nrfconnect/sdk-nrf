@@ -5,6 +5,7 @@ common:
     - ci_tests_drivers_flash
 tests:
   drivers.flash.flash_rpc:
+    sysbuild: true
     platform_allow: nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp

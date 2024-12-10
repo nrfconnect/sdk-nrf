@@ -85,7 +85,7 @@ def __print_dev_conf(device_list):
 
 
 def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
-                    pristine, child_image, options):
+                    pristine, options):
     if core == Core.app:
         build_cmd = (f"west build {TARGET_CORE_APP_FOLDER} "
                      f"-b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME} "
@@ -107,9 +107,6 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
             dest_folder /= TARGET_RELEASE_FOLDER
         else:
             raise Exception("Invalid build type!")
-
-        if not child_image:
-            device_flag += " -DCONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE=n"
 
         if options.nrf21540:
             device_flag += " -Dnrf5340_audio_SHIELD=nrf21540ek"
@@ -156,7 +153,6 @@ def __build_module(build_config, options):
         build_config.device,
         build_config.build,
         build_config.pristine,
-        build_config.child_image,
         options,
     )
     west_str = f"{build_cmd} -d {dest_folder} "
@@ -190,11 +186,11 @@ def __find_snr():
     return list(map(int, snrs))
 
 
-def __populate_hex_paths(dev, options, child_image):
+def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
     _, temp_dest_folder, _, _ = __build_cmd_get(
-        Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, child_image, options
+        Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options
     )
 
     dev.hex_path_app = temp_dest_folder / "merged.hex"
@@ -364,15 +360,11 @@ def __main():
 
     # Reboot step finished
     # Build step start
-    child_image = True
 
     if options.build is not None:
         print("Invoking build step")
         build_configs = []
         if Core.app in cores:
-            if not Core.net in cores:
-                child_image = False
-
             if AudioDevice.headset in devices:
                 build_configs.append(
                     BuildConf(
@@ -380,7 +372,6 @@ def __main():
                         device=AudioDevice.headset,
                         pristine=options.pristine,
                         build=options.build,
-                        child_image=child_image,
                     )
                 )
             if AudioDevice.gateway in devices:
@@ -390,7 +381,6 @@ def __main():
                         device=AudioDevice.gateway,
                         pristine=options.pristine,
                         build=options.build,
-                        child_image=child_image,
                     )
                 )
 
@@ -406,7 +396,7 @@ def __main():
     if options.program:
         for dev in device_list:
             if dev.snr_connected:
-                __populate_hex_paths(dev, options, child_image)
+                __populate_hex_paths(dev, options)
         program_threads_run(device_list, sequential=options.sequential_prog)
 
     # Program step finished

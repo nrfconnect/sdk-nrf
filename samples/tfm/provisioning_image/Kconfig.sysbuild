@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Network core configuration"
+	depends on SUPPORT_NETCORE
+
+choice NETCORE
+	prompt "Netcore image"
+	default NETCORE_PROVISIONING_IMAGE_NET_CORE if NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+
+config NETCORE_PROVISIONING_IMAGE_NET_CORE
+	bool "Provisioning"
+	help
+	  Include tfm provisioning network core image.
+
+endchoice
+
+if !NETCORE_NONE
+
+config NETCORE_IMAGE_NAME
+	default "provisioning_image_net_core" if NETCORE_PROVISIONING_IMAGE_NET_CORE
+
+config NETCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/tfm/provisioning_image_net_core" if NETCORE_PROVISIONING_IMAGE_NET_CORE
+
+endif # !NETCORE_NONE
+
+endmenu
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
