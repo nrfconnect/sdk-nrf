@@ -239,7 +239,33 @@ Bluetooth Fast Pair samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for nRF54L15 in the following samples:
+
+    * :ref:`bluetooth_mesh_sensor_client`
+    * :ref:`bluetooth_mesh_sensor_server`
+    * :ref:`bluetooth_ble_peripheral_lbs_coex`
+    * :ref:`bt_mesh_chat`
+    * :ref:`bluetooth_mesh_light_switch`
+    * :ref:`bluetooth_mesh_silvair_enocean`
+    * :ref:`bluetooth_mesh_light_dim`
+    * :ref:`bluetooth_mesh_light`
+    * :ref:`ble_mesh_dfu_target`
+    * :ref:`bluetooth_mesh_light_lc`
+    * :ref:`ble_mesh_dfu_distributor`
+
+  * Support for nRF54L05 in the following samples:
+
+    * :ref:`bluetooth_mesh_sensor_client`
+    * :ref:`bluetooth_mesh_sensor_server`
+    * :ref:`bluetooth_ble_peripheral_lbs_coex`
+    * :ref:`bt_mesh_chat`
+    * :ref:`bluetooth_mesh_light_switch`
+    * :ref:`bluetooth_mesh_silvair_enocean`
+    * :ref:`bluetooth_mesh_light_dim`
+    * :ref:`bluetooth_mesh_light`
+    * :ref:`bluetooth_mesh_light_lc`
 
 Cellular samples
 ----------------
