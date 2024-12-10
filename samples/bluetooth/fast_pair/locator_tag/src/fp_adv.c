@@ -21,6 +21,11 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
 
+/* RPA suspension timeout in minutes for the Fast Pair advertising set
+ * as recommended by the FMDN specification.
+ */
+#define FP_ADV_RPA_SUSPENSION_TIMEOUT (5)
+
 /* Fast Pair advertising interval 100ms. */
 #define FP_ADV_INTERVAL (0x00A0)
 
@@ -35,6 +40,7 @@ static bool is_initialized;
 static bool is_enabled;
 
 static bool fmdn_provisioned;
+static bool fp_account_key_present;
 
 static struct bt_conn *fp_conn;
 static struct bt_le_ext_adv *fp_adv_set;
@@ -59,8 +65,28 @@ static struct bt_le_adv_param fp_adv_param = {
 };
 
 static void fp_adv_restart_work_handle(struct k_work *w);
+static void fp_adv_rpa_suspension_work_handle(struct k_work *w);
 
 static K_WORK_DEFINE(fp_adv_restart_work, fp_adv_restart_work_handle);
+static K_WORK_DELAYABLE_DEFINE(fp_adv_rpa_suspension_work, fp_adv_rpa_suspension_work_handle);
+
+static void fp_adv_rpa_rotation_suspended_set(bool suspended)
+{
+	fp_adv_rpa_rotation_suspended = suspended;
+
+	LOG_DBG("Fast Pair: set RPA rotation suspended to %s", suspended ? "true" : "false");
+}
+
+static void fp_adv_rpa_suspension_work_handle(struct k_work *w)
+{
+	fp_adv_rpa_rotation_suspended_set(false);
+}
+
+static void fp_adv_rpa_suspension_cancel(void)
+{
+	(void) k_work_cancel_delayable(&fp_adv_rpa_suspension_work);
+	fp_adv_rpa_rotation_suspended_set(false);
+}
 
 /* Reference to the Fast Pair advertising information callback structure. */
 static const struct app_fp_adv_info_cb *fast_pair_adv_info_cb;
@@ -469,24 +495,50 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 
 static void fp_adv_provisioning_state_changed(bool provisioned)
 {
-	struct bt_le_oob oob;
-	int err;
-
 	fmdn_provisioned = provisioned;
 
+	if (!app_fp_adv_is_ready()) {
+		return;
+	}
+
 	if (!provisioned) {
+		int err;
+		struct bt_le_oob oob;
+
 		/* Force the RPA rotation to synchronize the Fast Pair advertising
-		 * payload with its RPA address using rpa_expired callback.
-		 */
+			* payload with its RPA address using rpa_expired callback.
+			*/
 		err = bt_le_oob_get_local(fp_adv_param.id, &oob);
 		if (err) {
 			LOG_ERR("Fast Pair: bt_le_oob_get_local failed: %d", err);
 		}
+	} else {
+		fp_adv_rpa_suspension_cancel();
 	}
 }
 
 static struct bt_fast_pair_fmdn_info_cb fmdn_info_cb = {
 	.provisioning_state_changed = fp_adv_provisioning_state_changed,
+};
+
+static void fp_adv_account_key_written(struct bt_conn *conn)
+{
+	/* The first and only Account Key write starts the FMDN provisioning. */
+	if (!fmdn_provisioned && !fp_account_key_present && app_fp_adv_is_ready()) {
+		/* Fast Pair Implementation Guidelines for the locator tag use case:
+		 * after the Provider was paired, it should not change its MAC address
+		 * till FMDN is provisioned or till 5 minutes passes.
+		 */
+		fp_adv_rpa_rotation_suspended_set(true);
+		(void) k_work_schedule(&fp_adv_rpa_suspension_work,
+					K_MINUTES(FP_ADV_RPA_SUSPENSION_TIMEOUT));
+	}
+
+	fp_account_key_present = bt_fast_pair_has_account_key();
+}
+
+static struct bt_fast_pair_info_cb fp_info_callbacks = {
+	.account_key_written = fp_adv_account_key_written,
 };
 
 enum app_fp_adv_mode app_fp_adv_mode_get(void)
@@ -528,12 +580,11 @@ static void fp_adv_mode_set(enum app_fp_adv_mode adv_mode)
 
 static void fp_adv_mode_update(void)
 {
-	bool has_account_key = bt_fast_pair_has_account_key();
 	bool is_any_request_enabled = (fp_adv_request_bm != 0);
 	enum app_fp_adv_mode requested_mode;
 
 	if (is_any_request_enabled) {
-		requested_mode = has_account_key ?
+		requested_mode = fp_account_key_present ?
 				 APP_FP_ADV_MODE_NOT_DISCOVERABLE :
 				 APP_FP_ADV_MODE_DISCOVERABLE;
 	} else {
@@ -581,11 +632,6 @@ void app_fp_adv_payload_refresh(void)
 	}
 }
 
-void app_fp_adv_rpa_rotation_suspend(bool suspended)
-{
-	fp_adv_rpa_rotation_suspended = suspended;
-}
-
 int app_fp_adv_id_set(uint8_t id)
 {
 	if (app_fp_adv_is_ready()) {
@@ -616,6 +662,12 @@ int app_fp_adv_init(void)
 		return err;
 	}
 
+	err = bt_fast_pair_info_cb_register(&fp_info_callbacks);
+	if (err) {
+		LOG_ERR("Fast Pair: bt_fast_pair_info_cb_register failed (err %d)", err);
+		return err;
+	}
+
 	STRUCT_SECTION_COUNT(app_fp_adv_trigger, &trigger_cnt);
 	__ASSERT_NO_MSG(trigger_cnt <= BITS_PER_VAR(fp_adv_request_bm));
 
@@ -642,6 +694,8 @@ int app_fp_adv_enable(void)
 		return err;
 	}
 
+	fp_account_key_present = bt_fast_pair_has_account_key();
+
 	fp_adv_mode_update();
 
 	is_enabled = true;
@@ -663,6 +717,9 @@ int app_fp_adv_disable(void)
 	}
 
 	is_enabled = false;
+
+	/* Reset the RPA suspension. */
+	fp_adv_rpa_suspension_cancel();
 
 	/* Suspend the requested advertising until the fp_adv module reinitializes. */
 	fp_adv_mode_set(APP_FP_ADV_MODE_OFF);
