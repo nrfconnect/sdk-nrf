@@ -14,7 +14,7 @@ Images included in a DFU multi-image package are identified by numeric identifie
 The library provides a way for the user to register custom functions for writing a single image with a given identifier.
 
 Because the library makes no assumptions about the formats of images included in a written package, it serves as a general-purpose solution for device firmware upgrades.
-For example, it can be used to upgrade the :ref:`nRF5340 <ug_nrf5340_multi_image>` firmware.
+For example, it can be used to upgrade the nRF5340 firmware.
 
 Configuration
 *************

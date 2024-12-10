@@ -401,7 +401,7 @@ MCUboot
 Build system
 ============
 
-* Added support for :ref:`ug_multi_image` for multi-core projects.
+* Added support for multi-image builds for multi-core projects.
 * Facilitated defining non-secure boards out of tree.
   Any board that matches ``*_ns`` or ``*ns`` is now considered non-secure, and its child images board is set to the secure variant.
 * Added support for defining external flash in the :ref:`partition_manager`.
@@ -433,7 +433,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`ug_nrf52` - added
 * :ref:`ug_thingy91` - added :ref:`thingy91_serialports`
 * :ref:`ug_nfc` - added
-* :ref:`ug_bootloader` - added :ref:`ug_bootloader_adding`
+* :ref:`ug_bootloader` - added upgradeable bootloader
 * Cloud client - updated
 * :ref:`crypto_test` - added
 * :ref:`libraries` - improved the structure of the library documentation

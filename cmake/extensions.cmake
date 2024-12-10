@@ -107,7 +107,7 @@ endfunction()
 #
 # NCS file function extension.
 # This function extends the zephyr_file(CONF_FILES <arg>) function to support
-# switching BOARD for child images.
+# switching BOARD for images.
 #
 # It also supports lookup of static partition manager files for based on
 # the board name, revision, and the current build type.
@@ -349,7 +349,7 @@ endfunction()
 # Usage
 #   get_shared(<var> IMAGE <img> PROPERTY <property>)
 #
-# Get a property value defined by the child image or domain <img> if it exists.
+# Get a property value defined by an image or domain <img> if it exists.
 # The property value will be returned in the variable referenced by <var>.
 #
 # Example usage 'get_shared(prop_value IMAGE child PROPERTY property_in_child)'

@@ -13,7 +13,7 @@ The version can have the form of a single number.
 Alternatively, it can be based on a more advanced versioning scheme.
 For example, the semantic versioning scheme uses three numbers to denote major, minor, and patch versions, respectively.
 
-The choice of the versioning scheme depends on the :ref:`selected bootloader <ug_bootloader_adding>` and the configuration of the bootloader, including :ref:`ug_fw_update_downgrade_protection`.
+The choice of the versioning scheme depends on the :ref:`selected bootloader <ug_bootloader_adding_sysbuild>` and the configuration of the bootloader, including :ref:`ug_fw_update_downgrade_protection`.
 The |NCS| :ref:`build system <app_build_system>` can automatically handle building of the bootloader together with the application.
 The build system can also sign the application images and provide versioning information for the images.
 
@@ -30,14 +30,14 @@ This option can refer to two different things:
 * If NSIB directly boots your application image, the Kconfig option denotes the application image version.
 * If NSIB boots a secondary-stage bootloader, the Kconfig option denotes the version of the secondary-stage bootloader.
   In such case, the application is booted by the secondary-state bootloader and the application image version is configured using the versioning scheme of the secondary-stage bootloader.
-  For example, if you opted for :ref:`ug_bootloader_adding_upgradable_mcuboot`, the application image versioning configuration is described in :ref:`ug_fw_update_image_versions_mcuboot`.
+  For example, if you opted for :ref:`ug_bootloader_adding_sysbuild_upgradable_mcuboot`, the application image versioning configuration is described in :ref:`ug_fw_update_image_versions_mcuboot`.
 
 .. _ug_fw_update_image_versions_mcuboot:
 
 Configuring image version with MCUboot
 **************************************
 
-To assign a semantic version number to your application when you have opted for booting application directly by the MCUboot bootloader (that is, if you have opted for either :ref:`ug_bootloader_adding_immutable_mcuboot` or :ref:`ug_bootloader_adding_upgradable_mcuboot`), it is recommended to use the :file:`VERSION` file that contains the version information for the application image.
+To assign a semantic version number to your application when you have opted for booting application directly by the MCUboot bootloader (that is, if you have opted for either :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot` or :ref:`ug_bootloader_adding_sysbuild_upgradable_mcuboot`), it is recommended to use the :file:`VERSION` file that contains the version information for the application image.
 Using a :file:`VERSION` file allows you to independently configure the version value for each build instance of the application.
 See Zephyr's :ref:`zephyr:app-version-details` page for more information.
 

@@ -60,8 +60,8 @@ nRF5340 configuration files
 
 The following additional configuration files are available for the :ref:`nRF5340 DK <ug_nrf5340>`:
 
-* The Bluetooth LE controller is part of a child image meant to run on the network core.
-  The configuration for the child image is stored in the :file:`child_image/` subdirectory.
+* The Bluetooth LE controller is part of an image meant to run on the network core.
+  The configuration for the image is stored in the :file:`sysbuild/` subdirectory.
 * The DTS overlay file :file:`boards/nrf5340dk_nrf5340_cpuapp.overlay` is available for the application core.
   This file forwards the control over GPIOs to network core, which provides control over GPIOs to the radio peripheral in order to execute antenna switching.
 
@@ -76,7 +76,7 @@ To build this sample with AoD mode only, set :makevar:`EXTRA_CONF_FILE` to the :
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
-To build this sample for :ref:`nRF5340 DK <ug_nrf5340>`, with AoD mode only, add content of :file:`overlay-aod.conf` file to :file:`child_image/hci_ipc.conf` file.
+To build this sample for the :ref:`nRF5340 DK <ug_nrf5340>` with AoD mode only, add the content of the :file:`overlay-aod.conf` file to the :file:`sysbuild/hci_ipc/prj.conf` file.
 
 .. bt_dir_finding_central_aod_end
 

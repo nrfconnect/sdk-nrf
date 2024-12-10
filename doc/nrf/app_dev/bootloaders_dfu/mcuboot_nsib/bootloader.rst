@@ -67,8 +67,7 @@ The |NCS| currently supports two implementations:
   .. figure:: ../images/bootloader_memory_layout.svg
      :alt: Memory layout
 
-By default, building an application with any bootloader configuration creates a :ref:`multi-image build <ug_multi_image>`, where the :ref:`partition_manager` manages its memory partitions.
-In this case, bootloaders are built as child images.
+By default, building an application with any bootloader configuration uses :ref:`sysbuild` to build multiple image, where the :ref:`partition_manager` manages its memory partitions.
 When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, then :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is built with the image automatically.
 From the bootloader perspective, the TF-M is part of the booted application image.
 
@@ -96,7 +95,7 @@ More specifically, the immutable bootloader always performs the following steps 
 
    The next stage in the boot chain can either be an application or another bootloader.
    Firmware images have a version number, and the bootloader will select the slot with the latest firmware.
-   For more information about creating a second-stage bootloader, see :ref:`ug_bootloader_adding_upgradable`.
+   For more information about creating a second-stage bootloader, see :ref:`ug_bootloader_adding_sysbuild_upgradable`.
 
 #. Verification of the next stage in the boot chain.
 

@@ -102,7 +102,7 @@ The Nordic Thingy:53 has an RF front-end with two 2.4 GHz antennas:
 
 The samples in the |NCS| use **ANT1** by default, with the nRF21540 gain set to +10 dBm.
 You can configure the TX gain with the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB` Kconfig option to select between +10 dBm or +20 dBm gain.
-To use the **ANT2** antenna, disable the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option in the network core's child image configuration.
+To use the **ANT2** antenna, disable the :kconfig:option:`CONFIG_MPSL_FEM` Kconfig option in the network core's image configuration.
 
 .. note::
    Transmitting with TX output power above +10 dBM is not permitted in some regions.
@@ -117,7 +117,6 @@ FOTA over Bluetooth Low Energy
    :start-after: fota_upgrades_over_ble_intro_start
    :end-before: fota_upgrades_over_ble_intro_end
 
-Bluetooth buffers configuration introduced by the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option is also automatically applied to the network core child image by the dedicated overlay file.
 Thingy:53 supports network core upgrade out of the box.
 
 .. include:: /app_dev/device_guides/nrf52/fota_update.rst

@@ -249,7 +249,7 @@ Documentation
 * Added or updated the following documentation:
 
   * nRF BLE Controller (experimental)
-  * :ref:`ug_multi_image`
+  * Multi-image build
   * :ref:`partition_manager`
   * :ref:`nrf_desktop`
   * :ref:`shell_bt_nus_readme`

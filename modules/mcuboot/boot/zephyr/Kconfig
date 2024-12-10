@@ -70,7 +70,6 @@ config MCUBOOT_NRF_CLEANUP_NONSECURE_RAM
 
 config BOOT_SIGNATURE_KEY_FILE
 	string "MCUBoot PEM key file"
-	depends on !MCUBOOT_BUILD_STRATEGY_FROM_SOURCE
 	help
 	  Absolute path to PEM key file containing the private key corresponding
 	  to the public key included in MCUBoot. This will be used to sign the

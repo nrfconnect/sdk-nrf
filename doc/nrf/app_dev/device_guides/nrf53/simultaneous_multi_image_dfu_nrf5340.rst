@@ -12,8 +12,7 @@ To enable the simultaneous update of multiple images in the MCUboot, set the fol
 * :kconfig:option:`CONFIG_PCD_APP` - Enable commands exchange with the network core.
 * :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
 
-As described in :ref:`multi-image build guide <ug_multi_image_variables>`, make sure to add the child image prefix to the name of Kconfig options that are used when building MCUboot as a child image (for example, ``child_image_CONFIG_PCD_APP``).
-If not changed, then the default child image prefix for MCUboot is ``mcuboot_`` (for example, ``mcuboot_CONFIG_PCD_APP``).
+As described in Zephyr's documentation about :ref:`sysbuild`, make sure to add the image prefix to the name of Kconfig options that are used when building MCUboot, which for MCUboot is ``mcuboot_`` (for example, ``mcuboot_CONFIG_PCD_APP``).
 
 .. note::
 

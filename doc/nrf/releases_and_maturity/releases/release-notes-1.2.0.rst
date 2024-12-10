@@ -513,7 +513,7 @@ Documentation
     * :ref:`ug_nrf5340` - added
     * :ref:`ug_thingy91` - added
     * :ref:`ug_ble_controller` - added
-    * :ref:`ug_multi_image` - updated with content that was removed from the Zephyr fork
+    * Multi-image builds - updated with content that was removed from the Zephyr fork
 
   * nrfxlib:
 

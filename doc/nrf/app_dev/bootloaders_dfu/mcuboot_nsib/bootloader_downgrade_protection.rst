@@ -91,8 +91,8 @@ Downgrade protection using |NSIB|
 
 To enable anti-rollback protection with monotonic counter for |NSIB|, set the following configurations in the ``b0`` image: :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` and :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`
 
-Special handling is needed when updating the S1 variant of an image when :ref:`ug_bootloader_adding_upgradable`.
-See :ref:`ug_bootloader_adding_presigned_variants` for details.
+Special handling is needed when updating the S1 variant of an image when :ref:`ug_bootloader_adding_sysbuild_upgradable`.
+See :ref:`ug_bootloader_adding_sysbuild_presigned_variants` for details.
 See :ref:`zephyr:sysbuild_kconfig_namespacing` in the Zephyr documentation for information on how to set options for built images in sysbuild.
 
 .. bootloader_monotonic_counter_nsib_end

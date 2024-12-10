@@ -16,7 +16,7 @@ See :ref:`ug_bootloader` for more information about the full bootloader chain.
 .. note::
 
    Currently, the NSIB does not support performing firmware updates over the SMP transport.
-   If the application using the NSIB requires SMP-based firmware updates, such as Bluetooth® LE DFU, :ref:`include MCUboot as a second-stage bootloader <ug_bootloader_adding_upgradable>`.
+   If the application using the NSIB requires SMP-based firmware updates, such as Bluetooth® LE DFU, :ref:`include MCUboot as a second-stage bootloader <ug_bootloader_adding_sysbuild_upgradable>`.
 
 .. _bootloader_rot:
 
@@ -157,8 +157,6 @@ Monotonic counter
    :start-after: bootloader_monotonic_counter_nsib_start
    :end-before: bootloader_monotonic_counter_nsib_end
 
-To set options for child images, such as NSIB and MCUboot, see the :ref:`ug_multi_image_variables` section.
-
 .. _bootloader_build_and_run:
 
 Building and running
@@ -169,20 +167,20 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 .. caution::
-   |NSIB| should be included as a child image in a multi-image build, rather than being built stand-alone.
+   |NSIB| should be included as an image in a project using sysbuild, rather than being built stand-alone.
    While it is technically possible to build the NSIB by itself and merge it into other application images, this process is not supported.
    To reduce the development time and potential issues with this route, let the existing |NCS| infrastructure for multi-image builds handle the integration.
 
-   The NSIB is automatically added as a child image when the :kconfig:option:`CONFIG_SECURE_BOOT` Kconfig option is set in the application.
+   The NSIB is automatically added as an image when the ``SB_CONFIG_SECURE_BOOT_APPCORE`` sysbuild Kconfig option is set.
 
-For building and running the NSIB with an application, see :ref:`ug_bootloader_adding_immutable`.
+For building and running the NSIB with an application, see :ref:`ug_bootloader_adding_sysbuild_immutable`.
 
 Building and running using |VSC|
 ================================
 
 .. include:: /includes/build_and_run_bootloader.txt
 
-To add the NSIB as a child image to your application, complete the following steps:
+To add the NSIB as an image to your application, complete the following steps:
 
 1. :ref:`Create a private key in PEM format <ug_fw_update_keys>`.
 #. Enable the |NSIB| through Kconfig as follows:
@@ -206,11 +204,6 @@ To add the NSIB as a child image to your application, complete the following ste
    The build process creates two images, one for the NSIB and one for the application, and merges them.
 
 #. Select :guilabel:`Flash` in the :guilabel:`Actions View` to program the resulting image to your device.
-
-Testing
-=======
-
-See :ref:`ug_bootloader_testing` for testing of the expected runtime behavior of the NSIB when built with an application.
 
 Dependencies
 ************

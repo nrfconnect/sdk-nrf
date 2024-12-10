@@ -31,7 +31,7 @@ You can build and program separate images or combined images using the |nRFVSC|.
 
    .. group-tab:: Multi-image build
 
-      If you are working with Bluetooth LE, Thread, Zigbee, or Matter samples, the network core sample is built as a child image when you build the application core image (see :ref:`ug_nrf5340_multi_image` above).
+      If you are working with Bluetooth® LE, Thread, Zigbee, or Matter samples, the network core sample is built as a separate image when you build the application core image.
 
       Complete the following steps to build and program a multi-image build to the nRF5340 application core and network core:
 

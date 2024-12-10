@@ -84,7 +84,6 @@ mapping_topics:
                                                       "development-kits", "evaluation-kits",
                                                       "prototyping-platforms"]
   - nrf/app_dev/config_and_build/sysbuild/*.html: ["applications", "samples", "kconfig"]
-  - nrf/app_dev/config_and_build/multi_image.html: ["applications", "samples", "kconfig"]
   - nrf/app_dev/config_and_build/building.html: ["applications", "samples", "development-kits",
                                                  "evaluation-kits", "prototyping-platforms",
                                                  "kconfig"]
@@ -127,7 +126,6 @@ mapping_topics:
                                                       "nrf52832", "nrf52820", "nrf52811",
                                                       "nrf52810", "nrf52805", "nrf21540", "npm1100",
                                                       "npm1300", "npm6001", "applications"]
-  - nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_adding.html: ["kconfig"]
   - nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_config.html: ["kconfig"]
   - nrf/app_dev/bootloaders_dfu/qspi_xip_split_image.html: ["nrf52840", "thingy53", "nrf5340"]
   - nrf/app_dev/bootloaders_dfu/dfu_tools_mcumgr_cli.html: ["nrf91-series", "nrf70-series",
@@ -214,7 +212,6 @@ mapping_topics:
   - nrf/app_dev/device_guides/nrf53/building_nrf53.html: ["nrf5340", "development-kits",
                                                           "nrf-connect-vsc"]
   - nrf/app_dev/device_guides/nrf53/fota_update_nrf5340.html: ["nrf5340", "development-kits"]
-  - nrf/app_dev/device_guides/nrf53/multi_image_nrf5340.html: ["nrf5340", "development-kits"]
   - nrf/app_dev/device_guides/nrf53/simultaneous_multi_image_dfu_nrf5340.html: ["nrf5340",
                                                                                 "development-kits"]
   - /nrf/app_dev/device_guides/nrf53/serial_recovery.html: ["nrf5340", "development-kits"]

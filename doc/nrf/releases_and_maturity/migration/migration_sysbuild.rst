@@ -7,8 +7,8 @@ Migrating from multi-image builds to sysbuild
    :local:
    :depth: 2
 
-:ref:`sysbuild` is a build system used in zephyr to configure, build, and flash multiple images as part of a single project.
-It replaces the :ref:`child/parent system for multi-image builds <ug_multi_image>` in |NCS|.
+Zephyr's :ref:`sysbuild` is a build system used to configure, build, and program multiple images as part of a single project.
+It replaces the child/parent system for multi-image builds in the |NCS|.
 As the previous system has been deprecated, you must update your existing multi-image build projects to support being built using sysbuild.
 
 The following are the differences in how project configuration is performed in sysbuild compared to child/parent image configuration:
@@ -563,7 +563,7 @@ The expected output files are the following:
 Image overlay configuration
 ***************************
 
-In child/parent image configurations, an application could include additional configuration files in the ``child_image`` folder that would be applied to these images (see :ref:`ug_multi_image_permanent_changes`).
+In child/parent image configurations, an application could include additional configuration files in the ``child_image`` folder that would be applied to these images.
 This feature has been adapted in sysbuild; see :ref:`sysbuild_application_configuration` for an overview.
 You must update child/parent image configuration to use it with sysbuild, as the way these files can be used differs:
 

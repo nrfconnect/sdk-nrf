@@ -58,7 +58,7 @@ To disable serial output, you must change the project configuration associated w
 
 .. note::
     If the application consists of multiple images, like applications built for the nRF53 Series, logging must be disabled on both images.
-    See :ref:`ug_nrf5340` and :ref:`ug_multi_image`.
+    See :ref:`ug_nrf5340`.
 
 1. Set the project configuration :kconfig:option:`CONFIG_SERIAL` to ``n`` irrespective of whether you are building the sample for the :ref:`SPE-only <app_boards_spe_nspe_cpuapp>` board targets or board targets with :ref:`NSPE <app_boards_spe_nspe_cpuapp_ns>`.
 #. For the board target with NSPE (for example, ``nrf9160dk/nrf9160/ns``), ensure that serial logging is also disabled in Trusted Firmware-M by setting :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` to ``y``.

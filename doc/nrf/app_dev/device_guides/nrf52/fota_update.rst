@@ -14,7 +14,7 @@ You can also use FOTA updates to replace the application.
 See the :ref:`app_dfu` page for general Device Firmware Update (DFU) information, such as supported methods for sending and receiving updates on the device.
 
 .. note::
-   For the possibility of introducing an upgradable bootloader, refer to :ref:`ug_bootloader_adding`.
+   To implement an upgradable bootloader, refer to :ref:`ug_bootloader_adding_sysbuild`.
 
 .. fota_upgrades_intro_end
 
@@ -52,7 +52,7 @@ To enable support for FOTA updates, do the following:
 .. fota_upgrades_over_ble_mandatory_mcuboot_start
 
 * Use MCUboot as the upgradable bootloader (``SB_CONFIG_BOOTLOADER_MCUBOOT`` must be enabled).
-  For more information, go to the :ref:`ug_bootloader_adding` page.
+  For more information, see the :ref:`ug_bootloader_adding_sysbuild` page.
 
 .. fota_upgrades_over_ble_mandatory_mcuboot_end
 
@@ -184,7 +184,7 @@ FOTA update sample
 
 The :zephyr:code-sample:`smp-svr` demonstrates how to set up your project to support FOTA updates.
 
-The sample documentation is from the Zephyr project and is incompatible with the :ref:`ug_multi_image`.
+The sample documentation is from the Zephyr project.
 When working in the |NCS| environment, ignore the part of the sample documentation that describes the building and programming steps.
 In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any other sample using the following commands:
 
@@ -195,7 +195,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
         .. parsed-literal::
            :class: highlight
 
-            west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf -DSB_CONFG_NETCORE_HCI_IPC=y
+            west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf -DSB_CONFIG_NETCORE_HCI_IPC=y
             west flash
 
     .. group-tab:: nRF52 SoCs

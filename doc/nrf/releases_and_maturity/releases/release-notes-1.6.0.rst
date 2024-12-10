@@ -569,8 +569,8 @@ In addition to documentation related to the changes listed above, the following 
 
    * Added the following bootloader user guides:
 
-      * :ref:`ug_bootloader_adding`
-      * :ref:`ug_bootloader_testing`
+      * Upgradeable bootloader
+      * Bootloader output testing
       * :ref:`ug_bootloader_external_flash`
       * :ref:`ug_bootloader_config`
       * :ref:`ug_fw_update`
@@ -580,7 +580,7 @@ In addition to documentation related to the changes listed above, the following 
    * :ref:`ug_bootloader` - Updated architecture information for clarifying first- and second-stage bootloader design.
    * "Immutable bootloader" references have been changed to "|NSIB|".
 
-* :ref:`ug_multi_image` - Added more information regarding child image usage, configuration options, and image-specific variables.
+* Multi-image builds - Added more information regarding child image usage, configuration options, and image-specific variables.
 * :ref:`partition_manager` - Added section about partition reports.
 * :ref:`ug_tfm` - Added references to new crypto samples that utilize TF-M and information about the TF-M minimal build.
 * :ref:`ug_thread` - The following sections were added or changed considerably:
