@@ -68,4 +68,5 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
    building_nrf54l
    nrf54l_signing_with_payload
    fota_update
+   kmu_basics
    kmu_provision
