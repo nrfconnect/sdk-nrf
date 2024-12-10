@@ -289,6 +289,7 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = buf,
 		    .size = rep->size,
 		};
@@ -333,6 +334,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
@@ -388,6 +390,7 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = buf,
 		    .size = rep->size,
 		};
@@ -438,6 +441,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
@@ -628,6 +632,7 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = 0,
 		    .data = buf,
 		    .size = sizeof(conn_data->hids_boot_kb_outp_rep_ctx),
 		};
@@ -670,6 +675,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = 0,
 		    .data = rep_data,
 		    .size = sizeof(conn_data->hids_boot_kb_outp_rep_ctx),
 		};

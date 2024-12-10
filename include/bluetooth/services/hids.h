@@ -154,6 +154,9 @@ enum bt_hids_notify_evt {
 /** @brief Report data.
  */
 struct bt_hids_rep {
+	/** Report ID defined in the HIDS Report Map. Not valid for boot reports. */
+	uint8_t id;
+
 	/** Pointer to the report data. */
 	uint8_t *data;
 
