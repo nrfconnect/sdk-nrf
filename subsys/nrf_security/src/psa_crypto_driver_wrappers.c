@@ -1630,6 +1630,9 @@ psa_status_t psa_driver_wrapper_aead_decrypt_setup(psa_aead_operation_t *operati
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
+#if defined(PSA_NEED_CRACEN_PLATFORM_KEYS)
+	case PSA_KEY_LOCATION_CRACEN:
+#endif
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif
