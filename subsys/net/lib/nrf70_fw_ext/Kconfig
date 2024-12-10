@@ -68,7 +68,6 @@ config NRF_WIFI_FW_PATCH_DFU
 	bool "Direct Firmware Update of nRF70 FW patch"
 	depends on PARTITION_MANAGER_ENABLED
 	depends on BOOTLOADER_MCUBOOT
-	depends on !XIP_SPLIT_IMAGE
 	help
 	  Enabling this option adds support for Device Firmware Update (DFU)
 	  for the nRF70 Series Firmware Patch.

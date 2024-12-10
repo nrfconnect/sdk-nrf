@@ -6,10 +6,6 @@
 
 menu "Test"
 
-config ZTEST_MULTICORE_DEFAULT_SETTINGS
-	bool "Implement default image for multicore boards"
-	default y
-
 rsource "unity/Kconfig"
 rsource "mocks/Kconfig"
 

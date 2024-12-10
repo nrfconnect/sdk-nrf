@@ -20,6 +20,7 @@ tests:
       - sysbuild
       - ci_samples_cellular
   sample.cellular.lwm2m_client.afwu_extcpu:
+    sysbuild: true
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf"

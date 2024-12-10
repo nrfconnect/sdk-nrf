@@ -18,7 +18,7 @@ function(generate_dfu_zip)
     message(FATAL_ERROR "Missing required param")
   endif()
 
-  if(SYSBUILD AND GENZIP_IMAGE)
+  if(GENZIP_IMAGE)
     set(APPNAME ${GENZIP_IMAGE})
     sysbuild_get(CONFIG_BUILD_OUTPUT_META IMAGE ${GENZIP_IMAGE} VAR CONFIG_BUILD_OUTPUT_META KCONFIG)
     sysbuild_get(CONFIG_BOARD IMAGE ${GENZIP_IMAGE} VAR CONFIG_BOARD KCONFIG)

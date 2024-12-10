@@ -66,14 +66,6 @@ config SECURE_BOOT
 config BOOTLOADER_MCUBOOT
 	default y
 
-# Do not use these keys for own custom boards!
-# These are meant as examples and therefore public.
-# The documentation of the nRF Secure Immutable Bootloader and MCUBoot detail on how
-# to set up your own keys.
-
-config SB_SIGNING_KEY_FILE
-	default "$(ZEPHYR_NRF_MODULE_DIR)/boards/nordic/thingy91x/nsib_signing_key.pem"
-
 config I2C
 	default y
 

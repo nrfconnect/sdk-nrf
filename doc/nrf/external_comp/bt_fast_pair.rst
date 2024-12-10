@@ -187,7 +187,7 @@ The Fast Pair provisioning data is stored on the dedicated Fast Pair partition, 
 Partition definition using the Partition Manager (PM)
 -----------------------------------------------------
 
-For devices that support :ref:`partition_manager` and have the :kconfig:option:`CONFIG_PM_SINGLE_IMAGE` Kconfig option automatically enabled by the Fast Pair build system, the system also automatically creates the ``bt_fast_pair`` partition.
+For devices that support :ref:`partition_manager`, the system also automatically creates the ``bt_fast_pair`` partition.
 The partition is defined in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file.
 The :ref:`fast_pair_input_device` sample follows this approach.
 Alternatively, the Fast Pair partition can be defined manually in the application's configuration file.

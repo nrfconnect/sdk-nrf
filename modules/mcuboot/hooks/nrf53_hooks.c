@@ -15,17 +15,10 @@
 #include "bootutil/fault_injection_hardening.h"
 #include "flash_map_backend/flash_map_backend.h"
 
-#if CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1
-/* Sysbuild */
 /* MCUboot image update image number */
 #define NET_CORE_SECONDARY_IMAGE CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
 /* MCUboot serial recovery slot number */
 #define NET_CORE_VIRTUAL_PRIMARY_SLOT (CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER * 2) + 1
-#else
-/* Legacy child/parent */
-#define NET_CORE_SECONDARY_IMAGE 1
-#define NET_CORE_VIRTUAL_PRIMARY_SLOT 3
-#endif
 
 #include <dfu/pcd.h>
 #if defined(CONFIG_PCD_APP) && defined(CONFIG_NRF53_MULTI_IMAGE_UPDATE) \

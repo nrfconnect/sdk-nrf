@@ -30,6 +30,4 @@ function(lwm2m_carrier_divided_dfu)
   )
 endfunction(lwm2m_carrier_divided_dfu)
 
-if(SYSBUILD)
-  lwm2m_carrier_divided_dfu()
-endif()
+lwm2m_carrier_divided_dfu()

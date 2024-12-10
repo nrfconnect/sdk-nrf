@@ -161,19 +161,6 @@ menu "NCS subsystem configurations"
 
 endmenu # NCS subsystem configurations
 
-config PM_SINGLE_IMAGE
-	bool "Use the Partition Manager for single image builds" if !BUILD_WITH_TFM
-	default y if BUILD_WITH_TFM
-	select PARTITION_MANAGER_ENABLED
-	help
-	  Use the Partition Manager feature to partition the device even if
-	  only a single image is included in the build. This is typically set
-	  when a subsystem that defines its own Partition Manager configuration
-	  is included in the build.
-
-	  The option is always defined in builds where a TF-M image for the
-	  Secure Execution environment is generated.
-
 DT_CHOSEN_EXT_FLASH:= nordic,pm-ext-flash
 DT_CHOSEN_EXT_FLASH_PATH := $(dt_chosen_path,$(DT_CHOSEN_EXT_FLASH))
 
@@ -218,17 +205,10 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	# option is propagated to the MCUboot child image automatically.
 	depends on PM_EXTERNAL_FLASH_ENABLED || MCUBOOT
 	default y if BOOTLOADER_MCUBOOT
-	imply ADD_MCUBOOT_MEDIATE_SIM_FLASH_DTS
 	help
 	  Place the secondary partition of MCUboot in the external flash instead
 	  of the internal flash. This option should only be enabled by the user
 	  in the parent image.
-
-config PM_IMAGE_NOT_BUILT_FROM_SOURCE
-	bool
-	help
-	  Promptless helper config used to indicate that one or more
-	  image is not built from source.
 
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	bool "Override external driver check"
