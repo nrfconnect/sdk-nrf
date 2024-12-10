@@ -13,7 +13,7 @@ zephyr_library()
 
 zephyr_library_sources(src/suit_plat_swap.c)
 zephyr_library_sources(src/suit_plat_fetch_sdfw_specific.c)
-zephyr_library_sources(src/suit_plat_copy.c)
+zephyr_library_sources(src/suit_plat_copy_sdfw_specific.c)
 zephyr_library_sources(src/suit_plat_write_sdfw_specific.c)
 zephyr_library_sources(src/suit_plat_retrieve_manifest_sdfw_specific.c)
 zephyr_library_sources(src/suit_plat_version_sdfw_specific.c)
