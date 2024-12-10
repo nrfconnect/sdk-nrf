@@ -28,7 +28,7 @@ The memory layout is defined through one of the following methods:
 By default, a Zephyr-based application defines the memory layout in the DTS.
 If enabled, the :ref:`partition_manager` defines a new memory layout that is used instead of the memory layout defined in the DTS.
 You can use the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` Kconfig option value to check whether the Partition Manager is enabled in the current build.
-The option is automatically selected as part of the :ref:`ug_multi_image` feature to build the application with more than one image.
+The option is automatically enabled when using Zephyr's :ref:`zephyr:sysbuild` (unless your board uses nRF54H SoC Series).
 Enabling the :ref:`nrf_desktop_bluetooth_guide_fast_pair` also results in using the Partition Manager.
 To store the Fast Pair Provisioning data, the Fast Pair integration in the |NCS| uses partition defined by the Partition Manager.
 
