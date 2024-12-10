@@ -195,6 +195,8 @@
     - wifi.build.crypto_none
     - wifi.build.crypto_default
     - wifi.build.hostapd_ap
+    - wifi.build.dpp
+    - wifi.build.p2p
   platforms:
     - native_sim
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30884"
