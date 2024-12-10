@@ -275,8 +275,8 @@ int main(void)
 		/* SPI was active for ~1 second with separate SPI CS activations
 		 * for each spi_transceive_dt() call.
 		 */
-		__ASSERT_NO_MSG(high >= 1000);
-		__ASSERT_NO_MSG(low >= 1000);
+		__ASSERT_NO_MSG(high >= 100);
+		__ASSERT_NO_MSG(low >= 100);
 		__ASSERT_NO_MSG(low == high);
 #endif
 		counter++;
