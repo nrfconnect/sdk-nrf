@@ -232,6 +232,8 @@ nRF Desktop
     This helps to reduce RAM usage.
   * Link Time Optimization (:kconfig:option:`CONFIG_LTO`) to be enabled in MCUboot configurations of the nRF52840 DK (``mcuboot_smp``, ``mcuboot_qspi``).
     LTO no longer causes boot failures and it reduces the memory footprint.
+  * The :ref:`nrf_desktop_hids` to use :c:func:`bt_hids_inp_rep_send_userdata` function to send HID input reports while in report mode.
+    This enables the use of a shared callback for sending HID reports.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
