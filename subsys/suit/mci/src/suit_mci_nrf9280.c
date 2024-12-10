@@ -5,9 +5,12 @@
  */
 #include <suit_mci.h>
 #include <drivers/nrfx_common.h>
+#include <suit_storage.h>
 #include <suit_storage_mpi.h>
 #include <suit_execution_mode.h>
+#ifdef CONFIG_SDFW_LCS
 #include <sdfw/lcs.h>
+#endif /* CONFIG_SDFW_LCS */
 #include <zephyr/logging/log.h>
 #include <sdfw/arbiter.h>
 
@@ -57,6 +60,7 @@ mci_err_t suit_mci_invoke_order_get(const suit_manifest_class_id_t **class_id, s
 		}
 		break;
 
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		if (suit_storage_mpi_class_get(SUIT_MANIFEST_SEC_TOP, &class_id[0]) !=
 		    SUIT_PLAT_SUCCESS) {
@@ -140,8 +144,11 @@ mci_err_t suit_mci_independent_update_policy_get(const suit_manifest_class_id_t 
 	 * update candidate before resetting the SoC.
 	 */
 	switch (suit_execution_mode_get()) {
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	case EXECUTION_MODE_INSTALL_RECOVERY:
+	case EXECUTION_MODE_POST_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_POST_INVOKE_RECOVERY:
 		if ((role == SUIT_MANIFEST_APP_RECOVERY) || (role == SUIT_MANIFEST_RAD_RECOVERY)) {
 			*policy = SUIT_INDEPENDENT_UPDATE_DENIED;
@@ -245,7 +252,7 @@ mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class
 			return SUIT_PLAT_SUCCESS;
 		} else if ((mpi->signature_verification_policy ==
 			    SUIT_MPI_SIGNATURE_CHECK_ENABLED_ON_UPDATE) &&
-			   (suit_execution_mode_get() == EXECUTION_MODE_INVOKE)) {
+			   suit_execution_mode_booting()) {
 			/* By allowing key_id == 0 in the invoke path, the platform will verify
 			 * the signature only during updates.
 			 */
@@ -375,6 +382,43 @@ mci_err_t suit_mci_memory_access_rights_validate(const suit_manifest_class_id_t 
 		return MCI_ERR_MANIFESTCLASSID;
 	}
 
+	/* If the SUIT orchestrator is currently processing update candidate,
+	 * block all MEM components (regardless of the manifest class ID)
+	 * that points to the DFU partition, or any other region that contains
+	 * update candidate.
+	 * This check is necessary to ensure that the digest of the
+	 * authenticated digest of manifest or involved new firmware components
+	 * remains unchanged during the whole update procedure.
+	 */
+	if (suit_execution_mode_updating()) {
+		const suit_plat_mreg_t *update_regions = NULL;
+		size_t update_regions_len = 0;
+		suit_plat_err_t plat_err =
+			suit_storage_update_cand_get(&update_regions, &update_regions_len);
+
+		if (plat_err != SUIT_PLAT_SUCCESS) {
+			/* Should never happen as the execution mode indicates processing of
+			 * a pending update candiadate.
+			 */
+			return SUIT_PLAT_ERR_CRASH;
+		}
+
+		/* Ensure that the regions are mutually exclusive.
+		 *
+		 * The condition below is a negation of the following condition:
+		 *   (start_a) >= (start_b + size_b)
+		 *   or
+		 *   (start_b) >= (start_a + size_a)
+		 */
+		for (size_t i = 0; i < update_regions_len; i++) {
+			if ((((uint8_t *)address) <
+			     (update_regions[i].mem + update_regions[i].size)) &&
+			    (update_regions[i].mem < (((uint8_t *)address) + mem_size))) {
+				return MCI_ERR_NOACCESS;
+			}
+		}
+	}
+
 	switch (role) {
 	case SUIT_MANIFEST_UNKNOWN:
 		return MCI_ERR_MANIFESTCLASSID;
@@ -385,9 +429,10 @@ mci_err_t suit_mci_memory_access_rights_validate(const suit_manifest_class_id_t 
 		return MCI_ERR_NOACCESS;
 
 	case SUIT_MANIFEST_SEC_SDFW:
-		/* Sec manifest - TODO - implement checks based on UICR/SICR
+		/* SDFW & SDFW Recovery manifest - ability to operate on memory ranges intentionally
+		 * blocked.
 		 */
-		return SUIT_PLAT_SUCCESS;
+		return MCI_ERR_NOACCESS;
 
 	case SUIT_MANIFEST_SEC_SYSCTRL:
 		/* Sysctrl manifest - TODO - implement checks based on UICR/SICR
@@ -595,11 +640,17 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 		}
 
 		if ((parent_role == SUIT_MANIFEST_APP_RECOVERY) &&
-		    (child_role == SUIT_MANIFEST_RAD_RECOVERY)) {
+		    ((child_role == SUIT_MANIFEST_RAD_RECOVERY) ||
+			 ((child_role >= SUIT_MANIFEST_APP_LOCAL_1) &&
+		      (child_role <= SUIT_MANIFEST_APP_LOCAL_3)) ||
+		     ((child_role >= SUIT_MANIFEST_RAD_LOCAL_1) &&
+		      (child_role <= SUIT_MANIFEST_RAD_LOCAL_2)))) {
 			return SUIT_PLAT_SUCCESS;
 		}
+
 		break;
 
+	case EXECUTION_MODE_INSTALL_FOREGROUND_DFU:
 	case EXECUTION_MODE_INSTALL_RECOVERY:
 		if ((parent_role == SUIT_MANIFEST_SEC_TOP) &&
 		    ((child_role == SUIT_MANIFEST_SEC_SYSCTRL) ||
@@ -617,6 +668,7 @@ suit_mci_manifest_process_dependency_validate(const suit_manifest_class_id_t *pa
 		}
 		break;
 
+	case EXECUTION_MODE_INVOKE_FOREGROUND_DFU:
 	case EXECUTION_MODE_INVOKE_RECOVERY:
 		if ((parent_role == SUIT_MANIFEST_SEC_TOP) &&
 		    ((child_role == SUIT_MANIFEST_SEC_SYSCTRL) ||

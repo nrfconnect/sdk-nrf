@@ -45,7 +45,7 @@ manifest-independent-updates=y
 manifest-signature-check=DISABLED
 manifest-mpi-offset=0x3030
 
-menuconfig  SUIT_MPI_$(manifest)
+menuconfig SUIT_MPI_$(manifest)
 	bool "Application recovery manifest configuration"
 
 rsource "Kconfig.template.manifest_config"
@@ -57,7 +57,7 @@ manifest-independent-updates=n
 manifest-signature-check=DISABLED
 manifest-mpi-offset=0x3060
 
-menuconfig  SUIT_MPI_$(manifest)
+menuconfig SUIT_MPI_$(manifest)
 	bool "Application local (1) manifest configuration"
 	default y
 
@@ -70,7 +70,7 @@ manifest-independent-updates=n
 manifest-signature-check=DISABLED
 manifest-mpi-offset=0x3090
 
-menuconfig  SUIT_MPI_$(manifest)
+menuconfig SUIT_MPI_$(manifest)
 	bool "Application local (2) manifest configuration"
 
 rsource "Kconfig.template.manifest_config"
@@ -82,7 +82,7 @@ manifest-independent-updates=n
 manifest-signature-check=DISABLED
 manifest-mpi-offset=0x30c0
 
-menuconfig  SUIT_MPI_$(manifest)
+menuconfig SUIT_MPI_$(manifest)
 	bool "Application local (3) manifest configuration"
 
 rsource "Kconfig.template.manifest_config"
@@ -111,7 +111,7 @@ manifest-independent-updates=n
 manifest-signature-check=DISABLED
 manifest-mpi-offset=0x2000
 
-menuconfig  SUIT_MPI_$(manifest)
+menuconfig SUIT_MPI_$(manifest)
 	bool "Radio recovery manifest configuration"
 
 rsource "Kconfig.template.manifest_config"
@@ -123,7 +123,7 @@ manifest-independent-updates=n
 manifest-signature-check=DISABLED
 manifest-mpi-offset=0x2030
 
-menuconfig  SUIT_MPI_$(manifest)
+menuconfig SUIT_MPI_$(manifest)
 	bool "Radio local (1) manifest configuration"
 	default y
 
@@ -136,7 +136,7 @@ manifest-independent-updates=n
 manifest-signature-check=DISABLED
 manifest-mpi-offset=0x2060
 
-menuconfig  SUIT_MPI_$(manifest)
+menuconfig SUIT_MPI_$(manifest)
 	bool "Radio local (2) manifest configuration"
 
 rsource "Kconfig.template.manifest_config"

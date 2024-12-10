@@ -18,24 +18,29 @@ LOG_MODULE_REGISTER(suit_storage, CONFIG_SUIT_LOG_LEVEL);
 /* SUIT storage partition is defined as reserved-memory region, thus it uses absolute addresses. */
 #define SUIT_STORAGE_OFFSET                                                                        \
 	(FIXED_PARTITION_OFFSET(suit_storage_partition) - DT_REG_ADDR(DT_CHOSEN(zephyr_flash)))
-#define SUIT_STORAGE_SIZE		 FIXED_PARTITION_SIZE(suit_storage_partition)
-#define SUIT_STORAGE_NORDIC_ADDRESS	 suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_NORDIC_OFFSET)
-#define SUIT_STORAGE_NORDIC_OFFSET	 FIXED_PARTITION_OFFSET(cpusec_suit_storage)
-#define SUIT_STORAGE_NORDIC_SIZE	 FIXED_PARTITION_SIZE(cpusec_suit_storage)
-#define SUIT_STORAGE_NORDIC_CELL_ADDRESS suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_NORDIC_CELL_OFFSET)
-#define SUIT_STORAGE_NORDIC_CELL_OFFSET  FIXED_PARTITION_OFFSET(cpucell_suit_storage)
-#define SUIT_STORAGE_NORDIC_CELL_SIZE    FIXED_PARTITION_SIZE(cpucell_suit_storage)
-#define SUIT_STORAGE_RAD_ADDRESS	 suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_RAD_OFFSET)
-#define SUIT_STORAGE_RAD_OFFSET		 FIXED_PARTITION_OFFSET(cpurad_suit_storage)
-#define SUIT_STORAGE_RAD_SIZE		 FIXED_PARTITION_SIZE(cpurad_suit_storage)
-#define SUIT_STORAGE_APP_ADDRESS	 suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_APP_OFFSET)
-#define SUIT_STORAGE_APP_OFFSET		 FIXED_PARTITION_OFFSET(cpuapp_suit_storage)
-#define SUIT_STORAGE_APP_SIZE		 FIXED_PARTITION_SIZE(cpuapp_suit_storage)
+#define SUIT_STORAGE_SIZE		FIXED_PARTITION_SIZE(suit_storage_partition)
+#define SUIT_STORAGE_NORDIC_ADDRESS	suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_NORDIC_OFFSET)
+#define SUIT_STORAGE_NORDIC_OFFSET	FIXED_PARTITION_OFFSET(cpusec_suit_storage)
+#define SUIT_STORAGE_NORDIC_SIZE	FIXED_PARTITION_SIZE(cpusec_suit_storage)
+#define SUIT_STORAGE_NORDIC_CELL_ADDRESS	suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_NORDIC_CELL_OFFSET)
+#define SUIT_STORAGE_NORDIC_CELL_OFFSET	FIXED_PARTITION_OFFSET(cpucell_suit_storage)
+#define SUIT_STORAGE_NORDIC_CELL_SIZE	FIXED_PARTITION_SIZE(cpucell_suit_storage)
+#define SUIT_STORAGE_RAD_ADDRESS	suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_RAD_OFFSET)
+#define SUIT_STORAGE_RAD_OFFSET		FIXED_PARTITION_OFFSET(cpurad_suit_storage)
+#define SUIT_STORAGE_RAD_SIZE		FIXED_PARTITION_SIZE(cpurad_suit_storage)
+#define SUIT_STORAGE_APP_ADDRESS	suit_plat_mem_nvm_ptr_get(SUIT_STORAGE_APP_OFFSET)
+#define SUIT_STORAGE_APP_OFFSET		FIXED_PARTITION_OFFSET(cpuapp_suit_storage)
+#define SUIT_STORAGE_APP_SIZE		FIXED_PARTITION_SIZE(cpuapp_suit_storage)
 
 BUILD_ASSERT((SUIT_STORAGE_OFFSET <= SUIT_STORAGE_NORDIC_OFFSET) &&
 		     (SUIT_STORAGE_NORDIC_OFFSET + SUIT_STORAGE_NORDIC_SIZE <=
 		      SUIT_STORAGE_OFFSET + SUIT_STORAGE_SIZE),
 	     "Secure storage must be defined within SUIT storage partition");
+
+BUILD_ASSERT((SUIT_STORAGE_OFFSET <= SUIT_STORAGE_NORDIC_CELL_OFFSET) &&
+		     (SUIT_STORAGE_NORDIC_CELL_OFFSET + SUIT_STORAGE_NORDIC_CELL_SIZE <=
+		      SUIT_STORAGE_OFFSET + SUIT_STORAGE_SIZE),
+	     "Cellular storage must be defined within SUIT storage partition");
 
 BUILD_ASSERT((SUIT_STORAGE_OFFSET <= SUIT_STORAGE_RAD_OFFSET) &&
 		     (SUIT_STORAGE_RAD_OFFSET + SUIT_STORAGE_RAD_SIZE <=
@@ -58,6 +63,13 @@ struct suit_storage_nvv {
 	/* Manifest Runtime Non Volatile Variables. */
 	uint8_t var[EB_SIZE(suit_storage_nvv_t)];
 	/* Manifest Runtime Non Volatile Variables digest. */
+	uint8_t digest[EB_SIZE(suit_storage_digest_t)];
+};
+
+struct suit_storage_oem_exposed_config {
+	/* Nordic OEM Exposed SUIT Config. */
+	uint8_t config[64];
+	/* Nordic OEM Exposed SUIT Config digest. */
 	uint8_t digest[EB_SIZE(suit_storage_digest_t)];
 };
 
@@ -98,7 +110,7 @@ struct suit_storage_nordic {
 			struct suit_storage_mpi_app app_mpi_bak; /* 272 bytes */
 
 			/* Nordic OEM Exposed SUIT Config Backup and digest. */
-			uint8_t oem_config_backup_digest[96];
+			struct suit_storage_oem_exposed_config oem_exposed_config_bak; /* 96 bytes */
 
 			/* Flags used for selecting the boot path. */
 			struct suit_storage_flags flags; /* 16 bytes */
@@ -163,7 +175,10 @@ struct suit_storage_app {
 			struct suit_storage_mpi_app mpi;
 
 			/* Reserved for Future Use. */
-			uint8_t reserved[560];
+			uint8_t reserved[464];
+
+			/* Nordic OEM Exposed SUIT Config and digest. */
+			struct suit_storage_oem_exposed_config oem_exposed_config; /* 96 bytes */
 
 			/** Update candidate information. */
 			uint8_t update_cand[EB_SIZE(struct update_candidate_info)];
@@ -975,17 +990,17 @@ suit_plat_err_t suit_storage_installed_envelope_get(const suit_manifest_class_id
 		return err;
 	}
 
-	LOG_INF("Decode envelope with role: 0x%x%s address: 0x%lx", role, suit_role_name_get(role),
+	LOG_DBG("Decode envelope with role: 0x%x%s address: 0x%lx", role, suit_role_name_get(role),
 		(intptr_t)(*addr));
 
 	err = suit_storage_envelope_get(*addr, *size, id, addr, size);
 	if (err != SUIT_PLAT_SUCCESS) {
-		LOG_WRN("Unable to parse envelope with role 0x%x%s, address: 0x%lx", role,
-			suit_role_name_get(role), (intptr_t)(*addr));
+		LOG_WRN("Unable to parse envelope with role 0x%x%s", role,
+			suit_role_name_get(role));
 		return err;
 	}
 
-	LOG_INF("Valid envelope with given class ID and role 0x%x%s found", role,
+	LOG_DBG("Valid envelope with given class ID and role 0x%x%s found", role,
 		suit_role_name_get(role));
 
 	return err;
