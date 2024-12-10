@@ -90,8 +90,6 @@ static void fmdn_factory_reset_prepare(void)
 	/* Disable advertising request from the UI. */
 	fp_adv_ui_request = false;
 	app_fp_adv_request(&fp_adv_trigger_ui, fp_adv_ui_request);
-
-	app_fp_adv_rpa_rotation_suspend(false);
 }
 
 static void fmdn_factory_reset_executed(void)
@@ -206,12 +204,6 @@ static void fp_account_key_written(struct bt_conn *conn)
 		fmdn_factory_reset_schedule(
 			FACTORY_RESET_TRIGGER_PROVISIONING_TIMEOUT,
 			K_MINUTES(FMDN_PROVISIONING_TIMEOUT));
-
-		/* Fast Pair Implementation Guidelines for the locator tag use case:
-		 * after the Provider was paired, it should not change its MAC address
-		 * till FMDN is provisioned or till 5 minutes passes.
-		 */
-		app_fp_adv_rpa_rotation_suspend(true);
 	}
 
 	fp_account_key_present = bt_fast_pair_has_account_key();
@@ -380,7 +372,6 @@ static void fmdn_provisioning_state_changed(bool provisioned)
 	if (provisioned &&
 	    (factory_reset_trigger == FACTORY_RESET_TRIGGER_PROVISIONING_TIMEOUT)) {
 		fmdn_factory_reset_cancel();
-		app_fp_adv_rpa_rotation_suspend(false);
 	}
 
 	/* Fast Pair Implementation Guidelines for the locator tag use case:
