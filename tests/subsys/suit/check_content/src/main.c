@@ -10,6 +10,10 @@
 #include <suit_plat_decode_util.h>
 #include <suit_memptr_storage.h>
 #include <suit_sink.h>
+#include <suit_manifest_variables.h>
+
+#define TEST_MFST_VAR_NVM_ID	0
+#define TEST_MFST_VAR_NVM_VALUE 0xAB
 
 /* Data used as component content for a MEM component */
 static uint8_t data_mem[] = {0xde, 0xad, 0xbe, 0xef};
@@ -152,4 +156,118 @@ ZTEST(suit_check_content_tests, test_mem_not_matching)
 	err = suit_plat_release_component_handle(component);
 	zassert_equal(SUIT_SUCCESS, err, "test error - failed to cleanup component handle: %d",
 		      err);
+}
+
+ZTEST(suit_check_content_tests, test_mfst_var_nvm_matching)
+{
+	/* [h'MFST_VAR', h'00'] */
+	uint8_t component_id_value[] = {0x82, 0x49, 0x68, 'M', 'F',  'S', 'T',
+					'_',  'V',  'A',  'R', 0x41, 0x00};
+	struct zcbor_string src_component_id = {
+		.value = component_id_value,
+		.len = sizeof(component_id_value),
+	};
+	/* 0xAB */
+	uint8_t test_value[] = {0x18, TEST_MFST_VAR_NVM_VALUE};
+	struct zcbor_string test_value_zcbor = {
+		.value = test_value,
+		.len = sizeof(test_value),
+	};
+	suit_component_t component;
+	int ret;
+
+	/* GIVEN that MFST_VAR/0 value is initialized with sample value... */
+	zassert_equal(suit_mfst_var_set(TEST_MFST_VAR_NVM_ID, TEST_MFST_VAR_NVM_VALUE),
+		      SUIT_PLAT_SUCCESS, "Unable to set MFST_VAR value before the test");
+
+	/* ... and the component handle for the MFST_VAR/0 is successfully created */
+	zassert_equal(suit_plat_create_component_handle(&src_component_id, false, &component),
+		      SUIT_SUCCESS, "Unable to create MFST_VAR component");
+
+	/* WHEN a check content function is called */
+	ret = suit_plat_check_content(component, &test_value_zcbor);
+
+	/* THEN the component contents match its content parameter */
+	zassert_equal(ret, SUIT_SUCCESS, "Unexpected error code: %d", ret);
+
+	/* ... and the component can be safely released */
+	ret = suit_plat_release_component_handle(component);
+	zassert_equal(ret, SUIT_SUCCESS, "Failed to release component handle after the test: %d",
+		      ret);
+}
+
+ZTEST(suit_check_content_tests, test_mfst_var_nvm_not_matching)
+{
+	/* [h'MFST_VAR', h'00'] */
+	uint8_t component_id_value[] = {0x82, 0x49, 0x68, 'M', 'F',  'S', 'T',
+					'_',  'V',  'A',  'R', 0x41, 0x00};
+	struct zcbor_string src_component_id = {
+		.value = component_id_value,
+		.len = sizeof(component_id_value),
+	};
+	/* 0xBA */
+	uint8_t test_value[] = {0x18, 0xBA};
+	struct zcbor_string test_value_zcbor = {
+		.value = test_value,
+		.len = sizeof(test_value),
+	};
+	suit_component_t component;
+	int ret;
+
+	/* GIVEN that MFST_VAR/0 value is initialized with sample value... */
+	zassert_equal(suit_mfst_var_set(TEST_MFST_VAR_NVM_ID, TEST_MFST_VAR_NVM_VALUE),
+		      SUIT_PLAT_SUCCESS, "Unable to set MFST_VAR value before the test");
+
+	/* ... and the component handle for the MFST_VAR/0 is successfully created */
+	zassert_equal(suit_plat_create_component_handle(&src_component_id, false, &component),
+		      SUIT_SUCCESS, "Unable to create MFST_VAR component");
+
+	/* WHEN a check content function is called */
+	ret = suit_plat_check_content(component, &test_value_zcbor);
+
+	/* THEN the component contents does not match its content parameter */
+	zassert_equal(ret, SUIT_FAIL_CONDITION, "Unexpected error code: %d", ret);
+
+	/* ... and the component can be safely released */
+	ret = suit_plat_release_component_handle(component);
+	zassert_equal(ret, SUIT_SUCCESS, "Failed to release component handle after the test: %d",
+		      ret);
+}
+
+ZTEST(suit_check_content_tests, test_mfst_var_invalid_content)
+{
+	/* [h'MFST_VAR', h'00'] */
+	uint8_t component_id_value[] = {0x82, 0x49, 0x68, 'M', 'F',  'S', 'T',
+					'_',  'V',  'A',  'R', 0x41, 0x00};
+	struct zcbor_string src_component_id = {
+		.value = component_id_value,
+		.len = sizeof(component_id_value),
+	};
+	/* [0x00] */
+	uint8_t test_value[] = {0x81, 0x00};
+	struct zcbor_string test_value_zcbor = {
+		.value = test_value,
+		.len = sizeof(test_value),
+	};
+	suit_component_t component;
+	int ret;
+
+	/* GIVEN that MFST_VAR/0 value is initialized with sample value... */
+	zassert_equal(suit_mfst_var_set(TEST_MFST_VAR_NVM_ID, TEST_MFST_VAR_NVM_VALUE),
+		      SUIT_PLAT_SUCCESS, "Unable to set MFST_VAR value before the test");
+
+	/* ... and the component handle for the MFST_VAR/0 is successfully created */
+	zassert_equal(suit_plat_create_component_handle(&src_component_id, false, &component),
+		      SUIT_SUCCESS, "Unable to create MFST_VAR component");
+
+	/* WHEN a check content function is called */
+	ret = suit_plat_check_content(component, &test_value_zcbor);
+
+	/* THEN the component contents does not match its content parameter */
+	zassert_equal(ret, SUIT_ERR_UNSUPPORTED_PARAMETER, "Unexpected error code: %d", ret);
+
+	/* ... and the component can be safely released */
+	ret = suit_plat_release_component_handle(component);
+	zassert_equal(ret, SUIT_SUCCESS, "Failed to release component handle after the test: %d",
+		      ret);
 }
