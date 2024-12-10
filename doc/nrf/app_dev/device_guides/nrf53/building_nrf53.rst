@@ -98,7 +98,7 @@ To program the nRF5340 DK from the command line, use either west (which uses nrf
                     * :file:`rpc_host`
                     * :file:`hci_rpsmg`
                     * :file:`802154_rpmsg`
-                    * :file:`multiprotocol_rpmsg`
+                    * :file:`ipc_radio`
 
             #. Navigate to the build folder of the application sample and run the following command to erase the flash memory of the application core and program the application sample:
 

@@ -158,7 +158,7 @@ You can do this by either editing the :file:`prj.conf` file or building the samp
       The parameter name varies depending on the devices you are building for.
       For example:
 
-      * If you want to build for Thread devices for the ``nrf5340dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dmultiprotocol_rpmsg_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
+      * If you want to build for Thread devices for the ``nrf5340dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dipc_radio_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
       * If you want to build for Wi-Fi® devices for the ``nrf7002dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, add ``-Dhci_ipc_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y`` as the CMake argument.
 
       See `nRF Connect for VS Code extension pack <How to work with build configurations_>`_ documentation for more information.
@@ -174,7 +174,7 @@ You can do this by either editing the :file:`prj.conf` file or building the samp
 
         .. code-block:: console
 
-           west build -b nrf5340dk/nrf5340/cpuapp -- -Dmultiprotocol_rpmsg_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
+           west build -b nrf5340dk/nrf5340/cpuapp -- -Dipc_radio_CONFIG_BT_CTLR_TX_PWR_PLUS_3=y
 
       * If you want to build for Wi-Fi® devices for the ``nrf7002dk/nrf5340/cpuapp`` board target with a Bluetooth LE TX power equal to 3 dBm, run the following command:
 

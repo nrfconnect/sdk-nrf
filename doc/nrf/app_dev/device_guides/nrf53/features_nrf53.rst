@@ -215,7 +215,7 @@ Multiprotocol support for the nRF5340 DK
 
    * - Network core
      - Application core
-   * - :ref:`multiprotocol-rpmsg-sample`
+   * - :ref:`ipc_radio`
      - | :ref:`Thread samples <openthread_samples>`
        | :ref:`Zigbee samples <zigbee_samples>`
 
@@ -227,10 +227,8 @@ When using Thread or Zigbee in parallel with Bluetooth LE, run the low-level rad
 
    Bluetooth LE and IEEE 802.15.4 multiprotocol architecture in multicore SoC
 
-For the network core, the |NCS| provides the :ref:`multiprotocol-rpmsg-sample` sample.
-It is a combination of the :zephyr:code-sample:`bluetooth_hci_ipc` sample (for Bluetooth LE) and the :zephyr:code-sample:`nrf_ieee802154_rpmsg` sample (for IEEE 802.15.4).
-This means that it enables both the Bluetooth LE Controller and the nRF IEEE 802.15.4 radio driver and simultaneously exposes the functionality of both stacks to the application core using the `RPMsg Messaging Protocol`_.
-Separate RPMsg endpoints are used to obtain independent inter-core connections for each stack.
+For the network core, the |NCS| provides the :ref:`ipc_radio`.
+The :ref:`ipc_radio` enables both the Bluetooth LE Controller and the nRF IEEE 802.15.4 radio driver and simultaneously exposes the functionality of both stacks to the application.
 
 For the application core, the |NCS| provides a series of samples for the :ref:`Thread <ug_thread>` and :ref:`Zigbee <ug_zigbee>` protocols.
 |multi_image|

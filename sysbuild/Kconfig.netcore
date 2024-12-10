@@ -40,10 +40,6 @@ config SUPPORT_NETCORE_802154_RPMSG
 	bool
 	default y
 
-config SUPPORT_NETCORE_MULTIPROTOCOL_RPMSG
-	bool
-	default y
-
 config SUPPORT_NETCORE_IPC_RADIO
 	bool
 	default y
@@ -60,9 +56,6 @@ config NRF_DEFAULT_RPC_HOST
 config NRF_DEFAULT_802154
 	bool
 
-config NRF_DEFAULT_MULTIPROTOCOL
-	bool
-
 config NRF_DEFAULT_IPC_RADIO
 	bool
 
@@ -71,7 +64,6 @@ choice NETCORE
 	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 	default NETCORE_RPC_HOST if NRF_DEFAULT_RPC_HOST && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
-	default NETCORE_MULTIPROTOCOL_RPMSG if NRF_DEFAULT_MULTIPROTOCOL && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 	default NETCORE_IPC_RADIO if NRF_DEFAULT_IPC_RADIO && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
@@ -104,12 +96,6 @@ config NETCORE_802154_RPMSG
 	depends on SUPPORT_NETCORE_802154_RPMSG
 	help
 	  Include 802154_rpmsg as the netcore image to use.
-
-config NETCORE_MULTIPROTOCOL_RPMSG
-	bool "multiprotocol_rpmsg"
-	depends on SUPPORT_NETCORE_MULTIPROTOCOL_RPMSG
-	help
-	  Include multiprotocol_rpmsg as the netcore image to use.
 
 menuconfig NETCORE_IPC_RADIO
 	bool "ipc_radio"
@@ -147,7 +133,6 @@ config NETCORE_IMAGE_NAME
 	default "hci_ipc" if NETCORE_HCI_IPC
 	default "rpc_host" if NETCORE_RPC_HOST
 	default "802154_rpmsg" if NETCORE_802154_RPMSG
-	default "multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
 	default "ipc_radio" if NETCORE_IPC_RADIO
 	help
 	  Name of netcore image.
@@ -158,7 +143,6 @@ config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_BASE}/samples/bluetooth/hci_ipc" if NETCORE_HCI_IPC
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
 	default "${ZEPHYR_BASE}/samples/boards/nordic/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
-	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/multiprotocol_rpmsg" if NETCORE_MULTIPROTOCOL_RPMSG
 	default "${ZEPHYR_NRF_MODULE_DIR}/applications/ipc_radio" if NETCORE_IPC_RADIO
 	help
 	  Source directory of netcore image.

@@ -20,8 +20,6 @@ For applications and samples in the |NCS| repository, this is handled automatica
 +---------------------------------------------------------+--------------------------------------------+-----------+----------+-----------------------------------------------------------------------------------------------------------------------+
 |               ``SB_CONFIG_NETCORE_802154_RPMSG``        | :zephyr:code-sample:`nrf_ieee802154_rpmsg` | ✕         | ✓        |                                                                                                                       |
 +---------------------------------------------------------+--------------------------------------------+-----------+----------+-----------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_MULTIPROTOCOL_RPMSG`` | :ref:`multiprotocol-rpmsg-sample`          | ✓         | ✓        |                                                                                                                       |
-+---------------------------------------------------------+--------------------------------------------+-----------+----------+-----------------------------------------------------------------------------------------------------------------------+
 |               ``SB_CONFIG_NETCORE_IPC_RADIO``           | :ref:`ipc_radio`                           | ✓         | ✓        | Requires additional configuration. The following Kconfig options provide predefined configurations:                   |
 |                                                         |                                            |           |          | ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC`` enables HCI serialization                                                  |
 |                                                         |                                            |           |          | for Bluetooth, ``SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC`` enables nRF RPC serialization for Bluetooth, or                 |
@@ -34,7 +32,7 @@ The default for Thingy:53 is the :ref:`nrf5340_empty_net_core` sample applicatio
 The default for other nRF53 devices is having no image added to the build.
 
 When configuring an application, such as :zephyr:code-sample:`ble_peripheral_hr`, you must configure it with a supported network core image to ensure proper functionality.
-For basic Bluetooth samples, you can use :zephyr:code-sample:`bluetooth_hci_ipc`, :ref:`multiprotocol-rpmsg-sample`, or :ref:`ipc_radio` (one of the :ref:`companion components <companion_components>`).
+For basic Bluetooth samples, you can use :zephyr:code-sample:`bluetooth_hci_ipc`, or :ref:`ipc_radio` (one of the :ref:`companion components <companion_components>`).
 Use one of the following command patterns to build a sample with the :zephyr:code-sample:`bluetooth_hci_ipc` network image selected (with the relevant *board_target*, path to your application *app_dir*, and path to Zephyr's shared sysbuild directory *<path_to_zephyr>/share/sysbuild*):
 
 .. tabs::
