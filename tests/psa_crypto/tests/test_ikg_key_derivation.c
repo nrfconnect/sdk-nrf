@@ -215,7 +215,7 @@ int ikg_key_derivation_test(void)
 	return status;
 }
 
-ZTEST(test_suite_ikg, ikg_key_derivation_test)
+ZTEST(test_suite_ikg, test_ikg_key_derivation)
 {
 	ikg_key_derivation_test();
 }

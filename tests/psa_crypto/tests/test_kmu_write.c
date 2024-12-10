@@ -75,7 +75,7 @@ int kmu_write(void)
 	return status;
 }
 
-ZTEST(test_suite_ikg, kmu_test_1_write)
+ZTEST(test_suite_ikg, test_kmu_1_write)
 {
 	kmu_write();
 }
