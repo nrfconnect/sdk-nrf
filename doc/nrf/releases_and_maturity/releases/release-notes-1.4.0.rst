@@ -447,7 +447,7 @@ MCUboot
 * Updated MCUboot to facilitate using it as the second stage bootloader:
 
   * Added minimal configuration overlay file for MCUboot that makes it fit within 16 kB when MCUboot is used as the second stage bootloader.
-    Updated :ref:`documentation <ug_bootloader_adding>` with specific instructions on how and when to use this configuration.
+    Updated the documentation on adding bootloader with specific instructions on how and when to use this configuration.
 
 sdk-mcuboot
 -----------
@@ -483,7 +483,7 @@ Build system
   * Added a warning if no static partition manager configuration is provided when one image (or more) is not built from source in a multi-image build.
 
 * Enabled choosing a build strategy for Zephyr's :zephyr:code-sample:`bluetooth_hci_ipc` sample when it is built as a child image.
-  See :ref:`ug_multi_image` for details.
+  See multi-image builds for details.
 * Improved multi-core builds by disassociating domain names from board names.
 * Bugfixes:
 

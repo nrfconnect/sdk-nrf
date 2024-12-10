@@ -136,30 +136,18 @@ Memory layout configuration
 The memory layout configuration is provided by the :ref:`partition_manager` script, specific to the |NCS|.
 
 The script must be enabled to provide the memory layout configuration.
-It is impacted by various elements, such as Kconfig configuration options or the presence of child images.
+It is impacted by various elements, such as Kconfig configuration options or the presence of other images.
 Partition Manager ensures that all required partitions are in the correct place and have the correct size.
 
 If enabled, the memory layout can be controlled in the following ways:
 
-* Dynamically (default) - In this scenario, the layout is impacted by various elements, such as Kconfig configuration options or the presence of child images.
+* Dynamically (default) - In this scenario, the layout is impacted by various elements, such as Kconfig configuration options or the presence of other images.
   Partition Manager ensures that all required partitions are in the correct place and have the correct size.
 * Statically - In this scenario, you need to provide the static configuration.
   See :ref:`ug_pm_static` for information about how to do this.
 
 After CMake has run, a :file:`partitions.yml` file with the memory layout will have been created in the :file:`build` directory.
 This process also creates a set of header files that provides defines, which can be used to refer to memory layout elements.
-
-Child images
-------------
-
-.. important::
-    |sysbuild_related_deprecation_note|
-
-The |NCS| build system allows the application project to become a root for the sub-applications known in the |NCS| as child images.
-Examples of child images are bootloader images, network core images, or security-related images.
-Each child image is a separate application.
-
-For more information, see :ref:`ug_multi_image`.
 
 .. _app_build_file_suffixes:
 
@@ -171,7 +159,7 @@ When you select a given file suffix for the :ref:`configuration phase <configura
 If it does not find files that match the provided suffix, the build system will fall back to the default files without suffix.
 
 The file suffix can be any string, but many applications and samples in the |NCS| use ``release``.
-This suffix can be included in the :file:`prj.conf` file name (for example, :file:`prj_release.conf`), and also in file names for board configurations, child image Kconfig configurations, and others.
+You can include this suffix in the :file:`prj.conf` file name (for example, :file:`prj_release.conf`), in file names for board configurations, or image Kconfig configurations.
 In this way, these files are made dependent on the given configuration and are only used when that build configuration is generated.
 For example, if an application uses a custom :file:`nrf5340dk_nrf5340_cpuapp_release.overlay` overlay file, this file will be used together with the application's :file:`prj_release.conf` when you set :makevar:`FILE_SUFFIX` to ``release`` (``-DFILE_SUFFIX=release``).
 
@@ -277,7 +265,6 @@ The |NCS| `modifies the default behavior <sdk-zephyr west build patch_>`_ of ``w
 This includes :ref:`repository applications <create_application_types_repository>` and the out-of-tree applications (:ref:`workspace <create_application_types_workspace>` and :ref:`freestanding applications <create_application_types_freestanding>`).
 
 For this reason, unlike in Zephyr, ``--sysbuild`` does not have to be explicitly mentioned in the command prompt when building a repository application.
-This setting only applies to repositories delivered with the |NCS|, to maintain compatibility with child/parent images.
 
 If you want to disable this feature, for example if you want to explicitly use the ``--sysbuild`` parameter on the command line every time you build, :ref:`configure west to disable this default setting <sysbuild_enabled_ncs_configuring>`.
 
@@ -293,11 +280,6 @@ Moreover, this |NCS| setting does not apply to the following areas:
 Custom build types
 ==================
 
-.. important::
-    |file_suffix_related_deprecation_note|
-    It is still required for some applications that use build types with :ref:`multiple images <ug_multi_image>`.
-    Check the application and sample documentation pages for which variable to use.
-
 A build type is a feature that defines the way in which the configuration files are to be handled.
 For example, selecting a build type lets you generate different build configurations for *release* and *debug* versions of the application.
 
@@ -305,7 +287,7 @@ In the |NCS|, the build type is controlled using the configuration files, whose 
 When you select a build type for the :ref:`configuration phase <configuration_system_overview_config>`, the compiler will use a specific set of files to create a specific build configuration for the application.
 
 The :file:`prj.conf` file is the application-specific default, but many applications and samples include source files for generating the build configuration differently, for example :file:`prj_release.conf` or :file:`prj_debug.conf`.
-Similarly, the build type can be included in file names for board configuration, Partition Manager's static configuration, child image Kconfig configuration, and others.
+Similarly, the build type can be included in file names for board configuration, Partition Manager's static configuration, other image Kconfig configuration, and others.
 In this way, these files are made dependent on the build type and will only be used when the corresponding build type is invoked.
 For example, if an application uses :file:`pm_static_release.yml` to define Partition Manager's static configuration, this file will only be used when the application's :file:`prj_release.conf` file is used to select the release build type.
 
@@ -318,25 +300,12 @@ The following software components can be made dependent on the build type:
 
 * The Partition Manager's :ref:`static configuration <ug_pm_static>`.
   When the build type has been inferred, the file :file:`pm_static_<buildtype>.yml` will have precedence over :file:`pm_static.yml`.
-* The :ref:`child image Kconfig configuration <ug_multi_image_permanent_changes>`.
-  Certain child image configuration files located in the :file:`child_image/` directory can be defined per build type.
 
 The devicetree configuration is not affected by the build type.
 
 For more information about how to invoke build types, see :ref:`cmake_options`.
 
 .. _app_build_additions_multi_image:
-
-Multi-image builds
-==================
-
-.. important::
-    |sysbuild_related_deprecation_note|
-
-The |NCS| build system extends Zephyr's with support for multi-image builds.
-You can find out more about these in the :ref:`ug_multi_image` section.
-
-The |NCS| allows you to :ref:`build types <app_build_additions_build_types>` instead of using a single :file:`prj.conf` file.
 
 Boilerplate CMake file
 ======================

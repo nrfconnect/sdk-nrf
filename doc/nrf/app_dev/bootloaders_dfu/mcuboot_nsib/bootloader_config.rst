@@ -20,37 +20,32 @@ However, there are other ways to customize your application using Kconfig option
 Using custom project configurations
 ***********************************
 
-You can use custom project configuration options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`, either temporarily until you clean the build pristinely or permanently.
+You can use custom project configuration options for the associated image, specifying them at build time.
+These settings are temporary and will remain enabled until you clean the build pristinely.
 
 For example, you can temporarily assign custom project configurations for both the bootloaders and a sample application as follows:
 
 .. code-block:: console
 
    west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
-   -Db0_CONF_FILE=prj_immutable.conf \
-   -Dmcuboot_CONF_FILE=prj_upgradable.conf \
-   -DCONF_FILE=prj_app.conf
-
-In the example above, :file:`prj_app.conf` includes :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` to enable the immutable and upgradable bootloaders by default.
-The configuration applied during the command execution is taken into account until you clean the build pristinely.
-
-Alternatively, you can follow :ref:`ug_multi_image_permanent_changes` and store configuration options for child images in separate files in the application source directory.
-For example, in the |NCS| applications and samples that use different :ref:`build types for configuration <gs_modifying_build_types>`, the :file:`child_image` folder in the application source directory is often used to apply :ref:`permanent configuration changes <configuration_permanent_change>`.
+   -Db0_FILE_SUFFIX=immutable \
+   -Dmcuboot_FILE_SUFFIX=upgradable \
+   -Dapp_FILE_SUFFIX=app
 
 You can use custom project configuration files in combination with temporary configuration options associated with a single build, set using either the command line or Kconfig fragments.
 
 Assigning Kconfig fragments
 ***************************
 
-You can use Kconfig fragments specific to bootloaders to set temporary configuration options for the associated image, specifying them at build time using :ref:`ug_multi_image_variables`.
+You can use Kconfig fragments specific to bootloaders to set temporary configuration options for the associated image, specifying them at build time.
 
-For example, you can assign the :file:`my-custom-fragment.conf` fragment to the |NSIB|, which uses the child name of ``b0``, as follows:
+For example, you can assign the :file:`my-custom-fragment.conf` fragment to the |NSIB|, which uses the image name of ``b0``, as follows:
 
 .. code-block:: console
 
    west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
-   -DCONFIG_SECURE_BOOT=y \
-   -DCONFIG_BOOTLOADER_MCUBOOT=y \
+   -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
+   -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
    -Db0_EXTRA_CONF_FILE=my-custom-fragment.conf
 
 In the same way, you can replace ``b0`` with ``mcuboot`` to apply the :file:`my-custom-fragment.conf` fragment to the MCUboot image:
@@ -58,13 +53,13 @@ In the same way, you can replace ``b0`` with ``mcuboot`` to apply the :file:`my-
 .. code-block:: console
 
    west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
-   -DCONFIG_SECURE_BOOT=y \
-   -DCONFIG_BOOTLOADER_MCUBOOT=y \
+   -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
+   -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
    -Dmcuboot_EXTRA_CONF_FILE=my-custom-fragment.conf
 
-You can use this method to apply Kconfig fragments to any child image in the build, as well as to set any Kconfig option that can be set from the command line.
+You can use this method to apply Kconfig fragments to any image in the build, and set any Kconfig option that is available from the command line.
 
-See :ref:`ug_multi_image_variables` for more information about customizing images using this method.
+See :ref:`sysbuild` for more information about customizing images using this method.
 
 Customizing partitions
 **********************

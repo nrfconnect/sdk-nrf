@@ -145,7 +145,7 @@ The behavior of the Bluetooth implementation is almost the same as Zephyr's with
     The Bluetooth LE API is not strictly real-time by design, so the additional latency introduced by the IPC communication should be acceptable in most applications.
     To reduce the latency, consider using a different transport backend for nRF RPC.
     See :ref:`nrf_rpc_architecture` for details.
-  * Using advanced Bluetooth LE configurations, such as multiple simultaneous connections or advanced security features can be a limitation, because the child image (:ref:`ble_rpc_host` or :ref:`ipc_radio`) might require significantly more memory than the MCU it runs on has available.
+  * Using advanced Bluetooth LE configurations, such as multiple simultaneous connections or advanced security features can be a limitation, because the image (:ref:`ble_rpc_host` or :ref:`ipc_radio`) might require significantly more memory than the MCU it runs on has available.
     Typically, network or radio cores are more memory-constrained than the application MCU.
   * The :c:func:`bt_gatt_cancel` function is not implemented.
   * The ``flags`` field of  the :c:struct:`bt_gatt_subscribe_params` structure is atomic, so it cannot be correctly handled by the nRF RPC.

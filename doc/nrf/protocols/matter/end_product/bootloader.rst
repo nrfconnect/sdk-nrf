@@ -15,7 +15,7 @@ This page contains guidelines for configuring the MCUboot bootloader in Matter p
 Adding MCUboot to application
 *****************************
 
-Read :ref:`ug_bootloader_adding_immutable_mcuboot` to learn how to add MCUboot to an |NCS| application.
+Read :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot` to learn how to add MCUboot to an |NCS| application.
 Some Matter samples include :term:`Device Firmware Update (DFU)` support out of the box, as listed in the :ref:`sample feature matrix table <matter_samples>`.
 
 MCUboot minimal configuration
@@ -123,7 +123,7 @@ If the signature check fails, MCUboot rejects the image and either:
    As the key pair is publicly known, it provides no protection against the image forgery.
    For this reason, when making a real product, it is of the greatest importance to replace it with a unique key pair, known only to the device maker.
 
-   Read :ref:`ug_bootloader_adding_immutable_mcuboot_keys` to learn how to configure MCUboot to use a custom key pair.
+   Read :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot_keys` to learn how to configure MCUboot to use a custom key pair.
 
 Downgrade protection
 ********************

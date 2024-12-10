@@ -46,11 +46,6 @@ The nRF52840 SoC needs to enable UART1 on the devicetree using the following con
 MCUboot configuration
 ---------------------
 
-The sample has defined configuration and device tree overlay files for MCUboot that are available in the sample folder:
-
-* :file:`child_image/mcuboot.conf` - Defines the MCUboot recovery mode.
-* :file:`child_image/mcuboot/boards/nrf9160dk_nrf52840_0_14_0.overlay` - Define UART1 for MCUmgr.
-
 The MCUboot configuration is enabled automatically at build.
 
 Partition management

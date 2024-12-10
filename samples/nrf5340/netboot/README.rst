@@ -21,7 +21,6 @@ Overview
 
 The network core bootloader sample protects the flash memory areas allocated to both itself and the application running on the network core.
 
-You must use this sample as a child image of a :ref:`multi-image <ug_multi_image>` build, where MCUboot is enabled and there is a network core application.
 MCUboot verifies and shares with the network core bootloader any new network core application image received through a device firmware update (DFU) transport layer, like a serial or a Bluetooth® LE connection.
 For this reason, without MCUboot, this sample does nothing else but directly launches the application.
 
@@ -70,13 +69,13 @@ Building and running
 
 This sample can be found under :file:`samples/nrf5340/netboot/` in the |NCS| folder structure.
 
-Follow the steps below to include the sample as a child image in a :ref:`multi-image <ug_multi_image>` build that contains a network core application:
+To include the sample as an image in a sysbuild project that contains a network core application, add the following sysbuild Kconfig options in the project:
 
-#. To add MCUboot to the build, enable the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` option in the application that runs on the application core.
-   The build system includes the sample in the build by automatically enabling the :kconfig:option:`CONFIG_SECURE_BOOT` option for the application that runs on the network core.
-#. To enable the :ref:`subsys_pcd` library for MCUboot, set the :kconfig:option:`CONFIG_PCD_APP` option when building its image.
+* ``SB_CONFIG_BOOTLOADER_MCUBOOT``
+* ``SB_CONFIG_SECURE_BOOT_NETCORE``
+* ``SB_CONFIG_NETCORE_APP_UPDATE``
 
-The build system generates a new set of firmware update files.
+The build system includes the sample in the build automatically and generates a new set of firmware update files.
 These files match the ones described in :ref:`mcuboot:mcuboot_ncs`, except that they contain the network core application firmware and are prefixed with ``net_core_``.
 
 See :ref:`configure_application` for information on how to enable the required configuration options.

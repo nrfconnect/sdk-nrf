@@ -326,8 +326,8 @@ The :file:`dtm_uart_twowire.c` file is an implementation of the UART interface s
 The :file:`dtm_hci.c` and :file:`hci_uart.c` files are an implementation of the HCI UART interface specified in the `Bluetooth Core Specification`_, Volume 4, Part A (the flow control can be configured by an overlay file).
 
 The default selection of UART pins is defined in :file:`zephyr/boards/arm/board_name/board_name.dts`.
-You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file of the child image at the project level.
-The configuration files for the :ref:`nrf5340_remote_shell` subimage are located in the :file:`child_image/remote_shell` or :file:`sysbuild/remote_shell` directory.
+You can change the defaults using the symbols ``tx-pin`` and ``rx-pin`` in the DTS overlay file of the image at the project level.
+The configuration files for the :ref:`nrf5340_remote_shell` subimage are located in the :file:`sysbuild/remote_shell` directory.
 The HCI interface allows for a custom ``remote_hci`` image to be used with |nRF5340DKnoref|.
 
 .. note::

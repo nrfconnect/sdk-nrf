@@ -150,7 +150,6 @@ You can use either the SoftDevice Controller or the Zephyr Bluetooth LE Controll
 See :ref:`ug_ble_controller` for more information.
 
 For the application core, the |NCS| provides a series of :ref:`Bluetooth Low Energy samples <ble_samples>`, in addition to the :zephyr:code-sample-category:`bluetooth` samples.
-|multi_image|
 
 .. note::
    Most of the provided Bluetooth LE samples should run on the nRF5340 DK, but not all have been thoroughly tested.
@@ -198,7 +197,6 @@ This Zephyr sample is designed specifically to enable the nRF IEEE 802.15.4 radi
 The sample implements the RPMsg transport using the `OpenAMP`_ library to communicate with the nRF IEEE 802.15.4 radio driver serialization host that runs on a separate core (in this case, the nRF5340 application core).
 
 For the application core, the |NCS| provides a series of samples for the :ref:`Thread <ug_thread>`, :ref:`Zigbee <ug_zigbee>`, and :ref:`Matter <ug_matter>` protocols.
-|multi_image|
 
 Multiprotocol support
 =====================
@@ -231,7 +229,6 @@ For the network core, the |NCS| provides the :ref:`ipc_radio`.
 The :ref:`ipc_radio` enables both the Bluetooth LE Controller and the nRF IEEE 802.15.4 radio driver and simultaneously exposes the functionality of both stacks to the application.
 
 For the application core, the |NCS| provides a series of samples for the :ref:`Thread <ug_thread>` and :ref:`Zigbee <ug_zigbee>` protocols.
-|multi_image|
 See the :ref:`ug_multiprotocol_support` user guide for instructions on how to enable multiprotocol support for Thread or Zigbee in combination with Bluetooth.
 
 
@@ -254,13 +251,12 @@ Direct use of the radio peripheral
 Samples that directly use the radio peripheral can run on the network core of the nRF5340.
 They do not require any functionality from the application core.
 
-However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :kconfig:option:`CONFIG_SOC_NRF53_CPUNET_ENABLE` and the code in :file:`zephyr/boards/nordic/nrf5340dk/nrf5340_cpunet_reset.c`).
+However, on nRF5340, the application core is responsible for starting the network core and connecting its GPIO pins (see :kconfig:option:`CONFIG_SOC_NRF53_CPUNET_ENABLE` and the code in :file:`zephyr/soc/nordic/nrf53/nrf53_cpunet_mgmt.c`).
 Therefore, you must always program the application core, even if the firmware is supposed to run only on the network core.
 
 You can use the :ref:`nrf5340_empty_app_core` sample for this purpose.
-Configure the network core application to automatically include this sample as a child image.
+Configure the network core application to automatically include this sample as the application core image.
 This is the default configuration for the listed network core samples.
-For more information, see :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE` and :ref:`ug_nrf5340_multi_image`.
 
 
 No radio communication

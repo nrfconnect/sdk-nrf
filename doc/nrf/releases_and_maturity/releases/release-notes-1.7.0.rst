@@ -515,7 +515,7 @@ In addition to documentation related to the changes listed above, the following 
 
   * :ref:`ug_app_dev` section pages:
 
-    * :ref:`ug_multi_image` - Updated with the section about Child image devicetree overlays.
+    * Multi-image builds - Updated with the section about Child image devicetree overlays.
     * :ref:`ug_radio_fem` - Updated for the nRF21540 release.
 
   * :ref:`ug_nrf91` user guide - Restructured into several subpages.

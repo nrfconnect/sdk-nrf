@@ -8,11 +8,9 @@ Partition Manager
    :depth: 2
 
 The Partition Manager is a Python script that sets the start address and size of all the flash and RAM partitions in a multi-image build context.
-When creating an application that requires child images, like a bootloader, you can configure the Partition Manager to control where each image should be placed in memory, and how the RAM should be shared.
+When creating an application that requires other images, like a bootloader, you can configure the Partition Manager to control where each image should be placed in memory, and how the RAM should be shared.
 
-See :ref:`ug_multi_image` for more information about multi-image builds.
-
-The Partition Manager is activated for all multi-image builds, regardless of which build strategy is used for the child image.
+The Partition Manager is activated for all sysbuild builds.
 
 .. note::
    When you build a multi-image application using the Partition Manager, the devicetree source flash partitions are ignored.
@@ -35,11 +33,11 @@ Flash partition types
 Image partitions
    An image partition is the flash memory area reserved for an image to which the image binary is written.
 
-   When the Partition Manager is active, there is one *root image* and one or more *child images*.
+   When the Partition Manager is active, there is one *root image* and one or more *other images*.
    The name of the root image is ``app``.
    It is always implicitly defined.
-   Child images are explicitly defined in :file:`pm.yml` files.
-   The size of the root image partition is dynamic, while the sizes of all child image partitions are statically defined.
+   Other images are explicitly defined in :file:`pm.yml` files.
+   The size of the root image partition is dynamic, while the sizes of all other image partitions are statically defined.
 
 Placeholder partitions
    A placeholder partition does not contain an image, but reserves space for other uses.
@@ -75,12 +73,12 @@ Permanent placeholder RAM partitions
 Configuration
 *************
 
-Each child image must define its Partition Manager configuration in a file called :file:`pm.yml`.
-This file must be stored in the same folder as the main :file:`CMakeLists.txt` file of the child image.
+Each additional image must define its Partition Manager configuration in a :file:`pm.yml` file.
+This file must be stored in the same folder as the main :file:`CMakeLists.txt` file of the other image.
 
 .. note::
-   :file:`pm.yml` is only used for child images.
-   The root application does not need to define a :file:`pm.yml` file, because its partition size and placement is implied by the size and placement of the child image partitions.
+   :file:`pm.yml` is only used for additional images.
+   The root application does not need to define a :file:`pm.yml` file, because its partition size and placement is implied by the size and placement of the other image partitions.
    If a root application defines a :file:`pm.yml` file, it is silently ignored.
 
 The Partition Manager configuration can be also provided by a *subsystem*, intended as a software component.
@@ -124,7 +122,7 @@ placement: dict
    This property specifies the placement of the partition relative to other partitions, to the start or end of the flash, or to the root image ``app``.
 
    A partition with the placement property set is either an image partition or a placeholder partition.
-   If the partition name is the same as the image name (as defined in a ``CMakeLists.txt``; see :ref:`ug_multi_image_defining` for details), this partition is the image partition.
+   If the partition name is the same as the image name, this partition is the image partition.
    All other partitions are placeholder partitions.
    Each :file:`pm.yml` file must define exactly one image partition.
 
@@ -584,7 +582,7 @@ As partition manager does not know if partitions are used at runtime, consider t
 
 .. note::
 
-   When using an application configured with an MCUboot child image, both images use the same partition manager configuration, which means that the app and MCUboot have exactly the same partition maps.
+   When using an application configured with an MCUboot image, both images use the same partition manager configuration, which means that the app and MCUboot have exactly the same partition maps.
    The accessibility at runtime of flash partitions depends on the configurations of both the application and MCUboot and the values they give to the ``DEFAULT_DRIVER_KCONFIG`` option of the partition manager region specification.
 
 .. _pm_build_system:
@@ -592,7 +590,7 @@ As partition manager does not know if partitions are used at runtime, consider t
 Build system
 ************
 
-The build system finds the child images that have been enabled and their configurations.
+The build system identifies the enabled images and their configurations.
 
 For each image, the Partition Manager's CMake code infers the paths to the following files and folders from the name and from other global properties:
 
@@ -600,7 +598,7 @@ For each image, the Partition Manager's CMake code infers the paths to the follo
 * The compiled HEX file
 * The generated include folder
 
-After CMake finishes configuring the child images, the Partition Manager script is executed in configure time (``execute_process``) with the lists of names and paths as arguments.
+When CMake has completed configuring the additional images, the Partition Manager script is executed in configure time (``execute_process``) with the lists of names and paths as arguments.
 The configurations generated by the Partition Manager script are imported as CMake variables (see :ref:`pm_cmake_usage`).
 
 The Partition Manager script outputs a :file:`partitions.yml` file.
@@ -615,7 +613,7 @@ Generated output
 After the main Partition Manager script has finished, another script runs.
 This script takes the :file:`partitions.yml` file as input and creates the following output files:
 
-* A C header file :file:`pm_config.h` for each child image and for the root application
+* A C header file :file:`pm_config.h` for each other image and for the root application
 * A key-value file :file:`pm.config`
 
 The header files are used in the C code, while the key-value file is imported into the CMake namespace.
@@ -786,7 +784,7 @@ If you do not set :makevar:`PM_STATIC_YML_FILE`, the build system will use the f
   #. Otherwise, if the file :file:`pm_static_<board>.yml` exists, it will be used.
   #. Otherwise, if the file :file:`pm_static.yml` exists, it will be used.
 
-For :ref:`ug_multi_image` where the image targets a different domain, :ref:`ug_multi_image_build_scripts` uses the same search algorithm, but a domain specific configuration file is also searched.
+In builds where the image targets a different domain, the Partition Manager employs the same search algorithm but also looks for a domain-specific configuration file.
 For example, :file:`pm_static_<board>_<suffix>_<domain>.yml` or :file:`pm_static_<board>_<domain>.yml`.
 
 Use a static partition layout to ensure consistency between builds, as the settings storage will be at the same location after the DFU.
@@ -813,14 +811,14 @@ You can add or remove partitions as described in the following sections.
 Configuring dynamic partitions
 ==============================
 
-For child images that use dynamic partition sizing, the Partition Manager allows you to use the ``CONFIG_PM_PARTITION_SIZE_<CHILD_IMAGE>`` Kconfig option to adjust the partition size.
+For additional images that use dynamic partition sizing, the Partition Manager allows you to use the ``CONFIG_PM_PARTITION_SIZE_<IMAGE>`` Kconfig option to adjust the partition size.
 This is particularly useful when you want to optimize the memory usage of MCUboot to the smallest possible size by enabling cryptographic functionalities.
 
 .. note::
-   To match the reduced size, you need to set the ``CONFIG_PM_PARTITION_SIZE_<CHILD_IMAGE>`` Kconfig option in the child image's configuration.
-   For example, ``CONFIG_PM_PARTITION_SIZE_MCUBOOT`` must be set for the MCUboot child image.
+   To match the reduced size, you need to set the ``CONFIG_PM_PARTITION_SIZE_<IMAGE>`` Kconfig option in the other image's configuration.
+   For example, ``CONFIG_PM_PARTITION_SIZE_MCUBOOT`` must be set for the MCUboot image.
 
-The ``CONFIG_PM_PARTITION_SIZE_<CHILD_IMAGE>`` Kconfig option allows you to specify the memory size for each child image's partition directly in the Kconfig file.
+The ``CONFIG_PM_PARTITION_SIZE_<IMAGE>`` Kconfig option allows you to specify the memory size for each image's partition directly in the Kconfig file.
 This allows for precise control over memory allocation which is crucial for system performance optimization.
 
 Common variants of this Kconfig option include the following:
@@ -866,9 +864,6 @@ The region defaults to ``flash_primary`` if no ``region`` property is specified.
       address: 0xab00
       size: 0x1000
       span: [example]  # Only if this partition had the span property set originally.
-
-.. note::
-  Child images that are built with the build strategy *partition_name*\ _BUILD_STRATEGY_SKIP_BUILD or *partition_name*\ _BUILD_STRATEGY_USE_HEX_FILE must define a static partition to ensure correct placement of the dynamic partitions.
 
 .. _ug_pm_static_remove:
 

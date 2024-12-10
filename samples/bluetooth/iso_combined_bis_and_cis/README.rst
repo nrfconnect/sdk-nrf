@@ -26,9 +26,6 @@ The sample supports the following development kits:
 
 To test the sample, you need two additional devices.
 You can use any of the development kits listed above and mix different development kits.
-
-.. include:: /includes/hci_ipc_overlay.txt
-
 The sample also requires a connection to a computer with a serial terminal |ANSI| for each of the development kits.
 
 Overview

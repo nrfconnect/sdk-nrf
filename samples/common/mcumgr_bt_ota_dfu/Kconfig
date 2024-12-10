@@ -123,10 +123,6 @@ config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
 	  size. The buffer configuration should be the same in the Network Core
 	  and Application Core image.
 
-	  This configuration option is automatically applied for the Network
-	  Core child image if the NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP option is
-	  enabled in the main image.
-
 if NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
 
 config BT_L2CAP_TX_MTU

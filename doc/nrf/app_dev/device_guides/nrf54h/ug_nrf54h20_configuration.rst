@@ -73,4 +73,3 @@ Additionally, the build process generates the following user information configu
 
 You must flash all the HEX files into the device.
 For more information on building images for the nRF54H20 DK, see :ref:`ug_nrf54h20_gs`.
-For additional information on multi-image builds see :ref:`ug_multi_image`.

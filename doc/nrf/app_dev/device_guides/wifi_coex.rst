@@ -57,7 +57,6 @@ The following are the common requirements to use the coexistence feature:
 
 .. note::
    When using the nRF5340, apply steps 1 and 2 only to the network core.
-   See :ref:`ug_multi_image`.
 
 .. note::
    Do not enable Wi-Fi coexistence on the nRF5340 SoC in conjunction with Coded Phy and FEM, as this can lead to undefined behavior.
@@ -129,9 +128,9 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
    The second element is the pin number on that port.
 
 #. On the nRF5340, you must also apply the same devicetree node mentioned in step 1 to the network core using sysbuild build system. For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
-   To do so, apply the overlay to the correct network core child image by creating an overlay file named :file:`sysbuild/*childImageName*/boards/nrf5340dk_nrf5340_cpunet.overlay.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
+   Apply the overlay to the correct network core image by creating an overlay file named :file:`sysbuild/*image_name*/boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
 
-   The ``*childImageName*`` default value is set to ``ipc_radio`` :ref:`ipc_radio`.
+   The ``*image_name*`` value is ``ipc_radio`` :ref:`ipc_radio`.
 
    ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
    You can configure your application using the following sysbuild configurations:
@@ -210,10 +209,10 @@ To enable the generic three-wire coexistence, do the following:
    The second element is the pin number on that port.
 
 #. On nRF53 devices, you must also apply the same devicetree node mentioned in **Step 1** to the network core using sysbuild.
-   To apply the overlay to the correct network core child image, create an overlay file named :file:`sysbuild/*childImageName*/boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
+   To apply the overlay to the correct network core image, create an overlay file named :file:`sysbuild/*image_name*/boards/nrf5340dk_nrf5340_cpunet.overlay` in your application directory, for example :file:`sysbuild/ipc_radio/boards/nrf5340dk_nrf5340_cpunet.overlay`.
    For more information, see the :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
 
-   The *childImageName* default value is set to ``ipc_radio``:
+   The *image_name* value is ``ipc_radio``:
 
    ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
    You can configure your application using the following sysbuild configurations:

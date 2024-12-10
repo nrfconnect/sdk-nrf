@@ -41,7 +41,7 @@ def __populate_uicr(dev):
 def _program_cores(dev: DeviceConf) -> int:
     if dev.core_net_programmed == SelectFlags.TBD:
         if not path.isfile(dev.hex_path_net):
-            print("NET core hex not found. Built as APP core child image.")
+            print("NET core hex not found. Built as APP core image.")
             return 1
 
         print(f"Programming net core on: {dev}")

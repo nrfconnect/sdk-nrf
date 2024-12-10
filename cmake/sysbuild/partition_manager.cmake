@@ -366,23 +366,10 @@ function(update_runner)
   sysbuild_cache(CREATE APPLICATION ${RUNNER_IMAGE})
 endfunction()
 
-
 # APP is a special domain which is handled differently.
 # Remove it from the list.
 get_property(PM_DOMAINS GLOBAL PROPERTY PM_DOMAINS)
 list(REMOVE_ITEM PM_DOMAINS APP)
-
-## Check if current image is the dynamic partition in its domain.
-## I.E. it is the only partition without a statically configured size in this
-## domain. This is equivalent to the 'app' partition in the root domain.
-##
-## The dynamic partition is specified by the parent domain (i.e. the domain
-## which creates the current domain through 'create_domain_image()'.
-#if(DEFINED ${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION
-#   AND "${IMAGE_NAME}" STREQUAL "${${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION}"
-#)
-#  set(is_dynamic_partition_in_domain TRUE)
-#endif()
 
 get_property(PM_IMAGES GLOBAL PROPERTY PM_IMAGES)
 get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
@@ -391,7 +378,7 @@ get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 #
 # It will be executed if one of the following criteria is true for the
 # current image:
-# - It's a child image, and is the dynamic partition in the domain
+# - It's a secondary image, and is the dynamic partition in the domain
 # - It's the root image, and a static configuration has been provided
 # - It's the root image, and PM_IMAGES is populated.
 # - It's the root image, and other domains exist.
@@ -410,24 +397,8 @@ else()
     )
 endif()
 
-# Image files, those should be queried from actual image.
-# Add the dynamic partition as an image partition.
-#set_property(GLOBAL PROPERTY
-#  ${dynamic_partition}_PM_HEX_FILE
-#  ${PROJECT_BINARY_DIR}/${KERNEL_HEX_NAME}
-#  )
-#
-#set_property(GLOBAL PROPERTY
-#  ${dynamic_partition}_PM_TARGET
-#  ${logical_target_for_zephyr_elf}
-#  )
-
 # Prepare the input_files, header_files, and images lists
 set(generated_path include/generated)
-# ToDo: In child image, this happens to each domain parent.
-# In parent image, it only happen to direct children, not children of children.
-# This must be adjusted into:
-# Explicitly add the main dynamic partition image
 sysbuild_get(${DEFAULT_IMAGE}_input_files IMAGE ${DEFAULT_IMAGE} VAR PM_YML_FILES CACHE)
 sysbuild_get(${DEFAULT_IMAGE}_binary_dir  IMAGE ${DEFAULT_IMAGE} VAR ZEPHYR_BINARY_DIR CACHE)
 list(APPEND prefixed_images ":${dynamic_partition}")
@@ -568,8 +539,6 @@ foreach(d APP ${PM_DOMAINS})
     DEFAULT_DRIVER_KCONFIG ${soc_nvs_controller_driver_kc}
     DOMAIN ${d}
     )
-
-
 endforeach()
 
 sysbuild_get(ext_flash_enabled IMAGE ${DEFAULT_IMAGE} VAR CONFIG_PM_EXTERNAL_FLASH_ENABLED KCONFIG)
@@ -623,37 +592,7 @@ partition_manager(IN_FILES ${input_files} REGIONS ${regions})
 foreach(d ${PM_DOMAINS})
   get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${d})
   partition_manager(DOMAIN ${d} IN_FILES ${${d}_input_files} REGIONS ${${d}_regions})
-
-#  foreach(d ${PM_DOMAINS})
-#    # Should list be adjust to domain image list ?
-#    # In files must be adjust according to image being built/
-#    partition_manager(DOMAIN ${d} IN_FILES ${${d}_input_files} REGIONS ${domain_regions})
-#  endforeach()
 endforeach()
-
-# Start - Code related to network core update. Multi image updates are part of NCSDK-17807
-#if (CONFIG_SECURE_BOOT AND CONFIG_BOOTLOADER_MCUBOOT)
-#  # Create symbols for the offsets required for moving test update hex files
-#  # to MCUBoots secondary slot. This is needed because objcopy does not
-#  # support arithmetic expressions as argument (e.g. '0x100+0x200'), and all
-#  # of the symbols used to generate the offset is only available as a
-#  # generator expression when MCUBoots cmake code exectues. This because
-#  # partition manager is performed as the last step in the configuration stage.
-#  math(EXPR s0_offset "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${PM_S0_ADDRESS}")
-#  math(EXPR s1_offset "${PM_MCUBOOT_SECONDARY_ADDRESS} - ${PM_S1_ADDRESS}")
-#
-#  set_property(
-#    TARGET partition_manager
-#    PROPERTY s0_TO_SECONDARY
-#    ${s0_offset}
-#    )
-#  set_property(
-#    TARGET partition_manager
-#    PROPERTY s1_TO_SECONDARY
-#    ${s1_offset}
-#    )
-#endif()
-# End - Code related to network core update. Multi image updates are part of NCSDK-17807
 
 # Always add main partition file to list.
 list(APPEND pm_out_partition_file ${APPLICATION_BINARY_DIR}/partitions.yml)
@@ -719,78 +658,6 @@ else()
     endif()
   endforeach()
 
-# Start - Code related to network core update. Multi image updates are part of NCSDK-17807
-#  if (CONFIG_BOOTLOADER_MCUBOOT)
-#    # Create symbols for the offset required for moving the signed network
-#    # core application to MCUBoots secondary slot. This is needed
-#    # because  objcopy does not support arithmetic expressions as argument
-#    # (e.g. '0x100+0x200'), and all of the symbols used to generate the
-#    # offset are only available as a generator expression when MCUBoots
-#    # cmake code executes.
-#
-#    # Check if a signed version of the network core application is defined.
-#    # If so, this indicates that we need to support firmware updates on the
-#    # network core. This again means that we should generate the required
-#    # hex files.
-#    get_shared(cpunet_signed_app_hex IMAGE CPUNET PROPERTY PM_SIGNED_APP_HEX)
-#
-#    if (CONFIG_NRF53_UPGRADE_NETWORK_CORE
-#        AND DEFINED cpunet_signed_app_hex)
-#      # The address coming from other domains are not available in this scope
-#      # since it is imported by a different domain. Hence, it must be fetched
-#      # through the 'partition_manager' target.
-#      get_target_property(net_app_addr partition_manager CPUNET_PM_APP_ADDRESS)
-#
-#      get_shared(
-#        mcuboot_NRF53_MULTI_IMAGE_UPDATE
-#        IMAGE mcuboot
-#        PROPERTY NRF53_MULTI_IMAGE_UPDATE
-#        )
-#
-#      # Check if multi image updates are enabled, in which case we need
-#      # to use the "_1" variant of the secondary partition for the network core.
-#      if(DEFINED mcuboot_NRF53_MULTI_IMAGE_UPDATE)
-#        set(sec_slot_idx "_1")
-#      endif()
-#
-#      # Calculate the offset from the address which the net/app core app is linked
-#      # against to the secondary slot. We need these values to generate hex files
-#      # which targets the secondary slot.
-#      math(EXPR net_app_to_secondary
-#        "${xip_addr} \
-#        + ${PM_MCUBOOT_SECONDARY${sec_slot_idx}_ADDRESS} \
-#        - ${net_app_addr} \
-#        + ${PM_MCUBOOT_PAD_SIZE}"
-#        )
-#
-#      set_property(
-#        TARGET partition_manager
-#        PROPERTY net_app_TO_SECONDARY
-#        ${net_app_to_secondary}
-#        )
-#
-#      # This value is needed by `imgtool.py` which is used to sign the images.
-#      set_property(
-#        TARGET partition_manager
-#        PROPERTY net_app_slot_size
-#        ${PM_MCUBOOT_SECONDARY${sec_slot_idx}_SIZE}
-#        )
-#    endif()
-#
-#    math(EXPR app_to_secondary
-#      "${xip_addr} \
-#      + ${PM_MCUBOOT_SECONDARY_ADDRESS} \
-#      - ${PM_MCUBOOT_PRIMARY_ADDRESS}"
-#      )
-#
-#    set_property(
-#      TARGET partition_manager
-#      PROPERTY app_TO_SECONDARY
-#      ${app_to_secondary}
-#      )
-#  endif()
-# End - Code related to network core update. Multi image updates are part of NCSDK-17807
-
   # Explicitly add the root image domain hex file to the list
   list(APPEND domain_hex_files ${CMAKE_BINARY_DIR}/${merged}.hex)
   list(APPEND global_hex_depends ${merged}_hex)
@@ -838,30 +705,6 @@ else()
     COMMAND_EXPAND_LISTS
     )
 
-# ToDo: do we still want to merge hex files for all the domains ?
-#  if (PM_DOMAINS)
-#    # For convenience, generate global hex file containing all domains' hex
-#    # files.
-#    set(final_merged ${PROJECT_BINARY_DIR}/merged_domains.hex)
-#
-#    # Add command to merge files.
-#    add_custom_command(
-#      OUTPUT ${final_merged}
-#      COMMAND
-#      ${PYTHON_EXECUTABLE}
-#      ${ZEPHYR_BASE}/scripts/build/mergehex.py
-#      -o ${final_merged}
-#      ${domain_hex_files}
-#      DEPENDS
-#      ${domain_hex_files}
-#      ${global_hex_depends}
-#      )
-#
-#    # Wrapper target for the merge command.
-#    add_custom_target(merged_domains_hex ALL DEPENDS ${final_merged})
-#  endif()
-
   set(ZEPHYR_RUNNER_CONFIG_KERNEL_HEX "${final_merged}"
     CACHE STRING "Path to merged image in Intel Hex format" FORCE)
-
 endif()

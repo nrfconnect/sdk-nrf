@@ -158,12 +158,11 @@ The sample includes pre-configured configuration files for the development kits 
 The following configuration and DTS overlay files are included to host the MCUboot secondary image slot on external flash for the nRF7002 DK:
 
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` - DTS overlay file for the application image.
-* :file:`child_image/mcuboot/nrf7002dk_nrf5340_cpuapp.overlay` - DTS overlay file for the MCUboot child image.
-* :file:`child_image/mcuboot/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the MCUboot child image.
+* :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.overlay` - DTS overlay file for the MCUboot image.
+* :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the MCUboot image.
 
 Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
-Files that are located under the :file:`/child_image/mcuboot` folder are used to configure the MCUboot child image.
-To read more about child images, see :ref:`ug_multi_image`.
+Files that are located under the :file:`/sysbuild/mcuboot` folder are used to configure the MCUboot image.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

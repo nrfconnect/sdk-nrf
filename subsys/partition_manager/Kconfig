@@ -12,8 +12,8 @@ config PARTITION_MANAGER_ENABLED
 	  Option which can be checked to see whether or not the
 	  partition manager is enabled in the current build. Note that this
 	  should ideally be a hidden option, but it can't due to limitations
-	  in how parent images impose options on child images. Don't
-	  change the value of this option.
+	  in how sysbuild imposes options on images. Do not change the value
+	  of this option.
 
 # Override this option to use custom flash map implementation when partition
 # manager is enabled.
@@ -210,8 +210,6 @@ config PM_EXTERNAL_FLASH_SIZE_BITS
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	bool "Place MCUboot secondary in external flash"
 	depends on BOOTLOADER_MCUBOOT || MCUBOOT
-	# Only depend on the chosen for the parent image. The value of this
-	# option is propagated to the MCUboot child image automatically.
 	depends on PM_EXTERNAL_FLASH_ENABLED || MCUBOOT
 	default y if BOOTLOADER_MCUBOOT
 	help

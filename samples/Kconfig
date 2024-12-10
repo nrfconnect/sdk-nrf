@@ -25,7 +25,7 @@ menu "Image build variants"
 config NCS_MCUBOOT_IN_BUILD
 	bool "MCUBoot is included in the build [READ ONLY]"
 	help
-	  Helper option used to communicate to child images that MCUboot is included in the build.
+	  Helper option used to communicate to images that MCUboot is included in the build.
 
 endmenu
 

@@ -189,7 +189,6 @@ When you select `Communication through USB`_, MCUboot is built with support for 
 
 If you want to use the default UART serial communication channel, set the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` Kconfig option to enable MCUboot.
 To use the same MCUboot configuration as in `Communication through USB`_, you need to provide MCUboot with the Kconfig options included in the :file:`sysbuild/mcuboot_usb.conf` file.
-See :ref:`ug_multi_image_variables` to learn how to set the required options.
 
 MCUboot with the USB DFU requires a larger partition.
 To increase the partition, define the :makevar:`PM_STATIC_YML_FILE` variable that provides the path to the :file:`pm_static_<board>_<suffix>.yml` static configuration file for the board target of your choice.

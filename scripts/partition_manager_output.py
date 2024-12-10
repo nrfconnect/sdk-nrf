@@ -151,9 +151,9 @@ def write_gpm_config(gpm_config, regions_config, name, out_path):
         ----------------------------------------------------------
         --- WARNING: Partition image '{image}' is a container  ---
         --- partition with a span of one or more images, but   ---
-        --- has the same name of its child image. Container    ---
+        --- has the same name of its image. Container          ---
         --- partitions are not allowed to share the name of    ---
-        --- the child image that defines it.                   ---
+        --- the image that defines it.                         ---
         ---                                                    ---
         --- A pm_static.yml file defining appears to be        ---
         --- overriding this. If possible, please rename the    ---
@@ -163,9 +163,9 @@ def write_gpm_config(gpm_config, regions_config, name, out_path):
         else:
             raise PartitionError(
                 f"Partition image '{image}' is a container with a span of one "
-                "or more images, but has the same name of its child image. "
+                "or more images, but has the same name of its image. "
                 "Container partitions are not allowed to share the name of the "
-                " child image that defines it. Please rename the span "
+                " image that defines it. Please rename the span "
                 f"'{image}' in the pm.yml file of child '{image}'.")
 
     image_config_lines.append('#define PM_ADDRESS {}'.format(hex(gpm_config[domain][pm_image]['address'])))

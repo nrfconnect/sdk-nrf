@@ -48,7 +48,6 @@ Refer to their documentation for more information.
    features_nrf53
    building_nrf53
    fota_update_nrf5340
-   multi_image_nrf5340
    simultaneous_multi_image_dfu_nrf5340
    serial_recovery
    logging_nrf5340

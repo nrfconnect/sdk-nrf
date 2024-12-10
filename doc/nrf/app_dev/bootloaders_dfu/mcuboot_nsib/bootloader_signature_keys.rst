@@ -11,10 +11,9 @@ Signature keys
 A signature key can be used by :ref:`bootloader` to validate the next image in the boot chain.
 Dedicated host tools like :doc:`mcuboot:imgtool` can be used to sign application update images.
 
-When you use |NSIB|, a private/public key pair is by default generated during the build when you are :ref:`ug_bootloader_adding_immutable_keys`.
+When you use MCUboot or :ref:`enable a bootloader chain through sysbuild <ug_bootloader_adding_sysbuild_upgradable_mcuboot>`, the default configuration uses keys that were generated once and are stored in the public MCUboot Git repository.
+When you use |NSIB|, a private/public key pair is by default generated during the build when you are :ref:`ug_bootloader_adding_sysbuild_immutable_keys`.
 You can use the methods described in the following sections to explicitly define how the key pair is to be generated.
-
-When you use MCUboot or you are :ref:`ug_bootloader_adding_upgradable_mcuboot`, MCUboot uses keys that were generated once and are stored in the public MCUboot Git repository by default.
 
 .. note::
     These key pairs should only be used during development.
@@ -151,7 +150,7 @@ You can add this feature to your own project and check its functionality as foll
 
       The public key associated with the original private signing key must not be included in the public key list.
 
-#. Program the application to the target development kit and :ref:`check its console output <ug_bootloader_testing>`.
+#. Program the application to the target development kit and check its console output.
    With the first firmware version, ``priv_a.pem`` and ``pub_a.pem`` are used for signing and validating the image.
 
    .. code-block:: console
