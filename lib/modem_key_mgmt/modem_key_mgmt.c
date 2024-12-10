@@ -93,6 +93,9 @@ static int translate_error(int err)
 	case 519: /* already exists */
 		LOG_WRN("Key already exists");
 		return -EALREADY;
+	case 527: /* Invalid content */
+		LOG_WRN("Invalid content");
+		return -EINVAL;
 	case 528: /* not allowed in power off warning */
 		LOG_WRN("Not allowed when power off warning is active");
 		return -ECANCELED;
