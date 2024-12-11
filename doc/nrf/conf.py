@@ -48,6 +48,7 @@ extensions = [
     "zephyr.link-roles",
     "zephyr.dtcompatible-role",
     "zephyr.domain",
+    "zephyr.gh_utils",
     "sphinx_tabs.tabs",
     "software_maturity_table",
     "sphinx_togglebutton",
@@ -213,6 +214,19 @@ manifest_revisions_table_manifest = NRF_BASE / "west.yml"
 notfound_urls_prefix = "/nRF_Connect_SDK/doc/{}/nrf/".format(
     "latest" if version.endswith("99") else version
 )
+
+# -- Options for zephyr.gh_utils -----------------------------------------------
+
+gh_link_version = "main" if version.endswith("99") else f"v{version}"
+gh_link_base_url = f"https://github.com/nrfconnect/sdk-nrf"
+gh_link_prefixes = {
+    "applications/.*": "",
+    "samples/.*": "",
+    "scripts/.*": "",
+    "tests/.*": "",
+    ".*": "doc/nrf",
+}
+
 
 def setup(app):
     app.add_css_file("css/nrf.css")
