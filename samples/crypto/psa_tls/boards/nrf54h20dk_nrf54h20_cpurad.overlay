@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+/ {
+	eth-rtt {
+		compatible = "segger,eth-rtt";
+	};
+
+	chosen {
+		zephyr,console = &uart136;
+	};
+};
+
+&cpusec_cpurad_ipc {
+	status = "okay";
+};
+
+&cpurad_ram0x_region {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
+
+&cpurad_bellboard {
+	status = "okay";
+};
+
+&uart136 {
+	status = "okay";
+	memory-regions = <&cpurad_dma_region>;
+};
+
+&uart135 {
+	status = "disabled";
+};
