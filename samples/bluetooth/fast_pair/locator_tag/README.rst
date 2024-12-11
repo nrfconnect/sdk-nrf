@@ -135,11 +135,17 @@ To start Fast Pair discoverable advertising after the FMDN unprovisioning and fa
 Device Firmware Update (DFU)
 ============================
 
-The locator tag sample uses the :ref:`MCUboot <mcuboot:mcuboot_ncs>` bootloader firmware image, enabling application firmware image upgrades through the :ref:`app_dfu` procedure.
-Over-the-air updates are supported using MCUmgr's Simple Management Protocol (SMP) over Bluetooth.
+The locator tag sample supports over-the-air updates using MCUmgr's Simple Management Protocol (SMP) over Bluetooth.
+The application configures the appropriate DFU solution in relation to the selected board target (see the following table for more details).
+The following DFU solutions are supported in this sample:
+
+* The :ref:`MCUboot <mcuboot:mcuboot_ncs>` bootloader solution.
+  See the :ref:`app_dfu` user guide for more information.
+* The Software Update for Internet of Things (SUIT) solution.
+  See the :ref:`SUIT <ug_nrf54h20_suit_dfu>` user guide for more information.
 
 To enable the DFU functionality use the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
-It is enabled by default if the MCUboot bootloader image is used.
+This option is enabled by default if a supported DFU solution is configured (see the following table to learn about supported configurations).
 
 To select a specific version of the application, change the :file:`VERSION` file in the sample root directory.
 See the :ref:`zephyr:app-version-details` for details.
@@ -151,21 +157,23 @@ See the :ref:`zephyr:app-version-details` for details.
    * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR`
    * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION`
 
-The bootloader configuration varies depending on the board target:
+The configuration of the DFU solution varies depending on the board target:
 
-+-----------------------------------------+------------------------------------------------------------+
-| Bootloader configuration                | Board targets                                              |
-+=========================================+============================================================+
-| MCUboot, direct-xip mode without revert | * ``nrf52dk/nrf52832`` (only ``release`` configuration)    |
-|                                         | * ``nrf52833dk/nrf52833`` (only ``release`` configuration) |
-|                                         | * ``nrf52840dk/nrf52840``                                  |
-|                                         | * ``nrf54l15dk/nrf54l15/cpuapp``                           |
-+-----------------------------------------+------------------------------------------------------------+
-| MCUboot, overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                             |
-|                                         | * ``nrf5340dk/nrf5340/cpuapp/ns``                          |
-|                                         | * ``thingy53/nrf5340/cpuapp``                              |
-|                                         | * ``thingy53/nrf5340/cpuapp/ns``                           |
-+-----------------------------------------+------------------------------------------------------------+
++--------------+--------------------------------+------------------------------------------------------------+
+| DFU solution | Mode of operation              | Board targets                                              |
++==============+================================+============================================================+
+| MCUboot      | direct-xip mode without revert | * ``nrf52dk/nrf52832`` (only ``release`` configuration)    |
+|              |                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration) |
+|              |                                | * ``nrf52840dk/nrf52840``                                  |
+|              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                           |
++--------------+--------------------------------+------------------------------------------------------------+
+| MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                             |
+|              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                          |
+|              |                                | * ``thingy53/nrf5340/cpuapp``                              |
+|              |                                | * ``thingy53/nrf5340/cpuapp/ns``                           |
++--------------+--------------------------------+------------------------------------------------------------+
+| SUIT         | overwrite only mode            | * ``nrf54h20dk/nrf54h20/cpuapp``                           |
++--------------+--------------------------------+------------------------------------------------------------+
 
 DFU mode
 --------
@@ -457,7 +465,7 @@ SB_CONFIG_APP_DFU
    The sample sysbuild configuration option enables the Device Firmware Update (DFU) functionality.
    The value of this option is propagated to the application configuration option :ref:`CONFIG_APP_DFU <CONFIG_APP_DFU>`.
    On multi-core devices, it adds the Kconfig fragment to the network core image configuration which speeds up the DFU process.
-   By default, this option is enabled if the MCUboot bootloader image is used.
+   This option is enabled by default if the MCUboot bootloader image is used (``SB_CONFIG_BOOTLOADER_MCUBOOT``) or if the chosen board target is based on an nRF54H Series SoC  (``SB_CONFIG_SOC_SERIES_NRF54HX``).
 
 .. _CONFIG_APP_DFU:
 
@@ -924,7 +932,7 @@ To perform the DFU procedure, complete the following steps:
             :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
             :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 
-   .. group-tab:: nRF54 DKs
+   .. group-tab:: nRF54L DKs
 
       1. Observe that **LED 0** is blinking at a 1 second interval, which indicates that the DFU mode is disabled.
       #. Press the **Button 3** for 7 seconds or more to enter the DFU mode.
@@ -935,6 +943,37 @@ To perform the DFU procedure, complete the following steps:
          .. include:: /app_dev/device_guides/nrf52/fota_update.rst
             :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
             :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
+
+   .. group-tab:: nRF54H DKs
+
+      1. Observe that **LED 0** is blinking at a 1 second interval, which indicates that the DFU mode is disabled.
+      #. Press the **Button 3** for 7 seconds or more to enter the DFU mode.
+      #. Observe that **LED 0** is blinking at a 0.25 second interval, which indicates that the DFU mode is enabled.
+      #. Observe that **LED 2** is blinking, which indicates that the Fast Pair advertising is enabled.
+      #. Perform DFU using the `nRF Connect Device Manager`_ mobile app:
+
+         1. Generate the SUIT envelope by building your application with the FOTA support over Bluetooth Low Energy.
+            You can find the generated :file:`root.suit` envelope in the :file:`<build_dir>/DFU` directory.
+            Alternatively, you can use the generated :file:`dfu_suit.zip` package in the :file:`<build_dir>/zephyr` directory.
+         #. Download the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package to your device.
+
+            .. note::
+               `nRF Connect for Desktop`_ does not currently support the FOTA process.
+
+         #. Use the `nRF Connect Device Manager`_ mobile app to update your device with the new firmware.
+
+            a. Ensure that you can access the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package from your phone or tablet.
+            #. In the mobile app, scan and select the device to update.
+            #. Switch to the :guilabel:`Image` tab.
+            #. In the **Firmware Upgrade** section, tap the :guilabel:`SELECT FILE` button and select the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package.
+            #. Tap the :guilabel:`START` button.
+            #. Wait for the DFU to finish and verify that the application works properly.
+
+      .. note::
+         Support for SUIT updates is available starting from the following versions of the `nRF Connect Device Manager`_ mobile app:
+
+         * Version ``2.0`` on Android.
+         * Version ``1.7`` on iOS.
 
 Disabling the locator tag
 -------------------------
@@ -1081,6 +1120,7 @@ Device Firmware Update (DFU)
 
 This sample uses following components for the DFU functionality:
 
-* :ref:`MCUboot bootloader <mcuboot:mcuboot_ncs>`
+* :ref:`MCUboot bootloader <mcuboot:mcuboot_ncs>` (for supported board targets)
+* :ref:`SUIT <ug_nrf54h20_suit_dfu>` (for supported board targets)
 * :ref:`zephyr:app-version-details`
 * :ref:`zephyr:mcu_mgr`

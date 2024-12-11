@@ -238,7 +238,9 @@ Bluetooth samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
 
 Bluetooth Mesh samples
 ----------------------
