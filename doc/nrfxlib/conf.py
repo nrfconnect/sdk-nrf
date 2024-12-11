@@ -41,6 +41,7 @@ extensions = [
     "zephyr.doxyrunner",
     "zephyr.doxybridge",
     "zephyr.domain",
+    "zephyr.gh_utils",
 ]
 master_doc = "README"
 
@@ -101,6 +102,11 @@ warnings_filter_builders = ["inventory"]
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [(NRFXLIB_BASE, "**/*.rst"), (NRFXLIB_BASE, "**/doc/")]
+
+# -- Options for zephyr.gh_utils -----------------------------------------------
+
+gh_link_version = "main" if version.endswith("99") else f"v{version}"
+gh_link_base_url = f"https://github.com/nrfconnect/sdk-nrfxlib"
 
 
 def setup(app):
