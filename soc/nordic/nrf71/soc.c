@@ -12,10 +12,18 @@
  * for the Nordic Semiconductor nRF71 family processor.
  */
 
+#ifdef __NRF_TFM__
+#include <zephyr/autoconf.h>
+#endif
+
 #include <zephyr/kernel.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
+
+#ifndef __NRF_TFM__
+#include <zephyr/cache.h>
+#endif
 
 #if defined(NRF_APPLICATION)
 #include <cmsis_core.h>
@@ -29,8 +37,22 @@ LOG_MODULE_REGISTER(soc, CONFIG_SOC_LOG_LEVEL);
 
 void soc_early_init_hook(void)
 {
+	/* Update the SystemCoreClock global variable with current core clock
+	 * retrieved from hardware state.
+	 */
+#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE) || defined(__NRF_TFM__)
+	/* Currently not supported for non-secure */
+	SystemCoreClockUpdate();
+#endif
+
+#ifdef __NRF_TFM__
+	/* TF-M enables the instruction cache from target_cfg.c, so we
+	 * don't need to enable it here.
+	 */
+#else
 	/* Enable ICACHE */
 	sys_cache_instr_enable();
+#endif
 }
 
 void arch_busy_wait(uint32_t time_us)
