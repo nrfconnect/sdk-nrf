@@ -103,6 +103,8 @@ int mqtt_helper_init(struct mqtt_helper_cfg *cfg);
  *
  *  @retval 0 if successful.
  *  @retval -EOPNOTSUPP if operation is not supported in the current state.
+ *  @return A positive error code in case of DNS error, corresponding to ``getaddrinfo()`` return
+ *	    values.
  *  @return Otherwise a negative error code.
  */
 int mqtt_helper_connect(struct mqtt_helper_conn_params *conn_params);
