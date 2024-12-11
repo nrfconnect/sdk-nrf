@@ -133,6 +133,7 @@ function(add_docset name version)
   set(DOCSET_SRC_DIR ${CMAKE_BINARY_DIR}/${name}/src)
   set(DOCSET_DOCTREE_DIR ${CMAKE_BINARY_DIR}/${name}/doctree)
   set(DOCSET_HTML_DIR ${CMAKE_BINARY_DIR}/html/${name})
+  set(DOCSET_LINKCHECK_DIR ${CMAKE_BINARY_DIR}/linkcheck/${name})
   set(DOCSET_MAKE_DIRS ${DOCSET_BUILD_DIR};${DOCSET_SRC_DIR};${DOCSET_HTML_DIR})
   set(DOCSET_CLEAN_DIRS ${DOCSET_BUILD_DIR};${DOCSET_HTML_DIR})
   set(DOCSET_ENV DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE};DOCSET_VERSION=${version};DOCS_HTML_DIR=${DOCSET_HTML_DIR})
@@ -211,7 +212,7 @@ function(add_docset name version)
       ${SPHINXOPTS_EXTRA}
       ${EXTRA_ARGS}
       ${DOCSET_SRC_DIR}
-      ${DOCSET_BUILD_DIR}
+      ${DOCSET_LINKCHECK_DIR}
     USES_TERMINAL
     COMMENT "Checking links for ${name} docset..."
   )
