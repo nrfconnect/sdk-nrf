@@ -8,7 +8,7 @@ function(setup_nrf700x_xip_data)
   sysbuild_dt_nodelabel(qspi_nodelabel IMAGE ${DEFAULT_IMAGE} NODELABEL "qspi")
   sysbuild_dt_reg_addr(qspi_xip_address IMAGE ${DEFAULT_IMAGE} PATH "${qspi_nodelabel}" NAME "qspi_mm")
 
-  set(NRF70_FW_BINS ${ZEPHYR_HAL_NORDIC_MODULE_DIR}/zephyr/blobs/wifi_fw_bins/)
+  set(NRF70_FW_BINS ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi/bin/ncs)
 
   if(SB_CONFIG_WIFI_NRF70_SYSTEM_MODE)
     set(NRF70_PATCH ${NRF70_FW_BINS}/default/nrf70.bin)
