@@ -513,7 +513,7 @@ Matter samples
 nRF5340 samples
 ---------------
 
-* :ref:`multiprotocol-rpmsg-sample` sample:
+* ``nRF5340: Multiprotocol RPMsg`` sample:
 
   * Updated by decreasing the maximum supported number of concurrent Bluetooth LE connections to four.
 
