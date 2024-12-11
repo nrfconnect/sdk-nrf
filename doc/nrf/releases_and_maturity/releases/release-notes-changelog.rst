@@ -380,7 +380,7 @@ Protocol serialization samples
 SDFW samples
 ------------
 
-|no_changes_yet_note|
+* Removed the ``ssf_client`` sample since all services being shown has been removed.
 
 Sensor samples
 --------------
@@ -525,7 +525,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* Removed the unused SDFW services ``echo_service``, ``reset_evt_service``, and ``sdfw_update_service``.
 
 Security libraries
 ------------------
