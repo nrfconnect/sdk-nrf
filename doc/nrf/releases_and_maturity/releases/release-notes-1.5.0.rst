@@ -146,7 +146,7 @@ nRF5340 SoC
 
 * Added:
 
-  * :ref:`multiprotocol-rpmsg-sample` sample for network core, which enables support for multiprotocol, IEEE 802.15.4, and Bluetooth LE applications.
+  * ``nRF5340: Multiprotocol RPMsg`` sample for network core, which enables support for multiprotocol, IEEE 802.15.4, and Bluetooth LE applications.
 
 * Updated:
 
