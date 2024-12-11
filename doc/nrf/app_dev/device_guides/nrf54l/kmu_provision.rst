@@ -1,7 +1,7 @@
 .. _ug_nrf54l_developing_provision_kmu:
 
 
-nRF54L15 KMU provisioning
+nRF54L KMU provisioning
 #########################
 
 .. contents::
@@ -10,6 +10,9 @@ nRF54L15 KMU provisioning
 
 The nRF54L15 DK is equipped with Hardware Key Management Unit (KMU), that requires provisioning when in use.
 The |NCS| provides a west command, ``ncs-provision``, allowing to upload keys to the device though the Serial Write Debug (SWD) interface.
+
+.. note::
+   nRF54l05 and nRF54l10 KMU hardware and the keys provisioning are similar. Therefore use the same instructions for working with them.
 
 Prerequisites
 *************
