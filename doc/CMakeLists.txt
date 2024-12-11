@@ -339,7 +339,7 @@ add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR} ${NRF_VERSION})
 #-------------------------------------------------------------------------------
 # docset: wifi
 
-add_doxygen_docset(wifi ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
+add_doxygen_docset(wifi ${ZEPHYR_NRF_WIFI_MODULE_DIR} "" STANDALONE)
 
 #-------------------------------------------------------------------------------
 # docset: internal
