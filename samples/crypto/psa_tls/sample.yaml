@@ -179,7 +179,7 @@ tests:
   ################################################################################
   ## PSA APIs with Oberon
   ################################################################################
-  sample.psa_tls.server.ecdsa.oberon:
+  sample.psa_tls.tls_server.ecdsa.oberon:
     sysbuild: true
     build_only: true
     extra_args:
@@ -193,7 +193,7 @@ tests:
       - oberon
       - sysbuild
       - ci_samples_crypto
-  sample.psa_tls.client.ecdsa.oberon:
+  sample.psa_tls.tls_client.ecdsa.oberon:
     sysbuild: true
     build_only: true
     extra_args:
@@ -210,7 +210,7 @@ tests:
   ################################################################################
   ## PSA APIs with Cracen
   ################################################################################
-  sample.psa_tls.server.ecdsa.cracen:
+  sample.psa_tls.tls_server.ecdsa.cracen:
     sysbuild: true
     build_only: true
     extra_args:
@@ -219,16 +219,43 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     tags:
       - ci_build
       - cracen
       - sysbuild
       - ci_samples_crypto
-  sample.psa_tls.client.ecdsa.cracen:
+  sample.psa_tls.dtls_server.ecdsa.cracen:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    tags:
+      - ci_build
+      - cracen
+      - dtls
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.tls_client.ecdsa.cracen:
     sysbuild: true
     build_only: true
     extra_args:
@@ -237,10 +264,36 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    tags:
+      - ci_build
+      - cracen
+      - sysbuild
+      - ci_samples_crypto
+  sample.psa_tls.dtls_client.ecdsa.cracen:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     tags:
       - ci_build
       - cracen
