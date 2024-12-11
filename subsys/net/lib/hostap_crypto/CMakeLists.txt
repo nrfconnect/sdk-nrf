@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# This is for use in NCS with nRF security which works only on nRF platforms
+if(NOT DEFINED CONFIG_SOC_FAMILY_NORDIC_NRF)
+  return()
+endif()
+
 zephyr_interface_library_named(hostap_crypto)
 
 set(HOSTAP_BASE ${ZEPHYR_HOSTAP_MODULE_DIR})
