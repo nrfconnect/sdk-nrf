@@ -249,7 +249,7 @@ Bluetooth Mesh samples
 
 * Added:
 
-  * Support for nRF54L15 in the following samples:
+  * Support for nRF54L10 in the following samples:
 
     * :ref:`bluetooth_mesh_sensor_client`
     * :ref:`bluetooth_mesh_sensor_server`
