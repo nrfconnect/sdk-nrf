@@ -480,9 +480,9 @@ ZTEST(test_lpuart_resilency, test_tx_abort_rx_not_enabled)
 	uart_callback_set(lpuart, tx_abort_expected_callback, NULL);
 
 	err = uart_tx(lpuart, tx_buf, sizeof(tx_buf), 1000);
-	zassert_equal(err, 0, "uart_tx - unexpected err: %d", err);
+	zassert_equal(err, 0, "uart_tx - unexpected err: %d\n", err);
 	k_msleep(10);
-	zassert_equal(tx_abort_cnt, 1, "tx_abort_cnt != 1: %d", tx_abort_cnt);
+	zassert_equal(tx_abort_cnt, 1, "tx_abort_cnt != 1: %d\n", tx_abort_cnt);
 	tx_abort_cnt = 0;
 }
 
@@ -491,25 +491,39 @@ ZTEST(test_lpuart_resilency, test_tx_abort_from_api)
 	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_LPUART_LOOPBACK);
 
 	int err;
-	uint8_t tx_buffer[50] = {0};
-	uint8_t rx_buffer[50] = {0};
+	const uint32_t low_speed_buffer_size = 64;
+	const uint32_t high_speed_buffer_size = 256;
+	uint8_t *tx_buffer;
+	uint8_t *rx_buffer;
 	const struct device *lpuart = DEVICE_DT_GET(DT_NODELABEL(lpuart));
+	uint32_t serial_baud_rate = DT_PROP(DT_PARENT(DT_NODELABEL(lpuart)), current_speed);
+
+	uint32_t current_buffer_size =
+		(serial_baud_rate > 115200) ? high_speed_buffer_size : low_speed_buffer_size;
+
+	tx_buffer = (uint8_t *)k_malloc(current_buffer_size);
+	rx_buffer = (uint8_t *)k_malloc(current_buffer_size);
+
+	TC_PRINT("TX/RX buffer size: %d\n", current_buffer_size);
 
 	zassert_true(device_is_ready(lpuart), NULL);
 	uart_callback_set(lpuart, tx_abort_expected_callback, NULL);
 
-	err = uart_rx_enable(lpuart, rx_buffer, sizeof(rx_buffer), 100);
+	err = uart_rx_enable(lpuart, rx_buffer, current_buffer_size, 100);
 	zassert_equal(err, 0, "uart_rx_enable - unexpected err:%d", err);
-	err = uart_tx(lpuart, tx_buffer, sizeof(tx_buffer), 1000);
-	zassert_equal(err, 0, "uart_tx - unexpected err:%d", err);
+	err = uart_tx(lpuart, tx_buffer, current_buffer_size, 1000);
+	zassert_equal(err, 0, "uart_tx - unexpected err:%d\n", err);
 	k_msleep(1);
 	err = uart_tx_abort(lpuart);
-	zassert_equal(err, 0, "uart_tx_abort - unexpected err:%d", err);
+	zassert_equal(err, 0, "uart_tx_abort - unexpected err:%d\n", err);
 	k_msleep(10);
 	err = uart_rx_disable(lpuart);
-	zassert_equal(err, 0, "uart_rx_disable - unexpected err:%d", err);
-	zassert_equal(tx_abort_cnt, 1, "tx_abort_cnt != 1: %d", tx_abort_cnt);
+	zassert_equal(err, 0, "uart_rx_disable - unexpected err:%d\n", err);
+	zassert_equal(tx_abort_cnt, 1, "tx_abort_cnt != 1: %d\n", tx_abort_cnt);
 	tx_abort_cnt = 0;
+
+	k_free(tx_buffer);
+	k_free(rx_buffer);
 }
 
 static void *suite_setup(void)
