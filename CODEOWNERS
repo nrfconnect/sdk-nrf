@@ -267,7 +267,6 @@
 /doc/nrf/samples/other.rst                @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/peripheral.rst           @nrfconnect/ncs-radio-sw-doc
 /doc/nrf/samples/pmic.rst                 @nrfconnect/ncs-pmic-doc
-/doc/nrf/samples/sdfw.rst                 @nrfconnect/ncs-aurora-doc
 /doc/nrf/samples/sensor.rst               @nrfconnect/ncs-cia-doc
 /doc/nrf/samples/serialization.rst        @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/suit.rst                 @nrfconnect/ncs-charon-doc
@@ -520,8 +519,6 @@
 /samples/peripheral/lpuart/               @nordic-krch
 /samples/peripheral/radio_test/           @nrfconnect/ncs-si-muffin
 /samples/pmic/native/                     @nordic-auko
-/samples/sdfw/                            @nrfconnect/ncs-aurora
-/samples/sdfw/ssf_client/                 @anhmolt
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/suit/                            @nrfconnect/ncs-charon
@@ -643,7 +640,6 @@
 /samples/peripheral/lpuart/*.rst          @nrfconnect/ncs-doc-leads
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-si-muffin-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
-/samples/sdfw/**/*.rst                    @nrfconnect/ncs-aurora-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/suit/**/*.rst                    @nrfconnect/ncs-charon-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc

@@ -51,7 +51,6 @@ General information about samples in the |NCS|
    samples/nrf5340
    samples/peripheral
    samples/pmic
-   samples/sdfw
    samples/sensor
    samples/serialization
    samples/suit
