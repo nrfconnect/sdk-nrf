@@ -79,7 +79,11 @@
 				<NRF_PSEL(SDP_MSPI_DQ1, 2, 4)>,
 				<NRF_PSEL(SDP_MSPI_DQ2, 2, 3)>,
 				<NRF_PSEL(SDP_MSPI_DQ3, 2, 0)>,
-				<NRF_PSEL(SDP_MSPI_CS0, 2, 5)>;
+				<NRF_PSEL(SDP_MSPI_DQ4, 2, 5)>,
+				<NRF_PSEL(SDP_MSPI_DQ5, 2, 6)>,
+				<NRF_PSEL(SDP_MSPI_DQ6, 2, 7)>,
+				<NRF_PSEL(SDP_MSPI_DQ7, 2, 8)>,
+				<NRF_PSEL(SDP_MSPI_CS0, 2, 9)>;
 			nordic,drive-mode = <NRF_DRIVE_E0E1>;
 		};
 	};
@@ -90,7 +94,11 @@
 				<NRF_PSEL(SDP_MSPI_DQ1, 2, 4)>,
 				<NRF_PSEL(SDP_MSPI_DQ2, 2, 3)>,
 				<NRF_PSEL(SDP_MSPI_DQ3, 2, 0)>,
-				<NRF_PSEL(SDP_MSPI_CS0, 2, 5)>;
+				<NRF_PSEL(SDP_MSPI_DQ4, 2, 5)>,
+				<NRF_PSEL(SDP_MSPI_DQ5, 2, 6)>,
+				<NRF_PSEL(SDP_MSPI_DQ6, 2, 7)>,
+				<NRF_PSEL(SDP_MSPI_DQ7, 2, 8)>,
+				<NRF_PSEL(SDP_MSPI_CS0, 2, 9)>;
 			low-power-enable;
 		};
 	};

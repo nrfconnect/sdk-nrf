@@ -10,67 +10,83 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <drivers/mspi/nrfe_mspi.h>
+#include <zephyr/drivers/mspi.h>
 
-/* Max word size. */
-#define MAX_WORD_SIZE NRF_VPR_CSR_VIO_SHIFT_CNT_OUT_BUFFERED_MAX
+#define BIT_SET_VALUE(var, pos, value) ((var & (~(1 << pos))) | (value << pos))
 
-/* Macro for getting direction mask for specified pin and direction. */
-#define PIN_DIR_MASK(PIN_NUM, DIR)                                                                 \
-	(VPRCSR_NORDIC_DIR_PIN##PIN_NUM##_##DIR << VPRCSR_NORDIC_DIR_PIN##PIN_NUM##_Pos)
+#define VPRCSR_NORDIC_OUT_HIGH 1
+#define VPRCSR_NORDIC_OUT_LOW  0
 
-/* Macro for getting output mask for specified pin. */
-#define PIN_DIR_OUT_MASK(PIN_NUM) PIN_DIR_MASK(PIN_NUM, OUTPUT)
+#define VPRCSR_NORDIC_DIR_OUTPUT 1
+#define VPRCSR_NORDIC_DIR_INPUT	 0
 
-/* Macro for getting input mask for specified pin. */
-#define PIN_DIR_IN_MASK(PIN_NUM) PIN_DIR_MASK(PIN_NUM, INPUT)
+#define BITS_IN_WORD 32
+#define BITS_IN_BYTE 8
 
-/* Macro for getting state mask for specified pin and state. */
-#define PIN_OUT_MASK(PIN_NUM, STATE)                                                               \
-	(VPRCSR_NORDIC_OUT_PIN##PIN_NUM##_##STATE << VPRCSR_NORDIC_OUT_PIN##PIN_NUM##_Pos)
-
-/* Macro for getting high state mask for specified pin. */
-#define PIN_OUT_HIGH_MASK(PIN_NUM) PIN_OUT_MASK(PIN_NUM, HIGH)
-
-/* Macro for getting low state mask for specified pin. */
-#define PIN_OUT_LOW_MASK(PIN_NUM) PIN_OUT_MASK(PIN_NUM, LOW)
+enum hrt_bit_order {
+	HRT_BO_NORMAL,
+	HRT_BO_REVERSED_BYTE,
+	HRT_BO_REVERSED_WORD
+};
 
 /** @brief Low level transfer parameters. */
 struct hrt_ll_xfer {
-	/** @brief Top value of VTIM. This will determine clock frequency
-	 *                         (SPI_CLOCK ~= CPU_CLOCK / (2 * TOP)).
+
+	/** @brief Timer initial value,
+	 * 	   time which passes beetwen chip enable and first data clock
 	 */
-	volatile uint8_t counter_top;
+	uint16_t counter_initial_value;
 
-	/** @brief Word size of passed data, bits. */
-	volatile uint8_t word_size;
+	/** @brief Buffer for RX/TX data */
+	uint8_t *data;
 
-	/** @brief Data to send, under each index there is data of length word_size. */
-	volatile uint32_t *data_to_send;
+	/** @brief CEIL(buffer_length_bits/32)
+	 */
+	uint32_t words;
 
-	/** @brief Data length. */
-	volatile uint8_t data_len;
+	/** @brief Amount of clock pulses for last word.
+	 *         Due to hardware limitation, in case when last word clock pulse count is 1,
+	 * 	   the penultimate word has to share its bits with last word,
+	 * 	   for example:
+	 * 		buffer length = 36bits,
+	 * 		io_mode = QUAD,
+	 * 		last_word_clocks would be:(buffer_length%32)/QUAD = 1
+	 * 		so:
+	 * 			penultimate_word_clocks = 32-BITS_IN_BYTE
+	 * 			last_word_clocks = (buffer_length%32)/QUAD + BITS_IN_BYTE
+	 * 			last_word = penultimate_word>>24 | last_word<<8
+	 */
+	uint8_t last_word_clocks;
+
+	/** @brief  Amount of clock pulses for penultimate word.
+	 * 	    For more info see last_word_clocks.
+	 */
+	uint8_t penultimate_word_clocks;
+
+	/** @brief Value of last word.
+	 *         For more info see last_word_clocks.
+	 */
+	uint32_t last_word;
+
+	/** @brief Bit transfer order. */
+	enum hrt_bit_order bit_order;
+
+	/** @brief Number of CE VIO pin */
+	uint8_t ce_vio;
 
 	/** @brief If true chip enable pin will be left active after transfer */
-	volatile uint8_t ce_hold;
+	uint8_t ce_hold;
 
 	/** @brief Chip enable pin polarity in enabled state. */
-	volatile bool ce_enable_state;
+	enum mspi_ce_polarity ce_polarity;
 };
 
-/** @brief Write on single line.
+/** @brief Write.
  *
- *  Function to be used to write data on single data line (SPI).
- *
- *  @param[in] xfer_ll_params Low level transfer parameters.
- */
-void write_single_by_word(volatile struct hrt_ll_xfer xfer_ll_params);
-
-/** @brief Write on four lines.
- *
- *  Function to be used to write data on quad data line (SPI).
+ *  Function to be used to write data on SPI.
  *
  *  @param[in] xfer_ll_params Low level transfer parameters.
  */
-void write_quad_by_word(volatile struct hrt_ll_xfer xfer_ll_params);
+void hrt_write(volatile struct hrt_ll_xfer xfer_ll_params);
 
 #endif /* _HRT_H__ */

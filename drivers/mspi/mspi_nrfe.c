@@ -401,9 +401,11 @@ static int check_io_mode(enum mspi_io_mode io_mode)
 {
 	switch (io_mode) {
 	case MSPI_IO_MODE_SINGLE:
+	case MSPI_IO_MODE_DUAL:
 	case MSPI_IO_MODE_QUAD:
 	case MSPI_IO_MODE_QUAD_1_1_4:
 	case MSPI_IO_MODE_QUAD_1_4_4:
+	case MSPI_IO_MODE_OCTAL:
 		break;
 	default:
 		LOG_ERR("IO mode %d not supported", io_mode);
@@ -733,14 +735,38 @@ static int check_pins_config(const struct pinctrl_dev_config *config, uint8_t id
 				return -ENOTSUP;
 			}
 			break;
+		case NRF_FUN_SDP_MSPI_DQ4: /* Only single and QSPI modes are supported */
+			if (psel != NRFE_MSPI_DQ4_PIN_NUMBER) {
+				LOG_ERR("Wrong DQ4 GPIO pin number: %d! Needs to be = %d.", psel,
+					NRFE_MSPI_DQ4_PIN_NUMBER);
+				return -ENOTSUP;
+			}
+			break;
+		case NRF_FUN_SDP_MSPI_DQ5:
+			if (psel != NRFE_MSPI_DQ5_PIN_NUMBER) {
+				LOG_ERR("Wrong DQ5 GPIO pin number: %d! Needs to be = %d.", psel,
+					NRFE_MSPI_DQ5_PIN_NUMBER);
+				return -ENOTSUP;
+			}
+			break;
+		case NRF_FUN_SDP_MSPI_DQ6:
+			if (psel != NRFE_MSPI_DQ6_PIN_NUMBER) {
+				LOG_ERR("Wrong DQ6 GPIO pin number: %d! Needs to be = %d.", psel,
+					NRFE_MSPI_DQ6_PIN_NUMBER);
+				return -ENOTSUP;
+			}
+			break;
+		case NRF_FUN_SDP_MSPI_DQ7:
+			if (psel != NRFE_MSPI_DQ7_PIN_NUMBER) {
+				LOG_ERR("Wrong DQ7 GPIO pin number: %d! Needs to be = %d.", psel,
+					NRFE_MSPI_DQ7_PIN_NUMBER);
+				return -ENOTSUP;
+			}
+			break;
 		case NRF_FUN_SDP_MSPI_CS1: /* TODO: Support more CS */
 		case NRF_FUN_SDP_MSPI_CS2:
 		case NRF_FUN_SDP_MSPI_CS3:
 		case NRF_FUN_SDP_MSPI_CS4:
-		case NRF_FUN_SDP_MSPI_DQ4: /* Only single and QSPI modes are supported */
-		case NRF_FUN_SDP_MSPI_DQ5:
-		case NRF_FUN_SDP_MSPI_DQ6:
-		case NRF_FUN_SDP_MSPI_DQ7:
 		default:
 			LOG_ERR("Not supported function: %d for GPIO pin number: %d!", fun, psel);
 			return -ENOTSUP;

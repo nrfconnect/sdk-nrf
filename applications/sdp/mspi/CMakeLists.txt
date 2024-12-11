@@ -14,6 +14,6 @@ sdp_assembly_check("${CMAKE_SOURCE_DIR}/src/hrt/hrt.c")
 sdp_assembly_prepare_install("${CMAKE_SOURCE_DIR}/src/hrt/hrt.c")
 
 target_sources(app PRIVATE src/main.c)
-target_sources(app PRIVATE src/hrt/hrt.s)
+target_sources(app PRIVATE src/hrt/hrt.c)
 
 add_dependencies(app asm_check)
