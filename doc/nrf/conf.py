@@ -58,8 +58,8 @@ extensions = [
 ]
 
 linkcheck_ignore = [
-    # intersphinx links
-    r"(\.\.(\\|/))+(zephyr|kconfig|nrfxlib|mcuboot)",
+    # relative links (intersphinx, doxygen)
+    r"\.\.(\\|/)",
     # redirecting and used in release notes
     "https://github.com/nrfconnect/nrfxlib",
     # link to access local documentation

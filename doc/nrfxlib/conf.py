@@ -44,7 +44,7 @@ extensions = [
 ]
 master_doc = "README"
 
-linkcheck_ignore = [r"(\.\.(\\|/))+(kconfig|nrf)"]
+linkcheck_ignore = [r"\.\.(\\|/)"]
 rst_epilog = """
 .. include:: /doc/links.txt
 .. include:: /doc/shortcuts.txt
