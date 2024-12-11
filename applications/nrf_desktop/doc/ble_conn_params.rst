@@ -32,15 +32,22 @@ The |ble_conn_params| is enabled by the :ref:`CONFIG_DESKTOP_BLE_CONN_PARAMS_ENA
 The option is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` together with other features used by a HID dongle that forwards the HID reports received over Bluetooth LE.
 
 Enable :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` to manage Bluetooth connections' parameters reacting on the USB state change.
-The connection intervals for all of the Bluetooth connected peripherals are set to :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE <config_desktop_app_options>` (100 ms by default) while USB is suspended.
-The connections' peripheral latencies are set to 0.
-The connection parameter change is reverted when USB is active.
+The connection intervals for all of the Bluetooth connected peripherals are set to the value of :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE <config_desktop_app_options>` Kconfig option (100 ms by default) while USB is suspended.
+The connections' peripheral latencies are set to the value of :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE <config_desktop_app_options>` Kconfig option (``1`` by default).
+The non-zero peripheral latency is used to prevent peripheral latency increase requests triggered by the :ref:`nrf_desktop_ble_latency` used on the peripheral's end.
+The connection parameter change is reverted when USB is active or disconnected.
 The :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` is enabled by default.
 
 Implementation details
 **********************
 
-The |ble_conn_params| receives the peripheral's connection parameters update request as :c:struct:`ble_peer_conn_params_event`.
+After setting Bluetooth LE connection parameters using Bluetooth stack APIs, the module waits until the update is completed (for :c:struct:`ble_peer_conn_params_event` with :c:member:`ble_peer_conn_params_event.updated` set to ``true``) before performing subsequent connection parameter updates for a given connection.
+Subsequent connection parameter update for a given connection can be done right after the previous one is completed.
+
+Handling peripheral's requests
+==============================
+
+The |ble_conn_params| receives the peripheral's connection parameters update request as :c:struct:`ble_peer_conn_params_event` with :c:member:`ble_peer_conn_params_event.updated` set to ``false``.
 The module updates only the connection latency.
 The connection interval and supervision timeout are not changed according to the peripheral's request.
 
