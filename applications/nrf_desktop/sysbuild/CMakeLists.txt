@@ -26,3 +26,15 @@ set(ipc_radio_APPLICATION_CONFIG_DIR
 find_package(Sysbuild REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(sysbuild LANGUAGES)
+
+if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU)
+  message(WARNING "
+          ------------------------------------------------------------------------------
+          --- WARNING: MCUboot uses KMU stored keys for signature verification. Make ---
+          --- sure to use `west ncs-provision` to manually provision the bootloader. ---
+          --- Application would fail to boot if MCUboot is not provisioned. For more ---
+          --- details, see the `Building and running` section from `Application      ---
+          --- description` page in nRF Desktop application documentation.            ---
+          ------------------------------------------------------------------------------
+          ")
+endif()
