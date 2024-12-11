@@ -90,6 +90,11 @@ warnings_filter_silent = True
 
 kconfig_generate_db = False
 
+# -- Options for zephyr.gh_utils -----------------------------------------------
+
+gh_link_version = "main" if version.endswith("99") else f"v{version}"
+gh_link_base_url = f"https://github.com/nrfconnect/sdk-zephyr"
+
 # pylint: enable=undefined-variable,used-before-assignment
 
 
