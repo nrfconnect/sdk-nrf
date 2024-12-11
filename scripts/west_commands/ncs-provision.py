@@ -36,8 +36,13 @@ class NcsProvision(WestCommand):
             "-k", "--key", type=Path, action='append', dest="keys",
             help="Input .pem file with ED25519 private key"
         )
-        upload_parser.add_argument("-p", "--policy", type=str, help="Keys policy",
-                                   choices=["revokable", "lock"], default="revokable")
+        upload_parser.add_argument("-p", "--policy", type=str,
+                                   choices=["revokable", "lock", "lock-last"], default="lock-last",
+                                   help="Policy applied to the given set of keys."
+                                       " revokable: keys can be revoked each by one."
+                                       " lock: all keys stay as they are."
+                                       " lock-last: last key is uploaded as locked,"
+                                       " others as revokable")
         upload_parser.add_argument("-s", "--soc", type=str, help="SoC",
                                    choices=["nrf54l15"], required=True)
         upload_parser.add_argument("--dev-id", help="Device serial number")
@@ -55,11 +60,18 @@ class NcsProvision(WestCommand):
                     with open(keyfile, 'rb') as f:
                         priv_key = load_pem_private_key(f.read(), password=None)
                     pub_key = priv_key.public_key()
+                    if args.policy == "lock-last":
+                        if slot == (len(args.keys) - 1):
+                            key_policy = nrf54l15_key_policies["lock"]
+                        else:
+                            key_policy = nrf54l15_key_policies["revokable"]
+                    else:
+                        key_policy = nrf54l15_key_policies[args.policy]
                     command = [
                         "nrfprovision",
                         "provision",
                         "-r",
-                        nrf54l15_key_policies[args.policy],
+                        key_policy,
                         "-v",
                         pub_key.public_bytes_raw().hex(),
                         "-m",
