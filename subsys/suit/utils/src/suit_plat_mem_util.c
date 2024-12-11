@@ -98,23 +98,6 @@ uint8_t *suit_plat_mem_nvm_ptr_get(uintptr_t offset)
 }
 
 #ifdef CONFIG_SDFW_IS_UROT
-static nrf_mramc_mode_write_t set_mramc_write_mode(nrf_mramc_mode_write_t new_write_mode)
-{
-	NRF_MRAMC_Type * const mramc = (NRF_MRAMC_Type * const)DT_REG_ADDR(DT_NODELABEL(mramc));
-	nrf_mramc_config_t mramc_config;
-
-	nrf_mramc_config_get(mramc, &mramc_config);
-
-	nrf_mramc_mode_write_t previous_write_mode = mramc_config.mode_write;
-
-	if (new_write_mode != previous_write_mode) {
-		mramc_config.mode_write = new_write_mode;
-		nrf_mramc_config_set(mramc, &mramc_config);
-	}
-
-	return previous_write_mode;
-}
-
 bool suit_plat_mem_clear_sicr_update_registers(void)
 {
 	bool cleared = true;
@@ -122,19 +105,11 @@ bool suit_plat_mem_clear_sicr_update_registers(void)
 	if (NRF_SICR->UROT.UPDATE.OPERATION != SICR_UROT_UPDATE_OPERATION_OPCODE_Nop ||
 	    NRF_SICR->UROT.UPDATE.STATUS != SICR_UROT_UPDATE_STATUS_CODE_None) {
 
-		const nrf_mramc_mode_write_t new_write_mode = NRF_MRAMC_MODE_WRITE_DIRECT;
-		const nrf_mramc_mode_write_t previous_write_mode =
-			set_mramc_write_mode(new_write_mode);
-
 		NRF_SICR->UROT.UPDATE.OPERATION = SICR_UROT_UPDATE_OPERATION_OPCODE_Nop;
 		NRF_SICR->UROT.UPDATE.STATUS = SICR_UROT_UPDATE_STATUS_CODE_None;
 
 		/* Trigger MRAM write */
 		NRF_SICR->UROT.UPDATE.SM.TBS.RFU[1] = (uint32_t)0xFFFFFFFF;
-
-		if (previous_write_mode != new_write_mode) {
-			set_mramc_write_mode(previous_write_mode);
-		}
 
 		if (NRF_SICR->UROT.UPDATE.OPERATION != SICR_UROT_UPDATE_OPERATION_OPCODE_Nop ||
 		    NRF_SICR->UROT.UPDATE.STATUS != SICR_UROT_UPDATE_STATUS_CODE_None) {
