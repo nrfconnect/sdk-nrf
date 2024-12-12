@@ -10,6 +10,29 @@ config BT_FAST_PAIR
 config APP_DFU
 	bool "Enable MCUmgr OTA DFU over Bluetooth"
 	default y
+
+if APP_DFU
+
+choice APP_DFU_BACKEND
+	prompt "Choose DFU backend"
+	help
+	  The choice option is autoselected based on their mutually exclusive
+	  dependencies.
+
+config APP_DFU_BACKEND_MCUBOOT
+	bool "Use MCUboot as DFU backend"
 	depends on BOOTLOADER_MCUBOOT
+	help
+	  This option enables the MCUboot bootloader as the backend for the MCUmgr DFU module.
+
+config APP_DFU_BACKEND_SUIT
+	bool "Use SUIT as DFU backend"
+	depends on SOC_SERIES_NRF54HX
+	help
+	  This option enables the SUIT as the backend for the MCUmgr DFU module.
+
+endchoice
+
+endif
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

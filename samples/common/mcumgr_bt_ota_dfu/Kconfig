@@ -13,18 +13,15 @@ config NCS_SAMPLE_MCUMGR_BT_OTA_DFU
 	select ZCBOR
 	select CRC
 	select MCUMGR_TRANSPORT_BT
-	imply MCUMGR_TRANSPORT_BT_CONN_PARAM_CONTROL
-	imply IMG_MANAGER
-	imply STREAM_FLASH
 	imply FLASH_MAP
 	imply FLASH
-	imply MCUMGR_GRP_IMG
 	imply MCUMGR_GRP_OS
 	imply MCUMGR_GRP_OS_BOOTLOADER_INFO
+	imply MCUMGR_TRANSPORT_BT_CONN_PARAM_CONTROL
 	imply MCUMGR_TRANSPORT_BT_REASSEMBLY
 	imply NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
 	depends on BT_PERIPHERAL
-	depends on BOOTLOADER_MCUBOOT
+	depends on BOOTLOADER_MCUBOOT || SUIT
 	help
 	  Enable this option to include MCUmgr in the build which will enable
 	  the Bluetooth transport and image management group, which allows
@@ -32,11 +29,35 @@ config NCS_SAMPLE_MCUMGR_BT_OTA_DFU
 
 if NCS_SAMPLE_MCUMGR_BT_OTA_DFU
 
-config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_MCUBOOT_DIRECT_XIP_SUPPORT
-	bool
-	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
-	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
-	imply MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT
+choice NCS_SAMPLE_MCUMGR_BT_OTA_DFU_BACKEND
+	prompt "Choose DFU backend"
+	help
+	  The choice option is autoselected based on their mutually exclusive
+	  dependencies.
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_BACKEND_MCUBOOT
+	bool "Use MCUboot as DFU backend"
+	imply IMG_MANAGER
+	imply MCUMGR_GRP_IMG
+	imply MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT if \
+	      MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP || MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	imply STREAM_FLASH
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  This option enables the MCUboot bootloader as the backend for the MCUmgr DFU module.
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_BACKEND_SUIT
+	bool "Use SUIT as DFU backend"
+	select MCUMGR_SMP_LEGACY_RC_BEHAVIOUR
+	select MGMT_SUITFU
+	select MGMT_SUITFU_GRP_SUIT
+	select SSF_SUIT_SERVICE_ENABLED
+	select ZCBOR_CANONICAL
+	depends on SOC_SERIES_NRF54HX
+	help
+	  This option enables the SUIT as the backend for the MCUmgr DFU module.
+
+endchoice
 
 choice MCUMGR_TRANSPORT_BT_PERM
 	default MCUMGR_TRANSPORT_BT_PERM_RW

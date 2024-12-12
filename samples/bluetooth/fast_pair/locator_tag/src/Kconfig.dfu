@@ -7,7 +7,7 @@
 config APP_DFU
 	bool "Enable MCUmgr OTA DFU over Bluetooth"
 	select NCS_SAMPLE_MCUMGR_BT_OTA_DFU
-	depends on BOOTLOADER_MCUBOOT
+	depends on BOOTLOADER_MCUBOOT || SUIT
 	help
 	  Enable support for Device Firmware Update (DFU) over MCUmgr & SMP BT.
 
