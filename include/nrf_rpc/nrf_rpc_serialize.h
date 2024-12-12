@@ -229,6 +229,15 @@ int64_t nrf_rpc_decode_int64(struct nrf_rpc_cbor_ctx *ctx);
  */
 char *nrf_rpc_decode_str(struct nrf_rpc_cbor_ctx *ctx, char *buffer, size_t buffer_size);
 
+/** @brief Decode a string pointer and length. Moves CBOR pointer past string on success.
+ *
+ * @param[in,out] ctx CBOR decoding context.
+ * @param[out] len String length.
+ *
+ * @retval Pointer to a string within CBOR stream or NULL on error.
+ */
+const void *nrf_rpc_decode_str_ptr_and_len(struct nrf_rpc_cbor_ctx *ctx, size_t *len);
+
 /** Decode a string value into a scratchpad.
  *
  * @param[in] scratchpad Pointer to the scratchpad.
