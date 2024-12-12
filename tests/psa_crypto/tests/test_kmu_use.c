@@ -102,7 +102,7 @@ int kmu_use(void)
 	return status;
 }
 
-ZTEST(test_suite_ikg, kmu_test_2_use)
+ZTEST(test_suite_ikg, test_kmu_2_use)
 {
 	kmu_use();
 }

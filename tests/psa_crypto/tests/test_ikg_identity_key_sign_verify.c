@@ -157,7 +157,7 @@ int ikg_identity_key_test(void)
 	return status;
 }
 
-ZTEST(test_suite_ikg, ikg_identity_key_test)
+ZTEST(test_suite_ikg, test_ikg_identity_key)
 {
 	ikg_identity_key_test();
 }
