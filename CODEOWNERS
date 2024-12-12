@@ -499,7 +499,6 @@
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-pluto
-/samples/nrf5340/multiprotocol_rpmsg/     @hubertmis
 /samples/nrf_rpc/                         @nrfconnect/ncs-si-muffin
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
@@ -624,7 +623,6 @@
 /samples/nrf5340/empty_app_core/*.rst     @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_net_core/*.rst     @nrfconnect/ncs-si-bluebagel-doc
 /samples/nrf5340/extxip_smp_svr/*.rst     @nrfconnect/ncs-pluto-doc
-/samples/nrf5340/multiprotocol_rpmsg/*.rst @nrfconnect/ncs-doc-leads
 /samples/nrf5340/netboot/*.rst            @nrfconnect/ncs-pluto-doc
 /samples/nrf5340/remote_shell/*.rst       @nrfconnect/ncs-si-muffin-doc
 /samples/nrf_compress/mcuboot_update/*.rst @nrfconnect/ncs-vestavind-doc

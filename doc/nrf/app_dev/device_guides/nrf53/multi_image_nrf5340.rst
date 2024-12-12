@@ -47,9 +47,6 @@ The combination of these options determines which (if any) sample is included in
    * - :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
      - :zephyr:code-sample:`nrf_ieee802154_rpmsg`
      - ---
-   * - :kconfig:option:`CONFIG_BT_HCI_IPC` and :kconfig:option:`CONFIG_NRF_802154_SER_HOST`
-     - :ref:`multiprotocol-rpmsg-sample`
-     - ---
    * - :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_APP_CORE_CHILD_IMAGE`
      - ---
      - :ref:`nrf5340_empty_app_core`
