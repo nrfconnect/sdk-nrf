@@ -1,0 +1,46 @@
+&dppic130 {
+    	/* Remove default channels assignment */
+	/delete-property/ owned-channels;
+	/delete-property/ sink-channels;
+	/delete-property/ source-channels;
+	/delete-property/ nonsecure-channels;
+};
+
+&dppic132 {
+   	 /* Remove default channels assignment */
+	/delete-property/ owned-channels;
+	/delete-property/ sink-channels;
+	/delete-property/ source-channels;
+	/delete-property/ nonsecure-channels;
+};
+
+&dppic133 {
+   	/* Remove default channels assignment */
+	/delete-property/ owned-channels;
+	/delete-property/ sink-channels;
+	/delete-property/ source-channels;
+	/delete-property/ nonsecure-channels;
+};
+
+&dppic020 {
+	/* For now either `sink-channels` or `source-channels` property
+	   must be defined even for interconnection within single DPPI domain.
+	   See "Software limitations in nRF Connect SDK" chapter in the
+	   "nRF54H20 hardware events" presentation. */
+	sink-channels = <2>;
+	source-channels = <3>;
+	status = "okay";
+};
+
+&cpurad_ipct {
+    	/* Remove default channels assignment */
+	/delete-property/ source-channel-links;
+	/delete-property/ sink-channel-links;
+
+   	/* Radio IPCT channel 7 -> Global IPCT channel 3 (T020 CC0 event -> T130 STOP task) */
+	source-channel-links = <7 NRF_DOMAIN_ID_GLOBALSLOW 3>;
+    	/* Global IPCT channel 4 -> Radio IPCT channel 6 (T131 CC5 event to -> T020 START task) */
+	sink-channel-links = <6 NRF_DOMAIN_ID_GLOBALSLOW 4>;
+	status = "okay";
+};
+
