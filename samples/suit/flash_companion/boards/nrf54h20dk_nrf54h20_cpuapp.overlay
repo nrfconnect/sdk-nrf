@@ -42,7 +42,3 @@
 &cpuapp_cpurad_ipc {
 	status = "disabled";
 };
-
-&prng {
-	status = "disabled";
-};
