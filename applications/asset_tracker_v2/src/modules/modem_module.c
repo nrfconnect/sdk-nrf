@@ -340,11 +340,9 @@ static void print_carrier_error(const lwm2m_carrier_event_t *evt)
 		[LWM2M_CARRIER_ERROR_FOTA_FAIL] =
 			"Modem firmware update failed",
 		[LWM2M_CARRIER_ERROR_CONFIGURATION] =
-			"Illegal object configuration detected",
+			"Configuration failure",
 		[LWM2M_CARRIER_ERROR_INIT] =
 			"Initialization failure",
-		[LWM2M_CARRIER_ERROR_RUN] =
-			"Configuration failure",
 		[LWM2M_CARRIER_ERROR_CONNECT] =
 			"Connection failure",
 	};
