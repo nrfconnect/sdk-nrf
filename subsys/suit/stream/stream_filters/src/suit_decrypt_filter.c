@@ -9,6 +9,7 @@
 #include <suit_types.h>
 #include <suit_plat_decode_util.h>
 #include <psa/crypto.h>
+#include <suit_mci.h>
 #ifdef CONFIG_SUIT_AES_KW_MANUAL
 #include "suit_aes_key_unwrap_manual.h"
 #endif
@@ -122,6 +123,11 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 		if (status != PSA_SUCCESS) {
 			LOG_ERR("Failed to decrypt data: %d", status);
 			err = SUIT_PLAT_ERR_CRASH;
+			goto cleanup;
+		}
+
+		if (decrypted_len == 0) {
+			/* The remaining data will be decrypted by the flush function */
 			goto cleanup;
 		}
 
@@ -262,9 +268,10 @@ static suit_plat_err_t used_storage(void *ctx, size_t *size)
 	return SUIT_PLAT_ERR_UNSUPPORTED;
 }
 
-static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
-				  union suit_key_encryption_data kw_key,
-				  mbedtls_svc_key_id_t *cek_key_id)
+static suit_plat_err_t validate_key_and_unwrap_cek(enum suit_cose_alg kw_alg_id,
+						   union suit_key_encryption_data kw_key,
+						   const suit_manifest_class_id_t *class_id,
+						   mbedtls_svc_key_id_t *cek_key_id)
 {
 	switch (kw_alg_id) {
 #ifdef CONFIG_SUIT_AES_KW_MANUAL
@@ -273,6 +280,13 @@ static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
 
 		if (suit_plat_decode_key_id(&kw_key.aes.key_id, &kek_key_id) != SUIT_PLAT_SUCCESS) {
 			return SUIT_PLAT_ERR_INVAL;
+		}
+		LOG_ERR("KEK KEY ID: %x", kek_key_id);
+
+		if (suit_mci_fw_encryption_key_id_validate(class_id, kek_key_id)
+		    != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Encryption key ID validation failed");
+			return SUIT_PLAT_ERR_AUTHENTICATION;
 		}
 
 		/* TODO proper key unwrap algorithm from PSA */
@@ -291,6 +305,13 @@ static suit_plat_err_t unwrap_cek(enum suit_cose_alg kw_alg_id,
 			!= SUIT_PLAT_SUCCESS) {
 			return SUIT_PLAT_ERR_INVAL;
 		}
+
+		if (suit_mci_fw_encryption_key_id_validate(class_id, cek_key_id_value)
+		    != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Encryption key ID validation failed");
+			return SUIT_PLAT_ERR_AUTHENTICATION;
+		}
+
 #ifdef MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
 		cek_key_id->MBEDTLS_PRIVATE(key_id) = cek_key_id_value;
 		cek_key_id->MBEDTLS_PRIVATE(owner) = NRF_OWNER_SECURE;
@@ -325,6 +346,7 @@ static suit_plat_err_t get_psa_alg_info(enum suit_cose_alg cose_alg_id, psa_algo
 
 suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *dec_sink,
 					struct suit_encryption_info *enc_info,
+					const suit_manifest_class_id_t *class_id,
 					struct stream_sink *enc_sink)
 {
 	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
@@ -335,7 +357,7 @@ suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *dec_sink,
 	}
 
 	if ((enc_info == NULL) || (enc_sink == NULL) || (dec_sink == NULL) ||
-	    (enc_sink->write == NULL)) {
+	    (enc_sink->write == NULL) || class_id == NULL) {
 		return SUIT_PLAT_ERR_INVAL;
 	}
 
@@ -349,7 +371,8 @@ suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *dec_sink,
 
 	ctx.in_use = true;
 
-	ret = unwrap_cek(enc_info->kw_alg_id, enc_info->kw_key, &ctx.cek_key_id);
+	ret = validate_key_and_unwrap_cek(enc_info->kw_alg_id, enc_info->kw_key, class_id,
+					  &ctx.cek_key_id);
 
 	if (ret != SUIT_PLAT_SUCCESS) {
 		ctx.in_use = false;

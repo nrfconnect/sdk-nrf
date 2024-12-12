@@ -84,6 +84,10 @@ ZTEST(mci_snity_tests, test_null_pointers)
 	zassert_equal(rc, SUIT_PLAT_ERR_INVAL, "suit_mci_signing_key_id_validate returned (%d)",
 		      rc);
 
+	rc = suit_mci_fw_encryption_key_id_validate(NULL, key_id);
+	zassert_equal(rc, SUIT_PLAT_ERR_INVAL,
+		      "suit_mci_fw_encryption_key_id_validate returned (%d)", rc);
+
 	rc = suit_mci_manifest_class_id_validate(NULL);
 	zassert_equal(rc, SUIT_PLAT_ERR_INVAL, "suit_mci_manifest_class_id_validate returned (%d)",
 		      rc);

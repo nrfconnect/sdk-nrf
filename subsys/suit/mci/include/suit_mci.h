@@ -180,6 +180,22 @@ mci_err_t suit_mci_signing_key_id_get(const suit_manifest_class_id_t *class_id, 
 #endif /* CONFIG_ZTEST */
 
 /**
+ * @brief Verifying whether specific key_id is valid for decrypting firmware orchestrated
+ *        by a manifest of a specific class
+ *
+ * @param[in]   class_id	Manifest class id
+ * @param[in]   key_id		Identifier of key utilized for firmware decryption.
+ *
+ * @retval SUIT_PLAT_SUCCESS        on success
+ * @retval SUIT_PLAT_ERR_INVAL      invalid parameter, i.e. null pointer
+ * @retval MCI_ERR_MANIFESTCLASSID  manifest class id unsupported
+ * @retval MCI_ERR_WRONGKEYID       provided key ID is invalid for decryption
+ *                                  for provided manifest class
+ */
+mci_err_t suit_mci_fw_encryption_key_id_validate(const suit_manifest_class_id_t *class_id,
+						 uint32_t key_id);
+
+/**
  * @brief Verifies if manifest with specific class id is entitled to start (invoke) code on specific
  * processor
  *

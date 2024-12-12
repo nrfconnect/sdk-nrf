@@ -129,6 +129,25 @@ ZTEST(mci_api_positive_scenarios_tests, test_signing_key_id_validate)
 	}
 }
 
+ZTEST(mci_api_positive_scenarios_tests, test_fw_encryption_key_id_validate)
+{
+	int rc = 0;
+	size_t output_size = OUTPUT_MAX_SIZE;
+
+	rc = suit_mci_supported_manifest_class_ids_get(result_class_info, &output_size);
+	zassert_equal(rc, SUIT_PLAT_SUCCESS,
+		      "suit_mci_supported_manifest_class_ids_get returned (%d)", rc);
+
+	for (int i = 0; i < output_size; ++i) {
+		uint32_t key_id = 0;
+
+		rc = suit_mci_fw_encryption_key_id_validate(result_class_info[i].class_id, key_id);
+		zassert_true((rc == MCI_ERR_NOACCESS || rc == SUIT_PLAT_SUCCESS ||
+			      rc == MCI_ERR_WRONGKEYID),
+			     "suit_mci_fw_encryption_key_id_validate returned (%d)", rc);
+	}
+}
+
 ZTEST(mci_api_positive_scenarios_tests, test_processor_start_rights_validate)
 {
 	int rc = 0;

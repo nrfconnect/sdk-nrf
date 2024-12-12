@@ -18,3 +18,4 @@ zephyr_library_sources_ifdef(CONFIG_SUIT_AES_KW_MANUAL src/suit_aes_key_unwrap_m
 
 zephyr_library_link_libraries(suit_stream_filters_interface)
 zephyr_library_link_libraries(suit_utils)
+zephyr_library_link_libraries(suit_mci)

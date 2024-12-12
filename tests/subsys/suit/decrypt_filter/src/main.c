@@ -5,16 +5,22 @@
  */
 
 #include <zephyr/ztest.h>
+#include <zephyr/fff.h>
 #include <psa/crypto.h>
 #include <suit_decrypt_filter.h>
 #include <suit_ram_sink.h>
 #include <suit_memptr_streamer.h>
+#include <suit_mci.h>
 
 /* Forward declaration of the internal, temporary AES key-unwrap implementation. */
 psa_status_t suit_aes_key_unwrap_manual(psa_key_id_t kek_key_id, const uint8_t *wrapped_cek,
 					size_t cek_bits, psa_key_type_t cek_key_type,
 					psa_algorithm_t cek_key_alg,
 					mbedtls_svc_key_id_t *unwrapped_cek_key_id);
+
+DEFINE_FFF_GLOBALS;
+FAKE_VALUE_FUNC(int, suit_mci_fw_encryption_key_id_validate, const suit_manifest_class_id_t *,
+		uint32_t);
 
 /**
  * The master key used by these tests can be imported into the local KMS backend by running:
@@ -35,6 +41,7 @@ static const uint8_t test_key_data[] = {
 static uint8_t kek_key_id_cbor[] = {
 	0x1A, 0x00, 0x00, 0x00, 0x00,
 };
+static psa_key_id_t kek_key_id;
 
 struct suit_decrypt_filter_tests_fixture {
 	psa_key_id_t key_id;
@@ -112,6 +119,10 @@ static const uint8_t iv_direct[] = {
 	0x60, 0x90, 0x6d, 0xb2, 0xfe, 0xc3, 0xc8, 0x5a, 0xf0, 0x28, 0xb1, 0xb6,
 };
 
+static const suit_manifest_class_id_t sample_class_id = {
+	{0x5b, 0x46, 0x9f, 0xd1, 0x90, 0xee, 0x53, 0x9c, 0xa3, 0x18, 0x68, 0x1b, 0x03, 0x69, 0x5e,
+	 0x36}};
+
 static uint8_t output_buffer[128] = {0};
 
 static void init_encryption_key(const uint8_t *data, size_t size, psa_key_id_t *key_id,
@@ -137,7 +148,6 @@ static void init_encryption_key(const uint8_t *data, size_t size, psa_key_id_t *
 	cbor_key_id[2] = ((*key_id >> 16) & 0xFF);
 	cbor_key_id[3] = ((*key_id >> 8) & 0xFF);
 	cbor_key_id[4] = ((*key_id >> 0) & 0xFF);
-
 }
 
 static void *test_suite_setup(void)
@@ -151,6 +161,7 @@ static void *test_suite_setup(void)
 	/* Init the KEK key */
 	init_encryption_key(test_key_data, sizeof(test_key_data), &fixture.key_id,
 			    PSA_ALG_ECB_NO_PADDING, kek_key_id_cbor);
+	kek_key_id = fixture.key_id;
 
 	return &fixture;
 }
@@ -169,6 +180,7 @@ static void test_before(void *f)
 {
 	(void) f;
 	memset(output_buffer, 0, sizeof(output_buffer));
+	RESET_FAKE(suit_mci_fw_encryption_key_id_validate);
 }
 
 
@@ -207,14 +219,21 @@ ZTEST_F(suit_decrypt_filter_tests, test_filter_smoke_aes_kw)
 						.len = sizeof(wrapped_cek),
 					}},
 	};
+	suit_mci_fw_encryption_key_id_validate_fake.return_val = SUIT_PLAT_SUCCESS;
 
 	suit_plat_err_t err = suit_ram_sink_get(&ram_sink, output_buffer, sizeof(output_buffer));
 
 	zassert_equal(err, SUIT_PLAT_SUCCESS, "Unable to create RAM sink");
 
-	err = suit_decrypt_filter_get(&dec_sink, &enc_info, &ram_sink);
+	err = suit_decrypt_filter_get(&dec_sink, &enc_info, &sample_class_id, &ram_sink);
 
 	zassert_equal(err, SUIT_PLAT_SUCCESS, "Failed to create decrypt filter");
+	zassert_equal_ptr(suit_mci_fw_encryption_key_id_validate_fake.call_count, 1,
+		      "Invalid number of calls to suit_mci_fw_encryption_key_id_validate");
+	zassert_equal_ptr(suit_mci_fw_encryption_key_id_validate_fake.arg0_val, &sample_class_id,
+			   "Invalid class ID passed to suit_mci_fw_encryption_key_id_validate");
+	zassert_equal(suit_mci_fw_encryption_key_id_validate_fake.arg1_val, kek_key_id,
+			   "Invalid key ID passed to suit_mci_fw_encryption_key_id_validate");
 
 	err = suit_memptr_streamer_stream(ciphertext_aes_kw, sizeof(ciphertext_aes_kw), &dec_sink);
 
@@ -260,13 +279,23 @@ ZTEST_F(suit_decrypt_filter_tests, test_filter_smoke_direct)
 			       .len = sizeof(cek_key_id_cbor)},}
 	};
 
+	suit_mci_fw_encryption_key_id_validate_fake.return_val = SUIT_PLAT_SUCCESS;
+
 	suit_plat_err_t err = suit_ram_sink_get(&ram_sink, output_buffer, sizeof(output_buffer));
 
 	zassert_equal(err, SUIT_PLAT_SUCCESS, "Unable to create RAM sink");
 
-	err = suit_decrypt_filter_get(&dec_sink, &enc_info, &ram_sink);
+	err = suit_decrypt_filter_get(&dec_sink, &enc_info, &sample_class_id, &ram_sink);
 
 	zassert_equal(err, SUIT_PLAT_SUCCESS, "Failed to create decrypt filter");
+
+	zassert_equal_ptr(suit_mci_fw_encryption_key_id_validate_fake.call_count, 1,
+		      "Invalid number of calls to suit_mci_fw_encryption_key_id_validate");
+	zassert_equal_ptr(suit_mci_fw_encryption_key_id_validate_fake.arg0_val, &sample_class_id,
+			   "Invalid class ID passed to suit_mci_fw_encryption_key_id_validate");
+	zassert_equal(suit_mci_fw_encryption_key_id_validate_fake.arg1_val, cek_key_id,
+			   "Invalid key ID passed to suit_mci_fw_encryption_key_id_validate");
+
 
 	err = suit_memptr_streamer_stream(ciphertext_direct, sizeof(ciphertext_direct), &dec_sink);
 
@@ -284,4 +313,50 @@ ZTEST_F(suit_decrypt_filter_tests, test_filter_smoke_direct)
 		      "Decrypted plaintext does not match");
 
 	psa_destroy_key(cek_key_id);
+}
+
+ZTEST_F(suit_decrypt_filter_tests, test_key_id_validation_fail)
+{
+	struct stream_sink dec_sink;
+	struct stream_sink ram_sink;
+	uint8_t cek_key_id_cbor[] = {
+		0x1A, 0x00, 0x00, 0x00, 0x00,
+	};
+
+	psa_key_id_t cek_key_id;
+
+	init_encryption_key(test_key_data, sizeof(test_key_data), &cek_key_id,
+			    PSA_ALG_GCM, cek_key_id_cbor);
+
+	struct suit_encryption_info enc_info = {
+		.enc_alg_id = suit_cose_aes256_gcm,
+		.IV = {
+				.value = iv_direct,
+				.len = sizeof(iv_direct),
+			},
+		.aad = {
+				.value = aad,
+				.len = strlen(aad),
+			},
+		.kw_alg_id = suit_cose_direct,
+		.kw_key.aes = {.key_id = {.value = cek_key_id_cbor,
+			       .len = sizeof(cek_key_id_cbor)},}
+	};
+
+	suit_mci_fw_encryption_key_id_validate_fake.return_val = MCI_ERR_WRONGKEYID;
+
+	suit_plat_err_t err = suit_ram_sink_get(&ram_sink, output_buffer, sizeof(output_buffer));
+
+	zassert_equal(err, SUIT_PLAT_SUCCESS, "Unable to create RAM sink");
+
+	err = suit_decrypt_filter_get(&dec_sink, &enc_info, &sample_class_id, &ram_sink);
+	zassert_equal(err, SUIT_PLAT_ERR_AUTHENTICATION,
+		      "Incorrect error code when getting decrypt filter");
+
+	zassert_equal_ptr(suit_mci_fw_encryption_key_id_validate_fake.call_count, 1,
+		      "Invalid number of calls to suit_mci_fw_encryption_key_id_validate");
+	zassert_equal_ptr(suit_mci_fw_encryption_key_id_validate_fake.arg0_val, &sample_class_id,
+			   "Invalid class ID passed to suit_mci_fw_encryption_key_id_validate");
+	zassert_equal(suit_mci_fw_encryption_key_id_validate_fake.arg1_val, cek_key_id,
+			   "Invalid key ID passed to suit_mci_fw_encryption_key_id_validate");
 }
