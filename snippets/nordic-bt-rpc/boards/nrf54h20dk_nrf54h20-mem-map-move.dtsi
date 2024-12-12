@@ -18,6 +18,7 @@
 &mram1x {
 	cpurad_rw_partitions: cpurad-rw-partitions {
 		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "disabled";
 		nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RWS>;
 		#address-cells = <1>;
 		#size-cells = <1>;
