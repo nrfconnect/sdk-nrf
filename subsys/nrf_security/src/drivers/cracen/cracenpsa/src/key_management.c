@@ -15,6 +15,7 @@
 #include <sicrypto/ecc.h>
 #include <sicrypto/ecdsa.h>
 #include <sicrypto/ed25519.h>
+#include <sicrypto/ed25519ph.h>
 #include <sicrypto/ed448.h>
 #include <sicrypto/montgomery.h>
 #include <sicrypto/rsa_keygen.h>
@@ -602,6 +603,7 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	psa_status_t psa_status;
 	size_t expected_pub_key_size = 0;
 	int si_status = 0;
+	psa_algorithm_t key_alg = psa_get_key_algorithm(attributes);
 	const struct sx_pk_ecurve *sx_curve;
 	struct sitask t;
 
@@ -673,9 +675,15 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 			break;
 		case PSA_ECC_FAMILY_TWISTED_EDWARDS:
 			if (key_bits_attr == 255) {
-				priv_key.def = si_sig_def_ed25519;
-				priv_key.key.ed25519 = (struct sx_ed25519_v *)key_buffer;
-				pub_key.key.ed25519 = (struct sx_ed25519_pt *)data;
+				if (key_alg == PSA_ALG_ED25519PH) {
+					priv_key.def = si_sig_def_ed25519ph;
+					priv_key.key.ed25519 = (struct sx_ed25519_v *)key_buffer;
+					pub_key.key.ed25519 = (struct sx_ed25519_pt *)data;
+				} else {
+					priv_key.def = si_sig_def_ed25519;
+					priv_key.key.ed25519 = (struct sx_ed25519_v *)key_buffer;
+					pub_key.key.ed25519 = (struct sx_ed25519_pt *)data;
+				}
 			} else {
 				priv_key.def = si_sig_def_ed448;
 				priv_key.key.ed448 = (struct sx_ed448_v *)key_buffer;
@@ -700,6 +708,7 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	*data_length = expected_pub_key_size;
 	return PSA_SUCCESS;
 }
+
 static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_t *attributes,
 						       const uint8_t *key_buffer,
 						       size_t key_buffer_size, uint8_t *data,

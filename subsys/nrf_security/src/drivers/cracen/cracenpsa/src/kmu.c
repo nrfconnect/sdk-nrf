@@ -61,7 +61,7 @@ enum kmu_metadata_algorithm {
 	METADATA_ALG_CMAC = 9,
 	METADATA_ALG_ED25519 = 10,
 	METADATA_ALG_ECDSA = 11,
-	METADATA_ALG_RESERVED2 = 12,
+	METADATA_ALG_ED25519PH = 12,
 	METADATA_ALG_RESERVED3 = 13,
 	METADATA_ALG_RESERVED4 = 14,
 	METADATA_ALG_RESERVED5 = 15,
@@ -463,6 +463,15 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 				: PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS));
 		psa_set_key_algorithm(key_attr, PSA_ALG_PURE_EDDSA);
 		break;
+	case METADATA_ALG_ED25519PH:
+		/* If the key can sign it is assumed it is a private key */
+		psa_set_key_type(
+			key_attr,
+			can_sign(key_attr)
+				? PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)
+				: PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS));
+		psa_set_key_algorithm(key_attr, PSA_ALG_ED25519PH);
+		break;
 	case METADATA_ALG_ECDSA:
 		psa_set_key_type(key_attr,
 				 can_sign(key_attr)
@@ -613,6 +622,19 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 		}
 		metadata->algorithm = METADATA_ALG_ED25519;
 		break;
+
+	case PSA_ALG_ED25519PH:
+		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
+		PSA_ECC_FAMILY_TWISTED_EDWARDS) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		/* Don't support private keys that are only used for verify */
+		if (!can_sign(key_attr) &&
+			PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(key_attr))) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		metadata->algorithm = METADATA_ALG_ED25519PH;
+	break;
 
 	case PSA_ALG_ECDSA(PSA_ALG_ANY_HASH):
 		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
