@@ -1567,6 +1567,8 @@ The following table indicates the software maturity levels of the support for ea
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -1580,6 +1582,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - Experimental
         - Supported\ :sup:`1`
+        - --
+        - --
         - --
         - --
         - --
@@ -1600,6 +1604,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **Promiscuous Mode**
         - --
         - --
@@ -1608,6 +1614,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - Supported\ :sup:`2`
+        - --
+        - --
         - --
         - --
         - --
@@ -1623,6 +1631,8 @@ The following table indicates the software maturity levels of the support for ea
         - Experimental\ :sup:`3`
         - Supported\ :sup:`1`
         - Experimental\ :sup:`4`
+        - --
+        - --
         - Experimental\ :sup:`5`
         - --
         - --
@@ -1636,6 +1646,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - Experimental\ :sup:`6`
         - Supported\ :sup:`7`
+        - --
+        - --
         - --
         - --
         - --
@@ -1656,6 +1668,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **TX injection Mode**
         - --
         - --
@@ -1670,6 +1684,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **Thread Coexistence**
         - --
         - --
@@ -1678,6 +1694,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - Experimental
+        - --
+        - --
         - --
         - --
         - --
