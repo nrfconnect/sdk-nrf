@@ -42,6 +42,7 @@ static int datamode_handler_result;
 uint16_t slm_datamode_time_limit; /* Send trigger by time in data mode */
 K_MUTEX_DEFINE(mutex_mode); /* Protects the operation mode variables. */
 
+static size_t at_cmd_len;
 uint8_t slm_at_buf[SLM_AT_MAX_CMD_LEN + 1];
 uint8_t slm_data_buf[SLM_MAX_MESSAGE_SIZE];
 
@@ -569,7 +570,6 @@ static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
 {
 	size_t processed;
 	static bool inside_quotes;
-	static size_t at_cmd_len;
 	static uint8_t prev_character;
 	bool send = false;
 
@@ -704,6 +704,18 @@ void slm_at_receive(const uint8_t *buf, size_t len)
 		buf += ret;
 		len -= ret;
 	}
+
+#if defined(CONFIG_SLM_UART_ECHO)
+	if (get_slm_mode() == SLM_AT_COMMAND_MODE && at_backend.send) {
+		static const uint8_t clear_line_cmd[] = "\33[2K\r"; /* VT100 Clear line escape sequence */
+		at_backend.send(clear_line_cmd, sizeof(clear_line_cmd));
+		for (size_t i = 0; i < at_cmd_len; ++i)
+			if (slm_at_buf[i] == '\r')
+				at_backend.send("\r\n", 2);
+			else
+				at_backend.send(slm_at_buf + i, 1);
+	}
+#endif
 
 	/* start inactivity timer in datamode */
 	if (get_slm_mode() == SLM_DATA_MODE) {
