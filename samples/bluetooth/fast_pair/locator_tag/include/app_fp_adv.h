@@ -81,13 +81,6 @@ void app_fp_adv_payload_refresh(void);
  */
 enum app_fp_adv_mode app_fp_adv_mode_get(void);
 
-/** Set the suspension mode for the RPA rotations of the Fast Pair advertising set.
- *
- *  @param suspended true if the RPA cannot change on the RPA timeout.
- *                   false if the RPA can change on the RPA timeout (default).
- */
-void app_fp_adv_rpa_rotation_suspend(bool suspended);
-
 /** Set the Bluetooth identity for the Fast Pair advertising.
  *
  *  This identity shall be created with the @ref bt_id_create function
