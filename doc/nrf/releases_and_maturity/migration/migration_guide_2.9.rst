@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_2.9:
 
-Migration guide for |NCS| v2.9.0 (Working draft)
-################################################
+Migration guide for |NCS| v2.9.0
+################################
 
 .. contents::
    :local:
@@ -10,14 +12,10 @@ Migration guide for |NCS| v2.9.0 (Working draft)
 This document describes the changes required or recommended when migrating your application from |NCS| v2.8.0 to |NCS| v2.9.0.
 
 .. HOWTO
-
    Add changes in the following format:
-
    Component (for example, application, sample or libraries)
    *********************************************************
-
    .. toggle::
-
       * Change1 and description
       * Change2 and description
 
