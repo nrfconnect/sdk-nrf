@@ -3,10 +3,17 @@
 
 import json
 import os
+import sys
 from pathlib import Path
 
 import jsonschema
 from west.commands import WestCommand
+
+sys.path.append(str(Path(__file__).parent))
+import utils
+
+
+utils.install_json_excepthook()
 
 
 SCRIPT_DIR = Path(__file__).absolute().parent
@@ -65,7 +72,7 @@ class NcsBICR(WestCommand):
             try:
                 jsonschema.validate(bicr, schema)
             except jsonschema.ValidationError as e:
-                raise Exception("Invalid BICR") from e
+                raise ValueError("Invalid BICR") from e
 
         if args.json_schema:
             schema = {

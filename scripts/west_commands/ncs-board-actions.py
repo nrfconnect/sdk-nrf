@@ -9,6 +9,12 @@ from pathlib import Path
 
 from west.commands import WestCommand
 
+sys.path.append(str(Path(__file__).parent))
+import utils
+
+
+utils.install_json_excepthook()
+
 
 SCRIPT_DIR = Path(__file__).absolute().parent
 BICRGEN = (
