@@ -4,10 +4,10 @@
 from pathlib import Path
 import json
 import shutil
+import sys
 
 from jinja2 import Environment, FileSystemLoader
 from west.commands import WestCommand
-from west import log
 from yaml import load
 import jsonschema
 
@@ -15,6 +15,12 @@ try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
+
+sys.path.append(Path(__file__).parents[2])
+import utils
+
+
+utils.install_json_excepthook()
 
 
 SCRIPT_DIR = Path(__file__).absolute().parent
@@ -50,6 +56,11 @@ class NcsCreateBoard(WestCommand):
             schema = json.loads(f.read())
 
         if args.json_schema:
+            schema = {
+                "schema": schema,
+                "state": None,
+            }
+
             print(json.dumps(schema))
             return
 
@@ -62,7 +73,7 @@ class NcsCreateBoard(WestCommand):
         try:
             jsonschema.validate(input, schema)
         except jsonschema.ValidationError as e:
-            raise Exception("Board configuration is not valid") from e
+            raise ValueError("Board configuration is not valid") from e
 
         soc_parts = input["soc"].split("-")
         req_soc = soc_parts[0].lower()
@@ -81,8 +92,7 @@ class NcsCreateBoard(WestCommand):
                     break
 
         if not series:
-            log.err(f"Invalid/unsupported SoC: {req_soc}")
-            return
+            raise ValueError(f"Invalid/unsupported SoC: {req_soc}")
 
         targets = []
         for variant in soc["variants"]:
@@ -125,8 +135,7 @@ class NcsCreateBoard(WestCommand):
                 break
 
         if not targets:
-            log.err(f"Invalid/unsupported variant: {req_variant}")
-            return
+            raise ValueError(f"Invalid/unsupported variant: {req_variant}")
 
         # prepare Jinja environment
         env = Environment(
@@ -180,6 +189,14 @@ class NcsCreateBoard(WestCommand):
             tmpl = TEMPLATE_DIR / series / "board-shared_sram.dtsi"
             shutil.copy(tmpl, out_dir / f"{ input['board'] }-shared_sram.dtsi")
 
+        # nrf54H specific files
+        if series == "nrf54h":
+            tmpl = TEMPLATE_DIR / series / "board-ipc_conf.dtsi"
+            shutil.copy(tmpl, out_dir / f"{ input['board'] }-ipc_conf.dtsi")
+
+            tmpl = TEMPLATE_DIR / series / "board-memory_map.dtsi"
+            shutil.copy(tmpl, out_dir / f"{ input['board'] }-memory_map.dtsi")
+
         # nrf91 specific files
         if series == "nrf91":
             tmpl = env.get_template("board-partitioning.dtsi.jinja2")
@@ -200,7 +217,11 @@ class NcsCreateBoard(WestCommand):
             with open(out_dir / f"{ name }_defconfig", "w") as f:
                 f.write(tmpl.render(target=target))
 
-            tmpl = env.get_template("board.dts.jinja2")
+            if not target["xip"]:
+                tmpl = env.get_template("board.dts.jinja2")
+            else:
+                tmpl = env.get_template("board-xip.dts.jinja2")
+
             with open(out_dir / f"{name}.dts", "w") as f:
                 f.write(tmpl.render(target=target))
 
@@ -208,4 +229,19 @@ class NcsCreateBoard(WestCommand):
             with open(out_dir / f"{name}.yml", "w") as f:
                 f.write(tmpl.render(target=target))
 
-        print(f"Board {input['board']} created successfully")
+        # return post-commands
+        commands = []
+
+        if series == "nrf54h":
+            commands.append(
+                {
+                    "name": "Create BICR",
+                    "command": "west",
+                    "args": ["ncs-bicr", "--board-dir", str(out_dir.resolve())],
+                    "properties": {
+                        "providesJsonSchema": False,
+                    },
+                }
+            )
+
+        print(json.dumps({"commands": commands}))
