@@ -119,7 +119,7 @@
     - applications.sdp.gpio.icbmsg
   platforms:
     - all
-  rom_size: 8400
+  rom_size: 8700
   ram_size: 12000
   codeowners:
     - nrfconnect/ncs-ll-ursus
