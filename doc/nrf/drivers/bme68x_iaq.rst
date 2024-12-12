@@ -10,7 +10,7 @@ BME68X IAQ driver
 You can use the BME68X IAQ driver to run the Bosch Sensor Environmental Cluster (BSEC) library in order to get Indoor Air Quality (IAQ) readings.
 
 The BSEC library is distributed with a Bosch proprietary license (`BSEC license`_) that prevents it from being part of |NCS|.
-To start using it, you have to accept the license and enable the download with the following commands:
+To start using it, you have to accept the license and enable the download by running the following commands in the :file:`nrf` folder:
 
 .. code-block::
 
