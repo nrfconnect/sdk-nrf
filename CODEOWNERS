@@ -656,6 +656,7 @@
 /scripts/ncs-toolchain-version-minimum.txt @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/west_commands/utils/             @gmarull
 /scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/ncs-bicr.py        @gmarull
 /scripts/west_commands/ncs-board-actions.py @gmarull
