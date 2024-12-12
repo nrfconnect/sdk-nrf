@@ -339,11 +339,6 @@ For example, in the |NCS| applications and samples that use different :ref:`buil
 
 The listing below describes how to leverage this functionality, where ``ACI_NAME`` is the name of the child image to which the configuration will be applied.
 
-.. literalinclude:: ../../../../cmake/multi_image.cmake
-    :language: c
-    :start-at: It is possible for a sample to use a custom set of Kconfig fragments for a
-    :end-before: set(ACI_CONF_DIR ${config_dir}/child_image)
-
 When you are using :ref:`app_build_additions_build_types` and the configuration name has been inferred, the child image Kconfig overlay file is searched at :file:`child_image/<ACI_NAME>_<name>.conf`.
 Alternatively, the child image Kconfig configuration file can be introduced as :file:`child_image/<ACI_NAME>/prj.conf` and follow the same pattern as the parent Kconfig.
 For example, :file:`child_image/mcuboot/prj_release.conf` can be used to define the ``release`` build type for the ``mcuboot`` child image.
