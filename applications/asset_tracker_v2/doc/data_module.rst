@@ -130,7 +130,7 @@ CONFIG_DATA_SAMPLE_NEIGHBOR_CELLS_DEFAULT
 .. _CONFIG_DATA_SAMPLE_WIFI_DEFAULT:
 
 CONFIG_DATA_SAMPLE_WIFI_DEFAULT
-   This configuration includes Wi-Fi APs during sampling.
+   This configuration includes Wi-Fi® APs during sampling.
    Enabled by default.
 
 Other options:

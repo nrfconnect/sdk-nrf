@@ -35,7 +35,7 @@ When the network interface is brought down, the nRF Wi-Fi driver puts the nRF70 
 When the network interface is brought up, the nRF Wi-Fi driver puts the nRF70 Series device in Active state.
 
 .. note::
-   The application needs to reinitialize the Wi-Fi association after the network interface is brought up.
+   The application needs to reinitialize the Wi-Fi® association after the network interface is brought up.
 
 Functional state
 ================

@@ -124,7 +124,7 @@ The integration supports the following location services:
 * Cell-based location assistance
 * A-GNSS location assistance
 * :ref:`P-GPS location assistance <location_assistance_pgps_lwm2m>`
-* :ref:`Wi-Fi based location assistance <location_assistance_agnss_lwm2m>`
+* :ref:`Wi-Fi® based location assistance <location_assistance_agnss_lwm2m>`
 
 Cell-based location
 ===================

@@ -85,7 +85,7 @@ CONFIG_REST_CELL_DEFAULT_DOREPLY_VAL - Enable return of location from cloud
 .. _CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL:
 
 CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL - Enable fallback to coarse location
-   If enabled and the location of the cell tower or Wi-Fi access points cannot be found, return area-level location based on the cellular tracking area code.
+   If enabled and the location of the cell tower or Wi-Fi® access points cannot be found, return area-level location based on the cellular tracking area code.
    Otherwise an error will be returned indicating location is not known.
 
 .. _CONFIG_REST_CELL_DEFAULT_HICONF_VAL:

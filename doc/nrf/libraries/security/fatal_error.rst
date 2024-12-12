@@ -12,13 +12,13 @@ The |NCS| provides an implementation of the fatal error handler that overrides Z
 Overview
 ********
 
-The library defines the :c:func:`k_sys_fatal_error_handler()` function, which is declared in Zephyr's :ref:`fatal error handling API <zephyr:fatal>`.
+The library defines the :c:func:`k_sys_fatal_error_handler` function, which is declared in Zephyr's :ref:`fatal error handling API <zephyr:fatal>`.
 Its implementation in the |NCS| is standardized for most samples.
 
 Configuration
 *************
 
-When building for an embedded target, the default behavior of the :c:func:`k_sys_fatal_error_handler()` function in case of a fatal error is to reboot the application.
+When building for an embedded target, the default behavior of the :c:func:`k_sys_fatal_error_handler` function in case of a fatal error is to reboot the application.
 You can modify the default behavior of the library not to reboot the application.
 To have the application enter an endless loop, change the :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR` Kconfig option to ``n``.
 

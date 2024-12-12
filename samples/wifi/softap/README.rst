@@ -28,7 +28,7 @@ You can enable the SoftAP mode by setting the below configuration options in the
 * :kconfig:option:`CONFIG_NRF70_AP_MODE`: Enables access point mode support.
 * :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_AP`: Enables access point support.
 
-The sample uses the :ref:`lib_wifi_ready` library to check Wi-Fi readiness.
+The sample uses the :ref:`lib_wifi_ready` library to check Wi-Fi® readiness.
 To use the :ref:`lib_wifi_ready` library, enable the :kconfig:option:`CONFIG_WIFI_READY_LIB` Kconfig option.
 
 .. note::

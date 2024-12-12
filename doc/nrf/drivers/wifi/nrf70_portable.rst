@@ -3,6 +3,10 @@
 nRF Wi-Fi portable driver
 #########################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Wi-Fi portable driver implements OS-agnostic code for the nRF70 FullMAC Series of devices.
 This code can be used to implement OS-native drivers for the nRF70 Series devices.
 

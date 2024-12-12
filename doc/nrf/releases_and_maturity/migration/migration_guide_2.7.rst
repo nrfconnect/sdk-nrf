@@ -71,8 +71,8 @@ nRF5340 Audio applications
      :ref:`ug_ble_controller_softdevice` is included and built automatically.
      Make sure to remove references to LE Audio controller for nRF5340 from your application and transition to the new controller.
 
-Wi-Fi
------
+Wi-Fi®
+------
 
 .. toggle::
 

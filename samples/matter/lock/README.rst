@@ -11,7 +11,7 @@ Matter: Door lock
 This door lock sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a door lock device with one basic bolt.
 You can use this sample as a reference for creating your application.
 
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi network.
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread or Wi-Fi® network.
 Support for both Thread and Wi-Fi depends on the hardware platform.
 The door lock sample can be built with support for one transport protocol, either Thread or Wi-Fi, or with support for :ref:`switching between Matter over Wi-Fi and Matter over Thread <matter_lock_sample_wifi_thread_switching>`, where the application activates either Thread or Wi-Fi on boot, depending on the runtime configuration.
 

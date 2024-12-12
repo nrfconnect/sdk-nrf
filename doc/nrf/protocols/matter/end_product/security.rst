@@ -46,7 +46,7 @@ Cryptography
 Depending on the networking backend, the |NCS| Matter samples currently use the following APIs to implement cryptographic operations:
 
 * PSA Cryptography API for Thread networking.
-* Mbed TLS for Wi-Fi networking.
+* Mbed TLS for Wi-Fi® networking.
   Support for PSA Cryptography API for the Wi-Fi backend is planned for a future release.
 
 Both APIs are integrated in the :ref:`nrf_security` library.

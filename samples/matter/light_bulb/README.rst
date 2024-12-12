@@ -17,7 +17,7 @@ You can use this sample as a reference for creating your own application.
     This sample is self-contained and can be tested on its own.
     However, it is required when testing the :ref:`Matter light switch <matter_light_switch_sample>` sample.
 
-The sample can also communicate with `AWS IoT Core`_ over a Wi-Fi network using the nRF7002 DK.
+The sample can also communicate with `AWS IoT Core`_ over a Wi-Fi® network using the nRF7002 DK.
 For more details, see the :ref:`matter_light_bulb_aws_iot` section.
 
 Requirements

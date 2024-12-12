@@ -7,7 +7,7 @@ Matter network topology and concepts
    :local:
    :depth: 2
 
-Matter network can be composed of Ethernet, Wi-Fi, and Thread devices.
+Matter network can be composed of Ethernet, Wi-Fi®, and Thread devices.
 Matter joins these devices together within the local Matter fabric (infrastructure), which allows devices to talk to each other using the same Matter application layer, despite using different network technologies underneath.
 All communication is achieved over IPv6, although the Matter network is capable of running in the absence of IPv6 infrastructure connected to the Internet, for example within a firewalled network.
 Bluetooth® LE can be used for commissioning of a Matter device to the Matter network.

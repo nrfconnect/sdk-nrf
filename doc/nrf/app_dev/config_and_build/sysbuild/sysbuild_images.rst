@@ -3,6 +3,10 @@
 Sysbuild images
 ###############
 
+.. contents::
+   :local:
+   :depth: 2
+
 :ref:`configuration_system_overview_sysbuild` allows you to add additional images to your builds.
 
 

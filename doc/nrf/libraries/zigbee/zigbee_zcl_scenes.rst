@@ -30,16 +30,16 @@ To enable the Zigbee ZCL scene helper library, set the :kconfig:option:`CONFIG_Z
 
 Because the library uses Zephyr's :ref:`settings_api` subsystem, the application must call the following functions for the library to work correctly:
 
-* :c:func:`zcl_scenes_init()`
-* :c:func:`zcl_scenes_cb()`
-* :c:func:`settings_subsys_init()`
-* :c:func:`settings_load()`
+* :c:func:`zcl_scenes_init`
+* :c:func:`zcl_scenes_cb`
+* :c:func:`settings_subsys_init`
+* :c:func:`settings_load`
 
 You must implement these functions in the following manner:
 
-* :c:func:`settings_subsys_init()` must be called before :c:func:`zcl_scenes_init()`
-* :c:func:`settings_load()` must be called after :c:func:`zcl_scenes_init()`
-* :c:func:`zcl_scenes_cb()` must be called in the ZCL device callback:
+* :c:func:`settings_subsys_init` must be called before :c:func:`zcl_scenes_init`
+* :c:func:`settings_load` must be called after :c:func:`zcl_scenes_init`
+* :c:func:`zcl_scenes_cb` must be called in the ZCL device callback:
 
   .. code-block:: C
 

@@ -245,12 +245,12 @@ To add a new timer for the measurement task, edit the :file:`src/app_task.cpp` f
    }
 
 The timer must be initialized in the ``Init()`` method of the ``AppTask`` class.
-If :c:func:`StartSensorTimer()` is called, the ``Sensor Measure`` task is added to the tasks queue every *aTimeoutMs* milliseconds, until :c:func:`StopSensorTimer()` is called.
+If :c:func:`StartSensorTimer` is called, the ``Sensor Measure`` task is added to the tasks queue every *aTimeoutMs* milliseconds, until :c:func:`StopSensorTimer` is called.
 
 Implement task handlers
 -----------------------
 
-When a task is dequeued, the ``task_executor`` module calls the task handler passed to the :c:func:`PostTask()` function.
+When a task is dequeued, the ``task_executor`` module calls the task handler passed to the :c:func:`PostTask` function.
 Because you need to handle new tasks, you must implement the corresponding handlers.
 
 To add new task handlers, complete the following steps:
@@ -276,7 +276,7 @@ To add new task handlers, complete the following steps:
       }
 
    With this addition, when the sensor is active, the timer expiration event happens every half a second.
-   This causes an invocation of :c:func:`SensorMeasureHandler()` and triggers an update of the ``MeasuredValue`` attribute of the Temperature Measurement cluster.
+   This causes an invocation of :c:func:`SensorMeasureHandler` and triggers an update of the ``MeasuredValue`` attribute of the Temperature Measurement cluster.
 
    .. note::
       In the code fragment, the example value is updated randomly, but in a real sensor application it would be updated with the value obtained from external measurement.
@@ -309,8 +309,8 @@ To implement the callback function, complete the following steps:
 2. Implement the callback in this file:
 
    a. Open :file:`ncs/modules/lib/matter/src/app/util/generic-callback-stubs.cpp` to check the list of customizable callback functions, marked with ``__attribute__((weak))``.
-   #. Read the description of :c:func:`MatterPostAttributeChangeCallback()` in the :file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` file.
-   #. Implement :c:func:`MatterPostAttributeChangeCallback()` in the :file:`src/zcl_callbacks.cpp` file.
+   #. Read the description of :c:func:`MatterPostAttributeChangeCallback` in the :file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` file.
+   #. Implement :c:func:`MatterPostAttributeChangeCallback` in the :file:`src/zcl_callbacks.cpp` file.
 
 For example, the implementation can look as follows:
 

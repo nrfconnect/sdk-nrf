@@ -55,7 +55,7 @@ You can program the precompiled firmware image using one of the following ways:
   For details, refer to the :ref:`thingy53_app_mcuboot_bootloader` section.
 
   See the :ref:`thingy53_gs_updating_usb` section in the :ref:`ug_thingy53_gs` guide for the detailed procedures on how to program the Thingy:53 using the `Programmer app`_.
-* Update the firmware over-the-air (OTA) using Bluetooth LE and the nRF Programmer mobile application for Android or iOS.
+* Update the firmware over-the-air (OTA) using Bluetooth® LE and the nRF Programmer mobile application for Android or iOS.
   To use this method, the application that is currently programmed on Thingy:53 must support it.
   For details, refer to :ref:`thingy53_app_fota_smp` section.
   All precompiled images support OTA using Bluetooth.

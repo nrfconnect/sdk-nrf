@@ -90,4 +90,4 @@ Transport and IP Framing
 This layer manages the transmission of the payload through the IP network to the peer device.
 It uses either the Transmission Control Protocol (TCP) or the combination of User Datagram Protocol (UDP) with Matter's Message Reliability Protocol (MRP).
 The MRP implements retransmissions, provides confirmation of delivery, and ensures that duplicated messages are rejected.
-During the commissioning process, Bluetooth Transport Protocol over Bluetooth LE can be used instead of this layer.
+During the commissioning process, Bluetooth® Transport Protocol over Bluetooth LE can be used instead of this layer.

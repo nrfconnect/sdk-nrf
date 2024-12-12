@@ -388,7 +388,7 @@ The following table presents the possible threads used in a Matter application a
 |                     |                                                                  | For Matter over Thread only.                                   |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
 | net_mgmt            | :kconfig:option:`CONFIG_NET_MGMT_EVENT_STACK_SIZE`               | Zephyr network management event processing thread stack.       |
-|                     |                                                                  | For Matter over Wi-Fi only.                                    |
+|                     |                                                                  | For Matter over Wi-Fi® only.                                   |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
 | wpa_supplicant_main | :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_THREAD_STACK_SIZE`| WPA supplicant main thread.                                    |
 |                     |                                                                  | Processing Wi-Fi requests and connections.                     |

@@ -7,7 +7,7 @@ CAF: Bluetooth LE state module
    :local:
    :depth: 2
 
-The Bluetooth® LE state module is a core Bluetooth module in :ref:`lib_caf` (CAF).
+The Bluetooth LE state module is a core Bluetooth® module in :ref:`lib_caf` (CAF).
 When enabled for an application, the |ble_state| is responsible for the following actions:
 
 * Enabling Bluetooth (:c:func:`bt_enable`)

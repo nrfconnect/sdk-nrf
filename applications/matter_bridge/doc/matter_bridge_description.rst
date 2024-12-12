@@ -19,7 +19,7 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
-To test the Matter bridge application with the :ref:`Bluetooth LE bridged device <matter_bridge_app_bridged_support>`, you also need the following:
+To test the Matter bridge application with the :ref:`Bluetooth® LE bridged device <matter_bridge_app_bridged_support>`, you also need the following:
 
 * An additional development kit compatible with one of the following Bluetooth LE samples:
 
@@ -28,7 +28,7 @@ To test the Matter bridge application with the :ref:`Bluetooth LE bridged device
 
 * A micro-USB cable for every development kit to connect it to the PC.
 
-To commission the Matter bridge device and control it remotely through a Wi-Fi network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
+To commission the Matter bridge device and control it remotely through a Wi-Fi® network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on your setup.
 
 .. note::
@@ -131,7 +131,7 @@ Remote testing in a network
 ===========================
 
 By default, the Matter accessory device has no IPv6 network configured.
-To use the device within a Wi-Fi network, you must pair it with the Matter controller over Bluetooth® LE to get the configuration from the controller.
+To use the device within a Wi-Fi network, you must pair it with the Matter controller over Bluetooth LE to get the configuration from the controller.
 
 The Bluetooth LE advertising starts automatically upon device startup, but only for a predefined period of time (1 hour by default).
 If the Bluetooth LE advertising times out, you can re-enable it manually (see the :ref:`matter_bridge_app_ui` section).
@@ -437,7 +437,7 @@ CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 .. _CONFIG_BRIDGE_MIGRATE_PRE_2_7_0:
 
 CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
-``bool`` - Enable migration of bridged device data stored in old scheme from pre nRF SDK 2.7.0 releases.
+``bool`` - Enable migration of bridged device data stored in old scheme from pre |NCS| 2.7.0 releases.
 
 .. _CONFIG_BRIDGE_MIGRATE_VERSION_1:
 
@@ -564,7 +564,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
 
          .. group-tab:: Matter bridge over Thread
 
-            You can not increase the default number of Bluetooth LE connections in this configuration using overlays.
+            You cannot increase the default number of Bluetooth LE connections in this configuration using overlays.
             This is because the configuration uses both Thread and Bluetooth LE protocols, and limited RAM memory.
             You can still increase the number of connections by modifying the board files and decreasing the buffer sizes.
             The default number of connections is ``10``, which effectively means 9 bridged devices.

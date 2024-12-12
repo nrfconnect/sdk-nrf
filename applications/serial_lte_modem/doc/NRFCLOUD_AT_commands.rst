@@ -196,7 +196,7 @@ nRF Cloud location
 ==================
 
 The ``#XNRFCLOUDPOS`` command sends a request to nRF Cloud to determine the device's location.
-The request uses information from the cellular network, Wi-Fi access points, or both.
+The request uses information from the cellular network, Wi-Fi® access points, or both.
 
 .. note::
    To use ``#XNRFCLOUDPOS``, the following preconditions apply:

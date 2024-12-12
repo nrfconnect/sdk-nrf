@@ -9,7 +9,7 @@ Coexistence of short-range radio and other radios
 
 This guide describes how to add short-range radio and other radio coexistence support to your application in |NCS|.
 
-Short-range RF technologies (here referred to as SR), such as Bluetooth® LE or 802.15.4, use a different radio than other technologies like Wi-Fi®  or LTE (here referred to as *the other radios*).
+Short-range RF technologies (here referred to as SR), such as Bluetooth® LE or 802.15.4, use a different radio than other technologies like Wi-Fi® or LTE (here referred to as *the other radios*).
 However, if both SR and the other radio attempt to transmit simultaneously, the radio frequency (RF) waves interfere with each other, causing decreased performance and higher power consumption.
 Also, in cases like receiving an acknowledgment (ACK), radios should not transmit to ensure correct reception.
 
@@ -320,6 +320,6 @@ To add a custom coexistence implementation, complete following steps:
    * The implementation of the functions required by the interface structure :c:struct:`mpsl_cx_interface_t`.
      Refer to :ref:`MPSL CX API <mpsl_api_sr_cx>` for details.
    * The initialization code initializing the required hardware resources, based on devicetree information.
-   * A call to the function :c:func:`mpsl_cx_interface_set()` during the system initialization.
+   * A call to the function :c:func:`mpsl_cx_interface_set` during the system initialization.
 
 #. Add the necessary CMakeLists.txt entries to get your code compiled when the new Kconfig choice option you added is selected.

@@ -88,7 +88,7 @@ The module is a configuration channel listener and provides the following config
    Average rating threshold for approving a blocked Bluetooth LE channel that is under evaluation by the QoS module.
    Fixed point value with 1/100 scaling.
 * ``wifi_rating_inc``
-   Wi-Fi strength rating multiplier.
+   Wi-Fi® strength rating multiplier.
    Increase the value to block Wi-Fi faster.
    Fixed point value with 1/100 scaling.
 * ``wifi_present_threshold``

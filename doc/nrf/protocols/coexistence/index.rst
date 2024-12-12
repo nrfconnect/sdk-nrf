@@ -12,10 +12,10 @@ The following table lists wireless coexistence between protocols:
     :header-rows: 1
 
     * - Wireless coexistence
-      - Bluetooth LE
+      - Bluetooth® LE
       - Thread
       - Zigbee
-      - Wi-Fi
+      - Wi-Fi®
       - LTE-M/NB-IoT
     * - Bluetooth LE
       - N/A

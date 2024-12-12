@@ -69,7 +69,7 @@ The devices that are to be commissioned need to let the commissioner know about 
 This can happen using the following advertising methods:
 
 * Bluetooth® LE - This method is used especially if the node is being added to its first Matter fabric.
-* DNS-SD - This method is commonly used if the node is connected to Ethernet or is already a member of a Wi-Fi or Thread network.
+* DNS-SD - This method is commonly used if the node is connected to Ethernet or is already a member of a Wi-Fi® or Thread network.
 * Planned for future releases: Wi-Fi Access Point - This method will use the Wi-Fi Soft-AP functionality and will be used for devices that are not yet members of any network.
 
 The advertisement priority is defined within the Discovery Capabilities Bitmask, provided in the onboarding data.

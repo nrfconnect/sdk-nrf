@@ -7,7 +7,7 @@ The Matter Bridge application supports bridging only a few Matter device types d
 However, you can select any of the available :ref:`Matter device types <ug_matter_device_types>` and add support to it in the application.
 
 You will need to implement the ``Matter Bridged Device`` and ``Bridged Device Data Provider`` roles based on the :ref:`Matter Bridge architecture <ug_matter_overview_bridge_ncs_implementation>` for the newly added Matter device type.
-The Matter Bridge application supports :ref:`simulated and Bluetooth LE <matter_bridge_app_bridged_support>` bridged device configurations.
+The Matter Bridge application supports :ref:`simulated and Bluetooth® LE <matter_bridge_app_bridged_support>` bridged device configurations.
 In this guide, the simulated provider example is presented, but the process is similar for the Bluetooth LE provider as well.
 
 The following steps show how to add support for a new Matter device type, using  the Pressure Sensor device type as an example.
