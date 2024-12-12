@@ -270,7 +270,10 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`modem_shell_application` sample:
+
+  * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
+    Link control functionality is now always enabled and cannot be disabled.
 
 Cryptography samples
 --------------------
