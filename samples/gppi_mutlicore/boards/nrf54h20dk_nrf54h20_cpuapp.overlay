@@ -1,0 +1,63 @@
+/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */
+
+&timer130 {
+	status = "okay";
+};
+
+&timer131 {
+	status = "okay";
+};
+
+/* DPPIC in domain where TIMER130 and TIMER131 are located. */
+&dppic133 {
+	/* Remove default channels assignment */
+	/delete-property/ owned-channels;
+	/delete-property/ sink-channels;
+	/delete-property/ source-channels;
+	/delete-property/ nonsecure-channels;
+
+	owned-channels = <3 4>;
+    	/* T131 CC5 event */
+	source-channels = <3>;
+    	/* T130 STOP task */
+	sink-channels = <4>;
+	status = "okay";
+};
+
+/* DPPIC where IPCT130 is located. */
+&dppic130 {
+	/* Remove default channels assignment */
+	/delete-property/ owned-channels;
+	/delete-property/ sink-channels;
+	/delete-property/ source-channels;
+	/delete-property/ nonsecure-channels;
+
+	owned-channels = <3 4>;
+    	/* T131 CC5 event to IPCT130*/
+	sink-channels = <3>;
+    	/* T130 STOP task from IPCT130*/
+	source-channels = <4>;
+	status = "okay";
+};
+
+&dppic131 {
+	/* Remove default channels assignment */
+	/delete-property/ owned-channels;
+	/delete-property/ sink-channels;
+	/delete-property/ source-channels;
+	/delete-property/ nonsecure-channels;
+};
+
+&ipct130 {
+	/* Remove default channels assignment */
+	/delete-property/ source-channel-links;
+	/delete-property/ sink-channel-links;
+	/delete-property/ owned-channels;
+
+	status = "okay";
+	owned-channels = <4 3>;
+	/* Radio IPCT channel 7 -> Global IPCT channel 3 (T020 CC0 event -> T130 STOP task) */
+	sink-channel-links = <3 NRF_DOMAIN_ID_RADIOCORE 7>;
+	/* Global IPCT channel 4 -> Radio IPCT channel 6 (T131 CC5 event to -> T020 START task) */
+	source-channel-links = <4 NRF_DOMAIN_ID_RADIOCORE 6>;
+};
