@@ -483,7 +483,7 @@
 			{ ZAP_EMPTY_DEFAULT(), 0x00000005, 1, ZAP_TYPE(BOOLEAN), 0 }, /* TestInProgress */                             \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000006, 1, ZAP_TYPE(BOOLEAN), 0 }, /* HardwareFaultAlert */                         \
 			{ ZAP_EMPTY_DEFAULT(), 0x00000007, 1, ZAP_TYPE(ENUM8), 0 }, /* EndOfServiceAlert */                            \
-			{ ZAP_SIMPLE_DEFAULT(7), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                              \
+			{ ZAP_SIMPLE_DEFAULT(3), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                              \
 			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                           \
 	}
 
@@ -924,10 +924,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
-		{ 0x00000011, 1 }, { 0x00000016, 3 }, { 0x00000011, 1 },                                               \
-		{                                                                                                      \
-			0x00000076, 1                                                                                  \
-		}                                                                                                      \
+		{ 0x00000011, 1 }, { 0x00000016, 3 }, { 0x00000011, 1 }, { 0x00000076, 1 }                             \
 	}
 
 // Array of device type offsets
