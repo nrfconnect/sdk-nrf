@@ -6,7 +6,6 @@ sample:
 common:
   sysbuild: true
   tags: ci_build sysbuild ci_applications_nrf_desktop
-  harness: console
   harness_config:
     type: multi_line
     ordered: false
@@ -18,13 +17,19 @@ common:
       - "(ble_adv: Advertising started)|(ble_scan: Scan started)"
       - "dfu: Secondary image slot is clean"
 tests:
+  applications.nrf_desktop.zdebug.uart.kmu_provision:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    timeout: 180
+    harness: pytest
   applications.nrf_desktop.zdebug.uart:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
+    harness: console
   applications.nrf_desktop.zdebug:
     build_only: true
     platform_allow: >
@@ -49,7 +54,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=wwcb
-  applications.nrf_desktop.zdebug_fast_pair.gmouse.uart:
+  applications.nrf_desktop.zdebug_fast_pair.gmouse.uart.kmu_provision:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
@@ -57,6 +62,8 @@ tests:
     extra_args: FILE_SUFFIX=fast_pair
                 FP_MODEL_ID=0x8E717D
                 FP_ANTI_SPOOFING_KEY=dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=
+    timeout: 180
+    harness: pytest
   applications.nrf_desktop.zdebug_fast_pair.gmouse:
     build_only: true
     platform_allow: nrf52840dk/nrf52840 nrf52840gmouse/nrf52840
@@ -111,12 +118,14 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=dongle
-  applications.nrf_desktop.zdebug_keyboard.uart:
+  applications.nrf_desktop.zdebug_keyboard.uart.kmu_provision:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=keyboard
+    timeout: 180
+    harness: pytest
   applications.nrf_desktop.zdebug_keyboard:
     build_only: true
     platform_allow:
