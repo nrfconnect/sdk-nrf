@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(coap_utils, CONFIG_COAP_UTILS_LOG_LEVEL);
 #endif
 
 const static int nfds = 1;
-static struct pollfd fds;
+static struct zsock_pollfd fds;
 static struct coap_reply replies[COAP_MAX_REPLIES];
 static int proto_family;
 static struct sockaddr *bind_addr;
@@ -37,7 +37,7 @@ static int coap_open_socket(void)
 	int sock;
 
 	while (1) {
-		sock = socket(proto_family, SOCK_DGRAM, IPPROTO_UDP);
+		sock = zsock_socket(proto_family, SOCK_DGRAM, IPPROTO_UDP);
 		if (sock < 0) {
 			LOG_ERR("Failed to create socket %d", errno);
 			k_sleep(K_MSEC(COAP_OPEN_SOCKET_SLEEP));
@@ -47,7 +47,7 @@ static int coap_open_socket(void)
 	}
 
 	if (bind_addr) {
-		if (bind(sock, bind_addr, sizeof(*bind_addr))) {
+		if (zsock_bind(sock, bind_addr, sizeof(*bind_addr))) {
 			LOG_ERR("Failed to bind socket, errno: %d", errno);
 		}
 	}
@@ -57,7 +57,7 @@ static int coap_open_socket(void)
 
 static void coap_close_socket(int socket)
 {
-	(void)close(socket);
+	(void)zsock_close(socket);
 }
 
 static void coap_receive(void)
@@ -73,25 +73,25 @@ static void coap_receive(void)
 	while (1) {
 		fds.revents = 0;
 
-		if (poll(&fds, nfds, -1) < 0) {
+		if (zsock_poll(&fds, nfds, -1) < 0) {
 			LOG_ERR("Error in poll:%d", errno);
 			errno = 0;
 			k_sleep(K_MSEC(COAP_POOL_SLEEP));
 			continue;
 		}
 
-		if (fds.revents & POLLERR) {
+		if (fds.revents & ZSOCK_POLLERR) {
 			LOG_ERR("Error in poll.. waiting a moment.");
 			k_sleep(K_MSEC(COAP_POOL_SLEEP));
 			continue;
 		}
 
-		if (fds.revents & POLLHUP) {
+		if (fds.revents & ZSOCK_POLLHUP) {
 			LOG_ERR("Error in poll: POLLHUP");
 			continue;
 		}
 
-		if (fds.revents & POLLNVAL) {
+		if (fds.revents & ZSOCK_POLLNVAL) {
 			LOG_ERR("Error in poll: POLLNVAL - fd not open");
 
 			coap_close_socket(fds.fd);
@@ -102,13 +102,13 @@ static void coap_receive(void)
 			continue;
 		}
 
-		if (!(fds.revents & POLLIN)) {
+		if (!(fds.revents & ZSOCK_POLLIN)) {
 			LOG_ERR("Unknown poll error");
 			continue;
 		}
 
 		from_addr_len = sizeof(from_addr);
-		len = recvfrom(fds.fd, buf, sizeof(buf) - 1, 0, &from_addr,
+		len = zsock_recvfrom(fds.fd, buf, sizeof(buf) - 1, 0, &from_addr,
 			       &from_addr_len);
 
 		if (len < 0) {
@@ -184,7 +184,7 @@ end:
 static int coap_send_message(const struct sockaddr *addr,
 			     struct coap_packet *request)
 {
-	return sendto(fds.fd, request->data, request->offset, 0, addr,
+	return zsock_sendto(fds.fd, request->data, request->offset, 0, addr,
 		      sizeof(*addr));
 }
 
@@ -207,7 +207,7 @@ void coap_init(int ip_family, struct sockaddr *addr)
 		bind_addr = addr;
 	}
 
-	fds.events = POLLIN;
+	fds.events = ZSOCK_POLLIN;
 	fds.revents = 0;
 	fds.fd = coap_open_socket();
 
