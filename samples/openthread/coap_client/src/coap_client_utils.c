@@ -125,7 +125,7 @@ static int on_provisioning_reply(const struct coap_packet *response,
 
 	memcpy(&unique_local_addr.sin6_addr, payload, payload_size);
 
-	if (!inet_ntop(AF_INET6, payload, unique_local_addr_str,
+	if (!zsock_inet_ntop(AF_INET6, payload, unique_local_addr_str,
 		       INET6_ADDRSTRLEN)) {
 		LOG_ERR("Received data is not IPv6 address: %d", errno);
 		ret = -errno;
