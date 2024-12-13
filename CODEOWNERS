@@ -831,7 +831,7 @@
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-pluto
 /tests/modules/mcuboot/external_flash/    @nrfconnect/ncs-pluto
-/tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
+/tests/nrf5340_audio/                     @nrfconnect/ncs-audio
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /tests/subsys/audio/audio_module_template/ @nrfconnect/ncs-audio
