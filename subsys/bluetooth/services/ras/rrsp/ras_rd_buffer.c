@@ -265,12 +265,15 @@ static void subevent_data_available(struct bt_conn *conn,
 	/* process_step_data might have requested dropping this procedure. */
 	bool drop = (drop_procedure_counter[conn_index] == result->header.procedure_counter);
 
-	if (hdr->ranging_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE && !drop) {
+	if (drop) {
+		rd_buffer_free(buf);
+		return;
+	}
+
+	if (hdr->ranging_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE) {
 		buf->ready = true;
 		buf->busy = false;
 		notify_new_rd_stored(conn, result->header.procedure_counter);
-	} else {
-		rd_buffer_free(buf);
 	}
 }
 
