@@ -485,7 +485,7 @@ int bt_ras_rreq_cp_subscribe(struct bt_conn *conn)
 	}
 
 	err = bt_gatt_subscribe(conn, &rreq->cp.subscribe_params);
-	if (err) {
+	if (err && err != -EALREADY) {
 		LOG_DBG("RAS-CP subscribe failed (err %d)", err);
 		return err;
 	}
@@ -503,7 +503,7 @@ int bt_ras_rreq_cp_unsubscribe(struct bt_conn *conn)
 	}
 
 	err = bt_gatt_unsubscribe(conn, &rreq->cp.subscribe_params);
-	if (err) {
+	if (err && err != -EINVAL) {
 		LOG_DBG("RAS-CP unsubscribe failed (err %d)", err);
 		return err;
 	}
@@ -617,7 +617,7 @@ int bt_ras_rreq_on_demand_rd_subscribe(struct bt_conn *conn)
 	}
 
 	err = bt_gatt_subscribe(conn, &rreq->on_demand_rd.subscribe_params);
-	if (err) {
+	if (err && err != -EALREADY) {
 		LOG_DBG("On-demand ranging data subscribe failed (err %d)", err);
 		return err;
 	}
@@ -637,7 +637,7 @@ int bt_ras_rreq_on_demand_rd_unsubscribe(struct bt_conn *conn)
 	}
 
 	err = bt_gatt_unsubscribe(conn, &rreq->on_demand_rd.subscribe_params);
-	if (err) {
+	if (err && err != -EINVAL) {
 		LOG_DBG("On-demand ranging data unsubscribe failed (err %d)", err);
 		return err;
 	}
@@ -657,7 +657,7 @@ int bt_ras_rreq_rd_ready_subscribe(struct bt_conn *conn, bt_ras_rreq_rd_ready_cb
 	}
 
 	err = bt_gatt_subscribe(conn, &rreq->rd_ready.subscribe_params);
-	if (err) {
+	if (err && err != -EALREADY) {
 		LOG_DBG("Ranging data ready subscribe failed (err %d)", err);
 		return err;
 	}
@@ -678,7 +678,7 @@ int bt_ras_rreq_rd_ready_unsubscribe(struct bt_conn *conn)
 	}
 
 	err = bt_gatt_unsubscribe(conn, &rreq->rd_ready.subscribe_params);
-	if (err) {
+	if (err && err != -EINVAL) {
 		LOG_DBG("Ranging data ready unsubscribe failed (err %d)", err);
 		return err;
 	}
@@ -699,7 +699,7 @@ int bt_ras_rreq_rd_overwritten_subscribe(struct bt_conn *conn, bt_ras_rreq_rd_ov
 	}
 
 	err = bt_gatt_subscribe(conn, &rreq->rd_overwritten.subscribe_params);
-	if (err) {
+	if (err && err != -EALREADY) {
 		LOG_DBG("Ranging data overwritten subscribe failed (err %d)", err);
 		return err;
 	}
@@ -720,7 +720,7 @@ int bt_ras_rreq_rd_overwritten_unsubscribe(struct bt_conn *conn)
 	}
 
 	err = bt_gatt_unsubscribe(conn, &rreq->rd_overwritten.subscribe_params);
-	if (err) {
+	if (err && err != -EINVAL) {
 		LOG_DBG("Ranging data overwritten unsubscribe failed (err %d)", err);
 		return err;
 	}
