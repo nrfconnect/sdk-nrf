@@ -25,6 +25,12 @@ static uint8_t rx_buf[5];
 static bool buf_released;
 static int test_time;
 
+/* Timeout should be more than a millisecond as transfer setup with enabling
+ * of HFXO can take more than a millisecond so if timeout is too short it can
+ * expire before first byte is transferred.
+ */
+#define TX_TIMEOUT_US 10000
+
 static void kill_timer_handler(struct k_timer *timer)
 {
 	ARG_UNUSED(timer);
@@ -85,7 +91,7 @@ static void next_tx(const struct device *dev)
 	}
 
 	tx_req_cnt++;
-	int err = uart_tx(dev, tx_buf, tx_len, 100000);
+	int err = uart_tx(dev, tx_buf, tx_len, TX_TIMEOUT_US);
 
 	if (err != 0) {
 		TC_PRINT("uart_tx returned err:%d\n", err);
@@ -323,7 +329,7 @@ static void validate_lpuart(const struct device *lpuart)
 
 	k_timer_start(&wdt_timer, K_MSEC(200), K_NO_WAIT);
 
-	err = uart_tx(lpuart, tx_buf, sizeof(tx_buf), 10000);
+	err = uart_tx(lpuart, tx_buf, sizeof(tx_buf), TX_TIMEOUT_US);
 	zassert_equal(err, 0, NULL);
 
 	k_msleep(10);
@@ -479,7 +485,7 @@ ZTEST(test_lpuart_resilency, test_tx_abort_rx_not_enabled)
 	zassert_true(device_is_ready(lpuart), NULL);
 	uart_callback_set(lpuart, tx_abort_expected_callback, NULL);
 
-	err = uart_tx(lpuart, tx_buf, sizeof(tx_buf), 1000);
+	err = uart_tx(lpuart, tx_buf, sizeof(tx_buf), TX_TIMEOUT_US);
 	zassert_equal(err, 0, "uart_tx - unexpected err: %d", err);
 	k_msleep(10);
 	zassert_equal(tx_abort_cnt, 1, "tx_abort_cnt != 1: %d", tx_abort_cnt);
@@ -500,7 +506,7 @@ ZTEST(test_lpuart_resilency, test_tx_abort_from_api)
 
 	err = uart_rx_enable(lpuart, rx_buffer, sizeof(rx_buffer), 100);
 	zassert_equal(err, 0, "uart_rx_enable - unexpected err:%d", err);
-	err = uart_tx(lpuart, tx_buffer, sizeof(tx_buffer), 1000);
+	err = uart_tx(lpuart, tx_buffer, sizeof(tx_buffer), TX_TIMEOUT_US);
 	zassert_equal(err, 0, "uart_tx - unexpected err:%d", err);
 	k_msleep(1);
 	err = uart_tx_abort(lpuart);
