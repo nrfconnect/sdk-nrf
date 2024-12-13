@@ -594,6 +594,7 @@
   - "tests/drivers/lpuart/**/*"
   - "tests/drivers/pwm/**/*"
   - "tests/drivers/sensor/**/*"
+  - "tests/drivers/audio/**/*"
 
 "CI-ps-test":
   - "samples/nrf_rpc/protocols_serialization/**/*"

@@ -1,3 +1,10 @@
+common:
+  tags:
+    - drivers
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+
 tests:
   drivers.audio.pdm_loopback.nrf54l15.1000khz:
     platform_allow:
