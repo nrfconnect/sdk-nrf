@@ -384,7 +384,9 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`coremark_sample` sample:
+
+  * Added support for the :ref:`nRF54L05 and nRF54L10 (emulated on nRF54L15 DK) <ug_nrf54l>` SoCs.
 
 Drivers
 =======
