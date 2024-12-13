@@ -713,7 +713,10 @@ static int api_tx_abort(const struct device *dev)
 	irq_unlock(key);
 
 	err = uart_tx_abort(data->uart);
-	if (err != -EFAULT) {
+	if (err == -EFAULT) {
+		/* If abort is before TX is started just report ABORT from here. */
+		err = 0;
+	} else {
 		/* if successfully aborted or returned error different than
 		 * one indicating that there is no transfer, return error code.
 		 */
