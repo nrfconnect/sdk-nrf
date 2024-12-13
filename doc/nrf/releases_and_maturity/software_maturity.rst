@@ -2236,6 +2236,22 @@ The following table indicates the software maturity levels of the support for ea
          - Experimental
          - Experimental
          - Experimental
+       * - **hardware cryptography acceleration**
+         - --
+         - --
+         - --
+         - --
+         - --
+         - Supported
+         - --
+         - --
+         - Experimental
+         - Experimental
+         - Supported
+         - --
+         - Supported
+         - Supported
+         - Supported
 
 Power management device support
 *******************************
