@@ -672,6 +672,7 @@
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
 /scripts/sdp/                             @nrfconnect/ncs-ll-ursus
+/scripts/twister/alt/zephyr/tests/drivers/mspi/api/testcase.yaml @nrfconnect/ncs-ll-ursus
 
 /scripts/docker/*.rst                     @nrfconnect/ncs-doc-leads
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-bluebagel-doc
