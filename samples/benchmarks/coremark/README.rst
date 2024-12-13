@@ -48,6 +48,8 @@ The sample configuration sets up the following board targets for standard loggin
 * ``nrf52833dk/nrf52833``
 * ``nrf52dk/nrf52832``
 * ``nrf5340dk/nrf5340/cpuapp``
+* ``nrf54l15dk/nrf54l05/cpuapp``
+* ``nrf54l15dk/nrf54l10/cpuapp``
 * ``nrf54l15dk/nrf54l15/cpuapp``
 
 Multi-domain logging

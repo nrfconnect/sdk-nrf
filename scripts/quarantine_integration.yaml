@@ -544,6 +544,8 @@
   platforms:
     - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -559,6 +561,8 @@
     - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -569,6 +573,8 @@
     - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -579,6 +585,8 @@
     - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
