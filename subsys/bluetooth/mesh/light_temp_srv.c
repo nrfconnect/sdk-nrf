@@ -394,6 +394,17 @@ static void light_temp_srv_reset(struct bt_mesh_light_temp_srv *srv)
 	srv->range.max = BT_MESH_LIGHT_TEMP_MAX;
 }
 
+static int update_handler(const struct bt_mesh_model *model)
+{
+	struct bt_mesh_light_temp_srv *srv = model->rt->user_data;
+	struct bt_mesh_light_temp_status status = { 0 };
+
+	srv->handlers->get(srv, NULL, &status);
+	encode_status(srv->pub.msg, &status);
+
+	return 0;
+}
+
 static int bt_mesh_light_temp_srv_init(const struct bt_mesh_model *model)
 {
 	struct bt_mesh_light_temp_srv *srv = model->rt->user_data;
@@ -401,7 +412,11 @@ static int bt_mesh_light_temp_srv_init(const struct bt_mesh_model *model)
 
 	srv->model = model;
 	light_temp_srv_reset(srv);
-	net_buf_simple_init(srv->pub.msg, 0);
+
+	srv->pub.msg = &srv->pub_buf;
+	srv->pub.update = update_handler;
+	net_buf_simple_init_with_data(&srv->pub_buf, srv->pub_data,
+				      sizeof(srv->pub_data));
 
 #if IS_ENABLED(CONFIG_BT_SETTINGS) && IS_ENABLED(CONFIG_EMDS)
 	srv->emds_entry.entry.id = EMDS_MODEL_ID(model);
