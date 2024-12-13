@@ -203,6 +203,12 @@
     - native_sim
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30877"
 
+- scenarios:
+    - drivers.spi.pm_runtime
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "TBD"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
