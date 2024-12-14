@@ -37,14 +37,18 @@ function(dfu_multi_image_package TARGET_NAME)
     string(REPLACE ";" "\n" SCRIPT_ARGS "${SCRIPT_ARGS}")
     file(GENERATE OUTPUT ${ARG_OUTPUT}.args CONTENT ${SCRIPT_ARGS})
 
-    add_custom_target(${TARGET_NAME} ALL
+    add_custom_command(
         COMMAND
         ${Python3_EXECUTABLE}
         ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/dfu_multi_image_tool.py
         @${ARG_OUTPUT}.args
-        BYPRODUCTS
+        OUTPUT
         ${ARG_OUTPUT}
         DEPENDS
         ${ARG_DEPENDS}
+    )
+    add_custom_target(${TARGET_NAME} ALL
+        DEPENDS
+        ${ARG_OUTPUT}
     )
 endfunction()

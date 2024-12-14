@@ -18,7 +18,7 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
 
     list(APPEND dfu_multi_image_ids 0)
     list(APPEND dfu_multi_image_paths "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.bin")
-    list(APPEND dfu_multi_image_targets ${DEFAULT_IMAGE}_extra_byproducts)
+    list(APPEND dfu_multi_image_targets ${DEFAULT_IMAGE}_extra_byproducts ${dfu_multi_image_paths})
   endif()
 
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET)
