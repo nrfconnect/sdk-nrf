@@ -10,6 +10,7 @@
 		reg = <0xa5000 DT_SIZE_K(72)>;
 	};
 
+	/delete-node/ partition@94000;
 	cpuapp_slot0_partition: partition@b7000 {
 		reg = <0xb7000 DT_SIZE_K(256)>;
 	};
@@ -32,6 +33,8 @@
 	nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RXS>;
 	#address-cells = < 0x1 >;
 	#size-cells = < 0x1 >;
+
+	/delete-node/ partition@54000;
 	cpurad_slot0_partition: partition@66000 {
 		reg = < 0x66000 DT_SIZE_K(160) >;
 	};
