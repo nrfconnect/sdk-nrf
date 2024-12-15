@@ -60,13 +60,29 @@ void lte_net_if_modem_fault_handler(void)
 	net_if_dormant_on(iface_bound);
 }
 
+static uint16_t pdn_mtu(void)
+{
+	struct pdn_dynamic_info info;
+	int rc;
+
+	rc = pdn_dynamic_info_get(0, &info);
+	if ((rc != 0) || (info.ipv4_mtu == 0)) {
+		LOG_WRN("MTU query failed, error: %d, MTU: %d", rc, info.ipv4_mtu);
+		/* Fallback to the minimum value that IPv4 is required to support */
+		info.ipv4_mtu = NET_IPV4_MTU;
+	}
+	LOG_DBG("Network MTU: %d", info.ipv4_mtu);
+	return info.ipv4_mtu;
+}
+
 /* Called when we detect LTE connectivity has been gained.
  *
- * Marks the iface as active and cancels any pending timeout.
+ * Queries the network MTU, marks the iface as active, and cancels any pending timeout.
  */
 static void become_active(void)
 {
 	LOG_DBG("Becoming active");
+	net_if_set_mtu(iface_bound, pdn_mtu());
 	net_if_dormant_off(iface_bound);
 	k_work_cancel_delayable(&connection_timeout_work);
 }
