@@ -523,6 +523,8 @@ Modem libraries
 
   * Fixed an issue with the :c:func:`modem_key_mgmt_clear` function where it returned ``-ENOENT`` when the credential was cleared.
 
+* Updated the :ref:`nrf_modem_lib_lte_net_if` to automatically set the actual link :term:`Maximum Transmission Unit (MTU)` on the network interface when PDN connectivity is gained.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
