@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_LOCATOR_TAG_FP_ADV
+	bool "Enable the Fast Pair advertising module"
+	select BT_ADV_PROV
+	select BT_ADV_PROV_FAST_PAIR
+	depends on BT_FAST_PAIR_FMDN
+	help
+	  Enable the Fast Pair advertising module that is tailored for the locator tag use case.
+	  The module manages the Fast Pair advertising set and the Fast Pair connections that are
+	  derived from it. It also implements the locator tag requirements for the Fast Pair
+	  advertising define in the FMDN specification:
+	  https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag.
