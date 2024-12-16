@@ -421,7 +421,7 @@ int link_sett_save_defcontauth_prot(int auth_prot)
 	err = link_shell_pdn_auth_prot_to_pdn_lib_method_map(auth_prot,
 							     &method);
 	if (err) {
-		mosh_error("Uknown auth protocol %d", auth_prot);
+		mosh_error("Unknown auth protocol %d", auth_prot);
 		return -EINVAL;
 	}
 
