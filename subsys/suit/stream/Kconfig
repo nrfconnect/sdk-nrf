@@ -42,7 +42,7 @@ config SUIT_STREAM_SINK_EXTMEM
 menuconfig SUIT_STREAM_SINK_SDFW
 	bool "Enable SDFW sink"
 	depends on SUIT_UTILS
-	depends on SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X
 	select PSA_WANT_ALG_SHA_512
 	select SUIT_STREAM_SINK_DIGEST
 
@@ -80,7 +80,7 @@ endif # SUIT_STREAM_SINK_SDFW
 menuconfig SUIT_STREAM_SINK_SDFW_RECOVERY
 	bool "Enable SDFW Recovery sink"
 	depends on SUIT_UTILS
-	depends on SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X
 	select PSA_WANT_ALG_SHA_512
 	select SUIT_STREAM_SINK_DIGEST
 
