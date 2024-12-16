@@ -578,6 +578,7 @@ function(suit_create_package)
     "${DEFAULT_BINARY_DIR}/zephyr"
     --zephyr-base ${ZEPHYR_BASE}
     --config-file "${PROJECT_BINARY_DIR}/.config"
+    --soc ${SB_CONFIG_SOC}
     ${CORE_ARGS}
   )
   set_property(
