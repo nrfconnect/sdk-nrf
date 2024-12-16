@@ -221,7 +221,8 @@ int lwm2m_os_pdn_ctx_destroy(uint8_t cid);
  *                    supported, or PDN_FAM_IPV6 if only IPv6 is supported. Otherwise, this value
  *                    will remain unchanged.
  *
- * @retval  0      If success.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
  */
 int lwm2m_os_pdn_activate(uint8_t cid, int *esm, enum lwm2m_os_pdn_fam *family);
 
@@ -230,7 +231,8 @@ int lwm2m_os_pdn_activate(uint8_t cid, int *esm, enum lwm2m_os_pdn_fam *family);
  *
  * @param cid The PDP context ID.
  *
- * @retval  0      If success.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
  */
 int lwm2m_os_pdn_deactivate(uint8_t cid);
 
@@ -241,7 +243,7 @@ int lwm2m_os_pdn_deactivate(uint8_t cid);
  *
  * @param cid The context ID of the PDN connection.
  *
- * @retval  0      If success.
+ * @return A non-negative PDN ID on success, or a negative errno otherwise.
  */
 int lwm2m_os_pdn_id_get(uint8_t cid);
 
@@ -249,6 +251,9 @@ int lwm2m_os_pdn_id_get(uint8_t cid);
  * @brief Set a callback for events pertaining to the default PDP context (zero).
  *
  * @param cb The PDN event handler.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
  */
 int lwm2m_os_pdn_default_callback_set(lwm2m_os_pdn_event_handler_t cb);
 
@@ -333,8 +338,8 @@ uint32_t lwm2m_os_rand_get(void);
  *
  * @param[in] id of the entry to be deleted.
  *
- * @retval  0      If success
- * @retval  -ERRNO errno code if error.
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
  */
 int lwm2m_os_storage_delete(uint16_t id);
 
