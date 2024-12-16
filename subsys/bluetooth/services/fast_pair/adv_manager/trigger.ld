@@ -1,0 +1,1 @@
+ITERABLE_SECTION_RAM(bt_fast_pair_adv_manager_trigger, 4)
