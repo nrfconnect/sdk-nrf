@@ -1,0 +1,9 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if BOARD_NRF7120PDK_NRF7120_CPUAPP
+
+config BT_CTLR
+	default BT
+
+endif # BOARD_NRF7120PDK_NRF7120_CPUAPP
