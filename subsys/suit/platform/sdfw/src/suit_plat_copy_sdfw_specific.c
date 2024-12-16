@@ -13,6 +13,7 @@
 #include <suit_plat_digest_cache.h>
 #include <suit_plat_memptr_size_update.h>
 #include <suit_memory_layout.h>
+#include <suit_plat_copy_domain_specific.h>
 
 #if CONFIG_SUIT_IPUC
 #include <suit_plat_ipuc.h>
@@ -33,20 +34,79 @@
 #include <suit_decrypt_filter.h>
 #endif /* CONFIG_SUIT_STREAM_FILTER_DECRYPT */
 
-LOG_MODULE_REGISTER(suit_plat_copy, CONFIG_SUIT_LOG_LEVEL);
+LOG_MODULE_DECLARE(suit_plat_copy, CONFIG_SUIT_LOG_LEVEL);
 
-int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handle,
-			 struct zcbor_string *manifest_component_id,
-			 struct suit_encryption_info *enc_info)
+#ifdef CONFIG_SUIT_STREAM
+static bool
+decode_supported_soc_specific_component(suit_component_t handle,
+					suit_secure_domain_component_number_t *soc_component)
+{
+	struct zcbor_string *component_id = NULL;
+	uint32_t component_number = 0;
+	suit_plat_err_t plat_ret;
+	int ret;
+
+	ret = suit_plat_component_id_get(handle, &component_id);
+	if (ret != SUIT_SUCCESS) {
+		LOG_ERR("Failed to get component ID: %d", ret);
+		return false;
+	}
+
+	plat_ret = suit_plat_decode_component_number(component_id, &component_number);
+	if (plat_ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Failed to decode SOC specific component number: %d", plat_ret);
+		ret = suit_plat_err_to_processor_err_convert(plat_ret);
+		return false;
+	}
+
+	*soc_component = (suit_secure_domain_component_number_t)component_number;
+
+	if ((*soc_component) != SUIT_SECDOM_COMPONENT_NUMBER_SDFW &&
+	    (*soc_component) != SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY) {
+		LOG_ERR("Unsupported SOC specific component type: %d", *soc_component);
+		return false;
+	}
+
+	return true;
+}
+#endif /* CONFIG_SUIT_STREAM */
+
+bool suit_plat_copy_domain_specific_is_type_supported(suit_component_type_t dst_component_type,
+						      suit_component_type_t src_component_type)
 {
 #ifdef CONFIG_SUIT_STREAM
+	/* Check if destination component type is supported */
+	if ((dst_component_type != SUIT_COMPONENT_TYPE_MEM) &&
+	    (dst_component_type != SUIT_COMPONENT_TYPE_SOC_SPEC)) {
+		return false;
+	}
+
+	/* Check if source component type is supported */
+	if ((src_component_type != SUIT_COMPONENT_TYPE_MEM) &&
+	    (src_component_type != SUIT_COMPONENT_TYPE_CAND_IMG)) {
+		return false;
+	}
+
+	return true;
+#else  /* CONFIG_SUIT_STREAM */
+	return false;
+#endif /* CONFIG_SUIT_STREAM */
+}
+
+int suit_plat_check_copy_domain_specific(suit_component_t dst_handle,
+					 suit_component_type_t dst_component_type,
+					 suit_component_t src_handle,
+					 suit_component_type_t src_component_type,
+					 struct zcbor_string *manifest_component_id,
+					 struct suit_encryption_info *enc_info)
+{
+#ifdef CONFIG_SUIT_STREAM
+	suit_secure_domain_component_number_t soc_component = 0;
 	struct stream_sink dst_sink;
 #ifdef CONFIG_SUIT_STREAM_SOURCE_MEMPTR
 	const uint8_t *payload_ptr;
 	size_t payload_size;
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
-	suit_component_type_t src_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
-	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
 
@@ -54,32 +114,18 @@ int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handl
 	 * Validate streaming operation.
 	 */
 
-	/* Get destination component type based on component handle*/
-	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
-	if (ret != SUIT_SUCCESS) {
-		LOG_ERR("Failed to decode destination component type");
-		return ret;
-	}
-
-	/* Check if destination component type is supported */
-	if ((dst_component_type != SUIT_COMPONENT_TYPE_MEM) &&
-	    (dst_component_type != SUIT_COMPONENT_TYPE_SOC_SPEC)) {
-		LOG_ERR("Unsupported destination component type");
+	if (!suit_plat_copy_domain_specific_is_type_supported(dst_component_type,
+							      src_component_type)) {
+		LOG_ERR("Unsupported component type pair: (dst: %d, src: %d)", dst_component_type,
+			src_component_type);
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 
-	/* Get source component type based on component handle*/
-	ret = suit_plat_component_type_get(src_handle, &src_component_type);
-	if (ret != SUIT_SUCCESS) {
-		LOG_ERR("Failed to decode source component type");
-		return ret;
-	}
-
-	/* Check if source component type is supported */
-	if ((src_component_type != SUIT_COMPONENT_TYPE_MEM) &&
-	    (src_component_type != SUIT_COMPONENT_TYPE_CAND_IMG)) {
-		LOG_ERR("Unsupported source component type");
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	if (dst_component_type == SUIT_COMPONENT_TYPE_SOC_SPEC) {
+		if (!decode_supported_soc_specific_component(dst_handle, &soc_component)) {
+			LOG_ERR("Failed to decode SOC specific component");
+			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+		}
 	}
 
 	/*
@@ -146,19 +192,20 @@ int suit_plat_check_copy(suit_component_t dst_handle, suit_component_t src_handl
 #endif /* CONFIG_SUIT_STREAM */
 }
 
-int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
-		   struct zcbor_string *manifest_component_id,
-		   struct suit_encryption_info *enc_info)
+int suit_plat_copy_domain_specific(suit_component_t dst_handle,
+				   suit_component_type_t dst_component_type,
+				   suit_component_t src_handle,
+				   suit_component_type_t src_component_type,
+				   struct zcbor_string *manifest_component_id,
+				   struct suit_encryption_info *enc_info)
 {
 #ifdef CONFIG_SUIT_STREAM
+	suit_secure_domain_component_number_t soc_component = 0;
 	struct stream_sink dst_sink;
-	uint32_t soc_spec_number = 0;
 #ifdef CONFIG_SUIT_STREAM_SOURCE_MEMPTR
 	const uint8_t *payload_ptr;
 	size_t payload_size;
 #endif /* CONFIG_SUIT_STREAM_SOURCE_MEMPTR */
-	suit_component_type_t src_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
-	suit_component_type_t dst_component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	int ret = SUIT_SUCCESS;
 
@@ -166,55 +213,18 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 	 * Validate streaming operation.
 	 */
 
-	/* Get destination component type based on component handle*/
-	ret = suit_plat_component_type_get(dst_handle, &dst_component_type);
-	if (ret != SUIT_SUCCESS) {
-		LOG_ERR("Failed to decode destination component type");
-		return ret;
-	}
-
-	/* Check if destination component type is supported */
-	if ((dst_component_type != SUIT_COMPONENT_TYPE_MEM) &&
-	    (dst_component_type != SUIT_COMPONENT_TYPE_SOC_SPEC)) {
-		LOG_ERR("Unsupported destination component type");
+	if (!suit_plat_copy_domain_specific_is_type_supported(dst_component_type,
+							      src_component_type)) {
+		LOG_ERR("Unsupported component type pair: (dst: %d, src: %d)", dst_component_type,
+			src_component_type);
 		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 
 	if (dst_component_type == SUIT_COMPONENT_TYPE_SOC_SPEC) {
-		struct zcbor_string *component_id = NULL;
-
-		ret = suit_plat_component_id_get(dst_handle, &component_id);
-		if (ret != SUIT_SUCCESS) {
-			LOG_ERR("suit_plat_component_id_get failed - error %i", ret);
-			return ret;
-		}
-
-		plat_ret = suit_plat_decode_component_number(component_id, &soc_spec_number);
-		if (plat_ret != SUIT_PLAT_SUCCESS) {
-			LOG_ERR("suit_plat_decode_component_number failed - error %i", plat_ret);
-			ret = suit_plat_err_to_processor_err_convert(plat_ret);
-			return ret;
-		}
-
-		if (soc_spec_number != SUIT_SECDOM_COMPONENT_NUMBER_SDFW &&
-		    soc_spec_number != SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY) {
-			LOG_ERR("Unsupported destination component type");
+		if (!decode_supported_soc_specific_component(dst_handle, &soc_component)) {
+			LOG_ERR("Failed to decode SOC specific component");
 			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 		}
-	}
-
-	/* Get source component type based on component handle*/
-	ret = suit_plat_component_type_get(src_handle, &src_component_type);
-	if (ret != SUIT_SUCCESS) {
-		LOG_ERR("Failed to decode source component type");
-		return ret;
-	}
-
-	/* Check if source component type is supported */
-	if ((src_component_type != SUIT_COMPONENT_TYPE_MEM) &&
-	    (src_component_type != SUIT_COMPONENT_TYPE_CAND_IMG)) {
-		LOG_ERR("Unsupported source component type");
-		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 	}
 
 	/*
@@ -295,8 +305,8 @@ int suit_plat_copy(suit_component_t dst_handle, suit_component_t src_handle,
 	}
 
 	if (ret == SUIT_SUCCESS && dst_component_type == SUIT_COMPONENT_TYPE_SOC_SPEC &&
-	    (soc_spec_number == SUIT_SECDOM_COMPONENT_NUMBER_SDFW ||
-	     soc_spec_number == SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY)) {
+	    (soc_component == SUIT_SECDOM_COMPONENT_NUMBER_SDFW ||
+	     soc_component == SUIT_SECDOM_COMPONENT_NUMBER_SDFW_RECOVERY)) {
 		uintptr_t sdfw_update_area_addr = 0;
 		size_t sdfw_update_area_size = 0;
 
