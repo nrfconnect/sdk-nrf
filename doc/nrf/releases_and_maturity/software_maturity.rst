@@ -1285,6 +1285,8 @@ The following table indicates the software maturity levels of the support for ea
         - nRF52840
         - nRF5340
         - nRF54H20
+        - nRF54L05
+        - nRF54L10
         - nRF54L15
         - nRF9131
         - nRF9151
@@ -1299,6 +1301,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - --
         - Supported
         - --
         - --
@@ -1313,6 +1317,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - --
         - Supported
         - --
         - --
@@ -1332,6 +1338,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
+        - --
+        - --
       * - **NFC ISO-DEP protocol (ISO/IEC 14443-4)**
         - --
         - --
@@ -1341,6 +1349,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - --
         - Supported
         - --
         - --
@@ -1355,6 +1365,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - --
         - Supported
         - --
         - --
@@ -1369,6 +1381,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - --
         - Supported
         - --
         - --
@@ -1383,6 +1397,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
+        - --
+        - --
         - Supported
         - --
         - --
@@ -1397,6 +1413,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental\ :sup:`1`
+        - --
+        - --
         - Supported\ :sup:`1`
         - --
         - --
