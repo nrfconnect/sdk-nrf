@@ -17,7 +17,7 @@ if SUIT_STORAGE
 
 config SUPPORT_SUIT_STORAGE_LAYOUT_SOC
 	bool
-	default y if SOC_SERIES_NRF54HX
+	default y if SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X
 
 config SUPPORT_SUIT_STORAGE_LAYOUT_TEST
 	bool
@@ -49,6 +49,7 @@ config SUIT_STORAGE_N_UPDATE_REGIONS
 config SUIT_STORAGE_N_ENVELOPES
 	int "Number of envelopes, possible to store in SUIT storage"
 	default 11 if SOC_SERIES_NRF54HX
+	default 13 if SOC_SERIES_NRF92X
 	default 5 if SOC_NRF52840
 	default 5 if SOC_POSIX
 	help
