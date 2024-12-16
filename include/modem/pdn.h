@@ -262,7 +262,9 @@ int pdn_default_apn_get(char *buf, size_t len);
  *
  * @param cb The PDN event handler.
  *
- * @return int Zero on success or a negative errno otherwise.
+ * @retval 0       Callback registered successfully, or the callback is already registered.
+ * @retval -EFAULT The provided cb parameter was \c NULL.
+ * @retval -ENOMEM Insufficient heap to allocate the PDP context.
  */
 int pdn_default_ctx_cb_reg(pdn_event_handler_t cb);
 
@@ -271,7 +273,10 @@ int pdn_default_ctx_cb_reg(pdn_event_handler_t cb);
  *
  * @param cb The PDN event handler.
  *
- * @return int Zero on success or a negative errno otherwise.
+ * @retval 0       Callback deregistered successfully.
+ * @retval -EFAULT The provided cb parameter was \c NULL.
+ * @retval -EINVAL PDP context with the provided callback was not found. This can be returned if
+ *                 the callback was not registered upon calling this function.
  */
 int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb);
 
