@@ -220,21 +220,14 @@ K_TIMER_DEFINE(inactivity_timer, inactivity_timer_handler, NULL);
 /* Search for quit_str and send data prior to that. Tracks quit_str over several calls. */
 static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
 {
+	k_mutex_lock(&mutex_data, K_FOREVER);
+
 	const char *const quit_str = CONFIG_SLM_DATAMODE_TERMINATOR;
 	size_t processed;
 	bool quit_str_match = false;
-	bool prev_quit_str_match = false;
-	uint8_t quit_str_match_count;
-	uint8_t prev_quit_str_match_count;
-
-	k_mutex_lock(&mutex_data, K_FOREVER);
-
-	/* Initialize from previous time.*/
-	prev_quit_str_match_count = quit_str_partial_match;
-	quit_str_match_count = prev_quit_str_match_count;
-	if (prev_quit_str_match_count != 0) {
-		prev_quit_str_match = true;
-	}
+	uint8_t quit_str_match_count = quit_str_partial_match;
+	uint8_t prev_quit_str_match_count = quit_str_partial_match;
+	uint8_t prev_quit_str_match_count_original = quit_str_partial_match;
 
 	/* Find quit_str or partial match at the end of the buffer. */
 	for (processed = 0; processed < len && quit_str_match == false; processed++) {
@@ -243,22 +236,37 @@ static size_t raw_rx_handler(const uint8_t *buf, const size_t len)
 			if (quit_str_match_count == strlen(quit_str)) {
 				quit_str_match = true;
 			}
-		} else {
-			/* No match. Possible previous partial quit_str match is data. */
-			quit_str_match_count = 0;
-			prev_quit_str_match = false;
+		} else if (quit_str_match_count > 0) {
+			/* Check if we match a beginning of a new quit_str.
+			 * We either match the first character, or in the edge case of
+			 * quit_str starting with multiple same characters, e.g. "aaabbb",
+			 * we match all but the current character (with input aaaa).
+			 */
+			for (int i = 0; i < quit_str_match_count; i++) {
+				if (buf[processed] != quit_str[i]) {
+					quit_str_match_count = i;
+					break;
+				}
+			}
+			if (quit_str_match_count == 0) {
+				/* No match.
+				 * Previous partial quit_str is data.
+				 */
+				prev_quit_str_match_count = 0;
+			} else if (prev_quit_str_match_count > 0) {
+				/* Partial match.
+				 * Part of the previous partial quit_str is data.
+				 */
+				prev_quit_str_match_count--;
+			}
 		}
 	}
 
-	if (prev_quit_str_match == false) {
-		/* Write data which was previously interpreted as a possible partial quit_str. */
-		write_data_buf(quit_str, prev_quit_str_match_count);
+	/* Write data which was previously interpreted as a possible partial quit_str. */
+	write_data_buf(quit_str, prev_quit_str_match_count_original - prev_quit_str_match_count);
 
-		/* Write data from buf until the start of the possible (partial) quit_str. */
-		write_data_buf(buf, processed - quit_str_match_count);
-	} else {
-		/* Nothing to write this round.*/
-	}
+	/* Write data from buf until the start of the possible (partial) quit_str. */
+	write_data_buf(buf, processed - (quit_str_match_count - prev_quit_str_match_count));
 
 	if (quit_str_match) {
 		raw_send(SLM_DATAMODE_FLAGS_NONE);
