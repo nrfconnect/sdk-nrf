@@ -207,7 +207,7 @@ static int cmd_data_rate_set(const struct shell *shell, size_t argc,
 	}
 
 	if (argc == 2) {
-		shell_error(shell, "Uknown argument: %s", argv[1]);
+		shell_error(shell, "Unknown argument: %s", argv[1]);
 		return -EINVAL;
 	}
 
@@ -418,7 +418,7 @@ static int cmd_output_power_set(const struct shell *shell, size_t argc,
 	}
 
 	if (argc == 2) {
-		shell_error(shell, "Uknown argument: %s", argv[1]);
+		shell_error(shell, "Unknown argument: %s", argv[1]);
 		return -EINVAL;
 	}
 
@@ -439,7 +439,7 @@ static int cmd_transmit_pattern_set(const struct shell *shell, size_t argc,
 	}
 
 	if (argc == 2) {
-		shell_error(shell, "Uknown argument: %s.", argv[1]);
+		shell_error(shell, "Unknown argument: %s.", argv[1]);
 		return -EINVAL;
 	}
 
@@ -1173,7 +1173,7 @@ static int cmd_fem(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	if (argc == 2) {
-		shell_error(shell, "Uknown argument: %s.", argv[1]);
+		shell_error(shell, "Unknown argument: %s.", argv[1]);
 		return -EINVAL;
 	}
 
@@ -1220,7 +1220,7 @@ static int cmd_fem_antenna_select(const struct shell *shell, size_t argc,
 	}
 
 	if (argc == 2) {
-		shell_error(shell, "Uknown argument: %s.", argv[1]);
+		shell_error(shell, "Unknown argument: %s.", argv[1]);
 		return -EINVAL;
 	}
 

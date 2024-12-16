@@ -76,7 +76,7 @@ static int default_cmd(const struct shell *shell, size_t argc,
 	}
 
 	if (argc == 2) {
-		shell_error(shell, "Uknown argument: %s", argv[1]);
+		shell_error(shell, "Unknown argument: %s", argv[1]);
 		return -EINVAL;
 	}
 
