@@ -40,6 +40,67 @@ config SUIT_ENVELOPE_SIGN_SCRIPT
 	  - --output-file <STRING> - location of signed envelope to create by script
 	default "modules/lib/suit-generator/ncs/sign_script.py"
 
+choice SUIT_ENVELOPE_ENCRYPT_SCRIPT
+	prompt "Select the used SUIT encryption script"
+	help
+	   The SUIT encryption script is used to generate encryption artifacts for images inside a SUIT envelope.
+	   It is the "external" script that is called by the build system - it is responsible for creating
+	   various needed SUIT structures, but passes the actual encryption of the payload to a separate KMS script.
+	default SUIT_ENVELOPE_ENCRYPT_SCRIPT_DEFAULT
+
+config SUIT_ENVELOPE_ENCRYPT_SCRIPT_DEFAULT
+	bool "Use the default SUIT encryption script"
+	help
+	  Use the default encryption script to generate encryption artifacts for images inside a SUIT envelope.
+
+endchoice
+
+config SUIT_ENVELOPE_ENCRYPT_SCRIPT_PATH
+	string "Location of SUIT encrypt script"
+	help
+	  Python script called to generate encryption artifacts for images inside a SUIT envelope.
+	  See the help message for the default encryption script to see what arguments the script
+	  must accept.
+	default "${ZEPHYR_NRF_MODULE_DIR}/../modules/lib/suit-generator/ncs/encrypt_script.py" if SUIT_ENVELOPE_ENCRYPT_SCRIPT_DEFAULT
+
+choice SUIT_ENVELOPE_KMS_SCRIPT
+	prompt "Select the used SUIT KMS script to be used by the encryption script"
+	help
+	   This is the "internal" python script that is called by the encryption script to perform the cryptographic operations,
+	   such as encryption using an AES key. The script must contain a class implementing the interface defined by
+	   the abstract class SuitKMSBase found in the suit_generator.suit_kms_base and a suit_kms_factory function
+	   needed to get an object of the class.
+
+config SUIT_ENVELOPE_KMS_SCRIPT_BASIC
+	bool "Use the basic SUIT KMS script"
+	help
+	  Use the basic KMS script to encrypt firmware.
+	  This script provides a basic implementation of the SuitKMS interface, in which
+	  the private/encryption keys are stored in the filesystem.
+
+endchoice
+
+config SUIT_ENVELOPE_KMS_SCRIPT_PATH
+	string "Location of SUIT KMS script"
+	default "${ZEPHYR_NRF_MODULE_DIR}/../modules/lib/suit-generator/ncs/basic_kms.py" if SUIT_ENVELOPE_KMS_SCRIPT_BASIC
+
+if SUIT_ENVELOPE_KMS_SCRIPT_BASIC
+
+config SUIT_ENVELOPE_KMS_SCRIPT_BASIC_KEY_DIRECTORY
+	string "The directory in which the keys are stored"
+	default "${ZEPHYR_NRF_MODULE_DIR}/../modules/lib/suit-generator/ncs"
+	help
+	  Location of the key file used by the basic KMS script.
+
+endif
+
+config SUIT_ENVELOPE_KMS_SCRIPT_CONTEXT
+	string "Context for the SUIT KMS script"
+	default SUIT_ENVELOPE_KMS_SCRIPT_BASIC_KEY_DIRECTORY if SUIT_ENVELOPE_KMS_SCRIPT_BASIC
+	default ""
+	help
+	  Context to pass to the SUIT KMS script.
+
 config SUIT_ENVELOPE_ROOT_ARTIFACT_NAME
 	string "Name of the root SUIT artifact."
 	default "root"
