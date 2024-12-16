@@ -2098,6 +2098,8 @@ Hardware Unique Key
         - nRF5340
         - nRF54H20
         - nRF54L15
+        - nRF54L10
+        - nRF54L05
         - nRF9131
         - nRF9151
         - nRF9160
@@ -2111,6 +2113,8 @@ Hardware Unique Key
         - Supported
         - Supported
         - --
+        - Experimental
+        - Experimental
         - Experimental
         - --
         - Supported
