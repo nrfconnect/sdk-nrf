@@ -24,7 +24,7 @@ Make sure you have all the required hardware and that your computer has one of t
 Hardware
 ========
 
-* nRF54H20 DK version PCA10175 Engineering C - v0.8.3 and later revisions
+* nRF54H20 DK version PCA10175 Engineering C - v0.9.0 and later revisions
 
   Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 
@@ -48,9 +48,9 @@ See :ref:`supported_OS` for more information.
 
 You also need the following:
 
-* `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively).
-* `curl`_.
-* SEGGER J-Link |jlink_ver| and, on Windows, also the SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
+* `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively)
+* `curl`_
+* SEGGER J-Link |jlink_ver| and, on Windows, also the SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|
 
    .. note::
       To install the SEGGER USB Driver for J-Link on Windows, manually install J-Link |jlink_ver| from the command line using the ``-InstUSBDriver=1`` parameter:
@@ -66,11 +66,14 @@ You also need the following:
             .\JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
 
       #. Follow the on-screen instructions.
-      #. After installing, add the J-Link executable to the system path on Linux and MacOS, or to the environment variables on Windows, to run it from anywhere on the system.
+      #. After installing, ensure the J-Link executable can be run from anywhere on your system:
 
-* The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
-* In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
-* On Linux, the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
+         * For Linux and MacOS, add it to the system path.
+         * For Windows, add it to the environment variables.
+
+* The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_
+* In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_
+* On Linux, the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware
 
 .. _ug_nrf54h20_gs_installing_software:
 
@@ -82,7 +85,7 @@ To work with the nRF54H20 DK, follow the instructions in the next sections to in
 .. _ug_nrf54h20_install_toolchain:
 
 Installing the |NCS| and its toolchain
-**************************************
+======================================
 
 You can install the |NCS| and its toolchain by using Toolchain Manager.
 
@@ -95,7 +98,7 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
 
    a. `Download nRF Connect for Desktop`_ for your operating system.
    #. Install and run the tool on your machine.
-   #. In the :guilabel:`APPS` section, click :guilabel:`Install` next to Toolchain Manager.
+   #. In the :guilabel:`Apps` section, click :guilabel:`Install` next to Toolchain Manager.
 
    The app installs on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
 
@@ -147,18 +150,20 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
          You can then follow the instructions in :ref:`creating_cmd`.
 
 Installing a terminal application
-**********************************
+=================================
 
 Install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
 Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 Installing nRF Util and its commands
-************************************
+====================================
 
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
-* nRF Util version 7.11.1 or higher
-* nRF Util ``device`` version 2.7.2
+* nRF Util version 7.13.0 or higher
+* nRF Util ``device`` version 2.7.8
+* nRF Util ``trace`` version 3.10.0
+* nRF Util ``suit`` version 0.9.0
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
 #. Add nRF Util to the system path on Linux and MacOS, or environment variables on Windows, to run it from anywhere on the system.
@@ -174,15 +179,23 @@ Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
       nrfutil --version
 
-#. If your version is below 7.11.1, run the following command to update nRF Util::
+#. If your version is below 7.13.0, run the following command to update nRF Util::
 
       nrfutil self-upgrade
 
    For more information, consult the `nRF Util`_ documentation.
 
-#. Install the nRF Util ``device`` command version 2.7.2 as follows::
+#. Install the nRF Util ``device`` command version 2.7.8 as follows::
 
-      nrfutil install device=2.7.2 --force
+      nrfutil install device=2.7.8 --force
+
+#. Install the nRF Util ``trace`` command version 3.10.0 as follows::
+
+      nrfutil install trace=3.10.0 --force
+
+#. Install the nRF Util ``suit`` command version 0.9.0 as follows::
+
+      nrfutil install suit=0.9.0 --force
 
 .. _ug_nrf54h20_gs_bringup:
 
@@ -202,9 +215,8 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 1. Download the `BICR new binary file`_.
 #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
-.. note::
-   On MacOS, connecting the DK might cause a popup containing the message ``“Disk Not Ejected Properly`` to appear repeatedly on screen.
-   To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
+   .. note::
+      On MacOS, when connecting the DK, you might see a popup with the message ``Disk Not Ejected Properly`` appearing multiple times.
 
 #. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
 
@@ -221,10 +233,11 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 Programming the nRF54H20 SoC binaries
 =====================================
 
-After programming the BICR, you need to provide the nRF54H20 SoC with the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
+After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC binaries <abi_compatibility>`.
+This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC Binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
+1. Download the `nRF54H20 SoC Binaries v0.8.0`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -279,7 +292,7 @@ If you have multiple Nordic Semiconductor devices, ensure that only the nRF54H20
 
    west flash
 
-The sample will be built and programmed automatically on both the application core and the Peripheral Processor (PPR) of the nRF54H20.
+This command builds and programs the sample automatically on both the application core and the Peripheral Processor (PPR) of the nRF54H20 SoC.
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
@@ -313,7 +326,8 @@ Next steps
 You are now all set to use the nRF54H20 DK.
 See the following links for where to go next:
 
-* :ref:`ug_nrf54h20_architecture` for information about the multicore System on Chip, such as the responsibilities of the cores and their interprocessor interactions, the memory mapping, and the boot sequence.
+* :ref:`ug_nrf54h20_architecture` for information about the multicore System on Chip.
+  This includes descriptions of core responsibilities, their interprocessor interactions, memory mapping, and the boot sequence.
 * The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 * :ref:`configuration_and_build` documentation to learn more about the |NCS| development environment.
 * :ref:`ug_nrf54h` documentation for more advanced topics related to the nRF54H20.
