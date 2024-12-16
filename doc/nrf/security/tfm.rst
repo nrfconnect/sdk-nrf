@@ -78,11 +78,81 @@ A minimal version of the TF-M secure application is provided in |NCS| to show ho
 
 The secure services supported by this minimal version allow for generating random numbers, and the platform services.
 
-The minimal version of TF-M is disabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` option or one of the other build profiles.
-
 When :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` is set, the configurability of TF-M is severely limited.
 Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
 Instead, the default configuration must be used as a starting point.
+
+.. _tfm_configurable_build:
+
+Configurable build
+==================
+
+The minimal version of TF-M is disabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` option or one of the other build profiles.
+For description of the build profiles, see Trusted Firmware M documentation regarding :ref:`tf-m_profiles`.
+
+When :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` is enabled, the build process will not set a specific
+TF-M profile type. This allows for a more flexible configuration where individual TF-M features can be
+enabled or disabled as needed. This provides more control over the build process and allows for a more
+fine-grained configuration of the TF-M secure image.
+
+In order to configure the features of the TF-M secure image, you must choose which TF-M partitions and which secure services to include in the build.
+A "TF-M partition" in this context refers to a secure partition within the Trusted Firmware-M architecture. These partitions are isolated from each other and from the non-secure application code.
+A service running inside TF-M would typically be implemented within one of these secure partitions. Each service can be a separate partition, or multiple related services might be grouped into a single partition. The partition provides the execution environment for the service, handling secure function calls and ensuring that the service's code and data are protected from unauthorized access.
+
+Following are the available Kconfig options for TF-M partitions:
+
+.. list-table:: Available TF-M Partitions
+   :header-rows: 1
+
+   * - Option Name
+     - Description
+     - Default Value
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM`
+     - Provides platform services.
+     - Enabled
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO`
+     - Provides cryptographic services.
+     - Enabled
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE`
+     - Provides secure storage services.
+     - Enabled
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE`
+     - Provides internal trusted storage services.
+     - Enabled
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_INITIAL_ATTESTATION`
+     - Provides initial attestation services.
+     - Disabled
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_FIRMWARE_UPDATE`
+     - Provides firmware update services.
+     - Disabled
+
+When cryptographic services are enabled, you can configure what crypto modules to include in TF-M by using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options as explained above.
+
+Security Partition Manager (SPM) backend may also be configured, depending on the isolation requirements of the application.
+
+.. list-table:: SPM backends
+   :header-rows: 1
+
+   * - Option
+     - Description
+     - Allowed isolation levels
+   * - :kconfig:option:`CONFIG_TFM_SFN`
+     - With SFN the Secure Partition is made up of a collection of callback functions which implement secure services.
+     - Level 1
+   * - :kconfig:option:`CONFIG_TFM_IPC`
+     - With IPC each Secure Partition processes signals in any order, and can defer responding to a message while continuing to process other signals.
+     - Levels 1, 2 and 3
+
+Amount of logging messages can be controlled by setting the :kconfig:option:`CONFIG_TFM_LOG_LEVEL` option or by setting the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option to disable logging.
+
+Size of TF-M partitions are affected by multiple configuration option and hardware related options.
+Code and memory size of TF-M increases as more services are enabled but also selected hardware places limitations on how separation of secure and non-secure are made.
+
+TF-M is linked as a separate partition in the final binary image. The reserved sizes of its RAM and Flash partitions are configured by the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` and :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` options.
+These configuration option allows you to specify the size allocated for the TF-M partition in the final binary image. Default partition sizes vary between device families and are not optimized to any specific use case.
+
+Process to optimize the TF-M size is to first find the minimal set of features to satisfy the application needs and then minimize the allocated partition sizes while still conforming to the alignment and granularity requirements of given hardware.
+See :ref:`ug_tfm_partition_alignment_requirements` for more information about the alignment requirements.
 
 
 .. _tfm_encrypted_its:
@@ -196,6 +266,22 @@ TF-M requires that secure and non-secure partition addresses must be aligned to 
 
 On nRF53 and nRF91 Series devices, TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the SPU flash region size.
 On nRF54L15 devices, TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the MPC region size.
+
+.. list-table:: Region limits on different hardware
+   :header-rows: 1
+
+   * - Family
+     - RAM granularity
+     - ROM granularity
+   * - nRF91 Series
+     - 8 kB
+     - 32 kB
+   * - nRF53 Series
+     - 8 kB
+     - 16 kB
+   * - nRF54 Series
+     - 4 kB
+     - 4 kB
 
 When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
 But when the static partitions are used, the user is responsible for following the alignment requirements.
