@@ -116,8 +116,10 @@ static void test_request_release_clock_spec(const struct device *clk_dev,
 	__ASSERT_NO_MSG(ret == 0);
 	__ASSERT_NO_MSG(res == 0);
 	ret = clock_control_get_rate(clk_dev, NULL, &rate);
-	__ASSERT_NO_MSG(ret == 0);
-	__ASSERT_NO_MSG(rate == clk_spec->frequency);
+	if (ret != -ENOSYS) {
+		__ASSERT_NO_MSG(ret == 0);
+		__ASSERT_NO_MSG(rate == clk_spec->frequency);
+	}
 	k_busy_wait(10000);
 	ret = nrf_clock_control_release(clk_dev, clk_spec);
 	__ASSERT_NO_MSG(ret == ONOFF_STATE_ON);

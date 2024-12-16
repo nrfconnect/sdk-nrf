@@ -127,7 +127,9 @@ static void test_request_release_clock_spec(const struct device *clk_dev,
 	}
 	ret = clock_control_get_rate(clk_dev, NULL, &rate);
 	LOG_INF("Clock control get rate response code: %d", ret);
-	if (ret != 0) {
+	if (ret == -ENOSYS) {
+		LOG_INF("Clock control get rate not supported");
+	} else if (ret != 0) {
 		LOG_ERR("Clock control get rate failed");
 		atomic_inc(&completed_threads);
 		return;
