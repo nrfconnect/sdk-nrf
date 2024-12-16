@@ -468,9 +468,9 @@
 			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
                                                                                                                                       \
 			/* Endpoint: 1, Cluster: Thermostat (server) */                                                               \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                           \
+			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000000, 2, ZAP_TYPE(TEMPERATURE),                                           \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* LocalTemperature */                                                      \
-			{ ZAP_SIMPLE_DEFAULT(0xFFFF), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                           \
+			{ ZAP_SIMPLE_DEFAULT(0x8000), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                           \
 			  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* OutdoorTemperature */                                                    \
 			{ ZAP_SIMPLE_DEFAULT(700), 0x00000003, 2, ZAP_TYPE(TEMPERATURE), 0 }, /* AbsMinHeatSetpointLimit              \
 											       */                                     \
@@ -980,7 +980,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
-		{ 0x00000016, 3 },                                                                                     \
+		{ 0x00000012, 1 }, { 0x00000016, 3 },                                                                  \
 		{                                                                                                      \
 			0x00000301, 4                                                                                  \
 		}                                                                                                      \
@@ -989,13 +989,13 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device type offsets
 #define FIXED_DEVICE_TYPE_OFFSETS                                                                                      \
 	{                                                                                                              \
-		0, 1                                                                                                   \
+		0, 2                                                                                                   \
 	}
 
 // Array of device type lengths
 #define FIXED_DEVICE_TYPE_LENGTHS                                                                                      \
 	{                                                                                                              \
-		1, 1                                                                                                   \
+		2, 1                                                                                                   \
 	}
 
 // Array of endpoint types supported on each endpoint
