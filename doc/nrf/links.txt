@@ -223,6 +223,8 @@
 .. _`PSA Certified Crypto API 1.2.1`: https://arm-software.github.io/psa-api/crypto/1.2/
 .. _`PSA Certified Crypto API 1.2 PAKE Extension Final 1`: https://arm-software.github.io/psa-api/crypto/1.2/ext-pake/
 .. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
+.. _`PSA Certified Secure Storage API 1.0`: https://arm-software.github.io/psa-api/storage/1.0/
+.. _`PSA Certified Attestation API 1.0`: https://arm-software.github.io/psa-api/attestation/1.0/
 
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
@@ -477,7 +479,11 @@
 
 .. _`TF-M documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/index.html
 .. _`TF-M secure partition integration guide`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_secure_partition_addition.html
+.. _`TF-M Platform`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_platform_integration_guide.html
 .. _`TF-M ITS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_its_integration_guide.html
+.. _`TF-M Crypto`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_crypto_integration_guide.html
+.. _`TF-M PS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_ps_integration_guide.html
+.. _`TF-M Attestation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/services/tfm_attestation_integration_guide.html
 
 .. _`HCI Events`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/softdevice_controller/doc/api.html#hci_events
 
