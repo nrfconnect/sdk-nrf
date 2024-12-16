@@ -31,6 +31,21 @@ The TF-M implementation in |NCS| is demonstrated in the following samples:
 
 In addition, the TF-M implementation is used in all samples and applications in this SDK that support the ``*/ns`` :ref:`variant <app_boards_names>` of the boards, due to :ref:`Cortex-M Security Extensions (CMSE) <app_boards_spe_nspe>` support.
 
+Limitations
+===========
+
+The following limitations apply to TF-M and its usage:
+
+* Firmware Update service is not supported.
+* The following crypto modules or ciphers are not supported:
+
+  * AES output feedback (AES-OFB) mode.
+  * AES cipher feedback (AES-CFB) mode.
+
+* Isolation level 3 is not supported.
+* In Isolation level 2 (and 3), the number of peripherals configured as secure in Application Root of Trust (ARoT) is limited by the number of available MPU regions.
+* Nordic Semiconductor devices only support the GCC toolchain for building TF-M.
+
 Building
 ********
 
@@ -62,10 +77,7 @@ Enabling secure services
 When using the :ref:`nrf_security`, if :kconfig:option:`CONFIG_BUILD_WITH_TFM` is enabled together with :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`, the TF-M secure image will enable the use of the hardware acceleration of Arm CryptoCell.
 In such case, the Kconfig configurations in the Nordic Security Backend control the features enabled through TF-M.
 
-You can configure what crypto modules to include in TF-M by using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options found in file :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules`.
-
-TF-M utilizes :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
-For more information about the PSA cryptography and the API, see `PSA Certified Crypto API`_.
+See :ref:`tfm_partition_crypto` for more information about the TF-M Crypto partition.
 
 .. _tfm_minimal_build:
 
@@ -77,135 +89,163 @@ A minimal version of the TF-M secure application is provided in |NCS| to show ho
 
 The secure services supported by this minimal version allow for generating random numbers, and the platform services.
 
-The minimal version of TF-M is disabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` option or one of the other build profiles.
-
-When :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` is set, the configurability of TF-M is severely limited.
+The minimal version is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option, which is enabled by default on the nRF53 Series and nRF91 Series devices.
+With the minimal build, the configuration of TF-M is severely limited.
 Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
 Instead, the default configuration must be used as a starting point.
 
+.. _tfm_configurable_build:
 
-.. _tfm_encrypted_its:
+Configurable build
+==================
 
-Encrypted ITS
-=============
+The configurable build is the full TF-M implementation that lets you configure all of its features.
+It does not come with the constraints of the minimal build.
 
-TF-M implements a PSA internal trusted storage (ITS) with encryption and authentication.
-For more information about the general features of the TF-M ITS service, see `TF-M ITS`_.
+To enable the configurable, full TF-M build, make sure the following Kconfig options are configured:
 
-To enable TF-M ITS encryption, use the Kconfig option :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED`.
-The ITS encryption is transparent to the user as long as the Master Key Encryption Key (MKEK) is populated before use.
+* :kconfig:option:`CONFIG_BUILD_WITH_TFM` is enabled
+* :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` is enabled
+* :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` is disabled
 
-On Nordic Semiconductor devices, the hardware-accelerated AEAD scheme ChaChaPoly1305 is used with a 256 bits key.
-This key is derived with a key derivation function (KDF) based on NIST SP 800-108 CMAC.
-The input key of the KDF is the MKEK, a symmetric key stored in the Key Management Unit (KMU) of Nordic Semiconductor devices.
-The MKEK is protected by the KMU peripheral and its key material cannot be read by software. It can only be used by reference.
+For description of the build profiles, see :ref:`tf-m_profiles`.
+It is not recommended to use predefined TF-M profiles as they might result in a larger memory footprint than necessary.
 
-The file ID is used as a derivation label for the KDF.
-This means that each file ID uses a different AEAD key.
-As long as each file has a unique file ID, the key used for encryption and authentication is unique.
+When the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` Kconfig option is enabled, the build process will not set a specific TF-M profile type.
+This allows for a more flexible configuration where individual TF-M features can be enabled or disabled as needed.
+It also provides more control over the build process and allows for a more fine-grained configuration of the TF-M secure image.
 
-To strengthen data integrity, the metadata of the ITS file (creation flags/size) is used as authenticated data in the encryption process.
-
-The nonce for the AEAD operation is generated by concatenating a random 8-byte seed and an increasing 4-byte counter.
-The random seed is generated once in the boot process and stays the same until reset.
-
-Logging
-*******
-
-TF-M employs two UART interfaces for logging: one for the secure part (MCUboot and TF-M), and one for the non-secure application.
-By default, the logs arrive on different COM ports on the host PC.
-See the :ref:`ug_tfm_manual_VCOM_connection` for more details.
-
-Alternatively, you can configure the TF-M to connect to the same UART as the application by using the :kconfig:option:`CONFIG_TFM_SECURE_UART0` Kconfig option.
-Setting this Kconfig option makes TF-M logs visible on the application's VCOM, without manual connection.
-
-The UART instance used by the application is ``0`` by default, and the TF-M UART instance is ``1``.
-By using the :kconfig:option:`CONFIG_TFM_SECURE_UART0`. the TF-M UART instance becomes the same as that of the application's.
+To configure the features of the TF-M secure image, you must choose which TF-M partitions and which secure services to include in the build.
 
 .. note::
+     A "TF-M partition" in this context refers to a secure partition within the Trusted Firmware-M architecture.
+     These partitions are isolated from each other and from the non-secure application code.
+     A service running inside TF-M would typically be implemented within one of these secure partitions.
 
-  When the TF-M and application use the same UART, the TF-M will disable logging after it has booted and it will only re-enable it again to log a fatal error.
+Each service can be a separate partition, or multiple related services might be grouped into a single partition.
+The partition provides the execution environment for the service.
+It handles secure function calls and ensures that the service's code and data are protected from unauthorized access.
 
-Provisioning
-************
+Following are the available Kconfig options for TF-M partitions:
 
-For the devices that need provisioning, TF-M implements the following Platform Root of Trust (PRoT) Security Lifecycle states that conform to the `ARM Platform Security Model 1.1`_:
+.. list-table:: Available TF-M Partitions
+   :header-rows: 1
 
-* Device Assembly and Test
-* PRoT Provisioning
-* Secured
+   * - Option name
+     - Description
+     - Default value
+     - Dependencies
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM`
+     - Provides platform services.
+     - Enabled
+     -
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO`
+     - Provides cryptographic services.
+     - Enabled
+     - INTERNAL_TRUSTED_STORAGE
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE`
+     - Provides secure storage services.
+     - Enabled
+     - PLATFORM, CRYPTO
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE`
+     - Provides internal trusted storage services.
+     - Enabled
+     -
+   * - :kconfig:option:`CONFIG_TFM_PARTITION_INITIAL_ATTESTATION`
+     - Provides initial attestation services.
+     - Disabled
+     - CRYPTO
 
-The device starts in the **Device Assembly and Test** state.
-The :ref:`provisioning_image` sample shows how to move the device from the **Device Assembly and Test** state to the **PRoT Provisioning** state, and how to provision the device with hardware unique keys (HUKs) and an identity key.
+Security Partition Manager backend configuration
+------------------------------------------------
 
-To move the device from the **PRoT Provisioning** state to the **Secured** state, set the :kconfig:option:`CONFIG_TFM_NRF_PROVISIONING` Kconfig option for your application.
-In the first boot, TF-M will ensure that the keys are stored in the Key Management Unit (KMU) and move the device to the **Secured** state.
-The :ref:`tfm_psa_template` sample shows how to achieve this.
+Security Partition Manager (SPM) backend may also be configured, depending on the isolation requirements of the application.
 
-.. _ug_tfm_manual_VCOM_connection:
+.. note::
+    Do not confuse *Security* Partition Manager with *Secure* Partition Manager that was removed in the |NCS| v2.1.0.
+    See :ref:`migration guide <spm_to_tfm_migration>`.
 
-Manual connection to Virtual COM ports on the nRF5340 DK
-=========================================================
+.. list-table:: SPM backends
+   :header-rows: 1
 
-By default, the nRF5340 DK v1.0.0 requires that you connect specific wires on the kit to receive secure logs on the host PC.
-Specifically, wire the pins **P0.25** and **P0.26** of the **P2** connector to **RxD** and **TxD** of the **P24** connector respectively.
-See :ref:`logging_cpunet` on the Working with nRF5340 DK page for more information.
+   * - Option
+     - Description
+     - Allowed isolation levels
+   * - :kconfig:option:`CONFIG_TFM_SFN`
+     - With SFN, the Secure Partition is made up of a collection of callback functions that implement secure services.
+     - Level 1
+   * - :kconfig:option:`CONFIG_TFM_IPC`
+     - With IPC, each Secure Partition processes signals in any order, and can defer responding to a message while continuing to process other signals.
+     - Levels 1, 2 and 3
 
-On the nRF5340 DK v2.0.0, there are only two virtual COM ports available.
-By default, one of the ports is used by the non-secure UART0 peripheral from the application and the other by the UART1 peripheral from the network core.
+To control the number of logging messages, set the :kconfig:option:`CONFIG_TFM_LOG_LEVEL` Kconfig option.
+To disable logging, set the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
 
-There are several options to get UART output from the secure TF-M:
+The size of TF-M partitions is affected by multiple configuration options and hardware-related options.
+The code and memory size of TF-M increases when more services are enabled, but the selected hardware also places limitations on how the separation of secure and non-secure is made.
 
-* Disable the output for the network core and change the pins used by TF-M.
-  The network core will usually have an |NCS| image.
-  To learn how to configure an image, see the Configuration namespacing section in Zephyr's documentation about :ref:`sysbuild`.
-  To configure logging in an |NCS| image, see :ref:`ug_logging`.
-  To change the pins used by TF-M, the RXD (:kconfig:option:`CONFIG_TFM_UART1_RXD_PIN`) and TXD (:kconfig:option:`CONFIG_TFM_UART1_TXD_PIN`) Kconfig options in the application image can be set to **P1.00** (32) and **P1.01** (33).
+TF-M is linked as a separate partition in the final binary image.
+The reserved sizes of its RAM and flash partitions are configured by the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` and :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` options.
+These configuration options allow you to specify the size allocated for the TF-M partition in the final binary image.
+Default partition sizes vary between device families and are not optimized to any specific use case.
 
-* The secure and non-secure UART peripherals can be wired to the same pins.
-  Specifically, physically wire together the pins **P0.25** and **P0.26** to **P0.20** and **P0.22**, respectively.
-
-* If the non-secure application, network core and TF-M outputs are all needed simultaneously, additional UART <-> USB hardware is needed.
-  A second nRF DK can be used if available.
-  Pin **P0.25** needs to be wired to the TXD pin, and **P0.26** to the RXD pin of the external hardware.
-  These pins will provide the secure TF-M output, while the two native COM ports of the DK will be used for the non-secure application and the network core output.
-
-Limitations
-***********
-
-The following limitations apply to TF-M and its usage:
-
-* Firmware Update service is not supported.
-* The following crypto modules or ciphers are not supported:
-
-  * AES output feedback (AES-OFB) mode.
-  * AES cipher feedback (AES-CFB) mode.
-
-* Isolation level 3 is not supported.
-* In Isolation level 2 or higher, the number of peripherals configured as secure in Application Root of Trust (ARoT) is limited by the number of available MPU regions.
-* Nordic Semiconductor devices only support the GCC toolchain for building TF-M.
+To optimize the TF-M size, find the minimal set of features to satisfy the application needs and then minimize the allocated partition sizes while still conforming to the alignment and granularity requirements of given hardware.
 
 .. _ug_tfm_partition_alignment_requirements:
 
 TF-M partition alignment requirements
-*************************************
+=====================================
 
 TF-M requires that secure and non-secure partition addresses must be aligned to the flash region size :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE`.
-|NCS| ensures that they in fact are aligned and comply with the TF-M requirements.
+The |NCS| ensures that they in fact are aligned and comply with the TF-M requirements.
 
-On nRF53 and nRF91 Series devices, TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the SPU flash region size.
-On nRF54L15 devices, TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` is set to the MPC region size.
+The following differences apply to the device families:
+
+* On nRF53 and nRF91 Series devices, TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option is set to the SPU flash region size.
+* On nRF54L15 devices, TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` option is set to the MPC region size.
+
+.. list-table:: Region limits on different hardware
+   :header-rows: 1
+
+   * - Family
+     - RAM granularity
+     - ROM granularity
+   * - nRF91 Series
+     - 8 kB
+     - 32 kB
+   * - nRF53 Series
+     - 8 kB
+     - 16 kB
+   * - nRF54 Series
+     - 4 kB
+     - 4 kB
+
+.. figure:: /images/nrf-secure-rom-granularity.svg
+   :alt: Partition alignment granularity
+   :width: 80%
+   :align: center
+
+   Partition alignment granularity on different nRF devices
 
 When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
 But when the static partitions are used, the user is responsible for following the alignment requirements.
 
-If you are experiencing any partition alignment issues when using the Partition Manager, check the :ref:`known_issues` page on the main branch.
+.. figure:: /images/secure-flash-regions.svg
+   :alt: Example of aligning partitions with flash regions
+   :width: 80%
+   :align: center
 
-The partitions which need to be aligned with the TrustZone flash region size are partitions ``tfm_nonsecure`` and ``nonsecure_storage``.
+   Example of aligning partitions with flash regions
+
+.. note::
+   If you are experiencing any partition alignment issues when using the Partition Manager, check the `known issues page on the main branch`_.
+
+You need to align the ``tfm_nonsecure``, ``tfm_storage``, and ``nonsecure_storage`` partitions with the TrustZone flash region size.
 Both the partition start address and the partition size need to be aligned with the flash region size :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE`.
 
-Note that the ``tfm_nonsecure`` partition is placed after the ``tfm_secure`` partition, thus the end address of the ``tfm_secure`` partition is the same as the start address of the ``tfm_nonsecure`` partition.
-As a result, altering the size of the ``tfm_secure`` partition affects the start address of the ``tfm_nonsecure`` partition.
+.. note::
+   The ``tfm_nonsecure`` partition is placed after the ``tfm_secure`` partition, thus the end address of the ``tfm_secure`` partition is the same as the start address of the ``tfm_nonsecure`` partition.
+   As a result, altering the size of the ``tfm_secure`` partition affects the start address of the ``tfm_nonsecure`` partition.
 
 The following static partition snippet shows a non-aligned configuration for nRF5340 which has a TrustZone flash region size :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` of 0x4000.
 
@@ -253,38 +293,461 @@ We will decrease the size of the (optional) ``mcuboot_pad`` partition and thus t
       address: 0x8000
       size: 0x4000
 
+Analyzing ``tfm_secure`` partition size
+=======================================
 
+You can analyze the size of the ``tfm_secure`` partition from the build output:
 
-.. _ug_tfm_migrate:
+.. code-block:: console
 
-Migrating from Secure Partition Manager to Trusted Firmware-M
-*************************************************************
+   [71/75] Linking C executable bin/tfm_s.axf
+   Memory region   Used Size  Region Size  %age Used
+      FLASH:       31972 B       256 KB     12.20%
+      RAM:         4804 B        88 KB      5.33%
 
-The interface to TF-M is different from the interface to SPM.
-Due to that, the application code that uses the SPM Secure Services needs to be ported to use TF-M instead.
+The example shows that the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` Kconfig option for the ``tfm_secure`` partition is set to 256 kB and the TF-M binary uses 32 kB of the available space.
+Similarly, the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` option for the ``tfm_secure`` partition is set to 88 kB and the TF-M binary uses 5 kB of the available space.
+You can use this information to optimize the size of the TF-M, as long as it is within the alignment requirements explained in the previous section.
 
-TF-M can replace the following SPM services:
+Tools for analyzing the ``tfm_secure`` partition size
+-----------------------------------------------------
 
-* ``spm_request_system_reboot`` with ``tfm_platform_system_reset``.
-* ``spm_request_random_number`` with ``psa_generate_random`` or ``entropy_get_entropy``.
-* ``spm_request_read`` with ``tfm_platform_mem_read`` or ``soc_secure_mem_read``.
-* ``spm_s0_active`` with ``tfm_platform_s0_active``.
-* ``spm_firmware_info`` with ``tfm_firmware_info``.
+The TF-M build system is compatible with Zephyr's :ref:`zephyr:footprint_tools` tools that let you generate RAM and ROM usage reports (using :ref:`zephyr:sysbuild_dedicated_image_build_targets`).
+You can use the reports to analyze the memory usage of the different TF-M partitions and see how changing the Kconfig options affects the memory usage.
 
-The following SPM services have no replacement in TF-M:
+Depending on your development environment, you can generate memory reports for TF-M in the following ways:
 
-* ``spm_prevalidate_b1_upgrade``
-* ``spm_busy_wait``
-* ``spm_set_ns_fatal_error_handler``
+.. tabs::
+
+   .. group-tab:: nRF Connect for VS Code
+
+      You can use the `Memory report`_ feature in the |nRFVSC| to check the size and percentage of memory that each symbol uses on your device for RAM, ROM, and partitions (when applicable).
+
+   .. group-tab:: Command line
+
+       You can use the :ref:`zephyr:sysbuild_dedicated_image_build_targets` ``tfm_ram_report`` and ``tfm_rom_report`` targets for analyzing the memory usage of the TF-M partitions inside the ``tfm_secure`` partition.
+       For example, after building the :ref:`tfm_hello_world` sample for the ``nrf9151dk/nrf9151/ns`` board target, you can run the following commands from your application root directory to generate the RAM memory report for TF-M in the terminal:
+
+       .. code-block:: console
+
+          west build -d build/tfm_hello_world -t tfm_ram_report
+
+For more information about the ``tfm_ram_report`` and ``tfm_rom_report`` targets, refer to the :ref:`tfm_build_system` documentation.
+
+TF-M Services
+*************
+
+As explained in the :ref:`tfm_configurable_build` section, TF-M is built from a set of services that are isolated from each other.
+Services can be enabled or disabled based on the application requirements.
+Following sections describe the available TF-M services and their purpose.
+
+Platform service
+================
+
+The platform service provides platform-specific services to other TF-M partitions and to a non-secure application.
+To enable the platform service, set the :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM` Kconfig option.
+
+For user applications :ref:`placed in the Non-Secure Processing Environment <app_boards_spe_nspe_cpuapp_ns>`, you can set the :kconfig:option:`CONFIG_TFM_ALLOW_NON_SECURE_FAULT_HANDLING` Kconfig option, which enables more detailed error descriptions of faults from the application with the Zephyr fault handler.
+
+The platform service also exposes the following |NCS| specific APIs for the non-secure application:
+
+  .. code-block:: c
+
+    /* Search for the fw_info structure in firmware image located at address. */
+    int tfm_platform_firmware_info(uint32_t fw_address, struct fw_info *info);
+
+    /* Check if S0 is the active B1 slot. */
+    int tfm_platform_s0_active(uint32_t s0_address, uint32_t s1_address, bool *s0_active);
+
+See :ref:`lib_tfm_ioctl_api` for more information about APIs available for the non-secure application.
+
+For more information about the general features of the TF-M Platform partition, see `TF-M Platform`_.
+
+Internal Trusted Storage service
+================================
+
+The Internal Trusted Storage (ITS) service implements the PSA Internal Trusted Storage APIs (`PSA Certified Secure Storage API 1.0`_) to achieve confidentiality, authenticity and encryption in rest (optional).
+
+To enable the ITS service, set the :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE` Kconfig option.
+
+ITS is meant to be used by other TF-M partitions.
+It must not be accessed directly by a user application :ref:`placed in the Non-Secure Processing Environment <app_boards_spe_nspe_cpuapp_ns>`.
+If you want the user application to access the contents of the partition, use the :ref:`tfm_partition_ps`.
+
+For more information about the general features of the TF-M ITS service, see `TF-M ITS`_.
+
+.. _tfm_encrypted_its:
+
+Encrypted ITS
+-------------
+
+TF-M ITS encryption is a data protection mechanism in Internal Trusted Storage. It provides transparent encryption using a Master Key Encryption Key (MKEK) stored in hardware, with unique encryption keys derived for each file.
+
+To enable TF-M ITS encryption, set the :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED` Kconfig option.
+
+On Nordic Semiconductor devices, the hardware-accelerated AEAD scheme ChaChaPoly1305 is used with a 256-bit key.
+This key is derived with a key derivation function (KDF) based on NIST SP 800-108 CMAC.
+The input key of the KDF is the MKEK, a symmetric key stored in the Key Management Unit (KMU) of Nordic Semiconductor devices.
+The MKEK is protected by the KMU peripheral and its key material cannot be read by the software.
+It can only be used by reference.
+
+The file ID is used as a derivation label for the KDF.
+This means that each file ID uses a different AEAD key.
+As long as each file has a unique file ID, the key used for encryption and authentication is unique.
+
+To strengthen data integrity, the metadata of the ITS file (creation flags or size, or both) is used as authenticated data in the encryption process.
+
+The nonce for the AEAD operation is generated by concatenating a random 8-byte seed and an increasing 4-byte counter.
+The random seed is generated once in the boot process and stays the same until reset.
+
+.. _tfm_partition_its_sizing:
+
+Sizing the Internal Trusted Storage
+-----------------------------------
+
+The RAM and flash usage of the ITS service are included in the ``tfm_secure`` partition.
+The storage itself is a separate ``tfm_its`` partition.
+
+When using the :ref:`partition_manager`, you can configure the size of the ``tfm_its`` with the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE` Kconfig option.
+The resulting partition is visible in the :file:`partitions.yml` file in the build directory:
+
+.. code-block:: console
+
+    EMPTY_2:
+      address: 0xea000
+      end_address: 0xf0000
+      placement:
+        after:
+        - tfm_its
+      region: flash_primary
+      size: 0x6000
+    tfm_its:
+      address: 0xe8000
+      end_address: 0xea000
+      inside:
+      - tfm_storage
+      placement:
+        align:
+          start: 0x8000
+        before:
+        - tfm_otp_nv_counters
+      region: flash_primary
+      size: 0x2000
+
+The :ref:`partition_manager` can only align the start address of the ``tfm_its`` partition with the flash region size (see :ref:`ug_tfm_partition_alignment_requirements`).
+If the size of the ``tfm_its`` does not equal the flash region size, the Partition Manager allocates an additional empty partition to fill the gap.
+See the :ref:`tfm_ps_static_partition` for an example on how to optimize the size of the ``tfm_its`` partition by manual configuration.
+
+TF-M does not guarantee in build time that the ``tfm_its`` partition can hold the assets that are configured with the :kconfig:option:`CONFIG_TFM_ITS_NUM_ASSETS` and :kconfig:option:`CONFIG_TFM_ITS_MAX_ASSET_SIZE` options.
+Depending on the available flash size, the ITS can use one or two flash pages (4 KB) for ensuring power failure safe operations.
+In addition, ITS stores the bookkeeping information for the assets in the flash memory and the bookkeeping size scales with the configured number of assets.
+This can leave a very small amount of space for the actual assets.
+
+It is recommended to test the ITS with the intended assets to ensure that the assets fit in the available space.
+
+.. _tfm_partition_crypto:
+
+Crypto service
+==============
+
+The crypto service implements the PSA Crypto APIs (`PSA Certified Crypto API`_) and provides cryptographic services to other TF-M partitions and to the non-secure application.
+
+To enable the crypto service, set the :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` Kconfig option.
+
+You can configure the service directly using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options found in the :file:`zephyr/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules` file.
+However, it is recommended to use the ``CONFIG_PSA_WANT_*`` Kconfig options to enable the required algorithms and key types.
+These will enable the required ``CONFIG_TFM_CRYPTO_*`` Kconfig options.
+
+TF-M uses :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
+
+For more information about the general features of the Crypto partition, see `TF-M Crypto`_.
+
+.. _tfm_partition_ps:
+
+Protected Storage service
+=========================
+
+The Protected Storage (PS) service implements the PSA Protected Storage APIs (`PSA Certified Secure Storage API 1.0`_).
+
+To enable the PS service, set the :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE` Kconfig option.
+
+The PS service uses the ITS service to achieve confidentiality and authenticity.
+In addition, it provides encryption, authentication, and rollback protection.
+
+A user application :ref:`placed in the Non-Secure Processing Environment <app_boards_spe_nspe_cpuapp_ns>` should use the PS partition for storing sensitive data.
+
+For more information about the general features of the TF-M PS service, see `TF-M PS`_.
+
+Sizing the Protected Storage partition
+--------------------------------------
+
+The RAM and flash usage of the PS service are included in the ``tfm_secure`` partition.
+The storage itself is a separate ``tfm_ps`` partition.
+Additionally, the PS partition requires non-volatile counters for rollback protection.
+Those are stored in the ``tfm_otp_nv_counters`` partition.
+
+When using the :ref:`partition_manager`, the size of the ``tfm_ps`` is configured with the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE` Kconfig option.
+The size of the ``tfm_otp_nv_counters`` is configured with the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_OTP_NV_COUNTERS` Kconfig option.
+
+Resulting partitions are visible in the :file:`partitions.yml` file in the build directory:
+
+.. code-block:: console
+
+    EMPTY_0:
+      address: 0xfc000
+      end_address: 0x100000
+      placement:
+        after:
+        - tfm_ps
+      region: flash_primary
+      size: 0x4000
+    EMPTY_1:
+      address: 0xf2000
+      end_address: 0xf8000
+      placement:
+        after:
+        - tfm_otp_nv_counters
+      region: flash_primary
+      size: 0x6000
+    tfm_otp_nv_counters:
+      address: 0xf0000
+      end_address: 0xf2000
+      inside:
+      - tfm_storage
+      placement:
+        align:
+          start: 0x8000
+        before:
+        - tfm_ps
+      region: flash_primary
+      size: 0x2000
+    tfm_ps:
+      address: 0xf8000
+      end_address: 0xfc000
+      inside:
+      - tfm_storage
+      placement:
+        align:
+          start: 0x8000
+        before:
+        - end
+      region: flash_primary
+      size: 0x4000
+
+Similarly to :ref:`tfm_partition_its_sizing`, the :ref:`partition_manager` can only align the start addresses of the partitions with the flash region size.
+The Partition Manager allocates an additional empty partition to fill the gaps.
+
+See :ref:`tfm_ps_static_partition` for an example on how to optimize the size of the partitions by manual configuration.
+
+TF-M does not guarantee in build time that the ``tfm_ps`` partition can hold the assets that are configured with the :kconfig:option:`CONFIG_TFM_PS_NUM_ASSETS` and :kconfig:option:`CONFIG_TFM_PS_MAX_ASSET_SIZE` options.
+The PS partition uses the ITS internally to store the assets in ``tfm_ps``.
+This means that some of the flash space is reserved for the ITS functionality.
+Additionally, the PS service stores the file metadata in object tables, which also consumes flash space.
+The size of the object table scales with the number of configured assets and two object tables (old and new) are required when performing PS operations.
+This might leave a very small amount of space for the actual assets.
+
+It is highly recommended to test the PS with the intended assets to ensure that the assets fit in the available space.
+
+.. _tfm_ps_static_partition:
+
+Example of PS sizing with static partitions
+-------------------------------------------
+
+With devices where ROM granularity is higher than the flash page size (nRF53 Series and nRF91 Series), it might be useful to configure the ``tfm_its``, ``tfm_ps`` and ``tfm_otp_nv_counters`` partitions as static partitions.
+
+You can start by copying the default configuration from the :file:`partitions.yml` file in the build directory as the :file:`pm_static.yml` file in the application directory.
+The following snippet shows the meaningful parts of the default configuration for the ``tfm_its``, ``tfm_ps`` and ``tfm_otp_nv_counters`` partitions in the nRF9151 SoC:
+
+.. code-block:: console
+
+    EMPTY_0:
+      address: 0xfc000
+      end_address: 0x100000
+      placement:
+        after:
+        - tfm_ps
+      region: flash_primary
+      size: 0x4000
+    EMPTY_1:
+      address: 0xf2000
+      end_address: 0xf8000
+      placement:
+        after:
+        - tfm_otp_nv_counters
+      region: flash_primary
+      size: 0x6000
+    EMPTY_2:
+      address: 0xea000
+      end_address: 0xf0000
+      placement:
+        after:
+        - tfm_its
+      region: flash_primary
+      size: 0x6000
+    app:
+      address: 0x40000
+      end_address: 0xe8000
+      region: flash_primary
+      size: 0xa8000
+    tfm_nonsecure:
+      address: 0x40000
+      end_address: 0xe8000
+      orig_span: &id004
+      - app
+      region: flash_primary
+      size: 0xa8000
+      span: *id004
+    tfm_its:
+      address: 0xe8000
+      end_address: 0xea000
+      inside:
+      - tfm_storage
+      placement:
+        align:
+          start: 0x8000
+        before:
+        - tfm_otp_nv_counters
+      region: flash_primary
+      size: 0x2000
+    tfm_otp_nv_counters:
+      address: 0xf0000
+      end_address: 0xf2000
+      inside:
+      - tfm_storage
+      placement:
+        align:
+          start: 0x8000
+        before:
+        - tfm_ps
+      region: flash_primary
+      size: 0x2000
+    tfm_ps:
+      address: 0xf8000
+      end_address: 0xfc000
+      inside:
+      - tfm_storage
+      placement:
+        align:
+          start: 0x8000
+        before:
+        - end
+      region: flash_primary
+      size: 0x4000
+    tfm_storage:
+      address: 0xe8000
+      end_address: 0xfc000
+      orig_span: &id006
+      - tfm_ps
+      - tfm_its
+      - tfm_otp_nv_counters
+      region: flash_primary
+      size: 0x14000
+      span: *id006
+
+The ``tfm_storage`` partition that holds the ``tfm_its``, ``tfm_ps`` and ``tfm_otp_nv_counters`` partitions must be aligned with the flash region size, so that you can configure it as secure.
+After removing the empty partitions, unnecessary alignments and adjusting the sizes of the partitions, the same information in the :file:`pm_static.yml` file should look like this:
+
+.. code-block:: console
+
+    app:
+      address: 0x40000
+      end_address: 0xf8000
+      region: flash_primary
+      size: 0xb8000
+    tfm_nonsecure:
+      address: 0x40000
+      end_address: 0xf8000
+      orig_span: &id004
+      - app
+      region: flash_primary
+      size: 0xb8000
+      span: *id004
+    tfm_its:
+      address: 0xf8000
+      end_address: 0xfa000
+      inside:
+      - tfm_storage
+      placement:
+        before:
+        - tfm_otp_nv_counters
+      region: flash_primary
+      size: 0x2000
+    tfm_otp_nv_counters:
+      address: 0xfa000
+      end_address: 0xfc000
+      inside:
+      - tfm_storage
+      placement:
+        before:
+        - tfm_ps
+      region: flash_primary
+      size: 0x2000
+    tfm_storage:
+      address: 0xf8000
+      end_address: 0x100000
+      orig_span: &id006
+      - tfm_ps
+      - tfm_its
+      - tfm_otp_nv_counters
+      region: flash_primary
+      size: 0x8000
+      span: *id006
+
+The ``tfm_storage`` partition is still aligned with the flash region size and the ``tfm_its``, ``tfm_ps`` and ``tfm_otp_nv_counters`` partitions are placed inside it.
+The available space for the non-secure application has increased by 0x10000 bytes.
 
 .. note::
-   By default, TF-M configures memory regions as secure memory, while SPM configures memory regions as non-secure.
-   The partitions ``tfm_nonsecure``, ``mcuboot_secondary``, and ``nonsecure_storage`` are configured as non-secure flash memory regions.
-   The partition ``sram_nonsecure`` is configured as a non-secure RAM region.
 
-If a static partition file is used for the application, make the following changes:
+   For devices that are intended for production and meant to be updated in the field, you should always use static partitions to ensure that the partitions are not moved around in the flash memory.
 
-* Rename the ``spm`` partition to ``tfm``.
-* Add a partition called ``tfm_secure`` that spans ``mcuboot_pad`` (if MCUboot is enabled) and ``tfm`` partitions.
-* Add a partition called ``tfm_nonsecure`` that spans the application, and other possible application partitions that must be non-secure.
-* For non-secure storage partitions, place the partitions inside the ``nonsecure_storage`` partition.
+Initial Attestation service
+===========================
+
+The Initial Attestation service implements the PSA Initial Attestation APIs (`PSA Certified Attestation API 1.0`_).
+The service allows the device to prove its identity to a remote entity.
+
+To enable the Initial Attestation service, set the :kconfig:option:`CONFIG_TFM_PARTITION_INITIAL_ATTESTATION` Kconfig option.
+
+The :ref:`tfm_psa_template` sample demonstrates how to use the Initial Attestation service.
+
+The Initial Attestation service is not enabled by default.
+Keep it disabled unless you need attestation.
+
+For more information about the general features of the TF-M Initial Attestation service, see `TF-M Attestation`_.
+
+Provisioning
+************
+
+For devices that need provisioning, TF-M implements the following Platform Root of Trust (PRoT) security lifecycle states that conform to the `ARM Platform Security Model 1.1`_:
+
+* Device Assembly and Test
+* PRoT Provisioning
+* Secured
+
+The device starts in the **Device Assembly and Test** state.
+The :ref:`provisioning_image` sample shows how to switch the device from the **Device Assembly and Test** state to the **PRoT Provisioning** state, and how to provision the device with hardware unique keys (HUKs) and an identity key.
+
+To switch the device from the **PRoT Provisioning** state to the **Secured** state, set the :kconfig:option:`CONFIG_TFM_NRF_PROVISIONING` Kconfig option for your application.
+On the first boot, TF-M ensures that the keys are stored in the Key Management Unit (KMU) and switches the device to the **Secured** state.
+The :ref:`tfm_psa_template` sample shows how to achieve this.
+
+.. _ug_tfm_manual_VCOM_connection:
+
+Logging
+*******
+
+TF-M employs two UART interfaces for logging: one for the :ref:`Secure Processing Environment<app_boards_spe_nspe>` (including MCUboot and TF-M), and one for the :ref:`Non-Secure Processing Environment<app_boards_spe_nspe>` (including user application).
+By default, the logs arrive on different COM ports on the host PC.
+See :ref:`ug_tfm_manual_VCOM_connection` for more details.
+
+Alternatively, you can configure the TF-M to connect to the same UART as the application with the :kconfig:option:`CONFIG_TFM_SECURE_UART0` Kconfig option.
+Setting this Kconfig option makes TF-M logs visible on the application's VCOM, without manual connection.
+
+The UART instance used by the application is ``0`` by default, and the TF-M UART instance is ``1``.
+To change the TF-M UART instance to the same as that of the application's, use the :kconfig:option:`CONFIG_TFM_SECURE_UART0` Kconfig option.
+
+.. note::
+
+   When the TF-M and the user application use the same UART, the TF-M disables logging after it has booted and re-enables it again only to log a fatal error.
+
+For nRF5340 DK devices, see :ref:`nrf5430_tfm_log`.
