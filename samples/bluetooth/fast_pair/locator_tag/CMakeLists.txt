@@ -15,12 +15,9 @@ project(locator_tag)
 target_sources(app PRIVATE
   src/main.c
   src/factory_reset.c
-  src/fp_adv.c
 )
 
 zephyr_linker_sources(SECTIONS src/factory_reset_callbacks.ld)
-
-zephyr_linker_sources(DATA_SECTIONS src/fp_adv_trigger.ld)
 
 if (CONFIG_APP_DFU)
   target_sources(app PRIVATE src/dfu.c)
