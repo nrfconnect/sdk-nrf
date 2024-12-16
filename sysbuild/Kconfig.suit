@@ -31,6 +31,7 @@ config SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME
 config SUIT_ENVELOPE_SIGN_SCRIPT
 	string "Location of SUIT sign script"
 	depends on SUIT_ENVELOPE_SIGN
+	default "modules/lib/suit-generator/ncs/sign_script.py"
 	help
 	  Python script called to sign SUIT envelope.
 	  You can use either absolute or relative path.
@@ -38,7 +39,19 @@ config SUIT_ENVELOPE_SIGN_SCRIPT
 	  Script need to accept two arguments:
 	  - --input-file <STRING> - location of unsigned envelope in the build system
 	  - --output-file <STRING> - location of signed envelope to create by script
-	default "modules/lib/suit-generator/ncs/sign_script.py"
+
+config SUIT_ENVELOPE_BASIC_KMS_SCRIPT_KEY_DIRECTORY
+	string "The directory in which the keys are stored"
+	default "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs"
+	help
+	  Location of the key files used if the default basic KMS script is used during signing
+	  or encryption.
+
+config SUIT_ENVELOPE_KMS_SCRIPT_CONTEXT
+	string "Context for the SUIT KMS script"
+	default SUIT_ENVELOPE_BASIC_KMS_SCRIPT_KEY_DIRECTORY
+	help
+	  Context to pass to the SUIT KMS script during signing and encryption.
 
 config SUIT_ENVELOPE_ROOT_ARTIFACT_NAME
 	string "Name of the root SUIT artifact."
