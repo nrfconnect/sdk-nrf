@@ -7,10 +7,10 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/kernel.h>
 
+#include <bluetooth/services/fast_pair/adv_manager.h>
 #include <bluetooth/services/fast_pair/fast_pair.h>
 
 #include "app_factory_reset.h"
-#include "app_fp_adv.h"
 #include "app_ui.h"
 
 #include <zephyr/logging/log.h>
@@ -49,7 +49,7 @@ int bt_fast_pair_factory_reset_user_action_perform(void)
 	LOG_INF("Factory Reset: resetting Bluetooth identity within the factory reset");
 
 	/* Check if FP identity exists. */
-	bt_id = app_fp_adv_id_get();
+	bt_id = bt_fast_pair_adv_manager_id_get();
 	bt_id_get(NULL, &id_count);
 	if (id_count > bt_id) {
 		/* All non-volatile Bluetooth data linked to the Fast Pair Bluetooth identity
@@ -89,7 +89,7 @@ static void factory_reset_perform(void)
 {
 	int err;
 	bool fast_pair_is_ready = bt_fast_pair_is_ready();
-	bool fp_adv_is_ready = app_fp_adv_is_ready();
+	bool fp_adv_is_ready = bt_fast_pair_adv_manager_is_ready();
 
 	LOG_INF("Performing reset to factory settings...");
 
@@ -104,9 +104,10 @@ static void factory_reset_perform(void)
 
 	/* Disable the Fast Pair advertising module if it is active. */
 	if (fp_adv_is_ready) {
-		err = app_fp_adv_disable();
+		err = bt_fast_pair_adv_manager_disable();
 		if (err) {
-			LOG_ERR("Factory Reset: app_fp_adv_disable failed (err %d)", err);
+			LOG_ERR("Factory Reset: bt_fast_pair_adv_manager_disable "
+				"failed (err %d)", err);
 			goto finish;
 		}
 	}
@@ -140,9 +141,10 @@ static void factory_reset_perform(void)
 
 	/* Reenable the Fast Pair advertising module if it was active before the reset. */
 	if (fp_adv_is_ready) {
-		err = app_fp_adv_enable();
+		err = bt_fast_pair_adv_manager_enable();
 		if (err) {
-			LOG_ERR("Factory Reset: app_fp_adv_enable failed (err %d)", err);
+			LOG_ERR("Factory Reset: bt_fast_pair_adv_manager_enable "
+				"failed (err %d)", err);
 			goto finish;
 		}
 	}

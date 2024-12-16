@@ -48,6 +48,7 @@ config BT_FAST_PAIR_BN
 rsource "fp_crypto/Kconfig.fp_crypto"
 rsource "fp_storage/Kconfig.fp_storage"
 rsource "fmdn/Kconfig"
+rsource "adv_manager/Kconfig"
 
 config BT_FAST_PAIR_ACTIVATION
 	bool

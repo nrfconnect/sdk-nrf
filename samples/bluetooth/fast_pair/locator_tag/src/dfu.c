@@ -11,6 +11,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <bluetooth/adv_prov.h>
 
+#include <bluetooth/services/fast_pair/adv_manager.h>
 #include <bluetooth/services/fast_pair/fast_pair.h>
 #include <bluetooth/services/fast_pair/fmdn.h>
 
@@ -18,7 +19,6 @@
 
 #include "app_dfu.h"
 #include "app_factory_reset.h"
-#include "app_fp_adv.h"
 #include "app_ui.h"
 
 #include <zephyr/logging/log.h>
@@ -30,7 +30,12 @@ LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
 static const struct bt_data data = BT_DATA_BYTES(BT_DATA_UUID128_ALL, SMP_BT_SVC_UUID_VAL);
 static bool dfu_mode;
 
-APP_FP_ADV_TRIGGER_REGISTER(fp_adv_trigger_dfu, "dfu");
+BT_FAST_PAIR_ADV_MANAGER_TRIGGER_REGISTER(
+	fp_adv_trigger_dfu,
+	"dfu",
+	(&(const struct bt_fast_pair_adv_manager_trigger_config) {
+		.suspend_rpa = true,
+	}));
 
 static void dfu_mode_timeout_work_handle(struct k_work *w);
 static K_WORK_DELAYABLE_DEFINE(dfu_mode_timeout_work, dfu_mode_timeout_work_handle);
@@ -43,8 +48,6 @@ BUILD_ASSERT((APP_VERSION_MAJOR == CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSIO
 
 static void dfu_mode_change(bool new_mode)
 {
-	enum app_fp_adv_mode pre_request_fp_adv_mode = app_fp_adv_mode_get();
-
 	if (dfu_mode == new_mode) {
 		return;
 	}
@@ -53,15 +56,8 @@ static void dfu_mode_change(bool new_mode)
 
 	dfu_mode = new_mode;
 
-	app_fp_adv_request(&fp_adv_trigger_dfu, dfu_mode);
-
-	/* Ensure that the advertising payload is updated if the advertising was already
-	 * enabled before the advertising request.
-	 */
-	if ((pre_request_fp_adv_mode == APP_FP_ADV_MODE_DISCOVERABLE) ||
-	    (pre_request_fp_adv_mode == APP_FP_ADV_MODE_NOT_DISCOVERABLE)) {
-		app_fp_adv_payload_refresh();
-	}
+	bt_fast_pair_adv_manager_request(&fp_adv_trigger_dfu, dfu_mode);
+	bt_fast_pair_adv_manager_payload_refresh();
 
 	app_ui_state_change_indicate(APP_UI_STATE_DFU_MODE, dfu_mode);
 }
@@ -102,13 +98,11 @@ static int get_ad_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state
 	ARG_UNUSED(state);
 	ARG_UNUSED(fb);
 
-	enum app_fp_adv_mode current_fp_adv_mode = app_fp_adv_mode_get();
-
 	if (!dfu_mode) {
 		return -ENOENT;
 	}
 
-	if (current_fp_adv_mode != APP_FP_ADV_MODE_DISCOVERABLE) {
+	if (!bt_fast_pair_adv_manager_is_pairing_mode()) {
 		return -ENOENT;
 	}
 
@@ -123,13 +117,11 @@ static int get_sd_data(struct bt_data *sd, const struct bt_le_adv_prov_adv_state
 	ARG_UNUSED(state);
 	ARG_UNUSED(fb);
 
-	enum app_fp_adv_mode current_fp_adv_mode = app_fp_adv_mode_get();
-
 	if (!dfu_mode) {
 		return -ENOENT;
 	}
 
-	if (current_fp_adv_mode != APP_FP_ADV_MODE_NOT_DISCOVERABLE) {
+	if (bt_fast_pair_adv_manager_is_pairing_mode()) {
 		return -ENOENT;
 	}
 
