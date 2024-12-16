@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_ADV_MANAGER
+	bool "Enable the Fast Pair advertising manager"
+	depends on BT_PERIPHERAL
+	depends on BT_EXT_ADV
+	depends on BT_PRIVACY
+	depends on BT_SMP
+	depends on BT_ADV_PROV
+	depends on BT_ADV_PROV_FAST_PAIR
+	help
+	  Enable the Fast Pair advertising module. The module manages the Fast Pair advertising set
+	  and the Fast Pair connections that are derived from it.
+
+choice BT_FAST_PAIR_ADV_MANAGER_USE_CASE
+	prompt "Use case selection"
+	default BT_FAST_PAIR_ADV_MANAGER_USE_CASE_UNSPECIFIED
+	help
+	  Tailor the advertising manager for the specific Fast Pair device type. The use case
+	  configuration enables additional behaviour to satisfy the device feature requirements
+	  from the Google Fast Pair specification that are related to Fast Pair advertising:
+	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement.
+
+config BT_FAST_PAIR_ADV_MANAGER_USE_CASE_UNSPECIFIED
+	bool "Unspecified use case"
+	help
+	  Select the unspecified Fast Pair use case. This use case configuration is neutral and is
+	  the default choice selection. The unspecified use case configuration allows using the
+	  module in the minimal configuration without any use case specific behaviours. This
+	  configuration choice should be used in all use cases that do not define any additional
+	  requirements for the Fast Pair advertising. It can also be used to replace the suggested
+	  implementation of use case specific advertising requirements with custom implementation.
+	  For example, if the locator tag extension of this module does not fit your application
+	  due to its underlying assumption, you can desist from enabling the
+	  CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG Kconfig option and replace it with
+	  you custom implementation.
+
+config BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG
+	bool "Locator tag use case"
+	depends on BT_FAST_PAIR_FMDN
+	help
+	  Tailor the advertising manager for the Fast Pair locator tag. The manager implements the
+	  locator tag requirements for the Fast Pair advertising defined in the FMDN specification:
+	  https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag.
+
+	  The locator tag extension currently controls the following advertising triggers:
+
+	  - FMDN provisioning trigger: used to maintain the Fast Pair advertising between the
+	    the Owner Account Key write operation until successful provisioning operation.
+	  - Clock synchronization trigger: used to maintain the Fast Pair advertising for the
+	    FMDN clock synchronization; this trigger can be disabled with the
+	    CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG_CLOCK_SYNC_TRIGGER Kconfig option
+	    and replaced with custom implementation.
+
+endchoice
+
+if BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG
+
+config BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG_CLOCK_SYNC_TRIGGER
+	bool "Activate the advertising trigger for the FMDN clock synchronization"
+	default y
+	help
+	  Activate the advertising trigger that is responsible for the FMDN clock
+	  synchronization. After a power loss in the FMDN provisoned state, the trigger
+	  keeps the Fast Pair non-discoverable advertising active until the next invocation
+	  of Read Beacon Parameters request. This additional advertising state lets the Fast
+	  Pair Seeker (for example, a smartphone) detect the device and synchronize the clock
+	  even if a significant clock drift occurred. This Kconfig option is responsible for
+	  implementing clock synchronization requirement from the Locator Tag guidelines:
+	  https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag.
+
+endif # BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG

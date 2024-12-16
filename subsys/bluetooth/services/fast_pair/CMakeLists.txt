@@ -38,3 +38,5 @@ if(CONFIG_BT_FAST_PAIR_FMDN)
   add_subdirectory(fmdn)
   target_link_libraries(fast_pair PRIVATE fmdn)
 endif()
+
+add_subdirectory_ifdef(CONFIG_BT_FAST_PAIR_ADV_MANAGER adv_manager)
