@@ -236,6 +236,12 @@ function(suit_create_package)
   set(CORE_ARGS)
   set(STORAGE_BOOT_ARGS)
   sysbuild_get(app_config_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_CONFIG_DIR CACHE)
+  get_property(SUIT_KMS_SCRIPT GLOBAL PROPERTY SUIT_KMS_SCRIPT)
+  # If the user has not provided the path to the kms script, use the default one.
+  if(NOT SUIT_KMS_SCRIPT)
+    set(SUIT_KMS_SCRIPT "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs/basic_kms.py")
+  endif()
+
 
   if(NOT DEFINED SB_CONFIG_SUIT_ENVELOPE_SIGN)
     set(SB_CONFIG_SUIT_ENVELOPE_SIGN FALSE)
@@ -247,11 +253,39 @@ function(suit_create_package)
 
   foreach(image ${IMAGES})
     unset(target)
+    unset(encrypt)
     sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
     sysbuild_get(target IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET KCONFIG)
+    sysbuild_get(encrypt IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_ENCRYPT KCONFIG)
 
     set(BINARY_FILE "${BINARY_FILE}.bin")
+
+    if(encrypt)
+      if(DEFINED target AND NOT target STREQUAL "")
+        set(${image}_SUIT_ENCRYPT_DIR "${SUIT_ROOT_DIRECTORY}/${target}_encryption_artifacts")
+      else()
+        set(${image}_SUIT_ENCRYPT_DIR "${SUIT_ROOT_DIRECTORY}/${image}_encryption_artifacts")
+      endif()
+
+      set(SUIT_ENCRYPT_ARGS)
+      sysbuild_get(encrypt_string_key_id IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_ENCRYPT_STRING_KEY_ID KCONFIG)
+      sysbuild_get(encrypt_key_name IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_ENCRYPT_KEY_NAME KCONFIG)
+      sysbuild_get(plaintext_hash_alg IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_ENCRYPT_PLAINTEXT_HASH_ALG_NAME KCONFIG)
+
+      list(APPEND SUIT_ENCRYPT_ARGS --firmware ${BINARY_DIR}/zephyr/${BINARY_FILE})
+      list(APPEND SUIT_ENCRYPT_ARGS --key-name ${encrypt_key_name})
+      list(APPEND SUIT_ENCRYPT_ARGS --string-key-id ${encrypt_string_key_id})
+      list(APPEND SUIT_ENCRYPT_ARGS --hash-alg ${plaintext_hash_alg})
+      list(APPEND SUIT_ENCRYPT_ARGS --context ${SB_CONFIG_SUIT_ENVELOPE_KMS_SCRIPT_CONTEXT})
+      list(APPEND SUIT_ENCRYPT_ARGS --kms-script ${SUIT_KMS_SCRIPT})
+
+      suit_encrypt_image("${SUIT_ENCRYPT_ARGS}" ${${image}_SUIT_ENCRYPT_DIR})
+
+      set(${image}_SUIT_PAYLOAD_BINARY ${${image}_SUIT_ENCRYPT_DIR}/encrypted_content.bin)
+    else()
+      set(${image}_SUIT_PAYLOAD_BINARY ${BINARY_DIR}/zephyr/${BINARY_FILE})
+    endif()
 
     list(APPEND CORE_ARGS
       --core ${image},${SUIT_ROOT_DIRECTORY}${image}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
@@ -262,11 +296,11 @@ function(suit_create_package)
       --core ${target},${SUIT_ROOT_DIRECTORY}${image}.bin,${BINARY_DIR}/zephyr/edt.pickle,${BINARY_DIR}/zephyr/.config
       )
     endif()
-    suit_copy_artifact_to_output_directory(${image} ${BINARY_DIR}/zephyr/${BINARY_FILE})
+    suit_copy_artifact_to_output_directory(${image} ${${image}_SUIT_PAYLOAD_BINARY})
 
-    unset(CONFIG_SUIT_RECOVERY)
-    sysbuild_get(CONFIG_SUIT_RECOVERY IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
-    if(CONFIG_SUIT_RECOVERY)
+    unset(recovery)
+    sysbuild_get(recovery IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
+    if(recovery)
       set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ARTIFACTS ${SUIT_ROOT_DIRECTORY}${image}.bin)
     else()
       set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${SUIT_ROOT_DIRECTORY}${image}.bin)
@@ -313,9 +347,9 @@ function(suit_create_package)
     suit_render_template(${INPUT_ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
     suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
 
-    unset(CONFIG_SUIT_RECOVERY)
-    sysbuild_get(CONFIG_SUIT_RECOVERY IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
-    if(CONFIG_SUIT_RECOVERY)
+    unset(recovery)
+    sysbuild_get(recovery IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
+    if(recovery)
       set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ARTIFACTS ${ENVELOPE_SUIT_FILE})
     else()
       set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${ENVELOPE_SUIT_FILE})
@@ -336,10 +370,10 @@ function(suit_create_package)
     if(EXTRACT_TO_CACHE)
       sysbuild_get(CACHE_PARTITION_NUM IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_PARTITION KCONFIG)
 
-      unset(CONFIG_SUIT_RECOVERY)
-      sysbuild_get(CONFIG_SUIT_RECOVERY IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
+      unset(recovery)
+      sysbuild_get(recovery IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
 
-      if(CONFIG_SUIT_RECOVERY)
+      if(recovery)
         list(APPEND RECOVERY_DFU_CACHE_PARTITIONS_USED ${CACHE_PARTITION_NUM})
         list(APPEND SUIT_RECOVERY_CACHE_PARTITION_${CACHE_PARTITION_NUM} ${image})
       else()
@@ -356,11 +390,10 @@ function(suit_create_package)
   foreach(CACHE_PARTITION_NUM ${DFU_CACHE_PARTITIONS_USED})
     set(CACHE_CREATE_ARGS "")
     foreach(image ${SUIT_CACHE_PARTITION_${CACHE_PARTITION_NUM}})
-      sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
-      sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
       sysbuild_get(IMAGE_CACHE_URI IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI KCONFIG)
+
       list(APPEND CACHE_CREATE_ARGS
-        "--input" "\"${IMAGE_CACHE_URI},${BINARY_DIR}/zephyr/${BINARY_FILE}.bin\""
+        "--input" "\"${IMAGE_CACHE_URI},${${image}_SUIT_PAYLOAD_BINARY}\""
       )
     endforeach()
 
@@ -382,11 +415,9 @@ function(suit_create_package)
     foreach(CACHE_PARTITION_NUM ${RECOVERY_DFU_CACHE_PARTITIONS_USED})
       set(CACHE_CREATE_ARGS "")
       foreach(image ${SUIT_RECOVERY_CACHE_PARTITION_${CACHE_PARTITION_NUM}})
-        sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
-        sysbuild_get(BINARY_FILE IMAGE ${image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
         sysbuild_get(IMAGE_CACHE_URI IMAGE ${image} VAR CONFIG_SUIT_DFU_CACHE_EXTRACT_IMAGE_URI KCONFIG)
         list(APPEND CACHE_CREATE_ARGS
-          "--input" "\"${IMAGE_CACHE_URI},${BINARY_DIR}/zephyr/${BINARY_FILE}.bin\""
+          "--input" "\"${IMAGE_CACHE_URI},${${image}_SUIT_PAYLOAD_BINARY}\""
         )
       endforeach()
 
@@ -544,9 +575,9 @@ function(suit_setup_merge)
   foreach(image ${IMAGES})
     set(ARTIFACTS_TO_MERGE)
 
-    unset(CONFIG_NRF_REGTOOL_GENERATE_UICR)
-    sysbuild_get(CONFIG_NRF_REGTOOL_GENERATE_UICR IMAGE ${image} VAR CONFIG_NRF_REGTOOL_GENERATE_UICR KCONFIG)
-    if(NOT DEFINED CONFIG_NRF_REGTOOL_GENERATE_UICR)
+    unset(regtool_generate_uicr)
+    sysbuild_get(regtool_generate_uicr IMAGE ${image} VAR CONFIG_NRF_REGTOOL_GENERATE_UICR KCONFIG)
+    if(NOT DEFINED regtool_generate_uicr)
       continue()
     endif()
 

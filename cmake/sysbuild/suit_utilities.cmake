@@ -8,6 +8,12 @@ set(SUIT_GENERATOR_BUILD_SCRIPT "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs/build.p
 set(SUIT_GENERATOR_CLI_SCRIPT "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/suit_generator/cli.py")
 set(SUIT_OUTPUT_ARTIFACTS_DIRECTORY "DFU")
 
+if(WIN32)
+  set(SEP $<SEMICOLON>)
+else()
+  set(SEP :)
+endif()
+
 if(NOT DEFINED SUIT_ROOT_DIRECTORY)
   set(SUIT_ROOT_DIRECTORY ${APPLICATION_BINARY_DIR}/${SUIT_OUTPUT_ARTIFACTS_DIRECTORY}/)
 endif()
@@ -84,8 +90,17 @@ function(suit_create_envelope input_file output_file create_signature)
   endif()
 endfunction()
 
+# Create a SUIT DFU cache partition file from a list of payloads.
+#
+# Usage:
+#  suit_create_cache_partition(<args> <output_file> <partition_num> <recovery>)
+#
+# Parameters:
+#   'args' - list of arguments for the cache_create command
+#   'output_file' - path to output cache partition file
+#   'partition_num' - partition number
+#   'recovery' - if set to true, the cache partition contains recovery firmware payloads
 function(suit_create_cache_partition args output_file partition_num recovery)
-
   list(APPEND args "--output-file" "${output_file}")
 
   set_property(
@@ -110,6 +125,15 @@ function(suit_create_cache_partition args output_file partition_num recovery)
   endif()
 endfunction()
 
+# Create a SUIT DFU cache partition with Nordic proprietary payloads
+# extracted from the top-level SUIT envelope.
+#
+# Usage:
+# suit_create_nordic_cache_partition(<args> <output_file>)
+#
+# Parameters:
+#   'args' - list of arguments for the cache_create command
+#   'output_file' - path to output cache partition file
 function(suit_create_nordic_cache_partition args output_file)
   list(APPEND args "--output-file" "${output_file}")
   list(APPEND args "--omit-payload-regex" "'(?!.*secdom.*\.bin|.*sysctl_v.*\.bin).*'")
@@ -142,4 +166,44 @@ function(suit_add_merge_hex_file)
     set_property(GLOBAL APPEND PROPERTY SUIT_MERGE_application_FILE ${arg_FILES})
     set_property(GLOBAL APPEND PROPERTY SUIT_MERGE_application_DEPENDENCIES ${arg_DEPENDENCIES})
 endif()
+endfunction()
+
+# Create SUIT encryption artifacts for a given image.
+#
+# Usage:
+# suit_encrypt_image(<args> <output_directory>)
+#
+# Parameters:
+#   'args' - list of arguments for the encryption script
+#   'output_directory' - path to a directory where the encryption artifacts will be stored
+function(suit_encrypt_image args output_directory)
+  get_property(
+    encrypt_script
+    GLOBAL PROPERTY
+    SUIT_ENCRYPT_SCRIPT
+  )
+  # If the user has not provided the path to the encrypt script, use the default one.
+  if(NOT encrypt_script)
+    set(encrypt_script "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs/encrypt_script.py")
+  endif()
+
+  if(NOT EXISTS ${encrypt_script})
+    message(SEND_ERROR "DFU: ${encrypt_script} does not exist. Corrupted configuration?")
+    return()
+  endif()
+
+  list(APPEND args --output-dir ${output_directory})
+
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${output_directory}
+  )
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+    COMMAND
+    PYTHONPATH=${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}${SEP}$ENV{PYTHONPATH}
+    ${PYTHON_EXECUTABLE}
+    ${encrypt_script} encrypt-and-generate
+    ${args}
+  )
 endfunction()
