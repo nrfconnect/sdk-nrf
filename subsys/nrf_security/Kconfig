@@ -58,6 +58,7 @@ if NRF_SECURITY
 
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	bool
+	default y if SOC_SERIES_NRF92X && (SOC_NRF9280_CPUSEC || SOC_NRF9230_ENGB_CPUSEC)
 	default y if SOC_SERIES_NRF54LX && PSA_CRYPTO_DRIVER_CRACEN
 	default y if SOC_SERIES_NRF54HX && SOC_NRF54H20_CPUSEC
 	help
@@ -256,6 +257,13 @@ endchoice
 
 # This is for internal use only.
 config SOC_NRF54H20_CPUSEC
+	bool
+
+# This is for internal use only.
+config SOC_NRF9280_CPUSEC
+	bool
+
+config SOC_NRF9230_ENGB_CPUSEC
 	bool
 
 endmenu
