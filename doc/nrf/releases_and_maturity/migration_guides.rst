@@ -20,6 +20,7 @@ Migration guides are also provided for major functionality updates.
 
 For nRF54H20-exclusive customer sampling releases:
 
+* `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-rc1`_
 * `Migration notes for nRF Connect SDK v2.7.99-cs2 and the nRF54H20 DK`_
 * `Migration notes for nRF Connect SDK v2.7.99-cs1 and the nRF54H20 DK`_
 * `Migration notes for nRF Connect SDK v2.7.0 for nRF54H20 DK users`_
