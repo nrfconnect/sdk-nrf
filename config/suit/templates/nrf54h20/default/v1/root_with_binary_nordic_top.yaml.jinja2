@@ -351,7 +351,7 @@ SUIT_Envelope_Tagged:
           - suit-send-record-failure
           - suit-send-sysinfo-success
           - suit-send-sysinfo-failure
-    {%- if radio is defined %}
+    {%- if radio is defined and APP_LOCAL_1_VERSION is defined %}
         # Ensure that the application manifest version matches exactly the installed radio manifest version.
         - suit-directive-set-component-index: {{ rad_component_index }}
         - suit-directive-override-parameters:
