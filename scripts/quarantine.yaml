@@ -15,3 +15,16 @@
 - platforms:
     - native_posix
   comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
+
+- scenarios:
+    - sample.matter.lock.debug
+    - sample.matter.lock.release
+    - sample.matter.template.smp_dfu.nrf54h20
+    - sample.suit.smp_transfer.cache_push.extflash
+    - sample.suit.smp_transfer.cache_push.extflash.bt
+    - sample.suit.smp_transfer.full_processing.extflash
+    - sample.suit.smp_transfer.full_processing.extflash.bt
+    - sample.suit.smp_transfer.recovery
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "FLASH overflow - TBD"
