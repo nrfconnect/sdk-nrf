@@ -1,6 +1,8 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.8.99
+Changelog for |NCS| v2.9.99
 ###########################
 
 .. contents::
@@ -16,14 +18,14 @@ The most relevant changes that are present on the main branch of the |NCS|, as c
 
    When adding a new PR, decide whether it needs an entry in the changelog.
    If it does, update this page.
-   Add the sections you need, as only a handful of sections is kept when the changelog is cleaned.
-   "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
+   Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
+   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
 
 Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See :ref:`known_issues` for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.9.0-nRF54H20-rc1`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -108,7 +110,7 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
-* Updated the Bluetooth LE SoftDevice Controller driver to make the :c:func:`hci_vs_sdc_llpm_mode_set` function return an error if Low Latency Packet Mode (LLPM) is not supported or not enabled in the Bluetooth LE Controller driver configuration (:kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`).
+|no_changes_yet_note|
 
 Bluetooth Mesh
 --------------
@@ -168,7 +170,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Machine learning
 ----------------
 
-* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+|no_changes_yet_note|
 
 Asset Tracker v2
 ----------------
@@ -183,7 +185,7 @@ Connectivity Bridge
 IPC radio firmware
 ------------------
 
-* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system in all devices that contain MRAM, such as the nRF54H Series devices.
+|no_changes_yet_note|
 
 Matter Bridge
 -------------
@@ -201,7 +203,7 @@ nRF Desktop
 * Updated:
 
   * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
-    The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the nrfx reset reason helper dependency (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
+    The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
   * The release configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
 
 nRF Machine Learning (Edge Impulse)
@@ -392,7 +394,7 @@ Other samples
 
 * :ref:`coremark_sample` sample:
 
-  * Added support for the :ref:`nRF54L05 and nRF54L10 (emulated on nRF54L15 DK) <ug_nrf54l>` SoCs.
+  * Added support for the nRF54L05 and nRF54L10 SoCs (emulated on nRF54L15 DK).
 
 Drivers
 =======
@@ -419,9 +421,7 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-* :ref:`bt_fast_pair_readme` library:
-
-  * Updated the :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
+|no_changes_yet_note|
 
 Common Application Framework
 ----------------------------
@@ -515,7 +515,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Added instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+|no_changes_yet_note|
 
 Edge Impulse integration
 ------------------------
