@@ -51,18 +51,10 @@ NET_BUF_SIMPLE_DEFINE_STATIC(latest_peer_steps, BT_RAS_PROCEDURE_MEM);
 static int32_t most_recent_peer_ranging_counter = PROCEDURE_COUNTER_NONE;
 static int32_t most_recent_local_ranging_counter = PROCEDURE_COUNTER_NONE;
 static int32_t dropped_ranging_counter = PROCEDURE_COUNTER_NONE;
-static bool distance_estimation_in_progress;
 
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
 {
 	LOG_INF("Subevent result callback %d", result->header.procedure_counter);
-
-	if (distance_estimation_in_progress) {
-		LOG_WRN("New procedure data received whilst estimating previous distance, drop "
-			"this procedure.");
-		dropped_ranging_counter = result->header.procedure_counter;
-		return;
-	}
 
 	if (result->header.subevent_done_status == BT_CONN_LE_CS_SUBEVENT_ABORTED) {
 		/* If this subevent was aborted, drop the entire procedure for now. */
@@ -97,7 +89,6 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 
 	if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE) {
 		most_recent_local_ranging_counter = result->header.procedure_counter;
-		distance_estimation_in_progress = true;
 		k_sem_give(&sem_procedure_done);
 	} else if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_ABORTED) {
 		LOG_WRN("Procedure aborted");
@@ -466,7 +457,7 @@ int main(void)
 		.max_procedure_len = 100,
 		.min_procedure_interval = 100,
 		.max_procedure_interval = 100,
-		.max_procedure_count = 0,
+		.max_procedure_count = 1,
 		.min_subevent_len = 60000,
 		.max_subevent_len = 60000,
 		.tone_antenna_config_selection = BT_LE_CS_TONE_ANTENNA_CONFIGURATION_INDEX_ONE,
@@ -488,15 +479,22 @@ int main(void)
 		.enable = 1,
 	};
 
-	err = bt_le_cs_procedure_enable(connection, &params);
-	if (err) {
-		LOG_ERR("Failed to enable CS procedures (err %d)", err);
-		return 0;
-	}
-
 	while (true) {
-		k_sem_take(&sem_procedure_done, K_FOREVER);
-		distance_estimation_in_progress = true;
+		err = bt_le_cs_procedure_enable(connection, &params);
+		if (err) {
+			LOG_ERR("Failed to enable CS procedures (err %d)", err);
+			return 0;
+		}
+
+		err = k_sem_take(&sem_procedure_done, K_SECONDS(1));
+		if (err) {
+			LOG_WRN("Timeout waiting for local procedure done (err %d)", err);
+
+			/* Check if remote has rd ready to align counters. */
+			k_sem_take(&sem_rd_ready, K_SECONDS(1));
+
+			goto retry;
+		}
 
 		err = k_sem_take(&sem_rd_ready, K_SECONDS(1));
 		if (err) {
@@ -531,7 +529,6 @@ int main(void)
 retry:
 		net_buf_simple_reset(&latest_local_steps);
 		net_buf_simple_reset(&latest_peer_steps);
-		distance_estimation_in_progress = false;
 	}
 
 	return 0;
