@@ -104,6 +104,7 @@ Configurable build
 
 The minimal version of TF-M is disabled by setting the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` option or one of the other build profiles.
 For description of the build profiles, see Trusted Firmware M documentation regarding :ref:`tf-m_profiles`.
+It is not recommended to use predefined TF-M profiles as they might result in a larger memory footprint than necessary.
 
 When :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` is enabled, the build process will not set a specific
 TF-M profile type. This allows for a more flexible configuration where individual TF-M features can be
@@ -122,24 +123,27 @@ Following are the available Kconfig options for TF-M partitions:
    * - Option Name
      - Description
      - Default Value
+     - Dependencies
    * - :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM`
      - Provides platform services.
      - Enabled
+     -
    * - :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO`
      - Provides cryptographic services.
      - Enabled
+     - INTERNAL_TRUSTED_STORAGE
    * - :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE`
      - Provides secure storage services.
      - Enabled
+     - PLATFORM, CRYPTO
    * - :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE`
      - Provides internal trusted storage services.
      - Enabled
+     -
    * - :kconfig:option:`CONFIG_TFM_PARTITION_INITIAL_ATTESTATION`
      - Provides initial attestation services.
      - Disabled
-   * - :kconfig:option:`CONFIG_TFM_PARTITION_FIRMWARE_UPDATE`
-     - Provides firmware update services.
-     - Disabled
+     - CRYPTO
 
 When cryptographic services are enabled, you can configure what crypto modules to include in TF-M by using the ``CONFIG_TFM_CRYPTO_*`` Kconfig options as explained above.
 
@@ -201,7 +205,7 @@ But when the static partitions are used, the user is responsible for following t
 
 If you are experiencing any partition alignment issues when using the Partition Manager, check the :ref:`known_issues` page on the main branch.
 
-The partitions which need to be aligned with the TrustZone flash region size are partitions ``tfm_nonsecure`` and ``nonsecure_storage``.
+The partitions which need to be aligned with the TrustZone flash region size are partitions ``tfm_nonsecure``, ``tfm_storage`` and ``nonsecure_storage``.
 Both the partition start address and the partition size need to be aligned with the flash region size :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE`.
 
 Note that the ``tfm_nonsecure`` partition is placed after the ``tfm_secure`` partition, thus the end address of the ``tfm_secure`` partition is the same as the start address of the ``tfm_nonsecure`` partition.
@@ -253,6 +257,24 @@ We will decrease the size of the (optional) ``mcuboot_pad`` partition and thus t
       address: 0x8000
       size: 0x4000
 
+Analyzing TF-M partition size
+=============================
+
+The size of the TF-M partition can be analyzed from the build output.
+
+  .. code-block:: console
+
+     [71/75] Linking C executable bin/tfm_s.axf
+     Memory region   Used Size  Region Size  %age Used
+        FLASH:       31972 B       256 KB     12.20%
+        RAM:         4804 B        88 KB      5.33%
+
+The example above shows that the TF-M partition :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` is set to 256 kB and the TF-M binary uses 32 kB of the available space.
+Similarly the TF-M partition :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` is set to 88 kB and the TF-M binary uses 5 kB of the available space.
+This information can be used to optimize the size of the TF-M partition, as long as it is within the alignment requirements explained in the previous section.
+
+To see more detailed information about the memory usage, refer to :ref:`tfm_build_system` documentation.
+Build system offers tools like ``tfm_ram_report`` and ``tfm_rom_report`` to analyze the RAM and ROM usage in generated images.
 
 .. _tfm_encrypted_its:
 
