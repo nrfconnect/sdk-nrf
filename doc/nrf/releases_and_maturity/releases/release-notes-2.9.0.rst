@@ -144,6 +144,11 @@ Board support
   Support for ``native_posix`` will be removed in Zephyr with the v4.2 release.
   In the |NCS|, it will be removed once Zephyr v4.2 is upmerged to sdk-nrf.
 
+Build and configuration system
+==============================
+
+* Fixed the issue in the ``nordic-bt-rpc`` snippet, where an invalid memory map was created for nRF54H20 devices, which resulted in a runtime failure.
+
 Bootloaders and DFU
 ===================
 
@@ -301,6 +306,9 @@ nRF Desktop
 
 * Updated:
 
+  * The :ref:`nrf_desktop_settings_loader` to make the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` the default settings backend for all board targets that use the MRAM technology.
+    As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations were migrated from the NVS settings backend to the ZMS settings backend.
+  * :ref:`nrf_desktop_watchdog` by adding the :ref:`zephyr:nrf54h20dk_nrf54h20` release configuration.
   * The configuration files of the :ref:`nrf_desktop_click_detector` (:file:`click_detector_def.h`) to allow using them also when Bluetooth LE peer control using a dedicated button (:ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>`) is disabled.
   * The DTS description for board targets with a different DTS overlay file for each build type to isolate the common configuration that is now defined in the :file:`app_common.dtsi` file.
     The following board configurations have been updated:
@@ -392,6 +400,7 @@ Bluetooth samples
       * :ref:`peripheral_uart`
       * :ref:`ble_rpc_host`
 
+    As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
   * Testing steps in the :ref:`peripheral_hids_mouse` to provide the build configuration that is compatible with the `Bluetooth Low Energy app`_ testing tool.
 
 * :ref:`power_profiling` sample:
@@ -409,6 +418,10 @@ Bluetooth Fast Pair samples
 * :ref:`fast_pair_locator_tag` sample:
 
   * Updated the MCUboot bootloader configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` board target to enable the :kconfig:option:`CONFIG_FPROTECT` Kconfig option that is used to protect the bootloader partition against memory corruption.
+
+* :ref:`fast_pair_input_device` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
 
 Cellular samples
 ----------------
@@ -522,6 +535,7 @@ Other samples
 
   * Updated:
 
+    * Configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board to support multi-domain logging using the ARM Coresight STM.
     * The logging format in the standard logging mode to align it with the format used in the multi-domain logging mode.
     * Support for alternative configurations to use the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>`.
       The following file suffixes are supported as alternative configurations:
@@ -563,6 +577,11 @@ Bluetooth libraries and services
 
   * Updated the :c:func:`bt_hogp_rep_read` function to forward the GATT read error code through the registered user callback.
     This ensures that API user is aware of the error.
+
+* :ref:`bt_fast_pair_readme` library:
+
+  * Added support in build system for devices that do not support the :ref:`partition_manager`.
+    The :ref:`zephyr:nrf54h20dk_nrf54h20` board target is the only example of such a device.
 
 Modem libraries
 ---------------
