@@ -59,8 +59,6 @@ suit_plat_err_t suit_storage_mpi_configuration_load(suit_manifest_role_t role, c
 	const suit_manifest_class_id_t *new_class_id = NULL;
 	suit_storage_mpi_t *mpi = (suit_storage_mpi_t *)addr;
 
-	LOG_INF("Suit manifest role: %02x", role);
-
 	if ((role == SUIT_MANIFEST_UNKNOWN) || (addr == NULL) || (size == 0)) {
 		return SUIT_PLAT_ERR_INVAL;
 	}
@@ -115,10 +113,7 @@ suit_plat_err_t suit_storage_mpi_configuration_load(suit_manifest_role_t role, c
 	/* Validate downgrade prevention policy value. */
 	switch (mpi->downgrade_prevention_policy) {
 	case SUIT_MPI_DOWNGRADE_PREVENTION_DISABLED:
-		LOG_INF("Downgrade prevention policy disabled");
-		break;
 	case SUIT_MPI_DOWNGRADE_PREVENTION_ENABLED:
-		LOG_INF("Downgrade prevention policy enabled");
 		break;
 	default:
 		LOG_ERR("Invalid downgrade prevention policy value for role 0x%x%s: %d", role,
@@ -146,13 +141,8 @@ suit_plat_err_t suit_storage_mpi_configuration_load(suit_manifest_role_t role, c
 	/* Validate signature verification policy value. */
 	switch (mpi->signature_verification_policy) {
 	case SUIT_MPI_SIGNATURE_CHECK_DISABLED:
-		LOG_INF("Signature check disabled");
-		break;
 	case SUIT_MPI_SIGNATURE_CHECK_ENABLED_ON_UPDATE:
-		LOG_INF("Signature check enabled on update");
-		break;
 	case SUIT_MPI_SIGNATURE_CHECK_ENABLED_ON_UPDATE_AND_BOOT:
-		LOG_INF("Signature check enabled on update and boot");
 		break;
 	default:
 		LOG_ERR("Invalid signature verification policy value for role 0x%x%s: %d", role,
