@@ -339,39 +339,3 @@ We will decrease the size of the (optional) ``mcuboot_pad`` partition and thus t
     app:
       address: 0x8000
       size: 0x4000
-
-
-
-.. _ug_tfm_migrate:
-
-Migrating from Secure Partition Manager to Trusted Firmware-M
-*************************************************************
-
-The interface to TF-M is different from the interface to SPM.
-Due to that, the application code that uses the SPM Secure Services needs to be ported to use TF-M instead.
-
-TF-M can replace the following SPM services:
-
-* ``spm_request_system_reboot`` with ``tfm_platform_system_reset``.
-* ``spm_request_random_number`` with ``psa_generate_random`` or ``entropy_get_entropy``.
-* ``spm_request_read`` with ``tfm_platform_mem_read`` or ``soc_secure_mem_read``.
-* ``spm_s0_active`` with ``tfm_platform_s0_active``.
-* ``spm_firmware_info`` with ``tfm_firmware_info``.
-
-The following SPM services have no replacement in TF-M:
-
-* ``spm_prevalidate_b1_upgrade``
-* ``spm_busy_wait``
-* ``spm_set_ns_fatal_error_handler``
-
-.. note::
-   By default, TF-M configures memory regions as secure memory, while SPM configures memory regions as non-secure.
-   The partitions ``tfm_nonsecure``, ``mcuboot_secondary``, and ``nonsecure_storage`` are configured as non-secure flash memory regions.
-   The partition ``sram_nonsecure`` is configured as a non-secure RAM region.
-
-If a static partition file is used for the application, make the following changes:
-
-* Rename the ``spm`` partition to ``tfm``.
-* Add a partition called ``tfm_secure`` that spans ``mcuboot_pad`` (if MCUboot is enabled) and ``tfm`` partitions.
-* Add a partition called ``tfm_nonsecure`` that spans the application, and other possible application partitions that must be non-secure.
-* For non-secure storage partitions, place the partitions inside the ``nonsecure_storage`` partition.
