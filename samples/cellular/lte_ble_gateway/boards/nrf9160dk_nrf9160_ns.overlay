@@ -3,6 +3,7 @@
 / {
 	chosen {
 		zephyr,bt-uart=&lpuart;
+		zephyr,bt-hci = &bt_hci_uart;
 	};
 };
 
@@ -23,6 +24,11 @@
 		status = "okay";
 		req-pin = <21>; /* <&interface_to_nrf52840 3 0>; */
 		rdy-pin = <19>; /* <&interface_to_nrf52840 2 0>; */
+
+		bt_hci_uart: bt_hci_uart {
+			compatible = "zephyr,bt-hci-uart";
+			status = "okay";
+		};
 	};
 };
 
