@@ -275,6 +275,10 @@ Cellular samples
   * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
     The link control functionality is now always enabled and cannot be disabled.
 
+* :ref:`lte_sensor_gateway` sample:
+
+   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_..
+
 Cryptography samples
 --------------------
 
