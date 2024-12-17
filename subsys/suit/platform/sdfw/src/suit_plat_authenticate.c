@@ -68,8 +68,6 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 		return SUIT_ERR_UNSUPPORTED_PARAMETER;
 	}
 
-	LOG_WRN("Decoded key ID: %08x", public_key_id);
-
 	/* Validate KEY ID */
 	ret = suit_mci_signing_key_id_validate(class_id, public_key_id);
 	if (ret != SUIT_PLAT_SUCCESS) {
