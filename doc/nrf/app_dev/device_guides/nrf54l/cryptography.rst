@@ -268,6 +268,14 @@ The following table lists all key types that can be stored in the KMU, indicatin
      - No
      - Yes
      - Yes
+   * - HMAC SHA-256 128-bit keys
+     - | ``key_type``: ``PSA_KEY_TYPE_HMAC``
+       | ``key bits``: 128
+       | ``key_algorithm``: ``PSA_ALG_HMAC(PSA_ALG_SHA_256)``
+     - 1
+     - No
+     - No
+     - Yes
 .. [1] Keys with the Encrypted usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) will require two additional KMU slots to store the nonce and the authentication tag.
 
 Storing keys in KMU
