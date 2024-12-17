@@ -1,6 +1,8 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.8.99
+Changelog for |NCS| v2.9.99
 ###########################
 
 .. contents::
@@ -23,7 +25,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See :ref:`known_issues` for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.9.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -168,7 +170,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Machine learning
 ----------------
 
-* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+|no_changes_yet_note|
 
 Asset Tracker v2
 ----------------
@@ -509,7 +511,7 @@ DULT integration
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``a4eda30f5b0cfd0cf15512be9dcd559239dbfc91``, with some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``e890df7ab975da181a9f3fb3abc470bf935625ab``, with some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
