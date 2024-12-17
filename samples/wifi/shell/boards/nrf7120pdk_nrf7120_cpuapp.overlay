@@ -87,3 +87,7 @@
 &systick {
     status = "disabled";
 };
+
+&psa_rng {
+    status = "okay";
+};
