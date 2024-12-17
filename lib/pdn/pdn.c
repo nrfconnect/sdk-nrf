@@ -659,6 +659,55 @@ int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
 	return 0;
 }
 
+int pdn_dynamic_params_get_v6(uint8_t cid, struct in6_addr *dns6_pri,
+			   struct in6_addr *dns6_sec, unsigned int *ipv6_mtu)
+{
+	int matched;
+	const char *fmt;
+	unsigned int mtu;
+	char dns6_pri_str[INET6_ADDRSTRLEN];
+	char dns6_sec_str[INET6_ADDRSTRLEN];
+	char at_cmd[sizeof("AT+CGCONTRDP=10")];
+
+	if (snprintf(at_cmd, sizeof(at_cmd), "AT+CGCONTRDP=%u", cid) >= sizeof(at_cmd)) {
+		return -E2BIG;
+	}
+	/* "+CGCONTRDP: 0,,"ims","","",
+	 *	"0000:0000:0000:0000:0000:0000:0000:0000",
+	 *	"0000:0000:0000:0000:0000:0000:0000:0000",,,,,1500"
+	 */
+	fmt = "+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\","
+		"\"%45[0-9A-Fa-f:]\",\"%45[0-9A-Fa-f:]\",,,,,%u";
+
+	/* If IPv6 is enabled, it will be the first response line. */
+	matched = nrf_modem_at_scanf(at_cmd, fmt, &dns6_pri_str, &dns6_sec_str, &mtu);
+	/* Need to match at least the two IP addresses, or there is an error */
+	if (matched < 2) {
+		return -EBADMSG;
+	}
+
+	if (dns6_pri) {
+		if (zsock_inet_pton(AF_INET6, dns6_pri_str, dns6_pri) != 1) {
+			return -EADDRNOTAVAIL;
+		}
+	}
+	if (dns6_sec) {
+		if (zsock_inet_pton(AF_INET6, dns6_sec_str, dns6_sec) != 1) {
+			return -EADDRNOTAVAIL;
+		}
+	}
+	if (ipv6_mtu) {
+		/* If we matched the MTU, copy it here, otherwise report zero */
+		if (matched == 3) {
+			*ipv6_mtu = mtu;
+		} else {
+			*ipv6_mtu = 0;
+		}
+	}
+
+	return 0;
+}
+
 int pdn_default_apn_get(char *buf, size_t len)
 {
 	int err;

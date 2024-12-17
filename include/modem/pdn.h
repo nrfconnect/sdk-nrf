@@ -194,6 +194,19 @@ int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
 			   struct in_addr *dns4_sec, unsigned int *ipv4_mtu);
 
 /**
+ * @brief Retrieve dynamic parameters of a given PDP context.
+ *
+ * @param cid The PDP context ID.
+ * @param[out] dns6_pri The address of the primary IPv6 DNS server. Optional, can be NULL.
+ * @param[out] dns6_sec The address of the secondary IPv6 DNS server. Optional, can be NULL.
+ * @param[out] ipv6_mtu The IPv6 MTU. Optional, can be NULL.
+ *
+ * @return Zero on success or an error code on failure.
+ */
+int pdn_dynamic_params_get_v6(uint8_t cid, struct in6_addr *dns6_pri,
+			   struct in6_addr *dns6_sec, unsigned int *ipv6_mtu);
+
+/**
  * @brief Retrieve the default Access Point Name (APN).
  *
  * The default APN is the APN of the default PDP context (zero).

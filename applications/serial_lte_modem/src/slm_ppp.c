@@ -213,7 +213,11 @@ static int ppp_start_internal(void)
 	ret = pdn_dynamic_params_get(PDP_CID, &ctx->ipcp.my_options.dns1_address,
 				     &ctx->ipcp.my_options.dns2_address, &mtu);
 	if (ret) {
-		return ret;
+		/* If any error happened on pdn getting with IPv4, try to parse with IPv6 */
+		ret = pdn_dynamic_params_get_v6(PDP_CID, NULL, NULL, &mtu);
+		if (ret) {
+			return ret;
+		}
 	}
 
 	if (mtu) {
