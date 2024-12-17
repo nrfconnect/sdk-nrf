@@ -298,6 +298,10 @@ Cellular samples
 
   * Fixed an issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
 
+* :ref:`lte_sensor_gateway` sample:
+
+   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
+
 Cryptography samples
 --------------------
 
