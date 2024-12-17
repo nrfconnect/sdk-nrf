@@ -839,6 +839,8 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 					psa_get_key_type(attributes), psa_get_key_bits(attributes));
 			}
 			return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+		} else if (psa_get_key_type(attributes) == PSA_KEY_TYPE_HMAC) {
+			return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 		} else {
 			return sizeof(kmu_opaque_key_buffer);
 		}

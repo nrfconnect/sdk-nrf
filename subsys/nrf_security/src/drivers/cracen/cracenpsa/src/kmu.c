@@ -62,7 +62,7 @@ enum kmu_metadata_algorithm {
 	METADATA_ALG_ED25519 = 10,
 	METADATA_ALG_ECDSA = 11,
 	METADATA_ALG_ED25519PH = 12,
-	METADATA_ALG_RESERVED3 = 13,
+	METADATA_ALG_HMAC = 13,
 	METADATA_ALG_RESERVED4 = 14,
 	METADATA_ALG_RESERVED5 = 15,
 };
@@ -479,6 +479,10 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 					 : PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1));
 		psa_set_key_algorithm(key_attr, PSA_ALG_ECDSA(PSA_ALG_ANY_HASH));
 		break;
+	case METADATA_ALG_HMAC:
+		psa_set_key_type(key_attr, PSA_KEY_TYPE_HMAC);
+		psa_set_key_algorithm(key_attr, PSA_ALG_HMAC(PSA_ALG_SHA_256));
+		break;
 	default:
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
@@ -648,6 +652,12 @@ psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_ECDSA;
+		break;
+	case PSA_ALG_HMAC(PSA_ALG_SHA_256):
+		if (!can_sign(key_attr) && PSA_ALG_IS_HMAC(psa_get_key_type(key_attr))) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		metadata->algorithm = METADATA_ALG_HMAC;
 		break;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -954,6 +964,11 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 			key_buffer++;
 			key_buffer_size--;
 		}
+		return push_kmu_key_to_ram(key_buffer, key_buffer_size);
+	}
+
+	/* HMAC keys are getting loading into the key buffer like volatile keys */
+	if (psa_get_key_type(attributes) == PSA_KEY_TYPE_HMAC) {
 		return push_kmu_key_to_ram(key_buffer, key_buffer_size);
 	}
 
