@@ -253,6 +253,23 @@ We will decrease the size of the (optional) ``mcuboot_pad`` partition and thus t
       address: 0x8000
       size: 0x4000
 
+Analyzing TF-M partition size
+=============================
+
+The size of the TF-M partition can be analyzed from the build output.
+
+  .. code-block:: console
+
+     [71/75] Linking C executable bin/tfm_s.axf
+     Memory region   Used Size  Region Size  %age Used
+        FLASH:       31972 B       256 KB     12.20%
+        RAM:         4804 B        88 KB      5.33%
+
+The example above shows that the TF-M partition :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` is set to 256 kB and the TF-M binary uses 32 kB of the available space.
+Similarly the TF-M partition :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` is set to 88 kB and the TF-M binary uses 5 kB of the available space.
+This information can be used to optimize the size of the TF-M partition, as long as it is within the alignment requirements explained in the previous section.
+
+To see more detailed information about the memory usage, refer to :ref:`tfm_build_system` documentation.
 
 .. _tfm_encrypted_its:
 
