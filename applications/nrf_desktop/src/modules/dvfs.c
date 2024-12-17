@@ -255,23 +255,14 @@ static void dvfs_notify_work_handler(struct k_work *work)
 		handle_dvfs_error(res);
 		return;
 	}
-	ret = clock_control_get_rate(dvfs_clock_dev, NULL, &current_freq);
-	if (ret < 0) {
-		LOG_ERR("Failed to get current frequency with error: %d", ret);
-		dvfs_fatal_error();
-		return;
-	}
-	if (requested_freq != current_freq) {
-		/*
-		 * In current solution it is assumed that no other module
-		 * will change cpu frequency.
-		 */
-		LOG_ERR("Requested frequency %" PRIu32
-			" is not the same as current frequency %" PRIu32,
-			requested_freq, current_freq);
-		dvfs_fatal_error();
-		return;
-	}
+
+	/*
+	 * Clock control request success means current_freq is now at minimum
+	 * requested_freq. In current solution it is assumed that no other
+	 * module will change cpu frequency, so current_freq is effectively
+	 * equal to requested_freq.
+	 */
+	current_freq = requested_freq;
 
 	dvfs_retry.retries_cnt = 0;
 	LOG_INF("DVFS completed, current frequency is: %" PRIu32, current_freq);
@@ -364,15 +355,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				k_work_init_delayable(&dvfs_state_timeouts[i].timeout_work,
 						      dvfs_state_timeout_work_handler);
 			}
-			int ret = clock_control_get_rate(dvfs_clock_dev,
-					NULL, &current_freq);
 
-			if (ret < 0) {
-				LOG_ERR("Failed to get current frequency with error: %d",
-					ret);
-				dvfs_fatal_error();
-				return false;
-			}
 			module_state = STATE_READY;
 
 			if (IS_ENABLED(CONFIG_DESKTOP_DVFS_STATE_INITIALIZING_ENABLE)) {
