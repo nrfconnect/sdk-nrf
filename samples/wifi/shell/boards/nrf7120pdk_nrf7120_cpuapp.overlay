@@ -1,0 +1,84 @@
+/ {
+
+    chosen {
+        zephyr,shell-uart = &uart20;
+        zephyr,sram = &cpuapp_sram;
+    };
+
+    ipc0: ipc0 {
+        compatible = "zephyr,ipc-icmsg";
+        tx-region = <&ipc_shm_cpuapp_cpuuma_0>;   // TODO: Need shared memory between APP-WIFI
+        rx-region = <&ipc_shm_cpuuma_cpuapp_0>;   // TODO: Need shared memory between APP-WIFI
+        mboxes = <&wifi_bellboard 2>,
+            <&cpuapp_bellboard  0>;
+        mbox-names = "tx", "rx";
+        status = "okay";
+    };
+
+    ipc1: ipc1 {
+        compatible = "zephyr,ipc-icmsg";
+        tx-region = <&ipc_shm_cpuapp_cpuuma_1>;   // TODO: Need shared memory between APP-WIFI
+        rx-region = <&ipc_shm_cpuuma_cpuapp_1>;   // TODO: Need shared memory between APP-WIFI
+        mboxes = <&wifi_bellboard 3>,
+            <&cpuapp_bellboard  1>;
+        mbox-names = "tx", "rx";
+        status = "okay";
+    };
+};
+
+/*
+    TODO: Temporary increase APP sram until DTS is fixed
+*/
+&cpuapp_sram {
+    reg = <0x20000000 DT_SIZE_K(512)>;
+};
+
+&cpuapp_sram {
+    ipc_shm_area_cpuapp_cpuuma: memory@4000 {
+        compatible = "mmio-sram";
+        reg = <0x4000 DT_SIZE_K(8)>;
+        ranges = <0x0 0x4000 DT_SIZE_K(8)>;
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        ipc_shm_cpuapp_cpuuma_0: memory@0 {
+            compatible = "mmio-sram";
+            reg = <0x0 DT_SIZE_K(2)>;
+        };
+
+        ipc_shm_cpuuma_cpuapp_0: memory@800 {
+            compatible = "mmio-sram";
+            reg = <0x800 DT_SIZE_K(2)>;
+        };
+
+        ipc_shm_cpuapp_cpuuma_1: memory@1000 {
+            compatible = "mmio-sram";
+            reg = <0x0 DT_SIZE_K(2)>;
+        };
+
+        ipc_shm_cpuuma_cpuapp_1: memory@1800 {
+            compatible = "mmio-sram";
+            reg = <0x800 DT_SIZE_K(2)>;
+        };
+    };
+};
+
+&cpuapp_bellboard {
+    status = "okay";
+};
+
+&wifi_bellboard {
+    status = "okay";
+};
+
+&uart20 {
+    status = "okay";
+};
+
+&grtc {
+    status = "okay";
+};
+
+&systick {
+    status = "disabled";
+};
