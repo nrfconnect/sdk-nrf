@@ -451,7 +451,9 @@ Security libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`pdn_readme` library:
+
+  * Added the :c:func:`pdn_dynamic_params_get_v6` function to get PDN parameters for IPv6-only.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
