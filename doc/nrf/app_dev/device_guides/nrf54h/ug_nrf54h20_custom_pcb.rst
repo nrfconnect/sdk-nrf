@@ -9,10 +9,6 @@ Configuring your application for a custom PCB
 
 This guide demonstrates how to create your custom board files for your PCB for the nRF54H20 SoC.
 
-.. note::
-   Do not use the |NCS| v2.9.0 with the nRF54H20 SoC.
-   Use the |NCS| v2.8.0 instead.
-
 Prepare your PCB
 ****************
 

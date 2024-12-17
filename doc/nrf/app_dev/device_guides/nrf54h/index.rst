@@ -6,8 +6,6 @@ Developing with nRF54H Series
 .. note::
 
    All software for the nRF54H20 SoC is experimental, and hardware availability is restricted to the participants in the customer sampling program.
-   Do not use the |NCS| v2.9.0 with the nRF54H20 SoC.
-   Use the |NCS| v2.8.0 instead.
 
 .. |nrf_series| replace:: devices of the nRF54H Series
 
