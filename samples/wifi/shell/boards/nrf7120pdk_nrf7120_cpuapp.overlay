@@ -1,8 +1,13 @@
 / {
+    nordic_wlan0: nordic_wlan0 {
+        compatible = "nordic,wlan0";
+        status = "okay";
+    };
 
     chosen {
         zephyr,shell-uart = &uart20;
         zephyr,sram = &cpuapp_sram;
+        zephyr,wifi = &nordic_wlan0;
     };
 
     ipc0: ipc0 {
