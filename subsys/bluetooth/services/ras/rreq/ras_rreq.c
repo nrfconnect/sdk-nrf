@@ -896,6 +896,7 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 			if (local_step_data_buf->len < sizeof(struct bt_le_cs_subevent_step) ||
 			    peer_ranging_data_buf->len < sizeof(struct ras_rd_cs_subevent_step)) {
 				LOG_WRN("Step data appears malformed.");
+				return;
 			}
 
 			local_step.mode = net_buf_simple_pull_u8(local_step_data_buf);
@@ -921,8 +922,18 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 
 			peer_step.data_len = local_step.data_len;
 
+			if (peer_step.mode & BIT(7)) {
+				/* From RAS spec:
+				 * Bit 7: 1 means Aborted, 0 means Success
+				 * If the Step is aborted and bit 7 is set to 1, then bits 0-6 do
+				 * not contain any valid data
+				 */
+				LOG_INF("Peer step aborted");
+				return;
+			}
+
 			if (peer_step.mode == 0) {
-				/* Only occassion where peer step mode length is not equal to local
+				/* Only occasion where peer step mode length is not equal to local
 				 * step mode length is mode 0 steps.
 				 */
 				peer_step.data_len =
