@@ -11,7 +11,7 @@ The continuous array library introduces an array that you can loop over, for exa
 You can use it to test playback with applications that support audio development kits, for example the :ref:`nrf53_audio_app`.
 
 The library introduces the :c:func:`contin_array_create` function, which takes an array that the user wants to loop over.
-For more information, see `API documentation`_.
+For more information, see the following API documentation section.
 
 Configuration
 *************
