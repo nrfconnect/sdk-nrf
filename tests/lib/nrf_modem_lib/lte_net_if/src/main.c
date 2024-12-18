@@ -44,6 +44,14 @@ static void lte_lc_register_handler_stub(lte_lc_evt_handler_t cb, int num_of_cal
 	lte_lc_event_handler_callback = cb;
 }
 
+/* Stub used to report a non-default link MTU */
+static int pdn_dynamic_info_get_1000_stub(uint32_t cid,  struct pdn_dynamic_info *pdn_info,
+										  int num_of_calls)
+{
+	pdn_info->ipv4_mtu = 1000;
+	return 0;
+}
+
 static void bring_network_interface_up(void)
 {
 	struct net_if *net_if = net_if_get_default();
@@ -442,11 +450,17 @@ void test_pdn_act_with_cereg_should_activate_iface(void)
 			"AT+CGPADDR=0", "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"", 1);
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
+	/* Netowrk MTU is 1000 */
+	__cmock_pdn_dynamic_info_get_Stub(&pdn_dynamic_info_get_1000_stub);
+
 	/* Fire PDN active */
 	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
 
 	/* Check that iface becomes active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
+
+	/* MTU should have been set to reported value */
+	TEST_ASSERT_EQUAL(1000, net_if_get_mtu(net_if));
 }
 
 
@@ -504,6 +518,9 @@ void test_cereg_registered_home_with_pdn_should_activate_iface(void)
 			"AT+CGPADDR=0", "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"", 1);
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
+	/* MTU query fails */
+	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(-1);
+
 	/* Fire PDN active */
 	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
 
@@ -516,6 +533,9 @@ void test_cereg_registered_home_with_pdn_should_activate_iface(void)
 
 	/* Check that iface becomes active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
+
+	/* MTU should have reverted to default minimum */
+	TEST_ASSERT_EQUAL(NET_IPV4_MTU, net_if_get_mtu(net_if));
 }
 
 /* Verify that CEREG registration (roaming) does activate iface if PDN is active */
@@ -542,6 +562,9 @@ void test_cereg_registered_roaming_with_pdn_should_activate_iface(void)
 			"AT+CGPADDR=0", "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"", 1);
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
+	/* MTU not set by function */
+	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
+
 	/* Fire PDN active */
 	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
 
@@ -554,6 +577,9 @@ void test_cereg_registered_roaming_with_pdn_should_activate_iface(void)
 
 	/* Check that iface becomes active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
+
+	/* MTU should have reverted to default minimum */
+	TEST_ASSERT_EQUAL(NET_IPV4_MTU, net_if_get_mtu(net_if));
 }
 
 /* Verify that CEREG searching does not affect iface activation (from inactive to active) */
@@ -602,6 +628,7 @@ void test_cereg_searching_should_not_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
+	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -644,6 +671,7 @@ void test_cereg_unregistered_should_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
+	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -686,6 +714,7 @@ void test_pdn_deact_should_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
+	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
