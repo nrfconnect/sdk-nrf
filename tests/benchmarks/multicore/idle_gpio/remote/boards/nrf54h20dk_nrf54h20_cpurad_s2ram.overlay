@@ -7,6 +7,7 @@
 / {
 	aliases {
 		sw1 = &button1;
+		led1 = &led1;
 	};
 	buttons {
 		compatible = "gpio-keys";
@@ -16,9 +17,20 @@
 			zephyr,code = <INPUT_KEY_1>;
 		};
 	};
+	leds {
+		compatible = "gpio-leds";
+		led1: led_1 {
+			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 1";
+		};
+	};
 };
 
 &gpio0 {
+	status = "okay";
+};
+
+&gpio9 {
 	status = "okay";
 };
 

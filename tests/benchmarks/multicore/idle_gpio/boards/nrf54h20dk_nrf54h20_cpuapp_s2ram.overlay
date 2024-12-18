@@ -7,10 +7,12 @@
 / {
 	aliases {
 		/delete-property/ sw1;
+		/delete-property/ led1;
 	};
 };
 
 /delete-node/ &button1;
+/delete-node/ &led1;
 
 &gpiote130 {
 	status = "okay";
