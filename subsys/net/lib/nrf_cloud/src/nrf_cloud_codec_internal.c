@@ -55,9 +55,6 @@ static bool modem_inf_initd;
 static int init_modem_info(void);
 #endif
 
-#if defined(CONFIG_NRF_CLOUD_MQTT) && defined(CONFIG_NRF_CLOUD_GATEWAY)
-static gateway_state_handler_t gateway_state_handler;
-#endif
 static int shadow_connection_info_update(cJSON * device_obj);
 
 static const char *const sensor_type_str[] = {
@@ -458,13 +455,6 @@ int nrf_cloud_sensor_data_encode(const struct nrf_cloud_sensor_data *sensor,
 	return 0;
 }
 
-#ifdef CONFIG_NRF_CLOUD_GATEWAY
-void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler)
-{
-	gateway_state_handler = handler;
-}
-#endif
-
 int nrf_cloud_state_encode(uint32_t reported_state, const bool update_desired_topic,
 			   const bool add_info_sections, struct nrf_cloud_data *output)
 {
@@ -749,19 +739,6 @@ int nrf_cloud_shadow_data_state_decode(const struct nrf_cloud_obj_shadow_data *c
 	cJSON *pairing_obj = NULL;
 	cJSON *pairing_state_obj = NULL;
 	cJSON *topic_prefix_obj = NULL;
-
-#ifdef CONFIG_NRF_CLOUD_GATEWAY
-	if (gateway_state_handler) {
-		ret = gateway_state_handler(input->json);
-		if (ret != 0) {
-			LOG_ERR("Error from gateway_state_handler: %d", ret);
-			return ret;
-		}
-	} else {
-		LOG_ERR("No gateway state handler registered");
-		return -EINVAL;
-	}
-#endif /* CONFIG_NRF_CLOUD_GATEWAY */
 
 	if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_ACCEPTED) {
 		desired_obj = input->accepted->desired.json;
