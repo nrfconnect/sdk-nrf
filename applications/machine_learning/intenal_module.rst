@@ -28,7 +28,7 @@ The nRF Machine Learning application also uses the following dedicated applicati
 
 ``ei_data_forwarder_bt_nus``
   The module forwards the sensor readouts over NUS to the connected Bluetooth Central.
-  The sensor data is forwarded only if the connection is secured and the connection interval is within the limit defined by the :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT` and :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT` Kconfig options.
+  The sensor data is forwarded only if the connection is secured and the connection interval is within the limit defined by the :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MIN_INT` and :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_MAX_INT` Kconfig options.
 
 ``ei_data_forwarder_uart``
   The module forwards the sensor readouts over UART.
