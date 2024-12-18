@@ -92,6 +92,18 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src);
  */
 int lib_kmu_push_slot(int slot_id);
 
+/** @brief Block one or more consecutive KMU slots.
+ *
+ *  @param[in] slot_id ID of the first KMU slot to block.
+ *  @param[in] slot_count Number of consecutive slots to block.
+ *
+ *  @return LIB_KMU_SUCCESS        If the operation was successful.
+ *  @return -LIB_KMU_ERROR         If the operation returned an error.
+ *
+ *  @note This uses the `PUSHBLOCK` task on devices that do not have the `BLOCK` one.
+ */
+int lib_kmu_block_slot_range(int slot_id, unsigned int slot_count);
+
 /** @brief Revoke the KMU slot.
  *
  *  @param[in] slot_id Slot id of the KMU slot.

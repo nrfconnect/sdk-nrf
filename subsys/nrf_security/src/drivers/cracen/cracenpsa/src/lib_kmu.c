@@ -16,6 +16,10 @@
 
 #include <cracen/lib_kmu.h>
 
+#ifdef KMU_TASKS_BLOCK_ResetValue
+#define HAS_BLOCK_TASK 1
+#endif
+
 void lib_kmu_clear_all_events(void)
 {
 	NRF_KMU_S->EVENTS_METADATAREAD = 0;
@@ -23,7 +27,11 @@ void lib_kmu_clear_all_events(void)
 	NRF_KMU_S->EVENTS_PROVISIONED = 0;
 	NRF_KMU_S->EVENTS_PUSHED = 0;
 	NRF_KMU_S->EVENTS_REVOKED = 0;
+#if HAS_BLOCK_TASK
+	NRF_KMU_S->EVENTS_BLOCKED = 0;
+#else
 	NRF_KMU_S->EVENTS_PUSHBLOCKED = 0;
+#endif
 }
 
 static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
@@ -107,6 +115,32 @@ int lib_kmu_push_slot(int slot_id)
 
 	return trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_PUSH),
 							&(NRF_KMU_S->EVENTS_PUSHED));
+}
+
+static int block_kmu_slot(int slot_id)
+{
+	NRF_KMU_S->KEYSLOT = slot_id;
+
+#if HAS_BLOCK_TASK
+	return trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_BLOCK),
+							&(NRF_KMU_S->EVENTS_BLOCKED));
+#else
+	return trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_PUSHBLOCK),
+							&(NRF_KMU_S->EVENTS_PUSHBLOCKED));
+#endif
+}
+
+int lib_kmu_block_slot_range(int slot_id, unsigned int slot_count)
+{
+	int ret;
+
+	for (unsigned int i = 0; i != slot_count; ++i) {
+		ret = block_kmu_slot(slot_id + i);
+		if (ret != LIB_KMU_SUCCESS) {
+			return ret;
+		}
+	}
+	return LIB_KMU_SUCCESS;
 }
 
 int lib_kmu_revoke_slot(int slot_id)
