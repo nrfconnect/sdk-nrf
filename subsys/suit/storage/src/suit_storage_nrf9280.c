@@ -278,7 +278,7 @@ static suit_plat_err_t find_manifest_area(suit_manifest_role_t role, const uint8
 		break;
 	case SUIT_MANIFEST_NORDIC_CELLFW:
 		*addr = nordic_storage_cell->nordic_cell.cellfw;
-		*size = sizeof(nordic_storage_cell->nordic_cell.top);
+		*size = sizeof(nordic_storage_cell->nordic_cell.cellfw);
 		break;
 	case SUIT_MANIFEST_RAD_RECOVERY:
 		*addr = rad_storage->rad.recovery;
