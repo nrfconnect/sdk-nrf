@@ -34,6 +34,7 @@ Debugging single-core applications
 **********************************
 
 To debug single-core applications, you can use the ``west debug`` command to start a single debug session with GDB.
+You can also attach the debug session to a running core using the ``west attach`` command.
 
 Debugging multi-core applications
 *********************************
@@ -41,7 +42,22 @@ Debugging multi-core applications
 To debug the firmware running also on cores other than the application core, you need to set up a separate debug session for each one of the cores you want to debug.
 When debugging another core, the application core debug session runs in the background and you can debug both cores if needed.
 
-If you want to reset the other cores while debugging, make sure to first reset the application core and execute the code.
+Debugging early-boot and reset issues
+*************************************
+
+A local domain reset triggers a global reset, which resets the debugging state.
+As a result, a new debugging connection is required.
+To debug early boot issues, you can trigger a reset while keeping the cores in a halted state.
+This approach allows time to attach the debugger.
+The cores can then be started individually.
+
+The following example demonstrates how to debug the early boot phase on the application core:
+
+.. code-block:: shell
+
+  nrfutil device reset --reset-kind RESET_VIA_SECDOM
+  nrfutil device go --core Network
+  west attach
 
 Using GDB as an external debugger
 *********************************
