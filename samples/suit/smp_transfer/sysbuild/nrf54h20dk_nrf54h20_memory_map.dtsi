@@ -5,27 +5,32 @@
  */
 
 &cpuapp_rx_partitions {
-	/delete-node/ partition@a6000;
-	cpuapp_recovery_partition: partition@a5000 {
-		reg = <0xa5000 DT_SIZE_K(72)>;
+	/delete-node/ partition@94000;
+	cpuapp_recovery_partition: partition@9d000 {
+		reg = <0x9d000 DT_SIZE_K(72)>;
 	};
 
-	/delete-node/ partition@94000;
-	cpuapp_slot0_partition: partition@b7000 {
-		reg = <0xb7000 DT_SIZE_K(256)>;
+	cpuapp_recovery_rfu_partition: partition@af000 {
+		reg = <0xaf000 DT_SIZE_K(56)>;
+	};
+
+	cpuapp_slot0_partition: partition@bd000 {
+		reg = <0xbd000 DT_SIZE_K(268)>;
 	};
 
 	/* Delete PPR code partition */
 	/delete-node/ partition@e4000;
-	cpuppr_code_partition: partition@a5010 {
-		reg = < 0xa5010 0x10 >;
-	};
 
 	/* Delete FLPR code partition */
 	/delete-node/ partition@f4000;
-	cpuflpr_code_partition: partition@a5020 {
-		reg = < 0xa5020 0x10 >;
-	};
+};
+
+&cpuflpr_vpr {
+	/delete-property/ source-memory;
+};
+
+&cpuppr_vpr {
+	/delete-property/ source-memory;
 };
 
 &cpurad_rx_partitions {
@@ -35,11 +40,11 @@
 	#size-cells = < 0x1 >;
 
 	/delete-node/ partition@54000;
-	cpurad_slot0_partition: partition@66000 {
-		reg = < 0x66000 DT_SIZE_K(160) >;
+	cpurad_recovery_partition: partition@54000 {
+		reg = < 0x54000 DT_SIZE_K(92) >;
 	};
 
-	cpurad_recovery_partition: partition@8e000 {
-		reg = < 0x8e000 DT_SIZE_K(92) >;
+	cpurad_slot0_partition: partition@6b000 {
+		reg = < 0x6b000 DT_SIZE_K(200) >;
 	};
 };
