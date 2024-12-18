@@ -413,18 +413,6 @@ int nrf_cloud_json_to_url_params_convert(char *const buf, const size_t buf_size,
 int nrf_cloud_ground_fix_url_encode(char *buf, size_t size, const char *base,
 				    const struct nrf_cloud_location_config *config);
 
-#ifdef CONFIG_NRF_CLOUD_GATEWAY
-typedef int (*gateway_state_handler_t)(void *root_obj);
-
-/** @brief Register a callback, which is called whenever the shadow changes.
- *  The callback is passed a pointer to the shadow JSON document.  The callback
- *  should return 0 to allow further processing of shadow changes in
- *  nrf_cloud_codec.c.  It should return a negative error code only when the
- *  shadow is malformed.
- */
-void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler);
-#endif
-
 /** @brief Encode a log output buffer for transport to the cloud */
 int nrf_cloud_log_json_encode(struct nrf_cloud_log_context *ctx, uint8_t *buf, size_t size,
 			 struct nrf_cloud_data *output);
