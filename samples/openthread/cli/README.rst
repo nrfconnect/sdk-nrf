@@ -125,9 +125,6 @@ The following snippets are available:
 * ``tcp`` - Enables experimental TCP support in this sample.
 * ``low_power`` - Enables low power consumption mode in this sample.
 
-  .. note::
-     The ``low_power`` snippet does not support the ``nrf54l15dk/nrf54l10/cpuapp`` board target.
-
 FEM support
 ===========
 
