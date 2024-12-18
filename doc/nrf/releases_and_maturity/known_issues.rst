@@ -3689,10 +3689,12 @@ NCSDK-30263: direct-xip with revert does not work on nRF54L15
 
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0
 
-KRKNWK-18776: MCUboot updates take a long time
+NCSDK-31066: MCUboot updates take a long time
   The current implementation of MCUboot does not optimally utilize RRAM, which causes longer update times.
 
-  **Affected platforms:** nRF54L15
+  **Affected platforms:** nRF54L Series
+
+  **Workaround:** Set MCUBoot's Kconfig option :kconfig:option:`CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE` to ``32``.
 
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
