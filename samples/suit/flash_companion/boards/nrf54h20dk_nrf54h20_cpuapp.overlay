@@ -25,6 +25,7 @@
 
 &mx25uw63 {
 	status = "okay";
+	/delete-property/ reset-gpios;
 };
 
 &uart136 {
