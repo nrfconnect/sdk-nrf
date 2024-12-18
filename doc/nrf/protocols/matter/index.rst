@@ -15,7 +15,7 @@ It supports a wide range of existing technologies, including Wi-Fi®, Thread, an
 
 .. matter_intro_end
 
-|NCS| |release| allows you to develop applications with Matter specification version 1.3.0 and `Matter SDK version`_ 1.3.0.0.
+|NCS| |release| allows you to develop applications with Matter specification version 1.4.0 and `Matter SDK version`_ 1.4.0.0.
 For a full list of |NCS| and Matter versions, view the following table:
 
 .. toggle:: nRF Connect SDK, Matter specification, and Matter SDK versions
