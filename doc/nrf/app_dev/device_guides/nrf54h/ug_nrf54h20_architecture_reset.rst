@@ -7,25 +7,8 @@ nRF54H20 reset behavior
    :local:
    :depth: 2
 
-The reset behavior of the nRF54H20 SoC depends on the core that triggers the reset:
 
-+--------------------------+--------------------------------------------------------------+
-|   CPU Triggering Reset   |   Reset Behavior                                             |
-+==========================+==============================================================+
-| Secure Domain            | Resets the entire SoC                                        |
-+--------------------------+--------------------------------------------------------------+
-| System Controller        | Resets the entire SoC                                        |
-+--------------------------+--------------------------------------------------------------+
-| Application domain       | - Resets all peripherals and VPRs owned by the Application   |
-|                          |   domain                                                     |
-|                          | - Resets the Radio domain                                    |
-|                          | - Resets all peripherals and VPRs owned by the Radio domain  |
-+--------------------------+--------------------------------------------------------------+
-| Radio domain             | - Resets all peripherals and VPRs owned by the Radio domain  |
-|                          | - Resets the Application domain                              |
-|                          | - Resets all peripherals and VPRs owned by the Application   |
-|                          |   domain                                                     |
-+--------------------------+--------------------------------------------------------------+
+All local domain resets trigger a reset of the entire SoC.
 
 nRF Util allows for different types of reset behavior on the various cores of the nRF54H20 SoC, based on the current lifecycle state of the device.
 
@@ -73,11 +56,14 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
    * - ``RESET_VIA_SECDOM``
      - Uses the CTRL-AP mailbox to send a local domain reset request to the Secure Domain Firmware (SDFW).
 
-       SDFW resets nonessential local domains and global peripherals owned by these domains.
-       Nonessential domains include all local domains except the Secure Domain.
+       This command resets the entire system while keeping both the application core and the radio core in a halted state.
 
-       Only domains with a populated UICR are reset.
-       After the reset, the affected CPUs do not restart.
+       You can start each core individually using the following commands:
+
+       * To start the Application core: ``nrfutil device go --core Application``
+       * To start the Network core: ``nrfutil device go --core Network``
+
+       This approach is particularly useful for debugging individual domains, starting from their reset handlers.
 
    * - ``RESET_DEFAULT``
      - Selects ``RESET_HARD``.
