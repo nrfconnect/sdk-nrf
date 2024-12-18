@@ -93,7 +93,25 @@ SUIT_Envelope_Tagged:
             name: nRF54H20_nordic_top
 
       suit-shared-sequence:
-      - suit-directive-set-component-index: [{{ component_list|join(',') }}]
+      - suit-directive-set-component-index: [{{  component_list_without_top|join(',') }}]
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: {{ mpi_root_vendor_name }}
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: {{ mpi_root_vendor_name }}
+              name: {{ mpi_root_class_name }}
+      - suit-condition-vendor-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-condition-class-identifier:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+      - suit-directive-set-component-index: [{{ top_component_index }}]
       - suit-directive-override-parameters:
           suit-parameter-vendor-identifier:
             RFC4122_UUID: {{ mpi_root_vendor_name }}
