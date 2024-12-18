@@ -611,5 +611,13 @@ config BT_CTLR_SDC_LE_POWER_CLASS_1
 	  See Bluetooth Core Specification, Vol 6, Part A, Section 3
 	  Transmitter Characteristics for more information.
 
+config BT_LL_SOFTDEVICE_INIT_PRIO_LEVEL
+	int
+	default 53 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  This option configures the LL_SOFTDEVICE initialization priority level. The priority
+	  must be lower than the CONFIG_MPSL_INIT_PRIORITY due to dependency on the MPSL library.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
