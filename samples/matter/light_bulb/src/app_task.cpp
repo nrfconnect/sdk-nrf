@@ -17,10 +17,6 @@
 #include "pwm/pwm_device.h"
 #endif
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "dfu/ota/ota_util.h"
-#endif
-
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/DeferredAttributePersistenceProvider.h>
 #include <app/clusters/identify-server/identify-server.h>
