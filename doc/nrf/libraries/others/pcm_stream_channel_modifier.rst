@@ -8,7 +8,7 @@ PCM Stream Channel Modifier
    :depth: 2
 
 PCM Stream Channel Modifier library enables users to split pulse-code modulation (PCM) streams from stereo to mono or combine mono streams to form a stereo stream.
-For more information, see `API documentation`_.
+For more information, see the following API documentation section.
 
 Configuration
 *************

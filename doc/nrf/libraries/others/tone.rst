@@ -8,7 +8,7 @@ Tone generator
    :depth: 2
 
 The tone generator library creates an array of pulse-code modulation (PCM) data of a one-period sine tone, with a given tone frequency and sampling frequency.
-For more information, see `API documentation`_.
+For more information, see the following API documentation section.
 
 Configuration
 *************
