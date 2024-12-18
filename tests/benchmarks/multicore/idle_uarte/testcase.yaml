@@ -11,7 +11,6 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_normal.overlay"
     harness_config:
       fixture: gpio_loopback
@@ -25,8 +24,52 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_uarte"
+
+  benchmarks.multicore.idle_uarte.fast.gd_freq_256MHz.nrf54h20dk_cpuapp_cpurad.s2ram:
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - CONFIG_CLOCK_CONTROL=y
+      - CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_256MHZ=y
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_uarte"
+
+  benchmarks.multicore.idle_uarte.fast.gd_freq_128MHz.nrf54h20dk_cpuapp_cpurad.s2ram:
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - CONFIG_CLOCK_CONTROL=y
+      - CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ=y
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_uarte"
+
+  benchmarks.multicore.idle_uarte.fast.gd_freq_64MHz.nrf54h20dk_cpuapp_cpurad.s2ram:
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - CONFIG_CLOCK_CONTROL=y
+      - CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ=y
     harness_config:
       fixture: gpio_loopback
       pytest_root:
@@ -39,7 +82,6 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_normal.overlay"
       - CONFIG_PRINTK=y
       - CONFIG_LOG=y
