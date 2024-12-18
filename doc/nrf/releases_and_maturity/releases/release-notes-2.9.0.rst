@@ -57,6 +57,8 @@ Added the following features as experimental:
     They are primarily meant to demonstrate the data flow between initiator and reflector.
     The ranging algorithm in these samples is for illustrative purposes, and the resulting accuracy is not representative for Channel Sounding.
 
+Sign up for the `nRF Connect SDK v2.9.0 webinar`_ to learn more about the new features.
+
 Release tag
 ***********
 
