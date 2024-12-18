@@ -1390,7 +1390,7 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 		}
 	}
 
-#if defined(BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT)
+#if defined(CONFIG_BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT)
 	if (CONFIG_BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT != 27) {
 		sdc_hci_cmd_vs_min_val_of_max_acl_tx_payload_set_t params = {
 			.min_val_of_max_acl_tx_payload =
