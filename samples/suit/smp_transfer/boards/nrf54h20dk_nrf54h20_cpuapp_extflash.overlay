@@ -75,14 +75,19 @@
 };
 
 &cpuapp_rx_partitions {
-	/delete-node/ partition@b7000;
-	/delete-node/ cpuapp_recovery_partition;
-	cpuapp_recovery_partition: partition@a5000 {
-		reg = <0xa5000 DT_SIZE_K(84)>;
+	/delete-node/ partition@9d000;
+	cpuapp_recovery_partition: partition@9d000 {
+		reg = <0x9d000 DT_SIZE_K(84)>;
 	};
 
-	cpuapp_slot0_partition: partition@ba000 {
-		reg = <0xba000 DT_SIZE_K(792)>;
+	/delete-node/ partition@af000;
+	cpuapp_recovery_rfu_partition: partition@b2000 {
+		reg = <0xb2000 DT_SIZE_K(44)>;
+	};
+
+	/delete-node/ partition@bd000;
+	cpuapp_slot0_partition: partition@bd000 {
+		reg = <0xbd000 DT_SIZE_K(780)>;
 	};
 };
 
