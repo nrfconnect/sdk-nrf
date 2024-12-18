@@ -203,7 +203,7 @@ manifest:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: bda2c886c3c7b411e2d39bec07b87b51d613748c
+      revision: 18feea913b2928e700ae7be35efed5584560534f
       groups:
         - find-my
     - name: azure-sdk-for-c
