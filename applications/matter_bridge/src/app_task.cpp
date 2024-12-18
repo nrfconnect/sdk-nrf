@@ -22,10 +22,6 @@
 #include "bridge/ble_connectivity_manager.h"
 #endif
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "dfu/ota/ota_util.h"
-#endif /* CONFIG_BRIDGED_DEVICE_BT */
-
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>

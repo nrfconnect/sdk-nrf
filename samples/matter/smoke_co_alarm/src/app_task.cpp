@@ -12,10 +12,6 @@
 #include "lib/core/CHIPError.h"
 #include "lib/support/CodeUtils.h"
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "dfu/ota/ota_util.h"
-#endif
-
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/clusters/smoke-co-alarm-server/SmokeCOTestEventTriggerHandler.h>
