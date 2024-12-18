@@ -9,6 +9,8 @@
 #include <zephyr/pm/device_runtime.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/devicetree/clocks.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 /* Note: logging is normally disabled for this test
  * Enable only for debugging purposes
@@ -31,6 +33,39 @@ const uint8_t test_pattern[TEST_BUFFER_LEN] = {0x11, 0x12, 0x13, 0x14, 0x15,
 					       0x16, 0x17, 0x18, 0x19, 0x20};
 static uint8_t test_buffer[TEST_BUFFER_LEN];
 static volatile uint8_t uart_error_counter;
+
+#if defined(CONFIG_CLOCK_CONTROL)
+const struct nrf_clock_spec clk_spec_global_hsfll = {
+	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
+};
+
+/*
+ * Set Global Domain frequency (HSFLL120)
+ * based on: CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
+ */
+void set_global_domain_frequency(void)
+{
+	int err;
+	int res;
+	struct onoff_client cli;
+	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
+
+	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
+	sys_notify_init_spinwait(&cli.notify);
+	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
+	printk("Return code: %d\n", err);
+	__ASSERT_NO_MSG(err < 3);
+	__ASSERT_NO_MSG(err >= 0);
+	do {
+		err = sys_notify_fetch_result(&cli.notify, &res);
+		k_yield();
+	} while (err == -EAGAIN);
+	printk("Clock control request return value: %d\n", err);
+	printk("Clock control request response code: %d\n", res);
+	__ASSERT_NO_MSG(err == 0);
+	__ASSERT_NO_MSG(res == 0);
+}
+#endif /* CONFIG_CLOCK_CONTROL */
 
 /*
  * Callback function for UART async transmission
@@ -109,6 +144,11 @@ int main(void)
 					       .stop_bits = UART_CFG_STOP_BITS_1,
 					       .data_bits = UART_CFG_DATA_BITS_8,
 					       .flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS};
+
+#if defined(CONFIG_CLOCK_CONTROL)
+	k_msleep(1000);
+	set_global_domain_frequency();
+#endif
 
 	printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
 	printk("UART instance: %s\n", uart_dev->name);
