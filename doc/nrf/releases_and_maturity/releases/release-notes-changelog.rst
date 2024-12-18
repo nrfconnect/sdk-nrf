@@ -277,7 +277,7 @@ Cellular samples
 
 * :ref:`lte_sensor_gateway` sample:
 
-   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_..
+   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
 
 Cryptography samples
 --------------------
