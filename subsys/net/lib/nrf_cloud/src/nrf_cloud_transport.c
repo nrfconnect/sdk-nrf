@@ -1125,6 +1125,12 @@ int nct_dc_connect(void)
 		.message_id = NCT_MSG_ID_DC_SUB
 	};
 
+	char *p = (char *)subscribe_topic.topic.utf8;
+	int l = subscribe_topic.topic.size;
+
+	p[l - 3] = 'c';
+	p[l - 2] = '2';
+	p[l - 1] = 'g';
 	LOG_DBG("Subscribing to:");
 	for (int i = 0; i < subscription_list.list_count; i++) {
 		LOG_DBG("%.*s", subscription_list.list[i].topic.size,

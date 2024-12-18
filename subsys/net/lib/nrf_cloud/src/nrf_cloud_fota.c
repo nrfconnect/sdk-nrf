@@ -121,7 +121,7 @@ static void update_last_job(char const *const job_id)
 
 static bool is_last_job(char const *const job_id)
 {
-	bool match;
+	bool match = false;
 
 	K_SPINLOCK(&last_job_slock) {
 		match = (strncmp(last_job, job_id, sizeof(last_job)) == 0);
