@@ -10,7 +10,7 @@ Data FIFO
 This library combines the Zephyr memory slab and message queue mechanisms.
 The purpose is to be able to allocate a memory slab, use it, and signal to a receiver when the write operation has completed.
 The reader can then read and free the memory slab when done.
-For more information, see `API documentation`_.
+For more information, see the following API documentation section.
 
 Configuration
 *************
