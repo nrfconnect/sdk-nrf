@@ -43,8 +43,9 @@ config TFM_PLATFORM_SP_STACK_SIZE
 
 config TFM_PLATFORM_NV_COUNTER_MODULE_DISABLED
 	bool "Disable Non-volatile counter module"
-	default y if TFM_PROFILE_TYPE_MINIMAL
-
+	default n if SOC_NRF54L15_CPUAPP
+	default n if TFM_PARTITION_PROTECTED_STORAGE && TFM_PS_ROLLBACK_PROTECTION
+	default y
 endmenu
 
 # Copied from secure_fw/partitions/crypto/Kconfig, appended the TFM prefix
@@ -129,6 +130,13 @@ menu "Attestation component configs"
 config TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS
 	bool "Include optional claims in initial attestation token"
 	default y
+
+config TFM_ATTEST_VERIFICATION_SERVICE_URL
+	string "TF-M attestation verification service URL"
+	default ""
+	depends on TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS
+	help
+	  Optional claim of URL of the verification service in the TF-M attestation token.
 
 config TFM_ATTEST_INCLUDE_COSE_KEY_ID
 	bool "Include COSE key-id in initial attestation token"
