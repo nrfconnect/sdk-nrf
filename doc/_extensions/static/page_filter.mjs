@@ -48,7 +48,7 @@ function createFilterTags(dropdown, elementType, filterTags) {
   var classFilterRE = Object.keys(filterTags);
   var index = classFilterRE.indexOf("versions");
   if (index !== -1) {
-      classFilterRE[index] = "v\\d+-\\d+-\\d+";
+      classFilterRE[index] = "v\\d+-\\d+-\\d+(-.*)?";
   }
   var parentElements = elementType.split("/");
   document.querySelectorAll(parentElements.shift()).forEach((element) => {
@@ -91,14 +91,17 @@ function createFilterTags(dropdown, elementType, filterTags) {
         spanTag.classList.add("filtertag");
         filterName = filterTags[className];
       }
-      else if (RegExp('v\\d+-\\d+-\\d+').test(className)) {
+      else if (RegExp('v\\d+-\\d+-\\d+(-.*)?').test(className)) {
         aTag.setAttribute("href", URL + "?v=" + className);
         spanTag.setAttribute("version", className);
         spanTag.classList.add("versiontag");
-        filterName = className.replace(/v(\d+)-(\d+)-(\d+)/i, 'v$1.$2.$3');
+        /** Updated replace method to handle additional segments after vX-X-X **/
+        filterName = className.replace(/v(\d+)-(\d+)-(\d+)(-.*)?/, (match, p1, p2, p3, p4) => {
+            return `v${p1}.${p2}.${p3}${p4 || ''}`;
+        });
         /** When clicking a version tag, filter by the corresponding version **/
         spanTag.addEventListener("click", () => displayOption(className, dropdown));
-      }
+    }
       var textNode = document.createTextNode(filterName);
 
       spanTag.appendChild(textNode);
@@ -158,7 +161,7 @@ function setupFiltering(name, filterTagContainer=undefined, filterTags={}) {
     /** Retrieve the 'v' parameter and switch to that version, if applicable.
         Otherwise, switch to the version that is selected in the dropdown.    **/
     var v = getUrlParameter('v');
-    if ("versions" in filterTags && (RegExp('v\\d+-\\d+-\\d+').test(v))) {
+    if ("versions" in filterTags && (RegExp('v\\d+-\\d+-\\d+(-.*)?').test(v))) {
       displayOption(v, dropdown);
     }
     else {
