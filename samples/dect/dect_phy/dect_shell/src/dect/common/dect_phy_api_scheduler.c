@@ -39,7 +39,7 @@ enum dect_phy_api_scheduler_state {
 };
 
 /* Scheduler data */
-static struct dect_phy_api_data {
+static struct dect_phy_api_scheduler_data {
 	enum dect_phy_api_scheduler_state state;
 } scheduler_data;
 
@@ -1171,6 +1171,7 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 				NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED;
 			sched_op_completed_params.status = ret;
 
+			/* Complete item */
 			if (iterator->sched_config.cb_op_to_mdm) {
 				iterator->sched_config.cb_op_to_mdm(
 					&sched_op_completed_params,
@@ -1178,15 +1179,13 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 			}
 
 			if (iterator->sched_config.cb_op_completed) {
-				/* Complete item */
-
 				/* Trigger callback also */
 				dect_phy_api_scheduler_done_list_mdm_op_complete(
 					&sched_op_completed_params, iterator);
-
-				dect_phy_api_scheduler_mdm_op_req_failed_evt_send(
-					&sched_op_completed_params);
 			}
+			dect_phy_api_scheduler_mdm_op_req_failed_evt_send(
+				&sched_op_completed_params);
+
 			if (iterator->sched_config.interval_count_left > 0) {
 				iterator->sched_config.interval_count_left--;
 				if (iterator->sched_config.interval_count_left == 0) {
