@@ -189,6 +189,14 @@ KRKNWK-14299: NRPA MAC address cannot be set in Zephyr
 Bluetooth LE
 ============
 
+.. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0
+
+NCSDK-31095: Issues with the :kconfig:option:`CONFIG_SEGGER_SYSVIEW` Kconfig option
+  Using this Kconfig option causes the data parameter in the macros :c:macro:`k_fifo_put`, :c:macro:`k_fifo_alloc_put`, :c:macro:`k_lifo_put`, and :c:macro:`k_lifo_alloc_put` to be evaluated multiple times.
+  This can cause problems if the data parameter is a function call incrementing a reference counter.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-zephyr`` (commit hash: ``f2f61094b5e1ba5b841d78e5dd88b2076fbc99ee`` from the `upstream Zephyr repository <https://github.com/zephyrproject-rtos/zephyr>`_).
+
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0
 
 DRGN-23363: A flash operation executed on the system workqueue might result in ``-ETIMEDOUT``
