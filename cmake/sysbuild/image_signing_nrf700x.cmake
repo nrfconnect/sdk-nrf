@@ -25,7 +25,16 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
   #
   # Therefore, go with an explicitly installed imgtool first, falling
   # back on mcuboot/scripts/imgtool.py.
-  if(IMGTOOL)
+  sysbuild_get(CONFIG_MCUBOOT_FORCE_IN_TREE_IMGTOOL_USAGE IMAGE ${DEFAULT_IMAGE} VAR CONFIG_MCUBOOT_FORCE_IN_TREE_IMGTOOL_USAGE KCONFIG)
+  if(CONFIG_MCUBOOT_FORCE_IN_TREE_IMGTOOL_USAGE)
+    if(NOT DEFINED ZEPHYR_MCUBOOT_MODULE_DIR)
+      message(FATAL_ERROR "MCUboot module cannot be found")
+    endif()
+    set(IMGTOOL_PY "${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py")
+    if(EXISTS "${IMGTOOL_PY}")
+      set(imgtool_path "${IMGTOOL_PY}")
+    endif()
+  elseif(IMGTOOL)
     set(imgtool_path "${IMGTOOL}")
   elseif(DEFINED ZEPHYR_MCUBOOT_MODULE_DIR)
     set(IMGTOOL_PY "${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py")
