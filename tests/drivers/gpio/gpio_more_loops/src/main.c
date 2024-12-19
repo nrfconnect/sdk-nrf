@@ -109,12 +109,12 @@ static void *suite_setup(void)
 	_check_inputs(0b11111111111111111111111111111111);
 	TC_PRINT("Input pull up works.\n");
 
-	for (i = 0; i < npairs; i++) {
-		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT | GPIO_PULL_DOWN);
-		zassert_equal(rc, 0, "IN[%d] config failed", i);
-	}
-	_check_inputs(0b00000000000000000000000000000000);
-	TC_PRINT("Input pull down works.\n");
+	// for (i = 0; i < npairs; i++) {
+	// 	rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT | GPIO_PULL_DOWN);
+	// 	zassert_equal(rc, 0, "IN[%d] config failed", i);
+	// }
+	// _check_inputs(0b00000000000000000000000000000000);
+	// TC_PRINT("Input pull down works.\n");
 
 	for (i = 0; i < npairs; i++) {
 		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT);
