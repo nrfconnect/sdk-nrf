@@ -1857,6 +1857,10 @@ config PSA_NEED_CRACEN_PLATFORM_KEYS
 	default y
 	depends on PSA_WANT_ALG_GCM
 	depends on PSA_WANT_AES_KEY_SIZE_256
+<<<<<<< HEAD
 	depends on PSA_WANT_PLATFORM_KEYS
+=======
+	depends on SOC_NRF54H20_CPUSEC
+>>>>>>> 83ef94adf9 (nrf_security: drivers: cracen: Remove sicrypto for ed25519)
 
 endmenu
