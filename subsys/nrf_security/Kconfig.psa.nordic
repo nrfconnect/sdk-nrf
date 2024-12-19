@@ -400,3 +400,10 @@ config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	bool "SRP public key support" if !MBEDTLS_PROMPTLESS
 	help
 	  SRP public key support.
+
+comment "Nordic added alternative cracen driver"
+
+config PSA_WANT_NO_SI_CRYPTO
+	bool "Running supported crypto operations without sicrypto" if !MBEDTLS_PROMPTLESS
+	help
+	  Using alternative high level driver for cracen when supported
