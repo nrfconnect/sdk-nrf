@@ -12,25 +12,37 @@ menuconfig SECURE_BOOT_CRYPTO
 	select NRF_OBERON
 
 if (SECURE_BOOT_CRYPTO)
+
 config SB_ECDSA_SECP256R1
 	bool
+
+config SB_ED25519
+	bool
+
 config SB_RSA_PSS2048
 	bool
+
 config SB_SHA256
+	bool
+
+config SB_SHA512
 	bool
 
 config SB_SIGNATURE_LEN
 	int
 	default 64 if SB_ECDSA_SECP256R1
+	default 64 if SB_ED25519
 	default 256 if SB_RSA_PSS2048
 
 config SB_PUBLIC_KEY_LEN
 	int
 	default 64 if SB_ECDSA_SECP256R1
+	default 32 if SB_ED25519
 	default 256 if SB_RSA_PSS2048
 
 config SB_HASH_LEN
-	def_int 32
+	def_int 64 if SB_SHA512
+	def_int 32 if !SB_CRYPTO_NONE
 
 choice SB_CRYPTO_SIG
 	prompt "Firmware verification Algorithm"
@@ -40,29 +52,44 @@ choice SB_CRYPTO_SIG
 	help
 	  Crypto implementation to use for signature verification of firmware in Bootloader.
 
-	config SB_CRYPTO_OBERON_ECDSA_SECP256R1
-		bool "Software ECDSA secp256r1"
-		select SB_ECDSA_SECP256R1
-		help
-		  Software implementation of ECDSA with NIST curve secp256r1.
+config SB_CRYPTO_OBERON_ECDSA_SECP256R1
+	bool "Software ECDSA secp256r1"
+	select SB_ECDSA_SECP256R1
+	help
+	  Software implementation of ECDSA with NIST curve secp256r1.
 
-	config SB_CRYPTO_CC310_ECDSA_SECP256R1
-		bool "Hardware ECDSA secp256r1" if HAS_HW_NRF_CC310
-		select NRF_CC310_BL
-		select SB_ECDSA_SECP256R1
-		help
-		  Hardware implementation of ECDSA with NIST curve secp256r1.
+config SB_CRYPTO_CC310_ECDSA_SECP256R1
+	bool "Hardware ECDSA secp256r1" if HAS_HW_NRF_CC310
+	select NRF_CC310_BL
+	select SB_ECDSA_SECP256R1
+	help
+	  Hardware implementation of ECDSA with NIST curve secp256r1.
 
-	config SB_CRYPTO_CLIENT_ECDSA_SECP256R1
-		bool "Use another image's ECDSA secp256r1 implementation"
-		select BL_SECP256R1_EXT_API_ATLEAST_REQUIRED
-		select SB_ECDSA_SECP256R1
-		help
-		  Using EXT_APIs from fw_info.
+config SB_CRYPTO_CLIENT_ECDSA_SECP256R1
+	bool "Use another image's ECDSA secp256r1 implementation"
+	select BL_SECP256R1_EXT_API_AT_LEAST_REQUIRED
+	select SB_ECDSA_SECP256R1
+	help
+	  Using EXT_APIs from fw_info.
 
-	config SB_CRYPTO_NO_ECDSA_SECP256R1
-		bool "Disable secp256r1 support"
-		select SB_ECDSA_SECP256R1
+config SB_CRYPTO_NO_ECDSA_SECP256R1
+	bool "secp256r1 without validation"
+	select SB_ECDSA_SECP256R1
+	help
+	  Requires that a secp256r1 signature be present in the image but does no validation.
+
+config SB_CRYPTO_PSA_ED25519
+	bool "PSA ed25519 support"
+	depends on NRF_SECURITY
+	depends on CRACEN_LIB_KMU
+	select SB_ED25519
+	select PSA_WANT_ALG_SHA_512
+	select PSA_WANT_ALG_PURE_EDDSA
+	select PSA_WANT_ECC_TWISTED_EDWARDS_255
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	select MBEDTLS_ENABLE_HEAP
+	help
+	  Use PSA crypto for ed25519 support.
 
 	#config SB_CRYPTO_OBERON_RSA_2048
 	#	bool #"Software RSA-PSS 2048-bits"
@@ -84,35 +111,53 @@ endchoice
 
 choice SB_CRYPTO_HASH
 	prompt "Hashing Implementation"
+	default SB_CRYPTO_NONE if SB_CRYPTO_PSA_ED25519
 	default SB_CRYPTO_NO_SHA256 if !IS_SECURE_BOOTLOADER
 	default SB_CRYPTO_CC310_SHA256 if HAS_HW_NRF_CC310
 	default SB_CRYPTO_OBERON_SHA256
 	help
 	  Crypto implementation to use for hash generation in Bootloader.
 
-	config SB_CRYPTO_OBERON_SHA256
-		bool "Software SHA256"
-		select SB_SHA256
-		help
-		  Software implementation of SHA256.
+config SB_CRYPTO_OBERON_SHA256
+	bool "Software SHA256"
+	select SB_SHA256
+	help
+	  Software implementation of SHA256.
 
-	config SB_CRYPTO_CC310_SHA256
-		bool "Hardware SHA256" if HAS_HW_NRF_CC310
-		select NRF_CC310_BL
-		select SB_SHA256
-		help
-		  Hardware implementation of SHA256.
+config SB_CRYPTO_CC310_SHA256
+	bool "Hardware SHA256" if HAS_HW_NRF_CC310
+	select NRF_CC310_BL
+	select SB_SHA256
+	help
+	  Hardware implementation of SHA256.
 
-	config SB_CRYPTO_CLIENT_SHA256
-		bool "Use another image's SHA256 implementation"
-		select BL_SHA256_EXT_API_ATLEAST_REQUIRED
-		select SB_SHA256
-		help
-		  Using EXT_APIs from fw_info.
+config SB_CRYPTO_CLIENT_SHA256
+	bool "Use another image's SHA256 implementation"
+	select BL_SHA256_EXT_API_AT_LEAST_REQUIRED
+	select SB_SHA256
+	help
+	  Using EXT_APIs from fw_info.
 
-	config SB_CRYPTO_NO_SHA256
-		bool "Disable SHA256 support"
-		select SB_SHA256
+config SB_CRYPTO_NO_SHA256
+	bool "SHA256 without validation"
+	help
+	  Requires that a SHA256 hash be present in the image but does no validation.
+
+config SB_CRYPTO_NONE
+	bool "None"
+	help
+	  No hash will be present in the image.
+
+config SB_CRYPTO_PSA_SHA512
+	bool "PSA SHA512 support"
+	depends on NRF_SECURITY
+	select SB_SHA512
+	select PSA_WANT_ALG_SHA_512
+	select PSA_WANT_ALG_PURE_EDDSA
+	select PSA_WANT_ECC_TWISTED_EDWARDS_255
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	help
+	  Use PSA crypto for SHA512 support.
 
 endchoice
 
@@ -122,16 +167,24 @@ flags = 2
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
+if SB_SHA256
 EXT_API = BL_SHA256
 id = 0x1002
 flags = 0
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+endif
 
+if SB_ECDSA_SECP256R1
 EXT_API = BL_SECP256R1
 id = 0x1003
 flags = 1
 ver = 1
 source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+endif
+
+module = SB_CRYPTO
+module-str = secure boot crypto
+source "subsys/logging/Kconfig.template.log_config"
 
 endif # SECURE_BOOT_CRYPTO
