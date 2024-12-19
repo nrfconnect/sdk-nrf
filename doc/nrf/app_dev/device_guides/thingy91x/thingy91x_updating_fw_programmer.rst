@@ -114,7 +114,7 @@ This section describes how you can update the application firmware of the nRF915
 
          .. code-block:: console
 
-            nrfutil device program --firmware dfu_application.zip --serial-number <J-Link Serial number> --traits mcuboot --x-family nrf91 --core Application
+            nrfutil device program --firmware dfu_application.zip --serial-number <Thingy:91 X Serial number> --traits mcuboot --x-family nrf91 --core Application
 
    .. group-tab:: Through external debug probe
 
@@ -137,7 +137,7 @@ This section describes how you can update the application firmware of the nRF915
 
          .. code-block:: console
 
-            nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <Thingy:91 X Serial number> --traits jlink --x-family nrf91 --core Application
+            nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <J-Link Serial number> --traits jlink --x-family nrf91 --core Application
 
 .. _update_modem_fw_nRF9151:
 
@@ -166,4 +166,4 @@ To update the nRF9151 modem firmware using an external debug probe, complete the
 
    .. code-block:: console
 
-      nrfutil device program --firmware <modem.zip> --serial-number <Thingy:91 X Serial number> --traits jlink modem --x-family nrf91
+      nrfutil device program --firmware <modem.zip> --serial-number <J-Link Serial number> --traits jlink modem --x-family nrf91
