@@ -49,6 +49,8 @@ static enum log_rpc_level stream_level = LOG_RPC_LEVEL_NONE;
 
 #ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
 static enum log_rpc_level history_level = LOG_RPC_LEVEL_NONE;
+static uint8_t history_threshold;
+static bool history_threshold_active;
 static void history_transfer_task(struct k_work *work);
 static K_MUTEX_DEFINE(history_transfer_mtx);
 static uint32_t history_transfer_id;
@@ -361,6 +363,15 @@ static void process(const struct log_backend *const backend, union log_msg_gener
 
 	if (max_level != LOG_RPC_LEVEL_NONE && level <= max_level) {
 		log_rpc_history_push(msg_generic);
+
+		if (history_threshold_active && log_rpc_history_get_usage() > history_threshold) {
+			struct nrf_rpc_cbor_ctx ctx;
+
+			NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
+			nrf_rpc_cbor_evt_no_err(&log_rpc_group,
+						LOG_RPC_EVT_HISTORY_THRESHOLD_REACHED, &ctx);
+			history_threshold_active = false;
+		}
 	}
 #endif
 }
@@ -519,6 +530,7 @@ static void history_transfer_task(struct k_work *work)
 		log_rpc_history_free(history_cur_msg);
 		history_cur_msg = NULL;
 		log_rpc_history_set_overwriting(true);
+		history_threshold_active = history_threshold > 0;
 	}
 
 	k_mutex_unlock(&history_transfer_mtx);
@@ -551,6 +563,40 @@ static void log_rpc_fetch_history_handler(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_fetch_history_handler, LOG_RPC_CMD_FETCH_HISTORY,
 			 log_rpc_fetch_history_handler, NULL);
+
+static void log_rpc_get_history_usage_threshold_handler(const struct nrf_rpc_group *group,
+							struct nrf_rpc_cbor_ctx *ctx,
+							void *handler_data)
+{
+	nrf_rpc_cbor_decoding_done(group, ctx);
+	nrf_rpc_rsp_send_uint(group, history_threshold);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_get_history_usage_threshold_handler,
+			 LOG_RPC_CMD_GET_HISTORY_USAGE_THRESHOLD,
+			 log_rpc_get_history_usage_threshold_handler, NULL);
+
+static void log_rpc_set_history_usage_threshold_handler(const struct nrf_rpc_group *group,
+							struct nrf_rpc_cbor_ctx *ctx,
+							void *handler_data)
+{
+	uint8_t threshold = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group,
+			    LOG_RPC_CMD_SET_HISTORY_USAGE_THRESHOLD, NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	history_threshold = threshold;
+	history_threshold_active = threshold > 0;
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_history_usage_threshold_handler,
+			 LOG_RPC_CMD_SET_HISTORY_USAGE_THRESHOLD,
+			 log_rpc_set_history_usage_threshold_handler, NULL);
 
 #endif
 

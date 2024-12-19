@@ -81,3 +81,13 @@ void log_rpc_history_free(const union log_msg_generic *msg)
 
 	mpsc_pbuf_free(&log_history_pbuf, &msg->buf);
 }
+
+uint8_t log_rpc_history_get_usage(void)
+{
+	size_t total_size;
+	size_t current_size;
+
+	mpsc_pbuf_get_utilization(&log_history_pbuf, &total_size, &current_size);
+
+	return current_size * 100 / total_size;
+}

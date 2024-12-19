@@ -55,6 +55,7 @@ config LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
 
 config LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
 	bool "Flash Circular Buffer"
+	depends on FCB
 	help
 	  Stores the log history in Flash Circular Buffer located in the "log_history"
 	  flash partition. Note that enabling this option may significantly increase
