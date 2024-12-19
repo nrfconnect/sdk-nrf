@@ -74,7 +74,7 @@ jobs:
 
       - name: Check version
         run: |
-          VERSION_REGEX="^v([0-9a-z\.\-]+)$"
+          VERSION_REGEX="^v([0-9a-zA-Z\.\-]+)$"
           if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
             VERSION=${BASH_REMATCH[1]}
           elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
