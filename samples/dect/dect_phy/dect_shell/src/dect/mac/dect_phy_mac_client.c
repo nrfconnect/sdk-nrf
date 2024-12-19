@@ -294,6 +294,17 @@ static void dect_phy_mac_client_rach_tx_worker(struct k_work *work_item)
 		strncpy(cmd_params.tx_data_str, tmp_str, DECT_DATA_MAX_LEN - 1);
 	}
 
+	/* Get fresh nbr info */
+	struct dect_phy_mac_nbr_info_list_item *scan_info =
+		dect_phy_mac_nbr_info_get_by_long_rd_id(cmd_params.target_long_rd_id);
+
+	if (!scan_info) {
+		desh_warn("(%s): Beacon with long RD ID %u has not been seen in scan results",
+			(__func__), cmd_params.target_long_rd_id);
+		return;
+	}
+
+	data->target_nbr = *scan_info;
 	err = dect_phy_mac_client_rach_tx(&data->target_nbr, &cmd_params);
 	if (err) {
 		desh_error("(%s): client_rach_tx failed: %d", (__func__), err);
