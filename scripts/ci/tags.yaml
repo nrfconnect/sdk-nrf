@@ -54,7 +54,6 @@ bluetooth:
     - nrf/drivers/mpsl/
     - nrf/include/bluetooth/
     - nrf/samples/bluetooth/
-    - nrf/samples/nrf5340/multiprotocol_rpmsg/
     - nrf/subsys/bluetooth/
     - nrf/subsys/mpsl/
     - nrf/subsys/nrf_rpc/
@@ -169,7 +168,6 @@ ci_applications_matter: &ci_matter
     - nrf/modules/mcuboot/
     - nrf/modules/nrfxlib/nrf_802154/
     - nrf/samples/matter/
-    - nrf/samples/nrf5340/multiprotocol_rpmsg/
     - nrf/snippets/matter-diagnostic-logs/
     - nrf/subsys/bluetooth/controller/
     - nrf/subsys/bootloader/
@@ -237,7 +235,6 @@ ci_samples_zigbee: &ci_zigbee
     - nrf/include/zigbee/
     - nrf/modules/mcuboot/
     - nrf/modules/nrfxlib/nrf_802154/
-    - nrf/samples/nrf5340/multiprotocol_rpmsg/
     - nrf/samples/zigbee/
     - nrf/subsys/bluetooth/controller/
     - nrf/subsys/bluetooth/services/
