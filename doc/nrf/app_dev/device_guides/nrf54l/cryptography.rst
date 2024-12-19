@@ -133,9 +133,9 @@ IKG keys are also accessed using the standard PSA Crypto APIs, and are reference
 +=================+=====================================+===================================================+
 | ECC secp256r1   | ``CRACEN_BUILTIN_IDENTITY_KEY_ID``  | Used for signing/verification.                    |
 +-----------------+-------------------------------------+---------------------------------------------------+
-| AES 256-bit     | ``CRACEN_BUILTIN_MKEK_ID``          | Used for encryption/decryption or key derivation. |
+| AES 256-bit     | ``CRACEN_BUILTIN_MKEK_ID``          | Used for key derivation.                          |
 +-----------------+-------------------------------------+---------------------------------------------------+
-| AES 256-bit     | ``CRACEN_BUILTIN_MEXT_ID``          | Used for encryption/decryption or key derivation. |
+| AES 256-bit     | ``CRACEN_BUILTIN_MEXT_ID``          | Used for key derivation.                          |
 +-----------------+-------------------------------------+---------------------------------------------------+
 
 The keys are not exportable, except for the public key associated with the asymmetric key.
