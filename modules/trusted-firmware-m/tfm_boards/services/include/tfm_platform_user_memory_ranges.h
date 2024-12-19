@@ -83,7 +83,13 @@ static const struct tfm_read_service_range ranges[] = {
 #if defined(UICR_OTP_ADDR)
 	{.start = UICR_OTP_ADDR, .size = UICR_OTP_SIZE},
 #endif
-
+#if defined(NRF54L15_XXAA)
+	{.start = 0x50120820, .size = sizeof(uint32_t)},
+	{.start = 0x50120840, .size = sizeof(uint32_t)},
+	{.start = 0x50120844, .size = sizeof(uint32_t)},
+	{.start = 0x50120848, .size = sizeof(uint32_t)},
+	{.start = 0x50120864, .size = sizeof(uint32_t)},
+#endif
 };
 
 #if defined(NRF_RRAMC_S)
@@ -98,12 +104,26 @@ static const uint32_t rramc_lowpower_config_allowed[] = {0x0, 0x1};
 #endif /* NRF_RRAMC_S */
 
 static const struct tfm_write32_service_address tfm_write32_service_addresses[] = {
+#if defined(NRF54L15_XXAA)
+	{.addr = 0x50120820,
+	 .mask = 0x80000001,
+	 .allowed_values = NULL,
+	 .allowed_values_array_size = 0},
+	{.addr = 0x50120840,
+	 .mask = 0x107FF,
+	 .allowed_values = NULL,
+	 .allowed_values_array_size = 0},
+	{.addr = 0x50120844, .mask = 0x1, .allowed_values = NULL, .allowed_values_array_size = 0},
+	{.addr = 0x50120848, .mask = 0x1, .allowed_values = NULL, .allowed_values_array_size = 0},
+	{.addr = 0x50120864, .mask = 0x1, .allowed_values = NULL, .allowed_values_array_size = 0},
+#endif
 #if defined(NRF_RRAMC_S)
 	{.addr = NRF_RRAMC_LOWPOWER_CONFIG_ADDR,
 	 .mask = 0x3,
 	 .allowed_values = rramc_lowpower_config_allowed,
-	 .allowed_values_array_size = 2 },
-#else
+	 .allowed_values_array_size = 2},
+#endif
+#if !defined(NRF54L15_XXAA) && !defined(NRF_RRAMC_S)
 	/* This is a dummy value because this table cannot be empty */
 	{.addr = 0xFFFFFFFF, .mask = 0x0, .allowed_values = NULL, .allowed_values_array_size = 0},
 #endif
