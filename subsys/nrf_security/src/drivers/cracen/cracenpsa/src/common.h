@@ -186,3 +186,102 @@ psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *
  * @return sxsymcrypt error code.
  */
 int cracen_prepare_ik_key(const uint8_t *user_data);
+
+/**
+ * @brief Big-Endian addition.
+ *
+ * @param v		Big-endian Value
+ * @param v_size	size of v
+ * @param summand	Summand.
+ *
+ */
+void be_add(unsigned char *v, size_t v_size, size_t summand);
+
+/**
+ * @brief Big-Endian compare with carry.
+ *
+ * @param a		First value to be compared
+ * @param b		Second value to be compared
+ * @param size		Size of a and b.
+ * @param carry		Value of the carry.
+ *
+ * \retval 0 if equal.
+ * \retval 1 if a > b.
+ * \retval -1 if a < b.
+ */
+int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry);
+
+/**
+ * @brief Hash several elements at different locations in memory
+ *
+ * @param inputs[in]		Array of pointers to elements that will be hashed.
+ * @param inputs_lengths[in]	Array of lengths of elements to be hashed.
+ * @param input_count[in]	Number of elements to be hashed.
+ * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
+ * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ *
+ * @return sxsymcrypt error code.
+ */
+int hash_all_inputs(const char *inputs[], const size_t inputs_lengths[], size_t input_count,
+		    const struct sxhashalg *hashalg, char *digest);
+
+/**
+ * @brief Hash several elements at different locations in memory with a previously created hash
+ * context(sxhash)
+ *
+ * @param sxhashopctx[in]	Pointer to the sxhash context.
+ * @param inputs[in]		Array of pointers to elements that will be hashed.
+ * @param inputs_lengths[in]	Array of lengths of elements to be hashed.
+ * @param input_count[in]	Number of elements to be hashed.
+ * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
+ * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ *
+ * @return sxsymcrypt error code.
+ */
+int hash_all_inputs_with_context(struct sxhash *sxhashopctx, const char *inputs[],
+				 const size_t inputs_lengths[], size_t input_count,
+				 const struct sxhashalg *hashalg, char *digest);
+
+/**
+ * @brief Hash a single element
+ *
+ * @param inputs[in]		Pointer to the element that will be hashed.
+ * @param inputs_lengths[in]	Length of the element to be hashed.
+ * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
+ * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ *
+ * @return sxsymcrypt error code.
+ */
+int hash_input(const char *input, const size_t input_length, const struct sxhashalg *hashalg,
+	       char *digest);
+
+/**
+ * @brief Hash a single element with a previously created hash context(sxhash)
+ *
+ * @param sxhashopctx[in]	Pointer to the sxhash context.
+ * @param inputs[in]		Pointer to element that will be hashed.
+ * @param inputs_lengths[in]	Length of element to be hashed.
+ * @param hashalg[in]		hash algorithm to be used in sxhashalg format.
+ * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
+ *
+ * @return sxsymcrypt error code.
+ */
+int hash_input_with_context(struct sxhash *hashopctx, const char *input, const size_t input_length,
+			    const struct sxhashalg *hashalg, char *digest);
+
+/**
+ * @brief Generate a random number within the specified range.
+ *
+ * This function generates a random number strictly less than the given upper limit (`n`).
+ * The generated random number is evenly distributed over the range [0, n-1]. If the range
+ * is invalid (e.g., `n` is zero, less than three, or even), an error code is returned.
+ *
+ * @param n[in]         Pointer to a buffer holding the upper limit of the random range.
+ *                       The upper limit must be a non-zero odd number.
+ * @param nsz[in]       Size of the upper limit buffer in bytes.
+ * @param out[out]      Buffer to store the generated random number.
+ *                       The size of `out` should be at least `nsz`.
+ *
+ * @return sxsymcrypt error code:
+ */
+int rndinrange_create(const unsigned char *n, size_t nsz, unsigned char *out);

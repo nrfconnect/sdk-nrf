@@ -385,26 +385,7 @@ void bits2int(const uint8_t *data, size_t data_len, uint8_t *out_data, size_t ql
 void bits2octets(const uint8_t *data, size_t data_len, uint8_t *out_data, const uint8_t *order,
 		 size_t order_len)
 {
-	bits2int(data, data_len, out_data, order_len * 8 - clz_u8(order[0]));
-
-	int ge = si_be_cmp(out_data, order, order_len, 0);
-
-	if (ge >= 0) {
-		uint8_t carry = 0;
-
-		for (size_t i = order_len; i > 0; i--) {
-			uint32_t a = out_data[i - 1];
-			uint32_t b = order[i - 1] + carry;
-
-			if (b > a) {
-				a += 0x100;
-				carry = 1;
-			} else {
-				carry = 0;
-			}
-			out_data[i - 1] = a - b;
-		}
-	}
+	/* Kept for compliance */
 }
 
 static int run_deterministic_ecdsa_hmac_step(struct sitask *t, struct siwq *wq)
