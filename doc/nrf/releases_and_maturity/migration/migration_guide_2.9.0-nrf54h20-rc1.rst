@@ -87,6 +87,11 @@ nRF54H20 SoC binaries
 
           nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.8.0.zip --serial-number <serial_number>
 
+    #. Purge the device again as follows::
+
+          nrfutil device recover --core Application --serial-number <serial_number>
+          nrfutil device recover --core Network --serial-number <serial_number>
+
     #. Erase the device again as follows::
 
           nrfutil device erase --all --core Network --serial-number <snr>
@@ -127,11 +132,11 @@ nrfutil device
 
 .. toggle::
 
-  * ``nrfutil device`` has been updated to version 2.7.8.
+  * ``nrfutil device`` has been updated to version 2.7.10.
 
-    Install the nRF Util ``device`` command version 2.7.8 as follows::
+    Install the nRF Util ``device`` command version 2.7.10 as follows::
 
-       nrfutil install device=2.7.8 --force
+       nrfutil install device=2.7.10 --force
 
     For more information, consult the `nRF Util`_ documentation.
 
