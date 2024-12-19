@@ -24,13 +24,20 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/settings/settings.h>
-#include <zephyr/sys/reboot.h>
 #if defined(CONFIG_BOOTLOADER_MCUBOOT)
 #include <zephyr/dfu/mcuboot.h>
 #endif
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem.h>
+#endif
+
+#if UNIT_TESTING
+#define SYS_REBOOT_WARM 0
+#define SYS_REBOOT_COLD 1
+void sys_reboot(int type);
+#else
+#include <zephyr/sys/reboot.h>
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_fota, CONFIG_NRF_CLOUD_FOTA_LOG_LEVEL);
@@ -243,6 +250,7 @@ int nrf_cloud_fota_init(struct nrf_cloud_fota_init_param const *const init)
 	/* Ensure the codec is initialized */
 	(void)nrf_cloud_codec_init(NULL);
 
+	/*TODO: remove this check and variable */
 	if (!fota_dl_initialized) {
 		ret = fota_download_init(http_fota_handler);
 		if (ret != 0) {
@@ -1362,5 +1370,58 @@ int nrf_cloud_fota_ble_job_update(const struct nrf_cloud_fota_ble_job *const ble
 	}
 
 	return publish_and_free_obj(&job_obj, &topic_ble_updt, &param);
+}
+#endif
+
+#if UNIT_TESTING
+void reset_all_static_vars(void)
+{
+	client_mqtt = NULL;
+	event_cb = NULL;
+	ble_cb = NULL;
+	initialized = false;
+	fota_report_ack_pending = false;
+	fota_dl_initialized = false;
+	reboot_on_init = false;
+	last_fota_dl_evt = FOTA_DOWNLOAD_EVT_ERROR;
+	reset_topics();
+	cleanup_job(&current_fota);
+	memset(&saved_job, 0, sizeof(saved_job));
+	saved_job.type = NRF_CLOUD_FOTA_TYPE__INVALID;
+}
+
+struct nrf_cloud_fota_c_ctx {
+	struct mqtt_client ** client_mqtt;
+	nrf_cloud_fota_callback_t * event_cb;
+	nrf_cloud_fota_ble_callback_t * ble_cb;
+	bool * initialized;
+	bool * fota_dl_initialized;
+	bool * reboot_on_init;
+	bool * fota_report_ack_pending;
+	enum fota_download_evt_id * last_fota_dl_evt;
+	struct nrf_cloud_fota_job * current_fota;
+	struct nrf_cloud_settings_fota_job * saved_job;
+	struct mqtt_topic * sub_topics;
+	struct mqtt_topic * topic_updt;
+	struct mqtt_topic * topic_req;
+	size_t  sub_topics_size;
+};
+
+void access_internal_state (struct nrf_cloud_fota_c_ctx* ctx)
+{
+	ctx->client_mqtt = &client_mqtt;
+	ctx->event_cb = &event_cb;
+	ctx->ble_cb = &ble_cb;
+	ctx->initialized = &initialized;
+	ctx->fota_dl_initialized = &fota_dl_initialized;
+	ctx->reboot_on_init = &reboot_on_init;
+	ctx->fota_report_ack_pending = &fota_report_ack_pending;
+	ctx->last_fota_dl_evt = &last_fota_dl_evt;
+	ctx->current_fota = &current_fota;
+	ctx->saved_job = &saved_job;
+	ctx->sub_topics = sub_topics;
+	ctx->sub_topics_size = ARRAY_SIZE(sub_topics);
+	ctx->topic_updt = &topic_updt;
+	ctx->topic_req = &topic_req;
 }
 #endif
