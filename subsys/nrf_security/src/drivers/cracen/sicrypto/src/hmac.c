@@ -31,7 +31,8 @@ static void xorbuf(char *buf, char v, size_t sz)
 
 static int finish_hmac_computation(struct sitask *t, struct siwq *wq)
 {
-	size_t blocksz, digestsz;
+	size_t blocksz;
+	size_t digestsz;
 	(void)wq;
 
 	if (t->statuscode) {
