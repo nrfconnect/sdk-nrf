@@ -153,3 +153,21 @@ void log_rpc_history_free(const union log_msg_generic *msg)
 {
 	k_free((void *)msg);
 }
+
+uint8_t log_rpc_history_get_usage(void)
+{
+	int num_free_sectors;
+
+	k_mutex_lock(&fcb_lock, K_FOREVER);
+
+	num_free_sectors = fcb_free_sector_cnt(&fcb);
+
+	k_mutex_unlock(&fcb_lock);
+
+	/*
+	 * This calculates the usage with the sector size granularity.
+	 * Unforunately, there is no FCB API for getting more accurate usage, but it can be
+	 * implemented by hand if the greater accuraccy turns out to be needed.
+	 */
+	return (fcb.f_sector_cnt - num_free_sectors) * 100 / fcb.f_sector_cnt;
+}

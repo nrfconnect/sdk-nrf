@@ -99,6 +99,39 @@ static int cmd_log_rpc_history_fetch(const struct shell *sh, size_t argc, char *
 	return 0;
 }
 
+static void history_threshold_reached_handler(void)
+{
+	shell_print(shell, "History usage threshold reached");
+}
+
+static int cmd_log_rpc_history_threshold(const struct shell *sh, size_t argc, char *argv[])
+{
+	uint32_t threshold;
+	int rc = 0;
+
+	if (argc == 0) {
+		shell_print(sh, "%u", log_rpc_get_history_usage_threshold());
+		return 0;
+	}
+
+	threshold = shell_strtoul(argv[1], 0, &rc);
+
+	if (rc) {
+		shell_error(sh, "Invalid argument: %d", rc);
+		return -EINVAL;
+	}
+
+	if (threshold > 100) {
+		shell_error(sh, "%u exceeds max value (100)", threshold);
+		return -EINVAL;
+	}
+
+	shell = sh;
+	log_rpc_set_history_usage_threshold(history_threshold_reached_handler, (uint8_t)threshold);
+
+	return 0;
+}
+
 static int cmd_log_rpc_crash(const struct shell *sh, size_t argc, char *argv[])
 {
 	int rc;
@@ -149,6 +182,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(history_level, NULL, "Set log history level", cmd_log_rpc_history_level, 2,
 		      0),
 	SHELL_CMD_ARG(history_fetch, NULL, "Fetch log history", cmd_log_rpc_history_fetch, 1, 0),
+	SHELL_CMD_ARG(history_threshold, NULL, "Get or set history usage threshold",
+		      cmd_log_rpc_history_threshold, 1, 1),
 	SHELL_CMD_ARG(crash, NULL, "Retrieve remote device crash log", cmd_log_rpc_crash, 1, 0),
 	SHELL_CMD_ARG(echo, NULL, "Generate log message on remote", cmd_log_rpc_echo, 3, 0),
 	SHELL_SUBCMD_SET_END);
