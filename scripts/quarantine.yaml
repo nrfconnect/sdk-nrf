@@ -12,6 +12,13 @@
     - net.lib.wifi_credentials_backend_psa
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
 
+- scenarios:
+    - applications.matter_bridge.lto.br_ble.memory_profiling
+    - sample.matter.light_switch.persistent_subscriptions
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: https://nordicsemi.atlassian.net/browse/NCSDK-31119
+
 - platforms:
     - native_posix
   comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
