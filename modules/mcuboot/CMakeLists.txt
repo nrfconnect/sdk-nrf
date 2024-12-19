@@ -895,6 +895,7 @@ CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD cannot be used with CONFIG_XIP_SPLIT_IMAGE.
     IMAGE_IDS ${dfu_multi_image_ids}
     IMAGE_PATHS ${dfu_multi_image_paths}
     OUTPUT ${PROJECT_BINARY_DIR}/dfu_multi_image.bin
+    DEPENDS ${dfu_multi_image_targets}
     )
 
   add_dependencies(dfu_multi_image_pkg ${dfu_multi_image_targets})
