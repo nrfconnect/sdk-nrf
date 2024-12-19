@@ -9,6 +9,7 @@
  * Other IK tasks don't need workmem memory.
  */
 
+#include <string.h>
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
 #include <sxsymcrypt/hash.h>
@@ -90,7 +91,7 @@ static int exit_ikg(struct sitask *t)
 	return SX_ERR_HW_PROCESSING;
 }
 
-static int start_ecdsa_ik_sign(struct sitask *t, struct siwq *wq);
+static int start_ecdsa_ik_sign_wq(struct sitask *t, struct siwq *wq);
 
 static int finish_ecdsa_ik_sign(struct sitask *t, struct siwq *wq)
 {
@@ -98,7 +99,7 @@ static int finish_ecdsa_ik_sign(struct sitask *t, struct siwq *wq)
 
 	if ((t->statuscode == SX_ERR_INVALID_SIGNATURE) && (t->params.ik.attempts--)) {
 		sx_pk_release_req(t->pk);
-		si_wq_run_after(t, &t->params.ik.wq, start_ecdsa_ik_sign);
+		si_wq_run_after(t, &t->params.ik.wq, start_ecdsa_ik_sign_wq);
 		return (t->statuscode = SX_OK);
 	}
 
@@ -114,17 +115,12 @@ static int finish_ecdsa_ik_sign(struct sitask *t, struct siwq *wq)
 	return exit_ikg(t);
 }
 
-static int start_ecdsa_ik_sign(struct sitask *t, struct siwq *wq)
+static int start_ecdsa_ik_sign(struct sitask *t)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ik_ecdsa_sign inputs;
 	int opsz;
 	size_t digestsz = sx_hash_get_digestsz(&t->u.h);
-	(void)wq;
-
-	if (t->statuscode != SX_OK) {
-		return t->statuscode;
-	}
 
 	t->actions.status = si_silexpk_status;
 	t->actions.wait = si_silexpk_wait;
@@ -149,6 +145,15 @@ static int start_ecdsa_ik_sign(struct sitask *t, struct siwq *wq)
 	return SX_ERR_HW_PROCESSING;
 }
 
+static int start_ecdsa_ik_sign_wq(struct sitask *t, struct siwq *wq)
+{
+	(void)wq;
+	if (t->statuscode != SX_OK) {
+		return t->statuscode;
+	}
+	return start_ecdsa_ik_sign(t);
+}
+
 static void run_ecdsa_ik_hash(struct sitask *t)
 {
 	/* Override SX_ERR_HW_PROCESSING state pre-set by si_task_run()
@@ -156,8 +161,31 @@ static void run_ecdsa_ik_hash(struct sitask *t)
 	 */
 	t->statuscode = SX_ERR_READY;
 	si_task_produce(t, t->workmem, sx_hash_get_digestsz(&t->u.h));
+	si_wq_run_after(t, &t->params.ik.wq, start_ecdsa_ik_sign_wq);
+}
 
-	si_wq_run_after(t, &t->params.ik.wq, start_ecdsa_ik_sign);
+static void run_ik_sign(struct sitask *t)
+{
+	start_ecdsa_ik_sign(t);
+}
+
+static void ik_sign_consume_digest(struct sitask *t, const char *data, size_t sz)
+{
+	size_t digestsz = sx_hash_get_alg_digestsz(t->params.ik.privkey->hashalg);
+
+	if (sz < digestsz) {
+		si_task_mark_final(t, SX_ERR_INPUT_BUFFER_TOO_SMALL);
+		return;
+	} else if (sz > digestsz) {
+		si_task_mark_final(t, SX_ERR_TOO_BIG);
+		return;
+	}
+
+	/* Copy the message digest to workmem. */
+	memcpy(t->workmem, data, sz);
+
+	t->actions.consume = NULL;
+	t->actions.run = run_ik_sign;
 }
 
 static void create_sign(struct sitask *t, const struct si_sig_privkey *privkey,
@@ -173,6 +201,27 @@ static void create_sign(struct sitask *t, const struct si_sig_privkey *privkey,
 	t->params.ik.privkey = privkey;
 	t->params.ik.signature = signature;
 }
+
+
+static void create_sign_digest(struct sitask *t, const struct si_sig_privkey *privkey,
+			struct si_sig_signature *signature)
+{
+	size_t digestsz = sx_hash_get_alg_digestsz(privkey->hashalg);
+	size_t opsz = (size_t)sx_pk_curve_opsize(privkey->key.ref.curve);
+	size_t workmem_requirement = digestsz + opsz;
+
+	if (t->workmemsz < workmem_requirement) {
+		si_task_mark_final(t, SX_ERR_WORKMEM_BUFFER_TOO_SMALL);
+		return;
+	}
+
+	t->actions = (struct siactions){0};
+	t->statuscode = SX_ERR_READY;
+	t->actions.consume = ik_sign_consume_digest;
+	t->params.ik.privkey = privkey;
+	t->params.ik.signature = signature;
+}
+
 
 static int finish_ik_pubkey(struct sitask *t, struct siwq *wq)
 {
@@ -228,6 +277,7 @@ static void create_pubkey(struct sitask *t, const struct si_sig_privkey *privkey
 
 static const struct si_sig_def si_sig_def_ik = {
 	.sign = create_sign,
+	.sign_digest = create_sign_digest,
 	.pubkey = create_pubkey,
 };
 
