@@ -31,7 +31,7 @@ LOG_MODULE_REGISTER(nrf_cloud_pgps, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 #include "nrf_cloud_pgps_utils.h"
 #include "nrf_cloud_codec_internal.h"
 
-#define FORCE_HTTP_DL			0 /* set to 1 to force HTTP instead of HTTPS */
+#define DOWNLOAD_PROTOCOL		"https://"
 #define PGPS_DEBUG			0 /* set to 1 for extra logging */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD_120_MIN)
@@ -867,13 +867,17 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 	int err;
 	static char host[CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE];
 	static char path[CONFIG_DOWNLOADER_MAX_FILENAME_SIZE];
+	size_t sz = strlen(DOWNLOAD_PROTOCOL);
 
 	struct nrf_cloud_pgps_result pgps_dl = {
-		.host = host,
-		.host_sz = sizeof(host),
+		.host = &host[sz],
+		.host_sz = sizeof(host) - sz,
 		.path = path,
 		.path_sz = sizeof(path)
 	};
+
+	/* Include protocol so downloader does not issue a warning. */
+	strncpy(host, DOWNLOAD_PROTOCOL, sz + 1);
 
 #if defined(CONFIG_NRF_CLOUD_MQTT)
 	LOG_HEXDUMP_DBG(buf, buf_len, "MQTT packet");
@@ -887,6 +891,9 @@ int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 	if (err) {
 		return err;
 	}
+
+	/* Point to start of full host name including protocol. */
+	pgps_dl.host = host;
 
 	return nrf_cloud_pgps_update(&pgps_dl);
 }
@@ -917,14 +924,6 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location)
 	}
 
 	int sec_tag = nrf_cloud_sec_tag_get();
-
-	if (FORCE_HTTP_DL && (strncmp(file_location->host, "https", 5) == 0)) {
-		memmove(&file_location->host[4],
-			&file_location->host[5],
-			strlen(&file_location->host[4]));
-
-		sec_tag = -1;
-	}
 
 	err =  npgps_download_start(file_location->host, file_location->path,
 				    sec_tag, 0, FRAGMENT_SIZE);
