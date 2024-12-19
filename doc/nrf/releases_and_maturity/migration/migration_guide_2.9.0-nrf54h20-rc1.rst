@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_2.9.0-nrf54h20-rc1:
 
 Migration guide for |NCS| v2.9.0-nRF54H20-rc1
