@@ -240,7 +240,7 @@
   - "subsys/bluetooth/services/nus.c"
   - "drivers/mpsl/**/*"
   - "dts/bindings/radio_fem/**/*"
-  - "samples/nrf5340/multiprotocol_rpmsg/**/*"
+  - "applications/ipc_radio/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
   - "modules/mcuboot/**/*"
   - "applications/zigbee_weather_station/**/*"
@@ -313,7 +313,7 @@
   - "subsys/nrf_rpc/**/*"
   - "drivers/mpsl/**/*"
   - "dts/bindings/radio_fem/**/*"
-  - "samples/nrf5340/multiprotocol_rpmsg/**/*"
+  - "applications/ipc_radio/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
   - "samples/CMakeLists.txt"
 
@@ -326,7 +326,7 @@
   - "drivers/mpsl/**/*"
   - "boards/shields/**/*"
   - "dts/bindings/radio_fem/**/*"
-  - "samples/nrf5340/multiprotocol_rpmsg/**/*"
+  - "applications/ipc_radio/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
   - "samples/CMakeLists.txt"
 
@@ -374,7 +374,7 @@
   - "samples/matter/**/*"
   - "applications/matter_bridge/**/*"
   - "applications/matter_weather_station/**/*"
-  - "samples/nrf5340/multiprotocol_rpmsg/**/*"
+  - "applications/ipc_radio/**/*"
 
 "CI-find-my-test":
   - "CMakeLists.txt"
