@@ -5,7 +5,7 @@
  */
 
 /*
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.9.0
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 3
  */
@@ -13,9 +13,9 @@
 #ifndef ECHO_SERVICE_TYPES_H__
 #define ECHO_SERVICE_TYPES_H__
 
-#include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <zcbor_common.h>
 
 #ifdef __cplusplus
@@ -32,8 +32,8 @@ extern "C" {
 #define DEFAULT_MAX_QTY 3
 
 struct echo_service_rsp {
-	int32_t echo_service_rsp_ret;
-	struct zcbor_string echo_service_rsp_str_out;
+  int32_t echo_service_rsp_ret;
+  struct zcbor_string echo_service_rsp_str_out;
 };
 
 #ifdef __cplusplus
