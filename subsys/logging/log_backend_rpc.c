@@ -50,6 +50,7 @@ static enum log_rpc_level stream_level = LOG_RPC_LEVEL_NONE;
 #ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
 static enum log_rpc_level history_level = LOG_RPC_LEVEL_NONE;
 static void history_transfer_task(struct k_work *work);
+static void log_buffer_threshold_callback(void);
 static K_MUTEX_DEFINE(history_transfer_mtx);
 static uint32_t history_transfer_id;
 static union log_msg_generic *history_cur_msg;
@@ -378,7 +379,7 @@ static void init(struct log_backend const *const backend)
 	ARG_UNUSED(backend);
 
 #ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
-	log_rpc_history_init();
+	log_rpc_history_init(log_buffer_threshold_callback);
 	k_work_queue_init(&history_transfer_workq);
 	k_work_queue_start(&history_transfer_workq, history_transfer_workq_stack,
 			   K_THREAD_STACK_SIZEOF(history_transfer_workq_stack),
@@ -549,5 +550,45 @@ static void log_rpc_fetch_history_handler(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_fetch_history_handler, LOG_RPC_CMD_FETCH_HISTORY,
 			 log_rpc_fetch_history_handler, NULL);
+
+static void log_rpc_get_buffer_usage_threshold(const struct nrf_rpc_group *group,
+					       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	nrf_rpc_decoding_done(group, ctx);
+	nrf_rpc_rsp_send_uint(group, log_rpc_history_threshold_get());
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_get_buffer_usage_threshold,
+			 LOG_RPC_CMD_GET_BUFFER_USAGE_THRESHOLD, log_rpc_get_buffer_usage_threshold,
+			 NULL);
+
+static void log_rpc_set_buffer_usage_threshold(const struct nrf_rpc_group *group,
+					       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	uint8_t threshold = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group,
+			    LOG_RPC_CMD_SET_BUFFER_USAGE_THRESHOLD, NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	log_rpc_history_threshold_set(threshold);
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_buffer_usage_threshold,
+			 LOG_RPC_CMD_SET_BUFFER_USAGE_THRESHOLD, log_rpc_set_buffer_usage_threshold,
+			 NULL);
+
+void log_buffer_threshold_callback(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
+
+	nrf_rpc_cbor_evt_no_err(&log_rpc_group, LOG_RPC_EVT_HISTORY_THRESHOLD_REACHED, &ctx);
+}
 
 #endif

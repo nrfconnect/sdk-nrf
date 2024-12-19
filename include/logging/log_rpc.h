@@ -117,6 +117,32 @@ int log_rpc_fetch_history(log_rpc_history_handler_t handler);
  */
 int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length);
 
+/**
+ * @brief Gets current buffer usage threshold.
+ *
+ * The function fetches the current buffer usage signal threshold (percent).
+ *
+ * @returns The current threshold.
+ */
+uint8_t log_rpc_get_buffer_usage_signal_threshold(void);
+
+/**
+ * @brief Sets current buffer usage threshold.
+ *
+ * The function sets a threshold (percentage of log buffer used) that is used as
+ * an indicator for the RPC server when it should inform the client about
+ * pending log history. When the given threshold is reached the log history is
+ * fetched with @c handler callback function invoked for each received log
+ * message. Additionally, it is invoked with @c msg argument set to
+ * NULL after all log messages have been received.
+ *
+ * @param handler   History handler, see @c log_rpc_history_handler_t.
+ * @param threshold Percentage (0 - 100) of buffer usage when handler should be called.
+ *                  0 disables signaling.
+ */
+void log_rpc_set_buffer_usage_signal_threshold(log_rpc_history_handler_t handler,
+					       uint8_t threshold);
+
 #ifdef __cplusplus
 }
 #endif
