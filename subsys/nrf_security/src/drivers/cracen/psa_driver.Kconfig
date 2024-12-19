@@ -1859,5 +1859,4 @@ config PSA_NEED_CRACEN_PLATFORM_KEYS
 	depends on PSA_WANT_AES_KEY_SIZE_256
 	depends on SOC_NRF54H20_CPUSEC
 
-
 endmenu
