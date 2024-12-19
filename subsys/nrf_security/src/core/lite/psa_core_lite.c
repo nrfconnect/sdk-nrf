@@ -9,6 +9,7 @@
 #include <psa_crypto_driver_wrappers.h>
 #include <cracen_psa_kmu.h>
 #include <cracen/mem_helpers.h>
+#include <cracen_psa_eddsa.h>
 
 #if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
 #include "cracen_psa.h"
