@@ -17,9 +17,9 @@ on:
   push:
     branches:
       - '**'  # Triggers on pushes to any branch
-
 jobs:
   check-prs:
+    if: ${{ !github.event.created }}  # Skip for new branches
     runs-on: ubuntu-latest
 
     steps:
