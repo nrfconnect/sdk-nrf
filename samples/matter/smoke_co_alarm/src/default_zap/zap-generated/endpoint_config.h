@@ -924,19 +924,22 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 // Array of device types
 #define FIXED_DEVICE_TYPES                                                                                             \
 	{                                                                                                              \
-		{ 0x00000011, 1 }, { 0x00000016, 3 }, { 0x00000011, 1 }, { 0x00000076, 1 }                             \
+		{ 0x00000012, 1 }, { 0x00000011, 1 }, { 0x00000016, 3 }, { 0x00000011, 1 },                            \
+		{                                                                                                      \
+			0x00000076, 1                                                                                  \
+		}                                                                                                      \
 	}
 
 // Array of device type offsets
 #define FIXED_DEVICE_TYPE_OFFSETS                                                                                      \
 	{                                                                                                              \
-		0, 2                                                                                                   \
+		0, 3                                                                                                   \
 	}
 
 // Array of device type lengths
 #define FIXED_DEVICE_TYPE_LENGTHS                                                                                      \
 	{                                                                                                              \
-		2, 2                                                                                                   \
+		3, 2                                                                                                   \
 	}
 
 // Array of endpoint types supported on each endpoint
