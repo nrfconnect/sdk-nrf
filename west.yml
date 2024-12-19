@@ -130,7 +130,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: b82206c15fff357c151c24bf97c99c4348d14a46
+      revision: pull/389/head
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -206,7 +206,7 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: 1a811c356150a4ccc58d644d110524c33342e3a1
+      revision: pull/666/head
       groups:
         - sidewalk
     - name: find-my
