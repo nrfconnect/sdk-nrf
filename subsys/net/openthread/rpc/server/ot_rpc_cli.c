@@ -68,25 +68,36 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_init, OT_RPC_CMD_CLI_INIT, ot_
 static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	char input_line_buffer[256];
 	struct nrf_rpc_cbor_ctx rsp_ctx;
-	char *result;
+	char *buffer = NULL;
+	const void *ptr;
+	size_t len;
 
 	/* Parse the input */
-	result = nrf_rpc_decode_str(ctx, input_line_buffer, sizeof(input_line_buffer));
+	ptr = nrf_rpc_decode_str_ptr_and_len(ctx, &len);
+
+	if (ptr) {
+		buffer = malloc(len + 1);
+		if (buffer) {
+			memcpy(buffer, ptr, len);
+			buffer[len] = '\0';
+		}
+	}
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_CLI_INPUT_LINE);
+
+		free(buffer);
 		return;
 	}
 
-	if (result == NULL) {
+	if (!ptr || !buffer) {
 		return;
 	}
 
 	/* Execute OT CLI command */
 	openthread_api_mutex_lock(openthread_get_default_context());
-	otCliInputLine(input_line_buffer);
+	otCliInputLine(buffer);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	/* Encode and send the response */
@@ -94,6 +105,8 @@ static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+
+	free(buffer);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_input_line, OT_RPC_CMD_CLI_INPUT_LINE,
