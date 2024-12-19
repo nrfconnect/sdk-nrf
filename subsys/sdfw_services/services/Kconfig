@@ -5,10 +5,7 @@
 #
 
 # Services
-rsource "echo/Kconfig"
 rsource "enc_fw/Kconfig"
 rsource "extmem/Kconfig"
 rsource "psa_crypto/Kconfig"
-rsource "reset_evt/Kconfig"
-rsource "sdfw_update/Kconfig"
 rsource "suit_service/Kconfig"
