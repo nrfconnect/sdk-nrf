@@ -852,3 +852,85 @@ psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size
 
 	return PSA_ERROR_INVALID_ARGUMENT;
 }
+
+void be_add(unsigned char *v, size_t sz, size_t summand)
+{
+	while (sz > 0) {
+		sz--;
+		summand += v[sz];
+		v[sz] = summand & 0xFF;
+		summand >>= 8;
+	}
+}
+
+int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry)
+{
+	unsigned int neq = 0;
+	unsigned int gt = 0;
+	unsigned int ucarry;
+	unsigned int d;
+	unsigned int lt;
+
+	/* transform carry to work with unsigned numbers */
+	ucarry = 0x100 + carry;
+
+	for (int i = sz - 1; i >= 0; i--) {
+		d = ucarry + a[i] - b[i];
+		ucarry = 0xFF + (d >> 8);
+		neq |= d & 0xFF;
+	}
+
+	neq |= ucarry & 0xFF;
+	lt = ucarry < 0x100;
+	gt = neq && !lt;
+
+	return (gt ? 1 : 0) - (lt ? 1 : 0);
+}
+
+int hash_all_inputs_with_context(struct sxhash *hashopctx, const char *inputs[],
+				 const size_t inputs_lengths[], size_t input_count,
+				 const struct sxhashalg *hashalg, char *digest)
+{
+	int status;
+
+	status = sx_hash_create(hashopctx, hashalg, sizeof(*hashopctx));
+	if (status != SX_OK) {
+		return status;
+	}
+
+	for (size_t i = 0; i < input_count; i++) {
+		status = sx_hash_feed(hashopctx, inputs[i], inputs_lengths[i]);
+		if (status != SX_OK) {
+			return status;
+		}
+	}
+	status = sx_hash_digest(hashopctx, digest);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	status = sx_hash_wait(hashopctx);
+
+	return status;
+}
+
+int hash_all_inputs(const char *inputs[], const size_t inputs_lengths[], size_t input_count,
+		    const struct sxhashalg *hashalg, char *digest)
+{
+	struct sxhash hashopctx;
+
+	return hash_all_inputs_with_context(&hashopctx, inputs, inputs_lengths, input_count,
+					    hashalg, digest);
+}
+
+int hash_input(const char *input, const size_t input_length, const struct sxhashalg *hashalg,
+	       char *digest)
+{
+	return hash_all_inputs(&input, &input_length, 1, hashalg, digest);
+}
+
+int hash_input_with_context(struct sxhash *hashopctx, const char *input, const size_t input_length,
+			    const struct sxhashalg *hashalg, char *digest)
+{
+	return hash_all_inputs_with_context(hashopctx, &input, &input_length, 1, hashalg, digest);
+}

@@ -33,6 +33,8 @@
 #include <sxsymcrypt/hash.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
+#include "common.h"
+#include "cracen_psa_eddsa.h"
 
 #define AREA2_MEM_OFFSET 32
 #define AREA4_MEM_OFFSET 96
@@ -47,41 +49,6 @@ static char dom2[] = {0x53, 0x69, 0x67, 0x45, 0x64, 0x32, 0x35, 0x35, 0x31, 0x39
 		      0x6f, 0x20, 0x45, 0x64, 0x32, 0x35, 0x35, 0x31, 0x39, 0x20, 0x63, 0x6f,
 		      0x6c, 0x6c, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x01, 0x00};
 
-static int hash_all_inputs(char const *inputs[], size_t inputs_lengths[], size_t input_count,
-			   const struct sxhashalg *hashalg, char *out)
-{
-	struct sxhash hashopctx;
-	int status;
-
-	status = sx_hash_create(&hashopctx, hashalg, sizeof(hashopctx));
-	if (status != SX_OK) {
-		return status;
-	}
-
-	for (size_t i = 0; i < input_count; i++) {
-		status = sx_hash_feed(&hashopctx, inputs[i], inputs_lengths[i]);
-		if (status != SX_OK) {
-			return status;
-		}
-	}
-	status = sx_hash_digest(&hashopctx, out);
-	if (status != SX_OK) {
-		return status;
-	}
-
-	status = sx_hash_wait(&hashopctx);
-
-	return status;
-}
-
-static int hash_input(const char *input, size_t input_length, char *digest)
-{
-	char const *hash_array[] = {input};
-	size_t hash_array_lengths[] = {input_length};
-
-	return hash_all_inputs(hash_array, hash_array_lengths, 1, &sxhashalg_sha2_512, digest);
-}
-
 static int ed25519_calculate_r(char *workmem, const uint8_t *message, size_t message_length,
 			       bool prehash)
 {
@@ -90,7 +57,7 @@ static int ed25519_calculate_r(char *workmem, const uint8_t *message, size_t mes
 	size_t offset = prehash ? 0 : 1;
 	size_t input_count = 3 - offset;
 
-	return hash_all_inputs(&hash_array[offset], &hash_array_lengths[offset], input_count,
+	return hash_all_inputs(hash_array + offset, hash_array_lengths + offset, input_count,
 			       &sxhashalg_sha2_512, workmem + SX_ED25519_DGST_SZ);
 }
 
@@ -117,7 +84,7 @@ static int ed25519_sign_internal(const uint8_t *priv_key, char *signature, const
 	char *area_4 = workmem + AREA4_MEM_OFFSET;
 
 	/* Hash the private key, the digest is stored in the first 64 bytes of workmem*/
-	status = hash_input(priv_key, SX_ED25519_SZ, area_1);
+	status = hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, area_1);
 	if (status != SX_OK) {
 		return status;
 	}
@@ -193,7 +160,7 @@ int cracen_ed25519ph_sign(const uint8_t *priv_key, char *signature, const uint8_
 	int status;
 
 	if (is_message) {
-		status = hash_input(message, message_length, hashedmessage);
+		status = hash_input(message, message_length, &sxhashalg_sha2_512, hashedmessage);
 		if (status != SX_OK) {
 			return status;
 		}
@@ -222,11 +189,10 @@ static int ed25519_verify_internal(const uint8_t *pub_key, const char *message,
 	if (status != SX_OK) {
 		return status;
 	}
-
-	status =
-		sx_ed25519_verify((struct sx_ed25519_dgst *)digest, (struct sx_ed25519_pt *)pub_key,
-				  (const struct sx_ed25519_v *)(signature + SX_ED25519_SZ),
-				  (const struct sx_ed25519_pt *)signature);
+	status = sx_ed25519_verify((struct sx_ed25519_dgst *)digest,
+				   (struct sx_ed25519_pt *)pub_key,
+				   (const struct sx_ed25519_v *)(signature + SX_ED25519_SZ),
+				   (const struct sx_ed25519_pt *)signature);
 
 	return status;
 }
@@ -244,7 +210,7 @@ int cracen_ed25519ph_verify(const uint8_t *pub_key, const char *message, size_t 
 	char message_digest[SX_ED25519_DGST_SZ];
 
 	if (is_message) {
-		status = hash_input(message, message_length, message_digest);
+		status = hash_input(message, message_length, &sxhashalg_sha2_512, message_digest);
 		if (status != SX_OK) {
 			return status;
 		}
@@ -261,7 +227,7 @@ int cracen_ed25519_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	char digest[SX_ED25519_DGST_SZ];
 	char *pub_key_A = digest + SX_ED25519_SZ;
 
-	status = hash_input(priv_key, SX_ED25519_SZ, digest);
+	status = hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, digest);
 	if (status != SX_OK) {
 		return status;
 	}
