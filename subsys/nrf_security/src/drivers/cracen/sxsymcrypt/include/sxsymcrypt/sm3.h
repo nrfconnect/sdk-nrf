@@ -18,6 +18,21 @@ extern "C" {
 
 struct sxhash;
 
+#define SX_HASH_DIGESTSZ_SM3 32
+#define SX_HASH_BLOCKSZ_SM3 64
+
+
+#if SX_HASH_DIGESTSZ_MAX < SX_HASH_DIGESTSZ_SM3
+#undef SX_HASH_DIGESTSZ_MAX
+#define SX_HASH_DIGESTSZ_MAX SX_HASH_DIGESTSZ_SM3
+#endif
+
+
+#if SX_HASH_BLOCKSZ_MAX < SX_HASH_BLOCKSZ_SM3
+#undef SX_HASH_BLOCKSZ_MAX
+#define SX_HASH_BLOCKSZ_MAX SX_HASH_BLOCKSZ_SM3
+#endif
+
 /** GM/T 0004-2012: SM3 cryptographic hash algorithm */
 extern const struct sxhashalg sxhashalg_sm3;
 
