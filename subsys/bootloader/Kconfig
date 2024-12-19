@@ -261,4 +261,12 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config MCUBOOT_FORCE_IN_TREE_IMGTOOL_USAGE
+	bool "Use in-tree NCS MCUboot imgtool"
+	default y
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Will force usage of the in-tree NCS MCUboot version of imgtool when signing images
+	  instead of the global system imgtool version.
+
 endmenu
