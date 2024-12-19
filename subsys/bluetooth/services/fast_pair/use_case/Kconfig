@@ -95,3 +95,6 @@ config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_PN
 config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_BN
 	bool
 	depends on !BT_FAST_PAIR_BN
+
+# Inclusion of use case specific Kconfig files.
+rsource "locator_tag/Kconfig"

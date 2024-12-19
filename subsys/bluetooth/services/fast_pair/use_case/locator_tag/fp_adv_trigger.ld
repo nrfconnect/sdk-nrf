@@ -1,0 +1,1 @@
+ITERABLE_SECTION_RAM(bt_fast_pair_locator_tag_fp_adv_trigger, 4)
