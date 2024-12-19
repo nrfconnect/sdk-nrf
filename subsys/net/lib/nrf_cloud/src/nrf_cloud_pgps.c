@@ -864,9 +864,10 @@ static int pgps_request_all(void)
 /* handle incoming P-GPS response packets */
 int nrf_cloud_pgps_process(const char *buf, size_t buf_len)
 {
-	static char host[CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE];
-	static char path[CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE];
 	int err;
+	static char host[CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE];
+	static char path[CONFIG_DOWNLOADER_MAX_FILENAME_SIZE];
+
 	struct nrf_cloud_pgps_result pgps_dl = {
 		.host = host,
 		.host_sz = sizeof(host),
@@ -921,11 +922,13 @@ int nrf_cloud_pgps_update(struct nrf_cloud_pgps_result *file_location)
 		memmove(&file_location->host[4],
 			&file_location->host[5],
 			strlen(&file_location->host[4]));
+
 		sec_tag = -1;
 	}
 
 	err =  npgps_download_start(file_location->host, file_location->path,
 				    sec_tag, 0, FRAGMENT_SIZE);
+
 	if (err) {
 		state = PGPS_REQUEST_NEEDED; /* Will try again next time. */
 	}

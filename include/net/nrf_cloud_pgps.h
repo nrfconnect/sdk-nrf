@@ -100,12 +100,11 @@ struct gps_pgps_request {
  *         to nrf_cloud_pgps_process().
  */
 struct nrf_cloud_pgps_result {
-	/** User-provided buffer to hold download host name */
+	/** User-provided buffer to hold download host */
 	char *host;
 	/** Size of user-provided host buffer */
 	size_t host_sz;
-
-	/** User-provided buffer to hold download path/file name */
+	/** User-provided buffer to hold download path */
 	char *path;
 	/** Size of user-provided path buffer */
 	size_t path_sz;

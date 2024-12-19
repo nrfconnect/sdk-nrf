@@ -17,12 +17,12 @@ target_sources(app
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/mcumgr_smp_client/src/mcumgr_smp_client.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/fota_download/src/util/fota_download_util.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/fota_download/src/util/fota_download_smp.c
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/src/parse.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/dl_parse.c
   )
 
 set(includes
 "src/"
-${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/download_client/include
+${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/include
 )
 
 target_include_directories(app
@@ -40,10 +40,12 @@ target_compile_options(app
   -DCONFIG_NRF_MCUMGR_SMP_CLIENT_LOG_LEVEL=2
   -DCONFIG_FOTA_DOWNLOAD_LOG_LEVEL=2
   -DCONFIG_FOTA_DOWNLOAD_FILE_NAME_LENGTH=128
-  -DCONFIG_FOTA_DOWNLOAD_HOST_NAME_LENGTH=128
+  -DCONFIG_FOTA_DOWNLOAD_HOST_NAME_LENGTH=256
   -DCONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH=512
-  -DCONFIG_DOWNLOAD_CLIENT_BUF_SIZE=2048
-  -DCONFIG_DOWNLOAD_CLIENT_STACK_SIZE=1024
+  -DCONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE=128
+  -DCONFIG_DOWNLOADER_MAX_FILENAME_SIZE=128
+  -DCONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE=128
+  -DCONFIG_DOWNLOADER_STACK_SIZE=1024
   -DCONFIG_DFU_TARGET_SMP=1
   )
 

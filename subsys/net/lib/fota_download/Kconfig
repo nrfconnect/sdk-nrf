@@ -6,12 +6,12 @@
 
 menuconfig FOTA_DOWNLOAD
 	bool "FOTA Download"
-	depends on DOWNLOAD_CLIENT
+	depends on DOWNLOADER
 	depends on DFU_TARGET
 	select SYS_HASH_FUNC32
 	imply FW_INFO
 
-if (FOTA_DOWNLOAD)
+if FOTA_DOWNLOAD
 
 config FOTA_SOCKET_RETRIES
 	int "Number of retries for socket-related download issues"
@@ -30,6 +30,10 @@ config FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ
 	default 512
 	help
 	  Buffer size must be aligned to the minimal flash write block size
+
+config FOTA_DOWNLOAD_BUF_SZ
+	int "Size of buffer used for downloader library"
+	default 2048
 
 config FOTA_DOWNLOAD_FULL_MODEM_BUF_SZ
 	int "Size of buffer used for flash write operations during full modem updates"
@@ -71,4 +75,4 @@ module-dep=LOG
 module-str=Firmware Over the Air Download
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-endif # FOTA_DOWNLOAD
+endif #FOTA_DOWNLOAD
