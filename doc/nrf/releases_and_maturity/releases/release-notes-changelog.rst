@@ -297,7 +297,11 @@ Cellular samples
 
 * :ref:`nrf_cloud_multi_service` sample:
 
-  * Fixed an issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
+  * Fixed:
+
+    * An issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
+    * An issue with the too small :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig value
+      in the :file:`overlay-coap_nrf_provisioning.conf` file.
 
 * :ref:`lte_sensor_gateway` sample:
 
@@ -512,6 +516,9 @@ Libraries for networking
   * :ref:`lib_azure_fota`
   * :ref:`lib_fota_download`
 
+* :ref:`lib_nrf_cloud_pgps` library:
+
+  * Fixed the warning due to missing ``https`` download protocol.
 
 Libraries for NFC
 -----------------
