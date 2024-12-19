@@ -51,6 +51,18 @@ config SB_VALIDATION_METADATA_OFFSET
 	  the metadata is appended directly after the application image,
 	  aligned to the closest word.
 
+config SB_VALIDATION_STRUCT_HAS_HASH
+	bool
+	default y if !SB_CRYPTO_PSA_ED25519
+	help
+	  Set if the struct should contain the hash field.
+
+config SB_VALIDATION_STRUCT_HAS_PUBLIC_KEY
+	bool
+	default y if !SB_CRYPTO_PSA_ED25519
+	help
+	  Set if the struct should contain the public key field.
+
 if SECURE_BOOT_VALIDATION
 
 EXT_API = BL_VALIDATE_FW
