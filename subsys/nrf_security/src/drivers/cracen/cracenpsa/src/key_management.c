@@ -14,7 +14,6 @@
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecc.h>
 #include <sicrypto/ecdsa.h>
-#include <sicrypto/ed25519.h>
 #include <sicrypto/ed448.h>
 #include <sicrypto/montgomery.h>
 #include <sicrypto/rsa_keygen.h>
@@ -28,6 +27,12 @@
 #include <sxsymcrypt/trng.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/byteorder.h>
+
+#define NO_SI_CRYPTO_TEST (1)
+#if NO_SI_CRYPTO_TEST
+#else
+#include <sicrypto/ed25519.h>
+#endif
 
 extern const uint8_t cracen_N3072[384];
 
@@ -603,8 +608,10 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	size_t expected_pub_key_size = 0;
 	int si_status = 0;
 	const struct sx_pk_ecurve *sx_curve;
+#if NO_SI_CRYPTO_TEST
+#else
 	struct sitask t;
-
+#endif
 	switch (psa_curve) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
 	case PSA_ECC_FAMILY_SECP_R1:
@@ -629,9 +636,10 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	struct si_sig_privkey priv_key;
 	struct si_sig_pubkey pub_key;
-
+#if NO_SI_CRYPTO_TEST
+#else
 	char workmem[SX_ED448_DGST_SZ] = {};
-
+#endif
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
 		if (key_buffer_size != sizeof(ikg_opaque_key)) {
@@ -672,6 +680,8 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 			}
 			break;
 		case PSA_ECC_FAMILY_TWISTED_EDWARDS:
+#if NO_SI_CRYPTO_TEST
+#else
 			if (key_bits_attr == 255) {
 				priv_key.def = si_sig_def_ed25519;
 				priv_key.key.ed25519 = (struct sx_ed25519_v *)key_buffer;
@@ -681,12 +691,16 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 				priv_key.key.ed448 = (struct sx_ed448_v *)key_buffer;
 				pub_key.key.ed448 = (struct sx_ed448_pt *)data;
 			}
+#endif
 			break;
 		default:
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 	}
-
+#if NO_SI_CRYPTO_TEST
+	si_status = no_si_sig_create_ed25519_pubkey(key_buffer, data);
+	*data_length = 32;
+#else
 	si_task_init(&t, workmem, sizeof(workmem));
 	si_sig_create_pubkey(&t, &priv_key, &pub_key);
 	si_task_run(&t);
@@ -698,6 +712,7 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	}
 
 	*data_length = expected_pub_key_size;
+#endif
 	return PSA_SUCCESS;
 }
 static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_t *attributes,
