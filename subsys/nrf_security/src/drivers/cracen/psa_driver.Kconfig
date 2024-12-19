@@ -1845,6 +1845,10 @@ config PSA_NEED_CRACEN_KMU_DRIVER
 	default y
 	depends on CRACEN_LIB_KMU
 
+config PSA_NEED_NO_SI_CRYPTO
+	bool
+	default y
+
 config PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
 	bool
 	default y
@@ -1859,5 +1863,12 @@ config PSA_NEED_CRACEN_PLATFORM_KEYS
 	depends on PSA_WANT_AES_KEY_SIZE_256
 	depends on SOC_NRF54H20_CPUSEC
 
+# CRACEN no sicrypto drivers
+
+config PSA_NEED_NO_SI_CRYPTO_ED25519
+	bool
+	default y
+	depends on PSA_WANT_ALG_PURE_EDDSA
+	depends on PSA_WANT_NO_SI_CRYPTO
 
 endmenu
