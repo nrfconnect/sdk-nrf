@@ -20,7 +20,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
-#include <net/download_client.h>
+#include <net/downloader.h>
 #include <dfu/dfu_target.h>
 
 #ifdef __cplusplus
@@ -139,8 +139,7 @@ int fota_download_init(fota_download_callback_t client_callback);
  * @param sec_tag_list Security tags that you want to use with HTTPS. Pass NULL to disable TLS.
  * @param sec_tag_count Number of TLS security tags in list. Pass 0 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
- * @param fragment_size Fragment size to be used for the download.
- *			If 0, @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} is used.
+ * @param fragment_size Fragment size to be used for the download. If 0, no fragmentation is used.
  * @param expected_type Type of firmware file to be downloaded and installed.
  *
  * @retval 0	     If download has started successfully.
@@ -172,14 +171,14 @@ int fota_download(const char *host, const char *file, const int *sec_tag_list,
  *              download, both paths will be treated as upgradable bootloader slot 0
  *              and slot 1 binaries respectively, and only the binary corresponding to
  *              the currently inactive bootloader slot will be selected and downloaded.
-*               See <a href="https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/config_and_build/bootloaders/bootloader.html">
+ *              See <a href="https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/config_and_build/bootloaders/bootloader.html">
  *              Secure Bootloader Chain Docs</a> for details regarding the upgradable
  *              bootloader slots.
  * @param sec_tag_list Security tags that you want to use with HTTPS. Pass NULL to disable TLS.
  * @param sec_tag_count Number of TLS security tags in list. Pass 0 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
  * @param fragment_size Fragment size to be used for the download.
- *			If 0, @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} is used.
+ *			If 0, no fragmentation is used.
  *
  * @retval 0	     If download has started successfully.
  * @retval -EALREADY If download is already ongoing.
@@ -205,7 +204,7 @@ int fota_download_any(const char *host, const char *file, const int *sec_tag_lis
  * @param sec_tag Security tag you want to use with HTTPS. Pass -1 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
  * @param fragment_size Fragment size to be used for the download.
- *			If 0, @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} is used.
+ *			If 0, no fragmentation is used.
  *
  * @retval 0	     If download has started successfully.
  * @retval -EALREADY If download is already ongoing.
@@ -230,7 +229,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag,
  * @param sec_tag Security tag you want to use with HTTPS. Pass -1 to disable TLS.
  * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
  * @param fragment_size Fragment size to be used for the download.
- *			If 0, @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} is used.
+ *			If 0, no fragmentation is used.
  * @param expected_type Type of firmware file to be downloaded and installed.
  *
  * @retval 0	     If download has started successfully.
@@ -305,7 +304,7 @@ int fota_download_external_start(const char *host, const char *file,
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int fota_download_external_evt_handle(struct download_client_evt const *const evt);
+int fota_download_external_evt_handle(struct downloader_evt const *const evt);
 
 #ifdef __cplusplus
 }
