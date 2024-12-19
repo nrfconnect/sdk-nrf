@@ -35,7 +35,7 @@ config NRF_SECURITY
 	depends on SOC_FAMILY_NORDIC_NRF
 	default y if BUILD_WITH_TFM
 	# entropy is provided by PSA and NRF_SECURITY on NRF54LX
-	default y if ENTROPY_PSA_CRYPTO_RNG && SOC_SERIES_NRF54LX
+	default y if ENTROPY_PSA_CRYPTO_RNG && (SOC_SERIES_NRF54LX || SOC_SERIES_NRF92X)
 	select DISABLE_MBEDTLS_BUILTIN if MBEDTLS
 	# NCS does not use TF-M's BL2 bootloader, but uses it's own fork
 	# of MCUBoot instead (CONFIG_BOOTLOADER_MCUBOOT).
@@ -58,6 +58,7 @@ if NRF_SECURITY
 
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	bool
+	default y if SOC_SERIES_NRF92X && (SOC_NRF9280_CPUSEC || SOC_NRF9230_CPUSEC)
 	default y if SOC_SERIES_NRF54LX && PSA_CRYPTO_DRIVER_CRACEN
 	default y if SOC_SERIES_NRF54HX && SOC_NRF54H20_CPUSEC
 	help
