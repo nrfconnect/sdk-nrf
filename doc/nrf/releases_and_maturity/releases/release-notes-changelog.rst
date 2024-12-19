@@ -455,6 +455,8 @@ Modem libraries
 
   * Added the :c:func:`pdn_dynamic_params_get_v6` function to get PDN parameters for IPv6-only.
 
+* Updated the :ref:`nrf_modem_lib_lte_net_if` to automatically set the actual link :term:`Maximum Transmission Unit (MTU)` on the network interface when PDN connectivity is gained.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
