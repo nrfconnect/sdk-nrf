@@ -36,7 +36,8 @@ static struct nrf_cloud_download_data active_dl = { .type = NRF_CLOUD_DL_TYPE_NO
 #if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
 #define ACPT_IDX 0
 #define PRXY_IDX 1
-#define OPT_CNT  2
+#define BLOCK2_IDX 2
+#define OPT_CNT  3
 /* CoAP option array */
 static struct coap_client_option cc_opts[OPT_CNT] = {0};
 /* CoAP client to be used for file downloads */
@@ -197,15 +198,43 @@ static void coap_dl_cb(int16_t result_code, size_t offset, const uint8_t *payloa
 }
 
 #define MAX_RETRIES 5
-#define PROXY_RSC_OFFSET_TMPLT		NRF_CLOUD_COAP_PROXY_RSC "?offset=%u"
-#define PROXY_RSC_BUF_SZ		sizeof(PROXY_RSC_OFFSET_TMPLT) + 10
+/* COAP_OPTION_BLOCK2: set block size */
+#define SET_BLOCK_SIZE(v, b) (v |= ((b) & 0x07))
+/* COAP_OPTION_BLOCK2: set block number */
+#define SET_NUM(v, n) ((v) |= ((n) << 4))
+
+/* convert integer into CoAP option */
+static uint8_t coap_option_write_int_val(uint8_t *data, unsigned int val)
+{
+	uint8_t len;
+
+	if (val == 0U) {
+		data[0] = 0U;
+		len = 0U;
+	} else if (val < 0xFF) {
+		data[0] = (uint8_t) val;
+		len = 1U;
+	} else if (val < 0xFFFF) {
+		sys_put_be16(val, data);
+		len = 2U;
+	} else if (val < 0xFFFFFF) {
+		sys_put_be16(val, &data[1]);
+		data[0] = val >> 16;
+		len = 3U;
+	} else {
+		sys_put_be32(val, data);
+		len = 4U;
+	}
+
+	return len;
+}
+
 static int coap_dl_start(struct nrf_cloud_download_data *const dl, const size_t offset)
 {
-	static char rsc_path_offset[PROXY_RSC_BUF_SZ];
-
 	int err;
 	int retry = 0;
 	struct coap_client *cc = &coap_client.cc;
+	unsigned int block2_val = 0;
 
 	struct coap_client_request request = {
 		.method = COAP_METHOD_GET,
@@ -221,14 +250,11 @@ static int coap_dl_start(struct nrf_cloud_download_data *const dl, const size_t 
 	};
 
 	if (offset > 0) {
-		/* Use the offset parameter in the resource path */
-		err = snprintk(rsc_path_offset, sizeof(rsc_path_offset),
-			       PROXY_RSC_OFFSET_TMPLT, offset);
-		if ((err < 0) || (err >= sizeof(rsc_path_offset))) {
-			LOG_ERR("Could not format CoAP proxy download resource");
-			return -EIO;
-		}
-		request.path = rsc_path_offset;
+		SET_NUM(block2_val, (offset/1024));
+		SET_BLOCK_SIZE(block2_val, COAP_BLOCK_1024);
+		cc_opts[BLOCK2_IDX].code = COAP_OPTION_BLOCK2;
+		cc_opts[BLOCK2_IDX].len =
+			coap_option_write_int_val(cc_opts[BLOCK2_IDX].value, block2_val);
 	}
 
 	while ((err = coap_client_req(cc, cc->fd, NULL, &request, NULL)) == -EAGAIN) {
@@ -287,6 +313,12 @@ static int coap_dl(struct nrf_cloud_download_data *const dl)
 	ret = nrf_cloud_coap_transport_proxy_dl_opts_get(&cc_opts[ACPT_IDX],
 							 &cc_opts[PRXY_IDX],
 							 dl->host, file_path);
+	cc_opts[BLOCK2_IDX].code = COAP_OPTION_BLOCK2;
+	cc_opts[BLOCK2_IDX].len = 1;
+	cc_opts[BLOCK2_IDX].value[0] = 0;
+	SET_BLOCK_SIZE(cc_opts[BLOCK2_IDX].value[0], COAP_BLOCK_1024);
+	SET_NUM(cc_opts[BLOCK2_IDX].value[0], 0);
+
 	if (ret) {
 		LOG_ERR("Failed to set CoAP options, error: %d", ret);
 		return ret;
