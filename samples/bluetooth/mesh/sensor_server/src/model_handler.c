@@ -96,38 +96,38 @@ static const uint8_t cmp2_elem_offset_motion[1] = { 2 };
 static const uint8_t cmp2_elem_offset_people_count[1] = { 3 };
 
 static const struct bt_mesh_comp2_record comp_rec[4] = {
-	{
+	{/* Ambient Light Sensor NLC Profile 1.0.1 */
 	.id = BT_MESH_NLC_PROFILE_ID_AMBIENT_LIGHT_SENSOR,
 	.version.x = 1,
 	.version.y = 0,
-	.version.z = 0,
+	.version.z = 1,
 	.elem_offset_cnt = 1,
 	.elem_offset = cmp2_elem_offset_ambient_light,
 	.data_len = 0
 	},
-	{
+	{/* Occupancy Sensor NLC Profile 1.0.1 */
 	.id = BT_MESH_NLC_PROFILE_ID_OCCUPANCY_SENSOR,
 	.version.x = 1,
 	.version.y = 0,
-	.version.z = 0,
+	.version.z = 1,
 	.elem_offset_cnt = 1,
 	.elem_offset = cmp2_elem_offset_presence,
 	.data_len = 0
 	},
-	{
+	{/* Occupancy Sensor NLC Profile 1.0.1 */
 	.id = BT_MESH_NLC_PROFILE_ID_OCCUPANCY_SENSOR,
 	.version.x = 1,
 	.version.y = 0,
-	.version.z = 0,
+	.version.z = 1,
 	.elem_offset_cnt = 1,
 	.elem_offset = cmp2_elem_offset_motion,
 	.data_len = 0
 	},
-	{
+	{/* Occupancy Sensor NLC Profile 1.0.1 */
 	.id = BT_MESH_NLC_PROFILE_ID_OCCUPANCY_SENSOR,
 	.version.x = 1,
 	.version.y = 0,
-	.version.z = 0,
+	.version.z = 1,
 	.elem_offset_cnt = 1,
 	.elem_offset = cmp2_elem_offset_people_count,
 	.data_len = 0
