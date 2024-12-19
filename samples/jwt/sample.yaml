@@ -1,0 +1,18 @@
+sample:
+  name: JWT Sample
+  description: |
+    Sample demonstrating how to generate a JSON web token (JWT).
+
+common:
+  build_only: true
+  tags: ci_build ci_samples_jwt
+
+tests:
+  samples.jwt.logging.uart:
+    sysbuild: true
+    tags: sysbuild ci_samples_jwt
+    platform_allow:
+      - nrf9280pdk/nrf9280/cpuapp
+    integration_platforms:
+      - nrf9280pdk/nrf9280/cpuapp
+    extra_args: EXTRA_CONF_FILE=uart_logging.conf
