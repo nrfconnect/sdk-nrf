@@ -58,10 +58,8 @@
 	interrupts = <6 NRF_DEFAULT_IRQ_PRIORITY>;
 };
 
-/* Disabling uart rx pin to get low power */
 &uart0 {
 	pinctrl-0 = <&uart0_default_alt>;
 	pinctrl-1 = <&uart0_sleep_alt>;
 	pinctrl-names = "default", "sleep";
-	disable-rx;
 };
