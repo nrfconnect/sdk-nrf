@@ -852,3 +852,71 @@ psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size
 
 	return PSA_ERROR_INVALID_ARGUMENT;
 }
+
+void be_add(unsigned char *v, size_t sz, size_t summand)
+{
+	for (; sz > 0;) {
+		sz--;
+		summand += v[sz];
+		v[sz] = summand & 0xFF;
+		summand >>= 8;
+	}
+}
+
+int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry)
+{
+	int i;
+	unsigned int neq = 0, gt = 0;
+	unsigned int ucarry, d, lt;
+
+	/* transform carry to work with unsigned numbers */
+	ucarry = 0x100 + carry;
+
+	for (i = sz - 1; i >= 0; i--) {
+		d = ucarry + a[i] - b[i];
+		ucarry = 0xFF + (d >> 8);
+		neq |= d & 0xFF;
+	}
+
+	neq |= ucarry & 0xFF;
+	lt = ucarry < 0x100;
+	gt = neq && !lt;
+
+	return -lt + gt;
+}
+
+int hash_all_inputs(char *const inputs[], size_t inputs_lengths[], size_t input_count,
+		    const struct sxhashalg *hashalg, char *digest)
+{
+	int status;
+	struct sxhash hashopctx;
+
+	status = sx_hash_create(&hashopctx, hashalg, sizeof(hashopctx));
+	if (status != SX_OK) {
+		return status;
+	}
+
+	for (size_t i = 0; i < input_count; i++) {
+		status = sx_hash_feed(&hashopctx, inputs[i], inputs_lengths[i]);
+		if (status != SX_OK) {
+			return status;
+		}
+	}
+	status = sx_hash_digest(&hashopctx, digest);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	status = sx_hash_wait(&hashopctx);
+
+	return status;
+}
+
+int hash_input(const char *input, size_t input_length, const struct sxhashalg *hashalg,
+	       char *digest)
+{
+	char *const hash_array[] = {input};
+	size_t hash_array_lengths[] = {input_length};
+
+	return hash_all_inputs(hash_array, hash_array_lengths, 1, hashalg, digest);
+}
