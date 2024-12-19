@@ -18,6 +18,7 @@
 #include <openthread/netdata.h>
 #include <openthread/message.h>
 #include <openthread/srp_client.h>
+#include <openthread/dns_client.h>
 
 #include <string.h>
 
@@ -1051,7 +1052,7 @@ static void print_txt_entry(const struct shell *sh, const otDnsTxtEntry *entry)
 	shell_print(sh, "\t\t%s", buffer);
 }
 
-static void print_service_info(const struct shell *sh, const otSrpClientService *service)
+static void print_srp_service_info(const struct shell *sh, const otSrpClientService *service)
 {
 	const char *const *subtype = service->mSubTypeLabels;
 	size_t index = 0;
@@ -1098,7 +1099,7 @@ static int cmd_test_srp_client_services(const struct shell *sh, size_t argc, cha
 
 	while (service) {
 		shell_print(sh, "Service 0x%p", service);
-		print_service_info(sh, service);
+		print_srp_service_info(sh, service);
 
 		service = service->mNext;
 	}
@@ -1238,6 +1239,264 @@ static int cmd_test_srp_client_host_addresses(const struct shell *sh, size_t arg
 	return 0;
 }
 
+static int cmd_dns_client_config_get(const struct shell *sh, size_t argc, char *argv[])
+{
+	const otDnsQueryConfig *config;
+	struct in6_addr in6_addr;
+	char addr_string[NET_IPV6_ADDR_LEN];
+
+	config = otDnsClientGetDefaultConfig(NULL);
+
+	memcpy(in6_addr.s6_addr, config->mServerSockAddr.mAddress.mFields.m8, OT_IP6_ADDRESS_SIZE);
+
+	if (!net_addr_ntop(AF_INET6, &in6_addr, addr_string, sizeof(addr_string))) {
+		shell_error(sh, "Failed to convert the IPv6 address");
+		return -EINVAL;
+	}
+
+	shell_print(sh, "Address: [%s]:%u", addr_string, config->mServerSockAddr.mPort);
+	shell_print(sh, "Response timeout: %u", config->mResponseTimeout);
+	shell_print(sh, "Max attempts: %u", config->mMaxTxAttempts);
+	shell_print(sh, "Recursion flag: %u", config->mRecursionFlag);
+	shell_print(sh, "NAT64 mode: %u", config->mNat64Mode);
+	shell_print(sh, "Service mode: %u", config->mServiceMode);
+	shell_print(sh, "Transport protocol: %u", config->mTransportProto);
+
+	return 0;
+}
+
+static int cmd_dns_client_config_set(const struct shell *sh, size_t argc, char *argv[])
+{
+	struct in6_addr in6_addr;
+	otDnsQueryConfig config;
+	unsigned long port;
+	unsigned long timeout;
+	unsigned long attempts;
+	unsigned long recursion;
+	unsigned long nat_mode;
+	unsigned long service_mode;
+	unsigned long transport;
+	int err = 0;
+
+	if (net_addr_pton(AF_INET6, argv[1], &in6_addr)) {
+		shell_error(sh, "Invalid address");
+		return -EINVAL;
+	}
+
+	port = shell_strtoul(argv[2], 0, &err);
+	timeout = shell_strtoul(argv[3], 0, &err);
+	attempts = shell_strtoul(argv[4], 0, &err);
+	recursion = shell_strtoul(argv[5], 0, &err);
+	nat_mode = shell_strtoul(argv[6], 0, &err);
+	service_mode = shell_strtoul(argv[7], 0, &err);
+	transport = shell_strtoul(argv[8], 0, &err);
+
+	if (err) {
+		shell_warn(sh, "Unable to parse config string");
+		return -EINVAL;
+	}
+
+	memcpy(config.mServerSockAddr.mAddress.mFields.m8, in6_addr.s6_addr, OT_IP6_ADDRESS_SIZE);
+
+	config.mServerSockAddr.mPort = (uint16_t)port;
+	config.mResponseTimeout = (uint32_t)timeout;
+	config.mMaxTxAttempts = (uint32_t)attempts;
+	config.mRecursionFlag = (otDnsRecursionFlag)recursion;
+	config.mNat64Mode = (otDnsNat64Mode)nat_mode;
+	config.mServiceMode = (otDnsServiceMode)service_mode;
+	config.mTransportProto = (otDnsTransportProto)transport;
+
+	otDnsClientSetDefaultConfig(NULL, &config);
+
+	return 0;
+}
+
+static void dns_resolve_cb(otError error, const otDnsAddressResponse *response, void *context)
+{
+	const struct shell *sh = (const struct shell *)context;
+	char hostname[128];
+	otError getter_err;
+	uint16_t index = 0;
+	otIp6Address address;
+	uint32_t ttl;
+	char addr_string[NET_IPV6_ADDR_LEN];
+
+	if (error == OT_ERROR_NONE) {
+		getter_err = otDnsAddressResponseGetHostName(response, hostname, sizeof(hostname));
+
+		if (getter_err == OT_ERROR_NONE) {
+			shell_print(sh, "Hostname %s", hostname);
+		} else {
+			shell_error(sh, "Hostname error: %u", getter_err);
+			return;
+		}
+
+		while (otDnsAddressResponseGetAddress(response, index++, &address, &ttl) ==
+		       OT_ERROR_NONE) {
+			if (!net_addr_ntop(AF_INET6, (struct in6_addr *)&address, addr_string,
+					   sizeof(addr_string))) {
+				shell_error(sh, "Failed to convert the IPv6 address");
+				return;
+			}
+
+			shell_print(sh, "Address #%u: %s ttl: %u", index, addr_string, ttl);
+		}
+	} else {
+		shell_error(sh, "DNS resolve callback error: %u", error);
+	}
+}
+
+static int cmd_dns_client_resolve(const struct shell *sh, size_t argc, char *argv[])
+{
+	otError error;
+	const otDnsQueryConfig *config;
+
+	config = otDnsClientGetDefaultConfig(NULL);
+
+	if (net_addr_pton(AF_INET6, argv[2],
+			  (struct in6_addr *)&config->mServerSockAddr.mAddress)) {
+		shell_error(sh, "Invalid server address");
+		return -EINVAL;
+	}
+
+	if (strcmp(argv[0], "test_dns_client_resolve4") == 0) {
+		error = otDnsClientResolveIp4Address(NULL, argv[1], dns_resolve_cb, (void *)sh,
+						     config);
+	} else {
+		error = otDnsClientResolveAddress(NULL, argv[1], dns_resolve_cb, (void *)sh,
+						  config);
+	}
+
+	shell_print(sh, "Resolve requested, err: %u", error);
+
+	return 0;
+}
+
+static void print_dns_service_info(const struct shell *sh, const otDnsServiceInfo *service_info)
+{
+	char addr[INET6_ADDRSTRLEN];
+
+	net_addr_ntop(AF_INET6, (struct in6_addr *)&service_info->mHostAddress, addr, sizeof(addr));
+
+	shell_print(sh, "Port:%d, Priority:%d, Weight:%d, TTL:%u", service_info->mPort,
+		    service_info->mPriority, service_info->mWeight, service_info->mTtl);
+	shell_print(sh, "Host: %s", service_info->mHostNameBuffer);
+	shell_print(sh, "Address: %s", addr);
+	shell_print(sh, "Address TTL: %u", service_info->mHostAddressTtl);
+	shell_print(sh, "TXT:");
+
+	shell_hexdump(sh, service_info->mTxtData, service_info->mTxtDataSize);
+
+	shell_print(sh, "TXT TTL: %u", service_info->mTxtDataTtl);
+}
+
+
+static void dns_service_cb(otError error, const otDnsServiceResponse *response, void *context)
+{
+	const struct shell *sh = (const struct shell *)context;
+	char name[OT_DNS_MAX_NAME_SIZE];
+	char label[OT_DNS_MAX_LABEL_SIZE];
+	uint8_t txtBuffer[CONFIG_OPENTHREAD_RPC_DNS_MAX_TXT_DATA_SIZE];
+	otDnsServiceInfo service_info;
+
+	otDnsServiceResponseGetServiceName(response, label, sizeof(label), name, sizeof(name));
+
+	if (error == OT_ERROR_NONE) {
+		shell_print(sh, "DNS service resolution response for %s for service %s", label,
+			    name);
+
+		service_info.mHostNameBuffer = name;
+		service_info.mHostNameBufferSize = sizeof(name);
+		service_info.mTxtData = txtBuffer;
+		service_info.mTxtDataSize = sizeof(txtBuffer);
+
+		if (otDnsServiceResponseGetServiceInfo(response, &service_info) == OT_ERROR_NONE) {
+			print_dns_service_info(sh, &service_info);
+		}
+	} else {
+		shell_error(sh, "DNS service resolution error: %u", error);
+	}
+}
+
+static int cmd_dns_client_service(const struct shell *sh, size_t argc, char *argv[])
+{
+	const otDnsQueryConfig *config;
+	otError error;
+
+	config = otDnsClientGetDefaultConfig(NULL);
+
+	if (net_addr_pton(AF_INET6, argv[3],
+			  (struct in6_addr *)&config->mServerSockAddr.mAddress)) {
+		shell_error(sh, "Invalid server address");
+		return -EINVAL;
+	}
+
+	if (strcmp(argv[0], "test_dns_client_servicehost") == 0) {
+		error = otDnsClientResolveService(NULL, argv[1], argv[2], dns_service_cb,
+						 (void *)sh, config);
+	} else {
+		error = otDnsClientResolveServiceAndHostAddress(NULL, argv[1], argv[2],
+								dns_service_cb, (void *)sh,
+								config);
+	}
+
+	shell_print(sh, "Service resolve requested, err: %u", error);
+
+	return 0;
+}
+
+static void dns_browse_cb(otError error, const otDnsBrowseResponse *response, void *context)
+{
+	const struct shell *sh = (const struct shell *)context;
+	char name[OT_DNS_MAX_NAME_SIZE];
+	char label[OT_DNS_MAX_LABEL_SIZE];
+	uint8_t txtBuffer[CONFIG_OPENTHREAD_RPC_DNS_MAX_TXT_DATA_SIZE];
+	otDnsServiceInfo info;
+
+	otDnsBrowseResponseGetServiceName(response, name, sizeof(name));
+
+	shell_print(sh, "DNS browse response for: %s", name);
+
+	if (error == OT_ERROR_NONE) {
+		uint16_t index = 0;
+
+		while (otDnsBrowseResponseGetServiceInstance(response, index++, label,
+							     sizeof(label)) == OT_ERROR_NONE) {
+			shell_print(sh, "%s", label);
+
+			info.mHostNameBuffer     = name;
+			info.mHostNameBufferSize = sizeof(name);
+			info.mTxtData            = txtBuffer;
+			info.mTxtDataSize        = sizeof(txtBuffer);
+
+			if (otDnsBrowseResponseGetServiceInfo(response, label, &info) ==
+			    OT_ERROR_NONE) {
+				print_dns_service_info(sh, &info);
+			}
+		}
+	}
+}
+
+static int cmd_dns_client_browse(const struct shell *sh, size_t argc, char *argv[])
+{
+	const otDnsQueryConfig *config;
+	otError error;
+
+	config = otDnsClientGetDefaultConfig(NULL);
+
+	if (net_addr_pton(AF_INET6, argv[2],
+			  (struct in6_addr *)&config->mServerSockAddr.mAddress)) {
+		shell_error(sh, "Invalid server address");
+		return -EINVAL;
+	}
+
+	error = otDnsClientBrowse(NULL, argv[1], dns_browse_cb, (void *)sh, config);
+
+	shell_print(sh, "Browse requested, err: %u", error);
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	ot_cmds, SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
 	SHELL_CMD_ARG(ipmaddr, NULL, "IPv6 multicast configuration", cmd_ipmaddr, 1, 2),
@@ -1297,6 +1556,25 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_test_srp_client_host_address_auto, 1, 0),
 	SHELL_CMD_ARG(test_srp_client_host_addresses, NULL, "Test SRP client host addresses API",
 		      cmd_test_srp_client_host_addresses, 2, MAX_HOST_ADDRESSES - 1),
+	SHELL_CMD_ARG(test_dns_client_config_get, NULL, "Get default config",
+		      cmd_dns_client_config_get, 1, 0),
+	SHELL_CMD_ARG(test_dns_client_config_set, NULL,
+		      "Set default config, args:\n"
+		      "\t<address> <port> <timeout> <attempts> <recursion>"
+		      " <nat mode> <service_mode> <transport>",
+		      cmd_dns_client_config_set, 3, 6),
+	SHELL_CMD_ARG(test_dns_client_resolve, NULL, "Resolve IPv6 address, args: <name> <server>",
+		      cmd_dns_client_resolve, 3, 0),
+	SHELL_CMD_ARG(test_dns_client_resolve4, NULL, "Resolve IPv4 address, args: <name> <server>",
+		      cmd_dns_client_resolve, 3, 0),
+	SHELL_CMD_ARG(test_dns_client_service, NULL, "Service instance resolution, args: <instance>"
+						     "<service> <server>",
+		      cmd_dns_client_service, 4, 0),
+	SHELL_CMD_ARG(test_dns_client_servicehost, NULL, "Service instance resolution, args:"
+							 " <instance> <service> <server>",
+		      cmd_dns_client_service, 4, 0),
+	SHELL_CMD_ARG(test_dns_client_browse, NULL, "Service browsing, args <service> <server>",
+		      cmd_dns_client_browse, 3, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
