@@ -12,6 +12,10 @@
 #include <tfm_ioctl_api.h>
 #include <pm_config.h>
 #include <ctype.h>
+#include <psa/crypto.h>
+#include <tfm_builtin_key_ids.h>
+
+#define ATTEST_PUBKEY_LEN 65
 
 /* Define an example stats group; approximates seconds since boot. */
 STATS_SECT_START(smp_svr_stats)
@@ -61,6 +65,34 @@ void dump_hex_ascii(const uint8_t *data, size_t size)
 	}
 
 	printk("\n");
+}
+
+
+static void print_attest_pubkey(void)
+{
+	psa_status_t status;
+	size_t data_length;
+	uint8_t pub_key[ATTEST_PUBKEY_LEN];
+
+	psa_key_handle_t key_handle = mbedtls_svc_key_id_make(0, TFM_BUILTIN_KEY_ID_IAK);
+	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
+
+	status = psa_get_key_attributes(key_handle, &attr);
+	if (status != PSA_SUCCESS) {
+		return;
+	}
+
+	status = psa_export_public_key(key_handle,
+			pub_key,
+			sizeof(pub_key),
+			&data_length);
+
+	if (status != PSA_SUCCESS) {
+		printk("psa_export_public_key failed: %d\n", status);
+	} else {
+		printk("Attestation public key:\n");
+		dump_hex_ascii(pub_key, sizeof(pub_key));
+	}
 }
 
 static void get_fw_info_address(uint32_t fw_address)
@@ -145,6 +177,7 @@ static void get_attestation_token(void)
 	} else {
 		printk("Received initial attestation token of %zu bytes.\n", token_size);
 
+		printk("Attestation token:\n");
 		dump_hex_ascii(token_buf, token_size);
 	}
 }
@@ -165,6 +198,8 @@ int main(void)
 
 	get_fw_info();
 	get_attestation_token();
+	/* Print public key so it can be used to verify attestation token. */
+	print_attest_pubkey();
 
 	/* The system work queue handles all incoming mcumgr requests.  Let the
 	 * main thread idle while the mcumgr server runs.
