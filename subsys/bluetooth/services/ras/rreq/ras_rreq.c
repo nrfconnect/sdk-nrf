@@ -143,7 +143,10 @@ static uint8_t ranging_data_ready_notify_func(struct bt_conn *conn,
 		return BT_GATT_ITER_STOP;
 	}
 
-	uint16_t ranging_counter = *(uint16_t *)data;
+	struct net_buf_simple rd_ready;
+
+	net_buf_simple_init_with_data(&rd_ready, (uint8_t *)data, length);
+	uint16_t ranging_counter = net_buf_simple_pull_le16(&rd_ready);
 
 	if (rreq->rd_ready.cb) {
 		rreq->rd_ready.cb(conn, ranging_counter);
@@ -187,7 +190,10 @@ static uint8_t ranging_data_overwritten_notify_func(struct bt_conn *conn,
 		return BT_GATT_ITER_STOP;
 	}
 
-	uint16_t ranging_counter = *(uint16_t *)data;
+	struct net_buf_simple rd_overwritten;
+
+	net_buf_simple_init_with_data(&rd_overwritten, (uint8_t *)data, length);
+	uint16_t ranging_counter = net_buf_simple_pull_le16(&rd_overwritten);
 
 	if (rreq->on_demand_rd.data_get_in_progress &&
 	    rreq->on_demand_rd.counter_in_progress == ranging_counter) {
