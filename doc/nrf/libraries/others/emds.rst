@@ -7,36 +7,34 @@ Emergency data storage
     :local:
     :depth: 2
 
-Overview
-********
-The emergency data storage (EMDS) library provides persistent storage functionality designed to prevent the wear and tear of the flash memory.
+The emergency data storage (EMDS) library provides persistent storage functionality designed to prevent the wear and tear of the flash memory or RRAM (persistent memory).
 Its intended use is for storing of data undergoing frequent changes during runtime.
 
 Implementation
-==============
+**************
 The :kconfig:option:`CONFIG_EMDS` Kconfig option enables the emergency data storage.
 
-The application must initialize the pre-allocated flash area by using the :c:func:`emds_init` function.
+The application must initialize the pre-allocated storage area by using the :c:func:`emds_init` function.
 The :kconfig:option:`CONFIG_EMDS_SECTOR_COUNT` option defines how many sectors should be used to store data.
 
 The allocated storage space must be larger than the combined data stored by the application.
-Allocating a larger flash area will demand more resources, but also increase the life expectancy of the flash.
-The chosen size should reflect the amount of data stored, the available flash resources, and how the application calls the :c:func:`emds_store` function.
-In general, it should not be necessary to allocate a large flash area, since only a limited set of data should be stored to ensure swift completion of writing the flash on shutdown.
+Allocating a larger storage area will demand more resources, but also increase the life expectancy of the persistent memory.
+The chosen size should reflect the amount of data stored, the available persistent memory and how the application calls the :c:func:`emds_store` function.
+In general, it should not be necessary to allocate a large storage area, since only a limited set of data should be stored to ensure swift completion of writing the data on shutdown.
 
 The memory location that is going to be stored must be added on initialization.
 All memory areas must be provided through entries containing an ID, data pointer, and data length, using the :c:func:`emds_entry_add` function and the :c:macro:`EMDS_STATIC_ENTRY_DEFINE` macro.
 Entries to be stored when the emergency data storage is triggered need their own unique IDs that are not changed after a reboot.
 
-When all entries are added, the :c:func:`emds_load` function restores the entries into the memory areas from the flash.
+When all entries are added, the :c:func:`emds_load` function restores the entries into the memory areas from the persistent memory.
 
-After restoring the previous data, the application must run the :c:func:`emds_prepare` function to prepare the flash area for receiving new entries.
-If the remaining empty flash area is smaller than the required data size, the flash area will be automatically erased to increase the available flash area.
+After restoring the previous data, the application must run the :c:func:`emds_prepare` function to prepare the storage area for receiving new entries.
+If the remaining empty storage area is smaller than the required data size, the storage area will be automatically erased to increase the available storage area.
 
 The storage is done in deterministic time, so it is possible to know how long it takes to store all registered entries.
 However, this is chip-dependent, so it is important to measure the time.
 Find timing values under the "Electrical specification" section for the non-volatile memory controller in the Product Specification for the relevant SoC or the SiP you are using.
-For example, for the nRF9160 SiP, see the `Electrical specification of nRF9160`_ page.
+For example, for the nRF52840 SiP, see the `nRF52840 Product Specification`_ page.
 
 The following Kconfig options can be configured:
 
@@ -44,10 +42,12 @@ The following Kconfig options can be configured:
 * :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US`
 * :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`
 
-When configuring these values, consider the time for erase when doing garbage collection in NVS.
+When configuring these values, consider the time for erase when doing garbage collection in NVS using flash.
 If partial erase is not enabled or supported, the time of a complete sector erase has to be included in the :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`.
 When partial erase is enabled and supported by the hardware, include the time it takes for the scheduler to trigger, which is depending on the time defined in :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE_MS`.
 When changing the :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US` option, it is important that the worst time is considered.
+When configuring these values using RRAM, you do not need to consider garbage collection in the same way as for flash, as it can be written to regardless of value.
+However, avoid the ERASEALL functionality, because that can increase the time before the EMDS store functions are called.
 
 The application must call the :c:func:`emds_store` function to store all entries.
 This can only be done once, before the :c:func:`emds_prepare` function must be called again.
@@ -64,7 +64,7 @@ The :c:func:`emds_is_ready` function can be called to check if EMDS is prepared 
 Once the data storage has completed, a callback is called if provided in :c:func:`emds_init`.
 This callback notifies the application that the data storage has completed, and can be used to reboot the CPU or execute another function that is needed.
 
-After completion of :c:func:`emds_store`, the :c:func:`emds_is_ready` function call will return error, since it can no longer guarantee that the data will fit into the flash area.
+After completion of :c:func:`emds_store`, the :c:func:`emds_is_ready` function call will return an error, because it can no longer guarantee that the data will fit into the persistent memory area.
 
 The above described process is summarized in a message sequence diagram.
 
@@ -90,7 +90,7 @@ The above described process is summarized in a message sequence diagram.
 
 Requirements
 ************
-To prevent frequent writes to flash memory, the EMDS library can write data to flash only when the device is shutting down.
+To prevent frequent writes to persistent memory, the EMDS library can write data only when the device is shutting down.
 EMDS restores the application data to RAM at reboot.
 
 EMDS can store data within a guaranteed time, based on the amount of data being stored.
@@ -128,9 +128,9 @@ The :c:func:`emds_store_time_get` function estimates the required worst-case tim
    t_\text{store} = t_\text{base} + \sum_{i = 1}^n \left(t_\text{entry} + t_\text{word}\left(\left\lceil\frac{s_\text{ate}}{s_\text{block}}\right\rceil + \left\lceil\frac{s_i}{s_\text{block}}\right\rceil \right)\right)
 
 where :math:`t_\text{base}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`, :math:`t_\text{entry}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US` and :math:`t_\text{word}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US`.
-:math:`s_i` is the size of the :math:`i`\ th entry in bytes and :math:`s_\text{block}` is the number of bytes in one word of flash.
+:math:`s_i` is the size of the :math:`i`\ th entry in bytes and :math:`s_\text{block}` is the number of bytes in one word (4 bytes) of flash or the write-buffer size (16 bytes) of RRAM.
 These can be found by looking at datasheets, driver documentation, and the configuration of the application.
-:math:`s_\text{ate}` is the size of the allocation table entry used by the EMDS flash module, which is 8 B.
+:math:`s_\text{ate}` is the size of the allocation table entry used by the EMDS, which is 8 B.
 
 Example of time estimation
 ==========================
@@ -157,7 +157,7 @@ Calling the :c:func:`emds_store_time_get` function in the sample automatically c
 
 Limitations
 ***********
-    The power-fail comparator for the nRF528xx cannot be used with EMDS, as it will prevent the NVMC from performing write operations to flash.
+    The power-fail comparator cannot be active when EMDS is used, as it will prevent the NVMC or RRAMC from performing write operations to persistent memory.
 
 Dependencies
 ************
