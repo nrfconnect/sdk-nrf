@@ -1106,10 +1106,10 @@ static int inp_rep_notify_all(struct bt_hids *hids_obj,
 	}
 }
 
-int bt_hids_inp_rep_send(struct bt_hids *hids_obj,
-			 struct bt_conn *conn, uint8_t rep_index,
-			 uint8_t const *rep, uint8_t len,
-			 bt_gatt_complete_func_t cb)
+int bt_hids_inp_rep_send_userdata(struct bt_hids *hids_obj,
+				  struct bt_conn *conn, uint8_t rep_index,
+				  uint8_t const *rep, uint8_t len,
+				  bt_gatt_complete_func_t cb, void *userdata)
 {
 	struct bt_hids_inp_rep *hids_inp_rep =
 	    &hids_obj->inp_rep_group.reports[rep_index];
@@ -1147,6 +1147,7 @@ int bt_hids_inp_rep_send(struct bt_hids *hids_obj,
 	params.data = rep;
 	params.len = hids_inp_rep->size;
 	params.func = cb;
+	params.user_data = userdata;
 
 	int err = bt_gatt_notify_cb(conn, &params);
 
