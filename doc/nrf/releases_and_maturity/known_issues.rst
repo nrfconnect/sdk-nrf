@@ -479,6 +479,13 @@ Enhanced ShockBurst (ESB)
 
 The issues in this section are related to the :ref:`ug_esb` protocol.
 
+.. rst-class:: v2.9
+
+NCSDK-30802: Packet retransmission is not working properly in the ESB for the nRF54 Series devices
+  The device suddenly stops transmitting ESB packets.
+
+**Workaround:** Trigger the ``NRF_TIMER_TASK_CLEAR`` task after ``NRF_TIMER_TASK_STOP``.
+
 .. rst-class:: v2-3-0 v2-2-0
 
 NCSDK-20092: ESB does not send packet longer than 63 bytes
