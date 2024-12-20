@@ -10,11 +10,10 @@ SUIT: Recovery application
 The SUIT recovery application is a minimal application that allows recovering the device firmware if the original firmware is damaged.
 It is to be used as a companion firmware to the main application that is using :ref:`Software Update for Internet of Things (SUIT) <ug_nrf54h20_suit_intro>` procedure, rather than a stand-alone application.
 
-The following limitations apply to this application:
+The following limitation applies to this application:
 
 * The recovery firmware is only able to recover from a situation where the application or radio core are damaged.
   It does not recover from Nordic Semiconductor-controlled firmware failures.
-* The recovery firmware is not compatible with a main application that uses an external flash for update.
 
 .. _suit_recovery_reqs:
 
@@ -98,13 +97,13 @@ Testing
 
    .. code-block:: console
 
-      nrfutil device x-write --address 0xE0BA000 --value 0xFFFF --serial-number <segger_id>
+      nrfutil device x-write --address 0xE0B7000 --value 0xFFFF --serial-number <dk_serial_number>
 
 #. Reset the device to enter the recovery path:
 
    .. code-block:: console
 
-      nrfutil device reset --serial-port COM7
+      nrfutil device reset --serial-number <dk_serial_number>
 
 #. Open the nRF Device Manager app on your mobile phone, and observe the device now advertising itself as *SUIT Recovery*.
 #. Recover the application using the nRF Device Manager app to perform an update, following the process outlined in the :ref:`nrf54h_suit_sample` sample documentation.
