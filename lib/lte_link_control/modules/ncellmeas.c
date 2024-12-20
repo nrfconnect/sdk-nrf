@@ -167,6 +167,10 @@ static int parse_ncellmeas_gci(struct lte_lc_ncellmeas_params *params, const cha
 		goto clean_exit;
 	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
 		LOG_WRN("NCELLMEAS interrupted; results incomplete");
+		if (param_count == 3) {
+			/* No results, skip parsing. */
+			goto clean_exit;
+		}
 	}
 
 	/* Go through the cells */
@@ -425,6 +429,14 @@ static int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *ce
 	err = at_parser_init(&parser, at_response);
 	__ASSERT_NO_MSG(err == 0);
 
+	err = at_parser_cmd_count_get(&parser, &count);
+	if (err) {
+		LOG_ERR("Could not get NCELLMEAS param count, "
+			"potentially malformed notification, error: %d",
+			err);
+		goto clean_exit;
+	}
+
 	/* Status code */
 	err = at_parser_num_get(&parser, AT_NCELLMEAS_STATUS_INDEX, &status);
 	if (err) {
@@ -437,6 +449,10 @@ static int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *ce
 		goto clean_exit;
 	} else if (status == AT_NCELLMEAS_STATUS_VALUE_INCOMPLETE) {
 		LOG_WRN("NCELLMEAS interrupted; results incomplete");
+		if (count == 2) {
+			/* No results, skip parsing. */
+			goto clean_exit;
+		}
 	}
 
 	/* Current cell ID */
@@ -517,14 +533,6 @@ static int parse_ncellmeas(const char *at_response, struct lte_lc_cells_info *ce
 	 */
 	size_t ta_meas_time_index = AT_NCELLMEAS_PRE_NCELLS_PARAMS_COUNT +
 				    cells->ncells_count * AT_NCELLMEAS_N_PARAMS_COUNT;
-
-	err = at_parser_cmd_count_get(&parser, &count);
-	if (err) {
-		LOG_ERR("Could not get NCELLMEAS param count, "
-			"potentially malformed notification, error: %d",
-			err);
-		goto clean_exit;
-	}
 
 	if (count > ta_meas_time_index) {
 		err = at_parser_num_get(&parser, ta_meas_time_index,

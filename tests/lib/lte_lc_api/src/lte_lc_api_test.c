@@ -2691,6 +2691,41 @@ void test_lte_lc_neighbor_cell_measurement_normal_status_incomplete(void)
 	at_monitor_dispatch(at_notif);
 }
 
+void test_lte_lc_neighbor_cell_measurement_normal_status_incomplete_no_cells(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_DEFAULT,
+		.gci_count = 0,
+	};
+	strcpy(at_notif,
+	       "%NCELLMEAS: 2\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 0;
+	test_event_data[0].cells_info.current_cell.mnc = 0;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[0].cells_info.current_cell.tac = 0;
+	test_event_data[0].cells_info.current_cell.earfcn = 0;
+	test_event_data[0].cells_info.current_cell.timing_advance = 0;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 0;
+	test_event_data[0].cells_info.current_cell.measurement_time = 0;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 0;
+	test_event_data[0].cells_info.current_cell.rsrp = 0;
+	test_event_data[0].cells_info.current_cell.rsrq = 0;
+	test_event_data[0].cells_info.ncells_count = 0;
+	test_event_data[0].cells_info.gci_cells_count = 0;
+
+	at_monitor_dispatch(at_notif);
+}
+
 void test_lte_lc_neighbor_cell_measurement_cell_id_missing_fail(void)
 {
 	int ret;
@@ -2951,6 +2986,41 @@ void test_lte_lc_neighbor_cell_measurement_gci_status_incomplete(void)
 	test_gci_cells[1].phys_cell_id = 449;
 	test_gci_cells[1].rsrp = 51;
 	test_gci_cells[1].rsrq = 11;
+
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_neighbor_cell_measurement_gci_status_incomplete_no_cells(void)
+{
+	int ret;
+	struct lte_lc_ncellmeas_params params = {
+		.search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT,
+		.gci_count = 2,
+	};
+	strcpy(at_notif,
+	       "%NCELLMEAS: 2\r\n");
+
+	lte_lc_callback_count_expected = 1;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,2", EXIT_SUCCESS);
+
+	ret = lte_lc_neighbor_cell_measurement(&params);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	test_event_data[0].type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	test_event_data[0].cells_info.current_cell.mcc = 0;
+	test_event_data[0].cells_info.current_cell.mnc = 0;
+	test_event_data[0].cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[0].cells_info.current_cell.tac = 0;
+	test_event_data[0].cells_info.current_cell.earfcn = 0;
+	test_event_data[0].cells_info.current_cell.timing_advance = 0;
+	test_event_data[0].cells_info.current_cell.timing_advance_meas_time = 0;
+	test_event_data[0].cells_info.current_cell.measurement_time = 0;
+	test_event_data[0].cells_info.current_cell.phys_cell_id = 0;
+	test_event_data[0].cells_info.current_cell.rsrp = 0;
+	test_event_data[0].cells_info.current_cell.rsrq = 0;
+	test_event_data[0].cells_info.ncells_count = 0;
+	test_event_data[0].cells_info.gci_cells_count = 0;
 
 	at_monitor_dispatch(at_notif);
 }
@@ -3774,7 +3844,6 @@ void test_lte_lc_neighbor_cell_measurement_no_event_handler(void)
 	/* Register handler so that tearDown() doesn't cause unnecessary warning log */
 	lte_lc_register_handler(lte_lc_event_handler);
 }
-
 
 void test_lte_lc_modem_sleep_event(void)
 {

@@ -456,6 +456,10 @@ Modem libraries
 
   * Added the :c:func:`pdn_dynamic_params_get_v6` function to get PDN parameters for IPv6-only.
 
+* :ref:`lte_lc_readme` library:
+
+  * Fixed handling of ``%NCELLMEAS`` notification with status 2 (measurement interrupted) and no cells.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
