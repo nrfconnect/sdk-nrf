@@ -193,13 +193,13 @@ int main(void)
 			k_yield();
 		}
 
-		/* Disable PWM */
-		ret = pwm_set_dt(&pwm_out, 0, 0);
-		if (ret) {
-			LOG_ERR("pwm_set_dt(%u, %u) returned %d",
-				0, 0, ret);
-			return ret;
-		}
+		// /* Disable PWM */
+		// ret = pwm_set_dt(&pwm_out, 0, 0);
+		// if (ret) {
+		// 	LOG_ERR("pwm_set_dt(%u, %u) returned %d",
+		// 		0, 0, ret);
+		// 	return ret;
+		// }
 #if defined(CONFIG_PM_DEVICE_RUNTIME)
 		pm_device_runtime_put(pwm_out.dev);
 #endif
