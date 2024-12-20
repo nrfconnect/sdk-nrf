@@ -1,6 +1,8 @@
 common:
   sysbuild: true
-  tags: ci_build ci_tests_benchmarks_multicore
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
   platform_allow:
     - nrf54h20dk/nrf54h20/cpuapp
   integration_platforms:
@@ -21,10 +23,10 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
-      idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
-      remote_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -34,8 +36,8 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -44,7 +46,7 @@ tests:
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep_fast:
     extra_args:
-      idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
     harness: console
     harness_config:
       type: multi_line
@@ -57,23 +59,79 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
-      idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
-      remote_CONFIG_TEST_SLEEP_DURATION_MS=500
-      idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
 
-  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast:
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.no_clock_control:
     tags: ppk_power_measure
     extra_args:
-      idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
-      remote_CONF_FILE=prj_s2ram.conf
-      idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+    harness: pytest
+    harness_config:
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_320MHz:
+    tags: ppk_power_measure
+    extra_args:
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_CONFIG_CLOCK_CONTROL=y
+      - idle_pwm_loopback_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ=y
+    harness: pytest
+    harness_config:
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_256MHz:
+    tags: ppk_power_measure
+    extra_args:
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_CONFIG_CLOCK_CONTROL=y
+      - idle_pwm_loopback_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_256MHZ=y
+    harness: pytest
+    harness_config:
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_128MHz:
+    tags: ppk_power_measure
+    extra_args:
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_CONFIG_CLOCK_CONTROL=y
+      - idle_pwm_loopback_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ=y
+    harness: pytest
+    harness_config:
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_64MHz:
+    tags: ppk_power_measure
+    extra_args:
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_CONFIG_CLOCK_CONTROL=y
+      - idle_pwm_loopback_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ=y
     harness: pytest
     harness_config:
       fixture: spi_loopback
