@@ -613,6 +613,23 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set(network_images)
   endif()
 
+  if(SB_CONFIG_CRACEN_MICROCODE_LOAD_ONCE)
+    if(SB_CONFIG_CRACEN_MICROCODE_LOAD_B0)
+      set_config_bool(b0 CONFIG_CRACEN_LOAD_MICROCODE y)
+
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        set_config_bool(mcuboot CONFIG_CRACEN_LOAD_MICROCODE n)
+      endif()
+    elseif(SB_CONFIG_CRACEN_MICROCODE_LOAD_MCUBOOT)
+      if(SB_CONFIG_SECURE_BOOT_APPCORE)
+        set_config_bool(b0 CONFIG_CRACEN_LOAD_MICROCODE n)
+      endif()
+
+      set_config_bool(mcuboot CONFIG_CRACEN_LOAD_MICROCODE y)
+    endif()
+
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_CRACEN_LOAD_MICROCODE n)
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
