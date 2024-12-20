@@ -60,6 +60,13 @@ config DESKTOP_HID_EVENT_QUEUE_SIZE
 	help
 	  Size of the HID event queue.
 
+config DESKTOP_HID_STATE_RAW_REPORTS
+	bool
+	help
+	  Enable the HID state module to handle passthrough reports.
+	  The HID state will not alter the data but will make sure the reports
+	  are sent to the transport in an organized manner.
+
 module = DESKTOP_HID_STATE
 module-str = HID state
 source "subsys/logging/Kconfig.template.log_config"
