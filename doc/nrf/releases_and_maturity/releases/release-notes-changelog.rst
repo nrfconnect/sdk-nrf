@@ -442,6 +442,16 @@ Wi-Fi samples
 
   * Added an ``overlay-zperf.conf`` overlay for :ref:`performance benchmarking and memory footprint analysis <wifi_sta_performance_testing_memory_footprint>`.
 
+* Radio test samples:
+
+  * Added:
+
+    * The :ref:`wifi_radio_test_sd` sample to demonstrate the Wi-Fi and Bluetooth LE radio test running on the application core.
+
+  * Updated:
+
+    * The :ref:`wifi_radio_test` sample is now moved to :zephyr_file:`samples/wifi/radio_test/multi_domain`.
+
 Other samples
 -------------
 
