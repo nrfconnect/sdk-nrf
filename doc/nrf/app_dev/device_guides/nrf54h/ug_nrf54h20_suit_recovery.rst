@@ -52,11 +52,11 @@ The following image shows the recovery manifest topology for the nRF54H20 SoC:
 If a failure during a boot process occurred, the Secure Domain sets the recovery flag and reboots the device.
 Upon each boot the Secure Domain checks if the recovery flag is set.
 If it is set, the device enters recovery mode.
-If it isn't booting proceeds normally by running the root manifest.
+If it is not, the boot process continues normally by executing the root manifest.
 
 After entering the recovery mode it is verified if MPI configuration for the APP_RECOVERY is present.
 If it is, the APP_RECOVERY manifest is processed.
-It no MPI configuration is found the Secure Domain performs an attempt to process the normal manufacturer root manifest.
+If no MPI configuration is found, the Secure Domain attempts to process the normal manufacturer root manifest.
 This is needed, as the device might enter recovery mode if it is empty.
 The recovery flag is not cleared after flashing the firmware, but the device should proceed as if it would boot normally.
 
@@ -80,10 +80,6 @@ Nordic provides a default recovery firmware that can be used in the recovery pro
 This firmware uses Bluetooth LE and SMP as a transport.
 It is optimized for memory usage, currently using around 164 kB of MRAM (72 kB of application core and 92 kB radio core).
 
-.. caution::
-   The default recovery firmware does not support :ref:`updating from external flash memory <ug_nrf54h20_suit_external_memory>`.
-   This also means that the recovery firmware is not compatible with a main application that uses external flash for updates.
-
 To use the firmware:
 
 1. Create :file:`recovery.overlay` and :file:`recovery_hci_ipc.ovelay` files in the main application's :ref:`configuration_system_overview_sysbuild` directory.
@@ -95,7 +91,7 @@ To use the firmware:
    This will cause the recovery firmware to be built automatically as part of the main application build.
 
 #. :ref:`Program the main application firmware to the device <programming>`.
-This will automatically program both the main application and the recovery firmware to the device.
+   This automatically programs both the main application and the recovery firmware onto the device.
 
 #. To update the recovery firmware perform an update in the same way as described in :ref:`nrf54h_suit_sample`, however using the recovery firmware envelope.
    The envelopes needed for the update are located in the build directory of the main application, by default found in :file:`build/DFU/app_recovery.suit` and :file:`build/DFU/rad_recovery.suit`.
