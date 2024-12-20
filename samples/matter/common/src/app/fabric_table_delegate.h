@@ -11,6 +11,7 @@
 #include <lib/support/logging/CHIPLogging.h>
 
 #include "app/group_data_provider.h"
+#include <mpsl/mpsl_lib.h>
 
 #ifdef CONFIG_CHIP_WIFI
 #include <platform/nrfconnect/wifi/WiFiManager.h>
@@ -57,10 +58,14 @@ private:
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
 				chip::DeviceLayer::ThreadStackMgr().ClearAllSrpHostAndServices();
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
+				/*/ Disable mpsl before start removing settings to improve the performance. */
+				mpsl_lib_uninit();
 				/* Erase Matter data */
 				chip::DeviceLayer::PersistedStorage::KeyValueStoreMgrImpl().DoFactoryReset();
 				/* Erase Network credentials and disconnect */
 				chip::DeviceLayer::ConnectivityMgr().ErasePersistentInfo();
+				/*/ Re-enable mpsl after clearing persistent data. */
+				mpsl_lib_init();
 #ifdef CONFIG_CHIP_WIFI
 				chip::DeviceLayer::WiFiManager::Instance().Disconnect();
 				chip::DeviceLayer::ConnectivityMgr().ClearWiFiStationProvision();
