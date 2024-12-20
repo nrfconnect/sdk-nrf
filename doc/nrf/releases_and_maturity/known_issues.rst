@@ -496,6 +496,19 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-9-0
+
+KRKNWK-19826: The Device Firmware Upgrade (DFU) fails for nRF5340 DK with RAM power down enabled
+  The DFU fails for nRF5340 DK, if the application enables the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option.
+  This option is enabled by default for the ``release`` configuration of the following samples:
+
+    * :ref:`matter_lock_sample`
+    * :ref:`matter_light_switch_sample`
+    * :ref:`matter_smoke_co_alarm_sample`
+    * :ref:`matter_window_covering_sample`
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option to ``n`` in the :file:`prj_release.conf` file of the application.
+
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0
 
 KRKNWK-19388: The smart plug functionality of Matter Bridge application does not work with Apple Home application
