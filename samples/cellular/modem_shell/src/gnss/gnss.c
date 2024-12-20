@@ -941,17 +941,20 @@ static void get_pgps_data_work_fn(struct k_work *work)
 	err = nrf_cloud_rest_pgps_data_get(&rest_ctx, &request);
 #elif defined(CONFIG_NRF_CLOUD_COAP)
 	struct nrf_cloud_pgps_result file_location = {0};
+
 	static char host[64];
 	static char path[128];
 
 	memset(host, 0, sizeof(host));
 	memset(path, 0, sizeof(path));
+
 	file_location.host = host;
 	file_location.host_sz = sizeof(host);
 	file_location.path = path;
 	file_location.path_sz = sizeof(path);
 
 	err = nrf_cloud_coap_pgps_url_get(&request, &file_location);
+
 #endif
 	if (err) {
 		mosh_error("GNSS: Failed to get P-GPS data, error: %d", err);

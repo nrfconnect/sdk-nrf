@@ -13,8 +13,7 @@ LOG_MODULE_REGISTER(fota_download_delta_modem, CONFIG_LOG_DEFAULT_LEVEL);
 /* Initialized to value different than success (0) */
 static int dfu_result = -1;
 
-NRF_MODEM_LIB_ON_DFU_RES(fota_delta_modem_dfu_res_hook,
-			 on_modem_dfu_res, NULL);
+NRF_MODEM_LIB_ON_DFU_RES(fota_delta_modem_dfu_res_hook, on_modem_dfu_res, NULL);
 
 static void on_modem_dfu_res(int dfu_res, void *ctx)
 {

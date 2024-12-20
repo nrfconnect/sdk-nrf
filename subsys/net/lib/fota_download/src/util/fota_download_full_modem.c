@@ -70,7 +70,11 @@ int fota_download_full_modem_stream_params_init(void)
 	const struct dfu_target_full_modem_params params = {
 		.buf = fota_download_fulmodem_buf,
 		.len = sizeof(fota_download_fulmodem_buf),
-		.dev = &(struct dfu_target_fmfu_fdev){ .dev = flash_dev, .offset = 0, .size = 0 }
+		.dev = &(struct dfu_target_fmfu_fdev){
+			.dev = flash_dev,
+			.offset = 0,
+			.size = 0
+		}
 	};
 
 	ret = dfu_target_full_modem_cfg(&params);
