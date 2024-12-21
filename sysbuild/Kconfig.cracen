@@ -1,0 +1,39 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SUPPORT_CRACEN
+	bool
+	default y if SOC_SERIES_NRF54LX
+	help
+	  Hidden symbol indicating if CRACEN is supported on the device.
+
+if SUPPORT_CRACEN
+
+menu "CRACEN"
+
+config CRACEN_MICROCODE_LOAD_B0
+	bool
+	depends on SECURE_BOOT_APPCORE && SECURE_BOOT_SIGNATURE_TYPE_ED25519
+	default y
+	help
+	  Hidden symbol indicating if b0 is using CRACEN.
+
+config CRACEN_MICROCODE_LOAD_MCUBOOT
+	bool
+	depends on BOOTLOADER_MCUBOOT && BOOT_SIGNATURE_TYPE_ED25519
+	default y
+	help
+	  Hidden symbol indicating if MCUboot is using CRACEN.
+
+config CRACEN_MICROCODE_LOAD_ONCE
+	bool "Load CRACEN microcode once only"
+	depends on CRACEN_MICROCODE_LOAD_B0 || CRACEN_MICROCODE_LOAD_MCUBOOT
+	default y
+	help
+	  If enabled, will only load microcode for CRACEN in the first system bootable image,
+	  which will be either b0 or MCUboot, depending on project configuration.
+
+endmenu
+
+endif # SUPPORT_CRACEN
