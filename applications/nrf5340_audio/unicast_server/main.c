@@ -565,6 +565,43 @@ int main(void)
 
 	ret = bt_mgmt_adv_start(0, ext_adv_buf, ext_adv_buf_cnt, NULL, 0, true);
 	ERR_CHK(ret);
+	
+		// Test monotonicity
+	uint32_t timestamps_us[10];
+	int counter;
+	for (counter = 0; counter < 1000000; counter++){
+		// progress bar
+		if ((counter % 1000) == 0) {
+			LOG_ERR("%u", counter);
+		}
 
+		// get some timestamps
+		int i;
+		for (i=0;i<10;i++){
+			timestamps_us[i] = audio_sync_timer_capture();		
+		}
+
+		// check if there's a negative delta
+		int incorrect_entry = -1;
+		for (i=1;i<10;i++){
+			if (timestamps_us[i-1] > timestamps_us[i]){
+				incorrect_entry = i-1;
+			}
+		}
+
+		// report error
+		if (incorrect_entry >= 0){
+			LOG_ERR("\nIncorrect timestamp:");
+			for (i=0;i<10;i++){
+				if (incorrect_entry == i){
+					LOG_ERR("t[%u] = %u <<--", i, timestamps_us[i]);
+				} else {
+					LOG_ERR("t[%u] = %u", i, timestamps_us[i]);
+				}
+			}
+			break;
+		}
+	}
 	return 0;
 }
+
