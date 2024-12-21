@@ -38,6 +38,8 @@ enum dfu_target_image_type {
 	DFU_TARGET_IMAGE_TYPE_SMP = 8,
 	/** SUIT Envelope */
 	DFU_TARGET_IMAGE_TYPE_SUIT = 16,
+	/** Custom update implementation */
+	DFU_TARGET_IMAGE_TYPE_CUSTOM = 128,
 	/** Any application image type */
 	DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION = DFU_TARGET_IMAGE_TYPE_MCUBOOT,
 	/** Any modem image */
@@ -46,7 +48,7 @@ enum dfu_target_image_type {
 	/** Any DFU image type */
 	DFU_TARGET_IMAGE_TYPE_ANY =
 		(DFU_TARGET_IMAGE_TYPE_MCUBOOT | DFU_TARGET_IMAGE_TYPE_MODEM_DELTA |
-		 DFU_TARGET_IMAGE_TYPE_FULL_MODEM),
+		 DFU_TARGET_IMAGE_TYPE_FULL_MODEM | DFU_TARGET_IMAGE_TYPE_CUSTOM),
 };
 
 enum dfu_target_evt_id {
