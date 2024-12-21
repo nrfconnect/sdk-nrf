@@ -75,7 +75,7 @@ config MPSL_LOW_PRIO_IRQN
 	  Check the interrupt number in the MDK
 
 config MPSL_HFCLK_LATENCY
-	int
+	int "HFCLK ramp-up latency in microsecond, assumed by MPSL to wait for the clock availability"
 	default 854 if SOC_SERIES_NRF54LX
 	default 1400
 	help
