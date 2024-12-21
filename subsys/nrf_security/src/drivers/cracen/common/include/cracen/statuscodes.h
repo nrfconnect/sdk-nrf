@@ -44,8 +44,15 @@
 /** The functionality or operation is not supported */
 #define SX_ERR_NOT_IMPLEMENTED 8
 
+/** An unexpected micro-code instruction (in the PK engine)
+ *
+ * On hardware older than december 2018, this error means a
+ * ::SX_ERR_POINT_AT_INFINITY error
+ */
+#define SX_ERR_INVALID_MICROCODE 9
+
 /** The output operand is a point at infinity */
-#define SX_ERR_POINT_AT_INFINITY 9
+#define SX_ERR_POINT_AT_INFINITY SX_ERR_INVALID_MICROCODE
 
 /** The input value is outside the expected range */
 #define SX_ERR_OUT_OF_RANGE 10
@@ -99,6 +106,11 @@
 /** Resources not available for a new operation. Retry later */
 #define SX_ERR_PK_RETRY 19
 
+/** Low-order point during point multiplication
+ *  or check on point order failed
+ */
+#define SX_ERR_BAD_ORDER 20
+
 /** The size passed as part of a request is not valid */
 #define SX_ERR_INVALID_REQ_SZ 100
 
@@ -127,20 +139,20 @@
 #define SX_ERR_WORKMEM_BUFFER_TOO_SMALL 109
 
 /** Waiting on the hardware to process this operation */
-#define SX_ERR_HW_PROCESSING (-1)
+#define SX_ERR_HW_PROCESSING -1
 
 /** No hardware available for a new operation. Retry later. */
-#define SX_ERR_RETRY (-2)
+#define SX_ERR_RETRY -2
 
 /** No compatible hardware for this operation.
  *
  * This error occurs if the dedicated hardware to execute the operation is not
  * present, or hardware is present and operation not supported by it.
  */
-#define SX_ERR_INCOMPATIBLE_HW (-3)
+#define SX_ERR_INCOMPATIBLE_HW -3
 
 /** Invalid authentication tag in authenticated decryption */
-#define SX_ERR_INVALID_TAG (-16)
+#define SX_ERR_INVALID_TAG -16
 
 /** Hardware DMA error
  *
@@ -148,14 +160,14 @@
  * wrong addresses, RAM corruption, a hardware or software bug or system
  * corruption.
  */
-#define SX_ERR_DMA_FAILED (-32)
+#define SX_ERR_DMA_FAILED -32
 
 /** Fatal error, trying to call a function with an uninitialized object
  *
  * For example calling sx_aead_decrypt() with an sxaead object which
  * has not been created yet with sx_aead_create_*() function.
  */
-#define SX_ERR_UNINITIALIZED_OBJ (-33)
+#define SX_ERR_UNINITIALIZED_OBJ -33
 
 /** Fatal error, trying to call an AEAD or block cipher create function with an
  * uninitialized or invalid key reference.
@@ -165,57 +177,65 @@
  * function, sx_keyref_load_material() was called with key NULL or size 0, or
  * sx_keyref_load_by_id() was called with an invalid index ID.
  */
-#define SX_ERR_INVALID_KEYREF (-34)
+#define SX_ERR_INVALID_KEYREF -34
 
 /** Fatal error, trying to create instance with not enough memory */
-#define SX_ERR_ALLOCATION_TOO_SMALL (-35)
+#define SX_ERR_ALLOCATION_TOO_SMALL -35
 
 /** Input or output buffer size too large */
-#define SX_ERR_TOO_BIG (-64)
+#define SX_ERR_TOO_BIG -64
 
 /** Output buffer size too small */
-#define SX_ERR_OUTPUT_BUFFER_TOO_SMALL (-65)
+#define SX_ERR_OUTPUT_BUFFER_TOO_SMALL -65
 
 /** The given key size is not supported by the algorithm or the hardware */
-#define SX_ERR_INVALID_KEY_SZ (-66)
+#define SX_ERR_INVALID_KEY_SZ -66
 
 /** Input tag size is invalid */
-#define SX_ERR_INVALID_TAG_SIZE (-67)
+#define SX_ERR_INVALID_TAG_SIZE -67
 
 /** Input nonce size is invalid */
-#define SX_ERR_INVALID_NONCE_SIZE (-68)
+#define SX_ERR_INVALID_NONCE_SIZE -68
 
 /** Too many feeds were inputed */
-#define SX_ERR_FEED_COUNT_EXCEEDED (-69)
+#define SX_ERR_FEED_COUNT_EXCEEDED -69
 
 /** Input data size granularity is incorrect */
-#define SX_ERR_WRONG_SIZE_GRANULARITY (-70)
+#define SX_ERR_WRONG_SIZE_GRANULARITY -70
 
 /** Attempt to use HW keys with a mode that does not support HW keys */
-#define SX_ERR_HW_KEY_NOT_SUPPORTED (-71)
+#define SX_ERR_HW_KEY_NOT_SUPPORTED -71
 
 /** Attempt to use a mode or engine that does not support context saving */
-#define SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED (-72)
+#define SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED -72
 
 /** Attempt to feed AAD after input data was fed */
-#define SX_ERR_FEED_AFTER_DATA (-73)
+#define SX_ERR_FEED_AFTER_DATA -73
+
 
 /** Hardware cannot work anymore.
  *
  * To recover, reset the hardware or call *_init() function.
  * For example, if this error is received when sx_trng_get()
- * is called, call again sx_trng_open() to reset the hardware.
+ * is called, call again sx_trng_reset() to reset the hardware.
  */
-#define SX_ERR_RESET_NEEDED (-82)
+#define SX_ERR_RESET_NEEDED -82
+
+/** A self-test has failed
+ *
+ * For example, if this error is received when sx_trng_init_selftests() is
+ * called, one of the TRNG self-tests failed and the HW cannot be used.
+ */
+#define SX_ERR_SELF_TEST_FAILURE -83
 
 /** Input buffer size too small. */
-#define SX_ERR_INPUT_BUFFER_TOO_SMALL (-83)
+#define SX_ERR_INPUT_BUFFER_TOO_SMALL -84
 
 /** Size of entropy buffer is too small. */
-#define SX_ERR_INSUFFICIENT_ENTROPY (-84)
+#define SX_ERR_INSUFFICIENT_ENTROPY -85
 
 /** The system appears to have been tampered with. */
-#define SX_ERR_CORRUPTION_DETECTED (-85)
+#define SX_ERR_CORRUPTION_DETECTED -86
 
 /** @} */
 

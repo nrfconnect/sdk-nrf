@@ -27,7 +27,7 @@
  * version number is equal or larger than the minor version number
  * they were written for.
  */
-#define SXSYMCRYPT_API_MINOR 0
+#define SXSYMCRYPT_API_MINOR 5
 
 /** Check application has compatible version numbers.
  *
