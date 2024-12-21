@@ -12,10 +12,6 @@
 #include "app/task_executor.h"
 #include "board/board.h"
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "dfu/ota/ota_util.h"
-#endif
-
 #include <app/clusters/identify-server/identify-server.h>
 #include <app/server/OnboardingCodesUtil.h>
 
