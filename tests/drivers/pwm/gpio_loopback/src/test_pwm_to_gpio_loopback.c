@@ -71,17 +71,32 @@ static void test_capture(uint32_t period, uint32_t pulse, pwm_flags_t flags)
 	zassert_equal(err, 0, "failed to configure input pin (err %d)", err);
 
 	err = gpio_pin_interrupt_configure_dt(&in, GPIO_INT_EDGE_BOTH);
-	zassert_equal(err, 0, "failed to configure input pin interrupt (err %d)", err);
+	if (err == -12){ // polling
+		for (int i=0; i<((NUMBER_OF_CYCLE_TO_CAPTURE * period) + (period >> 2)); i+=(period >> 1)){
+			if (gpio_pin_get_dt(&in)) {
+				high++;
+			} else {
+				low++;
+			}
+		}
+		// err = gpio_pin_configure_dt(&in, GPIO_OUTPUT);
+		// while(1){
+		// 	gpio_pin_toggle_dt(&in);
+		// 	k_usleep(period >> 1);
+		// }
+	} else {  // interrupts
+		zassert_equal(err, 0, "failed to configure input pin interrupt (err %d)", err);
 
-	gpio_init_callback(&pwm_input_cb_data, pwm_input_captured_callback, BIT(in.pin));
-	gpio_add_callback(in.port, &pwm_input_cb_data);
+		gpio_init_callback(&pwm_input_cb_data, pwm_input_captured_callback, BIT(in.pin));
+		gpio_add_callback(in.port, &pwm_input_cb_data);
 
-	/* NUMBER_OF_CYCLE_TO_CAPTURE periods plus 1/4 of period to catch the last edge */
-	k_usleep((NUMBER_OF_CYCLE_TO_CAPTURE * period) + (period >> 2));
-
+		/* NUMBER_OF_CYCLE_TO_CAPTURE periods plus 1/4 of period to catch the last edge */
+		k_usleep((NUMBER_OF_CYCLE_TO_CAPTURE * period) + (period >> 2));
+	}
 	TC_PRINT("PWM output -high state counter: %d -low state counter: %d\n", high, low);
 	zassert((high >= NUMBER_OF_CYCLE_TO_CAPTURE) && (low >= NUMBER_OF_CYCLE_TO_CAPTURE),
-		"PWM not captured");
+			"PWM not captured");
+
 }
 
 ZTEST(pwm_loopback, test_pwm_polarity_normal)
