@@ -1180,7 +1180,7 @@ static int cmd_fem(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-#if !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+#if !CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC
 static int cmd_fem_tx_power_control_set(const struct shell *shell, size_t argc,
 			    char **argv)
 {
@@ -1204,7 +1204,7 @@ static int cmd_fem_tx_power_control_set(const struct shell *shell, size_t argc,
 
 	return 0;
 }
-#endif /* !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
+#endif /* !CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC */
 
 static int cmd_fem_antenna_select(const struct shell *shell, size_t argc,
 				  char **argv)
@@ -1381,11 +1381,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem_antenna,
 );
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem,
-#if !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+#if !CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC
 	SHELL_CMD(tx_power_control, NULL,
 		  "Set the front-end module (FEM) Tx power control specific to the FEM in use <tx_power_control>.",
 		  cmd_fem_tx_power_control_set),
-#endif /* !CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
+#endif /* !CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC */
 	SHELL_CMD(antenna, &sub_fem_antenna,
 		  "Select the front-end module (FEM) antenna <sub_cmd>",
 		  cmd_fem_antenna_select),
@@ -1396,7 +1396,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_fem,
 );
 #endif /* CONFIG_FEM */
 
-#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+#if CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC
 static int cmd_total_output_power_set(const struct shell *shell, size_t argc, char **argv)
 {
 	int power;
@@ -1422,7 +1422,7 @@ static int cmd_total_output_power_set(const struct shell *shell, size_t argc, ch
 
 	return 0;
 }
-#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
+#endif /* CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC */
 
 SHELL_CMD_REGISTER(start_channel, NULL,
 		   "Start channel for the sweep or the channel for"
@@ -1450,12 +1450,12 @@ SHELL_CMD_REGISTER(output_power,
 		   "this commands sets the total output power including fem gain",
 		   cmd_output_power_set);
 
-#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+#if CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC
 SHELL_CMD_REGISTER(total_output_power, NULL,
 		  "Total output power in dBm, including gain of the attached front-end module. "
 		  "<tx power> dBm",
 		  cmd_total_output_power_set);
-#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
+#endif /* CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC */
 
 SHELL_CMD_REGISTER(transmit_pattern,
 		   &sub_transmit_pattern,
@@ -1484,12 +1484,12 @@ SHELL_CMD_REGISTER(fem,
 static int radio_cmd_init(void)
 {
 
-#if CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC
+#if CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC
 	/* When front-end module is used, set output power to the front-end module
 	 * default output power.
 	 */
 	config.txpower = fem_default_tx_output_power_get();
-#endif /* CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC */
+#endif /* CONFIG_RADIO_TEST_SD_POWER_CONTROL_AUTOMATIC */
 
 	return radio_test_init(&test_config);
 }

@@ -386,7 +386,13 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`wifi_radio_test_sd` sample to demonstrate the Wi-Fi and Bluetooth LE radio test running on the application core.
+
+* Updated:
+
+  * The :ref:`wifi_radio_test` sample is now moved to :zephyr_file:`samples/wifi/radio_test/multi_domain`.
 
 Other samples
 -------------
