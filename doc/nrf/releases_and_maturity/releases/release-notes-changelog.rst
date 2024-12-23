@@ -453,6 +453,7 @@ Modem libraries
 * :ref:`pdn_readme` library:
 
   * Added the :c:func:`pdn_dynamic_params_get_v6` function to get PDN parameters for IPv6-only.
+  * Changed logic DNS record expectation. Because ISP sends sometimes 1 and even 0.
 
 * :ref:`lte_lc_readme` library:
 

@@ -624,6 +624,17 @@ int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
 	char dns4_sec_str[INET_ADDRSTRLEN];
 	char at_cmd[sizeof("AT+CGCONTRDP=10")];
 
+	/* Initialize out variables with default */
+	if (dns4_pri) {
+		memset(dns4_pri, 0, sizeof(struct in_addr));
+	}
+	if (dns4_sec) {
+		memset(dns4_sec, 0, sizeof(struct in_addr));
+	}
+	if (ipv4_mtu) {
+		*ipv4_mtu = 0;
+	}
+
 	if (snprintf(at_cmd, sizeof(at_cmd), "AT+CGCONTRDP=%u", cid) >= sizeof(at_cmd)) {
 		return -E2BIG;
 	}
@@ -632,8 +643,8 @@ int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
 
 	/* If IPv4 is enabled, it will be the first response line. */
 	matched = nrf_modem_at_scanf(at_cmd, fmt, &dns4_pri_str, &dns4_sec_str, &mtu);
-	/* Need to match at least the two IP addresses, or there is an error */
-	if (matched < 2) {
+
+	if (matched < 1) {
 		return -EBADMSG;
 	}
 
@@ -643,8 +654,10 @@ int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
 		}
 	}
 	if (dns4_sec) {
-		if (zsock_inet_pton(AF_INET, dns4_sec_str, dns4_sec) != 1) {
-			return -EADDRNOTAVAIL;
+		if (matched >= 2) {
+			if (zsock_inet_pton(AF_INET, dns4_sec_str, dns4_sec) != 1) {
+				return -EADDRNOTAVAIL;
+			}
 		}
 	}
 	if (ipv4_mtu) {
@@ -669,6 +682,17 @@ int pdn_dynamic_params_get_v6(uint8_t cid, struct in6_addr *dns6_pri,
 	char dns6_sec_str[INET6_ADDRSTRLEN];
 	char at_cmd[sizeof("AT+CGCONTRDP=10")];
 
+	/* Initialize out variables with default */
+	if (dns6_pri) {
+		memset(dns6_pri, 0, sizeof(struct in6_addr));
+	}
+	if (dns6_sec) {
+		memset(dns6_sec, 0, sizeof(struct in6_addr));
+	}
+	if (ipv6_mtu) {
+		*ipv6_mtu = 0;
+	}
+
 	if (snprintf(at_cmd, sizeof(at_cmd), "AT+CGCONTRDP=%u", cid) >= sizeof(at_cmd)) {
 		return -E2BIG;
 	}
@@ -681,8 +705,8 @@ int pdn_dynamic_params_get_v6(uint8_t cid, struct in6_addr *dns6_pri,
 
 	/* If IPv6 is enabled, it will be the first response line. */
 	matched = nrf_modem_at_scanf(at_cmd, fmt, &dns6_pri_str, &dns6_sec_str, &mtu);
-	/* Need to match at least the two IP addresses, or there is an error */
-	if (matched < 2) {
+
+	if (matched < 1) {
 		return -EBADMSG;
 	}
 
@@ -692,8 +716,10 @@ int pdn_dynamic_params_get_v6(uint8_t cid, struct in6_addr *dns6_pri,
 		}
 	}
 	if (dns6_sec) {
-		if (zsock_inet_pton(AF_INET6, dns6_sec_str, dns6_sec) != 1) {
-			return -EADDRNOTAVAIL;
+		if (matched >= 2) {
+			if (zsock_inet_pton(AF_INET6, dns6_sec_str, dns6_sec) != 1) {
+				return -EADDRNOTAVAIL;
+			}
 		}
 	}
 	if (ipv6_mtu) {

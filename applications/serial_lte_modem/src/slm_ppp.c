@@ -215,7 +215,7 @@ static int ppp_start_internal(void)
 	if (ret) {
 		/* If any error happened on pdn getting with IPv4, try to parse with IPv6 */
 		ret = pdn_dynamic_params_get_v6(PDP_CID, NULL, NULL, &mtu);
-		if (ret) {
+		if (ret && ret != -EBADMSG) {
 			return ret;
 		}
 	}
