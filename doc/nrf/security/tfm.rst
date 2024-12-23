@@ -200,8 +200,22 @@ On nRF54L15 devices, TF-M uses the MPC to enforce the security policy between th
      - 4 kB
      - 4 kB
 
+.. figure:: /images/nrf-secure-rom-granularity.svg
+   :alt: Partition alignment granularity
+   :width: 80%
+   :align: center
+
+   Partition alignment granularity on different nRF devices.
+
 When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
 But when the static partitions are used, the user is responsible for following the alignment requirements.
+
+.. figure:: /images/secure-flash-regions.svg
+   :alt: Example of aligning partitions with flash regions
+   :width: 80%
+   :align: center
+
+   Example of aligning partitions with flash regions.
 
 If you are experiencing any partition alignment issues when using the Partition Manager, check the :ref:`known_issues` page on the main branch.
 
