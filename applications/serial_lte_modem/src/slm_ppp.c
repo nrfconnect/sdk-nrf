@@ -200,37 +200,48 @@ static int ppp_start_failure(int ret)
 	return ret;
 }
 
+static unsigned int ppp_retrieve_mtu(void)
+{
+	struct pdn_dynamic_info populated_info = { 0 };
+
+	if (!pdn_dynamic_info_get(PDP_CID, &populated_info)) {
+		if (populated_info.ipv6_mtu) {
+			/* Set the PPP MTU to that of the LTE link. */
+			/* IPv6's MTU has more priority on dual-stack.
+			 * Because, it must be at least 1280 for IPv6,
+			 * while MTU of IPv4 may be less.
+			 */
+			return MIN(populated_info.ipv6_mtu, sizeof(ppp_data_buf));
+		}
+		if (populated_info.ipv4_mtu) {
+			/* Set the PPP MTU to that of the LTE link. */
+			return MIN(populated_info.ipv4_mtu, sizeof(ppp_data_buf));
+		}
+	}
+
+	LOG_DBG("Could not retrieve MTU, using fallback value.");
+	BUILD_ASSERT(sizeof(ppp_data_buf) >= CONFIG_SLM_PPP_FALLBACK_MTU);
+	return CONFIG_SLM_PPP_FALLBACK_MTU;
+}
+
+static void ppp_set_mtu(void)
+{
+	const unsigned int mtu = ppp_retrieve_mtu();
+
+	net_if_set_mtu(ppp_iface, mtu);
+	LOG_DBG("MTU set to %u.", mtu);
+}
+
 static int ppp_start_internal(void)
 {
 	int ret;
-	unsigned int mtu;
 	struct ppp_context *const ctx = net_if_l2_data(ppp_iface);
 
 	if (!configure_ppp_link_ip_addresses(ctx)) {
 		return -EADDRNOTAVAIL;
 	}
 
-	ret = pdn_dynamic_params_get(PDP_CID, &ctx->ipcp.my_options.dns1_address,
-				     &ctx->ipcp.my_options.dns2_address, &mtu);
-	if (ret) {
-		/* If any error happened on pdn getting with IPv4, try to parse with IPv6 */
-		ret = pdn_dynamic_params_get_v6(PDP_CID, NULL, NULL, &mtu);
-		if (ret) {
-			return ret;
-		}
-	}
-
-	if (mtu) {
-		/* Set the PPP MTU to that of the LTE link. */
-		mtu = MIN(mtu, sizeof(ppp_data_buf));
-	} else {
-		LOG_DBG("Could not retrieve MTU, using fallback value.");
-		mtu = CONFIG_SLM_PPP_FALLBACK_MTU;
-		BUILD_ASSERT(sizeof(ppp_data_buf) >= CONFIG_SLM_PPP_FALLBACK_MTU);
-	}
-
-	net_if_set_mtu(ppp_iface, mtu);
-	LOG_DBG("MTU set to %u.", mtu);
+	ppp_set_mtu();
 
 	ret = net_if_up(ppp_iface);
 	if (ret) {

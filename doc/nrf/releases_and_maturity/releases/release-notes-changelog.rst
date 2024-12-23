@@ -481,7 +481,8 @@ Modem libraries
 
 * :ref:`pdn_readme` library:
 
-  * Added the :c:func:`pdn_dynamic_params_get_v6` function to get PDN parameters for IPv6-only.
+  * Deprecated the :c:func:`pdn_dynamic_params_get` function.
+    Use the new function :c:func:`pdn_dynamic_info_get` instead.
 
 * :ref:`lte_lc_readme` library:
 

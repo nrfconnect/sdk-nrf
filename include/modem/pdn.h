@@ -54,6 +54,38 @@ struct pdn_pdp_opt {
 	uint8_t secure_pco;
 };
 
+/**
+ * @brief PDN context dynamic information structure.
+ *
+ * This structure holds dynamic information about the PDN context.
+ */
+struct pdn_dynamic_info {
+	/**
+	 * @brief IPv4 Maximum Transmission Unit.
+	 */
+	uint32_t ipv4_mtu;
+	/**
+	 * @brief IPv6 Maximum Transmission Unit.
+	 */
+	uint32_t ipv6_mtu;
+	/**
+	 * @brief Primary IPv4 DNS address.
+	 */
+	struct in_addr dns_addr4_primary;
+	/**
+	 * @brief Secondary IPv4 DNS address.
+	 */
+	struct in_addr dns_addr4_secondary;
+	/**
+	 * @brief Primary IPv6 DNS address.
+	 */
+	struct in6_addr dns_addr6_primary;
+	/**
+	 * @brief Secondary IPv6 DNS address.
+	 */
+	struct in6_addr dns_addr6_secondary;
+};
+
 /** @brief PDN library event */
 enum pdn_event {
 	/** +CNEC ESM error code */
@@ -183,6 +215,8 @@ int pdn_id_get(uint8_t cid);
 /**
  * @brief Retrieve dynamic parameters of a given PDP context.
  *
+ * @deprecated Use pdn_dynamic_info_get instead.
+ *
  * @param cid The PDP context ID.
  * @param[out] dns4_pri The address of the primary IPv4 DNS server. Optional, can be NULL.
  * @param[out] dns4_sec The address of the secondary IPv4 DNS server. Optional, can be NULL.
@@ -190,21 +224,18 @@ int pdn_id_get(uint8_t cid);
  *
  * @return Zero on success or an error code on failure.
  */
-int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
+__deprecated int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
 			   struct in_addr *dns4_sec, unsigned int *ipv4_mtu);
 
 /**
- * @brief Retrieve dynamic parameters of a given PDP context.
+ * @brief Retrieve dynamic parameters of a given PDN context.
  *
- * @param cid The PDP context ID.
- * @param[out] dns6_pri The address of the primary IPv6 DNS server. Optional, can be NULL.
- * @param[out] dns6_sec The address of the secondary IPv6 DNS server. Optional, can be NULL.
- * @param[out] ipv6_mtu The IPv6 MTU. Optional, can be NULL.
+ * @param[in] cid The PDN context ID.
+ * @param[out] pdn_info PDN dynamic info.
  *
  * @return Zero on success or an error code on failure.
  */
-int pdn_dynamic_params_get_v6(uint8_t cid, struct in6_addr *dns6_pri,
-			   struct in6_addr *dns6_sec, unsigned int *ipv6_mtu);
+int pdn_dynamic_info_get(uint32_t cid, struct pdn_dynamic_info *pdn_info);
 
 /**
  * @brief Retrieve the default Access Point Name (APN).
