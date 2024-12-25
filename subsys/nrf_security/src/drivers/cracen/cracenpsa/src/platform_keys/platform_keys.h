@@ -22,4 +22,6 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attributes,
 					    const uint8_t *key_buffer, size_t key_buffer_size);
 
+psa_status_t cracen_platform_destroy_key(const psa_key_attributes_t *attributes);
+
 #endif /* CRACEN_PLATFORM_KEYS_H */
