@@ -1406,6 +1406,9 @@ psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 	return cracen_kmu_destroy_key(attributes);
 #endif
+#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+	return cracen_platform_destroy_key(attributes);
+#endif
 
 	return PSA_ERROR_DOES_NOT_EXIST;
 }

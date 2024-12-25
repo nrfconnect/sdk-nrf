@@ -37,6 +37,8 @@
 #define PLATFORM_KEY_GET_DOMAIN(x)     (((x) >> 16) & 0xff)
 #define PLATFORM_KEY_GET_ACCESS(x)     (((x) >> 24) & 0xf)
 
+#define PLATFORM_KEY_REVOKED_FLAG (0xFA50)
+
 #define MAX_KEY_SIZE 32
 
 static struct {
@@ -144,6 +146,7 @@ typedef enum {
 	DERIVED,
 	SICR,
 	IKG,
+	REVOKED
 } key_type;
 
 #define APPEND_STR(str, end, part)                                                                 \
@@ -176,7 +179,7 @@ static key_type find_key(uint32_t id, platform_key *key)
 		key->sicr.key_buffer_max_length = sizeof((x)[gen].CIPHERTEXT);                     \
 		key->sicr.mac = (uint8_t *)(x)[gen].MAC;                                           \
 		key->sicr.mac_size = sizeof((x)[gen].MAC);                                         \
-		return SICR;                                                                       \
+		return (key->sicr.type == PLATFORM_KEY_REVOKED_FLAG) ? REVOKED : SICR;             \
 	}                                                                                          \
 	break;
 
@@ -194,7 +197,7 @@ static key_type find_key(uint32_t id, platform_key *key)
 		key->sicr.key_buffer_max_length = sizeof((x)[gen].PUBKEY);                         \
 		key->sicr.mac = (uint8_t *)(x)[gen].MAC;                                           \
 		key->sicr.mac_size = sizeof((x)[gen].MAC);                                         \
-		return SICR;                                                                       \
+		return (key->sicr.type == PLATFORM_KEY_REVOKED_FLAG) ? REVOKED : SICR;             \
 	}                                                                                          \
 	break;
 
@@ -377,6 +380,10 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 {
 	platform_key key;
 	key_type type = find_key((uint32_t)slot_number, &key);
+
+	if (type == REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 	if (type == SICR) {
 		uint32_t key_id = (uint32_t)slot_number;
@@ -567,13 +574,13 @@ psa_status_t cracen_platform_keys_get_size(psa_key_attributes_t const *attribute
 	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 
-	if (type == IKG) {
+	if (type == REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	} else if (type == IKG) {
 		*key_size = sizeof(ikg_opaque_key);
 		return PSA_SUCCESS;
-	}
-
-	if (key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS) ||
-	    key_type == PSA_KEY_TYPE_AES) {
+	} else if (key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS) ||
+		   key_type == PSA_KEY_TYPE_AES) {
 		*key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 		return PSA_SUCCESS;
 	}
@@ -586,6 +593,10 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 {
 	platform_key key;
 	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id), &key);
+
+	if (type == REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 	psa_status_t status = verify_access(MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(key_id),
 					    MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id));
@@ -625,7 +636,9 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 	uint8_t encrypted_key[MAX_KEY_SIZE];
 	size_t outlen;
 
-	if (type != SICR) {
+	if (type == REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	} else if (type != SICR) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -711,4 +724,38 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 	}
 
 	return status;
+}
+
+psa_status_t cracen_platform_destroy_key(const psa_key_attributes_t *attributes)
+{
+	platform_key key;
+	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
+	/* The value 0x00 was chosen arbitrarily here, 0xFF was not used to distinguish revoked keys
+	 * from keys not yet written.
+	 */
+	static const uint8_t revoked_key_val[MAX_KEY_SIZE] = {0x0};
+
+	if (type == REVOKED) {
+		return PSA_ERROR_NOT_PERMITTED;
+	} else if (type != SICR) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	psa_status_t status =
+		verify_access(MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes)),
+			      MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
+
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	uint32_t revoked_key_attr = (key.sicr.bits << 16) | PLATFORM_KEY_REVOKED_FLAG;
+
+	/* The nonce will be written to MRAM based on the buffer in the platform_key, so we
+	 * set it here before the call to write function.
+	 */
+	key.sicr.nonce[0] = 0x0;
+	write_sicr_key_to_mram(&key, revoked_key_attr, revoked_key_val, sizeof(revoked_key_val));
+
+	return PSA_SUCCESS;
 }
