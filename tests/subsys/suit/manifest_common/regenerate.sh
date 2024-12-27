@@ -10,6 +10,7 @@ generated_files=()
 SUIT_PROCESSOR_DIR="../../../../../modules/lib/suit-processor"
 SUIT_GENERATOR_DIR="../../../../../modules/lib/suit-generator"
 SIGN_SCRIPT=${SUIT_GENERATOR_DIR}/ncs/sign_script.py
+KMS_SCRIPT=${SUIT_GENERATOR_DIR}/ncs/basic_kms.py
 KEYS_DIR=${SUIT_GENERATOR_DIR}/ncs
 
 if [ -z "$1" ]
@@ -30,21 +31,6 @@ if [ ! -f key_private.pem ]; then
   generated_files+=("\tpublic key:\t\t$PWD/key_public.pem")
 fi
 
-    # 0x4000AA00: Path(__file__).parent / "key_private_OEM_ROOT_GEN1.pem",
-    # 0x40022100: Path(__file__).parent / "key_private_APPLICATION_GEN1.pem",
-    # 0x40032100: Path(__file__).parent / "key_private_RADIO_GEN1.pem",
-if [ ! -f key_private_OEM_ROOT_GEN1.pem ]; then
-  cp key_private.pem key_private_OEM_ROOT_GEN1.pem
-fi
-
-if [ ! -f key_private_APPLICATION_GEN1.pem ]; then
-  cp key_private.pem key_private_APPLICATION_GEN1.pem
-fi
-
-if [ ! -f key_private_RADIO_GEN1.pem ]; then
-  cp key_private.pem key_private_RADIO_GEN1.pem
-fi
-
 if [ ! -f key_public.c ]; then
   echo "Generating public key as C source file..."
   suit-generator convert --input-file key_private.pem --output-file key_public.c
@@ -57,7 +43,9 @@ echo "Generating SUIT envelope for $1 input file ..."
 suit-generator create --input-file $1 --output-file sample.suit
 generated_files+=("\tunsigned binary envelope:\t\t$PWD/sample.suit")
 echo "Signing SUIT envelope using key_priv.pem ..."
-python3 ${SIGN_SCRIPT} --input-file sample.suit --output-file sample_signed.suit
+suit-generator sign single-level --input-envelope sample.suit --output-envelope sample_signed.suit \
+               --key-name key_private --key-id 0x40000000 --sign-script ${SIGN_SCRIPT} \
+               --kms-script ${KMS_SCRIPT}
 generated_files+=("\tsigned binary envelope:\t\t\t$PWD/sample_signed.suit")
 echo "Converting binary envelope into C code ..."
 zcbor convert \

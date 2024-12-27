@@ -21,29 +21,6 @@ function(suit_set_absolute_or_relative_path path relative_root output_variable)
   set(${output_variable} "${path}" PARENT_SCOPE)
 endfunction()
 
-# Sign an envelope using SIGN_SCRIPT.
-#
-# Usage:
-#   suit_sign_envelope(<input_file> <output_file>)
-#
-# Parameters:
-#   'input_file' - path to input unsigned envelope
-#   'output_file' - path to output signed envelope
-function(suit_sign_envelope input_file output_file)
-  cmake_path(GET ZEPHYR_NRF_MODULE_DIR PARENT_PATH NRF_DIR_PARENT)
-  suit_set_absolute_or_relative_path(${SB_CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT} ${NRF_DIR_PARENT} SIGN_SCRIPT)
-  if(NOT EXISTS ${SIGN_SCRIPT})
-    message(SEND_ERROR "DFU: ${SB_CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT} does not exist. Corrupted configuration?")
-    return()
-  endif()
-  set_property(
-    GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
-    COMMAND ${PYTHON_EXECUTABLE} ${SIGN_SCRIPT}
-    --input-file ${input_file}
-    --output-file ${output_file}
-  )
-endfunction()
-
 # Register SUIT post build commands.
 #
 # Usage:
@@ -237,14 +214,16 @@ function(suit_create_package)
   set(STORAGE_BOOT_ARGS)
   sysbuild_get(app_config_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_CONFIG_DIR CACHE)
   get_property(SUIT_KMS_SCRIPT GLOBAL PROPERTY SUIT_KMS_SCRIPT)
+  get_property(SUIT_SIGN_SCRIPT GLOBAL PROPERTY SUIT_SIGN_SCRIPT)
+
   # If the user has not provided the path to the kms script, use the default one.
   if(NOT SUIT_KMS_SCRIPT)
     set(SUIT_KMS_SCRIPT "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs/basic_kms.py")
   endif()
 
-
-  if(NOT DEFINED SB_CONFIG_SUIT_ENVELOPE_SIGN)
-    set(SB_CONFIG_SUIT_ENVELOPE_SIGN FALSE)
+  # If the user has not provided the path to the sign script, use the default one.
+  if(NOT SUIT_SIGN_SCRIPT)
+    set(SUIT_SIGN_SCRIPT "${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}/ncs/sign_script.py")
   endif()
 
   list(APPEND CORE_ARGS
@@ -345,7 +324,28 @@ function(suit_create_package)
     set(ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${target}.suit)
 
     suit_render_template(${INPUT_ENVELOPE_JINJA_FILE} ${ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
-    suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
+    suit_create_envelope(${ENVELOPE_YAML_FILE} ${ENVELOPE_SUIT_FILE})
+
+    unset(sign_envelope)
+    sysbuild_get(sign_envelope IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_SIGN KCONFIG)
+    if(sign_envelope)
+      set(SUIT_SIGN_ARGS)
+      unset(sign_key_id)
+      unset(sign_private_key_name)
+      unset(sign_alg_name)
+
+      sysbuild_get(sign_key_id IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_SIGN_KEY_ID KCONFIG)
+      sysbuild_get(sign_private_key_name IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_SIGN_PRIVATE_KEY_NAME KCONFIG)
+      sysbuild_get(sign_alg_name IMAGE ${image} VAR CONFIG_SUIT_ENVELOPE_TARGET_SIGN_ALG_NAME KCONFIG)
+
+      list(APPEND SUIT_SIGN_ARGS --key-name ${sign_private_key_name})
+      list(APPEND SUIT_SIGN_ARGS --key-id ${sign_key_id})
+      list(APPEND SUIT_SIGN_ARGS --alg ${sign_alg_name})
+      list(APPEND SUIT_SIGN_ARGS --context ${SB_CONFIG_SUIT_ENVELOPE_KMS_SCRIPT_CONTEXT})
+      list(APPEND SUIT_SIGN_ARGS --kms-script ${SUIT_KMS_SCRIPT})
+
+      suit_sign_envelope(${ENVELOPE_SUIT_FILE} ${ENVELOPE_SUIT_FILE} "${SUIT_SIGN_ARGS}" ${SUIT_SIGN_SCRIPT})
+    endif()
 
     unset(recovery)
     sysbuild_get(recovery IMAGE ${image} VAR CONFIG_SUIT_RECOVERY KCONFIG)
@@ -444,10 +444,23 @@ function(suit_create_package)
       set(APP_RECOVERY_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${APP_RECOVERY_NAME}.yaml)
       set(APP_RECOVERY_ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${APP_RECOVERY_NAME}.suit)
       suit_render_template(${INPUT_APP_RECOVERY_ENVELOPE_JINJA_FILE} ${APP_RECOVERY_ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
-      suit_create_envelope(${APP_RECOVERY_ENVELOPE_YAML_FILE} ${APP_RECOVERY_ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
-        list(APPEND STORAGE_BOOT_ARGS
-          --input-envelope ${APP_RECOVERY_ENVELOPE_SUIT_FILE}
-        )
+      suit_create_envelope(${APP_RECOVERY_ENVELOPE_YAML_FILE} ${APP_RECOVERY_ENVELOPE_SUIT_FILE})
+
+      if(SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_SIGN)
+        set(SUIT_SIGN_ARGS)
+
+        list(APPEND SUIT_SIGN_ARGS --key-name ${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_SIGN_PRIVATE_KEY_NAME})
+        list(APPEND SUIT_SIGN_ARGS --key-id ${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_ID})
+        list(APPEND SUIT_SIGN_ARGS --alg ${SB_CONFIG_SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_NAME})
+        list(APPEND SUIT_SIGN_ARGS --context ${SB_CONFIG_SUIT_ENVELOPE_KMS_SCRIPT_CONTEXT})
+        list(APPEND SUIT_SIGN_ARGS --kms-script ${SUIT_KMS_SCRIPT})
+
+        suit_sign_envelope(${APP_RECOVERY_ENVELOPE_SUIT_FILE} ${APP_RECOVERY_ENVELOPE_SUIT_FILE} "${SUIT_SIGN_ARGS}" ${SUIT_SIGN_SCRIPT})
+      endif()
+
+      list(APPEND STORAGE_BOOT_ARGS
+        --input-envelope ${APP_RECOVERY_ENVELOPE_SUIT_FILE}
+      )
       set_property(GLOBAL APPEND PROPERTY SUIT_RECOVERY_DFU_ARTIFACTS ${APP_RECOVERY_ENVELOPE_SUIT_FILE})
     endif()
   endif()
@@ -491,7 +504,20 @@ function(suit_create_package)
     set(ROOT_ENVELOPE_YAML_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.yaml)
     set(ROOT_ENVELOPE_SUIT_FILE ${SUIT_ROOT_DIRECTORY}${ROOT_NAME}.suit)
     suit_render_template(${INPUT_ROOT_ENVELOPE_JINJA_FILE} ${ROOT_ENVELOPE_YAML_FILE} "${TEMPLATE_ARGS}")
-    suit_create_envelope(${ROOT_ENVELOPE_YAML_FILE} ${ROOT_ENVELOPE_SUIT_FILE} ${SB_CONFIG_SUIT_ENVELOPE_SIGN})
+    suit_create_envelope(${ROOT_ENVELOPE_YAML_FILE} ${ROOT_ENVELOPE_SUIT_FILE})
+
+    if(SB_CONFIG_SUIT_ENVELOPE_ROOT_SIGN)
+      set(SUIT_SIGN_ARGS)
+
+      list(APPEND SUIT_SIGN_ARGS --key-name ${SB_CONFIG_SUIT_ENVELOPE_ROOT_SIGN_PRIVATE_KEY_NAME})
+      list(APPEND SUIT_SIGN_ARGS --key-id ${SB_CONFIG_SUIT_ENVELOPE_ROOT_SIGN_KEY_ID})
+      list(APPEND SUIT_SIGN_ARGS --alg ${SB_CONFIG_SUIT_ENVELOPE_ROOT_SIGN_ALG_NAME})
+      list(APPEND SUIT_SIGN_ARGS --context ${SB_CONFIG_SUIT_ENVELOPE_KMS_SCRIPT_CONTEXT})
+      list(APPEND SUIT_SIGN_ARGS --kms-script ${SUIT_KMS_SCRIPT})
+
+      suit_sign_envelope(${ROOT_ENVELOPE_SUIT_FILE} ${ROOT_ENVELOPE_SUIT_FILE} "${SUIT_SIGN_ARGS}" ${SUIT_SIGN_SCRIPT})
+    endif()
+
       list(APPEND STORAGE_BOOT_ARGS
         --input-envelope ${ROOT_ENVELOPE_SUIT_FILE}
       )
