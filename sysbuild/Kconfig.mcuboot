@@ -47,8 +47,6 @@ endif # MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
 	bool "Compressed image support"
 	depends on MCUBOOT_MODE_OVERWRITE_ONLY
-	depends on MCUBOOT_UPDATEABLE_IMAGES = "1"
-	depends on !BOOT_ENCRYPTION
 	help
 	  When enabled, supports loading compressed images using LZMA2 to the secondary slot which
 	  will then be decompressed and loaded to the primary slot.
