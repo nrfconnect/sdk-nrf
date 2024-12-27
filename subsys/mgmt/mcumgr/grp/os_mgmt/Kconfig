@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Additional MCUmgr OS group management functionality"
+
+config MCUMGR_GRP_OS_BOOTLOADER_INFO_B0_ACTIVE_SLOT
+	bool "Bootloader info query for active b0 slot"
+	depends on MCUMGR_GRP_OS_BOOTLOADER_INFO
+	depends on BOOTLOADER_MCUBOOT
+	depends on MCUBOOT_MCUBOOT_IMAGE_NUMBER != -1
+	depends on FW_INFO
+	depends on FW_INFO_API
+	depends on MCUMGR_MGMT_NOTIFICATION_HOOKS
+	depends on MCUMGR_GRP_OS_BOOTLOADER_INFO_HOOK
+	help
+	  Enables a bootloader info command for `active_b0_slot` which will return the active b0
+	  image slot number, and can be used to determine which update image should be loaded.
+
+endmenu
