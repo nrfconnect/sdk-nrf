@@ -14,11 +14,6 @@ menuconfig SUIT_ENVELOPE
 
 if SUIT_ENVELOPE
 
-config SUIT_ENVELOPE_SIGN
-	bool "Sign created SUIT envelope"
-	help
-	  Sign created SUIT envelope by external script
-
 config SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME
 	string "Name of the default root envelope template"
 	default "root_with_binary_nordic_top.yaml.jinja2"
@@ -26,19 +21,6 @@ config SUIT_ENVELOPE_ROOT_TEMPLATE_FILENAME
 	  Name of the default root envelope template. The build system searches for a file with this
 	  name in the suit/<soc> directory inside the application directory. If the file is not found
 	  the default template from the base template directory is used.
-
-
-config SUIT_ENVELOPE_SIGN_SCRIPT
-	string "Location of SUIT sign script"
-	depends on SUIT_ENVELOPE_SIGN
-	default "modules/lib/suit-generator/ncs/sign_script.py"
-	help
-	  Python script called to sign SUIT envelope.
-	  You can use either absolute or relative path.
-	  In case relative path is used, the build system uses NRF parent directory.
-	  Script need to accept two arguments:
-	  - --input-file <STRING> - location of unsigned envelope in the build system
-	  - --output-file <STRING> - location of signed envelope to create by script
 
 config SUIT_ENVELOPE_BASIC_KMS_SCRIPT_KEY_DIRECTORY
 	string "The directory in which the keys are stored"
@@ -89,6 +71,67 @@ config SUIT_ENVELOPE_NORDIC_TOP_CACHE_PARTITION_NUM
 	default 1
 
 endif # SUIT_ENVELOPE_NORDIC_TOP_IN_ROOT
+
+config SUIT_ENVELOPE_ROOT_SIGN
+	bool "Sign the root envelope"
+
+if SUIT_ENVELOPE_ROOT_SIGN
+
+choice SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN
+	prompt "SUIT root envelope signing key generation"
+	default SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN1
+
+config SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN1
+	bool "Key generation 1"
+
+config SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN2
+	bool "Key generation 2"
+
+config SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN3
+	bool "Key generation 3"
+
+endchoice
+
+config SUIT_ENVELOPE_ROOT_SIGN_KEY_ID
+	hex "The key ID used to identify the OEM root public key on the device"
+	default 0x4000AA00 if SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN1
+	default 0x4000AA01 if SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN2
+	default 0x4000AA02 if SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN3
+	help
+	  This string is translated to the numeric KEY ID by the encryption script
+
+config SUIT_ENVELOPE_ROOT_SIGN_PRIVATE_KEY_NAME
+	string "Name of the private key used for signing - to identify the key in the KMS"
+	default "MANIFEST_OEM_ROOT_GEN1_priv" if SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN1
+	default "MANIFEST_OEM_ROOT_GEN2_priv" if SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN2
+	default "MANIFEST_OEM_ROOT_GEN3_priv" if SUIT_ENVELOPE_ROOT_SIGN_KEY_GEN3
+
+choice SUIT_ENVELOPE_ROOT_SIGN_ALG
+	prompt "Algorithm used to sign the root envelope"
+	default SUIT_ENVELOPE_ROOT_SIGN_ALG_EDDSA
+
+config SUIT_ENVELOPE_ROOT_SIGN_ALG_EDDSA
+	bool "Use the EdDSA algorithm"
+
+config SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_256
+	bool "Use the ECDSA algorithm with key length of 256 bits"
+
+config SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_384
+	bool "Use the ECDSA algorithm with key length of 384 bits"
+
+config SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_521
+	bool "Use the ECDSA algorithm with key length of 521 bits"
+
+endchoice
+
+config SUIT_ENVELOPE_ROOT_SIGN_ALG_NAME
+	string "String name of the algorithm used to sign the root envelope"
+	default "eddsa" if SUIT_ENVELOPE_ROOT_SIGN_ALG_EDDSA
+	default "es-256" if SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_256
+	default "es-384" if SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_384
+	default "es-521" if SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_521
+
+endif # SUIT_ENVELOPE_ROOT_SIGN
 
 config SUIT_BASE_MANIFEST_TEMPLATE_DIR
 	string "Base manifest directory"
@@ -163,6 +206,67 @@ config SUIT_ENVELOPE_APP_RECOVERY_ARTIFACT_NAME
 	default "app_recovery"
 	help
 	  Name of the root SUIT artifact.
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN
+	bool "Sign the app recovery envelope"
+
+if SUIT_ENVELOPE_APP_RECOVERY_SIGN
+
+choice SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN
+	prompt "SUIT app recovery envelope signing key generation"
+	default SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN1
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN1
+	bool "Key generation 1"
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN2
+	bool "Key generation 2"
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN3
+	bool "Key generation 3"
+
+endchoice
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_ID
+	hex "The key ID used to identify the app recovery public key on the device"
+	default 0x40022100 if SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN1
+	default 0x40022101 if SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN2
+	default 0x40022102 if SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN3
+	help
+	  This string is translated to the numeric KEY ID by the encryption script
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_PRIVATE_KEY_NAME
+	string "Name of the private key used for signing - to identify the key in the KMS"
+	default "MANIFEST_APPLICATION_GEN1_priv" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN1
+	default "MANIFEST_APPLICATION_GEN2_priv" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN2
+	default "MANIFEST_APPLICATION_GEN3_priv" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_KEY_GEN3
+
+choice SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG
+	prompt "Algorithm used to sign the app recovery envelope"
+	default SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_EDDSA
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_EDDSA
+	bool "Use the EdDSA algorithm"
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_256
+	bool "Use the ECDSA algorithm with key length of 256 bits"
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_384
+	bool "Use the ECDSA algorithm with key length of 384 bits"
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_521
+	bool "Use the ECDSA algorithm with key length of 521 bits"
+
+endchoice
+
+config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_NAME
+	string "String name of the algorithm used to sign the app recovery envelope"
+	default "eddsa" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_EDDSA
+	default "es-256" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_256
+	default "es-384" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_384
+	default "es-521" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_521
+
+endif # SUIT_ENVELOPE_APP_RECOVERY_SIGN
 
 endif # SUIT_BUILD_RECOVERY
 
