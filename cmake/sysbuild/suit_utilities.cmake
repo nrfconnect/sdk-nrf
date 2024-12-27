@@ -75,7 +75,7 @@ endfunction()
 #   'input_file' - path to input yaml configuration
 #   'output_file' - path to output binary suit envelope
 #   'create_signature' - sign the envelope if set to true
-function(suit_create_envelope input_file output_file create_signature)
+function(suit_create_envelope input_file output_file)
   set_property(
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
@@ -84,10 +84,6 @@ function(suit_create_envelope input_file output_file create_signature)
     --output-file ${output_file}
     BYPRODUCTS ${output_file}
   )
-
-  if (create_signature AND SB_CONFIG_SUIT_ENVELOPE_SIGN_SCRIPT)
-    suit_sign_envelope(${output_file} ${output_file})
-  endif()
 endfunction()
 
 # Create a SUIT DFU cache partition file from a list of payloads.
@@ -188,7 +184,7 @@ function(suit_encrypt_image args output_directory)
   endif()
 
   if(NOT EXISTS ${encrypt_script})
-    message(SEND_ERROR "DFU: ${encrypt_script} does not exist. Corrupted configuration?")
+    message(SEND_ERROR "DFU: Encrypt script ${encrypt_script} does not exist. Corrupted configuration?")
     return()
   endif()
 
@@ -204,6 +200,34 @@ function(suit_encrypt_image args output_directory)
     PYTHONPATH=${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}${SEP}$ENV{PYTHONPATH}
     ${PYTHON_EXECUTABLE}
     ${encrypt_script} encrypt-and-generate
+    ${args}
+  )
+endfunction()
+
+# Sign an envelope using the sign script.
+#
+# Usage:
+#   suit_sign_envelope(<input_file> <output_file>)
+#
+# Parameters:
+#   'input_file' - path to input unsigned envelope
+#   'output_file' - path to output signed envelope
+#   'args' - list of other arguments for the sign script
+#   'sign_script_path' - path to the sign script
+function(suit_sign_envelope input_file output_file args sign_script_path)
+  if(NOT EXISTS ${sign_script_path})
+    message(SEND_ERROR "DFU: Sign script ${sign_script_path} does not exist. Corrupted configuration?")
+    return()
+  endif()
+  list(APPEND args "--input-envelope" "${input_file}")
+  list(APPEND args "--output-envelope" "${output_file}")
+  list(APPEND args "--sign-script" "${sign_script_path}")
+
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+    COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
+    sign
+    single-level
     ${args}
   )
 endfunction()
