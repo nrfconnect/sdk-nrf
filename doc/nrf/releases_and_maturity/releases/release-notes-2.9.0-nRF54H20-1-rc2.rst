@@ -1,7 +1,7 @@
-.. _ncs_release_notes_290-nrf54h20-rc1:
+.. _ncs_release_notes_290-nrf54h20-1-rc2:
 
-|NCS| v2.9.0-nRF54H20-rc1 Release Notes
-#######################################
+|NCS| v2.9.0-nRF54H20-1-rc2 Release Notes
+#########################################
 
 .. contents::
    :local:
@@ -10,7 +10,7 @@
 |NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products.
 The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and redistributed with the SDK.
 
-The |NCS| v2.9.0-nrf54h20-rc1 is an nRF54H20-exclusive release tag, only supporting products based on the nRF54H20 SoC.
+The |NCS| v2.9.0-nRF54H20-1-rc2 is an nRF54H20-exclusive release tag, only supporting products based on the nRF54H20 SoC.
 
 Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
 To learn more, see :ref:`software_maturity`.
@@ -42,60 +42,61 @@ Added the following features as experimental:
   * :ref:`Parallel scanning and initiating connection <bt_scanning_while_connecting>`.
     It reduces the overall waiting time when there are several Bluetooth devices to be discovered and connected at the same time.
 
-Improved the following features:
+Improved:
 
-* Better BICR handling and generation.
-* Enhanced power management features across various subsystems.
+* BICR handling and generation.
+* Power management features across various subsystems.
 
-Implemented the following bug fixes:
+Fixed:
 
-* NCSDK-30802: Resolved an issue where the nRF54H20 device suddenly stopped transmitting ESB packets after nrfxlib 3.9.0.
-* NCSDK-30161: Fixed an assertion during boot time caused by a combination of :kconfig:option:`CONFIG_ASSERT`, :kconfig:option:`CONFIG_SOC_NRF54H20_GPD`, and external flash.
-* NCSDK-30117: Ensured that it is no longer possible to declare a MEM component pointing to a memory region not assigned to a particular core.
+* NCSDK-30802: An issue where the nRF54H20 device suddenly stopped transmitting ESB packets after nrfxlib 3.9.0.
+* NCSDK-30161: An assertion during boot time caused by a combination of :kconfig:option:`CONFIG_ASSERT`, :kconfig:option:`CONFIG_SOC_NRF54H20_GPD`, and external flash.
+* NCSDK-30117: An issue where a MEM component could be declared pointing to a memory region not assigned to a specific core.
 * NCSDK-29682: Added support for the ``cose-alg-sha-512`` algorithm in the SUIT module.
 
 Limitations
 ***********
 
 On the nRF54H20 SoC, the Device Firmware Update (DFU) procedure from external flash memory does not work with the new flash memory driver based on the MSPI EXMIF handling.
+You must use the :file:`spi_dw.c` driver in such case.
 
 Release tag
 ***********
 
-The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.9.0-nRF54H20**.
+The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.9.0-nRF54H20-1-rc2**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
 See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
 
-For information on the included repositories and revisions, see `Repositories and revisions for v2.9.0-nRF54H20-rc1`_.
+For information on the included repositories and revisions, see `Repositories and revisions for v2.9.0-nRF54H20-1-rc2`_.
 
 Integration test results
 ************************
 
 The integration test results for this tag can be found in the following external Artifactory:
 
-* `Twister test report for nRF Connect SDK v2.9.0-nRF54H20-rc1`_
-* `Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-rc1`_
+* `Twister test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_
+* `Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_
 
 IDE and tool support
 ********************
 
-`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v2.9.0-nrf54h20-rc1.
+`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v2.9.0-nRF54H20-1-rc2.
 See the :ref:`installation` section for more information about supported operating systems and toolchain.
 
 Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v2.9.0-nRF54H20-rc1`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_ for the list of issues valid for the latest release.
 
 Migration notes
 ***************
 
-See the `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-rc1`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nrf54h20-rc1.
+See the `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nRF54H20-1-rc2.
 
-.. _ncs_release_notes_290-nRF54H20-rc1_changelog:
+.. _ncs_release_notes_290-nrf54h20-1-rc2_changelog:
 
 Changelog
 *********
@@ -141,6 +142,8 @@ Bluetooth LE
 
 * Updated the Bluetooth LE SoftDevice Controller driver to make the :c:func:`hci_vs_sdc_llpm_mode_set` function return an error if Low Latency Packet Mode (LLPM) is not supported or not enabled in the Bluetooth LE Controller driver configuration (:kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`).
 
+* Fixed an issue where Bluetooth applications built with the ``nordic-ble-rpc`` snippet (in the :ref:`ble_rpc` configuration) did not work on the nRF54H20 devices due to incorrect memory mapping.
+
 Matter
 ------
 
@@ -150,6 +153,12 @@ Matter
     You can use this class to generate the Spake2+ verifier at runtime.
     To use this class, enable the Kconfig options :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`.
   * The :ref:`ug_matter_device_watchdog_pause_mode` to the :ref:`ug_matter_device_watchdog` feature.
+
+Enhanced ShockBurst (ESB)
+-------------------------
+
+* Added support for loading radio trims.
+* Fixed a hardware erratum for the nRF54H20 SoC to improve RF performance.
 
 Matter fork
 +++++++++++
@@ -233,29 +242,13 @@ nRF Desktop
   * The :ref:`nrf_desktop_settings_loader` to make the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` the default settings backend for all board targets that use the MRAM technology.
     As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations were migrated from the NVS settings backend to the ZMS settings backend.
   * :ref:`nrf_desktop_watchdog` by adding the :ref:`zephyr:nrf54h20dk_nrf54h20` release configuration.
-  * Updated the configuration files of the :ref:`nrf_desktop_click_detector` (:file:`click_detector_def.h`) to allow them to be used even when Bluetooth LE peer control using a dedicated button (:ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>`) is disabled.
+  * The configuration files of the :ref:`nrf_desktop_click_detector` (:file:`click_detector_def.h`) to allow them to be used even when Bluetooth LE peer control using a dedicated button (:ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>`) is disabled.
   * The DTS description for board targets with a different DTS overlay file for each build type to isolate the common configuration that is now defined in the :file:`app_common.dtsi` file.
     The :ref:`zephyr:nrf54h20dk_nrf54h20` board configuration has been updated.
+  * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
+    The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
 
-  * The :ref:`nrf_desktop_ble_conn_params` with the following changes:
-
-    * Fixed the Bluetooth LE connection parameters update loop (NCSDK-30261) that replicated if an nRF Desktop dongle without Low Latency Packet Mode (LLPM) support was connected to an nRF Desktop peripheral with LLPM support.
-    * The module now waits until a triggered Bluetooth LE connection parameters update is completed before triggering subsequent updates for a given connection.
-    * Improved the log to also display the information if USB is suspended.
-      The information is needed to determine the requested connection parameters.
-    * The module now uses non-zero Bluetooth LE peripheral latency while USB is suspended.
-      This is done to prevent peripheral latency increase requests from :ref:`nrf_desktop_ble_latency` on peripheral's end.
-    * The module reverts the USB suspended Bluetooth LE connection parameter update when USB cable is disconnected.
-
-  * The :ref:`nrf_desktop_ble_scan` to always use a connection interval of 10 ms for peripherals without Low Latency Packet Mode (LLPM) support if a dongle supports LLPM and more than one Bluetooth LE connection.
-    This is required to avoid Bluetooth Link Layer scheduling conflicts that could lead to HID report rate drop.
-
-nRF SoC flash driver
---------------------
-
-* Removed the ``imply`` for the partial erase feature of the nRF SoC flash driver (:kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE`) for the USB next stack (:ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>`).
-  The partial erase feature was used as a workaround for device errors that might be reported by the Windows USB host in Device Manager if a USB cable is connected while erasing a secondary image slot in the background.
-  The workaround is no longer needed after the nRF UDC driver was improved.
+  * The release configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
 
 Samples
 =======
@@ -273,6 +266,11 @@ Bluetooth samples
     The accuracy is not representative for Channel Sounding and should be replaced if accuracy is important.
   * The :ref:`bt_peripheral_with_multiple_identities` sample demonstrating how to use a single physical device to create and manage multiple advertisers, making it appear as multiple distinct devices by assigning each a unique identity.
   * The :ref:`bt_scanning_while_connecting` sample demonstrating how to establish multiple connections faster using the :kconfig:option:`CONFIG_BT_SCAN_AND_INITIATE_IN_PARALLEL` Kconfig option.
+
+  * :ref:`direct_test_mode`:
+
+    * Added support for loading radio trims.
+    * Fixed a hardware erratum for the nRF54H20 SoC to improve RF performance.
 
 * Updated:
 
@@ -309,10 +307,22 @@ Bluetooth samples
   * Fixed an issue with data transmission (OCT-3251).
     Data is now sent on all BISes when generated by the application (no SD card inserted).
 
+Peripheral samples
+------------------
+
+* :ref:`radio_test`:
+
+  * Added support for loading radio trims.
+  * Fixed a hardware erratum for the nRF54H20 SoC to improve RF performance.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
 * :ref:`fast_pair_input_device` sample:
+
+  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+
+* :ref:`fast_pair_locator_tag` sample:
 
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
 
@@ -386,8 +396,9 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Added support in build system for devices that do not support the :ref:`partition_manager`.
+  * Added support in the build system for devices that do not support the :ref:`partition_manager`.
     The :ref:`zephyr:nrf54h20dk_nrf54h20` board target is the only example of such a device.
+
   * Updated the :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
 
 nRF RPC libraries
