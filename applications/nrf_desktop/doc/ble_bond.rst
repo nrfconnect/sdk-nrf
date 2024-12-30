@@ -67,7 +67,7 @@ For example, the transition from :c:enumerator:`STATE_ERASE_PEER` to :c:enumerat
 
 When the transition occurs:
 
-a. The :c:struct:`ble_peer_operation_event` with the defined :c:member:`ble_peer_operation_event.op` is submitted.
+1. The :c:struct:`ble_peer_operation_event` with the defined :c:member:`ble_peer_operation_event.op` is submitted.
    For example, when the user confirms the erase advertising, the :c:struct:`ble_peer_operation_event` is submitted with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_ERASE_ADV`.
 #. The currently selected application local identity is updated (if anything changed).
 

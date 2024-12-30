@@ -42,7 +42,7 @@ Complete the following steps to enable the |ble_scan|:
 #. Make sure that the number of scan filters based on the Bluetooth name (:kconfig:option:`CONFIG_BT_SCAN_NAME_CNT`) is equal to the number of peripheral types the nRF Desktop central connects to.
    The |ble_scan| uses Bluetooth name filters to look for unbonded peripherals.
    The peripheral type may be either a mouse or a keyboard.
-#. If you want to limit the number of attempts to connect to a device, you can use the connection attempt filter (:kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER`).
+#. To limit the number of attempts to connect to a device, you can use the connection attempt filter (:kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER`).
    The Kconfig option is enabled by default.
    After the predefined number of disconnections or connection failures, the nRF Desktop central will no longer try to connect with the given peripheral device.
    This is done to prevent connecting and disconnecting with a peripheral in a never-ending loop.
@@ -88,14 +88,14 @@ The following scanning scenarios are possible:
 Scanning module configuration
 =============================
 
-The |ble_scan| relies on :ref:`nrf_bt_scan_readme` to perform Bluetooth scanning.
-The |ble_scan| selects :kconfig:option:`CONFIG_BT_SCAN` and :kconfig:option:`CONFIG_BT_SCAN_FILTER_ENABLE`.
-Apart from that the following default values are applied:
+The |ble_scan| relies on the :ref:`nrf_bt_scan_readme` library to perform Bluetooth scanning.
+The module selects :kconfig:option:`CONFIG_BT_SCAN` and :kconfig:option:`CONFIG_BT_SCAN_FILTER_ENABLE`.
+Apart from that, the following default values are applied:
 
 * :kconfig:option:`CONFIG_BT_SCAN_NAME_CNT` is set to ``2``.
-  By default, nRF Desktop dongle connects to peripherals that are either keyboard or mouse.
+  By default, the nRF Desktop dongle connects to peripherals that are either keyboard or mouse.
 * :kconfig:option:`CONFIG_BT_SCAN_ADDRESS_CNT` is set to :kconfig:option:`CONFIG_BT_MAX_PAIRED`.
-  The dongle scans for all of the bonded peripherals.
+  The dongle scans for all bonded peripherals.
 * :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER` is enabled.
 
 .. _nrf_desktop_ble_scan_scanning_not_started:
@@ -139,7 +139,8 @@ If the :ref:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S <config_desktop_app_optio
 * Scan request
 
 After the duration that is specified in the :ref:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S <config_desktop_app_options>` Kconfig option, the module switches to regular scanning.
-The regular scanning can be interrupted by using connected peripherals and times out after the scan duration specified by :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>` if there are peripherals connected over Bluetooth.
+You can interrupt regular scanning by using connected peripherals.
+The scanning times out after the duration specified in the :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>` Kconfig option if there are peripherals connected over Bluetooth.
 
 .. note::
   The conditions described under :ref:`nrf_desktop_ble_scan_scanning_not_started` prevent the starting of the forced scan.

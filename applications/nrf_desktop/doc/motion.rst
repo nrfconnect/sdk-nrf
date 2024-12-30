@@ -91,7 +91,7 @@ The X and Y coordinates of subsequent vertexes of the octagon are defined as the
 You can configure the path with the following options:
 
 * :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME <config_desktop_app_options>` - Sets how long each edge is traced.
-  To speed up calculations, this Kconfig option value must be set to a power of two.
+  To speed up calculations, set this Kconfig option value to a power of two.
 * :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR <config_desktop_app_options>` - Scales the size of the octagon.
   The Kconfig option's value is used as the ``SCALE`` factor in the ``coords`` array.
 
@@ -178,7 +178,7 @@ Upon connection, the following happens:
     #. Waits for the indication that the :c:struct:`motion_event` data was transmitted to the host.
        This is done when the module receives the :c:struct:`hid_report_sent_event` event.
 
-#. At this point, a next motion sampling is performed and the next :c:struct:`motion_event` sent.
+#. The next motion sampling is performed and the next :c:struct:`motion_event` sent.
 
 The module continues to sample data until disconnection or when there is no motion detected.
 The ``motion`` module assumes no motion when a number of consecutive samples equal to :ref:`CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT <config_desktop_app_options>` returns zero on both axis.
@@ -227,6 +227,6 @@ You can perform the following actions to ensure that non-zero motion is reported
 * ``Simulated movement data``
   Increase the value of the used scale factor or reduce time for transition between two points in the trajectory to increase the generated motion values.
   Keep in mind that the generated shape is periodically repeated, so the transition time between two points in the trajectory should not be too short.
-  If it is, it might cause the same point to generate twice which would also result in submitting a :c:struct:`motion_event` with values set to ``0`` for both axes.
+  If it is, it might cause the same point to generate twice, which would also result in submitting a :c:struct:`motion_event` with values set to ``0`` for both axes.
 
 See the :ref:`nrf_desktop_motion_configuration` section for details on how to modify configuration for a given implementation of the module.

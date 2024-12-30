@@ -13,22 +13,22 @@ The module achieves this reduction by switching to low power modes when the devi
 Configuration
 *************
 
-You can enable the |power_manager| by selecting the :kconfig:option:`CONFIG_CAF_POWER_MANAGER` option in the configuration.
+To enable the |power_manager|, set the :kconfig:option:`CONFIG_CAF_POWER_MANAGER` Kconfig option in the configuration.
 
 This module uses Zephyr's :ref:`zephyr:pm_api` subsystem.
 
 Timeout configuration options
 =============================
 
-With the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` configuration option, you can set the period of time after which the application enters the low power mode.
+With the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_TIMEOUT` Kconfig option, you can set the period of time after which the application enters the low power mode.
 By default, the timeout is set to 120 seconds.
 
-The :kconfig:option:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT` sets the period of time after which the device is turned off upon an internal error.
+The :kconfig:option:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT` option sets the period of time after which the device is turned off upon an internal error.
 
 Optional boolean for keeping the system on
 ==========================================
 
-The :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` lets the system stay on also when there are no active connections.
+The :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` Kconfig option lets the system stay on also when there are no active connections.
 
 For more information about configuration options, check the help in the configuration tool.
 
@@ -37,7 +37,7 @@ Implementation details
 
 The |power_manager| is started when the "main" is ready (which is reported using :c:struct:`module_state_event`).
 
-When started, it can do the following operations:
+When started, it can perform the following operations:
 
 * Manage `Power states`_
 * Trigger `Switching to low power`_
@@ -60,7 +60,7 @@ The |power_manager| takes control of the overall operating system power state.
 
    Power manager state handling in CAF
 
-See the following section for more details about how the application state converts to the system power state.
+See the following sections for more details about how the application state converts to the system power state.
 
 Idle
 ----
@@ -127,14 +127,14 @@ Some modules might not be ready to switch to the lower power state.
 In such case, the module that is not yet ready should consume the :c:struct:`power_down_event` and change its internal state, so that it enters the low power state when ready.
 
 After entering the low power state, each module must report this by sending a :c:struct:`module_state_event`.
-The |power_manager| continues with the low power state change when it gets a notification that the module switched to the low power.
+The |power_manager| continues with the low power state change when it gets a notification indicating that the module switched to the low power.
 
 Only after all modules confirmed that they have entered the low power state (by not consuming the :c:struct:`power_down_event`), the |power_manager| sets the required application's state.
 
 If a disconnection happens while the device is in the suspended state, the |power_manager| switches the application to the off state.
 
 However, the application can also be configured to keep the system in the suspended state when there are no active connections, instead of switching to the off state.
-To select this behavior, use the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` configuration option.
+To select this behavior, use the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` Kconfig option.
 
 Wake-up scenarios
 =================
@@ -157,7 +157,7 @@ This also restarts the power-down counter if the device is not connected through
 Wake-up from the off state
 --------------------------
 
-In the off state, the CPU is not running and the CPU reboot is required.
+In the off state, the CPU is not running and a CPU reboot is required.
 
 Before the application enters the off state, at least one module must configure the peripheral under its control, so that it issues a hardware-related event capable of rebooting the CPU (that is, capable of leaving the CPU off mode).
 After the reboot, the application initializes itself again.

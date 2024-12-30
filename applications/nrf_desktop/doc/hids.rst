@@ -24,23 +24,23 @@ Module events
 Configuration
 *************
 
-Complete the following steps to configure the module:
+Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
-1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` options are enabled.
-   The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option, which is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
-#. The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects the following Kconfig options:
+Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` Kconfig options are enabled.
+The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option, which is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
 
-   * The :kconfig:option:`CONFIG_BT_HIDS` option that automatically enables the :ref:`hids_readme`.
-   * The :kconfig:option:`CONFIG_BT_CONN_CTX` option that automatically enables the :ref:`bt_conn_ctx_readme`, which is required by the |GATT_HID|.
+The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects the following Kconfig options:
 
-#. The nRF Desktop application modifies the defaults of Kconfig option values, defined by the :ref:`hids_readme`, to tailor the default configuration to application needs.
-   The configuration is tailored for either nRF Desktop mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`) or nRF Desktop keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`).
-   For more details, see the :file:`src/modules/Kconfig.hids` file.
+* The :kconfig:option:`CONFIG_BT_HIDS` option that automatically enables the :ref:`hids_readme`.
+* The :kconfig:option:`CONFIG_BT_CONN_CTX` option that automatically enables the :ref:`bt_conn_ctx_readme`, which is required by the |GATT_HID|.
 
-   .. tip::
-     If the HID report configuration is identical to the default configuration of either nRF Desktop mouse or keyboard, you do not need to modify the |GATT_HID| configuration.
-     Otherwise, see :ref:`hids_readme` documentation for configuration details.
+The nRF Desktop application modifies the default Kconfig option values, defined by the :ref:`hids_readme`, to tailor the default configuration to application needs.
+The configuration is tailored for either nRF Desktop mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`) or nRF Desktop keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`).
+For more details, see the :file:`src/modules/Kconfig.hids` file.
+
+.. tip::
+   If the HID report configuration is identical to the default configuration of either nRF Desktop mouse or keyboard, you do not need to modify the |GATT_HID| configuration.
+   Otherwise, see :ref:`hids_readme` documentation for configuration details.
 
 The HID Service application module forwards the information about the enabled HID notifications to other application modules using ``hid_report_subscription_event``.
 These notifications are enabled by the connected Bluetooth® Central.
@@ -97,7 +97,7 @@ HID notifications
 =================
 
 The ``hid_notification_event`` is used to synchronize the information about enabling or disabling the HID notifications for the HID input report.
-The event is submitted when the |GATT_HID| calls a callback related to enabling or disabling the notifications and the event is received only by the ``hids`` application module.
+The event is submitted when the |GATT_HID| calls a callback related to enabling or disabling the notifications and the event is received only by the HID Service application module.
 
 Transport for configuration channel
 ===================================

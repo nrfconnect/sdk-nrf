@@ -28,7 +28,7 @@ The following Kconfig options are also available for the module:
 * :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM`
 * :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM`
 
-To use the module, you must complete the following requirements:
+To use the module, complete the following requirements:
 
 1. Physically connect the sensor.
 #. Add and enable the sensor in the devicetree file.
@@ -56,7 +56,7 @@ To use the module, you must complete the following requirements:
       * :c:member:`sm_sensor_config.sampling_period_ms` - Sensor sampling period, in milliseconds.
       * :c:member:`sm_sensor_config.active_events_limit` - Maximum number of unprocessed :c:struct:`sensor_event`.
 
-      For example, the file content could look like follows:
+      For example, the file content could look like this:
 
       .. code-block:: c
 
@@ -118,7 +118,7 @@ To use the sensor trigger, complete the following steps:
         * :c:member:`sm_trigger.activation.thresh` - Sensor trigger activation threshold.
         * :c:member:`sm_trigger.activation.timeout_ms` - Time after which the sensor is put to sleep.
 
-   For example, the extended configuration file for the LIS2DH accelerometer could look like follows:
+   For example, the extended configuration file for the LIS2DH accelerometer could look like this:
 
    .. code-block:: c
 
@@ -177,7 +177,7 @@ To manually configure the passive power management functionality, complete the f
 
 1. Enable :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option.
 #. Extend the module configuration file of the sensor of your choice by adding :c:member:`sm_sensor_config.suspend` in an array of :c:struct:`sm_sensor_config`.
-   For example, the extended configuration file for the LIS2DH accelerometer could look like follows:
+   For example, the extended configuration file for the LIS2DH accelerometer could look like this:
 
    .. code-block:: c
 
@@ -214,7 +214,7 @@ Implementation details
 **********************
 
 The |sensor_manager| starts in reaction to :c:struct:`module_state_event`.
-When started, it can do the following operations:
+When started, it can perform the following operations:
 
 * Periodically sample the configured sensors.
 * Submit :c:struct:`sensor_event` when the sensor channels are sampled.
@@ -222,19 +222,19 @@ When started, it can do the following operations:
 
 The |sensor_manager| samples sensors periodically, according to the configuration specified for each sensor.
 Sampling of the sensors is done from a dedicated preemptive thread.
-You can change the thread priority by setting the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY` Kconfig option.
+To change the thread priority, set the value of the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_PRIORITY` Kconfig option.
 Use the preemptive thread priority to make sure that the thread does not block other operations in the system.
 
 For each sensor, the |sensor_manager| limits the number of :c:struct:`sensor_event` events that it submits, but whose processing has not been completed.
 This is done to prevent out-of-memory error if the system workqueue is blocked.
 The limit value for the maximum number of unprocessed events for each sensor is placed in the :c:member:`sm_sensor_config.active_events_limit` structure field in the configuration file.
 The ``active_sensor_events_cnt`` counter is incremented when :c:struct:`sensor_event` is sent and decremented when the event is processed by the |sensor_manager| that is the final subscriber of the event.
-A situation can occur that the ``active_sensor_events_cnt`` counter will already be decremented but the memory allocated by the event would not yet be freed.
+A situation can occur that the ``active_sensor_events_cnt`` counter is already decremented but the memory allocated by the event would not yet be freed.
 Because of this behavior, the maximum number of allocated sensor events for the given sensor is equal to :c:member:`sm_sensor_config.active_events_limit` plus one.
 
 The dedicated thread uses its own thread stack.
-You can change the size of the stack by setting the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE` Kconfig option.
-The thread stack size must be big enough for the sensors used.
+To change the size of the stack, set the value of the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_THREAD_STACK_SIZE` Kconfig option.
+The thread stack size must be large enough for the sensors used.
 
 Sensor state events
 ===================
@@ -256,15 +256,15 @@ The following figure shows the possible state transitions.
 
 The |sensor_manager| submits :c:struct:`sensor_state_event` whenever the sensor state changes.
 Each sensor starts in the :c:enumerator:`SENSOR_STATE_DISABLED` state, which is not reported by the module.
-Also, each sensor acts independently to others.
+Also, each sensor acts independently.
 If one of the sensors reports an error, it does not stop the |sensor_manager| from sampling other sensors.
 
 After the initialization, each sensor changes its state to :c:enumerator:`SENSOR_STATE_ACTIVE` and start periodic sampling.
-In case of an error sensor submits :c:struct:`sensor_state_event` with the :c:enumerator:`SENSOR_STATE_ERROR` state.
+In case of an error, the sensor submits :c:struct:`sensor_state_event` with the :c:enumerator:`SENSOR_STATE_ERROR` state.
 
-If the trigger functionality or :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` is enabled the sensor can be put into the :c:enumerator:`SENSOR_STATE_SLEEP` state.
+If the trigger functionality or :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` is enabled, the sensor can be put into the :c:enumerator:`SENSOR_STATE_SLEEP` state.
 In this state, the sensor is not actively sampling and is not reporting any :c:struct:`sensor_event`.
-If the sensor trigger fires or the :c:struct:`wake_up_event` comes, the sensor state changes to :c:enumerator:`SENSOR_STATE_ACTIVE` and periodic sampling is restarted.
+If the sensor trigger fires or the :c:struct:`wake_up_event` is received, the sensor state changes to :c:enumerator:`SENSOR_STATE_ACTIVE` and periodic sampling is restarted.
 
 Sensor trigger activation
 =========================
@@ -272,14 +272,14 @@ Sensor trigger activation
 The sensor trigger is activated and the sensor is put to sleep if the values measured by the sensor do not deviate from the last sensor value by more than :c:member:`sm_trigger.activation.threshold` for the period of time specified in :c:member:`sm_trigger.activation.timeout_ms`.
 If the value measured by the sensor does not fit within the threshold, the last sensor value is updated and the sensor continues the sampling process.
 
-The sensor trigger activation type is of the :c:enumerator:`ACT_TYPE_ABS` (Absolute deviation) type.
+The sensor trigger activation type is :c:enumerator:`ACT_TYPE_ABS` (Absolute deviation).
 
 Passive power management
 ========================
 
 If the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_PM` Kconfig option is enabled, the sensors react to :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
 
-If a :c:struct:`power_down_event` comes when the sensor is in the :c:enumerator:`SENSOR_STATE_ACTIVE` state, the sensor state changes to :c:enumerator:`SENSOR_STATE_SLEEP` and sensor stops sampling.
+If a :c:struct:`power_down_event` is received when the sensor is in the :c:enumerator:`SENSOR_STATE_ACTIVE` state, the sensor state changes to :c:enumerator:`SENSOR_STATE_SLEEP` and the sensor stops sampling.
 
 Depending on the trigger functionality configuration:
 
@@ -289,7 +289,7 @@ Depending on the trigger functionality configuration:
 .. note::
     |device_pm_note|
 
-If a :c:struct:`wake_up_event` comes when the sensor is in the :c:enumerator:`SENSOR_STATE_SLEEP` state, the sensor switches to :c:enumerator:`SENSOR_STATE_ACTIVE` and starts actively sampling.
+If a :c:struct:`wake_up_event` is received when the sensor is in the :c:enumerator:`SENSOR_STATE_SLEEP` state, the sensor switches to :c:enumerator:`SENSOR_STATE_ACTIVE` and starts active sampling.
 
 Depending on the trigger functionality configuration:
 
@@ -299,16 +299,16 @@ Depending on the trigger functionality configuration:
 Active power management
 =======================
 
-If :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM` is enabled, the sensor can submit :c:struct:`power_manager_restrict_event` and :c:struct:`wake_up_event`.
+If the :kconfig:option:`CONFIG_CAF_SENSOR_MANAGER_ACTIVE_PM` Kconfig option is enabled, the sensor can submit :c:struct:`power_manager_restrict_event` and :c:struct:`wake_up_event`.
 
-A :c:struct:`power_manager_restrict_event` restricts a power level to which the application can be put.
+A :c:struct:`power_manager_restrict_event` restricts the power level to which the application can be put.
 It is submitted every time the allowed state changes.
 
 If there is any sensor that is in the :c:enumerator:`SENSOR_STATE_ACTIVE` state, the module power state is restricted to the :c:enumerator:`POWER_MANAGER_LEVEL_ALIVE` state.
 If all the sensors are in the :c:enumerator:`SENSOR_STATE_SLEEP` state and if at least one sensor has trigger activated, the power state is restricted to the :c:enumerator:`POWER_MANAGER_LEVEL_SUSPENDED` state.
 Having all the sensors sleeping and none of them with the trigger functionality enabled means that any power state is allowed.
 
-If the sensor's trigger functionality is configured, each time the trigger is activated :c:struct:`wake_up_event` is created and sent to other modules.
+If the sensor's trigger functionality is configured, each time the trigger is activated, a :c:struct:`wake_up_event` is created and sent to other modules.
 
 Sending :c:struct:`wake_up_event` to other modules results in waking up the whole system.
 
@@ -317,7 +317,7 @@ Sending :c:struct:`wake_up_event` to other modules results in waking up the whol
 Changing sensor sample period
 =============================
 
-To change sensor sample period you have to send :c:struct:`set_sensor_period_event` with new period value in milliseconds.
+To change the sensor sample period, you have to send :c:struct:`set_sensor_period_event` with new period value in milliseconds.
 To identify which sensor sampling period you want to change, set the sensor description in :c:struct:`set_sensor_period_event`.
 The following code shows an example of changing accelerometer sampling to 400 ms:
 

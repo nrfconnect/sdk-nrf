@@ -59,10 +59,10 @@ The module listens for the following events related to data transfer initiated b
 When these events are received, the module sets the connection latency to low.
 When the :ref:`nrf_desktop_config_channel` is no longer in use, and neither :ref:`nrf_desktop_ble_smp` nor :ref:`nrf_desktop_dfu_mcumgr` receive firmware updates (no mentioned events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_LATENCY` to reduce the power consumption.
 
-  .. note::
-     If the option :ref:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK <config_desktop_app_options>` is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.
+.. note::
+   If the :ref:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK <config_desktop_app_options>` Kconfig option is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.
 
-     When the device is in the low power mode and the events related to data transfer are not received, the connection latency is set to higher value to reduce the power consumption.
+   When the device is in the low power mode and the events related to data transfer are not received, the connection latency is set to higher value to reduce the power consumption.
 
 The ``ble_latency`` module receives :ref:`nrf_desktop_config_channel` events, but it is not configurable with the :ref:`nrf_desktop_config_channel`.
 The module does not register itself using the ``GEN_CONFIG_EVENT_HANDLERS`` macro.
