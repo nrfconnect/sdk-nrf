@@ -27,6 +27,9 @@
 
 void boot_banner(void)
 {
+#ifdef HALTIUM_XXAA
+	printk("RESETINFO %x\n", NRF_RESETINFO->RESETREAS.GLOBAL);
+#endif
 #if defined(CONFIG_BOOT_DELAY) && (CONFIG_BOOT_DELAY > 0)
 	printk("*** Delaying boot by " STRINGIFY(CONFIG_BOOT_DELAY) "ms... ***\n");
 	k_busy_wait(CONFIG_BOOT_DELAY * USEC_PER_MSEC);
