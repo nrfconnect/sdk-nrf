@@ -24,7 +24,7 @@ Configuration
 *************
 
 The module receives LED effects through the :ref:`nrf_desktop_config_channel` and displays them using the :ref:`caf_leds`.
-For this reason, make sure that both :kconfig:option:`CONFIG_CAF_LEDS` and :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` options are set.
+For this reason, make sure that both :kconfig:option:`CONFIG_CAF_LEDS` and :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` Kconfig options are set.
 
 To enable the module, use the :ref:`CONFIG_DESKTOP_LED_STREAM_ENABLE <config_desktop_app_options>` Kconfig option.
 
@@ -57,7 +57,7 @@ Implementation details
 **********************
 
 The module receives LED effects as ``config_event``.
-The effects are sent to :ref:`caf_leds` as ``led_event``.
+The effects are sent to the :ref:`caf_leds` as ``led_event``.
 Displaying the sequence begins when the first LED effect is received by the |led_stream|.
 
 Every received LED effect has a predefined duration.

@@ -56,11 +56,11 @@ Complete the following steps to configure the module:
 
    Those options affect :ref:`nrf_desktop_usb_state` that subscribes for HID boot reports.
    The Dongle forwards HID reports from both mouse and keyboard, and so either option works if you want to have the Dongle work as boot mouse or boot keyboard.
-   For more information about the configuration of the HID boot protocol, see the boot protocol configuration section in the :ref:`nrf_desktop_usb_state` documentation.
+   For more information about the configuration of the HID boot protocol, see the "Boot protocol configuration" section in the :ref:`nrf_desktop_usb_state` documentation.
 #. Make sure that the value of :ref:`CONFIG_DESKTOP_HID_FORWARD_SUBSCRIBER_COUNT <config_desktop_app_options>` Kconfig option matches number of USB HID class instances configured in :ref:`nrf_desktop_usb_state`.
    nRF Desktop dongle can use one or more instances of the USB HID class.
    By default, the module uses a dedicated HID subscriber (USB HID class instance) for every BLE bonded HID peripheral.
-   For more details about interactions with USB, see the `Interaction with the USB`_ section.
+   For more details, see the `Interaction with the USB`_ section.
 
 Implementation details
 **********************

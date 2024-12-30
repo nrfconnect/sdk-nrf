@@ -20,12 +20,12 @@ Module events
     :end-before: table_dfu_end
 
 .. note::
-    |nrf_desktop_module_event_note|
+   |nrf_desktop_module_event_note|
 
 Configuration
 *************
 
-The module can be used for the following devices:
+You can use this module for the following devices:
 
 * nRF52, nRF53, and nRF54L Series - To perform the firmware upgrade, you must enable the bootloader.
   You can use the DFU module with either MCUboot or B0 bootloader.
@@ -35,7 +35,7 @@ The module can be used for the following devices:
   The DFU module acts as a transport for the SUIT envelope used to update device firmware.
   For more information on how to enable the SUIT procedure, see the :ref:`nrf_desktop_suit` section.
 
-Enable the DFU module using the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>` option.
+To enable the DFU module, use the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>` Kconfig option.
 It requires the transport option :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
 
 Set the value of :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE <config_desktop_app_options>` to specify the size of the sync buffer (in words).
@@ -61,7 +61,7 @@ If the MCUboot bootloader in the swap mode is selected, the DFU module does the 
 If the MCUboot bootloader's direct-xip mode is used, the module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
 In that case, the DFU module assumes that the MCUboot direct-xip bootloader simply boots an image with the higher version, so there is no need to mark the image as pending and confirm it.
 
-The :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP <config_desktop_app_options>` option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
+The :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP <config_desktop_app_options>` Kconfig option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
 If the option is enabled, the DFU module reports the ``MCUBOOT+XIP`` bootloader name instead of ``MCUBOOT`` to indicate that the bootloader working in the direct-xip mode is used.
 The option depends on enabling the MCUboot bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`) and is enabled by default if the MCUboot direct-xip mode of operations is set (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP`).
 See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader configuration.
@@ -87,7 +87,7 @@ Non-volatile memory access synchronization with other DFU methods
 The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods (for example, SMP DFU).
 If multiple DFU transports are enabled in your application configuration, make sure that the following conditions are met:
 
-* The :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option is enabled
+* The :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` Kconfig option is enabled
 * All of the used DFU transports use the :ref:`nrf_desktop_dfu_lock`.
 
 On each DFU attempt, the module attempts to claim ownership over the DFU non-volatile memory using the DFU Lock API.

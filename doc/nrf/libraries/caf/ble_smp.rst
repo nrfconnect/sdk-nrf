@@ -28,12 +28,11 @@ To use the module, you must enable the following Kconfig options:
 Enabling remote OS management
 =============================
 
-The |smp| supports registering OS management handlers automatically, which you can enable using the following Kconfig option:
-
-* :kconfig:option:`CONFIG_MCUMGR_GRP_OS` - This option enables MCUmgr OS management handlers.
-  Use these handlers to remotely trigger the device reboot after the image transfer is completed.
-  After the reboot, the device starts using the new firmware.
-  One of the applications that support the remote reboot functionality is `nRF Connect for Mobile`_.
+The |smp| supports registering OS management handlers automatically.
+You can enable this using the :kconfig:option:`CONFIG_MCUMGR_GRP_OS` Kconfig option.
+Use these handlers to remotely trigger the device reboot after the image transfer is completed.
+After the reboot, the device starts using the new firmware.
+One of the applications that support the remote reboot functionality is `nRF Connect for Mobile`_.
 
 Implementation details
 **********************
@@ -44,7 +43,7 @@ The module registers itself as the final subscriber of the event to track the nu
 If a :c:struct:`ble_smp_transfer_event` was already submitted but not processed, the module desists from submitting a subsequent event.
 After the previously submitted event is processed, the module submits a subsequent event when the :c:func:`upload_confirm_cb` callback is called.
 
-The application user must not perform more than one firmware upgrade at a time.
+Do not perform more than one firmware upgrade at a time.
 The modification of the data by multiple application modules can result in a broken image that is going to be rejected by the bootloader.
 
 After building your application with the |smp| enabled, the :file:`dfu_application.zip` archive is generated in the build directory.

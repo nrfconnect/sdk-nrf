@@ -17,7 +17,7 @@ To use the module, you must enable the following Kconfig options:
 * :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR` - This option enables the |click_detector|.
 * :kconfig:option:`CONFIG_CAF_BUTTON_EVENTS` - This option enables the ``button_event`` that is required for the |click_detector| to work.
 
-In addition to :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR`, the following Kconfig options are available for the module:
+In addition, the following Kconfig options are available for the module:
 
 * :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_DEF_PATH`
 * :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS`
@@ -27,7 +27,7 @@ Adding module configuration file
 
 In addition to setting the Kconfig options, you must also add a module configuration file that contains an array of :c:struct:`click_detector_config`.
 
-To do so, complete the following steps:
+Complete the following steps:
 
 1. Add a file that defines the following information for every ``key_id`` that should be handled by the |click_detector| in an array of :c:struct:`click_detector_config`:
 
@@ -80,6 +80,6 @@ The exact values of time intervals for click types are defined in the :file:`sub
 Power management states
 =======================
 
-If the option :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS` is enabled, the module can react to power management events.
+If the :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_PM_EVENTS` Kconfig option is enabled, the module can react to power management events.
 The module stops tracing of key states when ``power_down_event`` is received.
 The module starts operating again when ``wake_up_event`` is received.

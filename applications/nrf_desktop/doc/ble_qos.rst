@@ -27,15 +27,16 @@ Configuration
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
 The QoS module uses the ``chmap_filter`` library, whose API is described in :file:`src/util/chmap_filter/include/chmap_filter.h`.
-The library is linked if :ref:`CONFIG_DESKTOP_BLE_QOS_ENABLE <config_desktop_app_options>` Kconfig option is enabled.
+The library is linked if the :ref:`CONFIG_DESKTOP_BLE_QOS_ENABLE <config_desktop_app_options>` Kconfig option is enabled.
 
 Enable the module using the :ref:`CONFIG_DESKTOP_BLE_QOS_ENABLE <config_desktop_app_options>` Kconfig option.
 The option selects :kconfig:option:`CONFIG_BT_HCI_VS_EVT_USER`, because the module uses vendor-specific HCI events.
 
 You can use the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` Kconfig option to enable real-time QoS information printouts through the USB CDC ACM port.
-The :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>` Kconfig option must be enabled and the selected USB CDC ACM instance must be enabled, and specified in devicetree using ``ncs,ble-qos-uart`` DT chosen.
+The :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>` Kconfig option must be enabled.
+Also, the selected USB CDC ACM instance must be enabled, and specified in the devicetree using the ``ncs,ble-qos-uart`` DT chosen.
 For an example of configuration that specifies the ``ncs,ble-qos-uart`` DT chosen, see the :file:`configuration/nrf52840dongle_nrf52840/app.overlay` file.
-This option automatically selects other Kconfig options needed to handle stats printouts over the USB CDC ACM port:
+This option automatically selects other Kconfig options needed to handle statistics printouts over the USB CDC ACM port:
 
 * :kconfig:option:`CONFIG_USB_COMPOSITE_DEVICE`
 * :kconfig:option:`CONFIG_USB_CDC_ACM`
