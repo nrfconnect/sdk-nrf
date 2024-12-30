@@ -80,6 +80,9 @@
 /** RSA modexp operation with Chinese Remainder Theorem */
 #define PK_OP_RSA_CRT (0x13 | SX_PK_OP_FLAGS_BIGENDIAN)
 
+/** RSA short exponentiation operation */
+#define PK_OP_RSA_PUB_MODEXP (0x14 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN)
+
 /** RSA modular exponentiation operation with countermeasures */
 #define PK_OP_RSA_MDEXP_CM                                                                         \
 	(0x15 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN | SX_PK_OP_FLAGS_MOD_CM)
@@ -141,13 +144,13 @@
 /** Elliptic curve point on curve check */
 #define PK_OP_ECC_PTONCURVE (0x26 | SX_PK_OP_FLAGS_BIGENDIAN)
 
-/** EDDSA point multiplication operation */
+/** EdDSA point multiplication operation */
 #define PK_OP_EDDSA_PTMUL (0x3B)
 
-/** EDDSA 2nd part of signature operation */
+/** EdDSA 2nd part of signature operation */
 #define PK_OP_EDDSA_SIGN (0x3C)
 
-/** EDDSA signature verification operation */
+/** EdDSA signature verification operation */
 #define PK_OP_EDDSA_VERIFY (0x3D)
 
 /** Point multiplication operation on edwards curve */
@@ -209,6 +212,9 @@
 
 /** SRP server session key generation */
 #define PK_OP_SRP_SERVER_SESSION_KEY_GEN (0x1b | SX_PK_OP_FLAGS_BIGENDIAN)
+
+/** Elliptic curve point check order */
+#define PK_OP_CHECK_POINT_ORDER (0x29 | SX_PK_OP_FLAGS_BIGENDIAN)
 
 /** Selected predefined curve field mask */
 #define PK_OP_FLAGS_SELCUR_MASK 0x00F00000

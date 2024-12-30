@@ -299,4 +299,10 @@
 #define OP_SLOT_SRP_A (0x02)
 #define OP_SLOT_SRP_U (0x08)
 
+/* Mod exp small pub exponent */
+#define OP_SLOT_RSA_PUB_MODEXP_M 0
+#define OP_SLOT_RSA_PUB_MODEXP_EXP 5
+#define OP_SLOT_RSA_PUB_MODEXP_INPUT 8
+#define OP_SLOT_RSA_PUB_MODEXP_RESULT 4
+
 #endif

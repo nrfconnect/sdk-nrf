@@ -8,6 +8,7 @@
 #include "../../../src/regs_curves.h"
 #include "../../target/hw/ba414/regs_commands.h"
 #include <silexpk/core.h>
+#include <string.h>
 
 #define SX_MAX(p, q) ((p >= q) ? p : q)
 
@@ -31,8 +32,8 @@ static const unsigned char params_nistp192[] = {
 	0x64, 0x21, 0x05, 0x19, 0xe5, 0x9c, 0x80, 0xe7, 0x0f, 0xa7, 0xe9, 0xab, 0x72, 0x24, 0x30,
 	0x49, 0xfe, 0xb8, 0xde, 0xec, 0xc1, 0x46, 0xb9, 0xb1};
 
-const struct sx_pk_ecurve sx_curve_nistp192 = {.curveflags =
-						       PK_OP_FLAGS_PRIME | PK_OP_FLAGS_SELCUR_P192,
+const struct sx_pk_ecurve sx_curve_nistp192 = {.curveflags = PK_OP_FLAGS_PRIME |
+							     PK_OP_FLAGS_SELCUR_P192,
 					       .sz = 24,
 					       .params = (char *)params_nistp192};
 
@@ -85,8 +86,8 @@ static const unsigned char params_nistp256[] = {
 	0xbc, 0x65, 0x1d, 0x06, 0xb0, 0xcc, 0x53, 0xb0, 0xf6, 0x3b, 0xce, 0x3c, 0x3e, 0x27, 0xd2,
 	0x60, 0x4b};
 
-const struct sx_pk_ecurve sx_curve_nistp256 = {.curveflags =
-						       PK_OP_FLAGS_PRIME | PK_OP_FLAGS_SELCUR_P256,
+const struct sx_pk_ecurve sx_curve_nistp256 = {.curveflags = PK_OP_FLAGS_PRIME |
+							     PK_OP_FLAGS_SELCUR_P256,
 					       .sz = 32,
 					       .params = (char *)params_nistp256};
 
@@ -122,8 +123,8 @@ static const unsigned char params_nistp384[] = {
 	0x87, 0x5a, 0xc6, 0x56, 0x39, 0x8d, 0x8a, 0x2e, 0xd1, 0x9d, 0x2a, 0x85, 0xc8, 0xed, 0xd3,
 	0xec, 0x2a, 0xef};
 
-const struct sx_pk_ecurve sx_curve_nistp384 = {.curveflags =
-						       PK_OP_FLAGS_PRIME | PK_OP_FLAGS_SELCUR_P384,
+const struct sx_pk_ecurve sx_curve_nistp384 = {.curveflags = PK_OP_FLAGS_PRIME |
+							     PK_OP_FLAGS_SELCUR_P384,
 					       .sz = 48,
 					       .params = (char *)params_nistp384};
 
@@ -165,8 +166,8 @@ static const unsigned char params_nistp521[] = {
 	0xbd, 0x3b, 0xb1, 0xbf, 0x07, 0x35, 0x73, 0xdf, 0x88, 0x3d, 0x2c, 0x34, 0xf1, 0xef, 0x45,
 	0x1f, 0xd4, 0x6b, 0x50, 0x3f, 0x00};
 
-const struct sx_pk_ecurve sx_curve_nistp521 = {.curveflags =
-						       PK_OP_FLAGS_PRIME | PK_OP_FLAGS_SELCUR_P521,
+const struct sx_pk_ecurve sx_curve_nistp521 = {.curveflags = PK_OP_FLAGS_PRIME |
+							     PK_OP_FLAGS_SELCUR_P521,
 					       .sz = 66,
 					       .params = (char *)params_nistp521};
 

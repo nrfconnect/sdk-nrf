@@ -89,7 +89,7 @@ const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_PTMUL = &CMD_EDDSA_PTMUL;
 
 static const struct sx_pk_cmd_def CMD_EDWARDS_PTMUL = {
 	PK_OP_EDWARDS_PTMUL, (1 << OP_SLOT_EDDSA_PTMUL_RX) | (1 << OP_SLOT_EDDSA_PTMUL_RY),
-	(3 << OP_SLOT_EDDSA_PTMUL_R) | (3 << OP_SLOT_EDDSA_PTMUL_P), 0};
+	(1 << OP_SLOT_EDDSA_PTMUL_R) | (3 << OP_SLOT_EDDSA_PTMUL_P), 0};
 const struct sx_pk_cmd_def *const SX_PK_CMD_EDWARDS_PTMUL = &CMD_EDWARDS_PTMUL;
 
 static const struct sx_pk_cmd_def CMD_EDDSA_SIGN = {
@@ -113,3 +113,11 @@ const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_VER = &CMD_EDDSA_VER;
 static const struct sx_pk_cmd_def CMD_ECC_PT_DECOMP = {PK_OP_ECC_PT_DECOMP, (1 << OP_SLOT_PTR_C),
 						       (1 << OP_SLOT_PTR_A), OP_SLOT_PTR_A};
 const struct sx_pk_cmd_def *const SX_PK_CMD_ECC_PT_DECOMP = &CMD_ECC_PT_DECOMP;
+
+static const struct sx_pk_cmd_def CMD_CHECK_EC_POINT_ORDER = {
+	PK_OP_CHECK_POINT_ORDER,
+	0,
+	(3 << OP_SLOT_PTR_A),
+	OP_SLOT_PTR_A
+};
+const struct sx_pk_cmd_def * const SX_PK_CMD_ECC_CHECK_PT_ORDER = &CMD_CHECK_EC_POINT_ORDER;

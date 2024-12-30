@@ -17,7 +17,7 @@ static const char * const descriptions[] = {
 	"Not invertible",
 	"Invalid signature",
 	"Not implemented",
-	"Point at infinity",
+	"Unexpected micro-code instruction",
 	"Out of range",
 	"Invalid modulus (must be odd)",
 	"Point not on curve",
@@ -28,6 +28,7 @@ static const char * const descriptions[] = {
 	"Invalid elliptic curve parameters",
 	"IK not ready. Please initialize IK first",
 	"Resources not available for a new operation. Retry later",
+	"Low order point or check on point order failed",
 };
 
 const char *sx_describe_statuscode(unsigned int code)

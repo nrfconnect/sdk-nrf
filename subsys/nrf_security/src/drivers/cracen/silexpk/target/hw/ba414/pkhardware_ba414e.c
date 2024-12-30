@@ -137,8 +137,12 @@ static void sx_pk_blind(sx_pk_req *req, sx_pk_blind_factor factor)
 	char *cryptoram = req->cryptoram + slot_sz * 16;
 	const int blind_sz = sizeof(factor);
 
+	/* Force lsb bit to guarantee odd random value. Force bits 63 & 62 to 0 and
+	 * bit 61 to 1 to guarantee constant time execution on hardware.
+	 */
 	if (req->cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
-		/* Force lsb bit to guarantee odd random value */
+		p[0] &= 0x3F;
+		p[0] |= 0x20;
 		p[7] |= 1;
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
@@ -146,8 +150,9 @@ static void sx_pk_blind(sx_pk_req *req, sx_pk_blind_factor factor)
 		sx_clrpkmem(cryptoram - req->op_size, req->op_size - blind_sz);
 		cryptoram -= blind_sz;
 	} else {
-		/* Force lsb bit to guarantee odd random value */
 		p[0] |= 1;
+		p[7] &= 0x3F;
+		p[7] |= 0x20;
 		cryptoram -= slot_sz;
 		sx_clrpkmem(cryptoram + blind_sz, req->op_size - blind_sz);
 	}
