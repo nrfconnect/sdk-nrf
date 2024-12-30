@@ -70,7 +70,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: b65083934c814001df6e67159bda2a1b14185099
+      revision: 8a64a2e4ab24379765dde83c2a50044c0d615541
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -94,6 +94,7 @@ manifest:
           - fatfs
           - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
+          - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
           - hostap
           - liblc3
@@ -131,7 +132,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 3a25855215a2cfc64c3f0e2dba3ada3f11df7816
+      revision: 3897a7b0f645f3c79829bd6840fc3502ea1bdacb
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -148,7 +149,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 1d909ad4fe416d4e5257d16e6031d6f2e95b4d85
+      revision: 85954588939b0d6c46a84ae39ef7926cc2fe9810
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
