@@ -32,9 +32,9 @@ Module events
 Configuration
 *************
 
-The module requires the basic Bluetooth® configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
+The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
-The module is enabled with :ref:`CONFIG_DESKTOP_QOS_ENABLE <config_desktop_app_options>` option.
+To enable the module, use the :ref:`CONFIG_DESKTOP_QOS_ENABLE <config_desktop_app_options>` Kconfig option.
 The module is available on the :ref:`peripheral devices <nrf_desktop_bluetooth_guide_peripheral>` only and requires the :ref:`nrf_desktop_ble_qos` to be enabled.
 
 Implementation details
