@@ -19,7 +19,7 @@ on:
       - '**'  # Triggers on pushes to any branch
 jobs:
   check-prs:
-    if: ${{ !github.event.created }}  # Skip for new branches
+    if: ${{ github.repository_owner == 'nrfconnect' && !github.event.created }}  # Skip for new branches or forks
     runs-on: ubuntu-latest
 
     steps:
