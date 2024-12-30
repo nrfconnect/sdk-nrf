@@ -520,26 +520,24 @@ cleanup:
 	return PSA_ERROR_CORRUPTION_DETECTED;
 }
 
-size_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes)
+psa_status_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes, size_t *key_size)
 {
 	platform_key key;
 	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 
-	if (type == INVALID) {
-		return 0;
-	}
-
 	if (type == IKG) {
-		return sizeof(ikg_opaque_key);
+		*key_size = sizeof(ikg_opaque_key);
+		return PSA_SUCCESS;
 	}
 
 	if (key_type == PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS) ||
 	    key_type == PSA_KEY_TYPE_AES) {
-		return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+		*key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+		return PSA_SUCCESS;
 	}
 
-	return 0;
+	return PSA_ERROR_INVALID_ARGUMENT;
 }
 
 psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
