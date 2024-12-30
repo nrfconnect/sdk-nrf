@@ -247,7 +247,7 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes);
 
-size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes);
+psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size);
 
 psa_status_t cracen_jpake_setup(cracen_jpake_operation_t *operation,
 				const psa_key_attributes_t *attributes, const uint8_t *password,
