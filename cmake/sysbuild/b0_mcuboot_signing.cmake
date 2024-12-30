@@ -138,7 +138,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
 
     if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
       ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
-      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>")
+      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>;signed_by_mcuboot_and_b0_s1_image.binslot=1")
     endif()
 
     if(bin_files)
@@ -156,6 +156,7 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
         ${extra_bin_data}
         "version_MCUBOOT=${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION}"
         "version_B0=${mcuboot_fw_info_firmware_version}"
+        "signed_by_mcuboot_and_b0_mcuboot.binslot=0"
         DEPENDS ${signed_targets}
         )
     endif()
