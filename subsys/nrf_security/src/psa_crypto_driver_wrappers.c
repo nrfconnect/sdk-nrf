@@ -463,8 +463,7 @@ psa_driver_wrapper_get_key_buffer_size_from_key_data(const psa_key_attributes_t 
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif
-		*key_buffer_size = cracen_get_opaque_size(attributes);
-		return *key_buffer_size != 0 ? PSA_SUCCESS : PSA_ERROR_INVALID_ARGUMENT;
+		return cracen_get_opaque_size(attributes, key_buffer_size);
 #endif
 	default:
 		(void)key_type;
@@ -503,8 +502,7 @@ psa_status_t psa_driver_wrapper_get_key_buffer_size(const psa_key_attributes_t *
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif
-		*key_buffer_size = cracen_get_opaque_size(attributes);
-		return *key_buffer_size != 0 ? PSA_SUCCESS : PSA_ERROR_NOT_SUPPORTED;
+		return cracen_get_opaque_size(attributes, key_buffer_size);
 #endif
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:

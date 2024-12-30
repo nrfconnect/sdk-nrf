@@ -806,7 +806,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 	return PSA_SUCCESS;
 }
 
-size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
+psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size)
 {
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
@@ -814,18 +814,20 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 		case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 			if (psa_get_key_type(attributes) ==
 			    PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
-				return sizeof(ikg_opaque_key);
+				*key_size = sizeof(ikg_opaque_key);
+				return PSA_SUCCESS;
 			}
 			break;
 		case CRACEN_BUILTIN_MEXT_ID:
 		case CRACEN_BUILTIN_MKEK_ID:
 			if (psa_get_key_type(attributes) == PSA_KEY_TYPE_AES) {
-				return sizeof(ikg_opaque_key);
+				*key_size = sizeof(ikg_opaque_key);
+				return PSA_SUCCESS;
 			}
 			break;
 #ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
 		default:
-			return cracen_platform_keys_get_size(attributes);
+			return cracen_platform_keys_get_size(attributes, key_size);
 #endif
 		}
 	}
@@ -835,15 +837,19 @@ size_t cracen_get_opaque_size(const psa_key_attributes_t *attributes)
 		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
 			if (psa_get_key_type(attributes) ==
 			    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
-				return PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(
+				*key_size = PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(
 					psa_get_key_type(attributes), psa_get_key_bits(attributes));
+			} else {
+				*key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 			}
-			return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 		} else if (psa_get_key_type(attributes) == PSA_KEY_TYPE_HMAC) {
-			return PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
+			*key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 		} else {
-			return sizeof(kmu_opaque_key_buffer);
+			*key_size = sizeof(kmu_opaque_key_buffer);
 		}
+
+		return PSA_SUCCESS;
 	}
-	return 0;
+
+	return PSA_ERROR_INVALID_ARGUMENT;
 }
