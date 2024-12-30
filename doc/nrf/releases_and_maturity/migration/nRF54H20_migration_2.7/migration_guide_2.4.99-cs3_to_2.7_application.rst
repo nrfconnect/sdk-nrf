@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_cs3_to_to_2_7_app:
 
 Migrate your application for the nRF54H20 DK to |NCS| v2.7.0 (for v2.4.99-cs3 users)
