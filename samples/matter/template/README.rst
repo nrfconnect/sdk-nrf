@@ -147,6 +147,44 @@ The following is an example command to build the sample on the nRF54L15 DK with 
 
 Note that in this case, the size of the application partition is half of what it would be when using a configuration with external flash memory support.
 
+SUIT DFU on nRF54H20
+--------------------
+
+.. matter_template_dfu_suit_start
+
+nRF54H20 Matter devices support :ref:`ug_nrf54h20_suit_dfu`.
+You can use SUIT mechanisms to update Application and Radio cores firmware as well as the *nRF54H20 SoC binaries* provided by Nordic Semiconductor.
+Currently, Matter samples support only the :ref:`ug_nrf54h20_suit_external_memory` approach and the *Push* firmware update model.
+The default SUIT manifest template files are located in the ``config/suit/templates/nrf54h20/matter/v1`` directory.
+You can change the SUIT manifest template files source directory by setting the ``SUIT_BASE_MANIFEST_VARIANT`` sysbuild configuration option.
+
+Currently, only DFU over the :ref:`ug_matter_overview_dfu` protocol is fully supported for this sample without any external tools.
+To perform a firmware update using the Simple Management Protocol (SMP) over |Bluetooth| LE, you need an external tool that supports :ref:`ug_nrf54h20_suit_smp`.
+
+To perform a firmware update of the Application and Radio cores firmware using the :ref:`ug_matter_overview_dfu` protocol, ensure that the ``MATTER_OTA`` sysbuild configuration option is set to ``y`` and perform the firmware update as usual following the :doc:`matter:nrfconnect_examples_software_update` user guide.
+In this case, the *nRF54H20 SoC Nordic binaries* will not be updated.
+
+To update the *nRF54H20 SoC Nordic binaries*, you need to follow the :ref:`ug_nrf54h20_suit_soc_binaries_root_in_manufacturer` user guide and additionally define the cache partition size according to the device tree configuration using the ``SUIT_DFU_CACHE_PARTITION_1_EB_SIZE`` CMake variable.
+By default, the cache partition size is set to 2048 kB.
+To see the exact value of the cache 1 partition size, see the device tree configuration file and find the ``dfu_cache_partition_1`` node.
+
+For example, you can use the following command to prepare DFU files which include *nRF54H20 SoC Nordic binaries* for Matter OTA:
+
+.. code-block:: console
+
+   west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY="\"<NORDIC_TOP_DIRECTORY>\"" -DSUIT_DFU_CACHE_PARTITION_1_EB_SIZE=2048
+
+To perform a firmware update using the SMP over |Bluetooth| LE protocol, write the following files to the device using an external tool and the SUIT SMP extension described in the :ref:`ug_nrf54h20_suit_smp` user guide:
+
+   1. :file:`<build_dir>/DFU/root.suit` into slot 0.
+   #. :file:`<build_dir>/DFU/dfu_cache_partition_1.bin` into slot 1.
+
+The ``<build_dir>`` refers to your build directory.
+The SUIT envelope file is included in the :file:`root.suit` file, whereas the new application firmware is included in the :file:`dfu_cache_partition_1.bin` file.
+After transferring both files, confirm the update and reboot the device.
+
+.. matter_template_dfu_suit_end
+
 FEM support
 ===========
 
