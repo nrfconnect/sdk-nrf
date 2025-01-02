@@ -27,7 +27,8 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
                tx-en-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
                rx-en-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
                pdn-gpios   = <&gpio0 15 GPIO_ACTIVE_HIGH>;
-               spi-if = <&nrf_radio_fem_spi>
+               spi-if = <&nrf_radio_fem_spi>;
+               supply-voltage-mv = <3000>;
          };
       };
 #. Optionally replace the device name ``name_of_fem_node``.
@@ -52,17 +53,17 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
       &pinctrl {
          spi3_default_alt: spi3_default_alt {
             group1 {
-               psels = <NRF_PSEL(SPI_SCK, 1, 15)>,
-                       <NRF_PSEL(SPI_MISO, 1, 14)>,
-                       <NRF_PSEL(SPI_MOSI, 1, 13)>;
+               psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
+                       <NRF_PSEL(SPIM_MISO, 1, 14)>,
+                       <NRF_PSEL(SPIM_MOSI, 1, 13)>;
             };
          };
 
          spi3_sleep_alt: spi3_sleep_alt {
             group1 {
-               psels = <NRF_PSEL(SPI_SCK, 1, 15)>,
-                       <NRF_PSEL(SPI_MISO, 1, 14)>,
-                       <NRF_PSEL(SPI_MOSI, 1, 13)>;
+               psels = <NRF_PSEL(SPIM_SCK, 1, 15)>,
+                       <NRF_PSEL(SPIM_MISO, 1, 14)>,
+                       <NRF_PSEL(SPIM_MOSI, 1, 13)>;
                low-power-enable;
             };
          };
@@ -85,7 +86,7 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
 
    In this example, the nRF21540 is controlled by the ``spi3`` bus.
    Replace the SPI bus according to your hardware design, and create alternative entries for SPI3 with different ``pinctrl-N`` and ``pinctrl-names`` properties.
-#. On nRF53 devices, the devicetree nodes described above must be added to the network core.
+#. On nRF53 devices, the devicetree nodes described above must be added to the network core and ``spi0`` instance of the network core must be used.
    For the application core, you must also add a GPIO forwarder node to its devicetree file:
 
    .. code-block:: devicetree
@@ -121,3 +122,4 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
 .. note::
    The nRF21540 GPIO-only mode of operation is selected by default in Kconfig when an nRF21540 node is provided in devicetree, as mentioned in the :ref:`ug_radio_fem_sw_support` section.
    To enable the GPIO+SPI mode of operation, you must explicitly set the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option to ``y``.
+   On an nRF5340, the :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option must be set to ``y`` for the network core image.
