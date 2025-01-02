@@ -14,7 +14,7 @@ PyYAML                          # |  X  |         |        |         |         |
 pykwalify                       # |     |         |        |         |         |      |   X    |
 pytest                          # |     |         |        |         |         |      |   X    |
 recommonmark                    # |     |         |   X    |    X    |         |      |        |
-sphinx~=7.4                     # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
+sphinx~=8.1                     # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
 sphinx-autobuild                # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
 sphinx-copybutton               # |  X  |         |        |         |         |      |   X    |
 sphinx-ncs-theme<1.1            # |  X  |         |        |         |         |      |        |
