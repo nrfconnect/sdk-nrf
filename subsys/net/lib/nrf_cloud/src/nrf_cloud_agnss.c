@@ -619,6 +619,23 @@ int nrf_cloud_agnss_process(const char *buf, size_t buf_len)
 
 		LOG_DBG("Parsed_len: %d", parsed_len);
 
+		/**
+		 * The else clause below was incorrectly flagged by Coverity as a copy of
+		 * overlapped memory bug.
+		 *
+		 * This is by design. The cloud will transmit 0 or more, up to 32,
+		 * nrf_cloud_agnss_tow_element structs, which will be copied into the local
+		 * sys_time struct's sv_tow array. The cloud side does this to conserve data
+		 * bandwidth, as quite often there are few if any TOW elements.
+		 *
+		 * In the same data buffer, there will be exactly one
+		 * nrf_cloud_agnss_system_time element struct (the first 12 bytes only),
+		 * which will then be copied into the local sys_time struct before the
+		 * sv_tow array.
+		 *
+		 * This locally-assembled sys_time struct will then be passed to
+		 * agnss_send_to_modem(), which expects this combined structure.
+		 */
 		if (element.type == NRF_CLOUD_AGNSS_GPS_TOWS) {
 			memcpy(&sys_time.sv_tow[element.tow->sv_id - 1],
 				element.tow,
