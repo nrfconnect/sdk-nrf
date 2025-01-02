@@ -48,6 +48,8 @@ FAKE_VALUE_FUNC(int, suit_mci_manifest_parent_child_declaration_validate,
 FAKE_VALUE_FUNC(int, suit_mci_manifest_process_dependency_validate,
 		const suit_manifest_class_id_t *, const suit_manifest_class_id_t *);
 FAKE_VALUE_FUNC(int, suit_mci_init);
+FAKE_VALUE_FUNC(int, suit_mci_fw_encryption_key_id_validate, const suit_manifest_class_id_t *,
+		uint32_t);
 
 static inline void mock_suit_mci_reset(void)
 {
@@ -74,6 +76,7 @@ static inline void mock_suit_mci_reset(void)
 	RESET_FAKE(suit_mci_manifest_process_dependency_validate);
 	RESET_FAKE(suit_mci_manifest_parent_child_declaration_validate);
 	RESET_FAKE(suit_mci_init);
+	RESET_FAKE(suit_mci_fw_encryption_key_id_validate);
 }
 
 #endif /* MOCK_SUIT_MCI_H__ */

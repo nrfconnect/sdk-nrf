@@ -18,17 +18,17 @@ extern "C" {
 /**
  * @brief Get decrypt filter object
  *
- * @param[out] dec_sink  Pointer to destination sink_stream to pass decrypted data
+ * @param[out] in_sink   Pointer to input sink_stream to pass encrypted data
  * @param[in]  enc_info  Pointer to the structure with encryption info.
  * @param[in]  class_id  Pointer to the manifest class ID of the destination component
- * @param[in]  enc_sink  Pointer to source sink_stream to be filled with encrypted data
+ * @param[in]  out_sink  Pointer to output sink_stream to be filled with decrypted data
  *
  * @return SUIT_PLAT_SUCCESS if success otherwise error code
  */
-suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *dec_sink,
+suit_plat_err_t suit_decrypt_filter_get(struct stream_sink *in_sink,
 					struct suit_encryption_info *enc_info,
 					const suit_manifest_class_id_t *class_id,
-					struct stream_sink *enc_sink);
+					struct stream_sink *out_sink);
 
 #ifdef __cplusplus
 }
