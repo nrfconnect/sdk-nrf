@@ -193,7 +193,8 @@ IPC radio firmware
 Matter Bridge
 -------------
 
-|no_changes_yet_note|
+* Enabled SUIT DFU support for the :ref:`matter_bridge_app` application.
+  Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
 
 nRF5340 Audio
 -------------
@@ -356,6 +357,8 @@ Matter samples
 --------------
 
 * Updated the :ref:`matter_template_sample` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
+* Enabled SUIT DFU support for the :ref:`matter_lock_sample`, and :ref:`matter_template_sample` samples.
+  Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
 
 Networking samples
 ------------------
