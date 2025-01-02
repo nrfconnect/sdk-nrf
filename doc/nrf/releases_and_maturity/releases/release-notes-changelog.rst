@@ -134,7 +134,7 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
 
 Matter fork
 +++++++++++
