@@ -202,6 +202,8 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		}
 		safe_memset(entropy, sizeof(entropy), 0,
 			    CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE);
+
+		prng.reseed_counter = 0;
 	}
 
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
