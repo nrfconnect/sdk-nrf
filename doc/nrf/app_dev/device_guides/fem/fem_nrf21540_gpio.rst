@@ -35,6 +35,15 @@ To use nRF21540 in GPIO mode, complete the following steps:
          };
       };
 
+   When you add the above node to the devicetree and build the application, FEM-related Kconfig options are automatically enabled and FEM support is enabled.
+   Additionally, you can consider setting the following Kconfig options:
+
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB`
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA`
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB`
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_RX_GAIN_DB`
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL`
+
 #. Optionally replace the node name ``name_of_fem_node``.
 #. Replace the pin numbers provided for each of the required properties:
 
