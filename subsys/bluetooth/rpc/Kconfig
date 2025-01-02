@@ -184,6 +184,5 @@ source "$(ZEPHYR_BASE)/subsys/bluetooth/services/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/common/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/host/Kconfig"
 source "$(ZEPHYR_BASE)/subsys/bluetooth/crypto/Kconfig"
-source "$(ZEPHYR_BASE)/subsys/bluetooth/shell/Kconfig"
 
 endif # BT_RPC_STACK
