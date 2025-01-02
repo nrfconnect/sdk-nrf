@@ -1017,7 +1017,9 @@ void test_location_cellular_cancel_during_ncellmeas(void)
 
 	err = location_request_cancel();
 	TEST_ASSERT_EQUAL(0, err);
-	k_sleep(K_MSEC(1));
+
+	/* Need to wait a bit because no %NCELLMEAS notification is sent after AT%NCELLMEASSTOP. */
+	k_sleep(K_MSEC(2100));
 }
 
 /* Test cellular timeout during the 1st NCELLMEAS. */
