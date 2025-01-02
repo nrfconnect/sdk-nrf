@@ -653,6 +653,22 @@ static void at_handler_ncellmeas_gci(const char *response)
 	k_free(evt.cells_info.neighbor_cells);
 }
 
+static void ncellmeas_cancel_timeout_work_fn(struct k_work *work)
+{
+	struct lte_lc_evt evt = {0};
+
+	LOG_DBG("No %%NCELLMEAS notification received after AT%%NCELLMEASSTOP, "
+		"sending empty results");
+
+	evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	evt.cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	event_handler_list_dispatch(&evt);
+
+	k_sem_give(&ncellmeas_idle_sem);
+}
+
+K_WORK_DELAYABLE_DEFINE(ncellmeas_cancel_timeout_work, ncellmeas_cancel_timeout_work_fn);
+
 static void at_handler_ncellmeas(const char *response)
 {
 	int err;
@@ -660,10 +676,22 @@ static void at_handler_ncellmeas(const char *response)
 
 	__ASSERT_NO_MSG(response != NULL);
 
+	k_work_cancel_delayable(&ncellmeas_cancel_timeout_work);
+
 	if (event_handler_list_is_empty()) {
 		/* No need to parse the response if there is no handler
 		 * to receive the parsed data.
 		 */
+		goto exit;
+	}
+
+	if (k_sem_count_get(&ncellmeas_idle_sem) > 0) {
+		/* No need to parse the notification because neighbor cell measurement
+		 * has not been requested.
+		 */
+		LOG_DBG("%%NCELLMEAS notification not parsed because "
+			"lte_lc_neighbor_cell_measurement() not called");
+
 		goto exit;
 	}
 
@@ -793,7 +821,11 @@ int ncellmeas_cancel(void)
 		err = -EFAULT;
 	}
 
-	k_sem_give(&ncellmeas_idle_sem);
+	/* Transition to idle happens when %NCELLMEAS notification is received. However, if modem
+	 * had not yet started the measurement, no notification is sent and we need a timeout to
+	 * handle it.
+	 */
+	k_work_schedule(&ncellmeas_cancel_timeout_work, K_SECONDS(2));
 
 	return err;
 }
