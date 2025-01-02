@@ -36,8 +36,8 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		cpuapp_slot0_partition: partition@98000 {
-			reg = <0x98000 DT_SIZE_K(848)>;
+		cpuapp_slot0_partition: partition@86000 {
+			reg = <0x86000 DT_SIZE_K(1336)>;
 		};
 	};
 
@@ -48,17 +48,17 @@
 		#address-cells = < 0x1 >;
 		#size-cells = < 0x1 >;
 
-		storage_partition: partition@16C000 {
-			reg = < 0x16C000 DT_SIZE_K(32) >;
+		storage_partition: partition@1D4000 {
+			reg = < 0x1D4000 DT_SIZE_K(32) >;
 		};
 
-		factory_data: partition@174000 {
-			reg = < 0x174000 DT_SIZE_K(4) >;
+		factory_data: partition@1DC000 {
+			reg = < 0x1DC000 DT_SIZE_K(4) >;
 		};
 
 		/* DFU partition to store SUIT manifests and Nordic Firmware update */
-		dfu_partition: partition@175000 {
-			reg = < 0x175000 DT_SIZE_K(464) >;
+		dfu_partition: partition@1DD000 {
+			reg = < 0x1DD000 DT_SIZE_K(64) >;
 		};
 
 	};
@@ -72,7 +72,7 @@
 		#size-cells = <1>;
 
 		dfu_cache_partition_1: partition@0 {
-			reg = <0x0 DT_SIZE_K(1024)>;
+			reg = <0x0 DT_SIZE_K(2048)>;
 		};
 	};
 };

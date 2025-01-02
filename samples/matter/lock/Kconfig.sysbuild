@@ -77,19 +77,6 @@ endif # BOARD_NRF54L15DK_NRF54L15_CPUAPP_NS
 
 endif # BOOTLOADER_MCUBOOT
 
-if SOC_SERIES_NRF54HX
-
-config SUIT_ENVELOPE
-	default y
-
-config SUIT_BUILD_FLASH_COMPANION
-	default y
-
-config SUIT_MULTI_IMAGE_PACKAGE_BUILD
-	default y if MATTER_OTA
-
-endif # SOC_SERIES_NRF54HX
-
 #### Enable generating factory data
 config MATTER_FACTORY_DATA_GENERATE
 	default y if !BOARD_NRF21540DK

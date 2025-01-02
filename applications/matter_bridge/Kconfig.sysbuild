@@ -64,10 +64,6 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 endif # SOC_SERIES_NRF53X
 endif # BOOTLOADER_MCUBOOT
 
-## Disable DFU for nRF54h20
-config MATTER_OTA
-	default n if SOC_SERIES_NRF54HX
-
 #### Enable generating factory data
 config MATTER_FACTORY_DATA_GENERATE
 	default y
