@@ -37,6 +37,29 @@ const struct nrf_clock_spec test_clk_specs_hsfll[] = {
 	},
 };
 
+const struct nrf_clock_spec test_clk_specs_global_hsfll[] = {
+	{
+		.frequency = MHZ(320),
+	},
+	{
+		.frequency = MHZ(256),
+	},
+	{
+		.frequency = MHZ(128),
+	},
+	{
+		.frequency = MHZ(64),
+	},
+};
+
+static const struct test_clk_ctx global_hsfll_test_clk_ctx[] = {
+	{
+		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120)),
+		.clk_specs = test_clk_specs_global_hsfll,
+		.clk_specs_size = ARRAY_SIZE(test_clk_specs_global_hsfll),
+	},
+};
+
 const struct nrf_clock_spec test_clk_specs_fll16m[] = {
 	{
 		.frequency = MHZ(16),
@@ -97,6 +120,22 @@ static const struct test_clk_ctx lfclk_test_clk_ctx[] = {
 	},
 };
 
+const struct nrf_clock_spec test_clk_specs_hfxo[] = {
+	{
+		.frequency = MHZ(32),
+		.accuracy = 0,
+		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
+	},
+};
+
+static const struct test_clk_ctx hfxo_test_clk_ctx[] = {
+	{
+		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(hfxo)),
+		.clk_specs = test_clk_specs_hfxo,
+		.clk_specs_size = ARRAY_SIZE(test_clk_specs_hfxo),
+	},
+};
+
 static void test_request_release_clock_spec(const struct device *clk_dev,
 					    const struct nrf_clock_spec *clk_spec)
 {
@@ -151,12 +190,34 @@ static void test_clock_control_request(const struct test_clk_ctx *clk_contexts,
 	}
 }
 
+static void test_auxpll_control(const struct device *clk_dev)
+{
+	int err;
+	enum clock_control_status clk_status;
+
+	err = clock_control_on(clk_dev, NULL);
+	LOG_INF("Auxpll: %s ON request, status: %d", clk_dev->name, err);
+	k_msleep(10);
+	clk_status = clock_control_get_status(clk_dev, NULL);
+	__ASSERT_NO_MSG(clk_status == CLOCK_CONTROL_STATUS_ON);
+	err = clock_control_off(clk_dev, NULL);
+	LOG_INF("Auxpll: %s OFF request, status: %d", clk_dev->name, err);
+	k_msleep(10);
+	clk_status = clock_control_get_status(clk_dev, NULL);
+	__ASSERT_NO_MSG(clk_status == CLOCK_CONTROL_STATUS_OFF);
+	k_msleep(1000);
+}
+
 int main(void)
 {
 	LOG_INF("Idle clock_control, %s", CONFIG_BOARD_TARGET);
 	k_msleep(100);
 	while (1) {
+		test_auxpll_control(DEVICE_DT_GET(DT_NODELABEL(canpll)));
+		test_clock_control_request(hfxo_test_clk_ctx, ARRAY_SIZE(hfxo_test_clk_ctx));
 		test_clock_control_request(hsfll_test_clk_ctx, ARRAY_SIZE(hsfll_test_clk_ctx));
+		test_clock_control_request(global_hsfll_test_clk_ctx,
+					   ARRAY_SIZE(hsfll_test_clk_ctx));
 		test_clock_control_request(fll16m_test_clk_ctx, ARRAY_SIZE(fll16m_test_clk_ctx));
 		test_clock_control_request(lfclk_test_clk_ctx, ARRAY_SIZE(lfclk_test_clk_ctx));
 	}
