@@ -399,7 +399,7 @@ struct lte_lc_ncell {
 	uint32_t earfcn;
 
 	/**
-	 * Difference of current cell and neighbor cell measurement, in the range
+	 * Difference of current cell and neighbor cell measurement in milliseconds, in the range
 	 * -99999 ms < time_diff < 99999 ms. @ref LTE_LC_CELL_TIME_DIFF_INVALID if the value is not
 	 * valid.
 	 */
@@ -441,7 +441,9 @@ struct lte_lc_cell {
 	uint32_t earfcn;
 
 	/**
-	 * Timing advance decimal value.
+	 * Timing advance decimal value in basic time units (Ts).
+	 *
+	 * Ts = 1/(15000 x 2048) seconds (as specified in 3GPP TS 36.211).
 	 *
 	 * Range 0 - @ref LTE_LC_CELL_TIMING_ADVANCE_MAX. @ref LTE_LC_CELL_TIMING_ADVANCE_INVALID if
 	 * timing advance is not valid.
@@ -453,7 +455,7 @@ struct lte_lc_cell {
 	uint16_t timing_advance;
 
 	/**
-	 * Timing advance measurement time, calculated from modem boot time.
+	 * Timing advance measurement time in milliseconds, calculated from modem boot time.
 	 *
 	 * Range 0 - 18 446 744 073 709 551 614 ms.
 	 *
@@ -466,7 +468,7 @@ struct lte_lc_cell {
 	uint64_t timing_advance_meas_time;
 
 	/**
-	 * Measurement time.
+	 * Cell measurement time in milliseconds, calculated from modem boot time.
 	 *
 	 * Range 0 - 18 446 744 073 709 551 614 ms.
 	 */
