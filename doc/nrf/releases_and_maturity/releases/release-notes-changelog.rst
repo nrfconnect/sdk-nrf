@@ -294,6 +294,10 @@ Cellular samples
   * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
     The link control functionality is now always enabled and cannot be disabled.
 
+* :ref:`nrf_cloud_multi_service` sample:
+
+  * Fixed an issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
+
 Cryptography samples
 --------------------
 

@@ -212,7 +212,7 @@ static void on_location_update(const struct location_event_data * const location
 static void handle_at_cmd_requests(const struct nrf_cloud_data *const dev_msg)
 {
 	char *cmd;
-	struct nrf_cloud_obj msg_obj;
+	NRF_CLOUD_OBJ_DEFINE(msg_obj, NRF_CLOUD_OBJ_TYPE__UNDEFINED);
 	int err = nrf_cloud_obj_input_decode(&msg_obj, dev_msg);
 
 	if (err) {
