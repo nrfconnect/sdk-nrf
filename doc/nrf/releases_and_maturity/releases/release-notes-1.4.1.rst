@@ -92,7 +92,7 @@ Zephyr changes incorporated into |NCS|
 
 This section contains changes in Zephyr that were cherry-picked into |NCS| for this release.
 
-* Added support for the :ref:`zephyr:actinius_icarus` board.
+* Added support for the Actinius Icarus board.
 
 Bluetooth Host
 ~~~~~~~~~~~~~~
