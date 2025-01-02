@@ -12,6 +12,8 @@ LOG_MODULE_REGISTER(idle_spim_loopback, LOG_LEVEL_INF);
 #include <zephyr/drivers/spi.h>
 #include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/pm/device_runtime.h>
+#include <zephyr/devicetree/clocks.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 #define	DELTA			(1)
 
@@ -49,6 +51,38 @@ static volatile uint32_t high, low;
 static struct k_timer my_timer;
 static bool timer_expired;
 
+#if defined(CONFIG_CLOCK_CONTROL)
+const struct nrf_clock_spec clk_spec_global_hsfll = {
+	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
+};
+
+/*
+ * Set Global Domain frequency (HSFLL120)
+ * based on: CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
+ */
+void set_global_domain_frequency(void)
+{
+	int err;
+	int res;
+	struct onoff_client cli;
+	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
+
+	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
+	sys_notify_init_spinwait(&cli.notify);
+	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
+	printk("Return code: %d\n", err);
+	__ASSERT_NO_MSG(err < 3);
+	__ASSERT_NO_MSG(err >= 0);
+	do {
+		err = sys_notify_fetch_result(&cli.notify, &res);
+		k_yield();
+	} while (err == -EAGAIN);
+	printk("Clock control request return value: %d\n", err);
+	printk("Clock control request response code: %d\n", res);
+	__ASSERT_NO_MSG(err == 0);
+	__ASSERT_NO_MSG(res == 0);
+}
+#endif /* CONFIG_CLOCK_CONTROL */
 
 void my_timer_handler(struct k_timer *dummy)
 {
@@ -96,6 +130,12 @@ int main(void)
 		.buffers = &rx_spi_buf,
 		.count = 1
 	};
+
+#if defined(CONFIG_CLOCK_CONTROL)
+	k_msleep(1000);
+	set_global_domain_frequency();
+	k_msleep(100);
+#endif
 
 	LOG_INF("Multicore idle_spi_loopback test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Core will sleep for %u ms", CONFIG_TEST_SLEEP_DURATION_MS);
