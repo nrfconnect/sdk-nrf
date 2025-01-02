@@ -25,8 +25,8 @@
 		nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RXS>;
 		#address-cells = < 0x1 >;
 		#size-cells = < 0x1 >;
-		cpurad_slot0_partition: partition@66000 {
-			reg = < 0x66000 DT_SIZE_K(200) >;
+		cpurad_slot0_partition: partition@54000 {
+			reg = < 0x54000 DT_SIZE_K(200) >;
 		};
 	};
 };

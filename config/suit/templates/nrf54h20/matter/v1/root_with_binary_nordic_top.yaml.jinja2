@@ -153,6 +153,25 @@ SUIT_Envelope_Tagged:
 
     suit-install:
     - suit-directive-set-component-index: 0
+{%- if nordic_top %}
+    - suit-directive-override-parameters:
+        suit-parameter-uri: '#top'
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-condition-dependency-integrity:
+      - suit-send-record-success
+      - suit-send-record-failure
+      - suit-send-sysinfo-success
+      - suit-send-sysinfo-failure
+    - suit-directive-run-sequence:
+      - suit-directive-override-parameters:
+          suit-parameter-soft-failure: True
+      - suit-directive-process-dependency:
+        - suit-send-record-success
+        - suit-send-record-failure
+        - suit-send-sysinfo-success
+        - suit-send-sysinfo-failure
+{%- endif %}
 {%- if application is defined %}
     - suit-directive-override-parameters:
         suit-parameter-uri: '#{{ application['name'] }}'
@@ -172,22 +191,6 @@ SUIT_Envelope_Tagged:
 {%- if radio is defined %}
     - suit-directive-override-parameters:
         suit-parameter-uri: '#{{ radio['name'] }}'
-    - suit-directive-fetch:
-      - suit-send-record-failure
-    - suit-condition-dependency-integrity:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
-    - suit-directive-process-dependency:
-      - suit-send-record-success
-      - suit-send-record-failure
-      - suit-send-sysinfo-success
-      - suit-send-sysinfo-failure
-{%- endif %}
-{%- if nordic_top %}
-    - suit-directive-override-parameters:
-        suit-parameter-uri: '#top'
     - suit-directive-fetch:
       - suit-send-record-failure
     - suit-condition-dependency-integrity:
