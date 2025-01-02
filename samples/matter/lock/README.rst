@@ -319,6 +319,13 @@ For example:
 
 .. matter_door_lock_sample_build_with_dfu_end
 
+SUIT DFU on nRF54H20
+--------------------
+
+.. include:: ../template/README.rst
+    :start-after: matter_template_dfu_suit_start
+    :end-before: matter_template_dfu_suit_end
+
 .. _matter_lock_sample_configuration_fem:
 
 FEM support

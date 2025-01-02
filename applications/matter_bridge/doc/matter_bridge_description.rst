@@ -98,13 +98,17 @@ For example:
 
 For information about how to upgrade the device firmware using a PC or a smartphone, see the :ref:`matter_bridge_app_dfu` section.
 
-.. note::
-    Currently the DFU over Bluetooth LE SMP and Matter OTA are not available for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
-
 The Matter bridge device has an additional functionality, enabling it to work as a smart plug.
 This feature provides an additional endpoint with an ID equal to 2, which represents Matter on/off smart plug device type functionality.
 This means that you can integrate the Matter bridge functionality into your end product, such as a smart plug, and avoid having to use a standalone bridge device.
 This is an optional feature and can be enabled by :ref:`Configuring the smart plug functionality <matter_bridge_smart_plug_functionality>`.
+
+SUIT DFU on nRF54H20
+====================
+
+.. include:: ../../../samples/matter/template/README.rst
+    :start-after: matter_template_dfu_suit_start
+    :end-before: matter_template_dfu_suit_end
 
 .. _matter_bridge_app_bridged_support:
 
