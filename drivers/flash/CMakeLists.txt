@@ -5,3 +5,4 @@
 #
 
 add_subdirectory_ifdef(CONFIG_FLASH_RPC flash_rpc)
+add_subdirectory_ifdef(CONFIG_FLASH_IPUC flash_ipuc)

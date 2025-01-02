@@ -290,6 +290,7 @@
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
+/drivers/flash/flash_ipuc/                @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/hw_cc3xx/                        @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
@@ -328,6 +329,7 @@
 /include/dfu/suit_dfu_fetch_source.h      @nrfconnect/ncs-charon
 /include/dfu/suit_dfu.h                   @nrfconnect/ncs-charon
 /include/drivers/flash/                   @nrfconnect/ncs-co-drivers
+/include/drivers/flash/flash_ipuc.h       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/nrfe_mspi.h         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
