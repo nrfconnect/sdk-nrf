@@ -46,6 +46,10 @@
 #include <ram_pwrdn.h>
 #endif
 
+#ifdef CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL
+#include <mpsl/mpsl_lib.h>
+#endif
+
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/OnboardingCodesUtil.h>
@@ -191,6 +195,14 @@ CHIP_ERROR InitNetworkingStack()
 #define VerifyInitResultOrReturnError(ec, msg)                                                                         \
 	VerifyOrReturnError(ec == CHIP_NO_ERROR, ec, LOG_ERR(msg " [Error: %d]", sInitResult.Format()))
 
+void FactoryResetCallback(intptr_t /* unused */)
+{
+#ifdef CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	// Disable mpsl before start removing settings to improve the performance.
+	mpsl_lib_uninit();
+#endif
+}
+
 void DoInitChipServer(intptr_t /* unused */)
 {
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
@@ -294,6 +306,7 @@ void DoInitChipServer(intptr_t /* unused */)
 	VerifyInitResultOrReturn(sInitResult, "Cannot register CHIP event handler");
 
 	SetDeviceInfoProvider(sLocalInitData.mDeviceInfoProvider);
+	ConfigurationManagerImpl().SetFactoryResetDeviceCallback(FactoryResetCallback);
 
 	sInitResult = Server::GetInstance().Init(*sLocalInitData.mServerInitParams);
 	VerifyInitResultOrReturn(sInitResult, "Server::Init() failed");

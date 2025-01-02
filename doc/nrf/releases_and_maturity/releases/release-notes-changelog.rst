@@ -133,7 +133,9 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Added the factory reset callback and described its usage in the :ref:`ug_matter_persistent_storage_factory_reset` section of the Matter documentation.
+  The default implementation of the factory reset callback disables the :ref:`mpsl` before performing flash operations to speed up the process.
+  The :ref:`mpsl` is also disabled during the last fabric removal process and is re-enabled after the flash operations are completed.
 
 Matter fork
 +++++++++++

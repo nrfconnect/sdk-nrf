@@ -229,6 +229,20 @@ Additionally, in case of the secure storage backend, the following Kconfig optio
 * :ref:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_MAX_ENTRY_NUMBER<CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_MAX_ENTRY_NUMBER>` - Defines the maximum number or assets that can be stored in the secure storage.
 * :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE` - Defines the maximum length of the secret that is stored.
 
+.. _ug_matter_persistent_storage_factory_reset:
+
+Factory reset
+-------------
+
+The factory reset functionality allows you to reset the device to its factory settings and remove all non-volatile data related to Matter and network.
+If you need to remove application-specific data, you must do it manually or use a dedicated callback function.
+The default implementation of the factory reset callback is located in the :file:`ncs/nrf/samples/matter/common/src/app/matter_init.cpp` file and it disables the :ref:`mpsl` to speed up flash operations during the factory reset.
+Disabling :ref:`mpsl` before performing flash operations is recommended for single-core devices only because they require synchronization between the flash driver and :ref:`mpsl`.
+
+To define your own factory reset callback, implement and set it in the Configuration Manager module using the ``ConfigurationManagerImpl().SetFactoryResetDeviceCallback()`` method after initializing the Matter stack.
+The Configuration Manager module implementation for Zephyr platform is located in the :file:`ncs/modules/lib/matter/src/platform/Zephyr/ConfigurationManagerImpl.h` file.
+In the callback, you can remove application-specific data, such as specific Zephyr settings, and perform any actions needed before performing the factory reset and rebooting the device.
+
 .. _ug_matter_configuration_diagnostic_logs:
 
 Diagnostic logs
