@@ -49,6 +49,17 @@ static const char client_cert2_test[] = {
 static const char client_key2_test[] = {
 	#include <wifi_enterprise_test_certs/client-key2.pem.inc>
 	'\0'};
+
+static bool is_enterprise_security(enum wifi_security_type security)
+{
+	switch (security) {
+	case WIFI_SECURITY_TYPE_EAP_TLS:
+	case WIFI_SECURITY_TYPE_EAP_TLS_SHA256:
+		return true;
+	default:
+		return false;
+	}
+}
 #endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 
 static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
@@ -100,7 +111,7 @@ static int __stored_creds_to_params(struct wifi_credentials_personal *creds,
 	/* Defaults */
 	params->security = creds->header.type;
 #ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
-	if (params->security == WIFI_SECURITY_TYPE_EAP_TLS) {
+	if (is_enterprise_security(params->security)) {
 		if (creds->header.key_passwd_length > 0) {
 			key_passwd = (char *)k_malloc(creds->header.key_passwd_length + 1);
 			if (!key_passwd) {
@@ -225,7 +236,7 @@ static int add_network_from_credentials_struct_personal(struct wifi_credentials_
 
 #ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
 	/* Load the enterprise credentials if needed */
-	if (cnx_params.security == WIFI_SECURITY_TYPE_EAP_TLS) {
+	if (is_enterprise_security(cnx_params.security)) {
 		wifi_set_enterprise_creds(iface);
 	}
 #endif
