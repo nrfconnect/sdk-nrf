@@ -10,8 +10,6 @@
 #include <cracen/statuscodes.h>
 #include "waitqueue.h"
 
-extern struct sx_pk_cnx silex_pk_engine;
-
 void si_task_init(struct sitask *t, char *workmem, size_t workmemsz)
 {
 	assert(t);

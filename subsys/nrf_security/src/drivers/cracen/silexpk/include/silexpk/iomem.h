@@ -7,6 +7,12 @@
 #ifndef IOMEM_HEADER_FILE
 #define IOMEM_HEADER_FILE
 
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+#define SX_WARN_UNALIGNED_ADDR(addr) printk("%s: WARNING: unaligned address %p\r\n", __func__, addr)
+#else
+#define SX_WARN_UNALIGNED_ADDR(addr)
+#endif
+
 /** Clear device memory
  *
  * @param[in] dst Memory to clear.

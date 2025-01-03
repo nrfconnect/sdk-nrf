@@ -8,6 +8,7 @@
 #ifndef PKHARDWARE_BA414E_H
 #define PKHARDWARE_BA414E_H
 
+#include <silexpk/core.h>
 #include <stdint.h>
 
 struct sx_pk_cmd_def {
