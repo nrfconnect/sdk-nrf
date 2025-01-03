@@ -33,11 +33,11 @@
 			label = "RGB red channel";
 		};
 		green_led: led_2 {
-			gpios = <&gpio0 30 0>;
+			gpios = <&gpio0 31 0>;
 			label = "RGB green channel";
 		};
 		blue_led: led_3 {
-			gpios = <&gpio0 31 0>;
+			gpios = <&gpio0 30 0>;
 			label = "RGB blue channel";
 		};
 	};
@@ -48,10 +48,10 @@
 			pwms = <&pwm0 0 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
 		};
 		pwm_led1: pwm_led_1 {
-			pwms = <&pwm0 1 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+			pwms = <&pwm0 2 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
 		};
 		pwm_led2: pwm_led_2 {
-			pwms = <&pwm0 2 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+			pwms = <&pwm0 1 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
 		};
 	};
 	zephyr,user {
