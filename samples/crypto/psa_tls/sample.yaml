@@ -218,12 +218,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -238,14 +240,16 @@ tests:
     extra_args:
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
     platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -263,12 +267,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -285,12 +291,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -354,9 +362,11 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
     tags:
       - ci_build
       - cracen_oberon
@@ -370,9 +380,11 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
     tags:
       - ci_build
       - cracen_oberon
