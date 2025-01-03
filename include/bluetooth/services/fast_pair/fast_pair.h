@@ -302,7 +302,8 @@ int bt_fast_pair_battery_set(enum bt_fast_pair_battery_comp battery_comp,
  *  This function can only be called before enabling Fast Pair with the @ref bt_fast_pair_enable
  *  API.
  *
- *  This function must be called in the cooperative thread context.
+ *  This function must be called in the cooperative thread context or in the system initialization
+ *  context (@ref SYS_INIT macro).
  *
  *  @param cb Callback struct.
  *
