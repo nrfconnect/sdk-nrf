@@ -880,12 +880,18 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
 		psa_key_attributes_t stored_attributes;
 
-		if (key_buffer_size < cracen_get_opaque_size(attributes)) {
+		size_t opaque_key_size;
+		psa_status_t status = cracen_get_opaque_size(attributes, &opaque_key_size);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		if (key_buffer_size < opaque_key_size) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
 
-		psa_status_t status = cracen_kmu_provision(attributes, slot_id, data, data_length);
-
+		status = cracen_kmu_provision(attributes, slot_id, data, data_length);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -1199,12 +1205,19 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 							    PSA_KEY_USAGE_VERIFY_HASH |
 							    PSA_KEY_USAGE_VERIFY_MESSAGE);
 
+		size_t opaque_key_size;
+		psa_status_t status = cracen_get_opaque_size(attributes, &opaque_key_size)
+
+		if(status != PSA_SUCCESS){
+			return status;
+		}
+
 		/* According to the PSA Crypto Driver interface proposed document the driver
 		 * should fill the attributes even if the buffer of the key is too small. So
 		 * we check the buffer here and not earlier in the function.
 		 */
-		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
-			*key_buffer_length = cracen_get_opaque_size(attributes);
+		if (key_buffer_size >= opaque_key_size) {
+			*key_buffer_length = opaque_key_size;
 			*((ikg_opaque_key *)key_buffer) =
 				(ikg_opaque_key){.slot_number = slot_number,
 						 .owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(
@@ -1226,11 +1239,17 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		psa_set_key_usage_flags(attributes,
 					PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_VERIFY_DERIVATION);
 
+		size_t opaque_key_size;
+		psa_status_t status = cracen_get_opaque_size(attributes, &opaque_key_size)
+
+		if(status != PSA_SUCCESS){
+			return status;
+		}
 		/* See comment about the placement of this check in the previous switch
 		 * case.
 		 */
-		if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
-			*key_buffer_length = cracen_get_opaque_size(attributes);
+		if (key_buffer_size >= opaque_key_size) {
+			*key_buffer_length = opaque_key_size;
 			*((ikg_opaque_key *)key_buffer) =
 				(ikg_opaque_key){.slot_number = slot_number,
 						 .owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(
