@@ -1,6 +1,9 @@
 common:
   sysbuild: true
-  tags: ci_build ci_tests_benchmarks_multicore spim
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
+    - spim
   platform_allow:
     - nrf54h20dk/nrf54h20/cpuapp
   integration_platforms:
@@ -27,8 +30,8 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes.idle:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -37,8 +40,7 @@ tests:
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.s2ram:
     tags: ppk_power_measure
-    extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+    extra_args: idle_spim_loopback_CONF_FILE=prj_s2ram.conf
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -47,7 +49,7 @@ tests:
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.no_sleep_fast:
     extra_args:
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -62,9 +64,9 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes.idle_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -74,8 +76,8 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -126,8 +128,7 @@ tests:
   #
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.no_sleep:
-    extra_args:
-      idle_spim_loopback_CONFIG_DATA_FIELD=16
+    extra_args: idle_spim_loopback_CONFIG_DATA_FIELD=16
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -142,9 +143,9 @@ tests:
   benchmarks.multicore.idle_spim_loopback.16_bytes.idle:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
-      idle_spim_loopback_CONFIG_DATA_FIELD=16
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_CONFIG_DATA_FIELD=16
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -154,8 +155,8 @@ tests:
   benchmarks.multicore.idle_spim_loopback.16_bytes.s2ram:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_DATA_FIELD=16
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_DATA_FIELD=16
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -164,8 +165,8 @@ tests:
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.no_sleep_fast:
     extra_args:
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
-      idle_spim_loopback_CONFIG_DATA_FIELD=16
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_DATA_FIELD=16
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -180,10 +181,10 @@ tests:
   benchmarks.multicore.idle_spim_loopback.16_bytes.idle_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
-      idle_spim_loopback_CONFIG_DATA_FIELD=16
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_DATA_FIELD=16
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -193,9 +194,9 @@ tests:
   benchmarks.multicore.idle_spim_loopback.16_bytes.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
-      idle_spim_loopback_CONFIG_DATA_FIELD=16
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_DATA_FIELD=16
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -251,9 +252,9 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_lock.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -267,9 +268,9 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_spi_lock.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -282,8 +283,8 @@ tests:
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.no_sleep:
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -300,10 +301,10 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.idle:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -313,9 +314,9 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.s2ram:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -324,9 +325,9 @@ tests:
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.no_sleep_fast:
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -343,11 +344,11 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.idle_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -357,10 +358,10 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -374,9 +375,9 @@ tests:
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.no_sleep:
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -394,11 +395,11 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.idle:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -408,10 +409,10 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.s2ram:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -420,10 +421,10 @@ tests:
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.no_sleep_fast:
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -441,12 +442,12 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.idle_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback
@@ -456,11 +457,11 @@ tests:
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.s2ram_fast:
     tags: ppk_power_measure
     extra_args:
-      idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
-      idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
-      idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
-      idle_spim_loopback_CONF_FILE=prj_s2ram.conf
-      idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
+      - idle_spim_loopback_CONFIG_TEST_SPI_HOLD_ON_CS=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_LOCK_ON=y
+      - idle_spim_loopback_CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP=n
+      - idle_spim_loopback_CONF_FILE=prj_s2ram.conf
+      - idle_spim_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay"
     harness: pytest
     harness_config:
       fixture: spi_loopback

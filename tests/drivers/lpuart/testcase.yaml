@@ -1,6 +1,9 @@
 common:
-  tags: lpuart sysbuild ci_tests_drivers_lpuart
+  tags:
 
+    - lpuart
+    - sysbuild
+    - ci_tests_drivers_lpuart
 tests:
   lpuart.loopback_busy_sim:
     sysbuild: true
@@ -83,7 +86,9 @@ tests:
       fixture: gpio_loopback
   lpuart.two_chip_test:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160 nrf9160dk/nrf52840
+    platform_allow:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
@@ -92,7 +97,9 @@ tests:
       - CONFIG_TEST_LPUART_TIMEOUT=10
   lpuart.two_chip_test_busy_sim:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160 nrf9160dk/nrf52840
+    platform_allow:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840
@@ -102,7 +109,9 @@ tests:
       - CONFIG_TEST_BUSY_SIM=y
   lpuart.two_chip_test_debug:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160 nrf9160dk/nrf52840
+    platform_allow:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf9160dk/nrf52840

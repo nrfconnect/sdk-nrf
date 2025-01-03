@@ -11,7 +11,10 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9161dk/nrf9161/ns
     extra_args: EXTRA_CONF_FILE="overlay-eu.conf"
-    tags: ci_build sysbuild ci_samples_dect
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_dect
   sample.dect_phy.dect_hello.us.sysbuild:
     sysbuild: true
     build_only: true
@@ -22,4 +25,7 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9161dk/nrf9161/ns
     extra_args: EXTRA_CONF_FILE="overlay-us.conf"
-    tags: ci_build sysbuild ci_samples_dect
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_dect

@@ -1,6 +1,9 @@
 common:
   sysbuild: true
-  tags: ci_tests_benchmarks_current_consumption ppk_power_measure sensors
+  tags:
+    - ci_tests_benchmarks_current_consumption
+    - ppk_power_measure
+    - sensors
   harness: pytest
 
 tests:

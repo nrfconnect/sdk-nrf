@@ -11,4 +11,6 @@ tests:
     integration_platforms:
       - thingy91/nrf52840
       - thingy91x/nrf5340/cpuapp
-    tags: ci_build sysbuild
+    tags:
+      - ci_build
+      - sysbuild

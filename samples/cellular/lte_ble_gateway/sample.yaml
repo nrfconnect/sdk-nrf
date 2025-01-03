@@ -7,4 +7,7 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160/ns
     platform_allow: nrf9160dk/nrf9160/ns
-    tags: ci_build sysbuild ci_samples_cellular
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
