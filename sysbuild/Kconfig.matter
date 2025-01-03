@@ -37,7 +37,22 @@ config MATTER_OTA_IMAGE_FILE_NAME
 	help
 	  Provides the file name of the generated Matter OTA image in the build directory.
 
+if SOC_SERIES_NRF54HX
+
+config SUIT_ENVELOPE
+	default y
+
+config SUIT_BUILD_FLASH_COMPANION
+	default y
+
+config SUIT_MULTI_IMAGE_PACKAGE_BUILD
+	default y if MATTER_OTA
+
 config SUIT_BASE_MANIFEST_VARIANT
 	default "matter/v1"
 
-endif
+config SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE
+	default y if SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY != ""
+
+endif # SOC_SERIES_NRF54HX
+endif # MATTER
