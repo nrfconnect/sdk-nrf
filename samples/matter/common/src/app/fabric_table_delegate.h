@@ -12,6 +12,10 @@
 
 #include "app/group_data_provider.h"
 
+#ifdef CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL
+#include <mpsl/mpsl_lib.h>
+#endif
+
 #ifdef CONFIG_CHIP_WIFI
 #include <platform/nrfconnect/wifi/WiFiManager.h>
 #endif
@@ -57,10 +61,18 @@ private:
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
 				chip::DeviceLayer::ThreadStackMgr().ClearAllSrpHostAndServices();
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
+#ifdef CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL
+				/* Disable mpsl before start removing settings to improve the performance. */
+				mpsl_lib_uninit();
+#endif
 				/* Erase Matter data */
 				chip::DeviceLayer::PersistedStorage::KeyValueStoreMgrImpl().DoFactoryReset();
 				/* Erase Network credentials and disconnect */
 				chip::DeviceLayer::ConnectivityMgr().ErasePersistentInfo();
+#ifdef CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL
+				/* Re-enable mpsl after clearing persistent data. */
+				mpsl_lib_init();
+#endif
 #ifdef CONFIG_CHIP_WIFI
 				chip::DeviceLayer::WiFiManager::Instance().Disconnect();
 				chip::DeviceLayer::ConnectivityMgr().ClearWiFiStationProvision();
