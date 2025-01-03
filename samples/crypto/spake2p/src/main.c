@@ -133,7 +133,7 @@ int main(void)
 
 	status = psa_import_key(&key_attributes, key_pair, sizeof(key_pair), &key);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_import_key failed. (Error: %d)", status);
+		LOG_INF("Key pair psa_import_key failed. (Error: %d)", status);
 		goto error;
 	}
 
@@ -146,7 +146,7 @@ int main(void)
 
 	status = psa_import_key(&key_attributes, public_key, sizeof(public_key), &key_server);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_import_key failed. (Error: %d)", status);
+		LOG_INF("Public key psa_import_key failed. (Error: %d)", status);
 		goto error;
 	}
 
