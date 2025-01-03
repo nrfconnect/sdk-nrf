@@ -479,7 +479,7 @@ Enhanced ShockBurst (ESB)
 
 The issues in this section are related to the :ref:`ug_esb` protocol.
 
-.. rst-class:: v2.9
+.. rst-class:: v2-9-0
 
 NCSDK-30802: Packet retransmission is not working properly in the ESB for the nRF54 Series devices
   The device suddenly stops transmitting ESB packets.
