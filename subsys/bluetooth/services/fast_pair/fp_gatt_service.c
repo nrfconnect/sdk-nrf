@@ -851,8 +851,9 @@ static void fp_info_cb_account_key_written_notify(struct bt_conn *conn)
 
 int bt_fast_pair_info_cb_register(struct bt_fast_pair_info_cb *cb)
 {
-	/* It is assumed that this function executes in the cooperative thread context. */
-	__ASSERT_NO_MSG(!k_is_preempt_thread());
+	/* It is assumed that this function executes in the cooperative thread context
+	 * or in the system initialization context (SYS_INIT macro).
+	 */
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
 	if (bt_fast_pair_is_ready()) {
