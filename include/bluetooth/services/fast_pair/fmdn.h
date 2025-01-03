@@ -14,9 +14,11 @@
  * @defgroup bt_fast_pair_fmdn Fast Pair FMDN API
  * @brief Fast Pair FMDN API
  *
- *  It is required to use the Fast Pair FMDN API in the cooperative thread context
- *  (for example, system workqueue thread). Following this requirement guarantees
- *  a proper synchronization between the user operations and the module operations.
+ *  It is required to use the Fast Pair FMDN API in the cooperative thread context.
+ *  API function exceptions that do not follow this rule mention alternative requirements
+ *  explicitly in their API documentation. Following the cooperative thread context
+ *  requirement guarantees proper synchronization between the user operations and the
+ *  module operations.
  *
  * @{
  */
@@ -234,6 +236,9 @@ struct bt_fast_pair_fmdn_ring_cb {
  *  You can call this function only in the disabled state of the FMDN module
  *  (see @ref bt_fast_pair_is_ready function).
  *
+ *  This function must be called in the cooperative thread context or in the system initialization
+ *  context (@ref SYS_INIT macro).
+ *
  *  @param cb Ringing callback structure.
  *
  *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
@@ -354,6 +359,9 @@ struct bt_fast_pair_fmdn_motion_detector_cb {
  *
  *  You can call this function only in the disabled state of the FMDN module
  *  (see @ref bt_fast_pair_is_ready function).
+ *
+ *  This function must be called in the cooperative thread context or in the system initialization
+ *  context (@ref SYS_INIT macro).
  *
  *  @param cb Motion detector callback structure.
  *
@@ -529,6 +537,9 @@ struct bt_fast_pair_fmdn_info_cb {
  *  This API for callback registration is optional and does not have to be used. You can
  *  register multiple instances of information callbacks.
  *
+ *  This function must be called in the cooperative thread context or in the system initialization
+ *  context (@ref SYS_INIT macro).
+ *
  *  @param cb Information callback structure.
  *
  *  @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
@@ -564,6 +575,9 @@ struct bt_fast_pair_fmdn_read_mode_cb {
  *
  *  You can call this function only in the disabled state of the FMDN module
  *  (see @ref bt_fast_pair_is_ready function).
+ *
+ *  This function must be called in the cooperative thread context or in the system initialization
+ *  context (@ref SYS_INIT macro).
  *
  *  @param cb Read mode callback structure.
  *
