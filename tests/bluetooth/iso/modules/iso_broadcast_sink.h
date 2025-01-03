@@ -9,6 +9,9 @@
 
 #include <stdint.h>
 
+typedef void (*sim_iso_recv_cb_t)(uint32_t last_count, uint32_t counts_fail,
+				  uint32_t counts_success);
+
 /** @brief Initialize the ISO broadcast sink.
  *
  * @note This code is intended for CI testing and is based on a Zephyr sample.
@@ -16,6 +19,6 @@
  *
  * @retval 0 The initialization was successful, error otherwise.
  */
-int iso_broadcast_sink_init(void);
+int iso_broadcast_sink_init(sim_iso_recv_cb_t sim_iso_recv_cb);
 
 #endif
