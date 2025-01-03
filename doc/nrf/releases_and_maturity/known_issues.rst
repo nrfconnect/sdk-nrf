@@ -1242,6 +1242,33 @@ Zigbee
 
 The issues in this section are related to the :ref:`ug_zigbee` protocol.
 
+.. rst-class:: v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+NCSIDB-1411: Clearing configuration data is not fully performed when processing the Leave Network command
+   Configuration data of ZCL Reporting feature is not cleared when processing the leave network command, resulting in incomplete compliance with the specification.
+
+   The Zigbee BDB 3.0 Specification, section 9.4 says that all Zigbee persistent data (with exceptions ..) must be cleared in response to the Mgmt_Leave_req command, however the stack leaves the ZCL Reporting parameter values ​​set (cached in memory) and continues to use them.
+
+   **Workaround:** You can supplement the processing of the Leave Network command with ZCL Reporting parameter clearing by adding a :c:func:`zb_zcl_init_reporting_info` call in the ``ZB_ZDO_SIGNAL_LEAVE`` handler.
+   See the following snippet for an example:
+
+  .. code-block:: c
+
+     case ZB_ZDO_SIGNAL_LEAVE:
+         /* Device leaves the network. */
+         if (status == RET_OK) {
+             zb_zdo_signal_leave_params_t *leave_params =
+                 ZB_ZDO_SIGNAL_GET_PARAMS(sig_hndler, zb_zdo_signal_leave_params_t);
+
+             if (leave_params->leave_type == ZB_NWK_LEAVE_TYPE_RESET) {
+                /* Workaround for NCSIDB-1411 - clearing ZCL Reporting parameters. */
+                zb_zcl_init_reporting_info();
+             }
+        }
+        /* Call default signal handler. */
+        ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
+        break;
+
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
 NCSIDB-1336: Zigbee Router device cannot rejoin after missing Network Key update or rotation
