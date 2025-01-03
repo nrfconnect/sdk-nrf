@@ -44,9 +44,8 @@ To use the module, you must fulfill the following requirements:
 #. Configure LEDs in DTS.
    See `Configuring LEDs in DTS`_ for details.
 
-The following Kconfig options are also available for this module:
-
-* :kconfig:option:`CONFIG_CAF_LEDS_PM_EVENTS` - This option enables the reaction to `Power management events`_.
+The :kconfig:option:`CONFIG_CAF_LEDS_PM_EVENTS` Kconfig option is also available for this module.
+It enables the reaction to `Power management events`_.
 
 .. note::
    The GPIO-based LED driver implementation supports only turning LED on or off.

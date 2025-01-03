@@ -23,26 +23,26 @@ Module events
 Configuration
 *************
 
-The module is enabled by selecting the :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option.
+To enable the module, use the :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` Kconfig option.
 
 The :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` option.
 The module is enabled by default for the nRF Desktop dongles because the dongles forward the HID data to the host connected over USB.
 See the :ref:`nrf_desktop_hid_configuration` documentation for details.
 
-The module can be used with either the USB legacy stack or the USB next stack.
-The USB stack is selected by enabling one of the following Kconfig choice options:
+You can use the module with either the USB legacy stack or the USB next stack.
+To select the USB stack, enable one of the following Kconfig choice options:
 
 * :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>`
   The option enables USB legacy stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK`).
   The USB legacy stack is used by default.
 * :ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>`
   The option enables USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
-  This is the only USB stack that supports USB High-Speed and the nRF54H20 platform.
+  This is the only USB stack that supports USB High-Speed and the nRF54H20 devices.
 
 .. note::
-  The USB next stack integration is :ref:`experimental <software_maturity>`.
-  The HID boot protocol integration is not yet fully tested and may not work properly.
-  The secondary image slot background erase in :ref:`nrf_desktop_dfu` may cause missing USB HID subscriptions after a USB cable is attached.
+   The USB next stack integration is :ref:`experimental <software_maturity>`.
+   The HID boot protocol integration is not yet fully tested and may not work properly.
+   The secondary image slot background erase in :ref:`nrf_desktop_dfu` may cause missing USB HID subscriptions after a USB cable is attached.
 
 Some of the properties are configured in the same way for both stacks, but part of the configuration is specific to the selected USB stack.
 See the following sections for details.
@@ -102,10 +102,10 @@ See the subsections below for details.
 nRF Desktop peripheral
 ----------------------
 
-The nRF Desktop peripheral devices by default use only a single HID-class USB instance.
+By default, the nRF Desktop peripheral devices use only a single HID-class USB instance.
 In that case, this instance is used for all the HID reports.
 
-Enable :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` to use more than one USB HID-class instance on the nRF Desktop peripheral.
+Enable the :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` Kconfig option to use more than one USB HID-class instance on the nRF Desktop peripheral.
 Make sure to configure additional HID-class USB instances and create an additional :file:`usb_state_def.h` header in the configuration.
 The header assigns HID input reports to the HID-class USB instances.
 A given HID report can be handled only by a single HID-class USB instance.
@@ -143,14 +143,14 @@ The same instance is used after reconnection.
 USB HID configuration in USB legacy stack
 -----------------------------------------
 
-For the USB legacy stack, the :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>` selects the required dependencies: :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID` Kconfig options.
-The number of HID-class USB instances in the USB legacy stack is specified by :kconfig:option:`CONFIG_USB_HID_DEVICE_COUNT`.
+For the USB legacy stack, the :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>` Kconfig option selects the required dependencies: :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID`.
+The number of HID-class USB instances in the USB legacy stack is specified by the :kconfig:option:`CONFIG_USB_HID_DEVICE_COUNT` option.
 The default value of this option is updated to match requirements for either an nRF Desktop peripheral or a dongle.
 
 Low latency device configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The module sets the default value of :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` to ``1``.
+The module sets the default value of the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option to ``1``.
 For low latency of HID reports, the device requests a polling rate of 1 ms.
 
 Boot protocol configuration
@@ -236,12 +236,12 @@ The module sends the report using :c:struct:`hid_report_event`, that is handled 
 nRF54H20 support
 ================
 
-Due to the characteristics of the nRF54H20 USB Device Controller (UDC), following change has been made in the USB state module to support the nRF54H20 platform:
+Due to the characteristics of the nRF54H20 USB Device Controller (UDC), following change has been made in the USB state module to support the nRF54H20 devices:
 
 * The module disables the USB stack when the USB cable is disconnected and enables the stack when the cable is connected.
 
-This change is applicable to the nRF54H20 platform only.
-It is necessary to ensure proper USB stack operation on the nRF54H20 platform.
+This change is applicable to the nRF54H20 devices only.
+It is necessary to ensure proper USB stack operation on the nRF54H20 devices.
 
 The :kconfig:option:`CONFIG_UDC_DWC2_USBHS_VBUS_READY_TIMEOUT` Kconfig option is set to a non-zero value to prevent the :c:func:`usbd_enable` function from blocking the application forever when the USB cable is not connected.
 Instead, the function returns an error on timeout.
