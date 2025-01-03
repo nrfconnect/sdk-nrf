@@ -8,14 +8,15 @@
 
 #include <zephyr/kernel.h>
 
-#include "../hw/ba414/regs_addr.h"
-#include <silexpk/core.h>
-#include "../hw/ba414/pkhardware_ba414e.h"
-#include <cracen/interrupts.h>
-#include <cracen/statuscodes.h>
 #include "../hw/ba414/ba414_status.h"
+#include "../hw/ba414/pkhardware_ba414e.h"
+#include "../hw/ba414/regs_addr.h"
 #include "../hw/ik/ikhardware.h"
 #include "../hw/ik/regs_addr.h"
+#include <silexpk/core.h>
+#include <silexpk/iomem.h>
+#include <cracen/interrupts.h>
+#include <cracen/statuscodes.h>
 #include "internal.h"
 
 #include <hal/nrf_cracen.h>
@@ -27,10 +28,6 @@
 #endif
 #ifndef ADDR_BA414EP_CRYPTORAM_BASE
 #define ADDR_BA414EP_CRYPTORAM_BASE CRACEN_ADDR_BA414EP_CRYPTORAM_BASE
-#endif
-
-#ifndef SX_PK_MICROCODE_ADDRESS
-#define SX_PK_MICROCODE_ADDRESS CRACEN_SX_PK_MICROCODE_ADDRESS
 #endif
 
 #ifndef NULL
@@ -50,7 +47,7 @@ struct sx_pk_cnx {
 	struct sx_pk_blinder *b;
 };
 
-struct sx_pk_cnx silex_pk_engine;
+static struct sx_pk_cnx silex_pk_engine;
 
 NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_asymmetric);
 
@@ -107,9 +104,12 @@ void sx_pk_wrreg(struct sx_regs *regs, uint32_t addr, uint32_t v)
 {
 	volatile uint32_t *p = (uint32_t *)(regs->base + addr);
 
-#ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_pk_wrreg(addr=0x%x, sum=0x%x, val=0x%x);\r\n", addr, (uint32_t)p, v);
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_pk_wrreg(addr=0x%x, p=%p, val=0x%x)\r\n", addr, p, v);
 #endif
+	if ((uintptr_t)p % 4) {
+		SX_WARN_UNALIGNED_ADDR(p);
+	}
 
 	*p = v;
 }
@@ -119,10 +119,17 @@ uint32_t sx_pk_rdreg(struct sx_regs *regs, uint32_t addr)
 	volatile uint32_t *p = (uint32_t *)(regs->base + addr);
 	uint32_t v;
 
+
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_pk_rdreg(addr=0x%x, p=%p)\r\n", addr, p);
+#endif
+	if ((uintptr_t)p % 4) {
+		SX_WARN_UNALIGNED_ADDR(p);
+	}
+
 	v = *p;
 
-#ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_pk_rdreg(addr=0x%x, sum=0x%x);\r\n", addr, (uint32_t)p);
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("result = 0x%x\r\n", v);
 #endif
 
