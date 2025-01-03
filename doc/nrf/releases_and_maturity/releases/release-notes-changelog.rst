@@ -453,6 +453,9 @@ Modem libraries
 * :ref:`pdn_readme` library:
 
   * Added the :c:func:`pdn_dynamic_params_get_v6` function to get PDN parameters for IPv6-only.
+  * Changed logic DNS record expectation, because ISP sometimes sends 1 and even 0.
+  * Remove :c:func:`pdn_dynamic_params_get` and :c:func:`pdn_dynamic_params_get_v6`
+  * move :c:func:`link_api_pdp_context_dynamic_params_get` to common place as :c:func:`pdn_pdp_context_dynamic_params_get`
 
 * :ref:`lte_lc_readme` library:
 

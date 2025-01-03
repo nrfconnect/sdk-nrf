@@ -16,6 +16,9 @@
 extern "C" {
 #endif
 
+#define AT_CMD_PDP_CONTEXT_READ_PDP_TYPE_STR_MAX_LEN (6 + 1)
+#define APN_STR_MAX_LEN 64
+
 /**
  * @file pdn.h
  * @brief Public APIs for the PDN library.
@@ -52,6 +55,24 @@ struct pdn_pdp_opt {
 	 * 1 – Protected transmission of PCO is requested
 	 */
 	uint8_t secure_pco;
+};
+
+struct pdp_context_info {
+	uint32_t cid;
+	uint32_t ipv4_mtu;
+	uint32_t ipv6_mtu;
+	uint32_t pdn_id;
+	bool pdn_id_valid;
+	bool ctx_active;
+	char pdp_type_str[AT_CMD_PDP_CONTEXT_READ_PDP_TYPE_STR_MAX_LEN];
+	char apn_str[APN_STR_MAX_LEN];
+	char pdp_type;
+	struct in_addr ip_addr4;
+	struct in6_addr ip_addr6;
+	struct in_addr dns_addr4_primary;
+	struct in_addr dns_addr4_secondary;
+	struct in6_addr dns_addr6_primary;
+	struct in6_addr dns_addr6_secondary;
 };
 
 /** @brief PDN library event */
@@ -183,29 +204,11 @@ int pdn_id_get(uint8_t cid);
 /**
  * @brief Retrieve dynamic parameters of a given PDP context.
  *
- * @param cid The PDP context ID.
- * @param[out] dns4_pri The address of the primary IPv4 DNS server. Optional, can be NULL.
- * @param[out] dns4_sec The address of the secondary IPv4 DNS server. Optional, can be NULL.
- * @param[out] ipv4_mtu The IPv4 MTU. Optional, can be NULL.
+ * @param[inout] populated_info PDP context info.
  *
  * @return Zero on success or an error code on failure.
  */
-int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
-			   struct in_addr *dns4_sec, unsigned int *ipv4_mtu);
-
-/**
- * @brief Retrieve dynamic parameters of a given PDP context.
- *
- * @param cid The PDP context ID.
- * @param[out] dns6_pri The address of the primary IPv6 DNS server. Optional, can be NULL.
- * @param[out] dns6_sec The address of the secondary IPv6 DNS server. Optional, can be NULL.
- * @param[out] ipv6_mtu The IPv6 MTU. Optional, can be NULL.
- *
- * @return Zero on success or an error code on failure.
- */
-int pdn_dynamic_params_get_v6(uint8_t cid, struct in6_addr *dns6_pri,
-			   struct in6_addr *dns6_sec, unsigned int *ipv6_mtu);
-
+int pdn_pdp_context_dynamic_params_get(struct pdp_context_info *populated_info);
 /**
  * @brief Retrieve the default Access Point Name (APN).
  *

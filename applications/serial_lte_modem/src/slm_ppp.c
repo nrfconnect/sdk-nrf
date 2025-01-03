@@ -210,19 +210,17 @@ static int ppp_start_internal(void)
 		return -EADDRNOTAVAIL;
 	}
 
-	ret = pdn_dynamic_params_get(PDP_CID, &ctx->ipcp.my_options.dns1_address,
-				     &ctx->ipcp.my_options.dns2_address, &mtu);
-	if (ret) {
-		/* If any error happened on pdn getting with IPv4, try to parse with IPv6 */
-		ret = pdn_dynamic_params_get_v6(PDP_CID, NULL, NULL, &mtu);
-		if (ret) {
-			return ret;
-		}
-	}
+	struct pdp_context_info populated_info = {};
 
-	if (mtu) {
+	populated_info.cid = PDP_CID;
+	ret = pdn_pdp_context_dynamic_params_get(&populated_info);
+
+	if (populated_info.ipv4_mtu) {
 		/* Set the PPP MTU to that of the LTE link. */
-		mtu = MIN(mtu, sizeof(ppp_data_buf));
+		mtu = MIN(populated_info.ipv4_mtu, sizeof(ppp_data_buf));
+	} else if (populated_info.ipv6_mtu) {
+		/* Set the PPP MTU to that of the LTE link. */
+		mtu = MIN(populated_info.ipv6_mtu, sizeof(ppp_data_buf));
 	} else {
 		LOG_DBG("Could not retrieve MTU, using fallback value.");
 		mtu = CONFIG_SLM_PPP_FALLBACK_MTU;
