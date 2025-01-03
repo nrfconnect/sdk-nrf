@@ -19,10 +19,6 @@
 #include "bt_nus/bt_nus_service.h"
 #endif
 
-#ifdef CONFIG_CHIP_OTA_REQUESTOR
-#include "dfu/ota/ota_util.h"
-#endif
-
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/clusters/door-lock-server/door-lock-server.h>
 #include <app/clusters/identify-server/identify-server.h>
