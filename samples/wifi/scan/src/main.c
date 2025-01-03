@@ -40,68 +40,6 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 #define SCAN_TIMEOUT_MS 10000
 
 static uint32_t scan_result;
-
-const struct wifi_scan_params tests[] = {
-#ifdef CONFIG_WIFI_SCAN_PROFILE_DEFAULT
-	{
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_ACTIVE
-	{
-	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
-	.dwell_time_active = CONFIG_WIFI_SCAN_DWELL_TIME_ACTIVE
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_PASSIVE
-	{
-	.scan_type = WIFI_SCAN_TYPE_PASSIVE,
-	.dwell_time_passive = CONFIG_WIFI_SCAN_DWELL_TIME_PASSIVE
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_2_4GHz_ACTIVE
-	{
-	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
-	.bands = 0
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_2_4GHz_PASSIVE
-	{
-	.scan_type = WIFI_SCAN_TYPE_PASSIVE,
-	.bands = 0
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_5GHz_ACTIVE
-	{
-	.scan_type = WIFI_SCAN_TYPE_ACTIVE,
-	.bands = 0
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_5GHz_PASSIVE
-	{
-	.scan_type = WIFI_SCAN_TYPE_PASSIVE,
-	.bands = 0
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
-	{
-	.bands = 0,
-	.chan = { {0, 0} }
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_5GHz_NON_DFS_CHAN
-	{
-	.bands = 0,
-	.chan = { {0, 0} }
-	},
-#endif
-#ifdef CONFIG_WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_AND_5GHz_NON_DFS_CHAN
-	{
-	.bands = 0,
-	.chan = { {0, 0} }
-	},
-#endif
-};
-
 static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 
 K_SEM_DEFINE(scan_sem, 0, 1);
@@ -257,8 +195,7 @@ static int wifi_scan(void)
 {
 	struct net_if *iface = net_if_get_default();
 	int band_str_len;
-
-	struct wifi_scan_params params = tests[0];
+	struct wifi_scan_params params = { 0 };
 
 	band_str_len = sizeof(CONFIG_WIFI_SCAN_BANDS_LIST);
 	if (band_str_len - 1) {
@@ -285,6 +222,15 @@ static int wifi_scan(void)
 					CONFIG_WIFI_SCAN_CHAN_LIST);
 			return -ENOEXEC;
 		}
+	}
+
+	params.dwell_time_passive = CONFIG_WIFI_SCAN_DWELL_TIME_PASSIVE;
+	params.dwell_time_active = CONFIG_WIFI_SCAN_DWELL_TIME_ACTIVE;
+
+	if (IS_ENABLED(CONFIG_WIFI_SCAN_TYPE_PASSIVE)) {
+		params.scan_type = WIFI_SCAN_TYPE_PASSIVE;
+	} else {
+		params.scan_type = WIFI_SCAN_TYPE_ACTIVE;
 	}
 
 	if (net_mgmt(NET_REQUEST_WIFI_SCAN, iface, &params,
