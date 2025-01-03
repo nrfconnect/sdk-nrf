@@ -311,6 +311,7 @@
 /ext/iperf3/                              @nrfconnect/ncs-code-owners @jhirsi
 
 # Include
+/include/app_jwt.h                        @nrfconnect/ncs-modem @ayla-nordicsemi
 /include/audio/                           @nrfconnect/ncs-audio
 /include/audio_module/                    @nrfconnect/ncs-audio
 /include/bluetooth/                       @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
@@ -353,6 +354,7 @@
 
 # Libraries
 /lib/adp536x/                             @nrfconnect/ncs-cia
+/lib/app_jwt/                             @nrfconnect/ncs-modem @ayla-nordicsemi
 /lib/at_cmd_parser/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/at_cmd_custom/                       @nrfconnect/ncs-modem
 /lib/at_host/                             @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
@@ -493,6 +495,7 @@
 /samples/gazell/                          @leewkb4567
 /samples/hw_id/                           @nrfconnect/ncs-cia
 /samples/ipc/ipc_service/                 @nrfconnect/ncs-si-muffin
+/samples/jwt/                             @nrfconnect/ncs-modem @ayla-nordicsemi
 /samples/keys/                            @nrfconnect/ncs-aegir
 /samples/matter/                          @nrfconnect/ncs-matter
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
@@ -614,6 +617,7 @@
 /samples/gazell/**/*.rst                  @nrfconnect/ncs-si-muffin-doc
 /samples/hw_id/*.rst                      @nrfconnect/ncs-cia-doc
 /samples/ipc/ipc_service/*.rst            @nrfconnect/ncs-si-muffin-doc
+/samples/jwt/*.rst                        @nrfconnect/ncs-modem-doc @ayla-nordicsemi
 /samples/keys/**/*.rst                    @nrfconnect/ncs-aegir-doc
 /samples/matter/**/*.rst                  @nrfconnect/ncs-matter-doc
 /samples/mpsl/**/*.rst                    @nrfconnect/ncs-dragoon-doc
