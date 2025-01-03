@@ -15,11 +15,10 @@
 #include <bluetooth/adv_prov/fast_pair.h>
 #include <bluetooth/services/fast_pair/fast_pair.h>
 #include <bluetooth/services/fast_pair/fmdn.h>
-
-#include "app_fp_adv.h"
+#include <bluetooth/services/fast_pair/use_case/locator_tag/fp_adv.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(fast_pair_locator_tag_fp_adv, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 /* RPA suspension timeout in minutes for the Fast Pair advertising set
  * as recommended by the FMDN specification.
@@ -46,12 +45,13 @@ static struct bt_conn *fp_conn;
 static struct bt_le_ext_adv *fp_adv_set;
 static bool fp_adv_set_active;
 static bool fp_adv_rpa_rotation_suspended;
-static enum app_fp_adv_mode fp_adv_mode = APP_FP_ADV_MODE_OFF;
+static enum bt_fast_pair_locator_tag_fp_adv_mode fp_adv_mode =
+	BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_OFF;
 static uint32_t fp_adv_request_bm;
 static const char * const fp_adv_mode_description[] = {
-	[APP_FP_ADV_MODE_OFF] = "disabled",
-	[APP_FP_ADV_MODE_DISCOVERABLE] = "discoverable",
-	[APP_FP_ADV_MODE_NOT_DISCOVERABLE] = "non-discoverable",
+	[BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_OFF] = "disabled",
+	[BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_DISCOVERABLE] = "discoverable",
+	[BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_NOT_DISCOVERABLE] = "non-discoverable",
 };
 
 /* According to Fast Pair specification, the advertising interval should be no longer than
@@ -74,7 +74,8 @@ static void fp_adv_rpa_rotation_suspended_set(bool suspended)
 {
 	fp_adv_rpa_rotation_suspended = suspended;
 
-	LOG_DBG("Fast Pair: set RPA rotation suspended to %s", suspended ? "true" : "false");
+	LOG_DBG("Fast Pair Locator Tag FP Adv: set RPA rotation suspended to %s",
+		suspended ? "true" : "false");
 }
 
 static void fp_adv_rpa_suspension_work_handle(struct k_work *w)
@@ -89,7 +90,7 @@ static void fp_adv_rpa_suspension_cancel(void)
 }
 
 /* Reference to the Fast Pair advertising information callback structure. */
-static const struct app_fp_adv_info_cb *fast_pair_adv_info_cb;
+static const struct bt_fast_pair_locator_tag_fp_adv_info_cb *fast_pair_adv_info_cb;
 
 static void fp_adv_state_changed_notify(bool enabled)
 {
@@ -98,9 +99,10 @@ static void fp_adv_state_changed_notify(bool enabled)
 	}
 }
 
-int app_fp_adv_info_cb_register(const struct app_fp_adv_info_cb *cb)
+int bt_fast_pair_locator_tag_fp_adv_info_cb_register(
+	const struct bt_fast_pair_locator_tag_fp_adv_info_cb *cb)
 {
-	if (app_fp_adv_is_ready()) {
+	if (bt_fast_pair_locator_tag_fp_adv_is_ready()) {
 		return -EACCES;
 	}
 
@@ -133,8 +135,8 @@ static uint16_t fp_adv_rpa_timeout_calculate(void)
 
 		rpa_timeout += rand_timeout_diff;
 	} else {
-		LOG_WRN("Fast Pair: cannot get random RPA timeout (err: %d). Used fixed value",
-			err);
+		LOG_WRN("Fast Pair Locator Tag FP Adv: "
+			"cannot get random RPA timeout (err: %d). Used fixed value", err);
 	}
 
 	return rpa_timeout;
@@ -161,20 +163,20 @@ static bool can_pair(void)
 	return (bond_cnt() < CONFIG_BT_MAX_PAIRED);
 }
 
-static bool fp_adv_is_pairing_mode(enum app_fp_adv_mode fp_adv_mode)
+static bool fp_adv_is_pairing_mode(enum bt_fast_pair_locator_tag_fp_adv_mode fp_adv_mode)
 {
-	return ((fp_adv_mode == APP_FP_ADV_MODE_DISCOVERABLE) && can_pair());
+	return ((fp_adv_mode == BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_DISCOVERABLE) && can_pair());
 }
 
-static void fp_adv_prov_configure(enum app_fp_adv_mode fp_adv_mode)
+static void fp_adv_prov_configure(enum bt_fast_pair_locator_tag_fp_adv_mode fp_adv_mode)
 {
 	bt_le_adv_prov_fast_pair_enable(can_pair());
 
 	switch (fp_adv_mode) {
-	case APP_FP_ADV_MODE_DISCOVERABLE:
+	case BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_DISCOVERABLE:
 		break;
 
-	case APP_FP_ADV_MODE_NOT_DISCOVERABLE:
+	case BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_NOT_DISCOVERABLE:
 		bt_le_adv_prov_fast_pair_enable(true);
 		break;
 
@@ -196,14 +198,15 @@ static int fp_adv_payload_set(bool rpa_rotated, bool new_session)
 	struct bt_data ad[ad_len];
 	struct bt_data sd[sd_len];
 
-	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+	__ASSERT(fp_adv_set, "Fast Pair Locator Tag FP Adv: invalid state of the advertising set");
 
 	/* Set advertising mode of Fast Pair advertising data provider. */
 	fp_adv_prov_configure(fp_adv_mode);
 
 	err = bt_hci_get_adv_handle(fp_adv_set, &adv_handle);
 	if (err) {
-		LOG_ERR("Fast Pair: cannot get advertising handle (err: %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: cannot get advertising handle (err: %d)",
+			err);
 		return err;
 	}
 
@@ -214,19 +217,22 @@ static int fp_adv_payload_set(bool rpa_rotated, bool new_session)
 
 	err = bt_le_adv_prov_get_ad(ad, &ad_len, &state, &fb);
 	if (err) {
-		LOG_ERR("Fast Pair: cannot get advertising data (err: %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: cannot get advertising data (err: %d)",
+			err);
 		return err;
 	}
 
 	err = bt_le_adv_prov_get_sd(sd, &sd_len, &state, &fb);
 	if (err) {
-		LOG_ERR("Fast Pair: cannot get scan response data (err: %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: cannot get scan response data (err: %d)",
+			err);
 		return err;
 	}
 
 	err = bt_le_ext_adv_set_data(fp_adv_set, ad, ad_len, sd, sd_len);
 	if (err) {
-		LOG_ERR("Fast Pair: bt_le_ext_adv_set_data returned error: %d", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: bt_le_ext_adv_set_data returned error: %d",
+			err);
 		return err;
 	}
 
@@ -238,7 +244,7 @@ static int bt_stack_advertising_start(void)
 	int err;
 	struct bt_le_ext_adv_start_param ext_adv_start_param = {0};
 
-	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+	__ASSERT(fp_adv_set, "Fast Pair Locator Tag FP Adv: invalid state of the advertising set");
 
 	if (fp_adv_set_active) {
 		return 0;
@@ -246,7 +252,8 @@ static int bt_stack_advertising_start(void)
 
 	err = bt_le_ext_adv_start(fp_adv_set, &ext_adv_start_param);
 	if (err) {
-		LOG_ERR("Fast Pair: bt_le_ext_adv_start returned error: %d", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: bt_le_ext_adv_start returned error: %d",
+			err);
 		return err;
 	}
 
@@ -259,7 +266,7 @@ static int bt_stack_advertising_stop(void)
 {
 	int err;
 
-	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+	__ASSERT(fp_adv_set, "Fast Pair Locator Tag FP Adv: invalid state of the advertising set");
 
 	if (!fp_adv_set_active) {
 		return 0;
@@ -267,7 +274,7 @@ static int bt_stack_advertising_stop(void)
 
 	err = bt_le_ext_adv_stop(fp_adv_set);
 	if (err) {
-		LOG_ERR("Fast Pair: cannot stop advertising (err: %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: cannot stop advertising (err: %d)", err);
 		return err;
 	}
 
@@ -280,9 +287,9 @@ static int bt_stack_advertising_update(void)
 {
 	int err;
 
-	__ASSERT(!fp_conn, "Fast Pair: invalid connection state");
+	__ASSERT(!fp_conn, "Fast Pair Locator Tag FP Adv: invalid connection state");
 
-	if (fp_adv_mode == APP_FP_ADV_MODE_OFF) {
+	if (fp_adv_mode == BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_OFF) {
 		err = bt_stack_advertising_stop();
 		if (err) {
 			return err;
@@ -290,7 +297,8 @@ static int bt_stack_advertising_update(void)
 	} else {
 		err = fp_adv_payload_set(false, true);
 		if (err) {
-			LOG_ERR("Fast Pair: cannot set advertising payload (err: %d)", err);
+			LOG_ERR("Fast Pair Locator Tag FP Adv: "
+				"cannot set advertising payload (err: %d)", err);
 			return err;
 		}
 
@@ -310,10 +318,10 @@ static void fp_advertising_update(void)
 
 	err = bt_stack_advertising_update();
 	if (!err) {
-		LOG_INF("Fast Pair: advertising in the %s mode",
+		LOG_INF("Fast Pair Locator Tag FP Adv: advertising in the %s mode",
 			fp_adv_mode_description[fp_adv_mode]);
 	} else {
-		LOG_ERR("Fast Pair: advertising failed to start (err %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: advertising failed to start (err %d)", err);
 	}
 
 	if (fp_adv_set_was_active != fp_adv_set_active) {
@@ -346,12 +354,13 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 
 	__ASSERT_NO_MSG(is_enabled);
 
-	LOG_INF("Fast Pair: RPA expired");
+	LOG_INF("Fast Pair Locator Tag FP Adv: RPA expired");
 
 	if (!uptime) {
 		uptime = k_uptime_get();
 	} else {
-		LOG_INF("Fast Pair: the last timeout has occurred %" PRId64 " [s] ago",
+		LOG_INF("Fast Pair Locator Tag FP Adv: "
+			"the last timeout has occurred %" PRId64 " [s] ago",
 			(k_uptime_delta(&uptime) / MSEC_PER_SEC));
 	}
 
@@ -363,31 +372,34 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 		next_rpa_timeout = fp_adv_rpa_timeout_calculate();
 		err = bt_le_set_rpa_timeout(next_rpa_timeout);
 		if (err && (err != -EALREADY)) {
-			LOG_ERR("Fast Pair: bt_le_set_rpa_timeout failed: %d for %d [s]",
+			LOG_ERR("Fast Pair Locator Tag FP Adv: "
+				"bt_le_set_rpa_timeout failed: %d for %d [s]",
 				err, next_rpa_timeout);
 		} else {
-			LOG_INF("Fast Pair: setting RPA timeout to %d [s]",
+			LOG_INF("Fast Pair Locator Tag FP Adv: setting RPA timeout to %d [s]",
 				next_rpa_timeout);
 		}
 	}
 
-	if (fp_adv_mode == APP_FP_ADV_MODE_DISCOVERABLE) {
-		LOG_INF("Fast Pair: RPA rotation blocked for the discoverable advertising");
+	if (fp_adv_mode == BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_DISCOVERABLE) {
+		LOG_INF("Fast Pair Locator Tag FP Adv: "
+			"RPA rotation blocked for the discoverable advertising");
 
 		expire_rpa = false;
 	}
 
 	if (fp_adv_rpa_rotation_suspended) {
-		LOG_INF("Fast Pair: RPA rotation is in the suspended mode");
+		LOG_INF("Fast Pair Locator Tag FP Adv: RPA rotation is in the suspended mode");
 
 		expire_rpa = false;
 	}
 
-	if (fp_adv_mode != APP_FP_ADV_MODE_OFF) {
+	if (fp_adv_mode != BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_OFF) {
 		/* Update the advertising payload. */
 		err = fp_adv_payload_set(expire_rpa, false);
 		if (err) {
-			LOG_ERR("Fast Pair: cannot set advertising payload (err: %d)", err);
+			LOG_ERR("Fast Pair Locator Tag FP Adv: "
+				"cannot set advertising payload (err: %d)", err);
 		}
 	}
 
@@ -402,16 +414,18 @@ static int fp_adv_set_setup(void)
 		.rpa_expired = fp_adv_rpa_expired,
 	};
 
-	__ASSERT(!fp_adv_set, "Fast Pair: invalid state of the advertising set");
+	__ASSERT(!fp_adv_set,
+		 "Fast Pair Locator Tag FP Adv: invalid state of the advertising set");
 
 	/* Create the Fast Pair advertising set. */
 	err = bt_le_ext_adv_create(&fp_adv_param, &fp_adv_set_cb, &fp_adv_set);
 	if (err) {
-		LOG_ERR("Fast Pair: bt_le_ext_adv_create returned error: %d", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: "
+			"bt_le_ext_adv_create returned error: %d", err);
 		return err;
 	}
 
-	LOG_INF("Fast Pair: prepared the advertising set");
+	LOG_INF("Fast Pair Locator Tag FP Adv: prepared the advertising set");
 
 	return 0;
 }
@@ -420,11 +434,12 @@ static int fp_adv_set_teardown(void)
 {
 	int err;
 
-	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+	__ASSERT(fp_adv_set, "Fast Pair Locator Tag FP Adv: invalid state of the advertising set");
 
 	err = bt_le_ext_adv_delete(fp_adv_set);
 	if (err) {
-		LOG_ERR("Fast Pair: bt_le_ext_adv_delete returned error: %d", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: "
+			"bt_le_ext_adv_delete returned error: %d", err);
 		return err;
 	}
 
@@ -435,7 +450,7 @@ static int fp_adv_set_teardown(void)
 
 static void fp_adv_restart_work_handle(struct k_work *w)
 {
-	if (app_fp_adv_is_ready()) {
+	if (bt_fast_pair_locator_tag_fp_adv_is_ready()) {
 		fp_advertising_update();
 	}
 }
@@ -447,7 +462,8 @@ static void fp_adv_conn_clear(void)
 	if (fp_conn) {
 		err = bt_conn_disconnect(fp_conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 		if (err) {
-			LOG_ERR("Fast Pair: bt_conn_disconnect returned error: %d", err);
+			LOG_ERR("Fast Pair Locator Tag FP Adv: "
+				"bt_conn_disconnect returned error: %d", err);
 		}
 	}
 }
@@ -455,17 +471,17 @@ static void fp_adv_conn_clear(void)
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		LOG_WRN("Connection failed (err %" PRIu8 ")", err);
+		LOG_WRN("Fast Pair Locator Tag FP Adv: connection failed (err %" PRIu8 ")", err);
 
 		(void) k_work_submit(&fp_adv_restart_work);
 	} else {
-		LOG_INF("Connected");
+		LOG_INF("Fast Pair Locator Tag FP Adv: connected");
 	}
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_INF("Disconnected (reason %" PRIu8 ")", reason);
+	LOG_INF("Fast Pair Locator Tag FP Adv: disconnected (reason %" PRIu8 ")", reason);
 
 	if (fp_conn == conn) {
 		fp_conn = NULL;
@@ -480,10 +496,11 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		LOG_INF("Security changed: %s level %u", addr, level);
+		LOG_INF("Fast Pair Locator Tag FP Adv: security changed: %s level %u",
+			addr, level);
 	} else {
-		LOG_WRN("Security failed: %s level %u err %d %s", addr, level, err,
-			bt_security_err_to_str(err));
+		LOG_WRN("Fast Pair Locator Tag FP Adv: security failed: %s level %u err %d %s",
+			addr, level, err, bt_security_err_to_str(err));
 	}
 }
 
@@ -497,7 +514,7 @@ static void fp_adv_provisioning_state_changed(bool provisioned)
 {
 	fmdn_provisioned = provisioned;
 
-	if (!app_fp_adv_is_ready()) {
+	if (!bt_fast_pair_locator_tag_fp_adv_is_ready()) {
 		return;
 	}
 
@@ -510,7 +527,8 @@ static void fp_adv_provisioning_state_changed(bool provisioned)
 			*/
 		err = bt_le_oob_get_local(fp_adv_param.id, &oob);
 		if (err) {
-			LOG_ERR("Fast Pair: bt_le_oob_get_local failed: %d", err);
+			LOG_ERR("Fast Pair Locator Tag FP Adv: bt_le_oob_get_local failed: %d",
+				err);
 		}
 	} else {
 		fp_adv_rpa_suspension_cancel();
@@ -524,7 +542,8 @@ static struct bt_fast_pair_fmdn_info_cb fmdn_info_cb = {
 static void fp_adv_account_key_written(struct bt_conn *conn)
 {
 	/* The first and only Account Key write starts the FMDN provisioning. */
-	if (!fmdn_provisioned && !fp_account_key_present && app_fp_adv_is_ready()) {
+	if (!fmdn_provisioned && !fp_account_key_present &&
+	    bt_fast_pair_locator_tag_fp_adv_is_ready()) {
 		/* Fast Pair Implementation Guidelines for the locator tag use case:
 		 * after the Provider was paired, it should not change its MAC address
 		 * till FMDN is provisioned or till 5 minutes passes.
@@ -541,26 +560,26 @@ static struct bt_fast_pair_info_cb fp_info_callbacks = {
 	.account_key_written = fp_adv_account_key_written,
 };
 
-enum app_fp_adv_mode app_fp_adv_mode_get(void)
+enum bt_fast_pair_locator_tag_fp_adv_mode bt_fast_pair_locator_tag_fp_adv_mode_get(void)
 {
 	return fp_adv_mode;
 }
 
-static uint8_t fp_adv_trigger_idx_get(struct app_fp_adv_trigger *trigger)
+static uint8_t fp_adv_trigger_idx_get(struct bt_fast_pair_locator_tag_fp_adv_trigger *trigger)
 {
 	__ASSERT_NO_MSG(trigger);
 
-	STRUCT_SECTION_START_EXTERN(app_fp_adv_trigger);
-	STRUCT_SECTION_END_EXTERN(app_fp_adv_trigger);
+	STRUCT_SECTION_START_EXTERN(bt_fast_pair_locator_tag_fp_adv_trigger);
+	STRUCT_SECTION_END_EXTERN(bt_fast_pair_locator_tag_fp_adv_trigger);
 
-	__ASSERT_NO_MSG((trigger >= STRUCT_SECTION_START(app_fp_adv_trigger)) &&
-			(trigger < STRUCT_SECTION_END(app_fp_adv_trigger)));
-	ARG_UNUSED(STRUCT_SECTION_END(app_fp_adv_trigger));
+	__ASSERT_NO_MSG(trigger >= STRUCT_SECTION_START(bt_fast_pair_locator_tag_fp_adv_trigger));
+	__ASSERT_NO_MSG(trigger < STRUCT_SECTION_END(bt_fast_pair_locator_tag_fp_adv_trigger));
+	ARG_UNUSED(STRUCT_SECTION_END(bt_fast_pair_locator_tag_fp_adv_trigger));
 
-	return (trigger - STRUCT_SECTION_START(app_fp_adv_trigger));
+	return (trigger - STRUCT_SECTION_START(bt_fast_pair_locator_tag_fp_adv_trigger));
 }
 
-static void fp_adv_mode_set(enum app_fp_adv_mode adv_mode)
+static void fp_adv_mode_set(enum bt_fast_pair_locator_tag_fp_adv_mode adv_mode)
 {
 	if (fp_adv_mode == adv_mode) {
 		return;
@@ -572,33 +591,36 @@ static void fp_adv_mode_set(enum app_fp_adv_mode adv_mode)
 		/* Support only one connection for the Fast Pair advertising set. */
 		fp_advertising_update();
 	} else {
-		LOG_INF("Fast Pair: advertising switched to %s mode",
+		LOG_INF("Fast Pair Locator Tag FP Adv: advertising switched to %s mode",
 			fp_adv_mode_description[fp_adv_mode]);
-		LOG_INF("Fast Pair: advertising inactive due to an active connection");
+		LOG_INF("Fast Pair Locator Tag FP Adv: "
+			"advertising inactive due to an active connection");
 	}
 }
 
 static void fp_adv_mode_update(void)
 {
 	bool is_any_request_enabled = (fp_adv_request_bm != 0);
-	enum app_fp_adv_mode requested_mode;
+	enum bt_fast_pair_locator_tag_fp_adv_mode requested_mode;
 
 	if (is_any_request_enabled) {
 		requested_mode = fp_account_key_present ?
-				 APP_FP_ADV_MODE_NOT_DISCOVERABLE :
-				 APP_FP_ADV_MODE_DISCOVERABLE;
+				 BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_NOT_DISCOVERABLE :
+				 BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_DISCOVERABLE;
 	} else {
-		requested_mode = APP_FP_ADV_MODE_OFF;
+		requested_mode = BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_OFF;
 	}
 
 	/* Switch the advertising mode only on change. */
 	if (requested_mode != fp_adv_mode) {
-		LOG_INF("Fast Pair: advertising: %sabling", is_any_request_enabled ? "en" : "dis");
+		LOG_INF("Fast Pair Locator Tag FP Adv: advertising: %sabling",
+			is_any_request_enabled ? "en" : "dis");
 		fp_adv_mode_set(requested_mode);
 	}
 }
 
-void app_fp_adv_request(struct app_fp_adv_trigger *trigger, bool enable)
+void bt_fast_pair_locator_tag_fp_adv_request(
+	struct bt_fast_pair_locator_tag_fp_adv_trigger *trigger, bool enable)
 {
 	uint8_t idx = fp_adv_trigger_idx_get(trigger);
 	bool trigger_enabled = fp_adv_request_bm & BIT(idx);
@@ -609,32 +631,33 @@ void app_fp_adv_request(struct app_fp_adv_trigger *trigger, bool enable)
 
 	WRITE_BIT(fp_adv_request_bm, idx, enable);
 
-	LOG_INF("Fast Pair: advertising request from trigger \"%s\": %sable",
+	LOG_INF("Fast Pair Locator Tag FP Adv: advertising request from trigger \"%s\": %sable",
 		trigger->id, enable ? "en" : "dis");
 
-	if (app_fp_adv_is_ready()) {
+	if (bt_fast_pair_locator_tag_fp_adv_is_ready()) {
 		fp_adv_mode_update();
 	}
 }
 
-void app_fp_adv_payload_refresh(void)
+void bt_fast_pair_locator_tag_fp_adv_payload_refresh(void)
 {
 	int err;
 
-	if (fp_adv_mode == APP_FP_ADV_MODE_OFF) {
+	if (fp_adv_mode == BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_OFF) {
 		return;
 	}
 
 	err = fp_adv_payload_set(false, true);
 	if (err) {
-		LOG_ERR("Fast Pair: cannot refresh the advertising payload (err: %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: "
+			"cannot refresh the advertising payload (err: %d)", err);
 		return;
 	}
 }
 
-int app_fp_adv_id_set(uint8_t id)
+int bt_fast_pair_locator_tag_fp_adv_id_set(uint8_t id)
 {
-	if (app_fp_adv_is_ready()) {
+	if (bt_fast_pair_locator_tag_fp_adv_is_ready()) {
 		/* It is not possible to switch the Bluetooth identity
 		 * if Fast Pair advertising module is operational.
 		 */
@@ -646,37 +669,12 @@ int app_fp_adv_id_set(uint8_t id)
 	return 0;
 }
 
-uint8_t app_fp_adv_id_get(void)
+uint8_t bt_fast_pair_locator_tag_fp_adv_id_get(void)
 {
 	return fp_adv_param.id;
 }
 
-int app_fp_adv_init(void)
-{
-	int err;
-	int trigger_cnt;
-
-	err = bt_fast_pair_fmdn_info_cb_register(&fmdn_info_cb);
-	if (err) {
-		LOG_ERR("Fast Pair: bt_fast_pair_fmdn_info_cb_register returned error: %d", err);
-		return err;
-	}
-
-	err = bt_fast_pair_info_cb_register(&fp_info_callbacks);
-	if (err) {
-		LOG_ERR("Fast Pair: bt_fast_pair_info_cb_register failed (err %d)", err);
-		return err;
-	}
-
-	STRUCT_SECTION_COUNT(app_fp_adv_trigger, &trigger_cnt);
-	__ASSERT_NO_MSG(trigger_cnt <= BITS_PER_VAR(fp_adv_request_bm));
-
-	is_initialized = true;
-
-	return 0;
-}
-
-int app_fp_adv_enable(void)
+int bt_fast_pair_locator_tag_fp_adv_enable(void)
 {
 	int err;
 
@@ -684,13 +682,13 @@ int app_fp_adv_enable(void)
 	__ASSERT_NO_MSG(is_initialized);
 
 	if (is_enabled) {
-		LOG_ERR("Fast Pair: fp_adv module already enabled");
+		LOG_ERR("Fast Pair Locator Tag FP Adv: module already enabled");
 		return 0;
 	}
 
 	err = fp_adv_set_setup();
 	if (err) {
-		LOG_ERR("Fast Pair: fp_adv_set_setup failed (err %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: fp_adv_set_setup failed (err %d)", err);
 		return err;
 	}
 
@@ -700,19 +698,19 @@ int app_fp_adv_enable(void)
 
 	is_enabled = true;
 
-	LOG_INF("Fast Pair: fp_adv module enabled");
+	LOG_INF("Fast Pair Locator Tag FP Adv: module enabled");
 
 	return 0;
 }
 
-int app_fp_adv_disable(void)
+int bt_fast_pair_locator_tag_fp_adv_disable(void)
 {
 	int err;
 
 	__ASSERT_NO_MSG(is_initialized);
 
 	if (!is_enabled) {
-		LOG_ERR("Fast Pair: fp_adv module already disabled");
+		LOG_ERR("Fast Pair Locator Tag FP Adv: module already disabled");
 		return 0;
 	}
 
@@ -722,22 +720,49 @@ int app_fp_adv_disable(void)
 	fp_adv_rpa_suspension_cancel();
 
 	/* Suspend the requested advertising until the fp_adv module reinitializes. */
-	fp_adv_mode_set(APP_FP_ADV_MODE_OFF);
+	fp_adv_mode_set(BT_FAST_PAIR_LOCATOR_TAG_FP_ADV_MODE_OFF);
 
 	fp_adv_conn_clear();
 
 	err = fp_adv_set_teardown();
 	if (err) {
-		LOG_ERR("Fast Pair: fp_adv_set_teardown failed (err %d)", err);
+		LOG_ERR("Fast Pair Locator Tag FP Adv: fp_adv_set_teardown failed (err %d)", err);
 		return err;
 	}
 
-	LOG_INF("Fast Pair: fp_adv module disabled");
+	LOG_INF("Fast Pair Locator Tag FP Adv: module disabled");
 
 	return 0;
 }
 
-bool app_fp_adv_is_ready(void)
+bool bt_fast_pair_locator_tag_fp_adv_is_ready(void)
 {
 	return is_enabled;
+}
+
+int bt_fast_pair_locator_tag_fp_adv_init(void)
+{
+	int err;
+	int trigger_cnt;
+
+	err = bt_fast_pair_fmdn_info_cb_register(&fmdn_info_cb);
+	if (err) {
+		LOG_ERR("Fast Pair Locator Tag FP Adv: "
+			"bt_fast_pair_fmdn_info_cb_register returned error: %d", err);
+		return err;
+	}
+
+	err = bt_fast_pair_info_cb_register(&fp_info_callbacks);
+	if (err) {
+		LOG_ERR("Fast Pair Locator Tag FP Adv: "
+			"bt_fast_pair_info_cb_register failed (err %d)", err);
+		return err;
+	}
+
+	STRUCT_SECTION_COUNT(bt_fast_pair_locator_tag_fp_adv_trigger, &trigger_cnt);
+	__ASSERT_NO_MSG(trigger_cnt <= BITS_PER_VAR(fp_adv_request_bm));
+
+	is_initialized = true;
+
+	return 0;
 }
