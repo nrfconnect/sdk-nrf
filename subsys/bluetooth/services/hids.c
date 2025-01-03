@@ -287,11 +287,13 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 	ret_len = bt_gatt_attr_read(conn, attr, buf, len, offset, rep_data,
 				    rep->size);
 
-	if (rep->handler) {
-		struct bt_hids_rep report = {
-		    .data = buf,
-		    .size = rep->size,
-		};
+	struct bt_hids_rep report = {
+		.data = buf,
+		.size = rep->size,
+	};
+	if (rep->handler_ext) {
+		rep->handler_ext(rep->id, &report, conn, false);
+	} else if (rep->handler) {
 		rep->handler(&report, conn, false);
 	}
 
@@ -331,11 +333,13 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 	}
 	memcpy(rep_data + offset, buf, len);
 
-	if (rep->handler) {
-		struct bt_hids_rep report = {
-		    .data = rep_data,
-		    .size = rep->size,
-		};
+	struct bt_hids_rep report = {
+		.data = rep_data,
+		.size = rep->size,
+	};
+	if (rep->handler_ext) {
+		rep->handler_ext(rep->id, &report, conn, true);
+	} else if (rep->handler) {
 		rep->handler(&report, conn, true);
 	}
 release_ctx:
@@ -473,16 +477,21 @@ static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 	    CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
 			 struct bt_hids_inp_rep, ccc);
 
+	uint8_t report_id = inp_rep->id;
+	enum bt_hids_notify_evt evt;
+
 	if (value == BT_GATT_CCC_NOTIFY) {
 		LOG_DBG("Notification has been turned on");
-		if (inp_rep->handler != NULL) {
-			inp_rep->handler(BT_HIDS_CCCD_EVT_NOTIFY_ENABLED);
-		}
+		evt = BT_HIDS_CCCD_EVT_NOTIFY_ENABLED;
 	} else {
 		LOG_DBG("Notification has been turned off");
-		if (inp_rep->handler != NULL) {
-			inp_rep->handler(BT_HIDS_CCCD_EVT_NOTIFY_DISABLED);
-		}
+		evt = BT_HIDS_CCCD_EVT_NOTIFY_DISABLED;
+	}
+
+	if (inp_rep->handler_ext != NULL) {
+		inp_rep->handler_ext(report_id, evt);
+	} else if (inp_rep->handler != NULL) {
+		inp_rep->handler(evt);
 	}
 }
 
