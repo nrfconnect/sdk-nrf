@@ -78,6 +78,12 @@ if(CONFIG_PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)
   )
 endif()
 
+if(CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
+  )
+endif()
+
 if(CONFIG_PSA_NEED_CRACEN_SRP_6)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/srp.c
