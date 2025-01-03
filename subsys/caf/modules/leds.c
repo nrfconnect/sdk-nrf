@@ -65,10 +65,10 @@ static int set_color_one_channel(struct led *led, struct led_color *color)
 	/* For a single color LED convert color to brightness. */
 	unsigned int brightness = 0;
 
-	for (size_t i = 0; i < ARRAY_SIZE(color->c); i++) {
+	for (size_t i = 0; i < color->channel_count; i++) {
 		brightness += color->c[i];
 	}
-	brightness /= ARRAY_SIZE(color->c);
+	brightness /= color->channel_count;
 
 	return led_set_brightness(led->dev, 0, brightness);
 }
@@ -77,7 +77,7 @@ static int set_color_all_channels(struct led *led, struct led_color *color)
 {
 	int err = 0;
 
-	for (size_t i = 0; (i < ARRAY_SIZE(color->c)) && !err; i++) {
+	for (size_t i = 0; (i < led->color_count) && !err; i++) {
 		err = led_set_brightness(led->dev, i, color->c[i]);
 	}
 
@@ -88,7 +88,7 @@ static void set_color(struct led *led, struct led_color *color)
 {
 	int err;
 
-	if (led->color_count == ARRAY_SIZE(color->c)) {
+	if (led->color_count == color->channel_count) {
 		err = set_color_all_channels(led, color);
 	} else {
 		err = set_color_one_channel(led, color);
@@ -117,7 +117,10 @@ static void work_handler(struct k_work *work)
 	__ASSERT_NO_MSG(effect_step->substep_count > 0);
 	int substeps_left = effect_step->substep_count - led->effect_substep;
 
-	for (size_t i = 0; i < ARRAY_SIZE(led->color.c); i++) {
+	__ASSERT_NO_MSG(effect_step->color.channel_count <= ARRAY_SIZE(effect_step->color.c));
+
+	led->color.channel_count = effect_step->color.channel_count;
+	for (size_t i = 0; i < effect_step->color.channel_count; i++) {
 		int diff = (effect_step->color.c[i] - led->color.c[i]) /
 			substeps_left;
 		led->color.c[i] += diff;
@@ -184,7 +187,7 @@ static int leds_init(void)
 	for (size_t i = 0; (i < ARRAY_SIZE(leds)) && !err; i++) {
 		struct led *led = &leds[i];
 
-		__ASSERT_NO_MSG((led->color_count == 1) || (led->color_count == 3));
+		__ASSERT_NO_MSG((led->color_count <= ARRAY_SIZE(led->color.c)));
 
 		if (!device_is_ready(led->dev)) {
 			LOG_ERR("Device %s is not ready", led->dev->name);

@@ -20,13 +20,16 @@
 extern "C" {
 #endif
 
-#define _CAF_LED_COLOR_CHANNEL_COUNT 3
+#define _CAF_LED_COLOR_CHANNEL_COUNT 4
 
 /** @brief Color of LED.
  */
 struct led_color {
 	/** Values for color channels. */
 	uint8_t c[_CAF_LED_COLOR_CHANNEL_COUNT];
+
+	/** Number of channels in color */
+	size_t channel_count;
 };
 
 /** @brief Single step of a LED effect.
@@ -82,7 +85,7 @@ struct led_effect {
  */
 #define LED_COLOR_ARG_PASS(...) __VA_ARGS__
 
-/** Create LED color initializer for LED turned on.
+/** Create LED color initializer for LED with RGB channels turned on.
  *
  * @note As arguments, pass the brightness levels for every color channel.
  *
@@ -97,14 +100,57 @@ struct led_effect {
 		.c = {					\
 			COLOR_BRIGHTNESS_TO_PCT(_r),	\
 			COLOR_BRIGHTNESS_TO_PCT(_g),	\
-			COLOR_BRIGHTNESS_TO_PCT(_b)	\
-		}					\
+			COLOR_BRIGHTNESS_TO_PCT(_b),	\
+			0								\
+		},									\
+		.channel_count = 3					\
+}
+
+/** Create LED color initializer for LED with RGBW channels turned on.
+ *
+ * @note As arguments, pass the brightness levels for every color channel.
+ *
+ * @note The macro returns the structure initializer that once expanded
+ *       contains commas not placed in brackets.
+ *       This means that when passed as an argument, this argument
+ *       cannot be passed simply to another macro.
+ *       Use @ref LED_COLOR_ARG_PASS macro for the preprocessor
+ *       to treat it as a single argument again.
+ */
+#define LED_COLOR_RGBW(_r, _g, _b, _w) {	\
+		.c = {					\
+			COLOR_BRIGHTNESS_TO_PCT(_r),	\
+			COLOR_BRIGHTNESS_TO_PCT(_g),	\
+			COLOR_BRIGHTNESS_TO_PCT(_b),	\
+			COLOR_BRIGHTNESS_TO_PCT(_w),	\
+		},									\
+		.channel_count = 4					\
+}
+
+/** Create LED color initializer for single LED color turned on.
+ *
+ * @note As arguments, pass the brightness level for the LED.
+ *
+ * @note The macro returns the structure initializer that once expanded
+ *       contains commas not placed in brackets.
+ *       This means that when passed as an argument, this argument
+ *       cannot be passed simply to another macro.
+ *       Use @ref LED_COLOR_ARG_PASS macro for the preprocessor
+ *       to treat it as a single argument again.
+ */
+#define LED_COLOR_SINGLE(_c) {				\
+		.c = {					\
+			COLOR_BRIGHTNESS_TO_PCT(_c),	\
+			0, 0, 0							\
+		},									\
+		.channel_count = 1					\
 }
 
 /** Create LED color initializer for LED turned off.
  */
 #define LED_NOCOLOR() {			\
-		.c = {0, 0, 0}		\
+		.c = {0, 0, 0, 0},		\
+		.channel_count = 3		\
 }
 
 /** Create LED turned on effect initializer.
