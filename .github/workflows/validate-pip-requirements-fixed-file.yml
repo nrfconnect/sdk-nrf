@@ -61,8 +61,8 @@ jobs:
             workon pip-fixed-venv  > /dev/null 2>&1
 
             pip3 install \
-              --extra-index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
-              pip-compile-cross-platform==1.4.2+nordic.2 --upgrade > /dev/null 2>&1
+              --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
+              pip-compile-cross-platform==1.4.2+nordic.3 --upgrade > /dev/null 2>&1
             pip-compile-cross-platform \
               bootloader/mcuboot/scripts/requirements.txt \
               zephyr/scripts/requirements.txt \
@@ -71,7 +71,8 @@ jobs:
               nrf/scripts/requirements-extra.txt \
               nrf/scripts/requirements.txt \
               --output-file nrf/scripts/requirements-fixed.txt \
-              --min-python-version 3.10
+              --min-python-version 3.12 \
+              --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
 
             deactivate
             rmvirtualenv pip-fixed-venv
