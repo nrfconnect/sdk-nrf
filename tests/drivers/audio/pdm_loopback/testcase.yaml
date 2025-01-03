@@ -6,21 +6,24 @@ common:
     fixture: gpio_loopback
 
 tests:
-  drivers.audio.pdm_loopback.nrf54l15.1000khz:
+  drivers.audio.pdm_loopback.nrf54l.1000khz:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp
     extra_args:
       CONFIG_NRFX_TIMER00=y
-  drivers.audio.pdm_loopback.nrf54l15.1280khz:
+  drivers.audio.pdm_loopback.nrf54l.1280khz:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp
     extra_args:
       CONFIG_NRFX_TIMER00=y
       CONFIG_TEST_PDM_SAMPLING_RATE=16000
       CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
-  drivers.audio.pdm_loopback.nrf54l15.1600khz:
+  drivers.audio.pdm_loopback.nrf54l.1600khz:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp
     extra_args:
       CONFIG_NRFX_TIMER00=y
       CONFIG_TEST_PDM_SAMPLING_RATE=32000
