@@ -36,7 +36,7 @@ extern "C" {
 #endif
 
 /** Make sure the application is compatible with SilexPK API version **/
-SX_PK_API_ASSERT_SRC_COMPATIBLE(2, 0, sxopseccweierstrass);
+SX_PK_API_ASSERT_SRC_COMPATIBLE(2, 1, sxopseccweierstrass);
 
 struct sx_pk_ecurve;
 
@@ -1170,6 +1170,46 @@ static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_aff
 	return status;
 }
 
+/** Asynchronous (non-blocking) EC point order check.
+ *
+ * Starts an EC point order check on the accelerator
+ * and return immediately.
+ *
+ * @remark When the operation finishes on the accelerator,
+ * call sx_pk_release_req()
+ *
+ *
+ * @param[in] curve Elliptic curve used to validate point
+ * @param[in] p Affine point P
+ *
+ * @return Acquired acceleration request for this operation
+ */
+static inline struct sx_pk_acq_req sx_async_ecp_check_order_go(const struct sx_pk_ecurve *curve,
+							       const sx_pk_affine_point *p)
+{
+	struct sx_pk_acq_req pkreq;
+
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_CHECK_PT_ORDER);
+	if (pkreq.status) {
+		return pkreq;
+	}
+
+	struct sx_pk_inops_ec_ptoncurve inputs;
+
+	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0,
+		(struct sx_pk_slot *)&inputs);
+	if (pkreq.status) {
+		return pkreq;
+	}
+	int opsz = sx_pk_get_opsize(pkreq.req);
+
+	sx_pk_affpt2mem(p, inputs.px.addr, inputs.py.addr, opsz);
+
+	sx_pk_run(pkreq.req);
+
+	return pkreq;
+}
+
 /** @} */
 
 /**
@@ -1419,8 +1459,8 @@ static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_af
  * @param[in] cof Cofactor \#E(Fp)/n, where n is the degree of a base point G
  * and \#E(Fp) the number of rational points of the curve
  * @param[in] rax x-coordinate of random point of user A
- * @param[in] w Value equal to (log2(n)/2)-1. n is the degree of
- * the base point of the selected curve.
+ * @param[in] exp2_w Value equal to 2^w with w = [ceil(ceil(log2(n)) / 2) - 1].
+ * n is the degree of the base point of the selected curve.
  *
  * @return Acquired acceleration request for this operation
  *
@@ -1429,7 +1469,7 @@ static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_af
 static inline struct sx_pk_acq_req
 sx_async_sm2_exchange_go(const struct sx_pk_ecurve *curve, const sx_ecop *d, const sx_ecop *k,
 			 const sx_pk_affine_point *q, const sx_pk_affine_point *rb,
-			 const sx_ecop *cof, const sx_ecop *rax, const sx_ecop *w)
+			 const sx_ecop *cof, const sx_ecop *rax, const sx_ecop *exp2_w)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm2_exchange inputs;
@@ -1452,7 +1492,7 @@ sx_async_sm2_exchange_go(const struct sx_pk_ecurve *curve, const sx_ecop *d, con
 	sx_pk_affpt2mem(rb, inputs.rbx.addr, inputs.rby.addr, opsz);
 	sx_pk_ecop2mem(cof, inputs.cof.addr, opsz);
 	sx_pk_ecop2mem(rax, inputs.rax.addr, opsz);
-	sx_pk_ecop2mem(w, inputs.w.addr, opsz);
+	sx_pk_ecop2mem(exp2_w, inputs.w.addr, opsz);
 
 	sx_pk_run(pkreq.req);
 
@@ -1482,10 +1522,10 @@ static inline void sx_async_sm2_exchange_end(sx_pk_req *req, sx_pk_affine_point 
  *
  *  SM2 key exchange goes as follow:
  *    1. if Q or RB not on curve: SX_ERR_POINT_NOT_ON_CURVE failure
- *    2. x1 = w + (RA.x mod w) with w = 2^([log2(n) / 2] - 1)
+ *    2. x1 = 2^w + (RA.x mod w) with w = [ceil(ceil(log2(n)) / 2) - 1]
  *      n is given as domain param
  *    3. tA = (d + x1 * k) mod n
- *    4. x2 = w + (RB.x mod w) with w = 2^([log2(n) / 2] - 1)
+ *    4. x2 = 2^w + (RB.x mod w) with w = [ceil(ceil(log2(n)) / 2) - 1]
  *    5. U = (cof * tA) * (Q + x2 * RB)
  *    6. if U == 0 (point at infinity) then SX_ERR_NOT_INVERTIBLE failure
  *
@@ -1498,8 +1538,8 @@ static inline void sx_async_sm2_exchange_end(sx_pk_req *req, sx_pk_affine_point 
  * @param[in] cof Cofactor \#E(Fp)/n, where n is the degree of a base point G
  * and \#E(Fp) the number of rational points of the curve
  * @param[in] rax x-coordinate of random point of user A
- * @param[in] w Value equal to (log2(n)/2)-1. n is the degree of
- * the base point of the selected curve.
+ * @param[in] exp2_w Value equal to 2^w with w = [ceil(ceil(log2(n)) / 2) - 1].
+ * n is the degree of the base point of the selected curve.
  * @param[out] u The shared secret U
  *
  * @return ::SX_OK
@@ -1518,12 +1558,12 @@ static inline void sx_async_sm2_exchange_end(sx_pk_req *req, sx_pk_affine_point 
 static inline int sx_sm2_exchange(const struct sx_pk_ecurve *curve, const sx_ecop *d,
 				  const sx_ecop *k, const sx_pk_affine_point *q,
 				  const sx_pk_affine_point *rb, const sx_ecop *cof,
-				  const sx_ecop *rax, const sx_ecop *w, sx_pk_affine_point *u)
+				  const sx_ecop *rax, const sx_ecop *exp2_w, sx_pk_affine_point *u)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
 
-	pkreq = sx_async_sm2_exchange_go(curve, d, k, q, rb, cof, rax, w);
+	pkreq = sx_async_sm2_exchange_go(curve, d, k, q, rb, cof, rax, exp2_w);
 	if (pkreq.status) {
 		return pkreq.status;
 	}
