@@ -14,6 +14,10 @@
 #include <sxsymcrypt/internal.h>
 #include <cracen/interrupts.h>
 
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+#include <zephyr/sys/printk.h>
+#endif
+
 #ifdef CONFIG_DCACHE
 #include <zephyr/cache.h>
 #endif
@@ -25,11 +29,8 @@
 #ifndef SX_CM_REGS_ADDR
 #define SX_CM_REGS_ADDR ((uint32_t)NRF_CRACENCORE)
 #endif
-#ifndef SX_TRNG_REGS_OFFSET
-#define SX_TRNG_REGS_OFFSET 0x1000
-#endif
 #ifndef SX_TRNG_REGS_ADDR
-#define SX_TRNG_REGS_ADDR ((SX_CM_REGS_ADDR) + (SX_TRNG_REGS_OFFSET))
+#define SX_TRNG_REGS_ADDR ((uint32_t)&NRF_CRACENCORE->RNGCONTROL)
 #endif
 
 struct sxdesc;
@@ -39,8 +40,8 @@ static inline void sx_wrreg(uint32_t addr, uint32_t val)
 {
 	volatile uint32_t *p = (uint32_t *)(SX_CM_REGS_ADDR + addr);
 
-#ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_wrregx(addr=%x, sum=%x, val=%d);", addr, p, val);
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_wrreg(addr=0x%x, p=%p, val=0x%x)\r\n", addr, p, val);
 #endif
 
 	wmb(); /* comment for compliance */
@@ -53,8 +54,8 @@ static inline void sx_wr_trng(uint32_t addr, uint32_t val)
 {
 	volatile uint32_t *p = (uint32_t *)(SX_TRNG_REGS_ADDR + addr);
 
-#ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_wrregx(addr=%x, sum=%x, val=%d);", addr, p, val);
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_wr_trng(addr=0x%x, p=%p, val=0x%x)\r\n", addr, p, val);
 #endif
 
 	wmb(); /* comment for compliance */
@@ -67,6 +68,9 @@ static inline void sx_wrreg_addr(uint32_t addr, struct sxdesc *p)
 {
 	volatile size_t *d = (volatile size_t *)(SX_CM_REGS_ADDR + addr);
 
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_wrreg_addr(addr=0x%x, d=%p, p=%p)\r\n", addr, d, p);
+#endif
 	wmb(); /* comment for compliance */
 	*d = (size_t)p;
 	rmb(); /* comment for compliance */
@@ -78,13 +82,15 @@ static inline uint32_t sx_rdreg(uint32_t addr)
 	volatile uint32_t *p = (uint32_t *)(SX_CM_REGS_ADDR + addr);
 	uint32_t v;
 
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_rdreg(addr=0x%x, p=%p)\r\n", addr, p);
+#endif
 	wmb(); /* comment for compliance */
 	v = *p;
 	rmb(); /* comment for compliance */
 
-#ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_rdregx(addr=0x%x, sum=0x%x);\n", addr, p);
-	printk("result = 0x%x\n", v);
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("result = 0x%x\r\n", v);
 #endif
 
 	return v;
@@ -96,15 +102,16 @@ static inline uint32_t sx_rd_trng(uint32_t addr)
 	volatile uint32_t *p = (uint32_t *)(SX_TRNG_REGS_ADDR + addr);
 	uint32_t v;
 
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_rd_trng(addr=0x%x, p=%p)\r\n", addr, p);
+#endif
 	wmb(); /* comment for compliance */
 	v = *p;
 	rmb(); /* comment for compliance */
 
-#ifdef INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_rdregx(addr=0x%x, sum=0x%x);\n", addr, p);
-	printk("result = 0x%x\n", v);
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("result = 0x%x\r\n", v);
 #endif
-
 	return v;
 }
 
