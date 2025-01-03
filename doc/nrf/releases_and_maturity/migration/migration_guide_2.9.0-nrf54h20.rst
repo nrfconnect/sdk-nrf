@@ -1,15 +1,15 @@
 :orphan:
 
-.. _migration_2.9.0-nrf54h20-rc1:
+.. _migration_2.9.0-nrf54h20:
 
-Migration guide for |NCS| v2.9.0-nRF54H20-rc1
-#############################################
+Migration guide for |NCS| v2.9.0-nRF54H20
+#########################################
 
 .. contents::
    :local:
    :depth: 3
 
-This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-rc1.
+This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20.
 
 .. HOWTO
 
@@ -23,7 +23,7 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
-.. _migration_2.9.0-nrf54h20-rc1_required:
+.. _migration_2.9.0-nrf54h20_required:
 
 Required changes
 ****************
@@ -40,7 +40,7 @@ DK compatibility
 
 .. toggle::
 
-   * The |NCS| v2.9.0-nRF54H20-rc1 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
+   * The |NCS| v2.9.0-nRF54H20 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
      Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 
 Dependencies
@@ -89,11 +89,6 @@ nRF54H20 SoC binaries
 
           nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.8.0.zip --serial-number <serial_number>
 
-    #. Purge the device again as follows::
-
-          nrfutil device recover --core Application --serial-number <serial_number>
-          nrfutil device recover --core Network --serial-number <serial_number>
-
     #. Erase the device again as follows::
 
           nrfutil device erase --all --core Network --serial-number <snr>
@@ -134,11 +129,11 @@ nrfutil device
 
 .. toggle::
 
-  * ``nrfutil device`` has been updated to version 2.7.10.
+  * ``nrfutil device`` has been updated to version 2.7.8.
 
-    Install the nRF Util ``device`` command version 2.7.10 as follows::
+    Install the nRF Util ``device`` command version 2.7.8 as follows::
 
-       nrfutil install device=2.7.10 --force
+       nrfutil install device=2.7.8 --force
 
     For more information, consult the `nRF Util`_ documentation.
 
