@@ -273,6 +273,7 @@
 /doc/nrf/samples/tfm.rst                  @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/thread.rst               @nrfconnect/ncs-terahertz-doc
 /doc/nrf/samples/wifi.rst                 @nrfconnect/ncs-wifi-doc
+/doc/nrf/samples/wifi_radiotest.rst       @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_provisioning.rst    @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_zephyr.rst          @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/zigbee.rst               @nrfconnect/ncs-terahertz-doc
