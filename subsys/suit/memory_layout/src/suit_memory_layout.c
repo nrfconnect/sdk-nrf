@@ -7,6 +7,9 @@
 #include <zephyr/device.h>
 #include <suit_memory_layout.h>
 #include <zephyr/drivers/flash/flash_simulator.h>
+#ifdef CONFIG_FLASH_IPUC
+#include <drivers/flash/flash_ipuc.h>
+#endif /* CONFIG_FLASH_IPUC */
 
 /* Definitions for SOC internal nonvolatile memory */
 #if (DT_NODE_EXISTS(DT_NODELABEL(mram1x))) /* nrf54H20 */
@@ -182,18 +185,33 @@ static const struct nvm_area *find_area_by_device(const struct device *fdev)
 
 bool suit_memory_global_address_to_nvm_address(uintptr_t address, struct nvm_address *result)
 {
-	const struct nvm_area *area = find_area(address);
+	struct nvm_area *area = (struct nvm_area *)find_area(address);
 
 	if (result == NULL) {
 		return false;
 	}
 
-	if (area == NULL) {
+	result->fdev = NULL;
+	if (area != NULL) {
+		result->fdev = area->na_fdev;
+		result->offset = address - area_address_get(area);
+	}
+#ifdef CONFIG_FLASH_IPUC
+	struct nvm_area ipuc_area;
+
+	ipuc_area.na_fdev = flash_ipuc_find(address, 0, &ipuc_area.na_start, &ipuc_area.na_size);
+	if (ipuc_area.na_fdev != NULL) {
+		/* Use IPUC instead of internal NVM driver to gain write access. */
+		result->fdev = ipuc_area.na_fdev;
+		/* IPUCs use relative addressing */
+		result->offset = address - ipuc_area.na_start;
+	}
+#endif /* CONFIG_FLASH_IPUC */
+
+	if (result->fdev == NULL) {
 		return false;
 	}
 
-	result->fdev = area->na_fdev;
-	result->offset = address - area_address_get(area);
 	return true;
 }
 
@@ -216,7 +234,15 @@ bool suit_memory_nvm_address_to_global_address(struct nvm_address *address, uint
 
 bool suit_memory_global_address_is_in_nvm(uintptr_t address)
 {
+#ifdef CONFIG_FLASH_IPUC
+	struct nvm_area ipuc_area;
+
+	ipuc_area.na_fdev = flash_ipuc_find(address, 0, &ipuc_area.na_start, &ipuc_area.na_size);
+
+	return (ipuc_area.na_fdev != NULL) && (find_area(address) != NULL);
+#else  /* CONFIG_FLASH_IPUC */
 	return find_area(address) != NULL;
+#endif /* CONFIG_FLASH_IPUC */
 }
 
 bool suit_memory_global_address_range_is_in_nvm(uintptr_t address, size_t size)
@@ -227,7 +253,15 @@ bool suit_memory_global_address_range_is_in_nvm(uintptr_t address, size_t size)
 	const struct nvm_area *start = find_area(address);
 	const struct nvm_area *end = find_area(address + size - 1);
 
+#ifdef CONFIG_FLASH_IPUC
+	struct nvm_area ipuc_area;
+
+	ipuc_area.na_fdev = flash_ipuc_find(address, size, &ipuc_area.na_start, &ipuc_area.na_size);
+
+	return (start != NULL && start == end) || (ipuc_area.na_fdev != NULL);
+#else  /* CONFIG_FLASH_IPUC */
 	return start != NULL && start == end;
+#endif /* CONFIG_FLASH_IPUC */
 }
 
 bool suit_memory_global_address_is_in_ram(uintptr_t address)
