@@ -21,6 +21,7 @@
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
 #include <silexpk/sxops/eccweierstrass.h>
+#include <silexpk/sxops/rsa.h>
 #include <stddef.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <zephyr/logging/log.h>
@@ -335,6 +336,22 @@ bool cracen_ecc_curve_is_weierstrass(psa_ecc_family_t curve)
 	default:
 		return false;
 	}
+}
+
+psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uint8_t *output,
+				    size_t output_size)
+{
+	const uint8_t *order = sx_pk_curve_order(&sx_curve_nistp256);
+
+	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)order};
+	sx_op operand = {.sz = input_size, .bytes = (char *)input};
+	sx_op result = {.sz = output_size, .bytes = output};
+
+	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce command. */
+	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
+	int sx_status = sx_mod_single_op_cmd(cmd, &modulo, &operand, &result);
+
+	return silex_statuscodes_to_psa(sx_status);
 }
 
 psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
