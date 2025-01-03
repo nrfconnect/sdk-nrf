@@ -112,3 +112,38 @@ For more details, see the following links:
 
   * ``DT_CLOCKS_CTLR_BY_IDX()``: Gets the node identifier for the controller phandle from a *clocks* phandle-array property at an index.
   * ``DT_CLOCKS_CTLR()``: It is equivalent to ``DT_CLOCKS_CTLR_BY_IDX()`` with index (idx) set to 0.
+
+Global Domain Frequency Scaling (GDFS)
+======================================
+
+Global Domain Frequency Scaling (GDFS) is a backend service that allows one processing core to request configuration changes to the global HSFLL clock domain via the system controller firmware.
+
+To use this feature, you can use the existing Zephyr clock control API without needing detailed knowledge of GDFS.
+Through the clock control API, when an application invokes standard clock control functions (such as ``clock_control_request()``), the system controller firmware automatically configures the global HSFLL clock as requested, with GDFS handling the communication and adjustments internally.
+
+Direct interaction with GDFS
+----------------------------
+
+You can also use GDFS in specialized scenarios, like implementing proprietary radio protocols or optimizing low-level performance, where you might want to use GDFS directly.
+For specialized applications, you have the option to work directly with the GDFS service by initializing IPC, setting up handlers, and issuing frequency requests as needed.
+In such cases, developers must:
+
+1. Initialize the IPC backend.
+
+   GDFS relies on Interprocessor Communication (IPC) to exchange configuration requests and responses between the application core and the System Controller firmware (SCFW).
+   Before invoking GDFS functions, the application must properly initialize the underlying IPC backend.
+
+#. Initialize GDFS and configure handlers.
+
+   After the IPC setup, you can initialize GDFS by calling its initialization routine and providing a callback handler.
+   This callback receives status responses whenever the application submits a request.
+   If it is needed to modify the callback handler, you can uninitialize and reinitialize GDFS.
+
+#. Request specific frequencies.
+
+   GDFS provides functions to request one of several supported HSFLL frequencies on the nRF54H20 SoC (specifically, 320 MHz, 256 MHz, 128 MHz, 64 MHz).
+   When issuing such a request, you must include a context pointer passed directly to the callback handler.
+   The handler then receives success or failure notifications.
+
+You can find the header files in the :file:`modules/hal/nordic/nrfs` directory.
+Within this directory, :file:`nrf_gdfs.h` and related source files define the GDFS interface.
