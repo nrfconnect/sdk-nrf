@@ -462,19 +462,20 @@ static int start_download(void)
 	}
 
 	LOG_INF("Starting FOTA download of %s/%s", job.host, job.path);
-
 	sec_tag = nrf_cloud_sec_tag_get();
 
-	struct nrf_cloud_download_data dl = {
+	struct nrf_cloud_download_data cloud_dl = {
 		.type = NRF_CLOUD_DL_TYPE_FOTA,
 		.host = job.host,
 		.path = job.path,
-		.dl_cfg = {
+		.dl_host_conf = {
 			.sec_tag_list = &sec_tag,
 			.sec_tag_count = (sec_tag < 0 ? 0 : 1),
 			.pdn_id = 0,
-			.frag_size_override = ctx_ptr->fragment_size ? ctx_ptr->fragment_size :
-					      CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
+			.range_override =
+				ctx_ptr->fragment_size
+					? ctx_ptr->fragment_size
+					: CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
 		},
 		.fota = {
 			.expected_type = ctx_ptr->img_type,
@@ -489,7 +490,7 @@ static int start_download(void)
 	fota_status = NRF_CLOUD_FOTA_IN_PROGRESS;
 	fota_status_details = NULL;
 
-	ret = nrf_cloud_download_start(&dl);
+	ret = nrf_cloud_download_start(&cloud_dl);
 	if (ret) {
 		LOG_ERR("Failed to start FOTA download, error: %d", ret);
 		fota_status = NRF_CLOUD_FOTA_QUEUED;

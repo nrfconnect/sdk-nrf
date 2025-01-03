@@ -58,16 +58,16 @@ Configure the following parameters when using this library:
 * :kconfig:option:`CONFIG_AZURE_FOTA_TLS` - Enables HTTPS for downloads. By default, TLS is enabled and currently, the transport protocol must be configured at compile time.
 * :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG` - Sets the security tag for TLS credentials when using HTTPS as the transport layer. See :ref:`azure_iot_hub_flash_certs` for more details.
 
-Additionally, configure the :ref:`lib_download_client` library:
+Additionally, configure the :ref:`lib_downloader` library:
 
-* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` - Sets the maximum length of the host name for the download client.
-* :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` - Sets the maximum length of the file name for the download client.
+* :kconfig:option:`CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE` - Sets the maximum length of the host name for the library.
+* :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` - Sets the maximum length of the file name for the library.
 
 Limitations
 ***********
 
 The library requires a ``Content-Range`` header to be present in the HTTP response from the server.
-This limitation is inherited from the :ref:`lib_download_client` library.
+This limitation is inherited from the :ref:`lib_downloader` library.
 
 API documentation
 *****************
