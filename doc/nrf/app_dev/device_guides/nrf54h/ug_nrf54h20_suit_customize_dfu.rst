@@ -195,7 +195,7 @@ Specifically, in the basic case:
 * :kconfig:option:`SB_CONFIG_SUIT_MPI_RAD_LOCAL_1_CLASS_NAME`
 
 These Kconfig options are used during Manifest Provisioning Information (MPI) generation.
-After the MPI has been flashed, it is read by the Secure Domain Firmware, which can then use it to verify if the UUIDs in a manifest are correct,
+Once the MPI has been flashed, it is read by the SDFW, which uses it to verify the correctness of the UUIDs in the manifest.
 
 As an example, after adding the following lines to the :file:`sysbuild.conf` file:
 
