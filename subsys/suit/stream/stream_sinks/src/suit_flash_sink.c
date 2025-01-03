@@ -398,6 +398,14 @@ static suit_plat_err_t seek(void *ctx, size_t offset)
 
 static suit_plat_err_t flush(void *ctx)
 {
+	struct flash_ctx *flash_ctx = (struct flash_ctx *)ctx;
+
+	int ret = flash_write(flash_ctx->fdev, WRITE_OFFSET(flash_ctx), NULL, 0);
+
+	if (ret != 0) {
+		return SUIT_PLAT_ERR_IO;
+	}
+
 	return SUIT_PLAT_SUCCESS;
 }
 
