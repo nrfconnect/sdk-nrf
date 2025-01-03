@@ -800,12 +800,27 @@ psa_status_t psa_driver_wrapper_derive_key(const psa_key_attributes_t *attribute
 					   uint8_t *key_buffer, size_t key_buffer_size,
 					   size_t *key_buffer_length)
 {
+	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
+
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
+#ifdef PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER
+		status = cracen_derive_key(attributes, input, input_length, key_buffer,
+					   key_buffer_size, key_buffer_length);
+
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER */
+
 #ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER
-		return oberon_derive_key(attributes, input, input_length, key_buffer,
-					 key_buffer_size, key_buffer_length);
+		status = oberon_derive_key(attributes, input, input_length, key_buffer,
+					   key_buffer_size, key_buffer_length);
+
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
 		break;
 
@@ -819,7 +834,8 @@ psa_status_t psa_driver_wrapper_derive_key(const psa_key_attributes_t *attribute
 		(void)key_buffer_size;
 		(void)key_buffer_length;
 	}
-	return PSA_ERROR_INVALID_ARGUMENT;
+
+	return status;
 }
 
 /*

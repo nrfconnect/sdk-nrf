@@ -288,3 +288,16 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
  * @return sxsymcrypt status code.
  */
 int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);
+
+/**
+ * @brief Performs `input` modulo the order of the NIST p256 curve
+ *
+ * @param input Input for the modulo operation.
+ * @param input_size Input size in bytes.
+ * @param output Output of the modulo operation.
+ * @param output_size Output size in bytes.
+ *
+ * @return psa_status_t
+ */
+psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uint8_t *output,
+				    size_t output_size);
