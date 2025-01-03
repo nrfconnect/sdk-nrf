@@ -18,68 +18,83 @@
 #define IS_NATURAL_SIZE(sz, type) 1
 #endif
 
+static void write_incomplete_word(uint32_t *dst, const uint8_t *bytes,
+				  size_t first_byte_pos, size_t num_bytes)
+{
+	if ((uintptr_t)dst % 4) {
+		SX_WARN_UNALIGNED_ADDR(dst);
+	}
+	uint32_t word = *dst;
+
+	for (size_t i = 0; i != num_bytes; ++i) {
+		((uint8_t *)&word)[first_byte_pos + i] = bytes[i];
+	}
+
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("write_incomplete_word(%p, 0x%x, %zu, %zu): 0x%x to 0x%x\r\n",
+		dst, *(uint32_t *)bytes, first_byte_pos, num_bytes, *dst, word);
+#endif
+
+	*dst = word;
+}
+
 void sx_clrpkmem(void *dst, size_t sz)
 {
-	typedef int64_t clrblk_t;
-	volatile char *d = (volatile char *)dst;
-
 	if (sz == 0) {
 		return;
 	}
 
-	while (sz && (!IS_NATURAL_ALIGNED(d, clrblk_t))) {
-		*d = 0;
-		d++;
-		sz--;
-	}
-
-#if !defined(__aarch64__)
-	memset((char *)d, 0, MASK_TO_NATURAL_SIZE(sz, clrblk_t));
-	d += MASK_TO_NATURAL_SIZE(sz, clrblk_t);
-	sz -= MASK_TO_NATURAL_SIZE(sz, clrblk_t);
-
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_clrpkmem(%p, %zu)\r\n", dst, sz);
 #endif
-	while (sz) {
-		*d = 0;
-		d++;
-		sz--;
+	if ((uintptr_t)dst % 4) {
+		SX_WARN_UNALIGNED_ADDR(dst);
+	}
+	uint32_t *word_dst = (uint32_t *)dst;
+
+	for (size_t i = 0; i != sz / 4; ++i) {
+		word_dst[i] = 0;
+	}
+	if (sz % 4) {
+		uint32_t zero = 0;
+
+		write_incomplete_word(&word_dst[sz / 4], (uint8_t *)&zero, 0, sz % 4);
 	}
 }
-
-struct uchunk {
-	int64_t a[2];
-};
-
-typedef struct uchunk tfrblk;
-#define tfrblksz sizeof(tfrblk)
 
 void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
-	volatile char *d = (volatile char *)dst;
-	volatile const char *s = (volatile const char *)src;
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+	printk("sx_wrpkmem(%p, %zu)\r\n", dst, sz);
+#endif
+	uintptr_t dst_addr = (uintptr_t)dst;
 
-	while (sz && (!IS_NATURAL_ALIGNED(d, tfrblk) || !IS_NATURAL_SIZE(sz, tfrblk))) {
-		*d = *s;
-		d++;
-		s++;
-		sz--;
+	if (dst_addr % 4) {
+		const size_t byte_count = 4 - dst_addr % 4;
+
+		write_incomplete_word((uint32_t *)(dst_addr & ~3), src, dst_addr % 4, byte_count);
+		*(uint8_t **)&dst += byte_count;
+		*(uint8_t **)&src += byte_count;
+		sz -= byte_count;
 	}
-	memcpy((char *)d, (char *)s, sz);
+
+	for (size_t i = 0; i != sz / 4; ++i) {
+		((uint32_t *)dst)[i] = ((uint32_t *)src)[i];
+	}
+
+	if (sz % 4) {
+		write_incomplete_word((uint32_t *)(dst_addr + (sz & ~3)),
+				      (uint8_t *)src + (sz & ~3), 0, sz % 4);
+	}
 }
 
-void sx_rdpkmem(void *dst, const void *src, size_t sz)
+void sx_wrpkmem_byte(void *dst, char input_byte)
 {
-	if (IS_SAME_ALIGNMENT(dst, src, tfrblk) && IS_NATURAL_SIZE(sz, tfrblk)) {
-		memcpy(dst, src, sz);
-	} else {
-		volatile char *d = (volatile char *)dst;
-		volatile const char *s = (volatile const char *)src;
+	uintptr_t dst_addr = (uintptr_t)dst;
+	uint32_t *word_dst = (uint32_t *)(dst_addr & ~3);
+	uint32_t word = *word_dst;
+	size_t byte_index = dst_addr % 4;
 
-		while (sz) {
-			*d = *s;
-			d++;
-			s++;
-			sz--;
-		}
-	}
+	((uint8_t *)&word)[byte_index] = input_byte;
+	*word_dst = word;
 }
