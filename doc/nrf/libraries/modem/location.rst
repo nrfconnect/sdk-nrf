@@ -379,7 +379,10 @@ The following |NCS| applications and samples use this library:
 Limitations
 ***********
 
-* The Location library can only have one application registered at a time. If there is already an application handler registered, another initialization will override the existing handler.
+* The Location library can only have one application registered at a time.
+  If there is already an application handler registered, another initialization will override the existing handler.
+* GNSS API should not be used directly by the application when using the Location library.
+  Using the GNSS API from both the application and the Location library may lead to unexpected behavior.
 
 Dependencies
 ************
