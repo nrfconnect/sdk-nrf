@@ -7,7 +7,7 @@
 # This file includes threading support required by the PSA crypto core
 # Which was added in Mbed TLS 3.6.0.
 
-if(CONFIG_MBEDTLS_THREADING_C AND NOT (CONFIG_PSA_CRYPTO_DRIVER_CC3XX OR CONFIG_CC3XX_BACKEND))
+if(CONFIG_MBEDTLS_THREADING_C AND NOT CONFIG_NRF_CC3XX_PLATFORM)
 
   append_with_prefix(src_crypto_base ${CMAKE_CURRENT_LIST_DIR}
     threading_alt.c
