@@ -50,12 +50,18 @@ struct bt_ras_rd_overwritten {
 	bt_ras_rreq_rd_overwritten_cb_t cb;
 };
 
+struct bt_ras_features_read {
+	struct bt_gatt_read_params read_params;
+	bt_ras_rreq_features_read_cb_t cb;
+};
+
 static struct bt_ras_rreq {
 	struct bt_conn *conn;
 	struct bt_ras_rreq_cp cp;
 	struct bt_ras_on_demand_rd on_demand_rd;
 	struct bt_ras_rd_ready rd_ready;
 	struct bt_ras_rd_overwritten rd_overwritten;
+	struct bt_ras_features_read features_read;
 } rreq_pool[CONFIG_BT_RAS_RREQ_MAX_ACTIVE_CONN];
 
 static struct bt_ras_rreq *ras_rreq_find(struct bt_conn *conn)
@@ -481,6 +487,69 @@ static int ras_cp_subscribe_params_populate(struct bt_gatt_dm *dm, struct bt_ras
 	return 0;
 }
 
+static uint8_t feature_read_cb(struct bt_conn *conn, uint8_t err,
+			       struct bt_gatt_read_params *params, const void *data,
+			       uint16_t length)
+{
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (rreq == NULL) {
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (!rreq->features_read.cb) {
+		LOG_ERR("No read callback present");
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (err) {
+		LOG_ERR("Read value error: %d", err);
+		rreq->features_read.cb(conn, 0, err);
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (!data || length != sizeof(uint32_t)) {
+		rreq->features_read.cb(conn, 0, -EMSGSIZE);
+		return BT_GATT_ITER_STOP;
+	}
+
+	struct net_buf_simple feature_buf;
+
+	net_buf_simple_init_with_data(&feature_buf, (uint8_t *)data, length);
+	uint16_t feature_bits = net_buf_simple_pull_le32(&feature_buf);
+
+	rreq->features_read.cb(conn, feature_bits, err);
+
+	rreq->features_read.cb = NULL;
+
+	return BT_GATT_ITER_STOP;
+}
+
+static int ras_read_features_params_populate(struct bt_gatt_dm *dm, struct bt_ras_rreq *rreq)
+{
+	const struct bt_gatt_dm_attr *gatt_chrc;
+	const struct bt_gatt_dm_attr *gatt_desc;
+
+	/* RAS Features (Mandatory) */
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_RAS_FEATURES);
+	if (!gatt_chrc) {
+		LOG_WRN("Could not locate mandatory RAS Features characteristic");
+		return -EINVAL;
+	}
+
+	gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_RAS_FEATURES);
+	if (!gatt_desc) {
+		LOG_WRN("Could not locate mandatory RAS Features descriptor");
+		return -EINVAL;
+	}
+	rreq->features_read.read_params.single.handle = gatt_desc->handle;
+	rreq->features_read.read_params.func = feature_read_cb;
+	rreq->features_read.read_params.handle_count = 1;
+	rreq->features_read.read_params.single.offset = 0;
+
+	return 0;
+}
+
 int bt_ras_rreq_cp_subscribe(struct bt_conn *conn)
 {
 	int err;
@@ -821,6 +890,41 @@ int bt_ras_rreq_alloc_and_assign_handles(struct bt_gatt_dm *dm, struct bt_conn *
 	err = ras_cp_subscribe_params_populate(dm, rreq);
 	if (err) {
 		bt_ras_rreq_free(conn);
+		return err;
+	}
+
+	err = ras_read_features_params_populate(dm, rreq);
+	if (err) {
+		bt_ras_rreq_free(conn);
+		return err;
+	}
+
+	return 0;
+}
+
+int bt_ras_rreq_read_features(struct bt_conn *conn, bt_ras_rreq_features_read_cb_t cb)
+{
+	int err;
+
+	if (cb == NULL || conn == NULL) {
+		return -EINVAL;
+	}
+
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (rreq == NULL) {
+		return -EINVAL;
+	}
+
+	if (rreq->features_read.cb) {
+		return -EBUSY;
+	}
+
+	rreq->features_read.cb = cb;
+
+	err = bt_gatt_read(conn, &rreq->features_read.read_params);
+	if (err) {
+		rreq->features_read.cb = NULL;
 		return err;
 	}
 
