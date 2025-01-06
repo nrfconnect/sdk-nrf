@@ -37,6 +37,8 @@ int sock_recv(
 	enum sock_recv_print_format print_format);
 
 int sock_close(int socket_id);
+int sock_connection_save(int socket_id);
+int sock_connection_load(int socket_id);
 int sock_rai(
 	int socket_id, bool rai_last, bool rai_no_data, bool rai_one_resp,
 	bool rai_ongoing, bool rai_wait_more);

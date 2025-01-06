@@ -66,6 +66,7 @@ struct sock_info {
 	int send_flags;
 	bool in_use;
 	bool secure;
+	bool connection_saved;
 	char *send_buffer;
 	uint32_t send_buffer_size;
 	bool send_poll;
@@ -1234,6 +1235,63 @@ int sock_close(int socket_id)
 	return 0;
 }
 
+int sock_connection_save(int socket_id)
+{
+	struct sock_info *socket_info = get_socket_info_by_id(socket_id);
+	int err;
+
+	if (socket_info == NULL) {
+		return -EINVAL;
+	}
+
+	if (socket_info->connection_saved) {
+		mosh_error("DTLS connection is already saved for socket id=%d", socket_info->id);
+		return -EINVAL;
+	}
+
+	if (!socket_info->secure || socket_info->type != SOCK_DGRAM) {
+		mosh_error("Save connection is only supported for DTLS sockets");
+		return -EINVAL;
+	}
+
+	err = setsockopt(socket_info->fd, SOL_TLS, TLS_DTLS_CONN_SAVE, &(int){0}, sizeof(int));
+	if (err) {
+		mosh_error("Save DTLS connection failed, errno %d", errno);
+		return err;
+	}
+
+	socket_info->connection_saved = true;
+	mosh_print("Saved DTLS connection for socket id=%d, fd=%d",
+		   socket_info->id, socket_info->fd);
+	return 0;
+}
+
+int sock_connection_load(int socket_id)
+{
+	struct sock_info *socket_info = get_socket_info_by_id(socket_id);
+	int err;
+
+	if (socket_info == NULL) {
+		return -EINVAL;
+	}
+
+	if (!socket_info->connection_saved) {
+		mosh_error("DTLS connection is not saved for socket id=%d", socket_info->id);
+		return -EINVAL;
+	}
+
+	err = setsockopt(socket_info->fd, SOL_TLS, TLS_DTLS_CONN_LOAD, &(int){0}, sizeof(int));
+	if (err) {
+		mosh_error("Load DTLS connection failed, errno %d", errno);
+		return err;
+	}
+
+	socket_info->connection_saved = false;
+	mosh_print("Loaded DTLS connection for socket id=%d, fd=%d",
+		   socket_info->id, socket_info->fd);
+	return 0;
+}
+
 static int sock_rai_option_set(int fd, int option, char *option_string)
 {
 	int err = setsockopt(fd, SOL_SOCKET, SO_RAI, &option, sizeof(option));
@@ -1307,6 +1365,7 @@ int sock_rai(int socket_id, bool rai_last, bool rai_no_data,
 
 int sock_list(void)
 {
+	char extra_info[64];
 	bool opened_sockets = false;
 
 	for (int i = 0; i < MAX_SOCKETS; i++) {
@@ -1314,16 +1373,21 @@ int sock_list(void)
 
 		if (socket_info->in_use) {
 			opened_sockets = true;
+			extra_info[0] = 0;
+			if (socket_info->connection_saved) {
+				strcpy(extra_info, "[saved]");
+			}
 			mosh_print(
 				"Socket id=%d, fd=%d, family=%d, type=%d, port=%d, "
-				"bind_port=%d, pdn=%d",
+				"bind_port=%d, pdn=%d %s",
 				i,
 				socket_info->fd,
 				socket_info->family,
 				socket_info->type,
 				socket_info->port,
 				socket_info->bind_port,
-				socket_info->pdn_cid);
+				socket_info->pdn_cid,
+				extra_info);
 		}
 	}
 

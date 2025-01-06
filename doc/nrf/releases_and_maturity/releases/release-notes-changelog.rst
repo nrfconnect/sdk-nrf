@@ -291,6 +291,8 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
+  * Added support for saving and loading DTLS connection.
+
   * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
     The link control functionality is now always enabled and cannot be disabled.
 
