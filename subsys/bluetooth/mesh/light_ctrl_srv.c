@@ -1541,8 +1541,10 @@ static void scene_recall(const struct bt_mesh_model *model, const uint8_t data[]
 			.transition = transition,
 		};
 
+		bool restart = is_enabled(srv);
+
 		ctrl_disable(srv);
-		if (atomic_test_bit(&srv->flags, FLAG_RESUME_TIMER)) {
+		if (restart || atomic_test_bit(&srv->flags, FLAG_RESUME_TIMER)) {
 			schedule_resume_timer(srv);
 		}
 		lightness_srv_change_lvl(srv->lightness, NULL, &set, &status, true);
