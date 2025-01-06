@@ -88,7 +88,7 @@ See :ref:`zephyr:setting_configuration_values` in the Zephyr documentation for i
 
    .. group-tab:: nRF Connect for VS Code
 
-      If you work with |nRFVSC|, you can use one of the following options:
+      If you work with the |nRFVSC|, you can use one of the following options:
 
       * Edit the :file:`prj.conf` directly in |VSC|.
       * Select an extra Kconfig fragment file when you `build an application <How to build an application_>`_.

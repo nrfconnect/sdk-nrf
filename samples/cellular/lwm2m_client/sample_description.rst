@@ -290,7 +290,7 @@ Avoiding re-writing credentials to modem
 Every time the sample starts, it provisions the keys to the modem and this is only needed once.
 To speed up the start up, you can prevent the provisioning by completing the following steps using |VSC|:
 
-1. In |nRFVSC|, `build the sample <How to build an application_>`_.
+1. In the |nRFVSC|, `build the sample <How to build an application_>`_.
 #. Under **Actions**, click :guilabel:`Kconfig`.
 #. Click :guilabel:`Application sample`.
 #. Under **LwM2M objects**, remove the key value next to :guilabel:`LwM2M pre-shared key for communication`.
