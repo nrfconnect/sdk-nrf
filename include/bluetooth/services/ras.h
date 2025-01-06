@@ -347,6 +347,20 @@ typedef void (*bt_ras_rreq_rd_overwritten_cb_t)(struct bt_conn *conn, uint16_t r
 typedef void (*bt_ras_rreq_ranging_data_get_complete_t)(struct bt_conn *conn,
 							uint16_t ranging_counter, int err);
 
+/** @brief RAS features read callback.
+ *
+ * @param[in] conn         Connection Object.
+ * @param[in] feature_bits Bit 0 set if Real-time Ranging Data supported
+ *                         Bit 1 set if Retrieve Lost Ranging Data Segments supported
+ *                         Bit 2 set if Abort Operation supported
+ *                         Bit 3 set if Filter Ranging Data supported
+ *                         All other bits are RFU.
+ * @param[in] err          Error code, 0 if the features were read successfully. Otherwise a
+ * negative error code.
+ */
+typedef void (*bt_ras_rreq_features_read_cb_t)(struct bt_conn *conn, uint32_t feature_bits,
+					       int err);
+
 /** @brief Allocate a RREQ context and assign GATT handles. Takes a reference to the connection.
  *
  * @note RREQ context will be freed automatically on disconnect.
@@ -485,6 +499,19 @@ int bt_ras_rreq_rd_overwritten_subscribe(struct bt_conn *conn, bt_ras_rreq_rd_ov
  *           Otherwise, a negative error code is returned.
  */
 int bt_ras_rreq_rd_overwritten_unsubscribe(struct bt_conn *conn);
+
+/** @brief Read supported RAS features from peer.
+ *
+ * @note Calling from BT RX thread may return an error as bt_gatt_read will not block if
+ * there are no available TX buffers.
+ *
+ * @param[in] conn Connection Object, which already has associated RREQ context.
+ * @param[in] cb   Features read callback.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a negative error code is returned.
+ */
+int bt_ras_rreq_read_features(struct bt_conn *conn, bt_ras_rreq_features_read_cb_t cb);
 
 /** @brief Provide step header for each step back to the user.
  *
