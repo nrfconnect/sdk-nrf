@@ -14,6 +14,7 @@
 #ifndef BT_MESH_GEN_LOC_H__
 #define BT_MESH_GEN_LOC_H__
 
+#include <float.h>
 #include <zephyr/bluetooth/mesh.h>
 
 #ifdef __cplusplus
@@ -21,16 +22,24 @@ extern "C" {
 #endif
 
 /**
- * @defgroup bt_mesh_loc_altitude_defines Defines for altitude.
- * Boundaries and special values for the altitude.
+ * @defgroup bt_mesh_loc_location_defines Defines for locations.
+ * Boundaries and special values for the latitude, longitude, altitude and local North/East.
  * @{
  */
-/** Highest altitude that can be represented */
-#define BT_MESH_LOC_ALTITUDE_MAX 32765
-/** Altitude is unknown or not configured. */
-#define BT_MESH_LOC_ALTITUDE_UNKNOWN 0x7fff
-/** Altitude is out of bounds. */
-#define BT_MESH_LOC_ALTITUDE_TOO_LARGE 0x7ffe
+/** The Global Longitude is unknown or not configured. */
+#define BT_MESH_LOC_GLOBAL_LONGITUDE_UNKNOWN DBL_MAX
+/** The Global Latitude is unknown or not configured. */
+#define BT_MESH_LOC_GLOBAL_LATITUDE_UNKNOWN  DBL_MAX
+/** The Local North is unknown or not configured. */
+#define BT_MESH_LOC_LOCAL_NORTH_UNKNOWN      ((int16_t)0x8000)
+/** The Local East is unknown or not configured. */
+#define BT_MESH_LOC_LOCAL_EAST_UNKNOWN       ((int16_t)0x8000)
+/** The highest Altitude (Local and Global) that can be represented */
+#define BT_MESH_LOC_ALTITUDE_MAX             ((int16_t)32765)
+/** The Altitude (Local and Global) is unknown or not configured. */
+#define BT_MESH_LOC_ALTITUDE_UNKNOWN         ((int16_t)0x7fff)
+/** The Altitude (Local and Global) is out of bounds. */
+#define BT_MESH_LOC_ALTITUDE_TOO_LARGE       ((int16_t)0x7ffe)
 /** @} */
 
 /**
@@ -50,26 +59,23 @@ extern "C" {
 #define BT_MESH_LOC_FLOOR_NUMBER_UNKNOWN 0xff
 /** @} */
 
-/** Global location parameters. */
+/** Global location parameters. @sa bt_mesh_loc_location_defines */
 struct bt_mesh_loc_global {
 	/** Global WGS84 North coordinate in degrees. */
 	double latitude;
 	/** Global WGS84 East coordinate in degrees. */
 	double longitude;
-	/**
-	 * Global altitude above the WGS84 datum in meters.
-	 * @sa bt_mesh_loc_altitude_defines
-	 */
+	/** Global altitude above the WGS84 datum in meters. */
 	int16_t altitude;
 };
 
 /** Local location parameters. */
 struct bt_mesh_loc_local {
-	/** Local north position in decimeters. */
+	/** The Local North position in decimeters. @sa bt_mesh_loc_location_defines */
 	int16_t north;
-	/** Local east position in decimeters. */
+	/** The Local East position in decimeters. @sa bt_mesh_loc_location_defines */
 	int16_t east;
-	/** Local altitude in decimeters. @sa bt_mesh_loc_altitude_defines */
+	/** The Local Altitude in decimeters. @sa bt_mesh_loc_location_defines */
 	int16_t altitude;
 	/** Floor number. @sa bt_mesh_loc_floor_number_defines */
 	int16_t floor_number;
