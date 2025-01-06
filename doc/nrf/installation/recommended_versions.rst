@@ -380,8 +380,8 @@ For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
 
 It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
 
-|nRFVSC|
-========
+nRF Connect for Visual Studio Code
+==================================
 
 |vsc_extension_description|
 
