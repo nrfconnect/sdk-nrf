@@ -608,4 +608,8 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added new section :ref:`ug_custom_board`.
+  This section includes the following pages:
+
+  * :ref:`defining_custom_board` - Previously located under :ref:`app_boards`.
+  * :ref:`programming_custom_board` - New page.
