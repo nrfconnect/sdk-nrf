@@ -13,21 +13,25 @@
 #ifndef BT_MESH_GEN_LOC_INTERNAL_H__
 #define BT_MESH_GEN_LOC_INTERNAL_H__
 
+#include <math.h>
 #include <bluetooth/mesh/gen_loc.h>
 
-#define BT_MESH_LOC_LATITUDE_FACTOR                                            \
-	(23860929.411111) /* ((INT32_MAX - 1) / 90) */
-#define BT_MESH_LOC_LONGITUDE_FACTOR                                           \
-	(11930464.705556) /* ((INT32_MAX - 1) / 180)                           \
-			   */
+#define BT_MESH_LOC_LATITUDE_NOT_CONFIGURED  0x80000000
+#define BT_MESH_LOC_LONGITUDE_NOT_CONFIGURED 0x80000000
 
-static inline void
-bt_mesh_loc_global_encode(struct net_buf_simple *buf,
-			  const struct bt_mesh_loc_global *loc)
+static inline void bt_mesh_loc_global_encode(struct net_buf_simple *buf,
+					     const struct bt_mesh_loc_global *loc)
 {
-	uint32_t latitude = (uint32_t)(loc->latitude * BT_MESH_LOC_LATITUDE_FACTOR);
-	uint32_t longitude =
-		(uint32_t)(loc->longitude * BT_MESH_LOC_LONGITUDE_FACTOR);
+	int32_t latitude = BT_MESH_LOC_LATITUDE_NOT_CONFIGURED;
+	int32_t longitude = BT_MESH_LOC_LONGITUDE_NOT_CONFIGURED;
+
+	if (loc->latitude >= -90.0 && loc->latitude <= 90.0) {
+		latitude = floor(loc->latitude / 90 * (INT32_MAX - 1));
+	}
+
+	if (loc->longitude >= -180.0 && loc->longitude <= 180.0) {
+		longitude = floor(loc->longitude / 180 * (INT32_MAX - 1));
+	}
 
 	net_buf_simple_add_le32(buf, latitude);
 	net_buf_simple_add_le32(buf, longitude);
@@ -37,10 +41,15 @@ bt_mesh_loc_global_encode(struct net_buf_simple *buf,
 static inline void bt_mesh_loc_global_decode(struct net_buf_simple *buf,
 					     struct bt_mesh_loc_global *loc)
 {
-	loc->latitude =
-		(net_buf_simple_pull_le32(buf) / BT_MESH_LOC_LATITUDE_FACTOR);
-	loc->longitude =
-		(net_buf_simple_pull_le32(buf) / BT_MESH_LOC_LONGITUDE_FACTOR);
+	int32_t latitude = net_buf_simple_pull_le32(buf);
+	int32_t longitude = net_buf_simple_pull_le32(buf);
+
+	loc->latitude = latitude == BT_MESH_LOC_LATITUDE_NOT_CONFIGURED
+				? BT_MESH_LOC_GLOBAL_LATITUDE_UNKNOWN
+				: ((double)latitude * 90) / (INT32_MAX - 1);
+	loc->longitude = longitude == BT_MESH_LOC_LONGITUDE_NOT_CONFIGURED
+				 ? BT_MESH_LOC_GLOBAL_LONGITUDE_UNKNOWN
+				 : ((double)longitude * 180) / (INT32_MAX - 1);
 	loc->altitude = net_buf_simple_pull_le16(buf);
 }
 

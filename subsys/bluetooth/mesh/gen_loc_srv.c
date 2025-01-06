@@ -10,18 +10,19 @@
 #include "model_utils.h"
 #include "gen_loc_internal.h"
 
-#define LOC_GLOBAL_DEFAULT                                                     \
-	{                                                                      \
-		.latitude = 0.0, .longitude = 0.0,                             \
-		.altitude = BT_MESH_LOC_ALTITUDE_UNKNOWN,                      \
+#define LOC_GLOBAL_DEFAULT                                                                         \
+	{                                                                                          \
+		.latitude = BT_MESH_LOC_GLOBAL_LATITUDE_UNKNOWN,                                   \
+		.longitude = BT_MESH_LOC_GLOBAL_LONGITUDE_UNKNOWN,                                 \
+		.altitude = BT_MESH_LOC_ALTITUDE_UNKNOWN,                                          \
 	}
 
-#define LOC_LOCAL_DEFAULT                                                      \
-	{                                                                      \
-		.north = 0, .east = 0,                                         \
-		.altitude = BT_MESH_LOC_ALTITUDE_UNKNOWN,                      \
-		.floor_number = BT_MESH_LOC_FLOOR_NUMBER_UNKNOWN,              \
-		.is_mobile = false, .time_delta = 0, .precision_mm = 4096000,  \
+#define LOC_LOCAL_DEFAULT                                                                          \
+	{                                                                                          \
+		.north = BT_MESH_LOC_LOCAL_NORTH_UNKNOWN, .east = BT_MESH_LOC_LOCAL_EAST_UNKNOWN,  \
+		.altitude = BT_MESH_LOC_ALTITUDE_UNKNOWN,                                          \
+		.floor_number = BT_MESH_LOC_FLOOR_NUMBER_UNKNOWN, .is_mobile = false,              \
+		.time_delta = 0, .precision_mm = 4096000,                                          \
 	}
 
 /* Global location */
