@@ -10,12 +10,9 @@ You can select the board targets for these boards when :ref:`building`.
 
 Some boards can support Cortex-M Security Extensions (CMSE), with their board targets separated for different :ref:`app_boards_spe_nspe`.
 
-In addition, you can :ref:`define custom boards <defining_custom_board>`.
-
 .. toctree::
    :maxdepth: 1
    :caption: Subpages:
 
    board_names
    processing_environments
-   defining_custom_board

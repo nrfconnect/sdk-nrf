@@ -738,6 +738,7 @@
 .. _`System OFF mode`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/power.html#ariaid-title10
 .. _`nRF52840 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dk/page/UG/dk/intro.html
 .. _`nRF52840 Dongle User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dongle/page/UG/nrf52840_Dongle/intro.html
+.. _`nRF52840 DK Debug output`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dk/page/UG/dk/hw_debug_out.html
 .. _`nRF52840 DK Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf52840/page/COMP/nrf52840/nrf52840_comp_matrix.html
 
 .. _`nRF52833 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52833&labelkey=product-specification
@@ -921,6 +922,7 @@
 
 .. _`nRF Connect SDK Intermediate course`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/
 .. _`Lesson 2 - Debugging and troubleshooting`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-2-debugging/
+.. _`Lesson 3 – Adding custom board support`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-3-adding-custom-board-support/
 .. _`Lesson 5 – Serial Peripheral Interface (SPI)`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-5-serial-peripheral-interface-spi/
 .. _`Lesson 7 - Device driver model`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-7-device-driver-model/
 

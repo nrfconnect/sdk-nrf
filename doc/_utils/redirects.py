@@ -58,7 +58,6 @@ NRF = [
     ("config_and_build/board_support/index", "app_dev/board_support/index"),
     ("config_and_build/board_support/board_names", "app_dev/board_support/board_names"), # Board names
     ("config_and_build/board_support/processing_environments", "app_dev/board_support/processing_environments"), # Processing environments
-    ("config_and_build/board_support/defining_custom_board", "app_dev/board_support/defining_custom_board"), # Defining custom board
     ("gs_modifying", "app_dev/config_and_build/index"), # Configuring and building (landing)
     ("getting_started/modifying", "app_dev/config_and_build/index"),
     ("config_and_build/modifying", "app_dev/config_and_build/index"),
@@ -262,6 +261,8 @@ NRF = [
     ("device_guides/fem/fem_incomplete_connections", "app_dev/device_guides/fem/fem_incomplete_connections"), # Use case of incomplete physical connections to the FEM module
     ("device_guides/fem/fem_power_models", "app_dev/device_guides/fem/fem_power_models"), # Using FEM power models
     ("device_guides/fem/21540ek_dev_guide", "app_dev/device_guides/fem/21540ek_dev_guide"), # Developing with the nRF21540 EK
+    ("config_and_build/board_support/defining_custom_board", "app_dev/device_guides/custom/defining_custom_board"), # Defining custom board
+    ("app_dev/board_support/defining_custom_board", "app_dev/device_guides/custom/defining_custom_board"),
     ("ug_radio_coex", "app_dev/device_guides/wifi_coex"), # Coexistence of short-range radio and other radios
     ("app_dev/wifi_coex/index", "app_dev/device_guides/wifi_coex"),
     ("device_guides/wifi_coex", "app_dev/device_guides/wifi_coex"),

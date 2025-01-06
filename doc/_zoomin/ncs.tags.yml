@@ -233,6 +233,7 @@ mapping_topics:
   - nrf/app_dev/device_guides/fem/*.html: ["fem", "nrf21540", "evaluation-kits", "development-kits"]
   - nrf/app_dev/device_guides/wifi_coex.html: ["kconfig", "ble", "nrf70-series", "nrf7002",
                                                "nrf7001", "nrf7000", "wifi"]
+  - nrf/app_dev/device_guides/custom/*.html: ["development-kits"]
   - nrf/test_and_optimize.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                                  "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160",
                                  "thingy91", "thingy91x", "nrf9161", "nrf9151", "nrf9131",
