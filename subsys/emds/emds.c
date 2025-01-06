@@ -69,22 +69,35 @@ static int emds_fs_init(void)
 
 static int emds_entries_size(uint32_t *size)
 {
-	size_t block_size = emds_flash.flash_params->write_block_size;
 	int entries = 0;
 
 	*size = 0;
 
 	STRUCT_SECTION_FOREACH(emds_entry, ch) {
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+		/* Data is not required to be alinged with block_size for RRAM */
+		*size += ch->len;
+		*size += emds_flash.ate_size;
+#else
+		size_t block_size = emds_flash.flash_params->write_block_size;
 		*size += DIV_ROUND_UP(ch->len, block_size) * block_size;
 		*size += DIV_ROUND_UP(emds_flash.ate_size, block_size) * block_size;
+#endif
 		entries++;
 	}
 
 	struct emds_dynamic_entry *ch;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+		/* Data is not required to be alinged with block_size for RRAM */
+		*size += ch->entry.len;
+		*size += emds_flash.ate_size;
+#else
+		size_t block_size = emds_flash.flash_params->write_block_size;
 		*size += DIV_ROUND_UP(ch->entry.len, block_size) * block_size;
 		*size += DIV_ROUND_UP(emds_flash.ate_size, block_size) * block_size;
+#endif
 		entries++;
 	}
 
@@ -251,7 +264,6 @@ int emds_prepare(void)
 	}
 
 	(void)emds_entries_size(&size);
-
 	rc = emds_flash_prepare(&emds_flash, size);
 	if (rc) {
 		return rc;
