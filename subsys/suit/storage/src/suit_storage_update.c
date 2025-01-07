@@ -8,7 +8,6 @@
 #include <zephyr/drivers/flash.h>
 #include <zephyr/logging/log.h>
 
-#define UPDATE_MAGIC_VALUE_AVAILABLE_RAW  0x5555AAAA
 #define UPDATE_MAGIC_VALUE_AVAILABLE_CBOR 0x55AA55AA
 #define UPDATE_MAGIC_VALUE_EMPTY	  0xFFFFFFFF
 

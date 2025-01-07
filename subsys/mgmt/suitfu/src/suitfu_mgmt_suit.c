@@ -55,26 +55,11 @@ static const struct mgmt_handler suit_mgmt_handlers[] = {
 #endif
 };
 
-#ifdef CONFIG_MGMT_SUITFU_GRP_OS
-static const struct mgmt_handler suit_mgmt_os_handlers[] = {
-	[OS_MGMT_ID_BOOTLOADER_INFO] = {.mh_read = suitfu_mgmt_suit_bootloader_info_read,
-					.mh_write = NULL},
-};
-#endif
-
 static struct mgmt_group suit_mgmt_group = {
 	.mg_handlers = (struct mgmt_handler *)suit_mgmt_handlers,
 	.mg_handlers_count = ARRAY_SIZE(suit_mgmt_handlers),
 	.mg_group_id = CONFIG_MGMT_GROUP_ID_SUIT,
 };
-
-#ifdef CONFIG_MGMT_SUITFU_GRP_OS
-static struct mgmt_group suit_mgmt_os_group = {
-	.mg_handlers = (struct mgmt_handler *)suit_mgmt_os_handlers,
-	.mg_handlers_count = ARRAY_SIZE(suit_mgmt_os_handlers),
-	.mg_group_id = MGMT_GROUP_ID_OS,
-};
-#endif
 
 void suit_mgmt_register_group(void)
 {
@@ -82,17 +67,11 @@ void suit_mgmt_register_group(void)
 	suitfu_mgmt_suit_image_fetch_init();
 #endif
 	mgmt_register_group(&suit_mgmt_group);
-#ifdef CONFIG_MGMT_SUITFU_GRP_OS
-	mgmt_register_group(&suit_mgmt_os_group);
-#endif
 }
 
 void suit_mgmt_unregister_group(void)
 {
 	mgmt_unregister_group(&suit_mgmt_group);
-#ifdef CONFIG_MGMT_SUITFU_GRP_OS
-	mgmt_unregister_group(&suit_mgmt_os_group);
-#endif
 }
 
 #ifdef CONFIG_MGMT_SUITFU_AUTO_REGISTER_HANDLERS
