@@ -1,33 +1,29 @@
 / {
-    nordic_wlan0: nordic_wlan0 {
-        compatible = "nordic,wlan0";
-        status = "okay";
-    };
-
     chosen {
         zephyr,shell-uart = &uart20;
         zephyr,sram = &cpuapp_sram;
-        zephyr,wifi = &nordic_wlan0;
     };
 
-    ipc0: ipc0 {
-        compatible = "zephyr,ipc-icmsg";
-        tx-region = <&ipc_shm_cpuapp_cpuuma_0>;   // TODO: Need shared memory between APP-WIFI
-        rx-region = <&ipc_shm_cpuuma_cpuapp_0>;   // TODO: Need shared memory between APP-WIFI
-        mboxes = <&wifi_bellboard 2>,
-            <&cpuapp_bellboard  0>;
-        mbox-names = "tx", "rx";
-        status = "okay";
-    };
+    ipc {
+        ipc0: ipc0 {
+            compatible = "zephyr,ipc-icmsg";
+            tx-region = <&ipc_shm_cpuapp_cpuuma_0>;   // TODO: Need shared memory between APP-WIFI
+            rx-region = <&ipc_shm_cpuuma_cpuapp_0>;   // TODO: Need shared memory between APP-WIFI
+            mboxes = <&wifi_bellboard 2>,
+                <&cpuapp_bellboard  0>;
+            mbox-names = "tx", "rx";
+            status = "okay";
+        };
 
-    ipc1: ipc1 {
-        compatible = "zephyr,ipc-icmsg";
-        tx-region = <&ipc_shm_cpuapp_cpuuma_1>;   // TODO: Need shared memory between APP-WIFI
-        rx-region = <&ipc_shm_cpuuma_cpuapp_1>;   // TODO: Need shared memory between APP-WIFI
-        mboxes = <&wifi_bellboard 3>,
-            <&cpuapp_bellboard  1>;
-        mbox-names = "tx", "rx";
-        status = "okay";
+        ipc1: ipc1 {
+            compatible = "zephyr,ipc-icmsg";
+            tx-region = <&ipc_shm_cpuapp_cpuuma_1>;   // TODO: Need shared memory between APP-WIFI
+            rx-region = <&ipc_shm_cpuuma_cpuapp_1>;   // TODO: Need shared memory between APP-WIFI
+            mboxes = <&wifi_bellboard 3>,
+                <&cpuapp_bellboard  1>;
+            mbox-names = "tx", "rx";
+            status = "okay";
+        };
     };
 };
 
@@ -58,12 +54,12 @@
 
         ipc_shm_cpuapp_cpuuma_1: memory@1000 {
             compatible = "mmio-sram";
-            reg = <0x0 DT_SIZE_K(2)>;
+            reg = <0x1000 DT_SIZE_K(2)>;
         };
 
         ipc_shm_cpuuma_cpuapp_1: memory@1800 {
             compatible = "mmio-sram";
-            reg = <0x800 DT_SIZE_K(2)>;
+            reg = <0x1800 DT_SIZE_K(2)>;
         };
     };
 };
@@ -90,4 +86,12 @@
 
 &psa_rng {
     status = "okay";
+};
+
+&uicr {
+    status = "disabled";
+};
+
+&clock {
+    status = "disabled";
 };
