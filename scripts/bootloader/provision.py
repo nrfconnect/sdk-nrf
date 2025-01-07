@@ -3,15 +3,15 @@
 # Copyright (c) 2018 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-
-
-from intelhex import IntelHex
-
 import argparse
-import struct
-from ecdsa import VerifyingKey
-from hashlib import sha256
 import os
+import struct
+from hashlib import sha256
+
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec, ed25519
+from cryptography.hazmat.primitives.serialization import load_pem_public_key
+from intelhex import IntelHex
 
 # Size of implementation ID in OTP in bytes
 IMPLEMENTATION_ID_SIZE = 0x20
@@ -46,10 +46,10 @@ def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_
         return provision_data
 
     assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
-    assert mcuboot_counters_slots    % 2 == 0, "--mcuboot-counters-slots     must be an even number"
+    assert mcuboot_counters_slots % 2 == 0, "--mcuboot-counters-slots     must be an even number"
 
     provision_data += struct.pack('H', BL_COLLECTION_TYPE_MONOTONIC_COUNTERS)
-    provision_data += struct.pack('H', num_counters) # Could be 0, 1, or 2
+    provision_data += struct.pack('H', num_counters)  # Could be 0, 1, or 2
 
     if num_counter_slots_version > 0:
         provision_data += struct.pack('H', BL_MONOTONIC_COUNTERS_DESC_NSIB)
@@ -111,7 +111,7 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
 
     idx = 0
     for mhash in hashes:
-        provision_data += struct.pack('I', 0x50FAFFFF | (idx << 24)) # Invalidation token
+        provision_data += struct.pack('I', 0x50FAFFFF | (idx << 24))  # Invalidation token
         provision_data += mhash
         idx += 1
 
@@ -156,12 +156,26 @@ def parse_args():
     return parser.parse_args()
 
 
+def public_key_to_string(public_key) -> bytes:
+    if isinstance(public_key, ec.EllipticCurvePublicKey):
+        return public_key.public_bytes(
+            encoding=serialization.Encoding.X962,
+            format=serialization.PublicFormat.UncompressedPoint
+        )[1:]
+    if isinstance(public_key, ed25519.Ed25519PublicKey):
+        return public_key.public_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PublicFormat.Raw
+        )
+    raise NotImplementedError
+
+
 def get_hashes(public_key_files, verify_hashes):
     hashes = list()
     for fn in public_key_files:
         with open(fn, 'rb') as f:
-            digest = sha256(VerifyingKey.from_pem(f.read()).to_string()).digest()[:16]
-            if verify_hashes and any([digest[n:n+2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
+            digest = sha256(public_key_to_string(load_pem_public_key(f.read()))).digest()[:16]
+            if verify_hashes and any([digest[n:n + 2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
                 raise RuntimeError("Hash of key in '%s' contains 0xffff. Please regenerate the key." %
                                    os.path.abspath(f.name))
             hashes.append(digest)
@@ -246,7 +260,6 @@ def main():
         )
         return
 
-
     s0_address = args.s0_addr
     s1_address = args.s1_addr if args.s1_addr is not None else s0_address
 
@@ -254,7 +267,7 @@ def main():
     # rest of the provisioning data so add it to the given base
     # address
     provision_address = args.provision_addr + num_bytes_provisioned_elsewhere
-    max_size          = args.max_size       - num_bytes_provisioned_elsewhere
+    max_size = args.max_size - num_bytes_provisioned_elsewhere
 
     hashes = []
     if args.public_key_files:

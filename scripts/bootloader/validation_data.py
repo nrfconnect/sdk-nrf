@@ -12,13 +12,23 @@ import hashlib
 import struct
 import sys
 from pathlib import Path
-from typing import TextIO, BinaryIO
+from typing import BinaryIO, TextIO
 
-import ecdsa  # type: ignore[import-untyped]
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import ed25519
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import ec, ed25519
+from cryptography.hazmat.primitives.asymmetric.utils import encode_dss_signature
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 from intelhex import IntelHex  # type: ignore[import-untyped]
+
+
+def load_public_key(file_name: Path):
+    with open(file_name, 'rb') as f:
+        return load_pem_public_key(f.read())
+
+
+class InvalidSignatureError(Exception):
+    """Raised when an invalid signature is encountered."""
 
 
 class BaseValidator(abc.ABC):
@@ -45,7 +55,7 @@ class BaseValidator(abc.ABC):
         self,
         signature_bytes: bytes,
         input_hex: IntelHex,
-        public_key: ecdsa.VerifyingKey | ed25519.Ed25519PublicKey,
+        public_key,
         magic_value: bytes
     ) -> bytes:
         hash_bytes = self.get_hash(input_hex)
@@ -66,7 +76,7 @@ class BaseValidator(abc.ABC):
         self,
         signature_file: Path,
         input_file: Path,
-        public_key: ecdsa.VerifyingKey | ed25519.Ed25519PublicKey,
+        public_key: ec.EllipticCurvePublicKey | ed25519.Ed25519PublicKey,
         offset: int,
         output_hex: TextIO,
         output_bin: BinaryIO | None,
@@ -74,16 +84,15 @@ class BaseValidator(abc.ABC):
     ) -> None:
         with open(input_file, 'r', encoding='UTF-8') as f:
             ih = IntelHex(f)
-        ih.start_addr = None  # OBJCOPY incorrectly inserts x86 specific records, remove the start_addr as it is wrong.
+        # OBJCOPY incorrectly inserts x86 specific records, remove the start_addr as it is wrong.
+        ih.start_addr = None
 
         minimum_offset = ((ih.maxaddr() // 4) + 1) * 4
         if offset != 0 and offset < minimum_offset:
             raise RuntimeError(f'Incorrect offset, must be bigger than {hex(minimum_offset)}')
 
         # Parse comma-separated string of uint32s into hex string. Each is encoded in little-endian byte order
-        parsed_magic_value = b''.join(
-            [struct.pack('<I', int(m, 0)) for m in magic_value.split(',')]
-        )
+        parsed_magic_value = self._parse_magic_value(magic_value)
         signature_bytes = self._read_binary(signature_file)
         validation_data = self.get_validation_data(
             signature_bytes=signature_bytes,
@@ -105,12 +114,21 @@ class BaseValidator(abc.ABC):
         if output_bin:
             ih.tofile(output_bin.name, format='bin')
 
-    def _read_binary(self, file, encoding=None) -> bytes:
+    @staticmethod
+    def _parse_magic_value(magic_value):
+        parsed_magic_value = b''.join(
+            [struct.pack('<I', int(m, 0)) for m in magic_value.split(',')]
+        )
+        return parsed_magic_value
+
+    @staticmethod
+    def _read_binary(file, encoding=None) -> bytes:
         with open(file, 'rb', encoding=encoding) as f:
             data_bytes = f.read()
         return data_bytes
 
-    def _read_text(self, file, encoding=None) -> str:
+    @staticmethod
+    def _read_text(file, encoding=None) -> str:
         with open(file, 'r', encoding=encoding) as f:
             data = f.read()
         return data
@@ -118,11 +136,47 @@ class BaseValidator(abc.ABC):
 
 class EcdsaSignatureValidator(BaseValidator):
 
-    def to_string(self, public_key) -> bytes:
-        return public_key.to_string()
+    def get_validation_data(
+        self,
+        signature_bytes: bytes,
+        input_hex: IntelHex,
+        public_key,
+        magic_value: bytes
+    ) -> bytes:
+        hash_bytes = self.get_hash(input_hex)
+        public_key_bytes = self.to_string(public_key)
 
-    def verify(self, public_key: ecdsa.VerifyingKey, signature_bytes: bytes, message_bytes: bytes):
-        public_key.verify(signature_bytes, message_bytes, hashfunc=self.hashfunc)
+        # Will raise an exception if it fails
+        self.verify(public_key, signature_bytes, hash_bytes)
+
+        validation_bytes = magic_value
+        validation_bytes += struct.pack('I', input_hex.addresses()[0])
+        validation_bytes += hash_bytes
+        validation_bytes += public_key_bytes
+        validation_bytes += signature_bytes
+
+        return validation_bytes
+
+    def to_string(self, public_key: ec.EllipticCurvePublicKey) -> bytes:
+        public_key_bytes = public_key.public_bytes(
+            encoding=serialization.Encoding.X962,
+            format=serialization.PublicFormat.UncompressedPoint,
+        )
+        return public_key_bytes[1:]
+
+    def verify(
+        self, public_key: ec.EllipticCurvePublicKey, signature_bytes: bytes, message_bytes: bytes
+    ) -> None:
+        signature = self._encode_signature(signature_bytes)
+        public_key.verify(signature, message_bytes, ec.ECDSA(hashes.SHA256()))
+
+    @staticmethod
+    def _encode_signature(signature: bytes) -> bytes:
+        """Return encoded signature from ASN.1 format signature."""
+        assert len(signature) == 64
+        values = signature[:32], signature[32:]
+        key1, key2 = (int.from_bytes(v, byteorder='big') for v in values)
+        return encode_dss_signature(key1, key2)
 
 
 class Ed25519SignatureValidator(BaseValidator):
@@ -135,9 +189,16 @@ class Ed25519SignatureValidator(BaseValidator):
         )
         return public_key_bytes
 
-    def verify(self, public_key: ed25519.Ed25519PublicKey, signature_bytes: bytes,
-               message_bytes: bytes):
-        public_key.verify(signature_bytes, message_bytes)
+    def verify(
+        self,
+        public_key: ed25519.Ed25519PublicKey,
+        signature_bytes: bytes,
+        message_bytes: bytes
+    ):
+        try:
+            public_key.verify(signature_bytes, message_bytes)
+        except InvalidSignature:
+            raise InvalidSignatureError('Signature verification failed')
 
     def get_validation_data(
         self,
@@ -163,7 +224,7 @@ class Ed25519SignatureValidator(BaseValidator):
         self,
         signature_file: Path,
         input_file: Path,
-        public_key: ecdsa.VerifyingKey | ed25519.Ed25519PublicKey,
+        public_key: ec.EllipticCurvePublicKey | ed25519.Ed25519PublicKey,
         offset: int,
         output_hex: TextIO,
         output_bin: BinaryIO | None,
@@ -182,16 +243,15 @@ class Ed25519SignatureValidator(BaseValidator):
 
         with open(input_file, 'r', encoding='UTF-8') as f:
             ih = IntelHex(f)
-        ih.start_addr = None  # OBJCOPY incorrectly inserts x86 specific records, remove the start_addr as it is wrong.
+        # OBJCOPY incorrectly inserts x86 specific records, remove the start_addr as it is wrong.
+        ih.start_addr = None
 
         minimum_offset = ((ih.maxaddr() // 4) + 1) * 4
         if offset != 0 and offset < minimum_offset:
             raise RuntimeError(f'Incorrect offset, must be bigger than {hex(minimum_offset)}')
 
         # Parse comma-separated string of uint32s into hex string. Each is encoded in little-endian byte order
-        parsed_magic_value = b''.join(
-            [struct.pack('<I', int(m, 0)) for m in magic_value.split(',')]
-        )
+        parsed_magic_value = self._parse_magic_value(magic_value)
         signature_bytes = self._read_binary(signature_file)
         self.verify(
             public_key=public_key,
@@ -260,37 +320,25 @@ def parse_args(argv=None):
 def main(argv=None) -> int:
     args = parse_args(argv)
 
+    signature_validator: EcdsaSignatureValidator | Ed25519SignatureValidator
     if args.algorithm == 'ecdsa':
-        with open(args.public_key, 'r', encoding='UTF-8') as f:
-            public_key = ecdsa.VerifyingKey.from_pem(f.read())
-        EcdsaSignatureValidator(hashfunc=hashlib.sha256).append_validation_data(
-            signature_file=args.signature,
-            input_file=args.input,
-            public_key=public_key,
-            offset=args.offset,
-            output_hex=args.output_hex,
-            output_bin=args.output_bin,
-            magic_value=args.magic_value
-        )
+        signature_validator = EcdsaSignatureValidator(hashfunc=hashlib.sha256)
     elif args.algorithm == 'ed25519':
-        with open(args.public_key, 'rb') as f:
-            public_key = load_pem_public_key(f.read())
-        if args.hash == 'sha512':
-            hashfunction = hashlib.sha512
-        else:
-            hashfunction = None
-        Ed25519SignatureValidator(hashfunction).append_validation_data(
-            signature_file=args.signature,
-            input_file=args.input,
-            public_key=public_key,
-            offset=args.offset,
-            output_hex=args.output_hex,
-            output_bin=args.output_bin,
-            magic_value=args.magic_value
-        )
+        hashfunction = hashlib.sha512 if args.hash == 'sha512' else None
+        signature_validator = Ed25519SignatureValidator(hashfunction)
     else:
-        raise SystemExit('Not implemented')
+        raise SystemExit('Algorithm not implemented')
 
+    public_key = load_public_key(args.public_key)
+    signature_validator.append_validation_data(
+        signature_file=args.signature,
+        input_file=args.input,
+        public_key=public_key,
+        offset=args.offset,
+        output_hex=args.output_hex,
+        output_bin=args.output_bin,
+        magic_value=args.magic_value
+    )
     return 0
 
 
