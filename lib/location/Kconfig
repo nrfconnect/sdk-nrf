@@ -61,7 +61,7 @@ config LOCATION_DATA_DETAILS
 
 config LOCATION_WORKQUEUE_STACK_SIZE
 	int "Stack size for the library work queue"
-	default 4096
+	default 3072
 
 if LOCATION_METHOD_GNSS
 
