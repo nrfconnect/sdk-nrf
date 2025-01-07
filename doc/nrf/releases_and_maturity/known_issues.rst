@@ -5644,6 +5644,36 @@ Calling ``nrf_connect()`` immediately causes fail
 
   **Affected platforms:** nRF9160
 
+Known issues for custom boards
+******************************
+
+.. rst-class:: v2-8-0
+
+ VSC-2817: Custom boards for the nRF54L15 rev. Engineering B include Kconfig options for the rev. Engineering A
+    If you generated a custom board based on the nRF54L15 rev. Engineering B using the |NCS| v2.8.0, the custom board files mistakenly include the following Kconfig select options for the Engineering A version of the SoC:
+
+    * ``SOC_NRF54L15_ENGA_CPUAPP``
+    * ``SOC_NRF54L15_ENGA_CPUFLPR``
+
+    **Affected platforms:** nRF54L15 (rev. Engineering B)
+
+    **Workaround:** In the Kconfig file for your custom board (named :file:`Kconfig.<custom_board_name>`, where ``<custom_board_name>`` is the name of your board), manually replace the select options under the ``BOARD_CUSTOM_BOARD_NAME`` Kconfig option:
+
+    * ``SOC_NRF54L15_ENGA_CPUAPP`` with ``SOC_NRF54L15_CPUAPP``
+    * ``SOC_NRF54L15_ENGA_CPUFLPR`` with ``SOC_NRF54L15_CPUFLPR``
+
+    Then, :ref:`manually regenerate the board <zephyr:custom_board_definition>`.
+
+.. rst-class:: v2-9-0 v2-8-0
+
+ VSC-2817: Custom boards for the nRF54L15 rev. Engineering B adds the :kconfig:option:`CONFIG_SOC_NRF_FORCE_CONSTLAT` setting
+    If you generated a custom board based on the nRF54L15 rev. Engineering B using the |NCS| v2.9.0 or v2.8.0, the custom board files add the :kconfig:option:`CONFIG_SOC_NRF_FORCE_CONSTLAT` Kconfig option set to ``y``.
+
+    **Affected platforms:** nRF54L15 (rev. Engineering B)
+
+    **Workaround:** In the Kconfig file for your custom board (named :file:`Kconfig.<custom_board_name>`, where ``<custom_board_name>`` is the name of your board), manually remove the :kconfig:option:`CONFIG_SOC_NRF_FORCE_CONSTLAT` Kconfig option.
+    Then, :ref:`manually regenerate the board <zephyr:custom_board_definition>`.
+
 Known issues for deprecated components
 **************************************
 
