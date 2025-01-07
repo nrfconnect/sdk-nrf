@@ -137,16 +137,18 @@ Complete the following steps to update the firmware:
 #. Take off the top cover of the Nordic Thingy:53 so you can access the **SW2** button in Step 7.
 #. Plug the Nordic Thingy:53 into the computer using a USB-C cable.
 
-   .. figure:: /gsg_guides/images/thingy53_sw1_usb.svg
+   .. figure:: /gsg_guides/images/thingy53_sw1_usb.webp
       :alt: The Nordic Thingy:53 schematic - **SW1** and USB connector cover
+      :width: 361px
 
       The Nordic Thingy:53 schematic - **SW1** and USB connector cover
 
 #. Open nRF Connect for Desktop and launch the Programmer app.
 #. Press **SW2** while moving the power switch **SW1** to the **ON** position.
 
-   .. figure:: /gsg_guides/images/thingy53_sw1_sw2.svg
+   .. figure:: /gsg_guides/images/thingy53_sw1_sw2.webp
       :alt: The Nordic Thingy:53 schematic - **SW1** and **SW2**
+      :width: 425px
 
       The Nordic Thingy:53 schematic - **SW1** and **SW2**
 
@@ -209,8 +211,9 @@ Do no unplug or power off the devices during this process.
    a. Open the connector cover on the side of the Nordic Thingy:53.
    #. Use a JTAG cable to connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe.
 
-      .. figure:: /gsg_guides/images/thingy53_nrf5340_dk.svg
+      .. figure:: /gsg_guides/images/thingy53_nrf5340_dk.webp
          :alt: Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
+         :width: 568px
 
          Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
 

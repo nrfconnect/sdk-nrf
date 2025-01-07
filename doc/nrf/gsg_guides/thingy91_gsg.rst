@@ -60,8 +60,9 @@ Complete the following steps to prepare the Thingy:91 for setup:
    #. Remove the protective cover.
    #. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the Thingy:91.
 
-      .. figure:: images/thingy91_insert_sim.svg
+      .. figure:: images/thingy91_insert_sim.webp
          :alt: Inserting SIM
+         :width: 352px
 
          Inserting SIM
 
