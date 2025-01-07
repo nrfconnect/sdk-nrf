@@ -100,4 +100,3 @@ class BuildConf:
     device: AudioDevice
     build: BuildType
     pristine: bool
-    child_image: bool
