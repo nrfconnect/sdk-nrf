@@ -17,9 +17,6 @@
 #elif (DT_NODE_EXISTS(DT_NODELABEL(flash0))) /* nrf52 or flash simulator */
 #define INTERNAL_NVM_START DT_REG_ADDR(DT_NODELABEL(flash0))
 #define INTERNAL_NVM_SIZE  DT_REG_SIZE(DT_NODELABEL(flash0))
-#elif (DT_NODE_EXISTS(DT_NODELABEL(rram0))) /* nrf54l15 */
-#define INTERNAL_NVM_START DT_REG_ADDR(DT_NODELABEL(rram0))
-#define INTERNAL_NVM_SIZE  DT_REG_SIZE(DT_NODELABEL(rram0))
 #else
 #error "No recognizable internal nvm nodes found."
 #endif

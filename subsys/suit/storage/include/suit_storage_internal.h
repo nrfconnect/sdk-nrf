@@ -30,9 +30,7 @@
 extern "C" {
 #endif
 
-#define SUIT_STORAGE_NVM_NODE                                                                      \
-	COND_CODE_1(DT_NODE_EXISTS(DT_NODELABEL(secdom_nvs)), (DT_NODELABEL(secdom_nvs)),          \
-		    (DT_CHOSEN(zephyr_flash)))
+#define SUIT_STORAGE_NVM_NODE DT_CHOSEN(zephyr_flash)
 #define SUIT_STORAGE_WRITE_SIZE DT_PROP(SUIT_STORAGE_NVM_NODE, write_block_size)
 #define SUIT_STORAGE_EB_SIZE	DT_PROP(SUIT_STORAGE_NVM_NODE, erase_block_size)
 #define SUIT_STORAGE_ACCESS_BLOCK_SIZE                                                             \
