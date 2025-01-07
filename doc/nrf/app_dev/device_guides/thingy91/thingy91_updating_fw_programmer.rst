@@ -81,8 +81,9 @@ Updating the firmware in the nRF52840 SoC
       #. Switch off the Thingy:91.
       #. Press **SW4** while switching **SW1** to the **ON** position.
 
-         .. figure:: images/thingy91_sw1_sw4.svg
+         .. figure:: images/thingy91_sw1_sw4.webp
             :alt: thingy91_sw1_sw4
+            :width: 515px
 
             Thingy:91 - SW1 SW4 switch
 
@@ -146,8 +147,9 @@ Updating the firmware in the nRF52840 SoC
 
          a. Connect the Thingy:91 to the debug out port on a 10-pin external debug probe using a JTAG cable.
 
-            .. figure:: images/programmer_thingy91_connect_dk_swd_vddio.svg
+            .. figure:: images/programmer_thingy91_connect_dk_swd_vddio.webp
                :alt: Thingy:91 - Connecting the external debug probe
+               :width: 626px
 
                Thingy:91 - Connecting the external debug probe
 
@@ -222,8 +224,9 @@ Update the modem firmware on the nRF9160 SiP
       #. Switch off the Thingy:91.
       #. Press **SW3** while switching **SW1** to the **ON** position.
 
-         .. figure:: images/thingy91_sw1_sw3.svg
+         .. figure:: images/thingy91_sw1_sw3.webp
             :alt: Thingy:91 - SW1 SW3 switch
+            :width: 483px
 
             Thingy:91 - SW1 SW3 switch
 
@@ -319,8 +322,9 @@ Program the nRF9160 SiP application
       #. Switch off the Thingy:91.
       #. Press **SW3** while switching **SW1** to the **ON** position.
 
-         .. figure:: images/thingy91_sw1_sw3.svg
+         .. figure:: images/thingy91_sw1_sw3.webp
             :alt: Thingy:91 - SW1 SW3 switch
+            :width: 483px
 
             Thingy:91 - SW1 SW3 switch
 
