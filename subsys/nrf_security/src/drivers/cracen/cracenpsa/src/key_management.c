@@ -27,12 +27,6 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/byteorder.h>
 
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-#else
-#include <sicrypto/ed25519.h>
-#include <sicrypto/ed25519ph.h>
-#endif
-
 extern const uint8_t cracen_N3072[384];
 
 extern nrf_security_mutex_t cracen_mutex_symmetric;
@@ -606,12 +600,9 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	psa_status_t psa_status;
 	size_t expected_pub_key_size = 0;
 	int si_status = 0;
-	psa_algorithm_t key_alg = psa_get_key_algorithm(attributes);
 	const struct sx_pk_ecurve *sx_curve;
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-#else
+
 	struct sitask t;
-#endif
 	switch (psa_curve) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
 	case PSA_ECC_FAMILY_SECP_R1:
@@ -636,10 +627,8 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	struct si_sig_privkey priv_key;
 	struct si_sig_pubkey pub_key;
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-#else
 	char workmem[SX_ED448_DGST_SZ] = {};
-#endif
+
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
 		if (key_buffer_size != sizeof(ikg_opaque_key)) {
@@ -680,33 +669,25 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 			}
 			break;
 		case PSA_ECC_FAMILY_TWISTED_EDWARDS:
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-#else
 			if (key_bits_attr == 255) {
-				if (key_alg == PSA_ALG_ED25519PH) {
-					priv_key.def = si_sig_def_ed25519ph;
-					priv_key.key.ed25519 = (struct sx_ed25519_v *)key_buffer;
-					pub_key.key.ed25519 = (struct sx_ed25519_pt *)data;
-				} else {
-					priv_key.def = si_sig_def_ed25519;
-					priv_key.key.ed25519 = (struct sx_ed25519_v *)key_buffer;
-					pub_key.key.ed25519 = (struct sx_ed25519_pt *)data;
-				}
+				(void)t;
+				si_status = ed25519_create_pubkey(key_buffer, data);
+				*data_length = 32;
+					if (si_status != SX_OK) {
+						return silex_statuscodes_to_psa(si_status);
+					}
+				return PSA_SUCCESS;
 			} else {
 				priv_key.def = si_sig_def_ed448;
 				priv_key.key.ed448 = (struct sx_ed448_v *)key_buffer;
 				pub_key.key.ed448 = (struct sx_ed448_pt *)data;
 			}
-#endif
 			break;
 		default:
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 	}
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-	si_status = create_ed25519_pubkey(key_buffer, data);
-	*data_length = 32;
-#else
+
 	si_task_init(&t, workmem, sizeof(workmem));
 	si_sig_create_pubkey(&t, &priv_key, &pub_key);
 	si_task_run(&t);
@@ -718,7 +699,6 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	}
 
 	*data_length = expected_pub_key_size;
-#endif
 	return PSA_SUCCESS;
 }
 

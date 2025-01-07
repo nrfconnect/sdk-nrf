@@ -12,7 +12,6 @@
 #include <psa/crypto_values.h>
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecdsa.h>
-#include <sicrypto/ed25519ph.h>
 #include <sicrypto/ik.h>
 #include <sicrypto/internal.h>
 #include <sicrypto/rsapss.h>
@@ -37,12 +36,6 @@
 
 #define SI_PSA_IS_KEY_FLAG(flag, attr) ((flag) == (psa_get_key_usage_flags((attr)) & (flag)))
 #define SI_PSA_IS_KEY_TYPE(flag, attr) ((flag) == (psa_get_key_type((attr)) & (flag)))
-
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-#else
-#include <sicrypto/ed25519.h>
-#include <sicrypto/ed25519ph.h>
-#endif
 
 static int cracen_signature_set_hashalgo(const struct sxhashalg **hashalg, psa_algorithm_t alg)
 {
@@ -124,26 +117,8 @@ static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, ch
 		return SX_ERR_INVALID_ARG;
 	}
 
-	if (alg == PSA_ALG_PURE_EDDSA) {
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-#else
-		privkey->def = si_sig_def_ed25519;
-		privkey->key.ed25519 = (struct sx_ed25519_v *)key_buffer;
-#endif
+	if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
 		return SX_OK;
-	}
-
-	if (IS_ENABLED(PSA_NEED_CRACEN_ED25519PH)) {
-		if (alg == PSA_ALG_ED25519PH) {
-			privkey->def = si_sig_def_ed25519ph;
-			privkey->key.ed25519 = (struct sx_ed25519_v *)key_buffer;
-			if (message) {
-				return cracen_signature_set_hashalgo(&privkey->hashalg, alg);
-			} else {
-				return cracen_signature_set_hashalgo_from_digestsz(
-					&privkey->hashalg, alg, digestsz);
-			}
-		}
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
@@ -216,40 +191,8 @@ static int cracen_signature_prepare_ec_pubkey(struct sitask *t, struct si_sig_pu
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS)) {
 		if (alg == PSA_ALG_PURE_EDDSA) {
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-			return SX_OK;
-#else
-			pubkey->def = si_sig_def_ed25519;
-
-			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
-				pubkey->key.ed25519 = (struct sx_ed25519_pt *)key_buffer;
-				return SX_OK;
-			}
-			if (curvesz != key_buffer_size) {
-				return SX_ERR_INVALID_KEY_SZ;
-			}
-			pubkey->key.ed25519 = (struct sx_ed25519_pt *)pubkey_buffer;
-#endif
-		}
-	}
-
-	if (IS_ENABLED(PSA_NEED_CRACEN_ED25519PH) && alg == PSA_ALG_ED25519PH) {
-		pubkey->def = si_sig_def_ed25519ph;
-		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
-			pubkey->key.ed25519 = (struct sx_ed25519_pt *)key_buffer;
-			if (message) {
-				cracen_signature_set_hashalgo(&pubkey->hashalg,
-									       alg);
-			} else {
-				cracen_signature_set_hashalgo_from_digestsz(&pubkey->hashalg,
-								alg, digestsz);
-			}
 			return SX_OK;
 		}
-		if (curvesz != key_buffer_size) {
-			return SX_ERR_INVALID_KEY_SZ;
-		}
-		pubkey->key.ed25519 = (struct sx_ed25519_pt *)pubkey_buffer;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
@@ -308,18 +251,6 @@ static psa_status_t cracen_signature_ecc_sign(int message, const psa_key_attribu
 					      size_t signature_size, size_t *signature_length)
 {
 	int si_status;
-	const struct sx_pk_ecurve *curve;
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-#else
-	struct si_sig_privkey privkey = {0};
-	struct si_sig_signature sign = {0};
-	struct sitask t;
-	/* Workmem for ecc sign task is 4 * digestsz + hmac block size + curve size */
-	char workmem[4 * PSA_HASH_MAX_SIZE + PSA_HMAC_MAX_HASH_BLOCK_SIZE +
-		     PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
-
-	si_task_init(&t, workmem, sizeof(workmem));
-#endif
 	if (!PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(attributes))) {
 		return silex_statuscodes_to_psa(SX_ERR_INCOMPATIBLE_HW);
 	}
@@ -332,7 +263,26 @@ static psa_status_t cracen_signature_ecc_sign(int message, const psa_key_attribu
 	    ((!message) && (!SI_PSA_IS_KEY_FLAG(PSA_KEY_USAGE_SIGN_HASH, attributes)))) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+	if (alg == PSA_ALG_ED25519PH) {
+		si_status = ed25519ph_sign(key_buffer, signature, input, input_length, message);
+		*signature_length = 64;
+		return silex_statuscodes_to_psa(si_status);
 
+	} else if (alg == PSA_ALG_PURE_EDDSA) {
+		si_status = ed25519_sign(key_buffer, signature, input, input_length);
+		*signature_length = 64;
+		return silex_statuscodes_to_psa(si_status);
+	}
+
+	const struct sx_pk_ecurve *curve;
+	struct si_sig_privkey privkey = {0};
+	struct si_sig_signature sign = {0};
+	struct sitask t;
+	/* Workmem for ecc sign task is 4 * digestsz + hmac block size + curve size */
+	char workmem[4 * PSA_HASH_MAX_SIZE + PSA_HMAC_MAX_HASH_BLOCK_SIZE +
+		     PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
+
+	si_task_init(&t, workmem, sizeof(workmem));
 	si_status =
 		cracen_signature_prepare_ec_prvkey(&privkey, (char *)key_buffer, key_buffer_size,
 						   &curve, alg, attributes, message, input_length);
@@ -344,47 +294,23 @@ static psa_status_t cracen_signature_ecc_sign(int message, const psa_key_attribu
 	if ((int)signature_size < 2 * curve->sz) {
 		return silex_statuscodes_to_psa(SX_ERR_OUTPUT_BUFFER_TOO_SMALL);
 	}
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-	ed25519_sign(key_buffer, signature, input);
-	*signature_length = 64;
-#else
 	*signature_length = 2 * curve->sz;
 	sign.sz = *signature_length;
 	sign.r = (char *)signature;
 	sign.s = (char *)signature + *signature_length / 2;
 
-	/* ED25519PH requires prehashing and supports sign and verify message
-	 * the message is therefore hashed here before si_sig_verify is called
-	 */
-	if (alg == PSA_ALG_ED25519PH && message) {
-		uint8_t status;
-		uint8_t hash[64];
-		size_t output_len;
-
-		status = psa_hash_compute(PSA_ALG_SHA_512,
-				input, input_length, hash,
-				sizeof(hash), &output_len);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
+	if (message) {
 		si_sig_create_sign(&t, &privkey, &sign);
-		si_task_consume(&t, (char *)hash, sizeof(hash));
 	} else {
-		if (message) {
-			si_sig_create_sign(&t, &privkey, &sign);
-		} else {
-			si_sig_create_sign_digest(&t, &privkey, &sign);
-
-		}
-		si_task_consume(&t, (char *)input,
-			message ? input_length : sx_hash_get_alg_digestsz(privkey.hashalg));
+		si_sig_create_sign_digest(&t, &privkey, &sign);
 
 	}
+	si_task_consume(&t, (char *)input,
+		message ? input_length : sx_hash_get_alg_digestsz(privkey.hashalg));
+
 	si_task_run(&t);
 	si_status = si_task_wait(&t);
 	safe_memzero(workmem, sizeof(workmem));
-#endif
 	return silex_statuscodes_to_psa(si_status);
 }
 
@@ -418,59 +344,48 @@ static psa_status_t cracen_signature_ecc_verify(int message, const psa_key_attri
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	si_task_init(&t, workmem, sizeof(workmem));
-
 	si_status = cracen_signature_prepare_ec_pubkey(&t, &pubkey, (char *)key_buffer,
 						       key_buffer_size, &curve, alg, attributes,
 						       message, input_length, pubkey_buffer);
-	if (si_status) {
-		return silex_statuscodes_to_psa(si_status);
-	}
 
 	if ((int)signature_length != 2 * curve->sz) {
 		return silex_statuscodes_to_psa(SX_ERR_INVALID_SIGNATURE);
 	}
 
-#if CONFIG_PSA_NEED_NO_SI_CRYPTO_ED25519
-	si_status = ed25519_verify(key_buffer, (char *)input, input_length, signature);
-#else
+	if (alg == PSA_ALG_ED25519PH) {
+		si_status = ed25519ph_verify(key_buffer, (char *)input,
+		input_length, signature, message);
+
+		return silex_statuscodes_to_psa(si_status);
+	} else if (alg == PSA_ALG_PURE_EDDSA) {
+		si_status = ed25519_verify(key_buffer, (char *)input,
+		input_length, signature);
+
+		return silex_statuscodes_to_psa(si_status);
+	}
+
+	si_task_init(&t, workmem, sizeof(workmem));
+
+	if (si_status) {
+		return silex_statuscodes_to_psa(si_status);
+	}
+
 	sign.sz = signature_length;
 	sign.r = (char *)signature;
 	sign.s = (char *)signature + signature_length / 2;
-	/* ED25519PH requires prehashing and supports sign and verify message
-	 * the message is therefore hashed here before si_sig_verify is called
-	 */
-	if (alg == PSA_ALG_ED25519PH && message) {
-		psa_status_t status;
-		uint8_t hash[64];
-		uint32_t output_len;
-
-		status = psa_hash_compute(PSA_ALG_SHA_512,
-				input, input_length, hash,
-				sizeof(hash), &output_len);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
+	if (message) {
 		si_sig_create_verify(&t, &pubkey, &sign);
-		si_task_consume(&t, (char *)hash, sizeof(hash));
 	} else {
-		if (message) {
-			si_sig_create_verify(&t, &pubkey, &sign);
-		} else {
-			if (sx_hash_get_alg_digestsz(pubkey.hashalg) != input_length) {
-				return PSA_ERROR_INVALID_ARGUMENT;
-			}
-			si_sig_create_verify_digest(&t, &pubkey, &sign);
+		if (sx_hash_get_alg_digestsz(pubkey.hashalg) != input_length) {
+			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-
-		si_task_consume(&t, (char *)input, input_length);
+		si_sig_create_verify_digest(&t, &pubkey, &sign);
 	}
+	si_task_consume(&t, (char *)input, input_length);
 	si_task_run(&t);
 	si_status = si_task_wait(&t);
 
 	safe_memzero(workmem, sizeof(workmem));
-#endif
 
 	return silex_statuscodes_to_psa(si_status);
 }
