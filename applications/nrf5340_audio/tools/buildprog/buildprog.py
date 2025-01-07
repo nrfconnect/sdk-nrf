@@ -84,68 +84,56 @@ def __print_dev_conf(device_list):
     print(table)
 
 
-def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
-                    pristine, child_image, options):
-    if core == Core.app:
-        build_cmd = (f"west build {TARGET_CORE_APP_FOLDER} "
-                     f"-b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME} "
-                     f"--sysbuild")
-        if device == AudioDevice.headset:
-            device_flag = "-DCONFIG_AUDIO_DEV=1"
-            dest_folder = TARGET_DEV_HEADSET_FOLDER
-        elif device == AudioDevice.gateway:
-            device_flag = "-DCONFIG_AUDIO_DEV=2"
-            dest_folder = TARGET_DEV_GATEWAY_FOLDER
-        else:
-            raise Exception("Invalid device!")
+def __build_cmd_get(cores: Core, device: AudioDevice, build: BuildType,
+                    pristine, options):
 
-        if build == BuildType.debug:
-            release_flag = ""
-            dest_folder /= TARGET_DEBUG_FOLDER
-        elif build == BuildType.release:
-            release_flag = " -DFILE_SUFFIX=release"
-            dest_folder /= TARGET_RELEASE_FOLDER
-        else:
-            raise Exception("Invalid build type!")
+    build_cmd = (f"west build {TARGET_CORE_APP_FOLDER} "
+                 f"-b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME} "
+                 f"--sysbuild")
+    if Core.app in cores and Core.net in cores:
+        # No changes to build command, build both cores
+        pass
+    elif Core.app in cores:
+        build_cmd += " --domain nrf5340_audio"
+    elif Core.net in cores:
+        build_cmd += " --domain ipc_radio"
+    else:
+        raise Exception("Invalid core!")
 
-        if not child_image:
-            device_flag += " -DCONFIG_NCS_INCLUDE_RPMSG_CHILD_IMAGE=n"
-
-        if options.nrf21540:
-            device_flag += " -Dnrf5340_audio_SHIELD=nrf21540ek"
-            device_flag += " -Dipc_radio_SHIELD=nrf21540ek"
-
-        if options.custom_bt_name is not None and options.user_bt_name:
-            raise Exception(
-                "User BT name option is invalid when custom BT name is set")
-
-        if options.custom_bt_name is not None:
-            custom_bt_name = "_".join(options.custom_bt_name)[
-                :MAX_USER_NAME_LEN].upper()
-            device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + custom_bt_name + "\\\""
-
-        if options.user_bt_name:
-            user_specific_bt_name = (
-                "AUDIO_DEV_" + getpass.getuser())[:MAX_USER_NAME_LEN].upper()
-            device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + user_specific_bt_name + "\\\""
-
-        if os.name == 'nt':
-            release_flag = release_flag.replace('\\', '/')
-
-        if pristine:
-            build_cmd += " -p"
-
-    elif core == Core.net:
-        if build == BuildType.debug:
-            dest_folder /= TARGET_DEBUG_FOLDER
-        elif build == BuildType.release:
-            dest_folder /= TARGET_RELEASE_FOLDER
-        else:
-            raise Exception("Invalid build type!")
-
-        build_cmd = ""
-        device_flag = ""
+    if device == AudioDevice.headset:
+        device_flag = "-DCONFIG_AUDIO_DEV=1"
+        dest_folder = TARGET_DEV_HEADSET_FOLDER
+    elif device == AudioDevice.gateway:
+        device_flag = "-DCONFIG_AUDIO_DEV=2"
+        dest_folder = TARGET_DEV_GATEWAY_FOLDER
+    else:
+        raise Exception("Invalid device!")
+    if build == BuildType.debug:
         release_flag = ""
+        dest_folder /= TARGET_DEBUG_FOLDER
+    elif build == BuildType.release:
+        release_flag = " -DFILE_SUFFIX=release"
+        dest_folder /= TARGET_RELEASE_FOLDER
+    else:
+        raise Exception("Invalid build type!")
+    if options.nrf21540:
+        device_flag += " -Dnrf5340_audio_SHIELD=nrf21540ek"
+        device_flag += " -Dipc_radio_SHIELD=nrf21540ek"
+    if options.custom_bt_name is not None and options.user_bt_name:
+        raise Exception(
+            "User BT name option is invalid when custom BT name is set")
+    if options.custom_bt_name is not None:
+        custom_bt_name = "_".join(options.custom_bt_name)[
+            :MAX_USER_NAME_LEN].upper()
+        device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + custom_bt_name + "\\\""
+    if options.user_bt_name:
+        user_specific_bt_name = (
+            "AUDIO_DEV_" + getpass.getuser())[:MAX_USER_NAME_LEN].upper()
+        device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + user_specific_bt_name + "\\\""
+    if os.name == 'nt':
+        release_flag = release_flag.replace('\\', '/')
+    if pristine:
+        build_cmd += " -p"
 
     return build_cmd, dest_folder, device_flag, release_flag
 
@@ -156,7 +144,6 @@ def __build_module(build_config, options):
         build_config.device,
         build_config.build,
         build_config.pristine,
-        build_config.child_image,
         options,
     )
     west_str = f"{build_cmd} -d {dest_folder} "
@@ -190,11 +177,11 @@ def __find_snr():
     return list(map(int, snrs))
 
 
-def __populate_hex_paths(dev, options, child_image):
+def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
     _, temp_dest_folder, _, _ = __build_cmd_get(
-        Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, child_image, options
+        Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options
     )
 
     dev.hex_path_app = temp_dest_folder / "merged.hex"
@@ -364,38 +351,29 @@ def __main():
 
     # Reboot step finished
     # Build step start
-    child_image = True
 
     if options.build is not None:
         print("Invoking build step")
         build_configs = []
-        if Core.app in cores:
-            if not Core.net in cores:
-                child_image = False
 
-            if AudioDevice.headset in devices:
-                build_configs.append(
-                    BuildConf(
-                        core=Core.app,
-                        device=AudioDevice.headset,
-                        pristine=options.pristine,
-                        build=options.build,
-                        child_image=child_image,
-                    )
+        if AudioDevice.headset in devices:
+            build_configs.append(
+                BuildConf(
+                    core=cores,
+                    device=AudioDevice.headset,
+                    pristine=options.pristine,
+                    build=options.build,
                 )
-            if AudioDevice.gateway in devices:
-                build_configs.append(
-                    BuildConf(
-                        core=Core.app,
-                        device=AudioDevice.gateway,
-                        pristine=options.pristine,
-                        build=options.build,
-                        child_image=child_image,
-                    )
+            )
+        if AudioDevice.gateway in devices:
+            build_configs.append(
+                BuildConf(
+                    core=cores,
+                    device=AudioDevice.gateway,
+                    pristine=options.pristine,
+                    build=options.build,
                 )
-
-        if Core.net in cores:
-            print("Net core uses precompiled hex or child image")
+            )
 
         for build_cfg in build_configs:
             __build_module(build_cfg, options)
@@ -406,7 +384,7 @@ def __main():
     if options.program:
         for dev in device_list:
             if dev.snr_connected:
-                __populate_hex_paths(dev, options, child_image)
+                __populate_hex_paths(dev, options)
         program_threads_run(device_list, sequential=options.sequential_prog)
 
     # Program step finished
