@@ -51,15 +51,13 @@ config SUIT_STORAGE_N_ENVELOPES
 	    - SecDom: firmware + recovery
 	    - SysCtlr: firmware
 	    - Radio: recovery
-	    * Radio: firmware (A)
-	    * Radio: firmware (B)
+	    - Radio: firmware (A)
+	    - Radio: firmware (B)
 	    - ROOT
 	    - Application: recovery
 	    - Application: firmware (A)
 	    - Application: firmware (B)
-	    * Application: user data
-
-	  Manifests marked with (*) are not available in legacy SUIT storage format.
+	    - Application: user data
 
 	  For debug and test platforms (POSIX, nRF52840) the following envelopes may be defined:
 	    - ROOT

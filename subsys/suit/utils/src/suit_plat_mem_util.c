@@ -75,8 +75,6 @@ uintptr_t suit_plat_mem_nvm_offset_get(uint8_t *ptr)
 
 #if (DT_NODE_EXISTS(DT_NODELABEL(mram1x)))
 	address = (((address) & 0xEFFFFFFFUL) - (DT_REG_ADDR(DT_NODELABEL(mram1x)) & 0xEFFFFFFFUL));
-#elif (DT_NODE_EXISTS(DT_NODELABEL(mram10)))
-	address = (((address) & 0xEFFFFFFFUL) - (DT_REG_ADDR(DT_NODELABEL(mram10)) & 0xEFFFFFFFUL));
 #endif
 
 	return address;
@@ -88,8 +86,6 @@ uint8_t *suit_plat_mem_nvm_ptr_get(uintptr_t offset)
 
 #if (DT_NODE_EXISTS(DT_NODELABEL(mram1x)))
 	address = (((offset) & 0xEFFFFFFFUL) + (DT_REG_ADDR(DT_NODELABEL(mram1x)) & 0xEFFFFFFFUL));
-#elif (DT_NODE_EXISTS(DT_NODELABEL(mram10)))
-	address = (((offset) & 0xEFFFFFFFUL) + (DT_REG_ADDR(DT_NODELABEL(mram10)) & 0xEFFFFFFFUL));
 #else
 	address = offset;
 #endif
