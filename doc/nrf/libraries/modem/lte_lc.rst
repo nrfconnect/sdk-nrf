@@ -185,7 +185,7 @@ You can set the timer values requested by the modem using the following options:
 Connection pre-evaluation
 =========================
 
-Modem firmware version 1.3.0 and higher supports connection a pre-evaluation feature that allows the application to get information about a cell that is likely to be used for an RRC connection.
+Modem firmware versions 1.3.0 and higher support a connection pre-evaluation feature that allows the application to get information about a cell that is likely to be used for an RRC connection.
 Based on the parameters received in the function call, the application can decide whether to send application data or not.
 To enable this module, use the :kconfig:option:`CONFIG_LTE_LC_CONN_EVAL_MODULE` Kconfig option.
 The function :c:func:`lte_lc_conn_eval_params_get` populates a structure of type :c:struct:`lte_lc_conn_eval_params` that includes information on the current consumption cost by the data transmission when utilizing the given cell.
@@ -227,7 +227,7 @@ The :c:struct:`lte_lc_conn_eval_params` structure lists all information that is 
 Modem sleep and TAU pre-warning notifications
 =============================================
 
-Modem firmware v1.3.0 and higher supports receiving callbacks from the modem related to Tracking Area Updates (TAU) and modem sleep.
+Modem firmware versions 1.3.0 and higher support receiving callbacks from the modem related to Tracking Area Updates (TAU) and modem sleep.
 Based on these notifications, the application can alter its behavior to optimize for a given metric.
 
 For instance, TAU pre-warning notifications can be used to schedule data transfers before a TAU so that data transfer and TAU occurs within the same RRC connection window, thereby saving the potential overhead associated with the additional data exchange.
@@ -242,6 +242,13 @@ To enable modem sleep and TAU pre-warning notifications, use the following optio
 * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
 
 For additional configurations related to these features, see the API documentation.
+
+Limitations
+***********
+
+The LTE link control library and the :ref:`nrfxlib:nrf_modem_at` interface should be used at the same time with caution,
+because the library also uses the same interface.
+As a general rule, do not use the AT commands for features that the LTE link control library supports.
 
 Dependencies
 ************

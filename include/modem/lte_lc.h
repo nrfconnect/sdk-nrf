@@ -1303,6 +1303,10 @@ int lte_lc_deregister_handler(lte_lc_evt_handler_t handler);
 /**
  * Connect to LTE network.
  *
+ * This function sets the modem to online mode using @ref lte_lc_normal.
+ * The client does not need to do anything to re-connect if the connection is lost but
+ * the modem will handle it automatically.
+ *
  * @note After initialization, the system mode will be set to the default mode selected with Kconfig
  *       and LTE preference set to automatic selection.
  *
@@ -1319,7 +1323,9 @@ int lte_lc_connect(void);
  *
  * The function returns immediately.
  *
- * @note The library must be initialized before this function is called.
+ * This function sets the modem to online mode using @ref lte_lc_normal.
+ * The client does not need to do anything to re-connect if the connection is lost but
+ * the modem will handle it automatically.
  *
  * @param[in] handler Event handler for receiving LTE events. The parameter can be @c NULL if an
  *                    event handler is already registered.
