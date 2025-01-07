@@ -391,7 +391,7 @@ The following table shows asymmetric signature algorithm support for each driver
 +---------------------------------+---------------------------+----------------------------+---------------------------+
 | PureEdDSA                       | Supported                 | Supported                  | Supported                 |
 +---------------------------------+---------------------------+----------------------------+---------------------------+
-| HashEdDSA Edwards25519          | Not supported             | Not supported              | Not supported             |
+| HashEdDSA Edwards25519          | Not supported             | Not supported              | Supported                 |
 +---------------------------------+---------------------------+----------------------------+---------------------------+
 | HashEdDSA Edwards448            | Not supported             | Not supported              | Not supported             |
 +---------------------------------+---------------------------+----------------------------+---------------------------+

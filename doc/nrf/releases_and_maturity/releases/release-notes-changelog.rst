@@ -94,6 +94,7 @@ Security
 ========
 
   * Added support for HKDF-Expand and HKDF-Extract in CRACEN.
+  * Added support for Ed25519ph(HashEdDSA) to CRACEN
 
 Protocols
 =========
