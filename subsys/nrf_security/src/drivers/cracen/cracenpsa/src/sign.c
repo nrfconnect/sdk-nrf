@@ -425,7 +425,7 @@ static psa_status_t cracen_signature_ecc_verify(int message, const psa_key_attri
 	if (alg == PSA_ALG_ED25519PH && message) {
 		psa_status_t status;
 		uint8_t hash[64];
-		uint32_t output_len;
+		size_t output_len;
 
 		status = psa_hash_compute(PSA_ALG_SHA_512,
 				input, input_length, hash,
