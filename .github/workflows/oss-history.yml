@@ -3,7 +3,7 @@ on: pull_request
 
 jobs:
   contribs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Check OSS history
     steps:
       - name: Checkout sources

@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   compliance_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Run compliance checks on patch series (PR)
     steps:
     - name: Update PATH for west
