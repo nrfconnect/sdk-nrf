@@ -306,7 +306,7 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 
 	while (token != NULL) {
 		err = sscanf(token, "%%CMNG: %u,%u,\"", &tag, &type);
-		if (tag == sec_tag) {
+		if (tag == sec_tag && err == 2) {
 			err = nrf_modem_at_printf("AT%%CMNG=3,%u,%u", sec_tag, type);
 		}
 		token = strtok(NULL, "\n");
