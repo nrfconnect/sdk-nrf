@@ -18,3 +18,4 @@ target_include_directories(suit_mci INTERFACE ${ZEPHYR_NRF_MODULE_DIR}/subsys/su
 zephyr_library_link_libraries(suit_stream_filters_interface)
 zephyr_library_link_libraries(suit_stream_sources_interface)
 zephyr_library_link_libraries(suit_mci)
+zephyr_library_link_libraries(suit_decrypt_test_utils)
