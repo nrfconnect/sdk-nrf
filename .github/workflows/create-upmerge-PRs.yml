@@ -14,7 +14,7 @@ env:
 jobs:
   auto-upmerge-create-PRs:
     if: github.repository == 'nrfconnect/sdk-nrf'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout sources
         uses: nrfconnect/action-checkout-west-update@main
@@ -88,7 +88,7 @@ jobs:
           gh pr create --base $PR_TARGET_BRANCH --title "manifest: Update revisions of upmerged projects (automatic upmerge)" --body "Automatic upmerge action" --label "CI-all-test" --label "auto-upmerge"
 
   failure-notifier:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: failure()
     needs: auto-upmerge-create-PRs
     env:
