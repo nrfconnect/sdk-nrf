@@ -18,6 +18,7 @@
 #include <mocks_sdfw.h>
 #include <suit_manifest_variables.h>
 #include <suit_storage.h>
+#include <decrypt_test_utils.h>
 
 #define DFU_PARTITION_OFFSET FIXED_PARTITION_OFFSET(dfu_partition)
 #define FLASH_WRITE_ADDR     (suit_plat_mem_nvm_ptr_get(DFU_PARTITION_OFFSET))
@@ -110,6 +111,56 @@ ZTEST(write_tests, test_write_to_flash_sink_OK)
 	zassert_equal(ret, SUIT_SUCCESS, "dst_handle release failed - error %i", ret);
 	zassert_mem_equal(FLASH_WRITE_ADDR, test_data, sizeof(test_data),
 			  "Data in destination is invalid");
+}
+
+ZTEST(write_tests, test_write_to_flash_sink_encrypted_OK)
+{
+	struct zcbor_string source = {
+		.value = decrypt_test_ciphertext_direct,
+		.len = sizeof(decrypt_test_ciphertext_direct)
+	};
+
+	/* Create handle that will be used as destination */
+	suit_component_t dst_handle;
+	/* [h'MEM', h'02', h'1A000F0000', h'191000'] */
+	uint8_t valid_dst_value[] = {0x84, 0x44, 0x63, 'M',  'E',  'M',	 0x41, 0x02, 0x45,
+				     0x1A, 0x00, 0x0F, 0x00, 0x00, 0x43, 0x19, 0x10, 0x00};
+
+	struct zcbor_string valid_dst_component_id = {
+		.value = valid_dst_value,
+		.len = sizeof(valid_dst_value),
+	};
+
+	psa_key_id_t cek_key_id;
+	uint8_t cek_key_id_cbor[] = {
+		0x1A, 0x00, 0x00, 0x00, 0x00,
+	};
+
+	psa_status_t status = psa_crypto_init();
+
+	zassert_equal(status, PSA_SUCCESS, "Failed to init psa crypto");
+
+	status = decrypt_test_init_encryption_key(decrypt_test_key_data,
+				sizeof(decrypt_test_key_data), &cek_key_id,
+				PSA_ALG_GCM, cek_key_id_cbor);
+	zassert_equal(status, PSA_SUCCESS, "Failed to import key");
+
+	struct suit_encryption_info enc_info =
+				DECRYPT_TEST_ENC_INFO_DEFAULT_INIT(cek_key_id_cbor);
+
+	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
+
+	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
+
+	ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, &enc_info);
+	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_write failed - error %i", ret);
+
+	ret = suit_plat_release_component_handle(dst_handle);
+	zassert_equal(ret, SUIT_SUCCESS, "dst_handle release failed - error %i", ret);
+	zassert_mem_equal(FLASH_WRITE_ADDR, decrypt_test_plaintext, strlen(decrypt_test_plaintext),
+			  "Data in destination is invalid");
+
+	psa_destroy_key(cek_key_id);
 }
 
 ZTEST(write_tests, test_write_to_ram_sink_OK)

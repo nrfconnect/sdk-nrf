@@ -16,6 +16,7 @@
 #include <mocks_sdfw.h>
 #include <suit_manifest_variables.h>
 #include <suit_storage.h>
+#include <decrypt_test_utils.h>
 
 #define WRITE_ADDR		  0x1A00080000
 #define TEST_MFST_VAR_NVM_ID	  1
@@ -653,4 +654,102 @@ ZTEST(copy_tests, test_mfst_nvm_var_to_mram_NOK)
 	ret = suit_plat_release_component_handle(dst_handle);
 	zassert_equal(ret, SUIT_SUCCESS,
 		      "Failed to release destination component handle after the test: %d", ret);
+}
+
+ZTEST(copy_tests, test_integrated_fetch_and_copy_to_msink_encrypted_OK)
+{
+	memptr_storage_handle_t handle;
+	struct zcbor_string source = {
+		.value = decrypt_test_ciphertext_direct,
+		.len = sizeof(decrypt_test_ciphertext_direct)
+	};
+
+	suit_component_t src_handle;
+	/* [h'CAND_IMG', h'02'] */
+	uint8_t valid_src_value[] = {0x82, 0x49, 0x68, 'C', 'A',  'N', 'D',
+					 '_',  'I',	 'M',  'G', 0x41, 0x02};
+
+	struct zcbor_string valid_src_component_id = {
+		.value = valid_src_value,
+		.len = sizeof(valid_src_value),
+	};
+
+	psa_key_id_t cek_key_id;
+	uint8_t cek_key_id_cbor[] = {
+		0x1A, 0x00, 0x00, 0x00, 0x00,
+	};
+
+	psa_status_t status = psa_crypto_init();
+
+	zassert_equal(status, PSA_SUCCESS, "Failed to init psa crypto");
+
+	status = decrypt_test_init_encryption_key(decrypt_test_key_data,
+				sizeof(decrypt_test_key_data), &cek_key_id,
+				PSA_ALG_GCM, cek_key_id_cbor);
+	zassert_equal(status, PSA_SUCCESS, "Failed to import key");
+
+	struct suit_encryption_info enc_info =
+				DECRYPT_TEST_ENC_INFO_DEFAULT_INIT(cek_key_id_cbor);
+
+	int ret = suit_plat_create_component_handle(&valid_src_component_id, false, &src_handle);
+
+	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
+
+	ret = suit_plat_fetch_integrated(src_handle, &source, &valid_manifest_component_id, NULL);
+	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
+
+	ret = suit_plat_component_impl_data_get(src_handle, &handle);
+	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_component_impl_data_get failed - error %i",
+			  ret);
+
+	const uint8_t *payload;
+	size_t payload_size = 0;
+
+	ret = suit_memptr_storage_ptr_get(handle, &payload, &payload_size);
+	zassert_equal(ret, SUIT_PLAT_SUCCESS, "storage.get failed - error %i", ret);
+	zassert_equal_ptr(decrypt_test_ciphertext_direct, payload,
+			"Retrieved payload doesn't mach ciphertext_direct");
+	zassert_equal(sizeof(decrypt_test_ciphertext_direct), payload_size,
+			"Retrieved payload_size doesn't mach size of ciphertext_direct");
+	zassert_not_null(payload, "Retrieved payload is NULL");
+
+	/* Create handle that will be used as destination */
+	suit_component_t dst_handle;
+	/* [h'MEM', h'02', h'1A00080000', h'191000'] */
+	uint8_t valid_dst_value[] = {0x84, 0x44, 0x63, 'M',  'E',  'M',	 0x41, 0x02, 0x45,
+					 0x1A, 0x00, 0x08, 0x00, 0x00, 0x43, 0x19, 0x10, 0x00};
+
+	struct zcbor_string valid_dst_component_id = {
+		.value = valid_dst_value,
+		.len = sizeof(valid_dst_value),
+	};
+
+	ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
+	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
+
+	ret = suit_plat_copy(dst_handle, src_handle, &valid_manifest_component_id, &enc_info);
+	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_copy failed - error %i", ret);
+
+	ret = suit_plat_component_impl_data_get(dst_handle, &handle);
+	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_component_impl_data_get failed - error %i",
+			  ret);
+
+	ret = suit_memptr_storage_ptr_get(handle, &payload, &payload_size);
+	zassert_equal(ret, SUIT_PLAT_SUCCESS, "storage.get failed - error %i", ret);
+	zassert_equal(memcmp(decrypt_test_plaintext, payload, strlen(decrypt_test_plaintext)), 0,
+			"Retrieved decrypted payload doesn't mach decrypt_test_plaintext");
+	zassert_equal(sizeof(decrypt_test_plaintext), payload_size,
+			"Retrieved payload_size doesn't mach size of decrypt_test_plaintext");
+
+	ret = suit_plat_release_component_handle(dst_handle);
+	zassert_equal(ret, SUIT_SUCCESS, "dst_handle release failed - error %i", ret);
+
+	ret = suit_plat_release_component_handle(src_handle);
+	zassert_equal(ret, SUIT_SUCCESS, "src_handle release failed - error %i", ret);
+
+	ret = suit_memptr_storage_release(handle);
+	zassert_equal(ret, SUIT_PLAT_SUCCESS, "memptr_storage handle release failed - error %i",
+		  ret);
+
+	psa_destroy_key(cek_key_id);
 }
