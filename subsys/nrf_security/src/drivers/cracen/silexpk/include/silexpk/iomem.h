@@ -7,6 +7,14 @@
 #ifndef IOMEM_HEADER_FILE
 #define IOMEM_HEADER_FILE
 
+#include <string.h>
+
+#ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
+#define SX_WARN_UNALIGNED_ADDR(addr) printk("%s: WARNING: unaligned address %p\r\n", __func__, addr)
+#else
+#define SX_WARN_UNALIGNED_ADDR(addr)
+#endif
+
 /** Clear device memory
  *
  * @param[in] dst Memory to clear.
@@ -38,11 +46,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz);
  * Will be modified after this call
  * @param[in] input_byte The byte value to be written.
  */
-static inline void sx_wrpkmem_byte(void *dst, char input_byte)
-{
-	volatile char *d = (volatile char *)dst;
-	*d = input_byte;
-}
+void sx_wrpkmem_byte(void *dst, char input_byte);
 
 /** Read from device memory at src into normal memory at dst.
  *
@@ -54,7 +58,10 @@ static inline void sx_wrpkmem_byte(void *dst, char input_byte)
  * @param[in] src Source of read operation
  * @param[in] sz The number of bytes to read from src to dst
  */
-void sx_rdpkmem(void *dst, const void *src, size_t sz);
+static inline void sx_rdpkmem(void *dst, const void *src, size_t sz)
+{
+	memcpy(dst, src, sz);
+}
 
 /** Read a byte from device memory at src.
  *
