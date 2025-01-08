@@ -483,6 +483,10 @@ Modem libraries
 
   * Fixed handling of ``%NCELLMEAS`` notification with status 2 (measurement interrupted) and no cells.
 
+* :ref:`modem_key_mgmt` library:
+
+  * Fixed an issue with the :c:func:`modem_key_mgmt_clear` function where it returned ``-ENOENT`` when the credential was cleared.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
