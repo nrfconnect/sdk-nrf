@@ -27,13 +27,6 @@
     };
 };
 
-/*
-    TODO: Temporary increase APP sram until DTS is fixed
-*/
-&cpuapp_sram {
-    reg = <0x20000000 DT_SIZE_K(512)>;
-};
-
 &cpuapp_sram {
     ipc_shm_area_cpuapp_cpuuma: memory@4000 {
         compatible = "mmio-sram";
