@@ -51,10 +51,13 @@ Depending on your preferred development environment, install the following requi
           Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and download the installer from the `nRF Command Line Tools`_ page.
         * The |jlink_ver_vsc| of :ref:`SEGGER J-Link <requirements_jlink>`.
           Download it from the `J-Link Software and Documentation Pack`_ page.
+          On Windows, `install it manually together with SEGGER USB Driver for J-Link <nRF Util prerequisites_>`_.
         * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
         * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
 
-      * Additionally for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
+      * Additionally, for Windows users: SEGGER USB Driver for J-Link, required for support of older Nordic Semiconductor devices in nRF Util.
+        For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
+      * Additionally, for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
    .. group-tab:: Command line
 
@@ -75,8 +78,11 @@ Depending on your preferred development environment, install the following requi
 
         * The |jlink_ver| of :ref:`SEGGER J-Link <requirements_jlink>`.
           Download it from the `J-Link Software and Documentation Pack`_ page.
+          On Windows, `install it manually together with SEGGER USB Driver for J-Link <nRF Util prerequisites_>`_.
 
-      * Additionally for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
+      * Additionally, for Windows users: SEGGER USB Driver for J-Link, required for support of older Nordic Semiconductor devices in nRF Util.
+        For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
+      * Additionally, for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
 
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:

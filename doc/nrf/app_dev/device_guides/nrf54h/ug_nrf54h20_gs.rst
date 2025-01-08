@@ -46,27 +46,8 @@ You also need the following:
 
 * `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively)
 * `curl`_
-* SEGGER J-Link |jlink_ver| and, on Windows, also the SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|
-
-   .. note::
-      To install the SEGGER USB Driver for J-Link on Windows, manually install J-Link |jlink_ver| from the command line using the ``-InstUSBDriver=1`` parameter:
-
-      1. Navigate to the download location of the J-Link executable and run one of the following commands:
-
-         * From the Command Prompt::
-
-            JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
-
-         * From PowerShell::
-
-            .\JLink_Windows_V794i_x86_64.exe -InstUSBDriver=1
-
-      #. Follow the on-screen instructions.
-      #. After installing, ensure the J-Link executable can be run from anywhere on your system:
-
-         * For Linux and MacOS, add it to the system path.
-         * For Windows, add it to the environment variables.
-
+* SEGGER J-Link |jlink_ver| and, on Windows, also the SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
+  For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
 * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_
 * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_
 * On Linux, the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware

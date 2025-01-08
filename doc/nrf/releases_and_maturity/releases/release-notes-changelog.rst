@@ -33,7 +33,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Updated the :ref:`installing_vsc` section on the :ref:`installation` page with the Windows-only requirement to install SEGGER USB Driver for J-Link.
 
 Board support
 =============
@@ -63,7 +63,8 @@ Developing with nRF70 Series
 Working with nRF54H Series
 ==========================
 
-|no_changes_yet_note|
+* Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
+  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
 
 Developing with nRF54L Series
 =============================
