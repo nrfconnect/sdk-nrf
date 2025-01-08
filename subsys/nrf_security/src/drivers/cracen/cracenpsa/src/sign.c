@@ -373,7 +373,25 @@ static psa_status_t cracen_signature_ecc_verify(int message, const psa_key_attri
 	sign.sz = signature_length;
 	sign.r = (char *)signature;
 	sign.s = (char *)signature + signature_length / 2;
+<<<<<<< HEAD
 	if (message) {
+=======
+	/* ED25519PH requires prehashing and supports sign and verify message
+	 * the message is therefore hashed here before si_sig_verify is called
+	 */
+	if (alg == PSA_ALG_ED25519PH && message) {
+		psa_status_t status;
+		uint8_t hash[64];
+		size_t output_len;
+
+		status = psa_hash_compute(PSA_ALG_SHA_512,
+				input, input_length, hash,
+				sizeof(hash), &output_len);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+>>>>>>> 6e0cb3a5ef (nrf_security: drivers: cracen: fix build errors with ns)
 		si_sig_create_verify(&t, &pubkey, &sign);
 	} else {
 		if (sx_hash_get_alg_digestsz(pubkey.hashalg) != input_length) {
