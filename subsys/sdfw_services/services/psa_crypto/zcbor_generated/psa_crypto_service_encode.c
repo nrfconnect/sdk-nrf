@@ -39,13 +39,15 @@ static bool encode_psa_get_key_attributes_req(zcbor_state_t *state,
 static bool encode_psa_reset_key_attributes_req(zcbor_state_t *state,
 						const struct psa_reset_key_attributes_req *input);
 static bool encode_psa_purge_key_req(zcbor_state_t *state, const struct psa_purge_key_req *input);
+static bool encode_ptr_const_attr(zcbor_state_t *state, const uint32_t *input);
 static bool encode_ptr_key(zcbor_state_t *state, const uint32_t *input);
 static bool encode_psa_copy_key_req(zcbor_state_t *state, const struct psa_copy_key_req *input);
 static bool encode_psa_destroy_key_req(zcbor_state_t *state,
 				       const struct psa_destroy_key_req *input);
-static bool encode_ptr_buf(zcbor_state_t *state, const uint32_t *input);
+static bool encode_ptr_const_buf(zcbor_state_t *state, const uint32_t *input);
 static bool encode_buf_len(zcbor_state_t *state, const uint32_t *input);
 static bool encode_psa_import_key_req(zcbor_state_t *state, const struct psa_import_key_req *input);
+static bool encode_ptr_buf(zcbor_state_t *state, const uint32_t *input);
 static bool encode_ptr_uint(zcbor_state_t *state, const uint32_t *input);
 static bool encode_psa_export_key_req(zcbor_state_t *state, const struct psa_export_key_req *input);
 static bool encode_psa_export_public_key_req(zcbor_state_t *state,
@@ -160,7 +162,7 @@ static bool encode_psa_generate_random_req(zcbor_state_t *state,
 					   const struct psa_generate_random_req *input);
 static bool encode_psa_generate_key_req(zcbor_state_t *state,
 					const struct psa_generate_key_req *input);
-static bool encode_ptr_cipher(zcbor_state_t *state, const uint32_t *input);
+static bool encode_ptr_const_cipher(zcbor_state_t *state, const uint32_t *input);
 static bool encode_psa_pake_setup_req(zcbor_state_t *state, const struct psa_pake_setup_req *input);
 static bool encode_psa_pake_set_role_req(zcbor_state_t *state,
 					 const struct psa_pake_set_role_req *input);
@@ -227,6 +229,16 @@ static bool encode_psa_purge_key_req(zcbor_state_t *state, const struct psa_purg
 	return res;
 }
 
+static bool encode_ptr_const_attr(zcbor_state_t *state, const uint32_t *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool res = ((zcbor_tag_put(state, 32777) && (zcbor_uint32_encode(state, (&(*input))))));
+
+	log_result(state, res, __func__);
+	return res;
+}
+
 static bool encode_ptr_key(zcbor_state_t *state, const uint32_t *input)
 {
 	zcbor_log("%s\r\n", __func__);
@@ -243,7 +255,7 @@ static bool encode_psa_copy_key_req(zcbor_state_t *state, const struct psa_copy_
 
 	bool res = (((((zcbor_uint32_put(state, (14)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_copy_key_req_source_key)))) &&
-		      ((encode_ptr_attr(state, (&(*input).psa_copy_key_req_p_attributes)))) &&
+		      ((encode_ptr_const_attr(state, (&(*input).psa_copy_key_req_p_attributes)))) &&
 		      ((encode_ptr_key(state, (&(*input).psa_copy_key_req_p_target_key)))))));
 
 	log_result(state, res, __func__);
@@ -262,11 +274,11 @@ static bool encode_psa_destroy_key_req(zcbor_state_t *state,
 	return res;
 }
 
-static bool encode_ptr_buf(zcbor_state_t *state, const uint32_t *input)
+static bool encode_ptr_const_buf(zcbor_state_t *state, const uint32_t *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = ((zcbor_tag_put(state, 32770) && (zcbor_uint32_encode(state, (&(*input))))));
+	bool res = ((zcbor_tag_put(state, 32776) && (zcbor_uint32_encode(state, (&(*input))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -286,11 +298,22 @@ static bool encode_psa_import_key_req(zcbor_state_t *state, const struct psa_imp
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = (((((zcbor_uint32_put(state, (16)))) &&
-		      ((encode_ptr_attr(state, (&(*input).psa_import_key_req_p_attributes)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_import_key_req_p_data)))) &&
-		      ((encode_buf_len(state, (&(*input).psa_import_key_req_data_length)))) &&
-		      ((encode_ptr_key(state, (&(*input).psa_import_key_req_p_key)))))));
+	bool res =
+		(((((zcbor_uint32_put(state, (16)))) &&
+		   ((encode_ptr_const_attr(state, (&(*input).psa_import_key_req_p_attributes)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_import_key_req_p_data)))) &&
+		   ((encode_buf_len(state, (&(*input).psa_import_key_req_data_length)))) &&
+		   ((encode_ptr_key(state, (&(*input).psa_import_key_req_p_key)))))));
+
+	log_result(state, res, __func__);
+	return res;
+}
+
+static bool encode_ptr_buf(zcbor_state_t *state, const uint32_t *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool res = ((zcbor_tag_put(state, 32770) && (zcbor_uint32_encode(state, (&(*input))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -343,7 +366,7 @@ static bool encode_psa_hash_compute_req(zcbor_state_t *state,
 
 	bool res = (((((zcbor_uint32_put(state, (19)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_hash_compute_req_alg)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_hash_compute_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_hash_compute_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_hash_compute_req_input_length)))) &&
 		      ((encode_ptr_buf(state, (&(*input).psa_hash_compute_req_p_hash)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_hash_compute_req_hash_size)))) &&
@@ -360,9 +383,9 @@ static bool encode_psa_hash_compare_req(zcbor_state_t *state,
 
 	bool res = (((((zcbor_uint32_put(state, (20)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_hash_compare_req_alg)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_hash_compare_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_hash_compare_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_hash_compare_req_input_length)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_hash_compare_req_p_hash)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_hash_compare_req_p_hash)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_hash_compare_req_hash_length)))))));
 
 	log_result(state, res, __func__);
@@ -388,7 +411,7 @@ static bool encode_psa_hash_update_req(zcbor_state_t *state,
 
 	bool res = (((((zcbor_uint32_put(state, (22)))) &&
 		      ((encode_ptr_uint(state, (&(*input).psa_hash_update_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_hash_update_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_hash_update_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_hash_update_req_input_length)))))));
 
 	log_result(state, res, __func__);
@@ -417,7 +440,7 @@ static bool encode_psa_hash_verify_req(zcbor_state_t *state,
 
 	bool res = (((((zcbor_uint32_put(state, (24)))) &&
 		      ((encode_ptr_uint(state, (&(*input).psa_hash_verify_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_hash_verify_req_p_hash)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_hash_verify_req_p_hash)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_hash_verify_req_hash_length)))))));
 
 	log_result(state, res, __func__);
@@ -455,7 +478,7 @@ static bool encode_psa_mac_compute_req(zcbor_state_t *state,
 	bool res = (((((zcbor_uint32_put(state, (27)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_mac_compute_req_key)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_mac_compute_req_alg)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_mac_compute_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_mac_compute_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_mac_compute_req_input_length)))) &&
 		      ((encode_ptr_buf(state, (&(*input).psa_mac_compute_req_p_mac)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_mac_compute_req_mac_size)))) &&
@@ -472,9 +495,9 @@ static bool encode_psa_mac_verify_req(zcbor_state_t *state, const struct psa_mac
 	bool res = (((((zcbor_uint32_put(state, (28)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_mac_verify_req_key)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_mac_verify_req_alg)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_mac_verify_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_mac_verify_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_mac_verify_req_input_length)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_mac_verify_req_p_mac)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_mac_verify_req_p_mac)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_mac_verify_req_mac_length)))))));
 
 	log_result(state, res, __func__);
@@ -515,7 +538,7 @@ static bool encode_psa_mac_update_req(zcbor_state_t *state, const struct psa_mac
 
 	bool res = (((((zcbor_uint32_put(state, (31)))) &&
 		      ((encode_ptr_uint(state, (&(*input).psa_mac_update_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_mac_update_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_mac_update_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_mac_update_req_input_length)))))));
 
 	log_result(state, res, __func__);
@@ -546,7 +569,7 @@ static bool encode_psa_mac_verify_finish_req(zcbor_state_t *state,
 	bool res =
 		(((((zcbor_uint32_put(state, (33)))) &&
 		   ((encode_ptr_uint(state, (&(*input).psa_mac_verify_finish_req_p_handle)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_mac_verify_finish_req_p_mac)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_mac_verify_finish_req_p_mac)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_mac_verify_finish_req_mac_length)))))));
 
 	log_result(state, res, __func__);
@@ -573,7 +596,7 @@ static bool encode_psa_cipher_encrypt_req(zcbor_state_t *state,
 		(((zcbor_uint32_put(state, (35)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_cipher_encrypt_req_key)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_cipher_encrypt_req_alg)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_cipher_encrypt_req_p_input)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_cipher_encrypt_req_p_input)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_cipher_encrypt_req_input_length)))) &&
 		 ((encode_ptr_buf(state, (&(*input).psa_cipher_encrypt_req_p_output)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_cipher_encrypt_req_output_size)))) &&
@@ -592,7 +615,7 @@ static bool encode_psa_cipher_decrypt_req(zcbor_state_t *state,
 		(((zcbor_uint32_put(state, (36)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_cipher_decrypt_req_key)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_cipher_decrypt_req_alg)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_cipher_decrypt_req_p_input)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_cipher_decrypt_req_p_input)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_cipher_decrypt_req_input_length)))) &&
 		 ((encode_ptr_buf(state, (&(*input).psa_cipher_decrypt_req_p_output)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_cipher_decrypt_req_output_size)))) &&
@@ -655,7 +678,7 @@ static bool encode_psa_cipher_set_iv_req(zcbor_state_t *state,
 
 	bool res = (((((zcbor_uint32_put(state, (40)))) &&
 		      ((encode_ptr_uint(state, (&(*input).psa_cipher_set_iv_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_cipher_set_iv_req_p_iv)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_cipher_set_iv_req_p_iv)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_cipher_set_iv_req_iv_length)))))));
 
 	log_result(state, res, __func__);
@@ -670,7 +693,7 @@ static bool encode_psa_cipher_update_req(zcbor_state_t *state,
 	bool res =
 		(((((zcbor_uint32_put(state, (41)))) &&
 		   ((encode_ptr_uint(state, (&(*input).psa_cipher_update_req_p_handle)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_cipher_update_req_p_input)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_cipher_update_req_p_input)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_cipher_update_req_input_length)))) &&
 		   ((encode_ptr_buf(state, (&(*input).psa_cipher_update_req_p_output)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_cipher_update_req_output_size)))) &&
@@ -717,12 +740,13 @@ static bool encode_psa_aead_encrypt_req(zcbor_state_t *state,
 		((zcbor_uint32_put(state, (44)))) &&
 		((zcbor_uint32_encode(state, (&(*input).psa_aead_encrypt_req_key)))) &&
 		((zcbor_uint32_encode(state, (&(*input).psa_aead_encrypt_req_alg)))) &&
-		((encode_ptr_buf(state, (&(*input).psa_aead_encrypt_req_p_nonce)))) &&
+		((encode_ptr_const_buf(state, (&(*input).psa_aead_encrypt_req_p_nonce)))) &&
 		((encode_buf_len(state, (&(*input).psa_aead_encrypt_req_nonce_length)))) &&
-		((encode_ptr_buf(state, (&(*input).psa_aead_encrypt_req_p_additional_data)))) &&
+		((encode_ptr_const_buf(state,
+				       (&(*input).psa_aead_encrypt_req_p_additional_data)))) &&
 		((encode_buf_len(state,
 				 (&(*input).psa_aead_encrypt_req_additional_data_length)))) &&
-		((encode_ptr_buf(state, (&(*input).psa_aead_encrypt_req_p_plaintext)))) &&
+		((encode_ptr_const_buf(state, (&(*input).psa_aead_encrypt_req_p_plaintext)))) &&
 		((encode_buf_len(state, (&(*input).psa_aead_encrypt_req_plaintext_length)))) &&
 		((encode_ptr_buf(state, (&(*input).psa_aead_encrypt_req_p_ciphertext)))) &&
 		((encode_buf_len(state, (&(*input).psa_aead_encrypt_req_ciphertext_size)))) &&
@@ -741,12 +765,13 @@ static bool encode_psa_aead_decrypt_req(zcbor_state_t *state,
 		(((zcbor_uint32_put(state, (45)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_aead_decrypt_req_key)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_aead_decrypt_req_alg)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_aead_decrypt_req_p_nonce)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_aead_decrypt_req_p_nonce)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_aead_decrypt_req_nonce_length)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_aead_decrypt_req_p_additional_data)))) &&
+		 ((encode_ptr_const_buf(state,
+					(&(*input).psa_aead_decrypt_req_p_additional_data)))) &&
 		 ((encode_buf_len(state,
 				  (&(*input).psa_aead_decrypt_req_additional_data_length)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_aead_decrypt_req_p_ciphertext)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_aead_decrypt_req_p_ciphertext)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_aead_decrypt_req_ciphertext_length)))) &&
 		 ((encode_ptr_buf(state, (&(*input).psa_aead_decrypt_req_p_plaintext)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_aead_decrypt_req_plaintext_size)))) &&
@@ -808,7 +833,7 @@ static bool encode_psa_aead_set_nonce_req(zcbor_state_t *state,
 
 	bool res = (((((zcbor_uint32_put(state, (49)))) &&
 		      ((encode_ptr_uint(state, (&(*input).psa_aead_set_nonce_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_aead_set_nonce_req_p_nonce)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_aead_set_nonce_req_p_nonce)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_aead_set_nonce_req_nonce_length)))))));
 
 	log_result(state, res, __func__);
@@ -820,11 +845,12 @@ static bool encode_psa_aead_set_lengths_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = (((
-		((zcbor_uint32_put(state, (50)))) &&
-		((encode_ptr_uint(state, (&(*input).psa_aead_set_lengths_req_p_handle)))) &&
-		((encode_buf_len(state, (&(*input).psa_aead_set_lengths_req_ad_length)))) &&
-		((encode_buf_len(state, (&(*input).psa_aead_set_lengths_req_plaintext_length)))))));
+	bool res =
+		(((((zcbor_uint32_put(state, (50)))) &&
+		   ((encode_ptr_uint(state, (&(*input).psa_aead_set_lengths_req_p_handle)))) &&
+		   ((zcbor_uint32_encode(state, (&(*input).psa_aead_set_lengths_req_ad_length)))) &&
+		   ((zcbor_uint32_encode(
+			   state, (&(*input).psa_aead_set_lengths_req_plaintext_length)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -837,7 +863,7 @@ static bool encode_psa_aead_update_ad_req(zcbor_state_t *state,
 
 	bool res = (((((zcbor_uint32_put(state, (51)))) &&
 		      ((encode_ptr_uint(state, (&(*input).psa_aead_update_ad_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_aead_update_ad_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_aead_update_ad_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_aead_update_ad_req_input_length)))))));
 
 	log_result(state, res, __func__);
@@ -852,7 +878,7 @@ static bool encode_psa_aead_update_req(zcbor_state_t *state,
 	bool res =
 		(((((zcbor_uint32_put(state, (52)))) &&
 		   ((encode_ptr_uint(state, (&(*input).psa_aead_update_req_p_handle)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_aead_update_req_p_input)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_aead_update_req_p_input)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_aead_update_req_input_length)))) &&
 		   ((encode_ptr_buf(state, (&(*input).psa_aead_update_req_p_output)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_aead_update_req_output_size)))) &&
@@ -892,7 +918,7 @@ static bool encode_psa_aead_verify_req(zcbor_state_t *state,
 		   ((encode_ptr_buf(state, (&(*input).psa_aead_verify_req_p_plaintext)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_aead_verify_req_plaintext_size)))) &&
 		   ((encode_ptr_uint(state, (&(*input).psa_aead_verify_req_p_plaintext_length)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_aead_verify_req_p_tag)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_aead_verify_req_p_tag)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_aead_verify_req_tag_length)))))));
 
 	log_result(state, res, __func__);
@@ -919,7 +945,7 @@ static bool encode_psa_sign_message_req(zcbor_state_t *state,
 		(((zcbor_uint32_put(state, (56)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_message_req_key)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_sign_message_req_alg)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_sign_message_req_p_input)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_sign_message_req_p_input)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_sign_message_req_input_length)))) &&
 		 ((encode_ptr_buf(state, (&(*input).psa_sign_message_req_p_signature)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_sign_message_req_signature_size)))) &&
@@ -938,9 +964,9 @@ static bool encode_psa_verify_message_req(zcbor_state_t *state,
 		(((zcbor_uint32_put(state, (57)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_verify_message_req_key)))) &&
 		 ((zcbor_uint32_encode(state, (&(*input).psa_verify_message_req_alg)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_verify_message_req_p_input)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_verify_message_req_p_input)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_verify_message_req_input_length)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_verify_message_req_p_signature)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_verify_message_req_p_signature)))) &&
 		 ((encode_buf_len(state, (&(*input).psa_verify_message_req_signature_length)))))));
 
 	log_result(state, res, __func__);
@@ -955,7 +981,7 @@ static bool encode_psa_sign_hash_req(zcbor_state_t *state, const struct psa_sign
 		(((((zcbor_uint32_put(state, (58)))) &&
 		   ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_req_key)))) &&
 		   ((zcbor_uint32_encode(state, (&(*input).psa_sign_hash_req_alg)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_sign_hash_req_p_hash)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_sign_hash_req_p_hash)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_sign_hash_req_hash_length)))) &&
 		   ((encode_ptr_buf(state, (&(*input).psa_sign_hash_req_p_signature)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_sign_hash_req_signature_size)))) &&
@@ -974,9 +1000,9 @@ static bool encode_psa_verify_hash_req(zcbor_state_t *state,
 		(((((zcbor_uint32_put(state, (59)))) &&
 		   ((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_req_key)))) &&
 		   ((zcbor_uint32_encode(state, (&(*input).psa_verify_hash_req_alg)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_verify_hash_req_p_hash)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_verify_hash_req_p_hash)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_verify_hash_req_hash_length)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_verify_hash_req_p_signature)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_verify_hash_req_p_signature)))) &&
 		   ((encode_buf_len(state, (&(*input).psa_verify_hash_req_signature_length)))))));
 
 	log_result(state, res, __func__);
@@ -988,18 +1014,18 @@ static bool encode_psa_asymmetric_encrypt_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res =
-		(((((zcbor_uint32_put(state, (60)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_encrypt_req_key)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_encrypt_req_alg)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_asymmetric_encrypt_req_p_input)))) &&
-		   ((encode_buf_len(state, (&(*input).psa_asymmetric_encrypt_req_input_length)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_asymmetric_encrypt_req_p_salt)))) &&
-		   ((encode_buf_len(state, (&(*input).psa_asymmetric_encrypt_req_salt_length)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_asymmetric_encrypt_req_p_output)))) &&
-		   ((encode_buf_len(state, (&(*input).psa_asymmetric_encrypt_req_output_size)))) &&
-		   ((encode_ptr_uint(state,
-				     (&(*input).psa_asymmetric_encrypt_req_p_output_length)))))));
+	bool res = ((
+		(((zcbor_uint32_put(state, (60)))) &&
+		 ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_encrypt_req_key)))) &&
+		 ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_encrypt_req_alg)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_asymmetric_encrypt_req_p_input)))) &&
+		 ((encode_buf_len(state, (&(*input).psa_asymmetric_encrypt_req_input_length)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_asymmetric_encrypt_req_p_salt)))) &&
+		 ((encode_buf_len(state, (&(*input).psa_asymmetric_encrypt_req_salt_length)))) &&
+		 ((encode_ptr_buf(state, (&(*input).psa_asymmetric_encrypt_req_p_output)))) &&
+		 ((encode_buf_len(state, (&(*input).psa_asymmetric_encrypt_req_output_size)))) &&
+		 ((encode_ptr_uint(state,
+				   (&(*input).psa_asymmetric_encrypt_req_p_output_length)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1010,18 +1036,18 @@ static bool encode_psa_asymmetric_decrypt_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res =
-		(((((zcbor_uint32_put(state, (61)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_decrypt_req_key)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_decrypt_req_alg)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_asymmetric_decrypt_req_p_input)))) &&
-		   ((encode_buf_len(state, (&(*input).psa_asymmetric_decrypt_req_input_length)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_asymmetric_decrypt_req_p_salt)))) &&
-		   ((encode_buf_len(state, (&(*input).psa_asymmetric_decrypt_req_salt_length)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_asymmetric_decrypt_req_p_output)))) &&
-		   ((encode_buf_len(state, (&(*input).psa_asymmetric_decrypt_req_output_size)))) &&
-		   ((encode_ptr_uint(state,
-				     (&(*input).psa_asymmetric_decrypt_req_p_output_length)))))));
+	bool res = ((
+		(((zcbor_uint32_put(state, (61)))) &&
+		 ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_decrypt_req_key)))) &&
+		 ((zcbor_uint32_encode(state, (&(*input).psa_asymmetric_decrypt_req_alg)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_asymmetric_decrypt_req_p_input)))) &&
+		 ((encode_buf_len(state, (&(*input).psa_asymmetric_decrypt_req_input_length)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_asymmetric_decrypt_req_p_salt)))) &&
+		 ((encode_buf_len(state, (&(*input).psa_asymmetric_decrypt_req_salt_length)))) &&
+		 ((encode_ptr_buf(state, (&(*input).psa_asymmetric_decrypt_req_p_output)))) &&
+		 ((encode_buf_len(state, (&(*input).psa_asymmetric_decrypt_req_output_size)))) &&
+		 ((encode_ptr_uint(state,
+				   (&(*input).psa_asymmetric_decrypt_req_p_output_length)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1080,15 +1106,16 @@ encode_psa_key_derivation_input_bytes_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = ((
-		(((zcbor_uint32_put(state, (65)))) &&
-		 ((encode_ptr_uint(state,
-				   (&(*input).psa_key_derivation_input_bytes_req_p_handle)))) &&
-		 ((zcbor_uint32_encode(state,
-				       (&(*input).psa_key_derivation_input_bytes_req_step)))) &&
-		 ((encode_ptr_buf(state, (&(*input).psa_key_derivation_input_bytes_req_p_data)))) &&
-		 ((encode_buf_len(state,
-				  (&(*input).psa_key_derivation_input_bytes_req_data_length)))))));
+	bool res =
+		(((((zcbor_uint32_put(state, (65)))) &&
+		   ((encode_ptr_uint(state,
+				     (&(*input).psa_key_derivation_input_bytes_req_p_handle)))) &&
+		   ((zcbor_uint32_encode(state,
+					 (&(*input).psa_key_derivation_input_bytes_req_step)))) &&
+		   ((encode_ptr_const_buf(
+			   state, (&(*input).psa_key_derivation_input_bytes_req_p_data)))) &&
+		   ((encode_buf_len(
+			   state, (&(*input).psa_key_derivation_input_bytes_req_data_length)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1140,7 +1167,7 @@ static bool encode_psa_key_derivation_key_agreement_req(
 					 (&(*input).psa_key_derivation_key_agreement_req_step)))) &&
 		   ((zcbor_uint32_encode(
 			   state, (&(*input).psa_key_derivation_key_agreement_req_private_key)))) &&
-		   ((encode_ptr_buf(
+		   ((encode_ptr_const_buf(
 			   state, (&(*input).psa_key_derivation_key_agreement_req_p_peer_key)))) &&
 		   ((encode_buf_len(
 			   state,
@@ -1177,8 +1204,8 @@ encode_psa_key_derivation_output_key_req(zcbor_state_t *state,
 
 	bool res = ((
 		(((zcbor_uint32_put(state, (70)))) &&
-		 ((encode_ptr_attr(state,
-				   (&(*input).psa_key_derivation_output_key_req_p_attributes)))) &&
+		 ((encode_ptr_const_attr(
+			 state, (&(*input).psa_key_derivation_output_key_req_p_attributes)))) &&
 		 ((encode_ptr_uint(state,
 				   (&(*input).psa_key_derivation_output_key_req_p_handle)))) &&
 		 ((encode_ptr_key(state, (&(*input).psa_key_derivation_output_key_req_p_key)))))));
@@ -1209,7 +1236,7 @@ static bool encode_psa_raw_key_agreement_req(zcbor_state_t *state,
 		((zcbor_uint32_put(state, (72)))) &&
 		((zcbor_uint32_encode(state, (&(*input).psa_raw_key_agreement_req_alg)))) &&
 		((zcbor_uint32_encode(state, (&(*input).psa_raw_key_agreement_req_private_key)))) &&
-		((encode_ptr_buf(state, (&(*input).psa_raw_key_agreement_req_p_peer_key)))) &&
+		((encode_ptr_const_buf(state, (&(*input).psa_raw_key_agreement_req_p_peer_key)))) &&
 		((encode_buf_len(state, (&(*input).psa_raw_key_agreement_req_peer_key_length)))) &&
 		((encode_ptr_buf(state, (&(*input).psa_raw_key_agreement_req_p_output)))) &&
 		((encode_buf_len(state, (&(*input).psa_raw_key_agreement_req_output_size)))) &&
@@ -1238,19 +1265,20 @@ static bool encode_psa_generate_key_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = (((((zcbor_uint32_put(state, (74)))) &&
-		      ((encode_ptr_attr(state, (&(*input).psa_generate_key_req_p_attributes)))) &&
-		      ((encode_ptr_key(state, (&(*input).psa_generate_key_req_p_key)))))));
+	bool res = ((
+		(((zcbor_uint32_put(state, (74)))) &&
+		 ((encode_ptr_const_attr(state, (&(*input).psa_generate_key_req_p_attributes)))) &&
+		 ((encode_ptr_key(state, (&(*input).psa_generate_key_req_p_key)))))));
 
 	log_result(state, res, __func__);
 	return res;
 }
 
-static bool encode_ptr_cipher(zcbor_state_t *state, const uint32_t *input)
+static bool encode_ptr_const_cipher(zcbor_state_t *state, const uint32_t *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = ((zcbor_tag_put(state, 32775) && (zcbor_uint32_encode(state, (&(*input))))));
+	bool res = ((zcbor_tag_put(state, 32780) && (zcbor_uint32_encode(state, (&(*input))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1260,11 +1288,11 @@ static bool encode_psa_pake_setup_req(zcbor_state_t *state, const struct psa_pak
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res =
-		(((((zcbor_uint32_put(state, (79)))) &&
-		   ((encode_ptr_uint(state, (&(*input).psa_pake_setup_req_p_handle)))) &&
-		   ((zcbor_uint32_encode(state, (&(*input).psa_pake_setup_req_password_key)))) &&
-		   ((encode_ptr_cipher(state, (&(*input).psa_pake_setup_req_p_cipher_suite)))))));
+	bool res = (((((zcbor_uint32_put(state, (79)))) &&
+		      ((encode_ptr_uint(state, (&(*input).psa_pake_setup_req_p_handle)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).psa_pake_setup_req_password_key)))) &&
+		      ((encode_ptr_const_cipher(state,
+						(&(*input).psa_pake_setup_req_p_cipher_suite)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1288,10 +1316,11 @@ static bool encode_psa_pake_set_user_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = (((((zcbor_uint32_put(state, (81)))) &&
-		      ((encode_ptr_uint(state, (&(*input).psa_pake_set_user_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_pake_set_user_req_p_user_id)))) &&
-		      ((encode_buf_len(state, (&(*input).psa_pake_set_user_req_user_id_len)))))));
+	bool res =
+		(((((zcbor_uint32_put(state, (81)))) &&
+		   ((encode_ptr_uint(state, (&(*input).psa_pake_set_user_req_p_handle)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_pake_set_user_req_p_user_id)))) &&
+		   ((encode_buf_len(state, (&(*input).psa_pake_set_user_req_user_id_len)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1302,10 +1331,11 @@ static bool encode_psa_pake_set_peer_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = (((((zcbor_uint32_put(state, (82)))) &&
-		      ((encode_ptr_uint(state, (&(*input).psa_pake_set_peer_req_p_handle)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_pake_set_peer_req_p_peer_id)))) &&
-		      ((encode_buf_len(state, (&(*input).psa_pake_set_peer_req_peer_id_len)))))));
+	bool res =
+		(((((zcbor_uint32_put(state, (82)))) &&
+		   ((encode_ptr_uint(state, (&(*input).psa_pake_set_peer_req_p_handle)))) &&
+		   ((encode_ptr_const_buf(state, (&(*input).psa_pake_set_peer_req_p_peer_id)))) &&
+		   ((encode_buf_len(state, (&(*input).psa_pake_set_peer_req_peer_id_len)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1316,11 +1346,11 @@ static bool encode_psa_pake_set_context_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res =
-		(((((zcbor_uint32_put(state, (83)))) &&
-		   ((encode_ptr_uint(state, (&(*input).psa_pake_set_context_req_p_handle)))) &&
-		   ((encode_ptr_buf(state, (&(*input).psa_pake_set_context_req_p_context)))) &&
-		   ((encode_buf_len(state, (&(*input).psa_pake_set_context_req_context_len)))))));
+	bool res = ((
+		(((zcbor_uint32_put(state, (83)))) &&
+		 ((encode_ptr_uint(state, (&(*input).psa_pake_set_context_req_p_handle)))) &&
+		 ((encode_ptr_const_buf(state, (&(*input).psa_pake_set_context_req_p_context)))) &&
+		 ((encode_buf_len(state, (&(*input).psa_pake_set_context_req_context_len)))))));
 
 	log_result(state, res, __func__);
 	return res;
@@ -1350,7 +1380,7 @@ static bool encode_psa_pake_input_req(zcbor_state_t *state, const struct psa_pak
 	bool res = (((((zcbor_uint32_put(state, (85)))) &&
 		      ((encode_ptr_uint(state, (&(*input).psa_pake_input_req_p_handle)))) &&
 		      ((zcbor_uint32_encode(state, (&(*input).psa_pake_input_req_step)))) &&
-		      ((encode_ptr_buf(state, (&(*input).psa_pake_input_req_p_input)))) &&
+		      ((encode_ptr_const_buf(state, (&(*input).psa_pake_input_req_p_input)))) &&
 		      ((encode_buf_len(state, (&(*input).psa_pake_input_req_input_length)))))));
 
 	log_result(state, res, __func__);
@@ -1362,11 +1392,12 @@ static bool encode_psa_pake_get_shared_key_req(zcbor_state_t *state,
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool res = ((
-		(((zcbor_uint32_put(state, (86)))) &&
-		 ((encode_ptr_uint(state, (&(*input).psa_pake_get_shared_key_req_p_handle)))) &&
-		 ((encode_ptr_attr(state, (&(*input).psa_pake_get_shared_key_req_p_attributes)))) &&
-		 ((encode_ptr_key(state, (&(*input).psa_pake_get_shared_key_req_p_key)))))));
+	bool res =
+		(((((zcbor_uint32_put(state, (86)))) &&
+		   ((encode_ptr_uint(state, (&(*input).psa_pake_get_shared_key_req_p_handle)))) &&
+		   ((encode_ptr_const_attr(
+			   state, (&(*input).psa_pake_get_shared_key_req_p_attributes)))) &&
+		   ((encode_ptr_key(state, (&(*input).psa_pake_get_shared_key_req_p_key)))))));
 
 	log_result(state, res, __func__);
 	return res;
