@@ -58,6 +58,14 @@ nRF54H20 DK
 
      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad .
 
+  To achieve the lowest power consumption, use the ``benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram`` configuration.
+  This configuration does not provide console output.
+  Use the following build command:
+
+  .. code-block:: console
+
+     west build -p -b nrf54h20dk/nrf54h20/cpuapp -T benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram .
+
   You can build the test for application and PPR cores as follows:
 
   .. code-block:: console
