@@ -41,7 +41,6 @@ Building and running
 
 .. include:: /includes/build_and_run_test.txt
 
-The remote board must be specified using ``SB_CONFIG_REMOTE_BOARD``.
 To build the test, use configuration setups from :file:`testcase.yaml` using the ``-T`` option.
 See the following examples:
 
