@@ -158,7 +158,7 @@ Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * nRF Util version 7.13.0 or higher
 * nRF Util ``device`` version 2.7.10
-* nRF Util ``trace`` version 3.10.0
+* nRF Util ``trace`` version 3.1.0
 * nRF Util ``suit`` version 0.9.0
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
@@ -185,9 +185,9 @@ Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
       nrfutil install device=2.7.10 --force
 
-#. Install the nRF Util ``trace`` command version 3.10.0 as follows::
+#. Install the nRF Util ``trace`` command version 3.1.0 as follows::
 
-      nrfutil install trace=3.10.0 --force
+      nrfutil install trace=3.1.0 --force
 
 #. Install the nRF Util ``suit`` command version 0.9.0 as follows::
 
