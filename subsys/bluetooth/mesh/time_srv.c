@@ -36,20 +36,27 @@ static inline bool tai_is_unknown(const struct bt_mesh_time_tai *tai)
 	return !tai->sec && !tai->subsec;
 }
 
-static inline struct bt_mesh_time_tai
-tai_at(const struct bt_mesh_time_srv *srv, int64_t uptime)
+static inline struct bt_mesh_time_tai tai_at(const struct bt_mesh_time_srv *srv, int64_t uptime)
 {
 	const struct bt_mesh_time_tai *sync = &srv->data.sync.status.tai;
-	int64_t steps = (SUBSEC_STEPS * (uptime - srv->data.sync.uptime)) /
-			MSEC_PER_SEC;
+	int64_t steps = (SUBSEC_STEPS * (uptime - srv->data.sync.uptime)) / MSEC_PER_SEC;
+	int64_t sec;
+	int64_t subsec;
 
 	if (tai_is_unknown(sync)) {
 		return *sync;
 	}
 
-	return (struct bt_mesh_time_tai) {
-		.sec = sync->sec + (steps / SUBSEC_STEPS),
-		.subsec = sync->subsec + steps,
+	subsec = sync->subsec + steps;
+	sec = sync->sec + (subsec / SUBSEC_STEPS);
+
+	if (subsec >= SUBSEC_STEPS) {
+		subsec %= SUBSEC_STEPS;
+	}
+
+	return (struct bt_mesh_time_tai){
+		.sec = sec,
+		.subsec = subsec,
 	};
 }
 
