@@ -318,6 +318,7 @@
 /include/bluetooth/adv_prov.h             @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
+/include/bluetooth/services/ras.h         @nrfconnect/ncs-dragoon
 /include/caf/                             @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /include/debug/                           @nrfconnect/ncs-co-drivers
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch
