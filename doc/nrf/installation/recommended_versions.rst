@@ -287,6 +287,9 @@ Among others, this package includes the J-Link RTT Viewer, which can be used for
 
 It is recommended to use the |jlink_ver| of the package when you :ref:`installing_vsc`.
 
+On Windows, you also need to install SEGGER USB Driver for J-Link, which is required for support of older Nordic Semiconductor devices in :ref:`requirements_nrf_util`.
+For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
+
 .. _toolchain_management_tools:
 .. _additional_nordic_sw_tools:
 
