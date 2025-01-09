@@ -39,6 +39,8 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    - name: ppryga-nordic
+      url-base: https://github.com/ppryga-nordic
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -68,8 +70,9 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
+      remote: ppryga-nordic
       repo-path: sdk-zephyr
-      revision: 9761d261943a916443cf6c748ee3daa2915e3546
+      revision: 5088b82c56d8800e291ec998f2b04e7d77e92a99
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -191,7 +194,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 769666e2a185d5cbaf89bd9cbfe17911b4d9d447
+      revision: 4343578d1f304df7fdb80b97b7a33da28b800594
       submodules: true
       groups:
         - dragoon
