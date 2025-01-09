@@ -261,7 +261,10 @@ static int trace_fragment_write(struct nrf_modem_trace_data *frag)
 		}
 
 		if (ret < 0) {
-			if (ret != -ENOSPC) {
+			if ((ret == -ENOSPC) || (ret == -ENOSR)) {
+				LOG_DBG("trace_backend.write returned with %d", ret);
+				LOG_DBG("Please make sure that the backend is properly connected.");
+			} else {
 				LOG_ERR("trace_backend.write failed with err: %d", ret);
 			}
 
