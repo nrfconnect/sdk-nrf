@@ -9,6 +9,9 @@ LOG_MODULE_REGISTER(idle_wdt, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/watchdog.h>
+#include <zephyr/drivers/gpio.h>
+
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 #define WDT_WINDOW_MAX	(200)
 
@@ -47,6 +50,12 @@ int main(void)
 {
 	int ret;
 	int counter = 0;
+
+	ret = gpio_is_ready_dt(&led);
+	__ASSERT(ret, "Error: GPIO Device not ready");
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	__ASSERT(ret == 0, "Could not configure led GPIO");
 
 	LOG_INF("Multicore idle_wdt test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Main sleeps for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
@@ -122,7 +131,9 @@ int main(void)
 		 * Watchdog was started with option WDT_OPT_PAUSE_IN_SLEEP thus
 		 * it shall not reset the core during sleep.
 		 */
+		gpio_pin_set_dt(&led, 0);
 		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);
+		gpio_pin_set_dt(&led, 1);
 	}
 
 	return 0;

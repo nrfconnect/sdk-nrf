@@ -21,6 +21,8 @@ LOG_MODULE_REGISTER(idle_pwm_loop, LOG_LEVEL_INF);
 #error "Unsupported board: pwm_to_gpio_loopback node is not defined"
 #endif
 
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
+
 static const struct gpio_dt_spec pin_in = GPIO_DT_SPEC_GET_BY_IDX(
 	DT_NODELABEL(pwm_to_gpio_loopback),	gpios, 0);
 
@@ -97,9 +99,18 @@ int main(void)
 	uint32_t tolerance;
 	int ret;
 
+	ret = gpio_is_ready_dt(&led);
+	__ASSERT(ret, "Error: GPIO Device not ready");
+
 #if defined(CONFIG_CLOCK_CONTROL)
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
+	__ASSERT(ret == 0, "Could not configure led GPIO");
 	k_msleep(1000);
+	gpio_pin_set_dt(&led, 1);
 	set_global_domain_frequency();
+#else
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	__ASSERT(ret == 0, "Could not configure led GPIO");
 #endif
 
 	/* Set PWM fill ratio to 50% */
@@ -226,7 +237,9 @@ int main(void)
 		__ASSERT_NO_MSG(low >= edges - tolerance);
 
 		/* Sleep / enter low power state */
+		gpio_pin_set_dt(&led, 0);
 		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);
+		gpio_pin_set_dt(&led, 1);
 	}
 
 	return 0;

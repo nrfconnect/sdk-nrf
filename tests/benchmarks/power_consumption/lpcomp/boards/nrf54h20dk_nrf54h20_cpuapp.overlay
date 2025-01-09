@@ -6,6 +6,8 @@
 
 / {
 	aliases {
+		led = &led0;
+		/delete-property/ led1;
 		test-comp = &comp;
 	};
 
@@ -13,6 +15,8 @@
 		test-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
 	};
 };
+
+/delete-node/ &led1;
 
 &gpio1 {
 	status = "okay";

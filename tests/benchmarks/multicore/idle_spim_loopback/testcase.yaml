@@ -33,7 +33,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.s2ram:
     tags: ppk_power_measure
@@ -43,7 +43,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.no_sleep_fast:
     extra_args:
@@ -69,7 +69,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.s2ram_fast:
     tags: ppk_power_measure
@@ -80,7 +80,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.gd_freq_256MHz.s2ram_fast:
     tags: ppk_power_measure
@@ -93,7 +93,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.gd_freq_128MHz.s2ram_fast:
     tags: ppk_power_measure
@@ -106,7 +106,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes.gd_freq_64MHz.s2ram_fast:
     tags: ppk_power_measure
@@ -119,7 +119,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   #
   # 16 Bytes of data
@@ -149,7 +149,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.s2ram:
     tags: ppk_power_measure
@@ -160,7 +160,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.no_sleep_fast:
     extra_args:
@@ -188,7 +188,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.s2ram_fast:
     tags: ppk_power_measure
@@ -200,7 +200,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.gd_freq_256MHz.s2ram_fast:
     tags: ppk_power_measure
@@ -214,7 +214,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.gd_freq_128MHz.s2ram_fast:
     tags: ppk_power_measure
@@ -228,7 +228,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.16_bytes.gd_freq_64MHz.s2ram_fast:
     tags: ppk_power_measure
@@ -242,7 +242,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   #
   # 4 Bytes of data with SPI Chip Select Lock enabled
@@ -258,7 +258,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   #
   # 4 Bytes of data with SPI Lock enabled
@@ -274,7 +274,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   #
   # 4 Bytes of data with SPI Chip Select Lock enabled and SPI Lock enabled
@@ -308,7 +308,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.s2ram:
     tags: ppk_power_measure
@@ -320,7 +320,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.no_sleep_fast:
     extra_args:
@@ -352,7 +352,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock.s2ram_fast:
     tags: ppk_power_measure
@@ -365,7 +365,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   #
   # 4 Bytes of data with SPI Chip Select Lock enabled and SPI Lock
@@ -403,7 +403,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.s2ram:
     tags: ppk_power_measure
@@ -416,7 +416,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.no_sleep_fast:
     extra_args:
@@ -451,7 +451,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
 
   benchmarks.multicore.idle_spim_loopback.4_bytes_cs_and_spi_lock_no_release.s2ram_fast:
     tags: ppk_power_measure
@@ -465,4 +465,4 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"

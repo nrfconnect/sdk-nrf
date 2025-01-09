@@ -11,10 +11,17 @@
  */
 
 / {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+	};
+
 	zephyr,user {
 		test-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
 	};
 };
+
+/delete-node/ &led1;
 
 &gpiote130 {
 	status = "okay";

@@ -15,6 +15,8 @@ LOG_MODULE_REGISTER(idle_spim_loopback, LOG_LEVEL_INF);
 #include <zephyr/devicetree/clocks.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
+
 #define	DELTA			(1)
 
 #define SPI_MODE_DEFAULT (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE \
@@ -131,10 +133,19 @@ int main(void)
 		.count = 1
 	};
 
+	ret = gpio_is_ready_dt(&led);
+	__ASSERT(ret, "Error: GPIO Device not ready");
+
 #if defined(CONFIG_CLOCK_CONTROL)
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
+	__ASSERT(ret == 0, "Could not configure led GPIO");
 	k_msleep(1000);
+	gpio_pin_set_dt(&led, 1);
 	set_global_domain_frequency();
 	k_msleep(100);
+#else
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	__ASSERT(ret == 0, "Could not configure led GPIO");
 #endif
 
 	LOG_INF("Multicore idle_spi_loopback test on %s", CONFIG_BOARD_TARGET);
@@ -322,7 +333,9 @@ int main(void)
 		counter++;
 
 		/* Sleep / enter low power state. */
+		gpio_pin_set_dt(&led, 0);
 		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);
+		gpio_pin_set_dt(&led, 1);
 	}
 
 	return 0;

@@ -6,7 +6,16 @@
 
 / {
 	aliases {
+		led = &led1;
 		pwm-led0 = &pwm_gpio;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led1: led_1 {
+			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 1";
+		};
 	};
 
 	pwmleds {
@@ -30,6 +39,14 @@
 			low-power-enable;
 		};
 	};
+};
+
+&gpio9 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
 };
 
 &pwm131 {

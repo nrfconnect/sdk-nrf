@@ -7,7 +7,6 @@
 / {
 	aliases {
 		led = &led1;
-		watchdog0 = &wdt010;
 	};
 
 	leds {
@@ -24,9 +23,5 @@
 };
 
 &gpiote130 {
-	status = "okay";
-};
-
-&wdt010 {
 	status = "okay";
 };

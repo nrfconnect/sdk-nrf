@@ -9,18 +9,13 @@ LOG_MODULE_REGISTER(idle_pwm_led, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/pwm.h>
+#include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/device_runtime.h>
 
 
-#if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUAPP_COMMON)
-/* Alias pwm-led0 = &pwm_led2 */
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
-#elif IS_ENABLED(CONFIG_SOC_NRF54H20_CPURAD_COMMON)
-/* Alias pwm-led0 = &pwm_led3 */
-static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
-#else
-#error "Invalid core selected."
-#endif
+
 
 #define PWM_STEPS_PER_SEC	(50)
 
@@ -34,6 +29,16 @@ int main(void)
 	uint32_t pulse_max;
 	int32_t pulse_step;
 	uint32_t current_pulse_width;
+
+	if (!gpio_is_ready_dt(&led)) {
+		LOG_ERR("GPIO Device not ready");
+		return 0;
+	}
+
+	if (gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE) != 0) {
+		LOG_ERR("Could not configure led GPIO");
+		return 0;
+	}
 
 	if (!pwm_is_ready_dt(&pwm_led)) {
 		LOG_ERR("Device %s is not ready.", pwm_led.dev->name);
@@ -110,7 +115,9 @@ int main(void)
 #endif
 
 		/* Sleep / enter low power state */
+		gpio_pin_set_dt(&led, 0);
 		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);
+		gpio_pin_set_dt(&led, 1);
 	}
 
 	return 0;
