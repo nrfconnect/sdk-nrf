@@ -27,8 +27,9 @@ static psa_key_id_t identity_key_id = TFM_BUILTIN_KEY_ID_IAK;
 static psa_key_id_t identity_key_id = CRACEN_BUILTIN_IDENTITY_KEY_ID;
 #endif
 
-/* ====================================================================== */
-/*			Global variables/defines for the IKG signing tests		  */
+/* ======================================================================
+ *			Global variables/defines for the IKG signing tests
+ */
 
 #define NRF_CRYPTO_TEST_IKG_TEXT_SIZE (68)
 #define NRF_CRYPTO_TEST_IKG_SIGNATURE_SIZE (64)

@@ -21,14 +21,15 @@
 #endif
 
 LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
-/* ====================================================================== */
-/*			Global variables/defines for the kmu write test				  */
+/* ======================================================================
+ *		Global variables/defines for the kmu write test
+ */
 
 static psa_key_handle_t key_handle;
 #define KMU_SLOT_NUM 125
 /*
  *This is a sample public key for testing purposes only.
- *Uses sample key to ensure key generation is causing issues.
+ *Uses sample key to ensure key generation is not the cause of an issue.
  */
 static uint8_t m_pub_key[32] = {
 	0x29, 0x06, 0xA6, 0xA5, 0x5F, 0x9E, 0xB0, 0x5E,
