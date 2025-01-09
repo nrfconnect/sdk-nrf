@@ -2400,7 +2400,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(tx_tone_freq,
 		      NULL,
-		      "<val> - Frequency in the range of -10MHz to 10MHz",
+		      "<val> - Frequency offset with respect to center frequency in the range of -10MHz to 10MHz (resolution 1MHz)",
 		      nrf_wifi_radio_test_set_tx_tone_freq,
 		      2,
 		      0),

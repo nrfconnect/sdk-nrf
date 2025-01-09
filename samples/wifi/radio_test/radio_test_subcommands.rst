@@ -170,7 +170,8 @@ Wi-Fi radio test subcommands
      - | <val> (Min: -10, Max: 10)
      - 0
      - Configuration
-     - Transmit tone frequency in the range of -10 MHz to 10 MHz.
+     - Tone frequency in the range of -10 MHz to 10 MHz with a resolution of 1 MHz.
+       The transmit tone frequency will be offset from the center frequency of the selected channel.
    * - dpd
      - | 0 - DPD bypass
        | 1 - Enable DPD
