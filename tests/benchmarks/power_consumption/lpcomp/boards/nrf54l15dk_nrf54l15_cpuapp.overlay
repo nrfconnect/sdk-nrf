@@ -6,6 +6,7 @@
 
 / {
 	aliases {
+		led = &button3;
 		test-comp = &comp;
 	};
 

@@ -13,11 +13,27 @@
  */
 
 / {
+	aliases {
+		led = &led1;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led1: led_1 {
+			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 1";
+		};
+	};
+
 	pwm_to_gpio_loopback: pwm_to_gpio_loopback {
 		compatible = "test-pwm-to-gpio-loopback";
 		pwms = <&pwm131 0 PWM_USEC(200) PWM_POLARITY_NORMAL>;
 		gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
 	};
+};
+
+&gpio9 {
+	status = "okay";
 };
 
 &pinctrl {
