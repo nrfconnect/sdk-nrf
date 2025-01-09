@@ -581,7 +581,7 @@ static int downloader_callback(const struct downloader_evt *event)
 
 	ret = downloader_cancel(&dl);
 
-	if (ret) {
+	if (ret && (ret != -EPERM)) {
 		LOG_ERR("Error disconnecting from download client:%d", ret);
 	}
 #endif
