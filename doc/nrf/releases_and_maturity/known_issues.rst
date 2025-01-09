@@ -498,6 +498,19 @@ The issues in this section are related to the :ref:`ug_matter` protocol.
 
 .. rst-class:: v2-9-0
 
+KRKNWK-19846: Wrong command for the internal configuration build in the :ref:`matter_template_sample` sample documentation
+  There is an obsolete and wrong command for building the sample for the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
+
+  **Affected platforms:** nRF54L15
+
+  **Workaround:** Use the following command to build the sample for the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only:
+
+  .. code-block:: console
+
+    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
+
+.. rst-class:: v2-9-0
+
 KRKNWK-19826: The Device Firmware Upgrade (DFU) fails for nRF5340 DK with RAM power down enabled
   The DFU fails for nRF5340 DK, if the application enables the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option.
   This option is enabled by default for the ``release`` configuration of the following samples:

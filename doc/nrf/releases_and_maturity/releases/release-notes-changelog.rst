@@ -340,7 +340,7 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Updated the :ref:`matter_template_sample` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
 
 Networking samples
 ------------------
