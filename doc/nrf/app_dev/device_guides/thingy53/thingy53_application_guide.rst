@@ -14,53 +14,15 @@ See the following sections for details of what is configured by default and what
 
 .. _thingy53_serialports:
 
-Connecting to Thingy:53
-***********************
+Connecting to Thingy:53 for logs
+********************************
 
 Applications and samples for the Nordic Thingy:53 use a serial terminal to provide logs.
 By default, the serial terminal is accessible through the USB CDC ACM class handled by application firmware.
 The serial port is visible right after the Thingy:53 is connected to the host using a USB cable.
 The CDC ACM baudrate is ignored, and transfer goes with USB speed.
 
-.. _thingy53_app_update:
-
-Updating firmware image for Thingy:53
-*************************************
-
-You can program the firmware on the Nordic Thingy:53 using an external debug probe and 10-pin JTAG cable, as described in :ref:`thingy53_building_pgming`, using either :ref:`Visual Studio Code <thingy53_build_pgm_vscode>` or :ref:`command line <thingy53_build_pgm_command_line>`.
-You can also update applications running on both the network and application core using the built-in MCUboot bootloader and the `Programmer app`_ for desktop or the `nRF Programmer`_ app for Android and iOS.
-You can also update the prebuilt application images that way.
-
-See :ref:`thingy53_gs_updating_firmware` for details about updating firmware image.
-
-.. _thingy53_app_update_debug:
-
-Firmware update using external debug probe
-==========================================
-
-If you are using an external debug probe, such as the nRF5340 DK, or any J-Link device supporting ARM Cortex-M33, you can program the Thingy:53 the same way as nRF5340 DK.
-See :ref:`ug_nrf5340` for details.
-
-.. _thingy53_app_update_mcuboot:
-
-Firmware update using MCUboot bootloader
-========================================
-
-Samples and applications built for Thingy:53 include the MCUboot bootloader that you can use to update the firmware out of the box.
-This method uses signed binary files :file:`app_update.bin` and :file:`net_core_app_update.bin` (or :file:`dfu_application.zip`).
-You can program the precompiled firmware image using one of the following ways:
-
-* Use the :doc:`MCUboot<mcuboot:index-ncs>` feature and the built-in serial recovery mode of Thingy:53.
-  In this scenario, the Thingy is connected directly to your PC through USB.
-  For details, refer to the :ref:`thingy53_app_mcuboot_bootloader` section.
-
-  See the :ref:`thingy53_gs_updating_usb` section in the :ref:`ug_thingy53_gs` guide for the detailed procedures on how to program the Thingy:53 using the `Programmer app`_.
-* Update the firmware over-the-air (OTA) using Bluetooth® LE and the nRF Programmer mobile application for Android or iOS.
-  To use this method, the application that is currently programmed on Thingy:53 must support it.
-  For details, refer to :ref:`thingy53_app_fota_smp` section.
-  All precompiled images support OTA using Bluetooth.
-
-  See the :ref:`thingy53_gs_updating_ble` section in the :ref:`ug_thingy53_gs` guide for the detailed procedures on how to program a Thingy:53 using `nRF Programmer`_ for Android or iOS.
+For more information, see :ref:`thingy53_app_usb`.
 
 .. _thingy53_app_partition_manager_config:
 

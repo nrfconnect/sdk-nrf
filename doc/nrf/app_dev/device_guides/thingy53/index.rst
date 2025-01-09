@@ -30,5 +30,6 @@ The nRF5340 is augmented with the nRF21540 RF FEM (Front-end Module) Range exten
    :maxdepth: 2
    :caption: Subpages:
 
+   thingy53_precompiled
    building_thingy53
    thingy53_application_guide

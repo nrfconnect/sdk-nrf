@@ -45,7 +45,6 @@ The build process generates firmware in two formats:
 For more information about files generated as output of the build process, see :ref:`app_build_output_files`.
 
 See the following sections for details regarding building and programming the firmware for Thingy:53 in various environments.
-See :ref:`thingy53_app_update` for more detailed information about updating firmware on Thingy:53.
 
 .. _thingy53_build_pgm_targets_wifi:
 
@@ -64,6 +63,53 @@ For example, you can use the following command when building on the command line
 
 For the compatible Wi-Fi samples in the |NCS|, see the :ref:`wifi_samples` section.
 
+.. _thingy53_app_update:
+
+Programming methods for Thingy:53
+*********************************
+
+You can program the firmware on the Nordic Thingy:53 using an external debug probe and a 10-pin JTAG cable, using :ref:`Visual Studio Code <thingy53_build_pgm_vscode>`, :ref:`command line <thingy53_build_pgm_command_line>`, or the `Programmer app <Programming Nordic Thingy:53_>`_ from nRF Connect for Desktop.
+You can also program applications running on both the network and application core using the built-in MCUboot serial recovery mode, using the `Programmer app`_ from nRF Connect for Desktop or `nRF Util <Programming application firmware using MCUboot serial recovery_>`_.
+
+Finally, you can use the `Programmer app`_ from nRF Connect for Desktop, the `nRF Programmer`_ mobile app for Android and iOS, or nRF Util to update the :ref:`preloaded application images <thingy53_precompiled>`.
+
+.. _thingy53_app_update_debug:
+
+Firmware update using external debug probe
+==========================================
+
+You can program the firmware on the Nordic Thingy:53 using an external debug probe and a 10-pin JTAG cable.
+In such cases, you can program the Thingy:53 the same way as the nRF5340 DK.
+
+The external debug probe must support Arm Cortex-M33 (such as the nRF5340 DK).
+You need a 10-pin 2x5 socket-to-socket 1.27 mm IDC (:term:`Serial Wire Debug (SWD)`) JTAG cable to connect to the external debug probe.
+
+This method is supported when programming with :ref:`Visual Studio Code <thingy53_build_pgm_vscode>`, :ref:`command line <thingy53_build_pgm_command_line>`, or the `Programmer app <Programming Nordic Thingy:53_>`_ from nRF Connect for Desktop.
+
+See also :ref:`ug_nrf5340` for additional information.
+
+.. _thingy53_app_update_mcuboot:
+
+Firmware update using MCUboot bootloader
+========================================
+
+Samples and applications built for Thingy:53 include the MCUboot bootloader that you can use to update the firmware out of the box.
+This method uses signed binary files :file:`app_update.bin` and :file:`net_core_app_update.bin` (or :file:`dfu_application.zip`).
+You can program the precompiled firmware image in one of the following ways:
+
+* Use the :doc:`MCUboot<mcuboot:index-ncs>` feature and the built-in serial recovery mode of Thingy:53.
+  In this scenario, the Thingy is connected directly to your PC through USB.
+  For details, refer to the :ref:`thingy53_app_mcuboot_bootloader` section.
+
+  See `Programming Nordic Thingy:53`_ in the `Programmer app`_ for the detailed procedures on how to program the Thingy:53 using nRF Connect for Desktop.
+
+* Update the firmware over-the-air (OTA) using Bluetooth LE and the nRF Programmer mobile application for Android or iOS.
+  To use this method, the application that is currently programmed on Thingy:53 must support it.
+  For details, refer to the :ref:`thingy53_app_fota_smp` section.
+  All precompiled images support OTA using Bluetooth.
+
+  See the :ref:`thingy53_gs_updating_ble` section for the detailed procedures on how to program a Thingy:53 using the `nRF Programmer`_ mobile app for Android or iOS.
+
 .. _thingy53_build_pgm_vscode:
 
 Building and programming using |VSC|
@@ -80,8 +126,15 @@ Complete the following steps to build and program using the |nRFVSC|:
 3. Program the sample or application:
 
    a. Connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK, using a 10-pin JTAG cable.
-   #. Connect the external debug probe to the PC using a USB cable.
+
+      .. figure:: ./images/thingy53_nrf5340_dk.webp
+         :alt: Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
+
+         Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
+
+   #. Connect the external debug probe to the PC using a micro-USB cable.
    #. Make sure that the Thingy:53 and the external debug probe are powered on.
+      (On the Thingy:53, move the power switch **SW1** to the **ON** position.)
    #. Click :guilabel:`Flash` in the :guilabel:`Actions View`.
 
 .. _thingy53_build_pgm_command_line:
@@ -119,8 +172,15 @@ To build and program the source code from the command line, complete the followi
 #. Program the sample or application:
 
    a. Connect the Nordic Thingy:53 to the debug out port on a 10-pin external debug probe, for example nRF5340 DK, using a 10-pin JTAG cable.
-   #. Connect the external debug probe to the PC using a USB cable.
+
+      .. figure:: ./images/thingy53_nrf5340_dk.webp
+         :alt: Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
+
+         Nordic Thingy:53 connected to the debug port on a 10-pin external debug probe
+
+   #. Connect the external debug probe to the PC using a micro-USB cable.
    #. Make sure that the Nordic Thingy:53 and the external debug probe are powered on.
+      (On the Thingy:53, move the power switch **SW1** to the **ON** position.)
    #. Use the following command to program the sample or application to the device:
 
       .. code-block:: console
@@ -128,3 +188,27 @@ To build and program the source code from the command line, complete the followi
          west flash
 
    The device resets and runs the programmed sample or application.
+
+.. _thingy53_gs_updating_usb:
+.. _thingy53_gs_updating_external_probe:
+
+Programming using the Programmer app
+************************************
+
+You can program the Nordic Thingy:53 using the `Programmer app`_ from nRF Connect for Desktop and MCUboot's serial recovery feature.
+You can use this application to also program precompiled firmware packages.
+
+You can program the Thingy:53 using the Programmer app with either USB-C or an external debug probe.
+See the `Programming Nordic Thingy:53`_ in the tool documentation for detailed steps.
+
+Programming using nRF Util
+**************************
+
+You can use the nRF Util tool to program Thingy:53, including programming precompiled firmware packages.
+See `Programming application firmware using MCUboot serial recovery`_ in the tool documentation for detailed steps.
+
+Using the nRF Programmer mobile app
+***********************************
+
+You can use the `nRF Programmer`_ mobile app on your Android or iOS device to program precompiled firmware packages.
+For detailed steps, see :ref:`thingy53_gs_updating_ble`.
