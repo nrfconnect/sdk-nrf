@@ -10,8 +10,6 @@
 #include <stdint.h>
 #include <suit_types.h>
 #include <suit_platform_internal.h>
-#ifdef CONFIG_SUIT_STREAM
-#include <suit_sink.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,21 +29,41 @@ bool suit_plat_fetch_integrated_domain_specific_is_type_supported(
 /**
  * @brief Domain specific part of the core part of the suit_plat_fetch function.
  */
+int suit_plat_check_fetch_domain_specific(suit_component_t dst_handle,
+					  suit_component_type_t dst_component_type,
+					  struct zcbor_string *uri,
+					  struct zcbor_string *manifest_component_id,
+					  struct suit_encryption_info *enc_info);
+
+/**
+ * @brief Domain specific part of the core part of the suit_plat_fetch function.
+ */
 int suit_plat_fetch_domain_specific(suit_component_t dst_handle,
 				    suit_component_type_t dst_component_type,
-				    struct stream_sink *dst_sink, struct zcbor_string *uri);
+				    struct zcbor_string *uri,
+				    struct zcbor_string *manifest_component_id,
+				    struct suit_encryption_info *enc_info);
+
+/**
+ * @brief Domain specific part of the core part of the suit_plat_fetch_integrated function
+ */
+int suit_plat_check_fetch_integrated_domain_specific(suit_component_t dst_handle,
+						     suit_component_type_t dst_component_type,
+						     struct zcbor_string *payload,
+						     struct zcbor_string *manifest_component_id,
+						     struct suit_encryption_info *enc_info);
 
 /**
  * @brief Domain specific part of the core part of the suit_plat_fetch_integrated function
  */
 int suit_plat_fetch_integrated_domain_specific(suit_component_t dst_handle,
 					       suit_component_type_t dst_component_type,
-					       struct stream_sink *dst_sink,
-					       struct zcbor_string *payload);
+					       struct zcbor_string *payload,
+					       struct zcbor_string *manifest_component_id,
+					       struct suit_encryption_info *enc_info);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* CONFIG_SUIT_STREAM */
 #endif /* SUIT_PLAT_FETCH_DOMAIN_SPECIFIC_H__ */
