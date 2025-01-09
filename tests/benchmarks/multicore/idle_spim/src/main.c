@@ -7,6 +7,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/spi.h>
+#include <zephyr/drivers/gpio.h>
+
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 LOG_MODULE_REGISTER(idle_spim);
 
@@ -42,6 +45,12 @@ int main(void)
 	bool status;
 	uint8_t response;
 
+	status = gpio_is_ready_dt(&led);
+	__ASSERT(status, "Error: GPIO Device not ready");
+
+	status = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	__ASSERT(status == 0, "Could not configure led GPIO");
+
 	status = spi_is_ready_dt(&spim_spec);
 	__ASSERT(status, "Error: SPI device is not ready");
 
@@ -50,7 +59,9 @@ int main(void)
 			spi_read_register(CHIP_ID_REGISTER_ADDRESS, &response);
 			printk("Chip ID: 0x%x\n", response);
 		}
+		gpio_pin_set_dt(&led, 0);
 		k_msleep(2000);
+		gpio_pin_set_dt(&led, 1);
 	}
 
 	return 0;

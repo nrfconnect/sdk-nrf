@@ -1,5 +1,6 @@
 / {
 	aliases {
+		led = &button3;
 		/delete-property/ sw1;
 		/delete-property/ sw2;
 		out0 = &output0;

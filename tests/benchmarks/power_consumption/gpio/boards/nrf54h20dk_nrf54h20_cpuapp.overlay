@@ -1,5 +1,7 @@
 / {
 	aliases {
+		led = &led0;
+		/delete-property/ led1;
 		out0 = &output0;
 		in0 = &input0;
 	};
@@ -22,6 +24,8 @@
 		};
 	};
 };
+
+/delete-node/ &led1;
 
 &gpiote130 {
 	status = "okay";

@@ -11,11 +11,14 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/devicetree/clocks.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#include <zephyr/drivers/gpio.h>
 
 /* Note: logging is normally disabled for this test
  * Enable only for debugging purposes
  */
 LOG_MODULE_REGISTER(idle_uarte);
+
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 #if DT_NODE_EXISTS(DT_NODELABEL(dut))
 #define UART_NODE DT_NODELABEL(dut)
@@ -145,9 +148,18 @@ int main(void)
 					       .data_bits = UART_CFG_DATA_BITS_8,
 					       .flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS};
 
+	err = gpio_is_ready_dt(&led);
+	__ASSERT(err, "Error: GPIO Device not ready");
+
 #if defined(CONFIG_CLOCK_CONTROL)
+	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
+	__ASSERT(err == 0, "Could not configure led GPIO");
 	k_msleep(1000);
+	gpio_pin_set_dt(&led, 1);
 	set_global_domain_frequency();
+#else
+	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	__ASSERT(err == 0, "Could not configure led GPIO");
 #endif
 
 	printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
@@ -190,7 +202,9 @@ int main(void)
 		}
 		disable_uart_rx();
 		printk("Good night\n");
+		gpio_pin_set_dt(&led, 0);
 		k_msleep(2000);
+		gpio_pin_set_dt(&led, 1);
 	}
 
 	return 0;

@@ -8,6 +8,8 @@
 
 / {
 	aliases {
+		led = &led0;
+		/delete-property/ led1;
 		pwm-led0 = &pwm120_gpio;
 	};
 
@@ -18,6 +20,8 @@
 		};
 	};
 };
+
+/delete-node/ &led1;
 
 &pinctrl {
 	/omit-if-no-ref/ pwm120_default: pwm120_default {

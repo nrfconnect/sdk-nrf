@@ -1,8 +1,12 @@
 / {
 	aliases {
+		led = &led0;
+		/delete-property/ led1;
 		adc0 = &adc;
 	};
 };
+
+/delete-node/ &led1;
 
 &adc {
 	#address-cells = <1>;

@@ -13,12 +13,19 @@
  */
 
 / {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+	};
+
 	pwm_to_gpio_loopback: pwm_to_gpio_loopback {
 		compatible = "test-pwm-to-gpio-loopback";
 		pwms = <&pwm120 1 PWM_USEC(200) PWM_POLARITY_NORMAL>;
 		gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 	};
 };
+
+/delete-node/ &led1;
 
 &pinctrl {
 	/omit-if-no-ref/ pwm120_default: pwm120_default {

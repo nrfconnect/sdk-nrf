@@ -16,6 +16,8 @@
 
 extern struct k_sem semaphore;
 
+const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
+
 static const struct gpio_dt_spec phase_a = GPIO_DT_SPEC_GET(DT_ALIAS(qenca), gpios);
 static const struct gpio_dt_spec phase_b = GPIO_DT_SPEC_GET(DT_ALIAS(qencb), gpios);
 static const struct device *const qdec_dev = DEVICE_DT_GET(DT_ALIAS(qdec0));
@@ -120,6 +122,12 @@ int main(void)
 {
 	int rc;
 
+	rc = gpio_is_ready_dt(&led);
+	__ASSERT(rc, "Error: GPIO Device not ready");
+
+	rc = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	__ASSERT(rc == 0, "Could not configure led GPIO");
+
 	init_device();
 
 	while (1) {
@@ -133,7 +141,9 @@ int main(void)
 			rc = pm_device_runtime_put(qdec_dev);
 			__ASSERT_NO_MSG(rc == 0);
 		}
+		gpio_pin_set_dt(&led, 0);
 		k_msleep(1000);
+		gpio_pin_set_dt(&led, 1);
 	}
 	return 0;
 }
