@@ -336,6 +336,7 @@
 .. _`Nordic Thingy:53`:
 .. _`Thingy:53 product page`: https://www.nordicsemi.com/thingy53
 .. _`Nordic Thingy:53 Downloads`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53/Downloads#infotabs
+.. _`Nordic Thingy:53 get started`: https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53/GetStarted?lang=en#infotabs
 
 .. _`Nordic Thingy:52`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-52
 .. _`Nordic Thingy:91`: https://www.nordicsemi.com/Software-and-tools/Prototyping-platforms/Nordic-Thingy-91
@@ -406,7 +407,7 @@
 
 .. _`nRF Toolbox`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Toolbox
 
-.. _`nRF Edge Impulse mobile app`: https://cm.nordicsemi.com/Products/Development-tools/nrf-edge-impulse
+.. _`nRF Edge Impulse mobile app`: https://www.nordicsemi.com/Products/Development-tools/nRF-Edge-Impulse
 
 .. ### Source: infocenter.nordicsemi.com
 
@@ -636,6 +637,7 @@
 .. _`Programmer app`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/index.html
 .. _`Programming the nRF52840 Dongle`:
 .. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
+.. _`Programming Nordic Thingy:53`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html#programming-nordic-thingy53
 
 .. _`Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
 .. _`Connecting using the Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
@@ -847,6 +849,7 @@
 .. _`nrfutil-trace`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/CHANGELOG.html
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`Device command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming.html
+.. _`Programming application firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
 .. _`Programming application firmware on the nRF54L15 SoC`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_nrf54L15.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html

@@ -653,8 +653,16 @@ cJSON
 Documentation
 =============
 
-* Added new section :ref:`ug_custom_board`.
-  This section includes the following pages:
+* Added:
 
-  * :ref:`defining_custom_board` - Previously located under :ref:`app_boards`.
-  * :ref:`programming_custom_board` - New page.
+  * New section :ref:`ug_custom_board`.
+    This section includes the following pages:
+
+    * :ref:`defining_custom_board` - Previously located under :ref:`app_boards`.
+    * :ref:`programming_custom_board` - New page.
+
+  * New page :ref:`thingy53_precompiled` under :ref:`ug_thingy53`.
+    This page includes some of the information previously located on the standalone page for getting started with Nordic Thingy:53.
+
+* Removed the standalone page for getting started with Nordic Thingy:53.
+  The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
