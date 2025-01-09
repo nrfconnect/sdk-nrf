@@ -13,9 +13,9 @@
 #include <suit_plat_digest_cache.h>
 #endif /* CONFIG_SUIT_DIGEST_CACHE */
 
-#if CONFIG_SUIT_IPUC
-#include <suit_plat_ipuc.h>
-#endif /* CONFIG_SUIT_IPUC */
+#if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
+#include <suit_ipuc_sdfw.h>
+#endif
 
 #ifdef CONFIG_SUIT_STREAM
 #include <suit_sink.h>
@@ -203,9 +203,9 @@ int suit_plat_fetch(suit_component_t dst_handle, struct zcbor_string *uri,
 	 * Stream the data.
 	 */
 
-#if CONFIG_SUIT_IPUC
-	suit_plat_ipuc_revoke(dst_handle);
-#endif /* CONFIG_SUIT_IPUC */
+#if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
+	suit_ipuc_sdfw_revoke(dst_handle);
+#endif
 
 #if CONFIG_SUIT_DIGEST_CACHE
 	/* Invalidate digest cache for the destination component. */
@@ -337,7 +337,6 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	(void)manifest_component_id;
 #endif
 
-
 	/*
 	 * Validate streaming operation.
 	 */
@@ -393,9 +392,9 @@ int suit_plat_fetch_integrated(suit_component_t dst_handle, struct zcbor_string 
 	 * Stream the data.
 	 */
 
-#if CONFIG_SUIT_IPUC
-	suit_plat_ipuc_revoke(dst_handle);
-#endif /* CONFIG_SUIT_IPUC */
+#if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
+	suit_ipuc_sdfw_revoke(dst_handle);
+#endif
 
 #if CONFIG_SUIT_DIGEST_CACHE
 	/* Invalidate digest cache for the destination component. */

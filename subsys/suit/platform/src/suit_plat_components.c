@@ -10,9 +10,9 @@
 #include <suit_memptr_storage.h>
 #include <zephyr/logging/log.h>
 
-#if CONFIG_SUIT_IPUC
-#include <suit_plat_ipuc.h>
-#endif /* CONFIG_SUIT_IPUC */
+#if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
+#include <suit_ipuc_sdfw.h>
+#endif
 
 LOG_MODULE_REGISTER(plat_components, CONFIG_SUIT_LOG_LEVEL);
 
@@ -275,13 +275,15 @@ int suit_plat_override_image_size(suit_component_t handle, size_t size)
 			return SUIT_ERR_CRASH;
 		}
 
-#if CONFIG_SUIT_IPUC
+#if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
 		if (size == 0) {
-			suit_plat_ipuc_declare(handle);
+			suit_manifest_role_t role = SUIT_MANIFEST_UNKNOWN;
+
+			suit_ipuc_sdfw_declare(handle, role);
 		} else {
-			suit_plat_ipuc_revoke(handle);
+			suit_ipuc_sdfw_revoke(handle);
 		}
-#endif /* CONFIG_SUIT_IPUC */
+#endif
 
 		return SUIT_SUCCESS;
 	}

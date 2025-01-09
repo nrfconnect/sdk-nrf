@@ -93,7 +93,8 @@ endif()
 
 if (CONFIG_MOCK_SUIT_IPUC)
   target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_IPUC)
-  target_include_directories(testbinary PRIVATE ${SUIT_SUBSYS_DIR}/platform/include)
+  target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_PLATFORM_VARIANT_SDFW)
+  target_include_directories(testbinary PRIVATE ${SUIT_SUBSYS_DIR}/ipuc/include)
 endif()
 
 if (CONFIG_MOCK_DIGEST_SINK)

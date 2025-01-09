@@ -13,8 +13,8 @@
 #include <suit_plat_digest_cache.h>
 #include <suit_plat_memptr_size_update.h>
 
-#if CONFIG_SUIT_IPUC
-#include <suit_plat_ipuc.h>
+#ifdef CONFIG_SUIT_IPUC
+#include <suit_ipuc_sdfw.h>
 #endif /* CONFIG_SUIT_IPUC */
 
 #ifdef CONFIG_SUIT_STREAM
@@ -180,7 +180,7 @@ int suit_plat_write_domain_specific(suit_component_t dst_handle,
 	 */
 
 #if CONFIG_SUIT_IPUC
-	suit_plat_ipuc_revoke(dst_handle);
+	suit_ipuc_sdfw_revoke(dst_handle);
 #endif /* CONFIG_SUIT_IPUC */
 
 #if CONFIG_SUIT_DIGEST_CACHE
