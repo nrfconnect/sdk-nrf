@@ -19,6 +19,7 @@ struct test_clk_ctx {
 	size_t clk_specs_size;
 };
 
+#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
 const struct nrf_clock_spec test_clk_specs_hsfll[] = {
 	{
 		.frequency = MHZ(128),
@@ -36,6 +37,15 @@ const struct nrf_clock_spec test_clk_specs_hsfll[] = {
 		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 	},
 };
+
+static const struct test_clk_ctx hsfll_test_clk_ctx[] = {
+	{
+		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(cpuapp_hsfll)),
+		.clk_specs = test_clk_specs_hsfll,
+		.clk_specs_size = ARRAY_SIZE(test_clk_specs_hsfll),
+	},
+};
+#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
 
 const struct nrf_clock_spec test_clk_specs_global_hsfll[] = {
 	{
@@ -86,14 +96,6 @@ static const struct test_clk_ctx fll16m_test_clk_ctx[] = {
 	},
 };
 
-static const struct test_clk_ctx hsfll_test_clk_ctx[] = {
-	{
-		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(cpuapp_hsfll)),
-		.clk_specs = test_clk_specs_hsfll,
-		.clk_specs_size = ARRAY_SIZE(test_clk_specs_hsfll),
-	},
-};
-
 const struct nrf_clock_spec test_clk_specs_lfclk[] = {
 	{
 		.frequency = 32768,
@@ -120,6 +122,7 @@ static const struct test_clk_ctx lfclk_test_clk_ctx[] = {
 	},
 };
 
+#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
 const struct nrf_clock_spec test_clk_specs_hfxo[] = {
 	{
 		.frequency = MHZ(32),
@@ -135,6 +138,7 @@ static const struct test_clk_ctx hfxo_test_clk_ctx[] = {
 		.clk_specs_size = ARRAY_SIZE(test_clk_specs_hfxo),
 	},
 };
+#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
 
 static void test_request_release_clock_spec(const struct device *clk_dev,
 					    const struct nrf_clock_spec *clk_spec)
@@ -190,6 +194,7 @@ static void test_clock_control_request(const struct test_clk_ctx *clk_contexts,
 	}
 }
 
+#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
 static void test_auxpll_control(const struct device *clk_dev)
 {
 	int err;
@@ -207,20 +212,34 @@ static void test_auxpll_control(const struct device *clk_dev)
 	__ASSERT_NO_MSG(clk_status == CLOCK_CONTROL_STATUS_OFF);
 	k_msleep(1000);
 }
+#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
+
+void run_tests(void)
+{
+#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
+	test_auxpll_control(DEVICE_DT_GET(DT_NODELABEL(canpll)));
+	test_clock_control_request(hfxo_test_clk_ctx, ARRAY_SIZE(hfxo_test_clk_ctx));
+	test_clock_control_request(hsfll_test_clk_ctx, ARRAY_SIZE(hsfll_test_clk_ctx));
+#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
+	test_clock_control_request(global_hsfll_test_clk_ctx,
+				   ARRAY_SIZE(global_hsfll_test_clk_ctx));
+	test_clock_control_request(fll16m_test_clk_ctx, ARRAY_SIZE(fll16m_test_clk_ctx));
+	test_clock_control_request(lfclk_test_clk_ctx, ARRAY_SIZE(lfclk_test_clk_ctx));
+}
 
 int main(void)
 {
 	LOG_INF("Idle clock_control, %s", CONFIG_BOARD_TARGET);
 	k_msleep(100);
+#if defined(CONFIG_COVERAGE)
+	printk("Start testing\n");
+	run_tests();
+	printk("Testing done\n");
+#else
 	while (1) {
-		test_auxpll_control(DEVICE_DT_GET(DT_NODELABEL(canpll)));
-		test_clock_control_request(hfxo_test_clk_ctx, ARRAY_SIZE(hfxo_test_clk_ctx));
-		test_clock_control_request(hsfll_test_clk_ctx, ARRAY_SIZE(hsfll_test_clk_ctx));
-		test_clock_control_request(global_hsfll_test_clk_ctx,
-					   ARRAY_SIZE(hsfll_test_clk_ctx));
-		test_clock_control_request(fll16m_test_clk_ctx, ARRAY_SIZE(fll16m_test_clk_ctx));
-		test_clock_control_request(lfclk_test_clk_ctx, ARRAY_SIZE(lfclk_test_clk_ctx));
+		run_tests();
 	}
+#endif /* CONFIG_COVERAGE */
 
 	return 0;
 }
