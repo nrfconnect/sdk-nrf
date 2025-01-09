@@ -13,3 +13,4 @@ include(../cmake/test_template.cmake)
 
 zephyr_library_link_libraries(suit_memptr_storage_interface)
 zephyr_library_link_libraries(suit_platform_interface)
+zephyr_library_link_libraries(suit_ipuc)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -68,6 +68,14 @@ static bool encode_suit_authorize_process_dependency_req(
     zcbor_state_t *state,
     const struct suit_authorize_process_dependency_req *input);
 static bool
+encode_suit_get_ipuc_info_req(zcbor_state_t *state,
+                              const struct suit_get_ipuc_info_req *input);
+static bool
+encode_suit_setup_write_ipuc_req(zcbor_state_t *state,
+                                 const struct suit_setup_write_ipuc_req *input);
+static bool encode_suit_write_ipuc_req(zcbor_state_t *state,
+                                       const struct suit_write_ipuc_req *input);
+static bool
 encode_suit_get_manifest_var_req(zcbor_state_t *state,
                                  const struct suit_get_manifest_var_req *input);
 static bool
@@ -115,6 +123,17 @@ static bool encode_suit_get_supported_manifest_info_rsp(
 static bool encode_suit_authorize_process_dependency_rsp(
     zcbor_state_t *state,
     const struct suit_authorize_process_dependency_rsp *input);
+static bool
+encode_suit_get_ipuc_count_rsp(zcbor_state_t *state,
+                               const struct suit_get_ipuc_count_rsp *input);
+static bool
+encode_suit_get_ipuc_info_rsp(zcbor_state_t *state,
+                              const struct suit_get_ipuc_info_rsp *input);
+static bool
+encode_suit_setup_write_ipuc_rsp(zcbor_state_t *state,
+                                 const struct suit_setup_write_ipuc_rsp *input);
+static bool encode_suit_write_ipuc_rsp(zcbor_state_t *state,
+                                       const struct suit_write_ipuc_rsp *input);
 static bool
 encode_suit_get_manifest_var_rsp(zcbor_state_t *state,
                                  const struct suit_get_manifest_var_rsp *input);
@@ -361,6 +380,55 @@ static bool encode_suit_authorize_process_dependency_req(
                 .suit_authorize_process_dependency_req_dependent_class_id)))) &&
       ((zcbor_int32_encode(
           state, (&(*input).suit_authorize_process_dependency_req_seq_id)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+encode_suit_get_ipuc_info_req(zcbor_state_t *state,
+                              const struct suit_get_ipuc_info_req *input) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = (((
+      ((zcbor_uint32_put(state, (31)))) &&
+      ((zcbor_uint32_encode(state, (&(*input).suit_get_ipuc_info_req_idx)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool encode_suit_setup_write_ipuc_req(
+    zcbor_state_t *state, const struct suit_setup_write_ipuc_req *input) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = ((
+      (((zcbor_uint32_put(state, (32)))) &&
+       ((zcbor_bstr_encode(
+           state, (&(*input).suit_setup_write_ipuc_req_component_id)))) &&
+       ((zcbor_bstr_encode(
+           state, (&(*input).suit_setup_write_ipuc_req_encryption_info)))) &&
+       ((zcbor_bstr_encode(
+           state, (&(*input).suit_setup_write_ipuc_req_compression_info)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+encode_suit_write_ipuc_req(zcbor_state_t *state,
+                           const struct suit_write_ipuc_req *input) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = ((
+      (((zcbor_uint32_put(state, (33)))) &&
+       ((zcbor_bstr_encode(state,
+                           (&(*input).suit_write_ipuc_req_component_id)))) &&
+       ((zcbor_uint32_encode(state, (&(*input).suit_write_ipuc_req_offset)))) &&
+       ((zcbor_bool_encode(state,
+                           (&(*input).suit_write_ipuc_req_last_chunk)))) &&
+       ((zcbor_uint32_encode(state, (&(*input).suit_write_ipuc_req_addr)))) &&
+       ((zcbor_uint32_encode(state, (&(*input).suit_write_ipuc_req_size)))))));
 
   log_result(state, res, __func__);
   return res;
@@ -669,6 +737,62 @@ static bool encode_suit_authorize_process_dependency_rsp(
   return res;
 }
 
+static bool
+encode_suit_get_ipuc_count_rsp(zcbor_state_t *state,
+                               const struct suit_get_ipuc_count_rsp *input) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = ((
+      (((zcbor_uint32_put(state, (30)))) &&
+       ((zcbor_int32_encode(state, (&(*input).suit_get_ipuc_count_rsp_ret)))) &&
+       ((zcbor_uint32_encode(state,
+                             (&(*input).suit_get_ipuc_count_rsp_count)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+encode_suit_get_ipuc_info_rsp(zcbor_state_t *state,
+                              const struct suit_get_ipuc_info_rsp *input) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = (((
+      ((zcbor_uint32_put(state, (31)))) &&
+      ((zcbor_int32_encode(state, (&(*input).suit_get_ipuc_info_rsp_ret)))) &&
+      ((zcbor_bstr_encode(state,
+                          (&(*input).suit_get_ipuc_info_rsp_component_id)))) &&
+      ((zcbor_int32_encode(state, (&(*input).suit_get_ipuc_info_rsp_role)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool encode_suit_setup_write_ipuc_rsp(
+    zcbor_state_t *state, const struct suit_setup_write_ipuc_rsp *input) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = (((((zcbor_uint32_put(state, (32)))) &&
+                ((zcbor_int32_encode(
+                    state, (&(*input).suit_setup_write_ipuc_rsp_ret)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+encode_suit_write_ipuc_rsp(zcbor_state_t *state,
+                           const struct suit_write_ipuc_rsp *input) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res =
+      (((((zcbor_uint32_put(state, (33)))) &&
+         ((zcbor_int32_encode(state, (&(*input).suit_write_ipuc_rsp_ret)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
 static bool encode_suit_get_manifest_var_rsp(
     zcbor_state_t *state, const struct suit_get_manifest_var_rsp *input) {
   zcbor_log("%s\r\n", __func__);
@@ -911,85 +1035,125 @@ static bool encode_suit_rsp(zcbor_state_t *state,
                                                                                                                                                                                            suit_rsp_msg_suit_get_supported_manifest_info_rsp_m_c)
                                                                                                                                                                                               ? ((encode_suit_get_supported_manifest_info_rsp(state, (&(*input)
                                                                                                                                                                                                                                                            .suit_rsp_msg_suit_get_supported_manifest_info_rsp_m))))
-                                                                                                                                                                                              : (
-                                                                                                                                                                                                    (
-                                                                                                                                                                                                        (*input)
-                                                                                                                                                                                                            .suit_rsp_msg_choice ==
-                                                                                                                                                                                                        suit_rsp_msg_suit_authorize_process_dependency_rsp_m_c)
-                                                                                                                                                                                                        ? ((
-                                                                                                                                                                                                              encode_suit_authorize_process_dependency_rsp(state,
-                                                                                                                                                                                                                                                           (&(*input)
-                                                                                                                                                                                                                                                                 .suit_rsp_msg_suit_authorize_process_dependency_rsp_m))))
-                                                                                                                                                                                                        : (
-                                                                                                                                                                                                              (
-                                                                                                                                                                                                                  (*input)
-                                                                                                                                                                                                                      .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                  suit_rsp_msg_suit_get_manifest_var_rsp_m_c)
-                                                                                                                                                                                                                  ? ((encode_suit_get_manifest_var_rsp(
-                                                                                                                                                                                                                        state,
-                                                                                                                                                                                                                        (&(*input)
-                                                                                                                                                                                                                              .suit_rsp_msg_suit_get_manifest_var_rsp_m))))
-                                                                                                                                                                                                                  : ((
-                                                                                                                                                                                                                         (*input)
-                                                                                                                                                                                                                             .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                         suit_rsp_msg_suit_set_manifest_var_rsp_m_c)
-                                                                                                                                                                                                                         ? ((encode_suit_set_manifest_var_rsp(
-                                                                                                                                                                                                                               state,
-                                                                                                                                                                                                                               (&(*input)
-                                                                                                                                                                                                                                     .suit_rsp_msg_suit_set_manifest_var_rsp_m))))
-                                                                                                                                                                                                                         : (
-                                                                                                                                                                                                                               (
-                                                                                                                                                                                                                                   (*input)
-                                                                                                                                                                                                                                       .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                                   suit_rsp_msg_suit_evt_sub_rsp_m_c)
-                                                                                                                                                                                                                                   ? ((encode_suit_evt_sub_rsp(
-                                                                                                                                                                                                                                         state,
-                                                                                                                                                                                                                                         (&(*input)
-                                                                                                                                                                                                                                               .suit_rsp_msg_suit_evt_sub_rsp_m))))
-                                                                                                                                                                                                                                   : (((*input)
+                                                                                                                                                                                              : (((*input)
+                                                                                                                                                                                                      .suit_rsp_msg_choice ==
+                                                                                                                                                                                                  suit_rsp_msg_suit_authorize_process_dependency_rsp_m_c)
+                                                                                                                                                                                                     ? ((encode_suit_authorize_process_dependency_rsp(
+                                                                                                                                                                                                           state, (&(
+                                                                                                                                                                                                                        *input)
+                                                                                                                                                                                                                        .suit_rsp_msg_suit_authorize_process_dependency_rsp_m))))
+                                                                                                                                                                                                     : (((*input)
+                                                                                                                                                                                                             .suit_rsp_msg_choice ==
+                                                                                                                                                                                                         suit_rsp_msg_suit_get_ipuc_count_rsp_m_c)
+                                                                                                                                                                                                            ? ((encode_suit_get_ipuc_count_rsp(state,
+                                                                                                                                                                                                                                               (
+                                                                                                                                                                                                                                                   &(*input)
+                                                                                                                                                                                                                                                        .suit_rsp_msg_suit_get_ipuc_count_rsp_m))))
+                                                                                                                                                                                                            : (((*input)
+                                                                                                                                                                                                                    .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                suit_rsp_msg_suit_get_ipuc_info_rsp_m_c)
+                                                                                                                                                                                                                   ? ((encode_suit_get_ipuc_info_rsp(state,
+                                                                                                                                                                                                                                                     (
+                                                                                                                                                                                                                                                         &(*input)
+                                                                                                                                                                                                                                                              .suit_rsp_msg_suit_get_ipuc_info_rsp_m))))
+                                                                                                                                                                                                                   : (
+                                                                                                                                                                                                                         (
+                                                                                                                                                                                                                             (*input)
+                                                                                                                                                                                                                                 .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                             suit_rsp_msg_suit_setup_write_ipuc_rsp_m_c)
+                                                                                                                                                                                                                             ? (
+                                                                                                                                                                                                                                   (
+                                                                                                                                                                                                                                       encode_suit_setup_write_ipuc_rsp(
+                                                                                                                                                                                                                                           state, (
+                                                                                                                                                                                                                                                      &(*input)
+                                                                                                                                                                                                                                                           .suit_rsp_msg_suit_setup_write_ipuc_rsp_m))))
+                                                                                                                                                                                                                             : (
+                                                                                                                                                                                                                                   (
+                                                                                                                                                                                                                                       (*input)
                                                                                                                                                                                                                                            .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                                       suit_rsp_msg_suit_chunk_enqueue_rsp_m_c)
-                                                                                                                                                                                                                                          ? ((encode_suit_chunk_enqueue_rsp(state,
-                                                                                                                                                                                                                                                                            (
-                                                                                                                                                                                                                                                                                &(*input)
-                                                                                                                                                                                                                                                                                     .suit_rsp_msg_suit_chunk_enqueue_rsp_m))))
-                                                                                                                                                                                                                                          : (((*input)
-                                                                                                                                                                                                                                                  .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                                              suit_rsp_msg_suit_chunk_status_rsp_m_c)
-                                                                                                                                                                                                                                                 ? ((encode_suit_chunk_status_rsp(
-                                                                                                                                                                                                                                                       state,
-                                                                                                                                                                                                                                                       (&(*input)
-                                                                                                                                                                                                                                                             .suit_rsp_msg_suit_chunk_status_rsp_m))))
-                                                                                                                                                                                                                                                 : (((*input)
-                                                                                                                                                                                                                                                         .suit_rsp_msg_choice == suit_rsp_msg_suit_boot_mode_read_rsp_m_c)
-                                                                                                                                                                                                                                                        ? ((encode_suit_boot_mode_read_rsp(
-                                                                                                                                                                                                                                                              state,
-                                                                                                                                                                                                                                                              (&(*input)
-                                                                                                                                                                                                                                                                    .suit_rsp_msg_suit_boot_mode_read_rsp_m))))
-                                                                                                                                                                                                                                                        : (((*input)
-                                                                                                                                                                                                                                                                .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                                                            suit_rsp_msg_suit_invoke_confirm_rsp_m_c)
-                                                                                                                                                                                                                                                               ? ((
-                                                                                                                                                                                                                                                                     encode_suit_invoke_confirm_rsp(
-                                                                                                                                                                                                                                                                         state,
-                                                                                                                                                                                                                                                                         (&(*input)
-                                                                                                                                                                                                                                                                               .suit_rsp_msg_suit_invoke_confirm_rsp_m))))
-                                                                                                                                                                                                                                                               : (
-                                                                                                                                                                                                                                                                     (
-                                                                                                                                                                                                                                                                         (*input)
-                                                                                                                                                                                                                                                                             .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                                                                         suit_rsp_msg_suit_boot_flags_reset_rsp_m_c)
-                                                                                                                                                                                                                                                                         ? ((encode_suit_boot_flags_reset_rsp(
-                                                                                                                                                                                                                                                                               state,
-                                                                                                                                                                                                                                                                               (&(*input)
-                                                                                                                                                                                                                                                                                     .suit_rsp_msg_suit_boot_flags_reset_rsp_m))))
-                                                                                                                                                                                                                                                                         : (((*input)
-                                                                                                                                                                                                                                                                                 .suit_rsp_msg_choice ==
-                                                                                                                                                                                                                                                                             suit_rsp_msg_suit_foreground_dfu_required_rsp_m_c)
-                                                                                                                                                                                                                                                                                ? ((encode_suit_foreground_dfu_required_rsp(
-                                                                                                                                                                                                                                                                                      state, (&(*input)
-                                                                                                                                                                                                                                                                                                   .suit_rsp_msg_suit_foreground_dfu_required_rsp_m))))
-                                                                                                                                                                                                                                                                                : false)))))))))))))))))))))) ||
+                                                                                                                                                                                                                                       suit_rsp_msg_suit_write_ipuc_rsp_m_c)
+                                                                                                                                                                                                                                       ? ((
+                                                                                                                                                                                                                                             encode_suit_write_ipuc_rsp(state,
+                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                            &(*input)
+                                                                                                                                                                                                                                                                                 .suit_rsp_msg_suit_write_ipuc_rsp_m))))
+                                                                                                                                                                                                                                       : (
+                                                                                                                                                                                                                                             (
+                                                                                                                                                                                                                                                 (*input)
+                                                                                                                                                                                                                                                     .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                 suit_rsp_msg_suit_get_manifest_var_rsp_m_c)
+                                                                                                                                                                                                                                                 ? (
+                                                                                                                                                                                                                                                       (
+                                                                                                                                                                                                                                                           encode_suit_get_manifest_var_rsp(state, (&(*input)
+                                                                                                                                                                                                                                                                                                         .suit_rsp_msg_suit_get_manifest_var_rsp_m))))
+                                                                                                                                                                                                                                                 : ((
+                                                                                                                                                                                                                                                        (*input)
+                                                                                                                                                                                                                                                            .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                        suit_rsp_msg_suit_set_manifest_var_rsp_m_c)
+                                                                                                                                                                                                                                                        ? (
+                                                                                                                                                                                                                                                              (
+                                                                                                                                                                                                                                                                  encode_suit_set_manifest_var_rsp(state, (
+                                                                                                                                                                                                                                                                                                              &(*input)
+                                                                                                                                                                                                                                                                                                                   .suit_rsp_msg_suit_set_manifest_var_rsp_m))))
+                                                                                                                                                                                                                                                        : (
+                                                                                                                                                                                                                                                              (
+                                                                                                                                                                                                                                                                  (*input)
+                                                                                                                                                                                                                                                                      .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                                  suit_rsp_msg_suit_evt_sub_rsp_m_c)
+                                                                                                                                                                                                                                                                  ? (
+                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                            encode_suit_evt_sub_rsp(
+                                                                                                                                                                                                                                                                                state, (&(*input)
+                                                                                                                                                                                                                                                                                             .suit_rsp_msg_suit_evt_sub_rsp_m))))
+                                                                                                                                                                                                                                                                  : (
+                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                            (*input)
+                                                                                                                                                                                                                                                                                .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                                            suit_rsp_msg_suit_chunk_enqueue_rsp_m_c)
+                                                                                                                                                                                                                                                                            ? ((
+                                                                                                                                                                                                                                                                                  encode_suit_chunk_enqueue_rsp(state, (
+                                                                                                                                                                                                                                                                                                                           &(*input)
+                                                                                                                                                                                                                                                                                                                                .suit_rsp_msg_suit_chunk_enqueue_rsp_m))))
+                                                                                                                                                                                                                                                                            : (
+                                                                                                                                                                                                                                                                                  (
+                                                                                                                                                                                                                                                                                      (*input)
+                                                                                                                                                                                                                                                                                          .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                                                      suit_rsp_msg_suit_chunk_status_rsp_m_c)
+                                                                                                                                                                                                                                                                                      ? ((
+                                                                                                                                                                                                                                                                                            encode_suit_chunk_status_rsp(
+                                                                                                                                                                                                                                                                                                state, (&(*input)
+                                                                                                                                                                                                                                                                                                             .suit_rsp_msg_suit_chunk_status_rsp_m))))
+                                                                                                                                                                                                                                                                                      : (((*input)
+                                                                                                                                                                                                                                                                                              .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                                                          suit_rsp_msg_suit_boot_mode_read_rsp_m_c)
+                                                                                                                                                                                                                                                                                             ? (
+                                                                                                                                                                                                                                                                                                   (encode_suit_boot_mode_read_rsp(state, (
+                                                                                                                                                                                                                                                                                                                                              &(
+                                                                                                                                                                                                                                                                                                                                                   *input)
+                                                                                                                                                                                                                                                                                                                                                   .suit_rsp_msg_suit_boot_mode_read_rsp_m))))
+                                                                                                                                                                                                                                                                                             : (((*input)
+                                                                                                                                                                                                                                                                                                     .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                                                                 suit_rsp_msg_suit_invoke_confirm_rsp_m_c)
+                                                                                                                                                                                                                                                                                                    ? ((encode_suit_invoke_confirm_rsp(
+                                                                                                                                                                                                                                                                                                          state,
+                                                                                                                                                                                                                                                                                                          (&(*input)
+                                                                                                                                                                                                                                                                                                                .suit_rsp_msg_suit_invoke_confirm_rsp_m))))
+                                                                                                                                                                                                                                                                                                    : (
+                                                                                                                                                                                                                                                                                                          (
+                                                                                                                                                                                                                                                                                                              (*input)
+                                                                                                                                                                                                                                                                                                                  .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                                                                              suit_rsp_msg_suit_boot_flags_reset_rsp_m_c)
+                                                                                                                                                                                                                                                                                                              ? ((encode_suit_boot_flags_reset_rsp(
+                                                                                                                                                                                                                                                                                                                    state,
+                                                                                                                                                                                                                                                                                                                    (&(*input)
+                                                                                                                                                                                                                                                                                                                          .suit_rsp_msg_suit_boot_flags_reset_rsp_m))))
+                                                                                                                                                                                                                                                                                                              : (((*input)
+                                                                                                                                                                                                                                                                                                                      .suit_rsp_msg_choice ==
+                                                                                                                                                                                                                                                                                                                  suit_rsp_msg_suit_foreground_dfu_required_rsp_m_c)
+                                                                                                                                                                                                                                                                                                                     ? ((encode_suit_foreground_dfu_required_rsp(
+                                                                                                                                                                                                                                                                                                                           state, (&(*input)
+                                                                                                                                                                                                                                                                                                                                        .suit_rsp_msg_suit_foreground_dfu_required_rsp_m))))
+                                                                                                                                                                                                                                                                                                                     : false)))))))))))))))))))))))))) ||
                  (zcbor_list_map_end_force_encode(state), false)) &&
                 zcbor_list_end_encode(state, 8))));
 
@@ -1001,157 +1165,178 @@ static bool encode_suit_req(zcbor_state_t *state,
                             const struct suit_req *input) {
   zcbor_log("%s\r\n", __func__);
 
-  bool res = ((
-      (zcbor_list_start_encode(state, 7) &&
-       ((((
-            ((*input).suit_req_msg_choice ==
-             suit_req_msg_suit_trigger_update_req_m_c)
-                ? ((encode_suit_trigger_update_req(
-                      state,
-                      (&(*input).suit_req_msg_suit_trigger_update_req_m))))
-                : (((*input).suit_req_msg_choice ==
-                    suit_req_msg_suit_check_installed_component_digest_req_m_c)
-                       ? ((encode_suit_check_installed_component_digest_req(
-                             state,
-                             (&(*input)
-                                   .suit_req_msg_suit_check_installed_component_digest_req_m))))
-                       : (((*input).suit_req_msg_choice ==
-                           suit_req_msg_suit_get_installed_manifest_info_req_m_c)
-                              ? ((encode_suit_get_installed_manifest_info_req(
-                                    state,
-                                    (&(*input)
-                                          .suit_req_msg_suit_get_installed_manifest_info_req_m))))
-                              : (((*input).suit_req_msg_choice ==
-                                  suit_req_msg_suit_get_install_candidate_info_req_m_c)
-                                     ? ((zcbor_uint32_put(state, (4))))
-                                     : (((*input).suit_req_msg_choice ==
-                                         suit_req_msg_suit_authenticate_manifest_req_m_c)
-                                            ? ((encode_suit_authenticate_manifest_req(
-                                                  state,
-                                                  (&(*input)
-                                                        .suit_req_msg_suit_authenticate_manifest_req_m))))
-                                            : (((*input).suit_req_msg_choice ==
-                                                suit_req_msg_suit_authorize_unsigned_manifest_req_m_c)
-                                                   ? ((encode_suit_authorize_unsigned_manifest_req(
-                                                         state,
-                                                         (&(*input)
-                                                               .suit_req_msg_suit_authorize_unsigned_manifest_req_m))))
-                                                   : (((*input)
-                                                           .suit_req_msg_choice ==
-                                                       suit_req_msg_suit_authorize_seq_num_req_m_c)
-                                                          ? ((encode_suit_authorize_seq_num_req(
-                                                                state,
-                                                                (&(*input)
-                                                                      .suit_req_msg_suit_authorize_seq_num_req_m))))
-                                                          : (((*input)
-                                                                  .suit_req_msg_choice ==
-                                                              suit_req_msg_suit_check_component_compatibility_req_m_c)
-                                                                 ? ((encode_suit_check_component_compatibility_req(
-                                                                       state,
-                                                                       (&(*input)
-                                                                             .suit_req_msg_suit_check_component_compatibility_req_m))))
-                                                                 : (((*input).suit_req_msg_choice == suit_req_msg_suit_get_supported_manifest_roles_req_m_c) ? ((zcbor_uint32_put(
-                                                                                                                                                                   state,
-                                                                                                                                                                   (18))))
-                                                                                                                                                             : (
-                                                                                                                                                                   (
-                                                                                                                                                                       (*input)
-                                                                                                                                                                           .suit_req_msg_choice ==
-                                                                                                                                                                       suit_req_msg_suit_get_supported_manifest_info_req_m_c)
-                                                                                                                                                                       ? ((encode_suit_get_supported_manifest_info_req(
-                                                                                                                                                                             state,
-                                                                                                                                                                             (&(*input)
-                                                                                                                                                                                   .suit_req_msg_suit_get_supported_manifest_info_req_m))))
-                                                                                                                                                                       : (
-                                                                                                                                                                             (
-                                                                                                                                                                                 (*input)
-                                                                                                                                                                                     .suit_req_msg_choice ==
-                                                                                                                                                                                 suit_req_msg_suit_authorize_process_dependency_req_m_c)
-                                                                                                                                                                                 ? (
-                                                                                                                                                                                       (
-                                                                                                                                                                                           encode_suit_authorize_process_dependency_req(
-                                                                                                                                                                                               state,
-                                                                                                                                                                                               (
-                                                                                                                                                                                                   &(
-                                                                                                                                                                                                        *input)
-                                                                                                                                                                                                        .suit_req_msg_suit_authorize_process_dependency_req_m))))
-                                                                                                                                                                                 : (
-                                                                                                                                                                                       (
-                                                                                                                                                                                           (*input)
-                                                                                                                                                                                               .suit_req_msg_choice ==
-                                                                                                                                                                                           suit_req_msg_suit_get_manifest_var_req_m_c)
-                                                                                                                                                                                           ? ((encode_suit_get_manifest_var_req(
-                                                                                                                                                                                                 state, (
-                                                                                                                                                                                                            &(
-                                                                                                                                                                                                                 *input)
-                                                                                                                                                                                                                 .suit_req_msg_suit_get_manifest_var_req_m))))
-                                                                                                                                                                                           : (
-                                                                                                                                                                                                 (
-                                                                                                                                                                                                     (*input)
-                                                                                                                                                                                                         .suit_req_msg_choice ==
-                                                                                                                                                                                                     suit_req_msg_suit_set_manifest_var_req_m_c)
-                                                                                                                                                                                                     ? ((
-                                                                                                                                                                                                           encode_suit_set_manifest_var_req(
-                                                                                                                                                                                                               state, (&(*input)
-                                                                                                                                                                                                                            .suit_req_msg_suit_set_manifest_var_req_m))))
-                                                                                                                                                                                                     : (
-                                                                                                                                                                                                           (
-                                                                                                                                                                                                               (*input)
-                                                                                                                                                                                                                   .suit_req_msg_choice ==
-                                                                                                                                                                                                               suit_req_msg_suit_evt_sub_req_m_c)
-                                                                                                                                                                                                               ? ((
-                                                                                                                                                                                                                     encode_suit_evt_sub_req(
-                                                                                                                                                                                                                         state, (
+  bool res = (((
+      zcbor_list_start_encode(state, 7) &&
+      ((((((*input).suit_req_msg_choice ==
+           suit_req_msg_suit_trigger_update_req_m_c)
+              ? ((encode_suit_trigger_update_req(
+                    state, (&(*input).suit_req_msg_suit_trigger_update_req_m))))
+              : (((*input).suit_req_msg_choice ==
+                  suit_req_msg_suit_check_installed_component_digest_req_m_c)
+                     ? ((encode_suit_check_installed_component_digest_req(
+                           state,
+                           (&(*input)
+                                 .suit_req_msg_suit_check_installed_component_digest_req_m))))
+                     : (((*input).suit_req_msg_choice ==
+                         suit_req_msg_suit_get_installed_manifest_info_req_m_c)
+                            ? ((encode_suit_get_installed_manifest_info_req(
+                                  state,
+                                  (&(*input)
+                                        .suit_req_msg_suit_get_installed_manifest_info_req_m))))
+                            : (((*input).suit_req_msg_choice ==
+                                suit_req_msg_suit_get_install_candidate_info_req_m_c)
+                                   ? ((zcbor_uint32_put(state, (4))))
+                                   : (((*input).suit_req_msg_choice ==
+                                       suit_req_msg_suit_authenticate_manifest_req_m_c)
+                                          ? ((encode_suit_authenticate_manifest_req(
+                                                state,
+                                                (&(*input)
+                                                      .suit_req_msg_suit_authenticate_manifest_req_m))))
+                                          : (((*input).suit_req_msg_choice ==
+                                              suit_req_msg_suit_authorize_unsigned_manifest_req_m_c)
+                                                 ? ((encode_suit_authorize_unsigned_manifest_req(
+                                                       state,
+                                                       (&(*input)
+                                                             .suit_req_msg_suit_authorize_unsigned_manifest_req_m))))
+                                                 : (((*input)
+                                                         .suit_req_msg_choice ==
+                                                     suit_req_msg_suit_authorize_seq_num_req_m_c)
+                                                        ? ((encode_suit_authorize_seq_num_req(
+                                                              state,
+                                                              (&(*input)
+                                                                    .suit_req_msg_suit_authorize_seq_num_req_m))))
+                                                        : (((*input)
+                                                                .suit_req_msg_choice ==
+                                                            suit_req_msg_suit_check_component_compatibility_req_m_c)
+                                                               ? ((encode_suit_check_component_compatibility_req(
+                                                                     state,
+                                                                     (&(*input)
+                                                                           .suit_req_msg_suit_check_component_compatibility_req_m))))
+                                                               : (((*input).suit_req_msg_choice == suit_req_msg_suit_get_supported_manifest_roles_req_m_c) ? ((zcbor_uint32_put(
+                                                                                                                                                                 state,
+                                                                                                                                                                 (18))))
+                                                                                                                                                           : (
+                                                                                                                                                                 (
+                                                                                                                                                                     (*input)
+                                                                                                                                                                         .suit_req_msg_choice ==
+                                                                                                                                                                     suit_req_msg_suit_get_supported_manifest_info_req_m_c)
+                                                                                                                                                                     ? (
+                                                                                                                                                                           (
+                                                                                                                                                                               encode_suit_get_supported_manifest_info_req(state,
+                                                                                                                                                                                                                           (&(*input)
+                                                                                                                                                                                                                                 .suit_req_msg_suit_get_supported_manifest_info_req_m))))
+                                                                                                                                                                     : (
+                                                                                                                                                                           (
+                                                                                                                                                                               (*input)
+                                                                                                                                                                                   .suit_req_msg_choice ==
+                                                                                                                                                                               suit_req_msg_suit_authorize_process_dependency_req_m_c)
+                                                                                                                                                                               ? ((encode_suit_authorize_process_dependency_req(state,
+                                                                                                                                                                                                                                (
                                                                                                                                                                                                                                     &(*input)
-                                                                                                                                                                                                                                         .suit_req_msg_suit_evt_sub_req_m))))
-                                                                                                                                                                                                               : (
-                                                                                                                                                                                                                     (
-                                                                                                                                                                                                                         (*input)
-                                                                                                                                                                                                                             .suit_req_msg_choice ==
-                                                                                                                                                                                                                         suit_req_msg_suit_chunk_enqueue_req_m_c)
-                                                                                                                                                                                                                         ? ((
-                                                                                                                                                                                                                               encode_suit_chunk_enqueue_req(state,
-                                                                                                                                                                                                                                                             (&(*input)
-                                                                                                                                                                                                                                                                   .suit_req_msg_suit_chunk_enqueue_req_m))))
+                                                                                                                                                                                                                                         .suit_req_msg_suit_authorize_process_dependency_req_m))))
+                                                                                                                                                                               : (((*input)
+                                                                                                                                                                                       .suit_req_msg_choice ==
+                                                                                                                                                                                   suit_req_msg_suit_get_ipuc_count_req_m_c)
+                                                                                                                                                                                      ? ((zcbor_uint32_put(state, (30))))
+                                                                                                                                                                                      : (((*input)
+                                                                                                                                                                                              .suit_req_msg_choice ==
+                                                                                                                                                                                          suit_req_msg_suit_get_ipuc_info_req_m_c)
+                                                                                                                                                                                             ? ((
+                                                                                                                                                                                                   encode_suit_get_ipuc_info_req(
+                                                                                                                                                                                                       state,
+                                                                                                                                                                                                       (&(*input)
+                                                                                                                                                                                                             .suit_req_msg_suit_get_ipuc_info_req_m))))
+                                                                                                                                                                                             : (((*input)
+                                                                                                                                                                                                     .suit_req_msg_choice ==
+                                                                                                                                                                                                 suit_req_msg_suit_setup_write_ipuc_req_m_c)
+                                                                                                                                                                                                    ? ((encode_suit_setup_write_ipuc_req(
+                                                                                                                                                                                                          state,
+                                                                                                                                                                                                          (&(*input)
+                                                                                                                                                                                                                .suit_req_msg_suit_setup_write_ipuc_req_m))))
+                                                                                                                                                                                                    : (((*input)
+                                                                                                                                                                                                            .suit_req_msg_choice ==
+                                                                                                                                                                                                        suit_req_msg_suit_write_ipuc_req_m_c)
+                                                                                                                                                                                                           ? ((encode_suit_write_ipuc_req(
+                                                                                                                                                                                                                 state,
+                                                                                                                                                                                                                 (&(*input)
+                                                                                                                                                                                                                       .suit_req_msg_suit_write_ipuc_req_m))))
+                                                                                                                                                                                                           : (((*input)
+                                                                                                                                                                                                                   .suit_req_msg_choice ==
+                                                                                                                                                                                                               suit_req_msg_suit_get_manifest_var_req_m_c)
+                                                                                                                                                                                                                  ? ((encode_suit_get_manifest_var_req(
+                                                                                                                                                                                                                        state,
+                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                            &(*input)
+                                                                                                                                                                                                                                 .suit_req_msg_suit_get_manifest_var_req_m))))
+                                                                                                                                                                                                                  : (((*input)
+                                                                                                                                                                                                                          .suit_req_msg_choice ==
+                                                                                                                                                                                                                      suit_req_msg_suit_set_manifest_var_req_m_c)
+                                                                                                                                                                                                                         ? ((encode_suit_set_manifest_var_req(
+                                                                                                                                                                                                                               state,
+                                                                                                                                                                                                                               (&(*input)
+                                                                                                                                                                                                                                     .suit_req_msg_suit_set_manifest_var_req_m))))
                                                                                                                                                                                                                          : (
                                                                                                                                                                                                                                (
                                                                                                                                                                                                                                    (*input)
-                                                                                                                                                                                                                                       .suit_req_msg_choice == suit_req_msg_suit_chunk_status_req_m_c)
-                                                                                                                                                                                                                                   ? ((encode_suit_chunk_status_req(
-                                                                                                                                                                                                                                         state,
-                                                                                                                                                                                                                                         (
-                                                                                                                                                                                                                                             &(*input)
-                                                                                                                                                                                                                                                  .suit_req_msg_suit_chunk_status_req_m))))
+                                                                                                                                                                                                                                       .suit_req_msg_choice ==
+                                                                                                                                                                                                                                   suit_req_msg_suit_evt_sub_req_m_c)
+                                                                                                                                                                                                                                   ? ((
+                                                                                                                                                                                                                                         encode_suit_evt_sub_req(
+                                                                                                                                                                                                                                             state,
+                                                                                                                                                                                                                                             (&(*input)
+                                                                                                                                                                                                                                                   .suit_req_msg_suit_evt_sub_req_m))))
                                                                                                                                                                                                                                    : (
                                                                                                                                                                                                                                          (
                                                                                                                                                                                                                                              (*input)
                                                                                                                                                                                                                                                  .suit_req_msg_choice ==
-                                                                                                                                                                                                                                             suit_req_msg_suit_boot_mode_read_req_m_c)
-                                                                                                                                                                                                                                             ? ((zcbor_uint32_put(
-                                                                                                                                                                                                                                                   state, (50))))
-                                                                                                                                                                                                                                             : (((*input)
-                                                                                                                                                                                                                                                     .suit_req_msg_choice ==
-                                                                                                                                                                                                                                                 suit_req_msg_suit_invoke_confirm_req_m_c)
-                                                                                                                                                                                                                                                    ? ((encode_suit_invoke_confirm_req(state, (
-                                                                                                                                                                                                                                                                                                  &(*input)
-                                                                                                                                                                                                                                                                                                       .suit_req_msg_suit_invoke_confirm_req_m))))
-                                                                                                                                                                                                                                                    : (
-                                                                                                                                                                                                                                                          (
-                                                                                                                                                                                                                                                              (*input)
-                                                                                                                                                                                                                                                                  .suit_req_msg_choice ==
-                                                                                                                                                                                                                                                              suit_req_msg_suit_boot_flags_reset_req_m_c)
-                                                                                                                                                                                                                                                              ? ((zcbor_uint32_put(
-                                                                                                                                                                                                                                                                    state,
-                                                                                                                                                                                                                                                                    (52))))
-                                                                                                                                                                                                                                                              : (((*input)
-                                                                                                                                                                                                                                                                      .suit_req_msg_choice ==
-                                                                                                                                                                                                                                                                  suit_req_msg_suit_foreground_dfu_required_req_m_c)
-                                                                                                                                                                                                                                                                     ? ((zcbor_uint32_put(
-                                                                                                                                                                                                                                                                           state,
-                                                                                                                                                                                                                                                                           (53))))
-                                                                                                                                                                                                                                                                     : false)))))))))))))))))))))) ||
-        (zcbor_list_map_end_force_encode(state), false)) &&
-       zcbor_list_end_encode(state, 7))));
+                                                                                                                                                                                                                                             suit_req_msg_suit_chunk_enqueue_req_m_c)
+                                                                                                                                                                                                                                             ? ((encode_suit_chunk_enqueue_req(
+                                                                                                                                                                                                                                                   state,
+                                                                                                                                                                                                                                                   (
+                                                                                                                                                                                                                                                       &(*input)
+                                                                                                                                                                                                                                                            .suit_req_msg_suit_chunk_enqueue_req_m))))
+                                                                                                                                                                                                                                             : (
+                                                                                                                                                                                                                                                   (
+                                                                                                                                                                                                                                                       (
+                                                                                                                                                                                                                                                           *input)
+                                                                                                                                                                                                                                                           .suit_req_msg_choice ==
+                                                                                                                                                                                                                                                       suit_req_msg_suit_chunk_status_req_m_c)
+                                                                                                                                                                                                                                                       ? ((encode_suit_chunk_status_req(
+                                                                                                                                                                                                                                                             state,
+                                                                                                                                                                                                                                                             (&(*input)
+                                                                                                                                                                                                                                                                   .suit_req_msg_suit_chunk_status_req_m))))
+                                                                                                                                                                                                                                                       : (
+                                                                                                                                                                                                                                                             (
+                                                                                                                                                                                                                                                                 (*input)
+                                                                                                                                                                                                                                                                     .suit_req_msg_choice ==
+                                                                                                                                                                                                                                                                 suit_req_msg_suit_boot_mode_read_req_m_c)
+                                                                                                                                                                                                                                                                 ? (
+                                                                                                                                                                                                                                                                       (
+                                                                                                                                                                                                                                                                           zcbor_uint32_put(state, (50))))
+                                                                                                                                                                                                                                                                 : (((*input)
+                                                                                                                                                                                                                                                                         .suit_req_msg_choice ==
+                                                                                                                                                                                                                                                                     suit_req_msg_suit_invoke_confirm_req_m_c)
+                                                                                                                                                                                                                                                                        ? ((encode_suit_invoke_confirm_req(
+                                                                                                                                                                                                                                                                              state,
+                                                                                                                                                                                                                                                                              (&(*input)
+                                                                                                                                                                                                                                                                                    .suit_req_msg_suit_invoke_confirm_req_m))))
+                                                                                                                                                                                                                                                                        : (((*input)
+                                                                                                                                                                                                                                                                                .suit_req_msg_choice ==
+                                                                                                                                                                                                                                                                            suit_req_msg_suit_boot_flags_reset_req_m_c)
+                                                                                                                                                                                                                                                                               ? ((zcbor_uint32_put(
+                                                                                                                                                                                                                                                                                     state,
+                                                                                                                                                                                                                                                                                     (52))))
+                                                                                                                                                                                                                                                                               : (
+                                                                                                                                                                                                                                                                                     (
+                                                                                                                                                                                                                                                                                         (*input)
+                                                                                                                                                                                                                                                                                             .suit_req_msg_choice ==
+                                                                                                                                                                                                                                                                                         suit_req_msg_suit_foreground_dfu_required_req_m_c)
+                                                                                                                                                                                                                                                                                         ? (
+                                                                                                                                                                                                                                                                                               (
+                                                                                                                                                                                                                                                                                                   zcbor_uint32_put(state, (53))))
+                                                                                                                                                                                                                                                                                         : false)))))))))))))))))))))))))) ||
+       (zcbor_list_map_end_force_encode(state), false)) &&
+      zcbor_list_end_encode(state, 7))));
 
   log_result(state, res, __func__);
   return res;

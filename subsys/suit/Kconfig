@@ -80,6 +80,7 @@ config SUIT_DFU_CANDIDATE_PROCESSING_FULL
 	imply SUIT_MEMPTR_STORAGE
 	imply SUIT_PLATFORM
 	imply SUIT_PROCESSOR
+	imply SUIT_IPUC
 	imply SUIT_MANIFEST_VARIABLES
 	imply SUIT_SINK_SELECTOR
 
@@ -196,6 +197,7 @@ rsource "validator/Kconfig"
 rsource "events/Kconfig"
 rsource "app_tools/Kconfig"
 rsource "manifest_variables/Kconfig"
+rsource "ipuc/Kconfig"
 
 # Configure SUIT_LOG_LEVEL
 module = SUIT

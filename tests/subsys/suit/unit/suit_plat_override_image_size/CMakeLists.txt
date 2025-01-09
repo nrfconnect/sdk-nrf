@@ -11,6 +11,7 @@ include(../cmake/test_template.cmake)
 project(plat_override_image_size)
 
 target_include_directories(testbinary PRIVATE ${SUIT_SUBSYS_DIR}/platform/include)
+target_include_directories(testbinary PRIVATE ${SUIT_SUBSYS_DIR}/metadata/include)
 target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_PLATFORM)
 
 target_sources(testbinary PRIVATE

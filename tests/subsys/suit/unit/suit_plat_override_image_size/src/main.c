@@ -128,13 +128,13 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 		      suit_memptr_storage_ptr_store_fake.arg2_history[1], expected_size);
 
 	/* ... and IPUC component should be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 1,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_revoke_fake.arg0_history[0], component,
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 1,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.arg0_history[0], component,
 		      "Wrong component handle: %d instead of %d",
-		      suit_plat_ipuc_revoke_fake.arg0_history[0], component);
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+		      suit_ipuc_sdfw_revoke_fake.arg0_history[0], component);
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests, test_suit_override_size_and_declare_ipuc)
@@ -167,13 +167,13 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_override_size_and_decla
 		      suit_memptr_storage_ptr_store_fake.arg2_history[1], expected_size);
 
 	/* ... and IPUC component should be revoked */
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 1,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.arg0_history[0], component,
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 1,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.arg0_history[0], component,
 		      "Wrong component handle: %d instead of %d",
-		      suit_plat_ipuc_declare_fake.arg0_history[0], component);
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
+		      suit_ipuc_sdfw_declare_fake.arg0_history[0], component);
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests,
@@ -194,10 +194,10 @@ ZTEST(suit_platform_override_image_size_tests,
 		      expected_error);
 
 	/* ... and IPUC component should not be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_size_fail_get)
@@ -216,10 +216,10 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 		      expected_error);
 
 	/* ... and IPUC component should not be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_size_fail_store)
@@ -237,10 +237,10 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 		      expected_error);
 
 	/* ... and IPUC component should not be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests,
@@ -259,10 +259,10 @@ ZTEST(suit_platform_override_image_size_tests,
 		      expected_error);
 
 	/* ... and IPUC component should not be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 
 	/* Cleanup: create component to satisfy test_after */
 	suit_plat_decode_component_type_fake.custom_fake =
@@ -290,10 +290,10 @@ ZTEST(suit_platform_override_image_size_tests,
 		      expected_error);
 
 	/* ... and IPUC component should not be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests,
@@ -312,10 +312,10 @@ ZTEST(suit_platform_override_image_size_tests,
 		      expected_error);
 
 	/* ... and IPUC component should not be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 }
 
 ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_size_exceeding_size)
@@ -330,8 +330,8 @@ ZTEST(suit_platform_override_image_size_tests, test_suit_plat_override_image_siz
 		      expected_error);
 
 	/* ... and IPUC component should not be revoked */
-	zassert_equal(suit_plat_ipuc_revoke_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_revoke() calls");
-	zassert_equal(suit_plat_ipuc_declare_fake.call_count, 0,
-		      "Incorrect number of suit_plat_ipuc_declare() calls");
+	zassert_equal(suit_ipuc_sdfw_revoke_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_revoke() calls");
+	zassert_equal(suit_ipuc_sdfw_declare_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_sdfw_declare() calls");
 }
