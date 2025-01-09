@@ -10,3 +10,8 @@
 		zephyr,code-partition = &boot_partition;
 	};
 };
+
+// Disable GPIO forwarder for nRF7002 EK compatibility
+&gpio_fwd {
+	status = "disabled";
+};
