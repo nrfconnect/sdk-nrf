@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/kernel.h>
+/ {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+	};
+};
 
-int main(void)
-{
-	k_sleep(K_FOREVER);
-
-	return 0;
-}
+/delete-node/ &led1;

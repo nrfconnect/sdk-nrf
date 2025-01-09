@@ -1,6 +1,16 @@
+/ {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+	};
+};
+
+/delete-node/ &led1;
+
 &spi131 {
 	zephyr,pm-device-runtime-auto;
 };
+
 &exmif {
 	status = "disabled";
 };

@@ -5,6 +5,8 @@
 
 / {
 	aliases {
+		led = &led0;
+		/delete-property/ led1;
 		qdec0 = &qdec130;
 		qenca = &phase_a;
 		qencb = &phase_b;
@@ -20,6 +22,8 @@
 		};
 	};
 };
+
+/delete-node/ &led1;
 
 &pinctrl {
 	qdec_pinctrl: qdec_pinctrl {

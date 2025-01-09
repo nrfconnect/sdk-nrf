@@ -2,6 +2,8 @@
 
 / {
 	aliases {
+		led = &led0;
+		/delete-property/ led1;
 		counter = &timer130;
 	};
 };
@@ -9,3 +11,5 @@
 &timer130 {
 	status = "okay";
 };
+
+/delete-node/ &led1;

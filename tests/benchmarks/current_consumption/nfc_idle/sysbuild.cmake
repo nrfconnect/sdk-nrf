@@ -8,7 +8,7 @@ if(SB_CONFIG_SOC_NRF54H20)
   # Add remote project
   ExternalZephyrProject_Add(
       APPLICATION remote
-      SOURCE_DIR ${SYSBUILD_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever
+      SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever
       BOARD ${SB_CONFIG_REMOTE_BOARD}
       BOARD_REVISION ${BOARD_REVISION}
     )
