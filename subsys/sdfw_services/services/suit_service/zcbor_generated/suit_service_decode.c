@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -65,6 +65,14 @@ static bool decode_suit_get_supported_manifest_info_req(
 static bool decode_suit_authorize_process_dependency_req(
     zcbor_state_t *state, struct suit_authorize_process_dependency_req *result);
 static bool
+decode_suit_get_ipuc_info_req(zcbor_state_t *state,
+                              struct suit_get_ipuc_info_req *result);
+static bool
+decode_suit_setup_write_ipuc_req(zcbor_state_t *state,
+                                 struct suit_setup_write_ipuc_req *result);
+static bool decode_suit_write_ipuc_req(zcbor_state_t *state,
+                                       struct suit_write_ipuc_req *result);
+static bool
 decode_suit_get_manifest_var_req(zcbor_state_t *state,
                                  struct suit_get_manifest_var_req *result);
 static bool
@@ -106,6 +114,17 @@ static bool decode_suit_get_supported_manifest_info_rsp(
     zcbor_state_t *state, struct suit_get_supported_manifest_info_rsp *result);
 static bool decode_suit_authorize_process_dependency_rsp(
     zcbor_state_t *state, struct suit_authorize_process_dependency_rsp *result);
+static bool
+decode_suit_get_ipuc_count_rsp(zcbor_state_t *state,
+                               struct suit_get_ipuc_count_rsp *result);
+static bool
+decode_suit_get_ipuc_info_rsp(zcbor_state_t *state,
+                              struct suit_get_ipuc_info_rsp *result);
+static bool
+decode_suit_setup_write_ipuc_rsp(zcbor_state_t *state,
+                                 struct suit_setup_write_ipuc_rsp *result);
+static bool decode_suit_write_ipuc_rsp(zcbor_state_t *state,
+                                       struct suit_write_ipuc_rsp *result);
 static bool
 decode_suit_get_manifest_var_rsp(zcbor_state_t *state,
                                  struct suit_get_manifest_var_rsp *result);
@@ -363,6 +382,55 @@ static bool decode_suit_authorize_process_dependency_req(
       ((zcbor_int32_decode(
           state,
           (&(*result).suit_authorize_process_dependency_req_seq_id)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+decode_suit_get_ipuc_info_req(zcbor_state_t *state,
+                              struct suit_get_ipuc_info_req *result) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = (((((zcbor_uint32_expect(state, (31)))) &&
+                ((zcbor_uint32_decode(
+                    state, (&(*result).suit_get_ipuc_info_req_idx)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+decode_suit_setup_write_ipuc_req(zcbor_state_t *state,
+                                 struct suit_setup_write_ipuc_req *result) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = ((
+      (((zcbor_uint32_expect(state, (32)))) &&
+       ((zcbor_bstr_decode(
+           state, (&(*result).suit_setup_write_ipuc_req_component_id)))) &&
+       ((zcbor_bstr_decode(
+           state, (&(*result).suit_setup_write_ipuc_req_encryption_info)))) &&
+       ((zcbor_bstr_decode(
+           state, (&(*result).suit_setup_write_ipuc_req_compression_info)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool decode_suit_write_ipuc_req(zcbor_state_t *state,
+                                       struct suit_write_ipuc_req *result) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = (((
+      ((zcbor_uint32_expect(state, (33)))) &&
+      ((zcbor_bstr_decode(state,
+                          (&(*result).suit_write_ipuc_req_component_id)))) &&
+      ((zcbor_uint32_decode(state, (&(*result).suit_write_ipuc_req_offset)))) &&
+      ((zcbor_bool_decode(state,
+                          (&(*result).suit_write_ipuc_req_last_chunk)))) &&
+      ((zcbor_uint32_decode(state, (&(*result).suit_write_ipuc_req_addr)))) &&
+      ((zcbor_uint32_decode(state, (&(*result).suit_write_ipuc_req_size)))))));
 
   log_result(state, res, __func__);
   return res;
@@ -697,6 +765,63 @@ static bool decode_suit_authorize_process_dependency_rsp(
 }
 
 static bool
+decode_suit_get_ipuc_count_rsp(zcbor_state_t *state,
+                               struct suit_get_ipuc_count_rsp *result) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = (((
+      ((zcbor_uint32_expect(state, (30)))) &&
+      ((zcbor_int32_decode(state, (&(*result).suit_get_ipuc_count_rsp_ret)))) &&
+      ((zcbor_uint32_decode(state,
+                            (&(*result).suit_get_ipuc_count_rsp_count)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+decode_suit_get_ipuc_info_rsp(zcbor_state_t *state,
+                              struct suit_get_ipuc_info_rsp *result) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = ((
+      (((zcbor_uint32_expect(state, (31)))) &&
+       ((zcbor_int32_decode(state, (&(*result).suit_get_ipuc_info_rsp_ret)))) &&
+       ((zcbor_bstr_decode(
+           state, (&(*result).suit_get_ipuc_info_rsp_component_id)))) &&
+       ((zcbor_int32_decode(state,
+                            (&(*result).suit_get_ipuc_info_rsp_role)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
+decode_suit_setup_write_ipuc_rsp(zcbor_state_t *state,
+                                 struct suit_setup_write_ipuc_rsp *result) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res = (((((zcbor_uint32_expect(state, (32)))) &&
+                ((zcbor_int32_decode(
+                    state, (&(*result).suit_setup_write_ipuc_rsp_ret)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool decode_suit_write_ipuc_rsp(zcbor_state_t *state,
+                                       struct suit_write_ipuc_rsp *result) {
+  zcbor_log("%s\r\n", __func__);
+
+  bool res =
+      (((((zcbor_uint32_expect(state, (33)))) &&
+         ((zcbor_int32_decode(state, (&(*result).suit_write_ipuc_rsp_ret)))))));
+
+  log_result(state, res, __func__);
+  return res;
+}
+
+static bool
 decode_suit_get_manifest_var_rsp(zcbor_state_t *state,
                                  struct suit_get_manifest_var_rsp *result) {
   zcbor_log("%s\r\n", __func__);
@@ -974,6 +1099,35 @@ static bool decode_suit_rsp(zcbor_state_t *state, struct suit_rsp *result) {
                         suit_rsp_msg_suit_authorize_process_dependency_rsp_m_c),
                    true))) ||
                 (zcbor_union_elem_code(state) &&
+                 (((decode_suit_get_ipuc_count_rsp(
+                      state,
+                      (&(*result).suit_rsp_msg_suit_get_ipuc_count_rsp_m)))) &&
+                  (((*result).suit_rsp_msg_choice =
+                        suit_rsp_msg_suit_get_ipuc_count_rsp_m_c),
+                   true))) ||
+                (zcbor_union_elem_code(state) &&
+                 (((decode_suit_get_ipuc_info_rsp(
+                      state,
+                      (&(*result).suit_rsp_msg_suit_get_ipuc_info_rsp_m)))) &&
+                  (((*result).suit_rsp_msg_choice =
+                        suit_rsp_msg_suit_get_ipuc_info_rsp_m_c),
+                   true))) ||
+                (zcbor_union_elem_code(state) &&
+                 (((decode_suit_setup_write_ipuc_rsp(
+                      state,
+                      (&(*result)
+                            .suit_rsp_msg_suit_setup_write_ipuc_rsp_m)))) &&
+                  (((*result).suit_rsp_msg_choice =
+                        suit_rsp_msg_suit_setup_write_ipuc_rsp_m_c),
+                   true))) ||
+                (zcbor_union_elem_code(state) &&
+                 (((decode_suit_write_ipuc_rsp(
+                      state,
+                      (&(*result).suit_rsp_msg_suit_write_ipuc_rsp_m)))) &&
+                  (((*result).suit_rsp_msg_choice =
+                        suit_rsp_msg_suit_write_ipuc_rsp_m_c),
+                   true))) ||
+                (zcbor_union_elem_code(state) &&
                  (((decode_suit_get_manifest_var_rsp(
                       state,
                       (&(*result)
@@ -1130,6 +1284,31 @@ static bool decode_suit_req(zcbor_state_t *state, struct suit_req *result) {
                             .suit_req_msg_suit_authorize_process_dependency_req_m)))) &&
                   (((*result).suit_req_msg_choice =
                         suit_req_msg_suit_authorize_process_dependency_req_m_c),
+                   true))) ||
+                (((zcbor_uint32_expect_union(state, (30)))) &&
+                 (((*result).suit_req_msg_choice =
+                       suit_req_msg_suit_get_ipuc_count_req_m_c),
+                  true)) ||
+                (((decode_suit_get_ipuc_info_req(
+                     state,
+                     (&(*result).suit_req_msg_suit_get_ipuc_info_req_m)))) &&
+                 (((*result).suit_req_msg_choice =
+                       suit_req_msg_suit_get_ipuc_info_req_m_c),
+                  true)) ||
+                (zcbor_union_elem_code(state) &&
+                 (((decode_suit_setup_write_ipuc_req(
+                      state,
+                      (&(*result)
+                            .suit_req_msg_suit_setup_write_ipuc_req_m)))) &&
+                  (((*result).suit_req_msg_choice =
+                        suit_req_msg_suit_setup_write_ipuc_req_m_c),
+                   true))) ||
+                (zcbor_union_elem_code(state) &&
+                 (((decode_suit_write_ipuc_req(
+                      state,
+                      (&(*result).suit_req_msg_suit_write_ipuc_req_m)))) &&
+                  (((*result).suit_req_msg_choice =
+                        suit_req_msg_suit_write_ipuc_req_m_c),
                    true))) ||
                 (zcbor_union_elem_code(state) &&
                  (((decode_suit_get_manifest_var_req(

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -109,6 +109,24 @@ struct suit_authorize_process_dependency_req {
   int32_t suit_authorize_process_dependency_req_seq_id;
 };
 
+struct suit_get_ipuc_info_req {
+  uint32_t suit_get_ipuc_info_req_idx;
+};
+
+struct suit_setup_write_ipuc_req {
+  struct zcbor_string suit_setup_write_ipuc_req_component_id;
+  struct zcbor_string suit_setup_write_ipuc_req_encryption_info;
+  struct zcbor_string suit_setup_write_ipuc_req_compression_info;
+};
+
+struct suit_write_ipuc_req {
+  struct zcbor_string suit_write_ipuc_req_component_id;
+  uint32_t suit_write_ipuc_req_offset;
+  bool suit_write_ipuc_req_last_chunk;
+  uint32_t suit_write_ipuc_req_addr;
+  uint32_t suit_write_ipuc_req_size;
+};
+
 struct suit_get_manifest_var_req {
   uint32_t suit_get_manifest_var_req_id;
 };
@@ -157,6 +175,9 @@ struct suit_req {
         suit_req_msg_suit_get_supported_manifest_info_req_m;
     struct suit_authorize_process_dependency_req
         suit_req_msg_suit_authorize_process_dependency_req_m;
+    struct suit_get_ipuc_info_req suit_req_msg_suit_get_ipuc_info_req_m;
+    struct suit_setup_write_ipuc_req suit_req_msg_suit_setup_write_ipuc_req_m;
+    struct suit_write_ipuc_req suit_req_msg_suit_write_ipuc_req_m;
     struct suit_get_manifest_var_req suit_req_msg_suit_get_manifest_var_req_m;
     struct suit_set_manifest_var_req suit_req_msg_suit_set_manifest_var_req_m;
     struct suit_evt_sub_req suit_req_msg_suit_evt_sub_req_m;
@@ -176,6 +197,10 @@ struct suit_req {
     suit_req_msg_suit_get_supported_manifest_roles_req_m_c,
     suit_req_msg_suit_get_supported_manifest_info_req_m_c,
     suit_req_msg_suit_authorize_process_dependency_req_m_c,
+    suit_req_msg_suit_get_ipuc_count_req_m_c,
+    suit_req_msg_suit_get_ipuc_info_req_m_c,
+    suit_req_msg_suit_setup_write_ipuc_req_m_c,
+    suit_req_msg_suit_write_ipuc_req_m_c,
     suit_req_msg_suit_get_manifest_var_req_m_c,
     suit_req_msg_suit_set_manifest_var_req_m_c,
     suit_req_msg_suit_evt_sub_req_m_c,
@@ -252,6 +277,25 @@ struct suit_authorize_process_dependency_rsp {
   int32_t suit_authorize_process_dependency_rsp_ret;
 };
 
+struct suit_get_ipuc_count_rsp {
+  int32_t suit_get_ipuc_count_rsp_ret;
+  uint32_t suit_get_ipuc_count_rsp_count;
+};
+
+struct suit_get_ipuc_info_rsp {
+  int32_t suit_get_ipuc_info_rsp_ret;
+  struct zcbor_string suit_get_ipuc_info_rsp_component_id;
+  int32_t suit_get_ipuc_info_rsp_role;
+};
+
+struct suit_setup_write_ipuc_rsp {
+  int32_t suit_setup_write_ipuc_rsp_ret;
+};
+
+struct suit_write_ipuc_rsp {
+  int32_t suit_write_ipuc_rsp_ret;
+};
+
 struct suit_get_manifest_var_rsp {
   int32_t suit_get_manifest_var_rsp_ret;
   uint32_t suit_get_manifest_var_rsp_value;
@@ -320,6 +364,10 @@ struct suit_rsp {
         suit_rsp_msg_suit_get_supported_manifest_info_rsp_m;
     struct suit_authorize_process_dependency_rsp
         suit_rsp_msg_suit_authorize_process_dependency_rsp_m;
+    struct suit_get_ipuc_count_rsp suit_rsp_msg_suit_get_ipuc_count_rsp_m;
+    struct suit_get_ipuc_info_rsp suit_rsp_msg_suit_get_ipuc_info_rsp_m;
+    struct suit_setup_write_ipuc_rsp suit_rsp_msg_suit_setup_write_ipuc_rsp_m;
+    struct suit_write_ipuc_rsp suit_rsp_msg_suit_write_ipuc_rsp_m;
     struct suit_get_manifest_var_rsp suit_rsp_msg_suit_get_manifest_var_rsp_m;
     struct suit_set_manifest_var_rsp suit_rsp_msg_suit_set_manifest_var_rsp_m;
     struct suit_evt_sub_rsp suit_rsp_msg_suit_evt_sub_rsp_m;
@@ -343,6 +391,10 @@ struct suit_rsp {
     suit_rsp_msg_suit_get_supported_manifest_roles_rsp_m_c,
     suit_rsp_msg_suit_get_supported_manifest_info_rsp_m_c,
     suit_rsp_msg_suit_authorize_process_dependency_rsp_m_c,
+    suit_rsp_msg_suit_get_ipuc_count_rsp_m_c,
+    suit_rsp_msg_suit_get_ipuc_info_rsp_m_c,
+    suit_rsp_msg_suit_setup_write_ipuc_rsp_m_c,
+    suit_rsp_msg_suit_write_ipuc_rsp_m_c,
     suit_rsp_msg_suit_get_manifest_var_rsp_m_c,
     suit_rsp_msg_suit_set_manifest_var_rsp_m_c,
     suit_rsp_msg_suit_evt_sub_rsp_m_c,
