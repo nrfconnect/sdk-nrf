@@ -125,7 +125,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
 
 Gazell
 ------
@@ -234,8 +234,9 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* :ref:`direct_test_mode` sample:
 
-|no_changes_yet_note|
+  * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -370,7 +371,9 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
 
 PMIC samples
 ------------
