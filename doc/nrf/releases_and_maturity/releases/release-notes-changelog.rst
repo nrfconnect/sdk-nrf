@@ -495,6 +495,7 @@ Modem libraries
 * :ref:`lte_lc_readme` library:
 
   * Fixed handling of ``%NCELLMEAS`` notification with status 2 (measurement interrupted) and no cells.
+  * Added sending of ``LTE_LC_EVT_NEIGHBOR_CELL_MEAS`` event with ``current_cell`` set to ``LTE_LC_CELL_EUTRAN_ID_INVALID`` in case an error occurs while parsing the ``%NCELLMEAS`` notification.
 
 * :ref:`modem_key_mgmt` library:
 
