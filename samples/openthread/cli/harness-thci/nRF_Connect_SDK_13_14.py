@@ -1543,7 +1543,7 @@ class OpenThreadTHCI(object):
         # self.sedPollingRate = ModuleHelper.Default_Harness_SED_Polling_Rate
         self.__sedPollPeriod = 3 * 1000  # in milliseconds
         self.ssedTimeout = 30  # in seconds
-        self.cslPeriod = 3125  # in milliseconds
+        self.cslPeriod = 500  # in milliseconds
         self.deviceRole = None
         self.provisioningUrl = ""
         self.hasActiveDatasetToCommit = False
