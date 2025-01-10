@@ -113,7 +113,7 @@ if (CONFIG_MOCK_DFU_CACHE_STREAMER)
 endif()
 
 if (CONFIG_MOCK_DFU_CACHE_SINK)
-  target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_STREAM)
+  target_compile_options(test_interface INTERFACE -DCONFIG_SUIT_STREAM -DCONFIG_SUIT_STREAM_SINK_CACHE)
   target_include_directories(testbinary PRIVATE ${SUIT_SUBSYS_DIR}/stream/stream_sinks/include)
 endif()
 
