@@ -7,7 +7,7 @@ PDN
    :local:
    :depth: 2
 
-The PDN library can be used to manage Packet Data Protocol (PDP) contexts and PDN connections.
+The PDN library can be used to manage Packet Data Protocol (PDP) contexts and Packet Data Network (PDN) connections.
 It provides an API for the following purposes:
 
 * Creating and configuring PDP contexts
@@ -42,7 +42,7 @@ The application can create PDP contexts by using the :c:func:`pdn_ctx_create` fu
 The application can use the :c:func:`pdn_default_ctx_cb_reg` function to register an event handler for events pertaining the default PDP context, and the :c:func:`pdn_default_ctx_cb_dereg` to deregister it.
 The library stores 12 bytes of memory on the system heap for each PDP context created using :c:func:`pdn_ctx_create` and for each event handler for the default PDP context.
 The maximum number of PDP contexts that can be created is limited by the maximum number of PDP context supported by the nRF91 Series modem firmware and the amount of system heap memory available.
-The :c:func:`pdn_ctx_configure` function is used to configure a PDP context, which can be configured with a family, access point name, and optional authentication parameters.
+The :c:func:`pdn_ctx_configure` function is used to configure a PDP context, which can be configured with address family, access point name, and optional authentication parameters.
 The :c:func:`pdn_activate` function activates a PDN connection for a PDP context.
 A PDN connection is identified by an ID as reported by ``AT%XGETPDNID``, and it is distinct from the PDP context ID (CID).
 The modem creates a PDN connection for a PDP context as necessary.
@@ -55,7 +55,7 @@ The PDN library overrides the default PDP context configuration automatically af
 The default PDP context configuration consists of the following parameters, each controlled with a Kconfig setting:
 
 * Access point name, :kconfig:option:`CONFIG_PDN_DEFAULT_APN`
-* Family, :kconfig:option:`CONFIG_PDN_DEFAULT_FAM`
+* Address family, :kconfig:option:`CONFIG_PDN_DEFAULT_FAM`
 * Authentication method, :kconfig:option:`CONFIG_PDN_DEFAULT_AUTH`
 * Authentication credentials, :kconfig:option:`CONFIG_PDN_DEFAULT_USERNAME` and :kconfig:option:`CONFIG_PDN_DEFAULT_PASSWORD`
 

@@ -38,15 +38,15 @@ config PDN_DEFAULT_APN
 	string "Access point name (APN)"
 
 choice
-	prompt "Family"
+	prompt "Address family"
 	default PDN_DEFAULT_FAM_IPV4V6
 
 config PDN_DEFAULT_FAM_IPV4
-	bool "IPV4"
+	bool "IPv4"
 config PDN_DEFAULT_FAM_IPV6
-	bool "IPV6"
+	bool "IPv6"
 config PDN_DEFAULT_FAM_IPV4V6
-	bool "IPV4V6"
+	bool "IPv4v6"
 config PDN_DEFAULT_FAM_NONIP
 	bool "Non-IP"
 
