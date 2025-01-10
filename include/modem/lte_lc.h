@@ -283,7 +283,10 @@ enum lte_lc_evt_type {
 	 * Neighbor cell measurement results.
 	 *
 	 * The associated payload is the @c lte_lc_evt.cells_info member of type
-	 * @ref lte_lc_cells_info in the event.
+	 * @ref lte_lc_cells_info in the event. In case of an error or if no cells were found,
+	 * the @c lte_lc_cells_info.current_cell member is set to
+	 * @ref LTE_LC_CELL_EUTRAN_ID_INVALID, and @c lte_lc_cells_info.ncells_count and
+	 * @c lte_lc_cells_info.gci_cells_count members are set to zero.
 	 */
 	LTE_LC_EVT_NEIGHBOR_CELL_MEAS		= 7,
 #endif /* CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE */
@@ -1688,7 +1691,8 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  * @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS, meaning that an event handler must be registered to receive
  * the information. Depending on the network conditions, LTE connection state and requested search
  * type, it may take a while before the measurement result is ready and reported back. After the
- * event is received, the neighbor cell measurements are automatically stopped.
+ * event is received, the neighbor cell measurements are automatically stopped. If the
+ * function returns successfully, the @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS event is always reported.
  *
  * @note This feature is only supported by modem firmware versions >= 1.3.0.
  *

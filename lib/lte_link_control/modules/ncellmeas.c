@@ -610,6 +610,17 @@ clean_exit:
 	return err;
 }
 
+static void ncellmeas_empty_event_dispatch(void)
+{
+	struct lte_lc_evt evt = {0};
+
+	LOG_DBG("Dispatching empty LTE_LC_EVT_NEIGHBOR_CELL_MEAS event");
+
+	evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
+	evt.cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	event_handler_list_dispatch(&evt);
+}
+
 static void at_handler_ncellmeas_gci(const char *response)
 {
 	int err;
@@ -625,6 +636,7 @@ static void at_handler_ncellmeas_gci(const char *response)
 	cells = k_calloc(ncellmeas_params.gci_count, sizeof(struct lte_lc_cell));
 	if (cells == NULL) {
 		LOG_ERR("Failed to allocate memory for the GCI cells");
+		ncellmeas_empty_event_dispatch();
 		return;
 	}
 
@@ -646,6 +658,7 @@ static void at_handler_ncellmeas_gci(const char *response)
 		break;
 	default:
 		LOG_ERR("Parsing of neighbor cells failed, err: %d", err);
+		ncellmeas_empty_event_dispatch();
 		break;
 	}
 
@@ -655,14 +668,9 @@ static void at_handler_ncellmeas_gci(const char *response)
 
 static void ncellmeas_cancel_timeout_work_fn(struct k_work *work)
 {
-	struct lte_lc_evt evt = {0};
+	LOG_DBG("No %%NCELLMEAS notification received after AT%%NCELLMEASSTOP");
 
-	LOG_DBG("No %%NCELLMEAS notification received after AT%%NCELLMEASSTOP, "
-		"sending empty results");
-
-	evt.type = LTE_LC_EVT_NEIGHBOR_CELL_MEAS;
-	evt.cells_info.current_cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
-	event_handler_list_dispatch(&evt);
+	ncellmeas_empty_event_dispatch();
 
 	k_sem_give(&ncellmeas_idle_sem);
 }
@@ -709,6 +717,7 @@ static void at_handler_ncellmeas(const char *response)
 		neighbor_cells = k_calloc(ncell_count, sizeof(struct lte_lc_ncell));
 		if (neighbor_cells == NULL) {
 			LOG_ERR("Failed to allocate memory for neighbor cells");
+			ncellmeas_empty_event_dispatch();
 			goto exit;
 		}
 	}
@@ -730,6 +739,7 @@ static void at_handler_ncellmeas(const char *response)
 		break;
 	default:
 		LOG_ERR("Parsing of neighbor cells failed, err: %d", err);
+		ncellmeas_empty_event_dispatch();
 		break;
 	}
 
