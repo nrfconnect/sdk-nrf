@@ -148,17 +148,4 @@ config NRFX_ALL_DRIVERS
 	select NRFX_PRS_BOX_3
 	select NRFX_PRS_BOX_4
 
-config NRFX_AND_BT_LL_SOFTDEVICE
-	bool "Test nrfx integration with SoftDevice BLE LL"
-	select BT
-
-config NRFX_AND_BT_LL_SW_SPLIT
-	bool "Test nrfx integration with Zephyr BLE LL"
-	select BT
-
-choice BT_LL_CHOICE
-	default BT_LL_SOFTDEVICE if NRFX_AND_BT_LL_SOFTDEVICE
-	default BT_LL_SW_SPLIT   if NRFX_AND_BT_LL_SW_SPLIT
-endchoice
-
 source "Kconfig.zephyr"
