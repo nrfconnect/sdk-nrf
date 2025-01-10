@@ -45,6 +45,7 @@ However, there are the following limitations:
 * This method requires two updates, which is not supported by all protocols.
 * The manufacturer envelope cannot ensure the compatibility of SoC binaries with the manufacturer application.
 
+.. _ug_nrf54h20_suit_soc_binaries_root_in_manufacturer:
 
 Attaching the nordic_top.suit envelope to the manufacturer root manifest
 ========================================================================
