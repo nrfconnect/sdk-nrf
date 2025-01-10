@@ -59,6 +59,21 @@ tests:
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.unexpected_reboot:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_unexected_reboot_occurrence"
+    tags: ppk_power_measure
+    timeout: 110
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
