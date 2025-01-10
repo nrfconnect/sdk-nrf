@@ -48,9 +48,6 @@ tests:
         s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63566;coverage_support
-    extra_configs:
-      - CONFIG_LOG=y
-      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
   sample.sensor.accel_polling.nrf54l:
@@ -78,9 +75,6 @@ tests:
         s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
     extra_args:
       - SHIELD=pca63565;coverage_support
-    extra_configs:
-      - CONFIG_LOG=y
-      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
   sample.sensor.accel_polling.nrf54l15_cpuflpr:
