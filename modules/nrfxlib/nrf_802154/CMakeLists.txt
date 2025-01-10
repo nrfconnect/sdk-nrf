@@ -18,6 +18,7 @@ if (CONFIG_NRF_802154_RADIO_DRIVER OR CONFIG_NRF_802154_SERIALIZATION)
           ${CMAKE_CURRENT_SOURCE_DIR}/sl/platform/nrf_802154_platform_timestamper.c
           ${CMAKE_CURRENT_SOURCE_DIR}/sl/platform/nrf_802154_platform_sl_lptimer_grtc.c
           ${CMAKE_CURRENT_SOURCE_DIR}/sl/platform/nrf_802154_platform_sl_lptimer_grtc_hw_task.c
+          ${CMAKE_CURRENT_SOURCE_DIR}/sl/platform/nrf_802154_platform_sl_lptimer_grtc_pm_utils.c
       )
     endif()
   endif ()

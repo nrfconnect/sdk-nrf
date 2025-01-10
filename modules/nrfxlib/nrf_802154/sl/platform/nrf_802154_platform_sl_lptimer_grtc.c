@@ -6,6 +6,7 @@
 
 #include "platform/nrf_802154_platform_sl_lptimer.h"
 #include "nrf_802154_platform_sl_lptimer_grtc_hw_task.h"
+#include "nrf_802154_platform_sl_lptimer_grtc_pm_utils.h"
 
 #include <assert.h>
 #include <zephyr/sys/atomic.h>
@@ -95,6 +96,8 @@ void nrf_802154_platform_sl_lptimer_schedule_at(uint64_t fire_lpticks)
 			     fire_lpticks,
 			     timer_compare_handler,
 			     NULL);
+
+	nrf_802154_platform_sl_lptimer_pm_utils_event_update(fire_lpticks);
 }
 
 void nrf_802154_platform_sl_lptimer_disable(void)
@@ -102,6 +105,8 @@ void nrf_802154_platform_sl_lptimer_disable(void)
 	atomic_clear_bit(&m_enabled, 0);
 
 	z_nrf_grtc_timer_abort(m_callbacks_cc_channel);
+
+	nrf_802154_platform_sl_lptimer_pm_utils_event_unregister();
 }
 
 void nrf_802154_platform_sl_lptimer_critical_section_enter(void)
