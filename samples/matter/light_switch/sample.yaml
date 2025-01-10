@@ -62,7 +62,8 @@ tests:
   sample.matter.light_switch.lit_icd:
     sysbuild: true
     build_only: true
-    extra_args: light_switch_SNIPPET=lit_icd
+    extra_args:
+      - light_switch_SNIPPET=lit_icd
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
