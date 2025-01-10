@@ -7,8 +7,8 @@
 #include <zephyr/kernel.h>
 
 /* From the specification:
- * 3GPP TS 24.301 version 8.7.0
- * EMM cause, 9.9.3.9
+ * 3GPP TS 24.301 version 14.10.0
+ * ESM cause information element, table 9.9.4.4.1
  */
 
 static const struct {
@@ -49,7 +49,6 @@ static const struct {
 	{ 0x3a, "PDN type non IP only allowed" },
 	{ 0x3b, "Unsupported QCI value" },
 	{ 0x3c, "Bearer handling not supported" },
-	{ 0x3d, "PDN type Ethernet only allowed" },
 	{ 0x41, "Maximum number of EPS bearers reached" },
 	{ 0x42, "Requested APN not supported in current RAT and PLMN combination" },
 	{ 0x51, "Invalid PTI value" },
