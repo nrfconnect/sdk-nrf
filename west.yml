@@ -191,7 +191,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: f4f268ce33699c0889e295520777b00a93aab5a3
+      revision: develop/DRGN-23817_adapt_for_upmerge_20241220
       submodules: true
       groups:
         - dragoon

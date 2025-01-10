@@ -39,9 +39,7 @@ config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 config BT_LL_SOFTDEVICE_HEADERS_INCLUDE_PATH_OVERRIDE
 	bool
 
-if BT_CTLR
 rsource "controller/Kconfig"
-endif
 rsource "host_extensions/Kconfig"
 
 comment "BLE Libraries"
