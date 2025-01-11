@@ -6,7 +6,7 @@
 
 menuconfig BT_ADV_PROV_TX_POWER
 	bool "TX power"
-	select BT_CTLR_TX_PWR_DYNAMIC_CONTROL if BT_CTLR
+	select BT_CTLR_TX_PWR_DYNAMIC_CONTROL if HAS_BT_CTLR
 	help
 	  Adds TX power to advertising data. Provider reads the advertising TX
 	  power from Bluetooth controller and adds predefined correction value
