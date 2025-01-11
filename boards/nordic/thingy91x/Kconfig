@@ -32,11 +32,6 @@ endif
 
 if BOARD_THINGY91X_NRF5340_CPUNET
 
-# BT_CTLR depends on BT. When BT is enabled we should default to also
-# enabling the controller.
-config BT_CTLR
-	default y if BT
-
 config BT_ECC
 	default y if BT
 
