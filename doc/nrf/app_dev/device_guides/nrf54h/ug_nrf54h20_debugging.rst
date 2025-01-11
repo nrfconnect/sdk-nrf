@@ -30,7 +30,6 @@ Debug configurations
 Some applications and samples provide a specific configuration that enables additional debug functionalities.
 You can select custom configurations when you are :ref:`configuring the build settings <cmake_options>`.
 
-
 Debugging single-core applications
 **********************************
 
@@ -79,8 +78,9 @@ To debug a specific core using ``JLinkExe`` do the following:
       .. note::
          |nrfjprog_deprecation_note|
 
-   If just one DK is connected to the machine, defining ``SEGGER-ID`` is not necessary.
-   If more than one DK is connected to the machine and ``SEGGER-ID`` is undefined, a pop up window will appear where you can manually select the ID of the DK you want to run J-Link on.
+   If you connect just one DK to the machine, defining ``SEGGER-ID`` is not necessary.
+
+   If you connect multiple DKs to the machine and have not defined ``SEGGER-ID``, a pop-up window appears where you can manually select the ID of the DK to run J-Link on.
 
    .. note::
       PPR core debugging is not functional in the initial limited sampling.
@@ -112,7 +112,7 @@ Debug logging
 *************
 
 You can use the logging system to get more information about the state of your application.
-Logs are integrated into various modules and subsystems in the |NCS| and Zephyr.
+Various modules and subsystems in the |NCS| and Zephyr integrate logs.
 These logs are visible once you configure the logger for your application.
 
 You can also configure log level per logger module to, for example, get more information about a given subsystem.
@@ -147,9 +147,10 @@ A value of ``0`` indicates *no error*, while any other value signifies that an e
    Therefore, a device experiencing erratic behavior might still report ``0`` incorrectly.
    For example, this may occur if the device is in a boot loop.
 
-
 Several components report errors through this register.
-The first 4 bits of the first byte is reserved for future use and must be ``0``, the second 4 bits of the bootstatus indicate which component reported an error:
+The first 4 bits of the first byte must be 0.
+These bits are reserved for future use.
+The second 4 bits of the ``BOOTSTATUS`` indicate which component reports an error:
 
  * System Controller ROM -> ``0x01``
  * Secure Domain ROM -> ``0x02``
@@ -160,17 +161,16 @@ The first 4 bits of the first byte is reserved for future use and must be ``0``,
       Each one of these values has a different handling of the remaining bits.
       This chapter only describes the semantics for Secure Domain Firmware errors (``0x0B******``).
 
-
 The second byte describes the boot step within the SDFW booting process that reported the failure.
 For more information, see `SDFW Boot Steps`_
 The last two bytes contain the lower 16 bits of the error code.
 
 For example, ``0x0BA1FF62`` indicates that the SDFW reported an error in the BICR validate step (``0xA1``) with error message ``0xFF62``, or ``-158``.
 
-SDFW Boot Steps
+SDFW boot steps
 ---------------
 
-The boot steps are defined as follows:
+The following are the boot steps definitions:
 
 .. parsed-literal::
    :class: highlight
@@ -188,7 +188,8 @@ The boot steps are defined as follows:
     #define BOOTSTATUS_STEP_ADAC 0xC0
     #define BOOTSTATUS_STEP_SERVICES 0xCF
 
-Errors are not accumulated, as only one error is reported even if multiple boot steps fail.
+Errors do not accumulate.
+When multiple boot steps fail, the system reports only one error.
 The SDFW chooses which error to report if multiple errors occur.
 The types of errors that can overwrite other errors are the following:
 
@@ -198,7 +199,7 @@ The types of errors that can overwrite other errors are the following:
 The following is a short description of the failures related to the boot steps:
 
  * ``BOOTSTATUS_STEP_START_GRTC``  - SDFW was unable to initialize the driver used for the GRTC.
- * ``BOOTSTATUS_STEP_SDFW_UPDATE`` - SDROM was instructed to install an update before last reset, and is indicating that an error occurred while performing the update.
+ * ``BOOTSTATUS_STEP_SDFW_UPDATE`` - Before the last reset, the SDROM received instructions to install an update and indicates that an error occurred during the process.
  * ``BOOTSTATUS_STEP_BELLBOARD_CONFIG`` - SDFW was unable to apply the static bellboard configuration.
  * ``BOOTSTATUS_STEP_SUIT_INIT`` - A SUIT related error occurred.
  * ``BOOTSTATUS_STEP_DOMAIN_ALLOCATE`` - An error occurred while allocating global resources.
