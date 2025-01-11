@@ -16,6 +16,6 @@
 	};
 
 	chosen {
-		zephyr,ot-uart = &cdc_acm_uart;
+		zephyr,ot-uart = &board_cdc_acm_uart;
 	};
 };
