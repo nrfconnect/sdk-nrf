@@ -54,10 +54,3 @@ config HEAP_MEM_POOL_ADD_SIZE_BOARD
 	default 4096 if BT_HCI_IPC
 
 endif #  BOARD_{{ board | upper }}_NRF5340_CPUAPP || BOARD_{{ board | upper }}_NRF5340_CPUAPP_NS
-
-if BOARD_{{ board | upper }}_NRF5340_CPUNET
-
-config BT_CTLR
-	default y if BT
-
-endif # BOARD_{{ board | upper }}_NRF5340_CPUNET
