@@ -260,15 +260,7 @@ config BT_MAX_PAIRED
 
 endif # DESKTOP_BT_CENTRAL
 
-if BT_CTLR
-
-choice BT_LL_CHOICE
-	default BT_LL_SOFTDEVICE
-	help
-	  nRF Desktop devices should use the Softdevice controller by default.
-	  Other controller variants may be used for resource-constrained
-	  devices.
-endchoice
+if HAS_BT_CTLR
 
 choice BT_CTLR_TX_PWR
 	default BT_CTLR_TX_PWR_0
@@ -282,7 +274,7 @@ config BT_CTLR_CONN_PARAM_REQ
 	  nRF Desktop devices disable support for the Connection Parameter
 	  Request feature as it is not needed.
 
-endif # BT_CTLR
+endif # HAS_BT_CTLR
 
 config BT_DEVICE_NAME
 	default DESKTOP_DEVICE_PRODUCT
