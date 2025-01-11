@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
@@ -847,7 +852,7 @@ int get_num_connected(void)
 	return num_connected;
 }
 
-void ble_conn_mgr_init()
+void ble_conn_mgr_init(void)
 {
 	num_connected = 0;
 	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {

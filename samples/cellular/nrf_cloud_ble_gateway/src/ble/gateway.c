@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/net/mqtt.h>
@@ -20,7 +25,6 @@
 #include "gateway.h"
 #include "nrf_cloud_mem.h"
 
-#include "ui.h"
 #include "cJSON.h"
 #include "cJSON_os.h"
 #include "ble.h"
@@ -89,6 +93,7 @@ int gateway_shadow_accepted_handler(const struct nrf_cloud_obj *desired)
 	ARG_UNUSED(desired);
 
 	int err = nrf_cloud_shadow_transform_request("state.desired.desiredConnections", 1024);
+
 	if (err) {
 		LOG_ERR("Error requesting shadow tf: %d", err);
 	}
@@ -641,7 +646,7 @@ void device_shutdown(bool reboot)
 	LOG_PANIC();
 	if (!reboot) {
 		LOG_INF("Shutting down...");
-#if defined(CONFIG_MODEM_WAKEUP_PIN)		
+#if defined(CONFIG_MODEM_WAKEUP_PIN)
 		nrf_gpio_cfg_input(CONFIG_MODEM_WAKEUP_PIN,
 				   NRF_GPIO_PIN_PULLUP);
 		nrf_gpio_cfg_sense_set(CONFIG_MODEM_WAKEUP_PIN,
@@ -688,4 +693,3 @@ void device_shutdown(bool reboot)
 		NRF_REGULATORS_NS->SYSTEMOFF = 1;
 	}
 }
-

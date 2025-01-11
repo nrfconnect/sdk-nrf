@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,61 +39,60 @@ LOG_MODULE_REGISTER(peripheral_dfu, CONFIG_NRF_CLOUD_FOTA_LOG_LEVEL);
 				} else {			     \
 					LOG_INF(__VA_ARGS__);        \
 				}				     \
-		      } while (false)
+		} while (false)
 
 enum nrf_dfu_op_t {
-  NRF_DFU_OP_PROTOCOL_VERSION = 0x00,
-  NRF_DFU_OP_OBJECT_CREATE = 0x01,
-  NRF_DFU_OP_RECEIPT_NOTIF_SET = 0x02,
-  NRF_DFU_OP_CRC_GET = 0x03,
-  NRF_DFU_OP_OBJECT_EXECUTE = 0x04,
-  NRF_DFU_OP_OBJECT_SELECT = 0x06,
-  NRF_DFU_OP_MTU_GET = 0x07,
-  NRF_DFU_OP_OBJECT_WRITE = 0x08,
-  NRF_DFU_OP_PING = 0x09,
-  NRF_DFU_OP_HARDWARE_VERSION = 0x0A,
-  NRF_DFU_OP_FIRMWARE_VERSION = 0x0B,
-  NRF_DFU_OP_ABORT = 0x0C,
-  NRF_DFU_OP_RESPONSE = 0x60,
-  NRF_DFU_OP_INVALID = 0xFF
+	NRF_DFU_OP_PROTOCOL_VERSION = 0x00,
+	NRF_DFU_OP_OBJECT_CREATE = 0x01,
+	NRF_DFU_OP_RECEIPT_NOTIF_SET = 0x02,
+	NRF_DFU_OP_CRC_GET = 0x03,
+	NRF_DFU_OP_OBJECT_EXECUTE = 0x04,
+	NRF_DFU_OP_OBJECT_SELECT = 0x06,
+	NRF_DFU_OP_MTU_GET = 0x07,
+	NRF_DFU_OP_OBJECT_WRITE = 0x08,
+	NRF_DFU_OP_PING = 0x09,
+	NRF_DFU_OP_HARDWARE_VERSION = 0x0A,
+	NRF_DFU_OP_FIRMWARE_VERSION = 0x0B,
+	NRF_DFU_OP_ABORT = 0x0C,
+	NRF_DFU_OP_RESPONSE = 0x60,
+	NRF_DFU_OP_INVALID = 0xFF
 };
 
 enum nrf_dfu_result_t {
-  NRF_DFU_RES_CODE_INVALID = 0x00,
-  NRF_DFU_RES_CODE_SUCCESS = 0x01,
-  NRF_DFU_RES_CODE_OP_CODE_NOT_SUPPORTED = 0x02,
-  NRF_DFU_RES_CODE_INVALID_PARAMETER = 0x03,
-  NRF_DFU_RES_CODE_INSUFFICIENT_RESOURCES = 0x04,
-  NRF_DFU_RES_CODE_INVALID_OBJECT = 0x05,
-  NRF_DFU_RES_CODE_UNSUPPORTED_TYPE = 0x07,
-  NRF_DFU_RES_CODE_OPERATION_NOT_PERMITTED = 0x08,
-  NRF_DFU_RES_CODE_OPERATION_FAILED = 0x0A,
-  NRF_DFU_RES_CODE_EXT_ERROR = 0x0B
+	NRF_DFU_RES_CODE_INVALID = 0x00,
+	NRF_DFU_RES_CODE_SUCCESS = 0x01,
+	NRF_DFU_RES_CODE_OP_CODE_NOT_SUPPORTED = 0x02,
+	NRF_DFU_RES_CODE_INVALID_PARAMETER = 0x03,
+	NRF_DFU_RES_CODE_INSUFFICIENT_RESOURCES = 0x04,
+	NRF_DFU_RES_CODE_INVALID_OBJECT = 0x05,
+	NRF_DFU_RES_CODE_UNSUPPORTED_TYPE = 0x07,
+	NRF_DFU_RES_CODE_OPERATION_NOT_PERMITTED = 0x08,
+	NRF_DFU_RES_CODE_OPERATION_FAILED = 0x0A,
+	NRF_DFU_RES_CODE_EXT_ERROR = 0x0B
 };
 
-typedef enum
-{
-    NRF_DFU_EXT_ERROR_NO_ERROR = 0x00,
-    NRF_DFU_EXT_ERROR_INVALID_ERROR_CODE = 0x01,
-    NRF_DFU_EXT_ERROR_WRONG_COMMAND_FORMAT = 0x02,
-    NRF_DFU_EXT_ERROR_UNKNOWN_COMMAND = 0x03,
-    NRF_DFU_EXT_ERROR_INIT_COMMAND_INVALID = 0x04,
-    NRF_DFU_EXT_ERROR_FW_VERSION_FAILURE = 0x05,
-    NRF_DFU_EXT_ERROR_HW_VERSION_FAILURE = 0x06,
-    NRF_DFU_EXT_ERROR_SD_VERSION_FAILURE = 0x07,
-    NRF_DFU_EXT_ERROR_SIGNATURE_MISSING = 0x08,
-    NRF_DFU_EXT_ERROR_WRONG_HASH_TYPE = 0x09,
-    NRF_DFU_EXT_ERROR_HASH_FAILED = 0x0A,
-    NRF_DFU_EXT_ERROR_WRONG_SIGNATURE_TYPE = 0x0B,
-    NRF_DFU_EXT_ERROR_VERIFICATION_FAILED = 0x0C,
-    NRF_DFU_EXT_ERROR_INSUFFICIENT_SPACE = 0x0D,
+typedef enum {
+	NRF_DFU_EXT_ERROR_NO_ERROR = 0x00,
+	NRF_DFU_EXT_ERROR_INVALID_ERROR_CODE = 0x01,
+	NRF_DFU_EXT_ERROR_WRONG_COMMAND_FORMAT = 0x02,
+	NRF_DFU_EXT_ERROR_UNKNOWN_COMMAND = 0x03,
+	NRF_DFU_EXT_ERROR_INIT_COMMAND_INVALID = 0x04,
+	NRF_DFU_EXT_ERROR_FW_VERSION_FAILURE = 0x05,
+	NRF_DFU_EXT_ERROR_HW_VERSION_FAILURE = 0x06,
+	NRF_DFU_EXT_ERROR_SD_VERSION_FAILURE = 0x07,
+	NRF_DFU_EXT_ERROR_SIGNATURE_MISSING = 0x08,
+	NRF_DFU_EXT_ERROR_WRONG_HASH_TYPE = 0x09,
+	NRF_DFU_EXT_ERROR_HASH_FAILED = 0x0A,
+	NRF_DFU_EXT_ERROR_WRONG_SIGNATURE_TYPE = 0x0B,
+	NRF_DFU_EXT_ERROR_VERIFICATION_FAILED = 0x0C,
+	NRF_DFU_EXT_ERROR_INSUFFICIENT_SPACE = 0x0D,
 } nrf_dfu_ext_error_code_t;
 
 enum  nrf_dfu_firmware_type_t {
-  NRF_DFU_FIRMWARE_TYPE_SOFTDEVICE = 0x00,
-  NRF_DFU_FIRMWARE_TYPE_APPLICATION = 0x01,
-  NRF_DFU_FIRMWARE_TYPE_BOOTLOADER = 0x02,
-  NRF_DFU_FIRMWARE_TYPE_UNKNOWN = 0xFF
+	NRF_DFU_FIRMWARE_TYPE_SOFTDEVICE = 0x00,
+	NRF_DFU_FIRMWARE_TYPE_APPLICATION = 0x01,
+	NRF_DFU_FIRMWARE_TYPE_BOOTLOADER = 0x02,
+	NRF_DFU_FIRMWARE_TYPE_UNKNOWN = 0xFF
 };
 
 struct dfu_notify_packet {
@@ -120,18 +124,16 @@ struct dfu_notify_packet {
 		} fw;
 		uint8_t ext_err_code;
 	};
-} __attribute__((packed));
+} __packed;
 
-enum ble_dfu_buttonless_op_code_t
-{
+enum ble_dfu_buttonless_op_code_t {
 	DFU_OP_RESERVED = 0x00,
 	DFU_OP_ENTER_BOOTLOADER = 0x01,
 	DFU_OP_SET_ADV_NAME = 0x02,
 	DFU_OP_RESPONSE_CODE = 0x20
 };
 
-enum ble_dfu_buttonless_rsp_code_t
-{
+enum ble_dfu_buttonless_rsp_code_t {
 	DFU_RSP_INVALID = 0x00,
 	DFU_RSP_SUCCESS = 0x01,
 	DFU_RSP_OP_CODE_NOT_SUPPORTED = 0x02,
@@ -145,7 +147,7 @@ struct secure_dfu_ind_packet {
 	uint8_t resp_code;
 	uint8_t op_code;
 	uint8_t rsp_code;
-} __attribute__((packed));
+} __packed;
 
 K_SEM_DEFINE(peripheral_dfu_active, 1, 1);
 static size_t download_size;
@@ -231,8 +233,7 @@ static int notification_callback(const char *addr, const char *chrc_uuid,
 	/** @TODO: implement bonded mode also */
 	if (strcmp(chrc_uuid, DFU_BUTTONLESS_UUID) == 0) {
 		normal_mode = true;
-	}
-	else if (strcmp(chrc_uuid, DFU_CONTROL_POINT_UUID) == 0) {
+	} else if (strcmp(chrc_uuid, DFU_CONTROL_POINT_UUID) == 0) {
 		normal_mode = false;
 	} else {
 		LOG_WRN("Notification received for wrong UUID:%s", chrc_uuid);
@@ -380,10 +381,9 @@ static int decode_dfu(void)
 			LOG_ERR("Extended DFU error: 0x%02X", p->ext_err_code);
 		}
 		return -EFAULT;
-	} else {
-		LOG_WRN("DFU operation failed: %d", p->result);
-		return -EPROTO;
 	}
+	LOG_WRN("DFU operation failed: %d", p->result);
+	return -EPROTO;
 }
 
 int peripheral_dfu_init(void)
@@ -849,9 +849,9 @@ static void cancel_dfu(enum nrf_cloud_fota_error error)
 
 static uint8_t peripheral_dfu(const char *buf, size_t len)
 {
-	static size_t prev_percent = 0;
-	static size_t prev_update_percent = 0;
-	static uint32_t prev_crc = 0;
+	static size_t prev_percent;
+	static size_t prev_update_percent;
+	static uint32_t prev_crc;
 	size_t percent = 0;
 	int err = 0;
 
@@ -1077,8 +1077,7 @@ static uint8_t peripheral_dfu(const char *buf, size_t len)
 				if (dfu_notify_packet_data->crc.offset !=
 				    completed_size) {
 					err = -EIO;
-				}
-				else if (dfu_notify_packet_data->crc.crc !=
+				} else if (dfu_notify_packet_data->crc.crc !=
 					 prev_crc) {
 					err = -EBADMSG;
 				} else {
@@ -1164,9 +1163,10 @@ static int send_data(char *ble_addr, const char *buf, size_t len)
 
 	while (idx < len) {
 		uint8_t size = MIN(MAX_CHUNK_SIZE, (len - idx));
+
 		LOG_DBG("Sending write without response: %d, %d", size, idx);
 		err = gatt_write_without_response(ble_addr, DFU_PACKET_UUID,
-					    (uint8_t *)&buf[idx], size);
+						  (uint8_t *)&buf[idx], size);
 		if (err) {
 			LOG_ERR("Error writing chunk at %d size %u: %d",
 				idx, size, err);
@@ -1213,9 +1213,9 @@ static int do_cmd(char *ble_addr, bool normal_mode, uint8_t *buf, uint16_t len,
 static int send_switch_to_dfu(char *ble_addr)
 {
 	char smol_buf[1];
-	
+
 	smol_buf[0] = DFU_OP_ENTER_BOOTLOADER;
-	
+
 	return do_cmd(ble_addr, true, smol_buf, sizeof(smol_buf), "DFU", true);
 }
 
@@ -1360,120 +1360,3 @@ static int send_abort(char *ble_addr)
 	return do_cmd(ble_addr, false, smol_buf,
 		      sizeof(smol_buf), "Abort", true);
 }
-
-#if 0
-/* unclear what these functions are for */
-
-int write_image_size_to_dfu_packet(char *ble_addr, int image_size)
-{
-	/* The length here is expected to be
-	 * <len softdevice><len bootloader><len app> where each is a uint32
-	 * In the case we aren't updating all of them (psst we are only doing
-	 * the app) the others need to be 0 So ours should look like
-	 * 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 <len app>
-	 * all lengths are little endian
-	 *
-	 * https://infocenter.nordicsemi.com/index.jsp?topic=%2Fcom.nordic.infocenter.sdk5.v11.0.0%2Fbledfu_transport_bleservice.html
-	 */
-#define SIZE_LEN 12 /* Size of 3 uint32s */
-	char buf[SIZE_LEN];
-	int err;
-
-	memset(buf, 0, sizeof(char) * SIZE_LEN);
-	buf[8] = image_size & 0xFF;
-	buf[9] = (image_size >> 8) & 0xFF;
-	buf[10] = (image_size >> 16) & 0xFF;
-	buf[11] = (image_size >> 24) & 0xFF;
-	err = gatt_write_without_response(ble_addr, DFU_PACKET_UUID, buf,
-					  SIZE_LEN);
-	if (err) {
-		LOG_ERR("Error sending image size: %d", err);
-	}
-	return err;
-}
-
-int send_initialize_dfu_parameters(char *ble_addr)
-{
-	char smol_buf[1];
-	int err;
-
-	smol_buf[0] = 0x02;
-	err = gatt_write(ble_addr, false, smol_buf,
-			 sizeof(smol_buf), on_sent);
-	if (err) {
-		LOG_ERR("Error sending initialize dfu: %d", err);
-	}
-	return err;
-}
-
-int write_dfu_parameters(char *ble_addr, uint32_t app_version, uint16_t crc)
-{
-#define NUM_DEVICES 1
-#define ANY_SOFTDEVICE 0xFFFE
-	uint16_t device_type = 0;
-	uint16_t device_rev = 0;
-	/* This is bad if we change but it is fine for now */
-	uint16_t softdevice[NUM_DEVICES] = {ANY_SOFTDEVICE};
-	uint16_t softdevice_len = NUM_DEVICES;
-	char *buf;
-	int buf_len = (sizeof(device_type) + sizeof(device_rev) +
-		       (sizeof(softdevice) * NUM_DEVICES) +
-		       sizeof(softdevice_len));
-	buf = malloc(buf_len);
-	int i;
-	int j;
-	int err;
-
-	if (buf == NULL) {
-		LOG_ERR("Out of memory allocating DFU parameter buffer");
-		return -ENOMEM;
-	}
-
-	/* Order is:
-	 * 1) device type
-	 * 2) device revision
-	 * 3) application version
-	 * 4) softdevice array length
-	 * n) each softdevice
-	 * n+1) CRC-16-CCITT of the image
-	 */
-	buf[0] = device_type & 0xFF;
-	buf[1] = (device_type >> 8) & 0xFF;
-	buf[2] = device_rev & 0xFF;
-	buf[3] = (device_rev >> 8) & 0xFF;
-	buf[4] = app_version & 0xFF;
-	buf[5] = (app_version >> 8) & 0xFF;
-	buf[6] = (app_version >> 16) & 0xFF;
-	buf[7] = (app_version >> 24) & 0xFF;
-	buf[8] = softdevice_len & 0xFF;
-	buf[9] = (softdevice_len >> 8) & 0xFF;
-	for (i = 10, j = 0; (i < (10 + (2 * softdevice_len))); i += 2, j++) {
-		buf[i] = softdevice[j] & 0xFF;
-		buf[i + 1] = (softdevice[j] >> 8) & 0xFF;
-	}
-	buf[i] = crc & 0xFF;
-	buf[i + 1] = (crc >> 8) & 0xFF;
-
-	err = gatt_write_without_response(ble_addr, DFU_PACKET_UUID, buf,
-					  buf_len);
-	if (err) {
-		LOG_ERR("Error sending dfu parameters: %d", err);
-	}
-	free(buf);
-	return err;
-}
-
-int send_start_dfu_packet(char *ble_addr)
-{
-	char smol_buf[1];
-	int err;
-
-	smol_buf[0] = 0x01;
-	err = gatt_write(ble_addr, false, smol_buf,
-			 sizeof(smol_buf), on_sent);
-	if (err) {
-		LOG_ERR("Error sending start dfu: %d", err);
-	}
-	return err;
-}
-#endif

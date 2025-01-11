@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA.
+ * Copyright (c) 2025 Nordic Semiconductor ASA.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/kernel.h>
@@ -242,4 +242,3 @@ int bt_hci_transport_setup(struct device *h4)
 #else
 #warning "Reset and/or boot node is missing"
 #endif /* DT_NODE_HAS_STATUS(RESET_NODE, okay) && DT_NODE_HAS_STATUS(BOOT_NODE, okay) */
-

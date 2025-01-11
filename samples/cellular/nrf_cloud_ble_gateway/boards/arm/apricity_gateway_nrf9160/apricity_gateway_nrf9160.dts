@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 /dts-v1/;
@@ -10,10 +10,8 @@
 
 / {
 	chosen {
-		zephyr,sram = &sram0_s;
+		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
-		zephyr,sram-secure-partition = &sram0_s;
-		zephyr,sram-non-secure-partition = &sram0_ns;
 	};
 };

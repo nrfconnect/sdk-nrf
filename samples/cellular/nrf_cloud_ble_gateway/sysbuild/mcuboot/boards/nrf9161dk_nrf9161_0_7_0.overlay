@@ -15,4 +15,4 @@
 
 &gd25lb256 {
 	status = "okay";
- };
+};

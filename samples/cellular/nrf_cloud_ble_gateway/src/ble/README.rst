@@ -30,7 +30,8 @@ Requirements
 
 * For the Apricity Gateway nRF9160, `nrfcloud_gateway_controller`_ must be programmed in the nRF52 board controller.
 * For the nRF9160 DK, `hci_lpuart`_ must instead be programmed in the nRF52 board controller.
-* The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33. Therefore, it automatically includes the `secure_partition_manager`_ that prepares the required peripherals to be available for the application.
+* The sample is configured to compile and run as a non-secure application on nRF91's Cortex-M33.
+  Therefore, it automatically includes the `secure_partition_manager`_ that prepares the required peripherals to be available for the application.
 
 
 .. _nrfcloud_ble_gateway_user_interface:
@@ -40,21 +41,22 @@ Key Features
 Hardware
 --------
 - Runs on either the Apricity Gateway hardware or the nRF9160DK
-- 700-960 MHz + 1710-2200 MHz LTE band support. The following bands, based on geographic regions, are used:
-   - USA – 2, 4, 12, and 13
-   - EU – 3, 8, 20, and 28
+- 700-960 MHz + 1710-2200 MHz LTE band support.
+  The following bands, based on geographic regions, are used:
+   - USA 2, 4, 12, and 13
+   - EU 3, 8, 20, and 28
 - Certifications: CE, FCC <TBD>
 - LTE-M/NB-IoT and Bluetooth LE antennas
 - Nano/4FF Subscriber Identity Module (SIM) card slot
 - 64 megabit SPI serial Flash memory
 - PC connection through USB
-- Normal operating temperature range: 5°C ~ 35°C <TBD>
+- Normal operating temperature range: 5C ~ 35C <TBD>
 
 Apricity Gateway hardware distinguishing features:
 
-- Single button with multiple uses – power, reset, and update enable
+- Single button with multiple uses power, reset, and update enable
 - Dual RGB LEDs for status indication of LTE and BLE connections
-- Larger LTE and BLE antennas 
+- Larger LTE and BLE antennas
 - Rechargeable 3.7V Li-Po battery with 2000 mAh capacity
 - Charging through Universal Serial Bus (USB) or external power supply with barrel jack connector
 - Rigid, wall mountable enclosure
@@ -72,7 +74,8 @@ Firmware
 User interface
 **************
 
-One can locally manage the gateway with a USB connection and a terminal program.  See :ref:`Shell` for details.
+One can locally manage the gateway with a USB connection and a terminal program.
+See :ref:`Shell` for details.
 
 The Apricity Gateway button has the following functions:
 
@@ -134,8 +137,8 @@ Program nRF9160 Application Processor
 1. Checkout this repository.
 #. Execute the following to pull down all other required repositories::
 
-      west update 
- 
+      west update
+
 #. Execute the following to build for the Apricity Gateway hardware::
 
       west build -d build_ag -b apricity_gateway_nrf9160ns
@@ -155,14 +158,17 @@ Program nRF52840 Board Controller
 
 For the Apricity Gateway hardware, follow the same instructions as above in the folder for its repository, except use ``apricity_gateway_nrf52840`` instead of ``apricity_gateway_nrf9160ns``, and connect the Tag Connect to ``NRF52:J1``.
 
-For the nRF9160 DK, `hci_lpuart`_ must instead be programmed in the nRF52 board controller.  This should be done from the root of the lte-gateway repo so that the required device tree overlays in the `boards <./boards>`_ folder are utilized.
+For the nRF9160 DK, `hci_lpuart`_ must instead be programmed in the nRF52 board controller.
+This should be done from the root of the lte-gateway repo so that the required device tree overlays in the `boards <./boards>`_ folder are utilized.
 
 Program The nRF9160 Modem Processor
 -----------------------------------
 
 `Modem Firmware v1.3.0`_
 
-For either the Apricity Gateway or the nRF9160 DK, you must also flash the modem firmware.  Version ``mfw_1.3.0`` or higher is required.  Program this using `nRF Connect Programmer`_ application.
+For either the Apricity Gateway or the nRF9160 DK, you must also flash the modem firmware.
+Version ``mfw_1.3.0`` or higher is required.
+Program this using `nRF Connect Programmer`_ application.
 
 
 Generating Certificates
@@ -174,7 +180,8 @@ Create Self-Signed CA Certs
 ---------------------------
 This step is done using the `Create CA Cert`_ Python 3 script.
 
-Check out this repository, install the specified prerequisite Python 3 packages, and then follow the instructions to create a CA cert.  This only needs to be done once per customer.
+Check out this repository, install the specified prerequisite Python 3 packages, and then follow the instructions to create a CA cert.
+This only needs to be done once per customer.
 
 Install Device Certificates
 ---------------------------
@@ -188,12 +195,18 @@ Using the generated ``provision.csv`` file, go on to the next step.
 
 NOTES:
 
-- The ``-A`` (all ports) option will be necessary if using the nRF9160DK, in order to find the board.  If you have more than one board powered on and connected to your PC via USB, you will need to select which board to use.  Otherwise, it will use the first one detected.
-- The ``-g`` (gateway) option forces the program to assume this device has a shell which uses the expected Gateway commands in order to send and receive modem ``AT`` commands.  Usually the program will detect this automatically.
+- The ``-A`` (all ports) option will be necessary if using the nRF9160DK, in order to find the board.
+  If you have more than one board powered on and connected to your PC via USB, you will need to select which board to use.
+  Otherwise, it will use the first one detected.
+- The ``-g`` (gateway) option forces the program to assume this device has a shell which uses the expected Gateway commands in order to send and receive modem ``AT`` commands.
+  Usually the program will detect this automatically.
 - The ``-a`` (append) option allows you to build up a CSV file for multiple devices, and then add them all at once to your account with a single curl command.
-- The ``-d`` (delete) option will remove any previous certificates from the ``SECTAG`` being used.  A ``SECTAG`` is a programming slot for certificates in the modem.  The ``SECTAG`` here must match the ``CONFIG_NRF_CLOUD_SEC_TAG`` Kconfig option in the prj.conf file.
+- The ``-d`` (delete) option will remove any previous certificates from the ``SECTAG`` being used.
+  A ``SECTAG`` is a programming slot for certificates in the modem.
+  The ``SECTAG`` here must match the ``CONFIG_NRF_CLOUD_SEC_TAG`` Kconfig option in the prj.conf file.
 
-The provision.csv file lists the device ID (UUID) in the first column.  It is also displayed by the Device Credentials Installer script.
+The provision.csv file lists the device ID (UUID) in the first column.
+It is also displayed by the Device Credentials Installer script.
 
 Provisioning and Associating with nRF Cloud
 *******************************************
@@ -205,8 +218,9 @@ There are two ways to provision and associate using the provision.csv file you g
 1. Via the nRF Cloud website: `nRF Cloud Provision Devices`_
 #. Programmatically using `nRF Cloud ProvisionDevices REST API`_
 
-On the `nRF Cloud Provision Devices`_ page, you can drag and drop the CSV file, or click  the button to browse for and select it.
-Click the Upload and Provision button to begin the process.  The status will be displayed in the table below.
+On the `nRF Cloud Provision Devices`_ page, you can drag and drop the CSV file, or click the button to browse for and select it.
+Click the Upload and Provision button to begin the process.
+The status will be displayed in the table below.
 
 Instead of using the website, you can instead use curl or Postman to submit the csv file to the `nRF Cloud ProvisionDevices REST API`_ directly.
 You will need to find your nRF Cloud account API Key on your account settings page, and use it in place of $API_KEY below.
@@ -238,7 +252,9 @@ After programming the application and all prerequisites to your board, test the 
 
 1. Connect the board to the computer using a USB cable. The board is assigned a COM port (Windows) or ttyACM or ttyS device (Linux).
 
-#. Connect to the board with a terminal emulator, for example, PuTTY, Tera Term, or LTE Link Monitor.  Turn off local echo. Output CR and LF when either is received. The shell uses VT100-compatible escape sequences for coloration.
+#. Connect to the board with a terminal emulator, for example, PuTTY, Tera Term, or LTE Link Monitor.
+   Turn off local echo. Output CR and LF when either is received.
+   The shell uses VT100-compatible escape sequences for coloration.
 #. Reset the board if it was already on.
 #. Observe in the terminal window that the board starts up in the Secure Partition Manager and that the application starts.
    This is indicated by output similar to the following lines::
@@ -249,7 +265,9 @@ After programming the application and all prerequisites to your board, test the 
 
       login:
 
-#. For PuTTY_ or `LTE Link Monitor`_, you will need to reconnect terminal. (Bluetooth LE HCI control resets the terminal output and needs to be reconnected).  `Tera Term`_ automatically reconnects.
+#. For PuTTY_ or `LTE Link Monitor`_, you will need to reconnect terminal.
+   (Bluetooth LE HCI control resets the terminal output and needs to be reconnected).
+   `Tera Term`_ automatically reconnects.
 #. Log in with the default password::
 
       nordic
@@ -258,13 +276,16 @@ After programming the application and all prerequisites to your board, test the 
 
       log enable inf
 
-#. Open a web browser and navigate to https://nrfcloud.com/.  Click on Device Management then Gateways.  Click on your device's Device ID (UUID), which takes you to the detailed view of your gateway.
+#. Open a web browser and navigate to https://nrfcloud.com/.
+   Click on Device Management then Gateways.
+   Click on your device's Device ID (UUID), which takes you to the detailed view of your gateway.
 #. The first time you start the application, the device will be added to your account automatically.
 
    a. Observe that the LED(s) indicate that the device is connected.
    #. If the LED(s) indicate an error, check the details of the error in the terminal window.
 
-#. Add BLE devices by clicking on the + sign.  Read, write, and enable notifications on connected peripheral and observe data being received on the nRF Cloud. 
+#. Add BLE devices by clicking on the + sign.
+   Read, write, and enable notifications on connected peripheral and observe data being received on the nRF Cloud.
 #. Optionally send AT commands from the terminal, and observe that the response is received.
 
 
@@ -272,7 +293,8 @@ After programming the application and all prerequisites to your board, test the 
 
 Using the Management Interface (Shell)
 **************************************
-The shell is available via a USB serial port, through one of the two provided serial connections.  Using a 3rd party terminal program such as PuTTY_ or `Tera Term`_, you can log in and administer the gateway directly.
+The shell is available via a USB serial port, through one of the two provided serial connections.
+Using a 3rd party terminal program such as PuTTY_ or `Tera Term`_, you can log in and administer the gateway directly.
 
 Once logged in at the login: prompt, you can get help using the tab key or by typing help. ::
 
@@ -285,13 +307,17 @@ Once logged in at the login: prompt, you can get help using the tab key or by ty
       passwd reboot resize session shell shutdown
    gateway:#
 
-Many commands have sub commands.  The shell offers command completion; you can type the start of a command and hit tab, and it will offer available choices. ::
+Many commands have sub commands.
+The shell offers command completion.
+Type the start of a command and hit tab, and it will offer available choices. ::
 
    at - <enable | AT<cmd> | exit> Execute an AT command. Use <at enable>
       first to remain in AT command mode until 'exit'.
 
-This command, plus the parameter 'enable' places the shell into AT command mode.  In this mode, the only available commands are nrf9160
-modem AT commands or 'exit' to return to normal shell mode.  See the `nRF91 AT Command Reference`_ for more information about AT commands. ::
+This command, plus the parameter 'enable' places the shell into AT command mode.
+In this mode, the only available commands are nrf9160
+modem AT commands or 'exit' to return to normal shell mode.
+See the `nRF91 AT Command Reference`_ for more information about AT commands. ::
 
    ble - Bluetooth commands
    Subcommands:
@@ -306,7 +332,7 @@ modem AT commands or 'exit' to return to normal shell mode.  See the `nRF91 AT C
       fota: <addr> <host> <path> <size> <final> [ver] [crc] [sec_tag]
             [frag_size] [apn] start BLE firmware over-the-air update.
       test: Set BLE FOTA download test mode.
-   
+
    clear - Clear the terminal.
    cpu_load - debug command to see how busy the nrf9160 is.
    date -     <get | set [Y-m-d] <H:M:S>> - display or change the current
@@ -316,7 +342,7 @@ modem AT commands or 'exit' to return to normal shell mode.  See the `nRF91 AT C
               over-the-air update.
    history -  display previous commands entered in the shell.  Up arrow
               will move backward one by one, making it easy to repeat
-	       previous commands.
+              previous commands.
 
    info - Informational commands
    Subcommands:
@@ -329,7 +355,7 @@ modem AT commands or 'exit' to return to normal shell mode.  See the `nRF91 AT C
       modem:   Modem information.
       param:   List parameters.
       scan:    Bluetooth scan results.
-   
+
    kernel - Kernel commands
    Subcommands:
       cycles:  Kernel cycles.
@@ -338,21 +364,21 @@ modem AT commands or 'exit' to return to normal shell mode.  See the `nRF91 AT C
       threads: List kernel threads.
       uptime:  Kernel uptime.
       version: Kernel version.
-   
+
    log - Commands for controlling logger
    Subcommands:
       backend:       Logger backends commands.
       disable:       'log disable <module_0> .. <module_n>' disables
-      		      logs in specified modules (all if no modules
-		      specified).
+                     logs in specified modules (all if no modules
+                     specified).
       enable:        'log enable <level> <module_0> ... <module_n>'
                      enables logs up to given level in specified modules
-		      (all if no modules specified).
+                     (all if no modules specified).
       go:            Resume logging
       halt:          Halt logging
       list_backends: Lists logger backends.
       status:        Logger status
-   
+
    login - the default first command after reboot and after logout.
    logout - lock shell until user logs in again with correct password.
    passwd - <oldpw> <newpw> change the password.
@@ -365,24 +391,26 @@ modem AT commands or 'exit' to return to normal shell mode.  See the `nRF91 AT C
    Subcommands:
       backspace_mode: Toggle backspace key mode.
                       Some terminals are not sending separate escape code
-		       for backspace and delete button. This command forces
-		       shell to interpret delete key as backspace.
+                      for backspace and delete button. This command forces
+                      shell to interpret delete key as backspace.
       colors:         Toggle colored syntax.
       echo:           Toggle shell echo.
       stats:          Shell statistics.
-   
+
    shutdown - Disconnect from nRF Cloud and the LTE network, then
               power down the gateway.  Press the button to restart.
-   
-   
+
+
 Updating Firmware with FOTA
 ***************************
 
-The nRF9160 modem, application firmware, and bootloader, can all be updated over the air by nRF Cloud.  This can be done when the gateway is connected to the cloud via https://nrfcloud.com/#/updates-dashboard.
+The nRF9160 modem, application firmware, and bootloader, can all be updated over the air by nRF Cloud.
+This can be done when the gateway is connected to the cloud via https://nrfcloud.com/#/updates-dashboard.
 
 Modem
 -----
-Incremental modem updates are supported.  Full modem updates using external flash memory on board the Apricity gateway hardware is possible but not enabled yet.
+Incremental modem updates are supported.
+Full modem updates using external flash memory on board the Apricity gateway hardware is possible but not enabled yet.
 
 nRF9160
 -------
@@ -390,13 +418,19 @@ Application and MCUboot firmware updates are supported.
 
 nRF52840
 --------
-The nRF52840 cannot be updated over the air yet; it must be updated over USB on the Apricity Gateway.  See the Button Behavior and LED Indicator Behavior sections for the process to enter MCUboot mode.  Once in that mode, nRF Connect Desktop Programmer can update the firmware using the MCUBoot mode, by clicking the Enable MCUBoot checkbox.
+The nRF52840 cannot be updated over the air yet; it must be updated over USB on the Apricity Gateway.
+See the Button Behavior and LED Indicator Behavior sections for the process to enter MCUboot mode.
+Once in that mode, nRF Connect Desktop Programmer can update the firmware using the MCUBoot mode, by clicking the Enable MCUBoot checkbox.
 
 The nRF52840 can be updated on an nRF9160DK using the built-in Segger J-Link programming hardware and the already established methods for flashing (nRF Connect for Desktop Programmer, west, nrfjprog, etc.).
 
 BLE Devices
 -----------
-Bluetooth devices running the nRF5SDK and its buttonless secure DFU bootloader can be updated as well.  Create a device group in nRF Cloud for one or more indentical Bluetooth peripherals that are connected to your gateway.  Then in the Updates Dashboard, upload the firmware bundle using the Bundles ... menu, then click Create Update.  Select the device group and the firmware bundle, and click Save.  Then click Apply Update.   
+Bluetooth devices running the nRF5SDK and its buttonless secure DFU bootloader can be updated as well.
+Create a device group in nRF Cloud for one or more indentical Bluetooth peripherals that are connected to your gateway.
+Then in the Updates Dashboard, upload the firmware bundle using the Bundles ... menu, then click Create Update.
+Select the device group and the firmware bundle, and click Save.
+Then click Apply Update.
 
 Known Issues and Limitations
 ****************************
@@ -510,4 +544,3 @@ From Zephyr:
 
 .. _`zephyr:bluetooth_api`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/reference/bluetooth/index.html
 .. _`zephyr:bluetooth-hci-uart-sample`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/samples/bluetooth/hci_uart/README.html
-

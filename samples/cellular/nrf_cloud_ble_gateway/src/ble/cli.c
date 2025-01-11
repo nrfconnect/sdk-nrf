@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #undef __XSI_VISIBLE
 #define __XSI_VISIBLE 1
 #undef _XOPEN_SOURCE
@@ -159,14 +164,6 @@ int heap_shell(const struct shell *shell, size_t argc, char **argv)
 	shell_print(shell, "system heap statistics:");
 	shell_print(shell, "max. size:      %6ld", MAX_HEAP_SIZE);
 
-#if 0 /* TODO: PETE */
-	struct mallinfo system_stats;
-
-	system_stats = mallinfo();
-	shell_print(shell, "size:           %6d", system_stats.arena);
-	shell_print(shell, "free:           %6d", system_stats.fordblks);
-	shell_print(shell, "allocated:      %6d", system_stats.uordblks);
-#endif
 	return 0;
 }
 
@@ -348,18 +345,6 @@ void print_connection_status(const struct shell *shell)
 	} else {
 		shell_print(shell, "LTE functional mode: \t%d", (int)fmode);
 	}
-
-#if 0 /* TODO: PETE */
-	shell_print(shell, "LTE connection: \t%s",
-		    get_lte_connection_status() ?
-		    "connected" : "disconnected");
-	shell_print(shell, "cloud connection: \t%s",
-		    get_cloud_connection_status() ?
-		    "connected" : "disconnected");
-	shell_print(shell, "cloud ready: \t\t%s",
-		    get_cloud_ready_status() ?
-		    "ready" : "not ready");
-#endif
 }
 
 static void print_cloud_info(const struct shell *shell)
@@ -464,7 +449,7 @@ static void print_conn_info(const struct shell *shell, bool show_path,
 	struct uuid_handle_pair *up;
 	char uuid_str[BT_UUID_STR_LEN];
 	char path[BT_MAX_PATH_LEN];
-	const char *types[] = {"svc", "chr", "---", "ccc"};
+	static const char * const types[] = {"svc", "chr", "---", "ccc"};
 
 	if (!notify) {
 		shell_print(shell, "   MAC, connected, discovered, shadow"
@@ -1290,8 +1275,7 @@ static int app_cmd_at(const struct shell *shell, size_t argc, char **argv)
 		shell_set_root_cmd("at");
 		set_at_prompt(shell, true);
 		return 0;
-	}
-	else if (strcmp(argv[1], "exit") == 0) {
+	} else if (strcmp(argv[1], "exit") == 0) {
 		set_at_prompt(shell, false);
 		return 0;
 	}
@@ -1351,9 +1335,9 @@ static int cmd_shutdown(const struct shell *shell, size_t argc, char **argv)
 }
 
 /*
-example:
-fota firmware.nrfcloud.com 3c7003c6-45a0-4a74-9023-1e006ceeb835/APP*30f6ce17*1.4.0/app_update.bin
-*/
+ * example:
+ * fota firmware.nrfcloud.com 3c7003c6-45a0-4a74-9023-1e006ceeb835/APP*30f6ce17*1.4.0/app_update.bin
+ */
 static int cmd_fota(const struct shell *shell, size_t argc, char **argv)
 {
 #if defined(CONFIG_NRF_CLOUD_FOTA)
@@ -1381,6 +1365,7 @@ static int cmd_fota(const struct shell *shell, size_t argc, char **argv)
 		shell_print(shell, "mcuboot download detected");
 	}
 	int err = fota_download_start(host, path, sec_tag, 0, frag);
+
 	if (err) {
 		shell_error(shell, "Error %d starting download", err);
 	}
@@ -1392,16 +1377,16 @@ static int cmd_fota(const struct shell *shell, size_t argc, char **argv)
 }
 
 /*
-example:
-ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
-	APP*f1078fc9*2.2.0/app_thingy_s132.bin 155272 1 2.2.0
-ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
-	APP*56693cf8*2.2.0/app_thingy_s132dat.bin 135 1 2.2.0
-ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
-	APP*f15b85a8*s132/sd_bl.bin 153344 0 s132
-ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
-	APP*3fb54637*s132/sd_bl_dat.bin 139 1 s132
-*/
+ * example:
+ * ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
+ *      APP*f1078fc9*2.2.0/app_thingy_s132.bin 155272 1 2.2.0
+ * ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
+ *      APP*56693cf8*2.2.0/app_thingy_s132dat.bin 135 1 2.2.0
+ * ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
+ *      APP*f15b85a8*s132/sd_bl.bin 153344 0 s132
+ * ble fota C2:6B:AC:6D:05:A3 firmware.beta.nrfcloud.com ba1752ef-0d36-4fcf-8748-3cad9f8801b0/
+ *      APP*3fb54637*s132/sd_bl_dat.bin 139 1 s132
+ */
 #if CONFIG_GATEWAY_BLE_FOTA
 static int cmd_ble_fota(const struct shell *shell, size_t argc, char **argv)
 {
@@ -1526,7 +1511,7 @@ int set_passwd(char *passwd)
 
 static int cmd_login(const struct shell *shell, size_t argc, char **argv)
 {
-	static uint32_t attempts = 0;
+	static uint32_t attempts;
 
 	if (argc < 2) {
 		shell_print(shell, "Access requires: <password>");
@@ -1547,15 +1532,13 @@ static int cmd_login(const struct shell *shell, size_t argc, char **argv)
 
 		shell_print(shell, "\nHit tab for help.\n");
 		return 0;
-	} else {
-		shell_error(shell, "Incorrect password!");
-		attempts++;
-		if (attempts > 3) {
-			k_sleep(K_SECONDS(attempts));
-		}
-		return -EINVAL;
 	}
-	return 0;
+	shell_error(shell, "Incorrect password!");
+	attempts++;
+	if (attempts > 3) {
+		k_sleep(K_SECONDS(attempts));
+	}
+	return -EINVAL;
 }
 
 static int cmd_passwd(const struct shell *shell, size_t argc, char **argv)
@@ -1600,7 +1583,7 @@ void cli_init(void)
 	if (shell) {
 		/*
 		 * Zephyr commit: SHA-1: 2b5723d4558619a9283683499c095e0b344d32d7
-                 *                shell: add init backend configuration
+		 *                shell: add init backend configuration
 		 * broke the config system regarding obscure, so for now,
 		 * set it manually on
 		 */
@@ -1654,7 +1637,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_ble,
 #if CONFIG_GATEWAY_BLE_FOTA
 	SHELL_CMD(fota, &dynamic_ble_fota,
 		 "<addr> <host> <path> <size> <final> [ver] [crc] [sec_tag] [frag_size] [apn] "
-		  "BLE firmware over-the-air update.", NULL),
+		 "BLE firmware over-the-air update.", NULL),
 	SHELL_CMD(test, NULL, "Set BLE FOTA download test mode.", cmd_ble_test),
 #endif
 	SHELL_SUBCMD_SET_END /* Array terminated. */

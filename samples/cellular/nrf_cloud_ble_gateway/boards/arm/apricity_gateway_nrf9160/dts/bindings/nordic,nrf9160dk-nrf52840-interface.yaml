@@ -1,5 +1,5 @@
-# Copyright (c) 2021 Nordic Semiconductor ASA
-# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 # NOTE: This file is replicated in nrf9160dk_nrf9160 and nrf9160dk_nrf52840.
 #       Any changes should be done in both instances.

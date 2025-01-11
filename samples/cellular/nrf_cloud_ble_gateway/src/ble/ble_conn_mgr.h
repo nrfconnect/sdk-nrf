@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #ifndef _BLE_CONN_MGR_H_
 #define _BLE_CONN_MGR_H_
 
@@ -79,7 +84,7 @@ int ble_conn_mgr_get_handle_by_uuid(uint16_t *handle, const char *uuid,
 				    const struct ble_device_conn *conn_ptr);
 struct uuid_handle_pair *ble_conn_mgr_get_uhp_by_uuid(const char *uuid,
 						      const struct ble_device_conn *conn_ptr);
-void ble_conn_mgr_init();
+void ble_conn_mgr_init(void);
 int ble_conn_set_connected(struct ble_device_conn *conn_ptr, bool connected);
 int ble_conn_mgr_set_subscribed(uint16_t handle, uint8_t sub_index,
 				const struct ble_device_conn *conn_ptr);

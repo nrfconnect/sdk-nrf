@@ -23,4 +23,3 @@
 		nordic,drive-mode = <NRF_DRIVE_H0H1>;
 	};
 };
-

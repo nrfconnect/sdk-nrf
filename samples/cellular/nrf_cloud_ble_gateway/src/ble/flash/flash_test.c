@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/drivers/gpio.h>
@@ -20,8 +25,10 @@
 #define MEMCTRL_GPIO_CTRL  DT_GPIO_CTLR(MEMCTRL_NODE, gpios)
 #define MEMCTRL_GPIO_PIN   DT_GPIO_PIN(MEMCTRL_NODE, gpios)
 
-/**@brief Set the external mem control pin to high to 
-  * enable access to the external memory chip. */
+/**
+ * Set the external mem control pin to high to
+ * enable access to the external memory chip.
+ */
 static int flash_test_init(void)
 {
 	const struct device *port;
@@ -112,7 +119,7 @@ int flash_test(void)
 		const uint8_t *rp = buf;
 		const uint8_t *rpe = rp + len;
 
-		ret= -EFAULT;
+		ret = -EFAULT;
 		printk("FAIL - %d\n", ret);
 		while (rp < rpe) {
 			printk("%08x wrote %02x read %02x %s\n",

@@ -1,7 +1,6 @@
-/*
- * Copyright (c) 2018 Nordic Semiconductor ASA
+/* Copyright (c) 2025 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/kernel.h>
@@ -26,7 +25,6 @@
 #include "ctype.h"
 #include "nrf_cloud_transport.h"
 #include "ble_conn_mgr.h"
-#include "ui.h"
 
 #define SEND_NOTIFY_STACK_SIZE 2048
 #define SEND_NOTIFY_PRIORITY 5
@@ -97,7 +95,7 @@ struct gatt_read_cache_entry {
 	const struct bt_conn *conn;
 	struct uuid_handle_pair *uhp;
 	bool pending;
-	bool last;	
+	bool last;
 } gatt_read_cache[CONFIG_BT_MAX_CONN];
 
 /* Convert ble address string to uppcase */
@@ -348,7 +346,7 @@ static void send_ble_read_data(int unused1, int unused2, int unused3)
 							     BT_UUID_GATT_CCC_VAL_STR,
 							     path,
 							     ((char *)rx_data->data),
-							     rx_data->length, 
+							     rx_data->length,
 							     &output, false);
 		} else {
 			err = device_value_changed_encode(rx_data->ble_mac_addr_str,
@@ -360,11 +358,6 @@ static void send_ble_read_data(int unused1, int unused2, int unused3)
 			LOG_ERR("Unable to encode: %d", err);
 			goto cleanup;
 		}
-		/*
-		LOG_DBG("UUID %s, path %s, len %u, json %s",
-			uuid, path,
-			rx_data->length, (char *)output.data.ptr);
-		*/
 		err = g2c_send(&output.data);
 		k_mutex_unlock(&output.lock);
 		if (err) {
@@ -519,6 +512,7 @@ static uint8_t gatt_read_callback(struct bt_conn *conn, uint8_t err,
 		 */
 		uint16_t offset = MIN(params->single.offset, BT_MAX_VALUE_LEN);
 		uint16_t this_len = MIN(length, (BT_MAX_VALUE_LEN - offset));
+
 		uhp->value_len = offset + this_len;
 		memcpy(&uhp->value[offset], data, this_len);
 	}
@@ -658,7 +652,7 @@ int gatt_write(const char *ble_mac_addr_str, const char *chrc_uuid, uint8_t *dat
 	return err;
 }
 
-int gatt_write_without_response(const char *ble_mac_addr_str,const char *chrc_uuid,
+int gatt_write_without_response(const char *ble_mac_addr_str, const char *chrc_uuid,
 				uint8_t *data, uint16_t data_len)
 {
 	int err;
@@ -931,7 +925,7 @@ int ble_subscribe_handle(const char *ble_mac_addr_str, uint16_t handle, uint8_t 
 	int err;
 
 	LOG_DBG("Addr %s handle %u value_type %u", ble_mac_addr_str,
-		handle, (unsigned)value_type);
+		handle, (unsigned int)value_type);
 	err = ble_conn_mgr_get_conn_by_addr(ble_mac_addr_str, &conn_ptr);
 	if (err == 0) {
 		err = ble_conn_mgr_get_uuid_by_handle(handle, uuid, conn_ptr);

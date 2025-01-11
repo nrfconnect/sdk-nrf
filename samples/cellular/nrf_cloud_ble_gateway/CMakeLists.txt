@@ -106,7 +106,6 @@ target_sources(app PRIVATE src/ble/gateway.c)
 target_sources_ifdef(CONFIG_SHELL app PRIVATE src/ble/cli.c)
 target_sources_ifdef(CONFIG_GATEWAY_BLE_FOTA app PRIVATE src/ble/dfu/peripheral_dfu.c)
 
-add_subdirectory(src/ble/ui)
 #add_subdirectory(src/ble/dfu)
 add_subdirectory(src/ble/flash)
 

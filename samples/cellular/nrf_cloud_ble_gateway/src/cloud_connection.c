@@ -173,7 +173,7 @@ void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb)
 
 /* This function causes the cloud to disconnect, and updates internal state accordingly.
  *
- * It is also triggerd by cloud disconnection, to update internal state.
+ * It is also triggered by cloud disconnection, to update internal state.
  *
  * In this latter case, an unnecessary "Disconnecting from nRF Cloud" and
  * "Already disconnected from nRF Cloud" will be printed.

@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <string.h>
@@ -33,10 +38,10 @@ LOG_MODULE_REGISTER(ble_codec, CONFIG_NRFCLOUD_BLE_GATEWAY_LOG_LEVEL);
 typedef int (*gateway_state_handler_t)(void *root_obj);
 
 extern void nrf_cloud_register_gateway_state_handler(gateway_state_handler_t handler);
-extern int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info *const mod_inf,
-					    cJSON *const mod_inf_obj);
-extern int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info *const svc_inf,
-					      cJSON *const svc_inf_obj);
+extern int nrf_cloud_modem_info_json_encode(const struct nrf_cloud_modem_info * const mod_inf,
+					    cJSON * const mod_inf_obj);
+extern int nrf_cloud_service_info_json_encode(const struct nrf_cloud_svc_info * const svc_inf,
+					      cJSON * const svc_inf_obj);
 extern int nrf_cloud_shadow_delta_response_encode(cJSON *input_obj,
 						  bool accept,
 						  struct nrf_cloud_data *const output);
@@ -47,7 +52,7 @@ static char service_buffer[MAX_SERVICE_BUF_SIZE];
 
 static bool first_service = true;
 static bool first_chrc = true;
-static bool desired_conns_strings = false;
+static bool desired_conns_strings;
 
 #define JSON_KEY_SRVC_INFO	"serviceInfo"
 
@@ -499,7 +504,7 @@ int device_descriptor_value_encode(const char *ble_address, char *uuid,
 	CJADDSTRCS(root_obj, "gatewayId", gateway_id);
 	CJADDNULLCS(root_obj, "requestId");
 
-	CJADDSTRCS(event, "type", changed ? 
+	CJADDSTRCS(event, "type", changed ?
 		   "device_descriptor_value_changed" :
 		   "device_descriptor_value_read_result");
 	CJADDSTRCS(event, "timestamp", get_time_str(str, sizeof(str)));
@@ -561,8 +566,8 @@ int device_chrc_read_encode(char *ble_address, char *uuid, char *path,
 
 	CJADDSTRCS(event, "type", "device_characteristic_value_changed");
 	/** This used to use "device_characteristic_value_read_result"
-	  * but that no longer works in the cloud backend.
-	  */
+	 * but that no longer works in the cloud backend.
+	 */
 	CJADDSTRCS(event, "timestamp", get_time_str(str, sizeof(str)));
 
 	CJADDSTRCS(device, "id", ble_address);
@@ -671,9 +676,8 @@ cleanup:
 int device_shadow_data_encode(const char *ble_address, bool connecting,
 			      bool connected, struct gw_msg *msg)
 {
-	int ret = -ENOMEM;
 	__ASSERT_NO_MSG(msg != NULL);
-
+	int ret = -ENOMEM;
 	cJSON *root_obj = cJSON_CreateObject();
 	cJSON *state_obj = cJSON_CreateObject();
 	cJSON *reported_obj = cJSON_CreateObject();
@@ -714,9 +718,8 @@ cleanup:
 
 int gateway_reported_encode(struct gw_msg *msg)
 {
-	int ret = -ENOMEM;
 	__ASSERT_NO_MSG(msg != NULL);
-
+	int ret = -ENOMEM;
 	cJSON *root_obj = cJSON_CreateObject();
 	cJSON *state_obj = cJSON_CreateObject();
 	cJSON *reported_obj = cJSON_CreateObject();
@@ -750,9 +753,8 @@ cleanup:
 int gateway_desired_list_encode(const struct desired_conn *desired, int num_desired,
 				struct gw_msg *msg)
 {
-	int ret = -ENOMEM;
 	__ASSERT_NO_MSG(msg != NULL);
-
+	int ret = -ENOMEM;
 	cJSON *root_obj = cJSON_CreateObject();
 	cJSON *state_obj = cJSON_CreateObject();
 	cJSON *desired_obj = cJSON_CreateObject();
@@ -1184,6 +1186,7 @@ int desired_conns_handler(cJSON *desired_connections_obj)
 	}
 
 	char *ptr = cJSON_Print(desired_connections_obj);
+
 	LOG_INF("Desired conns: %s", ptr);
 	nrf_cloud_free(ptr);
 
@@ -1312,4 +1315,3 @@ void ble_codec_init(void)
 {
 	/* Nothing to do. */
 }
-

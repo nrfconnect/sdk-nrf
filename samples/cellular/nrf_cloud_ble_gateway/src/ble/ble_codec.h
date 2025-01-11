@@ -1,3 +1,8 @@
+/* Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 #ifndef BLE_CODEC_H_
 #define BLE_CODEC_H_
 
@@ -37,7 +42,7 @@ int device_disconnect_result_encode(char *ble_address, bool conn_status,
 int gateway_shadow_data_encode(void *modem_ptr, struct gw_msg *msg);
 int device_shadow_data_encode(const char *ble_address, bool connecting,
 			      bool connected, struct gw_msg *msg);
-int gateway_desired_list_encode(const struct desired_conn *desired,int num_desired,
+int gateway_desired_list_encode(const struct desired_conn *desired, int num_desired,
 				struct gw_msg *msg);
 int gateway_reported_encode(struct gw_msg *msg);
 void get_uuid_str(struct uuid_handle_pair *uuid_handle, char *str, size_t len);

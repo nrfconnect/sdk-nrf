@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-BSD-5-Clause-Nordic
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 / {
@@ -12,7 +12,7 @@
 		zephyr,console = &uart0;
 		zephyr,shell-uart = &uart0;
 		zephyr,uart-mcumgr = &uart0;
-		zephyr,bt-uart=&uart1;
+		zephyr,bt-hci=&bt_hci_uart;
 	};
 
 	buttons {
@@ -266,6 +266,10 @@
 	pinctrl-0 = <&uart1_default>;
 	pinctrl-1 = <&uart1_sleep>;
 	pinctrl-names = "default", "sleep";
+	bt_hci_uart: bt_hci_uart {
+		compatible = "zephyr,bt-hci-uart";
+		status = "okay";
+	};
 };
 
 &flash0 {
@@ -294,8 +298,12 @@
 		slot1_ns_partition: partition@c0000 {
 			label = "image-1-nonsecure";
 		};
+		scratch_partition: partition@f0000 {
+			label = "image-scratch";
+			reg = <0x000f0000 0xa000>;
+		};
 		/* 0xf0000 to 0xf7fff reserved for TF-M partitions */
-		storage_partition: partition@f8000 {
+		storage_partition: partition@fa000 {
 			label = "storage";
 			reg = <0x000f8000 0x00008000>;
 		};
@@ -313,7 +321,7 @@
 			/* Secure image memory */
 		};
 
-		sram0_modem: image_modem@20016000 {
+		sram0_bsd: image_modem@20010000 {
 			/* Modem (shared) memory */
 		};
 
