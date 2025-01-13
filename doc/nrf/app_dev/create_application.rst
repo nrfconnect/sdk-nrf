@@ -100,6 +100,7 @@ This application type is suitable for the following development cases:
 * You want to make changes to one or more of the repositories of the |NCS| when working on the application.
 * You want to develop a project that involves more than one board target, for example using a mesh networking protocol like :ref:`ug_matter` or :ref:`ug_bt_mesh`.
 * You want to run a big project that lets you develop most features without having to patch the |NCS| tree, for example with out-of-tree boards, drivers, SoCs, and so on.
+* You want to use out-of-tree applications from the `nRF Connect SDK Add-ons`_ index.
 
 For more information about applications placed in workspace in the |NCS|, see the :ref:`workflow 4 on the development model page <dm_workflow_4>`.
 
@@ -291,3 +292,34 @@ Use the following steps depending on the application type:
          This allows CMake to automatically load the boilerplate code required for building |NCS| applications.
 
 You can now start :ref:`configuring and building <configuration_and_build>` the application using the command line.
+
+.. _creating_add_on_index:
+
+Creating application from add-ons
+=================================
+
+You can create a :ref:`workspace application <create_application_types_workspace>` also by browsing and copying reference applications from the `nRF Connect SDK Add-ons`_ index.
+The index is a collection of publicly available |NCS| supplementary components that extend the SDK's functionality.
+In addition to applications, it includes drivers, libraries, and protocol implementations.
+
+To create an application from the add-on index, complete the following steps:
+
+.. tabs::
+
+   .. tab:: nRF Connect for VS Code (recommended)
+
+      Complete the following steps in the |nRFVSC|:
+
+      1. In the :guilabel:`Welcome View`, click :guilabel:`Create a new application`.
+      #. Select :guilabel:`Browse nRF Connect SDK Add-on Index`.
+      #. Browse through the available add-ons and select one that matches your needs.
+      #. Follow the creation wizard to set up your workspace application.
+
+   .. tab:: Command line
+
+      When creating add-on applications from the command line, follow the instructions provided in the `nRF Connect SDK Add-ons`_ repository.
+      These instructions guide you through the process of copying and configuring the add-on application in your workspace.
+
+The add-on is copied to your workspace and automatically configured with a west workspace, allowing you to start development right away.
+
+For more information, including how to contribute your own add-on to the index, read :file:`README.md` and :file:`CONTRIBUTING.md` in the `ncs-app-index repository <ncs-app-index_>`_.

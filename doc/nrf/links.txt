@@ -226,6 +226,7 @@
 .. _`Memfault WebBluetooth Client`: https://memfault.github.io/web-ble-example/
 
 .. _`nRF Connect SDK Add-ons`: https://nrfconnect.github.io/ncs-app-index/
+.. _`ncs-app-index`: https://github.com/nrfconnect/ncs-app-index
 
 .. ### Source: githubusercontent.com
 

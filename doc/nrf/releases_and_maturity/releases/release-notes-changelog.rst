@@ -679,5 +679,6 @@ Documentation
   * New page :ref:`thingy53_precompiled` under :ref:`ug_thingy53`.
     This page includes some of the information previously located on the standalone page for getting started with Nordic Thingy:53.
 
+* Updated the :ref:`create_application` page with the :ref:`creating_add_on_index` section.
 * Removed the standalone page for getting started with Nordic Thingy:53.
   The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
