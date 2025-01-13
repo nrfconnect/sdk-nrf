@@ -508,7 +508,7 @@ ZTEST(test_lpuart_resilency, test_tx_abort_from_api)
 	zassert_equal(err, 0, "uart_rx_enable - unexpected err:%d", err);
 	err = uart_tx(lpuart, tx_buffer, sizeof(tx_buffer), TX_TIMEOUT_US);
 	zassert_equal(err, 0, "uart_tx - unexpected err:%d", err);
-	k_msleep(1);
+	k_usleep(100);
 	err = uart_tx_abort(lpuart);
 	zassert_equal(err, 0, "uart_tx_abort - unexpected err:%d", err);
 	k_msleep(10);
