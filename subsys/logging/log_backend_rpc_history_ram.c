@@ -47,6 +47,19 @@ void log_rpc_history_push(const union log_msg_generic *msg)
 	mpsc_pbuf_commit(&log_history_pbuf, &copy->buf);
 }
 
+void log_rpc_history_set_overwriting(bool overwriting)
+{
+	k_sched_lock();
+
+	if (overwriting) {
+		log_history_pbuf.flags |= MPSC_PBUF_MODE_OVERWRITE;
+	} else {
+		log_history_pbuf.flags &= (~MPSC_PBUF_MODE_OVERWRITE);
+	}
+
+	k_sched_unlock();
+}
+
 union log_msg_generic *log_rpc_history_pop(void)
 {
 	return (union log_msg_generic *)mpsc_pbuf_claim(&log_history_pbuf);
