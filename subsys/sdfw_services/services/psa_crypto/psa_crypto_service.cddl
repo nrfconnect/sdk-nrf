@@ -9,6 +9,12 @@ ptr_attr = #6.32772(uint)
 ptr_key = #6.32773(uint)
 ptr_uint = #6.32774(uint)
 ptr_cipher = #6.32775(uint)
+ptr_const_buf = #6.32776(uint)
+ptr_const_attr = #6.32777(uint)
+ptr_const_key = #6.32778(uint)
+ptr_const_uint = #6.32779(uint)
+ptr_const_cipher = #6.32780(uint)
+
 
 
 psa_crypto_init_req = (
@@ -34,7 +40,7 @@ psa_purge_key_req = (
 psa_copy_key_req = (
     14,
     source_key: uint,
-    p_attributes: ptr_attr,
+    p_attributes: ptr_const_attr,
     p_target_key: ptr_key,
 )
 
@@ -45,8 +51,8 @@ psa_destroy_key_req = (
 
 psa_import_key_req = (
     16,
-    p_attributes: ptr_attr,
-    p_data: ptr_buf,
+    p_attributes: ptr_const_attr,
+    p_data: ptr_const_buf,
     data_length: buf_len,
     p_key: ptr_key,
 )
@@ -70,7 +76,7 @@ psa_export_public_key_req = (
 psa_hash_compute_req = (
     19,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
     p_hash: ptr_buf,
     hash_size: buf_len,
@@ -80,9 +86,9 @@ psa_hash_compute_req = (
 psa_hash_compare_req = (
     20,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
-    p_hash: ptr_buf,
+    p_hash: ptr_const_buf,
     hash_length: buf_len,
 )
 
@@ -95,7 +101,7 @@ psa_hash_setup_req = (
 psa_hash_update_req = (
     22,
     p_handle: ptr_uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
 )
 
@@ -110,7 +116,7 @@ psa_hash_finish_req = (
 psa_hash_verify_req = (
     24,
     p_handle: ptr_uint,
-    p_hash: ptr_buf,
+    p_hash: ptr_const_buf,
     hash_length: buf_len,
 )
 
@@ -129,7 +135,7 @@ psa_mac_compute_req = (
     27,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
     p_mac: ptr_buf,
     mac_size: buf_len,
@@ -140,9 +146,9 @@ psa_mac_verify_req = (
     28,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
-    p_mac: ptr_buf,
+    p_mac: ptr_const_buf,
     mac_length: buf_len,
 )
 
@@ -163,7 +169,7 @@ psa_mac_verify_setup_req = (
 psa_mac_update_req = (
     31,
     p_handle: ptr_uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
 )
 
@@ -178,7 +184,7 @@ psa_mac_sign_finish_req = (
 psa_mac_verify_finish_req = (
     33,
     p_handle: ptr_uint,
-    p_mac: ptr_buf,
+    p_mac: ptr_const_buf,
     mac_length: buf_len,
 )
 
@@ -191,7 +197,7 @@ psa_cipher_encrypt_req = (
     35,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
     p_output: ptr_buf,
     output_size: buf_len,
@@ -202,7 +208,7 @@ psa_cipher_decrypt_req = (
     36,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
     p_output: ptr_buf,
     output_size: buf_len,
@@ -234,14 +240,14 @@ psa_cipher_generate_iv_req = (
 psa_cipher_set_iv_req = (
     40,
     p_handle: ptr_uint,
-    p_iv: ptr_buf,
+    p_iv: ptr_const_buf,
     iv_length: buf_len,
 )
 
 psa_cipher_update_req = (
     41,
     p_handle: ptr_uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
     p_output: ptr_buf,
     output_size: buf_len,
@@ -265,11 +271,11 @@ psa_aead_encrypt_req = (
     44,
     key: uint,
     alg: uint,
-    p_nonce: ptr_buf,
+    p_nonce: ptr_const_buf,
     nonce_length: buf_len,
-    p_additional_data: ptr_buf,
+    p_additional_data: ptr_const_buf,
     additional_data_length: buf_len,
-    p_plaintext: ptr_buf,
+    p_plaintext: ptr_const_buf,
     plaintext_length: buf_len,
     p_ciphertext: ptr_buf,
     ciphertext_size: buf_len,
@@ -280,11 +286,11 @@ psa_aead_decrypt_req = (
     45,
     key: uint,
     alg: uint,
-    p_nonce: ptr_buf,
+    p_nonce: ptr_const_buf,
     nonce_length: buf_len,
-    p_additional_data: ptr_buf,
+    p_additional_data: ptr_const_buf,
     additional_data_length: buf_len,
-    p_ciphertext: ptr_buf,
+    p_ciphertext: ptr_const_buf,
     ciphertext_length: buf_len,
     p_plaintext: ptr_buf,
     plaintext_size: buf_len,
@@ -316,28 +322,28 @@ psa_aead_generate_nonce_req = (
 psa_aead_set_nonce_req = (
     49,
     p_handle: ptr_uint,
-    p_nonce: ptr_buf,
+    p_nonce: ptr_const_buf,
     nonce_length: buf_len,
 )
 
 psa_aead_set_lengths_req = (
     50,
     p_handle: ptr_uint,
-    ad_length: buf_len,
-    plaintext_length: buf_len,
+    ad_length: uint,
+    plaintext_length: uint,
 )
 
 psa_aead_update_ad_req = (
     51,
     p_handle: ptr_uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
 )
 
 psa_aead_update_req = (
     52,
     p_handle: ptr_uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
     p_output: ptr_buf,
     output_size: buf_len,
@@ -361,7 +367,7 @@ psa_aead_verify_req = (
     p_plaintext: ptr_buf,
     plaintext_size: buf_len,
     p_plaintext_length: ptr_uint,
-    p_tag: ptr_buf,
+    p_tag: ptr_const_buf,
     tag_length: buf_len,
 )
 
@@ -374,7 +380,7 @@ psa_sign_message_req = (
     56,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
     p_signature: ptr_buf,
     signature_size: buf_len,
@@ -385,9 +391,9 @@ psa_verify_message_req = (
     57,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
-    p_signature: ptr_buf,
+    p_signature: ptr_const_buf,
     signature_length: buf_len,
 )
 
@@ -395,7 +401,7 @@ psa_sign_hash_req = (
     58,
     key: uint,
     alg: uint,
-    p_hash: ptr_buf,
+    p_hash: ptr_const_buf,
     hash_length: buf_len,
     p_signature: ptr_buf,
     signature_size: buf_len,
@@ -406,9 +412,9 @@ psa_verify_hash_req = (
     59,
     key: uint,
     alg: uint,
-    p_hash: ptr_buf,
+    p_hash: ptr_const_buf,
     hash_length: buf_len,
-    p_signature: ptr_buf,
+    p_signature: ptr_const_buf,
     signature_length: buf_len,
 )
 
@@ -416,9 +422,9 @@ psa_asymmetric_encrypt_req = (
     60,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
-    p_salt: ptr_buf,
+    p_salt: ptr_const_buf,
     salt_length: buf_len,
     p_output: ptr_buf,
     output_size: buf_len,
@@ -429,9 +435,9 @@ psa_asymmetric_decrypt_req = (
     61,
     key: uint,
     alg: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
-    p_salt: ptr_buf,
+    p_salt: ptr_const_buf,
     salt_length: buf_len,
     p_output: ptr_buf,
     output_size: buf_len,
@@ -460,7 +466,7 @@ psa_key_derivation_input_bytes_req = (
     65,
     p_handle: ptr_uint,
     step: uint,
-    p_data: ptr_buf,
+    p_data: ptr_const_buf,
     data_length: buf_len,
 )
 
@@ -483,7 +489,7 @@ psa_key_derivation_key_agreement_req = (
     p_handle: ptr_uint,
     step: uint,
     private_key: uint,
-    p_peer_key: ptr_buf,
+    p_peer_key: ptr_const_buf,
     peer_key_length: buf_len,
 )
 
@@ -496,7 +502,7 @@ psa_key_derivation_output_bytes_req = (
 
 psa_key_derivation_output_key_req = (
     70,
-    p_attributes: ptr_attr,
+    p_attributes: ptr_const_attr,
     p_handle: ptr_uint,
     p_key: ptr_key,
 )
@@ -510,7 +516,7 @@ psa_raw_key_agreement_req = (
     72,
     alg: uint,
     private_key: uint,
-    p_peer_key: ptr_buf,
+    p_peer_key: ptr_const_buf,
     peer_key_length: buf_len,
     p_output: ptr_buf,
     output_size: buf_len,
@@ -525,7 +531,7 @@ psa_generate_random_req = (
 
 psa_generate_key_req = (
     74,
-    p_attributes: ptr_attr,
+    p_attributes: ptr_const_attr,
     p_key: ptr_key,
 )
 
@@ -533,7 +539,7 @@ psa_pake_setup_req = (
     79,
     p_handle: ptr_uint,
     password_key: uint,
-    p_cipher_suite: ptr_cipher,
+    p_cipher_suite: ptr_const_cipher,
 )
 
 psa_pake_set_role_req = (
@@ -545,21 +551,21 @@ psa_pake_set_role_req = (
 psa_pake_set_user_req = (
     81,
     p_handle: ptr_uint,
-    p_user_id: ptr_buf,
+    p_user_id: ptr_const_buf,
     user_id_len: buf_len,
 )
 
 psa_pake_set_peer_req = (
     82,
     p_handle: ptr_uint,
-    p_peer_id: ptr_buf,
+    p_peer_id: ptr_const_buf,
     peer_id_len: buf_len,
 )
 
 psa_pake_set_context_req = (
     83,
     p_handle: ptr_uint,
-    p_context: ptr_buf,
+    p_context: ptr_const_buf,
     context_len: buf_len,
 )
 
@@ -576,14 +582,14 @@ psa_pake_input_req = (
     85,
     p_handle: ptr_uint,
     step: uint,
-    p_input: ptr_buf,
+    p_input: ptr_const_buf,
     input_length: buf_len,
 )
 
 psa_pake_get_shared_key_req = (
     86,
     p_handle: ptr_uint,
-    p_attributes: ptr_attr,
+    p_attributes: ptr_const_attr,
     p_key: ptr_key,
 )
 
