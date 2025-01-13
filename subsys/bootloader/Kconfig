@@ -111,6 +111,12 @@ config SB_DISABLE_SELF_RWX
 	  Sets RRAMC's BOOTCONF region protection before jumping to application.
 	  It disables reads writes and execution memory area which holds NSIB.
 
+config SB_BOOTCONF_LOCK_WRITES
+	bool "Disable writes on bootloader's NVM"
+	depends on SOC_NRF54L15_CPUAPP && !FPROTECT_ALLOW_COMBINED_REGIONS
+	help
+	  Sets RRAMC's BOOTCONF region protection at chip flashing.
+
 endif # IS_SECURE_BOOTLOADER
 
 config IS_BOOTLOADER_IMG
