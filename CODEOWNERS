@@ -801,6 +801,7 @@
 /tests/crypto/                            @stephen-nordic @magnev
 /tests/drivers/audio/pdm_loopback/        @nrfconnect/ncs-low-level-test
 /tests/drivers/gpio/                      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/tests/drivers/flash/flash_ipuc/          @nrfconnect/ncs-charon
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
