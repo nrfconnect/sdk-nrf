@@ -1872,7 +1872,7 @@ static uint32_t dtm_packet_interval_calculate(uint32_t test_payload_length,
 		 * 24 CRC
 		 */
 		overhead_bits = 88; /* 11 bytes */
-	} else if (mode == NRF_RADIO_MODE_NRF_1MBIT) {
+	} else if (mode == NRF_RADIO_MODE_BLE_1MBIT) {
 		/*  8 preamble
 		 * 32 sync word
 		 *  8 PDU header, actually packetHeaderS0len * 8
