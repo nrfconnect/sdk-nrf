@@ -901,6 +901,7 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 {
 	kmu_metadata metadata;
 	psa_status_t status = read_primary_slot_metadata(slot_number, &metadata);
+	size_t opaque_key_size;
 
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -921,8 +922,14 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 		return status;
 	}
 
-	if (key_buffer_size >= cracen_get_opaque_size(attributes)) {
-		*key_buffer_length = cracen_get_opaque_size(attributes);
+
+	status = cracen_get_opaque_size(attributes, &opaque_key_size);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	if (key_buffer_size >= opaque_key_size) {
+		*key_buffer_length = opaque_key_size;
 		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
 
 		key->key_usage_scheme = metadata.key_usage_scheme;
