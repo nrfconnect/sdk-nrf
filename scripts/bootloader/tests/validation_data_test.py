@@ -6,16 +6,13 @@
 import hashlib
 import textwrap
 
-import ecdsa  # type: ignore[import-untyped]
-
 import do_sign
+from asn1parse import get_ecdsa_signature
+from cryptography.hazmat.primitives.serialization import load_pem_public_key
 from hash import generate_hash_digest
 from keygen import Ed25519KeysGenerator, EllipticCurveKeysGenerator
-from validation_data import (
-    Ed25519SignatureValidator,
-    EcdsaSignatureValidator,
-    main as validation_data_main
-)
+from validation_data import EcdsaSignatureValidator, Ed25519SignatureValidator
+from validation_data import main as validation_data_main
 
 DUMMY_ZEPHYR_HEX = textwrap.dedent("""\
 :1098000050110020EDA60000E5DE0000D9A6000002
@@ -56,7 +53,7 @@ def test_data_validation_for_ec(tmpdir):
 
     do_sign.sign_with_ecdsa(private_key_file, hash_file, message_signature_file)
 
-    public_key = ecdsa.VerifyingKey.from_pem(public_key_file.read())
+    public_key = load_pem_public_key(public_key_file.open('rb').read())
     EcdsaSignatureValidator(hashfunc=hashlib.sha256).append_validation_data(
         signature_file=message_signature_file,
         input_file=zephyr_hex_file,
@@ -66,7 +63,7 @@ def test_data_validation_for_ec(tmpdir):
         output_bin=output_bin_file.open('wb'),
         magic_value=magic_value
     )
-    assert message_signature_file.open('rb').read() in output_bin_file.open('rb').read()
+    assert get_ecdsa_signature(message_signature_file.open('rb').read(), 32) in output_bin_file.open('rb').read()
     # check with CLI command too
     assert validation_data_main(
         [
@@ -80,7 +77,8 @@ def test_data_validation_for_ec(tmpdir):
             '--magic-value', magic_value
         ]
     ) == 0
-    assert message_signature_file.open('rb').read() in output_bin_file.open('rb').read()
+
+    assert get_ecdsa_signature(message_signature_file.open('rb').read(), 32) in output_bin_file.open('rb').read()
 
 
 def test_data_validation_for_ed25519(tmpdir):
@@ -163,3 +161,32 @@ def test_data_validation_for_signed_hex_file_with_ed25519(tmpdir):
         ]
     ) == 0
     assert message_signature_file.open('rb').read() in output_bin_file.open('rb').read()
+
+
+def test_ecdsa_public_key_to_string(tmpdir):
+    public_key_data = textwrap.dedent("""\
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEihHfHl4KigTP4uFhlo1M1IkezteI
+        DLYmPEVtPrPYrQtqpctToFIG8uV3g6MAMhqPG/h69polPuvN3Lo56YnXhA==
+        -----END PUBLIC KEY-----
+    """)
+    public_key = load_pem_public_key(public_key_data.encode())
+    validator = EcdsaSignatureValidator(hashfunc=hashlib.sha256)
+    expected_bytes = (b'\x8a\x11\xdf\x1e^\n\x8a\x04\xcf\xe2\xe1a\x96\x8dL\xd4\x89\x1e'
+                      b'\xce\xd7\x88\x0c\xb6&<Em>\xb3\xd8\xad\x0bj\xa5\xcbS\xa0R\x06'
+                      b'\xf2\xe5w\x83\xa3\x002\x1a\x8f\x1b\xf8z\xf6\x9a%>\xeb\xcd\xdc'
+                      b'\xba9\xe9\x89\xd7\x84')
+    assert validator.to_string(public_key) == expected_bytes
+
+
+def test_ed25519_public_key_to_string(tmpdir):
+    public_key_data = textwrap.dedent("""\
+        -----BEGIN PUBLIC KEY-----
+        MCowBQYDK2VwAyEAHq4VC8pj/yLm8a7IzOZfkjB4o6Vk6UvRGGKAgpl24q8=
+        -----END PUBLIC KEY-----
+    """)
+    public_key = load_pem_public_key(public_key_data.encode())
+    validator = Ed25519SignatureValidator()
+    expected_bytes = (b'\x1e\xae\x15\x0b\xcac\xff"\xe6\xf1\xae\xc8\xcc\xe6_\x920x'
+                      b'\xa3\xa5d\xe9K\xd1\x18b\x80\x82\x99v\xe2\xaf')
+    assert validator.to_string(public_key) == expected_bytes

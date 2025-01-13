@@ -7,14 +7,15 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import hashlib
 import sys
 from pathlib import Path
 from typing import BinaryIO, Generator
 
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
-from ecdsa.keys import SigningKey  # type: ignore[import-untyped]
 from intelhex import IntelHex  # type: ignore[import-untyped]
 
 
@@ -66,11 +67,14 @@ def hex_to_binary(input_hex_file: str) -> bytes:
 def sign_with_ecdsa(
     private_key_file: Path, input_file: Path, output_file: Path | None = None
 ) -> int:
-    with open(private_key_file, 'r') as f:
-        private_key = SigningKey.from_pem(f.read())
+    with open(private_key_file, 'rb') as f:
+        private_key = load_pem_private_key(f.read(), password=None)
+    if not isinstance(private_key, EllipticCurvePrivateKey):
+        raise SystemExit(f'Private key file {private_key_file} is not Elliptic Curve key')
+
     with open(input_file, 'rb') as f:
         data = f.read()
-    signature = private_key.sign(data, hashfunc=hashlib.sha256)
+    signature = private_key.sign(data, ec.ECDSA(hashes.SHA256()))
     with open_stream(output_file) as stream:
         stream.write(signature)
     return 0
@@ -80,7 +84,10 @@ def sign_with_ed25519(
     private_key_file: Path, input_file: Path, output_file: Path | None = None
 ) -> int:
     with open(private_key_file, 'rb') as f:
-        private_key: Ed25519PrivateKey = load_pem_private_key(f.read(), password=None)  # type: ignore[assignment]
+        private_key = load_pem_private_key(f.read(), password=None)
+    if not isinstance(private_key, Ed25519PrivateKey):
+        raise SystemExit(f'Private key file {private_key_file} is not Ed25519 key')
+
     if str(input_file).endswith('.hex'):
         data = hex_to_binary(str(input_file))
     else:
@@ -92,13 +99,16 @@ def sign_with_ed25519(
     return 0
 
 
+ALGORITHMS = {
+    'ecdsa': sign_with_ecdsa,
+    'ed25519': sign_with_ed25519,
+}
+
+
 def main(argv=None) -> int:
     args = parse_args(argv)
-    if args.algorithm == 'ecdsa':
-        return sign_with_ecdsa(args.private_key, args.infile, args.outfile)
-    if args.algorithm == 'ed25519':
-        return sign_with_ed25519(args.private_key, args.infile, args.outfile)
-    return 1
+    sign_function = ALGORITHMS[args.algorithm]
+    return sign_function(args.private_key, args.infile, args.outfile)
 
 
 if __name__ == '__main__':
