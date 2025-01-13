@@ -83,7 +83,7 @@
 			/* Battery specs from LiPol LP803448 datasheet (Dwg. nr. FD_3245_70) */
 			term-microvolt = <4200000>;
 			current-microamp = <675000>; /* 0.5C charging current */
-			dischg-limit-microamp = <1340000>; /* Maximum value for PMIC */
+			dischg-limit-microamp = <1000000>; /* Maximum value for PMIC */
 			thermistor-cold-millidegrees = <0>;
 			thermistor-cool-millidegrees = <0>;
 			thermistor-warm-millidegrees = <45000>;
