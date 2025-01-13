@@ -145,11 +145,11 @@ nrfutil trace
 
 .. toggle::
 
-  * ``nrfutil trace`` has been updated to version 3.10.0.
+  * ``nrfutil trace`` has been updated to version 3.1.0.
 
-    Install the nRF Util ``trace`` command version 3.10.0 as follows::
+    Install the nRF Util ``trace`` command version 3.1.0 as follows::
 
-       nrfutil install trace=3.10.0 --force
+       nrfutil install trace=3.1.0 --force
 
     For more information, consult the `nRF Util`_ documentation.
 
