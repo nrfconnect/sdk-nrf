@@ -67,6 +67,10 @@ config BT_GATT_DM_DATA_PRINT
 	help
 	  Enable functions for printing discovery related data
 
+config HEAP_MEM_POOL_ADD_SIZE_BT_GATT_DM
+	int
+	default 512
+
 module = BT_GATT_DM
 module-str = GATT database discovery
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
