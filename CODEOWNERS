@@ -314,7 +314,7 @@
 # Include
 /include/audio/                           @nrfconnect/ncs-audio
 /include/audio_module/                    @nrfconnect/ncs-audio
-/include/bluetooth/                       @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
+/include/bluetooth/                       @nrfconnect/ncs-dragoon
 /include/bluetooth/adv_prov.h             @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
@@ -714,7 +714,7 @@
 /subsys/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-bluebagel
 /subsys/audio/audio_module_template/      @nrfconnect/ncs-audio
 /subsys/audio_module/                     @nrfconnect/ncs-audio
-/subsys/bluetooth/                        @nrfconnect/ncs-si-muffin @nrfconnect/ncs-dragoon
+/subsys/bluetooth/                        @nrfconnect/ncs-dragoon
 /subsys/bluetooth/adv_prov/               @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
