@@ -55,6 +55,7 @@
 	pinctrl-1 = <&i2c130_sleep>;
 	pinctrl-names = "default", "sleep";
 	zephyr,concat-buf-size = <255>;
+	zephyr,pm-device-runtime-auto;
 
 	bme688: bme688@76 {
 		compatible = "bosch,bme680";
@@ -82,6 +83,7 @@
 	pinctrl-1 = <&spi131_sleep>;
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
+	zephyr,pm-device-runtime-auto;
 	cs-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>,
 				<&gpio1 2 GPIO_ACTIVE_LOW>;
 
