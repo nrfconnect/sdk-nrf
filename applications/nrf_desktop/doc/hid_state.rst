@@ -29,7 +29,7 @@ Module events
 Configuration
 *************
 
-The |hid_state| is enabled by the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` option which is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` option.
+To enable the |hid_state|, use the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` Kconfig option that is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` option.
 An nRF Desktop peripheral uses the |hid_state| to generate HID reports based on the user input.
 For details related to HID configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
@@ -118,13 +118,13 @@ You must define all of the mentioned data in this configuration file, and specif
 Report expiration
 =================
 
-With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` configuration option, you can set the amount of time after which a key will be considered expired.
+With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a key will be considered expired.
 The higher the value, the longer the period after which the nRF Desktop application will recall pressed keys when the connection is established.
 
 Queue event size
 ================
 
-With the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` configuration option, you can set the number of elements on the queue where the keys are stored before the connection is established.
+With the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
 When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
 If there is no space in the queue, the oldest element is released.
 
@@ -208,7 +208,7 @@ This queue preserves an order at which input data events are received.
 Storing limitations
 -------------------
 
-The number of events that can be inserted into the queue is limited by :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` option.
+The number of events that can be inserted into the queue is limited using the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
 
 Discarding events
     When there is no space for a new input event, the |hid_state| tries to free space by discarding the oldest event in the queue.
@@ -259,7 +259,7 @@ Depending on the connection method, this event can be submitted:
 The :c:struct:`report_state` structure serves the following purposes:
 
 * Tracks the state of the connection.
-* Contains the link connecting the object to the right :c:struct:`report_data` structure, from which the data is taken when the HID report is formed.
+* Contains the link connecting the object to the right :c:struct:`report_data` structure from which the data is taken when the HID report is formed.
 * Tracks the number of reports of the associated type that were sent to the subscriber.
 
 Forming HID reports
@@ -270,7 +270,7 @@ The :c:struct:`report_data` structure is passed as an argument to this function.
 
 .. note::
     The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).
-    The source file containing the descriptor is given by :ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>` option.
+    The source file containing the descriptor is provided by the :ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>` Kconfig option.
 
 Handling HID keyboard LED state
 ===============================

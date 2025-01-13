@@ -9,7 +9,7 @@ Button simulator module
 
 Use the |button_sim| to generate the sequence of simulated key presses.
 The time between subsequent key presses is defined as a module configuration option.
-Generating keys can be started and stopped by pressing the predefined button.
+To start or stop generating key presses, press the predefined button.
 
 Module events
 *************
@@ -34,7 +34,7 @@ To configure the |button_sim|:
 #. Define the interval between subsequent simulated button presses (:ref:`CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL <config_desktop_app_options>`).
    One second is used by default.
 
-If you want the sequence to automatically restart after it ends, set :ref:`CONFIG_DESKTOP_BUTTONS_SIM_LOOP_FOREVER <config_desktop_app_options>`.
+If you want the sequence to automatically restart after it ends, set the :ref:`CONFIG_DESKTOP_BUTTONS_SIM_LOOP_FOREVER <config_desktop_app_options>` Kconfig option.
 By default, the sequence is generated only once.
 
 Implementation details
@@ -43,4 +43,4 @@ Implementation details
 The |button_sim| generates button sequence using :c:struct:`k_work_delayable`, which resubmits itself.
 The work handler submits the press and the release of a single button from the sequence.
 
-Receiving :c:struct:`button_event` with the key ID set to :ref:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID <config_desktop_app_options>` either stops generating the sequence (in case it is already being generated) or starts generating it.
+Receiving :c:struct:`button_event` with the key ID set to :ref:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID <config_desktop_app_options>` either stops generating the sequence (if it is already being generated) or starts generating it.

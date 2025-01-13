@@ -10,7 +10,7 @@ Fast Pair module
 The Fast Pair module is used to:
 
 * Update the Fast Pair advertising payload to automatically switch between showing and hiding user interface (UI) pairing indication on the Fast Pair Seeker.
-  The UI indication must be displayed only if the Provider can bond with new peers on the currently used Bluetooth local identity.
+  The UI indication must be displayed only if the Provider can bond with new peers on the currently used Bluetooth® local identity.
 * Reject a normal Bluetooth pairing when outside of the pairing mode.
 * Remove the Fast Pair advertising payload for the dongle peer.
 
@@ -44,7 +44,7 @@ The Fast Pair module is enabled using :ref:`CONFIG_DESKTOP_FAST_PAIR <config_des
 The option is enabled by default if :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` Kconfig option value is greater than one.
 
 .. note::
-   If :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` Kconfig option value is equal to one:
+   If the :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` Kconfig option value is equal to one:
 
    * Displaying UI indication during the Fast Pair not discoverable advertising (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR_SHOW_UI_PAIRING`) is disabled by default in the nRF Desktop advertising data configuration defined in :file:`src/util/Kconfig` file.
    * :ref:`nrf_desktop_ble_state` automatically disconnects new peers right after Bluetooth connection is established if the used Bluetooth local identity is already bonded with another peer.

@@ -92,12 +92,12 @@ During the grace period, Swift Pair data is removed from the advertising packet 
 This is done to ensure that the user does not try to connect to the device that is no longer available.
 
 .. note::
-   Make sure that :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` Kconfig option is enabled if both following conditions are met:
+   Make sure that the :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` Kconfig option is enabled if both following conditions are met:
 
    * Any of the providers requests the grace period.
    * :kconfig:option:`CONFIG_CAF_BLE_ADV_PM_EVENTS` is enabled.
 
-   The :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` is enabled by default if the Swift Pair advertising data provider is enabled in the configuration.
+   The :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` option is enabled by default if the Swift Pair advertising data provider is enabled in the configuration.
 
 Force power down on bonded peer power off
 -----------------------------------------
@@ -153,4 +153,4 @@ Grace period with synchronized updates of RPA and advertising data
 ==================================================================
 
 With both the :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD` and the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` options enabled, if the RPA rotation occurs in the grace period, it terminates the grace period prematurely.
-This limitation is caused by the Bluetooth API, which doesn't allow to delay the RPA rotation.
+This limitation is caused by the Bluetooth API, which does not allow delay in the RPA rotation.
