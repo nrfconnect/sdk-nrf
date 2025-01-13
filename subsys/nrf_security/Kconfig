@@ -266,4 +266,8 @@ config SOC_NRF9280_CPUSEC
 config SOC_NRF9230_ENGB_CPUSEC
 	bool
 
+# This is for internal use only.
+config CONFIG_SUIT
+	bool
+
 endmenu
