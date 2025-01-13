@@ -304,7 +304,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	printk("Starting Current Time Service client example\n");
+	printk("Starting Current Time Service client sample\n");
 
 	err = bt_cts_client_init(&cts_c);
 	if (err) {

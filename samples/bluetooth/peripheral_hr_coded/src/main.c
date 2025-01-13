@@ -172,7 +172,7 @@ int main(void)
 	uint32_t led_status = 0;
 	int err;
 
-	printk("Starting Bluetooth Peripheral HR coded example\n");
+	printk("Starting Bluetooth Peripheral HR coded sample\n");
 
 	err = dk_leds_init();
 	if (err) {

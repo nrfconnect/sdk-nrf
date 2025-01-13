@@ -167,7 +167,7 @@ The result should look similar to the following output.
 - For the central::
 
    *** Booting Zephyr OS build v3.3.99-ncs1-2858-gc9d01d05ce83 ***
-   Starting Bluetooth LLPM example
+   Starting Bluetooth LLPM sample
    I: SoftDevice Controller build revision:
    I: 01 2d a8 d4 0d e5 25 cf |.-....%.
    I: a3 48 8d 2f 56 e0 59 c8 |.H./V.Y.
@@ -242,7 +242,7 @@ The result should look similar to the following output.
 - For the peripheral::
 
    *** Booting Zephyr OS build v3.3.99-ncs1-2858-gc9d01d05ce83 ***
-   Starting Bluetooth LLPM example
+   Starting Bluetooth LLPM sample
    I: SoftDevice Controller build revision:
    I: 01 2d a8 d4 0d e5 25 cf |.-....%.
    I: a3 48 8d 2f 56 e0 59 c8 |.H./V.Y.

@@ -169,7 +169,7 @@ The result should look similar to the following output:
 * The MCPD method::
 
    *** Booting Zephyr OS build v2.6.99-ncs1  ***
-   Starting Distance Measurement example
+   Starting Distance Measurement sample
    I: SoftDevice Controller build revision:
    I: 3f 47 70 8e 81 95 4e 86 |?Gp...N.
    I: 9d d3 a2 95 88 f6 30 0a |......0.
@@ -200,7 +200,7 @@ The result should look similar to the following output:
 * The RTT method::
 
    *** Booting Zephyr OS build v2.6.99-ncs1  ***
-   Starting Distance Measurement example
+   Starting Distance Measurement sample
    I: SoftDevice Controller build revision:
    I: 3f 47 70 8e 81 95 4e 86 |?Gp...N.
    I: 9d d3 a2 95 88 f6 30 0a |......0.

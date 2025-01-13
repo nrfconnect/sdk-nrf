@@ -225,7 +225,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting GATT Discovery Manager example\n");
+	printk("Starting GATT Discovery Manager sample\n");
 
 	err = dk_buttons_init(button_changed);
 	if (err) {

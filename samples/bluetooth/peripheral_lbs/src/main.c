@@ -187,7 +187,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	printk("Starting Bluetooth Peripheral LBS example\n");
+	printk("Starting Bluetooth Peripheral LBS sample\n");
 
 	err = dk_leds_init();
 	if (err) {

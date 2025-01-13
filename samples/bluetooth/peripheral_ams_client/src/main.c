@@ -437,7 +437,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	printk("Starting Apple Media Service client example\n");
+	printk("Starting Apple Media Service client sample\n");
 
 	err = bt_ams_client_init(&ams_c);
 	if (err) {

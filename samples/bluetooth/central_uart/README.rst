@@ -68,7 +68,7 @@ Testing
 #. |connect_terminal_specific|
 #. Optionally, connect the RTT console to display debug messages. See :ref:`central_uart_debug`.
 #. Reset the kit.
-#. Observe that the text "Starting Bluetooth Central UART example" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with NUS.
+#. Observe that the text "Starting Bluetooth Central UART sample" is printed on the COM listener running on the computer and the device starts scanning for Peripherals with NUS.
 #. Program the :ref:`peripheral_uart` sample to the second development kit.
    See the documentation for that sample for detailed instructions.
 #. Observe that the kits connect.

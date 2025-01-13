@@ -940,7 +940,7 @@ int main(void)
 	int err;
 	int blink_status = 0;
 
-	printk("Starting Bluetooth Peripheral HIDS keyboard example\n");
+	printk("Starting Bluetooth Peripheral HIDS keyboard sample\n");
 
 	configure_gpio();
 

@@ -588,7 +588,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting NFC Central Pairing example\n");
+	printk("Starting NFC Central Pairing sample\n");
 
 	/* Configure buttons */
 	err = dk_buttons_init(button_changed);

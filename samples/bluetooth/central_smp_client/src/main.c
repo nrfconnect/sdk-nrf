@@ -431,7 +431,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting Bluetooth Central SMP Client example\n");
+	printk("Starting Bluetooth Central SMP Client sample\n");
 
 	bt_dfu_smp_init(&dfu_smp, &init_params);
 

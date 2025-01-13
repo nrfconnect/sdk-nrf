@@ -230,7 +230,7 @@ int main(void)
 	int err;
 	uint32_t blink_status = 0;
 
-	printk("Starting Running Speed and Cadence peripheral example\n");
+	printk("Starting Running Speed and Cadence peripheral sample\n");
 
 	err = dk_leds_init();
 	if (err) {

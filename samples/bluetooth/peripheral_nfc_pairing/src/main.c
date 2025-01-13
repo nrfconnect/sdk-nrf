@@ -711,7 +711,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting Bluetooth NFC Pairing Reference example\n");
+	printk("Starting Bluetooth NFC Pairing Reference sample\n");
 
 	/* Configure LED-pins as outputs */
 	err = dk_leds_init();

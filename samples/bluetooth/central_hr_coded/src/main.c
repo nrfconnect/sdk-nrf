@@ -254,7 +254,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting Bluetooth Central HR coded example\n");
+	printk("Starting Bluetooth Central HR coded sample\n");
 
 	err = bt_enable(NULL);
 	if (err) {

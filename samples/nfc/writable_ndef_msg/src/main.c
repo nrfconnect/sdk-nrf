@@ -119,7 +119,7 @@ static int board_init(void)
  */
 int main(void)
 {
-	printk("Starting Nordic NFC Writable NDEF Message example\n");
+	printk("Starting Nordic NFC Writable NDEF Message sample\n");
 
 	/* Configure LED-pins as outputs. */
 	if (board_init() < 0) {
@@ -167,7 +167,7 @@ int main(void)
 		printk("Cannot start emulation!\n");
 		goto fail;
 	}
-	printk("Starting NFC Writable NDEF Message example\n");
+	printk("Starting NFC Writable NDEF Message sample\n");
 
 	while (true) {
 		if (atomic_cas(&op_flags, FLASH_BUF_PREP_FINISHED,

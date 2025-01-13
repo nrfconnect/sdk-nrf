@@ -233,7 +233,7 @@ After programming the sample to your development kit, complete the following ste
       #. Reset the kit.
       #. Observe that **LED 1** is blinking and the device is advertising under the default name **Nordic_UART_Service**.
          You can configure this name using the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option.
-      #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
+      #. Observe that the text "Starting Nordic UART service sample" is printed on the COM listener running on the computer.
 
    .. group-tab:: nRF54 DKs
 
@@ -247,7 +247,7 @@ After programming the sample to your development kit, complete the following ste
       #. Reset the kit.
       #. Observe that **LED 0** is blinking and the device is advertising under the default name **Nordic_UART_Service**.
          You can configure this name using the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option.
-      #. Observe that the text "Starting Nordic UART service example" is printed on the COM listener running on the computer.
+      #. Observe that the text "Starting Nordic UART service sample" is printed on the COM listener running on the computer.
 
 .. _peripheral_uart_testing_mobile:
 

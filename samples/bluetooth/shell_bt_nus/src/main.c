@@ -123,7 +123,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting Bluetooth NUS shell transport example\n");
+	printk("Starting Bluetooth NUS shell transport sample\n");
 
 	if (IS_ENABLED(CONFIG_BT_SMP)) {
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);

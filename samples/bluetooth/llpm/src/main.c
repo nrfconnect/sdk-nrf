@@ -443,7 +443,7 @@ int main(void)
 
 	console_init();
 
-	printk("Starting Bluetooth LLPM example\n");
+	printk("Starting Bluetooth LLPM sample\n");
 
 	err = bt_enable(NULL);
 	if (err) {

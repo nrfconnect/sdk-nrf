@@ -155,7 +155,7 @@ BUILD_ASSERT(false, "No Clock Control driver");
 
 int main(void)
 {
-	printk("Starting Radio Test example\n");
+	printk("Starting Radio Test sample\n");
 
 	clock_init();
 

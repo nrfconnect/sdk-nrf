@@ -392,7 +392,7 @@ int main(void)
 
 	console_init();
 
-	printk("Starting Bluetooth Subrating example\n");
+	printk("Starting Bluetooth Subrating sample\n");
 
 	err = bt_enable(NULL);
 	if (err) {
