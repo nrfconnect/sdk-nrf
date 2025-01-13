@@ -181,7 +181,7 @@ The result should look similar to the following output.
 For the tester::
 
    *** Booting Zephyr OS build v3.0.99-ncs1  ***
-   Starting Bluetooth Throughput example
+   Starting Bluetooth Throughput sample
    I: SoftDevice Controller build revision:
    I: 33 78 2a 18 20 f5 61 61 |3x*. .aa
    I: a6 8b 77 60 62 83 39 2a |..w`b.9*
@@ -230,7 +230,7 @@ For the tester::
 For the peer::
 
    *** Booting Zephyr OS build v3.0.99-ncs1  ***
-   Starting Bluetooth Throughput example
+   Starting Bluetooth Throughput sample
    I: SoftDevice Controller build revision:
    I: 33 78 2a 18 20 f5 61 61 |3x*. .aa
    I: a6 8b 77 60 62 83 39 2a |..w`b.9*

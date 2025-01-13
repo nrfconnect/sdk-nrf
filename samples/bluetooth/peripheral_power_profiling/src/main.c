@@ -711,7 +711,7 @@ int main(void)
 	uint32_t button_state = 0;
 	uint32_t has_changed = 0;
 
-	printk("Starting Bluetooth Power Profiling example\n");
+	printk("Starting Bluetooth Power Profiling sample\n");
 
 	err = dk_buttons_init(button_handler);
 	if (err) {

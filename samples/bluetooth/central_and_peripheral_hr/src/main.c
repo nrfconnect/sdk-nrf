@@ -381,7 +381,7 @@ int main(void)
 	int err;
 	int blink_status = 0;
 
-	printk("Starting Bluetooth Central and Peripheral Heart Rate relay example\n");
+	printk("Starting Bluetooth Central and Peripheral Heart Rate relay sample\n");
 
 	err = dk_leds_init();
 	if (err) {

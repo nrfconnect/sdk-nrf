@@ -682,7 +682,7 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	printk("Starting Apple Notification Center Service client example\n");
+	printk("Starting Apple Notification Center Service client sample\n");
 
 	err = ancs_c_init();
 	if (err) {

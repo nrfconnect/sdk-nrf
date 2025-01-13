@@ -350,7 +350,7 @@ int main(void)
 	uint32_t blink_status = 0;
 	struct dm_init_param init_param;
 
-	printk("Starting Distance Measurement example\n");
+	printk("Starting Distance Measurement sample\n");
 
 	err = dk_leds_init();
 	if (err) {

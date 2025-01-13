@@ -19,7 +19,7 @@ int main(void)
 	uint32_t blink_status = 0;
 	int err;
 
-	printk("Starting NFC shell example\n");
+	printk("Starting NFC shell sample\n");
 
 	err = dk_leds_init();
 	if (err) {

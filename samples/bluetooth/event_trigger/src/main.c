@@ -257,7 +257,7 @@ int main(void)
 
 	k_work_init(&work, work_handler);
 	console_init();
-	printk("Starting Event Trigger Example.\n");
+	printk("Starting Event Trigger Sample.\n");
 
 	err = bt_enable(NULL);
 	if (err) {

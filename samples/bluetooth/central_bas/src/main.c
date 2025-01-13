@@ -366,7 +366,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting Bluetooth Central BAS example\n");
+	printk("Starting Bluetooth Central BAS sample\n");
 
 	bt_bas_client_init(&bas);
 

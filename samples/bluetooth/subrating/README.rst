@@ -106,7 +106,7 @@ The result should look similar to the following output:
 
     *** Booting nRF Connect SDK v2.7.99-9539f0a1a59b ***
     *** Using Zephyr OS v3.6.99-766b306bcbe8 ***
-    Starting Bluetooth Subrating example
+    Starting Bluetooth Subrating sample
     I: SoftDevice Controller build revision:
     I: 0f 3f c8 4a 7e 8d b6 7a |.?.J~..z
     I: 64 7f 04 47 8b 3c 4b ae |d..G.<K.
@@ -136,7 +136,7 @@ The result should look similar to the following output:
 
     *** Booting nRF Connect SDK v2.7.99-9539f0a1a59b ***
     *** Using Zephyr OS v3.6.99-766b306bcbe8 ***
-    Starting Bluetooth Subrating example
+    Starting Bluetooth Subrating sample
     I: SoftDevice Controller build revision:
     I: 0f 3f c8 4a 7e 8d b6 7a |.?.J~..z
     I: 64 7f 04 47 8b 3c 4b ae |d..G.<K.

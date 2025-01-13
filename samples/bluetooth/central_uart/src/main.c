@@ -597,7 +597,7 @@ int main(void)
 		return 0;
 	}
 
-	printk("Starting Bluetooth Central UART example\n");
+	printk("Starting Bluetooth Central UART sample\n");
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {

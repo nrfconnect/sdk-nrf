@@ -616,7 +616,7 @@ int main(void)
 {
 	int err;
 
-	LOG_INF("Starting Bluetooth Fast Pair locator tag example");
+	LOG_INF("Starting Bluetooth Fast Pair locator tag sample");
 
 	if (IS_ENABLED(CONFIG_APP_DFU)) {
 		app_dfu_fw_version_log();

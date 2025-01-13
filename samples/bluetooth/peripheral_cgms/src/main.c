@@ -120,7 +120,7 @@ int main(void)
 	struct bt_cgms_cb cb;
 	struct bt_cgms_init_param params;
 
-	printk("Starting Bluetooth Peripheral CGM example\n");
+	printk("Starting Bluetooth Peripheral CGM sample\n");
 
 	bt_conn_auth_cb_register(&auth_cb_display);
 

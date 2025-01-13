@@ -284,7 +284,7 @@ int main(void)
 	uint32_t blink_status = 0;
 	int err;
 
-	printk("Starting Bluetooth Memfault example\n");
+	printk("Starting Bluetooth Memfault sample\n");
 
 	err = dk_leds_init();
 	if (err) {

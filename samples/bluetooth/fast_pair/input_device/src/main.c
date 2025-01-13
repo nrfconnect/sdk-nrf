@@ -516,7 +516,7 @@ int main(void)
 	bool run_led_on = true;
 	int err;
 
-	LOG_INF("Starting Bluetooth Fast Pair input device example");
+	LOG_INF("Starting Bluetooth Fast Pair input device sample");
 
 	/* Switch to the cooperative thread context before interaction
 	 * with the Fast Pair API.

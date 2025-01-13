@@ -186,7 +186,7 @@ int main(void)
 	int err;
 	int blink_status = 0;
 
-	printk("Starting Bluetooth multiple advertising sets example\n");
+	printk("Starting Bluetooth multiple advertising sets sample\n");
 
 	err = dk_leds_init();
 	if (err) {

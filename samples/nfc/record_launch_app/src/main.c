@@ -57,7 +57,7 @@ int main(void)
 	int err;
 	size_t len = sizeof(ndef_msg_buf);
 
-	printk("Starting NFC Launch app example\n");
+	printk("Starting NFC Launch app sample\n");
 
 	/* Configure LED-pins as outputs */
 	err = dk_leds_init();

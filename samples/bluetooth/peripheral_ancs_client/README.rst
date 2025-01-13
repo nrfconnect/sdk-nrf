@@ -140,7 +140,7 @@ Testing with Bluetooth Low Energy app
 Send an iOS notification to the application
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The following table shows the format of a notification that you can send to the example application:
+The following table shows the format of a notification that you can send to the sample application:
 
    +------------------+---------------+--------------------------+
    | Field            | Example value | Interpretation           |
@@ -223,7 +223,7 @@ The following table shows the relevant part of a request to retrieve notificatio
    | Length           | 20 00         | 0x0020                      |
    +------------------+---------------+-----------------------------+
 
-Note that the example application will request all existing attribute types, not only a subset.
+Note that the sample application will request all existing attribute types, not only a subset.
 
 The following table shows the format of a response that contains some of the requested notification attributes:
 

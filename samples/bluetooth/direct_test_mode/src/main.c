@@ -14,7 +14,7 @@ int main(void)
 	int err;
 	union dtm_tr_packet cmd;
 
-	printk("Starting Direct Test Mode example\n");
+	printk("Starting Direct Test Mode sample\n");
 
 	err = dtm_tr_init();
 	if (err) {

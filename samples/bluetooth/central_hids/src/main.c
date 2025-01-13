@@ -646,7 +646,7 @@ int main(void)
 {
 	int err;
 
-	printk("Starting Bluetooth Central HIDS example\n");
+	printk("Starting Bluetooth Central HIDS sample\n");
 
 	bt_hogp_init(&hogp, &hogp_init_params);
 
