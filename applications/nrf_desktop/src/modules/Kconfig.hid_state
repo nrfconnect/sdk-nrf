@@ -60,6 +60,16 @@ config DESKTOP_HID_EVENT_QUEUE_SIZE
 	help
 	  Size of the HID event queue.
 
+config DESKTOP_HID_STATE_RAW_REPORTS
+	bool
+	help
+	  This option should be selected if the application code issue reports
+	  prepared outside of the HID state module.
+	  The HID state module will work as proxy collecting and holding such
+	  reports.
+	  The HID state will not alter the data but will make sure the reports
+	  are sent to the transport in an organized manner.
+
 module = DESKTOP_HID_STATE
 module-str = HID state
 source "subsys/logging/Kconfig.template.log_config"
