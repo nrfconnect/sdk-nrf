@@ -518,6 +518,7 @@ static void history_transfer_task(struct k_work *work)
 	} else {
 		log_rpc_history_free(history_cur_msg);
 		history_cur_msg = NULL;
+		log_rpc_history_set_overwriting(true);
 	}
 
 	k_mutex_unlock(&history_transfer_mtx);
@@ -541,6 +542,7 @@ static void log_rpc_fetch_history_handler(const struct nrf_rpc_group *group,
 
 	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
 	history_transfer_id = transfer_id;
+	log_rpc_history_set_overwriting(false);
 	k_work_submit_to_queue(&history_transfer_workq, &history_transfer_work);
 	k_mutex_unlock(&history_transfer_mtx);
 
