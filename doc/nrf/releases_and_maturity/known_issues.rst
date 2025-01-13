@@ -189,6 +189,16 @@ KRKNWK-14299: NRPA MAC address cannot be set in Zephyr
 Bluetooth LE
 ============
 
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0
+
+DRGN-24352: Missing disconnection events when HCI Controller to host flow control is enabled
+  :zephyr:code-sample:`bluetooth_hci_ipc` and :ref:`ipc_radio application` do not support stream flow control and drop bytes.
+  With the deferred disconnection complete generation added in the |NCS| v2.6.0, there are cases where the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option has value ``y``, and the value of :kconfig:option:`CONFIG_BT_BUF_CMD_TX_COUNT` is smaller than (:kconfig:option:`CONFIG_BT_BUF_ACL_RX_COUNT` + 1).
+  This might result in dropped HCI command packets.
+  The symptom visible is a missing disconnect event, and subsequent failure in connection, if a peripheral device falls out of range or is powered off.
+
+  **Workaround:** Users should ensure that the value of :kconfig:option:`CONFIG_BT_BUF_ACL_RX_COUNT` is smaller than the one for :kconfig:option:`CONFIG_BT_BUF_CMD_TX_COUNT` in their project.
+
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0
 
 NCSDK-31095: Issues with the :kconfig:option:`CONFIG_SEGGER_SYSVIEW` Kconfig option
