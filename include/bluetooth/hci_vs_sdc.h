@@ -114,17 +114,6 @@ int hci_vs_sdc_zephyr_read_tx_power(
 	const sdc_hci_cmd_vs_zephyr_read_tx_power_t *params,
 	sdc_hci_cmd_vs_zephyr_read_tx_power_return_t *return_params);
 
-/** @brief Read Supported Vendor Specific Commands.
- *
- * For the complete API description, see sdc_hci_cmd_vs_read_supported_vs_commands().
- *
- * @param[out] return_params Return parameters.
- *
- * @return 0 on success or negative error value on failure.
- */
-int hci_vs_sdc_read_supported_vs_commands(
-	sdc_hci_cmd_vs_read_supported_vs_commands_return_t *return_params);
-
 /** @brief Set Low Latency Packet Mode.
  *
  * For the complete API description, see sdc_hci_cmd_vs_llpm_mode_set().
