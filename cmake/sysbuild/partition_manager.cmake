@@ -498,19 +498,25 @@ foreach(d APP ${PM_DOMAINS})
 
   sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF91X IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF91X KCONFIG)
   sysbuild_get(${image_name}_CONFIG_SOC_NRF5340_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF5340_CPUAPP KCONFIG)
+  sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF54LX IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF54LX KCONFIG)
   sysbuild_get(${image_name}_CONFIG_SOC_NRF54L15_CPUAPP IMAGE ${image_name} VAR CONFIG_SOC_NRF54L15_CPUAPP KCONFIG)
 
-  if (${image_name}_CONFIG_SOC_SERIES_NRF91X)
+  if(${image_name}_CONFIG_SOC_SERIES_NRF91X)
     # See nRF9160 Product Specification, chapter "UICR"
     set(otp_start_addr "0xff8108")
     set(otp_size 756) # 189 * 4
-  elseif (${image_name}_CONFIG_SOC_NRF5340_CPUAPP)
+  elseif(${image_name}_CONFIG_SOC_NRF5340_CPUAPP)
     # See nRF5340 Product Specification, chapter Application Core -> ... "UICR"
     set(otp_start_addr "0xff8100")
     set(otp_size 764)  # 191 * 4
-  elseif (DEFINED ${image_name}_CONFIG_SOC_NRF54L15_CPUAPP)
-    set(otp_start_addr "0xffd500")
-    set(otp_size 1276)  # 319 * 4
+  elseif(${image_name}_CONFIG_SOC_SERIES_NRF54LX)
+    set(bootconf_start_addr "0xffd080")
+    set(bootconf_size 4)
+
+    if(DEFINED ${image_name}_CONFIG_SOC_NRF54L15_CPUAPP)
+      set(otp_start_addr "0xffd500")
+      set(otp_size 1276)  # 319 * 4
+    endif()
   endif()
 
   sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF54LX IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF54LX KCONFIG)
@@ -539,6 +545,15 @@ foreach(d APP ${PM_DOMAINS})
       NAME otp
       SIZE ${otp_size}
       BASE ${otp_start_addr}
+      PLACEMENT start_to_end
+      DOMAIN ${d}
+      )
+  endif()
+  if(${image_name}_CONFIG_SOC_SERIES_NRF54LX)
+    add_region(
+      NAME bootconf
+      SIZE ${bootconf_size}
+      BASE ${bootconf_start_addr}
       PLACEMENT start_to_end
       DOMAIN ${d}
       )
