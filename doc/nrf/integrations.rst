@@ -11,6 +11,10 @@ Integrations of the following third-party products are documented in their priva
 
 In the case of Find My, MFi licensees can get access to the repository by issuing a Nordic `DevZone`_ private ticket.
 
+.. note::
+    Integrations are available also through the `nRF Connect SDK Add-ons`_, a curated collection of supplementary |NCS| components.
+    For more information, including how to contribute your own add-on to the index, read :file:`README.md` and :file:`CONTRIBUTING.md` in the `ncs-app-index repository <ncs-app-index_>`_.
+
 The following user guides describe available integrations:
 
 .. toctree::

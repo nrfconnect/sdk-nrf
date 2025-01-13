@@ -603,6 +603,13 @@ Glossary
       It includes a public REST API that can be used for building IoT solutions.
       See `nRF Cloud`_.
 
+   nRF Connect SDK Add-ons
+      An index of publicly available supplementary components that extend the |NCS|'s functionality.
+      The index can be accessed from the |nRFVSC|, and can also be browsed on `add-on webpage <nRF Connect SDK Add-ons_>`_.
+      Add-ons in the index follow specific contribution guidelines and are maintained by their respective owners.
+      The workspace applications listed there can be used to create out-of-tree :ref:`workspace applications <creating_add_on_index>`.
+      For more information, including how to contribute your own add-on to the index, read :file:`README.md` and :file:`CONTRIBUTING.md` in the `ncs-app-index repository <ncs-app-index_>`_.
+
    nRF repository
       An |NCS| repository, hosted in the `nrfconnect GitHub organization`_, that does not have an externally maintained, open-source upstream.
       It is exclusive to Nordic development.
