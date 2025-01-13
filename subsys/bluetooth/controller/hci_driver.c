@@ -68,6 +68,23 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_CENTRAL) ||
 BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 			 (CONFIG_BT_CTLR_SDC_PERIPHERAL_COUNT > 0));
 
+#if defined(CONFIG_BT_HCI_ACL_FLOW_CONTROL)
+  /*
+   * The Host will generate up to acl_pkts number of Host Number of Completed Packets command plus a
+   * number of normal HCI commands, as such we need to ensure the tx command buffer count is big
+   * enough to not block incoming ACKs from the host.
+   *
+   * When Controller to Host data flow control is supported, ensure that BT_BUF_CMD_TX_COUNT is
+   * greater than or equal to (BT_BUF_ACL_RX_COUNT + Ncmd), where Ncmd is the supported maximum
+   * Num_HCI_Command_Packets.
+   *
+   * The SDC controller (currently) does not support Num_HCI_Command_Packets > 1, which means Ncmd
+   * is always 1.
+   */
+BUILD_ASSERT(CONFIG_BT_BUF_ACL_RX_COUNT < CONFIG_BT_BUF_CMD_TX_COUNT,
+	     "Too low HCI command buffers compared to ACL Rx buffers.");
+#endif
+
 #if defined(CONFIG_BT_BROADCASTER)
 	#if defined(CONFIG_BT_CTLR_ADV_EXT)
 		#define SDC_ADV_SET_COUNT CONFIG_BT_CTLR_ADV_SET
