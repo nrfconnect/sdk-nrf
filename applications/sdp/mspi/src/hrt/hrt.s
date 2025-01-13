@@ -162,13 +162,13 @@ hrt_write:
  #APP
 	csrw 3022, a5
  #NO_APP
-	lbu	a4,66(s0)
-	li	a5,1
-	sll	a5,a5,a4
-	lbu	a4,68(s0)
+	lbu	a5,66(s0)
+	li	a4,1
+	lbu	a3,68(s0)
+	sll	a5,a4,a5
 	slli	a5,a5,16
 	srli	a5,a5,16
-	bne	a4,zero,.L21
+	bne	a3,a4,.L21
  #APP
 	csrc 3008, a5
  #NO_APP
@@ -209,13 +209,13 @@ hrt_write:
  #NO_APP
 	lbu	a5,67(s0)
 	bne	a5,zero,.L13
-	lbu	a4,66(s0)
-	li	a5,1
-	sll	a5,a5,a4
-	lbu	a4,68(s0)
+	lbu	a5,66(s0)
+	li	a4,1
+	lbu	a3,68(s0)
+	sll	a5,a4,a5
 	slli	a5,a5,16
 	srli	a5,a5,16
-	bne	a4,zero,.L26
+	bne	a3,a4,.L26
  #APP
 	csrs 3008, a5
  #NO_APP

@@ -93,7 +93,7 @@ typedef struct {
 	bool ce_hold;
 
 	/** @brief Chip enable pin polarity in enabled state. */
-	enum mspi_ce_polarity ce_polarity;
+	nrfe_mspi_polarity_t ce_polarity;
 
 	/** @brief When true clock signal makes 1 transition less.
 	 *         It is required for spi modes 1 and 3 due to hardware issue.

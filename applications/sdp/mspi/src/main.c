@@ -19,10 +19,6 @@
 
 #include <stdint.h>
 
-#define CE_PINS_MAX   9
-#define DATA_PINS_MAX 8
-#define VIO_COUNT     11
-
 #define SUPPORTED_IO_MODES_COUNT 7
 
 #define HRT_IRQ_PRIORITY    2
@@ -34,7 +30,7 @@
 /* In OCTAL mode 4 bytes for address + 32 bytes for up to 32 dummy cycles*/
 #define ADDR_AND_CYCLES_MAX_SIZE 36
 
-static const uint8_t pin_to_vio_map[VIO_COUNT] = {
+static const uint8_t pin_to_vio_map[NRFE_MSPI_VIO_COUNT] = {
 	4,  /* Physical pin 0 */
 	0,  /* Physical pin 1 */
 	1,  /* Physical pin 2 */
@@ -59,17 +55,26 @@ static const hrt_xfer_bus_widths_t io_modes[SUPPORTED_IO_MODES_COUNT] = {
 };
 
 static volatile uint8_t ce_vios_count;
-static volatile uint8_t ce_vios[CE_PINS_MAX];
+static volatile uint8_t ce_vios[NRFE_MSPI_CE_PINS_MAX];
 static volatile uint8_t data_vios_count;
-static volatile uint8_t data_vios[DATA_PINS_MAX];
-static volatile struct mspi_cfg nrfe_mspi_cfg;
-static volatile struct mspi_dev_cfg nrfe_mspi_dev_cfg;
-static volatile struct mspi_xfer nrfe_mspi_xfer;
+static volatile uint8_t data_vios[NRFE_MSPI_DATA_PINS_MAX];
+static volatile nrfe_mspi_xfer_config_t nrfe_mspi_xfer_config;
+
 static volatile hrt_xfer_t xfer_params;
 static volatile uint8_t address_and_dummy_cycles[ADDR_AND_CYCLES_MAX_SIZE];
 
 static struct ipc_ept ep;
 static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
+
+NRF_STATIC_INLINE void nrf_vpr_csr_vio_out_or_set(uint16_t value)
+{
+    nrf_csr_set_bits(VPRCSR_NORDIC_OUT, value);
+}
+
+NRF_STATIC_INLINE void nrf_vpr_csr_vio_out_clear_set(uint16_t value)
+{
+    nrf_csr_clear_bits(VPRCSR_NORDIC_OUT, value);
+}
 
 static void adjust_tail(volatile hrt_xfer_data_t *xfer_data, uint16_t frame_width, uint32_t data_length)
 {
@@ -150,36 +155,37 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	nrf_vpr_csr_vio_config_set(&vio_config);
 }
 
-static void xfer_execute(struct mspi_xfer_packet xfer_packet)
+static void xfer_execute(nrfe_mspi_xfer_packet_t *xfer_packet, uint8_t *buffer)
 {
-	NRFX_ASSERT(nrfe_mspi_dev_cfg.ce_num < ce_vios_count);
-	NRFX_ASSERT(nrfe_mspi_dev_cfg.io_mode < SUPPORTED_IO_MODES_COUNT);
+	NRFX_ASSERT(nrfe_mspi_xfer_config.ce_num < ce_vios_count);
+	NRFX_ASSERT(nrfe_mspi_xfer_config.io_mode < SUPPORTED_IO_MODES_COUNT);
+	NRFX_ASSERT(nrfe_mspi_xfer_config.ce_polarities[nrfe_mspi_xfer_config.ce_num] != NRFE_MSPI_POL_UNDEFINED);
 
 	xfer_params.counter_value = 4;
-	xfer_params.ce_vio = ce_vios[nrfe_mspi_dev_cfg.ce_num];
-	xfer_params.ce_hold = nrfe_mspi_xfer.hold_ce;
-	xfer_params.ce_polarity = nrfe_mspi_dev_cfg.ce_polarity;
-	xfer_params.bus_widths = io_modes[nrfe_mspi_dev_cfg.io_mode];
-	
+	xfer_params.ce_vio = ce_vios[nrfe_mspi_xfer_config.ce_num];
+	xfer_params.ce_hold = nrfe_mspi_xfer_config.hold_ce;
+	xfer_params.ce_polarity = nrfe_mspi_xfer_config.ce_polarities[nrfe_mspi_xfer_config.ce_num];
+	xfer_params.bus_widths = io_modes[nrfe_mspi_xfer_config.io_mode];
+
 	/* Fix position of command if command length is < BITS_IN_WORD,
 	 * so that leading zeros would not be printed instead of data bits.
 	 */
-	xfer_packet.cmd = xfer_packet.cmd
-			  << (BITS_IN_WORD - nrfe_mspi_xfer.cmd_length * BITS_IN_BYTE);
+	xfer_packet->command = xfer_packet->command
+			  << (BITS_IN_WORD - nrfe_mspi_xfer_config.command_length * BITS_IN_BYTE);
 
 	xfer_params.xfer_data[HRT_FE_COMMAND].vio_out_set = &nrf_vpr_csr_vio_out_buffered_reversed_word_set;
-	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet.cmd;
+	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet->command;
 	xfer_params.xfer_data[HRT_FE_COMMAND].word_count = 0;
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_COMMAND],
 		xfer_params.bus_widths.command,
-		nrfe_mspi_xfer.cmd_length * BITS_IN_BYTE);
+		nrfe_mspi_xfer_config.command_length * BITS_IN_BYTE);
 
-	for (uint8_t i = 0; i < nrfe_mspi_xfer.addr_length; i++) {
-		address_and_dummy_cycles[i] = *(((uint8_t *)&xfer_packet.address)+nrfe_mspi_xfer.addr_length-i-1);
+	for (uint8_t i = 0; i < nrfe_mspi_xfer_config.address_length; i++) {
+		address_and_dummy_cycles[i] = *(((uint8_t *)&xfer_packet->address)+nrfe_mspi_xfer_config.address_length-i-1);
 	}
 
-	for (uint8_t i = nrfe_mspi_xfer.addr_length; i < ADDR_AND_CYCLES_MAX_SIZE; i++) {
+	for (uint8_t i = nrfe_mspi_xfer_config.address_length; i < ADDR_AND_CYCLES_MAX_SIZE; i++) {
 		address_and_dummy_cycles[i] = 0;
 	}
 
@@ -189,15 +195,15 @@ static void xfer_execute(struct mspi_xfer_packet xfer_packet)
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_ADDRESS],
 		xfer_params.bus_widths.address,
-		nrfe_mspi_xfer.addr_length * BITS_IN_BYTE +
-			nrfe_mspi_xfer.tx_dummy * xfer_params.bus_widths.address);
+		nrfe_mspi_xfer_config.address_length * BITS_IN_BYTE +
+			nrfe_mspi_xfer_config.tx_dummy * xfer_params.bus_widths.address);
 
 	xfer_params.xfer_data[HRT_FE_DATA].vio_out_set = &nrf_vpr_csr_vio_out_buffered_reversed_byte_set;
-	xfer_params.xfer_data[HRT_FE_DATA].data = xfer_packet.data_buf;
+	xfer_params.xfer_data[HRT_FE_DATA].data = buffer;
 	xfer_params.xfer_data[HRT_FE_DATA].word_count = 0;
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA],
-		xfer_params.bus_widths.data, xfer_packet.num_bytes * BITS_IN_BYTE);
+		xfer_params.bus_widths.data, xfer_packet->num_bytes * BITS_IN_BYTE);
 
 	nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE));
 }
@@ -215,7 +221,7 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_t *pins_cfg)
 
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
 
-		NRFX_ASSERT(pin_number < VIO_COUNT)
+		NRFX_ASSERT(pin_number < NRFE_MSPI_VIO_COUNT)
 
 		if ((fun >= NRF_FUN_SDP_MSPI_CS0) && (fun <= NRF_FUN_SDP_MSPI_CS4)) {
 
@@ -244,7 +250,24 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_t *pins_cfg)
 		}
 	}
 	nrf_vpr_csr_vio_dir_set(xfer_params.tx_direction_mask);
-	nrf_vpr_csr_vio_out_set(VPRCSR_NORDIC_OUT_HIGH << pin_to_vio_map[NRFE_MSPI_CS0_PIN_NUMBER]);
+}
+
+static void set_ce_pins()
+{
+	for(uint8_t i=0; (i<NRFE_MSPI_CE_PINS_MAX) && (i<ce_vios_count); i++) {
+
+		switch(nrfe_mspi_xfer_config.ce_polarities[i])
+		{
+		case NRFE_MSPI_POL_UNDEFINED:
+			break;
+		case NRFE_MSPI_POL_ACTIVE_LOW:
+			nrf_vpr_csr_vio_out_or_set(BIT(ce_vios[i]));
+			break;
+		case NRFE_MSPI_POL_ACTIVE_HIGH:
+			nrf_vpr_csr_vio_out_clear_set(BIT(ce_vios[i]));
+			break;
+		}
+	}
 }
 
 static void ep_bound(void *priv)
@@ -267,31 +290,18 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		config_pins(pins_cfg);
 		break;
 	}
-	case NRFE_MSPI_CONFIG_CTRL: {
-		nrfe_mspi_cfg_t *cfg = (nrfe_mspi_cfg_t *)data;
-		nrfe_mspi_cfg = cfg->cfg;
-		break;
-	}
-	case NRFE_MSPI_CONFIG_DEV: {
-		nrfe_mspi_dev_cfg_t *cfg = (nrfe_mspi_dev_cfg_t *)data;
-		nrfe_mspi_dev_cfg = cfg->cfg;
-		configure_clock(nrfe_mspi_dev_cfg.cpp);
-		break;
-	}
 	case NRFE_MSPI_CONFIG_XFER: {
-		nrfe_mspi_xfer_t *xfer = (nrfe_mspi_xfer_t *)data;
-		nrfe_mspi_xfer = xfer->xfer;
+		nrfe_mspi_xfer_config = *(nrfe_mspi_xfer_config_t *)data;
+		configure_clock(nrfe_mspi_xfer_config.cpp);
+		set_ce_pins();
 		break;
 	}
 	case NRFE_MSPI_TX:
-	case NRFE_MSPI_TXRX: {
+		nrfe_mspi_xfer_packet_t *packet = (nrfe_mspi_xfer_packet_t*)data;
+		xfer_execute(packet, (uint8_t*)((uint8_t*)data+sizeof(nrfe_mspi_xfer_packet_t)));
+		break;
+	case NRFE_MSPI_RX: {
 		nrfe_mspi_xfer_packet_t *packet = (nrfe_mspi_xfer_packet_t *)data;
-
-		if (packet->packet.dir == MSPI_RX) {
-			/* TODO: Process received data */
-		} else if (packet->packet.dir == MSPI_TX) {
-			xfer_execute(packet->packet);
-		}
 		break;
 	}
 	default:

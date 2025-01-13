@@ -137,7 +137,7 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 	}
 
 	/* Enable CE */
-	if (hrt_xfer_params->ce_polarity == MSPI_CE_ACTIVE_LOW) {
+	if (hrt_xfer_params->ce_polarity == NRFE_MSPI_POL_ACTIVE_LOW) {
 		nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->ce_vio));
 	} else {
 		nrf_vpr_csr_vio_out_or_set(BIT(hrt_xfer_params->ce_vio));
@@ -171,7 +171,7 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 	/* Disable CE */
 	if (!hrt_xfer_params->ce_hold) {
 
-		if (hrt_xfer_params->ce_polarity == MSPI_CE_ACTIVE_LOW) {
+		if (hrt_xfer_params->ce_polarity == NRFE_MSPI_POL_ACTIVE_LOW) {
 			nrf_vpr_csr_vio_out_or_set(BIT(hrt_xfer_params->ce_vio));
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->ce_vio));
