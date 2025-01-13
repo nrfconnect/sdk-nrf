@@ -39,11 +39,6 @@
 	status = "disabled";
 };
 
-&prng {
-	status = "disabled";
-};
-
-
 &exmif_default {
 	group1 {
 		psels = <NRF_PSEL(EXMIF_CK, 6, 0)>,
