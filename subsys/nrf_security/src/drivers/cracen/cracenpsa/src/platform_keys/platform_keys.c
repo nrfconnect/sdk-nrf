@@ -127,7 +127,7 @@ typedef struct derived_key {
 } derived_key;
 
 typedef struct ikg_key {
-	uint32_t slot_number;
+	uint32_t id;
 	uint32_t domain;
 } ikg_key;
 
@@ -253,18 +253,23 @@ static key_type find_key(uint32_t id, platform_key *key)
 	}
 
 	if (usage == USAGE_IAK || usage == USAGE_MKEK || usage == USAGE_MEXT) {
-		key->ikg.domain = domain;
+		/* IKG keys are populated in cracen_load_keyref and cracen_get_builtin_key.
+		 * Here we only do the matching of platform key id to the internal
+		 * Cracen key id that the rest of the driver can understand.
+		 */
 		switch (usage) {
 		case USAGE_IAK:
-			key->ikg.slot_number = CRACEN_IDENTITY_KEY_SLOT_NUMBER;
+			key->ikg.id = CRACEN_BUILTIN_IDENTITY_KEY_ID;
 			break;
 		case USAGE_MKEK:
-			key->ikg.slot_number = CRACEN_MKEK_SLOT_NUMBER;
+			key->ikg.id = CRACEN_BUILTIN_MKEK_ID;
 			break;
 		case USAGE_MEXT:
-			key->ikg.slot_number = CRACEN_MEXT_SLOT_NUMBER;
+			key->ikg.id = CRACEN_BUILTIN_MEXT_ID;
 			break;
 		}
+
+		key->ikg.domain = domain;
 		return IKG;
 	}
 
@@ -542,6 +547,19 @@ size_t cracen_platform_keys_get_size(psa_key_attributes_t const *attributes)
 	return 0;
 }
 
+bool cracen_platform_keys_is_ikg_key(psa_key_attributes_t const *attributes)
+{
+	platform_key key;
+	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
+
+	return (type == IKG);
+}
+
+uint32_t cracen_platform_keys_get_owner(psa_key_attributes_t const *attributes)
+{
+	return PLATFORM_KEY_GET_DOMAIN(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
+}
+
 psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 					  psa_drv_slot_number_t *slot_number)
 {
@@ -566,7 +584,7 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 	}
 
 	if (type == IKG) {
-		*slot_number = key.ikg.slot_number;
+		*slot_number = key.ikg.id;
 		*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 			PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN);
 
