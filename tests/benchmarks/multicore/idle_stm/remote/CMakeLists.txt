@@ -13,5 +13,5 @@ target_sources(app PRIVATE ../src/main.c)
 
 if((DEFINED CONFIG_SOC_NRF54H20_CPUPPR) OR (DEFINED CONFIG_SOC_NRF54H20_ENGB_CPUPPR))
 	message(STATUS "Power Mode handler for RISC V is included.")
-	target_sources(app PRIVATE ../src/power_off.c)
+	target_sources(app PRIVATE ../../common/power_off.c)
 endif()

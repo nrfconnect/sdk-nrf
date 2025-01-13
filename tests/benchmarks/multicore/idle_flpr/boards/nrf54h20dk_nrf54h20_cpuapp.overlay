@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuflpr_vpr {
+	status = "okay";
+};
+
+&uart120 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
+
+/ {
+	aliases {
+		/delete-property/ led1;
+	};
+};
+
+/delete-node/ &led1;
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0>;
+};
