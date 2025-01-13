@@ -6,6 +6,7 @@
 
 menuconfig BT_GATT_DM
 	bool "GATT Discovery Manager library"
+	depends on HEAP_MEM_POOL_SIZE > 0
 	help
 	  Enable BLE GATT Discovery Manager library
 
