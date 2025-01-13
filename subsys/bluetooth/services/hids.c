@@ -289,6 +289,7 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = buf,
 		    .size = rep->size,
 		};
@@ -333,6 +334,7 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
@@ -388,6 +390,7 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = buf,
 		    .size = rep->size,
 		};
@@ -438,6 +441,7 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = rep->id,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
@@ -473,16 +477,21 @@ static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 	    CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
 			 struct bt_hids_inp_rep, ccc);
 
+	uint8_t report_id = inp_rep->id;
+	enum bt_hids_notify_evt evt;
+
 	if (value == BT_GATT_CCC_NOTIFY) {
 		LOG_DBG("Notification has been turned on");
-		if (inp_rep->handler != NULL) {
-			inp_rep->handler(BT_HIDS_CCCD_EVT_NOTIFY_ENABLED);
-		}
+		evt = BT_HIDS_CCCD_EVT_NOTIFY_ENABLED;
 	} else {
 		LOG_DBG("Notification has been turned off");
-		if (inp_rep->handler != NULL) {
-			inp_rep->handler(BT_HIDS_CCCD_EVT_NOTIFY_DISABLED);
-		}
+		evt = BT_HIDS_CCCD_EVT_NOTIFY_DISABLED;
+	}
+
+	if (inp_rep->handler_ext != NULL) {
+		inp_rep->handler_ext(report_id, evt);
+	} else if (inp_rep->handler != NULL) {
+		inp_rep->handler(evt);
 	}
 }
 
@@ -628,6 +637,7 @@ static ssize_t hids_boot_kb_outp_report_read(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = 0,
 		    .data = buf,
 		    .size = sizeof(conn_data->hids_boot_kb_outp_rep_ctx),
 		};
@@ -670,6 +680,7 @@ static ssize_t hids_boot_kb_outp_report_write(struct bt_conn *conn,
 
 	if (rep->handler) {
 		struct bt_hids_rep report = {
+		    .id = 0,
 		    .data = rep_data,
 		    .size = sizeof(conn_data->hids_boot_kb_outp_rep_ctx),
 		};

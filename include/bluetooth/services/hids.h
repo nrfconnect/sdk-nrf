@@ -154,6 +154,9 @@ enum bt_hids_notify_evt {
 /** @brief Report data.
  */
 struct bt_hids_rep {
+	/** Report ID defined in the HIDS Report Map. Not valid for boot reports. */
+	uint8_t id;
+
 	/** Pointer to the report data. */
 	uint8_t *data;
 
@@ -166,6 +169,13 @@ struct bt_hids_rep {
  *  @param evt Notification event.
  */
 typedef void (*bt_hids_notify_handler_t) (enum bt_hids_notify_evt evt);
+
+/** @brief HID notification event handler, with report identification.
+ *
+ * @param report_id Report ID defined in the HIDS Report Map.
+ * @param evt Notification event.
+ */
+typedef void (*bt_hids_notify_ext_handler_t) (uint8_t report_id, enum bt_hids_notify_evt evt);
 
 /** @brief HID Report event handler.
  *
@@ -225,8 +235,15 @@ struct bt_hids_inp_rep {
 	 */
 	const uint8_t *rep_mask;
 
-	/** Callback with the notification event. */
+	/** Callback with the notification event.
+	 * Used if set and extended callback is not set.
+	 */
 	bt_hids_notify_handler_t handler;
+
+	/** Extended callback with the notification event.
+	 * Has preference over the normal callback.
+	 */
+	bt_hids_notify_ext_handler_t handler_ext;
 };
 
 
