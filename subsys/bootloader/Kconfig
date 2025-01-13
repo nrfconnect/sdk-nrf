@@ -6,22 +6,6 @@
 
 menu "Bootloader"
 
-config BUILD_S1_VARIANT
-	# This can not depend on BOOTLOADER_MCUBOOT, or SECURE_BOOT as this
-	# option has to be set when building MCUBoot (or any other child image
-	# which will be stored in S0 and S1) itself.
-	bool "Build S1 variant of specified image"
-	help
-	  Build upgrade candidate of image for alternative slot S1.
-
-config S1_VARIANT_IMAGE_NAME
-	string
-	default "mcuboot" if MCUBOOT || BOOTLOADER_MCUBOOT
-	default "app" if !BOOTLOADER_MCUBOOT
-	depends on BUILD_S1_VARIANT
-	help
-	  Which image should be linked against S1.
-
 config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
@@ -31,105 +15,7 @@ config SECURE_BOOT
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
 
-config BOOTLOADER_PROVISION_HEX
-	bool
-	default y if SECURE_BOOT
-	default y if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
-	help
-	  Generate provision.hex if NSIB is enabled or if MCUboot hardware
-	  counters are enabled.
-
 if SECURE_BOOT
-
-module=B0
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.build_strategy"
-
-config SB_PRIVATE_KEY_PROVIDED
-	bool
-	help
-	  Hidden config specifying whether the build system has access to the
-	  private key used for signing, and will use it to perform signing and
-	  create the public key to be provisioned.
-
-choice SB_SIGNING
-	prompt "Firmware signing method"
-	default SB_SIGNING_PYTHON
-	config SB_SIGNING_PYTHON
-		bool "Sign with Python ecdsa library"
-		select SB_PRIVATE_KEY_PROVIDED
-
-	config SB_SIGNING_OPENSSL
-		bool "Sign with openssl command line tool"
-		select SB_PRIVATE_KEY_PROVIDED
-
-	config SB_SIGNING_CUSTOM
-		bool "Sign with custom command"
-endchoice
-
-config SB_SIGNING_KEY_FILE
-	string
-	prompt "Private key PEM file" if SB_PRIVATE_KEY_PROVIDED
-	default ""
-	help
-	  Absolute path to the private key PEM file.
-	  Specifies the private key used for signing the firmware image.
-	  The hash of the corresponding public key is stored as the first
-	  entry in the list of public key hashes in the provision hex file.
-	  See also SB_PUBLIC_KEY_FILES.
-
-config SB_SIGNING_COMMAND
-	string
-	prompt "Custom signing command" if !SB_PRIVATE_KEY_PROVIDED
-	default ""
-	help
-	  This command will be called to produce a signature of the firmware.
-	  It will be called as "${CONFIG_SB_SIGNING_COMMAND} <file>"
-	  The command must calculate the signature over the contents
-	  of the <file> and write the signature to stdout.
-	  The signature must be on DER format.
-
-config SB_SIGNING_PUBLIC_KEY
-	string
-	prompt "Public key PEM file" if !SB_PRIVATE_KEY_PROVIDED
-	default ""
-	help
-	  Path to a PEM file.
-	  When using a custom signing command, specify the corresponding public
-	  key here. This public key is checked during building, and added as
-	  the first entry in the provisioned data. See SB_PUBLIC_KEY_FILES.
-
-config SB_PUBLIC_KEY_FILES
-	string "Public Key PEM files"
-	default ""
-	help
-	  Comma-separated list of absolute paths to public key pem files.
-	  The provision hex file will contain a list of hashes of public keys.
-	  The first public key hash is the one corresponding to the private
-	  signing key used to sign the image. See SB_SIGNING_KEY_FILE.
-	  The hashes of the public keys specified in this configuration will be
-	  placed after the aforementioned public key hash, in the order
-	  they appear in this config. The order is significant since if an image
-	  is successfully validated against a public key in the list, all
-	  public keys before it in the list will be invalidated.
-	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
-	  If config is the string "debug", 2 generated debug files will be used.
-	  If config is an empty string then only the public key hash
-	  corresponding to the private signing key used to sign the image is
-	  included in provision.hex.
-
-config SB_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
-	bool "[DEBUG] Place signing public key last"
-	default n
-	help
-	  Place the public key used for signing last in the list instead of
-	  first. This is meant to be used for testing looping through the
-	  public keys.
-
-config SB_DEBUG_NO_VERIFY_HASHES
-	bool
-	help
-	  [DEBUG] Don't check public key hashes for applicability.
-	  Use this only in (negative) tests!
 
 config SB_MONOTONIC_COUNTER
 	bool "Enable HW monotonic version counter"
