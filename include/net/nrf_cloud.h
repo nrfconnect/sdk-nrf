@@ -625,14 +625,6 @@ struct nrf_cloud_gnss_data {
 	};
 };
 
-#ifdef CONFIG_NRF_CLOUD_GATEWAY
-/** @brief Structure to hold message received from nRF Cloud. */
-struct nrf_cloud_gw_data {
-	struct nrf_cloud_data data;
-	uint16_t id;
-};
-#endif
-
 /** @brief Data to control behavior of the nrf_cloud library from the
  *  cloud side. This data is stored in the device shadow.
  */
