@@ -1,0 +1,20 @@
+common:
+  sysbuild: true
+  depends_on: gpio
+  harness: pytest
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
+    - exmif
+    - ppk_power_measure
+
+tests:
+  benchmarks.multicore.idle_exmif.nrf54h20dk_cpuapp_cpurad:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_exmif_and_s2ram"
