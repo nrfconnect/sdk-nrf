@@ -13,5 +13,5 @@ See the subpages for detailed documentation on the application and its modules:
 
    app_desc
    config_options
-   intenal_module
+   internal_module
    api
