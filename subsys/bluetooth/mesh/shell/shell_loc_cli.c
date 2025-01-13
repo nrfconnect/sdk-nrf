@@ -17,8 +17,23 @@ static const struct bt_mesh_model *mod;
 static void global_loc_print(const struct shell *shell, int err, struct bt_mesh_loc_global *rsp)
 {
 	if (!err) {
-		shell_print(shell, "Latitude: %f, longitude: %f, altitude: %d", rsp->latitude,
-			    rsp->longitude, rsp->altitude);
+		if (rsp->latitude == BT_MESH_LOC_GLOBAL_LATITUDE_UNKNOWN) {
+			shell_print(shell, "Latitude: unknown");
+		} else {
+			shell_print(shell, "Latitude: %f", rsp->latitude);
+		}
+
+		if (rsp->longitude == BT_MESH_LOC_GLOBAL_LONGITUDE_UNKNOWN) {
+			shell_print(shell, "Longitude: unknown");
+		} else {
+			shell_print(shell, "Longitude: %f", rsp->longitude);
+		}
+
+		if (rsp->altitude == BT_MESH_LOC_ALTITUDE_UNKNOWN) {
+			shell_print(shell, "Altitude: unknown");
+		} else {
+			shell_print(shell, "Altitude: %d", rsp->altitude);
+		}
 	}
 }
 
@@ -84,11 +99,28 @@ static int cmd_loc_global_set_unack(const struct shell *shell, size_t argc, char
 static void local_loc_print(const struct shell *shell, int err, struct bt_mesh_loc_local *rsp)
 {
 	if (!err) {
+		if (rsp->north == BT_MESH_LOC_LOCAL_NORTH_UNKNOWN) {
+			shell_print(shell, "North: unknown");
+		} else {
+			shell_print(shell, "North: %d", rsp->north);
+		}
+
+		if (rsp->east == BT_MESH_LOC_LOCAL_EAST_UNKNOWN) {
+			shell_print(shell, "East: unknown");
+		} else {
+			shell_print(shell, "East: %d", rsp->east);
+		}
+
+		if (rsp->altitude == BT_MESH_LOC_ALTITUDE_UNKNOWN) {
+			shell_print(shell, "Altitude: unknown");
+		} else {
+			shell_print(shell, "Altitude: %d", rsp->altitude);
+		}
+
 		shell_print(shell,
-			    "North: %d, east: %d, altitude: %d, "
 			    "floor_number: %d, is_mobile: %d, "
 			    "time_delta: %d, precision_mm: %d",
-			    rsp->north, rsp->east, rsp->altitude, rsp->floor_number, rsp->is_mobile,
+			    rsp->floor_number, rsp->is_mobile,
 			    rsp->time_delta, rsp->precision_mm);
 	}
 }
