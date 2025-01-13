@@ -695,6 +695,7 @@
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-pluto
 /scripts/bootloader/                      @nrfconnect/ncs-pluto
+/scripts/reglock.py                       @nrfconnect/ncs-pluto
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci

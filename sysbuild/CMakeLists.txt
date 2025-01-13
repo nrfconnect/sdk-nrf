@@ -506,6 +506,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endif()
 
+  if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES)
+    set_config_bool(b0 CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS n)
+  endif()
+
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
     if(NOT SB_CONFIG_NETCORE_NONE)
       set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_SECURE_BOOT y)
@@ -734,6 +738,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf700x.cmake)
+  endif()
+
+  if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootconf.cmake)
   endif()
 
   if(SB_CONFIG_DFU_ZIP)
