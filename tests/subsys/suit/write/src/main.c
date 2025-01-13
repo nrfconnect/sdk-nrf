@@ -10,7 +10,7 @@
 #include <suit_types.h>
 #include <suit_memptr_storage.h>
 #include <suit_platform_internal.h>
-#include <suit_plat_ipuc.h>
+#include <suit_ipuc_sdfw.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/storage/flash_map.h>
 #include <suit_plat_mem_util.h>
@@ -87,22 +87,23 @@ ZTEST(write_tests, test_write_to_flash_sink_OK)
 		.len = sizeof(valid_dst_value),
 	};
 
+	int ipc_client_id = 1234;
 	int ret = suit_plat_create_component_handle(&valid_dst_component_id, false, &dst_handle);
 
 	zassert_equal(ret, SUIT_SUCCESS, "create_component_handle failed - error %i", ret);
-	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
+	ret = suit_ipuc_sdfw_write_setup(ipc_client_id, &valid_dst_component_id, NULL, NULL);
 	zassert_equal(ret, SUIT_PLAT_ERR_NOT_FOUND, "in-place updateable component found");
 
-	ret = suit_plat_ipuc_declare(dst_handle);
-	zassert_equal(ret, SUIT_PLAT_SUCCESS, "suit_plat_ipuc_declare failed - error %i", ret);
+	ret = suit_ipuc_sdfw_declare(dst_handle, SUIT_MANIFEST_UNKNOWN);
+	zassert_equal(ret, SUIT_PLAT_SUCCESS, "suit_ipuc_sdfw_declare failed - error %i", ret);
 
-	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
-	zassert_equal(ret, SUIT_PLAT_SUCCESS, "cannot write to in-place updateable component");
+	ret = suit_ipuc_sdfw_write_setup(ipc_client_id, &valid_dst_component_id, NULL, NULL);
+	zassert_equal(ret, SUIT_PLAT_SUCCESS, "suit_ipuc_sdfw_write_setup failed - error %i", ret);
 
 	ret = suit_plat_write(dst_handle, &source, &valid_manifest_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_write failed - error %i", ret);
 
-	ret = suit_plat_ipuc_write(dst_handle, 0, (uintptr_t)test_data, sizeof(test_data), true);
+	ret = suit_ipuc_sdfw_write_setup(ipc_client_id, &valid_dst_component_id, NULL, NULL);
 	zassert_equal(ret, SUIT_PLAT_ERR_NOT_FOUND, "in-place updateable component found");
 
 	ret = suit_plat_release_component_handle(dst_handle);

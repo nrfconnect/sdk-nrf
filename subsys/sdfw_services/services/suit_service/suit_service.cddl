@@ -266,6 +266,54 @@ suit_authorize_process_dependency_rsp = (
 	ret: int,
 )
 
+; In-place updateable components
+suit_get_ipuc_count_req = (
+	30,
+)
+
+suit_get_ipuc_count_rsp = (
+	30,
+	ret: int,
+	count: uint
+)
+
+suit_get_ipuc_info_req = (
+	31,
+	idx: uint
+)
+
+suit_get_ipuc_info_rsp = (
+	31,
+	ret: int,
+	component_id: bstr,
+	role: int,
+)
+
+suit_setup_write_ipuc_req = (
+	32,
+	component_id: bstr,
+	encryption_info: bstr,
+	compression_info: bstr,
+)
+
+suit_setup_write_ipuc_rsp = (
+	32,
+	ret: int,
+)
+
+suit_write_ipuc_req = (
+	33,
+	component_id: bstr,
+	offset: uint,
+	last_chunk: bool,
+	addr: uint,
+	size: uint,
+)
+
+suit_write_ipuc_rsp = (
+	33,
+	ret: int,
+)
 
 ; Missing image event notification message
 suit_evt_sub_req = (
@@ -397,6 +445,11 @@ suit_req = [
 		suit_get_supported_manifest_info_req /
 		suit_authorize_process_dependency_req /
 
+		suit_get_ipuc_count_req /
+		suit_get_ipuc_info_req /
+		suit_setup_write_ipuc_req /
+		suit_write_ipuc_req /
+
 		suit_get_manifest_var_req /
 		suit_set_manifest_var_req /
 
@@ -427,6 +480,11 @@ suit_rsp = [
 		suit_get_supported_manifest_roles_rsp /
 		suit_get_supported_manifest_info_rsp /
 		suit_authorize_process_dependency_rsp /
+
+		suit_get_ipuc_count_rsp /
+		suit_get_ipuc_info_rsp /
+		suit_setup_write_ipuc_rsp /
+		suit_write_ipuc_rsp /
 
 		suit_get_manifest_var_rsp /
 		suit_set_manifest_var_rsp /

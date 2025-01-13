@@ -55,7 +55,7 @@
 #endif /* CONFIG_MOCK_SUIT_PLATFORM */
 
 #ifdef CONFIG_MOCK_SUIT_IPUC
-#include <mock_suit_plat_ipuc.h>
+#include <mock_suit_ipuc_sdfw.h>
 #endif /* CONFIG_MOCK_SUIT_IPUC */
 
 #ifdef CONFIG_MOCK_DIGEST_SINK

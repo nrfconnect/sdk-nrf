@@ -22,20 +22,6 @@ config SUIT_DIGEST_CACHE_SIZE
 
 endif
 
-config SUIT_IPUC
-	bool "Enable in-place updateable components"
-	help
-	  SUIT manifest may instruct the platform that component is inactive, by overriding
-	  image-size parameter with value 0. Such component may be updated in place,
-	  also memory associated to such component may be utilized for other purposes.
-
-if SUIT_IPUC
-
-config SUIT_IPUC_SIZE
-	int "Maximum number of supported in-place updateable components"
-	default 8
-endif
-
 config SUIT_AUTHENTICATE
 	bool "Enable message/data authentication"
 	depends on SUIT_CRYPTO
