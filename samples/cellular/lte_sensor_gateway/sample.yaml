@@ -1,7 +1,7 @@
 sample:
   name: LTE-Bluetooth LE gateway sample
 tests:
-  sample.cellular.lte_ble_gateway:
+  sample.cellular.lte_sensor_gateway:
     sysbuild: true
     build_only: true
     integration_platforms:

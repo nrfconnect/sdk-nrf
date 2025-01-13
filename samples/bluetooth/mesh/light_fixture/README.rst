@@ -200,7 +200,7 @@ For more information about configuration files in the |NCS|, see :ref:`app_build
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_ctrl`
+.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_fixture`
 
 .. include:: /includes/build_and_run_ns.txt
 
