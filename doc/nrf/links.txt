@@ -76,6 +76,7 @@
 .. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
 
 .. _`nRF Blinky`: https://github.com/NordicSemiconductor/Android-nRF-Blinky
+.. _`nRF Blinky documentation`: https://github.com/NordicSemiconductor/Android-nRF-Blinky?tab=readme-ov-file#nrf-blinky-for-android
 
 .. _`Source code for nRF Wi-Fi Provisioner mobile app for Android`: https://github.com/NordicSemiconductor/Android-nRF-Wi-Fi-Provisioner
 .. _`Source code for nRF Wi-Fi Provisioner mobile app for iOS`: https://github.com/NordicSemiconductor/IOS-nRF-Wi-Fi-Provisioner

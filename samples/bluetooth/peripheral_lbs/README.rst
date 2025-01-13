@@ -19,7 +19,7 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 The sample also requires a smartphone or tablet running a compatible mobile application.
-The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also use other similar applications (for example, `nRF Blinky`_ or `nRF Toolbox`_).
+The `Testing`_ instructions refer to `nRF Connect for Mobile`_ and `nRF Blinky`_, but you can also use other similar applications, such as `nRF Toolbox`_.
 
 .. note::
    |thingy53_sample_note|
@@ -139,70 +139,79 @@ Testing
 
 After programming the sample to your dongle or development kit, one of the LEDs starts blinking to indicate that the advertising loop is active (see `User interface`_ for details).
 
-To test the sample using the `nRF Connect for Mobile`_ application, complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF Connect for Mobile
 
-      1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
-      #. Power on the development kit or insert your dongle into the USB port.
-      #. Connect to the device from the application.
-         The device is advertising as ``Nordic_LBS``.
-         The services of the connected device are shown.
-      #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
-      #. Press **Button 1** on the device.
-      #. Observe that notifications with the following values are displayed:
+      To test the sample using the `nRF Connect for Mobile`_ application, complete the following steps:
 
-         * ``Button released`` when **Button 1** is released.
-         * ``Button pressed`` when **Button 1** is pressed.
+      .. tabs::
 
-      #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
-         Depending on the hardware platform, this produces results described in the table.
+         .. group-tab:: nRF52 and nRF53 DKs
 
-         +------------------------+---------+----------------------------------------------+
-         | Hardware platform      | Value   | Effect                                       |
-         +========================+=========+==============================================+
-         | nRF52 and nRF53 DKs    | ``OFF`` | Switch the **LED 3** off.                    |
-         +                        +---------+----------------------------------------------+
-         |                        | ``ON``  | Switch the **LED 3** on.                     |
-         +------------------------+---------+----------------------------------------------+
-         | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
-         +                        +---------+----------------------------------------------+
-         |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
-         +------------------------+---------+----------------------------------------------+
-         | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
-         +                        +---------+----------------------------------------------+
-         |                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
-         +------------------------+---------+----------------------------------------------+
+            1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+            #. Power on the development kit or insert your dongle into the USB port.
+            #. Connect to the device from the application.
+               The device is advertising as ``Nordic_LBS``.
+               The services of the connected device are shown.
+            #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+            #. Press **Button 1** on the device.
+            #. Observe that notifications with the following values are displayed:
 
-   .. group-tab:: nRF54 DKs
+               * ``Button released`` when **Button 1** is released.
+               * ``Button pressed`` when **Button 1** is pressed.
 
-      .. note::
-          |nrf54_buttons_leds_numbering|
+            #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
+               Depending on the hardware platform, this produces results described in the table.
 
-      1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
-      #. Power on the development kit or insert your dongle into the USB port.
-      #. Connect to the device from the application.
-         The device is advertising as ``Nordic_LBS``.
-         The services of the connected device are shown.
-      #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
-      #. Press **Button 0** on the device.
-      #. Observe that notifications with the following values are displayed:
+               +------------------------+---------+----------------------------------------------+
+               | Hardware platform      | Value   | Effect                                       |
+               +========================+=========+==============================================+
+               | nRF52 and nRF53 DKs    | ``OFF`` | Switch the **LED 3** off.                    |
+               +                        +---------+----------------------------------------------+
+               |                        | ``ON``  | Switch the **LED 3** on.                     |
+               +------------------------+---------+----------------------------------------------+
+               | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
+               +                        +---------+----------------------------------------------+
+               |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
+               +------------------------+---------+----------------------------------------------+
+               | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
+               +                        +---------+----------------------------------------------+
+               |                        | ``ON``  | Switch the blue channel of the RGB LED on.   |
+               +------------------------+---------+----------------------------------------------+
 
-         * ``Button released`` when **Button 0** is released.
-         * ``Button pressed`` when **Button 0** is pressed.
+         .. group-tab:: nRF54 DKs
 
-      #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
-         Depending on the hardware platform, this produces results described in the table.
+            .. note::
+               |nrf54_buttons_leds_numbering|
 
-         +------------------------+---------+----------------------------------------------+
-         | Hardware platform      | Value   | Effect                                       |
-         +========================+=========+==============================================+
-         | nRF54 DKs              | ``OFF`` | Switch the **LED 2** off.                    |
-         +                        +---------+----------------------------------------------+
-         |                        | ``ON``  | Switch the **LED 2** on.                     |
-         +------------------------+---------+----------------------------------------------+
+            1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
+            #. Power on the development kit or insert your dongle into the USB port.
+            #. Connect to the device from the application.
+               The device is advertising as ``Nordic_LBS``.
+               The services of the connected device are shown.
+            #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+            #. Press **Button 0** on the device.
+            #. Observe that notifications with the following values are displayed:
+
+               * ``Button released`` when **Button 0** is released.
+               * ``Button pressed`` when **Button 0** is pressed.
+
+            #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
+               Depending on the hardware platform, this produces results described in the table.
+
+               +------------------------+---------+----------------------------------------------+
+               | Hardware platform      | Value   | Effect                                       |
+               +========================+=========+==============================================+
+               | nRF54 DKs              | ``OFF`` | Switch the **LED 2** off.                    |
+               +                        +---------+----------------------------------------------+
+               |                        | ``ON``  | Switch the **LED 2** on.                     |
+               +------------------------+---------+----------------------------------------------+
+
+   .. group-tab:: nRF Blinky
+
+      To test the sample using the nRF Blinky mobile app, see the `nRF Blinky documentation`_.
 
 
 Dependencies
