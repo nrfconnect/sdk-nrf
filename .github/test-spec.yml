@@ -150,6 +150,7 @@
   - "subsys/pcd/*"
   - "subsys/net/lib/*fota*/**/*"
   - "subsys/net/lib/downloader/**/*"
+  - "tests/drivers/flash/flash_ipuc/**/*"
   - "tests/subsys/bootloader/**/*"
   - "tests/subsys/dfu/**/*"
 
