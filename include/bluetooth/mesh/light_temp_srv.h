@@ -150,6 +150,11 @@ struct bt_mesh_light_temp_srv {
 	const struct bt_mesh_light_ctl_srv *ctl;
 	/** Publish parameters. */
 	struct bt_mesh_model_pub pub;
+	/* Publication buffer */
+	struct net_buf_simple pub_buf;
+	/* Publication data */
+	uint8_t pub_data[BT_MESH_MODEL_BUF_LEN(
+		BT_MESH_LIGHT_CTL_STATUS, BT_MESH_LIGHT_CTL_MSG_MAXLEN_STATUS)];
 	/** Transaction ID tracker for the set messages. */
 	struct bt_mesh_tid_ctx prev_transaction;
 	/** Handler function structure. */
