@@ -1,13 +1,15 @@
-.. _migration_2.9.0-nrf54h20-rc1:
+:orphan:
 
-Migration guide for |NCS| v2.9.0-nRF54H20-rc1
-#############################################
+.. _migration_2.9.0-nrf54h20:
+
+Migration guide for |NCS| v2.9.0-nRF54H20-1
+###########################################
 
 .. contents::
    :local:
    :depth: 3
 
-This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-rc1.
+This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20.
 
 .. HOWTO
 
@@ -21,7 +23,7 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
-.. _migration_2.9.0-nrf54h20-rc1_required:
+.. _migration_2.9.0-nrf54h20_required:
 
 Required changes
 ****************
@@ -38,7 +40,7 @@ DK compatibility
 
 .. toggle::
 
-   * The |NCS| v2.9.0-nRF54H20-rc1 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
+   * The |NCS| v2.9.0-nRF54H20 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
      Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 
 Dependencies
