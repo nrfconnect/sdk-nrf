@@ -16,6 +16,7 @@
 #include <sdc_hci_vs.h>
 
 #include "hci_internal.h"
+#include "hci_internal_wrappers.h"
 #include "ecdh.h"
 
 #define CMD_COMPLETE_MIN_SIZE (BT_HCI_EVT_HDR_SIZE \
@@ -892,7 +893,7 @@ static uint8_t controller_and_baseband_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_CB_SET_CONTROLLER_TO_HOST_FLOW_CONTROL:
 		return sdc_hci_cmd_cb_set_controller_to_host_flow_control((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_CB_HOST_BUFFER_SIZE:
-		return sdc_hci_cmd_cb_host_buffer_size((void *)cmd_params);
+		return sdc_hci_cmd_cb_host_buffer_size_wrapper((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS:
 		return sdc_hci_cmd_cb_host_number_of_completed_packets((void *)cmd_params);
 #endif

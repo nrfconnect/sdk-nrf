@@ -311,6 +311,7 @@ Kconfig*                                  @tejlmand
 /tests/modules/mcuboot/external_flash/    @hakonfam @sigvartmh
 /tests/nrf5340_audio/                     @koffes @alexsven @erikrobstad @rick1082 @nordic-auko
 /tests/subsys/audio_module/               @koffes @alexsven @erikrobstad @rick1082 @gWacey
+/tests/subsys/bluetooth/controller/        @nrfconnect/ncs-dragoon
 /tests/subsys/bluetooth/gatt_dm/          @doki-nordic
 /tests/subsys/bluetooth/mesh/             @ludvigsj
 /tests/subsys/bluetooth/fast_pair/        @alstrzebonski @MarekPieta @kapi-no

@@ -9,6 +9,7 @@ zephyr_library()
 zephyr_library_sources(
   hci_driver.c
   hci_internal.c
+  hci_internal_wrappers.c
 )
 
 zephyr_library_sources_ifdef(
