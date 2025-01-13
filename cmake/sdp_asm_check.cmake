@@ -11,17 +11,17 @@ function(asm_check)
     get_filename_component(src_dir ${hrt_src} DIRECTORY)
 
     execute_process(COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
-                    ${src_dir}/${asm_filename}.s ${asm_filename}-temp.s
+                    ${src_dir}/${asm_filename}-${target_soc}.s ${asm_filename}-${target_soc}-temp.s
                     RESULT_VARIABLE compare_result)
 
     if( compare_result EQUAL 0)
-      message("File ${asm_filename}.s has not changed.")
+      message("File ${asm_filename}-${target_soc}.s has not changed.")
     elseif( compare_result EQUAL 1)
-      message(WARNING "${asm_filename}.s ASM file content has changed.\
+      message(WARNING "${asm_filename}-${target_soc}.s ASM file content has changed.\
               If you want to include the new ASM in build, \
               please run `ninja asm_install` in FLPR build directory and build again")
     else()
-      message("Something went wrong when comparing ${asm_filename}.s and ${asm_filename}-temp.s")
+      message("Something went wrong when comparing ${asm_filename}-${target_soc}.s and ${asm_filename}-${target_soc}-temp.s")
     endif()
   endforeach()
 
