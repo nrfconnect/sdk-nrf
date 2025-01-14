@@ -1,6 +1,7 @@
 common:
   tags:
     - drivers
+    - ci_tests_drivers_audio
   harness: ztest
   harness_config:
     fixture: gpio_loopback
