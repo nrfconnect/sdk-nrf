@@ -8,4 +8,39 @@
 rsource "../mocks/Kconfig"
 rsource "../tests/Kconfig"
 
+choice TEST_SUIT_PLATFORM_FETCH_VARIANT
+	prompt "SUIT platform implementation variant to test"
+	default TEST_SUIT_PLATFORM_FETCH_VARIANT_SDFW
+
+config TEST_SUIT_PLATFORM_FETCH_VARIANT_APP
+	bool "Local or application"
+	depends on SUIT_PLATFORM_VARIANT_APP
+	select FLASH_IPUC
+	select SUIT_ENVELOPE_INFO
+	select SUIT_CACHE_RW
+	select SUIT_STREAM_SINK_CACHE
+	select SUIT_STREAM_FETCH_SOURCE_MGR
+
+config TEST_SUIT_PLATFORM_FETCH_VARIANT_SDFW
+	bool "Bootloader or SDFW"
+	depends on SUIT_PLATFORM_VARIANT_SDFW
+	select MOCK_SDFW_ARBITER
+	select SUIT_EXECUTION_MODE
+	select SUIT_MCI
+	select SUIT_STREAM_FILTER_DECRYPT
+	select SUIT_CRYPTO
+	select SUIT_STORAGE
+
+endchoice # TEST_SUIT_PLATFORM_FETCH_VARIANT
+
+if TEST_SUIT_PLATFORM_FETCH_VARIANT_APP
+
+config SUIT_CACHE_SDFW_IPUC_ID
+	default 254
+
+config SUIT_CACHE_APP_IPUC_ID
+	default 255
+
+endif # TEST_SUIT_PLATFORM_FETCH_VARIANT_APP
+
 source "Kconfig.zephyr"

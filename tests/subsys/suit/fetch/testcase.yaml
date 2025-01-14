@@ -13,3 +13,18 @@ tests:
       - nrf52840dk/nrf52840
       - native_sim
       - native_sim/native/64
+
+  suit-platform.integration.fetch.app:
+    platform_allow:
+      - native_sim
+      - native_sim/native/64
+    tags:
+      - suit-processor
+      - suit_platform
+      - suit
+      - ci_tests_subsys_suit
+    extra_configs:
+      - CONFIG_SUIT_PLATFORM_VARIANT_APP=y
+    integration_platforms:
+      - native_sim
+      - native_sim/native/64
