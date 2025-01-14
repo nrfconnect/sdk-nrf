@@ -504,6 +504,15 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-9-0 v2-8-0
+
+NCSDK-28567: Swap time after DFU takes a very long time
+  Due to the incorrect RRAM buffer configuration, the swap time after DFU can exceed three minutes.
+
+  **Affected platforms:** nRF54L15, nRF54L10
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE` Kconfig option to ``1`` in the :file:`sysbuild/mcuboot/boards/nrf54l15dk_nrf54l15_cpuapp.conf` file of the application.
+
 .. rst-class:: v2-9-0
 
 KRKNWK-19846: Wrong command for the internal configuration build in the :ref:`matter_template_sample` sample documentation
@@ -2804,6 +2813,14 @@ Matter samples
 ==============
 
 The issues in this section are related to :ref:`matter_samples`.
+
+.. rst-class:: v2-9-0
+
+KRKNWK-19861: ICD DSLS does not work with the :ref:`matter_smoke_co_alarm_sample` sample
+  According to the sample's documentation the ICD DSLS can be enabled by setting the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``y``.
+  Additionally, the ICD Management cluster's feature map has to be set to ``0xf`` in the sample's ``.zap`` file.
+  This piece of information is missing from the documentation.
+  It will be added in the next version.
 
 .. rst-class:: v2-8-0
 
