@@ -57,6 +57,8 @@ struct transport_params_coap {
 	bool new_data_req;
 	/** Request retransmission */
 	bool retransmission_req;
+	/* Proxy-URI option value */
+	const char *proxy_uri;
 };
 
 BUILD_ASSERT(CONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE >= sizeof(struct transport_params_coap));
@@ -311,6 +313,15 @@ static int coap_request_send(struct downloader *dl)
 		return err;
 	}
 
+	if (coap->proxy_uri != NULL) {
+		err = coap_packet_append_option(&request, COAP_OPTION_PROXY_URI,
+			coap->proxy_uri, strlen(coap->proxy_uri));
+		if (err) {
+			LOG_ERR("Unable to add Proxy-URI option");
+			return err;
+		}
+	}
+
 	if (!has_pending(dl)) {
 		struct coap_transmission_parameters params = coap_get_transmission_parameters();
 
@@ -407,6 +418,9 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 		LOG_DBG("Enabled native TLS");
 		coap->sock.type |= SOCK_NATIVE_TLS;
 	}
+
+	/* Copy proxy-uri to internal struct */
+	coap->proxy_uri = dl_host_cfg->proxy_uri;
 
 	return 0;
 }
