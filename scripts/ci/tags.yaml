@@ -1296,6 +1296,12 @@ ci_tests_drivers_egpio:
     - zephyr/drivers/mbox/
     - zephyr/subsys/ipc/ipc_service/
 
+ci_tests_drivers_gpio:
+  files:
+    - nrf/tests/drivers/gpio/
+    - zephyr/drivers/gpio/
+    - zephyr/soc/nordic/
+
 ci_tests_drivers_fprotect:
   files:
     - nrf/lib/fprotect/

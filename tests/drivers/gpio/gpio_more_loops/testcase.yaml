@@ -2,6 +2,7 @@ common:
   tags:
     - drivers
     - gpio
+    - ci_tests_drivers_gpio
   depends_on: gpio
   filter: not CONFIG_COVERAGE
   harness: ztest
