@@ -1,0 +1,16 @@
+identifier: apricity_gateway_nrf9160
+name: Apricity-Gateway-NRF9160
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - xtools
+  - zephyr
+ram: 88
+flash: 1024
+supported:
+  - gpio
+  - i2c
+  - pwm
+  - spi
+  - counter

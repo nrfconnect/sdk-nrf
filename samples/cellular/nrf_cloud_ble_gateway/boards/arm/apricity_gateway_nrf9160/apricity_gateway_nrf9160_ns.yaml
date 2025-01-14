@@ -1,0 +1,16 @@
+identifier: apricity_gateway_nrf9160_ns
+name: APRICITY_GATEWAY-nRF9160-Non-Secure
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - zephyr
+ram: 128
+flash: 256
+supported:
+  - serial
+  - spi
+  - i2c
+  - pwm
+  - netif:modem
+  - gpio

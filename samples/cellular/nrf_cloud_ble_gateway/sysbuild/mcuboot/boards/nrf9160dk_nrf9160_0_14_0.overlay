@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+		nordic,pm-ext-flash = &mx25r64;
+		/* zephyr,bt-uart=&lpuart; */
+		zephyr,bt-hci=&bt_hci_uart;
+	};
+};
+
+/* External flash device is disabled by default */
+&mx25r64 {
+	status = "okay";
+};
+
+&nrf52840_reset {
+	status = "okay";
+};
+
+&gpiote {
+	interrupts = <49 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&uart2 {
+	current-speed = <1000000>;
+	status = "okay";
+	/delete-property/ hw-flow-control;
+
+	pinctrl-0 = <&uart2_default_alt>;
+	pinctrl-1 = <&uart2_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	bt_hci_uart: bt_hci_uart {
+		compatible = "zephyr,bt-hci-uart";
+		status = "okay";
+		/*rts-pin = <21>;  <&interface_to_nrf52840 3 0>; */
+		/*cts-pin = <19>;  <&interface_to_nrf52840 2 0>; */
+	};
+};
+
+&pinctrl {
+	uart2_default_alt: uart2_default_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 18)>,
+				<NRF_PSEL(UART_RX, 0, 17)>,
+				<NRF_PSEL(UART_RTS, 0, 21)>,
+				<NRF_PSEL(UART_CTS, 0, 19)>;
+		};
+	};
+
+	uart2_sleep_alt: uart2_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 18)>,
+				<NRF_PSEL(UART_RX, 0, 17)>,
+				<NRF_PSEL(UART_RTS, 0, 21)>,
+				<NRF_PSEL(UART_CTS, 0, 19)>;
+			low-power-enable;
+		};
+	};
+
+};
