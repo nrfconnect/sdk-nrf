@@ -109,7 +109,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
         Because of that, on the DK PCA10156 revision v0.8.1, **LED 0** and **LED 2** cannot be used for PWM output.
-        You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
+        You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR_WHITE(255)`` or ``LED_COLOR_OFF``.
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).

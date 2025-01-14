@@ -15,7 +15,7 @@
  */
 const struct {} hid_keyboard_leds_def_include_once;
 
-static const struct led_effect keyboard_led_on = LED_EFFECT_LED_ON(LED_COLOR(255, 255, 255));
+static const struct led_effect keyboard_led_on = LED_EFFECT_LED_ON(LED_COLOR_WHITE(255));
 static const struct led_effect keyboard_led_off = LED_EFFECT_LED_OFF();
 
 /* Map HID keyboard LEDs to application LED IDs. */

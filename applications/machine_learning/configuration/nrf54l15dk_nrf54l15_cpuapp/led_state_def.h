@@ -27,36 +27,36 @@ static const uint8_t led_map[] = {
 
 static const struct led_effect ei_data_forwarder_led_effects[] = {
 	[EI_DATA_FORWARDER_STATE_DISCONNECTED]	=
-		LED_EFFECT_LED_BLINK(2000, LED_COLOR(100, 100, 100)),
+		LED_EFFECT_LED_BLINK(2000, LED_COLOR_WHITE(100)),
 	[EI_DATA_FORWARDER_STATE_CONNECTED]	=
-		LED_EFFECT_LED_BLINK(500, LED_COLOR(100, 100, 100)),
+		LED_EFFECT_LED_BLINK(500, LED_COLOR_WHITE(100)),
 	[EI_DATA_FORWARDER_STATE_TRANSMITTING]	=
-		LED_EFFECT_LED_BLINK(50, LED_COLOR(100, 100, 100)),
+		LED_EFFECT_LED_BLINK(50, LED_COLOR_WHITE(100)),
 };
 
 static const struct ml_result_led_effect ml_result_led_effects[] = {
 	{
 		.label = NULL,
-		.effect = LED_EFFECT_LED_BREATH(500, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_BREATH_LINEAR(500, LED_COLOR_WHITE(100)),
 	},
 	{
 		.label = ANOMALY_LABEL,
-		.effect = LED_EFFECT_LED_BREATH(250, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_BREATH_LINEAR(250, LED_COLOR_WHITE(100)),
 	},
 	{
 		.label = "sine",
-		.effect = LED_EFFECT_LED_CLOCK(1, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_CLOCK(1, LED_COLOR_WHITE(100)),
 	},
 	{
 		.label = "triangle",
-		.effect = LED_EFFECT_LED_CLOCK(2, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_CLOCK(2, LED_COLOR_WHITE(100)),
 	},
 	{
 		.label = "square",
-		.effect = LED_EFFECT_LED_CLOCK(3, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_CLOCK(3, LED_COLOR_WHITE(100)),
 	},
 	{
 		.label = "idle",
-		.effect = LED_EFFECT_LED_CLOCK(4, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_CLOCK(4, LED_COLOR_WHITE(100)),
 	},
 };

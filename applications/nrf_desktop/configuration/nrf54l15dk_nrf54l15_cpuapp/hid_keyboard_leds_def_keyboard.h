@@ -20,10 +20,10 @@ const struct {} hid_keyboard_leds_def_include_once;
  * PWM output.
  *
  * You can still use these LEDs with the PWM LED driver, but you must set the LED color to
- * ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``. This ensures the PWM peripheral is not
+ * ``LED_COLOR_WHITE(255)`` or ``LED_COLOR_OFF``. This ensures the PWM peripheral is not
  * used for the mentioned LEDs.
  */
-static const struct led_effect keyboard_led_on = LED_EFFECT_LED_ON(LED_COLOR(255, 255, 255));
+static const struct led_effect keyboard_led_on = LED_EFFECT_LED_ON(LED_COLOR_WHITE(255));
 static const struct led_effect keyboard_led_off = LED_EFFECT_LED_OFF();
 
 /* Map HID keyboard LEDs to application LED IDs. */

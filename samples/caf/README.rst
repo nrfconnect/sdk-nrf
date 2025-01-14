@@ -84,9 +84,9 @@ The following snippet demonstrates the default LED effect configuration:
 
      static const struct led_effect led_effect[] = {
         [LED_EFFECT_ID_OFF] = LED_EFFECT_LED_OFF(),
-        [LED_EFFECT_ID_BLINK] = LED_EFFECT_LED_BLINK(200, LED_COLOR(255, 255, 255)),
-        [LED_EFFECT_ID_BREATH] = LED_EFFECT_LED_BREATH(200, LED_COLOR(255, 255, 255)),
-        [LED_EFFECT_ID_CLOCK] = LED_EFFECT_LED_CLOCK(3, LED_COLOR(255, 255, 255)),
+        [LED_EFFECT_ID_BLINK] = LED_EFFECT_LED_BLINK(200, LED_COLOR_WHITE(255)),
+        [LED_EFFECT_ID_BREATH] = LED_EFFECT_LED_BREATH_LINEAR(200, LED_COLOR_WHITE(255)),
+	     [LED_EFFECT_ID_CLOCK] = LED_EFFECT_LED_CLOCK(3, LED_COLOR_WHITE(255))
      };
 
 When testing the sample, you can change the defined effects or add your own effects to the ``led_effect`` table.

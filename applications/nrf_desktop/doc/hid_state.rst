@@ -98,7 +98,7 @@ For example, the file contents should look like follows:
 
 	#include "hid_keyboard_leds.h"
 
-	static const struct led_effect keyboard_led_on = LED_EFFECT_LED_ON(LED_COLOR(255, 255, 255));
+	static const struct led_effect keyboard_led_on = LED_EFFECT_LED_ON(LED_COLOR_WHITE(255));
 	static const struct led_effect keyboard_led_off = LED_EFFECT_LED_OFF();
 
 	static const uint8_t keyboard_led_map[] = {

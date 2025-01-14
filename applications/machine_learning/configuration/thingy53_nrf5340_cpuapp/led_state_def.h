@@ -27,32 +27,32 @@ static const uint8_t led_map[] = {
 
 static const struct led_effect ei_data_forwarder_led_effects[] = {
 	[EI_DATA_FORWARDER_STATE_DISCONNECTED]	=
-		LED_EFFECT_LED_BLINK(2000, LED_COLOR(100, 0, 0)),
+		LED_EFFECT_LED_BLINK(2000, LED_COLOR_RED(100)),
 	[EI_DATA_FORWARDER_STATE_CONNECTED]	=
-		LED_EFFECT_LED_BLINK(500, LED_COLOR(100, 0, 0)),
+		LED_EFFECT_LED_BLINK(500, LED_COLOR_RED(100)),
 	[EI_DATA_FORWARDER_STATE_TRANSMITTING]	=
-		LED_EFFECT_LED_BLINK(50, LED_COLOR(100, 0, 0)),
+		LED_EFFECT_LED_BLINK(50, LED_COLOR_RED(100)),
 };
 
 static const struct ml_result_led_effect ml_result_led_effects[] = {
 	{
 		.label = NULL,
-		.effect = LED_EFFECT_LED_BLINK2(100, 200, LED_COLOR(100, 100, 100)),
+		.effect = LED_EFFECT_LED_BLINK2(100, 200, LED_COLOR_WHITE(100)),
 	},
 	{
 		.label = ANOMALY_LABEL,
-		.effect = LED_EFFECT_LED_ON(LED_COLOR(100, 0, 100)),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR_MAGENTA(100)),
 	},
 	{
 		.label = "updown",
-		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 100, 0)),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR_GREEN(100)),
 	},
 	{
 		.label = "rotate",
-		.effect = LED_EFFECT_LED_ON(LED_COLOR(100, 0, 0)),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR_RED(100)),
 	},
 	{
 		.label = "tap",
-		.effect = LED_EFFECT_LED_ON(LED_COLOR(0, 0, 100)),
+		.effect = LED_EFFECT_LED_ON(LED_COLOR_BLUE(100)),
 	},
 };

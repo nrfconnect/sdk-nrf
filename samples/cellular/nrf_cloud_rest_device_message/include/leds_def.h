@@ -24,5 +24,5 @@ enum led_id {
 	LED_ID_COUNT
 };
 
-static const struct led_effect led_effect_on = LED_EFFECT_LED_ON(LED_COLOR(255, 255, 255));
+static const struct led_effect led_effect_on = LED_EFFECT_LED_ON(LED_COLOR_WHITE(255));
 static const struct led_effect led_effect_off = LED_EFFECT_LED_OFF();
