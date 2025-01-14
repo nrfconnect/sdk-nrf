@@ -1,0 +1,139 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud BLE Gateway Sample Settings"
+
+if NRF_CLOUD_GATEWAY
+
+config USE_BT_HCI_SETUP
+	bool "Use BT HCI setup"
+	default y
+	select BT_HCI_SETUP
+	help
+	  Get the setup to run.
+
+config APPLICATION_WORKQUEUE_PRIORITY
+	int "Application workqueue priority"
+	default SYSTEM_WORKQUEUE_PRIORITY
+
+config FLASH_TEST
+	bool "Enable Flash Test module"
+	default n
+	select NRFX_SPIM if FLASH_TEST
+	select NRFX_SPIM3 if FLASH_TEST
+	select SPI if FLASH_TEST
+	select SPI_NOR if FLASH_TEST
+	help
+	  Enable to test Erase, Write, and Read of external flash.
+
+config CLOUD_BUTTON
+	bool "Enable button sensor"
+	default y
+
+config CLOUD_BUTTON_INPUT
+	int "Set button sensor button number"
+	range 1 4 if BOARD_NRF9160_PCA10090NS
+	range 1 1 if BOARD_NRF9160_PCA20035NS
+	default 1
+
+config ENTER_52840_MCUBOOT_VIA_BUTTON
+	bool "Button enables 52840 MCUboot"
+	depends on BOARD_APRICITY_GATEWAY_NRF9160 || BOARD_APRICITY_GATEWAY_NRF9160_NS
+	help
+	  Holding a button during and after startup will place the
+	  nrf52840 into MCUboot mode so the firmware can be updated.
+
+config SHELL_PROMPT_SECURE
+	string "Displayed prompt name"
+	default "uart:~# "
+	help
+	  Displayed prompt name for UART backend once user has logged in.
+
+config SHELL_DEFAULT_PASSWORD
+	string "Factory-set initial password"
+	default "nordic"
+	help
+	  User needs to type this to enter the shell and execute
+	  commands.
+
+config GATEWAY_BLE_FOTA
+	bool "Enable BLE FOTA support"
+	default y
+	help
+	  Enable ability to receive FOTA jobs for specific BLE devices,
+	  then inject data from one or more file downloads to a BLE
+	  device that supports a compatible DFU protocol.
+
+config GATEWAY_DBG_CMDS
+	bool "Enable debugging commands"
+	default y
+	select CPU_LOAD
+	select CPU_LOAD_CMDS
+	select KERNEL_SHELL
+
+config GATEWAY_SHELL
+	bool "Enable shell for administering nRF Cloud gateway"
+	default y
+	select SHELL
+	select SHELL_CMDS
+	select SHELL_HISTORY
+	select SHELL_METAKEYS
+	select SHELL_VT100_COLORS
+	select SHELL_BACKEND_SERIAL
+	select SHELL_CMDS_SELECT
+
+config STARTING_LOG_OVERRIDE
+	bool "Different logging level at boot"
+	default n
+	help
+	  All configured logging will occur if disabled. Otherwise,
+	  logging changed to STARTING_LOG_LEVEL until user logs in and
+	  manually enables with 'log enable inf' (or whatever level is
+	  desired).
+
+choice
+	prompt "Max compiled-in log level to boot with"
+	default STARTING_LOG_LEVEL_INF
+	depends on LOG
+
+config STARTING_LOG_LEVEL_OFF
+	bool "Off"
+
+config STARTING_LOG_LEVEL_ERR
+	bool "Error"
+
+config STARTING_LOG_LEVEL_WRN
+	bool "Warning"
+
+config STARTING_LOG_LEVEL_INF
+	bool "Info"
+
+config STARTING_LOG_LEVEL_DBG
+	bool "Debug"
+
+endchoice
+
+config STARTING_LOG_LEVEL
+	int
+	depends on LOG
+	default 0 if STARTING_LOG_LEVEL_OFF
+	default 1 if STARTING_LOG_LEVEL_ERR
+	default 2 if STARTING_LOG_LEVEL_WRN
+	default 3 if STARTING_LOG_LEVEL_INF
+	default 4 if STARTING_LOG_LEVEL_DBG
+
+if NRF_CLOUD_MQTT
+module-str = MQTT BLE Gateway
+endif
+if NRF_CLOUD_COAP
+module-str = CoAP BLE Gateway
+endif
+module = NRFCLOUD_BLE_GATEWAY
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

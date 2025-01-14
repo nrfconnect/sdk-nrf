@@ -1,4 +1,4 @@
-/* Copyright (c) 2023 Nordic Semiconductor ASA
+/* Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -65,6 +65,9 @@ int main(void)
 
 	LOG_INF("nRF Cloud multi-service sample has started, version: %s, protocol: %s",
 		CONFIG_APP_VERSION, protocol);
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+	LOG_INF("nRF Cloud BLE gateway support is enabled.");
+#endif
 
 	return 0;
 }

@@ -54,6 +54,12 @@ static int process_delta(struct nrf_cloud_data *const delta)
 		return err;
 	}
 
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+	if (delta_obj.type == NRF_CLOUD_OBJ_TYPE_JSON) {
+		err = gateway_state_handler(delta_obj.json);
+	}
+#endif
+
 	/* Reject the delta by updating desired.
 	 * Accept the delta by updating reported.
 	 */
