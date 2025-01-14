@@ -41,6 +41,7 @@ enum slm_httpccon_operation {
 /**@brief HTTP client state */
 enum httpc_state {
 	HTTPC_INIT,
+	HTTPC_ONGOING,
 	HTTPC_REQ_DONE,
 	HTTPC_RSP_HEADER_DONE,
 	HTTPC_COMPLETE
@@ -518,6 +519,7 @@ static void httpc_thread_fn(void *arg1, void *arg2, void *arg3)
 	}
 
 	LOG_INF("HTTP thread terminated");
+	httpc.state = HTTPC_INIT;
 }
 
 #define HTTP_CRLF_STR "\\r\\n"
@@ -581,6 +583,11 @@ static int handle_at_httpc_request(enum at_parser_cmd_type cmd_type,
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
+		if (httpc.state > HTTPC_INIT) {
+			LOG_ERR("Previous HTTP request is not finished.");
+			return -EEXIST;
+		}
+
 		memset(slm_data_buf, 0, sizeof(slm_data_buf));
 		/* Get method string */
 		size = HTTPC_METHOD_LEN;
@@ -641,7 +648,7 @@ static int handle_at_httpc_request(enum at_parser_cmd_type cmd_type,
 			}
 		}
 		httpc.total_sent = 0;
-		httpc.state = HTTPC_INIT;
+		httpc.state = HTTPC_ONGOING;
 		httpc.rsp_header_length = 0;
 		httpc.rsp_body_length = 0;
 		/* start http request thread */
