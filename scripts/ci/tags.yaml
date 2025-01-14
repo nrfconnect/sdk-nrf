@@ -1255,6 +1255,11 @@ ci_tests_benchmarks_peripheral_load:
     - zephyr/drivers/watchdog/
     - zephyr/soc/nordic/
 
+ci_tests_benchmarks_kernel_freq_change:
+  files:
+    - nrf/tests/benchmarks/kernel_freq_change/
+    - zephyr/drivers/clock_control/
+
 ci_tests_benchmarks_spi_endless:
   files:
     - modules/hal/nordic/nrfx/
