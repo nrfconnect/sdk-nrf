@@ -59,6 +59,8 @@ struct transport_params_coap {
 	bool retransmission_req;
 	/* Proxy-URI option value */
 	const char *proxy_uri;
+	/* Client auth callback */
+	int (*auth_cb)(int sock);
 };
 
 BUILD_ASSERT(CONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE >= sizeof(struct transport_params_coap));
@@ -419,8 +421,9 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 		coap->sock.type |= SOCK_NATIVE_TLS;
 	}
 
-	/* Copy proxy-uri to internal struct */
+	/* Copy proxy-uri and auth-cb to internal struct */
 	coap->proxy_uri = dl_host_cfg->proxy_uri;
+	coap->auth_cb = dl_host_cfg->auth_cb;
 
 	return 0;
 }
@@ -464,6 +467,11 @@ cleanup:
 	}
 
 	coap->new_data_req = true;
+
+	/* Run auth callback if set */
+	if (coap->auth_cb != NULL) {
+		return coap->auth_cb(coap->sock.fd);
+	}
 
 	return err;
 }

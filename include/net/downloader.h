@@ -186,6 +186,11 @@ struct downloader_host_cfg {
 	 */
 	int family;
 	/**
+	 * Callback to do client authentication.
+	 * This is called after connecting.
+	 */
+	int (*auth_cb)(int sock);
+	/**
 	 * CoAP Proxy-URI option.
 	 * This string is used in case you are requesting a proxied file from a CoAP server.
 	 */
