@@ -10,9 +10,27 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		/* Use the last 48KB of NVM as suit storage. */
-		suit_storage: partition@f4000 {
-			reg = <0xf4000 DT_SIZE_K(48)>;
+		suit_storage: partition@e9000 {
+			reg = <0xe9000 DT_SIZE_K(48)>;
 		};
+
+		dfu_partition: partition@f5000 {
+			reg = <0xf5000 DT_SIZE_K(4)>;
+		};
+
+		dfu_cache_partition_1: partition@f6000 {
+			reg = <0xf6000 DT_SIZE_K(4)>;
+		};
+
+		dfu_cache_partition_3: partition@f7000 {
+			reg = <0xf7000 DT_SIZE_K(4)>;
+		};
+	};
+};
+
+/ {
+	sram0: memory@20000000 {
+		compatible = "mmio-sram";
+		reg = <0x20000000 DT_SIZE_K(256)>;
 	};
 };
