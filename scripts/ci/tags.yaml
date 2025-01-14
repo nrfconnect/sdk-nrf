@@ -1302,6 +1302,11 @@ ci_tests_drivers_gpio:
     - zephyr/drivers/gpio/
     - zephyr/soc/nordic/
 
+ci_tests_drivers_audio:
+  files:
+    - nrf/tests/drivers/audio/pdm_loopback/
+    - zephyr/drivers/audio/
+
 ci_tests_drivers_fprotect:
   files:
     - nrf/lib/fprotect/
