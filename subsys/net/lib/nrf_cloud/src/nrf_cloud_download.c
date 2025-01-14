@@ -52,6 +52,41 @@ static int coap_dl_init(void)
 	return nrf_cloud_coap_transport_init(&coap_client);
 }
 
+int nrf_cloud_download_handle_coap_auth(int socket)
+{
+	int err = 0;
+	struct nrf_cloud_coap_client *client = &coap_client;
+
+	/* Initialize client */
+	err = nrf_cloud_coap_transport_init(client);
+	if (err) {
+		LOG_ERR("Failed to initialize CoAP client, error: %d", err);
+		return err;
+	}
+
+	/* We are already connected using the given socket */
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	client->sock = socket;
+	client->cc.fd = socket;
+	k_mutex_unlock(&client->mutex);
+
+	/* Authenticate */
+	err = nrf_cloud_coap_transport_authenticate(client);
+	if (err) {
+		LOG_ERR("Failed to authenticate CoAP client, error: %d", err);
+		return err;
+	}
+
+	/* Clean up client */
+	k_mutex_lock(&client->mutex, K_FOREVER);
+	client->sock = -1;
+	client->cc.fd = -1;
+	client->authenticated = false;
+	k_mutex_unlock(&client->mutex);
+
+	return 0;
+}
+
 static int coap_dl_connect_and_auth(void)
 {
 	int ret = nrf_cloud_coap_transport_connect(&coap_client);
