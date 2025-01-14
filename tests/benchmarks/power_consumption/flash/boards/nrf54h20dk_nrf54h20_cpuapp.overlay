@@ -2,6 +2,10 @@
 	status = "okay";
 };
 
+&exmif {
+	zephyr,pm-device-runtime-auto;
+};
+
 / {
 	aliases {
 		led = &led0;

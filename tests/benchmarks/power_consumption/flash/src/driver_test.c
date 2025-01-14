@@ -25,12 +25,25 @@ uint8_t buf[EXPECTED_SIZE];
 
 static const struct device *flash_dev = DEVICE_DT_GET(FLASH_NODE);
 
+static bool suspend_req;
+
+bool self_suspend_req(void)
+{
+	suspend_req = true;
+	return true;
+}
+
 void thread_definition(void)
 {
 	int rc;
 	uint8_t fill_value = 0x00;
 
 	while (1) {
+		if (suspend_req) {
+			suspend_req = false;
+			k_thread_suspend(k_current_get());
+		}
+
 		rc = flash_erase(flash_dev, TEST_AREA_OFFSET, FLASH_PAGE_SIZE);
 		__ASSERT(rc == 0, "flash_erase %d\n", rc);
 		rc = flash_fill(flash_dev, fill_value, TEST_AREA_OFFSET, EXPECTED_SIZE);
