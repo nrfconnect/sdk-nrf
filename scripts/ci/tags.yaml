@@ -1406,6 +1406,13 @@ ci_samples_nrf_rpc:
     - zephyr/subsys/net/
     - zephyr/subsys/random/
 
+ci_tests_subsys_nrf_rpc:
+  files:
+    - nrf/subsys/nrf_rpc/
+    - nrf/tests/mocks/nrf_rpc/
+    - nrf/tests/subsys/nrf_rpc/
+    - nrfxlib/nrf_rpc/
+
 ci_applications_protocols_serialization:
   files:
     - modules/crypto/
