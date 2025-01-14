@@ -19,7 +19,7 @@
 
 LOG_MODULE_REGISTER(message_queue, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
-/* Message Queue for enqueing outgoing messages during offline periods. */
+/* Message Queue for enqueuing outgoing messages during offline periods. */
 K_MSGQ_DEFINE(device_message_queue,
 	      sizeof(struct nrf_cloud_obj *),
 	      CONFIG_MAX_OUTGOING_MESSAGES,
