@@ -189,17 +189,18 @@ function(suit_encrypt_image args output_directory)
   endif()
 
   list(APPEND args --output-dir ${output_directory})
+  list(APPEND args --encrypt-script ${encrypt_script})
 
   set_property(
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
     COMMAND ${CMAKE_COMMAND} -E make_directory ${output_directory}
   )
+
   set_property(
     GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
-    COMMAND
-    PYTHONPATH=${ZEPHYR_SUIT_GENERATOR_MODULE_DIR}${SEP}$ENV{PYTHONPATH}
-    ${PYTHON_EXECUTABLE}
-    ${encrypt_script} encrypt-and-generate
+    COMMAND ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
+    encrypt
+    encrypt-and-generate
     ${args}
   )
 endfunction()
