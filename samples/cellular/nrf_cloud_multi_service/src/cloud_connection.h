@@ -76,6 +76,11 @@ void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb);
 void disconnect_cloud(void);
 
 /**
+ * @brief Allow automatic reconnections to the cloud.
+ */
+void control_cloud_connection(bool enable);
+
+/**
  * @brief Report a communications error so the cloud_connection can evaluate and
  * recover.
  */

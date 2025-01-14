@@ -24,6 +24,9 @@
 #include "location_tracking.h"
 #include "led_control.h"
 #include "shadow_config.h"
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+#include "gateway.h"
+#endif
 
 LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
@@ -40,6 +43,7 @@ static K_EVENT_DEFINE(cloud_events);
 /* Atomic status flag tracking whether an initial association is in progress. */
 static atomic_t initial_association;
 static bool device_deleted;
+static bool connection_allowed = true;
 static int reconnect_seconds = CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS;
 
 /* Helper functions for pending on pendable events. */
@@ -66,6 +70,11 @@ bool await_date_time_known(k_timeout_t timeout)
 bool is_device_deleted(void)
 {
 	return device_deleted;
+}
+
+void control_cloud_connection(bool enable)
+{
+	connection_allowed = enable;
 }
 
 /* Wait for a connection result, and return true if connection was successful within the timeout,
@@ -164,7 +173,7 @@ void register_general_dev_msg_handler(dev_msg_handler_cb_t handler_cb)
 
 /* This function causes the cloud to disconnect, and updates internal state accordingly.
  *
- * It is also triggerd by cloud disconnection, to update internal state.
+ * It is also triggered by cloud disconnection, to update internal state.
  *
  * In this latter case, an unnecessary "Disconnecting from nRF Cloud" and
  * "Already disconnected from nRF Cloud" will be printed.
@@ -367,10 +376,6 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 	int err;
 
 	if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) && shadow->delta) {
-		LOG_DBG("Shadow: Delta - version: %d, timestamp: %lld",
-			shadow->delta->ver,
-			shadow->delta->ts);
-
 		bool accept = true;
 
 		err = shadow_config_delta_process(&shadow->delta->state);
@@ -384,6 +389,31 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 			LOG_DBG("Ignoring delta until accepted shadow is received");
 			return;
 		}
+
+		if (!shadow->delta->state.encoded_data.ptr &&
+		    (shadow->delta->state.enc_src != NRF_CLOUD_ENC_SRC_NONE)) {
+			LOG_ERR("Encoded data ptr is NULL");
+			return;
+		}
+		if (!shadow->delta->state.json) {
+			LOG_ERR("JSON is NULL");
+			return;
+		}
+		LOG_INF("Shadow: Delta - version: %d, timestamp: %lld, %*s",
+			shadow->delta->ver,
+			shadow->delta->ts,
+			shadow->delta->state.encoded_data.len,
+			(shadow->delta->state.enc_src != NRF_CLOUD_ENC_SRC_NONE) ?
+				(const char *)shadow->delta->state.encoded_data.ptr :
+				"(not encoded)");
+
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+		LOG_INF("Processing gateway connection changes");
+		err = gateway_shadow_delta_handler(shadow->delta);
+		if (err) {
+			LOG_ERR("Error handling delta: %d", err);
+		}
+#endif
 
 		err = nrf_cloud_obj_shadow_delta_response_encode(&shadow->delta->state, accept);
 		if (err) {
@@ -403,6 +433,16 @@ static void handle_shadow_event(struct nrf_cloud_obj_shadow_data *const shadow)
 			/* Send the config on an error */
 			(void)shadow_config_reported_send();
 		}
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+		LOG_INF("Requesting gateway desired connections");
+		(void)gateway_shadow_accepted_handler(&shadow->accepted->desired);
+#endif
+	} else if ((shadow->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) && shadow->transform) {
+		LOG_DBG("Shadow: Transform");
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+		LOG_INF("Processing gateway desired connections");
+		(void)gateway_shadow_transform_handler(&shadow->transform->result.obj);
+#endif
 	}
 }
 
@@ -435,6 +475,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		 * succeeds.
 		 */
 		LOG_INF("Please add this device to your cloud account in the nRF Cloud portal.");
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+		reset_gateway();
+#endif
 
 		/* Store the fact that this is an initial association.
 		 *
@@ -501,7 +544,9 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 			 */
 			general_dev_msg_handler(&nrf_cloud_evt->data);
 		}
-
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+		gateway_data_handler(&nrf_cloud_evt->data);
+#endif
 		break;
 	case NRF_CLOUD_EVT_RX_DATA_DISCON:
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_DISCON");
@@ -510,6 +555,8 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 		break;
 	case NRF_CLOUD_EVT_RX_DATA_SHADOW: {
 		LOG_DBG("NRF_CLOUD_EVT_RX_DATA_SHADOW");
+		LOG_DBG("shadow: %*s", nrf_cloud_evt->data.len,
+			(const char *)nrf_cloud_evt->data.ptr);
 		handle_shadow_event(nrf_cloud_evt->shadow);
 		break;
 	}
@@ -590,6 +637,13 @@ static int setup_cloud(void)
 		return err;
 	}
 
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+	err = lte_lc_psm_req(IS_ENABLED(CONFIG_LTE_PSM_REQ));
+	if (err) {
+		LOG_ERR("Unable to disable PSM: %d", err);
+	}
+#endif
+
 #elif defined(CONFIG_NRF_CLOUD_COAP)
 #if defined(CONFIG_COAP_FOTA)
 	err = coap_fota_init();
@@ -613,6 +667,11 @@ static void check_credentials(void)
 {
 	int status = nrf_cloud_credentials_configured_check();
 
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+	if (status) {
+		reset_gateway();
+	}
+#endif
 	if (status == -ENOTSUP) {
 		if (IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
 			LOG_WRN("nRF Cloud credentials are not installed. "

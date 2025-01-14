@@ -6,6 +6,8 @@
 
 menu "Multi Service Sample Settings"
 
+rsource "Kconfig.ble_gateway"
+
 config APP_VERSION
 	string "Multi Service Sample version"
 	default "1.0.0"

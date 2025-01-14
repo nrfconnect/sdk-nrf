@@ -17,7 +17,7 @@ void on_fota_downloaded(void)
 	sample_reboot_normal();
 }
 
-struct dfu_target_fmfu_fdev * get_full_modem_fota_fdev(void)
+struct dfu_target_fmfu_fdev *get_full_modem_fota_fdev(void)
 {
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_FULL_MODEM_UPDATE)) {
 		static struct dfu_target_fmfu_fdev ext_flash_dev = {

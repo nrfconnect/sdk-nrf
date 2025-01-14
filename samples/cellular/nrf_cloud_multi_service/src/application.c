@@ -28,6 +28,9 @@
 #include "led_control.h"
 #include "at_commands.h"
 #include "shadow_config.h"
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+#include "gateway.h"
+#endif
 
 LOG_MODULE_REGISTER(application, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
@@ -364,6 +367,9 @@ void main_application_thread_fn(void)
 	}
 
 	dk_buttons_init(button_handler);
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+	init_gateway();
+#endif
 
 	/* Wait for first connection before starting the application. */
 	(void)await_cloud_ready(K_FOREVER);

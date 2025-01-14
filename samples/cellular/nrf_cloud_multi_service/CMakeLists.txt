@@ -1,10 +1,12 @@
 #
-# Copyright (c) 2022 Nordic Semiconductor ASA
+# Copyright (c) 2024 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 cmake_minimum_required(VERSION 3.20.0)
+
+set(BOARD_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_cloud_multi_service)
@@ -45,6 +47,19 @@ if(CONFIG_NRF_MODEM_LIB)
 	target_sources(app PRIVATE src/at_commands.c)
 endif()
 
-# NORDIC SDK APP END
-
 zephyr_include_directories(src)
+
+if (CONFIG_NRF_CLOUD_GATEWAY)
+    target_sources(app PRIVATE src/ble/ble.c)
+    target_sources(app PRIVATE src/ble/ble_codec.c)
+    target_sources(app PRIVATE src/ble/ble_conn_mgr.c)
+    target_sources(app PRIVATE src/ble/gateway.c)
+    target_sources_ifdef(CONFIG_SHELL app PRIVATE src/ble/cli.c)
+    target_sources_ifdef(CONFIG_GATEWAY_BLE_FOTA app PRIVATE src/ble/dfu/peripheral_dfu.c)
+    target_sources_ifdef(CONFIG_FLASH_TEST, app PRIVATE src/ble/flash/flash_test.c)
+    zephyr_include_directories(src src/ble src/ble/flash src/ble/dfu)
+    #add_subdirectory(src/ble/dfu)
+    add_subdirectory(src/ble/flash)
+endif()
+
+# NORDIC SDK APP END
