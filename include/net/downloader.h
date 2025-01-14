@@ -185,6 +185,11 @@ struct downloader_host_cfg {
 	 * Set to @c AF_UNSPEC (0) to fallback to @c AF_INET if @c AF_INET6 does not work.
 	 */
 	int family;
+	/**
+	 * CoAP Proxy-URI option.
+	 * This string is used in case you are requesting a proxied file from a CoAP server.
+	 */
+	const char *proxy_uri;
 };
 
 /**

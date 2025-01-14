@@ -32,7 +32,7 @@ config DOWNLOADER_SHELL
 
 config DOWNLOADER_TRANSPORT_PARAMS_SIZE
 	int "Maximum transport parameter size"
-	default 128
+	default 256
 
 config DOWNLOADER_TRANSPORT_HTTP
 	bool "HTTP transport"
