@@ -287,11 +287,8 @@ static int coap_request_send(struct downloader *dl)
 		return err;
 	}
 
-	err = dl_parse_url_file(dl->file, file, sizeof(file));
-	if (err) {
-		LOG_ERR("Unable to parse url");
-		return err;
-	}
+	LOG_DBG("dl->file: %s", dl->file);
+	strncpy(file, dl->file, sizeof(file) - 1);
 
 	path_elem = strtok_r(file, COAP_PATH_ELEM_DELIM, &path_elem_saveptr);
 	do {
