@@ -113,6 +113,11 @@ config FLASH_SIZE
 	default 1524
 endif
 
+config NRF_SECURITY_ENABLER
+	def_bool y
+	imply NRF_SECURITY if BT_CRYPTO || BT_HOST_CRYPTO || BT_MESH_USES_MBEDTLS_PSA || BT_FAST_PAIR_CRYPTO_PSA
+	imply ENTROPY_GENERATOR if BOARD_NATIVE_SIM
+	imply PSA_WANT_GENERATE_RANDOM if BT_HOST_CRYPTO_PRNG
 
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
