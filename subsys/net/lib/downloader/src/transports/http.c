@@ -430,11 +430,11 @@ static int http_parse(struct downloader *dl, size_t len)
 
 static bool dl_http_proto_supported(struct downloader *dl, const char *url)
 {
-	if (strncmp(url, HTTPS, strlen(HTTPS)) == 0) {
+	if (strncmp(url, HTTPS, (sizeof(HTTPS) - 1)) == 0) {
 		return true;
 	}
 
-	if (strncmp(url, HTTP, strlen(HTTP)) == 0) {
+	if (strncmp(url, HTTP, (sizeof(HTTP) - 1)) == 0) {
 		return true;
 	}
 
@@ -458,8 +458,8 @@ static int dl_http_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 	http->sock.proto = IPPROTO_TCP;
 	http->sock.type = SOCK_STREAM;
 
-	if (strncmp(url, HTTPS, strlen(HTTPS)) == 0 ||
-	    (strncmp(url, HTTP, strlen(HTTP)) != 0 &&
+	if (strncmp(url, HTTPS, (sizeof(HTTPS) - 1)) == 0 ||
+	    (strncmp(url, HTTP, (sizeof(HTTP) - 1)) != 0 &&
 	     (dl_host_cfg->sec_tag_count != 0 && dl_host_cfg->sec_tag_list != NULL))) {
 		http->sock.proto = IPPROTO_TLS_1_2;
 		http->sock.type = SOCK_STREAM;

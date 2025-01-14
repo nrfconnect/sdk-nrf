@@ -25,6 +25,9 @@ LOG_MODULE_DECLARE(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
 #define FILENAME_SIZE	     CONFIG_DOWNLOADER_MAX_FILENAME_SIZE
 #define COAP_PATH_ELEM_DELIM "/"
 
+#define COAP "coap://"
+#define COAPS "coaps://"
+
 struct transport_params_coap {
 	/** Flag whether config is set */
 	bool cfg_set;
@@ -342,9 +345,9 @@ static int coap_request_send(struct downloader *dl)
 
 static bool dl_coap_proto_supported(struct downloader *dl, const char *url)
 {
-	if (strncmp(url, "coaps://", 8) == 0) {
+	if (strncmp(url, COAPS, (sizeof(COAPS) - 1)) == 0) {
 		return true;
-	} else if (strncmp(url, "coap://", 7) == 0) {
+	} else if (strncmp(url, COAP, (sizeof(COAP) - 1)) == 0) {
 		return true;
 	}
 
@@ -369,14 +372,14 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 		coap->cfg = tmp_cfg;
 		coap->cfg_set = cfg_set;
 	} else {
-		coap->cfg.block_size = 5;
+		coap->cfg.block_size = COAP_BLOCK_1024;
 		coap->cfg.max_retransmission = 4;
 	}
 
 	coap->sock.proto = IPPROTO_UDP;
 	coap->sock.type = SOCK_DGRAM;
 
-	if (strncmp(url, "coaps://", 8) == 0 ||
+	if (strncmp(url, COAPS, (sizeof(COAPS) - 1)) == 0 ||
 	    (dl_host_cfg->sec_tag_count != 0 && dl_host_cfg->sec_tag_list != NULL)) {
 		coap->sock.proto = IPPROTO_DTLS_1_2;
 		coap->sock.type = SOCK_DGRAM;
