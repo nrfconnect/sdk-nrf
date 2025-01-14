@@ -27,6 +27,18 @@ config CAF_LEDS_GPIO
 
 endchoice
 
+config CAF_LEDS_ENABLE_DEPRECATED_MACROS
+	bool "Enable deprecated LED effect macros"
+	default n
+	help
+	  Enables the deprecated LED effect macros for backward compatibility.
+
+config CAF_LEDS_FRAMES_PER_SECOND
+	int "Frames per second"
+	default 100
+	help
+	  Number of LED updates per second.
+
 config CAF_LEDS_PM_EVENTS
 	bool "Power management events support"
 	select PM_DEVICE
