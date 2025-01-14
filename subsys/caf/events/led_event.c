@@ -23,6 +23,20 @@ APP_EVENT_TYPE_DEFINE(led_event,
 			IF_ENABLED(CONFIG_CAF_INIT_LOG_LED_EVENTS,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
+static void log_led_global_brightness_event(const struct app_event_header *aeh)
+{
+	const struct led_global_brightness_event *event = cast_led_global_brightness_event(aeh);
+
+	APP_EVENT_MANAGER_LOG(aeh, "brightness:%u", event->brightness);
+}
+
+APP_EVENT_TYPE_DEFINE(led_global_brightness_event,
+		  log_led_global_brightness_event,
+		  NULL,
+		  APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_LED_GLOBAL_BRIGHTNESS_EVENTS,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+
 static void log_led_ready_event(const struct app_event_header *aeh)
 {
 	const struct led_ready_event *event = cast_led_ready_event(aeh);
