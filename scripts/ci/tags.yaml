@@ -1413,6 +1413,13 @@ ci_tests_subsys_nrf_rpc:
     - nrf/tests/subsys/nrf_rpc/
     - nrfxlib/nrf_rpc/
 
+ci_tests_subsys_kmu:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/subsys/kmu/
+
 ci_applications_protocols_serialization:
   files:
     - modules/crypto/
