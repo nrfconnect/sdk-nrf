@@ -3,6 +3,7 @@ common:
   tags:
     - pytest
     - kmu
+    - ci_tests_subsys_kmu
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
 tests:
