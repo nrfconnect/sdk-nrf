@@ -961,7 +961,7 @@ struct lte_lc_conn_eval_params {
  *
  * When using search types up to @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE, the result
  * contains parameters from current/serving cell and optionally up to
- * @kconfig{CONFIG_LTE_NEIGHBOR_CELLS_MAX} neighbor cells.
+ * `CONFIG_LTE_NEIGHBOR_CELLS_MAX` neighbor cells.
  *
  * Result notification for Global Cell ID (GCI) search types include Cell ID, PLMN and TAC for up to
  * @c gci_count (@ref lte_lc_ncellmeas_params) surrounding cells.
@@ -1373,7 +1373,7 @@ int lte_lc_normal(void);
  * For encoding of the variables, see nRF AT Commands Reference Guide, 3GPP 27.007 Ch. 7.38., and
  * 3GPP 24.008 Ch. 10.5.7.4a and Ch. 10.5.7.3.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PSM_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
  * @param[in] rptau
  * @parblock
@@ -1435,7 +1435,7 @@ int lte_lc_psm_param_set(const char *rptau, const char *rat);
  * For more information about the encodings, see the description of the
  * lte_lc_psm_param_set() function.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PSM_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
  * @param[in] rptau
  * @parblock
@@ -1468,18 +1468,18 @@ int lte_lc_psm_param_set_seconds(int rptau, int rat);
 /**
  * Request modem to enable or disable Power Saving Mode (PSM).
  *
- * PSM parameters can be set using @kconfig{CONFIG_LTE_PSM_REQ_FORMAT},
- * @kconfig{CONFIG_LTE_PSM_REQ_RPTAU}, @kconfig{CONFIG_LTE_PSM_REQ_RAT},
- * @kconfig{CONFIG_LTE_PSM_REQ_RPTAU_SECONDS} and @kconfig{CONFIG_LTE_PSM_REQ_RAT_SECONDS},
+ * PSM parameters can be set using `CONFIG_LTE_PSM_REQ_FORMAT`,
+ * `CONFIG_LTE_PSM_REQ_RPTAU`, `CONFIG_LTE_PSM_REQ_RAT`,
+ * `CONFIG_LTE_PSM_REQ_RPTAU_SECONDS` and `CONFIG_LTE_PSM_REQ_RAT_SECONDS`,
  * or by calling lte_lc_psm_param_set() or lte_lc_psm_param_set_seconds().
  *
- * @note @kconfig{CONFIG_LTE_PSM_REQ} can be set to enable PSM, which is generally sufficient. This
+ * @note `CONFIG_LTE_PSM_REQ` can be set to enable PSM, which is generally sufficient. This
  *       option allows explicit disabling/enabling of PSM requesting after modem initialization.
  *       Calling this function for run-time control is possible, but it should be noted that
- *       conflicts may arise with the value set by @kconfig{CONFIG_LTE_PSM_REQ} if it is called
+ *       conflicts may arise with the value set by `CONFIG_LTE_PSM_REQ` if it is called
  *       during modem initialization.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PSM_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
  * @param[in] enable @c true to enable PSM, @c false to disable PSM.
  *
@@ -1491,7 +1491,7 @@ int lte_lc_psm_req(bool enable);
 /**
  * Get the current PSM (Power Saving Mode) configuration.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PSM_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
  * @param[out] tau Periodic TAU interval in seconds. A non-negative integer.
  * @param[out] active_time Active time in seconds. A non-negative integer,
@@ -1513,20 +1513,20 @@ int lte_lc_psm_get(int *tau, int *active_time);
  * would do if network allowed to use PSM. Sending of MO data or MO SMS will automatically wake up
  * the modem just like if modem was in normal PSM sleep.
  *
- * To use the feature, also PSM request must be enabled using @kconfig{CONFIG_LTE_PSM_REQ} or
+ * To use the feature, also PSM request must be enabled using `CONFIG_LTE_PSM_REQ` or
  * lte_lc_psm_req().
  *
  * Refer to the AT command guide for guidance and limitations of this feature.
  *
- * @note @kconfig{CONFIG_LTE_PROPRIETARY_PSM_REQ} can be set to enable proprietary PSM, which is
+ * @note `CONFIG_LTE_PROPRIETARY_PSM_REQ` can be set to enable proprietary PSM, which is
  *       generally sufficient. This option allows to enable or disable proprietary PSM after modem
  *       initialization. Calling this function for run-time control is possible, but it should be
  *       noted that conflicts may arise with the value set by
- *       @kconfig{CONFIG_LTE_PROPRIETARY_PSM_REQ} if it is called during modem initialization.
+ *       `CONFIG_LTE_PROPRIETARY_PSM_REQ` if it is called during modem initialization.
  *
  * @note This feature is only supported by modem firmware versions >= v2.0.0.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PSM_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
@@ -1544,7 +1544,7 @@ int lte_lc_proprietary_psm_req(bool enable);
  *
  * For reference to which values can be set, see subclause 10.5.5.32 of 3GPP TS 24.008.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_EDRX_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_EDRX_MODULE` to be enabled.
  *
  * @param[in] mode LTE mode to which the PTW value applies.
  * @param[in] ptw Paging Time Window value as a null-terminated string.
@@ -1563,7 +1563,7 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
  *
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_EDRX_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_EDRX_MODULE` to be enabled.
  *
  * @param[in] mode LTE mode to which the eDRX value applies.
  * @param[in] edrx eDRX value as a null-terminated string.
@@ -1577,20 +1577,20 @@ int lte_lc_edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 /**
  * Request modem to enable or disable use of eDRX.
  *
- * eDRX parameters can be set using @kconfig{CONFIG_LTE_EDRX_REQ_VALUE_LTE_M},
- * @kconfig{CONFIG_LTE_EDRX_REQ_VALUE_NBIOT}, @kconfig{CONFIG_LTE_PTW_VALUE_LTE_M} and
- * @kconfig{CONFIG_LTE_PTW_VALUE_NBIOT}, or by calling lte_lc_edrx_param_set() and
+ * eDRX parameters can be set using `CONFIG_LTE_EDRX_REQ_VALUE_LTE_M`,
+ * `CONFIG_LTE_EDRX_REQ_VALUE_NBIOT`, `CONFIG_LTE_PTW_VALUE_LTE_M` and
+ * `CONFIG_LTE_PTW_VALUE_NBIOT`, or by calling lte_lc_edrx_param_set() and
  * lte_lc_ptw_set().
  *
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
- * @note @kconfig{CONFIG_LTE_EDRX_REQ} can be set to enable eDRX, which is generally sufficient.
+ * @note `CONFIG_LTE_EDRX_REQ` can be set to enable eDRX, which is generally sufficient.
  *       This option allows explicit disabling/enabling of eDRX requesting after modem
  *       initialization. Calling this function for run-time control is possible, but it should be
- *       noted that conflicts may arise with the value set by @kconfig{CONFIG_LTE_EDRX_REQ} if it is
+ *       noted that conflicts may arise with the value set by `CONFIG_LTE_EDRX_REQ` if it is
  *       called during modem initialization.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_EDRX_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_EDRX_MODULE` to be enabled.
  *
  * @param[in] enable @c true to enable eDRX, @c false to disable eDRX.
  *
@@ -1604,7 +1604,7 @@ int lte_lc_edrx_req(bool enable);
  *
  * @param[out] edrx_cfg eDRX configuration.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_EDRX_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_EDRX_MODULE` to be enabled.
  *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
@@ -1696,7 +1696,7 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  *
  * @note This feature is only supported by modem firmware versions >= 1.3.0.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
  *
  * @param[in] params Search type parameters or @c NULL to initiate a measurement with the default
  *                   parameters. See @ref lte_lc_ncellmeas_params for more information.
@@ -1711,7 +1711,7 @@ int lte_lc_neighbor_cell_measurement(struct lte_lc_ncellmeas_params *params);
 /**
  * Cancel an ongoing neighbor cell measurement.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
  *
  * @retval 0 if neighbor cell measurement was cancelled.
  * @retval -EFAULT if AT command failed.
@@ -1724,7 +1724,7 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * Connection evaluation parameters can be used to determine the energy efficiency of data
  * transmission before the actual data transmission.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_CONN_EVAL_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_CONN_EVAL_MODULE` to be enabled.
  *
  * @param[out] params Connection evaluation parameters.
  *
@@ -1776,7 +1776,7 @@ int lte_lc_modem_events_disable(void);
  * "nRF91 AT Commands - Command Reference Guide" for more information and in-depth explanations of
  * periodic search configuration.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` to be enabled.
  *
  * @param[in] cfg Periodic search configuration.
  *
@@ -1790,7 +1790,7 @@ int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cf
 /**
  * Get the configured periodic search parameters.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` to be enabled.
  *
  * @param[out] cfg Periodic search configuration.
  *
@@ -1806,7 +1806,7 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg);
 /**
  * Clear the configured periodic search parameters.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` to be enabled.
  *
  * @retval 0 if the configuration was cleared.
  * @retval -EFAULT if an AT command could not be sent to the modem.
@@ -1820,7 +1820,7 @@ int lte_lc_periodic_search_clear(void);
  * This can be used for example when modem is in sleep state between periodic searches. The search
  * is performed only when the modem is in sleep state between periodic searches.
  *
- * @note Requires @kconfig{CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE} to be enabled.
+ * @note Requires `CONFIG_LTE_LC_PERIODIC_SEARCH_MODULE` to be enabled.
  *
  * @retval 0 if the search request was successfully delivered to the modem.
  * @retval -EFAULT if an AT command could not be sent to the modem.
