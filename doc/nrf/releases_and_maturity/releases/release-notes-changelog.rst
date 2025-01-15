@@ -206,6 +206,12 @@ nRF Desktop
     The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
   * The release configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
 
+* Added:
+
+  * System Power Management for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target on the application and radio cores.
+    The application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
+    Enabling MRAM latency makes the Bluetooth LE controller unstable.
+
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
