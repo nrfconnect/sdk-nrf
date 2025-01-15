@@ -102,15 +102,14 @@ int main(void)
 	ret = gpio_is_ready_dt(&led);
 	__ASSERT(ret, "Error: GPIO Device not ready");
 
-#if defined(CONFIG_CLOCK_CONTROL)
-	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
-	__ASSERT(ret == 0, "Could not configure led GPIO");
-	k_msleep(1000);
-	gpio_pin_set_dt(&led, 1);
-	set_global_domain_frequency();
-#else
 	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT(ret == 0, "Could not configure led GPIO");
+
+	/* Wait a bit to solve NRFS request timeout issue. */
+	k_msleep(100);
+
+#if defined(CONFIG_CLOCK_CONTROL)
+	set_global_domain_frequency();
 #endif
 
 	/* Set PWM fill ratio to 50% */

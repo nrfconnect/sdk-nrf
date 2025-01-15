@@ -94,7 +94,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_256MHz:
     tags: ppk_power_measure
@@ -108,7 +108,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_128MHz:
     tags: ppk_power_measure
@@ -122,7 +122,7 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_64MHz:
     tags: ppk_power_measure
@@ -136,4 +136,4 @@ tests:
     harness_config:
       fixture: spi_loopback
       pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"

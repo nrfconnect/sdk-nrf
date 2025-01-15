@@ -13,7 +13,6 @@
  */
 
 / {
-
 	aliases {
 		led = &led0;
 		/delete-property/ led1;
