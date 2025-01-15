@@ -15,6 +15,43 @@ config BT_MESH_SETTINGS_WORKQ_STACK_SIZE
 
 endif
 
+if BT_MESH_USES_MBEDTLS_PSA
+
+config BT_MESH_MBEDTLS_BACKEND_ENABLE
+	bool
+	default y
+	imply NRF_SECURITY
+	imply MBEDTLS_ENABLE_HEAP
+
+config MBEDTLS_HEAP_SIZE
+	default 1024
+
+if BT_SETTINGS
+
+config BT_MESH_PSA_CRYPTO_STORAGE
+	bool
+	default y
+	imply TRUSTED_STORAGE
+	select MBEDTLS_PSA_CRYPTO_STORAGE_C
+
+choice TRUSTED_STORAGE_BACKEND_AEAD_KEY
+	default TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID
+
+endchoice # TRUSTED_STORAGE_BACKEND_AEAD_KEY
+
+endif # BT_SETTINGS
+
+if BT_LONG_WQ
+# There is no clear undestanding where this parameter should be adapted for ble mesh purposes.
+# This place has been chosen as temporary solution.
+# JIRA task NCSDK-31391 was created to solve the issue later.
+config BT_LONG_WQ_STACK_SIZE
+	default 4096
+
+endif # BT_LONG_WQ
+
+endif # BT_MESH_USES_MBEDTLS_PSA
+
 if BT_MESH_ADV_EXT
 
 # Set the optimal advertiser configuration to improve performance of the Relay, GATT and Friend
