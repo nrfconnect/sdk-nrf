@@ -20,15 +20,13 @@ In most of the cases you want to make it possible to configure some properties o
 For example, a sensor may need to allow configuring used GPIO pins or communication interface.
 
 A driver instance can be made configurable through a devicetree node that is compatible with a specific binding.
-The devicetree bindings provide structure for the devicetree by declaring requirements for the content of devicetree nodes.
-The :ref:`compatible <zephyr:dt-bindings-compatible>` property defines compatibility of a devicetree node with a devicetree binding.
+
+|devicetree_bindings|
 
 You can create a devicetree binding YAML file for your driver in the :file:`dts/bindings` directory of your project.
 If applicable, you can also use one of the existing DTS bindings available in the |NCS| or Zephyr.
 For implementation examples, see :file:`nrf/dts/bindings` and :file:`zephyr/dts/bindings` directories.
 See also :ref:`zephyr:devicetree` documentation for more information about devicetree.
-
-For more information about devicetree bindings, read the :ref:`documentation about them in Zephyr <zephyr:dt-binding-compat>`.
 
 .. rst-class:: numbered-step
 

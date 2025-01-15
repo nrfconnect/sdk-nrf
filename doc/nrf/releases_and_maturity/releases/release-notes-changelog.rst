@@ -687,6 +687,8 @@ Documentation
 
   * New page :ref:`thingy53_precompiled` under :ref:`ug_thingy53`.
     This page includes some of the information previously located on the standalone page for getting started with Nordic Thingy:53.
+  * New page :ref:`add_new_led_example` under :ref:`configuring_devicetree`.
+    This page includes information previously located in the |nRFVSC| documentation.
 
 * Updated the :ref:`create_application` page with the :ref:`creating_add_on_index` section.
 * Removed the standalone page for getting started with Nordic Thingy:53.
