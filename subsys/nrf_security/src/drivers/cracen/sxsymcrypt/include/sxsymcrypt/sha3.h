@@ -51,7 +51,7 @@ extern const struct sxhashalg sxhashalg_sha3_384;
 /** Hash algorithm SHA-3 512*/
 extern const struct sxhashalg sxhashalg_sha3_512;
 
-/** Hash algorithm SHAKE256, with output size fixed to 114 bytes (for ED448). */
+/** Hash algorithm SHAKE256, with output size fixed to 114 bytes (for Ed448). */
 extern const struct sxhashalg sxhashalg_shake256_114;
 
 /** Creates a SHA3-224 hash operation context

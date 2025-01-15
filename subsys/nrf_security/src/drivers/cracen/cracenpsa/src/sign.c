@@ -339,7 +339,7 @@ static psa_status_t cracen_signature_ecc_sign(int message, const psa_key_attribu
 	sign.r = (char *)signature;
 	sign.s = (char *)signature + *signature_length / 2;
 
-	/* ED25519PH requires prehashing and supports sign and verify message
+	/* Ed25519ph requires prehashing and supports sign and verify message
 	 * the message is therefore hashed here before si_sig_verify is called
 	 */
 	if (alg == PSA_ALG_ED25519PH && message) {
@@ -419,7 +419,7 @@ static psa_status_t cracen_signature_ecc_verify(int message, const psa_key_attri
 	sign.sz = signature_length;
 	sign.r = (char *)signature;
 	sign.s = (char *)signature + signature_length / 2;
-	/* ED25519PH requires prehashing and supports sign and verify message
+	/* Ed25519ph requires prehashing and supports sign and verify message
 	 * the message is therefore hashed here before si_sig_verify is called
 	 */
 	if (alg == PSA_ALG_ED25519PH && message) {

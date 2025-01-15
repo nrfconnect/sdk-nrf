@@ -24,7 +24,7 @@ struct sx_pk_cmd_def;
  *
  * All operands for this command use a little endian representation.
  * Operands should be decoded and clamped as defined in specifications
- * for ED25519 or ED448.
+ * for Ed25519 or Ed448.
  */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_PTMUL;
 
@@ -32,7 +32,7 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_PTMUL;
  *
  * All operands for this command use a little endian representation.
  * Operands should be decoded and clamped as defined in specifications
- * for ED25519 or ED448.
+ * for Ed25519 or Ed448.
  */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_SIGN;
 
@@ -40,7 +40,7 @@ extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_SIGN;
  *
  * All operands for this command use a little endian representation.
  * Operands should be decoded and clamped as defined in specifications
- * for ED25519 or ED448.
+ * for Ed25519 or Ed448.
  */
 extern const struct sx_pk_cmd_def *const SX_PK_CMD_EDDSA_VER;
 
