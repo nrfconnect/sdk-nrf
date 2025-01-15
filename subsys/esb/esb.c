@@ -277,6 +277,19 @@ static volatile uint32_t wait_for_ack_timeout_us;
 static uint32_t radio_shorts_common = RADIO_SHORTS_COMMON;
 static const bool fast_switching = IS_ENABLED(CONFIG_ESB_FAST_SWITCHING);
 
+/* Event work handler function */
+static void evt_work_handler(struct k_work *work);
+
+/* Structure representing an ESB event with associated work */
+struct esb_evt_irq {
+	struct esb_evt event;
+	struct k_work work;
+};
+
+#define ESB_EVENT_QUEUE_SIZE (CONFIG_ESB_TX_FIFO_SIZE + CONFIG_ESB_RX_FIFO_SIZE)
+static uint32_t evt_irq_idx;
+static struct esb_evt_irq evt_irq[ESB_EVENT_QUEUE_SIZE];
+
 static const mpsl_fem_event_t rx_event = {
 	.type = MPSL_FEM_EVENT_TYPE_TIMER,
 	.event.timer = {
@@ -948,6 +961,13 @@ static void initialize_fifos(void)
 	}
 }
 
+static void initialize_event_work(void)
+{
+	for (size_t i = 0; i < ESB_EVENT_QUEUE_SIZE; i++) {
+		k_work_init(&evt_irq[i].work, evt_work_handler);
+	}
+}
+
 static void tx_fifo_remove_last(void)
 {
 	if (tx_fifo.count == 0) {
@@ -1597,28 +1617,44 @@ static void radio_irq_handler(void)
 #endif /* defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING) */
 }
 
+static void evt_work_handler(struct k_work *work)
+{
+	struct esb_evt_irq *evt = CONTAINER_OF(work, struct esb_evt_irq, work);
+
+	if (event_handler != NULL) {
+		event_handler(&evt->event);
+	}
+}
+
+static void event_handle(uint32_t interrupts, uint32_t interrupt_mask, uint32_t event_id)
+{
+	struct esb_evt event;
+
+	if (interrupts & interrupt_mask) {
+		event.tx_attempts = last_tx_attempts;
+		event.evt_id = event_id;
+		evt_irq[evt_irq_idx].event = event;
+		k_work_submit(&evt_irq[evt_irq_idx].work);
+
+		if (++evt_irq_idx >= ESB_EVENT_QUEUE_SIZE) {
+			evt_irq_idx = 0;
+		}
+	}
+}
+
+static void event_push(uint32_t interrupts)
+{
+	event_handle(interrupts, INT_TX_SUCCESS_MSK, ESB_EVENT_TX_SUCCESS);
+	event_handle(interrupts, INT_TX_FAILED_MSK, ESB_EVENT_TX_FAILED);
+	event_handle(interrupts, INT_RX_DATA_RECEIVED_MSK, ESB_EVENT_RX_RECEIVED);
+}
+
 static void esb_evt_irq_handler(void)
 {
 	uint32_t interrupts;
-	struct esb_evt event;
-
-	event.tx_attempts = last_tx_attempts;
 
 	get_and_clear_irqs(&interrupts);
-	if (event_handler != NULL) {
-		if (interrupts & INT_TX_SUCCESS_MSK) {
-			event.evt_id = ESB_EVENT_TX_SUCCESS;
-			event_handler(&event);
-		}
-		if (interrupts & INT_TX_FAILED_MSK) {
-			event.evt_id = ESB_EVENT_TX_FAILED;
-			event_handler(&event);
-		}
-		if (interrupts & INT_RX_DATA_RECEIVED_MSK) {
-			event.evt_id = ESB_EVENT_RX_RECEIVED;
-			event_handler(&event);
-		}
-	}
+	event_push(interrupts);
 }
 
 #if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
@@ -1723,6 +1759,7 @@ int esb_init(const struct esb_config *config)
 	nrf_radio_prefix1_set(NRF_RADIO, 0x13E363A3);
 
 	initialize_fifos();
+	initialize_event_work();
 
 	err = sys_timer_init();
 	if (err) {
