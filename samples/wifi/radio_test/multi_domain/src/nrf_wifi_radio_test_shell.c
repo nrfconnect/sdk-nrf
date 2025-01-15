@@ -12,7 +12,9 @@
 #include <nrf_wifi_radio_test_shell.h>
 #include <util.h>
 #include "fmac_api_common.h"
-
+#ifdef CONFIG_NRF70_SR_COEX
+#include <coex.h>
+#endif
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 
@@ -1396,6 +1398,81 @@ static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 }
 #endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
+#ifdef CONFIG_NRF70_SR_COEX
+static int nrf_wifi_radio_test_config_pta(const struct shell *shell,
+					  size_t argc,
+					  const char *argv[])
+{
+	bool wlan_band;
+	bool separate_antennas;
+	bool is_sr_protocol_ble;
+	int result_non_pta = 0;
+	int result_pta = 0;
+	int result = 0;
+
+	if (argc < 4) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "invalid # of args : %d\n", argc);
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Usage: config_pta wlan_band");
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      " separate_antennas is_sr_protocol_ble\n");
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "wlan_band: 0 for 2.4GHz, 1 for 5GHz\n");
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "is_sep_antennas: 0 for shared antenna,");
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      " 1 for separate antennas\n");
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "is_sr_ble: 0 for Thread, 1 for Bluetooth\n");
+		return -ENOEXEC;
+	}
+
+	wlan_band  = strtoul(argv[1], NULL, 0);
+	separate_antennas  = strtoul(argv[2], NULL, 0);
+	is_sr_protocol_ble  = strtoul(argv[3], NULL, 0);
+
+	if ((int)wlan_band > 1) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Invalid wlan_band(%d).\n",
+			      (int)wlan_band);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	if ((int)separate_antennas > 1) {
+		shell_fprintf(shell,
+			     SHELL_ERROR,
+			    "Invalid separate_antennas(%d).\n",
+			    (int)separate_antennas);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	if ((int)is_sr_protocol_ble > 1) {
+		shell_fprintf(shell,
+			     SHELL_ERROR,
+			    "Invalid is_sr_protocol_ble(%d).\n",
+			    (int)is_sr_protocol_ble);
+		shell_help(shell);
+		return -ENOEXEC;
+	}
+
+	result_non_pta = nrf_wifi_coex_config_non_pta(separate_antennas, is_sr_protocol_ble);
+	result_pta = nrf_wifi_coex_config_pta(wlan_band, separate_antennas, is_sr_protocol_ble);
+	result = result_non_pta & result_pta;
+	return result;
+}
+#endif /* CONFIG_NRF70_SR_COEX */
+
 static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 				      size_t argc,
 				      const char *argv[])
@@ -2358,6 +2435,18 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      2,
 		      0),
 #endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
+
+#ifdef CONFIG_NRF70_SR_COEX
+	SHELL_CMD_ARG(config_pta,
+		      NULL,
+		      " - <val> - Wi-Fi operating band 0: 2.4GHz, 1: 5GHz\n"
+		      " - <val> - Antenna mode 0: Shared, 1: Separate\n"
+		      " - <val> - SR protocol  0: Thread, 1: Bluetooth LE\n",
+		      nrf_wifi_radio_test_config_pta,
+		      4,
+		      0),
+#endif /* CONFIG_NRF70_SR_COEX */
+
 	SHELL_CMD_ARG(rx_lna_gain,
 		      NULL,
 		      "<val> - LNA gain to be configured.\n"
