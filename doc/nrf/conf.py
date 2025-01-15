@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2024 Nordic Semiconductor
+# Copyright (c) 2025 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -26,9 +26,9 @@ MCUBOOT_BASE = utils.get_projdir("mcuboot")
 # General configuration --------------------------------------------------------
 
 project = "nRF Connect SDK"
-copyright = "2019-2024, Nordic Semiconductor"
+copyright = "2019-2025, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = "2.6.2"
+version = release = "2.6.3"
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
