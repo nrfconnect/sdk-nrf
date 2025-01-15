@@ -28,5 +28,6 @@ In particular, :ref:`zephyr:set-devicetree-overlays` explains how the base devic
    :caption: Subpages:
 
    add_new_driver
+   add_new_led_example
    pin_control
    use_gpio_pin_directly
