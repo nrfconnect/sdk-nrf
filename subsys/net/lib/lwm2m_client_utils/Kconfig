@@ -253,6 +253,20 @@ config LWM2M_CELL_CONN_APN_PROFILE_COUNT
 
 endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
 
+config LWM2M_CLIENT_UTILS_BINARYAPPDATA_OBJ_SUPPORT
+	bool "Support for binary application data container object"
+	select LWM2M_BINARYAPPDATA_OBJ_SUPPORT if !ZTEST
+
+if LWM2M_CLIENT_UTILS_BINARYAPPDATA_OBJ_SUPPORT
+
+config LWM2M_BINARYAPPDATA_DATA_SIZE
+	int "BinaryAppData data size"
+	default 512
+	help
+	  Maximum size of the BinaryAppData data resource.
+
+endif #LWM2M_CLIENT_UTILS_BINARYAPPDATA_OBJ_SUPPORT
+
 config LWM2M_CLIENT_UTILS_RAI
 	bool "Enable release assistance indication (RAI)"
 	help

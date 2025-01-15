@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SLM_LWM2M
+	bool "LwM2M support in SLM"
+	depends on LWM2M
+
+if SLM_LWM2M
+
+config SLM_LWM2M_AUTO_STARTUP
+	bool "Enable automatic startup on boot"
+	help
+	  Enable automatic startup of the LwM2M client on device boot. If this configuration is
+	  disabled, automatic startup is controlled through a dedicated AT command.
+
+config SLM_LWM2M_PSK
+	string "LwM2M pre-shared key"
+	help
+	  Pre-shared key must be identical to the PSK registered with the device on the LwM2M server.
+	  Use the hexadecimal representation.
+
+endif # SLM_LWM2M
