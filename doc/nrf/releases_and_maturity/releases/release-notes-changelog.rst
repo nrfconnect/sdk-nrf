@@ -105,8 +105,13 @@ Developing with PMICs
 Security
 ========
 
-  * Added support for HKDF-Expand and HKDF-Extract in CRACEN.
-  * Added support for Ed25519ph(HashEdDSA) to CRACEN
+  * Added:
+
+    * Support for HKDF-Expand and HKDF-Extract in CRACEN.
+    * Support for Ed25519ph(HashEdDSA) to CRACEN.
+
+  * Updated the :ref:`app_approtect` page with nRF Util commands that replaced the nrfjprog commands.
+    This is part of the ongoing work of archiving `nRF Command Line Tools`_ and replacing them with nRF Util.
   * Moved the :ref:`app_boards_spe_nspe` documentation page under :ref:`security` from the :ref:`ug_app_dev` section.
 
 Protocols
