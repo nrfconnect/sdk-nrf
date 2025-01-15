@@ -110,7 +110,7 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Fixed an issue where a flash operation executed on the system workqueue might result in ``-ETIMEDOUT``, if there is an active Bluetooth LE connection.
 
 Bluetooth Mesh
 --------------
