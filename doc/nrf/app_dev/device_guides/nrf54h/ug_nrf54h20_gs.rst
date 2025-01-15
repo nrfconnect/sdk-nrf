@@ -137,42 +137,37 @@ Installing nRF Util and its commands
 
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
-* nRF Util version 7.13.0 or higher
-* nRF Util ``device`` version 2.7.10
-* nRF Util ``trace`` version 3.10.0
-* nRF Util ``suit`` version 0.9.0
+* nRF Util v7.13.0 or higher
+* nRF Util ``device`` command v2.7.10
+* nRF Util ``trace`` command v3.1.0
+* nRF Util ``suit`` command v0.9.0
 
-1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
-#. Add nRF Util to the system path on Linux and MacOS, or environment variables on Windows, to run it from anywhere on the system.
-   On Linux and MacOS, use one of the following options:
+If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prerequisites <installing_vsc>`, complete the following steps to install it:
 
-   * Add nRF Util's directory to the system path.
-   * Move the file to a directory in the system path.
+1. Complete the steps listed on the `Installing nRF Util`_ page to install nRF Util.
+   Follow the default installation procedure from the web repository.
+#. Verify the version of the nRF Util installation on your machine:
 
-#. On MacOS and Linux, give ``nrfutil`` execute permissions by typing ``chmod +x nrfutil`` in a terminal or using a file browser.
-   This is typically a checkbox found under file properties.
-#. On MacOS, to run the nrfutil executable you need to allow it in the system settings.
-#. Verify the version of the nRF Util installation on your machine by running the following command::
+   a. Run the following command:
 
-      nrfutil --version
+      .. code-block::
 
-#. If your version is below 7.13.0, run the following command to update nRF Util::
+         nrfutil --version
 
-      nrfutil self-upgrade
+   b. If your version is below v7.13.0, run the following command to update the core module:
 
-   For more information, consult the `nRF Util`_ documentation.
+      .. code-block::
 
-#. Install the nRF Util ``device`` command version 2.7.10 as follows::
+         nrfutil self-upgrade
+
+      For more information, consult the `Upgrading nRF Util core module`_ documentation.
+
+#. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
+   For example, the following command installs the nRF Util ``device`` command version 2.7.10:
+
+   .. code-block::
 
       nrfutil install device=2.7.10 --force
-
-#. Install the nRF Util ``trace`` command version 3.10.0 as follows::
-
-      nrfutil install trace=3.10.0 --force
-
-#. Install the nRF Util ``suit`` command version 0.9.0 as follows::
-
-      nrfutil install suit=0.9.0 --force
 
 .. _ug_nrf54h20_gs_bringup:
 

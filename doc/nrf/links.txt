@@ -840,7 +840,9 @@
 .. _`nRF Util`: https://docs.nordicsemi.com/bundle/nrfutil/page/README.html
 .. _`Installing nRF Util`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html
 .. _`nRF Util prerequisites`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html#prerequisites
+.. _`Upgrading nRF Util core module`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html#upgrading-nrf-util
 .. _`Installing and upgrading nRF Util commands`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing_commands.html
+.. _`Installing specific versions of nRF Util commands`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing_commands.html#installing-specific-versions-of-commands
 .. _`Installing nRF Util for nRF5 SDK`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/installing.html
 .. _`DFU over Zigbee`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_performing.html#dfu-over-zigbee
 .. _`Generating DFU packages`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_generating_packages.html
