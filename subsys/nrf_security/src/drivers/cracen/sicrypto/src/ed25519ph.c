@@ -48,7 +48,7 @@
 /* This is the ASCII string with the
  * PHflag 1 and context size 0 appended as defined in:
  * https://datatracker.ietf.org/doc/html/rfc8032.html#section-2
- * used for domain seperation between ED25519 and ED25519PH
+ * used for domain seperation between Ed25519 and Ed25519ph
  */
 const char dom2[34] = {
 	0x53, 0x69, 0x67, 0x45, 0x64, 0x32, 0x35,

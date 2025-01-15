@@ -13,9 +13,9 @@
 #include <silexpk/iomem.h>
 #include <silexpk/cmddefs/edwards.h>
 
-/** Write a ED448 digest into a pair of operand slots.
+/** Write a Ed448 digest into a pair of operand slots.
  *
- * A ED448 digest has twice as many bytes as the normal operand size.
+ * A Ed448 digest has twice as many bytes as the normal operand size.
  *
  * \param op The digest bytes to write into the operand slot.
  * \param slots The pair of slots to write the operand into.
@@ -133,7 +133,7 @@ static inline int ed448_decode_pt_x(const struct sx_ed448_pt *pt)
 	return (pt->encoded[SX_ED448_PT_SZ - 1] >> 7) & 1;
 }
 
-/** Write the y affine coordinate of an encoded ED448 point into memory */
+/** Write the y affine coordinate of an encoded Ed448 point into memory */
 static inline void ed448_pt_write_y(const struct sx_ed448_pt *pt, char *ay)
 {
 	sx_wrpkmem(ay, pt->encoded, SX_ED448_PT_SZ - 1);

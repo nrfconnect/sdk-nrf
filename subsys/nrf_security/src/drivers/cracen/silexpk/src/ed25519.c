@@ -14,9 +14,9 @@
 #include <silexpk/cmddefs/edwards.h>
 #include <string.h>
 
-/** Write a ED25519 digest into a pair of operand slots.
+/** Write a Ed25519 digest into a pair of operand slots.
  *
- * A ED25519 digest has twice as many bytes as the normal operand size.
+ * A Ed25519 digest has twice as many bytes as the normal operand size.
  *
  * \param op The digest bytes to write into the operand slot.
  * \param slots The pair of slots to write the operand into.
@@ -134,7 +134,7 @@ static inline int ed25519_decode_pt_x(const struct sx_ed25519_pt *pt)
 	return (pt->encoded[SX_ED25519_PT_SZ - 1] >> 7) & 1;
 }
 
-/** Write the y affine coordinate of an encoded ED25519 point into memory */
+/** Write the y affine coordinate of an encoded Ed25519 point into memory */
 static inline void ed25519_pt_write_y(const struct sx_ed25519_pt *pt, char *ay)
 {
 	sx_wrpkmem(ay, pt->encoded, SX_ED25519_PT_SZ);

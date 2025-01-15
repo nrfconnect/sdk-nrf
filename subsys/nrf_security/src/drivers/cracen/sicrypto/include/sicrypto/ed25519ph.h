@@ -16,7 +16,7 @@ extern "C" {
 
 #include "sig.h"
 
-/** Signature definitions for ED25519PH keys.
+/** Signature definitions for Ed25519ph keys.
  *
  * The following constraints apply when using Ed25519ph keys:
  *
