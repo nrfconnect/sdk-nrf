@@ -2131,7 +2131,7 @@ OCT-3174: Host on CIS gateway may throw assert if a connected headset is hard re
 
   **Affected platforms:** nRF5340 Audio DK
 
-.. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0
+.. rst-class:: v2-9-0-nRF54H20-rc1 v2-8-0
 
 OCT-3152: Public address for broadcast source
   When trying to use a public address for the broadcast source, the address will still change on each boot and appears to be random.
