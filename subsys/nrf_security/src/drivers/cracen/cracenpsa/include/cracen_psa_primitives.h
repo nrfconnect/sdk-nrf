@@ -371,4 +371,27 @@ struct cracen_pake_operation {
 	};
 };
 typedef struct cracen_pake_operation cracen_pake_operation_t;
+
+struct sx_pk_ecurve;
+
+struct ecdsa_signature {
+	size_t sz; /**< Total signature size, in bytes. */
+	char *r;   /**< Signature element "r". */
+	char *s;   /**< Signature element "s". */
+};
+struct eccsk {
+	const struct sx_pk_ecurve *curve;
+	char *d;
+};
+
+struct eccpk {
+	const struct sx_pk_ecurve *curve;
+	char *qx;
+	char *qy;
+};
+
+struct ecc_keypair {
+	struct eccsk sk;
+	struct eccpk pk;
+};
 #endif /* CRACEN_PSA_PRIMITIVES_H */
