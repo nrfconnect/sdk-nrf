@@ -15,6 +15,8 @@
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
+#define COOP_PRIO -1
+
 #ifndef CONFIG_APP_MODE_FLASH_AND_RUN
 /*
  * Get button configuration from the devicetree. This is mandatory.
@@ -170,8 +172,20 @@ static int button_init(void)
 	return ret;
 }
 
+static void main_thread_priority_cooperative_set(void)
+{
+	BUILD_ASSERT(CONFIG_MAIN_THREAD_PRIORITY >= 0);
+	k_thread_priority_set(k_current_get(), COOP_PRIO);
+}
+
 int main(void)
 {
+	/* Drivers need to be run from a non-blocking thread.
+	 * We need preemptive priority during init.
+	 * Later we prefer cooperative priority to ensure no interference with the benchmark.
+	 */
+	main_thread_priority_cooperative_set();
+
 	LOG_INF("CoreMark sample for %s", CONFIG_BOARD_TARGET);
 
 	if (IS_ENABLED(CONFIG_APP_MODE_FLASH_AND_RUN)) {
