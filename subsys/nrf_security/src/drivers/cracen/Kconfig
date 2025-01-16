@@ -7,6 +7,19 @@
 config CRACEN_HW_PRESENT
 	def_bool SOC_SERIES_NRF54LX
 
+choice CRACEN_HW_VERSION
+	prompt "CRACEN IP revision"
+
+config CRACEN_HW_VERSION_BASE
+	bool "Base CRACEN"
+	depends on SOC_SERIES_NRF54HX || SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05
+
+config CRACEN_HW_VERSION_LITE
+	bool "CRACEN Lite"
+	depends on SOC_NRF54L20
+
+endchoice # CRACEN_HW_VERSION
+
 # Configure CRACEN_LOG_LEVEL
 module = CRACEN
 module-str = CRACEN
@@ -16,7 +29,7 @@ if PSA_CRYPTO_DRIVER_CRACEN
 
 config CRACEN_LOAD_MICROCODE
 	bool "Load CRACEN microcode"
-	depends on (SOC_SERIES_NRF54LX && !SOC_NRF54L20) || SOC_SERIES_NRF54HX
+	depends on CRACEN_HW_VERSION_BASE
 	default y
 	help
 	  Prompt-less configuration to load the CRACEN microcode.
