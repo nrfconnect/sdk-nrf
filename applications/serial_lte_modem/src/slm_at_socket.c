@@ -31,7 +31,7 @@ LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 
 /**@brief Socket operations. */
 enum slm_socket_operation {
-	AT_SOCKET_CLOSE,
+	AT_SOCKET_DUMMY,
 	AT_SOCKET_OPEN,
 	AT_SOCKET_OPEN6
 };
@@ -58,7 +58,6 @@ static struct slm_socket {
 	int family;        /* Socket address family */
 	int fd;            /* Socket descriptor. */
 	int fd_peer;       /* Socket descriptor for peer. */
-	int ranking;       /* Ranking of socket */
 	uint16_t cid;      /* PDP Context ID, 0: primary; 1~10: secondary */
 } socks[SLM_MAX_SOCKET_COUNT];
 
@@ -71,30 +70,28 @@ static int socket_poll(int sock_fd, int event, int timeout);
 static int handle_at_sendto(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			    uint32_t param_count);
 
-static int socket_ranking;
-
 #define INIT_SOCKET(socket)			\
 	socket.family  = AF_UNSPEC;		\
 	socket.sec_tag = INVALID_SEC_TAG;	\
 	socket.role    = AT_SOCKET_ROLE_CLIENT;	\
 	socket.fd      = INVALID_SOCKET;	\
 	socket.fd_peer = INVALID_SOCKET;	\
-	socket.ranking = 0;			\
 	socket.cid     = 0;
 
-static bool is_opened_socket(int fd)
+static int find_opened_socket(int fd)
 {
 	if (fd == INVALID_SOCKET) {
-		return false;
+		return -EINVAL;
 	}
 
 	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 		if (socks[i].fd == fd) {
-			return true;
+			sock = socks[i];
+			return sock.fd;
 		}
 	}
 
-	return false;
+	return -ENOENT;
 }
 
 static int find_avail_socket(void)
@@ -164,7 +161,6 @@ static int do_socket_open(void)
 		goto error;
 	}
 
-	sock.ranking = socket_ranking++;
 	ret = find_avail_socket();
 	if (ret < 0) {
 		goto error;
@@ -253,7 +249,6 @@ static int do_secure_socket_open(int peer_verify)
 		}
 	}
 
-	sock.ranking = socket_ranking++;
 	ret = find_avail_socket();
 	if (ret < 0) {
 		goto error;
@@ -272,6 +267,7 @@ error:
 static int do_socket_close(void)
 {
 	int ret;
+	int fd = sock.fd;
 
 	if (sock.fd == INVALID_SOCKET) {
 		return 0;
@@ -290,31 +286,7 @@ static int do_socket_close(void)
 		ret = -errno;
 	}
 
-	rsp_send("\r\n#XSOCKET: %d,\"closed\"\r\n", ret);
-
-	/* Select most recent socket as current active */
-	int ranking = 0, index = -1;
-
-	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
-		if (socks[i].fd == INVALID_SOCKET) {
-			continue;
-		}
-		if (socks[i].fd == sock.fd) {
-			LOG_DBG("Set socket %d null", sock.fd);
-			INIT_SOCKET(socks[i]);
-		} else {
-			if (ranking < socks[i].ranking) {
-				ranking = socks[i].ranking;
-				index = i;
-			}
-		}
-	}
-	if (index >= 0) {
-		LOG_INF("Swap to socket %d", socks[index].fd);
-		sock = socks[index];
-	} else {
-		INIT_SOCKET(sock);
-	}
+	rsp_send("\r\n#XCLOSE: %d,%d\r\n", fd, ret);
 
 	return ret;
 }
@@ -414,13 +386,13 @@ static int sockopt_get(enum at_sockopt at_option)
 		len = sizeof(struct timeval);
 		ret = getsockopt(sock.fd, level, option, &tmo, &len);
 		if (ret == 0) {
-			rsp_send("\r\n#XSOCKETOPT: %ld\r\n", (long)tmo.tv_sec);
+			rsp_send("\r\n#XSOCKETOPT: %d,%ld\r\n", sock.fd, (long)tmo.tv_sec);
 		}
 	} else {
 		/* Default */
 		ret = getsockopt(sock.fd, level, option, &value, &len);
 		if (ret == 0) {
-			rsp_send("\r\n#XSOCKETOPT: %d\r\n", value);
+			rsp_send("\r\n#XSOCKETOPT: %d,%d\r\n", sock.fd, value);
 		}
 	}
 
@@ -510,7 +482,7 @@ static int sec_sockopt_get(enum at_sec_sockopt at_option)
 	if (level == SOL_TLS && option == TLS_CIPHERSUITE_USED) {
 		ret = getsockopt(sock.fd, level, option, &value, &len);
 		if (ret == 0) {
-			rsp_send("\r\n#XSSOCKETOPT: 0x%x\r\n", value);
+			rsp_send("\r\n#XSSOCKETOPT: %d, 0x%x\r\n", sock.fd, value);
 		}
 	} else if (level == SOL_TLS && option == TLS_HOSTNAME) {
 		char hostname[SLM_MAX_URL] = {0};
@@ -518,13 +490,13 @@ static int sec_sockopt_get(enum at_sec_sockopt at_option)
 		len = sizeof(hostname);
 		ret = getsockopt(sock.fd, level, option, &hostname, &len);
 		if (ret == 0) {
-			rsp_send("\r\n#XSSOCKETOPT: %s\r\n", hostname);
+			rsp_send("\r\n#XSSOCKETOPT: %d, %s\r\n", sock.fd, hostname);
 		}
 	} else {
 		/* Default */
 		ret = getsockopt(sock.fd, level, option, &value, &len);
 		if (ret == 0) {
-			rsp_send("\r\n#XSSOCKETOPT: %d\r\n", value);
+			rsp_send("\r\n#XSSOCKETOPT: %d, %d\r\n", sock.fd, value);
 		}
 	}
 
@@ -1010,23 +982,24 @@ static int handle_at_socket(enum at_parser_cmd_type cmd_type, struct at_parser *
 				}
 			}
 			err = do_socket_open();
-		} else if (op == AT_SOCKET_CLOSE) {
-			err = do_socket_close();
 		} else {
 			err = -EINVAL;
 		} break;
 
 	case AT_PARSER_CMD_TYPE_READ:
-		if (sock.fd != INVALID_SOCKET) {
-			rsp_send("\r\n#XSOCKET: %d,%d,%d,%d,%d\r\n", sock.fd,
-				sock.family, sock.role, sock.type, sock.cid);
+		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+			if (socks[i].fd != INVALID_SOCKET && socks[i].sec_tag == INVALID_SEC_TAG) {
+				rsp_send("\r\n#XSOCKET: %d,%d,%d,%d,%d\r\n",
+					socks[i].fd, socks[i].family, socks[i].role,
+					socks[i].type, socks[i].cid);
+			}
 		}
 		err = 0;
 		break;
 
 	case AT_PARSER_CMD_TYPE_TEST:
-		rsp_send("\r\n#XSOCKET: (%d,%d,%d),(%d,%d,%d),(%d,%d),<cid>",
-			AT_SOCKET_CLOSE, AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
+		rsp_send("\r\n#XSOCKET: (%d,%d),(%d,%d,%d),(%d,%d),<cid>",
+			AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
 			SOCK_STREAM, SOCK_DGRAM, SOCK_RAW,
 			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
 		err = 0;
@@ -1104,24 +1077,25 @@ static int handle_at_secure_socket(enum at_parser_cmd_type cmd_type,
 				}
 			}
 			err = do_secure_socket_open(peer_verify);
-		} else if (op == AT_SOCKET_CLOSE) {
-			err = do_socket_close();
 		} else {
 			err = -EINVAL;
 		} break;
 
 	case AT_PARSER_CMD_TYPE_READ:
-		if (sock.fd != INVALID_SOCKET) {
-			rsp_send("\r\n#XSSOCKET: %d,%d,%d,%d,%d,%d\r\n", sock.fd,
-				sock.family, sock.role, sock.type, sock.sec_tag, sock.cid);
+		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+			if (socks[i].fd != INVALID_SOCKET && socks[i].sec_tag != INVALID_SEC_TAG) {
+				rsp_send("\r\n#XSSOCKET: %d,%d,%d,%d,%d,%d\r\n",
+					socks[i].fd, socks[i].family, socks[i].role,
+					socks[i].type, socks[i].sec_tag, socks[i].cid);
+			}
 		}
 		err = 0;
 		break;
 
 	case AT_PARSER_CMD_TYPE_TEST:
-		rsp_send("\r\n#XSSOCKET: (%d,%d,%d),(%d,%d),(%d,%d),"
+		rsp_send("\r\n#XSSOCKET: (%d,%d),(%d,%d),(%d,%d),"
 			 "<sec_tag>,<peer_verify>,<cid>\r\n",
-			AT_SOCKET_CLOSE, AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
+			AT_SOCKET_OPEN, AT_SOCKET_OPEN6,
 			SOCK_STREAM, SOCK_DGRAM,
 			AT_SOCKET_ROLE_CLIENT, AT_SOCKET_ROLE_SERVER);
 		err = 0;
@@ -1134,43 +1108,33 @@ static int handle_at_secure_socket(enum at_parser_cmd_type cmd_type,
 	return err;
 }
 
-SLM_AT_CMD_CUSTOM(xsocketselect, "AT#XSOCKETSELECT", handle_at_socket_select);
-static int handle_at_socket_select(enum at_parser_cmd_type cmd_type,
-				   struct at_parser *parser, uint32_t)
+SLM_AT_CMD_CUSTOM(xclose, "AT#XCLOSE", handle_at_close);
+static int handle_at_close(enum at_parser_cmd_type cmd_type,
+			   struct at_parser *parser, uint32_t param_count)
 {
-	int err = 0;
+	int err = -EINVAL;
 	int fd;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		err = at_parser_num_get(parser, 1, &fd);
-		if (err) {
-			return err;
-		}
-		if (fd < 0) {
-			return -EINVAL;
-		}
-		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
-			if (socks[i].fd == fd) {
-				sock = socks[i];
-				rsp_send("\r\n#XSOCKETSELECT: %d\r\n", sock.fd);
-				return 0;
+		if (param_count > 1) {
+			err = at_parser_num_get(parser, 1, &fd);
+			if (err) {
+				return err;
 			}
-		}
-		err = -EBADF;
-		break;
-
-	case AT_PARSER_CMD_TYPE_READ:
-		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
-			if (socks[i].fd != INVALID_SOCKET) {
-				rsp_send("\r\n#XSOCKETSELECT: %d,%d,%d,%d,%d,%d,%d\r\n",
-					socks[i].fd, socks[i].family, socks[i].role,
-					socks[i].type, socks[i].sec_tag, socks[i].ranking,
-					socks[i].cid);
+			if (find_opened_socket(fd) != fd) {
+				return -EINVAL;
 			}
-		}
-		if (sock.fd != INVALID_SOCKET) {
-			rsp_send("\r\n#XSOCKETSELECT: %d\r\n", sock.fd);
+			err = do_socket_close();
+		} else {
+			/* Close all opened sockets */
+			for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+				if (fds[i].fd != INVALID_SOCKET) {
+					sock = socks[i];
+					(void)do_socket_close();
+				}
+				err = 0;
+			}
 		}
 		break;
 
@@ -1186,24 +1150,32 @@ static int handle_at_socketopt(enum at_parser_cmd_type cmd_type, struct at_parse
 			       uint32_t param_count)
 {
 	int err = -EINVAL;
+	int fd;
 	uint16_t op;
 	uint16_t name;
 	int value = 0;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		err = at_parser_num_get(parser, 1, &op);
+		err = at_parser_num_get(parser, 1, &fd);
 		if (err) {
 			return err;
 		}
-		err = at_parser_num_get(parser, 2, &name);
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		err = at_parser_num_get(parser, 2, &op);
+		if (err) {
+			return err;
+		}
+		err = at_parser_num_get(parser, 3, &name);
 		if (err) {
 			return err;
 		}
 		if (op == AT_SOCKETOPT_SET) {
 			/* some options don't require a value */
-			if (param_count > 3) {
-				err = at_parser_num_get(parser, 3, &value);
+			if (param_count > 4) {
+				err = at_parser_num_get(parser, 4, &value);
 				if (err) {
 					return err;
 				}
@@ -1215,7 +1187,7 @@ static int handle_at_socketopt(enum at_parser_cmd_type cmd_type, struct at_parse
 		} break;
 
 	case AT_PARSER_CMD_TYPE_TEST:
-		rsp_send("\r\n#XSOCKETOPT: (%d,%d),<name>,<value>\r\n",
+		rsp_send("\r\n#XSOCKETOPT: <sock_handle>,(%d,%d),<name>,<value>\r\n",
 			AT_SOCKETOPT_GET, AT_SOCKETOPT_SET);
 		err = 0;
 		break;
@@ -1232,20 +1204,28 @@ static int handle_at_secure_socketopt(enum at_parser_cmd_type cmd_type,
 				      struct at_parser *parser, uint32_t)
 {
 	int err = -EINVAL;
+	int fd;
 	uint16_t op;
 	uint16_t name;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, 1, &fd);
+		if (err) {
+			return err;
+		}
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
 		if (sock.sec_tag == INVALID_SEC_TAG) {
 			LOG_ERR("Not secure socket");
 			return err;
 		}
-		err = at_parser_num_get(parser, 1, &op);
+		err = at_parser_num_get(parser, 2, &op);
 		if (err) {
 			return err;
 		}
-		err = at_parser_num_get(parser, 2, &name);
+		err = at_parser_num_get(parser, 3, &name);
 		if (err) {
 			return err;
 		}
@@ -1254,9 +1234,9 @@ static int handle_at_secure_socketopt(enum at_parser_cmd_type cmd_type,
 			char value_str[SLM_MAX_URL] = {0};
 			int size = SLM_MAX_URL;
 
-			err = at_parser_num_get(parser, 3, &value_int);
+			err = at_parser_num_get(parser, 4, &value_int);
 			if (err == -EOPNOTSUPP) {
-				err = util_string_get(parser, 3, value_str, &size);
+				err = util_string_get(parser, 4, value_str, &size);
 				if (err) {
 					return err;
 				}
@@ -1271,7 +1251,7 @@ static int handle_at_secure_socketopt(enum at_parser_cmd_type cmd_type,
 		} break;
 
 	case AT_PARSER_CMD_TYPE_TEST:
-		rsp_send("\r\n#XSSOCKETOPT: (%d,%d),<name>,<value>\r\n",
+		rsp_send("\r\n#XSSOCKETOPT: <sock_handle>,(%d,%d),<name>,<value>\r\n",
 			AT_SOCKETOPT_GET, AT_SOCKETOPT_SET);
 		err = 0;
 		break;
@@ -1288,11 +1268,19 @@ static int handle_at_bind(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 			  uint32_t)
 {
 	int err = -EINVAL;
+	int fd;
 	uint16_t port;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		err = at_parser_num_get(parser, 1, &port);
+		err = at_parser_num_get(parser, 1, &fd);
+		if (err) {
+			return err;
+		}
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		err = at_parser_num_get(parser, 2, &port);
 		if (err < 0) {
 			return err;
 		}
@@ -1311,22 +1299,29 @@ static int handle_at_connect(enum at_parser_cmd_type cmd_type, struct at_parser 
 			     uint32_t)
 {
 	int err = -EINVAL;
+	int fd;
 	char url[SLM_MAX_URL] = {0};
 	int size = SLM_MAX_URL;
 	uint16_t port;
 
-	if (sock.role != AT_SOCKET_ROLE_CLIENT) {
-		LOG_ERR("Invalid role");
-		return err;
-	}
-
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		err = util_string_get(parser, 1, url, &size);
+		err = at_parser_num_get(parser, 1, &fd);
 		if (err) {
 			return err;
 		}
-		err = at_parser_num_get(parser, 2, &port);
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		if (sock.role != AT_SOCKET_ROLE_CLIENT) {
+			LOG_ERR("Invalid role");
+			return err;
+		}
+		err = util_string_get(parser, 2, url, &size);
+		if (err) {
+			return err;
+		}
+		err = at_parser_num_get(parser, 3, &port);
 		if (err) {
 			return err;
 		}
@@ -1341,17 +1336,24 @@ static int handle_at_connect(enum at_parser_cmd_type cmd_type, struct at_parser 
 }
 
 SLM_AT_CMD_CUSTOM(xlisten, "AT#XLISTEN", handle_at_listen);
-static int handle_at_listen(enum at_parser_cmd_type cmd_type, struct at_parser *, uint32_t)
+static int handle_at_listen(enum at_parser_cmd_type cmd_type, struct at_parser *parser, uint32_t)
 {
 	int err = -EINVAL;
-
-	if (sock.role != AT_SOCKET_ROLE_SERVER) {
-		LOG_ERR("Invalid role");
-		return err;
-	}
+	int fd;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, 1, &fd);
+		if (err) {
+			return err;
+		}
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		if (sock.role != AT_SOCKET_ROLE_SERVER) {
+			LOG_ERR("Invalid role");
+			return err;
+		}
 		err = do_listen();
 		break;
 
@@ -1368,29 +1370,28 @@ static int handle_at_accept(enum at_parser_cmd_type cmd_type, struct at_parser *
 {
 	int err = -EINVAL;
 	int timeout;
-
-	if (sock.role != AT_SOCKET_ROLE_SERVER) {
-		LOG_ERR("Invalid role");
-		return err;
-	}
+	int fd;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		err = at_parser_num_get(parser, 1, &timeout);
+		err = at_parser_num_get(parser, 1, &fd);
+		if (err) {
+			return err;
+		}
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		if (sock.role != AT_SOCKET_ROLE_SERVER) {
+			LOG_ERR("Invalid role");
+			return err;
+		}
+		err = at_parser_num_get(parser, 2, &timeout);
 		if (err) {
 			return err;
 		}
 		err = do_accept(timeout);
 		break;
 
-	case AT_PARSER_CMD_TYPE_READ:
-		if (sock.fd_peer != INVALID_SOCKET) {
-			rsp_send("\r\n#XTCPACCEPT: %d\r\n", sock.fd_peer);
-		} else {
-			rsp_send("\r\n#XTCPACCEPT: 0\r\n");
-		}
-		err = 0;
-		break;
 
 	default:
 		break;
@@ -1404,14 +1405,22 @@ static int handle_at_send(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 			  uint32_t param_count)
 {
 	int err = -EINVAL;
+	int fd;
 	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		if (param_count > 1) {
+		err = at_parser_num_get(parser, 1, &fd);
+		if (err) {
+			return err;
+		}
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		if (param_count > 2) {
 			size = sizeof(data);
-			err = util_string_get(parser, 1, data, &size);
+			err = util_string_get(parser, 2, data, &size);
 			if (err) {
 				return err;
 			}
@@ -1433,17 +1442,25 @@ static int handle_at_recv(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 			  uint32_t param_count)
 {
 	int err = -EINVAL;
+	int fd;
 	int timeout;
 	int flags = 0;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		err = at_parser_num_get(parser, 1, &timeout);
+		err = at_parser_num_get(parser, 1, &fd);
 		if (err) {
 			return err;
 		}
-		if (param_count > 2) {
-			err = at_parser_num_get(parser, 2, &flags);
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		err = at_parser_num_get(parser, 2, &timeout);
+		if (err) {
+			return err;
+		}
+		if (param_count > 3) {
+			err = at_parser_num_get(parser, 3, &flags);
 			if (err) {
 				return err;
 			}
@@ -1464,24 +1481,32 @@ static int handle_at_sendto(enum at_parser_cmd_type cmd_type, struct at_parser *
 {
 
 	int err = -EINVAL;
+	int fd;
 	int size;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
+		err = at_parser_num_get(parser, 1, &fd);
+		if (err) {
+			return err;
+		}
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
 		size = sizeof(udp_url);
-		err = util_string_get(parser, 1, udp_url, &size);
+		err = util_string_get(parser, 2, udp_url, &size);
 		if (err) {
 			return err;
 		}
-		err = at_parser_num_get(parser, 2, &udp_port);
+		err = at_parser_num_get(parser, 3, &udp_port);
 		if (err) {
 			return err;
 		}
-		if (param_count > 3) {
+		if (param_count > 4) {
 			char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 
 			size = sizeof(data);
-			err = util_string_get(parser, 3, data, &size);
+			err = util_string_get(parser, 4, data, &size);
 			if (err) {
 				return err;
 			}
@@ -1504,17 +1529,25 @@ static int handle_at_recvfrom(enum at_parser_cmd_type cmd_type, struct at_parser
 			      uint32_t param_count)
 {
 	int err = -EINVAL;
+	int fd;
 	int timeout;
 	int flags = 0;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		err = at_parser_num_get(parser, 1, &timeout);
+		err = at_parser_num_get(parser, 1, &fd);
 		if (err) {
 			return err;
 		}
-		if (param_count > 2) {
-			err = at_parser_num_get(parser, 2, &flags);
+		if (find_opened_socket(fd) != fd) {
+			return -EINVAL;
+		}
+		err = at_parser_num_get(parser, 2, &timeout);
+		if (err) {
+			return err;
+		}
+		if (param_count > 3) {
+			err = at_parser_num_get(parser, 3, &flags);
 			if (err) {
 				return err;
 			}
@@ -1635,7 +1668,7 @@ static int handle_at_poll(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 					if (err) {
 						return err;
 					}
-					if (!is_opened_socket(handle)) {
+					if (find_opened_socket(handle) != handle) {
 						return -EINVAL;
 					}
 					fds[i].fd = handle;
@@ -1661,7 +1694,6 @@ int slm_at_socket_init(void)
 	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 		INIT_SOCKET(socks[i]);
 	}
-	socket_ranking = 1;
 
 	return 0;
 }
@@ -1670,7 +1702,6 @@ int slm_at_socket_init(void)
  */
 int slm_at_socket_uninit(void)
 {
-	(void)do_socket_close();
 	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 		if (socks[i].fd_peer != INVALID_SOCKET) {
 			close(socks[i].fd_peer);
