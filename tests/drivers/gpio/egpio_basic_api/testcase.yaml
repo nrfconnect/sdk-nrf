@@ -7,6 +7,7 @@ common:
   harness: ztest
   harness_config:
     fixture: gpio_loopback
+  timeout: 30
 
 tests:
   drivers.egpio.loopback.icmsg:
