@@ -22,6 +22,7 @@ int main(void)
 {
 
 	int rc;
+	int test_repetitions = 3;
 
 	gpio_pin_configure_dt(&test_pin, GPIO_OUTPUT_INACTIVE);
 
@@ -34,7 +35,13 @@ int main(void)
 	rc = comparator_set_trigger(test_dev, COMPARATOR_TRIGGER_BOTH_EDGES);
 	__ASSERT_NO_MSG(rc == 0);
 
-	while (1) {
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		counter = 0;
 		k_msleep(200);
 		gpio_pin_set_dt(&test_pin, 1);
@@ -49,5 +56,9 @@ int main(void)
 		pm_device_runtime_get(test_dev);
 		k_msleep(1);
 	}
+
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

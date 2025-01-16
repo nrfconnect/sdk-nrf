@@ -10,6 +10,7 @@ common:
 
 tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep:
+    filter: not CONFIG_COVERAGE
     harness: console
     harness_config:
       fixture: spi_loopback
@@ -21,6 +22,7 @@ tests:
         - "Iteration 1"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
@@ -34,6 +36,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
@@ -44,7 +47,22 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
 
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.coverage:
+    filter: CONFIG_COVERAGE
+    extra_args:
+      - idle_pwm_loopback_CONF_FILE=coverage.conf
+      - SHIELD=coverage_support
+    harness: console
+    harness_config:
+      fixture: spi_loopback
+      type: multi_line
+      ordered: true
+      regex:
+        - ".*Coverage analysis enabled.*"
+        - ".*Coverage analysis start.*"
+
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep_fast:
+    filter: not CONFIG_COVERAGE
     extra_args:
       - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
     harness: console
@@ -57,6 +75,7 @@ tests:
         - "Iteration 1"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle_fast:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
@@ -71,6 +90,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.no_clock_control:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
@@ -83,6 +103,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_320MHz:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
@@ -97,6 +118,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_256MHz:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
@@ -111,6 +133,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_128MHz:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
@@ -125,6 +148,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_64MHz:
+    filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     extra_args:
       - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf

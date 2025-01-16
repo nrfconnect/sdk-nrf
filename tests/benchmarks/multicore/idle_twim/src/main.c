@@ -39,6 +39,7 @@ static uint8_t read_sensor_register(uint8_t register_address)
 int main(void)
 {
 	uint8_t response;
+	int test_repetitions = 3;
 	uint32_t i2c_config = I2C_SPEED_SET(I2C_SPEED_STANDARD) | I2C_MODE_CONTROLLER;
 
 	printk("Device address 0x%x\n", DEVICE_ADDRESS);
@@ -50,7 +51,13 @@ int main(void)
 		return -1;
 	}
 
-	while (1) {
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		response = read_sensor_register(CHIP_ID_REGISTER_ADDRESS);
 		printk("Chip_Id: %d\n", response);
 
@@ -59,5 +66,8 @@ int main(void)
 		k_msleep(2000);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

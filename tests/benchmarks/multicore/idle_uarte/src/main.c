@@ -142,6 +142,7 @@ void disable_uart_rx(void)
 int main(void)
 {
 	int err;
+	int test_repetitions = 3;
 	struct uart_config test_uart_config = {.baudrate = 115200,
 					       .parity = UART_CFG_PARITY_ODD,
 					       .stop_bits = UART_CFG_STOP_BITS_1,
@@ -191,7 +192,13 @@ int main(void)
 		pm_device_runtime_enable(console_dev);
 	}
 
-	while (1) {
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		printk("Hello\n");
 		enable_uart_rx();
 		printk("UART test transmission\n");
@@ -207,5 +214,8 @@ int main(void)
 		gpio_pin_set_dt(&led, 1);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

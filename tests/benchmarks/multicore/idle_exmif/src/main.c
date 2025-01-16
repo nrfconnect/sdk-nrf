@@ -160,6 +160,7 @@ static void configure_exmif_for_test(const struct device *controller, struct msp
 int main(void)
 {
 	int ret;
+	int test_repetitions = 3;
 
 	printk("Multicore idle exmif test on %s\n", CONFIG_BOARD_TARGET);
 	k_msleep(10);
@@ -172,9 +173,15 @@ int main(void)
 	__ASSERT_NO_MSG(ret == 0);
 
 	configure_exmif_for_test(controller, &dev_id);
-
 	k_msleep(500);
-	while (1) {
+
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		printk("Wake up\n");
 		for (int counter = 0; counter < NUMBER_OF_TEST_READS; counter++) {
 			read_jedec_id(controller, &dev_id);
@@ -186,5 +193,8 @@ int main(void)
 		gpio_pin_set_dt(&led, 1);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }
