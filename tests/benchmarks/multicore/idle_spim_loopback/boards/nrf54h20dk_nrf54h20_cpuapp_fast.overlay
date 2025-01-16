@@ -69,6 +69,10 @@
 	};
 };
 
+&dma_fast_region {
+	status = "okay";
+};
+
 &exmif {
 	status = "disabled";
 };
