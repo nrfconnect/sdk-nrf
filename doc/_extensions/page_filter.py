@@ -224,10 +224,11 @@ def read_versions(app: Sphinx) -> None:
     try:
         with open(VERSIONS_FILE) as version_file:
             nrf_versions = json.loads(version_file.read())
+            # Updated regex to match versions with optional segments
             nrf_versions = list(
-                filter(lambda v: re.match(r"\d\.\d\.\d$", v), nrf_versions)
+                filter(lambda v: re.match(r"\d+\.\d+\.\d+(-.*)?$", v), nrf_versions)
             )
-            # Versions classes are on the format "vX-X-X"
+            # Convert versions to a format suitable for class names
             app.env.nrf_versions = [
                 f"v{version.replace('.', '-')}" for version in reversed(nrf_versions)
             ]
