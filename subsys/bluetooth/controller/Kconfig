@@ -155,6 +155,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 
 config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	int "Default max connection event length [us]"
+	depends on BT_CONN
 	default 0 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	default 7500 if !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	range 0 4000000
@@ -182,6 +183,7 @@ config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
 
 config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	int "Default central ACL event spacing [us]"
+	depends on BT_CENTRAL
 	default 30000 if BT_ISO
 	default BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	help
@@ -217,6 +219,7 @@ config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
 
 config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
 	int "Default periodic advertising event length [us]"
+	depends on BT_PER_ADV
 	default 2500 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
 	default 7500 if !BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
 	range 0 4000000
@@ -252,6 +255,7 @@ config BT_CTLR_SDC_RX_PACKET_COUNT
 
 config BT_CTLR_SDC_SCAN_BUFFER_COUNT
 	int "Number of buffers available in the scanner"
+	depends on BT_OBSERVER
 	default 3
 	range 2 20
 	help
@@ -554,6 +558,7 @@ config BT_CTLR_SDC_IGNORE_HCI_ISO_DATA_TS_FROM_HOST
 
 config BT_CTLR_SDC_BIG_RESERVED_TIME_US
 	int "BIG reserved time [us]"
+	depends on BT_CTLR_ADV_ISO
 	range 0 4000000
 	default 1600
 	help
@@ -561,6 +566,7 @@ config BT_CTLR_SDC_BIG_RESERVED_TIME_US
 
 config BT_CTLR_SDC_CIG_RESERVED_TIME_US
 	int "CIG reserved time [us]"
+	depends on BT_CTLR_CENTRAL_ISO
 	range 0 4000000
 	default 1300
 	help
@@ -568,6 +574,7 @@ config BT_CTLR_SDC_CIG_RESERVED_TIME_US
 
 config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	int "CIS subevent length [us]"
+	depends on BT_CTLR_CENTRAL_ISO
 	default 0
 	help
 	  Sets the subevent length to be used for CISes in microseconds.

@@ -1089,17 +1089,17 @@ static int configure_memory_usage(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
-		cfg.scan_buffer_cfg.count = CONFIG_BT_CTLR_SDC_SCAN_BUFFER_COUNT;
+#if defined(CONFIG_BT_OBSERVER)
+	cfg.scan_buffer_cfg.count = CONFIG_BT_CTLR_SDC_SCAN_BUFFER_COUNT;
 
-		required_memory =
-		sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
-			    SDC_CFG_TYPE_SCAN_BUFFER_CFG,
-			    &cfg);
-		if (required_memory < 0) {
-			return required_memory;
-		}
+	required_memory =
+	sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+			SDC_CFG_TYPE_SCAN_BUFFER_CFG,
+			&cfg);
+	if (required_memory < 0) {
+		return required_memory;
 	}
+#endif /* CONFIG_BT_OBSERVER */
 
 	if (IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)) {
 		cfg.periodic_sync_count.count = SDC_PERIODIC_ADV_SYNC_COUNT;
@@ -1355,81 +1355,79 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
-		sdc_hci_cmd_vs_periodic_adv_event_length_set_t params = {
-			.event_length_us = CONFIG_BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
-		};
-		err = sdc_hci_cmd_vs_periodic_adv_event_length_set(&params);
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return -ENOTSUP;
-		}
+#if defined(CONFIG_BT_PER_ADV)
+	sdc_hci_cmd_vs_periodic_adv_event_length_set_t per_adv_length_params = {
+		.event_length_us = CONFIG_BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
+	};
+	err = sdc_hci_cmd_vs_periodic_adv_event_length_set(&per_adv_length_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
+	}
+#endif /* CONFIG_BT_PER_ADV */
+
+#if defined(CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US)
+	sdc_hci_cmd_vs_big_reserved_time_set_t big_reserved_time_params = {
+		.reserved_time_us = CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US
+	};
+	err = sdc_hci_cmd_vs_big_reserved_time_set(&big_reserved_time_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
+	}
+#endif /* BT_CTLR_SDC_BIG_RESERVED_TIME_US*/
+
+#if defined(CONFIG_BT_CTLR_CENTRAL_ISO)
+	sdc_hci_cmd_vs_cig_reserved_time_set_t cig_reserved_time_params = {
+		.reserved_time_us = CONFIG_BT_CTLR_SDC_CIG_RESERVED_TIME_US
+	};
+	err = sdc_hci_cmd_vs_cig_reserved_time_set(&cig_reserved_time_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_ISO_BROADCASTER)) {
-		sdc_hci_cmd_vs_big_reserved_time_set_t params = {
-			.reserved_time_us = CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US
-		};
-		err = sdc_hci_cmd_vs_big_reserved_time_set(&params);
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return -ENOTSUP;
-		}
+	sdc_hci_cmd_vs_cis_subevent_length_set_t cis_subevent_length_params = {
+		.cis_subevent_length_us = CONFIG_BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
+	};
+	err = sdc_hci_cmd_vs_cis_subevent_length_set(&cis_subevent_length_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
+	}
+#endif /* CONFIG_BT_CTLR_CENTRAL_ISO */
+
+#if defined(CONFIG_BT_CONN)
+	sdc_hci_cmd_vs_event_length_set_t conn_event_length_params = {
+		.event_length_us = CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
+	};
+	err = sdc_hci_cmd_vs_event_length_set(&conn_event_length_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_CONN_ISO)) {
-		sdc_hci_cmd_vs_cig_reserved_time_set_t params = {
-			.reserved_time_us = CONFIG_BT_CTLR_SDC_CIG_RESERVED_TIME_US
-		};
-		err = sdc_hci_cmd_vs_cig_reserved_time_set(&params);
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return -ENOTSUP;
-		}
+	sdc_hci_cmd_vs_conn_event_extend_t event_extend_params = {
+		.enable = IS_ENABLED(CONFIG_BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT)
+	};
+	err = sdc_hci_cmd_vs_conn_event_extend(&event_extend_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
 	}
+#endif /* CONFIG_BT_CONN */
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_CONN_ISO)) {
-		sdc_hci_cmd_vs_cis_subevent_length_set_t params = {
-			.cis_subevent_length_us = CONFIG_BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
-		};
-		err = sdc_hci_cmd_vs_cis_subevent_length_set(&params);
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return -ENOTSUP;
-		}
+#if defined(CONFIG_BT_CENTRAL)
+	sdc_hci_cmd_vs_central_acl_event_spacing_set_t acl_event_spacing_params = {
+		.central_acl_event_spacing_us =
+			CONFIG_BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
+	};
+	err = sdc_hci_cmd_vs_central_acl_event_spacing_set(&acl_event_spacing_params);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
 	}
-
-	if (IS_ENABLED(CONFIG_BT_CONN)) {
-		sdc_hci_cmd_vs_event_length_set_t params = {
-			.event_length_us = CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
-		};
-		err = sdc_hci_cmd_vs_event_length_set(&params);
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return -ENOTSUP;
-		}
-
-		sdc_hci_cmd_vs_conn_event_extend_t event_extend_params = {
-			.enable = IS_ENABLED(CONFIG_BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT)
-		};
-		err = sdc_hci_cmd_vs_conn_event_extend(&event_extend_params);
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return -ENOTSUP;
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-		sdc_hci_cmd_vs_central_acl_event_spacing_set_t params = {
-			.central_acl_event_spacing_us =
-				CONFIG_BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
-		};
-		err = sdc_hci_cmd_vs_central_acl_event_spacing_set(&params);
-		if (err) {
-			MULTITHREADING_LOCK_RELEASE();
-			return -ENOTSUP;
-		}
-	}
+#endif /* CONFIG_BT_CENTRAL */
 
 #if defined(CONFIG_BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT)
 	if (CONFIG_BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT != 27) {
