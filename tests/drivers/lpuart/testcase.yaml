@@ -1,9 +1,10 @@
 common:
   tags:
-
     - lpuart
     - sysbuild
     - ci_tests_drivers_lpuart
+  timeout: 30
+
 tests:
   lpuart.loopback_busy_sim:
     sysbuild: true
