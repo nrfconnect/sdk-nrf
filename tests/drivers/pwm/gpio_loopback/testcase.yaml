@@ -8,6 +8,7 @@ common:
   harness: ztest
   harness_config:
     fixture: gpio_loopback
+  timeout: 20
 
 tests:
   drivers.pwm.gpio_loopback:
