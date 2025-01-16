@@ -29,7 +29,7 @@ def get_ecdsa_signature(der, clength):
     # Disable pylint error as 'input' keyword has specific handling in 'check_output'
     # pylint: disable=unexpected-keyword-arg
     stdout = check_output(['openssl', 'asn1parse', '-inform', 'der'], input=der)
-    sig = b''.join([bytes.fromhex(re.search(r'(?<=\:)([0-9A-F]+)', num)[0]).ljust(clength, b'\0') \
+    sig = b''.join([bytes.fromhex(re.search(r'(?<=\:)([0-9A-F]+)', num)[0]).rjust(clength, b'\0') \
                     for num in re.findall(r'INTEGER *\:[0-9A-F]+', stdout.decode())])
 
     assert len(sig) == 2*clength
