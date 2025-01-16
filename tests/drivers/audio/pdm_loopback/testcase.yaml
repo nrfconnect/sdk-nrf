@@ -5,6 +5,7 @@ common:
   harness: ztest
   harness_config:
     fixture: gpio_loopback
+  timeout: 20
 
 tests:
   drivers.audio.pdm_loopback.nrf54l.1000khz:
