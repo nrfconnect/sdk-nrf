@@ -4,10 +4,11 @@ sample:
 
 common:
   tags:
-
     - ci_build
     - sysbuild
     - ci_samples_peripheral_lpuart
+  timeout: 30
+
 tests:
   sample.peripheral.lpuart:
     sysbuild: true
