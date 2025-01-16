@@ -7,6 +7,12 @@
 config CRACEN_HW_PRESENT
 	def_bool SOC_SERIES_NRF54LX || SOC_SERIES_NRF92X
 
+config CRACEN_HW_VERSION_BASE
+	def_bool SOC_SERIES_NRF54HX || SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05
+
+config CRACEN_HW_VERSION_LITE
+	def_bool SOC_NRF54L20
+
 # Configure CRACEN_LOG_LEVEL
 module = CRACEN
 module-str = CRACEN
@@ -14,16 +20,12 @@ source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 if PSA_CRYPTO_DRIVER_CRACEN
 
-config SUPPORTS_CRACEN
-	bool
-	default y if (SOC_SERIES_NRF54LX && !SOC_NRF54L20) || SOC_SERIES_NRF54HX
-
 config CRACEN_LOAD_MICROCODE
 	bool "Load CRACEN microcode"
-	depends on SUPPORTS_CRACEN
+	depends on CRACEN_HW_VERSION_BASE
 	default y
 	help
-	  Prompt-less configuration to load the CRACEN microcode.
+	  Whether to load the CRACEN microcode on startup.
 	  This is required to use the PKE/IKG engine. Note that this is not
 	  required when a bootloader has already loaded the microcode.
 
