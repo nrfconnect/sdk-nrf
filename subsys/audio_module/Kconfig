@@ -17,14 +17,19 @@ config AUDIO_MODULE_TEST
 
 config AUDIO_MODULE_NAME_SIZE
 	int "Maximum size for module naming in characters"
+	depends on AUDIO_MODULE
 	default 20
 
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
+if AUDIO_MODULE || AUDIO_MODULE_TEST
+
 module = AUDIO_MODULE
 module-str = audio_module
 source "subsys/logging/Kconfig.template.log_config"
+
+endif
 
 endmenu # Log levels
 endmenu # Audio Modules
