@@ -8,6 +8,7 @@ menu "Test"
 
 config ZTEST_MULTICORE_DEFAULT_SETTINGS
 	bool "Implement default image for multicore boards"
+	depends on ZTEST
 	default y
 
 rsource "unity/Kconfig"
