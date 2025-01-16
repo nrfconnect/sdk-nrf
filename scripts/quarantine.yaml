@@ -28,3 +28,12 @@
 - platforms:
     - native_posix
   comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
+
+- scenarios:
+    - sample.find_my.switchable_networks.debug
+    - sample.find_my.switchable_networks.release
+  platforms:
+    - nrf52833dk/nrf52833
+    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: https://nordicsemi.atlassian.net/browse/NCSDK-31377
