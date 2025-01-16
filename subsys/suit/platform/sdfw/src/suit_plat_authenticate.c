@@ -32,6 +32,9 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 	case suit_cose_EdDSA:
 		psa_alg = PSA_ALG_PURE_EDDSA; /* ed25519/curve25519 without internal hashing */
 		break;
+	case suit_cose_VS_HashEdDSA:
+		psa_alg = PSA_ALG_ED25519PH; /* ed25519/curve25519 with internal hashing */
+		break;
 	default:
 		return SUIT_ERR_DECODING;
 	}
