@@ -20,6 +20,7 @@
 /VERSION                                  @nrfconnect/ncs-code-owners
 /west.yml                                 @nrfconnect/ncs-code-owners
 /west-test.yml                            @nrfconnect/ncs-ci
+/sonar-project.properties                 @nrfconnect/ncs-ci
 
 # Dot folders
 /.github/                                 @nrfconnect/ncs-ci
