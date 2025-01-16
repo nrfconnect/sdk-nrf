@@ -12,7 +12,6 @@
 #include <nrf_security_mutexes.h>
 #include <sicrypto/drbghash.h>
 #include <sicrypto/ecc.h>
-#include <sicrypto/ecdsa.h>
 #include <sicrypto/ed448.h>
 #include <sicrypto/montgomery.h>
 #include <sicrypto/rsa_keygen.h>
@@ -520,9 +519,7 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
 	psa_status_t psa_status;
 	int si_status;
-	struct sitask t;
 	const struct sx_pk_ecurve *sx_curve;
-	struct si_eccsk si_priv_key;
 	uint8_t workmem[PSA_KEY_EXPORT_ECC_KEY_PAIR_MAX_SIZE(PSA_VENDOR_ECC_MAX_CURVE_BITS)] = {};
 
 	*key_buffer_length = 0;
@@ -569,13 +566,8 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 
 		memcpy(key_buffer, workmem, key_size_bytes);
 	} else {
-		si_task_init(&t, workmem, key_size_bytes);
 
-		si_priv_key.d = key_buffer;
-		si_ecc_create_genprivkey(&t, sx_curve, &si_priv_key);
-		si_task_run(&t);
-
-		si_status = si_task_wait(&t);
+		si_status = ecc_create_genprivkey(sx_curve, key_buffer, key_buffer_size);
 		if (si_status != SX_OK) {
 			psa_status = silex_statuscodes_to_psa(si_status);
 		}
@@ -649,14 +641,10 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 		case PSA_ECC_FAMILY_SECP_R1:
 		case PSA_ECC_FAMILY_SECP_K1:
 		case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
-			priv_key.def = si_sig_def_ecdsa;
-			priv_key.key.eckey.curve = sx_curve;
-			priv_key.key.eckey.d = (char *)key_buffer;
-
 			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
-			pub_key.key.eckey.qx = &data[1];
-			pub_key.key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
-			break;
+			si_status = ecc_create_genpubkey(key_buffer, data+1, sx_curve);
+			return silex_statuscodes_to_psa(si_status);
+;
 		case PSA_ECC_FAMILY_MONTGOMERY:
 			if (key_bits_attr == 255) {
 				priv_key.def = si_sig_def_x25519;
@@ -673,9 +661,9 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 				(void)t;
 				si_status = ed25519_create_pubkey(key_buffer, data);
 				*data_length = 32;
-					if (si_status != SX_OK) {
-						return silex_statuscodes_to_psa(si_status);
-					}
+				if (si_status != SX_OK) {
+					return silex_statuscodes_to_psa(si_status);
+				}
 				safe_memzero(workmem, sizeof(workmem));
 				return PSA_SUCCESS;
 			} else {

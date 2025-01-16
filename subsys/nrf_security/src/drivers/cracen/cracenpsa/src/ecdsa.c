@@ -1,0 +1,539 @@
+/* ECDSA signature generation and verification.
+ *
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Workmem layout for the ECDSA sign task:
+ *      1. Hash digest of the message to be signed (size: digestsz).
+ *      2. Output of the rndinrange subtask (size: curve_op_size, which is the
+ *         max size in bytes of parameters and operands for the selected curve).
+ *
+ * Workmem layout for the ECDSA Deterministic sign task:
+ *      1. HMAC task requirements (size: digestsz + blocksz)
+ *      2. Hash digest of the message to be signed (size: digestsz).
+ *      4. K (HMAC key) (size: digestsz)
+ *      5. V (size: digestsz)
+ *      6. T (size: curve_op_size)
+ *
+ * Workmem layout for the ECDSA verify task:
+ *      1. Hash digest of the message whose signature is being verified
+ *         (size: digestsz).
+ */
+
+#include <stdint.h>
+#include <string.h>
+#include <silexpk/core.h>
+#include <silexpk/iomem.h>
+#include <silexpk/cmddefs/ecc.h>
+#include <sxsymcrypt/sha2.h>
+#include <cracen/statuscodes.h>
+#include "sxsymcrypt/hash.h"
+#include "sicrypto/util.h"
+#include <sicrypto/hmac.h>
+#include "cracen_psa.h"
+#include "cracen_psa_primitives.h"
+#include "sxsymcrypt/hash.h"
+#include "hashdefs.h"
+
+#define MIN(x, y) (x) < (y) ? (x) : (y)
+#define ROUND_UP(x, align)                                                                         \
+	(((unsigned long)(x) + ((unsigned long)(align) - 1)) & ~((unsigned long)(align) - 1))
+#define INTERNAL_OCTET_NOT_USED ((uint8_t)0xFFu)
+
+#ifndef MAX_ECDSA_ATTEMPTS
+#define MAX_ECDSA_ATTEMPTS 255
+#endif
+
+struct hmac_step_struct {
+	int attempts;
+	uint16_t tlen;
+	uint8_t step;
+	int deterministic_retries;
+};
+
+/* Counts leading zeroes in a u8 */
+static int clz_u8(uint8_t i)
+{
+	int r = 0;
+
+	while (((1 << (7 - r)) & i) == 0) {
+		r++;
+	}
+	return r;
+}
+
+/** Convert a digest into an operand for ECDSA
+ *
+ * The raw digest may need to be padded or truncated to fit the curve
+ * operand used for ECDSA.
+ *
+ * Conversion could also imply byte order inversion, but that is not
+ * implemented here. It's expected that SilexPK takes big endian
+ * operands here.
+ *
+ * As the digest size is expressed in bytes, this procedure does not
+ * work for curves which have sizes not multiples of 8 bits.
+ */
+static void digest2op(const char *digest, size_t sz, char *dst, size_t opsz)
+{
+	if (opsz > sz) {
+		sx_clrpkmem(dst, opsz - sz);
+		dst += opsz - sz;
+	}
+	sx_wrpkmem(dst, digest, opsz);
+}
+
+static void ecdsa_write_pk(char *pubkey, char *x, char *y, size_t opsz)
+{
+	sx_wrpkmem(x, pubkey, opsz);
+	sx_wrpkmem(y, pubkey + opsz, opsz);
+}
+
+static void ecdsa_write_sig(struct ecdsa_signature *sig, char *r, char *s, size_t opsz)
+{
+	sx_wrpkmem(r, sig->r, opsz);
+	sx_wrpkmem(s, sig->s, opsz);
+}
+
+static void ecdsa_write_sk(const struct eccsk *sk, char *d, size_t opsz)
+{
+	sx_wrpkmem(d, sk->d, opsz);
+}
+
+static void ecdsa_read_sig(struct ecdsa_signature *sig, const char *r, const char *s, size_t opsz)
+{
+	sx_rdpkmem(sig->r, r, opsz);
+	if (!sig->s) {
+		sig->s = sig->r + opsz;
+	}
+	sx_rdpkmem(sig->s, s, opsz);
+}
+
+/**
+ * @brief Perform bits2int according to definition in RFC-6979.
+ */
+void bits2int(const uint8_t *data, size_t data_len, uint8_t *out_data, size_t qlen)
+{
+	size_t data_bitlen = data_len * 8;
+	size_t qbytes = ROUND_UP(qlen, 8) / 8;
+
+	if (data_bitlen > qlen) {
+		uint32_t rshift = qbytes * 8 - qlen;
+
+		memmove(out_data, data, qbytes);
+
+		if (rshift) {
+			uint8_t prev = 0;
+
+			for (size_t i = 0; i < qbytes; i++) {
+				uint8_t tmp = out_data[i];
+
+				out_data[i] = prev << (8 - rshift) | (tmp >> rshift);
+				prev = tmp;
+			}
+		}
+
+	} else {
+		memset(out_data, 0, qbytes - data_len);
+		memmove(out_data + (qbytes - data_len), data, qbytes);
+	}
+}
+
+/**
+ * @brief Perform bits2octects according to definition in RFC-6979.
+ */
+void bits2octets(const uint8_t *data, size_t data_len, uint8_t *out_data, const uint8_t *order,
+		 size_t order_len)
+{
+	bits2int(data, data_len, out_data, order_len * 8 - clz_u8(order[0]));
+
+	int ge = si_be_cmp(out_data, order, order_len, 0);
+
+	if (ge >= 0) {
+		uint8_t carry = 0;
+
+		for (size_t i = order_len; i > 0; i--) {
+			uint32_t a = out_data[i - 1];
+			uint32_t b = order[i - 1] + carry;
+
+			if (b > a) {
+				a += 0x100;
+				carry = 1;
+			} else {
+				carry = 0;
+			}
+			out_data[i - 1] = a - b;
+		}
+	}
+}
+
+int cracen_create_ecdsa_pubkey(char *privkey, char *pubkey, const struct sx_pk_ecurve *curve)
+{
+	return ecc_create_genpubkey(privkey, pubkey, curve);
+}
+
+int cracen_ecdsa_sign(const struct eccsk *privkey, size_t privkey_size,
+		      const struct sxhashalg *hashalg, const struct sx_pk_ecurve *curve,
+		      const uint8_t *message, size_t message_length, uint8_t *signature,
+		      size_t signature_size, size_t *signature_length)
+{
+	int status;
+	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
+	int opsz = sx_pk_curve_opsize(curve);
+	struct sx_pk_acq_req pkreq;
+	struct sx_pk_inops_ecdsa_generate inputs;
+	const char *curve_n;
+	size_t workmem_requirement = digestsz + opsz;
+	struct sxhash hashopctx;
+	struct ecdsa_signature internal_signature = {0};
+	char workmem[workmem_requirement];
+
+	curve_n = sx_pk_curve_order(curve);
+
+	internal_signature.r = signature;
+	internal_signature.s = signature + opsz;
+
+	status = sx_hash_create(&hashopctx, hashalg, sizeof(hashopctx));
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_feed(&hashopctx, message, message_length);
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_digest(&hashopctx, workmem);
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_wait(&hashopctx);
+	if (status != SX_OK) {
+		return status;
+	}
+	for (int i = 0; i <= MAX_ECDSA_ATTEMPTS; i++) {
+		rndinrange_create((const unsigned char *)curve_n, opsz, workmem + digestsz);
+
+		pkreq = sx_pk_acquire_req(SX_PK_CMD_ECDSA_GEN);
+		if (pkreq.status) {
+			return pkreq.status;
+		}
+		pkreq.status =
+			sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
+		if (pkreq.status) {
+			return pkreq.status;
+		}
+
+		ecdsa_write_sk(privkey, inputs.d.addr, opsz);
+		sx_wrpkmem(inputs.k.addr, workmem + digestsz, opsz);
+		digest2op(workmem, digestsz, inputs.h.addr, opsz);
+		sx_pk_run(pkreq.req);
+		status = sx_pk_wait(pkreq.req);
+		if (status != 0) {
+			return status;
+		}
+		status = sx_pk_has_finished(pkreq.req);
+		if (status == SX_ERR_BUSY) {
+			return SX_ERR_HW_PROCESSING;
+		}
+
+		/* SX_ERR_NOT_INVERTIBLE may be due to silexpk countermeasures. */
+		if ((status == SX_ERR_INVALID_SIGNATURE) || (status == SX_ERR_NOT_INVERTIBLE)) {
+			sx_pk_release_req(pkreq.req);
+			if (i == MAX_ECDSA_ATTEMPTS) {
+				return SX_ERR_TOO_MANY_ATTEMPTS;
+			}
+		} else {
+			break;
+		}
+	}
+	if (status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
+		return status;
+	}
+
+	const char **outputs = sx_pk_get_output_ops(pkreq.req);
+
+	ecdsa_read_sig(&internal_signature, outputs[0], outputs[1], opsz);
+	sx_rdpkmem(signature + signature_size, outputs[1], opsz);
+	sx_pk_release_req(pkreq.req);
+	return SX_OK;
+}
+
+static int run_deterministic_ecdsa_hmac_step(const struct sxhashalg *hashalg, size_t opsz,
+					     const char *curve_n, size_t digestsz, size_t blocksz,
+					     char *workmem, struct hmac_step_struct hmac_step,
+					     const struct eccsk *privkey);
+
+static int deterministic_ecdsa_hmac(const struct sxhashalg *hashalg, uint8_t *key, const uint8_t *v,
+				    size_t hash_len, uint8_t internal_octet, uint8_t *sk,
+				    uint8_t *hash, size_t key_len, uint8_t *hmac);
+
+int cracen_ecdsa_sign_deterministic(const struct eccsk *privkey, size_t privkey_size,
+				    const struct sxhashalg *hashalg,
+				    const struct sx_pk_ecurve *curve, const uint8_t *digest,
+				    size_t digest_length, uint8_t *signature, size_t signature_size,
+				    size_t *signature_length)
+{
+	int status;
+
+	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
+	size_t opsz = (size_t)sx_pk_curve_opsize(curve);
+	size_t blocksz = sx_hash_get_alg_blocksz(hashalg);
+	const char *curve_n = sx_pk_curve_order(curve);
+
+	struct sxhash hashopctx;
+	size_t workmem_requirement = digestsz + opsz;
+	char workmem[workmem_requirement];
+	struct sx_pk_acq_req pkreq;
+	struct sx_pk_inops_ecdsa_generate inputs;
+	int attempts = MAX_ECDSA_ATTEMPTS;
+	struct ecdsa_signature internal_signature = {0};
+	char pubkey[opsz + opsz];
+
+	internal_signature.r = signature;
+	internal_signature.s = signature + opsz;
+
+	status = cracen_create_ecdsa_pubkey(privkey->d, pubkey, curve);
+
+	struct hmac_step_struct hmac_step;
+
+	status = sx_hash_create(&hashopctx, hashalg, sizeof(hashopctx));
+
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_feed(&hashopctx, digest, digest_length);
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_digest(&hashopctx, workmem);
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_wait(&hashopctx);
+	if (status != SX_OK) {
+		return status;
+	}
+	do {
+		uint8_t *h1 = workmem + digestsz + blocksz;
+
+		memcpy(h1, workmem, digestsz);
+
+		hmac_step.deterministic_retries = 0;
+		hmac_step.step = 0;
+		hmac_step.tlen = 0;
+
+		while (hmac_step.step <= 6) {
+			run_deterministic_ecdsa_hmac_step(hashalg, opsz, curve_n, digestsz, blocksz,
+							  workmem, hmac_step, privkey);
+		}
+
+		pkreq = sx_pk_acquire_req(SX_PK_CMD_ECDSA_GEN);
+		if (pkreq.status) {
+			return pkreq.status;
+		}
+		pkreq.status =
+			sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
+		if (pkreq.status) {
+			return pkreq.status;
+		}
+		opsz = sx_pk_curve_opsize(curve);
+		ecdsa_write_sk(privkey, inputs.d.addr, opsz);
+		sx_wrpkmem(inputs.k.addr, workmem + digestsz, opsz);
+		digest2op(workmem, digestsz, inputs.h.addr, opsz);
+		sx_pk_run(pkreq.req);
+
+		if (pkreq.status != SX_OK) {
+			sx_pk_release_req(pkreq.req);
+		}
+	} while (((status == SX_ERR_INVALID_SIGNATURE) || (status == SX_ERR_NOT_INVERTIBLE)) &&
+		 (attempts--));
+	/*This might be supposed to be pubkey. Will need to double check*/
+	const char **outputs = sx_pk_get_output_ops(pkreq.req);
+
+	ecdsa_read_sig(&internal_signature, outputs[0], outputs[1], opsz);
+	sx_pk_release_req(pkreq.req);
+
+	return SX_OK;
+}
+
+static int run_deterministic_ecdsa_hmac_step(const struct sxhashalg *hashalg, size_t opsz,
+					     const char *curve_n, size_t digestsz, size_t blocksz,
+					     char *workmem, struct hmac_step_struct hmac_step,
+					     const struct eccsk *privkey)
+{
+	uint8_t *h1 = workmem + digestsz + blocksz;
+	uint8_t *K = h1 + digestsz;
+	uint8_t *V = K + digestsz;
+	uint8_t *T = V + digestsz;
+	uint8_t step = hmac_step.step;
+
+	switch (step) {
+	case 0: /* K = HMAC_K(V || 0x00 || privkey || h1) */
+		for (size_t i = 0; i < digestsz; i++) {
+			K[i] = 0x0; /* Initialize K = 0x00 0x00 ... */
+			V[i] = 0x1; /* Initialize V = 0x01 0x01 ... */
+		}
+
+		/* The original h1 must be preserved for the sign operation. We reuse T for the
+		 * transformed value.
+		 */
+		bits2octets(h1, digestsz, T, curve_n, opsz);
+
+		deterministic_ecdsa_hmac(hashalg, K, V, digestsz, 0, privkey->d, T, opsz, K);
+		break;
+
+	case 1: /* V = HMAC_K(V) */
+		deterministic_ecdsa_hmac(hashalg, K, V, digestsz, INTERNAL_OCTET_NOT_USED, NULL,
+					 NULL, opsz, V);
+		break;
+
+	case 2: /* K = HMAC_K(V || 0x01 || privkey || h1) */
+		deterministic_ecdsa_hmac(hashalg, K, V, digestsz, 1, privkey->d, T, opsz, K);
+		break;
+
+	case 3: /* V = HMAC_K(V) */
+	case 4: /* same as case 3. */
+		deterministic_ecdsa_hmac(hashalg, K, V, digestsz, INTERNAL_OCTET_NOT_USED, NULL,
+					 NULL, opsz, V);
+		break;
+
+	case 5: /* T = T || V */
+
+		size_t copylen = MIN(digestsz, opsz - hmac_step.tlen);
+
+		memcpy(T + hmac_step.tlen, V, copylen);
+		hmac_step.tlen += copylen;
+		if (hmac_step.tlen < opsz) {
+			/* We need more data. */
+			hmac_step.step = 4;
+			return SX_ERR_HW_PROCESSING;
+		}
+		break;
+
+	case 6: /* Verify that T is in range [1, q-1] */
+	{
+		int rshift = clz_u8(curve_n[0]);
+
+		/* Only use the first qlen bits that was generated. */
+		bits2int(T, opsz, T, opsz * 8 - rshift);
+
+		bool is_zero = true;
+
+		for (size_t i = 0; i < opsz; i++) {
+			if (T[i]) {
+				is_zero = false;
+				break;
+			}
+		}
+		int ge = si_be_cmp(T, curve_n, opsz, 0);
+		bool must_retry =
+			hmac_step.deterministic_retries < (MAX_ECDSA_ATTEMPTS - hmac_step.attempts);
+		if (is_zero || ge >= 0 || must_retry) {
+			/* T is out of range. Retry */
+			hmac_step.step = 3;
+			hmac_step.tlen = 0;
+			hmac_step.deterministic_retries++;
+			/* K = HMAC_K(V || 0x00) */
+			deterministic_ecdsa_hmac(hashalg, K, V, digestsz, 0, NULL, NULL, 0, K);
+			return SX_ERR_HW_PROCESSING;
+		}
+
+		/* Copy parameters to start_ecdsa_sign. .*/
+		memcpy(workmem, h1, digestsz);
+		memcpy(workmem + digestsz, T, opsz);
+	}
+	}
+
+	hmac_step.step++;
+	return SX_OK;
+}
+
+static int deterministic_ecdsa_hmac(const struct sxhashalg *hashalg, uint8_t *key, const uint8_t *v,
+				    size_t hash_len, uint8_t internal_octet, uint8_t *sk,
+				    uint8_t *hash, size_t key_len, uint8_t *hmac)
+{
+
+	struct sxhash hashopctx;
+	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
+	size_t blocksz = sx_hash_get_alg_blocksz(hashalg);
+	size_t workmemsz = blocksz + digestsz;
+	char workmem[workmemsz];
+
+	mac_create_hmac(hashalg, &hashopctx, key, hash_len, workmem, workmemsz);
+
+	/* The hash function is initialized in mac_create_hmac */
+	sx_hash_feed(&hashopctx, v, hash_len);
+
+	if (internal_octet != INTERNAL_OCTET_NOT_USED) {
+		sx_hash_feed(&hashopctx, &internal_octet, sizeof(internal_octet));
+	}
+	if (sk) {
+		sx_hash_feed(&hashopctx, sk, key_len);
+	}
+	if (hash) {
+		sx_hash_feed(&hashopctx, hash, key_len);
+	}
+
+	return hmac_produce(&hashopctx, hashalg, hmac, hash_len, workmem);
+}
+
+int cracen_ecdsa_verify(char *pubkey, const struct sxhashalg *hashalg, const uint8_t *message,
+			size_t message_length, const struct sx_pk_ecurve *curve,
+			const uint8_t *signature)
+{
+	int status;
+	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
+	size_t opsz = sx_pk_curve_opsize(curve);
+
+	char workmem[digestsz];
+	struct sxhash hashopctx;
+	struct sx_pk_acq_req pkreq;
+	struct sx_pk_inops_ecdsa_verify inputs;
+	struct ecdsa_signature internal_signature = {0};
+
+	internal_signature.r = (char *)signature;
+	internal_signature.s = (char *)signature + opsz;
+
+	status = sx_hash_create(&hashopctx, hashalg, sizeof(hashopctx));
+
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_feed(&hashopctx, message, message_length);
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_digest(&hashopctx, workmem);
+
+	if (status != SX_OK) {
+		return status;
+	}
+	status = sx_hash_wait(&hashopctx);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECDSA_VER);
+	if (pkreq.status) {
+		return pkreq.status;
+	}
+	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
+	if (pkreq.status) {
+		return pkreq.status;
+	}
+
+	opsz = sx_pk_curve_opsize(curve);
+	ecdsa_write_pk(pubkey, inputs.qx.addr, inputs.qy.addr, opsz);
+	ecdsa_write_sig(&internal_signature, inputs.r.addr, inputs.s.addr, opsz);
+
+	digest2op(workmem, digestsz, inputs.h.addr, opsz);
+	sx_pk_run(pkreq.req);
+	status = sx_pk_wait(pkreq.req);
+	if (status != SX_OK) {
+		return status;
+	}
+	sx_pk_release_req(pkreq.req);
+
+	return status;
+}

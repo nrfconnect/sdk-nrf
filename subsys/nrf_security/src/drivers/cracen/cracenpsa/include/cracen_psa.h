@@ -361,20 +361,47 @@ psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation
 
 psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation);
 
-int ed25519_sign(const uint8_t *privkey, char *signature,
-					const uint8_t *message, size_t message_length);
+int ed25519_sign(const uint8_t *privkey, char *signature, const uint8_t *message,
+		 size_t message_length);
 
-int ed25519_verify(const uint8_t *pubkey, const char *message,
-			size_t message_length, const char *signature);
+int ed25519_verify(const uint8_t *pubkey, const char *message, size_t message_length,
+		   const char *signature);
 
+int ed25519ph_sign(const uint8_t *privkey, char *signature, const uint8_t *message,
+		   size_t message_length, int ismessage);
 
-int ed25519ph_sign(const uint8_t *privkey, char *signature,
-			const uint8_t *message, size_t message_length, int ismessage);
+int ed25519ph_verify(const uint8_t *pubkey, const char *message, size_t message_length,
+		     const char *signature, int ismessage);
 
-int ed25519ph_verify(const uint8_t *pubkey, const char *message,
-			size_t message_length, const char *signature, int ismessage);
+int ed25519_create_pubkey(const uint8_t *privkey, uint8_t *pubkey);
 
-int ed25519_create_pubkey(const uint8_t *privkey,
-				uint8_t *pubkey);
+int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry);
+
+int ecc_create_genpubkey(const char *priv_key, char *pub_key, const struct sx_pk_ecurve *curve);
+
+int ecc_create_genprivkey(const struct sx_pk_ecurve *curve, char *priv_key, size_t priv_key_size);
+
+int cracen_ecdsa_verify(char *pubkey, const struct sxhashalg *hashalg, const uint8_t *message,
+			size_t message_length, const struct sx_pk_ecurve *curve,
+			const uint8_t *signature);
+
+int cracen_ecdsa_sign(const struct eccsk *privkey, size_t privkey_size,
+		      const struct sxhashalg *hashalg, const struct sx_pk_ecurve *curve,
+		      const uint8_t *message, size_t message_length, uint8_t *signature,
+		      size_t signature_size, size_t *signature_length);
+
+int cracen_ecdsa_sign_deterministic(const struct eccsk *privkey, size_t privkey_size,
+				    const struct sxhashalg *hashalg,
+				    const struct sx_pk_ecurve *curve, const uint8_t *digest,
+				    size_t digest_length, uint8_t *signature, size_t signature_size,
+				    size_t *signature_length);
+
+int rndinrange_create(const unsigned char *n, size_t nsz, unsigned char *out);
+
+int mac_create_hmac(const struct sxhashalg *hashalg, struct sxhash *hashopctx, const char *key,
+		    size_t keysz, char *workmem, size_t workmemsz);
+
+int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, char *out, size_t sz,
+		 char *workmem);
 
 #endif /* CRACEN_PSA_H */
