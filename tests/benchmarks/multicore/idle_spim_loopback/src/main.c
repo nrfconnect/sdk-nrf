@@ -113,6 +113,7 @@ int main(void)
 	int counter = 0;
 	uint8_t acc = 0;
 	bool test_pass;
+	int test_repetitions = 3;
 
 	/* SPI buffer sets */
 	struct spi_buf tx_spi_buf = {
@@ -187,8 +188,14 @@ int main(void)
 
 	k_timer_init(&my_timer, my_timer_handler, NULL);
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
 	/* Run test forever. */
-	while (1) {
+	while (test_repetitions)
+#endif
+	{
 		test_pass = true;
 		timer_expired = false;
 
@@ -338,5 +345,8 @@ int main(void)
 		gpio_pin_set_dt(&led, 1);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

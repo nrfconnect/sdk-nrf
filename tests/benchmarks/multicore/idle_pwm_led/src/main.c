@@ -29,6 +29,7 @@ int main(void)
 	uint32_t pulse_max;
 	int32_t pulse_step;
 	uint32_t current_pulse_width;
+	int test_repetitions = 3;
 
 	if (!gpio_is_ready_dt(&led)) {
 		LOG_ERR("GPIO Device not ready");
@@ -75,7 +76,13 @@ int main(void)
 		pm_device_runtime_enable(pwm_led.dev);
 #endif
 
-	while (1) {
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		LOG_INF("Multicore idle_pwm_led test iteration %u", cnt++);
 
 #if defined(CONFIG_PM_DEVICE_RUNTIME)
@@ -120,5 +127,8 @@ int main(void)
 		gpio_pin_set_dt(&led, 1);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

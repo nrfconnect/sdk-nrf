@@ -30,6 +30,7 @@ int main(void)
 	int err;
 	uint16_t channel_reading[5];
 	int16_t sample_value;
+	int test_repetitions = 3;
 
 	/* Options for the sequence sampling. */
 	const struct adc_sequence_options options = {
@@ -51,7 +52,13 @@ int main(void)
 	err = adc_setup();
 	__ASSERT_NO_MSG(err == 0);
 
-	while (1) {
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		gpio_pin_set_dt(&gpio, 1);
 		err = adc_read(adc, &sequence);
 		sample_value = channel_reading[0];
@@ -63,5 +70,8 @@ int main(void)
 		__ASSERT_NO_MSG(sample_value == ADC_LOW_LEVEL);
 		k_sleep(K_SECONDS(1));
 	}
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

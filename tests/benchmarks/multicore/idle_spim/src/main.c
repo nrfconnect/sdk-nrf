@@ -44,6 +44,7 @@ int main(void)
 {
 	bool status;
 	uint8_t response;
+	int test_repetitions = 3;
 
 	status = gpio_is_ready_dt(&led);
 	__ASSERT(status, "Error: GPIO Device not ready");
@@ -54,7 +55,13 @@ int main(void)
 	status = spi_is_ready_dt(&spim_spec);
 	__ASSERT(status, "Error: SPI device is not ready");
 
-	while (1) {
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		for (int read_index = 0; read_index < SPI_READ_COUNT; read_index++) {
 			spi_read_register(CHIP_ID_REGISTER_ADDRESS, &response);
 			printk("Chip ID: 0x%x\n", response);
@@ -64,5 +71,8 @@ int main(void)
 		gpio_pin_set_dt(&led, 1);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

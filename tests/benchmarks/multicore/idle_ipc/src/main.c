@@ -72,6 +72,7 @@ int main(void)
 	int ret;
 	unsigned long last_cnt = 0;
 	unsigned long delta = 0;
+	int test_repetitions = 3;
 
 	p_payload = (struct payload *)k_malloc(CONFIG_APP_IPC_SERVICE_MESSAGE_LEN);
 	if (!p_payload) {
@@ -112,8 +113,13 @@ int main(void)
 	}
 	k_msleep(CONFIG_TEST_START_DELAY_MS);
 
-	while (true) {
-
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	while (test_repetitions)
+#endif
+	{
 		printk("Hello\n");
 		printk("Send data over IPC\n");
 
@@ -140,5 +146,8 @@ int main(void)
 		k_msleep(CONFIG_SLEEP_TIME_MS);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }

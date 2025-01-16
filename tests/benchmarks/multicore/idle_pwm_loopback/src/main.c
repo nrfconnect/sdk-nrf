@@ -98,6 +98,7 @@ int main(void)
 	uint32_t edges;
 	uint32_t tolerance;
 	int ret;
+	int test_repetitions = 3;
 
 	ret = gpio_is_ready_dt(&led);
 	__ASSERT(ret, "Error: GPIO Device not ready");
@@ -161,8 +162,14 @@ int main(void)
 
 	k_timer_init(&my_timer, my_timer_handler, NULL);
 
-	/* Run test forever */
-	while (1) {
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis enabled\n");
+	while (test_repetitions--)
+#else
+	/* Run test forever. */
+	while (test_repetitions)
+#endif
+	{
 		timer_expired = false;
 
 		/* clear edge counters */
@@ -241,5 +248,8 @@ int main(void)
 		gpio_pin_set_dt(&led, 1);
 	}
 
+#if defined(CONFIG_COVERAGE)
+	printk("Coverage analysis start\n");
+#endif
 	return 0;
 }
