@@ -37,6 +37,7 @@ The following pages provide a brief overview of the Matter structure, in accorda
    security
    commissioning
    multi_fabrics
+   group_communication
    dfu
    bridge
    dev_model
