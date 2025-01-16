@@ -111,8 +111,7 @@ Freestanding application
 
 This kind of application is handled separately from the |NCS|.
 It is located out-of-tree, that is outside of a west workspace, and is not using the `west manifest file`_ to specify the SDK version.
-Instead, the |NCS| version is taken from the :makevar:`ZEPHYR_BASE` environment variable.
-This means that all freestanding applications will use the same |NCS| version and the same copy of the SDK.
+The build system will find the location of the SDK through the :makevar:`ZEPHYR_BASE` environment variable, which is set either through a script or manually in an IDE.
 
 With this kind of application, the workspace has the following structure:
 
