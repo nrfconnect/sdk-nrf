@@ -29,11 +29,6 @@
 	};
 };
 
-/* Set IPC thread priority to the highest value to not collide with other threads. */
-&ipc0 {
-    zephyr,priority = <0 PRIO_COOP>;
-};
-
 &pwm0 {
 	pinctrl-0 = <&pwm0_default_alt>;
 	pinctrl-1 = <&pwm0_sleep_alt>;
