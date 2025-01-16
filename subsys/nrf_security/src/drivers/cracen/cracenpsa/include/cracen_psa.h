@@ -377,4 +377,35 @@ int ed25519ph_verify(const uint8_t *pubkey, const char *message,
 int ed25519_create_pubkey(const uint8_t *privkey,
 				uint8_t *pubkey);
 
+struct sx_pk_ecurve;
+
+struct ecdsa_signature {
+	size_t sz; /**< Total signature size, in bytes. */
+	char *r;   /**< Signature element "r". */
+	char *s;   /**< Signature element "s". */
+};
+struct eccsk {
+	const struct sx_pk_ecurve *curve;
+	char *d;
+};
+
+struct eccpk {
+	const struct sx_pk_ecurve *curve;
+	char *qx;
+	char *qy;
+};
+
+struct ecc_keypair {
+	struct eccsk sk;
+	struct eccpk pk;
+};
+
+int ecc_create_genpubkey(const struct si_eccsk *sk, struct si_eccpk *pk, struct sx_pk_ecurve *curve);
+
+void ecc_create_genprivkey(const struct sx_pk_ecurve *curve,
+			      char *priv_key, size_t priv_key_size);
+
+
+
+
 #endif /* CRACEN_PSA_H */
