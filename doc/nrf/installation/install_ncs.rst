@@ -210,8 +210,8 @@ Simply put, you can work with the following versions of the |NCS|:
    * - Specific release (recommended)
      - Release tag (for example, |release_tt|)
      - :ref:`Release_notes` of the release
-   * - :ref:`Development tag <dm-revisions>`
-     - Development tag (for example, ``v1.9.2-dev1``)
+   * - :ref:`Preview tag <dm-revisions>`
+     - Development tag (for example, ``v2.8.0-preview1``)
      - :ref:`Changelog <release_notes>` of the tag
    * - Branch
      - Branch name (for example, ``main``)
@@ -296,11 +296,11 @@ For more information about the repository and development model, see the :ref:`d
 
               west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release| |release|
 
-         * **Development tag:** To check out the ``v1.9.2-dev1`` tag, enter the following command:
+         * **Preview tag:** To check out the ``v2.8.0-preview1`` tag, enter the following command:
 
            .. code-block:: console
 
-              west init -m https://github.com/nrfconnect/sdk-nrf --mr v1.9.2-dev1 v1.9.2-dev1
+              west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.8.0-preview1
 
          * **Branch**: To check out the ``main`` branch that includes the latest state of development, enter the following command:
 
