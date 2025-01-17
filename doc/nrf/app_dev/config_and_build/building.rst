@@ -124,7 +124,7 @@ For more options, see Zephyr's :ref:`zephyr:west-building` or run the ``west --h
      - ``west build -b nrf52840dk/nrf52840 --no-sysbuild``
    * - ``-vvv``
      - Enable a detailed :ref:`zephyr:west-building-verbose` log, which includes the full commands used by the build system to generate the :ref:`app_build_output_files`.
-     - ``west build -b nrf52840dk/nrf52840 -vvv``
+     - ``west -vvv build -b nrf52840dk/nrf52840``
    * - *directory_name*
      - Build from a directory other than the current directory.
      - ``west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template``
