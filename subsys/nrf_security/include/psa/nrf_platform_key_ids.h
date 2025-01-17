@@ -134,70 +134,62 @@ extern "C" {
 /* KeyIDs used by SDFW for IETF SUIT manifest verification */
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: NONE (0x00),        Usage:
- * MANIFEST_OEM_ROOT (0xAA),   Generation: 1-4 (0x0-0x3)
+ * MANIFEST_OEM_ROOT (0xAA),   Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_OEM_ROOT_GEN1 0x4000AA00
 #define MANIFEST_PUBKEY_OEM_ROOT_GEN2 0x4000AA01
 #define MANIFEST_PUBKEY_OEM_ROOT_GEN3 0x4000AA02
-#define MANIFEST_PUBKEY_OEM_ROOT_GEN4 0x4000AA03
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: NONE (0x00),        Usage:
- * MANIFEST_NORDIC_TOP (0xBB), Generation: 1-4 (0x0-0x3)
+ * MANIFEST_NORDIC_TOP (0xBB), Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_NRF_TOP_GEN1 0x4000BB00
 #define MANIFEST_PUBKEY_NRF_TOP_GEN2 0x4000BB01
 #define MANIFEST_PUBKEY_NRF_TOP_GEN3 0x4000BB02
-#define MANIFEST_PUBKEY_NRF_TOP_GEN4 0x4000BB03
 
 /* KeyIDs used by SDFW for IETF SUIT secure boot of local domain FW */
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: SECURE (0x01),      Usage: UROTPUBKEY
- * (0x11),   Generation: 1-4 (0x0-0x3)
+ * (0x11),   Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_SECURE_GEN1 0x40011100
 #define MANIFEST_PUBKEY_SECURE_GEN2 0x40011101
 #define MANIFEST_PUBKEY_SECURE_GEN3 0x40011102
-#define MANIFEST_PUBKEY_SECURE_GEN4 0x40011103
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: APPLICATION (0x02), Usage: PUBKEY (0x21),
- * Generation: 1-4 (0x0-0x3)
+ * Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_APPLICATION_GEN1 0x40022100
 #define MANIFEST_PUBKEY_APPLICATION_GEN2 0x40022101
 #define MANIFEST_PUBKEY_APPLICATION_GEN3 0x40022102
-#define MANIFEST_PUBKEY_APPLICATION_GEN4 0x40022103
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: RADIOCORE (0x03),   Usage: PUBKEY (0x21),
- * Generation: 1-4 (0x0-0x3)
+ * Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_RADIO_GEN1 0x40032100
 #define MANIFEST_PUBKEY_RADIO_GEN2 0x40032101
 #define MANIFEST_PUBKEY_RADIO_GEN3 0x40032102
-#define MANIFEST_PUBKEY_RADIO_GEN4 0x40032103
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: CELL (0x04),        Usage: PUBKEY (0x21),
- * Generation: 1-4 (0x0-0x3)
+ * Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_CELL_GEN1 0x40042100
 #define MANIFEST_PUBKEY_CELL_GEN2 0x40042101
 #define MANIFEST_PUBKEY_CELL_GEN3 0x40042102
-#define MANIFEST_PUBKEY_CELL_GEN4 0x40042103
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: WIFI (0x06),        Usage: PUBKEY (0x21),
- * Generation: 1-4 (0x0-0x3)
+ * Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_WIFI_GEN1 0x40062100
 #define MANIFEST_PUBKEY_WIFI_GEN2 0x40062101
 #define MANIFEST_PUBKEY_WIFI_GEN3 0x40062102
-#define MANIFEST_PUBKEY_WIFI_GEN4 0x40062103
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: SYSCTRL (0x08),     Usage: PUBKEY (0x21),
- * Generation: 1-4 (0x0-0x3)
+ * Generation: 1-3 (0x0-0x2)
  */
 #define MANIFEST_PUBKEY_SYSCTRL_GEN1 0x40082100
 #define MANIFEST_PUBKEY_SYSCTRL_GEN2 0x40082101
 #define MANIFEST_PUBKEY_SYSCTRL_GEN3 0x40082102
-#define MANIFEST_PUBKEY_SYSCTRL_GEN4 0x40082103
 
 /* KeyIDs used by SDFW for SUIT manifest decryption of local domain FW */
 
@@ -242,44 +234,39 @@ extern "C" {
  */
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: SECURE (0x01),      Usage: AUTHDEBUG
- * (0x23), Generation: 1-4 (0x0-0x3)
+ * (0x13), Generation: 1-3 (0x0-0x2)
  */
 #define AUTHDEBUG_SECURE_GEN1 0x40012300
 #define AUTHDEBUG_SECURE_GEN2 0x40012301
 #define AUTHDEBUG_SECURE_GEN3 0x40012302
-#define AUTHDEBUG_SECURE_GEN4 0x40012303
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: APPLICATION (0x02), Usage: AUTHDEBUG
- * (0x23), Generation: 1-4 (0x0-0x3)
+ * (0x13), Generation: 1-3 (0x0-0x2)
  */
-#define AUTHDEBUG_APPLICATION_GEN1 0x40022300
-#define AUTHDEBUG_APPLICATION_GEN2 0x40022301
-#define AUTHDEBUG_APPLICATION_GEN3 0x40022302
-#define AUTHDEBUG_APPLICATION_GEN4 0x40022303
+#define AUTHDEBUG_APPLICATION_GEN1 0x40021300
+#define AUTHDEBUG_APPLICATION_GEN2 0x40021301
+#define AUTHDEBUG_APPLICATION_GEN3 0x40021302
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: RADIO (0x03),       Usage: AUTHDEBUG
- * (0x23), Generation: 1-4 (0x0-0x3)
+ * (0x13), Generation: 1-3 (0x0-0x2)
  */
-#define AUTHDEBUG_RADIO_GEN1 0x40032300
-#define AUTHDEBUG_RADIO_GEN2 0x40032301
-#define AUTHDEBUG_RADIO_GEN3 0x40032302
-#define AUTHDEBUG_RADIO_GEN4 0x40032303
+#define AUTHDEBUG_RADIO_GEN1 0x40031300
+#define AUTHDEBUG_RADIO_GEN2 0x40031301
+#define AUTHDEBUG_RADIO_GEN3 0x40031302
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: CELL (0x04),        Usage: AUTHDEBUG
- * (0x23), Generation: 1-4 (0x0-0x3)
+ * (0x13), Generation: 1-3 (0x0-0x2)
  */
-#define AUTHDEBUG_CELL_GEN1 0x40042300
-#define AUTHDEBUG_CELL_GEN2 0x40042301
-#define AUTHDEBUG_CELL_GEN3 0x40042302
-#define AUTHDEBUG_CELL_GEN4 0x40042303
+#define AUTHDEBUG_CELL_GEN1 0x40041300
+#define AUTHDEBUG_CELL_GEN2 0x40041301
+#define AUTHDEBUG_CELL_GEN3 0x40041302
 
 /* Class: Platform (0x4), Access: Internal (0x0), Domain: WIFI (0x06),        Usage: AUTHDEBUG
- * (0x23), Generation: 1-4 (0x0-0x3)
+ * (0x13), Generation: 1-3 (0x0-0x2)
  */
-#define AUTHDEBUG_WIFI_GEN1 0x40062300
-#define AUTHDEBUG_WIFI_GEN2 0x40062301
-#define AUTHDEBUG_WIFI_GEN3 0x40062302
-#define AUTHDEBUG_WIFI_GEN4 0x40062303
+#define AUTHDEBUG_WIFI_GEN1 0x40061300
+#define AUTHDEBUG_WIFI_GEN2 0x40061301
+#define AUTHDEBUG_WIFI_GEN3 0x40061302
 
 /* KeyIDs used by local domains to encrypt their STM trace data. */
 
