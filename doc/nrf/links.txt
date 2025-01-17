@@ -815,6 +815,7 @@
 .. _`AP-Protect for nRF9151`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
 .. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
+.. _`AP-Protect for nRF54L15`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/ctrl-ap.html
 .. _`AP-Protect for nRF5340`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/debugandtrace.html#ariaid-title9
 .. _`AP-Protect for nRF52840`:
 .. _`access port protection mechanism`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/dif.html#ariaid-title3
