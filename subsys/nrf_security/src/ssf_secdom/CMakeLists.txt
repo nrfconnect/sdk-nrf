@@ -7,4 +7,5 @@
 target_sources(${mbedcrypto_target}
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/ssf_crypto.c
+    ${CMAKE_CURRENT_LIST_DIR}/ssf_psa_core_compatibility.c
 )
