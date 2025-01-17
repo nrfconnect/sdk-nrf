@@ -73,12 +73,12 @@ static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 		return;
 	}
 
-	printk("Attempting to boot from address 0x%x.\n\r",
+	printk("Attempting to boot from address 0x%x.\r\n",
 		fw_info->address);
 
 	if (!bl_validate_firmware_local(fw_info->address,
 					fw_info)) {
-		printk("Failed to validate, permanently invalidating!\n\r");
+		printk("Failed to validate, permanently invalidating!\r\n");
 		fw_info_invalidate(fw_info);
 		return;
 	}
@@ -90,8 +90,8 @@ static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 	int err = get_monotonic_version(&stored_version);
 
 	if (err) {
-		printk("Failed to read the monotonic counter!\n\r");
-		printk("We assume this is due to the firmware version not being enabled.\n\r");
+		printk("Failed to read the monotonic counter!\r\n");
+		printk("We assume this is due to the firmware version not being enabled.\r\n");
 
 		/*
 		 * Errors in reading the firmware version are assumed to be
@@ -133,11 +133,11 @@ int main(void)
 	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
 
 	if (err) {
-		printk("Failed to protect B0 flash, cancel startup.\n\r");
+		printk("Failed to protect B0 flash, cancel startup.\r\n");
 		return 0;
 	}
 #else
-	printk("Fprotect disabled. No protection applied.\n\r");
+	printk("Fprotect disabled. No protection applied.\r\n");
 #endif
 
 	uint32_t s0_addr = s0_address_read();
@@ -153,6 +153,6 @@ int main(void)
 		validate_and_boot(s0_info, BOOT_SLOT_0);
 	}
 
-	printk("No bootable image found. Aborting boot.\n\r");
+	printk("No bootable image found. Aborting boot.\r\n");
 	return 0;
 }
