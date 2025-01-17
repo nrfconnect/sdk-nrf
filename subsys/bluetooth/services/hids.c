@@ -1152,7 +1152,7 @@ int bt_hids_inp_rep_send_userdata(struct bt_hids *hids_obj,
 
 	struct bt_gatt_notify_params params = {0};
 
-	params.attr = &hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
+	params.attr = rep_attr;
 	params.data = rep;
 	params.len = hids_inp_rep->size;
 	params.func = cb;
@@ -1267,7 +1267,7 @@ int bt_hids_boot_mouse_inp_rep_send(struct bt_hids *hids_obj,
 
 	struct bt_gatt_notify_params params = {0};
 
-	params.attr = &hids_obj->gp.svc.attrs[rep_ind];
+	params.attr = rep_attr;
 	params.data = rep_data;
 	params.len = sizeof(conn_data->hids_boot_mouse_inp_rep_ctx);
 	params.func = cb;
