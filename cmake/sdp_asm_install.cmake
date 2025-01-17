@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Function that replaces .s file tracked in repository with updated version from build
+#
+# Arguments:
+# hrt_srcs - path to the .c file(s) to verify
+# soc      - name of the SoC the code is being built for
 function(asm_install)
   if(NOT DEFINED soc)
     message(FATAL_ERROR "asm_install missing soc argument.")

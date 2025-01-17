@@ -4,6 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# This function takes as an argument target to be built and path to .c source file(s)
+# whose .s output must be verified against .s file tracked in repository. It then:
+# - adds a pre-build dependency that generates .s files in build directory
+# - adds a dependency on specified target to call sdp_asm_check.cmake with appropriate arguments
+# - adds a custom target that calls sdp_asm_install.cmake with appropriate arguments
+# - adds .s files from build directory to target sources
+#
+# Arguments:
+# target   - target to which the dependencies are to be applied
+# hrt_srcs - path to the .c source file(s) to verify
 function(sdp_assembly_install target hrt_srcs)
   sdp_assembly_generate(${CONFIG_SOC} "${hrt_srcs}")
   sdp_assembly_check(${CONFIG_SOC} "${hrt_srcs}")

@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Function checking if .s file generated during build is identical to one tracked in repository
+#
+# Arguments:
+# hrt_srcs - path to the .c file(s) to verify
+# soc      - name of the SoC the code is being built for
 function(asm_check)
   if(NOT DEFINED soc)
     message(FATAL_ERROR "asm_check missing soc argument.")
