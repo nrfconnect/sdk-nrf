@@ -506,6 +506,15 @@ The issues in this section are related to the :ref:`ug_matter` protocol.
 
 .. rst-class:: v2-9-0 v2-8-0
 
+KRKNWK-19806: RPU recovery fails during Wi-Fi communication
+   Wi-Fi is not reconnecting to previously connected network after RPU recovery.
+
+  **Affected platforms:** nRF7002
+
+  **Workaround:** Cherry-pick changes from PR #529 in the `Matter GitHub repository`_ .
+
+.. rst-class:: v2-9-0 v2-8-0
+
 NCSDK-28567: Swap time after DFU takes a very long time
   Due to the incorrect RRAM buffer configuration, the swap time after DFU can exceed three minutes.
 
@@ -2813,6 +2822,14 @@ Matter samples
 ==============
 
 The issues in this section are related to :ref:`matter_samples`.
+
+.. rst-class:: v2-9-0 v2-8-0
+
+KRKNWK-19806: RPU recovery fails on the nRF5340 DK with nRF7002 EK shield due to invalid MCUboot configuration
+
+  **Affected platforms:** nRF5340, nRF7002
+
+  **Workaround:** Cherry-pick changes from PR #19826 in the `sdk-nrf`_ repository.
 
 .. rst-class:: v2-9-0
 
