@@ -182,7 +182,7 @@ The result should look similar to the following output::
    I: Connected to FB:92:1D:8E:8C:D8 (random), number of connections 14
    I: Connected to D9:E5:51:E0:5E:24 (random), number of connections 15
    I: Connected to CF:2F:99:89:A3:4D (random), number of connections 16
-   I: 12 seconds to create 16 connections
+   I: 8 seconds to create 16 connections
    I: Disconnecting connections...
    I: ---------------------------------------------------------------------
    I: ---------------------------------------------------------------------
@@ -204,7 +204,7 @@ The result should look similar to the following output::
    I: Connected to F4:9C:8C:24:F9:44 (random), number of connections 14
    I: Connected to EF:92:DC:88:3B:B3 (random), number of connections 15
    I: Connected to C8:BA:1D:6F:95:2B (random), number of connections 16
-   I: 9 seconds to create 16 connections
+   I: 7 seconds to create 16 connections
    I: Disconnecting connections...
    I: ---------------------------------------------------------------------
    I: ---------------------------------------------------------------------
@@ -226,7 +226,7 @@ The result should look similar to the following output::
    I: Connected to CF:2F:99:89:A3:4D (random), number of connections 14
    I: Connected to EF:92:DC:88:3B:B3 (random), number of connections 15
    I: Connected to D9:E5:51:E0:5E:24 (random), number of connections 16
-   I: 4 seconds to create 16 connections
+   I: 2 seconds to create 16 connections
    I: Disconnecting connections...
    I: ---------------------------------------------------------------------
    I: ---------------------------------------------------------------------
