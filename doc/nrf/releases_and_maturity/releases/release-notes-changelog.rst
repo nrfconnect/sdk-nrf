@@ -139,6 +139,7 @@ Matter
 ------
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
+* Added :ref:`ug_matter_debug_snippet`.
 
 Matter fork
 +++++++++++
