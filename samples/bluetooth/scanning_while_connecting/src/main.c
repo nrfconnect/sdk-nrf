@@ -437,6 +437,35 @@ int main(void)
 
 	hci_vs_sdc_central_acl_event_spacing_set(&event_spacing_params);
 
+	/** Set a small connection event length to leave more time for scanning.
+	 *
+	 * This can also be set at compile time by using the Kconfig option
+	 * CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT in the prj.conf file.
+	 */
+	sdc_hci_cmd_vs_event_length_set_t event_length_params = {
+		.event_length_us = 2000,
+	};
+
+	hci_vs_sdc_event_length_set(&event_length_params);
+
+	/** Connection event extension is turned on by default. This is turned on by default
+	 * to achieve higher throughput. As a consequence, the scheduler will schedule
+	 * longer connection events at the cost of scanning events. In this sample application,
+	 * we try to achieve faster connection establishment, so we turn connection
+	 * event extension off. Thus, the controller schedules more time for scanning.
+	 *
+	 * This can also be turned off at compile time by setting the Kconfig option
+	 * BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT=n in the prj.conf file.
+	 *
+	 * See our scheduling documentation under nrfxlib/softdevice_controller for
+	 * more information.
+	 */
+	sdc_hci_cmd_vs_conn_event_extend_t conn_event_extend_params = {
+		.enable = 0,
+	};
+
+	hci_vs_sdc_conn_event_extend(&conn_event_extend_params);
+
 	for (uint8_t i = 0; i < ARRAY_SIZE(conn_establishment_modes); i++) {
 
 		active_conn_establishment_mode = conn_establishment_modes[i];
