@@ -85,10 +85,12 @@ void TemperatureSensor::InternalMeasurement()
 void TemperatureSensor::ExternalMeasurement()
 {
 	Nrf::Matter::BindingHandler::BindingData *data = Platform::New<Nrf::Matter::BindingHandler::BindingData>();
-	data->ClusterId = Clusters::TemperatureMeasurement::Id;
-	data->EndpointId = mTemperatureMeasurementEndpointId;
-	data->InvokeCommandFunc = ExternalTemperatureMeasurementReadHandler;
-	BindingHandler::RunBoundClusterAction(data);
+	if (data) {
+		data->ClusterId = Clusters::TemperatureMeasurement::Id;
+		data->EndpointId = mTemperatureMeasurementEndpointId;
+		data->InvokeCommandFunc = ExternalTemperatureMeasurementReadHandler;
+		BindingHandler::RunBoundClusterAction(data);
+	}
 }
 
 void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(const EmberBindingTableEntry &binding,
