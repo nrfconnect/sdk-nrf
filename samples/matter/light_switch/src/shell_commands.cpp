@@ -67,42 +67,51 @@ namespace Unicast
 	{
 		Nrf::Matter::BindingHandler::BindingData *data =
 			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
-		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
-		data->CommandId = Clusters::OnOff::Commands::On::Id;
-		data->ClusterId = Clusters::OnOff::Id;
-		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup.SetValue(false);
+		if (data) {
+			data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
+			data->CommandId = Clusters::OnOff::Commands::On::Id;
+			data->ClusterId = Clusters::OnOff::Id;
+			data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+			data->IsGroup.SetValue(false);
 
-		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
-		return CHIP_NO_ERROR;
+			Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
+			return CHIP_NO_ERROR;
+		}
+		return CHIP_ERROR_NO_MEMORY;
 	}
 
 	static CHIP_ERROR OffCommandHandler(int argc, char **argv)
 	{
 		Nrf::Matter::BindingHandler::BindingData *data =
 			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
-		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
-		data->CommandId = Clusters::OnOff::Commands::Off::Id;
-		data->ClusterId = Clusters::OnOff::Id;
-		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup.SetValue(false);
+		if (data) {
+			data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
+			data->CommandId = Clusters::OnOff::Commands::Off::Id;
+			data->ClusterId = Clusters::OnOff::Id;
+			data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+			data->IsGroup.SetValue(false);
 
-		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
-		return CHIP_NO_ERROR;
+			Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
+			return CHIP_NO_ERROR;
+		}
+		return CHIP_ERROR_NO_MEMORY;
 	}
 
 	static CHIP_ERROR ToggleCommandHandler(int argc, char **argv)
 	{
 		Nrf::Matter::BindingHandler::BindingData *data =
 			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
-		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
-		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
-		data->ClusterId = Clusters::OnOff::Id;
-		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup.SetValue(false);
+		if (data) {
+			data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
+			data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
+			data->ClusterId = Clusters::OnOff::Id;
+			data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+			data->IsGroup.SetValue(false);
 
-		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
-		return CHIP_NO_ERROR;
+			Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
+			return CHIP_NO_ERROR;
+		}
+		return CHIP_ERROR_NO_MEMORY;
 	}
 } /* namespace Unicast */
 
@@ -142,42 +151,51 @@ namespace Group
 	{
 		Nrf::Matter::BindingHandler::BindingData *data =
 			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
-		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
-		data->CommandId = Clusters::OnOff::Commands::On::Id;
-		data->ClusterId = Clusters::OnOff::Id;
-		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup.SetValue(true);
+		if (data) {
+			data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
+			data->CommandId = Clusters::OnOff::Commands::On::Id;
+			data->ClusterId = Clusters::OnOff::Id;
+			data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+			data->IsGroup.SetValue(true);
 
-		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
-		return CHIP_NO_ERROR;
+			Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
+			return CHIP_NO_ERROR;
+		}
+		return CHIP_ERROR_NO_MEMORY;
 	}
 
 	CHIP_ERROR OffCommandHandler(int argc, char **argv)
 	{
 		Nrf::Matter::BindingHandler::BindingData *data =
 			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
-		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
-		data->CommandId = Clusters::OnOff::Commands::Off::Id;
-		data->ClusterId = Clusters::OnOff::Id;
-		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup.SetValue(true);
+		if (data) {
+			data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
+			data->CommandId = Clusters::OnOff::Commands::Off::Id;
+			data->ClusterId = Clusters::OnOff::Id;
+			data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+			data->IsGroup.SetValue(true);
 
-		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
-		return CHIP_NO_ERROR;
+			Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
+			return CHIP_NO_ERROR;
+		}
+		return CHIP_ERROR_NO_MEMORY;
 	}
 
 	CHIP_ERROR ToggleCommandHandler(int argc, char **argv)
 	{
 		Nrf::Matter::BindingHandler::BindingData *data =
 			Platform::New<Nrf::Matter::BindingHandler::BindingData>();
-		data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
-		data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
-		data->ClusterId = Clusters::OnOff::Id;
-		data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
-		data->IsGroup.SetValue(true);
+		if (data) {
+			data->EndpointId = LightSwitch::GetInstance().GetLightSwitchEndpointId();
+			data->CommandId = Clusters::OnOff::Commands::Toggle::Id;
+			data->ClusterId = Clusters::OnOff::Id;
+			data->InvokeCommandFunc = LightSwitch::SwitchChangedHandler;
+			data->IsGroup.SetValue(true);
 
-		Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
-		return CHIP_NO_ERROR;
+			Nrf::Matter::BindingHandler::RunBoundClusterAction(data);
+			return CHIP_NO_ERROR;
+		}
+		return CHIP_ERROR_NO_MEMORY;
 	}
 
 } /* namespace Group */

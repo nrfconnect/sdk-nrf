@@ -31,6 +31,7 @@ namespace Nrf::Matter
 
 	void BindingHandler::OnInvokeCommandSucces(BindingData *bindingData)
 	{
+		VerifyOrReturn(bindingData != nullptr, LOG_ERR("Invalid binding data"));
 		LOG_DBG("Binding command applied successfully!");
 
 		/* If session was recovered and communication works, reset flag to the initial state. */
