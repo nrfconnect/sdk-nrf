@@ -1122,7 +1122,7 @@ int bt_hids_inp_rep_send_userdata(struct bt_hids *hids_obj,
 {
 	struct bt_hids_inp_rep *hids_inp_rep =
 	    &hids_obj->inp_rep_group.reports[rep_index];
-	struct bt_gatt_attr *rep_attr =
+	const struct bt_gatt_attr *rep_attr =
 	    &hids_obj->gp.svc.attrs[hids_inp_rep->att_ind];
 	uint8_t *rep_data;
 
