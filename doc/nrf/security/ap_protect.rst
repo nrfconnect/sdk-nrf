@@ -87,7 +87,7 @@ See the related hardware documentation for more information about which implemen
    * - nRF54L15
      - n/a
      - ✔
-     - *Documentation not yet available*
+     - `AP-Protect for nRF54L15`_
      - Also supports Secure AP-Protect (see note below)
    * - nRF5340
      - n/a
