@@ -54,24 +54,55 @@ static struct k_timer my_timer;
 static bool timer_expired;
 
 #if defined(CONFIG_CLOCK_CONTROL)
-const struct nrf_clock_spec clk_spec_global_hsfll = {
-	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
+// const struct nrf_clock_spec clk_spec_global_hsfll = {
+// 	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
+// };
+
+// /*
+//  * Set Global Domain frequency (HSFLL120)
+//  * based on: CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
+//  */
+// void set_global_domain_frequency(void)
+// {
+// 	int err;
+// 	int res;
+// 	struct onoff_client cli;
+// 	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
+
+// 	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
+// 	sys_notify_init_spinwait(&cli.notify);
+// 	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
+// 	printk("Return code: %d\n", err);
+// 	__ASSERT_NO_MSG(err < 3);
+// 	__ASSERT_NO_MSG(err >= 0);
+// 	do {
+// 		err = sys_notify_fetch_result(&cli.notify, &res);
+// 		k_yield();
+// 	} while (err == -EAGAIN);
+// 	printk("Clock control request return value: %d\n", err);
+// 	printk("Clock control request response code: %d\n", res);
+// 	__ASSERT_NO_MSG(err == 0);
+// 	__ASSERT_NO_MSG(res == 0);
+// }
+
+const struct nrf_clock_spec clk_spec_local_hsfll = {
+	.frequency = MHZ(CONFIG_LOCAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
 };
 
 /*
- * Set Global Domain frequency (HSFLL120)
- * based on: CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
+ * Set Local Domain frequency (HSFLL120)
+ * based on: CONFIG_LOCAL_DOMAIN_CLOCK_FREQUENCY_MHZ
  */
-void set_global_domain_frequency(void)
+void set_local_domain_frequency(void)
 {
 	int err;
 	int res;
 	struct onoff_client cli;
-	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
+	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(cpuapp_hsfll));
 
-	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
+	printk("Requested frequency [Hz]: %d\n", clk_spec_local_hsfll.frequency);
 	sys_notify_init_spinwait(&cli.notify);
-	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
+	err = nrf_clock_control_request(hsfll_dev, &clk_spec_local_hsfll, &cli);
 	printk("Return code: %d\n", err);
 	__ASSERT_NO_MSG(err < 3);
 	__ASSERT_NO_MSG(err >= 0);
@@ -142,7 +173,7 @@ int main(void)
 	__ASSERT(ret == 0, "Could not configure led GPIO");
 	k_msleep(1000);
 	gpio_pin_set_dt(&led, 1);
-	set_global_domain_frequency();
+	set_local_domain_frequency();
 	k_msleep(100);
 #else
 	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);

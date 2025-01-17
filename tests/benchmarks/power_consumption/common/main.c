@@ -6,6 +6,12 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
+#if CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP
+#if defined(CONFIG_CLOCK_CONTROL)
+#include <zephyr/devicetree/clocks.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#endif
+#endif
 
 const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
@@ -21,6 +27,40 @@ __weak bool self_suspend_req(void)
 {
 	return false;
 }
+#if CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP
+#if defined(CONFIG_CLOCK_CONTROL)
+const struct nrf_clock_spec clk_spec_local_hsfll = {
+	.frequency = MHZ(CONFIG_LOCAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
+};
+
+/*
+ * Set Local Domain frequency (HSFLL120)
+ * based on: CONFIG_LOCAL_DOMAIN_CLOCK_FREQUENCY_MHZ
+ */
+void set_local_domain_frequency(void)
+{
+	int err;
+	int res;
+	struct onoff_client cli;
+	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(cpuapp_hsfll));
+
+	printk("Requested frequency [Hz]: %d\n", clk_spec_local_hsfll.frequency);
+	sys_notify_init_spinwait(&cli.notify);
+	err = nrf_clock_control_request(hsfll_dev, &clk_spec_local_hsfll, &cli);
+	printk("Return code: %d\n", err);
+	__ASSERT_NO_MSG(err < 3);
+	__ASSERT_NO_MSG(err >= 0);
+	do {
+		err = sys_notify_fetch_result(&cli.notify, &res);
+		k_yield();
+	} while (err == -EAGAIN);
+	printk("Clock control request return value: %d\n", err);
+	printk("Clock control request response code: %d\n", res);
+	__ASSERT_NO_MSG(err == 0);
+	__ASSERT_NO_MSG(res == 0);
+}
+#endif /* CONFIG_CLOCK_CONTROL */
+#endif
 
 K_THREAD_DEFINE(thread_id, 500, thread_definition, NULL, NULL, NULL,
 				5, 0, 0);
@@ -48,6 +88,14 @@ int main(void)
 
 	rc = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT_NO_MSG(rc == 0);
+
+#if CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP
+#if defined(CONFIG_CLOCK_CONTROL)
+	/* Wait a bit to solve NRFS request timeout issue. */
+	k_msleep(100);
+	set_local_domain_frequency();
+#endif
+#endif
 
 	k_timer_start(&timer, K_SECONDS(1), K_SECONDS(1));
 

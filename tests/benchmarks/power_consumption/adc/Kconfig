@@ -1,0 +1,29 @@
+#
+# Copyright (c) 20245 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+
+choice LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION
+	prompt "Local domain clock frequency"
+	default LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
+
+config LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
+	bool "320MHz"
+
+config LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ
+	bool "128MHz"
+
+config LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ
+	bool "64MHz"
+
+endchoice
+
+config LOCAL_DOMAIN_CLOCK_FREQUENCY_MHZ
+	int
+	default 320 if LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
+	default 128 if LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ
+	default 64 if LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ
+
+source "Kconfig.zephyr"
