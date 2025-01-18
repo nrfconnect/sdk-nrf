@@ -224,6 +224,18 @@ The average current consumption in an idle case can be around ~1-2 mA in the nRF
 
 See :ref:`app_power_opt` for more information on power management testing and usage of the PPK2.
 
+.. _wifi_sta_performance_testing_memory_footprint:
+
+Performance testing and memory footprint analysis
+*************************************************
+
+The sample can be used to test the performance of the Wi-Fi connection.
+The performance tuning is done to achieve a trade-off between memory usage and performance.
+
+You can use the at :file:`overlay-zperf.conf` file to run the performance test.
+The default build, without the overlay, is used for memory footprint testing and analysis.
+The overlay must be enabled to run the performance test corresponding to the memory footprints.
+
 Dependencies
 ************
 

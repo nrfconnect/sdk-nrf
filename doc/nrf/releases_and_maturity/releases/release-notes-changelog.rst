@@ -434,7 +434,9 @@ Zigbee samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`wifi_station_sample` sample:
+
+  * Added an ``overlay-zperf.conf`` overlay for :ref:`performance benchmarking and memory footprint analysis <wifi_sta_performance_testing_memory_footprint>`.
 
 Other samples
 -------------
