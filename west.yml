@@ -1,4 +1,4 @@
-# tHe west manifest file (west.yml) for the nRF Connect SDK (NCS).
+# The west manifest file (west.yml) for the nRF Connect SDK (NCS).
 #
 # The per-workspace west configuration file, ncs/.west/config,
 # specifies the location of this manifest file like this:
