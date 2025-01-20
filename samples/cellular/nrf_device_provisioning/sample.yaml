@@ -1,7 +1,7 @@
 sample:
   name: nRF Device Provisioning
 tests:
-  sample.cellular.nrf_provisioning:
+  sample.cellular.nrf_device_provisioning:
     sysbuild: true
     build_only: true
     integration_platforms:

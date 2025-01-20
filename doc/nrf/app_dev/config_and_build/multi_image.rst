@@ -284,7 +284,7 @@ See :ref:`ug_bootloader` for more details.
 .. note::
 
    The build system grabs the Kconfig fragment or configuration file specified in a CMake argument relative to that image's application directory.
-   For example, the build system uses ``nrf/samples/bootloader/my-fragment.conf`` when building with the ``-Db0_EXTRA_CONF_FILE=my-fragment.conf`` option, whereas ``-DEXTRA_CONF_FILE=my-fragment.conf`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-fragment.conf``.
+   For example, the build system uses file:`nrf/samples/nsib/my-fragment.conf` when building with the ``-Db0_EXTRA_CONF_FILE=my-fragment.conf`` option, whereas ``-DEXTRA_CONF_FILE=my-fragment.conf`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-fragment.conf``.
 
 You can also merge multiple fragments into the overall configuration for an image by giving a list of Kconfig fragments as a string, separated using ``;``.
 The following example shows how to combine ``abc.conf``, Kconfig fragment of the ``childimageone`` child image, with the ``extrafragment.conf`` fragment:
@@ -327,7 +327,7 @@ The build system does also automatically apply any devicetree overlay located in
 .. note::
 
    The build system grabs the devicetree overlay files specified in a CMake argument relative to that image's application directory.
-   For example, the build system uses ``nrf/samples/bootloader/my-dts.overlay`` when building with the ``-Db0_DTC_OVERLAY_FILE=my-dts.overlay`` option, whereas ``-DDTC_OVERLAY_FILE=my-dts.overlay`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-dts.overlay``.
+   For example, the build system uses ``nrf/samples/nsib/my-dts.overlay`` when building with the ``-Db0_DTC_OVERLAY_FILE=my-dts.overlay`` option, whereas ``-DDTC_OVERLAY_FILE=my-dts.overlay`` grabs the fragment from the main application's directory, such as ``zephyr/samples/hello_world/my-dts.overlay``.
 
 .. _ug_multi_image_permanent_changes:
 
