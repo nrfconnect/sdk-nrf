@@ -39,6 +39,10 @@ if(CONFIG_BT_FAST_PAIR_FMDN)
   target_link_libraries(fast_pair PRIVATE fmdn)
 endif()
 
+if(CONFIG_BT_FAST_PAIR_ADV_MANAGER)
+  add_subdirectory(adv_manager)
+endif()
+
 if(SYSBUILD)
   zephyr_get(FP_DATA_PRESENT MERGE SYSBUILD)
 
