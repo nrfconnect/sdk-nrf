@@ -161,19 +161,23 @@ BUILD_ASSERT(NRF_SPROTO_DTLS1v2 == IPPROTO_DTLS_1_2, "Socket value not aligned w
 BUILD_ASSERT(SOL_TLS == NRF_SOL_SECURE, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(SOL_SOCKET == NRF_SOL_SOCKET, "Socket value not aligned with modemlib.");
 
+#if defined(CONFIG_POSIX_API)
 BUILD_ASSERT(MSG_DONTWAIT == NRF_MSG_DONTWAIT, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(MSG_PEEK == NRF_MSG_PEEK, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(MSG_WAITALL == NRF_MSG_WAITALL, "Socket value not aligned with modemlib.");
+#endif
 
 BUILD_ASSERT(AI_CANONNAME == NRF_AI_CANONNAME, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(AI_NUMERICSERV == NRF_AI_NUMERICSERV, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(AI_PDNSERV == NRF_AI_PDNSERV, "Socket value not aligned with modemlib.");
 
+#if defined(CONFIG_POSIX_API)
 BUILD_ASSERT(POLLIN == NRF_POLLIN, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(POLLOUT == NRF_POLLOUT, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(POLLERR == NRF_POLLERR, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(POLLHUP == NRF_POLLHUP, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(POLLNVAL == NRF_POLLNVAL, "Socket value not aligned with modemlib.");
+#endif
 
 BUILD_ASSERT(DNS_EAI_ADDRFAMILY == NRF_EAI_ADDRFAMILY, "Socket value not aligned with modemlib.");
 BUILD_ASSERT(DNS_EAI_AGAIN == NRF_EAI_AGAIN, "Socket value not aligned with modemlib.");
