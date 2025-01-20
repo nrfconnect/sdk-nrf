@@ -13,7 +13,7 @@
 
 /* Following defines the time how much in advance is scheduled to modem */
 #define DECT_PHY_API_SCHEDULER_OP_TIME_WINDOW_MS 500
-#define DECT_PHY_API_SCHEDULER_OP_MAX_COUNT	 20
+#define DECT_PHY_API_SCHEDULER_OP_MAX_COUNT	 30
 
 #define DECT_SCHEDULER_DELAYED_ERROR		       6666
 #define DECT_SCHEDULER_SCHEDULER_FATAL_MEM_ALLOC_ERROR 6667
@@ -216,6 +216,8 @@ void dect_phy_api_scheduler_list_status_print(void);
 void dect_phy_api_scheduler_list_delete_all_items(void); /* purge */
 
 uint64_t dect_phy_api_scheduler_list_item_last_scheduled_modem_frame_time_get(void);
+
+bool dect_phy_api_scheduler_list_is_empty(void);
 
 /**************************************************************************************************/
 

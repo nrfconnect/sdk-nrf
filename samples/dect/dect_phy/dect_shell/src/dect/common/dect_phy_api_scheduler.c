@@ -14,6 +14,8 @@
 #include "dect_common_settings.h"
 #include "dect_phy_common_rx.h"
 
+#include "dect_phy_ctrl.h"
+
 #include "dect_phy_api_scheduler_integration.h"
 #include "dect_phy_api_scheduler.h"
 
@@ -64,7 +66,6 @@ static void dect_phy_api_scheduler_led_off_timer_handler(struct k_timer *timer_i
 
 static bool dect_phy_api_scheduler_list_remove_from_tail(void);
 static void dect_phy_api_scheduler_list_purge(void);
-static bool dect_phy_api_scheduler_list_is_empty(void);
 
 static struct dect_phy_api_scheduler_list_item *
 dect_phy_api_scheduler_done_list_item_add(struct dect_phy_api_scheduler_list_item *new_list_item);
@@ -212,7 +213,7 @@ exit:
 	return return_value;
 }
 
-static bool dect_phy_api_scheduler_list_is_empty(void)
+bool dect_phy_api_scheduler_list_is_empty(void)
 {
 	return sys_dlist_is_empty(&to_be_sheduled_list);
 }
@@ -476,7 +477,7 @@ struct dect_phy_api_scheduler_list_item *
 dect_phy_api_scheduler_list_item_add(struct dect_phy_api_scheduler_list_item *new_list_item)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
-	const uint32_t scheduler_offset = DECT_PHY_TX_RX_SCHEDULING_OFFSET_MDM_TICKS;
+	uint32_t scheduler_offset = dect_phy_ctrl_modem_latency_min_margin_between_ops_get();
 
 	if (new_list_item == NULL) {
 		return NULL;
@@ -886,18 +887,6 @@ dect_phy_api_scheduler_done_list_item_find_by_phy_handle(uint32_t handle)
 		}
 	}
 	return iterator;
-}
-
-static void dect_phy_api_scheduler_done_list_items_stop_in_modem(void)
-{
-	struct dect_phy_api_scheduler_list_item *iterator = NULL;
-
-	SYS_DLIST_FOR_EACH_CONTAINER(&done_sheduled_list, iterator, dnode) {
-		if (!iterator->stop_requested) {
-			(void)nrf_modem_dect_phy_rx_stop(iterator->phy_op_handle);
-			iterator->stop_requested = true;
-		}
-	}
 }
 
 static void dect_phy_api_scheduler_done_list_mdm_op_complete(
@@ -1499,7 +1488,6 @@ static void dect_phy_api_scheduler_th_handler(void)
 		}
 		case DECT_PHY_API_EVENT_SCHEDULER_OP_SUSPEND: {
 			scheduler_data.state = SCHEDULER_STATE_SUSPENDED;
-			dect_phy_api_scheduler_done_list_items_stop_in_modem();
 			dect_phy_api_scheduler_suspended_evt_send();
 			break;
 		}

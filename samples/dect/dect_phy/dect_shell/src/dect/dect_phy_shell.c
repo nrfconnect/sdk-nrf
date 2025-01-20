@@ -103,6 +103,8 @@ static const char dect_phy_perf_cmd_usage_str[] =
 	"                                 Default: as slots (c_gap_slots).\n"
 	"      --c_tx_pwr <int>,          TX power (dBm),\n"
 	"                                 [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23].\n"
+	"                                 See supported max for the used band by using\n"
+	"                                 \"dect status\" -command output.\n"
 	"                                 Default: from common tx settings.\n"
 	"      --c_tx_mcs <int>,          Set client TX MCS. Default: from common tx settings.\n"
 	"  -d, --debug,                   Print CRC errors. Note: might impact on actual\n"
@@ -411,6 +413,8 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"                                     Default: from common rx settings.\n"
 	"  -p  --tx_pwr <int>,                TX power (dBm),\n"
 	"                                     [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23]\n"
+	"                                     See supported max for the used band by using\n"
+	"                                     \"dect status\" -command output.\n"
 	"                                     Default: from common tx settings.\n"
 	"      --tx_mcs <int>,                Set TX MCS. Default: from common tx settings.\n"
 	"Frame structure:\n"
@@ -426,7 +430,7 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"                                     configured frame are scheduled at once and\n"
 	"                                     is also a reporting interval.\n"
 	"                                     There is no delay between frames.\n"
-	"                                     Default: 100.\n"
+	"                                     Default: 15.\n"
 	"      --frame_repeat_count_intervals <int>, The number of intervals for\n"
 	"                                            frame_repeat_count.\n"
 	"                                     Intervals are scheduled ASAP after\n"
@@ -517,7 +521,7 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 	params.expected_rx_rssi_level = current_settings->rx.expected_rssi_level;
 	params.find_rx_sync = false;
 	params.continuous = false;
-	params.frame_repeat_count = 50;
+	params.frame_repeat_count = 15;
 	params.frame_repeat_count_intervals = 5;
 
 	params.rx_frame_start_offset = 0;
@@ -741,6 +745,8 @@ static const char dect_phy_ping_cmd_usage_str[] =
 	"      --c_tx_mcs <int>,      Set client TX MCS. Default: from common tx settings.\n"
 	"      --c_tx_pwr <int>,      TX power (dBm),\n"
 	"                             [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23].\n"
+	"                             See supported max for the used band by using\n"
+	"                             \"dect status\" -command output.\n"
 	"                             Default: from common tx settings.\n"
 	"      --c_tx_lbt_period <cnt>,  Listen Before Talk (LBT) period (symbol count).\n"
 	"                                Zero value disables LBT (default).\n"
@@ -992,6 +998,152 @@ static void dect_phy_status_cmd(const struct shell *shell, size_t argc, char **a
 
 /**************************************************************************************************/
 
+static const char dect_phy_activate_cmd_usage_str[] =
+	"Usage: dect activate <mode>\n"
+	"  Activate PHY software stack in given radio mode.\n"
+	"Options:\n"
+	"  -1, --low_latency,                Default. This mode has the lowest latency,\n"
+	"                                    the best RX/TX switching performance,\n"
+	"                                    and the highest power consumption.\n"
+	"  -2, --low_latency_with_standby,   This mode has the same RX/TX switching\n"
+	"                                    performance as the low latency mode,\n"
+	"                                    but higher operation start-up latency.\n"
+	"                                    Power consumption is thus lower compared to\n"
+	"                                    the low latency mode.\n"
+	"  -3, --non_lbt_with_standby,       This mode has the lowest power consumption,\n"
+	"                                    due the to modem entering standby mode when possible\n"
+	"                                    and not using LBT, at the cost\n"
+	"                                    of higher start-up latency and worse RX/TX switching\n"
+	"                                    performance compared to the other radio modes.\n";
+
+/* Specifying the expected options (both long and short): */
+static struct option long_options_radio_mode_conf[] = {
+	{ "low_latency", no_argument, 0, '0' },
+	{ "low_latency_with_standby", no_argument, 0, '1' },
+	{ "non_lbt_with_standby", no_argument, 0, '2' },
+	{ 0, 0, 0, 0 } };
+
+static void dect_phy_activate_cmd(const struct shell *shell, size_t argc, char **argv)
+{
+	enum nrf_modem_dect_phy_radio_mode radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY;
+
+	int long_index = 0;
+	int opt, ret;
+
+	optreset = 1;
+	optind = 1;
+	while ((opt = getopt_long(argc, argv, "123h", long_options_radio_mode_conf, &long_index)) !=
+	       -1) {
+		switch (opt) {
+		case '1':
+			radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY;
+			break;
+		case '2':
+			radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY_WITH_STANDBY;
+			break;
+		case '3':
+			radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_NON_LBT_WITH_STANDBY;
+			break;
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+	if (optind < argc) {
+		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	ret = dect_phy_ctrl_activate_cmd(radio_mode);
+	if (ret) {
+		desh_error("Cannot start activate command, ret: %d", ret);
+	}
+	return;
+
+show_usage:
+	desh_print_no_format(dect_phy_activate_cmd_usage_str);
+}
+
+static void dect_phy_deactivate_cmd(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret = dect_phy_ctrl_deactivate_cmd();
+
+	if (ret) {
+		desh_error("Cannot start deactivate command, ret: %d", ret);
+	} else {
+		desh_print("Deactivation started.");
+	}
+}
+
+/**************************************************************************************************/
+
+static const char dect_phy_radio_mode_cmd_usage_str[] =
+	"Usage: dect radio_mode <mode>\n"
+	"  Configure radio mode.\n"
+	"Options:\n"
+	"  -1, --low_latency,                Default. This mode has the lowest latency,\n"
+	"                                    the best RX/TX switching performance,\n"
+	"                                    and the highest power consumption.\n"
+	"  -2, --low_latency_with_standby,   This mode has the same RX/TX switching\n"
+	"                                    performance as the low latency mode,\n"
+	"                                    but higher operation start-up latency.\n"
+	"                                    Power consumption is thus lower compared to\n"
+	"                                    the low latency mode.\n"
+	"  -3, --non_lbt_with_standby,       This mode has the lowest power consumption,\n"
+	"                                    due the to modem entering standby mode when possible\n"
+	"                                    and not using LBT, at the cost\n"
+	"                                    of higher start-up latency and worse RX/TX switching\n"
+	"                                    performance compared to the other radio modes.\n";
+
+static void dect_phy_radio_mode_cmd(const struct shell *shell, size_t argc, char **argv)
+{
+	enum nrf_modem_dect_phy_radio_mode radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY;
+
+	int long_index = 0;
+	int opt, ret;
+
+	optreset = 1;
+	optind = 1;
+	while ((opt = getopt_long(argc, argv, "123h", long_options_radio_mode_conf, &long_index)) !=
+	       -1) {
+		switch (opt) {
+		case '1':
+			radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY;
+			break;
+		case '2':
+			radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY_WITH_STANDBY;
+			break;
+		case '3':
+			radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_NON_LBT_WITH_STANDBY;
+			break;
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+	if (optind < argc) {
+		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	ret = dect_phy_ctrl_radio_mode_cmd(radio_mode);
+	if (ret) {
+		desh_error("Cannot start activate command, ret: %d", ret);
+	}
+	return;
+
+show_usage:
+	desh_print_no_format(dect_phy_radio_mode_cmd_usage_str);
+}
+
+/**************************************************************************************************/
+
 static void dect_phy_time_cmd(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = dect_phy_ctrl_time_query();
@@ -1116,7 +1268,6 @@ static int dect_phy_rssi_scan_cmd(const struct shell *shell, size_t argc, char *
 			}
 			case 'f': {
 				params.suspend_scheduler = true;
-				params.reinit_mdm_api = true;
 				break;
 			}
 			case 'a': {
@@ -1374,6 +1525,12 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"                             (e.g. in rssi_scan).\n"
 	"                             Default: band #1. Other supported bands are:\n"
 	"                             2, 4, 9 and 22.\n"
+	"  -m, --radio_mode <#>,      Enable/Disable activation at start-up.\n"
+	"                             With radio mode:\n"
+	"                             1: Low latency (default).\n"
+	"                             2: Low latency with standby.\n"
+	"                             3: LBT (Listen Before Talk) disabled, with standby.\n"
+	"                             4: Disabled and radio not activated at start-up.\n"
 	"  -d, --sche_delay <usecs>,  Estimated scheduling delay (us).\n"
 	"RSSI measurement settings:\n"
 	"      --rssi_scan_time <msecs>,   Channel access: set the time (msec) that is used for\n"
@@ -1395,6 +1552,8 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"Common TX settings:\n"
 	"      --tx_pwr <dbm>,             Set default TX power (dBm).\n"
 	"                                  [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23]\n"
+	"                                  See supported max for the used band by using\n"
+	"                                 \"dect status\" -command output.\n"
 	"      --tx_mcs <mcs>,             Set default MCS on TX (0-4).\n"
 	"HARQ parameters in modem init:\n"
 	"      --mdm_init_harq_process_count <int>,  Count of HARQ RX processes for modem init\n"
@@ -1428,6 +1587,7 @@ static struct option long_options_settings[] = {
 	{"tx_id", required_argument, 0, 't'},
 	{"band_nbr", required_argument, 0, 'b'},
 	{"sche_delay", required_argument, 0, 'd'},
+	{"radio_mode", required_argument, 0, 'm'},
 	{"rx_exp_rssi_level", required_argument, 0, DECT_SHELL_SETT_COMMON_RX_EXP_RSSI_LEVEL},
 	{"tx_pwr", required_argument, 0, DECT_SHELL_SETT_COMMON_TX_PWR},
 	{"tx_mcs", required_argument, 0, DECT_SHELL_SETT_COMMON_TX_MCS},
@@ -1454,6 +1614,8 @@ static struct option long_options_settings[] = {
 
 static void dect_phy_sett_cmd_print(struct dect_phy_settings *dect_sett)
 {
+	char tmp_str[128] = {0};
+
 	desh_print("Common settings:");
 	desh_print("  network id (32bit).............................%u (0x%08x)",
 		   dect_sett->common.network_id, dect_sett->common.network_id);
@@ -1463,6 +1625,13 @@ static void dect_phy_sett_cmd_print(struct dect_phy_settings *dect_sett)
 		   dect_sett->common.short_rd_id, dect_sett->common.short_rd_id);
 	desh_print("  band number....................................%d",
 		   dect_sett->common.band_nbr);
+	if (dect_sett->common.activate_at_startup) {
+		desh_print("  Startup activation radio mode..................%s",
+			   dect_common_utils_radio_mode_to_string(
+				dect_sett->common.startup_radio_mode, tmp_str));
+	} else {
+		desh_print("  Startup activation.............................Disabled");
+	}
 	desh_print("Common RX settings:");
 	desh_print("    expected RSSI level..........................%d",
 		   dect_sett->rx.expected_rssi_level);
@@ -1509,7 +1678,6 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 
 	int long_index = 0;
 	int opt, tmp_value;
-	bool phy_api_reinit_needed = false;
 
 	if (argc < 2) {
 		goto show_usage;
@@ -1517,8 +1685,8 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 	dect_common_settings_read(&current_settings);
 	newsettings = current_settings;
 
-	while ((opt = getopt_long(argc, argv, "d:n:t:b:rh", long_options_settings, &long_index)) !=
-	       -1) {
+	while ((opt = getopt_long(
+			argc, argv, "m:d:n:t:b:rh", long_options_settings, &long_index)) != -1) {
 		switch (opt) {
 		case 'r': {
 			dect_common_settings_read(&current_settings);
@@ -1536,6 +1704,26 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 				return -EINVAL;
 			}
 			newsettings.common.network_id = tmp_value;
+			break;
+		}
+		case 'm': {
+			tmp_value = atoi(optarg);
+			newsettings.common.activate_at_startup = true;
+			if (tmp_value == 1) {
+				newsettings.common.startup_radio_mode =
+					NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY;
+			} else if (tmp_value == 2) {
+				newsettings.common.startup_radio_mode =
+					NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY_WITH_STANDBY;
+			} else if (tmp_value == 3) {
+				newsettings.common.startup_radio_mode =
+					NRF_MODEM_DECT_PHY_RADIO_MODE_NON_LBT_WITH_STANDBY;
+			} else if (tmp_value == 4) {
+				newsettings.common.activate_at_startup = false;
+			} else {
+				desh_error("Give decent value for Radio Mode [1-3].", tmp_value);
+				return -EINVAL;
+			}
 			break;
 		}
 		case 't': {
@@ -1560,8 +1748,8 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 			     current_settings.common.band_nbr != 4) ||
 			    (current_settings.common.band_nbr == 4 &&
 			     newsettings.common.band_nbr != 4)) {
-				/* If changing to/from 4, we need dto reinit PHY API */
-				phy_api_reinit_needed = true;
+				desh_warn("Note: Band change to/from 4 requires "
+					  "a reboot or a reactivate.");
 			}
 			break;
 		}
@@ -1646,7 +1834,6 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case DECT_SHELL_SETT_RESET_ALL: {
 			dect_common_settings_defaults_set();
-			phy_api_reinit_needed = true;
 			goto settings_updated;
 		}
 		case 'h':
@@ -1664,10 +1851,7 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 
 	dect_common_settings_write(&newsettings);
 settings_updated:
-	dect_phy_ctrl_msgq_data_op_add(
-		DECT_PHY_CTRL_OP_SETTINGS_UPDATED,
-		(void *)&phy_api_reinit_needed,
-		sizeof(bool));
+	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_SETTINGS_UPDATED);
 	return 0;
 
 show_usage:
@@ -1702,6 +1886,18 @@ SHELL_SUBCMD_ADD((dect), sett, NULL,
 		 "Set and read common dect settings.\n"
 		 " Usage: dect sett -h",
 		 dect_phy_sett_cmd, 1, 10);
+SHELL_SUBCMD_ADD((dect), activate, NULL,
+		 "Activate radio.\n"
+		 " Usage: dect activate -h",
+		 dect_phy_activate_cmd, 1, 10);
+SHELL_SUBCMD_ADD((dect), deactivate, NULL,
+		 "De-activate radio.\n"
+		 " Usage: dect deactivate",
+		 dect_phy_deactivate_cmd, 1, 0);
+SHELL_SUBCMD_ADD((dect), radio_mode, NULL,
+		 "Activate radio.\n"
+		 " Usage: dect radio_mode -h",
+		 dect_phy_radio_mode_cmd, 1, 10);
 SHELL_SUBCMD_ADD((dect), rssi_scan, NULL,
 		 "Execute RSSI measurement/scan.\n"
 		 " Usage: dect rssi_scan [options: see: dect rssi_scan -h]",

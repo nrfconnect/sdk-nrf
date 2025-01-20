@@ -379,14 +379,15 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 	}
 
 	const uint8_t *p_ptr = data_ptr + 1;
-	struct nrf_modem_dect_phy_rx_pdc_status *p_rx_status = &(rcv_params->rx_status);
+	struct nrf_modem_dect_phy_pdc_event *p_rx_status = &(rcv_params->rx_status);
 	dect_phy_mac_common_header_t common_header;
 	int16_t rssi_level = p_rx_status->rssi_2 / 2;
 
 	if (print) {
-		desh_print("PDC received (stf start time %llu): snr %d, "
+		desh_print("PDC received (stf start time %llu, handle %d): snr %d, "
 			"RSSI-2 %d (RSSI %d), len %d",
-			rcv_params->time, p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
+			rcv_params->time, p_rx_status->handle,
+			p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
 			rcv_params->data_length);
 
 		dect_phy_mac_type_header_print(&type_header);
@@ -398,9 +399,10 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 	if (!handled) {
 		/* In failure, we want to print what we got */
 		if (!print) {
-			desh_print("PDC received (stf start time %llu): snr %d, "
+			desh_print("PDC received (stf start time %llu, handle %d): snr %d, "
 				"RSSI-2 %d (RSSI %d), len %d",
-				rcv_params->time, p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
+				rcv_params->time, p_rx_status->handle,
+				p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
 				rcv_params->data_length);
 		}
 		desh_error("Failed to decode MAC Common header");
@@ -448,7 +450,7 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 		/* If received cluster beacon with RA IE, store as a neighbor */
 		if (beacon_msg != NULL && ra_ie != NULL) {
 			dect_phy_mac_nbr_info_store_n_update(
-				&rcv_params->time, rcv_params->last_rx_op_channel,
+				&rcv_params->time, rcv_params->rx_channel,
 				common_header.nw_id, rcv_params->last_received_pcc_short_nw_id,
 				common_header.transmitter_id,
 				rcv_params->last_received_pcc_transmitter_short_rd_id, beacon_msg,

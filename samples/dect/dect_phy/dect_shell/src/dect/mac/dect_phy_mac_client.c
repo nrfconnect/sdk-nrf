@@ -166,8 +166,8 @@ static uint64_t dect_phy_mac_client_next_rach_tx_time_get(
 
 	uint64_t time_now = dect_app_modem_time_now();
 	uint64_t beacon_received = target_nbr->time_rcvd_mdm_ticks;
-	uint64_t first_possible_tx =
-		time_now + (US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us));
+	uint64_t first_possible_tx = time_now + dect_phy_ctrl_modem_latency_for_next_op_get(true) +
+		(US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us));
 	uint64_t next_beacon_frame_start, beacon_interval_mdm_ticks, ra_start_mdm_ticks;
 	uint64_t ra_interval_mdm_ticks, last_valid_rach_rx_frame_time;
 

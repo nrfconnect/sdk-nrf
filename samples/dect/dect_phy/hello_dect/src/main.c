@@ -18,6 +18,7 @@ BUILD_ASSERT(CONFIG_CARRIER, "Carrier must be configured according to local regu
 
 static bool exit;
 static uint16_t device_id;
+static uint64_t modem_time;
 
 /* Header type 1, due to endianness the order is different than in the specification. */
 struct phy_ctrl_field_common {
@@ -36,12 +37,13 @@ struct phy_ctrl_field_common {
 /* Semaphore to synchronize modem calls. */
 K_SEM_DEFINE(operation_sem, 0, 1);
 
+K_SEM_DEFINE(deinit_sem, 0, 1);
+
 /* Callback after init operation. */
-static void init(const uint64_t *time, int16_t temp, enum nrf_modem_dect_phy_err err,
-	  const struct nrf_modem_dect_phy_modem_cfg *cfg)
+static void on_init(const struct nrf_modem_dect_phy_init_event *evt)
 {
-	if (err) {
-		LOG_ERR("Init failed, err %d", err);
+	if (evt->err) {
+		LOG_ERR("Init failed, err %d", evt->err);
 		exit = true;
 		return;
 	}
@@ -50,118 +52,207 @@ static void init(const uint64_t *time, int16_t temp, enum nrf_modem_dect_phy_err
 }
 
 /* Callback after deinit operation. */
-static void deinit(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void on_deinit(const struct nrf_modem_dect_phy_deinit_event *evt)
 {
-	if (err) {
-		LOG_ERR("Deinit failed, err %d", err);
+	if (evt->err) {
+		LOG_ERR("Deinit failed, err %d", evt->err);
+		return;
+	}
+
+	k_sem_give(&deinit_sem);
+}
+
+static void on_activate(const struct nrf_modem_dect_phy_activate_event *evt)
+{
+	if (evt->err) {
+		LOG_ERR("Activate failed, err %d", evt->err);
+		exit = true;
 		return;
 	}
 
 	k_sem_give(&operation_sem);
 }
 
-/* Operation complete notification. */
-static void op_complete(const uint64_t *time, int16_t temperature,
-		 enum nrf_modem_dect_phy_err err, uint32_t handle)
+static void on_deactivate(const struct nrf_modem_dect_phy_deactivate_event *evt)
 {
-	LOG_DBG("op_complete cb time %"PRIu64" status %d", *time, err);
+
+	if (evt->err) {
+		LOG_ERR("Deactivate failed, err %d", evt->err);
+		return;
+	}
+
+	k_sem_give(&deinit_sem);
+}
+
+static void on_configure(const struct nrf_modem_dect_phy_configure_event *evt)
+{
+	if (evt->err) {
+		LOG_ERR("Configure failed, err %d", evt->err);
+		return;
+	}
+
 	k_sem_give(&operation_sem);
 }
 
-/* Callback after receive stop operation. */
-static void rx_stop(const uint64_t *time, enum nrf_modem_dect_phy_err err, uint32_t handle)
+/* Callback after link configuration operation. */
+static void on_link_config(const struct nrf_modem_dect_phy_link_config_event *evt)
 {
-	LOG_DBG("rx_stop cb time %"PRIu64" status %d handle %d", *time, err, handle);
+	LOG_DBG("link_config cb time %"PRIu64" status %d", modem_time, evt->err);
+}
+
+static void on_radio_config(const struct nrf_modem_dect_phy_radio_config_event *evt)
+{
+	if (evt->err) {
+		LOG_ERR("Radio config failed, err %d", evt->err);
+		return;
+	}
+
+	k_sem_give(&operation_sem);
+}
+
+/* Callback after capability get operation. */
+static void on_capability_get(const struct nrf_modem_dect_phy_capability_get_event *evt)
+{
+	LOG_DBG("capability_get cb time %"PRIu64" status %d", modem_time, evt->err);
+}
+
+static void on_bands_get(const struct nrf_modem_dect_phy_band_get_event *evt)
+{
+	LOG_DBG("bands_get cb status %d", evt->err);
+}
+
+static void on_latency_info_get(const struct nrf_modem_dect_phy_latency_info_event *evt)
+{
+	LOG_DBG("latency_info_get cb status %d", evt->err);
+}
+
+/* Callback after time query operation. */
+static void on_time_get(const struct nrf_modem_dect_phy_time_get_event *evt)
+{
+	LOG_DBG("time_get cb time %"PRIu64" status %d", modem_time, evt->err);
+}
+
+static void on_cancel(const struct nrf_modem_dect_phy_cancel_event *evt)
+{
+	LOG_DBG("on_cancel cb status %d", evt->err);
+	k_sem_give(&operation_sem);
+}
+
+/* Operation complete notification. */
+static void on_op_complete(const struct nrf_modem_dect_phy_op_complete_event *evt)
+{
+	LOG_DBG("op_complete cb time %"PRIu64" status %d", modem_time, evt->err);
 	k_sem_give(&operation_sem);
 }
 
 /* Physical Control Channel reception notification. */
-static void pcc(
-	const uint64_t *time,
-	const struct nrf_modem_dect_phy_rx_pcc_status *status,
-	const union nrf_modem_dect_phy_hdr *hdr)
+static void on_pcc(const struct nrf_modem_dect_phy_pcc_event *evt)
 {
-	struct phy_ctrl_field_common *header = (struct phy_ctrl_field_common *)hdr->type_1;
-
 	LOG_INF("Received header from device ID %d",
-		header->transmitter_id_hi << 8 |  header->transmitter_id_lo);
+		evt->hdr.hdr_type_1.transmitter_id_hi << 8 | evt->hdr.hdr_type_1.transmitter_id_lo);
 }
 
 /* Physical Control Channel CRC error notification. */
-static void pcc_crc_err(const uint64_t *time,
-		 const struct nrf_modem_dect_phy_rx_pcc_crc_failure *crc_failure)
+static void on_pcc_crc_err(const struct nrf_modem_dect_phy_pcc_crc_failure_event *evt)
 {
-	LOG_DBG("pcc_crc_err cb time %"PRIu64"", *time);
+	LOG_DBG("pcc_crc_err cb time %"PRIu64"", modem_time);
 }
 
 /* Physical Data Channel reception notification. */
-static void pdc(const uint64_t *time,
-		const struct nrf_modem_dect_phy_rx_pdc_status *status,
-		const void *data, uint32_t len)
+static void on_pdc(const struct nrf_modem_dect_phy_pdc_event *evt)
 {
 	/* Received RSSI value is in fixed precision format Q14.1 */
 	LOG_INF("Received data (RSSI: %d.%d): %s",
-		(status->rssi_2 / 2), (status->rssi_2 & 0b1) * 5, (char *)data);
+		(evt->rssi_2 / 2), (evt->rssi_2 & 0b1) * 5, (char *)evt->data);
 }
 
 /* Physical Data Channel CRC error notification. */
-static void pdc_crc_err(
-	const uint64_t *time, const struct nrf_modem_dect_phy_rx_pdc_crc_failure *crc_failure)
+static void on_pdc_crc_err(const struct nrf_modem_dect_phy_pdc_crc_failure_event *evt)
 {
-	LOG_DBG("pdc_crc_err cb time %"PRIu64"", *time);
+	LOG_DBG("pdc_crc_err cb time %"PRIu64"", modem_time);
 }
 
 /* RSSI measurement result notification. */
-static void rssi(const uint64_t *time, const struct nrf_modem_dect_phy_rssi_meas *status)
+static void on_rssi(const struct nrf_modem_dect_phy_rssi_event *evt)
 {
-	LOG_DBG("rssi cb time %"PRIu64" carrier %d", *time, status->carrier);
+	LOG_DBG("rssi cb time %"PRIu64" carrier %d", modem_time, evt->carrier);
 }
 
-/* Callback after link configuration operation. */
-static void link_config(const uint64_t *time, enum nrf_modem_dect_phy_err err)
-{
-	LOG_DBG("link_config cb time %"PRIu64" status %d", *time, err);
-}
-
-/* Callback after time query operation. */
-static void time_get(const uint64_t *time, enum nrf_modem_dect_phy_err err)
-{
-	LOG_DBG("time_get cb time %"PRIu64" status %d", *time, err);
-}
-
-/* Callback after capability get operation. */
-static void capability_get(const uint64_t *time, enum nrf_modem_dect_phy_err err,
-		    const struct nrf_modem_dect_phy_capability *capability)
-{
-	LOG_DBG("capability_get cb time %"PRIu64" status %d", *time, err);
-}
-
-static void stf_cover_seq_control(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void on_stf_cover_seq_control(const struct nrf_modem_dect_phy_stf_control_event *evt)
 {
 	LOG_WRN("Unexpectedly in %s\n", (__func__));
 }
 
-/* Dect PHY callbacks. */
-static struct nrf_modem_dect_phy_callbacks dect_phy_callbacks = {
-	.init = init,
-	.deinit = deinit,
-	.op_complete = op_complete,
-	.rx_stop = rx_stop,
-	.pcc = pcc,
-	.pcc_crc_err = pcc_crc_err,
-	.pdc = pdc,
-	.pdc_crc_err = pdc_crc_err,
-	.rssi = rssi,
-	.link_config = link_config,
-	.time_get = time_get,
-	.capability_get = capability_get,
-	.stf_cover_seq_control = stf_cover_seq_control,
-};
+static void dect_phy_event_handler(const struct nrf_modem_dect_phy_event *evt)
+{
+	modem_time = evt->time;
 
-/* Dect PHY init parameters. */
-static struct nrf_modem_dect_phy_init_params dect_phy_init_params = {
-	.harq_rx_expiry_time_us = 5000000,
+	switch (evt->id) {
+	case NRF_MODEM_DECT_PHY_EVT_INIT:
+		on_init(&evt->init);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_DEINIT:
+		on_deinit(&evt->deinit);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_ACTIVATE:
+		on_activate(&evt->activate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_DEACTIVATE:
+		on_deactivate(&evt->deactivate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CONFIGURE:
+		on_configure(&evt->configure);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_RADIO_CONFIG:
+		on_radio_config(&evt->radio_config);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_COMPLETED:
+		on_op_complete(&evt->op_complete);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CANCELED:
+		on_cancel(&evt->cancel);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_RSSI:
+		on_rssi(&evt->rssi);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PCC:
+		on_pcc(&evt->pcc);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PCC_ERROR:
+		on_pcc_crc_err(&evt->pcc_crc_err);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC:
+		on_pdc(&evt->pdc);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC_ERROR:
+		on_pdc_crc_err(&evt->pdc_crc_err);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_TIME:
+		on_time_get(&evt->time_get);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CAPABILITY:
+		on_capability_get(&evt->capability_get);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_BANDS:
+		on_bands_get(&evt->band_get);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_LATENCY:
+		on_latency_info_get(&evt->latency_get);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_LINK_CONFIG:
+		on_link_config(&evt->link_config);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_STF_CONFIG:
+		on_stf_cover_seq_control(&evt->stf_cover_seq_control);
+		break;
+	}
+}
+
+/* Dect PHY config parameters. */
+static struct nrf_modem_dect_phy_config_params dect_phy_config_params = {
+	.band_group_index = ((CONFIG_CARRIER >= 525 && CONFIG_CARRIER <= 551)) ? 1 : 0,
 	.harq_rx_process_count = 4,
+	.harq_rx_expiry_time_us = 5000000,
 };
 
 /* Send operation. */
@@ -249,15 +340,37 @@ int main(void)
 		return err;
 	}
 
-	err = nrf_modem_dect_phy_callback_set(&dect_phy_callbacks);
+	err = nrf_modem_dect_phy_event_handler_set(dect_phy_event_handler);
 	if (err) {
-		LOG_ERR("nrf_modem_dect_phy_callback_set failed, err %d", err);
+		LOG_ERR("nrf_modem_dect_phy_event_handler_set failed, err %d", err);
 		return err;
 	}
 
-	err = nrf_modem_dect_phy_init(&dect_phy_init_params);
+	err = nrf_modem_dect_phy_init();
 	if (err) {
 		LOG_ERR("nrf_modem_dect_phy_init failed, err %d", err);
+		return err;
+	}
+
+	k_sem_take(&operation_sem, K_FOREVER);
+	if (exit) {
+		return -EIO;
+	}
+
+	err = nrf_modem_dect_phy_configure(&dect_phy_config_params);
+	if (err) {
+		LOG_ERR("nrf_modem_dect_phy_configure failed, err %d", err);
+		return err;
+	}
+
+	k_sem_take(&operation_sem, K_FOREVER);
+	if (exit) {
+		return -EIO;
+	}
+
+	err = nrf_modem_dect_phy_activate(NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY);
+	if (err) {
+		LOG_ERR("nrf_modem_dect_phy_activate failed, err %d", err);
 		return err;
 	}
 
@@ -288,14 +401,14 @@ int main(void)
 
 		tx_counter_value++;
 
+		/* Wait for TX operation to complete. */
+		k_sem_take(&operation_sem, K_FOREVER);
+
 		if ((tx_counter_value >= CONFIG_TX_TRANSMISSIONS) && CONFIG_TX_TRANSMISSIONS) {
 			LOG_INF("Reached maximum number of transmissions (%d)",
 				CONFIG_TX_TRANSMISSIONS);
 			break;
 		}
-
-		/* Wait for TX operation to complete. */
-		k_sem_take(&operation_sem, K_FOREVER);
 
 		/** Receiving messages for CONFIG_RX_PERIOD_S seconds. */
 		err = receive(rx_handle);
@@ -310,13 +423,21 @@ int main(void)
 
 	LOG_INF("Shutting down");
 
+	err = nrf_modem_dect_phy_deactivate();
+	if (err) {
+		LOG_ERR("nrf_modem_dect_phy_deactivate failed, err %d", err);
+		return err;
+	}
+
+	k_sem_take(&deinit_sem, K_FOREVER);
+
 	err = nrf_modem_dect_phy_deinit();
 	if (err) {
 		LOG_ERR("nrf_modem_dect_phy_deinit() failed, err %d", err);
 		return err;
 	}
 
-	k_sem_take(&operation_sem, K_FOREVER);
+	k_sem_take(&deinit_sem, K_FOREVER);
 
 	err = nrf_modem_lib_shutdown();
 	if (err) {

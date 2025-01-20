@@ -149,25 +149,21 @@ int desh_print_help_shell(const struct shell *shell, size_t argc, char **argv)
 
 void desh_print_version_info(void)
 {
-	/* shell_print() is not used here, because this function is called early during
-	 * application startup and the shell might not be ready yet.
-	 */
-	printk("\nDESH version:       v%s-%s\n", NCS_VERSION_STRING, NCS_COMMIT_STRING);
-
+	desh_print("DESH version:       v%s-%s", NCS_VERSION_STRING, NCS_COMMIT_STRING);
 #if defined(BUILD_ID)
-	printk("DESH build id:      v%s\n", STRINGIFY(BUILD_ID));
+	desh_print("DESH build id:      v%s", STRINGIFY(BUILD_ID));
 #else
-	printk("DESH build id:      custom\n");
+	desh_print("DESH build id:      custom");
 #endif
 
 #if defined(BUILD_VARIANT)
 #if defined(BRANCH_NAME)
-	printk("DESH build variant: %s/%s\n", STRINGIFY(BRANCH_NAME), STRINGIFY(BUILD_VARIANT));
+	desh_print("DESH build variant: %s/%s", STRINGIFY(BRANCH_NAME), STRINGIFY(BUILD_VARIANT));
 #else
-	printk("DESH build variant: %s\n", STRINGIFY(BUILD_VARIANT));
+	desh_print("DESH build variant: %s", STRINGIFY(BUILD_VARIANT));
 #endif
 #else
-	printk("DESH build variant: dev\n");
+	desh_print("DESH build variant: dev");
 #endif
 
 }

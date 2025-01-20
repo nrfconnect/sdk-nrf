@@ -226,7 +226,7 @@ void dect_phy_mac_ctrl_lms_rssi_scan_data_init(int beacon_tx_slot_count)
 }
 
 void dect_phy_mac_ctrl_cluster_beacon_phy_api_direct_rssi_cb(
-	const struct nrf_modem_dect_phy_rssi_meas *p_meas_results)
+	const struct nrf_modem_dect_phy_rssi_event *p_meas_results)
 {
 	/* Handle Last Minute Scan results. This assumes that start time was frame start. */
 	bool busy_in_beacon_tx = false;

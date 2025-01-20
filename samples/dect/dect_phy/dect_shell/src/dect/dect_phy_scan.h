@@ -73,7 +73,7 @@ void dect_phy_scan_rssi_stop(void);
 void dect_phy_scan_rssi_rx_th_run(struct dect_phy_rssi_scan_params *cmd_params);
 void dect_phy_scan_rssi_finished_handle(enum nrf_modem_dect_phy_err status);
 void dect_phy_scan_rssi_cb_handle(enum nrf_modem_dect_phy_err status,
-				  struct nrf_modem_dect_phy_rssi_meas const *p_result);
+				  struct nrf_modem_dect_phy_rssi_event const *p_result);
 int dect_phy_scan_rssi_data_init(struct dect_phy_rssi_scan_params *params);
 int dect_phy_scan_rssi_data_reinit_with_current_params(void);
 

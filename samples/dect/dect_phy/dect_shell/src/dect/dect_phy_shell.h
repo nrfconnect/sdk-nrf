@@ -125,7 +125,6 @@ struct dect_phy_ping_params {
 #define DECT_PHY_SHELL_RSSI_SCAN_DEFAULT_DURATION_MS \
 	((DECT_PHY_SETT_DEFAULT_BEACON_TX_INTERVAL_SECS * 1000) + 10)
 struct dect_phy_rssi_scan_params {
-	bool reinit_mdm_api;
 	bool suspend_scheduler;
 	bool only_allowed_channels; /* At band #1, scan only allowed channels per Harmonized std  */
 
@@ -175,6 +174,8 @@ struct dect_phy_common_op_event_msgq_item {
 
 #define DECT_PHY_COMMON_RX_CMD_HANDLE	 50
 #define DECT_PHY_COMMON_RSSI_SCAN_HANDLE 60
+
+#define DECT_PHY_RADIO_MODE_CONFIG_HANDLE 70
 
 #define DECT_PHY_MAC_BEACON_LMS_RSSI_SCAN_HANDLE 99
 

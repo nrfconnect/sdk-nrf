@@ -38,7 +38,10 @@ Main command structure:
   .. code-block:: console
 
      dect
+       activate
+       deactivate
        sett
+       radio_mode
        rssi_scan
        ping
        perf
@@ -286,15 +289,6 @@ Example 2: HARQ
 
      dect perf -c --c_gap_subslots 4 --c_tx_mcs 4 --c_slots 4 --s_tx_id 39 -t 12 --c_harq_feedback_rx_delay_subslots 2 --c_harq_feedback_rx_subslots 3 --c_harq_process_nbr_max 7 -a --channel 1671
 
-* Client side: Decrease default scheduler delay and rerun the previous step:
-
-  .. code-block:: console
-
-     dect sett -d 5000
-
- .. note::
-    Set the delay back to default to avoid scheduler problems on other use cases.
-
 RX/TX testing with RF tool
 ==========================
 
@@ -329,13 +323,13 @@ Example 1: bi-directional testing
   .. code-block:: console
 
      dect sett -t 39
-     dect rf_tool -m rx_tx --rx_find_sync --frame_repeat_count 50 --frame_repeat_count_intervals 10 -c 1677
+     dect rf_tool -m rx_tx --rx_find_sync --frame_repeat_count 15 --frame_repeat_count_intervals 10 -c 1677
 
 * Client side: Trigger to start operation:
 
   .. code-block:: console
 
-     dect rf_tool -m rx_tx --frame_repeat_count 50 --frame_repeat_count_intervals 10 -t 39 -c 1677
+     dect rf_tool -m rx_tx --frame_repeat_count 15 --frame_repeat_count_intervals 10 -t 39 -c 1677
 
 Example 2: unidirectional testing
 ---------------------------------
@@ -346,7 +340,7 @@ Example 2: unidirectional testing
   .. code-block:: console
 
      dect sett -t 39
-     dect rf_tool -m rx --rx_find_sync --frame_repeat_count 50 -c 1677
+     dect rf_tool -m rx --rx_find_sync --frame_repeat_count 15 -c 1677
 
 * RX device option 2: RX device on ``rx_cont`` mode:
 
@@ -360,13 +354,13 @@ Example 2: unidirectional testing
   .. code-block:: console
 
      dect sett -t 39
-     dect rf_tool -m rx_cont --rf_mode_peer tx --frame_repeat_count 50 --rx_find_sync -c 1677
+     dect rf_tool -m rx_cont --rf_mode_peer tx --frame_repeat_count 15 --rx_find_sync -c 1677
 
 * TX device: Trigger to start operation:
 
   .. code-block:: console
 
-     dect rf_tool -m tx --frame_repeat_count 50 -c 1677 -t 39
+     dect rf_tool -m tx --frame_repeat_count 15 -c 1677 -t 39
 
 * RX device with option 2: Stop continuous RX to give a report:
 
@@ -388,20 +382,20 @@ Example 3: duty cycle (RX+TX) testing
   .. code-block:: console
 
      server:
-     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 50 -c 1677
+     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 15 -c 1677
 
      client:
-     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 50 -c 1677 -t 39
+     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 15 -c 1677 -t 39
 
   RX/TX duty cycle percentage 82.50%:
 
   .. code-block:: console
 
      server:
-     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 50 -c 1677
+     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 15 -c 1677
 
      client:
-     dect rf_tool -m rx_tx --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 50 -c 1677 -t 39
+     dect rf_tool -m rx_tx --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 15 -c 1677 -t 39
 
 * TX/RX testing on separate devices:
 
@@ -433,10 +427,10 @@ Example 4: Bi-directional testing with more data
   .. code-block:: console
 
      server:
-     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 50 -c 1677
+     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 15 -c 1677
 
      client:
-     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 50 -c 1677 --tx_pwr 15 -t 39
+     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 15 -c 1677 --tx_pwr 15 -t 39
 
 Dect NR+ PHY MAC
 ================

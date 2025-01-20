@@ -53,6 +53,8 @@ static const struct dect_phy_settings_common phy_common_settings_data = {
 	.network_id = DECT_PHY_DEFAULT_NETWORK_ID,
 	.transmitter_id = DECT_PHY_DEFAULT_TRANSMITTER_LONG_RD_ID,
 	.band_nbr = 1,
+	.activate_at_startup = true,
+	.startup_radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY,
 };
 
 static const struct dect_phy_settings phy_settings_data_defaults = {
