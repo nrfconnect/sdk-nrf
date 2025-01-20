@@ -543,6 +543,18 @@ Libraries for networking
 
   * Fixed the warning due to missing ``https`` download protocol.
 
+* :ref:`lib_downloader` library:
+
+  * Updated to support Proxy-URI option and an authentication callback after connecting.
+
+* :ref:`lib_fota_download` library:
+
+  * Updated to use the :ref:`lib_downloader` library for CoAP downloads.
+
+* :ref:`lib_nrf_cloud` library:
+
+  * Updated to use the :ref:`lib_downloader` library for CoAP downloads.
+
 Libraries for NFC
 -----------------
 

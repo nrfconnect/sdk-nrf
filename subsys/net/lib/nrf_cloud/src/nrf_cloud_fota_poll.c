@@ -212,29 +212,6 @@ static void http_fota_dl_handler(const struct fota_download_evt *evt)
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
 		LOG_DBG("FOTA download percent: %d%%", evt->progress);
 		break;
-	case FOTA_DOWNLOAD_EVT_RESUME_OFFSET:
-		LOG_DBG("FOTA download resume at offset: %u", evt->resume_offset);
-		/* Event is only applicable if CoAP downloads are enabled */
-#if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
-		int err = nrf_cloud_download_coap_offset_resume(evt->resume_offset);
-
-		if (err) {
-			LOG_ERR("Failed to resume download, error: %d", err);
-			nrf_cloud_download_end();
-			fota_status = NRF_CLOUD_FOTA_FAILED;
-			fota_status_details = FOTA_STATUS_DETAILS_DL_ERR;
-
-			if (ctx_ptr->is_nonblocking) {
-				k_work_cancel_delayable(&ctx_ptr->timeout_work);
-				ctx_ptr->status_fn(fota_status, fota_status_details);
-
-				(void)update_job_status(ctx_ptr);
-			} else {
-				k_sem_give(&fota_download_sem);
-			}
-		}
-#endif /* CONFIG_NRF_CLOUD_COAP_DOWNLOADS */
-		break;
 	default:
 		break;
 	}

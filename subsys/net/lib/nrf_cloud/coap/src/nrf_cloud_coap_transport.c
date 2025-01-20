@@ -928,49 +928,33 @@ int nrf_cloud_coap_transport_resume(struct nrf_cloud_coap_client *const client)
 #define PROXY_URI_DL_HTTPS_LEN		(sizeof(PROXY_URI_DL_HTTPS) - 1)
 #define PROXY_URI_DL_SEP		"/"
 #define PROXY_URI_DL_SEP_LEN		(sizeof(PROXY_URI_DL_SEP) - 1)
-#define PROXY_URI_ADDED_LEN		(PROXY_URI_DL_HTTPS_LEN + PROXY_URI_DL_SEP_LEN)
 
-int nrf_cloud_coap_transport_proxy_dl_opts_get(struct coap_client_option *const opt_accept,
-					       struct coap_client_option *const opt_proxy_uri,
-					       char const *const host, char const *const path)
+int nrf_cloud_coap_transport_proxy_dl_uri_get(char *const uri, size_t uri_len,
+					      char const *const host, char const *const path)
 {
-	__ASSERT_NO_MSG(opt_accept != NULL);
-	__ASSERT_NO_MSG(opt_proxy_uri != NULL);
+	__ASSERT_NO_MSG(uri != NULL);
 	__ASSERT_NO_MSG(host != NULL);
 	__ASSERT_NO_MSG(path != NULL);
 
-	size_t uri_idx = 0;
 	size_t host_len = strlen(host);
 	size_t path_len = strlen(path);
 
-	opt_accept->code = COAP_OPTION_ACCEPT;
-	opt_accept->len = 1;
-	opt_accept->value[0] = COAP_CONTENT_FORMAT_TEXT_PLAIN;
+	const size_t needed_len =
+		PROXY_URI_DL_HTTPS_LEN + host_len + PROXY_URI_DL_SEP_LEN +  path_len;
 
-	opt_proxy_uri->code = COAP_OPTION_PROXY_URI;
-	opt_proxy_uri->len = host_len + path_len + PROXY_URI_ADDED_LEN;
-
-	if (opt_proxy_uri->len > CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE) {
+	if (needed_len > uri_len) {
 		LOG_ERR("Host and path for CoAP proxy GET is too large: %u bytes",
-			opt_proxy_uri->len);
-		LOG_INF("Increase CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE, current value: %d",
-			CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE);
+			needed_len);
 		return -E2BIG;
 	}
 
 	/* We don't want a NULL terminated string, so just copy the data to create the full URI */
-	memcpy(&opt_proxy_uri->value[uri_idx], PROXY_URI_DL_HTTPS, PROXY_URI_DL_HTTPS_LEN);
-	uri_idx += PROXY_URI_DL_HTTPS_LEN;
+	memcpy(uri, PROXY_URI_DL_HTTPS, PROXY_URI_DL_HTTPS_LEN);
+	memcpy(&uri[PROXY_URI_DL_HTTPS_LEN], host, host_len);
+	memcpy(&uri[PROXY_URI_DL_HTTPS_LEN + host_len], PROXY_URI_DL_SEP, PROXY_URI_DL_SEP_LEN);
+	memcpy(&uri[PROXY_URI_DL_HTTPS_LEN + host_len + PROXY_URI_DL_SEP_LEN], path, path_len);
 
-	memcpy(&opt_proxy_uri->value[uri_idx], host, host_len);
-	uri_idx += host_len;
-
-	memcpy(&opt_proxy_uri->value[uri_idx], PROXY_URI_DL_SEP, PROXY_URI_DL_SEP_LEN);
-	uri_idx += PROXY_URI_DL_SEP_LEN;
-
-	memcpy(&opt_proxy_uri->value[uri_idx], path, path_len);
-
-	LOG_DBG("Proxy URI: %.*s", opt_proxy_uri->len, opt_proxy_uri->value);
+	LOG_DBG("Proxy URI: %.*s", needed_len, uri);
 
 	return 0;
 }

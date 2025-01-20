@@ -97,18 +97,17 @@ int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client);
  */
 int nrf_cloud_coap_transport_resume(struct nrf_cloud_coap_client *const client);
 
-/**@brief Get the CoAP options required to perform a proxy download.
+/**@brief Get the URI required to perform a proxy download.
  *
- * @param opt_accept	Option to be populated with COAP_OPTION_ACCEPT details.
- * @param opt_proxy_uri	Option to be populated with COAP_OPTION_PROXY_URI details.
+ * @param uri		Buffer to store the URI.
+ * @param uri_len	Length of the URI buffer.
  * @param host		Download host.
  * @param path		Download file path.
  *
  * @return 0 if successful, otherwise a negative error code.
  */
-int nrf_cloud_coap_transport_proxy_dl_opts_get(struct coap_client_option *const opt_accept,
-					       struct coap_client_option *const opt_proxy_uri,
-					       char const *const host, char const *const path);
+int nrf_cloud_coap_transport_proxy_dl_uri_get(char *const uri, size_t uri_len,
+					      char const *const host, char const *const path);
 
 /**@brief Check if device is connected and authorized to use nRF Cloud CoAP.
  *
