@@ -39,6 +39,7 @@ extern struct k_work_q mosh_common_work_q;
 #define SOCK_RECEIVE_BUFFER_SIZE 1536
 #define SOCK_RECEIVE_STACK_SIZE 1280
 #define SOCK_RECEIVE_PRIORITY 5
+#define SOCK_OPT_VALUE_LIST_SIZE 20
 /* Timeout (in ms) for polling socket events such as receive data,
  * permission to send more, disconnected socket etc.
  * This limits how quickly data can be received after socket creation.
@@ -1303,6 +1304,249 @@ int sock_rai(int socket_id, bool rai_last, bool rai_no_data,
 	}
 
 	return 0;
+}
+
+int sock_setopt(int socket_id, int sock_level, int sock_opt_id, char *sock_opt_value)
+{
+	struct sock_info *socket_info = get_socket_info_by_id(socket_id);
+	int err;
+	char *end;
+
+	if (socket_info == NULL) {
+		return -EINVAL;
+	}
+
+	if (sock_opt_id == 0) {
+		mosh_error("Socket option is mandatory.");
+		return -EINVAL;
+	}
+
+	if (sock_opt_value == NULL &&
+	    !(sock_level == SOL_TLS && sock_opt_id == TLS_HOSTNAME) &&
+	    !(sock_level == SOL_TLS && sock_opt_id == TLS_SESSION_CACHE_PURGE) &&
+	    !(sock_level == SOL_TLS && sock_opt_id == TLS_DTLS_CONN_SAVE) &&
+	    !(sock_level == SOL_TLS && sock_opt_id == TLS_DTLS_CONN_LOAD)) {
+		mosh_error("Socket option value is mandatory.");
+		return -EINVAL;
+	}
+
+	switch (sock_level) {
+	case SOL_TLS:
+		switch (sock_opt_id) {
+		case TLS_SEC_TAG_LIST:
+		case TLS_CIPHERSUITE_LIST:
+			/* Value is a comma separated list of integers or hexadecimals, for example
+			 * "42,43,44" or "0xC024,0xC00A,0xC023".
+			 */
+			int value_list[SOCK_OPT_VALUE_LIST_SIZE];
+			unsigned int value_count = 0;
+
+			for (int i = 0; i < strlen(sock_opt_value); i++) {
+				if (sock_opt_value[i] == ',') {
+					sock_opt_value[i] = ' ';
+				}
+			}
+
+			while (value_count < ARRAY_SIZE(value_list)) {
+				int value = strtoul(sock_opt_value, &end, 0);
+
+				if (end == sock_opt_value) {
+					break;
+				}
+				value_list[value_count++] = value;
+				sock_opt_value = end;
+			}
+
+			err = setsockopt(socket_info->fd, sock_level, sock_opt_id, value_list,
+					 value_count * sizeof(int));
+			goto exit;
+
+		case TLS_HOSTNAME:
+			/* Value can be empty to clear hostname. */
+			size_t hostname_len;
+
+			if (sock_opt_value == NULL) {
+				hostname_len = 0;
+			} else {
+				hostname_len = strlen(sock_opt_value);
+			}
+			err = setsockopt(socket_info->fd, sock_level, sock_opt_id, sock_opt_value,
+					 hostname_len);
+			goto exit;
+
+		case TLS_SESSION_CACHE_PURGE:
+		case TLS_DTLS_CONN_SAVE:
+		case TLS_DTLS_CONN_LOAD:
+			/* No value used for these options. */
+			err = setsockopt(socket_info->fd, sock_level, sock_opt_id, NULL, 0);
+			goto exit;
+
+		default:
+			break;
+		}
+		break; /* SOL_TLS */
+
+	case SOL_SOCKET:
+		switch (sock_opt_id) {
+		case SO_RCVTIMEO:
+		case SO_SNDTIMEO:
+			/* Value is in milliseconds and needs to be converted into
+			 * a timeval structure.
+			 */
+			int timeout_us;
+			struct timeval tv;
+
+			timeout_us = atoi(sock_opt_value) * USEC_PER_MSEC;
+			tv.tv_sec = timeout_us / USEC_PER_SEC;
+			tv.tv_usec = timeout_us % USEC_PER_SEC;
+			err = setsockopt(socket_info->fd, sock_level, sock_opt_id, &tv,
+				sizeof(tv));
+			goto exit;
+
+		default:
+			break;
+		}
+		break; /* SOL_SOCKET */
+
+	default:
+		break;
+	}
+
+	/* All other values are integers. */
+	int sock_opt_value_int;
+
+	sock_opt_value_int = atoi(sock_opt_value);
+	err = setsockopt(socket_info->fd, sock_level, sock_opt_id, &sock_opt_value_int,
+				sizeof(sock_opt_value_int));
+
+exit:
+	if (err) {
+		mosh_error("setsockopt() for level=%d, option=%d, value=%s failed with error %d",
+			   sock_level, sock_opt_id, sock_opt_value, errno);
+	}
+
+	return err;
+}
+
+int sock_getopt(int socket_id, int sock_level, int sock_opt_id)
+{
+	struct sock_info *socket_info = get_socket_info_by_id(socket_id);
+	int err;
+	int sock_opt_value = 0;
+	int sock_opt_value_len = sizeof(sock_opt_value);
+
+	if (socket_info == NULL) {
+		return -EINVAL;
+	}
+
+	switch (sock_level) {
+	case SOL_TLS:
+		switch (sock_opt_id) {
+		case TLS_SEC_TAG_LIST:
+		case TLS_CIPHERSUITE_LIST:
+			/* Value is a list of sec_tags or ciphersuites. */
+			int value_list[SOCK_OPT_VALUE_LIST_SIZE];
+			unsigned int value_list_size = sizeof(value_list);
+
+			err = getsockopt(socket_info->fd, sock_level, sock_opt_id, value_list,
+					&value_list_size);
+			if (!err) {
+				char value_str[128] = { 0 };
+				size_t value_str_len = 0;
+
+				for (unsigned int i = 0; i < value_list_size / sizeof(int); i++) {
+					if (sock_opt_id == TLS_SEC_TAG_LIST) {
+						value_str_len +=
+							snprintf(value_str + value_str_len,
+								 sizeof(value_str) - value_str_len,
+								 "%d,", value_list[i]);
+					} else {
+						value_str_len +=
+							snprintf(value_str + value_str_len,
+								 sizeof(value_str) - value_str_len,
+								 "0x%X,", value_list[i]);
+					}
+					if (value_str_len >= sizeof(value_str) - 1) {
+						break;
+					}
+				}
+
+				if (value_str_len > 0 && value_str_len <= sizeof(value_str)) {
+					if (value_str[value_str_len - 1] == ',') {
+						value_str[value_str_len - 1] = '\0';
+					}
+				}
+
+				mosh_print(
+					"getsockopt() socket_id=%d, level=%d, option=%d, value=%s",
+					socket_id, sock_level, sock_opt_id, value_str);
+			}
+			goto exit;
+
+		case TLS_HOSTNAME:
+			/* Value is a string. */
+			char hostname[64] = { 0 };
+			size_t hostname_len = sizeof(hostname) - 1;
+
+			err = getsockopt(socket_info->fd, sock_level, sock_opt_id,
+					 hostname, &hostname_len);
+			if (!err) {
+				mosh_print(
+					"getsockopt() socket_id=%d, level=%d, option=%d, value=%s",
+					socket_id, sock_level, sock_opt_id, hostname);
+			}
+			goto exit;
+
+		default:
+			break;
+		}
+		break; /* SOL_TLS */
+
+	case SOL_SOCKET:
+		switch (sock_opt_id) {
+		case SO_RCVTIMEO:
+		case SO_SNDTIMEO:
+			/* Value is a timeval structure. */
+			struct timeval tv;
+			size_t tv_len = sizeof(tv);
+
+			err = getsockopt(socket_info->fd, sock_level, sock_opt_id, &tv, &tv_len);
+			if (!err) {
+				int timeout_ms = tv.tv_sec * MSEC_PER_SEC +
+						 tv.tv_usec / USEC_PER_MSEC;
+				mosh_print(
+					"getsockopt() socket_id=%d, level=%d, option=%d, "
+					"value=%d ms",
+					socket_id, sock_level, sock_opt_id, timeout_ms);
+			}
+			goto exit;
+
+		default:
+			break;
+		}
+		break; /* SOL_SOCKET */
+
+	default:
+		break;
+	}
+
+	/* All other values are integers. */
+	err = getsockopt(socket_info->fd, sock_level, sock_opt_id, &sock_opt_value,
+			 &sock_opt_value_len);
+	if (!err) {
+		mosh_print(
+			"getsockopt() socket_id=%d, level=%d, option=%d, value=%d",
+			socket_id, sock_level, sock_opt_id, sock_opt_value);
+	}
+
+exit:
+	if (err) {
+		mosh_error(
+			"getsockopt() socket_id=%d, level=%d, option=%d failed with error %d",
+			socket_id, sock_level, sock_opt_id, errno);
+	}
+
+	return err;
 }
 
 int sock_list(void)
