@@ -3,21 +3,18 @@ append:
   EXTRA_CONF_FILE: matter_debug.conf
 
 boards:
-  /.*nrf52840.*/:
+  nrf52840dk/nrf52840:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf52840dk_nrf52840.overlay
-  /.*nrf5340.*/:
+  nrf5340dk/nrf5340/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf5340dk_nrf5340_cpuapp.overlay
   nrf7002dk/nrf5340/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf7002dk_nrf5340_cpuapp.overlay
-  thingy53/nrf5340/cpuapp:
-    append:
-      EXTRA_DTC_OVERLAY_FILE: boards/nrf5340dk_nrf5340_cpuapp.overlay
-  /.*nrf54l.*/:
+  /nrf54l15dk.*/:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.overlay
-  /.*nrf54h20.*/:
+  nrf54h20dk/nrf54h20/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54h20dk_nrf54h20_cpuapp.overlay

@@ -354,3 +354,8 @@ For example, for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_l
    :class: highlight
 
    west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-debug
+
+.. note::
+
+  You can increase the UART speed using this snippet only for Nordic Development Kits.
+  If you want to use the snippet for your custom board, you need to adjust the UART speed manually.
