@@ -21,8 +21,10 @@ common:
 tests:
   applications.nrf_desktop.zdebug.uart.kmu_provision:
     platform_allow:
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     timeout: 180
     harness: pytest
@@ -66,8 +68,10 @@ tests:
     extra_args: FILE_SUFFIX=wwcb
   applications.nrf_desktop.zdebug_fast_pair.gmouse.uart.kmu_provision:
     platform_allow:
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - FILE_SUFFIX=fast_pair
@@ -140,8 +144,10 @@ tests:
     extra_args: FILE_SUFFIX=dongle
   applications.nrf_desktop.zdebug_keyboard.uart.kmu_provision:
     platform_allow:
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=keyboard
     timeout: 180
@@ -186,6 +192,7 @@ tests:
       - nrf52840gmouse/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf52dmouse/nrf52832
@@ -200,6 +207,7 @@ tests:
       - nrf52840gmouse/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=release
   applications.nrf_desktop.zrelease_fast_pair.keyboard:
