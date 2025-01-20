@@ -83,7 +83,7 @@ static void dect_phy_mac_ctrl_beacon_start_work_handler(struct k_work *work_item
 		.stop_on_1st_free_channel = false,
 		.dont_stop_on_this_channel = 0,
 		.dont_stop_on_nbr_channels = true,
-		.reinit_mdm_api = true,
+		.suspend_scheduler = true,
 		.only_allowed_channels = true,
 	};
 
@@ -253,6 +253,20 @@ int dect_phy_mac_ctrl_associate(struct dect_phy_mac_associate_params *params)
 		return ret;
 	}
 
+	enum nrf_modem_dect_phy_radio_mode radio_mode;
+
+	ret = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
+	if (!ret && radio_mode == NRF_MODEM_DECT_PHY_RADIO_MODE_NON_LBT_WITH_STANDBY) {
+		char tmp_str[128] = {0};
+
+		dect_common_utils_radio_mode_to_string(radio_mode, tmp_str);
+
+		/* We need to disable LBT */
+		desh_warn("Associate req to RA resource requires LBT to be used, continue -- "
+			  "but current radio mode is %s and operation will fail in modem.",
+				tmp_str);
+	}
+
 	ret = dect_phy_mac_client_associate(scan_info, params);
 	if (ret) {
 		desh_error("Cannot start client_associate: %d", ret);
@@ -281,6 +295,20 @@ int dect_phy_mac_ctrl_dissociate(struct dect_phy_mac_associate_params *params)
 		return ret;
 	}
 
+	enum nrf_modem_dect_phy_radio_mode radio_mode;
+
+	ret = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
+	if (!ret && radio_mode == NRF_MODEM_DECT_PHY_RADIO_MODE_NON_LBT_WITH_STANDBY) {
+		char tmp_str[128] = {0};
+
+		dect_common_utils_radio_mode_to_string(radio_mode, tmp_str);
+
+		/* We need to disable LBT */
+		desh_warn("Associate req to RA resource requires LBT to be used, continue -- "
+			  "but current radio mode is %s and operation will fail in modem.",
+				tmp_str);
+	}
+
 	ret = dect_phy_mac_client_dissociate(scan_info, params);
 	if (ret) {
 		desh_error("Cannot start client_dissociate: %d", ret);
@@ -307,6 +335,20 @@ int dect_phy_mac_ctrl_rach_tx_start(struct dect_phy_mac_rach_tx_params *params)
 	ret = dect_phy_ctrl_ext_command_start(mac_data.ext_cmd);
 	if (ret) {
 		return ret;
+	}
+
+	enum nrf_modem_dect_phy_radio_mode radio_mode;
+
+	ret = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
+	if (!ret && radio_mode == NRF_MODEM_DECT_PHY_RADIO_MODE_NON_LBT_WITH_STANDBY) {
+		char tmp_str[128] = {0};
+
+		dect_common_utils_radio_mode_to_string(radio_mode, tmp_str);
+
+		/* We need to disable LBT */
+		desh_warn("Associate req to RA resource requires LBT to be used, continue -- "
+			  "but current radio mode is %s and operation will fail in modem.",
+				tmp_str);
 	}
 
 	ret = dect_phy_mac_client_rach_tx_start(scan_info, params);
@@ -338,6 +380,11 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 {
 	if (params->status != NRF_MODEM_DECT_PHY_SUCCESS) {
 		char tmp_str[128] = {0};
+
+		if (params->status == NRF_MODEM_DECT_PHY_ERR_OP_CANCELED) {
+			/* Intentionally cancelled - do not print PHY_ERR_OP_CANCELED */
+			goto specific_handles;
+		}
 
 		dect_common_utils_modem_phy_err_to_string(params->status, params->temperature,
 							  tmp_str);
@@ -378,6 +425,7 @@ void dect_phy_mac_ctrl_th_phy_api_mdm_op_complete_cb(
 		}
 	}
 
+specific_handles:
 	if (!dect_phy_mac_cluster_beacon_is_running() &&
 	   (params->handle == DECT_PHY_MAC_CLIENT_RA_TX_HANDLE ||
 	    params->handle == DECT_PHY_MAC_CLIENT_ASSOCIATION_RX_HANDLE ||

@@ -229,7 +229,7 @@ const char *dect_common_utils_modem_phy_err_to_string(enum nrf_modem_dect_phy_er
 		{NRF_MODEM_DECT_PHY_SUCCESS, "NRF_MODEM_DECT_PHY_SUCCESS"},
 		{NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY, "ERR_LBT_CHANNEL_BUSY"},
 		{NRF_MODEM_DECT_PHY_ERR_UNSUPPORTED_OP, "ERR_UNSUPPORTED_OP"},
-		{NRF_MODEM_DECT_PHY_ERR_NO_ONGOING_OP, "ERR_NO_ONGOING_OP"},
+		{NRF_MODEM_DECT_PHY_ERR_NOT_FOUND, "ERR_NOT_FOUND"},
 		{NRF_MODEM_DECT_PHY_ERR_NO_MEMORY, "ERR_NO_MEMORY"},
 		{NRF_MODEM_DECT_PHY_ERR_NOT_ALLOWED, "ERR_NOT_ALLOWED"},
 		{NRF_MODEM_DECT_PHY_OK_WITH_HARQ_RESET, "PHY_OK_WITH_HARQ_RESET"},
@@ -244,15 +244,18 @@ const char *dect_common_utils_modem_phy_err_to_string(enum nrf_modem_dect_phy_er
 		{NRF_MODEM_DECT_PHY_ERR_PAYLOAD_UNAVAILABLE, "ERR_PAYLOAD_UNAVAILABLE"},
 		{NRF_MODEM_DECT_PHY_ERR_OP_CANCELED, "PHY_ERR_OP_CANCELED"},
 		{NRF_MODEM_DECT_PHY_ERR_COMBINED_OP_FAILED, "ERR_COMBINED_OP_FAILED"},
+		{NRF_MODEM_DECT_PHY_ERR_RADIO_MODE_CONFLICT, "ERR_RADIO_MODE_CONFLICT"},
 		{NRF_MODEM_DECT_PHY_ERR_UNSUPPORTED_CARRIER, "ERR_UNSUPPORTED_CARRIER"},
 		{NRF_MODEM_DECT_PHY_ERR_UNSUPPORTED_DATA_SIZE, "ERR_UNSUPPORTED_DATA_SIZE"},
 		{NRF_MODEM_DECT_PHY_ERR_INVALID_NETWORK_ID, "ERR_INVALID_NETWORK_ID"},
 		{NRF_MODEM_DECT_PHY_ERR_INVALID_PHY_HEADER, "ERR_INVALID_PHY_HEADER"},
 		{NRF_MODEM_DECT_PHY_ERR_INVALID_DURATION, "ERR_INVALID_DURATION"},
 		{NRF_MODEM_DECT_PHY_ERR_INVALID_PARAMETER, "ERR_INVALID_PARAMETER"},
+		{NRF_MODEM_DECT_PHY_ERR_TX_POWER_OVER_MAX_LIMIT, "ERR_TX_POWER_OVER_MAX_LIMIT"},
 		{NRF_MODEM_DECT_PHY_ERR_MODEM_ERROR, "ERR_MODEM_ERROR"},
 		{NRF_MODEM_DECT_PHY_ERR_MODEM_ERROR_RF_STATE, "ERR_MODEM_ERROR_RF_STATE"},
 		{NRF_MODEM_DECT_PHY_ERR_TEMP_HIGH, "ERR_TEMP_HIGH"},
+		{NRF_MODEM_DECT_PHY_ERR_PROD_LOCK, "ERR_PROD_LOCK"},
 		/* Specific internal errors: */
 		{DECT_SCHEDULER_DELAYED_ERROR, "DECT_SCHEDULER_DELAYED_ERROR"},
 		{DECT_SCHEDULER_SCHEDULER_FATAL_MEM_ALLOC_ERROR,
@@ -488,4 +491,34 @@ bool dect_common_utils_32bit_network_id_validate(uint32_t network_id)
 bool dect_common_utils_mdm_ticks_is_in_range(uint64_t time, uint64_t start, uint64_t end)
 {
 	return (time >= start && time <= end);
+}
+
+/**************************************************************************************************/
+
+const char *dect_common_utils_radio_mode_to_string(int mode, char *out_str_buff)
+{
+	struct mapping_tbl_item const mapping_table[] = {
+		{NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY, "Low latency"},
+		{NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY_WITH_STANDBY,
+			"Low latency with standby"},
+		{NRF_MODEM_DECT_PHY_RADIO_MODE_NON_LBT_WITH_STANDBY, "LBT disabled, with standby"},
+		{-1, NULL}};
+
+	return dect_common_utils_map_to_string(mapping_table, mode, out_str_buff);
+}
+
+/**************************************************************************************************/
+
+int8_t dect_common_utils_max_tx_pwr_dbm_by_pwr_class(uint8_t power_class)
+{
+	switch (power_class) {
+	case 1:
+		return DECT_PHY_CLASS_1_MAX_TX_POWER_DBM;
+	case 2:
+		return DECT_PHY_CLASS_2_MAX_TX_POWER_DBM;
+	case 3:
+		return DECT_PHY_CLASS_3_MAX_TX_POWER_DBM;
+	default:
+		return DECT_PHY_CLASS_4_MAX_TX_POWER_DBM;
+	}
 }

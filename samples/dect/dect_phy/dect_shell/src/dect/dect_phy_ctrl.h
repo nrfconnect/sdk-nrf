@@ -35,10 +35,20 @@
 #define DECT_PHY_CTRL_OP_SCHEDULER_SUSPENDED		18
 #define DECT_PHY_CTRL_OP_SCHEDULER_RESUMED		19
 
+#define DECT_PHY_CTRL_OP_RADIO_ACTIVATED		20
+#define DECT_PHY_CTRL_OP_RADIO_DEACTIVATED		21
+#define DECT_PHY_CTRL_OP_RADIO_MODE_CONFIGURED		22
+
 /******************************************************************************/
 
 int dect_phy_ctrl_msgq_non_data_op_add(uint16_t event_id);
 int dect_phy_ctrl_msgq_data_op_add(uint16_t event_id, void *data, size_t data_size);
+
+/******************************************************************************/
+
+int dect_phy_ctrl_activate_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode);
+int dect_phy_ctrl_deactivate_cmd(void);
+int dect_phy_ctrl_radio_mode_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode);
 
 /******************************************************************************/
 
@@ -48,9 +58,16 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params, bool restart);
 void dect_phy_ctrl_rx_stop(void);
 bool dect_phy_ctrl_rx_is_ongoing(void);
 
+int dect_phy_ctrl_current_radio_mode_get(
+	enum nrf_modem_dect_phy_radio_mode *radio_mode);
 int dect_phy_ctrl_time_query(void);
 
+void dect_phy_ctrl_mdm_op_cancel_all(void);
+
 int dect_phy_ctrl_modem_temperature_get(void);
+
+uint64_t dect_phy_ctrl_modem_latency_for_next_op_get(bool is_tx);
+uint64_t dect_phy_ctrl_modem_latency_min_margin_between_ops_get(void);
 
 /******************************************************************************/
 
@@ -67,6 +84,11 @@ int dect_phy_ctrl_rssi_scan_results_print_and_best_channel_get(bool print_result
 
 bool dect_phy_ctrl_mdm_phy_api_initialized(void);
 bool dect_phy_ctrl_phy_api_scheduler_suspended(void);
+
+int8_t dect_phy_ctrl_utils_mdm_max_tx_pwr_dbm_get_by_channel(uint16_t channel);
+uint8_t dect_phy_ctrl_utils_mdm_max_tx_phy_pwr_get_by_channel(uint16_t channel);
+uint8_t dect_phy_ctrl_utils_mdm_next_supported_phy_tx_power_get(
+	uint8_t phy_power, uint16_t channel);
 
 /******************************************************************************/
 
@@ -113,7 +135,7 @@ int dect_phy_ctrl_th_register_default_phy_api_pdc_rcv_cb(
 
 /* Callback for receiving RSSI measurement results */
 typedef void (*dect_phy_ctrl_ext_phy_api_direct_rssi_cb_t)(
-	const struct nrf_modem_dect_phy_rssi_meas *meas_results);
+	const struct nrf_modem_dect_phy_rssi_event *meas_results);
 
 /* Callback for receiving modem operation complete events */
 typedef void (*dect_phy_ctrl_ext_phy_api_mdm_op_complete_cb_t)(
@@ -147,5 +169,19 @@ struct dect_phy_ctrl_ext_callbacks {
 };
 int dect_phy_ctrl_ext_command_start(struct dect_phy_ctrl_ext_callbacks ext_callbacks);
 void dect_phy_ctrl_ext_command_stop(void);
+
+/******************************************************************************/
+
+/* Common modem callbacks that can be handled by dect_phy_ctrl */
+void dect_phy_ctrl_mdm_time_query_cb(
+	const struct nrf_modem_dect_phy_time_get_event *evt, uint64_t *time);
+void dect_phy_ctrl_mdm_radio_config_cb(
+	const struct nrf_modem_dect_phy_radio_config_event *evt);
+void dect_phy_ctrl_mdm_activate_cb(const struct nrf_modem_dect_phy_activate_event *evt);
+void dect_phy_ctrl_mdm_deactivate_cb(const struct nrf_modem_dect_phy_deactivate_event *evt);
+void dect_phy_ctrl_mdm_cancel_cb(const struct nrf_modem_dect_phy_cancel_event *evt);
+void dect_phy_ctrl_mdm_configure_cb(const struct nrf_modem_dect_phy_configure_event *evt);
+void dect_phy_ctrl_mdm_on_capability_get_cb(
+	const struct nrf_modem_dect_phy_capability_get_event *evt);
 
 #endif /* DECT_PHY_CTRL_H */

@@ -213,6 +213,15 @@ typedef struct {
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND22_MIN 1691
 #define DECT_PHY_SUPPORTED_CHANNEL_BAND22_MAX 1711
 
+#define DESH_DECT_PHY_SUPPORTED_BAND_COUNT 5
+
+/************************************************************************************************/
+
+#define DECT_PHY_CLASS_1_MAX_TX_POWER_DBM 23
+#define DECT_PHY_CLASS_2_MAX_TX_POWER_DBM 21
+#define DECT_PHY_CLASS_3_MAX_TX_POWER_DBM 19
+#define DECT_PHY_CLASS_4_MAX_TX_POWER_DBM 10
+
 /************************************************************************************************/
 
 #define US_TO_MODEM_TICKS(x) ((uint64_t)(((x) * NRF_MODEM_DECT_MODEM_TIME_TICK_RATE_KHZ) / 1000))

@@ -94,4 +94,12 @@ bool dect_common_utils_32bit_network_id_validate(uint32_t network_id);
 
 bool dect_common_utils_mdm_ticks_is_in_range(uint64_t time, uint64_t start, uint64_t end);
 
+/******************************************************************************/
+
+const char *dect_common_utils_radio_mode_to_string(int mode, char *out_str_buff);
+
+/******************************************************************************/
+
+int8_t dect_common_utils_max_tx_pwr_dbm_by_pwr_class(uint8_t power_class);
+
 #endif /* DECT_COMMON_UTILS_H */

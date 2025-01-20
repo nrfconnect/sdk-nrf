@@ -204,10 +204,10 @@ int main(void)
 	}
 #endif
 
-	desh_print_version_info();
-
 	/* Resize terminal width and height of the shell to have proper command editing. */
 	shell_execute_cmd(desh_shell, "resize");
+
+	desh_print_version_info();
 
 	return 0;
 }

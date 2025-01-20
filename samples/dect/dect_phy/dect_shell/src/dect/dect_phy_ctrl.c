@@ -43,7 +43,18 @@ struct k_work_q dect_phy_ctrl_work_q;
 /* States of all commands */
 static struct dect_phy_ctrl_data {
 	bool phy_api_initialized;
-	struct nrf_modem_dect_phy_init_params dect_phy_init_params;
+
+	int band_info_count;
+	struct nrf_modem_dect_phy_band band_info[DESH_DECT_PHY_SUPPORTED_BAND_COUNT];
+	bool band_info_band4_supported;
+
+	bool mdm_latency_info_valid;
+	struct nrf_modem_dect_phy_latency_info mdm_latency_info;
+
+	struct nrf_modem_dect_phy_config_params dect_phy_init_params;
+
+	bool last_set_radio_mode_successful;
+	enum nrf_modem_dect_phy_radio_mode last_set_radio_mode;
 
 	uint16_t phy_api_init_count;
 	bool phy_api_capabilities_printed;
@@ -88,14 +99,16 @@ static struct dect_phy_ctrl_data {
 
 K_SEM_DEFINE(rssi_scan_sema, 0, 1);
 
-K_SEM_DEFINE(dect_phy_ctrl_mdm_api_deinit_sema, 0, 1);
 K_SEM_DEFINE(dect_phy_ctrl_mdm_api_init_sema, 0, 1);
+K_SEM_DEFINE(dect_phy_ctrl_mdm_api_op_cancel_sema, 0, 1);
+K_SEM_DEFINE(dect_phy_ctrl_mdm_api_radio_mode_config_sema, 0, 1);
+K_MUTEX_DEFINE(dect_phy_ctrl_mdm_api_op_cancel_all_mutex);
 
 /**************************************************************************************************/
 
 static void dect_phy_rssi_channel_scan_completed_cb(enum nrf_modem_dect_phy_err phy_status);
 static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx);
-static int dect_phy_ctrl_phy_reinit(void);
+static int dect_phy_ctrl_phy_handlers_init(void);
 
 /**************************************************************************************************/
 
@@ -136,6 +149,204 @@ int dect_phy_ctrl_msgq_data_op_add(uint16_t event_id, void *data, size_t data_si
 	return 0;
 }
 
+/**************************************************************************************************/
+
+static void dect_phy_ctrl_phy_configure_from_settings(void)
+{
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+	int ret;
+
+	/* Configure modem */
+	ctrl_data.dect_phy_init_params.harq_rx_expiry_time_us =
+		current_settings->harq.mdm_init_harq_expiry_time_us;
+	ctrl_data.dect_phy_init_params.harq_rx_process_count =
+		current_settings->harq.mdm_init_harq_process_count;
+	ctrl_data.dect_phy_init_params.band_group_index =
+		((current_settings->common.band_nbr == 4) ? 1 : 0);
+
+	ret = nrf_modem_dect_phy_configure(&ctrl_data.dect_phy_init_params);
+	if (ret) {
+		desh_error("%s: nrf_modem_dect_phy_configure returned: %i",
+			(__func__), ret);
+	}
+
+	/* Wait that configure is done */
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(5));
+	if (ret) {
+		desh_error("(%s): nrf_modem_dect_phy_configure() timeout.", (__func__));
+	} else {
+		desh_print("DECT modem configured to band #%d.",
+		current_settings->common.band_nbr);
+	}
+}
+
+static void dect_phy_ctrl_radio_activate(enum nrf_modem_dect_phy_radio_mode radio_mode)
+{
+	int ret = nrf_modem_dect_phy_activate(radio_mode);
+	char tmp_str[128] = {0};
+
+	if (ret) {
+		desh_error("(%s): nrf_modem_dect_phy_activate() failed: %d",
+			(__func__), ret);
+		return;
+	}
+
+	/* Wait that activate is done */
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(5));
+	if (ret) {
+		ctrl_data.last_set_radio_mode_successful = false;
+		desh_error("(%s): nrf_modem_dect_phy_activate() timeout.",
+			(__func__));
+	} else {
+		ctrl_data.last_set_radio_mode = radio_mode;
+		ctrl_data.last_set_radio_mode_successful = true;
+		desh_print("DECT modem activated to radio mode: %s.",
+			dect_common_utils_radio_mode_to_string(
+				radio_mode, tmp_str));
+	}
+}
+
+/**************************************************************************************************/
+void dect_phy_ctrl_utils_mdm_latency_info_print(void)
+{
+	char tmp_str[128] = {0};
+
+	if (!ctrl_data.mdm_latency_info_valid) {
+		desh_error("DECT modem latency info not valid.");
+		return;
+	}
+	desh_print("DECT modem latency info:");
+	desh_print(" Radio mode specific latencies:");
+
+	for (int i = 0; i < NRF_MODEM_DECT_PHY_RADIO_MODE_COUNT; i++) {
+		desh_print("  Radio mode: %s",
+			dect_common_utils_radio_mode_to_string(i, tmp_str));
+		desh_print("    scheduled_operation_transition: %d",
+			ctrl_data.mdm_latency_info.radio_mode[i]
+				.scheduled_operation_transition);
+		desh_print("    scheduled_operation_startup: %d",
+			ctrl_data.mdm_latency_info.radio_mode[i]
+				.scheduled_operation_startup);
+		for (int j = 0; j < NRF_MODEM_DECT_PHY_RADIO_MODE_COUNT; j++) {
+			desh_print("    radio mode transition delay to %s: %d",
+				dect_common_utils_radio_mode_to_string(j, tmp_str),
+					ctrl_data.mdm_latency_info.radio_mode[i]
+						.radio_mode_transition[j]);
+		}
+	}
+
+	desh_print(" Operation latencies:");
+	desh_print("  RX:");
+	desh_print("   idle_to_active: %d",
+		ctrl_data.mdm_latency_info.operation.receive.idle_to_active);
+	desh_print("   active_to_idle_rssi: %d",
+		ctrl_data.mdm_latency_info.operation.receive.active_to_idle_rssi);
+	desh_print("   active_to_idle_rx: %d",
+		ctrl_data.mdm_latency_info.operation.receive.active_to_idle_rx);
+	desh_print("   stop_to_rf_off: %d",
+		ctrl_data.mdm_latency_info.operation.receive.stop_to_rf_off);
+	desh_print("  TX:");
+	desh_print("   idle_to_active: %d",
+		ctrl_data.mdm_latency_info.operation.transmit.idle_to_active);
+	desh_print("   active_to_idle: %d",
+		ctrl_data.mdm_latency_info.operation.transmit.active_to_idle);
+	desh_print(" Modem radio configuration durations:");
+	desh_print("  DECT PHY initialization duration: %d",
+		ctrl_data.mdm_latency_info.stack.initialization);
+	desh_print("  DECT PHY deinitialization duration: %d",
+		ctrl_data.mdm_latency_info.stack.deinitialization);
+	desh_print("  DECT PHY configuration duration: %d",
+		ctrl_data.mdm_latency_info.stack.configuration);
+	desh_print("  DECT PHY activation duration: %d",
+		ctrl_data.mdm_latency_info.stack.activation);
+	desh_print("  DECT PHY deactivation duration: %d",
+		ctrl_data.mdm_latency_info.stack.deactivation);
+}
+
+int8_t dect_phy_ctrl_utils_mdm_max_tx_pwr_dbm_get_by_channel(uint16_t channel)
+{
+	for (int i = 0; i < ctrl_data.band_info_count; i++) {
+		if (channel >= ctrl_data.band_info[i].min_carrier &&
+		    channel <= ctrl_data.band_info[i].max_carrier) {
+			return dect_common_utils_max_tx_pwr_dbm_by_pwr_class(
+				ctrl_data.band_info[i].power_class);
+		}
+	}
+	/* Fallback to safest choise, the lowest max */
+	return DECT_PHY_CLASS_4_MAX_TX_POWER_DBM;
+}
+
+uint8_t dect_phy_ctrl_utils_mdm_max_tx_phy_pwr_get_by_channel(uint16_t channel)
+{
+	int8_t max_permitted_pwr_dbm =
+		dect_phy_ctrl_utils_mdm_max_tx_pwr_dbm_get_by_channel(channel);
+
+	return dect_common_utils_dbm_to_phy_tx_power(max_permitted_pwr_dbm);
+}
+
+uint8_t dect_phy_ctrl_utils_mdm_next_supported_phy_tx_power_get(uint8_t phy_power, uint16_t channel)
+{
+	uint8_t max_phy_pwr = dect_phy_ctrl_utils_mdm_max_tx_phy_pwr_get_by_channel(channel);
+	uint8_t next_phy_pwr = dect_common_utils_next_phy_tx_power_get(phy_power);
+
+	if (next_phy_pwr > max_phy_pwr) {
+		next_phy_pwr = max_phy_pwr;
+	}
+	return next_phy_pwr;
+}
+
+void dect_phy_ctrl_utils_mdm_band_info_print(void)
+{
+	desh_print("DECT modem band info:");
+	for (int i = 0; i < ctrl_data.band_info_count; i++) {
+		desh_print("  Band number:      %d", ctrl_data.band_info[i].band_number);
+		desh_print("  Band group index: %d", ctrl_data.band_info[i].band_group_index);
+		desh_print("  Min carrier:      %d", ctrl_data.band_info[i].min_carrier);
+		desh_print("  Max carrier:      %d", ctrl_data.band_info[i].max_carrier);
+		desh_print("  Power class:      %d", ctrl_data.band_info[i].power_class);
+		desh_print("    Max power:      %ddBm",
+			dect_common_utils_max_tx_pwr_dbm_by_pwr_class(
+				ctrl_data.band_info[i].power_class));
+		desh_print("  RX gain:          %d\n", ctrl_data.band_info[i].rx_gain);
+	}
+}
+
+/**************************************************************************************************/
+
+static void dect_phy_ctrl_radio_configure_activate_from_settings(void)
+{
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+	int ret;
+
+	ret = nrf_modem_dect_phy_band_get();
+	if (ret) {
+		desh_error("%s: nrf_modem_dect_phy_band_get returned: %i",
+			(__func__), ret);
+	}
+
+	/* Wait that band_get is done */
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(5));
+	if (ret) {
+		desh_error("(%s): nrf_modem_dect_phy_band_get() timeout.", (__func__));
+	} else {
+		dect_phy_ctrl_utils_mdm_band_info_print();
+
+		if (!ctrl_data.band_info_band4_supported &&
+		    current_settings->common.band_nbr == 4) {
+			desh_error("Band 4 is not supported in modem - setting default band #1.");
+			current_settings->common.band_nbr = 1;
+		}
+	}
+
+	dect_phy_ctrl_phy_configure_from_settings();
+	if (current_settings->common.activate_at_startup) {
+		dect_phy_ctrl_radio_activate(current_settings->common.startup_radio_mode);
+	} else {
+		desh_print("DECT modem not activated.");
+		desh_print("  Activation can be done manually by using command \"dect activate\".");
+	}
+}
+
 static void dect_phy_ctrl_msgq_thread_handler(void)
 {
 	struct dect_phy_common_op_event_msgq_item event;
@@ -144,6 +355,58 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 		k_msgq_get(&dect_phy_ctrl_msgq, &event, K_FOREVER);
 
 		switch (event.id) {
+		case DECT_PHY_CTRL_OP_RADIO_ACTIVATED: {
+			struct nrf_modem_dect_phy_activate_event *evt =
+				(struct nrf_modem_dect_phy_activate_event *)event.data;
+			char tmp_str[128] = {0};
+
+			dect_common_utils_modem_phy_err_to_string(
+				evt->err, evt->temp, tmp_str);
+
+			if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+				desh_error("(%s): radio activation failed: %d (%s)",
+					(__func__), evt->err, tmp_str);
+				ctrl_data.last_set_radio_mode_successful = false;
+			} else {
+				ctrl_data.last_set_radio_mode_successful = true;
+			}
+			break;
+		}
+		case DECT_PHY_CTRL_OP_RADIO_DEACTIVATED: {
+			struct nrf_modem_dect_phy_deactivate_event *evt =
+				(struct nrf_modem_dect_phy_deactivate_event *)event.data;
+			char tmp_str[128] = {0};
+
+			dect_common_utils_modem_phy_err_to_string(
+				evt->err, NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED, tmp_str);
+
+			if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+				desh_error("(%s): radio deactivation failed: %d (%s)",
+					(__func__), evt->err, tmp_str);
+			} else {
+				desh_print("Radio deactivated.");
+			}
+			break;
+		}
+		case DECT_PHY_CTRL_OP_RADIO_MODE_CONFIGURED: {
+			struct nrf_modem_dect_phy_radio_config_event *evt =
+				(struct nrf_modem_dect_phy_radio_config_event *)event.data;
+			char tmp_str[128] = {0};
+
+			dect_common_utils_modem_phy_err_to_string(
+				evt->err, NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED, tmp_str);
+
+			if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+				desh_error("(%s): radio mode configuration failed: %d (%s)",
+					(__func__), evt->err, tmp_str);
+				ctrl_data.last_set_radio_mode_successful = false;
+			} else {
+				ctrl_data.last_set_radio_mode_successful = true;
+				desh_print("Radio mode configured.");
+			}
+			break;
+		}
+
 		case DECT_PHY_CTRL_OP_SCHEDULER_SUSPENDED: {
 			ctrl_data.scheduler_suspended = true;
 			break;
@@ -156,7 +419,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			ctrl_data.perf_ongoing = false;
 			dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
 
-			dect_phy_ctrl_phy_reinit();
+			dect_phy_ctrl_phy_handlers_init();
 
 			desh_print("perf command done.");
 			break;
@@ -165,7 +428,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			ctrl_data.ping_ongoing = false;
 			dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
 
-			dect_phy_ctrl_phy_reinit();
+			dect_phy_ctrl_phy_handlers_init();
 			desh_print("ping command done.");
 			break;
 		}
@@ -173,7 +436,8 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			ctrl_data.cert_ongoing = false;
 			dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_ON);
 
-			dect_phy_ctrl_phy_reinit();
+			dect_phy_ctrl_phy_handlers_init();
+			desh_print("rf_tool command done.");
 			break;
 		}
 		case DECT_PHY_CTRL_OP_DEBUG_ON: {
@@ -185,84 +449,73 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			break;
 		}
 		case DECT_PHY_CTRL_OP_SETTINGS_UPDATED: {
-			bool phy_api_reinit_needed = *((bool *)event.data);
-
-			if (phy_api_reinit_needed) {
-				dect_phy_ctrl_phy_reinit();
-			}
 			if (ctrl_data.ext_cmd.sett_changed_cb != NULL) {
 				ctrl_data.ext_cmd.sett_changed_cb();
 			}
 			break;
 		}
 		case DECT_PHY_CTRL_OP_PHY_API_MDM_INITIALIZED: {
-			struct dect_phy_common_op_initialized_params *params =
-				(struct dect_phy_common_op_initialized_params *)event.data;
+			struct nrf_modem_dect_phy_init_event *params =
+				(struct nrf_modem_dect_phy_init_event *)event.data;
 			char tmp_str[128] = {0};
+			int ret;
 
-			if (params->temperature != NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED) {
-				ctrl_data.last_valid_temperature = params->temperature;
+			if (params->temp != NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED) {
+				ctrl_data.last_valid_temperature = params->temp;
 			}
 
-			if (params->status) {
+			if (params->err != NRF_MODEM_DECT_PHY_SUCCESS) {
 				dect_common_utils_modem_phy_err_to_string(
-				params->status, params->temperature, tmp_str);
+				params->err, params->temp, tmp_str);
 
-				desh_error("(%s): init failed (time %llu, temperature %d, "
+				desh_error("(%s): init failed (temperature %d, "
 					   "temp_limit %d): %d (%s)",
-					   (__func__), params->time, params->temperature,
-					   params->modem_configuration.temperature_limit,
-					   params->status, tmp_str);
+					   (__func__), params->temp,
+					   params->temperature_limit,
+					   params->err, tmp_str);
 			} else {
+				k_sleep(K_MSEC(100));
 				if (ctrl_data.phy_api_init_count <= 1) {
 					desh_print("DECT modem initialized:");
 					desh_print("  current temperature:       %dC",
-						   params->temperature);
-					desh_print("  max operating temperature: %dC",
-						   params->modem_configuration.temperature_limit);
-					desh_print("  Latencies (in mdm time)");
-					desh_print(
-						"    from Idle to RSSI RF sampling start: %d",
-						params->modem_configuration.latency.idle_to_rssi);
-					desh_print(
-						"    from RF sampling of RSSI to Idle: %d",
-						params->modem_configuration.latency.rssi_to_idle);
-					desh_print("    from Idle to RX RF sampling start: %d",
-						   params->modem_configuration.latency.idle_to_rx);
-					desh_print("    from RF sampling of RX to Idle: %d",
-						   params->modem_configuration.latency.rx_to_idle);
-					desh_print("    from RF sampling of RX with RSSI "
-						   "measurement to "
-						   "Idle: %d",
-						   params->modem_configuration.latency
-							   .rx_rssi_to_idle);
-					desh_print(
-						"    from RX stop request to RF sampling stop: %d",
-						params->modem_configuration.latency
-							.rx_stop_to_rf_off);
-					desh_print("    from Idle to TX RF sample transmission "
-						   "start: %d",
-						   params->modem_configuration.latency.idle_to_tx);
-					desh_print("    from Idle to TX with LBT monitoring RF "
-						   "sampling "
-						   "start: %d",
-						   params->modem_configuration.latency
-							   .idle_to_tx_with_lbt);
-					desh_print(
-						"    from TX RF sample transmission end (with or "
-						"without LBT) to Idle: %d",
-						params->modem_configuration.latency.tx_to_idle);
-					desh_print("    from Idle to TX with LBT monitoring RF "
-						   "sampling start "
-						   "in TX-RX operation: %d",
-						   params->modem_configuration.latency
-							   .idle_to_txrx_with_lbt);
-					desh_print(
-						"    from TX RF sample transmission end to RX RF "
-						"sampling start in TX-RX operation: %d",
-						params->modem_configuration.latency.txrx_tx_to_rx);
+						   params->temp);
 				}
 			}
+			k_sleep(K_MSEC(100)); /* Wait that prev print is done */
+
+			/* Capability query */
+			ret = nrf_modem_dect_phy_capability_get(); /* asynch: result in callback */
+			if (ret) {
+				printk("nrf_modem_dect_phy_capability_get returned: %i\n", ret);
+			}
+
+			/* Wait that Capability is done */
+			ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(5));
+			if (ret) {
+				desh_error("(%s): nrf_modem_dect_phy_capability_get() timeout.",
+					(__func__));
+				/* continue */
+			}
+
+			k_sleep(K_MSEC(100)); /* Wait that capability print is done */
+
+			ret = nrf_modem_dect_phy_latency_get();
+			if (ret) {
+				desh_error("nrf_modem_dect_phy_latency_get returned: %i", ret);
+			}
+
+			/* Wait that latency query is done */
+			ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(5));
+			if (ret) {
+				desh_error("(%s): nrf_modem_dect_phy_latency_get() timeout.",
+					(__func__));
+				/* continue */
+			} else {
+				dect_phy_ctrl_utils_mdm_latency_info_print();
+			}
+
+			/* Configure and activate */
+			dect_phy_ctrl_radio_configure_activate_from_settings();
 			break;
 		}
 
@@ -270,8 +523,10 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			struct dect_phy_common_op_pcc_crc_fail_params *params =
 				(struct dect_phy_common_op_pcc_crc_fail_params *)event.data;
 
-			desh_warn("RX PCC CRC error (time %llu): SNR %d, RSSI-2 %d (%d dBm)",
-				  params->time, params->crc_failure.snr, params->crc_failure.rssi_2,
+			desh_warn("RX PCC CRC error (time %llu, handle %d): "
+				  "SNR %d, RSSI-2 %d (%d dBm)",
+				  params->time, params->crc_failure.handle,
+				  params->crc_failure.snr, params->crc_failure.rssi_2,
 				  (params->crc_failure.rssi_2 / 2));
 			break;
 		}
@@ -279,8 +534,10 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			struct dect_phy_common_op_pdc_crc_fail_params *params =
 				(struct dect_phy_common_op_pdc_crc_fail_params *)event.data;
 
-			desh_warn("RX PDC CRC error (time %llu): SNR %d, RSSI-2 %d (%d dBm)",
-				  params->time, params->crc_failure.snr, params->crc_failure.rssi_2,
+			desh_warn("RX PDC CRC error (time %llu, handle %d): "
+				  "SNR %d, RSSI-2 %d (%d dBm)",
+				  params->time, params->crc_failure.handle,
+				  params->crc_failure.snr, params->crc_failure.rssi_2,
 				  (params->crc_failure.rssi_2 / 2));
 			break;
 		}
@@ -295,10 +552,11 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			if (ctrl_data.debug) {
 				int16_t rssi_level = params->pcc_status.rssi_2 / 2;
 
-				desh_print("PCC received (stf start time %llu): "
+				desh_print("PCC received (stf start time %llu, handle %d): "
 					   "status: \"%s\", snr %d, "
 					   "RSSI-2 %d (RSSI %d)",
-					   params->stf_start_time, tmp_str, params->pcc_status.snr,
+					   params->stf_start_time, params->pcc_status.handle,
+					   tmp_str, params->pcc_status.snr,
 					   params->pcc_status.rssi_2, rssi_level);
 			}
 			if (params->pcc_status.header_status ==
@@ -338,7 +596,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			if (!data_handled) {
 				unsigned char hex_data[128];
 				int i;
-				struct nrf_modem_dect_phy_rx_pdc_status *p_rx_status =
+				struct nrf_modem_dect_phy_pdc_event *p_rx_status =
 					&(params->rx_status);
 				int16_t rssi_level = p_rx_status->rssi_2 / 2;
 
@@ -411,6 +669,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			    (ctrl_data.rssi_scan_cmd_running &&
 			     ctrl_data.rssi_scan_params.interval_secs)) {
 				if (ctrl_data.rssi_scan_params.suspend_scheduler) {
+					dect_phy_ctrl_mdm_op_cancel_all();
 					dect_phy_api_scheduler_suspend();
 				}
 				err = dect_phy_scan_rssi_start(
@@ -446,94 +705,98 @@ K_THREAD_DEFINE(dect_phy_ctrl_msgq_th, DECT_PHY_CTRL_STACK_SIZE, dect_phy_ctrl_m
 
 /**************************************************************************************************/
 
-static void dect_phy_ctrl_mdm_initialize_cb(const uint64_t *time, int16_t temperature,
-				     enum nrf_modem_dect_phy_err status,
-				     const struct nrf_modem_dect_phy_modem_cfg *modem_configuration)
+static void dect_phy_ctrl_mdm_initialize_cb(const struct nrf_modem_dect_phy_init_event *evt)
 {
-	struct dect_phy_common_op_initialized_params ctrl_op_initialized_params;
 
-	dect_app_modem_time_save(time);
-
-	ctrl_op_initialized_params.time = *time;
-	ctrl_op_initialized_params.temperature = temperature;
-	ctrl_op_initialized_params.status = status;
-	ctrl_op_initialized_params.modem_configuration = *modem_configuration;
-
-	if (status == NRF_MODEM_DECT_PHY_SUCCESS) {
+	if (evt->err == NRF_MODEM_DECT_PHY_SUCCESS) {
 		ctrl_data.phy_api_init_count++;
 		ctrl_data.phy_api_initialized = true;
 	}
 
 	k_sem_give(&dect_phy_ctrl_mdm_api_init_sema);
 	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_INITIALIZED,
-				       (void *)&ctrl_op_initialized_params,
-				       sizeof(struct dect_phy_common_op_initialized_params));
+				       (void *)evt,
+				       sizeof(struct nrf_modem_dect_phy_init_event));
 }
 
-static void dect_phy_ctrl_mdm_time_query_cb(
-	uint64_t const *time, enum nrf_modem_dect_phy_err status)
+static void dect_phy_ctrl_mdm_on_deinit_cb(const struct nrf_modem_dect_phy_deinit_event *deinit_evt)
 {
-	dect_app_modem_time_save(time);
+	ctrl_data.phy_api_initialized = false;
+}
 
-	if (ctrl_data.time_cmd) {
-		if (status != NRF_MODEM_DECT_PHY_SUCCESS) {
-			printk("\nCannot get modem time, err %d", status);
-			return;
-		}
+void dect_phy_ctrl_mdm_activate_cb(const struct nrf_modem_dect_phy_activate_event *evt)
+{
+	k_sem_give(&dect_phy_ctrl_mdm_api_init_sema);
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_RADIO_ACTIVATED,
+				       (void *)evt,
+				       sizeof(struct nrf_modem_dect_phy_activate_event));
+}
 
-		uint64_t time_now = dect_app_modem_time_now();
-		static const char *behind_str = "behind";
-		static const char *ahead_str = "ahead";
-		int64_t time_diff = *time - time_now;
+void dect_phy_ctrl_mdm_deactivate_cb(const struct nrf_modem_dect_phy_deactivate_event *evt)
+{
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_RADIO_DEACTIVATED,
+				       (void *)evt,
+				       sizeof(struct nrf_modem_dect_phy_deactivate_event));
+}
 
-		if (time_diff >= 0) {
-			printk("\nModem time: %llu, app time %lld (%s by %lld ticks)\n", *time,
-			       time_now, behind_str, time_diff);
-		} else {
-			printk("\nModem time: %llu, app time %lld (%s by %lld ticks)\n", *time,
-			       time_now, ahead_str, time_diff);
-		}
+void dect_phy_ctrl_mdm_configure_cb(const struct nrf_modem_dect_phy_configure_event *evt)
+{
+	if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+		printk("PHY configure failed: %d\n", evt->err);
 	}
-	ctrl_data.time_cmd = false;
+	k_sem_give(&dect_phy_ctrl_mdm_api_init_sema);
 }
 
-static void dect_phy_ctrl_mdm_rx_operation_stop_cb(uint64_t const *time,
-					    enum nrf_modem_dect_phy_err status, uint32_t handle)
+void dect_phy_ctrl_mdm_radio_config_cb(
+	const struct nrf_modem_dect_phy_radio_config_event *evt)
 {
-	dect_app_modem_time_save(time);
+	k_sem_give(&dect_phy_ctrl_mdm_api_radio_mode_config_sema);
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_RADIO_MODE_CONFIGURED,
+				       (void *)evt,
+				       sizeof(struct nrf_modem_dect_phy_radio_config_event));
 }
 
-static void dect_phy_ctrl_mdm_operation_complete_cb(uint64_t const *time, int16_t temperature,
-					     enum nrf_modem_dect_phy_err status, uint32_t handle)
+static void dect_phy_ctrl_mdm_operation_complete_cb(
+	const struct nrf_modem_dect_phy_op_complete_event *evt, uint64_t *time)
 {
 	struct dect_phy_common_op_completed_params op_completed_params = {
-		.handle = handle,
-		.temperature = temperature,
-		.status = status,
+		.handle = evt->handle,
+		.temperature = evt->temp,
+		.status = evt->err,
 		.time = *time,
 	};
 
-
-	dect_app_modem_time_save(time);
 	dect_phy_api_scheduler_mdm_op_completed(&op_completed_params);
 	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_COMPLETED,
 				       (void *)&op_completed_params,
 				       sizeof(struct dect_phy_common_op_completed_params));
 }
 
+static void dect_phy_ctrl_mdm_on_rssi_cb(const struct nrf_modem_dect_phy_rssi_event *evt)
+{
+	if (ctrl_data.rssi_scan_ongoing || ctrl_data.rx_cmd_on_going) {
+		dect_phy_scan_rssi_cb_handle(NRF_MODEM_DECT_PHY_SUCCESS, evt);
+	} else if (ctrl_data.ext_cmd.direct_rssi_cb != NULL) {
+		ctrl_data.ext_cmd.direct_rssi_cb(evt);
+	}
+}
+
+void dect_phy_ctrl_mdm_cancel_cb(const struct nrf_modem_dect_phy_cancel_event *evt)
+{
+	k_sem_give(&dect_phy_ctrl_mdm_api_op_cancel_sema);
+}
+
 static void
-dect_phy_ctrl_mdm_on_rx_pcc_cb(uint64_t const *time,
-			       struct nrf_modem_dect_phy_rx_pcc_status const *p_rx_status,
-			       union nrf_modem_dect_phy_hdr const *p_phy_header)
+dect_phy_ctrl_mdm_on_rx_pcc_cb(const struct nrf_modem_dect_phy_pcc_event *evt,
+	uint64_t *time)
 {
 	struct dect_phy_common_op_pcc_rcv_params ctrl_pcc_op_params;
 
-	ctrl_data.last_received_stf_start_time = p_rx_status->stf_start_time;
-	dect_app_modem_time_save(time);
+	ctrl_data.last_received_stf_start_time = evt->stf_start_time;
 
-	if (p_rx_status->header_status == NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
-		struct dect_phy_ctrl_field_common *phy_h = (void *)p_phy_header;
-		const uint8_t *p_ptr = (uint8_t *)p_phy_header;
+	if (evt->header_status == NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
+		struct dect_phy_ctrl_field_common *phy_h = (void *)&evt->hdr;
+		const uint8_t *p_ptr = (uint8_t *)&evt->hdr;
 
 		uint8_t short_nw_id;
 		int16_t pcc_rx_pwr_dbm =
@@ -563,10 +826,10 @@ dect_phy_ctrl_mdm_on_rx_pcc_cb(uint64_t const *time,
 		ctrl_pcc_op_params.phy_len_type = phy_h->packet_length_type;
 	}
 
-	ctrl_pcc_op_params.pcc_status = *p_rx_status;
-	ctrl_pcc_op_params.phy_header = *p_phy_header;
+	ctrl_pcc_op_params.pcc_status = *evt;
+	ctrl_pcc_op_params.phy_header = evt->hdr;
 	ctrl_pcc_op_params.time = *time;
-	ctrl_pcc_op_params.stf_start_time = p_rx_status->stf_start_time;
+	ctrl_pcc_op_params.stf_start_time = evt->stf_start_time;
 
 	if (ctrl_data.ext_cmd.direct_pcc_rcv_cb != NULL) {
 		ctrl_data.ext_cmd.direct_pcc_rcv_cb(&ctrl_pcc_op_params);
@@ -577,26 +840,43 @@ dect_phy_ctrl_mdm_on_rx_pcc_cb(uint64_t const *time,
 				       sizeof(struct dect_phy_common_op_pcc_rcv_params));
 }
 
-static void dect_phy_ctrl_mdm_on_rx_pdc_cb(uint64_t const *time,
-			       struct nrf_modem_dect_phy_rx_pdc_status const *p_rx_status,
-			       void const *p_data, uint32_t length)
+static void dect_phy_ctrl_mdm_on_pcc_crc_failure_cb(
+	const struct nrf_modem_dect_phy_pcc_crc_failure_event *evt, uint64_t *time)
 {
-	int16_t rssi_level = p_rx_status->rssi_2 / 2;
+	struct dect_phy_common_op_pcc_crc_fail_params pdc_crc_fail_params = {
+		.time = *time,
+		.crc_failure = *evt,
+	};
 
-	dect_app_modem_time_save(time);
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_RX_PCC_CRC_ERROR,
+				       (void *)&pdc_crc_fail_params,
+				       sizeof(struct dect_phy_common_op_pcc_crc_fail_params));
+}
+
+static void dect_phy_ctrl_mdm_on_rx_pdc_cb(const struct nrf_modem_dect_phy_pdc_event *evt)
+{
+	int16_t rssi_level = evt->rssi_2 / 2;
+	uint16_t channel;
+	int err;
 
 	struct dect_phy_commmon_op_pdc_rcv_params ctrl_pdc_op_params;
 	struct dect_phy_api_scheduler_op_pdc_type_rcvd_params pdc_op_params;
 
-	ctrl_pdc_op_params.rx_status = *p_rx_status;
+	ctrl_pdc_op_params.rx_status = *evt;
 
-	ctrl_pdc_op_params.data_length = length;
+	ctrl_pdc_op_params.data_length = evt->len;
 	ctrl_pdc_op_params.time = ctrl_data.last_received_stf_start_time;
 
 	ctrl_pdc_op_params.rx_pwr_dbm = ctrl_data.last_received_pcc_pwr_dbm;
 	ctrl_pdc_op_params.rx_mcs = ctrl_data.last_received_pcc_mcs;
 	ctrl_pdc_op_params.rx_rssi_level_dbm = rssi_level;
-	ctrl_pdc_op_params.last_rx_op_channel = dect_phy_common_rx_get_last_rx_op_channel();
+	ctrl_pdc_op_params.rx_channel = 0;
+
+	err =  dect_phy_common_rx_op_handle_to_channel_get(evt->handle, &channel);
+	if (!err) {
+		ctrl_pdc_op_params.rx_channel = channel;
+	}
+
 	ctrl_pdc_op_params.last_received_pcc_short_nw_id = ctrl_data.last_received_pcc_short_nw_id;
 	ctrl_pdc_op_params.last_received_pcc_transmitter_short_rd_id =
 		ctrl_data.last_received_pcc_transmitter_short_rd_id;
@@ -604,8 +884,8 @@ static void dect_phy_ctrl_mdm_on_rx_pdc_cb(uint64_t const *time,
 		ctrl_data.last_received_pcc_phy_len_type;
 	ctrl_pdc_op_params.last_received_pcc_phy_len = ctrl_data.last_received_pcc_phy_len;
 
-	if (length <= sizeof(ctrl_pdc_op_params.data)) {
-		memcpy(ctrl_pdc_op_params.data, p_data, length);
+	if (evt->len <= sizeof(ctrl_pdc_op_params.data)) {
+		memcpy(ctrl_pdc_op_params.data, evt->data, evt->len);
 		if (ctrl_data.ext_cmd.direct_pdc_rcv_cb != NULL) {
 			ctrl_data.ext_cmd.direct_pdc_rcv_cb(&ctrl_pdc_op_params);
 		}
@@ -616,158 +896,234 @@ static void dect_phy_ctrl_mdm_on_rx_pdc_cb(uint64_t const *time,
 	} else {
 		printk("Received data is too long to be received by CTRL TH - discarded (len %d, "
 		       "buf size %d)\n",
-		       length, sizeof(ctrl_pdc_op_params.data));
+		       evt->len, sizeof(ctrl_pdc_op_params.data));
 	}
 
-	pdc_op_params.data_length = length;
+	pdc_op_params.data_length = evt->len;
 	pdc_op_params.time = ctrl_data.last_received_stf_start_time;
 	pdc_op_params.rx_pwr_dbm = ctrl_data.last_received_pcc_pwr_dbm;
 	pdc_op_params.rx_rssi_dbm = rssi_level;
-	if (length <= sizeof(pdc_op_params.data)) {
-		memcpy(pdc_op_params.data, p_data, length);
+	if (evt->len <= sizeof(pdc_op_params.data)) {
+		memcpy(pdc_op_params.data, evt->data, evt->len);
 		dect_phy_api_scheduler_mdm_pdc_data_recv(&pdc_op_params);
 	} else {
 		printk("Received data is too long to be received by SCHEDULER TH - discarded (len "
 		       "%d, buf size %d)\n",
-		       length, sizeof(pdc_op_params.data));
+		       evt->len, sizeof(pdc_op_params.data));
 	}
-}
-
-static void dect_phy_ctrl_mdm_on_rssi_cb(const uint64_t *time,
-				  const struct nrf_modem_dect_phy_rssi_meas *p_result)
-{
-	dect_app_modem_time_save(time);
-
-	if (ctrl_data.rssi_scan_ongoing || ctrl_data.rx_cmd_on_going) {
-		dect_phy_scan_rssi_cb_handle(NRF_MODEM_DECT_PHY_SUCCESS, p_result);
-	} else if (ctrl_data.ext_cmd.direct_rssi_cb != NULL) {
-		ctrl_data.ext_cmd.direct_rssi_cb(p_result);
-	}
-}
-
-static void dect_phy_ctrl_mdm_on_link_configuration_cb(uint64_t const *time,
-						enum nrf_modem_dect_phy_err status)
-{
-	dect_app_modem_time_save(time);
-}
-
-static void dect_phy_ctrl_mdm_on_pcc_crc_failure_cb(
-	uint64_t const *time, struct nrf_modem_dect_phy_rx_pcc_crc_failure const *crc_failure)
-{
-	struct dect_phy_common_op_pcc_crc_fail_params pdc_crc_fail_params = {
-		.time = *time,
-		.crc_failure = *crc_failure,
-	};
-
-	dect_app_modem_time_save(time);
-	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_RX_PCC_CRC_ERROR,
-				       (void *)&pdc_crc_fail_params,
-				       sizeof(struct dect_phy_common_op_pcc_crc_fail_params));
 }
 
 static void dect_phy_ctrl_mdm_on_pdc_crc_failure_cb(
-	uint64_t const *time, struct nrf_modem_dect_phy_rx_pdc_crc_failure const *crc_failure)
+	const struct nrf_modem_dect_phy_pdc_crc_failure_event *evt, uint64_t *time)
 {
 	struct dect_phy_common_op_pdc_crc_fail_params pdc_crc_fail_params = {
 		.time = *time,
-		.crc_failure = *crc_failure,
+		.crc_failure = *evt,
 	};
 
-	dect_app_modem_time_save(time);
 	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_PHY_API_MDM_RX_PDC_CRC_ERROR,
 				       (void *)&pdc_crc_fail_params,
 				       sizeof(struct dect_phy_common_op_pdc_crc_fail_params));
 }
 
-static void dect_phy_ctrl_mdm_on_capability_get_cb(
-	const uint64_t *time, enum nrf_modem_dect_phy_err err,
-	const struct nrf_modem_dect_phy_capability *capabilities)
+void dect_phy_ctrl_mdm_time_query_cb(
+	const struct nrf_modem_dect_phy_time_get_event *evt, uint64_t *time)
 {
+	if (ctrl_data.time_cmd) {
+		uint64_t time_now;
+		int64_t time_diff;
+		static const char *behind_str = "behind";
+		static const char *ahead_str = "ahead";
+
+		if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+			printk("\nCannot get modem time, err %d", evt->err);
+			return;
+		}
+
+		time_now = dect_app_modem_time_now();
+		time_diff = *time - time_now;
+
+		if (time_diff >= 0) {
+			printk("\nModem time: %llu, app time %lld (%s by %lld ticks)\n", *time,
+			       time_now, behind_str, time_diff);
+		} else {
+			printk("\nModem time: %llu, app time %lld (%s by %lld ticks)\n", *time,
+			       time_now, ahead_str, time_diff);
+		}
+	}
+	ctrl_data.time_cmd = false;
+}
+
+void dect_phy_ctrl_mdm_on_capability_get_cb(
+	const struct nrf_modem_dect_phy_capability_get_event *evt)
+{
+	if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+		printk("Cannot get modem capabilities, err %d\n", evt->err);
+		return;
+	}
 	if (!ctrl_data.phy_api_capabilities_printed) {
-		printk("\nModem capabilities:\n");
-		printk("  DECT NR+ version: %d\n", capabilities->dect_version);
-		for (int i = 0; i < capabilities->variant_count; i++) {
-			printk("    power_class[%d]:            %d\n", i,
-			       capabilities->variant[i].power_class);
-			printk("    rx_spatial_streams[%d]:     %d\n", i,
-			       capabilities->variant[i].rx_spatial_streams);
-			printk("    rx_tx_diversity[%d]:        %d\n", i,
-			       capabilities->variant[i].rx_tx_diversity);
-			printk("    rx_gain[%d]:                %ddBm\n", i,
-			       capabilities->variant[i].rx_gain);
-			printk("    mcs_max[%d]:                %d\n", i,
-			       capabilities->variant[i].mcs_max);
-			printk("    harq_soft_buf_size[%d]:     %d\n", i,
-			       capabilities->variant[i].harq_soft_buf_size);
-			printk("    harq_process_count_max[%d]: %d\n", i,
-			       capabilities->variant[i].harq_process_count_max);
-			printk("    harq_feedback_delay[%d]:    %d\n", i,
-			       capabilities->variant[i].harq_feedback_delay);
-			printk("    mu[%d]:                     %d\n", i,
-			       capabilities->variant[i].mu);
-			printk("    beta[%d]:                   %d\n", i,
-			       capabilities->variant[i].beta);
+		struct nrf_modem_dect_phy_capability *capability = evt->capability;
+
+		if (capability == NULL) {
+			printk("\nModem capabilities:\n");
+			printk("  No capabilities available\n");
+		} else {
+			printk("\nModem capabilities:\n");
+			printk("  DECT NR+ version: %d\n", capability->dect_version);
+			printk("  DECT NR+ variant count: %d\n", capability->variant_count);
+			for (int i = 0; i < capability->variant_count; i++) {
+				printk("    rx_spatial_streams[%d]:     %d\n", i,
+				capability->variant[i].rx_spatial_streams);
+				printk("    rx_tx_diversity[%d]:        %d\n", i,
+				capability->variant[i].rx_tx_diversity);
+				printk("    mcs_max[%d]:                %d\n", i,
+				capability->variant[i].mcs_max);
+				printk("    harq_soft_buf_size[%d]:     %d\n", i,
+				capability->variant[i].harq_soft_buf_size);
+				printk("    harq_process_count_max[%d]: %d\n", i,
+				capability->variant[i].harq_process_count_max);
+				printk("    harq_feedback_delay[%d]:    %d\n", i,
+				capability->variant[i].harq_feedback_delay);
+				printk("    mu[%d]:                     %d\n", i,
+				capability->variant[i].mu);
+
+				/* desh supports only 1 for mu */
+				__ASSERT_NO_MSG(capability->variant[i].mu == 1);
+
+				printk("    beta[%d]:                   %d\n", i,
+				capability->variant[i].beta);
+			}
 		}
 		ctrl_data.phy_api_capabilities_printed = true;
 	}
+	k_sem_give(&dect_phy_ctrl_mdm_api_init_sema);
 }
 
-static void dect_phy_ctrl_mdm_on_stf_cover_seq_control_cb(
-	const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void dect_phy_ctrl_mdm_on_band_get_cb(const struct nrf_modem_dect_phy_band_get_event *evt)
 {
-	printk("WARN: Unexpectedly in %s\n", (__func__));
+	ctrl_data.band_info_count = 0;
+	ctrl_data.band_info_band4_supported = false;
+
+	for (size_t i = 0; i < evt->band_count && i < DESH_DECT_PHY_SUPPORTED_BAND_COUNT; i++) {
+		/* Store band info */
+		ctrl_data.band_info[i] = evt->band[i];
+		ctrl_data.band_info_count++;
+		if (ctrl_data.band_info[i].band_number == 4) {
+			ctrl_data.band_info_band4_supported = true;
+		}
+	}
+	k_sem_give(&dect_phy_ctrl_mdm_api_init_sema);
 }
 
-static void dect_phy_ctrl_mdm_on_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
+static void dect_phy_ctrl_mdm_on_latency_cb(const struct nrf_modem_dect_phy_latency_info_event *evt)
 {
-	ctrl_data.phy_api_initialized = false;
-	k_sem_give(&dect_phy_ctrl_mdm_api_deinit_sema);
+	if (evt->err == NRF_MODEM_DECT_PHY_SUCCESS && evt->latency_info != NULL) {
+		ctrl_data.mdm_latency_info = *evt->latency_info;
+		ctrl_data.mdm_latency_info_valid = true;
+	} else {
+		ctrl_data.mdm_latency_info_valid = false;
+	}
+
+	k_sem_give(&dect_phy_ctrl_mdm_api_init_sema);
 }
 
-static const struct nrf_modem_dect_phy_callbacks dect_phy_api_config = {
+void dect_phy_ctrl_mdm_evt_handler(const struct nrf_modem_dect_phy_event *evt)
+{
+	dect_app_modem_time_save(&evt->time);
 
-	.init = dect_phy_ctrl_mdm_initialize_cb,
-	.rx_stop = dect_phy_ctrl_mdm_rx_operation_stop_cb,
-	.op_complete = dect_phy_ctrl_mdm_operation_complete_cb,
-	.pcc = dect_phy_ctrl_mdm_on_rx_pcc_cb,
-	.pcc_crc_err = dect_phy_ctrl_mdm_on_pcc_crc_failure_cb,
-	.pdc = dect_phy_ctrl_mdm_on_rx_pdc_cb,
-	.pdc_crc_err = dect_phy_ctrl_mdm_on_pdc_crc_failure_cb,
-	.rssi = dect_phy_ctrl_mdm_on_rssi_cb,
-	.link_config = dect_phy_ctrl_mdm_on_link_configuration_cb,
-	.time_get = dect_phy_ctrl_mdm_time_query_cb,
-	.capability_get = dect_phy_ctrl_mdm_on_capability_get_cb,
-	.stf_cover_seq_control = dect_phy_ctrl_mdm_on_stf_cover_seq_control_cb,
-	.deinit = dect_phy_ctrl_mdm_on_deinit_cb,
-};
+	switch (evt->id) {
+	case NRF_MODEM_DECT_PHY_EVT_INIT:
+		dect_phy_ctrl_mdm_initialize_cb(&evt->init);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_DEINIT:
+		dect_phy_ctrl_mdm_on_deinit_cb(&evt->deinit);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_ACTIVATE:
+		dect_phy_ctrl_mdm_activate_cb(&evt->activate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_DEACTIVATE:
+		dect_phy_ctrl_mdm_deactivate_cb(&evt->deactivate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CONFIGURE:
+		dect_phy_ctrl_mdm_configure_cb(&evt->configure);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_RADIO_CONFIG:
+		dect_phy_ctrl_mdm_radio_config_cb(&evt->radio_config);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_COMPLETED:
+		dect_phy_ctrl_mdm_operation_complete_cb(&evt->op_complete, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CANCELED:
+		dect_phy_ctrl_mdm_cancel_cb(&evt->cancel);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_RSSI:
+		dect_phy_ctrl_mdm_on_rssi_cb(&evt->rssi);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PCC:
+		dect_phy_ctrl_mdm_on_rx_pcc_cb(&evt->pcc, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PCC_ERROR:
+		dect_phy_ctrl_mdm_on_pcc_crc_failure_cb(&evt->pcc_crc_err, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC:
+		dect_phy_ctrl_mdm_on_rx_pdc_cb(&evt->pdc);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC_ERROR:
+		dect_phy_ctrl_mdm_on_pdc_crc_failure_cb(&evt->pdc_crc_err, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_TIME:
+		dect_phy_ctrl_mdm_time_query_cb(&evt->time_get, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CAPABILITY:
+		dect_phy_ctrl_mdm_on_capability_get_cb(&evt->capability_get);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_BANDS:
+		dect_phy_ctrl_mdm_on_band_get_cb(&evt->band_get);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_LATENCY:
+		dect_phy_ctrl_mdm_on_latency_cb(&evt->latency_get);
+		break;
+	default:
+		printk("%s: WARN: Unexpected event id %d\n", (__func__), evt->id);
+		break;
+	}
+}
 
 static void dect_phy_ctrl_phy_init(void)
 {
-	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
-	int ret = nrf_modem_dect_phy_callback_set(&dect_phy_api_config);
-
-	ctrl_data.dect_phy_init_params.harq_rx_expiry_time_us =
-		current_settings->harq.mdm_init_harq_expiry_time_us;
-
-	ctrl_data.dect_phy_init_params.harq_rx_process_count =
-		current_settings->harq.mdm_init_harq_process_count;
-	ctrl_data.dect_phy_init_params.reserved = 0;
-	ctrl_data.dect_phy_init_params.band4_support =
-		((current_settings->common.band_nbr == 4) ? 1 : 0);
+	int ret = nrf_modem_dect_phy_event_handler_set(dect_phy_ctrl_mdm_evt_handler);
 
 	if (ret) {
-		printk("nrf_modem_dect_phy_callback_set returned: %i\n", ret);
+		printk("nrf_modem_dect_phy_event_handler_set returned: %i\n", ret);
 	} else {
-		ret = nrf_modem_dect_phy_init(&ctrl_data.dect_phy_init_params);
+		ret = nrf_modem_dect_phy_init();
 		if (ret) {
 			printk("nrf_modem_dect_phy_init returned: %i\n", ret);
-		} else {
-			ret = nrf_modem_dect_phy_capability_get(); /* asynch: result in callback */
-			if (ret) {
-				printk("nrf_modem_dect_phy_capability_get returned: %i\n", ret);
-			}
 		}
 	}
+}
+
+void dect_phy_ctrl_mdm_op_cancel_all(void)
+{
+	int err;
+
+	k_mutex_lock(&dect_phy_ctrl_mdm_api_op_cancel_all_mutex, K_FOREVER);
+
+	k_sem_reset(&dect_phy_ctrl_mdm_api_op_cancel_sema);
+	err = nrf_modem_dect_phy_cancel(NRF_MODEM_DECT_PHY_HANDLE_CANCEL_ALL);
+
+	if (err) {
+		desh_error("%s: cannot cancel ongoing operations: %d", (__func__), err);
+		/* continue */
+	} else {
+		/* Wait that cancel(all) is done */
+		err = k_sem_take(&dect_phy_ctrl_mdm_api_op_cancel_sema, K_SECONDS(5));
+		if (err) {
+			desh_error("%s: nrf_modem_dect_phy_cancel() timeout.", (__func__));
+			/* continue */
+		}
+	}
+	k_mutex_unlock(&dect_phy_ctrl_mdm_api_op_cancel_all_mutex);
 }
 
 /**************************************************************************************************/
@@ -788,6 +1144,68 @@ int dect_phy_ctrl_modem_temperature_get(void)
 	return ctrl_data.last_valid_temperature;
 }
 
+int dect_phy_ctrl_current_radio_mode_get(
+	enum nrf_modem_dect_phy_radio_mode *radio_mode)
+{
+	if (!ctrl_data.phy_api_initialized) {
+		desh_error("Phy api not initialized");
+		return -EACCES;
+	}
+	*radio_mode = ctrl_data.last_set_radio_mode;
+
+	return 0;
+}
+
+static enum nrf_modem_dect_phy_radio_mode dect_phy_ctrl_last_radio_mode_get(void)
+{
+	return ctrl_data.last_set_radio_mode;
+}
+
+static struct nrf_modem_dect_phy_latency_info *dect_phy_ctrl_modem_latency_info_ref_get(void)
+{
+	return &ctrl_data.mdm_latency_info;
+}
+
+uint64_t dect_phy_ctrl_modem_latency_min_margin_between_ops_get(void)
+{
+	uint64_t latency = DECT_PHY_TX_RX_SCHEDULING_OFFSET_MDM_TICKS;
+
+	if (ctrl_data.mdm_latency_info_valid) {
+		struct nrf_modem_dect_phy_latency_info *latency_info =
+			dect_phy_ctrl_modem_latency_info_ref_get();
+		enum nrf_modem_dect_phy_radio_mode radio_mode = dect_phy_ctrl_last_radio_mode_get();
+		uint32_t scheduler_offset =
+			latency_info->radio_mode[radio_mode]
+				.scheduled_operation_transition;
+
+		latency = scheduler_offset;
+	}
+	return latency;
+}
+
+uint64_t dect_phy_ctrl_modem_latency_for_next_op_get(bool is_tx)
+{
+	uint64_t latency = DECT_PHY_TX_RX_SCHEDULING_OFFSET_MDM_TICKS;
+	uint64_t min_margin = dect_phy_ctrl_modem_latency_min_margin_between_ops_get();
+
+	if (ctrl_data.mdm_latency_info_valid) {
+		struct nrf_modem_dect_phy_latency_info *latency_info =
+			dect_phy_ctrl_modem_latency_info_ref_get();
+		enum nrf_modem_dect_phy_radio_mode radio_mode = dect_phy_ctrl_last_radio_mode_get();
+
+		if (is_tx) {
+			latency = latency_info->radio_mode[radio_mode]
+					.scheduled_operation_startup +
+				latency_info->operation.transmit.idle_to_active;
+		} else {
+			latency = latency_info->radio_mode[radio_mode]
+					.scheduled_operation_startup +
+				latency_info->operation.receive.idle_to_active;
+		}
+	}
+	return MAX(latency, min_margin);
+}
+
 /**************************************************************************************************/
 
 bool dect_phy_ctrl_rx_is_ongoing(void)
@@ -798,7 +1216,7 @@ bool dect_phy_ctrl_rx_is_ongoing(void)
 void dect_phy_ctrl_rx_stop(void)
 {
 	ctrl_data.rx_cmd_on_going = false;
-	(void)nrf_modem_dect_phy_rx_stop(ctrl_data.rx_cmd_params.handle);
+	(void)nrf_modem_dect_phy_cancel(ctrl_data.rx_cmd_params.handle);
 	dect_phy_api_scheduler_resume();
 }
 
@@ -822,6 +1240,7 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params, bool restart)
 	}
 
 	if (params->suspend_scheduler) {
+		dect_phy_ctrl_mdm_op_cancel_all();
 		dect_phy_api_scheduler_suspend();
 	}
 
@@ -911,6 +1330,7 @@ void dect_phy_ctrl_status_get_n_print(void)
 		sprintf(tmp_mdm_str, "%d", temperature);
 	}
 	desh_print("  Modem temperature: %sC", tmp_mdm_str);
+	dect_phy_ctrl_utils_mdm_band_info_print();
 #if defined(CONFIG_BME680)
 	struct sensor_value data = {0};
 
@@ -1038,41 +1458,23 @@ static void dect_phy_rssi_channel_scan_completed_cb(enum nrf_modem_dect_phy_err 
 	}
 }
 
-static int dect_phy_ctrl_phy_reinit(void)
+static int dect_phy_ctrl_phy_handlers_init(void)
 {
 	int ret;
 
-	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
-	ret = nrf_modem_dect_phy_deinit();
+	dect_phy_ctrl_mdm_op_cancel_all();
+
+	ret = nrf_modem_dect_phy_event_handler_set(dect_phy_ctrl_mdm_evt_handler);
 	if (ret) {
-		desh_error("nrf_modem_dect_phy_deinit failed, err=%d", ret);
-		return ret;
+		desh_error("nrf_modem_dect_phy_event_handler_set returned: %i", ret);
 	}
 
-	/* Wait that deinit is done */
-	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
-		return -ETIMEDOUT;
-	}
-
-	k_sem_reset(&dect_phy_ctrl_mdm_api_init_sema);
-	dect_phy_ctrl_phy_init();
-
-	/* Wait that init is done */
-	ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(60));
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_init() timeout.", (__func__));
-		return -ETIMEDOUT;
-	}
-	return 0;
+	return ret;
 }
 
 int dect_phy_ctrl_rssi_scan_start(struct dect_phy_rssi_scan_params *params,
 				  dect_phy_ctrl_rssi_scan_completed_callback_t fp_result_callback)
 {
-	int ret;
-
 	if (!ctrl_data.phy_api_initialized) {
 		desh_error("Phy api not initialized");
 		return -EACCES;
@@ -1091,17 +1493,8 @@ int dect_phy_ctrl_rssi_scan_start(struct dect_phy_rssi_scan_params *params,
 	ctrl_data.rssi_scan_complete_cb = fp_result_callback;
 
 	if (params->suspend_scheduler) {
+		dect_phy_ctrl_mdm_op_cancel_all();
 		dect_phy_api_scheduler_suspend();
-	}
-
-	if (params->reinit_mdm_api) {
-		ret = dect_phy_ctrl_phy_reinit();
-		if (ret) {
-			if (params->suspend_scheduler) {
-				dect_phy_api_scheduler_resume();
-			}
-			return ret;
-		}
 	}
 
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RSSI_SCAN_RUN);
@@ -1154,21 +1547,7 @@ int dect_phy_ctrl_perf_cmd(struct dect_phy_perf_params *params)
 			"DECT operation already on going. Stop all before starting running perf.");
 		return -EBUSY;
 	}
-	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
-
-	/* We want to have own callbacks for perf command */
-	ret = nrf_modem_dect_phy_deinit();
-	if (ret) {
-		desh_error("nrf_modem_dect_phy_deinit failed, err=%d", ret);
-		return ret;
-	}
-
-	/* Wait that deinit is done */
-	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
-		return -ETIMEDOUT;
-	}
+	dect_phy_ctrl_mdm_op_cancel_all();
 
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_OFF);
 	ctrl_data.perf_ongoing = true;
@@ -1192,26 +1571,13 @@ void dect_phy_ctrl_perf_cmd_stop(void)
 int dect_phy_ctrl_ping_cmd(struct dect_phy_ping_params *params)
 {
 	int ret;
+
 	if (dect_phy_ctrl_op_ongoing()) {
 		desh_error("Operation already on going. Stop all before starting running ping.");
 		return -EBUSY;
 	}
-	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
 
-	/* We want to have own mdm phy api callbacks for ping command */
-	ret = nrf_modem_dect_phy_deinit();
-	if (ret) {
-		desh_error("nrf_modem_dect_phy_deinit failed, err=%d", ret);
-		return ret;
-	}
-
-	/* Wait that deinit is done */
-	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
-		return -ETIMEDOUT;
-	}
-
+	dect_phy_ctrl_mdm_op_cancel_all();
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_OFF);
 	ctrl_data.ping_ongoing = true;
 	ret = dect_phy_ping_cmd_handle(params);
@@ -1240,22 +1606,7 @@ int dect_phy_ctrl_rf_tool_cmd(struct dect_phy_rf_tool_params *params)
 		return -EBUSY;
 	}
 
-	k_sem_reset(&dect_phy_ctrl_mdm_api_deinit_sema);
-
-	/* We want to have own mdm phy api callbacks for cert command */
-	ret = nrf_modem_dect_phy_deinit();
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_deinit failed, err=%d", (__func__), ret);
-		return ret;
-	}
-
-	/* Wait that deinit is done */
-	ret = k_sem_take(&dect_phy_ctrl_mdm_api_deinit_sema, K_SECONDS(10));
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_deinit() timeout.", (__func__));
-		return -ETIMEDOUT;
-	}
-
+	dect_phy_ctrl_mdm_op_cancel_all();
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_DEBUG_OFF);
 	ctrl_data.cert_ongoing = true;
 	ret = dect_phy_rf_tool_cmd_handle(params);
@@ -1361,6 +1712,94 @@ bool dect_phy_ctrl_nbr_is_in_channel(uint16_t channel)
 	} else {
 		return dect_phy_mac_nbr_is_in_channel(channel);
 	}
+}
+
+/**************************************************************************************************/
+
+int dect_phy_ctrl_activate_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode)
+{
+	if (!ctrl_data.phy_api_initialized) {
+		desh_error("Phy api not initialized");
+		return -EACCES;
+	}
+	dect_phy_ctrl_phy_configure_from_settings();
+	dect_phy_ctrl_radio_activate(radio_mode);
+
+	return 0;
+}
+
+int dect_phy_ctrl_deactivate_cmd(void)
+{
+	int ret;
+
+	if (!ctrl_data.phy_api_initialized) {
+		desh_error("Phy api not initialized");
+		return -EACCES;
+	}
+
+	ret = nrf_modem_dect_phy_deactivate();
+	if (ret) {
+		desh_error("nrf_modem_dect_phy_deactivate() failed, err=%d", ret);
+	}
+	return ret;
+}
+
+int dect_phy_ctrl_radio_mode_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode)
+{
+	if (!ctrl_data.phy_api_initialized) {
+		desh_error("Phy api not initialized");
+		return -EACCES;
+	}
+
+	if (dect_phy_ctrl_op_ongoing()) {
+		/* Cancel all from modem before */
+		desh_warn("Operation already on going. "
+			  "Canceling all operations in modem "
+			  "before starting running radio mode change.");
+		dect_phy_ctrl_mdm_op_cancel_all();
+	}
+
+	uint64_t first_possible_tx;
+	uint64_t time_now = dect_app_modem_time_now();
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+
+	first_possible_tx =
+		time_now +
+			dect_phy_ctrl_modem_latency_for_next_op_get(true) +
+				US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us);
+
+	struct nrf_modem_dect_phy_radio_config_params config_params = {
+		.radio_mode = radio_mode,
+		.start_time = first_possible_tx,
+		.handle = DECT_PHY_RADIO_MODE_CONFIG_HANDLE,
+	};
+	int ret = nrf_modem_dect_phy_radio_config(&config_params);
+
+	ctrl_data.last_set_radio_mode_successful = false;
+	if (ret) {
+		desh_error("nrf_modem_dect_phy_radio_config() failed, err=%d", ret);
+	}
+
+	/* Wait that radio mode configure is done */
+	ret = k_sem_take(&dect_phy_ctrl_mdm_api_radio_mode_config_sema, K_SECONDS(5));
+	if (ret) {
+		desh_error("(%s): nrf_modem_dect_phy_radio_config() timeout.", (__func__));
+		ctrl_data.last_set_radio_mode_successful = false;
+	} else {
+		char tmp_str[128] = {0};
+
+		dect_common_utils_radio_mode_to_string(radio_mode, tmp_str);
+		if (ctrl_data.last_set_radio_mode_successful) {
+			ctrl_data.last_set_radio_mode = radio_mode;
+			desh_print("DECT radio mode configured to: %s.", tmp_str);
+		} else {
+			desh_error("DECT radio mode configuration failed to %s.", tmp_str);
+			desh_print("Last set DECT radio mode %s.",
+				dect_common_utils_radio_mode_to_string(
+					ctrl_data.last_set_radio_mode, tmp_str));
+		}
+	}
+	return ret;
 }
 
 /**************************************************************************************************/

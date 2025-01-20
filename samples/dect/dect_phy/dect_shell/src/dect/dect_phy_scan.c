@@ -32,7 +32,6 @@ struct dect_phy_rssi_scan_data {
 	/* Current scanning state */
 	enum nrf_modem_dect_phy_err phy_status;
 
-	uint64_t start_time_mdm_ticks;
 	uint32_t total_time_subslots;
 	uint16_t current_scan_count; /* Scan count per channel */
 	uint16_t current_saturated_count;
@@ -88,42 +87,13 @@ void dect_phy_scan_rssi_rx_th_run(struct dect_phy_rssi_scan_params *cmd_params)
 		.duration = rssi_scan_data.total_time_subslots,
 		.reporting_interval = NRF_MODEM_DECT_PHY_RSSI_INTERVAL_24_SLOTS,
 	};
-	uint64_t mdm_time_now = dect_app_modem_time_now();
 	int ret = 0;
 	struct dect_phy_settings *curr_settings = dect_common_settings_ref_get();
+	uint64_t latency = dect_phy_ctrl_modem_latency_for_next_op_get(false) +
+			(US_TO_MODEM_TICKS(curr_settings->scheduler.scheduling_delay_us));
+	uint64_t mdm_time_now = dect_app_modem_time_now();
 
-	if (rssi_scan_data.start_time_mdm_ticks == 0) {
-		/* 1st time*/
-		int factor = 1;
-
-		if (!dect_phy_api_scheduler_done_list_is_empty()) {
-			/* Something cooking there, let's wait more */
-			factor = 2;
-		}
-		if (cmd_params->suspend_scheduler) {
-			/* Wait for a while to get modem emptied of already scheduled stuff */
-			rssi_params.start_time =
-				mdm_time_now +
-				(factor *
-				 MS_TO_MODEM_TICKS(DECT_PHY_API_SCHEDULER_OP_TIME_WINDOW_MS + 100));
-			rssi_scan_data.start_time_mdm_ticks = rssi_params.start_time;
-		} else {
-			rssi_scan_data.start_time_mdm_ticks = mdm_time_now;
-		}
-	} else {
-		if (cmd_params->suspend_scheduler && !dect_phy_api_scheduler_done_list_is_empty()) {
-			rssi_params.start_time =
-				mdm_time_now +
-				(US_TO_MODEM_TICKS(curr_settings->scheduler.scheduling_delay_us));
-		}
-	}
-
-	/* Override set start time to zero if mdm api was reinited then no other
-	 * operations on the way
-	 */
-	if (cmd_params->reinit_mdm_api) {
-		rssi_params.start_time = 0;
-	}
+	rssi_params.start_time = mdm_time_now + latency;
 
 	ret = nrf_modem_dect_phy_rssi(&rssi_params);
 	if (ret) {
@@ -717,7 +687,6 @@ void dect_phy_scan_rssi_finished_handle(enum nrf_modem_dect_phy_err status)
 		     rssi_scan_data.current_channel != dect_common_utils_channel_max_on_band(
 							       curr_settings->common.band_nbr))) {
 			/* Start a new round in next channel */
-			rssi_scan_data.start_time_mdm_ticks = dect_app_modem_time_now();
 			rssi_scan_data.first_mdm_meas_time_mdm_ticks = 0;
 			rssi_scan_data.rssi_high_level = -127;
 			rssi_scan_data.rssi_low_level = 1;
@@ -771,7 +740,7 @@ rssi_scan_done:
 /**************************************************************************************************/
 
 void dect_phy_scan_rssi_cb_handle(enum nrf_modem_dect_phy_err status,
-				  struct nrf_modem_dect_phy_rssi_meas const *p_result)
+				  struct nrf_modem_dect_phy_rssi_event const *p_result)
 {
 	if (status == NRF_MODEM_DECT_PHY_SUCCESS) {
 		__ASSERT_NO_MSG(p_result != NULL);
@@ -875,6 +844,8 @@ void dect_phy_scan_rssi_cb_handle(enum nrf_modem_dect_phy_err status,
 
 void dect_phy_scan_rx_th_run(struct dect_phy_rx_cmd_params *params)
 {
+	struct dect_phy_settings *current_settings;
+	uint64_t time_now;
 	struct nrf_modem_dect_phy_rx_params rx_op = {
 		.handle = params->handle,
 		.start_time = 0,
@@ -886,32 +857,43 @@ void dect_phy_scan_rx_th_run(struct dect_phy_rx_cmd_params *params)
 		.duration = SECONDS_TO_MODEM_TICKS(params->duration_secs),
 		.rssi_interval = NRF_MODEM_DECT_PHY_RSSI_INTERVAL_OFF,
 	};
-	int ret;
+	int err;
+
+	current_settings = dect_common_settings_ref_get();
+	time_now = dect_app_modem_time_now();
 
 	if (params->rssi_interval_secs) {
 		rx_op.rssi_interval = NRF_MODEM_DECT_PHY_RSSI_INTERVAL_24_SLOTS;
 	}
 
 	if (params->suspend_scheduler) {
-		/* Modem is not necessarily idle thus start_time zero cannot be used. */
 		/* Wait for a while to get modem emptied of already scheduled stuff */
-
-		uint64_t time_now = dect_app_modem_time_now();
-
 		rx_op.start_time =
 			time_now +
 			(2 * MS_TO_MODEM_TICKS(DECT_PHY_API_SCHEDULER_OP_TIME_WINDOW_MS));
-	}
+	} else {
+		enum nrf_modem_dect_phy_radio_mode radio_mode;
 
+		uint64_t latency = dect_phy_ctrl_modem_latency_for_next_op_get(false) +
+			(3 * US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us));
+
+		err = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
+		if (!err && radio_mode == NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY &&
+			dect_phy_api_scheduler_list_is_empty()) {
+			rx_op.start_time = 0;
+		} else {
+			rx_op.start_time = time_now + latency;
+		}
+	}
 	rx_op.filter = params->filter;
 
 	desh_print("-----------------------------------------------------------------------------");
 	desh_print("Starting RX: channel %d, rssi_level %d, duration %d secs.",
 		params->channel, params->expected_rssi_level, params->duration_secs);
 
-	ret = dect_phy_common_rx_op(&rx_op);
-	if (ret) {
-		desh_error("nrf_modem_dect_phy_rx failed %d", ret);
+	err = dect_phy_common_rx_op(&rx_op);
+	if (err) {
+		desh_error("nrf_modem_dect_phy_rx failed %d", err);
 	}
 }
 

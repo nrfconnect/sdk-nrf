@@ -31,8 +31,6 @@
 BUILD_ASSERT((sizeof(dect_phy_perf_pdu_t) == DECT_DATA_MAX_LEN),
 	     "dect_phy_perf_pdu_t must be 700 bytes");
 
-K_SEM_DEFINE(perf_phy_api_init, 0, 1);
-
 #define DECT_PHY_PERF_HARQ_TX_PROCESS_COUNT	   8
 #define DECT_PHY_PERF_HARQ_TX_PROCESS_TIMEOUT_SECS 2
 #define DECT_PHY_PERF_CLIENT_TX_WINDOW_COUNT	   7
@@ -120,7 +118,6 @@ static struct dect_phy_perf_data {
 	int64_t time_started_ms;
 
 	struct dect_phy_perf_params cmd_params;
-	struct nrf_modem_dect_phy_modem_cfg mdm_init_conf;
 
 	struct dect_phy_perf_rx_metrics rx_metrics;
 	struct dect_phy_perf_tx_metrics tx_metrics;
@@ -154,9 +151,8 @@ static int dect_phy_perf_rx_pdc_data_handle(struct dect_phy_data_rcv_common_para
 #define DECT_PHY_PERF_EVENT_RX_PCC_CRC_ERROR  4
 #define DECT_PHY_PERF_EVENT_RX_PDC_CRC_ERROR  5
 #define DECT_PHY_PERF_EVENT_RX_PCC	      6
-#define DECT_PHY_PERF_EVENT_MDM_INITIALIZED   7
-#define DECT_PHY_PERF_EVENT_HARQ_TX_WIN_TIMER 8
-#define DECT_PHY_PERF_EVENT_CMD_DONE	      9
+#define DECT_PHY_PERF_EVENT_HARQ_TX_WIN_TIMER 7
+#define DECT_PHY_PERF_EVENT_CMD_DONE	      8
 
 static int dect_phy_perf_msgq_non_data_op_add(uint16_t event_id);
 static int dect_phy_perf_msgq_data_op_add(uint16_t event_id, void *data, size_t data_size);
@@ -410,69 +406,40 @@ static uint8_t dect_phy_perf_current_free_harq_tx_process_count_get(void)
 
 /**************************************************************************************************/
 
-static void dect_phy_perf_initialize_cb(const uint64_t *time, int16_t temperature,
-				 enum nrf_modem_dect_phy_err status,
-				 const struct nrf_modem_dect_phy_modem_cfg *modem_configuration)
-{
-	struct dect_phy_common_op_initialized_params initialized_evt_params;
-
-	initialized_evt_params.time = *time;
-	initialized_evt_params.temperature = temperature;
-	initialized_evt_params.status = status;
-	initialized_evt_params.modem_configuration = *modem_configuration;
-
-	dect_app_modem_time_save(time);
-	dect_phy_perf_msgq_data_op_add(DECT_PHY_PERF_EVENT_MDM_INITIALIZED,
-				       (void *)&initialized_evt_params,
-				       sizeof(struct dect_phy_common_op_initialized_params));
-}
-
-static void dect_phy_perf_rx_op_stop_cb(uint64_t const *time, enum nrf_modem_dect_phy_err status,
-				 uint32_t handle)
-{
-	dect_app_modem_time_save(time);
-}
-
-static void dect_phy_perf_op_complete_cb(uint64_t const *time, int16_t temperature,
-				  enum nrf_modem_dect_phy_err status, uint32_t handle)
+static void dect_phy_perf_mdm_op_complete_cb(
+	const struct nrf_modem_dect_phy_op_complete_event *evt, uint64_t *time)
 {
 	struct dect_phy_common_op_completed_params perf_op_completed_params = {
-		.handle = handle,
-		.temperature = temperature,
-		.status = status,
+		.handle = evt->handle,
+		.temperature = evt->temp,
+		.status = evt->err,
 		.time = *time,
 	};
-
-	dect_app_modem_time_save(time);
 
 	dect_phy_perf_msgq_data_op_add(DECT_PHY_PERF_EVENT_MDM_OP_COMPLETED,
 				       (void *)&perf_op_completed_params,
 				       sizeof(struct dect_phy_common_op_completed_params));
 }
 
-static void dect_phy_perf_rx_pcc_cb(uint64_t const *time,
-				    struct nrf_modem_dect_phy_rx_pcc_status const *p_rx_status,
-				    union nrf_modem_dect_phy_hdr const *p_phy_header)
+static void dect_phy_perf_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_event *evt, uint64_t *time)
 {
 	struct dect_phy_common_op_pcc_rcv_params ctrl_pcc_op_params;
 	struct dect_phy_perf_params *cmd_params = &(perf_data.cmd_params);
 	uint64_t harq_feedback_start_time = 0;
-	struct dect_phy_header_type2_format0_t *header = (void *)p_phy_header;
+	struct dect_phy_header_type2_format0_t *header = (void *)&evt->hdr;
 	uint16_t len_slots = header->packet_length + 1; /* Always in slots */
 	struct dect_phy_header_type2_format1_t feedback_header;
 
-	dect_app_modem_time_save(time);
-
-	ctrl_pcc_op_params.pcc_status = *p_rx_status;
-	ctrl_pcc_op_params.phy_header = *p_phy_header;
+	ctrl_pcc_op_params.pcc_status = *evt;
+	ctrl_pcc_op_params.phy_header = evt->hdr;
 	ctrl_pcc_op_params.phy_len = header->packet_length;
 	ctrl_pcc_op_params.phy_len_type = header->packet_length_type;
 	ctrl_pcc_op_params.time = *time;
-	ctrl_pcc_op_params.stf_start_time = p_rx_status->stf_start_time;
+	ctrl_pcc_op_params.stf_start_time = evt->stf_start_time;
 
 	if (cmd_params->use_harq && cmd_params->role == DECT_PHY_COMMON_ROLE_SERVER) {
 		harq_feedback_start_time =
-			p_rx_status->stf_start_time +
+			evt->stf_start_time +
 			(len_slots * DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS) +
 			(cmd_params->server_harq_feedback_tx_delay_subslot_count *
 			 DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS);
@@ -481,9 +448,9 @@ static void dect_phy_perf_rx_pcc_cb(uint64_t const *time,
 
 	/* Provide HARQ feedback if requested */
 	perf_data.rx_metrics.rx_last_pcc_received = k_uptime_get();
-	if (p_rx_status->header_status == NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
-		struct dect_phy_ctrl_field_common *phy_h = (void *)p_phy_header;
-		const uint8_t *p_ptr = (uint8_t *)p_phy_header;
+	if (evt->header_status == NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
+		struct dect_phy_ctrl_field_common *phy_h = (void *)&evt->hdr;
+		const uint8_t *p_ptr = (uint8_t *)&evt->hdr;
 
 		/* Get to transmitter_identity_hi */
 		p_ptr++;
@@ -492,7 +459,7 @@ static void dect_phy_perf_rx_pcc_cb(uint64_t const *time,
 
 		perf_data.rx_metrics.rx_last_pcc_phy_pwr = phy_h->transmit_power;
 		if (cmd_params->role == DECT_PHY_COMMON_ROLE_SERVER) {
-			if (p_rx_status->phy_type == DECT_PHY_HEADER_TYPE2) {
+			if (evt->phy_type == DECT_PHY_HEADER_TYPE2) {
 				struct nrf_modem_dect_phy_tx_params harq_tx =
 					perf_data.server_data.harq_feedback_data.params;
 
@@ -567,125 +534,72 @@ static void dect_phy_perf_rx_pcc_cb(uint64_t const *time,
 				       sizeof(struct dect_phy_common_op_pcc_rcv_params));
 }
 
-static void dect_phy_perf_pcc_crc_failure_cb(
-	uint64_t const *time, struct nrf_modem_dect_phy_rx_pcc_crc_failure const *crc_failure)
+static void dect_phy_perf_mdm_pcc_crc_failure_cb(
+	const struct nrf_modem_dect_phy_pcc_crc_failure_event *evt, uint64_t *time)
 {
 	struct dect_phy_common_op_pcc_crc_fail_params pdc_crc_fail_params = {
 		.time = *time,
-		.crc_failure = *crc_failure,
+		.crc_failure = *evt,
 	};
 
-	dect_app_modem_time_save(time);
 	dect_phy_perf_msgq_data_op_add(DECT_PHY_PERF_EVENT_RX_PCC_CRC_ERROR,
 				       (void *)&pdc_crc_fail_params,
 				       sizeof(struct dect_phy_common_op_pcc_crc_fail_params));
 }
 
-static void dect_phy_perf_rx_pdc_cb(uint64_t const *time,
-			     struct nrf_modem_dect_phy_rx_pdc_status const *p_rx_status,
-			     void const *p_data, uint32_t length)
+static void dect_phy_perf_mdm_pdc_cb(const struct nrf_modem_dect_phy_pdc_event *evt, uint64_t *time)
 {
-	int16_t rssi_level = p_rx_status->rssi_2 / 2;
-
-	dect_app_modem_time_save(time);
+	int16_t rssi_level = evt->rssi_2 / 2;
 
 	struct dect_phy_commmon_op_pdc_rcv_params perf_pdc_op_params;
 
-	perf_pdc_op_params.rx_status = *p_rx_status;
+	perf_pdc_op_params.rx_status = *evt;
 
-	perf_pdc_op_params.data_length = length;
+	perf_pdc_op_params.data_length = evt->len;
 	perf_pdc_op_params.time = *time;
 
 	perf_pdc_op_params.rx_pwr_dbm = 0; /* Not needed from PDC */
 	perf_pdc_op_params.rx_rssi_level_dbm = rssi_level;
-	perf_pdc_op_params.last_rx_op_channel = perf_data.cmd_params.channel;
+	perf_pdc_op_params.rx_channel = perf_data.cmd_params.channel;
 
-	if (length <= sizeof(perf_pdc_op_params.data)) {
-		memcpy(perf_pdc_op_params.data, p_data, length);
+	if (evt->len <= sizeof(perf_pdc_op_params.data)) {
+		memcpy(perf_pdc_op_params.data, evt->data, evt->len);
 		dect_phy_perf_msgq_data_op_add(DECT_PHY_PERF_EVENT_RX_PDC_DATA,
 					       (void *)&perf_pdc_op_params,
 					       sizeof(struct dect_phy_commmon_op_pdc_rcv_params));
 	} else {
 		printk("Received data is too long to be received by PERF TH - discarded (len %d, "
 		       "buf size %d)\n",
-		       length, sizeof(perf_pdc_op_params.data));
+		       evt->len, sizeof(perf_pdc_op_params.data));
 	}
 }
 
-static void dect_phy_perf_on_pdc_crc_failure_cb(
-	uint64_t const *time, struct nrf_modem_dect_phy_rx_pdc_crc_failure const *crc_failure)
+static void dect_phy_perf_mdm_pdc_crc_failure_cb(
+	const struct nrf_modem_dect_phy_pdc_crc_failure_event *evt, uint64_t *time)
 {
 	struct dect_phy_common_op_pdc_crc_fail_params pdc_crc_fail_params = {
 		.time = *time,
-		.crc_failure = *crc_failure,
+		.crc_failure = *evt,
 	};
 
-	dect_app_modem_time_save(time);
 	dect_phy_perf_msgq_data_op_add(DECT_PHY_PERF_EVENT_RX_PDC_CRC_ERROR,
 				       (void *)&pdc_crc_fail_params,
 				       sizeof(struct dect_phy_common_op_pdc_crc_fail_params));
 }
 
-static void dect_phy_perf_on_rssi_cb(const uint64_t *time,
-			      const struct nrf_modem_dect_phy_rssi_meas *p_result)
+static void dect_phy_perf_mdm_capability_get_cb(
+	const struct nrf_modem_dect_phy_capability_get_event *evt)
 {
-	printk("WARN: Unexpectedly in %s\n", (__func__));
-}
-
-static void dect_phy_perf_link_configuration_cb(
-	uint64_t const *time, enum nrf_modem_dect_phy_err status)
-{
-	printk("WARN: Unexpectedly in %s\n", (__func__));
-}
-
-static void dect_phy_perf_time_query_cb(uint64_t const *time, enum nrf_modem_dect_phy_err status)
-{
-	printk("WARN: Unexpectedly in %s\n", (__func__));
-}
-
-static void dect_phy_perf_capability_get_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err,
-				     const struct nrf_modem_dect_phy_capability *capabilities)
-{
-	dect_app_modem_time_save(time);
-
-	for (int i = 0; i < capabilities->variant_count; i++) {
-		if (capabilities->variant[i].harq_process_count_max !=
+	for (int i = 0; i < evt->capability->variant_count; i++) {
+		if (evt->capability->variant[i].harq_process_count_max !=
 		    DECT_PHY_PERF_HARQ_TX_PROCESS_COUNT) {
 			printk("Modem HARQ max process count (%d) does not match expected count: "
 			       "%d!!!!\n",
-			       capabilities->variant[i].harq_process_count_max,
+			       evt->capability->variant[i].harq_process_count_max,
 			       DECT_PHY_PERF_HARQ_TX_PROCESS_COUNT);
 		}
 	}
 }
-
-static void dect_phy_perf_stf_cover_seq_control_cb(
-	const uint64_t *time, enum nrf_modem_dect_phy_err err)
-{
-	printk("WARN: Unexpectedly in %s\n", (__func__));
-}
-
-extern struct k_sem dect_phy_ctrl_mdm_api_deinit_sema;
-static void dect_phy_perf_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
-{
-	k_sem_give(&dect_phy_ctrl_mdm_api_deinit_sema);
-}
-
-static const struct nrf_modem_dect_phy_callbacks perf_phy_api_config = {
-	.init = dect_phy_perf_initialize_cb,
-	.rx_stop = dect_phy_perf_rx_op_stop_cb,
-	.op_complete = dect_phy_perf_op_complete_cb,
-	.pcc = dect_phy_perf_rx_pcc_cb,
-	.pcc_crc_err = dect_phy_perf_pcc_crc_failure_cb,
-	.pdc = dect_phy_perf_rx_pdc_cb,
-	.pdc_crc_err = dect_phy_perf_on_pdc_crc_failure_cb,
-	.rssi = dect_phy_perf_on_rssi_cb,
-	.link_config = dect_phy_perf_link_configuration_cb,
-	.time_get = dect_phy_perf_time_query_cb,
-	.capability_get = dect_phy_perf_capability_get_cb,
-	.stf_cover_seq_control = dect_phy_perf_stf_cover_seq_control_cb,
-	.deinit = dect_phy_perf_deinit_cb,
-};
 
 /**************************************************************************************************/
 
@@ -897,7 +811,7 @@ static int dect_phy_perf_client_start(void)
 	uint64_t time_now = dect_app_modem_time_now();
 	uint64_t first_possible_tx =
 		time_now +
-		(US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us + 4000));
+		(US_TO_MODEM_TICKS(2 * current_settings->scheduler.scheduling_delay_us + 4000));
 
 	/* Sending max amount of data that can be encoded to given slot amount */
 	int16_t perf_pdu_byte_count =
@@ -1005,11 +919,23 @@ static int dect_phy_perf_start(struct dect_phy_perf_params *params,
 		ret = dect_phy_perf_client_start();
 	} else {
 		__ASSERT_NO_MSG(params->role == DECT_PHY_COMMON_ROLE_SERVER);
+		enum nrf_modem_dect_phy_radio_mode radio_mode;
+		uint64_t next_possible_start_time = 0;
+
+		ret = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
 
 		desh_print("Starting server RX: channel %d, exp_rssi_level %d, duration %d secs.",
 			   params->channel, params->expected_rx_rssi_level, params->duration_secs);
 
-		ret = dect_phy_perf_server_rx_start(0);
+		if (!ret && radio_mode != NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY) {
+			uint64_t time_now = dect_app_modem_time_now();
+			struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+
+			next_possible_start_time =
+				time_now + (3 * US_TO_MODEM_TICKS(
+					current_settings->scheduler.scheduling_delay_us));
+		}
+		ret = dect_phy_perf_server_rx_start(next_possible_start_time);
 	}
 	return ret;
 }
@@ -1050,8 +976,9 @@ static int dect_phy_perf_tx_request_results(void)
 		.transmitter_identity_lo =
 			(uint8_t)(current_settings->common.transmitter_id & 0xFF),
 		.df_mcs = 0,
-		.transmit_power = dect_common_utils_next_phy_tx_power_get(
-			dect_common_utils_dbm_to_phy_tx_power(params->tx_power_dbm)),
+		.transmit_power = dect_phy_ctrl_utils_mdm_next_supported_phy_tx_power_get(
+			dect_common_utils_dbm_to_phy_tx_power(params->tx_power_dbm),
+			params->channel),
 		.receiver_identity_hi = (uint8_t)(params->destination_transmitter_id >> 8),
 		.receiver_identity_lo = (uint8_t)(params->destination_transmitter_id & 0xFF),
 		.feedback.format1.format = 0,
@@ -1188,8 +1115,8 @@ static int dect_phy_perf_server_results_tx(char *result_str)
 		.transmitter_identity_lo =
 			(uint8_t)(current_settings->common.transmitter_id & 0xFF),
 		.df_mcs = 1,
-		.transmit_power = dect_common_utils_next_phy_tx_power_get(
-			perf_data.rx_metrics.rx_last_pcc_phy_pwr),
+		.transmit_power = dect_phy_ctrl_utils_mdm_next_supported_phy_tx_power_get(
+			perf_data.rx_metrics.rx_last_pcc_phy_pwr, params->channel),
 		.receiver_identity_hi = (uint8_t)(perf_data.rx_metrics.rx_last_tx_id >> 8),
 		.receiver_identity_lo = (uint8_t)(perf_data.rx_metrics.rx_last_tx_id & 0xFF),
 		.feedback.format1.format = 0,
@@ -1298,7 +1225,7 @@ static void dect_phy_perf_server_report_local_and_tx_results(void)
 		   (strlen(results_str) + 1), results_str);
 
 	/* Send results to client: */
-	(void)nrf_modem_dect_phy_rx_stop(DECT_PHY_PERF_SERVER_RX_HANDLE);
+	(void)nrf_modem_dect_phy_cancel(DECT_PHY_PERF_SERVER_RX_HANDLE);
 	if (dect_phy_perf_server_results_tx(results_str)) {
 		desh_error("Cannot start sending server results");
 	}
@@ -1532,25 +1459,6 @@ static void dect_phy_perf_thread_fn(void)
 			dect_phy_perf_client_tx_with_harq(next_possible_tx);
 			break;
 		}
-		case DECT_PHY_PERF_EVENT_MDM_INITIALIZED: {
-			struct dect_phy_common_op_initialized_params *params =
-				(struct dect_phy_common_op_initialized_params *)event.data;
-
-			if (params->status) {
-				desh_error("(%s): init failed (time %llu, temperature %d, "
-					   "temp_limit %d): %d",
-					   (__func__), params->time, params->temperature,
-					   params->modem_configuration.temperature_limit,
-					   params->status);
-			} else {
-				desh_print("dect phy api initialized for perf command.");
-				perf_data.mdm_init_conf = params->modem_configuration;
-				dect_phy_perf_harq_tx_process_table_init(
-					perf_data.cmd_params.client_harq_process_nbr_max);
-			}
-			k_sem_give(&perf_phy_api_init);
-			break;
-		}
 
 		case DECT_PHY_PERF_EVENT_MDM_OP_COMPLETED: {
 			struct dect_phy_common_op_completed_params *params =
@@ -1719,10 +1627,11 @@ rx_pcc_debug:
 
 					perf_data.rx_metrics.rx_last_pcc_print_zticks =
 						z_ticks_last_pcc_print;
-					desh_print("Periodic debug: PCC received (time %llu): "
-						   "status: \"%s\", snr %d, "
+					desh_print("Periodic debug: PCC received (time %llu, "
+						   "handle %d): status: \"%s\", snr %d, "
 						   "RSSI %d, tx pwr %d dbm",
-						   params->time, tmp_str, params->pcc_status.snr,
+						   params->time, params->pcc_status.handle,
+						   tmp_str, params->pcc_status.snr,
 						   rssi_level,
 						   dect_common_utils_phy_tx_power_to_dbm(
 							   phy_h->transmit_power));
@@ -1763,13 +1672,15 @@ rx_pcc_debug:
 					char snum[64] = {0};
 					unsigned char hex_data[128];
 					int i;
-					struct nrf_modem_dect_phy_rx_pdc_status *p_rx_status =
+					struct nrf_modem_dect_phy_pdc_event *p_rx_status =
 						&(params->rx_status);
 					int16_t rssi_level = p_rx_status->rssi_2 / 2;
 
-					desh_print("PDC received (time %llu): snr %d, RSSI-2 %d "
+					desh_print("PDC received (time %llu, handle %d): "
+						   "snr %d, RSSI-2 %d "
 						   "(RSSI %d), len %d",
-						   params->time, p_rx_status->snr,
+						   params->time, p_rx_status->handle,
+						   p_rx_status->snr,
 						   p_rx_status->rssi_2, rssi_level,
 						   params->data_length);
 
@@ -1837,49 +1748,68 @@ static int dect_phy_perf_msgq_non_data_op_add(uint16_t event_id)
 
 /**************************************************************************************************/
 
-static void dect_phy_perf_phy_init(struct nrf_modem_dect_phy_init_params *init_params)
+void dect_phy_perf_mdm_evt_handler(const struct nrf_modem_dect_phy_event *evt)
 {
-	int ret = nrf_modem_dect_phy_callback_set(&perf_phy_api_config);
+	dect_app_modem_time_save(&evt->time);
+
+	switch (evt->id) {
+	case NRF_MODEM_DECT_PHY_EVT_COMPLETED:
+		dect_phy_perf_mdm_op_complete_cb(&evt->op_complete, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PCC:
+		dect_phy_perf_mdm_pcc_cb(&evt->pcc, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PCC_ERROR:
+		dect_phy_perf_mdm_pcc_crc_failure_cb(&evt->pcc_crc_err, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC:
+		dect_phy_perf_mdm_pdc_cb(&evt->pdc, (uint64_t *) &evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC_ERROR:
+		dect_phy_perf_mdm_pdc_crc_failure_cb(&evt->pdc_crc_err, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CAPABILITY:
+		dect_phy_perf_mdm_capability_get_cb(&evt->capability_get);
+		break;
+
+	/* Callbacks handled by dect_phy_ctrl */
+	case NRF_MODEM_DECT_PHY_EVT_RADIO_CONFIG:
+		dect_phy_ctrl_mdm_radio_config_cb(&evt->radio_config);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_ACTIVATE:
+		dect_phy_ctrl_mdm_activate_cb(&evt->activate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_DEACTIVATE:
+		dect_phy_ctrl_mdm_deactivate_cb(&evt->deactivate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CANCELED:
+		dect_phy_ctrl_mdm_cancel_cb(&evt->cancel);
+		break;
+
+	default:
+		printk("%s: WARN: Unexpected event id %d\n", (__func__), evt->id);
+		break;
+	}
+}
+
+static void dect_phy_perf_phy_init(void)
+{
+	int ret = nrf_modem_dect_phy_event_handler_set(dect_phy_perf_mdm_evt_handler);
 
 	if (ret) {
-		printk("nrf_modem_dect_phy_callback_set returned: %i\n", ret);
-	} else {
-		ret = nrf_modem_dect_phy_init(init_params);
-
-		if (ret) {
-			printk("nrf_modem_dect_phy_init returned: %i\n", ret);
-		} else {
-			ret = nrf_modem_dect_phy_capability_get(); /* asynch: result in callback */
-			if (ret) {
-				printk("nrf_modem_dect_phy_capability_get returned: %i\n", ret);
-			}
-		}
+		printk("nrf_modem_dect_phy_event_handler_set returned: %i\n", ret);
 	}
 }
 
 int dect_phy_perf_cmd_handle(struct dect_phy_perf_params *params)
 {
 	int ret;
-	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
-	struct nrf_modem_dect_phy_init_params perf_phy_init_params = {
-		.harq_rx_expiry_time_us = params->mdm_init_harq_expiry_time_us,
-		.harq_rx_process_count = params->mdm_init_harq_process_count,
-		.reserved = 0,
-		.band4_support = ((current_settings->common.band_nbr == 4) ? 1 : 0),
-	};
 
 	if (perf_data.perf_ongoing) {
 		desh_error("perf command already running");
 		return -1;
 	}
-	k_sem_reset(&perf_phy_api_init);
-	dect_phy_perf_phy_init(&perf_phy_init_params);
-
-	ret = k_sem_take(&perf_phy_api_init, K_SECONDS(5));
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_init() timeout.", (__func__));
-		return -ETIMEDOUT;
-	}
+	dect_phy_perf_phy_init();
 
 	ret = dect_phy_perf_start(params, START);
 	if (ret) {
@@ -1907,7 +1837,6 @@ void dect_phy_perf_cmd_stop(void)
 		}
 	} else {
 		dect_phy_perf_msgq_non_data_op_add(DECT_PHY_PERF_EVENT_SERVER_REPORT);
-		nrf_modem_dect_phy_rx_stop(DECT_PHY_PERF_SERVER_RX_HANDLE);
 		dect_phy_perf_server_data_ongoing_rx_count_decrease();
 		dect_phy_perf_msgq_non_data_op_add(DECT_PHY_PERF_EVENT_CMD_DONE);
 	}

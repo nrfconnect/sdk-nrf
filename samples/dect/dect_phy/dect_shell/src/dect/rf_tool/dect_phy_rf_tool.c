@@ -120,52 +120,25 @@ static bool dect_phy_rf_tool_rx_mode(enum dect_phy_rf_tool_mode mode);
 /**************************************************************************************************/
 
 #define DECT_PHY_RF_TOOL_EVT_CMD_DONE			    1
-#define DECT_PHY_RF_TOOL_EVT_MDM_INITIALIZED		    2
-#define DECT_PHY_RF_TOOL_EVT_MDM_DEINITIALIZED		    3
-#define DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED		    4
-#define DECT_PHY_RF_TOOL_EVT_STATUS_REPORT		    5
-#define DECT_PHY_RF_TOOL_EVT_RX_PCC_CRC_ERROR		    6
-#define DECT_PHY_RF_TOOL_EVT_RX_PDC_CRC_ERROR		    7
-#define DECT_PHY_RF_TOOL_EVT_RX_PCC			    8
-#define DECT_PHY_RF_TOOL_EVT_RX_PDC_DATA		    9
-#define DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE 10
+#define DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED		    2
+#define DECT_PHY_RF_TOOL_EVT_RX_PCC_CRC_ERROR		    3
+#define DECT_PHY_RF_TOOL_EVT_RX_PDC_CRC_ERROR		    4
+#define DECT_PHY_RF_TOOL_EVT_RX_PCC			    5
+#define DECT_PHY_RF_TOOL_EVT_RX_PDC_DATA		    6
+#define DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE 7
 
 /**************************************************************************************************/
 
-static void dect_phy_rf_tool_initialize_cb(const uint64_t *time, int16_t temperature,
-				    enum nrf_modem_dect_phy_err status,
-				    const struct nrf_modem_dect_phy_modem_cfg *modem_configuration)
-{
-	struct dect_phy_common_op_initialized_params initialized_evt_params;
-
-	initialized_evt_params.time = *time;
-	initialized_evt_params.temperature = temperature;
-	initialized_evt_params.status = status;
-	initialized_evt_params.modem_configuration = *modem_configuration;
-
-	dect_app_modem_time_save(time);
-	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_MDM_INITIALIZED,
-					  (void *)&initialized_evt_params,
-					  sizeof(struct dect_phy_common_op_initialized_params));
-}
-
-static void dect_phy_rf_tool_rx_op_stop_cb(uint64_t const *time, enum nrf_modem_dect_phy_err status,
-				    uint32_t handle)
-{
-	dect_app_modem_time_save(time);
-}
-
-static void dect_phy_rf_tool_op_complete_cb(uint64_t const *time, int16_t temperature,
-				     enum nrf_modem_dect_phy_err status, uint32_t handle)
+static void dect_phy_rf_tool_mdm_op_complete_cb(
+	const struct nrf_modem_dect_phy_op_complete_event *evt,
+	uint64_t *time)
 {
 	struct dect_phy_common_op_completed_params rf_tool_op_completed_params = {
-		.handle = handle,
-		.temperature = temperature,
-		.status = status,
+		.handle = evt->handle,
+		.temperature = evt->temp,
+		.status = evt->err,
 		.time = *time,
 	};
-
-	dect_app_modem_time_save(time);
 
 	dect_phy_api_scheduler_mdm_op_completed(&rf_tool_op_completed_params);
 	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED,
@@ -173,19 +146,16 @@ static void dect_phy_rf_tool_op_complete_cb(uint64_t const *time, int16_t temper
 					  sizeof(struct dect_phy_common_op_completed_params));
 }
 
-static void dect_phy_rf_tool_rx_pcc_cb(uint64_t const *time,
-				       struct nrf_modem_dect_phy_rx_pcc_status const *p_rx_status,
-				       union nrf_modem_dect_phy_hdr const *p_phy_header)
+static void dect_phy_rf_tool_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_event *evt,
+	uint64_t *time)
 {
 	struct dect_phy_common_op_pcc_rcv_params ctrl_pcc_op_params;
-	struct dect_phy_header_type2_format0_t *header = (void *)p_phy_header;
+	struct dect_phy_header_type2_format0_t *header = (void *)&evt->hdr;
 
-	dect_app_modem_time_save(time);
-
-	ctrl_pcc_op_params.pcc_status = *p_rx_status;
-	ctrl_pcc_op_params.phy_header = *p_phy_header;
+	ctrl_pcc_op_params.pcc_status = *evt;
+	ctrl_pcc_op_params.phy_header = evt->hdr;
 	ctrl_pcc_op_params.time = *time;
-	ctrl_pcc_op_params.stf_start_time = p_rx_status->stf_start_time;
+	ctrl_pcc_op_params.stf_start_time = evt->stf_start_time;
 	ctrl_pcc_op_params.phy_len = header->packet_length;
 	ctrl_pcc_op_params.phy_len_type = header->packet_length_type;
 
@@ -194,117 +164,60 @@ static void dect_phy_rf_tool_rx_pcc_cb(uint64_t const *time,
 					  sizeof(struct dect_phy_common_op_pcc_rcv_params));
 }
 
-static void dect_phy_rf_tool_pcc_crc_failure_cb(
-	uint64_t const *time, struct nrf_modem_dect_phy_rx_pcc_crc_failure const *crc_failure)
+static void dect_phy_rf_tool_mdm_pcc_crc_failure_cb(
+	const struct nrf_modem_dect_phy_pcc_crc_failure_event *evt,
+	uint64_t *time)
 {
 	struct dect_phy_common_op_pcc_crc_fail_params pdc_crc_fail_params = {
 		.time = *time,
-		.crc_failure = *crc_failure,
+		.crc_failure = *evt,
 	};
 
-	dect_app_modem_time_save(time);
 	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_RX_PCC_CRC_ERROR,
 					  (void *)&pdc_crc_fail_params,
 					  sizeof(struct dect_phy_common_op_pcc_crc_fail_params));
 }
 
-static void dect_phy_rf_tool_rx_pdc_cb(uint64_t const *time,
-				struct nrf_modem_dect_phy_rx_pdc_status const *p_rx_status,
-				void const *p_data, uint32_t length)
+static void dect_phy_rf_tool_mdm_pdc_cb(const struct nrf_modem_dect_phy_pdc_event *evt,
+	uint64_t *time)
 {
-	int16_t rssi_level = p_rx_status->rssi_2 / 2;
-
-	dect_app_modem_time_save(time);
-
+	int16_t rssi_level = evt->rssi_2 / 2;
 	struct dect_phy_commmon_op_pdc_rcv_params rf_tool_pdc_op_params;
 
-	rf_tool_pdc_op_params.rx_status = *p_rx_status;
+	rf_tool_pdc_op_params.rx_status = *evt;
 
-	rf_tool_pdc_op_params.data_length = length;
+	rf_tool_pdc_op_params.data_length = evt->len;
 	rf_tool_pdc_op_params.time = *time;
 
 	rf_tool_pdc_op_params.rx_pwr_dbm = 0;		      /* Taken from PCC */
 	rf_tool_pdc_op_params.rx_rssi_level_dbm = rssi_level; /* Used from PCC */
-	rf_tool_pdc_op_params.last_rx_op_channel = rf_tool_data.cmd_params.channel;
+	rf_tool_pdc_op_params.rx_channel = rf_tool_data.cmd_params.channel;
 
-	if (length <= sizeof(rf_tool_pdc_op_params.data)) {
-		memcpy(rf_tool_pdc_op_params.data, p_data, length);
+	if (evt->len <= sizeof(rf_tool_pdc_op_params.data)) {
+		memcpy(rf_tool_pdc_op_params.data, evt->data, evt->len);
 		dect_phy_rf_tool_msgq_data_op_add(
 			DECT_PHY_RF_TOOL_EVT_RX_PDC_DATA, (void *)&rf_tool_pdc_op_params,
 			sizeof(struct dect_phy_commmon_op_pdc_rcv_params));
 	} else {
 		printk("Received data is too long to be received by PERF TH - discarded (len %d, "
 		       "buf size %d)\n",
-		       length, sizeof(rf_tool_pdc_op_params.data));
+		       evt->len, sizeof(rf_tool_pdc_op_params.data));
 	}
 }
 
-static void dect_phy_rf_tool_on_pdc_crc_failure_cb(
-	uint64_t const *time, struct nrf_modem_dect_phy_rx_pdc_crc_failure const *crc_failure)
+static void dect_phy_rf_tool_mdm_pdc_crc_failure_cb(
+	const struct nrf_modem_dect_phy_pdc_crc_failure_event *evt,
+	uint64_t *time)
 {
 	struct dect_phy_common_op_pdc_crc_fail_params pdc_crc_fail_params = {
 		.time = *time,
-		.crc_failure = *crc_failure,
+		.crc_failure = *evt,
 	};
 
-	dect_app_modem_time_save(time);
 	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_RX_PDC_CRC_ERROR,
 					  (void *)&pdc_crc_fail_params,
 					  sizeof(struct dect_phy_common_op_pdc_crc_fail_params));
 }
-
-static void dect_phy_rf_tool_on_rssi_cb(const uint64_t *time,
-				 const struct nrf_modem_dect_phy_rssi_meas *p_result)
-{
-	printk("WARN: Unexpectedly in %s\n", (__func__));
-}
-
-static void dect_phy_rf_tool_link_configuration_cb(uint64_t const *time,
-					    enum nrf_modem_dect_phy_err status)
-{
-	printk("WARN: Unexpectedly in %s\n", (__func__));
-}
-
-static void dect_phy_rf_tool_time_query_cb(
-	uint64_t const *time, enum nrf_modem_dect_phy_err status)
-{
-}
-
-static void dect_phy_rf_tool_capability_get_cb(
-	const uint64_t *time, enum nrf_modem_dect_phy_err err,
-	const struct nrf_modem_dect_phy_capability *capabilities)
-{
-	dect_app_modem_time_save(time);
-}
-
-static void dect_phy_rf_tool_stf_cover_seq_control_cb(
-	const uint64_t *time, enum nrf_modem_dect_phy_err err)
-{
-	printk("WARN: Unexpectedly in %s\n", (__func__));
-}
-
-extern struct k_sem dect_phy_ctrl_mdm_api_deinit_sema;
-static void dect_phy_rf_tool_deinit_cb(const uint64_t *time, enum nrf_modem_dect_phy_err err)
-{
-	k_sem_give(&dect_phy_ctrl_mdm_api_deinit_sema);
-	dect_phy_rf_tool_msgq_non_data_op_add(DECT_PHY_RF_TOOL_EVT_MDM_DEINITIALIZED);
-}
-
-static const struct nrf_modem_dect_phy_callbacks rf_tool_phy_api_config = {
-	.init = dect_phy_rf_tool_initialize_cb,
-	.rx_stop = dect_phy_rf_tool_rx_op_stop_cb,
-	.op_complete = dect_phy_rf_tool_op_complete_cb,
-	.pcc = dect_phy_rf_tool_rx_pcc_cb,
-	.pcc_crc_err = dect_phy_rf_tool_pcc_crc_failure_cb,
-	.pdc = dect_phy_rf_tool_rx_pdc_cb,
-	.pdc_crc_err = dect_phy_rf_tool_on_pdc_crc_failure_cb,
-	.rssi = dect_phy_rf_tool_on_rssi_cb,
-	.link_config = dect_phy_rf_tool_link_configuration_cb,
-	.time_get = dect_phy_rf_tool_time_query_cb,
-	.capability_get = dect_phy_rf_tool_capability_get_cb,
-	.stf_cover_seq_control = dect_phy_rf_tool_stf_cover_seq_control_cb,
-	.deinit = dect_phy_rf_tool_deinit_cb,
-};
 
 /**************************************************************************************************/
 static bool dect_phy_rf_tool_rx_mode(enum dect_phy_rf_tool_mode mode)
@@ -480,7 +393,7 @@ void dect_phy_rf_tool_print_results(void)
 
 static void dect_phy_rf_tool_cmd_done(void)
 {
-	dect_phy_rf_tool_msgq_non_data_op_add(DECT_PHY_RF_TOOL_EVT_STATUS_REPORT);
+	dect_phy_rf_tool_print_results();
 
 	/* Mdm phy api deinit is done by dect_phy_ctrl */
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RF_TOOL_CMD_DONE);
@@ -511,27 +424,6 @@ static void dect_phy_rf_tool_thread_fn(void)
 		switch (event.id) {
 		case DECT_PHY_RF_TOOL_EVT_CMD_DONE: {
 			dect_phy_rf_tool_cmd_done();
-			break;
-		}
-		case DECT_PHY_RF_TOOL_EVT_MDM_INITIALIZED: {
-			struct dect_phy_common_op_initialized_params *params =
-				(struct dect_phy_common_op_initialized_params *)event.data;
-
-			if (params->status) {
-				desh_error("(%s): init failed (time %llu, temperature %d, "
-					   "temp_limit %d): %d",
-					   (__func__), params->time, params->temperature,
-					   params->modem_configuration.temperature_limit,
-					   params->status);
-			} else {
-				desh_print("dect phy api initialized for RF tool command.");
-			}
-			k_sem_give(&rf_tool_phy_api_init);
-			break;
-		}
-		case DECT_PHY_RF_TOOL_EVT_MDM_DEINITIALIZED: {
-			desh_print("dect phy api deinitialized for RF tool command.");
-			desh_print("rf_tool command done.");
 			break;
 		}
 		case DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED: {
@@ -573,10 +465,6 @@ static void dect_phy_rf_tool_thread_fn(void)
 						&params->handle, sizeof(uint32_t));
 				}
 			}
-			break;
-		}
-		case DECT_PHY_RF_TOOL_EVT_STATUS_REPORT: {
-			dect_phy_rf_tool_print_results();
 			break;
 		}
 		case DECT_PHY_RF_TOOL_EVT_RX_PCC_CRC_ERROR: {
@@ -875,30 +763,53 @@ static int dect_phy_rf_tool_msgq_non_data_op_add(uint16_t event_id)
 
 /**************************************************************************************************/
 
+void dect_phy_rf_tool_evt_handler(const struct nrf_modem_dect_phy_event *evt)
+{
+	dect_app_modem_time_save(&evt->time);
+
+	switch (evt->id) {
+	case NRF_MODEM_DECT_PHY_EVT_PCC:
+		dect_phy_rf_tool_mdm_pcc_cb(&evt->pcc, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PCC_ERROR:
+		dect_phy_rf_tool_mdm_pcc_crc_failure_cb(&evt->pcc_crc_err, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC:
+		dect_phy_rf_tool_mdm_pdc_cb(&evt->pdc, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_PDC_ERROR:
+		dect_phy_rf_tool_mdm_pdc_crc_failure_cb(&evt->pdc_crc_err, (uint64_t *)&evt->time);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_COMPLETED:
+		dect_phy_rf_tool_mdm_op_complete_cb(&evt->op_complete, (uint64_t *)&evt->time);
+		break;
+
+	/* Callbacks handled by dect_phy_ctrl */
+	case NRF_MODEM_DECT_PHY_EVT_RADIO_CONFIG:
+		dect_phy_ctrl_mdm_radio_config_cb(&evt->radio_config);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_ACTIVATE:
+		dect_phy_ctrl_mdm_activate_cb(&evt->activate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_DEACTIVATE:
+		dect_phy_ctrl_mdm_deactivate_cb(&evt->deactivate);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_CANCELED:
+		dect_phy_ctrl_mdm_cancel_cb(&evt->cancel);
+		break;
+
+	default:
+		printk("%s: WARN: Unexpected event id %d\n", (__func__), evt->id);
+		break;
+	}
+}
+
 static void dect_phy_rf_tool_phy_init(void)
 {
-	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
-	struct nrf_modem_dect_phy_init_params rf_tool_phy_init_params = {
-		.harq_rx_expiry_time_us = current_settings->harq.mdm_init_harq_expiry_time_us,
-		.harq_rx_process_count = current_settings->harq.mdm_init_harq_process_count,
-		.reserved = 0,
-		.band4_support = ((current_settings->common.band_nbr == 4) ? 1 : 0),
-	};
-	int ret = nrf_modem_dect_phy_callback_set(&rf_tool_phy_api_config);
+	int ret = nrf_modem_dect_phy_event_handler_set(dect_phy_rf_tool_evt_handler);
 
 	if (ret) {
-		printk("nrf_modem_dect_phy_callback_set returned: %i\n", ret);
-	} else {
-		ret = nrf_modem_dect_phy_init(&rf_tool_phy_init_params);
-
-		if (ret) {
-			printk("nrf_modem_dect_phy_init returned: %i\n", ret);
-		} else {
-			ret = nrf_modem_dect_phy_capability_get(); /* asynch: result in callback */
-			if (ret) {
-				printk("nrf_modem_dect_phy_capability_get returned: %i\n", ret);
-			}
-		}
+		printk("nrf_modem_dect_phy_event_handler_set returned: %i\n", ret);
 	}
 }
 
@@ -1072,8 +983,6 @@ static int dect_phy_rf_tool_tx_op_schedule(uint64_t start_time, uint32_t interva
 
 static int dect_phy_rf_tool_operations_schedule(uint64_t init_frame_start_time)
 {
-	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
-
 	struct dect_phy_rf_tool_params *cmd_params = &(rf_tool_data.cmd_params);
 	uint64_t frame_start_time = init_frame_start_time;
 	uint64_t time_now = dect_app_modem_time_now();
@@ -1083,8 +992,7 @@ static int dect_phy_rf_tool_operations_schedule(uint64_t init_frame_start_time)
 	if (init_frame_start_time == 0) {
 		/* Initial start */
 		frame_start_time =
-			time_now +
-			(20 * US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us));
+			time_now + MS_TO_MODEM_TICKS(200);
 	} else {
 		frame_start_time = init_frame_start_time;
 	}
@@ -1252,11 +1160,22 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 			rf_tool_data.rx_metrics.rx_op_to_mdm_ok_count++;
 		}
 	} else {
-		/* Schedule operations right away */
+		/* Schedule operations right away if possible in active radio mode  */
 		uint64_t next_possible_frame_time = 0;
 
 		if (restart) {
 			next_possible_frame_time = dect_phy_rf_tool_next_frame_time_get(restart);
+		} else {
+			enum nrf_modem_dect_phy_radio_mode radio_mode;
+
+			ret = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
+			if (!ret && radio_mode != NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY) {
+				uint64_t time_now = dect_app_modem_time_now();
+
+				next_possible_frame_time =
+					time_now + (3 * US_TO_MODEM_TICKS(
+						current_settings->scheduler.scheduling_delay_us));
+			}
 		}
 		ret = dect_phy_rf_tool_operations_schedule(next_possible_frame_time);
 	}
@@ -1431,14 +1350,8 @@ int dect_phy_rf_tool_cmd_handle(struct dect_phy_rf_tool_params *params)
 		return -1;
 	}
 
-	k_sem_reset(&rf_tool_phy_api_init);
 	dect_phy_rf_tool_phy_init();
 
-	ret = k_sem_take(&rf_tool_phy_api_init, K_SECONDS(5));
-	if (ret) {
-		desh_error("(%s): nrf_modem_dect_phy_init() timeout.", (__func__));
-		return -ETIMEDOUT;
-	}
 	ret = dect_phy_rf_tool_start(params, false);
 	if (ret) {
 		rf_tool_data.on_going = false;

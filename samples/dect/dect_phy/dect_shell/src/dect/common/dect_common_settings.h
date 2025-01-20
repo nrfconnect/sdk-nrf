@@ -16,7 +16,7 @@
 
 #define DECT_PHY_DEFAULT_NETWORK_ID			0x12345678
 #define DECT_PHY_DEFAULT_TRANSMITTER_LONG_RD_ID		38
-#define DECT_PHY_API_SCHEDULER_OFFSET_US		(10000)
+#define DECT_PHY_API_SCHEDULER_OFFSET_US		(5000)
 
 #define DECT_PHY_SETT_DEFAULT_BEACON_TX_INTERVAL_SECS	2
 
@@ -109,6 +109,8 @@ struct dect_phy_settings_common {
 	uint32_t network_id;
 	uint32_t transmitter_id;
 	uint16_t band_nbr;
+	bool activate_at_startup;
+	enum nrf_modem_dect_phy_radio_mode startup_radio_mode;
 	uint16_t short_rd_id; /* Generated random value, cannot be set */
 };
 

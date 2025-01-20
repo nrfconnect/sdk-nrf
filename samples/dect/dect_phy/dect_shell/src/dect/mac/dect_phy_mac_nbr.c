@@ -112,9 +112,9 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 				   (__func__), long_rd_id);
 			done = false;
 		} else {
-			desh_print("Neighbor with long rd id %u (0x%08x), short rd id %u (0x%04x) "
-				   "stored to nbr list.",
-				   long_rd_id, long_rd_id, short_rd_id, short_rd_id);
+			desh_print("Neighbor with long rd id %u (0x%08x), short rd id %u (0x%04x), "
+				   "channel %d, stored to nbr list.",
+				   long_rd_id, long_rd_id, short_rd_id, short_rd_id, channel);
 		}
 	} else {
 		/* Already existing beacon: update */
@@ -124,6 +124,9 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 				nbr_ptr->time_rcvd_mdm_ticks,
 				*rcv_time);
 
+		if (channel) {
+			nbr_ptr->channel = channel;
+		}
 		nbr_ptr->short_rd_id = short_rd_id;
 		nbr_ptr->nw_id_24msb = nw_id_24msb;
 		nbr_ptr->nw_id_8lsb = nw_id_8lsb;
@@ -137,11 +140,11 @@ bool dect_phy_mac_nbr_info_store_n_update(uint64_t const *rcv_time, uint16_t cha
 
 		if (print_update) {
 			desh_print("Neighbor with long rd id %u (0x%08x), short rd id %u (0x%04x), "
-				"nw (24bit MSB: %u (0x%06x), 8bit LSB: %u (0x%02x))\n"
+				"nw (24bit MSB: %u (0x%06x), 8bit LSB: %u (0x%02x)), channel %d\n"
 				"  updated with time %llu (time shift %lld mdm ticks) to nbr list.",
 				long_rd_id, long_rd_id, short_rd_id, short_rd_id, nw_id_24msb,
-				nw_id_24msb, nw_id_8lsb, nw_id_8lsb, nbr_ptr->time_rcvd_mdm_ticks,
-				time_shift_mdm_ticks);
+				nw_id_24msb, nw_id_8lsb, nw_id_8lsb, nbr_ptr->channel,
+				nbr_ptr->time_rcvd_mdm_ticks, time_shift_mdm_ticks);
 		}
 	}
 	k_mutex_unlock(&nbr_list_mutex);

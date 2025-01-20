@@ -10,6 +10,8 @@ config CARRIER
 	help
 	   The availability of the channels and the exact regulation to use them varies in different countries.
 	   See ETSI TS 103 636-2 5.4.2 for the calculation.
+	   Band index 1 is set when the carrier is within the range of 525 to 551.
+	   This is the only range allowed for band index 1 as other carriers will interfere with other radio devices, including LTE devices.
 
 config NETWORK_ID
 	int "Network ID"

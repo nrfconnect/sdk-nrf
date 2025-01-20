@@ -15,8 +15,6 @@
 
 /******************************************************************************/
 
-#define DECT_PHY_MAX_TX_PWR_DBM 23
-
 #define DECT_PHY_LBT_PERIOD_MAX_SYM (NRF_MODEM_DECT_LBT_PERIOD_MAX / NRF_MODEM_DECT_SYMBOL_DURATION)
 #define DECT_PHY_LBT_PERIOD_MIN_SYM (NRF_MODEM_DECT_LBT_PERIOD_MIN / NRF_MODEM_DECT_SYMBOL_DURATION)
 
@@ -35,17 +33,10 @@ struct dect_phy_common_harq_feedback_data {
 	uint8_t encoded_data_to_send[DECT_DATA_MAX_LEN]; /* DECT_MAC_MESSAGE_TYPE_HARQ_FEEDBACK */
 };
 
-struct dect_phy_common_op_initialized_params {
-	uint64_t time;
-	int16_t temperature;
-	struct nrf_modem_dect_phy_modem_cfg modem_configuration;
-	enum nrf_modem_dect_phy_err status;
-};
-
 struct dect_phy_common_op_pcc_rcv_params {
 	uint64_t time;
 	uint64_t stf_start_time;
-	struct nrf_modem_dect_phy_rx_pcc_status pcc_status;
+	struct nrf_modem_dect_phy_pcc_event pcc_status;
 
 	uint8_t phy_len;
 	enum dect_phy_packet_length_type phy_len_type;
@@ -60,17 +51,17 @@ struct dect_phy_common_op_pcc_rcv_params {
 
 struct dect_phy_common_op_pcc_crc_fail_params {
 	uint64_t time;
-	struct nrf_modem_dect_phy_rx_pcc_crc_failure crc_failure;
+	struct nrf_modem_dect_phy_pcc_crc_failure_event crc_failure;
 };
 struct dect_phy_common_op_pdc_crc_fail_params {
 	uint64_t time;
-	struct nrf_modem_dect_phy_rx_pdc_crc_failure crc_failure;
+	struct nrf_modem_dect_phy_pdc_crc_failure_event crc_failure;
 };
 
 struct dect_phy_commmon_op_pdc_rcv_params {
-	struct nrf_modem_dect_phy_rx_pdc_status rx_status;
+	struct nrf_modem_dect_phy_pdc_event rx_status;
 
-	uint16_t last_rx_op_channel;
+	uint16_t rx_channel;
 
 	uint8_t last_received_pcc_short_nw_id;
 	uint16_t last_received_pcc_transmitter_short_rd_id;
