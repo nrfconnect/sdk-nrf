@@ -279,6 +279,11 @@
   - "applications/asset_tracker_v2/**/*"
   - "samples/net/aws_iot/**/*"
   - "samples/net/azure_iot_hub/**/*"
+  - "samples/net/coap_client/**/*"
+  - "samples/net/download/**/*"
+  - "samples/net/http_server/**/*"
+  - "samples/net/https_client/**/*"
+  - "samples/net/mqtt/**/*"
   - "samples/net/udp/**/*"
 
 "CI-apps-test":
