@@ -224,19 +224,6 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
-  sample.nrf7002.shell.posix_names:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - CONFIG_POSIX_API=n
-      - CONIFG_NET_SOCKETS_POSIX_NAMES=y
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
-    platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.nrf7002_ns.shell:
     sysbuild: true
     build_only: true
