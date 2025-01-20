@@ -195,7 +195,7 @@ struct bt_mesh_dtt_srv *bt_mesh_dtt_srv_get(const struct bt_mesh_elem *elem)
 	const struct bt_mesh_comp *comp = bt_mesh_comp_get();
 	uint16_t index;
 
-	index = elem->rt->addr - comp->elem[0].rt->addr;
+	index = elem - comp->elem;
 	for (int i = index; i >= 0; --i) {
 		const struct bt_mesh_elem *element = &comp->elem[i];
 
