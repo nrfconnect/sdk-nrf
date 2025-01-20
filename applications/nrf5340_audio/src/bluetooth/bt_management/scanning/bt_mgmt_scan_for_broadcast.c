@@ -425,7 +425,7 @@ void bt_mgmt_broadcast_code_ptr_get(uint8_t **broadcast_code_ptr)
 void bt_mgmt_scan_delegator_init(void)
 {
 	if (!scan_dlg_cb_registered) {
-		bt_bap_scan_delegator_register_cb(&scan_delegator_cbs);
+		bt_bap_scan_delegator_register(&scan_delegator_cbs);
 		scan_dlg_cb_registered = true;
 	}
 
