@@ -66,10 +66,6 @@ config FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX
 	help
 	  Maximum size of the list of security tags used to store TLS credentials.
 
-config FOTA_DOWNLOAD_EXTERNAL_DL
-	bool "Use external download events to perform FOTA updates"
-	select EXPERIMENTAL
-
 module=FOTA_DOWNLOAD
 module-dep=LOG
 module-str=Firmware Over the Air Download

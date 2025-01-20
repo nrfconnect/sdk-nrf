@@ -25,11 +25,6 @@
 
 LOG_MODULE_REGISTER(fota_download, CONFIG_FOTA_DOWNLOAD_LOG_LEVEL);
 
-#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-static size_t ext_file_sz;
-static size_t ext_rcvd_sz;
-#endif
-
 static fota_download_callback_t callback;
 static const char *dl_host;
 static const char *dl_file;
@@ -105,15 +100,6 @@ static void send_progress(int progress)
 #endif
 }
 
-static void send_ext_resume(const size_t offset)
-{
-#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-	const struct fota_download_evt evt = { .id = FOTA_DOWNLOAD_EVT_RESUME_OFFSET,
-					       .resume_offset = offset };
-	callback(&evt);
-#endif
-}
-
 static void stopped(void)
 {
 	atomic_clear_bit(&flags, FLAG_DOWNLOADING);
@@ -143,27 +129,16 @@ static void dfu_target_callback_handler(enum dfu_target_evt_id evt)
 
 static size_t file_size_get(size_t *size)
 {
-#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-	*size = ext_file_sz;
-	return 0;
-#endif
 	return downloader_file_size_get(&dl, size);
 }
 
 static size_t downloaded_size_get(size_t *size)
 {
-#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-	*size = ext_rcvd_sz;
-	return 0;
-#endif
 	return downloader_downloaded_size_get(&dl, size);
 }
 
 static int dl_cancel(void)
 {
-#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-	return 0;
-#endif
 	return downloader_cancel(&dl);
 }
 
@@ -264,10 +239,6 @@ static int downloader_callback(const struct downloader_evt *event)
 			}
 		}
 
-#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-		ext_rcvd_sz += event->fragment.len;
-#endif
-
 		err = dfu_target_write(event->fragment.buf, event->fragment.len);
 		if (err && err == -EINVAL) {
 			LOG_INF("Image refused");
@@ -321,7 +292,8 @@ static int downloader_callback(const struct downloader_evt *event)
 		/* In case of socket errors we can return 0 to retry/continue,
 		 * or non-zero to stop
 		 */
-		if ((socket_retries_left) && (event->error == -ECONNRESET)) {
+		if ((socket_retries_left)
+		  && ((event->error == -ECONNRESET) || (event->error == -EAGAIN))) {
 			LOG_WRN("Download socket error. %d retries left...",
 				socket_retries_left);
 			socket_retries_left--;
@@ -371,11 +343,6 @@ error_and_close:
 
 static int get_from_offset(const size_t offset)
 {
-	if (IS_ENABLED(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)) {
-		send_ext_resume(offset);
-		return 0;
-	}
-
 	int err = downloader_get_with_host_and_file(&dl, &dl_host_cfg, dl_host, dl_file, offset);
 
 	if (err != 0) {
@@ -533,47 +500,21 @@ static void set_host_and_file(char const *const host, char const *const file)
 	dl_file = file;
 }
 
-#if defined(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL)
-int fota_download_external_evt_handle(struct downloader_evt const *const evt)
+int fota_download_with_host_cfg(const char *host, const char *file,
+				int sec_tag, uint8_t pdn_id, size_t fragment_size,
+				const enum dfu_target_image_type expected_type,
+				const struct downloader_host_cfg *host_cfg)
 {
-	return downloader_callback(evt);
+	dl_host_cfg = *host_cfg;
+	LOG_DBG("Downloading %s/%s", host, file);
+	return fota_download_start_with_image_type(host, file, sec_tag,
+						   pdn_id, fragment_size, expected_type);
 }
-
-int fota_download_external_start(const char *host, const char *file,
-				 const enum dfu_target_image_type expected_type,
-				 const size_t image_size)
-{
-	if (host == NULL || file == NULL || callback == NULL || image_size == 0) {
-		return -EINVAL;
-	}
-
-	if (atomic_test_and_set_bit(&flags, FLAG_DOWNLOADING)) {
-		return -EALREADY;
-	}
-
-	atomic_clear_bit(&flags, FLAG_STOPPED);
-	atomic_clear_bit(&flags, FLAG_RESUME);
-	set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR);
-
-	set_host_and_file(host, file);
-
-	socket_retries_left = CONFIG_FOTA_SOCKET_RETRIES;
-
-	img_type_expected = expected_type;
-	ext_file_sz = image_size;
-	ext_rcvd_sz = 0;
-
-	atomic_set_bit(&flags, FLAG_FIRST_FRAGMENT);
-
-	return 0;
-}
-#endif /* CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL */
 
 int fota_download(const char *host, const char *file,
 	const int *sec_tag_list, uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
 {
-	__ASSERT_NO_MSG(!IS_ENABLED(CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL));
 
 	if (host == NULL || file == NULL || callback == NULL) {
 		return -EINVAL;

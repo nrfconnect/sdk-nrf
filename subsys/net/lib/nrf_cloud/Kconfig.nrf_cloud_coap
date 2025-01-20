@@ -68,6 +68,7 @@ endif # WIFI
 config NRF_CLOUD_COAP_DOWNLOADS
 	bool "Download files using CoAP instead of HTTP [EXPERIMENTAL]"
 	depends on NRF_CLOUD_COAP
+	select DOWNLOADER_TRANSPORT_COAP
 	select EXPERIMENTAL
 	help
 	  Use nRF Cloud CoAP's proxy download resource to download files for FOTA and P-GPS.

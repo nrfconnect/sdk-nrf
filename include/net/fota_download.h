@@ -63,11 +63,6 @@ enum fota_download_evt_id {
 
 	/** FOTA download abandoned due to a cancellation request. */
 	FOTA_DOWNLOAD_EVT_CANCELLED,
-
-	/** Resume the download at offset.
-	 *  Only generated if @kconfig{CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL} is enabled.
-	 */
-	FOTA_DOWNLOAD_EVT_RESUME_OFFSET,
 };
 
 /**
@@ -101,8 +96,6 @@ struct fota_download_evt {
 		enum fota_download_error_cause cause;
 		/** Download progress %. */
 		int progress;
-		/** Resume at offset @ref FOTA_DOWNLOAD_EVT_RESUME_OFFSET */
-		size_t resume_offset;
 	};
 };
 
@@ -151,6 +144,32 @@ int fota_download_init(fota_download_callback_t client_callback);
 int fota_download(const char *host, const char *file, const int *sec_tag_list,
 		  uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size,
 		  const enum dfu_target_image_type expected_type);
+
+/**@brief Download the given file with the specified image type from the given host.
+ *
+ * Identical to fota_download_start_with_image_type(),
+ * but with additional host configuration options.
+ *
+ * @param host Name of host to start downloading from. Can include scheme
+ *             and port number, for example https://google.com:443
+ * @param file Path to the file you wish to download. See fota_download_any()
+ *             for details on expected format.
+ * @param sec_tag Security tag you want to use with COAPS. Pass -1 to disable DTLS.
+ * @param pdn_id Packet Data Network ID to use for the download, or 0 to use the default.
+ * @param fragment_size Fragment size to be used for the download. If 0, no fragmentation is used.
+ * @param expected_type Type of firmware file to be downloaded and installed.
+ * @param host_cfg Additional host configuration options.
+ *
+ * @retval 0	     If download has started successfully.
+ * @retval -EALREADY If download is already ongoing.
+ * @retval -E2BIG    If sec_tag_count is larger than
+ *		     @kconfig{CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX}
+ *                   Otherwise, a negative value is returned.
+ */
+int fota_download_with_host_cfg(const char *host, const char *file,
+				int sec_tag, uint8_t pdn_id, size_t fragment_size,
+				const enum dfu_target_image_type expected_type,
+				const struct downloader_host_cfg *host_cfg);
 
 
 /**@brief Start downloading the given file of any image type from the given host.
@@ -280,31 +299,6 @@ int fota_download_s0_active_get(bool *const s0_active);
  *                      downloaded.
  */
 int fota_download_b1_file_parse(char *s0_s1_files);
-
-/**@brief Start a FOTA download using an external download client.
- *        Requires @kconfig{CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL} to be enabled.
- *
- * @param host		Name of host.
- * @param file		File path of the firmware image.
- * @param expected_type Type of firmware image to be installed.
- * @param image_size	Size of the firmware image.
- *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int fota_download_external_start(const char *host, const char *file,
-				 const enum dfu_target_image_type expected_type,
-				 const size_t image_size);
-
-/**@brief Handle a download event from an external download client.
- *        Requires @kconfig{CONFIG_FOTA_DOWNLOAD_EXTERNAL_DL} to be enabled.
- *
- * @param evt Download event.
- *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
- */
-int fota_download_external_evt_handle(struct downloader_evt const *const evt);
 
 #ifdef __cplusplus
 }
