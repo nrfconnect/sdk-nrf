@@ -32,7 +32,9 @@ enum sock_shell_command {
 	SOCK_CMD_GETADDRINFO,
 	SOCK_CMD_SEND,
 	SOCK_CMD_RECV,
-	SOCK_CMD_RAI
+	SOCK_CMD_RAI,
+	SOCK_CMD_OPTION_SET,
+	SOCK_CMD_OPTION_GET,
 };
 
 static const char sock_connect_usage_str[] =
@@ -165,6 +167,71 @@ static const char sock_rai_usage_str[] =
 	"                            option before the next send call.\n"
 	"  -h, --help,               Shows this help information";
 
+static const char sock_setopt_usage_str[] =
+	"Usage: sock option set -i <socket id> -o <socket option> -v <value>\n"
+	"       [--level <level>]\n"
+	"Options:\n"
+	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
+	"                            sockets.\n"
+	"  -o, --option [str|int]    String name or integer ID of the socket option\n"
+	"      --level [str|int]     String name or integer ID of the socket option level.\n"
+	"                            This is optional if a valid option string is given\n"
+	"                            with '-o' option.\n"
+	"  -v, --value [int]         Value of the socket option\n"
+	"  -h, --help,               Shows this help information";
+
+static const char sock_getopt_usage_str[] =
+	"Usage: sock option get -i <socket id> -o <socket option> [--level <level>]\n"
+	"Options:\n"
+	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
+	"                            sockets.\n"
+	"  -o, --option [str|int]    String name or integer ID of the socket option\n"
+	"      --level [str|int]     String name or integer ID of the socket option level.\n"
+	"                            This is optional if a valid option string is given\n"
+	"                            with '-o' option.\n"
+	"  -h, --help,               Shows this help information";
+
+static const char sock_option_id_list_str[] =
+	"\n"
+	"List of supported socket options which you can set as string for '-o' option:\n"
+	"- TLS_SEC_TAG_LIST\n"
+	"- TLS_HOSTNAME\n"
+	"- TLS_CIPHERSUITE_LIST\n"
+	"- TLS_PEER_VERIFY\n"
+	"- TLS_DTLS_ROLE\n"
+	"- TLS_SESSION_CACHE\n"
+	"- TLS_SESSION_CACHE_PURGE\n"
+	"- TLS_DTLS_HANDSHAKE_TIMEO\n"
+	"- TLS_CIPHERSUITE_USED\n"
+	"- TLS_DTLS_CID\n"
+	"- TLS_DTLS_CID_STATUS\n"
+	"- TLS_DTLS_CONN_SAVE\n"
+	"- TLS_DTLS_CONN_LOAD\n"
+	"- TLS_DTLS_HANDSHAKE_STATUS\n"
+	"- SO_ERROR\n"
+	"- SO_KEEPOPEN\n"
+	"- SO_EXCEPTIONAL_DATA\n"
+	"- SO_RCVTIMEO\n"
+	"- SO_SNDTIMEO\n"
+	"- SO_BINDTOPDN\n"
+	"- SO_REUSEADDR\n"
+	"- SO_RAI\n"
+	"- SO_IP_ECHO_REPLY\n"
+	"- SO_IPV6_ECHO_REPLY\n"
+	"- SO_IPV6_DELAYED_ADDR_REFRESH\n"
+	"- SO_TCP_SRV_SESSTIMEO\n"
+	"- SO_SILENCE_ALL\n";
+
+static const char sock_level_list_str[] =
+	"\n"
+	"List of supported socket levels which you can set as string for '--level' option:\n"
+	"- SOL_SOCKET\n"
+	"- SOL_TLS\n"
+	"- IPPROTO_IP\n"
+	"- IPPROTO_IPV6\n"
+	"- IPPROTO_TCP\n"
+	"- IPPROTO_ALL\n";
+
 /* The following do not have short options */
 #define SOCK_SHELL_OPT_RAI_LAST 200
 #define SOCK_SHELL_OPT_RAI_NO_DATA 201
@@ -172,6 +239,7 @@ static const char sock_rai_usage_str[] =
 #define SOCK_SHELL_OPT_RAI_ONGOING 203
 #define SOCK_SHELL_OPT_RAI_WAIT_MORE 204
 #define SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX 205
+#define SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL 206
 
 /* Specifying the expected options (both long and short) */
 static struct option long_options[] = {
@@ -197,6 +265,9 @@ static struct option long_options[] = {
 	{ "wait_ack",       no_argument,       0, 'W' },
 	{ "keep_open",      no_argument,       0, 'K' },
 	{ "print_format",   required_argument, 0, 'P' },
+	{ "option",         required_argument, 0, 'o' },
+	{ "value",          required_argument, 0, 'v' },
+	{ "level",          required_argument, 0, SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL },
 	{ "packet_number_prefix", no_argument, 0, SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX },
 	{ "rai_last",       no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
 	{ "rai_no_data",    no_argument,       0, SOCK_SHELL_OPT_RAI_NO_DATA },
@@ -207,7 +278,7 @@ static struct option long_options[] = {
 	{ 0,                0,                 0, 0   }
 };
 
-static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:WKP:h";
+static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:WKP:L:o:v:h";
 
 static void sock_print_usage(enum sock_shell_command command)
 {
@@ -229,6 +300,16 @@ static void sock_print_usage(enum sock_shell_command command)
 		break;
 	case SOCK_CMD_RAI:
 		mosh_print_no_format(sock_rai_usage_str);
+		break;
+	case SOCK_CMD_OPTION_SET:
+		mosh_print_no_format(sock_setopt_usage_str);
+		mosh_print_no_format(sock_option_id_list_str);
+		mosh_print_no_format(sock_level_list_str);
+		break;
+	case SOCK_CMD_OPTION_GET:
+		mosh_print_no_format(sock_getopt_usage_str);
+		mosh_print_no_format(sock_option_id_list_str);
+		mosh_print_no_format(sock_level_list_str);
 		break;
 	default:
 		break;
@@ -852,10 +933,251 @@ show_usage:
 	return err;
 }
 
+struct sock_opt_entry {
+	char name[30];
+	int opt;
+	int level;
+};
+
+static struct sock_opt_entry sock_opt_table[] = {
+	{ "TLS_SEC_TAG_LIST", TLS_SEC_TAG_LIST, SOL_TLS },
+	{ "TLS_HOSTNAME", TLS_HOSTNAME, SOL_TLS },
+	{ "TLS_CIPHERSUITE_LIST", TLS_CIPHERSUITE_LIST, SOL_TLS },
+	{ "TLS_PEER_VERIFY", TLS_PEER_VERIFY, SOL_TLS },
+	{ "TLS_DTLS_ROLE", TLS_DTLS_ROLE, SOL_TLS },
+	{ "TLS_SESSION_CACHE", TLS_SESSION_CACHE, SOL_TLS },
+	{ "TLS_SESSION_CACHE_PURGE", TLS_SESSION_CACHE_PURGE, SOL_TLS },
+	{ "TLS_DTLS_HANDSHAKE_TIMEO", TLS_DTLS_HANDSHAKE_TIMEO, SOL_TLS },
+	{ "TLS_CIPHERSUITE_USED", TLS_CIPHERSUITE_USED, SOL_TLS },
+	{ "TLS_DTLS_CID", TLS_DTLS_CID, SOL_TLS },
+	{ "TLS_DTLS_CID_STATUS", TLS_DTLS_CID_STATUS, SOL_TLS },
+	{ "TLS_DTLS_CONN_SAVE", TLS_DTLS_CONN_SAVE, SOL_TLS },
+	{ "TLS_DTLS_CONN_LOAD", TLS_DTLS_CONN_LOAD, SOL_TLS },
+	{ "TLS_DTLS_HANDSHAKE_STATUS", TLS_DTLS_HANDSHAKE_STATUS, SOL_TLS },
+
+	{ "SO_ERROR", SO_ERROR, SOL_SOCKET },
+	{ "SO_KEEPOPEN", SO_KEEPOPEN, SOL_SOCKET },
+	{ "SO_EXCEPTIONAL_DATA", SO_EXCEPTIONAL_DATA, SOL_SOCKET },
+	{ "SO_RCVTIMEO", SO_RCVTIMEO, SOL_SOCKET },
+	{ "SO_SNDTIMEO", SO_SNDTIMEO, SOL_SOCKET },
+	{ "SO_BINDTOPDN", SO_BINDTOPDN, SOL_SOCKET },
+	{ "SO_REUSEADDR", SO_REUSEADDR, SOL_SOCKET },
+	{ "SO_RAI", SO_RAI, SOL_SOCKET },
+
+	{ "SO_IP_ECHO_REPLY", SO_IP_ECHO_REPLY, IPPROTO_IP },
+
+	{ "SO_IPV6_ECHO_REPLY", SO_IPV6_ECHO_REPLY, IPPROTO_IPV6 },
+	{ "SO_IPV6_DELAYED_ADDR_REFRESH", SO_IPV6_DELAYED_ADDR_REFRESH, IPPROTO_IPV6 },
+
+	{ "SO_TCP_SRV_SESSTIMEO", SO_TCP_SRV_SESSTIMEO, IPPROTO_TCP },
+
+	{ "SO_SILENCE_ALL", SO_SILENCE_ALL, IPPROTO_ALL },
+};
+
+static struct sock_opt_entry *sock_opt_map(const char *opt)
+{
+	for (int i = 0; i < ARRAY_SIZE(sock_opt_table); i++) {
+		if (!strcmp(opt, sock_opt_table[i].name)) {
+			return &sock_opt_table[i];
+		}
+	}
+
+	return NULL;
+}
+
+struct sock_level_entry {
+	char name[20];
+	int level;
+};
+
+static struct sock_level_entry sock_level_table[] = {
+	{ "SOL_SOCKET", SOL_SOCKET },
+	{ "SOL_TLS", SOL_TLS },
+	{ "IPPROTO_IP", IPPROTO_IP },
+	{ "IPPROTO_IPV6", IPPROTO_IPV6 },
+	{ "IPPROTO_TCP", IPPROTO_TCP },
+	{ "IPPROTO_ALL", IPPROTO_ALL },
+};
+
+static struct sock_level_entry *sock_level_map(const char *level)
+{
+	for (int i = 0; i < ARRAY_SIZE(sock_level_table); i++) {
+		if (!strcmp(level, sock_level_table[i].name)) {
+			return &sock_level_table[i];
+		}
+	}
+
+	return NULL;
+}
+
+static int cmd_sock_setopt(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_socket_id = SOCK_ID_NONE;
+	int arg_sock_opt_level = SOL_SOCKET;
+	int arg_sock_opt_id = 0;
+	int arg_sock_opt_value = 0;
+	struct sock_opt_entry *sock_opt;
+	struct sock_level_entry *sock_level;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+
+		switch (opt) {
+		case 'i': /* Socket ID */
+			arg_socket_id = atoi(optarg);
+			break;
+
+		case SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL: /* Level */
+			arg_sock_opt_level = atoi(optarg);
+			if (arg_sock_opt_id == 0) {
+				sock_level = sock_level_map(optarg);
+				if (sock_level == NULL) {
+					mosh_error("Unknown socket level: %s", optarg);
+					goto show_usage;
+				}
+				arg_sock_opt_level = sock_level->level;
+			}
+			break;
+
+		case 'o': /* Option */
+			arg_sock_opt_id = atoi(optarg);
+			if (arg_sock_opt_id == 0) {
+				sock_opt = sock_opt_map(optarg);
+				if (sock_opt == NULL) {
+					mosh_error("Unknown socket option: %s", optarg);
+					goto show_usage;
+				}
+				arg_sock_opt_id = sock_opt->opt;
+				arg_sock_opt_level = sock_opt->level;
+			}
+			break;
+
+		case 'v': /* Value */
+			arg_sock_opt_value = atoi(optarg);
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	/* TODO: Handle non integer options somehow (like send/recv timeouts, TLS sec tag lists) */
+
+	err = sock_setopt(arg_socket_id, arg_sock_opt_level, arg_sock_opt_id, arg_sock_opt_value);
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_OPTION_SET);
+	return err;
+}
+
+static int cmd_sock_getopt(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_socket_id = SOCK_ID_NONE;
+	int arg_sock_opt_level = SOL_SOCKET;
+	int arg_sock_opt_id = -1;
+	struct sock_opt_entry *sock_opt;
+	struct sock_level_entry *sock_level;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+
+		switch (opt) {
+		case 'i': /* Socket ID */
+			arg_socket_id = atoi(optarg);
+			break;
+
+		case SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL: /* Level */
+			arg_sock_opt_level = atoi(optarg);
+			if (arg_sock_opt_id == 0) {
+				sock_level = sock_level_map(optarg);
+				if (sock_level == NULL) {
+					mosh_error("Unknown socket level: %s", optarg);
+					goto show_usage;
+				}
+				arg_sock_opt_level = sock_level->level;
+			}
+			break;
+
+		case 'o': /* Option */
+			arg_sock_opt_id = atoi(optarg);
+			if (arg_sock_opt_id == 0) {
+				sock_opt = sock_opt_map(optarg);
+				if (sock_opt == NULL) {
+					mosh_error("Unknown socket option: %s", opt);
+					goto show_usage;
+				}
+				arg_sock_opt_id = sock_opt->opt;
+				arg_sock_opt_level = sock_opt->level;
+			}
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	/* TODO: Handle non integer options somehow (like send/recv timeouts, TLS sec tag lists) */
+
+	err = sock_getopt(arg_socket_id, arg_sock_opt_level, arg_sock_opt_id);
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_OPTION_GET);
+	return err;
+}
+
 static int cmd_sock_list(const struct shell *shell, size_t argc, char **argv)
 {
 	return sock_list();
 }
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_sock_option,
+	SHELL_CMD_ARG(set, NULL, "Set socket option.", cmd_sock_setopt, 0, 10),
+	SHELL_CMD_ARG(get, NULL, "Get socket option.", cmd_sock_getopt, 0, 10),
+	SHELL_SUBCMD_SET_END
+);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_sock,
@@ -891,6 +1213,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		list, NULL,
 		"List open sockets.",
 		cmd_sock_list, 1, 0),
+	SHELL_CMD(
+		option, &sub_sock_option,
+		"Set/Get socket option.",
+		mosh_print_help_shell),
 	SHELL_SUBCMD_SET_END
 );
 
