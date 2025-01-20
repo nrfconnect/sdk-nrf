@@ -579,6 +579,7 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
+  * Added support for setting and getting socket options using the ``sock option set`` and ``sock option get`` commands.
   * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
     The link control functionality is now always enabled and cannot be disabled.
 
