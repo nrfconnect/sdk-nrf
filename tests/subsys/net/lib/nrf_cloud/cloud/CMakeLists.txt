@@ -52,8 +52,8 @@ if (CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_MODEM_LIB)
 		)
 
 		# This code file has functions/structs/variables defined when
-		# NET_SOCKETS_POSIX_NAMES=y in zephyr/net/socket.h, so
-		# it needs to be excluded when NET_SOCKETS_POSIX_NAMES=n
+		# POSIX_API=y in zephyr/net/socket.h, so it needs to be excluded
+		# when POSIX_API=n
 		set_source_files_properties(
 			${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/downloader.c
 			DIRECTORY ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/
@@ -64,7 +64,7 @@ if (CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_MODEM_LIB)
 
 	if (CONFIG_NRF_MODEM_LIB)
 
-		# Similarly, these files need to be excluded when NET_SOCKETS_POSIX_NAMES=n
+		# Similarly, these files need to be excluded when POSIX_API=n
 		set_source_files_properties(
 			${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/sanity.c
 			${ZEPHYR_NRF_MODULE_DIR}/lib/nrf_modem_lib/nrf9x_sockets.c
