@@ -261,6 +261,10 @@ Bluetooth Fast Pair samples
 Bluetooth Mesh samples
 ----------------------
 
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Removed support for the :ref:`zephyr:nrf52dk_nrf52832` board target.
+
 * Added:
 
   * Support for nRF54L10 in the following samples:
