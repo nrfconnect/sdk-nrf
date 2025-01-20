@@ -27,6 +27,7 @@ from nrf5340_audio_dk_devices import (
     AudioDevice,
     SelectFlags,
     Core,
+    Transport,
 )
 from program import program_threads_run
 
@@ -44,6 +45,11 @@ TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME = "nrf5340_audio_dk/nrf5340/cpuapp"
 TARGET_CORE_APP_FOLDER = NRF5340_AUDIO_FOLDER
 TARGET_DEV_HEADSET_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_headset"
 TARGET_DEV_GATEWAY_FOLDER = NRF5340_AUDIO_FOLDER / "build/dev_gateway"
+
+UNICAST_SERVER_OVERLAY = NRF5340_AUDIO_FOLDER / "unicast_server/overlay-unicast_server.conf"
+UNICAST_CLIENT_OVERLAY = NRF5340_AUDIO_FOLDER / "unicast_client/overlay-unicast_client.conf"
+BROADCAST_SINK_OVERLAY = NRF5340_AUDIO_FOLDER / "broadcast_sink/overlay-broadcast_sink.conf"
+BROADCAST_SOURCE_OVERLAY = NRF5340_AUDIO_FOLDER / "broadcast_source/overlay-broadcast_source.conf"
 
 TARGET_RELEASE_FOLDER = "build_release"
 TARGET_DEBUG_FOLDER = "build_debug"
@@ -130,16 +136,26 @@ def __build_cmd_get(cores: Core, device: AudioDevice, build: BuildType,
         user_specific_bt_name = (
             "AUDIO_DEV_" + getpass.getuser())[:MAX_USER_NAME_LEN].upper()
         device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + user_specific_bt_name + "\\\""
+    if options.transport == Transport.broadcast.name:
+        if device == AudioDevice.headset:
+            overlay_flag = (f" -DEXTRA_CONF_FILE={BROADCAST_SINK_OVERLAY}")
+        elif device == AudioDevice.gateway:
+            overlay_flag = (f" -DEXTRA_CONF_FILE={BROADCAST_SOURCE_OVERLAY}")
+    elif options.transport == Transport.unicast.name:
+        if device == AudioDevice.headset:
+            overlay_flag = (f" -DEXTRA_CONF_FILE={UNICAST_SERVER_OVERLAY}")
+        elif device == AudioDevice.gateway:
+            overlay_flag = (f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}")
     if os.name == 'nt':
         release_flag = release_flag.replace('\\', '/')
     if pristine:
         build_cmd += " -p"
 
-    return build_cmd, dest_folder, device_flag, release_flag
+    return build_cmd, dest_folder, device_flag, release_flag, overlay_flag
 
 
 def __build_module(build_config, options):
-    build_cmd, dest_folder, device_flag, release_flag = __build_cmd_get(
+    build_cmd, dest_folder, device_flag, release_flag, overlay_flag = __build_cmd_get(
         build_config.core,
         build_config.device,
         build_config.build,
@@ -153,7 +169,7 @@ def __build_module(build_config, options):
 
     # Only add compiler flags if folder doesn't exist already
     if not dest_folder.exists():
-        west_str = west_str + device_flag + release_flag
+        west_str = west_str + device_flag + release_flag + overlay_flag
 
     print("Run: " + west_str)
 
@@ -180,7 +196,7 @@ def __find_snr():
 def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
-    _, temp_dest_folder, _, _ = __build_cmd_get(
+    _, temp_dest_folder, _, _, _ = __build_cmd_get(
         Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options
     )
 
@@ -292,6 +308,14 @@ def __main():
         default=False,
         help="Set to generate a user specific Bluetooth device name.\
               Note that this will put the computer user name on air in clear text",
+    )
+    parser.add_argument(
+        "-t",
+        "--transport",
+        type=str,
+        choices=[i.name for i in Transport],
+        default=Transport.unicast.name,
+        help="Select the transport type",
     )
 
     options = parser.parse_args(args=sys.argv[1:])
