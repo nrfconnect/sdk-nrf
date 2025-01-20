@@ -11,33 +11,37 @@ common:
     - ci_build
     - sysbuild
 tests:
-  applications.nrf5340_audio.default:
-    extra_args: []
   applications.nrf5340_audio.headset_unicast:
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=1
+      - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
   applications.nrf5340_audio.gateway_unicast:
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=2
+      - EXTRA_CONF_FILE=unicast_client/overlay-unicast_client.conf
   applications.nrf5340_audio.headset_broadcast:
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=1
       - CONFIG_TRANSPORT_BIS=y
+      - EXTRA_CONF_FILE=broadcast_sink/overlay-broadcast_sink.conf
   applications.nrf5340_audio.gateway_broadcast:
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=2
       - CONFIG_TRANSPORT_BIS=y
+      - EXTRA_CONF_FILE=broadcast_source/overlay-broadcast_source.conf
   applications.nrf5340_audio.headset_unicast_sd_card:
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=1
       - CONFIG_SD_CARD_PLAYBACK=y
+      - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
   applications.nrf5340_audio.headset_dfu:
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=1
       - FILE_SUFFIX=fota
+      - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf

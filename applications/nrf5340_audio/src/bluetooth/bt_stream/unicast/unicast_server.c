@@ -138,7 +138,7 @@ static enum bt_audio_dir caps_dirs[] = {
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
 
-static const struct bt_audio_codec_qos_pref qos_pref = BT_AUDIO_CODEC_QOS_PREF(
+static const struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
 	true, BT_GAP_LE_PHY_2M, CONFIG_BT_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
 	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
 	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
@@ -168,7 +168,7 @@ BUILD_ASSERT(CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT <= 1,
 
 static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum bt_audio_dir dir,
 			 const struct bt_audio_codec_cfg *codec, struct bt_bap_stream **stream,
-			 struct bt_audio_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
+			 struct bt_bap_qos_cfg_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
 	int ret;
 	LOG_DBG("LC3 config callback");
@@ -224,14 +224,14 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 
 static int lc3_reconfig_cb(struct bt_bap_stream *stream, enum bt_audio_dir dir,
 			   const struct bt_audio_codec_cfg *codec,
-			   struct bt_audio_codec_qos_pref *const pref, struct bt_bap_ascs_rsp *rsp)
+			   struct bt_bap_qos_cfg_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("ASE Codec Reconfig: stream %p", (void *)stream);
 
 	return 0;
 }
 
-static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_audio_codec_qos *qos,
+static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_bap_qos_cfg *qos,
 		      struct bt_bap_ascs_rsp *rsp)
 {
 	enum bt_audio_dir dir;
