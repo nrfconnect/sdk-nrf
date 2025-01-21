@@ -190,14 +190,14 @@ static int cracen_signature_prepare_ec_pubkey(struct sitask *t, struct si_sig_pu
 	status = SX_ERR_INCOMPATIBLE_HW;
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS)) {
-		if (alg == PSA_ALG_PURE_EDDSA) {
+		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
 			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
 				memcpy(pubkey_buffer, key_buffer, key_buffer_size);
 				return SX_OK;
 			}
 			status = ed25519_create_pubkey(key_buffer, pubkey_buffer);
 			return status;
-		}
+			}
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||

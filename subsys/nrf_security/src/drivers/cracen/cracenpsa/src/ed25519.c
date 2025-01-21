@@ -9,6 +9,8 @@
 #include <cracen/ec_helpers.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen/mem_helpers.h>
+#include "crypmasterregs.h"
+#include "hw.h"
 
 /* This is the ASCII string with the
  * PHflag 1 and context size 0 appended as defined in:
@@ -249,37 +251,56 @@ int ed25519_verify_internal(const uint8_t *pubkey, const char *message,
 	struct sxhash hashopctx;
 	int status;
 
-	status = sx_hash_create(&hashopctx, &sxhashalg_sha2_512, sizeof(hashopctx));
 
+	status = sx_hash_create(&hashopctx, &sxhashalg_sha2_512, sizeof(hashopctx));
 	if (status != 0) {
 		return status;
 	}
 	if (prehash) {
 		status = sx_hash_feed(&hashopctx, dom2, sizeof(dom2));
+
 		if (status != 0) {
 			return status;
 		}
 	}
-	status = sx_hash_feed(&hashopctx, signature, SX_ED25519_SZ);
+	status = sx_hash_feed(&hashopctx, signature, SX_ED25519_SZ/2);
+	while ((sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK) != 0);
+	if (status != 0) {
+		return status;
+	}
+
+	status = sx_hash_feed(&hashopctx, signature+16, SX_ED25519_SZ/2);
+	while ((sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK) != 0);
 
 	if (status != 0) {
 		return status;
 	}
-	status = sx_hash_feed(&hashopctx, pubkey, SX_ED25519_SZ);
-
+	status = sx_hash_feed(&hashopctx, pubkey, SX_ED25519_SZ/2);
+	while ((sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK) != 0);
+	if (status != 0) {
+		return status;
+	}
+	status = sx_hash_feed(&hashopctx, pubkey+16, SX_ED25519_SZ/2);
+	while ((sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK) != 0);
 	if (status != 0) {
 		return status;
 	}
 	status = sx_hash_feed(&hashopctx, message, message_length);
+	while ((sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK) != 0);
 
 	if (status != 0) {
 		return status;
 	}
 	status = sx_hash_digest(&hashopctx, workmem);
+	while ((sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK) != 0);
+
+
 	if (status != 0) {
 		return status;
 	}
 	status = sx_hash_wait(&hashopctx);
+
+
 	if (status != 0) {
 		return status;
 	}
