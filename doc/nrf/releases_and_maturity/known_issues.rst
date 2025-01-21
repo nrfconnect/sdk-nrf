@@ -504,6 +504,14 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-9-0
+
+KRKNWK-19804: Descriptor Device Type List does not include OTA Requestor device on endpoint 0
+  None of the Matter samples include the OTA Requestor Device Type on endpoint 0 in the Descriptor Device Type List.
+  This causes the Matter 1.4 certification test IDM-10.5 to fail.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-nrf`` (commit hash: ``9d1b1512b9176f7ecfd491c21659c90d4f119245``).
+
 .. rst-class:: v2-9-0 v2-8-0
 
 KRKNWK-19806: RPU recovery fails during Wi-Fi communication
