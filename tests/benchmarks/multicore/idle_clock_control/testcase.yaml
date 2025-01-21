@@ -1,12 +1,12 @@
 common:
   sysbuild: true
-  tags:
-    - ci_build
-    - ci_tests_benchmarks_multicore
-    - ppk_power_measure
 
 tests:
   benchmarks.multicore.idle_clock_control.app:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
+      - ppk_power_measure
     filter: not CONFIG_COVERAGE
     harness: pytest
     platform_allow:
@@ -21,6 +21,10 @@ tests:
 
   # note: in this scenario cpuapp is the 'remote'
   benchmarks.multicore.idle_clock_control.rad:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
+      - ppk_power_measure
     filter: not CONFIG_COVERAGE
     harness: pytest
     platform_allow:
@@ -44,6 +48,9 @@ tests:
     timeout: 90
 
   benchmarks.multicore.idle_clock_control.coverage:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
     filter: CONFIG_COVERAGE
     harness: console
     harness_config:

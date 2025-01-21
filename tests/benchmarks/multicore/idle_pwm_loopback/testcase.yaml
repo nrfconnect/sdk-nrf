@@ -47,20 +47,6 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
 
-  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.coverage:
-    filter: CONFIG_COVERAGE
-    extra_args:
-      - idle_pwm_loopback_CONF_FILE=coverage.conf
-      - SHIELD=coverage_support
-    harness: console
-    harness_config:
-      fixture: spi_loopback
-      type: multi_line
-      ordered: true
-      regex:
-        - ".*Coverage analysis enabled.*"
-        - ".*Coverage analysis start.*"
-
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep_fast:
     filter: not CONFIG_COVERAGE
     extra_args:
@@ -161,3 +147,17 @@ tests:
       fixture: spi_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
+
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.coverage:
+    filter: CONFIG_COVERAGE
+    extra_args:
+      - idle_pwm_loopback_CONF_FILE=coverage.conf
+      - SHIELD=coverage_support
+    harness: console
+    harness_config:
+      fixture: spi_loopback
+      type: multi_line
+      ordered: true
+      regex:
+        - ".*Coverage analysis enabled.*"
+        - ".*Coverage analysis start.*"
