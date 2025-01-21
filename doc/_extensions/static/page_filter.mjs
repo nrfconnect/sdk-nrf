@@ -11,7 +11,7 @@ function displayOption(option, dropdown) {
 
   document.querySelectorAll(".hideable").forEach(e => e.hidden = false);
   var filters = all_dropdowns
-    .map(dp => dp.options[dp.selectedIndex].value)
+    .map(dp => dp.options[dp.selectedIndex].value.toLowerCase())
     .filter(val => val !== "all");
 
   if (filters.length == 0) return;
