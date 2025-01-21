@@ -43,6 +43,9 @@ target_sources_ifdef(CONFIG_DESKTOP_HID_FORWARD_ENABLE
 target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_state.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_provider_mouse.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_PM_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_state_pm.c)
 
