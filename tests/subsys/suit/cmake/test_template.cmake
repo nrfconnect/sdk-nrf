@@ -23,5 +23,7 @@ if (CONFIG_64BIT)
   set(bit_arg -b 64)
 endif()
 
+set(SUIT_SUBSYS_DIR ${ZEPHYR_NRF_MODULE_DIR}/subsys/suit)
+
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../common" "${PROJECT_BINARY_DIR}/test_common")
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../mocks" "${PROJECT_BINARY_DIR}/test_mocks")

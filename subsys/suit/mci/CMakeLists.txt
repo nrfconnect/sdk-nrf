@@ -11,7 +11,9 @@ target_link_libraries(suit_mci INTERFACE suit_platform_err)
 target_link_libraries(suit_mci INTERFACE suit_metadata)
 
 zephyr_library()
-zephyr_library_sources_ifdef(CONFIG_SUIT_MCI_IMPL_NRF54H20_SDFW src/suit_mci_nrf54h20.c)
+if(CONFIG_SUIT_MCI_IMPL_SDFW)
+  zephyr_library_sources(src/suit_mci_${CONFIG_SOC}.c)
+endif()
 zephyr_library_sources(src/suit_generic_ids.c)
 
 zephyr_library_link_libraries(suit_mci)

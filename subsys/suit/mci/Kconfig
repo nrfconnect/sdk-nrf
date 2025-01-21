@@ -11,14 +11,19 @@ menuconfig SUIT_MCI
 
 if SUIT_MCI
 
+config SUPPORT_SUIT_MCI_IMPL_SDFW
+	bool
+	default y if SOC_SERIES_NRF54HX
+
 choice SUIT_MCI_IMPL
 	prompt "MCI implementation"
-	default SUIT_MCI_IMPL_NRF54H20_SDFW if SOC_SERIES_NRF54HX
-	default SUIT_MCI_IMPL_CUSTOM if !SOC_SERIES_NRF54HX
+	default SUIT_MCI_IMPL_SDFW if SUPPORT_SUIT_MCI_IMPL_SDFW
+	default SUIT_MCI_IMPL_CUSTOM
 
-config SUIT_MCI_IMPL_NRF54H20_SDFW
-	bool "nRF54H20: Secure domain"
+config SUIT_MCI_IMPL_SDFW
+	bool "Secure domain"
 	depends on SUIT_PLATFORM_VARIANT_SDFW
+	depends on SUPPORT_SUIT_MCI_IMPL_SDFW
 
 config SUIT_MCI_IMPL_CUSTOM
 	bool "custom"
