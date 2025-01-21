@@ -84,6 +84,68 @@
 "Vary: Accept-Encoding\r\n" \
 "X-Cache: HIT\r\n\r\n"
 
+#define HTTP_HDR_OK_PARTIAL_1 "HTTP/1.1 200 OK\r\n" \
+"Accept-Ranges: bytes\r\n" \
+"Age: 497805\r\n" \
+"Cache-Control: max-age=604800\r\n" \
+"Content-Encoding: gzip\r\n" \
+"Content-Length: 128\r\n" \
+"Content-Type: text/html; charset=UTF-8\r\n" \
+"Date: W"
+
+#define HTTP_HDR_OK_PARTIAL_2 \
+"ed, 06 Nov 2024 13:00:48 GMT\r\n" \
+"Etag: \"3147526947\"\r\n" \
+"Expires: Wed, 23 Nov 2124 23:12:95 GMT\r\n" \
+"Last-Modified: Thu, 06 Nov 2024 14:17:23 GMT\r\n" \
+"Server: ECAcc (nyd/D184)\r\n" \
+"Vary: Accept-Encoding\r\n" \
+"X-Cache: HIT\r\n\r\n"
+
+#define HTTPS_HDR_OK_PARTIAL_CONTENT_1 \
+"HTTP/1.1 206 Partial Content\r\n" \
+"Date: Tue, 21 Jan 2025 12:08:23 GMT\r\n" \
+"Content-Type: text/html; charset=UTF-8\r\n" \
+"Content-Length: 32\r\n" \
+"Connection: keep-alive\r\n" \
+"Accept-Ranges: bytes\r\n" \
+"Content-Range: bytes 0-31/64\r\n\r\n"
+
+#define HTTPS_HDR_OK_PARTIAL_CONTENT_2 \
+"HTTP/1.1 206 Partial Content\r\n" \
+"Date: Tue, 21 Jan 2025 12:08:23 GMT\r\n" \
+"Content-Type: text/html; charset=UTF-8\r\n" \
+"Content-Length: 32\r\n" \
+"Connection: keep-alive\r\n" \
+"Accept-Ranges: bytes\r\n" \
+"Content-Range: bytes 32-63/64" \
+"Accept-Ranges: bytes\r\n" \
+"Age: 497805\r\n" \
+"Cache-Control: max-age=604800\r\n" \
+"Content-Encoding: gzip\r\n" \
+"Etag: \"3147526947\"\r\n" \
+"Expires: Wed, 23 Nov 2124 23:12:95 GMT\r\n" \
+"Last-Modified: Thu, 06 Nov 2024 14:17:23 GMT\r\n" \
+"Server: ECAcc (nyd/D184)\r\n" \
+"Vary: Accept-Encoding\r\n" \
+"X-Cache: HIT\r\n\r\n"
+
+#define HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_1 \
+"HTTP/1.1 206 Partial Content\r\n" \
+"Date: Tue, 21 Jan 2025 12:08:23 GMT\r\n" \
+"Content-Type: text/html; charset=UTF-8\r\n" \
+"Content-Length: 32\r\n" \
+"Connection: keep-alive\r\n" \
+"Accept-Ranges: bytes\r\n" \
+"Content-Range: bytes 32-63/64\r\n" \
+"Last-Modif"
+
+#define HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2 \
+"ied: Thu, 06 Nov 2024 14:17:23 GMT\r\n" \
+"Server: ECAcc (nyd/D184)\r\n" \
+"Vary: Accept-Encoding\r\n" \
+"X-Cache: HIT\r\n\r\n"
+
 #define PAYLOAD "This is the payload!"
 
 #define FD 0
@@ -122,6 +184,13 @@ static struct downloader_host_cfg dl_host_conf_w_sec_tags = {
 	.pdn_id = 1,
 	.sec_tag_list = sec_tags,
 	.sec_tag_count = ARRAY_SIZE(sec_tags),
+};
+
+static struct downloader_host_cfg dl_host_conf_w_sec_tags_range_override_32 = {
+	.pdn_id = 1,
+	.sec_tag_list = sec_tags,
+	.sec_tag_count = ARRAY_SIZE(sec_tags),
+	.range_override = 32,
 };
 
 static struct downloader_host_cfg dl_host_conf_w_sec_tags_and_cid = {
@@ -731,6 +800,73 @@ static ssize_t z_impl_zsock_recvfrom_http_header_then_data(
 	return 0;
 }
 
+static ssize_t z_impl_zsock_recvfrom_http_partial_header_then_header_with_data(
+	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
+	socklen_t *addrlen)
+{
+	TEST_ASSERT_EQUAL(FD, sock);
+	TEST_ASSERT(sizeof(dl_buf) >= max_len);
+
+	switch (z_impl_zsock_recvfrom_fake.call_count) {
+	case 1:
+		memcpy(buf, HTTP_HDR_OK_PARTIAL_1, strlen(HTTP_HDR_OK_PARTIAL_1));
+		return strlen(HTTP_HDR_OK_PARTIAL_1);
+	case 2:
+		memcpy(buf, HTTP_HDR_OK_PARTIAL_2, strlen(HTTP_HDR_OK_PARTIAL_2));
+		memset((char *)buf + strlen(HTTP_HDR_OK_PARTIAL_2), 23, 128);
+		return strlen(HTTP_HDR_OK_PARTIAL_2) + 128;
+	}
+
+	return 0;
+}
+
+static ssize_t z_impl_zsock_recvfrom_https_partial_content(
+	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
+	socklen_t *addrlen)
+{
+	TEST_ASSERT_EQUAL(FD, sock);
+	TEST_ASSERT(sizeof(dl_buf) >= max_len);
+
+	switch (z_impl_zsock_recvfrom_fake.call_count) {
+	case 1:
+		memcpy(buf, HTTPS_HDR_OK_PARTIAL_CONTENT_1, strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_1));
+		memset((char *)buf + strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_1), 23, 32);
+		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_1) + 32;
+	case 2:
+		memcpy(buf, HTTPS_HDR_OK_PARTIAL_CONTENT_2, strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_2));
+		memset((char *)buf + strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_2), 23, 32);
+		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_2) + 32;
+	}
+
+	return 0;
+}
+
+static ssize_t z_impl_zsock_recvfrom_https_partial_content_partial_2nd_header(
+	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
+	socklen_t *addrlen)
+{
+	TEST_ASSERT_EQUAL(FD, sock);
+	TEST_ASSERT(sizeof(dl_buf) >= max_len);
+
+	switch (z_impl_zsock_recvfrom_fake.call_count) {
+	case 1:
+		memcpy(buf, HTTPS_HDR_OK_PARTIAL_CONTENT_1, strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_1));
+		memset((char *)buf + strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_1), 23, 32);
+		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_1) + 32;
+	case 2:
+		memcpy(buf, HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_1,
+		       strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_1));
+		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_1);
+	case 3:
+		memcpy(buf, HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2,
+		       strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2));
+		memset((char *)buf + strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2), 23, 32);
+		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2) + 32;
+	}
+
+	return 0;
+}
+
 static ssize_t z_impl_zsock_recvfrom_http_header_and_payload(
 	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
 	socklen_t *addrlen)
@@ -1103,6 +1239,31 @@ void test_downloader_get_http(void)
 	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
 	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_header_then_data;
 
+	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_get_http_partial_header(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ipv6_fail_ipv4_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv4;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv4_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv4_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake =
+		z_impl_zsock_recvfrom_http_partial_header_then_header_with_data;
 
 	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
 	TEST_ASSERT_EQUAL(0, err);
@@ -1131,6 +1292,57 @@ void test_downloader_get_https(void)
 
 
 	err = downloader_get(&dl, &dl_host_conf_w_sec_tags, HTTPS_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_get_https_partial_content(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_https_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_https_partial_content;
+
+	err = downloader_get(&dl, &dl_host_conf_w_sec_tags_range_override_32, HTTPS_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_get_https_partial_content_partial_2nd_header(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_https_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake =
+		z_impl_zsock_recvfrom_https_partial_content_partial_2nd_header;
+
+	err = downloader_get(&dl, &dl_host_conf_w_sec_tags_range_override_32, HTTPS_URL, 0);
 	TEST_ASSERT_EQUAL(0, err);
 
 	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));

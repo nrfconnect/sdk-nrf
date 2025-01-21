@@ -145,16 +145,16 @@ static int http_get_request_send(struct downloader *dl)
 			   IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
 
 	if (dl->host_cfg.range_override) {
-		if (tls_force_range && dl->host_cfg.range_override > (TLS_RANGE_MAX - 1)) {
+		if (tls_force_range && dl->host_cfg.range_override > (TLS_RANGE_MAX)) {
 			LOG_WRN("Range override > TLS max range, setting to TLS max range");
-			dl->host_cfg.range_override = (TLS_RANGE_MAX - 1);
+			dl->host_cfg.range_override = (TLS_RANGE_MAX);
 		}
 	} else if (tls_force_range) {
-		dl->host_cfg.range_override = TLS_RANGE_MAX - 1;
+		dl->host_cfg.range_override = TLS_RANGE_MAX;
 	}
 
 	if (dl->host_cfg.range_override) {
-		off = dl->progress + dl->host_cfg.range_override;
+		off = dl->progress + dl->host_cfg.range_override - 1;
 
 		if (dl->file_size && (off > dl->file_size - 1)) {
 			/* Don't request bytes past the end of file */
@@ -215,7 +215,7 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 
 	LOG_DBG("(partial) http header response:\n%s", dl->cfg.buf);
 
-	p = strnstr(dl->cfg.buf, "\r\n\r\n", dl->cfg.buf_size);
+	p = strnstr(dl->cfg.buf, "\r\n\r\n", buf_len);
 	if (p) {
 		/* End of header received */
 		http->header.has_end = true;
@@ -591,7 +591,7 @@ static int dl_http_download(struct downloader *dl)
 		return -ECONNRESET;
 	}
 
-	ret = http_parse(dl, len);
+	ret = http_parse(dl, len + dl->buf_offset);
 	if (ret <= 0) {
 		return ret;
 	}
