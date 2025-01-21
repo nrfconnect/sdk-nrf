@@ -23,3 +23,10 @@ config DESKTOP_LTO_DEFAULTS
 	imply ISR_TABLES_LOCAL_DECLARATION
 	help
 	  nRF Desktop enables LTO to limit memory usage and improve performance.
+
+config APP_EVENT_MANAGER_MAX_EVENT_CNT
+	default 64
+	help
+	  nRF Desktop increases the maximum number of Application Event Manager
+	  event types to ensure that more complex configurations fit in the
+	  limit.

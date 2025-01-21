@@ -241,6 +241,9 @@ nRF Desktop
 
     This approach simplifies the process of adding support for new HID reports.
 
+  * The default value of the :kconfig:option:`CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT` Kconfig option to ``64``.
+    This ensures that more complex configurations fit in the limit.
+
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
