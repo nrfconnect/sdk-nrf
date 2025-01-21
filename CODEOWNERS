@@ -102,8 +102,8 @@
 /doc/nrf/drivers/hw_cc3xx.rst             @nrfconnect/ncs-aegir-doc
 /doc/nrf/drivers/paw3212.rst              @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
+/doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/wifi/*.rst               @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/wifi.rst                 @nrfconnect/ncs-wifi-doc
@@ -186,7 +186,7 @@
 /doc/nrf/libraries/nfc/                   @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/nrf_rpc/index.rst      @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/nrf_rpc/nrf_rpc_ipc.rst @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/libraries/nrf_rpc/nrf_rpc_uart.rst @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/nrf_rpc/nrf_rpc_uart.rst @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/nrf_rpc/nrf_rpc_dev_info.rst @nrfconnect/ncs-terahertz-doc
 
 /doc/nrf/libraries/others/adp536x.rst     @nrfconnect/ncs-cia-doc
@@ -219,7 +219,7 @@
 /doc/nrf/libraries/others/supl_os_client.rst @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/others/tone.rst        @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/uart_async_adapter.rst @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/libraries/others/wave_gen.rst    @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/others/wave_gen.rst    @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/security/bootloader/   @nrfconnect/ncs-pluto-doc
 /doc/nrf/libraries/security/nrf_security/ @nrfconnect/ncs-aegir-doc
 /doc/nrf/libraries/security/tfm/          @nrfconnect/ncs-aegir-doc
@@ -268,7 +268,7 @@
 /doc/nrf/samples/peripheral.rst           @nrfconnect/ncs-radio-sw-doc
 /doc/nrf/samples/pmic.rst                 @nrfconnect/ncs-pmic-doc
 /doc/nrf/samples/sensor.rst               @nrfconnect/ncs-cia-doc
-/doc/nrf/samples/serialization.rst        @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/samples/serialization.rst        @nrfconnect/ncs-terahertz-doc
 /doc/nrf/samples/suit.rst                 @nrfconnect/ncs-charon-doc
 /doc/nrf/samples/tfm.rst                  @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/thread.rst               @nrfconnect/ncs-terahertz-doc
@@ -318,10 +318,25 @@
 /include/audio_module/                    @nrfconnect/ncs-audio
 /include/bluetooth/                       @nrfconnect/ncs-dragoon
 /include/bluetooth/adv_prov.h             @nrfconnect/ncs-si-bluebagel
+/include/bluetooth/bt_rpc.h               @nrfconnect/ncs-si-muffin
+/include/bluetooth/conn_ctx.h             @nrfconnect/ncs-si-muffin
+/include/bluetooth/gatt_dm.h              @nrfconnect/ncs-si-muffin
+/include/bluetooth/gatt_pool.h            @nrfconnect/ncs-si-muffin
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
+/include/bluetooth/scan.h                 @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/bas_client.h  @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/bms.h         @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/cgms.h        @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/ddfs.h        @nrfconnect/ncs-si-muffin
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/services/hids.h        @nrfconnect/ncs-si-bluebagel
-/include/bluetooth/services/ras.h         @nrfconnect/ncs-dragoon
+/include/bluetooth/services/hrs_client.h  @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/lbs.h         @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/mds.h         @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/nus_client.h  @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/nus.h         @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/rscs.h        @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/throughput.h  @nrfconnect/ncs-si-muffin
 /include/caf/                             @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /include/debug/                           @nrfconnect/ncs-co-drivers
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch
@@ -408,7 +423,7 @@
 /lib/supl/                                @nrfconnect/ncs-co-networking @tokangas
 /lib/tone/                                @nrfconnect/ncs-audio
 /lib/uicc_lwm2m/                          @stig-bjorlykke
-/lib/wave_gen/                            @nrfconnect/ncs-si-muffin
+/lib/wave_gen/                            @nrfconnect/ncs-si-bluebagel
 
 # Modules
 /modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia
@@ -737,7 +752,7 @@
 /subsys/dm/                               @nrfconnect/ncs-si-muffin
 /subsys/dult/                             @nrfconnect/ncs-si-bluebagel
 /subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
-/subsys/esb/                              @lemrey
+/subsys/esb/                              @nrfconnect/ncs-si-muffin
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-muffin
 /subsys/fw_info/                          @nrfconnect/ncs-pluto
 /subsys/gazell/                           @leewkb4567
