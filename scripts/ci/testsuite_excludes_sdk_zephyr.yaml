@@ -1,0 +1,210 @@
+# This file contains information on what files are associated with which
+# twister testsuite excludes patterns.
+#
+# File format is the same as for tags.yaml - please refer to its description.
+
+"*tests/lib/*":
+  files:
+    - modules/fs/
+    - modules/lib/cmsis-dsp/
+    - modules/lib/cmsis-nn/
+    - modules/lib/gui/
+    - modules/lib/picolibc/
+    - zephyr/arch/
+    - zephyr/kernel/
+    - zephyr/lib/
+    - zephyr/lib/heap/
+    - zephyr/lib/libc/
+    - zephyr/lib/os/
+    - zephyr/modules/lvgl/
+    - zephyr/tests/lib
+
+"*tests/kernel/*":
+  files:
+    - modules/lib/picolibc/
+    - tests/kernel/
+    - zephyr/arch/
+    - zephyr/kernel/
+    - zephyr/lib/
+
+"*tests/subsys/*":
+  files:
+    - tests/subsys/
+    - zephyr/lib/
+    - zephyr/modules/fatfs/
+    - zephyr/modules/littlefs/
+    - zephyr/subsys/
+
+"*tests/net/*":
+  files:
+    - modules/lib/hostap/
+    - tests/net/
+    - zephyr/drivers/net/
+    - zephyr/lib/net_buf/
+    - zephyr/modules/hostap/
+    - zephyr/subsys/net/
+    - zephyr/subsys/random/
+
+"*tests/drivers/*":
+  files:
+    - modules/hal/nordic/
+    - tests/drivers/
+    - zephyr/drivers/
+    - zephyr/soc/nordic/
+    - zephyr/subsys/debug/coredump/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/input/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/logging/
+    - zephyr/subsys/net/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/random/
+    - zephyr/subsys/rtio/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/tracing/
+    - zephyr/subsys/usb/
+
+"*tests/posix/*":
+  files:
+    - tests/posix/
+    - zephyr/boards/native/
+    - zephyr/lib/posix/
+
+"*tests/arch/*":
+  files:
+    - tests/arch/
+    - zephyr/arch/arm/
+    - zephyr/arch/common/
+    - zephyr/arch/riscv/
+
+"*tests/bluetooth/*":
+  files:
+    - modules/hal/libmetal/
+    - modules/lib/liblc3/
+    - modules/lib/open-amp/
+    - tests/bluetooth/
+    - zephyr/drivers/bluetooth/
+    - zephyr/lib/crc/
+    - zephyr/lib/net_buf/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/samples/bluetooth/hci_uart_async/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/
+
+"*tests/benchmarks/*":
+  files:
+    - modules/lib/cmsis-dsp/
+    - tests/benchmarks/
+    - zephyr/kernel/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/timing/
+    - zephyr/subsys/tracing/
+
+"*tests/ztest/*":
+  files:
+    - tests/ztest/
+    - zephyr/subsys/testsuite/
+
+"*tests/crypto/*":
+  files:
+    - modules/crypto/
+    - tests/crypto/
+    - zephyr/modules/mbedtls/
+    - zephyr/subsys/random/
+
+"*tests/misc/*":
+  files:
+    - tests/misc/
+
+"*samples/subsys/*":
+  files:
+    - samples/subsys/
+    - zephyr/subsys/
+
+"*samples/drivers/*":
+  files:
+    - samples/drivers/
+    - zephyr/drivers/
+
+"*samples/net/*":
+  files:
+    - modules/lib/open-amp/
+    - modules/lib/openthread/
+    - samples/net/
+    - zephyr/lib/crc/
+    - zephyr/lib/net_buf/
+    - zephyr/modules/hostap/
+    - zephyr/modules/nrf_wifi/
+    - zephyr/modules/openthread/
+    - zephyr/net/
+    - zephyr/subsys/net/
+    - zephyr/subsys/random/
+    - zephyr/subsys/usb/
+
+"*samples/sensor/*":
+  files:
+    - samples/sensor/
+    - zephyr/drivers/adc/
+    - zephyr/drivers/i2c/
+    - zephyr/drivers/sensor/
+    - zephyr/drivers/spi/
+    - zephyr/drivers/w1/
+
+"*samples/basic/*":
+  files:
+    - zephyr/samples/basic/
+
+"*samples/bluetooth/*":
+  files:
+    - zephyr/samples/bluetooth/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/
+
+"*samples/philosophers/*":
+  files:
+    - zephyr/kernel/
+    - zephyr/samples/philosophers/
+
+"*samples/modules/*":
+  files:
+    - modules/lib/cmsis-dsp/
+    - modules/lib/lz4/
+    - modules/lib/nanopb/
+    - zephyr/drivers/can/
+    - zephyr/modules/canopennode/
+    - zephyr/samples/modules/
+
+"*samples/shields/*":
+  files:
+    - zephyr/drivers/sensor/
+    - zephyr/samples/shields/
+
+"*samples/boards/*":
+  files:
+    - zephyr/samples/boards/
+    - zephyr/soc/nordic/
+
+"*samples/userspace/*":
+  files:
+    - zephyr/samples/userspace/
+
+"*samples/posix/*":
+  files:
+    - zephyr/boards/native/
+    - zephyr/lib/posix/
+    - zephyr/samples/posix/
+    - zephyr/subsys/net/
+
+"*samples/cpp/*":
+  files:
+    - zephyr/samples/cpp/
