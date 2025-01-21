@@ -78,6 +78,12 @@ config DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT
 	help
 	  Log HID report subscription events in nRF Desktop application.
 
+config DESKTOP_INIT_LOG_HID_REPORT_PROVIDER_EVENT
+	bool "Log HID report provider events"
+	default y
+	help
+	  Log HID report provider events in nRF Desktop application.
+
 config DESKTOP_INIT_LOG_HID_REPORT_EVENT
 	bool "Log HID report events"
 	default y
