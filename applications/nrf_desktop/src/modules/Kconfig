@@ -11,6 +11,13 @@ rsource "Kconfig.caf_ble_adv.default"
 rsource "Kconfig.caf_power_manager.default"
 rsource "Kconfig.caf_settings_loader.default"
 
+menu "HID report providers"
+	depends on DESKTOP_HID_REPORT_PROVIDER_EVENT
+
+rsource "Kconfig.hid_provider_mouse"
+
+endmenu
+
 rsource "Kconfig.hid_state"
 rsource "Kconfig.led_state"
 rsource "Kconfig.led_stream"
