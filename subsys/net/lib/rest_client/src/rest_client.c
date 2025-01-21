@@ -10,14 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/arpa/inet.h>
-#include <zephyr/posix/unistd.h>
-#include <zephyr/posix/netdb.h>
-#include <zephyr/posix/sys/socket.h>
-#else
 #include <zephyr/net/socket.h>
-#endif
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/net/http/client.h>
 #include <zephyr/net/http/parser.h>
@@ -87,13 +80,15 @@ static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
 		verify = tls_peer_verify;
 	}
 
-	err = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify,
+			       sizeof(verify));
 	if (err) {
 		LOG_ERR("Failed to setup peer verification, error: %d", errno);
 		return err;
 	}
 
-	err = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag,
+			       sizeof(tls_sec_tag));
 	if (err) {
 		LOG_ERR("Failed to setup TLS sec tag, error: %d", errno);
 		return err;
@@ -105,14 +100,16 @@ static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
 		cache = TLS_SESSION_CACHE_DISABLED;
 	}
 
-	err = setsockopt(fd, SOL_TLS, TLS_SESSION_CACHE, &cache, sizeof(cache));
+	err = zsock_setsockopt(fd, SOL_TLS, TLS_SESSION_CACHE, &cache,
+			       sizeof(cache));
 	if (err) {
 		LOG_ERR("Unable to set session cache, errno %d", errno);
 		return err;
 	}
 
 	if (tls_hostname) {
-		err = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, tls_hostname, strlen(tls_hostname));
+		err = zsock_setsockopt(fd, SOL_TLS, TLS_HOSTNAME, tls_hostname,
+				       strlen(tls_hostname));
 		if (err) {
 			LOG_ERR("Failed to setup TLS hostname, error: %d", errno);
 			return err;
@@ -130,13 +127,15 @@ static int rest_client_sckt_timeouts_set(int fd, int32_t timeout_ms)
 		/* Send TO also affects TCP connect */
 		timeout.tv_sec = timeout_ms / MSEC_PER_SEC;
 		timeout.tv_usec = (timeout_ms % MSEC_PER_SEC) * USEC_PER_MSEC;
-		err = setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+		err = zsock_setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout,
+				       sizeof(timeout));
 		if (err) {
 			LOG_ERR("Failed to set socket send timeout, error: %d", errno);
 			return err;
 		}
 
-		err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+		err = zsock_setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout,
+				       sizeof(timeout));
 		if (err) {
 			LOG_ERR("Failed to set socket recv timeout, error: %d", errno);
 			return err;
@@ -154,10 +153,10 @@ static int rest_client_sckt_connect(int *const fd,
 				    int32_t *timeout_ms)
 {
 	int ret;
-	struct addrinfo *addr_info;
+	struct zsock_addrinfo *addr_info;
 	char peer_addr[INET6_ADDRSTRLEN];
 	char portstr[6] = { 0 };
-	struct addrinfo hints = {
+	struct zsock_addrinfo hints = {
 		.ai_flags = AI_NUMERICSERV, /* Let getaddrinfo() set port to addrinfo */
 		.ai_family = AF_UNSPEC, /* Both IPv4 and IPv6 addresses accepted */
 		.ai_socktype = SOCK_STREAM,
@@ -177,17 +176,17 @@ static int rest_client_sckt_connect(int *const fd,
 
 	LOG_DBG("Doing getaddrinfo() with connect addr %s port %s", hostname, portstr);
 
-	ret = getaddrinfo(hostname, portstr, &hints, &addr_info);
+	ret = zsock_getaddrinfo(hostname, portstr, &hints, &addr_info);
 	if (ret) {
 		LOG_ERR("getaddrinfo() failed, error: %d", ret);
 		return -EFAULT;
 	}
 
 	sa = addr_info->ai_addr;
-	inet_ntop(sa->sa_family,
-		  (void *)&((struct sockaddr_in *)sa)->sin_addr,
-		  peer_addr,
-		  INET6_ADDRSTRLEN);
+	zsock_inet_ntop(sa->sa_family,
+			(void *)&((struct sockaddr_in *)sa)->sin_addr,
+			peer_addr,
+			INET6_ADDRSTRLEN);
 	LOG_DBG("getaddrinfo() %s", peer_addr);
 
 	if (*timeout_ms != SYS_FOREVER_MS) {
@@ -203,7 +202,7 @@ static int rest_client_sckt_connect(int *const fd,
 	}
 
 	proto = (sec_tag == REST_CLIENT_SEC_TAG_NO_SEC) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
-	*fd = socket(addr_info->ai_family, SOCK_STREAM, proto);
+	*fd = zsock_socket(addr_info->ai_family, SOCK_STREAM, proto);
 	if (*fd == -1) {
 		LOG_ERR("Failed to open socket, error: %d", errno);
 		ret = -ENOTCONN;
@@ -227,7 +226,7 @@ static int rest_client_sckt_connect(int *const fd,
 
 	LOG_DBG("Connecting to %s port %s", hostname, portstr);
 
-	ret = connect(*fd, addr_info->ai_addr, addr_info->ai_addrlen);
+	ret = zsock_connect(*fd, addr_info->ai_addr, addr_info->ai_addrlen);
 	if (ret) {
 		LOG_ERR("Failed to connect socket, error: %d", errno);
 		if (errno == ETIMEDOUT) {
@@ -253,10 +252,10 @@ static int rest_client_sckt_connect(int *const fd,
 
 clean_up:
 
-	freeaddrinfo(addr_info);
+	zsock_freeaddrinfo(addr_info);
 	if (ret) {
 		if (*fd > -1) {
-			(void)close(*fd);
+			(void)zsock_close(*fd);
 			*fd = -1;
 		}
 	}
@@ -270,7 +269,7 @@ static void rest_client_close_connection(struct rest_client_req_context *const r
 	int ret;
 
 	if (!req_ctx->keep_alive) {
-		ret = close(req_ctx->connect_socket);
+		ret = zsock_close(req_ctx->connect_socket);
 		if (ret) {
 			LOG_WRN("Failed to close socket, error: %d", errno);
 		} else {
