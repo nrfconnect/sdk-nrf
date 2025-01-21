@@ -20,14 +20,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/settings/settings.h>
-
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/arpa/inet.h>
-#include <zephyr/posix/netdb.h>
-#include <zephyr/posix/sys/socket.h>
-#else
 #include <zephyr/net/socket.h>
-#endif /* defined(CONFIG_POSIX_API) */
 
 LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -968,7 +961,7 @@ int nct_connect(void)
 	int err = 0;
 	const char *const host_name = NRF_CLOUD_HOSTNAME;
 	uint16_t port = htons(NRF_CLOUD_PORT);
-	struct addrinfo hints = {
+	struct zsock_addrinfo hints = {
 		.ai_socktype = SOCK_STREAM
 	};
 	int sock = nrf_cloud_connect_host(host_name, port, &hints, &nct_connect_host_cb);
@@ -994,7 +987,7 @@ int nct_connect(void)
 			.tv_sec = CONFIG_NRF_CLOUD_SEND_TIMEOUT_SEC
 		};
 
-		err = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+		err = zsock_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
 		if (err == -1) {
 			LOG_ERR("Failed to set timeout, errno: %d", errno);
 			err = 0;

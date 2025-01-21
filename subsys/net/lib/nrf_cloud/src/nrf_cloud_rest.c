@@ -994,7 +994,7 @@ int nrf_cloud_rest_disconnect(struct nrf_cloud_rest_context *const rest_ctx)
 		return -ENOTCONN;
 	}
 
-	int err = close(rest_ctx->connect_socket);
+	int err = zsock_close(rest_ctx->connect_socket);
 	if (err) {
 		LOG_ERR("Failed to close socket, error: %d", errno);
 		err = -EIO;
