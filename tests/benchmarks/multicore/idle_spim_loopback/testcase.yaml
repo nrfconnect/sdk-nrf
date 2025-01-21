@@ -50,20 +50,6 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
 
-  benchmarks.multicore.idle_spim_loopback.coverage:
-    filter: CONFIG_COVERAGE
-    extra_args:
-      - SHIELD=coverage_support
-      - CONF_FILE=coverage.conf
-    harness: console
-    harness_config:
-      fixture: spi_loopback
-      type: multi_line
-      ordered: true
-      regex:
-        - ".*Coverage analysis enabled.*"
-        - ".*Coverage analysis start.*"
-
   benchmarks.multicore.idle_spim_loopback.4_bytes.no_sleep_fast:
     filter: not CONFIG_COVERAGE
     extra_args:
@@ -513,3 +499,17 @@ tests:
       fixture: spi_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
+
+  benchmarks.multicore.idle_spim_loopback.coverage:
+    filter: CONFIG_COVERAGE
+    extra_args:
+      - SHIELD=coverage_support
+      - CONF_FILE=coverage.conf
+    harness: console
+    harness_config:
+      fixture: spi_loopback
+      type: multi_line
+      ordered: true
+      regex:
+        - ".*Coverage analysis enabled.*"
+        - ".*Coverage analysis start.*"
