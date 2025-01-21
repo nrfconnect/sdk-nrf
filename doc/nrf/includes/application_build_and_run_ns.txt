@@ -1,6 +1,7 @@
 This application can be found under |application path| in the |NCS| folder structure.
 
-When built as a firmware image for a board target with the ``*/ns`` :ref:`variant <app_boards_names>`, the application has :term:`Cortex-M Security Extensions (CMSE)` enabled and separates the firmware between the :term:`Non-Secure Processing Environment (NSPE)` and the :term:`Secure Processing Environment (SPE)`.
+You can build this application as firmware image for a board target with the ``*/ns`` :ref:`variant <app_boards_names>` (see the Requirements section above).
+In such cases, the sample has Cortex-M Security Extensions (CMSE) enabled and separates the firmware between Non-Secure Processing Environment (NSPE) and Secure Processing Environment (SPE).
 Because of this, it automatically includes the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`.
 To read more about CMSE, see :ref:`app_boards_spe_nspe`.
 
