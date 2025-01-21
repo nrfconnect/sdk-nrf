@@ -109,9 +109,9 @@ int dult_user_register(const struct dult_user *user);
  *
  *  This function sets the current battery level. The battery level is an optional
  *  feature in the DULT specification and this API must not be used when the
- *  @kconfig{CONFIG_DULT_BATTERY} Kconfig is disabled.
+ *  `CONFIG_DULT_BATTERY` Kconfig is disabled.
  *
- *  If the @kconfig{CONFIG_DULT_BATTERY} Kconfig is enabled, this function must be called to
+ *  If the `CONFIG_DULT_BATTERY` Kconfig is enabled, this function must be called to
  *  initialize the battery level after registering the DULT user with @ref dult_user_register
  *  and before enabling DULT with @ref dult_enable function. Subsequent calls to update
  *  the battery level are allowed in the enabled mode.
@@ -122,8 +122,8 @@ int dult_user_register(const struct dult_user *user);
  *  The exact mapping of the battery percentage to the battery level as defined by the
  *  DULT specification in the ANOS is implementation-specific. The mapping configuration
  *  is controlled by the following Kconfig options:
- *  @kconfig{CONFIG_DULT_BATTERY_LEVEL_CRITICAL_THR}, @kconfig{CONFIG_DULT_BATTERY_LEVEL_LOW_THR}
- *  and @kconfig{CONFIG_DULT_BATTERY_LEVEL_MEDIUM_THR}.
+ *  `CONFIG_DULT_BATTERY_LEVEL_CRITICAL_THR}, `CONFIG_DULT_BATTERY_LEVEL_LOW_THR`
+ *  and `CONFIG_DULT_BATTERY_LEVEL_MEDIUM_THR`.
  *
  *  @param user	            User structure used to authenticate the user.
  *  @param percentage_level Battery level as a percentage [0-100%]
@@ -193,7 +193,7 @@ enum dult_sound_src {
 	DULT_SOUND_SRC_BT_GATT,
 
 	/** Sound source type originating from the Motion detector.
-	 *  Used only when the @kconfig{CONFIG_DULT_MOTION_DETECTOR} is enabled.
+	 *  Used only when the `CONFIG_DULT_MOTION_DETECTOR` is enabled.
 	 */
 	DULT_SOUND_SRC_MOTION_DETECTOR,
 
@@ -290,7 +290,7 @@ int dult_sound_state_update(const struct dult_user *user,
 
 /** @brief Motion detector callback structure.
  *
- *  Used only when the @kconfig{CONFIG_DULT_MOTION_DETECTOR} Kconfig option is enabled.
+ *  Used only when the `CONFIG_DULT_MOTION_DETECTOR` Kconfig option is enabled.
  */
 struct dult_motion_detector_cb {
 	/** @brief Request the user to start the motion detector.
@@ -332,7 +332,7 @@ struct dult_motion_detector_cb {
  *
  *  This function registers callbacks to handle motion detector activities defined
  *  in the Motion detector feature from the DULT specification. This API can only
- *  be used when the @kconfig{CONFIG_DULT_MOTION_DETECTOR} Kconfig option is
+ *  be used when the `CONFIG_DULT_MOTION_DETECTOR` Kconfig option is
  *  enabled. If this configuration is active, this function must be called after
  *  registering the DULT user with @ref dult_user_register and before enabling
  *  DULT with @ref dult_enable function.

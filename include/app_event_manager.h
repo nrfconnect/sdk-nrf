@@ -217,7 +217,7 @@ static inline bool app_event_get_type_flag(const struct event_type *et,
  * Function that calculates the event size using its header.
  * @note
  * For this function to be available the
- * @kconfig{CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE} option needs to be enabled.
+ * `CONFIG_APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE` option needs to be enabled.
  *
  * @param aeh Pointer to the application event header.
  *

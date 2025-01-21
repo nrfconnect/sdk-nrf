@@ -138,7 +138,7 @@ int fota_download_init(fota_download_callback_t client_callback);
  * @retval 0	     If download has started successfully.
  * @retval -EALREADY If download is already ongoing.
  * @retval -E2BIG    If sec_tag_count is larger than
- *		     @kconfig{CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX}
+ *		     `CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX`
  *                   Otherwise, a negative value is returned.
  */
 int fota_download(const char *host, const char *file, const int *sec_tag_list,
@@ -163,7 +163,7 @@ int fota_download(const char *host, const char *file, const int *sec_tag_list,
  * @retval 0	     If download has started successfully.
  * @retval -EALREADY If download is already ongoing.
  * @retval -E2BIG    If sec_tag_count is larger than
- *		     @kconfig{CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX}
+ *		     `CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX`
  *                   Otherwise, a negative value is returned.
  */
 int fota_download_with_host_cfg(const char *host, const char *file,
@@ -202,7 +202,7 @@ int fota_download_with_host_cfg(const char *host, const char *file,
  * @retval 0	     If download has started successfully.
  * @retval -EALREADY If download is already ongoing.
  * @retval -E2BIG    If sec_tag_count is larger than
- *		     @kconfig{CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX}
+ *		     `CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX`
  *                   Otherwise, a negative value is returned.
  */
 int fota_download_any(const char *host, const char *file, const int *sec_tag_list,

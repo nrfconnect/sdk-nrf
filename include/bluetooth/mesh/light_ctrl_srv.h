@@ -34,7 +34,7 @@ struct bt_mesh_light_ctrl_srv;
  *
  *  @brief Initialization parameters for @ref bt_mesh_light_ctrl_srv with custom regulator.
  *
- *  Only available if @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG} is selected.
+ *  Only available if `CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG` is selected.
  *
  *  @param[in] _lightness_srv Pointer to the @ref bt_mesh_lightness_srv this
  *                            server controls.
@@ -55,8 +55,8 @@ struct bt_mesh_light_ctrl_srv;
  *  @brief Initialization parameters for @ref bt_mesh_light_ctrl_srv.
  *
  *  This will enable the specification-defined regulator if
- *  @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG} and
- *  @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC} are selected.
+ *  `CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG` and
+ *  `CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC` are selected.
  *
  *  @param[in] _lightness_srv Pointer to the @ref bt_mesh_lightness_srv this
  *                            server controls.
@@ -226,7 +226,7 @@ int bt_mesh_light_ctrl_srv_on(struct bt_mesh_light_ctrl_srv *srv);
  *  state). Calling this function temporarily disables occupancy sensor
  *  triggering (referred to as "manual mode" in the documentation). The server
  *  will remain in manual mode until the manual mode timer expires, see
- *  @kconfig{CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL}.
+ *  `CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL`.
  *
  *  @param[in] srv        Light Lightness Control Server instance.
  *

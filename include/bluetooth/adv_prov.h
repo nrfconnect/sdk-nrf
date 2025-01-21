@@ -48,7 +48,7 @@ struct bt_le_adv_prov_adv_state {
 	bool new_adv_session;
 
 	/** Information about the advertising set for which the advertising data is prepared.
-	 *  If @kconfig{CONFIG_BT_EXT_ADV} is used, the advertising handle can be acquired using
+	 *  If `CONFIG_BT_EXT_ADV` is used, the advertising handle can be acquired using
 	 *  the bt_hci_get_adv_handle function.
 	 *  Otherwise, the advertising handle must be set to 0.
 	 */
