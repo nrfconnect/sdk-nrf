@@ -103,8 +103,48 @@ Sample dongle (``nrf5340dk/nrf5340``)
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default.
 
+Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
+      * The configuration emulates the nRF54L05 SoC on the nRF54L15 Development Kit.
+      * The build types allow to build the application as a mouse or a keyboard.
+      * Inputs are simulated based on the hardware button presses.
+      * On the nRF54L05 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
+        Because of that, on the DK PCA10156 revision v0.8.1, **LED 0** and **LED 2** cannot be used for PWM output.
+        You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
+        This ensures the PWM peripheral is not used for the mentioned LEDs.
+      * Only Bluetooth LE transport is enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+      * The preconfigured ``debug`` configuration does not use the bootloader due to memory size limits.
+        In the ``debug`` configuration, logs are provided through the UART.
+        For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
+      * The preconfigured ``release`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        All of the ``release`` configurations enable hardware cryptography for the MCUboot bootloader.
+        The application image is verified using a pure ED25519 signature.
+        The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
+        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+      * The board supports the ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse  (``release_fast_pair`` file suffix).
+
+Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
+      * The configuration emulates the nRF54L10 SoC on the nRF54L15 Development Kit.
+      * The build types allow to build the application as a mouse or a keyboard.
+      * Inputs are simulated based on the hardware button presses.
+      * On the nRF54L10 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
+        Because of that, on the DK PCA10156 revision v0.8.1, **LED 0** and **LED 2** cannot be used for PWM output.
+        You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
+        This ensures the PWM peripheral is not used for the mentioned LEDs.
+      * Only Bluetooth LE transport is enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+      * In ``debug`` configurations, logs are provided through the UART.
+        For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
+      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        All of the configurations enable hardware cryptography for the MCUboot bootloader.
+        The application image is verified using a pure ED25519 signature.
+        The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
+        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+      * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
+        The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
+
 Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
-      * The configuration uses the nRF54L15 Development Kit (DK).
+      * The configuration uses the nRF54L15 Development Kit.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
@@ -113,7 +153,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
-      * In debug configurations, logs are provided through the UART.
+      * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         All of the configurations enable hardware cryptography for the MCUboot bootloader.
@@ -130,6 +170,6 @@ Sample mouse (``nrf54h20dk/nrf54h20/cpuapp``)
       * Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
-      * In debug configurations, logs are provided through the UART.
+      * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54H20 DK, see the :ref:`ug_nrf54h20_gs` documentation.
       * The configurations use the Software Updates for Internet of Things (SUIT) and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_smp`.
