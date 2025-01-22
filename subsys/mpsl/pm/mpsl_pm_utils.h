@@ -14,8 +14,22 @@ extern "C" {
 /** @brief Initialize MPSL Power Management
  *
  * This routine initializes MPSL PM (via `mpsl_pm_init`).
+ *
+ * @retval 0 MPSL PM was initialized successfully.
+ * @retval -NRF_EPERM MPSL PM is already initialized.
  */
-void mpsl_pm_utils_init(void);
+int32_t mpsl_pm_utils_init(void);
+
+/** @brief Unitialize MPSL Power Management
+ *
+ * This routine uninitializes MPSL PM (via `mpsl_pm_uninit`).
+ *
+ * @retval 0 MPSL PM was uninitialized successfully.
+ * @retval -NRF_EPERM MPSL was not initialized before the call.
+ * @retval -NRF_ETIMEDOUT MPSL PM uninitialization timed out while waiting for completion.
+ * @retval -NRF_EFAULT MPSL PM uninitialization failed due to unknown reason.
+ */
+int32_t mpsl_pm_utils_uninit(void);
 
 /** @brief Handles MPSL Power Management work
  *
