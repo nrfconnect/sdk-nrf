@@ -44,7 +44,7 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
-  sample.nrf7002eb_interposer_p1.nrf7002eb.softap:
+  sample.nrf54h20.softap:
     sysbuild: true
     build_only: true
     extra_args:
@@ -52,9 +52,21 @@ tests:
       - softap_SNIPPET=nrf70-wifi
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf54l15.softap:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - softap_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - softap_SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - ci_build
