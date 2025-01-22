@@ -572,7 +572,7 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_request_peer_sca = 1;
 #endif
 
-#if (defined(CONFIG_BT_HCI_RAW) && defined(CONFIG_BT_TINYCRYPT_ECC)) || defined(CONFIG_BT_CTLR_ECDH)
+#if defined(CONFIG_BT_CTLR_ECDH)
 	cmds->hci_le_read_local_p256_public_key = 1;
 	cmds->hci_le_generate_dhkey_v1 = 1;
 	cmds->hci_le_generate_dhkey_v2 = 1;
