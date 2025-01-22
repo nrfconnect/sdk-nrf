@@ -159,6 +159,7 @@ Zigbee
 ------
 
 * Fixed compilation errors that previously occurred when the :kconfig:option:`CONFIG_ZIGBEE_FACTORY_RESET` Kconfig option was disabled.
+* Fixed the :file:`zb_add_ota_header.py` script to allow a patch version higher than 9 in an ``APPLICATION_VERSION_STRING``.
 
 Wi-Fi
 -----
