@@ -120,7 +120,7 @@
     - applications.matter_bridge.lto.br_ble.memory_profiling
     - applications.matter_bridge.release.br_ble.nrf54h20.wifi
   platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 
@@ -251,7 +251,7 @@
     - sample.cellular.modem_shell_debug
     - sample.cellular.modem_shell_modem_uart_trace
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -277,7 +277,7 @@
     - sample.cellular.location.nrf7002ek_wifi
     - sample.cellular.location.pgps
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -294,7 +294,7 @@
     - sample.cellular.http_update.full_modem_update
     - sample.cellular.http_update.modem_delta_update
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -308,7 +308,7 @@
     - samples.cellular.nidd
     - sample.cellular.udp
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - thingy91/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -318,28 +318,28 @@
     - sample.cellular.battery
     - sample.cellular.modem_callbacks
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.net.azure_iot_hub
   platforms:
     - nrf7002dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf9161dk/nrf9161/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.net.azure_iot_hub.dps
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.net.coap_client
   platforms:
     - nrf7002dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - thingy91/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -363,20 +363,20 @@
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.hw_id.device_id
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.debug.memfault
     - sample.debug.memfault.etb
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - thingy91/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -410,7 +410,7 @@
     - applications.serial_lte_modem
     - applications.serial_lte_modem.lwm2m_carrier
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -578,7 +578,7 @@
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -590,7 +590,7 @@
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -602,7 +602,7 @@
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -647,7 +647,7 @@
 - scenarios:
     - sample.cellular.nrf7002ek_wifi.scan
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -665,19 +665,19 @@
 - scenarios:
     - sample.cellular.nrf_cloud_rest_device_message
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.cellular.nrf_cloud_rest_cell_pos
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.cellular.nrf_cloud_rest_fota
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -698,7 +698,7 @@
     - examples.nrfx_pwm.common_mode
     - examples.nrfx_gppi.fork
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -721,7 +721,7 @@
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -729,7 +729,7 @@
   platforms:
     - nrf52840dk/nrf52840
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -737,7 +737,7 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
     - nrf52dk/nrf52832
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -986,8 +986,8 @@
     - applications.asset_tracker_v2.memfault-low-power
     - applications.asset_tracker_v2.memfault.sysbuild
     - applications.asset_tracker_v2.nrf7002ek_wifi-debug.sysbuild
-    - applications.asset_tracker_v2.nrf7002ek_wifi.nrf9160dk
-    - applications.asset_tracker_v2.nrf7002ek_wifi.nrf9160dk.sysbuild
+    - applications.asset_tracker_v2.nrf7002ek_wifi.nrf9160dk@0.14.0
+    - applications.asset_tracker_v2.nrf7002ek_wifi.nrf9160dk@0.14.0.sysbuild
     - applications.asset_tracker_v2.nrf_cloud
     - applications.asset_tracker_v2.nrf_cloud-no-agnss
     - applications.asset_tracker_v2.nrf_cloud-no-agnss.sysbuild
@@ -996,7 +996,7 @@
     - applications.asset_tracker_v2.nrf7002ek_wifi-debug
     - applications.asset_tracker_v2.nrf7002ek_wifi.nrf9161dk
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1030,7 +1030,7 @@
     - applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws
     - applications.asset_tracker_v2.cloud.cloud_codec.json_common.azure
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -1042,7 +1042,7 @@
     - asset_tracker_v2.lwm2m_integration
     - asset_tracker_v2.ui_module_test.tester
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -1117,7 +1117,7 @@
     - tfm.psa_test_storage_lvl1
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1137,7 +1137,7 @@
     - tfm.regression_ipc_lvl2.oberon
     - tfm.regression_sfn_lvl1
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1175,7 +1175,7 @@
     - net.lib.aws_fota.aws_fota_json
   platforms:
     - nrf52840dk/nrf52840
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -1193,7 +1193,7 @@
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1202,7 +1202,7 @@
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1217,7 +1217,7 @@
     - lpuart.two_chip_test_busy_sim
     - lpuart.two_chip_test_debug
   platforms:
-    - nrf9160dk/nrf52840
+    - nrf9160dk@0.14.0/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1227,7 +1227,7 @@
     - lpuart.two_chip_test_busy_sim
     - lpuart.two_chip_test_debug
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1270,7 +1270,7 @@
     - sample.nrf7002_eks.raw_scan
     - sample.nrf7002_eks.scan
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1301,7 +1301,7 @@
     - dfu.target_stream.store_progress
   platforms:
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1433,13 +1433,13 @@
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - bootloader.bl_validation.negative
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
