@@ -141,7 +141,7 @@ class OTA_header:
 
 def convert_version_string_to_int(s):
     """Convert from semver string "1.2.3", to integer 1020003"""
-    match = re.match(r'^([0-9]+)\.([0-9]+)\.([0-9])(?:\+[0-9]+)?$', s)
+    match = re.match(r'^([0-9]+)\.([0-9]+)\.([0-9]+)(?:\+[0-9]+)?$', s)
     if match is None:
         raise ValueError('application-version-string parameter must be on the format x.y.z or x.y.z+t')
     js = [0x100*0x10000, 0x10000, 1]

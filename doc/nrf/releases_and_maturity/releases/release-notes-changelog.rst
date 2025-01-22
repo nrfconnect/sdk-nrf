@@ -162,7 +162,7 @@ Thread
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Fixed the :file:`zb_add_ota_header.py` script to allow a patch version higher than 9 in an ``APPLICATION_VERSION_STRING``.
 
 Wi-Fi
 -----
