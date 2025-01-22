@@ -48,6 +48,11 @@ if(CONFIG_THREAD_WIFI_SWITCHING)
     )
 endif()
 
+# Do not treat warnings as errors while the variable may be uninitialized for this sample.
+# In the door-lock-server implementation, there is a warning that the C++ "optional"
+# variable may be uninitialized, but actually, it is wrongly interpreted by the Zephyr toolchain.
+target_compile_options(app PRIVATE -Wno-error=maybe-uninitialized)
+
 chip_configure_data_model(app
     INCLUDE_SERVER
     BYPASS_IDL
