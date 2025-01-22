@@ -33,7 +33,7 @@
     - sample.benchmark.coremark.heap_memory
     - sample.benchmark.coremark.multiple_threads
   platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31409"
 
 - scenarios:
@@ -45,7 +45,7 @@
     - sample.openthread.cli
     - sample.openthread.cli.singleprotocol
   platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31493"
 
 - scenarios:
