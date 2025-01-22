@@ -17,6 +17,12 @@ extern "C" {
  */
 void mpsl_pm_utils_init(void);
 
+/** @brief Unitialize MPSL Power Management
+ *
+ * This routine uninitializes MPSL PM (via `mpsl_pm_uninit`).
+ */
+void mpsl_pm_utils_uninit(void);
+
 /** @brief Handles MPSL Power Management work
  *
  * This calls Zephyr Power Management policy functions according
