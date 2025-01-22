@@ -336,6 +336,9 @@ The following configuration files are provided:
   It can be customized to fit your configuration (UART, baud rate, and so on).
   By default, it sets the baud rate of the PPP UART to 1 000 000.
 
+* :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_.
+  For more information about Memfault features in |NCS|, see :ref:`mod_memfault`.
+
 * :file:`overlay-zephyr-modem.conf`, :file:`overlay-zephyr-modem-external-mcu.conf`, :file:`overlay-zephyr-modem-nrf9160dk-nrf52840.conf`, :file:`overlay-external-mcu.overlay`,  and :file:`overlay-zephyr-modem-nrf9160dk-nrf52840.overlay` - These configuration files are used when compiling SLM to turn an nRF91 Series SiP into a Zephyr-compatible standalone modem.
   See :ref:`slm_as_zephyr_modem` for more information.
 
