@@ -92,6 +92,11 @@ static void on_connect(void)
 	LOG_INF("Time to connect: %d ms", time_to_lte_connection);
 #endif /* IS_ENABLED(MEMFAULT_NCS_LTE_METRICS) */
 
+	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED)) {
+		/* Coredump sending handled internally */
+		return;
+	}
+
 	LOG_INF("Sending already captured data to Memfault");
 
 	/* Trigger collection of heartbeat data. */

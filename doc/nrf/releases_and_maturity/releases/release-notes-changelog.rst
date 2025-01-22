@@ -253,6 +253,8 @@ nRF Machine Learning (Edge Impulse)
 Serial LTE modem
 ----------------
 
+* Added an overlay :file:`overlay-memfault.conf` file to enable Memfault.
+  For more information about Memfault features in |NCS|, see :ref:`mod_memfault`.
 * Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Thingy:53: Matter weather station
@@ -702,7 +704,9 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Added a new feature to automatically post coredumps to Memfault when network connectivity is available.
+  To enable this feature, set the :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED` Kconfig option to ``y``.
+  Only supported for nRF91 Series devices.
 
 AVSystem integration
 --------------------
