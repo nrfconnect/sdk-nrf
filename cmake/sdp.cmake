@@ -46,7 +46,7 @@ function(sdp_assembly_generate hrt_srcs)
     )
   endforeach()
 
-  add_dependencies(asm_gen syscall_list_h_target)
+  add_dependencies(asm_gen syscall_list_h_target kobj_types_h_target)
 
 endfunction()
 
