@@ -44,14 +44,14 @@ class NcsProvision(WestCommand):
                                        " lock-last: last key is uploaded as locked,"
                                        " others as revokable")
         upload_parser.add_argument("-s", "--soc", type=str, help="SoC",
-                                   choices=["nrf54l15"], required=True)
+                                   choices=["nrf54l05", "nrf54l10", "nrf54l15"], required=True)
         upload_parser.add_argument("--dev-id", help="Device serial number")
 
         return parser
 
     def do_run(self, args, unknown_args):
         if args.command == "upload":
-            if args.soc == "nrf54l15":
+            if args.soc in ["nrf54l05", "nrf54l10", "nrf54l15"]:
                 if len(args.keys) > len(nrf54l15_key_slots):
                     sys.exit(
                         "Error: requested upload of more keys than there are designated slots.")
