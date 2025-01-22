@@ -28,7 +28,7 @@ static const uint8_t led_map[LED_ID_COUNT] = {
  * for PWM output.
  *
  * You can still use these LEDs with the PWM LED driver, but you must set the LED color to
- * ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``. This ensures the PWM peripheral is not
+ * `LED_COLOR(255, 255, 255)` or `LED_COLOR(0, 0, 0)`. This ensures the PWM peripheral is not
  * used for the mentioned LEDs.
  */
 
