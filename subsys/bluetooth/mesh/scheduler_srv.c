@@ -399,6 +399,7 @@ static void run_scheduler(struct bt_mesh_scheduler_srv *srv)
 	uint8_t planned_idx = get_least_time_index(srv);
 
 	if (planned_idx == BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT) {
+		k_work_cancel_delayable(&srv->delayed_work);
 		return;
 	}
 
@@ -637,6 +638,23 @@ static int action_set(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx 
 	    srv->sch_reg[idx].scene_number != 0)) {
 		schedule_action(srv, idx);
 		run_scheduler(srv);
+	}
+
+	if ((srv->sch_reg[idx].action == BT_MESH_SCHEDULER_NO_ACTIONS) &&
+	    (srv->active_bitmap & BIT(idx))) {
+		WRITE_BIT(srv->active_bitmap, idx, 0);
+
+		bool reschedule = srv->idx == idx;
+
+		if (srv->active_bitmap == 0) {
+			srv->idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
+			srv->last_idx = BT_MESH_SCHEDULER_ACTION_ENTRY_COUNT;
+		}
+
+		/* If the current action is set to NO_ACTIONS, schedule the next in line, if any */
+		if (reschedule) {
+			run_scheduler(srv);
+		}
 	}
 
 	if (srv->action_set_cb) {
