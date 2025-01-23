@@ -97,6 +97,7 @@ static void reboot_to_continue(void)
 
 		LOG_PANIC();
 
+		k_sleep(K_USEC(10));
 		sys_reboot(SYS_REBOOT_COLD);
 	} else {
 		LOG_DBG("Reboot disabled - perform manually");
