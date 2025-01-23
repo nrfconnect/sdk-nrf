@@ -37,4 +37,16 @@ config DEV_INFO_RPC_INITIALIZE_NRF_RPC
 	  Initialize nRF RPC library during the system startup. Disabling this
 	  option allow user to initialize it in a different way.
 
+config NRF_RPC_REMOTE_SHELL
+	bool "Remote shell"
+	depends on NRF_RPC_DEV_INFO_SERVER
+	select SHELL
+	select SHELL_BACKEND_DUMMY
+	default y
+	help
+	  Enable access to remote shell via NRF_RPC.
+
+config SHELL_BACKEND_DUMMY_BUF_SIZE
+	default 1024 if NRF_RPC_REMOTE_SHELL
+
 endif # NRF_RPC_DEV_INFO

@@ -40,4 +40,26 @@ ZTEST(dev_info_rpc_client, test_get_version)
 	zexpect_str_equal(commit, version);
 }
 
+ZTEST(dev_info_rpc_client, test_invoke_shell_cmd)
+{
+
+	const size_t argc = 2;
+	static const char *const argv[] = {"say", "hello", NULL};
+	const char *hello = "HelloWorld\0";
+	char *reply = NULL;
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(DEV_INFO_RPC_INVOKE_SHELL_CMD, 0x6a, 's', 'a', 'y', ' ', 'h', 'e', 'l', 'l',
+			'o', '\0'),
+		RPC_RSP(0x6b, 'H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd', '\0'));
+	reply = nrf_rpc_invoke_remote_shell_cmd(argc, (char **)argv);
+	mock_nrf_rpc_tr_expect_done();
+
+	zexpect_str_equal(hello, reply);
+
+	if (reply) {
+		k_free(reply);
+	}
+}
+
 ZTEST_SUITE(dev_info_rpc_client, NULL, NULL, tc_setup, NULL, NULL);
