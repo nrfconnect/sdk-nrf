@@ -22,6 +22,9 @@ config LOG_BACKEND_RTT
 config LOG_BACKEND_UART
 	default n
 
+config SHELL_BACKEND_SERIAL
+	default n if NRF_RPC_REMOTE_SHELL
+
 if SOC_NRF54L15
 
 config BT_CTLR_ECDH

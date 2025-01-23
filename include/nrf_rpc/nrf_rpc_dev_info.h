@@ -19,7 +19,17 @@
  *  @retval version of the remote on success.
  *  @retval NULL on failure.
  */
-const char *nrf_rpc_get_ncs_commit_sha(void);
+char *nrf_rpc_get_ncs_commit_sha(void);
+
+/** @brief Invoke the remote server shell command.
+ *
+ *  @param[in] argc Number of arguments.
+ *  @param[in] argv Array of arguments.
+ *
+ *  @retval Command output on success.
+ *  @retval NULL on failure.
+ */
+char *nrf_rpc_invoke_remote_shell_cmd(size_t argc, char *argv[]);
 
 /**
  * @}
