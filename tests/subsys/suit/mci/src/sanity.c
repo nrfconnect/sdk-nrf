@@ -37,6 +37,7 @@ ZTEST(mci_snity_tests, test_null_pointers)
 		{'u', 'n', 's', 'u', 'p', 'p', 'o', 'r', 't', 'e', 'd', '!', '!', '!', ' ', ' '}};
 	size_t output_size = OUTPUT_MAX_SIZE;
 	uint32_t key_id = 0;
+	int32_t alg_id = 0;
 	int processor_id = 0;
 	void *mem_address = &mem_address;
 	size_t mem_size = sizeof(mem_address);
@@ -80,9 +81,9 @@ ZTEST(mci_snity_tests, test_null_pointers)
 	zassert_equal(rc, SUIT_PLAT_ERR_INVAL,
 		      "suit_mci_independent_update_policy_get returned (%d)", rc);
 
-	rc = suit_mci_signing_key_id_validate(NULL, key_id);
-	zassert_equal(rc, SUIT_PLAT_ERR_INVAL, "suit_mci_signing_key_id_validate returned (%d)",
-		      rc);
+	rc = suit_mci_signing_key_id_and_alg_validate(NULL, key_id, alg_id);
+	zassert_equal(rc, SUIT_PLAT_ERR_INVAL,
+		      "suit_mci_signing_key_id_and_alg_validate returned (%d)", rc);
 
 	rc = suit_mci_fw_encryption_key_id_validate(NULL, key_id);
 	zassert_equal(rc, SUIT_PLAT_ERR_INVAL,
