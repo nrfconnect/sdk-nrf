@@ -34,4 +34,19 @@ ZTEST(dev_info_rpc_server, test_get_server_version)
 	mock_nrf_rpc_tr_expect_done();
 }
 
+ZTEST(dev_info_rpc_server, test_invoke_shell_cmd)
+{
+	mock_nrf_rpc_tr_expect_add(
+		RPC_RSP(0x78, 0x55, 'R', 'e', 'm', 'o', 't', 'e', ' ', 's', 'h', 'e', 'l', 'l', ' ',
+			'i', 's', ' ', 'd', 'i', 's', 'a', 'b', 'l', 'e', 'd', ' ', 'o', 'n', ' ',
+			't', 'h', 'e', ' ', 's', 'e', 'r', 'v', 'e', 'r', '.', ' ', 'E', 'n', 'a',
+			'b', 'l', 'e', ' ', 'C', 'O', 'N', 'F', 'I', 'G', '_', 'N', 'R', 'F', '_',
+			'R', 'P', 'C', '_', 'R', 'E', 'M', 'O', 'T', 'E', '_', 'S', 'H', 'E', 'L',
+			'L', ' ', 't', 'o', ' ', 'u', 's', 'e', ' ', 'i', 't', '.'),
+		NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(DEV_INFO_RPC_INVOKE_SHELL_CMD, 0x6a, 's', 'a', 'y', ' ',
+					'h', 'e', 'l', 'l', 'o', '\0'));
+	mock_nrf_rpc_tr_expect_done();
+}
+
 ZTEST_SUITE(dev_info_rpc_server, NULL, NULL, tc_setup, NULL, NULL);

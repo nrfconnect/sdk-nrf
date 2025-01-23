@@ -27,6 +27,9 @@ config ZMS
 config NVS
 	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
 
+config SHELL_BACKEND_SERIAL
+	default n if NRF_RPC_REMOTE_SHELL
+
 if LOG
 
 choice LOG_MODE
