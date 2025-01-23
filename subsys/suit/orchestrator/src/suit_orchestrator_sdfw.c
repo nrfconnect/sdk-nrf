@@ -588,7 +588,7 @@ static int suit_orchestrator_run(void)
 			if (IS_ENABLED(CONFIG_SUIT_UPDATE_REBOOT_ENABLED)) {
 				LOG_INF("Reboot the system after update: %d", ret);
 				LOG_PANIC();
-
+				k_sleep(K_USEC(10));
 				sys_reboot(SYS_REBOOT_COLD);
 			}
 			return ret;
@@ -614,7 +614,7 @@ static int suit_orchestrator_run(void)
 			if (IS_ENABLED(CONFIG_SUIT_UPDATE_REBOOT_ENABLED)) {
 				LOG_INF("Reboot the system after update: %d", ret);
 				LOG_PANIC();
-
+				k_sleep(K_USEC(10));
 				sys_reboot(SYS_REBOOT_COLD);
 			}
 			return ret;
@@ -653,6 +653,7 @@ static int suit_orchestrator_run(void)
 			if (IS_ENABLED(CONFIG_SUIT_BOOT_RECOVERY_REBOOT_ENABLED)) {
 				LOG_INF("Reboot the system after unsuccessful boot: %d", ret);
 				LOG_PANIC();
+				k_sleep(K_USEC(10));
 				sys_reboot(SYS_REBOOT_COLD);
 			}
 			return -ENOTSUP;
