@@ -12,7 +12,8 @@
 #include "mosh_print.h"
 #include "gnss.h"
 
-#define AGNSS_CMD_LINE_INJECT_MAX_LENGTH MIN(3500, CONFIG_SHELL_CMD_BUFF_SIZE)
+#define AGNSS_CMD_LINE_INJECT_MAX_LENGTH MIN(NRF_CLOUD_AGNSS_MAX_DATA_SIZE, \
+					     CONFIG_SHELL_CMD_BUFF_SIZE)
 
 static int cmd_gnss_start(const struct shell *shell, size_t argc, char **argv)
 {

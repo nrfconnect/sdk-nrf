@@ -57,7 +57,6 @@ BUILD_ASSERT(
 #define AT_MDM_SLEEP_NOTIF_START "AT%%XMODEMSLEEP=1,%d,%d"
 #endif
 #if (defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS))
-#define AGNSS_REQUEST_RECV_BUF_SIZE 3500
 #define AGNSS_REQUEST_HTTPS_RESP_HEADER_SIZE 400
 /* Minimum time between two A-GNSS data requests in seconds. */
 #define AGNSS_REQUEST_MIN_INTERVAL (60 * 60)
@@ -97,7 +96,7 @@ static int64_t agnss_req_timestamp;
 #if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && \
 	(defined(CONFIG_NRF_CLOUD_REST) || defined(CONFIG_NRF_CLOUD_COAP)) && \
 	!defined(CONFIG_NRF_CLOUD_MQTT)
-static char agnss_rest_data_buf[AGNSS_REQUEST_RECV_BUF_SIZE];
+static char agnss_rest_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
 #endif
 #endif
 
