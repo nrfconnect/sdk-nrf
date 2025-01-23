@@ -25,7 +25,7 @@ static char jwt_buf[600];
 static char rx_buf[2048];
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
-static char agnss_data_buf[3500];
+static char agnss_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
 #endif /* CONFIG_NRF_CLOUD_AGNSS */
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)
