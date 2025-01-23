@@ -654,6 +654,7 @@
 # Scripts
 /scripts/docker/                          @nrfconnect/ncs-ci
 /scripts/ci/tags.yaml                     @nordic-piks @PerMac @katgiadla
+/scripts/ci/tags_sdk_zephyr.yaml          @nordic-piks @PerMac @katgiadla
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla
 /scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @nrfconnect/ncs-si-bluebagel
