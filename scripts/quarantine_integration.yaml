@@ -491,6 +491,13 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - applications.nrf_desktop.zdebug_fast_pair.gmouse.uart.kmu_provision
+    - applications.nrf_desktop.zdebug_keyboard.uart.kmu_provision
+  platforms:
+    - nrf54l15dk/nrf54l10/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - applications.nrf_desktop.zrelease
   platforms:
     - nrf52810dmouse/nrf52810
@@ -498,6 +505,8 @@
     - nrf52833dk/nrf52833
     - nrf52833dongle/nrf52833
     - nrf52dmouse/nrf52832
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -522,6 +531,12 @@
     - applications.nrf_desktop.zrelease.usb_next
   platforms:
     - nrf52840dongle/nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - applications.nrf_desktop.zrelease_fast_pair.gmouse
+  platforms:
+    - nrf54l15dk/nrf54l05/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
