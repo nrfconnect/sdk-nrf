@@ -102,7 +102,7 @@ static bool agnss_inject_int = true;
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) && !defined(CONFIG_NRF_CLOUD_MQTT) && \
 	!defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS)
-static char agnss_data_buf[3500];
+static char agnss_data_buf[NRF_CLOUD_AGNSS_MAX_DATA_SIZE];
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)

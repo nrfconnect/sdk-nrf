@@ -8,7 +8,7 @@
 #define NRF_CLOUD_AGNSS_H_
 
 /** @file nrf_cloud_agnss.h
- * @brief Module to provide nRF Cloud A-GNSS support to nRF9160 SiP.
+ * @brief Module to provide nRF Cloud A-GNSS support to nRF91 SiP.
  */
 
 #include <zephyr/kernel.h>
@@ -18,6 +18,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * Maximum size of assistance data in bytes when all assistance data types are received.
+ * Can be used to set the buffer size for REST and CoAP.
+ */
+#define NRF_CLOUD_AGNSS_MAX_DATA_SIZE 3600
 
 /** Exclude the mask angle from the A-GNSS request */
 #define NRF_CLOUD_AGNSS_MASK_ANGLE_NONE	0xFF
