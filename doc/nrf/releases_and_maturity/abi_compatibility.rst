@@ -28,8 +28,8 @@ The following table illustrates ABI compatibility between different versions of 
 
    * - |NCS| versions
      - Compatible nRF54H20 SoC binaries version
-   * - |NCS| v2.9.0-nRF54H20
-     - `nRF54H20 SoC Binaries v0.8.0`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+   * - |NCS| v2.9.0-nRF54H20-1-rc2
+     - `nRF54H20 SoC Binaries v0.9.1`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
    * - |NCS| v2.9.0
      - `nRF54H20 SoC Binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
    * - |NCS| v2.8.0
@@ -47,17 +47,22 @@ The following table illustrates ABI compatibility between different versions of 
 ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the application, radio binaries, or both are recompiled, as long as they are based on a compatible |NCS| version.
 Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binary components to work together without recompilation when updating to newer |NCS| versions.
 
-nRF54H20 SoC Binaries v0.8.0 changelog
+nRF54H20 SoC Binaries v0.9.1 changelog
 **************************************
 
 The following sections provide detailed lists of changes by component.
 
-Secure Domain Firmware (SDFW) v9.0.0
+Secure Domain Firmware (SDFW) v10.1.0
 =====================================
 
 Added
 -----
 
+* GPIO DRIVECTRL for P6 and P7 on nRF54H20 is now corrected by SDFW on boot.
+  This addresses an issue where some devices has this incorrectly configured.
+* Added support for TLS-1.3 in the PSA crypto service.
+* Added support for ED25519 pre-hashed in the PSA crypto service.
+* The SDFW now uses a watchdog timer with a timeout of 4 seconds.
 * Purge protection can be enabled over ADAC.
 * Clock control is enabled in SDFW.
 * Global domain power request service is integrated in SDFW.
@@ -66,10 +71,15 @@ Added
 Updated
 -------
 
-* Local domain reset will trigger a global reset.
-  ``RESETINFO`` will contain both the global and local reset reason.
-* All processors are booted regardless of whether they have firmware.
-  They are booted in halted mode if no firmware is present.
+* A local domain reset now triggers a global reset.
+  ``RESETINFO`` contains both the global and local reset reasons.
+* All processors now boot regardless of whether they have firmware.
+  If no firmware is present, they boot in halted mode.
+* Reduced power consumption from the Secure Domain when tracing is enabled.
+* Increased the number of possible concurrent PSA operations to 8.
+* The ETR buffer location is now read from the UICR.
+  Enabling ETR tracing now requires configuring the location.
+* The SDFW no longer immediately resets on a fatal error.
 
 Removed
 -------
@@ -80,9 +90,12 @@ Removed
 Fixed
 -----
 
+* An issue where SDFW exited the sleep state for a short duration after boot completion.
+* An issue where replies to ADAC SSF commands contained a large amount of additional zero values at the end of the message.
+* An issue where permission checks for pointer members in the SSF PSA crypto service requests were incorrect.
 * An issue with invoking crypto service from multiple threads or clients.
 
-System Controller Firmware (SCFW) v4.0.0
+System Controller Firmware (SCFW) v4.0.2
 =========================================
 
 Added
@@ -94,6 +107,7 @@ Added
 Updated
 -------
 
+* Improved stability.
 * GDPWR service: Renamed power domains.
 * GPIO power configuration:
 
