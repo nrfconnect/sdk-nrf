@@ -231,8 +231,11 @@ int suit_mci_manifest_class_id_validate(const suit_manifest_class_id_t *class_id
 	return SUIT_PLAT_SUCCESS;
 }
 
-int suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id, uint32_t key_id)
+int suit_mci_signing_key_id_and_alg_validate(const suit_manifest_class_id_t *class_id,
+					     uint32_t key_id, int32_t cose_alg)
 {
+	(void) cose_alg;
+
 	if (NULL == class_id) {
 		return SUIT_PLAT_ERR_INVAL;
 	}

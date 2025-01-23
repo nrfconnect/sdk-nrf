@@ -76,7 +76,7 @@ int suit_plat_authenticate_manifest(struct zcbor_string *manifest_component_id,
 	}
 
 	/* Validate KEY ID */
-	ret = suit_mci_signing_key_id_validate(class_id, public_key_id);
+	ret = suit_mci_signing_key_id_and_alg_validate(class_id, public_key_id, alg_id);
 	if (ret != SUIT_PLAT_SUCCESS) {
 		LOG_ERR("Signing key validation failed: MCI err %i", ret);
 		return SUIT_ERR_AUTHENTICATION;
@@ -135,7 +135,7 @@ int suit_plat_authorize_unsigned_manifest(struct zcbor_string *manifest_componen
 	}
 
 	/* Check if unsigned manifest is allowed - pass key_id == 0*/
-	ret = suit_mci_signing_key_id_validate(class_id, 0);
+	ret = suit_mci_signing_key_id_and_alg_validate(class_id, 0, 0);
 
 	if (ret == SUIT_PLAT_SUCCESS) {
 		return SUIT_SUCCESS;
