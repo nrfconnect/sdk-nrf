@@ -46,7 +46,9 @@ Board support
 Build and configuration system
 ==============================
 
-|no_changes_yet_note|
+* Removed support for the deprecated multi-image builds (parent-child images) functionality.
+  All |NCS| projects must now use :ref:`sysbuild`.
+  See :ref:`child_parent_to_sysbuild_migration` for an overview of differences with parent-child image and how to migrate.
 
 Bootloaders and DFU
 ===================
