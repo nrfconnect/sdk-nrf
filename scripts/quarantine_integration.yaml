@@ -5,6 +5,7 @@
     - sample.matter.lock.release
     - sample.matter.lock.debug
     - sample.matter.lock.lto
+    - sample.matter.lock.release.power_consumption
     - sample.matter.light_switch.debug
     - sample.matter.thermostat.debug
     - sample.matter.light_switch.persistent_subscriptions
@@ -17,8 +18,10 @@
     - sample.matter.thermostat.lto
     - sample.matter.window_cover.release
     - sample.matter.window_cover.lto
+    - sample.matter.window_cover.release.power_consumption
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
+    - sample.matter.smoke_co_alarm.release.power_consumption
   platforms:
     - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -27,6 +30,7 @@
     - sample.matter.lock.nus
     - sample.matter.lock.debug
     - sample.matter.lock.lto
+    - sample.matter.lock.release.power_consumption
     - sample.matter.window_cover.debug
     - sample.matter.light_bulb.ffs
     - sample.matter.light_switch.persistent_subscriptions
@@ -39,6 +43,8 @@
     - sample.matter.thermostat.lto
     - sample.matter.window_cover.release
     - sample.matter.window_cover.lto
+    - sample.matter.window_cover.release.power_consumption
+    - sample.matter.smoke_co_alarm.release.power_consumption
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
     - applications.matter_bridge.lto.br_ble.memory_profiling
@@ -88,6 +94,7 @@
     - sample.matter.lock.lto
     - sample.matter.lock.smp_dfu
     - sample.matter.lock.nus
+    - sample.matter.lock.release.power_consumption
     - sample.matter.light_bulb.memory_profiling.persistent_subscriptions
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.debug
@@ -102,6 +109,8 @@
     - sample.matter.window_cover.release
     - sample.matter.window_cover.debug
     - sample.matter.window_cover.lto
+    - sample.matter.window_cover.release.power_consumption
+    - sample.matter.smoke_co_alarm.release.power_consumption
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
