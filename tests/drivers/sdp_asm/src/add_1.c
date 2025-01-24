@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/kernel.h>
+#include <stdint.h>
 
 extern volatile uint8_t arg_uint8_t;
 extern volatile uint16_t arg_uint16_t;
