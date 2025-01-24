@@ -80,8 +80,8 @@ enum {
 	0x05, USAGE_PAGE_MOUSE_XY,					\
 	0x09, 0x30,         /* Usage (X) */				\
 	0x09, 0x31,         /* Usage (Y) */				\
-	0x16, 0x01, 0xF8,   /* Logical Maximum (2047) */		\
-	0x26, 0xFF, 0x07,   /* Logical Minimum (-2047) */		\
+	0x16, 0x01, 0xF8,   /* Logical Minimum (-2047) */		\
+	0x26, 0xFF, 0x07,   /* Logical Maximum (2047) */		\
 	0x75, 0x0C,         /* Report Size (12) */			\
 	0x95, 0x02,         /* Report Count (2) */			\
 	0x81, 0x06,         /* Input (Data, Variable, Relative) */	\
