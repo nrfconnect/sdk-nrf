@@ -14,6 +14,12 @@ include(../../cmake/test_template.cmake)
 FILE(GLOB manifest_sources ../manifest/src/*.c)
 target_sources(app PRIVATE
   ${manifest_sources}
+  # Use nRF54H20-specific implementation.
+  ${SUIT_SUBSYS_DIR}/storage/src/suit_storage_nrf54h20.c
+  )
+
+target_include_directories(app PRIVATE
+  ${SUIT_SUBSYS_DIR}/storage/include
   )
 
 # Link with the CMake target, that includes SUIT platform internal APIs header

@@ -18,6 +18,7 @@ target_sources(app PRIVATE
 
 # Link with the CMake target, that includes SUIT platform internal APIs header
 zephyr_library_link_libraries(suit_utils)
+
 if(CONFIG_TESTS_SUIT_ORCHESTRATOR_APP_FULL_PROCESSING)
   zephyr_library_link_libraries(suit_cache_interface)
   zephyr_library_link_libraries(suit_stream_sources_interface)
