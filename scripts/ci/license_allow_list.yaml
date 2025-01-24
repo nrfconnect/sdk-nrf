@@ -36,6 +36,7 @@ none: |
 # Ignore all detected licenses in that file.
 any: |
   .*/license-texts.yaml$
+  ^nrf/subsys/nrf_compress/lzma/
 
 # Allow different licenses from external sources
 LicenseRef-west-ncs-sbom-iperf-BSD-3-Clause: "^nrf/ext/"
