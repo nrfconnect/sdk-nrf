@@ -60,7 +60,7 @@ bluetooth:
     - tests/bluetooth/
     - tests/bsim/bluetooth/
 
-net:
+net: &tag_net
   files:
     - drivers/ethernet/
     - drivers/ieee802154/
@@ -71,6 +71,8 @@ net:
     - samples/net/
     - subsys/net/
     - tests/net/
+
+wifi: *tag_net
 
 test_framework:
   files:
@@ -714,7 +716,7 @@ jwt:
     - tests/subsys/jwt/
     - tests/lib/json/
 
-heap:
+heap: &tag_heap
   files:
     - tests/lib/shared_multi_heap/
     - lib/heap/
@@ -722,6 +724,8 @@ heap:
     - tests/lib/heap_align/
     - tests/lib/multi_heap/
     - include/zephyr/multi_heap/
+
+multi_heap: *tag_heap
 
 logging:
   files:
@@ -858,12 +862,14 @@ cmsis_rtos:
     - samples/subsys/portability/cmsis_rtos_v*/
     - tests/subsys/portability/cmsis_rtos_v*/
 
-linker:
+linker: &tag_linker
   files:
     - include/zephyr/linker/
     - tests/misc/iterable_sections/
     - tests/application_development/code_relocation/
     - samples/application_development/code_relocation_nocopy/
+
+iterable_sections: *tag_linker
 
 nanopb:
   files:
@@ -948,6 +954,8 @@ modem_chat: &tag_modem
 modem_cmux: *tag_modem
 
 modem_pipelink: *tag_modem
+
+modem_pipe: *tag_modem
 
 modem_ppp: *tag_modem
 
@@ -1052,3 +1060,103 @@ timer:
     - dts/bindings/timer/
     - include/zephyr/dt-bindings/timer/
     - tests/kernel/timer/
+
+external:
+  files:
+    - samples/application_development/external_lib/
+
+nvs:
+  files:
+    - drivers/flash/
+    - samples/subsys/nvs/
+    - subsys/fs/nvs/
+    - subsys/mem_mgmt/
+    - subsys/storage/flash_map/
+    - tests/subsys/fs/nvs/
+
+openamp:
+  files:
+    - lib/open-amp/
+    - samples/subsys/ipc/openamp/
+    - samples/subsys/ipc/openamp_rsc_table/
+    - samples/subsys/ipc/rpmsg_service/
+
+devmem_load:
+  files:
+    - samples/subsys/shell/devmem_load/
+    - subsys/shell/
+
+mpu:
+  files:
+    - samples/arch/mpu/mpu_test/
+    - arch/arm/core/mpu/
+
+fram:
+  files:
+    - samples/drivers/spi_fujitsu_fram/
+    - drivers/spi/
+    - include/zephyr/drivers/spi.h
+
+stm:
+  files:
+    - samples/boards/nordic/coresight_stm/
+    - subsys/debug/
+    - subsys/logging/
+    - subsys/logging/frontends/
+    - tests/boards/nrf/coresight_stm/
+
+gen_inc_file:
+  files:
+    - tests/application_development/gen_inc_file/
+
+mcuboot:
+  files:
+    - modules/Kconfig.mcuboot
+    - tests/boot/
+
+version:
+  files:
+    - tests/cmake/app_version/
+    - include/zephyr/kernel_version.h
+
+ec_host_cmd:
+  files:
+    - subsys/mgmt/ec_host_cmd/
+    - include/zephyr/mgmt/ec_host_cmd/
+    - tests/subsys/mgmt/ec_host_cmd/
+
+stp_decoder:
+  files:
+    - tests/subsys/debug/mipi_stp_decoder/
+    - subsys/debug/
+
+lorawan:
+  files:
+    - drivers/lora/
+    - include/zephyr/drivers/lora.h
+    - samples/drivers/lora/
+    - include/zephyr/lorawan/
+    - subsys/lorawan/
+    - samples/subsys/lorawan/
+    - include/zephyr/dt-bindings/lora/
+    - dts/bindings/lora/
+
+modbus:
+  files:
+    - samples/subsys/modbus/
+    - include/zephyr/modbus/
+    - tests/subsys/modbus/
+    - subsys/modbus/
+
+lockfree:
+  files:
+    - tests/lib/lockfree/
+    - include/zephyr/sys/mpsc_lockfree.h
+    - include/zephyr/sys/spsc_lockfree.h
+
+net_buf:
+  files:
+    - include/zephyr/net/buf.h
+    - include/zephyr/net_buf.h
+    - lib/net_buf/
+    - tests/lib/net_buf/

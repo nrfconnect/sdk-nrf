@@ -187,6 +187,8 @@
     - libraries.libc.time
     - libraries.mpsc_pbuf.*
     - libraries.encoding.*
+    - sample.modules.cmsis_dsp.moving_average
+    - math.interpolation
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
