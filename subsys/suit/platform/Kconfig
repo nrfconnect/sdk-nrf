@@ -23,19 +23,22 @@ config SUIT_DIGEST
 	depends on SUIT_STREAM_SINK_DIGEST
 
 config MAX_NUMBER_OF_MANIFEST_CLASS_IDS
-	int  "Maximum number of supported manifest class IDs that can be handled"
+	int "Maximum number of supported manifest class IDs that can be handled"
 	range 1 200
 	default 11 if SOC_SERIES_NRF54HX
 	default 5 if SOC_NRF52840
 	default 5 if SOC_POSIX
 	help
-		Check SUIT_STORAGE_N_ENVELOPES
+	  Check SUIT_STORAGE_N_ENVELOPES
 
 if SUIT_PLATFORM_VARIANT_SDFW
+
 rsource "sdfw/Kconfig"
+
 endif # SUIT_PLATFORM_VARIANT_SDFW
 
 rsource "sink_selector/Kconfig"
+
 endif # SUIT_PLATFORM
 
 config SUIT_CRYPTO
@@ -51,17 +54,14 @@ config SUIT_CRYPTO
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
 	imply PSA_WANT_ECC_TWISTED_EDWARDS_255
 
-
 if MBEDTLS && SOC_POSIX
 
 # Make sure that PSA API compatibility layer is enabled
 config MBEDTLS_PSA_CRYPTO_C
-	bool
 	default y
 
 # Instruct mbedTLS to use Zephyr entropy
-config MBEDTLS_ZEPHYR_ENTROPY
-	bool
+config MBEDTLS_ENTROPY_POLL_ZEPHYR
 	default y
 
 config SUIT_DEFAULT_MBEDTLS_CONFIG
@@ -71,6 +71,7 @@ config SUIT_DEFAULT_MBEDTLS_CONFIG
 
 config MBEDTLS_USER_CONFIG_FILE
 	default "user-tls-conf.h" if SUIT_DEFAULT_MBEDTLS_CONFIG
+
 endif
 
 config SUIT_CHECK_IMAGE_MATCH
