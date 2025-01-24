@@ -1,7 +1,7 @@
 # Nordic Semiconductor nRFx MCU line
 
 # Copyright (c) 2016-2025 Nordic Semiconductor ASA
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 # This file is contains Zephyr build system Kconfig references and is not
 # re-usable outside the Zephyr tree.
