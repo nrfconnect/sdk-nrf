@@ -1,5 +1,5 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 if(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
   board_runner_args(jlink "--device=cortex-m33" "--speed=4000")

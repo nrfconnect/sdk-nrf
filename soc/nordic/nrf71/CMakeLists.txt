@@ -1,5 +1,5 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 zephyr_library_sources(
   soc.c
