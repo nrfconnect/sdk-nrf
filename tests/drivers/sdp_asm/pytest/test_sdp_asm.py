@@ -62,8 +62,7 @@ after add_100: 212, 323, 434"""
         execute_shell_cmd(cmd, f"{BUILD_DIR}")
 
     logger.info("# Reflash")
-    cmd = ['west', 'flash', '--erase']
-    execute_shell_cmd(cmd, f"{BUILD_DIR}")
+    dut._flash_and_run()
 
     logger.info("# Get output from serial port")
     output = "\n".join(dut.readlines_until(regex='Test completed', timeout=5.0))
