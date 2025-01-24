@@ -11,7 +11,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(integration_test_cache_pool_digest)
 include(../cmake/test_template.cmake)
 
-
 zephyr_library_link_libraries(suit_stream_sinks_interface)
 zephyr_library_link_libraries(suit_utils)
 zephyr_library_link_libraries(suit_platform_interface)

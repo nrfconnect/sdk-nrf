@@ -11,6 +11,5 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(integration_test_suit_digest_sink)
 include(../cmake/test_template.cmake)
 
-
-# link with the cmake target, that includes suit platform internal apis header
+# Link with the CMake target, that includes suit platform internal apis header
 zephyr_library_link_libraries(suit_stream_sinks_interface)

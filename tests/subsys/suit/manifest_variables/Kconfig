@@ -6,5 +6,6 @@
 
 # Include and define MOCK_* Kconfigs
 rsource "../mocks/Kconfig"
+rsource "../tests/Kconfig"
 
 source "Kconfig.zephyr"
