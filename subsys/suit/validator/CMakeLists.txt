@@ -10,7 +10,10 @@ target_include_directories(suit_validator INTERFACE include)
 target_link_libraries(suit_validator INTERFACE suit_platform_err)
 
 zephyr_library()
-zephyr_library_sources_ifdef(CONFIG_SUIT_VALIDATOR_IMPL_NRF54H20_SDFW src/suit_validator_nrf54h20.c)
+
+if(CONFIG_SUIT_VALIDATOR_IMPL_SDFW)
+  zephyr_library_sources(src/suit_validator_${CONFIG_SOC}.c)
+endif()
 
 zephyr_library_link_libraries(suit_validator)
 zephyr_library_link_libraries(suit_memory_layout_interface)

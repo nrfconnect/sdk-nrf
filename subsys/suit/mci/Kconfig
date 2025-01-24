@@ -13,7 +13,7 @@ if SUIT_MCI
 
 config SUPPORT_SUIT_MCI_IMPL_SDFW
 	bool
-	default y if SOC_SERIES_NRF54HX
+	default y if SOC_SERIES_NRF54HX && SUIT_PLATFORM_VARIANT_SDFW
 
 choice SUIT_MCI_IMPL
 	prompt "MCI implementation"
@@ -22,12 +22,11 @@ choice SUIT_MCI_IMPL
 
 config SUIT_MCI_IMPL_SDFW
 	bool "Secure domain"
-	depends on SUIT_PLATFORM_VARIANT_SDFW
 	depends on SUPPORT_SUIT_MCI_IMPL_SDFW
 
 config SUIT_MCI_IMPL_CUSTOM
-	bool "custom"
+	bool "Custom"
 
-endchoice #MCI implementation
+endchoice # SUIT_MCI_IMPL
 
 endif # SUIT_MCI

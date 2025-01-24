@@ -11,8 +11,13 @@ target_link_libraries(suit_storage_interface INTERFACE suit_platform_err)
 target_link_libraries(suit_storage_interface INTERFACE suit_utils)
 
 zephyr_library()
-zephyr_library_sources_ifdef(CONFIG_SUIT_STORAGE_LAYOUT_TEST src/suit_storage_test.c)
-zephyr_library_sources_ifdef(CONFIG_SUIT_STORAGE_LAYOUT_NRF54H20 src/suit_storage_nrf54h20.c)
+
+if(CONFIG_SUIT_STORAGE_LAYOUT_SOC)
+  zephyr_library_sources(src/suit_storage_${CONFIG_SOC}.c)
+elseif(CONFIG_SUIT_STORAGE_LAYOUT_TEST)
+  zephyr_library_sources(src/suit_storage_test.c)
+endif()
+
 zephyr_library_sources(src/suit_storage_update.c)
 zephyr_library_sources(src/suit_storage_encode.c)
 zephyr_library_sources(src/suit_storage_envelope.c)

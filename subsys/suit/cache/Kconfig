@@ -15,11 +15,11 @@ if SUIT_CACHE
 config SUIT_CACHE_MAX_CACHES
 	int "The maximum number of caches that will be handled"
 	range 1 16
+	default 8
 	help
 	  The maximum number of user-defined caches is limited to 15.
 	  User defined cache partitions names start at index 1 as suit_cache_0 is predefined.
 	  The default value is 8, and the minimum is 1.
-	default 8
 
 config APP_LINK_WITH_SUIT_CACHE_INTERFACE
 	bool
@@ -30,8 +30,8 @@ config SUIT_MAX_URI_LENGTH
 	range 1 512
 	default 128
 	help
-		This option determines the longest URI that can be read or written from
-		the cache.
+	  This option determines the longest URI that can be read or written from
+	  the cache.
 
 config SUIT_CACHE_RW
 	bool "Enable write mode for SUIT cache"

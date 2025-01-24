@@ -121,9 +121,11 @@ config SUIT_STREAM_SINK_DIGEST
 	imply PSA_WANT_ALG_SHA_512 if SOC_FAMILY_NORDIC_NRF
 
 if SUIT_STREAM_SINK_DIGEST
-	config SUIT_STREAM_SINK_DIGEST_CONTEXT_COUNT
+
+config SUIT_STREAM_SINK_DIGEST_CONTEXT_COUNT
 	int "Maximum number of contexts"
 	default 1
+
 endif # SUIT_STREAM_SINK_DIGEST
 
 config SUIT_STREAM_SOURCE_CACHE
@@ -166,9 +168,11 @@ config SUIT_STREAM_IPC_PROVIDER
 	depends on SUIT_STREAM_FETCH_SOURCE_MGR
 
 config SUIT_STREAM_IPC_PROVIDER_BUFFERS
-	int "The number of buffers supported by provider. For optimal performance should be equal to CONFIG_SUIT_STREAM_IPC_REQUESTOR_MAX_CHUNKS"
+	int "The number of buffers supported by provider"
 	default 3
 	depends on SUIT_STREAM_IPC_PROVIDER
+	help
+	  For optimal performance should be equal to CONFIG_SUIT_STREAM_IPC_REQUESTOR_MAX_CHUNKS
 
 config SUIT_STREAM_IPC_PROVIDER_BUFFER_SIZE
 	int "Size of single buffer in bytes"
