@@ -28,9 +28,3 @@
 - platforms:
     - native_posix
   comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
-
-- scenarios:
-    - drivers.sdp_asm.basic
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuflpr
-  comment: https://nordicsemi.atlassian.net/browse/NCSDK-31409
