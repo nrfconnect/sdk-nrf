@@ -9,22 +9,12 @@ if(SB_CONFIG_SDP)
   set(board_target_flpr "${BOARD}/${target_soc}/cpuflpr")
   set(target_soc)
 
-  # Select the SDP application
-  if(SB_CONFIG_SDP_GPIO)
-    set(sdp_app_dir "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/gpio")
-  elseif(SB_CONFIG_SDP_MSPI)
-    set(sdp_app_dir "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/mspi")
-  else()
-    message(FATAL_ERROR "Unknown SDP application type")
-  endif()
-
   # Include the SDP application in the build
   ExternalZephyrProject_Add(
     APPLICATION sdp
-    SOURCE_DIR ${sdp_app_dir}
+    SOURCE_DIR ${SB_CONFIG_SDP_IMAGE_PATH}
     BOARD ${board_target_flpr}
     BOARD_REVISION ${BOARD_REVISION}
   )
-  set(sdp_app_dir)
   set(board_target_flpr)
 endif()
