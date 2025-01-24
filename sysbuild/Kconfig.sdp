@@ -39,6 +39,13 @@ endchoice
 
 endif # SDP_GPIO
 
+config SDP_IMAGE_PATH
+	string
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/gpio" if SDP_GPIO
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/mspi" if SDP_MSPI
+	help
+	  Source directory of SDP image.
+
 endif # SDP
 
 endmenu
