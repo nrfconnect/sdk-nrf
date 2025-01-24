@@ -1,6 +1,8 @@
 /* LzmaDec.h -- LZMA Decoder
 2023-04-02 : Igor Pavlov : Public domain */
 
+/** With changes by Nordic Semiconductor ASA */
+
 #ifndef ZIP7_INC_LZMA_DEC_H
 #define ZIP7_INC_LZMA_DEC_H
 
@@ -47,13 +49,29 @@ SRes LzmaProps_Decode(CLzmaProps *p, const Byte *data, unsigned size);
 
 #define LZMA_REQUIRED_INPUT_MAX 20
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+/* Handler type for external dictionary operations.
+ * See LzmaDictionaryOpen() and other dictionary interfaces to be implemented
+ * by the user of this library below.
+ */
+typedef struct DictHandle_t {
+	BoolInt isOpened;
+	SizeT dicBufSize;
+
+} DictHandle;
+#endif
+
 typedef struct {
 	/* Don't change this structure. ASM code can use it. */
 	CLzmaProps prop;
 	CLzmaProb *probs;
 	CLzmaProb *probs_1664;
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+	DictHandle *dicHandle;
+#else
 	Byte *dic;
 	SizeT dicBufSize;
+#endif
 	SizeT dicPos;
 	const Byte *buf;
 	UInt32 range;
@@ -69,11 +87,19 @@ typedef struct {
 	Byte tempBuf[LZMA_REQUIRED_INPUT_MAX];
 } CLzmaDec;
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+#define LzmaDec_CONSTRUCT(p)                                                                       \
+	{                                                                                          \
+		(p)->dicHandle = NULL;                                                                   \
+		(p)->probs = NULL;                                                                 \
+	}
+#else
 #define LzmaDec_CONSTRUCT(p)                                                                       \
 	{                                                                                          \
 		(p)->dic = NULL;                                                                   \
 		(p)->probs = NULL;                                                                 \
 	}
+#endif
 #define LzmaDec_Construct(p) LzmaDec_CONSTRUCT(p)
 
 void LzmaDec_Init(CLzmaDec *p);
@@ -228,6 +254,66 @@ failure
 SRes LzmaDecode(Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen, const Byte *propData,
 		unsigned propSize, ELzmaFinishMode finishMode, ELzmaStatus *status,
 		ISzAllocPtr alloc);
+
+
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+/* Interfaces to be implemented by the user of this library.
+   They are added to allow for different memory storage of dictionary,
+   not only as directly referenced memory through CLzmaDec::dic.
+*/
+
+/* Open dictionary with requested size.
+
+minSize:
+  Minimal size of the dictionary.
+Returns:
+  Pointer to a dictionary handle struct for subsequent API calls
+  or NULL if failed to open.
+*/
+DictHandle *LzmaDictionaryOpen(SizeT minSize);
+
+/* Write to dictionary.
+
+handle:
+  Pointer to dictionary handle struct, returned from LzmaDictionaryOpen().
+pos:
+  Position (byte-wise) in dictionary to start writing to.
+data
+  Data to be written.
+len
+  Length of @a data.
+Returns:
+  Number of written bytes.
+*/
+SizeT LzmaDictionaryWrite(DictHandle *handle, SizeT pos, const Byte *data, SizeT len);
+
+/* Read from dictionary.
+
+handle:
+  Pointer to dictionary handle struct, returned from LzmaDictionaryOpen().
+pos:
+  Position (byte-wise) in dictionary to start reading from.
+data
+  Data buffer to fill in with read data.
+len
+  Length of @a data; number of bytes to be read.
+Returns:
+  Number of read bytes.
+*/
+SizeT LzmaDictionaryRead(DictHandle *handle, SizeT pos, Byte *data, SizeT len);
+
+/* Close dictionary.
+
+handle:
+  Pointer to dictionary handle struct, returned from LzmaDictionaryOpen().
+
+Returns:
+  SZ_OK
+  SZ_ERROR_PARAM - Invalid input parameters
+  SZ_ERROR_FAIL  - Some unexpected error: internal error of code, memory corruption or hardware
+ */
+SRes LzmaDictionaryClose(DictHandle *handle);
+#endif
 
 EXTERN_C_END
 

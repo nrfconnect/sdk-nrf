@@ -1,6 +1,8 @@
 /* LzmaDec.c -- LZMA Decoder
 2023-04-07 : Igor Pavlov : Public domain */
 
+/** With changes by Nordic Semiconductor ASA */
+
 #include "Precomp.h"
 
 #include <string.h>
@@ -304,8 +306,13 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 	unsigned lc = p->prop.lc;
 	unsigned lpMask = ((unsigned)0x100 << p->prop.lp) - ((unsigned)0x100 >> lc);
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+	Byte dicData;
+	SizeT dicBufSize = p->dicHandle->dicBufSize;
+#else
 	Byte *dic = p->dic;
 	SizeT dicBufSize = p->dicBufSize;
+#endif
 	SizeT dicPos = p->dicPos;
 
 	UInt32 processedPos = p->processedPos;
@@ -329,9 +336,23 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 			UPDATE_0(prob)
 			prob = probs + Literal;
 			if (processedPos != 0 || checkDicSize != 0) {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+				if (LzmaDictionaryRead(p->dicHandle,
+						(dicPos == 0 ? dicBufSize : dicPos) - 1,
+						&dicData,
+						sizeof(dicData)) != sizeof(dicData)) {
+
+					len += kMatchSpecLen_Error_Data;
+					break;
+				}
+#endif
 				prob += (UInt32)3 *
 					((((processedPos << 8) +
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+					   dicData) &
+#else
 					   dic[(dicPos == 0 ? dicBufSize : dicPos) - 1]) &
+#endif
 					  lpMask)
 					 << lc);
 			}
@@ -355,8 +376,20 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 				NORMAL_LITER_DEC
 #endif
 			} else {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+				if (LzmaDictionaryRead(p->dicHandle,
+						dicPos - rep0 + (dicPos < rep0 ? dicBufSize : 0),
+						&dicData,
+						sizeof(dicData)) != sizeof(dicData)) {
+
+					len += kMatchSpecLen_Error_Data;
+					break;
+				}
+				unsigned matchByte = dicData;
+#else
 				unsigned matchByte =
 					dic[dicPos - rep0 + (dicPos < rep0 ? dicBufSize : 0)];
+#endif
 				unsigned offs = 0x100;
 				state -= (state < 10) ? 3 : 6;
 				symbol = 1;
@@ -382,7 +415,11 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 #endif
 			}
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+			LzmaDictionaryWrite(p->dicHandle, dicPos++, (Byte *)&symbol, sizeof(Byte));
+#else
 			dic[dicPos++] = (Byte)symbol;
+#endif
 			continue;
 		}
 
@@ -415,9 +452,29 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 						// if (dicPos == limit) { state = state <
 						// kNumLitStates ? 9 : 11; len = 1; break; }
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+						if (LzmaDictionaryRead(p->dicHandle,
+								dicPos - rep0 +
+									  (dicPos < rep0 ? dicBufSize : 0),
+								&dicData,
+								sizeof(dicData)) != sizeof(dicData)) {
+
+							len += kMatchSpecLen_Error_Data;
+							break;
+						}
+						if (LzmaDictionaryWrite(p->dicHandle,
+								dicPos++,
+								&dicData,
+								sizeof(dicData)) != sizeof(dicData)) {
+
+							len += kMatchSpecLen_Error_Data;
+							break;
+						}
+#else
 						dic[dicPos] = dic[dicPos - rep0 +
 								  (dicPos < rep0 ? dicBufSize : 0)];
 						dicPos++;
+#endif
 						processedPos++;
 						state = state < kNumLitStates ? 9 : 11;
 						continue;
@@ -632,6 +689,7 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 				processedPos += (UInt32)curLen;
 
 				len -= curLen;
+#ifndef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
 				if (curLen <= dicBufSize - pos) {
 					Byte *dest = dic + dicPos;
 					ptrdiff_t src = (ptrdiff_t)pos - (ptrdiff_t)dicPos;
@@ -641,13 +699,35 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 						*(dest) = (Byte) * (dest + src);
 					} while (++dest != lim);
 				} else {
+#endif
 					do {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+						if (LzmaDictionaryRead(p->dicHandle,
+								pos,
+								&dicData,
+								sizeof(dicData)) != sizeof(dicData)) {
+
+							len += kMatchSpecLen_Error_Data;
+							break;
+						}
+						if (LzmaDictionaryWrite(p->dicHandle,
+								dicPos++,
+								&dicData,
+								sizeof(dicData)) != sizeof(dicData)) {
+
+							len += kMatchSpecLen_Error_Data;
+							break;
+						}
+#else
 						dic[dicPos++] = dic[pos];
+#endif
 						if (++pos == dicBufSize) {
 							pos = 0;
 						}
 					} while (--curLen != 0);
+#ifndef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
 				}
+#endif
 			}
 		}
 	} while (dicPos < limit && buf < bufLimit);
@@ -673,15 +753,27 @@ static int Z7_FASTCALL LZMA_DECODE_REAL(CLzmaDec *p, SizeT limit, const Byte *bu
 }
 #endif
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+static SRes Z7_FASTCALL LzmaDec_WriteRem(CLzmaDec *p, SizeT limit)
+#else
 static void Z7_FASTCALL LzmaDec_WriteRem(CLzmaDec *p, SizeT limit)
+#endif
 {
 	unsigned len = (unsigned)p->remainLen;
 	if (len == 0 /* || len >= kMatchSpecLenStart */) {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+		return SZ_OK;
+#else
 		return;
+#endif
 	}
 	{
-		SizeT dicPos = p->dicPos;
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+		Byte dicData;
+#else
 		Byte *dic;
+#endif
+		SizeT dicPos = p->dicPos;
 		SizeT dicBufSize;
 		SizeT rep0; /* we use SizeT to avoid the BUG of VC14 for AMD64 */
 		{
@@ -689,7 +781,11 @@ static void Z7_FASTCALL LzmaDec_WriteRem(CLzmaDec *p, SizeT limit)
 			if (rem < len) {
 				len = (unsigned)(rem);
 				if (len == 0) {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+					return SZ_OK;
+#else
 					return;
+#endif
 				}
 			}
 		}
@@ -700,15 +796,39 @@ static void Z7_FASTCALL LzmaDec_WriteRem(CLzmaDec *p, SizeT limit)
 
 		p->processedPos += (UInt32)len;
 		p->remainLen -= (UInt32)len;
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+		dicBufSize = p->dicHandle->dicBufSize;
+#else
 		dic = p->dic;
-		rep0 = p->reps[0];
 		dicBufSize = p->dicBufSize;
+#endif
+		rep0 = p->reps[0];
 		do {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+			if (LzmaDictionaryRead(p->dicHandle,
+					dicPos - rep0 + (dicPos < rep0 ? dicBufSize : 0),
+					&dicData,
+					sizeof(dicData)) != sizeof(dicData)) {
+
+				return SZ_ERROR_DATA;
+			}
+			if (LzmaDictionaryWrite(p->dicHandle,
+					dicPos++,
+					&dicData,
+					sizeof(dicData)) != sizeof(dicData)) {
+
+				return SZ_ERROR_DATA;
+			}
+#else
 			dic[dicPos] = dic[dicPos - rep0 + (dicPos < rep0 ? dicBufSize : 0)];
 			dicPos++;
+#endif
 		} while (--len);
 		p->dicPos = dicPos;
 	}
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+	return SZ_OK;
+#endif
 }
 
 /*
@@ -763,7 +883,10 @@ typedef enum {
 	DUMMY_INPUT_EOF, /* need more input data */
 	DUMMY_LIT,
 	DUMMY_MATCH,
-	DUMMY_REP
+	DUMMY_REP,
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+	DUMMY_DICT_FAIL
+#endif
 } ELzmaDummy;
 
 #define IS_DUMMY_END_MARKER_POSSIBLE(dummyRes) ((dummyRes) == DUMMY_MATCH)
@@ -790,13 +913,30 @@ static ELzmaDummy LzmaDec_TryDummy(const CLzmaDec *p, const Byte *buf, const Byt
 			UPDATE_0_CHECK
 
 			prob = probs + Literal;
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+			Byte dicData;
+
+			if (LzmaDictionaryRead(p->dicHandle,
+					(p->dicPos == 0 ? p->dicHandle->dicBufSize
+									: p->dicPos) - 1,
+					&dicData,
+					sizeof(dicData)) != sizeof(dicData)) {
+
+				res = DUMMY_DICT_FAIL;
+				break;
+			}
+#endif
 			if (p->checkDicSize != 0 || p->processedPos != 0) {
 				prob += ((UInt32)LZMA_LIT_SIZE *
 					 ((((p->processedPos) & (((unsigned)1 << (p->prop.lp)) - 1))
 					   << p->prop.lc) +
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+					  ((unsigned)dicData >>
+#else
 					  ((unsigned)p->dic[(p->dicPos == 0 ? p->dicBufSize
 									    : p->dicPos) -
 							    1] >>
+#endif
 					   (8 - p->prop.lc))));
 			}
 
@@ -806,9 +946,22 @@ static ELzmaDummy LzmaDec_TryDummy(const CLzmaDec *p, const Byte *buf, const Byt
 					GET_BIT_CHECK(prob + symbol, symbol)
 				} while (symbol < 0x100);
 			} else {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+				if (LzmaDictionaryRead(p->dicHandle,
+						p->dicPos - p->reps[0] +
+							(p->dicPos < p->reps[0] ? p->dicHandle->dicBufSize : 0),
+						&dicData,
+						sizeof(dicData)) != sizeof(dicData)) {
+
+					res = DUMMY_DICT_FAIL;
+					break;
+				}
+				unsigned matchByte = dicData;
+#else
 				unsigned matchByte =
 					p->dic[p->dicPos - p->reps[0] +
 					       (p->dicPos < p->reps[0] ? p->dicBufSize : 0)];
+#endif
 				unsigned offs = 0x100;
 				unsigned symbol = 1;
 				do {
@@ -1057,8 +1210,13 @@ SRes LzmaDec_DecodeToDic(CLzmaDec *p, SizeT dicLimit, const Byte *src, SizeT *sr
 			return SZ_OK;
 		}
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+		if (LzmaDec_WriteRem(p, dicLimit) != SZ_OK) {
+			return SZ_ERROR_FAIL;
+		}
+#else
 		LzmaDec_WriteRem(p, dicLimit);
-
+#endif
 		{
 			// (p->remainLen == 0 || p->dicPos == dicLimit)
 
@@ -1089,6 +1247,12 @@ SRes LzmaDec_DecodeToDic(CLzmaDec *p, SizeT dicLimit, const Byte *src, SizeT *sr
 					const Byte *bufOut = src + inSize;
 
 					ELzmaDummy dummyRes = LzmaDec_TryDummy(p, src, &bufOut);
+
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+					if (dummyRes == DUMMY_DICT_FAIL) {
+						break;
+					}
+#endif
 
 					if (dummyRes == DUMMY_INPUT_EOF) {
 						size_t i;
@@ -1177,6 +1341,12 @@ SRes LzmaDec_DecodeToDic(CLzmaDec *p, SizeT dicLimit, const Byte *src, SizeT *sr
 					ELzmaDummy dummyRes =
 						LzmaDec_TryDummy(p, p->tempBuf, &bufOut);
 
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+					if (dummyRes == DUMMY_DICT_FAIL) {
+						break;
+					}
+#endif
+
 					if (dummyRes == DUMMY_INPUT_EOF) {
 						if (rem >= LZMA_REQUIRED_INPUT_MAX) {
 							break;
@@ -1245,6 +1415,7 @@ SRes LzmaDec_DecodeToDic(CLzmaDec *p, SizeT dicLimit, const Byte *src, SizeT *sr
 	return SZ_ERROR_FAIL;
 }
 
+#ifndef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
 SRes LzmaDec_DecodeToBuf(CLzmaDec *p, Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen,
 			 ELzmaFinishMode finishMode, ELzmaStatus *status)
 {
@@ -1284,6 +1455,7 @@ SRes LzmaDec_DecodeToBuf(CLzmaDec *p, Byte *dest, SizeT *destLen, const Byte *sr
 		}
 	}
 }
+#endif
 
 void LzmaDec_FreeProbs(CLzmaDec *p, ISzAllocPtr alloc)
 {
@@ -1291,10 +1463,15 @@ void LzmaDec_FreeProbs(CLzmaDec *p, ISzAllocPtr alloc)
 	p->probs = NULL;
 }
 
-static void LzmaDec_FreeDict(CLzmaDec *p, ISzAllocPtr alloc)
+static SRes LzmaDec_FreeDict(CLzmaDec *p, ISzAllocPtr alloc)
 {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+	return LzmaDictionaryClose(p->dicHandle);
+#else
 	ISzAlloc_Free(alloc, p->dic);
 	p->dic = NULL;
+	return SZ_OK;
+#endif
 }
 
 void LzmaDec_Free(CLzmaDec *p, ISzAllocPtr alloc)
@@ -1378,6 +1555,7 @@ SRes LzmaDec_Allocate(CLzmaDec *p, const Byte *props, unsigned propsSize, ISzAll
 		}
 	}
 
+#ifndef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
 	if (!p->dic || dicBufSize != p->dicBufSize) {
 		LzmaDec_FreeDict(p, alloc);
 		p->dic = (Byte *)ISzAlloc_Alloc(alloc, dicBufSize);
@@ -1387,10 +1565,27 @@ SRes LzmaDec_Allocate(CLzmaDec *p, const Byte *props, unsigned propsSize, ISzAll
 		}
 	}
 	p->dicBufSize = dicBufSize;
+#else
+	if (!p->dicHandle || dicBufSize != p->dicHandle->dicBufSize) {
+		if (p->dicHandle) {
+			SRes const rc = LzmaDictionaryClose(p->dicHandle);
+			if (rc != 0) {
+				return rc;
+			}
+		}
+
+		p->dicHandle = LzmaDictionaryOpen(dicBufSize);
+
+		if (!p->dicHandle) {
+			return SZ_ERROR_MEM;
+		}
+	}
+#endif
 	p->prop = propNew;
 	return SZ_OK;
 }
 
+#ifndef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
 SRes LzmaDecode(Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen, const Byte *propData,
 		unsigned propSize, ELzmaFinishMode finishMode, ELzmaStatus *status,
 		ISzAllocPtr alloc)
@@ -1416,3 +1611,4 @@ SRes LzmaDecode(Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen, cons
 	LzmaDec_FreeProbs(&p, alloc);
 	return res;
 }
+#endif
