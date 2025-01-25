@@ -48,10 +48,10 @@ static ssize_t mock_socket_offload_write(void *obj, const void *buffer, size_t c
 	return mock_socket_offload_sendto(obj, buffer, count, 0, NULL, 0);
 }
 
-static int mock_socket_offload_close(void *obj)
+static int mock_socket_offload_close2(void *obj, int fd)
 {
 	k_sleep(K_MSEC(50));
-	return zsock_close_ctx(obj);
+	return zsock_close_ctx(obj, fd);
 }
 
 static int mock_socket_offload_ioctl(void *obj, unsigned int request, va_list args)
@@ -141,7 +141,7 @@ static const struct socket_op_vtable mock_socket_fd_op_vtable = {
 	.fd_vtable = {
 		.read = mock_socket_offload_read,
 		.write = mock_socket_offload_write,
-		.close = mock_socket_offload_close,
+		.close2 = mock_socket_offload_close2,
 		.ioctl = mock_socket_offload_ioctl,
 	},
 	.bind = mock_socket_offload_bind,
