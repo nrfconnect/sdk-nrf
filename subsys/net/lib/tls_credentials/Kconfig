@@ -1,0 +1,28 @@
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if TLS_CREDENTIALS
+
+config TLS_MAX_CREDENTIALS_NUMBER
+	# Increase default maximum number of TLS credentials that can be registered.
+	default 20 if TLS_CREDENTIALS_BACKEND_NRF_MODEM
+
+choice TLS_CREDENTIALS_BACKEND
+	depends on TLS_CREDENTIALS
+	default TLS_CREDENTIALS_BACKEND_NRF_MODEM if NRF_MODEM_LIB
+	help
+	  TLS credentials management backend implementation.
+
+config TLS_CREDENTIALS_BACKEND_NRF_MODEM
+	bool "Use modem credentials storage as backend"
+	depends on MODEM_KEY_MGMT
+	help
+	  TLS credentials management backend using the nrf modem key management API to store
+	  credentials and keep entries across system reboot.
+	  Entries are loaded from the modem at boot, and can then be used in socket connections.
+
+endchoice
+
+endif # TLS_CREDENTIALS
