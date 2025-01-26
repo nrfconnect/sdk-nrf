@@ -23,7 +23,10 @@ extern "C" {
  * @{
  */
 
-/**@brief Credential types. */
+/** @brief The digest is 32 bytes long. */
+#define MODEM_KEY_MGMT_DIGEST_SIZE (32)
+
+/** @brief Credential types. */
 enum modem_key_mgmt_cred_type {
 	MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 	MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
@@ -31,6 +34,15 @@ enum modem_key_mgmt_cred_type {
 	MODEM_KEY_MGMT_CRED_TYPE_PSK,
 	MODEM_KEY_MGMT_CRED_TYPE_IDENTITY
 };
+
+/**
+ * @brief Credential list entry handler function prototype.
+ *
+ * @param[in] sec_tag      The security tag.
+ * @param[in] cred_type    The credential type.
+ */
+typedef void (*modem_key_mgmt_list_cb_t)(
+	nrf_sec_tag_t sec_tag, enum modem_key_mgmt_cred_type cred_type);
 
 /**
  * @brief Write or update a credential in persistent storage.
@@ -137,6 +149,23 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		       const void *buf, size_t len);
 
 /**
+ * @brief Read the SHA1 digest of a credential from persistent storage.
+ *
+ * @param[in]           sec_tag         The security tag of the credential.
+ * @param[in]           cred_type       The credential type.
+ * @param[out]          buf             Buffer to read the credential into.
+ * @param[in]           len             Length of the buffer.
+ *
+ * @retval 0            On success.
+ * @retval -ENOMEM      Credential does not fit in @p buf. See @ref MODEM_KEY_MGMT_DIGEST_SIZE
+ * @retval -ENOENT      No credential associated with the given
+ *                      @p sec_tag and @p cred_type.
+ */
+int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
+			  enum modem_key_mgmt_cred_type cred_type,
+			  void *buf, size_t len);
+
+/**
  * @brief Check if a credential exists in persistent storage.
  *
  * @param[in] sec_tag		The security tag to search for.
@@ -151,6 +180,17 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type,
 			  bool *exists);
+
+/**
+ * @brief List all the available credentials in persistent storage.
+ *
+ * @param[in]           list_cb         Callback called for each available
+ *                                      credential in persistent storage.
+ *
+ * @retval 0            On success.
+ * @retval -ENOBUFS     Internal buffer is too small.
+ */
+int modem_key_mgmt_list(modem_key_mgmt_list_cb_t list_cb);
 
 /**@} */
 
