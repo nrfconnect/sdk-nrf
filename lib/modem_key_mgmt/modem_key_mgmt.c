@@ -298,6 +298,11 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 	cmee_enable(&cmee_was_enabled);
 
 	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf), "AT%%CMNG=1, %d", sec_tag);
+
+	if (!cmee_was_enabled) {
+		cmee_disable();
+	}
+
 	if (err) {
 		return translate_error(err);
 	}
@@ -310,10 +315,6 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 			err = nrf_modem_at_printf("AT%%CMNG=3,%u,%u", sec_tag, type);
 		}
 		token = strtok(NULL, "\n");
-	}
-
-	if (!cmee_was_enabled) {
-		cmee_disable();
 	}
 
 	if (err) {
