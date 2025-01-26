@@ -267,6 +267,68 @@ out:
 	return err;
 }
 
+#define MODEM_KEY_MGMT_DIGEST_STR_SIZE_WITHOUT_NULL_TERM 64
+
+int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
+			  enum modem_key_mgmt_cred_type cred_type,
+			  void *buf, size_t len)
+{
+	char cmd[sizeof("AT%CMNG=1,##########,##")];
+	bool cmee_was_enabled;
+	int ret;
+
+	if (buf == NULL) {
+		return -EINVAL;
+	}
+
+	if (len < MODEM_KEY_MGMT_DIGEST_SIZE) {
+		return -ENOMEM;
+	}
+
+	cmee_enable(&cmee_was_enabled);
+
+	snprintk(cmd, sizeof(cmd), "AT%%CMNG=1,%u,%u", sec_tag, cred_type);
+
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
+	ret = nrf_modem_at_scanf(
+		cmd,
+		"%%CMNG: "
+		"%*u," /* Ignore tag. */
+		"%*u," /* Ignore type. */
+		"\"%" STRINGIFY(MODEM_KEY_MGMT_DIGEST_STR_SIZE_WITHOUT_NULL_TERM) "s\"",
+		scratch_buf);
+
+	if (!cmee_was_enabled) {
+		cmee_disable();
+	}
+
+	switch (ret) {
+	case 1:
+		len = hex2bin(scratch_buf, strlen(scratch_buf), buf, len);
+
+		if (len != MODEM_KEY_MGMT_DIGEST_SIZE) {
+			ret = -EINVAL;
+			break;
+		}
+
+		ret = 0;
+		break;
+	case 0:
+		ret = -ENOENT;
+	default:
+		break;
+	}
+
+	k_mutex_unlock(&key_mgmt_mutex);
+	if (ret) {
+		return translate_error(ret);
+	}
+
+	return 0;
+
+}
+
 int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 			  enum modem_key_mgmt_cred_type cred_type)
 {
@@ -360,6 +422,46 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 		*exists = true;
 	} else {
 		*exists = false;
+	}
+
+out:
+	k_mutex_unlock(&key_mgmt_mutex);
+	return err;
+}
+
+int modem_key_mgmt_list(modem_key_mgmt_list_cb_t list_cb)
+{
+	int err;
+	char *token;
+	uint32_t tag, type;
+	bool cmee_was_enabled;
+
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
+	cmee_enable(&cmee_was_enabled);
+
+	scratch_buf[0] = '\0';
+	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf),
+			       "AT%%CMNG=1");
+
+	if (!cmee_was_enabled) {
+		cmee_disable();
+	}
+
+	if (err) {
+		err = translate_error(err);
+		goto out;
+	}
+
+	token = strtok(scratch_buf, "\n");
+	while (token != NULL) {
+		int match = sscanf(token, "%%CMNG: %u,%u,\"", &tag, &type);
+
+		if (match == 2 && tag < NRF_SEC_TAG_TLS_DECRYPT_BASE) {
+			list_cb(tag, type);
+		}
+
+		token = strtok(NULL, "\n");
 	}
 
 out:
