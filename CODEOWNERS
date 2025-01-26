@@ -827,6 +827,7 @@
 /tests/lib/modem_battery/                 @nrfconnect/ncs-modem
 /tests/lib/modem_info/                    @nrfconnect/ncs-cia
 /tests/lib/modem_jwt/                     @nrfconnect/ncs-iot-oulu
+/tests/lib/modem_key_mgmt/                @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /tests/lib/nrf_fuel_gauge/                @nordic-auko
 /tests/lib/nrf_modem_lib/                 @nrfconnect/ncs-modem
 /tests/lib/nrf_modem_lib/nrf9x_sockets/   @nrfconnect/ncs-modem
