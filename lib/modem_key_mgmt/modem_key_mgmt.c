@@ -297,6 +297,8 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 
 	cmee_enable(&cmee_was_enabled);
 
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
 	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf), "AT%%CMNG=1, %d", sec_tag);
 
 	if (!cmee_was_enabled) {
@@ -304,7 +306,7 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 	}
 
 	if (err) {
-		return translate_error(err);
+		goto out;
 	}
 
 	token = strtok(scratch_buf, "\n");
@@ -317,6 +319,8 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 		token = strtok(NULL, "\n");
 	}
 
+out:
+	k_mutex_unlock(&key_mgmt_mutex);
 	if (err) {
 		return translate_error(err);
 	}
