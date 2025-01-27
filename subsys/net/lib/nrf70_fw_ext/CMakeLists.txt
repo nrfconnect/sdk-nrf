@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if(CONFIG_NRF_WIFI_BUILD_ONLY_MODE)
+if(CONFIG_BUILD_ONLY_NO_BLOBS)
   return()
 endif()
 
