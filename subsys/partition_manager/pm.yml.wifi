@@ -1,0 +1,7 @@
+#include <zephyr/autoconf.h>
+
+nrf70_wifi_fw:
+  placement:
+    after: [settings_storage]
+  region: external_flash
+  size: 131072

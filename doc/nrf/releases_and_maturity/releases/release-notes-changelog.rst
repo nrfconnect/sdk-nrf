@@ -61,7 +61,10 @@ Developing with nRF91 Series
 Developing with nRF70 Series
 ============================
 
-|no_changes_yet_note|
+* :ref:`ug_nrf70_developing_fw_patch_ext_flash`
+
+   * Removed support for storing the nRF70 firmware patches in external flash without the :ref:`partition_manager`.
+
 
 Working with nRF54H Series
 ==========================
@@ -451,6 +454,10 @@ Wi-Fi samples
   * Updated:
 
     * The :ref:`wifi_radio_test` sample is now moved to :zephyr_file:`samples/wifi/radio_test/multi_domain`.
+
+* :ref:`wifi_shell_sample` sample:
+
+  * Modified support for storing the nRF70 firmware patches in external flash using the :ref:`partition_manager`.
 
 Other samples
 -------------

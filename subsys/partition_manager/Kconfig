@@ -156,6 +156,15 @@ config PM_PARTITION_SIZE_VPR_LAUNCHER
 	  This to place the flpr app's code at the address found in the devicetree.
 endif
 
+if WIFI_NRF70 && NRF_WIFI_PATCHES_EXT_FLASH_STORE
+
+partition=NRF70_WIFI_FW
+partition-size=0x20000
+rsource "Kconfig.template.partition_config"
+rsource "Kconfig.template.partition_region"
+
+endif
+
 endmenu # Zephyr subsystem configurations
 menu "NCS subsystem configurations"
 
