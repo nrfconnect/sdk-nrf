@@ -28,3 +28,9 @@
 - platforms:
     - native_posix
   comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
+
+- scenarios:
+    - drivers.flash.flash_ipuc
+  platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31492"
