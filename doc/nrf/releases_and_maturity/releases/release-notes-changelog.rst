@@ -531,6 +531,7 @@ Modem libraries
 
 * :ref:`pdn_readme` library:
 
+  * Added the :kconfig:option:`CONFIG_PDN_DYNAMIC_INFO_AT_BUF_SIZE ` Kconfig option to set the response buffer size for the ``AT+CGCONTRDP`` AT command.
   * Deprecated the :c:func:`pdn_dynamic_params_get` function.
     Use the new function :c:func:`pdn_dynamic_info_get` instead.
 

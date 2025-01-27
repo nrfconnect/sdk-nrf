@@ -688,7 +688,7 @@ int pdn_dynamic_info_get(uint32_t cid, struct pdn_dynamic_info *pdn_info)
 	struct at_parser parser;
 	size_t param_str_len;
 
-	char cgcontrdp_at_rsp_buf[512];
+	char *cgcontrdp_at_rsp_buf;
 
 	char *at_ptr;
 	char *tmp_ptr;
@@ -706,18 +706,24 @@ int pdn_dynamic_info_get(uint32_t cid, struct pdn_dynamic_info *pdn_info)
 		return -EINVAL;
 	}
 
+	cgcontrdp_at_rsp_buf = k_malloc(CONFIG_PDN_DYNAMIC_INFO_AT_BUF_SIZE);
+	if (!cgcontrdp_at_rsp_buf) {
+		LOG_ERR("k_malloc failed for CGDCONTRDP response buffer");
+		return -ENOMEM;
+	}
+
 	at_ptr = cgcontrdp_at_rsp_buf;
 	tmp_ptr = cgcontrdp_at_rsp_buf;
 
 	sprintf(at_cmd_pdn_context_read_info_cmd_str, AT_CMD_PDN_CONTEXT_READ_INFO, cid);
-	ret = nrf_modem_at_cmd(cgcontrdp_at_rsp_buf, sizeof(cgcontrdp_at_rsp_buf), "%s",
+	ret = nrf_modem_at_cmd(cgcontrdp_at_rsp_buf, CONFIG_PDN_DYNAMIC_INFO_AT_BUF_SIZE, "%s",
 			       at_cmd_pdn_context_read_info_cmd_str);
 	if (ret) {
 		LOG_ERR(
 			"nrf_modem_at_cmd returned err: %d for %s",
 			ret,
 			at_cmd_pdn_context_read_info_cmd_str);
-		return ret;
+		goto clean_exit;
 	}
 
 	/* Check how many rows of info do we have */
@@ -732,7 +738,7 @@ int pdn_dynamic_info_get(uint32_t cid, struct pdn_dynamic_info *pdn_info)
 	if (ret) {
 		LOG_ERR("Could not init AT parser for %s, error: %d\n",
 			   at_cmd_pdn_context_read_info_cmd_str, ret);
-		return ret;
+		goto clean_exit;
 	}
 
 parse:
@@ -813,6 +819,7 @@ parse:
 	}
 
 clean_exit:
+	k_free(cgcontrdp_at_rsp_buf);
 	return ret;
 }
 
