@@ -154,6 +154,7 @@ ci_samples_wifi:
 
 ci_applications_matter: &ci_matter
   files:
+    - modules/hal_nordic/nrf_802154/
     - modules/lib/hostap/
     - modules/lib/matter/
     - modules/lib/suit-generator/
@@ -267,6 +268,7 @@ ci_tests_subsys_zigbee: *ci_zigbee
 
 ci_samples_openthread:
   files:
+    - modules/hal_nordic/nrf_802154/
     - modules/lib/openthread/
     - nrf/applications/ipc_radio/
     - nrf/drivers/entropy/
