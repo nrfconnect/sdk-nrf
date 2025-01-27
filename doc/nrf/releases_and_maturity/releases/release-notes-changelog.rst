@@ -373,11 +373,15 @@ Matter samples
 Networking samples
 ------------------
 
-* Updated the following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+* Updated:
 
-  * :ref:`aws_iot`
-  * :ref:`azure_iot_hub`
-  * :ref:`download_sample`
+  * The :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option value to ``1280`` for all networking samples that had it set to a lower value.
+    This is a requirement from zephyr and removes a build warning.
+  * The following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+
+    * :ref:`aws_iot`
+    * :ref:`azure_iot_hub`
+    * :ref:`download_sample`
 
 NFC samples
 -----------
