@@ -50,17 +50,23 @@ enum mpsl_timeslot_call {
 	CLOSE_SESSION,
 };
 
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	#define HFCLK_CFG MPSL_TIMESLOT_HFCLK_CFG_XTAL_GUARANTEED
+#else
+	#define HFCLK_CFG MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
+
 /* Timeslot requests */
 static mpsl_timeslot_request_t timeslot_request_earliest = {
 	.request_type = MPSL_TIMESLOT_REQ_TYPE_EARLIEST,
-	.params.earliest.hfclk = MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE,
+	.params.earliest.hfclk = HFCLK_CFG,
 	.params.earliest.priority = MPSL_TIMESLOT_PRIORITY_NORMAL,
 	.params.earliest.length_us = TIMESLOT_LENGTH_US,
 	.params.earliest.timeout_us = 1000000
 };
 static mpsl_timeslot_request_t timeslot_request_normal = {
 	.request_type = MPSL_TIMESLOT_REQ_TYPE_NORMAL,
-	.params.normal.hfclk = MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE,
+	.params.normal.hfclk = HFCLK_CFG,
 	.params.normal.priority = MPSL_TIMESLOT_PRIORITY_NORMAL,
 	.params.normal.distance_us = TIMESLOT_REQUEST_DISTANCE_US,
 	.params.normal.length_us = TIMESLOT_LENGTH_US

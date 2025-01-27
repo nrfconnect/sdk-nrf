@@ -40,6 +40,9 @@ The timeslot session is closed when any key is pressed in the terminal.
    For the nRF54L Series ``mpsl_timer0`` is the ``timer10`` instance.
    For the nRF54H Series ``mpsl_timer0`` is the ``timer020`` instance.
 
+.. note::
+   For the nRF54H20, if you want to use ``MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE`` then you must request the HFXO earlier using the :c:func:`mpsl_clock_hfclk_request` function.
+
 Building and running
 ********************
 
