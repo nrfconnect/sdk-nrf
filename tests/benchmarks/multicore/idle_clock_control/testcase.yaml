@@ -38,7 +38,6 @@ tests:
       - remote_CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME=y
-      - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
       - remote_CONFIG_CLOCK_CONTROL=n
     harness_config:

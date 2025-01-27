@@ -67,7 +67,7 @@ int main(void)
 			printk("Chip ID: 0x%x\n", response);
 		}
 		gpio_pin_set_dt(&led, 0);
-		k_msleep(2000);
+		k_msleep(1000);
 		gpio_pin_set_dt(&led, 1);
 	}
 

@@ -1,7 +1,17 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+
+/* Required GPIO loopback: P1.02 - P1.03 */
 / {
 	aliases {
 		adc0 = &adc;
 		sw = &loopback;
+		led = &led0;
+		/delete-property/ led1;
 	};
 	buttons {
 		compatible = "gpio-keys";
@@ -10,6 +20,8 @@
 		};
 	};
 };
+
+/delete-node/ &led1;
 
 &adc {
 	#address-cells = <1>;
