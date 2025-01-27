@@ -280,7 +280,6 @@ tests:
     extra_args:
       - shell_SHIELD=nrf7002ek
       - shell_SNIPPET=nrf70-fw-patch-ext-flash
-      - SB_CONFIG_PARTITION_MANAGER=n
       - SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp

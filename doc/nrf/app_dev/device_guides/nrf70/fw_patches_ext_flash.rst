@@ -80,7 +80,11 @@ In this case the upload of the firmware patch from the external memory to the nR
 1. The firmware patch is loaded from the external memory onto internal RAM.
 #. The firmware patch is uploaded to the nRF70 device.
 
-This feature can be enabled using DTS or the :ref:`app_build_snippets` feature, or by using :ref:`partition_manager`.
+You can enable this feature using the :ref:`app_build_snippets` feature.
+
+.. note::
+
+   Storing the nRF70 firmware patches in external RAM memory requires the partition manager to be enabled.
 
 Configuration
 -------------
@@ -91,24 +95,7 @@ The following configuration options are available:
 * :kconfig:option:`CONFIG_NRF_WIFI_FW_FLASH_CHUNK_SIZE` - Defines the size of the chunks used to read the firmware patches from the external non-XIP memory.
   The default value is 8192 bytes.
 
-The external memory partition name must be defined in the devicetree or in the partition manager configuration file.
-
-* ``nrf70_fw_partition`` - Defines the name of the external memory partition that stores the firmware patches.
-  This must be defined in the devicetree, for example:
-
-.. code-block:: dts
-
-    &flash0 {
-        partitions {
-            compatible = "fixed-partitions";
-            #address-cells = <1>;
-            #size-cells = <1>;
-            nrf70_fw_partition: partition@0 {
-                label = "nrf70_fw_partition";
-                reg = <0x00000000 DT_SIZE_K(128)>;
-            };
-        };
-    };
+You must define the external memory partition name in the Partition Manager configuration file as follows:
 
 * ``nrf70_wifi_fw`` - Defines the name of the external memory partition that stores the firmware patches.
   This must be defined in the partition manager configuration file, for example:
@@ -126,8 +113,7 @@ Building
 
 See :ref:`nrf7002dk_nrf5340` for general instructions on building.
 
-Additionally, you can build the sample either with the ``nrf70-fw-patch-ext-flash`` snippet or with Partition Manager (``SB_CONFIG_PARTITION_MANAGER``).
-When using the ``nrf70-fw-patch-ext-flash`` snippet, set ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE``, and disable ``SB_CONFIG_PARTITION_MANAGER``.
+Additionally, you can build the sample using the ``nrf70-fw-patch-ext-flash`` snippet and set the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y`` Kconfig option.
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with the ``nrf70-fw-patch-ext-flash`` snippet enabled, run the following commands.
 
@@ -136,14 +122,14 @@ With west
 
 .. code-block:: console
 
-    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash" -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_PARTITION_MANAGER=n
+    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash" -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
 
 With CMake
 ^^^^^^^^^^
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash" -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_PARTITION_MANAGER=n samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash" -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y samples/wifi/shell
     ninja -C build
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with partition manager enabled, run the following commands:
