@@ -386,15 +386,13 @@ static int api_config(const struct mspi_dt_spec *spec)
 	}
 
 	/* Send pinout configuration to FLPR */
-	ret = send_config(NRFE_MSPI_CONFIG_PINS, (const void *)pins_cfg.pin,
-				sizeof(pins_cfg));
+	ret = send_config(NRFE_MSPI_CONFIG_PINS, (const void *)pins_cfg.pin, sizeof(pins_cfg));
 	if (ret < 0) {
 		return ret;
 	}
 
 	/* Send controller configuration to FLPR */
-	return send_config(NRFE_MSPI_CONFIG_CTRL, (const void *)config,
-				sizeof(struct mspi_cfg));
+	return send_config(NRFE_MSPI_CONFIG_CTRL, (const void *)config, sizeof(struct mspi_cfg));
 }
 
 static int check_io_mode(enum mspi_io_mode io_mode)
