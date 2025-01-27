@@ -162,6 +162,7 @@ Matter
   * A new section :ref:`ug_matter_creating_accessory_vendor_cluster` in the :ref:`ug_matter_creating_accessory` page.
   * A description for the new :ref:`ug_matter_gs_tools_matter_west_commands_append` within the :ref:`ug_matter_gs_tools_matter_west_commands` page.
   * New arguments to the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_gui` to provide a custom cache directory and add new clusters to Matter Data Model.
+  * A new section :ref:`ug_matter_device_low_power_calibration_period` in the :ref:`ug_matter_device_low_power_configuration`.
   * :ref:`ug_matter_debug_snippet`.
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.

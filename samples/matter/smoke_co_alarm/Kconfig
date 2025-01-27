@@ -22,6 +22,14 @@ config CHIP_ICD_LIT_SUPPORT
 config CHIP_ICD_SIT_SLOW_POLL_LIMIT
 	default 5000
 
+# Use the same value as CONFIG_CHIP_ICD_IDLE_MODE_DURATION
+config CHIP_ICD_SLOW_POLL_INTERVAL
+	default 300000
+
+# Use greater than default (200 ms) value to limit the impact of Active Threshold Duration on power consumption
+config CHIP_ICD_FAST_POLLING_INTERVAL
+	default 500
+
 config CHIP_ICD_REPORT_ON_ACTIVE_MODE
 	default y
 
