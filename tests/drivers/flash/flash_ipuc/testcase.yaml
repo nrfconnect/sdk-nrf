@@ -3,7 +3,6 @@ common:
     - drivers
     - flash
     - ci_tests_drivers_flash
-    - ci_tests_subsys_suit
 tests:
   drivers.flash.flash_ipuc:
     platform_allow:
