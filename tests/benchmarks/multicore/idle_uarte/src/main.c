@@ -26,21 +26,19 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 #error Improper device tree configuration, UARTE test node not available
 #endif
 
-#define UART_ACTION_BASE_TIMEOUT_US 1000
-#define TEST_BUFFER_LEN		    10
+#define UART_ACTION_BASE_TIMEOUT_US 50000
+#define TEST_BUFFER_LEN		    512
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
 static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
-const uint8_t test_pattern[TEST_BUFFER_LEN] = {0x11, 0x12, 0x13, 0x14, 0x15,
-					       0x16, 0x17, 0x18, 0x19, 0x20};
+uint8_t test_pattern[TEST_BUFFER_LEN];
 static uint8_t test_buffer[TEST_BUFFER_LEN];
 static volatile uint8_t uart_error_counter;
 
 #if defined(CONFIG_CLOCK_CONTROL)
 const struct nrf_clock_spec clk_spec_global_hsfll = {
-	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
-};
+	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)};
 
 /*
  * Set Global Domain frequency (HSFLL120)
@@ -117,11 +115,10 @@ void enable_uart_rx(void)
 {
 	int err;
 
-	printk("Enable UART RX\n");
-	err = uart_rx_enable(uart_dev, test_buffer, TEST_BUFFER_LEN,
-			     5 * UART_ACTION_BASE_TIMEOUT_US);
+	err = uart_rx_enable(uart_dev, test_buffer, TEST_BUFFER_LEN, UART_ACTION_BASE_TIMEOUT_US);
 	if (err != 0) {
 		printk("Unexpected error when enabling UART RX: %d\n", err);
+		__ASSERT_NO_MSG(err == 0);
 	}
 }
 
@@ -130,13 +127,17 @@ void disable_uart_rx(void)
 {
 	int err;
 
-	k_msleep(250);
-	printk("Disable UART RX\n");
 	err = uart_rx_disable(uart_dev);
 	if (err != 0) {
 		printk("Unexpected error when disabling RX: %d\n", err);
 	}
-	k_msleep(250);
+}
+
+void set_test_pattern(void)
+{
+	for (int counter = 0; counter < TEST_BUFFER_LEN; counter++) {
+		test_pattern[counter] = counter;
+	}
 }
 
 int main(void)
@@ -155,7 +156,6 @@ int main(void)
 #if defined(CONFIG_CLOCK_CONTROL)
 	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
 	__ASSERT(err == 0, "Could not configure led GPIO");
-	k_msleep(1000);
 	gpio_pin_set_dt(&led, 1);
 	set_global_domain_frequency();
 #else
@@ -165,26 +165,26 @@ int main(void)
 
 	printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
 	printk("UART instance: %s\n", uart_dev->name);
-
-	k_msleep(250);
+	set_test_pattern();
+	k_msleep(10);
 
 	err = uart_configure(uart_dev, &test_uart_config);
 	if (err != 0) {
 		printk("Unexpected error when configuring UART: %d\n", err);
-		return -1;
+		__ASSERT_NO_MSG(err == 0);
 	}
 
 	/* UART is disabled so expect error. */
 	err = uart_rx_disable(uart_dev);
 	if (err != -EFAULT) {
 		printk("Unexpected error when disabling RX: %d\n", err);
-		return -1;
+		__ASSERT_NO_MSG(err == 0);
 	}
 
 	err = uart_callback_set(uart_dev, async_uart_callback, NULL);
 	if (err != 0) {
 		printk("Unexpected error when setting callback %d\n", err);
-		return -1;
+		__ASSERT_NO_MSG(err == 0);
 	}
 
 	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
@@ -199,18 +199,16 @@ int main(void)
 	while (test_repetitions)
 #endif
 	{
-		printk("Hello\n");
 		enable_uart_rx();
-		printk("UART test transmission\n");
 		err = uart_tx(uart_dev, test_pattern, TEST_BUFFER_LEN, UART_ACTION_BASE_TIMEOUT_US);
 		if (err != 0) {
 			printk("Unexpected error when sending UART TX data: %d\n", err);
-			return -1;
+			__ASSERT_NO_MSG(err == 0);
 		}
+		k_busy_wait(UART_ACTION_BASE_TIMEOUT_US);
 		disable_uart_rx();
-		printk("Good night\n");
 		gpio_pin_set_dt(&led, 0);
-		k_msleep(2000);
+		k_msleep(1000);
 		gpio_pin_set_dt(&led, 1);
 	}
 

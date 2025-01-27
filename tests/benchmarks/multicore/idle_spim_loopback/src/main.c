@@ -17,10 +17,11 @@ LOG_MODULE_REGISTER(idle_spim_loopback, LOG_LEVEL_INF);
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
-#define	DELTA			(1)
+#define DELTA (1)
 
-#define SPI_MODE_DEFAULT (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE \
-				| SPI_TRANSFER_MSB | SPI_MODE_CPHA | SPI_MODE_CPOL)
+#define SPI_MODE_DEFAULT                                                                           \
+	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |              \
+	 SPI_MODE_CPHA | SPI_MODE_CPOL)
 
 #if defined(CONFIG_TEST_SPI_HOLD_ON_CS) && defined(CONFIG_TEST_SPI_LOCK_ON)
 #define SPI_MODE (SPI_MODE_DEFAULT | SPI_HOLD_ON_CS | SPI_LOCK_ON)
@@ -36,14 +37,13 @@ static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), 
 
 static const struct gpio_dt_spec pin_in = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
 
-#define MEMORY_SECTION(node)                                                           \
-	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                \
-		    (__attribute__((__section__(                                               \
+#define MEMORY_SECTION(node)                                                                       \
+	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
+		    (__attribute__((__section__(                                                   \
 			    LINKER_DT_NODE_REGION_NAME(DT_PHANDLE(node, memory_regions)))))),      \
 		    ())
 
-static uint8_t spim_buffer[2 * CONFIG_DATA_FIELD]
-	MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
+static uint8_t spim_buffer[2 * CONFIG_DATA_FIELD] MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));
 
 /* Variables used to count edges on SPI CS */
 static struct gpio_callback gpio_input_cb_data;
@@ -55,8 +55,7 @@ static bool timer_expired;
 
 #if defined(CONFIG_CLOCK_CONTROL)
 const struct nrf_clock_spec clk_spec_global_hsfll = {
-	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)
-};
+	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)};
 
 /*
  * Set Global Domain frequency (HSFLL120)
@@ -116,23 +115,12 @@ int main(void)
 	int test_repetitions = 3;
 
 	/* SPI buffer sets */
-	struct spi_buf tx_spi_buf = {
-		.buf = &spim_buffer[0],
-		.len = CONFIG_DATA_FIELD
-	};
-	struct spi_buf_set tx_spi_buf_set = {
-		.buffers = &tx_spi_buf,
-		.count = 1
-	};
+	struct spi_buf tx_spi_buf = {.buf = &spim_buffer[0], .len = CONFIG_DATA_FIELD};
+	struct spi_buf_set tx_spi_buf_set = {.buffers = &tx_spi_buf, .count = 1};
 
-	struct spi_buf rx_spi_buf = {
-		.buf = &spim_buffer[CONFIG_DATA_FIELD],
-		.len = CONFIG_DATA_FIELD
-	};
-	struct spi_buf_set rx_spi_buf_set = {
-		.buffers = &rx_spi_buf,
-		.count = 1
-	};
+	struct spi_buf rx_spi_buf = {.buf = &spim_buffer[CONFIG_DATA_FIELD],
+				     .len = CONFIG_DATA_FIELD};
+	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
 
 	ret = gpio_is_ready_dt(&led);
 	__ASSERT(ret, "Error: GPIO Device not ready");
@@ -140,10 +128,8 @@ int main(void)
 #if defined(CONFIG_CLOCK_CONTROL)
 	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
 	__ASSERT(ret == 0, "Could not configure led GPIO");
-	k_msleep(1000);
 	gpio_pin_set_dt(&led, 1);
 	set_global_domain_frequency();
-	k_msleep(100);
 #else
 	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT(ret == 0, "Could not configure led GPIO");
@@ -223,7 +209,7 @@ int main(void)
 		while (!timer_expired) {
 			/* Generate pseudo random tx_data for current test. */
 			for (int i = 0; i < CONFIG_DATA_FIELD; i++) {
-				*((uint8_t *) tx_spi_buf.buf + i) = acc;
+				*((uint8_t *)tx_spi_buf.buf + i) = acc;
 				acc += DELTA;
 			}
 
@@ -236,12 +222,12 @@ int main(void)
 
 			/* Check if the received data is consistent with the data sent. */
 			for (int i = 0; i < CONFIG_DATA_FIELD; i++) {
-				uint8_t received = *((uint8_t *) rx_spi_buf.buf + i);
-				uint8_t transmitted = *((uint8_t *) tx_spi_buf.buf + i);
+				uint8_t received = *((uint8_t *)rx_spi_buf.buf + i);
+				uint8_t transmitted = *((uint8_t *)tx_spi_buf.buf + i);
 
 				if (received != transmitted) {
-					LOG_ERR("FAIL: rx[%d] = %d, expected %d",
-						i, received, transmitted);
+					LOG_ERR("FAIL: rx[%d] = %d, expected %d", i, received,
+						transmitted);
 					test_pass = false;
 					__ASSERT(false, "Run %d - FAILED\n", counter);
 				}
@@ -264,8 +250,8 @@ int main(void)
 			}
 
 			if (temp_pin_value != expected_pin_value) {
-				LOG_ERR("SPI CS signal is %d, while expected is %d",
-					temp_pin_value, expected_pin_value);
+				LOG_ERR("SPI CS signal is %d, while expected is %d", temp_pin_value,
+					expected_pin_value);
 			}
 			__ASSERT_NO_MSG(temp_pin_value == expected_pin_value);
 #endif
@@ -287,8 +273,8 @@ int main(void)
 		}
 		__ASSERT_NO_MSG(ret == 0);
 
-		ret = gpio_pin_interrupt_configure_dt(&pin_in, GPIO_INT_DISABLE |
-				GPIO_INT_LEVELS_LOGICAL | GPIO_INT_HIGH_1);
+		ret = gpio_pin_interrupt_configure_dt(
+			&pin_in, GPIO_INT_DISABLE | GPIO_INT_LEVELS_LOGICAL | GPIO_INT_HIGH_1);
 		if (ret) {
 			LOG_ERR("gpio_pin_interrupt_configure_dt() has failed (%d)", ret);
 		}
@@ -311,7 +297,7 @@ int main(void)
 		/* Every test iteration will see one SPI CS activation and one deactivation. */
 		__ASSERT_NO_MSG(high == 1);
 		__ASSERT_NO_MSG(low == 1);
-#else /* defined(CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP) */
+#else  /* defined(CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP) */
 		/* SPI CS gets activated in the first iteration and stays active forever. */
 		if (counter == 0) {
 			/* Observed edge depends on GPIO polarity. */

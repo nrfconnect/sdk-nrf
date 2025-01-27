@@ -14,4 +14,4 @@ config TEST_START_DELAY_MS
 
 config SLEEP_TIME_MS
 	int "Core sleep time [ms]"
-	default 2000
+	default 1000
