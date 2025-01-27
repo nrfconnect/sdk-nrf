@@ -1097,13 +1097,16 @@ fram:
     - drivers/spi/
     - include/zephyr/drivers/spi.h
 
-stm:
+stm: &tag_stm
   files:
     - samples/boards/nordic/coresight_stm/
     - subsys/debug/
     - subsys/logging/
     - subsys/logging/frontends/
     - tests/boards/nrf/coresight_stm/
+    - tests/subsys/logging/log_frontend_stmesp_demux/
+
+coresight_stm: *tag_stm
 
 gen_inc_file:
   files:
