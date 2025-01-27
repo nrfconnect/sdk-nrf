@@ -25,7 +25,7 @@ BUILD_ASSERT(WRITE_BLOCK_SIZE > 0, "zephyr,flash: write_block_size expected to b
 struct ipuc_context {
 	struct zcbor_string component_id;
 	uint8_t component_id_buf[IPUC_MEM_COMPONENT_MAX_SIZE];
-	size_t address;
+	uintptr_t address;
 	size_t size;
 	bool read_access;
 };
@@ -282,8 +282,8 @@ static struct device *flash_component_ipuc(struct zcbor_string *component_id,
 		if (!dry_run) {
 			uint8_t cpu_id = 0;
 
-			plat_err = suit_plat_decode_component_id(&ctx->component_id, &cpu_id,
-								 &ctx->address, &ctx->size);
+			plat_err = suit_plat_decode_component_id(
+				&ctx->component_id, &cpu_id, (intptr_t *)&ctx->address, &ctx->size);
 			if (plat_err != SUIT_PLAT_SUCCESS) {
 				LOG_ERR("Failed to decode IPUC %d component ID: %d", i, plat_err);
 				continue;
@@ -296,7 +296,7 @@ static struct device *flash_component_ipuc(struct zcbor_string *component_id,
 				break;
 			}
 
-			LOG_INF("IPUC for address range (0x%x, 0x%x) created", ctx->address,
+			LOG_INF("IPUC for address range (0x%lx, 0x%x) created", ctx->address,
 				ctx->size);
 		}
 
@@ -403,8 +403,8 @@ static struct device *flash_cache_ipuc(uintptr_t min_address, uintptr_t *ipuc_ad
 			return NULL;
 		}
 
-		plat_err = suit_plat_decode_component_id(&ctx->component_id, &cpu_id, &ctx->address,
-							 &ctx->size);
+		plat_err = suit_plat_decode_component_id(&ctx->component_id, &cpu_id,
+							 (intptr_t *)&ctx->address, &ctx->size);
 		if (plat_err != SUIT_PLAT_SUCCESS) {
 			flash_ipuc_release(dev);
 			return NULL;
@@ -421,7 +421,7 @@ static struct device *flash_cache_ipuc(uintptr_t min_address, uintptr_t *ipuc_ad
 			return NULL;
 		}
 
-		LOG_INF("Cache IPUC at idx %d for address range (0x%x, 0x%x) created", i_max,
+		LOG_INF("Cache IPUC at idx %d for address range (0x%lx, 0x%x) created", i_max,
 			ctx->address, ctx->size);
 	}
 
