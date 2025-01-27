@@ -264,7 +264,13 @@ Wi-Fi radio test subcommands
      - 0
      - Configuration
      - If the channel is an edge channel, the value of <val> is subtracted from the transmit power.
-
+   * - config_pta
+     - | <val> - Wi-Fi operating band 0: 2.4 GHz, 1: 5 GHz
+       | <val> - Antenna mode 0: Shared, 1: Separate
+       | <val> - SR protocol  0: Thread, 1: Bluetooth® LE
+     - 0
+     - Configuration
+     - Allows configuration of PTA for different Wi-Fi operating bands, antenna modes, and Short-Range protocols.
 
 .. _wifi_radio_test_stats:
 
