@@ -27,7 +27,7 @@ static uint8_t radio_end_timer_start;
 
 static nrf_dppi_channel_group_t ramp_up_dppi_group;
 
-void esb_ppi_for_txrx_set(bool rx, bool timer_start, bool fast_switching)
+void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 {
 	uint32_t channels_mask;
 
@@ -48,11 +48,6 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start, bool fast_switching)
 
 	nrf_egu_subscribe_set(ESB_EGU, ESB_EGU_TASK, disabled_phy_end_egu);
 
-	if (fast_switching) {
-		nrf_radio_subscribe_set(NRF_RADIO, rx ? NRF_RADIO_TASK_TXEN : NRF_RADIO_TASK_RXEN,
-					disabled_phy_end_egu);
-	}
-
 	if (timer_start) {
 		nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START,
 					egu_timer_start);
@@ -64,7 +59,7 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start, bool fast_switching)
 	nrf_dppi_channels_enable(ESB_DPPIC, channels_mask);
 }
 
-void esb_ppi_for_txrx_clear(bool rx, bool timer_start, bool fast_switching)
+void esb_ppi_for_txrx_clear(bool rx, bool timer_start)
 {
 	uint32_t channels_mask;
 
@@ -83,11 +78,6 @@ void esb_ppi_for_txrx_clear(bool rx, bool timer_start, bool fast_switching)
 	nrf_egu_subscribe_clear(ESB_EGU, ESB_EGU_TASK);
 
 	nrf_dppi_channels_remove_from_group(ESB_DPPIC, BIT(egu_ramp_up), ramp_up_dppi_group);
-
-	if (fast_switching) {
-		nrf_radio_subscribe_clear(NRF_RADIO, rx ? NRF_RADIO_TASK_TXEN :
-							  NRF_RADIO_TASK_RXEN);
-	}
 
 	if (timer_start) {
 		nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START);

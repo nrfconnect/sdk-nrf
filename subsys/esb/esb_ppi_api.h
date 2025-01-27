@@ -35,25 +35,18 @@ extern "C" {
  *           |
  *           \----> self disable
  *
- *      if (fast_switching)
- *                    1
- *      RADIO_PHYEND ---> RADIO_TASK_TXEN/RXEN
- *
  * @param[in] rx Radio Rx mode, otherwise Tx mode.
  * @param[in] timer_start Indicates whether the timer is to be started on the EGU event.
- * @param[in] fast_switch Indicates whether to configure fast switching.
  */
-void esb_ppi_for_txrx_set(bool rx, bool timer_start, bool fast_switching);
+void esb_ppi_for_txrx_set(bool rx, bool timer_start);
 
 /** @brief Clear PPI/DPPI connection for Tx or Rx radio operations
  *
  * @param[in] rx Radio Rx mode, otherwise Tx mode.
  * @param[in] timer_start Clear timer connections if the timer was set using
  *                        the @ref esb_ppi_for_txrx_set function.
- * @param[in] fast_switching Clear fast switching configuration if the fast switching was set using
- *                        the @ref esb_ppi_for_txrx_set function.
  */
-void esb_ppi_for_txrx_clear(bool rx, bool timer_start, bool fast_switching);
+void esb_ppi_for_txrx_clear(bool rx, bool timer_start);
 
 /** @brief Configure PPIs/DPPIs for the external front-end module. The EGU event will be connected
  *         to the TIMER_START event. As a result, the front-end module ramp-up will be scheduled\
