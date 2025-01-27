@@ -12,94 +12,136 @@
 
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
+#include <hal/nrf_vpr_csr_vtim.h>
 #include <haly/nrfy_gpio.h>
 
-#include <zephyr/drivers/mspi.h>
+#include <drivers/mspi/nrfe_mspi.h>
 
-#define MAX_DATA_LEN 256
+#define CE_PINS_MAX   9
+#define DATA_PINS_MAX 8
+#define VIO_COUNT     11
 
-#define XFER_COMMAND_IDX (0)
-#define XFER_ADDRESS_IDX (1)
-#define XFER_DATA_IDX	 (2)
-
-#define HRT_IRQ_PRIORITY	   2
-#define HRT_VEVIF_IDX_WRITE_SINGLE 17
-#define HRT_VEVIF_IDX_WRITE_QUAD   18
-
-/* How many words are needed for given amount of bytes.*/
-#define WORDS_FOR_BYTES(bytes) ((bytes - 1) / 4 + 1)
+#define HRT_IRQ_PRIORITY    2
+#define HRT_VEVIF_IDX_WRITE 18
 
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-typedef struct __packed {
-	uint8_t opcode;
-	struct mspi_cfg cfg;
-} nrfe_mspi_cfg_t;
-
-typedef struct __packed {
-	uint8_t opcode;
-	struct mspi_dev_cfg cfg;
-} nrfe_mspi_dev_cfg_t;
-
-typedef struct __packed {
-	uint8_t opcode;
-	struct mspi_xfer xfer;
-} nrfe_mspi_xfer_t;
-
-typedef struct __packed {
-	uint8_t opcode;
-	struct mspi_xfer_packet packet;
-} nrfe_mspi_xfer_packet_t;
-
-struct mspi_config {
-	uint8_t *data;
-	uint8_t data_len;
-	uint8_t word_size;
+static const uint8_t pin_to_vio_map[VIO_COUNT] = {
+	4,  /* Physical pin 0 */
+	0,  /* Physical pin 1 */
+	1,  /* Physical pin 2 */
+	3,  /* Physical pin 3 */
+	2,  /* Physical pin 4 */
+	5,  /* Physical pin 5 */
+	6,  /* Physical pin 6 */
+	7,  /* Physical pin 7 */
+	8,  /* Physical pin 8 */
+	9,  /* Physical pin 9 */
+	10, /* Physical pin 10 */
 };
 
-struct mspi_dev_config {
-	enum mspi_io_mode io_mode;
-	enum mspi_ce_polarity ce_polarity;
-	uint32_t read_cmd;
-	uint32_t write_cmd;
-	uint8_t cmd_length;  /* Command length in bits. */
-	uint8_t addr_length; /* Address length in bits. */
-};
-
-static struct mspi_dev_config mspi_dev_configs;
-
-uint32_t data_buffer[MAX_DATA_LEN + 2];
-
-volatile struct hrt_ll_xfer xfer_ll_params = {
-	.counter_top = 4,
-	.word_size = 4,
-	.data_to_send = NULL,
-	.data_len = 0,
-	.ce_hold = false,
-	.ce_enable_state = false,
-};
+static volatile uint8_t ce_vios_count;
+static volatile uint8_t ce_vios[CE_PINS_MAX];
+static volatile uint8_t data_vios_count;
+static volatile uint8_t data_vios[DATA_PINS_MAX];
+static volatile struct mspi_cfg nrfe_mspi_cfg;
+static volatile struct mspi_dev_cfg nrfe_mspi_dev_cfg;
+static volatile struct mspi_xfer nrfe_mspi_xfer;
+static struct hrt_xfer xfer_params;
 
 static struct ipc_ept ep;
 static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 
-static void process_packet(const void *data, size_t len, void *priv);
+static void configure_clock(enum mspi_cpp_mode cpp_mode)
+{
+	nrf_vpr_csr_vio_config_t vio_config = {
+		.input_sel = false,
+		.stop_cnt = true,
+	};
+	uint16_t out = nrf_vpr_csr_vio_out_get();
+
+	switch (cpp_mode) {
+	case MSPI_CPP_MODE_0: {
+		vio_config.clk_polarity = 0;
+		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
+		xfer_params.eliminate_last_pulse = false;
+		break;
+	}
+	case MSPI_CPP_MODE_1: {
+		vio_config.clk_polarity = 1;
+		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
+		xfer_params.eliminate_last_pulse = true;
+		break;
+	}
+	case MSPI_CPP_MODE_2: {
+		vio_config.clk_polarity = 1;
+		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
+		xfer_params.eliminate_last_pulse = false;
+		break;
+	}
+	case MSPI_CPP_MODE_3: {
+		vio_config.clk_polarity = 0;
+		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
+		xfer_params.eliminate_last_pulse = true;
+		break;
+	}
+	}
+	nrf_vpr_csr_vio_out_set(out);
+	nrf_vpr_csr_vio_config_set(&vio_config);
+}
+
+static void config_pins(nrfe_mspi_pinctrl_soc_pin_t *pins_cfg)
+{
+	ce_vios_count = 0;
+	data_vios_count = 0;
+	xfer_params.tx_direction_mask = 0;
+	xfer_params.rx_direction_mask = 0;
+
+	for (uint8_t i = 0; i < NRFE_MSPI_PINS_MAX; i++) {
+		uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
+		uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
+
+		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
+
+		NRFX_ASSERT(pin_number < VIO_COUNT)
+
+		if ((fun >= NRF_FUN_SDP_MSPI_CS0) && (fun <= NRF_FUN_SDP_MSPI_CS4)) {
+
+			ce_vios[ce_vios_count] = pin_to_vio_map[pin_number];
+			WRITE_BIT(xfer_params.tx_direction_mask, ce_vios[ce_vios_count],
+				  VPRCSR_NORDIC_DIR_OUTPUT);
+			WRITE_BIT(xfer_params.rx_direction_mask, ce_vios[ce_vios_count],
+				  VPRCSR_NORDIC_DIR_OUTPUT);
+			ce_vios_count++;
+
+		} else if ((fun >= NRF_FUN_SDP_MSPI_DQ0) && (fun <= NRF_FUN_SDP_MSPI_DQ7)) {
+
+			data_vios[data_vios_count] = pin_to_vio_map[pin_number];
+			WRITE_BIT(xfer_params.tx_direction_mask, data_vios[data_vios_count],
+				  VPRCSR_NORDIC_DIR_OUTPUT);
+			WRITE_BIT(xfer_params.rx_direction_mask, data_vios[data_vios_count],
+				  VPRCSR_NORDIC_DIR_INPUT);
+			data_vios_count++;
+		} else if (fun == NRF_FUN_SDP_MSPI_SCK) {
+			WRITE_BIT(xfer_params.tx_direction_mask,
+				  pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER],
+				  VPRCSR_NORDIC_DIR_OUTPUT);
+			WRITE_BIT(xfer_params.rx_direction_mask,
+				  pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER],
+				  VPRCSR_NORDIC_DIR_OUTPUT);
+		}
+	}
+	nrf_vpr_csr_vio_dir_set(xfer_params.tx_direction_mask);
+	nrf_vpr_csr_vio_out_set(VPRCSR_NORDIC_OUT_HIGH << pin_to_vio_map[NRFE_MSPI_CS0_PIN_NUMBER]);
+}
 
 static void ep_bound(void *priv)
 {
-	(void)priv;
-
 	atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_EP_BOUNDED);
 }
 
-static struct ipc_ept_cfg ep_cfg = {
-	.cb = {
-		.bound = ep_bound,
-		.received = process_packet,
-	},
-};
-
-static void process_packet(const void *data, size_t len, void *priv)
+static void ep_recv(const void *data, size_t len, void *priv)
 {
 	(void)priv;
 	(void)len;
@@ -110,44 +152,29 @@ static void process_packet(const void *data, size_t len, void *priv)
 
 	switch (opcode) {
 	case NRFE_MSPI_CONFIG_PINS: {
-		/* TODO: Process pinctrl config data
-		 * nrfe_mspi_pinctrl_soc_pin_t *pins_cfg = (nrfe_mspi_pinctrl_soc_pin_t *)data;
-		 * response.opcode = pins_cfg->opcode;
-		 *
-		 * for (uint8_t i = 0; i < NRFE_MSPI_PINS_MAX; i++) {
-		 *         uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
-		 *         uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
-		 *         NRF_GPIO_Type *reg = nrf_gpio_pin_port_decode(&psel);
-		 * }
-		 */
+		nrfe_mspi_pinctrl_soc_pin_t *pins_cfg = (nrfe_mspi_pinctrl_soc_pin_t *)data;
+		config_pins(pins_cfg);
 		break;
 	}
 	case NRFE_MSPI_CONFIG_CTRL: {
-		/* TODO: Process controller config data
-		 * nrfe_mspi_cfg_t *cfg = (nrfe_mspi_cfg_t *)data;
-		 * response.opcode = cfg->opcode;
-		 */
+		nrfe_mspi_cfg_t *cfg = (nrfe_mspi_cfg_t *)data;
+		nrfe_mspi_cfg = cfg->cfg;
 		break;
 	}
 	case NRFE_MSPI_CONFIG_DEV: {
-		/* TODO: Process device config data
-		 * nrfe_mspi_dev_cfg_t *cfg = (nrfe_mspi_dev_cfg_t *)data;
-		 * response.opcode = cfg->opcode;
-		 */
+		nrfe_mspi_dev_cfg_t *cfg = (nrfe_mspi_dev_cfg_t *)data;
+		nrfe_mspi_dev_cfg = cfg->cfg;
+		configure_clock(nrfe_mspi_dev_cfg.cpp);
 		break;
 	}
 	case NRFE_MSPI_CONFIG_XFER: {
-		/* TODO: Process xfer config data
-		 * nrfe_mspi_xfer_t *xfer = (nrfe_mspi_xfer_t *)data;
-		 * response.opcode = xfer->opcode;
-		 */
+		nrfe_mspi_xfer_t *xfer = (nrfe_mspi_xfer_t *)data;
+		nrfe_mspi_xfer = xfer->xfer;
 		break;
 	}
 	case NRFE_MSPI_TX:
 	case NRFE_MSPI_TXRX: {
 		nrfe_mspi_xfer_packet_t *packet = (nrfe_mspi_xfer_packet_t *)data;
-
-		response.opcode = packet->opcode;
 
 		if (packet->packet.dir == MSPI_RX) {
 			/* TODO: Process received data */
@@ -162,41 +189,6 @@ static void process_packet(const void *data, size_t len, void *priv)
 	}
 
 	ipc_service_send(&ep, (const void *)&response.opcode, sizeof(response));
-}
-
-void configure_clock(enum mspi_cpp_mode cpp_mode)
-{
-	nrf_vpr_csr_vio_config_t vio_config = {
-		.input_sel = 0,
-		.stop_cnt = 0,
-	};
-
-	nrf_vpr_csr_vio_dir_set(PIN_DIR_OUT_MASK(VIO(NRFE_MSPI_SCK_PIN_NUMBER)));
-
-	switch (cpp_mode) {
-	case MSPI_CPP_MODE_0: {
-		vio_config.clk_polarity = 0;
-		nrf_vpr_csr_vio_out_set(PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_SCK_PIN_NUMBER)));
-		break;
-	}
-	case MSPI_CPP_MODE_1: {
-		vio_config.clk_polarity = 1;
-		nrf_vpr_csr_vio_out_set(PIN_OUT_LOW_MASK(VIO(NRFE_MSPI_SCK_PIN_NUMBER)));
-		break;
-	}
-	case MSPI_CPP_MODE_2: {
-		vio_config.clk_polarity = 1;
-		nrf_vpr_csr_vio_out_set(PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_SCK_PIN_NUMBER)));
-		break;
-	}
-	case MSPI_CPP_MODE_3: {
-		vio_config.clk_polarity = 0;
-		nrf_vpr_csr_vio_out_set(PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_SCK_PIN_NUMBER)));
-		break;
-	}
-	}
-
-	nrf_vpr_csr_vio_config_set(&vio_config);
 }
 
 void prepare_and_send_data(uint8_t *data, uint8_t data_length)
@@ -242,19 +234,9 @@ void prepare_and_send_data(uint8_t *data, uint8_t data_length)
 	}
 }
 
-__attribute__((interrupt)) void hrt_handler_write_single(void)
-{
-	xfer_ll_params.ce_enable_state = (mspi_dev_configs.ce_polarity == MSPI_CE_ACTIVE_HIGH);
-
-	write_single_by_word(xfer_ll_params);
-}
-
-__attribute__((interrupt)) void hrt_handler_write_quad(void)
-{
-	xfer_ll_params.ce_enable_state = (mspi_dev_configs.ce_polarity == MSPI_CE_ACTIVE_HIGH);
-
-	write_quad_by_word(xfer_ll_params);
-}
+static const struct ipc_ept_cfg ep_cfg = {
+	.cb = {.bound = ep_bound, .received = ep_recv},
+};
 
 static int backend_init(void)
 {
@@ -288,42 +270,23 @@ static int backend_init(void)
 	return 0;
 }
 
+__attribute__((interrupt)) void hrt_handler_write(void)
+{
+	hrt_write(&xfer_params);
+}
+
 int main(void)
 {
-	int ret = 0;
-	uint16_t direction;
-	uint16_t output;
+	int ret = backend_init();
 
-	ret = backend_init();
 	if (ret < 0) {
 		return 0;
 	}
 
-	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_WRITE_SINGLE, HRT_IRQ_PRIORITY, hrt_handler_write_single,
-			   0);
-	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE_SINGLE), true);
-
-	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_WRITE_QUAD, HRT_IRQ_PRIORITY, hrt_handler_write_quad, 0);
-	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE_QUAD), true);
+	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_WRITE, HRT_IRQ_PRIORITY, hrt_handler_write, 0);
+	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE), true);
 
 	nrf_vpr_csr_rtperiph_enable_set(true);
-
-	configure_clock(MSPI_CPP_MODE_0);
-
-	direction = nrf_vpr_csr_vio_dir_get();
-	nrf_vpr_csr_vio_dir_set(direction | PIN_DIR_OUT_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER)));
-
-	output = nrf_vpr_csr_vio_out_get();
-	nrf_vpr_csr_vio_out_set(output | PIN_OUT_HIGH_MASK(VIO(NRFE_MSPI_CS0_PIN_NUMBER)));
-
-	/* This initialization is temporary until code is merged with APP core part */
-	mspi_dev_configs.ce_polarity = MSPI_CE_ACTIVE_LOW;
-	mspi_dev_configs.io_mode = MSPI_IO_MODE_SINGLE;
-	mspi_dev_configs.cmd_length = 32;
-	mspi_dev_configs.addr_length = 32;
-
-	data_buffer[XFER_COMMAND_IDX] = 0xe5b326c1;
-	data_buffer[XFER_ADDRESS_IDX] = 0xaabbccdd;
 
 	while (true) {
 		k_cpu_idle();
