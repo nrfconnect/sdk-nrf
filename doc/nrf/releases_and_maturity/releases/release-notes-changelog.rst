@@ -139,10 +139,13 @@ Gazell
 Matter
 ------
 
-* Added a new documentation page :ref:`ug_matter_group_communication` in the :ref:`ug_matter_intro_overview`.
+* Added:
+
+  * A new documentation page :ref:`ug_matter_group_communication` in the :ref:`ug_matter_intro_overview`.
+  * A new section :ref:`ug_matter_device_low_power_calibration_period` in the :ref:`ug_matter_device_low_power_configuration`.
+  * :ref:`ug_matter_debug_snippet`.
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
-* Added :ref:`ug_matter_debug_snippet`.
 
 Matter fork
 +++++++++++
