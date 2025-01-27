@@ -655,4 +655,56 @@ ZTEST(scheduler_action_planning, test_second_sched_turn_off_recurring)
 	expected_tm_check(fired_tm, expected, 8);
 }
 
+ZTEST(scheduler_action_planning, test_sched_cancel_imminent_action)
+{
+	/** Send a TURN_ON action to the sched srv in
+	 * element 1 of the mocked composition data.
+	 * Cancel the action before it is triggered by
+	 * sending a new action with the same parameters
+	 * but with the action set to NO_ACTIONS.
+	 *
+	 * Expect no events to be triggered.
+	 */
+
+	const struct bt_mesh_schedule_entry test_action = {
+		.year = BT_MESH_SCHEDULER_ANY_YEAR,
+		.month = ANY_MONTH,
+		.day = BT_MESH_SCHEDULER_ANY_DAY,
+		.hour = 0,
+		.minute = BT_MESH_SCHEDULER_ANY_MINUTE,
+		.second = BT_MESH_SCHEDULER_EVERY_15_SECONDS,
+		.day_of_week = ANY_DAY_OF_WEEK,
+		.action = BT_MESH_SCHEDULER_TURN_ON,
+		.transition_time = model_transition_encode(2500),
+		.scene_number = 1
+	};
+
+	struct sched_evt evt_list[] = {
+		{ .elem_idx = 0, .evt = BT_MESH_SCHEDULER_TURN_ON, .transition_time = 2500 },
+		{ .elem_idx = 1, .evt = BT_MESH_SCHEDULER_TURN_ON, .transition_time = 2500 },
+		{ .elem_idx = 2, .evt = BT_MESH_SCHEDULER_TURN_ON, .transition_time = 2500 },
+	};
+
+	sched_evt_ctx_init(evt_list, ARRAY_SIZE(evt_list));
+	action_put(&test_action, sched_mod_elem1);
+	k_sleep(K_SECONDS(1));
+
+	const struct bt_mesh_schedule_entry test_action_inactive = {
+		.year = BT_MESH_SCHEDULER_ANY_YEAR,
+		.month = ANY_MONTH,
+		.day = BT_MESH_SCHEDULER_ANY_DAY,
+		.hour = 0,
+		.minute = BT_MESH_SCHEDULER_ANY_MINUTE,
+		.second = BT_MESH_SCHEDULER_EVERY_15_SECONDS,
+		.day_of_week = ANY_DAY_OF_WEEK,
+		.action = BT_MESH_SCHEDULER_NO_ACTIONS,
+		.transition_time = model_transition_encode(2500),
+		.scene_number = 1
+	};
+
+	action_put(&test_action_inactive, sched_mod_elem1);
+	zassert_equal(k_sem_take(&action_fired, K_SECONDS(60)), -EAGAIN,
+		      "Unexpected event was triggered");
+}
+
 ZTEST_SUITE(scheduler_action_planning, NULL, NULL, tc_setup, tc_teardown, NULL);
