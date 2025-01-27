@@ -43,7 +43,12 @@
 #define MIN(x, y) (x) < (y) ? (x) : (y)
 #define ROUND_UP(x, align)                                                                         \
 	(((unsigned long)(x) + ((unsigned long)(align)-1)) & ~((unsigned long)(align)-1))
-#define INTERNAL_OCTET_NOT_USED ((uint8_t)0xFFu)
+
+typedef enum {
+	INTERNAL_OCTET_ZERO,
+	INTERNAL_OCTET_ONE,
+	INTERNAL_OCTET_UNUSED,
+} internal_octet_t;
 
 #ifndef MAX_ECDSA_ATTEMPTS
 #define MAX_ECDSA_ATTEMPTS 255
@@ -316,14 +321,22 @@ static void run_ecdsa_sign_rnd(struct sitask *t)
 
 static void deterministic_ecdsa_hmac(struct sitask *t, const struct sxhashalg *hashalg,
 				     uint8_t *key, const uint8_t *v, size_t hash_len,
-				     uint8_t internal_octet, uint8_t *sk, uint8_t *hash,
-				     size_t key_len, uint8_t *hmac)
+				     internal_octet_t internal_octet, const uint8_t *sk,
+				     const uint8_t *hash, size_t key_len, uint8_t *hmac)
 {
 	si_mac_create_hmac(t, hashalg, key, hash_len);
 	si_task_consume(t, v, hash_len);
 
-	if (internal_octet != INTERNAL_OCTET_NOT_USED) {
-		si_task_consume(t, &internal_octet, sizeof(internal_octet));
+	if (internal_octet != INTERNAL_OCTET_UNUSED) {
+		/* Not const because CRACEN cannot access MRAM on 54H20. */
+		static uint8_t internal_octet_values[] = {
+			[INTERNAL_OCTET_ZERO] = 0,
+			[INTERNAL_OCTET_ONE] = 1,
+			[INTERNAL_OCTET_UNUSED] = 0xFF,
+		};
+
+		si_task_consume(t, &internal_octet_values[internal_octet],
+				sizeof(*internal_octet_values));
 	}
 	if (sk) {
 		si_task_consume(t, sk, key_len);
@@ -424,26 +437,28 @@ static int run_deterministic_ecdsa_hmac_step(struct sitask *t, struct siwq *wq)
 
 		si_wq_run_after(t, wq, run_deterministic_ecdsa_hmac_step);
 		deterministic_ecdsa_hmac(t, t->params.ecdsa_sign.privkey->hashalg, K, V, digestsz,
-					 0, t->params.ecdsa_sign.privkey->key.eckey.d, T, opsz, K);
+					 INTERNAL_OCTET_ZERO,
+					 t->params.ecdsa_sign.privkey->key.eckey.d, T, opsz, K);
 		break;
 
 	case 1: /* V = HMAC_K(V) */
 		si_wq_run_after(t, wq, run_deterministic_ecdsa_hmac_step);
 		deterministic_ecdsa_hmac(t, t->params.ecdsa_sign.privkey->hashalg, K, V, digestsz,
-					 INTERNAL_OCTET_NOT_USED, NULL, NULL, opsz, V);
+					 INTERNAL_OCTET_UNUSED, NULL, NULL, opsz, V);
 		break;
 
 	case 2: /* K = HMAC_K(V || 0x01 || privkey || h1) */
 		si_wq_run_after(t, wq, run_deterministic_ecdsa_hmac_step);
 		deterministic_ecdsa_hmac(t, t->params.ecdsa_sign.privkey->hashalg, K, V, digestsz,
-					 1, t->params.ecdsa_sign.privkey->key.eckey.d, T, opsz, K);
+					 INTERNAL_OCTET_ONE,
+					 t->params.ecdsa_sign.privkey->key.eckey.d, T, opsz, K);
 		break;
 
 	case 3: /* V = HMAC_K(V) */
 	case 4: /* same as case 3. */
 		si_wq_run_after(t, wq, run_deterministic_ecdsa_hmac_step);
 		deterministic_ecdsa_hmac(t, t->params.ecdsa_sign.privkey->hashalg, K, V, digestsz,
-					 INTERNAL_OCTET_NOT_USED, NULL, NULL, opsz, V);
+					 INTERNAL_OCTET_UNUSED, NULL, NULL, opsz, V);
 		break;
 
 	case 5: /* T = T || V */
@@ -486,7 +501,7 @@ static int run_deterministic_ecdsa_hmac_step(struct sitask *t, struct siwq *wq)
 			t->params.ecdsa_sign.deterministic_retries++;
 			/* K = HMAC_K(V || 0x00) */
 			deterministic_ecdsa_hmac(t, t->params.ecdsa_sign.privkey->hashalg, K, V,
-						 digestsz, 0, NULL, NULL, 0, K);
+						 digestsz, INTERNAL_OCTET_ZERO, NULL, NULL, 0, K);
 			return SX_ERR_HW_PROCESSING;
 		}
 
