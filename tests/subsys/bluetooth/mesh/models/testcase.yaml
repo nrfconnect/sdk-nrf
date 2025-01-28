@@ -24,7 +24,9 @@ tests:
     # no-settings build. These should be listed here, and be wrapped
     # in an #ifdef CONFIG_BT_SETTINGS in main.c.
     extra_configs:
+      - CONFIG_SETTINGS=y
       - CONFIG_BT_SETTINGS=y
+      - CONFIG_NVS=y
       - CONFIG_BT_MESH_SCENE_SRV=y
       - CONFIG_BT_MESH_SCHEDULER_SRV=y
     tags: sysbuild
