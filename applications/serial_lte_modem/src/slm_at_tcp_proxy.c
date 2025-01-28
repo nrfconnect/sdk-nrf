@@ -72,12 +72,12 @@ static int do_tcp_server_start(uint16_t port)
 
 	/* Open socket */
 	if (proxy.sec_tag == INVALID_SEC_TAG) {
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
+		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
+		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
 	if (ret < 0) {
-		LOG_ERR("socket() failed: %d", -errno);
+		LOG_ERR("zsock_socket() failed: %d", -errno);
 		ret = -errno;
 		goto exit_svr;
 	}
@@ -96,7 +96,7 @@ static int do_tcp_server_start(uint16_t port)
 		int tls_native = 1;
 
 		/* Must be the first socket option to set. */
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_NATIVE, &tls_native,
+		ret = zsock_setsockopt(proxy.sock, SOL_TLS, TLS_NATIVE, &tls_native,
 					sizeof(tls_native));
 		if (ret) {
 			ret = errno;
@@ -105,18 +105,18 @@ static int do_tcp_server_start(uint16_t port)
 #endif
 		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
 
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+		ret = zsock_setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 				 sizeof(sec_tag_t));
 		if (ret) {
-			LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
+			LOG_ERR("zsock_setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
 			ret = -errno;
 			goto exit_svr;
 		}
 	}
 
-	ret = setsockopt(proxy.sock, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(int));
+	ret = zsock_setsockopt(proxy.sock, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(int));
 	if (ret < 0) {
-		LOG_ERR("setsockopt(SO_REUSEADDR): %d", -errno);
+		LOG_ERR("zsock_setsockopt(SO_REUSEADDR): %d", -errno);
 		ret = -errno;
 		goto exit_svr;
 	}
@@ -128,9 +128,9 @@ static int do_tcp_server_start(uint16_t port)
 	}
 
 	/* Enable listen */
-	ret = listen(proxy.sock, 1);
+	ret = zsock_listen(proxy.sock, 1);
 	if (ret < 0) {
-		LOG_ERR("listen() failed: %d", -errno);
+		LOG_ERR("zsock_listen() failed: %d", -errno);
 		ret = -EINVAL;
 		goto exit_svr;
 	}
@@ -147,7 +147,7 @@ static int do_tcp_server_start(uint16_t port)
 
 exit_svr:
 	if (proxy.sock != INVALID_SOCKET) {
-		close(proxy.sock);
+		zsock_close(proxy.sock);
 		proxy.sock = INVALID_SOCKET;
 	}
 	rsp_send("\r\n#XTCPSVR: %d,\"not started\"\r\n", ret);
@@ -177,16 +177,16 @@ static int do_tcp_proxy_close(void)
 
 		/* Attempt to make the thread exit by closing the sockets. */
 		if (proxy.sock != INVALID_SOCKET) {
-			close(proxy.sock);
+			zsock_close(proxy.sock);
 			proxy.sock = INVALID_SOCKET;
 		}
 		if (proxy.sock_peer != INVALID_SOCKET) {
-			close(proxy.sock_peer);
+			zsock_close(proxy.sock_peer);
 			proxy.sock_peer = INVALID_SOCKET;
 		}
 	}
 	k_msgq_purge(&proxy_event_queue);
-	close(proxy.efd);
+	zsock_close(proxy.efd);
 	proxy.efd = INVALID_SOCKET;
 
 	return ret;
@@ -199,12 +199,12 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 
 	/* Open socket */
 	if (proxy.sec_tag == INVALID_SEC_TAG) {
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
+		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
-		ret = socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
+		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
 	if (ret < 0) {
-		LOG_ERR("socket() failed: %d", -errno);
+		LOG_ERR("zsock_socket() failed: %d", -errno);
 		return ret;
 	}
 	proxy.sock = ret;
@@ -219,7 +219,8 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 		int tls_native = 1;
 
 		/* Must be the first socket option to set. */
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_NATIVE, &tls_native, sizeof(tls_native));
+		ret = zsock_setsockopt(proxy.sock, SOL_TLS, TLS_NATIVE, &tls_native,
+				       sizeof(tls_native));
 		if (ret) {
 			ret = errno;
 			goto exit_cli;
@@ -227,27 +228,27 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 #endif
 		sec_tag_t sec_tag_list[1] = { proxy.sec_tag };
 
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
+		ret = zsock_setsockopt(proxy.sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
 				 sizeof(sec_tag_t));
 		if (ret) {
-			LOG_ERR("setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
+			LOG_ERR("zsock_setsockopt(TLS_SEC_TAG_LIST) error: %d", -errno);
 			ret = -errno;
 			goto exit_cli;
 		}
-		ret = setsockopt(proxy.sock, SOL_TLS, TLS_PEER_VERIFY, &proxy.peer_verify,
+		ret = zsock_setsockopt(proxy.sock, SOL_TLS, TLS_PEER_VERIFY, &proxy.peer_verify,
 				 sizeof(proxy.peer_verify));
 		if (ret) {
-			LOG_ERR("setsockopt(TLS_PEER_VERIFY) error: %d", errno);
+			LOG_ERR("zsock_setsockopt(TLS_PEER_VERIFY) error: %d", errno);
 			ret = -errno;
 			goto exit_cli;
 		}
 		if (proxy.hostname_verify) {
-			ret = setsockopt(proxy.sock, SOL_TLS, TLS_HOSTNAME, url, strlen(url));
+			ret = zsock_setsockopt(proxy.sock, SOL_TLS, TLS_HOSTNAME, url, strlen(url));
 		} else {
-			ret = setsockopt(proxy.sock, SOL_TLS, TLS_HOSTNAME, NULL, 0);
+			ret = zsock_setsockopt(proxy.sock, SOL_TLS, TLS_HOSTNAME, NULL, 0);
 		}
 		if (ret) {
-			LOG_ERR("setsockopt(TLS_HOSTNAME) error: %d", errno);
+			LOG_ERR("zsock_setsockopt(TLS_HOSTNAME) error: %d", errno);
 			ret = -errno;
 			goto exit_cli;
 		}
@@ -259,12 +260,12 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 		goto exit_cli;
 	}
 	if (sa.sa_family == AF_INET) {
-		ret = connect(proxy.sock, &sa, sizeof(struct sockaddr_in));
+		ret = zsock_connect(proxy.sock, &sa, sizeof(struct sockaddr_in));
 	} else {
-		ret = connect(proxy.sock, &sa, sizeof(struct sockaddr_in6));
+		ret = zsock_connect(proxy.sock, &sa, sizeof(struct sockaddr_in6));
 	}
 	if (ret) {
-		LOG_ERR("connect() failed: %d", -errno);
+		LOG_ERR("zsock_connect() failed: %d", -errno);
 		ret = -errno;
 		goto exit_cli;
 	}
@@ -281,7 +282,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port)
 	return 0;
 
 exit_cli:
-	close(proxy.sock);
+	zsock_close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
 	rsp_send("\r\n#XTCPCLI: %d,\"not connected\"\r\n", ret);
 
@@ -299,9 +300,9 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 	}
 
 	while (offset < datalen) {
-		ret = send(sock, data + offset, datalen - offset, 0);
+		ret = zsock_send(sock, data + offset, datalen - offset, 0);
 		if (ret < 0) {
-			LOG_ERR("send() failed: %d, sent: %d", -errno, offset);
+			LOG_ERR("zsock_send() failed: %d, sent: %d", -errno, offset);
 			ret = -errno;
 			break;
 		} else {
@@ -328,9 +329,9 @@ static int do_tcp_send_datamode(const uint8_t *data, int datalen)
 	}
 
 	while (offset < datalen) {
-		ret = send(sock, data + offset, datalen - offset, 0);
+		ret = zsock_send(sock, data + offset, datalen - offset, 0);
 		if (ret < 0) {
-			LOG_ERR("send() failed: %d, sent: %d", -errno, offset);
+			LOG_ERR("zsock_send() failed: %d, sent: %d", -errno, offset);
 			break;
 		} else {
 			offset += ret;
@@ -366,8 +367,8 @@ static int tcp_datamode_callback(uint8_t op, const uint8_t *data, int len, uint8
 static void tcpsvr_terminate_connection(int cause)
 {
 	if (proxy.sock_peer != INVALID_SOCKET) {
-		if (close(proxy.sock_peer) < 0) {
-			LOG_WRN("sock %d close() error: %d", proxy.sock_peer, -errno);
+		if (zsock_close(proxy.sock_peer) < 0) {
+			LOG_WRN("sock %d zsock_close() error: %d", proxy.sock_peer, -errno);
 		}
 		proxy.sock_peer = INVALID_SOCKET;
 
@@ -390,7 +391,7 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 	};
 
 	int ret;
-	struct pollfd fds[FD_COUNT];
+	struct zsock_pollfd fds[FD_COUNT];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
@@ -398,18 +399,18 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 
 
 	fds[SOCK_LISTEN].fd = proxy.sock;
-	fds[SOCK_LISTEN].events = POLLIN;
+	fds[SOCK_LISTEN].events = ZSOCK_POLLIN;
 	/** The field fd contains a file descriptor for an open file.  If this field is negative,
 	 * then the corresponding events field is ignored and the revents field returns zero.
 	 */
 	fds[SOCK_PEER].fd = INVALID_SOCKET;
-	fds[SOCK_PEER].events = POLLIN;
+	fds[SOCK_PEER].events = ZSOCK_POLLIN;
 	fds[EVENT_FD].fd = proxy.efd;
-	fds[EVENT_FD].events = POLLIN;
+	fds[EVENT_FD].events = ZSOCK_POLLIN;
 	while (true) {
-		ret = poll(fds, ARRAY_SIZE(fds), MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
+		ret = zsock_poll(fds, ARRAY_SIZE(fds), MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
 		if (ret < 0) { /* IO error */
-			LOG_WRN("poll() error: %d", -errno);
+			LOG_WRN("zsock_poll() error: %d", -errno);
 			ret = -EIO;
 			break;
 		}
@@ -421,22 +422,22 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
 		/* Listening socket events must be handled first*/
 		if (fds[SOCK_LISTEN].revents) {
-			if ((fds[SOCK_LISTEN].revents & POLLERR) != 0) {
-				LOG_WRN("SOCK_LISTEN (%d): POLLERR", fds[SOCK_LISTEN].fd);
+			if ((fds[SOCK_LISTEN].revents & ZSOCK_POLLERR) != 0) {
+				LOG_WRN("SOCK_LISTEN (%d): ZSOCK_POLLERR", fds[SOCK_LISTEN].fd);
 				ret = -EIO;
 				break;
 			}
-			if ((fds[SOCK_LISTEN].revents & POLLHUP) != 0) {
-				LOG_WRN("SOCK_LISTEN (%d): POLLHUP", fds[SOCK_LISTEN].fd);
+			if ((fds[SOCK_LISTEN].revents & ZSOCK_POLLHUP) != 0) {
+				LOG_WRN("SOCK_LISTEN (%d): ZSOCK_POLLHUP", fds[SOCK_LISTEN].fd);
 				ret = -ECONNRESET;
 				break;
 			}
-			if ((fds[SOCK_LISTEN].revents & POLLNVAL) != 0) {
-				LOG_WRN("SOCK_LISTEN (%d): POLLNVAL", fds[SOCK_LISTEN].fd);
+			if ((fds[SOCK_LISTEN].revents & ZSOCK_POLLNVAL) != 0) {
+				LOG_WRN("SOCK_LISTEN (%d): ZSOCK_POLLNVAL", fds[SOCK_LISTEN].fd);
 				ret = -ENETDOWN;
 				break;
 			}
-			if ((fds[SOCK_LISTEN].revents & POLLIN) == 0) {
+			if ((fds[SOCK_LISTEN].revents & ZSOCK_POLLIN) == 0) {
 				/* Ignore and check whether there are client events */
 				goto client_events;
 			}
@@ -449,28 +450,28 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 				struct sockaddr_in client;
 
 				len = sizeof(struct sockaddr_in);
-				ret = accept(proxy.sock, (struct sockaddr *)&client, &len);
+				ret = zsock_accept(proxy.sock, (struct sockaddr *)&client, &len);
 				if (ret == -1) {
-					LOG_WRN("accept(ipv4) error: %d", -errno);
+					LOG_WRN("zsock_accept(ipv4) error: %d", -errno);
 					goto client_events;
 				}
-				(void)inet_ntop(AF_INET, &client.sin_addr, peer_addr,
+				(void)zsock_inet_ntop(AF_INET, &client.sin_addr, peer_addr,
 					sizeof(peer_addr));
 			} else {
 				struct sockaddr_in6 client;
 
 				len = sizeof(struct sockaddr_in6);
-				ret = accept(proxy.sock, (struct sockaddr *)&client, &len);
+				ret = zsock_accept(proxy.sock, (struct sockaddr *)&client, &len);
 				if (ret == -1) {
-					LOG_WRN("accept(ipv6) error: %d", -errno);
+					LOG_WRN("zsock_accept(ipv6) error: %d", -errno);
 					goto client_events;
 				}
-				(void)inet_ntop(AF_INET6, &client.sin6_addr, peer_addr,
+				(void)zsock_inet_ntop(AF_INET6, &client.sin6_addr, peer_addr,
 					sizeof(peer_addr));
 			}
 			if (fds[SOCK_PEER].fd >= 0) {
 				LOG_WRN("Full. Close connection.");
-				close(ret);
+				zsock_close(ret);
 				goto client_events;
 			}
 			proxy.sock_peer = ret;
@@ -481,12 +482,12 @@ static void tcpsvr_thread_func(void *p1, void *p2, void *p3)
 client_events:
 		/* Incoming socket events */
 		if (fds[SOCK_PEER].revents) {
-			/* Process POLLIN first to get the data, even if there are errors. */
-			if ((fds[SOCK_PEER].revents & POLLIN) == POLLIN) {
-				ret = recv(fds[SOCK_PEER].fd, (void *)slm_data_buf,
-					   sizeof(slm_data_buf), MSG_DONTWAIT);
+			/* Process ZSOCK_POLLIN first to get the data, even if there are errors. */
+			if ((fds[SOCK_PEER].revents & ZSOCK_POLLIN) == ZSOCK_POLLIN) {
+				ret = zsock_recv(fds[SOCK_PEER].fd, (void *)slm_data_buf,
+					   sizeof(slm_data_buf), ZSOCK_MSG_DONTWAIT);
 				if (ret < 0 && errno != EAGAIN) {
-					LOG_ERR("recv() error: %d", -errno);
+					LOG_ERR("zsock_recv() error: %d", -errno);
 					tcpsvr_terminate_connection(-errno);
 					fds[SOCK_PEER].fd = INVALID_SOCKET;
 				}
@@ -497,24 +498,24 @@ client_events:
 					data_send(slm_data_buf, ret);
 				}
 			}
-			if ((fds[SOCK_PEER].revents & POLLERR) != 0) {
-				LOG_WRN("SOCK_PEER (%d): POLLERR", fds[SOCK_PEER].fd);
+			if ((fds[SOCK_PEER].revents & ZSOCK_POLLERR) != 0) {
+				LOG_WRN("SOCK_PEER (%d): ZSOCK_POLLERR", fds[SOCK_PEER].fd);
 				tcpsvr_terminate_connection(-EIO);
 				fds[SOCK_PEER].fd = INVALID_SOCKET;
 			}
-			if ((fds[SOCK_PEER].revents & POLLHUP) != 0) {
-				LOG_DBG("SOCK_PEER (%d): POLLHUP", fds[SOCK_PEER].fd);
+			if ((fds[SOCK_PEER].revents & ZSOCK_POLLHUP) != 0) {
+				LOG_DBG("SOCK_PEER (%d): ZSOCK_POLLHUP", fds[SOCK_PEER].fd);
 				tcpsvr_terminate_connection(0);
 				fds[SOCK_PEER].fd = INVALID_SOCKET;
 			}
-			if ((fds[SOCK_PEER].revents & POLLNVAL) != 0) {
-				LOG_WRN("SOCK_PEER (%d): POLLNVAL", fds[SOCK_PEER].fd);
+			if ((fds[SOCK_PEER].revents & ZSOCK_POLLNVAL) != 0) {
+				LOG_WRN("SOCK_PEER (%d): ZSOCK_POLLNVAL", fds[SOCK_PEER].fd);
 				tcpsvr_terminate_connection(-EBADF);
 				fds[SOCK_PEER].fd = INVALID_SOCKET;
 			}
 		}
 		/* Events from AT-commands. */
-		if ((fds[EVENT_FD].revents & POLLIN) != 0) {
+		if ((fds[EVENT_FD].revents & ZSOCK_POLLIN) != 0) {
 			eventfd_t value;
 
 			ret = eventfd_read(fds[EVENT_FD].fd, &value);
@@ -538,14 +539,14 @@ client_events:
 				break;
 			}
 		}
-		if (fds[EVENT_FD].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+		if (fds[EVENT_FD].revents & (ZSOCK_POLLERR | ZSOCK_POLLHUP | ZSOCK_POLLNVAL)) {
 			LOG_ERR("efd: unexpected event: %d", fds[EVENT_FD].revents);
 			break;
 		}
 	}
 
 	tcpsvr_terminate_connection(ret);
-	close(proxy.sock);
+	zsock_close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
 
 	if (in_datamode()) {
@@ -566,20 +567,20 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 	};
 
 	int ret;
-	struct pollfd fds[FD_COUNT];
+	struct zsock_pollfd fds[FD_COUNT];
 
 	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
 	fds[SOCK].fd = proxy.sock;
-	fds[SOCK].events = POLLIN;
+	fds[SOCK].events = ZSOCK_POLLIN;
 	fds[EVENT_FD].fd = proxy.efd;
-	fds[EVENT_FD].events = POLLIN;
+	fds[EVENT_FD].events = ZSOCK_POLLIN;
 	while (true) {
-		ret = poll(fds, ARRAY_SIZE(fds), MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
+		ret = zsock_poll(fds, ARRAY_SIZE(fds), MSEC_PER_SEC * CONFIG_SLM_TCP_POLL_TIME);
 		if (ret < 0) {
-			LOG_WRN("poll() error: %d", ret);
+			LOG_WRN("zsock_poll() error: %d", ret);
 			ret = -EIO;
 			break;
 		}
@@ -589,11 +590,11 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 		}
 		LOG_DBG("sock events 0x%08x", fds[SOCK].revents);
 		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
-		if ((fds[SOCK].revents & POLLIN) != 0) {
-			ret = recv(fds[SOCK].fd, (void *)slm_data_buf, sizeof(slm_data_buf),
-				   MSG_DONTWAIT);
+		if ((fds[SOCK].revents & ZSOCK_POLLIN) != 0) {
+			ret = zsock_recv(fds[SOCK].fd, (void *)slm_data_buf, sizeof(slm_data_buf),
+				   ZSOCK_MSG_DONTWAIT);
 			if (ret < 0 && errno != EAGAIN) {
-				LOG_WRN("recv() error: %d", -errno);
+				LOG_WRN("zsock_recv() error: %d", -errno);
 			} else if (ret > 0) {
 				if (!in_datamode()) {
 					rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
@@ -601,24 +602,24 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 				data_send(slm_data_buf, ret);
 			}
 		}
-		if ((fds[SOCK].revents & POLLERR) != 0) {
-			LOG_WRN("SOCK (%d): POLLERR", fds[SOCK].fd);
+		if ((fds[SOCK].revents & ZSOCK_POLLERR) != 0) {
+			LOG_WRN("SOCK (%d): ZSOCK_POLLERR", fds[SOCK].fd);
 			ret = -EIO;
 			break;
 		}
-		if ((fds[SOCK].revents & POLLNVAL) != 0) {
-			LOG_WRN("SOCK (%d): POLLNVAL", fds[SOCK].fd);
+		if ((fds[SOCK].revents & ZSOCK_POLLNVAL) != 0) {
+			LOG_WRN("SOCK (%d): ZSOCK_POLLNVAL", fds[SOCK].fd);
 			ret = -ENETDOWN;
 			break;
 		}
-		if ((fds[SOCK].revents & POLLHUP) != 0) {
+		if ((fds[SOCK].revents & ZSOCK_POLLHUP) != 0) {
 			/* Lose LTE connection / remote end close */
-			LOG_WRN("SOCK (%d): POLLHUP", fds[SOCK].fd);
+			LOG_WRN("SOCK (%d): ZSOCK_POLLHUP", fds[SOCK].fd);
 			ret = -ECONNRESET;
 			break;
 		}
 		/* Events from AT-commands. */
-		if ((fds[EVENT_FD].revents & POLLIN) != 0) {
+		if ((fds[EVENT_FD].revents & ZSOCK_POLLIN) != 0) {
 			eventfd_t value;
 
 			/* AT-command event can only close the client. */
@@ -627,13 +628,13 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 			ret = 0;
 			break;
 		}
-		if (fds[EVENT_FD].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+		if (fds[EVENT_FD].revents & (ZSOCK_POLLERR | ZSOCK_POLLHUP | ZSOCK_POLLNVAL)) {
 			LOG_ERR("efd: unexpected event: %d", fds[EVENT_FD].revents);
 			break;
 		}
 	}
 
-	close(proxy.sock);
+	zsock_close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
 
 	if (in_datamode()) {
