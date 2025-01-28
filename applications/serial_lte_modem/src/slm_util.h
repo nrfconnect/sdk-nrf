@@ -173,7 +173,7 @@ int util_str_to_int(const char *str, int base, int *output);
 /**
  * @brief Resolve remote host by host name or IP address
  *
- * This function wraps up getaddrinfo() to return first resolved address.
+ * This function wraps up zsock_getaddrinfo() to return first resolved address.
  *
  * @param[in] cid PDP Context ID as defined in "+CGDCONT" command (0~10).
  * @param[in] host Name or IP address of remote host.

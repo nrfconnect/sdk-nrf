@@ -63,7 +63,8 @@ static char hostname[URI_HOST_MAX];
 static uint8_t fmfu_buf[FMFU_BUF_SIZE];
 
 /* External flash device for full modem firmware storage */
-static const struct device *flash_dev = DEVICE_DT_GET_ONE(jedec_spi_nor);
+#define FLASH_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(jedec_spi_nor)
+static const struct device *flash_dev = DEVICE_DT_GET(FLASH_NODE);
 
 /* dfu_target specific configurations */
 static struct dfu_target_fmfu_fdev fdev;
@@ -334,6 +335,7 @@ static int handle_at_fota(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 #if defined(CONFIG_SLM_FULL_FOTA)
 			else if (op == SLM_FOTA_START_FULL_FOTA)  {
 				fdev.dev = flash_dev;
+				fdev.size = DT_PROP(FLASH_NODE, size) / 8;
 				full_modem_fota_params.buf = fmfu_buf;
 				full_modem_fota_params.len = sizeof(fmfu_buf);
 				full_modem_fota_params.dev = &fdev;
