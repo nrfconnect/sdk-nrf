@@ -157,7 +157,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 	}
 
-	LOG_DBG("Received msg with opcode: %d", response->opcode);
+	LOG_HEXDUMP_DBG((uint8_t *)data, len, "Received msg:");
 }
 
 /**
@@ -473,8 +473,15 @@ static int xfer_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 
 	/* Wait for the transfer to complete and receive data. */
 	if ((packet->dir == MSPI_RX) && (ipc_receive_buffer != NULL) && (ipc_received > 0)) {
-		memcpy((void *)packet->data_buf, (void *)ipc_receive_buffer, ipc_received);
-		packet->num_bytes = ipc_received;
+		/*
+		 * It is not possible to check whether received data is valid, so packet->num_bytes
+		 * should always be equal to ipc_received. If it is not, then something went wrong.
+		 */
+		if (packet->num_bytes != ipc_received) {
+			rc = -EIO;
+		} else {
+			memcpy((void *)packet->data_buf, (void *)ipc_receive_buffer, ipc_received);
+		}
 
 		/* Clear the receive buffer pointer and size */
 		ipc_receive_buffer = NULL;
