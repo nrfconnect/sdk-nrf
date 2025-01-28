@@ -34,7 +34,7 @@ west-commands:
       - name: ncs-create-board
         class: NcsCreateBoard
         help: create board skeleton files for any Nordic SoC
-  - file: scripts/west_commands/ncs-provision.py
+  - file: scripts/west_commands/ncs_provision.py
     commands:
       - name: ncs-provision
         class: NcsProvision
