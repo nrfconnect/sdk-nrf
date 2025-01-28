@@ -1466,3 +1466,21 @@ ci_samples_nrf_profiler:
     - nrf/subsys/app_event_manager/
     - nrf/subsys/caf/
     - nrf/subsys/nrf_profiler/
+
+ci_samples_nrf5340:
+  files:
+    - bootloader/mcuboot/
+    - nrf/modules/mcuboot/
+    - nrf/samples/nrf5340/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/partition_manager/
+    - nrf/subsys/pcd/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/samples/subsys/mgmt/mcumgr/smp_svr/
+    - zephyr/soc/nordic/nrf53/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/mgmt/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/usb/
