@@ -233,9 +233,37 @@ class RepoAnalyzer:
 
                 # Temporary workaround for any commit(s) that are known
                 # to specify incorrect SHAs of the commits they revert.
-                if self.downstream_repo.name == 'trusted-firmware-m':
-                    if rsha == '74ebcb636cb39b498a2ac05f7587f8ee9158bba9':
-                        rsha = 'af7b2f48e88bd3f260347138f87e5c4f7819b273'
+                if self.downstream_repo.name == 'zephyr':
+                    if rsha == '8027617116b66548dc6d115af8cca84282adc87e':
+                        rsha = 'd269d6fcc54c9f03bb19419120ce3a57f69a6a88'
+                    if rsha == 'a278ee4af1397201e4b9a8431d601c3e64d34a6b':
+                        rsha = '4f9ab7947c5214f837d806b33d3cb5262ff9bc83'
+                    if rsha == '9a0b81bf553b937f2ecb729a4ae9dff6df93919f':
+                        rsha = '9a675fa35fbd88a3464aaf015f68dff3fa22090a'
+                    if rsha == '500609863634bf00a675146dcb78f5137aed330a':
+                        rsha = '188ec35dc3785cf4e498434ebb55bdf47b08061b'
+                    if rsha == 'e02f019aaac99993da5e39a986c2345eeac22dfc':
+                        rsha = '045899a31200e2b57627442ced7cb80916270fb2'
+                    if rsha == '8d6a853718ee5be65221d5187fa32793e44b8bdb':
+                        rsha = '7db6fe0372890ceb24f9c644203261ba242f5792'
+                    if rsha == '38f2104a801b1db40ab4596f972c0178f21821c5':
+                        rsha = 'f787d7b1dd2cd768dd849c95f00ecac6b399b005'
+                    if rsha == 'b0ce7fe23a0c83ce3038baf2b8899e0e6b1497fc':
+                        rsha = 'ccd2f6324256a9dd7cdba83b1b4b8f5627df77ac'
+                    if rsha == '687cefae54d14d19010ec95b6a6a89eedb6da5b0':
+                        rsha = 'eefa2fee0b36fb0a502e7b44fc4a2d90e5cf23bb'
+                    # Commit 34ac0f01d11fd78304df355cc139479bb32e511e that
+                    # contains this incorrect SHA reference reverts in fact
+                    # only a part of 29b9b3e2052e7022ce8a5c197612e08d75796535,
+                    # so just ignore it.
+                    if rsha == '330eb8146a5b694fb90d738cc04e6ef76d80f636':
+                        continue
+                    # Commit 08b6e7604926f6a2ec5eca9d4058f2f3fbc11e6e that
+                    # contains this incorrect SHA reference reverts in fact
+                    # only a part of 5eec5ca2ac59038194a91b7086edc50949ed83c9,
+                    # so just ignore it.
+                    if rsha == 'fe339b14b3effd069458f5e4710f17cda8295229':
+                        continue
 
                 if rsha in downstream_out:
                     log.dbg('** commit {} ("{}") was reverted in {}'.

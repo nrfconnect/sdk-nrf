@@ -59,7 +59,7 @@ static const char * const fp_adv_mode_description[] = {
  */
 static struct bt_le_adv_param fp_adv_param = {
 	.id = BT_ID_DEFAULT,
-	.options = (BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME),
+	.options = BT_LE_ADV_OPT_CONN,
 	.interval_min = FP_ADV_INTERVAL,
 	.interval_max = FP_ADV_INTERVAL,
 };

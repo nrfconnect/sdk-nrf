@@ -53,8 +53,6 @@ static struct modem_pipe *gnss_pipe;
 
 #define LOCATION_REPORT_MS 5000
 
-#define SEC_PER_HOUR	(MIN_PER_HOUR * SEC_PER_MIN)
-#define SEC_PER_DAY	(HOUR_PER_DAY * SEC_PER_HOUR)
 /* (6.1.1980 UTC - 1.1.1970 UTC) */
 #define GPS_TO_UNIX_UTC_OFFSET_SECONDS	(315964800UL)
 /* UTC/GPS time offset as of 1st of January 2017. */

@@ -9,7 +9,6 @@ menuconfig NRF_MODEM_LIB
 	select EXPERIMENTAL if SOC_NRF9280_CPUAPP
 	select NRF_MODEM
 	imply NET_SOCKETS_OFFLOAD
-	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
 	# The modem must be turned on to achieve low power consumption.
 	# But disable it for ZTEST's as some tests have HW
 	# resource-conflicts with NRF_MODEM_LIB.

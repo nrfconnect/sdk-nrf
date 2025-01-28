@@ -9,7 +9,7 @@
 #include <zboss_api.h>
 #if CONFIG_CRYPTO_NRF_ECB
 #include <zephyr/crypto/crypto.h>
-#elif CONFIG_BT_CTLR
+#elif CONFIG_HAS_BT_CTLR
 #include <zephyr/bluetooth/crypto.h>
 #elif CONFIG_ZIGBEE_USE_SOFTWARE_AES
 #include <ocrypto_aes_ecb.h>
@@ -59,7 +59,7 @@ static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 out:
 	cipher_free_session(dev, &ctx);
 }
-#elif CONFIG_BT_CTLR
+#elif CONFIG_HAS_BT_CTLR
 static void encrypt_aes(zb_uint8_t *key, zb_uint8_t *msg, zb_uint8_t *c)
 {
 	int err;

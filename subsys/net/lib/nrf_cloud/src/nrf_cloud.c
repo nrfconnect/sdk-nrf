@@ -3,11 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/poll.h>
-#else
 #include <zephyr/net/socket.h>
-#endif
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <zephyr/net/mqtt.h>
@@ -587,7 +583,7 @@ static int start_connection_poll(void)
 void nrf_cloud_run(void)
 {
 	int ret;
-	struct pollfd fds[1];
+	struct zsock_pollfd fds[1];
 	struct nrf_cloud_evt evt;
 
 start:
@@ -611,7 +607,7 @@ start:
 	}
 
 	fds[0].fd = nct_socket_get();
-	fds[0].events = POLLIN;
+	fds[0].events = ZSOCK_POLLIN;
 
 	/* Only disconnect events will occur below */
 	evt.type = NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED;
@@ -619,7 +615,7 @@ start:
 
 	while (true) {
 		fds[0].revents = 0;
-		ret = poll(fds, ARRAY_SIZE(fds), nct_keepalive_time_left());
+		ret = zsock_poll(fds, ARRAY_SIZE(fds), nct_keepalive_time_left());
 
 		/* If poll returns 0 the timeout has expired. */
 		if (ret == 0) {
@@ -640,7 +636,7 @@ start:
 			break;
 		}
 
-		if ((fds[0].revents & POLLIN) == POLLIN) {
+		if ((fds[0].revents & ZSOCK_POLLIN) == ZSOCK_POLLIN) {
 			ret = nrf_cloud_process();
 			if ((ret < 0) && (ret != -EAGAIN)) {
 				LOG_DBG("Disconnecting; nrf_cloud_process returned an error: %d",
@@ -657,7 +653,7 @@ start:
 			continue;
 		}
 
-		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
+		if ((fds[0].revents & ZSOCK_POLLNVAL) == ZSOCK_POLLNVAL) {
 			LOG_DBG("Socket error: POLLNVAL");
 			if (nfsm_get_disconnect_requested()) {
 				LOG_DBG("The cloud socket was disconnected by request");
@@ -670,14 +666,14 @@ start:
 			break;
 		}
 
-		if ((fds[0].revents & POLLHUP) == POLLHUP) {
+		if ((fds[0].revents & ZSOCK_POLLHUP) == ZSOCK_POLLHUP) {
 			LOG_DBG("Socket error: POLLHUP");
 			LOG_DBG("Connection was closed by the cloud");
 			evt.status = NRF_CLOUD_DISCONNECT_CLOSED_BY_REMOTE;
 			break;
 		}
 
-		if ((fds[0].revents & POLLERR) == POLLERR) {
+		if ((fds[0].revents & ZSOCK_POLLERR) == ZSOCK_POLLERR) {
 			LOG_DBG("Socket error: POLLERR");
 			LOG_DBG("Cloud connection was unexpectedly closed");
 			evt.status = NRF_CLOUD_DISCONNECT_MISC;
