@@ -51,6 +51,7 @@ static struct bt_bap_lc3_preset lc3_preset = BT_BAP_LC3_BROADCAST_PRESET_NRF5340
 
 static bool initialized;
 static bool delete_broadcast_src[CONFIG_BT_ISO_MAX_BIG];
+static uint32_t stored_broadcast_id;
 
 static int metadata_u8_add(uint8_t buffer[], uint8_t *index, uint8_t type, uint8_t value)
 {
@@ -263,13 +264,14 @@ int broadcast_source_ext_adv_populate(uint8_t big_index, bool fixed_id, uint32_t
 
 	if (!fixed_id) {
 		/* Use a random broadcast ID */
-		ret = bt_cap_initiator_broadcast_get_id(broadcast_sources[big_index],
-							&broadcast_id);
+		ret = bt_rand(&broadcast_id, BT_AUDIO_BROADCAST_ID_SIZE);
 		if (ret) {
-			LOG_ERR("Unable to get broadcast ID: %d", ret);
+			LOG_WRN("Unable to generate broadcast ID: %d\n", ret);
 			return ret;
 		}
 	}
+
+	stored_broadcast_id = broadcast_id;
 
 	sys_put_le16(BT_UUID_BROADCAST_AUDIO_VAL, ext_adv_data->brdcst_id_buf);
 
@@ -596,8 +598,6 @@ static uint8_t audio_map_location_get(struct bt_bap_stream *bap_stream)
 
 int broadcast_source_id_get(uint8_t big_index, uint32_t *broadcast_id)
 {
-	int ret;
-
 	if (big_index >= CONFIG_BT_ISO_MAX_BIG) {
 		LOG_ERR("Failed to get broadcast ID for BIG %d out of %d", big_index,
 			CONFIG_BT_ISO_MAX_BIG);
@@ -614,11 +614,7 @@ int broadcast_source_id_get(uint8_t big_index, uint32_t *broadcast_id)
 		return -EINVAL;
 	}
 
-	ret = bt_cap_initiator_broadcast_get_id(broadcast_sources[big_index], broadcast_id);
-	if (ret) {
-		LOG_ERR("Unable to get broadcast ID: %d", ret);
-		return ret;
-	}
+	*broadcast_id = stored_broadcast_id;
 
 	return 0;
 }
