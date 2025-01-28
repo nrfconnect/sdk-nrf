@@ -545,6 +545,10 @@ Modem libraries
 
 * Updated the :ref:`nrf_modem_lib_lte_net_if` to automatically set the actual link :term:`Maximum Transmission Unit (MTU)` on the network interface when PDN connectivity is gained.
 
+* :ref:`nrf_modem_lib_readme`:
+
+  * Fixed a bug where various subsystems would be erroneously initialized during a failed initialization of the library.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
