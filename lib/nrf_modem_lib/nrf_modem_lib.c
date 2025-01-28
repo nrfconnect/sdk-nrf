@@ -169,6 +169,9 @@ int nrf_modem_lib_init(void)
 	err = nrf_modem_init(&init_params);
 	if (err) {
 		LOG_ERR("Modem library initialization failed, err %d", err);
+
+		/* Jump to the init callbacks and pass them the returned error. */
+		goto init_callbacks;
 	}
 
 #if CONFIG_NRF_MODEM_LIB_TRACE
@@ -182,6 +185,7 @@ int nrf_modem_lib_init(void)
 		log_fw_version_uuid();
 	}
 
+init_callbacks:
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_init_cb, e) {
 		LOG_DBG("Modem init callback: %p", e->callback);
 		e->callback(err, e->context);
