@@ -64,11 +64,9 @@ static i2s_blk_comp_callback_t i2s_blk_comp_callback;
 
 static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t status)
 {
-	uint32_t frame_start_ts = audio_sync_timer_capture_get();
-
 	if ((status == NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED) && released_bufs &&
 	    i2s_blk_comp_callback && (released_bufs->p_rx_buffer || released_bufs->p_tx_buffer)) {
-		i2s_blk_comp_callback(frame_start_ts, released_bufs->p_rx_buffer,
+		i2s_blk_comp_callback(audio_sync_timer_capture_get(), released_bufs->p_rx_buffer,
 				      released_bufs->p_tx_buffer);
 	}
 }
