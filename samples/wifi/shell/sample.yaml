@@ -457,7 +457,7 @@ tests:
       - ci_samples_wifi
   sample.nrf7002.shell.psa:
     build_only: true
-    extra_args: CONFIG_HOSTAP_CRYPTO_LEGACY_PSA=y
+    extra_args: CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
