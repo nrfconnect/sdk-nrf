@@ -280,6 +280,10 @@ Bluetooth samples
 
   * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
 
+* :ref:`central_uart` sample:
+
+  * Added reconnection to bonded devices based on their address.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
