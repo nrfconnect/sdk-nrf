@@ -21,6 +21,12 @@ uint32_t audio_sync_timer_capture(void);
  * @brief Returns the last captured value of the sync timer.
  *
  * The captured time is corresponding to the I2S frame start.
+ * NOTE: This function is not reentrant and must only be called
+ * once in the I2S ISR. There may be a delay in the capturing of
+ * the clock value. Hence, there is a retry-loop with a timeout.
+ * Should we not get the new capture value before the timeout,
+ * a warning will be printed and calculations based on the old
+ * timer capture values.
  *
  * See @ref audio_sync_timer_capture().
  *
