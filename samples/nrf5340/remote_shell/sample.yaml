@@ -11,6 +11,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_samples_nrf5340
   sample.nrf5340.remote_ipc_shell.uart.build:
     sysbuild: true
     build_only: true
@@ -22,3 +23,4 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_samples_nrf5340

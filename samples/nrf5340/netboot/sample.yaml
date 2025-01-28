@@ -10,6 +10,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_samples_nrf5340
   sample.nrf5340.netboot.minimal_size:
     sysbuild: true
     build_only: true
@@ -20,3 +21,4 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_samples_nrf5340

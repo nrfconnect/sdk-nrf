@@ -13,6 +13,8 @@ common:
     - nrf5340dk/nrf5340/cpuapp
   integration_platforms:
     - nrf5340dk/nrf5340/cpuapp
+  tags:
+    - ci_samples_nrf5340
 tests:
   sample.mcumgr.smp_svr.ext_xip:
     platform_allow:
