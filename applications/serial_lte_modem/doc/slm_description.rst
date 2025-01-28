@@ -455,17 +455,11 @@ To connect with an external MCU using UART_2, change the configuration files for
 
       * In the :file:`nrf9151dk_nrf9151_ns.conf` file::
 
-          # Use UART_0 (when working with PC terminal)
-          # unmask the following config
-          #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
-          #CONFIG_UART_0_NRF_HW_ASYNC=y
+          # When working with PC terminal, unmask the following config.
           #CONFIG_SLM_POWER_PIN=8
           #CONFIG_SLM_INDICATE_PIN=0
 
-          # Use UART_2 (when working with external MCU)
-          # unmask the following config
-          CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
-          CONFIG_UART_2_NRF_HW_ASYNC=y
+          # When working with external MCU, unmask the following config.
           CONFIG_SLM_POWER_PIN=31
           CONFIG_SLM_INDICATE_PIN=30
 
@@ -496,17 +490,11 @@ To connect with an external MCU using UART_2, change the configuration files for
 
       * In the :file:`nrf9161dk_nrf9161_ns.conf` file::
 
-          # Use UART_0 (when working with PC terminal)
-          # unmask the following config
-          #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
-          #CONFIG_UART_0_NRF_HW_ASYNC=y
+          # When working with PC terminal, unmask the following config.
           #CONFIG_SLM_POWER_PIN=8
           #CONFIG_SLM_INDICATE_PIN=0
 
-          # Use UART_2 (when working with external MCU)
-          # unmask the following config
-          CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
-          CONFIG_UART_2_NRF_HW_ASYNC=y
+          # When working with external MCU, unmask the following config.
           CONFIG_SLM_POWER_PIN=31
           CONFIG_SLM_INDICATE_PIN=30
 
@@ -538,17 +526,11 @@ To connect with an external MCU using UART_2, change the configuration files for
 
       * In the :file:`nrf9160dk_nrf9160_ns.conf` file::
 
-          # Use UART_0 (when working with PC terminal)
-          # unmask the following config
-          #CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
-          #CONFIG_UART_0_NRF_HW_ASYNC=y
+          # When working with PC terminal, unmask the following config.
           #CONFIG_SLM_POWER_PIN=6
           #CONFIG_SLM_INDICATE_PIN=2
 
-          # Use UART_2 (when working with external MCU)
-          # unmask the following config
-          CONFIG_UART_2_NRF_HW_ASYNC_TIMER=2
-          CONFIG_UART_2_NRF_HW_ASYNC=y
+          # When working with external MCU, unmask the following config.
           CONFIG_SLM_POWER_PIN=31
           CONFIG_SLM_INDICATE_PIN=30
 
