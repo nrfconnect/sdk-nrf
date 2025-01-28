@@ -43,6 +43,7 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY OR
   )
 
   zephyr_library_sources_ifdef(CONFIG_HOSTAP_CRYPTO_ENTERPRISE
+    ${HOSTAP_SRC_BASE}/crypto/des-internal.c
     ${HOSTAP_SRC_BASE}/crypto/ms_funcs.c
     ${HOSTAP_SRC_BASE}/crypto/aes-eax.c
     ${HOSTAP_SRC_BASE}/crypto/md4-internal.c
