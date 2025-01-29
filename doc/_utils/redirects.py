@@ -54,11 +54,14 @@ NRF = [
     ("gs_recommended_versions", "installation/recommended_versions"), # Requirements reference
     ("getting_started/recommended_versions", "installation/recommended_versions"),
     ("create_application", "app_dev/create_application"), # Creating an application
-    ("app_boards", "app_dev/board_support/index"), # Board support
-    ("config_and_build/board_support", "app_dev/board_support/index"),
-    ("config_and_build/board_support/index", "app_dev/board_support/index"),
-    ("config_and_build/board_support/board_names", "app_dev/board_support/board_names"), # Board names
-    ("config_and_build/board_support/processing_environments", "app_dev/board_support/processing_environments"), # Processing environments
+    ("app_boards", "app_dev/board_names"), # Board support (merged with Board names in v3.0.0)
+    ("config_and_build/board_support", "app_dev/board_names"),
+    ("config_and_build/board_support/index", "app_dev/board_names"),
+    ("app_dev/board_support/index", "app_dev/board_names"),
+    ("config_and_build/board_support/board_names", "app_dev/board_names"), # Board names (moved to top of the hierarchy in v3.0.0)
+    ("app_dev/board_support/board_names", "app_dev/board_names"),
+    ("config_and_build/board_support/processing_environments", "security/processing_environments"), # Processing environments (moved under Security in v3.0.0)
+    ("app_dev/board_support/processing_environments", "security/processing_environments"),
     ("gs_modifying", "app_dev/config_and_build/index"), # Configuring and building (landing)
     ("getting_started/modifying", "app_dev/config_and_build/index"),
     ("config_and_build/modifying", "app_dev/config_and_build/index"),

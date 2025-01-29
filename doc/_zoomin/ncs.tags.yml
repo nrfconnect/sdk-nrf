@@ -58,13 +58,13 @@ mapping_topics:
                                           "nrf52832", "nrf52820", "nrf52811", "nrf52810",
                                           "nrf52805", "nrf21540", "npm1100", "npm1300", "npm6001",
                                           "applications", "nrf-connect-vsc"]
-  - nrf/app_dev/board_support/*.html: ["nrf91-series", "nrf70-series", "nrf54-series",
-                                       "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
-                                       "nrf7000", "nrf9160", "thingy91", "thingy91x", "nrf9161",
-                                       "nrf9151", "nrf9131", "nrf54h20", "nrf54l15", "nrf54l05",
-                                       "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
-                                       "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
-                                       "nrf21540", "npm1100", "npm1300", "npm6001"]
+  - nrf/app_dev/board_names.html: ["nrf91-series", "nrf70-series", "nrf54-series",
+                                   "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
+                                   "nrf7000", "nrf9160", "thingy91", "thingy91x", "nrf9161",
+                                   "nrf9151", "nrf9131", "nrf54h20", "nrf54l15", "nrf54l05",
+                                   "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
+                                   "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
+                                   "nrf21540", "npm1100", "npm1300", "npm6001"]
   - nrf/app_dev/config_and_build/*.html: ["nrf91-series", "nrf70-series", "nrf54-series",
                                           "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
                                           "nrf7000", "nrf9160", "thingy91", "thingy91x", "nrf9161",
