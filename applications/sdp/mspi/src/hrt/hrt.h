@@ -119,4 +119,12 @@ typedef struct {
  */
 void hrt_write(hrt_xfer_t *hrt_xfer_params);
 
+/** @brief Read.
+ *
+ *  Function to be used to read data from MSPI.
+ *
+ *  @param[in] hrt_xfer_params Hrt transfer parameters and data.
+ */
+void hrt_read(volatile hrt_xfer_t *hrt_xfer_params);
+
 #endif /* _HRT_H__ */

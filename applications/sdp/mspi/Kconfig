@@ -1,0 +1,5 @@
+config SDP_MSPI_MAX_RESPONSE_SIZE
+	int "Max size of response that can be sent to APP core. In bytes."
+	default 128
+
+source "Kconfig.zephyr"

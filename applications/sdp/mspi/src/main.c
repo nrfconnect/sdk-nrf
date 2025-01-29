@@ -30,10 +30,13 @@
 #define CE_PIN_UNUSED UINT8_MAX
 
 #define HRT_IRQ_PRIORITY    2
+#define HRT_VEVIF_IDX_READ  17
 #define HRT_VEVIF_IDX_WRITE 18
 
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
+
+BUILD_ASSERT(CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 
 static const uint8_t pin_to_vio_map[VIO_COUNT] = {
 	4,  /* Physical pin 0 */
@@ -67,6 +70,8 @@ static volatile nrfe_mspi_xfer_config_t nrfe_mspi_xfer_config;
 static volatile nrfe_mspi_dev_config_t nrfe_mspi_devices[DEVICES_MAX];
 
 static volatile hrt_xfer_t xfer_params;
+
+static volatile uint8_t response_buffer[CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE];
 
 static struct ipc_ept ep;
 static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
@@ -169,6 +174,10 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 		break;
 	}
 	}
+
+	WRITE_BIT(out, 3, VPRCSR_NORDIC_OUT_HIGH);
+	WRITE_BIT(out, 4, VPRCSR_NORDIC_OUT_HIGH);
+
 	nrf_vpr_csr_vio_out_set(out);
 	nrf_vpr_csr_vio_config_set(&vio_config);
 }
@@ -228,7 +237,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	} else {
 		adjust_tail(&xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES],
 			    xfer_params.bus_widths.dummy_cycles,
-			    nrfe_mspi_xfer_config.tx_dummy*xfer_params.bus_widths.dummy_cycles);
+			    nrfe_mspi_xfer_config.tx_dummy * xfer_params.bus_widths.dummy_cycles);
 	}
 
 	xfer_params.xfer_data[HRT_FE_DATA].vio_out_set =
@@ -240,6 +249,56 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 		    xfer_packet->num_bytes * BITS_IN_BYTE);
 
 	nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE));
+}
+
+void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint8_t *buffer)
+{
+	volatile nrfe_mspi_dev_config_t *device =
+		&nrfe_mspi_devices[nrfe_mspi_xfer_config.device_index];
+	nrf_vpr_csr_vio_config_t config;
+
+	xfer_params.counter_value = 4;
+	xfer_params.ce_vio = ce_vios[device->ce_index];
+	xfer_params.ce_hold = nrfe_mspi_xfer_config.hold_ce;
+	xfer_params.ce_polarity = device->ce_polarity;
+	xfer_params.bus_widths = io_modes[device->io_mode];
+	xfer_params.xfer_data[HRT_FE_DATA].data = buffer;
+
+	nrf_vpr_csr_vio_config_get(&config);
+	config.input_sel = true;
+	nrf_vpr_csr_vio_config_set(&config);
+
+	/*
+	 * Fix position of command and address if command/address length is < BITS_IN_WORD,
+	 * so that leading zeros would not be printed instead of data bits.
+	 */
+	xfer_packet->command =
+		xfer_packet->command
+		<< (BITS_IN_WORD - nrfe_mspi_xfer_config.command_length * BITS_IN_BYTE);
+	xfer_packet->address =
+		xfer_packet->address
+		<< (BITS_IN_WORD - nrfe_mspi_xfer_config.address_length * BITS_IN_BYTE);
+
+	/* Configure command phase. */
+	xfer_params.xfer_data[HRT_FE_COMMAND].vio_out_set =
+		nrf_vpr_csr_vio_out_buffered_reversed_word_set;
+	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet->command;
+	xfer_params.xfer_data[HRT_FE_COMMAND].word_count = nrfe_mspi_xfer_config.command_length;
+
+	/* Configure address phase. */
+	xfer_params.xfer_data[HRT_FE_ADDRESS].vio_out_set =
+		nrf_vpr_csr_vio_out_buffered_reversed_word_set;
+	xfer_params.xfer_data[HRT_FE_ADDRESS].data = (uint8_t *)&xfer_packet->address;
+	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count = nrfe_mspi_xfer_config.address_length;
+
+	/* Configure data phase. */
+	xfer_params.xfer_data[HRT_FE_DATA].word_count = xfer_packet->num_bytes;
+
+	/* Read/write barrier to make sure that all configuration is done before jumping to HRT. */
+	nrf_barrier_rw();
+
+	/* Read data */
+	nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_READ));
 }
 
 static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
@@ -302,6 +361,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	(void)len;
 	nrfe_mspi_flpr_response_msg_t response;
 	uint8_t opcode = *(uint8_t *)data;
+	uint32_t num_bytes = 0;
 
 	response.opcode = opcode;
 
@@ -360,16 +420,20 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	case NRFE_MSPI_TXRX: {
 		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
+		num_bytes = packet->num_bytes;
 
-		(void)packet;
+		if (num_bytes > 0) {
+			prepare_and_read_data(packet, response_buffer + 1);
+		}
 		break;
 	}
 	default:
-		response.opcode = NRFE_MSPI_WRONG_OPCODE;
+		opcode = NRFE_MSPI_WRONG_OPCODE;
 		break;
 	}
 
-	ipc_service_send(&ep, (const void *)&response.opcode, sizeof(response));
+	response_buffer[0] = opcode;
+	ipc_service_send(&ep, (const void *)response_buffer, sizeof(opcode) + num_bytes);
 }
 
 static const struct ipc_ept_cfg ep_cfg = {
@@ -408,6 +472,11 @@ static int backend_init(void)
 	return 0;
 }
 
+__attribute__((interrupt)) void hrt_handler_read(void)
+{
+	hrt_read(&xfer_params);
+}
+
 __attribute__((interrupt)) void hrt_handler_write(void)
 {
 	hrt_write((hrt_xfer_t *)&xfer_params);
@@ -420,6 +489,9 @@ int main(void)
 	if (ret < 0) {
 		return 0;
 	}
+
+	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_READ, HRT_IRQ_PRIORITY, hrt_handler_read, 0);
+	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_READ), true);
 
 	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_WRITE, HRT_IRQ_PRIORITY, hrt_handler_write, 0);
 	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE), true);
