@@ -8,11 +8,11 @@
 
 zephyr_interface_library_named(suit_envelope_info)
 target_include_directories(suit_envelope_info INTERFACE include)
+target_link_libraries(suit_envelope_info INTERFACE suit_platform_err)
 
 zephyr_library()
 zephyr_library_sources(src/suit_envelope_info.c)
 
 zephyr_library_link_libraries(suit_envelope_info)
-zephyr_library_link_libraries(suit_platform_err)
 zephyr_library_link_libraries(suit_utils)
 zephyr_library_link_libraries(suit_memory_layout_interface)
