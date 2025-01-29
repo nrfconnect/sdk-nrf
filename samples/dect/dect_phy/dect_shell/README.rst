@@ -672,7 +672,7 @@ Example: starting of cluster beacon and sending RA data to it
             Power const:          The RD operating in FT mode does not have power constraints.
             Frame offset:         not included in the beacon
             Next cluster channel: current cluster channel.
-            Time to next next:    not included in the beacon.
+            Time to next:         not included in the beacon.
                                     The next cluster beacon is
                                     transmitted based on Cluster beacon period.
             Network Beacon period 10 ms

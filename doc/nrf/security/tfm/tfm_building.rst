@@ -27,7 +27,7 @@ The following platforms are currently supported:
 TF-M uses UART1 for logging from the secure application.
 To disable logging, enable the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
 When building TF-M with logging enabled, UART1 must be disabled in the non-secure application, otherwise the non-secure application will fail to run.
-The recommended way to do this is to copy the .overlay file from the :ref:`tfm_hello_world` sample.
+The recommended way to do this is to copy the :file:`.overlay` file from the :ref:`tfm_hello_world` sample.
 
 Enabling secure services
 ========================
