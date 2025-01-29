@@ -64,6 +64,7 @@ Some of them are documented in detail in other parts of this documentation, whil
    :maxdepth: 2
    :caption: Subpages:
 
+   security/processing_environments
    security/ap_protect
    security/tfm
    security/trusted_storage

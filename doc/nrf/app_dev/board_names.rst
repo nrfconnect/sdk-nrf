@@ -1,14 +1,23 @@
+.. _app_boards:
 .. _app_boards_names:
 .. _programming_board_names:
 
-Board names
-###########
+Board support
+#############
 
 .. contents::
    :local:
    :depth: 2
 
+The |NCS| provides board definitions for all Nordic Semiconductor devices and follows Zephyr's :ref:`zephyr:hw_support_hierarchy`.
+
 The following tables list all boards and corresponding board targets for Nordic Semiconductor's hardware platforms.
+You can select the board targets for these boards when :ref:`building`.
+
+Some boards can support Cortex-M Security Extensions (CMSE), with their board targets separated for different :ref:`app_boards_spe_nspe`.
+
+Board terminology in the |NCS|
+******************************
 
 The board targets follow Zephyr's :ref:`zephyr:board_terminology` scheme and are used mostly when :ref:`building`.
 For example, the board target ``nrf54l15dk/nrf54l15/cpuapp`` can be read as made of the following elements:

@@ -107,6 +107,7 @@ Security
 
   * Added support for HKDF-Expand and HKDF-Extract in CRACEN.
   * Added support for Ed25519ph(HashEdDSA) to CRACEN
+  * Moved the :ref:`app_boards_spe_nspe` documentation page under :ref:`security` from the :ref:`ug_app_dev` section.
 
 Protocols
 =========

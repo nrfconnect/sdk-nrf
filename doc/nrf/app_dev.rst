@@ -19,7 +19,7 @@ For detailed integration instructions of specific technologies and components, c
    :caption: Subpages:
 
    app_dev/create_application
-   app_dev/board_support/index
+   app_dev/board_names
    app_dev/config_and_build/index
    app_dev/programming
    app_dev/companion_components
