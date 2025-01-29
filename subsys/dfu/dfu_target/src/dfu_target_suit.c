@@ -9,9 +9,6 @@
 #include <dfu/dfu_target.h>
 #include <dfu/dfu_target_stream.h>
 #include <zephyr/devicetree.h>
-#ifdef CONFIG_SSF_SUIT_SERVICE_ENABLED
-#include <sdfw/sdfw_services/suit_service.h>
-#endif /* CONFIG_SSF_SUIT_SERVICE_ENABLED */
 #include <suit_envelope_info.h>
 #ifdef CONFIG_DFU_TARGET_SUIT_CACHE_PROCESSING
 #include <suit_dfu_cache_rw.h>
@@ -197,7 +194,7 @@ int dfu_target_suit_reset(void)
 		return rc;
 	}
 
-	suit_ssf_err_t err = suit_dfu_cleanup();
+	int err = suit_dfu_cleanup();
 
 	stream_flash_in_use = false;
 	stream_buf_bytes = 0;
@@ -215,7 +212,7 @@ int dfu_target_suit_reboot(void)
 {
 	k_msleep(CONFIG_DFU_TARGET_REBOOT_RESET_DELAY_MS);
 
-	suit_ssf_err_t err = suit_dfu_update_start();
+	int err = suit_dfu_update_start();
 
 	if (err < 0) {
 		LOG_ERR("Failed to start firmware upgrade!");
