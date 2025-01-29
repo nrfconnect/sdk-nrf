@@ -24,7 +24,7 @@
     - net.lwm2m.lwm2m_registry
     - net.lwm2m.block_transfer
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - native_sim
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -40,7 +40,7 @@
     - nrf52840dk/nrf52840
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -100,8 +100,8 @@
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf5340dk/nrf5340/cpunet
-    - nrf9160dk/nrf9160
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -131,8 +131,8 @@
   platforms:
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
-    - nrf9160dk/nrf9160
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -140,7 +140,7 @@
     - sample.tfm.secure_partition
     - sample.tfm_ipc
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -200,7 +200,7 @@
   platforms:
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpunet
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -212,7 +212,7 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -225,8 +225,8 @@
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf5340dk/nrf5340/cpunet
-    - nrf9160dk/nrf9160
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -239,8 +239,8 @@
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf5340dk/nrf5340/cpunet
-    - nrf9160dk/nrf9160
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -251,8 +251,8 @@
     - nrf5340dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf5340dk/nrf5340/cpunet
-    - nrf9160dk/nrf9160
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
 

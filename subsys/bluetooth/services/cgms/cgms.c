@@ -23,8 +23,6 @@
 
 LOG_MODULE_REGISTER(cgms, CONFIG_BT_CGMS_LOG_LEVEL);
 
-#define SEC_PER_DAY                86400
-
 #define CGMS_SVC_MEAS_ATTR_IDX     1
 #define CGMS_SVC_RACP_ATTR_IDX     12
 #define CGMS_SVC_SOCP_ATTR_IDX     15

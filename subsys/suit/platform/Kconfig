@@ -64,6 +64,11 @@ config MBEDTLS_PSA_CRYPTO_C
 config MBEDTLS_ENTROPY_POLL_ZEPHYR
 	default y
 
+# Increase the default number of key slots, to keep the same volatile key IDs
+config MBEDTLS_PSA_KEY_SLOT_COUNT
+	int
+	default 32
+
 config SUIT_DEFAULT_MBEDTLS_CONFIG
 	bool "Use default mbedTLS configuration file"
 	default y

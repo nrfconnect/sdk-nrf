@@ -28,6 +28,11 @@ if(CONFIG_MBEDTLS_ENABLE_HEAP)
   )
 endif()
 
+# Add PSA crypto initialization in Zephyr
+list(APPEND src_zephyr
+  ${ZEPHYR_BASE}/modules/mbedtls/psa_init.c
+)
+
 if(CONFIG_MBEDTLS_ENTROPY_POLL)
   list(APPEND src_zephyr
     ${NRF_SECURITY_ROOT}/src/zephyr/entropy_poll.c

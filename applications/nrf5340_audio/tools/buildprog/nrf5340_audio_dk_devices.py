@@ -47,6 +47,11 @@ class Channel(Enum):
     right = 1
     NA = auto()
 
+class Transport(str, Enum):
+    """Transport type"""
+    broadcast = "broadcast"
+    unicast = "unicast"
+
 
 @dataclass
 class DeviceConf:

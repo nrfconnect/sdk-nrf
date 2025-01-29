@@ -36,10 +36,10 @@
 						    BT_AUDIO_CODEC_CFG_DURATION_10, _loc,          \
 						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,         \
 						    _stream_context),                              \
-			  BT_AUDIO_CODEC_QOS_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),  \
-						      CONFIG_BT_AUDIO_RETRANSMITS,                 \
-						      CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,    \
-						      CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
+			  BT_BAP_QOS_CFG_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),      \
+						  CONFIG_BT_AUDIO_RETRANSMITS,                     \
+						  CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,        \
+						  CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
 
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.

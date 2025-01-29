@@ -80,14 +80,14 @@
     - sample.mgmt.osdp.peripheral_device_sc
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928"
 
 - scenarios:
     - examples.nrfx_uarte.tx_rx_non_blocking
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3395"
 
@@ -95,7 +95,7 @@
     - examples.nrfx_uarte.rx_double_buffered
   platforms:
     - nrf52840dk/nrf52840
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - nrf5340dk/nrf5340/cpuapp
     - nrf52833dk/nrf52833
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3468"
@@ -112,7 +112,7 @@
   platforms:
     - nrf52840dk/nrf52840
     - nrf52833dk/nrf52833
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3813"
 
 - scenarios:
@@ -130,7 +130,7 @@
 - scenarios:
     - arch.interrupt.gen_isr_table.riscv_no_direct
   platforms:
-    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27981"
 
@@ -144,7 +144,7 @@
 - scenarios:
     - sample.net.sockets.http.server
   platforms:
-    - nrf54h20dk/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
 
 - scenarios:
@@ -155,14 +155,14 @@
   comment: "Test not aligned for nrf54l15 but selected due to jedec,spi-nor"
 
 - scenarios:
-    - llext.simple.*
+    - llext.*
   platforms:
-    - nrf54h20dk/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpunet
-    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
     - nrf54l15dk/nrf54l15/cpuflpr
-    - qemu_cortex_m3
+    - qemu_cortex_m3/ti_lm3s6965
   comment: "overflow, to report/fix in the upstream @permac and put ticket # here"
 
 - scenarios:
@@ -172,7 +172,7 @@
 - scenarios:
     - storage.flash_map
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29462"
 
 - scenarios:
@@ -209,14 +209,14 @@
     - libraries.encoding.jwt
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
 
 - scenarios:
     - net.mqtt.tls
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24922"
 
@@ -224,7 +224,7 @@
     - net.socket.register.tls
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-18853"
 
 - scenarios:
@@ -244,7 +244,7 @@
 - scenarios:
     - sample.drivers.crypto.mbedtls
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
 
@@ -252,21 +252,21 @@
     - sample.net.sockets.websocket_client
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24929"
 
 - scenarios:
     - sample.psa_crypto
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-22771"
 
 - scenarios:
     - sample.net.sockets.http.server
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"
 
 - scenarios:
@@ -360,7 +360,7 @@
     - drivers.gpio.build
     - sample.perf
   platforms:
-    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
 
 - scenarios:
@@ -419,16 +419,16 @@
     - libraries.libc.newlib_nano.thread_safety.userspace.stress
     - libraries.libc.newlib.thread_safety.userspace.stress
   platforms:
-    - nrf54h20dk/nrf54h20/cpurad
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "region FLASH overflowed"
 
 - scenarios:
     - libraries.cmsis_dsp.matrix.unary_f64
     - libraries.cmsis_dsp.matrix.unary_f64.fpu
   platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54h20dk/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "Won't be fixed, 'rodata will not fit in region FLASH' - no ticket"
 
 - scenarios:
@@ -449,5 +449,5 @@
 - scenarios:
     - drivers.hwinfo.api
   platforms:
-    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: Unsupported device

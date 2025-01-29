@@ -1112,7 +1112,7 @@ static void check_and_update_pd_in_group(struct stream_index idx, uint32_t new_p
 }
 
 static void stream_configured_cb(struct bt_bap_stream *stream,
-				 const struct bt_audio_codec_qos_pref *pref)
+				 const struct bt_bap_qos_cfg_pref *pref)
 {
 	int ret;
 	uint32_t new_pres_dly_us;

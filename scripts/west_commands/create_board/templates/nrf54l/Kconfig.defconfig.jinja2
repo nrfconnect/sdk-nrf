@@ -1,8 +1,5 @@
 if BOARD_{{ board | upper }}_CPUAPP
 
-config BT_CTLR
-	default BT
-
 config ROM_START_OFFSET
 	default 0x800 if BOOTLOADER_MCUBOOT
 
