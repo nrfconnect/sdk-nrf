@@ -118,7 +118,7 @@ acpi:
     - lib/acpi/
     - tests/lib/acpi/
 
-arm:
+arm: &tag_arm
   files:
     - arch/arm/
     - include/zephyr/arch/arm/
@@ -127,6 +127,8 @@ arm:
     - soc/arm/nordic/
     - dts/arm/nordic/
     - dts/bindings/arm/nordic*.yaml
+
+vector_relay: *tag_arm
 
 benchmark:
   files:
@@ -202,11 +204,13 @@ device:
     - tests/kernel/device/
     - tests/misc/check_init_priorities/
 
-dfu_mcuboot:
+dfu_mcuboot: &tag_dfu
   files:
     - include/zephyr/dfu/
     - subsys/dfu/
     - tests/subsys/dfu/
+
+dfu_image_util: *tag_dfu
 
 devicetree:
   files:
@@ -1163,3 +1167,29 @@ net_buf:
     - include/zephyr/net_buf.h
     - lib/net_buf/
     - tests/lib/net_buf/
+
+introduction:
+  files:
+    - samples/cpp/hello_world/
+    - samples/userspace/hello_world_user/
+    - samples/hello_world/
+    - samples/arch/smp/pi/
+
+snippets:
+  files:
+    - tests/cmake/snippets/
+
+zms:
+  files:
+    - subsys/fs/zms/
+    - include/zephyr/fs/zms.h
+    - samples/subsys/fs/zms/
+    - tests/subsys/fs/zms/
+
+arch:
+  files:
+    - arch/Kconfig
+    - include/zephyr/arch/
+    - arch/common/
+    - include/zephyr/arch/common/
+    - tests/arch/common/
