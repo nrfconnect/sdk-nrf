@@ -76,6 +76,8 @@ nRF70 Series
        For example, ``CONFIG_WPA_SUPP=y`` to ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``.
        Update your application configurations to use the new namespace.
 
+     * You need to reconcile the application heap and kernel heap usage appropriately to accommodate this switch from application to kernel heap.
+
    * The SR co-existence feature should now be explicitly enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX` Kconfig option.
      The RF switch feature should be enabled using the :kconfig:option:`CONFIG_NRF70_SR_COEX_RF_SWITCH` Kconfig option.
 
