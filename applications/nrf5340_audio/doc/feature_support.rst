@@ -30,11 +30,11 @@ nRF5340 DK Bluetooth DNs/QDIDs
    The exact DN/QDID numbers depend on the project configuration and the features used in the application.
 
    .. note::
-      - The DNs/QDIDs listed in the Compatibility Matrix may not cover all use cases or combinations.
+      * The DNs/QDIDs listed in the Compatibility Matrix might not cover all use cases or combinations.
         The full details of what is supported by a DN/QDID can be found in the associated ICS (Implementation Conformance Statement).
 
-      - The Audio applications do not demonstrate the full capabilities of the underlying DNs/QDIDs.
-        At the same time, the Audio applications may demonstrate features not available in the underlying DNs/QDID
+      * The Audio applications do not demonstrate the full capabilities of the underlying DNs/QDIDs.
+        At the same time, the Audio applications may demonstrate features not available in the underlying DNs/QDID.
 
 .. ncs-include:: lc3/README.rst
    :docset: nrfxlib

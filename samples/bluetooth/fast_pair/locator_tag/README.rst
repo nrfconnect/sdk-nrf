@@ -969,7 +969,7 @@ To test this feature, complete the following steps:
       #. Observe that after up to 0.5 second, the ringing action starts, which is indicated by **LED 2** being lit.
       #. Double-click **Button 2** to simulate the motion event while the **LED 2** is still lit (ringing action is still in progress).
       #. Observe that **LED 2** blinks fast twice, which indicates that the motion detected event appears.
-      #. Observe that after 0.5 second, of not ringing, the ringing action starts again for one second, which is indicated by **LED 2** being lit.
+      #. Observe that after 0.5 second of not ringing, the ringing action starts again for one second, which is indicated by **LED 2** being lit.
       #. Observe that **LED 2** goes back to blinking at a 0.25 second interval, which indicates that the motion detector is active.
       #. Observe that after 20 seconds from the first motion event or after 10 ringing actions completes, the **LED 2** is off, which indicates that the motion detector is inactive.
       #. Double-click **Button 2** to simulate the motion event.
