@@ -48,9 +48,9 @@ after add_100: 212, 323, 434"""
     logger.info("# Confirm that build log contains warnings")
     with open(f"{build_log_file}", errors="ignore") as log_file:
         log_file_content = log_file.read()
-        assert "add_1.s ASM file content has changed" in log_file_content
-        assert "File add_10.s has not changed" in log_file_content
-        assert "add_100.s ASM file content has changed" in log_file_content
+        assert "add_1-nrf54l15.s ASM file content has changed" in log_file_content
+        assert "File add_10-nrf54l15.s has not changed" in log_file_content
+        assert "add_100-nrf54l15.s ASM file content has changed" in log_file_content
 
     for _ in range(2):
         logger.info("# Install newly compiled .S files")
