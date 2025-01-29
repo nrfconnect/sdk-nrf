@@ -3,6 +3,11 @@
 SDP GPIO
 ########
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 This application demonstrates how to create SDP on FLPR in Zephyr threadless mode by implementing a subset of Zephyr GPIO API.
 It is intended for use with Zephyr's :zephyr:code-sample:`blinky` sample.
 

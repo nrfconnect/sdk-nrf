@@ -3,12 +3,12 @@
 Bluetooth
 #########
 
-Bluetooth® is a short-range wireless communication standard. The standard is managed by Bluetooth SIG and the technology
-is found in most phones, laptop computers and tablets. Operating in the 2.4 GHz frequency band the technology can be
-used world wide and supports a wide range of use cases.
+Bluetooth® is a short-range wireless communication standard.
+The standard is managed by Bluetooth SIG and the technology is found in most phones, laptop computers and tablets.
+Operating in the 2.4 GHz frequency band the technology can be used world wide and supports a wide range of use cases.
 
-Nordic Semiconductor products support the power efficient Bluetooth LE protocol. The nRF Connect SDK  provides
-qualified Bluetooth core stack, profiles and application examples for typical use cases.
+Nordic Semiconductor products support the power efficient Bluetooth LE protocol.
+The |NCS| provides qualified Bluetooth core stack, profiles and application examples for typical use cases.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
 

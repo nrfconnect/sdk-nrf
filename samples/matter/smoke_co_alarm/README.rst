@@ -74,8 +74,8 @@ The device uses the SIT mode, when the wired power source is active.
 Otherwise, it switches to the LIT mode, to indicate that it is possible to save the energy, when using a battery power source.
 Dynamic switching is possible only if the ICD device meets all criteria for operating in the LIT mode (it has at least one client registered).
 DSLS support is disabled by default.
-To enable it, set the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``y`` and enable the feature support in the ICD Management cluster's feature map, by setting it to ``0xf`` in the sample's ``.zap`` file.
-Regenerate the source files after modifying the ``.zap`` file.
+To enable it, set the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``y`` and enable the feature support in the ICD Management cluster's feature map, by setting it to ``0xf`` in the sample's :file:`.zap` file.
+Regenerate the source files after modifying the :file:`.zap` file.
 
 In the LIT mode, the device responsiveness is much lower than in the SIT mode.
 However, you can request the device to become responsive to, for example, change its configuration.

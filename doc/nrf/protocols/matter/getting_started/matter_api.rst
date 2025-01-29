@@ -132,7 +132,7 @@ Event handler API
 
 The Matter SDK provides a notification scheme based on the public events that are propagated from the Matter stack to the application layer.
 The nRF Connect Matter event handler API provides mechanisms to register and unregister custom functions that handle these events within an application.
-This module also includes a default handler that is used in nRF Connect SDK Matter samples and applications.
+This module also includes a default handler that is used in |NCS| Matter samples and applications.
 
 The specific Matter events that can be handled in the application are listed in the :file:`ncs/modules/lib/matter/src/include/platform/CHIPDeviceEvent.h` header file.
 The nRF Connect Matter API contains of the following functions that can be used to handle events:

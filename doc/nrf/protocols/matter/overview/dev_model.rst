@@ -25,7 +25,7 @@ Finally, it integrates the OpenThread and Wi-Fi stacks, both of which can work i
 
 Nordic Semiconductor integrates the Matter stack in the |NCS| using a `dedicated Matter fork`_.
 The official Matter repository is fetched into the fork and the fork is included in the |NCS| as a Zephyr module, including files deployed in the :ref:`matter_index` tab.
-The fork is maintained and verified as a part of the nRF Connect SDK release process as an :ref:`OSS repository <dm_repo_types>`.
+The fork is maintained and verified as a part of the |NCS| release process as an :ref:`OSS repository <dm_repo_types>`.
 
 For more information about Matter architecture and Matter in the |NCS|, read :ref:`ug_matter_overview_architecture_integration`.
 
