@@ -340,9 +340,9 @@ The following features are enabled when using this snippet:
   * Log buffer size is set to high value to allow showing all logs.
   * Deferred mode of logging.
   * Increased verbosity of Matter logs.
-  * Openthread is built from sources.
-  * Openthread shell is enabled.
-  * Openthread logging level is set to INFO.
+  * OpenThread is built from sources.
+  * OpenThread shell is enabled.
+  * OpenThread logging level is set to INFO.
   * Full shell functionalities.
   * Logging source code location on VerifyOrDie failure that occurs in the Matter stack.
 

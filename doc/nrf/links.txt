@@ -171,12 +171,12 @@
 .. _`bt_nus_service.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/matter/common/src/bt_nus/bt_nus_service.h
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
-.. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/device_credentials_installer.py
-.. _`nrf_cloud_onboard.py`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#nrf-cloud-device-onboarding
-.. _`nRF Cloud Utilities Create CA Cert`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#create-ca-cert
-.. _`nRF Cloud Utilities Create Device Credentials`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#create-device-credentials
-.. _`nRF Cloud Utilities Prerequisites`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md#prerequisites
-.. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/master/python/modem-firmware-1.3%2B/README.md
+.. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/main/src/nrfcloud_utils/device_credentials_installer.py
+.. _`nrf_cloud_onboard.py`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#nrf-cloud-device-onboarding
+.. _`nRF Cloud Utilities Create CA Cert`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-ca-cert
+.. _`nRF Cloud Utilities Create Device Credentials`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-device-credentials
+.. _`nRF Cloud Utilities Prerequisites`: https://github.com/nRFCloud/utils/blob/main/README.md#requirements
+.. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md
 
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
@@ -264,7 +264,7 @@
 .. _`raw XML`: https://raw.githubusercontent.com/OpenMobileAlliance/lwm2m-registry/prod/version_history/3300-1_0.xml
 .. _`Amazon license`: https://raw.githubusercontent.com/nrfconnect/sdk-sidewalk/main/LICENSE.txt
 
-.. ### Source: developer.nordicsemi.com
+.. ### Source: https://ncsdoc.z6.web.core.windows.net
 
 .. _`declaring custom cluster`: https://ncsdoc.z6.web.core.windows.net/zboss/3.11.6.0/using_zigbee__z_c_l.html#cluster_declaration_custom
 
@@ -344,15 +344,8 @@
 .. _`nPM1300 EK get started`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK/Get-started?lang=en#infotabs
 
 .. _`nPM2100 product website`: https://www.nordicsemi.com/Products/nPM2100
-.. _`nPM2100 Datasheet`: https://docs.nordicsemi.com/bundle/ps_npm2100/page/keyfeatures_html5.html
-.. _`nPM2100 EK product page`: https://docs.nordicsemi.com/bundle/ug_npm2100_ek/page/UG/nPM2100_EK/intro/intro.html
-.. _`Connect and use the nPM2100 EK`: https://docs.nordicsemi.com/bundle/ug_npm2100_ek/page/UG/nPM2100_EK/connect_ek/connect_ek.html
-.. _`Using the nPM2100 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_048/page/APP/nan_048/intro.html
-
 .. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
-
 .. _`Nordic Semiconductor's IoT cloud platform`: https://www.nordicsemi.com/Products/Cloud-services
-
 .. _`iBasis network coverage spreadsheet`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/3rd-party/iBasis-simplified-coverage-map-for-web.pdf?la=en&hash=CA7DBF400243D8A7A7BDA94873B50E73C26B4FAC
 
 .. _`Contact Us`: https://www.nordicsemi.com/About-us/Contact-Us
@@ -369,15 +362,15 @@
 
 .. _`nRF Connect SDK v2.9.0 webinar`:
 .. _`nRF Connect SDK v2.8.0 webinar`: https://webinars.nordicsemi.com/events
-.. _`nRF Connect SDK v2.7.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v270
-.. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Events/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
-.. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
-.. _`nRF Connect SDK v2.4.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v240
-.. _`nRF Connect SDK v2.3.0 webinar`: https://www.nordicsemi.com/Events/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v23?utm_campaign=2023%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.3
-.. _`nRF Connect SDK v2.2.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v220?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2&utm_content=Release%20notes%20%7C%20Webinar-link%20%7C%20Exciting%20new%20features%20in%20nRF%20Connect%20SDK%20v2.2
-.. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210?utm_campaign=2022%20Webinars&utm_source=Documentation&utm_medium=Link%20to%20webinar%20%7C%20from%20documentation&utm_content=Link%20to%20webinar%20%7C%20from%20documentation
-.. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0&utm_content=Webinar%20registration%20%7C%20nRF%20Connect%20SDK%20v2.0
-.. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Events/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19?utm_campaign=2022%20Webinars&utm_source=developer.nordicsemi.com&utm_medium=In-line%20text%20%7C%20nRF%20Connect%20SDK%20v1.9%20%7C%20Link%20to%20webinar
+.. _`nRF Connect SDK v2.7.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v270
+.. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
+.. _`nRF Connect SDK v2.5.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v250
+.. _`nRF Connect SDK v2.4.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v240
+.. _`nRF Connect SDK v2.3.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2023/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v23
+.. _`nRF Connect SDK v2.2.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v220
+.. _`nRF Connect SDK v2.1.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v210
+.. _`nRF Connect SDK v2.0.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v2
+.. _`nRF Connect SDK v1.9.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2022/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v19
 .. _`Adding Device Firmware Update (DFU/FOTA) Support in nRF Connect SDK`: https://www.nordicsemi.com/Events/2024/Webinar-Adding-Device-Firmware-Update-DFU-FOTA-Support-in-nRF-Connect-SDK
 
 .. #### Source: www.nordicsemi.com/*/Development-Tools
@@ -395,7 +388,6 @@
 
 .. _`nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
 .. _`Download nRF Connect for Desktop`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop/Download#infotabs
-.. _`nRF Connect for Desktop's additional requirements`: https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/download_cfd.html#additional-requirements
 
 .. _`nRF Connect for Mobile`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-mobile
 
@@ -410,6 +402,8 @@
 
 .. _`nRF Edge Impulse mobile app`: https://www.nordicsemi.com/Products/Development-tools/nRF-Edge-Impulse
 
+.. _`nPM Fuel Gauge Board`: https://www.nordicsemi.com/Products/Development-hardware/nPM-Fuel-Gauge-board
+
 .. ### Source: infocenter.nordicsemi.com
 
 .. _`Nordic Semiconductor Infocenter`: https://infocenter.nordicsemi.com/index.jsp
@@ -417,7 +411,7 @@
 .. ### Source: docs.nordicsemi.com
 
 .. _`Nordic Semiconductor TechDocs`: https://docs.nordicsemi.com
-
+.. _`nRF Connect for Desktop's additional requirements`: https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/download_cfd.html#additional-requirements
 .. _`nRF Connect SDK v1.4.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.4.0/page/nrf/index.html
 .. _`nRF Connect SDK v1.3.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.3.0/page/nrf/index.html
 .. _`nRF Connect SDK v1.2.1 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.2.1/page/nrf/index.html
@@ -490,7 +484,10 @@
 .. _`FF-M Isolation Rules`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/design_docs/ff_isolation.html
 
 .. _`HCI Events`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/softdevice_controller/doc/api.html#hci_events
-
+.. _`nPM2100 Datasheet`: https://docs.nordicsemi.com/bundle/ps_npm2100/page/keyfeatures_html5.html
+.. _`nPM2100 EK product page`: https://docs.nordicsemi.com/bundle/ug_npm2100_ek/page/UG/nPM2100_EK/intro/intro.html
+.. _`Connect and use the nPM2100 EK`: https://docs.nordicsemi.com/bundle/ug_npm2100_ek/page/UG/nPM2100_EK/connect_ek/connect_ek.html
+.. _`Using the nPM2100 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_048/page/APP/nan_048/intro.html
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
 .. _`Repositories and revisions for v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-2.9.1/page/nrf/releases_and_maturity/repository_revisions.html
@@ -836,7 +833,6 @@
 .. _`nPM1300 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/intro.html
 .. _`Evaluate nPM1300 using nPM PowerUP`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/npm_powerup.html
 .. _`Use the nPM1300 EK with an nRF5340 DK`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/using_nrf5340_DK.html
-.. _`nPM Fuel Gauge Board`: https://www.nordicsemi.com/Products/Development-hardware/nPM-Fuel-Gauge-board
 .. _`Using the nPM1300 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/intro.html
 
 .. _`nRF21540 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_ek/page/UG/nrf21540_DK/intro.html
@@ -892,8 +888,8 @@
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
-.. _`nRF5 SDK Bootloader`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html
-.. _`nRF5 Bootloader DFU Mode`: https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/lib_bootloader.html#lib_bootloader_dfu_mode
+.. _`nRF5 SDK Bootloader`: https://docs.nordicsemi.com/bundle/sdk_nrf5_v17.0.2/page/lib_bootloader.html
+.. _`nRF5 Bootloader DFU Mode`: https://docs.nordicsemi.com/bundle/sdk_nrf5_v17.0.2/page/lib_bootloader.html#lib_bootloader_dfu_mode
 
 .. _`nRF9160 Hardware Verification Guidelines - UART interface`: https://docs.nordicsemi.com/bundle/nwp_034/page/WP/nwp_034/uart_if.html
 .. _`nRF9160 Antenna and RF Interface Guidelines`: https://docs.nordicsemi.com/bundle/nwp_033/page/WP/nwp_033/nwp_033_intro.html
@@ -1382,9 +1378,9 @@
 .. _`nRF Cloud Auto-onboarding`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#auto-onboarding
 .. _`nRF Cloud device claiming`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ClaimingDevices/ClaimingDeviceOwnershipPortal.html
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#preconnect-onboarding
-.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html#just-in-time-provisioning
+.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#jitp
 .. _`nRF Cloud Onboarding`:
-.. _`nRF Cloud Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Provisioning.html
+.. _`nRF Cloud Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningOverview.html
 .. _`nRF Cloud FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html
 .. _`nRF Cloud MQTT FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html#mqtt-job-execution-notifications
 .. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTATutorial.html

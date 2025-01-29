@@ -57,7 +57,7 @@ Recommended changes
 
 The following changes are recommended for your application to work optimally after the migration.
 
-* Latest changes in Zephyr and nRF Connect SDK allow power optimization for the LwM2M Client.
+* Latest changes in Zephyr and |NCS| allow power optimization for the LwM2M Client.
   Using DTLS Connection Identifier reduces the DTLS handshake overhead when performing the LwM2M Update operation.
   This is enabled using the :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_DTLS_CID` Kconfig option and requires modem firmware v1.3.5 or newer.
   Zephyr's LwM2M engine now support tickless operation mode when the Kconfig option :kconfig:option:`CONFIG_LWM2M_TICKLESS` is enabled.

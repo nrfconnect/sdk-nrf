@@ -9,12 +9,12 @@ Amazon Sidewalk
 
 .. caution::
    The Amazon Sidewalk protocol is owned and licensed by Amazon.
-   Before continuing with the nRF Connect SDK for Sidewalk, you must familiarize yourself with the official `Amazon license`_, including all the applicable restrictions.
-   Please note, that redistributing Sidewalk under the nRF Connect SDK is prohibited.
+   Before continuing with the |NCS| for Sidewalk, you must familiarize yourself with the official `Amazon license`_, including all the applicable restrictions.
+   Please note, that redistributing Sidewalk under the |NCS| is prohibited.
 
    Be aware, that by downloading and including the Sidewalk repository, you accept the above-mentioned license.
 
-   Due to these restrictions, Sidewalk cannot be automatically fetched through the nRF Connect SDK and will require performing a dedicated setup.
+   Due to these restrictions, Sidewalk cannot be automatically fetched through the |NCS| and will require performing a dedicated setup.
    For details, see `Setting up the SDK for Amazon Sidewalk`_.
 
 .. note::
