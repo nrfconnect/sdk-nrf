@@ -189,6 +189,7 @@
     - libraries.encoding.*
     - sample.modules.cmsis_dsp.moving_average
     - math.interpolation
+    - sample.drivers.misc.timeaware_gpio
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
