@@ -128,6 +128,8 @@ static char *strnstr(const char *haystack, const char *needle, size_t haystack_l
 extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
 #endif
 
+static int parse_protocol(struct downloader *dl, const char *url);
+
 static int http_get_request_send(struct downloader *dl)
 {
 	int err;
@@ -224,7 +226,19 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 		parse_len = buf_len;
 	}
 
+	/* Convert HTTP headers to lowercase, but not the values (for example URI) */
+	bool value = false;
 	for (size_t i = 0; i < parse_len; i++) {
+		if (dl->cfg.buf[i] == '\r' || dl->cfg.buf[i] == '\n') {
+			value = false;
+		}
+		if (value) {
+			continue;
+		}
+		if (dl->cfg.buf[i] == ':') {
+			value = true;
+			continue;
+		}
 		dl->cfg.buf[i] = tolower(dl->cfg.buf[i]);
 	}
 
@@ -251,10 +265,16 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 			if (q) {
 
 				/* Received entire line */
-				p += strlen("\r\nlocation:");
+				p += strlen("\r\nlocation: ");
 				*q = '\0';
 
 				LOG_INF("Resource moved to %s", p);
+
+				err = parse_protocol(dl, p);
+				if (err) {
+					LOG_ERR("Failed to parse protocol, err %d, url %s", err, p);
+					return -EBADMSG;
+				}
 
 				err = dl_parse_url_host(p, dl->hostname, sizeof(dl->hostname));
 				if (err) {
@@ -441,30 +461,24 @@ static bool dl_http_proto_supported(struct downloader *dl, const char *url)
 	return false;
 }
 
-static int dl_http_init(struct downloader *dl, struct downloader_host_cfg *dl_host_cfg,
-			const char *url)
+static int parse_protocol(struct downloader *dl, const char *url)
 {
 	int err;
 	struct transport_params_http *http;
 
 	http = (struct transport_params_http *)dl->transport_internal;
 
-	/* Reset http internal struct except config. */
-	struct downloader_transport_http_cfg tmp_cfg = http->cfg;
-
-	memset(http, 0, sizeof(struct transport_params_http));
-	http->cfg = tmp_cfg;
 
 	http->sock.proto = IPPROTO_TCP;
 	http->sock.type = SOCK_STREAM;
 
 	if (strncmp(url, HTTPS, (sizeof(HTTPS) - 1)) == 0 ||
 	    (strncmp(url, HTTP, (sizeof(HTTP) - 1)) != 0 &&
-	     (dl_host_cfg->sec_tag_count != 0 && dl_host_cfg->sec_tag_list != NULL))) {
+	     (dl->host_cfg.sec_tag_count != 0 && dl->host_cfg.sec_tag_list != NULL))) {
 		http->sock.proto = IPPROTO_TLS_1_2;
 		http->sock.type = SOCK_STREAM;
 
-		if (dl_host_cfg->sec_tag_list == NULL || dl_host_cfg->sec_tag_count == 0) {
+		if (dl->host_cfg.sec_tag_list == NULL || dl->host_cfg.sec_tag_count == 0) {
 			LOG_WRN("No security tag provided for TLS/DTLS");
 			return -EINVAL;
 		}
@@ -483,12 +497,28 @@ static int dl_http_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 		LOG_DBG("Port not specified, using default: %d", http->sock.port);
 	}
 
-	if (dl_host_cfg->set_native_tls) {
+	if (dl->host_cfg.set_native_tls) {
 		LOG_DBG("Enabled native TLS");
 		http->sock.type |= SOCK_NATIVE_TLS;
 	}
 
 	return 0;
+}
+
+static int dl_http_init(struct downloader *dl, struct downloader_host_cfg *dl_host_cfg,
+			const char *url)
+{
+	struct transport_params_http *http;
+
+	http = (struct transport_params_http *)dl->transport_internal;
+
+	/* Reset http internal struct except config. */
+	struct downloader_transport_http_cfg tmp_cfg = http->cfg;
+
+	memset(http, 0, sizeof(struct transport_params_http));
+	http->cfg = tmp_cfg;
+
+	return parse_protocol(dl, url);
 }
 
 static int dl_http_deinit(struct downloader *dl)
