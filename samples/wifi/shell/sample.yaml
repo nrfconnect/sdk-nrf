@@ -196,7 +196,7 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=overlay-scan-only.conf
-      - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
+      - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     platform_allow:
       - thingy91x/nrf9151/ns
     tags:
