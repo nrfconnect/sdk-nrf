@@ -483,8 +483,8 @@ void test_date_time_initial_auto_update_at_1s_from_boot(void)
 
 	__cmock_sntp_query_ExpectAndReturn(NULL, 5000, NULL, 0);
 	__cmock_sntp_query_IgnoreArg_ctx();
-	__cmock_sntp_query_IgnoreArg_time();
-	__cmock_sntp_query_ReturnThruPtr_time(&sntp_time_value);
+	__cmock_sntp_query_IgnoreArg_ts();
+	__cmock_sntp_query_ReturnThruPtr_ts(&sntp_time_value);
 
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_sntp_close_ExpectAnyArgs();
@@ -859,8 +859,8 @@ void test_date_time_update_all_retry_ntp_fail(void)
 	__cmock_sntp_init_ExpectAnyArgsAndReturn(0);
 	__cmock_sntp_query_ExpectAndReturn(NULL, 5000, NULL, -1);
 	__cmock_sntp_query_IgnoreArg_ctx();
-	__cmock_sntp_query_IgnoreArg_time();
-	__cmock_sntp_query_ReturnThruPtr_time(&sntp_time_value);
+	__cmock_sntp_query_IgnoreArg_ts();
+	__cmock_sntp_query_ReturnThruPtr_ts(&sntp_time_value);
 
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_sntp_close_ExpectAnyArgs();
@@ -899,8 +899,8 @@ void test_date_time_update_all_retry_ntp_fail(void)
 	__cmock_sntp_init_ExpectAnyArgsAndReturn(0);
 	__cmock_sntp_query_ExpectAndReturn(NULL, 5000, NULL, -1);
 	__cmock_sntp_query_IgnoreArg_ctx();
-	__cmock_sntp_query_IgnoreArg_time();
-	__cmock_sntp_query_ReturnThruPtr_time(&sntp_time_value);
+	__cmock_sntp_query_IgnoreArg_ts();
+	__cmock_sntp_query_ReturnThruPtr_ts(&sntp_time_value);
 
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_sntp_close_ExpectAnyArgs();
@@ -925,8 +925,8 @@ void test_date_time_update_all_retry_ntp_fail(void)
 	__cmock_sntp_init_ExpectAnyArgsAndReturn(0);
 	__cmock_sntp_query_ExpectAndReturn(NULL, 5000, NULL, -1);
 	__cmock_sntp_query_IgnoreArg_ctx();
-	__cmock_sntp_query_IgnoreArg_time();
-	__cmock_sntp_query_ReturnThruPtr_time(&sntp_time_value);
+	__cmock_sntp_query_IgnoreArg_ts();
+	__cmock_sntp_query_ReturnThruPtr_ts(&sntp_time_value);
 
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_sntp_close_ExpectAnyArgs();
@@ -939,8 +939,8 @@ void test_date_time_update_all_retry_ntp_fail(void)
 	__cmock_sntp_init_ExpectAnyArgsAndReturn(0);
 	__cmock_sntp_query_ExpectAndReturn(NULL, 5000, NULL, -1);
 	__cmock_sntp_query_IgnoreArg_ctx();
-	__cmock_sntp_query_IgnoreArg_time();
-	__cmock_sntp_query_ReturnThruPtr_time(&sntp_time_value);
+	__cmock_sntp_query_IgnoreArg_ts();
+	__cmock_sntp_query_ReturnThruPtr_ts(&sntp_time_value);
 
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_sntp_close_ExpectAnyArgs();
