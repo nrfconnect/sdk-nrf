@@ -754,6 +754,10 @@ Documentation
   * New page :ref:`add_new_led_example` under :ref:`configuring_devicetree`.
     This page includes information previously located in the |nRFVSC| documentation.
 
-* Updated the :ref:`create_application` page with the :ref:`creating_add_on_index` section.
+* Updated:
+
+  * The :ref:`create_application` page with the :ref:`creating_add_on_index` section.
+  * The :ref:`ug_nrf91` documentation to use `nRF Util`_ instead of nrfjprog.
+
 * Removed the standalone page for getting started with Nordic Thingy:53.
   The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.

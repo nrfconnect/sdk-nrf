@@ -120,14 +120,11 @@ There are two ways to update the modem firmware:
 Full update
   You can use either a wired or a wireless connection to do a full update of the modem firmware:
 
-  * When using a wired connection, you can use either the `Programmer app`_, which is part of `nRF Connect for Desktop`_, or the `nRF pynrfjprog`_ Python package.
-    Both methods use the Simple Management Protocol (SMP) to provide an interface over UART, which enables the device to perform the update.
+  * When using a wired connection, you can use either the `Programmer app`_, which is part of `nRF Connect for Desktop`_, or `nRF Util's device command <Upgrading modem firmware using J-Link_>`_.
+    Both methods use the :term:`Serial Wire Debug (SWD)` interface to update the firmware.
 
-    * You can use the Programmer app to perform the update, regardless of the images that are part of the existing firmware of the device.
-      For example, you can update the modem on an nRF9160 DK using the instructions described in the :ref:`nrf9160_updating_fw_modem` section.
-
-    * You can also use the nRF pynrfjprog Python package to perform the update, as long as a custom application image integrating the ``lib_fmfu_mgmt`` subsystem is included in the existing firmware of the device.
-      See the :ref:`fmfu_smp_svr_sample` sample for an example on how to integrate the :ref:`subsystem <lib_fmfu_mgmt>` in your custom application.
+    You can use the Programmer app to perform the update, regardless of the images that are part of the existing firmware of the device.
+    For example, you can update the modem on an nRF9160 DK using the instructions provided in the :ref:`nrf9160_updating_fw_modem` section.
 
   * When using a wireless connection, the update is applied over-the-air (OTA).
     See :ref:`nrf91_fota` for more information.
