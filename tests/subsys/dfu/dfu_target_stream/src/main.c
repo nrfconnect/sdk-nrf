@@ -12,8 +12,7 @@
 #include <dfu/dfu_target_stream.h>
 
 #define FLASH_BASE (64*1024)
-#define FLASH_SIZE DT_REG_SIZE(SOC_NV_FLASH_NODE)
-#define FLASH_AVAILABLE (FLASH_SIZE-FLASH_BASE)
+#define FLASH_AVAILABLE (16*1024)
 
 #define TEST_ID_1 "test_1"
 #define TEST_ID_2 "test_2"
@@ -41,11 +40,15 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream)
 
 	/* Null checks */
 	err = DFU_TARGET_STREAM_INIT(NULL, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_true(err < 0, "Unexpected success: %d", err);
 
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, NULL, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
+	zassert_true(err < 0, "Unexpected success: %d", err);
+
+	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, NULL, sizeof(sbuf),
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_true(err < 0, "Unexpected success: %d", err);
 
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, NULL, sizeof(sbuf),
@@ -54,14 +57,14 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream)
 
 	/* Expected successful call */
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	/* Call _init again without calling "complete". This should result
 	 * in an error since only one id is supported simultaneously
 	 */
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_true(err < 0, "Unexpected success: %d", err);
 
 	/* Perform write, and verify offset */
@@ -85,7 +88,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream)
 	 * should be deleted.
 	 */
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	/* Read out the data to ensure that it was written correctly */
@@ -108,7 +111,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	/* Perform write, and verify offset */
@@ -126,7 +129,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	 * verify that the offsets are the same.
 	 */
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	err = dfu_target_stream_offset_get(&second_offset);
@@ -142,7 +145,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	 * verify that the offset is now 0, since we had a succesfull 'done'.
 	 */
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	err = dfu_target_stream_offset_get(&second_offset);
@@ -159,7 +162,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 
 	/* Re-initialize dfu target, for 'TEST_ID_1' */
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	/* Verify that offset is 0 */
@@ -184,7 +187,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	 * loaded is 0 even though it was just retained an non-0 for TEST_ID_1
 	 */
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	err = dfu_target_stream_offset_get(&first_offset);
@@ -207,7 +210,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	/* Check that last erased page offset was set correctly when loading */
@@ -236,7 +239,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	err = dfu_target_stream_done(false);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
 	/* Check that last erased page offset was set correctly when loading */
@@ -272,14 +275,14 @@ static void reset_stream_progress(const struct device *dev)
 	int err;
 
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_1, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	__ASSERT(err == 0, "Unable to initialiae test stream %s: %d", TEST_ID_1, err);
 
 	err = dfu_target_stream_reset();
 	__ASSERT(err == 0, "Unable to reset test stream %s: %d", TEST_ID_1, err);
 
 	err = DFU_TARGET_STREAM_INIT(TEST_ID_2, fdev, sbuf, sizeof(sbuf),
-				     FLASH_BASE, 0, NULL);
+				     FLASH_BASE, FLASH_AVAILABLE, NULL);
 	__ASSERT(err == 0, "Unable to initialiae test stream %s: %d", TEST_ID_2, err);
 
 	err = dfu_target_stream_reset();
