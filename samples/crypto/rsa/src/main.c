@@ -103,7 +103,7 @@ int import_rsa_keypair(void)
 	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_RSA_KEY_PAIR);
 	psa_set_key_bits(&key_attributes, 4096);
 
-	/* Generate a random keypair. The keypair is not exposed to the application,
+	/* Import an RSA keypair. The keypair is not exposed to the application,
 	 * we can use it to signing/verification the key handle.
 	 */
 	status = psa_import_key(&key_attributes, private_key_der, sizeof(private_key_der),
