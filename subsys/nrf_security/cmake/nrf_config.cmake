@@ -23,6 +23,8 @@ kconfig_check_and_set_base(MBEDTLS_NO_PLATFORM_ENTROPY)
 kconfig_check_and_set_base(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
 kconfig_check_and_set_base(MBEDTLS_DEBUG_C)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
+kconfig_check_and_set_base(MBEDTLS_HAVE_TIME)
+kconfig_check_and_set_base(MBEDTLS_HAVE_TIME_DATE)
 
 # Threading configurations for CryptoCell and locally built PSA core
 kconfig_check_and_set_base(MBEDTLS_THREADING_C)
