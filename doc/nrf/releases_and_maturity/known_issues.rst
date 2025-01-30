@@ -504,6 +504,21 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0
+
+KRKNWK-19915: Certification test case TC-DGGEN-2.1 fails on test step 10d when Total Operational Hours feature is enabled
+  Total operational hours are saved to NVM with interval defined by :kconfig:option:`CONFIG_CHIP_OPERATIONAL_TIME_SAVE_INTERVAL` Kconfig option.
+  The test case requires checking the value after one hour, restarting the DUT, and verifying if the value has not changed, causing failures if given option is greater than 1.
+
+  **Workaround:** There are two alternative solutions to fix this issue:
+
+    * Disable PICS DGGEN.S.A0003 in the :file:`GeneralDiagnosticsClusterTestPlan.xml` file, disable the ``TotalOperationalHours`` attribute in the General Diagnostics Cluster on Endpoint 0 using the ZAP Tool, and regenerate files.
+    * Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``89e823e5d8065ce85a6e6b4c205e11db413c4535`` from the `upstream Matter SDK repository <https://github.com/project-chip/connectedhomeip>`_).
+
+  .. note::
+
+    The total operational hours feature is optional and this issue affects the certification process only when DGGEN.S.A0003 PICS is enabled.
+
 .. rst-class:: v2-9-0
 
 KRKNWK-19804: Descriptor Device Type List does not include OTA Requestor device on endpoint 0
