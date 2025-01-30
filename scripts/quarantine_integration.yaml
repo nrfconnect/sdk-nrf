@@ -959,7 +959,7 @@
     - applications.asset_tracker_v2.debug
     - applications.asset_tracker_v2.nrf_cloud
   platforms:
-    - native_sim
+    - native_sim/native
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -1470,6 +1470,3 @@
     - thingy53/nrf5340/cpuapp/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
-- platforms:
-    - native_posix
-  comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
