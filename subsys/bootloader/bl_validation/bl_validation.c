@@ -202,16 +202,19 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 	int init_retval = bl_crypto_init();
 
 	if (init_retval) {
-		LOG_ERR("bl_crypto_init() returned %d.", init_retval);
+		if (!external) {
+			LOG_ERR("bl_crypto_init() returned %d.", init_retval);
+		}
 		return false;
 	}
 
 	init_retval = verify_public_keys();
 	if (init_retval) {
-		LOG_ERR("verify_public_keys() returned %d.", init_retval);
-		if (init_retval == -EHASHFF) {
-			LOG_INF("A public key contains 0xFFFF, which is "
-				"unsupported");
+		if (!external) {
+			LOG_ERR("verify_public_keys() returned %d.", init_retval);
+			if (init_retval == -EHASHFF) {
+				LOG_INF("A public key contains 0xFFFF, which is unsupported");
+			}
 		}
 		return false;
 	}
@@ -230,19 +233,25 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 
 		if (read_retval != SB_PUBLIC_KEY_HASH_LEN) {
 			if (read_retval == -EINVAL) {
-				LOG_INF("Key %d has been invalidated, try next.",
-					key_data_idx);
+				if (!external) {
+					LOG_INF("Key %d has been invalidated, try next.",
+						key_data_idx);
+				}
 				continue;
 			} else {
-				LOG_ERR("public_key_data_read failed: %d.",
-					read_retval);
+				if (!external) {
+					LOG_ERR("public_key_data_read failed: %d.",
+						read_retval);
+				}
 				return false;
 			}
 		}
 
-		LOG_INF("Verifying signature against key %d.", key_data_idx);
-		LOG_INF("Hash: 0x%02x...%02x", key_data[0],
-			key_data[SB_PUBLIC_KEY_HASH_LEN-1]);
+		if (!external) {
+			LOG_INF("Verifying signature against key %d.", key_data_idx);
+			LOG_INF("Hash: 0x%02x...%02x", key_data[0],
+				key_data[SB_PUBLIC_KEY_HASH_LEN-1]);
+		}
 		int retval = rot_verify(fw_val_info->public_key,
 					key_data,
 					fw_val_info->signature,
@@ -251,22 +260,32 @@ static bool validate_signature(const uint32_t fw_src_address, const uint32_t fw_
 
 		if (retval == 0) {
 			for (uint32_t i = 0; i < key_data_idx; i++) {
-				LOG_INF("Invalidating key %d.", i);
+				if (!external) {
+					LOG_INF("Invalidating key %d.", i);
+				}
 				invalidate_public_key(i);
 			}
-			LOG_INF("Firmware signature verified.");
+			if (!external) {
+				LOG_INF("Firmware signature verified.");
+			}
 			return true;
 		} else if (retval == -EHASHINV) {
-			LOG_WRN("Public key didn't match, try next.");
+			if (!external) {
+				LOG_WRN("Public key didn't match, try next.");
+			}
 			continue;
 		} else {
-			LOG_ERR("Firmware validation failed with error %d.",
-				retval);
+			if (!external) {
+				LOG_ERR("Firmware validation failed with error %d.",
+					retval);
+			}
 			return false;
 		}
 	}
 
-	LOG_ERR("Failed to validate signature.");
+	if (!external) {
+		LOG_ERR("Failed to validate signature.");
+	}
 	return false;
 }
 
@@ -279,7 +298,9 @@ static bool validate_hash(const uint32_t fw_src_address, const uint32_t fw_size,
 	int retval = bl_crypto_init();
 
 	if (retval) {
-		LOG_ERR("bl_crypto_init() returned %d.", retval);
+		if (!external) {
+			LOG_ERR("bl_crypto_init() returned %d.", retval);
+		}
 		return false;
 	}
 
@@ -287,12 +308,16 @@ static bool validate_hash(const uint32_t fw_src_address, const uint32_t fw_size,
 			fw_val_info->hash);
 
 	if (retval != 0) {
-		LOG_ERR("Firmware validation failed with error %d.",
-			retval);
+		if (!external) {
+			LOG_ERR("Firmware validation failed with error %d.",
+				retval);
+		}
 		return false;
 	}
 
-	LOG_INF("Firmware hash verified.");
+	if (!external) {
+		LOG_INF("Firmware hash verified.");
+	}
 
 	return true;
 }
@@ -309,37 +334,51 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	const uint32_t fw_src_end = (fw_src_address + fwinfo->size);
 
 	if (!fwinfo) {
-		LOG_ERR("NULL parameter.");
+		if (!external) {
+			LOG_ERR("NULL parameter.");
+		}
 		return false;
 	}
 
 	if (!fw_info_check((uint32_t)fwinfo)) {
-		LOG_ERR("Invalid firmware info format.");
+		if (!external) {
+			LOG_ERR("Invalid firmware info format.");
+		}
 		return false;
 	}
 
 	if (fw_dst_address != fwinfo->address) {
-		LOG_ERR("The firmware doesn't belong at destination addr.");
+		if (!external) {
+			LOG_ERR("The firmware doesn't belong at destination addr.");
+		}
 		return false;
 	}
 
 	if (!external && (fw_src_address != fw_dst_address)) {
-		LOG_ERR("src and dst must be equal for local calls.");
+		if (!external) {
+			LOG_ERR("src and dst must be equal for local calls.");
+		}
 		return false;
 	}
 
 	if (fw_info_find(fw_src_address) != fwinfo) {
-		LOG_ERR("Firmware info doesn't point to itself.");
+		if (!external) {
+			LOG_ERR("Firmware info doesn't point to itself.");
+		}
 		return false;
 	}
 
 	if (fwinfo->valid != CONFIG_FW_INFO_VALID_VAL) {
-		LOG_ERR("Firmware has been invalidated: 0x%x.",
-			fwinfo->valid);
+		if (!external) {
+			LOG_ERR("Firmware has been invalidated: 0x%x.",
+				fwinfo->valid);
+		}
 		return false;
 	}
 
-	LOG_INF("Trying to get Firmware version");
+	if (!external) {
+		LOG_INF("Trying to get Firmware version");
+	}
 
 #if defined(CONFIG_NRFX_NVMC)
 	uint16_t stored_version;
@@ -350,8 +389,10 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	int err = get_monotonic_version(&stored_version);
 
 	if (err) {
-		LOG_ERR("Cannot read the firmware version. %d", err);
-		LOG_INF("We assume this is due to the firmware version not being enabled.");
+		if (!external) {
+			LOG_ERR("Cannot read the firmware version. %d", err);
+			LOG_INF("We assume this is due to the firmware version not being enabled.");
+		}
 
 		/*
 		 * Errors in reading the firmware version are assumed to be
@@ -365,8 +406,10 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	}
 
 	if (fwinfo->version < stored_version) {
-		LOG_ERR("Firmware version (%u) is smaller than monotonic counter (%u).",
-			fwinfo->version, stored_version);
+		if (!external) {
+			LOG_ERR("Firmware version (%u) is smaller than monotonic counter (%u).",
+				fwinfo->version, stored_version);
+		}
 		return false;
 	}
 
@@ -375,19 +418,25 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		"B0's slots aren't the same size. Check pm.yml.");
 	if ((fwinfo->size > (PM_S0_SIZE))
 		|| (fwinfo->total_size > fwinfo->size)) {
-		LOG_ERR("Invalid size or total_size in firmware info.");
+		if (!external) {
+			LOG_ERR("Invalid size or total_size in firmware info.");
+		}
 		return false;
 	}
 #endif
 
 	if (!region_within(fwinfo_address, fwinfo_end,
 			fw_src_address, fw_src_end)) {
-		LOG_ERR("Firmware info is not within signed region.");
+		if (!external) {
+			LOG_ERR("Firmware info is not within signed region.");
+		}
 		return false;
 	}
 
 	if (!within(fwinfo->boot_address, fw_dst_address, fw_dst_end)) {
-		LOG_ERR("Boot address is not within signed region.");
+		if (!external) {
+			LOG_ERR("Boot address is not within signed region.");
+		}
 		return false;
 	}
 
@@ -398,19 +447,25 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	const uint32_t reset_vector = ((const uint32_t *)(fw_src_address + stack_ptr_offset))[1];
 
 	if (!within(reset_vector, fw_dst_address, fw_dst_end)) {
-		LOG_ERR("Reset handler is not within signed region.");
+		if (!external) {
+			LOG_ERR("Reset handler is not within signed region.");
+		}
 		return false;
 	}
 
 	fw_val_info = validation_info_find(fw_src_address + fwinfo->size, 4);
 
 	if (!fw_val_info) {
-		LOG_ERR("Could not find valid firmware validation info.");
+		if (!external) {
+			LOG_ERR("Could not find valid firmware validation info.");
+		}
 		return false;
 	}
 
 	if (fw_val_info->address != fwinfo->address) {
-		LOG_ERR("Validation info doesn't belong to this firmware.");
+		if (!external) {
+			LOG_ERR("Validation info doesn't belong to this firmware.");
+		}
 		return false;
 	}
 
