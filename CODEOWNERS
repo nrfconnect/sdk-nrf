@@ -52,6 +52,7 @@
 /applications/zigbee_weather_station/*.rst @nrfconnect/ncs-terahertz-doc
 
 # Boards
+/boards/nordic/nrf7120pdk/                @nrfconnect/ncs-co-boards @rob-robinson-14 @Hi-Im-David
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-bluebagel
 /boards/nordic/thingy91*                  @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
 /boards/shields/coverage_support/         @nrfconnect/ncs-low-level-test
@@ -724,6 +725,10 @@
 /snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
 /snippets/wpa-supplicant-debug/           @krish2718 @sachinthegreen
 /snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
+
+# SoC
+/soc/nordic/                              @nrfconnect/ncs-code-owners
+/soc/nordic/nrf71/                        @nrfconnect/ncs-code-owners @rob-robinson-14 @Hi-Im-David
 
 # These snippet entries must be below other snippet entries (excluding doc), do not move
 /snippets/                                @nrfconnect/ncs-co-build-system
