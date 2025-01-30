@@ -57,7 +57,7 @@
     - sample.modules.lvgl.demo_widgets
     - sample.smf.smf_calculator
   platforms:
-    - native_sim
+    - native_sim/native
     - native_sim/native/64
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
 
@@ -193,15 +193,28 @@
     - net.sockets.tls13.psk_kex.tickets
     - net.sockets.tls13.ephemeral_kex.tickets
   platforms:
-    - native_sim
+    - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30873"
 
 - scenarios:
     - drivers.power_domain.build.pm
     - drivers.power_domain.build
   platforms:
-    - native_sim
+    - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30877"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.ram_load.*
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24488"
+
+- scenarios:
+    - net.iface.iid.stable
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31574"
 
 # ---------------------------------   Won't fix section -----------------------------------
 
@@ -448,12 +461,19 @@
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "partition manager configuration need to be fixed/provided"
 
-- platforms:
-    - native_posix
-  comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
-
 - scenarios:
     - drivers.hwinfo.api
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
-  comment: Unsupported device
+  comment: "Unsupported device"
+
+- scenarios:
+    - secure_storage.psa.its.secure_storage.*
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+    - mps2/an521/cpu0
+  comment: "redundant due to natve_sim already in scope"
+
+- scenarios:
+    - sample.net.prometheus
+  comment: "not compatible with NCS (Frank Audun Kvamtro)"
