@@ -37,7 +37,7 @@ struct nac_test_values_big {
 	uint8_t phy;
 	uint32_t pd_us;
 	bool encryption;
-	uint8_t broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE + 1];
+	uint8_t broadcast_code[BT_ISO_BROADCAST_CODE_SIZE + 1];
 	uint8_t num_subgroups;
 	bool high_quality;
 	bool std_quality;
