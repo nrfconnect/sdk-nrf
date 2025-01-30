@@ -610,32 +610,6 @@ int bt_conn_create_auto_stop(void)
 }
 #endif /* defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 
-#if !defined(CONFIG_BT_FILTER_ACCEPT_LIST)
-int bt_le_set_auto_conn(const bt_addr_le_t *addr,
-			const struct bt_le_conn_param *param)
-{
-	struct nrf_rpc_cbor_ctx ctx;
-	int result;
-	size_t buffer_size_max = 3;
-
-	buffer_size_max += addr ? sizeof(bt_addr_le_t) : 0;
-	buffer_size_max += (param == NULL) ? 1 : 12;
-
-	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-
-	nrf_rpc_encode_buffer(&ctx, addr, sizeof(bt_addr_le_t));
-	if (param == NULL) {
-		nrf_rpc_encode_null(&ctx);
-	} else {
-		bt_le_conn_param_enc(&ctx, param);
-	}
-
-	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_LE_SET_AUTO_CONN_RPC_CMD,
-				&ctx, nrf_rpc_rsp_decode_i32, &result);
-
-	return result;
-}
-#endif  /* !defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 #endif  /* defined(CONFIG_BT_CENTRAL) */
 
 #if defined(CONFIG_BT_SMP)
