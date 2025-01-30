@@ -630,41 +630,6 @@ static void bt_conn_create_auto_stop_rpc_handler(const struct nrf_rpc_group *gro
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_create_auto_stop, BT_CONN_CREATE_AUTO_STOP_RPC_CMD,
 			 bt_conn_create_auto_stop_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
-
-#if !defined(CONFIG_BT_FILTER_ACCEPT_LIST)
-static void bt_le_set_auto_conn_rpc_handler(const struct nrf_rpc_group *group,
-					    struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
-{
-	bt_addr_le_t addr_data;
-	const bt_addr_le_t *addr;
-	struct bt_le_conn_param param_data;
-	struct bt_le_conn_param *param;
-	int result;
-
-	addr = nrf_rpc_decode_buffer(ctx, &addr_data, sizeof(bt_addr_le_t));
-	if (nrf_rpc_decode_is_null(ctx)) {
-		param = NULL;
-	} else {
-		param = &param_data;
-		bt_le_conn_param_dec(ctx, param);
-	}
-
-	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		goto decoding_error;
-	}
-
-	result = bt_le_set_auto_conn(addr, param);
-
-	nrf_rpc_rsp_send_int(group, result);
-
-	return;
-decoding_error:
-	report_decoding_error(BT_LE_SET_AUTO_CONN_RPC_CMD, handler_data);
-}
-
-NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_set_auto_conn, BT_LE_SET_AUTO_CONN_RPC_CMD,
-			 bt_le_set_auto_conn_rpc_handler, NULL);
-#endif  /* !defined(CONFIG_BT_FILTER_ACCEPT_LIST) */
 #endif  /* defined(CONFIG_BT_CENTRAL) */
 
 #if defined(CONFIG_BT_SMP)
