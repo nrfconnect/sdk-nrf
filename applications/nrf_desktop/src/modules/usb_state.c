@@ -539,85 +539,23 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 	bool new_rep_enabled = (usb_hid->enabled) && (usb_hid->hid_protocol == HID_PROTOCOL_REPORT);
 	bool new_boot_enabled = (usb_hid->enabled) && (usb_hid->hid_protocol == HID_PROTOCOL_BOOT);
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_MOUSE]) &&
-	    (usb_hid->report_bm & BIT(REPORT_ID_MOUSE))) {
-		struct hid_report_subscription_event *event =
-			new_hid_report_subscription_event();
+	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
+		uint8_t rep_id = input_reports[i];
+		bool new_enabled = is_hid_boot_report(rep_id) ? new_boot_enabled : new_rep_enabled;
 
-		event->report_id  = REPORT_ID_MOUSE;
-		event->enabled    = new_rep_enabled;
-		event->subscriber = usb_hid;
+		if ((new_enabled != usb_hid->report_enabled[rep_id]) &&
+		    (usb_hid->report_bm & BIT(rep_id))) {
+			struct hid_report_subscription_event *event =
+				new_hid_report_subscription_event();
 
-		APP_EVENT_SUBMIT(event);
+			event->report_id  = rep_id;
+			event->enabled    = new_enabled;
+			event->subscriber = usb_hid;
 
-		usb_hid->report_enabled[REPORT_ID_MOUSE] = new_rep_enabled;
-	}
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_KEYBOARD_KEYS]) &&
-	    (usb_hid->report_bm & BIT(REPORT_ID_KEYBOARD_KEYS))) {
-		struct hid_report_subscription_event *event =
-			new_hid_report_subscription_event();
+			APP_EVENT_SUBMIT(event);
 
-		event->report_id  = REPORT_ID_KEYBOARD_KEYS;
-		event->enabled    = new_rep_enabled;
-		event->subscriber = usb_hid;
-
-		APP_EVENT_SUBMIT(event);
-
-		usb_hid->report_enabled[REPORT_ID_KEYBOARD_KEYS] = new_rep_enabled;
-	}
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_SYSTEM_CTRL]) &&
-	    (usb_hid->report_bm & BIT(REPORT_ID_SYSTEM_CTRL))) {
-		struct hid_report_subscription_event *event =
-			new_hid_report_subscription_event();
-
-		event->report_id  = REPORT_ID_SYSTEM_CTRL;
-		event->enabled    = new_rep_enabled;
-		event->subscriber = usb_hid;
-
-		APP_EVENT_SUBMIT(event);
-		usb_hid->report_enabled[REPORT_ID_SYSTEM_CTRL] = new_rep_enabled;
-	}
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT) &&
-	    (new_rep_enabled != usb_hid->report_enabled[REPORT_ID_CONSUMER_CTRL]) &&
-	    (usb_hid->report_bm & BIT(REPORT_ID_CONSUMER_CTRL))) {
-		struct hid_report_subscription_event *event =
-			new_hid_report_subscription_event();
-
-		event->report_id  = REPORT_ID_CONSUMER_CTRL;
-		event->enabled    = new_rep_enabled;
-		event->subscriber = usb_hid;
-
-		APP_EVENT_SUBMIT(event);
-		usb_hid->report_enabled[REPORT_ID_CONSUMER_CTRL] = new_rep_enabled;
-	}
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) &&
-	    (new_boot_enabled != usb_hid->report_enabled[REPORT_ID_BOOT_MOUSE]) &&
-	    (usb_hid->report_bm & BIT(REPORT_ID_BOOT_MOUSE))) {
-		struct hid_report_subscription_event *event =
-			new_hid_report_subscription_event();
-
-		event->report_id  = REPORT_ID_BOOT_MOUSE;
-		event->enabled    = new_boot_enabled;
-		event->subscriber = usb_hid;
-
-		APP_EVENT_SUBMIT(event);
-		usb_hid->report_enabled[REPORT_ID_BOOT_MOUSE] = new_boot_enabled;
-	}
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD) &&
-	    (new_boot_enabled != usb_hid->report_enabled[REPORT_ID_BOOT_KEYBOARD]) &&
-	    (usb_hid->report_bm & BIT(REPORT_ID_BOOT_KEYBOARD))) {
-		struct hid_report_subscription_event *event =
-			new_hid_report_subscription_event();
-
-		event->report_id  = REPORT_ID_BOOT_KEYBOARD;
-		event->enabled    = new_boot_enabled;
-		event->subscriber = usb_hid;
-
-		APP_EVENT_SUBMIT(event);
-		usb_hid->report_enabled[REPORT_ID_BOOT_KEYBOARD] = new_boot_enabled;
+			usb_hid->report_enabled[rep_id] = new_enabled;
+		}
 	}
 
 	LOG_INF("USB HID %p %sabled", (void *)usb_hid, (usb_hid->enabled) ? ("en"):("dis"));
