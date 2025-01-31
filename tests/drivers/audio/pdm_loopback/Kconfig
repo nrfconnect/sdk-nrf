@@ -28,8 +28,7 @@ config TEST_PDM_SAMPLING_TIME
 	  determine the period of capturing timer.
 
 config TEST_USE_DMM
-	bool "Use of DMM prealocation"
-	default n
+	bool "Use of DMM pre-allocation"
 	help
 	  The test will use it to determine whether to prealocate DMM
 	  buffer or use regular mem slab and allocate dmm buffer inside
