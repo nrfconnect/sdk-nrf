@@ -256,6 +256,7 @@ nRF Desktop
 
     The features were implemented directly in the HID state module before.
     This change simplifies the HID state module implementation and allows code reuse.
+  * The HID input and output report maps (``input_reports`` and ``output_reports`` arrays defined in the :file:`configuration/common/hid_report_desc.h` file) to contain only IDs of enabled HID reports.
   * The default value of the :kconfig:option:`CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT` Kconfig option to ``64``.
     This ensures that more complex configurations fit in the limit.
   * The :ref:`nrf_desktop_hid_reportq` to accept HID report IDs that do not belong to HID input reports supported by the application (are not part of the ``input_reports`` array defined in :file:`configuration/common/hid_report_desc.h` file).
