@@ -53,5 +53,4 @@
 &tddconf {
 	status = "okay";
 	etrsources = <(NRF_TDDCONF_SOURCE_STMMAINCORE)>;
-	portconfig = <0>;
 };
