@@ -1142,7 +1142,14 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		}
 
 		operation->state = CRACEN_KD_STATE_HKDF_OUTPUT;
-		memcpy(output, operation->hkdf.prk, 32);
+
+		size_t prk_length = PSA_HASH_LENGTH(PSA_ALG_HKDF_GET_HASH(operation->alg));
+
+		if (output_length < prk_length) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		}
+
+		memcpy(output, operation->hkdf.prk, prk_length);
 		return PSA_SUCCESS;
 	}
 
