@@ -25,3 +25,33 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc_54H"
+  benchmarks.power_consumption.adc_nrf54h.ld_64MHz:
+    sysbuild: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - adc_CONFIG_CLOCK_CONTROL=y
+      - adc_CONFIG_LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ=y
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc_54H"
+  benchmarks.power_consumption.adc_nrf54h.ld_128MHz:
+    sysbuild: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - adc_CONFIG_CLOCK_CONTROL=y
+      - adc_CONFIG_LOCAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ=y
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc_54H"
