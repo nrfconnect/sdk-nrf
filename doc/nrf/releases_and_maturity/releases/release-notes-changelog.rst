@@ -133,6 +133,8 @@ Bluetooth® LE
 * Fixed an issue where a flash operation executed on the system workqueue might result in ``-ETIMEDOUT``, if there is an active Bluetooth LE connection.
 * Fixed an issue where Bluetooth applications built with the ``nordic-bt-rpc`` snippet (in the :ref:`ble_rpc` configuration) did not work on the nRF54H20 devices due to incorrect memory mapping.
 
+* Updated the Bluetooth LE SoftDevice Controller driver to make the :c:func:`hci_vs_sdc_llpm_mode_set` function return an error if Low Latency Packet Mode (LLPM) is not supported or not enabled in the Bluetooth LE Controller driver configuration (:kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`).
+
 Bluetooth Mesh
 --------------
 
@@ -199,7 +201,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Machine learning
 ----------------
 
-|no_changes_yet_note|
+* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
 
 Asset Tracker v2
 ----------------
@@ -214,7 +216,7 @@ Connectivity Bridge
 IPC radio firmware
 ------------------
 
-|no_changes_yet_note|
+* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system in all devices that contain MRAM, such as the nRF54H Series devices.
 
 Matter Bridge
 -------------
@@ -565,6 +567,11 @@ Bluetooth libraries and services
 
   * Fixed an issue in the :ref:`bt_mesh_light_ctrl_srv_readme` model to automatically resume the Lightness Controller after recalling a scene (``NCSDK-30033`` known issue).
 
+
+* :ref:`bt_fast_pair_readme` library:
+
+  * Updated the :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
+
 Common Application Framework
 ----------------------------
 
@@ -726,7 +733,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Added instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
 
 Edge Impulse integration
 ------------------------
