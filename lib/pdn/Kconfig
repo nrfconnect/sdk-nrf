@@ -27,13 +27,6 @@ config PDN_INIT_PRIORITY
 	int "Initialization priority"
 	default APPLICATION_INIT_PRIORITY
 
-config PDN_DYNAMIC_INFO_AT_BUF_SIZE
-	int "Dynamic info AT buffer size"
-	default 512
-	help
-	   Buffer size for storing the response of the AT+CGCONTRDP AT command used in the
-	   pdn_dynamic_info_get() function.
-
 config PDN_DEFAULTS_OVERRIDE
 	bool "Override defaults for PDP context 0"
 	help

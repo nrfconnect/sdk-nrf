@@ -62,26 +62,39 @@ The sample shows the following output, which may vary based on the network provi
 
 .. code-block:: console
 
+   *** Booting nRF Connect SDK v2.9.99-0f7da9c375d1 ***
+   *** Using Zephyr OS v3.7.99-2d1e173dfed0 ***
    PDN sample started
    Event: PDP context 0 activated
-   Default APN is telenor.iot
+   Default APN is telenor.smart
    Created new PDP context 1
-   PDP contEvent: PDP context 0 IPv6 up
-   ext 1 configured: APN telenor.iot, Family IPV4V6
+   PDP context 1 configured: APN telenor.smart, Family IPV4V6
    Event: PDP context 1 activated
+   Event: PDP context 0 IPv6 up
    Event: PDP context 1 IPv6 up
    PDP Context 0, PDN ID 0
    PDP Context 1, PDN ID 0
+   Dynamic info for cid 0:
+   Primary IPv4 DNS address: 111.222.233.4
+   Secondary IPv4 DNS address: 111.222.233.4
+   Primary IPv6 DNS address: 1111:2222:3:fff::55
+   Secondary IPv6 DNS address: 1111:2222:3:fff::55
+   IPv4 MTU: 1500, IPv6 MTU: 1500
+   Dynamic info for cid 1:
+   Primary IPv4 DNS address: 111.222.233.4
+   Secondary IPv4 DNS address: 111.222.233.4
+   Primary IPv6 DNS address: 1111:2222:3:fff::55
+   Secondary IPv6 DNS address: 1111:2222:3:fff::55
+   IPv4 MTU: 1500, IPv6 MTU: 1500
 
    Interface addresses:
-   l0: (AF_INET) 10.243.140.208
-   l0: (AF_INET6) fe80::63:b639:ab01
-   l0: (AF_INET6) 2a02:2121:20d:175d:0:63:b639:ab01
+   l0: (AF_INET) 10.22.233.44
+   l0: (AF_INET6) aaaa::bbbb:cccc
+   l0: (AF_INET6) aaa:bbbbb:cccc:dddd::eeee:2cd2
 
-   Event: PDP context 0 deactivated
-   Event: PDP context 1 deactivated
    Event: PDP context 0 network detach
    Event: PDP context 1 network detach
+   Event: PDP context 1 context destroyed
    Bye
 
 Dependencies

@@ -243,7 +243,7 @@ __deprecated int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
  *
  * @return Zero on success or an error code on failure.
  */
-int pdn_dynamic_info_get(uint32_t cid, struct pdn_dynamic_info *pdn_info);
+int pdn_dynamic_info_get(uint8_t cid, struct pdn_dynamic_info *pdn_info);
 
 /**
  * @brief Retrieve the default Access Point Name (APN).

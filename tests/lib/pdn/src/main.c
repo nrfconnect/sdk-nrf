@@ -45,6 +45,7 @@ FAKE_VOID_FUNC(k_free, void *);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_scanf, const char *, const char *, ...);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_printf, const char *, ...);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...);
+FAKE_VALUE_FUNC(int, z_impl_zsock_inet_pton, sa_family_t, const char *, void *);
 
 extern void on_cgev(const char *notif);
 extern void on_cnec_esm(const char *notif);
@@ -74,6 +75,45 @@ static void k_free_PDN1(void *data)
 static void k_free_PDN2(void *data)
 {
 	TEST_ASSERT_EQUAL_PTR(&pdn2, data);
+}
+
+#define IPv4_DNS_PRIMARY_STR "192.168.1.23"
+#define IPv4_DNS_SECONDARY_STR "192.168.1.24"
+#define IPv6_DNS_PRIMARY_STR "1111:2222:3:fff::55"
+#define IPv6_DNS_SECONDARY_STR "2222:3333:4:eee:7777::66"
+
+char ipv4_dns_primary[] = {192, 168, 1, 23};
+char ipv4_dns_secondary[] = {192, 168, 1, 24};
+char ipv6_dns_primary[] = {17, 17, 34, 34, 0, 3, 15, 255, 0, 0, 0, 0, 0, 0, 0, 85};
+char ipv6_dns_secondary[] = {34, 34, 51, 51, 0, 4, 14, 238, 119, 119, 0, 0, 0, 0, 0, 102};
+
+
+static int z_impl_zsock_inet_pton_custom(sa_family_t family, const char *src, void *dst)
+{
+	switch (family) {
+	case AF_INET:
+		if (memcmp(src, IPv4_DNS_PRIMARY_STR, strlen(IPv4_DNS_PRIMARY_STR)) == 0) {
+			memcpy(dst, ipv4_dns_primary, sizeof(ipv4_dns_primary));
+			return 1;
+		}
+		if (memcmp(src, IPv4_DNS_SECONDARY_STR, strlen(IPv4_DNS_SECONDARY_STR)) == 0) {
+			memcpy(dst, ipv4_dns_secondary, sizeof(ipv4_dns_secondary));
+			return 1;
+		}
+		break;
+	case AF_INET6:
+		if (memcmp(src, IPv6_DNS_PRIMARY_STR, strlen(IPv6_DNS_PRIMARY_STR)) == 0) {
+			memcpy(dst, ipv6_dns_primary, sizeof(ipv6_dns_primary));
+			return 1;
+		}
+		if (memcmp(src, IPv6_DNS_SECONDARY_STR, strlen(IPv6_DNS_SECONDARY_STR)) == 0) {
+			memcpy(dst, ipv6_dns_secondary, sizeof(ipv6_dns_secondary));
+			return 1;
+		}
+		break;
+	}
+
+	return 0;
 }
 
 static int nrf_modem_at_printf_eshutdown(const char *cmd, va_list args)
@@ -572,6 +612,115 @@ static int nrf_modem_at_scanf_custom_cgdcont(const char *cmd, const char *fmt, v
 	return 1;
 }
 
+#define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1 \
+	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%15[0-9.]\",\"%15[0-9.]\",,,,,%u"
+#define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2 \
+	"+%*[^+]"\
+	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%39[0-9A-Fa-f:]\",\"%39[0-9A-Fa-f:]\",,,,,%u"
+
+static int nrf_modem_at_scanf_custom_cgcontrdp(const char *cmd, const char *fmt, va_list args)
+{
+	char *dns1;
+	char *dns2;
+	unsigned int *mtu;
+
+	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
+
+	dns1 = va_arg(args, char *);
+	dns2 = va_arg(args, char *);
+	mtu = va_arg(args, unsigned int *);
+
+	switch (nrf_modem_at_scanf_fake.call_count) {
+	case 1:
+		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1, fmt);
+		strcpy(dns1, IPv4_DNS_PRIMARY_STR);
+		strcpy(dns2, IPv4_DNS_SECONDARY_STR);
+		*mtu = 1500;
+		return 3;
+	case 2:
+		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2, fmt);
+		strcpy(dns1, IPv6_DNS_PRIMARY_STR);
+		strcpy(dns2, IPv6_DNS_SECONDARY_STR);
+		*mtu = 1600;
+		return 3;
+	default:
+		TEST_ASSERT(false);
+		break;
+	}
+
+	return -EBADMSG;
+}
+
+static int nrf_modem_at_scanf_custom_cgcontrdp_match_ipv4(
+	const char *cmd, const char *fmt, va_list args)
+{
+	char *dns1;
+	char *dns2;
+	unsigned int *mtu;
+
+	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
+
+	dns1 = va_arg(args, char *);
+	dns2 = va_arg(args, char *);
+	mtu = va_arg(args, unsigned int *);
+
+	switch (nrf_modem_at_scanf_fake.call_count) {
+	case 1:
+		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1, fmt);
+		strcpy(dns1, IPv4_DNS_PRIMARY_STR);
+		strcpy(dns2, IPv4_DNS_SECONDARY_STR);
+		*mtu = 1500;
+		return 3;
+	case 2:
+		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2, fmt);
+		return -EBADMSG;
+	default:
+		TEST_ASSERT(false);
+		break;
+	}
+
+	return -EBADMSG;
+}
+
+static int nrf_modem_at_scanf_custom_cgcontrdp_match_ipv6(
+	const char *cmd, const char *fmt, va_list args)
+{
+	char *dns1;
+	char *dns2;
+	unsigned int *mtu;
+
+	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
+
+	dns1 = va_arg(args, char *);
+	dns2 = va_arg(args, char *);
+	mtu = va_arg(args, unsigned int *);
+
+	switch (nrf_modem_at_scanf_fake.call_count) {
+	case 1:
+		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1, fmt);
+		strcpy(dns1, IPv6_DNS_PRIMARY_STR);
+		strcpy(dns2, IPv6_DNS_SECONDARY_STR);
+		*mtu = 1600;
+		return 3;
+	case 2:
+		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2, fmt);
+		return -EBADMSG;
+	default:
+		TEST_ASSERT(false);
+		break;
+	}
+
+	return -EBADMSG;
+}
+
+static int nrf_modem_at_scanf_custom_cgcontrdp_no_match(
+	const char *cmd, const char *fmt, va_list args)
+{
+	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
+	return -EBADMSG;
+}
+
+
 #define CMD_XGETPDNID "AT%%XGETPDNID=%u"
 #define RESP_XGETPDNID "%XGETPDNID: 1"
 
@@ -628,6 +777,7 @@ void setUp(void)
 	pdn_evt_cid = 0;
 	pdn_evt_event = PDN_EVENT_CNEC_ESM;
 	pdn_evt_reason = 0;
+	z_impl_zsock_inet_pton_fake.custom_fake = z_impl_zsock_inet_pton_custom;
 }
 
 void tearDown(void)
@@ -1307,7 +1457,85 @@ void test_on_modem_cfun_lte_on(void)
 	pdn_on_modem_cfun(21, NULL);
 
 	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
+}
 
+void test_pdn_dynamic_info_get_einval(void)
+{
+	int ret;
+
+	ret = pdn_dynamic_info_get(0, NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_pdn_dynamic_info_get_ebadmsg(void)
+{
+	int ret;
+	struct pdn_dynamic_info pdn_info = {};
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_no_match;
+
+	ret = pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_pdn_dynamic_info_get(void)
+{
+	int ret;
+	struct pdn_dynamic_info pdn_info = {};
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
+
+	ret = pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_primary, &pdn_info.dns_addr4_primary,
+				 sizeof(ipv4_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_secondary, &pdn_info.dns_addr4_secondary,
+				 sizeof(ipv4_dns_secondary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_primary, &pdn_info.dns_addr6_primary,
+				 sizeof(ipv6_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_secondary, &pdn_info.dns_addr6_secondary,
+				 sizeof(ipv6_dns_secondary));
+}
+
+void test_pdn_dynamic_info_get_match_ipv4(void)
+{
+	int ret;
+	struct pdn_dynamic_info pdn_info = {};
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv4;
+
+	ret = pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(0, pdn_info.ipv6_mtu);
+
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_primary, &pdn_info.dns_addr4_primary,
+				 sizeof(ipv4_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_secondary, &pdn_info.dns_addr4_secondary,
+				 sizeof(ipv4_dns_secondary));
+}
+
+void test_pdn_dynamic_info_get_match_ipv6(void)
+{
+	int ret;
+	struct pdn_dynamic_info pdn_info = {};
+
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv6;
+
+	ret = pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(0, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
+
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_primary, &pdn_info.dns_addr6_primary,
+				 sizeof(ipv6_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_secondary, &pdn_info.dns_addr6_secondary,
+				 sizeof(ipv6_dns_secondary));
 }
 
 extern void on_modem_init(int ret, void *ctx);
