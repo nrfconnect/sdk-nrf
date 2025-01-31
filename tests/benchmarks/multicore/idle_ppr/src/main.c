@@ -46,11 +46,12 @@ int main(void)
 	while (1) {
 		timer_expired = false;
 
+		/* Turn ON LED */
+		ret = gpio_pin_set_dt(&led, 1);
+
 		/* start a one-shot timer that expires after 1 second */
 		k_timer_start(&my_timer, K_MSEC(1000), K_NO_WAIT);
 
-		/* Turn ON LED */
-		ret = gpio_pin_set_dt(&led, 1);
 		if (ret < 0) {
 			LOG_ERR("Unable to turn on LED");
 		}
@@ -62,15 +63,15 @@ int main(void)
 			k_yield();
 		}
 
+		LOG_INF("Run %d", counter);
+		counter++;
+
 		/* Turn OFF LED */
 		ret = gpio_pin_set_dt(&led, 0);
 		if (ret < 0) {
 			LOG_ERR("Unable to turn off LED");
 		}
 		__ASSERT(ret == 0, "Unable to turn off LED\n");
-
-		LOG_INF("Run %d", counter);
-		counter++;
 
 		/* Sleep / enter low power state */
 		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);

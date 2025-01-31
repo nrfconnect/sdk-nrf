@@ -18,8 +18,6 @@
  */
 LOG_MODULE_REGISTER(idle_uarte);
 
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
-
 #if DT_NODE_EXISTS(DT_NODELABEL(dut))
 #define UART_NODE DT_NODELABEL(dut)
 #else
@@ -31,6 +29,7 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
 static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 uint8_t test_pattern[TEST_BUFFER_LEN];
 static uint8_t test_buffer[TEST_BUFFER_LEN];
