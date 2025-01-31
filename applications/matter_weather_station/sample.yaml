@@ -45,23 +45,6 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_weather_station.lto:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - OVERLAY_CONFIG=overlay-factory_data.conf
-      - FILE_SUFFIX=factory_data
-      - CONFIG_CHIP_FACTORY_DATA=y
-      - SB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y
-      - CONFIG_LTO=y
-      - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
-    platform_allow: thingy53/nrf5340/cpuapp
-    platform_exclude: thingy53/nrf5340/cpuapp/ns
-    integration_platforms:
-      - thingy53/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_weather_station.nrf7002eb:
     sysbuild: true
     build_only: true
