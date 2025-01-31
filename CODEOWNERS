@@ -18,7 +18,7 @@
 /LICENSE                                  @carlescufi
 /README.rst                               @carlescufi @nrfconnect/ncs-doc-leads
 /VERSION                                  @nrfconnect/ncs-code-owners
-/west.yml                                 @nrfconnect/ncs-code-owners
+/west.yml                                 @nrfconnect/ncs-code-owners @nrfconnect/ncs-merge
 /west-test.yml                            @nrfconnect/ncs-ci
 
 # Dot folders
