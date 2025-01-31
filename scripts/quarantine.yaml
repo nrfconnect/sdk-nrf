@@ -3,7 +3,7 @@
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 
 - scenarios:
-    - applications.matter_bridge.lto.br_ble.nrf54h20.wifi
+    - applications.matter_bridge.br_ble.nrf54h20.wifi
     - applications.matter_bridge.release.br_ble.nrf54h20.wifi
     - sample.matter.template.nrf54h20.nrf7002eb
   comment: "54H Wi-Fi PSA and Matter Legacy crypto config"
@@ -11,13 +11,6 @@
 - scenarios:
     - net.lib.wifi_credentials_backend_psa
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
-
-- scenarios:
-    - applications.matter_bridge.lto.br_ble.memory_profiling
-    - sample.matter.light_switch.persistent_subscriptions
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: https://nordicsemi.atlassian.net/browse/NCSDK-31119
 
 - scenarios:
     - sample.nrf7002.shell.otbr
@@ -37,9 +30,9 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31409"
 
 - scenarios:
-    - applications.matter_bridge.lto
-    - applications.matter_bridge.lto.br_ble
-    - applications.matter_bridge.lto.br_ble.memory_profiling
+    - applications.matter_bridge
+    - applications.matter_bridge.br_ble
+    - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.release
     - applications.matter_bridge.release.br_ble
     - sample.openthread.cli

@@ -4,20 +4,15 @@
 - scenarios:
     - sample.matter.lock.release
     - sample.matter.lock.debug
-    - sample.matter.lock.lto
     - sample.matter.lock.release.power_consumption
     - sample.matter.light_switch.debug
     - sample.matter.thermostat.debug
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.debug
     - sample.matter.light_bulb.release
-    - sample.matter.light_bulb.lto
     - sample.matter.light_switch.release
-    - sample.matter.light_switch.lto
     - sample.matter.thermostat.release
-    - sample.matter.thermostat.lto
     - sample.matter.window_cover.release
-    - sample.matter.window_cover.lto
     - sample.matter.window_cover.release.power_consumption
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
@@ -29,25 +24,20 @@
 - scenarios:
     - sample.matter.lock.nus
     - sample.matter.lock.debug
-    - sample.matter.lock.lto
     - sample.matter.lock.release.power_consumption
     - sample.matter.window_cover.debug
     - sample.matter.light_bulb.ffs
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.debug
     - sample.matter.light_bulb.release
-    - sample.matter.light_bulb.lto
     - sample.matter.light_switch.release
-    - sample.matter.light_switch.lto
     - sample.matter.thermostat.release
-    - sample.matter.thermostat.lto
     - sample.matter.window_cover.release
-    - sample.matter.window_cover.lto
     - sample.matter.window_cover.release.power_consumption
     - sample.matter.smoke_co_alarm.release.power_consumption
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
-    - applications.matter_bridge.lto.br_ble.memory_profiling
+    - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.release
     - applications.matter_bridge.release.br_ble
   platforms:
@@ -64,18 +54,13 @@
 - scenarios:
     - sample.matter.lock.release
     - sample.matter.lock.debug
-    - sample.matter.lock.lto
     - sample.matter.light_bulb.memory_profiling.persistent_subscriptions
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.debug
     - sample.matter.light_bulb.release
-    - sample.matter.light_bulb.lto
     - sample.matter.light_switch.release
-    - sample.matter.light_switch.lto
     - sample.matter.thermostat.release
-    - sample.matter.thermostat.lto
     - sample.matter.thermostat.ext_temp
-    - applications.matter_bridge.lto.br_ble.memory_profiling
     - applications.matter_bridge.release
     - applications.matter_bridge.release.br_ble
   platforms:
@@ -91,7 +76,6 @@
 - scenarios:
     - sample.matter.lock.debug
     - sample.matter.lock.release
-    - sample.matter.lock.lto
     - sample.matter.lock.smp_dfu
     - sample.matter.lock.nus
     - sample.matter.lock.release.power_consumption
@@ -99,16 +83,12 @@
     - sample.matter.light_switch.persistent_subscriptions
     - sample.matter.light_bulb.debug
     - sample.matter.light_bulb.release
-    - sample.matter.light_bulb.lto
     - sample.matter.light_switch.release
     - sample.matter.light_switch.debug
-    - sample.matter.light_switch.lto
     - sample.matter.thermostat.debug
     - sample.matter.thermostat.release
-    - sample.matter.thermostat.lto
     - sample.matter.window_cover.release
     - sample.matter.window_cover.debug
-    - sample.matter.window_cover.lto
     - sample.matter.window_cover.release.power_consumption
     - sample.matter.smoke_co_alarm.release.power_consumption
   platforms:
@@ -126,7 +106,7 @@
   comment: "Configurations excluded to limit resources usage in integration Matter ns builds"
 
 - scenarios:
-    - applications.matter_bridge.lto.br_ble.memory_profiling
+    - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.release.br_ble.nrf54h20.wifi
   platforms:
     - nrf54h20dk/nrf54h20/cpuapp

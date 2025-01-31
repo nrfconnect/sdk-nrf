@@ -20,7 +20,7 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.lto:
+  applications.matter_bridge:
     sysbuild: true
     build_only: true
     extra_args:
@@ -37,7 +37,7 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.lto.br_ble:
+  applications.matter_bridge.br_ble:
     sysbuild: true
     build_only: true
     extra_args:
@@ -74,7 +74,7 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.lto.br_ble.smp_dfu:
+  applications.matter_bridge.br_ble.smp_dfu:
     sysbuild: true
     build_only: true
     extra_args:
@@ -88,7 +88,7 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.lto.nrf5340.wifi:
+  applications.matter_bridge.nrf5340.wifi:
     sysbuild: true
     build_only: true
     extra_args:
@@ -105,7 +105,7 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.lto.br_ble.nrf54h20.wifi:
+  applications.matter_bridge.br_ble.nrf54h20.wifi:
     sysbuild: true
     build_only: true
     extra_args:
@@ -134,7 +134,7 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.lto.br_ble.memory_profiling:
+  applications.matter_bridge.br_ble.memory_profiling:
     sysbuild: true
     build_only: true
     extra_args:
@@ -145,17 +145,15 @@ tests:
       - CONFIG_BRIDGE_MIGRATE_VERSION_1=n
       - CONFIG_WIFI_NM_WPA_SUPPLICANT_WPA3=n
     integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
-      - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.lto.smart_plug:
+  applications.matter_bridge.smart_plug:
     sysbuild: true
     build_only: true
     extra_args:
