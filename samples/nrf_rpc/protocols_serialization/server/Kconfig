@@ -6,6 +6,12 @@
 
 menu "Protocols serialization server"
 
+config ZMS
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
 choice LOG_MODE
 	default LOG_MODE_DEFERRED
 endchoice
