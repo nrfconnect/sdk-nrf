@@ -16,6 +16,7 @@
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/usbd.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/drivers/gpio.h>
 
 #include <nrfs_usb.h>
 
@@ -24,6 +25,7 @@
 LOG_MODULE_REGISTER(idle_usb, LOG_LEVEL_INF);
 
 const struct device *const uart_dev = DEVICE_DT_GET_ONE(zephyr_cdc_acm_uart);
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 #define RING_BUF_SIZE		  1024
 #define TEST_TRANSMISSION_TIME_MS 4000
@@ -169,19 +171,26 @@ int main(void)
 
 	LOG_INF("Hello World! %s", CONFIG_BOARD_TARGET);
 
+	ret = gpio_is_ready_dt(&led);
+	__ASSERT(ret, "Error: GPIO Device not ready");
+
+	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
+	__ASSERT(err == 0, "Could not configure led GPIO");
+
 	if (!device_is_ready(uart_dev)) {
 		LOG_ERR("CDC ACM device not ready");
-		return 0;
+		__ASSERT(ret, "CDC ACM device not ready");
 	}
 	LOG_INF("Get UART PM runtime request response: %d", pm_device_runtime_get(uart_dev));
 
 	ret = enable_usb_device_next();
 	if (ret != 0) {
 		LOG_ERR("Failed to enable USB");
-		return 0;
+		__ASSERT(ret == 0, "Failed to enable USB");
 	}
 
 	ring_buf_init(&ringbuf, sizeof(ring_buffer), ring_buffer);
+	gpio_pin_set_dt(&led, 1);
 
 	LOG_INF("Wait for DTR");
 	k_sem_take(&dtr_sem, K_FOREVER);
@@ -231,5 +240,6 @@ int main(void)
 	k_msleep(100);
 
 	LOG_INF("Good night");
+	gpio_pin_set_dt(&led, 0);
 	k_sleep(K_FOREVER);
 }

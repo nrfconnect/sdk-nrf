@@ -7,12 +7,16 @@
 / {
 	aliases {
 		test-comp = &comp;
+		led = &led0;
+		/delete-property/ led1;
 	};
 
 	zephyr,user {
 		test-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
 	};
 };
+
+/delete-node/ &led1;
 
 &gpio1 {
 	status = "okay";
