@@ -92,7 +92,10 @@ Developing with nRF52 Series
 Developing with Front-End Modules
 =================================
 
-|no_changes_yet_note|
+* Added support for the following:
+
+  * :ref:`nRF2220 Front-End Module <ug_radio_fem_nrf2220>`.
+  * :ref:`nRF2220 EK shield <ug_radio_fem_nrf2220ek>`.
 
 Developing with PMICs
 =====================
