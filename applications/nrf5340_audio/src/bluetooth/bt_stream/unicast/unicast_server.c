@@ -690,7 +690,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	ret = bt_pacs_register(&pacs_param);
 	if (ret) {
-		printk("Could not register PACS (err %d)\n", ret);
+		LOG_ERR("Could not register PACS (err %d)\n", ret);
 		return ret;
 	}
 

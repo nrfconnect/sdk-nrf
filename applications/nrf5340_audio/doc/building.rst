@@ -261,7 +261,7 @@ Complete the following steps to build the application:
 
 1. Choose the combination of build flags:
 
-   a. Choose the device type by using one of the following :ref:`CMake options for extra Kconfig fragments <cmake_options>`:
+   a. Choose the configuration file for the device selected by using one of the following options:
 
       * For unicast headset: ``-DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf"``
       * For unicast gateway: ``-DEXTRA_CONF_FILE=".\unicast_client\overlay-unicast_client.conf"``
@@ -280,7 +280,7 @@ Complete the following steps to build the application:
 
       west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=release
 
-   This command creates the build files for headset device directly in the :file:`build` directory.
+   This command creates the build files for a unicast headset device directly in the :file:`build` directory.
    What this means is that you cannot create build files for all devices you want to program, because the subsequent commands will overwrite the files in the :file:`build` directory.
 
    To work around this standard west behavior, you can add the ``-d`` parameter to the ``west`` command to specify a custom build folder for each device.

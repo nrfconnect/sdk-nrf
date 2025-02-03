@@ -4,10 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _BOARD_VERSION_H_
-#define _BOARD_VERSION_H_
+/** @file
+ *  @brief nRF5340 Audio DK specific functions
+ *
+ * Used to access and validate the hardware being used.
+ */
 
-#include "board.h"
+#ifndef _NRF5340_AUDIO_DK_VERSION_H_
+#define _NRF5340_AUDIO_DK_VERSION_H_
+
+#include "nrf5340_audio_dk.h"
 
 /**@brief Get the board/HW version
  *
@@ -19,7 +25,7 @@
  * @return 0 on success.
  * Error code on fault or -ESPIPE if no valid version found
  */
-int board_version_get(struct board_version *board_rev);
+int nrf5340_audio_dk_version_get(struct board_version *board_rev);
 
 /**@brief Check that the FW is compatible with the HW version
  *
@@ -32,6 +38,6 @@ int board_version_get(struct board_version *board_rev);
  *
  * @return 0 on success. Error code on fault or -EPERM if incompatible board version.
  */
-int board_version_valid_check(void);
+int nrf5340_audio_dk_version_valid_check(void);
 
-#endif /* _BOARD_VERSION_H_ */
+#endif /* _NRF5340_AUDIO_DK_VERSION_H_ */
