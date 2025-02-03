@@ -16,3 +16,11 @@
 		hp-channel-r;
 	};
 };
+
+/ {
+	aliases {
+		led-app-status = &led1;
+		led-conn-status = &led0;
+		led-sync-status = &led2;
+	};
+};
