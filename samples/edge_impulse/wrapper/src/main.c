@@ -38,7 +38,7 @@ static void result_ready_cb(int err)
 			break;
 		}
 
-		printk("Value: %.2f\tLabel: %s\n", value, label);
+		printk("Value: %.2f\tLabel: %s\n", (double)value, label);
 	}
 
 	if (err) {
@@ -49,7 +49,7 @@ static void result_ready_cb(int err)
 			if (err) {
 				printk("Cannot get anomaly (err: %d)\n", err);
 			} else {
-				printk("Anomaly: %.2f\n", anomaly);
+				printk("Anomaly: %.2f\n", (double)anomaly);
 			}
 		}
 	}
