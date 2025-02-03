@@ -17,7 +17,7 @@ This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 Configuration
 *************
 
-Configure the :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION` Kconfig option to enable or disable the use of this library.
+To enable this library, set the :kconfig:option:`CONFIG_NRF_CLOUD` and :kconfig:option:`CONFIG_NRF_CLOUD_LOCATION` Kconfig options.
 
 Request and process location data
 *********************************

@@ -150,7 +150,7 @@ In such case, the device must resend the request after the previous request has 
 Configuration
 *************
 
-To enable location assistance, configure either or both of the following Kconfig options:
+To enable location assistance, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option and configure one or both of the following Kconfig options:
 
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT`
 * :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT`

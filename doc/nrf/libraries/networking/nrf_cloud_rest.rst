@@ -92,7 +92,7 @@ These are documented on the function itself.
 Configuration
 *************
 
-Configure the :kconfig:option:`CONFIG_NRF_CLOUD_REST` option to enable or disable the use of this library.
+To enable this library, set the :kconfig:option:`CONFIG_NRF_CLOUD` and :kconfig:option:`CONFIG_NRF_CLOUD_REST` Kconfig options.
 
 Additionally, configure the following options for the needs of your application:
 

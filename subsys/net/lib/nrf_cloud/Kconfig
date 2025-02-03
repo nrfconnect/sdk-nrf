@@ -3,6 +3,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config NRF_CLOUD
+	bool "nRF Cloud support"
+	help
+	  Enable configuration options for nRF Cloud.
+
+if NRF_CLOUD
+
 menu "nRF Cloud"
 
 menu "Transport"
@@ -165,3 +172,5 @@ module-help=Enables nRF Cloud log messages.
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # "nRF Cloud"
+
+endif # NRF_CLOUD
