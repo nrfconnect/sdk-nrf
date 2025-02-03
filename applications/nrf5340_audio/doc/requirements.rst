@@ -9,9 +9,7 @@ nRF5340 Audio application requirements
 
 The nRF5340 Audio applications are designed to be used only with the following hardware:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf5340_audio_dk_nrf5340
+.. table-from-sample-yaml::
 
 .. note::
    The applications supports PCA10121 revisions 1.0.0 or above.
@@ -19,7 +17,7 @@ The nRF5340 Audio applications are designed to be used only with the following h
 
    * Revisions 0.8.0 and above.
 
-You need at least two nRF5340 Audio development kits (one with the gateway firmware and one with headset firmware) to test each of the applications.
+You need at least two nRF5340 development kits (one with the gateway firmware and one with headset firmware) to test each of the applications.
 For CIS with TWS in mind, three kits are required.
 
 If you want to test with other hardware (for example, a mobile phone or PC), it is highly recommended to test with Audio DKs on both the gateway and headset side first to verify basic functionality before moving on to testing with other vendors.

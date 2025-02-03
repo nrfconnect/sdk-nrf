@@ -40,8 +40,12 @@ endmenu # FIFO
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-module = BOARD_VERSION
-module-str = board-version
+module = NRF5340_BOARD_INIT
+module-str = nrf534-board-init
+source "subsys/logging/Kconfig.template.log_config"
+
+module = NRF5340_BOARD_VERSION
+module-str = nrf534-board-version
 source "subsys/logging/Kconfig.template.log_config"
 
 module = CHAN_ASSIGNMENT
