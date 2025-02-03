@@ -66,5 +66,3 @@ API documentation
 
 | Header file: :file:`include/zephyr/net/wifi_credentials.h`
 | Source files: :file:`subsys/net/lib/wifi_credentials`
-
-.. doxygengroup:: wifi_credentials
