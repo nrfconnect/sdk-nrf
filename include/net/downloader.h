@@ -55,6 +55,7 @@ enum downloader_evt_id {
 	 * - -EINVAL: Invalid configuration.
 	 * - -EAFNOSUPPORT: Unsupported address family (IPv4/IPv6).
 	 * - -EHOSTUNREACH: Failed to resolve the target address.
+	 * - -EMSGSIZE: TLS packet is larger than the nRF91 Modem can handle.
 	 *
 	 * In case of @c ECONNRESET errors, returning zero from the callback will let the
 	 * library attempt to reconnect to the server and download the last fragment again.
