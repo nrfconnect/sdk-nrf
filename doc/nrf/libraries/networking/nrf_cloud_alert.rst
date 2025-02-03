@@ -53,7 +53,7 @@ The :c:func:`nrf_cloud_rest_alert_send` function initiates the connection as nee
 Configuration
 *************
 
-Configure the following Kconfig options to enable or disable the library and to select the data transport method:
+To enable this library, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option and configure the following options to select the data transport method:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_ALERT`
 * :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`, :kconfig:option:`CONFIG_NRF_CLOUD_REST`, or :kconfig:option:`CONFIG_NRF_CLOUD_COAP`.

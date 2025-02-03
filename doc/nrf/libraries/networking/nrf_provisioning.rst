@@ -21,7 +21,7 @@ The current implementation supports the following technologies:
 Configuration
 *************
 
-To enable the library, set the :kconfig:option:`CONFIG_NRF_PROVISIONING` Kconfig option to ``y``.
+To enable the library, set the :kconfig:option:`CONFIG_NRF_CLOUD` and :kconfig:option:`CONFIG_NRF_PROVISIONING` Kconfig options.
 
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_AUTO_INIT` - Initializes the client in the system initialization phase
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG` - Root CA security tag for the Provisioning Service

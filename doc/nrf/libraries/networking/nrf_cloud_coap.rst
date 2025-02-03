@@ -62,7 +62,7 @@ Connect the device to the network before calling the :c:func:`nrf_cloud_coap_con
 Configuration
 *************
 
-Configure the :kconfig:option:`CONFIG_NRF_CLOUD_COAP` option to enable or disable the use of this library.
+To enable this library, set the :kconfig:option:`CONFIG_NRF_CLOUD` and :kconfig:option:`CONFIG_NRF_CLOUD_COAP` Kconfig options.
 
 Additionally, the following Kconfig options are available:
 

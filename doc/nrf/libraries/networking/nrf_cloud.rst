@@ -25,7 +25,8 @@ The current implementation supports the following technologies:
 
 Initializing
 ************
-Before using any other APIs of the module, the application must call the :c:func:`nrf_cloud_init` function.
+
+Before using any other APIs of the module, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option and call the :c:func:`nrf_cloud_init` function in the application.
 If this call fails, the application must not use any functions of the module.
 
 .. note::

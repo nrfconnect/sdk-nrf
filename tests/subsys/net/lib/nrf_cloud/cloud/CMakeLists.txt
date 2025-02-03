@@ -85,3 +85,9 @@ if (CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_MODEM_LIB)
 
 endif()
 # NRF CLOUD TEST END
+
+target_compile_options(app
+  PRIVATE
+  # Set the macro explicitly to log level DBG
+  -DCONFIG_NRF_CLOUD_LOG_LEVEL=4
+)

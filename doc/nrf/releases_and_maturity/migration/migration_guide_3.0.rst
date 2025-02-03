@@ -36,7 +36,15 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+nRF Cloud library
+-----------------
+
+.. toggle::
+
+   For applications and samples using the :ref:`lib_nrf_cloud` library:
+
+   * You must set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option to access the nRF Cloud libraries.
+     This option is now disabled by default to prevent the unintended inclusion of nRF Cloud Kconfig variables in non-nRF Cloud projects, addressing a previous issue.
 
 .. _migration_3.0_recommended:
 

@@ -247,11 +247,14 @@ Configure the following options to enable location methods of your choice:
 * :kconfig:option:`CONFIG_LOCATION_METHOD_CELLULAR` - Enables cellular location method.
 * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI` - Enables Wi-Fi location method.
 
-The following options control the use of GNSS assistance data:
+For external GNSS assistance data usage, set the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option.
+It enables A-GNSS and P-GPS data retrieval, and cellular cell information and Wi-Fi APs sending to an external source, implemented separately by the application.
+If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST`, :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` or :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event when additional information is needed.
+Once the application has obtained necessary information, it must call the :c:func:`location_agnss_data_process`, the :c:func:`location_pgps_data_process`, or the :c:func:`location_cloud_location_ext_result_set` function, respectively, to feed it into the library.
 
-* :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` - Enables A-GNSS and P-GPS data retrieval, and cellular cell information and Wi-Fi APs sending to an external source, implemented separately by the application.
-  If enabled, the library triggers a :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST`, :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST` or :c:enum:`LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST` event when additional information is needed.
-  Once the application has obtained necessary information, it must call the :c:func:`location_agnss_data_process`, the :c:func:`location_pgps_data_process`, or the :c:func:`location_cloud_location_ext_result_set` function, respectively, to feed it into the library.
+Set the following Kconfig options to retrieve GNSS assistance data from `nRF Cloud`_:
+
+* :kconfig:option:`CONFIG_NRF_CLOUD` - Enables `nRF Cloud`_ support.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS` - Enables A-GNSS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` - Enables P-GPS data retrieval from `nRF Cloud`_.
 * :kconfig:option:`CONFIG_NRF_CLOUD_AGNSS_FILTERED` - Reduces assistance size by only downloading ephemerides for visible satellites.
@@ -270,7 +273,7 @@ The following options control the sensitivity of obstructed visibility detection
 These options set the threshold for how many satellites need to be found in how long a time period in order to conclude that the device is likely not indoors.
 Configuring the obstructed visibility detection is always a tradeoff between power consumption and the accuracy of detection.
 
-The following options control the transport method used with `nRF Cloud`_:
+To enable the transport method, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option and select one of the following options:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_REST` - Uses REST APIs to communicate with `nRF Cloud`_ if :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` is not set.
 * :kconfig:option:`CONFIG_NRF_CLOUD_MQTT` - Uses MQTT transport to communicate with `nRF Cloud`_.
