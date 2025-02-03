@@ -53,6 +53,14 @@ choice LOG_BACKEND_RPC_HISTORY_STORAGE_CHOICE
 config LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
 	bool "RAM buffer"
 
+config LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
+	bool "Flash Circular Buffer"
+	help
+	  Stores the log history in Flash Circular Buffer located in the "log_history"
+	  flash partition. Note that enabling this option may significantly increase
+	  the flash wear, so this option is not meant the production environments,
+	  and extra caution should be taken when using this functionality.
+
 endchoice # LOG_BACKEND_RPC_HISTORY_STORAGE_CHOICE
 
 config LOG_BACKEND_RPC_HISTORY_UPLOAD_THREAD_STACK_SIZE
@@ -64,11 +72,16 @@ config LOG_BACKEND_RPC_HISTORY_UPLOAD_CHUNK_SIZE
 	default 1024
 
 config LOG_BACKEND_RPC_HISTORY_SIZE
-	int "Log history size"
-	depends on LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
-	default 16384
+	hex "Log history size"
+	default 0x4000 if LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+	default 0x8000 if LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
 	help
 	  Size of the ring buffer used to store the log history, in bytes.
+
+config LOG_BACKEND_RPC_HISTORY_STORAGE_FCB_NUM_SECTORS
+	int "Log history FCB maximum number of flash sectors"
+	default 64
+	depends on LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
 
 endif # LOG_BACKEND_RPC_HISTORY
 

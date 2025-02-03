@@ -1,0 +1,7 @@
+#include <zephyr/autoconf.h>
+
+log_history:
+  size: CONFIG_LOG_BACKEND_RPC_HISTORY_SIZE
+  placement:
+    before: [end]
+    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
