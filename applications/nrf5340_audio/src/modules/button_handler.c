@@ -25,59 +25,43 @@ LOG_MODULE_REGISTER(button_handler, CONFIG_MODULE_BUTTON_HANDLER_LOG_LEVEL);
 ZBUS_CHAN_DEFINE(button_chan, struct button_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-/* How many buttons does the module support. Increase at memory cost */
-#define BUTTONS_MAX 5
-#define BASE_10	    10
+/* Button configuration structure. */
+struct btn_cfg_data {
+	const char *name;
+	const struct gpio_dt_spec gpio;
+	void *user_cfg;
+};
+
+struct btn_unit_cfg {
+	uint32_t num_buttons;
+	struct btn_cfg_data *buttons;
+};
+
+#define BASE_10 10
 
 /* Only allow one button msg at a time, as a mean of debounce */
 K_MSGQ_DEFINE(button_queue, sizeof(struct button_msg), 1, 4);
 
 static bool debounce_is_ongoing;
-static struct gpio_callback btn_callback[BUTTONS_MAX];
 
-/* clang-format off */
-const static struct btn_config btn_cfg[] = {
-	{
-		.btn_name = STRINGIFY(BUTTON_VOLUME_DOWN),
-		.btn_pin = BUTTON_VOLUME_DOWN,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw0), gpios),
-	},
-	{
-		.btn_name = STRINGIFY(BUTTON_VOLUME_UP),
-		.btn_pin = BUTTON_VOLUME_UP,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw1), gpios),
-	},
-	{
-		.btn_name = STRINGIFY(BUTTON_PLAY_PAUSE),
-		.btn_pin = BUTTON_PLAY_PAUSE,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw2), gpios),
-	},
-#if defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)
-	{
-		.btn_name = STRINGIFY(BUTTON_4),
-		.btn_pin = BUTTON_4,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw3), gpios),
-	},
-	{
-		.btn_name = STRINGIFY(BUTTON_5),
-		.btn_pin = BUTTON_5,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw4), gpios),
-	}
+#if DT_NODE_EXISTS(DT_PATH(buttons))
+#define BUTTON DT_PATH(buttons)
 #else
-	{
-		.btn_name = STRINGIFY(BUTTON_4),
-		.btn_pin = BUTTON_4,
-	},
-	{
-		.btn_name = STRINGIFY(BUTTON_5),
-		.btn_pin = BUTTON_5,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw3), gpios),
-	}
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP */
-};
-/* clang-format on */
+#pragma error("No buttons node found")
+#endif
 
-static const struct device *gpio_53_dev;
+#define BUTTON_GPIO(button_node_id)                                                                \
+	{                                                                                          \
+		.name = STRINGIFY(BUTTON_##button_node_id),                                        \
+				  .gpio = GPIO_DT_SPEC_GET(button_node_id, gpios),                 \
+		},
+
+static struct btn_cfg_data btn_config_data[] = {DT_FOREACH_CHILD(BUTTON, BUTTON_GPIO)};
+
+static const struct btn_unit_cfg btn_config = {.num_buttons = ARRAY_SIZE(btn_config_data),
+					       .buttons = btn_config_data};
+
+static struct gpio_callback btn_callback[ARRAY_SIZE(btn_config_data)];
 
 /**@brief Simple debouncer for buttons
  *
@@ -95,8 +79,8 @@ K_TIMER_DEFINE(button_debounce_timer, on_button_debounce_timeout, NULL);
  */
 static int pin_to_btn_idx(uint8_t btn_pin, uint32_t *pin_idx)
 {
-	for (uint8_t i = 0; i < ARRAY_SIZE(btn_cfg); i++) {
-		if (btn_pin == btn_cfg[i].btn_pin) {
+	for (uint8_t i = 0; i < btn_config.num_buttons; i++) {
+		if (btn_pin == btn_config.buttons[i].gpio.pin) {
 			*pin_idx = i;
 			return 0;
 		}
@@ -174,7 +158,7 @@ static void button_isr(const struct device *port, struct gpio_callback *cb, uint
 	ERR_CHK(ret);
 
 	LOG_DBG("Pushed button idx: %d pin: %d name: %s", btn_idx, btn_pin,
-		btn_cfg[btn_idx].btn_name);
+		btn_config.buttons[btn_idx].name);
 
 	msg.button_pin = btn_pin;
 	msg.button_action = BUTTON_PRESS;
@@ -191,16 +175,22 @@ static void button_isr(const struct device *port, struct gpio_callback *cb, uint
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed)
 {
 	int ret;
+	uint32_t btn_idx;
 
-	if (!device_is_ready(gpio_53_dev)) {
-		return -ENODEV;
-	}
-
-	if (button_pressed == NULL) {
+	if (button_pin == BUTTON_NOT_ASSIGNED || button_pressed == NULL) {
 		return -EINVAL;
 	}
 
-	ret = gpio_pin_get(gpio_53_dev, button_pin);
+	ret = pin_to_btn_idx(button_pin, &btn_idx);
+	if (ret) {
+		return -EINVAL;
+	}
+
+	if (!device_is_ready(btn_config.buttons[btn_idx].gpio.port)) {
+		return -EINVAL;
+	}
+
+	ret = gpio_pin_get(btn_config.buttons[btn_idx].gpio.port, button_pin);
 	switch (ret) {
 	case 0:
 		*button_pressed = false;
@@ -219,37 +209,34 @@ int button_handler_init(void)
 {
 	int ret;
 
-	if (ARRAY_SIZE(btn_cfg) == 0) {
+	if (btn_config.num_buttons == 0) {
 		LOG_WRN("No buttons assigned");
 		return -EINVAL;
 	}
 
-	gpio_53_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
+	for (size_t i = 0; i < btn_config.num_buttons; i++) {
+		struct btn_cfg_data *button = &btn_config.buttons[i];
 
-	if (!device_is_ready(gpio_53_dev)) {
-		LOG_ERR("Device driver not ready.");
-		return -ENODEV;
-	}
-
-	for (uint8_t i = 0; i < ARRAY_SIZE(btn_cfg); i++) {
-		if (btn_cfg[i].btn_pin == BUTTON_NOT_ASSIGNED) {
-			continue;
+		if (device_is_ready(button->gpio.port)) {
+			ret = gpio_pin_configure(button->gpio.port, button->gpio.pin,
+						 GPIO_INPUT | button->gpio.dt_flags);
+			if (ret) {
+				LOG_ERR("Cannot configure GPIO (ret %d)", ret);
+				return ret;
+			}
+		} else {
+			LOG_ERR("GPIO device not ready");
+			return -ENODEV;
 		}
 
-		ret = gpio_pin_configure(gpio_53_dev, btn_cfg[i].btn_pin,
-					 GPIO_INPUT | btn_cfg[i].btn_cfg_mask);
+		gpio_init_callback(&btn_callback[i], button_isr, BIT(button->gpio.pin));
+
+		ret = gpio_add_callback(button->gpio.port, &btn_callback[i]);
 		if (ret) {
 			return ret;
 		}
 
-		gpio_init_callback(&btn_callback[i], button_isr, BIT(btn_cfg[i].btn_pin));
-
-		ret = gpio_add_callback(gpio_53_dev, &btn_callback[i]);
-		if (ret) {
-			return ret;
-		}
-
-		ret = gpio_pin_interrupt_configure(gpio_53_dev, btn_cfg[i].btn_pin,
+		ret = gpio_pin_interrupt_configure(button->gpio.port, button->gpio.pin,
 						   GPIO_INT_EDGE_TO_INACTIVE);
 		if (ret) {
 			return ret;
@@ -265,8 +252,9 @@ static int cmd_print_all_btns(const struct shell *shell, size_t argc, char **arg
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	for (uint8_t i = 0; i < ARRAY_SIZE(btn_cfg); i++) {
-		shell_print(shell, "Id %d: pin: %d %s", i, btn_cfg[i].btn_pin, btn_cfg[i].btn_name);
+	for (uint8_t i = 0; i < btn_config.num_buttons; i++) {
+		shell_print(shell, "Id %d: pin: %d %s", i, btn_config.buttons[i].gpio.pin,
+			    btn_config.buttons[i].name);
 	}
 
 	return 0;
@@ -291,12 +279,12 @@ static int cmd_push_btn(const struct shell *shell, size_t argc, char **argv)
 
 	btn_idx = strtoul(argv[1], NULL, BASE_10);
 
-	if (btn_idx >= ARRAY_SIZE(btn_cfg)) {
+	if (btn_idx >= ARRAY_SIZE(btn_config_data)) {
 		shell_error(shell, "Selected button ID out of range");
 		return -EINVAL;
 	}
 
-	msg.button_pin = btn_cfg[btn_idx].btn_pin;
+	msg.button_pin = btn_config.buttons[btn_idx].gpio.pin;
 	msg.button_action = BUTTON_PRESS;
 
 	ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
@@ -304,8 +292,8 @@ static int cmd_push_btn(const struct shell *shell, size_t argc, char **argv)
 		LOG_ERR("Failed to publish button msg, ret: %d", ret);
 	}
 
-	shell_print(shell, "Pushed button idx: %d pin: %d : %s", btn_idx, btn_cfg[btn_idx].btn_pin,
-		    btn_cfg[btn_idx].btn_name);
+	shell_print(shell, "Pushed button idx: %d pin: %d : %s", btn_idx,
+		    btn_config.buttons[btn_idx].gpio.pin, btn_config.buttons[btn_idx].name);
 
 	return 0;
 }

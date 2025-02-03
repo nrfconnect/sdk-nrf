@@ -4,11 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+<<<<<<< HEAD
 /** @file
  *  @brief Board initialiszation function
  *
  */
 
+=======
+>>>>>>> 1fbc5f5ef0 (applications: nrf5340_audio: LED module for kits with other LED setup)
 #ifndef _NRF5340_BOARD_H_
 #define _NRF5340_BOARD_H_
 

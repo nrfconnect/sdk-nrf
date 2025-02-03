@@ -4,12 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+<<<<<<< HEAD
 /** @file
  *  @brief LED assignments
  *
  * LED mappings are listed here.
  */
 
+=======
+>>>>>>> 1fbc5f5ef0 (applications: nrf5340_audio: LED module for kits with other LED setup)
 #ifndef _LED_ASSIGNMENTS_H_
 #define _LED_ASSIGNMENTS_H_
 

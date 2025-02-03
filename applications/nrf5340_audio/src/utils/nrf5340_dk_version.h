@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+<<<<<<< HEAD
 /** @file
  *  @brief nRF5340 Audio DK specific functions
  *
@@ -13,6 +14,11 @@
 #ifndef _NRF5340_BOARD_VERSION_H_
 #define _NRF5340_BOARD_VERSION_H_
 
+=======
+#ifndef _NRF5340_BOARD_VERSION_H_
+#define _NRF5340_BOARD_VERSION_H_
+
+>>>>>>> 1fbc5f5ef0 (applications: nrf5340_audio: LED module for kits with other LED setup)
 #include "nrf5340_dk.h"
 
 /**@brief Get the board/HW version
