@@ -12,9 +12,6 @@ set(EDGE_IMPULSE_BINARY_DIR ${EDGE_IMPULSE_DIR}/src/edge_impulse_project-build)
 set(EDGE_IMPULSE_STAMP_DIR  ${EDGE_IMPULSE_DIR}/src/edge_impulse_project-stamp)
 set(EDGE_IMPULSE_LIBRARY    ${EDGE_IMPULSE_BINARY_DIR}/libedge_impulse.a)
 
-# Override Zephyr's Wdouble-promotion and unused variable warnings, as Edge Impulse gives warnings.
-zephyr_compile_options(-Wno-double-promotion -Wno-unused)
-
 file(GENERATE OUTPUT ${EDGE_IMPULSE_DIR}/compile_options.$<COMPILE_LANGUAGE>.cmake CONTENT
 "set(EI_$<COMPILE_LANGUAGE>_COMPILE_OPTIONS \"$<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>\")"
 )
@@ -130,6 +127,11 @@ add_dependencies(edge_impulse
                  edge_impulse_project
                  edge_impulse_project_download
 )
+
+# Suppress known build warnings for Edge Impulse library header files.
+target_compile_options(edge_impulse
+		       INTERFACE -Wno-double-promotion
+		       INTERFACE -Wno-unused)
 
 if(CONFIG_EI_WRAPPER)
   zephyr_library_named(ei_wrapper)
