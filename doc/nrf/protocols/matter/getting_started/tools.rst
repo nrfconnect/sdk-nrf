@@ -219,13 +219,49 @@ You can use them to simplify work with the Matter application project.
 ZAP tool west commands
 ======================
 
-To simplify work with the :ref:`ug_matter_gs_tools_zap`, there are two commands implemented within the Matter west commands set:
+To simplify work with the :ref:`ug_matter_gs_tools_zap`, there are three commands implemented within the Matter west commands set:
 
+* ``zap-append``
 * ``zap-gui``
 * ``zap-generate``
 
 By default, both commands look for a :file:`.zap` file in the current directory.
 You can also specify the path to the :file:`.zap` file explicitly.
+
+.. _ug_matter_gs_tools_matter_west_commands_append:
+
+``zap-append`` command
+----------------------
+
+To simplify adding new custom clusters to the Matter ZCL database and generating the required C++ files, you can use the ``zap-append`` west command.
+The command converts the provided XML files with the cluster definition to JSON format and adds them to the data model definition file (:file:`zcl.json`).
+You can provide a custom :file:`zcl.json` base file or use the existing one located in :file:`<default Matter SDK location>/src/app/zap-templates/zcl`.
+Depending on the provided ``--output`` argument, the command updates the base JSON file or generates a new JSON file with the appended cluster definition to the base.
+You can use the generated data model definition file as an argument to the ``zap-gui`` command to add the new cluster to the ZAP tool before launching the GUI.
+
+This is the base command invocation:
+
+.. code-block:: console
+
+   west zap-append <path_to_xml_file>
+
+You can use the following arguments:
+
+* ``-h`` or ``--help`` to display the help message.
+
+* ``-b`` or ``--base`` to provide an absolute path to the base :file:`zcl.json` file.
+  The base file must contain the existing data model definition appropriate to the given Matter version.
+  If the argument is not provided, the :file:`<default Matter SDK location>/src/app/zap-templates/zcl/zcl.json` file will be used.
+
+* ``-m`` or ``--matter`` to provide a path to a different Matter SDK location than the default one.
+  The command will use this path to read the required ZAP tool version.
+
+* ``-o`` or ``--output`` to provide a path to the output directory where the generated JSON file will be stored.
+  Use this option if you want to store the generated JSON file in a custom location.
+  If not provided, the base :file:`zcl.json` file will be updated.
+
+* Positional arguments to provide paths to the XML files with the cluster definition.
+  You can provide multiple XML files at once.
 
 .. _ug_matter_gs_tools_matter_west_commands_zap_tool_gui:
 
@@ -235,6 +271,7 @@ You can also specify the path to the :file:`.zap` file explicitly.
 ZAP tool GUI is a Node.js application used to configure the data model of a Matter application.
 It allows you to define endpoints, clusters, commands, attributes, and events for a specific application.
 The ``zap-gui`` command installs the appropriate version of the ZAP tool on your host machine and launches the ZAP tool GUI.
+The command integrates the :ref:`ug_matter_gs_tools_matter_west_commands_append` functionality, and you can use it to add new vendor-specific clusters before launching the ZAP tool GUI.
 
 This is the base command invocation:
 
@@ -244,6 +281,8 @@ This is the base command invocation:
 
 You can use the following optional arguments:
 
+* ``-h`` or ``--help`` to display the help message.
+
 * ``-z`` or ``--zap-file`` to provide a path to the :file:`.zap` file.
   Use this option if you invoke the ``zap-gui`` command outside the project directory.
 
@@ -252,6 +291,15 @@ You can use the following optional arguments:
 
 * ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
   The command will use this path to read the required ZAP tool version.
+
+* ``-c`` or ``--cache`` to provide a patch to the custom cache directory.
+  If not provided a temporary cache directory will be used and removed automatically after closing the ZAP tool GUI.
+  To keep the same cache for multiple invocations, provide the same path to the cache directory each time.
+
+* ``clusters <cluster_name>`` to add a new cluster to the ZCL.
+  Use this option to add a new cluster to the ZAP tool before launching the GUI.
+  The cluster must be written in the XML file format and contains attributes, commands, and events and other required information.
+  See the :ref:`ug_matter_creating_accessory_vendor_cluster` user guide for more information.
 
 .. _ug_matter_gs_tools_matter_west_commands_zap_tool_generate:
 
@@ -272,6 +320,8 @@ This is the base command invocation:
 
 You can use the following optional arguments:
 
+* ``-h`` or ``--help`` to display the help message.
+
 * ``-z`` or ``--zap-file`` to provide a path to the :file:`.zap` file.
   Use this option if you call the ``zap-generate`` command outside the project directory.
 
@@ -280,7 +330,6 @@ You can use the following optional arguments:
 
 * ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
   The command will use this path to read the required ZAP tool version and use the generation script from it.
-
 
 .. _ug_matter_gs_tools_cert:
 
