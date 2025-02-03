@@ -20,11 +20,9 @@
 #include "macros_common.h"
 #include "bt_mgmt.h"
 #include "lc3_streamer.h"
-
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
+#include "led_assignments.h"
 #include "led.h"
 #include "sd_card.h"
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
@@ -645,7 +643,7 @@ static uint32_t num_files_added;
 
 static int sd_card_toc_gen(void)
 {
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
+
 	/* Traverse SD tree */
 	int ret;
 
@@ -658,7 +656,6 @@ static int sd_card_toc_gen(void)
 	num_files_added = ret;
 
 	LOG_INF("Number of *.lc3 files on SD card: %d", num_files_added);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 	return 0;
 }
@@ -673,13 +670,11 @@ void nrf_auraconfig_main(void)
 	ret -= NRFX_ERROR_BASE_NUM;
 	ERR_CHK_MSG(ret, "Failed to set HFCLK divider");
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
 	ret = led_init();
 	ERR_CHK_MSG(ret, "Failed to initialize LED module");
 
-	ret = led_on(LED_APP_RGB, LED_COLOR_GREEN);
+	ret = led_on(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 	ERR_CHK(ret);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 	ret = bt_mgmt_init();
 	ERR_CHK(ret);
@@ -1102,9 +1097,7 @@ static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
-	led_blink(LED_APP_RGB, LED_COLOR_GREEN);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
+	led_blink(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 
 	return 0;
 }
@@ -1184,9 +1177,7 @@ static int cmd_stop(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
-	led_on(LED_APP_RGB, LED_COLOR_GREEN);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
+	led_on(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 
 	return 0;
 }
@@ -1685,7 +1676,7 @@ static int cmd_program_info(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
 {
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
+
 	int ret;
 	char buf[FILE_LIST_BUF_SIZE];
 	size_t buf_size = FILE_LIST_BUF_SIZE;
@@ -1712,7 +1703,6 @@ static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	shell_print(shell, "%s", buf);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 	return 0;
 }

@@ -14,23 +14,37 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(error_handler, CONFIG_ERROR_HANDLER_LOG_LEVEL);
 
-#if (defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) && (CONFIG_DEBUG))
+#if (CONFIG_DEBUG)
+struct error_led_setting {
+	struct gpio_dt_spec gpio_spec;
+	gpio_flags_t status;
+};
+
+#if defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)
 /* nRF5340 Audio DK center RGB LED */
-static const struct gpio_dt_spec center_led_r = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_red), gpios);
-static const struct gpio_dt_spec center_led_g = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_green), gpios);
-static const struct gpio_dt_spec center_led_b = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_blue), gpios);
-#endif /* (defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) && (CONFIG_DEBUG)) */
+static const struct error_led_setting error_leds[] = {
+	{GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_red), gpios), GPIO_OUTPUT_ACTIVE},
+	{GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_green), gpios), GPIO_OUTPUT_INACTIVE},
+	{GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_blue), gpios), GPIO_OUTPUT_INACTIVE}};
+#else
+static const struct error_led_setting error_leds[] = {
+	{GPIO_DT_SPEC_GET(DT_NODELABEL(led0), gpios), GPIO_OUTPUT_ACTIVE},
+	{GPIO_DT_SPEC_GET(DT_NODELABEL(led1), gpios), GPIO_OUTPUT_ACTIVE},
+	{GPIO_DT_SPEC_GET(DT_NODELABEL(led2), gpios), GPIO_OUTPUT_ACTIVE},
+	{GPIO_DT_SPEC_GET(DT_NODELABEL(led3), gpios), GPIO_OUTPUT_ACTIVE}};
+#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP */
+#endif /* CONFIG_DEBUG */
 
 void error_handler(unsigned int reason, const struct arch_esf *esf)
 {
 #if (CONFIG_DEBUG)
 	LOG_ERR("Caught system error -- reason %d. Entering infinite loop", reason);
 	LOG_PANIC();
-#if defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)
-	(void)gpio_pin_configure_dt(&center_led_r, GPIO_OUTPUT_ACTIVE);
-	(void)gpio_pin_configure_dt(&center_led_g, GPIO_OUTPUT_INACTIVE);
-	(void)gpio_pin_configure_dt(&center_led_b, GPIO_OUTPUT_INACTIVE);
-#endif /* defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) */
+
+	for (int i = 0; i < ARRAY_SIZE(error_leds); i++) {
+		(void)gpio_pin_configure_dt(&error_leds[i].gpio_spec, error_leds[i].status);
+	}
+
 	irq_lock();
 	while (1) {
 		__asm__ volatile("nop");
@@ -42,6 +56,7 @@ void error_handler(unsigned int reason, const struct arch_esf *esf)
 #endif /* (CONFIG_LOG) */
 	sys_reboot(SYS_REBOOT_COLD);
 #endif /* (CONFIG_DEBUG) */
+
 	CODE_UNREACHABLE;
 }
 
