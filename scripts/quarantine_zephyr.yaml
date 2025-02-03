@@ -216,6 +216,28 @@
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31574"
 
+- scenarios:
+    - drivers.eeprom.emul.build
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31589"
+
+- scenarios:
+    - llext.writable
+    - llext.writable_relocatable
+    - llext.writable_slid_linking
+    - llext.writable_relocatable_slid_linking
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31590"
+
+- scenarios:
+    - drivers.stepper.shell
+    - drivers.stepper.shell_async
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31591"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -430,6 +452,7 @@
     - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
+    - secure_storage.psa.its.secure_storage.custom.store
   platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "region RAM/FLASH overflowed"
