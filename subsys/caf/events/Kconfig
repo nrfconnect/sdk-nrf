@@ -18,6 +18,12 @@ config CAF_INIT_LOG_POWER_DOWN_EVENTS
 	depends on LOG
 	default y
 
+config CAF_INIT_LOG_POWER_OFF_EVENTS
+	bool "Log power off events"
+	depends on CAF_PM_EVENTS
+	depends on LOG
+	default y
+
 config CAF_INIT_LOG_WAKE_UP_EVENTS
 	bool "Log wake up events"
 	depends on CAF_PM_EVENTS
