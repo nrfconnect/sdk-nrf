@@ -408,8 +408,10 @@ void audio_system_start(void)
 	ret = audio_usb_start(&fifo_tx, &fifo_rx);
 	ERR_CHK(ret);
 #else
-	ret = hw_codec_default_conf_enable();
-	ERR_CHK(ret);
+	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
+		ret = hw_codec_default_conf_enable();
+		ERR_CHK(ret);
+	}
 
 	ret = audio_datapath_start(&fifo_rx);
 	ERR_CHK(ret);
@@ -430,8 +432,10 @@ void audio_system_stop(void)
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && CONFIG_AUDIO_SOURCE_USB)
 	audio_usb_stop();
 #else
-	ret = hw_codec_soft_reset();
-	ERR_CHK(ret);
+	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
+		ret = hw_codec_soft_reset();
+		ERR_CHK(ret);
+	}
 
 	ret = audio_datapath_stop();
 	ERR_CHK(ret);
@@ -485,12 +489,15 @@ int audio_system_init(void)
 		return ret;
 	}
 
-	ret = hw_codec_init();
-	if (ret) {
-		LOG_ERR("Failed to initialize HW codec: %d", ret);
-		return ret;
+	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
+		ret = hw_codec_init();
+		if (ret) {
+			LOG_ERR("Failed to initialize HW codec: %d", ret);
+			return ret;
+		}
 	}
 #endif
+
 	k_poll_signal_init(&encoder_sig);
 
 	return 0;
