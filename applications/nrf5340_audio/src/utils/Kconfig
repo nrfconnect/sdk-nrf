@@ -40,6 +40,10 @@ endmenu # FIFO
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
+module = NRF5340_BOARD
+module-str = nrf5340-board
+source "subsys/logging/Kconfig.template.log_config"
+
 module = BOARD_VERSION
 module-str = board-version
 source "subsys/logging/Kconfig.template.log_config"

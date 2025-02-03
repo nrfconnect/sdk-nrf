@@ -20,9 +20,7 @@
 #include "bt_mgmt_ctlr_cfg_internal.h"
 #include "bt_mgmt_adv_internal.h"
 #include "bt_mgmt_dfu_internal.h"
-#if CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP
 #include "button_assignments.h"
-#endif
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
@@ -213,11 +211,10 @@ static void bt_enabled_cb(int err)
 
 static int bonding_clear_check(void)
 {
-#if CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP
 	int ret;
 	bool pressed;
 
-	ret = button_pressed(BUTTON_5, &pressed);
+	ret = button_pressed(BUTTON_MUTE, &pressed);
 	if (ret) {
 		return ret;
 	}
@@ -227,7 +224,6 @@ static int bonding_clear_check(void)
 		return ret;
 	}
 
-#endif
 	return 0;
 }
 
@@ -420,7 +416,7 @@ int bt_mgmt_init(void)
 #if defined(CONFIG_AUDIO_BT_MGMT_DFU)
 	bool pressed;
 
-	ret = button_pressed(BUTTON_4, &pressed);
+	ret = button_pressed(BUTTON_TONE, &pressed);
 	if (ret) {
 		return ret;
 	}
