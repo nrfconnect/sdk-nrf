@@ -11,7 +11,7 @@
 
 
 /* Float comparison tolerance. */
-#define FLOAT_CMP_EPSILON			0.000001
+#define FLOAT_CMP_EPSILON			0.000001f
 
 /* Definitions provided by the EI library. */
 #define EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME	15
@@ -32,8 +32,8 @@ static const char * const ei_classifier_inferencing_categories[] = {
 #define EI_MOCK_GEN_LABEL_IDX(PRED_IDX) ((PRED_IDX) % EI_CLASSIFIER_LABEL_COUNT)
 #define EI_MOCK_GEN_LABEL(PRED_IDX)	\
 	(ei_classifier_inferencing_categories[EI_MOCK_GEN_LABEL_IDX(PRED_IDX)])
-#define EI_MOCK_GEN_VALUE(PRED_IDX)	(0.5 + ((PRED_IDX) * 0.001))
-#define EI_MOCK_GEN_VALUE_OTHERS(PRED_IDX) ((1.0 - EI_MOCK_GEN_VALUE(PRED_IDX)) / \
+#define EI_MOCK_GEN_VALUE(PRED_IDX)	(0.5f + ((PRED_IDX) * 0.001f))
+#define EI_MOCK_GEN_VALUE_OTHERS(PRED_IDX) ((1.0f - EI_MOCK_GEN_VALUE(PRED_IDX)) / \
 					   (EI_CLASSIFIER_LABEL_COUNT - 1))
 #define EI_MOCK_GEN_ANOMALY(PRED_IDX)	((float)(PRED_IDX))
 
