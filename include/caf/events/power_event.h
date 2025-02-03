@@ -57,6 +57,27 @@ struct power_down_event {
 	bool error;
 };
 
+/** @brief Power off event.
+ *
+ * The power off event is submitted by the module that controls the power management in the
+ * application to inform other application modules that system power off (sys_poweroff) is about to
+ * happen. This happens when system is already suspended by @ref power_down_event and entering power
+ * off state is not restricted.
+ *
+ * The module that controls the power management in the application registers itself as the final
+ * subscriber for the event. When it receives the power off event, it instantly calls the
+ * sys_poweroff API. Because of that, after handling the power off event, an application module can
+ * no longer trigger system wakeup using a @ref wake_up_event. An application module could trigger
+ * system reboot (sys_reboot) to wakeup the system (leaving the power off state goes through the
+ * system reboot anyway).
+ */
+struct power_off_event {
+	/** Event header. */
+	struct app_event_header header;
+
+	/** Information if the power off was result of a fatal error. */
+	bool error;
+};
 
 /** @brief Wake up event.
  *
@@ -94,6 +115,7 @@ extern "C" {
 #endif
 
 APP_EVENT_TYPE_DECLARE(power_down_event);
+APP_EVENT_TYPE_DECLARE(power_off_event);
 APP_EVENT_TYPE_DECLARE(wake_up_event);
 
 #ifdef __cplusplus
