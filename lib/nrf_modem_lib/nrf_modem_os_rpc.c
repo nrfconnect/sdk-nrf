@@ -89,6 +89,7 @@ struct nrf_modem_os_rpc inst_data = NRF_MODEM_OS_RPC_INIT(inst_data, DCACHE_LINE
  */
 struct nrf_modem_os_rpc_signal inst_app_fault;
 struct nrf_modem_os_rpc_signal inst_modem_fault;
+struct nrf_modem_os_rpc_signal inst_modem_trace;
 struct nrf_modem_os_rpc_signal inst_modem_sysoff;
 
 uintptr_t nrf_modem_os_rpc_sigdev_app_get(void)
