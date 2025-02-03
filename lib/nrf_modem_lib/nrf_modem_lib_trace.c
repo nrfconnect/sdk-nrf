@@ -308,6 +308,9 @@ trace_reset:
 		case -NRF_ENODATA:
 			LOG_INF("No more trace data");
 			goto deinit;
+		case -NRF_ENOTSUP:
+			LOG_INF("Tracing not supported");
+			goto deinit;
 		case -NRF_EINPROGRESS:
 			__ASSERT(0, "Error in transport backend");
 			goto deinit;
