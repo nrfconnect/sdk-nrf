@@ -248,7 +248,10 @@ def __main():
         help="Select which cores to include in build",
     )
     parser.add_argument(
-        "--pristine", default=False, action="store_true", help="Will build cleanly"
+        "--pristine",
+        default=False,
+        action="store_true",
+        help="Will build cleanly"
     )
     parser.add_argument(
         "-b",

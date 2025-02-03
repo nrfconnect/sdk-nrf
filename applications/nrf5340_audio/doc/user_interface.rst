@@ -19,6 +19,10 @@ Switches
 
 The application uses the following switches on the supported development kit:
 
+.. tabs::
+
+  .. group-tab:: nRF5340 Audio DK
+
 +-------------------+-------------------------------------------------------------------------------------+---------------------------------------+
 | Switch            | Function                                                                            | Applications                          |
 +===================+=====================================================================================+=======================================+
@@ -28,12 +32,24 @@ The application uses the following switches on the supported development kit:
 |                   | This switch is used for accurate power and current measurements.                    |                                       |
 +-------------------+-------------------------------------------------------------------------------------+---------------------------------------+
 
+
+  .. group-tab:: nRF5340 DK
++-------------------+-------------------------------------------------------------------------------------+---------------------------------------+
+| Switch            | Function                                                                            | Applications                          |
++===================+=====================================================================================+=======================================+
+| **POWER**         | Turns the development kit on or off.                                                | All                                   |
++-------------------+-------------------------------------------------------------------------------------+---------------------------------------+
+
 .. _nrf53_audio_app_ui_buttons:
 
 Buttons
 *******
 
 The application uses the following buttons on the supported development kit:
+
+.. tabs::
+
+  .. group-tab:: nRF5340 Audio DK
 
 +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
 | Button        | Function                                                                                                  | Applications                                |
@@ -77,12 +93,49 @@ The application uses the following buttons on the supported development kit:
 |               | This reverts any changes made during testing, for example the channel switches with **VOL** buttons.      |                                             |
 +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
 
+  .. group-tab:: nRF5340 DK
+
++---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| Button        | Function                                                                                                  | Applications                                |
++===============+===========================================================================================================+=============================================+
+| **Button 1-** | Long-pressed during startup: Changes the headset to the left channel one.                                 | * :ref:`nrf53_audio_broadcast_sink_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
+|               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|               | Pressed on the headset or the CIS gateway during playback: Turns the playback volume down.                | * :ref:`nrf53_audio_broadcast_sink_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |
++---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **Button 2**  | Long-pressed during startup: Changes the headset to the right channel one.                                | * :ref:`nrf53_audio_broadcast_sink_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
+|               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|               | Pressed on the headset or the CIS gateway during playback: Turns the playback volume up.                  | * :ref:`nrf53_audio_broadcast_sink_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |
++---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **Button 3**  | Starts or pauses the playback of the stream or listening to the stream.                                   | All                                         |
++---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **Button 4**  | Long-pressed during startup: Clears the previously stored bonding information.                            | * :ref:`nrf53_audio_unicast_server_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |
+|               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|               | Pressed during playback: Mutes the playback volume.                                                       | * :ref:`nrf53_audio_unicast_server_app`     |
+|               |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |
+|               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|               | Pressed on a BIS headset during playback: Change the gateway, if more than one is available.              | :ref:`nrf53_audio_broadcast_sink_app`       |
++---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **RESET**     | Resets the device to the originally programmed settings.                                                  | All                                         |
+|               | This reverts any changes made during testing, for example the channel switches with **VOL** buttons.      |                                             |
++---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+
 .. _nrf53_audio_app_ui_leds:
 
 LEDs
 ****
 
 To indicate the tasks performed, the application uses the LED behavior described in the following table:
+
+.. tabs::
+
+  .. group-tab:: nRF5340 Audio DK
 
 +--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
 | LED                      |Indication                                                                                                 | Applications                                |
@@ -157,4 +210,41 @@ To indicate the tasks performed, the application uses the LED behavior described
 | **HUB**                  | Off - No PC connection available.                                                                         | All                                         |
 | (bottom side)            +-----------------------------------------------------------------------------------------------------------+                                             |
 |                          | Green - Standard USB hub operation.                                                                       |                                             |
++--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+
+  .. group-tab:: nRF5340 DK
+
++--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| LED                      |Indication                                                                                                 | Applications                                |
++==========================+===========================================================================================================+=============================================+
+| **LED1**                 | Off - No Bluetooth connection.                                                                            | All                                         |
+|                          +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|                          | Solid green on the CIS gateway and headset: Kits have connected.                                           | * :ref:`nrf53_audio_unicast_server_app`     |
+|                          |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |
+|                          +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|                          | Solid green on the BIS headset: Kits have found a broadcasting stream.                                     | :ref:`nrf53_audio_broadcast_sink_app`       |
+|                          +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|                          | Blinking green on headset: Kits have started streaming audio (BIS and CIS modes).                          | * :ref:`nrf53_audio_broadcast_sink_app`     |
+|                          |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
+|                          +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|                          | Blinking green on the CIS gateway: Kit is streaming to a headset.                                          | :ref:`nrf53_audio_unicast_client_app`       |
+|                          +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|                          | Blinking green on the BIS gateway: Kit has started broadcasting audio.                                     | :ref:`nrf53_audio_broadcast_source_app`     |
++--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **LED2**                 | Off - Sync not achieved.                                                                                  | All                                         |
+|                          +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+|                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).       | * :ref:`nrf53_audio_broadcast_sink_app`     |
+|                          |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
++--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                        | All                                         |
++--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **LED1,2,3 and 4**       | All solid green - Fault in the application core has occurred.                                             | * :ref:`nrf53_audio_broadcast_source_app`   |
+|                          | See UART log for details and use the RESET button to reset the device.                                    | * :ref:`nrf53_audio_unicast_client_app`     |
+|                          | In the release mode, the device resets automatically with no indication on LED or UART.                   |                                             |
++--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
+| **LED5**                 | Off - No PC connection available.                                                                         | All                                         |
+|                          +-----------------------------------------------------------------------------------------------------------+                                             |
+|                          | Solid green - Connected to PC.                                                                            |                                             |
+|                          +-----------------------------------------------------------------------------------------------------------+                                             |
+|                          | Rapid green flash - USB enumeration failed.                                                               |                                             |
 +--------------------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
