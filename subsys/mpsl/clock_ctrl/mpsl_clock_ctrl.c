@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#include <zephyr/logging/log.h>
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <nrfx_clock.h>
@@ -14,6 +15,8 @@
 
 #include <mpsl_clock.h>
 #include "mpsl_clock_ctrl.h"
+
+LOG_MODULE_REGISTER(mpsl_clock_ctrl, CONFIG_MPSL_LOG_LEVEL);
 
 /* Variable shared for nrf and nrf2 clock control */
 static atomic_t m_hfclk_refcnt;
@@ -86,7 +89,14 @@ static int32_t m_lfclk_wait(void)
 		return -NRF_EFAULT;
 	}
 
-	if (m_lfclk_state.clk_req_rsp < 0) {
+	if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2) && m_lfclk_state.clk_req_rsp == -ETIMEDOUT) {
+		/* Due to NCSDK-31169, temporarily allow for LFCLK request to timeout.
+		 * That doens't break anything now because the LFCLK requested clock is
+		 * 500PPM and such LFCLK should be running from boot of the radio core.
+		 */
+		LOG_WRN("LFCLK could not be started: %d", m_lfclk_state.clk_req_rsp);
+		return 0;
+	} else if (m_lfclk_state.clk_req_rsp < 0) {
 		__ASSERT(false, "LFCLK could not be started, reason: %d",
 			 m_lfclk_state.clk_req_rsp);
 		/* Possible failure reasons:
