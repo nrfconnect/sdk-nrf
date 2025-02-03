@@ -737,7 +737,7 @@
 /subsys/dm/                               @nrfconnect/ncs-si-muffin
 /subsys/dult/                             @nrfconnect/ncs-si-bluebagel
 /subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
-/subsys/esb/                              @lemrey
+/subsys/esb/                              @nrfconnect/ncs-si-muffin
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-muffin
 /subsys/fw_info/                          @nrfconnect/ncs-pluto
 /subsys/gazell/                           @leewkb4567
