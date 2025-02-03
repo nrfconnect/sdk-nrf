@@ -8,6 +8,7 @@ menu "Drivers"
 
 menuconfig NRF5340_AUDIO_CS47L63_DRIVER
 	bool "CS47L63 HW codec driver"
+	default n
 	select HW_CODEC_CIRRUS_LOGIC
 	help
 	  Include the driver for the Cirrus Logic CS47L63 hardware codec chip
