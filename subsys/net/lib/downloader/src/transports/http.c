@@ -19,7 +19,11 @@
 
 LOG_MODULE_DECLARE(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
 
-/* nRF91 modem TLS secure socket buffer limited to 2kB including header */
+/* In the nRF91 Series modem, the TLS secure socket buffer is limited to around 2 kB.
+ * If the header and data is too large, the downloader will reduce the range requests until
+ * the requirements are satisfied. The application can also set the range_override in
+ * struct downloader_host_cfg to utilize the size better.
+ */
 #define TLS_RANGE_MAX 2048
 
 #define DEFAULT_PORT_TLS 443
@@ -431,9 +435,7 @@ static int http_parse(struct downloader *dl, size_t len)
 	if (dl->progress + len != dl->file_size) {
 		if (http->ranged) {
 			http->ranged_progress += len;
-			if (http->ranged_progress < (dl->host_cfg.range_override
-							     ? dl->host_cfg.range_override
-							     : TLS_RANGE_MAX - 1)) {
+			if (http->ranged_progress < dl->host_cfg.range_override) {
 				/* Ranged query: read until a full fragment */
 				return len;
 			}
@@ -610,6 +612,19 @@ static int dl_http_download(struct downloader *dl)
 			     dl->cfg.buf_size - dl->buf_offset);
 
 	if (len < 0) {
+		if (len == -EMSGSIZE && dl->host_cfg.range_override) {
+			/* We do not have enough space for the http header and requested data,
+			 * reattempt with shorter range request.
+			 */
+			dl->host_cfg.range_override -=
+				((dl->host_cfg.range_override > 256) ? 128 : 8);
+			if (dl->host_cfg.range_override <= 8) {
+				return -EMSGSIZE;
+			}
+			LOG_DBG("Message size too big, reattempting with range size %d",
+				dl->host_cfg.range_override);
+			return -ECONNRESET;
+		}
 		if (http->connection_close) {
 			return -ECONNRESET;
 		}

@@ -187,12 +187,32 @@ The following snippet shows how to download a file using HTTPS:
 Limitations
 ***********
 
-The library requires the host server to provide a Content-Range field in the HTTP GET response header when using HTTPS with the nRF91 Series devices.
-If this header field is missing, the library logs the following error::
+The following limitations apply to this library:
 
-   <err> downloader: Server did not send "Content-Range" in response
+nRF91 Series TLS limitation
+===========================
 
- Due to internal limitations, maximum CoAP block size is 512 bytes.
+The nRF91 Series modem has a size limit for receiving TLS packages.
+The size limit depends on modem internals and is around 2 kB.
+See modem firmware release notes for details.
+The library  asks the server for a content-range which must be supported by the host server when using HTTPS with the nRF91 Series devices.
+
+The content range is set by the :c:member:`downloader_host_cfg.range_override` configuration in the download client configuration.
+If the configuration is not set, a default value will be used for the nRF91 Series devices when using HTTPS.
+
+The fragment size must be set so that the TLS package does not exceed the modem limit.
+The TLS package size is dependent on the HTTP header and payload size.
+The HTTP header size is dependent on the server in use.
+When meeting this limitation, the downloader attempts to reduce the content-range in order to fill the TLS size requirements.
+If the requirements cannot be met, the downloader fails with error ``-EMSSIZE``.
+
+.. note::
+   If you are experiencing this issue on a deployed product, reducing the HTTP header size responded by the server can also resolve this issue.
+
+CoaP block size
+===============
+
+Due to internal limitations, the maximum CoAP block size is 512 bytes.
 
 API documentation
 *****************
