@@ -655,7 +655,7 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 	size_t addr_size;
 
 	LOG_DBG("Creating socket type IPPROTO_DTLS_1_2");
-	sock = socket(addr->sa_family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
+	sock = zsock_socket(addr->sa_family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
 
 	if (sock < 0) {
 		LOG_DBG("Failed to create CoAP socket, errno: %d", errno);
@@ -677,7 +677,7 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 		addr_size = sizeof(struct sockaddr_in);
 	}
 
-	err = connect(sock, addr, addr_size);
+	err = zsock_connect(sock, addr, addr_size);
 	if (err) {
 		LOG_DBG("Connect failed, errno: %d", errno);
 		err = -ECONNREFUSED;
@@ -687,7 +687,7 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 out:
 	if (err) {
 		if (sock >= 0) {
-			close(sock);
+			zsock_close(sock);
 		}
 		return err;
 	}
@@ -711,7 +711,7 @@ int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 		/* Could not resume. Try with a full handshake. */
 		tmp = client->sock;
 		client->sock = client->cc.fd = -1;
-		close(tmp);
+		zsock_close(tmp);
 	}
 
 	client->authenticated = false;
@@ -719,7 +719,7 @@ int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 	const char *const host_name = CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME;
 	uint16_t port = htons(CONFIG_NRF_CLOUD_COAP_SERVER_PORT);
 
-	struct addrinfo hints = {
+	struct zsock_addrinfo hints = {
 		.ai_socktype = SOCK_DGRAM
 	};
 	sock = nrf_cloud_connect_host(host_name, port, &hints, &nrf_cloud_coap_connect_host_cb);
@@ -758,7 +758,7 @@ int nrf_cloud_coap_transport_disconnect(struct nrf_cloud_coap_client *const clie
 	client->paused = false;
 	tmp = client->sock;
 	client->sock = client->cc.fd = -1;
-	err = close(tmp);
+	err = zsock_close(tmp);
 	k_mutex_unlock(&client->mutex);
 
 	return err;
@@ -873,7 +873,7 @@ int nrf_cloud_coap_transport_pause(struct nrf_cloud_coap_client *const client)
 			client->paused = false;
 			tmp = client->sock;
 			client->sock = client->cc.fd = -1;
-			close(tmp);
+			zsock_close(tmp);
 			LOG_DBG("Closed socket and marked as unauthenticated.");
 		}
 	} else {
