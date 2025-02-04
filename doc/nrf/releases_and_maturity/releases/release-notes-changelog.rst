@@ -326,6 +326,7 @@ Cellular samples
 
   * Fixed:
 
+    * Wrong header naming in :file:`provisioning_support.h` that was causing build errors when :file:`sample_reboot.h` was included in other source files.
     * An issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
     * An issue with the too small :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig value
       in the :file:`overlay-coap_nrf_provisioning.conf` file.
