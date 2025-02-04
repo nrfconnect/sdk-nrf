@@ -100,7 +100,7 @@ int pcd_fw_copy(const struct device *fdev)
 	}
 
 	rc = stream_flash_init(&stream, fdev, buf, sizeof(buf),
-			       cmd->offset, 0, NULL);
+			       cmd->offset, PM_APP_SIZE, NULL);
 	if (rc != 0) {
 		LOG_ERR("stream_flash_init failed: %d", rc);
 		return rc;
