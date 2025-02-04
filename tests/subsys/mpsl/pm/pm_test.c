@@ -13,17 +13,10 @@
 #include "cmock_policy.h"
 #include "cmock_mpsl_pm.h"
 #include "cmock_mpsl_pm_config.h"
-#include "cmock_mpsl_work.h"
-#include "cmock_kernel_minimal_mock.h"
 
 #include <mpsl/mpsl_pm_utils.h>
 
 #define PM_MAX_LATENCY_HCI_COMMANDS_US 499999
-
-#define TIME_TO_REGISTER_EVENT_IN_ZEPHYR_US 1000
-
-/* Mock implementation for mpsl_work_q*/
-struct k_work_q mpsl_work_q;
 
 /* The unity_main is not declared in any header file. It is only defined in the generated test
  * runner because of ncs' unity configuration. It is therefore declared here to avoid a compiler
@@ -36,7 +29,6 @@ typedef enum {
 	EVENT_FUNC_REGISTER,
 	EVENT_FUNC_UPDATE,
 	EVENT_FUNC_UNREGISTER,
-	EVENT_FUNC_DELAY_SCHEDULING,
 } event_func_t;
 
 typedef enum {
@@ -87,25 +79,15 @@ void run_test(test_vector_event_t *p_test_vectors, int num_test_vctr)
 
 		switch (v.event_func) {
 		case EVENT_FUNC_REGISTER:
-			__cmock_k_uptime_get_ExpectAndReturn(v.curr_time_ms);
 			__cmock_pm_policy_event_register_Expect(0, v.event_time_us);
 			__cmock_pm_policy_event_register_IgnoreArg_evt();
 			break;
 		case EVENT_FUNC_UPDATE:
-			__cmock_k_uptime_get_ExpectAndReturn(v.curr_time_ms);
 			__cmock_pm_policy_event_update_Expect(0, v.event_time_us);
 			__cmock_pm_policy_event_update_IgnoreArg_evt();
 			break;
 		case EVENT_FUNC_UNREGISTER:
 			__cmock_pm_policy_event_unregister_ExpectAnyArgs();
-			break;
-		case EVENT_FUNC_DELAY_SCHEDULING:
-			__cmock_k_uptime_get_ExpectAndReturn(v.curr_time_ms);
-			__cmock_K_USEC_ExpectAndReturn(
-				v.event_time_us, (k_timeout_t){v.event_time_us + 100});
-			__cmock_mpsl_work_schedule_Expect(
-				0, (k_timeout_t){v.event_time_us + 100});
-			__cmock_mpsl_work_schedule_IgnoreArg_dwork();
 			break;
 		case EVENT_FUNC_NONE:
 			break;
@@ -219,28 +201,6 @@ void test_register_update_and_deregister_event(void)
 		/* Update event. */
 		{true, {15000, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 2},
 		 EVENT_FUNC_UPDATE, 15000, 0},
-		/* Deregister event. */
-		{true, {0, MPSL_PM_EVENT_STATE_NO_EVENTS_LEFT, 3},
-		 EVENT_FUNC_UNREGISTER, 0, 0},
-	};
-	run_test(&test_vectors[0], ARRAY_SIZE(test_vectors));
-}
-
-void test_event_delayed_work(void)
-{
-	uint64_t event_time_us = (uint64_t)UINT32_MAX + 50000;
-	/* Make sure time until event will be more than UINT32_MAX cycles away. */
-	TEST_ASSERT_GREATER_THAN_INT64(UINT32_MAX, k_us_to_cyc_floor64(event_time_us));
-
-	test_vector_event_t test_vectors[] = {
-		/* Event time after 32 bit cycles have wrapped, so schedule retry. */
-		{true, {event_time_us, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 1},
-		 EVENT_FUNC_DELAY_SCHEDULING, event_time_us - 1000, 0},
-		/* Time has progressed until cycles will no longer wrap,
-		 * so register latency normally.
-		 */
-		{true, {event_time_us, MPSL_PM_EVENT_STATE_BEFORE_EVENT, 2},
-		 EVENT_FUNC_REGISTER, event_time_us, 100},
 		/* Deregister event. */
 		{true, {0, MPSL_PM_EVENT_STATE_NO_EVENTS_LEFT, 3},
 		 EVENT_FUNC_UNREGISTER, 0, 0},
