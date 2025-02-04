@@ -233,6 +233,11 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 When building the sample, you can provide the Fast Pair Model ID (``FP_MODEL_ID``) and the Fast Pair Anti-Spoofing Key (``FP_ANTI_SPOOFING_KEY``) as CMake options.
 If the data is not provided, the sample uses the default provisioning data obtained for the *NCS input device* (the input device debug Fast Pair provider).
 See :ref:`ug_bt_fast_pair_provisioning` for detailed guide.

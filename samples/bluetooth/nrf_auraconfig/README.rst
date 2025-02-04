@@ -781,6 +781,11 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 The nRF5340 Audio DK comes pre-programmed with basic firmware that indicates if the kit is functional.
 See :ref:`nrf53_audio_app_dk_testing_out_of_the_box` for more information.
 

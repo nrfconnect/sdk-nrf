@@ -688,6 +688,11 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. |sample_or_app| replace:: application
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 .. include:: ../../../samples/matter/lock/README.rst
     :start-after: matter_door_lock_sample_nrf70_firmware_patch_start
     :end-before: matter_door_lock_sample_nrf70_firmware_patch_end

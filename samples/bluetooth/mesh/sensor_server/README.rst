@@ -208,6 +208,11 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 .. _bluetooth_mesh_sensor_server_testing:
 
 Testing

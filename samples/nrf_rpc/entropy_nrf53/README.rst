@@ -51,6 +51,11 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`remote/`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 .. _entropy_nrf53_testing:
 
 Testing
