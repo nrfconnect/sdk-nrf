@@ -3227,6 +3227,22 @@ NCSDK-28192: Hardfault in :c:func:`coap_codec_agnss_encode`
 
   ** Workaround:** Apply the fix from `sdk-nrf PR #16242`_.
 
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
+
+NCSDK-31645: Download client might fail with error ``-EMSGSIZE`` when using TLS on nRF91 Series devices
+  The nRF91 Series modem has a size limit of 2 kB for receiving TLS packages.
+  This limitation results in the download client failing with error ``-EMSGSIZE`` when the HTTP package responded by the server is larger than the modem size limit.
+  The HTTP package includes both the HTTP header and payload.
+  Samples and applications that are affected include those that use the :ref:`lib_download_client` library to download files through HTTP, or those that use :ref:`lib_fota_download` with modem updates enabled.
+
+  **Affected platforms:** nRF9160 nRF9131 nRF9151 nRF9161
+
+  **Workaround:** Set the :c:member:`download_client_cfg.frag_size_override` in the download client configuration.
+  This enables HTTP range requests with a limited payload size as set in the :c:member:`download_client_cfg.frag_size_override` configuration.
+  The fragment size must be set so that the total size of the HTTP header plus the payload must not exceed the modem limit of 2303 bytes.
+  The HTTP header size is dependent on the server in use.
+  If you are experiencing this issue on a deployed product, reducing the HTTP header size responded by the server can also resolve this issue.
+
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0 v2-7-0 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0
 
 CIA-351: Connectivity issues with :ref:`lib_azure_iot_hub`
@@ -3236,7 +3252,6 @@ CIA-351: Connectivity issues with :ref:`lib_azure_iot_hub`
   **Affected platforms:** nRF9160
 
   **Workaround:** Avoid using LTE Power Saving Mode (PSM) and extended DRX intervals longer than approximately 30 seconds. This will reduce the risk of the issue occurring, at the cost of increased power consumption.
-
 
 Bluetooth libraries and services
 ================================
