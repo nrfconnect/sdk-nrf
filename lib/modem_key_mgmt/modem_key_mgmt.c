@@ -17,7 +17,11 @@
 
 LOG_MODULE_REGISTER(modem_key_mgmt, CONFIG_MODEM_KEY_MGMT_LOG_LEVEL);
 
-/* Protect the shared scratch_buf with a mutex. */
+/*
+ * Protect the shared scratch_buf with a mutex.
+ * Also used for making sure we `cmee_enable` and `cmee_disable`
+ * in the correct order.
+ */
 static K_MUTEX_DEFINE(key_mgmt_mutex);
 static char scratch_buf[4096];
 
@@ -117,6 +121,11 @@ static int key_fetch(nrf_sec_tag_t tag,
 	int err;
 	bool cmee_was_active;
 
+	/*
+	 * This function is expected to be called with the mutex locked.
+	 * Therefore no need to lock/unlock it here.
+	 */
+
 	cmee_enable(&cmee_was_active);
 
 	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf),
@@ -144,6 +153,8 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 		return -EINVAL;
 	}
 
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
 	cmee_enable(&cmee_was_enabled);
 
 	err = nrf_modem_at_printf("AT%%CMNG=0,%u,%d,\"%.*s\"",
@@ -152,6 +163,8 @@ int modem_key_mgmt_write(nrf_sec_tag_t sec_tag,
 	if (!cmee_was_enabled) {
 		cmee_disable();
 	}
+
+	k_mutex_unlock(&key_mgmt_mutex);
 
 	if (err) {
 		return translate_error(err);
@@ -204,6 +217,7 @@ int modem_key_mgmt_read(nrf_sec_tag_t sec_tag,
 
 end:
 	k_mutex_unlock(&key_mgmt_mutex);
+
 	return err;
 }
 
@@ -263,7 +277,6 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 
 out:
 	k_mutex_unlock(&key_mgmt_mutex);
-
 	return err;
 }
 
@@ -285,11 +298,11 @@ int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
 		return -ENOMEM;
 	}
 
-	cmee_enable(&cmee_was_enabled);
-
 	snprintk(cmd, sizeof(cmd), "AT%%CMNG=1,%u,%u", sec_tag, cred_type);
 
 	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
+	cmee_enable(&cmee_was_enabled);
 
 	ret = nrf_modem_at_scanf(
 		cmd,
@@ -321,6 +334,7 @@ int modem_key_mgmt_digest(nrf_sec_tag_t sec_tag,
 	}
 
 	k_mutex_unlock(&key_mgmt_mutex);
+
 	if (ret) {
 		return translate_error(ret);
 	}
@@ -335,6 +349,8 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 	int err;
 	bool cmee_was_enabled;
 
+	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
 	cmee_enable(&cmee_was_enabled);
 
 	err = nrf_modem_at_printf("AT%%CMNG=3,%u,%d", sec_tag, cred_type);
@@ -342,6 +358,8 @@ int modem_key_mgmt_delete(nrf_sec_tag_t sec_tag,
 	if (!cmee_was_enabled) {
 		cmee_disable();
 	}
+
+	k_mutex_unlock(&key_mgmt_mutex);
 
 	if (err) {
 		return translate_error(err);
@@ -357,9 +375,9 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 	char *token;
 	uint32_t tag, type;
 
-	cmee_enable(&cmee_was_enabled);
-
 	k_mutex_lock(&key_mgmt_mutex, K_FOREVER);
+
+	cmee_enable(&cmee_was_enabled);
 
 	err = nrf_modem_at_cmd(scratch_buf, sizeof(scratch_buf), "AT%%CMNG=1, %d", sec_tag);
 
@@ -383,6 +401,7 @@ int modem_key_mgmt_clear(nrf_sec_tag_t sec_tag)
 
 out:
 	k_mutex_unlock(&key_mgmt_mutex);
+
 	if (err) {
 		return translate_error(err);
 	}
@@ -426,6 +445,7 @@ int modem_key_mgmt_exists(nrf_sec_tag_t sec_tag,
 
 out:
 	k_mutex_unlock(&key_mgmt_mutex);
+
 	return err;
 }
 
@@ -466,5 +486,6 @@ int modem_key_mgmt_list(modem_key_mgmt_list_cb_t list_cb)
 
 out:
 	k_mutex_unlock(&key_mgmt_mutex);
+
 	return err;
 }
