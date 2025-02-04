@@ -48,7 +48,7 @@ static int get_device_ip_address(uint8_t *d4_addr)
 		LOG_ERR("Could not get IP addr: %d", err);
 		return err;
 	}
-	err = inet_pton(AF_INET, buf, d4_addr);
+	err = zsock_inet_pton(AF_INET, buf, d4_addr);
 	if (err == 1) {
 		return 0;
 	}
@@ -81,7 +81,7 @@ int nrfc_dtls_setup(int sock)
 	LOG_DBG("Setting socket options:");
 
 	LOG_DBG("  hostname: %s", CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME);
-	err = setsockopt(sock, SOL_TLS, TLS_HOSTNAME, CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME,
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_HOSTNAME, CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME,
 			 sizeof(CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME));
 	if (err) {
 		LOG_ERR("Error setting hostname: %d", -errno);
@@ -91,7 +91,7 @@ int nrfc_dtls_setup(int sock)
 	sectag = nrf_cloud_sec_tag_get();
 	LOG_DBG("  sectag: %d", sectag);
 
-	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, &sectag, sizeof(sectag));
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, &sectag, sizeof(sectag));
 	if (err) {
 		LOG_ERR("Error setting sectag list: %d", -errno);
 		return -errno;
@@ -100,7 +100,7 @@ int nrfc_dtls_setup(int sock)
 	int cid_option = TLS_DTLS_CID_SUPPORTED;
 
 	LOG_DBG("  Enable connection id");
-	err = setsockopt(sock, SOL_TLS, TLS_DTLS_CID, &cid_option, sizeof(cid_option));
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_CID, &cid_option, sizeof(cid_option));
 	if (!err) {
 		cid_supported = true;
 	} else if ((err != EOPNOTSUPP) && (err != EINVAL)) {
@@ -114,7 +114,7 @@ int nrfc_dtls_setup(int sock)
 	int timeout = TLS_DTLS_HANDSHAKE_TIMEO_123S;
 
 	LOG_DBG("  Set handshake timeout %d", timeout);
-	err = setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEO,
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEO,
 			 &timeout, sizeof(timeout));
 	if (!err) {
 	} else if ((err != EOPNOTSUPP) || (err != EINVAL)) {
@@ -124,7 +124,7 @@ int nrfc_dtls_setup(int sock)
 	int verify = TLS_PEER_VERIFY_REQUIRED;
 
 	LOG_DBG("  Peer verify: %d", verify);
-	err = setsockopt(sock, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
 		LOG_ERR("Failed to setup peer verification, errno %d", -errno);
 		return -errno;
@@ -133,7 +133,8 @@ int nrfc_dtls_setup(int sock)
 	int session_cache = TLS_SESSION_CACHE_ENABLED;
 
 	LOG_DBG("  TLS session cache: %d", session_cache);
-	err = setsockopt(sock, SOL_TLS, TLS_SESSION_CACHE, &session_cache, sizeof(session_cache));
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_SESSION_CACHE,
+			       &session_cache, sizeof(session_cache));
 	if (err) {
 		LOG_ERR("Failed to enable session cache, errno: %d", -errno);
 		err = -errno;
@@ -141,7 +142,7 @@ int nrfc_dtls_setup(int sock)
 
 	keepopen_supported = false;
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP_KEEPOPEN)) {
-		err = setsockopt(sock, SOL_SOCKET, SO_KEEPOPEN, &(int){1}, sizeof(int));
+		err = zsock_setsockopt(sock, SOL_SOCKET, SO_KEEPOPEN, &(int){1}, sizeof(int));
 		if (err) {
 			/* Either not supported or unusable due to unknown error. */
 			err = 0;
@@ -158,7 +159,7 @@ int nrfc_dtls_session_save(int sock)
 	int err;
 
 	LOG_DBG("Save DTLS CID session");
-	err = setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_SAVE, &(int){0}, sizeof(int));
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_SAVE, &(int){0}, sizeof(int));
 	if (err) {
 		LOG_DBG("Failed to save DTLS CID session, errno %d", -errno);
 		err = -errno;
@@ -171,7 +172,7 @@ int nrfc_dtls_session_load(int sock)
 	int err;
 
 	LOG_DBG("Load DTLS CID session");
-	err = setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_LOAD, &(int){1}, sizeof(int));
+	err = zsock_setsockopt(sock, SOL_TLS, TLS_DTLS_CONN_LOAD, &(int){1}, sizeof(int));
 	if (err) {
 		LOG_DBG("Failed to load DTLS CID session, errno %d", -errno);
 		err = -errno;
@@ -192,7 +193,7 @@ bool nrfc_dtls_cid_is_active(int sock)
 
 #if defined(CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG)
 
-	err = getsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_STATUS, &status, &len);
+	err = zsock_getsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_STATUS, &status, &len);
 	if (!err) {
 		if (len > 0) {
 			if (status == TLS_DTLS_HANDSHAKE_STATUS_FULL) {
@@ -212,7 +213,7 @@ bool nrfc_dtls_cid_is_active(int sock)
 #endif /* CONFIG_NRF_CLOUD_COAP_LOG_LEVEL_DBG */
 
 	len = sizeof(status);
-	err = getsockopt(sock, SOL_TLS, TLS_DTLS_CID_STATUS, &status, &len);
+	err = zsock_getsockopt(sock, SOL_TLS, TLS_DTLS_CID_STATUS, &status, &len);
 	if (!err) {
 		if (len > 0) {
 			switch (status) {

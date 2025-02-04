@@ -95,7 +95,7 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port,
 	LOG_DBG("Trying static IPv4 address: %s, port: %d",
 		CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR, port);
 
-	inet_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR, &(static_addr.sin_addr));
+	zsock_inet_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR, &(static_addr.sin_addr));
 	static_addr.sin_family = AF_INET;
 	static_addr.sin_port = static_port;
 
