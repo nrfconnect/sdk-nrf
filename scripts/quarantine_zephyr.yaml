@@ -500,3 +500,9 @@
 - scenarios:
     - sample.net.prometheus
   comment: "not compatible with NCS (Frank Audun Kvamtro)"
+
+- scenarios:
+    - drivers.wifi.build.spi
+  platforms:
+    - native_sim/native
+  comment: "requires pulling in hal_atmel but is actually not very useful"
