@@ -242,6 +242,8 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+When building the sample with :ref:`configuration_system_overview_sysbuild` for an SoC that has a network core, the IPC radio's :file:`prj.conf` source file from :file:`sysbuild/ipc_radio` is automatically applied to the build.
+
 .. matter_template_build_wifi_nrf54h20_start
 
 To use nrf54H20 DK with the ``nrf7002ek`` shield attached (2.4 GHz or 5 GHz), follow the :ref:`ug_nrf7002eb_nrf54h20dk_gs` user guide to connect all required pins and then use the following command to build the sample:

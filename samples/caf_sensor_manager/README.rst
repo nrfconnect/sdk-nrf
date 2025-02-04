@@ -60,6 +60,8 @@ You can build and flash all the required images by completing the following step
 
 .. include:: /includes/build_and_run.txt
 
+When building the sample with :ref:`configuration_system_overview_sysbuild` for an SoC that has a network core, the IPC radio's :file:`prj.conf` source file from :file:`remote/` is automatically applied to the build.
+
 Complete the following steps to program the sample:
 
       1. Go to the sample directory.
