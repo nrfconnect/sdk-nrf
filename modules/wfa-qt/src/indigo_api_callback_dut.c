@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -367,6 +374,7 @@ static int generate_hostapd_config(char *output, int output_size,
 	size_t i;
 	int enable_wps = 0, use_mbss = 0;
 	char buffer[S_BUFFER_LEN], cfg_item[2*BUFFER_LEN];
+	char *save_buffer;
 	char band[64], value[16];
 	char country[16];
 	struct tlv_to_config_name *cfg = NULL;
@@ -440,13 +448,13 @@ static int generate_hostapd_config(char *output, int output_size,
 			char *token = NULL, *delimit = ";";
 
 			memcpy(buffer, tlv->value, sizeof(buffer));
-			token = strtok(buffer, delimit);
+			token = strtok_r(buffer, delimit, &save_buffer);
 
 			while (token != NULL) {
 				CHECK_SNPRINTF(cfg_item, sizeof(cfg_item), ret,
 					       "%s=%s\n", cfg->config_name, token);
 				strcat(output, cfg_item);
-				token = strtok(NULL, delimit);
+				token = strtok_r(NULL, delimit, &save_buffer);
 			}
 			continue;
 		}
@@ -2490,7 +2498,9 @@ static int send_sta_anqp_query_handler(struct packet_wrapper *req, struct packet
 			goto done;
 		}
 	} else {
-		token = strtok(anqp_info_id, delimit);
+		char *save_anqp_info_id;
+
+		token = strtok_r(anqp_info_id, delimit, &save_anqp_info_id);
 		memset(buffer, 0, sizeof(buffer));
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "ANQP_GET %s ", bssid);
 		while (token != NULL) {
@@ -2501,7 +2511,7 @@ static int send_sta_anqp_query_handler(struct packet_wrapper *req, struct packet
 				}
 			}
 
-			token = strtok(NULL, delimit);
+			token = strtok_r(NULL, delimit, &save_anqp_info_id);
 			if (token != NULL) {
 				strcat(buffer, ",");
 			}

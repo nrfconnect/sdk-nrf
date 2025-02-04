@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -17,11 +24,6 @@
 #include <zephyr/logging/log.h>
 
 #include <modem/at_cmd_custom.h>
-
-/* Even though it's defined in minimal libc, the declaration of strtok_r appears to be missing in
- * some cases, so we forward declare it here.
- */
-extern char *strtok_r(char *, const char *, char **);
 
 LOG_MODULE_REGISTER(gcf_sms, CONFIG_GCF_SMS_LOG_LEVEL);
 

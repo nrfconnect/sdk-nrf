@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -193,12 +200,12 @@ send:
 
 	if (strchr(at_buf, '|')) {
 		struct at_cmd_mode_pipelining_info *pipes = at_cmd_mode_work.pipe_infos;
-		char *next_char;
+		char *next_char, *save_next_char;
 		char *tmp;
 		int pipelined_at_cmd_len;
 
 		next_char = at_buf;
-		tmp = strtok(next_char, "|");
+		tmp = strtok_r(next_char, "|", &save_next_char);
 
 		while (tmp != NULL) {
 			if (at_cmd_mode_work.pipe_cnt >= AT_MAX_CMD_PIPELINED) {
@@ -218,7 +225,7 @@ send:
 					at_cmd_mode_work.pipe_cnt++;
 				}
 			}
-			tmp = strtok(NULL, "|");
+			tmp = strtok_r(NULL, "|", &save_next_char);
 		}
 	}
 
