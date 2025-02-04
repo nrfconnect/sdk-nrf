@@ -1,10 +1,10 @@
-/* Copyright (c) 2023 Nordic Semiconductor ASA
+/* Copyright (c) 2023-2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _SAMPLE_REBOOT_H_
-#define _SAMPLE_REBOOT_H_
+#ifndef _PROVISIONING_SUPPORT_H_
+#define _PROVISIONING_SUPPORT_H_
 
 #include <zephyr/kernel.h>
 
@@ -28,4 +28,4 @@ static inline bool await_provisioning_idle(k_timeout_t timeout)
 
 #endif /*CONFIG_NRF_PROVISIONING*/
 
-#endif /* _SAMPLE_REBOOT_H_ */
+#endif /* _PROVISIONING_SUPPORT_H_ */
