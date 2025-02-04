@@ -60,6 +60,11 @@ You can build and flash all the required images by completing the following step
 
 .. include:: /includes/build_and_run.txt
 
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`remote/`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 Complete the following steps to program the sample:
 
       1. Go to the sample directory.

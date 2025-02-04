@@ -103,6 +103,11 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 The sample generates header and source files based on protocol buffer definitions in :file:`.proto` files during the build process.
 You must install a protocol buffer compiler to generate the files.
 See the :zephyr:code-sample:`nanopb` in the Zephyr documentation for more information.

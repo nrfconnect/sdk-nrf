@@ -216,6 +216,7 @@ IPC radio firmware
 ------------------
 
 * Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system in all devices that contain MRAM, such as the nRF54H Series devices.
+* Updated documentation of applications and samples that use the IPC radio firmware as :ref:`companion component <companion_components>` to mention its usage when built with :ref:`configuration_system_overview_sysbuild`.
 
 Matter Bridge
 -------------
