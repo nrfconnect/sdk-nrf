@@ -77,16 +77,6 @@ static volatile uint8_t response_buffer[CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE];
 static struct ipc_ept ep;
 static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 
-NRF_STATIC_INLINE void nrf_vpr_csr_vio_out_or_set(uint16_t value)
-{
-	nrf_csr_set_bits(VPRCSR_NORDIC_OUT, value);
-}
-
-NRF_STATIC_INLINE void nrf_vpr_csr_vio_out_clear_set(uint16_t value)
-{
-	nrf_csr_clear_bits(VPRCSR_NORDIC_OUT, value);
-}
-
 static void adjust_tail(volatile hrt_xfer_data_t *xfer_data, uint16_t frame_width,
 			uint32_t data_length)
 {
