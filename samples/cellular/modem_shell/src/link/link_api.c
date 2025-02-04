@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -368,7 +375,7 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 	struct pdp_context_info *populated_info;
 
 	char ip_addr_str[AT_CMD_PDP_CONTEXT_READ_IP_ADDR_STR_MAX_LEN];
-	char *ip_address1, *ip_address2;
+	char *ip_address1, *ip_address2, *save_ip_addr_str;
 	int family;
 	struct in_addr *addr4;
 	struct in6_addr *addr6;
@@ -470,10 +477,10 @@ parse:
 	/* Parse IP addresses from space delimited string. */
 
 	/* Get 1st 2 IP addresses from a CGDCONT string.
-	 * Notice that ip_addr_str is slightly modified by strtok()
+	 * Notice that ip_addr_str is modified by strtok_r()
 	 */
-	ip_address1 = strtok(ip_addr_str, " ");
-	ip_address2 = strtok(NULL, " ");
+	ip_address1 = strtok_r(ip_addr_str, " ", &save_ip_addr_str);
+	ip_address2 = strtok_r(NULL, " ", &save_ip_addr_str);
 
 	if (ip_address1 != NULL) {
 		family = net_utils_sa_family_from_ip_string(ip_address1);

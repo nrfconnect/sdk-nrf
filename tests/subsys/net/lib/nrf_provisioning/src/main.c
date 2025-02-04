@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/util.h>
@@ -339,7 +346,8 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 
 	strcpy(tokens, req_ctx->url);
 
-	char *tok = strtok(tokens, "/");
+	char *save_tok;
+	char *tok = strtok_r(tokens, "/", &save_tok);
 
 	int sgmtc = 0; /* Path segment count */
 	int qcnt = 0; /* Query item count */
@@ -348,22 +356,22 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 		switch (sgmtc) {
 		case 0:
 			info.apiver = tok;
-			tok = strtok(NULL, "/");
+			tok = strtok_r(NULL, "/", &save_tok);
 			sgmtc++;
 			break;
 		case 1:
 			info.endpoint = tok;
-			tok = strtok(NULL, "?");
+			tok = strtok_r(NULL, "?", &save_tok);
 			sgmtc++;
 			break;
 		case 2:
 			info.command = tok;
-			tok = strtok(NULL, "&");
+			tok = strtok_r(NULL, "&", &save_tok);
 			sgmtc++;
 			break;
 		default:
 			query_items[qcnt++] = tok;
-			tok = strtok(NULL, "&");
+			tok = strtok_r(NULL, "&", &save_tok);
 			break;
 		}
 	}

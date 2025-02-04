@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <zephyr/kernel.h>
 #include <zephyr/net/coap.h>
 #include <net/download_client.h>
@@ -16,11 +23,6 @@ LOG_MODULE_DECLARE(download_client, CONFIG_DOWNLOAD_CLIENT_LOG_LEVEL);
 #define COAP_VER 1
 #define FILENAME_SIZE CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
 #define COAP_PATH_ELEM_DELIM "/"
-
-/* declaration of strtok_r appears to be missing in some cases,
- * even though it's defined in the minimal libc, so we forward declare it
- */
-extern char *strtok_r(char *str, const char *sep, char **state);
 
 int url_parse_file(const char *url, char *file, size_t len);
 int socket_send(const struct download_client *client, size_t len, int timeout);

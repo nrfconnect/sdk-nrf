@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -1320,8 +1327,9 @@ int parse_wireless_interface_info(char *info)
 {
 	char *token = NULL;
 	char *delimit = ",";
+	char *save_token;
 
-	token = strtok(info, delimit);
+	token = strtok_r(info, delimit, &save_token);
 
 	while (token != NULL) {
 		if (strncmp(token, "2:", 2) == 0) {
@@ -1333,7 +1341,7 @@ int parse_wireless_interface_info(char *info)
 		} else {
 			return -1;
 		}
-		token = strtok(NULL, delimit);
+		token = strtok_r(NULL, delimit, &save_token);
 	}
 
 	return 0;

@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <stdlib.h>
@@ -255,7 +262,7 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 	char mver[128];
 	char *cver = STRINGIFY(1);
 	int ret;
-	char *mvernmb;
+	char *mvernmb, *save_mvernmb;
 	int cnt;
 	char after[NRF_PROVISIONING_CORRELATION_ID_SIZE];
 
@@ -269,12 +276,12 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 		return ret ? ret : -ENODATA;
 	}
 
-	mvernmb = strtok(mver, "_-");
+	mvernmb = strtok_r(mver, "_-", &save_mvernmb);
 	cnt = 1;
 
 	/* mfw_nrf9160_1.3.2-FOTA-TEST - for example */
 	while (cnt++ < 3) {
-		mvernmb = strtok(NULL, "_-");
+		mvernmb = strtok_r(NULL, "_-", &save_mvernmb);
 	}
 
 	buff_sz = sizeof(API_CMDS_TEMPLATE) +

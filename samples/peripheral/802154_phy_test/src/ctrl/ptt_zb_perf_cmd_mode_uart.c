@@ -12,6 +12,13 @@
  * gets it back with result and then frees the event.
  */
 
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>

@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+
+#ifdef _POSIX_C_SOURCE
 #undef _POSIX_C_SOURCE
+#endif
 #define _POSIX_C_SOURCE 200809L /* Required for gmtime_r */
 
 #include <date_time.h>
