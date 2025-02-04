@@ -26,46 +26,6 @@
  */
 #define CNT1_TOP_CALCULATE(cnt0_top) (2 * ((cnt0_top) + 1) - 1)
 
-/** @brief Shift control configuration. */
-typedef struct {
-	uint8_t shift_count;
-	nrf_vpr_csr_vio_shift_t out_mode;
-	uint8_t frame_width;
-	nrf_vpr_csr_vio_mode_in_t in_mode;
-} nrf_vpr_csr_vio_shift_ctrl_t;
-
-NRF_STATIC_INLINE void
-nrf_vpr_csr_vio_shift_ctrl_buffered_set(nrf_vpr_csr_vio_shift_ctrl_t const *p_shift_ctrl)
-{
-	uint32_t reg =
-		((p_shift_ctrl->shift_count << VPRCSR_NORDIC_SHIFTCTRLB_SHIFTCNTB_VALUE_Pos) &
-		 VPRCSR_NORDIC_SHIFTCTRLB_SHIFTCNTB_VALUE_Msk) |
-		((p_shift_ctrl->out_mode << VPRCSR_NORDIC_SHIFTCTRLB_OUTMODEB_MODE_Pos) &
-		 VPRCSR_NORDIC_SHIFTCTRLB_OUTMODEB_MODE_Msk) |
-		((p_shift_ctrl->frame_width << VPRCSR_NORDIC_SHIFTCTRLB_OUTMODEB_FRAMEWIDTH_Pos) &
-		 VPRCSR_NORDIC_SHIFTCTRLB_OUTMODEB_FRAMEWIDTH_Msk) |
-		((p_shift_ctrl->in_mode << VPRCSR_NORDIC_SHIFTCTRLB_INMODEB_MODE_Pos) &
-		 VPRCSR_NORDIC_SHIFTCTRLB_INMODEB_MODE_Msk);
-
-	nrf_csr_write(VPRCSR_NORDIC_SHIFTCTRLB, reg);
-}
-
-/* Temporary function definition until the one from nrfx has its return type fixed. */
-NRF_STATIC_INLINE uint32_t vpr_csr_vio_in_buffered_reversed_byte_get(void)
-{
-	return nrf_csr_read(VPRCSR_NORDIC_INBRB);
-}
-
-NRF_STATIC_INLINE void nrf_vpr_csr_vio_out_or_set(uint16_t value)
-{
-	nrf_csr_set_bits(VPRCSR_NORDIC_OUT, value);
-}
-
-NRF_STATIC_INLINE void nrf_vpr_csr_vio_out_clear_set(uint16_t value)
-{
-	nrf_csr_clear_bits(VPRCSR_NORDIC_OUT, value);
-}
-
 static const nrf_vpr_csr_vio_shift_ctrl_t write_final_shift_ctrl_cfg = {
 	.shift_count = 1,
 	.out_mode = NRF_VPR_CSR_VIO_SHIFT_NONE,
@@ -356,7 +316,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 
 	for (uint8_t i = 0; i < hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count; i++) {
 		hrt_xfer_params->xfer_data[HRT_FE_DATA].data[i] =
-			vpr_csr_vio_in_buffered_reversed_byte_get() >> INPUT_SHIFT_COUNT;
+			nrf_vpr_csr_vio_in_buffered_reversed_byte_get() >> INPUT_SHIFT_COUNT;
 	}
 
 	/* Stop counters */
