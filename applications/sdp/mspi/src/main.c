@@ -36,6 +36,8 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
+#define CALCULATE_CNT0_TOP(freq) (SystemCoreClock / (2 * freq) - 1)
+
 BUILD_ASSERT(CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 
 static const uint8_t pin_to_vio_map[VIO_COUNT] = {
@@ -187,7 +189,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	volatile nrfe_mspi_dev_config_t *device =
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config.device_index];
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = CALCULATE_CNT0_TOP(device->freq);
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config.hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
@@ -257,7 +259,7 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config.device_index];
 	nrf_vpr_csr_vio_config_t config;
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = CALCULATE_CNT0_TOP(device->freq);
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config.hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
