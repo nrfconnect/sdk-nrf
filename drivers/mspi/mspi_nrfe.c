@@ -28,8 +28,7 @@ LOG_MODULE_REGISTER(mspi_nrfe, CONFIG_MSPI_LOG_LEVEL);
 
 #define SDP_MPSI_PINCTRL_DEV_CONFIG_INIT(node_id)                                                  \
 	{                                                                                          \
-		.reg = PINCTRL_REG_NONE,                                                           \
-		.states = Z_PINCTRL_STATES_NAME(node_id),                                          \
+		.reg = PINCTRL_REG_NONE, .states = Z_PINCTRL_STATES_NAME(node_id),                 \
 		.state_cnt = ARRAY_SIZE(Z_PINCTRL_STATES_NAME(node_id)),                           \
 	}
 
@@ -60,8 +59,7 @@ static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 		.duplex = DT_PROP_OR(MSPI_NRFE_NODE, duplex, MSPI_FULL_DUPLEX),                    \
 		.dqs_support = DT_PROP_OR(MSPI_NRFE_NODE, dqs_support, false),                     \
 		.num_periph = DT_CHILD_NUM(MSPI_NRFE_NODE),                                        \
-		.max_freq = DT_PROP(MSPI_NRFE_NODE, clock_frequency),                              \
-		.re_init = true,                                                                   \
+		.max_freq = DT_PROP(MSPI_NRFE_NODE, clock_frequency), .re_init = true,             \
 		.sw_multi_periph = false,                                                          \
 	}
 
@@ -392,6 +390,13 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 		if (cfg->freq > drv_cfg->mspicfg.max_freq) {
 			LOG_ERR("Invalid frequency: %u, MAX: %u", cfg->freq,
 				drv_cfg->mspicfg.max_freq);
+			return -EINVAL;
+		}
+
+		if (SystemCoreClock % (cfg->freq * 2) != 0) {
+			LOG_ERR("Invalid frequency: %u. Only divisors of (CPU_FREQ / 2) are "
+				"allowed.",
+				cfg->freq);
 			return -EINVAL;
 		}
 	}
