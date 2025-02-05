@@ -361,6 +361,13 @@ NCSDK-29354: Bluetooth traffic stalls while writing or erasing flash
 
   **Workaround:** Use a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`).
 
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-0
+
+NCSDK-30959: The Bluetooth subsystem may deadlock when :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` is disabled
+  When the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option is disabled and a user application blocks any of the Bluetooth Host callbacks, the Bluetooth subsystem may deadlock.
+
+  **Workaround:** Enable the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option or do not call the blocking API from any of the Bluetooth Host callbacks.
+
 Bluetooth Mesh
 ==============
 
