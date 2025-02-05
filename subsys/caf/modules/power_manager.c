@@ -13,7 +13,6 @@
 #endif
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/poweroff.h>
-#include <zephyr/pm/pm.h>
 
 #include <app_event_manager.h>
 #include <nrf_profiler.h>
@@ -149,18 +148,9 @@ static void system_off_post_action(void)
 	/* Ensure that logs are displayed. */
 	LOG_PANIC();
 
-	/* You shouldn't enable CONFIG_POWEROFF and CONFIG_PM simultaneously */
-	BUILD_ASSERT(!(IS_ENABLED(CONFIG_POWEROFF) && IS_ENABLED(CONFIG_PM)),
-		"CAF Power Manager uses either power off or power management, but never both");
-
-#if CONFIG_PM
-		(void)pm_state_force(0u, &(struct pm_state_info){.state = PM_STATE_SOFT_OFF,
-									.substate_id =  0,
-									.min_residency_us = 0,
-									.exit_latency_us = 0 });
-#elif CONFIG_POWEROFF
+	if (IS_ENABLED(CONFIG_POWEROFF)) {
 		sys_poweroff();
-#endif
+	}
 }
 
 static void submit_power_off_event(bool error)
