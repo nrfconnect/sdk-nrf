@@ -90,7 +90,8 @@ config BT_RX_STACK_SIZE
 	default 512 if BT_HCI_RAW
 	default 2600 if BT_MESH
 	default 2200 if BT_SETTINGS
-	default 1536 if BT_SMP
+	default 3200 if BT_SMP && (SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX)
+	default 1536 if BT_SMP && !(SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX)
 	default 1024
 	range 512 65536 if BT_HCI_RAW
 	range 1100 65536 if BT_MESH
