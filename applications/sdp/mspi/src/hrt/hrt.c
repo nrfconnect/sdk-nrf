@@ -104,6 +104,13 @@ static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, boo
 		}
 
 		if ((i == 0) && (!*counter_running)) {
+			/*
+			 * Temporary fix for max frequency. Top value can be set to 0,
+			 * but initial value cannot, because counter will not start.
+			 */
+			if (counter_value == 0) {
+				counter_value = 1;
+			}
 			/* Start counter */
 			nrf_vpr_csr_vtim_simple_counter_set(0, counter_value);
 			*counter_running = true;
