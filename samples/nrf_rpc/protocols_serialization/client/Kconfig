@@ -6,9 +6,6 @@
 
 menu "Protocols serialization client"
 
-config BT_CTLR
-	default n
-
 choice BT_NUS_LOG_LEVEL_CHOICE
 	default BT_NUS_LOG_LEVEL_DBG if DEBUG
 endchoice

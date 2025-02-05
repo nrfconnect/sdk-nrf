@@ -98,7 +98,7 @@ static const struct bt_data non_connectable_sd_data[] = {
 };
 
 static const struct bt_le_adv_param *connectable_ad_params =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN,
 			CONNECTABLE_ADV_INTERVAL_MIN,
 			CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);

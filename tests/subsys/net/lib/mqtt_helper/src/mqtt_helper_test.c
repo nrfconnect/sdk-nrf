@@ -280,13 +280,13 @@ void test_mqtt_helper_connect_when_disconnected(void)
 	 */
 	struct zsock_addrinfo *test_res = NULL;
 
-	__cmock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__cmock_getaddrinfo_IgnoreArg_host();
-	__cmock_getaddrinfo_IgnoreArg_hints();
-	__cmock_getaddrinfo_IgnoreArg_res();
-	__cmock_getaddrinfo_ReturnThruPtr_res(&test_res);
+	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
+	__cmock_zsock_getaddrinfo_IgnoreArg_host();
+	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
+	__cmock_zsock_getaddrinfo_IgnoreArg_res();
+	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__cmock_freeaddrinfo_ExpectAnyArgs();
+	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
@@ -301,7 +301,7 @@ void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 
 	__cmock_mqtt_client_init_Expect(&mqtt_client);
 
-	__cmock_freeaddrinfo_ExpectAnyArgs();
+	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -2);
 
 	/* Make getddrinfo return a pointer that points to NULL. Otherwise the unit under test
@@ -310,11 +310,11 @@ void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 	 */
 	struct zsock_addrinfo *test_res = NULL;
 
-	__cmock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__cmock_getaddrinfo_IgnoreArg_host();
-	__cmock_getaddrinfo_IgnoreArg_hints();
-	__cmock_getaddrinfo_IgnoreArg_res();
-	__cmock_getaddrinfo_ReturnThruPtr_res(&test_res);
+	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
+	__cmock_zsock_getaddrinfo_IgnoreArg_host();
+	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
+	__cmock_zsock_getaddrinfo_IgnoreArg_res();
+	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
 	mqtt_state = MQTT_STATE_DISCONNECTED;
 
@@ -557,8 +557,8 @@ void test_mqtt_helper_poll_loop_disconnecting(void)
 void test_mqtt_helper_poll_loop_timeout(void)
 {
 	/* Let poll() return 0 first and then -ENOTCONN on subsequent call to end the test. */
-	__cmock_poll_ExpectAnyArgsAndReturn(0);
-	__cmock_poll_ExpectAnyArgsAndReturn(-ENOTCONN);
+	__cmock_zsock_poll_ExpectAnyArgsAndReturn(0);
+	__cmock_zsock_poll_ExpectAnyArgsAndReturn(-ENOTCONN);
 	__cmock_mqtt_live_ExpectAndReturn(&mqtt_client, 0);
 
 	/* mqtt_abort() should be called when the connection is dropped. */
@@ -576,7 +576,7 @@ void test_mqtt_helper_poll_loop_timeout(void)
  */
 void test_mqtt_helper_poll_loop_pollin(void)
 {
-	__cmock_poll_Stub(poll_stub_pollin);
+	__cmock_zsock_poll_Stub(poll_stub_pollin);
 	__cmock_mqtt_input_ExpectAndReturn(&mqtt_client, 0);
 
 	/* mqtt_abort() should be called when the poll fails (after the second call). */
@@ -593,7 +593,7 @@ void test_mqtt_helper_poll_loop_pollin(void)
  */
 void test_mqtt_helper_poll_loop_pollnval(void)
 {
-	__cmock_poll_Stub(poll_stub_pollnval);
+	__cmock_zsock_poll_Stub(poll_stub_pollnval);
 	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
@@ -607,7 +607,7 @@ void test_mqtt_helper_poll_loop_pollnval(void)
  */
 void test_mqtt_helper_poll_loop_pollhup(void)
 {
-	__cmock_poll_Stub(poll_stub_pollhup);
+	__cmock_zsock_poll_Stub(poll_stub_pollhup);
 	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
@@ -621,7 +621,7 @@ void test_mqtt_helper_poll_loop_pollhup(void)
  */
 void test_mqtt_helper_poll_loop_pollerr(void)
 {
-	__cmock_poll_Stub(poll_stub_pollerr);
+	__cmock_zsock_poll_Stub(poll_stub_pollerr);
 	__cmock_mqtt_abort_ExpectAndReturn(&mqtt_client, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;

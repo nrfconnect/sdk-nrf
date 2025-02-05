@@ -29,8 +29,8 @@ LOG_MODULE_REGISTER(slm_icmp, CONFIG_SLM_LOG_LEVEL);
 
 /**@ ICMP Ping command arguments */
 static struct ping_argv_t {
-	struct addrinfo *src;
-	struct addrinfo *dest;
+	struct zsock_addrinfo *src;
+	struct zsock_addrinfo *dest;
 	uint16_t len;
 	uint16_t waitms;
 	uint16_t count;
@@ -112,9 +112,9 @@ static uint32_t send_ping_wait_reply(void)
 	uint8_t *data = NULL;
 	uint8_t rep = 0;
 	uint8_t header_len = 0;
-	struct addrinfo *si = ping_argv.src;
+	struct zsock_addrinfo *si = ping_argv.src;
 	const int alloc_size = ICMP_DEFAULT_LINK_MTU;
-	struct pollfd fds[1];
+	struct zsock_pollfd fds[1];
 	int dpllen, pllen, len;
 	int fd;
 	int plseqnr;
@@ -237,9 +237,9 @@ static uint32_t send_ping_wait_reply(void)
 	errno = 0;
 	delta_t = 0;
 
-	fd = socket(AF_PACKET, SOCK_RAW, 0);
+	fd = zsock_socket(AF_PACKET, SOCK_RAW, 0);
 	if (fd < 0) {
-		LOG_ERR("socket() failed: (%d)", -errno);
+		LOG_ERR("zsock_socket() failed: (%d)", -errno);
 		free(buf);
 		return (uint32_t)delta_t;
 	}
@@ -249,7 +249,7 @@ static uint32_t send_ping_wait_reply(void)
 	if (ping_argv.pdn != 0) {
 		int pdn = ping_argv.pdn;
 
-		if (setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn, sizeof(int))) {
+		if (zsock_setsockopt(fd, SOL_SOCKET, SO_BINDTOPDN, &pdn, sizeof(int))) {
 			LOG_WRN("Unable to set socket SO_BINDTOPDN, abort");
 			goto close_end;
 		}
@@ -264,7 +264,7 @@ static uint32_t send_ping_wait_reply(void)
 	tv.tv_sec = (ping_argv.waitms / 1000);
 	tv.tv_usec = (ping_argv.waitms % 1000) * 1000;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&tv,
+	if (zsock_setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (struct timeval *)&tv,
 		       sizeof(struct timeval)) < 0) {
 		LOG_WRN("Unable to set socket SO_SNDTIMEO, continue");
 	}
@@ -272,7 +272,7 @@ static uint32_t send_ping_wait_reply(void)
 	/* Just for sure, let's put the timeout for rcv as well
 	 * (should not be needed for non-blocking socket):
 	 */
-	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv,
+	if (zsock_setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (struct timeval *)&tv,
 		       sizeof(struct timeval)) < 0) {
 		LOG_WRN("Unable to set socket SO_RCVTIMEO, continue");
 	}
@@ -281,19 +281,19 @@ static uint32_t send_ping_wait_reply(void)
 	start_t = k_uptime_get();
 	timeout = ping_argv.waitms;
 
-	ret = send(fd, buf, total_length, 0);
+	ret = zsock_send(fd, buf, total_length, 0);
 	if (ret <= 0) {
-		LOG_ERR("send() failed: (%d)", -errno);
+		LOG_ERR("zsock_send() failed: (%d)", -errno);
 		goto close_end;
 	}
 
-	/* Now after send(), calculate how much there's still time left */
+	/* Now after zsock_send(), calculate how much there's still time left */
 	delta_t = k_uptime_delta(&start_t);
 	timeout = ping_argv.waitms - (int32_t)delta_t;
 
 wait_for_data:
 	fds[0].fd = fd;
-	fds[0].events = POLLIN;
+	fds[0].events = ZSOCK_POLLIN;
 
 	do {
 		if (timeout <= 0) {
@@ -302,18 +302,18 @@ wait_for_data:
 			goto close_end;
 		}
 
-		ret = poll(fds, 1, timeout);
+		ret = zsock_poll(fds, 1, timeout);
 		if (ret == 0) {
 			LOG_WRN("Pinging result: no ping response in given timeout msec");
 			delta_t = 0;
 			goto close_end;
 		} else if (ret < 0) {
-			LOG_ERR("poll() failed: (%d) (%d)", -errno, ret);
+			LOG_ERR("zsock_poll() failed: (%d) (%d)", -errno, ret);
 			delta_t = 0;
 			goto close_end;
 		}
 
-		len = recv(fd, buf, alloc_size, 0);
+		len = zsock_recv(fd, buf, alloc_size, 0);
 
 		/* Calculate again, how much there's still time left */
 		delta_t = k_uptime_delta(&start_t);
@@ -321,7 +321,7 @@ wait_for_data:
 
 		if (len <= 0) {
 			if (errno != EAGAIN && errno != EWOULDBLOCK) {
-				LOG_ERR("recv() failed with errno (%d) and return value (%d)",
+				LOG_ERR("zsock_recv() failed with errno (%d) and return value (%d)",
 					-errno, len);
 				delta_t = 0;
 				goto close_end;
@@ -329,7 +329,7 @@ wait_for_data:
 		}
 		if (len < header_len) {
 			/* Data length error, ignore "silently" */
-			LOG_ERR("recv() wrong data (%d)", len);
+			LOG_ERR("zsock_recv() wrong data (%d)", len);
 		}
 
 		if ((rep == ICMP_ECHO_REP && buf[IP_PROTOCOL_POS] == IPPROTO_ICMP) ||
@@ -406,15 +406,15 @@ wait_for_data:
 		(uint32_t)(delta_t)/1000, (uint32_t)(delta_t)%1000);
 
 close_end:
-	(void)close(fd);
+	(void)zsock_close(fd);
 	free(buf);
 	return (uint32_t)delta_t;
 }
 
 void ping_task(struct k_work *item)
 {
-	struct addrinfo *si = ping_argv.src;
-	struct addrinfo *di = ping_argv.dest;
+	struct zsock_addrinfo *si = ping_argv.src;
+	struct zsock_addrinfo *di = ping_argv.dest;
 	uint32_t sum = 0;
 	uint32_t count = 0;
 	uint32_t rtt_min = 0xFFFFFFFF;
@@ -452,19 +452,19 @@ void ping_task(struct k_work *item)
 			rtt_min, rtt_max, sum / count);
 	}
 
-	freeaddrinfo(si);
-	freeaddrinfo(di);
+	zsock_freeaddrinfo(si);
+	zsock_freeaddrinfo(di);
 }
 
 static int ping_test_handler(const char *target)
 {
 	int ret;
-	struct addrinfo *res;
+	struct zsock_addrinfo *res;
 
-	ret = getaddrinfo(target, NULL, NULL, &res);
+	ret = zsock_getaddrinfo(target, NULL, NULL, &res);
 	if (ret != 0) {
-		LOG_ERR("getaddrinfo(dest) error: %d", ret);
-		rsp_send("\"%s\"\r\n", gai_strerror(ret));
+		LOG_ERR("zsock_getaddrinfo(dest) error: %d", ret);
+		rsp_send("\"%s\"\r\n", zsock_gai_strerror(ret));
 		return -EAGAIN;
 	}
 
@@ -476,16 +476,16 @@ static int ping_test_handler(const char *target)
 		util_get_ip_addr(ping_argv.pdn, ipv4_addr, NULL);
 		if (!*ipv4_addr) {
 			LOG_ERR("Unable to obtain local IPv4 address");
-			freeaddrinfo(res);
+			zsock_freeaddrinfo(res);
 			return -1;
 		}
 
 		ping_argv.dest = res;
 		res = NULL;
-		ret = getaddrinfo(ipv4_addr, NULL, NULL, &res);
+		ret = zsock_getaddrinfo(ipv4_addr, NULL, NULL, &res);
 		if (ret != 0) {
-			LOG_ERR("getaddrinfo(src) error: %d", ret);
-			freeaddrinfo(ping_argv.dest);
+			LOG_ERR("zsock_getaddrinfo(src) error: %d", ret);
+			zsock_freeaddrinfo(ping_argv.dest);
 			return -ret;
 		}
 		ping_argv.src = res;
@@ -496,16 +496,16 @@ static int ping_test_handler(const char *target)
 		util_get_ip_addr(ping_argv.pdn, NULL, ipv6_addr);
 		if (!*ipv6_addr) {
 			LOG_ERR("Unable to obtain local IPv6 address");
-			freeaddrinfo(res);
+			zsock_freeaddrinfo(res);
 			return -1;
 		}
 
 		ping_argv.dest = res;
 		res = NULL;
-		ret = getaddrinfo(ipv6_addr, NULL, NULL, &res);
+		ret = zsock_getaddrinfo(ipv6_addr, NULL, NULL, &res);
 		if (ret != 0) {
-			LOG_ERR("getaddrinfo(src) error: %d", ret);
-			freeaddrinfo(ping_argv.dest);
+			LOG_ERR("zsock_getaddrinfo(src) error: %d", ret);
+			zsock_freeaddrinfo(ping_argv.dest);
 			return -ret;
 		}
 		ping_argv.src = res;

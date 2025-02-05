@@ -226,7 +226,6 @@ FAKE_VALUE_FUNC(ssize_t, z_impl_zsock_sendto, int, const void *, size_t, int,
 		const struct sockaddr *, socklen_t);
 FAKE_VALUE_FUNC(ssize_t, z_impl_zsock_recvfrom, int, void *, size_t, int, struct sockaddr *,
 		socklen_t *);
-FAKE_VOID_FUNC(z_impl_sys_rand_get, void *, size_t);
 
 FAKE_VALUE_FUNC(int, coap_get_option_int, const struct coap_packet *, uint16_t);
 FAKE_VALUE_FUNC(int, coap_block_transfer_init, struct coap_block_context *, enum coap_block_size,
@@ -2409,7 +2408,6 @@ void setUp(void)
 	RESET_FAKE(z_impl_net_addr_ntop);
 	RESET_FAKE(z_impl_zsock_sendto);
 	RESET_FAKE(z_impl_zsock_recvfrom);
-	RESET_FAKE(z_impl_sys_rand_get);
 
 	RESET_FAKE(coap_get_option_int);
 	RESET_FAKE(coap_block_transfer_init);

@@ -13,6 +13,7 @@ add_subdirectory_ifdef(CONFIG_SECURE_BOOT_STORAGE bootloader/bl_storage)
 
 add_subdirectory_ifdef(CONFIG_NRF_SECURITY nrf_security)
 add_subdirectory_ifdef(CONFIG_TRUSTED_STORAGE trusted_storage)
+add_subdirectory_ifdef(CONFIG_SECURE_STORAGE secure_storage)
 
 add_subdirectory(net)
 add_subdirectory_ifdef(CONFIG_ESB		esb)
