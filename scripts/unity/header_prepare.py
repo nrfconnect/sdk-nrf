@@ -35,6 +35,12 @@ def header_prepare(in_file, out_file, out_wrap_file):
         re.M | re.S)
     content = static_inline_pattern.sub(r"", content)
 
+    # rewrite SVCALL to normal function declaration
+    svcall_pattern = re.compile(
+        r'SVCALL\(\w+, (\w+), (\w+\([^)]*\))\);',
+        re.M)
+    content = svcall_pattern.sub(r"\1 \2;", content)
+
     # change static inline functions to normal function declaration
     static_inline_pattern = re.compile(
         r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
