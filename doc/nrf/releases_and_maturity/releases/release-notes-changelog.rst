@@ -578,10 +578,17 @@ Modem libraries
 
 * :ref:`modem_key_mgmt` library:
 
+  * Added:
+
+    * The :c:func:`modem_key_mgmt_digest` function that would retrieve the SHA1 digest of a credential from the modem.
+    * The :c:func:`modem_key_mgmt_list` function that would retrieve the security tag and type of every credential stored in the modem.
+
   * Fixed:
 
     * An issue with the :c:func:`modem_key_mgmt_clear` function where it returned ``-ENOENT`` when the credential was cleared.
     * A race condition in several functions where ``+CMEE`` error notifications could be disabled by one function before the other one got a chance to run its command.
+    * An issue with the :c:func:`modem_key_mgmt_clear` function where ``+CMEE`` error notifications were not restored to their original state if the ``AT%CMNG`` AT command failed.
+    * The :c:func:`modem_key_mgmt_clear` function to lock the shared scratch buffer.
 
 * Updated the :ref:`nrf_modem_lib_lte_net_if` to automatically set the actual link :term:`Maximum Transmission Unit (MTU)` on the network interface when PDN connectivity is gained.
 
@@ -597,7 +604,11 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-* Added the :ref:`lib_downloader` library.
+* Added:
+
+  * The :ref:`lib_downloader` library.
+  * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
+
 * Deprecated the :ref:`lib_download_client` library.
   See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
 
