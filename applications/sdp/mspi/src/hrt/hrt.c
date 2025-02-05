@@ -81,7 +81,11 @@ static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, boo
 				SHIFTCNTB_VALUE(xfer_data->penultimate_word_clocks);
 			nrf_vpr_csr_vio_shift_ctrl_buffered_set(&xfer_shift_ctrl);
 		default: /* Intentional fallthrough */
-			xfer_data->vio_out_set(((uint32_t *)xfer_data->data)[i]);
+			if (xfer_data->data == NULL) {
+				xfer_data->vio_out_set(0);
+			} else {
+				xfer_data->vio_out_set(((uint32_t *)xfer_data->data)[i]);
+			}
 		}
 
 		if ((i == 0) && (!*counter_running)) {
@@ -156,6 +160,10 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 	/* Transfer address */
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_ADDRESS], hrt_xfer_params->bus_widths.address,
 	       &counter_running, hrt_xfer_params->counter_value);
+	/* Transfer dummy cycles */
+	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES],
+	       hrt_xfer_params->bus_widths.dummy_cycles, &counter_running,
+	       hrt_xfer_params->counter_value);
 	/* Transfer data */
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_DATA], hrt_xfer_params->bus_widths.data,
 	       &counter_running, hrt_xfer_params->counter_value);
