@@ -47,3 +47,18 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "To be fixed after upmerge. Footprint should be reduced. NCSDK-31428"
+
+- scenarios:
+    - applications.nrf_desktop.zrelease
+  platforms:
+    - nrf52833dk/nrf52820
+    - nrf52820dongle/nrf52820
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31675"
+
+- scenarios:
+    - applications.nrf_desktop.zdebug
+  platforms:
+    - nrf52833dk/nrf52820
+    - nrf52820dongle/nrf52820
+    - nrf52810dmouse/nrf52810
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31675"
