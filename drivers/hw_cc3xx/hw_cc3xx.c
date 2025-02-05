@@ -59,4 +59,26 @@ SYS_INIT(hw_cc3xx_init_internal, PRE_KERNEL_1,
 SYS_INIT(hw_cc3xx_init, POST_KERNEL,
 	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
+
+#if defined(CONFIG_MBEDTLS_PSA_CRYPTO_CLIENT) && !defined(CONFIG_MBEDTLS_BUILTIN)
+
+#include "psa/crypto.h"
+
+/* Ensuring psa_crypto_init is run on CryptoCell enabled HW */
+static int _psa_crypto_init(void)
+{
+	psa_status_t err = psa_crypto_init();
+	if(err != PSA_SUCCESS) {
+		return -EIO;
+	}
+
+	return 0;
+}
+
+/* Ensure PSA crypto is initalized after nrf_cc3xx mutex initialization */
+SYS_INIT(_psa_crypto_init, POST_KERNEL, 
+	 CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+
+#endif /* CONFIG_MBEDTLS_PSA_CRYPTO_CLIENT */
+
 #endif /* CONFIG_HW_CC3XX */
