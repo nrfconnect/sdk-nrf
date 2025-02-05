@@ -17,11 +17,14 @@ config CAF_POWER_MANAGER
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
 
+	  The sys_poweroff API is not yet fully supported on nRF54H SoC Series.
+	  Because of that, it's not enabled by default for now.
+
 if CAF_POWER_MANAGER
 
 config CAF_POWER_MANAGER_STAY_ON
-	bool "Stay on while no connections"
-	depends on PM || POWEROFF
+	bool "Stay on while no connections" if POWEROFF
+	default y if !POWEROFF
 	help
 	  If disabled the device will switch SoC to OFF mode after power
 	  manager timeout is done. If enabled the device will stay on
