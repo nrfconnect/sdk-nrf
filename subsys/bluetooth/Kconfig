@@ -45,6 +45,14 @@ config BT_LONG_WQ_STACK_SIZE
 	default 1800 if (BT_ECC || BT_GATT_CACHING)
 	default 1024
 
+if BT_CONN
+
+config BT_HCI_ACL_FLOW_CONTROL
+	# Enabling this option by default for now to avoid potential deadlocks. See NCSDK-30959.
+	default y
+
+endif # BT_CONN
+
 rsource "controller/Kconfig"
 rsource "host_extensions/Kconfig"
 
