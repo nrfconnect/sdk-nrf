@@ -956,28 +956,7 @@ To perform the DFU procedure, complete the following steps:
       #. Observe that **LED 2** is blinking, which indicates that the Fast Pair advertising is enabled.
       #. Perform DFU using the `nRF Connect Device Manager`_ mobile app:
 
-         1. Generate the SUIT envelope by building your application with the FOTA support over Bluetooth Low Energy.
-            You can find the generated :file:`root.suit` envelope in the :file:`<build_dir>/DFU` directory.
-            Alternatively, you can use the generated :file:`dfu_suit.zip` package in the :file:`<build_dir>/zephyr` directory.
-         #. Download the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package to your device.
-
-            .. note::
-               `nRF Connect for Desktop`_ does not currently support the FOTA process.
-
-         #. Use the `nRF Connect Device Manager`_ mobile app to update your device with the new firmware.
-
-            a. Ensure that you can access the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package from your phone or tablet.
-            #. In the mobile app, scan and select the device to update.
-            #. Switch to the :guilabel:`Image` tab.
-            #. In the **Firmware Upgrade** section, tap the :guilabel:`SELECT FILE` button and select the :file:`root.suit` envelope or the :file:`dfu_suit.zip` package.
-            #. Tap the :guilabel:`START` button.
-            #. Wait for the DFU to finish and verify that the application works properly.
-
-      .. note::
-         Support for SUIT updates is available starting from the following versions of the `nRF Connect Device Manager`_ mobile app:
-
-         * Version ``2.0`` on Android.
-         * Version ``1.7`` on iOS.
+         .. include:: /includes/suit_fota_update_nrfcdm_test_steps.txt
 
 Disabling the locator tag
 -------------------------
