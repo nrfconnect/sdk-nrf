@@ -83,6 +83,31 @@ static NRF_TIMER_Type *fault_timer;
 static volatile uint32_t *cpuflpr_error_ctx_ptr =
 	(uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
 
+static uint16_t cnt0_top_calculate(uint32_t freq)
+{
+	uint16_t dividor_high = UINT16_MAX;
+	uint16_t dividor_low = 1;
+	uint16_t middle;
+
+	if (freq == MAX_FREQUENCY) {
+		return 0;
+	}
+
+	/* Perform binary search for the highest frequency that is smaller than the requested one.
+	 */
+	while ((dividor_high - dividor_low) > 1) {
+		middle = (dividor_high + dividor_low) / 2;
+
+		if (freq < SystemCoreClock / (2 * middle)) {
+			dividor_low = middle;
+		} else {
+			dividor_high = middle;
+		}
+	}
+
+	return dividor_high - 1;
+}
+
 static void adjust_tail(volatile hrt_xfer_data_t *xfer_data, uint16_t frame_width,
 			uint32_t data_length)
 {
@@ -177,7 +202,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	volatile nrfe_mspi_dev_config_t *device =
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = cnt0_top_calculate(device->freq);
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.cpp_mode = device->cpp;
@@ -261,7 +286,7 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 	nrf_vpr_csr_vio_config_t config;
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = cnt0_top_calculate(device->freq);
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
