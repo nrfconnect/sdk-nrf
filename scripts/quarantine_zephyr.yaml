@@ -251,6 +251,14 @@
     - qemu_cortex_m3/ti_lm3s6965
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31671"
 
+- scenarios:
+    - secure_storage.psa.its.secure_storage.*
+    - sample.psa.persistent_key.secure_storage.entropy_driver
+    - secure_storage.psa.crypto.secure_storage
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31681"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
