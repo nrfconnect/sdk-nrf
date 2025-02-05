@@ -202,7 +202,7 @@ int gcf_sms_filter_callback(char *buf, size_t len, char *at_cmd)
 		}
 
 		/* Get the next command. */
-		msg = strtok_r(msg_rest, ";", &msg_rest);
+		msg = strtok_r(NULL, ";", &msg_rest);
 		/* Add AT for concatenated AT-commands. */
 		if ((msg) && (msg - 2 * sizeof(char) >= at_cmd)) {
 			msg = msg - 2 * sizeof(char);
