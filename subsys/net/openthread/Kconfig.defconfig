@@ -248,6 +248,15 @@ config OPENTHREAD_NUM_MESSAGE_BUFFERS
 	default 96 if OPENTHREAD_FTD
 	default 64
 
+if BT_LONG_WQ
+# There is no clear undestanding where this parameter should be adapted for OpenThread.
+# This place has been chosen as temporary solution.
+# JIRA task NCSDK-31391 was created to solve the issue later.
+config BT_LONG_WQ_STACK_SIZE
+	default 1600
+
+endif # BT_LONG_WQ
+
 # File system configuration
 config ZMS
 	default y if SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM
