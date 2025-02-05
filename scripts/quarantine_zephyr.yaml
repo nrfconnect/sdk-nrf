@@ -238,6 +238,19 @@
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31591"
 
+- scenarios:
+    - portability.posix.common.dynamic_stack
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31667"
+
+- scenarios:
+    - sample.bluetooth.central.multilink
+    - sample.bluetooth.peripheral_identity
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31671"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
