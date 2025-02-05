@@ -146,10 +146,15 @@ The following table lists the minimum and maximum output power values in dBm for
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
 | nrf7002dk                | -40 to +3 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
-| nrf54l15dk               | -40 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_3`)  |
+| nrf54l15dk               | -40 to +8 (:kconfig:option:`CONFIG_BT_CTLR_TX_PWR_MINUS_40` to :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_8`)  |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
 | nrf21540dk               | :ref:`Handled automatically by the FEM driver <ug_matter_gs_transmission_power_fem>`                            |
 +--------------------------+-----------------------------------------------------------------------------------------------------------------+
+
+.. note::
+
+   For nRF54L Series SoCs, the maximum TX power depends on the package variant.
+   CSP package variants have a maximum TX power of 8 dBm, while for the QFN package variants it is 7 dBm.
 
 For multicore boards, the configuration must be applied to the network core image.
 You can do this by either editing the :file:`prj.conf` file or building the sample with an additional argument, as described in the following tabs.
