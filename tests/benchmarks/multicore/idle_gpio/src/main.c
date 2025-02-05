@@ -22,6 +22,10 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 #error "Invalid core selected. "
 #endif
 
+#if DT_NODE_EXISTS(DT_PATH(zephyr_user))
+static const struct gpio_dt_spec fake_rts = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
+#endif
+
 static K_SEM_DEFINE(my_gpio_sem, 0, 1);
 
 void my_gpio_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
@@ -49,6 +53,20 @@ int main(void)
 		LOG_ERR("Could not configure led GPIO (%d)\n", rc);
 		return 0;
 	}
+
+#if DT_NODE_EXISTS(DT_PATH(zephyr_user))
+	rc = gpio_is_ready_dt(&fake_rts);
+	if (rc < 0) {
+		LOG_ERR("GPIO Device not ready (%d)\n", rc);
+		return 0;
+	}
+
+	rc = gpio_pin_configure_dt(&fake_rts, GPIO_OUTPUT_ACTIVE);
+	if (rc < 0) {
+		LOG_ERR("Could not configure fake_rst GPIO (%d)\n", rc);
+		return 0;
+	}
+#endif
 
 	rc = gpio_is_ready_dt(&sw);
 	if (rc < 0) {
