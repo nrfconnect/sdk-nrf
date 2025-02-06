@@ -50,7 +50,8 @@ FAKE_VALUE_FUNC(int, suit_plat_report, unsigned int, struct suit_report *);
 FAKE_VALUE_FUNC(int, suit_plat_sequence_completed, enum suit_command_sequence,
 		struct zcbor_string *, const uint8_t *, size_t);
 FAKE_VALUE_FUNC(int, suit_plat_retrieve_manifest, suit_component_t, const uint8_t **, size_t *);
-FAKE_VALUE_FUNC(int, suit_plat_override_image_size, suit_component_t, size_t);
+FAKE_VALUE_FUNC(int, suit_plat_override_image_size, suit_component_t, size_t,
+		struct zcbor_string *);
 
 #ifdef CONFIG_SUIT_PLATFORM_DRY_RUN_SUPPORT
 FAKE_VALUE_FUNC(int, suit_plat_check_fetch, suit_component_t, struct zcbor_string *,
