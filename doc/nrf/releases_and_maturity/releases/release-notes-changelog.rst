@@ -268,6 +268,7 @@ Bluetooth samples
 
 * Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
 
+  * :ref:`bluetooth_central_hids`
   * :ref:`peripheral_hids_keyboard`
 
 * :ref:`direct_test_mode` sample:
