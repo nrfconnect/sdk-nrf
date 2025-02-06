@@ -89,6 +89,9 @@ typedef struct {
 	 */
 	uint16_t counter_value;
 
+	/** @brief Index of clock VIO pin */
+	uint8_t clk_vio;
+
 	/** @brief Index of CE VIO pin */
 	uint8_t ce_vio;
 
@@ -98,16 +101,14 @@ typedef struct {
 	/** @brief Chip enable pin polarity in enabled state. */
 	enum mspi_ce_polarity ce_polarity;
 
-	/** @brief When true clock signal makes 1 transition less.
-	 *         It is required for spi modes 1 and 3 due to hardware issue.
-	 */
-	bool eliminate_last_pulse;
-
 	/** @brief Tx mode mask for csr dir register  */
 	uint16_t tx_direction_mask;
 
 	/** @brief Rx mode mask for csr dir register  */
 	uint16_t rx_direction_mask;
+
+	/** @brief Due to hardware issues hrt module needs to know about selected spi mode */
+	enum mspi_cpp_mode cpp_mode;
 
 } hrt_xfer_t;
 

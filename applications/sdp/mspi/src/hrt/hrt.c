@@ -213,24 +213,32 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_DATA], hrt_xfer_params->bus_widths.data,
 	       &counter_running, hrt_xfer_params->counter_value);
 
-	if (hrt_xfer_params->eliminate_last_pulse) {
-
-		/* Wait until the last word is sent */
+	/* Hardware issue workaround,
+	 * additional clock edge when transmitting in modes other than MSPI_CPP_MODE_0.
+	 * modes 1 and 3: Disable clock before the last pulse and perform last clock edge manualy.
+	 * mode 2: Add one pulse more to the last word in message, and disable clock before the last
+	 * pulse.
+	 */
+	if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_0) {
+		nrf_vpr_csr_vio_shift_ctrl_buffered_set(&write_final_shift_ctrl_cfg);
+		nrf_vpr_csr_vio_out_buffered_reversed_word_set(0x00);
+		nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
+	} else {
 		while (nrf_vpr_csr_vio_shift_cnt_out_get() != 0) {
 		}
+		nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
 
-		/* This is a partial solution to surplus clock edge problem in modes 1 and 3.
-		 * This solution works only for counter values above 20.
-		 */
-		nrf_vpr_csr_vtim_simple_wait_set(0, false, 0);
+		nrf_vpr_csr_vio_shift_ctrl_buffered_set(&write_final_shift_ctrl_cfg);
+
+		if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_1) {
+			nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->clk_vio));
+		} else if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_3) {
+			nrf_vpr_csr_vio_out_or_set(BIT(hrt_xfer_params->clk_vio));
+		}
 	}
 
-	/* Final configuration */
-	nrf_vpr_csr_vio_shift_ctrl_buffered_set(&write_final_shift_ctrl_cfg);
-	nrf_vpr_csr_vio_out_buffered_reversed_word_set(0x00);
-
-	/* Stop counter */
-	nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
+	/* Reset counter 0, Next message may be sent incorrectly if counter is not reset here. */
+	nrf_vpr_csr_vtim_simple_counter_set(0, 0);
 
 	/* Disable CE */
 	if (!hrt_xfer_params->ce_hold) {
