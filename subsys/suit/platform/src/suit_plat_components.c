@@ -12,6 +12,7 @@
 
 #if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
 #include <suit_ipuc_sdfw.h>
+#include <suit_storage_mpi.h>
 #endif
 
 LOG_MODULE_REGISTER(plat_components, CONFIG_SUIT_LOG_LEVEL);
@@ -215,7 +216,8 @@ int suit_plat_component_id_get(suit_component_t handle, struct zcbor_string **co
 	return SUIT_SUCCESS;
 }
 
-int suit_plat_override_image_size(suit_component_t handle, size_t size)
+int suit_plat_override_image_size(suit_component_t handle, size_t size,
+				  struct zcbor_string *manifest_component_id)
 {
 	struct zcbor_string *component_id = NULL;
 
@@ -232,6 +234,21 @@ int suit_plat_override_image_size(suit_component_t handle, size_t size)
 		LOG_ERR("Failed to decode component type: %i", err);
 		return SUIT_ERR_DECODING;
 	}
+
+#if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
+	suit_manifest_class_id_t *class_id = NULL;
+	suit_manifest_role_t role = SUIT_MANIFEST_UNKNOWN;
+
+	if (suit_plat_decode_manifest_class_id(manifest_component_id, &class_id) !=
+	    SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Component ID is not a manifest class");
+		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
+	if (suit_storage_mpi_role_get(class_id, &role) != SUIT_PLAT_SUCCESS) {
+		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+#endif
 
 	/* Size override is done only for MEM type component */
 	if (component_type == SUIT_COMPONENT_TYPE_MEM) {
@@ -277,8 +294,6 @@ int suit_plat_override_image_size(suit_component_t handle, size_t size)
 
 #if defined(CONFIG_SUIT_IPUC) && defined(CONFIG_SUIT_PLATFORM_VARIANT_SDFW)
 		if (size == 0) {
-			suit_manifest_role_t role = SUIT_MANIFEST_UNKNOWN;
-
 			suit_ipuc_sdfw_declare(handle, role);
 		} else {
 			suit_ipuc_sdfw_revoke(handle);
