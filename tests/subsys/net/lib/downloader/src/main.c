@@ -291,7 +291,7 @@ int zsock_getaddrinfo_server_ok(const char *host, const char *service,
 	}
 
 	errno = ENOPROTOOPT;
-	return EAI_SYSTEM;
+	return DNS_EAI_SYSTEM;
 }
 
 int zsock_getaddrinfo_server2_ok(const char *host, const char *service,
@@ -309,7 +309,7 @@ int zsock_getaddrinfo_server2_ok(const char *host, const char *service,
 	}
 
 	errno = ENOPROTOOPT;
-	return EAI_SYSTEM;
+	return DNS_EAI_SYSTEM;
 }
 
 
@@ -320,7 +320,7 @@ int zsock_getaddrinfo_server_ipv6_fail_ipv4_ok(const char *host, const char *ser
 	if (hints->ai_family == AF_INET6) {
 		/* Fail on IPv6 to retry IPv4 */
 		errno = ENOPROTOOPT;
-		return EAI_SYSTEM;
+		return DNS_EAI_SYSTEM;
 	}
 
 	TEST_ASSERT_EQUAL_STRING(HOSTNAME, host);
@@ -335,7 +335,7 @@ int zsock_getaddrinfo_server_enetunreach(const char *host, const char *service,
 				struct zsock_addrinfo **res)
 {
 	errno = ENETUNREACH;
-	return EAI_SYSTEM;
+	return DNS_EAI_SYSTEM;
 }
 
 void zsock_freeaddrinfo_server_ipv4(struct zsock_addrinfo *addr)
