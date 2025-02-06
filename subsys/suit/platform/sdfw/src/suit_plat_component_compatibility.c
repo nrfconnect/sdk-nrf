@@ -109,8 +109,7 @@ int suit_plat_component_compatibility_check(const suit_manifest_class_id_t *clas
 			return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
 		}
 
-		if ((role == SUIT_MANIFEST_SEC_TOP) || (role == SUIT_MANIFEST_SEC_SDFW) ||
-		    (role == SUIT_MANIFEST_SEC_SYSCTRL) || (role == SUIT_MANIFEST_APP_ROOT)) {
+		if ((role == SUIT_MANIFEST_SEC_TOP) || (role == SUIT_MANIFEST_APP_ROOT)) {
 			return SUIT_ERR_UNAUTHORIZED_COMPONENT;
 		}
 		break;
