@@ -14,9 +14,12 @@
 #include <zephyr/storage/flash_map.h>
 #include <zephyr/sys/util_macro.h>
 #include <suit_flash_sink.h>
-
 #include "suit_dfu_cache_internal.h"
 #include <suit_envelope_info.h>
+
+#ifdef CONFIG_FLASH_IPUC
+#include <drivers/flash/flash_ipuc.h>
+#endif /* CONFIG_FLASH_IPUC */
 
 LOG_MODULE_REGISTER(suit_cache_rw, CONFIG_SUIT_LOG_LEVEL);
 
@@ -79,7 +82,18 @@ static struct dfu_cache_partition_ext dfu_partitions_ext[] = {
 	{
 		.id = 0,
 	},
-	LISTIFY(CONFIG_SUIT_CACHE_MAX_CACHES, PARTITION_DEFINE, (), dfu_cache_partition_)};
+	LISTIFY(CONFIG_SUIT_CACHE_MAX_CACHES, PARTITION_DEFINE, (), dfu_cache_partition_)
+#ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
+		{
+			.id = CONFIG_SUIT_CACHE_SDFW_IPUC_ID,
+		},
+#endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+#ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
+	{
+		.id = CONFIG_SUIT_CACHE_APP_IPUC_ID,
+	},
+#endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
+};
 
 /**
  * @brief Get cache partition of specified id
@@ -195,6 +209,32 @@ static suit_plat_err_t erase_on_sink(uint8_t *address, size_t size)
 	}
 
 	return SUIT_PLAT_SUCCESS;
+}
+
+static void erase_cache_partition(struct dfu_cache_partition_ext *partition)
+{
+	if (partition == NULL) {
+		return;
+	}
+
+#ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
+	if (partition->id == CONFIG_SUIT_CACHE_SDFW_IPUC_ID) {
+		if (partition->fdev != NULL) {
+			flash_erase(partition->fdev, 0, partition->size);
+		}
+		return;
+	}
+#endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+#ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
+	if (partition->id == CONFIG_SUIT_CACHE_APP_IPUC_ID) {
+		if (partition->fdev != NULL) {
+			flash_erase(partition->fdev, 0, partition->size);
+		}
+		return;
+	}
+#endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
+
+	erase_on_sink(partition->address, partition->size);
 }
 
 /**
@@ -464,7 +504,7 @@ suit_plat_err_t suit_dfu_cache_validate_content(void)
 				if (err == SUIT_PLAT_ERR_NOMEM) {
 					LOG_INF("DFU Cache pool, id: %d is not empty... Erasing",
 						partition->id);
-					erase_on_sink(partition->address, partition->size);
+					erase_cache_partition(partition);
 				}
 			} else if (err != SUIT_PLAT_SUCCESS) {
 				LOG_ERR("DFU Cache pool, id: %d unavailable, err: %d",
@@ -495,7 +535,7 @@ suit_plat_err_t suit_dfu_cache_drop_content(void)
 			if (err == SUIT_PLAT_ERR_NOMEM) {
 				LOG_INF("DFU Cache pool, id: %d is not empty... Erasing",
 					partition->id);
-				erase_on_sink(partition->address, partition->size);
+				erase_cache_partition(partition);
 			}
 		}
 	}
@@ -544,6 +584,62 @@ suit_plat_err_t suit_dfu_cache_rw_slot_create(uint8_t cache_partition_id,
 
 		if (part == NULL) {
 			LOG_ERR("Partition not found");
+			return SUIT_PLAT_ERR_NOT_FOUND;
+		}
+
+		/* Initialize DFU cache partition through IPUC API (erase memory).
+		 * This operation is delayed, so only if a manifest uses IPUC-based cache partition,
+		 * it's contents are deleted.
+		 */
+#ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
+		if ((cache_partition_id == CONFIG_SUIT_CACHE_SDFW_IPUC_ID) &&
+		    (part->fdev == NULL)) {
+			uintptr_t sdfw_update_area_addr = 0;
+			size_t sdfw_update_area_size = 0;
+
+			suit_memory_sdfw_update_area_info_get(&sdfw_update_area_addr,
+							      &sdfw_update_area_size);
+			if (sdfw_update_area_size == 0) {
+				/* SoC does not enforce constrains on update candidate location
+				 */
+				sdfw_update_area_addr = 0;
+			}
+
+			part->fdev = flash_cache_ipuc_create(
+				sdfw_update_area_addr, (uintptr_t *)&part->address, &part->size);
+
+			if (part->fdev == NULL) {
+				part->address = NULL;
+				part->size = 0;
+			} else {
+				/* Disable the area before sdfw_update_area_addr */
+				if ((uintptr_t)part->address < sdfw_update_area_addr) {
+					part->size -=
+						(sdfw_update_area_addr - (uintptr_t)part->address);
+					part->address = (uint8_t *)sdfw_update_area_addr;
+				}
+
+				/* Disable the area after sdfw_update_area_addr +
+				 * sdfw_update_area_size
+				 */
+				if ((sdfw_update_area_size > 0) &&
+				    ((uintptr_t)part->address + part->size >
+				     sdfw_update_area_addr + sdfw_update_area_size)) {
+					part->size = sdfw_update_area_addr + sdfw_update_area_size -
+						     (uintptr_t)part->address;
+				}
+			}
+		}
+#endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+#ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
+		if ((cache_partition_id == CONFIG_SUIT_CACHE_APP_IPUC_ID) && (part->fdev == NULL)) {
+			part->fdev = flash_cache_ipuc_create(
+				(uintptr_t)part->address, (uintptr_t *)&part->address, &part->size);
+		}
+#endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
+
+		if (part->fdev == NULL) {
+			LOG_ERR("Partition %d unavailable", cache_partition_id);
 			return SUIT_PLAT_ERR_NOT_FOUND;
 		}
 
@@ -719,7 +815,63 @@ suit_plat_err_t suit_dfu_cache_rw_slot_drop(struct suit_cache_slot *slot)
 	return SUIT_PLAT_ERR_INVAL;
 }
 
-int suit_dfu_cache_rw_init(void)
+#ifdef CONFIG_FLASH_IPUC
+/**
+ * @brief Check the availability of IPUCs that can be used as SUIT cache parition.
+ */
+static void dfu_cache_ipuc_init(void)
+{
+	for (size_t i = 1; i < ARRAY_SIZE(dfu_partitions_ext); i++) {
+		/* Calculating memory-mapped address for cache pool */
+		struct dfu_cache_partition_ext *partition = &dfu_partitions_ext[i];
+
+#ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
+		if (partition->id == CONFIG_SUIT_CACHE_SDFW_IPUC_ID) {
+			uintptr_t sdfw_update_area_addr = 0;
+			size_t sdfw_update_area_size = 0;
+
+			suit_memory_sdfw_update_area_info_get(&sdfw_update_area_addr,
+							      &sdfw_update_area_size);
+			if (sdfw_update_area_size == 0) {
+				/* SoC does not enforce constrains on update candidate location
+				 */
+				sdfw_update_area_addr = 0;
+			}
+
+			bool available = flash_cache_ipuc_check(sdfw_update_area_addr,
+								(uintptr_t *)&partition->address,
+								&partition->size);
+
+			if (!available) {
+				partition->size = 0;
+			}
+
+			partition->wb_size = 1;
+			partition->eb_size = 1;
+
+			continue;
+		}
+#endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+#ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
+		if (partition->id == CONFIG_SUIT_CACHE_APP_IPUC_ID) {
+			bool available = flash_cache_ipuc_check(0, (uintptr_t *)&partition->address,
+								&partition->size);
+
+			if (!available) {
+				partition->size = 0;
+			}
+
+			partition->wb_size = 1;
+			partition->eb_size = 1;
+
+			continue;
+		}
+#endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
+	}
+}
+#endif /* CONFIG_FLASH_IPUC */
+
+suit_plat_err_t suit_dfu_cache_rw_init(void)
 {
 	for (size_t i = 1; i < ARRAY_SIZE(dfu_partitions_ext); i++) {
 
@@ -729,6 +881,17 @@ int suit_dfu_cache_rw_init(void)
 			.fdev = partition->fdev,
 			.offset = partition->offset,
 		};
+
+#ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
+		if (partition->id == CONFIG_SUIT_CACHE_SDFW_IPUC_ID) {
+			continue;
+		}
+#endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+#ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
+		if (partition->id == CONFIG_SUIT_CACHE_APP_IPUC_ID) {
+			continue;
+		}
+#endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
 
 		uintptr_t mapped_addr = 0;
 
@@ -756,7 +919,6 @@ int suit_dfu_cache_rw_init(void)
 			size_t eb_size = info.size;
 
 			for (uint32_t p_idx = info.index + 1; p_idx < page_count; p_idx++) {
-
 				if (0 ==
 				    flash_get_page_info_by_idx(partition->fdev, p_idx, &info)) {
 					if (info.size > eb_size) {
@@ -785,6 +947,10 @@ int suit_dfu_cache_rw_init(void)
 				partition->id);
 		}
 	}
+
+#ifdef CONFIG_FLASH_IPUC
+	dfu_cache_ipuc_init();
+#endif /* CONFIG_FLASH_IPUC */
 
 	int err = cache_0_resize(false);
 
