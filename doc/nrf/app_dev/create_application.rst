@@ -179,7 +179,7 @@ Use the following steps depending on the application placement:
             A quick pick menu appears.
          #. Click :guilabel:`Manage West Workspace...`.
          #. In the :guilabel:`Manage West Workspace...` action menu, click :guilabel:`Create West Workspace`.
-         #. Enter a location for the :file:`west.yml` file that matches the location provided in step 4.
+         #. Enter a location for the :file:`west.yml` file that matches the location provided when you were creating the application.
          #. Select the SDK version for the west workspace.
             The west workspace is initialized.
          #. Click :guilabel:`Manage SDKs` > :guilabel:`Manage West Workspace` > :guilabel:`West Update` to update the workspace modules.
