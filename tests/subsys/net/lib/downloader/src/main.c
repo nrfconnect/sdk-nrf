@@ -959,7 +959,8 @@ static ssize_t z_impl_zsock_recvfrom_http_redirect_and_close(
 		return 0;
 	}
 
-	return 0;
+	memcpy(buf, HTTP_HDR_REDIRECT, strlen(HTTP_HDR_REDIRECT));
+	return strlen(HTTP_HDR_REDIRECT);
 }
 
 int z_impl_zsock_socket_http_then_https(int family, int type, int proto)
@@ -1390,6 +1391,32 @@ void test_downloader_get_https_partial_content_partial_2nd_header(void)
 	TEST_ASSERT_EQUAL(0, err);
 
 	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_https_unlimited_redirect(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_https_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_redirect_and_close;
+
+
+	err = downloader_get(&dl, &dl_host_conf_w_sec_tags, HTTPS_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));

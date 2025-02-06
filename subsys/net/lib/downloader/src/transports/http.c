@@ -99,6 +99,8 @@ struct transport_params_http {
 
 	/** Request new data */
 	bool new_data_req;
+	/** Redirect retries */
+	uint8_t redirects;
 };
 
 BUILD_ASSERT(CONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE >= sizeof(struct transport_params_http));
@@ -291,6 +293,13 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 					LOG_ERR("Failed to parse filename, err %d, url %s", err, p);
 					k_mutex_unlock(&dl->mutex);
 					return -EBADMSG;
+				}
+
+				http->redirects++;
+
+				if (http->redirects > dl->host_cfg.redirects_max) {
+					LOG_ERR("Maximum redirections reached, aborting");
+					return -EMLINK;
 				}
 
 				return -ECONNRESET;
