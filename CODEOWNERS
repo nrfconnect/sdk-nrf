@@ -232,9 +232,9 @@
 /doc/nrf/libraries/zigbee/                @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/index.rst              @nrfconnect/ncs-doc-leads
 /doc/nrf/protocols/amazon_sidewalk/       @nrfconnect/ncs-sidewalk-doc
+/doc/nrf/protocols/bt/                    @nrfconnect/ncs-dragoon-doc
 /doc/nrf/protocols/bt/bt_mesh/            @nrfconnect/ncs-paladin-doc
 /doc/nrf/protocols/bt/bt_qualification/   @nrfconnect/ncs-dragoon-doc
-/doc/nrf/protocols/bt/                    @nrfconnect/ncs-dragoon-doc
 /doc/nrf/protocols/coexistence/           @nrfconnect/ncs-doc-leads
 /doc/nrf/protocols/dect/                  @nrfconnect/ncs-modem-doc
 /doc/nrf/protocols/esb/                   @nrfconnect/ncs-si-muffin-doc
