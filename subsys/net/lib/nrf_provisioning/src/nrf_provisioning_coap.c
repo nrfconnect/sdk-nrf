@@ -55,7 +55,7 @@ LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 static const char *resp_path = "p/rsp";
 static const char *dtls_suspend = "/.dtls/suspend";
 
-static struct addrinfo *address;
+static struct zsock_addrinfo *address;
 static struct coap_client client;
 static bool socket_keep_open;
 
