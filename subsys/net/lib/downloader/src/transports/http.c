@@ -151,22 +151,21 @@ static int http_get_request_send(struct downloader *dl)
 	/* nRF91 series has a limitation of decoding ~2k of data at once when using TLS */
 	tls_force_range = (http->sock.proto == IPPROTO_TLS_1_2 && !dl->host_cfg.set_native_tls &&
 			   IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
-
-	if (dl->host_cfg.range_override) {
-		if (tls_force_range && dl->host_cfg.range_override > (TLS_RANGE_MAX)) {
+	if (tls_force_range) {
+		if (dl->host_cfg.range_override > TLS_RANGE_MAX) {
 			LOG_WRN("Range override > TLS max range, setting to TLS max range");
-			dl->host_cfg.range_override = (TLS_RANGE_MAX);
+			dl->host_cfg.range_override = TLS_RANGE_MAX;
+		} else if (dl->host_cfg.range_override == 0) {
+			dl->host_cfg.range_override = TLS_RANGE_MAX;
 		}
-	} else if (tls_force_range) {
-		dl->host_cfg.range_override = TLS_RANGE_MAX;
 	}
 
 	if (dl->host_cfg.range_override) {
 		off = dl->progress + dl->host_cfg.range_override - 1;
 
-		if (dl->file_size && (off > dl->file_size - 1)) {
+		if (dl->file_size) {
 			/* Don't request bytes past the end of file */
-			off = dl->file_size - 1;
+			off = MIN(off, dl->file_size - 1);
 		}
 
 		len = snprintf(dl->cfg.buf, dl->cfg.buf_size, HTTP_GET_RANGE, dl->file,
@@ -440,22 +439,22 @@ static int http_parse(struct downloader *dl, size_t len)
 		}
 	}
 
-	/* Have we received a whole fragment or the whole file? */
-	if (dl->progress + len != dl->file_size) {
-		if (http->ranged) {
-			http->ranged_progress += len;
-			if (http->ranged_progress < dl->host_cfg.range_override) {
-				/* Ranged query: read until a full fragment */
-				return len;
-			}
+	if (dl->progress + len == dl->file_size) {
+		/* A full file has been received */
+		http->new_data_req = true;
+		return len;
+	}
+
+	if (http->ranged) {
+		http->ranged_progress += len;
+		if (http->ranged_progress < dl->host_cfg.range_override) {
+			/* Ranged query: read until a full fragment is received */
 		} else {
-			/* Non-ranged query: just keep on reading, ignore fragment size */
-			return len;
+			/* Ranged query: request next fragment */
+			http->new_data_req = true;
 		}
 	}
 
-	/* Either we have a full file, or we need to request a next fragment */
-	http->new_data_req = true;
 	return len;
 }
 
