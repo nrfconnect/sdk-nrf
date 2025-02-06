@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 import shutil
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from west.commands import WestCommand
 from west import log
 from yaml import load
@@ -167,9 +167,12 @@ class NcsCreateBoard(WestCommand):
         with open(out_dir / f"board.yml", "w") as f:
             f.write(tmpl.render())
 
-        tmpl = env.get_template("Kconfig.defconfig.jinja2")
-        with open(out_dir / f"Kconfig.defconfig", "w") as f:
-            f.write(tmpl.render(config))
+        try:
+            tmpl = env.get_template("Kconfig.defconfig.jinja2")
+            with open(out_dir / f"Kconfig.defconfig", "w") as f:
+                f.write(tmpl.render(config))
+        except TemplateNotFound:
+            pass
 
         # nrf53 specific files
         if series == "nrf53":

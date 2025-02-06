@@ -122,7 +122,7 @@ config BT_BUF_ACL_RX_SIZE
 	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
 
 config BT_CTLR_DATA_LENGTH_MAX
-	default 87 if BT_CTLR
+	default 87 if HAS_BT_CTLR
 	help
 	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
 

@@ -6,7 +6,7 @@
 
 / {
 	chosen {
-		ncs,zigbee-uart = &cdc_acm_uart;
+		ncs,zigbee-uart = &board_cdc_acm_uart;
 	};
 
 	buttons {

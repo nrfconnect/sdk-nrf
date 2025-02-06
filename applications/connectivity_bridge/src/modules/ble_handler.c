@@ -222,7 +222,7 @@ static void adv_start(void)
 
 	err = bt_le_adv_start(
 		BT_LE_ADV_PARAM(
-			BT_LE_ADV_OPT_CONNECTABLE,
+			BT_LE_ADV_OPT_CONN,
 			BT_GAP_ADV_SLOW_INT_MIN,
 			BT_GAP_ADV_SLOW_INT_MAX,
 			NULL),
