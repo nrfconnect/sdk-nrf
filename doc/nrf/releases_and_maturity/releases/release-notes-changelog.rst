@@ -266,6 +266,10 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
+
+  * :ref:`peripheral_hids_keyboard`
+
 * :ref:`direct_test_mode` sample:
 
   * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
