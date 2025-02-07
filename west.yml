@@ -182,12 +182,6 @@ manifest:
       revision: 181c9cad332b9388a27e7b4304822e3551b033ac
       groups:
         - nrf-802154
-    - name: soc-hwmv1
-      repo-path: sdk-soc-hwmv1
-      revision: be0500992bd8c222118b651b88d1f3714855a3aa
-      path: modules/soc-hwmv1
-      groups:
-        - soc-hwmv1
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
