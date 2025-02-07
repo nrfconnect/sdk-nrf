@@ -259,6 +259,13 @@
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31681"
 
+- scenarios:
+    - init.check_init_priorities
+    - shell.device_filter
+  platforms:
+    - native_sim/native
+  comment: "clash of entropy configurations, will be resolved in upstream (Frank Kvamtro)"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
