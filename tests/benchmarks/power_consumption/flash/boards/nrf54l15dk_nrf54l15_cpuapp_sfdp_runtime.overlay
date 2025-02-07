@@ -1,0 +1,10 @@
+/ {
+	aliases {
+		led = &button3;
+	};
+};
+
+&mx25r64 {
+/* Will be read from flash memory in runtime */
+/delete-property/ sfdp-bfp;
+};
