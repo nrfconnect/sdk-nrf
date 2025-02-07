@@ -30,7 +30,7 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31409"
 
 - scenarios:
-    - applications.matter_bridge
+    - applications.matter_bridge.debug
     - applications.matter_bridge.br_ble
     - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.release
