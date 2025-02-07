@@ -18,7 +18,13 @@ else()
   endif()
 endif()
 
-list(APPEND script_args sysbuild)
+if(SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM)
+  list(APPEND script_args --fwid-custom)
+elseif(SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_MCUBOOT_VERSION)
+  list(APPEND script_args --fwid-mcuboot-version)
+else()
+  list(APPEND script_args --no-fwid)
+endif()
 
 add_custom_target(verify_metadata ALL
   ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/verify_metadata.py ${script_args}

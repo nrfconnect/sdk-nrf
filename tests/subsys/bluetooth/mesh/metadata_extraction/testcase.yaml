@@ -30,3 +30,17 @@ tests:
     extra_configs:
       - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
       - CONFIG_LTO=y
+  bluetooth.mesh.metadata_extraction_single_fwid_custom:
+    sysbuild: true
+    tags: sysbuild
+    extra_args:
+      - SB_CONFIG_COMP_DATA_LAYOUT_SINGLE=y
+      # Using a separate conf file because setting string SB options using yaml
+      # didn't work
+      - SB_CONF_FILE=sysbuild_fwid_custom.conf
+  bluetooth.mesh.metadata_extraction_single_fwid_mcuboot_version:
+    sysbuild: true
+    tags: sysbuild
+    extra_args:
+      - SB_CONFIG_COMP_DATA_LAYOUT_SINGLE=y
+      - SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_MCUBOOT_VERSION=y

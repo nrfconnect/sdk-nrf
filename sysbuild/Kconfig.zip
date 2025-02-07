@@ -44,6 +44,46 @@ config DFU_ZIP_BLUETOOTH_MESH_METADATA
 	help
 	  Includes metadata for bluetooth mesh.
 
+if DFU_ZIP_BLUETOOTH_MESH_METADATA
+
+choice DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID
+	prompt "Source of Firmware ID to include in metadata file"
+	optional
+
+config DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM
+	bool "Use a custom Firmware ID"
+	help
+	  The value to include as Firmware ID in the Bluetooth Mesh metadata file is set using
+	  ``SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM_HEX``.
+	  Note: You are required to make sure that the Firmware ID used when initializing the DFU
+	  Server matches the ID in the metadata file.
+
+config DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_MCUBOOT_VERSION
+	bool "Use a Firmware ID generated from the MCUboot version"
+	help
+	  Includes a Firmware ID in the Bluetooth Mesh metadata file consisting of the values of
+	  ``CONFIG_BT_COMPANY_ID`` and ``CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION``.
+	  Note: You are required to make sure that the Firmware ID used when initializing the DFU
+	  Server matches the ID in the metadata file.
+
+endchoice
+
+if DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM
+
+config DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM_HEX
+	string "HEX string to use as Firmware ID"
+	help
+	  The raw value of this option is included as the Firmware ID in the Bluetooth Mesh metadata
+	  file. This must be a valid hex string, and must at minimum begin with a Company ID in
+	  little-endian order. The rest of the string is vendor-specific version information and may
+	  be empty.
+	  Note: You are required to make sure that the Firmware ID used when initializing the DFU
+	  Server matches the ID in the metadata file.
+
+endif # DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM
+
+endif # DFU_ZIP_BLUETOOTH_MESH_METADATA
+
 endif # BOOTLOADER_MCUBOOT
 
 endif # DFU_ZIP
