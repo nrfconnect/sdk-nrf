@@ -13,6 +13,7 @@
 #endif /* CONFIG_SDFW_LCS */
 #include <zephyr/logging/log.h>
 #include <sdfw/arbiter.h>
+#include <suit_types.h>
 
 #define MANIFEST_PUBKEY_NRF_TOP_GEN0	 0x4000BB00
 #define MANIFEST_PUBKEY_SYSCTRL_GEN0	 0x40082100
