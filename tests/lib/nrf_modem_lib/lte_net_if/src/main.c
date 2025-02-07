@@ -45,8 +45,8 @@ static void lte_lc_register_handler_stub(lte_lc_evt_handler_t cb, int num_of_cal
 }
 
 /* Stub used to report a non-default link MTU */
-static int pdn_dynamic_info_get_1000_stub(uint32_t cid,  struct pdn_dynamic_info *pdn_info,
-										  int num_of_calls)
+static int pdn_dynamic_info_get_1000_stub(
+	uint8_t cid,  struct pdn_dynamic_info *pdn_info, int num_of_calls)
 {
 	pdn_info->ipv4_mtu = 1000;
 	return 0;
