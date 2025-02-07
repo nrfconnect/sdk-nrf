@@ -1,0 +1,11 @@
+tests:
+  suit.integration.decompress_filter:
+    platform_allow:
+      - native_sim
+      - native_sim/native/64
+    tags:
+      - suit
+      - suit_decompress_filter
+      - ci_tests_subsys_suit
+    integration_platforms:
+      - native_sim

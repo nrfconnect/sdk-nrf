@@ -203,4 +203,8 @@ config SUIT_AES_KW_MANUAL
 	depends on SUIT_STREAM_FILTER_DECRYPT
 	select EXPERIMENTAL
 
+config SUIT_STREAM_FILTER_DECOMPRESS
+	bool "Enable support for image decompression"
+	depends on NRF_COMPRESS_EXTERNAL_DICTIONARY
+
 endif # SUIT_STREAM

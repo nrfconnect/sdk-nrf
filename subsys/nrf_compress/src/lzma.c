@@ -139,6 +139,8 @@ typedef struct dict_cache_t {
 	SizeT dict_pos_begin;
 	/** Indicates which dictionary element is stored as last element of @a data. */
 	SizeT dict_pos_end;
+	/** Write offset, for keeping track on invalidated bytes. */
+	SizeT write_offset;
 	/** Cache invalidation flag - if set, it is out of sync with external dictionary. */
 	bool invalid;
 } dict_cache;
@@ -169,12 +171,14 @@ static CLzmaDec lzma_decoder;
 static int synchronize_cache(const DictHandle *handle)
 {
 	SizeT dict_read_size;
-	const SizeT dict_write_size = cache.dict_pos_end - cache.dict_pos_begin + 1;
+	const SizeT dict_write_size = cache.write_offset;
 
 	if (ext_dict->write(cache.dict_pos_begin, cache.data, dict_write_size) !=
 			dict_write_size) {
 		return -EIO;
 	}
+
+	cache.write_offset = 0;
 
 	cache.dict_pos_begin = cache.dict_pos_end + 1;
 
@@ -535,13 +539,11 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 	}
 
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
-	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize,
-					input, &chunk_size,
-					(last_part ? LZMA_FINISH_END : LZMA_FINISH_ANY), &status);
+	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize, input, &chunk_size,
+					LZMA_FINISH_ANY, &status);
 #else
-	rc = LzmaDec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize,
-					input, &chunk_size,
-					(last_part ? LZMA_FINISH_END : LZMA_FINISH_ANY), &status);
+	rc = LzmaDec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize, input, &chunk_size,
+					LZMA_FINISH_ANY, &status);
 #endif
 	if (rc) {
 		return -EINVAL;
@@ -549,15 +551,14 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 
 	*offset = chunk_size;
 
-	if (last_part && (status == LZMA_STATUS_FINISHED_WITH_MARK ||
-			  status == LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK) &&
+	if (last_part && (status == LZMA_STATUS_FINISHED_WITH_MARK) &&
 	    *offset < input_size) {
 		/* If last block, ensure offset matches complete file size. */
 		*offset = input_size;
 	}
 
 	if (decoder->dicPos >= decoder->dicHandle->dicBufSize ||
-	    (last_part && input_size == chunk_size)) {
+	    (last_part && input_size == *offset)) {
 #if CONFIG_NRF_COMPRESS_DICTIONARY_CACHE_SIZE > 0
 		if (cache.invalid) {
 			rc = synchronize_cache(decoder->dicHandle);
@@ -593,6 +594,7 @@ DictHandle *LzmaDictionaryOpen(SizeT size)
 #if CONFIG_NRF_COMPRESS_DICTIONARY_CACHE_SIZE > 0
 	cache.dict_pos_begin = 0;
 	cache.dict_pos_end = sizeof(cache.data) - 1;
+	cache.write_offset = 0;
 #endif
 
 	return &dict_handle;
@@ -612,7 +614,6 @@ SizeT LzmaDictionaryWrite(DictHandle *handle, SizeT pos, const Byte *data, SizeT
 
 #if CONFIG_NRF_COMPRESS_DICTIONARY_CACHE_SIZE > 0
 	SizeT bytes_written = 0;
-	SizeT cache_pos;
 
 	if (pos > cache.dict_pos_end || pos < cache.dict_pos_begin) {
 		/*
@@ -622,27 +623,24 @@ SizeT LzmaDictionaryWrite(DictHandle *handle, SizeT pos, const Byte *data, SizeT
 		return 0;
 	}
 
-	cache_pos = pos - cache.dict_pos_begin;
-
 	while (bytes_written < write_len) {
 		SizeT cache_write_len =
-			(write_len - bytes_written) > (sizeof(cache.data) - cache_pos) ?
-				(sizeof(cache.data) - cache_pos) :
+			(write_len - bytes_written) > (sizeof(cache.data) - cache.write_offset) ?
+				(sizeof(cache.data) - cache.write_offset) :
 				(write_len - bytes_written);
 
-		memcpy(cache.data + cache_pos, data + bytes_written, cache_write_len);
+		memcpy(cache.data + cache.write_offset, data + bytes_written, cache_write_len);
 		cache.invalid = true;
 
 		bytes_written += cache_write_len;
-		cache_pos += cache_write_len;
+		cache.write_offset += cache_write_len;
 
-		if (cache_pos >= sizeof(cache.data)) {
+		if (cache.write_offset >= sizeof(cache.data)) {
 			/* Cache full, synchronize it. */
 			if (synchronize_cache(handle) != 0) {
 				bytes_written = 0;
 				break;
 			}
-			cache_pos = 0;
 		}
 	}
 	return bytes_written;
