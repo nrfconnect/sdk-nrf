@@ -110,6 +110,7 @@ suit_plat_err_t erase(void *ctx)
 			LOG_ERR("Failed to erase requested memory area: %i", res);
 			return SUIT_PLAT_ERR_IO;
 		}
+		flash_ctx->size_used = 0;
 
 		return SUIT_PLAT_SUCCESS;
 	}
@@ -440,5 +441,47 @@ static suit_plat_err_t release(void *ctx)
 	}
 
 	LOG_ERR("%s: Invalid arguments - ctx is NULL", __func__);
+	return SUIT_PLAT_ERR_INVAL;
+}
+
+suit_plat_err_t suit_flash_sink_readback(void *sink_ctx, size_t offset, uint8_t *buf, size_t size)
+{
+	if ((sink_ctx != NULL) && (buf != NULL)) {
+		struct flash_ctx *flash_ctx = (struct flash_ctx *)sink_ctx;
+
+		bool ctx_found = false;
+
+		for (int i = 0; i < SUIT_MAX_FLASH_COMPONENTS; i++) {
+			if (flash_ctx == &ctx[i]) {
+				ctx_found = true;
+				break;
+			}
+		}
+
+		if (ctx_found == false) {
+			LOG_ERR("Readback with invalid sink_ctx called.");
+			return SUIT_PLAT_ERR_INVAL;
+		}
+
+		if (!flash_ctx->in_use) {
+			LOG_ERR("flash_sink not initialized.");
+			return SUIT_PLAT_ERR_INVAL;
+		}
+
+		if (flash_ctx->fdev == NULL) {
+			LOG_ERR("%s: fdev is NULL.", __func__);
+			return SUIT_PLAT_ERR_INVAL;
+		}
+
+		if (flash_read(flash_ctx->fdev, flash_ctx->ptr + offset, buf, size) != 0) {
+			LOG_ERR("Flash read failed.");
+			return SUIT_PLAT_ERR_IO;
+		}
+
+		return SUIT_PLAT_SUCCESS;
+	}
+
+	LOG_ERR("%s: Invalid arguments. %s, %s", __func__, IS_COND_TRUE(sink_ctx != NULL),
+		IS_COND_TRUE(buf != NULL));
 	return SUIT_PLAT_ERR_INVAL;
 }
