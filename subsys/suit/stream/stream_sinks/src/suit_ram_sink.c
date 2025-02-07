@@ -99,7 +99,7 @@ static suit_plat_err_t write(void *ctx, const uint8_t *buf, size_t size)
 	if ((ctx != NULL) && (buf != NULL) && (size > 0)) {
 		struct ram_ctx *ram_ctx = (struct ram_ctx *)ctx;
 
-		if ((ram_ctx->offset_limit - (size_t)ram_ctx->ptr) >= size) {
+		if ((ram_ctx->offset_limit - (size_t)ram_ctx->ptr + ram_ctx->offset) >= size) {
 			uint8_t *dst = (uint8_t *)suit_memory_global_address_to_ram_address(
 				(uintptr_t)(ram_ctx->ptr + ram_ctx->offset));
 
@@ -166,6 +166,46 @@ static suit_plat_err_t release(void *ctx)
 		ram_ctx->in_use = false;
 
 		return SUIT_PLAT_SUCCESS;
+	}
+
+	LOG_ERR("Invalid arguments.");
+	return SUIT_PLAT_ERR_INVAL;
+}
+
+suit_plat_err_t suit_ram_sink_readback(void *sink_ctx, size_t offset, uint8_t *buf, size_t size)
+{
+	if ((sink_ctx != NULL) && (buf != NULL)) {
+		struct ram_ctx *ram_ctx = (struct ram_ctx *)sink_ctx;
+
+		bool ctx_found = false;
+
+		for (int i = 0; i < SUIT_MAX_RAM_COMPONENTS; i++) {
+			if (ram_ctx == &ctx[i]) {
+				ctx_found = true;
+				break;
+			}
+		}
+
+		if (ctx_found == false) {
+			LOG_ERR("Readback with invalid sink_ctx called.");
+			return SUIT_PLAT_ERR_INVAL;
+		}
+
+		if ((ram_ctx->offset_limit - (size_t)ram_ctx->ptr + offset) >= size) {
+			uint8_t *dst = (uint8_t *)suit_memory_global_address_to_ram_address(
+							(uintptr_t)(ram_ctx->ptr + offset));
+
+			if (dst == NULL) {
+				return SUIT_PLAT_ERR_INVAL;
+			}
+
+			memcpy(buf, dst, size);
+
+			return SUIT_PLAT_SUCCESS;
+		}
+
+		LOG_ERR("Read out of bounds.");
+		return SUIT_PLAT_ERR_OUT_OF_BOUNDS;
 	}
 
 	LOG_ERR("Invalid arguments.");

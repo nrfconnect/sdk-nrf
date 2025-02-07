@@ -33,6 +33,22 @@ suit_plat_err_t suit_flash_sink_get(struct stream_sink *sink, uint8_t *dst, size
  */
 bool suit_flash_sink_is_address_supported(uint8_t *address);
 
+/**
+ * @brief Read data from the flash sink. It is an additional interface, not a part
+ * of the stream_sink API. User that holds the flash_sink can readback the data during
+ * streaming, as flash_sink has the access to data destination in memory.
+ *
+ * @param[in] sink_ctx context of the flash_sink
+ * @param[in] offset Offset of flash_sink area to start reading from
+ * @param[out] buf Buffer to read into
+ * @param[in] size size of @a buf; data read size
+ *
+ * @retval SUIT_PLAT_SUCCESS on success
+ * @retval SUIT_PLAT_ERR_INVAL if invalid argument passed
+ * @retval SUIT_PLAT_ERR_IO on flash access fail
+ */
+suit_plat_err_t suit_flash_sink_readback(void *sink_ctx, size_t offset, uint8_t *buf, size_t size);
+
 #ifdef __cplusplus
 }
 #endif
