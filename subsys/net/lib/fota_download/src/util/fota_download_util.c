@@ -184,10 +184,24 @@ static void start_fota_download(struct k_work *work)
 	ret = fota_download_start_with_image_type(fota_host, fota_path, fota_sec_tag, 0, 0,
 						  active_dfu_type);
 	if (ret) {
-		struct fota_download_evt evt;
+		struct fota_download_evt evt = {
+			.id = FOTA_DOWNLOAD_EVT_ERROR
+		};
+
+		switch (ret) {
+		case -EINVAL:
+		case -E2BIG:
+			evt.cause = FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_CONFIGURATION;
+			break;
+		case -EPROTONOSUPPORT:
+			evt.cause = FOTA_DOWNLOAD_ERROR_CAUSE_PROTO_NOT_SUPPORTED;
+			break;
+		default:
+			evt.cause = FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL;
+			break;
+		}
 
 		LOG_ERR("fota_download_start() failed, return code %d", ret);
-		evt.id = FOTA_DOWNLOAD_EVT_CANCELLED;
 		fota_download_callback(&evt);
 	}
 }

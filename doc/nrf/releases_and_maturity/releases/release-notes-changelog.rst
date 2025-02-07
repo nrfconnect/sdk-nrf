@@ -633,6 +633,7 @@ Libraries for networking
 
 * :ref:`lib_fota_download` library:
 
+  * Added error codes related to unsupported protocol, DFU failures, and invalid configuration.
   * Updated to use the :ref:`lib_downloader` library for CoAP downloads.
 
 * :ref:`lib_nrf_cloud` library:
