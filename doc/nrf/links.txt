@@ -845,7 +845,7 @@
 
 .. _`Electrical specification of nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/_tmp/alta.nRF9160/autodita/APPLICATION.CURRENT/parameters.frontpage.html
 
-.. _`nAN34`: https://docs.nordicsemi.com/bundle/Application-Notes/resource/nan_34.pdf
+.. _`nAN34`: https://docs.nordicsemi.com/bundle/zip/resource/nAN34_v1.01.zip
 
 .. _`nRF Util`: https://docs.nordicsemi.com/bundle/nrfutil/page/README.html
 .. _`Installing nRF Util`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html
