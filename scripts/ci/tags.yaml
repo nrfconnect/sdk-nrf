@@ -965,6 +965,7 @@ ci_tests_subsys_nfc:
 ci_tests_lib_nrf_modem_lib:
   files:
     - nrf/lib/nrf_modem_lib/
+    - nrf/lib/pdn
     - nrf/tests/lib/nrf_modem_lib/
     - nrf/tests/mocks/nrf_modem_at/
     - zephyr/subsys/net/
