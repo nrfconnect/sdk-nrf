@@ -113,15 +113,6 @@ choice SUIT_ENVELOPE_ROOT_SIGN_ALG
 config SUIT_ENVELOPE_ROOT_SIGN_ALG_EDDSA
 	bool "Use the EdDSA algorithm"
 
-config SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_256
-	bool "Use the ECDSA algorithm with key length of 256 bits"
-
-config SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_384
-	bool "Use the ECDSA algorithm with key length of 384 bits"
-
-config SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_521
-	bool "Use the ECDSA algorithm with key length of 521 bits"
-
 config SUIT_ENVELOPE_ROOT_SIGN_ALG_HASH_EDDSA
 	bool "Use the HashEdDSA algorithm (specifically: ed25519ph)"
 	select EXPERIMENTAL
@@ -131,9 +122,6 @@ endchoice
 config SUIT_ENVELOPE_ROOT_SIGN_ALG_NAME
 	string "String name of the algorithm used to sign the root envelope"
 	default "eddsa" if SUIT_ENVELOPE_ROOT_SIGN_ALG_EDDSA
-	default "es-256" if SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_256
-	default "es-384" if SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_384
-	default "es-521" if SUIT_ENVELOPE_ROOT_SIGN_ALG_ECDSA_521
 	default "hash-eddsa" if SUIT_ENVELOPE_ROOT_SIGN_ALG_HASH_EDDSA
 
 endif # SUIT_ENVELOPE_ROOT_SIGN
@@ -253,15 +241,6 @@ choice SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG
 config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_EDDSA
 	bool "Use the EdDSA algorithm"
 
-config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_256
-	bool "Use the ECDSA algorithm with key length of 256 bits"
-
-config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_384
-	bool "Use the ECDSA algorithm with key length of 384 bits"
-
-config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_521
-	bool "Use the ECDSA algorithm with key length of 521 bits"
-
 config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_HASH_EDDSA
 	bool "Use the HashEdDSA algorithm (specifically: ed25519ph)"
 	select EXPERIMENTAL
@@ -271,9 +250,6 @@ endchoice
 config SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_NAME
 	string "String name of the algorithm used to sign the app recovery envelope"
 	default "eddsa" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_EDDSA
-	default "es-256" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_256
-	default "es-384" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_384
-	default "es-521" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_ECDSA_521
 	default "hash-eddsa" if SUIT_ENVELOPE_APP_RECOVERY_SIGN_ALG_HASH_EDDSA
 
 endif # SUIT_ENVELOPE_APP_RECOVERY_SIGN
