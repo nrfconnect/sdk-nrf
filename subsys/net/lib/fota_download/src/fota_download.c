@@ -187,7 +187,7 @@ static int downloader_callback(const struct downloader_evt *event)
 					set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE);
 				} else if (err < 0) {
 					LOG_ERR("dfu_target_init error %d", err);
-					set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
+					set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 				}
 			}
 
@@ -199,7 +199,7 @@ static int downloader_callback(const struct downloader_evt *event)
 			if (err != 0) {
 				LOG_DBG("unable to get dfu target offset err: "
 					"%d", err);
-				set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+				set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 				goto error_and_close;
 			}
 
@@ -213,7 +213,7 @@ static int downloader_callback(const struct downloader_evt *event)
 					if (err != 0) {
 						LOG_ERR("Unable to reset DFU target, err: %d", err);
 						set_error_state(
-							FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+							FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 						goto error_and_close;
 					}
 					err = dfu_target_init(img_type, 0, file_size,
@@ -221,7 +221,7 @@ static int downloader_callback(const struct downloader_evt *event)
 					if (err != 0) {
 						LOG_ERR("Failed to re-initialize target, err: %d",
 							err);
-						set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
+						set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 						goto error_and_close;
 					}
 				} else {
@@ -246,7 +246,7 @@ static int downloader_callback(const struct downloader_evt *event)
 			goto error_and_close;
 		} else if (err != 0) {
 			LOG_ERR("dfu_target_write error %d", err);
-			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 			goto error_and_close;
 		}
 
@@ -278,7 +278,7 @@ static int downloader_callback(const struct downloader_evt *event)
 
 		if (err != 0) {
 			LOG_ERR("dfu_target_done error: %d", err);
-			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 			goto error_and_close;
 		}
 
@@ -300,26 +300,44 @@ static int downloader_callback(const struct downloader_evt *event)
 			/* Fall through and return 0 below to tell
 			 * downloader to retry
 			 */
-		} else if ((event->error == -ECONNABORTED) ||
-			   (event->error == -ECONNREFUSED) ||
-			   (event->error == -EHOSTUNREACH)) {
-			LOG_ERR("Download client failed to connect to server");
-			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED);
-
-			goto error_and_close;
-		} else {
-			LOG_ERR("Downloader error event %d", event->error);
-			err = dfu_target_done(false);
-			if (err == -EACCES) {
-				LOG_DBG("No DFU target was initialized");
-			} else if (err != 0) {
-				LOG_ERR("Unable to deinitialze resources "
-					"used by dfu_target.");
-			}
-			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
-			goto error_and_close;
+			break;
 		}
-		break;
+		LOG_ERR("Downloader error event %d", event->error);
+		err = dfu_target_done(false);
+		if (err == -EACCES) {
+			LOG_DBG("No DFU target was initialized");
+		} else if (err != 0) {
+			LOG_ERR("Unable to deinitialize resources "
+				"used by dfu_target.");
+		}
+		switch (event->error) {
+
+		case -ECONNABORTED:
+		case -ECONNREFUSED:
+		case -EHOSTUNREACH:
+		case -ENETDOWN:
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED);
+			break;
+		case -ECONNRESET:
+		case -ETIMEDOUT:
+		case -EHOSTDOWN:
+		case -EBADMSG:
+		case -ERANGE:
+		case -E2BIG:
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED);
+			break;
+		case -EPROTONOSUPPORT:
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_PROTO_NOT_SUPPORTED);
+			break;
+		case -EINVAL:
+		case -EAFNOSUPPORT:
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_CONFIGURATION);
+			break;
+		default:
+			set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL);
+			break;
+		}
+		goto error_and_close;
 	case DOWNLOADER_EVT_STOPPED:
 		atomic_set_bit(&flags, FLAG_STOPPED);
 		/* Only clear flags if we are not going to resume */
