@@ -26,6 +26,7 @@ LOG_MODULE_REGISTER(remote);
 static K_MUTEX_DEFINE(history_transfer_mtx);
 static uint32_t history_transfer_id;
 static log_rpc_history_handler_t history_handler;
+static log_rpc_history_handler_t history_signal_handler;
 
 static void log_rpc_msg_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				void *handler_data)
@@ -190,4 +191,48 @@ int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length)
 	}
 
 	return log_chunk_size;
+}
+
+static void log_rpc_history_threshold_handler(const struct nrf_rpc_group *group,
+					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	nrf_rpc_decoding_done(&log_rpc_group, ctx);
+
+	if (history_signal_handler) {
+		log_rpc_fetch_history(history_signal_handler);
+	}
+}
+
+NRF_RPC_CBOR_EVT_DECODER(log_rpc_group, log_rpc_history_threshold_handler,
+			 LOG_RPC_EVT_HISTORY_THRESHOLD_REACHED, log_rpc_history_threshold_handler,
+			 NULL);
+
+uint8_t log_rpc_get_buffer_usage_signal_threshold(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	uint8_t threshold;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
+
+	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_GET_BUFFER_USAGE_THRESHOLD, &ctx);
+	threshold = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, &ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group,
+			    LOG_RPC_CMD_GET_BUFFER_USAGE_THRESHOLD, NRF_RPC_PACKET_TYPE_RSP);
+	}
+
+	return threshold;
+}
+
+void log_rpc_set_buffer_usage_signal_threshold(log_rpc_history_handler_t handler, uint8_t threshold)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	history_signal_handler =  handler;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 2);
+	nrf_rpc_encode_uint(&ctx, threshold);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_BUFFER_USAGE_THRESHOLD, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
 }

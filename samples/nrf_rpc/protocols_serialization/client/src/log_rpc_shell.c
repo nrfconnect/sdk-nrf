@@ -125,6 +125,36 @@ static int cmd_log_rpc_crash(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
+static int cmd_log_rpc_history_threshold(const struct shell *sh, size_t argc, char *argv[])
+{
+	uint32_t threshold;
+	int err = 0;
+
+	if (argc > 1) {
+		threshold = shell_strtoul(argv[1], 0, &err);
+
+		if (err) {
+			shell_error(sh, "Failed to parse threshold: %s", argv[1]);
+			return -ENOEXEC;
+		}
+
+		if (threshold > 100) {
+			shell_error(sh, "Value %u exceeds max value (100)");
+			return -ENOEXEC;
+		}
+
+		log_rpc_set_buffer_usage_signal_threshold(history_handler, (uint8_t)threshold);
+
+		return 0;
+	}
+
+	threshold = log_rpc_get_buffer_usage_signal_threshold();
+
+	shell_print(sh, "Current threshold: %u", threshold);
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(log_rpc_cmds,
 			       SHELL_CMD_ARG(stream_level, NULL, "Set log streaming level",
 					     cmd_log_rpc_stream_level, 2, 0),
@@ -134,6 +164,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(log_rpc_cmds,
 					     cmd_log_rpc_history_fetch, 1, 0),
 			       SHELL_CMD_ARG(crash, NULL, "Retrieve remote device crash log",
 					     cmd_log_rpc_crash, 1, 0),
+			       SHELL_CMD_ARG(history_threshold, NULL,
+					     "Get or set signaling threshold",
+					     cmd_log_rpc_history_threshold, 1, 0)
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(log_rpc, &log_rpc_cmds, "RPC logging commands", NULL, 1, 0);
