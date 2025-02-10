@@ -34,4 +34,22 @@ config MSPI_NRFE_IPC_NO_COPY
 	  this requires both cores to be able to access each others memory spaces.
 	  If n Data is passed through IPC by copy.
 
+config MSPI_NRFE_FAULT_TIMER
+	bool "SDP application fault timer"
+	select COUNTER
+	help
+	  Enable SDP application fault timer.
+	  Timer is used to detect application faults. If the timer expires,
+	  the application is considered to be in a fault state.
+
+if MSPI_NRFE_FAULT_TIMER
+
+config MSPI_NRFE_FAULT_TIMEOUT
+	int "SDP application fault timeout"
+	default 1000000
+	help
+	  Fault timeout in microseconds.
+
+endif # MSPI_NRFE_FAULT_TIMER
+
 endif # MSPI_NRFE
