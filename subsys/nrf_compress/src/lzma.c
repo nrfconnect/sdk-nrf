@@ -66,18 +66,32 @@ static void *lzma_probs_alloc(ISzAllocPtr p, size_t size)
 #endif
 }
 
+#ifdef CONFIG_NRF_COMPRESS_CLEANUP
+/* Replacement for memset(p, 0, sizeof(*p) that does not get
+ * optimized out.
+ */
+static void like_mbedtls_zeroize(void *p, size_t n)
+{
+	volatile unsigned char *v = (unsigned char *)p;
+
+	for (size_t i = 0; i < n; i++) {
+		v[i] = 0;
+	}
+}
+#endif
+
 static void lzma_probs_free(ISzAllocPtr p, void *address)
 {
 #if defined(CONFIG_NRF_COMPRESS_MEMORY_TYPE_MALLOC)
 #ifdef CONFIG_NRF_COMPRESS_CLEANUP
-	memset(address, 0x00, malloc_probs_size);
+	like_mbedtls_zeroize(address, malloc_probs_size);
 
 	malloc_probs_size = 0;
 #endif
 	free(address);
 #else
 #ifdef CONFIG_NRF_COMPRESS_CLEANUP
-	memset(lzma_probs, 0x00, sizeof(lzma_probs));
+	like_mbedtls_zeroize(lzma_probs, sizeof(lzma_probs));
 #endif
 #endif
 }
