@@ -242,6 +242,8 @@ nRF Desktop
   * Application configurations for the nRF54L05 and nRF54L10 SoCs (emulated on the nRF54L15 DK).
     The configurations are supported through ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
     For details, see the :ref:`nrf_desktop_board_configuration`.
+  * The ``dongle_small`` configuration for the nRF52833 DK.
+    The configuration enables logs and mimics the dongle configuration used for small SoCs.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

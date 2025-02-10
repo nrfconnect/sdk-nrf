@@ -65,8 +65,11 @@ Sample mouse, keyboard or dongle (``nrf52840dk/nrf52840``)
 Sample dongle (``nrf52833dk/nrf52833``)
       * The configuration uses the nRF52833 Development Kit.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
-      * Bluetooth uses Nordic Semiconductor's SoftDevice link layer and is configured to act as a central.
+        The dongle acts as a Bluetooth central.
         Input data comes from Bluetooth and is retransmitted to USB.
+      * For most of the build types, Bluetooth uses Nordic Semiconductor's SoftDevice link layer.
+      * The ``dongle_small`` configuration enables logs and mimics the dongle configuration used for small SoCs.
+        The configuration is used to verify the correct behavior of the memory-tailored configurations.
       * The configuration with the MCUboot bootloader is set as default.
 
 Sample dongle (``nrf52833dk/nrf52820``)
