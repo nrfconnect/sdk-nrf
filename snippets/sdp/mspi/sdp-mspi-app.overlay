@@ -13,3 +13,9 @@
 		#size-cells = <0>;
 	};
 };
+
+/* TIMER peripheral as a watchdog for SDP FW */
+fault_timer: &timer20 {
+	status = "okay";
+	prescaler = <4>;
+};
