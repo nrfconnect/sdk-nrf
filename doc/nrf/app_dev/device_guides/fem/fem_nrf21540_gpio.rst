@@ -3,7 +3,7 @@
 Enabling GPIO mode support for nRF21540
 #######################################
 
-The `nRF21540`_ device is a range extender that you can use with nRF52 and nRF53 Series devices.
+The `nRF21540`_ device is a range extender that you can use with nRF52, nRF53 and nRF54L Series devices.
 The nRF21540 GPIO mode implementation of FEM is compatible with the nRF21540 device and implements the 3-pin PA/LNA interface.
 
 .. ncs_implementation_desc_start
@@ -74,3 +74,45 @@ To use nRF21540 in GPIO mode, complete the following steps:
       };
 
    The pins defined in the GPIO forwarder node in the application core's devicetree file must match the pins defined in the FEM nodes in the network core's devicetree file.
+
+#. On nRF54L devices, the GPIO pins of the SoC selected to control ``tx-en-gpios``, ``rx-en-gpios`` and ``pdn-gpios`` must support GPIOTE.
+   For example, on the nRF54L15 device, you can only use pins belonging to GPIO P1 or GPIO P0.
+   You cannot use the GPIO P2 pins, because there is no related GPIOTE peripheral.
+   It is recommended to use the GPIO pins that belong to the PERI Power Domain of the nRF54L device.
+   For example, on the nRF54L15, these are pins belonging to GPIO P1.
+   Using pins belonging to Low Power Domain (GPIO P0 on nRF54L15) is supported but requires more DPPI and PPIB channels of the SoC.
+   The nRF54L devices contain only four PPIB channels between PERI Power Domain and Low Power Domain.
+   Due to this limitation, only two out of three pins from group ``tx-en-gpios``, ``rx-en-gpios`` and ``pdn-gpios`` (for example, ``tx-en-gpios`` and ``rx-en-gpios``) can be controlled by GPIO P0.
+   The one remaining pin of the pin group (for example ``pdn-gpios``) must be controlled by other GPIO port.
+   To ensure proper timing, set the ``tx-en-settle-time-us`` and ``rx-en-settle-time-us`` devicetree properties of the ``nrf_radio_fem`` node to the value ``12``.
+   You must also enable appropriate instances of the ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
+
+   .. code-block:: devicetree
+
+      &dppic10 {
+            status = "okay";
+      };
+
+      &ppib11 {
+            status = "okay";
+      };
+
+      &ppib21 {
+            status = "okay";
+      };
+
+      &dppic20 {
+            status = "okay";
+      };
+
+      &ppib22 {
+            status = "okay";
+      };
+
+      &ppib30 {
+            status = "okay";
+      };
+
+      &dppic30 {
+            status = "okay";
+      };
