@@ -31,6 +31,7 @@
 #include "hci_internal.h"
 #include "ecdh.h"
 #include "radio_nrf5_txp.h"
+#include "cs_antenna_switch.h"
 
 #define DT_DRV_COMPAT nordic_bt_hci_sdc
 
@@ -983,7 +984,11 @@ static int configure_supported_features(void)
 		if (err) {
 			return -ENOTSUP;
 		}
-		err = sdc_support_channel_sounding();
+#ifdef CS_ANTENNA_SWITCH_CALLBACK_TYPE_DEFINED
+	err = sdc_support_channel_sounding(cs_antenna_switch_func);
+#else
+	err = sdc_support_channel_sounding();
+#endif
 		if (err) {
 			return -ENOTSUP;
 		}
