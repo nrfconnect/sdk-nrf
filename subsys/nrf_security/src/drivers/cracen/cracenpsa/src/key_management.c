@@ -439,9 +439,9 @@ static psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, c
 	return PSA_SUCCESS;
 }
 
-static psa_status_t cracen_derive_spake2p_key(const psa_key_attributes_t *attributes, const uint8_t *input,
-				       size_t input_length, uint8_t *key, size_t key_size,
-				       size_t *key_length)
+static psa_status_t cracen_derive_spake2p_key(const psa_key_attributes_t *attributes,
+					      const uint8_t *input, size_t input_length,
+					      uint8_t *key, size_t key_size, size_t *key_length)
 {
 	size_t bits = psa_get_key_bits(attributes);
 	psa_key_type_t type = psa_get_key_type(attributes);
@@ -456,10 +456,6 @@ static psa_status_t cracen_derive_spake2p_key(const psa_key_attributes_t *attrib
 
 		if (input_length != 80) {
 			return PSA_ERROR_INVALID_ARGUMENT;
-		}
-
-		if (key_size < 2 * CRACEN_P256_KEY_SIZE) {
-			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
 
 		/* Described in section 3.2 of rfc9383, split the output of the PBKDF2
@@ -486,6 +482,53 @@ static psa_status_t cracen_derive_spake2p_key(const psa_key_attributes_t *attrib
 		}
 
 		*key_length = 2 * CRACEN_P256_KEY_SIZE;
+		return PSA_SUCCESS;
+	default:
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+}
+
+static psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attributes_t *attributes,
+							   const uint8_t *priv_key,
+							   size_t priv_key_length, uint8_t *pub_key,
+							   size_t pub_key_size,
+							   size_t *pub_key_length)
+{
+	psa_status_t status;
+	psa_key_type_t type = psa_get_key_type(attributes);
+	size_t key_bits_attr = psa_get_key_bits(attributes);
+	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_SPAKE2P_GET_FAMILY(psa_get_key_type(attributes));
+	const struct sx_pk_ecurve *sx_curve;
+	uint8_t *w0;
+	uint8_t *w1;
+
+	switch (type) {
+	case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
+		w0 = (uint8_t *)priv_key;
+		w1 = (uint8_t *)priv_key + CRACEN_P256_KEY_SIZE;
+		status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr, &sx_curve);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		if (key_bits_attr != 256) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+
+		if (pub_key_size < CRACEN_P256_KEY_SIZE + CRACEN_P256_POINT_SIZE + 1) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		}
+		if (priv_key_length != 2 * CRACEN_P256_KEY_SIZE) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		pub_key[CRACEN_P256_KEY_SIZE] = SI_ECC_PUBKEY_UNCOMPRESSED;
+		status = silex_statuscodes_to_psa(
+			ecc_genpubkey(w1, &pub_key[CRACEN_P256_KEY_SIZE + 1], sx_curve));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		memcpy(pub_key, w0, CRACEN_P256_KEY_SIZE);
+		*pub_key_length = CRACEN_P256_KEY_SIZE + CRACEN_P256_POINT_SIZE + 1;
 		return PSA_SUCCESS;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -860,6 +903,17 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 								  key_buffer_size, data, data_size,
 								  data_length);
 		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
+			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
+					      data_size, data_length);
+		}
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT_SECP_R1_256)) {
+		if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type)) {
+			return export_spake2p_public_key_from_keypair(attributes, key_buffer,
+								      key_buffer_size, data,
+								      data_size, data_length);
+		} else if (PSA_KEY_TYPE_IS_SPAKE2P_PUBLIC_KEY(key_type)) {
 			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
 					      data_size, data_length);
 		}
