@@ -87,6 +87,13 @@ config LOG_BACKEND_RPC_CRASH_LOG
 	  Setting this option requires that the devicetree contains the "crash_log"
 	  retained RAM partition.
 
+config LOG_BACKEND_RPC_ECHO
+	bool "Echo command support"
+	help
+	  Enables the support for "echo" nRF RPC command that allows the remote to
+	  generate a log message on the local device. This can be used for testing
+	  Logging over RPC functionality.
+
 endif # LOG_BACKEND_RPC
 
 endmenu # "Logging over nRF RPC"

@@ -125,15 +125,32 @@ static int cmd_log_rpc_crash(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(log_rpc_cmds,
-			       SHELL_CMD_ARG(stream_level, NULL, "Set log streaming level",
-					     cmd_log_rpc_stream_level, 2, 0),
-			       SHELL_CMD_ARG(history_level, NULL, "Set log history level",
-					     cmd_log_rpc_history_level, 2, 0),
-			       SHELL_CMD_ARG(history_fetch, NULL, "Fetch log history",
-					     cmd_log_rpc_history_fetch, 1, 0),
-			       SHELL_CMD_ARG(crash, NULL, "Retrieve remote device crash log",
-					     cmd_log_rpc_crash, 1, 0),
-			       SHELL_SUBCMD_SET_END);
+static int cmd_log_rpc_echo(const struct shell *sh, size_t argc, char *argv[])
+{
+	int rc = 0;
+	enum log_rpc_level level;
+
+	level = (enum log_rpc_level)shell_strtol(argv[1], 10, &rc);
+
+	if (rc) {
+		shell_error(sh, "Invalid argument: %d", rc);
+		return -EINVAL;
+	}
+
+	log_rpc_echo(level, argv[2]);
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	log_rpc_cmds,
+	SHELL_CMD_ARG(stream_level, NULL, "Set log streaming level", cmd_log_rpc_stream_level, 2,
+		      0),
+	SHELL_CMD_ARG(history_level, NULL, "Set log history level", cmd_log_rpc_history_level, 2,
+		      0),
+	SHELL_CMD_ARG(history_fetch, NULL, "Fetch log history", cmd_log_rpc_history_fetch, 1, 0),
+	SHELL_CMD_ARG(crash, NULL, "Retrieve remote device crash log", cmd_log_rpc_crash, 1, 0),
+	SHELL_CMD_ARG(echo, NULL, "Generate log message on remote", cmd_log_rpc_echo, 3, 0),
+	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(log_rpc, &log_rpc_cmds, "RPC logging commands", NULL, 1, 0);

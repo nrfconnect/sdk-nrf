@@ -553,3 +553,42 @@ NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_fetch_history_handler, LOG_RPC_C
 			 log_rpc_fetch_history_handler, NULL);
 
 #endif
+
+#ifdef CONFIG_LOG_BACKEND_RPC_ECHO
+
+static void put_log(enum log_rpc_level level, const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	log_generic(level, fmt, ap);
+	va_end(ap);
+}
+
+static void log_rpc_echo_handler(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+				 void *handler_data)
+{
+	enum log_rpc_level level;
+	const char *log_msg;
+	size_t log_len;
+
+	level = nrf_rpc_decode_uint(ctx);
+	log_msg = nrf_rpc_decode_str_ptr_and_len(ctx, &log_len);
+
+	if (log_msg) {
+		put_log(level, "%.*s", log_len, log_msg);
+	}
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_ECHO,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_echo_handler, LOG_RPC_CMD_ECHO,
+			 log_rpc_echo_handler, NULL);
+
+#endif

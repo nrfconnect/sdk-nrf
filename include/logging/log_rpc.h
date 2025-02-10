@@ -117,6 +117,15 @@ int log_rpc_fetch_history(log_rpc_history_handler_t handler);
  */
 int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length);
 
+/**
+ * @brief Generates a log message on the remote device.
+ *
+ * The function issues an nRF RPC command that requests the remote device to
+ * generate a log message with the given level. This function can be used to
+ * test other functions of Logging over nRF RPC library.
+ */
+void log_rpc_echo(enum log_rpc_level level, const char *message);
+
 #ifdef __cplusplus
 }
 #endif
