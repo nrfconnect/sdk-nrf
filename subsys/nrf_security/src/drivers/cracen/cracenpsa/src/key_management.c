@@ -896,6 +896,17 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		}
 	}
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT_SECP_R1_256)) {
+		if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type)) {
+			return export_ecc_public_key_from_keypair(attributes, key_buffer,
+								  key_buffer_size, data, data_size,
+								  data_length);
+		} else if (PSA_KEY_TYPE_IS_SPAKE2P_PUBLIC_KEY(key_type)) {
+			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
+					      data_size, data_length);
+		}
+	}
+
 	if (key_type == PSA_KEY_TYPE_RSA_KEY_PAIR &&
 	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_EXPORT)) {
 		return export_rsa_public_key_from_keypair(attributes, key_buffer, key_buffer_size,
