@@ -68,6 +68,12 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=wwcb
+  applications.nrf_desktop.zdebug_dongle_small:
+    build_only: true
+    platform_allow: nrf52833dk/nrf52833
+    integration_platforms:
+      - nrf52833dk/nrf52833
+    extra_args: FILE_SUFFIX=dongle_small
   applications.nrf_desktop.zdebug_fast_pair.gmouse.uart.kmu_provision:
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp

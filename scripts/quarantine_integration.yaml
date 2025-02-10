@@ -515,6 +515,12 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - applications.nrf_desktop.zdebug_dongle_small
+  platforms:
+    - nrf52833dk/nrf52833
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - applications.nrf_desktop.zdebug_3bleconn
     - applications.nrf_desktop.zrelease_4llpmconn
     - applications.nrf_desktop.zrelease.usb_next
