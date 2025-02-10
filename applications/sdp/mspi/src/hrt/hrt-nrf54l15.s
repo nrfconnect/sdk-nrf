@@ -13,95 +13,101 @@ hrt_tx:
 	sw	s0,16(sp)
 	sw	s1,12(sp)
 	lw	a4,4(a0)
-	sw	a2,0(sp)
-	sw	a3,4(sp)
+	sw	a2,8(sp)
+	sw	a3,0(sp)
 	beq	a4,zero,.L1
-	slli	s0,a1,12
+	slli	s1,a1,12
 	li	a4,126976
-	and	s0,s0,a4
+	and	a5,s1,a4
 	li	a4,32
 	div	a4,a4,a1
-	mv	a5,a0
+	mv	s0,a0
+	sw	a5,4(sp)
 	addi	a4,a4,-1
 	andi	a4,a4,63
-	or	a4,a4,s0
+	or	a4,a4,a5
 	ori	a4,a4,1024
  #APP
 	csrw 3019, a4
  #NO_APP
 	li	s1,0
 .L3:
-	lw	a4,4(a5)
-	bltu	s1,a4,.L10
+	lw	a4,4(s0)
+	bltu	s1,a4,.L11
 .L1:
 	lw	ra,20(sp)
 	lw	s0,16(sp)
 	lw	s1,12(sp)
 	addi	sp,sp,24
 	jr	ra
-.L10:
-	lw	a4,4(a5)
+.L11:
+	lw	a4,4(s0)
 	li	a2,1
 	sub	a4,a4,s1
 	beq	a4,a2,.L4
 	li	a2,2
 	beq	a4,a2,.L5
 .L6:
-	lw	a4,0(a5)
+	lw	a4,0(s0)
 	bne	a4,zero,.L8
-	lw	a4,16(a5)
-	sw	a5,8(sp)
+	lw	a4,16(s0)
 	li	a0,0
 	j	.L14
 .L4:
-	lbu	a4,8(a5)
+	lbu	a4,8(s0)
+	lw	a5,4(sp)
 	addi	a4,a4,-1
 	andi	a4,a4,63
-	or	a4,a4,s0
+	or	a4,a4,a5
 	ori	a4,a4,1024
  #APP
 	csrw 3019, a4
  #NO_APP
-	lw	a4,16(a5)
-	lw	a0,12(a5)
-	sw	a5,8(sp)
+	lw	a4,16(s0)
+	lw	a0,12(s0)
 .L14:
 	jalr	a4
-.L13:
-	lw	a5,8(sp)
+.L7:
 	bne	s1,zero,.L9
-	lw	a4,0(sp)
-	lbu	a4,0(a4)
+	lw	a5,8(sp)
+	lbu	a4,0(a5)
 	bne	a4,zero,.L9
-	lw	a4,4(sp)
- #APP
-	csrw 2005, a4
- #NO_APP
-	lw	a3,0(sp)
+	lw	a5,0(sp)
+	lhu	a4,0(sp)
+	bne	a5,zero,.L10
 	li	a4,1
-	sb	a4,0(a3)
+.L10:
+	slli	a5,a4,16
+	srli	a5,a5,16
+	sw	a5,0(sp)
+ #APP
+	csrw 2005, a5
+ #NO_APP
+	lw	a5,8(sp)
+	li	a4,1
+	sb	a4,0(a5)
 .L9:
 	addi	s1,s1,1
 	j	.L3
 .L5:
-	lbu	a4,9(a5)
+	lbu	a4,9(s0)
+	lw	a5,4(sp)
 	addi	a4,a4,-1
 	andi	a4,a4,63
-	or	a4,a4,s0
+	or	a4,a4,a5
 	ori	a4,a4,1024
  #APP
 	csrw 3019, a4
  #NO_APP
 	j	.L6
 .L8:
-	lw	a2,16(a5)
-	lw	a4,0(a5)
+	lw	a2,16(s0)
+	lw	a4,0(s0)
 	slli	a1,s1,2
-	sw	a5,8(sp)
 	add	a4,a4,a1
 	lw	a0,0(a4)
 	jalr	a2
-	j	.L13
+	j	.L7
 	.size	hrt_tx, .-hrt_tx
 	.section	.text.hrt_tx_rx.constprop.0,"ax",@progbits
 	.align	1
