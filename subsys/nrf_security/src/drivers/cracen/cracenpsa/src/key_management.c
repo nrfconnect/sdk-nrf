@@ -659,6 +659,11 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	psa_algorithm_t key_alg = psa_get_key_algorithm(attributes);
 	const struct sx_pk_ecurve *sx_curve;
 	struct sitask t;
+	psa_key_type_t type = psa_get_key_type(attributes);
+
+	if (type == PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)) {
+		psa_curve = PSA_ECC_FAMILY_SECP_R1;
+	}
 
 	switch (psa_curve) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
@@ -679,7 +684,7 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	psa_status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr, &sx_curve);
 	if (psa_status != PSA_SUCCESS) {
-		return PSA_SUCCESS;
+		return psa_status;
 	}
 
 	struct si_sig_privkey priv_key;
@@ -891,6 +896,17 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 								  key_buffer_size, data, data_size,
 								  data_length);
 		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
+			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
+					      data_size, data_length);
+		}
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT_SECP_R1_256)) {
+		if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type)) {
+			return export_ecc_public_key_from_keypair(attributes, key_buffer,
+								  key_buffer_size, data, data_size,
+								  data_length);
+		} else if (PSA_KEY_TYPE_IS_SPAKE2P_PUBLIC_KEY(key_type)) {
 			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
 					      data_size, data_length);
 		}
