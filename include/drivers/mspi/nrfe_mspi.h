@@ -9,6 +9,7 @@
 
 #include <zephyr/drivers/pinctrl.h>
 #include <zephyr/drivers/mspi.h>
+#include <hal/nrf_timer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,10 +33,11 @@ extern "C" {
 /** @brief eMSPI opcodes. */
 typedef enum {
 	NRFE_MSPI_EP_BOUNDED = 0,
-	NRFE_MSPI_CONFIG_PINS, /* nrfe_mspi_pinctrl_soc_pin_msg_t */
-	NRFE_MSPI_CONFIG_DEV,  /* nrfe_mspi_dev_config_msg_t */
-	NRFE_MSPI_CONFIG_XFER, /* nrfe_mspi_xfer_config_msg_t */
-	NRFE_MSPI_TX,	       /* nrfe_mspi_xfer_packet_msg_t + data buffer at the end */
+	NRFE_MSPI_CONFIG_TIMER_PTR, /* nrfe_mspi_flpr_timer_msg_t */
+	NRFE_MSPI_CONFIG_PINS,      /* nrfe_mspi_pinctrl_soc_pin_msg_t */
+	NRFE_MSPI_CONFIG_DEV,       /* nrfe_mspi_dev_config_msg_t */
+	NRFE_MSPI_CONFIG_XFER,      /* nrfe_mspi_xfer_config_msg_t */
+	NRFE_MSPI_TX,	            /* nrfe_mspi_xfer_packet_msg_t + data buffer at the end */
 	NRFE_MSPI_TXRX,
 	NRFE_MSPI_WRONG_OPCODE,
 	NRFE_MSPI_ALL_OPCODES = NRFE_MSPI_WRONG_OPCODE,
@@ -57,6 +59,11 @@ typedef struct {
 	uint16_t tx_dummy;
 	uint16_t rx_dummy;
 } nrfe_mspi_xfer_config_t;
+
+typedef struct {
+	nrfe_mspi_opcode_t opcode; /* NRFE_MSPI_CONFIG_TIMER_PTR */
+	NRF_TIMER_Type *timer_ptr;
+} nrfe_mspi_flpr_timer_msg_t;
 
 typedef struct {
 	nrfe_mspi_opcode_t opcode; /* NRFE_MSPI_CONFIG_PINS */
