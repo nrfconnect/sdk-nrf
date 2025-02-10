@@ -266,6 +266,12 @@
     - native_sim/native
   comment: "clash of entropy configurations, will be resolved in upstream (Frank Kvamtro)"
 
+- scenarios:
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "needs porting, owner not clear"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -309,6 +315,7 @@
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
 
 - scenarios:
@@ -534,6 +541,13 @@
   platforms:
     - native_sim/native
   comment: "requires pulling in hal_atmel but is actually not very useful"
+
+- scenarios:
+    - bluetooth.bt_crypto
+    - bluetooth.bt_crypto.psa
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "not supported in NCS anymore"
 
 - scenarios:
     - kernel.common.toolchain
