@@ -13,6 +13,7 @@
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
 #include <hal/nrf_vpr_csr_vtim.h>
+#include <hal/nrf_timer.h>
 #include <haly/nrfy_gpio.h>
 
 #include <drivers/mspi/nrfe_mspi.h>
@@ -76,6 +77,9 @@ static volatile uint8_t response_buffer[CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE];
 
 static struct ipc_ept ep;
 static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
+#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
+static NRF_TIMER_Type *fault_timer;
+#endif
 
 static void adjust_tail(volatile hrt_xfer_data_t *xfer_data, uint16_t frame_width,
 			uint32_t data_length)
@@ -367,10 +371,23 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	nrfe_mspi_flpr_response_msg_t response;
 	uint8_t opcode = *(uint8_t *)data;
 	uint32_t num_bytes = 0;
-
+#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
+	if (fault_timer != NULL) {
+		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_START);
+	}
+#endif
 	response.opcode = opcode;
 
 	switch (opcode) {
+#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
+	case NRFE_MSPI_CONFIG_TIMER_PTR: {
+		const nrfe_mspi_flpr_timer_msg_t *timer_data =
+			(const nrfe_mspi_flpr_timer_msg_t *)data;
+
+		fault_timer = timer_data->timer_ptr;
+		break;
+	}
+#endif
 	case NRFE_MSPI_CONFIG_PINS: {
 		nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg = (nrfe_mspi_pinctrl_soc_pin_msg_t *)data;
 
@@ -442,6 +459,12 @@ static void ep_recv(const void *data, size_t len, void *priv)
 
 	response_buffer[0] = opcode;
 	ipc_service_send(&ep, (const void *)response_buffer, sizeof(opcode) + num_bytes);
+#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
+	if (fault_timer != NULL) {
+		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_CLEAR);
+		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_STOP);
+	}
+#endif
 }
 
 static const struct ipc_ept_cfg ep_cfg = {
