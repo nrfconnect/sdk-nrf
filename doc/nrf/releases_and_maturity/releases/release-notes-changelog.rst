@@ -356,6 +356,8 @@ Cellular samples
     * An issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
     * An issue with the too small :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig value
       in the :file:`overlay-coap_nrf_provisioning.conf` file.
+    * Slow Wi-Fi connectivity startup by selecting ``TFM_SFN`` instead of ``TFM_IPC``.
+    * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
 
 * :ref:`lte_sensor_gateway` sample:
 
