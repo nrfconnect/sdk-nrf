@@ -47,7 +47,7 @@ You can use the available compression types by enabling their respective Kconfig
        | Fixed probability size of 14272 bytes.
        | Fixed dictionary size of 128 KiB.
    * - ARM thumb filter
-     - :kconfig:option:`NRF_COMPRESS_ARM_THUMB`
+     - :kconfig:option:`CONFIG_NRF_COMPRESS_ARM_THUMB`
      - ---
 
 Memory allocation configuration options
