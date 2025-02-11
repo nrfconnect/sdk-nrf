@@ -1,0 +1,10 @@
+description: Nordic, Memory Protection Controller (MPC)
+
+compatible: "nordic,nrf-mpc"
+
+include: base.yaml
+
+properties:
+  protection-region-size:
+    type: int
+    description: Region size for the Memory Protection Controller (MPC) in bytes.
