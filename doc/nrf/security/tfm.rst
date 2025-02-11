@@ -222,8 +222,8 @@ The following differences apply to the device families:
 
 .. figure:: /images/nrf-secure-rom-granularity.svg
    :alt: Partition alignment granularity
-   :width: 80%
-   :align: center
+   :width: 60em
+   :align: left
 
    Partition alignment granularity on different nRF devices
 
@@ -232,8 +232,8 @@ But when the static partitions are used, the user is responsible for following t
 
 .. figure:: /images/secure-flash-regions.svg
    :alt: Example of aligning partitions with flash regions
-   :width: 80%
-   :align: center
+   :width: 60em
+   :align: left
 
    Example of aligning partitions with flash regions
 

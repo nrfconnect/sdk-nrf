@@ -902,6 +902,9 @@ static void fota_download_callback(const struct fota_download_evt *evt)
 		LOG_INF("FOTA download failed, target %d", dfu_image_type);
 		target_image_type_store(ongoing_obj_id, dfu_image_type);
 		switch (evt->cause) {
+		case FOTA_DOWNLOAD_ERROR_CAUSE_PROTO_NOT_SUPPORTED:
+			set_result(ongoing_obj_id, RESULT_UNSUP_PROTO);
+			break;
 		/* Connecting to the FOTA server failed. */
 		case FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED:
 			/* FALLTHROUGH */

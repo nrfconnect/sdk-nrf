@@ -152,25 +152,21 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	case MSPI_CPP_MODE_0: {
 		vio_config.clk_polarity = 0;
 		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
-		xfer_params.eliminate_last_pulse = false;
 		break;
 	}
 	case MSPI_CPP_MODE_1: {
 		vio_config.clk_polarity = 1;
 		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
-		xfer_params.eliminate_last_pulse = true;
 		break;
 	}
 	case MSPI_CPP_MODE_2: {
 		vio_config.clk_polarity = 1;
 		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
-		xfer_params.eliminate_last_pulse = false;
 		break;
 	}
 	case MSPI_CPP_MODE_3: {
 		vio_config.clk_polarity = 0;
 		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
-		xfer_params.eliminate_last_pulse = true;
 		break;
 	}
 	}
@@ -190,8 +186,10 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	xfer_params.counter_value = 4;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config.hold_ce;
+	xfer_params.cpp_mode = device->cpp;
 	xfer_params.ce_polarity = device->ce_polarity;
 	xfer_params.bus_widths = io_modes[device->io_mode];
+	xfer_params.clk_vio = pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER];
 
 	/* Fix position of command and address if command/address length is < BITS_IN_WORD,
 	 * so that leading zeros would not be printed instead of data bits.
@@ -247,6 +245,21 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
 		    xfer_packet->num_bytes * BITS_IN_BYTE);
+
+	/* Hardware issue: Additional clock edge when transmitting in modes other
+	 *                 than MSPI_CPP_MODE_0.
+	 * Here is first part workaround of that issue only for MSPI_CPP_MODE_2.
+	 * Workaround: Add one pulse more to the last word in message,
+	 *             and disable clock before the last pulse.
+	 */
+	if (device->cpp == MSPI_CPP_MODE_2) {
+		for (uint8_t i = 0; i < HRT_FE_MAX; i++) {
+			if (xfer_params.xfer_data[HRT_FE_MAX - 1 - i].word_count != 0) {
+				xfer_params.xfer_data[HRT_FE_MAX - 1 - i].last_word_clocks++;
+				break;
+			}
+		}
+	}
 
 	nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE));
 }

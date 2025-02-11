@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(idle_uarte);
 #error Improper device tree configuration, UARTE test node not available
 #endif
 
-#define UART_ACTION_BASE_TIMEOUT_US 50000
+#define UART_ACTION_BASE_TIMEOUT_US 60000
 #define TEST_BUFFER_LEN		    512
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);

@@ -285,7 +285,7 @@ J-Link Software and Documentation Pack
 SEGGER's `J-Link Software and Documentation Pack`_ is a package of tools that is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
 Among others, this package includes the J-Link RTT Viewer, which can be used for :ref:`test_and_optimize`.
 
-It is recommended to use the |jlink_ver| of the package when you :ref:`installing_vsc`.
+For the SEGGER J-Link version to use with your preferred development environment, see the :ref:`installing_vsc` section on the |NCS| installation page.
 
 On Windows, you also need to install SEGGER USB Driver for J-Link, which is required for support of older Nordic Semiconductor devices in :ref:`requirements_nrf_util`.
 For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
@@ -382,6 +382,8 @@ For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
     |nrf_CLT_deprecation_note|
 
 It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
+
+.. _requirements_nrfvsc:
 
 nRF Connect for Visual Studio Code
 ==================================

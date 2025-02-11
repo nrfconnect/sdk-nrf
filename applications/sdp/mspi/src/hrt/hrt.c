@@ -73,6 +73,13 @@ static const nrf_vpr_csr_vio_shift_ctrl_t write_final_shift_ctrl_cfg = {
 	.in_mode = NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS,
 };
 
+static nrf_vpr_csr_vio_shift_ctrl_t xfer_shift_ctrl = {
+	.shift_count = SHIFTCNTB_VALUE(BITS_IN_WORD),
+	.out_mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE,
+	.frame_width = 1,
+	.in_mode = NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS,
+};
+
 static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, bool *counter_running,
 		   uint16_t counter_value)
 {
@@ -80,12 +87,15 @@ static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, boo
 		return;
 	}
 
-	nrf_vpr_csr_vio_shift_ctrl_t xfer_shift_ctrl = {
-		.shift_count = SHIFTCNTB_VALUE(BITS_IN_WORD / frame_width),
-		.out_mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE,
+	nrf_vpr_csr_vio_mode_out_t out_mode = {
+		.mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE,
 		.frame_width = frame_width,
-		.in_mode = NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS,
 	};
+	uint8_t prev_frame_width = xfer_shift_ctrl.frame_width;
+	uint32_t data;
+
+	xfer_shift_ctrl.shift_count = SHIFTCNTB_VALUE(BITS_IN_WORD / frame_width);
+	xfer_shift_ctrl.frame_width = frame_width;
 
 	nrf_vpr_csr_vio_shift_ctrl_buffered_set(&xfer_shift_ctrl);
 
@@ -96,7 +106,7 @@ static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, boo
 			xfer_shift_ctrl.shift_count = SHIFTCNTB_VALUE(xfer_data->last_word_clocks);
 			nrf_vpr_csr_vio_shift_ctrl_buffered_set(&xfer_shift_ctrl);
 
-			xfer_data->vio_out_set(xfer_data->last_word);
+			data = xfer_data->last_word;
 			break;
 		case 2: /* Last but one transfer.*/
 			xfer_shift_ctrl.shift_count =
@@ -104,11 +114,23 @@ static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, boo
 			nrf_vpr_csr_vio_shift_ctrl_buffered_set(&xfer_shift_ctrl);
 		default: /* Intentional fallthrough */
 			if (xfer_data->data == NULL) {
-				xfer_data->vio_out_set(0);
+				data = 0;
 			} else {
-				xfer_data->vio_out_set(((uint32_t *)xfer_data->data)[i]);
+				data = ((uint32_t *)xfer_data->data)[i];
 			}
 		}
+
+		/* In case of bus width change device has to load
+		 * new bus width before loading new out data.
+		 */
+		if (prev_frame_width != frame_width) {
+			prev_frame_width = frame_width;
+			while (nrf_vpr_csr_vio_shift_cnt_out_get() != 0) {
+			}
+			nrf_vpr_csr_vio_mode_out_set(&out_mode);
+		}
+
+		xfer_data->vio_out_set(data);
 
 		if ((i == 0) && (!*counter_running)) {
 			/* Start counter */
@@ -149,6 +171,7 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 	default:
 		break;
 	}
+	xfer_shift_ctrl.frame_width = out_mode.frame_width;
 
 	nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_RELOAD);
 	nrf_vpr_csr_vtim_simple_counter_top_set(0, hrt_xfer_params->counter_value);
@@ -190,24 +213,32 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_DATA], hrt_xfer_params->bus_widths.data,
 	       &counter_running, hrt_xfer_params->counter_value);
 
-	if (hrt_xfer_params->eliminate_last_pulse) {
-
-		/* Wait until the last word is sent */
+	/* Hardware issue workaround,
+	 * additional clock edge when transmitting in modes other than MSPI_CPP_MODE_0.
+	 * modes 1 and 3: Disable clock before the last pulse and perform last clock edge manualy.
+	 * mode 2: Add one pulse more to the last word in message, and disable clock before the last
+	 * pulse.
+	 */
+	if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_0) {
+		nrf_vpr_csr_vio_shift_ctrl_buffered_set(&write_final_shift_ctrl_cfg);
+		nrf_vpr_csr_vio_out_buffered_reversed_word_set(0x00);
+		nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
+	} else {
 		while (nrf_vpr_csr_vio_shift_cnt_out_get() != 0) {
 		}
+		nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
 
-		/* This is a partial solution to surplus clock edge problem in modes 1 and 3.
-		 * This solution works only for counter values above 20.
-		 */
-		nrf_vpr_csr_vtim_simple_wait_set(0, false, 0);
+		nrf_vpr_csr_vio_shift_ctrl_buffered_set(&write_final_shift_ctrl_cfg);
+
+		if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_1) {
+			nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->clk_vio));
+		} else if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_3) {
+			nrf_vpr_csr_vio_out_or_set(BIT(hrt_xfer_params->clk_vio));
+		}
 	}
 
-	/* Final configuration */
-	nrf_vpr_csr_vio_shift_ctrl_buffered_set(&write_final_shift_ctrl_cfg);
-	nrf_vpr_csr_vio_out_buffered_reversed_word_set(0x00);
-
-	/* Stop counter */
-	nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
+	/* Reset counter 0, Next message may be sent incorrectly if counter is not reset here. */
+	nrf_vpr_csr_vtim_simple_counter_set(0, 0);
 
 	/* Disable CE */
 	if (!hrt_xfer_params->ce_hold) {
