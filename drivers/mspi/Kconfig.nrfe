@@ -25,4 +25,13 @@ config MSPI_NRFE_INIT_PRIORITY
 	  SDP MSPI initialization depends on IPC initialization
 	  which is done at the same init level and has init priority equal to 46.
 
+config MSPI_NRFE_IPC_NO_COPY
+	bool "IPC no copy mode"
+	default y
+	depends on SOC_NRF54L15
+	help
+	  If y Data is passed through IPC by reference,
+	  this requires both cores to be able to access each others memory spaces.
+	  If n Data is passed through IPC by copy.
+
 endif # MSPI_NRFE
