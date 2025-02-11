@@ -74,6 +74,21 @@ suit_plat_err_t suit_dfu_cache_rw_slot_drop(struct suit_cache_slot *slot);
 suit_plat_err_t suit_dfu_cache_0_resize(void);
 
 /**
+ * @brief Update characteristics of NVM device unavailable at compile time
+ *
+ * For some NVM devices, especially external Flash, some characteristics
+ * like write or erase block size can be at runtime only.
+ * The same applies to memory mapping.
+ *
+ * For sake of simplicity, for devices with varying erase block size
+ * the largest erase block size is taken as reference.
+ *
+ * Functionality leaves NVM content intact.
+ *
+ */
+suit_plat_err_t suit_dfu_cache_rw_init(void);
+
+/**
  * @brief Validates content of cache partitions
  *
  * Validates content of cache partitions and erases nvm partition in case of content incoherency

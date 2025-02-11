@@ -719,20 +719,7 @@ suit_plat_err_t suit_dfu_cache_rw_slot_drop(struct suit_cache_slot *slot)
 	return SUIT_PLAT_ERR_INVAL;
 }
 
-/**
- * @brief Update characteristics of NVM device unavailable at compile time
- *
- * For some NVM devices, especially external Flash, some characteristics
- * like write or erase block size can be at runtime only.
- * The same applies to memory mapping.
- *
- * For sake of simplicity, for devices with varying erase block size
- * the largest erase block size is taken as reference.
- *
- * Functionality leaves NVM content intact.
- *
- */
-static int preinitialize(void)
+int suit_dfu_cache_rw_init(void)
 {
 	for (size_t i = 1; i < ARRAY_SIZE(dfu_partitions_ext); i++) {
 
@@ -806,5 +793,3 @@ static int preinitialize(void)
 	}
 	return 0;
 }
-
-SYS_INIT(preinitialize, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);

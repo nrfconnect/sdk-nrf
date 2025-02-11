@@ -120,6 +120,14 @@ void setup_dfu_test_corrupted_cache(const uint8_t *corrupted_cache, size_t corru
 	zassert_equal(res, 0, "Mem compare after write failed");
 }
 
+static void test_before(void *data)
+{
+	suit_plat_err_t plat_ret = suit_dfu_cache_rw_init();
+
+	zassert_equal(plat_ret, SUIT_PLAT_SUCCESS,
+		      "Unable to initialize DFU cache module before test execution: %d", plat_ret);
+}
+
 void clear_dfu_test_partitions(void *f)
 {
 	/* Erase the area, to meet the preconditions in the next test. */
@@ -153,9 +161,10 @@ bool is_cache_partition_1_empty(void)
 	return true;
 }
 
-ZTEST_SUITE(cache_rw_initialization_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
+ZTEST_SUITE(cache_rw_initialization_tests, NULL, NULL, test_before, clear_dfu_test_partitions,
+	    NULL);
 
-ZTEST_SUITE(cache_sink_recovery_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
+ZTEST_SUITE(cache_sink_recovery_tests, NULL, NULL, test_before, clear_dfu_test_partitions, NULL);
 
 ZTEST(cache_sink_recovery_tests, test_cache_recovery_header_ok_size_nok)
 {
@@ -192,7 +201,7 @@ ZTEST(cache_sink_recovery_tests, test_cache_recovery_malformed_zcbor)
 	zassert_true(is_cache_partition_1_empty(), "Corrupted cache partition was not recovered");
 }
 
-ZTEST_SUITE(cache_sink_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
+ZTEST_SUITE(cache_sink_tests, NULL, NULL, test_before, clear_dfu_test_partitions, NULL);
 
 ZTEST(cache_sink_tests, test_cache_drop_slot_ok)
 {

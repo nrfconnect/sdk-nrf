@@ -53,6 +53,14 @@ FAKE_VALUE_FUNC(int, suit_plat_authorize_unsigned_manifest, struct zcbor_string 
 FAKE_VALUE_FUNC(int, suit_plat_authenticate_manifest, struct zcbor_string *, enum suit_cose_alg,
 		struct zcbor_string *, struct zcbor_string *, struct zcbor_string *);
 
+static void test_before(void *data)
+{
+	suit_plat_err_t plat_ret = suit_dfu_cache_rw_init();
+
+	zassert_equal(plat_ret, SUIT_PLAT_SUCCESS,
+		      "Unable to initialize DFU cache module before test execution: %d", plat_ret);
+}
+
 void clear_dfu_test_partitions(void *f)
 {
 	/* Erase the area, to meet the preconditions in the next test. */
@@ -71,7 +79,7 @@ void clear_dfu_test_partitions(void *f)
 	zassert_equal(rc, 0, "Unable to erase dfu_cache_partition_3 before test execution: %i", rc);
 }
 
-ZTEST_SUITE(cache_pool_digest_tests, NULL, NULL, NULL, clear_dfu_test_partitions, NULL);
+ZTEST_SUITE(cache_pool_digest_tests, NULL, NULL, test_before, clear_dfu_test_partitions, NULL);
 
 ZTEST(cache_pool_digest_tests, test_cache_get_slot_ok)
 {
