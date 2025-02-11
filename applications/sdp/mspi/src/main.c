@@ -201,24 +201,21 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 		xfer_packet->address
 		<< (BITS_IN_WORD - nrfe_mspi_xfer_config.address_length * BITS_IN_BYTE);
 
-	xfer_params.xfer_data[HRT_FE_COMMAND].vio_out_set =
-		&nrf_vpr_csr_vio_out_buffered_reversed_word_set;
+	xfer_params.xfer_data[HRT_FE_COMMAND].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet->command;
 	xfer_params.xfer_data[HRT_FE_COMMAND].word_count = 0;
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_COMMAND], xfer_params.bus_widths.command,
 		    nrfe_mspi_xfer_config.command_length * BITS_IN_BYTE);
 
-	xfer_params.xfer_data[HRT_FE_ADDRESS].vio_out_set =
-		&nrf_vpr_csr_vio_out_buffered_reversed_word_set;
+	xfer_params.xfer_data[HRT_FE_ADDRESS].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].data = (uint8_t *)&xfer_packet->address;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count = 0;
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_ADDRESS], xfer_params.bus_widths.address,
 		    nrfe_mspi_xfer_config.address_length * BITS_IN_BYTE);
 
-	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].vio_out_set =
-		&nrf_vpr_csr_vio_out_buffered_reversed_word_set;
+	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].data = NULL;
 	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].word_count = 0;
 
@@ -238,8 +235,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 			    nrfe_mspi_xfer_config.tx_dummy * xfer_params.bus_widths.dummy_cycles);
 	}
 
-	xfer_params.xfer_data[HRT_FE_DATA].vio_out_set =
-		&nrf_vpr_csr_vio_out_buffered_reversed_byte_set;
+	xfer_params.xfer_data[HRT_FE_DATA].fun_out = HRT_FUN_OUT_BYTE;
 	xfer_params.xfer_data[HRT_FE_DATA].data = xfer_packet->data;
 	xfer_params.xfer_data[HRT_FE_DATA].word_count = 0;
 
@@ -293,14 +289,12 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 		<< (BITS_IN_WORD - nrfe_mspi_xfer_config.address_length * BITS_IN_BYTE);
 
 	/* Configure command phase. */
-	xfer_params.xfer_data[HRT_FE_COMMAND].vio_out_set =
-		nrf_vpr_csr_vio_out_buffered_reversed_word_set;
+	xfer_params.xfer_data[HRT_FE_COMMAND].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet->command;
 	xfer_params.xfer_data[HRT_FE_COMMAND].word_count = nrfe_mspi_xfer_config.command_length;
 
 	/* Configure address phase. */
-	xfer_params.xfer_data[HRT_FE_ADDRESS].vio_out_set =
-		nrf_vpr_csr_vio_out_buffered_reversed_word_set;
+	xfer_params.xfer_data[HRT_FE_ADDRESS].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].data = (uint8_t *)&xfer_packet->address;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count = nrfe_mspi_xfer_config.address_length;
 
