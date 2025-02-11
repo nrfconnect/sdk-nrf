@@ -29,6 +29,11 @@ typedef enum {
 	HRT_FE_MAX
 } hrt_frame_element_t;
 
+typedef enum {
+	HRT_FUN_OUT_BYTE,
+	HRT_FUN_OUT_WORD,
+} hrt_fun_out_t;
+
 /** @brief Structure for holding bus width of different xfer parts */
 typedef struct {
 	uint8_t command;
@@ -71,7 +76,7 @@ typedef struct {
 	uint32_t last_word;
 
 	/** @brief Function for writing to buffered out register. */
-	void (*vio_out_set)(uint32_t value);
+	hrt_fun_out_t fun_out;
 } hrt_xfer_data_t;
 
 /** @brief Hrt transfer parameters. */

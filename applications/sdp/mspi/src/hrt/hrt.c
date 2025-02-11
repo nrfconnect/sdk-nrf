@@ -130,7 +130,16 @@ static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, boo
 			nrf_vpr_csr_vio_mode_out_set(&out_mode);
 		}
 
-		xfer_data->vio_out_set(data);
+		switch (xfer_data->fun_out) {
+		case HRT_FUN_OUT_WORD:
+			nrf_vpr_csr_vio_out_buffered_reversed_word_set(data);
+			break;
+		case HRT_FUN_OUT_BYTE:
+			nrf_vpr_csr_vio_out_buffered_reversed_byte_set(data);
+			break;
+		default:
+			break;
+		}
 
 		if ((i == 0) && (!*counter_running)) {
 			/* Start counter */
@@ -270,7 +279,16 @@ static void hrt_tx_rx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, 
 	nrf_vpr_csr_vio_shift_ctrl_buffered_set(&shift_ctrl);
 
 	for (uint32_t i = 0; i < xfer_data->word_count; i++) {
-		xfer_data->vio_out_set(to_send & MSB_MASK);
+		switch (xfer_data->fun_out) {
+		case HRT_FUN_OUT_WORD:
+			nrf_vpr_csr_vio_out_buffered_reversed_word_set(to_send & MSB_MASK);
+			break;
+		case HRT_FUN_OUT_BYTE:
+			nrf_vpr_csr_vio_out_buffered_reversed_byte_set(to_send & MSB_MASK);
+			break;
+		default:
+			break;
+		}
 
 		to_send = to_send << BITS_IN_BYTE;
 
