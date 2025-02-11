@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&cdc_acm_uart {
+&board_cdc_acm_uart {
         status = "disabled";
 };

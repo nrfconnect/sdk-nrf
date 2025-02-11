@@ -13,11 +13,9 @@ project(pm_test)
 test_runner_generate(pm_test.c)
 
 # Create mocks for pm module.
-cmock_handle(${CMAKE_CURRENT_SOURCE_DIR}/kernel_minimal_mock.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/pm/policy.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/mpsl/include/mpsl_pm.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/mpsl/include/mpsl_pm_config.h)
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/mpsl/mpsl_work.h)
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/mpsl/pm/mpsl_pm_utils.c)
@@ -27,10 +25,6 @@ target_sources(app PRIVATE pm_test.c)
 
 # Include paths
 target_include_directories(app PRIVATE src)
-
-# Preinclude file to the UUT to redefine mpsl_work_schedule().
-set_property(SOURCE ${ZEPHYR_NRF_MODULE_DIR}/subsys/mpsl/pm/mpsl_pm_utils.c
-        PROPERTY COMPILE_FLAGS "-include mocks/kernel_minimal_mock.h -include mocks/mpsl_work.h")
 
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE

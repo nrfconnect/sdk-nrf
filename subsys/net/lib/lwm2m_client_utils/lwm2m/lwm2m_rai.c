@@ -141,7 +141,7 @@ static void lwm2m_set_socket_state(int sock_fd, enum lwm2m_socket_states state)
 	}
 
 	LOG_DBG("Set socket option SO_RAI with value %s\n", opt_names[state]);
-	ret = setsockopt(sock_fd, SOL_SOCKET, SO_RAI, &optval, sizeof(optval));
+	ret = zsock_setsockopt(sock_fd, SOL_SOCKET, SO_RAI, &optval, sizeof(optval));
 
 	if (ret < 0) {
 		ret = -errno;

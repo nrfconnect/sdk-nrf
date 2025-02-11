@@ -36,7 +36,7 @@ static void smp_adv(void)
 {
 	int ret;
 
-	ret = bt_le_adv_start(BT_LE_ADV_CONN, ad_peer, ARRAY_SIZE(ad_peer), sd_peer,
+	ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad_peer, ARRAY_SIZE(ad_peer), sd_peer,
 			      ARRAY_SIZE(sd_peer));
 	if (ret) {
 		LOG_ERR("SMP_SVR Advertising failed to start (ret %d)", ret);

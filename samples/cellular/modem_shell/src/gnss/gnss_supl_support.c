@@ -7,15 +7,11 @@
 #include <stdio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#if !defined(CONFIG_NET_SOCKETS_POSIX_NAMES)
 #include <zephyr/posix/unistd.h>
 #include <zephyr/posix/netdb.h>
 #include <zephyr/posix/sys/time.h>
 #include <zephyr/posix/sys/socket.h>
 #include <zephyr/posix/arpa/inet.h>
-#else
-#include <zephyr/net/socket.h>
-#endif
 #include <supl_session.h>
 
 #include "mosh_print.h"

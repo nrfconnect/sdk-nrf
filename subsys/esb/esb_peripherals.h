@@ -26,8 +26,8 @@ extern "C" {
 	/** The ESB Radio interrupt number. */
 	#define ESB_RADIO_IRQ_NUMBER RADIO_0_IRQn
 
-	/** DPPIC instance used by ESB. */
-	#define ESB_DPPIC NRF_DPPIC020
+	/** DPPIC instance number used by ESB. */
+	#define ESB_DPPIC_INSTANCE_NO 020
 
 	/** ESB EGU instance configuration. */
 	#define ESB_EGU NRF_EGU020
@@ -47,8 +47,8 @@ extern "C" {
 	/** The ESB Radio interrupt number. */
 	#define ESB_RADIO_IRQ_NUMBER RADIO_0_IRQn
 
-	/** DPPIC instance used by ESB. */
-	#define ESB_DPPIC NRF_DPPIC10
+	/** DPPIC instance number used by ESB. */
+	#define ESB_DPPIC_INSTANCE_NO 10
 
 	/** ESB EGU instance configuration. */
 	#define ESB_EGU NRF_EGU10
@@ -66,8 +66,8 @@ extern "C" {
 	/** The ESB Radio interrupt number. */
 	#define ESB_RADIO_IRQ_NUMBER RADIO_IRQn
 
-	/** DPPIC instance used by ESB. */
-	#define ESB_DPPIC NRF_DPPIC
+	/** DPPIC instance number used by ESB. */
+	#define ESB_DPPIC_INSTANCE_NO 0
 
 	/** ESB EGU instance configuration. */
 	#define ESB_EGU NRF_EGU0
@@ -79,6 +79,13 @@ extern "C" {
 	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_END_MASK
 
 #endif
+
+/** ESB DPPIC instance number. */
+#if ESB_DPPIC_INSTANCE_NO
+#define ESB_DPPIC NRFX_CONCAT_2(NRF_DPPIC, ESB_DPPIC_INSTANCE_NO)
+#else
+#define ESB_DPPIC NRF_DPPIC
+#endif /* ESB_DPPIC_INSTANCE_NO */
 
 /** ESB timer instance number. */
 #if defined(CONFIG_ESB_SYS_TIMER_INSTANCE_LEADING_ZERO)

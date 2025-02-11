@@ -8,7 +8,7 @@
 
 / {
 	chosen {
-		ncs,ble-qos-uart = &cdc_acm_uart;
+		ncs,ble-qos-uart = &board_cdc_acm_uart;
 	};
 
 	/* Configure DTS nodes used for USB next HID support. */
@@ -38,6 +38,6 @@
 	num-isoout-endpoints = <0>;
 };
 
-&cdc_acm_uart {
-		status = "okay";
+&board_cdc_acm_uart {
+	status = "okay";
 };

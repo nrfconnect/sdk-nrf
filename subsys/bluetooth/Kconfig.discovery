@@ -39,7 +39,6 @@ config BT_GATT_DM_WORKQ_STACK_SIZE
 	# requirements.
 	int
 	default 1300 if BT_GATT_CACHING
-	default 1140 if BT_TINYCRYPT_ECC
 	default 1024
 
 config BT_GATT_DM_WORKQ_PRIO
