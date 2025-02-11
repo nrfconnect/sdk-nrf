@@ -18,7 +18,7 @@
 #ifdef CONFIG_EMDS
 #include <emds/emds.h>
 
-#if defined(CONFIG_BT_CTLR)
+#if defined(CONFIG_HAS_BT_CTLR)
 #include <mpsl/mpsl_lib.h>
 #endif
 
@@ -57,7 +57,7 @@ static void isr_emds_cb(void *arg)
 {
 	ARG_UNUSED(arg);
 
-#if defined(CONFIG_BT_CTLR)
+#if defined(CONFIG_HAS_BT_CTLR)
 	int32_t err = mpsl_lib_uninit();
 
 	if (err != 0) {

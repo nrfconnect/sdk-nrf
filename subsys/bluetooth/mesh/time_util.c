@@ -41,7 +41,7 @@ int ts_to_tai(struct bt_mesh_time_tai *tai, const struct tm *timeptr)
 
 	days += timeptr->tm_mday - 1;
 
-	tai->sec = (days * SEC_PER_DAY);
+	tai->sec = ((uint64_t)days * SEC_PER_DAY);
 	tai->sec += ((uint64_t)timeptr->tm_hour * SEC_PER_HOUR);
 	tai->sec += ((uint64_t)timeptr->tm_min * SEC_PER_MIN);
 	tai->sec += (uint64_t)timeptr->tm_sec;

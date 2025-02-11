@@ -11,7 +11,7 @@
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/logging/log.h>
 
-#include <net/wifi_credentials.h>
+#include <zephyr/net/wifi_credentials.h>
 
 #include <pb.h>
 #include <pb_encode.h>

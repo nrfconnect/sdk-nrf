@@ -3,11 +3,9 @@ tests:
     sysbuild: true
     platform_allow:
       - native_sim
-      - qemu_cortex_m3
     tags:
       - bluetooth
       - ci_build
       - sysbuild
     integration_platforms:
       - native_sim
-      - qemu_cortex_m3

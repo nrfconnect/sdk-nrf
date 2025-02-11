@@ -90,7 +90,7 @@ static const struct bt_audio_codec_cap codec_cap = BT_AUDIO_CODEC_CAP_LC3(
 static const uint32_t bis_index_mask = BIT_MASK(ARRAY_SIZE(streams) + 1U);
 static uint32_t requested_bis_sync;
 static uint32_t bis_index_bitfield;
-static uint8_t sink_broadcast_code[BT_AUDIO_BROADCAST_CODE_SIZE];
+static uint8_t sink_broadcast_code[BT_ISO_BROADCAST_CODE_SIZE];
 
 static char broadcast_name_target[ADV_NAME_MAX + 1];
 

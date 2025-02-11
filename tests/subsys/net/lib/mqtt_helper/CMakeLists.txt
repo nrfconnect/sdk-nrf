@@ -30,7 +30,7 @@ target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/zephyr/n
 # Options that cannot be passed through Kconfig fragments.
 target_compile_options(app PRIVATE
         -DCONFIG_MQTT_LIB_TLS=1
-        -DCONFIG_NET_SOCKETS_POSIX_NAMES=1
+        -DCONFIG_POSIX_API=1
         -DCONFIG_MQTT_HELPER_HOSTNAME="test-some-hostname.com"
         -DCONFIG_MQTT_HELPER_STATIC_IP_ADDRESS=""
         -DCONFIG_MQTT_HELPER_PORT=8883

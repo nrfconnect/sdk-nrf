@@ -720,18 +720,18 @@ static void context_print(const struct shell *shell)
 	}
 }
 
-static void codec_qos_print(const struct shell *shell, struct bt_audio_codec_qos *qos)
+static void codec_qos_print(const struct shell *shell, struct bt_bap_qos_cfg *qos)
 {
-	if (qos->phy == BT_AUDIO_CODEC_QOS_1M || qos->phy == BT_AUDIO_CODEC_QOS_2M) {
+	if (qos->phy == BT_BAP_QOS_CFG_1M || qos->phy == BT_BAP_QOS_CFG_2M) {
 		shell_print(shell, "\t\t\tPHY: %dM", qos->phy);
-	} else if (qos->phy == BT_AUDIO_CODEC_QOS_CODED) {
+	} else if (qos->phy == BT_BAP_QOS_CFG_CODED) {
 		shell_print(shell, "\t\t\tPHY: LE Coded");
 	} else {
 		shell_print(shell, "\t\t\tPHY: Unknown");
 	}
 
 	shell_print(shell, "\t\t\tFraming: %s",
-		    (qos->framing == BT_AUDIO_CODEC_QOS_FRAMING_UNFRAMED ? "unframed" : "framed"));
+		    (qos->framing == BT_BAP_QOS_CFG_FRAMING_UNFRAMED ? "unframed" : "framed"));
 	shell_print(shell, "\t\t\tRTN: %d", qos->rtn);
 	shell_print(shell, "\t\t\tSDU size: %d", qos->sdu);
 	shell_print(shell, "\t\t\tMax Transport Latency: %d ms", qos->latency);
@@ -1829,8 +1829,7 @@ static int cmd_phy(const struct shell *shell, size_t argc, char **argv)
 
 	uint8_t phy = (uint8_t)atoi(argv[1]);
 
-	if (phy != BT_AUDIO_CODEC_QOS_1M && phy != BT_AUDIO_CODEC_QOS_2M &&
-	    phy != BT_AUDIO_CODEC_QOS_CODED) {
+	if (phy != BT_BAP_QOS_CFG_1M && phy != BT_BAP_QOS_CFG_2M && phy != BT_BAP_QOS_CFG_CODED) {
 		shell_error(shell, "Invalid PHY");
 		return -EINVAL;
 	}
@@ -1865,11 +1864,11 @@ static int cmd_framing(const struct shell *shell, size_t argc, char **argv)
 
 	if (strcasecmp(argv[1], "unframed") == 0) {
 		broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.framing =
-			BT_AUDIO_CODEC_QOS_FRAMING_UNFRAMED;
+			BT_BAP_QOS_CFG_FRAMING_UNFRAMED;
 		broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
 	} else if (strcasecmp(argv[1], "framed") == 0) {
 		broadcast_param[big_index].subgroups[sub_index].group_lc3_preset.qos.framing =
-			BT_AUDIO_CODEC_QOS_FRAMING_FRAMED;
+			BT_BAP_QOS_CFG_FRAMING_FRAMED;
 		broadcast_param[big_index].subgroups[sub_index].preset_name = "Custom";
 	} else {
 		shell_error(shell, "Invalid framing type");

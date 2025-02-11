@@ -248,4 +248,11 @@ config OPENTHREAD_NUM_MESSAGE_BUFFERS
 	default 96 if OPENTHREAD_FTD
 	default 64
 
+# File system configuration
+config ZMS
+	default y if SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
 endif # NET_L2_OPENTHREAD

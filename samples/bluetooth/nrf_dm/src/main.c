@@ -40,7 +40,7 @@ struct adv_mfg_data {
 
 static struct adv_mfg_data mfg_data;
 struct bt_le_adv_param adv_param_conn =
-	BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE |
+	BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONN |
 			     BT_LE_ADV_OPT_NOTIFY_SCAN_REQ,
 			     BT_GAP_ADV_FAST_INT_MIN_2,
 			     BT_GAP_ADV_FAST_INT_MAX_2,

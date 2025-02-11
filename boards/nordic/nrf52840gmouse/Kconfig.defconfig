@@ -13,9 +13,6 @@ config IEEE802154_NRF5
 
 endif # IEEE802154
 
-config BT_CTLR
-	default BT
-
 config HW_STACK_PROTECTION
 	default ARCH_HAS_STACK_PROTECTION
 

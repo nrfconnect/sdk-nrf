@@ -27,12 +27,8 @@ if SOC_NRF54L15
 config BT_CTLR_ECDH
 	default n
 
-config BT_USE_PSA_API
-	default y if BT_TINYCRYPT_ECC
-	select PSA_WANT_ALG_ECB_NO_PADDING
-
 config BT_LONG_WQ_STACK_SIZE
-	default 2048 if BT_USE_PSA_API
+	default 2048
 
 endif
 
