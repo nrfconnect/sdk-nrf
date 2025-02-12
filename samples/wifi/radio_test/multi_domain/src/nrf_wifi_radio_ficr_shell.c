@@ -14,7 +14,7 @@
 #include <nrf_wifi_radio_test_shell.h>
 #include "ficr_prog.h"
 
-#include "fmac_api_common.h"
+#include "common/fmac_api_common.h"
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 static struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
