@@ -62,3 +62,9 @@
     - nrf52820dongle/nrf52820
     - nrf52810dmouse/nrf52810
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31675"
+
+- scenarios:
+    - applications.connectivity_bridge
+  platforms:
+    - thingy91x/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31757"
