@@ -15,7 +15,7 @@
 #include <zephyr/init.h>
 #include <ctype.h>
 #include <host_rpu_sys_if.h>
-#include <fmac_structs.h>
+#include <radio_test/fmac_structs.h>
 #include <zephyr/drivers/wifi/nrf_wifi/bus/rpu_hw_if.h>
 
 struct nrf_wifi_ctx_zep_rt {
