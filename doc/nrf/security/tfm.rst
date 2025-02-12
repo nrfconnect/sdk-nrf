@@ -227,9 +227,9 @@ The following differences apply to the device families:
 
    Partition alignment granularity on different nRF devices
 
-The imaginary example above shows a worst case screnario in nRF91 series where the flash region size is 32 kB and both TF-M binary and secure storage are 12 kB.
-This leaves significant amount of unused space in the flash region.
-On a real world scenario, the size of the TF-M binary and secure storage are usually much larger.
+The imaginary example above shows a worst-case scenario in the nRF91 Series where the flash region size is 32 kB and both the TF-M binary and secure storage are 12 kB.
+This leaves a significant amount of unused space in the flash region.
+In a real-world scenario, the size of the TF-M binary and secure storage is usually much larger.
 
 When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
 But when the static partitions are used, the user is responsible for following the alignment requirements.
@@ -558,6 +558,8 @@ Example of PS sizing with static partitions
 -------------------------------------------
 
 With devices where ROM granularity is higher than the flash page size (nRF53 Series and nRF91 Series), it might be useful to configure the ``tfm_its``, ``tfm_ps`` and ``tfm_otp_nv_counters`` partitions as static partitions.
+For example, when these three partitions are combined into a single ``tfm_storage`` partition, only the ``tfm_storage`` partition needs to be aligned with the flash region size.
+This allows potential optimizations in the flash memory usage.
 
 You can start by copying the default configuration from the :file:`partitions.yml` file in the build directory as the :file:`pm_static.yml` file in the application directory.
 The following snippet shows the meaningful parts of the default configuration for the ``tfm_its``, ``tfm_ps`` and ``tfm_otp_nv_counters`` partitions in the nRF9151 SoC:
