@@ -68,3 +68,9 @@
   platforms:
     - thingy91x/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31757"
+
+- scenarios:
+    - sample.matter.light_bulb.aws
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
