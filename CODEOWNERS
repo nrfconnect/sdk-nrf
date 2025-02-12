@@ -494,6 +494,7 @@
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/cellular/                        @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /samples/cellular/battery/                @nrfconnect/ncs-modem
+/samples/cellular/gnss/                   @tokangas
 /samples/cellular/location/               @trantanen @jhirsi @tokangas
 /samples/cellular/lwm2m_carrier/          @nrfconnect/ncs-carrier
 /samples/cellular/lwm2m_client/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
