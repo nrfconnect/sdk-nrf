@@ -227,6 +227,10 @@ The following differences apply to the device families:
 
    Partition alignment granularity on different nRF devices
 
+The imaginary example above shows a worst case screnario in nRF91 series where the flash region size is 32 kB and both TF-M binary and secure storage are 12 kB.
+This leaves significant amount of unused space in the flash region.
+On a real world scenario, the size of the TF-M binary and secure storage are usually much larger.
+
 When the :ref:`partition_manager` is enabled, it will take into consideration the alignment requirements.
 But when the static partitions are used, the user is responsible for following the alignment requirements.
 
