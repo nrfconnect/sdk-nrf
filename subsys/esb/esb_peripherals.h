@@ -99,8 +99,8 @@ extern "C" {
 /** ESB nrfx timer instance. */
 #define ESB_NRFX_TIMER_INSTANCE NRFX_TIMER_INSTANCE(ESB_TIMER_INSTANCE_NO)
 
-#if !defined(CONFIG_NRFX_DPPI)
-/** Use fixed DPPI channels and groups if nrfx_dppi is not available. */
+#if defined(DPPIC_COUNT) && (DPPIC_COUNT > 1)
+/** Use fixed DPPI channels and groups if there are several instances of DPPIC. */
 #define ESB_DPPI_FIXED
 /** First fixed DPPI channel, total used channels: 7. */
 #define ESB_DPPI_FIRST_FIXED_CHANNEL 0
