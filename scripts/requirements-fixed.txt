@@ -35,7 +35,7 @@ commoncode==32.0.0 ; python_version >= "3.12" and python_version < "4.0" and pla
 construct==2.10.70 ; python_version >= "3.12" and python_version < "4.0"
 container-inspector==33.0.0 ; python_version >= "3.12" and python_version < "4.0" and platform_machine == "x86_64"
 coverage==7.6.4 ; python_version >= "3.12" and python_version < "4.0"
-cryptography==43.0.1 ; python_version >= "3.12" and python_version < "4.0"
+cryptography==44.0.1 ; python_version >= "3.12" and python_version < "4.0"
 debian-inspector==31.1.0 ; python_version >= "3.12" and python_version < "4.0" and platform_machine == "x86_64"
 deprecated==1.2.14 ; python_version >= "3.12" and python_version < "4.0"
 devicetree==0.0.2 ; python_version >= "3.12" and python_version < "4.0"
