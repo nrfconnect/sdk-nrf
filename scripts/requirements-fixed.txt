@@ -4,7 +4,7 @@
 #
 #    pip-compile-cross-platform bootloader/mcuboot/scripts/requirements.txt zephyr/scripts/requirements.txt nrf/scripts/requirements-west-ncs-sbom.txt nrf/scripts/requirements-ci.txt nrf/scripts/requirements-extra.txt nrf/scripts/requirements.txt --output-file nrf/scripts/requirements-fixed.txt --min-python-version 3.12 --index_url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
 #
---index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
+--extra-index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
 
 aenum==3.1.15 ; python_version >= "3.12" and python_version < "4.0"
 anytree==2.12.1 ; python_version >= "3.12" and python_version < "4"
@@ -35,7 +35,7 @@ commoncode==32.0.0 ; python_version >= "3.12" and python_version < "4.0" and pla
 construct==2.10.70 ; python_version >= "3.12" and python_version < "4.0"
 container-inspector==33.0.0 ; python_version >= "3.12" and python_version < "4.0" and platform_machine == "x86_64"
 coverage==7.6.4 ; python_version >= "3.12" and python_version < "4.0"
-cryptography==43.0.1 ; python_version >= "3.12" and python_version < "4.0"
+cryptography==44.0.1 ; python_version >= "3.12" and python_version < "4.0"
 debian-inspector==31.1.0 ; python_version >= "3.12" and python_version < "4.0" and platform_machine == "x86_64"
 deprecated==1.2.14 ; python_version >= "3.12" and python_version < "4.0"
 devicetree==0.0.2 ; python_version >= "3.12" and python_version < "4.0"

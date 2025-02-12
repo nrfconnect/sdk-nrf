@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+# Change to enable find-my-tests
 
 if (CONFIG_NFC_NDEF OR
     CONFIG_NFC_NDEF_PARSER)
