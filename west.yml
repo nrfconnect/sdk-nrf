@@ -25,10 +25,6 @@ manifest:
       url-base: https://github.com/zephyrproject-rtos
     - name: throwtheswitch
       url-base: https://github.com/ThrowTheSwitch
-    - name: armmbed
-      url-base: https://github.com/ARMmbed
-    - name: nordicsemi
-      url-base: https://github.com/NordicSemiconductor
     - name: dragoon
       url-base: https://projecttools.nordicsemi.no/bitbucket/scm/drgn
     - name: memfault
