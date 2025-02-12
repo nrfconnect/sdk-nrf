@@ -99,7 +99,7 @@
 /delete-node/ &mx25r64;
 
 &sdp_mspi {
-	clock-frequency = <DT_FREQ_M(48)>;
+	clock-frequency = <DT_FREQ_M(64)>;
 	pinctrl-0 = <&sdp_mspi_default>;
 	pinctrl-1 = <&sdp_mspi_sleep>;
 	pinctrl-names = "default", "sleep";
