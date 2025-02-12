@@ -12,7 +12,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/wifi/nrf_wifi/bus/rpu_hw_if.h>
 
-#include "rpu_if.h"
+#include "common/rpu_if.h"
 #include "ficr_prog.h"
 
 
