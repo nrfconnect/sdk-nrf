@@ -3,17 +3,9 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-
 #include <stdlib.h>
 #include <string.h>
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/arpa/inet.h>
-#include <zephyr/posix/netdb.h>
-#include <zephyr/posix/sys/socket.h>
-#include <zephyr/posix/poll.h>
-#else
 #include <zephyr/net/socket.h>
-#endif /* CONFIG_POSIX_API */
 
 #include <net/mqtt_helper.h>
 #include <zephyr/net/mqtt.h>
@@ -386,9 +378,9 @@ static int broker_init(struct sockaddr_storage *broker,
 		       struct mqtt_helper_conn_params *conn_params)
 {
 	int err;
-	struct addrinfo *result;
-	struct addrinfo *addr;
-	struct addrinfo hints = {
+	struct zsock_addrinfo *result;
+	struct zsock_addrinfo *addr;
+	struct zsock_addrinfo hints = {
 		.ai_socktype = SOCK_STREAM
 	};
 	char addr_str[NET_IPV6_ADDR_LEN];
@@ -401,7 +393,7 @@ static int broker_init(struct sockaddr_storage *broker,
 		LOG_DBG("Resolving IP address for %s", conn_params->hostname.ptr);
 	}
 
-	err = getaddrinfo(conn_params->hostname.ptr, NULL, &hints, &result);
+	err = zsock_getaddrinfo(conn_params->hostname.ptr, NULL, &hints, &result);
 	if (err) {
 		LOG_ERR("getaddrinfo() failed, error %d", err);
 		return -err;
@@ -418,8 +410,8 @@ static int broker_init(struct sockaddr_storage *broker,
 			broker6->sin6_family = addr->ai_family;
 			broker6->sin6_port = htons(CONFIG_MQTT_HELPER_PORT);
 
-			inet_ntop(addr->ai_family, &broker6->sin6_addr, addr_str,
-				sizeof(addr_str));
+			zsock_inet_ntop(addr->ai_family, &broker6->sin6_addr,
+					addr_str, sizeof(addr_str));
 			LOG_DBG("IPv6 Address found %s (%s)", addr_str,
 				net_family2str(addr->ai_family));
 			break;
@@ -431,8 +423,8 @@ static int broker_init(struct sockaddr_storage *broker,
 			broker4->sin_family = addr->ai_family;
 			broker4->sin_port = htons(CONFIG_MQTT_HELPER_PORT);
 
-			inet_ntop(addr->ai_family, &broker4->sin_addr, addr_str,
-				sizeof(addr_str));
+			zsock_inet_ntop(addr->ai_family, &broker4->sin_addr,
+					addr_str, sizeof(addr_str));
 			LOG_DBG("IPv4 Address found %s (%s)", addr_str,
 				net_family2str(addr->ai_family));
 			break;
@@ -443,7 +435,7 @@ static int broker_init(struct sockaddr_storage *broker,
 		addr = addr->ai_next;
 	}
 
-	freeaddrinfo(result);
+	zsock_freeaddrinfo(result);
 
 	return err;
 }
@@ -552,7 +544,8 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 		int sock = mqtt_client.transport.tcp.sock;
 #endif /* CONFIG_MQTT_LIB_TLS */
 
-		err = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+		err = zsock_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout,
+				       sizeof(timeout));
 		if (err == -1) {
 			LOG_WRN("Failed to set timeout, errno: %d", errno);
 
@@ -730,13 +723,13 @@ int mqtt_helper_deinit(void)
 MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 {
 	int ret;
-	struct pollfd fds[1] = {0};
+	struct zsock_pollfd fds[1] = {0};
 
 	LOG_DBG("Waiting for connection_poll_sem");
 	k_sem_take(&connection_poll_sem, K_FOREVER);
 	LOG_DBG("Took connection_poll_sem");
 
-	fds[0].events = POLLIN;
+	fds[0].events = ZSOCK_POLLIN;
 #if defined(CONFIG_MQTT_LIB_TLS)
 	fds[0].fd  = mqtt_client.transport.tls.sock;
 #else
@@ -754,7 +747,8 @@ MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 			LOG_DBG("Polling on socket fd: %d", fds[0].fd);
 		}
 
-		ret = poll(fds, ARRAY_SIZE(fds), mqtt_keepalive_time_left(&mqtt_client));
+		ret = zsock_poll(fds, ARRAY_SIZE(fds),
+				 mqtt_keepalive_time_left(&mqtt_client));
 		if (ret < 0) {
 			LOG_ERR("poll() returned an error (%d), errno: %d", ret, -errno);
 			break;
@@ -773,7 +767,7 @@ MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 			continue;
 		}
 
-		if ((fds[0].revents & POLLIN) == POLLIN) {
+		if ((fds[0].revents & ZSOCK_POLLIN) == ZSOCK_POLLIN) {
 			ret = mqtt_input(&mqtt_client);
 			if (ret) {
 				LOG_ERR("Cloud MQTT input error: %d", ret);
@@ -791,9 +785,9 @@ MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 			}
 		}
 
-		if ((fds[0].revents & POLLNVAL) == POLLNVAL) {
+		if ((fds[0].revents & ZSOCK_POLLNVAL) == ZSOCK_POLLNVAL) {
 			if (mqtt_state_verify(MQTT_STATE_DISCONNECTING)) {
-				/* POLLNVAL is to be expected while
+				/* ZSOCK_POLLNVAL is to be expected while
 				 * disconnecting, as the socket will be closed
 				 * by the MQTT library and become invalid.
 				 */
@@ -807,13 +801,13 @@ MQTT_HELPER_STATIC void mqtt_helper_poll_loop(void)
 			break;
 		}
 
-		if ((fds[0].revents & POLLHUP) == POLLHUP) {
+		if ((fds[0].revents & ZSOCK_POLLHUP) == ZSOCK_POLLHUP) {
 			LOG_ERR("Socket error: POLLHUP");
 			LOG_ERR("Connection was unexpectedly closed");
 			break;
 		}
 
-		if ((fds[0].revents & POLLERR) == POLLERR) {
+		if ((fds[0].revents & ZSOCK_POLLERR) == ZSOCK_POLLERR) {
 			LOG_ERR("Socket error: POLLERR");
 			LOG_ERR("Connection was unexpectedly closed");
 			break;

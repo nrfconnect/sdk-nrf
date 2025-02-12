@@ -99,7 +99,7 @@ static bool open_ppp_sockets(void)
 {
 	int ret;
 
-	ppp_fds[ZEPHYR_FD_IDX] = socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE,
+	ppp_fds[ZEPHYR_FD_IDX] = zsock_socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE,
 				        htons(IPPROTO_RAW));
 	if (ppp_fds[ZEPHYR_FD_IDX] < 0) {
 		LOG_ERR("Zephyr socket creation failed (%d).", errno);
@@ -110,14 +110,14 @@ static bool open_ppp_sockets(void)
 		.sll_family = AF_PACKET,
 		.sll_ifindex = net_if_get_by_iface(ppp_iface)
 	};
-	ret = bind(ppp_fds[ZEPHYR_FD_IDX],
+	ret = zsock_bind(ppp_fds[ZEPHYR_FD_IDX],
 		   (const struct sockaddr *)&ppp_zephyr_dst_addr, sizeof(ppp_zephyr_dst_addr));
 	if (ret < 0) {
 		LOG_ERR("Failed to bind Zephyr socket (%d).", errno);
 		return false;
 	}
 
-	ppp_fds[MODEM_FD_IDX] = socket(AF_PACKET, SOCK_RAW, 0);
+	ppp_fds[MODEM_FD_IDX] = zsock_socket(AF_PACKET, SOCK_RAW, 0);
 	if (ppp_fds[MODEM_FD_IDX] < 0) {
 		LOG_ERR("Modem socket creation failed (%d).", errno);
 		return false;
@@ -132,7 +132,7 @@ static void close_ppp_sockets(void)
 		if (ppp_fds[i] < 0) {
 			continue;
 		}
-		if (close(ppp_fds[i])) {
+		if (zsock_close(ppp_fds[i])) {
 			LOG_WRN("Failed to close %s socket (%d).",
 				ppp_socket_names[i], errno);
 		}
@@ -150,7 +150,7 @@ static bool configure_ppp_link_ip_addresses(struct ppp_context *ctx)
 	util_get_ip_addr(PDP_CID, addr4, addr6);
 
 	if (*addr4) {
-		if (inet_pton(AF_INET, addr4, &ctx->ipcp.my_options.address) != 1) {
+		if (zsock_inet_pton(AF_INET, addr4, &ctx->ipcp.my_options.address) != 1) {
 			return false;
 		}
 	} else if (!*addr6) {
@@ -161,7 +161,7 @@ static bool configure_ppp_link_ip_addresses(struct ppp_context *ctx)
 	if (*addr6) {
 		struct in6_addr in6;
 
-		if (inet_pton(AF_INET6, addr6, &in6) != 1) {
+		if (zsock_inet_pton(AF_INET6, addr6, &in6) != 1) {
 			return false;
 		}
 		/* The interface identifier is the last 64 bits of the IPv6 address. */
@@ -577,15 +577,15 @@ static int handle_at_ppp(enum at_parser_cmd_type cmd_type, struct at_parser *par
 static void ppp_data_passing_thread(void*, void*, void*)
 {
 	const size_t mtu = net_if_get_mtu(ppp_iface);
-	struct pollfd fds[PPP_FDS_COUNT];
+	struct zsock_pollfd fds[PPP_FDS_COUNT];
 
 	for (size_t i = 0; i != ARRAY_SIZE(fds); ++i) {
 		fds[i].fd = ppp_fds[i];
-		fds[i].events = POLLIN;
+		fds[i].events = ZSOCK_POLLIN;
 	}
 
 	while (true) {
-		const int poll_ret = poll(fds, ARRAY_SIZE(fds), -1);
+		const int poll_ret = zsock_poll(fds, ARRAY_SIZE(fds), -1);
 
 		if (poll_ret <= 0) {
 			LOG_ERR("Sockets polling failed (%d, %d).", poll_ret, errno);
@@ -599,18 +599,19 @@ static void ppp_data_passing_thread(void*, void*, void*)
 			if (!revents) {
 				continue;
 			}
-			if (!(revents & POLLIN)) {
-				/* POLLERR/POLLNVAL happen when the sockets are closed
+			if (!(revents & ZSOCK_POLLIN)) {
+				/* ZSOCK_POLLERR/ZSOCK_POLLNVAL happen when the sockets are closed
 				 * or when the connection goes down.
 				 */
-				if ((revents ^ POLLERR) && (revents ^ POLLNVAL)) {
+				if ((revents ^ ZSOCK_POLLERR) && (revents ^ ZSOCK_POLLNVAL)) {
 					LOG_WRN("Unexpected event 0x%x on %s socket.",
 						revents, ppp_socket_names[src]);
 				}
 				ppp_stop();
 				return;
 			}
-			const ssize_t len = recv(fds[src].fd, ppp_data_buf, mtu, MSG_DONTWAIT);
+			const ssize_t len =
+				zsock_recv(fds[src].fd, ppp_data_buf, mtu, ZSOCK_MSG_DONTWAIT);
 
 			if (len <= 0) {
 				if (len != -1 || (errno != EAGAIN && errno != EWOULDBLOCK)) {
@@ -624,7 +625,8 @@ static void ppp_data_passing_thread(void*, void*, void*)
 			void *dst_addr = (dst == MODEM_FD_IDX) ? NULL : &ppp_zephyr_dst_addr;
 			socklen_t addrlen = (dst == MODEM_FD_IDX) ? 0 : sizeof(ppp_zephyr_dst_addr);
 
-			send_ret = sendto(fds[dst].fd, ppp_data_buf, len, 0, dst_addr, addrlen);
+			send_ret =
+				zsock_sendto(fds[dst].fd, ppp_data_buf, len, 0, dst_addr, addrlen);
 			if (send_ret == -1) {
 				LOG_ERR("Failed to send %zd bytes to %s socket (%d).",
 					len, ppp_socket_names[dst], errno);

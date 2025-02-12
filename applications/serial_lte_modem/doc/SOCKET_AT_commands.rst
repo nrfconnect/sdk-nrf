@@ -1235,7 +1235,8 @@ Response syntax
 
 * The ``<error>`` value is an error code when the poll fails.
 * The ``<handle>`` value is an integer. It is the handle of a socket that have events returned, so-called ``revents``.
-* The ``<revents>`` value is a hexadecimal string. It represents the returned events, which could be a combination of POLLIN, POLLERR, POLLHUP and POLLNVAL.
+* The ``<revents>`` value is a hexadecimal string.
+  It represents the returned events, which could be a combination of ``ZSOCK_POLLIN``, ``ZSOCK_POLLERR``, ``ZSOCK_POLLHUP`` and ``ZSOCK_POLLNVAL``.
 
 Examples
 ~~~~~~~~

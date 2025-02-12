@@ -10,12 +10,7 @@
 #define NRF_CLOUD_NET_UTIL_H_
 
 #include <zephyr/kernel.h>
-
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/sys/socket.h>
-#else
 #include <zephyr/net/socket.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +55,7 @@ typedef int (*nrf_cloud_connect_host_cb)(struct sockaddr *const addr);
  *		     socket ID of the successful connection.
  * @return int Either a negative error code on failure, or a nonnegative socket ID on success.
  */
-int nrf_cloud_connect_host(const char *host_name, uint16_t port, struct addrinfo *hints,
+int nrf_cloud_connect_host(const char *host_name, uint16_t port, struct zsock_addrinfo *hints,
 			   nrf_cloud_connect_host_cb connect_cb);
 
 /** @endcond */

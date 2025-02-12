@@ -213,7 +213,7 @@ void mqtt_evt_handler(struct mqtt_client *const c, const struct mqtt_evt *evt)
 static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 {
 	int err = 0;
-	struct pollfd fds;
+	struct zsock_pollfd fds;
 
 	ARG_UNUSED(arg1);
 	ARG_UNUSED(arg2);
@@ -225,20 +225,20 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 		fds.fd = client.transport.tls.sock;
 	}
 #endif
-	fds.events = POLLIN;
+	fds.events = ZSOCK_POLLIN;
 	while (true) {
 		if (!ctx.connected) {
 			LOG_WRN("MQTT disconnected");
 			err = 0;
 			break;
 		}
-		err = poll(&fds, 1, mqtt_keepalive_time_left(&client));
+		err = zsock_poll(&fds, 1, mqtt_keepalive_time_left(&client));
 		if (err < 0) {
 			LOG_ERR("ERROR: poll %d", errno);
 			break;
 		}
 
-		if ((fds.revents & POLLIN) == POLLIN) {
+		if ((fds.revents & ZSOCK_POLLIN) == ZSOCK_POLLIN) {
 			err = mqtt_input(&client);
 			if (err != 0) {
 				LOG_ERR("ERROR: mqtt_input %d", err);
@@ -259,18 +259,18 @@ static void mqtt_thread_fn(void *arg1, void *arg2, void *arg3)
 		 * determines to be inactive or non-responsive at any time, regardless of the
 		 * Keep Alive value provided by that Client.
 		 */
-		if ((fds.revents & POLLERR) == POLLERR) {
-			LOG_ERR("POLLERR");
+		if ((fds.revents & ZSOCK_POLLERR) == ZSOCK_POLLERR) {
+			LOG_ERR("ZSOCK_POLLERR");
 			err = -EIO;
 			break;
 		}
-		if ((fds.revents & POLLHUP) == POLLHUP) {
-			LOG_ERR("POLLHUP");
+		if ((fds.revents & ZSOCK_POLLHUP) == ZSOCK_POLLHUP) {
+			LOG_ERR("ZSOCK_POLLHUP");
 			err = -ECONNRESET;
 			break;
 		}
-		if ((fds.revents & POLLNVAL) == POLLNVAL) {
-			LOG_ERR("POLLNVAL");
+		if ((fds.revents & ZSOCK_POLLNVAL) == ZSOCK_POLLNVAL) {
+			LOG_ERR("ZSOCK_POLLNVAL");
 			err = -ENOTCONN;
 			break;
 		}

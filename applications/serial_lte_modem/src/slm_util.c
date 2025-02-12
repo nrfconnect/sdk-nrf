@@ -314,9 +314,9 @@ void util_get_ip_addr(int cid, char addr4[INET_ADDRSTRLEN], char addr6[INET6_ADD
 	if (ret <= 0) {
 		return;
 	}
-	if (addr4 != NULL && inet_pton(AF_INET, addr1, tmp) == 1) {
+	if (addr4 != NULL && zsock_inet_pton(AF_INET, addr1, tmp) == 1) {
 		strcpy(addr4, addr1);
-	} else if (addr6 != NULL && inet_pton(AF_INET6, addr1, tmp) == 1) {
+	} else if (addr6 != NULL && zsock_inet_pton(AF_INET6, addr1, tmp) == 1) {
 		strcpy(addr6, addr1);
 		return;
 	}
@@ -324,7 +324,7 @@ void util_get_ip_addr(int cid, char addr4[INET_ADDRSTRLEN], char addr6[INET6_ADD
 	if (addr6 == NULL) {
 		return;
 	}
-	if (ret > 1 && inet_pton(AF_INET6, addr2, tmp) == 1) {
+	if (ret > 1 && zsock_inet_pton(AF_INET6, addr2, tmp) == 1) {
 		strcpy(addr6, addr2);
 	}
 }
@@ -353,8 +353,8 @@ int util_resolve_host(int cid, const char *host, uint16_t port, int family, stru
 {
 	int err;
 	char service[PORT_MAX_SIZE + PDN_ID_MAX_SIZE + 2];
-	struct addrinfo *ai = NULL;
-	struct addrinfo hints = {
+	struct zsock_addrinfo *ai = NULL;
+	struct zsock_addrinfo hints = {
 		.ai_flags  = AI_NUMERICSERV | AI_PDNSERV,
 		.ai_family = family
 	};
@@ -365,10 +365,10 @@ int util_resolve_host(int cid, const char *host, uint16_t port, int family, stru
 
 	/* "service" shall be formatted as follows: "port:pdn_id" */
 	snprintf(service, sizeof(service), "%hu:%d", port, cid);
-	err = getaddrinfo(host, service, &hints, &ai);
+	err = zsock_getaddrinfo(host, service, &hints, &ai);
 	if (!err) {
 		*sa = *(ai->ai_addr);
-		freeaddrinfo(ai);
+		zsock_freeaddrinfo(ai);
 
 		if (sa->sa_family != AF_INET && sa->sa_family != AF_INET6) {
 			err = DNS_EAI_ADDRFAMILY;
@@ -382,9 +382,9 @@ int util_resolve_host(int cid, const char *host, uint16_t port, int family, stru
 			errstr = strerror(errno);
 			err = errno;
 		} else {
-			errstr = gai_strerror(err);
+			errstr = zsock_gai_strerror(err);
 		}
-		LOG_ERR("getaddrinfo() error (%d): %s", err, errstr);
+		LOG_ERR("zsock_getaddrinfo() error (%d): %s", err, errstr);
 	}
 	return err;
 }
@@ -394,17 +394,17 @@ int util_get_peer_addr(struct sockaddr *peer, char addr[static INET6_ADDRSTRLEN]
 	const char *ret = NULL;
 
 	if (peer->sa_family == AF_INET) {
-		ret = inet_ntop(AF_INET, &((struct sockaddr_in *)peer)->sin_addr,
+		ret = zsock_inet_ntop(AF_INET, &((struct sockaddr_in *)peer)->sin_addr,
 				addr, INET6_ADDRSTRLEN);
 		*port = ntohs(((struct sockaddr_in *)peer)->sin_port);
 	} else {
-		ret = inet_ntop(AF_INET6, &((struct sockaddr_in6 *)peer)->sin6_addr,
+		ret = zsock_inet_ntop(AF_INET6, &((struct sockaddr_in6 *)peer)->sin6_addr,
 				addr, INET6_ADDRSTRLEN);
 		*port = ntohs(((struct sockaddr_in6 *)peer)->sin6_port);
 	}
 
 	if (ret == NULL) {
-		LOG_ERR("inet_ntop error (%d)", -errno);
+		LOG_ERR("zsock_inet_ntop error (%d)", -errno);
 		return -errno;
 	}
 
