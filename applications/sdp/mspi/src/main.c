@@ -417,6 +417,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	}
 	case NRFE_MSPI_CONFIG_XFER: {
+
 		nrfe_mspi_xfer_config_msg_t *xfer_config = (nrfe_mspi_xfer_config_msg_t *)data;
 
 		NRFX_ASSERT(xfer_config->xfer_config.device_index < DEVICES_MAX);
