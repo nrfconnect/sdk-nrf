@@ -1,3 +1,9 @@
+# Consistency checks for the build configuration
+{%-  import 'consistency_checks.jinja' as consistency_checks -%}
+
+# Verify signature verification configuration
+{{ consistency_checks.suit_verify_signature_check("APP_LOCAL_3", app_recovery_img, sysbuild) }}
+
 {%- set mpi_app_recovery_local_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_VENDOR_NAME']|default('nordicsemi.com') %}
 {%- set mpi_app_recovery_local_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_CLASS_NAME']|default('nRF54H20_sample_app_3') %}
 SUIT_Envelope_Tagged:

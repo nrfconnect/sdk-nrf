@@ -1,3 +1,9 @@
+# Consistency checks for the build configuration
+{%-  import 'consistency_checks.jinja' as consistency_checks -%}
+
+# Verify signature verification configuration
+{{ consistency_checks.suit_verify_signature_check("ROOT", sysbuild, sysbuild) }}
+
 # This SUIT manifest template can be for various scenarios,
 # depending on which components are defined in the input context and which payloads
 # are included/detached from the envelope.
