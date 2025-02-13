@@ -175,9 +175,6 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	}
 	}
 
-	WRITE_BIT(out, 3, VPRCSR_NORDIC_OUT_HIGH);
-	WRITE_BIT(out, 4, VPRCSR_NORDIC_OUT_HIGH);
-
 	nrf_vpr_csr_vio_out_set(out);
 	nrf_vpr_csr_vio_config_set(&vio_config);
 }
@@ -187,7 +184,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	volatile nrfe_mspi_dev_config_t *device =
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config.device_index];
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = 31;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config.hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
@@ -257,7 +254,7 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config.device_index];
 	nrf_vpr_csr_vio_config_t config;
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = 31;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config.hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
@@ -391,6 +388,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(
 				BIT(ce_vios[nrfe_mspi_devices[dev_config->device_index].ce_index]));
+		}
+
+		if (dev_config->dev_config.io_mode == MSPI_IO_MODE_SINGLE)
+		{
+			nrf_vpr_csr_vio_out_or_set(BIT(3));
+			nrf_vpr_csr_vio_out_or_set(BIT(4));
+		} else {
+			nrf_vpr_csr_vio_out_clear_set(BIT(3));
+			nrf_vpr_csr_vio_out_clear_set(BIT(4));
 		}
 
 		break;
