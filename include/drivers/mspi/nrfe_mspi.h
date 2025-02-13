@@ -79,7 +79,11 @@ typedef struct {
 	uint32_t command;
 	uint32_t address;
 	uint32_t num_bytes; /* Size of data */
+#if (defined(CONFIG_MSPI_NRFE_IPC_NO_COPY) || defined(CONFIG_SDP_MSPI_IPC_NO_COPY))
+	uint8_t *data;
+#else
 	uint8_t data[]; /* Variable length data field at the end of packet. */
+#endif
 } nrfe_mspi_xfer_packet_msg_t;
 
 typedef struct {
