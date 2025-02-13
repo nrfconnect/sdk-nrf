@@ -39,6 +39,7 @@ typedef enum {
 	NRFE_MSPI_CONFIG_XFER,      /* nrfe_mspi_xfer_config_msg_t */
 	NRFE_MSPI_TX,	            /* nrfe_mspi_xfer_packet_msg_t + data buffer at the end */
 	NRFE_MSPI_TXRX,
+	NRFE_MSPI_SDP_APP_HARD_FAULT,
 	NRFE_MSPI_WRONG_OPCODE,
 	NRFE_MSPI_ALL_OPCODES = NRFE_MSPI_WRONG_OPCODE,
 } nrfe_mspi_opcode_t;
