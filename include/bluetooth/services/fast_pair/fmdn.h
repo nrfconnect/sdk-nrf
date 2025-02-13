@@ -7,6 +7,7 @@
 #ifndef BT_FAST_PAIR_FMDN_H_
 #define BT_FAST_PAIR_FMDN_H_
 
+#include <zephyr/bluetooth/conn.h>
 #include <zephyr/sys/slist.h>
 #include <zephyr/sys/util.h>
 
@@ -505,6 +506,34 @@ struct bt_fast_pair_fmdn_info_cb {
 	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
 	 */
 	void (*clock_synced)(void);
+
+	/** @brief Indicate that the peer was authenticated locally.
+	 *
+	 *  This callback is called to indicate that the connected peer was
+	 *  authenticated locally using the protocol defined in the FMDN
+	 *  Accessory specification. It is triggered on a successful Read
+	 *  Provisioning State operation on the Beacon Actions GATT
+	 *  characteristic.
+	 *
+	 *  This callback can be used to facilitate the FMDN firmware update
+	 *  flow by granting the authenticated connection read access to the
+	 *  GATT Firmware Revision characteristic that is part of the Device
+	 *  Information Service (DIS). By default, the read operations of the
+	 *  identifying information (for example, from the DIS characteristics)
+	 *  are blocked for unauthenticated peers. The firmware version,
+	 *  retrieved from the FMDN accessory, may be used by the authenticated
+	 *  peer (smartphone) to notify the user about the outdated firmware
+	 *  and the pending firmware update.
+	 *
+	 *  This callback is executed in the cooperative thread context. You
+	 *  can learn about the exact thread context by analyzing the
+	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
+	 *  callback is executed in the Bluetooth-specific workqueue thread
+	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *
+	 *  @param conn Authenticated connection object.
+	 */
+	void (*conn_authenticated)(struct bt_conn *conn);
 
 	/** @brief Indicate provisioning state changes.
 	 *

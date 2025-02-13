@@ -332,6 +332,9 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 		return BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 	}
 
+	/* Fire the connection authenticated callback for the application if it is registered. */
+	fp_fmdn_callbacks_conn_authenticated_notify(conn);
+
 	return 0;
 }
 
