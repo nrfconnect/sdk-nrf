@@ -55,9 +55,6 @@ config NRF_CLOUD_SEND_DEVICE_STATUS_SIM
 config NRF_CLOUD_SEND_SERVICE_INFO_FOTA
 	default y
 
-config NRF_CLOUD_SEND_SERVICE_INFO_UI
-	default y
-
 # Enable cards for sensor data display in the nRF Cloud UI.
 config NRF_CLOUD_ENABLE_SVC_INF_UI_TEMP
 	default y if EXTERNAL_SENSORS
