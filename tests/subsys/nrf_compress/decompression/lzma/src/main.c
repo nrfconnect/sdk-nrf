@@ -104,7 +104,7 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 	uint32_t output_size;
 	uint32_t total_output_size = 0;
 	uint8_t output_sha[SHA256_SIZE] = { 0 };
-	struct nrf_compress_implementation *implementation;
+	struct nrf_compress_implementation *implementation = NULL;
 	mbedtls_sha256_context ctx;
 
 	mbedtls_sha256_init(&ctx);
@@ -112,6 +112,7 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 	zassert_ok(rc, "Expected mbedtls sha256 start to be successful");
 
 	implementation = nrf_compress_implementation_find(NRF_COMPRESS_TYPE_LZMA);
+	zassert_not_equal(implementation, NULL, "Expected implementation to not be NULL");
 
 	pos = 0;
 
@@ -529,7 +530,7 @@ ZTEST(nrf_compress_decompression, test_too_large_malloc)
 	struct nrf_compress_implementation *implementation;
 
 	/* Malloc data to reduce available heap for decompression library */
-	large_malloc_object = (uint8_t *)malloc(4264);
+	large_malloc_object = (uint8_t *)malloc(8000);
 	zassert_not_null(large_malloc_object, "Expected large malloc to be successful");
 
 	implementation = nrf_compress_implementation_find(NRF_COMPRESS_TYPE_LZMA);
