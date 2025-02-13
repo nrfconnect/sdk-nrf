@@ -1,0 +1,7 @@
+&comp {
+	compatible = "nordic,nrf-lpcomp";
+	psel = "AIN1";
+	refsel = "VDD_4_8";
+	status = "okay";
+	enable-hyst;
+};
