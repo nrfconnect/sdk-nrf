@@ -94,9 +94,8 @@ static size_t free_element_find(struct svc_el_pool *el_pool, size_t el_cnt)
 		 "Pool uninitialized");
 
 	for (size_t i = 0; i < el_cnt; i++) {
-		if (!atomic_test_and_set_bit(el_pool->locks, i)) {
+		if (!atomic_test_and_set_bit(el_pool->locks, i))
 			return i;
-		}
 	}
 	return el_cnt;
 }
