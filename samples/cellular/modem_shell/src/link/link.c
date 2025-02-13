@@ -183,7 +183,7 @@ static void link_registered_work(struct k_work *unused)
 	/* PDN activation may take some time. Thus, let modem have some time
 	 * before reading the PDN information.
 	 */
-	k_sleep(K_MSEC(2000));
+	k_sleep(K_MSEC(1500));
 
 	link_api_modem_info_get_for_shell(true);
 }

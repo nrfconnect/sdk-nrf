@@ -227,6 +227,7 @@ int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 {
 	int ret = 0;
 	int len;
+	uint32_t reg_status;
 	char tmp_cell_id_str[OP_CELL_ID_STR_MAX_LEN + 1] = { 0 };
 	char tmp_tac_str[OP_TAC_STR_MAX_LEN + 1] = { 0 };
 
@@ -241,9 +242,12 @@ int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 	resp->cell_id = -1;
 	resp->tac = -1;
 
+	/* reg_status is not used but can not be ignored, otherwise the function returns an error
+	 * for a notification which only contains the registration status.
+	 */
 	ret = nrf_modem_at_scanf("AT%XMONITOR",
 				 "%%XMONITOR: "
-				 "%*u,"                                /* <reg_status>: ignored */
+				 "%u,"                                 /* <reg_status> */
 				 "%"L(OP_FULL_NAME_STR_MAX_LEN)"[^,]," /* <full_name> with quotes */
 				 "%"L(OP_SHORT_NAME_STR_MAX_LEN)"[^,],"/* <short_name> with quotes*/
 				 "%"L(OP_PLMN_STR_MAX_LEN)"[^,],"      /* <plmn> */
@@ -255,6 +259,7 @@ int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 				 "%*u,"                                /* <EARFCN>: ignored */
 				 "%d,"                                 /* <rsrp> */
 				 "%d",                                 /* <snr> */
+					&reg_status,
 					resp->full_name_str,
 					resp->short_name_str,
 					resp->plmn_str,
@@ -403,6 +408,10 @@ int link_api_pdp_contexts_read(struct pdp_context_info_array *pdp_info)
 	/* Allocate array of PDP info accordingly */
 	pdp_info->array = calloc(pdp_cnt, sizeof(struct pdp_context_info));
 	pdp_info->size = pdp_cnt;
+
+	if (pdp_cnt == 0) {
+		goto clean_exit;
+	}
 
 	/* Parse the response */
 	ret = at_parser_init(&parser, at_ptr);
