@@ -56,11 +56,11 @@ static void *lzma_probs_alloc(ISzAllocPtr p, size_t size)
 
 	if (buffer == NULL) {
 		LOG_ERR("Failed to allocate nRF compression library buffer (0x%x)", size);
-	}
-
 #ifdef CONFIG_NRF_COMPRESS_CLEANUP
-	malloc_probs_size = size;
+	} else {
+		malloc_probs_size = size;
 #endif
+	}
 
 	return buffer;
 #endif
@@ -84,9 +84,15 @@ static void lzma_probs_free(ISzAllocPtr p, void *address)
 {
 #if defined(CONFIG_NRF_COMPRESS_MEMORY_TYPE_MALLOC)
 #ifdef CONFIG_NRF_COMPRESS_CLEANUP
-	like_mbedtls_zeroize(address, malloc_probs_size);
+	if (address == NULL) {
+		return;
+	}
 
-	malloc_probs_size = 0;
+	if (malloc_probs_size > 0) {
+		like_mbedtls_zeroize(address, malloc_probs_size);
+		malloc_probs_size = 0;
+	}
+
 #endif
 	free(address);
 #else
