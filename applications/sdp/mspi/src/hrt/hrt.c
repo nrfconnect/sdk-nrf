@@ -335,6 +335,10 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	/* Transfer address */
 	hrt_tx_rx(&hrt_xfer_params->xfer_data[HRT_FE_ADDRESS], hrt_xfer_params->bus_widths.address,
 		  false, hrt_xfer_params->counter_value, CNT1_INIT_VALUE);
+	
+	/* Transfer dummy_cycles */
+	hrt_tx_rx(&hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES], hrt_xfer_params->bus_widths.dummy_cycles,
+		  false, hrt_xfer_params->counter_value, CNT1_INIT_VALUE);
 
 	for (uint8_t i = 0; i < hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count; i++) {
 		hrt_xfer_params->xfer_data[HRT_FE_DATA].data[i] =
