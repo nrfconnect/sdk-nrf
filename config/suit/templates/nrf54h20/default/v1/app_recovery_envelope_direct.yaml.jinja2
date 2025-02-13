@@ -1,3 +1,9 @@
+# Consistency checks for the build configuration
+{%-  import 'consistency_checks.jinja' as consistency_checks -%}
+
+# Verify signature verification configuration
+{{ consistency_checks.suit_verify_signature_check("APP_RECOVERY", sysbuild, sysbuild) }}
+
 {%- set component_index = 0 %}
 {%- set component_list = [] %}
 {%- set dependencies_list = [] %}
