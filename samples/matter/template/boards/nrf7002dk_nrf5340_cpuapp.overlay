@@ -19,5 +19,5 @@
 
 /* Set IPC thread priority to the highest value to not collide with other threads. */
 &ipc0 {
-    zephyr,priority = <0 PRIO_COOP>;
+	zephyr,priority = <0 PRIO_COOP>;
 };
