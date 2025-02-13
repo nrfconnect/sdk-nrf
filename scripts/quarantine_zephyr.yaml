@@ -272,6 +272,15 @@
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "needs porting, owner not clear"
 
+- scenarios:
+    - libraries.encoding.jwt.rsa.psa
+    - libraries.encoding.jwt.rsa.legacy
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
