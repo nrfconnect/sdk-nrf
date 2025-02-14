@@ -1176,6 +1176,12 @@ ci_tests_lib_uicc_lwm2m:
     - nrf/lib/uicc_lwm2m/
     - nrf/tests/lib/uicc_lwm2m/
 
+ci_tests_lib_modem_key_mgmt:
+  files:
+    - nrfxlib/nrf_modem/
+    - nrf/lib/modem_key_mgmt/
+    - nrf/tests/lib/modem_key_mgmt/
+
 ci_tests_drivers_lpuart:
   files:
     - modules/hal/nordic/nrfx/
