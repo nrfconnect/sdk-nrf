@@ -21,6 +21,11 @@ zephyr_library_sources_ifdef(
   ecdh.c
 )
 
+zephyr_library_sources_ifdef(
+  CONFIG_BT_CHANNEL_SOUNDING
+  cs_antenna_switch.c
+)
+
 zephyr_library_link_libraries_ifdef(
   CONFIG_BT_CTLR_ECDH_LIB_OBERON
   nrfxlib_crypto
