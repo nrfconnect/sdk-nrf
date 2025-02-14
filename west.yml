@@ -137,7 +137,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.6.2-ncs2
+      revision: pull/40/head
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
