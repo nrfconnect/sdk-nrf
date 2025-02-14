@@ -529,12 +529,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - applications.nrf_desktop.zrelease_fast_pair.gmouse
-  platforms:
-    - nrf54l15dk/nrf54l05/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - applications.nrf_desktop.zdebug_mcuboot_smp
     - applications.nrf_desktop.zrelease_fast_pair.gmouse
   platforms:
