@@ -15,6 +15,7 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/sys/slist.h>
 #include <zephyr/logging/log.h>
+#include <nrf_errno.h>
 #include <nrf_modem_at.h>
 #include <modem/pdn.h>
 #include <modem/at_monitor.h>
@@ -732,7 +733,13 @@ int pdn_dynamic_info_get(uint8_t cid, struct pdn_dynamic_info *pdn_info)
 	ret = nrf_modem_at_scanf(at_cmd_buf, AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1,
 				 dns_addr_str_primary, dns_addr_str_secondary, &mtu);
 	if (ret < 1) {
-		LOG_ERR("nrf_modem_at_scanf failed, ret: %d", ret);
+		/* Don't log an error if no PDN connections are active, this may not be considered
+		 * an error by the caller.
+		 */
+		if (ret != -NRF_EBADMSG) {
+			LOG_ERR("nrf_modem_at_scanf failed, ret: %d", ret);
+		}
+
 		return ret;
 	}
 
