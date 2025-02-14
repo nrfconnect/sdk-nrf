@@ -33,12 +33,18 @@ enum term_modes {
 	MODE_COUNT      /* Counter of term_modes */
 };
 
+#define AT_HOST_UART_DEV_GET()                                                                     \
+	DEVICE_DT_GET(COND_CODE_1(DT_HAS_CHOSEN(ncs_at_host_uart),                                 \
+		(DT_CHOSEN(ncs_at_host_uart)), (DT_NODELABEL(uart0))))
+
+#define IS_LOG_BACKEND_UART(_uart_dev)                                                             \
+	(IS_ENABLED(CONFIG_LOG_BACKEND_UART) && COND_CODE_1(DT_HAS_CHOSEN(zephyr_log_uart),        \
+		(_uart_dev == DEVICE_DT_GET(DT_CHOSEN(zephyr_log_uart))),                          \
+		(COND_CODE_1(DT_HAS_CHOSEN(zephyr_console),                                        \
+			(_uart_dev == DEVICE_DT_GET(DT_CHOSEN(zephyr_console))), (false)))))
+
 static enum term_modes term_mode;
-#if DT_HAS_CHOSEN(ncs_at_host_uart)
-static const struct device *const uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_at_host_uart));
-#else
-static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
-#endif
+static const struct device *const uart_dev = AT_HOST_UART_DEV_GET();
 static bool at_buf_busy; /* Guards at_buf while processing a command */
 static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
@@ -46,7 +52,10 @@ static struct k_work cmd_send_work;
 
 static inline void write_uart_string(const char *str)
 {
-	if (IS_ENABLED(CONFIG_LOG_BACKEND_UART)) {
+	if (IS_LOG_BACKEND_UART(uart_dev)) {
+		/* The chosen AT host UART device is also the UART log backend device.
+		 * Therefore, log the AT response instead of writing directly to the UART device.
+		 */
 		LOG_RAW("%s", str);
 		return;
 	}
