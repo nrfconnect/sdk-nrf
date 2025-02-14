@@ -26,7 +26,7 @@ MCUBOOT_BASE = utils.get_projdir("mcuboot")
 # General configuration --------------------------------------------------------
 
 project = "nRF Connect SDK"
-copyright = "2019-2024, Nordic Semiconductor"
+copyright = "2019-2025, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 version = release = os.environ.get("DOCSET_VERSION")
 
