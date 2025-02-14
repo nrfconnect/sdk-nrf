@@ -167,13 +167,25 @@ config BT_GATT_UUID16_POOL_SIZE
 
 if BT_DIS
 
-config BT_DIS_MANUF
+config BT_DIS_MANUF_NAME
+	default y
+	help
+	  nRF Desktop enables the Manufacturer Name String characteristic as
+	  part of the DIS configuration.
+
+config BT_DIS_MANUF_NAME_STR
 	default DESKTOP_DEVICE_MANUFACTURER
 	help
 	  nRF Desktop defines common HID device identification values
 	  and passes them as defaults to the Bluetooth DIS configuration.
 
-config BT_DIS_MODEL
+config BT_DIS_MODEL_NUMBER
+	default y
+	help
+	  nRF Desktop enables the Model Number String characteristic as
+	  part of the DIS configuration.
+
+config BT_DIS_MODEL_NUMBER_STR
 	default DESKTOP_DEVICE_PRODUCT
 	help
 	  nRF Desktop defines common HID device identification values
