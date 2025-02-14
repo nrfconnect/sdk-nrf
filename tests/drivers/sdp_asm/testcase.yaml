@@ -1,7 +1,7 @@
 common:
   tags:
     - sdp_asm
-    - ci_tests_drivers_egpio
+    - ci_tests_drivers_sdp
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuflpr
   integration_platforms:
