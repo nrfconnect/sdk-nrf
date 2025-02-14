@@ -77,14 +77,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
 
 - scenarios:
-    - sample.suit.smp_transfer.cache_push.extflash.bt
-    - sample.suit.smp_transfer.full_processing.extflash.bt
-    - sample.suit.smp_transfer.recovery
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "flash overflow issue"
-
-- scenarios:
     - sample.bluetooth.peripheral_uart
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpurad
