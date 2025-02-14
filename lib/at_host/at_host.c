@@ -33,12 +33,12 @@ enum term_modes {
 	MODE_COUNT      /* Counter of term_modes */
 };
 
+#define AT_HOST_UART_DEV_GET()                                                                     \
+	DEVICE_DT_GET(COND_CODE_1(DT_HAS_CHOSEN(ncs_at_host_uart),                                 \
+		(DT_CHOSEN(ncs_at_host_uart)), (DT_NODELABEL(uart0))))
+
 static enum term_modes term_mode;
-#if DT_HAS_CHOSEN(ncs_at_host_uart)
-static const struct device *const uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_at_host_uart));
-#else
-static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
-#endif
+static const struct device *const uart_dev = AT_HOST_UART_DEV_GET();
 static bool at_buf_busy; /* Guards at_buf while processing a command */
 static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
