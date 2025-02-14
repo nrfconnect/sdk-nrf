@@ -627,6 +627,10 @@ Modem libraries
 
   * Removed references to HERE location services.
 
+* :ref:`lib_at_host` library:
+
+  * Fixed a bug where AT responses would erroneously be written to the logging UART instead of being written to the chosen ``ncs,at-host-uart`` UART device when the :kconfig:option:`CONFIG_LOG_BACKEND_UART` Kconfig option was set.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
