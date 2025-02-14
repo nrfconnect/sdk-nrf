@@ -4,6 +4,7 @@ build:
   sysbuild-cmake: sysbuild
   sysbuild-kconfig: sysbuild/Kconfig.sysbuild
   settings:
+    soc_root: .
     board_root: .
     dts_root: .
     module_ext_root: .
