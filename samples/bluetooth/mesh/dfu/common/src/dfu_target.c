@@ -9,6 +9,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/util.h>
 
@@ -21,10 +22,19 @@
 
 static struct bt_mesh_blob_io_flash *blob_flash_stream;
 static enum bt_mesh_dfu_effect img_effect = BT_MESH_DFU_EFFECT_NONE;
+struct mcuboot_img_sem_ver img_ver;
+
+static struct {
+	uint16_t company_id;
+	uint8_t major;
+	uint8_t minor;
+	uint16_t revision;
+	uint32_t build_num;
+} __packed fwid;
 
 static struct bt_mesh_dfu_img dfu_imgs[] = { {
-	.fwid = &((struct mcuboot_img_sem_ver){}),
-	.fwid_len = sizeof(struct mcuboot_img_sem_ver),
+	.fwid = &fwid,
+	.fwid_len = sizeof(fwid),
 } };
 
 #if defined(CONFIG_BT_MESH_DFU_METADATA)
@@ -79,7 +89,6 @@ static int dfu_meta_check(struct bt_mesh_dfu_srv *srv,
 			  enum bt_mesh_dfu_effect *effect)
 {
 #if defined(CONFIG_BT_MESH_DFU_METADATA)
-	struct mcuboot_img_sem_ver *img_ver = (struct mcuboot_img_sem_ver *) dfu_imgs[0].fwid;
 	struct bt_mesh_dfu_metadata metadata;
 	uint8_t key[16] = {};
 	uint32_t hash;
@@ -114,7 +123,7 @@ static int dfu_meta_check(struct bt_mesh_dfu_srv *srv,
 
 	printk("\tUser data length: %u\n", metadata.user_data_len);
 
-	if (!is_firmware_newer((struct mcuboot_img_sem_ver *) &metadata.fw_ver, img_ver)) {
+	if (!is_firmware_newer((struct mcuboot_img_sem_ver *) &metadata.fw_ver, &img_ver)) {
 		printk("New firmware version is older\n");
 		return -EINVAL;
 	}
@@ -239,7 +248,6 @@ struct bt_mesh_dfu_srv dfu_srv =
 
 static void image_version_load(void)
 {
-	struct mcuboot_img_sem_ver *img_ver = (struct mcuboot_img_sem_ver *) dfu_imgs[0].fwid;
 	struct mcuboot_img_header img_header;
 	int err;
 
@@ -250,10 +258,16 @@ static void image_version_load(void)
 		return;
 	}
 
-	*img_ver = img_header.h.v1.sem_ver;
+	img_ver = img_header.h.v1.sem_ver;
 
-	printk("Current image version: %u.%u.%u+%u\n", img_ver->major, img_ver->minor,
-	       img_ver->revision, img_ver->build_num);
+	fwid.company_id = sys_cpu_to_le16(CONFIG_BT_COMPANY_ID);
+	fwid.major = img_ver.major;
+	fwid.minor = img_ver.minor;
+	fwid.revision = sys_cpu_to_le16(img_ver.revision);
+	fwid.build_num = sys_cpu_to_le32(img_ver.build_num);
+
+	printk("Current image version: %u.%u.%u+%u\n", img_ver.major, img_ver.minor,
+	       img_ver.revision, img_ver.build_num);
 }
 
 int dfu_target_init(struct bt_mesh_blob_io_flash *flash_stream)

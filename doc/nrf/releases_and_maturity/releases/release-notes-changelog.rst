@@ -331,6 +331,11 @@ Bluetooth Mesh samples
     * :ref:`bluetooth_mesh_light`
     * :ref:`bluetooth_mesh_light_lc`
 
+* Updated the following samples to include the value of the :kconfig:option:`CONFIG_BT_COMPANY_ID` option in the Firmware ID:
+
+    * :ref:`ble_mesh_dfu_distributor`
+    * :ref:`ble_mesh_dfu_target`
+
 Cellular samples
 ----------------
 
