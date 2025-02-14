@@ -11,7 +11,7 @@
 
 #include "broadcast_sink.h"
 #include "zbus_common.h"
-#include "nrf5340_audio_dk.h"
+#include "nrf5340_board.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
@@ -127,7 +127,7 @@ static void button_msg_sub_thread(void)
 
 			break;
 
-		case BUTTON_4:
+		case BUTTON_TONE:
 			ret = broadcast_sink_change_active_audio_stream();
 			if (ret) {
 				LOG_WRN("Failed to change active audio stream: %d", ret);
@@ -135,7 +135,7 @@ static void button_msg_sub_thread(void)
 
 			break;
 
-		case BUTTON_5:
+		case BUTTON_MUTE:
 			if (IS_ENABLED(CONFIG_AUDIO_MUTE)) {
 				ret = bt_r_and_c_volume_mute(false);
 				if (ret) {
@@ -208,7 +208,7 @@ static void le_audio_msg_sub_thread(void)
 
 			audio_system_start();
 			stream_state_set(STATE_STREAMING);
-			ret = led_blink(LED_APP_1_BLUE);
+			ret = led_blink(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -223,7 +223,7 @@ static void le_audio_msg_sub_thread(void)
 
 			stream_state_set(STATE_PAUSED);
 			audio_system_stop();
-			ret = led_on(LED_APP_1_BLUE);
+			ret = led_on(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -265,7 +265,7 @@ static void le_audio_msg_sub_thread(void)
 			if (strm_state == STATE_STREAMING) {
 				stream_state_set(STATE_PAUSED);
 				audio_system_stop();
-				ret = led_on(LED_APP_1_BLUE);
+				ret = led_on(LED_AUDIO_CONN_STATUS);
 				ERR_CHK(ret);
 			}
 
@@ -566,7 +566,7 @@ int main(void)
 
 	LOG_DBG("Main started");
 
-	ret = nrf5340_audio_dk_init();
+	ret = nrf5340_board_init();
 	ERR_CHK(ret);
 
 	ret = fw_info_app_print();

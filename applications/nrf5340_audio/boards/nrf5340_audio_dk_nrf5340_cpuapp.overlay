@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led-device-type = &rgb1_red;
+		led-net-status = &rgb2_red;
+		led-app-status = &led3_green;
+		led-conn-status = &led1_blue;
+		led-sync-status = &led2_green;
+	};
+};
