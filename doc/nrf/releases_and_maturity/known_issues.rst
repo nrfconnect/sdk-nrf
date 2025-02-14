@@ -189,6 +189,27 @@ KRKNWK-14299: NRPA MAC address cannot be set in Zephyr
 Bluetooth LE
 ============
 
+.. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0
+
+NCSDK-31528: Deadlock on system workqueue with ``tx_notify`` in host
+  If the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option is disabled, blocking of the system workqueue can cause a deadlock in the Bluetooth Host when running out of buffers in the HCI commands pool.
+  The Bluetooth Host uses the system workqueue to complete processing of transmitted ACL data.
+  Thus, using any blocking API on the system workqueue blocks the Bluetooth Host.
+  For the deadlock to occur, the following must happen simultaneously:
+
+  * The :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option is disabled.
+  * The system workqueue is blocked.
+  * The HCI commands pool is empty.
+  * A blocking Bluetooth Host API that uses the :c:func:`bt_hci_cmd_send_sync` function is called from any thread (including the system workqueue).
+
+  An example of blocking the system workqueue is calling the :c:func:`bt_conn_get_tx_power_level` function in a receive callback (called when data is received over the connection).
+  Calling such a function can result in a deadlock, since it uses the :c:func:`bt_hci_cmd_send_sync` function to complete its operation.
+
+  **Workaround:** Do not block the system workqueue.
+  Alternatively, increase the value of the :kconfig:option:`CONFIG_BT_BUF_CMD_TX_COUNT` Kconfig option to increase the HCI commands pool.
+  This does not guarantee that the problem is solved, as multiple blocking calls may exhaust the buffer pool.
+  You can also use the (experimental) :kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ` Kconfig option to use a separate workqueue for connection TX notify processing.
+
 .. rst-class:: v2-9-0-nRF54H20-rc1 v2-9-0 v2-8-0 v2-7-0 v2-6-3 v2-6-2 v2-6-1 v2-6-0
 
 NCSDK-31095: Issues with the :kconfig:option:`CONFIG_SEGGER_SYSVIEW` Kconfig option
