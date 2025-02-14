@@ -608,6 +608,10 @@ Modem libraries
 
   * Fixed a bug where various subsystems would be erroneously initialized during a failed initialization of the library.
 
+* :ref:`lib_location` library:
+
+  * Removed references to HERE location services.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

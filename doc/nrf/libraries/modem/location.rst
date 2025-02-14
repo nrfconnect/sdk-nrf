@@ -76,9 +76,7 @@ Here are details related to the services handling cell information for cellular 
 
   * Services can be handled by the application by enabling the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option, in which case rest of the service configurations are ignored.
   * The service is selected in the :c:struct:`location_method_config` structure when requesting for location.
-  * The services available are `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ and `HERE Positioning`_.
-  * The data transport method for the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ can be configured to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
-  * The only data transport method with `HERE Positioning`_ service is REST.
+  * You can configure the data transport method for the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ to either MQTT (:kconfig:option:`CONFIG_NRF_CLOUD_MQTT`) or REST (:kconfig:option:`CONFIG_NRF_CLOUD_REST`).
 
 Diagrams
 ========
@@ -200,10 +198,7 @@ An nRF91 Series DK comes pre-provisioned with certificates for nRF Cloud.
 Location service accounts
 =========================
 
-To use the location services that provide A-GNSS or P-GPS, cellular or Wi-Fi positioning data, see the respective documentation for setting up your account and getting the required credentials for authentication:
-
-* `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_
-* `HERE Positioning`_
+To use the location services that provide A-GNSS, P-GPS, cellular, or Wi-Fi positioning data, see the `nRF Cloud Location Services <nRF Cloud Location Services documentation_>`_ documentation for setting up your account and getting the required credentials for authentication.
 
 You can configure the required credentials for the location services using Kconfig options.
 
@@ -283,12 +278,6 @@ Use at least one of the following sets of options:
 
 * :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL`
 * :kconfig:option:`CONFIG_LOCATION_SERVICE_NRF_CLOUD`
-* :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE` and :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_API_KEY`
-
-The following options are related to the HERE service and can usually have the default values:
-
-* :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_HOSTNAME`
-* :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG`
 
 The following options control the default location request configurations and are applied
 when :c:func:`location_config_defaults_set` function is called:
