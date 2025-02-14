@@ -3,7 +3,7 @@ common:
   tags:
     - drivers
     - gpio
-    - ci_tests_drivers_egpio
+    - ci_tests_drivers_sdp
   depends_on: gpio
   min_flash: 64
   harness: ztest
