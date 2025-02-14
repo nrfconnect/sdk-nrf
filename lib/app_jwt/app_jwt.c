@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,13 +20,17 @@
 #include <date_time.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
+
+#if defined(CONFIG_BOARD_NATIVE_SIM)
+#define IAK_APPLICATION_GEN1 0x41020100
+#else
 #include <psa/nrf_platform_key_ids.h>
+#endif
 
 #include <cJSON.h>
 
 #include <app_jwt.h>
 
-#include <zephyr/posix/time.h>
 #include <zephyr/sys/base64.h>
 #include <zephyr/sys/byteorder.h>
 

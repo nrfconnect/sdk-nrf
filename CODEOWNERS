@@ -877,6 +877,7 @@
 /tests/lib/sms/                           @nrfconnect/ncs-modem-tre
 /tests/lib/tone/                          @nrfconnect/ncs-audio
 /tests/lib/uicc_lwm2m/                    @stig-bjorlykke
+/tests/lib/app_jwt/                       @nrfconnect/ncs-modem
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
 /tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-pluto
