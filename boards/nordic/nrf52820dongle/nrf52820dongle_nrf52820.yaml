@@ -6,6 +6,8 @@ ram: 32
 flash: 256
 toolchain:
   - zephyr
+  - zephyr-gnu
+  - zephyr-llvm
   - gnuarmemb
   - xtools
   - netif:openthread

@@ -6,6 +6,8 @@ toolchain:
   - gnuarmemb
   - xtools
   - zephyr
+  - zephyr-gnu
+  - zephyr-llvm
 ram: 64
 flash: 256
 supported:
