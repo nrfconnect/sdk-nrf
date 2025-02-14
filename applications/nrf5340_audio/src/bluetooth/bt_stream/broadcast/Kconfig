@@ -211,7 +211,12 @@ config BT_AUDIO_BITRATE_BROADCAST_SRC
 config BT_AUDIO_SCAN_DELEGATOR
 	bool "Enable scan delegator"
 	depends on TRANSPORT_BIS
-	default n
+	select BT_CAP_ACCEPTOR
+	select BT_CSIP_SET_MEMBER
+	select BT_CAP_ACCEPTOR_SET_MEMBER
+	select BT_GAP_PERIPHERAL_PREF_PARAMS
+	select BT_VCP_VOL_REND
+	select BT_PER_ADV_SYNC_TRANSFER_RECEIVER
 	help
 	  When scan delegator feature is enabled, the broadcast sink will not
 	  search for a predefined broadcast source. Instead, it will wait for a
