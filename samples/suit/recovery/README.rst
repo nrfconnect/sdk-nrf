@@ -97,7 +97,7 @@ Testing
 
    .. code-block:: console
 
-      nrfutil device x-write --address 0xE0B7000 --value 0xFFFF --serial-number <dk_serial_number>
+      nrfutil device x-write --address 0xE0BD000 --value 0xFFFF --serial-number <dk_serial_number>
 
 #. Reset the device to enter the recovery path:
 
