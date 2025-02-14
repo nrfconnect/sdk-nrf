@@ -1469,6 +1469,7 @@ ci_samples_mpsl:
     - nrf/samples/mpsl/
     - nrf/samples/nrf5340/empty_app_core/
     - nrf/subsys/mpsl/
+    - nrfxlib/mpsl/
 
 ci_samples_caf:
   files:
