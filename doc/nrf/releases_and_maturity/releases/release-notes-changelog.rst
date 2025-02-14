@@ -198,11 +198,7 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Updated:
-
-  * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
-    The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
-  * The release configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
+|no_changes_yet_note|
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -232,54 +228,22 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-
 |no_changes_yet_note|
 
 Bluetooth Fast Pair samples
 ---------------------------
 
-* :ref:`fast_pair_locator_tag` sample:
-
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+|no_changes_yet_note|
 
 Bluetooth Mesh samples
 ----------------------
 
-* Added:
-
-  * Support for nRF54L15 in the following samples:
-
-    * :ref:`bluetooth_mesh_sensor_client`
-    * :ref:`bluetooth_mesh_sensor_server`
-    * :ref:`bluetooth_ble_peripheral_lbs_coex`
-    * :ref:`bt_mesh_chat`
-    * :ref:`bluetooth_mesh_light_switch`
-    * :ref:`bluetooth_mesh_silvair_enocean`
-    * :ref:`bluetooth_mesh_light_dim`
-    * :ref:`bluetooth_mesh_light`
-    * :ref:`ble_mesh_dfu_target`
-    * :ref:`bluetooth_mesh_light_lc`
-    * :ref:`ble_mesh_dfu_distributor`
-
-  * Support for nRF54L05 in the following samples:
-
-    * :ref:`bluetooth_mesh_sensor_client`
-    * :ref:`bluetooth_mesh_sensor_server`
-    * :ref:`bluetooth_ble_peripheral_lbs_coex`
-    * :ref:`bt_mesh_chat`
-    * :ref:`bluetooth_mesh_light_switch`
-    * :ref:`bluetooth_mesh_silvair_enocean`
-    * :ref:`bluetooth_mesh_light_dim`
-    * :ref:`bluetooth_mesh_light`
-    * :ref:`bluetooth_mesh_light_lc`
+|no_changes_yet_note|
 
 Cellular samples
 ----------------
 
-* :ref:`modem_shell_application` sample:
-
-  * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
-    The link control functionality is now always enabled and cannot be disabled.
+|no_changes_yet_note|
 
 Cryptography samples
 --------------------
@@ -390,9 +354,7 @@ Wi-Fi samples
 Other samples
 -------------
 
-* :ref:`coremark_sample` sample:
-
-  * Added support for the nRF54L05 and nRF54L10 SoCs (emulated on nRF54L15 DK).
+|no_changes_yet_note|
 
 Drivers
 =======
