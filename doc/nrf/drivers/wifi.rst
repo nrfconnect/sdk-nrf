@@ -8,3 +8,4 @@ Wi-Fi drivers
 
    wifi/nrf70_native
    wifi/nrf70_portable
+   wifi/low_level_api

@@ -156,7 +156,11 @@ with open(fin_path) as fin, open(fout_path, "w") as fout:
 
 # -- Options for doxybridge plugin ---------------------------------------------
 
-doxybridge_projects = {"nrf": _doxyrunner_outdir}
+doxybridge_projects = {
+    "nrf": _doxyrunner_outdir,
+    "wifi": utils.get_builddir() / "html" / "wifi",
+    "zephyr": utils.get_builddir() / "html" / "zephyr" / "doxygen",
+}
 
 # Options for ncs_include ------------------------------------------------------
 

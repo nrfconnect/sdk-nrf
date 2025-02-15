@@ -396,7 +396,7 @@ endfunction()
 add_dependencies(nrfxlib-inventory-all kconfig-all zephyr-all)
 add_doc_dependencies(zephyr kconfig-all)
 add_doc_dependencies(mcuboot kconfig-all)
-add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all matter-all tfm-all kconfig-all)
+add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all matter-all tfm-all kconfig-all wifi)
 add_doc_dependencies(nrfxlib nrf-all)
 
 add_custom_target(build-all ALL)
