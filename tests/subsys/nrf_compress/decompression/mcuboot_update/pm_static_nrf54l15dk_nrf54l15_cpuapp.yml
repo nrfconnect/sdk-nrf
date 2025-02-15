@@ -1,20 +1,20 @@
 app:
-  address: 0x10800
+  address: 0x11800
   end_address: 0xa2000
   region: flash_primary
-  size: 0x91800
+  size: 0x90800
 EMPTY_1:
   address: 0x0
-  end_address: 0x10800
+  end_address: 0x11800
   device: MX25R64
   region: external_flash
-  size: 0x10800
+  size: 0x11800
 compressed_app:
-  address: 0x10800
+  address: 0x11800
   end_address: 0xa2000
   device: MX25R64
   region: external_flash
-  size: 0x91800
+  size: 0x90800
 EMPTY_2:
   address: 0xa2000
   end_address: 0x800000
@@ -28,30 +28,30 @@ EMPTY_3:
   size: 0x65000
 mcuboot:
   address: 0x0
-  end_address: 0x10000
+  end_address: 0x11000
   region: flash_primary
-  size: 0x10000
+  size: 0x11000
 mcuboot_pad:
-  address: 0x10000
-  end_address: 0x10800
+  address: 0x11000
+  end_address: 0x11800
   region: flash_primary
   size: 0x800
 mcuboot_primary:
-  address: 0x10000
+  address: 0x11000
   end_address: 0xa2000
   orig_span: &id001
   - mcuboot_pad
   - app
   region: flash_primary
-  size: 0x92000
+  size: 0x91000
   span: *id001
 mcuboot_primary_app:
-  address: 0x10800
+  address: 0x11800
   end_address: 0xa2000
   orig_span: &id002
   - app
   region: flash_primary
-  size: 0x91800
+  size: 0x90800
   span: *id002
 mcuboot_secondary:
   address: 0xa2000
