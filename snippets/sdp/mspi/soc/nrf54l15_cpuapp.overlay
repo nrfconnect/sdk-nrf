@@ -15,14 +15,17 @@
 			};
 
 			sram_rx: memory@2003c000 {
-				reg = <0x2003c000 0x0800>;
+				reg = <0x2003c000 0x07f0>;
 			};
 
-			sram_tx: memory@2003c800 {
-				reg = <0x2003c800 0x0800>;
+			sram_tx: memory@2003c7f0 {
+				reg = <0x2003c7f0 0x07f0>;
+			};
+
+			cpuflpr_error_code: memory@2003cfe0 {
+				reg = <0x2003cfe0 0x0020>; /* 32bytes */
 			};
 		};
-
 
 		cpuflpr_sram_code_data: memory@2003d000 {
 			compatible = "mmio-sram";
